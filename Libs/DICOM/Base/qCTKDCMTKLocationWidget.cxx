@@ -26,6 +26,7 @@ qCTKDCMTKLocationWidget::qCTKDCMTKLocationWidget(QWidget* _parent):Superclass(_p
   d->setupUi(this);
 }
 
+//----------------------------------------------------------------------------
 qCTKDCMTKLocationWidget::~qCTKDCMTKLocationWidget()
 {
 }

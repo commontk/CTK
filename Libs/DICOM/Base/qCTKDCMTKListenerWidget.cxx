@@ -26,6 +26,7 @@ qCTKDCMTKListenerWidget::qCTKDCMTKListenerWidget(QWidget* _parent):Superclass(_p
   d->setupUi(this);
 }
 
+//----------------------------------------------------------------------------
 qCTKDCMTKListenerWidget::~qCTKDCMTKListenerWidget()
 {
 }

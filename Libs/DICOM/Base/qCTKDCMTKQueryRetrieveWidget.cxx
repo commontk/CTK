@@ -26,6 +26,7 @@ qCTKDCMTKQueryRetrieveWidget::qCTKDCMTKQueryRetrieveWidget(QWidget* _parent):Sup
   d->setupUi(this);
 }
 
+//----------------------------------------------------------------------------
 qCTKDCMTKQueryRetrieveWidget::~qCTKDCMTKQueryRetrieveWidget()
 {
 }
