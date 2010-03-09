@@ -1,0 +1,12 @@
+
+
+# Create executable
+ADD_EXECUTABLE(ctkDMCTK
+  Main.cxx
+)
+
+SET(KIT_LIBRARIES
+  ${qCTK_BASE_LIBRARIES}
+  )
+
+TARGET_LINK_LIBRARIES(ctkDMCTK ${KIT_LIBRARIES})
