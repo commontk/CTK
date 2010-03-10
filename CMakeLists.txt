@@ -114,7 +114,7 @@ OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 
 # Build options
 FOREACH(lib ${ctk_libs})
-  OPTION(CTK_USE_${lib} "Enable ${lib} Support." ON)
+  OPTION(CTK_ENABLE_${lib} "Enable ${lib} Support." ON)
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
@@ -132,7 +132,7 @@ ENDIF()
 # Add subdirectories
 #
 FOREACH(lib ${ctk_libs})
-  IF (CTK_USE_${lib})
+  IF (CTK_ENABLE_${lib})
     ADD_SUBDIRECTORY(Libs/${lib})
   ENDIF()
 ENDFOREACH()
