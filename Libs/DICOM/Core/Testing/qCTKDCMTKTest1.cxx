@@ -15,6 +15,7 @@ int qCTKDCMTKTest1(int argc, char** argv) {
     {
     out << "open db success\n";
     myCTK.initializeDatabase();
+    myCTK.database().close();
     }
   else
     { 
