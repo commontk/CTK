@@ -14,11 +14,14 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   qCTKDCMTK.cxx
   qCTKDCMTK.h
+  qCTKDCMTKModel.cxx
+  qCTKDCMTKModel.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   qCTKDCMTK.h
+  qCTKDCMTKModel.h
   )
 
 # UI files
@@ -27,6 +30,7 @@ SET(KIT_UI_FORMS
 
 # Resources
 SET(KIT_resources
+  Resources/dicom.qrc
 )
 
 # Additional Target libraries
@@ -51,5 +55,5 @@ ctk_build_qtlib(
 
 # Testing
 IF(BUILD_TESTING)
-  #ADD_SUBDIRECTORY(Testing)
+  ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)

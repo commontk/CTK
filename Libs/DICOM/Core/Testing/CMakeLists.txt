@@ -1,0 +1,20 @@
+SET(KIT CTKDICOMCore)
+
+CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  qCTKDCMTKModelTest1.cxx
+  )
+
+SET (TestsToRun ${Tests})
+REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+
+SET(LIBRARY_NAME ${PROJECT_NAME})
+
+ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
+TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME})
+
+SET( CTKDICOMCore_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
+IF(WIN32)
+  SET(CTKDICOMCore_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
+ENDIF(WIN32)
+
+ADD_TEST( qCTKDCMTKModelTest1 ${CTKDICOMCore_TESTS} qCTKDCMTKModelTest1 ../../Resources/dicom-sample.sql)
