@@ -29,7 +29,7 @@ SET(KIT_UI_FORMS
 SET(KIT_resources
 )
 
-# Additional Target libraries (QT libs already included)
+# Additional Target libraries
 SET(KIT_target_libraries
   CTKCore
   )
