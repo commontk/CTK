@@ -43,10 +43,10 @@ SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 #-----------------------------------------------------------------------------
 # CMake Macro(s)
 # 
-INCLUDE(CMake/CTKParseArgumentsMacro.cmake)
-INCLUDE(CMake/CTKBuildQtLibMacro.cmake)
-INCLUDE(CMake/CTKBuildQtPluginMacro.cmake)
-INCLUDE(CMake/CTKSetupQt.cmake)
+INCLUDE(CMake/ctkMacroParseArguments.cmake)
+INCLUDE(CMake/ctkMacroBuildQtLib.cmake)
+INCLUDE(CMake/ctkMacroBuildQtPlugin.cmake)
+INCLUDE(CMake/ctkMacroSetupQt.cmake)
 
 #-----------------------------------------------------------------------------
 # Testing
@@ -87,7 +87,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # QT
 #
-ctk_setup_qt()
+ctkMacroSetupQt()
 
 #-----------------------------------------------------------------------------
 # CTK Libraries

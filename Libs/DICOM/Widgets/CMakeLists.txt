@@ -41,7 +41,7 @@ SET(KIT_target_libraries
   CTKDICOMCore
   )
 
-ctk_build_qtlib(
+ctkMacroBuildQtLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
