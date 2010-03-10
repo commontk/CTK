@@ -32,7 +32,6 @@ qCTKDCMTK::qCTKDCMTK(QObject* _parent): Superclass(_parent)
 }
 
 //----------------------------------------------------------------------------
-qCTKDCMTK::
 qCTKDCMTK::~qCTKDCMTK()
 {
 }

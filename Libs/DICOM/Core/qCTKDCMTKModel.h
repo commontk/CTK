@@ -7,10 +7,10 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qCTKDMCTKExport.h"
+#include "CTKDICOMCoreExport.h"
 
 class qCTKDCMTKModelPrivate;
-class Q_CTKDMCTK_EXPORT qCTKDCMTKModel : public QAbstractItemModel
+class Q_CTK_DICOM_CORE_EXPORT qCTKDCMTKModel : public QAbstractItemModel
 {
   Q_OBJECT
 public:
