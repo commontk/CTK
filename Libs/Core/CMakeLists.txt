@@ -28,8 +28,9 @@ SET(KIT_UI_FORMS
 SET(KIT_resources
 )
 
-# Additional Target libraries (QT libs already included)
+# Additional Target libraries
 SET(KIT_target_libraries
+  ${QT_LIBRARIES}
   )
 
 ctk_build_qtlib(
@@ -49,5 +50,5 @@ ctk_build_qtlib(
 
 # Testing
 IF(BUILD_TESTING)
-  #ADD_SUBDIRECTORY(Testing)
+  ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)

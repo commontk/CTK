@@ -65,6 +65,24 @@ IF(BUILD_TESTING)
     ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
     @ONLY
     )
+
+  # Configuration for the CMake-generated test driver
+  SET(CMAKE_TESTDRIVER_EXTRA_INCLUDES "#include <stdexcept>")
+  SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "
+    try
+      {")
+  SET(CMAKE_TESTDRIVER_AFTER_TESTMAIN "    }
+      catch( std::exception & excp )
+        {
+        fprintf(stderr,\"%s\\n\",excp.what());
+        return EXIT_FAILURE;
+        }
+      catch( ... )
+        {
+        printf(\"Exception caught in the test driver\\n\");
+        return EXIT_FAILURE;
+        }
+      ")
 ENDIF()
 
 #-----------------------------------------------------------------------------

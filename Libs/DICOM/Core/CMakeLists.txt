@@ -30,7 +30,7 @@ SET(KIT_resources
   Resources/dicom.qrc
 )
 
-# Additional Target libraries (QT libs already included)
+# Additional Target libraries
 SET(KIT_target_libraries
   CTKCore
   )
