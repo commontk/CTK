@@ -47,6 +47,7 @@ INCLUDE(CMake/ctkMacroParseArguments.cmake)
 INCLUDE(CMake/ctkMacroBuildQtLib.cmake)
 INCLUDE(CMake/ctkMacroBuildQtPlugin.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
+INCLUDE(CMake/ctkMacroGetTargetLibraries.cmake)
 
 #-----------------------------------------------------------------------------
 # Testing
@@ -104,13 +105,17 @@ SET(ctk_libs
 # before the SuperBuild script is included
 #
 
+# Let's mark as advanced some default properties
+MARK_AS_ADVANCED(CMAKE_INSTALL_PREFIX)
+MARK_AS_ADVANCED(DART_TESTING_TIMEOUT)
+
 # KWStyle
 OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
-MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
+#MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
 
 # Build options
 FOREACH(lib ${ctk_libs})
-  OPTION(CTK_USE_${lib} "Enable ${lib} Support." ON)
+  OPTION(CTK_ENABLE_${lib} "Enable ${lib} Support." ON)
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
@@ -128,11 +133,11 @@ ENDIF()
 # Add subdirectories
 #
 FOREACH(lib ${ctk_libs})
-  IF (CTK_USE_${lib})
+  IF (CTK_ENABLE_${lib})
     ADD_SUBDIRECTORY(Libs/${lib})
   ENDIF()
 ENDFOREACH()
-
+    
 #-----------------------------------------------------------------------------
 # Style Checking configuration
 #

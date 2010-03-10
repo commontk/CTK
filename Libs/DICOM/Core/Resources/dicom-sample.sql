@@ -3,6 +3,11 @@
 -- For the corresponding DICOM files and more information see
 -- http://www.slicer.org/slicerWiki/index.php/DICOM:Database
 -- 
+-- Note: the semicolon at the end is necessary for the simple parser to separate
+--       the statements since the SQlite driver does not handle multiple
+--       commands per QSqlQuery::exec call!
+-- ;
+ 
 BEGIN TRANSACTION;
 CREATE TABLE 'Images' (   'Filename' VARCHAR(1024) NOT NULL ,   'SeriesInstanceUID' VARCHAR(255) NOT NULL ,   PRIMARY KEY ('Filename') );
 INSERT INTO "Images" VALUES('CTHeadAxialDicom/CTHead24.dcm','1.2.826.0.1.3680043.2.1125.1.65375240934815452318141136507497058');

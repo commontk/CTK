@@ -35,12 +35,10 @@ SET(KIT_UI_FORMS
 SET(KIT_resources
 )
 
-# Additional Target libraries
-SET(KIT_target_libraries
-  CTKCore
-  CTKDICOMCore
-  )
-
+# Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+ctkMacroGetTargetLibraries(KIT_target_libraries)
+  
+# See CMake/ctkMacroBuildQtLib.cmake
 ctkMacroBuildQtLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}

@@ -81,6 +81,19 @@ ExternalProject_Add(${proj}
     )
 
 #-----------------------------------------------------------------------------
+# Utilities/ZMQ
+#
+SET(proj ZMQ)
+ExternalProject_Add(${proj}
+    DOWNLOAD_COMMAND ""
+    INSTALL_COMMAND ""
+    CMAKE_GENERATOR ${gen}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/ZMQ
+    CMAKE_ARGS
+      ${ep_common_args}
+    )
+    
+#-----------------------------------------------------------------------------
 # CTK Utilities
 #
 set(proj CTK-Utilities)
@@ -92,6 +105,7 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${kwstyle_DEPENDS}
     "DCMTK"
+    "ZMQ"
 )
   
 #-----------------------------------------------------------------------------
