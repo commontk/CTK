@@ -17,7 +17,12 @@ public:
   typedef QObject Superclass;
   explicit qCTKDCMTK(QObject* parent = 0);
   virtual ~qCTKDCMTK();
-
+  
+  /// 
+  ///
+  void setDatabaseFileName(const QString& file);
+  virtual bool openDatabase(const QString& file);
+  const QString& GetLastError() const; 
 private:
   QCTK_DECLARE_PRIVATE(qCTKDCMTK);
 };
