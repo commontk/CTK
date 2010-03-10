@@ -14,8 +14,11 @@ int qCTKDCMTKTest1(int argc, char** argv) {
   if ( myCTK.openDatabase( argv[1]) )
     {
     out << "open db success\n";
+    /// make sure it is empty and properly initialized
     myCTK.initializeDatabase();
-    myCTK.database().close();
+    /// insert some sample data
+    myCTK.initializeDatabase(argv[2]);
+    myCTK.closeDatabase();
     }
   else
     { 

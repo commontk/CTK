@@ -82,7 +82,6 @@ bool qCTKDCMTKPrivate::executeScript(const QString& script) {
 
   for (QStringList::iterator it = sqlCommandsLines.begin(); it != sqlCommandsLines.end()-1; ++it)
   {
-    qDebug() << "Statement: " << *it ; 
     if (! (*it).startsWith("--") )
       {
       query.exec(*it);
