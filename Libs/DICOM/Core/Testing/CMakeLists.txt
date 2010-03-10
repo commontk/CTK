@@ -2,6 +2,7 @@ SET(KIT CTKDICOMCore)
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qCTKDCMTKModelTest1.cxx
+  qCTKDCMTKTest1.cxx
   )
 
 SET (TestsToRun ${Tests})
@@ -18,3 +19,4 @@ IF(WIN32)
 ENDIF(WIN32)
 
 ADD_TEST( qCTKDCMTKModelTest1 ${CTKDICOMCore_TESTS} qCTKDCMTKModelTest1 ../../Resources/dicom-sample.sql)
+ADD_TEST( qCTKDCMTKTest1 ${CTKDICOMCore_TESTS} qCTKDCMTKTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db)

@@ -1,4 +1,5 @@
 #include <QTextStream>
+#include <QApplication>
 
 #include "qCTKDCMTK.h"
 
@@ -6,7 +7,8 @@
 #include <cstdlib>
 
 int qCTKDCMTKTest1(int argc, char** argv) {
- 
+  
+  QApplication app(argc, argv);
   QTextStream out(stdout);
   qCTKDCMTK myCTK;
   if ( myCTK.openDatabase( argv[1]) )
