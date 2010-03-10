@@ -1,0 +1,121 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+IF(COMMAND CMAKE_POLICY)
+  CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND CMAKE_POLICY)
+
+PROJECT(CTK)
+
+# Default to shared library
+SET(CTK_LIBRARY_MODE "SHARED")
+SET(CTK_BUILD_SHARED_LIBS TRUE)
+
+#-----------------------------------------------------------------------------
+# Output directories.
+#
+IF(NOT LIBRARY_OUTPUT_PATH)
+  SET(LIBRARY_OUTPUT_PATH ${CTK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+ENDIF(NOT LIBRARY_OUTPUT_PATH)
+IF(NOT EXECUTABLE_OUTPUT_PATH)
+  SET(EXECUTABLE_OUTPUT_PATH ${CTK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
+ENDIF(NOT EXECUTABLE_OUTPUT_PATH)
+SET(CTK_LIBRARY_PATH ${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR})
+SET(CTK_EXECUTABLE_PATH ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR})
+SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
+
+#-----------------------------------------------------------------------------
+# Install directories, used for install rules.
+#
+SET(CTK_INSTALL_BIN_DIR "bin")
+SET(CTK_INSTALL_LIB_DIR "lib")
+SET(CTK_INSTALL_INCLUDE_DIR "include")
+SET(CTK_INSTALL_DOC_DIR "doc")
+
+#-----------------------------------------------------------------------------
+# Update CMake module path
+# 
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+
+#-----------------------------------------------------------------------------
+# Clear CTK_BASE_INCLUDE_DIRS and CTK_BASE_LIBRARIES
+#
+SET(CTK_BASE_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
+SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
+
+#-----------------------------------------------------------------------------
+# CMake Macro(s)
+# 
+INCLUDE(CMake/CTKParseArgumentsMacro.cmake)
+INCLUDE(CMake/CTKBuildQtLibMacro.cmake)
+INCLUDE(CMake/CTKBuildQtPluginMacro.cmake)
+INCLUDE(CMake/CTKSetupQt.cmake)
+
+#-----------------------------------------------------------------------------
+# Testing
+#
+OPTION(BUILD_TESTING "Test the project" ON)
+IF(BUILD_TESTING)
+  ENABLE_TESTING()
+  INCLUDE(CTest)
+  SET(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+  MARK_AS_ADVANCED(TCL_TCLSH DART_ROOT)
+    
+  # Setup file for setting custom ctest vars
+  CONFIGURE_FILE(
+    CMake/CTestCustom.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
+    @ONLY
+    )
+ENDIF()
+
+#-----------------------------------------------------------------------------
+# QT
+#
+ctk_setup_qt()
+
+#-----------------------------------------------------------------------------
+# CTK Libraries
+#
+SET(ctk_libs
+  Core
+  Widgets
+  DICOM/Core
+  DICOM/Widgets)
+  
+#-----------------------------------------------------------------------------
+# To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
+# before the SuperBuild script is included
+#
+
+# KWStyle
+OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
+MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
+
+# Build options
+FOREACH(lib ${ctk_libs})
+  OPTION(CTK_USE_${lib} "Enable ${lib} Support." ON)
+ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# Superbuild is used by default
+#
+OPTION(CTK_SUPERBUILD "Build CTK and the projects it depends on via SuperBuild.cmake." ON)
+MARK_AS_ADVANCED(CTK_SUPERBUILD)
+
+IF(CTK_SUPERBUILD)
+  INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
+  RETURN()
+ENDIF()
+
+#-----------------------------------------------------------------------------
+# Add subdirectories
+#
+FOREACH(lib ${ctk_libs})
+  IF (CTK_USE_${lib})
+    ADD_SUBDIRECTORY(Libs/${lib})
+  ENDIF()
+ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# Style Checking configuration
+#
+INCLUDE(Utilities/KWStyle/KWStyle.cmake)

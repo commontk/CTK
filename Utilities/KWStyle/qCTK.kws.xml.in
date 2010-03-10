@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<Description>
+  <LineLength>100</LineLength>
+  <DeclarationOrder>0,1,2</DeclarationOrder>
+  <Typedefs>^[A-Z](\w|\d)*</Typedefs>
+  <MemberFunctions>^~?(\w|\d)*</MemberFunctions>
+  <InternalVariables>^[A-Z](\w|\d)*</InternalVariables>
+  <SemicolonSpace>0</SemicolonSpace>
+  <EndOfFileNewLine>1</EndOfFileNewLine>
+  <Tabs>1</Tabs>
+  <Spaces>3</Spaces>
+  <Comments>/**, *, */,true</Comments>
+  <Header>@ZiBRA_SOURCE_DIR@/Utilities/KWStyle/headers,false,true</Header>
+  <Indent>SPACE,2,true,true</Indent>
+  <NameOfClass>[NameOfClass],qCTK</NameOfClass>
+  <IfNDefDefine>__[NameOfClass]_[Extension]</IfNDefDefine>
+  <EmptyLines>1</EmptyLines>
+  <Template>[TNV]</Template>
+  <Operator>1,1</Operator>
+</Description>

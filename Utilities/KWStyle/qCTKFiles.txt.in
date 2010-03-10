@@ -1,0 +1,3 @@
+"@CTK_SOURCE_DIR@/Libs/qCTK*.cxx" [R]
+"@CTK_SOURCE_DIR@/Libs/qCTK*.h" [R]
+"@CTK_SOURCE_DIR@/Libs/qCTK*.txx" [R]

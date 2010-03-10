@@ -1,11 +1,10 @@
-
-PROJECT(qCTKDMCTK)
+PROJECT(CTKWidgets)
 
 #
-# See CMake/Slicer3QTBaseLibraryMacros.cmake for details
+# See CTK/CMake/CTKBuildQtLibMacro.cmake for details
 #
 
-SET(KIT_export_directive "Q_CTKDMCTK_EXPORT")
+SET(KIT_export_directive "Q_CTK_WIDGETS_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
@@ -13,26 +12,17 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  qCTKDCMTK.cxx
-  qCTKDCMTK.h
-  qCTKDCMTKListenerWidget.cxx
-  qCTKDCMTKListenerWidget.h
-  qCTKDCMTKLocationWidget.cxx
-  qCTKDCMTKLocationWidget.h
-  qCTKDCMTKQueryRetrieveWidget.cxx
-  qCTKDCMTKQueryRetrieveWidget.h
+  qCTKSettings.cxx
+  qCTKSettings.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  qCTKDCMTK.h
+  qCTKSettings.h
   )
 
 # UI files
 SET(KIT_UI_FORMS
-  Resources/UI/qCTKDCMTKLocationWidget.ui
-  Resources/UI/qCTKDCMTKListenerWidget.ui
-  Resources/UI/qCTKDCMTKQueryRetrieveWidget.ui
 )
 
 # Resources
@@ -41,12 +31,11 @@ SET(KIT_resources
 
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
-  ${QT_LIBRARIES}
+  CTKCore
   )
 
-qctk_build_qtlib( 
+ctk_build_qtlib(
   NAME ${PROJECT_NAME}
-  EXPORT_TEMPLATE ${CTKDCMTK_SOURCE_DIR}/qCTKExport.h.in
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
@@ -54,7 +43,7 @@ qctk_build_qtlib(
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
-  LIBRARY_TYPE ${qCTK_LIBRARY_MODE}
+  LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
 # Plugins

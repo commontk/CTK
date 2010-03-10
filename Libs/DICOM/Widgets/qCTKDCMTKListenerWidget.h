@@ -7,11 +7,11 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qCTKDMCTKExport.h"
+#include "CTKDICOMWidgetsExport.h"
 
 class qCTKDCMTKListenerWidgetPrivate; 
 
-class Q_CTKDMCTK_EXPORT qCTKDCMTKListenerWidget : public QWidget
+class Q_CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKListenerWidget : public QWidget
 {
 public:
   typedef QWidget Superclass;

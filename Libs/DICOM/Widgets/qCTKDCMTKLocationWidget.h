@@ -7,11 +7,11 @@
 // qCTK includes
 #include <qCTKPimpl.h>
 
-#include "qCTKDMCTKExport.h"
+#include "CTKDICOMWidgetsExport.h"
 
 class qCTKDCMTKLocationWidgetPrivate; 
 
-class Q_CTKDMCTK_EXPORT qCTKDCMTKLocationWidget : public QWidget
+class Q_CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKLocationWidget : public QWidget
 {
 public:
   typedef QWidget Superclass;
