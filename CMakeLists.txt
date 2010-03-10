@@ -97,7 +97,8 @@ SET(ctk_libs
   Core
   Widgets
   DICOM/Core
-  DICOM/Widgets)
+  DICOM/Widgets
+  DICOM/Applications)
   
 #-----------------------------------------------------------------------------
 # To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
