@@ -22,6 +22,7 @@ CREATE TABLE 'Patients' (
   'PatientsBirthDate' DATE NULL ,
   'PatientsBirthTime' TIME NULL ,
   'PatientsSex' varchar(1) NULL ,
+  'PatientsAge' varchar(10) NULL ,
   'PatientsComments' VARCHAR(255) NULL );
 CREATE TABLE 'Series' (
   'SeriesInstanceUID' VARCHAR(255) NOT NULL ,
@@ -47,6 +48,7 @@ CREATE TABLE 'Studies' (
   'AccessionNumber' VARCHAR(255) NULL ,
   'ModalitiesInStudy' VARCHAR(255) NULL ,
   'ReferringPhysician' VARCHAR(255) NULL ,
+  'PerformingPysiciansName' VARCHAR(255) NULL ,
   'StudyDescription' VARCHAR(255) NULL ,
   PRIMARY KEY ('StudyInstanceUID') );
 
