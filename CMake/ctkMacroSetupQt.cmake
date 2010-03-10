@@ -5,7 +5,7 @@
 #
 
 
-MACRO(ctk_setup_qt)
+MACRO(ctkMacroSetupQt)
 
   IF(DEFINED CTK_QMAKE_EXECUTABLE)
     SET(QT_QMAKE_EXECUTABLE ${CTK_QMAKE_EXECUTABLE})
@@ -14,6 +14,10 @@ MACRO(ctk_setup_qt)
   SET(minimum_required_qt_version "4.6")
 
   FIND_PACKAGE(Qt4)
+
+  # This option won't show up in the main CMake configure panel
+  MARK_AS_ADVANCED(QT_QMAKE_EXECUTABLE)
+  
   IF(QT4_FOUND)
 
     IF(NOT "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" STREQUAL "${minimum_required_qt_version}")
@@ -30,4 +34,4 @@ MACRO(ctk_setup_qt)
     MESSAGE(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
   ENDIF(QT4_FOUND)
 
-ENDMACRO(ctk_setup_qt)
+ENDMACRO()

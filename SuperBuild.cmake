@@ -1,11 +1,5 @@
 SET(cmake_version_required "2.8")
-SET(cmake_version_required_regex "2.8.*")
 SET(cmake_version_required_dash "2-8")
-
-IF(NOT CMAKE_VERSION MATCHES "${cmake_version_required_regex}")
-  SET(err "error: CTK SuperBuild requires CMake version ${cmake_version_required}")
-  MESSAGE(FATAL_ERROR "${err}")
-ENDIF()
 
 CMAKE_MINIMUM_REQUIRED(VERSION ${cmake_version_required})
 

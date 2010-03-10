@@ -1,8 +1,11 @@
 -- 
--- A simple SQLITE3 database schema for modelling locally stored DICOM files
+-- A simple SQLITE3 database schema for modelling locally stored DICOM files 
 -- 
+-- Note: the semicolon at the end is necessary for the simple parser to separate
+--       the statements since the SQlite driver does not handle multiple
+--       commands per QSqlQuery::exec call!
+-- ;
 
-BEGIN TRANSACTION;
 DROP TABLE IF EXISTS 'Images' ;
 DROP TABLE IF EXISTS 'Patients' ;
 DROP TABLE IF EXISTS 'Series' ;
@@ -46,5 +49,4 @@ CREATE TABLE 'Studies' (
   'ReferringPhysician' VARCHAR(255) NULL ,
   'StudyDescription' VARCHAR(255) NULL ,
   PRIMARY KEY ('StudyInstanceUID') );
-COMMIT;
 
