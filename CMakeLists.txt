@@ -47,6 +47,7 @@ INCLUDE(CMake/ctkMacroParseArguments.cmake)
 INCLUDE(CMake/ctkMacroBuildQtLib.cmake)
 INCLUDE(CMake/ctkMacroBuildQtPlugin.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
+INCLUDE(CMake/ctkMacroGetTargetLibraries.cmake)
 
 #-----------------------------------------------------------------------------
 # Testing

@@ -3,7 +3,7 @@
 #
 #
 MACRO(CtkMacroBuildQtLib)
-  CtkMacroParseArguments(MYQTLIB
+  ctkMacroParseArguments(MYQTLIB
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
     ""
     ${ARGN}
@@ -96,6 +96,6 @@ MACRO(CtkMacroBuildQtLib)
     DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
     )
 
-ENDMACRO(CtkMacroBuildQtLib)
+ENDMACRO()
 
 

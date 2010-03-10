@@ -33,11 +33,10 @@ SET(KIT_resources
   Resources/dicom.qrc
 )
 
-# Additional Target libraries
-SET(KIT_target_libraries
-  CTKCore
-  )
+# Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+ctkMacroGetTargetLibraries(KIT_target_libraries)
 
+# See CMake/ctkMacroBuildQtLib.cmake
 ctkMacroBuildQtLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}

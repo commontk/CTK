@@ -93,6 +93,6 @@ MACRO(CtkMacroBuildQtPlugin)
   #  DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
   #  )
 
-ENDMACRO(CtkMacroBuildQtPlugin)
+ENDMACRO()
 
 

@@ -34,4 +34,4 @@ MACRO(ctkMacroSetupQt)
     MESSAGE(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
   ENDIF(QT4_FOUND)
 
-ENDMACRO(ctkMacroSetupQt)
+ENDMACRO()
