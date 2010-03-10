@@ -104,9 +104,13 @@ SET(ctk_libs
 # before the SuperBuild script is included
 #
 
+# Let's mark as advanced some default properties
+MARK_AS_ADVANCED(CMAKE_INSTALL_PREFIX)
+MARK_AS_ADVANCED(DART_TESTING_TIMEOUT)
+
 # KWStyle
 OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
-MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
+#MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
 
 # Build options
 FOREACH(lib ${ctk_libs})

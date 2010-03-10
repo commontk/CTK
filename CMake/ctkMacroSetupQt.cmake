@@ -14,6 +14,10 @@ MACRO(ctkMacroSetupQt)
   SET(minimum_required_qt_version "4.6")
 
   FIND_PACKAGE(Qt4)
+
+  # This option won't show up in the main CMake configure panel
+  MARK_AS_ADVANCED(QT_QMAKE_EXECUTABLE)
+  
   IF(QT4_FOUND)
 
     IF(NOT "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" STREQUAL "${minimum_required_qt_version}")
