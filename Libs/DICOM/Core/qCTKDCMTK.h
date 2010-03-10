@@ -3,6 +3,7 @@
 
 // QT includes 
 #include <QObject>
+#include <QSqlDatabase>
 
 // qCTK includes
 #include <qCTKPimpl.h>
@@ -19,10 +20,22 @@ public:
   virtual ~qCTKDCMTK();
   
   /// 
-  ///
+  /// 
   void setDatabaseFileName(const QString& file);
+  
+  ///
+  /// open the SQLite database in file
   virtual bool openDatabase(const QString& file);
+
+  QSqlDatabase& database();
   const QString& GetLastError() const; 
+  
+  
+  
+  ///
+  /// delete all data and initialize the database with
+  /// the default schema
+  bool initializeDatabase();
 private:
   QCTK_DECLARE_PRIVATE(qCTKDCMTK);
 };

@@ -3,8 +3,13 @@
 #include "qCTKDCMTK.h"
 
 // Qt includes
+#include <QDebug>
 #include <QSqlDatabase>
 #include <QSqlError>
+#include <QSqlQuery>
+#include <QFile>
+#include <QStringList>
+
 #include <iostream>
 
 //----------------------------------------------------------------------------
@@ -12,6 +17,8 @@ class qCTKDCMTKPrivate: public qCTKPrivate<qCTKDCMTK>
 {
 public:
   qCTKDCMTKPrivate(); 
+  bool executeScript(const QString& script);
+
   QSqlDatabase  Database;
   QString       DatabaseFileName;
   QString       LastError;
@@ -55,5 +62,39 @@ bool qCTKDCMTK::openDatabase(const QString& databaseFileName)
 const QString& qCTKDCMTK::GetLastError() const {
   QCTK_D(const qCTKDCMTK);
   return d->LastError; 
+}
+QSqlDatabase& qCTKDCMTK::database() {
+  QCTK_D(qCTKDCMTK);
+  return d->Database;
+}
+
+bool qCTKDCMTKPrivate::executeScript(const QString& script) {
+  QFile scriptFile(script);
+  qDebug() << scriptFile.exists();
+  qDebug() << scriptFile.size();
+  QString sqlCommands( scriptFile.readAll() );
+  qDebug() << sqlCommands ;
+  sqlCommands.replace( '\n', ' ' );
+  sqlCommands.replace("; ", ";\n");
+  QStringList sqlCommandsLines = sqlCommands.split('\n');
+  QSqlQuery query(Database);
+  for (QStringList::iterator it = sqlCommandsLines.begin(); it != sqlCommandsLines.end()-1; ++it)
+    {
+    query.exec(*it);
+    if (query.lastError().type())
+      {
+      std::cerr 
+      << "There was an error during execution of the statement: " 
+      << (*it).toStdString();
+      }
+      return false;
+    }
+  return true;
+}
+
+bool qCTKDCMTK::initializeDatabase() 
+{
+  QCTK_D(qCTKDCMTK);
+  return d->executeScript(":/dicom/dicom-schema.sql");
 }
 

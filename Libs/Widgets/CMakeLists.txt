@@ -34,7 +34,7 @@ SET(KIT_target_libraries
   CTKCore
   )
 
-ctk_build_qtlib(
+ctkMacroBuildQtLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
@@ -53,3 +53,6 @@ ctk_build_qtlib(
 IF(BUILD_TESTING)
   #ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)
+# ADD_EXECUTABLE(MyMain dummyMain.cpp)
+# TARGET_LINK_LIBRARIES(MyMain ${PROJECT_NAME})
+

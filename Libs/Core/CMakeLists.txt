@@ -33,7 +33,7 @@ SET(KIT_target_libraries
   ${QT_LIBRARIES}
   )
 
-ctk_build_qtlib(
+ctkMacroBuildQtLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
