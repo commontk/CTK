@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/dicom">
+  <file>dicom-schema.sql</file>
+</qresource>
+</RCC>
