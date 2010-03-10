@@ -28,7 +28,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   )
 
-# UI files
+# UI files - includes new widgets
 SET(KIT_UI_FORMS
   Resources/UI/qCTKDCMTKLocationWidget.ui
   Resources/UI/qCTKDCMTKListenerWidget.ui
