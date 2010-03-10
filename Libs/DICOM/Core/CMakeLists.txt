@@ -30,6 +30,7 @@ SET(KIT_UI_FORMS
 
 # Resources
 SET(KIT_resources
+  Resources/dicom.qrc
 )
 
 # Additional Target libraries
