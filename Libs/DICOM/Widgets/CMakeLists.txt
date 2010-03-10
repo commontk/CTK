@@ -18,6 +18,10 @@ SET(KIT_SRCS
   qCTKDCMTKLocationWidget.h
   qCTKDCMTKQueryRetrieveWidget.cxx
   qCTKDCMTKQueryRetrieveWidget.h
+  qCTKDCMTKServerNodeWidget.cxx
+  qCTKDCMTKServerNodeWidget.h
+  qCTKDCMTKQueryWidget.cxx
+  qCTKDCMTKQueryWidget.h
   )
 
 # Headers that should run through moc
@@ -29,6 +33,8 @@ SET(KIT_UI_FORMS
   Resources/UI/qCTKDCMTKLocationWidget.ui
   Resources/UI/qCTKDCMTKListenerWidget.ui
   Resources/UI/qCTKDCMTKQueryRetrieveWidget.ui
+  Resources/UI/qCTKDCMTKServerNodeWidget.ui
+  Resources/UI/qCTKDCMTKQueryWidget.ui
 )
 
 # Resources

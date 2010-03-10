@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>qCTKDCMTKServerNodeWidget</class>
+ <widget class="QWidget" name="qCTKDCMTKServerNodeWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -32,7 +32,7 @@
         <x>0</x>
         <y>0</y>
         <width>572</width>
-        <height>457</height>
+        <height>458</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
