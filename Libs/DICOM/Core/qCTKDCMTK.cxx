@@ -44,9 +44,6 @@ qCTKDCMTK::~qCTKDCMTK()
 }
 
 //----------------------------------------------------------------------------
-QCTK_SET_CXX(qCTKDCMTK, const QString&, setDatabaseFileName, DatabaseFileName);
-
-//----------------------------------------------------------------------------
 bool qCTKDCMTK::openDatabase(const QString& databaseFileName) 
 {
   QCTK_D(qCTKDCMTK);
@@ -57,14 +54,18 @@ bool qCTKDCMTK::openDatabase(const QString& databaseFileName)
     d->LastError = d->Database.lastError().text();
     return false;
     }
+  if ( d->Database.tables().empty() ) 
+    {
+    initializeDatabase();
+    }
   return true;
 }
 const QString& qCTKDCMTK::GetLastError() const {
   QCTK_D(const qCTKDCMTK);
   return d->LastError; 
 }
-QSqlDatabase& qCTKDCMTK::database() {
-  QCTK_D(qCTKDCMTK);
+const QSqlDatabase& qCTKDCMTK::database() const {
+  QCTK_D(const qCTKDCMTK);
   return d->Database;
 }
 
@@ -74,8 +75,6 @@ bool qCTKDCMTKPrivate::executeScript(const QString& script) {
   QString sqlCommands( QTextStream(&scriptFile).readAll() );
   sqlCommands.replace( '\n', ' ' );
   sqlCommands.replace("; ", ";\n");
-
-  //MITK_INFO << "Query:\n\n" << sqlCommands.toStdString() << "\n";
 
   QStringList sqlCommandsLines = sqlCommands.split('\n');
 
@@ -94,16 +93,17 @@ bool qCTKDCMTKPrivate::executeScript(const QString& script) {
         }
       }
   }
-
-
   return true;
 }
 
-
-bool qCTKDCMTK::initializeDatabase() 
+bool qCTKDCMTK::initializeDatabase(const char* sqlFileName) 
 {
   QCTK_D(qCTKDCMTK);
-  return d->executeScript(":/dicom/dicom-schema.sql");
+  return d->executeScript(sqlFileName);
 }
   
-
+void qCTKDCMTK::closeDatabase()
+{
+  QCTK_D(qCTKDCMTK);
+  d->Database.close();
+}
