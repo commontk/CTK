@@ -48,8 +48,8 @@ ENDMACRO()
 FIND_PATH( DCMTK_config_INCLUDE_DIR osconfig.h
   ${DCMTK_DIR}/config/include
   ${DCMTK_DIR}/config
+  ${DCMTK_DIR}/include/dcmtk/config
   ${DCMTK_DIR}/include
-  ${DCMTK_DIR}/include/dcmtk
 )
 
 FIND_PATH( DCMTK_ofstd_INCLUDE_DIR ofstdinc.h
@@ -121,12 +121,9 @@ IF( DCMTK_config_INCLUDE_DIR
     AND DCMTK_dcmimgle_INCLUDE_DIR
     AND DCMTK_dcmimgle_LIBRARY )
 
-  # Wrap library is required on Linux
+#   # Wrap library is required on Linux
 #   IF(NOT WIN32)
-#     FIND_LIBRARY(DCMTK_wrap_LIBRARY wrap
-#       /usr/lib
-#       /lib
-#       /usr/local/lib)
+#     FIND_LIBRARY(DCMTK_wrap_LIBRARY wrap)
 #     MESSAGE(DCMTK_wrap_LIBRARY:${DCMTK_wrap_LIBRARY})
 #     IF(NOT DCMTK_wrap_LIBRARY)
 #       MESSAGE(FATAL_ERROR "error: Wrap library is required to use DCMTK. "
