@@ -46,6 +46,7 @@ SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 INCLUDE(CMake/ctkMacroParseArguments.cmake)
 INCLUDE(CMake/ctkMacroBuildQtLib.cmake)
 INCLUDE(CMake/ctkMacroBuildQtPlugin.cmake)
+INCLUDE(CMake/ctkMacroBuildQtApp.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroGetTargetLibraries.cmake)
 
