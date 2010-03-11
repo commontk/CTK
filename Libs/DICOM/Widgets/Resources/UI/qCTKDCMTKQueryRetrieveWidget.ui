@@ -57,19 +57,19 @@
   <customwidget>
    <class>qCTKDCMTKQueryWidget</class>
    <extends>QWidget</extends>
-   <header>qctkdcmtkquerywidget.h</header>
+   <header>qCTKDCMTKQueryWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>qCTKDCMTKServerNodeWidget</class>
    <extends>QWidget</extends>
-   <header>qctkdcmtkservernodewidget.h</header>
+   <header>qCTKDCMTKServerNodeWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>qCTKDCMTKCommandWidget</class>
    <extends>QWidget</extends>
-   <header>qctkdcmtkcommandwidget.h</header>
+   <header>qCTKDCMTKCommandWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
