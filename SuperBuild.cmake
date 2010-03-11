@@ -126,7 +126,6 @@ ExternalProject_Add(${proj}
     SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
     INSTALL_COMMAND ""
     CMAKE_GENERATOR ${gen}
-    SOURCE_DIR OpenIGTLink
     CMAKE_ARGS
       ${ep_common_args}
     )
