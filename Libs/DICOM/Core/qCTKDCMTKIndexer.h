@@ -15,7 +15,8 @@ class Q_CTK_DICOM_CORE_EXPORT qCTKDCMTKIndexer
 public:
   explicit qCTKDCMTKIndexer();
   virtual ~qCTKDCMTKIndexer();
-  void AddDirectory(QSqlDatabase database, const QString& directoryName);
+  /// add directory to database and optionally copy files to destinationDirectory
+  void addDirectory(QSqlDatabase database, const QString& directoryName, const QString& destinationDirectoryName = "");
   void refreshDatabase(QSqlDatabase database, const QString& directoryName);
 
 private:

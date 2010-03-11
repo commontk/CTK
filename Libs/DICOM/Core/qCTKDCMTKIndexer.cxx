@@ -23,6 +23,7 @@
 #include <QFile>
 #include <QDirIterator>
 #include <QFileInfo>
+#include <QDebug>
 
 #define MITK_ERROR std::cout
 #define MITK_INFO std::cout
@@ -51,11 +52,10 @@ qCTKDCMTKIndexer::~qCTKDCMTKIndexer()
 {
 }
 
-void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& directoryName)  
+void qCTKDCMTKIndexer::addDirectory(QSqlDatabase database, const QString& directoryName,const QString& destinationDirectoryName)  
 {
   QSqlDatabase db = database;
   const std::string src_directory(directoryName.toStdString());
-  // db.transaction();
 
   OFList<OFString> originalDcmtkFileNames;
   OFList<OFString> dcmtkFileNames;
@@ -124,6 +124,7 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
     OFString seriesInstanceUID, seriesDate, seriesTime,
       seriesDescription, bodyPartExamined, frameOfReferenceUID,
       contrastAgent, scanningSequence;
+    OFString instanceNumber;
 
     Sint32 seriesNumber = 0, acquisitionNumber = 0, echoNumber = 0, temporalPosition = 0;
 
@@ -148,6 +149,12 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
       MITK_ERROR << "Could not read DCM_SeriesInstanceUID from " << filename;
       continue;
     }
+    if (!fileformat.getDataset()->findAndGetOFString(DCM_InstanceNumber, instanceNumber).good())
+    {
+      MITK_ERROR << "Could not read DCM_InstanceNumber from " << filename;
+      continue;
+    }
+
 
     fileformat.getDataset()->findAndGetOFString(DCM_PatientID, patientID);
     fileformat.getDataset()->findAndGetOFString(DCM_PatientsBirthDate, patientsBirthDate);
@@ -313,35 +320,22 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
     //----------------------------------
     //Move file to destination directory
     //----------------------------------
-    /*
-    // This depends on Poco and should be converted to Qt code
 
-    Poco::File currentFile(filename);
-    Poco::Path currentFilePath(filename);
-    MITK_INFO << "currentFilePath.getFileName(): " << currentFilePath.getFileName() << "\n";
+    if (!destinationDirectoryName.isEmpty())
+      {
+      QFile currentFile( qfilename );
+      QDir destinationDir(destinationDirectoryName);
 
-    if(moveFiles)
-    {
-      std::stringstream destDirectoryPath;
-      if((dest_directory[dest_directory.length()-1] != '/') && (dest_directory[dest_directory.length()-1] != '\\'))
-        destDirectoryPath << dest_directory << Poco::Path::separator() << seriesInstanceUID.c_str();
-      else
-        destDirectoryPath << dest_directory << seriesInstanceUID.c_str();
-
-      MITK_INFO << "last symbol: " << dest_directory[dest_directory.length()-1]
-      << "\ndestDirectoryPath: " << destDirectoryPath.str() << "\n";
-
-      Poco::File directory(destDirectoryPath.str());
-
-      if (!directory.exists()) directory.createDirectory();
-
-      destDirectoryPath << Poco::Path::separator() << currentFilePath.getFileName();
-
-      currentFile.moveTo(destDirectoryPath.str());
+      QString uniqueDirName = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
+      qDebug() << "MKPath: " << uniqueDirName;
+      destinationDir.mkpath(uniqueDirName);
+      QString destFileName = destinationDir.absolutePath().append("/").append(instanceNumber.c_str());
+      qDebug() << "Copy: " << qfilename << " -> " << destFileName;
+      currentFile.copy(destFileName);
       //for testing only: copy file instead of moving
       //currentFile.copyTo(destDirectoryPath.str());
     }
-    */
+    // */
     //------------------------
     //Add Filename to Database
     //------------------------

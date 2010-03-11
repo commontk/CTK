@@ -117,6 +117,7 @@ SET(ctk_plugins
 #
 SET(ctk_applications
   ctkDICOM
+  ctkDICOMIndexer
   )
   
 #-----------------------------------------------------------------------------
