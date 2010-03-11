@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS 'Studies' ;
 CREATE TABLE 'Images' (
   'Filename' VARCHAR(1024) NOT NULL ,
   'SeriesInstanceUID' VARCHAR(255) NOT NULL ,
+  'InsertTimestamp' VARCHAR(20) NOT NULL ,
   PRIMARY KEY ('Filename') );
 CREATE TABLE 'Patients' (
   'UID' INTEGER PRIMARY KEY AUTOINCREMENT,
