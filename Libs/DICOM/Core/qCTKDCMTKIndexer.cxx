@@ -18,6 +18,10 @@
 #include <QSqlRecord>
 #include <QVariant>
 #include <QDate>
+#include <QStringList>
+#include <QSet>
+#include <QFile>
+#include <QDirIterator>
 
 #define MITK_ERROR std::cout
 #define MITK_INFO std::cout
@@ -71,12 +75,20 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
 
   QSqlQuery query(database);
 
-  /* iterate over all input filenames */
-  OFString lastPatientID = "", lastPatientsName = "", lastPatientsBirthDate = "", lastStudyInstanceUID = "", lastSeriesInstanceUID = "";
+
+  /// these are for optimizing the import of image sequences
+  /// since most information are identical for all slices
+  OFString lastPatientID = "";
+  OFString lastPatientsName = "";
+  OFString lastPatientsBirthDate = "";
+  OFString lastStudyInstanceUID = "";
+  OFString lastSeriesInstanceUID = "";
   int lastPatientUID = -1;
 
+  /* iterate over all input filenames */
   while (iter != last)
   {
+    /// first we 
     std::string filename((*iter).c_str());
     MITK_INFO << filename << "\n";
     OFCondition status = fileformat.loadFile(filename.c_str());
@@ -160,6 +172,7 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
     //-----------------------
 
     //Speed up: Check if patient is the same as in last file; very probable, as all images belonging to a study have the same patient
+    bool patientExists = false;
     if(lastPatientID.compare(patientID) || lastPatientsBirthDate.compare(patientsBirthDate) || lastPatientsName.compare(patientsName))
     {
       //Check if patient is already present in the db
@@ -167,21 +180,18 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
       std::stringstream check_exists_query_string;
       check_exists_query_string << "SELECT * FROM Patients WHERE PatientID = '" << patientID << "'";
       check_exists_query.exec(check_exists_query_string.str().c_str());
-      //check_exists_query_string.flush();
 
-      bool patientExists = false;
-
+      /// we check only patients with the same PatientID
+      /// PatientID is not unique in DICOM, so we also compare Name and BirthDate
+      /// and assume this is sufficient
       while (check_exists_query.next())
       {
-        patientExists = true;
-        QString checkPatientsName = check_exists_query.value(check_exists_query.record().indexOf("PatientsName")).toString();
-        if(checkPatientsName.toStdString().compare(patientsName.c_str())) patientExists = false;
-
-        QString checkPatientsBirthDate = check_exists_query.value(check_exists_query.record().indexOf("PatientsBirthDate")).toString();
-        if(checkPatientsBirthDate.toStdString().compare(patientsBirthDate.c_str())) patientExists = false;
-
-        if(patientExists)
+        if (
+            check_exists_query.record().value("PatientsName").toString() == patientsName.c_str() &&
+            check_exists_query.record().value("PatientsBirthDate").toString() == patientsBirthDate.c_str()
+           )
         {
+          /// found it
           patientUID = check_exists_query.value(check_exists_query.record().indexOf("UID")).toInt();
           break;
         }
@@ -192,19 +202,27 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
 
         std::stringstream query_string;
 
-        query_string << "INSERT INTO Patients VALUES( NULL,'" << patientsName << "','" << patientID << "','" << patientsBirthDate << "','"
-          << patientsBirthTime << "','" << patientsSex << "','" << patientsAge << "','" << patientComments << "')";
+        query_string << "INSERT INTO Patients VALUES( NULL,'" 
+        << patientsName << "','" 
+        << patientID << "','" 
+        << patientsBirthDate << "','"
+        << patientsBirthTime << "','" 
+        << patientsSex << "','" 
+        << patientsAge << "','" 
+        << patientComments << "')";
 
         query.exec(query_string.str().c_str());
 
         patientUID = query.lastInsertId().toInt();
-        MITK_INFO << "Query result: " << patientUID << "\n";
-
-
+        MITK_INFO << "New patient inserted: " << patientUID << "\n";
       }
     }
-    else patientUID = lastPatientUID;
-
+    else 
+      {
+      patientUID = lastPatientUID;
+      }     
+    
+    /// keep this for the next image
     lastPatientUID = patientUID;
     lastPatientID = patientID;
     lastPatientsBirthDate = patientsBirthDate;
@@ -319,7 +337,7 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
 
       //To save absolute path: destDirectoryPath.str()
       query_string << "INSERT INTO Images VALUES('"
-        << /*relativeFilePath.str()*/ filename << "','" << seriesInstanceUID << "')";
+        << /*relativeFilePath.str()*/ filename << "','" << seriesInstanceUID << "','" << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString() << "')";
 
       query.exec(query_string.str().c_str());
     }
@@ -330,3 +348,28 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
 
 }
 
+void qCTKDCMTKIndexer::refreshDatabase(QSqlDatabase database, const QString& directoryName)
+{
+  /// get all filenames from the database
+  QSqlQuery allFilesQuery(database);
+  QStringList databaseFileNames;
+  QStringList filesToRemove;
+  allFilesQuery.exec("SELECT Filename from Images;");
+
+  while (allFilesQuery.next())
+    {
+    QString fileName = allFilesQuery.value(0).toString();
+    databaseFileNames.append(fileName);
+    if (! QFile::exists(fileName) ) 
+      {
+      filesToRemove.append(fileName);
+      }
+    }
+
+  QSet<QString> filesytemFiles;
+  QDirIterator dirIt(directoryName);
+  while (dirIt.hasNext()) 
+    {
+    filesytemFiles.insert(dirIt.next());
+    }
+}

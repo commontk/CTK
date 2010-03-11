@@ -16,6 +16,7 @@ public:
   explicit qCTKDCMTKIndexer();
   virtual ~qCTKDCMTKIndexer();
   void AddDirectory(QSqlDatabase database, const QString& directoryName);
+  void refreshDatabase(QSqlDatabase database, const QString& directoryName);
 
 private:
   QCTK_DECLARE_PRIVATE(qCTKDCMTKIndexer);

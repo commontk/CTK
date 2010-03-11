@@ -72,6 +72,12 @@ const QSqlDatabase& qCTKDCMTK::database() const {
 bool qCTKDCMTKPrivate::executeScript(const QString& script) {
   QFile scriptFile(script);
   scriptFile.open(QIODevice::ReadOnly);
+  if  ( !scriptFile.isOpen() )
+    {
+    qDebug() << "Script file " << script << " could not be opened!\n";
+    return false;
+    }
+
   QString sqlCommands( QTextStream(&scriptFile).readAll() );
   sqlCommands.replace( '\n', ' ' );
   sqlCommands.replace("; ", ";\n");
