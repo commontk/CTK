@@ -1,17 +1,16 @@
 #include <QStringList>
+#include <QSqlDriver>
+#include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
+#include <QSqlRecord>
+
 #include <QTime>
 #include <QDebug>
 
 #include "qCTKDCMTKModel.h"
 
-struct Node
-{
-  Node* Parent;
-  int   Row;
-  int   Column;
-};
+struct Node;
 
 class qCTKDCMTKModelPrivate:public qCTKPrivate<qCTKDCMTKModel>
 {
@@ -27,216 +26,212 @@ public:
     SeriesType,
     ImageType
   };
-  IndexType indexType(const QModelIndex& index)const;
+ 
+  void fetch(const QModelIndex& index, int limit);
+  Node* createNode(int row, int column, const QModelIndex& parent)const;
+  Node* nodeFromIndex(const QModelIndex& index)const;
+  QVariant value(const QModelIndex& index, int row, int field)const;
+  QString  generateQuery(const QString& fields, const QString& table, const QString& conditions = QString())const;
+  void updateQueries(Node* node)const;
 
-  void updateRootModel(const QModelIndex& index);
-  void updatePatientModel(const QModelIndex& index);
-  void updateStudyModel(const QModelIndex& index);
-  void updateSeriesModel(const QModelIndex& index);
+  Node*        RootNode;
+  QSqlDatabase DataBase;
+  QStringList  Headers;
+  QString      Sort;
+};
 
-  QModelIndex indexInRootQuery(const QModelIndex& index)const;
-  QModelIndex indexInPatientQuery(const QModelIndex& index)const;
-  QModelIndex indexInStudyQuery(const QModelIndex& index)const;
-  QModelIndex indexInSeriesQuery(const QModelIndex& index)const;
-  
-  QSqlDatabase    DataBase;
-  QSqlQueryModel* RootModel;
-  QSqlQueryModel* PatientModel;
-  QSqlQueryModel* StudyModel;
-  QSqlQueryModel* SeriesModel;
-
-  Node*           RootNode;
-  Node*           PatientNode;
-  Node*           StudyNode;
-  Node*           SeriesNode;
-  mutable QList<Node*>    Nodes;
+struct Node
+{
+  ~Node()
+    {
+    foreach(Node* node, this->Children)
+      {
+      delete node;
+      }
+    this->Children.clear();
+    }
+  qCTKDCMTKModelPrivate::IndexType Type;
+  Node*     Parent;
+  QVector<Node*> Children;
+  int       Row;
+  int       Column;
+  QSqlQuery Query;
+  QString   UID;
+  int       RowCount;
+  bool      End;
+  bool      Fetching;
 };
 
 qCTKDCMTKModelPrivate::qCTKDCMTKModelPrivate()
-  :DataBase(QSqlDatabase::addDatabase("QSQLITE", "DICOM-DB"))
 {
-  this->RootModel    = 0;
-  this->PatientModel = 0;
-  this->StudyModel   = 0;
-  this->SeriesModel  = 0;
   this->RootNode     = 0;
-  this->PatientNode  = 0;
-  this->StudyNode    = 0;
-  this->SeriesNode   = 0;
 }
 
 qCTKDCMTKModelPrivate::~qCTKDCMTKModelPrivate()
 {
-  foreach(Node* node, this->Nodes)
-    {
-    delete node;
-    }
-  this->Nodes.clear();
-
+  delete this->RootNode;
+  this->RootNode = 0;
 }
 
 void qCTKDCMTKModelPrivate::init()
 {
   QCTK_P(qCTKDCMTKModel);
-  this->RootModel = new QSqlQueryModel(p);
-  this->PatientModel = new QSqlQueryModel(p);
-  this->StudyModel = new QSqlQueryModel(p);
-  this->SeriesModel = new QSqlQueryModel(p);
-
-  QObject::connect(this->RootModel, SIGNAL(rowsAboutToBeInserted(const QModelIndex&, int, int)),
-          p, SLOT(rootRowsAboutToBeInserted(const QModelIndex&, int, int)));
-  QObject::connect(this->PatientModel, SIGNAL(rowsAboutToBeInserted(const QModelIndex&, int, int)),
-          p, SLOT(patientRowsAboutToBeInserted(const QModelIndex&, int, int)));
-  QObject::connect(this->StudyModel, SIGNAL(rowsAboutToBeInserted(const QModelIndex&, int, int)),
-          p, SLOT(studyRowsAboutToBeInserted(const QModelIndex&, int, int)));
-  QObject::connect(this->SeriesModel, SIGNAL(rowsAboutToBeInserted(const QModelIndex&, int, int)),
-          p, SLOT(seriesRowsAboutToBeInserted(const QModelIndex&, int, int)));
-
-  QObject::connect(this->RootModel, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
-          p, SLOT(rootRowsInserted(const QModelIndex&, int, int)));
-  QObject::connect(this->PatientModel, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
-          p, SLOT(patientRowsInserted(const QModelIndex&, int, int)));
-  QObject::connect(this->StudyModel, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
-          p, SLOT(studyRowsInserted(const QModelIndex&, int, int)));
-  QObject::connect(this->SeriesModel, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
-          p, SLOT(seriesRowsInserted(const QModelIndex&, int, int)));
-
-  QObject::connect(this->RootModel, SIGNAL(modelAboutToBeReset()),
-          p, SLOT(onModelAboutToBeReset()));
-  QObject::connect(this->PatientModel, SIGNAL(modelAboutToBeReset()),
-          p, SLOT(onModelAboutToBeReset()));
-  QObject::connect(this->StudyModel, SIGNAL(modelAboutToBeReset()),
-          p, SLOT(onModelAboutToBeReset()));
-  QObject::connect(this->SeriesModel, SIGNAL(modelAboutToBeReset()),
-          p, SLOT(onModelAboutToBeReset()));
-
-  QObject::connect(this->RootModel, SIGNAL(modelReset()),
-          p, SLOT(onModelReset()));
-  QObject::connect(this->PatientModel, SIGNAL(modelReset()),
-          p, SLOT(onModelReset()));
-  QObject::connect(this->StudyModel, SIGNAL(modelReset()),
-          p, SLOT(onModelReset()));
-  QObject::connect(this->SeriesModel, SIGNAL(modelReset()),
-          p, SLOT(onModelReset()));
-
-  QObject::connect(this->RootModel, SIGNAL(layoutAboutToBeChanged()),
-          p, SLOT(onLayoutAboutToBeChanged()));
-  QObject::connect(this->PatientModel, SIGNAL(layoutAboutToBeChanged()),
-          p, SLOT(onLayoutAboutToBeChanged()));
-  QObject::connect(this->StudyModel, SIGNAL(layoutAboutToBeChanged()),
-          p, SLOT(onLayoutAboutToBeChanged()));
-  QObject::connect(this->SeriesModel, SIGNAL(layoutAboutToBeChanged()),
-          p, SLOT(onLayoutAboutToBeChanged()));
-
-  QObject::connect(this->RootModel, SIGNAL(layoutChanged()),
-          p, SLOT(onLayoutChanged()));
-  QObject::connect(this->PatientModel, SIGNAL(layoutChanged()),
-          p, SLOT(onLayoutChanged()));
-  QObject::connect(this->StudyModel, SIGNAL(layoutChanged()),
-          p, SLOT(onLayoutChanged()));
-  QObject::connect(this->SeriesModel, SIGNAL(layoutChanged()),
-          p, SLOT(onLayoutChanged()));
-
-  this->RootNode = new Node;
-  this->RootNode->Parent = 0;
-  this->RootNode->Row = -1;
-  this->RootNode->Column = -1;
-  this->Nodes.append(this->RootNode);
+  this->Headers = QStringList() << "Name" << "Age" << "Scan" << "Date" << "Subject ID"
+                  << "Number" << "Institution" << "Referrer" << "Performer";
 }
 
-qCTKDCMTKModelPrivate::IndexType qCTKDCMTKModelPrivate::indexType(const QModelIndex& index)const
+Node* qCTKDCMTKModelPrivate::nodeFromIndex(const QModelIndex& index)const
+{
+  return index.isValid() ? reinterpret_cast<Node*>(index.internalPointer()) : this->RootNode;
+}
+
+Node* qCTKDCMTKModelPrivate::createNode(int row, int column, const QModelIndex& parent)const
 {
   QCTK_P(const qCTKDCMTKModel);
-  if (!index.isValid())
-    {
-    return RootType;
+  
+  Node* node = new Node;
+  Node* nodeParent = 0;
+  if (row == -1 || column == -1)
+    {// root node
+    node->Type = qCTKDCMTKModelPrivate::RootType;
+    node->Parent = 0;
     }
-  QModelIndex indexParent = p->parent(index);
-  if (!indexParent.isValid())
+  else
     {
-    return PatientType;
+    nodeParent = this->nodeFromIndex(parent); 
+    nodeParent->Children.push_back(node);
+    node->Parent = (nodeParent == this->RootNode ? 0: nodeParent);
+    node->Type = qCTKDCMTKModelPrivate::IndexType(nodeParent->Type + 1);
     }
-  indexParent = p->parent(indexParent);
-  if (!indexParent.isValid())
+  node->Row = row;
+  node->Column = column;
+  if (node->Type != qCTKDCMTKModelPrivate::RootType)
     {
-    return StudyType;
+    int field = nodeParent->Query.record().indexOf("UID");
+    node->UID = this->value(parent, row, field).toString();
     }
-  indexParent = p->parent(indexParent);
-  if (!indexParent.isValid())
+  
+  node->RowCount = 0;
+  node->End = false;
+  node->Fetching = false;
+
+  this->updateQueries(node);
+  
+  return node;
+}
+
+QVariant qCTKDCMTKModelPrivate::value(const QModelIndex& parent, int row, int column) const
+{
+  Node* node = this->nodeFromIndex(parent);
+  if (row >= node->RowCount)
+    {      
+    const_cast<qCTKDCMTKModelPrivate *>(this)->fetch(parent, row + 256);
+    }
+
+  if (!node->Query.seek(row)) 
     {
-    return SeriesType;
+    qDebug() << node->Query.lastError();
+    return QVariant();
     }
-  Q_ASSERT(!p->parent(indexParent).isValid());
-  return ImageType;
+  return node->Query.value(column);
 }
 
-QModelIndex qCTKDCMTKModelPrivate::indexInRootQuery(const QModelIndex& index) const
+QString qCTKDCMTKModelPrivate::generateQuery(const QString& fields, const QString& table, const QString& conditions)const
 {
-  return index;
-}
-
-QModelIndex qCTKDCMTKModelPrivate::indexInPatientQuery(const QModelIndex& index) const
-{
-  return index;
-}
-
-QModelIndex qCTKDCMTKModelPrivate::indexInStudyQuery(const QModelIndex& index) const
-{
-  return index;
-}
-
-QModelIndex qCTKDCMTKModelPrivate::indexInSeriesQuery(const QModelIndex& index) const
-{
-  return index;
-}
-
-void qCTKDCMTKModelPrivate::updateRootModel(const QModelIndex& index)
-{
-  QString query("SELECT * FROM Patients");
-  if (query == this->RootModel->query().lastQuery())
+  QString res = QString("SELECT ") + fields + QString(" FROM ") + table;
+  if (!conditions.isEmpty())
     {
-    return;
+    res += QString(" WHERE ") + conditions;
     }
-  this->RootModel->setQuery(query, this->DataBase);
+  if (this->Sort.isEmpty())
+    {
+    res += QString(" ORDER BY ") + this->Sort;
+    }
+  return res;
 }
 
-void qCTKDCMTKModelPrivate::updatePatientModel(const QModelIndex& index)
+void qCTKDCMTKModelPrivate::updateQueries(Node* node)const
+{
+  // are you kidding me, it should be virtualized here :-)
+  QString query;
+  switch(node->Type)
+    {
+    default:
+      Q_ASSERT(node->Type == qCTKDCMTKModelPrivate::RootType);
+      break;
+    case qCTKDCMTKModelPrivate::RootType:
+      //query = QString("SELECT  FROM ");
+      query = this->generateQuery("UID as UID, PatientsName as Name, PatientsAge as Age, PatientsBirthDate as Date, PatientID as 'Subject ID'","Patients");
+      break;
+    case qCTKDCMTKModelPrivate::PatientType:
+      //query = QString("SELECT  FROM Studies WHERE PatientsUID='%1'").arg(node->UID);
+      query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPysiciansName as Performer", "Studies",QString("PatientsUID='%1'").arg(node->UID));
+      break;
+    case qCTKDCMTKModelPrivate::StudyType:
+      //query = QString("SELECT SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='%1'").arg(node->UID);
+      query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number","Series",QString("StudyInstanceUID='%1'").arg(node->UID));
+      break;
+    case qCTKDCMTKModelPrivate::SeriesType:
+      //query = QString("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'").arg(node->UID);
+      query = this->generateQuery("Filename as UID, Filename as Name, SeriesInstanceUID as Date", "Images", QString("SeriesInstanceUID='%1'").arg(node->UID));
+      break;
+    case qCTKDCMTKModelPrivate::ImageType:
+      break;
+    }
+  node->Query = QSqlQuery(query, this->DataBase);
+  foreach(Node* child, node->Children)
+    {
+    this->updateQueries(child);
+    }
+}
+
+void qCTKDCMTKModelPrivate::fetch(const QModelIndex& index, int limit)
 {
   QCTK_P(qCTKDCMTKModel);
-  this->PatientNode = reinterpret_cast<Node*>(index.internalPointer());
-  QString patientId = p->data(index).toString();
-  QString query = QString("SELECT * FROM Studies WHERE PatientsUID='%1'").arg(patientId);
-  if (query == this->PatientModel->query().lastQuery())
+  Node* node = this->nodeFromIndex(index);
+  if (node->End || limit <= node->RowCount || node->Fetching/*|| bottom.column() == -1*/)
     {
     return;
     }
-  this->PatientModel->setQuery( query, this->DataBase);
-}
+  node->Fetching = true;
 
-void qCTKDCMTKModelPrivate::updateStudyModel(const QModelIndex& index)
-{
-  QCTK_P(qCTKDCMTKModel);
-  this->StudyNode = reinterpret_cast<Node*>(index.internalPointer());
-  QString studyId = p->data(index).toString();
-  QString query = QString("SELECT * FROM Series WHERE StudyInstanceUID='%1'").arg(studyId);
-  if (query == this->StudyModel->query().lastQuery())
-    {
-    return;
-    }
-  this->StudyModel->setQuery(query, this->DataBase);
-}
+  int newRowCount;
+  const int oldRowCount = node->RowCount;
 
-void qCTKDCMTKModelPrivate::updateSeriesModel(const QModelIndex& index)
-{
-  QCTK_P(qCTKDCMTKModel);
-  this->SeriesNode = reinterpret_cast<Node*>(index.internalPointer());
-  QString seriesId = p->data(index).toString();
-  QString query = QString("SELECT * FROM Images WHERE SeriesInstanceUID='%1'").arg(seriesId);
-  if (query == this->SeriesModel->query().lastQuery())
+  // try to seek directly
+  if (node->Query.seek(limit - 1)) 
     {
-    return;
+    newRowCount = limit;
+    } 
+  else 
+    {
+    newRowCount = qMax(oldRowCount, 1);
+    if (node->Query.seek(newRowCount - 1)) 
+      {
+      while (node->Query.next())
+        {
+        ++newRowCount;
+        }
+      } 
+    else 
+      {
+      // empty or invalid query
+      newRowCount = 0;
+      }
+    node->End = true; // this is the end.
     }
-  this->SeriesModel->setQuery(query, this->DataBase);
+  if (newRowCount > 0 && newRowCount > node->RowCount) 
+    {
+    p->beginInsertRows(index, node->RowCount, newRowCount - 1);
+    node->RowCount = newRowCount;
+    node->Fetching = false;
+    p->endInsertRows();
+    } 
+  else 
+    {
+    node->RowCount = newRowCount;
+    node->Fetching = false;
+    }
 }
 
 qCTKDCMTKModel::qCTKDCMTKModel(QObject* parent)
@@ -252,92 +247,51 @@ qCTKDCMTKModel::~qCTKDCMTKModel()
 bool qCTKDCMTKModel::canFetchMore ( const QModelIndex & parent ) const
 {
   QCTK_D(const qCTKDCMTKModel);
-  switch(d->indexType(parent))
-    {
-    case qCTKDCMTKModelPrivate::RootType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateRootModel(parent);
-      return d->RootModel->canFetchMore();
-      break;
-    case qCTKDCMTKModelPrivate::PatientType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updatePatientModel(parent);
-      return d->PatientModel->canFetchMore();
-      break;
-    case qCTKDCMTKModelPrivate::StudyType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateStudyModel(parent);
-      return d->StudyModel->canFetchMore();
-      break;
-    case qCTKDCMTKModelPrivate::SeriesType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateSeriesModel(parent);
-      return d->SeriesModel->canFetchMore();
-      break;
-    case qCTKDCMTKModelPrivate::ImageType:
-    default:
-      break;
-    }
-  return false;
+  Node* node = d->nodeFromIndex(parent);
+  return !node->End;
 }
 
 int qCTKDCMTKModel::columnCount ( const QModelIndex & _parent ) const
 {
+  QCTK_D(const qCTKDCMTKModel);
   Q_UNUSED(_parent);
-  return 50;
+  return d->Headers.size();
 }
 
 QVariant qCTKDCMTKModel::data ( const QModelIndex & index, int role ) const
 {
   QCTK_D(const qCTKDCMTKModel);
-  QVariant res;
-  QModelIndex indexParent = this->parent(index);
-  switch(d->indexType(index))
+  if (role & ~(Qt::DisplayRole | Qt::EditRole))
     {
-    default:
-    case qCTKDCMTKModelPrivate::RootType:
-      break;
-    case qCTKDCMTKModelPrivate::PatientType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateRootModel(indexParent);
-      res = d->RootModel->data(d->indexInRootQuery(index), role);
-      break;
-    case qCTKDCMTKModelPrivate::StudyType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updatePatientModel(indexParent);
-      res = d->PatientModel->data(d->indexInPatientQuery(index), role);
-      break;
-    case qCTKDCMTKModelPrivate::SeriesType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateStudyModel(indexParent);
-      res = d->StudyModel->data(d->indexInStudyQuery(index), role);
-      break;
-    case qCTKDCMTKModelPrivate::ImageType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateSeriesModel(indexParent);
-      res = d->SeriesModel->data(d->indexInSeriesQuery(index), role);
-      break;
+    return QVariant();
     }
-  return res;
+  QModelIndex indexParent = this->parent(index);
+  Node* node = d->nodeFromIndex(indexParent);
+  Q_ASSERT(node->Row == indexParent.row());
+  if (index.row() >= node->RowCount)
+    {      
+    const_cast<qCTKDCMTKModelPrivate *>(d)->fetch(index, index.row());
+    }
+
+  if (!node->Query.seek(index.row())) 
+    {
+    qDebug() << node->Query.lastError();
+    return QVariant();
+    }
+  int field = node->Query.record().indexOf(d->Headers[index.column()]);
+  if (field < 0)
+    {
+    return QVariant();
+    }
+  return d->value(indexParent, index.row(), field);
+  //return node->Query.value(field);
 }
 
 void qCTKDCMTKModel::fetchMore ( const QModelIndex & parent )
 {
   QCTK_D(qCTKDCMTKModel);
-  switch(d->indexType(parent))
-    {
-    case qCTKDCMTKModelPrivate::RootType:
-      d->updateRootModel(parent);
-      d->RootModel->fetchMore();
-      break;
-    case qCTKDCMTKModelPrivate::PatientType:
-      d->updatePatientModel(parent);
-      d->PatientModel->fetchMore();
-      break;
-    case qCTKDCMTKModelPrivate::StudyType:
-      d->updateStudyModel(parent);
-      d->StudyModel->fetchMore();
-      break;
-    case qCTKDCMTKModelPrivate::SeriesType:
-      d->updateSeriesModel(parent);
-      d->SeriesModel->fetchMore();
-      break;
-    case qCTKDCMTKModelPrivate::ImageType:
-    default:
-      break;
-    }
+  Node* node = d->nodeFromIndex(parent);
+  d->fetch(parent, qMax(node->RowCount, 0) + 256);
 }
 
 Qt::ItemFlags qCTKDCMTKModel::flags ( const QModelIndex & index ) const
@@ -348,82 +302,51 @@ Qt::ItemFlags qCTKDCMTKModel::flags ( const QModelIndex & index ) const
 bool qCTKDCMTKModel::hasChildren ( const QModelIndex & parent ) const
 {
   QCTK_D(const qCTKDCMTKModel);
-  switch(d->indexType(parent))
+  Node* node = d->nodeFromIndex(parent);
+  return node->RowCount > 0 || (!node->End && node->Query.seek(0));
+}
+
+QVariant qCTKDCMTKModel::headerData(int section, Qt::Orientation orientation, int role)const
+{
+  QCTK_D(const qCTKDCMTKModel);
+  if (role & ~(Qt::DisplayRole | Qt::EditRole))
     {
-    case qCTKDCMTKModelPrivate::RootType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateRootModel(parent);
-      return d->RootModel->rowCount();
-      break;
-    case qCTKDCMTKModelPrivate::PatientType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updatePatientModel(parent);
-      return d->PatientModel->rowCount();
-      break;
-    case qCTKDCMTKModelPrivate::StudyType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateStudyModel(parent);
-      return d->StudyModel->rowCount();
-      break;
-    case qCTKDCMTKModelPrivate::SeriesType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateSeriesModel(parent);
-      return d->SeriesModel->rowCount();
-      break;
-    case qCTKDCMTKModelPrivate::ImageType:
-    default:
-      break;
+    return QVariant();
     }
-  return false;
+  if (orientation == Qt::Vertical)
+    {
+    return section;
+    }
+  Q_ASSERT(orientation == Qt::Horizontal);
+  Q_ASSERT(section < d->Headers.size());
+  return d->Headers[section];
 }
 
 QModelIndex qCTKDCMTKModel::index ( int row, int column, const QModelIndex & parent ) const
 {
   QCTK_D(const qCTKDCMTKModel);
-  QSqlQueryModel* res = 0;
-  switch(d->indexType(parent))
-    {
-    case qCTKDCMTKModelPrivate::RootType:
-      res = d->RootModel;
-      break;
-    case qCTKDCMTKModelPrivate::PatientType:
-      res = d->PatientModel;
-      break;
-    case qCTKDCMTKModelPrivate::StudyType:
-      res = d->StudyModel;
-      break;
-    case qCTKDCMTKModelPrivate::SeriesType:
-      res = d->SeriesModel;
-      break;
-    case qCTKDCMTKModelPrivate::ImageType:
-    default:
-      Q_ASSERT(d->indexType(parent) != qCTKDCMTKModelPrivate::ImageType);
-      break;
-    }
-  Node* parentNode = 
-    reinterpret_cast<Node*>(parent.internalPointer());
+  Node* parentNode = d->nodeFromIndex(parent);
   Node* node = 0;
-  foreach(Node* tmpNode, d->Nodes)
+  foreach(Node* tmpNode, parentNode->Children)
     {
-    if (tmpNode->Parent == parentNode &&
-        tmpNode->Row == row && 
+    if (tmpNode->Row == row && 
         tmpNode->Column == column)
       {
       node = tmpNode;
       break;
       }
     }
-  if ( node == 0)
+  if (node == 0)
     {
-    node = new Node;
-    node->Parent = parentNode;
-    node->Row = row;
-    node->Column = column;
-    d->Nodes.append(node);
+    node = d->createNode(row, column, parent);
     }
   return this->createIndex(row, column, node);
 }
 
 QModelIndex qCTKDCMTKModel::parent ( const QModelIndex & index ) const
 {
-  Node* node = 
-    reinterpret_cast<Node*>(index.internalPointer());
+  QCTK_D(const qCTKDCMTKModel);
+  Node* node = d->nodeFromIndex(index);
   if (node == 0 || node->Parent == 0)
     {
     return QModelIndex();
@@ -434,116 +357,77 @@ QModelIndex qCTKDCMTKModel::parent ( const QModelIndex & index ) const
 int qCTKDCMTKModel::rowCount ( const QModelIndex & parent ) const
 {
   QCTK_D(const qCTKDCMTKModel);
-  int res = 0;
-  switch(d->indexType(parent))
+  Node* node = d->nodeFromIndex(parent);
+  if (node->RowCount == 0 && node->End)
     {
-    default:
-    case qCTKDCMTKModelPrivate::RootType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateRootModel(parent);
-      res = d->RootModel->rowCount();
-      break;
-      break;
-    case qCTKDCMTKModelPrivate::PatientType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updatePatientModel(parent);
-      res = d->PatientModel->rowCount();
-      break;
-    case qCTKDCMTKModelPrivate::StudyType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateStudyModel(parent);
-      res = d->StudyModel->rowCount();
-      break;
-    case qCTKDCMTKModelPrivate::SeriesType:
-      const_cast<qCTKDCMTKModelPrivate*>(d)->updateSeriesModel(parent);
-      res = d->SeriesModel->rowCount();
-      break;
+    const_cast<qCTKDCMTKModelPrivate*>(d)->fetch(parent, 256);
     }
-  return res;
+  return node->RowCount;
 }
 
-void qCTKDCMTKModel::setDataBase(const QString &db)
+void qCTKDCMTKModel::setDatabase(const QSqlDatabase &db)
 {
   QCTK_D(qCTKDCMTKModel);
 
   this->beginResetModel();
-  d->DataBase.setDatabaseName(db);
+  d->DataBase = db;
   
-  if (!d->DataBase.open() || d->DataBase.tables().empty())
+  delete d->RootNode;
+  d->RootNode = 0;
+
+  if (d->DataBase.tables().empty())
     {
-    //Q_ASSERT(d->DataBase.isOpen());
+    Q_ASSERT(d->DataBase.isOpen());
     return;
     }
+    
+  d->RootNode = d->createNode(-1, -1, QModelIndex());
+  
   this->endResetModel();
-  //this->m_DbPath = db;
-  //this->LoadStudies();
+
+  bool hasQuerySize = d->RootNode->Query.driver()->hasFeature(QSqlDriver::QuerySize);
+  if (hasQuerySize && d->RootNode->Query.size() > 0) 
+    {
+    int newRowCount= d->RootNode->Query.size();
+    beginInsertRows(QModelIndex(), 0, qMax(0, newRowCount - 1));
+    d->RootNode->RowCount = newRowCount;
+    d->RootNode->End = true;
+    endInsertRows();
+    } 
+  else
+    {
+    d->RootNode->RowCount = 0;
+    }
+  d->fetch(QModelIndex(), 256);
 }
 
-void qCTKDCMTKModel::rootRowsAboutToBeInserted(const QModelIndex& rootParent, int start, int end)
+void qCTKDCMTKModel::sort(int column, Qt::SortOrder order)
 {
   QCTK_D(qCTKDCMTKModel);
-  QModelIndex index = this->createIndex(rootParent.row(), rootParent.column(), d->RootNode);
-  //this->beginInsertRows(index, start, end);
+  emit layoutAboutToBeChanged();
+  d->Sort = QString("'%1' %2")
+    .arg(d->Headers[column])
+    .arg(order == Qt::AscendingOrder ? "ASC" : "DESC");
+  d->updateQueries(d->RootNode);
+  emit layoutChanged();
 }
 
-void qCTKDCMTKModel::rootRowsInserted(const QModelIndex& rootParent, int start, int end)
+bool qCTKDCMTKModel::setHeaderData ( int section, Qt::Orientation orientation, const QVariant & value, int role)
 {
   QCTK_D(qCTKDCMTKModel);
-  //this->endInsertRows();
-}
-
-void qCTKDCMTKModel::patientRowsAboutToBeInserted(const QModelIndex& patientParent, int start, int end)
-{
-  QCTK_D(qCTKDCMTKModel);
-  QModelIndex index = this->createIndex(patientParent.row(), patientParent.column(), d->PatientNode);
-  //this->beginInsertRows(index, start, end);
-}
-
-void qCTKDCMTKModel::patientRowsInserted(const QModelIndex& patientParent, int start, int end)
-{
-  QCTK_D(qCTKDCMTKModel);
-  //this->endInsertRows();
-}
-
-void qCTKDCMTKModel::studyRowsAboutToBeInserted(const QModelIndex& studyParent, int start, int end)
-{
-  QCTK_D(qCTKDCMTKModel);
-  QModelIndex index = this->createIndex(studyParent.row(), studyParent.column(), d->StudyNode);
-  //this->beginInsertRows(index, start, end);
-}
-
-void qCTKDCMTKModel::studyRowsInserted(const QModelIndex& studyParent, int start, int end)
-{
-  QCTK_D(qCTKDCMTKModel);
-  //this->endInsertRows();
-}
-
-void qCTKDCMTKModel::seriesRowsAboutToBeInserted(const QModelIndex& seriesParent, int start, int end)
-{
-  QCTK_D(qCTKDCMTKModel);
-  QModelIndex index = this->createIndex(seriesParent.row(), seriesParent.column(), d->SeriesNode);
-  //this->beginInsertRows(index, start, end);
-}
-
-void qCTKDCMTKModel::seriesRowsInserted(const QModelIndex& seriesParent, int start, int end)
-{
-  QCTK_D(qCTKDCMTKModel);
-  //this->endInsertRows();
-}
-
-void qCTKDCMTKModel::onModelAboutToBeReset()
-{
-  //this->beginResetModel();
-}
-
-void qCTKDCMTKModel::onModelReset()
-{
-  //this->endResetModel();
-}
-
-void qCTKDCMTKModel::onLayoutAboutToBeChanged()
-{
-  //emit layoutAboutToBeChanged();
-}
-
-void qCTKDCMTKModel::onLayoutChanged()
-{
-  //emit layoutChanged();
+  if (role & ~(Qt::DisplayRole | Qt::EditRole))
+    {
+    return false;
+    }
+  if (orientation == Qt::Vertical)
+    {
+    return false;
+    }
+  if (value.toString() == d->Headers[section])
+    {
+    return false;
+    }
+  d->Headers[section] = value.toString();
+  emit this->headerDataChanged(orientation, section, section);
+  return true;
 }

@@ -2,7 +2,9 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QTreeView>
+#include <QSqlQuery>
 
+#include "qCTKDCMTK.h"
 #include "qCTKDCMTKModel.h"
 
 #include <iostream>
@@ -10,23 +12,33 @@
 int qCTKDCMTKModelTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-
-  qCTKDCMTKModel model(0);
+  
   if (argc <= 1)
     {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
-    return EXIT_SUCCESS;
-    }
-  if (!QFileInfo(argv[1]).exists())
-    {
-    std::cerr << "Invalid sql file." << std::endl;
     return EXIT_FAILURE;
     }
-    
+  
+  qCTKDCMTK myCTK;
+  myCTK.openDatabase( argv[1] );
+  myCTK.initializeDatabase(argv[2]);
+  /*
+  QSqlQuery toto("SELECT * FROM Patients", myCTK.database());
+  qDebug() << "toto: " << myCTK.GetLastError() << toto.seek(0) << myCTK.GetLastError();
+  QSqlQuery titi("SELECT StudyID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPysiciansName as Performer FROM Studies WHERE PatientsUID='14'", myCTK.database());
+  qDebug() << "titi: " << titi.seek(0) << myCTK.GetLastError();
+  QSqlQuery tata("SELECT SeriesInstanceUID as UID, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='1.2.826.0.1.3680043.2.1125.1.73379483469717886505187028001198162'", myCTK.database());
+  qDebug() << "tata: " << tata.seek(0) << myCTK.GetLastError();
+  QSqlQuery tutu("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'", myCTK.database());
+  qDebug() << "tutu: " << tutu.seek(0) << myCTK.GetLastError();
+  */
+
+  qCTKDCMTKModel model(0);
+  model.setDatabase(myCTK.database());
+
   QTreeView viewer(0);
   viewer.setModel(&model);
-  
-  model.setDataBase(argv[1]);
+  viewer.setSortingEnabled(true);
 
   model.rowCount();
   qDebug() << model.rowCount() << model.columnCount();

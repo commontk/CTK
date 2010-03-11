@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cstdlib>
 
-int qCTKDCMTKTest1(int argc, char** argv) {
+int qCTKDCMTKTest1(int argc, char * argv []) {
   
   QApplication app(argc, argv);
   QTextStream out(stdout);
