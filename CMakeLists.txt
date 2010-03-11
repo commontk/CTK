@@ -31,8 +31,12 @@ SET(CTK_INSTALL_DOC_DIR "doc")
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
-# 
-SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
+# Note: FindXXX.cmake script specific to utility should be copied into Utilities/CMake
+#
+SET(CMAKE_MODULE_PATH
+  "${CMAKE_CURRENT_SOURCE_DIR}/Utilities/CMake"
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
+  ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
 # Clear CTK_BASE_INCLUDE_DIRS and CTK_BASE_LIBRARIES
