@@ -137,6 +137,10 @@ FOREACH(lib ${ctk_libs})
     ADD_SUBDIRECTORY(Libs/${lib})
   ENDIF()
 ENDFOREACH()
+
+ADD_SUBDIRECTORY(Applications)
+ADD_SUBDIRECTORY(Testing)
+ADD_SUBDIRECTORY(Examples)
     
 #-----------------------------------------------------------------------------
 # Style Checking configuration
