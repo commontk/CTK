@@ -10,7 +10,7 @@ IF(NOT DCMTK_FOUND)
 ENDIF()
 
 #
-# See CTK/CMake/CTKBuildQtLibMacro.cmake for details
+# See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
 
 SET(KIT_export_directive "Q_CTK_DICOM_CORE_EXPORT")
