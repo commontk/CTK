@@ -99,6 +99,13 @@ SET(ctk_libs
   DICOM/Core
   DICOM/Widgets
   DICOM/Applications)
+
+#-----------------------------------------------------------------------------
+# CTK Plugins
+#
+SET(ctk_plugins
+  org.commontk.cli
+  )
   
 #-----------------------------------------------------------------------------
 # To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
@@ -113,9 +120,14 @@ MARK_AS_ADVANCED(DART_TESTING_TIMEOUT)
 OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
 
-# Build options
+# Build options associated with CTK libraries
 FOREACH(lib ${ctk_libs})
   OPTION(CTK_ENABLE_${lib} "Enable ${lib} Support." ON)
+ENDFOREACH()
+
+# Build options associated with CTK plugins
+FOREACH(plugin ${ctk_plugins})
+  OPTION(CTK_ENABLE_${plugin} "Enable ${plugin} Support." ON)
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
@@ -130,7 +142,7 @@ IF(CTK_SUPERBUILD)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Add subdirectories
+# Add CTK libraries subdirectories
 #
 FOREACH(lib ${ctk_libs})
   IF (CTK_ENABLE_${lib})
@@ -138,6 +150,18 @@ FOREACH(lib ${ctk_libs})
   ENDIF()
 ENDFOREACH()
 
+#-----------------------------------------------------------------------------
+# Add CTK plugins subdirectories
+#
+FOREACH(plugin ${ctk_plugins})
+  IF (CTK_ENABLE_${plugin})
+    ADD_SUBDIRECTORY(Plugins/${plugin})
+  ENDIF()
+ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# Add general purpose subdirectories
+#
 ADD_SUBDIRECTORY(Applications)
 ADD_SUBDIRECTORY(Testing)
 ADD_SUBDIRECTORY(Examples)

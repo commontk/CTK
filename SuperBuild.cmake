@@ -19,6 +19,7 @@ SET_PROPERTY(DIRECTORY PROPERTY EP_BASE ${ep_base})
 
 SET(ep_install_dir ${ep_base}/Install)
 SET(ep_build_dir ${ep_base}/Build)
+SET(ep_source_dir ${ep_base}/Source)
 #SET(ep_parallelism_level)
 SET(ep_build_shared_libs ON)
 SET(ep_build_testing OFF)
@@ -69,6 +70,24 @@ IF (CTK_USE_KWSTYLE)
 ENDIF()
 
 #-----------------------------------------------------------------------------
+# PythonQt
+#
+SET (PythonQt_DEPENDS)
+# IF ()
+#   SET(proj PythonQt)
+#   SET(PythonQt_DEPENDS ${proj})
+#   ExternalProject_Add(${proj}
+#       SVN_REPOSITORY "https://pythonqt.svn.sourceforge.net/svnroot/pythonqt/trunk"
+#       CMAKE_GENERATOR ${gen}
+#       PATCH_COMMAND ${CMAKE_COMMAND} -P ${pythonqt_patch_script}
+#       CMAKE_ARGS
+#         ${ep_common_args}
+#         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+#         #${vtk_PYTHON_ARGS}
+#       INSTALL_COMMAND "")
+# ENDIF()
+    
+#-----------------------------------------------------------------------------
 # Utilities/DCMTK
 #
 SET (DCMTK_DEPENDS)
@@ -111,8 +130,22 @@ ExternalProject_Add(${proj}
     CMAKE_ARGS
       ${ep_common_args}
     )
-    
-    
+
+#-----------------------------------------------------------------------------
+# XIP
+#
+# SET(proj XIP)
+# SET(url https://collab01a.scr.siemens.com/svn/xip/releases/latest)
+# ExternalProject_Add(${proj}
+#    DOWNLOAD_COMMAND "${CMAKE_COMMAND} -E ${SVNCOMMAND} checkout ${url} ${ep_source_dir}/${proj} --username=anonymous "
+#    UPDATE_COMMAND ""
+#    #SVN_REPOSITORY "https://anonymous@collab01a.scr.siemens.com/svn/xip/releases/latest"
+#    INSTALL_COMMAND ""
+#    CMAKE_GENERATOR ${gen}
+#    CMAKE_ARGS
+#      ${ep_common_args}
+#    )
+   
 #-----------------------------------------------------------------------------
 # CTK Utilities
 #
@@ -125,8 +158,10 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
+    ${PythonQt_DEPENDS}
     "ZMQ"
     "OpenIGTLink"
+#     "XIP"
 )
   
 #-----------------------------------------------------------------------------
