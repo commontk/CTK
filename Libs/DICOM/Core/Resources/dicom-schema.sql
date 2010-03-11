@@ -48,6 +48,7 @@ CREATE TABLE 'Studies' (
   'StudyTime' VARCHAR(20) NULL ,
   'AccessionNumber' VARCHAR(255) NULL ,
   'ModalitiesInStudy' VARCHAR(255) NULL ,
+  'InstitutionName' VARCHAR(255) NULL ,
   'ReferringPhysician' VARCHAR(255) NULL ,
   'PerformingPysiciansName' VARCHAR(255) NULL ,
   'StudyDescription' VARCHAR(255) NULL ,

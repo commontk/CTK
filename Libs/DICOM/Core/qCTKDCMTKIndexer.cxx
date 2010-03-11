@@ -22,6 +22,7 @@
 #include <QSet>
 #include <QFile>
 #include <QDirIterator>
+#include <QFileInfo>
 
 #define MITK_ERROR std::cout
 #define MITK_INFO std::cout
@@ -88,8 +89,22 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
   /* iterate over all input filenames */
   while (iter != last)
   {
-    /// first we 
     std::string filename((*iter).c_str());
+    QString qfilename(filename.c_str()); 
+    /// first we check if the file is already in the database
+    QSqlQuery fileExists(database);
+    fileExists.prepare("SELECT InsertTimestamp FROM Images WHERE Filename == ?"); 
+    fileExists.bindValue(0,qfilename);
+    fileExists.exec();
+    if (
+      fileExists.next() && 
+      QFileInfo(qfilename).lastModified() < QDateTime::fromString(fileExists.value(0).toString(),Qt::ISODate)      
+      )
+      {
+      MITK_INFO << "File " << filename << " already added.";
+      continue;
+      }
+
     MITK_INFO << filename << "\n";
     OFCondition status = fileformat.loadFile(filename.c_str());
     ++iter;
@@ -100,15 +115,15 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
       continue;
     }
 
-    OFString patientsName = "", patientID = "", patientsBirthDate = "", patientsBirthTime = "", patientsSex = "",
-      patientComments = "", patientsAge = "";
+    OFString patientsName, patientID, patientsBirthDate, patientsBirthTime, patientsSex,
+      patientComments, patientsAge;
 
-    OFString studyInstanceUID = "", studyID = "", studyDate = "", studyTime = "",
-      accessionNumber = "", modalitiesInStudy = "", performingPhysiciansName = "", referringPhysician = "", studyDescription = "";
+    OFString studyInstanceUID, studyID, studyDate, studyTime,
+      accessionNumber, modalitiesInStudy, institutionName, performingPhysiciansName, referringPhysician, studyDescription;
 
-    OFString seriesInstanceUID = "", seriesDate = "", seriesTime = "",
-      seriesDescription = "", bodyPartExamined = "", frameOfReferenceUID = "",
-      contrastAgent = "", scanningSequence = "";
+    OFString seriesInstanceUID, seriesDate, seriesTime,
+      seriesDescription, bodyPartExamined, frameOfReferenceUID,
+      contrastAgent, scanningSequence;
 
     Sint32 seriesNumber = 0, acquisitionNumber = 0, echoNumber = 0, temporalPosition = 0;
 
@@ -145,6 +160,7 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
     fileformat.getDataset()->findAndGetOFString(DCM_StudyTime, studyTime);
     fileformat.getDataset()->findAndGetOFString(DCM_AccessionNumber, accessionNumber);
     fileformat.getDataset()->findAndGetOFString(DCM_ModalitiesInStudy, modalitiesInStudy);
+    fileformat.getDataset()->findAndGetOFString(DCM_InstitutionName, institutionName);
     fileformat.getDataset()->findAndGetOFString(DCM_PerformingPhysiciansName, performingPhysiciansName);
     fileformat.getDataset()->findAndGetOFString(DCM_ReferringPhysiciansName, referringPhysician);
     fileformat.getDataset()->findAndGetOFString(DCM_StudyDescription, studyDescription);
@@ -245,9 +261,17 @@ void qCTKDCMTKIndexer::AddDirectory(QSqlDatabase database, const QString& direct
         std::stringstream query_string;
 
         query_string << "INSERT INTO Studies VALUES('"
-          << studyInstanceUID << "','" << patientUID << "','" << studyID << "','"
+          << studyInstanceUID << "','" 
+          << patientUID << "','" 
+          << studyID << "','"
           << QDate::fromString(studyDate.c_str(), "yyyyMMdd").toString("yyyy-MM-dd").toStdString() << "','"
-          << studyTime << "','" << accessionNumber << "','" << modalitiesInStudy << "','" << referringPhysician << "','" << performingPhysiciansName << "','" << studyDescription << "')";
+          << studyTime << "','" 
+          << accessionNumber << "','" 
+          << modalitiesInStudy << "','" 
+          << institutionName << "','" 
+          << referringPhysician << "','" 
+          << performingPhysiciansName << "','" 
+          << studyDescription << "')";
 
         query.exec(query_string.str().c_str());
       }
