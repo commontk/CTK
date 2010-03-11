@@ -34,22 +34,13 @@
        </widget>
       </item>
       <item>
-       <widget class="qCTKDCMTKQueryWidget" name="queryWidget" native="true">
-        <zorder>locationWidget</zorder>
-       </widget>
+       <widget class="qCTKDCMTKQueryWidget" name="queryWidget" native="true"/>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="commandsFrame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
+    <widget class="qCTKDCMTKCommandWidget" name="widget" native="true"/>
    </item>
    <item>
     <widget class="QTreeWidget" name="treeWidget">
@@ -73,6 +64,12 @@
    <class>qCTKDCMTKServerNodeWidget</class>
    <extends>QWidget</extends>
    <header>qctkdcmtkservernodewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qCTKDCMTKCommandWidget</class>
+   <extends>QWidget</extends>
+   <header>qctkdcmtkcommandwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

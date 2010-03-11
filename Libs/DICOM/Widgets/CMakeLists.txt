@@ -22,6 +22,8 @@ SET(KIT_SRCS
   qCTKDCMTKServerNodeWidget.h
   qCTKDCMTKQueryWidget.cxx
   qCTKDCMTKQueryWidget.h
+  qCTKDCMTKCommandWidget.cxx
+  qCTKDCMTKCommandWidget.h
   )
 
 # Headers that should run through moc
@@ -35,6 +37,7 @@ SET(KIT_UI_FORMS
   Resources/UI/qCTKDCMTKQueryRetrieveWidget.ui
   Resources/UI/qCTKDCMTKServerNodeWidget.ui
   Resources/UI/qCTKDCMTKQueryWidget.ui
+  Resources/UI/qCTKDCMTKCommandWidget.ui
 )
 
 # Resources
