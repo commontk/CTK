@@ -98,6 +98,20 @@ ExternalProject_Add(${proj}
     CMAKE_ARGS
       ${ep_common_args}
     )
+
+#-----------------------------------------------------------------------------
+# Utilities/OpenIGTLink
+#
+SET(proj OpenIGTLink)
+ExternalProject_Add(${proj}
+    SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
+    INSTALL_COMMAND ""
+    CMAKE_GENERATOR ${gen}
+    SOURCE_DIR OpenIGTLink
+    CMAKE_ARGS
+      ${ep_common_args}
+    )
+    
     
 #-----------------------------------------------------------------------------
 # CTK Utilities
@@ -112,6 +126,7 @@ ExternalProject_Add(${proj}
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
     "ZMQ"
+    "OpenIGTLink"
 )
   
 #-----------------------------------------------------------------------------
