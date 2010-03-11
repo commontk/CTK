@@ -43,12 +43,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-/// \file qCTKSettings.h
+/// \file ctkSettings.h
 ///
 /// \date 02/03/2010
 
-#ifndef __qCTKSettings_h
-#define __qCTKSettings_h
+#ifndef __ctkSettings_h
+#define __ctkSettings_h
 
 // QT includes
 #include <QSettings>
@@ -58,12 +58,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class QDialog;
 class QMainWindow;
 
-class Q_CTK_WIDGETS_EXPORT qCTKSettings : public QSettings
+class Q_CTK_WIDGETS_EXPORT ctkSettings : public QSettings
 {
   Q_OBJECT
 
 public:
-  qCTKSettings(
+  ctkSettings(
     const QString& organization,
     const QString& application,
     QObject* p);

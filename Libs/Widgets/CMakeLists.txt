@@ -12,13 +12,13 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  qCTKSettings.cxx
-  qCTKSettings.h
+  ctkSettings.cxx
+  ctkSettings.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  qCTKSettings.h
+  ctkSettings.h
   )
 
 # UI files

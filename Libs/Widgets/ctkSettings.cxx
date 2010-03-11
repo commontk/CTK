@@ -42,7 +42,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
-#include "qCTKSettings.h"
+#include "ctkSettings.h"
 
 // QT includes
 #include <QDialog>
@@ -50,7 +50,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDesktopWidget>
 
 //-----------------------------------------------------------------------------
-qCTKSettings::qCTKSettings(
+ctkSettings::ctkSettings(
     const QString& organization, 
     const QString& application,
     QObject* p) :
@@ -59,13 +59,13 @@ qCTKSettings::qCTKSettings(
 }
 
 //-----------------------------------------------------------------------------
-void qCTKSettings::alertSettingsModified()
+void ctkSettings::alertSettingsModified()
 {
   emit this->modified();
 }
 
 //-----------------------------------------------------------------------------
-void qCTKSettings::saveState(const QMainWindow& window, const QString& key)
+void ctkSettings::saveState(const QMainWindow& window, const QString& key)
 {
   this->beginGroup(key);
   this->setValue("Position", window.pos());
@@ -75,7 +75,7 @@ void qCTKSettings::saveState(const QMainWindow& window, const QString& key)
 }
 
 //-----------------------------------------------------------------------------
-void qCTKSettings::saveState(const QDialog& dialog, const QString& key)
+void ctkSettings::saveState(const QDialog& dialog, const QString& key)
 {
   this->beginGroup(key);
   this->setValue("Position", dialog.pos());
@@ -84,7 +84,7 @@ void qCTKSettings::saveState(const QDialog& dialog, const QString& key)
 }
 
 //-----------------------------------------------------------------------------
-void qCTKSettings::restoreState(const QString& key, QMainWindow& window)
+void ctkSettings::restoreState(const QString& key, QMainWindow& window)
 {
   this->beginGroup(key);
   
@@ -123,7 +123,7 @@ void qCTKSettings::restoreState(const QString& key, QMainWindow& window)
 }
 
 //-----------------------------------------------------------------------------
-void qCTKSettings::restoreState(const QString& key, QDialog& dialog)
+void ctkSettings::restoreState(const QString& key, QDialog& dialog)
 {
   this->beginGroup(key);
   

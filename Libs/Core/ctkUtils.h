@@ -12,8 +12,8 @@
 
 =========================================================================*/
 
-#ifndef __qCTKUtils_h
-#define __qCTKUtils_h
+#ifndef __ctkUtils_h
+#define __ctkUtils_h
 
 // QT includes
 #include <QStringList>
@@ -23,11 +23,11 @@
 
 #include "CTKCoreExport.h"
 
-class Q_CTK_CORE_EXPORT qCTKUtils
+class Q_CTK_CORE_EXPORT ctkUtils
 {
   
 public:
-  typedef qCTKUtils Self;
+  typedef ctkUtils Self;
 
   ///
   /// Convert a QStringList to Vector of char*
@@ -44,8 +44,8 @@ public:
 
 private:
   /// Not implemented
-  qCTKUtils(){}
-  virtual ~qCTKUtils(){}
+  ctkUtils(){}
+  virtual ~ctkUtils(){}
 
 };
 

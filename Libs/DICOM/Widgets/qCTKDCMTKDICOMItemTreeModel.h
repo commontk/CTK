@@ -6,7 +6,7 @@
 #include <QModelIndex>
 
 // qCTK includes
-#include <qCTKPimpl.h>
+#include <ctkPimpl.h>
 
 #include "CTKDICOMWidgetsExport.h"
 

@@ -1,5 +1,5 @@
 /**
-\class qCTKPimpl qCTKPimpl
+\class ctkPimpl ctkPimpl
 \brief Hide private details of a class
 
 Application code generally doesn't have to be concerned about hiding its
@@ -7,7 +7,7 @@ implementation details, but when writing library code it is important to
 maintain a constant interface, both source and binary. Maintaining a constant
 source interface is easy enough, but keeping the binary interface constant
 means moving implementation details into a private class. The PIMPL, or
-d-pointer, idiom is a common method of implementing this separation. qCTKPimpl
+d-pointer, idiom is a common method of implementing this separation. ctkPimpl
 offers a convenient way to connect the public and private sides of your class.
 
 \section start Getting Started
@@ -45,12 +45,12 @@ private class can invoke functions in the public class by using the qctk_p()
 function (this one's actually a function).
 */
 
-#ifndef __qCTKPimpl_h
-#define __qCTKPimpl_h
+#ifndef __ctkPimpl_h
+#define __ctkPimpl_h
 
 #include <QtGlobal>
 
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Define a public class constructor with no argument
  *
  * Also make sure the Pimpl is initalized
@@ -61,7 +61,7 @@ function (this one's actually a function).
     QCTK_INIT_PRIVATE(PUB);              \
     }
 
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Define a public class constructor with one argument
  *
  * Also make sure the Pimpl is initalized
@@ -73,7 +73,7 @@ function (this one's actually a function).
     QCTK_INIT_PRIVATE(PUB);                     \
     }
     
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Define the setter in the public class.
  *
  * This should be put in the .cxx file of the public class. The parameter are
@@ -86,7 +86,7 @@ function (this one's actually a function).
     qctk_d.ref()._VARNAME =  var;                   \
   }
 
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Define the setter in the public class.
  *
  * This should be put in the .cxx file of the public class. The parameter are
@@ -99,7 +99,7 @@ function (this one's actually a function).
     return qctk_d.ref()._VARNAME;                  \
   }
 
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Declares that a public class has a related private class.
  *
  * This should be put in the private section of the public class. The parameter is the name of the public class.
@@ -109,27 +109,27 @@ function (this one's actually a function).
 friend class PUB##Private; qCTKPrivateInterface<PUB, PUB##Private> qctk_d; \
 typedef PUB Self;
 
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Declares that a private class has a related public class.
  *
  * This may be put anywhere in the declaration of the private class. The parameter is the name of the public class.
  */
 #define QCTK_DECLARE_PUBLIC(PUB) friend class PUB;
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Initializes resources owned by the private class.
  *
  * This should be called from the public class's constructor,
  * before qctk_d() is used for the first time. The parameter is the name of the public class.
  */
 #define QCTK_INIT_PRIVATE(PUB) qctk_d.setPublic(this)
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Returns a pointer (or reference) in the current scope named "d" to the private class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
  */
 #define QCTK_D(PUB) PUB##Private* d = qctk_d()
 #define QCTK_D_REF(PUB) PUB##Private& d = qctk_d.ref()
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Creates a pointer ( or reference) in the current scope named "q" to the public class.
  *
  * This macro only works in a class using \a QCTK_DECLARE_PUBLIC.
@@ -138,14 +138,14 @@ typedef PUB Self;
 #define QCTK_P_REF(PUB) PUB& p = qctk_p_ref()
 
 #ifdef QCTK_DOXYGEN_RUN
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Returns a pointer to the private class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
  */
 qCTKPrivate<PUB>* qctk_d();
 
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Returns a const pointer to the private class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
@@ -153,7 +153,7 @@ qCTKPrivate<PUB>* qctk_d();
  */
 const qCTKPrivate<PUB>* qctk_d();
 
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Returns a reference or pointer to the public class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PUBLIC.
@@ -161,7 +161,7 @@ const qCTKPrivate<PUB>* qctk_d();
 PUB& qctk_p_ref();
 PUB* qctk_p();
 
-/*! \relates qCTKPimpl
+/*! \relates ctkPimpl
  * Returns a const reference or pointer to the public class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PUBLIC.

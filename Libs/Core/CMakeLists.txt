@@ -12,8 +12,8 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  qCTKUtils.cxx
-  qCTKUtils.h
+  ctkUtils.cxx
+  ctkUtils.h
   )
 
 # Headers that should run through moc

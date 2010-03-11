@@ -5,7 +5,7 @@
 #include <QSqlDatabase>
 
 // qCTK includes
-#include <qCTKPimpl.h>
+#include <ctkPimpl.h>
 
 #include "CTKDICOMCoreExport.h"
 
