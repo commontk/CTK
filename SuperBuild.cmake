@@ -163,7 +163,25 @@ ExternalProject_Add(${proj}
     "OpenIGTLink"
 #     "XIP"
 )
-  
+
+#-----------------------------------------------------------------------------
+# Generate cmake variable name corresponding to Libs, Plugins and Applications
+#
+SET(ctk_libs_bool_vars)
+FOREACH(lib ${ctk_libs})
+  LIST(APPEND ctk_libs_bool_vars CTK_LIB_${lib})
+ENDFOREACH()
+
+SET(ctk_plugins_bool_vars)
+FOREACH(plugin ${ctk_plugins})
+  LIST(APPEND ctk_plugins_bool_vars CTK_PLUGIN_${plugin})
+ENDFOREACH()
+
+SET(ctk_applications_bool_vars)
+FOREACH(app ${ctk_applications})
+  LIST(APPEND ctk_applications_bool_vars CTK_APP_${app})
+ENDFOREACH()
+
 #-----------------------------------------------------------------------------
 # Convenient macro allowing to define superbuild arg
 #
@@ -172,7 +190,6 @@ MACRO(ctk_set_superbuild_boolean_arg ctk_cmake_var)
   IF(DEFINED ${ctk_cmake_var} AND NOT ${ctk_cmake_var})
     SET(superbuild_${ctk_cmake_var} OFF)
   ENDIF()
-  SET(superbuild_ep_arg_${ctk_cmake_var} -D${ctk_cmake_arg}:BOOL=${superbuild_${ctk_cmake_var}})
 ENDMACRO()
 
 #-----------------------------------------------------------------------------
@@ -182,7 +199,9 @@ ENDMACRO()
 SET(ctk_cmake_boolean_args
   BUILD_TESTING
   CTK_USE_KWSTYLE
-  ${ctk_libs}
+  ${ctk_libs_bool_vars}
+  ${ctk_plugins_bool_vars}
+  ${ctk_applications_bool_vars}
   )
 
 SET(ctk_superbuild_boolean_args)

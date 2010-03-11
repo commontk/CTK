@@ -98,13 +98,20 @@ SET(ctk_libs
   Widgets
   DICOM/Core
   DICOM/Widgets
-  DICOM/Applications)
+  )
 
 #-----------------------------------------------------------------------------
 # CTK Plugins
 #
 SET(ctk_plugins
   org.commontk.cli
+  )
+
+#-----------------------------------------------------------------------------
+# CTK Applications
+#
+SET(ctk_applications
+  ctkDICOM
   )
   
 #-----------------------------------------------------------------------------
@@ -122,12 +129,17 @@ OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 
 # Build options associated with CTK libraries
 FOREACH(lib ${ctk_libs})
-  OPTION(CTK_ENABLE_${lib} "Enable ${lib} Support." ON)
+  OPTION(CTK_LIB_${lib} "Enable ${lib} Library." ON)
 ENDFOREACH()
 
 # Build options associated with CTK plugins
 FOREACH(plugin ${ctk_plugins})
-  OPTION(CTK_ENABLE_${plugin} "Enable ${plugin} Support." ON)
+  OPTION(CTK_PLUGIN_${plugin} "Build ${plugin} Plugin." ON)
+ENDFOREACH()
+
+# Build options associated with CTK applications
+FOREACH(app ${ctk_applications})
+  OPTION(CTK_APP_${app} "Build ${app} Application." ON)
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
@@ -142,27 +154,35 @@ IF(CTK_SUPERBUILD)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Add CTK libraries subdirectories
+# Add CTK library subdirectories
 #
 FOREACH(lib ${ctk_libs})
-  IF (CTK_ENABLE_${lib})
+  IF (CTK_LIB_${lib})
     ADD_SUBDIRECTORY(Libs/${lib})
   ENDIF()
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# Add CTK plugins subdirectories
+# Add CTK plugin subdirectories
 #
 FOREACH(plugin ${ctk_plugins})
-  IF (CTK_ENABLE_${plugin})
+  IF (CTK_PLUGIN_${plugin})
     ADD_SUBDIRECTORY(Plugins/${plugin})
+  ENDIF()
+ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# Add CTK application subdirectories
+#
+FOREACH(app ${ctk_applications})
+  IF (CTK_APP_${app})
+    ADD_SUBDIRECTORY(Applications/${app})
   ENDIF()
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
 # Add general purpose subdirectories
 #
-ADD_SUBDIRECTORY(Applications)
 ADD_SUBDIRECTORY(Testing)
 ADD_SUBDIRECTORY(Examples)
     
