@@ -6,4 +6,5 @@
 
 SET(target_libraries
   ${QT_LIBRARIES}
+  ${QTMOBILITY_QTSERVICEFW_LIBRARY}
   )

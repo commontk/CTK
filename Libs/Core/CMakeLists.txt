@@ -1,5 +1,27 @@
 PROJECT(CTKCore)
 
+# use the QtMobility SuperBuild paths for now
+# we should add a FindQtMobility later
+SET(QTMOBILITY_INCLUDE_DIRS 
+  "${CTK_BINARY_DIR}/../CMakeExternals/Source/QtMobility/install/include"
+  )
+SET(QTMOBILITY_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
+FIND_LIBRARY(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG QtServiceFrameworkd
+             PATHS ${QTMOBILITY_LIBRARY_DIR}
+             )
+             
+FIND_LIBRARY(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE QtServiceFramework
+             PATHS ${QTMOBILITY_LIBRARY_DIR}
+             )
+             
+SET(QTMOBILITY_QTSERVICEFW_LIBRARY )
+IF(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE)
+  LIST(APPEND QTMOBILITY_QTSERVICEFW_LIBRARY optimized ${QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE})
+ENDIF()
+IF(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG)
+  LIST(APPEND QTMOBILITY_QTSERVICEFW_LIBRARY debug ${QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG})
+ENDIF()
+             
 #
 # See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
@@ -8,6 +30,7 @@ SET(KIT_export_directive "Q_CTK_CORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
+  ${QTMOBILITY_INCLUDE_DIRS}
   )
   
 # Source files

@@ -119,6 +119,33 @@ ExternalProject_Add(${proj}
     )
 
 #-----------------------------------------------------------------------------
+# QtMobility
+#
+SET(qtmobility_modules "serviceframework")
+SET(qtmobility_build_type "release")
+IF(UNIX)
+  IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    SET(qtmobility_build_type "debug")
+  ENDIF()
+ELSEIF(NOT ${CMAKE_CFG_INTDIR} STREQUAL "Release")
+  SET(qtmobility_build_type "debug")
+ENDIf()
+
+SET(qtmobility_patchcmd )
+IF(UNIX)
+  SET(qtmobility_patchcmd patch -p0 < ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobilityBeta1-Linux.patch)
+ENDIF(UNIX)
+
+SET(proj QtMobility)
+ExternalProject_Add(${proj}
+    URL "http://get.qt.nokia.com/qt/solutions/qt-mobility-src-1.0.0-beta1.tar.gz"
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
+    PATCH_COMMAND ${qtmobility_patchcmd}
+    BUILD_IN_SOURCE 1
+    )
+    
+
+#-----------------------------------------------------------------------------
 # Utilities/OpenIGTLink
 #
 SET(proj OpenIGTLink)
@@ -161,6 +188,7 @@ ExternalProject_Add(${proj}
     "ZMQ"
     "OpenIGTLink"
 #     "XIP"
+    "QtMobility"
 )
 
 #-----------------------------------------------------------------------------
