@@ -6,4 +6,5 @@
 
 SET(target_libraries
   CTKCore
+  ${DCMTK_LIBRARIES}
   )

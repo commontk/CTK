@@ -6,6 +6,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION ${cmake_version_required})
 # 
 # CTK_QMAKE_EXECUTABLE
 # CTK_KWSTYLE_EXECUTABLE
+# CTK_DCMTK_DIR
 #
 
 #-----------------------------------------------------------------------------
@@ -17,7 +18,7 @@ SET(ep_base "${CMAKE_BINARY_DIR}/CMakeExternals")
 SET_PROPERTY(DIRECTORY PROPERTY EP_BASE ${ep_base})
 
 SET(ep_install_dir ${ep_base}/Install)
-#SET(ep_build_dir ${ep_base}/Build)
+SET(ep_build_dir ${ep_base}/Build)
 #SET(ep_parallelism_level)
 SET(ep_build_shared_libs ON)
 SET(ep_build_testing OFF)
@@ -70,15 +71,20 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Utilities/DCMTK
 #
-SET(proj DCMTK)
-ExternalProject_Add(${proj}
-    DOWNLOAD_COMMAND ""
-    INSTALL_COMMAND "" # TODO DCMTK should be installable 
-    CMAKE_GENERATOR ${gen}
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/DCMTK
-    CMAKE_ARGS
-      ${ep_common_args}
-    )
+SET (DCMTK_DEPENDS)
+IF (NOT DEFINED CTK_DCMTK_DIR)
+  SET(proj DCMTK)
+  SET(DCMTK_DEPENDS ${proj})
+  ExternalProject_Add(${proj}
+      DOWNLOAD_COMMAND ""
+      CMAKE_GENERATOR ${gen}
+      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/${proj}
+      CMAKE_ARGS
+        ${ep_common_args}
+        -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
+      )
+  SET(CTK_DCMTK_DIR ${ep_install_dir})
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Utilities/ZMQ
@@ -104,7 +110,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   DEPENDS
     ${kwstyle_DEPENDS}
-    "DCMTK"
+    ${DCMTK_DEPENDS}
     "ZMQ"
 )
   
@@ -150,6 +156,7 @@ ExternalProject_Add(${proj}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCTK_QMAKE_EXECUTABLE:FILEPATH=${CTK_QMAKE_EXECUTABLE}
     -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
+    -DDCMTK_DIR=${CTK_DCMTK_DIR} # FindDCMTK expects DCMTK_DIR
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${CMAKE_BINARY_DIR}/CTK-build
   BUILD_COMMAND ""

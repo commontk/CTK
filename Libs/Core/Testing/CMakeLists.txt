@@ -1,7 +1,7 @@
 SET(KIT CTKCore)
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
-  qCTKUtilsTest1.cxx
+  ctkUtilsTest1.cxx
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -26,4 +26,4 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
-SIMPLE_TEST( qCTKUtilsTest1 )
+SIMPLE_TEST( ctkUtilsTest1 )

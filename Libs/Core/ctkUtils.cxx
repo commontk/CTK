@@ -12,13 +12,13 @@
 
 =========================================================================*/
 
-#include "qCTKUtils.h"
+#include "ctkUtils.h"
 
 // STD includes
 #include <algorithm>
 
 //------------------------------------------------------------------------------
-void qCTKUtils::qListToSTLVector(const QStringList& list,
+void ctkUtils::qListToSTLVector(const QStringList& list,
                                  std::vector<char*>& vector)
 {
   // Resize if required
@@ -46,7 +46,7 @@ static std::string qStringToSTLString(const QString& qstring)
 }
 
 //------------------------------------------------------------------------------
-void qCTKUtils::qListToSTLVector(const QStringList& list,
+void ctkUtils::qListToSTLVector(const QStringList& list,
                                  std::vector<std::string>& vector)
 {
   // To avoid unnessesary relocations, let's reserve the required amount of space
@@ -55,7 +55,7 @@ void qCTKUtils::qListToSTLVector(const QStringList& list,
 }
 
 //------------------------------------------------------------------------------
-void qCTKUtils::stlVectorToQList(const std::vector<std::string>& vector,
+void ctkUtils::stlVectorToQList(const std::vector<std::string>& vector,
                                  QStringList& list)
 {
   std::transform(vector.begin(),vector.end(),std::back_inserter(list),&QString::fromStdString);

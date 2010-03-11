@@ -5,7 +5,7 @@
 #include <QAbstractItemModel>
 
 // qCTK includes
-#include <qCTKPimpl.h>
+#include <ctkPimpl.h>
 
 #include "CTKDICOMCoreExport.h"
 

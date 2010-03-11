@@ -1,6 +1,15 @@
 PROJECT(CTKDICOMCore)
 
 #
+# 3rd party dependencies
+#
+
+FIND_PACKAGE(DCMTK)
+IF(NOT DCMTK_FOUND)
+  MESSAGE(FATAL_ERROR "error: DCMTK package is required to build ${PROJECT_NAME}")
+ENDIF()
+
+#
 # See CTK/CMake/CTKBuildQtLibMacro.cmake for details
 #
 
@@ -8,6 +17,7 @@ SET(KIT_export_directive "Q_CTK_DICOM_CORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
+  ${DCMTK_INCLUDE_DIR}
   )
   
 # Source files
@@ -34,9 +44,9 @@ SET(KIT_resources
 )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+# The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
 
-# See CMake/ctkMacroBuildQtLib.cmake
 ctkMacroBuildQtLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}

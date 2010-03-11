@@ -42,9 +42,9 @@ SET(KIT_resources
 )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+# The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
   
-# See CMake/ctkMacroBuildQtLib.cmake
 ctkMacroBuildQtLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}

@@ -13,7 +13,7 @@
 =========================================================================*/
 
 // qCTK includes
-#include "qCTKUtils.h"
+#include "ctkUtils.h"
 
 // QT includes
 #include <QStringList>
@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-int qCTKUtilsTest1(int argc, char * argv [] )
+int ctkUtilsTest1(int argc, char * argv [] )
 {
   Q_UNUSED(argc);
   Q_UNUSED(argv);  
@@ -38,7 +38,7 @@ int qCTKUtilsTest1(int argc, char * argv [] )
 
   std::vector<char*> outputCharVector;
   
-  qCTKUtils::qListToSTLVector(inputStringList, outputCharVector);
+  ctkUtils::qListToSTLVector(inputStringList, outputCharVector);
 
   if (outputCharVector.size() != 3)
     {
@@ -72,7 +72,7 @@ int qCTKUtilsTest1(int argc, char * argv [] )
 
   std::vector<std::string> outputStringVector;
 
-  qCTKUtils::qListToSTLVector(inputStringList, outputStringVector);
+  ctkUtils::qListToSTLVector(inputStringList, outputStringVector);
 
   if (outputStringVector.size() != 3)
     {
@@ -106,7 +106,7 @@ int qCTKUtilsTest1(int argc, char * argv [] )
 
   QStringList ouputStringList;
 
-  qCTKUtils::stlVectorToQList(inputStringVector, ouputStringList);
+  ctkUtils::stlVectorToQList(inputStringVector, ouputStringList);
 
   if (ouputStringList.size() != 3)
     {
