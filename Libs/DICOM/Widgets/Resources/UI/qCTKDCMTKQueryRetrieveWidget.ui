@@ -24,23 +24,18 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QFrame" name="locationsFrame">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+       <widget class="qCTKDCMTKServerNodeWidget" name="locationWidget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>200</height>
+         </size>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="queryFrame">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
+       <widget class="qCTKDCMTKQueryWidget" name="queryWidget" native="true">
+        <zorder>locationWidget</zorder>
        </widget>
       </item>
      </layout>
@@ -57,17 +52,30 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="viewFrame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
+    <widget class="QTreeWidget" name="treeWidget">
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qCTKDCMTKQueryWidget</class>
+   <extends>QWidget</extends>
+   <header>qctkdcmtkquerywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qCTKDCMTKServerNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qctkdcmtkservernodewidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
