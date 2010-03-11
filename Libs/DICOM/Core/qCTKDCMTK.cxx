@@ -94,6 +94,7 @@ bool qCTKDCMTKPrivate::executeScript(const QString& script) {
       if (query.lastError().type())
         {
         qDebug() << "There was an error during execution of the statement: " << (*it);
+        qDebug() << "Error message: " << query.lastError().text();
         return false;
         }
       }

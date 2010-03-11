@@ -15,10 +15,16 @@ int qCTKDCMTKTest1(int argc, char** argv) {
     {
     out << "open db success\n";
     /// make sure it is empty and properly initialized
-    myCTK.initializeDatabase();
+    if (! myCTK.initializeDatabase() ) {
+       out << "ERROR: basic DB init failed";
+       return EXIT_FAILURE;
+    };
     /// insert some sample data
-    myCTK.initializeDatabase(argv[2]);
-    myCTK.closeDatabase();
+    if (! myCTK.initializeDatabase(argv[2]) ) {
+       out << "ERROR: sample DB init failed";
+       return EXIT_FAILURE;
+    };
+    myCTK.closeDatabase(); 
     }
   else
     { 
