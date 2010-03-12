@@ -68,6 +68,15 @@ FIND_LIBRARY( DCMTK_ofstd_LIBRARY ofstd
   ${DCMTK_DIR}/lib
 )
 
+FIND_LIBRARY( DCMTK_oflog_LIBRARY oflog
+  ${DCMTK_DIR}/oflog/libsrc
+  ${DCMTK_DIR}/oflog/libsrc/Release
+  ${DCMTK_DIR}/oflog/libsrc/Debug
+  ${DCMTK_DIR}/oflog/Release
+  ${DCMTK_DIR}/oflog/Debug
+  ${DCMTK_DIR}/lib
+)
+
 FIND_PATH( DCMTK_dcmdata_INCLUDE_DIR dctypes.h
   ${DCMTK_DIR}/include/dcmdata
   ${DCMTK_DIR}/include/dcmtk/dcmdata
@@ -116,6 +125,7 @@ FIND_LIBRARY(DCMTK_dcmnet_LIBRARY dcmnet
 IF( DCMTK_config_INCLUDE_DIR 
     AND DCMTK_ofstd_INCLUDE_DIR 
     AND DCMTK_ofstd_LIBRARY
+    AND DCMTK_oflog_LIBRARY
     AND DCMTK_dcmdata_INCLUDE_DIR
     AND DCMTK_dcmdata_LIBRARY
     AND DCMTK_dcmimgle_INCLUDE_DIR
@@ -133,6 +143,7 @@ IF( DCMTK_config_INCLUDE_DIR
   
   SET( DCMTK_FOUND "YES" )
   SET( DCMTK_INCLUDE_DIR
+    ${DCMTK_DIR}/include
     ${DCMTK_config_INCLUDE_DIR}
     ${DCMTK_ofstd_INCLUDE_DIR}
     ${DCMTK_dcmdata_INCLUDE_DIR}
@@ -143,6 +154,7 @@ IF( DCMTK_config_INCLUDE_DIR
     ${DCMTK_dcmimgle_LIBRARY}
     ${DCMTK_dcmdata_LIBRARY}
     ${DCMTK_ofstd_LIBRARY}
+    ${DCMTK_oflog_LIBRARY}
     ${DCMTK_config_LIBRARY}
   )
 
@@ -161,7 +173,7 @@ IF( DCMTK_config_INCLUDE_DIR
   ENDIF(DCMTK_dcmnet_LIBRARY)
 
   IF( WIN32 )
-    SET( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} netapi32 )
+    SET( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} ws2_32 netapi32 wsock32)
   ENDIF( WIN32 )
   
 #   IF (NOT WIN32)
@@ -171,6 +183,7 @@ IF( DCMTK_config_INCLUDE_DIR
 ENDIF( DCMTK_config_INCLUDE_DIR 
     AND DCMTK_ofstd_INCLUDE_DIR 
     AND DCMTK_ofstd_LIBRARY
+    AND DCMTK_oflog_LIBRARY
     AND DCMTK_dcmdata_INCLUDE_DIR
     AND DCMTK_dcmdata_LIBRARY
     AND DCMTK_dcmimgle_INCLUDE_DIR
@@ -201,5 +214,6 @@ MARK_AS_ADVANCED(
   DCMTK_dcmnet_LIBRARY
   DCMTK_ofstd_INCLUDE_DIR
   DCMTK_ofstd_LIBRARY
+  DCMTK_oflog_LIBRARY
   )
 
