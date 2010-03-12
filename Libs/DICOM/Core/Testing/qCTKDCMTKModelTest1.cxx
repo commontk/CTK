@@ -22,9 +22,12 @@ int qCTKDCMTKModelTest1( int argc, char * argv [] )
   qCTKDCMTK myCTK;
   myCTK.openDatabase( argv[1] );
   myCTK.initializeDatabase(argv[2]);
-  /*
-  QSqlQuery toto("SELECT * FROM Patients", myCTK.database());
-  qDebug() << "toto: " << myCTK.GetLastError() << toto.seek(0) << myCTK.GetLastError();
+    /*
+  QSqlQuery toto("SELECT PatientsName as 'Name tt' FROM Patients ORDER BY \"Name tt\" ASC", myCTK.database());
+  qDebug() << "toto: " << myCTK.GetLastError() ;
+  qDebug()<< toto.seek(0) << myCTK.GetLastError();
+  qDebug() << toto.value(0).toString() << myCTK.GetLastError();
+
   QSqlQuery titi("SELECT StudyID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPysiciansName as Performer FROM Studies WHERE PatientsUID='14'", myCTK.database());
   qDebug() << "titi: " << titi.seek(0) << myCTK.GetLastError();
   QSqlQuery tata("SELECT SeriesInstanceUID as UID, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='1.2.826.0.1.3680043.2.1125.1.73379483469717886505187028001198162'", myCTK.database());
@@ -44,5 +47,6 @@ int qCTKDCMTKModelTest1( int argc, char * argv [] )
   qDebug() << model.rowCount() << model.columnCount();
   qDebug() << model.index(0,0);
   viewer.show();
-  return app.exec();
+  //return app.exec();
+  return EXIT_SUCCESS;
 }

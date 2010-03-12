@@ -143,7 +143,7 @@ QString qCTKDCMTKModelPrivate::generateQuery(const QString& fields, const QStrin
     {
     res += QString(" WHERE ") + conditions;
     }
-  if (this->Sort.isEmpty())
+  if (!this->Sort.isEmpty())
     {
     res += QString(" ORDER BY ") + this->Sort;
     }
@@ -161,7 +161,7 @@ void qCTKDCMTKModelPrivate::updateQueries(Node* node)const
       break;
     case qCTKDCMTKModelPrivate::RootType:
       //query = QString("SELECT  FROM ");
-      query = this->generateQuery("UID as UID, PatientsName as Name, PatientsAge as Age, PatientsBirthDate as Date, PatientID as 'Subject ID'","Patients");
+      query = this->generateQuery("UID as UID, PatientsName as Name, PatientsAge as Age, PatientsBirthDate as Date, PatientID as \"Subject ID\"","Patients");
       break;
     case qCTKDCMTKModelPrivate::PatientType:
       //query = QString("SELECT  FROM Studies WHERE PatientsUID='%1'").arg(node->UID);
@@ -272,12 +272,13 @@ QVariant qCTKDCMTKModel::data ( const QModelIndex & index, int role ) const
     {      
     const_cast<qCTKDCMTKModelPrivate *>(d)->fetch(index, index.row());
     }
-
+/*
   if (!node->Query.seek(index.row())) 
     {
     qDebug() << node->Query.lastError();
     return QVariant();
     }
+    */
   int field = node->Query.record().indexOf(d->Headers[index.column()]);
   if (field < 0)
     {
@@ -405,7 +406,7 @@ void qCTKDCMTKModel::sort(int column, Qt::SortOrder order)
 {
   QCTK_D(qCTKDCMTKModel);
   emit layoutAboutToBeChanged();
-  d->Sort = QString("'%1' %2")
+  d->Sort = QString("\"%1\" %2")
     .arg(d->Headers[column])
     .arg(order == Qt::AscendingOrder ? "ASC" : "DESC");
   d->updateQueries(d->RootNode);
