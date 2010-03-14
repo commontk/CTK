@@ -24,8 +24,8 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   qCTKDCMTK.cxx
   qCTKDCMTK.h
-  qCTKDCMTKIndexer.cxx
-  qCTKDCMTKIndexer.h
+  #qCTKDCMTKIndexer.cxx
+  #qCTKDCMTKIndexer.h
   qCTKDCMTKModel.cxx
   qCTKDCMTKModel.h
   )
