@@ -31,7 +31,7 @@ public:
   virtual QModelIndex parent ( const QModelIndex & index ) const;
   virtual int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
   virtual bool setHeaderData ( int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole );
-  virtual void qCTKDCMTKModel::sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
+  virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
   QCTK_DECLARE_PRIVATE(qCTKDCMTKModel);
