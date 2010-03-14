@@ -9,6 +9,11 @@
 
 #include <iostream>
 
+
+/* Test from build directory:
+ ./CTK-build/bin/CTKDICOMCoreCxxTests qCTKDCMTKModelTest1 ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
+*/
+
 int qCTKDCMTKModelTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
