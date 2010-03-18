@@ -37,10 +37,17 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   ctkUtils.cxx
   ctkUtils.h
+
+  # PluginFramework sources
+  PluginFramework/ctkPluginContext.cxx
+  PluginFramework/ctkPluginManager.cxx
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+
+  # PluginFramework headers
+  PluginFramework/ctkPluginActivator.h
   )
 
 # UI files

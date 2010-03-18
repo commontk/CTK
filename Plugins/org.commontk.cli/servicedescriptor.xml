@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <service>
+    <name>ctkCLIService</name>
+    <filepath>org_commontk_cli</filepath>
+    <interface>
+      <name>org.commontk.cli.ICLIManager</name>
+      <version>1.0</version>
+      <capabilities></capabilities>
+      <description>Interface that allows to discover and manage CLI modules</description>
+    </interface>
+  </service>

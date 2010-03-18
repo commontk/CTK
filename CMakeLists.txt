@@ -116,6 +116,7 @@ SET(ctk_plugins
 # CTK Applications
 #
 SET(ctk_applications
+  ctkCLIPluginExplorer
   ctkDICOM
   #ctkDICOMIndexer
   )
