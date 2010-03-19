@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qCTKDCMTKLocationWidget</class>
- <widget class="QWidget" name="qCTKDCMTKLocationWidget">
+ <class>ctkDICOMLocationWidget</class>
+ <widget class="QWidget" name="ctkDICOMLocationWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

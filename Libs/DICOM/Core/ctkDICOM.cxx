@@ -7,17 +7,17 @@
 #include <QFile>
 #include <QStringList>
 
-// qCTKDCMTK includes
-#include "qCTKDCMTK.h"
+// ctkDICOM includes
+#include "ctkDICOM.h"
 
 // STD includes
 #include <iostream>
 
 //----------------------------------------------------------------------------
-class qCTKDCMTKPrivate: public qCTKPrivate<qCTKDCMTK>
+class ctkDICOMPrivate: public qCTKPrivate<ctkDICOM>
 {
 public:
-  qCTKDCMTKPrivate(); 
+  ctkDICOMPrivate(); 
   bool executeScript(const QString& script);
 
   QSqlDatabase  Database;
@@ -26,31 +26,31 @@ public:
 };
 
 //----------------------------------------------------------------------------
-// qCTKDCMTKPrivate methods
+// ctkDICOMPrivate methods
 
 //------------------------------------------------------------------------------
-qCTKDCMTKPrivate::qCTKDCMTKPrivate() 
+ctkDICOMPrivate::ctkDICOMPrivate()
 {
 }
 
 //----------------------------------------------------------------------------
-// qCTKDCMTKWidget methods
+// ctkDICOMWidget methods
 
 //------------------------------------------------------------------------------
-qCTKDCMTK::qCTKDCMTK(QObject* _parent): Superclass(_parent)
+ctkDICOM::ctkDICOM(QObject* _parent): Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qCTKDCMTK);
+  QCTK_INIT_PRIVATE(ctkDICOM);
 }
 
 //----------------------------------------------------------------------------
-qCTKDCMTK::~qCTKDCMTK()
+ctkDICOM::~ctkDICOM()
 {
 }
 
 //----------------------------------------------------------------------------
-bool qCTKDCMTK::openDatabase(const QString& databaseFileName) 
+bool ctkDICOM::openDatabase(const QString& databaseFileName)
 {
-  QCTK_D(qCTKDCMTK);
+  QCTK_D(ctkDICOM);
   d->Database = QSqlDatabase::addDatabase("QSQLITE","DICOM-DB");
   d->Database.setDatabaseName(databaseFileName);
   if ( ! (d->Database.open()) )
@@ -66,19 +66,19 @@ bool qCTKDCMTK::openDatabase(const QString& databaseFileName)
 }
 
 //------------------------------------------------------------------------------
-const QString& qCTKDCMTK::GetLastError() const {
-  QCTK_D(const qCTKDCMTK);
+const QString& ctkDICOM::GetLastError() const {
+  QCTK_D(const ctkDICOM);
   return d->LastError; 
 }
 
 //------------------------------------------------------------------------------
-const QSqlDatabase& qCTKDCMTK::database() const {
-  QCTK_D(const qCTKDCMTK);
+const QSqlDatabase& ctkDICOM::database() const {
+  QCTK_D(const ctkDICOM);
   return d->Database;
 }
 
 //------------------------------------------------------------------------------
-bool qCTKDCMTKPrivate::executeScript(const QString& script) {
+bool ctkDICOMPrivate::executeScript(const QString& script) {
   QFile scriptFile(script);
   scriptFile.open(QIODevice::ReadOnly);
   if  ( !scriptFile.isOpen() )
@@ -112,15 +112,15 @@ bool qCTKDCMTKPrivate::executeScript(const QString& script) {
 }
 
 //------------------------------------------------------------------------------
-bool qCTKDCMTK::initializeDatabase(const char* sqlFileName) 
+bool ctkDICOM::initializeDatabase(const char* sqlFileName)
 {
-  QCTK_D(qCTKDCMTK);
+  QCTK_D(ctkDICOM);
   return d->executeScript(sqlFileName);
 }
 
 //------------------------------------------------------------------------------
-void qCTKDCMTK::closeDatabase()
+void ctkDICOM::closeDatabase()
 {
-  QCTK_D(qCTKDCMTK);
+  QCTK_D(ctkDICOM);
   d->Database.close();
 }

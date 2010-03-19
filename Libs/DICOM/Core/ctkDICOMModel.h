@@ -1,5 +1,5 @@
-#ifndef __qCTKDCMTKModel_h
-#define __qCTKDCMTKModel_h
+#ifndef __ctkDICOMModel_h
+#define __ctkDICOMModel_h
 
 // QT includes 
 #include <QAbstractItemModel>
@@ -10,13 +10,13 @@
 
 #include "CTKDICOMCoreExport.h"
 
-class qCTKDCMTKModelPrivate;
-class CTK_DICOM_CORE_EXPORT qCTKDCMTKModel : public QAbstractItemModel
+class ctkDICOMModelPrivate;
+class CTK_DICOM_CORE_EXPORT ctkDICOMModel : public QAbstractItemModel
 {
   Q_OBJECT
 public:
-  explicit qCTKDCMTKModel(QObject* parent = 0);
-  virtual ~qCTKDCMTKModel();
+  explicit ctkDICOMModel(QObject* parent = 0);
+  virtual ~ctkDICOMModel();
 
   void setDatabase(const QSqlDatabase& dataBase);
 
@@ -34,7 +34,7 @@ public:
   virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-  QCTK_DECLARE_PRIVATE(qCTKDCMTKModel);
+  QCTK_DECLARE_PRIVATE(ctkDICOMModel);
 };
 
 #endif

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qCTKDCMTKQueryRetrieveWidget</class>
- <widget class="QWidget" name="qCTKDCMTKQueryRetrieveWidget">
+ <class>ctkDICOMQueryRetrieveWidget</class>
+ <widget class="QWidget" name="ctkDICOMQueryRetrieveWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,7 +24,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="qCTKDCMTKServerNodeWidget" name="locationWidget" native="true">
+       <widget class="ctkDICOMServerNodeWidget" name="locationWidget" native="true">
         <property name="minimumSize">
          <size>
           <width>300</width>
@@ -34,13 +34,13 @@
        </widget>
       </item>
       <item>
-       <widget class="qCTKDCMTKQueryWidget" name="queryWidget" native="true"/>
+       <widget class="ctkDICOMQueryWidget" name="queryWidget" native="true"/>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="qCTKDCMTKCommandWidget" name="widget" native="true"/>
+    <widget class="ctkDICOMCommandWidget" name="widget" native="true"/>
    </item>
    <item>
     <widget class="QTreeWidget" name="treeWidget">
@@ -55,21 +55,21 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qCTKDCMTKQueryWidget</class>
+   <class>ctkDICOMQueryWidget</class>
    <extends>QWidget</extends>
-   <header>qCTKDCMTKQueryWidget.h</header>
+   <header>ctkDICOMQueryWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKDCMTKServerNodeWidget</class>
+   <class>ctkDICOMServerNodeWidget</class>
    <extends>QWidget</extends>
-   <header>qCTKDCMTKServerNodeWidget.h</header>
+   <header>ctkDICOMServerNodeWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qCTKDCMTKCommandWidget</class>
+   <class>ctkDICOMCommandWidget</class>
    <extends>QWidget</extends>
-   <header>qCTKDCMTKCommandWidget.h</header>
+   <header>ctkDICOMCommandWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

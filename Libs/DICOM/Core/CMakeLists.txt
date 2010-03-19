@@ -22,18 +22,18 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  qCTKDCMTK.cxx
-  qCTKDCMTK.h
-  qCTKDCMTKIndexer.cxx
-  qCTKDCMTKIndexer.h
-  qCTKDCMTKModel.cxx
-  qCTKDCMTKModel.h
+  ctkDICOM.cxx
+  ctkDICOM.h
+  ctkDICOMIndexer.cxx
+  ctkDICOMIndexer.h
+  ctkDICOMModel.cxx
+  ctkDICOMModel.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  qCTKDCMTK.h
-  qCTKDCMTKModel.h
+  ctkDICOM.h
+  ctkDICOMModel.h
   )
 
 # UI files

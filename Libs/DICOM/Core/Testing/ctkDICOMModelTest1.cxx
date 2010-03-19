@@ -1,20 +1,24 @@
+
+// QT includes
 #include <QApplication>
 #include <QDebug>
 #include <QFileInfo>
 #include <QTreeView>
 #include <QSqlQuery>
 
-#include "qCTKDCMTK.h"
-#include "qCTKDCMTKModel.h"
+// ctkDICOMCore includes
+#include "ctkDICOM.h"
+#include "ctkDICOMModel.h"
 
+// STD includes
 #include <iostream>
 
 
 /* Test from build directory:
- ./CTK-build/bin/CTKDICOMCoreCxxTests qCTKDCMTKModelTest1 ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
+ ./CTK-build/bin/CTKDICOMCoreCxxTests ctkDICOMModelTest1 ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
 */
 
-int qCTKDCMTKModelTest1( int argc, char * argv [] )
+int ctkDICOMModelTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   
@@ -24,7 +28,7 @@ int qCTKDCMTKModelTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   
-  qCTKDCMTK myCTK;
+  ctkDICOM myCTK;
   myCTK.openDatabase( argv[1] );
   myCTK.initializeDatabase(argv[2]);
     /*
@@ -41,7 +45,7 @@ int qCTKDCMTKModelTest1( int argc, char * argv [] )
   qDebug() << "tutu: " << tutu.seek(0) << myCTK.GetLastError();
   */
 
-  qCTKDCMTKModel model(0);
+  ctkDICOMModel model(0);
   model.setDatabase(myCTK.database());
 
   QTreeView viewer(0);

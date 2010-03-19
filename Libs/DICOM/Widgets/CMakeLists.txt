@@ -12,18 +12,18 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  qCTKDCMTKListenerWidget.cxx
-  qCTKDCMTKListenerWidget.h
-  qCTKDCMTKLocationWidget.cxx
-  qCTKDCMTKLocationWidget.h
-  qCTKDCMTKQueryRetrieveWidget.cxx
-  qCTKDCMTKQueryRetrieveWidget.h
-  qCTKDCMTKServerNodeWidget.cxx
-  qCTKDCMTKServerNodeWidget.h
-  qCTKDCMTKQueryWidget.cxx
-  qCTKDCMTKQueryWidget.h
-  qCTKDCMTKCommandWidget.cxx
-  qCTKDCMTKCommandWidget.h
+  ctkDICOMListenerWidget.cxx
+  ctkDICOMListenerWidget.h
+  ctkDICOMLocationWidget.cxx
+  ctkDICOMLocationWidget.h
+  ctkDICOMQueryRetrieveWidget.cxx
+  ctkDICOMQueryRetrieveWidget.h
+  ctkDICOMServerNodeWidget.cxx
+  ctkDICOMServerNodeWidget.h
+  ctkDICOMQueryWidget.cxx
+  ctkDICOMQueryWidget.h
+  ctkDICOMCommandWidget.cxx
+  ctkDICOMCommandWidget.h
   )
 
 # Headers that should run through moc
@@ -32,12 +32,12 @@ SET(KIT_MOC_SRCS
 
 # UI files - includes new widgets
 SET(KIT_UI_FORMS
-  Resources/UI/qCTKDCMTKLocationWidget.ui
-  Resources/UI/qCTKDCMTKListenerWidget.ui
-  Resources/UI/qCTKDCMTKQueryRetrieveWidget.ui
-  Resources/UI/qCTKDCMTKServerNodeWidget.ui
-  Resources/UI/qCTKDCMTKQueryWidget.ui
-  Resources/UI/qCTKDCMTKCommandWidget.ui
+  Resources/UI/ctkDICOMLocationWidget.ui
+  Resources/UI/ctkDICOMListenerWidget.ui
+  Resources/UI/ctkDICOMQueryRetrieveWidget.ui
+  Resources/UI/ctkDICOMServerNodeWidget.ui
+  Resources/UI/ctkDICOMQueryWidget.ui
+  Resources/UI/ctkDICOMCommandWidget.ui
 )
 
 # Resources

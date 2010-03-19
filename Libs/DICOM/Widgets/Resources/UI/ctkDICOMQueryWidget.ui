@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qCTKDCMTKQueryWidget</class>
- <widget class="QWidget" name="qCTKDCMTKQueryWidget">
+ <class>ctkDICOMQueryWidget</class>
+ <widget class="QWidget" name="ctkDICOMQueryWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

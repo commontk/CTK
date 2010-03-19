@@ -10,8 +10,8 @@
 #include <QFileInfo>
 #include <QDebug>
 
-// CTKDCMTK includes
-#include "qCTKDCMTKIndexer.h"
+// ctkDICOM includes
+#include "ctkDICOMIndexer.h"
 
 // DCMTK includes
 #ifndef WIN32
@@ -30,42 +30,42 @@
 #define MITK_INFO std::cout
 
 //------------------------------------------------------------------------------
-class qCTKDCMTKIndexerPrivate: public qCTKPrivate<qCTKDCMTKIndexer>
+class ctkDICOMIndexerPrivate: public qCTKPrivate<ctkDICOMIndexer>
 {
 public:
-  qCTKDCMTKIndexerPrivate();
-  ~qCTKDCMTKIndexerPrivate();
+  ctkDICOMIndexerPrivate();
+  ~ctkDICOMIndexerPrivate();
 
 };
 
 //------------------------------------------------------------------------------
-// qCTKDCMTKIndexerPrivate methods
+// ctkDICOMIndexerPrivate methods
 
 //------------------------------------------------------------------------------
-qCTKDCMTKIndexerPrivate::qCTKDCMTKIndexerPrivate()
+ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate()
 {
 }
 
 //------------------------------------------------------------------------------
-qCTKDCMTKIndexerPrivate::~qCTKDCMTKIndexerPrivate()
+ctkDICOMIndexerPrivate::~ctkDICOMIndexerPrivate()
 {
 }
 
 //------------------------------------------------------------------------------
-// qCTKDCMTKIndexer methods
+// ctkDICOMIndexer methods
 
 //------------------------------------------------------------------------------
-qCTKDCMTKIndexer::qCTKDCMTKIndexer()
+ctkDICOMIndexer::ctkDICOMIndexer()
 {
 }
 
 //------------------------------------------------------------------------------
-qCTKDCMTKIndexer::~qCTKDCMTKIndexer()
+ctkDICOMIndexer::~ctkDICOMIndexer()
 {
 }
 
 //------------------------------------------------------------------------------
-void qCTKDCMTKIndexer::addDirectory(QSqlDatabase database, const QString& directoryName,const QString& destinationDirectoryName)  
+void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directoryName,const QString& destinationDirectoryName)
 {
   QSqlDatabase db = database;
   const std::string src_directory(directoryName.toStdString());
@@ -380,7 +380,7 @@ void qCTKDCMTKIndexer::addDirectory(QSqlDatabase database, const QString& direct
 }
 
 //------------------------------------------------------------------------------
-void qCTKDCMTKIndexer::refreshDatabase(QSqlDatabase database, const QString& directoryName)
+void ctkDICOMIndexer::refreshDatabase(QSqlDatabase database, const QString& directoryName)
 {
   /// get all filenames from the database
   QSqlQuery allFilesQuery(database);

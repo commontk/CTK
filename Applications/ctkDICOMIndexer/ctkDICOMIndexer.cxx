@@ -4,9 +4,9 @@
 #include <QPushButton>
 #include <QTextStream>
 
-// CTKDICOM includes
-#include <qCTKDCMTKIndexer.h>
-#include <qCTKDCMTK.h>
+// ctkDICOM includes
+#include <ctkDICOMIndexer.h>
+#include <ctkDICOM.h>
 
 // STD includes
 #include <cstdlib>
@@ -16,9 +16,9 @@ int main(int argc, char** argv)
   QApplication app(argc, argv);
   QTextStream out(stdout);
 
-  qCTKDCMTKIndexer idx;
+  ctkDICOMIndexer idx;
 
-  qCTKDCMTK myCTK;
+  ctkDICOM myCTK;
   if ( myCTK.openDatabase( argv[1]) )
     {
     out << "open db success\n";

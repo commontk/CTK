@@ -1,73 +1,74 @@
 
-// qCTKDCMTK includes
-#include "qCTKDCMTKDICOMItemTreeModel.h"
+// ctkDICOMWidgets includes
+#include "ctkDICOMItemTreeModel.h"
 
 //----------------------------------------------------------------------------
-class qCTKDCMTKDICOMItemTreeModelPrivate: public qCTKPrivate<qCTKDCMTKDICOMItemTreeModel>
+class ctkDICOMItemTreeModelPrivate: public qCTKPrivate<ctkDICOMItemTreeModel>
 {
 public:
-  qCTKDCMTKDICOMItemTreeModelPrivate(){}
+  ctkDICOMItemTreeModelPrivate(){}
 };
 
 //----------------------------------------------------------------------------
-// qCTKDCMTKDICOMItemTreeModelPrivate methods
+// ctkDICOMItemTreeModelPrivate methods
 
 
 //----------------------------------------------------------------------------
-// qCTKDCMTKDICOMItemTreeModel methods
+// ctkDICOMItemTreeModel methods
 
-qCTKDCMTKDICOMItemTreeModel::qCTKDCMTKDICOMItemTreeModel(QObject* _parent):Superclass(_parent)
+//----------------------------------------------------------------------------
+ctkDICOMItemTreeModel::ctkDICOMItemTreeModel(QObject* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(qCTKDCMTKDICOMItemTreeModel);
-  QCTK_D(qCTKDCMTKDICOMItemTreeModel);
+  QCTK_INIT_PRIVATE(ctkDICOMItemTreeModel);
+  QCTK_D(ctkDICOMItemTreeModel);
 
 }
 
 //----------------------------------------------------------------------------
-qCTKDCMTKDICOMItemTreeModel::~qCTKDCMTKDICOMItemTreeModel()
+ctkDICOMItemTreeModel::~ctkDICOMItemTreeModel()
 {
 }
 
 //----------------------------------------------------------------------------
-QModelIndex qCTKDCMTKDICOMItemTreeModel::index(int row, int column,
+QModelIndex ctkDICOMItemTreeModel::index(int row, int column,
                             const QModelIndex &parent) const
 {
   return QModelIndex();
 }
 
 //----------------------------------------------------------------------------
-QModelIndex qCTKDCMTKDICOMItemTreeModel::parent(const QModelIndex &child) const
+QModelIndex ctkDICOMItemTreeModel::parent(const QModelIndex &child) const
 {
   return QModelIndex();
 }
 
 //----------------------------------------------------------------------------
-Qt::ItemFlags qCTKDCMTKDICOMItemTreeModel::flags(const QModelIndex &index) const
+Qt::ItemFlags ctkDICOMItemTreeModel::flags(const QModelIndex &index) const
 {
   return 0;
 }
 
 //----------------------------------------------------------------------------
-QVariant qCTKDCMTKDICOMItemTreeModel::data(const QModelIndex &index, int role) const
+QVariant ctkDICOMItemTreeModel::data(const QModelIndex &index, int role) const
 {
   return QVariant();
 }
 
 //----------------------------------------------------------------------------
-QVariant qCTKDCMTKDICOMItemTreeModel::headerData(int section, Qt::Orientation orientation,
+QVariant ctkDICOMItemTreeModel::headerData(int section, Qt::Orientation orientation,
                                                  int role) const
 {
   return QVariant();
 }
 
 //----------------------------------------------------------------------------
-int qCTKDCMTKDICOMItemTreeModel::rowCount(const QModelIndex &parent) const
+int ctkDICOMItemTreeModel::rowCount(const QModelIndex &parent) const
 {
   return -1;
 }
 
 //----------------------------------------------------------------------------
-int qCTKDCMTKDICOMItemTreeModel::columnCount(const QModelIndex &parent) const
+int ctkDICOMItemTreeModel::columnCount(const QModelIndex &parent) const
 {
   return -1;
 }

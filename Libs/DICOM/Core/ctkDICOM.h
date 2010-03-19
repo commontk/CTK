@@ -1,5 +1,5 @@
-#ifndef __qCTKDCMTK_h
-#define __qCTKDCMTK_h
+#ifndef __ctkDICOM_h
+#define __ctkDICOM_h
 
 // QT includes 
 #include <QObject>
@@ -10,14 +10,14 @@
 
 #include "CTKDICOMCoreExport.h"
 
-class qCTKDCMTKPrivate;
-class CTK_DICOM_CORE_EXPORT qCTKDCMTK : public QObject
+class ctkDICOMPrivate;
+class CTK_DICOM_CORE_EXPORT ctkDICOM : public QObject
 {
   Q_OBJECT
 public:
   typedef QObject Superclass;
-  explicit qCTKDCMTK(QObject* parent = 0);
-  virtual ~qCTKDCMTK();
+  explicit ctkDICOM(QObject* parent = 0);
+  virtual ~ctkDICOM();
   
   ///
   /// open the SQLite database in @param file. If the file does not
@@ -35,7 +35,7 @@ public:
   /// delete all data and reinitialize the database.
   bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
 private:
-  QCTK_DECLARE_PRIVATE(qCTKDCMTK);
+  QCTK_DECLARE_PRIVATE(ctkDICOM);
 };
 
 #endif

@@ -1,16 +1,20 @@
+
+// QT includes
 #include <QTextStream>
 #include <QApplication>
 
-#include "qCTKDCMTK.h"
+// ctkDICOMCore includes
+#include "ctkDICOM.h"
 
+// STD includes
 #include <iostream>
 #include <cstdlib>
 
-int qCTKDCMTKTest1(int argc, char * argv []) {
+int ctkDICOMTest1(int argc, char * argv []) {
   
   QApplication app(argc, argv);
   QTextStream out(stdout);
-  qCTKDCMTK myCTK;
+  ctkDICOM myCTK;
   if ( myCTK.openDatabase( argv[1]) )
     {
     out << "open db success\n";

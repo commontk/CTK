@@ -1,5 +1,5 @@
-#ifndef __qCTKDCMTKDICOMItemTreeModel_h
-#define __qCTKDCMTKDICOMItemTreeModel_h
+#ifndef __ctkDICOMItemTreeModel_h
+#define __ctkDICOMItemTreeModel_h
 
 // QT includes 
 #include <QAbstractItemModel>
@@ -10,14 +10,14 @@
 
 #include "CTKDICOMWidgetsExport.h"
 
-class qCTKDCMTKDICOMItemTreeModelPrivate;
+class ctkDICOMItemTreeModelPrivate;
 
-class CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKDICOMItemTreeModel : public QAbstractItemModel
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMItemTreeModel : public QAbstractItemModel
 {
 public:
   typedef QAbstractItemModel Superclass;
-  explicit qCTKDCMTKDICOMItemTreeModel(QObject* parent=0);
-  virtual ~qCTKDCMTKDICOMItemTreeModel();
+  explicit ctkDICOMItemTreeModel(QObject* parent=0);
+  virtual ~ctkDICOMItemTreeModel();
 
   virtual QModelIndex index(int row, int column,
                             const QModelIndex &parent = QModelIndex()) const;
@@ -35,7 +35,7 @@ public:
   virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
 private:
-  QCTK_DECLARE_PRIVATE(qCTKDCMTKDICOMItemTreeModel);
+  QCTK_DECLARE_PRIVATE(ctkDICOMItemTreeModel);
 };
 
 #endif

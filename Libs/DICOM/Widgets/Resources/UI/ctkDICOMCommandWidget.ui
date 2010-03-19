@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qCTKDCMTKCommandWidget</class>
- <widget class="QWidget" name="qCTKDCMTKCommandWidget">
+ <class>ctkDICOMCommandWidget</class>
+ <widget class="QWidget" name="ctkDICOMCommandWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

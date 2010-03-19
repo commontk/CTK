@@ -1,5 +1,5 @@
-#ifndef __qCTKDCMTKIndexer_h
-#define __qCTKDCMTKIndexer_h
+#ifndef __ctkDICOMIndexer_h
+#define __ctkDICOMIndexer_h
 
 // QT includes 
 #include <QSqlDatabase>
@@ -9,18 +9,18 @@
 
 #include "CTKDICOMCoreExport.h"
 
-class qCTKDCMTKIndexerPrivate;
-class CTK_DICOM_CORE_EXPORT qCTKDCMTKIndexer
+class ctkDICOMIndexerPrivate;
+class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer
 {
 public:
-  explicit qCTKDCMTKIndexer();
-  virtual ~qCTKDCMTKIndexer();
+  explicit ctkDICOMIndexer();
+  virtual ~ctkDICOMIndexer();
   /// add directory to database and optionally copy files to destinationDirectory
   void addDirectory(QSqlDatabase database, const QString& directoryName, const QString& destinationDirectoryName = "");
   void refreshDatabase(QSqlDatabase database, const QString& directoryName);
 
 private:
-  QCTK_DECLARE_PRIVATE(qCTKDCMTKIndexer);
+  QCTK_DECLARE_PRIVATE(ctkDICOMIndexer);
 };
 
 #endif
