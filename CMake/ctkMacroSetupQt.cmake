@@ -1,9 +1,7 @@
-#
-#  Check if VTK was configured with QT, 
-#  if so, use it, 
-#  otherwise, complain. 
-#
 
+#
+#
+#
 
 MACRO(ctkMacroSetupQt)
 
