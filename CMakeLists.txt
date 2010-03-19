@@ -55,6 +55,14 @@ INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroGetTargetLibraries.cmake)
 
 #-----------------------------------------------------------------------------
+# Patch program
+#
+FIND_PROGRAM(CTK_PATCH_EXECUTABLE patch
+  "C:/Program Files/GnuWin32/bin"
+  "C:/Program Files (x86)/GnuWin32/bin")
+MARK_AS_ADVANCED(CTK_PATCH_EXECUTABLE)
+
+#-----------------------------------------------------------------------------
 # Testing
 #
 OPTION(BUILD_TESTING "Test the project" ON)

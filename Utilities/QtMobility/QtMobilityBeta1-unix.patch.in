@@ -1,0 +1,28 @@
+diff -crB ../qt-mobility-src-1.0.0-beta1/common.pri common.pri
+*** ./qt-mobility-src-1.0.0-beta1/common.pri	2010-02-12 03:54:11.000000000 -0500
+--- common.pri	2010-03-11 16:04:39.000000000 -0500
+***************
+*** 104,109 ****
+--- 104,111 ----
+      QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
+  }
+  
++ contains(TEMPLATE,.*lib):DEFINES += QT_SHARED
++ 
+  maemo6 {
+      DEFINES+= Q_WS_MAEMO_6
+  }
+diff -crB ../qt-mobility-src-1.0.0-beta1/configure configure
+*** ./qt-mobility-src-1.0.0-beta1/configure	2010-02-12 03:54:12.000000000 -0500
+--- configure	2010-03-18 13:19:38.000000000 -0400
+***************
+*** 40,45 ****
+--- 40,47 ----
+  ##
+  #############################################################################
+  
++ PATH=@QT_BINARY_DIR@:$PATH
++ 
+  # the current directory (shadow build dir)
+  shadowpath=`/bin/pwd`
+  # the name of this script
