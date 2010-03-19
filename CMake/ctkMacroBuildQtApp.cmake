@@ -84,9 +84,8 @@ MACRO(CtkMacroBuildQtApp)
       LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Runtime
       ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
   ENDIF()
-  
+
   SET(my_libs
-    ${CTK_BASE_LIBRARIES}
     ${MY_TARGET_LIBRARIES}
     )
   TARGET_LINK_LIBRARIES(${proj_name} ${my_libs})

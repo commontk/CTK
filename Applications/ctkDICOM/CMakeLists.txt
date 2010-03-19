@@ -21,9 +21,9 @@ SET(KIT_UI_FORMS
 SET(KIT_resources
 )
 
-# Additional target libraries - Note that CTK_BASE_LIBRARIES is already included
-SET(KIT_target_libraries
-  )
+# Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+# The following macro will read the target libraries from the file 'target_libraries.cmake'
+ctkMacroGetTargetLibraries(KIT_target_libraries)
 
 # Additional directories to include - Not that CTK_INCLUDE_LIBRARIES is already included
 SET(KIT_include_directories
