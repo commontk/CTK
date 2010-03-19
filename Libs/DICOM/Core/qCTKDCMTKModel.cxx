@@ -12,6 +12,7 @@
 
 struct Node;
 
+//------------------------------------------------------------------------------
 class qCTKDCMTKModelPrivate:public qCTKPrivate<qCTKDCMTKModel>
 {
 public:
@@ -40,6 +41,7 @@ public:
   QString      Sort;
 };
 
+//------------------------------------------------------------------------------
 struct Node
 {
   ~Node()
@@ -62,17 +64,20 @@ struct Node
   bool      Fetching;
 };
 
+//------------------------------------------------------------------------------
 qCTKDCMTKModelPrivate::qCTKDCMTKModelPrivate()
 {
   this->RootNode     = 0;
 }
 
+//------------------------------------------------------------------------------
 qCTKDCMTKModelPrivate::~qCTKDCMTKModelPrivate()
 {
   delete this->RootNode;
   this->RootNode = 0;
 }
 
+//------------------------------------------------------------------------------
 void qCTKDCMTKModelPrivate::init()
 {
   QCTK_P(qCTKDCMTKModel);
@@ -80,11 +85,13 @@ void qCTKDCMTKModelPrivate::init()
                   << "Number" << "Institution" << "Referrer" << "Performer";
 }
 
+//------------------------------------------------------------------------------
 Node* qCTKDCMTKModelPrivate::nodeFromIndex(const QModelIndex& index)const
 {
   return index.isValid() ? reinterpret_cast<Node*>(index.internalPointer()) : this->RootNode;
 }
 
+//------------------------------------------------------------------------------
 Node* qCTKDCMTKModelPrivate::createNode(int row, int column, const QModelIndex& parent)const
 {
   QCTK_P(const qCTKDCMTKModel);
@@ -120,6 +127,7 @@ Node* qCTKDCMTKModelPrivate::createNode(int row, int column, const QModelIndex& 
   return node;
 }
 
+//------------------------------------------------------------------------------
 QVariant qCTKDCMTKModelPrivate::value(const QModelIndex& parent, int row, int column) const
 {
   Node* node = this->nodeFromIndex(parent);
@@ -136,6 +144,7 @@ QVariant qCTKDCMTKModelPrivate::value(const QModelIndex& parent, int row, int co
   return node->Query.value(column);
 }
 
+//------------------------------------------------------------------------------
 QString qCTKDCMTKModelPrivate::generateQuery(const QString& fields, const QString& table, const QString& conditions)const
 {
   QString res = QString("SELECT ") + fields + QString(" FROM ") + table;
@@ -150,6 +159,7 @@ QString qCTKDCMTKModelPrivate::generateQuery(const QString& fields, const QStrin
   return res;
 }
 
+//------------------------------------------------------------------------------
 void qCTKDCMTKModelPrivate::updateQueries(Node* node)const
 {
   // are you kidding me, it should be virtualized here :-)
@@ -185,6 +195,7 @@ void qCTKDCMTKModelPrivate::updateQueries(Node* node)const
     }
 }
 
+//------------------------------------------------------------------------------
 void qCTKDCMTKModelPrivate::fetch(const QModelIndex& index, int limit)
 {
   QCTK_P(qCTKDCMTKModel);
@@ -234,16 +245,19 @@ void qCTKDCMTKModelPrivate::fetch(const QModelIndex& index, int limit)
     }
 }
 
+//------------------------------------------------------------------------------
 qCTKDCMTKModel::qCTKDCMTKModel(QObject* parent)
 {
   QCTK_INIT_PRIVATE(qCTKDCMTKModel);
   qctk_d()->init();
 }
 
+//------------------------------------------------------------------------------
 qCTKDCMTKModel::~qCTKDCMTKModel()
 {
 }
 
+//------------------------------------------------------------------------------
 bool qCTKDCMTKModel::canFetchMore ( const QModelIndex & parent ) const
 {
   QCTK_D(const qCTKDCMTKModel);
@@ -251,6 +265,7 @@ bool qCTKDCMTKModel::canFetchMore ( const QModelIndex & parent ) const
   return !node->End;
 }
 
+//------------------------------------------------------------------------------
 int qCTKDCMTKModel::columnCount ( const QModelIndex & _parent ) const
 {
   QCTK_D(const qCTKDCMTKModel);
@@ -258,6 +273,7 @@ int qCTKDCMTKModel::columnCount ( const QModelIndex & _parent ) const
   return d->Headers.size();
 }
 
+//------------------------------------------------------------------------------
 QVariant qCTKDCMTKModel::data ( const QModelIndex & index, int role ) const
 {
   QCTK_D(const qCTKDCMTKModel);
@@ -288,6 +304,7 @@ QVariant qCTKDCMTKModel::data ( const QModelIndex & index, int role ) const
   //return node->Query.value(field);
 }
 
+//------------------------------------------------------------------------------
 void qCTKDCMTKModel::fetchMore ( const QModelIndex & parent )
 {
   QCTK_D(qCTKDCMTKModel);
@@ -295,11 +312,13 @@ void qCTKDCMTKModel::fetchMore ( const QModelIndex & parent )
   d->fetch(parent, qMax(node->RowCount, 0) + 256);
 }
 
+//------------------------------------------------------------------------------
 Qt::ItemFlags qCTKDCMTKModel::flags ( const QModelIndex & index ) const
 {
   return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
+//------------------------------------------------------------------------------
 bool qCTKDCMTKModel::hasChildren ( const QModelIndex & parent ) const
 {
   QCTK_D(const qCTKDCMTKModel);
@@ -307,6 +326,7 @@ bool qCTKDCMTKModel::hasChildren ( const QModelIndex & parent ) const
   return node->RowCount > 0 || (!node->End && node->Query.seek(0));
 }
 
+//------------------------------------------------------------------------------
 QVariant qCTKDCMTKModel::headerData(int section, Qt::Orientation orientation, int role)const
 {
   QCTK_D(const qCTKDCMTKModel);
@@ -323,6 +343,7 @@ QVariant qCTKDCMTKModel::headerData(int section, Qt::Orientation orientation, in
   return d->Headers[section];
 }
 
+//------------------------------------------------------------------------------
 QModelIndex qCTKDCMTKModel::index ( int row, int column, const QModelIndex & parent ) const
 {
   QCTK_D(const qCTKDCMTKModel);
@@ -344,6 +365,7 @@ QModelIndex qCTKDCMTKModel::index ( int row, int column, const QModelIndex & par
   return this->createIndex(row, column, node);
 }
 
+//------------------------------------------------------------------------------
 QModelIndex qCTKDCMTKModel::parent ( const QModelIndex & index ) const
 {
   QCTK_D(const qCTKDCMTKModel);
@@ -355,6 +377,7 @@ QModelIndex qCTKDCMTKModel::parent ( const QModelIndex & index ) const
   return this->createIndex(node->Parent->Row, node->Parent->Column, node->Parent);
 }
 
+//------------------------------------------------------------------------------
 int qCTKDCMTKModel::rowCount ( const QModelIndex & parent ) const
 {
   QCTK_D(const qCTKDCMTKModel);
@@ -366,6 +389,7 @@ int qCTKDCMTKModel::rowCount ( const QModelIndex & parent ) const
   return node->RowCount;
 }
 
+//------------------------------------------------------------------------------
 void qCTKDCMTKModel::setDatabase(const QSqlDatabase &db)
 {
   QCTK_D(qCTKDCMTKModel);
@@ -402,6 +426,7 @@ void qCTKDCMTKModel::setDatabase(const QSqlDatabase &db)
   d->fetch(QModelIndex(), 256);
 }
 
+//------------------------------------------------------------------------------
 void qCTKDCMTKModel::sort(int column, Qt::SortOrder order)
 {
   QCTK_D(qCTKDCMTKModel);
@@ -413,6 +438,7 @@ void qCTKDCMTKModel::sort(int column, Qt::SortOrder order)
   emit layoutChanged();
 }
 
+//------------------------------------------------------------------------------
 bool qCTKDCMTKModel::setHeaderData ( int section, Qt::Orientation orientation, const QVariant & value, int role)
 {
   QCTK_D(qCTKDCMTKModel);

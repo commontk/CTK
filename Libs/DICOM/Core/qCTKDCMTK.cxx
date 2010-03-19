@@ -1,7 +1,4 @@
 
-// qCTKDCMTK includes
-#include "qCTKDCMTK.h"
-
 // Qt includes
 #include <QDebug>
 #include <QSqlDatabase>
@@ -10,6 +7,10 @@
 #include <QFile>
 #include <QStringList>
 
+// qCTKDCMTK includes
+#include "qCTKDCMTK.h"
+
+// STD includes
 #include <iostream>
 
 //----------------------------------------------------------------------------
@@ -26,6 +27,8 @@ public:
 
 //----------------------------------------------------------------------------
 // qCTKDCMTKPrivate methods
+
+//------------------------------------------------------------------------------
 qCTKDCMTKPrivate::qCTKDCMTKPrivate() 
 {
 }
@@ -33,6 +36,7 @@ qCTKDCMTKPrivate::qCTKDCMTKPrivate()
 //----------------------------------------------------------------------------
 // qCTKDCMTKWidget methods
 
+//------------------------------------------------------------------------------
 qCTKDCMTK::qCTKDCMTK(QObject* _parent): Superclass(_parent)
 {
   QCTK_INIT_PRIVATE(qCTKDCMTK);
@@ -60,15 +64,20 @@ bool qCTKDCMTK::openDatabase(const QString& databaseFileName)
     }
   return true;
 }
+
+//------------------------------------------------------------------------------
 const QString& qCTKDCMTK::GetLastError() const {
   QCTK_D(const qCTKDCMTK);
   return d->LastError; 
 }
+
+//------------------------------------------------------------------------------
 const QSqlDatabase& qCTKDCMTK::database() const {
   QCTK_D(const qCTKDCMTK);
   return d->Database;
 }
 
+//------------------------------------------------------------------------------
 bool qCTKDCMTKPrivate::executeScript(const QString& script) {
   QFile scriptFile(script);
   scriptFile.open(QIODevice::ReadOnly);
@@ -102,12 +111,14 @@ bool qCTKDCMTKPrivate::executeScript(const QString& script) {
   return true;
 }
 
+//------------------------------------------------------------------------------
 bool qCTKDCMTK::initializeDatabase(const char* sqlFileName) 
 {
   QCTK_D(qCTKDCMTK);
   return d->executeScript(sqlFileName);
 }
-  
+
+//------------------------------------------------------------------------------
 void qCTKDCMTK::closeDatabase()
 {
   QCTK_D(qCTKDCMTK);

@@ -1,19 +1,4 @@
-#include "qCTKDCMTKIndexer.h"
-
-///
-/// DCMTK includes
-#ifndef WIN32
-  #define HAVE_CONFIG_H 
-#endif
-#include "dcmtk/dcmdata/dcfilefo.h"
-#include "dcmtk/dcmdata/dcdeftag.h"
-#include "dcmtk/dcmdata/dcdatset.h"
-#include "dcmtk/ofstd/ofcond.h"
-#include "dcmtk/ofstd/ofstring.h"
-
-#include "dcmtk/ofstd/ofstd.h"        /* for class OFStandard */
-#include "dcmtk/dcmdata/dcddirif.h"     /* for class DicomDirInterface */
-
+// Qt includes
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QVariant>
@@ -25,9 +10,26 @@
 #include <QFileInfo>
 #include <QDebug>
 
+// CTKDCMTK includes
+#include "qCTKDCMTKIndexer.h"
+
+// DCMTK includes
+#ifndef WIN32
+  #define HAVE_CONFIG_H 
+#endif
+#include <dcmtk/dcmdata/dcfilefo.h>
+#include <dcmtk/dcmdata/dcfilefo.h>
+#include <dcmtk/dcmdata/dcdeftag.h>
+#include <dcmtk/dcmdata/dcdatset.h>
+#include <dcmtk/ofstd/ofcond.h>
+#include <dcmtk/ofstd/ofstring.h>
+#include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
+#include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
+
 #define MITK_ERROR std::cout
 #define MITK_INFO std::cout
 
+//------------------------------------------------------------------------------
 class qCTKDCMTKIndexerPrivate: public qCTKPrivate<qCTKDCMTKIndexer>
 {
 public:
@@ -36,22 +38,33 @@ public:
 
 };
 
+//------------------------------------------------------------------------------
+// qCTKDCMTKIndexerPrivate methods
+
+//------------------------------------------------------------------------------
 qCTKDCMTKIndexerPrivate::qCTKDCMTKIndexerPrivate()
 {
 }
 
+//------------------------------------------------------------------------------
 qCTKDCMTKIndexerPrivate::~qCTKDCMTKIndexerPrivate()
 {
 }
 
+//------------------------------------------------------------------------------
+// qCTKDCMTKIndexer methods
+
+//------------------------------------------------------------------------------
 qCTKDCMTKIndexer::qCTKDCMTKIndexer()
 {
 }
 
+//------------------------------------------------------------------------------
 qCTKDCMTKIndexer::~qCTKDCMTKIndexer()
 {
 }
 
+//------------------------------------------------------------------------------
 void qCTKDCMTKIndexer::addDirectory(QSqlDatabase database, const QString& directoryName,const QString& destinationDirectoryName)  
 {
   QSqlDatabase db = database;
@@ -366,6 +379,7 @@ void qCTKDCMTKIndexer::addDirectory(QSqlDatabase database, const QString& direct
 
 }
 
+//------------------------------------------------------------------------------
 void qCTKDCMTKIndexer::refreshDatabase(QSqlDatabase database, const QString& directoryName)
 {
   /// get all filenames from the database

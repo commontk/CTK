@@ -3,12 +3,13 @@
 #include <QApplication>
 #include <QPushButton>
 #include <QTextStream>
-// STD includes
-//#include <cstdlib>
 
+// CTKDICOM includes
 #include <qCTKDCMTKIndexer.h>
 #include <qCTKDCMTK.h>
 
+// STD includes
+#include <cstdlib>
 
 int main(int argc, char** argv)
 {
