@@ -18,6 +18,14 @@ IF(WIN32)
   SET(CTKDICOMCore_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
 ENDIF(WIN32)
 
+MACRO( SIMPLE_TEST  TESTNAME )
+  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
+ENDMACRO( SIMPLE_TEST  )
+
+#
+# Add Tests
+#
+
 ADD_TEST( ctkDICOMModelTest1 ${CTKDICOMCore_TESTS}
           ctkDICOMModelTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
                              ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/dicom-sample.sql)
