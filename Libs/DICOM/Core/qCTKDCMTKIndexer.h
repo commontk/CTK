@@ -10,7 +10,7 @@
 #include "CTKDICOMCoreExport.h"
 
 class qCTKDCMTKIndexerPrivate;
-class Q_CTK_DICOM_CORE_EXPORT qCTKDCMTKIndexer  
+class CTK_DICOM_CORE_EXPORT qCTKDCMTKIndexer
 {
 public:
   explicit qCTKDCMTKIndexer();

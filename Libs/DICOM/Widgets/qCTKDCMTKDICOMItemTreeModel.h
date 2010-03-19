@@ -12,7 +12,7 @@
 
 class qCTKDCMTKDICOMItemTreeModelPrivate;
 
-class Q_CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKDICOMItemTreeModel : public QAbstractItemModel
+class CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKDICOMItemTreeModel : public QAbstractItemModel
 {
 public:
   typedef QAbstractItemModel Superclass;

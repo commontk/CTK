@@ -11,7 +11,7 @@
 #include "CTKDICOMCoreExport.h"
 
 class qCTKDCMTKModelPrivate;
-class Q_CTK_DICOM_CORE_EXPORT qCTKDCMTKModel : public QAbstractItemModel
+class CTK_DICOM_CORE_EXPORT qCTKDCMTKModel : public QAbstractItemModel
 {
   Q_OBJECT
 public:

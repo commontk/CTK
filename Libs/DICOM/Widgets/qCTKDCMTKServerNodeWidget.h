@@ -11,7 +11,7 @@
 
 class qCTKDCMTKServerNodeWidgetPrivate; 
 
-class Q_CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKServerNodeWidget : public QWidget
+class CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKServerNodeWidget : public QWidget
 {
 public:
   typedef QWidget Superclass;

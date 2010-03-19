@@ -4,7 +4,7 @@ PROJECT(CTKDICOMWidgets)
 # See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
 
-SET(KIT_export_directive "Q_CTK_DICOM_WIDGETS_EXPORT")
+SET(KIT_export_directive "CTK_DICOM_WIDGETS_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
@@ -47,7 +47,7 @@ SET(KIT_resources
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
-  
+
 ctkMacroBuildQtLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}

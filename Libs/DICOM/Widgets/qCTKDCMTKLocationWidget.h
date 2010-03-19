@@ -11,7 +11,7 @@
 
 class qCTKDCMTKLocationWidgetPrivate; 
 
-class Q_CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKLocationWidget : public QWidget
+class CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKLocationWidget : public QWidget
 {
 public:
   typedef QWidget Superclass;

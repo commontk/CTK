@@ -11,7 +11,7 @@
 
 class qCTKDCMTKCommandWidgetPrivate; 
 
-class Q_CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKCommandWidget : public QWidget
+class CTK_DICOM_WIDGETS_EXPORT qCTKDCMTKCommandWidget : public QWidget
 {
 public:
   typedef QWidget Superclass;
