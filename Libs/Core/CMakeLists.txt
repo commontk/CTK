@@ -26,7 +26,7 @@ ENDIF()
 # See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
 
-SET(KIT_export_directive "Q_CTK_CORE_EXPORT")
+SET(KIT_export_directive "CTK_CORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories

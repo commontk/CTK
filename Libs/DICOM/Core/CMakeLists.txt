@@ -13,7 +13,7 @@ ENDIF()
 # See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
 
-SET(KIT_export_directive "Q_CTK_DICOM_CORE_EXPORT")
+SET(KIT_export_directive "CTK_DICOM_CORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
@@ -22,18 +22,18 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  qCTKDCMTK.cxx
-  qCTKDCMTK.h
-  #qCTKDCMTKIndexer.cxx
-  #qCTKDCMTKIndexer.h
-  qCTKDCMTKModel.cxx
-  qCTKDCMTKModel.h
+  ctkDICOM.cxx
+  ctkDICOM.h
+  ctkDICOMIndexer.cxx
+  ctkDICOMIndexer.h
+  ctkDICOMModel.cxx
+  ctkDICOMModel.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  qCTKDCMTK.h
-  qCTKDCMTKModel.h
+  ctkDICOM.h
+  ctkDICOMModel.h
   )
 
 # UI files

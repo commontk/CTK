@@ -3,21 +3,31 @@
 #include <QApplication>
 #include <QPushButton>
 #include <QTextStream>
+
+// ctkDICOM includes
+#include <ctkDICOMIndexer.h>
+#include <ctkDICOM.h>
+
 // STD includes
-//#include <cstdlib>
-
-#include <qCTKDCMTKIndexer.h>
-#include <qCTKDCMTK.h>
-
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
 
 int main(int argc, char** argv)
 {
+
+  if (argc < 2)
+    {
+    std::cerr << "Usage: ctkDICOMIndexer <database.db> <sourceDir> [destDir]\n";
+    return EXIT_FAILURE;
+    }
+
   QApplication app(argc, argv);
   QTextStream out(stdout);
 
-  qCTKDCMTKIndexer idx;
+  ctkDICOMIndexer idx;
 
-  qCTKDCMTK myCTK;
+  ctkDICOM myCTK;
   if ( myCTK.openDatabase( argv[1]) )
     {
     out << "open db success\n";
@@ -41,6 +51,7 @@ int main(int argc, char** argv)
     { 
     out << "ERROR: " ;
     out << myCTK.GetLastError();
+    out << "\n" ;
     }
   return EXIT_SUCCESS;
 }

@@ -2,14 +2,14 @@
 // QT includes
 #include <QApplication>
 
-// ctk includes
-#include "qCTKDCMTKQueryRetrieveWidget.h"
+// ctkDICOM includes
+#include <ctkDICOMQueryRetrieveWidget.h>
 
 int main(int argc, char** argv)
 {
   QApplication app(argc, argv);
   
-  qCTKDCMTKQueryRetrieveWidget queryRetrieve;
+  ctkDICOMQueryRetrieveWidget queryRetrieve;
   queryRetrieve.show();
   return app.exec();
 }

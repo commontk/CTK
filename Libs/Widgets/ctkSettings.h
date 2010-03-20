@@ -58,7 +58,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class QDialog;
 class QMainWindow;
 
-class Q_CTK_WIDGETS_EXPORT ctkSettings : public QSettings
+class CTK_WIDGETS_EXPORT ctkSettings : public QSettings
 {
   Q_OBJECT
 

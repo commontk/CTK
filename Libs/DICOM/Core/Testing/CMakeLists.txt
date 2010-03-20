@@ -1,8 +1,8 @@
 SET(KIT CTKDICOMCore)
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
-  qCTKDCMTKModelTest1.cxx
-  qCTKDCMTKTest1.cxx
+  ctkDICOMModelTest1.cxx
+  ctkDICOMTest1.cxx
   )
 
 SET (TestsToRun ${Tests})
@@ -18,5 +18,18 @@ IF(WIN32)
   SET(CTKDICOMCore_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
 ENDIF(WIN32)
 
-ADD_TEST( qCTKDCMTKModelTest1 ${CTKDICOMCore_TESTS} qCTKDCMTKModelTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/dicom-sample.sql)
-ADD_TEST( qCTKDCMTKTest1 ${CTKDICOMCore_TESTS} qCTKDCMTKTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/dicom-sample.sql)
+MACRO( SIMPLE_TEST  TESTNAME )
+  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
+ENDMACRO( SIMPLE_TEST  )
+
+#
+# Add Tests
+#
+
+ADD_TEST( ctkDICOMModelTest1 ${CTKDICOMCore_TESTS}
+          ctkDICOMModelTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+                             ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/dicom-sample.sql)
+
+ADD_TEST( ctkDICOMTest1 ${CTKDICOMCore_TESTS}
+          ctkDICOMTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+                        ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/dicom-sample.sql)

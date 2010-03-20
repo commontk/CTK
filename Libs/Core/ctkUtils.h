@@ -23,7 +23,7 @@
 
 #include "CTKCoreExport.h"
 
-class Q_CTK_CORE_EXPORT ctkUtils
+class CTK_CORE_EXPORT ctkUtils
 {
   
 public:

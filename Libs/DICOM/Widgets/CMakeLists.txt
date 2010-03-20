@@ -4,7 +4,7 @@ PROJECT(CTKDICOMWidgets)
 # See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
 
-SET(KIT_export_directive "Q_CTK_DICOM_WIDGETS_EXPORT")
+SET(KIT_export_directive "CTK_DICOM_WIDGETS_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
@@ -12,18 +12,18 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  qCTKDCMTKListenerWidget.cxx
-  qCTKDCMTKListenerWidget.h
-  qCTKDCMTKLocationWidget.cxx
-  qCTKDCMTKLocationWidget.h
-  qCTKDCMTKQueryRetrieveWidget.cxx
-  qCTKDCMTKQueryRetrieveWidget.h
-  qCTKDCMTKServerNodeWidget.cxx
-  qCTKDCMTKServerNodeWidget.h
-  qCTKDCMTKQueryWidget.cxx
-  qCTKDCMTKQueryWidget.h
-  qCTKDCMTKCommandWidget.cxx
-  qCTKDCMTKCommandWidget.h
+  ctkDICOMListenerWidget.cxx
+  ctkDICOMListenerWidget.h
+  ctkDICOMLocationWidget.cxx
+  ctkDICOMLocationWidget.h
+  ctkDICOMQueryRetrieveWidget.cxx
+  ctkDICOMQueryRetrieveWidget.h
+  ctkDICOMServerNodeWidget.cxx
+  ctkDICOMServerNodeWidget.h
+  ctkDICOMQueryWidget.cxx
+  ctkDICOMQueryWidget.h
+  ctkDICOMCommandWidget.cxx
+  ctkDICOMCommandWidget.h
   )
 
 # Headers that should run through moc
@@ -32,12 +32,12 @@ SET(KIT_MOC_SRCS
 
 # UI files - includes new widgets
 SET(KIT_UI_FORMS
-  Resources/UI/qCTKDCMTKLocationWidget.ui
-  Resources/UI/qCTKDCMTKListenerWidget.ui
-  Resources/UI/qCTKDCMTKQueryRetrieveWidget.ui
-  Resources/UI/qCTKDCMTKServerNodeWidget.ui
-  Resources/UI/qCTKDCMTKQueryWidget.ui
-  Resources/UI/qCTKDCMTKCommandWidget.ui
+  Resources/UI/ctkDICOMLocationWidget.ui
+  Resources/UI/ctkDICOMListenerWidget.ui
+  Resources/UI/ctkDICOMQueryRetrieveWidget.ui
+  Resources/UI/ctkDICOMServerNodeWidget.ui
+  Resources/UI/ctkDICOMQueryWidget.ui
+  Resources/UI/ctkDICOMCommandWidget.ui
 )
 
 # Resources
@@ -47,7 +47,7 @@ SET(KIT_resources
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
-  
+
 ctkMacroBuildQtLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}

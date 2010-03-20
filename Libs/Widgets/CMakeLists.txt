@@ -4,7 +4,7 @@ PROJECT(CTKWidgets)
 # See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
 
-SET(KIT_export_directive "Q_CTK_WIDGETS_EXPORT")
+SET(KIT_export_directive "CTK_WIDGETS_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories

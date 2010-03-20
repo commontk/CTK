@@ -1,6 +1,0 @@
-
-
-ADD_SUBDIRECTORY(Core)
-# ADD_SUBDIRECTORY(Widgets)
-ADD_SUBDIRECTORY(Applications)
-
