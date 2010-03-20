@@ -10,9 +10,18 @@
 
 // STD includes
 #include <cstdlib>
+#include <iostream>
+#include <fstream>
 
 int main(int argc, char** argv)
 {
+
+  if (argc < 2)
+    {
+    std::cerr << "Usage: ctkDICOMIndexer <database.db> <sourceDir> [destDir]\n";
+    return EXIT_FAILURE;
+    }
+
   QApplication app(argc, argv);
   QTextStream out(stdout);
 
@@ -42,6 +51,7 @@ int main(int argc, char** argv)
     { 
     out << "ERROR: " ;
     out << myCTK.GetLastError();
+    out << "\n" ;
     }
   return EXIT_SUCCESS;
 }
