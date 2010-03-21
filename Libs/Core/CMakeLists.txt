@@ -35,12 +35,15 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
+  ctkModelTester.cxx
+  ctkModelTester.h
   ctkUtils.cxx
   ctkUtils.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkModelTester.h
   )
 
 # UI files
