@@ -9,6 +9,7 @@
 // ctkDICOMCore includes
 #include "ctkDICOM.h"
 #include "ctkDICOMModel.h"
+#include "ctkModelTester.h"
 
 // STD includes
 #include <iostream>
@@ -22,15 +23,24 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   
-  if (argc <= 1)
+  if (argc <= 2)
     {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
     return EXIT_FAILURE;
     }
   
   ctkDICOM myCTK;
-  myCTK.openDatabase( argv[1] );
-  myCTK.initializeDatabase(argv[2]);
+  if (!myCTK.openDatabase( argv[1] ))
+    {
+    std::cerr << "Error when opening the data base file: " << argv[1] 
+              << " error: " << myCTK.GetLastError().toStdString();
+    return EXIT_FAILURE;
+    }
+  if (!myCTK.initializeDatabase(argv[2]))
+    {
+    std::cerr << "Error when initializing the data base: " << argv[2] 
+              << " error: " << myCTK.GetLastError().toStdString();
+    }
     /*
   QSqlQuery toto("SELECT PatientsName as 'Name tt' FROM Patients ORDER BY \"Name tt\" ASC", myCTK.database());
   qDebug() << "toto: " << myCTK.GetLastError() ;
@@ -45,7 +55,16 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   qDebug() << "tutu: " << tutu.seek(0) << myCTK.GetLastError();
   */
 
+  ctkModelTester tester(0); 
+  tester.setNestedInserts(true);
+  tester.setThrowOnError(false);
   ctkDICOMModel model(0);
+  tester.setModel(&model);
+
+  model.setDatabase(myCTK.database());
+  
+  model.setDatabase(QSqlDatabase());
+ 
   model.setDatabase(myCTK.database());
 
   QTreeView viewer(0);
@@ -56,6 +75,6 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   qDebug() << model.rowCount() << model.columnCount();
   qDebug() << model.index(0,0);
   viewer.show();
-  //return app.exec();
+  return app.exec();
   return EXIT_SUCCESS;
 }
