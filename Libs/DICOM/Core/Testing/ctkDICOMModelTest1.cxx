@@ -16,7 +16,7 @@
 
 
 /* Test from build directory:
- ./CTK-build/bin/CTKDICOMCoreCxxTests ctkDICOMModelTest1 ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
+ ./CTK-build/bin/CTKDICOMCoreCxxTests ctkDICOMModelTest1 test.db ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
 */
 
 int ctkDICOMModelTest1( int argc, char * argv [] )
@@ -26,6 +26,7 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   if (argc <= 2)
     {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
+    std::cerr << "Usage: qctkDICOMModelTest1 <scratch.db> <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
     }
   
