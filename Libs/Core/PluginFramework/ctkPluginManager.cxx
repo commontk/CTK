@@ -7,9 +7,11 @@
 
 #include "ctkPluginManager.h"
 
+#include <QServiceManager>
 #include <QDirIterator>
 #include <QDebug>
 #include <QLibrary>
+#include <QApplication>
 
 namespace ctk {
 
@@ -18,6 +20,7 @@ class PluginManagerPrivate
 public:
 
   QList<QString> pluginPaths;
+  QServiceManager serviceManager;
 };
 
 PluginManager::PluginManager()
@@ -32,6 +35,12 @@ PluginManager::~PluginManager()
   delete d;
 }
 
+QServiceManager* PluginManager::serviceManager()
+{
+  Q_D(PluginManager);
+  return &(d->serviceManager);
+}
+
 void PluginManager::addSearchPath(const QString & searchPath)
 {
   Q_D(PluginManager);
@@ -42,6 +51,10 @@ void PluginManager::startAllPlugins()
 {
   Q_D(PluginManager);
   QDirIterator it(d->pluginPaths.front(), QDir::Files);
+  if (it.hasNext())
+  {
+    qApp->addLibraryPath(d->pluginPaths.front());
+  }
   while (it.hasNext()) {
        QString libName(it.next());
        QLibrary lib(libName);
@@ -53,18 +66,20 @@ void PluginManager::startAllPlugins()
        }
        qDebug() << libBaseName;
        lib.load();
-       qDebug() << "lib loaded: " << lib.isLoaded();
-       QString xyz = QString(":/") + libBaseName + "/servicedescriptor.xml";
-       //QString xyz = ":/servicedescriptor.xml";
-       qDebug() << "resource string: " << xyz;
-       QFile serviceDescriptor(xyz);
-       qDebug() << "file exists: " << serviceDescriptor.exists();
-       qDebug() << "open returns:" << serviceDescriptor.open(QIODevice::ReadOnly);
-       qDebug() << "file open: " << serviceDescriptor.isOpen();
-       qDebug() << "file is readable: " << serviceDescriptor.isReadable();
-       QByteArray serviceBA = serviceDescriptor.readAll();
-       qDebug() << serviceBA;
-       lib.unload();
+       if (lib.isLoaded())
+       {
+         QString xyz = QString(":/") + libBaseName + "/servicedescriptor.xml";
+         qDebug() << "resource string: " << xyz;
+         QFile serviceDescriptor(xyz);
+         //qDebug() << "file exists: " << serviceDescriptor.exists();
+         //qDebug() << "open returns:" << serviceDescriptor.open(QIODevice::ReadOnly);
+         //qDebug() << "file open: " << serviceDescriptor.isOpen();
+         //qDebug() << "file is readable: " << serviceDescriptor.isReadable();
+         //QByteArray serviceBA = serviceDescriptor.readAll();
+         //qDebug() << serviceBA;
+         qDebug() << "Service for " << libBaseName << " registered:" << d->serviceManager.addService(&serviceDescriptor);
+         lib.unload();
+       }
   }
 
 }

@@ -28,6 +28,7 @@ namespace ctk {
                               QAbstractSecuritySession* session)
   {
     std::cout << "Creating service instance for " << descriptor.interfaceName().toStdString() << std::endl;
+    return 0;
   }
 
 Q_EXPORT_PLUGIN2(org_commontk_cli, CLIPlugin)

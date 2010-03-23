@@ -9,12 +9,17 @@
 #define CTKPLUGINMANAGER_H_
 
 #include <QString>
+#include <QServiceManager>
+
+#include <CTKCoreExport.h>
 
 namespace ctk {
 
+  using namespace QtMobility;
+
   class PluginManagerPrivate;
 
-  class PluginManager
+  class CTK_CORE_EXPORT PluginManager
   {
     Q_DECLARE_PRIVATE(PluginManager)
 
@@ -22,6 +27,8 @@ namespace ctk {
 
     PluginManager();
     virtual ~PluginManager();
+
+    QServiceManager* serviceManager();
 
 	  void addSearchPath(const QString& searchPath);
 

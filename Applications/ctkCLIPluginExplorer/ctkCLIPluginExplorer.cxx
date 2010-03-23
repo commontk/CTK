@@ -14,8 +14,12 @@ int main(int argc, char** argv)
   QCoreApplication app(argc, argv);
 
   ctk::PluginManager pluginManager;
-  pluginManager.addSearchPath("/home/zelzer/git/CTK/bin-debug/CTK-build/bin/Plugins");
+  pluginManager.addSearchPath("C:\\development\\CTK-pluginfw\\CTK-build\\bin\\Plugins");
   pluginManager.startAllPlugins();
+
+  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+
+  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
 
   return 0;
 }

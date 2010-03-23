@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <service>
     <name>ctkCLIService</name>
-    <filepath>org_commontk_cli</filepath>
+    <filepath>liborg_commontk_cli</filepath>
     <interface>
       <name>org.commontk.cli.ICLIManager</name>
       <version>1.0</version>

@@ -14,7 +14,7 @@
 
 namespace ctk {
 
-  class Q_CTK_CORE_EXPORT PluginActivator
+  class PluginActivator
   {
   public:
 
