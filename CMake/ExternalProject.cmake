@@ -705,19 +705,28 @@ function(_ep_add_download_command name)
     get_filename_component(src_name "${source_dir}" NAME)
     get_filename_component(work_dir "${source_dir}/../" REALPATH)
 
-    # Since git doesn't allow to clone if the repository exists,
-    # let's delete it. Git will re-recreate it when the clone command will be invoked
-    execute_process(
-      COMMAND ${CMAKE_COMMAND} -E remove_directory ${source_dir}
-      RESULT_VARIABLE error_code
-      )
-    if(error_code)
-      message(FATAL_ERROR "Failed to remove directory: ${source_dir}")
-    endif()
-    
-    
+    # Since Git doesn't allow to clone if the repository exists,
+    # let's create a cmake script that will be invoked as a download command.
+    # That script will delete the source directory and call the appropriate git clone command
+    file(WRITE ${tmp_dir}/${name}-gitclone.cmake "
+execute_process(
+  COMMAND ${CMAKE_COMMAND} -E remove_directory ${source_dir}
+  RESULT_VARIABLE error_code
+  )
+if(error_code)
+  message(FATAL_ERROR "Failed to remove directory: ${source_dir}")
+endif()
+execute_process(
+  COMMAND ${Git_EXECUTABLE} clone ${git_repository} ${src_name}
+  WORKING_DIRECTORY ${work_dir}
+  RESULT_VARIABLE error_code
+  )
+if(error_code)
+  message(FATAL_ERROR 'Failed to clone repository: ${git_repository}')
+endif()
+")    
     set(comment "Performing download step (GIT clone) for '${name}'")
-    set(cmd ${Git_EXECUTABLE} clone ${git_repository} ${src_name})
+    set(cmd ${CMAKE_COMMAND} -P ${tmp_dir}/${name}-gitclone.cmake)
     list(APPEND depends ${stamp_dir}/${name}-gitinfo.txt)
   elseif(url)
     get_filename_component(work_dir "${source_dir}" PATH)
