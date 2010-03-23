@@ -703,7 +703,19 @@ function(_ep_add_download_command name)
       )
 
     get_filename_component(src_name "${source_dir}" NAME)
-    get_filename_component(work_dir "${source_dir}" PATH)
+    get_filename_component(work_dir "${source_dir}/../" REALPATH)
+
+    # Since git doesn't allow to clone if the repository exists,
+    # let's delete it. Git will re-recreate it when the clone command will be invoked
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -E remove_directory ${source_dir}
+      RESULT_VARIABLE error_code
+      )
+    if(error_code)
+      message(FATAL_ERROR "Failed to remove directory: ${source_dir}")
+    endif()
+    
+    
     set(comment "Performing download step (GIT clone) for '${name}'")
     set(cmd ${Git_EXECUTABLE} clone ${git_repository} ${src_name})
     list(APPEND depends ${stamp_dir}/${name}-gitinfo.txt)
