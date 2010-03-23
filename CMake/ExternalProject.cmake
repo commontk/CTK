@@ -693,7 +693,7 @@ function(_ep_add_download_command name)
     # TODO  [GIT_REVISION revision]        # Revision to checkout from GIT repo
     #get_property(git_revision TARGET ${name} PROPERTY _EP_GIT_REVISION)
 
-    set(repository ${svn_repository})
+    set(repository ${git_repository})
     set(module)
     set(tag ${git_revision})
     configure_file(
@@ -703,7 +703,7 @@ function(_ep_add_download_command name)
       )
 
     get_filename_component(src_name "${source_dir}" NAME)
-    #get_filename_component(work_dir "${source_dir}" PATH)
+    get_filename_component(work_dir "${source_dir}" PATH)
     set(comment "Performing download step (GIT clone) for '${name}'")
     set(cmd ${Git_EXECUTABLE} clone ${git_repository} ${src_name})
     list(APPEND depends ${stamp_dir}/${name}-gitinfo.txt)
