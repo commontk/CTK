@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-// qCTK includes
+// CTK includes
 #include "ctkUtils.h"
 
 // QT includes
