@@ -103,6 +103,11 @@ ENDIF()
 #
 ctkMacroSetupQt()
 
+# Update CTK_BASE_LIBRARIES with QT libraries
+IF(QT4_FOUND)
+  SET(CTK_BASE_LIBRARIES ${CTK_BASE_LIBRARIES} ${QT_LIBRARIES} CACHE INTERNAL "CTK libraries" FORCE)
+ENDIF()
+
 #-----------------------------------------------------------------------------
 # CTK Libraries
 #
