@@ -56,6 +56,7 @@ INCLUDE(CMake/ctkMacroBuildQtPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildQtApp.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroGetTargetLibraries.cmake)
+INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 
 #-----------------------------------------------------------------------------
 # Patch program
@@ -150,8 +151,22 @@ OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
 
 # Build options associated with CTK libraries
+# Note also that if
+# the file Libs/<DIR>/<LIBNAME>/ctk_library_options.cmake exists and look like:
+#
+#     SET(ctk_library_options
+#       OPT1:OFF
+#       OPT2:ON
+#       )
+#
+# In addition to 'CTK_LIB_Visualization/XIP' option, the following ones
+# will also be available in CMake configure menu:
+#  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
+#  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
+#
 FOREACH(lib ${ctk_libs})
   OPTION(CTK_LIB_${lib} "Enable ${lib} Library." ON)
+  ctkMacroAddCtkLibraryOptions(${lib})
 ENDFOREACH()
 
 # Build options associated with CTK plugins
