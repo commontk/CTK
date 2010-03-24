@@ -5,8 +5,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION ${cmake_version_required})
 
 # 
 # CTK_KWSTYLE_EXECUTABLE
+# DCMTK_DIR
 # QT_QMAKE_EXECUTABLE
-# CTK_DCMTK_DIR
 #
 
 #-----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ SET (PythonQt_DEPENDS)
 # Utilities/DCMTK
 #
 SET (DCMTK_DEPENDS)
-IF (NOT DEFINED CTK_DCMTK_DIR)
+IF (NOT DEFINED DCMTK_DIR)
   SET(proj DCMTK)
   SET(DCMTK_DEPENDS ${proj})
   ExternalProject_Add(${proj}
@@ -102,7 +102,7 @@ IF (NOT DEFINED CTK_DCMTK_DIR)
         ${ep_common_args}
         -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
       )
-  SET(CTK_DCMTK_DIR ${ep_install_dir})
+  SET(DCMTK_DIR ${ep_install_dir})
 ENDIF()
 
 #-----------------------------------------------------------------------------
@@ -258,7 +258,7 @@ ExternalProject_Add(${proj}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
-    -DDCMTK_DIR=${CTK_DCMTK_DIR} # FindDCMTK expects DCMTK_DIR
+    -DDCMTK_DIR=${DCMTK_DIR} # FindDCMTK expects DCMTK_DIR
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${CMAKE_BINARY_DIR}/CTK-build
   BUILD_COMMAND ""
