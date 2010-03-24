@@ -80,6 +80,7 @@ SET (PythonQt_DEPENDS)
 #       SVN_REPOSITORY "https://pythonqt.svn.sourceforge.net/svnroot/pythonqt/trunk"
 #       CMAKE_GENERATOR ${gen}
 #       PATCH_COMMAND ${CMAKE_COMMAND} -P ${pythonqt_patch_script}
+#       BUILD_COMMAND ""
 #       CMAKE_ARGS
 #         ${ep_common_args}
 #         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
@@ -108,15 +109,19 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Utilities/ZMQ
 #
-SET(proj ZMQ)
-ExternalProject_Add(${proj}
-    DOWNLOAD_COMMAND ""
-    INSTALL_COMMAND ""
-    CMAKE_GENERATOR ${gen}
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/ZMQ
-    CMAKE_ARGS
-      ${ep_common_args}
-    )
+SET (ZMQ_DEPENDS)
+#IF ()
+  SET(proj ZMQ)
+  SET(ZMQ_DEPENDS ${proj})
+  ExternalProject_Add(${proj}
+      DOWNLOAD_COMMAND ""
+      INSTALL_COMMAND ""
+      CMAKE_GENERATOR ${gen}
+      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/ZMQ
+      CMAKE_ARGS
+        ${ep_common_args}
+      )
+#ENDIF()
 
 #-----------------------------------------------------------------------------
 # QtMobility
@@ -154,29 +159,36 @@ ExternalProject_Add(${proj}
 #-----------------------------------------------------------------------------
 # Utilities/OpenIGTLink
 #
-SET(proj OpenIGTLink)
-ExternalProject_Add(${proj}
-    SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
-    INSTALL_COMMAND ""
-    CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
-      ${ep_common_args}
-    )
+SET (OpenIGTLink_DEPENDS)
+#IF ()
+  SET(proj OpenIGTLink)
+  SET(OpenIGTLink_DEPENDS ${proj})
+  ExternalProject_Add(${proj}
+      SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
+      INSTALL_COMMAND ""
+      CMAKE_GENERATOR ${gen}
+      CMAKE_ARGS
+        ${ep_common_args}
+      )
+#ENDIF()
 
 #-----------------------------------------------------------------------------
 # XIP
 #
-# SET(proj XIP)
-# SET(url https://collab01a.scr.siemens.com/svn/xip/releases/latest)
-# ExternalProject_Add(${proj}
-#    DOWNLOAD_COMMAND "${CMAKE_COMMAND} -E ${SVNCOMMAND} checkout ${url} ${ep_source_dir}/${proj} --username=anonymous "
-#    UPDATE_COMMAND ""
-#    #SVN_REPOSITORY "https://anonymous@collab01a.scr.siemens.com/svn/xip/releases/latest"
-#    INSTALL_COMMAND ""
-#    CMAKE_GENERATOR ${gen}
-#    CMAKE_ARGS
-#      ${ep_common_args}
-#    )
+SET (XIP_DEPENDS)
+#IF ()
+#   SET(proj XIP)
+#   SET(XIP_DEPENDS ${proj})
+#   SET(url https://collab01a.scr.siemens.com/svn/xip/releases/latest)
+#   ExternalProject_Add(${proj}
+#     SVN_REPOSITORY "https://collab01a.scr.siemens.com/svn/xip/releases/latest"
+#     SVN_USERNAME "anonymous"
+#     INSTALL_COMMAND ""
+#     CMAKE_GENERATOR ${gen}
+#     CMAKE_ARGS
+#       ${ep_common_args}
+#     )
+#ENDIF()
    
 #-----------------------------------------------------------------------------
 # CTK Utilities
@@ -188,13 +200,15 @@ ExternalProject_Add(${proj}
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
   DEPENDS
+    # Mandatory dependencies
+    QtMobility
+    # Optionnal dependencies
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
     ${PythonQt_DEPENDS}
-    ZMQ
-    OpenIGTLink
-#     XIP
-    QtMobility
+    ${ZMQ_DEPENDS}
+    ${OpenIGTLink_DEPENDS}
+    ${XIP_DEPENDS}
 )
 
 #-----------------------------------------------------------------------------
