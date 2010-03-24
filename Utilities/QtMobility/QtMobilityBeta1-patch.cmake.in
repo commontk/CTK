@@ -22,6 +22,9 @@ IF(UNIX)
     ${configured_patch_dir}/QtMobilityBeta1-unix.patch @ONLY)
   LIST(APPEND patch_files
     ${configured_patch_dir}/QtMobilityBeta1-unix.patch)
+  IF(APPLE)
+    LIST(APPEND patch_files ${patch_dir}/QtMobilityBeta1-apple.patch)
+  ENDIF()
 ENDIF()
 
 # Apply patches
