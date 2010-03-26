@@ -36,15 +36,6 @@ IF( NOT DCMTK_FOUND )
   MARK_AS_ADVANCED( DCMTK_DIR )
 ENDIF( NOT DCMTK_FOUND )
 
-# Convenient debug macro
-SET(debug TRUE)
-MACRO(findDcmtkDebug cmake_var)
-  IF(debug)
-    MESSAGE(STATUS ${cmake_var}:"${${cmake_var}}")
-  ENDIF()
-ENDMACRO()
-
-
 FIND_PATH( DCMTK_config_INCLUDE_DIR osconfig.h
   ${DCMTK_DIR}/config/include
   ${DCMTK_DIR}/config
