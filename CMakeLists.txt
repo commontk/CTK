@@ -51,11 +51,12 @@ SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 # CMake Macro(s)
 # 
 INCLUDE(CMake/ctkMacroParseArguments.cmake)
+INCLUDE(CMake/ctkMacroListFilter.cmake)
 INCLUDE(CMake/ctkMacroBuildQtLib.cmake)
 INCLUDE(CMake/ctkMacroBuildQtPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildQtApp.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
-INCLUDE(CMake/ctkMacroGetTargetLibraries.cmake)
+INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 
 #-----------------------------------------------------------------------------
@@ -120,13 +121,14 @@ SET(ctk_libs
   Widgets
   DICOM/Core
   DICOM/Widgets
+  Visualization/XIP
   )
 
 #-----------------------------------------------------------------------------
 # CTK Plugins
 #
 SET(ctk_plugins
-  org.commontk.cli
+  #org.commontk.cli
   )
 
 #-----------------------------------------------------------------------------
@@ -178,6 +180,14 @@ ENDFOREACH()
 FOREACH(app ${ctk_applications})
   OPTION(CTK_APP_${app} "Build ${app} Application." ON)
 ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# Check dependencies
+#
+ctkMacroGetAllTargetLibraries("${ctk_libs}" "Libs" ALL_TARGET_LIBRARIES)
+ctkMacroGetAllTargetLibraries("${ctk_plugins}" "Plugins" ALL_TARGET_LIBRARIES)
+ctkMacroGetAllTargetLibraries("${ctk_applications}" "Applications" ALL_TARGET_LIBRARIES)
+#MESSAGE(STATUS ALL_TARGET_LIBRARIES:${ALL_TARGET_LIBRARIES})
 
 #-----------------------------------------------------------------------------
 # Superbuild is used by default

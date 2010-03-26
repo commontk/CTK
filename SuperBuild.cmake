@@ -46,15 +46,24 @@ set(sep "^^")
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
 #-----------------------------------------------------------------------------
+# Initialize NON_CTK_DEPENDENCIES variable
+#
+# Using the variable ALL_TARGET_LIBRARIES initialized in the main CMakeLists.txt with the help
+# of the macro ctkMacroGetAllTargetLibraries, let's get the list of all Non-CTK dependencies.
+# NON_CTK_DEPENDENCIES is expected by the macro ctkMacroShouldAddExternalProject
+ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCIES)
+#MESSAGE(STATUS NON_CTK_DEPENDENCIES:${NON_CTK_DEPENDENCIES})
+
+#-----------------------------------------------------------------------------
 # Qt is expected to be setup by CTK/CMakeLists.txt just before it includes the SuperBuild script
 #
 
 #-----------------------------------------------------------------------------
 # KWStyle
 #
-SET (kwstyle_DEPENDS)
-IF (CTK_USE_KWSTYLE)
-  IF (NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
+SET(kwstyle_DEPENDS)
+IF(CTK_USE_KWSTYLE)
+  IF(NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
     SET(proj KWStyle-CVSHEAD)
     SET(kwstyle_DEPENDS ${proj})
     ExternalProject_Add(${proj}
@@ -72,8 +81,9 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # PythonQt
 #
-SET (PythonQt_DEPENDS)
-# IF ()
+SET(PythonQt_DEPENDS)
+ctkMacroShouldAddExternalProject(PYTHONQT_LIBRARIES add_project)
+IF(${add_project})
 #   SET(proj PythonQt)
 #   SET(PythonQt_DEPENDS ${proj})
 #   ExternalProject_Add(${proj}
@@ -86,32 +96,38 @@ SET (PythonQt_DEPENDS)
 #         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
 #         #${vtk_PYTHON_ARGS}
 #       INSTALL_COMMAND "")
-# ENDIF()
+ENDIF()
     
 #-----------------------------------------------------------------------------
 # Utilities/DCMTK
 #
-SET (DCMTK_DEPENDS)
-IF (NOT DEFINED DCMTK_DIR)
-  SET(proj DCMTK)
-  SET(DCMTK_DEPENDS ${proj})
-  ExternalProject_Add(${proj}
-      DOWNLOAD_COMMAND ""
-      CMAKE_GENERATOR ${gen}
-      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/${proj}
-      CMAKE_ARGS
-        ${ep_common_args}
-        -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
-      )
-  SET(DCMTK_DIR ${ep_install_dir})
+SET(DCMTK_DEPENDS)
+ctkMacroShouldAddExternalProject(DCMTK_LIBRARIES add_project)
+IF(${add_project})
+  IF(NOT DEFINED DCMTK_DIR)
+    SET(proj DCMTK)
+#     MESSAGE(STATUS "Adding project:${proj}")
+    SET(DCMTK_DEPENDS ${proj})
+    ExternalProject_Add(${proj}
+        DOWNLOAD_COMMAND ""
+        CMAKE_GENERATOR ${gen}
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/${proj}
+        CMAKE_ARGS
+          ${ep_common_args}
+          -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
+        )
+    SET(DCMTK_DIR ${ep_install_dir})
+  ENDIF()
 ENDIF()
 
 #-----------------------------------------------------------------------------
 # Utilities/ZMQ
 #
-SET (ZMQ_DEPENDS)
-#IF ()
+SET(ZMQ_DEPENDS)
+ctkMacroShouldAddExternalProject(ZMQ_LIBRARIES add_project)
+IF(${add_project})
   SET(proj ZMQ)
+#   MESSAGE(STATUS "Adding project:${proj}")
   SET(ZMQ_DEPENDS ${proj})
   ExternalProject_Add(${proj}
       DOWNLOAD_COMMAND ""
@@ -121,74 +137,86 @@ SET (ZMQ_DEPENDS)
       CMAKE_ARGS
         ${ep_common_args}
       )
-#ENDIF()
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # QtMobility
 #
-SET(proj QtMobility)
+SET(QtMobility_DEPENDS)
+ctkMacroShouldAddExternalProject(QTMOBILITY_QTSERVICEFW_LIBRARIES add_project)
+IF(${add_project})
+  SET(proj QtMobility)
+#   MESSAGE(STATUS "Adding project:${proj}")
+  SET(QtMobility_DEPENDS ${proj})
+  
+  # Configure patch script
+  SET(qtmobility_src_dir ${ep_source_dir}/${proj})
+  SET(qtmobility_patch_dir ${CTK_SOURCE_DIR}/Utilities/QtMobility/)
+  SET(qtmobility_configured_patch_dir ${CTK_BINARY_DIR}/Utilities/QtMobility/)
+  SET(qtmobility_patchscript
+    ${CTK_BINARY_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake)
+  CONFIGURE_FILE(
+    ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake.in
+    ${qtmobility_patchscript} @ONLY)
 
-# Configure patch script
-SET(qtmobility_src_dir ${ep_source_dir}/${proj})
-SET(qtmobility_patch_dir ${CTK_SOURCE_DIR}/Utilities/QtMobility/)
-SET(qtmobility_configured_patch_dir ${CTK_BINARY_DIR}/Utilities/QtMobility/)
-SET(qtmobility_patchscript
-  ${CTK_BINARY_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake)
-CONFIGURE_FILE(
-  ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake.in
-  ${qtmobility_patchscript} @ONLY)
+  # Define configure options
+  SET(qtmobility_modules "serviceframework")
+  SET(qtmobility_build_type "release")
+  IF(UNIX)
+  IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    SET(qtmobility_build_type "debug")
+  ENDIF()
+  ELSEIF(NOT ${CMAKE_CFG_INTDIR} STREQUAL "Release")
+  SET(qtmobility_build_type "debug")
+  ENDIf()
 
-# Define configure options
-SET(qtmobility_modules "serviceframework")
-SET(qtmobility_build_type "release")
-IF(UNIX)
- IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-   SET(qtmobility_build_type "debug")
- ENDIF()
-ELSEIF(NOT ${CMAKE_CFG_INTDIR} STREQUAL "Release")
- SET(qtmobility_build_type "debug")
-ENDIf()
-
-ExternalProject_Add(${proj}
-   URL "http://get.qt.nokia.com/qt/solutions/qt-mobility-src-1.0.0-beta1.tar.gz"
-   CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
-   PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
-   BUILD_IN_SOURCE 1
-   )
+  ExternalProject_Add(${proj}
+    URL "http://get.qt.nokia.com/qt/solutions/qt-mobility-src-1.0.0-beta1.tar.gz"
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
+    PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
+    BUILD_IN_SOURCE 1
+    )
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Utilities/OpenIGTLink
 #
 SET (OpenIGTLink_DEPENDS)
-#IF ()
-  SET(proj OpenIGTLink)
-  SET(OpenIGTLink_DEPENDS ${proj})
-  ExternalProject_Add(${proj}
-      SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
-      INSTALL_COMMAND ""
-      CMAKE_GENERATOR ${gen}
-      CMAKE_ARGS
-        ${ep_common_args}
-      )
-#ENDIF()
+ctkMacroShouldAddExternalProject(OpenIGTLink_LIBRARIES add_project)
+IF(${add_project})
+  IF(NOT DEFINED OpenIGTLink_DIR)
+    SET(proj OpenIGTLink)
+  #   MESSAGE(STATUS "Adding project:${proj}")
+    SET(OpenIGTLink_DEPENDS ${proj})
+    ExternalProject_Add(${proj}
+        SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
+        INSTALL_COMMAND ""
+        CMAKE_GENERATOR ${gen}
+        CMAKE_ARGS
+          ${ep_common_args}
+        )
+    SET(OpenIGTLink_DIR ${ep_build_dir}/${proj})
+  ENDIF()
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # XIP
 #
 SET (XIP_DEPENDS)
-#IF ()
-#   SET(proj XIP)
-#   SET(XIP_DEPENDS ${proj})
-#   SET(url https://collab01a.scr.siemens.com/svn/xip/releases/latest)
-#   ExternalProject_Add(${proj}
-#     SVN_REPOSITORY "https://collab01a.scr.siemens.com/svn/xip/releases/latest"
-#     SVN_USERNAME "anonymous"
-#     INSTALL_COMMAND ""
-#     CMAKE_GENERATOR ${gen}
-#     CMAKE_ARGS
-#       ${ep_common_args}
-#     )
-#ENDIF()
+ctkMacroShouldAddExternalProject(XIP_LIBRARIES add_project)
+IF(${add_project})
+  SET(proj XIP)
+#   MESSAGE(STATUS "Adding project:${proj}")
+  SET(XIP_DEPENDS ${proj})
+  ExternalProject_Add(${proj}
+    SVN_REPOSITORY "https://collab01a.scr.siemens.com/svn/xip/releases/latest"
+    SVN_USERNAME "anonymous"
+    INSTALL_COMMAND ""
+    CMAKE_GENERATOR ${gen}
+    CMAKE_ARGS
+      ${ep_common_args}
+    )
+ENDIF()
    
 #-----------------------------------------------------------------------------
 # CTK Utilities
@@ -201,7 +229,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   DEPENDS
     # Mandatory dependencies
-    QtMobility
+    ${QtMobility_DEPENDS}
     # Optionnal dependencies
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
