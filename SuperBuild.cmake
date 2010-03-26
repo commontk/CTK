@@ -313,7 +313,7 @@ ExternalProject_Add(${proj}
 #-----------------------------------------------------------------------------
 # CTK
 #
-set(proj CTK-build)
+SET(proj CTK-build)
 ExternalProject_Add(${proj}
   DOWNLOAD_COMMAND ""
   CMAKE_GENERATOR ${gen}
@@ -324,3 +324,12 @@ ExternalProject_Add(${proj}
   DEPENDS
     "CTK-Configure"
   )
+
+#-----------------------------------------------------------------------------
+# Custom target allowing to drive the build of CTK project itself
+#
+ADD_CUSTOM_TARGET(CTK
+  COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
+  )
+ 
