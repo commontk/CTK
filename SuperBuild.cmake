@@ -4,9 +4,9 @@ SET(cmake_version_required_dash "2-8")
 CMAKE_MINIMUM_REQUIRED(VERSION ${cmake_version_required})
 
 # 
-# CTK_QMAKE_EXECUTABLE
 # CTK_KWSTYLE_EXECUTABLE
-# CTK_DCMTK_DIR
+# DCMTK_DIR
+# QT_QMAKE_EXECUTABLE
 #
 
 #-----------------------------------------------------------------------------
@@ -46,15 +46,24 @@ set(sep "^^")
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
 #-----------------------------------------------------------------------------
+# Initialize NON_CTK_DEPENDENCIES variable
+#
+# Using the variable ALL_TARGET_LIBRARIES initialized in the main CMakeLists.txt with the help
+# of the macro ctkMacroGetAllTargetLibraries, let's get the list of all Non-CTK dependencies.
+# NON_CTK_DEPENDENCIES is expected by the macro ctkMacroShouldAddExternalProject
+ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCIES)
+#MESSAGE(STATUS NON_CTK_DEPENDENCIES:${NON_CTK_DEPENDENCIES})
+
+#-----------------------------------------------------------------------------
 # Qt is expected to be setup by CTK/CMakeLists.txt just before it includes the SuperBuild script
 #
 
 #-----------------------------------------------------------------------------
 # KWStyle
 #
-SET (kwstyle_DEPENDS)
-IF (CTK_USE_KWSTYLE)
-  IF (NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
+SET(kwstyle_DEPENDS)
+IF(CTK_USE_KWSTYLE)
+  IF(NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
     SET(proj KWStyle-CVSHEAD)
     SET(kwstyle_DEPENDS ${proj})
     ExternalProject_Add(${proj}
@@ -72,111 +81,142 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # PythonQt
 #
-SET (PythonQt_DEPENDS)
-# IF ()
+SET(PythonQt_DEPENDS)
+ctkMacroShouldAddExternalProject(PYTHONQT_LIBRARIES add_project)
+IF(${add_project})
 #   SET(proj PythonQt)
 #   SET(PythonQt_DEPENDS ${proj})
 #   ExternalProject_Add(${proj}
 #       SVN_REPOSITORY "https://pythonqt.svn.sourceforge.net/svnroot/pythonqt/trunk"
 #       CMAKE_GENERATOR ${gen}
 #       PATCH_COMMAND ${CMAKE_COMMAND} -P ${pythonqt_patch_script}
+#       BUILD_COMMAND ""
 #       CMAKE_ARGS
 #         ${ep_common_args}
 #         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
 #         #${vtk_PYTHON_ARGS}
 #       INSTALL_COMMAND "")
-# ENDIF()
+ENDIF()
     
 #-----------------------------------------------------------------------------
 # Utilities/DCMTK
 #
-SET (DCMTK_DEPENDS)
-IF (NOT DEFINED CTK_DCMTK_DIR)
-  SET(proj DCMTK)
-  SET(DCMTK_DEPENDS ${proj})
-  ExternalProject_Add(${proj}
-      DOWNLOAD_COMMAND ""
-      CMAKE_GENERATOR ${gen}
-      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/${proj}
-      CMAKE_ARGS
-        ${ep_common_args}
-        -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
-      )
-  SET(CTK_DCMTK_DIR ${ep_install_dir})
+SET(DCMTK_DEPENDS)
+ctkMacroShouldAddExternalProject(DCMTK_LIBRARIES add_project)
+IF(${add_project})
+  IF(NOT DEFINED DCMTK_DIR)
+    SET(proj DCMTK)
+#     MESSAGE(STATUS "Adding project:${proj}")
+    SET(DCMTK_DEPENDS ${proj})
+    ExternalProject_Add(${proj}
+        DOWNLOAD_COMMAND ""
+        CMAKE_GENERATOR ${gen}
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/${proj}
+        CMAKE_ARGS
+          ${ep_common_args}
+          -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
+        )
+    SET(DCMTK_DIR ${ep_install_dir})
+  ENDIF()
 ENDIF()
 
 #-----------------------------------------------------------------------------
 # Utilities/ZMQ
 #
-SET(proj ZMQ)
-ExternalProject_Add(${proj}
-    DOWNLOAD_COMMAND ""
-    INSTALL_COMMAND ""
-    CMAKE_GENERATOR ${gen}
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/ZMQ
-    CMAKE_ARGS
-      ${ep_common_args}
-    )
+SET(ZMQ_DEPENDS)
+ctkMacroShouldAddExternalProject(ZMQ_LIBRARIES add_project)
+IF(${add_project})
+  SET(proj ZMQ)
+#   MESSAGE(STATUS "Adding project:${proj}")
+  SET(ZMQ_DEPENDS ${proj})
+  ExternalProject_Add(${proj}
+      DOWNLOAD_COMMAND ""
+      INSTALL_COMMAND ""
+      CMAKE_GENERATOR ${gen}
+      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/ZMQ
+      CMAKE_ARGS
+        ${ep_common_args}
+      )
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # QtMobility
 #
-SET(proj QtMobility)
+SET(QtMobility_DEPENDS)
+ctkMacroShouldAddExternalProject(QTMOBILITY_QTSERVICEFW_LIBRARIES add_project)
+IF(${add_project})
+  SET(proj QtMobility)
+#   MESSAGE(STATUS "Adding project:${proj}")
+  SET(QtMobility_DEPENDS ${proj})
+  
+  # Configure patch script
+  SET(qtmobility_src_dir ${ep_source_dir}/${proj})
+  SET(qtmobility_patch_dir ${CTK_SOURCE_DIR}/Utilities/QtMobility/)
+  SET(qtmobility_configured_patch_dir ${CTK_BINARY_DIR}/Utilities/QtMobility/)
+  SET(qtmobility_patchscript
+    ${CTK_BINARY_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake)
+  CONFIGURE_FILE(
+    ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake.in
+    ${qtmobility_patchscript} @ONLY)
 
-# Configure patch script
-SET(qtmobility_src_dir ${ep_source_dir}/${proj})
-SET(qtmobility_patch_dir ${CTK_SOURCE_DIR}/Utilities/QtMobility/)
-SET(qtmobility_configured_patch_dir ${CTK_BINARY_DIR}/Utilities/QtMobility/)
-SET(qtmobility_patchscript
-  ${CTK_BINARY_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake)
-CONFIGURE_FILE(
-  ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake.in
-  ${qtmobility_patchscript} @ONLY)
+  # Define configure options
+  SET(qtmobility_modules "serviceframework")
+  SET(qtmobility_build_type "release")
+  IF(UNIX)
+  IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    SET(qtmobility_build_type "debug")
+  ENDIF()
+  ELSEIF(NOT ${CMAKE_CFG_INTDIR} STREQUAL "Release")
+  SET(qtmobility_build_type "debug")
+  ENDIf()
 
-# Define configure options
-SET(qtmobility_modules "serviceframework")
-SET(qtmobility_build_type "release")
-IF(UNIX)
- IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-   SET(qtmobility_build_type "debug")
- ENDIF()
-ELSEIF(NOT ${CMAKE_CFG_INTDIR} STREQUAL "Release")
- SET(qtmobility_build_type "debug")
-ENDIf()
-
-ExternalProject_Add(${proj}
-   URL "http://get.qt.nokia.com/qt/solutions/qt-mobility-src-1.0.0-beta1.tar.gz"
-   CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
-   PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
-   BUILD_IN_SOURCE 1
-   )
+  ExternalProject_Add(${proj}
+    URL "http://get.qt.nokia.com/qt/solutions/qt-mobility-src-1.0.0-beta1.tar.gz"
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
+    PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
+    BUILD_IN_SOURCE 1
+    )
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Utilities/OpenIGTLink
 #
-SET(proj OpenIGTLink)
-ExternalProject_Add(${proj}
-    SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
+SET (OpenIGTLink_DEPENDS)
+ctkMacroShouldAddExternalProject(OpenIGTLink_LIBRARIES add_project)
+IF(${add_project})
+  IF(NOT DEFINED OpenIGTLink_DIR)
+    SET(proj OpenIGTLink)
+  #   MESSAGE(STATUS "Adding project:${proj}")
+    SET(OpenIGTLink_DEPENDS ${proj})
+    ExternalProject_Add(${proj}
+        SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
+        INSTALL_COMMAND ""
+        CMAKE_GENERATOR ${gen}
+        CMAKE_ARGS
+          ${ep_common_args}
+        )
+    SET(OpenIGTLink_DIR ${ep_build_dir}/${proj})
+  ENDIF()
+ENDIF()
+
+#-----------------------------------------------------------------------------
+# XIP
+#
+SET (XIP_DEPENDS)
+ctkMacroShouldAddExternalProject(XIP_LIBRARIES add_project)
+IF(${add_project})
+  SET(proj XIP)
+#   MESSAGE(STATUS "Adding project:${proj}")
+  SET(XIP_DEPENDS ${proj})
+  ExternalProject_Add(${proj}
+    SVN_REPOSITORY "https://collab01a.scr.siemens.com/svn/xip/releases/latest"
+    SVN_USERNAME "anonymous"
     INSTALL_COMMAND ""
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${ep_common_args}
     )
-
-#-----------------------------------------------------------------------------
-# XIP
-#
-# SET(proj XIP)
-# SET(url https://collab01a.scr.siemens.com/svn/xip/releases/latest)
-# ExternalProject_Add(${proj}
-#    DOWNLOAD_COMMAND "${CMAKE_COMMAND} -E ${SVNCOMMAND} checkout ${url} ${ep_source_dir}/${proj} --username=anonymous "
-#    UPDATE_COMMAND ""
-#    #SVN_REPOSITORY "https://anonymous@collab01a.scr.siemens.com/svn/xip/releases/latest"
-#    INSTALL_COMMAND ""
-#    CMAKE_GENERATOR ${gen}
-#    CMAKE_ARGS
-#      ${ep_common_args}
-#    )
+ENDIF()
    
 #-----------------------------------------------------------------------------
 # CTK Utilities
@@ -188,13 +228,15 @@ ExternalProject_Add(${proj}
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
   DEPENDS
+    # Mandatory dependencies
+    ${QtMobility_DEPENDS}
+    # Optionnal dependencies
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
     ${PythonQt_DEPENDS}
-    ZMQ
-    OpenIGTLink
-#     XIP
-    QtMobility
+    ${ZMQ_DEPENDS}
+    ${OpenIGTLink_DEPENDS}
+    ${XIP_DEPENDS}
 )
 
 #-----------------------------------------------------------------------------
@@ -256,9 +298,9 @@ ExternalProject_Add(${proj}
     -DCTK_SUPERBUILD:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCTK_QMAKE_EXECUTABLE:FILEPATH=${CTK_QMAKE_EXECUTABLE}
+    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
-    -DDCMTK_DIR=${CTK_DCMTK_DIR} # FindDCMTK expects DCMTK_DIR
+    -DDCMTK_DIR=${DCMTK_DIR} # FindDCMTK expects DCMTK_DIR
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${CMAKE_BINARY_DIR}/CTK-build
   BUILD_COMMAND ""
@@ -271,7 +313,7 @@ ExternalProject_Add(${proj}
 #-----------------------------------------------------------------------------
 # CTK
 #
-set(proj CTK-build)
+SET(proj CTK-build)
 ExternalProject_Add(${proj}
   DOWNLOAD_COMMAND ""
   CMAKE_GENERATOR ${gen}
@@ -282,3 +324,12 @@ ExternalProject_Add(${proj}
   DEPENDS
     "CTK-Configure"
   )
+
+#-----------------------------------------------------------------------------
+# Custom target allowing to drive the build of CTK project itself
+#
+ADD_CUSTOM_TARGET(CTK
+  COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
+  )
+ 

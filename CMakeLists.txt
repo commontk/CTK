@@ -1,7 +1,10 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-IF(COMMAND CMAKE_POLICY)
-  CMAKE_POLICY(SET CMP0003 NEW)
-ENDIF(COMMAND CMAKE_POLICY)
+
+FOREACH(policy CMP0003)
+  IF(POLICY ${policy})
+    CMAKE_POLICY(SET ${policy} NEW)
+  ENDIF()
+ENDFOREACH()
 
 PROJECT(CTK)
 
@@ -48,11 +51,13 @@ SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 # CMake Macro(s)
 # 
 INCLUDE(CMake/ctkMacroParseArguments.cmake)
+INCLUDE(CMake/ctkMacroListFilter.cmake)
 INCLUDE(CMake/ctkMacroBuildQtLib.cmake)
 INCLUDE(CMake/ctkMacroBuildQtPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildQtApp.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
-INCLUDE(CMake/ctkMacroGetTargetLibraries.cmake)
+INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
+INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 
 #-----------------------------------------------------------------------------
 # Patch program
@@ -103,6 +108,11 @@ ENDIF()
 #
 ctkMacroSetupQt()
 
+# Update CTK_BASE_LIBRARIES with QT libraries
+IF(QT4_FOUND)
+  SET(CTK_BASE_LIBRARIES ${CTK_BASE_LIBRARIES} ${QT_LIBRARIES} CACHE INTERNAL "CTK libraries" FORCE)
+ENDIF()
+
 #-----------------------------------------------------------------------------
 # CTK Libraries
 #
@@ -111,13 +121,14 @@ SET(ctk_libs
   Widgets
   DICOM/Core
   DICOM/Widgets
+  Visualization/XIP
   )
 
 #-----------------------------------------------------------------------------
 # CTK Plugins
 #
 SET(ctk_plugins
-  org.commontk.cli
+  #org.commontk.cli
   )
 
 #-----------------------------------------------------------------------------
@@ -143,8 +154,22 @@ OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
 
 # Build options associated with CTK libraries
+# Note also that if
+# the file Libs/<DIR>/<LIBNAME>/ctk_library_options.cmake exists and look like:
+#
+#     SET(ctk_library_options
+#       OPT1:OFF
+#       OPT2:ON
+#       )
+#
+# In addition to 'CTK_LIB_Visualization/XIP' option, the following ones
+# will also be available in CMake configure menu:
+#  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
+#  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
+#
 FOREACH(lib ${ctk_libs})
   OPTION(CTK_LIB_${lib} "Enable ${lib} Library." ON)
+  ctkMacroAddCtkLibraryOptions(${lib})
 ENDFOREACH()
 
 # Build options associated with CTK plugins
@@ -156,6 +181,14 @@ ENDFOREACH()
 FOREACH(app ${ctk_applications})
   OPTION(CTK_APP_${app} "Build ${app} Application." ON)
 ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# Check dependencies
+#
+ctkMacroGetAllTargetLibraries("${ctk_libs}" "Libs" ALL_TARGET_LIBRARIES)
+ctkMacroGetAllTargetLibraries("${ctk_plugins}" "Plugins" ALL_TARGET_LIBRARIES)
+ctkMacroGetAllTargetLibraries("${ctk_applications}" "Applications" ALL_TARGET_LIBRARIES)
+#MESSAGE(STATUS ALL_TARGET_LIBRARIES:${ALL_TARGET_LIBRARIES})
 
 #-----------------------------------------------------------------------------
 # Superbuild is used by default
