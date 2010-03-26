@@ -7,10 +7,10 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-#include "ctkXIPAdaptorCoreExport.h"
+#include "CTKVisualizationXIPExport.h"
 
 class ctkXIPAdaptorPrivate;
-class CTK_XIP_EXPORT ctkXIPAdaptor : public QObject
+class CTK_VISUALIZATION_XIP_EXPORT ctkXIPAdaptor : public QObject
 {
   Q_OBJECT
 public:

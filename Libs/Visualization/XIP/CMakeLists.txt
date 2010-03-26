@@ -1,4 +1,4 @@
-PROJECT(CTKDICOMCore)
+PROJECT(CTKVisualizationXIP)
 
 #
 # 3rd party dependencies
@@ -13,7 +13,7 @@ PROJECT(CTKDICOMCore)
 # See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_XIP_CORE_EXPORT")
+SET(KIT_export_directive "CTK_VISUALIZATION_XIP_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
