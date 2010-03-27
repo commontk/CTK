@@ -14,7 +14,7 @@ int main(int argc, char** argv)
   QCoreApplication app(argc, argv);
 
   ctk::PluginManager pluginManager;
-  pluginManager.addSearchPath("C:\\development\\CTK-pluginfw\\CTK-build\\bin\\Plugins");
+  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
   pluginManager.startAllPlugins();
 
   qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();

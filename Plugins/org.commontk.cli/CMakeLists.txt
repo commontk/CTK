@@ -1,23 +1,28 @@
+PROJECT(org_commontk_cli)
 
+SET(PLUGIN_export_directive "org_commontk_cli_EXPORT")
 
-SET(plugin_srcs
+SET(PLUGIN_SRCS
   ctkCLIPlugin.cxx
 )
 
-SET(plugin_moc
+SET(PLUGIN_MOC_SRCS
   ctkCLIPlugin.h
 )
 
-SET(plugin_qrc_files
+SET(PLUGIN_resources
   org_commontk_cli.qrc
 )
 
 SET(LIBRARY_OUTPUT_PATH ${LIBRARY_OUTPUT_PATH}/Plugins)
 
-CtkMacroBuildQtPlugin(
-  NAME org_commontk_cli
-  SRCS ${plugin_srcs}
-  MOC_SRCS ${plugin_moc}
-  QRC_FILES ${plugin_qrc_files}
-  EXPORT_DIRECTIVE "org_commontk_cli_EXPORT"
+ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
+
+ctkMacroBuildQtPlugin(
+  NAME ${PROJECT_NAME}
+  EXPORT_DIRECTIVE ${PLUGIN_export_directive}
+  SRCS ${PLUGIN_SRCS}
+  MOC_SRCS ${PLUGIN_MOC_SRCS}
+  RESOURCES ${PLUGIN_resources}
+  TARGET_LIBRARIES ${PLUGIN_target_libraries}
 )

@@ -128,7 +128,7 @@ SET(ctk_libs
 # CTK Plugins
 #
 SET(ctk_plugins
-  #org.commontk.cli
+  org.commontk.cli
   )
 
 #-----------------------------------------------------------------------------
