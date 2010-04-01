@@ -1,4 +1,4 @@
-SET(KIT CTKCore)
+SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   ctkUtilsTest1.cxx
