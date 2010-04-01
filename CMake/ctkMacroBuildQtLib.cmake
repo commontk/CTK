@@ -71,6 +71,8 @@ MACRO(CtkMacroBuildQtLib)
     ${MY_QRC_SRCS}
     )
 
+  # Set labels associated with the target.
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
   # Install rules
   IF(CTK_BUILD_SHARED_LIBS)
     INSTALL(TARGETS ${lib_name}
