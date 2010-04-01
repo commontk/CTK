@@ -116,7 +116,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # CTK Libraries
 #
-SET(ctk_libs
+SET(CTK_LIBS
   Core
   Widgets
   DICOM/Core
@@ -127,14 +127,14 @@ SET(ctk_libs
 #-----------------------------------------------------------------------------
 # CTK Plugins
 #
-SET(ctk_plugins
+SET(CTK_PLUGINS
   #org.commontk.cli
   )
 
 #-----------------------------------------------------------------------------
 # CTK Applications
 #
-SET(ctk_applications
+SET(CTK_APPLICATIONS
   ctkDICOM
   ctkDICOMIndexer
   )
@@ -166,27 +166,29 @@ OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
 #
-FOREACH(lib ${ctk_libs})
+FOREACH(lib ${CTK_LIBS})
   OPTION(CTK_LIB_${lib} "Enable ${lib} Library." ON)
   ctkMacroAddCtkLibraryOptions(${lib})
 ENDFOREACH()
 
 # Build options associated with CTK plugins
-FOREACH(plugin ${ctk_plugins})
+FOREACH(plugin ${CTK_PLUGINS})
   OPTION(CTK_PLUGIN_${plugin} "Build ${plugin} Plugin." ON)
 ENDFOREACH()
 
 # Build options associated with CTK applications
-FOREACH(app ${ctk_applications})
+FOREACH(app ${CTK_APPLICATIONS})
   OPTION(CTK_APP_${app} "Build ${app} Application." ON)
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# Check dependencies
 #
-ctkMacroGetAllTargetLibraries("${ctk_libs}" "Libs" ALL_TARGET_LIBRARIES)
-ctkMacroGetAllTargetLibraries("${ctk_plugins}" "Plugins" ALL_TARGET_LIBRARIES)
-ctkMacroGetAllTargetLibraries("${ctk_applications}" "Applications" ALL_TARGET_LIBRARIES)
+#-----------------------------------------------------------------------------
+# Collect CTK library target dependencies
+#
+ctkMacroCollectAllTargetLibraries("${CTK_LIBS}" "Libs" ALL_TARGET_LIBRARIES)
+ctkMacroCollectAllTargetLibraries("${CTK_PLUGINS}" "Plugins" ALL_TARGET_LIBRARIES)
+ctkMacroCollectAllTargetLibraries("${CTK_APPLICATIONS}" "Applications" ALL_TARGET_LIBRARIES)
 #MESSAGE(STATUS ALL_TARGET_LIBRARIES:${ALL_TARGET_LIBRARIES})
 
 #-----------------------------------------------------------------------------
@@ -203,7 +205,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories
 #
-FOREACH(lib ${ctk_libs})
+FOREACH(lib ${CTK_LIBS})
   IF (CTK_LIB_${lib})
     ADD_SUBDIRECTORY(Libs/${lib})
   ENDIF()
@@ -212,7 +214,7 @@ ENDFOREACH()
 #-----------------------------------------------------------------------------
 # Add CTK plugin subdirectories
 #
-FOREACH(plugin ${ctk_plugins})
+FOREACH(plugin ${CTK_PLUGINS})
   IF (CTK_PLUGIN_${plugin})
     ADD_SUBDIRECTORY(Plugins/${plugin})
   ENDIF()
@@ -221,7 +223,7 @@ ENDFOREACH()
 #-----------------------------------------------------------------------------
 # Add CTK application subdirectories
 #
-FOREACH(app ${ctk_applications})
+FOREACH(app ${CTK_APPLICATIONS})
   IF (CTK_APP_${app})
     ADD_SUBDIRECTORY(Applications/${app})
   ENDIF()
