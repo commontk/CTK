@@ -58,6 +58,7 @@ INCLUDE(CMake/ctkMacroBuildQtApp.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
+INCLUDE(CMake/ctkMacroGenerateProjectXml.cmake)
 
 #-----------------------------------------------------------------------------
 # Patch program
@@ -182,7 +183,38 @@ FOREACH(app ${CTK_APPLICATIONS})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
+# Project.xml
 #
+
+# Create list of directories corresponding to the enabled targets
+SET(target_directories)
+
+FOREACH(lib ${CTK_LIBS})
+  SET(option_name CTK_LIB_${lib})
+  IF(${${option_name}})
+    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}:${option_name}")
+  ENDIF()
+ENDFOREACH()
+
+FOREACH(plugin ${CTK_PLUGINS})
+  SET(option_name CTK_PLUGIN_${plugin})
+  IF(${${option_name}})
+    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}:${option_name}")
+  ENDIF()
+ENDFOREACH()
+
+FOREACH(app ${CTK_APPLICATIONS})
+  SET(option_name CTK_APP_${app})
+  IF(${${option_name}})
+    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}:${option_name}")
+  ENDIF()
+ENDFOREACH()
+
+#MESSAGE(STATUS target_directories:${target_directories})
+
+# Generate Project.xml file expected by the CTest driver script
+ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}")
+
 #-----------------------------------------------------------------------------
 # Collect CTK library target dependencies
 #
