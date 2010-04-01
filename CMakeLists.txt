@@ -223,6 +223,13 @@ ctkMacroCollectAllTargetLibraries("${CTK_PLUGINS}" "Plugins" ALL_TARGET_LIBRARIE
 ctkMacroCollectAllTargetLibraries("${CTK_APPLICATIONS}" "Applications" ALL_TARGET_LIBRARIES)
 #MESSAGE(STATUS ALL_TARGET_LIBRARIES:${ALL_TARGET_LIBRARIES})
 
+# Collect CTK only libraries
+ctkMacroGetAllCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" CTEST_PROJECT_SUBPROJECTS)
+
+# Configure CTestConfigSubProject.cmake used that could be used by CTest scripts
+CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
+               ${CTK_BINARY_DIR}/CTestConfigSubProject.cmake)
+
 #-----------------------------------------------------------------------------
 # Superbuild is used by default
 #
