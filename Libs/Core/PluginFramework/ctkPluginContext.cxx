@@ -7,7 +7,8 @@
 
 #include "ctkPluginContext.h"
 
-#include <QServiceManager>
+#include "ctkServiceRegistration.h"
+#include "ctkServiceReference.h"
 
 namespace ctk {
 
@@ -16,7 +17,7 @@ namespace ctk {
 
   public:
 
-	  QServiceManager serviceManager;
+
   };
 
 
@@ -30,10 +31,25 @@ namespace ctk {
 	  delete d;
   }
 
-  QServiceInterfaceDescriptor PluginContext::getServiceDescriptor(const QString& interfaceName) const
+  ServiceRegistration PluginContext::registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties)
   {
-	Q_D(const PluginContext);
-	return d->serviceManager.interfaceDefault(interfaceName);
+
   }
+
+  QList<ServiceReference> PluginContext::getServiceReferences(const QString& clazz, const QString& filter)
+  {
+
+  }
+
+  ServiceReference PluginContext::getServiceReference(const QString& clazz)
+  {
+
+  }
+
+  QObject* PluginContext::getService(const ServiceReference& reference)
+  {
+
+  }
+
 
 }

@@ -26,7 +26,32 @@ public:
 PluginManager::PluginManager()
 : d_ptr(new PluginManagerPrivate())
 {
+  Q_D(PluginManager);
 
+  QString libName("CTKCore");
+  QLibrary lib(libName);
+  QFileInfo fileInfo(libName);
+  QString libBaseName(fileInfo.baseName());
+  if (libBaseName.startsWith("lib"))
+  {
+    libBaseName.remove(0, 3);
+  }
+  qDebug() << libBaseName;
+  lib.load();
+  if (lib.isLoaded())
+  {
+    QString xyz = QString(":/") + libBaseName + "/servicedescriptor.xml";
+    qDebug() << "resource string: " << xyz;
+    QFile serviceDescriptor(xyz);
+    qDebug() << "file exists: " << serviceDescriptor.exists();
+    qDebug() << "open returns:" << serviceDescriptor.open(QIODevice::ReadOnly);
+    qDebug() << "file open: " << serviceDescriptor.isOpen();
+    qDebug() << "file is readable: " << serviceDescriptor.isReadable();
+    //QByteArray serviceBA = serviceDescriptor.readAll();
+    //qDebug() << serviceBA;
+    qDebug() << "Service for " << libBaseName << " registered:" << d->serviceManager.addService(&serviceDescriptor);
+    lib.unload();
+  }
 }
 
 PluginManager::~PluginManager()
@@ -72,9 +97,9 @@ void PluginManager::startAllPlugins()
          qDebug() << "resource string: " << xyz;
          QFile serviceDescriptor(xyz);
          //qDebug() << "file exists: " << serviceDescriptor.exists();
-         //qDebug() << "open returns:" << serviceDescriptor.open(QIODevice::ReadOnly);
-         //qDebug() << "file open: " << serviceDescriptor.isOpen();
-         //qDebug() << "file is readable: " << serviceDescriptor.isReadable();
+         qDebug() << "open returns:" << serviceDescriptor.open(QIODevice::ReadOnly);
+         qDebug() << "file open: " << serviceDescriptor.isOpen();
+         qDebug() << "file is readable: " << serviceDescriptor.isReadable();
          //QByteArray serviceBA = serviceDescriptor.readAll();
          //qDebug() << serviceBA;
          qDebug() << "Service for " << libBaseName << " registered:" << d->serviceManager.addService(&serviceDescriptor);

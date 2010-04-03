@@ -20,8 +20,8 @@ namespace ctk {
 
     virtual ~PluginActivator() {};
 
-    virtual void start(PluginContext::Pointer context) = 0;
-    virtual void stop(PluginContext::Pointer context) = 0;
+    virtual void start(PluginContext* context) = 0;
+    virtual void stop(PluginContext* context) = 0;
 
   };
 

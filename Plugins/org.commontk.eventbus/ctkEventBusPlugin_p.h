@@ -1,12 +1,5 @@
-/*
- * ctkCLIPlugin.h
- *
- *  Created on: Mar 11, 2010
- *      Author: zelzer
- */
-
-#ifndef CTKCLIPLUGIN_H_
-#define CTKCLIPLUGIN_H_
+#ifndef CTKEVENTBUSPLUGIN_H
+#define CTKEVENTBUSPLUGIN_H
 
 #include <PluginFramework/ctkPluginActivator.h>
 
@@ -16,9 +9,9 @@ using namespace QtMobility;
 
 namespace ctk {
 
-  class CLIPlugin : public QObject,
-                    public PluginActivator,
-                    public QServicePluginInterface
+  class EventBusPlugin : public QObject,
+                     public PluginActivator,
+                     public QServicePluginInterface
   {
     Q_OBJECT
     Q_INTERFACES(ctk::PluginActivator QtMobility::QServicePluginInterface)
@@ -36,4 +29,4 @@ namespace ctk {
 
 }
 
-#endif /* CTKCLIPLUGIN_H_ */
+#endif // CTKEVENTBUSPLUGIN_H

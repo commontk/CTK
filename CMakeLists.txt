@@ -129,6 +129,7 @@ SET(ctk_libs
 #
 SET(ctk_plugins
   org.commontk.cli
+  org.commontk.eventbus
   )
 
 #-----------------------------------------------------------------------------

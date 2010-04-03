@@ -8,17 +8,18 @@
 #include "ctkCLIPlugin.h"
 
 #include <QtPlugin>
+#include <QServiceInterfaceDescriptor>
 
 #include <iostream>
 
 namespace ctk {
 
-  void CLIPlugin::start(PluginContext::Pointer context)
+  void CLIPlugin::start(PluginContext* context)
   {
     std::cout << "Plugin A started\n";
   }
 
-  void CLIPlugin::stop(PluginContext::Pointer context)
+  void CLIPlugin::stop(PluginContext* context)
   {
     std::cout << "Plugin B stopped\n";
   }

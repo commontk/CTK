@@ -8,15 +8,17 @@
 #ifndef CTKPLUGINCONTEXT_H_
 #define CTKPLUGINCONTEXT_H_
 
-#include <QSharedPointer>
-#include <QServiceInterfaceDescriptor>
+#include <QHash>
+#include <QString>
+#include <QVariant>
 
 #include "CTKCoreExport.h"
 
-using namespace QtMobility;
 
 namespace ctk {
 
+  class ServiceRegistration;
+  class ServiceReference;
   class PluginContextPrivate;
 
   class CTK_CORE_EXPORT PluginContext
@@ -26,15 +28,21 @@ namespace ctk {
 
   public:
 
-    //TODO use a macro
-    typedef QSharedPointer<PluginContext> Pointer;
+    typedef QHash<QString, QVariant> ServiceProperties;
 
-    PluginContext();
-    virtual ~PluginContext();
+    ~PluginContext();
 
-    QServiceInterfaceDescriptor getServiceDescriptor(const QString& interfaceName) const;
+    ServiceRegistration registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties = ServiceProperties());
+
+    QList<ServiceReference> getServiceReferences(const QString& clazz, const QString& filter = QString());
+
+    ServiceReference getServiceReference(const QString& clazz);
+
+    QObject* getService(const ServiceReference& reference);
 
   protected:
+
+    PluginContext();
 
     PluginContextPrivate * const d_ptr;
   };

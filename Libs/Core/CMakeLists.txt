@@ -45,8 +45,19 @@ SET(KIT_SRCS
   ctkUtils.h
 
   # PluginFramework sources
+  PluginFramework/ctkLDAPSearchFilter.cxx
+  PluginFramework/ctkPlugin.cxx
   PluginFramework/ctkPluginContext.cxx
   PluginFramework/ctkPluginManager.cxx
+  PluginFramework/ctkPluginRepository.cxx
+  PluginFramework/ctkServiceReference.cxx
+  PluginFramework/ctkServiceRegistration.cxx
+  #PluginFramework/ctkServiceRegistry.cxx
+  PluginFramework/ctkVersion.cxx
+
+  # EventBus sources
+  EventBus/ctkEvent.cxx
+  EventBus/ctkEventConstants.cxx
   )
 
 # Headers that should run through moc
@@ -55,6 +66,7 @@ SET(KIT_MOC_SRCS
 
   # PluginFramework headers
   PluginFramework/ctkPluginActivator.h
+
   )
 
 # UI files
