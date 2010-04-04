@@ -224,7 +224,7 @@ ENDFOREACH()
 ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
 
 #-----------------------------------------------------------------------------
-# Collect CTK library target dependencies
+# DGraph
 #
 ctkMacroCollectAllTargetLibraries("${CTK_LIBS}" "Libs" ALL_TARGET_LIBRARIES)
 ctkMacroCollectAllTargetLibraries("${CTK_PLUGINS}" "Plugins" ALL_TARGET_LIBRARIES)
@@ -233,6 +233,34 @@ ctkMacroCollectAllTargetLibraries("${CTK_APPLICATIONS}" "Applications" ALL_TARGE
 
 # Collect CTK only libraries
 ctkMacroGetAllCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" CTEST_PROJECT_SUBPROJECTS)
+# Generate DGraph input file expected by DGraph
+ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}")
+
+# Compile DGraph - An application allowing to check for cycle in DAG and also obtain the
+# topological order.
+TRY_COMPILE(RESULT_VAR ${CTK_BINARY_DIR}/Utilities/DGraph ${CTK_SOURCE_DIR}/Utilities/DGraph
+              DGraph
+              CMAKE_FLAGS
+                -DQT_QMAKE_EXECUTABLE:BOOL=${QT_QMAKE_EXECUTABLE}
+                -DCMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
+              OUTPUT_VARIABLE output)
+IF(NOT RESULT_VAR)
+  MESSAGE(FATAL_ERROR "Failed to compile DGraph application.\n${output}")
+ENDIF()
+SET(DGraph_EXECUTABLE ${CTK_BINARY_DIR}/Utilities/DGraph/DGraph)
+
+# Obtain list of target ordered topologically
+EXECUTE_PROCESS(
+  COMMAND ${DGraph_EXECUTABLE} ${CTK_BINARY_DIR}/DGraphInput.txt  
+  WORKING_DIRECTORY ${CTK_BINARY_DIR}
+  RESULT_VARIABLE RESULT_VAR
+  OUTPUT_VARIABLE CTEST_PROJECT_SUBPROJECTS
+  ERROR_VARIABLE error
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+IF(RESULT_VAR)
+  MESSAGE(FATAL_ERROR "Failed to obtain list of target ordered topologically.\n${error}")
+ENDIF()         
 
 # Configure CTestConfigSubProject.cmake used that could be used by CTest scripts
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
