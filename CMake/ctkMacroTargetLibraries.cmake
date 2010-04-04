@@ -110,7 +110,7 @@ ENDMACRO()
 # Extract all library names starting with CTK uppercase
 #
 MACRO(ctkMacroGetAllCTKTargetLibraries all_target_libraries varname)
-  SET(re_ctklib "^CTK[a-zA-Z0-9]+$")
+  SET(re_ctklib "^(c|C)(t|T)(k|K)[a-zA-Z0-9]+$")
   SET(_tmp_list)
   LIST(APPEND _tmp_list ${all_target_libraries})
   ctkMacroListFilter(_tmp_list re_ctklib OUTPUT_VARIABLE ${varname})
