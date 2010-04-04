@@ -226,13 +226,7 @@ ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directori
 #-----------------------------------------------------------------------------
 # DGraph
 #
-ctkMacroCollectAllTargetLibraries("${CTK_LIBS}" "Libs" ALL_TARGET_LIBRARIES)
-ctkMacroCollectAllTargetLibraries("${CTK_PLUGINS}" "Plugins" ALL_TARGET_LIBRARIES)
-ctkMacroCollectAllTargetLibraries("${CTK_APPLICATIONS}" "Applications" ALL_TARGET_LIBRARIES)
-#MESSAGE(STATUS ALL_TARGET_LIBRARIES:${ALL_TARGET_LIBRARIES})
 
-# Collect CTK only libraries
-ctkMacroGetAllCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" CTEST_PROJECT_SUBPROJECTS)
 # Generate DGraph input file expected by DGraph
 ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}")
 

@@ -46,10 +46,19 @@ set(sep "^^")
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
 #-----------------------------------------------------------------------------
+# Collect CTK library target dependencies
+#
+
+ctkMacroCollectAllTargetLibraries("${CTK_LIBS}" "Libs" ALL_TARGET_LIBRARIES)
+ctkMacroCollectAllTargetLibraries("${CTK_PLUGINS}" "Plugins" ALL_TARGET_LIBRARIES)
+ctkMacroCollectAllTargetLibraries("${CTK_APPLICATIONS}" "Applications" ALL_TARGET_LIBRARIES)
+#MESSAGE(STATUS ALL_TARGET_LIBRARIES:${ALL_TARGET_LIBRARIES})
+
+#-----------------------------------------------------------------------------
 # Initialize NON_CTK_DEPENDENCIES variable
 #
-# Using the variable ALL_TARGET_LIBRARIES initialized in the main CMakeLists.txt with the help
-# of the macro ctkMacroGetAllTargetLibraries, let's get the list of all Non-CTK dependencies.
+# Using the variable ALL_TARGET_LIBRARIES initialized above with the help
+# of the macro ctkMacroCollectAllTargetLibraries, let's get the list of all Non-CTK dependencies.
 # NON_CTK_DEPENDENCIES is expected by the macro ctkMacroShouldAddExternalProject
 ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCIES)
 #MESSAGE(STATUS NON_CTK_DEPENDENCIES:${NON_CTK_DEPENDENCIES})
