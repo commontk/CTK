@@ -3,11 +3,17 @@
 #
 #
 
-MACRO(ctkMacroGenerateProjectXml dir name target_directories)
+MACRO(ctkMacroGenerateProjectXml dir name target_directories is_superbuild)
   IF(NOT EXISTS ${dir})
     MESSAGE(FATAL_ERROR "Directory ${dir} doesn't exist!")
   ENDIF()
 
+  SET(xml_subprojects )
+
+  IF(${is_superbuild})
+    SET(xml_subprojects ${xml_subprojects} "  <SubProject name=\"SuperBuild\">\n")
+  ENDIF()
+  
   FOREACH(target_info ${target_directories})
 
     # extract target_dir and option_name
@@ -48,6 +54,10 @@ MACRO(ctkMacroGenerateProjectXml dir name target_directories)
     # filter dependencies starting with CTK
     ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
 
+    IF(${is_superbuild})
+      SET(xml_subprojects ${xml_subprojects} "    <Dependency name=\"SuperBuild\"/>\n")
+    ENDIF()
+    
     # Generate XML related to the dependencies 
     FOREACH(dependency_name ${ctk_dependencies})
       SET(xml_subprojects ${xml_subprojects} "    <Dependency name=\"${dependency_name}\"/>\n")

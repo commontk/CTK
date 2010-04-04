@@ -183,6 +183,13 @@ FOREACH(app ${CTK_APPLICATIONS})
   OPTION(CTK_APP_${app} "Build ${app} Application." ON)
 ENDFOREACH()
 
+
+#-----------------------------------------------------------------------------
+# Superbuild Option - Enabled by default
+#
+OPTION(CTK_SUPERBUILD "Build CTK and the projects it depends on via SuperBuild.cmake." ON)
+MARK_AS_ADVANCED(CTK_SUPERBUILD)
+
 #-----------------------------------------------------------------------------
 # Project.xml
 #
@@ -214,7 +221,7 @@ ENDFOREACH()
 #MESSAGE(STATUS target_directories:${target_directories})
 
 # Generate Project.xml file expected by the CTest driver script
-ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}")
+ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
 
 #-----------------------------------------------------------------------------
 # Collect CTK library target dependencies
@@ -232,10 +239,8 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
                ${CTK_BINARY_DIR}/CTestConfigSubProject.cmake)
 
 #-----------------------------------------------------------------------------
-# Superbuild is used by default
+# Superbuild script
 #
-OPTION(CTK_SUPERBUILD "Build CTK and the projects it depends on via SuperBuild.cmake." ON)
-MARK_AS_ADVANCED(CTK_SUPERBUILD)
 
 IF(CTK_SUPERBUILD)
   INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
