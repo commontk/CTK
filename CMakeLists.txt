@@ -58,6 +58,7 @@ INCLUDE(CMake/ctkMacroBuildQtApp.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
+INCLUDE(CMake/ctkMacroGenerateDGraphInput.cmake)
 INCLUDE(CMake/ctkMacroGenerateProjectXml.cmake)
 
 #-----------------------------------------------------------------------------
