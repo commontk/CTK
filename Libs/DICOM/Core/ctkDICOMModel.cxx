@@ -88,7 +88,6 @@ ctkDICOMModelPrivate::~ctkDICOMModelPrivate()
 //------------------------------------------------------------------------------
 void ctkDICOMModelPrivate::init()
 {
-  QCTK_P(ctkDICOMModel);
   this->Headers = QStringList() << "Name" << "Age" << "Scan" << "Date" << "Subject ID"
                   << "Number" << "Institution" << "Referrer" << "Performer";
 }
@@ -171,8 +170,6 @@ int ctkDICOMModelPrivate::childrenCount(Node* node)const
 //------------------------------------------------------------------------------
 Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)const
 {
-  QCTK_P(const ctkDICOMModel);
-  
   Node* node = new Node;
   Node* nodeParent = 0;
   if (row == -1)
@@ -248,7 +245,6 @@ QString ctkDICOMModelPrivate::generateQuery(const QString& fields, const QString
 //------------------------------------------------------------------------------
 void ctkDICOMModelPrivate::updateQueries(Node* node)const
 {
-  QCTK_P(const ctkDICOMModel);
   // are you kidding me, it should be virtualized here :-)
   QString query;
   switch(node->Type)
