@@ -118,9 +118,9 @@ bool ctkModelTester::throwOnError()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkModelTester::setNestedInserts( bool nestedInserts )
+void ctkModelTester::setNestedInserts( bool nestedInsertsValue )
 {
-  qctk_d()->NestedInserts = nestedInserts;
+  qctk_d()->NestedInserts = nestedInsertsValue;
 }
 
 //-----------------------------------------------------------------------------
