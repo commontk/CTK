@@ -200,26 +200,26 @@ SET(target_directories)
 FOREACH(lib ${CTK_LIBS})
   SET(option_name CTK_LIB_${lib})
   IF(${${option_name}})
-    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}:${option_name}")
+    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}::${option_name}")
   ENDIF()
 ENDFOREACH()
 
 FOREACH(plugin ${CTK_PLUGINS})
   SET(option_name CTK_PLUGIN_${plugin})
   IF(${${option_name}})
-    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}:${option_name}")
+    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}::${option_name}")
   ENDIF()
 ENDFOREACH()
 
 FOREACH(app ${CTK_APPLICATIONS})
   SET(option_name CTK_APP_${app})
   IF(${${option_name}})
-    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}:${option_name}")
+    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}::${option_name}")
   ENDIF()
 ENDFOREACH()
 
 #MESSAGE(STATUS target_directories:${target_directories})
-
+MESSAGE( "HERE: ${CTK_BINARY_DIR}")
 # Generate Project.xml file expected by the CTest driver script
 ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
 
@@ -241,7 +241,12 @@ TRY_COMPILE(RESULT_VAR ${CTK_BINARY_DIR}/Utilities/DGraph ${CTK_SOURCE_DIR}/Util
 IF(NOT RESULT_VAR)
   MESSAGE(FATAL_ERROR "Failed to compile DGraph application.\n${output}")
 ENDIF()
-SET(DGraph_EXECUTABLE ${CTK_BINARY_DIR}/Utilities/DGraph/DGraph)
+FIND_PROGRAM(DGraph_EXECUTABLE DGraph
+  "${CTK_BINARY_DIR}/Utilities/DGraph/"
+  "${CTK_BINARY_DIR}/Utilities/DGraph/bin/"
+  "${CTK_BINARY_DIR}/Utilities/DGraph/Debug/"
+  "${CTK_BINARY_DIR}/Utilities/DGraph/Release/")
+#SET(DGraph_EXECUTABLE ${CTK_BINARY_DIR}/Utilities/DGraph/DGraph)
 
 # Obtain list of target ordered topologically
 EXECUTE_PROCESS(
@@ -253,7 +258,7 @@ EXECUTE_PROCESS(
   OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 IF(RESULT_VAR)
-  MESSAGE(FATAL_ERROR "Failed to obtain list of target ordered topologically.\n${error}")
+  MESSAGE(FATAL_ERROR "Failed to obtain list of target ordered topologically.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
 ENDIF()         
 
 # Configure CTestConfigSubProject.cmake used that could be used by CTest scripts
