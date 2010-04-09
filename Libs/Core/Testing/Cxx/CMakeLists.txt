@@ -1,6 +1,7 @@
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  ctkModelTesterTest1.cxx
   ctkUtilsTest1.cxx
   #EXTRA_INCLUDE TestingMacros.h
   )
@@ -27,4 +28,5 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
+SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkUtilsTest1 )
