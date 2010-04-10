@@ -4,8 +4,9 @@
 
 namespace ctk {
 
-  Plugin::Plugin()
-    : d_ptr(new PluginPrivate)
+  Plugin::Plugin(PluginFrameworkContext* fw,
+                 PluginArchiveInterface* ba)
+    : d_ptr(new PluginPrivate(fw, ba))
   {
 
   }

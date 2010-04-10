@@ -7,13 +7,18 @@
 
 namespace ctk {
 
-  class PluginFramework
+  class PluginFramework : public Plugin
   {
 
   public:
 
-    void launch();
-    void shutdown();
+    PluginFramework();
+
+    void init();
+
+    // TODO return info about the reason why this
+    // method returned
+    void waitForStop(int timeout);
 
   protected:
 

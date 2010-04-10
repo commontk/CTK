@@ -7,6 +7,8 @@
 
 namespace ctk {
 
+  class PluginArchiveInterface;
+  class PluginFrameworkContext;
   class PluginPrivate;
   class Plugin {
 
@@ -22,6 +24,10 @@ namespace ctk {
       STOPPING,
       ACTIVE
     };
+
+    Q_DECLARE_FLAGS(States, State)
+
+    virtual ~Plugin();
 
     State state() const;
 
@@ -41,10 +47,12 @@ namespace ctk {
 
     PluginPrivate * const d_ptr;
 
-    Plugin();
+    Plugin(PluginFrameworkContext* fw, PluginArchiveInterface* ba);
     Plugin(PluginPrivate& dd);
   };
 
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctk::Plugin::States)
 
 #endif // CTKPLUGIN_H

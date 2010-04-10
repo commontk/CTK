@@ -48,8 +48,10 @@ SET(KIT_SRCS
   PluginFramework/ctkLDAPSearchFilter.cxx
   PluginFramework/ctkPlugin.cxx
   PluginFramework/ctkPluginContext.cxx
+  PluginFramework/ctkPluginFrameworkContext.cxx
+  PluginFramework/ctkPluginFrameworkContextPrivate.cxx
   PluginFramework/ctkPluginManager.cxx
-  PluginFramework/ctkPluginRepository.cxx
+  #PluginFramework/ctkPluginRepository.cxx
   PluginFramework/ctkServiceReference.cxx
   PluginFramework/ctkServiceRegistration.cxx
   #PluginFramework/ctkServiceRegistry.cxx
