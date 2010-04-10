@@ -40,6 +40,11 @@ ENDIF()
 # Use this value where semi-colons are needed in ep_add args:
 set(sep "^^")
 
+# Find the git executable, used for custom git commands for external projects
+# (e.g. for QtMobility)
+find_program(Git_EXECUTABLE git DOC "git command line client")
+mark_as_advanced(Git_EXECUTABLE)
+
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #
@@ -163,9 +168,9 @@ IF(${add_project})
   SET(qtmobility_patch_dir ${CTK_SOURCE_DIR}/Utilities/QtMobility/)
   SET(qtmobility_configured_patch_dir ${CTK_BINARY_DIR}/Utilities/QtMobility/)
   SET(qtmobility_patchscript
-    ${CTK_BINARY_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake)
+    ${CTK_BINARY_DIR}/Utilities/QtMobility/QtMobilityGitBranch1.0-patch.cmake)
   CONFIGURE_FILE(
-    ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobilityBeta1-patch.cmake.in
+    ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobilityGitBranch1.0-patch.cmake.in
     ${qtmobility_patchscript} @ONLY)
 
   # Define configure options
@@ -180,9 +185,10 @@ IF(${add_project})
   ENDIf()
 
   ExternalProject_Add(${proj}
-    URL "http://get.qt.nokia.com/qt/solutions/qt-mobility-src-1.0.0-beta1.tar.gz"
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
+    GIT_REPOSITORY git://gitorious.org/qt-mobility/qt-mobility.git
+    # the patch command is also used to checkout the 1.0 branch    
     PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
     BUILD_IN_SOURCE 1
     )
 ENDIF()
@@ -344,4 +350,3 @@ ADD_CUSTOM_TARGET(CTK
   COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
   )
- 

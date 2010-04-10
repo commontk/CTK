@@ -1,0 +1,20 @@
+diff -crB ../qt-mobility-src-1.0.0-beta1/configure.bat configure.bat
+*** ./qt-mobility-src-1.0.0-beta1/configure.bat	2010-02-12 03:54:12.000000000 -0500
+--- configure.bat	2010-03-18 13:19:42.000000000 -0400
+***************
+*** 60,66 ****
+  set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
+  set MOBILITY_MODULES_UNPARSED=
+  set VC_TEMPLATE_OPTION=
+! set QT_PATH=
+  set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
+  
+  if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
+--- 60,66 ----
+  set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
+  set MOBILITY_MODULES_UNPARSED=
+  set VC_TEMPLATE_OPTION=
+! set QT_PATH=@QT_BINARY_DIR@/
+  set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
+  
+  if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
