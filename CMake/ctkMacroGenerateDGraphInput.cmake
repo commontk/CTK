@@ -15,7 +15,7 @@ MACRO(ctkMacroGenerateDGraphInput dir name target_directories)
   FOREACH(target_info ${target_directories})
 
     # extract target_dir and option_name
-    STRING(REPLACE "::" "\\;" target_info ${target_info})
+    STRING(REPLACE "^^" "\\;" target_info ${target_info})
     SET(target_info_list ${target_info})
     LIST(GET target_info_list 0 target_dir)
     LIST(GET target_info_list 1 option_name)
