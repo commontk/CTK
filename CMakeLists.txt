@@ -12,6 +12,11 @@ PROJECT(CTK)
 SET(CTK_LIBRARY_MODE "SHARED")
 SET(CTK_BUILD_SHARED_LIBS TRUE)
 
+# Set the default symbol visibility to hidden for gcc
+IF(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  SET(CTK_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
+ENDIF()
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

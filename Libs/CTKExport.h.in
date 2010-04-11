@@ -8,14 +8,13 @@
 #ifndef __@MY_EXPORT_HEADER_PREFIX@Export_h
 #define __@MY_EXPORT_HEADER_PREFIX@Export_h
 
-#if defined(WIN32) && !defined(@MY_LIBNAME@_STATIC)
- #if defined(@MY_LIBNAME@_EXPORTS)
-  #define @MY_LIBRARY_EXPORT_DIRECTIVE@ __declspec( dllexport ) 
- #else
-  #define @MY_LIBRARY_EXPORT_DIRECTIVE@ __declspec( dllimport ) 
- #endif
+#include <QtCore/qglobal.h>
+
+#if defined(@MY_LIBNAME@_EXPORTS)
+ #define @MY_LIBRARY_EXPORT_DIRECTIVE@ Q_DECL_EXPORT
 #else
- #define @MY_LIBRARY_EXPORT_DIRECTIVE@
+ #define @MY_LIBRARY_EXPORT_DIRECTIVE@ Q_DECL_IMPORT
 #endif
 
 #endif
+
