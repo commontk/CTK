@@ -44,6 +44,9 @@ set(sep "^^")
 # (e.g. for QtMobility)
 find_program(Git_EXECUTABLE git DOC "git command line client")
 mark_as_advanced(Git_EXECUTABLE)
+if(NOT Git_EXECUTABLE)
+  message(SEND_ERROR "Set Git_EXECUTABLE to the path of your git executable")
+endif()
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
@@ -183,13 +186,22 @@ IF(${add_project})
   ELSEIF(NOT ${CMAKE_CFG_INTDIR} STREQUAL "Release")
   SET(qtmobility_build_type "debug")
   ENDIf()
+  
+  SET(qtmobility_make_cmd)
+  IF(UNIX OR MINGW)
+    SET(qtmobility_make_cmd make)
+  ELSEIF(WIN32)
+    SET(qtmobility_make_cmd nmake)
+  ENDIF()
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY git://gitorious.org/qt-mobility/qt-mobility.git
     # the patch command is also used to checkout the 1.0 branch    
     PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
-    BUILD_IN_SOURCE 1
+    BUILD_COMMAND ${qtmobility_make_cmd}
+	INSTALL_COMMAND ${qtmobility_make_cmd} install
+	BUILD_IN_SOURCE 1
     )
 ENDIF()
 
