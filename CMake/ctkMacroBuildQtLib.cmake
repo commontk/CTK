@@ -31,6 +31,8 @@ MACRO(CtkMacroBuildQtLib)
     ${CTK_BASE_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
+    # with CMake >2.9, use QT4_MAKE_OUTPUT_FILE instead ?
+    ${CMAKE_CURRENT_BINARY_DIR}/Resources/UI
     ${MY_INCLUDE_DIRECTORIES}
     )  
   SET(CTK_BASE_INCLUDE_DIRS ${my_includes} CACHE INTERNAL "CTK includes" FORCE)
@@ -71,6 +73,8 @@ MACRO(CtkMacroBuildQtLib)
     ${MY_QRC_SRCS}
     )
 
+  # Set labels associated with the target.
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
   # Install rules
   IF(CTK_BUILD_SHARED_LIBS)
     INSTALL(TARGETS ${lib_name}

@@ -1,0 +1,44 @@
+*** ../qt-mobility-src-1.0.0-beta1/configure	2010-02-12 03:54:12.000000000 -0500
+--- configure	2010-03-24 18:51:06.000000000 -0400
+***************
+*** 413,423 ****
+  }
+  
+  #compile tests
+! compileTest QMF qmf
+! compileTest NetworkManager networkmanager
+! compileTest "CoreWLAN (MacOS 10.6)" corewlan
+! compileTest "Maemo ICD" maemo-icd
+! compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+  
+  # Now module selection
+  # using 'expr match ....' should help a bit
+--- 413,423 ----
+  }
+  
+  #compile tests
+! #compileTest QMF qmf
+! #compileTest NetworkManager networkmanager
+! #compileTest "CoreWLAN (MacOS 10.6)" corewlan
+! #compileTest "Maemo ICD" maemo-icd
+! #compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+  
+  # Now module selection
+  # using 'expr match ....' should help a bit
+***************
+*** 493,499 ****
+  fi
+  
+  echo "Running qmake..."
+! if qmake -recursive "$relpath/qtmobility.pro"; then
+      echo ""
+      echo "configure has finished. You may run make or gmake to build the project now."
+  else
+--- 493,499 ----
+  fi
+  
+  echo "Running qmake..."
+! if qmake -spec macx-g++ -recursive "$relpath/qtmobility.pro"; then
+      echo ""
+      echo "configure has finished. You may run make or gmake to build the project now."
+  else

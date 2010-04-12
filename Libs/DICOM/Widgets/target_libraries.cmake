@@ -5,6 +5,5 @@
 # 
 
 SET(target_libraries
-  CTKCore
   CTKDICOMCore
   )

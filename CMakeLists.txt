@@ -12,6 +12,13 @@ PROJECT(CTK)
 SET(CTK_LIBRARY_MODE "SHARED")
 SET(CTK_BUILD_SHARED_LIBS TRUE)
 
+IF(CMAKE_CXX_COMPILER_ID)
+  # Set the default symbol visibility to hidden for gcc
+  IF(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    SET(CTK_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
+  ENDIF()
+ENDIF()
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #
@@ -58,6 +65,8 @@ INCLUDE(CMake/ctkMacroBuildQtApp.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
+INCLUDE(CMake/ctkMacroGenerateDGraphInput.cmake)
+INCLUDE(CMake/ctkMacroGenerateProjectXml.cmake)
 
 #-----------------------------------------------------------------------------
 # Patch program
@@ -116,7 +125,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # CTK Libraries
 #
-SET(ctk_libs
+SET(CTK_LIBS
   Core
   Widgets
   DICOM/Core
@@ -127,7 +136,7 @@ SET(ctk_libs
 #-----------------------------------------------------------------------------
 # CTK Plugins
 #
-SET(ctk_plugins
+SET(CTK_PLUGINS
   org.commontk.cli
   org.commontk.eventbus
   )
@@ -135,7 +144,7 @@ SET(ctk_plugins
 #-----------------------------------------------------------------------------
 # CTK Applications
 #
-SET(ctk_applications
+SET(CTK_APPLICATIONS
   ctkCLIPluginExplorer
   ctkDICOM
   ctkDICOMIndexer
@@ -168,34 +177,105 @@ OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
 #
-FOREACH(lib ${ctk_libs})
+FOREACH(lib ${CTK_LIBS})
   OPTION(CTK_LIB_${lib} "Enable ${lib} Library." ON)
   ctkMacroAddCtkLibraryOptions(${lib})
 ENDFOREACH()
 
 # Build options associated with CTK plugins
-FOREACH(plugin ${ctk_plugins})
+FOREACH(plugin ${CTK_PLUGINS})
   OPTION(CTK_PLUGIN_${plugin} "Build ${plugin} Plugin." ON)
 ENDFOREACH()
 
 # Build options associated with CTK applications
-FOREACH(app ${ctk_applications})
+FOREACH(app ${CTK_APPLICATIONS})
   OPTION(CTK_APP_${app} "Build ${app} Application." ON)
 ENDFOREACH()
 
-#-----------------------------------------------------------------------------
-# Check dependencies
-#
-ctkMacroGetAllTargetLibraries("${ctk_libs}" "Libs" ALL_TARGET_LIBRARIES)
-ctkMacroGetAllTargetLibraries("${ctk_plugins}" "Plugins" ALL_TARGET_LIBRARIES)
-ctkMacroGetAllTargetLibraries("${ctk_applications}" "Applications" ALL_TARGET_LIBRARIES)
-#MESSAGE(STATUS ALL_TARGET_LIBRARIES:${ALL_TARGET_LIBRARIES})
 
 #-----------------------------------------------------------------------------
-# Superbuild is used by default
+# Superbuild Option - Enabled by default
 #
 OPTION(CTK_SUPERBUILD "Build CTK and the projects it depends on via SuperBuild.cmake." ON)
 MARK_AS_ADVANCED(CTK_SUPERBUILD)
+
+#-----------------------------------------------------------------------------
+# Project.xml
+#
+
+# Create list of directories corresponding to the enabled targets
+SET(target_directories)
+
+FOREACH(lib ${CTK_LIBS})
+  SET(option_name CTK_LIB_${lib})
+  IF(${${option_name}})
+    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}^^${option_name}")
+  ENDIF()
+ENDFOREACH()
+
+FOREACH(plugin ${CTK_PLUGINS})
+  SET(option_name CTK_PLUGIN_${plugin})
+  IF(${${option_name}})
+    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^${option_name}")
+  ENDIF()
+ENDFOREACH()
+
+FOREACH(app ${CTK_APPLICATIONS})
+  SET(option_name CTK_APP_${app})
+  IF(${${option_name}})
+    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}^^${option_name}")
+  ENDIF()
+ENDFOREACH()
+
+#MESSAGE(STATUS target_directories:${target_directories})
+
+# Generate Project.xml file expected by the CTest driver script
+ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
+
+#-----------------------------------------------------------------------------
+# DGraph
+#
+
+# Generate DGraph input file expected by DGraph
+ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}")
+
+# Compile DGraph - An application allowing to check for cycle in DAG and also obtain the
+# topological order.
+TRY_COMPILE(RESULT_VAR ${CTK_BINARY_DIR}/Utilities/DGraph ${CTK_SOURCE_DIR}/Utilities/DGraph
+              DGraph
+              CMAKE_FLAGS
+                -DQT_QMAKE_EXECUTABLE:BOOL=${QT_QMAKE_EXECUTABLE}
+                -DCMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
+              OUTPUT_VARIABLE output)
+IF(NOT RESULT_VAR)
+  MESSAGE(FATAL_ERROR "Failed to compile DGraph application.\n${output}")
+ENDIF()
+FIND_PROGRAM(DGraph_EXECUTABLE DGraph
+  "${CTK_BINARY_DIR}/Utilities/DGraph/"
+  "${CTK_BINARY_DIR}/Utilities/DGraph/bin/"
+  "${CTK_BINARY_DIR}/Utilities/DGraph/Debug/"
+  "${CTK_BINARY_DIR}/Utilities/DGraph/Release/")
+
+# Obtain list of target ordered topologically
+EXECUTE_PROCESS(
+  COMMAND ${DGraph_EXECUTABLE} ${CTK_BINARY_DIR}/DGraphInput.txt  
+  WORKING_DIRECTORY ${CTK_BINARY_DIR}
+  RESULT_VARIABLE RESULT_VAR
+  OUTPUT_VARIABLE CTEST_PROJECT_SUBPROJECTS
+  ERROR_VARIABLE error
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+IF(RESULT_VAR)
+  MESSAGE(FATAL_ERROR "Failed to obtain list of target ordered topologically.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
+ENDIF()         
+
+# Configure CTestConfigSubProject.cmake used that could be used by CTest scripts
+CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
+               ${CTK_BINARY_DIR}/CTestConfigSubProject.cmake)
+
+#-----------------------------------------------------------------------------
+# Superbuild script
+#
 
 IF(CTK_SUPERBUILD)
   INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
@@ -205,7 +285,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories
 #
-FOREACH(lib ${ctk_libs})
+FOREACH(lib ${CTK_LIBS})
   IF (CTK_LIB_${lib})
     ADD_SUBDIRECTORY(Libs/${lib})
   ENDIF()
@@ -214,7 +294,7 @@ ENDFOREACH()
 #-----------------------------------------------------------------------------
 # Add CTK plugin subdirectories
 #
-FOREACH(plugin ${ctk_plugins})
+FOREACH(plugin ${CTK_PLUGINS})
   IF (CTK_PLUGIN_${plugin})
     ADD_SUBDIRECTORY(Plugins/${plugin})
   ENDIF()
@@ -223,7 +303,7 @@ ENDFOREACH()
 #-----------------------------------------------------------------------------
 # Add CTK application subdirectories
 #
-FOREACH(app ${ctk_applications})
+FOREACH(app ${CTK_APPLICATIONS})
   IF (CTK_APP_${app})
     ADD_SUBDIRECTORY(Applications/${app})
   ENDIF()

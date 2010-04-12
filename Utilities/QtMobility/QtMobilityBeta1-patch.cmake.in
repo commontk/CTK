@@ -28,4 +28,4 @@ IF(UNIX)
 ENDIF()
 
 # Apply patches
-ctkMacroApplyPatches(@CTK_PATCH_EXECUTABLE@ @qtmobility_src_dir@ "${patch_files}")
+ctkMacroApplyPatches("@CTK_PATCH_EXECUTABLE@" "@qtmobility_src_dir@" "${patch_files}")

@@ -72,6 +72,9 @@ MACRO(ctkMacroBuildQtPlugin)
     ${MY_QRC_SRCS}
     )
 
+  # Set labels associated with the target.
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
+  
   # Note: The plugin may be installed in some other location ???
   # Install rules
 #   IF(CTK_BUILD_SHARED_LIBS)
