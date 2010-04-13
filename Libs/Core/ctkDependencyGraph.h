@@ -3,6 +3,7 @@
 
 // QT includes
 #include <QString>
+#include <QList>
 
 class ctkDependencyGraph
 {
