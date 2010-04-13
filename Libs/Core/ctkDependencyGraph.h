@@ -5,7 +5,10 @@
 #include <QString>
 #include <QList>
 
-class ctkDependencyGraph
+/// CTK includes
+#include "CTKCoreExport.h"
+
+class CTK_CORE_EXPORT ctkDependencyGraph
 {
 public:
   ctkDependencyGraph(int nvertices, int nedges);
