@@ -25,8 +25,8 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
   Q_UNUSED(argc);
   Q_UNUSED(argv);  
 
-  const int numberOfVertices = 3;
-  const int numberOfEdges = 2;
+  const int numberOfVertices = 4;
+  const int numberOfEdges = 3;
 
   ctkDependencyGraph  graph(numberOfVertices,numberOfEdges);
 
@@ -34,9 +34,9 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
   graph.setVerbose(false);
   graph.setVerbose(true);
 
-  graph.insertEdge(0,1);
   graph.insertEdge(1,2);
   graph.insertEdge(2,3);
+  graph.insertEdge(3,4);
 
   graph.printAdditionalInfo();
   graph.printGraph();
@@ -50,7 +50,7 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
 
   int noe = graph.numberOfEdges();
 
-  if( noe != numberOfEdges )
+  if( noe != numberOfEdges + 3 )
     {
     return EXIT_FAILURE;
     }
@@ -75,7 +75,7 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
 
   QList<int> path;
 
-  graph.findPath( 0, 2, path );
+  graph.findPath( 1, 4, path );
 
   QList<int> list;
   graph.setEdgeListToExclude( list );
