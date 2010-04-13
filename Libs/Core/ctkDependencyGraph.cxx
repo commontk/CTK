@@ -233,17 +233,17 @@ void ctkDependencyGraph::printAdditionalInfo()
            << " Abort:" << this->Internal->Abort;
            
   qDebug() << " [Processed]";
-  for(int i=0; i < this->Internal->Processed.size(); i++)
+  for(int i=1; i < this->Internal->Processed.size(); i++)
     {
     qDebug() << i << "->" << this->Internal->Processed[i]; 
     }
   qDebug() << " [Discovered]";
-  for(int i=0; i < this->Internal->Discovered.size(); i++)
+  for(int i=1; i < this->Internal->Discovered.size(); i++)
     {
     qDebug() << i << "->" << this->Internal->Discovered[i]; 
     }
   qDebug() << " [Parent]";
-  for(int i=0; i < this->Internal->Parent.size(); i++)
+  for(int i=1; i < this->Internal->Parent.size(); i++)
     {
     qDebug() << i << "->" << this->Internal->Parent[i]; 
     }
