@@ -5,7 +5,7 @@ set(work_dir @ep_source_dir@)
 set(proj_dir ${work_dir}/@proj@)
 
 execute_process(
-  COMMAND @Git_EXECUTABLE@ checkout origin/1.0 -t
+  COMMAND @Git_EXECUTABLE@ checkout -b branch_1.0 origin/1.0 -t
   WORKING_DIRECTORY ${proj_dir}
   ERROR_VARIABLE error_output
   RESULT_VARIABLE error_code
