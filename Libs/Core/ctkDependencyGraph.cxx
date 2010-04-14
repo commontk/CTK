@@ -221,6 +221,12 @@ ctkDependencyGraph::ctkDependencyGraph(int nvertices, int nedges)
 //----------------------------------------------------------------------------
 ctkDependencyGraph::~ctkDependencyGraph()
 {
+  // Clean memory
+  for (int i=0; i <= this->Internal->NVertices; i++)
+    {
+    delete this->Internal->Edges[i];
+    }
+    
   delete this->Internal; 
 }
 
