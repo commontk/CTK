@@ -56,7 +56,7 @@ else()
   message(FATAL_ERROR "Unknown script mode: '${SCRIPT_MODE}'. Script mode should be either 'experimental', 'continuous' or 'nightly'")
 endif()
 
-message("script_mode:${SCRIPT_MODE}")
+#message("script_mode:${SCRIPT_MODE}")
 #message("model:${model}")
 #message("empty_binary_directory:${empty_binary_directory}")
 #message("force_build:${force_build}")
