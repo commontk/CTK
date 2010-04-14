@@ -333,6 +333,15 @@ IF(CTK_SUPERBUILD)
 ENDIF()
 
 #-----------------------------------------------------------------------------
+# CTK_SUPERBUILD_BINARY_DIR
+
+# If CTK_SUPERBUILD_BINARY_DIR isn't defined, it means CTK is *NOT* build using Superbuild.
+# In that specific case, CTK_SUPERBUILD_BINARY_DIR should default to CTK_BINARY_DIR
+IF(NOT DEFINED CTK_SUPERBUILD_BINARY_DIR)
+  SET(CTK_SUPERBUILD_BINARY_DIR ${CTK_BINARY_DIR})
+ENDIF()
+
+#-----------------------------------------------------------------------------
 # Set C/CXX Flags
 #
 SET(CMAKE_CXX_FLAGS ${CTK_CXX_FLAGS})
