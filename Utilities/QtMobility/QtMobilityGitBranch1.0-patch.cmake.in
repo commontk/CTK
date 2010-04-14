@@ -11,7 +11,7 @@ execute_process(
   RESULT_VARIABLE error_code
   )
 if(error_code)
-  if(NOT ${error_output} MATCHES "branch 1.0 already exists")
+  if(NOT ${error_output} MATCHES "branch branch_1.0 already exists")
     message(FATAL_ERROR "${error_output}")
   endif()
 endif()
