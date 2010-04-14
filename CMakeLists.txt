@@ -68,7 +68,7 @@ SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 
 #-----------------------------------------------------------------------------
 # CMake Macro(s)
-# 
+#
 INCLUDE(CMake/ctkMacroParseArguments.cmake)
 INCLUDE(CMake/ctkMacroListFilter.cmake)
 INCLUDE(CMake/ctkMacroBuildQtLib.cmake)
@@ -79,6 +79,10 @@ INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkMacroGenerateDGraphInput.cmake)
 INCLUDE(CMake/ctkMacroGenerateProjectXml.cmake)
+
+# Used by CTKGenerateCTKConfig.cmake
+SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)
+SET(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
 
 #-----------------------------------------------------------------------------
 # Patch program
@@ -342,6 +346,13 @@ IF(NOT DEFINED CTK_SUPERBUILD_BINARY_DIR)
 ENDIF()
 
 #-----------------------------------------------------------------------------
+# Configure files with settings
+#
+
+CONFIGURE_FILE(${CTK_SOURCE_DIR}/UseCTK.cmake.in
+               ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake COPYONLY IMMEDIATE)
+               
+#-----------------------------------------------------------------------------
 # Set C/CXX Flags
 #
 SET(CMAKE_CXX_FLAGS ${CTK_CXX_FLAGS})
@@ -384,3 +395,9 @@ ENDFOREACH()
 # Style Checking configuration
 #
 INCLUDE(Utilities/KWStyle/KWStyle.cmake)
+
+#-----------------------------------------------------------------------------
+# The commands in this directory are intended to be executed as
+# the end of the whole configuration process, as a "last step".
+# This directory is typically the last SUBDIRS in the main CMakeLists.txt.
+ADD_SUBDIRECTORY(Utilities/LastConfigureStep)
