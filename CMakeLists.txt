@@ -113,6 +113,11 @@ IF(BUILD_TESTING)
 ENDIF()
 
 #-----------------------------------------------------------------------------
+# Coverage
+#
+OPTION(WITH_COVERAGE "Enable/Disable coverage" OFF)
+
+#-----------------------------------------------------------------------------
 # QT
 #
 ctkMacroSetupQt()
@@ -278,6 +283,17 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
 IF(CTK_SUPERBUILD)
   INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   RETURN()
+ENDIF()
+
+#-----------------------------------------------------------------------------
+# Set coverage flag
+#
+IF(WITH_COVERAGE)
+  IF(CMAKE_CXX_COMPILER_ID AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    SET(coverage_flags "-g -fdiagnostics-show-option -fprofile-arcs -ftest-coverage -O3 -DNDEBUG")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${coverage_flags}")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${coverage_flags}")
+  ENDIF()
 ENDIF()
 
 #-----------------------------------------------------------------------------

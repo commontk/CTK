@@ -7,6 +7,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION ${cmake_version_required})
 # CTK_KWSTYLE_EXECUTABLE
 # DCMTK_DIR
 # QT_QMAKE_EXECUTABLE
+# WITH_COVERAGE
 #
 
 #-----------------------------------------------------------------------------
@@ -324,6 +325,7 @@ ExternalProject_Add(${proj}
     ${ctk_superbuild_boolean_args}
     -DCTK_SUPERBUILD:BOOL=OFF
     -DCTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
+    -DWITH_COVERAGE:BOOL=${WITH_COVERAGE}
     -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_CXX_FLAGS:STRING=${CTK_CXX_FLAGS}
