@@ -368,8 +368,8 @@ ENDFOREACH()
 #-----------------------------------------------------------------------------
 # Add general purpose subdirectories
 #
-ADD_SUBDIRECTORY(Testing)
-ADD_SUBDIRECTORY(Examples)
+#ADD_SUBDIRECTORY(Testing)
+#ADD_SUBDIRECTORY(Examples)
     
 #-----------------------------------------------------------------------------
 # Style Checking configuration
