@@ -12,13 +12,6 @@ PROJECT(CTK)
 SET(CTK_LIBRARY_MODE "SHARED")
 SET(CTK_BUILD_SHARED_LIBS TRUE)
 
-IF(CMAKE_CXX_COMPILER_ID)
-  # Set the default symbol visibility to hidden for gcc
-  IF(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    SET(CTK_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
-  ENDIF()
-ENDIF()
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #
@@ -116,6 +109,41 @@ ENDIF()
 # Coverage
 #
 OPTION(WITH_COVERAGE "Enable/Disable coverage" OFF)
+
+#-----------------------------------------------------------------------------
+# Additional CXX/C Flags
+#
+SET(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional C Flags")
+MARK_AS_ADVANCED(ADDITIONAL_C_FLAGS)
+SET(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional CXX Flags")
+MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
+
+#-----------------------------------------------------------------------------
+# Set symbol visibility Flags
+#
+IF(CMAKE_CXX_COMPILER_ID)
+  # Set the default symbol visibility to hidden for gcc
+  IF(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    SET(VISIBILITY_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
+  ENDIF()
+ENDIF()
+
+#-----------------------------------------------------------------------------
+# Set coverage Flags
+#
+IF(WITH_COVERAGE)
+  IF(CMAKE_CXX_COMPILER_ID AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    SET(coverage_flags "-g -fdiagnostics-show-option -fprofile-arcs -ftest-coverage -O3 -DNDEBUG")
+    SET(COVERAGE_CXX_FLAGS ${coverage_flags})
+    SET(COVERAGE_C_FLAGS ${coverage_flags})
+  ENDIF()
+ENDIF()
+
+#-----------------------------------------------------------------------------
+# CTK C/CXX Flags
+#
+SET(CTK_C_FLAGS "${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}")
+SET(CTK_CXX_FLAGS "${VISIBILITY_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}")
 
 #-----------------------------------------------------------------------------
 # QT
@@ -286,15 +314,10 @@ IF(CTK_SUPERBUILD)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Set coverage flag
+# Set C/CXX Flags
 #
-IF(WITH_COVERAGE)
-  IF(CMAKE_CXX_COMPILER_ID AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    SET(coverage_flags "-g -fdiagnostics-show-option -fprofile-arcs -ftest-coverage -O3 -DNDEBUG")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${coverage_flags}")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${coverage_flags}")
-  ENDIF()
-ENDIF()
+SET(CMAKE_CXX_FLAGS ${CTK_CXX_FLAGS})
+SET(CMAKE_C_FLAGS ${CTK_C_FLAGS})
 
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories
