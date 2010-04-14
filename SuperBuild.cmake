@@ -7,7 +7,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION ${cmake_version_required})
 # CTK_KWSTYLE_EXECUTABLE
 # DCMTK_DIR
 # QT_QMAKE_EXECUTABLE
-# WITH_COVERAGE
 #
 
 #-----------------------------------------------------------------------------
@@ -181,11 +180,11 @@ IF(${add_project})
   SET(qtmobility_modules "serviceframework")
   SET(qtmobility_build_type "release")
   IF(UNIX)
-  IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    SET(qtmobility_build_type "debug")
-  ENDIF()
+    IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+      SET(qtmobility_build_type "debug")
+    ENDIF()
   ELSEIF(NOT ${CMAKE_CFG_INTDIR} STREQUAL "Release")
-  SET(qtmobility_build_type "debug")
+    SET(qtmobility_build_type "debug")
   ENDIf()
   
   SET(qtmobility_make_cmd)
@@ -201,8 +200,8 @@ IF(${add_project})
     PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
     BUILD_COMMAND ${qtmobility_make_cmd}
-	INSTALL_COMMAND ${qtmobility_make_cmd} install
-	BUILD_IN_SOURCE 1
+    INSTALL_COMMAND ${qtmobility_make_cmd} install
+	  BUILD_IN_SOURCE 1
     )
 ENDIF()
 
