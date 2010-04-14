@@ -75,6 +75,12 @@ MACRO(CtkMacroBuildQtLib)
 
   # Set labels associated with the target.
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
+
+  # Apply user-defined properties to the library target.
+  IF(CTK_LIBRARY_PROPERTIES AND MY_LIBRARY_TYPE STREQUAL "SHARED")
+    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${CTK_LIBRARY_PROPERTIES})
+  ENDIF()
+
   # Install rules
   IF(CTK_BUILD_SHARED_LIBS)
     INSTALL(TARGETS ${lib_name}

@@ -33,6 +33,25 @@ SET(CTK_INSTALL_INCLUDE_DIR "include")
 SET(CTK_INSTALL_DOC_DIR "doc")
 
 #-----------------------------------------------------------------------------
+# CTK version number.  An even minor number corresponds to releases.
+#
+SET(CTK_MAJOR_VERSION 0)
+SET(CTK_MINOR_VERSION 1)
+SET(CTK_BUILD_VERSION 0)
+SET(CTK_VERSION
+    "${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}.${CTK_BUILD_VERSION}")
+
+# Append the library version information to the library target
+# properties.  A parent project may set its own properties and/or may
+# block this.
+IF(NOT CTK_NO_LIBRARY_VERSION)
+  SET(CTK_LIBRARY_PROPERTIES ${CTK_LIBRARY_PROPERTIES}
+    VERSION "${CTK_VERSION}"
+    SOVERSION "${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}"
+    )
+ENDIF()
+
+#-----------------------------------------------------------------------------
 # Update CMake module path
 # Note: FindXXX.cmake script specific to utility should be copied into Utilities/CMake
 #
