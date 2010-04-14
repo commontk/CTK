@@ -222,7 +222,7 @@ OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #       OPT2:ON
 #       )
 #
-# In addition to 'CTK_LIB_Visualization/XIP' option, the following ones
+# In addition to 'CTK_LIB_<DIR>/<LIBNAME>' option, the following ones
 # will also be available in CMake configure menu:
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
