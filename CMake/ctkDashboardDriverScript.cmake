@@ -173,6 +173,7 @@ WITH_COVERAGE:BOOL=TRUE
 
       # Coverage per sub-project (library, application or plugin)
       if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
+        message("Coverage ${subproject}")
         ctest_coverage(BUILD "${ctk_build_dir}" LABELS "${subproject}")
         ctest_submit(PARTS Coverage)
       endif ()
@@ -189,12 +190,14 @@ WITH_COVERAGE:BOOL=TRUE
     
     # Global coverage ... 
     if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
+      message("Global coverage")
       ctest_coverage(BUILD "${ctk_build_dir}")
       ctest_submit(PARTS Coverage)
     endif ()
     
     # Global dynamic analysis ...
     if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND)
+        message("Global memcheck")
         ctest_memcheck(BUILD "${ctk_build_dir}")
         ctest_submit(PARTS MemCheck)
       endif ()
