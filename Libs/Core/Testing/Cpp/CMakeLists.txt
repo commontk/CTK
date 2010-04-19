@@ -1,23 +1,23 @@
 SET(KIT ${PROJECT_NAME})
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
-  ctkModelTesterTest1.cxx
-  ctkUtilsTest1.cxx
-  ctkDependencyGraphTest1.cxx
+CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+  ctkModelTesterTest1.cpp
+  ctkUtilsTest1.cpp
+  ctkDependencyGraphTest1.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
 SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
+ADD_EXECUTABLE(${KIT}CppTests ${Tests})
+TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
-SET( KIT_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
+SET( KIT_TESTS ${CXX_TEST_PATH}/${KIT}CppTests)
 IF(WIN32)
-  SET(KIT_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
+  SET(KIT_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CppTests)
 ENDIF(WIN32)
 
 MACRO( SIMPLE_TEST  TESTNAME )

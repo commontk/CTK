@@ -12,7 +12,7 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkSettings.cxx
+  ctkSettings.cpp
   ctkSettings.h
   )
 

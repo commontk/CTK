@@ -126,7 +126,7 @@ WITH_COVERAGE:BOOL=TRUE
     include("${CTEST_BINARY_DIRECTORY}/CTestConfigSubProject.cmake")
     
     set(test_kits 
-      CxxTests
+      CppTests
       #PythonTests
       )
     

@@ -6,7 +6,7 @@ PROJECT(ctkDICOMIndexer)
   
 # Source files
 SET(KIT_SRCS
-  ctkDICOMIndexer.cxx
+  ctkDICOMIndexer.cpp
   )
 
 # Headers that should run through moc

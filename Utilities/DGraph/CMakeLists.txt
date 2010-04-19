@@ -30,9 +30,9 @@ CONFIGURE_FILE(
 
 # Add excutable
 ADD_EXECUTABLE(${PROJECT_NAME}
-  DGraph.cxx
+  DGraph.cpp
   ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.h
-  ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.cxx)
+  ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.cpp)
   
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${QT_LIBRARIES} )
 

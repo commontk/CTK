@@ -22,7 +22,7 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkXIPAdaptor.cxx
+  ctkXIPAdaptor.cpp
   ctkXIPAdaptor.h
   )
 

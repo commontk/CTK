@@ -22,11 +22,11 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkDICOM.cxx
+  ctkDICOM.cpp
   ctkDICOM.h
-  ctkDICOMIndexer.cxx
+  ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
-  ctkDICOMModel.cxx
+  ctkDICOMModel.cpp
   ctkDICOMModel.h
   )
 

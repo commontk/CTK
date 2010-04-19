@@ -12,17 +12,17 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkDICOMListenerWidget.cxx
+  ctkDICOMListenerWidget.cpp
   ctkDICOMListenerWidget.h
-  ctkDICOMLocationWidget.cxx
+  ctkDICOMLocationWidget.cpp
   ctkDICOMLocationWidget.h
-  ctkDICOMQueryRetrieveWidget.cxx
+  ctkDICOMQueryRetrieveWidget.cpp
   ctkDICOMQueryRetrieveWidget.h
-  ctkDICOMServerNodeWidget.cxx
+  ctkDICOMServerNodeWidget.cpp
   ctkDICOMServerNodeWidget.h
-  ctkDICOMQueryWidget.cxx
+  ctkDICOMQueryWidget.cpp
   ctkDICOMQueryWidget.h
-  ctkDICOMCommandWidget.cxx
+  ctkDICOMCommandWidget.cpp
   ctkDICOMCommandWidget.h
   )
 

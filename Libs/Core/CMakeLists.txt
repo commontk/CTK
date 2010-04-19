@@ -39,11 +39,11 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkDependencyGraph.cxx
+  ctkDependencyGraph.cpp
   ctkDependencyGraph.h
-  ctkModelTester.cxx
+  ctkModelTester.cpp
   ctkModelTester.h
-  ctkUtils.cxx
+  ctkUtils.cpp
   ctkUtils.h
   )
 
