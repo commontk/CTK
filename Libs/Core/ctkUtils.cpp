@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library:   qCTK
+  Library:   CTK
 
   Copyright (c) Kitware Inc. 
   All rights reserved.
