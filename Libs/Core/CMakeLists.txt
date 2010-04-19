@@ -39,6 +39,16 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
+  ctkAbstractFactory.h
+  ctkAbstractFactory.tpp
+  ctkAbstractObjectFactory.h
+  ctkAbstractObjectFactory.tpp
+  ctkAbstractPluginFactory.h
+  ctkAbstractPluginFactory.tpp
+  ctkAbstractQObjectFactory.h
+  ctkAbstractQObjectFactory.tpp
+  ctkAbstractLibraryFactory.h
+  ctkAbstractLibraryFactory.tpp
   ctkDependencyGraph.cpp
   ctkDependencyGraph.h
   ctkModelTester.cpp

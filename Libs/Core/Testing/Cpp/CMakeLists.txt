@@ -1,6 +1,11 @@
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+  ctkAbstractFactoryTest1.cpp
+  ctkAbstractLibraryFactoryTest1.cpp
+  ctkAbstractObjectFactoryTest1.cpp
+  ctkAbstractPluginFactoryTest1.cpp
+  ctkAbstractQObjectFactoryTest1.cpp
   ctkModelTesterTest1.cpp
   ctkUtilsTest1.cpp
   ctkDependencyGraphTest1.cpp
