@@ -33,6 +33,7 @@ class CTK_CORE_EXPORT ctkModelTester: public QObject
   Q_OBJECT
   Q_PROPERTY(bool nestedInserts READ nestedInserts WRITE setNestedInserts);
 public:
+  explicit ctkModelTester(QObject *parent = 0);
   ctkModelTester(QAbstractItemModel *model, QObject *parent = 0);
 
   void setModel(QAbstractItemModel* model);

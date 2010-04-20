@@ -45,11 +45,24 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+// ctkModelTesterPrivate methods
+
+//-----------------------------------------------------------------------------
 ctkModelTesterPrivate::ctkModelTesterPrivate()
 {
   this->Model = 0;
   this->ThrowOnError = true;
   this->NestedInserts = false;
+}
+
+//-----------------------------------------------------------------------------
+// ctkModelTester methods
+
+//-----------------------------------------------------------------------------
+ctkModelTester::ctkModelTester(QObject *_parent)
+  :QObject(_parent)
+{
+  CTK_INIT_PRIVATE(ctkModelTester);
 }
 
 //-----------------------------------------------------------------------------
