@@ -56,10 +56,10 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   qDebug() << "tutu: " << tutu.seek(0) << myCTK.GetLastError();
   */
 
-  ctkModelTester tester(0); 
+  ctkModelTester tester;
   tester.setNestedInserts(true);
   tester.setThrowOnError(false);
-  ctkDICOMModel model(0);
+  ctkDICOMModel model;
   tester.setModel(&model);
 
   model.setDatabase(myCTK.database());
@@ -68,7 +68,7 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
  
   model.setDatabase(myCTK.database());
 
-  QTreeView viewer(0);
+  QTreeView viewer;
   viewer.setModel(&model);
   viewer.setSortingEnabled(true);
 
