@@ -1,5 +1,11 @@
 PROJECT(CTKCore)
 
+# CMake modules
+SET(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
+
+# CMake Macros
+INCLUDE(CMake/ctkMacroBFDCheck.cmake)
+
 #
 # 3rd party dependencies
 #
@@ -25,7 +31,7 @@ ENDIF()
 IF(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG)
   LIST(APPEND QTMOBILITY_QTSERVICEFW_LIBRARIES debug ${QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG})
 ENDIF()
-             
+
 #
 # See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
@@ -57,6 +63,13 @@ SET(KIT_SRCS
   ctkUtils.cpp
   ctkUtils.h
   )
+
+IF(CTK_HAVE_BFD)
+  LIST(APPEND KIT_SRCS
+    ctkBinaryFileDescriptor.cpp
+    ctkBinaryFileDescriptor.h
+    )
+ENDIF()
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
