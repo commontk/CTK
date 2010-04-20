@@ -1,6 +1,8 @@
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
+  ctkMatrixWidgetTest1.cxx
+  #EXTRA_INCLUDE TestingMacros.h
   )
 
 SET (TestsToRun ${Tests})
@@ -25,3 +27,4 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
+SIMPLE_TEST( ctkMatrixWidgetTest1 )

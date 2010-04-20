@@ -12,12 +12,15 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
+  ctkMatrixWidget.cpp
+  ctkMatrixWidget.h
   ctkSettings.cpp
   ctkSettings.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkMatrixWidget.h
   ctkSettings.h
   )
 
@@ -50,5 +53,5 @@ ctkMacroBuildQtLib(
 
 # Testing
 IF(BUILD_TESTING)
-  #ADD_SUBDIRECTORY(Testing)
+  ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)
