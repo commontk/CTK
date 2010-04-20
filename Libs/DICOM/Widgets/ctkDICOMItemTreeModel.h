@@ -1,7 +1,7 @@
 #ifndef __ctkDICOMItemTreeModel_h
 #define __ctkDICOMItemTreeModel_h
 
-// QT includes 
+// Qt includes 
 #include <QAbstractItemModel>
 #include <QModelIndex>
 

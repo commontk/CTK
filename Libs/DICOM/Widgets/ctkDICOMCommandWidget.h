@@ -1,7 +1,7 @@
 #ifndef __ctkDICOMCommandWidget_h
 #define __ctkDICOMCommandWidget_h
 
-// QT includes 
+// Qt includes 
 #include <QWidget>
 
 // CTK includes

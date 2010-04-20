@@ -1,4 +1,4 @@
-// QT includes
+// Qt includes
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QVariant>

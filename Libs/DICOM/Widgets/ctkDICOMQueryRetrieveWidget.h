@@ -1,7 +1,7 @@
 #ifndef __ctkDICOMQueryRetrieveWidget_h
 #define __ctkDICOMQueryRetrieveWidget_h
 
-// QT includes 
+// Qt includes 
 #include <QWidget>
 
 // CTK includes

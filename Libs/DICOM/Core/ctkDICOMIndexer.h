@@ -1,7 +1,7 @@
 #ifndef __ctkDICOMIndexer_h
 #define __ctkDICOMIndexer_h
 
-// QT includes 
+// Qt includes 
 #include <QSqlDatabase>
 
 // CTK includes

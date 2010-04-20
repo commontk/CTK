@@ -44,7 +44,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =========================================================================*/
 #include "ctkSettings.h"
 
-// QT includes
+// Qt includes
 #include <QDialog>
 #include <QMainWindow>
 #include <QDesktopWidget>

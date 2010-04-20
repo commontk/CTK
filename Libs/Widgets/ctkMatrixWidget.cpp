@@ -15,7 +15,7 @@
 // CTK includes
 #include "ctkMatrixWidget.h"
 
-// QT includes
+// Qt includes
 #include <Qt>
 #include <QHeaderView>
 #include <QVariant>

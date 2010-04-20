@@ -15,7 +15,7 @@
 #ifndef __ctkModelTester_h
 #define __ctkModelTester_h
 
-/// QT includes
+/// Qt includes
 #include <QObject> 
 #include <QModelIndex>
 #include <QPersistentModelIndex>

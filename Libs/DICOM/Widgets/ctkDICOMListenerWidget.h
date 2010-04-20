@@ -1,7 +1,7 @@
 #ifndef __ctkDICOMListenerWidget_h
 #define __ctkDICOMListenerWidget_h
 
-// QT includes 
+// Qt includes 
 #include <QWidget>
 
 // CTK includes

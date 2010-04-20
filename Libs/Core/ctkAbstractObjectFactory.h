@@ -15,7 +15,7 @@
 #ifndef __ctkAbstractObjectFactory_h
 #define __ctkAbstractObjectFactory_h
 
-// QT includes
+// Qt includes
 #include <QDebug>
 
 // CTK includes

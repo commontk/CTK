@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-// QT includes
+// Qt includes
 #include <QDebug>
 #include <QStack>
 

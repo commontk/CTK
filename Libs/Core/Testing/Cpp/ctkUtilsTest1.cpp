@@ -15,7 +15,7 @@
 // CTK includes
 #include "ctkUtils.h"
 
-// QT includes
+// Qt includes
 #include <QStringList>
 
 // STD includes

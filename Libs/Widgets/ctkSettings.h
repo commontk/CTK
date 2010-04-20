@@ -50,7 +50,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef __ctkSettings_h
 #define __ctkSettings_h
 
-// QT includes
+// Qt includes
 #include <QSettings>
 
 // CTK includes

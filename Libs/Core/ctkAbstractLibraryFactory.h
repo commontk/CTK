@@ -15,7 +15,7 @@
 #ifndef __ctkAbstractLibraryFactory_h
 #define __ctkAbstractLibraryFactory_h
 
-// QT includes
+// Qt includes
 #include <QFileInfo>
 #include <QLibrary>
 #include <QStringList>

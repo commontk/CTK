@@ -15,7 +15,7 @@
 // CTK includes
 #include "ctkAbstractObjectFactory.h"
 
-// QT includes
+// Qt includes
 #include <QApplication>
 
 // STD includes

@@ -1,7 +1,7 @@
 #ifndef __ctkDICOMLocationWidget_h
 #define __ctkDICOMLocationWidget_h
 
-// QT includes 
+// Qt includes 
 #include <QWidget>
 
 // CTK includes

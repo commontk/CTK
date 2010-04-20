@@ -1,7 +1,7 @@
 #ifndef __ctkXIPAdaptor_h
 #define __ctkXIPAdaptor_h
 
-// QT includes 
+// Qt includes 
 #include <QObject>
 
 // CTK includes

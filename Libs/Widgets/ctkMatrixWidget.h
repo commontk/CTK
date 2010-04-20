@@ -15,7 +15,7 @@
 #ifndef __ctkMatrixWidget_h
 #define __ctkMatrixWidget_h
 
-/// QT includes
+/// Qt includes
 #include <QTableWidget>
 
 /// CTK includes

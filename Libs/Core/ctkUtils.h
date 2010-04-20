@@ -15,7 +15,7 @@
 #ifndef __ctkUtils_h
 #define __ctkUtils_h
 
-// QT includes
+// Qt includes
 #include <QStringList>
 
 // STD includes

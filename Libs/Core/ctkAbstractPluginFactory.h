@@ -15,7 +15,7 @@
 #ifndef __ctkAbstractPluginFactory_h
 #define __ctkAbstractPluginFactory_h
 
-// QT includes
+// Qt includes
 #include <QPluginLoader>
 #include <QFileInfo>
 

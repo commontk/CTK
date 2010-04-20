@@ -16,7 +16,7 @@
 #include "ctkAbstractPluginFactory.h"
 #include "ctkModelTester.h"
 
-// QT includes
+// Qt includes
 #include <QApplication>
 
 // STD includes

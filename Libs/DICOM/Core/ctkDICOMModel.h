@@ -1,7 +1,7 @@
 #ifndef __ctkDICOMModel_h
 #define __ctkDICOMModel_h
 
-// QT includes 
+// Qt includes 
 #include <QAbstractItemModel>
 #include <QSqlDatabase>
 

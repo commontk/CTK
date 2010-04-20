@@ -1,7 +1,7 @@
 #ifndef __ctkDICOMServerNodeWidget_h
 #define __ctkDICOMServerNodeWidget_h
 
-// QT includes 
+// Qt includes 
 #include <QWidget>
 
 // CTK includes

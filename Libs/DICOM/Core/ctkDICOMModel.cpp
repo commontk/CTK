@@ -1,5 +1,5 @@
 
-// QT includes
+// Qt includes
 #include <QStringList>
 #include <QSqlDriver>
 #include <QSqlError>

@@ -1,7 +1,7 @@
 #ifndef __ctkDependencyGraph_h
 #define __ctkDependencyGraph_h
 
-// QT includes
+// Qt includes
 #include <QString>
 #include <QList>
 

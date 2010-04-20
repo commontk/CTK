@@ -1,5 +1,5 @@
 
-// QT includes
+// Qt includes
 #include <QQueue>
 #include <QVarLengthArray>
 #include <QDebug>

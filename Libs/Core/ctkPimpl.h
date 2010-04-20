@@ -48,7 +48,7 @@ function (this one's actually a function).
 #ifndef __ctkPimpl_h
 #define __ctkPimpl_h
 
-// QT includes
+// Qt includes
 #include <QtGlobal>
 
 /*! \relates ctkPimpl
