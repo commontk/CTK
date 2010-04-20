@@ -4,8 +4,8 @@
 #include "ui_ctkDICOMLocationWidget.h"
 
 //----------------------------------------------------------------------------
-class ctkDICOMLocationWidgetPrivate: public qCTKPrivate<ctkDICOMLocationWidget>,
-                                      public Ui_ctkDICOMLocationWidget
+class ctkDICOMLocationWidgetPrivate: public ctkPrivate<ctkDICOMLocationWidget>,
+                                    public Ui_ctkDICOMLocationWidget
 {
 public:
   ctkDICOMLocationWidgetPrivate(){}
@@ -21,8 +21,8 @@ public:
 //----------------------------------------------------------------------------
 ctkDICOMLocationWidget::ctkDICOMLocationWidget(QWidget* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(ctkDICOMLocationWidget);
-  QCTK_D(ctkDICOMLocationWidget);
+  CTK_INIT_PRIVATE(ctkDICOMLocationWidget);
+  CTK_D(ctkDICOMLocationWidget);
   
   d->setupUi(this);
 }

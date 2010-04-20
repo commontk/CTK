@@ -15,9 +15,11 @@
 #ifndef __ctkAbstractObjectFactory_h
 #define __ctkAbstractObjectFactory_h
 
-#include "ctkAbstractFactory.h"
-
+// QT includes
 #include <QDebug>
+
+// CTK includes
+#include "ctkAbstractFactory.h"
 
 //----------------------------------------------------------------------------
 namespace{

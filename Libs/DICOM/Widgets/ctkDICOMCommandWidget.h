@@ -4,7 +4,7 @@
 // QT includes 
 #include <QWidget>
 
-// qCTK includes
+// CTK includes
 #include <ctkPimpl.h>
 
 #include "CTKDICOMWidgetsExport.h"
@@ -19,7 +19,7 @@ public:
   virtual ~ctkDICOMCommandWidget();
 
 private:
-  QCTK_DECLARE_PRIVATE(ctkDICOMCommandWidget);
+  CTK_DECLARE_PRIVATE(ctkDICOMCommandWidget);
 };
 
 #endif

@@ -19,7 +19,7 @@ public:
   virtual ~ctkXIPAdaptor();
   
 private:
-  QCTK_DECLARE_PRIVATE(ctkXIPAdaptor);
+  CTK_DECLARE_PRIVATE(ctkXIPAdaptor);
 };
 
 #endif

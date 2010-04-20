@@ -4,7 +4,7 @@
 // QT includes 
 #include <QSqlDatabase>
 
-// qCTK includes
+// CTK includes
 #include <ctkPimpl.h>
 
 #include "CTKDICOMCoreExport.h"
@@ -20,7 +20,7 @@ public:
   void refreshDatabase(QSqlDatabase database, const QString& directoryName);
 
 private:
-  QCTK_DECLARE_PRIVATE(ctkDICOMIndexer);
+  CTK_DECLARE_PRIVATE(ctkDICOMIndexer);
 };
 
 #endif

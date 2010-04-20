@@ -3,7 +3,7 @@
 #include "ctkDICOMItemTreeModel.h"
 
 //----------------------------------------------------------------------------
-class ctkDICOMItemTreeModelPrivate: public qCTKPrivate<ctkDICOMItemTreeModel>
+class ctkDICOMItemTreeModelPrivate: public ctkPrivate<ctkDICOMItemTreeModel>
 {
 public:
   ctkDICOMItemTreeModelPrivate(){}
@@ -19,8 +19,8 @@ public:
 //----------------------------------------------------------------------------
 ctkDICOMItemTreeModel::ctkDICOMItemTreeModel(QObject* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(ctkDICOMItemTreeModel);
-  QCTK_D(ctkDICOMItemTreeModel);
+  CTK_INIT_PRIVATE(ctkDICOMItemTreeModel);
+  //CTK_D(ctkDICOMItemTreeModel);
 
 }
 

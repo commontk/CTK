@@ -5,7 +5,7 @@
 #include <QAbstractItemModel>
 #include <QSqlDatabase>
 
-// qCTK includes
+// CTK includes
 #include <ctkPimpl.h>
 
 #include "CTKDICOMCoreExport.h"
@@ -37,7 +37,7 @@ public:
   virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-  QCTK_DECLARE_PRIVATE(ctkDICOMModel);
+  CTK_DECLARE_PRIVATE(ctkDICOMModel);
 };
 
 #endif

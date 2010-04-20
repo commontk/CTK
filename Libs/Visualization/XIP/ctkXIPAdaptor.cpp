@@ -6,7 +6,7 @@
 #include "ctkXIPAdaptor.h"
 
 //----------------------------------------------------------------------------
-class ctkXIPAdaptorPrivate: public qCTKPrivate<ctkXIPAdaptor>
+class ctkXIPAdaptorPrivate: public ctkPrivate<ctkXIPAdaptor>
 {
 public:
   ctkXIPAdaptorPrivate();
@@ -26,7 +26,7 @@ ctkXIPAdaptorPrivate::ctkXIPAdaptorPrivate()
 //------------------------------------------------------------------------------
 ctkXIPAdaptor::ctkXIPAdaptor(QObject* _parent): Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(ctkXIPAdaptor);
+  CTK_INIT_PRIVATE(ctkXIPAdaptor);
 }
 
 //----------------------------------------------------------------------------

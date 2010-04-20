@@ -5,7 +5,7 @@
 #include <QString>
 #include <QList>
 
-/// CTK includes
+// CTK includes
 #include "CTKCoreExport.h"
 
 class CTK_CORE_EXPORT ctkDependencyGraph

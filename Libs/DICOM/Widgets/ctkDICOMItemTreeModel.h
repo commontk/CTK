@@ -5,7 +5,7 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
-// qCTK includes
+// CTK includes
 #include <ctkPimpl.h>
 
 #include "CTKDICOMWidgetsExport.h"
@@ -35,7 +35,7 @@ public:
   virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
 private:
-  QCTK_DECLARE_PRIVATE(ctkDICOMItemTreeModel);
+  CTK_DECLARE_PRIVATE(ctkDICOMItemTreeModel);
 };
 
 #endif

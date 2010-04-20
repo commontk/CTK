@@ -1,4 +1,4 @@
-// Qt includes
+// QT includes
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QVariant>
@@ -30,7 +30,7 @@
 #define MITK_INFO std::cout
 
 //------------------------------------------------------------------------------
-class ctkDICOMIndexerPrivate: public qCTKPrivate<ctkDICOMIndexer>
+class ctkDICOMIndexerPrivate: public ctkPrivate<ctkDICOMIndexer>
 {
 public:
   ctkDICOMIndexerPrivate();

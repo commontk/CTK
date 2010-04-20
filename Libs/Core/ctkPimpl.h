@@ -48,6 +48,7 @@ function (this one's actually a function).
 #ifndef __ctkPimpl_h
 #define __ctkPimpl_h
 
+// QT includes
 #include <QtGlobal>
 
 /*! \relates ctkPimpl
@@ -55,10 +56,10 @@ function (this one's actually a function).
  *
  * Also make sure the Pimpl is initalized
  */
-#define QCTK_CONSTRUCTOR_NO_ARG_CXX(PUB) \
+#define CTK_CONSTRUCTOR_NO_ARG_CXX(PUB)  \
   PUB::PUB()                             \
     {                                    \
-    QCTK_INIT_PRIVATE(PUB);              \
+    CTK_INIT_PRIVATE(PUB);               \
     }
 
 /*! \relates ctkPimpl
@@ -66,11 +67,11 @@ function (this one's actually a function).
  *
  * Also make sure the Pimpl is initalized
  */
-#define QCTK_CONSTRUCTOR_1_ARG_CXX(PUB, _ARG1)  \
+#define CTK_CONSTRUCTOR_1_ARG_CXX(PUB, _ARG1)   \
   PUB::PUB(_ARG1 _parent) :                     \
     Superclass( _parent )                       \
     {                                           \
-    QCTK_INIT_PRIVATE(PUB);                     \
+    CTK_INIT_PRIVATE(PUB);                      \
     }
     
 /*! \relates ctkPimpl
@@ -80,10 +81,10 @@ function (this one's actually a function).
  * the name of the public class (PUB), the type of the argument to return (_TYPE),
  * the name of the getter(_NAME) and the name of the variable in the Private class(_VARNAME).
  */
-#define QCTK_SET_CXX(PUB, _TYPE, _NAME, _VARNAME)   \
+#define CTK_SET_CXX(PUB, _TYPE, _NAME, _VARNAME)    \
   void PUB::_NAME(_TYPE var)                        \
   {                                                 \
-    qctk_d.ref()._VARNAME =  var;                   \
+    ctk_d.ref()._VARNAME =  var;                    \
   }
 
 /*! \relates ctkPimpl
@@ -93,10 +94,10 @@ function (this one's actually a function).
  * the name of the public class (PUB), the type of the argument to return (_TYPE),
  * the name of the setter(_NAME) and the name of the variable in the Private class(_VARNAME).
  */
-#define QCTK_GET_CXX(PUB, _TYPE, _NAME, _VARNAME)  \
+#define CTK_GET_CXX(PUB, _TYPE, _NAME, _VARNAME)   \
   _TYPE PUB::_NAME()const                          \
   {                                                \
-    return qctk_d.ref()._VARNAME;                  \
+    return ctk_d.ref()._VARNAME;                   \
   }
 
 /*! \relates ctkPimpl
@@ -105,8 +106,8 @@ function (this one's actually a function).
  * This should be put in the private section of the public class. The parameter is the name of the public class.
  * For convenience, this macro also add 'typedef PUB Self;'
  */
-#define QCTK_DECLARE_PRIVATE(PUB)                                          \
-friend class PUB##Private; qCTKPrivateInterface<PUB, PUB##Private> qctk_d; \
+#define CTK_DECLARE_PRIVATE(PUB)                                          \
+friend class PUB##Private; ctkPrivateInterface<PUB, PUB##Private> ctk_d;  \
 typedef PUB Self;
 
 /*! \relates ctkPimpl
@@ -114,111 +115,111 @@ typedef PUB Self;
  *
  * This may be put anywhere in the declaration of the private class. The parameter is the name of the public class.
  */
-#define QCTK_DECLARE_PUBLIC(PUB) friend class PUB;
+#define CTK_DECLARE_PUBLIC(PUB) friend class PUB;
 /*! \relates ctkPimpl
  * Initializes resources owned by the private class.
  *
  * This should be called from the public class's constructor,
  * before qctk_d() is used for the first time. The parameter is the name of the public class.
  */
-#define QCTK_INIT_PRIVATE(PUB) qctk_d.setPublic(this)
+#define CTK_INIT_PRIVATE(PUB) ctk_d.setPublic(this)
 /*! \relates ctkPimpl
  * Returns a pointer (or reference) in the current scope named "d" to the private class.
  *
  * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
  */
-#define QCTK_D(PUB) PUB##Private* d = qctk_d()
-#define QCTK_D_REF(PUB) PUB##Private& d = qctk_d.ref()
+#define CTK_D(PUB) PUB##Private* d = ctk_d()
+#define CTK_D_REF(PUB) PUB##Private& d = ctk_d.ref()
 /*! \relates ctkPimpl
  * Creates a pointer ( or reference) in the current scope named "q" to the public class.
  *
- * This macro only works in a class using \a QCTK_DECLARE_PUBLIC.
+ * This macro only works in a class using \a CTK_DECLARE_PUBLIC.
  */
-#define QCTK_P(PUB) PUB* p = qctk_p()
-#define QCTK_P_REF(PUB) PUB& p = qctk_p_ref()
+#define CTK_P(PUB) PUB* p = ctk_p()
+#define CTK_P_REF(PUB) PUB& p = ctk_p_ref()
 
-#ifdef QCTK_DOXYGEN_RUN
+#ifdef CTK_DOXYGEN_RUN
 /*! \relates ctkPimpl
  * Returns a pointer to the private class.
  *
- * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
+ * This function is only available in a class using \a CTK_DECLARE_PRIVATE.
  */
-qCTKPrivate<PUB>* qctk_d();
+ctkPrivate<PUB>* ctk_d();
 
 /*! \relates ctkPimpl
  * Returns a const pointer to the private class.
  *
- * This function is only available in a class using \a QCTK_DECLARE_PRIVATE.
+ * This function is only available in a class using \a CTK_DECLARE_PRIVATE.
  * This overload will be automatically used in const functions.
  */
-const qCTKPrivate<PUB>* qctk_d();
+const ctkPrivate<PUB>* ctk_d();
 
 /*! \relates ctkPimpl
  * Returns a reference or pointer to the public class.
  *
- * This function is only available in a class using \a QCTK_DECLARE_PUBLIC.
+ * This function is only available in a class using \a CTK_DECLARE_PUBLIC.
  */
-PUB& qctk_p_ref();
-PUB* qctk_p();
+PUB& ctk_p_ref();
+PUB* ctk_p();
 
 /*! \relates ctkPimpl
  * Returns a const reference or pointer to the public class.
  *
- * This function is only available in a class using \a QCTK_DECLARE_PUBLIC.
+ * This function is only available in a class using \a CTK_DECLARE_PUBLIC.
  * This overload will be automatically used in const functions.
  */
-const PUB& qctk_p_ref();
-const PUB* qctk_p();
+const PUB& ctk_p_ref();
+const PUB* ctk_p();
 #endif
 
 template <typename PUB>
-class qCTKPrivate
+class ctkPrivate
 {
 public:
-  virtual ~qCTKPrivate(){}
-  inline void QCTK_setPublic(PUB* pub)
+  virtual ~ctkPrivate(){}
+  inline void CTK_setPublic(PUB* pub)
     {
     Q_ASSERT(pub);
-    qctk_p_ptr = pub;
+    ctk_p_ptr = pub;
     }
 
 protected:
-  inline PUB& qctk_p_ref()
+  inline PUB& ctk_p_ref()
     {
-    Q_ASSERT(this->qctk_p_ptr);
-    return *this->qctk_p_ptr;
+    Q_ASSERT(this->ctk_p_ptr);
+    return *this->ctk_p_ptr;
     }
-  inline const PUB& qctk_p_ref() const
+  inline const PUB& ctk_p_ref() const
     {
-    Q_ASSERT(this->qctk_p_ptr);
-    return *this->qctk_p_ptr;
+    Q_ASSERT(this->ctk_p_ptr);
+    return *this->ctk_p_ptr;
     }
 
-  inline PUB* qctk_p()
+  inline PUB* ctk_p()
     {
-    Q_ASSERT(this->qctk_p_ptr);
-    return this->qctk_p_ptr;
+    Q_ASSERT(this->ctk_p_ptr);
+    return this->ctk_p_ptr;
     }
-  inline const PUB* qctk_p() const
+  inline const PUB* ctk_p() const
     {
-    Q_ASSERT(this->qctk_p_ptr);
-    return this->qctk_p_ptr;
+    Q_ASSERT(this->ctk_p_ptr);
+    return this->ctk_p_ptr;
     }
 
 private:
-  PUB* qctk_p_ptr;
+  PUB* ctk_p_ptr;
 };
 
 template <typename PUB, typename PVT>
-class qCTKPrivateInterface
+class ctkPrivateInterface
 {
-  friend class qCTKPrivate<PUB>;
+  friend class ctkPrivate<PUB>;
 public:
-  qCTKPrivateInterface()
+  ctkPrivateInterface()
     {
     this->pvt = new PVT;
     }
-  ~qCTKPrivateInterface()
+  ~ctkPrivateInterface()
     {
     delete this->pvt;
     }
@@ -226,7 +227,7 @@ public:
   inline void setPublic(PUB* pub)
     {
     Q_ASSERT(pub);
-    this->pvt->QCTK_setPublic(pub);
+    this->pvt->CTK_setPublic(pub);
     }
   inline PVT& ref()
     {
@@ -245,7 +246,7 @@ public:
     return static_cast<PVT*>(this->pvt);
     }
 private:
-  qCTKPrivate<PUB>* pvt;
+  ctkPrivate<PUB>* pvt;
 };
 
 #endif

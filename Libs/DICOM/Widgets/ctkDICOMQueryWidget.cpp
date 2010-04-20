@@ -4,8 +4,8 @@
 #include "ui_ctkDICOMQueryWidget.h"
 
 //----------------------------------------------------------------------------
-class ctkDICOMQueryWidgetPrivate: public qCTKPrivate<ctkDICOMQueryWidget>,
-                                       public Ui_ctkDICOMQueryWidget
+class ctkDICOMQueryWidgetPrivate: public ctkPrivate<ctkDICOMQueryWidget>,
+                                  public Ui_ctkDICOMQueryWidget
 {
 public:
   ctkDICOMQueryWidgetPrivate(){}
@@ -21,8 +21,8 @@ public:
 //----------------------------------------------------------------------------
 ctkDICOMQueryWidget::ctkDICOMQueryWidget(QWidget* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(ctkDICOMQueryWidget);
-  QCTK_D(ctkDICOMQueryWidget);
+  CTK_INIT_PRIVATE(ctkDICOMQueryWidget);
+  CTK_D(ctkDICOMQueryWidget);
   
   d->setupUi(this);
 }

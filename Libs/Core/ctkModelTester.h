@@ -65,6 +65,7 @@ protected slots:
   void onRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
   void onRowsInserted(const QModelIndex & parent, int start, int end);
   void onRowsRemoved(const QModelIndex & parent, int start, int end);
+  
 protected:
   virtual void onItemsAboutToBeInserted(const QModelIndex& parent, Qt::Orientation, int start, int end);
   virtual void onItemsAboutToBeRemoved(const QModelIndex& parent, Qt::Orientation, int start, int end);
@@ -72,8 +73,9 @@ protected:
   virtual void onItemsRemoved(const QModelIndex& parent, Qt::Orientation, int start, int end);
   QList<QPersistentModelIndex> persistentModelIndexes(const QModelIndex& index)const;
   virtual void test(bool result, const QString& errorString)const;
+  
 private:
-  QCTK_DECLARE_PRIVATE(ctkModelTester);
+  CTK_DECLARE_PRIVATE(ctkModelTester);
 };
 
 #endif

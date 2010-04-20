@@ -53,6 +53,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // QT includes
 #include <QSettings>
 
+// CTK includes
 #include "CTKWidgetsExport.h"
 
 class QDialog;

@@ -15,6 +15,7 @@
 #ifndef __ctkAbstractFactory_h
 #define __ctkAbstractFactory_h
 
+// QT includes
 #include <QString>
 #include <QHash>
 #include <QSharedPointer>

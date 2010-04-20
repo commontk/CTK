@@ -4,7 +4,7 @@
 #include "ui_ctkDICOMServerNodeWidget.h"
 
 //----------------------------------------------------------------------------
-class ctkDICOMServerNodeWidgetPrivate: public qCTKPrivate<ctkDICOMServerNodeWidget>,
+class ctkDICOMServerNodeWidgetPrivate: public ctkPrivate<ctkDICOMServerNodeWidget>,
                                        public Ui_ctkDICOMServerNodeWidget
 {
 public:
@@ -21,8 +21,8 @@ public:
 //----------------------------------------------------------------------------
 ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(ctkDICOMServerNodeWidget);
-  QCTK_D(ctkDICOMServerNodeWidget);
+  CTK_INIT_PRIVATE(ctkDICOMServerNodeWidget);
+  CTK_D(ctkDICOMServerNodeWidget);
   
   d->setupUi(this);
 }

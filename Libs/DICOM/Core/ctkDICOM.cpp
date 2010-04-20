@@ -14,7 +14,7 @@
 #include <iostream>
 
 //----------------------------------------------------------------------------
-class ctkDICOMPrivate: public qCTKPrivate<ctkDICOM>
+class ctkDICOMPrivate: public ctkPrivate<ctkDICOM>
 {
 public:
   ctkDICOMPrivate(); 
@@ -39,7 +39,7 @@ ctkDICOMPrivate::ctkDICOMPrivate()
 //------------------------------------------------------------------------------
 ctkDICOM::ctkDICOM(QObject* _parent): Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(ctkDICOM);
+  CTK_INIT_PRIVATE(ctkDICOM);
 }
 
 //----------------------------------------------------------------------------
@@ -50,7 +50,7 @@ ctkDICOM::~ctkDICOM()
 //----------------------------------------------------------------------------
 bool ctkDICOM::openDatabase(const QString& databaseFileName)
 {
-  QCTK_D(ctkDICOM);
+  CTK_D(ctkDICOM);
   d->Database = QSqlDatabase::addDatabase("QSQLITE","DICOM-DB");
   d->Database.setDatabaseName(databaseFileName);
   if ( ! (d->Database.open()) )
@@ -67,13 +67,13 @@ bool ctkDICOM::openDatabase(const QString& databaseFileName)
 
 //------------------------------------------------------------------------------
 const QString& ctkDICOM::GetLastError() const {
-  QCTK_D(const ctkDICOM);
+  CTK_D(const ctkDICOM);
   return d->LastError; 
 }
 
 //------------------------------------------------------------------------------
 const QSqlDatabase& ctkDICOM::database() const {
-  QCTK_D(const ctkDICOM);
+  CTK_D(const ctkDICOM);
   return d->Database;
 }
 
@@ -114,13 +114,13 @@ bool ctkDICOMPrivate::executeScript(const QString& script) {
 //------------------------------------------------------------------------------
 bool ctkDICOM::initializeDatabase(const char* sqlFileName)
 {
-  QCTK_D(ctkDICOM);
+  CTK_D(ctkDICOM);
   return d->executeScript(sqlFileName);
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOM::closeDatabase()
 {
-  QCTK_D(ctkDICOM);
+  CTK_D(ctkDICOM);
   d->Database.close();
 }

@@ -15,10 +15,12 @@
 #ifndef __ctkAbstractPluginFactory_h
 #define __ctkAbstractPluginFactory_h
 
-#include "ctkAbstractFactory.h"
-
+// QT includes
 #include <QPluginLoader>
 #include <QFileInfo>
+
+// CTK includes
+#include "ctkAbstractFactory.h"
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>

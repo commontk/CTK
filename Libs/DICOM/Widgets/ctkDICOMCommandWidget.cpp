@@ -4,7 +4,7 @@
 #include "ui_ctkDICOMCommandWidget.h"
 
 //----------------------------------------------------------------------------
-class ctkDICOMCommandWidgetPrivate: public qCTKPrivate<ctkDICOMCommandWidget>,
+class ctkDICOMCommandWidgetPrivate: public ctkPrivate<ctkDICOMCommandWidget>,
                                     public Ui_ctkDICOMCommandWidget
 {
 public:
@@ -21,8 +21,8 @@ public:
 //----------------------------------------------------------------------------
 ctkDICOMCommandWidget::ctkDICOMCommandWidget(QWidget* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(ctkDICOMCommandWidget);
-  QCTK_D(ctkDICOMCommandWidget);
+  CTK_INIT_PRIVATE(ctkDICOMCommandWidget);
+  CTK_D(ctkDICOMCommandWidget);
   
   d->setupUi(this);
 }

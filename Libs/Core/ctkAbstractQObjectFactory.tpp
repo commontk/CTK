@@ -15,11 +15,11 @@
 #ifndef __ctkAbstractQObjectFactory_tpp
 #define __ctkAbstractQObjectFactory_tpp
 
-// CTK includes
-#include "ctkAbstractObjectFactory.h"
-
 // QT includes
 #include <QDebug>
+
+// CTK includes
+#include "ctkAbstractObjectFactory.h"
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>

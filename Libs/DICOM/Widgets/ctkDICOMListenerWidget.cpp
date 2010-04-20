@@ -4,7 +4,7 @@
 #include "ui_ctkDICOMListenerWidget.h"
 
 //----------------------------------------------------------------------------
-class ctkDICOMListenerWidgetPrivate: public qCTKPrivate<ctkDICOMListenerWidget>,
+class ctkDICOMListenerWidgetPrivate: public ctkPrivate<ctkDICOMListenerWidget>,
                                      public Ui_ctkDICOMListenerWidget
 {
 public:
@@ -21,8 +21,8 @@ public:
 //----------------------------------------------------------------------------
 ctkDICOMListenerWidget::ctkDICOMListenerWidget(QWidget* _parent):Superclass(_parent)
 {
-  QCTK_INIT_PRIVATE(ctkDICOMListenerWidget);
-  QCTK_D(ctkDICOMListenerWidget);
+  CTK_INIT_PRIVATE(ctkDICOMListenerWidget);
+  CTK_D(ctkDICOMListenerWidget);
   
   d->setupUi(this);
 }

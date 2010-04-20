@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 
-// qCTK includes
+// CTK includes
 #include <ctkPimpl.h>
 
 #include "CTKDICOMCoreExport.h"
@@ -35,7 +35,7 @@ public:
   /// delete all data and reinitialize the database.
   bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
 private:
-  QCTK_DECLARE_PRIVATE(ctkDICOM);
+  CTK_DECLARE_PRIVATE(ctkDICOM);
 };
 
 #endif

@@ -12,13 +12,15 @@
 
 =========================================================================*/
 
-#include "ctkModelTester.h"
-
+// QT includes
 #include <QDebug>
 #include <QStack>
 
+// CTK includes
+#include "ctkModelTester.h"
+
 //-----------------------------------------------------------------------------
-class ctkModelTesterPrivate: public qCTKPrivate<ctkModelTester>
+class ctkModelTesterPrivate: public ctkPrivate<ctkModelTester>
 {
 public:
   ctkModelTesterPrivate();
@@ -54,14 +56,14 @@ ctkModelTesterPrivate::ctkModelTesterPrivate()
 ctkModelTester::ctkModelTester(QAbstractItemModel *_model, QObject *_parent)
   :QObject(_parent)
 {
-  QCTK_INIT_PRIVATE(ctkModelTester);
+  CTK_INIT_PRIVATE(ctkModelTester);
   this->setModel(_model);
 }
 
 //-----------------------------------------------------------------------------
 void ctkModelTester::setModel(QAbstractItemModel *_model)
 {
-  QCTK_D(ctkModelTester);
+  CTK_D(ctkModelTester);
   if (d->Model)
     {
     // disconnect
@@ -102,31 +104,31 @@ void ctkModelTester::setModel(QAbstractItemModel *_model)
 //-----------------------------------------------------------------------------
 QAbstractItemModel* ctkModelTester::model()const
 {
-  return qctk_d()->Model;
+  return ctk_d()->Model;
 }
 
 //-----------------------------------------------------------------------------
 void ctkModelTester::setThrowOnError(bool throwException)
 {
-  qctk_d()->ThrowOnError = throwException;
+  ctk_d()->ThrowOnError = throwException;
 }
 
 //-----------------------------------------------------------------------------
 bool ctkModelTester::throwOnError()const
 {
-  return qctk_d()->ThrowOnError;
+  return ctk_d()->ThrowOnError;
 }
 
 //-----------------------------------------------------------------------------
 void ctkModelTester::setNestedInserts( bool nestedInsertsValue )
 {
-  qctk_d()->NestedInserts = nestedInsertsValue;
+  ctk_d()->NestedInserts = nestedInsertsValue;
 }
 
 //-----------------------------------------------------------------------------
 bool ctkModelTester::nestedInserts()const
 {
-  return qctk_d()->NestedInserts;
+  return ctk_d()->NestedInserts;
 }
 
 //-----------------------------------------------------------------------------
@@ -146,7 +148,7 @@ void  ctkModelTester::test(bool result, const QString& errorString)const
 //-----------------------------------------------------------------------------
 void ctkModelTester::testModelIndex(const QModelIndex& index)const
 {
-  QCTK_D(const ctkModelTester);
+  CTK_D(const ctkModelTester);
   if (!index.isValid())
     {// invalid index
     this->test(index.model() == 0, "An invalid index can't have a valid model.");
@@ -191,7 +193,7 @@ void ctkModelTester::testData(const QModelIndex& index)const
 //-----------------------------------------------------------------------------
 void ctkModelTester::testParent(const QModelIndex& vparent)const
 {
-  QCTK_D(const ctkModelTester);
+  CTK_D(const ctkModelTester);
   if (!d->Model->hasChildren(vparent))
     {
     // it's asking a lot :-)
@@ -223,7 +225,7 @@ void ctkModelTester::testParent(const QModelIndex& vparent)const
 //-----------------------------------------------------------------------------
 void ctkModelTester::testPersistentModelIndex(const QPersistentModelIndex& index)const
 {
-  QCTK_D(const ctkModelTester);
+  CTK_D(const ctkModelTester);
   //qDebug() << "Test persistent Index: " << index ;
   this->test(index.isValid(), "Persistent model index can't be invalid");
   // did you forget to call QAbstractItemModel::changePersistentIndex() between 
@@ -236,7 +238,7 @@ void ctkModelTester::testPersistentModelIndex(const QPersistentModelIndex& index
 //-----------------------------------------------------------------------------
 void ctkModelTester::testModel()const
 {
-  QCTK_D(const ctkModelTester);
+  CTK_D(const ctkModelTester);
   if (d->Model == 0)
     {
     return;
@@ -302,7 +304,7 @@ void ctkModelTester::onDataChanged(const QModelIndex & topLeft, const QModelInde
 //-----------------------------------------------------------------------------
 void ctkModelTester::onHeaderDataChanged(Qt::Orientation orientation, int first, int last)
 {
-  QCTK_D(ctkModelTester);
+  CTK_D(ctkModelTester);
   this->test(first <= last, "Changed headers have wrong indexes");
   switch (orientation)
     {
@@ -322,7 +324,7 @@ void ctkModelTester::onHeaderDataChanged(Qt::Orientation orientation, int first,
 //-----------------------------------------------------------------------------
 QList<QPersistentModelIndex> ctkModelTester::persistentModelIndexes(const QModelIndex& index)const
 {
-  QCTK_D(const ctkModelTester);
+  CTK_D(const ctkModelTester);
   QList<QPersistentModelIndex> list;
   for (int i = 0; i < d->Model->rowCount(index); ++i)
     {
@@ -339,7 +341,7 @@ QList<QPersistentModelIndex> ctkModelTester::persistentModelIndexes(const QModel
 //-----------------------------------------------------------------------------
 void ctkModelTester::onLayoutAboutToBeChanged()
 {
-  QCTK_D(ctkModelTester);
+  CTK_D(ctkModelTester);
 
   d->LayoutAboutToBeChanged = this->persistentModelIndexes(QModelIndex());
   this->testModel();
@@ -348,7 +350,7 @@ void ctkModelTester::onLayoutAboutToBeChanged()
 //-----------------------------------------------------------------------------
 void ctkModelTester::onLayoutChanged()
 {
-  QCTK_D(ctkModelTester);
+  CTK_D(ctkModelTester);
   foreach (const QPersistentModelIndex& index, d->LayoutAboutToBeChanged)
     {
     this->testPersistentModelIndex(index);
@@ -400,7 +402,7 @@ void ctkModelTester::onRowsRemoved(const QModelIndex & vparent, int start, int e
 //-----------------------------------------------------------------------------
 void ctkModelTester::onItemsAboutToBeInserted(const QModelIndex &vparent, Qt::Orientation orientation, int start, int end)
 {
-  QCTK_D(ctkModelTester);
+  CTK_D(ctkModelTester);
   this->test(start <= end, "Start can't be higher than end");
   //Not sure about that
   if (!d->NestedInserts)
@@ -425,7 +427,7 @@ void ctkModelTester::onItemsAboutToBeInserted(const QModelIndex &vparent, Qt::Or
 //-----------------------------------------------------------------------------
 void ctkModelTester::onItemsAboutToBeRemoved(const QModelIndex &vparent, Qt::Orientation orientation, int start, int end)
 {
-  QCTK_D(ctkModelTester);
+  CTK_D(ctkModelTester);
   this->test(start <= end, "Start can't be higher than end");
   //Not sure about that
   this->test(d->AboutToBeInserted.size() == 0, "While inserting items, you can't remove other items.");
@@ -465,7 +467,7 @@ void ctkModelTester::onItemsAboutToBeRemoved(const QModelIndex &vparent, Qt::Ori
 //-----------------------------------------------------------------------------
 void ctkModelTester::onItemsInserted(const QModelIndex & vparent, Qt::Orientation orientation, int start, int end)
 {
-  QCTK_D(ctkModelTester);
+  CTK_D(ctkModelTester);
   this->test(start <= end, "Start can't be higher end");
   this->test(d->AboutToBeInserted.size() != 0, "rowsInserted() has been emitted, but not rowsAboutToBeInserted.");
   //Not sure about that
@@ -491,7 +493,7 @@ void ctkModelTester::onItemsInserted(const QModelIndex & vparent, Qt::Orientatio
 //-----------------------------------------------------------------------------
 void ctkModelTester::onItemsRemoved(const QModelIndex & vparent, Qt::Orientation orientation, int start, int end)
 { 
-  QCTK_D(ctkModelTester);
+  CTK_D(ctkModelTester);
   this->test(start <= end, "Start can't be higher end");
   this->test(d->AboutToBeRemoved.size() != 0, "rowsRemoved() has been emitted, but not rowsAboutToBeRemoved.");
   //Not sure about that

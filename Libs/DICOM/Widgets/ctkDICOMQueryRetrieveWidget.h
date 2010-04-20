@@ -4,7 +4,7 @@
 // QT includes 
 #include <QWidget>
 
-// qCTK includes
+// CTK includes
 #include <ctkPimpl.h>
 
 #include "CTKDICOMWidgetsExport.h"
@@ -19,7 +19,7 @@ public:
   virtual ~ctkDICOMQueryRetrieveWidget();
 
 private:
-  QCTK_DECLARE_PRIVATE(ctkDICOMQueryRetrieveWidget);
+  CTK_DECLARE_PRIVATE(ctkDICOMQueryRetrieveWidget);
 };
 
 #endif

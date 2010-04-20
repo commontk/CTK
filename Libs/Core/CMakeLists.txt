@@ -53,6 +53,7 @@ SET(KIT_SRCS
   ctkDependencyGraph.h
   ctkModelTester.cpp
   ctkModelTester.h
+  ctkPimpl.h
   ctkUtils.cpp
   ctkUtils.h
   )
