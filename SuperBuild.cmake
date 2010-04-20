@@ -7,6 +7,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION ${cmake_version_required})
 # CTK_KWSTYLE_EXECUTABLE
 # DCMTK_DIR
 # QT_QMAKE_EXECUTABLE
+# VTK_DIR
 #
 
 #-----------------------------------------------------------------------------
@@ -227,6 +228,36 @@ IF(${add_project})
 ENDIF()
 
 #-----------------------------------------------------------------------------
+# VTK
+#
+SET (VTK_DEPENDS)
+ctkMacroShouldAddExternalProject(VTK_LIBRARIES add_project)
+IF(${add_project})
+  IF(NOT DEFINED VTK_DIR)
+    SET(proj VTK)
+    MESSAGE(STATUS "Adding project:${proj}")
+    SET(VTK_DEPENDS ${proj})
+    ExternalProject_Add(${proj}
+      GIT_REPOSITORY git://vtk.org/VTK.git
+      INSTALL_COMMAND ""
+      CMAKE_GENERATOR ${gen}
+      CMAKE_ARGS
+        ${ep_common_args}
+        -DVTK_WRAP_TCL:BOOL=OFF
+        -DVTK_WRAP_PYTHON:BOOL=OFF
+        -DVTK_WRAP_JAVA:BOOL=OFF
+        -DBUILD_SHARED_LIBS:BOOL=ON 
+        -DDESIRED_QT_VERSION:STRING=4
+        -DVTK_USE_GUISUPPORT:BOOL=ON
+        -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
+        -DVTK_USE_QT:BOOL=ON
+        -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      )
+    SET(VTK_DIR ${ep_build_dir}/${proj})
+  ENDIF()
+ENDIF()
+
+#-----------------------------------------------------------------------------
 # XIP
 #
 SET (XIP_DEPENDS)
@@ -263,6 +294,7 @@ ExternalProject_Add(${proj}
     ${PythonQt_DEPENDS}
     ${ZMQ_DEPENDS}
     ${OpenIGTLink_DEPENDS}
+    ${VTK_DEPENDS}
     ${XIP_DEPENDS}
 )
 
@@ -333,6 +365,7 @@ ExternalProject_Add(${proj}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
     -DDCMTK_DIR:PATH=${DCMTK_DIR} # FindDCMTK expects DCMTK_DIR
+    -DVTK_DIR:PATH=${VTK_DIR} # FindVTK expects VTK_DIR
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${CMAKE_BINARY_DIR}/CTK-build
   BUILD_COMMAND ""

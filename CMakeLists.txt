@@ -186,6 +186,8 @@ SET(CTK_LIBS
   Widgets
   DICOM/Core
   DICOM/Widgets
+  Visualization/VTK/Core
+  #Visualization/VTK/widgets
   Visualization/XIP
   )
 
