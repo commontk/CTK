@@ -4,7 +4,7 @@
 #include <QString>
 #include <QTextStream>
 
-// CTKVTK includes
+// CTK includes
 #include "ctkVTKConnection.h"
 
 // VTK includes

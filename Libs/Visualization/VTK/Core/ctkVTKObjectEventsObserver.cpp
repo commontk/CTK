@@ -11,8 +11,8 @@
 #include "ctkVTKConnection.h"
 
 // VTK includes
-#include "vtkObject.h"
-#include "vtkSmartPointer.h"
+#include <vtkObject.h>
+#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
 class ctkVTKObjectEventsObserverPrivate: public ctkPrivate<ctkVTKObjectEventsObserver>

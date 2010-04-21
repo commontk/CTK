@@ -1,4 +1,4 @@
-PROJECT(CTKVisualizationVTKCore)
+PROJECT(CTKVisualizationVTKWidgets)
 
 #
 # 3rd party dependencies
@@ -15,7 +15,7 @@ INCLUDE(${VTK_USE_FILE})
 # See CTK/CMake/ctkMacroBuildQtLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_VISUALIZATION_VTK_CORE_EXPORT")
+SET(KIT_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
@@ -23,17 +23,17 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkVTKConnection.cpp
-  ctkVTKConnection.h
-  ctkVTKObject.h
-  ctkVTKObjectEventsObserver.cpp
-  ctkVTKObjectEventsObserver.h
+  ctkVTKAbstractMatrixWidget.cpp
+  ctkVTKAbstractMatrixWidget.h
+  ctkVTKAbstractMatrixWidget_p.h
+  ctkVTKMatrixWidget.cpp
+  ctkVTKMatrixWidget.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkVTKConnection.h
-  ctkVTKObjectEventsObserver.h
+  ctkVTKAbstractMatrixWidget_p.h
+  ctkVTKMatrixWidget.h
   )
 
 # UI files
@@ -46,9 +46,9 @@ SET(KIT_resources
 
 # Set VTK_LIBRARIES variable
 SET(VTK_LIBRARIES
-  vtkCommon
+  QVTK
   )
-
+  
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
@@ -70,5 +70,5 @@ ctkMacroBuildQtLib(
 
 # Testing
 IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
+  #ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)
