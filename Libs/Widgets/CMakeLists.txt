@@ -16,12 +16,18 @@ SET(KIT_SRCS
   ctkMatrixWidget.h
   ctkSettings.cpp
   ctkSettings.h
+  ctkTransferFunctionItems.cpp
+  ctkTransferFunctionItems.h
+  ctkTransferFunctionWidget.cpp
+  ctkTransferFunctionWidget.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkMatrixWidget.h
   ctkSettings.h
+  ctkTransferFunctionItems.h
+  ctkTransferFunctionWidget.h
   )
 
 # UI files
