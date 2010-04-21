@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library:   ctk
+  Library:   CTK
 
   Copyright (c) Kitware Inc. 
   All rights reserved.
