@@ -6,5 +6,6 @@
 
 SET(target_libraries
   VTK_LIBRARIES
+  CTKWidgets
   CTKVisualizationVTKCore
   )
