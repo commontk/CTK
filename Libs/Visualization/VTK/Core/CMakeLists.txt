@@ -23,6 +23,8 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
+  ctkVTKCommandOptions.cpp
+  ctkVTKCommandOptions.h
   ctkVTKConnection.cpp
   ctkVTKConnection.h
   ctkVTKObject.h
