@@ -60,6 +60,8 @@ SET(KIT_SRCS
   ctkModelTester.cpp
   ctkModelTester.h
   ctkPimpl.h
+  ctkTransferFunction.cpp
+  ctkTransferFunction.h
   ctkUtils.cpp
   ctkUtils.h
   )
@@ -74,6 +76,7 @@ ENDIF()
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkModelTester.h
+  ctkTransferFunction.h
   )
 
 # UI files
