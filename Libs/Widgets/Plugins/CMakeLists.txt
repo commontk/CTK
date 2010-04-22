@@ -13,10 +13,10 @@ SET(PLUGIN_SRCS
   ctkWidgetsAbstractPlugin.cpp
   ctkWidgetsAbstractPlugin.h
 
-#   ctkCollapsibleButtonPlugin.cpp
-#   ctkCollapsibleButtonPlugin.h
-#   ctkCollapsibleGroupBoxPlugin.cpp
-#   ctkCollapsibleGroupBoxPlugin.h
+  ctkCollapsibleButtonPlugin.cpp
+  ctkCollapsibleButtonPlugin.h
+  ctkCollapsibleGroupBoxPlugin.cpp
+  ctkCollapsibleGroupBoxPlugin.h
   ctkColorPickerButtonPlugin.cpp
   ctkColorPickerButtonPlugin.h
 #   ctkCoordinatesWidgetPlugin.cpp
@@ -49,8 +49,8 @@ SET(PLUGIN_SRCS
 SET(PLUGIN_MOC_SRCS
   ctkWidgetsPlugins.h
 
-#   ctkCollapsibleButtonPlugin.h
-#   ctkCollapsibleGroupBoxPlugin.h
+  ctkCollapsibleButtonPlugin.h
+  ctkCollapsibleGroupBoxPlugin.h
   ctkColorPickerButtonPlugin.h
 #   ctkCoordinatesWidgetPlugin.h
 #   ctkDoubleRangeSliderPlugin.h

@@ -14,6 +14,16 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   ctkAddRemoveComboBox.cpp
   ctkAddRemoveComboBox.h
+  ctkButtonGroup.cpp
+  ctkButtonGroup.h
+  ctkCheckableHeaderView.cpp
+  ctkCheckableHeaderView.h
+  ctkCheckBoxPixmaps.cpp
+  ctkCheckBoxPixmaps.h
+  ctkCollapsibleButton.cpp
+  ctkCollapsibleButton.h
+  ctkCollapsibleGroupBox.cpp
+  ctkCollapsibleGroupBox.h
   ctkColorPickerButton.cpp
   ctkColorPickerButton.h
   ctkMatrixWidget.cpp
@@ -31,6 +41,11 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkAddRemoveComboBox.h
+  ctkButtonGroup.h
+  ctkCheckableHeaderView.h
+  ctkCheckBoxPixmaps.h
+  ctkCollapsibleButton.h
+  ctkCollapsibleGroupBox.h
   ctkColorPickerButton.h
   ctkMatrixWidget.h
   ctkSettings.h

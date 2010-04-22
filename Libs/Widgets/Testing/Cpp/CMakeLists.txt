@@ -2,6 +2,9 @@ SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkAddRemoveComboBoxTest1.cpp
+  ctkButtonGroupTest1.cpp
+  ctkCollapsibleButtonTest1.cpp
+  ctkCollapsibleGroupBoxTest1.cpp
   ctkColorPickerButtonTest1.cpp
   ctkMatrixWidgetTest1.cpp
   #EXTRA_INCLUDE TestingMacros.h
@@ -30,5 +33,8 @@ ENDMACRO( SIMPLE_TEST  )
 #
 
 SIMPLE_TEST( ctkAddRemoveComboBoxTest1 )
+SIMPLE_TEST( ctkButtonGroupTest1 )
+SIMPLE_TEST( ctkCollapsibleButtonTest1 )
+SIMPLE_TEST( ctkCollapsibleGroupBoxTest1 )
 SIMPLE_TEST( ctkColorPickerButtonTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
