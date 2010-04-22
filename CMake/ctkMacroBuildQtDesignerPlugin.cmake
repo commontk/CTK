@@ -74,13 +74,45 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
     )
 
   # Apply properties to the library target.
-  SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES COMPILE_FLAGS "-DQT_PLUGIN")
+  SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES
+    ${CTK_LIBRARY_PROPERTIES}
+    COMPILE_FLAGS "-DQT_PLUGIN"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/designer"
+    )
   
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
     ${QT_QTDESIGNER_LIBRARY}
     )
   TARGET_LINK_LIBRARIES(${lib_name} ${my_libs})
+
+  # Install the library
+  INSTALL(TARGETS ${lib_name}
+    RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR}/designer COMPONENT Runtime
+    LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT Runtime
+    ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT Development)
+
+  # Install headers - Are headers required ?
+  #FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  #INSTALL(FILES 
+  #  ${headers}
+  #  DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
+  #  )
+
+  
+  # Since QtDesigner expects plugin to be directly located under the
+  # directory 'designer', let's copy them. 
+
+  IF(NOT CMAKE_CFG_INTDIR STREQUAL ".")
+    GET_TARGET_PROPERTY(FILE_PATH ${lib_name} LOCATION)
+    GET_TARGET_PROPERTY(DIR_PATH ${lib_name} LIBRARY_OUTPUT_DIRECTORY)
+  
+    ADD_CUSTOM_COMMAND(
+      TARGET ${lib_name}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy ${FILE_PATH} ${DIR_PATH}/../designer/${CMAKE_SHARED_LIBRARY_PREFIX}${lib_name}${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
+      )
+  ENDIF()
 
 ENDMACRO()
 

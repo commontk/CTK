@@ -74,6 +74,7 @@ INCLUDE(CMake/ctkMacroListFilter.cmake)
 INCLUDE(CMake/ctkMacroBuildLib.cmake)
 INCLUDE(CMake/ctkMacroBuildPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildApp.cmake)
+INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
