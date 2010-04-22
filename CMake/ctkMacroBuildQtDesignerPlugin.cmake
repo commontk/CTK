@@ -75,7 +75,6 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
 
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES
-    ${CTK_LIBRARY_PROPERTIES}
     COMPILE_FLAGS "-DQT_PLUGIN"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/designer"
     )
