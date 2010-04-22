@@ -1,7 +1,7 @@
 PROJECT(CTKWidgets)
 
 #
-# See CTK/CMake/ctkMacroBuildQtLib.cmake for details
+# See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
 SET(KIT_export_directive "CTK_WIDGETS_EXPORT")
@@ -12,6 +12,8 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
+  ctkColorPickerButton.cpp
+  ctkColorPickerButton.h
   ctkMatrixWidget.cpp
   ctkMatrixWidget.h
   ctkSettings.cpp
@@ -24,6 +26,7 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkColorPickerButton.h
   ctkMatrixWidget.h
   ctkSettings.h
   ctkTransferFunctionItems.h
@@ -42,7 +45,7 @@ SET(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
 
-ctkMacroBuildQtLib(
+ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
@@ -55,7 +58,7 @@ ctkMacroBuildQtLib(
   )
 
 # Plugins
-#ADD_SUBDIRECTORY(Plugins)
+ADD_SUBDIRECTORY(Plugins)
 
 # Testing
 IF(BUILD_TESTING)

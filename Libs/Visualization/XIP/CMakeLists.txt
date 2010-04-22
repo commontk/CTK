@@ -10,7 +10,7 @@ PROJECT(CTKVisualizationXIP)
 # ENDIF()
 
 #
-# See CTK/CMake/ctkMacroBuildQtLib.cmake for details
+# See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
 SET(KIT_export_directive "CTK_VISUALIZATION_XIP_EXPORT")
@@ -43,7 +43,7 @@ SET(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
 
-ctkMacroBuildQtLib(
+ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}

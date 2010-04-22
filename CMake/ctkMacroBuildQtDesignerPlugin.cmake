@@ -4,7 +4,7 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #
 
-MACRO(ctkMacroBuildQtPlugin)
+MACRO(ctkMacroBuildQtDesignerPlugin)
   CtkMacroParseArguments(MY
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
     ""
@@ -29,6 +29,7 @@ MACRO(ctkMacroBuildQtPlugin)
   # Include dirs
   SET(my_includes
     ${CTK_BASE_INCLUDE_DIRS}
+    ${QT_QTDESIGNER_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MY_INCLUDE_DIRECTORIES}
@@ -72,27 +73,14 @@ MACRO(ctkMacroBuildQtPlugin)
     ${MY_QRC_SRCS}
     )
 
-  # Note: The plugin may be installed in some other location ???
-  # Install rules
-# IF(CTK_BUILD_SHARED_LIBS)
-# INSTALL(TARGETS ${lib_name}
-# RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR} COMPONENT Runtime
-# LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Runtime
-# ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
-# ENDIF()
+  # Apply properties to the library target.
+  SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES COMPILE_FLAGS "-DQT_PLUGIN")
   
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
+    ${QT_QTDESIGNER_LIBRARY}
     )
   TARGET_LINK_LIBRARIES(${lib_name} ${my_libs})
-  
-  # Install headers
-  #FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  #INSTALL(FILES
-  # ${headers}
-  # ${dynamicHeaders}
-  # DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
-  # )
 
 ENDMACRO()
 

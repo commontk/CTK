@@ -4,7 +4,7 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #
 
-MACRO(CtkMacroBuildQtApp)
+MACRO(ctkMacroBuildApp)
   ctkMacroParseArguments(MY
     "NAME;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
     ""

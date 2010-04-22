@@ -4,8 +4,8 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #
 
-MACRO(CtkMacroBuildQtLib)
-  ctkMacroParseArguments(MY
+MACRO(ctkMacroBuildPlugin)
+  CtkMacroParseArguments(MY
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
     ""
     ${ARGN}
@@ -31,13 +31,12 @@ MACRO(CtkMacroBuildQtLib)
     ${CTK_BASE_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    # with CMake >2.9, use QT4_MAKE_OUTPUT_FILE instead ?
-    ${CMAKE_CURRENT_BINARY_DIR}/Resources/UI
     ${MY_INCLUDE_DIRECTORIES}
-    )  
-  SET(CTK_BASE_INCLUDE_DIRS ${my_includes} CACHE INTERNAL "CTK includes" FORCE)
-  INCLUDE_DIRECTORIES(${CTK_BASE_INCLUDE_DIRS})
-
+    )
+  INCLUDE_DIRECTORIES(
+    ${my_includes}
+    )
+ 
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${MY_EXPORT_DIRECTIVE})
   SET(MY_EXPORT_HEADER_PREFIX ${MY_NAME})
   SET(MY_LIBNAME ${lib_name})
@@ -73,38 +72,30 @@ MACRO(CtkMacroBuildQtLib)
     ${MY_QRC_SRCS}
     )
 
-  # Set labels associated with the target.
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
+  # Apply properties to the library target.
+  SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES COMPILE_FLAGS "-DQT_PLUGIN")
 
-  # Apply user-defined properties to the library target.
-  IF(CTK_LIBRARY_PROPERTIES AND MY_LIBRARY_TYPE STREQUAL "SHARED")
-    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${CTK_LIBRARY_PROPERTIES})
-  ENDIF()
-
+  # Note: The plugin may be installed in some other location ???
   # Install rules
-  IF(CTK_BUILD_SHARED_LIBS)
-    INSTALL(TARGETS ${lib_name}
-      RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR} COMPONENT Runtime
-      LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Runtime
-      ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
-  ENDIF()
+# IF(CTK_BUILD_SHARED_LIBS)
+# INSTALL(TARGETS ${lib_name}
+# RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR} COMPONENT Runtime
+# LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Runtime
+# ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
+# ENDIF()
   
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
     )
   TARGET_LINK_LIBRARIES(${lib_name} ${my_libs})
-
-  # Update CTK_BASE_LIBRARIES
-  SET(CTK_BASE_LIBRARIES ${my_libs} ${lib_name} CACHE INTERNAL "CTK libraries" FORCE)
   
   # Install headers
-  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  INSTALL(FILES
-    ${headers}
-    ${dynamicHeaders}
-    DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
-    )
+  #FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  #INSTALL(FILES
+  # ${headers}
+  # ${dynamicHeaders}
+  # DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
+  # )
 
 ENDMACRO()
-
 

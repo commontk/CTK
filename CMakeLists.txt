@@ -71,9 +71,9 @@ SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 #
 INCLUDE(CMake/ctkMacroParseArguments.cmake)
 INCLUDE(CMake/ctkMacroListFilter.cmake)
-INCLUDE(CMake/ctkMacroBuildQtLib.cmake)
-INCLUDE(CMake/ctkMacroBuildQtPlugin.cmake)
-INCLUDE(CMake/ctkMacroBuildQtApp.cmake)
+INCLUDE(CMake/ctkMacroBuildLib.cmake)
+INCLUDE(CMake/ctkMacroBuildPlugin.cmake)
+INCLUDE(CMake/ctkMacroBuildApp.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
