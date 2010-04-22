@@ -713,9 +713,6 @@ execute_process(
   COMMAND ${CMAKE_COMMAND} -E remove_directory ${source_dir}
   RESULT_VARIABLE error_code
   )
-if(error_code)
-  message(FATAL_ERROR "Failed to remove directory: ${source_dir}")
-endif()
 execute_process(
   COMMAND ${Git_EXECUTABLE} clone ${git_repository} ${src_name}
   WORKING_DIRECTORY ${work_dir}
