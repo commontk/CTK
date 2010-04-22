@@ -12,12 +12,16 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
+  ctkAddRemoveComboBox.cpp
+  ctkAddRemoveComboBox.h
   ctkColorPickerButton.cpp
   ctkColorPickerButton.h
   ctkMatrixWidget.cpp
   ctkMatrixWidget.h
   ctkSettings.cpp
   ctkSettings.h
+  ctkTestApplication.cpp
+  ctkTestApplication.h
   ctkTransferFunctionItems.cpp
   ctkTransferFunctionItems.h
   ctkTransferFunctionWidget.cpp
@@ -26,20 +30,23 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkAddRemoveComboBox.h
   ctkColorPickerButton.h
   ctkMatrixWidget.h
   ctkSettings.h
+  ctkTestApplication.h
   ctkTransferFunctionItems.h
   ctkTransferFunctionWidget.h
   )
 
 # UI files
 SET(KIT_UI_FORMS
-)
+  Resources/UI/ctkAddRemoveComboBox.ui
+  )
 
 # Resources
 SET(KIT_resources
-)
+  )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'

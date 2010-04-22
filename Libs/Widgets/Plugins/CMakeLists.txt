@@ -68,7 +68,7 @@ SET(PLUGIN_MOC_SRCS
 
 # Resources
 SET(PLUGIN_resources
-  Resources/ctkVisualizationVTKWidgetsPlugins.qrc
+  Resources/CTKWidgetsPlugins.qrc
 )
 
 # Target libraries
