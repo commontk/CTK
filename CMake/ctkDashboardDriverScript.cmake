@@ -125,9 +125,10 @@ WITH_COVERAGE:BOOL=TRUE
     # To get CTEST_PROJECT_SUBPROJECTS definition
     include("${CTEST_BINARY_DIRECTORY}/CTestConfigSubProject.cmake")
     
-    set(test_kits 
+    set(kit_suffixes
       CppTests
       #PythonTests
+      Plugins
       )
     
    foreach(subproject ${CTEST_PROJECT_SUBPROJECTS})
@@ -144,10 +145,10 @@ WITH_COVERAGE:BOOL=TRUE
      set(CTEST_BUILD_TARGET "${subproject}")
      ctest_build(BUILD "${ctk_build_dir}" APPEND)
      
-     # Loop over test kits and try to build the corresponding target
-     foreach(test_kit ${test_kits})
-       message("Build ${subproject}${test_kit}")
-       set(CTEST_BUILD_TARGET "${subproject}${test_kit}")
+     # Loop over kit suffixes and try to build the corresponding target
+     foreach(kit_suffixe ${kit_suffixes})
+       message("Build ${subproject}${kit_suffixe}")
+       set(CTEST_BUILD_TARGET "${subproject}${kit_suffixe}")
        ctest_build(BUILD "${ctk_build_dir}" APPEND)
      endforeach()
      
