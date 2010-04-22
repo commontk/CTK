@@ -220,6 +220,14 @@ MARK_AS_ADVANCED(DART_TESTING_TIMEOUT)
 OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
 
+#-----------------------------------------------------------------------------
+# Documentation
+OPTION( BUILD_DOCUMENTATION "Build Documentation" OFF )
+
+IF( BUILD_DOCUMENTATION )
+  ADD_SUBDIRECTORY( Documentation )
+ENDIF( BUILD_DOCUMENTATION )
+
 # Build options associated with CTK libraries
 # Note also that if
 # the file Libs/<DIR>/<LIBNAME>/ctk_library_options.cmake exists and look like:
@@ -393,7 +401,7 @@ ENDFOREACH()
 #
 #ADD_SUBDIRECTORY(Testing)
 #ADD_SUBDIRECTORY(Examples)
-    
+
 #-----------------------------------------------------------------------------
 # Style Checking configuration
 #
