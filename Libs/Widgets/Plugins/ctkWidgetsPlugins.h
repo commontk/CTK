@@ -20,20 +20,20 @@
 
 // CTK includes
 #include "CTKWidgetsPluginsExport.h"
-// #include "qCTKCollapsibleButtonPlugin.h"
-// #include "qCTKCollapsibleGroupBoxPlugin.h"
-// #include "qCTKColorPickerButtonPlugin.h"
-// #include "qCTKCoordinatesWidgetPlugin.h"
-// #include "qCTKDoubleRangeSliderPlugin.h"
-// #include "qCTKDoubleSliderPlugin.h"
-// #include "qCTKDynamicSpacerPlugin.h"
-// #include "qCTKFittedTextBrowserPlugin.h"
-// #include "qCTKMenuButtonPlugin.h"
-// #include "qCTKRangeSliderPlugin.h"
-// #include "qCTKRangeWidgetPlugin.h"
-// #include "qCTKTitleComboBoxPlugin.h"
-// #include "qCTKTreeComboBoxPlugin.h"
-// #include "qCTKSliderSpinBoxWidgetPlugin.h"
+// #include "ctkCollapsibleButtonPlugin.h"
+// #include "ctkCollapsibleGroupBoxPlugin.h"
+#include "ctkColorPickerButtonPlugin.h"
+// #include "ctkCoordinatesWidgetPlugin.h"
+// #include "ctkDoubleRangeSliderPlugin.h"
+// #include "ctkDoubleSliderPlugin.h"
+// #include "ctkDynamicSpacerPlugin.h"
+// #include "ctkFittedTextBrowserPlugin.h"
+// #include "ctkMenuButtonPlugin.h"
+// #include "ctkRangeSliderPlugin.h"
+// #include "ctkRangeWidgetPlugin.h"
+// #include "ctkTitleComboBoxPlugin.h"
+// #include "ctkTreeComboBoxPlugin.h"
+// #include "ctkSliderSpinBoxWidgetPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins : public QObject,
@@ -46,20 +46,20 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-//     plugins << new qCTKCollapsibleButtonPlugin
-//             << new qCTKCollapsibleGroupBoxPlugin
-//             << new qCTKColorPickerButtonPlugin
-//             << new qCTKCoordinatesWidgetPlugin
-//             << new qCTKDoubleRangeSliderPlugin
-//             << new qCTKDoubleSliderPlugin
-//             << new qCTKDynamicSpacerPlugin
-//             << new qCTKFittedTextBrowserPlugin
-//             << new qCTKMenuButtonPlugin
-//             << new qCTKRangeSliderPlugin
-//             << new qCTKRangeWidgetPlugin
-//             << new qCTKTitleComboBoxPlugin
-//             << new qCTKTreeComboBoxPlugin
-//             << new qCTKSliderSpinBoxWidgetPlugin;
+    plugins //<< new ctkCollapsibleButtonPlugin
+//             << new ctkCollapsibleGroupBoxPlugin
+            << new ctkColorPickerButtonPlugin;
+//             << new ctkCoordinatesWidgetPlugin
+//             << new ctkDoubleRangeSliderPlugin
+//             << new ctkDoubleSliderPlugin
+//             << new ctkDynamicSpacerPlugin
+//             << new ctkFittedTextBrowserPlugin
+//             << new ctkMenuButtonPlugin
+//             << new ctkRangeSliderPlugin
+//             << new ctkRangeWidgetPlugin
+//             << new ctkTitleComboBoxPlugin
+//             << new ctkTreeComboBoxPlugin
+//             << new ctkSliderSpinBoxWidgetPlugin;
     return plugins;
     }
 };
