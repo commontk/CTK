@@ -118,27 +118,46 @@ QRectF ctkTransferFunctionItem::boundingRect()const
 }
 
 //-----------------------------------------------------------------------------
-QList<QPointF> ctkTransferFunctionItem::bezierParams(
+QList<ctkPoint> ctkTransferFunctionItem::bezierParams(
   ctkControlPoint* start, ctkControlPoint* end) const
 {
   Q_ASSERT(start);
   Q_ASSERT(end);
-  QList<QPointF> points; 
+  QList<ctkPoint> points; 
   
-  points << QPointF(start->Pos, this->y(start->Value));
-  points << QPointF(end->Pos, this->y(end->Value));
-
   ctkBezierControlPoint* bezierCP = dynamic_cast<ctkBezierControlPoint*>(start);
   if (!bezierCP)
     {// just duplicate start and end into p1 and p2
-    points << points[0];
-    points << points[1];
+    points << start->P;
+    points << start->P;
+    points << end->P;
+    points << end->P;
     return points;
     }
   
-  points << QPointF(bezierCP->P1, this->y(bezierCP->ValueP1));
-  points << QPointF(bezierCP->P2, this->y(bezierCP->ValueP2));
+  points << start->P;
+  points << bezierCP->P1;
+  points << bezierCP->P2;
+  points << end->P;
   return points;
+}
+
+//-----------------------------------------------------------------------------
+QList<ctkPoint> ctkTransferFunctionItem::nonLinearPoints(
+  ctkControlPoint* start, ctkControlPoint* end) const
+{
+  Q_ASSERT(start);
+    
+  ctkNonLinearControlPoint* nonLinearCP = 
+    dynamic_cast<ctkNonLinearControlPoint*>(start);
+  if (!nonLinearCP)
+    {
+    QList<ctkPoint> points; 
+    points << start->P;
+    points << end->P;
+    return points;
+    }
+  return nonLinearCP->SubPoints;
 }
 
 //-----------------------------------------------------------------------------
@@ -197,27 +216,54 @@ void ctkTransferFunctionGradientItem::paint(
   ctkControlPoint* startCP = this->transferFunction()->controlPoint(0);
   ctkControlPoint* endCP = 0;
   
-  qreal start = startCP->Pos * rangeDiff;
+  qreal start = startCP->x() * rangeDiff;
   qreal end = 0;
   for(int i = 1; i < count; ++i)
     {
     endCP = this->transferFunction()->controlPoint(i);
-    // TODO, use Bezier points for a finer gradient
-    end = endCP->Pos * rangeDiff;
-    QLinearGradient gradient(start,0, end, 0);
-    gradient.setColorAt(0, this->color(startCP->Value));
-    gradient.setColorAt(1, this->color(endCP->Value));
-    QRectF itemRect = QRectF(start, 0, end - start, 
-                             this->rect().height());
-    if (i==1)
+    // TODO, handle Bezier points for a finer gradient
+    // TODO, handle nonlinear points
+    if (dynamic_cast<ctkNonLinearControlPoint*>(startCP) != 0)
       {
-      itemRect.setLeft(0.);
+      QList<ctkPoint> points = this->nonLinearPoints(startCP, endCP);
+      for (int j = 1; j < points.count(); ++j)
+        {
+        end = points[j].X * rangeDiff;
+        QLinearGradient gradient(start, 0, end, 0);
+        gradient.setColorAt(0, this->color(points[j-1]));
+        gradient.setColorAt(1, this->color(points[j]));
+        QRectF itemRect = QRectF(start, 0, end - start, 
+                                 this->rect().height());
+        if (i==1 && j == 1)
+          {
+          itemRect.setLeft(0.);
+          }
+        if ((i == count -1) && (j == points.count() -1))
+          {
+          itemRect.setRight(this->rect().width());
+          }
+        painter->fillRect(itemRect, gradient);
+        start = end;
+        }
       }
-    if (i == count -1)
+    else
       {
-      itemRect.setRight(this->rect().width());
+      end = endCP->x() * rangeDiff;
+      QLinearGradient gradient(start, 0, end, 0);
+      gradient.setColorAt(0, this->color(startCP->value()));
+      gradient.setColorAt(1, this->color(endCP->value()));
+      QRectF itemRect = QRectF(start, 0, end - start, 
+                               this->rect().height());
+      if (i==1)
+        {
+        itemRect.setLeft(0.);
+        }
+      if (i == count -1)
+        {
+        itemRect.setRight(this->rect().width());
+        }
+      painter->fillRect(itemRect, gradient);
       }
-    painter->fillRect(itemRect, gradient);
     delete startCP;
     startCP = endCP;
     start = end;
@@ -313,7 +359,7 @@ void ctkTransferFunctionControlPointsItem::paint(
 
   QPainterPath path;
 
-  QPointF startPos(startCP->Pos, this->y(startCP->Value));
+  QPointF startPos(startCP->x(), this->y(startCP->value()));
   startPos.rx() *= rangeXDiff;
   startPos.setY(this->rect().height() 
                 - startPos.y() * rangeYDiff);
@@ -325,17 +371,35 @@ void ctkTransferFunctionControlPointsItem::paint(
   for(int i = 1; i < count; ++i)
     {
     endCP = this->transferFunction()->controlPoint(i);
-    QList<QPointF> points = this->bezierParams(startCP, endCP);
-    QList<QPointF>::iterator it = points.begin();
-    for ( ; it != points.end(); ++it)
+    if (dynamic_cast<ctkNonLinearControlPoint*>(startCP))
       {
-      (*it).rx() *= rangeXDiff;
-      (*it).setY(this->rect().height() 
-                 - (*it).y() * rangeYDiff);
+      QList<ctkPoint> points = this->nonLinearPoints(startCP, endCP);
+      int j;
+      for (j = 1; j < points.count(); ++j)
+        {
+        path.lineTo(
+          QPointF(points[j].X * rangeXDiff, this->rect().height() - 
+                  this->y(points[j].Value) * rangeYDiff));
+        }
+      j = points.count() -1;
+      d->ControlPoints << QPointF(points[j].X * rangeXDiff, this->rect().height() - 
+                  this->y(points[j].Value) * rangeYDiff);
       }
-    d->ControlPoints << points[1];
-    path.cubicTo(points[2], points[3], points[1]);
-    //qDebug() << i << points[0] << points[2] << points[3] << points[1];
+    else //dynamic_cast<ctkBezierControlPoint*>(startCP))
+      {
+      QList<ctkPoint> points = this->bezierParams(startCP, endCP);
+      QList<ctkPoint>::iterator it = points.begin();
+      QList<QPointF> bezierPoints;
+      foreach(const ctkPoint& p, points)
+        {
+        bezierPoints << 
+          QPointF(p.X * rangeXDiff, 
+                  this->rect().height() - this->y(p.Value) * rangeYDiff);
+        }
+      path.cubicTo(bezierPoints[1], bezierPoints[2], bezierPoints[3]);
+      d->ControlPoints << bezierPoints[3];
+      }
+    //qDebug() << i << points[0] << points[1] << points[2] << points[3];
     delete startCP;
     startCP = endCP;
     }
@@ -348,7 +412,7 @@ void ctkTransferFunctionControlPointsItem::paint(
   painter->drawPath(path);
 
   QPainterPath points;
-  foreach(const QPointF point, d->ControlPoints)
+  foreach(const QPointF& point, d->ControlPoints)
     {
     points.addEllipse(point, d->PointSize.width(), d->PointSize.height());
     }

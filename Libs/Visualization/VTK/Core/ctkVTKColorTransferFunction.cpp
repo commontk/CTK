@@ -86,6 +86,9 @@ QVariant ctkVTKColorTransferFunction::minValue()const
   for (int i = 0; i < this->count(); ++i)
     {
     d->ColorTransferFunction->GetColor(i, rgb);
+    Q_ASSERT(rgb[0] >= 0. && rgb[0] <= 1. &&
+             rgb[1] >= 0. && rgb[1] <= 1. &&
+             rgb[2] >= 0. && rgb[2] <= 1.);
     QColor color = QColor::fromRgbF(rgb[0], rgb[1], rgb[2]);
     if ( qGray(color.red(), color.green(), color.blue()) <
          qGray(minValue.red(), minValue.green(), minValue.blue()))
@@ -110,6 +113,9 @@ QVariant ctkVTKColorTransferFunction::maxValue()const
   for (int i = 0; i < this->count(); ++i)
     {
     d->ColorTransferFunction->GetColor(i, rgb);
+    Q_ASSERT(rgb[0] >= 0. && rgb[0] <= 1. &&
+             rgb[1] >= 0. && rgb[1] <= 1. &&
+             rgb[2] >= 0. && rgb[2] <= 1.);
     QColor color = QColor::fromRgbF(rgb[0], rgb[1], rgb[2]);
     if ( qGray(color.red(), color.green(), color.blue()) >
          qGray(minValue.red(), minValue.green(), minValue.blue()))
@@ -119,7 +125,6 @@ QVariant ctkVTKColorTransferFunction::maxValue()const
     }
   return minValue;
 }
-
 
 //-----------------------------------------------------------------------------
 ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
@@ -135,15 +140,18 @@ ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
            values[3] >= 0. && values[3] <= 1. &&  // Blue
            values[4] >= 0. && values[4] <= 1. &&  // MidPoint
            values[5] >= 0. && values[5] <= 1.);   // Sharpness
-  ctkBezierControlPoint* cp = new ctkBezierControlPoint();
   QColor rgb = QColor::fromRgbF(values[1], values[2], values[3]);
-  cp->Value = rgb;
-  cp->Pos = values[0];
-  // TODO convert P1, P2, Value1 and Value2 from midpoint/sharpness to bezier points
-  cp->P1 = values[0];
-  cp->ValueP1 = rgb;
-  index = (index + 1 )%this->count();
-  d->ColorTransferFunction->GetNodeValue(index, values);
+  if (index + 1 >= this->count())
+    {
+    ctkControlPoint* cp = new ctkControlPoint();
+    cp->P.X = values[0];
+    cp->P.Value = rgb;
+    return cp;
+    }
+  ctkNonLinearControlPoint* cp = new ctkNonLinearControlPoint();
+  cp->P.X = values[0];
+  cp->P.Value = rgb;
+  d->ColorTransferFunction->GetNodeValue(index + 1, values);
   Q_ASSERT(values[0] >= d->ColorTransferFunction->GetRange()[0] &&
            values[0] <= d->ColorTransferFunction->GetRange()[1] &&
            values[1] >= 0. && values[1] <= 1. &&  // Red
@@ -151,9 +159,17 @@ ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
            values[3] >= 0. && values[3] <= 1. &&  // Blue
            values[4] >= 0. && values[4] <= 1. &&  // MidPoint
            values[5] >= 0. && values[5] <= 1.);   // Sharpness
-  // TODO convert P1 and P2
-  cp->P2 = (index ? values[0] : cp->P1);
-  cp->ValueP2 = QColor::fromRgbF(values[1], values[2], values[3]);
+  double subPoints[30];
+  d->ColorTransferFunction->GetTable(cp->x(), values[0], 10, subPoints);
+  qreal interval = (values[0] - cp->x()) / 9.;
+  for(int i = 0; i < 10; ++i)
+    {
+    
+    QColor rgb = QColor::fromRgbF(subPoints[3*i], 
+                                  subPoints[3*i+1],
+                                  subPoints[3*i+2]);
+    cp->SubPoints << ctkPoint(cp->x() + interval*i, rgb);
+    }
   return cp;
 }
 
@@ -177,18 +193,18 @@ int ctkVTKColorTransferFunction::insertControlPoint(const ctkControlPoint& cp)
     {
     return index;
     }
-  QColor rgb = cp.Value.value<QColor>();
-  const ctkBezierControlPoint* bezierCp = dynamic_cast<const ctkBezierControlPoint*>(&cp);
-  if (bezierCp)
+  QColor rgb = cp.value().value<QColor>();
+  const ctkNonLinearControlPoint* nonLinearCp = dynamic_cast<const ctkNonLinearControlPoint*>(&cp);
+  if (nonLinearCp)
     {
-    // TODO convert P1 and P2
+    // TODO retrieve midpoint & sharpness
     index = d->ColorTransferFunction->AddRGBPoint(
-      cp.Pos, rgb.redF(), rgb.greenF(), rgb.blueF(), bezierCp->P1, bezierCp->P2);
+      cp.x(), rgb.redF(), rgb.greenF(), rgb.blueF());
     }
   else
     {
     index = d->ColorTransferFunction->AddRGBPoint(
-      cp.Pos, rgb.redF(), rgb.greenF(), rgb.blueF());
+      cp.x(), rgb.redF(), rgb.greenF(), rgb.blueF());
     }
   return index;
 }

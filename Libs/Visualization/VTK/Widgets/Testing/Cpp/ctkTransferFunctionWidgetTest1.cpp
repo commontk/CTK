@@ -37,8 +37,8 @@ int ctkTransferFunctionWidgetTest1(int argc, char * argv [] )
   vtkSmartPointer<vtkColorTransferFunction> ctf = 
     vtkSmartPointer<vtkColorTransferFunction>::New();
   //
-  ctf->AddRGBPoint(0., 1.,0.,0.);
-  ctf->AddRGBPoint(0.5, 0.,0.,1.);
+  ctf->AddRGBPoint(0., 1.,0.,0., 0.5, 0.);
+  //ctf->AddRGBPoint(0.5, 0.,0.,1.);
   ctf->AddRGBPoint(1., 0.,1.,0.);
   //ctf->AddHSVPoint(0., 0.,1.,1.);
   //ctf->AddHSVPoint(1., 0.66666,1.,1.);
@@ -49,10 +49,10 @@ int ctkTransferFunctionWidgetTest1(int argc, char * argv [] )
   // the widget is not really shown here, only when app.exec() is called
   transferFunctionWidget.show();
 
-  ctf->AddRGBPoint(0.7, 0.0,0.0,0.0);
+  //ctf->AddRGBPoint(0.7, 0.0,0.0,0.0);
   //ctkTransferFunctionWidget* toto = new ctkTransferFunctionWidget();
   QTimer autoExit;
   QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-  autoExit.start(1000);
+  //autoExit.start(1000);
   return app.exec();
 }

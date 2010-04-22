@@ -21,9 +21,9 @@
 /// CTK includes
 #include "CTKWidgetsExport.h"
 #include "ctkPimpl.h"
+#include "ctkTransferFunction.h"
 
 class ctkControlPoint;
-class ctkTransferFunction;
 class ctkTransferFunctionItemPrivate;
 //class ctkTransferFunctionGradientItemPrivate;
 class ctkTransferFunctionControlPointsItemPrivate;
@@ -47,10 +47,16 @@ public:
   QRectF rect()const;
   virtual QRectF boundingRect()const;
 protected:
-  qreal y(const QVariant& v)const;
-  QColor color(const QVariant& v)const;
+  qreal y(const QVariant& value)const;
+  inline qreal y(const ctkPoint& point)const;
 
-  QList<QPointF> bezierParams(ctkControlPoint* start, ctkControlPoint* end)const;
+  QColor color(const QVariant& value)const;
+  inline QColor color(const ctkPoint& point)const;
+
+
+
+  QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end)const;
+  QList<ctkPoint> nonLinearPoints(ctkControlPoint* start, ctkControlPoint* end)const;
 protected slots:
   virtual void onTransferFunctionChanged();
 private:
@@ -61,6 +67,17 @@ void ctkTransferFunctionItem::setRect(qreal x, qreal y, qreal width, qreal heigh
 {
   this->setRect(QRectF(x,y,width,height));
 }
+
+qreal ctkTransferFunctionItem::y(const ctkPoint& p)const
+{
+  return this->y(p.Value);
+}
+
+QColor ctkTransferFunctionItem::color(const ctkPoint& p)const
+{
+  return this->color(p.Value);
+}
+
 
 //-----------------------------------------------------------------------------
 class CTK_WIDGETS_EXPORT ctkTransferFunctionGradientItem: public ctkTransferFunctionItem

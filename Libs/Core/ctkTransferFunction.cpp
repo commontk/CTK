@@ -15,6 +15,21 @@
 #include "ctkTransferFunction.h"
 
 //-----------------------------------------------------------------------------
+ctkControlPoint::~ctkControlPoint()
+{ 
+}
+
+//-----------------------------------------------------------------------------
+ctkBezierControlPoint::~ctkBezierControlPoint()
+{
+}
+
+//-----------------------------------------------------------------------------
+ctkNonLinearControlPoint::~ctkNonLinearControlPoint()
+{
+}
+
+//-----------------------------------------------------------------------------
 ctkTransferFunction::ctkTransferFunction(QObject* parentObject)
   :QObject(parentObject)
 {
@@ -30,3 +45,9 @@ ctkTransferFunction::~ctkTransferFunction()
   // this->ControlPoints->clear();
   // emit changed();
 }
+
+ctkBezierControlPoint*  ctkTransferFunction::toto()
+{
+  return new ctkBezierControlPoint();
+}
+

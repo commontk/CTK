@@ -24,24 +24,43 @@
 /// CTK includes
 #include "CTKCoreExport.h"
 
-/// assumes the mapping is linear by default, if not, then subclasses must be 
-/// used
 //-----------------------------------------------------------------------------
-struct ctkControlPoint
+struct CTK_CORE_EXPORT ctkPoint
 {
-  virtual ~ctkControlPoint(){}
+  ctkPoint(){}
+  ctkPoint(qreal x, const QVariant& v)
+    :X(x),Value(v)
+  {  
+  }
+  qreal X;
   // QColor or qreal.
   QVariant Value;
-  qreal    Pos;
 };
 
 //-----------------------------------------------------------------------------
-struct ctkBezierControlPoint : public ctkControlPoint
+/// assumes the mapping is linear by default, if not, then subclasses must be 
+/// used
+struct CTK_CORE_EXPORT ctkControlPoint
 {
-  qreal P1;
-  QVariant ValueP1;
-  qreal P2;
-  QVariant ValueP2;
+  virtual ~ctkControlPoint();
+  inline const qreal& x()const {return this->P.X;}
+  inline const QVariant& value()const {return this->P.Value;}
+  ctkPoint P;
+};
+
+//-----------------------------------------------------------------------------
+struct CTK_CORE_EXPORT ctkBezierControlPoint : public ctkControlPoint
+{
+  virtual ~ctkBezierControlPoint();
+  ctkPoint P1;
+  ctkPoint P2;
+};
+
+//-----------------------------------------------------------------------------
+struct CTK_CORE_EXPORT ctkNonLinearControlPoint : public ctkControlPoint
+{
+  virtual ~ctkNonLinearControlPoint();
+  QList<ctkPoint> SubPoints;
 };
 
 //-----------------------------------------------------------------------------
@@ -52,9 +71,9 @@ public:
   ctkTransferFunction(QObject* parent = 0);
   virtual ~ctkTransferFunction();
   
-  virtual ctkControlPoint* controlPoint(int index)const =0;
+  virtual ctkControlPoint* controlPoint(int index)const = 0;
   inline QVariant value(int index)const;
-  virtual QVariant value(qreal pos)const =0;
+  virtual QVariant value(qreal pos)const = 0;
   
   virtual int count()const = 0;
   inline void range(qreal rangeValues[2])const;
@@ -72,7 +91,7 @@ public:
   /// be careful with it, as changing the value might require
   /// more changes to ctkControlPoint.
   virtual void setControlPointValue(int index, const QVariant& value)=0;
-
+  virtual ctkBezierControlPoint* toto();
 signals:
   void changed();
 };
@@ -81,7 +100,7 @@ signals:
 QVariant ctkTransferFunction::value(int index)const
 {
   QSharedPointer<ctkControlPoint> cp(this->controlPoint(index));
-  return cp->Value;
+  return cp->P.Value;
 }
 
 //-----------------------------------------------------------------------------

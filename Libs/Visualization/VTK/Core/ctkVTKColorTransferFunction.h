@@ -24,7 +24,9 @@
 class vtkColorTransferFunction;
 class ctkVTKColorTransferFunctionPrivate;
 
-//-----------------------------------------------------------------------------
+///
+/// Transfer function for a vtkColorTransferFunction. 
+/// The value is an RGB QColor (no alpha supported)
 class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKColorTransferFunction: public ctkTransferFunction
 {
   Q_OBJECT;
