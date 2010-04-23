@@ -53,6 +53,6 @@ int ctkTransferFunctionWidgetTest1(int argc, char * argv [] )
   //ctkTransferFunctionWidget* toto = new ctkTransferFunctionWidget();
   QTimer autoExit;
   QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-  //autoExit.start(1000);
+  autoExit.start(1000);
   return app.exec();
 }
