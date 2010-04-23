@@ -203,34 +203,35 @@ IF(QT4_FOUND)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# CTK Libraries
+# CTK Libraries - Use ON or OFF to indicate if the library should be built by default
 #
 SET(CTK_LIBS
-  Core
-  Widgets
-  DICOM/Core
-  DICOM/Widgets
-  Scripting/Python/Core
-  Scripting/Python/Widgets
-  Visualization/VTK/Core
-  Visualization/VTK/Widgets
-  Visualization/XIP
+  Core:ON
+  Widgets:ON
+  DICOM/Core:OFF
+  DICOM/Widgets:OFF
+  Scripting/Python/Core:OFF
+  Scripting/Python/Widgets:OFF
+  Visualization/VTK/Core:OFF
+  Visualization/VTK/Widgets:OFF
+  Visualization/XIP:OFF
   )
 
 #-----------------------------------------------------------------------------
-# CTK Plugins
+# CTK Plugins - Use ON or OFF to indicate if the plugin should be built by default
 #
 SET(CTK_PLUGINS
-  #org.commontk.cli
+  #org.commontk.cli:OFF
   )
 
 #-----------------------------------------------------------------------------
-# CTK Applications
+# CTK Applications - Use ON or OFF to indicate if the application should be built by default
 #
 SET(CTK_APPLICATIONS
-  ctkDICOM
-  ctkDICOMIndexer
+  ctkDICOM:OFF
+  ctkDICOMIndexer:OFF
   )
+
   
 #-----------------------------------------------------------------------------
 # To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
@@ -253,6 +254,14 @@ IF( BUILD_DOCUMENTATION )
   ADD_SUBDIRECTORY( Documentation )
 ENDIF( BUILD_DOCUMENTATION )
 
+
+#-----------------------------------------------------------------------------
+# Will contain a list of sub-directory without option ON or OFF
+#
+SET(CTK_LIBS_SUBDIRS )
+SET(CTK_PLUGINS_SUBDIRS )
+SET(CTK_APPLICATIONS_SUBDIRS )
+
 #-----------------------------------------------------------------------------
 # Build options associated with CTK libraries
 # Note also that if
@@ -269,20 +278,25 @@ ENDIF( BUILD_DOCUMENTATION )
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
 #
 FOREACH(lib ${CTK_LIBS})
-  OPTION(CTK_LIB_${lib} "Enable ${lib} Library." ON)
-  ctkMacroAddCtkLibraryOptions(${lib})
+  ctkMacroExtractOptionNameAndValue(${lib} lib_name lib_value)
+  OPTION(CTK_LIB_${lib_name} "Enable ${lib_name} Library." ${lib_value})
+  ctkMacroAddCtkLibraryOptions(${lib_name})
+  LIST(APPEND CTK_LIBS_SUBDIRS "${lib_name}")
 ENDFOREACH()
 
 # Build options associated with CTK plugins
 FOREACH(plugin ${CTK_PLUGINS})
-  OPTION(CTK_PLUGIN_${plugin} "Build ${plugin} Plugin." ON)
+  ctkMacroExtractOptionNameAndValue(${plugin} plugin_name plugin_value)
+  OPTION(CTK_PLUGIN_${plugin_name} "Build ${plugin_name} Plugin." ${plugin_value})
+  LIST(APPEND CTK_PLUGINS_SUBDIRS "${plugin_name}")
 ENDFOREACH()
 
 # Build options associated with CTK applications
 FOREACH(app ${CTK_APPLICATIONS})
-  OPTION(CTK_APP_${app} "Build ${app} Application." ON)
+  ctkMacroExtractOptionNameAndValue(${app} app_name app_value)
+  OPTION(CTK_APP_${app_name} "Build ${app_name} Application." ${app_value})
+  LIST(APPEND CTK_APPLICATIONS_SUBDIRS "${app_name}")
 ENDFOREACH()
-
 
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
@@ -297,21 +311,21 @@ MARK_AS_ADVANCED(CTK_SUPERBUILD)
 # Create list of directories corresponding to the enabled targets
 SET(target_directories)
 
-FOREACH(lib ${CTK_LIBS})
+FOREACH(lib ${CTK_LIBS_SUBDIRS})
   SET(option_name CTK_LIB_${lib})
   IF(${${option_name}})
     LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}^^${option_name}")
   ENDIF()
 ENDFOREACH()
 
-FOREACH(plugin ${CTK_PLUGINS})
+FOREACH(plugin ${CTK_PLUGINS_SUBDIRS})
   SET(option_name CTK_PLUGIN_${plugin})
   IF(${${option_name}})
     LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^${option_name}")
   ENDIF()
 ENDFOREACH()
 
-FOREACH(app ${CTK_APPLICATIONS})
+FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
   SET(option_name CTK_APP_${app})
   IF(${${option_name}})
     LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}^^${option_name}")
@@ -399,7 +413,7 @@ SET(CMAKE_C_FLAGS ${CTK_C_FLAGS})
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories
 #
-FOREACH(lib ${CTK_LIBS})
+FOREACH(lib ${CTK_LIBS_SUBDIRS})
   IF (CTK_LIB_${lib})
     ADD_SUBDIRECTORY(Libs/${lib})
   ENDIF()
@@ -408,7 +422,7 @@ ENDFOREACH()
 #-----------------------------------------------------------------------------
 # Add CTK plugin subdirectories
 #
-FOREACH(plugin ${CTK_PLUGINS})
+FOREACH(plugin ${CTK_PLUGINS_SUBDIRS})
   IF (CTK_PLUGIN_${plugin})
     ADD_SUBDIRECTORY(Plugins/${plugin})
   ENDIF()
@@ -417,7 +431,7 @@ ENDFOREACH()
 #-----------------------------------------------------------------------------
 # Add CTK application subdirectories
 #
-FOREACH(app ${CTK_APPLICATIONS})
+FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
   IF (CTK_APP_${app})
     ADD_SUBDIRECTORY(Applications/${app})
   ENDIF()
