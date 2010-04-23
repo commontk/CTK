@@ -250,6 +250,7 @@ IF( BUILD_DOCUMENTATION )
   ADD_SUBDIRECTORY( Documentation )
 ENDIF( BUILD_DOCUMENTATION )
 
+#-----------------------------------------------------------------------------
 # Build options associated with CTK libraries
 # Note also that if
 # the file Libs/<DIR>/<LIBNAME>/ctk_library_options.cmake exists and look like:
