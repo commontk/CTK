@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 class QAbstractItemModelHelper : public QAbstractItemModel
 {
 public:
@@ -36,6 +37,7 @@ public:
   virtual QVariant data(const QModelIndex&, int) const { return QVariant(); }
 };
 
+//-----------------------------------------------------------------------------
 int ctkModelTesterTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);

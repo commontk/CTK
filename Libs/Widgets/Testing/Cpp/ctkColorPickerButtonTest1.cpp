@@ -19,9 +19,10 @@
 #include "ctkColorPickerButton.h"
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 int ctkColorPickerButtonTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);

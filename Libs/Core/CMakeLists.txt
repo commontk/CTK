@@ -60,6 +60,7 @@ SET(KIT_SRCS
   ctkModelTester.cpp
   ctkModelTester.h
   ctkPimpl.h
+  ctkSingleton.h
   ctkTransferFunction.cpp
   ctkTransferFunction.h
   ctkUtils.cpp

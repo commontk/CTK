@@ -26,6 +26,7 @@
 #if QT_VERSION >= 0x040600
 #include <QProxyStyle>
 
+//-----------------------------------------------------------------------------
 class ctkCollapsibleGroupBoxStyle:public QProxyStyle
 {
   public:
@@ -48,6 +49,7 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
   
 #endif
 
+//-----------------------------------------------------------------------------
 ctkCollapsibleGroupBox::ctkCollapsibleGroupBox(QWidget* _parent)
   :QGroupBox(_parent)
 {
@@ -66,11 +68,13 @@ ctkCollapsibleGroupBox::ctkCollapsibleGroupBox(QWidget* _parent)
 #endif
 }
 
+//-----------------------------------------------------------------------------
 ctkCollapsibleGroupBox::~ctkCollapsibleGroupBox()
 {
 
 }
 
+//-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBox::expand(bool _expand)
 {
   if (!_expand)
@@ -104,6 +108,7 @@ void ctkCollapsibleGroupBox::expand(bool _expand)
     }
 }
 
+//-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBox::childEvent(QChildEvent* c)
 {
   if(c && c->type() == QEvent::ChildAdded)
@@ -118,6 +123,7 @@ void ctkCollapsibleGroupBox::childEvent(QChildEvent* c)
 }
 
 #if QT_VERSION < 0x040600
+//-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBox::paintEvent(QPaintEvent* e)
 {
   this->QGroupBox::paintEvent(e);
@@ -130,6 +136,7 @@ void ctkCollapsibleGroupBox::paintEvent(QPaintEvent* e)
   
 }
 
+//-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBox::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton) {
@@ -139,6 +146,7 @@ void ctkCollapsibleGroupBox::mousePressEvent(QMouseEvent *event)
     // no animation
 }
 
+//-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBox::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton) {
@@ -161,24 +169,28 @@ void ctkCollapsibleGroupBox::mouseReleaseEvent(QMouseEvent *event)
 
 #endif
 
+//-----------------------------------------------------------------------------
 QSize ctkCollapsibleGroupBox::minimumSizeHint() const
 {
   //qDebug() << "ctkCollapsibleGroupBox::minimumSizeHint::" << this->QGroupBox::minimumSizeHint() ;
   return this->QGroupBox::minimumSizeHint();
 }
 
+//-----------------------------------------------------------------------------
 QSize ctkCollapsibleGroupBox::sizeHint() const
 {
   //qDebug() << "ctkCollapsibleGroupBox::sizeHint::" << this->QGroupBox::sizeHint() ;
   return this->QGroupBox::sizeHint();
 }
 
+//-----------------------------------------------------------------------------
 int ctkCollapsibleGroupBox::heightForWidth(int w) const
 {
   //qDebug() << "ctkCollapsibleGroupBox::heightForWidth::" << this->QGroupBox::heightForWidth(w) ;
   return this->QGroupBox::heightForWidth(w);
 }
 
+//-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBox::resizeEvent ( QResizeEvent * _event )
 {
   //qDebug() << "ctkCollapsibleGroupBox::resizeEvent::" << _event->oldSize() << _event->size() ;

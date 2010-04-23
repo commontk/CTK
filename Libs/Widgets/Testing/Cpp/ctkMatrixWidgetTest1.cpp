@@ -12,16 +12,17 @@
 
 =========================================================================*/
 
+// Qt includes
+#include <QApplication>
+
 // CTK includes
 #include "ctkMatrixWidget.h"
-
-// QT includes
-#include <QApplication>
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 int ctkMatrixWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);

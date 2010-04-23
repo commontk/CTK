@@ -12,21 +12,23 @@
 
 =========================================================================*/
 
-// CTK includes
-#include "ctkAbstractObjectFactory.h"
-
 // Qt includes
 #include <QApplication>
+
+// CTK includes
+#include "ctkAbstractObjectFactory.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 class BaseClassHelper
 {
 public:
 };
 
+//-----------------------------------------------------------------------------
 int ctkAbstractObjectFactoryTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);

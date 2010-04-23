@@ -23,17 +23,17 @@
 #include "ctkCollapsibleButtonPlugin.h"
 #include "ctkCollapsibleGroupBoxPlugin.h"
 #include "ctkColorPickerButtonPlugin.h"
-// #include "ctkCoordinatesWidgetPlugin.h"
-// #include "ctkDoubleRangeSliderPlugin.h"
-// #include "ctkDoubleSliderPlugin.h"
-// #include "ctkDynamicSpacerPlugin.h"
-// #include "ctkFittedTextBrowserPlugin.h"
-// #include "ctkMenuButtonPlugin.h"
-// #include "ctkRangeSliderPlugin.h"
-// #include "ctkRangeWidgetPlugin.h"
-// #include "ctkTitleComboBoxPlugin.h"
-// #include "ctkTreeComboBoxPlugin.h"
-// #include "ctkSliderSpinBoxWidgetPlugin.h"
+#include "ctkCoordinatesWidgetPlugin.h"
+#include "ctkDoubleRangeSliderPlugin.h"
+#include "ctkDoubleSliderPlugin.h"
+#include "ctkDynamicSpacerPlugin.h"
+#include "ctkFittedTextBrowserPlugin.h"
+#include "ctkMenuButtonPlugin.h"
+#include "ctkRangeSliderPlugin.h"
+#include "ctkRangeWidgetPlugin.h"
+#include "ctkTitleComboBoxPlugin.h"
+#include "ctkTreeComboBoxPlugin.h"
+#include "ctkSliderSpinBoxWidgetPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins : public QObject,
@@ -48,18 +48,18 @@ public:
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkCollapsibleButtonPlugin
             << new ctkCollapsibleGroupBoxPlugin
-            << new ctkColorPickerButtonPlugin;
-//             << new ctkCoordinatesWidgetPlugin
-//             << new ctkDoubleRangeSliderPlugin
-//             << new ctkDoubleSliderPlugin
-//             << new ctkDynamicSpacerPlugin
-//             << new ctkFittedTextBrowserPlugin
-//             << new ctkMenuButtonPlugin
-//             << new ctkRangeSliderPlugin
-//             << new ctkRangeWidgetPlugin
-//             << new ctkTitleComboBoxPlugin
-//             << new ctkTreeComboBoxPlugin
-//             << new ctkSliderSpinBoxWidgetPlugin;
+            << new ctkColorPickerButtonPlugin
+            << new ctkCoordinatesWidgetPlugin
+            << new ctkDoubleRangeSliderPlugin
+            << new ctkDoubleSliderPlugin
+            << new ctkDynamicSpacerPlugin
+            << new ctkFittedTextBrowserPlugin
+            << new ctkMenuButtonPlugin
+            << new ctkRangeSliderPlugin
+            << new ctkRangeWidgetPlugin
+            << new ctkTitleComboBoxPlugin
+            << new ctkTreeComboBoxPlugin
+            << new ctkSliderSpinBoxWidgetPlugin;
     return plugins;
     }
 };

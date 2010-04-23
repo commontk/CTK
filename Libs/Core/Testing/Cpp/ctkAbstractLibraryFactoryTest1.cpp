@@ -12,21 +12,23 @@
 
 =========================================================================*/
 
-// CTK includes
-#include "ctkAbstractLibraryFactory.h"
-
 // Qt includes
 #include <QApplication>
+
+// CTK includes
+#include "ctkAbstractLibraryFactory.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 class BaseClassHelperType
 {
 public:
 };
 
+//-----------------------------------------------------------------------------
 class FactoryItemHelper
 {
 public:
@@ -38,6 +40,7 @@ public:
     }
 };
 
+//-----------------------------------------------------------------------------
 int ctkAbstractLibraryFactoryTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);

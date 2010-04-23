@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <iostream>
 
-
+//-----------------------------------------------------------------------------
 int ctkDependencyGraphTest1(int argc, char * argv [] )
 {
   Q_UNUSED(argc);

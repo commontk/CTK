@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 int ctkCollapsibleButtonTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);

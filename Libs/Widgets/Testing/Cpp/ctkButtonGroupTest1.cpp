@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 int ctkButtonGroupTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);

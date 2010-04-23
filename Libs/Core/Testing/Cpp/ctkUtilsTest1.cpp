@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library:   qCTK
+  Library:   CTK
 
   Copyright (c) Kitware Inc. 
   All rights reserved.
@@ -12,11 +12,11 @@
 
 =========================================================================*/
 
-// CTK includes
-#include "ctkUtils.h"
-
 // Qt includes
 #include <QStringList>
+
+// CTK includes
+#include "ctkUtils.h"
 
 // STD includes
 #include <stdlib.h>
@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 
+//-----------------------------------------------------------------------------
 int ctkUtilsTest1(int argc, char * argv [] )
 {
   Q_UNUSED(argc);

@@ -12,17 +12,18 @@
 
 =========================================================================*/
 
+// Qt includes
+#include <QApplication>
+
 // CTK includes
 #include "ctkAbstractQObjectFactory.h"
 #include "ctkModelTester.h"
-
-// Qt includes
-#include <QApplication>
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 int ctkAbstractQObjectFactoryTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
