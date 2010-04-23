@@ -27,36 +27,40 @@ MACRO(ctkMacroGenerateDGraphInput dir name target_directories)
       MESSAGE(FATAL_ERROR "Target directory ${target_dir}/CMakeLists.txt doesn't exists !")
     ENDIF()
 
-    # extract project name from CMakeLists.txt
-    FILE(STRINGS "${target_dir}/CMakeLists.txt" project_string
-      REGEX "^ *(P|p)(R|r)(O|o)(J|j)(E|e)(C|c)(T|t)\\("
-      LIMIT_COUNT 10)
-    STRING(REGEX MATCH "\\((.*)\\)" target_project_name ${project_string})
-    STRING(REGEX REPLACE "\\(|\\)" "" target_project_name ${target_project_name})
-    IF(${target_project_name} STREQUAL "")
-      MESSAGE(FATAL_ERROR "Failed to extract project name from ${target_dir}/CMakeLists.txt")
+    IF(${option_name})
+    
+      # extract project name from CMakeLists.txt
+      FILE(STRINGS "${target_dir}/CMakeLists.txt" project_string
+        REGEX "^ *(P|p)(R|r)(O|o)(J|j)(E|e)(C|c)(T|t)\\("
+        LIMIT_COUNT 10)
+      STRING(REGEX MATCH "\\((.*)\\)" target_project_name ${project_string})
+      STRING(REGEX REPLACE "\\(|\\)" "" target_project_name ${target_project_name})
+      IF(${target_project_name} STREQUAL "")
+        MESSAGE(FATAL_ERROR "Failed to extract project name from ${target_dir}/CMakeLists.txt")
+      ENDIF()
+      #MESSAGE(STATUS target_project_name:${target_project_name})
+      
+      LIST(APPEND vertices ${target_project_name})
+
+      # Make sure the variable is cleared
+      SET(dependencies )
+
+      # get dependencies
+      ctkMacroCollectTargetLibraryNames(${target_dir} dependencies)
+      
+      # Make sure the variable is cleared
+      SET(ctk_dependencies)
+
+      # filter dependencies starting with CTK
+      ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
+      
+      # Generate XML related to the dependencies
+      FOREACH(dependency_name ${ctk_dependencies})
+        LIST(APPEND edges ${dependency_name})
+        SET(dgraph_list ${dgraph_list} "${target_project_name} ${dependency_name}\n")
+      ENDFOREACH()
+
     ENDIF()
-    #MESSAGE(STATUS target_project_name:${target_project_name})
-    
-    LIST(APPEND vertices ${target_project_name})
-
-    # Make sure the variable is cleared
-    SET(dependencies )
-
-    # get dependencies
-    ctkMacroCollectTargetLibraryNames(${target_dir} ${option_name} dependencies)
-    
-    # Make sure the variable is cleared
-    SET(ctk_dependencies)
-
-    # filter dependencies starting with CTK
-    ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
-    
-    # Generate XML related to the dependencies
-    FOREACH(dependency_name ${ctk_dependencies})
-      LIST(APPEND edges ${dependency_name})
-      SET(dgraph_list ${dgraph_list} "${target_project_name} ${dependency_name}\n")
-    ENDFOREACH()
     
   ENDFOREACH()
 

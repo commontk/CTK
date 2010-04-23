@@ -38,37 +38,34 @@ ENDMACRO()
 #
 #
 #
-MACRO(ctkMacroCollectTargetLibraryNames target_dir option_name varname)
+MACRO(ctkMacroCollectTargetLibraryNames target_dir varname)
 
-  #MESSAGE(STATUS option_name:${option_name})
-  IF(${${option_name}})
-    #MESSAGE(STATUS target:${target})
-    SET(lib_targets)
+  #MESSAGE(STATUS target:${target})
+  SET(lib_targets)
 
-    SET(filepath ${target_dir}/target_libraries.cmake)
-    #MESSAGE(STATUS filepath:${filepath})
+  SET(filepath ${target_dir}/target_libraries.cmake)
+  #MESSAGE(STATUS filepath:${filepath})
 
-    # Check if "target_libraries.cmake" file exists
-    IF(NOT EXISTS ${filepath})
-      MESSAGE(FATAL_ERROR "${filepath} doesn't exists !")
-    ENDIF()
-
-    # Let's make sure target_libraries contains only strings
-    FILE(STRINGS "${filepath}" stringtocheck)
-    STRING(REGEX MATCHALL "[^#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
-    FOREACH(incorrect_element ${incorrect_elements})
-      STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
-      MESSAGE(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
-    ENDFOREACH()
-
-    # Make sure the variable is cleared
-    SET(target_libraries)
-
-    INCLUDE(${filepath})
-    
-    LIST(APPEND ${varname} ${target_libraries})
-    LIST(REMOVE_DUPLICATES ${varname})
+  # Check if "target_libraries.cmake" file exists
+  IF(NOT EXISTS ${filepath})
+    MESSAGE(FATAL_ERROR "${filepath} doesn't exists !")
   ENDIF()
+
+  # Let's make sure target_libraries contains only strings
+  FILE(STRINGS "${filepath}" stringtocheck)
+  STRING(REGEX MATCHALL "[^#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+  FOREACH(incorrect_element ${incorrect_elements})
+    STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+    MESSAGE(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
+  ENDFOREACH()
+
+  # Make sure the variable is cleared
+  SET(target_libraries)
+
+  INCLUDE(${filepath})
+
+  LIST(APPEND ${varname} ${target_libraries})
+  LIST(REMOVE_DUPLICATES ${varname})
 ENDMACRO()
 
 #
@@ -97,8 +94,13 @@ MACRO(ctkMacroCollectAllTargetLibraries targets subdir varname)
 
     SET(target_dir "${CTK_SOURCE_DIR}/${subdir}/${target}")
     #MESSAGE(STATUS target_dir:${target_dir})
+
+    SET(target_libraries)
     
-    ctkMacroCollectTargetLibraryNames(${target_dir} ${option_name} target_libraries)
+    # Collect target libraries only if option is ON
+    IF(${option_name})
+      ctkMacroCollectTargetLibraryNames(${target_dir} target_libraries)
+    ENDIF()
 
     LIST(APPEND ${varname} ${target_libraries})
     LIST(REMOVE_DUPLICATES ${varname})
