@@ -209,6 +209,7 @@ SET(CTK_LIBS
   Widgets
   DICOM/Core
   DICOM/Widgets
+  Scripting/Python/Core
   Visualization/VTK/Core
   Visualization/VTK/Widgets
   Visualization/XIP
