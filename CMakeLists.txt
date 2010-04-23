@@ -210,6 +210,7 @@ SET(CTK_LIBS
   DICOM/Core
   DICOM/Widgets
   Scripting/Python/Core
+  Scripting/Python/Widgets
   Visualization/VTK/Core
   Visualization/VTK/Widgets
   Visualization/XIP
