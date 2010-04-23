@@ -343,6 +343,7 @@ FIND_PROGRAM(DGraph_EXECUTABLE DGraph
   "${CTK_BINARY_DIR}/Utilities/DGraph/bin/"
   "${CTK_BINARY_DIR}/Utilities/DGraph/Debug/"
   "${CTK_BINARY_DIR}/Utilities/DGraph/Release/")
+MARK_AS_ADVANCED(DGraph_EXECUTABLE)
 
 # Obtain list of target ordered topologically
 EXECUTE_PROCESS(
