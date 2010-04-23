@@ -3,6 +3,12 @@
 # Sets PYTHONQT_FOUND, PYTHONQT_INCLUDE_DIR, PYTHONQT_LIBRARY, PYTHONQT_LIBRARIES
 #
 
+# Python is required
+FIND_PACKAGE(PythonLibs)
+IF(NOT PYTHONLIBS_FOUND)
+  MESSAGE(FATAL_ERROR "error: Python is required to build PythonQt")
+ENDIF()
+
 FIND_PATH(PYTHONQT_INSTALL_DIR include/PythonQt/PythonQt.h DOC "Directory where PythonQt was installed.")
 FIND_PATH(PYTHONQT_INCLUDE_DIR PythonQt.h "${PYTHONQT_INSTALL_DIR}/include/PythonQt" DOC "Path to the PythonQt include directory")
 FIND_LIBRARY(PYTHONQT_LIBRARY PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
