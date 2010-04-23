@@ -50,7 +50,6 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
   # Make sure variable are cleared
-  SET(MY_SRCS)
   SET(MY_UI_CXX)
   SET(MY_QRC_SRCS)
 
