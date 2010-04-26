@@ -16,7 +16,7 @@
 //----------------------------------------------------------------------------
 QString help(const QString& progName)
 {
-  QString msg = "Usage: %1 <graphfile>";
+  QString msg = "Usage: %1 <graphfile> [-path Label]";
   return msg.arg(progName);
 }
 
@@ -52,12 +52,36 @@ int getOrGenerateId(QHash<int, QString>& vertexIdToLabel,
 int main(int argc, char** argv)
 {
   bool verbose = false;
+  bool outputTopologicalOrder = true;
   
   // a graph file is expected
   if (argc < 2)
     {
     displayError(argv[0], QLatin1String("Missing one argument"));
     return EXIT_FAILURE;
+    }
+
+  bool outputPath = false;
+  QString label;
+  if (argc == 3)
+    {
+    displayError(argv[0], QLatin1String("Wrong argument"));
+    return EXIT_FAILURE;
+    }
+  if (argc == 4)
+    {
+    if (QString(argv[2]).compare("-path")!=0)
+      {
+      displayError(argv[0], QString("Wrong argument: %1").arg(argv[2]));
+      return EXIT_FAILURE;
+      }
+    label = QLatin1String(argv[3]);
+    outputTopologicalOrder = false;
+    outputPath = true;
+    if (verbose)
+      {
+      qDebug() << "label:" << label; 
+      }
     }
     
   QString filepath = QString::fromLatin1(argv[1]);
@@ -190,22 +214,48 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
     }
 
-  if (verbose)
+  if (outputTopologicalOrder)
     {
-    qDebug() << "> Topological order ...";
-    }
-  QList<int> out;
-  if (mygraph.topologicalSort(out))
-    {
-    for(int i=out.size() - 1; i >= 0; --i)
+    if (verbose)
       {
-      std::cout << vertexIdToLabel[out[i]].toStdString();
-      if (i != 0)
+      qDebug() << "> Topological order ...";
+      }
+    QList<int> out;
+    if (mygraph.topologicalSort(out))
+      {
+      for(int i=out.size() - 1; i >= 0; --i)
         {
-        std::cout << " ";
+        std::cout << vertexIdToLabel[out[i]].toStdString();
+        if (i != 0)
+          {
+          std::cout << " ";
+          }
+        }
+      std::cout << std::endl;
+      }
+    }
+    
+  if (outputPath)
+    {
+    // TODO Make sure label is valid
+    QList<int> out;
+    if (mygraph.topologicalSort(out))
+      {
+      // Assume all target depends on the first lib
+      int rootId = out.last();
+      int labelId = vertexLabelToId[label];
+      QList<int> path;
+      mygraph.findPath(labelId, rootId, path);
+      for(int i=0; i<path.size(); i++)
+        {
+        int id = path[i];
+        std::cout << vertexIdToLabel[id].toStdString();
+        if (i != path.size() - 1)
+          {
+          std::cout << " ";
+          }
         }
       }
-    std::cout << std::endl;
     }
     
   return EXIT_SUCCESS;
