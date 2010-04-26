@@ -27,8 +27,8 @@ MACRO(ctkMacroGenerateDGraphInput dir name target_directories)
       MESSAGE(FATAL_ERROR "Target directory ${target_dir}/CMakeLists.txt doesn't exists !")
     ENDIF()
 
-    IF(${option_name})
-    
+      SET(include_dep ${${option_name}})
+    IF(${include_dep})
       # extract project name from CMakeLists.txt
       FILE(STRINGS "${target_dir}/CMakeLists.txt" project_string
         REGEX "^ *(P|p)(R|r)(O|o)(J|j)(E|e)(C|c)(T|t)\\("

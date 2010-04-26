@@ -29,7 +29,7 @@ MACRO(ctkMacroGenerateProjectXml dir name target_directories is_superbuild)
       MESSAGE(FATAL_ERROR "Target directory ${target_dir}/CMakeLists.txt doesn't exists !")
     ENDIF()
 
-    IF(${option_name})
+    IF(${${option_name}})
 
       # extract project name from CMakeLists.txt
       FILE(STRINGS "${target_dir}/CMakeLists.txt" project_string

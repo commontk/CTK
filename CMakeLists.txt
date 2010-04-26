@@ -313,23 +313,17 @@ SET(target_directories)
 
 FOREACH(lib ${CTK_LIBS_SUBDIRS})
   SET(option_name CTK_LIB_${lib})
-  IF(${${option_name}})
-    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}^^${option_name}")
-  ENDIF()
+  LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}^^${option_name}")
 ENDFOREACH()
 
 FOREACH(plugin ${CTK_PLUGINS_SUBDIRS})
   SET(option_name CTK_PLUGIN_${plugin})
-  IF(${${option_name}})
-    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^${option_name}")
-  ENDIF()
+  LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^${option_name}")
 ENDFOREACH()
 
 FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
   SET(option_name CTK_APP_${app})
-  IF(${${option_name}})
-    LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}^^${option_name}")
-  ENDIF()
+  LIST(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}^^${option_name}")
 ENDFOREACH()
 
 #MESSAGE(STATUS target_directories:${target_directories})
@@ -338,12 +332,6 @@ ENDFOREACH()
 ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
 
 #-----------------------------------------------------------------------------
-# DGraph
-#
-
-# Generate DGraph input file expected by DGraph
-ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}")
-
 # Compile DGraph - An application allowing to check for cycle in DAG and also obtain the
 # topological order.
 TRY_COMPILE(RESULT_VAR ${CTK_BINARY_DIR}/Utilities/DGraph ${CTK_SOURCE_DIR}/Utilities/DGraph
@@ -361,6 +349,13 @@ FIND_PROGRAM(DGraph_EXECUTABLE DGraph
   "${CTK_BINARY_DIR}/Utilities/DGraph/Debug/"
   "${CTK_BINARY_DIR}/Utilities/DGraph/Release/")
 MARK_AS_ADVANCED(DGraph_EXECUTABLE)
+
+#-----------------------------------------------------------------------------
+# DGraph
+#
+
+# Generate DGraph input file expected by DGraph
+ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" TRUE)
 
 # Obtain list of target ordered topologically
 EXECUTE_PROCESS(
