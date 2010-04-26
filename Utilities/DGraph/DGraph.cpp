@@ -16,7 +16,7 @@
 //----------------------------------------------------------------------------
 QString help(const QString& progName)
 {
-  QString msg = "Usage: %1 <graphfile> [-path Label]";
+  QString msg = "Usage: %1 <graphfile> [-paths Label]";
   return msg.arg(progName);
 }
 
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
     }
   if (argc == 4)
     {
-    if (QString(argv[2]).compare("-path")!=0)
+    if (QString(argv[2]).compare("-paths")!=0)
       {
       displayError(argv[0], QString("Wrong argument: %1").arg(argv[2]));
       return EXIT_FAILURE;
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
     }
 
   // Init
-  ctkDependencyGraph mygraph(numberOfVertices, numberOfEdges);
+  ctkDependencyGraph mygraph(numberOfVertices);
   mygraph.setVerbose(verbose);
 
   // Map between vertex label and vertex id
@@ -173,6 +173,8 @@ int main(int argc, char** argv)
     line = in.readLine();
     }
   while (!line.isNull());
+
+  Q_ASSERT(numberOfEdges == mygraph.numberOfEdges());
 
   if (verbose)
     {
@@ -241,18 +243,27 @@ int main(int argc, char** argv)
     QList<int> out;
     if (mygraph.topologicalSort(out))
       {
-      // Assume all target depends on the first lib
+      // Assume all targets depend on the first lib
       int rootId = out.last();
       int labelId = vertexLabelToId[label];
-      QList<int> path;
-      mygraph.findPath(labelId, rootId, path);
-      for(int i=0; i<path.size(); i++)
+      QList<QList<int>*> paths;
+      mygraph.findPaths(labelId, rootId, paths);
+      for(int i=0; i < paths.size(); i++)
         {
-        int id = path[i];
-        std::cout << vertexIdToLabel[id].toStdString();
-        if (i != path.size() - 1)
+        QList<int>* p = paths[i];
+        Q_ASSERT(p);
+        for(int j=0; j < p->size(); j++)
           {
-          std::cout << " ";
+          int id = p->at(j);
+          std::cout << vertexIdToLabel[id].toStdString();
+          if (j != p->size() - 1)
+            {
+            std::cout << " ";
+            }
+          }
+        if (i != paths.size() - 1)
+          {
+          std::cout << ";";
           }
         }
       }

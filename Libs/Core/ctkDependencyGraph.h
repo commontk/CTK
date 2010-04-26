@@ -25,7 +25,7 @@
 class CTK_CORE_EXPORT ctkDependencyGraph
 {
 public:
-  ctkDependencyGraph(int nvertices, int nedges);
+  ctkDependencyGraph(int nvertices);
   ~ctkDependencyGraph();
   
   void printAdditionalInfo();
@@ -56,6 +56,10 @@ public:
   /// (from, to) indicate a relation between two vertices
   /// Note also that vertex id should be >= 1
   void insertEdge(int from, int to);
+
+  /// Retrieve the paths between two vertices
+  /// Caller is responsible to clear paths list
+  void findPaths(int from, int to, QList<QList<int>* >& paths);
   
   /// Retrieve the path between two vertices
   void findPath(int from, int to, QList<int>& path);

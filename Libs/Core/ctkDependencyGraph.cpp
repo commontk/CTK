@@ -43,6 +43,12 @@ public:
   
   /// Called each time a vertex is processed
   void processVertex(int v);
+
+  /// Retrieve the path between two vertices
+  void findPathDFS(int from, int to, QList<int>& path);
+
+  /// Recursive function used by findPaths to retrieve the path between two vertices
+  void findPathsRec(int from, int to, QList<int>* path, QList<QList<int>* >& paths);
   
   void setEdge(int vertice, int degree, int value);
   int edge(int vertice, int degree);
@@ -156,11 +162,11 @@ void ctkDependencyGraph::ctkInternal::processEdge(int from, int to)
     if (this->Verbose)
       {
       QList<int> path;
-      this->P->findPath(from, to, path);
+      this->findPathDFS(from, to, path);
       qWarning() << "Cycle detected from " << to << " to " << from;
       qWarning() << " " << path;
       path.clear();
-      this->P->findPath(to, from, path);
+      this->findPathDFS(to, from, path);
       qWarning() << " " << path;
       }
     this->Abort = true;
@@ -191,17 +197,61 @@ int ctkDependencyGraph::ctkInternal::edge(int vertice, int degree)
   Q_ASSERT(degree < MAXDEGREE);
   return (*this->Edges[vertice])[degree];
 }
+
+//----------------------------------------------------------------------------
+void ctkDependencyGraph::ctkInternal::findPathDFS(int from, int to, QList<int>& path)
+{
+  if ((from == to) || (to == -1))
+    {
+    path << from;
+    }
+  else 
+    {
+    this->findPathDFS(from, this->Parent[to], path);
+    path << to;
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDependencyGraph::ctkInternal::findPathsRec(
+  int from, int to, QList<int>* path, QList<QList<int>* >& paths)
+{
+  if (from == to)
+    {
+    return;
+    }
+  
+  QList<int> branch(*path);
+  int child = from;
+  for (int j=0; j < this->Degree[child]; j++)
+    {
+    if (j == 0)
+      {
+      int parent = this->edge(child, j);
+      *path << parent;
+      this->findPathsRec(parent, to, path, paths);
+      }
+    else
+      {
+      int parent = this->edge(child, j);
+      // Copy path and add it to the list
+      QList<int>* pathCopy = new QList<int>(branch);
+      paths << pathCopy;
+      *pathCopy << parent;
+      this->findPathsRec(parent, to, pathCopy, paths);
+      }
+    }
+}
     
 //----------------------------------------------------------------------------
 // ctkDependencyGraph methods
 
 //----------------------------------------------------------------------------
-ctkDependencyGraph::ctkDependencyGraph(int nvertices, int nedges)
+ctkDependencyGraph::ctkDependencyGraph(int nvertices)
 {
   this->Internal = new ctkInternal(this);
   
   this->Internal->NVertices = nvertices; 
-  this->Internal->NEdges = nedges;
   
   // Resize internal array
   this->Internal->Processed.resize(nvertices + 1);
@@ -254,17 +304,17 @@ void ctkDependencyGraph::printAdditionalInfo()
   qDebug() << " [Processed]";
   for(int i=1; i < this->Internal->Processed.size(); i++)
     {
-    qDebug() << i << "->" << this->Internal->Processed[i]; 
+    qDebug() << i << "->" << this->Internal->Processed[i];
     }
   qDebug() << " [Discovered]";
   for(int i=1; i < this->Internal->Discovered.size(); i++)
     {
-    qDebug() << i << "->" << this->Internal->Discovered[i]; 
+    qDebug() << i << "->" << this->Internal->Discovered[i];
     }
   qDebug() << " [Parent]";
   for(int i=1; i < this->Internal->Parent.size(); i++)
     {
-    qDebug() << i << "->" << this->Internal->Parent[i]; 
+    qDebug() << i << "->" << this->Internal->Parent[i];
     }
   qDebug() << " [Graph]"; 
   this->printGraph();
@@ -364,17 +414,48 @@ void ctkDependencyGraph::insertEdge(int from, int to)
 }
 
 //----------------------------------------------------------------------------
+void ctkDependencyGraph::findPaths(int from, int to, QList<QList<int>* >& paths)
+{
+  QList<int>* path = new QList<int>;
+  *path << from; 
+  paths << path;
+  this->Internal->findPathsRec(from, to, path, paths);
+
+  QList<int> pathToRemove;
+  // Remove list no ending with the requested element
+  int i = 0; 
+  while (!paths.isEmpty() && i < paths.size())
+    {
+    QList<int>* p = paths[i];
+    Q_ASSERT(p);
+    if (p->last() != to)
+      {
+      paths.removeAt(i);
+      delete p; 
+      }
+    else
+      {
+      i++;
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 void ctkDependencyGraph::findPath(int from, int to, QList<int>& path)
 {
-	if ((from == to) || (to == -1))
-	  {
-	  path << from;
-		}
-	else 
-	  {
-		this->findPath(from, this->Internal->Parent[to], path);
-		path << to;
-	  }
+  int child = from;
+  int parent = this->Internal->edge(child, 0);
+  path << child; 
+  while (parent > 0)
+    {
+    path << parent;
+    if (parent == to)
+      {
+      break;
+      }
+    child = parent;
+    parent = this->Internal->edge(child, 0);
+    }
 }
 
 //----------------------------------------------------------------------------
