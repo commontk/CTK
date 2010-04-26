@@ -719,7 +719,7 @@ execute_process(
   RESULT_VARIABLE error_code
   )
 if(error_code)
-  message(FATAL_ERROR 'Failed to clone repository: ${git_repository}')
+  message(FATAL_ERROR \"Failed to clone repository: ${git_repository}\")
 endif()
 ")    
     set(comment "Performing download step (GIT clone) for '${name}'")
