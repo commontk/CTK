@@ -100,6 +100,7 @@ INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkMacroExtractOptionNameAndValue.cmake)
+INCLUDE(CMake/ctkMacroValidateBuildOptions.cmake)
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkMacroGenerateDGraphInput.cmake)
 INCLUDE(CMake/ctkMacroGenerateProjectXml.cmake)
@@ -231,7 +232,6 @@ SET(CTK_APPLICATIONS
   ctkDICOM:OFF
   ctkDICOMIndexer:OFF
   )
-
   
 #-----------------------------------------------------------------------------
 # To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
@@ -305,7 +305,8 @@ OPTION(CTK_SUPERBUILD "Build CTK and the projects it depends on via SuperBuild.c
 MARK_AS_ADVANCED(CTK_SUPERBUILD)
 
 #-----------------------------------------------------------------------------
-# Project.xml
+# Generate target_directories list - List of directory corresponding to the different
+# libraries, plugins and applications associated with the corresponding option name.
 #
 
 # Create list of directories corresponding to the enabled targets
@@ -328,9 +329,6 @@ ENDFOREACH()
 
 #MESSAGE(STATUS target_directories:${target_directories})
 
-# Generate Project.xml file expected by the CTest driver script
-ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
-
 #-----------------------------------------------------------------------------
 # Compile DGraph - An application allowing to check for cycle in DAG and also obtain the
 # topological order.
@@ -351,6 +349,12 @@ FIND_PROGRAM(DGraph_EXECUTABLE DGraph
 MARK_AS_ADVANCED(DGraph_EXECUTABLE)
 
 #-----------------------------------------------------------------------------
+# Let's make sure the enabled/disabled libraries, plugins or applications are coherent
+#
+ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" FALSE)
+ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${target_directories}")
+
+#-----------------------------------------------------------------------------
 # DGraph
 #
 
@@ -359,7 +363,7 @@ ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" TRUE)
 
 # Obtain list of target ordered topologically
 EXECUTE_PROCESS(
-  COMMAND ${DGraph_EXECUTABLE} ${CTK_BINARY_DIR}/DGraphInput.txt  
+  COMMAND "${DGraph_EXECUTABLE}" "${CTK_BINARY_DIR}/DGraphInput.txt"  
   WORKING_DIRECTORY ${CTK_BINARY_DIR}
   RESULT_VARIABLE RESULT_VAR
   OUTPUT_VARIABLE CTEST_PROJECT_SUBPROJECTS
@@ -373,6 +377,13 @@ ENDIF()
 # Configure CTestConfigSubProject.cmake used that could be used by CTest scripts
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
                ${CTK_BINARY_DIR}/CTestConfigSubProject.cmake)
+
+#-----------------------------------------------------------------------------
+# Project.xml
+#
+
+# Generate Project.xml file expected by the CTest driver script
+ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
 
 #-----------------------------------------------------------------------------
 # Superbuild script
