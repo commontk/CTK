@@ -208,14 +208,14 @@ ENDIF()
 #
 SET(CTK_LIBS
   Core:ON
-  Widgets:ON
-  DICOM/Core:ON
-  DICOM/Widgets:ON
-  Scripting/Python/Core:ON
-  Scripting/Python/Widgets:ON
-  Visualization/VTK/Core:ON
-  Visualization/VTK/Widgets:ON
-  Visualization/XIP:ON
+  Widgets:OFF
+  DICOM/Core:OFF
+  DICOM/Widgets:OFF
+  Scripting/Python/Core:OFF
+  Scripting/Python/Widgets:OFF
+  Visualization/VTK/Core:OFF
+  Visualization/VTK/Widgets:OFF
+  Visualization/XIP:OFF
   )
 
 #-----------------------------------------------------------------------------
