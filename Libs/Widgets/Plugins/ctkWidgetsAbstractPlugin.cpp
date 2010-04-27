@@ -24,7 +24,7 @@ ctkWidgetsAbstractPlugin::ctkWidgetsAbstractPlugin()
 //-----------------------------------------------------------------------------
 QString ctkWidgetsAbstractPlugin::group() const
 { 
-  return "[CTK Widgets]";
+  return "CTK [Widgets]";
 }
 
 //-----------------------------------------------------------------------------
