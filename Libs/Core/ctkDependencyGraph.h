@@ -26,7 +26,11 @@
 #include <QList>
 
 // CTK includes
+#if !defined(NO_SYMBOL_EXPORT)
 #include "CTKCoreExport.h"
+#else
+#define CTK_CORE_EXPORT
+#endif
 
 class CTK_CORE_EXPORT ctkDependencyGraph
 {
