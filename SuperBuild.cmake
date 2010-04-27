@@ -327,17 +327,17 @@ ExternalProject_Add(${proj}
 # Generate cmake variable name corresponding to Libs, Plugins and Applications
 #
 SET(ctk_libs_bool_vars)
-FOREACH(lib ${ctk_libs})
+FOREACH(lib ${CTK_LIBS_SUBDIRS})
   LIST(APPEND ctk_libs_bool_vars CTK_LIB_${lib})
 ENDFOREACH()
 
 SET(ctk_plugins_bool_vars)
-FOREACH(plugin ${ctk_plugins})
+FOREACH(plugin ${CTK_PLUGINS_SUBDIRS})
   LIST(APPEND ctk_plugins_bool_vars CTK_PLUGIN_${plugin})
 ENDFOREACH()
 
 SET(ctk_applications_bool_vars)
-FOREACH(app ${ctk_applications})
+FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
   LIST(APPEND ctk_applications_bool_vars CTK_APP_${app})
 ENDFOREACH()
 
@@ -368,6 +368,11 @@ FOREACH(ctk_cmake_arg ${ctk_cmake_boolean_args})
   ctk_set_superbuild_boolean_arg(${ctk_cmake_arg})
   LIST(APPEND ctk_superbuild_boolean_args -D${ctk_cmake_arg}:BOOL=${superbuild_${ctk_cmake_arg}})
 ENDFOREACH()
+
+# MESSAGE("CMake args:")
+# FOREACH(arg ${ctk_superbuild_boolean_args})
+#   MESSAGE("  ${arg}")
+# ENDFOREACH()
 
 #-----------------------------------------------------------------------------
 # CTK Configure
