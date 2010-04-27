@@ -28,12 +28,17 @@ SET(KIT_SRCS
   ctkVTKAbstractMatrixWidget_p.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
+  ctkVTKRenderView.cpp
+  ctkVTKRenderView.h
+  ctkVTKRenderView_p.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkVTKAbstractMatrixWidget_p.h
   ctkVTKMatrixWidget.h
+  ctkVTKRenderView.h
+  ctkVTKRenderView_p.h
   )
 
 # UI files
@@ -66,7 +71,7 @@ ctkMacroBuildLib(
   )
 
 # Plugins
-#ADD_SUBDIRECTORY(Plugins)
+ADD_SUBDIRECTORY(Plugins)
 
 # Testing
 IF(BUILD_TESTING)
