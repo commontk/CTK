@@ -49,12 +49,12 @@ MACRO(ctkMacroBuildApp)
 
   # Make sure variable are cleared
   SET(MY_UI_CXX)
+  SET(MY_MOC_CXX)
   SET(MY_QRC_SRCS)
 
   # Wrap
-  QT4_WRAP_CPP(MY_SRCS ${MY_MOC_SRCS})
+  QT4_WRAP_CPP(MY_MOC_CXX ${MY_MOC_SRCS})
   QT4_WRAP_UI(MY_UI_CXX ${MY_UI_FORMS})
-  SET(MY_QRC_SRCS "")
   IF(DEFINED MY_RESOURCES)
     QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
   ENDIF()
@@ -65,19 +65,21 @@ MACRO(ctkMacroBuildApp)
     )
 
   SOURCE_GROUP("Generated" FILES
-    ${MY_MOC_SRCS}
     ${MY_QRC_SRCS}
+    ${MY_MOC_CXX}
     ${MY_UI_CXX}
     )
 
   # Create executable
   ADD_EXECUTABLE(${proj_name}
     ${MY_SRCS}
+    ${MY_MOC_CXX}
     ${MY_UI_CXX}
     ${MY_QRC_SRCS}
     )
 #   ADD_LIBRARY(${lib_name} ${MY_LIBRARY_TYPE}
 #     ${MY_SRCS}
+#     ${MY_MOC_CXX}
 #     ${MY_UI_CXX}
 #     ${MY_QRC_SRCS}
 #     )
