@@ -30,6 +30,8 @@ SET(KIT_SRCS
   ctkConsoleWidget.h
   ctkCoordinatesWidget.cpp
   ctkCoordinatesWidget.h
+  ctkDirectoryButton.cpp
+  ctkDirectoryButton.h
   ctkDoubleRangeSlider.cpp
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.cpp
@@ -73,6 +75,7 @@ SET(KIT_MOC_SRCS
   ctkColorPickerButton.h
   ctkConsoleWidget.h
   ctkCoordinatesWidget.h
+  ctkDirectoryButton.h
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
   ctkDynamicSpacer.h

@@ -21,6 +21,8 @@ SET(PLUGIN_SRCS
   ctkColorPickerButtonPlugin.h
   ctkCoordinatesWidgetPlugin.cpp
   ctkCoordinatesWidgetPlugin.h
+  ctkDirectoryButtonPlugin.cpp
+  ctkDirectoryButtonPlugin.h
   ctkDoubleRangeSliderPlugin.cpp
   ctkDoubleRangeSliderPlugin.h
   ctkDoubleSliderPlugin.cpp
@@ -53,6 +55,7 @@ SET(PLUGIN_MOC_SRCS
   ctkCollapsibleGroupBoxPlugin.h
   ctkColorPickerButtonPlugin.h
   ctkCoordinatesWidgetPlugin.h
+  ctkDirectoryButtonPlugin.h
   ctkDoubleRangeSliderPlugin.h
   ctkDoubleSliderPlugin.h
   ctkDynamicSpacerPlugin.h

@@ -30,6 +30,7 @@
 #include "ctkCollapsibleGroupBoxPlugin.h"
 #include "ctkColorPickerButtonPlugin.h"
 #include "ctkCoordinatesWidgetPlugin.h"
+#include "ctkDirectoryButtonPlugin.h"
 #include "ctkDoubleRangeSliderPlugin.h"
 #include "ctkDoubleSliderPlugin.h"
 #include "ctkDynamicSpacerPlugin.h"
@@ -56,6 +57,7 @@ public:
             << new ctkCollapsibleGroupBoxPlugin
             << new ctkColorPickerButtonPlugin
             << new ctkCoordinatesWidgetPlugin
+            << new ctkDirectoryButtonPlugin
             << new ctkDoubleRangeSliderPlugin
             << new ctkDoubleSliderPlugin
             << new ctkDynamicSpacerPlugin
