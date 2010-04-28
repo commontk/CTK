@@ -92,11 +92,19 @@ ctkAbstractPluginFactory<BaseClassType, FactoryItemType>::~ctkAbstractPluginFact
 {
 }
 
+//-----------------------------------------------------------------------------
+template<typename BaseClassType, typename FactoryItemType>
+QString ctkAbstractPluginFactory<BaseClassType, FactoryItemType>::fileNameToKey(
+  const QString& fileName)
+{
+  return fileName; 
+}
+
 //----------------------------------------------------------------------------
 template<typename BaseClassType, typename FactoryItemType>
 bool ctkAbstractPluginFactory<BaseClassType, FactoryItemType>::registerLibrary(const QFileInfo& file, QString& key)
 {
-  key = file.fileName();
+  key = this->fileNameToKey(file.fileName());
   // Check if already registered
   if (this->item(key))
     {

@@ -56,8 +56,15 @@ public:
   explicit ctkAbstractPluginFactory();
   virtual ~ctkAbstractPluginFactory();
 
-  /// 
+  ///
+  /// Return a name allowing to uniquely identify the plugin
+  /// By default, it return \a fileName 
+  virtual QString fileNameToKey(const QString& fileName);
+
+  ///
   /// Register a plugin in the factory
+  /// The parameter \a key passed by reference will be updated with the
+  /// associated object name obtained using ::fileNameToKey()
   virtual bool registerLibrary(const QFileInfo& file, QString& key);
 
 private:
