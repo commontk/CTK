@@ -125,16 +125,26 @@ ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::~ctkAbstractLibraryFa
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType, typename FactoryItemType>
-void ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::setSymbols(const QStringList& symbols) 
+void ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::setSymbols(
+  const QStringList& symbols) 
 {
   this->Symbols = symbols; 
 }
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType, typename FactoryItemType>
-bool ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::registerLibrary(const QFileInfo& file, QString& key)
+QString ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::fileNameToKey(
+  const QString& fileName)
 {
-  key = file.fileName();
+  return fileName; 
+}
+
+//-----------------------------------------------------------------------------
+template<typename BaseClassType, typename FactoryItemType>
+bool ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::registerLibrary(
+  const QFileInfo& file, QString& key)
+{
+  key = this->fileNameToKey(file.fileName());
   // Check if already registered
   if (this->item(key))
     {
