@@ -31,7 +31,7 @@ SET(PLUGIN_resources
 
 # Target libraries
 SET(PLUGIN_target_libraries
-  CTKWidgets
+  CTKVisualizationVTKWidgets
   )
 
 ctkMacroBuildQtDesignerPlugin(
