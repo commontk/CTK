@@ -55,10 +55,17 @@ void ctkAbstractQObjectFactory<BaseClassType>::uninstantiate(const QString& item
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
+QString ctkAbstractQObjectFactory<BaseClassType>::objectNameToKey(const QString& objectName)
+{
+  return objectName; 
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
 template<typename ClassType>
 bool ctkAbstractQObjectFactory<BaseClassType>::registerQObject(QString& key)
 {
-  key = QString::fromLatin1(ClassType::staticMetaObject.className());
+  key = this->objectNameToKey(QString::fromLatin1(ClassType::staticMetaObject.className()));
   return this->ctkAbstractObjectFactory<BaseClassType>::template registerObject<ClassType>(key);
 }
 
