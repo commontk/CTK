@@ -32,23 +32,19 @@ template<typename BaseClassType>
 class ctkAbstractQObjectFactory : public ctkAbstractObjectFactory<BaseClassType>
 {
 public:
-  //-----------------------------------------------------------------------------
   /// 
   /// Constructor/Desctructor
   explicit ctkAbstractQObjectFactory();
   virtual ~ctkAbstractQObjectFactory();
 
-  //----------------------------------------------------------------------------
   /// 
   /// Create an instance of the object
   virtual BaseClassType * instantiate(const QString& itemKey);
 
-  //----------------------------------------------------------------------------
   /// 
   /// Uninstanciate the object
   virtual void uninstantiate(const QString& itemKey);
 
-  //-----------------------------------------------------------------------------
   /// 
   /// Register an object in the factory
   /// Note: The parameter 'key' passed by reference will be updated with the associated object name

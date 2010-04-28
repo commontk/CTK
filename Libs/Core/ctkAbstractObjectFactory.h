@@ -58,13 +58,11 @@ template<typename BaseClassType>
 class ctkAbstractObjectFactory : public ctkAbstractFactory<BaseClassType>
 {
 public:
-  //-----------------------------------------------------------------------------
   /// 
   /// Constructor/Desctructor
   explicit ctkAbstractObjectFactory();
   virtual ~ctkAbstractObjectFactory();
 
-  //-----------------------------------------------------------------------------
   /// 
   /// Register an object in the factory
   template<typename ClassType>

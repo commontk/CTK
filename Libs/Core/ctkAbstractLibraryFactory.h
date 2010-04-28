@@ -45,12 +45,10 @@ public:
 
   void setSymbols(const QStringList& symbols);
 
-  //-----------------------------------------------------------------------------
   /// 
   /// Resolve symbols
   void resolve();
   
-  //-----------------------------------------------------------------------------
   /// 
   /// Get symbol address
   void* symbolAddress(const QString& symbol)const;
@@ -67,18 +65,15 @@ template<typename BaseClassType, typename FactoryItemType>
 class ctkAbstractLibraryFactory : public ctkAbstractFactory<BaseClassType>
 {
 public:
-  //-----------------------------------------------------------------------------
   /// 
   /// Constructor
   explicit ctkAbstractLibraryFactory();
   virtual ~ctkAbstractLibraryFactory();
 
-  //-----------------------------------------------------------------------------
   /// 
   /// Set the list of symbols
   void setSymbols(const QStringList& symbols);
 
-  //-----------------------------------------------------------------------------
   /// 
   /// Register a plugin in the factory
   virtual bool registerLibrary(const QFileInfo& file, QString& key);
