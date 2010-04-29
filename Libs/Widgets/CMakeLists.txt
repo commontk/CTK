@@ -102,6 +102,7 @@ SET(KIT_UI_FORMS
 
 # Resources
 SET(KIT_resources
+  Resources/CTKWidgets.qrc
   )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
