@@ -67,6 +67,7 @@ INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkMacroGenerateDGraphInput.cmake)
 INCLUDE(CMake/ctkMacroGenerateProjectXml.cmake)
+INCLUDE(CMake/ctkMacroGeneratePluginManifest.cmake)
 
 #-----------------------------------------------------------------------------
 # Patch program

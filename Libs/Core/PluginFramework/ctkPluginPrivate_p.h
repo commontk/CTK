@@ -1,3 +1,24 @@
+/*=============================================================================
+
+  Library: CTK
+
+  Copyright (c) 2010 German Cancer Research Center,
+    Division of Medical and Biological Informatics
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=============================================================================*/
+
 #ifndef CTKPLUGINPRIVATE_P_H
 #define CTKPLUGINPRIVATE_P_H
 
@@ -9,10 +30,16 @@
 namespace ctk {
 
   class PluginActivator;
-  class PluginArchiveInterface;
-  class PluginFrameworkContext;
+  class PluginArchive;
+  class PluginFrameworkContextPrivate;
 
   class PluginPrivate {
+
+  protected:
+
+    Q_DECLARE_PUBLIC(Plugin)
+
+    Plugin * const q_ptr;
 
   public:
 
@@ -24,8 +51,8 @@ namespace ctk {
      * @param checkContext AccessConrolContext to do permission checks against.
      * @exception std::invalid_argument Faulty manifest for bundle
      */
-    PluginPrivate(PluginFrameworkContext* fw,
-               PluginArchiveInterface* ba /*, Object checkContext*/);
+    PluginPrivate(Plugin& qq, PluginFrameworkContextPrivate* fw,
+               PluginArchive* pa /*, Object checkContext*/);
 
     /**
      * Construct a new empty Plugin.
@@ -34,30 +61,42 @@ namespace ctk {
      *
      * @param fw Framework for this plugin.
      */
-    PluginPrivate(PluginFrameworkContext* fw,
+    PluginPrivate(Plugin& qq,
+                  PluginFrameworkContextPrivate* fw,
                   int id,
-                  QString loc,
-                  QString sym,
+                  const QString& loc,
+                  const QString& sym,
                   const Version& ver);
 
     virtual ~PluginPrivate();
 
+    /**
+     * Get updated plugin state. That means check if an installed
+     * plugin has been resolved.
+     *
+     * @return Plugin state
+     */
+    Plugin::States getUpdatedState();
+
     QHash<QString, QString> getHeaders(const QString& locale);
 
-
-  protected:
 
     /**
      * Union of flags allowing plugin class access
      */
     static const Plugin::States RESOLVED_FLAGS;
 
-    PluginFrameworkContext * const fwCtx;
+    PluginFrameworkContextPrivate * const fwCtx;
 
     /**
      * Plugin identifier
      */
     const int id;
+
+    /**
+     * Plugin location identifier
+     */
+    const QString location;
 
     /**
      * Plugin symbolic name
@@ -72,7 +111,12 @@ namespace ctk {
     /**
      * State of the plugin
      */
-    Plugin::States state;
+    Plugin::State state;
+
+    /**
+     * Plugin archive
+     */
+    PluginArchive* archive;
 
     /**
      * PluginContext for the plugin
@@ -83,6 +127,11 @@ namespace ctk {
      * PluginActivator for the plugin
      */
     PluginActivator* pluginActivator;
+
+    /**
+     * Time when the plugin was last modified
+     */
+    long lastModified;
 
     /**
      * Stores the default locale entries when uninstalled
@@ -104,6 +153,13 @@ namespace ctk {
 
     /** Saved exception of resolve failure */
     PluginException resolveFailException;
+
+  private:
+
+    /**
+     * Check manifest and cache certain manifest headers as variables.
+     */
+    void checkManifestHeaders();
 
 
   };

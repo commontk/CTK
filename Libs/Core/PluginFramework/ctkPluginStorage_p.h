@@ -1,24 +1,60 @@
+/*=============================================================================
+
+  Library: CTK
+
+  Copyright (c) 2010 German Cancer Research Center,
+    Division of Medical and Biological Informatics
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=============================================================================*/
+
 #ifndef CTKPLUGINSTORAGE_P_H
 #define CTKPLUGINSTORAGE_P_H
 
-#include "ctkPluginFrameworkContext.h"
-#include "ctkPluginArchiveInterface_p.h"
+#include <QList>
+#include <QStringList>
+
+// Qt class forward declarations
+class QIODevice;
 
 namespace ctk {
 
+  // CTK class forward declarations
+  class PluginArchive;
+  class PluginFrameworkContextPrivate;
+
+  /**
+   * Storage of all plugin meta-data and resources
+   */
   class PluginStorage {
 
   private:
 
     /**
+     * Next available bundle id.
+     */
+    int nextFreeId;
+
+    /**
      * Plugin id sorted list of all active plugin archives.
      */
-    QList<PluginArchiveInterface*> archives;
+    QList<PluginArchive*> archives;
 
      /**
       * Framework handle.
       */
-     PluginFrameworkContext* framework;
+     PluginFrameworkContextPrivate* framework;
 
   public:
 
@@ -27,213 +63,87 @@ namespace ctk {
       * Try to restore all saved plugin archive state.
       *
       */
-     PluginStorage(PluginFrameworkContext* framework)
-       : framework(framework)
-     {
-       // See if we have a storage database
-       bundlesDir = Util.getFileStorage(framework, "bs");
-       if (bundlesDir == null) {
-         throw new RuntimeException("No bundle storage area available!");
-       }
-       // Restore all saved bundles
-       String [] list = bundlesDir.list();
-       for (int i = 0; list != null & i < list.length; i++) {
-         long id;
-         try {
-           id = Long.parseLong(list[i]);
-         } catch (NumberFormatException e) {
-           continue;
-         }
-         if (id == 0) {
-           System.err.println("Saved bundle with illegal id 0 is ignored.");
-         }
-         int pos = find(id);
-         if (pos < archives.size() && ((BundleArchive)archives.get(pos)).getBundleId() == id) {
-           System.err.println("There are two bundle directories with id: " + id);
-           break;
-         }
-         FileTree dir = new FileTree(bundlesDir, list[i]);
-         if (dir.isDirectory()) {
-           try {
-             boolean bUninstalled = BundleArchiveImpl.isUninstalled(dir);
-             if(bUninstalled) {
-               // silently remove any bundle marked as uninstalled
-               dir.delete();
-             } else {
-               BundleArchive ba = new BundleArchiveImpl(this, dir, id);
-               archives.add(pos, ba);
-             }
-             if (id >= nextFreeId) {
-               nextFreeId = id + 1;
-             }
-           } catch (Exception e) {
-             dir.delete();
-             System.err.println("Removed corrupt bundle dir (" + e.getMessage() + "): " + dir);
-           }
-         }
-       }
-     }
+     PluginStorage(PluginFrameworkContextPrivate* framework);
 
 
      /**
-      * Insert bundle into persistent storage
+      * Insert a plugin (shared library) into the persistent storage
       *
-      * @param location Location of bundle.
-      * @param is Inputstrem with bundle content.
-      * @return Bundle archive object.
+      * @param location Location of the plugin.
+      * @param is QIODevice with plugin content.
+      * @return Plugin archive object.
       */
-     public BundleArchive insertBundleJar(String location, InputStream is)
-       throws Exception
-     {
-       long id = nextFreeId++;
-       FileTree dir = new FileTree(bundlesDir, String.valueOf(id));
-       if (dir.exists()) {
-         // remove any old garbage
-         dir.delete();
-       }
-       dir.mkdir();
-       try {
-         BundleArchive ba = new BundleArchiveImpl(this, dir, is, location, id);
-         archives.add(ba);
-         return ba;
-       } catch (Exception e) {
-         dir.delete();
-         throw e;
-       }
-     }
+     PluginArchive* insertPlugin(const QString& location, QIODevice* is);
 
 
      /**
-      * Insert a new jar file into persistent storagedata as an update
-      * to an existing bundle archive. To commit this data a call to
-      * <code>replaceBundleArchive</code> is needed.
+      * Insert a new plugin (shared library) into the persistent
+      * storagedata as an update
+      * to an existing plugin archive. To commit this data a call to
+      * <code>replacePluginArchive</code> is needed.
       *
-      * @param old BundleArchive to be replaced.
-      * @param is Inputstrem with bundle content.
-      * @return Bundle archive object.
+      * @param old PluginArchive to be replaced.
+      * @param is QIODevice with plugin content.
+      * @return Plugin archive object.
       */
-     public BundleArchive updateBundleArchive(BundleArchive old, InputStream is)
-       throws Exception
-     {
-       return new BundleArchiveImpl((BundleArchiveImpl)old, is);
-     }
+     PluginArchive* updatePluginArchive(PluginArchive* old, QIODevice* is);
 
 
      /**
-      * Replace old bundle archive with a new updated bundle archive, that
-      * was created with updateBundleArchive.
+      * Replace old plugin archive with a new updated plugin archive, that
+      * was created with updatePluginArchive.
       *
-      * @param oldBA BundleArchive to be replaced.
-      * @param newBA Inputstrem with bundle content.
-      * @return New bundle archive object.
+      * @param oldPA PluginArchive to be replaced.
+      * @param newPA new PluginArchive.
       */
-     public void replaceBundleArchive(BundleArchive oldBA, BundleArchive newBA)
-       throws Exception
-     {
-       int pos;
-       long id = oldBA.getBundleId();
-       synchronized (archives) {
-         pos = find(id);
-         if (pos >= archives.size() || archives.get(pos) != oldBA) {
-           throw new Exception("replaceBundleJar: Old bundle archive not found, pos=" + pos);
-         }
-         archives.set(pos, newBA);
-       }
-     }
+     void replacePluginArchive(PluginArchive* oldPA, PluginArchive* newPA);
 
 
      /**
-      * Get all bundle archive objects.
+      * Get all plugin archive objects.
       *
-      * @return Private array of all BundleArchives.
+      * @return QList of all PluginArchives.
       */
-     public BundleArchive [] getAllBundleArchives() {
-       synchronized (archives) {
-         return (BundleArchive [])archives.toArray(new BundleArchive[archives.size()]);
-       }
-     }
+     QList<PluginArchive*> getAllPluginArchives() const;
 
 
      /**
-      * Get all bundles to start at next launch of framework.
-      * This list is sorted in increasing bundle id order.
+      * Get all plugins to start at next launch of framework.
+      * This list is sorted in increasing plugin id order.
       *
-      * @return Private copy of a List with bundle id's.
+      * @return A List with plugin locations.
       */
-     public List getStartOnLaunchBundles() {
-       ArrayList res = new ArrayList();
-       for (Iterator i = archives.iterator(); i.hasNext(); ) {
-         BundleArchive ba = (BundleArchive)i.next();
-         if (ba.getAutostartSetting()!=-1) {
-           res.add(ba.getBundleLocation());
-         }
-       }
-       return res;
-     }
+     QList<QString> getStartOnLaunchPlugins();
+
+     QString getPluginResource(const QString& res) const;
+
+     QStringList findResourcesPath(const QString& path) const;
 
 
      /**
-      * Close bundle storage.
+      * Close plugin storage.
       *
       */
-     public void close()
-     {
-       for (Iterator i = archives.iterator(); i.hasNext(); ) {
-         BundleArchive ba = (BundleArchive) i.next();
-         ba.close();
-         i.remove();
-       }
-       framework = null;
-       bundlesDir = null;
-     }
+     void close();
 
 
    private:
 
      /**
-      * Remove bundle archive from archives list.
+      * Remove plugin archive from archives list.
       *
-      * @param id Bundle archive id to find.
+      * @param id Plugin archive id to find.
       * @return true if element was removed.
       */
-     bool removeArchive(PluginArchiveInterface* ba) {
-       synchronized (archives) {
-         int pos = find(ba.getBundleId());
-         if (pos < archives.size() && archives.get(pos) == ba) {
-           archives.remove(pos);
-           return true;
-         } else {
-           return false;
-         }
-       }
-     }
+     bool removeArchive(const PluginArchive* ba);
 
      /**
-      * Find posisition for BundleArchive with specified id
+      * Find position for PluginArchive with specified id
       *
-      * @param id Bundle archive id to find.
-      * @return String to write
+      * @param id Plugin archive id to find.
+      * @return Found position for the plugin archive id
       */
-     int find(long id) {
-       int lb = 0;
-       int ub = archives.size() - 1;
-       int x = 0;
-       while (lb < ub) {
-         x = (lb + ub) / 2;
-         long xid = ((BundleArchive)archives.get(x)).getBundleId();
-         if (id == xid) {
-           return x;
-         } else if (id < xid) {
-           ub = x;
-         } else {
-           lb = x+1;
-         }
-       }
-       if (lb < archives.size() && ((BundleArchive)archives.get(lb)).getBundleId() < id) {
-         return lb + 1;
-       }
-       return lb;
-     }
+     int find(long id);
 
 
   };

@@ -19,39 +19,40 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORKCONTEXT_H
-#define CTKPLUGINFRAMEWORKCONTEXT_H
+#ifndef CTKPLUGINMANIFEST_P_H
+#define CTKPLUGINMANIFEST_P_H
 
 #include <QHash>
-#include <QString>
-#include <QVariant>
 
-#include "CTKCoreExport.h"
+class QIODevice;
 
 namespace ctk {
 
-  class PluginFramework;
-  class PluginFrameworkContextPrivate;
-
-  class CTK_CORE_EXPORT PluginFrameworkContext {
-
-    Q_DECLARE_PRIVATE(PluginFrameworkContext)
+  class PluginManifest
+  {
 
   public:
 
-    typedef QHash<QString, QVariant> Properties;
+    typedef QHash<QString,QString> Attributes;
 
-    PluginFrameworkContext(const Properties& initProps);
-    ~PluginFrameworkContext();
+    PluginManifest();
+    PluginManifest(QIODevice* in);
 
-    PluginFramework* getFramework();
+    void read(QIODevice* in);
+
+    Attributes getMainAttributes() const;
+    QString getAttribute(const QString& key) const;
+    Attributes getAttributes(const QString& section) const;
+
+    QStringList getSections() const;
 
   private:
 
-    PluginFrameworkContextPrivate * const d_ptr;
+    Attributes mainAttributes;
+    QHash<QString, Attributes> sections;
 
   };
 
 }
 
-#endif // CTKPLUGINFRAMEWORKCONTEXT_H
+#endif // CTKPLUGINMANIFEST_P_H

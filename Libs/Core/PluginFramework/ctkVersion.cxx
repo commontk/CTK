@@ -1,33 +1,78 @@
+/*=============================================================================
+
+  Library: CTK
+
+  Copyright (c) 2010 German Cancer Research Center,
+    Division of Medical and Biological Informatics
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=============================================================================*/
+
 #include "ctkVersion.h"
 
+#include <stdexcept>
+
 #include <QStringListIterator>
+#include <QDebug>
 
 namespace ctk {
 
   const QString Version::SEPARATOR = ".";
   const QRegExp Version::RegExp = QRegExp("[a-zA-Z0-9_\\-]*");
-  const Version Version::emptyVersion = Version(0, 0, 0);
+
+  const Version& Version::emptyVersion()
+  {
+    static Version emptyV;
+    return emptyV;
+  }
+
+  Version& Version::operator=(const Version& v)
+  {
+    majorVersion = v.majorVersion;
+    minorVersion = v.minorVersion;
+    microVersion = v.microVersion;
+    qualifier = v.qualifier;
+    return *this;
+  }
+
+  Version::Version()
+    : majorVersion(0), minorVersion(0), microVersion(0), qualifier("")
+  {
+
+  }
 
 
   void Version::validate()
   {
-    valid = RegExp.exactMatch(qualifier);
+    if (!RegExp.exactMatch(qualifier))
+      throw std::invalid_argument(std::string("invalid qualifier: ") + qualifier.toStdString());
   }
 
-  Version::Version(unsigned int major, unsigned int minor, unsigned int micro)
-    : valid(true), major(major), minor(minor), micro(micro), qualifier("")
+  Version::Version(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion)
+    : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier("")
   {
 
   }
 
-  Version::Version(unsigned int major, unsigned int minor, unsigned int micro, const QString& qualifier)
-     : valid(false), major(major), minor(minor), micro(micro), qualifier(qualifier)
+  Version::Version(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion, const QString& qualifier)
+     : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier(qualifier)
   {
     this->validate();
   }
 
   Version::Version(const QString& version)
-    : valid(false), major(0), minor(0), micro(0), qualifier("")
+    : majorVersion(0), minorVersion(0), microVersion(0)
   {
     unsigned int maj = 0;
     unsigned int min = 0;
@@ -60,18 +105,18 @@ namespace ctk {
       }
     }
 
-    if (!ok) return;
+    if (!ok) throw std::invalid_argument("invalid format");
 
-    major = maj;
-    minor = min;
-    micro = mic;
+    majorVersion = maj;
+    minorVersion = min;
+    microVersion = mic;
     qualifier = qual;
     this->validate();
   }
 
   Version::Version(const Version& version)
-  : valid(version.valid), major(version.major), minor(version.minor),
-    micro(version.micro), qualifier(version.qualifier)
+  : majorVersion(version.majorVersion), minorVersion(version.minorVersion),
+    microVersion(version.microVersion), qualifier(version.qualifier)
   {
 
   }
@@ -80,13 +125,13 @@ namespace ctk {
   {
     if (version.isEmpty())
     {
-      return emptyVersion;
+      return emptyVersion();
     }
 
     QString version2 = version.trimmed();
     if (version2.isEmpty())
     {
-      return emptyVersion;
+      return emptyVersion();
     }
 
     return Version(version2);
@@ -94,17 +139,17 @@ namespace ctk {
 
   unsigned int Version::getMajor() const
   {
-    return major;
+    return majorVersion;
   }
 
   unsigned int Version::getMinor() const
   {
-    return minor;
+    return minorVersion;
   }
 
   unsigned int Version::getMicro() const
   {
-    return micro;
+    return microVersion;
   }
 
   QString Version::getQualifier() const
@@ -115,7 +160,7 @@ namespace ctk {
   QString Version::toString() const
   {
     QString result;
-    result += QString::number(major) + SEPARATOR + QString::number(minor) + SEPARATOR + QString::number(micro);
+    result += QString::number(majorVersion) + SEPARATOR + QString::number(minorVersion) + SEPARATOR + QString::number(microVersion);
     if (!qualifier.isEmpty())
     {
       result += SEPARATOR + qualifier;
@@ -130,8 +175,8 @@ namespace ctk {
       return true;
     }
 
-    return (major == other.major) && (minor == other.minor) && (micro
-        == other.micro) && qualifier == other.qualifier;
+    return (majorVersion == other.majorVersion) && (minorVersion == other.minorVersion) && (microVersion
+        == other.microVersion) && qualifier == other.qualifier;
   }
 
   int Version::compare(const Version& other) const
@@ -141,28 +186,28 @@ namespace ctk {
       return 0;
     }
 
-    if (major < other.major)
+    if (majorVersion < other.majorVersion)
     {
       return -1;
     }
 
-    if (major == other.major)
+    if (majorVersion == other.majorVersion)
     {
 
-      if (minor < other.minor)
+      if (minorVersion < other.minorVersion)
       {
         return -1;
       }
 
-      if (minor == other.minor)
+      if (minorVersion == other.minorVersion)
       {
 
-        if (micro < other.micro)
+        if (microVersion < other.microVersion)
         {
           return -1;
         }
 
-        if (micro == other.micro)
+        if (microVersion == other.microVersion)
         {
           return qualifier.compare(other.qualifier);
         }
@@ -171,4 +216,11 @@ namespace ctk {
     return 1;
   }
 
+}
+
+QDebug operator<<(QDebug dbg, const ctk::Version& v)
+{
+  dbg << v.toString();
+
+  return dbg.maybeSpace();
 }

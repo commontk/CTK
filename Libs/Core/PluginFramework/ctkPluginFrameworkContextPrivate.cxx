@@ -1,4 +1,28 @@
+/*=============================================================================
+
+  Library: CTK
+
+  Copyright (c) 2010 German Cancer Research Center,
+    Division of Medical and Biological Informatics
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=============================================================================*/
+
 #include "ctkPluginFrameworkContextPrivate_p.h"
+
+#include "ctkPluginFrameworkPrivate_p.h"
+#include "ctkPluginArchive_p.h"
 
 namespace ctk {
 
@@ -8,8 +32,8 @@ namespace ctk {
 
   PluginFrameworkContextPrivate::PluginFrameworkContextPrivate(
       const PluginFrameworkContext::Properties& initProps)
-        : /*plugins(this), services(this), systemPlugin(this)*/
-        props(initProps)
+        : plugins(0), /*services(this),*/ systemPlugin(this),
+        storage(this), props(initProps)
   {
 
     {
@@ -33,48 +57,68 @@ namespace ctk {
 //    }
 //    props.save();
 
+    PluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
+    systemPluginPrivate->initSystemPlugin();
 
-//    systemPlugin.initSystemBundle();
+    plugins = new Plugins(this);
 
-//    plugins.load();
+    plugins->load();
 
     log() << "inited";
 
-    log() << "Installed bundles:";
-//    // Use the ordering in the bundle storage to get a sorted list of bundles.
-//    final BundleArchive [] allBAs = storage.getAllBundleArchives();
-//    for (int i = 0; i<allBAs.length; i++) {
-//      final BundleArchive ba = allBAs[i];
-//      final Bundle b = bundles.getBundle(ba.getBundleLocation());
-//      log(" #" +b.getBundleId() +" " +b.getSymbolicName() +":"
-//          +b.getVersion() +" location:" +b.getLocation());
-//    }
+    log() << "Installed plugins:";
+    // Use the ordering in the plugin storage to get a sorted list of plugins.
+    QList<PluginArchive*> allPAs = storage.getAllPluginArchives();
+    for (int i = 0; i < allPAs.size(); ++i)
+    {
+      PluginArchive* pa = allPAs[i];
+      Plugin* p = plugins->getPlugin(pa->getPluginLocation());
+      log() << " #" << p->getPluginId() << " " << p->getSymbolicName() << ":"
+          << p->getVersion() << " location:" << p->getLocation();
+    }
   }
 
   void PluginFrameworkContextPrivate::uninit()
   {
     log() << "uninit";
 
-    //systemBundle.uninitSystemBundle();
+    //PluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
+    //systemPluginPrivate->uninitSystemBundle();
 
-    //storage.close();
+    plugins->clear();
+    delete plugins;
+    plugins = 0;
+
+    storage.close();
 
   }
 
-  int PluginFrameworkContextPrivate::getId() {
+  int PluginFrameworkContextPrivate::getId() const
+  {
     return id;
   }
 
-  void PluginFrameworkContextPrivate::checkOurPlugin(Plugin* b) {
-//    if (this != ((BundleImpl)b).fwCtx) {
-//      throw new IllegalArgumentException("Bundle does not belong to this framework: " + b);
-//    }
+  void PluginFrameworkContextPrivate::checkOurPlugin(Plugin* plugin) const
+  {
+    PluginPrivate* pp = plugin->d_func();
+    if (this != pp->fwCtx)
+    {
+      throw std::invalid_argument("Plugin does not belong to this framework: " + plugin->getSymbolicName().toStdString());
+    }
   }
 
-  QDebug PluginFrameworkContextPrivate::log() {
+  QDebug PluginFrameworkContextPrivate::log() const
+  {
     QDebug dbg(qDebug());
     dbg << "Framework instance " << getId() << ": ";
     return dbg;
   }
+
+  void PluginFrameworkContextPrivate::resolvePlugin(PluginPrivate* plugin) const
+  {
+    // TODO
+
+  }
+
 
 }

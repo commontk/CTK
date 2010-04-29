@@ -1,8 +1,31 @@
+/*=============================================================================
+
+  Library: CTK
+
+  Copyright (c) 2010 German Cancer Research Center,
+    Division of Medical and Biological Informatics
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=============================================================================*/
+
 #ifndef CTKVERSION_H
 #define CTKVERSION_H
 
 #include <QString>
 #include <QRegExp>
+
+#include "CTKCoreExport.h"
 
 namespace ctk {
 
@@ -25,15 +48,16 @@ namespace ctk {
    * @Immutable
    */
 
-  class Version {
+  class CTK_CORE_EXPORT Version {
 
   private:
 
-    bool valid;
+    friend class PluginPrivate;
+    friend class VersionRange;
 
-    unsigned int major;
-    unsigned int minor;
-    unsigned int micro;
+    unsigned int majorVersion;
+    unsigned int minorVersion;
+    unsigned int microVersion;
     QString      qualifier;
 
     static const QString SEPARATOR; //  = "."
@@ -47,12 +71,16 @@ namespace ctk {
      */
     void validate();
 
+    Version& operator=(const Version& v);
+
+    Version();
+
   public:
 
     /**
      * The empty version "0.0.0".
      */
-    static const Version emptyVersion;
+    static const Version& emptyVersion();
 
     /**
      * Creates a version identifier from the specified numerical components.
@@ -60,22 +88,22 @@ namespace ctk {
      * <p>
      * The qualifier is set to the empty string.
      *
-     * @param major Major component of the version identifier.
-     * @param minor Minor component of the version identifier.
-     * @param micro Micro component of the version identifier.
+     * @param majorVersion Major component of the version identifier.
+     * @param minorVersion Minor component of the version identifier.
+     * @param microVersion Micro component of the version identifier.
      *
      */
-    Version(unsigned int major, unsigned int minor, unsigned int micro);
+    Version(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion);
 
     /**
      * Creates a version identifier from the specified components.
      *
-     * @param major Major component of the version identifier.
-     * @param minor Minor component of the version identifier.
-     * @param micro Micro component of the version identifier.
+     * @param majorVersion Major component of the version identifier.
+     * @param minorVersion Minor component of the version identifier.
+     * @param microVersion Micro component of the version identifier.
      * @param qualifier Qualifier component of the version identifier.
      */
-    Version(unsigned int major, unsigned int minor, unsigned int micro, const QString& qualifier);
+    Version(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion, const QString& qualifier);
 
     /**
      * Created a version identifier from the specified string.
@@ -84,10 +112,10 @@ namespace ctk {
      * Here is the grammar for version strings.
      *
      * <pre>
-     * version ::= major('.'minor('.'micro('.'qualifier)?)?)?
-     * major ::= digit+
-     * minor ::= digit+
-     * micro ::= digit+
+     * version ::= majorVersion('.'minorVersion('.'microVersion('.'qualifier)?)?)?
+     * majorVersion ::= digit+
+     * minorVersion ::= digit+
+     * microVersion ::= digit+
      * qualifier ::= (alpha|digit|'_'|'-')+
      * digit ::= [0..9]
      * alpha ::= [a..zA..Z]
@@ -123,28 +151,23 @@ namespace ctk {
     static Version parseVersion(const QString& version);
 
     /**
-     * Returns if the version is valid.
-     */
-    bool isValid() const;
-
-    /**
-     * Returns the major component of this version identifier.
+     * Returns the majorVersion component of this version identifier.
      *
-     * @return The major component.
+     * @return The majorVersion component.
      */
     unsigned int getMajor() const;
 
     /**
-     * Returns the minor component of this version identifier.
+     * Returns the minorVersion component of this version identifier.
      *
-     * @return The minor component.
+     * @return The minorVersion component.
      */
     unsigned int getMinor() const;
 
     /**
-     * Returns the micro component of this version identifier.
+     * Returns the microVersion component of this version identifier.
      *
-     * @return The micro component.
+     * @return The microVersion component.
      */
     unsigned int getMicro() const;
 
@@ -159,9 +182,9 @@ namespace ctk {
      * Returns the string representation of this version identifier.
      *
      * <p>
-     * The format of the version string will be <code>major.minor.micro</code>
+     * The format of the version string will be <code>majorVersion.minorVersion.microVersion</code>
      * if qualifier is the empty string or
-     * <code>major.minor.micro.qualifier</code> otherwise.
+     * <code>majorVersion.minorVersion.microVersion.qualifier</code> otherwise.
      *
      * @return The string representation of this version identifier.
      */
@@ -172,7 +195,7 @@ namespace ctk {
      *
      * <p>
      * A version is considered to be <b>equal to </b> another version if the
-     * major, minor and micro components are equal and the qualifier component
+     * majorVersion, minorVersion and microVersion components are equal and the qualifier component
      * is equal.
      *
      * @param object The <code>Version</code> object to be compared.
@@ -187,17 +210,17 @@ namespace ctk {
      *
      * <p>
      * A version is considered to be <b>less than </b> another version if its
-     * major component is less than the other version's major component, or the
-     * major components are equal and its minor component is less than the other
-     * version's minor component, or the major and minor components are equal
-     * and its micro component is less than the other version's micro component,
-     * or the major, minor and micro components are equal and it's qualifier
+     * majorVersion component is less than the other version's majorVersion component, or the
+     * majorVersion components are equal and its minorVersion component is less than the other
+     * version's minorVersion component, or the majorVersion and minorVersion components are equal
+     * and its microVersion component is less than the other version's microVersion component,
+     * or the majorVersion, minorVersion and microVersion components are equal and it's qualifier
      * component is less than the other version's qualifier component (using
      * <code>std::string::compare</code>).
      *
      * <p>
      * A version is considered to be <b>equal to</b> another version if the
-     * major, minor and micro components are equal and the qualifier component
+     * majorVersion, minorVersion and microVersion components are equal and the qualifier component
      * is equal.
      *
      * @param object The <code>Version</code> object to be compared.
@@ -210,5 +233,7 @@ namespace ctk {
   };
 
 }
+
+CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctk::Version& v);
 
 #endif // CTKVERSION_H

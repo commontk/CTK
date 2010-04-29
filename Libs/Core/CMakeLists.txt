@@ -19,11 +19,12 @@ FIND_LIBRARY(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE QtServiceFramework
              )
              
 SET(QTMOBILITY_QTSERVICEFW_LIBRARIES )
-IF(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE)
-  LIST(APPEND QTMOBILITY_QTSERVICEFW_LIBRARIES optimized ${QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE})
-ENDIF()
-IF(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG)
-  LIST(APPEND QTMOBILITY_QTSERVICEFW_LIBRARIES debug ${QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG})
+IF(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE AND QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG)
+  SET(QTMOBILITY_QTSERVICEFW_LIBRARIES optimized ${QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE} debug ${QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG})
+ELSEIF(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG)
+  SET(QTMOBILITY_QTSERVICEFW_LIBRARIES ${QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG})
+ELSEIF(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE)
+  SET(QTMOBILITY_QTSERVICEFW_LIBRARIES ${QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE})
 ENDIF()
              
 #
@@ -49,15 +50,24 @@ SET(KIT_SRCS
   # PluginFramework sources
   PluginFramework/ctkLDAPSearchFilter.cxx
   PluginFramework/ctkPlugin.cxx
+  PluginFramework/ctkPluginArchive.cxx
+  PluginFramework/ctkPluginConstants.cxx
   PluginFramework/ctkPluginContext.cxx
+  PluginFramework/ctkPluginException.cxx
+  PluginFramework/ctkPluginFramework.cxx
   PluginFramework/ctkPluginFrameworkContext.cxx
   PluginFramework/ctkPluginFrameworkContextPrivate.cxx
+  PluginFramework/ctkPluginFrameworkPrivate.cxx
   PluginFramework/ctkPluginManager.cxx
-  #PluginFramework/ctkPluginRepository.cxx
+  PluginFramework/ctkPluginManifest.cxx
+  PluginFramework/ctkPluginPrivate.cxx
+  PluginFramework/ctkPlugins.cxx
   PluginFramework/ctkServiceReference.cxx
   PluginFramework/ctkServiceRegistration.cxx
   #PluginFramework/ctkServiceRegistry.cxx
+  PluginFramework/ctkPluginStorage.cxx
   PluginFramework/ctkVersion.cxx
+  PluginFramework/ctkVersionRange.cxx
 
   # EventBus sources
   EventBus/ctkEvent.cxx
@@ -69,7 +79,7 @@ SET(KIT_MOC_SRCS
   ctkModelTester.h
 
   # PluginFramework headers
-  PluginFramework/ctkPluginActivator.h
+  #PluginFramework/ctkPluginActivator.h
 
   )
 
@@ -80,6 +90,13 @@ SET(KIT_UI_FORMS
 # Resources
 SET(KIT_resources
 )
+
+# Create a MANIFEST.MF resource for the CTK Core,
+# pretending that is is a plugin (the system plugin)
+ctkMacroGeneratePluginManifest(KIT_SRCS
+  SYMBOLIC_NAME "system.plugin"
+  VERSION "0.9.9"
+  )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'

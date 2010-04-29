@@ -1,3 +1,24 @@
+/*=============================================================================
+
+  Library: CTK
+
+  Copyright (c) 2010 German Cancer Research Center,
+    Division of Medical and Biological Informatics
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=============================================================================*/
+
 #ifndef CTKPLUGINEXCEPTION_H
 #define CTKPLUGINEXCEPTION_H
 
@@ -6,9 +27,11 @@
 #include <QString>
 #include <QDebug>
 
+#include "CTKCoreExport.h"
+
 namespace ctk {
 
-  class PluginException : public std::runtime_error
+  class CTK_CORE_EXPORT PluginException : public std::runtime_error
   {
   public:
 
@@ -26,15 +49,15 @@ namespace ctk {
        */
       INVALID_OPERATION,
       /**
-       * The bundle manifest contains errors.
+       * The plugin manifest contains errors.
        */
       MANIFEST_ERROR,
       /**
-       * The bundle was not resolved.
+       * The plugin was not resolved.
        */
       RESOLVE_ERROR,
       /**
-       * The bundle activator was in error.
+       * The plugin activator was in error.
        */
       ACTIVATOR_ERROR,
       /**
@@ -47,7 +70,7 @@ namespace ctk {
       STATECHANGE_ERROR,
       /**
        * The install or update operation failed because another
-       * already installed bundle has the same symbolic name and version.
+       * already installed plugin has the same symbolic name and version.
        */
       DUPLICATE_BUNDLE_ERROR
     };
@@ -68,14 +91,14 @@ namespace ctk {
 
   private:
 
-    const QString msg;
-    const Type type;
+    QString msg;
+    Type type;
     std::exception cause;
 
   };
 
 }
 
-QDebug operator<<(QDebug dbg, const ctk::PluginException& exc);
+CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctk::PluginException& exc);
 
 #endif // CTKPLUGINEXCEPTION_H

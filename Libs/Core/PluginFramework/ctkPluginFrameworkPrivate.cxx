@@ -19,39 +19,33 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORKCONTEXT_H
-#define CTKPLUGINFRAMEWORKCONTEXT_H
+#include "ctkPluginFrameworkPrivate_p.h"
 
-#include <QHash>
-#include <QString>
-#include <QVariant>
+#include "ctkPluginFramework.h"
+#include "ctkPluginConstants.h"
 
-#include "CTKCoreExport.h"
+#include "ctkPluginFrameworkContextPrivate_p.h"
 
 namespace ctk {
 
-  class PluginFramework;
-  class PluginFrameworkContextPrivate;
+  PluginFrameworkPrivate::PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContextPrivate* fw)
+    : PluginPrivate(qq, fw, 0, PluginConstants::SYSTEM_PLUGIN_LOCATION,
+                    PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
+                    // TODO: read version from the manifest resource
+                    Version(0, 9, 0))
+  {
 
-  class CTK_CORE_EXPORT PluginFrameworkContext {
+  }
 
-    Q_DECLARE_PRIVATE(PluginFrameworkContext)
+  void PluginFrameworkPrivate::init()
+  {
+    this->state = Plugin::STARTING;
+    this->fwCtx->init();
+  }
 
-  public:
-
-    typedef QHash<QString, QVariant> Properties;
-
-    PluginFrameworkContext(const Properties& initProps);
-    ~PluginFrameworkContext();
-
-    PluginFramework* getFramework();
-
-  private:
-
-    PluginFrameworkContextPrivate * const d_ptr;
-
-  };
+  void PluginFrameworkPrivate::initSystemPlugin()
+  {
+    this->pluginContext = new PluginContext(this);
+  }
 
 }
-
-#endif // CTKPLUGINFRAMEWORKCONTEXT_H
