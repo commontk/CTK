@@ -29,7 +29,9 @@ MACRO(ctkMacroGenerateProjectXml dir name target_directories is_superbuild)
       MESSAGE(FATAL_ERROR "Target directory ${target_dir}/CMakeLists.txt doesn't exists !")
     ENDIF()
 
-    IF(${${option_name}})
+    # Remarks: Project.xml should contains all sub-project. That way
+    # all dashboards should submit a similar file.
+    #IF(${${option_name}})
 
       # extract project name from CMakeLists.txt
       FILE(STRINGS "${target_dir}/CMakeLists.txt" project_string
@@ -66,7 +68,7 @@ MACRO(ctkMacroGenerateProjectXml dir name target_directories is_superbuild)
       ENDFOREACH()
       
       SET(xml_subprojects ${xml_subprojects} "  </SubProject>\n")
-    ENDIF()
+    #ENDIF()
   ENDFOREACH()
    
   SET(xml_content "<Project name=\"${name}\">\n${xml_subprojects}</Project>")
