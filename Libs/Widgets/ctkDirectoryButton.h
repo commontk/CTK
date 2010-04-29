@@ -34,8 +34,24 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QPushButton
 {
   Q_OBJECT
   Q_PROPERTY(QString caption READ caption WRITE setCaption)
-  Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
+  Q_PROPERTY(Options options READ options WRITE setOptions)
+  // QFileDialog::Options is not a meta-type, we need to create our own.
+  Q_FLAGS(Option Options);
+
 public: 
+  // QFileDialog::Options is not a meta-type, we need to create our own.
+  enum Option
+    {
+      ShowDirsOnly          = 0x00000001,
+      DontResolveSymlinks   = 0x00000002,
+      DontConfirmOverwrite  = 0x00000004,
+      DontUseSheet          = 0x00000008,
+      DontUseNativeDialog   = 0x00000010,
+      ReadOnly              = 0x00000020,
+      HideNameFilterDetails = 0x00000040
+    };
+  Q_DECLARE_FLAGS(Options, Option)
+    
   ctkDirectoryButton(QWidget * parent = 0);
   ctkDirectoryButton(const QString & text, QWidget * parent = 0);
   ctkDirectoryButton(const QIcon & icon, const QString & text, QWidget * parent = 0);
@@ -43,8 +59,8 @@ public:
   void setCaption(const QString& caption);
   const QString& caption()const;
   
-  void setOptions(const QFileDialog::Options& options);
-  const QFileDialog::Options& options()const;
+  void setOptions(const Options& options);
+  const Options& options()const;
 
 public slots:
   void browse();
@@ -55,5 +71,7 @@ signals:
 private:
   CTK_DECLARE_PRIVATE(ctkDirectoryButton);
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkDirectoryButton::Options);
 
 #endif

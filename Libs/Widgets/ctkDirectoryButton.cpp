@@ -31,13 +31,13 @@ public:
   ctkDirectoryButtonPrivate();
   void init();
   QString Caption;
-  QFileDialog::Options Options;
+  ctkDirectoryButton::Options _Options;
 };
 
 //-----------------------------------------------------------------------------
 ctkDirectoryButtonPrivate::ctkDirectoryButtonPrivate()
 {
-  this->Options = QFileDialog::ShowDirsOnly;
+  this->_Options = ctkDirectoryButton::ShowDirsOnly;
 }
 
 //-----------------------------------------------------------------------------
@@ -89,17 +89,17 @@ const QString& ctkDirectoryButton::caption()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkDirectoryButton::ctkDirectoryButton::setOptions(const QFileDialog::Options& dialogOptions)
+void ctkDirectoryButton::ctkDirectoryButton::setOptions(const Options& dialogOptions)
 {
   CTK_D(ctkDirectoryButton);
-  d->Options = dialogOptions;
+  d->_Options = dialogOptions;
 }
 
 //-----------------------------------------------------------------------------
-const QFileDialog::Options& ctkDirectoryButton::options()const
+const ctkDirectoryButton::Options& ctkDirectoryButton::options()const
 {
   CTK_D(const ctkDirectoryButton);
-  return d->Options;
+  return d->_Options;
 }
 
 //-----------------------------------------------------------------------------
@@ -111,7 +111,7 @@ void ctkDirectoryButton::browse()
       this, 
       d->Caption.isEmpty() ? this->toolTip() : d->Caption, 
       this->text(), 
-      d->Options);
+      QFlags<QFileDialog::Option>(int(d->_Options)));
   if (directory.isEmpty())
     {
     return;
