@@ -33,6 +33,8 @@ SET(PLUGIN_SRCS
   ctkExtensionFactory.h
   ctkFittedTextBrowserPlugin.cpp
   ctkFittedTextBrowserPlugin.h
+  ctkMatrixWidgetPlugin.cpp
+  ctkMatrixWidgetPlugin.h
   ctkMenuButtonPlugin.cpp
   ctkMenuButtonPlugin.h
   ctkRangeSliderPlugin.cpp
@@ -61,6 +63,7 @@ SET(PLUGIN_MOC_SRCS
   ctkDynamicSpacerPlugin.h
   ctkExtensionFactory.h
   ctkFittedTextBrowserPlugin.h
+  ctkMatrixWidgetPlugin.h
   ctkMenuButtonPlugin.h
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.h
