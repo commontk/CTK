@@ -19,6 +19,8 @@
 =========================================================================*/
 
 // Qt includes
+#include <QHBoxLayout>
+#include <QPushButton>
 #include <QStyle>
 
 // CTK includes
@@ -30,92 +32,130 @@ class ctkDirectoryButtonPrivate: public ctkPrivate<ctkDirectoryButton>
 public:
   ctkDirectoryButtonPrivate();
   void init();
-  QString Caption;
-  ctkDirectoryButton::Options _Options;
+
+  QDir         Directory;
+  QPushButton* PushButton;
+  QString      DialogCaption;
+  ctkDirectoryButton::Options DialogOptions;
 };
 
 //-----------------------------------------------------------------------------
 ctkDirectoryButtonPrivate::ctkDirectoryButtonPrivate()
 {
-  this->_Options = ctkDirectoryButton::ShowDirsOnly;
+  this->DialogOptions = ctkDirectoryButton::ShowDirsOnly;
 }
 
 //-----------------------------------------------------------------------------
 void ctkDirectoryButtonPrivate::init()
 {
   CTK_P(ctkDirectoryButton);
-  QObject::connect(p, SIGNAL(clicked()), p, SLOT(browse()));
+  this->PushButton = new QPushButton(p);
+  QObject::connect(this->PushButton, SIGNAL(clicked()), p, SLOT(browse()));
+  QHBoxLayout* l = new QHBoxLayout(p);
+  l->addWidget(this->PushButton);
+  l->setContentsMargins(0,0,0,0);
+  p->setLayout(l);
 }
 
 //-----------------------------------------------------------------------------
 ctkDirectoryButton::ctkDirectoryButton(QWidget * parentWidget)
-  :QPushButton(parentWidget)
+  :QWidget(parentWidget)
 {
   CTK_INIT_PRIVATE(ctkDirectoryButton);
-  this->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));
-  ctk_d()->init();
+  CTK_D(ctkDirectoryButton);
+  d->init();
+  d->PushButton->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));
 }
     
 //-----------------------------------------------------------------------------
-ctkDirectoryButton::ctkDirectoryButton(const QString & text, QWidget * parentWidget)
-  :QPushButton(text, parentWidget)
+ctkDirectoryButton::ctkDirectoryButton(const QString& dir, 
+                                       QWidget * parentWidget)
+  :QWidget(parentWidget)
 {
   CTK_INIT_PRIVATE(ctkDirectoryButton);
-  this->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));
-  ctk_d()->init();
+  CTK_D(ctkDirectoryButton);
+  d->init();
+  d->Directory = QDir(dir);
+  d->PushButton->setText(d->Directory.path());
+  d->PushButton->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));
 }
 
 //-----------------------------------------------------------------------------
 ctkDirectoryButton::ctkDirectoryButton(
-  const QIcon & icon, const QString & text, QWidget * parentWidget)
-  :QPushButton(icon, text, parentWidget)
+  const QIcon & icon, const QString& dir, QWidget * parentWidget)
+  :QWidget(parentWidget)
 {
   CTK_INIT_PRIVATE(ctkDirectoryButton);
-  ctk_d()->init();
+  CTK_D(ctkDirectoryButton);
+  d->init();
+  d->Directory = QDir(dir);
+  d->PushButton->setText(d->Directory.path());
+  d->PushButton->setIcon(icon);
 }
 
 //-----------------------------------------------------------------------------
-void ctkDirectoryButton::setCaption(const QString& captionTitle)
+void ctkDirectoryButton::setDirectory(const QString& dir)
 {
   CTK_D(ctkDirectoryButton);
-  d->Caption = captionTitle;
+  QDir newDirectory(dir);
+  if (d->Directory == newDirectory )
+    {
+    return;
+    }
+  d->Directory = newDirectory;
+  d->PushButton->setText(d->Directory.path());
+  emit directoryChanged(d->Directory.path());
+}
+
+//-----------------------------------------------------------------------------
+QString ctkDirectoryButton::directory()const
+{
+  CTK_D(const ctkDirectoryButton);
+  return d->Directory.path();
+}
+
+//-----------------------------------------------------------------------------
+void ctkDirectoryButton::setCaption(const QString& caption)
+{
+  CTK_D(ctkDirectoryButton);
+  d->DialogCaption = caption;
 }
 
 //-----------------------------------------------------------------------------
 const QString& ctkDirectoryButton::caption()const
 {
   CTK_D(const ctkDirectoryButton);
-  return d->Caption;
+  return d->DialogCaption;
 }
 
 //-----------------------------------------------------------------------------
 void ctkDirectoryButton::ctkDirectoryButton::setOptions(const Options& dialogOptions)
 {
   CTK_D(ctkDirectoryButton);
-  d->_Options = dialogOptions;
+  d->DialogOptions = dialogOptions;
 }
 
 //-----------------------------------------------------------------------------
 const ctkDirectoryButton::Options& ctkDirectoryButton::options()const
 {
   CTK_D(const ctkDirectoryButton);
-  return d->_Options;
+  return d->DialogOptions;
 }
 
 //-----------------------------------------------------------------------------
 void ctkDirectoryButton::browse()
 {
   CTK_D(ctkDirectoryButton);
-  QString directory = 
+  QString dir = 
     QFileDialog::getExistingDirectory(
       this, 
-      d->Caption.isEmpty() ? this->toolTip() : d->Caption, 
-      this->text(), 
-      QFlags<QFileDialog::Option>(int(d->_Options)));
-  if (directory.isEmpty())
+      d->DialogCaption.isEmpty() ? this->toolTip() : d->DialogCaption, 
+      d->Directory.path(), 
+      QFlags<QFileDialog::Option>(int(d->DialogOptions)));
+  // An empty directory means that the user cancelled the dialog.
+  if (dir.isEmpty())
     {
     return;
     }
-  this->setText(directory);
-  emit directoryChanged(directory);
+  this->setDirectory(dir);
 }
