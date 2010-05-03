@@ -44,14 +44,6 @@ ENDIF()
 # Use this value where semi-colons are needed in ep_add args:
 set(sep "^^")
 
-# Find the git executable, used for custom git commands for external projects
-# (e.g. for QtMobility)
-find_program(Git_EXECUTABLE git DOC "git command line client")
-mark_as_advanced(Git_EXECUTABLE)
-if(NOT Git_EXECUTABLE)
-  message(SEND_ERROR "Set Git_EXECUTABLE to the path of your git executable")
-endif()
-
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #
@@ -197,9 +189,9 @@ IF(${add_project})
   SET(qtmobility_patch_dir ${CTK_SOURCE_DIR}/Utilities/QtMobility/)
   SET(qtmobility_configured_patch_dir ${CTK_BINARY_DIR}/Utilities/QtMobility/)
   SET(qtmobility_patchscript
-    ${CTK_BINARY_DIR}/Utilities/QtMobility/QtMobilityGitBranch1.0-patch.cmake)
+    ${CTK_BINARY_DIR}/Utilities/QtMobility/QtMobility-1.0.0-patch.cmake)
   CONFIGURE_FILE(
-    ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobilityGitBranch1.0-patch.cmake.in
+    ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobility-1.0.0-patch.cmake.in
     ${qtmobility_patchscript} @ONLY)
 
   # Define configure options
@@ -221,13 +213,12 @@ IF(${add_project})
   ENDIF()
 
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY git://gitorious.org/qt-mobility/qt-mobility.git
-    # the patch command is also used to checkout the 1.0 branch    
+    URL ${CTK_BINARY_DIR}/Utilities/QtMobility/qt-mobility-servicefw-opensource-src-1.0.0.tar.gz
     PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
     BUILD_COMMAND ${qtmobility_make_cmd}
     INSTALL_COMMAND ${qtmobility_make_cmd} install
-	  BUILD_IN_SOURCE 1
+    BUILD_IN_SOURCE 1
     )
 ENDIF()
 
@@ -312,8 +303,9 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   DEPENDS
     # Mandatory dependencies
-    ${QtMobility_DEPENDS}
+    #  - none
     # Optionnal dependencies
+    ${QtMobility_DEPENDS}
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
     ${PythonQt_DEPENDS}
