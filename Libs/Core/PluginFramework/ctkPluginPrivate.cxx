@@ -35,7 +35,7 @@ namespace ctk {
       PluginFrameworkContextPrivate* fw,
       PluginArchive* pa)
     : q_ptr(&qq), fwCtx(fw), id(pa->getPluginId()),
-    location(pa->getPluginLocation()), state(Plugin::INSTALLED),
+    location(pa->getPluginLocation().toString()), state(Plugin::INSTALLED),
     archive(pa), pluginContext(0), pluginActivator(0), lastModified(0),
     lazyActivation(true), activating(false), deactivating(false),
     resolveFailException("")

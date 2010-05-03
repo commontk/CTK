@@ -33,18 +33,19 @@ namespace ctk {
   const QString PluginArchive::AUTOSTART_SETTING_EAGER("eager");
   const QString PluginArchive::AUTOSTART_SETTING_ACTIVATION_POLICY("activation_policy");
 
-  PluginArchive::PluginArchive(PluginStorage* pluginStorage, QIODevice* is,
-                const QString& pluginLocation, int pluginId, const QString& resourcePrefix)
+  PluginArchive::PluginArchive(PluginStorage* pluginStorage,
+                const QUrl& pluginLocation, const QString& localPluginPath,
+                int pluginId)
                   : autostartSetting(-1), id(pluginId), lastModified(0),
-                  location(pluginLocation), resourcePrefix(resourcePrefix), storage(pluginStorage)
+                  location(pluginLocation), localPluginPath(localPluginPath),
+                  storage(pluginStorage)
   {
-    QString manifestResource = this->getPluginResource("META-INF/MANIFEST.MF");
-    if (manifestResource.isNull())
+    QByteArray manifestResource = this->getPluginResource("META-INF/MANIFEST.MF");
+    if (manifestResource.isEmpty())
     {
-      throw PluginException(QString("Plugin has no MANIFEST.MF resource, location=") + pluginLocation);
+      throw PluginException(QString("Plugin has no MANIFEST.MF resource, location=") + pluginLocation.toString());
     }
-    QFile manifestFile(manifestResource);
-    manifest.read(&manifestFile);
+    manifest.read(manifestResource);
   }
 
   QString PluginArchive::getAttribute(const QString& key) const
@@ -69,27 +70,24 @@ namespace ctk {
     return id;
   }
 
-  QString PluginArchive::getPluginLocation() const
+  QUrl PluginArchive::getPluginLocation() const
   {
     return location;
   }
 
-  QString PluginArchive::getPluginResource(const QString& component) const
+  QString PluginArchive::getLibLocation() const
   {
-    QString resourcePath = QString(":/") + resourcePrefix;
-    if (component.startsWith('/')) resourcePath += component;
-    else resourcePath += QString("/") + component;
+    return localPluginPath;
+  }
 
-    return storage->getPluginResource(resourcePath);
+  QByteArray PluginArchive::getPluginResource(const QString& component) const
+  {
+    return storage->getPluginResource(getPluginId(), component);
   }
 
   QStringList PluginArchive::findResourcesPath(const QString& path) const
   {
-    QString resourcePath = QString(":/") + resourcePrefix;
-    if (path.startsWith('/')) resourcePath += path;
-    else resourcePath += QString("/") + path;
-
-    return storage->findResourcesPath(resourcePath);
+    return storage->findResourcesPath(getPluginId(), path);
   }
 
   int PluginArchive::getStartLevel() const
@@ -137,12 +135,7 @@ namespace ctk {
 
   void PluginArchive::purge()
   {
-    //TODO
-  }
-
-  void PluginArchive::close()
-  {
-    //TODO
+    storage->removeArchive(this);
   }
 
 

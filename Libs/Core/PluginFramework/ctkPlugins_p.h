@@ -22,6 +22,7 @@
 #ifndef CTKPLUGINS_H
 #define CTKPLUGINS_H
 
+#include <QUrl>
 #include <QHash>
 #include <QReadWriteLock>
 
@@ -76,7 +77,7 @@ namespace ctk {
      *
      * @param location The location to be installed
      */
-    Plugin* install(const QString& location, QIODevice* in);
+    Plugin* install(const QUrl& location, QIODevice* in);
 
 
     /**
@@ -84,7 +85,7 @@ namespace ctk {
      *
      * @param location The location to be removed
      */
-    void remove(const QString& location);
+    void remove(const QUrl& location);
 
 
     /**

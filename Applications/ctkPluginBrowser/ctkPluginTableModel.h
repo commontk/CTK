@@ -19,47 +19,39 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORK_H
-#define CTKPLUGINFRAMEWORK_H
+#ifndef CTKPLUGINTABLEMODEL_H
+#define CTKPLUGINTABLEMODEL_H
 
-#include "ctkPlugin.h"
+#include <QAbstractTableModel>
 
+#include <QList>
 
-#include "CTKCoreExport.h"
+#include <PluginFramework/ctkPlugin.h>
 
 namespace ctk {
 
-  class PluginFrameworkContextPrivate;
-  class PluginFrameworkPrivate;
+  class PluginContext;
 
-  class CTK_CORE_EXPORT PluginFramework : public Plugin
+  class PluginTableModel : public QAbstractTableModel
   {
-
-    Q_DECLARE_PRIVATE(PluginFramework)
-
   public:
 
-    /**
-     * Initialize this framework.
-     */
-    void init();
+    PluginTableModel(PluginContext* pc, QObject* parent = 0);
 
-    // TODO return info about the reason why this
-    // method returned
-    void waitForStop(int timeout);
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
 
-    QStringList getResourceList(const QString& path) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    QByteArray getResource(const QString& path) const;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const;
 
-  protected:
+  private:
 
-    friend class PluginFrameworkContextPrivate;
+    QString getStringForState(const Plugin::State state) const;
 
-    PluginFramework(PluginFrameworkContextPrivate* fw);
-
+    QList<Plugin*> plugins;
   };
 
 }
 
-#endif // CTKPLUGINFRAMEWORK_H
+#endif // CTKPLUGINTABLEMODEL_H

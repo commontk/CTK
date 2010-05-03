@@ -19,47 +19,37 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORK_H
-#define CTKPLUGINFRAMEWORK_H
+#include <PluginFramework/ctkPluginFrameworkContext.h>
+#include <PluginFramework/ctkPluginFramework.h>
+#include <PluginFramework/ctkPluginException.h>
 
-#include "ctkPlugin.h"
+#include "ctkPluginBrowser.h"
 
+#include <QApplication>
 
-#include "CTKCoreExport.h"
+using namespace ctk;
 
-namespace ctk {
+int main(int argv, char** argc)
+{
+  QApplication app(argv, argc);
 
-  class PluginFrameworkContextPrivate;
-  class PluginFrameworkPrivate;
+  PluginFrameworkContext::Properties props;
 
-  class CTK_CORE_EXPORT PluginFramework : public Plugin
+  PluginFrameworkContext fwContext(props);
+
+  PluginFramework* framework = fwContext.getFramework();
+  try {
+    framework->init();
+  }
+  catch (const PluginException& exc)
   {
+    qCritical() << "Failed to initialize the plug-in framework:" << exc;
+    exit(1);
+  }
 
-    Q_DECLARE_PRIVATE(PluginFramework)
+  PluginBrowser browser(framework);
+  browser.show();
 
-  public:
-
-    /**
-     * Initialize this framework.
-     */
-    void init();
-
-    // TODO return info about the reason why this
-    // method returned
-    void waitForStop(int timeout);
-
-    QStringList getResourceList(const QString& path) const;
-
-    QByteArray getResource(const QString& path) const;
-
-  protected:
-
-    friend class PluginFrameworkContextPrivate;
-
-    PluginFramework(PluginFrameworkContextPrivate* fw);
-
-  };
+  return app.exec();
 
 }
-
-#endif // CTKPLUGINFRAMEWORK_H

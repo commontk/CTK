@@ -34,12 +34,12 @@ namespace ctk {
 
   }
 
-  PluginManifest::PluginManifest(QIODevice* in)
+  PluginManifest::PluginManifest(const QByteArray& in)
   {
     read(in);
   }
 
-  void PluginManifest::read(QIODevice* in)
+  void PluginManifest::read(const QByteArray& in)
   {
     mainAttributes.clear();
     sections.clear();
@@ -48,12 +48,10 @@ namespace ctk {
     QString value;
     QString currSection;
 
-    in->open(QIODevice::ReadOnly);
+    QList<QByteArray> lines = in.split('\n');
 
-    while (!in->atEnd())
+    foreach (const QString& line, lines)
     {
-      QString line(in->readLine().data());
-
       // skip empty lines and comments
       if (line.trimmed().isEmpty() | line.startsWith('#')) continue;
 
@@ -99,8 +97,6 @@ namespace ctk {
         // add the line to the value
         value += line;
       }
-
-      in->close();
     }
 
     // save the last key/value pair
@@ -116,8 +112,6 @@ namespace ctk {
       }
     }
 
-    qDebug() << mainAttributes.keys();
-    qDebug() << mainAttributes.values();
   }
 
   PluginManifest::Attributes PluginManifest::getMainAttributes() const

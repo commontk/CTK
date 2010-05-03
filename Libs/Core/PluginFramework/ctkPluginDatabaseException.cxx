@@ -19,31 +19,34 @@
 
 =============================================================================*/
 
-#include "ctkPluginException.h"
+#include "ctkPluginDatabaseException.h"
+
+#include <QDebug>
 
 namespace ctk {
 
-  PluginException::PluginException(const QString& msg, const Type& type, const std::exception& cause)
+  PluginDatabaseException::PluginDatabaseException(const QString& msg, const Type& type, const std::exception& cause)
     : std::runtime_error(msg.toStdString()),
       type(type), cause(cause)
   {
 
   }
 
-  PluginException::PluginException(const QString& msg, const std::exception& cause)
+  PluginDatabaseException::PluginDatabaseException(const QString& msg, const std::exception& cause)
     : std::runtime_error(msg.toStdString()),
       type(UNSPECIFIED), cause(cause)
   {
 
   }
 
-  PluginException::PluginException(const PluginException& o)
-    : std::runtime_error(o.what()), type(o.type), cause(o.cause)
+  PluginDatabaseException::PluginDatabaseException(const PluginDatabaseException& o)
+    : std::runtime_error(o.what()),
+      type(o.type), cause(o.cause)
   {
 
   }
 
-  PluginException& PluginException::operator=(const PluginException& o)
+  PluginDatabaseException& PluginDatabaseException::operator=(const PluginDatabaseException& o)
   {
     std::runtime_error::operator=(o);
     type = o.type;
@@ -51,31 +54,32 @@ namespace ctk {
     return *this;
   }
 
-  std::exception PluginException::getCause() const
+  std::exception PluginDatabaseException::getCause() const
   {
     return cause;
   }
 
-  void PluginException::setCause(const std::exception& cause) throw(std::logic_error)
+  void PluginDatabaseException::setCause(const std::exception& cause) throw(std::logic_error)
   {
-    if (!cause.what()) throw std::logic_error("The cause for this PluginException instance is already set");
+    if (!cause.what()) throw std::logic_error("The cause for this PluginDatabaseException instance is already set");
 
     this->cause = cause;
   }
 
-  PluginException::Type PluginException::getType() const
+  PluginDatabaseException::Type PluginDatabaseException::getType() const
   {
     return type;
   }
 
 }
 
-QDebug operator<<(QDebug dbg, const ctk::PluginException& exc)
+QDebug operator<<(QDebug dbg, const ctk::PluginDatabaseException& exc)
 {
-  dbg << "PluginException:" << exc.what();
+  dbg << "PluginDatabaseException:" << exc.what();
 
   const char* causeMsg = exc.getCause().what();
   if (causeMsg) dbg << "  Caused by:" << causeMsg;
 
   return dbg.maybeSpace();
 }
+

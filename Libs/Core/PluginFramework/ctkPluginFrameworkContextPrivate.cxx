@@ -72,7 +72,7 @@ namespace ctk {
     for (int i = 0; i < allPAs.size(); ++i)
     {
       PluginArchive* pa = allPAs[i];
-      Plugin* p = plugins->getPlugin(pa->getPluginLocation());
+      Plugin* p = plugins->getPlugin(pa->getPluginLocation().toString());
       log() << " #" << p->getPluginId() << " " << p->getSymbolicName() << ":"
           << p->getVersion() << " location:" << p->getLocation();
     }

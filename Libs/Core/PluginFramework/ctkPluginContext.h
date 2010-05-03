@@ -25,6 +25,7 @@
 #include <QHash>
 #include <QString>
 #include <QVariant>
+#include <QUrl>
 
 #include "CTKCoreExport.h"
 
@@ -60,7 +61,7 @@ namespace ctk {
 
     QObject* getService(const ServiceReference& reference);
 
-    Plugin* installPlugin(const QString& location, QIODevice* in = 0);
+    Plugin* installPlugin(const QUrl& location, QIODevice* in = 0);
 
   protected:
 

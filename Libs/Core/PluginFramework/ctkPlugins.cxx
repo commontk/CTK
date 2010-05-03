@@ -46,7 +46,7 @@ namespace ctk {
     fwCtx = 0;
   }
 
-  Plugin* Plugins::install(const QString& location, QIODevice* in)
+  Plugin* Plugins::install(const QUrl& location, QIODevice* in)
   {
     if (!fwCtx)
     { // This Plugins instance has been closed!
@@ -56,19 +56,18 @@ namespace ctk {
     {
       QWriteLocker lock(&pluginsLock);
 
-      QHash<QString, Plugin*>::const_iterator it = plugins.find(location);
+      QHash<QString, Plugin*>::const_iterator it = plugins.find(location.toString());
       if (it != plugins.end()) {
         return it.value();
       }
 
       // install new plugin
-      QIODevice* pin = 0;
       PluginArchive* pa = 0;
+      QString localPluginPath;
       try {
         if (!in) {
-          // extract the input stream from the given location,
-          // which now must be a valid URL
-          QUrl url(location);
+          // extract the input stream from the given location
+          
 
 //          //TODO Support for http proxy authentication
 //          //TODO put in update as well
@@ -92,22 +91,25 @@ namespace ctk {
 //            }
 //          }
 
-          if (url.scheme() != "file")
+          if (location.scheme() != "file")
           {
-            throw std::runtime_error(std::string("Unsupported url scheme: ") + qPrintable(url.scheme()));
+            throw std::runtime_error(std::string("Unsupported url scheme: ") + qPrintable(location.scheme()));
           }
           else
           {
-            qDebug() << QString("Trying to install file:") << url.path();
+            qDebug() << QString("Trying to install file:") << location.path();
+            localPluginPath = location.toLocalFile();
           }
-        } else {
-          pin = in;
+        } 
+        else 
+        {
+          //TODO copy the QIODevice to a local cache
         }
 
-        pa = fwCtx->storage.insertPlugin(location, pin);
+        pa = fwCtx->storage.insertPlugin(location, localPluginPath);
 
         Plugin* res = new Plugin(fwCtx, pa);
-        plugins.insert(location, res);
+        plugins.insert(location.toString(), res);
 
         //TODO send event
         //fwCtx.listeners.bundleChanged(new BundleEvent(BundleEvent.INSTALLED, b));
@@ -124,7 +126,7 @@ namespace ctk {
   //      }
   //      else
   //      {
-        throw PluginException(QString("Failed to install plugin: ") + e.what(),
+        throw PluginException(QString("Failed to install plugin: ") + QString(e.what()),
                                 PluginException::UNSPECIFIED, e);
   //      }
       }
@@ -132,10 +134,10 @@ namespace ctk {
 
   }
 
-  void Plugins::remove(const QString& location)
+  void Plugins::remove(const QUrl& location)
   {
     QWriteLocker lock(&pluginsLock);
-    delete plugins.take(location);
+    delete plugins.take(location.toString());
   }
 
   Plugin* Plugins::getPlugin(int id) const
@@ -291,7 +293,7 @@ namespace ctk {
         try
         {
           Plugin* plugin = new Plugin(fwCtx, pa);
-          plugins.insert(pa->getPluginLocation(), plugin);
+          plugins.insert(pa->getPluginLocation().toString(), plugin);
         }
         catch (const std::exception& e)
         {
@@ -300,7 +302,7 @@ namespace ctk {
 
           std::cerr << "Error: Failed to load bundle "
                     << pa->getPluginId()
-                    << " ("  << qPrintable(pa->getPluginLocation())  << ")"
+                    << " ("  << qPrintable(pa->getPluginLocation().toString())  << ")"
                     << " uninstalled it!\n";
           std::cerr << e.what();
         }

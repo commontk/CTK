@@ -147,6 +147,7 @@ SET(CTK_PLUGINS
 #
 SET(CTK_APPLICATIONS
   ctkCLIPluginExplorer
+  ctkPluginBrowser
   ctkDICOM
   ctkDICOMIndexer
   )

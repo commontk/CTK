@@ -19,47 +19,36 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORK_H
-#define CTKPLUGINFRAMEWORK_H
+#ifndef CTKPLUGINBROWSER_H
+#define CTKPLUGINBROWSER_H
 
-#include "ctkPlugin.h"
+#include <QMainWindow>
 
-
-#include "CTKCoreExport.h"
+#include <ui_ctkPluginBrowserMainWindow.h>
 
 namespace ctk {
 
-  class PluginFrameworkContextPrivate;
-  class PluginFrameworkPrivate;
+  class PluginFramework;
 
-  class CTK_CORE_EXPORT PluginFramework : public Plugin
+  class PluginBrowser : public QMainWindow
   {
-
-    Q_DECLARE_PRIVATE(PluginFramework)
+    Q_OBJECT
 
   public:
 
-    /**
-     * Initialize this framework.
-     */
-    void init();
+    PluginBrowser(PluginFramework* framework);
 
-    // TODO return info about the reason why this
-    // method returned
-    void waitForStop(int timeout);
+  private slots:
 
-    QStringList getResourceList(const QString& path) const;
+    void pluginSelected(const QModelIndex& index);
 
-    QByteArray getResource(const QString& path) const;
+  private:
 
-  protected:
+    PluginFramework* framework;
 
-    friend class PluginFrameworkContextPrivate;
-
-    PluginFramework(PluginFrameworkContextPrivate* fw);
-
+    Ui::PluginBrowserWindow ui;
   };
 
 }
 
-#endif // CTKPLUGINFRAMEWORK_H
+#endif // CTKPLUGINBROWSER_H

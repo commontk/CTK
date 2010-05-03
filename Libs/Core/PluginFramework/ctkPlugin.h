@@ -72,7 +72,7 @@ namespace ctk {
     int getPluginId() const;
 
     /**
-     * Returns this bundle's location identifier.
+     * Returns this plugin's location identifier.
      *
      * <p>
      * The location identifier is the location passed to
@@ -111,10 +111,10 @@ namespace ctk {
      * @throws std::logic_error If this plugin has been
      *         uninstalled.
      */
-    QStringList getResourceList(const QString& path) const;
+    virtual QStringList getResourceList(const QString& path) const;
 
     /**
-     * Returns a Qt resource string to the resource at the
+     * Returns a QByteArray containing a Qt resource located at the
      * specified path in this plugin.
      * <p>
      * The specified path is always relative to the root of this plugin
@@ -129,7 +129,7 @@ namespace ctk {
      * @throws std::logic_error If this plugin has been
      *         uninstalled.
      */
-    QString getResource(const QString& path) const;
+    virtual QByteArray getResource(const QString& path) const;
 
     Version getVersion() const;
 

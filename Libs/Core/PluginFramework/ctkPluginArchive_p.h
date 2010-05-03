@@ -24,6 +24,7 @@
 
 #include <QString>
 #include <QHash>
+#include <QUrl>
 
 #include "ctkPluginManifest_p.h"
 
@@ -68,8 +69,8 @@ private:
   int autostartSetting;
   int id;
   qtimestamp lastModified;
-  QString location;
-  QString resourcePrefix;
+  QUrl location;
+  QString localPluginPath;
   PluginManifest manifest;
   PluginStorage* storage;
 
@@ -79,9 +80,8 @@ public:
    * Construct new plugin archive.
    *
    */
-  PluginArchive(PluginStorage* pluginStorage, QIODevice* is,
-                const QString& pluginLocation, int pluginId,
-                const QString& resourcePrefix);
+  PluginArchive(PluginStorage* pluginStorage, const QUrl& pluginLocation,
+                const QString& localPluginPath, int pluginId);
 
   /**
    * Get an attribute from the manifest of a plugin.
@@ -118,20 +118,29 @@ public:
 
 
   /**
-   * Get bundle location for this plugin archive.
+   * Get plugin location for this plugin archive.
    *
    * @return Bundle location.
    */
-   QString getPluginLocation() const;
+   QUrl getPluginLocation() const;
+
+   /**
+    * Get the path to the plugin library on the local
+    * file system
+    *
+    * @return Path to the plugin library
+    */
+   QString getLibLocation() const;
 
 
   /**
-   * Get a Qt resource string to a named resource inside a plugin.
+   * Get a Qt resource as a byte array from a plugin. The resource
+   * is cached and may be aquired even if the plugin is not active.
    *
-   * @param component Entry to get reference to.
-   * @return QString to the entry or null if it doesn't exist.
+   * @param component Resource to get the byte array from.
+   * @return QByteArray to the entry (empty if it doesn't exist).
    */
-   QString getPluginResource(const QString& component) const;
+   QByteArray getPluginResource(const QString& component) const;
 
 
   /**
@@ -203,14 +212,9 @@ public:
 
   /**
    * Remove plugin from persistent storage.
+   * This will delete the current PluginArchive instance.
    */
    void purge();
-
-
-  /**
-   * Close archive and all its open files.
-   */
-   void close();
 
 };
 

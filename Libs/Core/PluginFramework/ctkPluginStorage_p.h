@@ -25,6 +25,8 @@
 #include <QList>
 #include <QStringList>
 
+#include "ctkPluginDatabase_p.h"
+
 // Qt class forward declarations
 class QIODevice;
 
@@ -41,112 +43,104 @@ namespace ctk {
 
   private:
 
-    /**
-     * Next available bundle id.
-     */
-    int nextFreeId;
+    QMutex archivesLock;
 
     /**
      * Plugin id sorted list of all active plugin archives.
      */
     QList<PluginArchive*> archives;
 
-     /**
-      * Framework handle.
-      */
-     PluginFrameworkContextPrivate* framework;
+    /**
+     * Framework handle.
+     */
+    PluginFrameworkContextPrivate* framework;
+
+    /**
+     * SQLite db caching plug-in metadata and resources
+     */
+    PluginDatabase pluginDatabase;
 
   public:
 
-     /**
-      * Create a container for all plugin data in this framework.
-      * Try to restore all saved plugin archive state.
-      *
-      */
-     PluginStorage(PluginFrameworkContextPrivate* framework);
+    /**
+     * Create a container for all plugin data in this framework.
+     * Try to restore all saved plugin archive state.
+     *
+     */
+    PluginStorage(PluginFrameworkContextPrivate* framework);
 
 
-     /**
-      * Insert a plugin (shared library) into the persistent storage
-      *
-      * @param location Location of the plugin.
-      * @param is QIODevice with plugin content.
-      * @return Plugin archive object.
-      */
-     PluginArchive* insertPlugin(const QString& location, QIODevice* is);
+    /**
+     * Insert a plugin (shared library) into the persistent storage
+     *
+     * @param location Location of the plugin.
+     * @param localPath Path to the plugin on the local file system
+     * @return Plugin archive object.
+     */
+    PluginArchive* insertPlugin(const QUrl& location, const QString& localPath);
 
 
-     /**
-      * Insert a new plugin (shared library) into the persistent
-      * storagedata as an update
-      * to an existing plugin archive. To commit this data a call to
-      * <code>replacePluginArchive</code> is needed.
-      *
-      * @param old PluginArchive to be replaced.
-      * @param is QIODevice with plugin content.
-      * @return Plugin archive object.
-      */
-     PluginArchive* updatePluginArchive(PluginArchive* old, QIODevice* is);
+    /**
+     * Insert a new plugin (shared library) into the persistent
+     * storagedata as an update
+     * to an existing plugin archive. To commit this data a call to
+     * <code>replacePluginArchive</code> is needed.
+     *
+     * @param old PluginArchive to be replaced.
+     * @param localPath Path to a plugin on the local file system.
+     * @return Plugin archive object.
+     */
+    PluginArchive* updatePluginArchive(PluginArchive* old, const QString& localPath);
 
 
-     /**
-      * Replace old plugin archive with a new updated plugin archive, that
-      * was created with updatePluginArchive.
-      *
-      * @param oldPA PluginArchive to be replaced.
-      * @param newPA new PluginArchive.
-      */
-     void replacePluginArchive(PluginArchive* oldPA, PluginArchive* newPA);
+    /**
+     * Replace old plugin archive with a new updated plugin archive, that
+     * was created with updatePluginArchive.
+     *
+     * @param oldPA PluginArchive to be replaced.
+     * @param newPA new PluginArchive.
+     */
+    void replacePluginArchive(PluginArchive* oldPA, PluginArchive* newPA);
+
+    /**
+     * Remove plugin archive from archives list and persistent storage.
+     * The plugin archive is deleted and must not be used afterwards, if
+     * this method returns \a true.
+     *
+     * @param pa Plugin archive to remove.
+     * @return true if element was removed.
+     */
+    bool removeArchive(PluginArchive* pa);
 
 
-     /**
-      * Get all plugin archive objects.
-      *
-      * @return QList of all PluginArchives.
-      */
-     QList<PluginArchive*> getAllPluginArchives() const;
+    /**
+     * Get all plugin archive objects.
+     *
+     * @return QList of all PluginArchives.
+     */
+    QList<PluginArchive*> getAllPluginArchives() const;
 
 
-     /**
-      * Get all plugins to start at next launch of framework.
-      * This list is sorted in increasing plugin id order.
-      *
-      * @return A List with plugin locations.
-      */
-     QList<QString> getStartOnLaunchPlugins();
+    /**
+     * Get all plugins to start at next launch of framework.
+     * This list is sorted in increasing plugin id order.
+     *
+     * @return A List with plugin locations.
+     */
+    QList<QString> getStartOnLaunchPlugins();
 
-     QString getPluginResource(const QString& res) const;
+    QByteArray getPluginResource(long pluginId, const QString& res) const;
 
-     QStringList findResourcesPath(const QString& path) const;
+    QStringList findResourcesPath(long pluginId, const QString& path) const;
 
+    /**
+     * Close this plugin storage and all bundles in it.
+     */
+    void close();
 
-     /**
-      * Close plugin storage.
-      *
-      */
-     void close();
+    ~PluginStorage();
 
-
-   private:
-
-     /**
-      * Remove plugin archive from archives list.
-      *
-      * @param id Plugin archive id to find.
-      * @return true if element was removed.
-      */
-     bool removeArchive(const PluginArchive* ba);
-
-     /**
-      * Find position for PluginArchive with specified id
-      *
-      * @param id Plugin archive id to find.
-      * @return Found position for the plugin archive id
-      */
-     int find(long id);
-
-
-  };
+};
 
 }
 

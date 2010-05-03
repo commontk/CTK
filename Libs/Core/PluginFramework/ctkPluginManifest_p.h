@@ -36,9 +36,9 @@ namespace ctk {
     typedef QHash<QString,QString> Attributes;
 
     PluginManifest();
-    PluginManifest(QIODevice* in);
+    PluginManifest(const QByteArray& in);
 
-    void read(QIODevice* in);
+    void read(const QByteArray& in);
 
     Attributes getMainAttributes() const;
     QString getAttribute(const QString& key) const;

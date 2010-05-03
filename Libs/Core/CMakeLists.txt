@@ -53,6 +53,8 @@ SET(KIT_SRCS
   PluginFramework/ctkPluginArchive.cxx
   PluginFramework/ctkPluginConstants.cxx
   PluginFramework/ctkPluginContext.cxx
+  PluginFramework/ctkPluginDatabase.cxx
+  PluginFramework/ctkPluginDatabaseException.cxx
   PluginFramework/ctkPluginException.cxx
   PluginFramework/ctkPluginFramework.cxx
   PluginFramework/ctkPluginFrameworkContext.cxx

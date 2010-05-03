@@ -24,6 +24,7 @@
 #include "ctkPluginFrameworkPrivate_p.h"
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginFrameworkContextPrivate_p.h"
+#include "ctkPluginConstants.h"
 
 
 namespace ctk {
@@ -52,6 +53,43 @@ namespace ctk {
       throw std::logic_error("INTERNAL ERROR, Illegal state");
     }
     d->init();
+  }
+
+  QStringList PluginFramework::getResourceList(const QString& path) const
+  {
+    QString resourcePath = QString(":/") + PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME;
+    if (path.startsWith('/'))
+      resourcePath += path;
+    else
+      resourcePath += QString("/") + path;
+
+    QStringList paths;
+    QFileInfoList entryInfoList = QDir(resourcePath).entryInfoList();
+    QListIterator<QFileInfo> infoIter(entryInfoList);
+    while (infoIter.hasNext())
+    {
+      const QFileInfo& resInfo = infoIter.next();
+      QString entry = resInfo.canonicalFilePath().mid(resourcePath.size());
+      if (resInfo.isDir())
+        entry += "/";
+
+      paths << entry;
+    }
+
+    return paths;
+  }
+
+  QByteArray PluginFramework::getResource(const QString& path) const
+  {
+    QString resourcePath = QString(":/") + PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME;
+    if (path.startsWith('/'))
+      resourcePath += path;
+    else
+      resourcePath += QString("/") + path;
+
+    QFile resourceFile(resourcePath);
+    resourceFile.open(QIODevice::ReadOnly);
+    return resourceFile.readAll();
   }
 
   void waitForStop(int timeout)

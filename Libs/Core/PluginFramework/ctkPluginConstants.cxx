@@ -23,8 +23,8 @@
 
 namespace ctk {
 
-  const QString	PluginConstants::SYSTEM_PLUGIN_LOCATION = "System Bundle";
-  const QString	PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.bundle";
+  const QString	PluginConstants::SYSTEM_PLUGIN_LOCATION = "System Plugin";
+  const QString	PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.plugin";
 
   const QString PluginConstants::FRAMEWORK_STORAGE = "org.commontk.pluginfw.storage";
 

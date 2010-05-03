@@ -94,7 +94,7 @@ namespace ctk {
     return d->archive->findResourcesPath(path);
   }
 
-  QString Plugin::getResource(const QString& path) const
+  QByteArray Plugin::getResource(const QString& path) const
   {
     Q_D(const Plugin);
     return d->archive->getPluginResource(path);

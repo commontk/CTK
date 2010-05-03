@@ -76,7 +76,7 @@ namespace ctk {
     return d->plugin->fwCtx->plugins->getPlugins();
   }
 
-  Plugin* PluginContext::installPlugin(const QString& location, QIODevice* in)
+  Plugin* PluginContext::installPlugin(const QUrl& location, QIODevice* in)
   {
     Q_D(PluginContext);
     d->isPluginContextValid();
