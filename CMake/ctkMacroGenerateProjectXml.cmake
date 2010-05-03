@@ -29,41 +29,46 @@ MACRO(ctkMacroGenerateProjectXml dir name target_directories is_superbuild)
       MESSAGE(FATAL_ERROR "Target directory ${target_dir}/CMakeLists.txt doesn't exists !")
     ENDIF()
 
-    # extract project name from CMakeLists.txt
-    FILE(STRINGS "${target_dir}/CMakeLists.txt" project_string
-      REGEX "^ *(P|p)(R|r)(O|o)(J|j)(E|e)(C|c)(T|t)\\("
-      LIMIT_COUNT 10)
-    STRING(REGEX MATCH "\\((.*)\\)" target_project_name ${project_string})
-    STRING(REGEX REPLACE "\\(|\\)" "" target_project_name ${target_project_name})
-    IF(${target_project_name} STREQUAL "")
-      MESSAGE(FATAL_ERROR "Failed to extract project name from ${target_dir}/CMakeLists.txt")
-    ENDIF()
-    #MESSAGE(STATUS target_project_name:${target_project_name})
-    
-    SET(xml_subprojects ${xml_subprojects} "  <SubProject name=\"${target_project_name}\">\n")
+    # Remarks: Project.xml should contains all sub-project. That way
+    # all dashboards should submit a similar file.
+    #IF(${${option_name}})
 
-    # Make sure the variable is cleared
-    SET(dependencies )
+      # extract project name from CMakeLists.txt
+      FILE(STRINGS "${target_dir}/CMakeLists.txt" project_string
+        REGEX "^ *(P|p)(R|r)(O|o)(J|j)(E|e)(C|c)(T|t)\\("
+        LIMIT_COUNT 10)
+      STRING(REGEX MATCH "\\((.*)\\)" target_project_name ${project_string})
+      STRING(REGEX REPLACE "\\(|\\)" "" target_project_name ${target_project_name})
+      IF(${target_project_name} STREQUAL "")
+        MESSAGE(FATAL_ERROR "Failed to extract project name from ${target_dir}/CMakeLists.txt")
+      ENDIF()
+      #MESSAGE(STATUS target_project_name:${target_project_name})
+      
+      SET(xml_subprojects ${xml_subprojects} "  <SubProject name=\"${target_project_name}\">\n")
 
-    # get dependencies
-    ctkMacroCollectTargetLibraryNames(${target_dir} ${option_name} dependencies)
-     
-    # Make sure the variable is cleared
-    SET(ctk_dependencies)
+      # Make sure the variable is cleared
+      SET(dependencies )
 
-    # filter dependencies starting with CTK
-    ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
+      # get dependencies
+      ctkMacroCollectTargetLibraryNames(${target_dir} dependencies)
+      
+      # Make sure the variable is cleared
+      SET(ctk_dependencies)
 
-    IF(${is_superbuild})
-      SET(xml_subprojects ${xml_subprojects} "    <Dependency name=\"SuperBuild\"/>\n")
-    ENDIF()
-    
-    # Generate XML related to the dependencies 
-    FOREACH(dependency_name ${ctk_dependencies})
-      SET(xml_subprojects ${xml_subprojects} "    <Dependency name=\"${dependency_name}\"/>\n")
-    ENDFOREACH()
-    
-    SET(xml_subprojects ${xml_subprojects} "  </SubProject>\n")
+      # filter dependencies starting with CTK
+      ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
+
+      IF(${is_superbuild})
+        SET(xml_subprojects ${xml_subprojects} "    <Dependency name=\"SuperBuild\"/>\n")
+      ENDIF()
+      
+      # Generate XML related to the dependencies 
+      FOREACH(dependency_name ${ctk_dependencies})
+        SET(xml_subprojects ${xml_subprojects} "    <Dependency name=\"${dependency_name}\"/>\n")
+      ENDFOREACH()
+      
+      SET(xml_subprojects ${xml_subprojects} "  </SubProject>\n")
+    #ENDIF()
   ENDFOREACH()
    
   SET(xml_content "<Project name=\"${name}\">\n${xml_subprojects}</Project>")

@@ -5,13 +5,13 @@ set(work_dir @ep_source_dir@)
 set(proj_dir ${work_dir}/@proj@)
 
 execute_process(
-  COMMAND @Git_EXECUTABLE@ checkout origin/1.0 -t
+  COMMAND @Git_EXECUTABLE@ checkout -b branch_1.0 origin/1.0 -t
   WORKING_DIRECTORY ${proj_dir}
   ERROR_VARIABLE error_output
   RESULT_VARIABLE error_code
   )
 if(error_code)
-  if(NOT ${error_output} MATCHES "branch 1.0 already exists")
+  if(NOT ${error_output} MATCHES "branch branch_1.0 already exists")
     message(FATAL_ERROR "${error_output}")
   endif()
 endif()
@@ -62,3 +62,12 @@ IF(UNIX)
     MESSAGE(FATAL_ERROR "Patching ${proj_dir}/configure file failed.")
   ENDIF()
 ENDIF()
+
+# Let's add the updated files to the local repository. That way, 'git pull'
+# will try to merge the branch changes with the local ones
+execute_process(
+  COMMAND @Git_EXECUTABLE@ add --all
+  WORKING_DIRECTORY ${proj_dir}
+  ERROR_VARIABLE error_output
+  RESULT_VARIABLE error_code
+  )

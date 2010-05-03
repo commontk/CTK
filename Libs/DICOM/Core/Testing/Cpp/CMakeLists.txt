@@ -1,0 +1,38 @@
+SET(KIT ${PROJECT_NAME})
+
+CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+  ctkDICOMModelTest1.cpp
+  ctkDICOMTest1.cpp
+  )
+
+SET (TestsToRun ${Tests})
+REMOVE (TestsToRun ${KIT}CppTests.cpp)
+
+SET(LIBRARY_NAME ${PROJECT_NAME})
+
+ADD_EXECUTABLE(${KIT}CppTests ${Tests})
+TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME})
+
+SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
+IF(WIN32)
+  SET(KIT_TESTS ${CPP_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CppTests)
+ENDIF(WIN32)
+
+MACRO( SIMPLE_TEST  TESTNAME )
+  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
+  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
+ENDMACRO( SIMPLE_TEST  )
+
+#
+# Add Tests
+#
+
+ADD_TEST( ctkDICOMModelTest1 ${KIT_TESTS}
+          ctkDICOMModelTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+                             ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql)
+SET_PROPERTY(TEST ctkDICOMModelTest1 PROPERTY LABELS ${PROJECT_NAME})
+
+ADD_TEST( ctkDICOMTest1 ${KIT_TESTS}
+          ctkDICOMTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+                        ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql)
+SET_PROPERTY(TEST ctkDICOMTest1 PROPERTY LABELS ${PROJECT_NAME})

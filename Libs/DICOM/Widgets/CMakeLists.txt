@@ -1,7 +1,7 @@
 PROJECT(CTKDICOMWidgets)
 
 #
-# See CTK/CMake/ctkMacroBuildQtLib.cmake for details
+# See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
 SET(KIT_export_directive "CTK_DICOM_WIDGETS_EXPORT")
@@ -12,17 +12,17 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkDICOMListenerWidget.cxx
+  ctkDICOMListenerWidget.cpp
   ctkDICOMListenerWidget.h
-  ctkDICOMLocationWidget.cxx
+  ctkDICOMLocationWidget.cpp
   ctkDICOMLocationWidget.h
-  ctkDICOMQueryRetrieveWidget.cxx
+  ctkDICOMQueryRetrieveWidget.cpp
   ctkDICOMQueryRetrieveWidget.h
-  ctkDICOMServerNodeWidget.cxx
+  ctkDICOMServerNodeWidget.cpp
   ctkDICOMServerNodeWidget.h
-  ctkDICOMQueryWidget.cxx
+  ctkDICOMQueryWidget.cpp
   ctkDICOMQueryWidget.h
-  ctkDICOMCommandWidget.cxx
+  ctkDICOMCommandWidget.cpp
   ctkDICOMCommandWidget.h
   )
 
@@ -48,7 +48,7 @@ SET(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
 
-ctkMacroBuildQtLib(
+ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}

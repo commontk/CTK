@@ -1,11 +1,31 @@
+/*=========================================================================
+
+  Library:   CTK
+ 
+  Copyright (c) 2010  Kitware Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.commontk.org/LICENSE
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+=========================================================================*/
+
 #ifndef __ctkDICOMModel_h
 #define __ctkDICOMModel_h
 
-// QT includes 
+// Qt includes 
 #include <QAbstractItemModel>
 #include <QSqlDatabase>
 
-// qCTK includes
+// CTK includes
 #include <ctkPimpl.h>
 
 #include "CTKDICOMCoreExport.h"
@@ -37,7 +57,7 @@ public:
   virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-  QCTK_DECLARE_PRIVATE(ctkDICOMModel);
+  CTK_DECLARE_PRIVATE(ctkDICOMModel);
 };
 
 #endif

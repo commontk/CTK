@@ -1,12 +1,12 @@
 PROJECT(ctkDICOM)
 
 #
-# See CTK/CMake/ctkMacroBuildQtApp.cmake for details
+# See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
   
 # Source files
 SET(KIT_SRCS
-  ctkDICOM.cxx
+  ctkDICOM.cpp
   )
 
 # Headers that should run through moc
@@ -29,7 +29,7 @@ ctkMacroGetTargetLibraries(KIT_target_libraries)
 SET(KIT_include_directories
   )
 
-ctkMacroBuildQtApp(
+ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}

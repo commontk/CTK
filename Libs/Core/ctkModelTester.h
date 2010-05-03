@@ -1,21 +1,27 @@
 /*=========================================================================
 
-  Library:   ctk
+  Library:   CTK
+ 
+  Copyright (c) 2010  Kitware Inc.
 
-  Copyright (c) Kitware Inc. 
-  All rights reserved.
-  Distributed under a BSD License. See LICENSE.txt file.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
-  This software is distributed "AS IS" WITHOUT ANY WARRANTY; without even
-  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  See the above copyright notice for more information.
+      http://www.commontk.org/LICENSE
 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
 =========================================================================*/
 
 #ifndef __ctkModelTester_h
 #define __ctkModelTester_h
 
-/// QT includes
+/// Qt includes
 #include <QObject> 
 #include <QModelIndex>
 #include <QPersistentModelIndex>
@@ -33,6 +39,7 @@ class CTK_CORE_EXPORT ctkModelTester: public QObject
   Q_OBJECT
   Q_PROPERTY(bool nestedInserts READ nestedInserts WRITE setNestedInserts);
 public:
+  explicit ctkModelTester(QObject *parent = 0);
   ctkModelTester(QAbstractItemModel *model, QObject *parent = 0);
 
   void setModel(QAbstractItemModel* model);
@@ -65,6 +72,7 @@ protected slots:
   void onRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
   void onRowsInserted(const QModelIndex & parent, int start, int end);
   void onRowsRemoved(const QModelIndex & parent, int start, int end);
+  
 protected:
   virtual void onItemsAboutToBeInserted(const QModelIndex& parent, Qt::Orientation, int start, int end);
   virtual void onItemsAboutToBeRemoved(const QModelIndex& parent, Qt::Orientation, int start, int end);
@@ -72,8 +80,9 @@ protected:
   virtual void onItemsRemoved(const QModelIndex& parent, Qt::Orientation, int start, int end);
   QList<QPersistentModelIndex> persistentModelIndexes(const QModelIndex& index)const;
   virtual void test(bool result, const QString& errorString)const;
+  
 private:
-  QCTK_DECLARE_PRIVATE(ctkModelTester);
+  CTK_DECLARE_PRIVATE(ctkModelTester);
 };
 
 #endif

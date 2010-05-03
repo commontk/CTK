@@ -16,14 +16,26 @@ ctkMacroSetupQt()
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
   ${CTK_SOURCE_DIR}/Libs/Core
+  )
+
+# Do not export symbol in ctkDependencyGraph class
+ADD_DEFINITIONS(-DNO_SYMBOL_EXPORT)
+
+# Configure CTKCoreExport.h
+SET(MY_EXPORT_HEADER_PREFIX CTKCore)
+SET(MY_LIBRARY_EXPORT_DIRECTIVE CTK_CORE_EXPORT)
+CONFIGURE_FILE(
+  ${CTK_SOURCE_DIR}/Libs/CTKExport.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
   )
 
 # Add excutable
 ADD_EXECUTABLE(${PROJECT_NAME}
-  DGraph.cxx
+  DGraph.cpp
   ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.h
-  ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.cxx)
+  ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.cpp)
   
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${QT_LIBRARIES} )
 

@@ -1,7 +1,7 @@
 PROJECT(CTKWidgets)
 
 #
-# See CTK/CMake/ctkMacroBuildQtLib.cmake for details
+# See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
 SET(KIT_export_directive "CTK_WIDGETS_EXPORT")
@@ -12,28 +12,104 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkSettings.cxx
+  ctkAddRemoveComboBox.cpp
+  ctkAddRemoveComboBox.h
+  ctkButtonGroup.cpp
+  ctkButtonGroup.h
+  ctkCheckableHeaderView.cpp
+  ctkCheckableHeaderView.h
+  ctkCheckBoxPixmaps.cpp
+  ctkCheckBoxPixmaps.h
+  ctkCollapsibleButton.cpp
+  ctkCollapsibleButton.h
+  ctkCollapsibleGroupBox.cpp
+  ctkCollapsibleGroupBox.h
+  ctkColorPickerButton.cpp
+  ctkColorPickerButton.h
+  ctkConsoleWidget.cpp
+  ctkConsoleWidget.h
+  ctkCoordinatesWidget.cpp
+  ctkCoordinatesWidget.h
+  ctkDirectoryButton.cpp
+  ctkDirectoryButton.h
+  ctkDoubleRangeSlider.cpp
+  ctkDoubleRangeSlider.h
+  ctkDoubleSlider.cpp
+  ctkDoubleSlider.h
+  ctkDynamicSpacer.cpp
+  ctkDynamicSpacer.h
+  ctkFittedTextBrowser.cpp
+  ctkFittedTextBrowser.h
+  ctkMatrixWidget.cpp
+  ctkMatrixWidget.h
+  ctkMenuButton.cpp
+  ctkMenuButton.h
+  ctkRangeSlider.cpp
+  ctkRangeSlider.h
+  ctkRangeWidget.cpp
+  ctkRangeWidget.h
+  ctkSettings.cpp
   ctkSettings.h
+  ctkSliderSpinBoxWidget.cpp
+  ctkSliderSpinBoxWidget.h
+  ctkTestApplication.cpp
+  ctkTestApplication.h
+  ctkTitleComboBox.cpp
+  ctkTitleComboBox.h
+  ctkTransferFunctionItems.cpp
+  ctkTransferFunctionItems.h
+  ctkTransferFunctionWidget.cpp
+  ctkTransferFunctionWidget.h
+  ctkTreeComboBox.cpp
+  ctkTreeComboBox.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkAddRemoveComboBox.h
+  ctkButtonGroup.h
+  ctkCheckableHeaderView.h
+  ctkCheckBoxPixmaps.h
+  ctkCollapsibleButton.h
+  ctkCollapsibleGroupBox.h
+  ctkColorPickerButton.h
+  ctkConsoleWidget.h
+  ctkCoordinatesWidget.h
+  ctkDirectoryButton.h
+  ctkDoubleRangeSlider.h
+  ctkDoubleSlider.h
+  ctkDynamicSpacer.h
+  ctkFittedTextBrowser.h
+  ctkMatrixWidget.h
+  ctkMenuButton.h
+  ctkRangeSlider.h
+  ctkRangeWidget.h
   ctkSettings.h
+  ctkSliderSpinBoxWidget.h
+  ctkTestApplication.h
+  ctkTitleComboBox.h
+  ctkTransferFunctionItems.h
+  ctkTransferFunctionWidget.h
+  ctkTreeComboBox.h
   )
 
 # UI files
 SET(KIT_UI_FORMS
-)
+  Resources/UI/ctkAddRemoveComboBox.ui
+  Resources/UI/ctkRangeWidget.ui
+  Resources/UI/ctkSliderSpinBoxWidget.ui
+  )
 
 # Resources
 SET(KIT_resources
-)
+  Resources/CTKWidgets.qrc
+  )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
 
-ctkMacroBuildQtLib(
+ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
@@ -46,9 +122,9 @@ ctkMacroBuildQtLib(
   )
 
 # Plugins
-#ADD_SUBDIRECTORY(Plugins)
+ADD_SUBDIRECTORY(Plugins)
 
 # Testing
 IF(BUILD_TESTING)
-  #ADD_SUBDIRECTORY(Testing)
+  ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)

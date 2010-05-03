@@ -1,0 +1,72 @@
+#
+# CTKConfig.cmake - CTK CMake configuration file for external projects.
+#
+# This file is configured by CTK and used by the UseCTK.cmake module
+# to load CTK's settings for an external project.
+
+@CTK_CONFIG_INSTALL_ONLY@
+
+# The CTK include file directories.
+SET(CTK_INCLUDE_DIRS "@CTK_INCLUDE_DIRS_CONFIG@")
+ 
+# The CTK library directories.
+SET(CTK_LIBRARY_DIRS "@CTK_LIBRARY_DIRS_CONFIG@")
+ 
+# The CTK binary executable directories. Note that if
+# CTK_CONFIGURATION_TYPES is set (see below) then these directories
+# will be the parent directories under which there will be a directory
+# of runtime binaries for each configuration type.
+SET(CTK_EXECUTABLE_DIRS "@CTK_EXECUTABLE_DIRS_CONFIG@")
+ 
+# The CTK runtime library directories. Note that if
+# CTK_CONFIGURATION_TYPES is set (see below) then these directories
+# will be the parent directories under which there will be a directory
+# of runtime libraries for each configuration type.
+SET(CTK_RUNTIME_LIBRARY_DIRS "@CTK_RUNTIME_LIBRARY_DIRS_CONFIG@")
+
+# The CTK Qt designer plugin directory. Note that if
+# CTK_CONFIGURATION_TYPES is set (see below) then these directories
+# will be the parent directories under which there will be a directory
+# of runtime libraries for each configuration type.
+SET(CTK_QTDESIGNERPLUGINS_DIR "@CTK_QTDESIGNERPLUGINS_DIR_CONFIG@")
+ 
+# The CTK version number
+SET(CTK_MAJOR_VERSION "@CTK_MAJOR_VERSION@")
+SET(CTK_MINOR_VERSION "@CTK_MINOR_VERSION@")
+SET(CTK_BUILD_VERSION "@CTK_BUILD_VERSION@")
+ 
+# The location of the UseCTK.cmake file.
+SET(CTK_USE_FILE "@CTK_USE_FILE@")
+ 
+# CMake extension module directory
+SET(CTK_CMAKE_DIR "@CTK_CMAKE_DIR_CONFIG@")
+SET(CTK_CMAKE_UTILITIES_DIR "@CTK_CMAKE_UTILITIES_DIR_CONFIG@")
+ 
+# TODO The list of available libraries.
+
+# TODO The list of available plugins.
+
+# TODO The list of available applications.
+
+# TODO The Doxygen configuration.
+#SET(CTK_DOXYGEN_HOME "@CTK_DOXYGEN_HOME_CONFIG@")
+ 
+# TODO Relative install paths in the CTK install tree
+#SET(CTK_INSTALL_BIN_DIR "@CTK_INSTALL_BIN_DIR@")
+#SET(CTK_INSTALL_INCLUDE_DIR "@CTK_INSTALL_INCLUDE_DIR@")
+#SET(CTK_INSTALL_LIB_DIR "@CTK_INSTALL_LIB_DIR@")
+#SET(CTK_INSTALL_PACKAGE_DIR "@CTK_INSTALL_PACKAGE_DIR@")
+ 
+# A CTK install tree always provides one build configuration. A CTK
+# build tree may provide either one or multiple build configurations
+# depending on the CMake generator used. Since CTK can be used either
+# from a build tree or an install tree it is useful for outside
+# projects to know the configurations available. If this
+# CTKConfig.cmake is in a CTK install tree CTK_CONFIGURATION_TYPES
+# will be empty and CTK_BUILD_TYPE will be set to the value of
+# CMAKE_BUILD_TYPE used to build CTK. If CTKConfig.cmake is in a CTK
+# build tree then CTK_CONFIGURATION_TYPES and CTK_BUILD_TYPE will have
+# values matching CMAKE_CONFIGURATION_TYPES and CMAKE_BUILD_TYPE for
+# that build tree (only one will ever be set).
+SET(CTK_CONFIGURATION_TYPES @CTK_CONFIGURATION_TYPES_CONFIG@)
+SET(CTK_BUILD_TYPE @CTK_BUILD_TYPE_CONFIG@)

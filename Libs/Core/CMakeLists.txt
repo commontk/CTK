@@ -1,5 +1,11 @@
 PROJECT(CTKCore)
 
+# CMake modules
+SET(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
+
+# CMake Macros
+INCLUDE(CMake/ctkMacroBFDCheck.cmake)
+
 #
 # 3rd party dependencies
 #
@@ -26,9 +32,9 @@ ELSEIF(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG)
 ELSEIF(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE)
   SET(QTMOBILITY_QTSERVICEFW_LIBRARIES ${QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE})
 ENDIF()
-             
+
 #
-# See CTK/CMake/ctkMacroBuildQtLib.cmake for details
+# See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
 SET(KIT_export_directive "CTK_CORE_EXPORT")
@@ -40,11 +46,25 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkDependencyGraph.cxx
+  ctkAbstractFactory.h
+  ctkAbstractFactory.tpp
+  ctkAbstractObjectFactory.h
+  ctkAbstractObjectFactory.tpp
+  ctkAbstractPluginFactory.h
+  ctkAbstractPluginFactory.tpp
+  ctkAbstractQObjectFactory.h
+  ctkAbstractQObjectFactory.tpp
+  ctkAbstractLibraryFactory.h
+  ctkAbstractLibraryFactory.tpp
+  ctkDependencyGraph.cpp
   ctkDependencyGraph.h
-  ctkModelTester.cxx
+  ctkModelTester.cpp
   ctkModelTester.h
-  ctkUtils.cxx
+  ctkPimpl.h
+  ctkSingleton.h
+  ctkTransferFunction.cpp
+  ctkTransferFunction.h
+  ctkUtils.cpp
   ctkUtils.h
 
   # PluginFramework sources
@@ -76,13 +96,17 @@ SET(KIT_SRCS
   EventBus/ctkEventConstants.cxx
   )
 
+IF(CTK_HAVE_BFD)
+  LIST(APPEND KIT_SRCS
+    ctkBinaryFileDescriptor.cpp
+    ctkBinaryFileDescriptor.h
+    )
+ENDIF()
+
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkModelTester.h
-
-  # PluginFramework headers
-  #PluginFramework/ctkPluginActivator.h
-
+  ctkTransferFunction.h
   )
 
 # UI files
@@ -104,7 +128,7 @@ ctkMacroGeneratePluginManifest(KIT_SRCS
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
 
-ctkMacroBuildQtLib(
+ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
