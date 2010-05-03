@@ -22,7 +22,7 @@
 #define __ctkDirectoryButton_h
 
 // Qt includes
-#include <QPushButton>
+#include <QDir>
 #include <QFileDialog>
 
 // CTK includes
@@ -30,9 +30,10 @@
 #include "CTKWidgetsExport.h"
 class ctkDirectoryButtonPrivate;
 
-class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QPushButton
+class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString directory READ directory WRITE setDirectory)
   Q_PROPERTY(QString caption READ caption WRITE setCaption)
   Q_PROPERTY(Options options READ options WRITE setOptions)
   // QFileDialog::Options is not a meta-type, we need to create our own.
@@ -53,9 +54,15 @@ public:
   Q_DECLARE_FLAGS(Options, Option)
     
   ctkDirectoryButton(QWidget * parent = 0);
-  ctkDirectoryButton(const QString & text, QWidget * parent = 0);
-  ctkDirectoryButton(const QIcon & icon, const QString & text, QWidget * parent = 0);
+  ctkDirectoryButton(const QString& directory, QWidget * parent = 0);
+  ctkDirectoryButton(const QIcon& icon, const QString& directory, QWidget * parent = 0);
 
+  void setDirectory(const QString& directory);
+  QString directory()const;
+  
+  ///
+  /// The title of the file dialog used to select a new directory
+  /// If caption is not set, internally use QWidget::tooltip()
   void setCaption(const QString& caption);
   const QString& caption()const;
   
@@ -66,6 +73,9 @@ public slots:
   void browse();
 
 signals:
+  ///
+  /// directoryChanged is emitted when the current directory changes
+  ///if you want a directoryChanged signal as a utility. Feel free to add it
   void directoryChanged(const QString&);
 
 private:
