@@ -1,7 +1,7 @@
 #ifndef CTKEVENTBUSPLUGIN_H
 #define CTKEVENTBUSPLUGIN_H
 
-#include <PluginFramework/ctkPluginActivator.h>
+#include <ctkPluginActivator.h>
 
 #include <QServicePluginInterface>
 

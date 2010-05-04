@@ -27,11 +27,11 @@
 #include <QString>
 #include <QDebug>
 
-#include "CTKCoreExport.h"
+#include "CTKPluginFrameworkExport.h"
 
 namespace ctk {
 
-  class CTK_CORE_EXPORT PluginException : public std::runtime_error
+  class CTK_PLUGINFW_EXPORT PluginException : public std::runtime_error
   {
   public:
 
@@ -97,6 +97,6 @@ namespace ctk {
 
 }
 
-CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctk::PluginException& exc);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::PluginException& exc);
 
 #endif // CTKPLUGINEXCEPTION_H

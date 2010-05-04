@@ -32,7 +32,7 @@ namespace ctk {
   class PluginFrameworkContextPrivate;
   class PluginPrivate;
 
-  class CTK_CORE_EXPORT Plugin {
+  class CTK_PLUGINFW_EXPORT Plugin {
 
     Q_DECLARE_PRIVATE(Plugin)
 

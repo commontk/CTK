@@ -24,7 +24,7 @@
 
 #include "ctkPluginContext.h"
 
-#include "CTKCoreExport.h"
+#include "CTKPluginFrameworkExport.h"
 
 namespace ctk {
 

@@ -27,7 +27,7 @@
 #include <QVariant>
 #include <QUrl>
 
-#include "CTKCoreExport.h"
+#include "CTKPluginFrameworkExport.h"
 
 
 namespace ctk {
@@ -38,7 +38,7 @@ namespace ctk {
   class ServiceReference;
   class PluginContextPrivate;
 
-  class CTK_CORE_EXPORT PluginContext
+  class CTK_PLUGINFW_EXPORT PluginContext
   {
 
 	  Q_DECLARE_PRIVATE(PluginContext)

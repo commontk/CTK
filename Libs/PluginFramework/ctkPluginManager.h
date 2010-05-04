@@ -19,42 +19,42 @@
 
 =============================================================================*/
 
-#ifndef CTKLDAPSEARCHFILTER_H
-#define CTKLDAPSEARCHFILTER_H
+#ifndef CTKPLUGINMANAGER_H_
+#define CTKPLUGINMANAGER_H_
 
-#include "CTKCoreExport.h"
-
-#include <QMap>
 #include <QString>
-#include <QVariant>
+#include <QServiceManager>
+
+#include <CTKPluginFrameworkExport.h>
 
 namespace ctk {
 
-  class LDAPSearchFilterPrivate;
+  using namespace QtMobility;
 
-  class CTK_CORE_EXPORT LDAPSearchFilter {
+  class PluginManagerPrivate;
+
+  class CTK_PLUGINFW_EXPORT PluginManager
+  {
+    Q_DECLARE_PRIVATE(PluginManager)
 
   public:
 
-    typedef QMap<QString, QVariant> Dictionary;
+    PluginManager();
+    virtual ~PluginManager();
 
-    LDAPSearchFilter(const QString& filter = "");
-    LDAPSearchFilter(const LDAPSearchFilter& filter);
+    QServiceManager* serviceManager();
 
-    ~LDAPSearchFilter();
+	  void addSearchPath(const QString& searchPath);
 
-    bool match(const Dictionary& dictionary) const;
-    bool matchCase(const Dictionary& dictionary) const;
-
-    bool operator==(const LDAPSearchFilter& other) const;
-    LDAPSearchFilter& operator=(const LDAPSearchFilter& filter);
+	  void startAllPlugins();
 
   protected:
 
-    LDAPSearchFilterPrivate * d;
+	  PluginManagerPrivate* const d_ptr;
 
   };
 
 }
 
-#endif // CTKLDAPSEARCHFILTER_H
+
+#endif /* CTKPLUGINMANAGER_H_ */

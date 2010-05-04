@@ -3,11 +3,11 @@
 
 #include <QString>
 
-#include "CTKCoreExport.h"
+#include "CTKPluginFrameworkExport.h"
 
 namespace ctk {
 
-  struct CTK_CORE_EXPORT EventConstants {
+  struct CTK_PLUGINFW_EXPORT EventConstants {
 
     static const QString EVENT_TOPIC; // = "event.topics"
     static const QString EVENT_FILTER; // = "event.filter"

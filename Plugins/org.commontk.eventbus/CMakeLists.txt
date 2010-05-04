@@ -17,11 +17,11 @@ SET(PLUGIN_resources
   org_commontk_eventbus.qrc
 )
 
-SET(LIBRARY_OUTPUT_PATH ${LIBRARY_OUTPUT_PATH}/Plugins)
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Plugins)
 
 ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
 
-ctkMacroBuildQtPlugin(
+ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}

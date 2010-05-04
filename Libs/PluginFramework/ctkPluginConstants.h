@@ -24,11 +24,11 @@
 
 #include <QString>
 
-#include "CTKCoreExport.h"
+#include "CTKPluginFrameworkExport.h"
 
 namespace ctk {
 
-  struct CTK_CORE_EXPORT PluginConstants {
+  struct CTK_PLUGINFW_EXPORT PluginConstants {
 
     /**
      * Location identifier of the CTK <i>system plugin</i>, which is defined

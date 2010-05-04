@@ -209,6 +209,7 @@ ENDIF()
 #
 SET(CTK_LIBS
   Core:ON
+  PluginFramework:ON
   Widgets:OFF
   DICOM/Core:OFF
   DICOM/Widgets:OFF
@@ -224,7 +225,7 @@ SET(CTK_LIBS
 #
 SET(CTK_PLUGINS
   org.commontk.eventbus:ON
-  #org.commontk.cli:OFF
+  org.commontk.cli:OFF
   )
 
 #-----------------------------------------------------------------------------

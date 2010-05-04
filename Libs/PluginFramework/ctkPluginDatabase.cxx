@@ -325,15 +325,16 @@ PluginArchive* PluginDatabase::insertPlugin(const QUrl& location, const QString&
 
   try
   {
-    commitTransaction(&query);
-
+    PluginArchive* archive = 0;
     if (createArchive)
     {
-      PluginArchive* archive = new PluginArchive(m_PluginStorage, location, localPath,
-                                               pluginId);
-      return archive;
+      archive = new PluginArchive(m_PluginStorage, location, localPath,
+                                  pluginId);
     }
-    else return 0;
+
+    commitTransaction(&query);
+
+    return archive;
   }
   catch (...)
   {

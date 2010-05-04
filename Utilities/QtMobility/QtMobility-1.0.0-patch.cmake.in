@@ -14,7 +14,7 @@ SET(configured_patch_dir @qtmobility_configured_patch_dir@)
 SET(QT_BINARY_DIR @QT_BINARY_DIR@)
 
 SET(patch_files
-  QtMobility-1.0.0.patch
+  ${patch_dir}/QtMobility-1.0.0.patch
 )
 
 IF(WIN32)

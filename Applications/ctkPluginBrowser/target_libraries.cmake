@@ -5,5 +5,5 @@
 # 
 
 SET(target_libraries
-  CTKCore
+  CTKPluginFramework
   )

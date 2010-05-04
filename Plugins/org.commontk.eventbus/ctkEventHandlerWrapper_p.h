@@ -5,7 +5,7 @@
 
 #include <EventBus/ctkEventBus.h>
 #include <EventBus/ctkEventConstants.h>
-#include <PluginFramework/ctkLDAPSearchFilter.h>
+#include <ctkLDAPSearchFilter.h>
 
 #include <iostream>
 

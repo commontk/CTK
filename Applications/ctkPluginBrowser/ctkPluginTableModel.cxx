@@ -21,8 +21,8 @@
 
 #include "ctkPluginTableModel.h"
 
-#include <PluginFramework/ctkPlugin.h>
-#include <PluginFramework/ctkPluginContext.h>
+#include <ctkPlugin.h>
+#include <ctkPluginContext.h>
 
 namespace ctk {
 

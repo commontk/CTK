@@ -19,42 +19,39 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINMANAGER_H_
-#define CTKPLUGINMANAGER_H_
+#ifndef CTKPLUGINFRAMEWORKCONTEXT_H
+#define CTKPLUGINFRAMEWORKCONTEXT_H
 
+#include <QHash>
 #include <QString>
-#include <QServiceManager>
+#include <QVariant>
 
-#include <CTKCoreExport.h>
+#include "CTKPluginFrameworkExport.h"
 
 namespace ctk {
 
-  using namespace QtMobility;
+  class PluginFramework;
+  class PluginFrameworkContextPrivate;
 
-  class PluginManagerPrivate;
+  class CTK_PLUGINFW_EXPORT PluginFrameworkContext {
 
-  class CTK_CORE_EXPORT PluginManager
-  {
-    Q_DECLARE_PRIVATE(PluginManager)
+    Q_DECLARE_PRIVATE(PluginFrameworkContext)
 
   public:
 
-    PluginManager();
-    virtual ~PluginManager();
+    typedef QHash<QString, QVariant> Properties;
 
-    QServiceManager* serviceManager();
+    PluginFrameworkContext(const Properties& initProps);
+    ~PluginFrameworkContext();
 
-	  void addSearchPath(const QString& searchPath);
+    PluginFramework* getFramework();
 
-	  void startAllPlugins();
+  private:
 
-  protected:
-
-	  PluginManagerPrivate* const d_ptr;
+    PluginFrameworkContextPrivate * const d_ptr;
 
   };
 
 }
 
-
-#endif /* CTKPLUGINMANAGER_H_ */
+#endif // CTKPLUGINFRAMEWORKCONTEXT_H

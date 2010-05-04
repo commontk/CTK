@@ -1,19 +1,19 @@
 #ifndef CTKEVENT_H
 #define CTKEVENT_H
 
-#include "CTKCoreExport.h"
+#include "CTKPluginFrameworkExport.h"
 
 #include <QMap>
 #include <QVariant>
 #include <QStringList>
 
-#include <PluginFramework/ctkLDAPSearchFilter.h>
+#include <ctkLDAPSearchFilter.h>
 
 namespace ctk {
 
   class EventPrivate;
 
-  class CTK_CORE_EXPORT Event {
+  class CTK_PLUGINFW_EXPORT Event {
 
   public:
 

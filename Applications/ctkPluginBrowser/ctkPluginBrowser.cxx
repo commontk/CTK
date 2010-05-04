@@ -27,8 +27,8 @@
 
 #include <ui_ctkPluginBrowserMainWindow.h>
 
-#include <PluginFramework/ctkPluginException.h>
-#include <PluginFramework/ctkPluginFramework.h>
+#include <ctkPluginException.h>
+#include <ctkPluginFramework.h>
 
 #include <QApplication>
 #include <QMainWindow>

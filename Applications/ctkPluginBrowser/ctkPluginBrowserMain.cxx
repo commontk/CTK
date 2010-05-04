@@ -19,9 +19,9 @@
 
 =============================================================================*/
 
-#include <PluginFramework/ctkPluginFrameworkContext.h>
-#include <PluginFramework/ctkPluginFramework.h>
-#include <PluginFramework/ctkPluginException.h>
+#include <ctkPluginFrameworkContext.h>
+#include <ctkPluginFramework.h>
+#include <ctkPluginException.h>
 
 #include "ctkPluginBrowser.h"
 

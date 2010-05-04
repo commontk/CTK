@@ -8,7 +8,7 @@
 #ifndef CTKCLIPLUGIN_H_
 #define CTKCLIPLUGIN_H_
 
-#include <PluginFramework/ctkPluginActivator.h>
+#include <ctkPluginActivator.h>
 
 #include <QServicePluginInterface>
 

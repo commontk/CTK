@@ -21,7 +21,7 @@
 
 #include "ctkPluginResourcesTreeModel.h"
 
-#include <PluginFramework/ctkPlugin.h>
+#include <ctkPlugin.h>
 
 namespace ctk {
 

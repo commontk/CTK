@@ -25,7 +25,7 @@
 #include <QString>
 #include <QRegExp>
 
-#include "CTKCoreExport.h"
+#include "CTKPluginFrameworkExport.h"
 
 namespace ctk {
 
@@ -48,7 +48,7 @@ namespace ctk {
    * @Immutable
    */
 
-  class CTK_CORE_EXPORT Version {
+  class CTK_PLUGINFW_EXPORT Version {
 
   private:
 
@@ -234,6 +234,6 @@ namespace ctk {
 
 }
 
-CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctk::Version& v);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::Version& v);
 
 #endif // CTKVERSION_H

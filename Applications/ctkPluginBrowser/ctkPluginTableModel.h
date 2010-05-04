@@ -26,7 +26,7 @@
 
 #include <QList>
 
-#include <PluginFramework/ctkPlugin.h>
+#include <ctkPlugin.h>
 
 namespace ctk {
 

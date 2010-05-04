@@ -14,7 +14,6 @@ SET(KIT_export_directive "CTK_CORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
-  ${QTMOBILITY_INCLUDE_DIRS}
   )
   
 # Source files
@@ -39,34 +38,6 @@ SET(KIT_SRCS
   ctkTransferFunction.h
   ctkUtils.cpp
   ctkUtils.h
-
-  # PluginFramework sources
-  PluginFramework/ctkLDAPSearchFilter.cxx
-  PluginFramework/ctkPlugin.cxx
-  PluginFramework/ctkPluginArchive.cxx
-  PluginFramework/ctkPluginConstants.cxx
-  PluginFramework/ctkPluginContext.cxx
-  PluginFramework/ctkPluginDatabase.cxx
-  PluginFramework/ctkPluginDatabaseException.cxx
-  PluginFramework/ctkPluginException.cxx
-  PluginFramework/ctkPluginFramework.cxx
-  PluginFramework/ctkPluginFrameworkContext.cxx
-  PluginFramework/ctkPluginFrameworkContextPrivate.cxx
-  PluginFramework/ctkPluginFrameworkPrivate.cxx
-  PluginFramework/ctkPluginManager.cxx
-  PluginFramework/ctkPluginManifest.cxx
-  PluginFramework/ctkPluginPrivate.cxx
-  PluginFramework/ctkPlugins.cxx
-  PluginFramework/ctkServiceReference.cxx
-  PluginFramework/ctkServiceRegistration.cxx
-  #PluginFramework/ctkServiceRegistry.cxx
-  PluginFramework/ctkPluginStorage.cxx
-  PluginFramework/ctkVersion.cxx
-  PluginFramework/ctkVersionRange.cxx
-
-  # EventBus sources
-  EventBus/ctkEvent.cxx
-  EventBus/ctkEventConstants.cxx
   )
 
 IF(CTK_HAVE_BFD)
@@ -89,13 +60,6 @@ SET(KIT_UI_FORMS
 # Resources
 SET(KIT_resources
 )
-
-# Create a MANIFEST.MF resource for the CTK Core,
-# pretending that is is a plugin (the system plugin)
-ctkMacroGeneratePluginManifest(KIT_SRCS
-  SYMBOLIC_NAME "system.plugin"
-  VERSION "0.9.9"
-  )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'

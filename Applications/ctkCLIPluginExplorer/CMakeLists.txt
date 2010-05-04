@@ -1,7 +1,7 @@
 PROJECT(ctkCLIPluginExplorer)
 
 #
-# See CTK/CMake/ctkMacroBuildQtApp.cmake for details
+# See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
 
 SET(KIT_SRCS
@@ -28,7 +28,7 @@ ctkMacroGetTargetLibraries(KIT_target_libraries)
 SET(KIT_include_directories
   )
 
-ctkMacroBuildQtApp(
+ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}

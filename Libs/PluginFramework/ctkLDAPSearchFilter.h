@@ -19,47 +19,42 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORK_H
-#define CTKPLUGINFRAMEWORK_H
+#ifndef CTKLDAPSEARCHFILTER_H
+#define CTKLDAPSEARCHFILTER_H
 
-#include "ctkPlugin.h"
+#include "CTKPluginFrameworkExport.h"
 
-
-#include "CTKCoreExport.h"
+#include <QMap>
+#include <QString>
+#include <QVariant>
 
 namespace ctk {
 
-  class PluginFrameworkContextPrivate;
-  class PluginFrameworkPrivate;
+  class LDAPSearchFilterPrivate;
 
-  class CTK_CORE_EXPORT PluginFramework : public Plugin
-  {
-
-    Q_DECLARE_PRIVATE(PluginFramework)
+  class CTK_PLUGINFW_EXPORT LDAPSearchFilter {
 
   public:
 
-    /**
-     * Initialize this framework.
-     */
-    void init();
+    typedef QMap<QString, QVariant> Dictionary;
 
-    // TODO return info about the reason why this
-    // method returned
-    void waitForStop(int timeout);
+    LDAPSearchFilter(const QString& filter = "");
+    LDAPSearchFilter(const LDAPSearchFilter& filter);
 
-    QStringList getResourceList(const QString& path) const;
+    ~LDAPSearchFilter();
 
-    QByteArray getResource(const QString& path) const;
+    bool match(const Dictionary& dictionary) const;
+    bool matchCase(const Dictionary& dictionary) const;
+
+    bool operator==(const LDAPSearchFilter& other) const;
+    LDAPSearchFilter& operator=(const LDAPSearchFilter& filter);
 
   protected:
 
-    friend class PluginFrameworkContextPrivate;
-
-    PluginFramework(PluginFrameworkContextPrivate* fw);
+    LDAPSearchFilterPrivate * d;
 
   };
 
 }
 
-#endif // CTKPLUGINFRAMEWORK_H
+#endif // CTKLDAPSEARCHFILTER_H
