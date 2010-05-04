@@ -213,7 +213,7 @@ IF(${add_project})
   ENDIF()
 
   ExternalProject_Add(${proj}
-    URL ${CTK_BINARY_DIR}/Utilities/QtMobility/qt-mobility-servicefw-opensource-src-1.0.0.tar.gz
+    URL ${CTK_SOURCE_DIR}/Utilities/QtMobility/qt-mobility-servicefw-opensource-src-1.0.0.tar.gz
     PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CMAKE_BINARY_DIR}/CTK-build/bin -no-docs -modules ${qtmobility_modules}
     BUILD_COMMAND ${qtmobility_make_cmd}

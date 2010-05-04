@@ -14,7 +14,7 @@ SET(configured_patch_dir @qtmobility_configured_patch_dir@)
 SET(QT_BINARY_DIR @QT_BINARY_DIR@)
 
 SET(patch_files
-  QtMobility-1.0.0.patch
+  ${patch_dir}/QtMobility-1.0.0.patch
 )
 
 IF(WIN32)
@@ -52,11 +52,3 @@ IF(UNIX)
   ENDIF()
 ENDIF()
 
-# Let's add the updated files to the local repository. That way, 'git pull'
-# will try to merge the branch changes with the local ones
-execute_process(
-  COMMAND @Git_EXECUTABLE@ add --all
-  WORKING_DIRECTORY ${proj_dir}
-  ERROR_VARIABLE error_output
-  RESULT_VARIABLE error_code
-  )
