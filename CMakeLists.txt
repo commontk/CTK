@@ -102,7 +102,7 @@ INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
 INCLUDE(CMake/ctkMacroValidateBuildOptions.cmake)
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
-INCLUDE(CMake/ctkMacroGenerateDGraphInput.cmake)
+INCLUDE(CMake/ctkFunctionGenerateDGraphInput.cmake)
 INCLUDE(CMake/ctkFunctionGenerateProjectXml.cmake)
 
 # Used by CTKGenerateCTKConfig.cmake
@@ -351,7 +351,7 @@ MARK_AS_ADVANCED(DGraph_EXECUTABLE)
 #-----------------------------------------------------------------------------
 # Let's make sure the enabled/disabled libraries, plugins or applications are coherent
 #
-ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" FALSE)
+ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" FALSE)
 ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${target_directories}")
 
 #-----------------------------------------------------------------------------
@@ -359,7 +359,7 @@ ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${targe
 #
 
 # Generate DGraph input file expected by DGraph
-ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" TRUE)
+ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" TRUE)
 
 # Obtain list of target ordered topologically
 EXECUTE_PROCESS(
