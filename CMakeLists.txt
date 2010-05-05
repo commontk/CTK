@@ -103,7 +103,7 @@ INCLUDE(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
 INCLUDE(CMake/ctkMacroValidateBuildOptions.cmake)
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkMacroGenerateDGraphInput.cmake)
-INCLUDE(CMake/ctkMacroGenerateProjectXml.cmake)
+INCLUDE(CMake/ctkFunctionGenerateProjectXml.cmake)
 
 # Used by CTKGenerateCTKConfig.cmake
 SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)
@@ -383,7 +383,7 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
 #
 
 # Generate Project.xml file expected by the CTest driver script
-ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
+ctkFunctionGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
 
 #-----------------------------------------------------------------------------
 # Superbuild script
