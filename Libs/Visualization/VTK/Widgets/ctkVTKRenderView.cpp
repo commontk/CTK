@@ -165,3 +165,6 @@ void ctkVTKRenderView::resetCamera()
   CTK_D(ctkVTKRenderView);
   d->Renderer->ResetCamera();
 }
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, vtkRenderer*, renderer, Renderer);

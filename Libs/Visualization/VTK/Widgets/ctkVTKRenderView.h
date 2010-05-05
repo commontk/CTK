@@ -31,6 +31,7 @@
 
 class ctkVTKRenderViewPrivate;
 class vtkRenderWindowInteractor;
+class vtkRenderer;
 
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
 {
@@ -58,6 +59,9 @@ public:
   void setBackgroundColor(double r, double g, double b);
 
   void resetCamera();
+
+  /// Get a reference to the associated vtkRenderer
+  vtkRenderer* renderer()const;
 
   //virtual void setCornerText(const QString& text);
   
