@@ -89,7 +89,7 @@ SET(CTK_BASE_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
 SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 
 #-----------------------------------------------------------------------------
-# CMake Macro(s)
+# CMake Function(s) and Macro(s)
 #
 INCLUDE(CMake/ctkMacroParseArguments.cmake)
 INCLUDE(CMake/ctkMacroListFilter.cmake)
@@ -99,7 +99,7 @@ INCLUDE(CMake/ctkMacroBuildApp.cmake)
 INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
-INCLUDE(CMake/ctkMacroExtractOptionNameAndValue.cmake)
+INCLUDE(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
 INCLUDE(CMake/ctkMacroValidateBuildOptions.cmake)
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkMacroGenerateDGraphInput.cmake)
@@ -278,7 +278,7 @@ SET(CTK_APPLICATIONS_SUBDIRS )
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
 #
 FOREACH(lib ${CTK_LIBS})
-  ctkMacroExtractOptionNameAndValue(${lib} lib_name lib_value)
+  ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
   OPTION(CTK_LIB_${lib_name} "Enable ${lib_name} Library." ${lib_value})
   ctkMacroAddCtkLibraryOptions(${lib_name})
   LIST(APPEND CTK_LIBS_SUBDIRS "${lib_name}")
@@ -286,14 +286,14 @@ ENDFOREACH()
 
 # Build options associated with CTK plugins
 FOREACH(plugin ${CTK_PLUGINS})
-  ctkMacroExtractOptionNameAndValue(${plugin} plugin_name plugin_value)
+  ctkFunctionExtractOptionNameAndValue(${plugin} plugin_name plugin_value)
   OPTION(CTK_PLUGIN_${plugin_name} "Build ${plugin_name} Plugin." ${plugin_value})
   LIST(APPEND CTK_PLUGINS_SUBDIRS "${plugin_name}")
 ENDFOREACH()
 
 # Build options associated with CTK applications
 FOREACH(app ${CTK_APPLICATIONS})
-  ctkMacroExtractOptionNameAndValue(${app} app_name app_value)
+  ctkFunctionExtractOptionNameAndValue(${app} app_name app_value)
   OPTION(CTK_APP_${app_name} "Build ${app_name} Application." ${app_value})
   LIST(APPEND CTK_APPLICATIONS_SUBDIRS "${app_name}")
 ENDFOREACH()

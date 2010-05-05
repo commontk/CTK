@@ -16,7 +16,7 @@ MACRO(ctkMacroAddCtkLibraryOptions lib)
     INCLUDE(${filepath})
 
     FOREACH(option ${ctk_library_options})
-      ctkMacroExtractOptionNameAndValue(${option} option_name option_value)
+      ctkFunctionExtractOptionNameAndValue(${option} option_name option_value)
       OPTION(CTK_LIB_${lib}_${option_name} "Enable ${lib} Library ${option_name} option." ${option_value})
     ENDFOREACH()
     
