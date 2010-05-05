@@ -17,7 +17,7 @@ if(error_code)
 endif()
 
 
-INCLUDE(@CTK_SOURCE_DIR@/CMake/ctkMacroApplyPatches.cmake)
+INCLUDE(@CTK_SOURCE_DIR@/CMake/ctkFunctionApplyPatches.cmake)
 
 SET(patch_dir @qtmobility_patch_dir@)
 SET(configured_patch_dir @qtmobility_configured_patch_dir@)
@@ -43,7 +43,7 @@ IF(UNIX)
 ENDIF()
 
 # Apply patches
-ctkMacroApplyPatches("@CTK_PATCH_EXECUTABLE@" "@qtmobility_src_dir@" "${patch_files}")
+ctkFunctionApplyPatches("@CTK_PATCH_EXECUTABLE@" "@qtmobility_src_dir@" "${patch_files}")
 
 IF(UNIX)
 
