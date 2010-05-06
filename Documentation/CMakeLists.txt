@@ -28,7 +28,7 @@ IF( DOXYGEN_FOUND )
     ) 
   ELSE( DOXYGEN_DOT_FOUND )
     MESSAGE( SEND_ERROR
-      "Warning: Doxygen not found - Documentation will not be created"
+      "Warning: Dot not found - Documentation will not be created"
       )
   ENDIF( DOXYGEN_DOT_FOUND )
 ENDIF( DOXYGEN_FOUND )
