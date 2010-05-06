@@ -246,16 +246,11 @@ MARK_AS_ADVANCED(DART_TESTING_TIMEOUT)
 OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
 
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 # Documentation
-OPTION( BUILD_DOCUMENTATION "Build Documentation" OFF )
+ADD_SUBDIRECTORY( Documentation )
 
-IF( BUILD_DOCUMENTATION )
-  ADD_SUBDIRECTORY( Documentation )
-ENDIF( BUILD_DOCUMENTATION )
-
-
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 # Will contain a list of sub-directory without option ON or OFF
 #
 SET(CTK_LIBS_SUBDIRS )
