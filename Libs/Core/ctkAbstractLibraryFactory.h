@@ -43,11 +43,15 @@ public:
   QString path()const;
   virtual QString loadErrorString()const;
 
+  ///
+  /// Set list of required symbols
   void setSymbols(const QStringList& symbols);
 
   /// 
   /// Resolve symbols
-  void resolve();
+  /// Note that the function will return False if it fails to resolve on
+  /// of the required symbols set using ::setSymbols
+  bool resolve();
   
   /// 
   /// Get symbol address

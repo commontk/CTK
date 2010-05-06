@@ -28,11 +28,15 @@
 #include "ctkAbstractFactory.h"
 
 //----------------------------------------------------------------------------
+// ctkAbstractFactoryItem methods
+
+//----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkAbstractFactoryItem<BaseClassType>::ctkAbstractFactoryItem(const QString& _key)
   :Instance()
   ,Key(_key)
 {
+  this->Verbose = false;
 }
 
 //----------------------------------------------------------------------------
@@ -85,8 +89,26 @@ void ctkAbstractFactoryItem<BaseClassType>::uninstantiate()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
+void ctkAbstractFactoryItem<BaseClassType>::setVerbose(bool value)
+{
+  this->Verbose = value;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+bool ctkAbstractFactoryItem<BaseClassType>::verbose()
+{
+  return this->Verbose;
+}
+
+//----------------------------------------------------------------------------
+// ctkAbstractFactory methods
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
 ctkAbstractFactory<BaseClassType>::ctkAbstractFactory()
 {
+  this->Verbose = false;
 }
 
 //----------------------------------------------------------------------------
@@ -151,7 +173,10 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(
       {
       errorStr = " - " + _item->loadErrorString();
       }
-    qCritical() << "Failed to load object:" << _item->key() << errorStr ;
+    if (this->verbose())
+      {
+      qCritical() << "Failed to load object:" << _item->key() << errorStr ;
+      }
     return false;
     }
   
@@ -170,6 +195,20 @@ ctkAbstractFactoryItem<BaseClassType> * ctkAbstractFactory<BaseClassType>::item(
     return 0;
     }
   return iter.value().data();
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactory<BaseClassType>::setVerbose(bool value)
+{
+  this->Verbose = value;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+bool ctkAbstractFactory<BaseClassType>::verbose()
+{
+  return this->Verbose;
 }
 
 #endif

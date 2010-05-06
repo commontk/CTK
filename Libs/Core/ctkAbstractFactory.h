@@ -46,11 +46,14 @@ public:
   bool instantiated();
   QString key();
   virtual void uninstantiate();
+  void setVerbose(bool value);
+  bool verbose();
 protected:
   virtual BaseClassType* instanciator() = 0;
   BaseClassType* Instance;
 private:
   QString Key;
+  bool Verbose;
 };
 
 //----------------------------------------------------------------------------
@@ -85,6 +88,11 @@ public:
   /// Method provided for convenience - Should be overloaded in subclasse
   virtual void registerItems(){}
 
+  /// Enabled verbose output
+  /// Warning and error message will be printed to standard outputs
+  void setVerbose(bool value);
+  bool verbose();
+
 protected:
 
   /// 
@@ -101,6 +109,8 @@ private:
   void operator=(const ctkAbstractFactory&); /// Not implemented
 
   QHash<QString, QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > > RegisteredItemMap;
+
+  bool Verbose;
 };
 
 #include "ctkAbstractFactory.tpp"
