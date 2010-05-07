@@ -890,7 +890,16 @@ endfunction(_ep_add_patch_command)
 
 # TODO: Make sure external projects use the proper compiler
 function(_ep_add_configure_command name)
-  ExternalProject_Get_Property(${name} source_dir binary_dir)
+  ExternalProject_Get_Property(${name} source_dir binary_dir tmp_dir)
+  # If anything about the configure command changes, (command itself, cmake
+  # used, cmake args or cmake generator) then re-run the configure step.
+  # Fixes issue http://public.kitware.com/Bug/view.php?id=10258
+  #
+  if(NOT EXISTS ${tmp_dir}/${name}-cfgcmd.txt.in)
+    file(WRITE ${tmp_dir}/${name}-cfgcmd.txt.in "cmd='@cmd@'\n")
+  endif()
+  configure_file(${tmp_dir}/${name}-cfgcmd.txt.in ${tmp_dir}/${name}-cfgcmd.txt)
+  list(APPEND file_deps ${tmp_dir}/${name}-cfgcmd.txt)
 
   _ep_get_configuration_subdir_suffix(cfgdir)
 
