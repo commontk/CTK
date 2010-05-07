@@ -43,6 +43,7 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate()
   this->Orientation = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
   this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->RenderPending = false;
+  this->RenderEnabled = false;
 }
 
 // --------------------------------------------------------------------------
@@ -115,6 +116,10 @@ CTK_GET_CXX(ctkVTKRenderView, vtkRenderWindowInteractor*, interactor, CurrentInt
 void ctkVTKRenderView::scheduleRender()
 {
   CTK_D(ctkVTKRenderView);
+  if (!d->RenderEnabled)
+    {
+    return;
+    }
   if (!d->RenderPending)
     {
     d->RenderPending = true;
@@ -126,6 +131,10 @@ void ctkVTKRenderView::scheduleRender()
 void ctkVTKRenderView::forceRender()
 {
   CTK_D(ctkVTKRenderView);
+  if (!d->RenderEnabled)
+    {
+    return;
+    }
   d->RenderWindow->Render();
   d->RenderPending = false;
 }
@@ -160,6 +169,20 @@ void ctkVTKRenderView::setBackgroundColor(double r, double g, double b)
 }
 
 //----------------------------------------------------------------------------
+vtkCamera* ctkVTKRenderView::activeCamera()
+{
+  CTK_D(ctkVTKRenderView);
+  if (d->Renderer->IsActiveCameraCreated())
+    {
+    return 0;
+    }
+  else
+    {
+    return d->Renderer->GetActiveCamera();
+    }
+}
+
+//----------------------------------------------------------------------------
 void ctkVTKRenderView::resetCamera()
 {
   CTK_D(ctkVTKRenderView);
@@ -168,3 +191,6 @@ void ctkVTKRenderView::resetCamera()
 
 //----------------------------------------------------------------------------
 CTK_GET_CXX(ctkVTKRenderView, vtkRenderer*, renderer, Renderer);
+
+//----------------------------------------------------------------------------
+CTK_SET_CXX(ctkVTKRenderView, bool, setRenderEnabled, RenderEnabled);

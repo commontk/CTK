@@ -59,6 +59,7 @@ public:
   vtkSmartPointer<vtkRenderer>                  Renderer;
   vtkSmartPointer<vtkRenderWindow>              RenderWindow;
   bool                                          RenderPending;
+  bool                                          RenderEnabled;
   
   vtkSmartPointer<vtkAxesActor>                 Axes;
   vtkSmartPointer<vtkOrientationMarkerWidget>   Orientation;
