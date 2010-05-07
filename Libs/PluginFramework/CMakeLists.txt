@@ -48,6 +48,7 @@ SET(KIT_SRCS
   ctkPluginContext.cxx
   ctkPluginDatabase.cxx
   ctkPluginDatabaseException.cxx
+  ctkPluginEvent.cxx
   ctkPluginException.cxx
   ctkPluginFramework.cxx
   ctkPluginFrameworkContext.cxx
@@ -71,6 +72,8 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkPluginContext.h
+  ctkPluginEvent.h
 )
 
 # UI files

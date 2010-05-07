@@ -44,11 +44,16 @@ namespace ctk {
     /**
      * Check that the plugin is still valid.
      */
-    void isPluginContextValid()
+    void isPluginContextValid() const
     {
       if (!plugin) {
         throw std::logic_error("This plugin context is no longer valid");
       }
+    }
+
+    void invalidate()
+    {
+      plugin = 0;
     }
 
   };
@@ -67,12 +72,14 @@ namespace ctk {
   Plugin* PluginContext::getPlugin(int id) const
   {
     Q_D(const PluginContext);
+    d->isPluginContextValid();
     return d->plugin->fwCtx->plugins->getPlugin(id);
   }
 
   QList<Plugin*> PluginContext::getPlugins() const
   {
     Q_D(const PluginContext);
+    d->isPluginContextValid();
     return d->plugin->fwCtx->plugins->getPlugins();
   }
 
