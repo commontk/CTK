@@ -61,12 +61,6 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
     QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
   ENDIF()
 
-  # Add the generated manifest qrc file
-  STRING(REPLACE "_" "." plugin_symbolic_name ${lib_name})
-  ctkMacroGeneratePluginManifest(MY_QRC_SRCS
-    SYMBOLIC_NAME ${plugin_symbolic_name}
-    )
-
   SOURCE_GROUP("Resources" FILES
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
