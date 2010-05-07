@@ -27,7 +27,7 @@ IF( DOXYGEN_FOUND )
       DEPENDS ${CTK_BINARY_DIR}/Documentation/DevDoxyfile.txt
     ) 
   ELSE( DOXYGEN_DOT_FOUND )
-    MESSAGE( SEND_ERROR
+    MESSAGE( WARNING
       "Warning: Dot not found - Documentation will not be created"
       )
   ENDIF( DOXYGEN_DOT_FOUND )
