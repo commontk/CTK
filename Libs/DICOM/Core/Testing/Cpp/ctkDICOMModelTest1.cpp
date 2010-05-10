@@ -76,6 +76,6 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   qDebug() << model.rowCount() << model.columnCount();
   qDebug() << model.index(0,0);
   viewer.show();
-  return app.exec();
-  //return EXIT_SUCCESS;
+  //return app.exec();
+  return EXIT_SUCCESS;
 }
