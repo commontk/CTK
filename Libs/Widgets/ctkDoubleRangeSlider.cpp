@@ -341,17 +341,23 @@ void ctkDoubleRangeSlider::setSingleStep(double newStep)
 {
   CTK_D(ctkDoubleRangeSlider);
   d->SingleStep = newStep;
+  // The following can fire A LOT of signals that shouldn't be 
+  // fired.
+  bool oldBlockSignals = this->blockSignals(true);
   d->updateMinOffset(d->MinValue);
   d->updateMaxOffset(d->MaxValue);
   // update the new values of the ctkRangeSlider
   double _minvalue = d->MinValue;
   double _maxvalue = d->MaxValue;
+  // calling setMinimum or setMaximum can change the values MinimumValue
+  // and MaximumValue, this is why we re-set them later.  
   this->setMinimum(d->Minimum);
   this->setMaximum(d->Maximum);
   this->setMinimumValue(_minvalue);
   this->setMinimumPosition(_minvalue);
   this->setMaximumValue(_maxvalue);
   this->setMaximumPosition(_maxvalue);
+  this->blockSignals(oldBlockSignals);
 }
 
 // --------------------------------------------------------------------------
