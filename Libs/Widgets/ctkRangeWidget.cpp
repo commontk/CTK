@@ -268,6 +268,24 @@ void ctkRangeWidget::setMaximumValue(double _value)
 }
 
 // --------------------------------------------------------------------------
+void ctkRangeWidget::setValues(double newMinimumValue, double newMaximumValue)
+{
+  CTK_D(ctkRangeWidget);
+  // disable the tracking temporally to emit the
+  // signal valueChanged if changeValue() is called
+  bool isChanging = d->Changing;
+  d->Changing = false;
+  d->MinimumSpinBox->setValue(newMinimumValue);
+  d->MaximumSpinBox->setValue(newMaximumValue);
+  // Why do we need to set the value to the slider ?
+  //d->Slider->setValue(d->SpinBox->value());
+  Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
+  Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
+  // restore the prop
+  d->Changing = isChanging;
+}
+
+// --------------------------------------------------------------------------
 void ctkRangeWidget::setMinimumToMaximumSpinBox(double minimum)
 {
   ctk_d()->MaximumSpinBox->setMinimum(minimum);

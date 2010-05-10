@@ -153,6 +153,9 @@ public slots:
   void reset();
   void setMinimumValue(double value);
   void setMaximumValue(double value);
+  ///
+  /// Utility function that set the min and max values at once
+  void setValues(double minValue, double maxValue);
 
 signals:
   /// Use with care:
