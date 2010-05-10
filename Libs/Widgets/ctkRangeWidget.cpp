@@ -399,6 +399,12 @@ void ctkRangeWidget::setDecimals(int newDecimals)
   CTK_D(ctkRangeWidget);
   d->MinimumSpinBox->setDecimals(newDecimals);
   d->MaximumSpinBox->setDecimals(newDecimals);
+  // The number of decimals can change the range values
+  // i.e. 50.55 with 2 decimals -> 51 with 0 decimals
+  // As the SpinBox range change doesn't fire signals, 
+  // we have to do the synchronization manually here
+  d->Slider->setMinimum(d->MinimumSpinBox->minimum());
+  d->Slider->setMaximum(d->MaximumSpinBox->maximum());
 }
 
 // --------------------------------------------------------------------------
