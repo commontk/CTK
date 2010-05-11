@@ -31,6 +31,8 @@
 
 class ctkVTKRenderViewPrivate;
 class vtkRenderWindowInteractor;
+class vtkRenderer;
+class vtkCamera; 
 
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
 {
@@ -57,9 +59,17 @@ public:
   /// Set background color
   void setBackgroundColor(double r, double g, double b);
 
+  /// Get active camera
+  vtkCamera* activeCamera();
+
+  /// Reset camera
   void resetCamera();
 
-  //virtual void setCornerText(const QString& text);
+  /// Get a reference to the associated vtkRenderer
+  vtkRenderer* renderer()const;
+
+  /// Enable/Disable rendering
+  void setRenderEnabled(bool value);
   
 private:
   CTK_DECLARE_PRIVATE(ctkVTKRenderView);

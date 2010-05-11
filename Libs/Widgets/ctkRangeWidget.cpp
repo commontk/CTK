@@ -268,6 +268,24 @@ void ctkRangeWidget::setMaximumValue(double _value)
 }
 
 // --------------------------------------------------------------------------
+void ctkRangeWidget::setValues(double newMinimumValue, double newMaximumValue)
+{
+  CTK_D(ctkRangeWidget);
+  // disable the tracking temporally to emit the
+  // signal valueChanged if changeValue() is called
+  bool isChanging = d->Changing;
+  d->Changing = false;
+  d->MinimumSpinBox->setValue(newMinimumValue);
+  d->MaximumSpinBox->setValue(newMaximumValue);
+  // Why do we need to set the value to the slider ?
+  //d->Slider->setValue(d->SpinBox->value());
+  Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
+  Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
+  // restore the prop
+  d->Changing = isChanging;
+}
+
+// --------------------------------------------------------------------------
 void ctkRangeWidget::setMinimumToMaximumSpinBox(double minimum)
 {
   ctk_d()->MaximumSpinBox->setMinimum(minimum);
@@ -399,6 +417,12 @@ void ctkRangeWidget::setDecimals(int newDecimals)
   CTK_D(ctkRangeWidget);
   d->MinimumSpinBox->setDecimals(newDecimals);
   d->MaximumSpinBox->setDecimals(newDecimals);
+  // The number of decimals can change the range values
+  // i.e. 50.55 with 2 decimals -> 51 with 0 decimals
+  // As the SpinBox range change doesn't fire signals, 
+  // we have to do the synchronization manually here
+  d->Slider->setMinimum(d->MinimumSpinBox->minimum());
+  d->Slider->setMaximum(d->MaximumSpinBox->maximum());
 }
 
 // --------------------------------------------------------------------------

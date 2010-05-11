@@ -3,7 +3,7 @@
 #
 #
 
-MACRO(ctkMacroGenerateProjectXml dir name target_directories is_superbuild)
+FUNCTION(ctkFunctionGenerateProjectXml dir name target_directories is_superbuild)
   IF(NOT EXISTS ${dir})
     MESSAGE(FATAL_ERROR "Directory ${dir} doesn't exist!")
   ENDIF()
@@ -76,4 +76,4 @@ MACRO(ctkMacroGenerateProjectXml dir name target_directories is_superbuild)
 
   FILE(WRITE ${filename} ${xml_content})
   MESSAGE(STATUS "Generated: ${filename}")
-ENDMACRO()
+ENDFUNCTION()

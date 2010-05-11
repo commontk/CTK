@@ -777,13 +777,21 @@ endfunction(_ep_add_download_command)
 
 
 function(_ep_add_update_command name)
-  ExternalProject_Get_Property(${name} source_dir)
+  ExternalProject_Get_Property(${name} source_dir tmp_dir)
 
   get_property(cmd_set TARGET ${name} PROPERTY _EP_UPDATE_COMMAND SET)
   get_property(cmd TARGET ${name} PROPERTY _EP_UPDATE_COMMAND)
   get_property(cvs_repository TARGET ${name} PROPERTY _EP_CVS_REPOSITORY)
   get_property(svn_repository TARGET ${name} PROPERTY _EP_SVN_REPOSITORY)
   get_property(git_repository TARGET ${name} PROPERTY _EP_GIT_REPOSITORY)
+  
+  # Patch
+  get_property(patch_cmd_set TARGET ${name} PROPERTY _EP_PATCH_COMMAND SET)
+  get_property(patch_cmd TARGET ${name} PROPERTY _EP_PATCH_COMMAND)
+  set(patch_work_dir)
+  if(patch_cmd_set)
+    set(patch_work_dir ${source_dir})
+  endif()
 
   set(work_dir)
   set(comment)
@@ -816,9 +824,37 @@ function(_ep_add_update_command name)
       message(FATAL_ERROR "error: could not find git for pull of ${name}")
     endif()
     set(work_dir ${source_dir})
+
+    # The following script will allow to reset, pull and re-apply patches
+    file(WRITE ${tmp_dir}/${name}-gitupdate.cmake "
+execute_process(
+  COMMAND ${Git_EXECUTABLE} reset --hard HEAD
+  WORKING_DIRECTORY ${work_dir}
+  RESULT_VARIABLE error_code
+  )
+execute_process(
+  COMMAND ${Git_EXECUTABLE} pull
+  WORKING_DIRECTORY ${work_dir}
+  RESULT_VARIABLE error_code
+  )
+if(error_code)
+  message(FATAL_ERROR \"Failed to pull - repository: ${git_repository}\")
+endif()
+if(${patch_cmd_set})
+  execute_process(
+    COMMAND ${patch_cmd}
+    WORKING_DIRECTORY ${patch_work_dir}
+    RESULT_VARIABLE error_code
+    )
+  if(error_code)
+    message(FATAL_ERROR \"Failed to apply patch for ${name}\")
+  endif()
+endif()
+")
+
     set(comment "Performing update step (GIT pull) for '${name}'")
     #get_property(git_revision TARGET ${name} PROPERTY _EP_GIT_REVISION)
-    set(cmd ${Git_EXECUTABLE} pull)
+    set(cmd ${CMAKE_COMMAND} -P ${tmp_dir}/${name}-gitupdate.cmake)
     set(always 1)
   endif()
 
@@ -854,7 +890,16 @@ endfunction(_ep_add_patch_command)
 
 # TODO: Make sure external projects use the proper compiler
 function(_ep_add_configure_command name)
-  ExternalProject_Get_Property(${name} source_dir binary_dir)
+  ExternalProject_Get_Property(${name} source_dir binary_dir tmp_dir)
+  # If anything about the configure command changes, (command itself, cmake
+  # used, cmake args or cmake generator) then re-run the configure step.
+  # Fixes issue http://public.kitware.com/Bug/view.php?id=10258
+  #
+  if(NOT EXISTS ${tmp_dir}/${name}-cfgcmd.txt.in)
+    file(WRITE ${tmp_dir}/${name}-cfgcmd.txt.in "cmd='@cmd@'\n")
+  endif()
+  configure_file(${tmp_dir}/${name}-cfgcmd.txt.in ${tmp_dir}/${name}-cfgcmd.txt)
+  list(APPEND file_deps ${tmp_dir}/${name}-cfgcmd.txt)
 
   _ep_get_configuration_subdir_suffix(cfgdir)
 

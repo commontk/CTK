@@ -17,7 +17,7 @@ if(error_code)
 endif()
 
 
-INCLUDE(@CTK_SOURCE_DIR@/CMake/ctkMacroApplyPatches.cmake)
+INCLUDE(@CTK_SOURCE_DIR@/CMake/ctkFunctionApplyPatches.cmake)
 
 SET(patch_dir @qtmobility_patch_dir@)
 SET(configured_patch_dir @qtmobility_configured_patch_dir@)
@@ -43,7 +43,7 @@ IF(UNIX)
 ENDIF()
 
 # Apply patches
-ctkMacroApplyPatches("@CTK_PATCH_EXECUTABLE@" "@qtmobility_src_dir@" "${patch_files}")
+ctkFunctionApplyPatches("@CTK_PATCH_EXECUTABLE@" "@qtmobility_src_dir@" "${patch_files}")
 
 IF(UNIX)
 
@@ -62,12 +62,3 @@ IF(UNIX)
     MESSAGE(FATAL_ERROR "Patching ${proj_dir}/configure file failed.")
   ENDIF()
 ENDIF()
-
-# Let's add the updated files to the local repository. That way, 'git pull'
-# will try to merge the branch changes with the local ones
-execute_process(
-  COMMAND @Git_EXECUTABLE@ add --all
-  WORKING_DIRECTORY ${proj_dir}
-  ERROR_VARIABLE error_output
-  RESULT_VARIABLE error_code
-  )

@@ -79,7 +79,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (!qFuzzyCompare(sliderSpinBox.singleStep(), 0.1) || 
       !qFuzzyCompare(sliderSpinBox.value(), 32.12))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setMaximum failed."
+    std::cerr << "ctkSliderSpinBoxWidget::setSingleStep failed."
               << sliderSpinBox.singleStep() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -88,11 +88,15 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   sliderSpinBox.setDecimals(1);
 
   if (sliderSpinBox.decimals() != 1 || 
-      !qFuzzyCompare(sliderSpinBox.value(), 32.1))
+      !qFuzzyCompare(sliderSpinBox.value(), 32.1) ||
+      !qFuzzyCompare(sliderSpinBox.minimum(), 10.0) ||
+      !qFuzzyCompare(sliderSpinBox.maximum(), 2051.0))
     {
     std::cerr << "ctkSliderSpinBoxWidget::setDecimals failed."
               << sliderSpinBox.decimals() << " "
-              << sliderSpinBox.value() << std::endl;
+              << sliderSpinBox.value() << " " 
+              << sliderSpinBox.minimum() << " " 
+              << sliderSpinBox.maximum() << std::endl;
     return EXIT_FAILURE;
     }  
 
@@ -141,7 +145,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (sliderSpinBox.spinBoxAlignment() != Qt::AlignRight || 
       !qFuzzyCompare(sliderSpinBox.value(), 80.6))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setMinimum failed."
+    std::cerr << "ctkSliderSpinBoxWidget::setSpinBoxAlignment failed."
               << sliderSpinBox.spinBoxAlignment() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -152,7 +156,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (sliderSpinBox.isAutoSpinBoxWidth() != false || 
       !qFuzzyCompare(sliderSpinBox.value(), 80.6))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setMinimum failed."
+    std::cerr << "ctkSliderSpinBoxWidget::setAutoSpinBoxWidth failed."
               << sliderSpinBox.isAutoSpinBoxWidth() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -180,6 +184,18 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  sliderSpinBox.setDecimals(0);
+
+  if (!qFuzzyCompare(sliderSpinBox.value(), 81) ||
+      !qFuzzyCompare(sliderSpinBox.minimum(), 81) ||
+      !qFuzzyCompare(sliderSpinBox.maximum(), 2051))
+    {
+    std::cerr << "ctkSliderSpinBoxWidget::setDecimals failed."
+              << sliderSpinBox.value() << " " 
+              << sliderSpinBox.minimum() << " " 
+              << sliderSpinBox.maximum() << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // FIXME check that the correct signals are sent.
   return EXIT_SUCCESS;

@@ -28,6 +28,9 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
+// ctkFactoryObjectItem methods
+
+//----------------------------------------------------------------------------
 template<typename BaseClassType, typename ClassType>
 ctkFactoryObjectItem<BaseClassType,ClassType>::ctkFactoryObjectItem(const QString& _key)
   :ctkAbstractFactoryItem<BaseClassType>(_key)
@@ -48,6 +51,9 @@ BaseClassType* ctkFactoryObjectItem<BaseClassType,ClassType>::instanciator()
 {
   return this->instantiateObjectFunc();
 }
+
+//----------------------------------------------------------------------------
+// ctkAbstractObjectFactory methods
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
@@ -74,6 +80,7 @@ bool ctkAbstractObjectFactory<BaseClassType>::registerObject(const QString& key)
   QSharedPointer<ctkFactoryObjectItem<BaseClassType, ClassType> > objectItem =
     QSharedPointer<ctkFactoryObjectItem<BaseClassType, ClassType> >(
       new ctkFactoryObjectItem<BaseClassType, ClassType>(key) );
+  objectItem->setVerbose(this->verbose());
   return this->registerItem(objectItem);
 }
 

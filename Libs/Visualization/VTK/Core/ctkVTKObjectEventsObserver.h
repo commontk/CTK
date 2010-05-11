@@ -96,6 +96,7 @@ private:
 
 };
 
+//-----------------------------------------------------------------------------
 int ctkVTKObjectEventsObserver::removeAllConnections()
 {
   return this->removeConnection(0);

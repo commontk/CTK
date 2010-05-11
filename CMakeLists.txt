@@ -89,7 +89,7 @@ SET(CTK_BASE_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
 SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 
 #-----------------------------------------------------------------------------
-# CMake Macro(s)
+# CMake Function(s) and Macro(s)
 #
 INCLUDE(CMake/ctkMacroParseArguments.cmake)
 INCLUDE(CMake/ctkMacroListFilter.cmake)
@@ -99,11 +99,11 @@ INCLUDE(CMake/ctkMacroBuildApp.cmake)
 INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
-INCLUDE(CMake/ctkMacroExtractOptionNameAndValue.cmake)
+INCLUDE(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
 INCLUDE(CMake/ctkMacroValidateBuildOptions.cmake)
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
-INCLUDE(CMake/ctkMacroGenerateDGraphInput.cmake)
-INCLUDE(CMake/ctkMacroGenerateProjectXml.cmake)
+INCLUDE(CMake/ctkFunctionGenerateDGraphInput.cmake)
+INCLUDE(CMake/ctkFunctionGenerateProjectXml.cmake)
 INCLUDE(CMake/ctkMacroGeneratePluginManifest.cmake)
 
 # Used by CTKGenerateCTKConfig.cmake
@@ -251,16 +251,11 @@ MARK_AS_ADVANCED(DART_TESTING_TIMEOUT)
 OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
 
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 # Documentation
-OPTION( BUILD_DOCUMENTATION "Build Documentation" OFF )
+ADD_SUBDIRECTORY( Documentation )
 
-IF( BUILD_DOCUMENTATION )
-  ADD_SUBDIRECTORY( Documentation )
-ENDIF( BUILD_DOCUMENTATION )
-
-
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 # Will contain a list of sub-directory without option ON or OFF
 #
 SET(CTK_LIBS_SUBDIRS )
@@ -283,7 +278,7 @@ SET(CTK_APPLICATIONS_SUBDIRS )
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
 #
 FOREACH(lib ${CTK_LIBS})
-  ctkMacroExtractOptionNameAndValue(${lib} lib_name lib_value)
+  ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
   OPTION(CTK_LIB_${lib_name} "Enable ${lib_name} Library." ${lib_value})
   ctkMacroAddCtkLibraryOptions(${lib_name})
   LIST(APPEND CTK_LIBS_SUBDIRS "${lib_name}")
@@ -291,14 +286,14 @@ ENDFOREACH()
 
 # Build options associated with CTK plugins
 FOREACH(plugin ${CTK_PLUGINS})
-  ctkMacroExtractOptionNameAndValue(${plugin} plugin_name plugin_value)
+  ctkFunctionExtractOptionNameAndValue(${plugin} plugin_name plugin_value)
   OPTION(CTK_PLUGIN_${plugin_name} "Build ${plugin_name} Plugin." ${plugin_value})
   LIST(APPEND CTK_PLUGINS_SUBDIRS "${plugin_name}")
 ENDFOREACH()
 
 # Build options associated with CTK applications
 FOREACH(app ${CTK_APPLICATIONS})
-  ctkMacroExtractOptionNameAndValue(${app} app_name app_value)
+  ctkFunctionExtractOptionNameAndValue(${app} app_name app_value)
   OPTION(CTK_APP_${app_name} "Build ${app_name} Application." ${app_value})
   LIST(APPEND CTK_APPLICATIONS_SUBDIRS "${app_name}")
 ENDFOREACH()
@@ -356,7 +351,7 @@ MARK_AS_ADVANCED(DGraph_EXECUTABLE)
 #-----------------------------------------------------------------------------
 # Let's make sure the enabled/disabled libraries, plugins or applications are coherent
 #
-ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" FALSE)
+ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" FALSE)
 ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${target_directories}")
 
 #-----------------------------------------------------------------------------
@@ -364,7 +359,7 @@ ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${targe
 #
 
 # Generate DGraph input file expected by DGraph
-ctkMacroGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" TRUE)
+ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" TRUE)
 
 # Obtain list of target ordered topologically
 EXECUTE_PROCESS(
@@ -388,7 +383,7 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
 #
 
 # Generate Project.xml file expected by the CTest driver script
-ctkMacroGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
+ctkFunctionGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
 
 #-----------------------------------------------------------------------------
 # Superbuild script

@@ -2,7 +2,7 @@
 #
 # Generate a DGrapgh input file expected by DGraph executable.
 #
-MACRO(ctkMacroGenerateDGraphInput dir target_directories with_option)
+FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories with_option)
   IF(NOT EXISTS ${dir})
     MESSAGE(FATAL_ERROR "Directory ${dir} doesn't exist!")
   ENDIF()
@@ -81,4 +81,4 @@ MACRO(ctkMacroGenerateDGraphInput dir target_directories with_option)
 
   FILE(WRITE ${filename} ${dgraph_list})
   MESSAGE(STATUS "Generated: ${filename}")
-ENDMACRO()
+ENDFUNCTION()

@@ -20,15 +20,60 @@
 
 // Qt includes
 #include <QApplication>
+#include <QTreeView>
 
-// CTK includes
+// CTK widget includes
 #include <ctkDICOMQueryRetrieveWidget.h>
+
+// ctkDICOMCore includes
+#include "ctkDICOM.h"
+#include "ctkDICOMModel.h"
+
+// STD includes
+#include <iostream>
 
 int main(int argc, char** argv)
 {
   QApplication app(argc, argv);
+
+  // set up the database 
+  const char *datbaseFileName = "/tmp/test.db";
+  const char *datbaseScriptFileName = "/Users/pieper/ctk/latest/CTK/Libs/DICOM/Core/Resources/dicom-sample.sql";
+  if (argc > 1)
+    {
+    datbaseFileName = argv[1];
+    }
+  if (argc > 2)
+    {
+    datbaseScriptFileName = argv[2];
+    }
+
+  ctkDICOM myCTK;
+  if (!myCTK.openDatabase( datbaseFileName ))
+    {
+    std::cerr << "Error when opening the data base file: " << datbaseFileName
+              << " error: " << myCTK.GetLastError().toStdString();
+    return EXIT_FAILURE;
+    }
+  if (!myCTK.initializeDatabase(datbaseScriptFileName))
+    {
+    std::cerr << "Error when initializing the data base: " << datbaseScriptFileName
+              << " error: " << myCTK.GetLastError().toStdString();
+    return EXIT_FAILURE;
+    }
+
+  ctkDICOMModel model;
+  model.setDatabase(myCTK.database());
   
   ctkDICOMQueryRetrieveWidget queryRetrieve;
+  QTreeView *treeView = queryRetrieve.findChild<QTreeView *>("treeView");
+  if (!treeView)
+    {
+    std::cerr << "Could not access tree view from QueryRetrieve widget\n";
+    return EXIT_FAILURE;
+    }
+  treeView->setModel(&model);
+
   queryRetrieve.show();
   return app.exec();
 }

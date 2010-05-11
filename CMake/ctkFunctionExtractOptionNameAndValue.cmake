@@ -3,7 +3,7 @@
 #
 #
 
-MACRO(ctkMacroExtractOptionNameAndValue my_opt var_opt_name var_opt_value)
+FUNCTION(ctkFunctionExtractOptionNameAndValue my_opt var_opt_name var_opt_value)
 
  # Make sure option is correctly formated
   IF(NOT "${my_opt}" MATCHES "^[/A-Za-z0-9.]+:(ON|OFF)")
@@ -13,21 +13,24 @@ MACRO(ctkMacroExtractOptionNameAndValue my_opt var_opt_name var_opt_value)
   # Extract option name and option default value
   STRING(REPLACE ":" "\\;" my_opt_list ${my_opt})
   SET(my_opt_list ${my_opt_list})
-  LIST(GET my_opt_list 0 ${var_opt_name})
-  LIST(GET my_opt_list 1 ${var_opt_value})
-ENDMACRO()
+  LIST(GET my_opt_list 0 opt_name)
+  LIST(GET my_opt_list 1 opt_value)
+
+  SET(${var_opt_name} ${opt_name} PARENT_SCOPE)
+  SET(${var_opt_value} ${opt_value} PARENT_SCOPE)
+ENDFUNCTION()
 
 #
-# Test - Use cmake -DMACRO_TESTING:BOOL=ON -P ctkMacroExtractOptionNameAndValue.cmake
+# Test - Use cmake -DMACRO_TESTING:BOOL=ON -P ctkFunctionExtractOptionNameAndValue.cmake
 #
 IF(MACRO_TESTING)
 
-  MESSAGE("Testing ctkMacroExtractOptionNameAndValue ...")
+  MESSAGE("Testing ctkFunctionExtractOptionNameAndValue ...")
   #
   # Test1
   #
   SET(test1 "john:ON")
-  ctkMacroExtractOptionNameAndValue(${test1} test1_name test1_value)
+  ctkFunctionExtractOptionNameAndValue(${test1} test1_name test1_value)
   
   IF(NOT test1_name STREQUAL "john")
     MESSAGE(FATAL_ERROR "test1_name:${test1_name} - Expected:john")
@@ -41,7 +44,7 @@ IF(MACRO_TESTING)
   # Test2
   #
   SET(test2 "doe/john:OFF")
-  ctkMacroExtractOptionNameAndValue(${test2} test2_name test2_value)
+  ctkFunctionExtractOptionNameAndValue(${test2} test2_name test2_value)
   
   IF(NOT test2_name STREQUAL "doe/john")
     MESSAGE(FATAL_ERROR "test1_name:${test2_name} - Expected:doe/john")

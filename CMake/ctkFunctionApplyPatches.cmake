@@ -2,7 +2,7 @@
 #
 #
 
-MACRO(ctkMacroApplyPatches PATCH_EXE SRC_DIR PATCH_FILES)
+FUNCTION(ctkFunctionApplyPatches PATCH_EXE SRC_DIR PATCH_FILES)
   
   # Make sure patch executable exists
   IF(NOT EXISTS ${PATCH_EXE})
@@ -18,4 +18,4 @@ MACRO(ctkMacroApplyPatches PATCH_EXE SRC_DIR PATCH_FILES)
     ENDIF(result_var)
   ENDFOREACH()
   
-ENDMACRO()
+ENDFUNCTION()

@@ -25,6 +25,9 @@
 #include "ctkAbstractFactory.h"
 
 //----------------------------------------------------------------------------
+// ctkFactoryLibraryItem methods
+
+//----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkFactoryLibraryItem<BaseClassType>::ctkFactoryLibraryItem(const QString& _key,
                                                             const QString& _path)
@@ -41,7 +44,10 @@ bool ctkFactoryLibraryItem<BaseClassType>::load()
   bool loaded = this->Library.load();
   if (loaded)
     {
-    this->resolve();
+    if (!this->resolve())
+      {
+      return false;
+      }
     return true;
     }
   return false;
@@ -57,7 +63,7 @@ QString ctkFactoryLibraryItem<BaseClassType>::path()const
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 QString ctkFactoryLibraryItem<BaseClassType>::loadErrorString()const
-{ 
+{
   return this->Library.errorString();
 }
 
@@ -70,7 +76,7 @@ void ctkFactoryLibraryItem<BaseClassType>::setSymbols(const QStringList& symbols
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType>
-void ctkFactoryLibraryItem<BaseClassType>::resolve()
+bool ctkFactoryLibraryItem<BaseClassType>::resolve()
 {
   foreach(const QString& symbol, this->Symbols)
     {
@@ -83,17 +89,21 @@ void ctkFactoryLibraryItem<BaseClassType>::resolve()
     // Make sure the symbols haven't been registered
     if (this->ResolvedSymbols.contains(symbol))
       {
-      qWarning() << "Symbol '" << symbol << "' already resolved - Path:" << this->Path;
+      if (this->verbose())
+        {
+        qWarning() << "Symbol '" << symbol << "' already resolved - Path:" << this->Path;
+        }
       continue;
       }
-    
+
     void * resolvedSymbol = this->Library.resolve(symbol.toLatin1());
     if (!resolvedSymbol)
       {
-      qWarning() << "Failed to resolve symbol '" << symbol << "' - Path:" << this->Path;
+      return false;
       }
     this->ResolvedSymbols[symbol] = resolvedSymbol;
     }
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -109,6 +119,9 @@ void* ctkFactoryLibraryItem<BaseClassType>::symbolAddress(const QString& symbol)
     }
   return iter.value();
 }
+
+//----------------------------------------------------------------------------
+// ctkAbstractLibraryFactory methods
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType, typename FactoryItemType>
@@ -152,6 +165,7 @@ bool ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::registerLibrary(
     }
   QSharedPointer<FactoryItemType> _item =
     QSharedPointer<FactoryItemType>(new FactoryItemType(key, file.filePath()));
+  _item->setVerbose(this->verbose());
   _item->setSymbols(this->Symbols);
   return this->registerItem(_item);
 }

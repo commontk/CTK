@@ -29,9 +29,12 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
+// ctkFactoryPluginItem methods
+
+//----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkFactoryPluginItem<BaseClassType>::ctkFactoryPluginItem(const QString& _key,
-                                                            const QString& _path)
+                                                          const QString& _path)
   :ctkAbstractFactoryItem<BaseClassType>(_key),Path(_path)
 {
 }
@@ -66,19 +69,28 @@ BaseClassType* ctkFactoryPluginItem<BaseClassType>::instanciator()
   QObject * object = this->Loader.instance();
   if (!object)
     {
-    qWarning() << "Failed to instantiate plugin:" << this->path();
+    if (this->verbose())
+      {
+      qWarning() << "Failed to instantiate plugin:" << this->path();
+      }
     return 0;
     }
   BaseClassType* castedObject = qobject_cast<BaseClassType*>(object);
   if (!castedObject)
     {
-    qWarning() << "Failed to access interface [" << BaseClassType::staticMetaObject.className()
+    if (this->verbose())
+      {
+      qWarning() << "Failed to access interface [" << BaseClassType::staticMetaObject.className()
                << "] in plugin:" << this->path();
+      }
     delete object; // Clean memory
     return 0;
     }
   return castedObject;
 }
+
+//----------------------------------------------------------------------------
+// ctkAbstractPluginFactory methods
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType, typename FactoryItemType>
@@ -112,6 +124,7 @@ bool ctkAbstractPluginFactory<BaseClassType, FactoryItemType>::registerLibrary(c
     }
   QSharedPointer<FactoryItemType> _item =
     QSharedPointer<FactoryItemType>(new FactoryItemType(key, file.filePath()));
+  _item->setVerbose(this->verbose());
   return this->registerItem(_item);
 }
 

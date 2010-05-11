@@ -28,6 +28,9 @@
 #include "ctkAbstractObjectFactory.h"
 
 //----------------------------------------------------------------------------
+// ctkAbstractQObjectFactory methods
+
+//----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkAbstractQObjectFactory<BaseClassType>::ctkAbstractQObjectFactory()
 {
