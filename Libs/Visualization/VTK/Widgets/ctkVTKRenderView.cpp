@@ -174,11 +174,11 @@ vtkCamera* ctkVTKRenderView::activeCamera()
   CTK_D(ctkVTKRenderView);
   if (d->Renderer->IsActiveCameraCreated())
     {
-    return 0;
+    return d->Renderer->GetActiveCamera();
     }
   else
     {
-    return d->Renderer->GetActiveCamera();
+    return 0;
     }
 }
 
