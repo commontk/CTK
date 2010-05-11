@@ -687,7 +687,7 @@ function(_ep_add_download_command name)
     find_program(Git_EXECUTABLE git DOC "git command line client")
     mark_as_advanced(Git_EXECUTABLE)
     if(NOT Git_EXECUTABLE)
-      message(FATAL_ERROR "error: could not git svn for clone of ${name}")
+      message(FATAL_ERROR "error: could not find git to clone ${name} - Make sure Git_EXECUTABLE is set properly")
     endif()
 
     # TODO  [GIT_REVISION revision]        # Revision to checkout from GIT repo
@@ -710,12 +710,12 @@ function(_ep_add_download_command name)
     # That script will delete the source directory and call the appropriate git clone command
     file(WRITE ${tmp_dir}/${name}-gitclone.cmake "
 execute_process(
-  COMMAND ${CMAKE_COMMAND} -E remove_directory ${source_dir}
+  COMMAND \"${CMAKE_COMMAND}\" -E remove_directory \"${source_dir}\"
   RESULT_VARIABLE error_code
   )
 execute_process(
-  COMMAND ${Git_EXECUTABLE} clone ${git_repository} ${src_name}
-  WORKING_DIRECTORY ${work_dir}
+  COMMAND \"${Git_EXECUTABLE}\" clone \"${git_repository}\" \"${src_name}\"
+  WORKING_DIRECTORY \"${work_dir}\"
   RESULT_VARIABLE error_code
   )
 if(error_code)
@@ -828,13 +828,13 @@ function(_ep_add_update_command name)
     # The following script will allow to reset, pull and re-apply patches
     file(WRITE ${tmp_dir}/${name}-gitupdate.cmake "
 execute_process(
-  COMMAND ${Git_EXECUTABLE} reset --hard HEAD
-  WORKING_DIRECTORY ${work_dir}
+  COMMAND \"${Git_EXECUTABLE}\" reset --hard HEAD
+  WORKING_DIRECTORY \"${work_dir}\"
   RESULT_VARIABLE error_code
   )
 execute_process(
-  COMMAND ${Git_EXECUTABLE} pull
-  WORKING_DIRECTORY ${work_dir}
+  COMMAND \"${Git_EXECUTABLE}\" pull
+  WORKING_DIRECTORY \"${work_dir}\"
   RESULT_VARIABLE error_code
   )
 if(error_code)
@@ -842,8 +842,8 @@ if(error_code)
 endif()
 if(${patch_cmd_set})
   execute_process(
-    COMMAND ${patch_cmd}
-    WORKING_DIRECTORY ${patch_work_dir}
+    COMMAND \"${patch_cmd}\"
+    WORKING_DIRECTORY \"${patch_work_dir}\"
     RESULT_VARIABLE error_code
     )
   if(error_code)
