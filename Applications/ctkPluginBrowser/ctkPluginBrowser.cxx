@@ -41,6 +41,7 @@ namespace ctk {
   PluginBrowser::PluginBrowser(PluginFramework* framework)
     : framework(framework)
   {
+    framework->getPluginContext()->connectFrameworkListener(this, SLOT(frameworkEvent(PluginFrameworkEvent)));
 
     QStringList pluginDirs;
     pluginDirs << qApp->applicationDirPath() + "/Plugins";
@@ -50,7 +51,8 @@ namespace ctk {
     {
       try
       {
-        framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(dirIter.next()).toString());
+        Plugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(dirIter.next()).toString());
+        plugin->start(Plugin::START_ACTIVATION_POLICY);
       }
       catch (const PluginException& e)
       {
@@ -62,6 +64,8 @@ namespace ctk {
 
     ui.setupUi(this);
 
+    editors = new PluginBrowserEditors(ui.centralwidget);
+
     QAbstractItemModel* pluginTableModel = new PluginTableModel(framework->getPluginContext(), this);
     ui.pluginsTableView->setModel(pluginTableModel);
 
@@ -69,21 +73,59 @@ namespace ctk {
     ui.qtResourcesTreeView->setModel(qtresourcesTreeModel);
 
     connect(ui.pluginsTableView, SIGNAL(clicked(QModelIndex)), this, SLOT(pluginSelected(QModelIndex)));
-
+    connect(ui.pluginsTableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(pluginDoubleClicked(QModelIndex)));
+    connect(ui.pluginResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(dbResourceDoubleClicked(QModelIndex)));
+    connect(ui.qtResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(qtResourceDoubleClicked(QModelIndex)));
   }
 
   void PluginBrowser::pluginSelected(const QModelIndex &index)
   {
     QVariant v = index.data(Qt::UserRole);
-    qDebug() << "Selected plugin:" << v;
 
-    Plugin* plugin = framework->getPluginContext()->getPlugin(v.toInt());
+    Plugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
 
     if (!plugin) return;
 
     QAbstractItemModel* oldModel = ui.pluginResourcesTreeView->model();
     ui.pluginResourcesTreeView->setModel(new PluginResourcesTreeModel(plugin, this));
     if (oldModel) oldModel->deleteLater();;
+  }
+
+  void PluginBrowser::pluginDoubleClicked(const QModelIndex& index)
+  {
+    long pluginId = index.data(Qt::UserRole).toLongLong();
+    Plugin* plugin = framework->getPluginContext()->getPlugin(pluginId);
+
+    QByteArray mfContent = plugin->getResource("/META-INF/MANIFEST.MF");
+    QString location = QString("/") + plugin->getSymbolicName() + "/META-INF/MANIFEST.MF";
+    editors->openEditor(location, mfContent, location + " [cached]");
+  }
+
+  void PluginBrowser::qtResourceDoubleClicked(const QModelIndex& index)
+  {
+
+  }
+
+  void PluginBrowser::dbResourceDoubleClicked(const QModelIndex& index)
+  {
+    QString resPath = index.data(Qt::UserRole).toString();
+    if (resPath.isEmpty() || resPath.endsWith('/')) return;
+
+    qDebug() << "Trying to open: " << resPath;
+
+    QModelIndex pluginIndex = ui.pluginsTableView->selectionModel()->selectedIndexes().first();
+    long pluginId = pluginIndex.data(Qt::UserRole).toLongLong();
+
+    Plugin* plugin = framework->getPluginContext()->getPlugin(pluginId);
+
+    QByteArray resContent = plugin->getResource(resPath);
+    QString location = QString("/") + plugin->getSymbolicName() + resPath;
+    editors->openEditor(location, resContent, location + " [cached]");
+  }
+
+  void PluginBrowser::frameworkEvent(const PluginFrameworkEvent& event)
+  {
+    qDebug() << "FrameworkEvent: [" << event.getPlugin()->getSymbolicName() << "]" << event.getErrorString();
   }
 
 

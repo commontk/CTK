@@ -24,8 +24,10 @@
 
 #include "ctkPlugin.h"
 #include "ctkPluginException.h"
+#include "ctkRequirePlugin_p.h"
 
 #include <QHash>
+#include <QPluginLoader>
 
 namespace ctk {
 
@@ -63,7 +65,7 @@ namespace ctk {
      */
     PluginPrivate(Plugin& qq,
                   PluginFrameworkContextPrivate* fw,
-                  int id,
+                  long id,
                   const QString& loc,
                   const QString& sym,
                   const Version& ver);
@@ -76,10 +78,19 @@ namespace ctk {
      *
      * @return Plugin state
      */
-    Plugin::States getUpdatedState();
+    Plugin::State getUpdatedState();
 
-    QHash<QString, QString> getHeaders(const QString& locale);
+    /**
+     * Save the autostart setting to the persistent plugin storage.
+     *
+     * @param setting The autostart options to save.
+     */
+    void setAutostartSetting(const Plugin::StartOptions& setting);
 
+    /**
+     * Performs the actual activation.
+     */
+    void finalizeActivation();
 
     /**
      * Union of flags allowing plugin class access
@@ -91,7 +102,7 @@ namespace ctk {
     /**
      * Plugin identifier
      */
-    const int id;
+    const long id;
 
     /**
      * Plugin location identifier
@@ -129,6 +140,11 @@ namespace ctk {
     PluginActivator* pluginActivator;
 
     /**
+     * The Qt plugin loader for the plugin
+     */
+    QPluginLoader pluginLoader;
+
+    /**
      * Time when the plugin was last modified
      */
     long lastModified;
@@ -143,7 +159,11 @@ namespace ctk {
      */
     QHash<QString, QString> cachedRawHeaders;
 
-    bool lazyActivation;
+    /**
+     * True when this plugin has its activation policy
+     * set to "eager"
+     */
+    bool eagerActivation;
 
     /** True during the finalization of an activation. */
     bool activating;
@@ -152,14 +172,30 @@ namespace ctk {
     bool deactivating;
 
     /** Saved exception of resolve failure */
-    PluginException resolveFailException;
+    //PluginException resolveFailException;
+
+    /** List of RequirePlugin entries. */
+    QList<RequirePlugin*> require;
 
   private:
+
+    friend class PluginFrameworkContextPrivate;
 
     /**
      * Check manifest and cache certain manifest headers as variables.
      */
     void checkManifestHeaders();
+
+    // This could potentially be run in its own thread,
+    // parallelizing plugin activations
+    void start0();
+
+    /**
+     * Remove a plugins registered listeners, registered services and
+     * used services.
+     *
+     */
+    void removePluginResources();
 
 
   };

@@ -55,7 +55,7 @@ namespace ctk {
     }
     else if (role == Qt::UserRole)
     {
-      return plugin->getPluginId();
+      return QVariant::fromValue<qlonglong>(plugin->getPluginId());
     }
 
     return QVariant();

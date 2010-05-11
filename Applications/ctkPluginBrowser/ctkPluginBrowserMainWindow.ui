@@ -21,18 +21,6 @@
     <property name="margin">
      <number>0</number>
     </property>
-    <item>
-     <widget class="QTabWidget" name="detailsTabWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>MANIFEST.MF</string>
-       </attribute>
-      </widget>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">

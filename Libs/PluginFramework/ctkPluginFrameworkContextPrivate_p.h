@@ -29,6 +29,7 @@
 #include "ctkPluginFramework.h"
 #include "ctkPluginStorage_p.h"
 #include "ctkPlugins_p.h"
+#include "ctkPluginFrameworkListeners_p.h"
 
 namespace ctk {
 
@@ -42,6 +43,11 @@ namespace ctk {
        * All plugins in this framework.
        */
       Plugins* plugins;
+
+      /**
+       * All listeners in this framework.
+       */
+      PluginFrameworkListeners listeners;
 
       /**
        * All registered services in this framework.
@@ -108,14 +114,16 @@ namespace ctk {
        */
       void checkOurPlugin(Plugin* plugin) const;
 
+
       /**
        * Check that the plugin specified can resolve all its
        * Require-Plugin constraints.
        *
        * @param plugin Plugin to check, must be in INSTALLED state
-       * @return Symbolic name of plugin blocking resolve, otherwise null.
+       *
+       * @throws PluginException
        */
-      void resolvePlugin(PluginPrivate* plugin) const;
+      void resolvePlugin(PluginPrivate* plugin);
 
 
       /**
@@ -124,7 +132,11 @@ namespace ctk {
        */
       QDebug log() const;
 
+  private:
 
+      QSet<PluginPrivate*> tempResolved;
+
+      void checkRequirePlugin(PluginPrivate* plugin);
   };
 
 }

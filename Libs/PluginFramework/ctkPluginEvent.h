@@ -41,7 +41,7 @@ namespace ctk {
    * when a change occurs in a plugins's lifecycle. A type code is used to identify
    * the event type for future extendability.
    *
-   * @see PluginContext#pluginChanged
+   * @see PluginContext#connectPluginListener
    * @see EventBus
    */
   class CTK_PLUGINFW_EXPORT PluginEvent : public QObject
@@ -123,8 +123,8 @@ namespace ctk {
 
     }
 
-    PluginEvent::Type type;
-    Plugin* plugin;
+    const PluginEvent::Type type;
+    Plugin* const plugin;
   };
 
 }

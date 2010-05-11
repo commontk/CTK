@@ -19,33 +19,35 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORKPRIVATE_P_H
-#define CTKPLUGINFRAMEWORKPRIVATE_P_H
+#ifndef CTKPLUGINBROWSEREDITORS_H
+#define CTKPLUGINBROWSEREDITORS_H
 
-#include "ctkPluginPrivate_p.h"
-
-#include <QMutex>
+#include <QObject>
+#include <QTabWidget>
 
 namespace ctk {
 
-  class PluginFramework;
-
-  class PluginFrameworkPrivate : public PluginPrivate
+  class PluginBrowserEditors : public QObject
   {
+    Q_OBJECT
+
   public:
 
-    QMutex lock;
+    PluginBrowserEditors(QWidget* editorArea);
 
-    PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContextPrivate* fw);
+    void openEditor(const QString& location, const QByteArray& content, const QString& title, const QString& tooltip = QString());
 
-    void init();
+  private:
 
-    void initSystemPlugin();
+    QStringList editorLocations;
 
-    QHash<QString, QString> systemHeaders;
+    QTabWidget tabWidget;
 
+  private slots:
+
+    void tabCloseRequested(int index);
   };
 
 }
 
-#endif // CTKPLUGINFRAMEWORKPRIVATE_P_H
+#endif // CTKPLUGINBROWSEREDITORS_H

@@ -6,6 +6,7 @@ PROJECT(ctkPluginBrowser)
 
 SET(KIT_SRCS
   ctkPluginBrowser.cxx
+  ctkPluginBrowserEditors.cxx
   ctkPluginBrowserMain.cxx
   ctkPluginTableModel.cxx
   ctkPluginResourcesTreeModel.cxx
@@ -15,6 +16,7 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkPluginBrowser.h
+  ctkPluginBrowserEditors.h
   )
 
 # UI files

@@ -69,6 +69,87 @@ namespace ctk {
     static const QString	PLUGIN_SYMBOLICNAME; // = "Plugin-SymbolicName"
 
     /**
+     * Manifest header identifying the plugin's copyright information.
+     * <p>
+     * The attribute value may be retrieved from the <code>QHash</code>
+     * object returned by the <code>Plugin::getHeaders</code> method.
+     */
+    static const QString PLUGIN_COPYRIGHT; // = "Plugin-Copyright"
+
+    /**
+     * Manifest header containing a brief description of the plugin's
+     * functionality.
+     * <p>
+     * The attribute value may be retrieved from the <code>QHash</code>
+     * object returned by the <code>Plugin::getHeaders</code> method.
+     */
+    static const QString PLUGIN_DESCRIPTION; // = "Plugin-Description"
+
+    /**
+     * Manifest header identifying the plugin's name.
+     * <p>
+     * The attribute value may be retrieved from the <code>QHash</code>
+     * object returned by the <code>Plugin::getHeaders</code> method.
+     */
+    static const QString PLUGIN_NAME; // = "Plugin-Name"
+
+
+    /**
+     * Manifest header identifying the base name of the plugin's Qt .qm
+     * files.
+     *
+     * <p>
+     * The attribute value may be retrieved from the <code>QHash</code>
+     * object returned by the <code>Plugin::getHeaders</code> method.
+     *
+     * @see #PLUGIN_LOCALIZATION_DEFAULT_BASENAME
+     */
+    static const QString PLUGIN_LOCALIZATION; // = "Plugin-Localization"
+
+    /**
+     * Default value for the <code>Plugin-Localization</code> manifest header.
+     *
+     * @see #PLUGIN_LOCALIZATION
+     */
+    static const QString PLUGIN_LOCALIZATION_DEFAULT_BASENAME; // = "CTK-INF/l10n/plugin"
+
+    /**
+     * Manifest header identifying the symbolic names of other plugins required
+     * by the plugin.
+     *
+     * <p>
+     * The attribute value may be retrieved from the <code>Dictionary</code>
+     * object returned by the <code>Plugin::getHeaders</code> method.
+     *
+     */
+    static const QString REQUIRE_PLUGIN; // = "Require-Plugin"
+
+    /**
+     * Manifest header attribute identifying a range of versions for a plugin
+     * specified in the <code>Require-Plugin</code> manifest headers.
+     * The default value is <code>0.0.0</code>.
+     *
+     * <p>
+     * The attribute value is encoded in the Require-Plugin manifest header
+     * like:
+     *
+     * <pre>
+     *     Require-Plugin: com.acme.module.test; plugin-version=&quot;1.1&quot;
+     *     Require-Plugin: com.acme.module.test; plugin-version=&quot;[1.0,2.0)&quot;
+     * </pre>
+     *
+     * <p>
+     * The plugin-version attribute value uses a mathematical interval notation
+     * to specify a range of plugin versions. A plugin-version attribute value
+     * specified as a single version means a version range that includes any
+     * plugin version greater than or equal to the specified version.
+     *
+     * @see #REQUIRE_PLUGIN
+     */
+    static const QString PLUGIN_VERSION_ATTRIBUTE; // = "plugin-version"
+
+
+    /**
      * Manifest header identifying the plugin's version.
      *
      * <p>
@@ -113,8 +194,62 @@ namespace ctk {
      */
     static const QString	ACTIVATION_EAGER; // = "eager"
 
+    /**
+     * Manifest header directive identifying the resolution type in the
+     * Require-Plugin manifest header. The default value is
+     * {@link #RESOLUTION_MANDATORY mandatory}.
+     *
+     * <p>
+     * The directive value is encoded in the Require-Plugin
+     * manifest header like:
+     *
+     * <pre>
+     *     Require-Plugin: com.acme.module.test; resolution:=&quot;optional&quot;
+     * </pre>
+     *
+     * @see #REQUIRE_PLUGIN
+     * @see #RESOLUTION_MANDATORY
+     * @see #RESOLUTION_OPTIONAL
+     */
+    static const QString RESOLUTION_DIRECTIVE; // = "resolution"
 
+    /**
+     * Manifest header directive value identifying a mandatory resolution type.
+     * A mandatory resolution type indicates that the required plugin
+     * must be resolved when the plugin is resolved. If such a
+     * require plugin cannot be resolved, the module fails to resolve.
+     *
+     * <p>
+     * The directive value is encoded in the Require-Plugin
+     * manifest header like:
+     *
+     * <pre>
+     *     Require-Plugin: com.acme.module.test; resolution:=&quot;manditory&quot;
+     * </pre>
+     *
+     * @see #RESOLUTION_DIRECTIVE
+     */
+    static const QString RESOLUTION_MANDATORY; // = "mandatory"
 
+    /**
+     * Manifest header directive value identifying an optional resolution type.
+     * An optional resolution type indicates that the require plugin
+     * is optional and the plugin may be resolved without the require
+     * plugin being resolved. If the require plugin is not resolved
+     * when the plugin is resolved, therequire plugin may not be
+     * resolved before the plugin is refreshed.
+     *
+     * <p>
+     * The directive value is encoded in the Require-Plugin
+     * manifest header like:
+     *
+     * <pre>
+     *     Require-Plugin: com.acme.module.test; resolution:=&quot;optional&quot;
+     * </pre>
+     *
+     * @see #RESOLUTION_DIRECTIVE
+     */
+    static const QString RESOLUTION_OPTIONAL; // = "optional"
 
   };
 

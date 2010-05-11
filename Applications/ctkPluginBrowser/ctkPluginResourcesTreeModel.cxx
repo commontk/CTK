@@ -115,6 +115,17 @@ namespace ctk {
 
       return p.mid(i+1);
     }
+    else if (role == Qt::UserRole)
+    {
+      if (this->parent())
+      {
+        return this->parent()->data(role).toString() + path;
+      }
+      else
+      {
+        return path;
+      }
+    }
 
     return QVariant();
   }
@@ -181,7 +192,7 @@ namespace ctk {
     if (!index.isValid())
       return QVariant();
 
-    if (role == Qt::DisplayRole)
+    if (role == Qt::DisplayRole | role == Qt::UserRole)
     {
       PluginResourceTreeItem* item = static_cast<PluginResourceTreeItem*>(index.internalPointer());
       return item->data(role);

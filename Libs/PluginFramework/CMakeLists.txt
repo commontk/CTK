@@ -53,11 +53,15 @@ SET(KIT_SRCS
   ctkPluginFramework.cxx
   ctkPluginFrameworkContext.cxx
   ctkPluginFrameworkContextPrivate.cxx
+  ctkPluginFrameworkEvent.cxx
+  ctkPluginFrameworkListeners.cxx
   ctkPluginFrameworkPrivate.cxx
+  ctkPluginFrameworkUtil.cxx
   ctkPluginManager.cxx
   ctkPluginManifest.cxx
   ctkPluginPrivate.cxx
   ctkPlugins.cxx
+  ctkRequirePlugin.cxx
   ctkServiceReference.cxx
   ctkServiceRegistration.cxx
   #PluginFramework/ctkServiceRegistry.cxx
@@ -72,8 +76,9 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkPluginContext.h
   ctkPluginEvent.h
+  ctkPluginFrameworkEvent.h
+  ctkPluginFrameworkListeners_p.h
 )
 
 # UI files

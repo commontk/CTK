@@ -28,6 +28,8 @@
 
 namespace ctk {
 
+  class ServiceRegistrationPrivate;
+
   class ServiceReference {
 
   public:
@@ -41,6 +43,12 @@ namespace ctk {
     QList<Plugin*> getUsingPlugins() const;
 
     bool operator<(const ServiceReference& reference) const;
+
+  protected:
+
+    friend class ServiceRegistrationPrivate;
+
+    ServiceReference(ServiceRegistrationPrivate* reg);
 
   };
 

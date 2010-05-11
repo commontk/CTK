@@ -21,10 +21,54 @@ MACRO(ctkMacroGeneratePluginManifest QRC_SRCS)
   IF(DEFINED MY_ACTIVATIONPOLICY)
     STRING(TOLOWER "${MY_ACTIVATIONPOLICY}" _activation_policy)
     IF(_activation_policy STREQUAL "eager")
-      SET(manifest_content "Plugin-ActivationPolicy: eager")
+      SET(_manifest_content "${_manifest_content}\nPlugin-ActivationPolicy: eager")
     ELSE()
       MESSAGE(SEND_ERROR "ACTIVATIONPOLICY is set to '${MY_ACTIVATIONPOLICY}', which is not supported")
     ENDIF()
+  ENDIF()
+
+  IF(DEFINED MY_CATEGORY)
+    SET(_manifest_content "${_manifest_content}\nPlugin-Category: ${MY_CATEGORY}")
+  ENDIF()
+
+  IF(DEFINED MY_CONTACT_ADDRESS)
+    SET(_manifest_content "${_manifest_content}\nPlugin-ContactAddress: ${MY_CONTACT_ADDRESS}")
+  ENDIF()
+
+  IF(DEFINED MY_COPYRIGHT)
+    SET(_manifest_content "${_manifest_content}\nPlugin-Copyright: ${MY_COPYRIGHT}")
+  ENDIF()
+
+  IF(DEFINED MY_DESCRIPTION)
+    SET(_manifest_content "${_manifest_content}\nPlugin-Description: ${MY_DESCRIPTION}")
+  ENDIF()
+
+  IF(DEFINED MY_DOC_URL)
+    SET(_manifest_content "${_manifest_content}\nPlugin-DocURL: ${MY_DOC_URL}")
+  ENDIF()
+
+  IF(DEFINED MY_ICON)
+    SET(_manifest_content "${_manifest_content}\nPlugin-Icon: ${MY_ICON}")
+  ENDIF()
+
+  IF(DEFINED MY_LICENSE)
+    SET(_manifest_content "${_manifest_content}\nPlugin-License: ${MY_LICENSE}")
+  ENDIF()
+
+  IF(DEFINED MY_NAME)
+    SET(_manifest_content "${_manifest_content}\nPlugin-Name: ${MY_NAME}")
+  ENDIF()
+
+  IF(DEFINED MY_REQUIRE_PLUGIN)
+    SET(_manifest_content "${_manifest_content}\nRequire-Plugin: ${MY_REQUIRE_PLUGIN}")
+  ENDIF()
+
+  IF(DEFINED MY_VENDOR)
+    SET(_manifest_content "${_manifest_content}\nPlugin-Vendor: ${MY_VENDOR}")
+  ENDIF()
+
+  IF(DEFINED MY_VERSION)
+    SET(_manifest_content "${_manifest_content}\nPlugin-Version: ${MY_VERSION}")
   ENDIF()
 
   SET(_manifest_filename "MANIFEST.MF")

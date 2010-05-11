@@ -25,6 +25,7 @@
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginFrameworkContextPrivate_p.h"
 #include "ctkPluginConstants.h"
+#include "ctkPluginArchive_p.h"
 
 
 namespace ctk {
@@ -32,7 +33,7 @@ namespace ctk {
   PluginFramework::PluginFramework(PluginFrameworkContextPrivate* fw)
     : Plugin(*new PluginFrameworkPrivate(*this, fw))
   {
-
+    qRegisterMetaType<PluginFrameworkEvent>("PluginFrameworkEvent");
   }
 
   void PluginFramework::init()
@@ -53,6 +54,65 @@ namespace ctk {
       throw std::logic_error("INTERNAL ERROR, Illegal state");
     }
     d->init();
+  }
+
+  void PluginFramework::start(const Plugin::StartOptions& options)
+  {
+    Q_UNUSED(options);
+    Q_D(PluginFramework);
+
+    QStringList pluginsToStart;
+    {
+      QMutexLocker sync(&d->lock);
+      // TODO: parallel start
+      //waitOnActivation(lock, "PluginFramework::start", true);
+
+      switch (d->state)
+      {
+      case INSTALLED:
+      case RESOLVED:
+        d->init();
+      case STARTING:
+        d->activating = true;
+        break;
+      case ACTIVE:
+        return;
+      default:
+        throw std::logic_error("INTERNAL ERROR, Illegal state");
+      }
+
+      pluginsToStart = d->fwCtx->storage.getStartOnLaunchPlugins();
+    }
+
+    // Start plugins according to their autostart setting.
+    QStringListIterator i(pluginsToStart);
+    while (i.hasNext())
+    {
+      Plugin* p = d->fwCtx->plugins->getPlugin(i.next());
+      try {
+        const int autostartSetting = p->d_func()->archive->getAutostartSetting();
+        // Launch must not change the autostart setting of a plugin
+        StartOptions option = Plugin::START_TRANSIENT;
+        if (Plugin::START_ACTIVATION_POLICY == autostartSetting)
+        {
+          // Transient start according to the plugins activation policy.
+          option |= Plugin::START_ACTIVATION_POLICY;
+        }
+        p->start(option);
+      }
+      catch (const PluginException& pe)
+      {
+        d->fwCtx->listeners.frameworkError(p, pe);
+      }
+    }
+
+    {
+      QMutexLocker sync(&d->lock);
+      d->state = ACTIVE;
+      d->activating = false;
+      d->fwCtx->listeners.emitFrameworkEvent(
+          PluginFrameworkEvent(PluginFrameworkEvent::STARTED, this));
+    }
   }
 
   QStringList PluginFramework::getResourceList(const QString& path) const
@@ -95,6 +155,13 @@ namespace ctk {
   void waitForStop(int timeout)
   {
     // TODO implement
+  }
+
+  QHash<QString, QString> PluginFramework::getHeaders()
+  {
+    //TODO security
+    Q_D(PluginFramework);
+    return d->systemHeaders;
   }
 
 }

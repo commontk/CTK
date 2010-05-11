@@ -91,22 +91,12 @@ public:
    * @param key Name of attribute to get.
    * @return A string with result or null if the entry doesn't exists.
    */
-   QString getAttribute(const QString& key) const;
-
-  /**
-   * Gets all localization entries from this plugin. Will typically
-   * read the file OSGI-INF/plugin_&lt;locale&gt;.properties.
-   *
-   * @param localeFile Filename within archive for localization properties.
-   * @return null or a mapping of the entries.
-   */
-   QHash<QString,QString> getLocalizationEntries(const QString& localeFile) const;
-
+  QString getAttribute(const QString& key) const;
 
   /**
    * @returns the (raw/unlocalized) attributes
    */
-   QHash<QString,QString> getUnlocalizedAttributes() const;
+  QHash<QString,QString> getUnlocalizedAttributes() const;
 
 
   /**
@@ -114,7 +104,7 @@ public:
    *
    * @return Plugin identifier.
    */
-   int getPluginId() const;
+  int getPluginId() const;
 
 
   /**
@@ -122,7 +112,7 @@ public:
    *
    * @return Bundle location.
    */
-   QUrl getPluginLocation() const;
+  QUrl getPluginLocation() const;
 
    /**
     * Get the path to the plugin library on the local
@@ -140,7 +130,7 @@ public:
    * @param component Resource to get the byte array from.
    * @return QByteArray to the entry (empty if it doesn't exist).
    */
-   QByteArray getPluginResource(const QString& component) const;
+  QByteArray getPluginResource(const QString& component) const;
 
 
   /**
@@ -151,31 +141,31 @@ public:
    * @param name
    * @return
    */
-   QStringList findResourcesPath(const QString& path) const;
+  QStringList findResourcesPath(const QString& path) const;
 
 
   /**
    * Get stored plugin start level.
    */
-   int getStartLevel() const;
+  int getStartLevel() const;
 
 
   /**
    * Set stored plugin start level.
    */
-   void setStartLevel(int level);
+  void setStartLevel(int level);
 
 
   /**
    * Get last modified timestamp.
    */
-   qtimestamp getLastModified() const;
+  qtimestamp getLastModified() const;
 
 
   /**
    * Set stored last modified timestamp.
    */
-   void setLastModified(qtimestamp timemillisecs);
+  void setLastModified(qtimestamp timemillisecs);
 
 
   /**
@@ -183,7 +173,7 @@ public:
    *
    * @return the autostart setting. "-1" if the plugin is not started.
    */
-   int getAutostartSetting() const;
+  int getAutostartSetting() const;
 
 
   /**
@@ -191,7 +181,7 @@ public:
    *
    * @param setting the autostart setting to use.
    */
-   void setAutostartSetting(int setting);
+  void setAutostartSetting(int setting);
 
 
   /**
@@ -214,7 +204,7 @@ public:
    * Remove plugin from persistent storage.
    * This will delete the current PluginArchive instance.
    */
-   void purge();
+  void purge();
 
 };
 

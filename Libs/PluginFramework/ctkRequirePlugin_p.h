@@ -19,33 +19,32 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORKPRIVATE_P_H
-#define CTKPLUGINFRAMEWORKPRIVATE_P_H
+#ifndef CTKREQUIREPLUGIN_P_H
+#define CTKREQUIREPLUGIN_P_H
 
-#include "ctkPluginPrivate_p.h"
-
-#include <QMutex>
+#include <ctkVersionRange_p.h>
 
 namespace ctk {
 
-  class PluginFramework;
+  class PluginPrivate;
 
-  class PluginFrameworkPrivate : public PluginPrivate
+  class RequirePlugin
   {
+
   public:
 
-    QMutex lock;
+    const QString name;
+    const QString resolution;
+    const VersionRange pluginRange;
 
-    PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContextPrivate* fw);
+    RequirePlugin(PluginPrivate* requestor,
+                  const QString& name, const QString& res,
+                  const QString& range);
 
-    void init();
-
-    void initSystemPlugin();
-
-    QHash<QString, QString> systemHeaders;
+    bool overlap(const RequirePlugin& rp) const;
 
   };
 
 }
 
-#endif // CTKPLUGINFRAMEWORKPRIVATE_P_H
+#endif // CTKREQUIREPLUGIN_P_H

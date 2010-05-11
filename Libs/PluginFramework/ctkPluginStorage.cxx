@@ -83,10 +83,10 @@ namespace ctk {
     QListIterator<PluginArchive*> i(archives);
     while(i.hasNext())
     {
-      PluginArchive* ba = i.next();
-      if (ba->getAutostartSetting() != -1)
+      PluginArchive* pa = i.next();
+      if (pa->getAutostartSetting() != -1)
       {
-        res.push_back(ba->getPluginLocation().toString());
+        res.push_back(pa->getPluginLocation().toString());
       }
     }
     return res;

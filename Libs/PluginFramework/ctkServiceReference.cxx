@@ -25,6 +25,11 @@
 
 namespace ctk {
 
+  ServiceReference::ServiceReference(ServiceRegistrationPrivate* reg)
+  {
+
+  }
+
   QVariant ServiceReference::getProperty(const QString& key) const
   {
     return QVariant();

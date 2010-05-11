@@ -53,16 +53,9 @@ namespace ctk {
     return manifest.getAttribute(key);
   }
 
-  QHash<QString,QString> PluginArchive::getLocalizationEntries(const QString& localeFile) const
-  {
-    //TODO
-    return QHash<QString,QString>();
-  }
-
   QHash<QString,QString> PluginArchive::getUnlocalizedAttributes() const
   {
-    //TODO
-    return QHash<QString,QString>();
+    return manifest.getMainAttributes();
   }
 
   int PluginArchive::getPluginId() const

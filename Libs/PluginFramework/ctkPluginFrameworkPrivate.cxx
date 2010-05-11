@@ -34,7 +34,9 @@ namespace ctk {
                     // TODO: read version from the manifest resource
                     Version(0, 9, 0))
   {
-
+    systemHeaders.insert(PluginConstants::PLUGIN_SYMBOLICNAME, symbolicName);
+    systemHeaders.insert(PluginConstants::PLUGIN_NAME, location);
+    systemHeaders.insert(PluginConstants::PLUGIN_VERSION, version.toString());
   }
 
   void PluginFrameworkPrivate::init()

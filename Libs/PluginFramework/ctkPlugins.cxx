@@ -330,12 +330,11 @@ namespace ctk {
       {
         try
         {
-          plugin->start();
+          plugin->start(0);
         }
         catch (const PluginException& pe)
         {
-          // TODO
-          // rb.fwCtx.listeners.frameworkError(rb, be);
+          pp->fwCtx->listeners.frameworkError(plugin, pe);
         }
       }
     }

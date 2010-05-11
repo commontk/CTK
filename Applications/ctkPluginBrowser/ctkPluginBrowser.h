@@ -26,6 +26,10 @@
 
 #include <ui_ctkPluginBrowserMainWindow.h>
 
+#include "ctkPluginBrowserEditors.h"
+
+#include <ctkPluginFrameworkEvent.h>
+
 namespace ctk {
 
   class PluginFramework;
@@ -41,12 +45,18 @@ namespace ctk {
   private slots:
 
     void pluginSelected(const QModelIndex& index);
+    void pluginDoubleClicked(const QModelIndex& index);
+    void qtResourceDoubleClicked(const QModelIndex& index);
+    void dbResourceDoubleClicked(const QModelIndex& index);
+
+    void frameworkEvent(const PluginFrameworkEvent& event);
 
   private:
 
     PluginFramework* framework;
 
     Ui::PluginBrowserWindow ui;
+    PluginBrowserEditors* editors;
   };
 
 }

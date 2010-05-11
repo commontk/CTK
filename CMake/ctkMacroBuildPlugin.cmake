@@ -2,8 +2,31 @@
 #
 # Depends on:
 #  CTK/CMake/ctkMacroParseArguments.cmake
+#  CTK/CMake/ctkMacroGeneratePluginManifest.cmake
 #
-
+# This macro takes the usual arguments for building
+# a shared library using Qt. Additionally, it generates
+# plugin meta-data by creating a MANIFEST.MF text file
+# which is embedded in the share library as a Qt resource.
+#
+# The following variables can be set in a file named
+# manifest_headers.cmake, which will then be read by
+# this macro:
+#
+# Plugin-ActivationPolicy
+# Plugin-Category
+# Plugin-ContactAddress
+# Plugin-Copyright
+# Plugin-Description
+# Plugin-DocURL
+# Plugin-Icon
+# Plugin-License
+# Plugin-Name
+# Require-Plugin
+# Plugin-SymbolicName
+# Plugin-Vendor
+# Plugin-Version
+#
 MACRO(ctkMacroBuildPlugin)
   CtkMacroParseArguments(MY
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
@@ -60,10 +83,46 @@ MACRO(ctkMacroBuildPlugin)
     QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
   ENDIF()
 
+  # Clear the variables for the manifest headers
+  SET(Plugin-ActivationPolicy )
+  SET(Plugin-Category )
+  SET(Plugin-ContactAddress )
+  SET(Plugin-Copyright )
+  SET(Plugin-Description )
+  SET(Plugin-DocURL )
+  SET(Plugin-Icon )
+  SET(Plugin-License )
+  SET(Plugin-Name )
+  SET(Require-Plugin )
+  SET(Plugin-SymbolicName )
+  SET(Plugin-Vendor )
+  SET(Plugin-Version )
+
+  # If a file named manifest_headers.cmake exists, read it
+  IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
+    INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
+  ENDIF()
+
+  # Set the plugin_symbolicname to the library name if it is not set
+  IF(NOT Plugin-SymbolicName)
+    STRING(REPLACE "_" "." Plugin-SymbolicName ${lib_name})
+  ENDIF()
+
   # Add the generated manifest qrc file
-  STRING(REPLACE "_" "." plugin_symbolic_name ${lib_name})
   ctkMacroGeneratePluginManifest(MY_QRC_SRCS
-    SYMBOLIC_NAME ${plugin_symbolic_name}
+    ACTIVATIONPOLICY ${Plugin-ActivationPolicy}
+    CATEGORY ${Plugin-Category}
+    CONTACT_ADDRESS ${Plugin-ContactAddress}
+    COPYRIGHT ${Plugin-Copyright}
+    DESCRIPTION ${Plugin-Description}
+    DOC_URL ${Plugin-DocURL}
+    ICON ${Plugin-Icon}
+    LICENSE ${Plugin-License}
+    NAME ${Plugin-Name}
+    REQUIRE_PLUGIN ${Require-Plugin}
+    SYMBOLIC_NAME ${Plugin-SymbolicName}
+    VENDOR ${Plugin-Vendor}
+    VERSION ${Plugin-Version}
     )
 
   SOURCE_GROUP("Resources" FILES

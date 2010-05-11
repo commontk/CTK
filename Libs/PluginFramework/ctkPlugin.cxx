@@ -23,6 +23,7 @@
 
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginArchive_p.h"
+#include "ctkPluginFrameworkContextPrivate_p.h"
 
 #include <QStringList>
 
@@ -52,12 +53,53 @@ namespace ctk {
     return d->state;
   }
 
-  void Plugin::start()
+  void Plugin::start(const StartOptions& options)
   {
+    Q_D(Plugin);
 
+    if (d->state == UNINSTALLED)
+    {
+      throw std::logic_error("Plugin is uninstalled");
+    }
+
+    // Initialize the activation; checks initialization of lazy
+    // activation.
+
+    //TODO 1: If activating or deactivating, wait a litle
+    // we don't use mutliple threads to start plugins for now
+    //waitOnActivation(lock, "Plugin::start", false);
+
+    //2: start() is idempotent, i.e., nothing to do when already started
+    if (d->state == ACTIVE)
+    {
+      return;
+    }
+
+    //3: Record non-transient start requests.
+    if ((options & START_TRANSIENT) == 0)
+    {
+      d->setAutostartSetting(options);
+    }
+
+    //4: Resolve plugin (if needed)
+    d->getUpdatedState();
+
+    //5: Eager?
+    if ((options & START_ACTIVATION_POLICY) && d->eagerActivation )
+    {
+      d->finalizeActivation();
+    }
+    else
+    {
+      if (STARTING == d->state) return;
+      d->state = STARTING;
+      d->pluginContext = new PluginContext(this->d_func());
+      PluginEvent pluginEvent(PluginEvent::LAZY_ACTIVATION, this);
+      d->fwCtx->listeners.emitPluginChanged(pluginEvent);
+    }
   }
 
-  void Plugin::stop()
+  void Plugin::stop(const StopOptions& options)
   {
 
   }
@@ -69,7 +111,7 @@ namespace ctk {
     return d->pluginContext;
   }
 
-  int Plugin::getPluginId() const
+  long Plugin::getPluginId() const
   {
     Q_D(const Plugin);
     return d->id;
@@ -80,6 +122,24 @@ namespace ctk {
     //TODO security
     Q_D(const Plugin);
     return d->location;
+  }
+
+  QHash<QString, QString> Plugin::getHeaders()
+  {
+    //TODO security
+    Q_D(Plugin);
+    if (d->cachedRawHeaders.empty())
+    {
+      d->cachedRawHeaders = d->archive->getUnlocalizedAttributes();
+    }
+
+    if (d->state == UNINSTALLED)
+    {
+      return d->cachedHeaders;
+    }
+
+    //TODO use the embedded .qm files to localize header values
+    return d->cachedRawHeaders;
   }
 
   QString Plugin::getSymbolicName() const

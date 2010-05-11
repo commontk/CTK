@@ -110,5 +110,19 @@ namespace ctk {
 
   }
 
+  bool PluginContext::connectPluginListener(const QObject* receiver, const char* method,
+                                            Qt::ConnectionType type)
+  {
+    Q_D(PluginContext);
+    // TODO check permissions for a direct connection
+    receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(pluginChanged(PluginEvent)), method, type);
+  }
+
+  bool PluginContext::connectFrameworkListener(const QObject* receiver, const char* method, Qt::ConnectionType type)
+  {
+    Q_D(PluginContext);
+    receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(frameworkEvent(PluginFrameworkEvent)), method, type);
+  }
+
 
 }

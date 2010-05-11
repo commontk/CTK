@@ -44,6 +44,13 @@ namespace ctk {
      */
     void init();
 
+    /**
+     * Start this framework.
+     */
+    void start(const Plugin::StartOptions& options = 0);
+
+    QHash<QString, QString> getHeaders();
+
     // TODO return info about the reason why this
     // method returned
     void waitForStop(int timeout);

@@ -19,33 +19,23 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORKPRIVATE_P_H
-#define CTKPLUGINFRAMEWORKPRIVATE_P_H
-
-#include "ctkPluginPrivate_p.h"
-
-#include <QMutex>
+#include "ctkPluginFrameworkListeners_p.h"
 
 namespace ctk {
 
-  class PluginFramework;
-
-  class PluginFrameworkPrivate : public PluginPrivate
+  void PluginFrameworkListeners::frameworkError(Plugin* p, const std::exception& e)
   {
-  public:
+    emit frameworkEvent(PluginFrameworkEvent(PluginFrameworkEvent::ERROR, p, e));
+  }
 
-    QMutex lock;
+  void PluginFrameworkListeners::emitFrameworkEvent(const PluginFrameworkEvent& event)
+  {
+    emit frameworkEvent(event);
+  }
 
-    PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContextPrivate* fw);
-
-    void init();
-
-    void initSystemPlugin();
-
-    QHash<QString, QString> systemHeaders;
-
-  };
+  void PluginFrameworkListeners::emitPluginChanged(const PluginEvent& event)
+  {
+    emit pluginChanged(event);
+  }
 
 }
-
-#endif // CTKPLUGINFRAMEWORKPRIVATE_P_H

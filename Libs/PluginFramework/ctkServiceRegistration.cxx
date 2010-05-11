@@ -23,6 +23,8 @@
 
 #include <QMutex>
 
+#include <stdexcept>
+
 namespace ctk {
 
   class ServiceRegistrationPrivate
@@ -86,7 +88,7 @@ namespace ctk {
 
     ServiceRegistrationPrivate(Plugin* plugin, QObject* service,
                                const PluginContext::ServiceProperties& props)
-                                 : plugin(plugint), service(service), reference(this),
+                                 : plugin(plugin), service(service), reference(this),
                                  properties(props), available(true), unregistering(false)
     {
 
@@ -108,49 +110,93 @@ namespace ctk {
 
   ServiceReference ServiceRegistration::getReference() const
   {
-    if (!available) throw std::logic_error("Service is unregistered");
+    Q_D(const ServiceRegistration);
 
-    return reference;
+    if (!d->available) throw std::logic_error("Service is unregistered");
+
+    return d->reference;
   }
 
   void ServiceRegistration::setProperties(const PluginContext::ServiceProperties& properties)
   {
-    QMutexLocker lock(eventLock);
-          Set before;
-          // TBD, optimize the locking of services
-          synchronized (bundle.fwCtx.services) {
-            synchronized (properties) {
-              if (available) {
-                // NYI! Optimize the MODIFIED_ENDMATCH code
-                Object old_rank = properties.get(Constants.SERVICE_RANKING);
-                before = bundle.fwCtx.listeners.getMatchingServiceListeners(reference);
-                String[] classes = (String[])properties.get(Constants.OBJECTCLASS);
-                Long sid = (Long)properties.get(Constants.SERVICE_ID);
-                properties = new PropertiesDictionary(props, classes, sid);
-                Object new_rank = properties.get(Constants.SERVICE_RANKING);
-                if (old_rank != new_rank && new_rank instanceof Integer &&
-                    !((Integer)new_rank).equals(old_rank)) {
-                  bundle.fwCtx.services.updateServiceRegistrationOrder(this, classes);
-                }
-              } else {
-                throw new IllegalStateException("Service is unregistered");
-              }
-            }
-          }
-          bundle.fwCtx.listeners
-            .serviceChanged(bundle.fwCtx.listeners.getMatchingServiceListeners(reference),
-                            new ServiceEvent(ServiceEvent.MODIFIED, reference),
-                            before);
-          bundle.fwCtx.listeners
-            .serviceChanged(before,
-                            new ServiceEvent(ServiceEvent.MODIFIED_ENDMATCH, reference),
-                            null);
+//    QMutexLocker lock(eventLock);
+//          Set before;
+//          // TBD, optimize the locking of services
+//          synchronized (bundle.fwCtx.services) {
+//
+//            synchronized (properties) {
+//              if (available) {
+//                // NYI! Optimize the MODIFIED_ENDMATCH code
+//                Object old_rank = properties.get(Constants.SERVICE_RANKING);
+//                before = bundle.fwCtx.listeners.getMatchingServiceListeners(reference);
+//                String[] classes = (String[])properties.get(Constants.OBJECTCLASS);
+//                Long sid = (Long)properties.get(Constants.SERVICE_ID);
+//                properties = new PropertiesDictionary(props, classes, sid);
+//                Object new_rank = properties.get(Constants.SERVICE_RANKING);
+//                if (old_rank != new_rank && new_rank instanceof Integer &&
+//                    !((Integer)new_rank).equals(old_rank)) {
+//                  bundle.fwCtx.services.updateServiceRegistrationOrder(this, classes);
+//                }
+//              } else {
+//                throw new IllegalStateException("Service is unregistered");
+//              }
+//            }
+//          }
+//          bundle.fwCtx.listeners
+//            .serviceChanged(bundle.fwCtx.listeners.getMatchingServiceListeners(reference),
+//                            new ServiceEvent(ServiceEvent.MODIFIED, reference),
+//                            before);
+//          bundle.fwCtx.listeners
+//            .serviceChanged(before,
+//                            new ServiceEvent(ServiceEvent.MODIFIED_ENDMATCH, reference),
+//                            null);
 
   }
 
   void ServiceRegistration::unregister() const
   {
-
+//    Q_D(ServiceRegistration);
+//
+//    if (d->unregistering) return; // Silently ignore redundant unregistration.
+//
+//        {
+//          QMutexLocker lock(eventLock);
+//          if (d->unregistering) return;
+//          d->unregistering = true;
+//
+//          if (d->available)
+//          {
+//            if (d->plugin)
+//            {
+//              d->plugin->fwCtx.services.removeServiceRegistration(this);
+//            }
+//          }
+//          else
+//          {
+//            throw std::logic_error("Service is unregistered");
+//          }
+//        }
+//
+//        if (d->plugin)
+//    {
+//          bundle.fwCtx.listeners
+//            .serviceChanged(bundle.fwCtx.listeners.getMatchingServiceListeners(reference),
+//                            new ServiceEvent(ServiceEvent.UNREGISTERING, reference),
+//                            null);
+//        }
+//        synchronized (eventLock) {
+//          synchronized (properties) {
+//            available = false;
+//            if (null!=bundle)
+//              bundle.fwCtx.perm.callUnregister0(this);
+//            bundle = null;
+//            dependents = null;
+//            reference = null;
+//            service = null;
+//            serviceInstances = null;
+//            unregistering = false;
+//          }
+//        }
   }
 
 }

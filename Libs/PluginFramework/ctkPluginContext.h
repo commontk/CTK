@@ -90,9 +90,8 @@ namespace ctk {
    *
    * @threadsafe
    */
-  class CTK_PLUGINFW_EXPORT PluginContext : public QObject
+  class CTK_PLUGINFW_EXPORT PluginContext
   {
-    Q_OBJECT
 	  Q_DECLARE_PRIVATE(PluginContext)
 
   public:
@@ -136,26 +135,15 @@ namespace ctk {
     Plugin* installPlugin(const QUrl& location, QIODevice* in = 0);
 
 
-  signals:
+    bool connectPluginListener(const QObject* receiver, const char* method, Qt::ConnectionType type = Qt::QueuedConnection);
 
-    /**
-     *
-     */
-    void pluginChanged(const PluginEvent& event);
-
-    /**
-     *
-     */
-    //void frameworkEvent(const FrameworkEvent& event);
-
-    /**
-     *
-     */
-    //void serviceChanged(const ServiceEvent& event);
+    bool connectFrameworkListener(const QObject* receiver, const char* method, Qt::ConnectionType type = Qt::QueuedConnection);
 
   protected:
 
     friend class PluginFrameworkPrivate;
+    friend class Plugin;
+    friend class PluginPrivate;
 
     PluginContext(PluginPrivate* plugin);
 
