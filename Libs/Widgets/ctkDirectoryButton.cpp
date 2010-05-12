@@ -129,7 +129,7 @@ const QString& ctkDirectoryButton::caption()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkDirectoryButton::ctkDirectoryButton::setOptions(const Options& dialogOptions)
+void ctkDirectoryButton::setOptions(const Options& dialogOptions)
 {
   CTK_D(ctkDirectoryButton);
   d->DialogOptions = dialogOptions;
