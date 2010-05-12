@@ -43,8 +43,9 @@ ENDIF()
 IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
   SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CTK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
 ENDIF()
-#SET(CTK_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
-#SET(CTK_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
+IF(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+  SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CTK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Install directories, used for install rules.
