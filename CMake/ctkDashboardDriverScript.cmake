@@ -5,6 +5,7 @@
 
 # The following variable are expected to be define in the top-level script:
 set(expected_variables
+  ADDITIONNAL_CMAKECACHE_OPTION
   CTEST_NOTES_FILES
   CTEST_SITE
   CTEST_DASHBOARD_ROOT
@@ -93,6 +94,7 @@ CTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
 QT_QMAKE_EXECUTABLE:FILEPATH=/home/jchris/Projects/qtsdk-2010.02/qt/bin/qmake
 SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:BOOL=TRUE
 WITH_COVERAGE:BOOL=TRUE
+${ADDITIONNAL_CMAKECACHE_OPTION}
 ")
   endif()
   
