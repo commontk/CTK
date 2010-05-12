@@ -360,7 +360,7 @@ ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" TRUE)
 # Obtain list of target ordered topologically
 ctkFunctionExecuteProcess(
   COMMAND "${DGraph_EXECUTABLE}" "${CTK_BINARY_DIR}/DGraphInput.txt"
-  PATH_LIST ${QT_LIBRARY_DIR}
+  PATH_LIST \"${QT_INSTALLED_LIBRARY_DIR}\"
   WORKING_DIRECTORY ${CTK_BINARY_DIR}
   RESULT_VARIABLE RESULT_VAR
   OUTPUT_VARIABLE CTEST_PROJECT_SUBPROJECTS

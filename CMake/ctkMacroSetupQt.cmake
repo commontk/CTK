@@ -23,6 +23,13 @@ MACRO(ctkMacroSetupQt)
     SET(QT_USE_QTTEST ${BUILD_TESTING})
     INCLUDE(${QT_USE_FILE})
 
+    # Set variable QT_INSTALLED_LIBRARY_DIR that will contains
+    # Qt shared library
+    SET(QT_INSTALLED_LIBRARY_DIR ${QT_LIBRARY_DIR})
+    IF (WIN32)
+      GET_FILENAME_COMPONENT(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
+    ENDIF()
+
   ELSE(QT4_FOUND)
     MESSAGE(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
   ENDIF(QT4_FOUND)
