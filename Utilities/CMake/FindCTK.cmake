@@ -22,7 +22,7 @@
 SET(CTK_FOUND 0)
 
 # Construct consitent error messages for use below.
-SET(CTK_DIR_MESSAGE "CTK not found.  Set the CTK_DIR cmake cache entry to the directory containing CTKConfig.cmake.  This is either the root of the build tree, or PREFIX/lib/vtk for an installation.")
+SET(CTK_DIR_MESSAGE "CTK not found.  Set the CTK_DIR cmake cache entry to the directory containing CTKConfig.cmake.  This is either the root of the build tree, or PREFIX/lib/ctk for an installation.")
 
 # Use the Config mode of the find_package() command to find CTKConfig.
 # If this succeeds (possibly because CTK_DIR is already set), the
