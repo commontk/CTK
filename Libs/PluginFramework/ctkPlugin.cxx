@@ -23,13 +23,13 @@
 
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginArchive_p.h"
-#include "ctkPluginFrameworkContextPrivate_p.h"
+#include "ctkPluginFrameworkContext_p.h"
 
 #include <QStringList>
 
 namespace ctk {
 
-  Plugin::Plugin(PluginFrameworkContextPrivate* fw,
+  Plugin::Plugin(PluginFrameworkContext* fw,
                  PluginArchive* pa)
     : d_ptr(new PluginPrivate(*this, fw, pa))
   {

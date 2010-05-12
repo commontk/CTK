@@ -19,7 +19,7 @@
 
 =============================================================================*/
 
-#include <ctkPluginFrameworkContext.h>
+#include <ctkPluginFrameworkFactory.h>
 #include <ctkPluginFramework.h>
 #include <ctkPluginException.h>
 
@@ -33,11 +33,9 @@ int main(int argv, char** argc)
 {
   QApplication app(argv, argc);
 
-  PluginFrameworkContext::Properties props;
+  PluginFrameworkFactory fwFactory;
+  PluginFramework* framework = fwFactory.getFramework();
 
-  PluginFrameworkContext fwContext(props);
-
-  PluginFramework* framework = fwContext.getFramework();
   try {
     framework->init();
   }

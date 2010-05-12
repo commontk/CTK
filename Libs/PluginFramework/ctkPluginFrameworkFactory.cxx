@@ -19,39 +19,26 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORKCONTEXT_H
-#define CTKPLUGINFRAMEWORKCONTEXT_H
+#include "ctkPluginFrameworkFactory.h"
 
-#include <QHash>
-#include <QString>
-#include <QVariant>
-
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkContext_p.h"
 
 namespace ctk {
 
-  class PluginFramework;
-  class PluginFrameworkContextPrivate;
+  PluginFrameworkFactory::PluginFrameworkFactory(const Properties& initProps)
+    : fwCtx(new PluginFrameworkContext(initProps))
+  {
 
-  class CTK_PLUGINFW_EXPORT PluginFrameworkContext {
+  }
 
-    Q_DECLARE_PRIVATE(PluginFrameworkContext)
+  PluginFrameworkFactory::~PluginFrameworkFactory()
+  {
+    delete fwCtx;
+  }
 
-  public:
-
-    typedef QHash<QString, QVariant> Properties;
-
-    PluginFrameworkContext(const Properties& initProps);
-    ~PluginFrameworkContext();
-
-    PluginFramework* getFramework();
-
-  private:
-
-    PluginFrameworkContextPrivate * const d_ptr;
-
-  };
+  PluginFramework* PluginFrameworkFactory::getFramework()
+  {
+    return &(fwCtx->systemPlugin);
+  }
 
 }
-
-#endif // CTKPLUGINFRAMEWORKCONTEXT_H

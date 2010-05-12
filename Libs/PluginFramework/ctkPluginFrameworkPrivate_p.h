@@ -23,12 +23,13 @@
 #define CTKPLUGINFRAMEWORKPRIVATE_P_H
 
 #include "ctkPluginPrivate_p.h"
+#include "ctkPluginFramework.h"
 
 #include <QMutex>
 
 namespace ctk {
 
-  class PluginFramework;
+  class PluginFrameworkContext;
 
   class PluginFrameworkPrivate : public PluginPrivate
   {
@@ -36,7 +37,7 @@ namespace ctk {
 
     QMutex lock;
 
-    PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContextPrivate* fw);
+    PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContext* fw);
 
     void init();
 

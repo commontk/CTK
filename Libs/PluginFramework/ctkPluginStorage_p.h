@@ -34,7 +34,7 @@ namespace ctk {
 
   // CTK class forward declarations
   class PluginArchive;
-  class PluginFrameworkContextPrivate;
+  class PluginFrameworkContext;
 
   /**
    * Storage of all plugin meta-data and resources
@@ -53,7 +53,7 @@ namespace ctk {
     /**
      * Framework handle.
      */
-    PluginFrameworkContextPrivate* framework;
+    PluginFrameworkContext* framework;
 
     /**
      * SQLite db caching plug-in metadata and resources
@@ -67,7 +67,7 @@ namespace ctk {
      * Try to restore all saved plugin archive state.
      *
      */
-    PluginStorage(PluginFrameworkContextPrivate* framework);
+    PluginStorage(PluginFrameworkContext* framework);
 
 
     /**

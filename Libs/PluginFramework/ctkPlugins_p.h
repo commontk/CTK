@@ -31,7 +31,7 @@ namespace ctk {
 
   // CTK class forward declarations
   class Plugin;
-  class PluginFrameworkContextPrivate;
+  class PluginFrameworkContext;
   class Version;
   class VersionRange;
 
@@ -53,7 +53,7 @@ namespace ctk {
     /**
      * Link to framework object.
      */
-    PluginFrameworkContextPrivate* fwCtx;
+    PluginFrameworkContext* fwCtx;
 
     /**
      * Read write lock for protecting the plugins object
@@ -66,7 +66,7 @@ namespace ctk {
     /**
      * Create a container for all plugins in this framework.
      */
-    Plugins(PluginFrameworkContextPrivate* fw);
+    Plugins(PluginFrameworkContext* fw);
 
 
     void clear();

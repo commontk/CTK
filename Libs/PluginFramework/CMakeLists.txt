@@ -51,8 +51,8 @@ SET(KIT_SRCS
   ctkPluginEvent.cxx
   ctkPluginException.cxx
   ctkPluginFramework.cxx
+  ctkPluginFrameworkFactory.cxx
   ctkPluginFrameworkContext.cxx
-  ctkPluginFrameworkContextPrivate.cxx
   ctkPluginFrameworkEvent.cxx
   ctkPluginFrameworkListeners.cxx
   ctkPluginFrameworkPrivate.cxx

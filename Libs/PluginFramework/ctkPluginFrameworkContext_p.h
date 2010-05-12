@@ -19,13 +19,13 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINFRAMEWORKCONTEXTPRIVATE_P_H
-#define CTKPLUGINFRAMEWORKCONTEXTPRIVATE_P_H
+#ifndef CTKPLUGINFRAMEWORKCONTEXT_P_H
+#define CTKPLUGINFRAMEWORKCONTEXT_P_H
 
 #include <QDebug>
 #include <QMutex>
 
-#include "ctkPluginFrameworkContext.h"
+#include "ctkPluginFrameworkFactory.h"
 #include "ctkPluginFramework.h"
 #include "ctkPluginStorage_p.h"
 #include "ctkPlugins_p.h"
@@ -35,7 +35,7 @@ namespace ctk {
 
   class Plugin;
 
-  class PluginFrameworkContextPrivate {
+  class PluginFrameworkContext {
 
   public:
 
@@ -79,13 +79,13 @@ namespace ctk {
        */
       static int globalId;
 
-      PluginFrameworkContext::Properties props;
+      PluginFrameworkFactory::Properties props;
 
       /**
        * Contruct a framework context
        *
        */
-      PluginFrameworkContextPrivate(const PluginFrameworkContext::Properties& initProps);
+      PluginFrameworkContext(const PluginFrameworkFactory::Properties& initProps);
 
 
       /**
@@ -141,4 +141,4 @@ namespace ctk {
 
 }
 
-#endif // CTKPLUGINFRAMEWORKCONTEXTPRIVATE_P_H
+#endif // CTKPLUGINFRAMEWORKCONTEXT_P_H

@@ -24,7 +24,7 @@
 #include "ctkPluginConstants.h"
 #include "ctkPluginDatabaseException.h"
 #include "ctkPluginArchive_p.h"
-#include "ctkPluginFrameworkContextPrivate_p.h"
+#include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginActivator.h"
 
@@ -35,7 +35,7 @@ namespace ctk {
 
   PluginPrivate::PluginPrivate(
       Plugin& qq,
-      PluginFrameworkContextPrivate* fw,
+      PluginFrameworkContext* fw,
       PluginArchive* pa)
     : q_ptr(&qq), fwCtx(fw), id(pa->getPluginId()),
     location(pa->getPluginLocation().toString()), state(Plugin::INSTALLED),
@@ -65,7 +65,7 @@ namespace ctk {
   }
 
   PluginPrivate::PluginPrivate(Plugin& qq,
-    PluginFrameworkContextPrivate* fw,
+    PluginFrameworkContext* fw,
     long id, const QString& loc, const QString& sym, const Version& ver)
       : q_ptr(&qq), fwCtx(fw), id(id), location(loc), symbolicName(sym), version(ver),
       state(Plugin::INSTALLED), archive(0), pluginContext(0),

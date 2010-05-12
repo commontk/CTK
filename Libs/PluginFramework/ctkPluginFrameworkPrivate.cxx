@@ -24,11 +24,11 @@
 #include "ctkPluginFramework.h"
 #include "ctkPluginConstants.h"
 
-#include "ctkPluginFrameworkContextPrivate_p.h"
+#include "ctkPluginFrameworkContext_p.h"
 
 namespace ctk {
 
-  PluginFrameworkPrivate::PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContextPrivate* fw)
+  PluginFrameworkPrivate::PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContext* fw)
     : PluginPrivate(qq, fw, 0, PluginConstants::SYSTEM_PLUGIN_LOCATION,
                     PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
                     // TODO: read version from the manifest resource

@@ -64,9 +64,9 @@ namespace ctk {
    * <p>
    * A <code>PluginContext</code> object will be created and provided to the
    * plugin associated with this context when it is started using the
-   * {@link PluginActivator#start} method. The same <code>PluginContext</code>
+   * {@link PluginActivator::start} method. The same <code>PluginContext</code>
    * object will be passed to the plugin associated with this context when it is
-   * stopped using the {@link PluginActivator#stop} method. A
+   * stopped using the {@link PluginActivator::stop} method. A
    * <code>PluginContext</code> object is generally for the private use of its
    * associated plugin and is not meant to be shared with other plugins in the
    * plugin environment.

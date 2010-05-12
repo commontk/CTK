@@ -118,7 +118,7 @@ namespace ctk {
      * by the plugin.
      *
      * <p>
-     * The attribute value may be retrieved from the <code>Dictionary</code>
+     * The attribute value may be retrieved from the <code>QHash</code>
      * object returned by the <code>Plugin::getHeaders</code> method.
      *
      */

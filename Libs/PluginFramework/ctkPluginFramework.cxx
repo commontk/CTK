@@ -23,14 +23,14 @@
 
 #include "ctkPluginFrameworkPrivate_p.h"
 #include "ctkPluginPrivate_p.h"
-#include "ctkPluginFrameworkContextPrivate_p.h"
+#include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginConstants.h"
 #include "ctkPluginArchive_p.h"
 
 
 namespace ctk {
 
-  PluginFramework::PluginFramework(PluginFrameworkContextPrivate* fw)
+  PluginFramework::PluginFramework(PluginFrameworkContext* fw)
     : Plugin(*new PluginFrameworkPrivate(*this, fw))
   {
     qRegisterMetaType<PluginFrameworkEvent>("PluginFrameworkEvent");
@@ -41,7 +41,7 @@ namespace ctk {
     Q_D(PluginFramework);
 
     QMutexLocker sync(&d->lock);
-    // waitOnActivation(d->lock, "Framework.ini", true);
+    // waitOnActivation(d->lock, "Framework.init", true);
     switch (d->state)
     {
     case Plugin::INSTALLED:
@@ -150,11 +150,6 @@ namespace ctk {
     QFile resourceFile(resourcePath);
     resourceFile.open(QIODevice::ReadOnly);
     return resourceFile.readAll();
-  }
-
-  void waitForStop(int timeout)
-  {
-    // TODO implement
   }
 
   QHash<QString, QString> PluginFramework::getHeaders()

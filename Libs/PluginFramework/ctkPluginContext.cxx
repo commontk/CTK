@@ -22,7 +22,7 @@
 #include "ctkPluginContext.h"
 
 #include "ctkPluginPrivate_p.h"
-#include "ctkPluginFrameworkContextPrivate_p.h"
+#include "ctkPluginFrameworkContext_p.h"
 #include "ctkServiceRegistration.h"
 #include "ctkServiceReference.h"
 

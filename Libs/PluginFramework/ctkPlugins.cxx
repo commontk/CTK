@@ -24,7 +24,7 @@
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginException.h"
-#include "ctkPluginFrameworkContextPrivate_p.h"
+#include "ctkPluginFrameworkContext_p.h"
 #include "ctkVersionRange_p.h"
 
 #include <stdexcept>
@@ -34,7 +34,7 @@
 
 namespace ctk {
 
-  Plugins::Plugins(PluginFrameworkContextPrivate* fw) {
+  Plugins::Plugins(PluginFrameworkContext* fw) {
     fwCtx = fw;
     plugins.insert(fw->systemPlugin.getLocation(), &fw->systemPlugin);
   }

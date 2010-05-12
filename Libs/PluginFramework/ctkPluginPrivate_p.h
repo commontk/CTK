@@ -33,7 +33,7 @@ namespace ctk {
 
   class PluginActivator;
   class PluginArchive;
-  class PluginFrameworkContextPrivate;
+  class PluginFrameworkContext;
 
   class PluginPrivate {
 
@@ -53,7 +53,7 @@ namespace ctk {
      * @param checkContext AccessConrolContext to do permission checks against.
      * @exception std::invalid_argument Faulty manifest for bundle
      */
-    PluginPrivate(Plugin& qq, PluginFrameworkContextPrivate* fw,
+    PluginPrivate(Plugin& qq, PluginFrameworkContext* fw,
                PluginArchive* pa /*, Object checkContext*/);
 
     /**
@@ -64,7 +64,7 @@ namespace ctk {
      * @param fw Framework for this plugin.
      */
     PluginPrivate(Plugin& qq,
-                  PluginFrameworkContextPrivate* fw,
+                  PluginFrameworkContext* fw,
                   long id,
                   const QString& loc,
                   const QString& sym,
@@ -97,7 +97,7 @@ namespace ctk {
      */
     static const Plugin::States RESOLVED_FLAGS;
 
-    PluginFrameworkContextPrivate * const fwCtx;
+    PluginFrameworkContext * const fwCtx;
 
     /**
      * Plugin identifier
@@ -179,7 +179,7 @@ namespace ctk {
 
   private:
 
-    friend class PluginFrameworkContextPrivate;
+    friend class PluginFrameworkContext;
 
     /**
      * Check manifest and cache certain manifest headers as variables.

@@ -28,12 +28,12 @@
 
 // CTK includes
 #include "ctkPluginArchive_p.h"
-#include "ctkPluginFrameworkContextPrivate_p.h"
+#include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginDatabaseException.h"
 
 namespace ctk {
 
-  PluginStorage::PluginStorage(PluginFrameworkContextPrivate* framework)
+  PluginStorage::PluginStorage(PluginFrameworkContext* framework)
     : framework(framework), pluginDatabase(this)
   {
 //    // See if we have a storage database

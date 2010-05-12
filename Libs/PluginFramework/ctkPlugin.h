@@ -29,16 +29,16 @@
 namespace ctk {
 
   class PluginArchive;
-  class PluginFrameworkContextPrivate;
+  class PluginFrameworkContext;
   class PluginPrivate;
 
   /**
    * An installed plugin in the Framework.
    *
    * <p>
-   * A <code>Plugin</code> object is the access point to define the lifecycle of
+   * A <code>%Plugin</code> object is the access point to define the lifecycle of
    * an installed plugin. Each plugin installed in the plugin environment must have
-   * an associated <code>Plugin</code> object.
+   * an associated <code>%Plugin</code> object.
    *
    * <p>
    * A plugin must have a unique identity, a <code>long</code>, chosen by the
@@ -62,13 +62,13 @@ namespace ctk {
    *
    * <p>
    * A plugin should only execute code when its state is one of
-   * <code>STARTING</code>,<code>ACTIVE</code>, or <code>STOPPING</code>.
+   * <code>STARTING</code>, <code>ACTIVE</code>, or <code>STOPPING</code>.
    * An <code>UNINSTALLED</code> plugin can not be set to another state; it is a
    * zombie and can only be reached because references are kept somewhere.
    *
    * <p>
    * The Framework is the only entity that is allowed to create
-   * <code>Plugin</code> objects, and these objects are only valid within the
+   * <code>%Plugin</code> objects, and these objects are only valid within the
    * Framework that created them.
    *
    * @threadsafe
@@ -86,7 +86,7 @@ namespace ctk {
        * <p>
        * The <code>UNINSTALLED</code> state is only visible after a plugin is
        * uninstalled; the plugin is in an unusable state but references to the
-       * <code>Plugin</code> object may still be available and used for
+       * <code>%Plugin</code> object may still be available and used for
        * introspection.
        */
       UNINSTALLED,
@@ -114,7 +114,7 @@ namespace ctk {
        * include:
        * <ul>
        * <li>The plugin's required plugin dependencies from its
-       * {@link PluginConstants#REQUIRE_PLUGIN} Manifest header.
+       * {@link PluginConstants::REQUIRE_PLUGIN} Manifest header.
        * </ul>
        * <p>
        * Note that the plugin is not active yet. A plugin must be put in the
@@ -129,7 +129,7 @@ namespace ctk {
        * <p>
        * A plugin is in the <code>STARTING</code> state when its
        * {@link #start(const Options&) start} method is active. A plugin must be in this
-       * state when the plugin's {@link PluginActivator#start} method is called. If the
+       * state when the plugin's {@link PluginActivator::start} method is called. If the
        * <code>PluginActivator::start</code> method completes without exception,
        * then the plugin has successfully started and must move to the
        * <code>ACTIVE</code> state.
@@ -147,7 +147,7 @@ namespace ctk {
        * <p>
        * A plugin is in the <code>STOPPING</code> state when its
        * {@link #stop(const Option&) stop} method is active. A plugin must be in this state
-       * when the plugin's {@link PluginActivator#stop} method is called. When the
+       * when the plugin's {@link PluginActivator::stop} method is called. When the
        * <code>PluginActivator::stop</code> method completes the plugin is
        * stopped and must move to the <code>RESOLVED</code> state.
        */
@@ -281,7 +281,7 @@ namespace ctk {
      * <li>If this plugin's state is <code>STARTING</code> then this method
      * returns immediately.
      * <li>This plugin's state is set to <code>STARTING</code>.
-     * <li>A plugin event of type {@link PluginEvent#LAZY_ACTIVATION} is fired.
+     * <li>A plugin event of type {@link PluginEvent::LAZY_ACTIVATION} is fired.
      * <li>This method returns immediately and the remaining steps will be
      * followed when this plugin's activation is later triggered.
      * </ul>
@@ -291,43 +291,43 @@ namespace ctk {
      * <i></i>
      * <li>This plugin's state is set to <code>STARTING</code>.
      *
-     * <li>A plugin event of type {@link PluginEvent#STARTING} is fired.
+     * <li>A plugin event of type {@link PluginEvent::STARTING} is fired.
      *
-     * <li>The {@link PluginActivator#start} method of this plugin's
+     * <li>The {@link PluginActivator::start} method of this plugin's
      * <code>PluginActivator</code>, is called. If the
      * <code>PluginActivator</code> throws an exception then:
      * <ul>
      * <li>This plugin's state is set to <code>STOPPING</code>.
-     * <li>A plugin event of type {@link PluginEvent#STOPPING} is fired.
+     * <li>A plugin event of type {@link PluginEvent::STOPPING} is fired.
      * <li>Any services registered by this plugin must be unregistered.
      * <li>Any services used by this plugin must be released.
      * <li>Any listeners registered by this plugin must be removed.
      * <li>This plugin's state is set to <code>RESOLVED</code>.
-     * <li>A plugin event of type {@link BundleEvent#STOPPED} is fired.
+     * <li>A plugin event of type {@link PluginEvent::STOPPED} is fired.
      * <li>A <code>PluginException</code> is then thrown.
      * </ul>
      * <i></i>
      * <li>If this plugin's state is <code>UNINSTALLED</code>, because this
-     * plugin was uninstalled while the <code>PluginActivator#start</code>
+     * plugin was uninstalled while the <code>PluginActivator::start</code>
      * method was running, a <code>PluginException</code> is thrown.
      *
      * <li>This plugin's state is set to <code>ACTIVE</code>.
      *
-     * <li>A plugin event of type {@link PluginEvent#STARTED} is fired.
+     * <li>A plugin event of type {@link PluginEvent::STARTED} is fired.
      * </ol>
      *
      * <b>Preconditions </b>
      * <ul>
-     * <li><code>getState()</code> in &#x007B; <code>INSTALLED</code>,
-     * <code>RESOLVED</code>, <code>STARTING</code> &#x007D;
-     * or &#x007B; <code>INSTALLED</code>, <code>RESOLVED</code> &#x007D;
+     * <li><code>getState()</code> in { <code>INSTALLED</code>,
+     * <code>RESOLVED</code>, <code>STARTING</code> }
+     * or { <code>INSTALLED</code>, <code>RESOLVED</code> }
      * if this plugin has a eager activation policy.
      * </ul>
      * <b>Postconditions, no exceptions thrown </b>
      * <ul>
-     * <li>Plugin autostart setting is modified unless the
+     * <li>%Plugin autostart setting is modified unless the
      * {@link #START_TRANSIENT} option was set.
-     * <li><code>getState()</code> in &#x007B; <code>ACTIVE</code> &#x007D;
+     * <li><code>getState()</code> in { <code>ACTIVE</code> }
      * if the eager activation policy was used.
      * <li><code>PluginActivator::start()</code> has been called and did not
      * throw an exception if the eager policy was used.
@@ -336,8 +336,8 @@ namespace ctk {
      * <ul>
      * <li>Depending on when the exception occurred, plugin autostart setting is
      * modified unless the {@link #START_TRANSIENT} option was set.
-     * <li><code>getState()</code> not in &#x007B; <code>STARTING</code>,
-     * <code>ACTIVE</code> &#x007D;.
+     * <li><code>getState()</code> not in { <code>STARTING</code>,
+     * <code>ACTIVE</code> }.
      * </ul>
      *
      * @param options The options for starting this plugin. See
@@ -376,7 +376,7 @@ namespace ctk {
      *
      * <li>This plugin's state is set to <code>STOPPING</code>.
      *
-     * <li>A plugin event of type {@link PluginEvent#STOPPING} is fired.
+     * <li>A plugin event of type {@link PluginEvent::STOPPING} is fired.
      *
      * <li>If this plugin's state was <code>ACTIVE</code> prior to setting the
      * state to <code>STOPPING</code>, the {@link PluginActivator#stop} method
@@ -395,12 +395,12 @@ namespace ctk {
      *
      * <li>This plugin's state is set to <code>RESOLVED</code>.
      *
-     * <li>A plugin event of type {@link PluginEvent#STOPPED} is fired.
+     * <li>A plugin event of type {@link PluginEvent::STOPPED} is fired.
      * </ol>
      *
      * <b>Preconditions </b>
      * <ul>
-     * <li><code>getState()</code> in &#x007B; <code>ACTIVE</code> &#x007D;.
+     * <li><code>getState()</code> in { <code>ACTIVE</code> }.
      * </ul>
      * <b>Postconditions, no exceptions thrown </b>
      * <ul>
@@ -587,12 +587,12 @@ namespace ctk {
   protected:
 
     friend class PluginFramework;
-    friend class PluginFrameworkContextPrivate;
+    friend class PluginFrameworkContext;
     friend class Plugins;
 
     PluginPrivate * const d_ptr;
 
-    Plugin(PluginFrameworkContextPrivate* fw, PluginArchive* ba);
+    Plugin(PluginFrameworkContext* fw, PluginArchive* ba);
     Plugin(PluginPrivate& dd);
   };
 
