@@ -369,7 +369,13 @@ ctkFunctionExecuteProcess(
   )
 IF(RESULT_VAR)
   MESSAGE(FATAL_ERROR "Failed to obtain list of target ordered topologically.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
-ENDIF()         
+ENDIF()
+
+# If the list of subproject is empty, let's at least build CTKCore
+LIST(LENGTH CTEST_PROJECT_SUBPROJECTS subproject_count)
+IF (subproject_count EQUAL 0)
+  SET(CTEST_PROJECT_SUBPROJECTS CTKCore)
+ENDIF()
 
 # Configure CTestConfigSubProject.cmake used that could be used by CTest scripts
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
