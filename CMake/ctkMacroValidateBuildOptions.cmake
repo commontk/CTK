@@ -93,8 +93,9 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
 
     IF(${${option_name}})
       # Obtain dependency path
-      EXECUTE_PROCESS(
+      ctkFunctionExecuteProcess(
         COMMAND "${executable}" "${CTK_BINARY_DIR}/DGraphInput-alldep.txt" -paths ${target_project_name}
+        PATH_LIST ${QT_LIBRARY_DIR}
         WORKING_DIRECTORY ${CTK_BINARY_DIR}
         RESULT_VARIABLE RESULT_VAR
         OUTPUT_VARIABLE dep_paths
