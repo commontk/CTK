@@ -30,7 +30,9 @@
 #include "CTKVisualizationVTKWidgetsExport.h"
 
 class ctkVTKRenderViewPrivate;
+class vtkInteractorObserver;
 class vtkRenderWindowInteractor;
+class vtkRenderWindow;
 class vtkRenderer;
 class vtkCamera; 
 
@@ -49,9 +51,15 @@ public:
   /// Force a render even if a render is already ocurring
   void forceRender();
 
+  /// Get underlying RenderWindow
+  vtkRenderWindow* renderWindow()const;
+  
   /// Set/Get window interactor
   vtkRenderWindowInteractor* interactor()const;
   void setInteractor(vtkRenderWindowInteractor* newInteractor);
+
+  /// Get current interactor style
+  vtkInteractorObserver* interactorStyle();
 
   /// Set corner annotation text
   void setCornerAnnotationText(const QString& text);

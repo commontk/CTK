@@ -110,9 +110,6 @@ ctkVTKRenderView::~ctkVTKRenderView()
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, vtkRenderWindowInteractor*, interactor, CurrentInteractor);
-
-//----------------------------------------------------------------------------
 void ctkVTKRenderView::scheduleRender()
 {
   CTK_D(ctkVTKRenderView);
@@ -140,9 +137,14 @@ void ctkVTKRenderView::forceRender()
 }
 
 //----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, vtkRenderWindow*, renderWindow, RenderWindow);
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, vtkRenderWindowInteractor*, interactor, CurrentInteractor);
+
+//----------------------------------------------------------------------------
 void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
 {
-  Q_ASSERT(newInteractor);
   CTK_D(ctkVTKRenderView);
   d->RenderWindow->SetInteractor(newInteractor);
   d->Orientation->SetOrientationMarker(d->Axes);
@@ -150,6 +152,20 @@ void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
   d->Orientation->SetEnabled(1);
   d->Orientation->InteractiveOff();
   d->CurrentInteractor = newInteractor; 
+}
+
+//----------------------------------------------------------------------------
+vtkInteractorObserver* ctkVTKRenderView::interactorStyle()
+{
+  CTK_D(ctkVTKRenderView);
+  if (d->CurrentInteractor)
+    {
+    return d->CurrentInteractor->GetInteractorStyle();
+    }
+  else
+    {
+    return 0;
+    }
 }
 
 //----------------------------------------------------------------------------
