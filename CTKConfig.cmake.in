@@ -39,6 +39,10 @@
 # This file is configured by CTK and used by the UseCTK.cmake module
 # to load CTK's settings for an external project.
 
+
+# List all libraries
+SET(CTK_LIBRARIES @CTK_LIBRARIES@)
+
 @CTK_CONFIG_INSTALL_ONLY@
 
 # The CTK include file directories.

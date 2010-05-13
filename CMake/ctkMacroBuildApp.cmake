@@ -120,7 +120,7 @@ MACRO(ctkMacroBuildApp)
   TARGET_LINK_LIBRARIES(${proj_name} ${my_libs})
 
   # Update CTK_BASE_LIBRARIES
-#   SET(CTK_BASE_LIBRARIES ${my_libs} ${lib_name} CACHE INTERNAL "CTK libraries" FORCE)
+#   SET(CTK_BASE_LIBRARIES ${my_libs} ${lib_name} CACHE INTERNAL "CTK base libraries" FORCE)
   
   # Install headers
   FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")

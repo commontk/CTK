@@ -106,8 +106,11 @@ SET(CMAKE_MODULE_PATH
 #-----------------------------------------------------------------------------
 # Clear CTK_BASE_INCLUDE_DIRS and CTK_BASE_LIBRARIES
 #
-SET(CTK_BASE_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
+SET(CTK_BASE_LIBRARIES CACHE INTERNAL "CTK base libraries" FORCE)
 SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
+
+# Variable use in CTKConfig.cmake.in
+SET(CTK_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
 
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
@@ -222,7 +225,7 @@ ctkMacroSetupQt()
 
 # Update CTK_BASE_LIBRARIES with QT libraries
 IF(QT4_FOUND)
-  SET(CTK_BASE_LIBRARIES ${CTK_BASE_LIBRARIES} ${QT_LIBRARIES} CACHE INTERNAL "CTK libraries" FORCE)
+  SET(CTK_BASE_LIBRARIES ${CTK_BASE_LIBRARIES} ${QT_LIBRARIES} CACHE INTERNAL "CTK base libraries" FORCE)
 ENDIF()
 
 #-----------------------------------------------------------------------------

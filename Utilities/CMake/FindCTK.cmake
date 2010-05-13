@@ -21,20 +21,21 @@
 # - Find a CTK installation or build tree.
 # The following variables are set if CTK is found.  If CTK is not
 # found, CTK_FOUND is set to false.
-#  CTK_FOUND         - Set to true when VTK is found.
-#  CTK_USE_FILE      - CMake file to use VTK.
-#  CTK_MAJOR_VERSION - The VTK major version number.
-#  CTK_MINOR_VERSION - The VTK minor version number
+#  CTK_FOUND         - Set to true when CTK is found.
+#  CTK_USE_FILE      - CMake file to use CTK.
+#  CTK_MAJOR_VERSION - The CTK major version number.
+#  CTK_MINOR_VERSION - The CTK minor version number
 #                       (odd non-release).
-#  CTK_BUILD_VERSION - The VTK patch level
+#  CTK_BUILD_VERSION - The CTK patch level
 #                       (meaningless for odd minor).
 #  CTK_INCLUDE_DIRS  - Include directories for CTK
 #  CTK_LIBRARY_DIRS  - Link directories for CTK libraries
+#  CTK_LIBRARIES     - List of libraries
 #
 # The following cache entries must be set by the user to locate VTK:
 #  CTK_DIR  - The directory containing CTKConfig.cmake.
 #             This is either the root of the build tree,
-#             or the lib/vtk directory.  This is the 
+#             or the lib/ctk directory.  This is the
 #             only cache entry.
 #
 
