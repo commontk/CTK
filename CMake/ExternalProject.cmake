@@ -684,7 +684,11 @@ function(_ep_add_download_command name)
     list(APPEND depends ${stamp_dir}/${name}-svninfo.txt)
   elseif(git_repository)
     #find_package(Git)
-    find_program(Git_EXECUTABLE git DOC "git command line client")
+    find_program(Git_EXECUTABLE git
+      PATHS
+        "C:/Program Files/Git/bin"
+        "C:/Program Files (x86)/Git/bin"
+      DOC "git command line client")
     mark_as_advanced(Git_EXECUTABLE)
     if(NOT Git_EXECUTABLE)
       message(FATAL_ERROR "error: could not find git to clone ${name} - Make sure Git_EXECUTABLE is set properly")
