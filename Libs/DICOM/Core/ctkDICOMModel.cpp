@@ -444,6 +444,7 @@ bool ctkDICOMModel::hasChildren ( const QModelIndex & parentValue ) const
 QVariant ctkDICOMModel::headerData(int section, Qt::Orientation orientation, int role)const
 {
   CTK_D(const ctkDICOMModel);
+  // @bug: this expression is not "valid", DisplayRole and EditRole are not bitmasks
   if (role & ~(Qt::DisplayRole | Qt::EditRole))
     {
     return QVariant();
