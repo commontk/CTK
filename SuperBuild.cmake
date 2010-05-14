@@ -216,35 +216,29 @@ ExternalProject_Add(${proj}
   DEPENDS
     "CTK-Utilities"
   )
-  
+
+
 #-----------------------------------------------------------------------------
 # CTK
 #
 #MESSAGE(STATUS SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:${SUPERBUILD_EXCLUDE_CTKBUILD_TARGET})
 IF(NOT DEFINED SUPERBUILD_EXCLUDE_CTKBUILD_TARGET OR NOT SUPERBUILD_EXCLUDE_CTKBUILD_TARGET)
-#   SET(proj CTK-build)
-#   ExternalProject_Add(${proj}
-#     DOWNLOAD_COMMAND ""
-#     CMAKE_GENERATOR ${gen}
-#     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-#     BINARY_DIR CTK-build
-#     INSTALL_COMMAND ""
-#     DEPENDS
-#       "CTK-Configure"
-#     )
-  ADD_CUSTOM_TARGET(CTK-build ALL
-    COMMAND ${CMAKE_COMMAND} -G "${gen}" --build ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
-    COMMENT "Now building CTK ..."
-  )
-  ADD_DEPENDENCIES(CTK-build CTK-Configure)
+  SET(proj CTK-build)
+  ExternalProject_Add(${proj}
+    DOWNLOAD_COMMAND ""
+    CMAKE_GENERATOR ${gen}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+    BINARY_DIR CTK-build
+    INSTALL_COMMAND ""
+    DEPENDS
+      "CTK-Configure"
+    )
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Custom target allowing to drive the build of CTK project itself without superbuild
+# Custom target allowing to drive the build of CTK project itself
 #
-ADD_CUSTOM_TARGET(CTK-build-only
-  COMMAND ${CMAKE_COMMAND} -G "${gen}" --build ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
+ADD_CUSTOM_TARGET(CTK
+  COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/CTK-build
-  COMMENT "Now building CTK ..."
   )
