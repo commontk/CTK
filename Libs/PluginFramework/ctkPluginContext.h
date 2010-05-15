@@ -109,7 +109,17 @@ namespace ctk {
      * @throws std::logic_error If this PluginContext is no
      *         longer valid.
      */
-    Plugin* getPlugin(int id) const;
+    Plugin* getPlugin() const;
+
+    /**
+     * Returns the plugin with the specified identifier.
+     *
+     * @param id The identifier of the plugin to retrieve.
+     * @return A <code>Plugin</code> object or <code>0</code> if the
+     *         identifier does not match any installed plugin.
+     */
+    Plugin* getPlugin(long id) const;
+
 
     /**
      * Returns a list of all installed plugins.

@@ -65,14 +65,20 @@ namespace ctk {
 
   PluginContext::~PluginContext()
   {
-	  Q_D(PluginContext);
-	  delete d;
+    Q_D(PluginContext);
+    delete d;
   }
 
-  Plugin* PluginContext::getPlugin(int id) const
+  Plugin* PluginContext::getPlugin() const
   {
     Q_D(const PluginContext);
     d->isPluginContextValid();
+    return d->plugin->q_func();
+  }
+
+  Plugin* PluginContext::getPlugin(long id) const
+  {
+    Q_D(const PluginContext);
     return d->plugin->fwCtx->plugins->getPlugin(id);
   }
 

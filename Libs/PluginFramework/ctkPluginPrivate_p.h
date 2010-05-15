@@ -39,11 +39,11 @@ namespace ctk {
 
   protected:
 
-    Q_DECLARE_PUBLIC(Plugin)
-
     Plugin * const q_ptr;
 
   public:
+
+    Q_DECLARE_PUBLIC(Plugin)
 
     /**
      * Construct a new plugin based on a PluginArchive.
@@ -178,8 +178,6 @@ namespace ctk {
     QList<RequirePlugin*> require;
 
   private:
-
-    friend class PluginFrameworkContext;
 
     /**
      * Check manifest and cache certain manifest headers as variables.
