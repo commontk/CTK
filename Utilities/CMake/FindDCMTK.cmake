@@ -37,80 +37,101 @@ IF( NOT DCMTK_FOUND )
 ENDIF( NOT DCMTK_FOUND )
 
 FIND_PATH( DCMTK_config_INCLUDE_DIR osconfig.h
-  ${DCMTK_DIR}/config/include
-  ${DCMTK_DIR}/config
-  ${DCMTK_DIR}/include/dcmtk/config
-  ${DCMTK_DIR}/include
+  PATHS
+    ${DCMTK_DIR}/config/include
+    ${DCMTK_DIR}/config
+    ${DCMTK_DIR}/include/dcmtk/config
+    ${DCMTK_DIR}/include
+  NO_DEFAULT_PATH
+  
 )
 
 FIND_PATH( DCMTK_ofstd_INCLUDE_DIR ofstdinc.h
-  ${DCMTK_DIR}/ofstd/include
-  ${DCMTK_DIR}/ofstd
-  ${DCMTK_DIR}/include/ofstd
-  ${DCMTK_DIR}/include/dcmtk/ofstd
+  PATHS
+    ${DCMTK_DIR}/ofstd/include
+    ${DCMTK_DIR}/ofstd
+    ${DCMTK_DIR}/include/ofstd
+    ${DCMTK_DIR}/include/dcmtk/ofstd
+  NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY( DCMTK_ofstd_LIBRARY ofstd
-  ${DCMTK_DIR}/ofstd/libsrc
-  ${DCMTK_DIR}/ofstd/libsrc/Release
-  ${DCMTK_DIR}/ofstd/libsrc/Debug
-  ${DCMTK_DIR}/ofstd/Release
-  ${DCMTK_DIR}/ofstd/Debug
-  ${DCMTK_DIR}/lib
+  PATHS
+    ${DCMTK_DIR}/ofstd/libsrc
+    ${DCMTK_DIR}/ofstd/libsrc/Release
+    ${DCMTK_DIR}/ofstd/libsrc/Debug
+    ${DCMTK_DIR}/ofstd/Release
+    ${DCMTK_DIR}/ofstd/Debug
+    ${DCMTK_DIR}/lib
+  NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY( DCMTK_oflog_LIBRARY oflog
-  ${DCMTK_DIR}/oflog/libsrc
-  ${DCMTK_DIR}/oflog/libsrc/Release
-  ${DCMTK_DIR}/oflog/libsrc/Debug
-  ${DCMTK_DIR}/oflog/Release
-  ${DCMTK_DIR}/oflog/Debug
-  ${DCMTK_DIR}/lib
+  PATHS
+    ${DCMTK_DIR}/oflog/libsrc
+    ${DCMTK_DIR}/oflog/libsrc/Release
+    ${DCMTK_DIR}/oflog/libsrc/Debug
+    ${DCMTK_DIR}/oflog/Release
+    ${DCMTK_DIR}/oflog/Debug
+    ${DCMTK_DIR}/lib
+  NO_DEFAULT_PATH
 )
 
 FIND_PATH( DCMTK_dcmdata_INCLUDE_DIR dctypes.h
-  ${DCMTK_DIR}/include/dcmdata
-  ${DCMTK_DIR}/include/dcmtk/dcmdata
-  ${DCMTK_DIR}/dcmdata
-  ${DCMTK_DIR}/dcmdata/include
+  PATHS
+    ${DCMTK_DIR}/include/dcmdata
+    ${DCMTK_DIR}/include/dcmtk/dcmdata
+    ${DCMTK_DIR}/dcmdata
+    ${DCMTK_DIR}/dcmdata/include
+  NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY( DCMTK_dcmdata_LIBRARY dcmdata
-  ${DCMTK_DIR}/dcmdata/libsrc
-  ${DCMTK_DIR}/dcmdata/libsrc/Release
-  ${DCMTK_DIR}/dcmdata/libsrc/Debug
-  ${DCMTK_DIR}/dcmdata/Release
-  ${DCMTK_DIR}/dcmdata/Debug
-  ${DCMTK_DIR}/lib
+  PATHS
+    ${DCMTK_DIR}/dcmdata/libsrc
+    ${DCMTK_DIR}/dcmdata/libsrc/Release
+    ${DCMTK_DIR}/dcmdata/libsrc/Debug
+    ${DCMTK_DIR}/dcmdata/Release
+    ${DCMTK_DIR}/dcmdata/Debug
+    ${DCMTK_DIR}/lib
+  NO_DEFAULT_PATH
 )
 
 FIND_PATH( DCMTK_dcmimgle_INCLUDE_DIR dcmimage.h
-  ${DCMTK_DIR}/dcmimgle/include
-  ${DCMTK_DIR}/dcmimgle
-  ${DCMTK_DIR}/include/dcmimgle
-  ${DCMTK_DIR}/include/dcmtk/dcmimgle
+  PATHS
+    ${DCMTK_DIR}/dcmimgle/include
+    ${DCMTK_DIR}/dcmimgle
+    ${DCMTK_DIR}/include/dcmimgle
+    ${DCMTK_DIR}/include/dcmtk/dcmimgle
+  NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY( DCMTK_dcmimgle_LIBRARY dcmimgle
-  ${DCMTK_DIR}/dcmimgle/libsrc
-  ${DCMTK_DIR}/dcmimgle/libsrc/Release
-  ${DCMTK_DIR}/dcmimgle/libsrc/Debug
-  ${DCMTK_DIR}/dcmimgle/Release
-  ${DCMTK_DIR}/dcmimgle/Debug
-  ${DCMTK_DIR}/lib
+  PATHS
+    ${DCMTK_DIR}/dcmimgle/libsrc
+    ${DCMTK_DIR}/dcmimgle/libsrc/Release
+    ${DCMTK_DIR}/dcmimgle/libsrc/Debug
+    ${DCMTK_DIR}/dcmimgle/Release
+    ${DCMTK_DIR}/dcmimgle/Debug
+    ${DCMTK_DIR}/lib
+  NO_DEFAULT_PATH
 )
 
 # MM: I could not find this library on debian system / dcmtk 3.5.4
-FIND_LIBRARY(DCMTK_imagedb_LIBRARY imagedb 
-  ${DCMTK_DIR}/imagectn/libsrc/Release
-  ${DCMTK_DIR}/imagectn/libsrc/
-  ${DCMTK_DIR}/imagectn/libsrc/Debug
+FIND_LIBRARY(DCMTK_imagedb_LIBRARY imagedb
+  PATHS
+    ${DCMTK_DIR}/imagectn/libsrc/Release
+    ${DCMTK_DIR}/imagectn/libsrc/
+    ${DCMTK_DIR}/imagectn/libsrc/Debug
+  NO_DEFAULT_PATH
   )
 
-FIND_LIBRARY(DCMTK_dcmnet_LIBRARY dcmnet 
-  ${DCMTK_DIR}/dcmnet/libsrc/Release
-  ${DCMTK_DIR}/dcmnet/libsrc/Debug
-  ${DCMTK_DIR}/dcmnet/libsrc/
+FIND_LIBRARY(DCMTK_dcmnet_LIBRARY dcmnet
+  PATHS
+    ${DCMTK_DIR}/dcmnet/libsrc/Release
+    ${DCMTK_DIR}/dcmnet/libsrc/Debug
+    ${DCMTK_DIR}/dcmnet/libsrc/
+  NO_DEFAULT_PATH
   )
 
 IF( DCMTK_config_INCLUDE_DIR 
@@ -181,15 +202,21 @@ ENDIF( DCMTK_config_INCLUDE_DIR
     AND DCMTK_dcmimgle_LIBRARY )
 
 FIND_PROGRAM(DCMTK_DCMDUMP_EXECUTABLE dcmdump
-  ${DCMTK_DIR}/bin
+  PATHS
+    ${DCMTK_DIR}/bin
+  NO_DEFAULT_PATH
   )
 
 FIND_PROGRAM(DCMTK_DCMDJPEG_EXECUTABLE dcmdjpeg
-  ${DCMTK_DIR}/bin
+  PATHS
+    ${DCMTK_DIR}/bin
+  NO_DEFAULT_PATH
   )
 
 FIND_PROGRAM(DCMTK_DCMDRLE_EXECUTABLE dcmdrle
-  ${DCMTK_DIR}/bin
+  PATHS
+    ${DCMTK_DIR}/bin
+  NO_DEFAULT_PATH
   )
 
 MARK_AS_ADVANCED(
