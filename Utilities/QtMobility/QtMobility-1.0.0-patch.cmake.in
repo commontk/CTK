@@ -42,7 +42,7 @@ IF(UNIX)
   # which use another name for the Qt4 qmake program (e.g. qmake-qt4)
 
   EXECUTE_PROCESS(
-    COMMAND sed -i "s+qmake +@QT_QMAKE_EXECUTABLE@ +g" configure
+    COMMAND sed -i -e  "s+qmake +@QT_QMAKE_EXECUTABLE@ +g" configure
     WORKING_DIRECTORY ${proj_dir}
     RESULT_VARIABLE error_code
   )
