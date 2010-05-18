@@ -1,5 +1,5 @@
---- C:/development/CTK-master-vc9/CMakeExternals/Source/QtMobility/configure_orig.bat	Sun Apr 11 18:17:43 2010
-+++ C:/development/CTK-master-vc9/CMakeExternals/Source/QtMobility/configure.bat	Sun Apr 11 21:19:33 2010
+--- configure_orig.bat	Sun Apr 11 18:17:43 2010
++++ @CMAKE_CURRENT_BINARY_DIR@/configure.bat	Sun Apr 11 21:19:33 2010
 @@ -60,7 +60,7 @@
  set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
  set MOBILITY_MODULES_UNPARSED=
@@ -9,7 +9,7 @@
  set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
  
  if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
-@@ -457,10 +457,15 @@
+@@ -463,12 +463,19 @@
  echo.
  echo Start of compile tests
  REM compile tests go here.
@@ -17,6 +17,8 @@
 -call :compileTest SNAP snap
 -call :compileTest OCC occ
 -call :compileTest SymbianContactSIM symbiancntsim
+-call :compileTest S60_Sensor_API sensors_s60_31
+-call :compileTest Symbian_Sensor_Framework sensors_symbian
 +REM for CTK the compile tests generate errors in Visual Studio -> just disabling them
 +REM call :compileTest LBT lbt
 +echo lbt_enabled = no >> %PROJECT_CONFIG%
@@ -26,6 +28,10 @@
 +echo occ_enabled = no >> %PROJECT_CONFIG%
 +REM call :compileTest SymbianContactSIM symbiancntsim
 +echo symbiancntsim_enabled = no >> %PROJECT_CONFIG%
++REM call :compileTest S60_Sensor_API sensors_s60_31
++echo sensors_s60_31_enabled = no >> %PROJECT_CONFIG%
++REM call :compileTest Symbian_Sensor_Framework sensors_symbian
++echo sensors_symbian_enabled = no >> %PROJECT_CONFIG%
  echo End of compile tests
  echo.
  echo.

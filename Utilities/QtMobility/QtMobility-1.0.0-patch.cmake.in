@@ -13,8 +13,11 @@ SET(configured_patch_dir @qtmobility_configured_patch_dir@)
 # Variable required to properly configured the patch files
 SET(QT_BINARY_DIR @QT_BINARY_DIR@)
 
+CONFIGURE_FILE(${patch_dir}/QtMobility-1.0.0.patch.in
+  ${configured_patch_dir}/QtMobility-1.0.0.patch @ONLY)
+
 SET(patch_files
-  ${patch_dir}/QtMobility-1.0.0.patch
+  ${configured_patch_dir}/QtMobility-1.0.0.patch
 )
 
 IF(WIN32)

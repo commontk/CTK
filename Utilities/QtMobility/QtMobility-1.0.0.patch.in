@@ -1,0 +1,10 @@
+--- qtmobility.pro	2010-04-21 16:17:35.000000000 +0200
++++ @CMAKE_CURRENT_BINARY_DIR@/qtmobility.pro	2010-05-04 00:42:06.776482243 +0200
+@@ -100,7 +100,6 @@
+     SUBDIRS += tools
+ }
+ 
+-SUBDIRS += plugins
+ 
+ #built documentation snippets, if enabled
+ contains(build_docs, yes) {
