@@ -6,7 +6,7 @@
 # 
 
 SET(ctk_library_options
-  VTK:ON
-  ITK:OFF
+  #VTK:ON
+  #ITK:OFF
   )
   
