@@ -43,9 +43,9 @@ int ctkTransferFunctionWidgetTest1(int argc, char * argv [] )
   vtkSmartPointer<vtkColorTransferFunction> ctf = 
     vtkSmartPointer<vtkColorTransferFunction>::New();
   //
-  ctf->AddRGBPoint(0., 1.,0.,0., 0.5, 0.);
+  ctf->AddRGBPoint(0.2, 1.,0.,0., 0.5, 0.);
   //ctf->AddRGBPoint(0.5, 0.,0.,1.);
-  ctf->AddRGBPoint(1., 0.,1.,0.);
+  ctf->AddRGBPoint(0.8, 0.,1.,0.);
   //ctf->AddHSVPoint(0., 0.,1.,1.);
   //ctf->AddHSVPoint(1., 0.66666,1.,1.);
 

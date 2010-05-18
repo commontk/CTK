@@ -24,7 +24,9 @@
 /// CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkTransferFunctionWidget.h"
-#include "ctkTransferFunctionItems.h"
+#include "ctkTransferFunctionItem.h"
+#include "ctkTransferFunctionGradientItem.h"
+#include "ctkTransferFunctionControlPointsItem.h"
 
 //-----------------------------------------------------------------------------
 class ctkTransferFunctionWidgetPrivate: public ctkPrivate<ctkTransferFunctionWidget>
