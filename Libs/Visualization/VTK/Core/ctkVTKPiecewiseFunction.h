@@ -45,6 +45,7 @@ public:
   virtual ctkControlPoint* controlPoint(int index)const;
   virtual QVariant value(qreal pos)const;
   virtual int count()const;
+  virtual bool isDiscrete()const;
 
   virtual void range(qreal& minRange, qreal& maxRange)const;
   virtual QVariant minValue()const;

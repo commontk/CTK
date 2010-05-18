@@ -62,6 +62,12 @@ int ctkVTKPiecewiseFunction::count()const
 }
 
 //-----------------------------------------------------------------------------
+bool ctkVTKPiecewiseFunction::isDiscrete()const
+{
+  return false;
+}
+
+//-----------------------------------------------------------------------------
 void ctkVTKPiecewiseFunction::range(qreal& minRange, qreal& maxRange)const
 {
   CTK_D(const ctkVTKPiecewiseFunction);
