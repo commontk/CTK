@@ -33,10 +33,14 @@ class ctkDICOMQueryRetrieveWidgetPrivate;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryRetrieveWidget : public QWidget
 {
+Q_OBJECT;
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMQueryRetrieveWidget(QWidget* parent=0);
   virtual ~ctkDICOMQueryRetrieveWidget();
+
+public slots:
+    void processQuery();
 
 private:
   CTK_DECLARE_PRIVATE(ctkDICOMQueryRetrieveWidget);
