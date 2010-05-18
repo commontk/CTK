@@ -176,6 +176,12 @@ ENDIF()
 OPTION(WITH_COVERAGE "Enable/Disable coverage" OFF)
 
 #-----------------------------------------------------------------------------
+# Documentation
+#
+OPTION(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
+MARK_AS_ADVANCED(DOCUMENTATION_TARGET_IN_ALL)
+
+#-----------------------------------------------------------------------------
 # Additional CXX/C Flags
 #
 SET(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional C Flags")
