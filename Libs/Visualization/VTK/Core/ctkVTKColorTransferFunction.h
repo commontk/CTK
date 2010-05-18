@@ -38,6 +38,7 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKColorTransferFunction: public ctkT
   Q_OBJECT;
   QVTK_OBJECT;
 public:
+  ctkVTKColorTransferFunction(QObject* parent = 0);
   ctkVTKColorTransferFunction(vtkColorTransferFunction* colorTransferFunction, 
                               QObject* parent = 0);
   virtual ~ctkVTKColorTransferFunction();
@@ -45,6 +46,7 @@ public:
   virtual ctkControlPoint* controlPoint(int index)const;
   virtual QVariant value(qreal pos)const;
   virtual int count()const;
+  virtual bool isDiscrete()const;
 
   virtual void range(qreal& minRange, qreal& maxRange)const;
   virtual QVariant minValue()const;

@@ -36,6 +36,13 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+ctkVTKColorTransferFunction::ctkVTKColorTransferFunction(QObject* parentObject)
+  :ctkTransferFunction(parentObject)
+{
+  CTK_INIT_PRIVATE(ctkVTKColorTransferFunction);
+}
+
+//-----------------------------------------------------------------------------
 ctkVTKColorTransferFunction::ctkVTKColorTransferFunction(vtkColorTransferFunction* colorTransferFunction, 
                                                          QObject* parentObject)
   :ctkTransferFunction(parentObject)
@@ -59,6 +66,12 @@ int ctkVTKColorTransferFunction::count()const
     return -1;
     }
   return d->ColorTransferFunction->GetSize();
+}
+
+//-----------------------------------------------------------------------------
+bool ctkVTKColorTransferFunction::isDiscrete()const
+{
+  return false;
 }
 
 //-----------------------------------------------------------------------------

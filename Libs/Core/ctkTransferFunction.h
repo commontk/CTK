@@ -82,6 +82,8 @@ public:
   virtual QVariant value(qreal pos)const = 0;
   
   virtual int count()const = 0;
+  virtual bool isDiscrete()const = 0;
+
   inline void range(qreal rangeValues[2])const;
   virtual void range(qreal& minRange, qreal& maxRange)const=0;
   virtual QVariant minValue()const = 0;
