@@ -92,17 +92,38 @@ void ctkTransferFunctionControlPointsItem::paint(
   qreal rangeX[2];
   this->transferFunction()->range(rangeX);
   qreal rangeXDiff = this->rect().width() / (rangeX[1] - rangeX[0]);
+  qreal rangeXOffSet = rangeX[0];
+
   QVariant rangeY[2];
   rangeY[0] = this->transferFunction()->minValue();
   rangeY[1] = this->transferFunction()->maxValue();
   qreal rangeYDiff = this->rect().height();
+  qreal rangeYOffSet; 
   if (rangeY[0].canConvert<qreal>())
     {
-    rangeYDiff /= rangeY[1].toReal() - rangeY[0].toReal();
+    if (rangeY[1].toReal() == rangeY[0].toReal())
+      {
+      rangeYDiff /= rangeY[0].toReal();
+      rangeYOffSet = 0.;
+      }
+    else
+      {
+      rangeYDiff /= rangeY[1].toReal() - rangeY[0].toReal();
+      rangeYOffSet = rangeY[0].toReal();
+      }
     }
-  else if (rangeY[0].canConvert<qreal>())
+  else if (rangeY[0].canConvert<QColor>())
     {
-    rangeYDiff /= rangeY[1].value<QColor>().alphaF() - rangeY[0].value<QColor>().alphaF();
+    if ( rangeY[1].value<QColor>().alphaF() == rangeY[0].value<QColor>().alphaF())
+      {
+      rangeYDiff /= rangeY[0].value<QColor>().alphaF();
+      rangeYOffSet = 0.;
+      }
+    else
+      {
+      rangeYDiff /= rangeY[1].value<QColor>().alphaF() - rangeY[0].value<QColor>().alphaF();
+      rangeYOffSet = rangeY[0].value<QColor>().alphaF();
+      }
     }
   else
     {
@@ -116,7 +137,7 @@ void ctkTransferFunctionControlPointsItem::paint(
 
   QPainterPath path;
 
-  QPointF startPos(startCP->x(), this->y(startCP->value()));
+  QPointF startPos(startCP->x() - rangeXOffSet, this->y(startCP->value()) - rangeYOffSet);
   startPos.rx() *= rangeXDiff;
   startPos.setY(this->rect().height() 
                 - startPos.y() * rangeYDiff);
@@ -135,12 +156,12 @@ void ctkTransferFunctionControlPointsItem::paint(
       for (j = 1; j < points.count(); ++j)
         {
         path.lineTo(
-          QPointF(points[j].X * rangeXDiff, this->rect().height() - 
-                  this->y(points[j].Value) * rangeYDiff));
+          QPointF((points[j].X - rangeXOffSet) * rangeXDiff, this->rect().height() - 
+                  (this->y(points[j].Value) - rangeYOffSet) * rangeYDiff));
         }
-      j = points.count() -1;
-      d->ControlPoints << QPointF(points[j].X * rangeXDiff, this->rect().height() - 
-                  this->y(points[j].Value) * rangeYDiff);
+      j = points.count() - 1;
+      d->ControlPoints << QPointF((points[j].X - rangeXOffSet) * rangeXDiff, this->rect().height() - 
+                  (this->y(points[j].Value)- rangeYOffSet) * rangeYDiff );
       }
     else //dynamic_cast<ctkBezierControlPoint*>(startCP))
       {
@@ -150,8 +171,8 @@ void ctkTransferFunctionControlPointsItem::paint(
       foreach(const ctkPoint& p, points)
         {
         bezierPoints << 
-          QPointF(p.X * rangeXDiff, 
-                  this->rect().height() - this->y(p.Value) * rangeYDiff);
+          QPointF((p.X - rangeXOffSet)* rangeXDiff , 
+                  this->rect().height() - (this->y(p.Value) - rangeYOffSet)* rangeYDiff);
         }
       path.cubicTo(bezierPoints[1], bezierPoints[2], bezierPoints[3]);
       d->ControlPoints << bezierPoints[3];
