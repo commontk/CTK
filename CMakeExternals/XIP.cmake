@@ -14,5 +14,7 @@ IF(${add_project})
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${ep_common_args}
+      -DHAS_VTK:BOOL=OFF
+      -DHAS_ITK:BOOL=OFF
     )
 ENDIF()
