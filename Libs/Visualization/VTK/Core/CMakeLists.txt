@@ -34,6 +34,8 @@ SET(KIT_SRCS
   ctkVTKObject.h
   ctkVTKObjectEventsObserver.cpp
   ctkVTKObjectEventsObserver.h
+  ctkVTKPiecewiseFunction.cpp
+  ctkVTKPiecewiseFunction.h
   )
 
 # Headers that should run through moc
@@ -42,6 +44,7 @@ SET(KIT_MOC_SRCS
   ctkVTKConnection.h
   ctkVTKLookupTable.h
   ctkVTKObjectEventsObserver.h
+  ctkVTKPiecewiseFunction.h
   )
 
 # UI files
