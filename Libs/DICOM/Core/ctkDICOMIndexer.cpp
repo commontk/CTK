@@ -92,7 +92,8 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
 
   OFList<OFString> originalDcmtkFileNames;
   OFList<OFString> dcmtkFileNames;
-  OFStandard::searchDirectoryRecursively(src_directory.c_str(), originalDcmtkFileNames, NULL, NULL);
+  std::cerr << "Source Directory: " << src_directory << std::endl;
+  OFStandard::searchDirectoryRecursively( src_directory.c_str(), originalDcmtkFileNames, "", "");
 
   // hack to reverse list of filenames (not neccessary when image loading works correctly)
   for ( OFListIterator(OFString) iter = originalDcmtkFileNames.begin(); iter != originalDcmtkFileNames.end(); ++iter )
