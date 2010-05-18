@@ -56,8 +56,12 @@ SET(KIT_SRCS
   ctkTestApplication.h
   ctkTitleComboBox.cpp
   ctkTitleComboBox.h
-  ctkTransferFunctionItems.cpp
-  ctkTransferFunctionItems.h
+  ctkTransferFunctionControlPointsItem.cpp
+  ctkTransferFunctionControlPointsItem.h
+  ctkTransferFunctionGradientItem.cpp
+  ctkTransferFunctionGradientItem.h
+  ctkTransferFunctionItem.cpp
+  ctkTransferFunctionItem.h
   ctkTransferFunctionWidget.cpp
   ctkTransferFunctionWidget.h
   ctkTreeComboBox.cpp
@@ -88,7 +92,10 @@ SET(KIT_MOC_SRCS
   ctkSliderSpinBoxWidget.h
   ctkTestApplication.h
   ctkTitleComboBox.h
-  ctkTransferFunctionItems.h
+  ctkTransferFunctionControlPointsItem.h
+  ctkTransferFunctionGradientItem.h
+  ctkTransferFunctionItem.h
+  ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionWidget.h
   ctkTreeComboBox.h
   )

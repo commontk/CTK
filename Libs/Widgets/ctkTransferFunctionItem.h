@@ -18,8 +18,8 @@
  
 =========================================================================*/
 
-#ifndef __ctkTransferFunctionItems_h
-#define __ctkTransferFunctionItems_h
+#ifndef __ctkTransferFunctionItem_h
+#define __ctkTransferFunctionItem_h
 
 /// Qt includes
 #include <QGraphicsObject>
@@ -31,8 +31,6 @@
 
 class ctkControlPoint;
 class ctkTransferFunctionItemPrivate;
-//class ctkTransferFunctionGradientItemPrivate;
-class ctkTransferFunctionControlPointsItemPrivate;
 
 /// 
 /// TODO: should probably derive from QGraphicsItem or QAbstractGraphicsShapeItem
@@ -83,39 +81,5 @@ QColor ctkTransferFunctionItem::color(const ctkPoint& p)const
 {
   return this->color(p.Value);
 }
-
-
-//-----------------------------------------------------------------------------
-class CTK_WIDGETS_EXPORT ctkTransferFunctionGradientItem: public ctkTransferFunctionItem
-{
-  Q_OBJECT
-public:
-  ctkTransferFunctionGradientItem(QGraphicsItem* parent = 0);
-  ctkTransferFunctionGradientItem(ctkTransferFunction* transferFunction, 
-                                  QGraphicsItem* parent = 0);
-  virtual ~ctkTransferFunctionGradientItem();
-
-  virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-};
-
-
-//-----------------------------------------------------------------------------
-class CTK_WIDGETS_EXPORT ctkTransferFunctionControlPointsItem: public ctkTransferFunctionItem
-{
-  Q_OBJECT
-public:
-  explicit ctkTransferFunctionControlPointsItem(QGraphicsItem* parent = 0);
-  ctkTransferFunctionControlPointsItem(ctkTransferFunction* transferFunction, 
-                                       QGraphicsItem* parent = 0);
-  virtual ~ctkTransferFunctionControlPointsItem();
-
-  virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-protected:
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent* e);
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
-  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
-private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionControlPointsItem);
-};
 
 #endif
