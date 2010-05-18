@@ -180,10 +180,16 @@ qreal ctkTransferFunctionItem::y(const QVariant& v) const
 //-----------------------------------------------------------------------------
 QColor ctkTransferFunctionItem::color(const QVariant& v) const
 { 
-  Q_ASSERT(v.canConvert<QColor>());
+  //Q_ASSERT(v.canConvert<QColor>());
   if (v.canConvert<QColor>())
     {
     return v.value<QColor>();
+    }
+  else
+    {
+    //black background
+    QColor defaultColor(0., 0., 0.);
+    return defaultColor;
     }
   return QColor();
 }
