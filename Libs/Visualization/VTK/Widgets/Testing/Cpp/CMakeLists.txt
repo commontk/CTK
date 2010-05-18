@@ -2,6 +2,7 @@ SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkTransferFunctionWidgetTest1.cpp
+  ctkTransferFunctionWidgetTest2.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -29,3 +30,4 @@ ENDMACRO( SIMPLE_TEST  )
 
 #SIMPLE_TEST( ctkVTKObjectTest1 )
 SIMPLE_TEST( ctkTransferFunctionWidgetTest1 )
+SIMPLE_TEST( ctkTransferFunctionWidgetTest2 )

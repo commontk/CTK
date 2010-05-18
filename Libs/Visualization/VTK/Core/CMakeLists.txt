@@ -29,6 +29,8 @@ SET(KIT_SRCS
   ctkVTKCommandOptions.h
   ctkVTKConnection.cpp
   ctkVTKConnection.h
+  ctkVTKLookupTable.cpp
+  ctkVTKLookupTable.h
   ctkVTKObject.h
   ctkVTKObjectEventsObserver.cpp
   ctkVTKObjectEventsObserver.h
@@ -38,6 +40,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkVTKColorTransferFunction.h
   ctkVTKConnection.h
+  ctkVTKLookupTable.h
   ctkVTKObjectEventsObserver.h
   )
 
