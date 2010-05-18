@@ -135,14 +135,6 @@ SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)
 SET(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
 
 #-----------------------------------------------------------------------------
-# Patch program
-#
-FIND_PROGRAM(CTK_PATCH_EXECUTABLE patch
-  "C:/Program Files/GnuWin32/bin"
-  "C:/Program Files (x86)/GnuWin32/bin")
-MARK_AS_ADVANCED(CTK_PATCH_EXECUTABLE)
-
-#-----------------------------------------------------------------------------
 # Testing
 #
 OPTION(BUILD_TESTING "Test the project" ON)

@@ -7,6 +7,15 @@ IF(${add_project})
   SET(proj QtMobility)
 #   MESSAGE(STATUS "Adding project:${proj}")
   SET(QtMobility_DEPENDS ${proj})
+
+  # Patch program
+  FIND_PROGRAM(CTK_PATCH_EXECUTABLE patch
+    "C:/Program Files/GnuWin32/bin"
+    "C:/Program Files (x86)/GnuWin32/bin")
+  MARK_AS_ADVANCED(CTK_PATCH_EXECUTABLE)
+  IF(NOT CTK_PATCH_EXECUTABLE)
+    MESSAGE(FATAL_ERROR "error: Patch is required to build ${PROJECT_NAME}. Set CTK_PATCH_EXECUTABLE")
+  ENDIF()
   
   # Configure patch script
   SET(qtmobility_src_dir ${ep_source_dir}/${proj})
