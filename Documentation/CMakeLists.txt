@@ -27,7 +27,6 @@ IF( DOXYGEN_FOUND )
       )
 
     SET(userdoc_output "${CMAKE_CURRENT_BINARY_DIR}/doc/html/index.html")
-    MESSAGE(userdoc_output:${userdoc_output})
     
     # Run doxygen as a custom command driven by a custom target.
     ADD_CUSTOM_COMMAND(
