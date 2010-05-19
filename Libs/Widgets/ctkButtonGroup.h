@@ -32,10 +32,14 @@
 class ctkButtonGroupPrivate;
 
 ///
-/// The ctkButtonGroup class is a QButtonGroup that has a slightly
-/// different behavior when exclusive. By default, a ctkButtonGroup is
-/// exclusive. An exclusive ctkButtonGroup switches off the button that
-///  was clicked if it was already checked.
+/// ctkButtonGroup is a QButtonGroup with a different behavior when exclusive.
+/// An exclusive ctkButtonGroup switches off the previously checked button when 
+/// a new button is checked.
+/// Use ctkButtonGroup the same way than QButtonGroup (see QButtonGroup doc).
+/// i.e. : ctkButtonGroup* buttonGroup = new ctkButtonGroup(parent);
+/// buttonGroup->addButton(button1);
+/// buttonGroup->addButton(button2);
+/// By default ctkButtonGroup is exclusive. 
 class CTK_WIDGETS_EXPORT ctkButtonGroup : public QButtonGroup
 {
   Q_OBJECT

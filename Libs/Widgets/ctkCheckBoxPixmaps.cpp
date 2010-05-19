@@ -93,7 +93,7 @@ ctkCheckBoxPixmaps::ctkCheckBoxPixmaps(QWidget* parentWidget)
 }
 
 //-----------------------------------------------------------------------------
-QPixmap ctkCheckBoxPixmaps::getPixmap(Qt::CheckState state, bool active) const
+QPixmap ctkCheckBoxPixmaps::pixmap(Qt::CheckState state, bool active) const
 {
   int offset = active ? 3 : 0;
   switch (state)

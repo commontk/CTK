@@ -60,6 +60,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class QWidget;
 
+///
 /// ctkCheckBoxPixmaps is a helper class that can used to create pixmaps for
 /// checkboxs in various states. This is useful for showing checkboxes in qt-views.
 class CTK_WIDGETS_EXPORT ctkCheckBoxPixmaps : public QObject
@@ -72,10 +73,10 @@ public:
   ctkCheckBoxPixmaps(QWidget* parent);
 
   /// Returns a pixmap for the given state .
-  QPixmap getPixmap(Qt::CheckState state, bool active) const;
-  QPixmap getPixmap(int state, bool active) const
+  QPixmap pixmap(Qt::CheckState state, bool active) const;
+  QPixmap pixmap(int state, bool active) const
     {
-    return this->getPixmap(static_cast<Qt::CheckState>(state), active);
+    return this->pixmap(static_cast<Qt::CheckState>(state), active);
     }
 
 

@@ -304,7 +304,7 @@ void ctkCheckableHeaderView::updateHeaders(int first, int last)
     Qt::CheckState checkState;
     if (this->checkState(i, checkState))
       {
-      decoration = d->CheckBoxPixmaps->getPixmap(checkState, active);
+      decoration = d->CheckBoxPixmaps->pixmap(checkState, active);
       if (d->PropagateToItems && 
           checkState != Qt::PartiallyChecked &&
           !d->ItemsAreUpdating)
