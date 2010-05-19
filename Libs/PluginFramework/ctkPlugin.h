@@ -589,6 +589,7 @@ namespace ctk {
     friend class PluginFramework;
     friend class PluginFrameworkContext;
     friend class Plugins;
+    friend class ServiceReferencePrivate;
 
     PluginPrivate * const d_ptr;
 

@@ -73,7 +73,8 @@ MACRO(ctkMacroGeneratePluginManifest QRC_SRCS)
 
   SET(_manifest_filename "MANIFEST.MF")
   SET(_manifest_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_manifest_filename}")
-  SET(_manifest_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${MY_SYMBOLIC_NAME}_manifest.qrc")
+  STRING(REPLACE "." "_" _symbolic_name ${MY_SYMBOLIC_NAME})
+  SET(_manifest_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_symbolic_name}_manifest.qrc")
 
   SET(_manifest_qrc_content
 "<!DOCTYPE RCC><RCC version=\"1.0\">

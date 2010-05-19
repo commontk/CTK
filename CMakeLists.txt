@@ -105,6 +105,7 @@ INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkFunctionGenerateDGraphInput.cmake)
 INCLUDE(CMake/ctkFunctionGenerateProjectXml.cmake)
 INCLUDE(CMake/ctkMacroGeneratePluginManifest.cmake)
+INCLUDE(CMake/ctkMacroGeneratePluginResourceFile.cmake)
 
 # Used by CTKGenerateCTKConfig.cmake
 SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)

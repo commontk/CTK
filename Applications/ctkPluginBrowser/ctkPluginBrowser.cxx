@@ -24,6 +24,8 @@
 #include "ctkPluginTableModel.h"
 #include "ctkPluginResourcesTreeModel.h"
 #include "ctkQtResourcesTreeModel.h"
+#include "ctkServiceReference.h"
+#include "ctkPluginConstants.h"
 
 #include <ui_ctkPluginBrowserMainWindow.h>
 
@@ -99,6 +101,15 @@ namespace ctk {
     QByteArray mfContent = plugin->getResource("/META-INF/MANIFEST.MF");
     QString location = QString("/") + plugin->getSymbolicName() + "/META-INF/MANIFEST.MF";
     editors->openEditor(location, mfContent, location + " [cached]");
+
+    QList<ServiceReference*> serviceRefs = plugin->getPluginContext()->getServiceReferences("");
+    QListIterator<ServiceReference*> it(serviceRefs);
+    while (it.hasNext())
+    {
+      ServiceReference* ref = it.next();
+      qDebug() << "Service from" << ref->getPlugin()->getSymbolicName() << ":" << ref->getPropertyKeys();
+      qDebug() << "Object Classes:" << ref->getProperty(PluginConstants::OBJECTCLASS).toStringList();
+    }
   }
 
   void PluginBrowser::qtResourceDoubleClicked(const QModelIndex& index)

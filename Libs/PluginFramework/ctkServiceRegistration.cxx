@@ -20,6 +20,10 @@
 =============================================================================*/
 
 #include "ctkServiceRegistration.h"
+#include "ctkServiceRegistrationPrivate.h"
+#include "ctkPluginFrameworkContext_p.h"
+#include "ctkPluginPrivate_p.h"
+#include "ctkServiceFactory.h"
 
 #include <QMutex>
 
@@ -27,97 +31,23 @@
 
 namespace ctk {
 
-  class ServiceRegistrationPrivate
+  ServiceRegistration::ServiceRegistration(PluginPrivate* plugin, QObject* service,
+                      const ServiceProperties& props)
+    : d_ptr(new ServiceRegistrationPrivate(this, plugin, service, props))
   {
 
-  private:
+  }
 
-    /**
-     * Lock object for synchronous event delivery.
-     */
-    QMutex eventLock;
-
-
-  public:
-
-    /**
-     * Plugin registering this service.
-     */
-    Plugin* plugin;
-
-    /**
-     * Service or ServiceFactory object.
-     */
-    QObject* service;
-
-    /**
-     * Reference object to this service registration.
-     */
-    ServiceReference reference;
-
-    /**
-     * Service properties.
-     */
-    PluginContext::ServiceProperties properties;
-
-    /**
-     * Plugins dependent on this service. Integer is used as
-     * reference counter, counting number of unbalanced getService().
-     */
-    QHash<Plugin*,int> dependents;
-
-    /**
-     * Object instances that factory has produced.
-     */
-    QHash<Plugin*, QObject*> serviceInstances;
-
-    /**
-     * Is service available. I.e., if <code>true</code> then holders
-     * of a ServiceReference for the service are allowed to get it.
-     */
-    volatile bool available;
-
-    /**
-     * Avoid recursive unregistrations. I.e., if <code>true</code> then
-     * unregistration of this service has started but is not yet
-     * finished.
-     */
-    volatile bool unregistering;
-
-    QMutex propsLock;
-
-    ServiceRegistrationPrivate(Plugin* plugin, QObject* service,
-                               const PluginContext::ServiceProperties& props)
-                                 : plugin(plugin), service(service), reference(this),
-                                 properties(props), available(true), unregistering(false)
-    {
-
-    }
-
-    /**
-     * Check if a plugin uses this service
-     *
-     * @param p Plugin to check
-     * @return true if plugin uses this service
-     */
-    bool isUsedByPlugin(Plugin* p)
-    {
-      QHash<Plugin*, int> deps = dependents;
-      return deps.contains(p);
-    }
-
-  };
-
-  ServiceReference ServiceRegistration::getReference() const
+  ServiceReference* ServiceRegistration::getReference()
   {
-    Q_D(const ServiceRegistration);
+    Q_D(ServiceRegistration);
 
     if (!d->available) throw std::logic_error("Service is unregistered");
 
     return d->reference;
   }
 
-  void ServiceRegistration::setProperties(const PluginContext::ServiceProperties& properties)
+  void ServiceRegistration::setProperties(const ServiceProperties& properties)
   {
 //    QMutexLocker lock(eventLock);
 //          Set before;
@@ -153,50 +83,76 @@ namespace ctk {
 
   }
 
-  void ServiceRegistration::unregister() const
+  void ServiceRegistration::unregister()
   {
-//    Q_D(ServiceRegistration);
-//
-//    if (d->unregistering) return; // Silently ignore redundant unregistration.
-//
-//        {
-//          QMutexLocker lock(eventLock);
-//          if (d->unregistering) return;
-//          d->unregistering = true;
-//
-//          if (d->available)
-//          {
-//            if (d->plugin)
-//            {
-//              d->plugin->fwCtx.services.removeServiceRegistration(this);
-//            }
-//          }
-//          else
-//          {
-//            throw std::logic_error("Service is unregistered");
-//          }
-//        }
-//
-//        if (d->plugin)
-//    {
-//          bundle.fwCtx.listeners
+    Q_D(ServiceRegistration);
+
+    if (d->unregistering) return; // Silently ignore redundant unregistration.
+    {
+      QMutexLocker lock(&d->eventLock);
+      if (d->unregistering) return;
+      d->unregistering = true;
+
+      if (d->available)
+      {
+        if (d->plugin)
+        {
+          d->plugin->fwCtx->services.removeServiceRegistration(this);
+        }
+      }
+      else
+      {
+        throw std::logic_error("Service is unregistered");
+      }
+    }
+
+    if (d->plugin)
+    {
+      //TODO
+//      bundle.fwCtx.listeners
 //            .serviceChanged(bundle.fwCtx.listeners.getMatchingServiceListeners(reference),
 //                            new ServiceEvent(ServiceEvent.UNREGISTERING, reference),
 //                            null);
-//        }
-//        synchronized (eventLock) {
-//          synchronized (properties) {
-//            available = false;
-//            if (null!=bundle)
-//              bundle.fwCtx.perm.callUnregister0(this);
-//            bundle = null;
-//            dependents = null;
-//            reference = null;
-//            service = null;
-//            serviceInstances = null;
-//            unregistering = false;
-//          }
-//        }
+    }
+
+    {
+      QMutexLocker lock(&d->eventLock);
+      {
+        QMutexLocker lock2(&d->propsLock);
+        d->available = false;
+        if (d->plugin)
+        {
+          for (QHashIterator<Plugin*, QObject*> i(d->serviceInstances); i.hasNext();)
+          {
+            QObject* obj = i.next().value();
+            try
+            {
+              // NYI, don't call inside lock
+              qobject_cast<ServiceFactory*>(d->service)->ungetService(i.key(),
+                                                         this,
+                                                         obj);
+            }
+            catch (const std::exception& ue)
+            {
+              PluginFrameworkEvent pfwEvent(PluginFrameworkEvent::ERROR, d->plugin->q_func(), ue);
+              d->plugin->fwCtx->listeners
+                  .emitFrameworkEvent(pfwEvent);
+            }
+          }
+        }
+        d->plugin = 0;
+        d->dependents.clear();
+        d->service = 0;
+        d->serviceInstances.clear();;
+        d->unregistering = false;
+      }
+    }
+  }
+
+  bool ServiceRegistration::operator<(const ServiceRegistration& o) const
+  {
+    Q_D(const ServiceRegistration);
+    return d->reference->operator <(*(o.d_func()->reference));
   }
 
 }

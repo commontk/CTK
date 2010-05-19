@@ -27,6 +27,8 @@
 #include <QVariant>
 #include <QUrl>
 
+#include "ctkPluginFramework_global.h"
+
 #include "ctkPluginEvent.h"
 
 #include "CTKPluginFrameworkExport.h"
@@ -96,8 +98,6 @@ namespace ctk {
 
   public:
 
-    typedef QHash<QString, QVariant> ServiceProperties;
-
     ~PluginContext();
 
     /**
@@ -134,13 +134,209 @@ namespace ctk {
      */
     QList<Plugin*> getPlugins() const;
 
-    ServiceRegistration registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties = ServiceProperties());
+    /**
+     * Registers the specified service object with the specified properties
+     * under the specified class names into the Framework. A
+     * <code>ServiceRegistration</code> object is returned. The
+     * <code>ServiceRegistration</code> object is for the private use of the
+     * plugin registering the service and should not be shared with other
+     * plugins. The registering plugin is defined to be the context plugin.
+     * Other plugins can locate the service by using either the
+     * {@link #getServiceReferences} or {@link #getServiceReference} method.
+     *
+     * <p>
+     * A plugin can register a service object that implements the
+     * {@link ServiceFactory} interface to have more flexibility in providing
+     * service objects to other plugins.
+     *
+     * <p>
+     * The following steps are required to register a service:
+     * <ol>
+     * <li>If <code>service</code> is not a <code>ServiceFactory</code>, an
+     * <code>std::invalid_argument</code> is thrown if <code>service</code>
+     * is not an instance of all the specified class names.
+     * <li>The Framework adds the following service properties to the service
+     * properties from the specified <code>ServiceProperties</code> (which may be
+     * omitted): <br/>
+     * A property named {@link PluginConstants#SERVICE_ID} identifying the
+     * registration number of the service <br/>
+     * A property named {@link PluginConstants#OBJECTCLASS} containing all the
+     * specified classes. <br/>
+     * Properties with these names in the specified <code>ServiceProperties</code> will
+     * be ignored.
+     * <li>The service is added to the Framework service registry and may now be
+     * used by other plugins.
+     * <li>A service event of type {@link ServiceEvent#REGISTERED} is fired.
+     * <li>A <code>ServiceRegistration</code> object for this registration is
+     * returned.
+     * </ol>
+     *
+     * @param clazzes The class names under which the service can be located.
+     *        The class names will be stored in the service's
+     *        properties under the key {@link PluginConstants#OBJECTCLASS}.
+     * @param service The service object or a <code>ServiceFactory</code>
+     *        object.
+     * @param properties The properties for this service. The keys in the
+     *        properties object must all be <code>QString</code> objects. See
+     *        {@link PluginConstants} for a list of standard service property keys.
+     *        Changes should not be made to this object after calling this
+     *        method. To update the service's properties the
+     *        {@link ServiceRegistration::setProperties} method must be called.
+     *        The set of properties may be omitted if the service has
+     *        no properties.
+     * @return A <code>ServiceRegistration</code> object for use by the plugin
+     *         registering the service to update the service's properties or to
+     *         unregister the service.
+     * @throws std::invalid_argument If one of the following is true:
+     *         <ul>
+     *         <li><code>service</code> is <code>0</code>. <li><code>service
+     *         </code> is not a <code>ServiceFactory</code> object and is not an
+     *         instance of all the named classes in <code>clazzes</code>. <li>
+     *         <code>properties</code> contains case variants of the same key
+     *         name.
+     *         </ul>
+     * @throws std::logic_error If this PluginContext is no longer valid.
+     * @see ServiceRegistration
+     * @see ServiceFactory
+     */
+    ServiceRegistration* registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties = ServiceProperties());
 
-    QList<ServiceReference> getServiceReferences(const QString& clazz, const QString& filter = QString());
+    /**
+     * Returns a list of <code>ServiceReference</code> objects. The returned
+     * list contains services that
+     * were registered under the specified class and match the specified filter
+     * expression.
+     *
+     * <p>
+     * The list is valid at the time of the call to this method. However since
+     * the Framework is a very dynamic environment, services can be modified or
+     * unregistered at any time.
+     *
+     * <p>
+     * The specified <code>filter</code> expression is used to select the
+     * registered services whose service properties contain keys and values
+     * which satisfy the filter expression. See {@link Filter} for a description
+     * of the filter syntax. If the specified <code>filter</code> is
+     * empty, all registered services are considered to match the
+     * filter. If the specified <code>filter</code> expression cannot be parsed,
+     * an {@link std::invalid_argument} will be thrown with a human readable
+     * message where the filter became unparsable.
+     *
+     * <p>
+     * The result is a list of <code>ServiceReference</code> objects for all
+     * services that meet all of the following conditions:
+     * <ul>
+     * <li>If the specified class name, <code>clazz</code>, is not
+     * empty, the service must have been registered with the
+     * specified class name. The complete list of class names with which a
+     * service was registered is available from the service's
+     * {@link PlugincConstants::OBJECTCLASS objectClass} property.
+     * <li>If the specified <code>filter</code> is not empty, the
+     * filter expression must match the service.
+     * </ul>
+     *
+     * @param clazz The class name with which the service was registered or
+     *        an empty string for all services.
+     * @param filter The filter expression or empty for all
+     *        services.
+     * @return A list of <code>ServiceReference</code> objects or
+     *         an empty list if no services are registered which satisfy the
+     *         search.
+     * @throws std::invalid_argument If the specified <code>filter</code>
+     *         contains an invalid filter expression that cannot be parsed.
+     * @throws std::logic_error If this PluginContext is no longer valid.
+     */
+    QList<ServiceReference*> getServiceReferences(const QString& clazz, const QString& filter = QString());
 
-    ServiceReference getServiceReference(const QString& clazz);
+    /**
+     * Returns a <code>ServiceReference</code> object for a service that
+     * implements and was registered under the specified class.
+     *
+     * <p>
+     * The returned <code>ServiceReference</code> object is valid at the time of
+     * the call to this method. However as the Framework is a very dynamic
+     * environment, services can be modified or unregistered at any time.
+     *
+     * <p>
+     * This method is the same as calling
+     * {@link PluginContext::getServiceReferences(const QString&, const QString&)} with an
+     * empty filter expression. It is provided as a convenience for
+     * when the caller is interested in any service that implements the
+     * specified class.
+     * <p>
+     * If multiple such services exist, the service with the highest ranking (as
+     * specified in its {@link PluginConstants::SERVICE_RANKING} property) is returned.
+     * <p>
+     * If there is a tie in ranking, the service with the lowest service ID (as
+     * specified in its {@link PluginConstants::SERVICE_ID} property); that is, the
+     * service that was registered first is returned.
+     *
+     * @param clazz The class name with which the service was registered.
+     * @return A <code>ServiceReference</code> object, or <code>0</code> if
+     *         no services are registered which implement the named class.
+     * @throws std::logic_error If this PluginContext is no longer valid.
+     * @see #getServiceReferences(const QString&, const QString&)
+     */
+    ServiceReference* getServiceReference(const QString& clazz);
 
-    QObject* getService(const ServiceReference& reference);
+    /**
+     * Returns the service object referenced by the specified
+     * <code>ServiceReference</code> object.
+     * <p>
+     * A plugin's use of a service is tracked by the plugin's use count of that
+     * service. Each time a service's service object is returned by
+     * {@link #getService(ServiceReference*)} the context plugin's use count for
+     * that service is incremented by one. Each time the service is released by
+     * {@link #ungetService(ServiceReference*)} the context plugin's use count
+     * for that service is decremented by one.
+     * <p>
+     * When a plugin's use count for a service drops to zero, the plugin should
+     * no longer use that service.
+     *
+     * <p>
+     * This method will always return <code>0</code> when the service
+     * associated with this <code>reference</code> has been unregistered.
+     *
+     * <p>
+     * The following steps are required to get the service object:
+     * <ol>
+     * <li>If the service has been unregistered, <code>0</code> is returned.
+     * <li>The context plugin's use count for this service is incremented by
+     * one.
+     * <li>If the context plugin's use count for the service is currently one
+     * and the service was registered with an object implementing the
+     * <code>ServiceFactory</code> interface, the
+     * {@link ServiceFactory::getService(Plugin*, ServiceRegistration*)} method is
+     * called to create a service object for the context plugin. This service
+     * object is cached by the Framework. While the context plugin's use count
+     * for the service is greater than zero, subsequent calls to get the
+     * services's service object for the context plugin will return the cached
+     * service object. <br>
+     * If the service object returned by the <code>ServiceFactory</code> object
+     * is not an instance of all the classes named when the service
+     * was registered or the <code>ServiceFactory</code> object throws an
+     * exception, <code>0</code> is returned and a Framework event of type
+     * {@link FrameworkEvent::ERROR} containing a {@link ServiceException}
+     * describing the error is fired.
+     * <li>The service object for the service is returned.
+     * </ol>
+     *
+     * @param reference A reference to the service.
+     * @return A service object for the service associated with
+     *         <code>reference</code> or <code>0</code> if the service is not
+     *         registered, the service object returned by a
+     *         <code>ServiceFactory</code> does not implement the classes under
+     *         which it was registered or the <code>ServiceFactory</code> threw
+     *         an exception.
+     * @throws std::logic_error If this PluginContext is no
+     *         longer valid.
+     * @throws std::invalid_argument If the specified
+     *         <code>ServiceReference</code> was not created by the same
+     *         framework instance as this <code>PluginContext</code>.
+     * @see #ungetService(ServiceReference*)
+     * @see ServiceFactory
+     */
+    QObject* getService(ServiceReference* reference);
 
     Plugin* installPlugin(const QUrl& location, QIODevice* in = 0);
 

@@ -45,4 +45,9 @@ namespace ctk {
   const QString PluginConstants::RESOLUTION_MANDATORY = "mandatory";
   const QString PluginConstants::RESOLUTION_OPTIONAL = "optional";
 
+
+  const QString PluginConstants::OBJECTCLASS = "objectclass";
+  const QString PluginConstants::SERVICE_ID = "service.id";
+  const QString PluginConstants::SERVICE_RANKING = "service.ranking";
+
 }

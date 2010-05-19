@@ -26,6 +26,8 @@
 
 #include "ctkServiceReference.h"
 
+#include "CTKPluginFrameworkExport.h"
+
 namespace ctk {
 
   class ServiceRegistrationPrivate;
@@ -45,7 +47,7 @@ namespace ctk {
    * @see PluginContext#registerService()
    * @threadsafe
    */
-  class ServiceRegistration {
+  class CTK_PLUGINFW_EXPORT ServiceRegistration {
 
     Q_DECLARE_PRIVATE(ServiceRegistration)
 
@@ -63,7 +65,7 @@ namespace ctk {
      *         unregistered.
      * @return <code>ServiceReference</code> object.
      */
-    ServiceReference getReference() const;
+    ServiceReference* getReference();
 
     /**
      * Updates the properties associated with a service.
@@ -90,7 +92,7 @@ namespace ctk {
      * @throws std::invalid_argument If <code>properties</code> contains
      *         case variants of the same key name.
      */
-    void setProperties(const PluginContext::ServiceProperties& properties);
+    void setProperties(const ServiceProperties& properties);
 
     /**
      * Unregisters a service. Remove a <code>ServiceRegistration</code> object
@@ -123,12 +125,16 @@ namespace ctk {
      * @see BundleContext#ungetService
      * @see ServiceFactory#ungetService
      */
-    void unregister() const;
+    void unregister();
+
+    bool operator<(const ServiceRegistration& o) const;
 
   private:
 
-    ServiceRegistration(Plugin* plugin, QObject* service,
-                        const PluginContext::ServiceProperties& props);
+    friend class Services;
+
+    ServiceRegistration(PluginPrivate* plugin, QObject* service,
+                        const ServiceProperties& props);
 
     ServiceRegistrationPrivate * const d_ptr;
 

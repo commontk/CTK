@@ -7,8 +7,11 @@
 
 #include "ctkCLIPlugin.h"
 
+#include "ctkCLIRegistry.h"
+
 #include <QtPlugin>
 #include <QServiceInterfaceDescriptor>
+#include <QStringList>
 
 #include <iostream>
 
@@ -16,6 +19,8 @@ namespace ctk {
 
   void CLIPlugin::start(PluginContext* context)
   {
+    CLIRegistry* registry = new CLIRegistry();
+    context->registerService(QStringList("ctk::CLIRegistry"), registry);
     std::cout << "Plugin A started\n";
   }
 

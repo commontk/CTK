@@ -8,10 +8,15 @@ SET(PLUGIN_SRCS
 
 SET(PLUGIN_MOC_SRCS
   ctkCLIPlugin.h
+  ctkCLIRegistry.h
 )
 
 SET(PLUGIN_resources
-  org_commontk_cli.qrc
+
+)
+
+SET(PLUGIN_cached_resourcefiles
+  servicedescriptor.xml
 )
 
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Plugins)
@@ -24,5 +29,6 @@ ctkMacroBuildPlugin(
   SRCS ${PLUGIN_SRCS}
   MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
+  CACHED_RESOURCEFILES ${PLUGIN_cached_resourcefiles}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}
 )

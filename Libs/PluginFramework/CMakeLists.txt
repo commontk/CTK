@@ -62,9 +62,12 @@ SET(KIT_SRCS
   ctkPluginPrivate.cxx
   ctkPlugins.cxx
   ctkRequirePlugin.cxx
+  ctkServiceException.cxx
   ctkServiceReference.cxx
+  ctkServiceReferencePrivate.cxx
   ctkServiceRegistration.cxx
-  #PluginFramework/ctkServiceRegistry.cxx
+  ctkServiceRegistrationPrivate.cxx
+  ctkServices.cxx
   ctkPluginStorage.cxx
   ctkVersion.cxx
   ctkVersionRange.cxx
@@ -79,6 +82,7 @@ SET(KIT_MOC_SRCS
   ctkPluginEvent.h
   ctkPluginFrameworkEvent.h
   ctkPluginFrameworkListeners_p.h
+  ctkServiceFactory.h
 )
 
 # UI files

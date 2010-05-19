@@ -25,6 +25,7 @@
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkServiceRegistration.h"
 #include "ctkServiceReference.h"
+#include "ctkServiceReferencePrivate.h"
 
 #include <stdexcept>
 
@@ -96,24 +97,37 @@ namespace ctk {
     return d->plugin->fwCtx->plugins->install(location, in);
   }
 
-  ServiceRegistration PluginContext::registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties)
+  ServiceRegistration* PluginContext::registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties)
   {
-
+    Q_D(PluginContext);
+    d->isPluginContextValid();
+    return d->plugin->fwCtx->services.registerService(d->plugin, clazzes, service, properties);
   }
 
-  QList<ServiceReference> PluginContext::getServiceReferences(const QString& clazz, const QString& filter)
+  QList<ServiceReference*> PluginContext::getServiceReferences(const QString& clazz, const QString& filter)
   {
-
+    Q_D(PluginContext);
+    d->isPluginContextValid();
+    return d->plugin->fwCtx->services.get(clazz, filter);
   }
 
-  ServiceReference PluginContext::getServiceReference(const QString& clazz)
+  ServiceReference* PluginContext::getServiceReference(const QString& clazz)
   {
-
+    Q_D(PluginContext);
+    d->isPluginContextValid();
+    return d->plugin->fwCtx->services.get(d->plugin, clazz);
   }
 
-  QObject* PluginContext::getService(const ServiceReference& reference)
+  QObject* PluginContext::getService(ServiceReference* reference)
   {
+    if (reference == 0)
+    {
+      throw std::invalid_argument("Null ServiceReference is not valid");
+    }
 
+    Q_D(PluginContext);
+    d->isPluginContextValid();
+    return reference->d_func()->getService(d->plugin->q_func());
   }
 
   bool PluginContext::connectPluginListener(const QObject* receiver, const char* method,

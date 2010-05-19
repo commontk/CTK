@@ -20,39 +20,98 @@
 =============================================================================*/
 
 #include "ctkServiceReference.h"
+#include "ctkServiceReferencePrivate.h"
+#include "ctkServiceRegistrationPrivate.h"
+#include "ctkPluginPrivate_p.h"
+#include "ctkPluginConstants.h"
 
 #include <QStringList>
+#include <QMutexLocker>
 
 namespace ctk {
 
   ServiceReference::ServiceReference(ServiceRegistrationPrivate* reg)
+    : d_ptr(new ServiceReferencePrivate(reg))
   {
 
+  }
+
+  ServiceReference::~ServiceReference()
+  {
+    delete d_ptr;
   }
 
   QVariant ServiceReference::getProperty(const QString& key) const
   {
-    return QVariant();
+    Q_D(const ServiceReference);
+
+    QMutexLocker lock(&d->registration->propsLock);
+
+    return d->registration->properties.value(key);
   }
 
   QStringList ServiceReference::getPropertyKeys() const
   {
-    return QStringList();
+    Q_D(const ServiceReference);
+
+    QMutexLocker lock(&d->registration->propsLock);
+
+    return d->registration->properties.keys();
   }
 
   Plugin* ServiceReference::getPlugin() const
   {
-    return 0;
+    return d_func()->registration->plugin->q_func();
   }
 
   QList<Plugin*> ServiceReference::getUsingPlugins() const
   {
-    return QList<Plugin*>();
+    Q_D(const ServiceReference);
+
+    QMutexLocker lock(&d->registration->propsLock);
+
+    if (d->registration->reference != 0)
+    {
+      return d->registration->dependents.keys();
+    }
+    else
+    {
+      return QList<Plugin*>();
+    }
   }
 
   bool ServiceReference::operator<(const ServiceReference& reference) const
   {
-    return false;
+    bool sameFw = d_func()->registration->plugin->fwCtx == reference.d_func()->registration->plugin->fwCtx;
+    if (!sameFw)
+    {
+      throw std::invalid_argument("Can not compare service references "
+                                  "belonging to different framework "
+                                  "instances.");
+    }
+
+    int r1 = getProperty(PluginConstants::SERVICE_RANKING).toInt();
+    int r2 = reference.getProperty(PluginConstants::SERVICE_RANKING).toInt();
+
+    if (r1 != r2)
+    {
+      // use ranking if ranking differs
+      return r1 < r2 ? false : true;
+    }
+    else
+    {
+      qlonglong id1 = getProperty(PluginConstants::SERVICE_ID).toLongLong();
+      qlonglong id2 = reference.getProperty(PluginConstants::SERVICE_ID).toLongLong();
+
+      // otherwise compare using IDs,
+      // is less than if it has a higher ID.
+      return id2< id1;
+    }
+  }
+
+  bool ServiceReference::operator==(const ServiceReference& reference) const
+  {
+    return d_func()->registration == reference.d_func()->registration;
   }
 
 }

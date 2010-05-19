@@ -30,6 +30,7 @@
 #include "ctkPluginStorage_p.h"
 #include "ctkPlugins_p.h"
 #include "ctkPluginFrameworkListeners_p.h"
+#include "ctkServices_p.h"
 
 namespace ctk {
 
@@ -52,7 +53,7 @@ namespace ctk {
       /**
        * All registered services in this framework.
        */
-      //Services services;
+      Services services;
 
       /**
        * System plugin

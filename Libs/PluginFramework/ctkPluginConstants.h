@@ -251,6 +251,56 @@ namespace ctk {
      */
     static const QString RESOLUTION_OPTIONAL; // = "optional"
 
+    /**
+     * Service property identifying all of the class names under which a service
+     * was registered in the Framework. The value of this property must be of
+     * type <code>QStringList</code>.
+     *
+     * <p>
+     * This property is set by the Framework when a service is registered.
+     */
+    static const QString OBJECTCLASS; // = "objectclass"
+
+    /**
+     * Service property identifying a service's registration number. The value
+     * of this property must be of type <code>qlonglong</code>.
+     *
+     * <p>
+     * The value of this property is assigned by the Framework when a service is
+     * registered. The Framework assigns a unique value that is larger than all
+     * previously assigned values since the Framework was started. These values
+     * are NOT persistent across restarts of the Framework.
+     */
+    static const QString SERVICE_ID; //	= "service.id"
+
+    /**
+     * Service property identifying a service's ranking number.
+     *
+     * <p>
+     * This property may be supplied in the
+     * <code>ServiceProperties</code> object passed to the
+     * <code>PluginContext::registerService</code> method. The value of this
+     * property must be of type <code>int</code>.
+     *
+     * <p>
+     * The service ranking is used by the Framework to determine the <i>natural
+     * order</i> of services, see {@link ServiceReference::operator<(const ServiceReference&)},
+     * and the <i>default</i> service to be returned from a call to the
+     * {@link PluginContext::getServiceReference} method.
+     *
+     * <p>
+     * The default ranking is zero (0). A service with a ranking of
+     * <code>std::numeric_limits<int>::max()</code> is very likely to be returned as the
+     * default service, whereas a service with a ranking of
+     * <code>std::numeric_limits<int>::min()</code> is very unlikely to be returned.
+     *
+     * <p>
+     * If the supplied property value is not of type <code>int</code>, it is
+     * deemed to have a ranking value of zero.
+     */
+    static const QString SERVICE_RANKING; // = "service.ranking"
+
+
   };
 
 }

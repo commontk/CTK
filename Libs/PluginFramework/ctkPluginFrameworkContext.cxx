@@ -33,7 +33,7 @@ namespace ctk {
 
   PluginFrameworkContext::PluginFrameworkContext(
       const PluginFrameworkFactory::Properties& initProps)
-        : plugins(0), /*services(this),*/ systemPlugin(this),
+        : plugins(0), services(this), systemPlugin(this),
         storage(this), props(initProps)
   {
 

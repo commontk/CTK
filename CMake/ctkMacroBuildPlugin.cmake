@@ -29,7 +29,7 @@
 #
 MACRO(ctkMacroBuildPlugin)
   CtkMacroParseArguments(MY
-    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
+    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;LIBRARY_TYPE"
     ""
     ${ARGN}
     )
@@ -99,8 +99,10 @@ MACRO(ctkMacroBuildPlugin)
   SET(Plugin-Version )
 
   # If a file named manifest_headers.cmake exists, read it
+  SET(manifest_headers_dep )
   IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
     INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
+    SET(manifest_headers_dep "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
   ENDIF()
 
   # Set the plugin_symbolicname to the library name if it is not set
@@ -109,7 +111,8 @@ MACRO(ctkMacroBuildPlugin)
   ENDIF()
 
   # Add the generated manifest qrc file
-  ctkMacroGeneratePluginManifest(MY_QRC_SRCS
+  SET(manifest_qrc_src )
+  ctkMacroGeneratePluginManifest(manifest_qrc_src
     ACTIVATIONPOLICY ${Plugin-ActivationPolicy}
     CATEGORY ${Plugin-Category}
     CONTACT_ADDRESS ${Plugin-ContactAddress}
@@ -124,6 +127,21 @@ MACRO(ctkMacroBuildPlugin)
     VENDOR ${Plugin-Vendor}
     VERSION ${Plugin-Version}
     )
+
+  IF(manifest_headers_dep)
+    SET_PROPERTY(SOURCE ${manifest_qrc_src} APPEND
+                   PROPERTY OBJECT_DEPENDS ${manifest_headers_dep})
+  ENDIF()
+  LIST(APPEND MY_QRC_SRCS ${manifest_qrc_src})
+
+  # Add any other additional resource files
+  IF(MY_CACHED_RESOURCEFILES)
+    STRING(REPLACE "." "_" _plugin_symbolicname ${Plugin-SymbolicName})
+    ctkMacroGeneratePluginResourceFile(MY_QRC_SRCS
+      NAME ${_plugin_symbolicname}_cached.qrc
+      PREFIX ${Plugin-SymbolicName}
+      RESOURCES ${MY_CACHED_RESOURCEFILES})
+  ENDIF()
 
   SOURCE_GROUP("Resources" FILES
     ${MY_RESOURCES}
