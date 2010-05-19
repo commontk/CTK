@@ -62,6 +62,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class ctkCheckableHeaderViewPrivate;
 
+///
+/// ctkCheckableHeaderView is a QHeaderView that can display a checkbox 
+/// for any header section.
+/// If propageteToItems, the check state of the header section is set to
+/// all items in the header row/column of the QAbstractItemModel
+/// ctkCheckableHeaderView also supports row/column sorting.
 class CTK_WIDGETS_EXPORT ctkCheckableHeaderView : public QHeaderView
 {
   Q_OBJECT;
@@ -98,7 +104,10 @@ public:
   /// \return
   ///   True if the event should be filtered out.
   virtual bool eventFilter(QObject *object, QEvent *e);
-                                                      
+
+  ///
+  /// If true, the items check states in a row/column are synchronized 
+  /// with the check state of the corresponding header section.
   void setPropagateToItems(bool propagate);
   bool propagateToItems()const;
 
