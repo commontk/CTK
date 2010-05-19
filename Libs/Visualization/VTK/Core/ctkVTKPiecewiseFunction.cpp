@@ -68,6 +68,12 @@ bool ctkVTKPiecewiseFunction::isDiscrete()const
 }
 
 //-----------------------------------------------------------------------------
+bool ctkVTKPiecewiseFunction::isEditable()const
+{
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 void ctkVTKPiecewiseFunction::range(qreal& minRange, qreal& maxRange)const
 {
   CTK_D(const ctkVTKPiecewiseFunction);
@@ -95,15 +101,12 @@ QVariant ctkVTKPiecewiseFunction::minValue()const
     }
   //Initialize to max value
   /// TODO initialize with max value
-  double minValue = 9999.99;
+  double minValue = VTK_DOUBLE_MAX;
   for (int i = 0; i < this->count(); ++i)
     {
     double value[4];
     d->PiecewiseFunction->GetNodeValue(i, value);
-    if ( value[1] < minValue)
-      {
-      minValue = value[1];
-      }
+    minValue = qMin(value[1], minValue);
     }
   return minValue;
 }
@@ -119,15 +122,12 @@ QVariant ctkVTKPiecewiseFunction::maxValue()const
     }
   //Initialize to max value
   /// TODO initialize with max value
-  qreal maxValue = 0.;
+  qreal maxValue = VTK_DOUBLE_MIN;
   for (int i = 0; i < this->count(); ++i)
     {
     double value[4];
     d->PiecewiseFunction->GetNodeValue(i, value);
-    if ( maxValue < value[1])
-      {
-      maxValue = value[1];
-      }
+    maxValue = qMax(maxValue, value[1]);
     }
   return maxValue;
 }

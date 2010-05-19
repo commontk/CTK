@@ -29,6 +29,7 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkSmartPointer.h>
 
+//-----------------------------------------------------------------------------
 class ctkVTKColorTransferFunctionPrivate: public ctkPrivate<ctkVTKColorTransferFunction>
 {
 public:
@@ -72,6 +73,12 @@ int ctkVTKColorTransferFunction::count()const
 bool ctkVTKColorTransferFunction::isDiscrete()const
 {
   return false;
+}
+
+//-----------------------------------------------------------------------------
+bool ctkVTKColorTransferFunction::isEditable()const
+{
+  return true;
 }
 
 //-----------------------------------------------------------------------------

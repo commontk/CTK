@@ -76,6 +76,12 @@ bool ctkVTKLookupTable::isDiscrete()const
 }
 
 //-----------------------------------------------------------------------------
+bool ctkVTKLookupTable::isEditable()const
+{
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 void ctkVTKLookupTable::range(qreal& minRange, qreal& maxRange)const
 {
   CTK_D(const ctkVTKLookupTable);
@@ -127,12 +133,27 @@ QVariant ctkVTKLookupTable::maxValue()const
 }
 
 //-----------------------------------------------------------------------------
-ctkControlPoint* ctkVTKLookupTable::controlPoint(int index)const
+qreal ctkVTKLookupTable::indexToPos(int index)const
 {
   CTK_D(const ctkVTKLookupTable);
   double* range = d->LookupTable->GetRange();
+  return range[0] + index * ((range[1] - range[0]) / (d->LookupTable->GetNumberOfColors() - 1));
+}
+
+//-----------------------------------------------------------------------------
+int ctkVTKLookupTable::posToIndex(qreal pos)const
+{
+  CTK_D(const ctkVTKLookupTable);
+  double* range = d->LookupTable->GetRange();
+  return (pos - range[0]) / ((range[1] - range[0]) / (d->LookupTable->GetNumberOfColors() - 1));
+}
+
+//-----------------------------------------------------------------------------
+ctkControlPoint* ctkVTKLookupTable::controlPoint(int index)const
+{
+  CTK_D(const ctkVTKLookupTable);
   ctkControlPoint* cp = new ctkControlPoint();
-  cp->P.X = range[0] + index * (range[1] - range[0]) / (d->LookupTable->GetNumberOfColors() - 1);
+  cp->P.X = this->indexToPos(index);
   cp->P.Value = this->value(cp->P.X);
   return cp;
 }
@@ -141,13 +162,10 @@ ctkControlPoint* ctkVTKLookupTable::controlPoint(int index)const
 QVariant ctkVTKLookupTable::value(qreal pos)const
 {
   CTK_D(const ctkVTKLookupTable);
-  Q_ASSERT(d->LookupTable.GetPointer());
-  double rgb[3];
-  d->LookupTable->GetColor(pos, rgb);
-  double alpha = d->LookupTable->GetOpacity(pos);
-  return QColor::fromRgbF(rgb[0], rgb[1], rgb[2], alpha);;
+  QSharedPointer<ctkControlPoint> point = 
+    QSharedPointer<ctkControlPoint>(this->controlPoint(this->posToIndex(pos)));
+  return point->P.Value;
 }
-
 //-----------------------------------------------------------------------------
 int ctkVTKLookupTable::insertControlPoint(const ctkControlPoint& cp)
 {

@@ -83,6 +83,7 @@ public:
   
   virtual int count()const = 0;
   virtual bool isDiscrete()const = 0;
+  virtual bool isEditable()const = 0;
 
   inline void range(qreal rangeValues[2])const;
   virtual void range(qreal& minRange, qreal& maxRange)const=0;
@@ -100,7 +101,6 @@ public:
   /// be careful with it, as changing the value might require
   /// more changes to ctkControlPoint.
   virtual void setControlPointValue(int index, const QVariant& value)=0;
-  virtual ctkBezierControlPoint* toto();
 signals:
   void changed();
 };
