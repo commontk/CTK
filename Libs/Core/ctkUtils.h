@@ -29,30 +29,20 @@
 
 #include "CTKCoreExport.h"
 
-class CTK_CORE_EXPORT ctkUtils
-{
-  
-public:
-  typedef ctkUtils Self;
+namespace ctk {
+///
+/// Convert a QStringList to Vector of char*
+/// Caller will be responsible to delete the content of the vector
+void CTK_CORE_EXPORT qListToSTLVector(const QStringList& list, std::vector<char*>& vector);
 
-  ///
-  /// Convert a QStringList to Vector of char*
-  /// Caller will be responsible to delete the content of the vector
-  static void qListToSTLVector(const QStringList& list, std::vector<char*>& vector);
+///
+/// Convert a QStringList to a Vector of string
+void CTK_CORE_EXPORT qListToSTLVector(const QStringList& list, std::vector<std::string>& vector);
 
-  ///
-  /// Convert a QStringList to a Vector of string
-  static void qListToSTLVector(const QStringList& list, std::vector<std::string>& vector);
+///
+/// Convert a Vector of string to QStringList
+void CTK_CORE_EXPORT stlVectorToQList(const std::vector<std::string>& vector, QStringList& list);
 
-  ///
-  /// Convert a Vector of string to QStringList
-  static void stlVectorToQList(const std::vector<std::string>& vector, QStringList& list);
-
-private:
-  /// Not implemented
-  ctkUtils(){}
-  virtual ~ctkUtils(){}
-
-};
+}
 
 #endif

@@ -24,7 +24,7 @@
 #include <algorithm>
 
 //------------------------------------------------------------------------------
-void ctkUtils::qListToSTLVector(const QStringList& list,
+void ctk::qListToSTLVector(const QStringList& list,
                                  std::vector<char*>& vector)
 {
   // Resize if required
@@ -52,7 +52,7 @@ static std::string qStringToSTLString(const QString& qstring)
 }
 
 //------------------------------------------------------------------------------
-void ctkUtils::qListToSTLVector(const QStringList& list,
+void ctk::qListToSTLVector(const QStringList& list,
                                  std::vector<std::string>& vector)
 {
   // To avoid unnessesary relocations, let's reserve the required amount of space
@@ -61,7 +61,7 @@ void ctkUtils::qListToSTLVector(const QStringList& list,
 }
 
 //------------------------------------------------------------------------------
-void ctkUtils::stlVectorToQList(const std::vector<std::string>& vector,
+void ctk::stlVectorToQList(const std::vector<std::string>& vector,
                                  QStringList& list)
 {
   std::transform(vector.begin(),vector.end(),std::back_inserter(list),&QString::fromStdString);
