@@ -28,6 +28,11 @@
 // CTK includes
 #include "CTKWidgetsExport.h"
 
+///
+/// ctkColorPickerButton is a QPushButton that refers to a color. The color 
+/// and the name of the color (i.e. #FFFFFF) are displayed on the button.
+/// When clicked, a color dialog shows up to select a new color 
+/// for the QPushButton. 
 class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 {
   Q_OBJECT
@@ -38,10 +43,17 @@ public:
   explicit ctkColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
   virtual ~ctkColorPickerButton(){}
   
+  ///
+  /// Current selected color
   QColor color()const;
 
 public slots:
+  ///
+  /// Set a new current color
   void setColor(const QColor& color);
+
+  /// 
+  /// Opens a color dialog to select a new current color.
   void changeColor(bool change = true);
 
 signals:

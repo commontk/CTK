@@ -27,6 +27,10 @@
 // CTK includes
 #include "CTKWidgetsExport.h"
 
+///
+/// ctkCoordinatesWidget is a simple container of dimension coordinates.
+/// For each coordinate a spinbox is associated, everytime a value is modified
+/// the signal valueChanged is fired.
 class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
 {
   Q_OBJECT 
@@ -35,7 +39,6 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
   Q_PROPERTY(QString coordinates READ coordinatesAsString WRITE setCoordinatesAsString)
-
     
 public:
   explicit ctkCoordinatesWidget(QWidget* parent = 0);
@@ -72,6 +75,8 @@ public:
   double* coordinates()const;
 
 signals:
+  ///
+  /// valueChanged is fired anytime one coordinate is modified
   void valueChanged(double* pos);
 
 protected slots:
@@ -79,7 +84,7 @@ protected slots:
   void coordinatesChanged();
 
 protected:
-  void AddSpinBox();
+  void addSpinBox();
 
   double  Minimum;
   double  Maximum;

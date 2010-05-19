@@ -39,7 +39,7 @@ ctkCoordinatesWidget::ctkCoordinatesWidget(QWidget* _parent) :QWidget(_parent)
   for (int i = 0; i < this->Dimension; ++i)
     {
     this->Coordinates[i] = 0.;
-    this->AddSpinBox();
+    this->addSpinBox();
     }
   hboxLayout->setContentsMargins(0, 0, 0, 0);
 }
@@ -51,7 +51,7 @@ ctkCoordinatesWidget::~ctkCoordinatesWidget()
 }
 
 //------------------------------------------------------------------------------
-void ctkCoordinatesWidget::AddSpinBox()
+void ctkCoordinatesWidget::addSpinBox()
 {
   QDoubleSpinBox* spinBox = new QDoubleSpinBox(this);
   spinBox->setMinimum(this->Minimum);
@@ -76,7 +76,7 @@ void ctkCoordinatesWidget::setDimension(int dim)
     for (int i = this->Dimension; i < dim; ++i)
       {
       newPos[i] = 0.;
-      this->AddSpinBox();
+      this->addSpinBox();
       }
     }
   else
