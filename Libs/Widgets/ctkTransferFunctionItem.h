@@ -49,6 +49,16 @@ public:
   inline void setRect(qreal x, qreal y, qreal width, qreal height);
   void setRect(const QRectF& rectangle);
   QRectF rect()const;
+
+  qreal rangeXDiff();
+  qreal rangeXOffSet();
+
+  qreal rangeYDiff();
+  qreal rangeYOffSet();
+
+  QPointF transferFunction2ScreenCoordinates( qreal x, qreal y);
+  QPointF screen2TransferFunctionCoordinates( qreal x, qreal y);
+
   virtual QRectF boundingRect()const;
 protected:
   qreal y(const QVariant& value)const;
@@ -56,8 +66,6 @@ protected:
 
   QColor color(const QVariant& value)const;
   inline QColor color(const ctkPoint& point)const;
-
-
 
   QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end)const;
   QList<ctkPoint> nonLinearPoints(ctkControlPoint* start, ctkControlPoint* end)const;

@@ -171,12 +171,12 @@ ctkControlPoint* ctkVTKPiecewiseFunction::controlPoint(int index)const
            values[2] >= 0. && values[2] <= 1. &&                // Midpoint
            values[3] >= 0. && values[3] <= 1. );                // Sharpness
 
-  double subPoints[30];
-  d->PiecewiseFunction->GetTable(cp->x(), values[0], 10, subPoints);
-  qreal interval = (values[0] - cp->x()) / 9.;
+  double subPoints[100];
+  d->PiecewiseFunction->GetTable(cp->x(), values[0], 100, subPoints);
+  qreal interval = (values[0] - cp->x()) / 99.;
 
   // subPoints[i] since value varies (not like in color transfer function widget)
-  for(int i = 0; i < 10; ++i)
+  for(int i = 0; i < 100; ++i)
     {
     cp->SubPoints << ctkPoint(cp->x() + interval*i, subPoints[i]);
     }
@@ -218,6 +218,20 @@ int ctkVTKPiecewiseFunction::insertControlPoint(const ctkControlPoint& cp)
     }
   return index;
 }
+//-----------------------------------------------------------------------------
+// insert point with value = 0
+int ctkVTKPiecewiseFunction::insertControlPoint(qreal pos)
+{
+  CTK_D(ctkVTKPiecewiseFunction);
+  int index = -1;
+  if (d->PiecewiseFunction.GetPointer() == 0)
+    {
+    return index;
+    }
+  index = d->PiecewiseFunction->AddPoint( pos, 0);
+  qDebug() << "index of new point: " << index;
+  return index;
+}
 
 //-----------------------------------------------------------------------------
 void ctkVTKPiecewiseFunction::setControlPointPos(int index, qreal pos)
@@ -235,10 +249,11 @@ void ctkVTKPiecewiseFunction::setControlPointPos(int index, qreal pos)
 void ctkVTKPiecewiseFunction::setControlPointValue(int index, const QVariant& value)
 {
   CTK_D(ctkVTKPiecewiseFunction);
-  Q_ASSERT(value.value<QColor>().isValid());
-  QColor rgb = value.value<QColor>();
   double values[4];
   d->PiecewiseFunction->GetNodeValue(index, values);
+  qDebug() << "old value: " << values[1];
+  values[1] = value.toDouble();
+  qDebug() << "new value: " << values[1];
   // setNodeValue should eventually fired the signal changed()
   d->PiecewiseFunction->SetNodeValue(index, values);
 }

@@ -44,6 +44,11 @@ public:
   ctkTransferFunction* transferFunction()const;
 protected:
   virtual void resizeEvent(QResizeEvent * event);
+  /*
+  virtual void dragEnterEvent ( QDragEnterEvent * event );
+  virtual void mousePressEvent ( QMouseEvent * event );
+  virtual void mouseReleaseEvent ( QMouseEvent * event );*/
+
 private:
   CTK_DECLARE_PRIVATE(ctkTransferFunctionWidget);
 };

@@ -20,6 +20,7 @@
 /// Qt includes
 #include <QGraphicsScene>
 #include <QResizeEvent>
+#include <QDebug>
 
 /// CTK includes
 #include "ctkTransferFunction.h"
@@ -63,7 +64,6 @@ ctkTransferFunctionWidget::ctkTransferFunctionWidget(
   ctk_d()->init();
   this->setTransferFunction(transferFunction);
 }
-
 //-----------------------------------------------------------------------------
 ctkTransferFunctionWidget::~ctkTransferFunctionWidget()
 {
@@ -111,4 +111,39 @@ void ctkTransferFunctionWidget::resizeEvent(QResizeEvent * event)
   // Control points are resized by the view transform, we want
   // fixed size control points, lines...
   //this->fitInView(this->scene()->sceneRect());
+  qDebug() << "resize event caught";
 }
+/*
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionWidget::dragEnterEvent ( QDragEnterEvent * event )
+{
+  qDebug() << "drag event caught";
+
+  this->QGraphicsView::dragEnterEvent(event);
+
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionWidget::mousePressEvent ( QMouseEvent * event )
+{
+  qDebug() << "press event caught";
+  //One control point is added to the scene
+  // 1 - get position of the mouse
+  qDebug() << "x position " << event->x();
+  qDebug() << "y position " << event->y();
+
+  this->scene()->items()[1]->;
+
+  // 2nd item are the control points
+
+  this->QGraphicsView::mousePressEvent(event);
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionWidget::mouseReleaseEvent ( QMouseEvent * event )
+{
+  qDebug() << "release event caught";
+
+  this->QGraphicsView::mouseReleaseEvent(event);
+}
+*/

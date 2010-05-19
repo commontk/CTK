@@ -89,54 +89,20 @@ void ctkTransferFunctionControlPointsItem::paint(
     {
     return;
     }
-  qreal rangeX[2];
-  this->transferFunction()->range(rangeX);
-  qreal rangeXDiff = this->rect().width() / (rangeX[1] - rangeX[0]);
-  qreal rangeXOffSet = rangeX[0];
 
-  QVariant rangeY[2];
-  rangeY[0] = this->transferFunction()->minValue();
-  rangeY[1] = this->transferFunction()->maxValue();
-  qreal rangeYDiff = this->rect().height();
-  qreal rangeYOffSet; 
-  if (rangeY[0].canConvert<qreal>())
-    {
-    if (rangeY[1].toReal() == rangeY[0].toReal())
-      {
-      rangeYDiff /= rangeY[0].toReal();
-      rangeYOffSet = 0.;
-      }
-    else
-      {
-      rangeYDiff /= rangeY[1].toReal() - rangeY[0].toReal();
-      rangeYOffSet = rangeY[0].toReal();
-      }
-    }
-  else if (rangeY[0].canConvert<QColor>())
-    {
-    if ( rangeY[1].value<QColor>().alphaF() == rangeY[0].value<QColor>().alphaF())
-      {
-      rangeYDiff /= rangeY[0].value<QColor>().alphaF();
-      rangeYOffSet = 0.;
-      }
-    else
-      {
-      rangeYDiff /= rangeY[1].value<QColor>().alphaF() - rangeY[0].value<QColor>().alphaF();
-      rangeYOffSet = rangeY[0].value<QColor>().alphaF();
-      }
-    }
-  else
-    {
-    Q_ASSERT(rangeY[0].canConvert<qreal>() ||
-             rangeY[0].canConvert<QColor>());
-    }
+  qreal rangeXDiff = this->rangeXDiff();
+  qreal rangeXOffSet = this->rangeXOffSet();
+
+  qreal rangeYDiff = this->rangeYDiff();
+  qreal rangeYOffSet = this->rangeYDiff();
+
   ctkControlPoint* startCP = this->transferFunction()->controlPoint(0);
   ctkControlPoint* endCP = 0;
   qreal start = 0;
   qreal end = 0;
 
   QPainterPath path;
-
+ // this->x(controlpoint)
   QPointF startPos(startCP->x() - rangeXOffSet, this->y(startCP->value()) - rangeYOffSet);
   startPos.rx() *= rangeXDiff;
   startPos.setY(this->rect().height() 
@@ -156,12 +122,14 @@ void ctkTransferFunctionControlPointsItem::paint(
       for (j = 1; j < points.count(); ++j)
         {
         path.lineTo(
-          QPointF((points[j].X - rangeXOffSet) * rangeXDiff, this->rect().height() - 
-                  (this->y(points[j].Value) - rangeYOffSet) * rangeYDiff));
+          QPointF(
+            this->transferFunction2ScreenCoordinates(points[j].X,
+                                                     this->y(points[j].Value))));
         }
       j = points.count() - 1;
-      d->ControlPoints << QPointF((points[j].X - rangeXOffSet) * rangeXDiff, this->rect().height() - 
-                  (this->y(points[j].Value)- rangeYOffSet) * rangeYDiff );
+      d->ControlPoints << QPointF( this->transferFunction2ScreenCoordinates(
+        points[j].X,
+        this->y(points[j].Value)));
       }
     else //dynamic_cast<ctkBezierControlPoint*>(startCP))
       {
@@ -201,6 +169,7 @@ void ctkTransferFunctionControlPointsItem::paint(
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
+  qDebug() << "mouse press caught";
   CTK_D(ctkTransferFunctionControlPointsItem);
   QRectF pointArea(QPointF(0,0), d->PointSize*2.);
   d->SelectedPoint = -1;
@@ -215,13 +184,24 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
     }
   if (d->SelectedPoint < 0)
     {
-    e->ignore();
+    //QPointF currentPoint( e->pos() );
+  //  e->pos()->x();
+    //this->transferFunction()->insertControlPoint( e->pos().x() );
+
+  // convert coordinates
+  QPointF functionCoordinates = screen2TransferFunctionCoordinates( e->pos().x(), e->pos().y());
+  // add point to transfer function
+  // returns index
+  int index = this->transferFunction()->insertControlPoint( functionCoordinates.x());
+  // update value of the point
+  this->transferFunction()->setControlPointValue( index, functionCoordinates.y());
     }
 }
 
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
+  qDebug() << "mouse caught";
   CTK_D(ctkTransferFunctionControlPointsItem);
   if (d->SelectedPoint < 0)
     {
@@ -239,6 +219,7 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 {
+  qDebug() << "mouse release caught";
   CTK_D(ctkTransferFunctionControlPointsItem);
   if (d->SelectedPoint < 0)
     {

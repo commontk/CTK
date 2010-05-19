@@ -227,7 +227,15 @@ int ctkVTKColorTransferFunction::insertControlPoint(const ctkControlPoint& cp)
     }
   return index;
 }
+//-----------------------------------------------------------------------------
+// insert point with value = 0
+int ctkVTKColorTransferFunction::insertControlPoint(qreal pos)
+{
+  // nothing
+  int index = 0;
 
+  return index;
+}
 //-----------------------------------------------------------------------------
 void ctkVTKColorTransferFunction::setControlPointPos(int index, qreal pos)
 {

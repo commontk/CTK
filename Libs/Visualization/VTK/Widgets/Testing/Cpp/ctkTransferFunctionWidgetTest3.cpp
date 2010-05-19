@@ -43,8 +43,11 @@ int ctkTransferFunctionWidgetTest3(int argc, char * argv [] )
   vtkSmartPointer<vtkPiecewiseFunction> pwf =
     vtkSmartPointer<vtkPiecewiseFunction>::New();
   //
-  pwf->AddPoint(0.2, 1.);
-  pwf->AddPoint(0.8, 2.);
+  pwf->AddPoint(0., 1.);
+  pwf->AddPoint(0.2, 1.2);
+  pwf->AddPoint(0.3, 1.5);
+  pwf->AddPoint(0.4, 2., 0.5, 0.5);
+  pwf->AddPoint(0.9, 1.5);
 
   QSharedPointer<ctkTransferFunction> transferFunction =
     QSharedPointer<ctkTransferFunction>(new ctkVTKPiecewiseFunction(pwf));
@@ -52,8 +55,8 @@ int ctkTransferFunctionWidgetTest3(int argc, char * argv [] )
   // the widget is not really shown here, only when app.exec() is called
   transferFunctionWidget.show();
 
-  QTimer autoExit;
-  QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-  autoExit.start(1000);
+//  QTimer autoExit;
+//  QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
+//  autoExit.start(1000);
   return app.exec();
 }

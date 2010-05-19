@@ -42,6 +42,7 @@ public:
   virtual ~ctkTransferFunctionControlPointsItem();
 
   virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+
 protected:
   virtual void mousePressEvent(QGraphicsSceneMouseEvent* e);
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* e);

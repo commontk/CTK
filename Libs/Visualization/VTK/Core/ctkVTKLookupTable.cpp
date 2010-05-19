@@ -155,7 +155,15 @@ int ctkVTKLookupTable::insertControlPoint(const ctkControlPoint& cp)
   qDebug() << "ctkVTKLookupTable doesn't support insertControlPoint";
   return -1;
 }
+//-----------------------------------------------------------------------------
+// insert point with value = 0
+int ctkVTKLookupTable::insertControlPoint(qreal pos)
+{
+  // nothing
+  int index = 0;
 
+  return index;
+}
 //-----------------------------------------------------------------------------
 void ctkVTKLookupTable::setControlPointPos(int index, qreal pos)
 {

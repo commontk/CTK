@@ -90,6 +90,7 @@ public:
   virtual QVariant maxValue()const = 0;
   ///
   virtual int insertControlPoint(const ctkControlPoint& cp) = 0;
+  virtual int insertControlPoint(qreal pos) = 0;
 
   /// 
   /// be careful with it, as changing the value might require

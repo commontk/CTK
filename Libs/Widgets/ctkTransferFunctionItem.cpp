@@ -193,3 +193,125 @@ QColor ctkTransferFunctionItem::color(const QVariant& v) const
     }
   return QColor();
 }
+//-----------------------------------------------------------------------------
+qreal ctkTransferFunctionItem::rangeXDiff()
+{
+  // pointer to private class
+  CTK_D(ctkTransferFunctionItem);
+
+  qreal rangeX[2];
+  d->TransferFunction->range(rangeX);
+  return this->rect().width() / (rangeX[1] - rangeX[0]);
+}
+
+//-----------------------------------------------------------------------------
+qreal ctkTransferFunctionItem::rangeXOffSet()
+{
+  // pointer to private class
+  CTK_D(ctkTransferFunctionItem);
+
+  qreal rangeX[2];
+  d->TransferFunction->range(rangeX);
+  return rangeX[0];
+}
+
+//-----------------------------------------------------------------------------
+qreal ctkTransferFunctionItem::rangeYDiff()
+{
+  // pointer to private class
+  CTK_D(ctkTransferFunctionItem);
+
+  QVariant rangeY[2];
+  rangeY[0] = d->TransferFunction->minValue();
+  rangeY[1] = d->TransferFunction->maxValue();
+  qreal rangeYDiff = this->rect().height();
+  if (rangeY[0].canConvert<qreal>())
+    {
+    if (rangeY[1].toReal() == rangeY[0].toReal())
+      {
+      rangeYDiff /= rangeY[0].toReal();
+      return rangeYDiff;
+      }
+    else
+      {
+      rangeYDiff /= rangeY[1].toReal() - rangeY[0].toReal();
+      return rangeYDiff;
+      }
+    }
+    else if (rangeY[0].canConvert<QColor>())
+      {
+      if ( rangeY[1].value<QColor>().alphaF() == rangeY[0].value<QColor>().alphaF())
+        {
+        rangeYDiff /= rangeY[0].value<QColor>().alphaF();
+        return rangeYDiff;
+        }
+      else
+        {
+        rangeYDiff /= rangeY[1].value<QColor>().alphaF() - rangeY[0].value<QColor>().alphaF();
+        return rangeYDiff;
+        }
+      }
+    else
+      {
+      Q_ASSERT(rangeY[0].canConvert<qreal>() ||
+      rangeY[0].canConvert<QColor>());
+      }
+  return rangeYDiff;
+}
+
+//-----------------------------------------------------------------------------
+qreal ctkTransferFunctionItem::rangeYOffSet()
+{
+  // pointer to private class
+  CTK_D(ctkTransferFunctionItem);
+
+  QVariant rangeY[2];
+  rangeY[0] = d->TransferFunction->minValue();
+  rangeY[1] = d->TransferFunction->maxValue();
+  qreal rangeYOffSet;
+  if (rangeY[0].canConvert<qreal>())
+    {
+    if (rangeY[1].toReal() == rangeY[0].toReal())
+      {
+      return 0.;
+      }
+    else
+      {
+      return rangeY[0].toReal();
+      }
+    }
+  else if (rangeY[0].canConvert<QColor>())
+    {
+    if ( rangeY[1].value<QColor>().alphaF() == rangeY[0].value<QColor>().alphaF())
+      {
+      return 0.;
+      }
+    else
+      {
+      return rangeY[0].value<QColor>().alphaF();
+      }
+    }
+  else
+    {
+    Q_ASSERT(rangeY[0].canConvert<qreal>() ||
+        rangeY[0].canConvert<QColor>());
+    }
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+QPointF ctkTransferFunctionItem::transferFunction2ScreenCoordinates( qreal x, qreal y)
+{
+  QPointF screenCoordinates((x - this->rangeXOffSet() ) * this->rangeXDiff(),
+      this->rect().height() - (y - this->rangeYOffSet() ) * this->rangeYDiff() );
+  return screenCoordinates;
+}
+
+//-----------------------------------------------------------------------------
+QPointF ctkTransferFunctionItem::screen2TransferFunctionCoordinates( qreal x, qreal y)
+{
+  QPointF transferFunctionCoordinates((x / this->rangeXDiff() ) + this->rangeXOffSet(),
+      ( - y + this->rect().height() )/this->rangeYDiff() + this->rangeYOffSet());
+
+  return transferFunctionCoordinates;
+}

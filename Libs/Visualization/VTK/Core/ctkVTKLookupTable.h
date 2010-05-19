@@ -52,6 +52,8 @@ public:
   virtual QVariant maxValue()const;
 
   virtual int insertControlPoint(const ctkControlPoint& cp);
+  virtual int insertControlPoint(qreal pos);
+
   virtual void setControlPointPos(int index, qreal pos);
   virtual void setControlPointValue(int index, const QVariant& value);
 
