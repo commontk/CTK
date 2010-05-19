@@ -236,7 +236,7 @@ void ctkVTKCommandOptionsPrivate::syncQStringListPtrWithStringVectorPtr()
       {
       qStringListPtr->clear();
       QStringList convertedVector;
-      ctkUtils::stlVectorToQList(*vectorPtr, convertedVector);
+      ctk::stlVectorToQList(*vectorPtr, convertedVector);
       qStringListPtr->append(convertedVector);
       }
     }

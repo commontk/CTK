@@ -45,7 +45,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
 
   std::vector<char*> outputCharVector;
   
-  ctkUtils::qListToSTLVector(inputStringList, outputCharVector);
+  ctk::qListToSTLVector(inputStringList, outputCharVector);
 
   if (outputCharVector.size() != 3)
     {
@@ -79,7 +79,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
 
   std::vector<std::string> outputStringVector;
 
-  ctkUtils::qListToSTLVector(inputStringList, outputStringVector);
+  ctk::qListToSTLVector(inputStringList, outputStringVector);
 
   if (outputStringVector.size() != 3)
     {
@@ -113,7 +113,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
 
   QStringList ouputStringList;
 
-  ctkUtils::stlVectorToQList(inputStringVector, ouputStringList);
+  ctk::stlVectorToQList(inputStringVector, ouputStringList);
 
   if (ouputStringList.size() != 3)
     {
