@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 // Qt includes
@@ -26,32 +26,41 @@
 // CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkTransferFunctionWidget.h"
-#include "ctkVTKLookupTable.h"
+#include "ctkVTKCompositeFunction.h"
 
 // VTK includes
-#include <vtkLookupTable.h>
+#include <vtkPiecewiseFunction.h>
+#include <vtkColorTransferFunction.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkTransferFunctionWidgetTest2(int argc, char * argv [] )
+int ctkTransferFunctionWidgetTest4(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
-  vtkSmartPointer<vtkLookupTable> ctf = 
-    vtkSmartPointer<vtkLookupTable>::New();
 
-  ctf->SetNumberOfTableValues(32);
-  ctf->SetHueRange(0.,1.);
-  ctf->SetSaturationRange(1.,1.);
-  ctf->SetValueRange(1.,1.);
-  ctf->SetAlphaRange(1.,1.);
-  ctf->Build();
+  // Points have to be between 0 and 1
 
-  QSharedPointer<ctkTransferFunction> transferFunction = 
-    QSharedPointer<ctkTransferFunction>(new ctkVTKLookupTable(ctf));
+  vtkSmartPointer<vtkPiecewiseFunction> pwf =
+    vtkSmartPointer<vtkPiecewiseFunction>::New();
+  //
+  pwf->AddPoint(0., 0.1);
+  pwf->AddPoint(0.2,.2);
+  pwf->AddPoint(0.3, .5);
+  pwf->AddPoint(0.9, .5);
+
+  vtkSmartPointer<vtkColorTransferFunction> ctf =
+    vtkSmartPointer<vtkColorTransferFunction>::New();
+  //
+  ctf->AddRGBPoint(0., 1.,0.,0., 0., 0.);
+  ctf->AddRGBPoint(0.2, 0.,1.,0., 0.5, 0.);
+  ctf->AddRGBPoint(0.3, 1.,0.,0.6, 0.5, 0.);
+  ctf->AddRGBPoint(0.9, 0.,0.,1., 0.5, 0.);
+
+  QSharedPointer<ctkTransferFunction> transferFunction =
+    QSharedPointer<ctkTransferFunction>(new ctkVTKCompositeFunction(pwf, ctf));
   ctkTransferFunctionWidget transferFunctionWidget(transferFunction.data(), 0);
   // the widget is not really shown here, only when app.exec() is called
   transferFunctionWidget.show();
@@ -59,6 +68,5 @@ int ctkTransferFunctionWidgetTest2(int argc, char * argv [] )
   QTimer autoExit;
   QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
   autoExit.start(1000);
-
   return app.exec();
 }

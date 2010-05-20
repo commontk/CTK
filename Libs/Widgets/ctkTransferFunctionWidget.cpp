@@ -89,6 +89,7 @@ void ctkTransferFunctionWidget::setTransferFunction(ctkTransferFunction* transfe
   tfScene->clear();
   tfScene->setTransferFunction(transferFunction);
 
+  bool useMask = true;
   ctkTransferFunctionGradientItem* gradient = 
     new ctkTransferFunctionGradientItem(transferFunction);
   //gradient->setRect(tfScene->sceneRect());
