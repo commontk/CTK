@@ -19,34 +19,35 @@
 
 =============================================================================*/
 
+
+#ifndef CTKQTSERVICEREGISTRATIONPRIVATE_H
+#define CTKQTSERVICEREGISTRATIONPRIVATE_H
+
 #include "ctkServiceRegistrationPrivate.h"
+
+#include "QServiceInterfaceDescriptor"
 
 namespace ctk {
 
-  ServiceRegistrationPrivate::ServiceRegistrationPrivate(ServiceRegistration* sr,
-                                                         PluginPrivate* plugin, QObject* service,
-                                                         const ServiceProperties& props)
-                               : q_ptr(sr), plugin(plugin), service(service), reference(new ServiceReference(this)),
-                               properties(props), available(true), unregistering(false)
-  {
+  class QtServiceRegistration;
 
-  }
-
-  ServiceRegistrationPrivate::~ServiceRegistrationPrivate()
+  class QtServiceRegistrationPrivate : public ServiceRegistrationPrivate
   {
-    delete reference;
-  }
+  public:
 
-  bool ServiceRegistrationPrivate::isUsedByPlugin(Plugin* p)
-  {
-    QHash<Plugin*, int> deps = dependents;
-    return deps.contains(p);
-  }
+    QtServiceRegistrationPrivate(QtServiceRegistration* sr,
+                                 PluginPrivate* plugin,
+                                 QtMobility::QServiceInterfaceDescriptor serviceDescriptor,
+                                 const ServiceProperties& props);
 
-  QObject* ServiceRegistrationPrivate::getService()
-  {
-    return service;
-  }
+    QObject* getService();
+
+  protected:
+
+    QtMobility::QServiceInterfaceDescriptor serviceDescriptor;
+
+  };
 
 }
 
+#endif // CTKQTSERVICEREGISTRATIONPRIVATE_H

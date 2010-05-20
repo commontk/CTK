@@ -84,18 +84,29 @@ namespace ctk {
     //4: Resolve plugin (if needed)
     d->getUpdatedState();
 
-    //5: Eager?
-    if ((options & START_ACTIVATION_POLICY) && d->eagerActivation )
+    //5: Register Qt Mobility service xml files
+    //only register if we are not already in the STARTING state
+    if (d->state != STARTING)
     {
-      d->finalizeActivation();
+      QByteArray serviceDescriptor = getResource("servicedescriptor.xml");
+      if (!serviceDescriptor.isEmpty())
+      {
+        d->fwCtx->services.registerService(d, serviceDescriptor);
+      }
     }
-    else
+
+    //6: Eager?
+    if ((options & START_ACTIVATION_POLICY) && !d->eagerActivation )
     {
       if (STARTING == d->state) return;
       d->state = STARTING;
       d->pluginContext = new PluginContext(this->d_func());
       PluginEvent pluginEvent(PluginEvent::LAZY_ACTIVATION, this);
       d->fwCtx->listeners.emitPluginChanged(pluginEvent);
+    }
+    else
+    {
+      d->finalizeActivation();
     }
   }
 

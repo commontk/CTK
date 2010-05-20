@@ -48,6 +48,12 @@ namespace ctk {
     QStringList pluginDirs;
     pluginDirs << qApp->applicationDirPath() + "/Plugins";
 
+    QStringListIterator dirIt(pluginDirs);
+    while (dirIt.hasNext())
+    {
+      QApplication::addLibraryPath(dirIt.next());
+    }
+
     QDirIterator dirIter(pluginDirs.at(0), QDir::Files);
     while(dirIter.hasNext())
     {
@@ -110,6 +116,12 @@ namespace ctk {
       qDebug() << "Service from" << ref->getPlugin()->getSymbolicName() << ":" << ref->getPropertyKeys();
       qDebug() << "Object Classes:" << ref->getProperty(PluginConstants::OBJECTCLASS).toStringList();
     }
+
+    ServiceReference* cliRef = plugin->getPluginContext()->getServiceReference("ctk::ICLIManager");
+    QObject* cliService = plugin->getPluginContext()->getService(cliRef);
+    if (cliService)
+      qDebug() << "Got service object: " << cliService->metaObject()->className();
+    else qDebug() << "Got null service";
   }
 
   void PluginBrowser::qtResourceDoubleClicked(const QModelIndex& index)

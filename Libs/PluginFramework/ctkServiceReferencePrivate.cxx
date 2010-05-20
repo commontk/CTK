@@ -51,7 +51,7 @@ namespace ctk {
           QStringList classes =
               registration->properties.value(PluginConstants::OBJECTCLASS).toStringList();
           registration->dependents[plugin] = 1;
-          if (ServiceFactory* serviceFactory = qobject_cast<ServiceFactory*>(registration->service))
+          if (ServiceFactory* serviceFactory = qobject_cast<ServiceFactory*>(registration->getService()))
           {
             try
             {
@@ -89,19 +89,19 @@ namespace ctk {
           }
           else
           {
-            s = registration->service;
+            s = registration->getService();
           }
         }
         else
         {
           registration->dependents.insert(plugin, count + 1);
-          if (qobject_cast<ServiceFactory*>(registration->service))
+          if (qobject_cast<ServiceFactory*>(registration->getService()))
           {
             s = registration->serviceInstances.value(plugin);
           }
           else
           {
-            s = registration->service;
+            s = registration->getService();
           }
         }
       }
@@ -157,7 +157,7 @@ namespace ctk {
         {
           try
           {
-            qobject_cast<ServiceFactory*>(registration->service)->ungetService(plugin,
+            qobject_cast<ServiceFactory*>(registration->getService())->ungetService(plugin,
                 registration->q_func(), sfi);
           }
           catch (const std::exception& e)

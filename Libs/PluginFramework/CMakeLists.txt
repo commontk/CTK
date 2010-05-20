@@ -61,6 +61,8 @@ SET(KIT_SRCS
   ctkPluginManifest.cxx
   ctkPluginPrivate.cxx
   ctkPlugins.cxx
+  ctkQtServiceRegistration.cxx
+  ctkQtServiceRegistrationPrivate.cxx
   ctkRequirePlugin.cxx
   ctkServiceException.cxx
   ctkServiceReference.cxx

@@ -22,13 +22,16 @@
 #include "ctkPluginDatabase_p.h"
 #include "ctkPluginDatabaseException.h"
 #include "ctkPlugin.h"
+#include "ctkPluginConstants.h"
 #include "ctkPluginException.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginStorage_p.h"
+#include "ctkServiceException.h"
 
 #include <QApplication>
 #include <QFileInfo>
 #include <QUrl>
+#include <QServiceManager>
 
 #include <QDebug>
 
@@ -181,12 +184,13 @@ void PluginDatabase::updateDB()
 
   beginTransaction(&query, Write);
 
-  QString statement = "SELECT ID, Location, LocalPath, Timestamp FROM Plugins WHERE State != ?";
+  QString statement = "SELECT ID, Location, LocalPath, Timestamp, SymbolicName, Version FROM Plugins WHERE State != ?";
   QList<QVariant> bindValues;
   bindValues.append(Plugin::UNINSTALLED);
 
   QList<qlonglong> outdatedIds;
   QList<QPair<QString,QString> > outdatedPlugins;
+  QStringList outdatedServiceNames;
   try
   {
     executeQuery(&query, statement, bindValues);
@@ -198,6 +202,7 @@ void PluginDatabase::updateDB()
       {
         outdatedIds.append(query.value(EBindIndex).toLongLong());
         outdatedPlugins.append(qMakePair(query.value(EBindIndex1).toString(), query.value(EBindIndex2).toString()));
+        outdatedServiceNames.append(query.value(EBindIndex4).toString() + "_" + query.value(EBindIndex5).toString());
       }
     }
   }
@@ -219,6 +224,29 @@ void PluginDatabase::updateDB()
       bindValues.clear();
       bindValues.append(idIter.next());
       executeQuery(&query, statement, bindValues);
+    }
+  }
+  catch (...)
+  {
+    rollbackTransaction(&query);
+    throw;
+  }
+
+  try
+  {
+    QtMobility::QServiceManager serviceManager;
+    QStringListIterator serviceNameIter(outdatedServiceNames);
+    while (serviceNameIter.hasNext())
+    {
+      QString serviceName = serviceNameIter.next();
+      serviceManager.removeService(serviceName);
+      QtMobility::QServiceManager::Error error = serviceManager.error();
+      if (!(error == QtMobility::QServiceManager::NoError ||
+            error == QtMobility::QServiceManager::ComponentNotFound))
+      {
+        throw ServiceException(QString("Removing service named ") + serviceName +
+                               " failed: " + QString::number(serviceManager.error()));
+      }
     }
   }
   catch (...)
@@ -260,15 +288,17 @@ PluginArchive* PluginDatabase::insertPlugin(const QUrl& location, const QString&
 
   beginTransaction(&query, Write);
 
-  QString statement = "INSERT INTO Plugins(Location,LocalPath,State,Timestamp) VALUES(?,?,?,?)";
+  QString statement = "INSERT INTO Plugins(Location,LocalPath,SymbolicName,Version,State,Timestamp) VALUES(?,?,?,?,?,?)";
 
   QList<QVariant> bindValues;
   bindValues.append(location.toString());
   bindValues.append(localPath);
+  bindValues.append(QString("na"));
+  bindValues.append(QString("na"));
   bindValues.append(Plugin::INSTALLED);
   bindValues.append(lastModified);
 
-  long pluginId = -1;
+  qlonglong pluginId = -1;
   try
   {
     executeQuery(&query, statement, bindValues);
@@ -325,12 +355,23 @@ PluginArchive* PluginDatabase::insertPlugin(const QUrl& location, const QString&
 
   try
   {
-    PluginArchive* archive = 0;
-    if (createArchive)
+    PluginArchive* archive = new PluginArchive(m_PluginStorage, location, localPath,
+                                               pluginId);;
+
+    statement = "UPDATE Plugins SET SymbolicName=?,Version=? WHERE ID=?";
+    QString versionString = archive->getAttribute(PluginConstants::PLUGIN_VERSION);
+    bindValues.clear();
+    bindValues.append(archive->getAttribute(PluginConstants::PLUGIN_SYMBOLICNAME));
+    bindValues.append(versionString.isEmpty() ? "0.0.0" : versionString);
+    bindValues.append(pluginId);
+
+    if (!createArchive)
     {
-      archive = new PluginArchive(m_PluginStorage, location, localPath,
-                                  pluginId);
+      delete archive;
+      archive = 0;
     }
+
+    executeQuery(&query, statement, bindValues);
 
     commitTransaction(&query);
 
@@ -548,6 +589,8 @@ void PluginDatabase::createTables()
                       "ID INTEGER PRIMARY KEY,"
                       "Location TEXT NOT NULL UNIQUE,"
                       "LocalPath TEXT NOT NULL UNIQUE,"
+                      "SymbolicName TEXT NOT NULL,"
+                      "Version TEXT NOT NULL,"
                       "State INTEGER NOT NULL,"
                       "Timestamp TEXT NOT NULL)");
     try

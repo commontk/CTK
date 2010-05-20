@@ -350,7 +350,7 @@ namespace ctk {
      * @throws std::logic_error If this plugin has been uninstalled or this
      *         plugin tries to change its own state.
      */
-    virtual void start(const StartOptions& options = 0);
+    virtual void start(const StartOptions& options = START_ACTIVATION_POLICY);
 
     /**
      * Stops this plugin.

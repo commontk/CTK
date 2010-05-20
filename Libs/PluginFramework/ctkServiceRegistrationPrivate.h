@@ -40,6 +40,11 @@ namespace ctk {
 
     ServiceRegistration* const q_ptr;
 
+    /**
+     * Service or ServiceFactory object.
+     */
+    QObject* service;
+
   public:
 
     Q_DECLARE_PUBLIC(ServiceRegistration);
@@ -49,11 +54,6 @@ namespace ctk {
      * Plugin registering this service.
      */
     PluginPrivate* plugin;
-
-    /**
-     * Service or ServiceFactory object.
-     */
-    QObject* service;
 
     /**
      * Reference object to this service registration.
@@ -99,7 +99,7 @@ namespace ctk {
     ServiceRegistrationPrivate(ServiceRegistration* sr, PluginPrivate* plugin, QObject* service,
                                const ServiceProperties& props);
 
-    ~ServiceRegistrationPrivate();
+    virtual ~ServiceRegistrationPrivate();
 
     /**
      * Check if a plugin uses this service
@@ -108,6 +108,8 @@ namespace ctk {
      * @return true if plugin uses this service
      */
     bool isUsedByPlugin(Plugin* p);
+
+    virtual QObject* getService();
 
   };
 

@@ -38,6 +38,12 @@ namespace ctk {
 
   }
 
+  ServiceRegistration::ServiceRegistration(ServiceRegistrationPrivate& dd)
+    : d_ptr(&dd)
+  {
+
+  }
+
   ServiceReference* ServiceRegistration::getReference()
   {
     Q_D(ServiceRegistration);

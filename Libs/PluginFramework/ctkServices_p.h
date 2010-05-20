@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QMutex>
 #include <QStringList>
+#include <QServiceManager>
 
 #include "ctkServiceRegistration.h"
 #include "ctkPluginPrivate_p.h"
@@ -42,6 +43,8 @@ class Services {
 public:
 
   mutable QMutex mutex;
+
+  QtMobility::QServiceManager qServiceManager;
 
   /**
    * Creates a new ServiceProperties object containing <code>in</code>
@@ -98,6 +101,8 @@ public:
                                const QStringList& classes,
                                QObject* service,
                                const ServiceProperties& properties);
+
+  void registerService(PluginPrivate* plugin, QByteArray serviceDescription);
 
 
   /**
@@ -177,6 +182,8 @@ public:
    * @return A set of {@link ServiceRegistration} objects
    */
   QList<ServiceRegistration*> getUsedByPlugin(Plugin* p) const;
+
+  QString getQServiceManagerErrorString(QtMobility::QServiceManager::Error error);
 
 };
 

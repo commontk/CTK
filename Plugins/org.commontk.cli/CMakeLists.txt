@@ -9,6 +9,7 @@ SET(PLUGIN_SRCS
 SET(PLUGIN_MOC_SRCS
   ctkCLIPlugin.h
   ctkCLIRegistry.h
+  ctkICLIManager.h
 )
 
 SET(PLUGIN_resources

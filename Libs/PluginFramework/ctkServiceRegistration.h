@@ -125,16 +125,18 @@ namespace ctk {
      * @see BundleContext#ungetService
      * @see ServiceFactory#ungetService
      */
-    void unregister();
+    virtual void unregister();
 
     bool operator<(const ServiceRegistration& o) const;
 
-  private:
+  protected:
 
     friend class Services;
 
     ServiceRegistration(PluginPrivate* plugin, QObject* service,
                         const ServiceProperties& props);
+
+    ServiceRegistration(ServiceRegistrationPrivate& dd);
 
     ServiceRegistrationPrivate * const d_ptr;
 
