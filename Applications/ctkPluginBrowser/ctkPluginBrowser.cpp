@@ -115,7 +115,7 @@ void ctkPluginBrowser::pluginDoubleClicked(const QModelIndex& index)
     qDebug() << "Object Classes:" << ref->getProperty(PluginConstants::OBJECTCLASS).toStringList();
   }
 
-  ctkServiceReference* cliRef = plugin->getPluginContext()->getServiceReference("ctk::ICLIManager");
+  ctkServiceReference* cliRef = plugin->getPluginContext()->getServiceReference("ctkICLIManager");
   QObject* cliService = plugin->getPluginContext()->getService(cliRef);
   if (cliService)
     qDebug() << "Got service object: " << cliService->metaObject()->className();

@@ -20,7 +20,8 @@ using namespace QtMobility;
 void ctkCLIPlugin::start(ctkPluginContext* context)
 {
   ctkCLIRegistry* registry = new ctkCLIRegistry();
-  context->registerService(QStringList("ctk::CLIRegistry"), registry);
+  context->registerService(QStringList("ctkCLIRegistry"), registry);
+
   std::cout << "Plugin A started\n";
 }
 

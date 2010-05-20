@@ -10,14 +10,10 @@
 
 #include <QObject>
 
-namespace ctk {
-
-  class ICLIManager : public QObject
-  {
-    Q_OBJECT
-  };
-
-}
+class ctkICLIManager : public QObject
+{
+  Q_OBJECT
+};
 
 
 #endif /* CTKICLIMANAGER_H_ */
