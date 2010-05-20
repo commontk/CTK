@@ -8,11 +8,14 @@ IF(${add_project})
 #   MESSAGE(STATUS "Adding project:${proj}")
   SET(ZMQ_DEPENDS ${proj})
   ExternalProject_Add(${proj}
-      DOWNLOAD_COMMAND ""
+      GIT_REPOSITORY git://github.com/PatrickCheng/zeromq2.git
       INSTALL_COMMAND ""
       CMAKE_GENERATOR ${gen}
-      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/ZMQ
       CMAKE_ARGS
         ${ep_common_args}
+		-DBUILD_SHARED_LIBS:BOOL=ON 
+		-DZMQ_BUILD_DEVICES:BOOL=ON
+		-DZMQ_BUILD_PERFORMANCE_TESTS:BOOL=ON
       )
+	  SET(ZMQ_DIR ${ep_build_dir}/${proj})
 ENDIF()

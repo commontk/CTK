@@ -234,6 +234,7 @@ SET(CTK_LIBS
   Widgets:OFF
   DICOM/Core:OFF
   DICOM/Widgets:OFF
+  Messaging/Core:OFF
   Scripting/Python/Core:OFF
   Scripting/Python/Widgets:OFF
   Visualization/VTK/Core:OFF
