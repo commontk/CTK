@@ -14,8 +14,6 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   ctkDICOMListenerWidget.cpp
   ctkDICOMListenerWidget.h
-  ctkDICOMLocationWidget.cpp
-  ctkDICOMLocationWidget.h
   ctkDICOMQueryRetrieveWidget.cpp
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMServerNodeWidget.cpp
@@ -31,7 +29,6 @@ SET(KIT_MOC_SRCS
 
 # UI files - includes new widgets
 SET(KIT_UI_FORMS
-  Resources/UI/ctkDICOMLocationWidget.ui
   Resources/UI/ctkDICOMListenerWidget.ui
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget.ui
