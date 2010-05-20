@@ -177,6 +177,11 @@ ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
   ctkNonLinearControlPoint* cp = new ctkNonLinearControlPoint();
   cp->P.X = values[0];
   cp->P.Value = rgb;
+  // Optimization: don't use SubPoints when the sharpness is 0.
+  if (values[5] == 0.)
+    {
+    cp->SubPoints << ctkPoint(values[0], rgb);
+    } 
   d->ColorTransferFunction->GetNodeValue(index + 1, values);
   Q_ASSERT(values[0] >= d->ColorTransferFunction->GetRange()[0] &&
            values[0] <= d->ColorTransferFunction->GetRange()[1] &&
@@ -185,6 +190,12 @@ ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
            values[3] >= 0. && values[3] <= 1. &&  // Blue
            values[4] >= 0. && values[4] <= 1. &&  // MidPoint
            values[5] >= 0. && values[5] <= 1.);   // Sharpness
+  // Optimization: don't use SubPoints when the sharpness is 0.
+  if (values[5] == 0.)
+    {
+    cp->SubPoints << ctkPoint(values[0], rgb);
+    return cp;
+    } 
   double subPoints[30];
   d->ColorTransferFunction->GetTable(cp->x(), values[0], 10, subPoints);
   qreal interval = (values[0] - cp->x()) / 9.;
