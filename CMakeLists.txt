@@ -124,6 +124,7 @@ INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
 INCLUDE(CMake/ctkFunctionExecuteProcess.cmake)
+INCLUDE(CMake/ctkFunctionLFtoCRLF.cmake)
 INCLUDE(CMake/ctkMacroValidateBuildOptions.cmake)
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkFunctionGenerateDGraphInput.cmake)
