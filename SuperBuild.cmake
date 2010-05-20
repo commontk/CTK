@@ -95,6 +95,7 @@ ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCI
 # ExternalProjects
 #
 SET(external_projects
+  log4cpp
   KWStyle
   PythonQt
   DCMTK

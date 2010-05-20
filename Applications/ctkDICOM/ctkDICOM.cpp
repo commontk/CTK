@@ -32,6 +32,10 @@
 // STD includes
 #include <iostream>
 
+void usage ( char* prog ) {
+  std::cerr << "Usage: " << prog << " <DatabaseFilename> <DatabaseScriptFilename>\n";
+}
+
 int main(int argc, char** argv)
 {
   QApplication app(argc, argv);
@@ -52,16 +56,19 @@ int main(int argc, char** argv)
   if (!myCTK.openDatabase( datbaseFileName ))
     {
     std::cerr << "Error when opening the data base file: " << datbaseFileName
-              << " error: " << myCTK.GetLastError().toStdString();
+      << " error: " << myCTK.GetLastError().toStdString() << std::endl;
+      usage ( argv[0] );
     return EXIT_FAILURE;
     }
+  /*
   if (!myCTK.initializeDatabase(datbaseScriptFileName))
     {
     std::cerr << "Error when initializing the data base: " << datbaseScriptFileName
-              << " error: " << myCTK.GetLastError().toStdString();
+      << " error: " << myCTK.GetLastError().toStdString() << std::endl;;
+      usage ( argv[0] );
     return EXIT_FAILURE;
     }
-
+*/
   ctkDICOMModel model;
   model.setDatabase(myCTK.database());
   

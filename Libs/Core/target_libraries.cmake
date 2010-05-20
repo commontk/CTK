@@ -7,4 +7,5 @@
 SET(target_libraries
   QT_LIBRARIES
   BFD_LIBRARIES
+  log4cpp_LIBRARIES
   )

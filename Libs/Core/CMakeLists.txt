@@ -6,6 +6,10 @@ SET(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
 # CMake Macros
 INCLUDE(CMake/ctkMacroBFDCheck.cmake)
 
+FIND_PACKAGE(log4cpp)
+if ( NOT log4cpp_FOUND )
+  MESSAGE(FATAL_ERROR "error: log4cpp package is required to build ${PROJECT_NAME}" )
+endif()
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
@@ -14,6 +18,7 @@ SET(KIT_export_directive "CTK_CORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
+  ${log4cpp_INCLUDE_DIR}
   )
   
 # Source files
@@ -30,6 +35,8 @@ SET(KIT_SRCS
   ctkAbstractLibraryFactory.tpp
   ctkDependencyGraph.cpp
   ctkDependencyGraph.h
+  ctkLogger.cpp
+  ctkLogger.h
   ctkModelTester.cpp
   ctkModelTester.h
   ctkPimpl.h
@@ -49,9 +56,10 @@ ENDIF()
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkLogger.h 
   ctkModelTester.h
   ctkTransferFunction.h
-  )
+)
 
 # UI files
 SET(KIT_UI_FORMS
