@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS 'Images' ;
 DROP TABLE IF EXISTS 'Patients' ;
 DROP TABLE IF EXISTS 'Series' ;
 DROP TABLE IF EXISTS 'Studies' ;
+DROP TABLE IF EXISTS 'Directories' ;
 
 CREATE TABLE 'Images' (
   'Filename' VARCHAR(1024) NOT NULL ,
@@ -54,3 +55,6 @@ CREATE TABLE 'Studies' (
   'StudyDescription' VARCHAR(255) NULL ,
   PRIMARY KEY ('StudyInstanceUID') );
 
+CREATE TABLE 'Directories' (
+  'Dirname' VARCHAR(1024) ,
+  PRIMARY KEY ('Dirname') );
