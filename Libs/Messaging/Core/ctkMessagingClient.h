@@ -23,7 +23,7 @@
 
 // ZMQ includes 
 #include <zmq.hpp>
-#include "ctkMessagingCoreExport.h"
+#include "CTKMessagingCoreExport.h"
 
 //class ctkMessagingClientPrivate;
 
