@@ -122,7 +122,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   DEPENDS
     # Mandatory dependencies
-    #  - none
+    ${log4cpp_DEPENDS}
     # Optionnal dependencies
     ${QtMobility_DEPENDS}
     ${kwstyle_DEPENDS}
@@ -210,6 +210,7 @@ ExternalProject_Add(${proj}
     -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}    # FindPythonQt expects PYTHON_INCLUDE_DIR
     -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}        # FindPythonQt expects PYTHON_LIBRARY
     -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR
+    -Dlog4cpp_DIR:PATH=${log4cpp_DIR} # Findlog4cpp expects a log4cpp_DIR variable to be defined
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${CMAKE_BINARY_DIR}/CTK-build
   BUILD_COMMAND ""
