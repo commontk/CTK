@@ -12,6 +12,8 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
+  ctkDICOMDirectoryListWidget.cpp
+  ctkDICOMDirectoryListWidget.h
   ctkDICOMListenerWidget.cpp
   ctkDICOMListenerWidget.h
   ctkDICOMQueryRetrieveWidget.cpp
@@ -27,10 +29,12 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkDICOMQueryRetrieveWidget.h
+  ctkDICOMDirectoryListWidget.h
   )
 
 # UI files - includes new widgets
 SET(KIT_UI_FORMS
+  Resources/UI/ctkDICOMDirectoryListWidget.ui
   Resources/UI/ctkDICOMListenerWidget.ui
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget.ui
