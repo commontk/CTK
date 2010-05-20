@@ -35,6 +35,7 @@
 class CTK_WIDGETS_EXPORT ctkTransferFunctionGradientItem: public ctkTransferFunctionItem
 {
   Q_OBJECT
+  Q_PROPERTY(bool Mask READ mask WRITE setMask)
 public:
   ctkTransferFunctionGradientItem(QGraphicsItem* parent = 0);
   ctkTransferFunctionGradientItem(ctkTransferFunction* transferFunction, 
@@ -42,6 +43,12 @@ public:
   virtual ~ctkTransferFunctionGradientItem();
 
   virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+
+  bool mask()const;
+  void setMask(bool mask);
+
+private:
+  bool Mask;
 };
 
 #endif

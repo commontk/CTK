@@ -43,6 +43,7 @@ ctkTransferFunctionGradientItem::ctkTransferFunctionGradientItem(
   ctkTransferFunction* transferFunction, QGraphicsItem* parentItem)
   :ctkTransferFunctionItem(transferFunction, parentItem)
 {
+ this->Mask = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -56,8 +57,39 @@ void ctkTransferFunctionGradientItem::paint(
 {
   ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   Q_ASSERT(tfScene);
-  
-  const QGradient& gradient = tfScene->gradient();
-  painter->fillRect(this->rect(), gradient);
+
+  if ( this->mask() )
+    {
+    const QGradient& gradient = tfScene->gradient();
+    const QPainterPath& curve = tfScene->curve();
+    QPainterPath closedPath = curve;
+    QRectF position = this->rect();
+    // link to last point
+    closedPath.lineTo(position.x() + position.width(), position.y() + position.height());
+    // link to first point
+    closedPath.lineTo(position.x(), position.y() + position.height());
+    //Don,t need to close because automatic
+    QPen pen(QColor(255, 255, 255, 191), 1);
+    pen.setCosmetic(true);
+    painter->setPen(pen);
+    painter->setBrush(gradient);
+    painter->drawPath(closedPath);
+    }
+  else
+    {
+    const QGradient& gradient = tfScene->gradient();
+    painter->fillRect(this->rect(), gradient);
+    }
 }
 
+//-----------------------------------------------------------------------------
+bool ctkTransferFunctionGradientItem::mask() const
+{
+  return this->Mask;
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionGradientItem::setMask( bool mask )
+{
+  this->Mask = mask;
+}
