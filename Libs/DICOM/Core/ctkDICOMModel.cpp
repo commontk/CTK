@@ -285,7 +285,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
       break;
     case ctkDICOMModelPrivate::SeriesType:
       //query = QString("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'").arg(node->UID);
-      query = this->generateQuery("Filename as UID, Filename as Name, SeriesInstanceUID as Date", "Images", QString("SeriesInstanceUID='%1'").arg(node->UID));
+      // query = this->generateQuery("Filename as UID, Filename as Name, SeriesInstanceUID as Date", "Images", QString("SeriesInstanceUID='%1'").arg(node->UID));
       break;
     case ctkDICOMModelPrivate::ImageType:
       break;

@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 
   // set up the database 
   const char *datbaseFileName = "/tmp/test.db";
-  const char *datbaseScriptFileName = "/Users/pieper/ctk/latest/CTK/Libs/DICOM/Core/Resources/dicom-sample.sql";
+  const char *datbaseScriptFileName = "/home/nolden/CTK/Libs/DICOM/Core/Resources/dicom-sample.sql";
   if (argc > 1)
     {
     datbaseFileName = argv[1];

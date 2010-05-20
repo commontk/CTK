@@ -32,45 +32,76 @@
 #include <iostream>
 #include <fstream>
 
+void print_usage()
+{
+  std::cerr << "Usage: ";
+  std::cerr << "  1. ctkDICOMIndexer --add <database.db> <sourceDir> [destDir]\n";
+  std::cerr << "     Adds (or refreshes) sourceDir to the index of the database.\n";
+  std::cerr << "     Creates the database if it is not valid..\n";
+  std::cerr << "     If destDir is provided, images are copied there after import.\n";
+  std::cerr << "  2. ctkDICOMIndexer --init <database.db> [sqlScript]\n";
+  std::cerr << "     Reinitialize the database. Uses default schema or the provided sqlScript file.\n";
+  std::cerr << "  3. ctkDICOMIndexer --cleanup <database.db>\n";
+  std::cerr << "     Remove non-existent files from the database.";
+  return;
+}
+
+
+/**
+  *
+*/
 int main(int argc, char** argv)
 {
 
-  if (argc < 2)
-    {
-    std::cerr << "Usage: ctkDICOMIndexer <database.db> <sourceDir> [destDir]\n";
+  if (argc < 3)
+  {
+    print_usage();
     return EXIT_FAILURE;
-    }
+  }
 
   QApplication app(argc, argv);
   QTextStream out(stdout);
 
   ctkDICOMIndexer idx;
-
   ctkDICOM myCTK;
-  if ( myCTK.openDatabase( argv[1]) )
-    {
-    out << "open db success\n";
-    /// make sure it is empty and properly initialized
-    myCTK.initializeDatabase();
-    out << "init db done\n";
-    if (argc > 3)
-      {
-      idx.addDirectory(myCTK.database(),argv[2],argv[3]);
-      } 
-      else 
-      {
-      idx.addDirectory(myCTK.database(),argv[2]);
-      }
-    out << "add db done\n";
-    idx.refreshDatabase(myCTK.database(),argv[2]);
-    out << "refresh db done\n";
+
+
+  if (!myCTK.openDatabase( argv[2]))
+  {
+    std::cerr << "Database error:" << qPrintable(myCTK.GetLastError());
     myCTK.closeDatabase();
-    }
+    return EXIT_FAILURE;
+  }
   else
-    { 
-    out << "ERROR: " ;
-    out << myCTK.GetLastError();
-    out << "\n" ;
+  {
+    if (std::string("--add") == argv[1])
+    {
+      {
+        if (argc > 4)
+        {
+          idx.addDirectory(myCTK.database(),argv[3],argv[4]);
+        }
+        else
+        {
+          idx.addDirectory(myCTK.database(),argv[3]);
+        }
+      }
     }
+    else if (std::string("--init") == argv[1])
+    {
+      if (argc > 2)
+      {
+        myCTK.initializeDatabase(argv[2]);
+      }
+      else
+      {
+        myCTK.initializeDatabase();
+      }
+    }
+    else if (std::string("--cleanup") == argv[1])
+    {
+      // TODO
+    }
+  }
   return EXIT_SUCCESS;
 }
