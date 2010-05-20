@@ -28,11 +28,11 @@
 #include <QFile>
 
 
-  const QString PluginArchive::AUTOSTART_SETTING_STOPPED("stopped");
-  const QString PluginArchive::AUTOSTART_SETTING_EAGER("eager");
-  const QString PluginArchive::AUTOSTART_SETTING_ACTIVATION_POLICY("activation_policy");
+  const QString ctkPluginArchive::AUTOSTART_SETTING_STOPPED("stopped");
+  const QString ctkPluginArchive::AUTOSTART_SETTING_EAGER("eager");
+  const QString ctkPluginArchive::AUTOSTART_SETTING_ACTIVATION_POLICY("activation_policy");
 
-  PluginArchive::PluginArchive(PluginStorage* pluginStorage,
+  ctkPluginArchive::ctkPluginArchive(ctkPluginStorage* pluginStorage,
                 const QUrl& pluginLocation, const QString& localPluginPath,
                 int pluginId)
                   : autostartSetting(-1), id(pluginId), lastModified(0),
@@ -42,53 +42,53 @@
     QByteArray manifestResource = this->getPluginResource("META-INF/MANIFEST.MF");
     if (manifestResource.isEmpty())
     {
-      throw PluginException(QString("Plugin has no MANIFEST.MF resource, location=") + pluginLocation.toString());
+      throw ctkPluginException(QString("ctkPlugin has no MANIFEST.MF resource, location=") + pluginLocation.toString());
     }
     manifest.read(manifestResource);
   }
 
-  QString PluginArchive::getAttribute(const QString& key) const
+  QString ctkPluginArchive::getAttribute(const QString& key) const
   {
     return manifest.getAttribute(key);
   }
 
-  QHash<QString,QString> PluginArchive::getUnlocalizedAttributes() const
+  QHash<QString,QString> ctkPluginArchive::getUnlocalizedAttributes() const
   {
     return manifest.getMainAttributes();
   }
 
-  int PluginArchive::getPluginId() const
+  int ctkPluginArchive::getPluginId() const
   {
     return id;
   }
 
-  QUrl PluginArchive::getPluginLocation() const
+  QUrl ctkPluginArchive::getPluginLocation() const
   {
     return location;
   }
 
-  QString PluginArchive::getLibLocation() const
+  QString ctkPluginArchive::getLibLocation() const
   {
     return localPluginPath;
   }
 
-  QByteArray PluginArchive::getPluginResource(const QString& component) const
+  QByteArray ctkPluginArchive::getPluginResource(const QString& component) const
   {
     return storage->getPluginResource(getPluginId(), component);
   }
 
-  QStringList PluginArchive::findResourcesPath(const QString& path) const
+  QStringList ctkPluginArchive::findResourcesPath(const QString& path) const
   {
     return storage->findResourcesPath(getPluginId(), path);
   }
 
-  int PluginArchive::getStartLevel() const
+  int ctkPluginArchive::getStartLevel() const
   {
     //TODO
     return 0;
   }
 
-  void PluginArchive::setStartLevel(int level)
+  void ctkPluginArchive::setStartLevel(int level)
   {
     //TODO
 //    if (startLevel != level)
@@ -98,24 +98,24 @@
 //    }
   }
 
-  qtimestamp PluginArchive::getLastModified() const
+  qtimestamp ctkPluginArchive::getLastModified() const
   {
     return lastModified;
   }
 
-  void PluginArchive::setLastModified(qtimestamp clockticks)
+  void ctkPluginArchive::setLastModified(qtimestamp clockticks)
   {
     lastModified = clockticks;
     //TDOO
     //putContent(...)
   }
 
-  int PluginArchive::getAutostartSetting() const
+  int ctkPluginArchive::getAutostartSetting() const
   {
     return autostartSetting;
   }
 
-  void PluginArchive::setAutostartSetting(int setting)
+  void ctkPluginArchive::setAutostartSetting(int setting)
   {
     if (autostartSetting != setting)
     {
@@ -125,7 +125,7 @@
     }
   }
 
-  void PluginArchive::purge()
+  void ctkPluginArchive::purge()
   {
     storage->removeArchive(this);
 

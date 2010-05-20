@@ -24,18 +24,18 @@
 #include "ctkPluginFrameworkContext_p.h"
 
 
-  PluginFrameworkFactory::PluginFrameworkFactory(const Properties& initProps)
-    : fwCtx(new PluginFrameworkContext(initProps))
+  ctkPluginFrameworkFactory::ctkPluginFrameworkFactory(const Properties& initProps)
+    : fwCtx(new ctkPluginFrameworkContext(initProps))
   {
 
   }
 
-  PluginFrameworkFactory::~PluginFrameworkFactory()
+  ctkPluginFrameworkFactory::~ctkPluginFrameworkFactory()
   {
     delete fwCtx;
   }
 
-  PluginFramework* PluginFrameworkFactory::getFramework()
+  ctkPluginFramework* ctkPluginFrameworkFactory::getFramework()
   {
     return &(fwCtx->systemPlugin);
 

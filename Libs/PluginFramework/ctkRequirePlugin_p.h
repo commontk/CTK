@@ -25,22 +25,22 @@
 #include <ctkVersionRange_p.h>
 
 
-  class PluginPrivate;
+  class ctkPluginPrivate;
 
-  class RequirePlugin
+  class ctkRequirePlugin
   {
 
   public:
 
     const QString name;
     const QString resolution;
-    const VersionRange pluginRange;
+    const ctkVersionRange pluginRange;
 
-    RequirePlugin(PluginPrivate* requestor,
+    ctkRequirePlugin(ctkPluginPrivate* requestor,
                   const QString& name, const QString& res,
                   const QString& range);
 
-    bool overlap(const RequirePlugin& rp) const;
+    bool overlap(const ctkRequirePlugin& rp) const;
 
   };
 

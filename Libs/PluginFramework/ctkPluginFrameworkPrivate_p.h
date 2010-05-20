@@ -28,15 +28,15 @@
 #include <QMutex>
 
 
-  class PluginFrameworkContext;
+  class ctkPluginFrameworkContext;
 
-  class PluginFrameworkPrivate : public PluginPrivate
+  class ctkPluginFrameworkPrivate : public ctkPluginPrivate
   {
   public:
 
     QMutex lock;
 
-    PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContext* fw);
+    ctkPluginFrameworkPrivate(ctkPluginFramework& qq, ctkPluginFrameworkContext* fw);
 
     void init();
 

@@ -25,12 +25,12 @@
 #include "ctkPluginPrivate_p.h"
 
 
-  RequirePlugin::RequirePlugin(PluginPrivate* requestor,
+  ctkRequirePlugin::ctkRequirePlugin(ctkPluginPrivate* requestor,
                 const QString& name, const QString& res,
                 const QString& range)
                   : name(name),
                   resolution(res.isEmpty() ? PluginConstants::RESOLUTION_MANDATORY : res),
-                  pluginRange(range.isEmpty() ? VersionRange::defaultVersionRange() : range)
+                  pluginRange(range.isEmpty() ? ctkVersionRange::defaultVersionRange() : range)
   {
 
     if (resolution != PluginConstants::RESOLUTION_MANDATORY &&
@@ -51,7 +51,7 @@
 
   }
 
-  bool RequirePlugin::overlap(const RequirePlugin& rp) const
+  bool ctkRequirePlugin::overlap(const ctkRequirePlugin& rp) const
   {
     if (resolution == PluginConstants::RESOLUTION_MANDATORY &&
         rp.resolution != PluginConstants::RESOLUTION_MANDATORY)

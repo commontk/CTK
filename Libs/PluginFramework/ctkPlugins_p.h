@@ -29,17 +29,17 @@
 
 
   // CTK class forward declarations
-  class Plugin;
-  class PluginFrameworkContext;
-  class Version;
-  class VersionRange;
+  class ctkPlugin;
+  class ctkPluginFrameworkContext;
+  class ctkVersion;
+  class ctkVersionRange;
 
   /**
    * Here we handle all the plugins that are installed in the framework.
    * Also handles load and save of bundle states to a database, so that we
    * can restart the platform.
    */
-  class Plugins {
+  class ctkPlugins {
 
   private:
 
@@ -47,12 +47,12 @@
      * Table of all installed plugins in this framework.
      * Key is the plugin location.
      */
-    QHash<QString, Plugin*> plugins;
+    QHash<QString, ctkPlugin*> plugins;
 
     /**
      * Link to framework object.
      */
-    PluginFrameworkContext* fwCtx;
+    ctkPluginFrameworkContext* fwCtx;
 
     /**
      * Read write lock for protecting the plugins object
@@ -65,7 +65,7 @@
     /**
      * Create a container for all plugins in this framework.
      */
-    Plugins(PluginFrameworkContext* fw);
+    ctkPlugins(ctkPluginFrameworkContext* fw);
 
 
     void clear();
@@ -76,7 +76,7 @@
      *
      * @param location The location to be installed
      */
-    Plugin* install(const QUrl& location, QIODevice* in);
+    ctkPlugin* install(const QUrl& location, QIODevice* in);
 
 
     /**
@@ -91,20 +91,20 @@
      * Get the plugin that has the specified plugin identifier.
      *
      * @param id The identifier of the plugin to get.
-     * @return Plugin or null
+     * @return ctkPlugin or null
      *         if the plugin was not found.
      */
-    Plugin* getPlugin(int id) const;
+    ctkPlugin* getPlugin(int id) const;
 
 
     /**
      * Get the plugin that has specified plugin location.
      *
      * @param location The location of the plugin to get.
-     * @return Plugin or null
+     * @return ctkPlugin or null
      *         if the plugin was not found.
      */
-    Plugin* getPlugin(const QString& location) const;
+    ctkPlugin* getPlugin(const QString& location) const;
 
 
     /**
@@ -112,26 +112,26 @@
      *
      * @param name The symbolic name of the plugin to get.
      * @param version The plugin version of the plugin to get.
-     * @return Plugin or null.
+     * @return ctkPlugin or null.
      */
-    Plugin* getPlugin(const QString& name, const Version& version) const;
+    ctkPlugin* getPlugin(const QString& name, const ctkVersion& version) const;
 
 
     /**
      * Get all installed plugins.
      *
-     * @return A Plugin list with plugins.
+     * @return A ctkPlugin list with plugins.
      */
-    QList<Plugin*> getPlugins() const;
+    QList<ctkPlugin*> getPlugins() const;
 
 
     /**
      * Get all plugins that have specified plugin symbolic name.
      *
      * @param name The symbolic name of plugins to get.
-     * @return A list of Plugins.
+     * @return A list of ctkPlugins.
      */
-    QList<Plugin*> getPlugins(const QString& name) const;
+    QList<ctkPlugin*> getPlugins(const QString& name) const;
 
 
     /**
@@ -139,18 +139,18 @@
      * version range. Result is sorted in decreasing version order.
      *
      * @param name The symbolic name of plugins to get.
-     * @param range Version range of plugins to get.
-     * @return A List of Plugins.
+     * @param range ctkVersion range of plugins to get.
+     * @return A List of ctkPlugins.
      */
-    QList<Plugin*> getPlugins(const QString& name, const VersionRange& range) const;
+    QList<ctkPlugin*> getPlugins(const QString& name, const ctkVersionRange& range) const;
 
 
     /**
      * Get all plugins currently in plugin state ACTIVE.
      *
-     * @return A List of Plugins.
+     * @return A List of ctkPlugins.
      */
-    QList<Plugin*> getActivePlugins() const;
+    QList<ctkPlugin*> getActivePlugins() const;
 
 
     /**
@@ -166,9 +166,9 @@
     /**
      * Start a list of plugins in order
      *
-     * @param slist Plugins to start.
+     * @param slist ctkPlugins to start.
      */
-    void startPlugins(const QList<Plugin*>& slist) const;
+    void startPlugins(const QList<ctkPlugin*>& slist) const;
 
 
   };

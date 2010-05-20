@@ -32,12 +32,12 @@
 #include "ctkPluginFrameworkContext_p.h"
 
 
-  ServiceReferencePrivate::ServiceReferencePrivate(ServiceRegistrationPrivate* reg)
+  ctkServiceReferencePrivate::ctkServiceReferencePrivate(ctkServiceRegistrationPrivate* reg)
     : registration(reg)
   {
   }
 
-  QObject* ServiceReferencePrivate::getService(Plugin* plugin)
+  QObject* ctkServiceReferencePrivate::getService(ctkPlugin* plugin)
   {
     QObject* s = 0;
     {
@@ -50,7 +50,7 @@
           QStringList classes =
               registration->properties.value(PluginConstants::OBJECTCLASS).toStringList();
           registration->dependents[plugin] = 1;
-          if (ServiceFactory* serviceFactory = qobject_cast<ServiceFactory*>(registration->getService()))
+          if (ctkServiceFactory* serviceFactory = qobject_cast<ctkServiceFactory*>(registration->getService()))
           {
             try
             {
@@ -58,15 +58,15 @@
             }
             catch (const std::exception& pe)
             {
-              ServiceException se("ServiceFactory throw an exception",
-                                  ServiceException::FACTORY_EXCEPTION, pe);
+              ctkServiceException se("ctkServiceFactory throw an exception",
+                                  ctkServiceException::FACTORY_EXCEPTION, pe);
               plugin->d_func()->fwCtx->listeners.frameworkError
                 (registration->plugin->q_func(), se);
               return 0;
             }
             if (s == 0) {
-              ServiceException se("ServiceFactory produced null",
-                                  ServiceException::FACTORY_ERROR);
+              ctkServiceException se("ctkServiceFactory produced null",
+                                  ctkServiceException::FACTORY_ERROR);
               plugin->d_func()->fwCtx->listeners.frameworkError
                 (registration->plugin->q_func(), se);
               return 0;
@@ -76,9 +76,9 @@
               QString cls = i.next();
               if (!registration->plugin->fwCtx->services.checkServiceClass(s, cls))
               {
-                ServiceException se(QString("ServiceFactory produced an object ") +
+                ctkServiceException se(QString("ctkServiceFactory produced an object ") +
                                      "that did not implement: " + cls,
-                                     ServiceException::FACTORY_ERROR);
+                                     ctkServiceException::FACTORY_ERROR);
                 plugin->d_func()->fwCtx->listeners.frameworkError
                   (registration->plugin->q_func(), se);
                 return 0;
@@ -94,7 +94,7 @@
         else
         {
           registration->dependents.insert(plugin, count + 1);
-          if (qobject_cast<ServiceFactory*>(registration->getService()))
+          if (qobject_cast<ctkServiceFactory*>(registration->getService()))
           {
             s = registration->serviceInstances.value(plugin);
           }
@@ -118,7 +118,7 @@
      * @return True if service was remove or false if only refence counter was
      *         decremented.
      */
-  bool ServiceReferencePrivate::ungetService(Plugin* plugin, bool checkRefCounter)
+  bool ctkServiceReferencePrivate::ungetService(ctkPlugin* plugin, bool checkRefCounter)
   {
     QMutexLocker lock(&registration->propsLock);
     bool hadReferences = false;
@@ -156,7 +156,7 @@
         {
           try
           {
-            qobject_cast<ServiceFactory*>(registration->getService())->ungetService(plugin,
+            qobject_cast<ctkServiceFactory*>(registration->getService())->ungetService(plugin,
                 registration->q_func(), sfi);
           }
           catch (const std::exception& e)

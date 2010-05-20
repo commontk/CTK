@@ -31,9 +31,9 @@
 
     /**
      * Location identifier of the CTK <i>system plugin</i>, which is defined
-     * to be &quot;System Plugin&quot;.
+     * to be &quot;System ctkPlugin&quot;.
      */
-    static const QString	SYSTEM_PLUGIN_LOCATION; // = "System Plugin"
+    static const QString	SYSTEM_PLUGIN_LOCATION; // = "System ctkPlugin"
 
     /**
      * Alias for the symbolic name of the CTK <i>system plugin</i>. It is
@@ -63,34 +63,34 @@
      *
      * <p>
      * The attribute value may be retrieved from the <code>QHash</code>
-     * object returned by the <code>Plugin::getHeaders()</code> method.
+     * object returned by the <code>ctkPlugin::getHeaders()</code> method.
      */
-    static const QString	PLUGIN_SYMBOLICNAME; // = "Plugin-SymbolicName"
+    static const QString	PLUGIN_SYMBOLICNAME; // = "ctkPlugin-SymbolicName"
 
     /**
      * Manifest header identifying the plugin's copyright information.
      * <p>
      * The attribute value may be retrieved from the <code>QHash</code>
-     * object returned by the <code>Plugin::getHeaders</code> method.
+     * object returned by the <code>ctkPlugin::getHeaders</code> method.
      */
-    static const QString PLUGIN_COPYRIGHT; // = "Plugin-Copyright"
+    static const QString PLUGIN_COPYRIGHT; // = "ctkPlugin-Copyright"
 
     /**
      * Manifest header containing a brief description of the plugin's
      * functionality.
      * <p>
      * The attribute value may be retrieved from the <code>QHash</code>
-     * object returned by the <code>Plugin::getHeaders</code> method.
+     * object returned by the <code>ctkPlugin::getHeaders</code> method.
      */
-    static const QString PLUGIN_DESCRIPTION; // = "Plugin-Description"
+    static const QString PLUGIN_DESCRIPTION; // = "ctkPlugin-Description"
 
     /**
      * Manifest header identifying the plugin's name.
      * <p>
      * The attribute value may be retrieved from the <code>QHash</code>
-     * object returned by the <code>Plugin::getHeaders</code> method.
+     * object returned by the <code>ctkPlugin::getHeaders</code> method.
      */
-    static const QString PLUGIN_NAME; // = "Plugin-Name"
+    static const QString PLUGIN_NAME; // = "ctkPlugin-Name"
 
 
     /**
@@ -99,14 +99,14 @@
      *
      * <p>
      * The attribute value may be retrieved from the <code>QHash</code>
-     * object returned by the <code>Plugin::getHeaders</code> method.
+     * object returned by the <code>ctkPlugin::getHeaders</code> method.
      *
      * @see #PLUGIN_LOCALIZATION_DEFAULT_BASENAME
      */
-    static const QString PLUGIN_LOCALIZATION; // = "Plugin-Localization"
+    static const QString PLUGIN_LOCALIZATION; // = "ctkPlugin-Localization"
 
     /**
-     * Default value for the <code>Plugin-Localization</code> manifest header.
+     * Default value for the <code>ctkPlugin-Localization</code> manifest header.
      *
      * @see #PLUGIN_LOCALIZATION
      */
@@ -118,23 +118,23 @@
      *
      * <p>
      * The attribute value may be retrieved from the <code>QHash</code>
-     * object returned by the <code>Plugin::getHeaders</code> method.
+     * object returned by the <code>ctkPlugin::getHeaders</code> method.
      *
      */
-    static const QString REQUIRE_PLUGIN; // = "Require-Plugin"
+    static const QString REQUIRE_PLUGIN; // = "Require-ctkPlugin"
 
     /**
      * Manifest header attribute identifying a range of versions for a plugin
-     * specified in the <code>Require-Plugin</code> manifest headers.
+     * specified in the <code>Require-ctkPlugin</code> manifest headers.
      * The default value is <code>0.0.0</code>.
      *
      * <p>
-     * The attribute value is encoded in the Require-Plugin manifest header
+     * The attribute value is encoded in the Require-ctkPlugin manifest header
      * like:
      *
      * <pre>
-     *     Require-Plugin: com.acme.module.test; plugin-version=&quot;1.1&quot;
-     *     Require-Plugin: com.acme.module.test; plugin-version=&quot;[1.0,2.0)&quot;
+     *     Require-ctkPlugin: com.acme.module.test; plugin-version=&quot;1.1&quot;
+     *     Require-ctkPlugin: com.acme.module.test; plugin-version=&quot;[1.0,2.0)&quot;
      * </pre>
      *
      * <p>
@@ -153,57 +153,57 @@
      *
      * <p>
      * The attribute value may be retrieved from the <code>QHash</code>
-     * object returned by the <code>Plugin::getHeaders()</code> method.
+     * object returned by the <code>ctkPlugin::getHeaders()</code> method.
      */
-    static const QString	PLUGIN_VERSION; // = "Plugin-Version"
+    static const QString	PLUGIN_VERSION; // = "ctkPlugin-ctkVersion"
 
     /**
      * Manifest header identifying the plugin's activation policy.
      * <p>
      * The attribute value may be retrieved from the <code>QHash</code>
-     * object returned by the <code>Plugin::getHeaders()</code> method.
+     * object returned by the <code>ctkPlugin::getHeaders()</code> method.
      *
      * @see #ACTIVATION_EAGER
      */
-    static const QString	PLUGIN_ACTIVATIONPOLICY; // = "Plugin-ActivationPolicy"
+    static const QString	PLUGIN_ACTIVATIONPOLICY; // = "ctkPlugin-ActivationPolicy"
 
     /**
-     * Plugin activation policy declaring the plugin must be activated when the
+     * ctkPlugin activation policy declaring the plugin must be activated when the
      * first object is instantiated from the plugin.
      * <p>
      * A plugin with the lazy (default) activation policy
-     * will wait in the Plugin#STARTING state until the first
+     * will wait in the ctkPlugin#STARTING state until the first
      * class instantiation from the plugin occurs. The plugin will then be activated
      * before the instance is returned to the requester.
      * <p>
      * A plugin with the eager activation policy that is started with the
-     * Plugin#START_ACTIVATION_POLICY option will be activating immediately when
+     * ctkPlugin#START_ACTIVATION_POLICY option will be activating immediately when
      * the framework is started.
      * <p>
      * The activation policy value is specified as in the
-     * Plugin-ActivationPolicy manifest header like:
+     * ctkPlugin-ActivationPolicy manifest header like:
      *
      * <pre>
-     *       Plugin-ActivationPolicy: eager
+     *       ctkPlugin-ActivationPolicy: eager
      * </pre>
      *
      * @see #PLUGIN_ACTIVATIONPOLICY
-     * @see Plugin#start(int)
-     * @see Plugin#START_ACTIVATION_POLICY
+     * @see ctkPlugin#start(int)
+     * @see ctkPlugin#START_ACTIVATION_POLICY
      */
     static const QString	ACTIVATION_EAGER; // = "eager"
 
     /**
      * Manifest header directive identifying the resolution type in the
-     * Require-Plugin manifest header. The default value is
+     * Require-ctkPlugin manifest header. The default value is
      * {@link #RESOLUTION_MANDATORY mandatory}.
      *
      * <p>
-     * The directive value is encoded in the Require-Plugin
+     * The directive value is encoded in the Require-ctkPlugin
      * manifest header like:
      *
      * <pre>
-     *     Require-Plugin: com.acme.module.test; resolution:=&quot;optional&quot;
+     *     Require-ctkPlugin: com.acme.module.test; resolution:=&quot;optional&quot;
      * </pre>
      *
      * @see #REQUIRE_PLUGIN
@@ -219,11 +219,11 @@
      * require plugin cannot be resolved, the module fails to resolve.
      *
      * <p>
-     * The directive value is encoded in the Require-Plugin
+     * The directive value is encoded in the Require-ctkPlugin
      * manifest header like:
      *
      * <pre>
-     *     Require-Plugin: com.acme.module.test; resolution:=&quot;manditory&quot;
+     *     Require-ctkPlugin: com.acme.module.test; resolution:=&quot;manditory&quot;
      * </pre>
      *
      * @see #RESOLUTION_DIRECTIVE
@@ -239,11 +239,11 @@
      * resolved before the plugin is refreshed.
      *
      * <p>
-     * The directive value is encoded in the Require-Plugin
+     * The directive value is encoded in the Require-ctkPlugin
      * manifest header like:
      *
      * <pre>
-     *     Require-Plugin: com.acme.module.test; resolution:=&quot;optional&quot;
+     *     Require-ctkPlugin: com.acme.module.test; resolution:=&quot;optional&quot;
      * </pre>
      *
      * @see #RESOLUTION_DIRECTIVE
@@ -278,14 +278,14 @@
      * <p>
      * This property may be supplied in the
      * <code>ServiceProperties</code> object passed to the
-     * <code>PluginContext::registerService</code> method. The value of this
+     * <code>ctkPluginContext::registerService</code> method. The value of this
      * property must be of type <code>int</code>.
      *
      * <p>
      * The service ranking is used by the Framework to determine the <i>natural
-     * order</i> of services, see {@link ServiceReference::operator<(const ServiceReference&)},
+     * order</i> of services, see {@link ctkServiceReference::operator<(const ctkServiceReference&)},
      * and the <i>default</i> service to be returned from a call to the
-     * {@link PluginContext::getServiceReference} method.
+     * {@link ctkPluginContext::getServiceReference} method.
      *
      * <p>
      * The default ranking is zero (0). A service with a ranking of

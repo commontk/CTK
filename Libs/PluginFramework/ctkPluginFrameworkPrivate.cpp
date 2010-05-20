@@ -27,25 +27,25 @@
 #include "ctkPluginFrameworkContext_p.h"
 
 
-  PluginFrameworkPrivate::PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContext* fw)
-    : PluginPrivate(qq, fw, 0, PluginConstants::SYSTEM_PLUGIN_LOCATION,
+  ctkPluginFrameworkPrivate::ctkPluginFrameworkPrivate(ctkPluginFramework& qq, ctkPluginFrameworkContext* fw)
+    : ctkPluginPrivate(qq, fw, 0, PluginConstants::SYSTEM_PLUGIN_LOCATION,
                     PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
                     // TODO: read version from the manifest resource
-                    Version(0, 9, 0))
+                    ctkVersion(0, 9, 0))
   {
     systemHeaders.insert(PluginConstants::PLUGIN_SYMBOLICNAME, symbolicName);
     systemHeaders.insert(PluginConstants::PLUGIN_NAME, location);
     systemHeaders.insert(PluginConstants::PLUGIN_VERSION, version.toString());
   }
 
-  void PluginFrameworkPrivate::init()
+  void ctkPluginFrameworkPrivate::init()
   {
-    this->state = Plugin::STARTING;
+    this->state = ctkPlugin::STARTING;
     this->fwCtx->init();
   }
 
-  void PluginFrameworkPrivate::initSystemPlugin()
+  void ctkPluginFrameworkPrivate::initSystemPlugin()
   {
-    this->pluginContext = new PluginContext(this);
+    this->pluginContext = new ctkPluginContext(this);
 
 }

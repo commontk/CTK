@@ -4,16 +4,16 @@
 #include "ctkEvent.h"
 
 
-  class EventBus {
+  class ctkEventBus {
 
   public:
 
     typedef QMap<QString, QVariant> Properties;
 
-    virtual ~EventBus() {}
+    virtual ~ctkEventBus() {}
 
-    virtual void postEvent(const Event& event) = 0;
-    virtual void sendEvent(const Event& event) = 0;
+    virtual void postEvent(const ctkEvent& event) = 0;
+    virtual void sendEvent(const ctkEvent& event) = 0;
 
     virtual void publishSignal(const QObject* publisher, const char* signal) = 0;
 
@@ -22,6 +22,6 @@
   };
 
 
-Q_DECLARE_INTERFACE(ctk::EventBus, "org.commontk.core.EventBus")
+Q_DECLARE_INTERFACE(ctk::ctkEventBus, "org.commontk.core.ctkEventBus")
 
 #endif // CTKEVENTBUS_H

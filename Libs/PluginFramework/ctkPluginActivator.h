@@ -27,28 +27,28 @@
 /**
  * Customizes the starting and stopping of a plugin.
  * <p>
- * <code>%PluginActivator</code> is an interface that must be implemented by
+ * <code>%ctkPluginActivator</code> is an interface that must be implemented by
  * every plugin in the Framework. The Framework can create instances of a
- * plugin's <code>%PluginActivator</code> as required. If an instance's
- * <code>PluginActivator::start</code> method executes successfully, it is
- * guaranteed that the same instance's <code>PluginActivator::stop</code>
+ * plugin's <code>%ctkPluginActivator</code> as required. If an instance's
+ * <code>ctkPluginActivator::start</code> method executes successfully, it is
+ * guaranteed that the same instance's <code>ctkPluginActivator::stop</code>
  * method will be called when the plugin is to be stopped. The Framework must
- * not concurrently call a <code>%PluginActivator</code> object.
+ * not concurrently call a <code>%ctkPluginActivator</code> object.
  *
  * <p>
- * <code>%PluginActivator</code> is a Qt interface which must be implemented
- * using the standard Qt %Plugin facilities:
+ * <code>%ctkPluginActivator</code> is a Qt interface which must be implemented
+ * using the standard Qt %ctkPlugin facilities:
  *
  * <p>
  * <pre>
- * class MyPlugin : public QObject, public %ctk::PluginActivator
+ * class MyPlugin : public QObject, public %ctk::ctkPluginActivator
  * {
  *   Q_OBJECT
- *   Q_INTERFACES(ctk::PluginActivator)
+ *   Q_INTERFACES(ctk::ctkPluginActivator)
  *
  * public:
- *   void %start(%ctk::PluginContext* context);
- *   void %stop(%ctk::PluginContext* context);
+ *   void %start(%ctk::ctkPluginContext* context);
+ *   void %stop(%ctk::ctkPluginContext* context);
  * };
  * </pre>
  * And in your implementation file:
@@ -59,18 +59,18 @@
  *
  * <p>
  * See the Qt Documentation about <a href="http://doc.trolltech.com/4.6/plugins-howto.html">
- * How to Create Qt Plugins</a> for details.
+ * How to Create Qt ctkPlugins</a> for details.
  *
- * The class implementing the <code>%PluginActivator</code> interface must have a public
- * constructor that takes no parameters so that a <code>%PluginActivator</code>
+ * The class implementing the <code>%ctkPluginActivator</code> interface must have a public
+ * constructor that takes no parameters so that a <code>%ctkPluginActivator</code>
  * object can be created by <code>QPluginLoader::instance</code>.
  *
  */
-class PluginActivator
+class ctkPluginActivator
 {
 public:
 
-  virtual ~PluginActivator() {}
+  virtual ~ctkPluginActivator() {}
 
   /**
    * Called when this plugin is started so the Framework can perform the
@@ -87,12 +87,12 @@ public:
    *         plugin's listeners, unregister all services registered by this
    *         plugin, and release all services used by this plugin.
    */
-  virtual void start(PluginContext* context) = 0;
+  virtual void start(ctkPluginContext* context) = 0;
 
   /**
    * Called when this plugin is stopped so the Framework can perform the
    * plugin-specific activities necessary to stop the plugin. In general, this
-   * method should undo the work that the <code>PluginActivator::start</code>
+   * method should undo the work that the <code>ctkPluginActivator::start</code>
    * method started. There should be no active threads that were started by
    * this plugin when this plugin returns. A stopped plugin must not call any
    * Framework objects.
@@ -106,12 +106,12 @@ public:
    *         the plugin's listeners, unregister all services registered by the
    *         plugin, and release all services used by the plugin.
    */
-  virtual void stop(PluginContext* context) = 0;
+  virtual void stop(ctkPluginContext* context) = 0;
 
 };
 
 }
 
-Q_DECLARE_INTERFACE(ctk::PluginActivator, "org.commontk.pluginfw.pluginactivator")
+Q_DECLARE_INTERFACE(ctk::ctkPluginActivator, "org.commontk.pluginfw.pluginactivator")
 
 #endif /* CTKPLUGINACTIVATOR_H_ */

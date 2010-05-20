@@ -28,37 +28,37 @@
 #include <QStringList>
 
 
-  Plugin::Plugin(PluginFrameworkContext* fw,
-                 PluginArchive* pa)
-    : d_ptr(new PluginPrivate(*this, fw, pa))
+  ctkPlugin::ctkPlugin(ctkPluginFrameworkContext* fw,
+                 ctkPluginArchive* pa)
+    : d_ptr(new ctkPluginPrivate(*this, fw, pa))
   {
 
   }
 
-  Plugin::Plugin(PluginPrivate& dd)
+  ctkPlugin::ctkPlugin(ctkPluginPrivate& dd)
     : d_ptr(&dd)
   {
 
   }
 
-  Plugin::~Plugin()
+  ctkPlugin::~ctkPlugin()
   {
     delete d_ptr;
   }
 
-  Plugin::State Plugin::getState() const
+  ctkPlugin::State ctkPlugin::getState() const
   {
-    Q_D(const Plugin);
+    Q_D(const ctkPlugin);
     return d->state;
   }
 
-  void Plugin::start(const StartOptions& options)
+  void ctkPlugin::start(const StartOptions& options)
   {
-    Q_D(Plugin);
+    Q_D(ctkPlugin);
 
     if (d->state == UNINSTALLED)
     {
-      throw std::logic_error("Plugin is uninstalled");
+      throw std::logic_error("ctkPlugin is uninstalled");
     }
 
     // Initialize the activation; checks initialization of lazy
@@ -66,7 +66,7 @@
 
     //TODO 1: If activating or deactivating, wait a litle
     // we don't use mutliple threads to start plugins for now
-    //waitOnActivation(lock, "Plugin::start", false);
+    //waitOnActivation(lock, "ctkPlugin::start", false);
 
     //2: start() is idempotent, i.e., nothing to do when already started
     if (d->state == ACTIVE)
@@ -99,8 +99,8 @@
     {
       if (STARTING == d->state) return;
       d->state = STARTING;
-      d->pluginContext = new PluginContext(this->d_func());
-      PluginEvent pluginEvent(PluginEvent::LAZY_ACTIVATION, this);
+      d->pluginContext = new ctkPluginContext(this->d_func());
+      ctkPluginEvent pluginEvent(ctkPluginEvent::LAZY_ACTIVATION, this);
       d->fwCtx->listeners.emitPluginChanged(pluginEvent);
     }
     else
@@ -109,35 +109,35 @@
     }
   }
 
-  void Plugin::stop(const StopOptions& options)
+  void ctkPlugin::stop(const StopOptions& options)
   {
 
   }
 
-  PluginContext* Plugin::getPluginContext() const
+  ctkPluginContext* ctkPlugin::getPluginContext() const
   {
     //TODO security checks
-    Q_D(const Plugin);
+    Q_D(const ctkPlugin);
     return d->pluginContext;
   }
 
-  long Plugin::getPluginId() const
+  long ctkPlugin::getPluginId() const
   {
-    Q_D(const Plugin);
+    Q_D(const ctkPlugin);
     return d->id;
   }
 
-  QString Plugin::getLocation() const
+  QString ctkPlugin::getLocation() const
   {
     //TODO security
-    Q_D(const Plugin);
+    Q_D(const ctkPlugin);
     return d->location;
   }
 
-  QHash<QString, QString> Plugin::getHeaders()
+  QHash<QString, QString> ctkPlugin::getHeaders()
   {
     //TODO security
-    Q_D(Plugin);
+    Q_D(ctkPlugin);
     if (d->cachedRawHeaders.empty())
     {
       d->cachedRawHeaders = d->archive->getUnlocalizedAttributes();
@@ -152,27 +152,27 @@
     return d->cachedRawHeaders;
   }
 
-  QString Plugin::getSymbolicName() const
+  QString ctkPlugin::getSymbolicName() const
   {
-    Q_D(const Plugin);
+    Q_D(const ctkPlugin);
     return d->symbolicName;
   }
 
-  QStringList Plugin::getResourceList(const QString& path) const
+  QStringList ctkPlugin::getResourceList(const QString& path) const
   {
-    Q_D(const Plugin);
+    Q_D(const ctkPlugin);
     return d->archive->findResourcesPath(path);
   }
 
-  QByteArray Plugin::getResource(const QString& path) const
+  QByteArray ctkPlugin::getResource(const QString& path) const
   {
-    Q_D(const Plugin);
+    Q_D(const ctkPlugin);
     return d->archive->getPluginResource(path);
   }
 
-  Version Plugin::getVersion() const
+  ctkVersion ctkPlugin::getVersion() const
   {
-    Q_D(const Plugin);
+    Q_D(const ctkPlugin);
     return d->version;
 
 }

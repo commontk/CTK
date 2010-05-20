@@ -29,42 +29,42 @@
 #include "CTKPluginFrameworkExport.h"
 
 
-  class ServiceRegistrationPrivate;
+  class ctkServiceRegistrationPrivate;
 
   /**
    * A registered service.
    *
    * <p>
-   * The Framework returns a <code>ServiceRegistration</code> object when a
-   * <code>PluginContext#registerService()</code> method invocation is successful.
-   * The <code>ServiceRegistration</code> object is for the private use of the
+   * The Framework returns a <code>ctkServiceRegistration</code> object when a
+   * <code>ctkPluginContext#registerService()</code> method invocation is successful.
+   * The <code>ctkServiceRegistration</code> object is for the private use of the
    * registering plugin and should not be shared with other plugins.
    * <p>
-   * The <code>ServiceRegistration</code> object may be used to update the
+   * The <code>ctkServiceRegistration</code> object may be used to update the
    * properties of the service or to unregister the service.
    *
-   * @see PluginContext#registerService()
+   * @see ctkPluginContext#registerService()
    * @threadsafe
    */
-  class CTK_PLUGINFW_EXPORT ServiceRegistration {
+  class CTK_PLUGINFW_EXPORT ctkServiceRegistration {
 
-    Q_DECLARE_PRIVATE(ServiceRegistration)
+    Q_DECLARE_PRIVATE(ctkServiceRegistration)
 
   public:
 
     /**
-     * Returns a <code>ServiceReference</code> object for a service being
+     * Returns a <code>ctkServiceReference</code> object for a service being
      * registered.
      * <p>
-     * The <code>ServiceReference</code> object may be shared with other
+     * The <code>ctkServiceReference</code> object may be shared with other
      * plugins.
      *
      * @throws std::logic_error If this
-     *         <code>ServiceRegistration</code> object has already been
+     *         <code>ctkServiceRegistration</code> object has already been
      *         unregistered.
-     * @return <code>ServiceReference</code> object.
+     * @return <code>ctkServiceReference</code> object.
      */
-    ServiceReference* getReference();
+    ctkServiceReference* getReference();
 
     /**
      * Updates the properties associated with a service.
@@ -86,7 +86,7 @@
      *        be made to this object after calling this method. To update the
      *        service's properties this method should be called again.
      *
-     * @throws std::logic_error If this <code>ServiceRegistration</code>
+     * @throws std::logic_error If this <code>ctkServiceRegistration</code>
      *         object has already been unregistered.
      * @throws std::invalid_argument If <code>properties</code> contains
      *         case variants of the same key name.
@@ -94,9 +94,9 @@
     void setProperties(const ServiceProperties& properties);
 
     /**
-     * Unregisters a service. Remove a <code>ServiceRegistration</code> object
-     * from the Framework service registry. All <code>ServiceReference</code>
-     * objects associated with this <code>ServiceRegistration</code> object
+     * Unregisters a service. Remove a <code>ctkServiceRegistration</code> object
+     * from the Framework service registry. All <code>ctkServiceReference</code>
+     * objects associated with this <code>ctkServiceRegistration</code> object
      * can no longer be used to interact with the service once unregistration is
      * complete.
      *
@@ -108,36 +108,36 @@
      * <li>A service event of type {@link ServiceEvent#UNREGISTERING} is fired
      * so that plugins using this service can release their use of the service.
      * Once delivery of the service event is complete, the
-     * <code>ServiceReference</code> objects for the service may no longer be
+     * <code>ctkServiceReference</code> objects for the service may no longer be
      * used to get a service object for the service.
      * <li>For each plugin whose use count for this service is greater than
      * zero: <br>
      * The plugin's use count for this service is set to zero. <br>
-     * If the service was registered with a {@link ServiceFactory} object, the
-     * <code>ServiceFactory#ungetService</code> method is called to release
+     * If the service was registered with a {@link ctkServiceFactory} object, the
+     * <code>ctkServiceFactory#ungetService</code> method is called to release
      * the service object for the plugin.
      * </ol>
      *
      * @throws std::logic_error If this
-     *         <code>ServiceRegistration</code> object has already been
+     *         <code>ctkServiceRegistration</code> object has already been
      *         unregistered.
      * @see BundleContext#ungetService
-     * @see ServiceFactory#ungetService
+     * @see ctkServiceFactory#ungetService
      */
     virtual void unregister();
 
-    bool operator<(const ServiceRegistration& o) const;
+    bool operator<(const ctkServiceRegistration& o) const;
 
   protected:
 
-    friend class Services;
+    friend class ctkServices;
 
-    ServiceRegistration(PluginPrivate* plugin, QObject* service,
+    ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
                         const ServiceProperties& props);
 
-    ServiceRegistration(ServiceRegistrationPrivate& dd);
+    ctkServiceRegistration(ctkServiceRegistrationPrivate& dd);
 
-    ServiceRegistrationPrivate * const d_ptr;
+    ctkServiceRegistrationPrivate * const d_ptr;
 
   };
 

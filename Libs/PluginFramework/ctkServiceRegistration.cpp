@@ -30,29 +30,29 @@
 #include <stdexcept>
 
 
-  ServiceRegistration::ServiceRegistration(PluginPrivate* plugin, QObject* service,
+  ctkServiceRegistration::ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
                       const ServiceProperties& props)
-    : d_ptr(new ServiceRegistrationPrivate(this, plugin, service, props))
+    : d_ptr(new ctkServiceRegistrationPrivate(this, plugin, service, props))
   {
 
   }
 
-  ServiceRegistration::ServiceRegistration(ServiceRegistrationPrivate& dd)
+  ctkServiceRegistration::ctkServiceRegistration(ctkServiceRegistrationPrivate& dd)
     : d_ptr(&dd)
   {
 
   }
 
-  ServiceReference* ServiceRegistration::getReference()
+  ctkServiceReference* ctkServiceRegistration::getReference()
   {
-    Q_D(ServiceRegistration);
+    Q_D(ctkServiceRegistration);
 
     if (!d->available) throw std::logic_error("Service is unregistered");
 
     return d->reference;
   }
 
-  void ServiceRegistration::setProperties(const ServiceProperties& properties)
+  void ctkServiceRegistration::setProperties(const ServiceProperties& properties)
   {
 //    QMutexLocker lock(eventLock);
 //          Set before;
@@ -88,9 +88,9 @@
 
   }
 
-  void ServiceRegistration::unregister()
+  void ctkServiceRegistration::unregister()
   {
-    Q_D(ServiceRegistration);
+    Q_D(ctkServiceRegistration);
 
     if (d->unregistering) return; // Silently ignore redundant unregistration.
     {
@@ -127,19 +127,19 @@
         d->available = false;
         if (d->plugin)
         {
-          for (QHashIterator<Plugin*, QObject*> i(d->serviceInstances); i.hasNext();)
+          for (QHashIterator<ctkPlugin*, QObject*> i(d->serviceInstances); i.hasNext();)
           {
             QObject* obj = i.next().value();
             try
             {
               // NYI, don't call inside lock
-              qobject_cast<ServiceFactory*>(d->service)->ungetService(i.key(),
+              qobject_cast<ctkServiceFactory*>(d->service)->ungetService(i.key(),
                                                          this,
                                                          obj);
             }
             catch (const std::exception& ue)
             {
-              PluginFrameworkEvent pfwEvent(PluginFrameworkEvent::ERROR, d->plugin->q_func(), ue);
+              ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::ERROR, d->plugin->q_func(), ue);
               d->plugin->fwCtx->listeners
                   .emitFrameworkEvent(pfwEvent);
             }
@@ -154,9 +154,9 @@
     }
   }
 
-  bool ServiceRegistration::operator<(const ServiceRegistration& o) const
+  bool ctkServiceRegistration::operator<(const ctkServiceRegistration& o) const
   {
-    Q_D(const ServiceRegistration);
+    Q_D(const ctkServiceRegistration);
     return d->reference->operator <(*(o.d_func()->reference));
 
 }

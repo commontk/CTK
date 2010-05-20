@@ -32,32 +32,32 @@ class QIODevice;
 
 
   // CTK class forward declarations
-  class PluginArchive;
-  class PluginFrameworkContext;
+  class ctkPluginArchive;
+  class ctkPluginFrameworkContext;
 
   /**
    * Storage of all plugin meta-data and resources
    */
-  class PluginStorage {
+  class ctkPluginStorage {
 
   private:
 
     QMutex archivesLock;
 
     /**
-     * Plugin id sorted list of all active plugin archives.
+     * ctkPlugin id sorted list of all active plugin archives.
      */
-    QList<PluginArchive*> archives;
+    QList<ctkPluginArchive*> archives;
 
     /**
      * Framework handle.
      */
-    PluginFrameworkContext* framework;
+    ctkPluginFrameworkContext* framework;
 
     /**
      * SQLite db caching plug-in metadata and resources
      */
-    PluginDatabase pluginDatabase;
+    ctkPluginDatabase pluginDatabase;
 
   public:
 
@@ -66,7 +66,7 @@ class QIODevice;
      * Try to restore all saved plugin archive state.
      *
      */
-    PluginStorage(PluginFrameworkContext* framework);
+    ctkPluginStorage(ctkPluginFrameworkContext* framework);
 
 
     /**
@@ -74,9 +74,9 @@ class QIODevice;
      *
      * @param location Location of the plugin.
      * @param localPath Path to the plugin on the local file system
-     * @return Plugin archive object.
+     * @return ctkPlugin archive object.
      */
-    PluginArchive* insertPlugin(const QUrl& location, const QString& localPath);
+    ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath);
 
 
     /**
@@ -85,31 +85,31 @@ class QIODevice;
      * to an existing plugin archive. To commit this data a call to
      * <code>replacePluginArchive</code> is needed.
      *
-     * @param old PluginArchive to be replaced.
+     * @param old ctkPluginArchive to be replaced.
      * @param localPath Path to a plugin on the local file system.
-     * @return Plugin archive object.
+     * @return ctkPlugin archive object.
      */
-    PluginArchive* updatePluginArchive(PluginArchive* old, const QString& localPath);
+    ctkPluginArchive* updatePluginArchive(ctkPluginArchive* old, const QString& localPath);
 
 
     /**
      * Replace old plugin archive with a new updated plugin archive, that
      * was created with updatePluginArchive.
      *
-     * @param oldPA PluginArchive to be replaced.
-     * @param newPA new PluginArchive.
+     * @param oldPA ctkPluginArchive to be replaced.
+     * @param newPA new ctkPluginArchive.
      */
-    void replacePluginArchive(PluginArchive* oldPA, PluginArchive* newPA);
+    void replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA);
 
     /**
      * Remove plugin archive from archives list and persistent storage.
      * The plugin archive is deleted and must not be used afterwards, if
      * this method returns \a true.
      *
-     * @param pa Plugin archive to remove.
+     * @param pa ctkPlugin archive to remove.
      * @return true if element was removed.
      */
-    bool removeArchive(PluginArchive* pa);
+    bool removeArchive(ctkPluginArchive* pa);
 
 
     /**
@@ -117,7 +117,7 @@ class QIODevice;
      *
      * @return QList of all PluginArchives.
      */
-    QList<PluginArchive*> getAllPluginArchives() const;
+    QList<ctkPluginArchive*> getAllPluginArchives() const;
 
 
     /**
@@ -137,7 +137,7 @@ class QIODevice;
      */
     void close();
 
-    ~PluginStorage();
+    ~ctkPluginStorage();
 
 };
 

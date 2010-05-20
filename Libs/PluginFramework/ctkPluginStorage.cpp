@@ -32,7 +32,7 @@
 #include "ctkPluginDatabaseException.h"
 
 
-  PluginStorage::PluginStorage(PluginFrameworkContext* framework)
+  ctkPluginStorage::ctkPluginStorage(ctkPluginFrameworkContext* framework)
     : framework(framework), pluginDatabase(this)
   {
 //    // See if we have a storage database
@@ -45,20 +45,20 @@
     archives << pluginDatabase.getPluginArchives();
   }
 
-  PluginArchive* PluginStorage::insertPlugin(const QUrl& location, const QString& localPath)
+  ctkPluginArchive* ctkPluginStorage::insertPlugin(const QUrl& location, const QString& localPath)
   {
-    PluginArchive* pa = pluginDatabase.insertPlugin(location, localPath);
+    ctkPluginArchive* pa = pluginDatabase.insertPlugin(location, localPath);
     archives.push_back(pa);
     return pa;
   }
 
-  PluginArchive* PluginStorage::updatePluginArchive(PluginArchive* old, const QString& localPath)
+  ctkPluginArchive* ctkPluginStorage::updatePluginArchive(ctkPluginArchive* old, const QString& localPath)
   {
     //return new BundleArchiveImpl((BundleArchiveImpl)old, is);
     return 0;
   }
 
-  void PluginStorage::replacePluginArchive(PluginArchive* oldPA, PluginArchive* newPA)
+  void ctkPluginStorage::replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA)
   {
 //    int pos;
 //    long id = oldBA.getBundleId();
@@ -71,18 +71,18 @@
 //    }
   }
 
-  QList<PluginArchive*> PluginStorage::getAllPluginArchives() const
+  QList<ctkPluginArchive*> ctkPluginStorage::getAllPluginArchives() const
   {
     return archives;
   }
 
-  QList<QString> PluginStorage::getStartOnLaunchPlugins()
+  QList<QString> ctkPluginStorage::getStartOnLaunchPlugins()
   {
     QList<QString> res;
-    QListIterator<PluginArchive*> i(archives);
+    QListIterator<ctkPluginArchive*> i(archives);
     while(i.hasNext())
     {
-      PluginArchive* pa = i.next();
+      ctkPluginArchive* pa = i.next();
       if (pa->getAutostartSetting() != -1)
       {
         res.push_back(pa->getPluginLocation().toString());
@@ -91,18 +91,18 @@
     return res;
   }
 
-  PluginStorage::~PluginStorage()
+  ctkPluginStorage::~ctkPluginStorage()
   {
     close();
   }
 
-  void PluginStorage::close()
+  void ctkPluginStorage::close()
   {
     pluginDatabase.close();
     qDeleteAll(archives);
   }
 
-  bool PluginStorage::removeArchive(PluginArchive* pa)
+  bool ctkPluginStorage::removeArchive(ctkPluginArchive* pa)
   {
     QMutexLocker lock(&archivesLock);
 
@@ -113,7 +113,7 @@
       removed = archives.removeAll(pa);
       delete pa;
     }
-    catch (const PluginDatabaseException& exc)
+    catch (const ctkPluginDatabaseException& exc)
     {
       qDebug() << "Removing plugin archive failed:" << exc;
       removed = false;
@@ -122,26 +122,26 @@
     return removed;
   }
 
-  QByteArray PluginStorage::getPluginResource(long pluginId, const QString& res) const
+  QByteArray ctkPluginStorage::getPluginResource(long pluginId, const QString& res) const
   {
     try
     {
       return pluginDatabase.getPluginResource(pluginId, res);
     }
-    catch (const PluginDatabaseException& exc)
+    catch (const ctkPluginDatabaseException& exc)
     {
       qDebug() << QString("Getting plugin resource %1 failed:").arg(res) << exc;
       return QByteArray();
     }
   }
 
-  QStringList PluginStorage::findResourcesPath(long pluginId, const QString& path) const
+  QStringList ctkPluginStorage::findResourcesPath(long pluginId, const QString& path) const
   {
     try
     {
       return pluginDatabase.findResourcesPath(pluginId, path);
     }
-    catch (const PluginDatabaseException& exc)
+    catch (const ctkPluginDatabaseException& exc)
     {
       qDebug() << QString("Getting plugin resource paths for %1 failed:").arg(path) << exc;
       return QStringList();

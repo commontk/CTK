@@ -26,12 +26,12 @@
 #include "ctkPluginConstants.h"
 
 
-  QMutex PluginFrameworkContext::globalFwLock;
-  int PluginFrameworkContext::globalId = 1;
+  QMutex ctkPluginFrameworkContext::globalFwLock;
+  int ctkPluginFrameworkContext::globalId = 1;
 
 
-  PluginFrameworkContext::PluginFrameworkContext(
-      const PluginFrameworkFactory::Properties& initProps)
+  ctkPluginFrameworkContext::ctkPluginFrameworkContext(
+      const ctkPluginFrameworkFactory::Properties& initProps)
         : plugins(0), services(this), systemPlugin(this),
         storage(this), props(initProps)
   {
@@ -44,7 +44,7 @@
     log() << "created";
   }
 
-  void PluginFrameworkContext::init()
+  void ctkPluginFrameworkContext::init()
   {
     log() << "initializing";
 
@@ -57,10 +57,10 @@
 //    }
 //    props.save();
 
-    PluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
+    ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
     systemPluginPrivate->initSystemPlugin();
 
-    plugins = new Plugins(this);
+    plugins = new ctkPlugins(this);
 
     plugins->load();
 
@@ -68,21 +68,21 @@
 
     log() << "Installed plugins:";
     // Use the ordering in the plugin storage to get a sorted list of plugins.
-    QList<PluginArchive*> allPAs = storage.getAllPluginArchives();
+    QList<ctkPluginArchive*> allPAs = storage.getAllPluginArchives();
     for (int i = 0; i < allPAs.size(); ++i)
     {
-      PluginArchive* pa = allPAs[i];
-      Plugin* p = plugins->getPlugin(pa->getPluginLocation().toString());
+      ctkPluginArchive* pa = allPAs[i];
+      ctkPlugin* p = plugins->getPlugin(pa->getPluginLocation().toString());
       log() << " #" << p->getPluginId() << " " << p->getSymbolicName() << ":"
           << p->getVersion() << " location:" << p->getLocation();
     }
   }
 
-  void PluginFrameworkContext::uninit()
+  void ctkPluginFrameworkContext::uninit()
   {
     log() << "uninit";
 
-    //PluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
+    //ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
     //systemPluginPrivate->uninitSystemBundle();
 
     plugins->clear();
@@ -93,28 +93,28 @@
 
   }
 
-  int PluginFrameworkContext::getId() const
+  int ctkPluginFrameworkContext::getId() const
   {
     return id;
   }
 
-  void PluginFrameworkContext::checkOurPlugin(Plugin* plugin) const
+  void ctkPluginFrameworkContext::checkOurPlugin(ctkPlugin* plugin) const
   {
-    PluginPrivate* pp = plugin->d_func();
+    ctkPluginPrivate* pp = plugin->d_func();
     if (this != pp->fwCtx)
     {
-      throw std::invalid_argument("Plugin does not belong to this framework: " + plugin->getSymbolicName().toStdString());
+      throw std::invalid_argument("ctkPlugin does not belong to this framework: " + plugin->getSymbolicName().toStdString());
     }
   }
 
-  QDebug PluginFrameworkContext::log() const
+  QDebug ctkPluginFrameworkContext::log() const
   {
     QDebug dbg(qDebug());
     dbg << "Framework instance " << getId() << ": ";
     return dbg;
   }
 
-  void PluginFrameworkContext::resolvePlugin(PluginPrivate* plugin)
+  void ctkPluginFrameworkContext::resolvePlugin(ctkPluginPrivate* plugin)
   {
     qDebug() << "resolve:" << plugin->symbolicName << "[" << plugin->id << "]";
 
@@ -122,7 +122,7 @@
     // resolved plugins. Check that it is true!
     if (tempResolved.size() > 0 && !tempResolved.contains(plugin))
     {
-      PluginException pe("resolve: InternalError1!", PluginException::RESOLVE_ERROR);
+      ctkPluginException pe("resolve: InternalError1!", ctkPluginException::RESOLVE_ERROR);
       listeners.frameworkError(plugin->q_func(), pe);
       throw pe;
     }
@@ -137,31 +137,31 @@
     qDebug() << "resolve: Done for" << plugin->symbolicName << "[" << plugin->id << "]";
   }
 
-  void PluginFrameworkContext::checkRequirePlugin(PluginPrivate *plugin)
+  void ctkPluginFrameworkContext::checkRequirePlugin(ctkPluginPrivate *plugin)
   {
     if (!plugin->require.isEmpty())
     {
       qDebug() << "checkRequirePlugin: check requiring plugin" << plugin->id;
 
-      QListIterator<RequirePlugin*> i(plugin->require);
+      QListIterator<ctkRequirePlugin*> i(plugin->require);
       while (i.hasNext())
       {
-        RequirePlugin* pr = i.next();
-        QList<Plugin*> pl = plugins->getPlugins(pr->name, pr->pluginRange);
-        PluginPrivate* ok = 0;
-        for (QListIterator<Plugin*> pci(pl); pci.hasNext() && ok == 0; )
+        ctkRequirePlugin* pr = i.next();
+        QList<ctkPlugin*> pl = plugins->getPlugins(pr->name, pr->pluginRange);
+        ctkPluginPrivate* ok = 0;
+        for (QListIterator<ctkPlugin*> pci(pl); pci.hasNext() && ok == 0; )
         {
-          PluginPrivate* p2 = pci.next()->d_func();
+          ctkPluginPrivate* p2 = pci.next()->d_func();
           if (tempResolved.contains(p2))
           {
             ok = p2;
           }
-          else if (PluginPrivate::RESOLVED_FLAGS & p2->state)
+          else if (ctkPluginPrivate::RESOLVED_FLAGS & p2->state)
           {
             ok = p2;
           }
-          else if (p2->state == Plugin::INSTALLED) {
-            QSet<PluginPrivate*> oldTempResolved = tempResolved;
+          else if (p2->state == ctkPlugin::INSTALLED) {
+            QSet<ctkPluginPrivate*> oldTempResolved = tempResolved;
             tempResolved.insert(p2);
             checkRequirePlugin(p2);
             tempResolved = oldTempResolved;
@@ -173,7 +173,7 @@
         {
           tempResolved.clear();
           qDebug() << "checkRequirePlugin: failed to satisfy:" << pr->name;
-          throw PluginException(QString("Failed to resolve required plugin: %1").arg(pr->name));
+          throw ctkPluginException(QString("Failed to resolve required plugin: %1").arg(pr->name));
         }
       }
     }

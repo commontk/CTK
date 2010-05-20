@@ -29,23 +29,23 @@
 #include "CTKPluginFrameworkExport.h"
 
 
-  class PluginFramework;
-  class PluginFrameworkContext;
+  class ctkPluginFramework;
+  class ctkPluginFrameworkContext;
 
   /**
-   * A factory for creating PluginFramework instances.
+   * A factory for creating ctkPluginFramework instances.
    */
-  class CTK_PLUGINFW_EXPORT PluginFrameworkFactory {
+  class CTK_PLUGINFW_EXPORT ctkPluginFrameworkFactory {
 
   public:
 
     typedef QHash<QString, QVariant> Properties;
 
     /**
-     * Create a new <code>%PluginFrameworkFactory</code> instance.
+     * Create a new <code>%ctkPluginFrameworkFactory</code> instance.
      *
      * <p>
-     * The Properties map is used to configure the PluginFramework. The
+     * The Properties map is used to configure the ctkPluginFramework. The
      * plugin framework instance created with #getFramework() must interpret
      * the following properties:
      *
@@ -54,25 +54,25 @@
      * </ul>
      *
      * @param initProps The plugin framework configuration properties.
-     *        The PluginFramework instance created with #getFramework()
+     *        The ctkPluginFramework instance created with #getFramework()
      *        must use some reasonable default configuration if certain
      *        properties are not provided.
      */
-    PluginFrameworkFactory(const Properties& initProps = Properties());
+    ctkPluginFrameworkFactory(const Properties& initProps = Properties());
 
-    ~PluginFrameworkFactory();
+    ~ctkPluginFrameworkFactory();
 
     /**
-     * Create a new PluginFramework instance.
+     * Create a new ctkPluginFramework instance.
      *
-     * @return A new, configured PluginFramework instance. The plugin
-     *         framework instance must be in the Plugin::INSTALLED state.
+     * @return A new, configured ctkPluginFramework instance. The plugin
+     *         framework instance must be in the ctkPlugin::INSTALLED state.
      */
-    PluginFramework* getFramework();
+    ctkPluginFramework* getFramework();
 
   private:
 
-    PluginFrameworkContext * const fwCtx;
+    ctkPluginFrameworkContext * const fwCtx;
 
   };
 

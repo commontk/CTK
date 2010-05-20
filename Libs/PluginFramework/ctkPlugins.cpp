@@ -33,35 +33,35 @@
 #include <QUrl>
 
 
-  Plugins::Plugins(PluginFrameworkContext* fw) {
+  ctkPlugins::ctkPlugins(ctkPluginFrameworkContext* fw) {
     fwCtx = fw;
     plugins.insert(fw->systemPlugin.getLocation(), &fw->systemPlugin);
   }
 
-  void Plugins::clear()
+  void ctkPlugins::clear()
   {
     QWriteLocker lock(&pluginsLock);
     plugins.clear();
     fwCtx = 0;
   }
 
-  Plugin* Plugins::install(const QUrl& location, QIODevice* in)
+  ctkPlugin* ctkPlugins::install(const QUrl& location, QIODevice* in)
   {
     if (!fwCtx)
-    { // This Plugins instance has been closed!
-      throw std::logic_error("Plugins::install(location, inputStream) called on closed plugins object.");
+    { // This ctkPlugins instance has been closed!
+      throw std::logic_error("ctkPlugins::install(location, inputStream) called on closed plugins object.");
     }
 
     {
       QWriteLocker lock(&pluginsLock);
 
-      QHash<QString, Plugin*>::const_iterator it = plugins.find(location.toString());
+      QHash<QString, ctkPlugin*>::const_iterator it = plugins.find(location.toString());
       if (it != plugins.end()) {
         return it.value();
       }
 
       // install new plugin
-      PluginArchive* pa = 0;
+      ctkPluginArchive* pa = 0;
       QString localPluginPath;
       try {
         if (!in) {
@@ -107,7 +107,7 @@
 
         pa = fwCtx->storage.insertPlugin(location, localPluginPath);
 
-        Plugin* res = new Plugin(fwCtx, pa);
+        ctkPlugin* res = new ctkPlugin(fwCtx, pa);
         plugins.insert(location.toString(), res);
 
         //TODO send event
@@ -125,34 +125,34 @@
   //      }
   //      else
   //      {
-        throw PluginException(QString("Failed to install plugin: ") + QString(e.what()),
-                                PluginException::UNSPECIFIED, e);
+        throw ctkPluginException(QString("Failed to install plugin: ") + QString(e.what()),
+                                ctkPluginException::UNSPECIFIED, e);
   //      }
       }
     }
 
   }
 
-  void Plugins::remove(const QUrl& location)
+  void ctkPlugins::remove(const QUrl& location)
   {
     QWriteLocker lock(&pluginsLock);
     delete plugins.take(location.toString());
   }
 
-  Plugin* Plugins::getPlugin(int id) const
+  ctkPlugin* ctkPlugins::getPlugin(int id) const
   {
     if (!fwCtx)
     { // This plugins instance has been closed!
-      throw std::logic_error("Plugins::getPlugin(id) called on closed plugins object.");
+      throw std::logic_error("ctkPlugins::getPlugin(id) called on closed plugins object.");
     }
 
     {
       QReadLocker lock(&pluginsLock);
 
-      QHashIterator<QString, Plugin*> it(plugins);
+      QHashIterator<QString, ctkPlugin*> it(plugins);
       while (it.hasNext())
       {
-        Plugin* plugin = it.next().value();
+        ctkPlugin* plugin = it.next().value();
         if (plugin->getPluginId() == id) {
           return plugin;
         }
@@ -161,32 +161,32 @@
     return 0;
   }
 
-  Plugin* Plugins::getPlugin(const QString& location) const {
+  ctkPlugin* ctkPlugins::getPlugin(const QString& location) const {
     if (!fwCtx)
     { // This plugins instance has been closed!
-      throw std::logic_error("Plugins::getPlugin(location) called on closed plugins object.");
+      throw std::logic_error("ctkPlugins::getPlugin(location) called on closed plugins object.");
     }
 
     QReadLocker lock(&pluginsLock);
-    QHash<QString, Plugin*>::const_iterator it = plugins.find(location);
+    QHash<QString, ctkPlugin*>::const_iterator it = plugins.find(location);
     if (it != plugins.end()) return it.value();
     return 0;
   }
 
-  Plugin* Plugins::getPlugin(const QString& name, const Version& version) const
+  ctkPlugin* ctkPlugins::getPlugin(const QString& name, const ctkVersion& version) const
   {
     if (!fwCtx)
-    { // This Plugins instance has been closed!
-      throw std::logic_error("Plugins::getPlugin(name, version) called on closed plugins object.");
+    { // This ctkPlugins instance has been closed!
+      throw std::logic_error("ctkPlugins::getPlugin(name, version) called on closed plugins object.");
     }
 
     {
       QReadLocker lock(&pluginsLock);
 
-      QHashIterator<QString, Plugin*> it(plugins);
+      QHashIterator<QString, ctkPlugin*> it(plugins);
       while (it.hasNext())
       {
-        Plugin* plugin = it.next().value();
+        ctkPlugin* plugin = it.next().value();
         if ((name == plugin->getSymbolicName()) && (version == plugin->getVersion()))
         {
           return plugin;
@@ -196,11 +196,11 @@
     return 0;
   }
 
-  QList<Plugin*> Plugins::getPlugins() const
+  QList<ctkPlugin*> ctkPlugins::getPlugins() const
   {
     if (!fwCtx)
     { // This plugins instance has been closed!
-      throw std::logic_error("Plugins::getPlugins() called on closed plugins object.");
+      throw std::logic_error("ctkPlugins::getPlugins() called on closed plugins object.");
     }
 
     {
@@ -209,16 +209,16 @@
     }
   }
 
-  QList<Plugin*> Plugins::getPlugins(const QString& name) const
+  QList<ctkPlugin*> ctkPlugins::getPlugins(const QString& name) const
   {
-    QList<Plugin*> res;
+    QList<ctkPlugin*> res;
 
     {
       QReadLocker lock(&pluginsLock);
-      QHashIterator<QString, Plugin*> it(plugins);
+      QHashIterator<QString, ctkPlugin*> it(plugins);
       while (it.hasNext())
       {
-        Plugin* plugin = it.next().value();
+        ctkPlugin* plugin = it.next().value();
         if (name == plugin->getSymbolicName())
         {
           res.push_back(plugin);
@@ -229,18 +229,18 @@
     return res;
   }
 
-  QList<Plugin*> Plugins::getPlugins(const QString& name, const VersionRange& range) const {
+  QList<ctkPlugin*> ctkPlugins::getPlugins(const QString& name, const ctkVersionRange& range) const {
     if (!fwCtx)
     { // This plugins instance has been closed!
-      throw std::logic_error("Plugins::getPlugins(name, versionRange) called on closed plugins object.");
+      throw std::logic_error("ctkPlugins::getPlugins(name, versionRange) called on closed plugins object.");
     }
 
-    QList<Plugin*> pluginsWithName = getPlugins(name);
-    QList<Plugin*> res;
+    QList<ctkPlugin*> pluginsWithName = getPlugins(name);
+    QList<ctkPlugin*> res;
 
-    QListIterator<Plugin*> it(pluginsWithName);
+    QListIterator<ctkPlugin*> it(pluginsWithName);
     while (it.hasNext()) {
-      Plugin* plugin = it.next();
+      ctkPlugin* plugin = it.next();
       if (range.withinRange(plugin->getVersion()))
       {
         int j = res.size();
@@ -258,21 +258,21 @@
     return res;
   }
 
-  QList<Plugin*> Plugins::getActivePlugins() const {
+  QList<ctkPlugin*> ctkPlugins::getActivePlugins() const {
     if (!fwCtx)
     { // This plugins instance has been closed!
-      throw std::logic_error("Plugins::getActivePlugins() called on closed plugins object.");
+      throw std::logic_error("ctkPlugins::getActivePlugins() called on closed plugins object.");
     }
 
-    QList<Plugin*> slist;
+    QList<ctkPlugin*> slist;
     {
       QReadLocker lock(&pluginsLock);
-      QHashIterator<QString, Plugin*> it(plugins);
+      QHashIterator<QString, ctkPlugin*> it(plugins);
       while (it.hasNext())
       {
-        Plugin* plugin = it.next().value();
-        Plugin::State s = plugin->getState();
-        if (s == Plugin::ACTIVE || s == Plugin::STARTING) {
+        ctkPlugin* plugin = it.next().value();
+        ctkPlugin::State s = plugin->getState();
+        if (s == ctkPlugin::ACTIVE || s == ctkPlugin::STARTING) {
           slist.push_back(plugin);
         }
       }
@@ -280,18 +280,18 @@
     return slist;
   }
 
-  void Plugins::load() {
-    QList<PluginArchive*> pas = fwCtx->storage.getAllPluginArchives();
-    QListIterator<PluginArchive*> it(pas);
+  void ctkPlugins::load() {
+    QList<ctkPluginArchive*> pas = fwCtx->storage.getAllPluginArchives();
+    QListIterator<ctkPluginArchive*> it(pas);
 
     {
       QWriteLocker lock(&pluginsLock);
       while (it.hasNext())
       {
-        PluginArchive* pa = it.next();
+        ctkPluginArchive* pa = it.next();
         try
         {
-          Plugin* plugin = new Plugin(fwCtx, pa);
+          ctkPlugin* plugin = new ctkPlugin(fwCtx, pa);
           plugins.insert(pa->getPluginLocation().toString(), plugin);
         }
         catch (const std::exception& e)
@@ -309,29 +309,29 @@
     }
   }
 
-  void Plugins::startPlugins(const QList<Plugin*>& slist) const {
+  void ctkPlugins::startPlugins(const QList<ctkPlugin*>& slist) const {
     // Sort in start order
     // Resolve first to avoid dead lock
-    QListIterator<Plugin*> it(slist);
+    QListIterator<ctkPlugin*> it(slist);
     while (it.hasNext())
     {
-      Plugin* plugin = it.next();
-      PluginPrivate* pp = plugin->d_func();
+      ctkPlugin* plugin = it.next();
+      ctkPluginPrivate* pp = plugin->d_func();
       pp->getUpdatedState();
     }
 
     it.toFront();
     while (it.hasNext())
     {
-      Plugin* plugin = it.next();
-      PluginPrivate* pp = plugin->d_func();
-      if (pp->getUpdatedState() == Plugin::RESOLVED)
+      ctkPlugin* plugin = it.next();
+      ctkPluginPrivate* pp = plugin->d_func();
+      if (pp->getUpdatedState() == ctkPlugin::RESOLVED)
       {
         try
         {
           plugin->start(0);
         }
-        catch (const PluginException& pe)
+        catch (const ctkPluginException& pe)
         {
           pp->fwCtx->listeners.frameworkError(plugin, pe);
         }

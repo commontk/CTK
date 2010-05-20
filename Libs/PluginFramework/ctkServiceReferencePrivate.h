@@ -26,14 +26,14 @@
 class QObject;
 
 
-  class ServiceRegistrationPrivate;
-  class Plugin;
+  class ctkServiceRegistrationPrivate;
+  class ctkPlugin;
 
-  class ServiceReferencePrivate
+  class ctkServiceReferencePrivate
   {
   public:
 
-    ServiceReferencePrivate(ServiceRegistrationPrivate* reg);
+    ctkServiceReferencePrivate(ctkServiceRegistrationPrivate* reg);
 
     /**
       * Get the service object.
@@ -41,24 +41,24 @@ class QObject;
       * @param plugin requester of service.
       * @return Service requested or null in case of failure.
       */
-    QObject* getService(Plugin* plugin);
+    QObject* getService(ctkPlugin* plugin);
 
     /**
      * Unget the service object.
      *
-     * @param plugin Plugin who wants remove service.
+     * @param plugin ctkPlugin who wants remove service.
      * @param checkRefCounter If true decrement refence counter and remove service
      *                        if we reach zero. If false remove service without
      *                        checking refence counter.
      * @return True if service was remove or false if only refence counter was
      *         decremented.
      */
-    bool ungetService(Plugin* plugin, bool checkRefCounter);
+    bool ungetService(ctkPlugin* plugin, bool checkRefCounter);
 
     /**
      * Link to registration object for this reference.
      */
-    ServiceRegistrationPrivate* registration;
+    ctkServiceRegistrationPrivate* registration;
   };
 
 #endif // CTKSERVICEREFERENCEPRIVATE_H

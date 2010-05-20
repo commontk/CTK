@@ -24,27 +24,27 @@
 #include <QDebug>
 
 
-  ServiceException::ServiceException(const QString& msg, const Type& type, const std::exception& cause)
+  ctkServiceException::ctkServiceException(const QString& msg, const Type& type, const std::exception& cause)
     : std::runtime_error(msg.toStdString()),
       type(type), cause(cause)
   {
 
   }
 
-  ServiceException::ServiceException(const QString& msg, const std::exception& cause)
+  ctkServiceException::ctkServiceException(const QString& msg, const std::exception& cause)
     : std::runtime_error(msg.toStdString()),
       type(UNSPECIFIED), cause(cause)
   {
 
   }
 
-  ServiceException::ServiceException(const ServiceException& o)
+  ctkServiceException::ctkServiceException(const ctkServiceException& o)
     : std::runtime_error(o.what()), type(o.type), cause(o.cause)
   {
 
   }
 
-  ServiceException& ServiceException::operator=(const ServiceException& o)
+  ctkServiceException& ctkServiceException::operator=(const ctkServiceException& o)
   {
     std::runtime_error::operator=(o);
     type = o.type;
@@ -52,28 +52,28 @@
     return *this;
   }
 
-  std::exception ServiceException::getCause() const
+  std::exception ctkServiceException::getCause() const
   {
     return cause;
   }
 
-  void ServiceException::setCause(const std::exception& cause) throw(std::logic_error)
+  void ctkServiceException::setCause(const std::exception& cause) throw(std::logic_error)
   {
-    if (!cause.what()) throw std::logic_error("The cause for this ServiceException instance is already set");
+    if (!cause.what()) throw std::logic_error("The cause for this ctkServiceException instance is already set");
 
     this->cause = cause;
   }
 
-  ServiceException::Type ServiceException::getType() const
+  ctkServiceException::Type ctkServiceException::getType() const
   {
     return type;
   }
 
 }
 
-QDebug operator<<(QDebug dbg, const ctk::ServiceException& exc)
+QDebug operator<<(QDebug dbg, const ctk::ctkServiceException& exc)
 {
-  dbg << "ServiceException:" << exc.what();
+  dbg << "ctkServiceException:" << exc.what();
 
   const char* causeMsg = exc.getCause().what();
   if (causeMsg) dbg << "  Caused by:" << causeMsg;

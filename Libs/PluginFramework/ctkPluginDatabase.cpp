@@ -39,7 +39,7 @@
 #define PLUGINDATABASE "pluginfw.db"
 
 //database table names
-#define PLUGINS_TABLE "Plugins"
+#define PLUGINS_TABLE "ctkPlugins"
 #define PLUGIN_RESOURCES_TABLE "PluginResources"
 
 //separator
@@ -61,17 +61,17 @@
 
 
 
-PluginDatabase::PluginDatabase(PluginStorage* storage)
+ctkPluginDatabase::ctkPluginDatabase(ctkPluginStorage* storage)
 :m_isDatabaseOpen(false), m_inTransaction(false), m_PluginStorage(storage)
 {
 }
 
-PluginDatabase::~PluginDatabase()
+ctkPluginDatabase::~ctkPluginDatabase()
 {
     close();
 }
 
-void PluginDatabase::open()
+void ctkPluginDatabase::open()
 {
   if (m_isDatabaseOpen)
     return;
@@ -90,7 +90,7 @@ void PluginDatabase::open()
     {
       close();
       QString errorText("Could not create database directory: %1");
-      throw PluginDatabaseException(errorText.arg(dbFileInfo.path()), PluginDatabaseException::DB_CREATE_DIR_ERROR);
+      throw ctkPluginDatabaseException(errorText.arg(dbFileInfo.path()), ctkPluginDatabaseException::DB_CREATE_DIR_ERROR);
     }
   }
 
@@ -109,8 +109,8 @@ void PluginDatabase::open()
   if (!database.isValid())
   {
     close();
-    throw PluginDatabaseException(QString("Invalid database connection: %1").arg(m_connectionName),
-                                  PluginDatabaseException::DB_CONNECTION_INVALID);
+    throw ctkPluginDatabaseException(QString("Invalid database connection: %1").arg(m_connectionName),
+                                  ctkPluginDatabaseException::DB_CONNECTION_INVALID);
   }
 
   //Create or open database
@@ -119,8 +119,8 @@ void PluginDatabase::open()
     if (!database.open())
     {
       close();
-      throw PluginDatabaseException(QString("Could not open database. ") + database.lastError().text(),
-                                    PluginDatabaseException::DB_SQL_ERROR);
+      throw ctkPluginDatabaseException(QString("Could not open database. ") + database.lastError().text(),
+                                    ctkPluginDatabaseException::DB_SQL_ERROR);
     }
   }
   m_isDatabaseOpen = true;
@@ -130,15 +130,15 @@ void PluginDatabase::open()
   if (!query.exec("PRAGMA foreign_keys"))
   {
     close();
-    throw PluginDatabaseException(QString("Check for foreign key support failed."),
-                                  PluginDatabaseException::DB_SQL_ERROR);
+    throw ctkPluginDatabaseException(QString("Check for foreign key support failed."),
+                                  ctkPluginDatabaseException::DB_SQL_ERROR);
   }
 
   if (!query.next())
   {
     close();
-    throw PluginDatabaseException(QString("SQLite db does not support foreign keys. It is either older than 3.6.19 or was compiled with SQLITE_OMIT_FOREIGN_KEY or SQLITE_OMIT_TRIGGER"),
-                                  PluginDatabaseException::DB_SQL_ERROR);
+    throw ctkPluginDatabaseException(QString("SQLite db does not support foreign keys. It is either older than 3.6.19 or was compiled with SQLITE_OMIT_FOREIGN_KEY or SQLITE_OMIT_TRIGGER"),
+                                  ctkPluginDatabaseException::DB_SQL_ERROR);
   }
   query.finish();
   query.clear();
@@ -147,8 +147,8 @@ void PluginDatabase::open()
   if (!query.exec("PRAGMA foreign_keys = ON"))
   {
     close();
-    throw PluginDatabaseException(QString("Enabling foreign key support failed."),
-                                  PluginDatabaseException::DB_SQL_ERROR);
+    throw ctkPluginDatabaseException(QString("Enabling foreign key support failed."),
+                                  ctkPluginDatabaseException::DB_SQL_ERROR);
   }
   query.finish();
 
@@ -174,7 +174,7 @@ void PluginDatabase::open()
   updateDB();
 }
 
-void PluginDatabase::updateDB()
+void ctkPluginDatabase::updateDB()
 {
   checkConnection();
 
@@ -183,9 +183,9 @@ void PluginDatabase::updateDB()
 
   beginTransaction(&query, Write);
 
-  QString statement = "SELECT ID, Location, LocalPath, Timestamp, SymbolicName, Version FROM Plugins WHERE State != ?";
+  QString statement = "SELECT ID, Location, LocalPath, Timestamp, SymbolicName, ctkVersion FROM ctkPlugins WHERE State != ?";
   QList<QVariant> bindValues;
-  bindValues.append(Plugin::UNINSTALLED);
+  bindValues.append(ctkPlugin::UNINSTALLED);
 
   QList<qlonglong> outdatedIds;
   QList<QPair<QString,QString> > outdatedPlugins;
@@ -216,7 +216,7 @@ void PluginDatabase::updateDB()
 
   try
   {
-    statement = "DELETE FROM Plugins WHERE ID=?";
+    statement = "DELETE FROM ctkPlugins WHERE ID=?";
     QListIterator<qlonglong> idIter(outdatedIds);
     while (idIter.hasNext())
     {
@@ -243,7 +243,7 @@ void PluginDatabase::updateDB()
       if (!(error == QtMobility::QServiceManager::NoError ||
             error == QtMobility::QServiceManager::ComponentNotFound))
       {
-        throw ServiceException(QString("Removing service named ") + serviceName +
+        throw ctkServiceException(QString("Removing service named ") + serviceName +
                                " failed: " + QString::number(serviceManager.error()));
       }
     }
@@ -265,7 +265,7 @@ void PluginDatabase::updateDB()
 }
 
 
-PluginArchive* PluginDatabase::insertPlugin(const QUrl& location, const QString& localPath, bool createArchive)
+ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QString& localPath, bool createArchive)
 {
   checkConnection();
 
@@ -287,14 +287,14 @@ PluginArchive* PluginDatabase::insertPlugin(const QUrl& location, const QString&
 
   beginTransaction(&query, Write);
 
-  QString statement = "INSERT INTO Plugins(Location,LocalPath,SymbolicName,Version,State,Timestamp) VALUES(?,?,?,?,?,?)";
+  QString statement = "INSERT INTO ctkPlugins(Location,LocalPath,SymbolicName,ctkVersion,State,Timestamp) VALUES(?,?,?,?,?,?)";
 
   QList<QVariant> bindValues;
   bindValues.append(location.toString());
   bindValues.append(localPath);
   bindValues.append(QString("na"));
   bindValues.append(QString("na"));
-  bindValues.append(Plugin::INSTALLED);
+  bindValues.append(ctkPlugin::INSTALLED);
   bindValues.append(lastModified);
 
   qlonglong pluginId = -1;
@@ -319,7 +319,7 @@ PluginArchive* PluginDatabase::insertPlugin(const QUrl& location, const QString&
   if (!pluginLoader.load())
   {
     rollbackTransaction(&query);
-    throw PluginException(QString("The plugin could not be loaded: %1").arg(localPath));
+    throw ctkPluginException(QString("The plugin could not be loaded: %1").arg(localPath));
   }
 
   QDirIterator dirIter(resourcePrefix, QDirIterator::Subdirectories);
@@ -354,10 +354,10 @@ PluginArchive* PluginDatabase::insertPlugin(const QUrl& location, const QString&
 
   try
   {
-    PluginArchive* archive = new PluginArchive(m_PluginStorage, location, localPath,
+    ctkPluginArchive* archive = new ctkPluginArchive(m_PluginStorage, location, localPath,
                                                pluginId);;
 
-    statement = "UPDATE Plugins SET SymbolicName=?,Version=? WHERE ID=?";
+    statement = "UPDATE ctkPlugins SET SymbolicName=?,ctkVersion=? WHERE ID=?";
     QString versionString = archive->getAttribute(PluginConstants::PLUGIN_VERSION);
     bindValues.clear();
     bindValues.append(archive->getAttribute(PluginConstants::PLUGIN_SYMBOLICNAME));
@@ -384,7 +384,7 @@ PluginArchive* PluginDatabase::insertPlugin(const QUrl& location, const QString&
 
 }
 
-QStringList PluginDatabase::findResourcesPath(long pluginId, const QString& path) const
+QStringList ctkPluginDatabase::findResourcesPath(long pluginId, const QString& path) const
 {
   checkConnection();
 
@@ -421,14 +421,14 @@ QStringList PluginDatabase::findResourcesPath(long pluginId, const QString& path
   return paths;
 }
 
-void PluginDatabase::removeArchive(const PluginArchive *pa)
+void ctkPluginDatabase::removeArchive(const ctkPluginArchive *pa)
 {
   checkConnection();
 
   QSqlDatabase database = QSqlDatabase::database(m_connectionName);
   QSqlQuery query(database);
 
-  QString statement = "DELETE FROM Plugins WHERE ID=?";
+  QString statement = "DELETE FROM ctkPlugins WHERE ID=?";
 
   QList<QVariant> bindValues;
   bindValues.append(pa->getPluginId());
@@ -436,7 +436,7 @@ void PluginDatabase::removeArchive(const PluginArchive *pa)
   executeQuery(&query, statement, bindValues);
 }
 
-void PluginDatabase::executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues) const
+void ctkPluginDatabase::executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues) const
 {
   Q_ASSERT(query != 0);
 
@@ -468,22 +468,22 @@ void PluginDatabase::executeQuery(QSqlQuery *query, const QString &statement, co
         parameters = "None";
       }
 
-      PluginDatabaseException::Type errorType;
+      ctkPluginDatabaseException::Type errorType;
       int result = query->lastError().number();
       if (result == 26 || result == 11) //SQLILTE_NOTADB || SQLITE_CORRUPT
       {
-        qWarning() << "PluginFramework:- Database file is corrupt or invalid:" << getDatabasePath();
-        errorType = PluginDatabaseException::DB_FILE_INVALID;
+        qWarning() << "ctkPluginFramework:- Database file is corrupt or invalid:" << getDatabasePath();
+        errorType = ctkPluginDatabaseException::DB_FILE_INVALID;
       }
       else if (result == 8) //SQLITE_READONLY
-        errorType = PluginDatabaseException::DB_WRITE_ERROR;
+        errorType = ctkPluginDatabaseException::DB_WRITE_ERROR;
       else
-        errorType = PluginDatabaseException::DB_SQL_ERROR;
+        errorType = ctkPluginDatabaseException::DB_SQL_ERROR;
 
       query->finish();
       query->clear();
 
-      throw PluginDatabaseException(errorText.arg(stage == Prepare ? "prepare":"execute")
+      throw ctkPluginDatabaseException(errorText.arg(stage == Prepare ? "prepare":"execute")
                   .arg(statement).arg(query->lastError().text()).arg(parameters), errorType);
     }
 
@@ -496,7 +496,7 @@ void PluginDatabase::executeQuery(QSqlQuery *query, const QString &statement, co
 }
 
 
-void PluginDatabase::close()
+void ctkPluginDatabase::close()
 {
   if (m_isDatabaseOpen)
   {
@@ -512,19 +512,19 @@ void PluginDatabase::close()
     }
     else
     {
-      throw PluginDatabaseException(QString("Problem closing database: Invalid connection %1").arg(m_connectionName));
+      throw ctkPluginDatabaseException(QString("Problem closing database: Invalid connection %1").arg(m_connectionName));
     }
   }
 }
 
 
-void PluginDatabase::setDatabasePath(const QString &databasePath)
+void ctkPluginDatabase::setDatabasePath(const QString &databasePath)
 {
     m_databasePath = QDir::toNativeSeparators(databasePath);
 }
 
 
-QString PluginDatabase::getDatabasePath() const
+QString ctkPluginDatabase::getDatabasePath() const
 {
     QString path;
     if(m_databasePath.isEmpty())
@@ -551,7 +551,7 @@ QString PluginDatabase::getDatabasePath() const
 }
 
 
-QByteArray PluginDatabase::getPluginResource(long pluginId, const QString& res) const
+QByteArray ctkPluginDatabase::getPluginResource(long pluginId, const QString& res) const
 {
   checkConnection();
 
@@ -576,7 +576,7 @@ QByteArray PluginDatabase::getPluginResource(long pluginId, const QString& res) 
 }
 
 
-void PluginDatabase::createTables()
+void ctkPluginDatabase::createTables()
 {
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
@@ -584,12 +584,12 @@ void PluginDatabase::createTables()
     //Begin Transaction
     beginTransaction(&query, Write);
 
-    QString statement("CREATE TABLE Plugins("
+    QString statement("CREATE TABLE ctkPlugins("
                       "ID INTEGER PRIMARY KEY,"
                       "Location TEXT NOT NULL UNIQUE,"
                       "LocalPath TEXT NOT NULL UNIQUE,"
                       "SymbolicName TEXT NOT NULL,"
-                      "Version TEXT NOT NULL,"
+                      "ctkVersion TEXT NOT NULL,"
                       "State INTEGER NOT NULL,"
                       "Timestamp TEXT NOT NULL)");
     try
@@ -606,7 +606,7 @@ void PluginDatabase::createTables()
                 "PluginID INTEGER NOT NULL,"
                 "ResourcePath TEXT NOT NULL, "
                 "Resource BLOB NOT NULL,"
-                "FOREIGN KEY(PluginID) REFERENCES Plugins(ID) ON DELETE CASCADE)";
+                "FOREIGN KEY(PluginID) REFERENCES ctkPlugins(ID) ON DELETE CASCADE)";
     try
     {
       executeQuery(&query, statement);
@@ -630,7 +630,7 @@ void PluginDatabase::createTables()
 }
 
 
-bool PluginDatabase::checkTables() const
+bool ctkPluginDatabase::checkTables() const
 {
   bool bTables(false);
   QStringList tables = QSqlDatabase::database(m_connectionName).tables();
@@ -643,7 +643,7 @@ bool PluginDatabase::checkTables() const
 }
 
 
-bool PluginDatabase::dropTables()
+bool ctkPluginDatabase::dropTables()
 {
   //Execute transaction for deleting the database tables
   QSqlDatabase database = QSqlDatabase::database(m_connectionName);
@@ -684,28 +684,28 @@ bool PluginDatabase::dropTables()
 }
 
 
-bool PluginDatabase::isOpen() const
+bool ctkPluginDatabase::isOpen() const
 {
   return m_isDatabaseOpen;
 }
 
 
-void PluginDatabase::checkConnection() const
+void ctkPluginDatabase::checkConnection() const
 {
   if(!m_isDatabaseOpen)
   {
-    throw PluginDatabaseException("Database not open.", PluginDatabaseException::DB_NOT_OPEN_ERROR);
+    throw ctkPluginDatabaseException("Database not open.", ctkPluginDatabaseException::DB_NOT_OPEN_ERROR);
   }
 
   if (!QSqlDatabase::database(m_connectionName).isValid())
   {
-    throw PluginDatabaseException(QString("Database connection invalid: %1").arg(m_connectionName),
-                                  PluginDatabaseException::DB_CONNECTION_INVALID);
+    throw ctkPluginDatabaseException(QString("Database connection invalid: %1").arg(m_connectionName),
+                                  ctkPluginDatabaseException::DB_CONNECTION_INVALID);
   }
 }
 
 
-void PluginDatabase::beginTransaction(QSqlQuery *query, TransactionType type)
+void ctkPluginDatabase::beginTransaction(QSqlQuery *query, TransactionType type)
 {
   bool success;
   if (type == Read)
@@ -717,36 +717,36 @@ void PluginDatabase::beginTransaction(QSqlQuery *query, TransactionType type)
       int result = query->lastError().number();
       if (result == 26 || result == 11) //SQLITE_NOTADB || SQLITE_CORRUPT
       {
-        throw PluginDatabaseException(QString("PluginFramework: Database file is corrupt or invalid: %1").arg(getDatabasePath()),
-                                      PluginDatabaseException::DB_FILE_INVALID);
+        throw ctkPluginDatabaseException(QString("ctkPluginFramework: Database file is corrupt or invalid: %1").arg(getDatabasePath()),
+                                      ctkPluginDatabaseException::DB_FILE_INVALID);
       }
       else if (result == 8) //SQLITE_READONLY
       {
-        throw PluginDatabaseException(QString("PluginFramework: Insufficient permissions to write to database: %1").arg(getDatabasePath()),
-                                      PluginDatabaseException::DB_WRITE_ERROR);
+        throw ctkPluginDatabaseException(QString("ctkPluginFramework: Insufficient permissions to write to database: %1").arg(getDatabasePath()),
+                                      ctkPluginDatabaseException::DB_WRITE_ERROR);
       }
       else
-        throw PluginDatabaseException(QString("PluginFramework: ") + query->lastError().text(),
-                                      PluginDatabaseException::DB_SQL_ERROR);
+        throw ctkPluginDatabaseException(QString("ctkPluginFramework: ") + query->lastError().text(),
+                                      ctkPluginDatabaseException::DB_SQL_ERROR);
   }
 
 }
 
 
-void PluginDatabase::commitTransaction(QSqlQuery *query)
+void ctkPluginDatabase::commitTransaction(QSqlQuery *query)
 {
   Q_ASSERT(query != 0);
   query->finish();
   query->clear();
   if (!query->exec(QLatin1String("COMMIT")))
   {
-    throw PluginDatabaseException(QString("PluginFramework: ") + query->lastError().text(),
-                                  PluginDatabaseException::DB_SQL_ERROR);
+    throw ctkPluginDatabaseException(QString("ctkPluginFramework: ") + query->lastError().text(),
+                                  ctkPluginDatabaseException::DB_SQL_ERROR);
   }
 }
 
 
-void PluginDatabase::rollbackTransaction(QSqlQuery *query)
+void ctkPluginDatabase::rollbackTransaction(QSqlQuery *query)
 {
   Q_ASSERT(query !=0);
   query->finish();
@@ -754,23 +754,23 @@ void PluginDatabase::rollbackTransaction(QSqlQuery *query)
 
   if (!query->exec(QLatin1String("ROLLBACK")))
   {
-    throw PluginDatabaseException(QString("PluginFramework: ") + query->lastError().text(),
-                                  PluginDatabaseException::DB_SQL_ERROR);
+    throw ctkPluginDatabaseException(QString("ctkPluginFramework: ") + query->lastError().text(),
+                                  ctkPluginDatabaseException::DB_SQL_ERROR);
   }
 }
 
-QList<PluginArchive*> PluginDatabase::getPluginArchives() const
+QList<ctkPluginArchive*> ctkPluginDatabase::getPluginArchives() const
 {
   checkConnection();
 
   QSqlQuery query(QSqlDatabase::database(m_connectionName));
-  QString statement("SELECT ID, Location, LocalPath FROM Plugins WHERE State != ?");
+  QString statement("SELECT ID, Location, LocalPath FROM ctkPlugins WHERE State != ?");
   QList<QVariant> bindValues;
-  bindValues.append(Plugin::UNINSTALLED);
+  bindValues.append(ctkPlugin::UNINSTALLED);
 
   executeQuery(&query, statement, bindValues);
 
-  QList<PluginArchive*> archives;
+  QList<ctkPluginArchive*> archives;
   while (query.next())
   {
     const long id = query.value(EBindIndex).toLongLong();
@@ -779,16 +779,16 @@ QList<PluginArchive*> PluginDatabase::getPluginArchives() const
 
     if (id <= 0 || location.isEmpty() || localPath.isEmpty())
     {
-      throw PluginDatabaseException(QString("Database integrity corrupted, row %1 contains empty values.").arg(id),
-                                    PluginDatabaseException::DB_FILE_INVALID);
+      throw ctkPluginDatabaseException(QString("Database integrity corrupted, row %1 contains empty values.").arg(id),
+                                    ctkPluginDatabaseException::DB_FILE_INVALID);
     }
 
     try
     {
-      PluginArchive* pa = new PluginArchive(m_PluginStorage, location, localPath, id);
+      ctkPluginArchive* pa = new ctkPluginArchive(m_PluginStorage, location, localPath, id);
       archives.append(pa);
     }
-    catch (const PluginException& exc)
+    catch (const ctkPluginException& exc)
     {
       qWarning() << exc;
     }

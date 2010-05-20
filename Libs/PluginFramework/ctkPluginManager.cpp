@@ -28,7 +28,7 @@
 #include <QApplication>
 
 
-class PluginManagerPrivate
+class ctkPluginManagerPrivate
 {
 public:
 
@@ -36,10 +36,10 @@ public:
   QServiceManager serviceManager;
 };
 
-PluginManager::PluginManager()
-: d_ptr(new PluginManagerPrivate())
+ctkPluginManager::ctkPluginManager()
+: d_ptr(new ctkPluginManagerPrivate())
 {
-  Q_D(PluginManager);
+  Q_D(ctkPluginManager);
 
   QString libName("CTKCore");
   QLibrary lib(libName);
@@ -67,27 +67,27 @@ PluginManager::PluginManager()
   }
 }
 
-PluginManager::~PluginManager()
+ctkPluginManager::~ctkPluginManager()
 {
-  Q_D(PluginManager);
+  Q_D(ctkPluginManager);
   delete d;
 }
 
-QServiceManager* PluginManager::serviceManager()
+QServiceManager* ctkPluginManager::serviceManager()
 {
-  Q_D(PluginManager);
+  Q_D(ctkPluginManager);
   return &(d->serviceManager);
 }
 
-void PluginManager::addSearchPath(const QString & searchPath)
+void ctkPluginManager::addSearchPath(const QString & searchPath)
 {
-  Q_D(PluginManager);
+  Q_D(ctkPluginManager);
   d->pluginPaths.push_back(searchPath);
 }
 
-void PluginManager::startAllPlugins()
+void ctkPluginManager::startAllPlugins()
 {
-  Q_D(PluginManager);
+  Q_D(ctkPluginManager);
   QDirIterator it(d->pluginPaths.front(), QDir::Files);
   if (it.hasNext())
   {

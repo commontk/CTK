@@ -23,24 +23,24 @@
 
 
 
-  PluginEvent::PluginEvent(Type type, Plugin* plugin)
-    : d(new PluginEventData(type, plugin))
+  ctkPluginEvent::ctkPluginEvent(Type type, ctkPlugin* plugin)
+    : d(new ctkPluginEventData(type, plugin))
   {
 
   }
 
-  PluginEvent::PluginEvent(const PluginEvent& other)
+  ctkPluginEvent::ctkPluginEvent(const ctkPluginEvent& other)
     : d(other.d)
   {
 
   }
 
-  Plugin* PluginEvent::getPlugin() const
+  ctkPlugin* ctkPluginEvent::getPlugin() const
   {
     return d->plugin;
   }
 
-  PluginEvent::Type PluginEvent::getType() const
+  ctkPluginEvent::Type ctkPluginEvent::getType() const
   {
     return d->type;
 

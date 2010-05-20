@@ -26,19 +26,19 @@
 #include "ctkQtServiceRegistration_p.h"
 
 
-  QtServiceRegistrationPrivate::QtServiceRegistrationPrivate(QtServiceRegistration* sr,
-                               PluginPrivate* plugin,
+  ctkQtServiceRegistrationPrivate::ctkQtServiceRegistrationPrivate(ctkQtServiceRegistration* sr,
+                               ctkPluginPrivate* plugin,
                                QtMobility::QServiceInterfaceDescriptor serviceDescriptor,
                                const ServiceProperties& props)
-    : ServiceRegistrationPrivate(sr, plugin, 0, props),
+    : ctkServiceRegistrationPrivate(sr, plugin, 0, props),
       serviceDescriptor(serviceDescriptor)
   {
 
   }
 
-  QObject* QtServiceRegistrationPrivate::getService()
+  QObject* ctkQtServiceRegistrationPrivate::getService()
   {
-    if (this->plugin->state != Plugin::ACTIVE)
+    if (this->plugin->state != ctkPlugin::ACTIVE)
     {
       this->plugin->q_func()->start(0);
     }

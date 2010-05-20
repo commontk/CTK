@@ -32,34 +32,34 @@
    * environment.
    *
    * <p>
-   * When registering a service, a <code>ServiceFactory</code> object can be
+   * When registering a service, a <code>ctkServiceFactory</code> object can be
    * used instead of a service object, so that the plugin developer can gain
    * control of the specific service object granted to a plugin that is using the
    * service.
    *
    * <p>
    * When this happens, the
-   * <code>PluginContext::getService(const ServiceReference&)</code> method calls the
-   * <code>ServiceFactory::getService</code> method to create a service object
+   * <code>ctkPluginContext::getService(const ctkServiceReference&)</code> method calls the
+   * <code>ctkServiceFactory::getService</code> method to create a service object
    * specifically for the requesting plugin. The service object returned by the
-   * <code>ServiceFactory</code> is cached by the Framework until the plugin
+   * <code>ctkServiceFactory</code> is cached by the Framework until the plugin
    * releases its use of the service.
    *
    * <p>
    * When the plugin's use count for the service equals zero (including the plugin
    * stopping or the service being unregistered), the
-   * <code>ServiceFactory::ungetService</code> method is called.
+   * <code>ctkServiceFactory::ungetService</code> method is called.
    *
    * <p>
-   * <code>ServiceFactory</code> objects are only used by the Framework and are
+   * <code>ctkServiceFactory</code> objects are only used by the Framework and are
    * not made available to other plugins in the plugin environment. The Framework
-   * may concurrently call a <code>ServiceFactory</code>.
+   * may concurrently call a <code>ctkServiceFactory</code>.
    *
-   * @see PluginContext#getService
+   * @see ctkPluginContext#getService
    * @threadsafe
    */
 
-  class CTK_PLUGINFW_EXPORT ServiceFactory : public QObject
+  class CTK_PLUGINFW_EXPORT ctkServiceFactory : public QObject
   {
     Q_OBJECT
 
@@ -71,14 +71,14 @@
      * <p>
      * The Framework invokes this method the first time the specified
      * <code>plugin</code> requests a service object using the
-     * <code>PluginContext::getService(const ServiceReference&)</code> method. The
+     * <code>ctkPluginContext::getService(const ctkServiceReference&)</code> method. The
      * service factory can then return a specific service object for each
      * plugin.
      *
      * <p>
      * The Framework caches the value returned (unless it is 0),
      * and will return the same service object on any future call to
-     * <code>PluginContext::getService</code> for the same plugins. This means the
+     * <code>ctkPluginContext::getService</code> for the same plugins. This means the
      * Framework must not allow this method to be concurrently called for the
      * same plugin.
      *
@@ -88,13 +88,13 @@
      * <code>0</code> is returned to the plugin.
      *
      * @param plugin The plugin using the service.
-     * @param registration The <code>ServiceRegistration</code> object for the
+     * @param registration The <code>ctkServiceRegistration</code> object for the
      *        service.
      * @return A service object that <strong>must</strong> be an instance of all
      *         the classes named when the service was registered.
-     * @see PluginContext#getService
+     * @see ctkPluginContext#getService
      */
-    virtual QObject* getService(Plugin* plugin, ServiceRegistration* registration) = 0;
+    virtual QObject* getService(ctkPlugin* plugin, ctkServiceRegistration* registration) = 0;
 
     /**
      * Releases a service object.
@@ -103,14 +103,14 @@
      * The Framework invokes this method when a service has been released by a
      * plugin. The service object may then be destroyed.
      *
-     * @param plugin The Plugin releasing the service.
-     * @param registration The <code>ServiceRegistration</code> object for the
+     * @param plugin The ctkPlugin releasing the service.
+     * @param registration The <code>ctkServiceRegistration</code> object for the
      *        service.
      * @param service The service object returned by a previous call to the
-     *        <code>ServiceFactory::getService</code> method.
-     * @see PluginContext#ungetService
+     *        <code>ctkServiceFactory::getService</code> method.
+     * @see ctkPluginContext#ungetService
      */
-    virtual void ungetService(Plugin* plugin, ServiceRegistration* registration,
+    virtual void ungetService(ctkPlugin* plugin, ctkServiceRegistration* registration,
         QObject* service) = 0;
   };
 

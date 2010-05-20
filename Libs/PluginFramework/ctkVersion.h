@@ -29,30 +29,30 @@
 
 
   /**
-   * Version identifier for plug-ins and packages.
+   * ctkVersion identifier for plug-ins and packages.
    *
    * <p>
-   * Version identifiers have four components.
+   * ctkVersion identifiers have four components.
    * <ol>
    * <li>Major version. A non-negative integer.</li>
    * <li>Minor version. A non-negative integer.</li>
    * <li>Micro version. A non-negative integer.</li>
-   * <li>Qualifier. A text string. See <code>Version(const QString&)</code> for the
+   * <li>Qualifier. A text string. See <code>ctkVersion(const QString&)</code> for the
    * format of the qualifier string.</li>
    * </ol>
    *
    * <p>
-   * <code>Version</code> objects are immutable.
+   * <code>ctkVersion</code> objects are immutable.
    *
    * @Immutable
    */
 
-  class CTK_PLUGINFW_EXPORT Version {
+  class CTK_PLUGINFW_EXPORT ctkVersion {
 
   private:
 
-    friend class PluginPrivate;
-    friend class VersionRange;
+    friend class ctkPluginPrivate;
+    friend class ctkVersionRange;
 
     unsigned int majorVersion;
     unsigned int minorVersion;
@@ -64,22 +64,22 @@
 
 
     /**
-     * Called by the Version constructors to validate the version components.
+     * Called by the ctkVersion constructors to validate the version components.
      *
      * @return <code>true</code> if the validation was successfull, <code>false</code> otherwise.
      */
     void validate();
 
-    Version& operator=(const Version& v);
+    ctkVersion& operator=(const ctkVersion& v);
 
-    Version();
+    ctkVersion();
 
   public:
 
     /**
      * The empty version "0.0.0".
      */
-    static const Version& emptyVersion();
+    static const ctkVersion& emptyVersion();
 
     /**
      * Creates a version identifier from the specified numerical components.
@@ -92,7 +92,7 @@
      * @param microVersion Micro component of the version identifier.
      *
      */
-    Version(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion);
+    ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion);
 
     /**
      * Creates a version identifier from the specified components.
@@ -102,7 +102,7 @@
      * @param microVersion Micro component of the version identifier.
      * @param qualifier Qualifier component of the version identifier.
      */
-    Version(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion, const QString& qualifier);
+    ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion, const QString& qualifier);
 
     /**
      * Created a version identifier from the specified string.
@@ -124,30 +124,30 @@
      *
      * @param version string representation of the version identifier.
      */
-    Version(const QString& version);
+    ctkVersion(const QString& version);
 
     /**
      * Create a version identifier from another.
      *
      * @param version Another version identifier
      */
-    Version(const Version& version);
+    ctkVersion(const ctkVersion& version);
 
 
     /**
      * Parses a version identifier from the specified string.
      *
      * <p>
-     * See <code>Version(const QString&)</code> for the format of the version string.
+     * See <code>ctkVersion(const QString&)</code> for the format of the version string.
      *
      * @param version string representation of the version identifier. Leading
      *        and trailing whitespace will be ignored.
-     * @return A <code>Version</code> object representing the version
+     * @return A <code>ctkVersion</code> object representing the version
      *         identifier. If <code>version</code> is the empty string
      *         then <code>emptyVersion</code> will be
      *         returned.
      */
-    static Version parseVersion(const QString& version);
+    static ctkVersion parseVersion(const QString& version);
 
     /**
      * Returns the majorVersion component of this version identifier.
@@ -190,22 +190,22 @@
     QString toString() const;
 
     /**
-     * Compares this <code>Version</code> object to another object.
+     * Compares this <code>ctkVersion</code> object to another object.
      *
      * <p>
      * A version is considered to be <b>equal to </b> another version if the
      * majorVersion, minorVersion and microVersion components are equal and the qualifier component
      * is equal.
      *
-     * @param object The <code>Version</code> object to be compared.
+     * @param object The <code>ctkVersion</code> object to be compared.
      * @return <code>true</code> if <code>object</code> is a
-     *         <code>Version</code> and is equal to this object;
+     *         <code>ctkVersion</code> and is equal to this object;
      *         <code>false</code> otherwise.
      */
-    bool operator==(const Version& object) const;
+    bool operator==(const ctkVersion& object) const;
 
     /**
-     * Compares this <code>Version</code> object to another object.
+     * Compares this <code>ctkVersion</code> object to another object.
      *
      * <p>
      * A version is considered to be <b>less than </b> another version if its
@@ -222,16 +222,16 @@
      * majorVersion, minorVersion and microVersion components are equal and the qualifier component
      * is equal.
      *
-     * @param object The <code>Version</code> object to be compared.
+     * @param object The <code>ctkVersion</code> object to be compared.
      * @return A negative integer, zero, or a positive integer if this object is
      *         less than, equal to, or greater than the specified
-     *         <code>Version</code> object.
+     *         <code>ctkVersion</code> object.
      */
-    int compare(const Version& object) const;
+    int compare(const ctkVersion& object) const;
 
   };
 
 
-CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::Version& v);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::ctkVersion& v);
 
 #endif // CTKVERSION_H

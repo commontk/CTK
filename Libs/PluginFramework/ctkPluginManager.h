@@ -30,16 +30,16 @@
 
   using namespace QtMobility;
 
-  class PluginManagerPrivate;
+  class ctkPluginManagerPrivate;
 
-  class CTK_PLUGINFW_EXPORT PluginManager
+  class CTK_PLUGINFW_EXPORT ctkPluginManager
   {
-    Q_DECLARE_PRIVATE(PluginManager)
+    Q_DECLARE_PRIVATE(ctkPluginManager)
 
   public:
 
-    PluginManager();
-    virtual ~PluginManager();
+    ctkPluginManager();
+    virtual ~ctkPluginManager();
 
     QServiceManager* serviceManager();
 
@@ -49,7 +49,7 @@
 
   protected:
 
-	  PluginManagerPrivate* const d_ptr;
+	  ctkPluginManagerPrivate* const d_ptr;
 
   };
 

@@ -28,17 +28,17 @@
 #include <stdexcept>
 
 
-  PluginManifest::PluginManifest()
+  ctkPluginManifest::ctkPluginManifest()
   {
 
   }
 
-  PluginManifest::PluginManifest(const QByteArray& in)
+  ctkPluginManifest::ctkPluginManifest(const QByteArray& in)
   {
     read(in);
   }
 
-  void PluginManifest::read(const QByteArray& in)
+  void ctkPluginManifest::read(const QByteArray& in)
   {
     mainAttributes.clear();
     sections.clear();
@@ -113,18 +113,18 @@
 
   }
 
-  PluginManifest::Attributes PluginManifest::getMainAttributes() const
+  ctkPluginManifest::Attributes ctkPluginManifest::getMainAttributes() const
   {
     return mainAttributes;
   }
 
-  QString PluginManifest::getAttribute(const QString& key) const
+  QString ctkPluginManifest::getAttribute(const QString& key) const
   {
     if (!mainAttributes.contains(key)) return QString();
     return mainAttributes[key];
   }
 
-  PluginManifest::Attributes PluginManifest::getAttributes(const QString& section) const
+  ctkPluginManifest::Attributes ctkPluginManifest::getAttributes(const QString& section) const
   {
     if (!sections.contains(section))
     {
@@ -134,7 +134,7 @@
     return sections[section];
   }
 
-  QStringList PluginManifest::getSections() const
+  QStringList ctkPluginManifest::getSections() const
   {
     return sections.keys();
 

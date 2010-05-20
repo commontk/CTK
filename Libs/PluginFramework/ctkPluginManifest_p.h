@@ -27,15 +27,15 @@
 class QIODevice;
 
 
-  class PluginManifest
+  class ctkPluginManifest
   {
 
   public:
 
     typedef QHash<QString,QString> Attributes;
 
-    PluginManifest();
-    PluginManifest(const QByteArray& in);
+    ctkPluginManifest();
+    ctkPluginManifest(const QByteArray& in);
 
     void read(const QByteArray& in);
 

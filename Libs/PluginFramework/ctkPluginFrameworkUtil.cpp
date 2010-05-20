@@ -211,7 +211,7 @@
     }
   };
 
-  QList<QMap<QString, QStringList> > PluginFrameworkUtil::parseEntries(const QString& a, const QString& s,
+  QList<QMap<QString, QStringList> > ctkPluginFrameworkUtil::parseEntries(const QString& a, const QString& s,
                                              bool single, bool unique, bool single_entry)
   {
     QList<QMap<QString, QStringList> > result;

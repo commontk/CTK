@@ -29,43 +29,43 @@
 #include <QMutexLocker>
 
 
-  ServiceReference::ServiceReference(ServiceRegistrationPrivate* reg)
-    : d_ptr(new ServiceReferencePrivate(reg))
+  ctkServiceReference::ctkServiceReference(ctkServiceRegistrationPrivate* reg)
+    : d_ptr(new ctkServiceReferencePrivate(reg))
   {
 
   }
 
-  ServiceReference::~ServiceReference()
+  ctkServiceReference::~ctkServiceReference()
   {
     delete d_ptr;
   }
 
-  QVariant ServiceReference::getProperty(const QString& key) const
+  QVariant ctkServiceReference::getProperty(const QString& key) const
   {
-    Q_D(const ServiceReference);
+    Q_D(const ctkServiceReference);
 
     QMutexLocker lock(&d->registration->propsLock);
 
     return d->registration->properties.value(key);
   }
 
-  QStringList ServiceReference::getPropertyKeys() const
+  QStringList ctkServiceReference::getPropertyKeys() const
   {
-    Q_D(const ServiceReference);
+    Q_D(const ctkServiceReference);
 
     QMutexLocker lock(&d->registration->propsLock);
 
     return d->registration->properties.keys();
   }
 
-  Plugin* ServiceReference::getPlugin() const
+  ctkPlugin* ctkServiceReference::getPlugin() const
   {
     return d_func()->registration->plugin->q_func();
   }
 
-  QList<Plugin*> ServiceReference::getUsingPlugins() const
+  QList<ctkPlugin*> ctkServiceReference::getUsingPlugins() const
   {
-    Q_D(const ServiceReference);
+    Q_D(const ctkServiceReference);
 
     QMutexLocker lock(&d->registration->propsLock);
 
@@ -75,11 +75,11 @@
     }
     else
     {
-      return QList<Plugin*>();
+      return QList<ctkPlugin*>();
     }
   }
 
-  bool ServiceReference::operator<(const ServiceReference& reference) const
+  bool ctkServiceReference::operator<(const ctkServiceReference& reference) const
   {
     bool sameFw = d_func()->registration->plugin->fwCtx == reference.d_func()->registration->plugin->fwCtx;
     if (!sameFw)
@@ -108,7 +108,7 @@
     }
   }
 
-  bool ServiceReference::operator==(const ServiceReference& reference) const
+  bool ctkServiceReference::operator==(const ctkServiceReference& reference) const
   {
     return d_func()->registration == reference.d_func()->registration;
 

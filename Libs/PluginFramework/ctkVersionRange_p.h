@@ -28,13 +28,13 @@
   /**
    * Class representing CTK version ranges.
    */
-  class VersionRange
+  class ctkVersionRange
   {
 
   private:
 
-    Version* low;
-    Version* high;
+    ctkVersion* low;
+    ctkVersion* high;
     bool lowIncluded;
     bool highIncluded;
 
@@ -43,10 +43,10 @@
     /**
      * The empty version range "[0.0.0,inf)".
      */
-    static const VersionRange& defaultVersionRange();
+    static const ctkVersionRange& defaultVersionRange();
 
     /**
-     * Construct a VersionRange object.
+     * Construct a ctkVersionRange object.
      * Format for a range:
      *   ( "(" | "[" ) LOW_VERSION ","  HIGH_VERSION ( ")" | "]" )
      * Format for at least a version:
@@ -54,16 +54,16 @@
      *
      * @param vr Input string.
      */
-    VersionRange(const QString& vr);
+    ctkVersionRange(const QString& vr);
 
 
     /**
-     * Construct the default VersionRange object.
+     * Construct the default ctkVersionRange object.
      *
      */
-    VersionRange();
+    ctkVersionRange();
 
-    ~VersionRange();
+    ~ctkVersionRange();
 
 
     bool isSpecified() const;
@@ -72,31 +72,31 @@
     /**
      * Check if specified version is within our range.
      *
-     * @param ver Version to compare to.
+     * @param ver ctkVersion to compare to.
      * @return Return true if within range, otherwise false.
      */
-    bool withinRange(const Version& ver) const;
+    bool withinRange(const ctkVersion& ver) const;
 
 
     /**
-     * Check if objects range is within another VersionRange.
+     * Check if objects range is within another ctkVersionRange.
      *
-     * @param range VersionRange to compare to.
+     * @param range ctkVersionRange to compare to.
      * @return Return true if within range, otherwise false.
      */
-    bool withinRange(const VersionRange& range) const;
+    bool withinRange(const ctkVersionRange& range) const;
 
 
     /**
-     * Compare object to another VersionRange. VersionRanges are compared on the
+     * Compare object to another ctkVersionRange. VersionRanges are compared on the
      * lower bound.
      *
-     * @param obj VersionRange to compare to.
+     * @param obj ctkVersionRange to compare to.
      * @return Return 0 if equals, negative if this object is less than obj
      *         and positive if this object is larger then obj.
-     * @exception ClassCastException if object is not a VersionRange object.
+     * @exception ClassCastException if object is not a ctkVersionRange object.
      */
-    int compare(const VersionRange& obj) const;
+    int compare(const ctkVersionRange& obj) const;
 
 
     /**
@@ -114,7 +114,7 @@
      * @param obj Package entry to compare to.
      * @return true if equal, otherwise false.
      */
-    bool operator==(const VersionRange& r) const;
+    bool operator==(const ctkVersionRange& r) const;
 
   };
 

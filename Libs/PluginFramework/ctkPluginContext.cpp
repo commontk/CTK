@@ -30,14 +30,14 @@
 #include <stdexcept>
 
 
-  class PluginContextPrivate
+  class ctkPluginContextPrivate
   {
 
   public:
 
-    PluginPrivate* plugin;
+    ctkPluginPrivate* plugin;
 
-    PluginContextPrivate(PluginPrivate* plugin)
+    ctkPluginContextPrivate(ctkPluginPrivate* plugin)
       : plugin(plugin)
     {}
 
@@ -59,88 +59,88 @@
   };
 
 
-  PluginContext::PluginContext(PluginPrivate* plugin)
-  : d_ptr(new PluginContextPrivate(plugin))
+  ctkPluginContext::ctkPluginContext(ctkPluginPrivate* plugin)
+  : d_ptr(new ctkPluginContextPrivate(plugin))
   {}
 
-  PluginContext::~PluginContext()
+  ctkPluginContext::~ctkPluginContext()
   {
-    Q_D(PluginContext);
+    Q_D(ctkPluginContext);
     delete d;
   }
 
-  Plugin* PluginContext::getPlugin() const
+  ctkPlugin* ctkPluginContext::getPlugin() const
   {
-    Q_D(const PluginContext);
+    Q_D(const ctkPluginContext);
     d->isPluginContextValid();
     return d->plugin->q_func();
   }
 
-  Plugin* PluginContext::getPlugin(long id) const
+  ctkPlugin* ctkPluginContext::getPlugin(long id) const
   {
-    Q_D(const PluginContext);
+    Q_D(const ctkPluginContext);
     return d->plugin->fwCtx->plugins->getPlugin(id);
   }
 
-  QList<Plugin*> PluginContext::getPlugins() const
+  QList<ctkPlugin*> ctkPluginContext::getPlugins() const
   {
-    Q_D(const PluginContext);
+    Q_D(const ctkPluginContext);
     d->isPluginContextValid();
     return d->plugin->fwCtx->plugins->getPlugins();
   }
 
-  Plugin* PluginContext::installPlugin(const QUrl& location, QIODevice* in)
+  ctkPlugin* ctkPluginContext::installPlugin(const QUrl& location, QIODevice* in)
   {
-    Q_D(PluginContext);
+    Q_D(ctkPluginContext);
     d->isPluginContextValid();
     return d->plugin->fwCtx->plugins->install(location, in);
   }
 
-  ServiceRegistration* PluginContext::registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties)
+  ctkServiceRegistration* ctkPluginContext::registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties)
   {
-    Q_D(PluginContext);
+    Q_D(ctkPluginContext);
     d->isPluginContextValid();
     return d->plugin->fwCtx->services.registerService(d->plugin, clazzes, service, properties);
   }
 
-  QList<ServiceReference*> PluginContext::getServiceReferences(const QString& clazz, const QString& filter)
+  QList<ctkServiceReference*> ctkPluginContext::getServiceReferences(const QString& clazz, const QString& filter)
   {
-    Q_D(PluginContext);
+    Q_D(ctkPluginContext);
     d->isPluginContextValid();
     return d->plugin->fwCtx->services.get(clazz, filter);
   }
 
-  ServiceReference* PluginContext::getServiceReference(const QString& clazz)
+  ctkServiceReference* ctkPluginContext::getServiceReference(const QString& clazz)
   {
-    Q_D(PluginContext);
+    Q_D(ctkPluginContext);
     d->isPluginContextValid();
     return d->plugin->fwCtx->services.get(d->plugin, clazz);
   }
 
-  QObject* PluginContext::getService(ServiceReference* reference)
+  QObject* ctkPluginContext::getService(ctkServiceReference* reference)
   {
     if (reference == 0)
     {
-      throw std::invalid_argument("Null ServiceReference is not valid");
+      throw std::invalid_argument("Null ctkServiceReference is not valid");
     }
 
-    Q_D(PluginContext);
+    Q_D(ctkPluginContext);
     d->isPluginContextValid();
     return reference->d_func()->getService(d->plugin->q_func());
   }
 
-  bool PluginContext::connectPluginListener(const QObject* receiver, const char* method,
+  bool ctkPluginContext::connectPluginListener(const QObject* receiver, const char* method,
                                             Qt::ConnectionType type)
   {
-    Q_D(PluginContext);
+    Q_D(ctkPluginContext);
     // TODO check permissions for a direct connection
-    receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(pluginChanged(PluginEvent)), method, type);
+    receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(pluginChanged(ctkPluginEvent)), method, type);
   }
 
-  bool PluginContext::connectFrameworkListener(const QObject* receiver, const char* method, Qt::ConnectionType type)
+  bool ctkPluginContext::connectFrameworkListener(const QObject* receiver, const char* method, Qt::ConnectionType type)
   {
-    Q_D(PluginContext);
-    receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(frameworkEvent(PluginFrameworkEvent)), method, type);
+    Q_D(ctkPluginContext);
+    receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(frameworkEvent(ctkPluginFrameworkEvent)), method, type);
 
 
 }

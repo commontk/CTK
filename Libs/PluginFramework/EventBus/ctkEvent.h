@@ -10,31 +10,31 @@
 #include <ctkLDAPSearchFilter.h>
 
 
-  class EventPrivate;
+  class ctkEventPrivate;
 
-  class CTK_PLUGINFW_EXPORT Event {
+  class CTK_PLUGINFW_EXPORT ctkEvent {
 
   public:
 
     typedef QMap<QString, QVariant> Properties;
 
     //TODO: what are we doing about malformed topic strings? Use exceptions in CTK?
-    Event(const QString& topic, const LDAPSearchFilter::Dictionary& properties = Properties());
-    Event(const Event& event);
-    ~Event();
+    ctkEvent(const QString& topic, const ctkLDAPSearchFilter::Dictionary& properties = Properties());
+    ctkEvent(const ctkEvent& event);
+    ~ctkEvent();
 
-    bool operator==(const Event& other) const;
+    bool operator==(const ctkEvent& other) const;
 
     const QVariant& property(const QString& name) const;
     QStringList propertyNames() const;
 
     const QString& topic() const;
 
-    bool matches(const LDAPSearchFilter& filter) const;
+    bool matches(const ctkLDAPSearchFilter& filter) const;
 
   protected:
 
-    EventPrivate * const d;
+    ctkEventPrivate * const d;
   };
 
 

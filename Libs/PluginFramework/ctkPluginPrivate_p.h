@@ -30,61 +30,61 @@
 #include <QPluginLoader>
 
 
-  class PluginActivator;
-  class PluginArchive;
-  class PluginFrameworkContext;
+  class ctkPluginActivator;
+  class ctkPluginArchive;
+  class ctkPluginFrameworkContext;
 
-  class PluginPrivate {
+  class ctkPluginPrivate {
 
   protected:
 
-    Plugin * const q_ptr;
+    ctkPlugin * const q_ptr;
 
   public:
 
-    Q_DECLARE_PUBLIC(Plugin)
+    Q_DECLARE_PUBLIC(ctkPlugin)
 
     /**
-     * Construct a new plugin based on a PluginArchive.
+     * Construct a new plugin based on a ctkPluginArchive.
      *
-     * @param fw PluginFrameworkContext for this plugin.
-     * @param ba Plugin archive representing the shared library and cached data
+     * @param fw ctkPluginFrameworkContext for this plugin.
+     * @param ba ctkPlugin archive representing the shared library and cached data
      * @param checkContext AccessConrolContext to do permission checks against.
      * @exception std::invalid_argument Faulty manifest for bundle
      */
-    PluginPrivate(Plugin& qq, PluginFrameworkContext* fw,
-               PluginArchive* pa /*, Object checkContext*/);
+    ctkPluginPrivate(ctkPlugin& qq, ctkPluginFrameworkContext* fw,
+               ctkPluginArchive* pa /*, Object checkContext*/);
 
     /**
-     * Construct a new empty Plugin.
+     * Construct a new empty ctkPlugin.
      *
      * Only called for the system plugin
      *
      * @param fw Framework for this plugin.
      */
-    PluginPrivate(Plugin& qq,
-                  PluginFrameworkContext* fw,
+    ctkPluginPrivate(ctkPlugin& qq,
+                  ctkPluginFrameworkContext* fw,
                   long id,
                   const QString& loc,
                   const QString& sym,
-                  const Version& ver);
+                  const ctkVersion& ver);
 
-    virtual ~PluginPrivate();
+    virtual ~ctkPluginPrivate();
 
     /**
      * Get updated plugin state. That means check if an installed
      * plugin has been resolved.
      *
-     * @return Plugin state
+     * @return ctkPlugin state
      */
-    Plugin::State getUpdatedState();
+    ctkPlugin::State getUpdatedState();
 
     /**
      * Save the autostart setting to the persistent plugin storage.
      *
      * @param setting The autostart options to save.
      */
-    void setAutostartSetting(const Plugin::StartOptions& setting);
+    void setAutostartSetting(const ctkPlugin::StartOptions& setting);
 
     /**
      * Performs the actual activation.
@@ -94,49 +94,49 @@
     /**
      * Union of flags allowing plugin class access
      */
-    static const Plugin::States RESOLVED_FLAGS;
+    static const ctkPlugin::States RESOLVED_FLAGS;
 
-    PluginFrameworkContext * const fwCtx;
+    ctkPluginFrameworkContext * const fwCtx;
 
     /**
-     * Plugin identifier
+     * ctkPlugin identifier
      */
     const long id;
 
     /**
-     * Plugin location identifier
+     * ctkPlugin location identifier
      */
     const QString location;
 
     /**
-     * Plugin symbolic name
+     * ctkPlugin symbolic name
      */
     QString symbolicName;
 
     /**
-     * Plugin version
+     * ctkPlugin version
      */
-    Version version;
+    ctkVersion version;
 
     /**
      * State of the plugin
      */
-    Plugin::State state;
+    ctkPlugin::State state;
 
     /**
-     * Plugin archive
+     * ctkPlugin archive
      */
-    PluginArchive* archive;
+    ctkPluginArchive* archive;
 
     /**
-     * PluginContext for the plugin
+     * ctkPluginContext for the plugin
      */
-    PluginContext* pluginContext;
+    ctkPluginContext* pluginContext;
 
     /**
-     * PluginActivator for the plugin
+     * ctkPluginActivator for the plugin
      */
-    PluginActivator* pluginActivator;
+    ctkPluginActivator* pluginActivator;
 
     /**
      * The Qt plugin loader for the plugin
@@ -171,10 +171,10 @@
     bool deactivating;
 
     /** Saved exception of resolve failure */
-    //PluginException resolveFailException;
+    //ctkPluginException resolveFailException;
 
-    /** List of RequirePlugin entries. */
-    QList<RequirePlugin*> require;
+    /** List of ctkRequirePlugin entries. */
+    QList<ctkRequirePlugin*> require;
 
   private:
 

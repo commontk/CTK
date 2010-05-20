@@ -22,17 +22,17 @@
 #include "ctkPluginFrameworkListeners_p.h"
 
 
-  void PluginFrameworkListeners::frameworkError(Plugin* p, const std::exception& e)
+  void ctkPluginFrameworkListeners::frameworkError(ctkPlugin* p, const std::exception& e)
   {
-    emit frameworkEvent(PluginFrameworkEvent(PluginFrameworkEvent::ERROR, p, e));
+    emit frameworkEvent(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::ERROR, p, e));
   }
 
-  void PluginFrameworkListeners::emitFrameworkEvent(const PluginFrameworkEvent& event)
+  void ctkPluginFrameworkListeners::emitFrameworkEvent(const ctkPluginFrameworkEvent& event)
   {
     emit frameworkEvent(event);
   }
 
-  void PluginFrameworkListeners::emitPluginChanged(const PluginEvent& event)
+  void ctkPluginFrameworkListeners::emitPluginChanged(const ctkPluginEvent& event)
   {
     emit pluginChanged(event);
 

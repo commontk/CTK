@@ -27,17 +27,17 @@
 #include "ctkVersion.h"
 
 
-  class PluginArchive;
-  class PluginFrameworkContext;
-  class PluginPrivate;
+  class ctkPluginArchive;
+  class ctkPluginFrameworkContext;
+  class ctkPluginPrivate;
 
   /**
    * An installed plugin in the Framework.
    *
    * <p>
-   * A <code>%Plugin</code> object is the access point to define the lifecycle of
+   * A <code>%ctkPlugin</code> object is the access point to define the lifecycle of
    * an installed plugin. Each plugin installed in the plugin environment must have
-   * an associated <code>%Plugin</code> object.
+   * an associated <code>%ctkPlugin</code> object.
    *
    * <p>
    * A plugin must have a unique identity, a <code>long</code>, chosen by the
@@ -67,14 +67,14 @@
    *
    * <p>
    * The Framework is the only entity that is allowed to create
-   * <code>%Plugin</code> objects, and these objects are only valid within the
+   * <code>%ctkPlugin</code> objects, and these objects are only valid within the
    * Framework that created them.
    *
    * @threadsafe
    */
-  class CTK_PLUGINFW_EXPORT Plugin {
+  class CTK_PLUGINFW_EXPORT ctkPlugin {
 
-    Q_DECLARE_PRIVATE(Plugin)
+    Q_DECLARE_PRIVATE(ctkPlugin)
 
   public:
 
@@ -85,7 +85,7 @@
        * <p>
        * The <code>UNINSTALLED</code> state is only visible after a plugin is
        * uninstalled; the plugin is in an unusable state but references to the
-       * <code>%Plugin</code> object may still be available and used for
+       * <code>%ctkPlugin</code> object may still be available and used for
        * introspection.
        */
       UNINSTALLED,
@@ -128,8 +128,8 @@
        * <p>
        * A plugin is in the <code>STARTING</code> state when its
        * {@link #start(const Options&) start} method is active. A plugin must be in this
-       * state when the plugin's {@link PluginActivator::start} method is called. If the
-       * <code>PluginActivator::start</code> method completes without exception,
+       * state when the plugin's {@link ctkPluginActivator::start} method is called. If the
+       * <code>ctkPluginActivator::start</code> method completes without exception,
        * then the plugin has successfully started and must move to the
        * <code>ACTIVE</code> state.
        * <p>
@@ -146,8 +146,8 @@
        * <p>
        * A plugin is in the <code>STOPPING</code> state when its
        * {@link #stop(const Option&) stop} method is active. A plugin must be in this state
-       * when the plugin's {@link PluginActivator::stop} method is called. When the
-       * <code>PluginActivator::stop</code> method completes the plugin is
+       * when the plugin's {@link ctkPluginActivator::stop} method is called. When the
+       * <code>ctkPluginActivator::stop</code> method completes the plugin is
        * stopped and must move to the <code>RESOLVED</code> state.
        */
       STOPPING,
@@ -232,7 +232,7 @@
      */
     Q_DECLARE_FLAGS(StopOptions, StopOption)
 
-    virtual ~Plugin();
+    virtual ~ctkPlugin();
 
     /**
      * Returns this plugin's current state.
@@ -258,7 +258,7 @@
      * <li>If this plugin is in the process of being activated or deactivated
      * then this method must wait for activation or deactivation to complete
      * before continuing. If this does not occur in a reasonable time, a
-     * <code>PluginException</code> is thrown to indicate this plugin was unable
+     * <code>ctkPluginException</code> is thrown to indicate this plugin was unable
      * to be started.
      *
      * <li>If this plugin's state is <code>ACTIVE</code> then this method
@@ -273,14 +273,14 @@
      *
      * <li>If this plugin's state is not <code>RESOLVED</code>, an attempt is
      * made to resolve this plugin. If the Framework cannot resolve this plugin,
-     * a <code>PluginException</code> is thrown.
+     * a <code>ctkPluginException</code> is thrown.
      *
      * <li>If the {@link #START_ACTIVATION_POLICY} option is not set then:
      * <ul>
      * <li>If this plugin's state is <code>STARTING</code> then this method
      * returns immediately.
      * <li>This plugin's state is set to <code>STARTING</code>.
-     * <li>A plugin event of type {@link PluginEvent::LAZY_ACTIVATION} is fired.
+     * <li>A plugin event of type {@link ctkPluginEvent::LAZY_ACTIVATION} is fired.
      * <li>This method returns immediately and the remaining steps will be
      * followed when this plugin's activation is later triggered.
      * </ul>
@@ -290,29 +290,29 @@
      * <i></i>
      * <li>This plugin's state is set to <code>STARTING</code>.
      *
-     * <li>A plugin event of type {@link PluginEvent::STARTING} is fired.
+     * <li>A plugin event of type {@link ctkPluginEvent::STARTING} is fired.
      *
-     * <li>The {@link PluginActivator::start} method of this plugin's
-     * <code>PluginActivator</code>, is called. If the
-     * <code>PluginActivator</code> throws an exception then:
+     * <li>The {@link ctkPluginActivator::start} method of this plugin's
+     * <code>ctkPluginActivator</code>, is called. If the
+     * <code>ctkPluginActivator</code> throws an exception then:
      * <ul>
      * <li>This plugin's state is set to <code>STOPPING</code>.
-     * <li>A plugin event of type {@link PluginEvent::STOPPING} is fired.
+     * <li>A plugin event of type {@link ctkPluginEvent::STOPPING} is fired.
      * <li>Any services registered by this plugin must be unregistered.
      * <li>Any services used by this plugin must be released.
      * <li>Any listeners registered by this plugin must be removed.
      * <li>This plugin's state is set to <code>RESOLVED</code>.
-     * <li>A plugin event of type {@link PluginEvent::STOPPED} is fired.
-     * <li>A <code>PluginException</code> is then thrown.
+     * <li>A plugin event of type {@link ctkPluginEvent::STOPPED} is fired.
+     * <li>A <code>ctkPluginException</code> is then thrown.
      * </ul>
      * <i></i>
      * <li>If this plugin's state is <code>UNINSTALLED</code>, because this
-     * plugin was uninstalled while the <code>PluginActivator::start</code>
-     * method was running, a <code>PluginException</code> is thrown.
+     * plugin was uninstalled while the <code>ctkPluginActivator::start</code>
+     * method was running, a <code>ctkPluginException</code> is thrown.
      *
      * <li>This plugin's state is set to <code>ACTIVE</code>.
      *
-     * <li>A plugin event of type {@link PluginEvent::STARTED} is fired.
+     * <li>A plugin event of type {@link ctkPluginEvent::STARTED} is fired.
      * </ol>
      *
      * <b>Preconditions </b>
@@ -324,11 +324,11 @@
      * </ul>
      * <b>Postconditions, no exceptions thrown </b>
      * <ul>
-     * <li>%Plugin autostart setting is modified unless the
+     * <li>%ctkPlugin autostart setting is modified unless the
      * {@link #START_TRANSIENT} option was set.
      * <li><code>getState()</code> in { <code>ACTIVE</code> }
      * if the eager activation policy was used.
-     * <li><code>PluginActivator::start()</code> has been called and did not
+     * <li><code>ctkPluginActivator::start()</code> has been called and did not
      * throw an exception if the eager policy was used.
      * </ul>
      * <b>Postconditions, when an exception is thrown </b>
@@ -342,9 +342,9 @@
      * @param options The options for starting this plugin. See
      *        {@link #START_TRANSIENT} and {@link #START_ACTIVATION_POLICY}. The
      *        Framework must ignore unrecognized options.
-     * @throws PluginException If this plugin could not be started. This could
+     * @throws ctkPluginException If this plugin could not be started. This could
      *         be because a code dependency could not be resolved or the
-     *         <code>PluginActivator</code> could not be loaded or
+     *         <code>ctkPluginActivator</code> could not be loaded or
      *         threw an exception.
      * @throws std::logic_error If this plugin has been uninstalled or this
      *         plugin tries to change its own state.
@@ -363,7 +363,7 @@
      * <li>If this plugin is in the process of being activated or deactivated
      * then this method must wait for activation or deactivation to complete
      * before continuing. If this does not occur in a reasonable time, a
-     * <code>PluginException</code> is thrown to indicate this plugin was unable
+     * <code>ctkPluginException</code> is thrown to indicate this plugin was unable
      * to be stopped.
      * <li>If the {@link #STOP_TRANSIENT} option is not set then then set this
      * plugin's persistent autostart setting to <em>Stopped</em>. When the
@@ -375,13 +375,13 @@
      *
      * <li>This plugin's state is set to <code>STOPPING</code>.
      *
-     * <li>A plugin event of type {@link PluginEvent::STOPPING} is fired.
+     * <li>A plugin event of type {@link ctkPluginEvent::STOPPING} is fired.
      *
      * <li>If this plugin's state was <code>ACTIVE</code> prior to setting the
-     * state to <code>STOPPING</code>, the {@link PluginActivator#stop} method
-     * of this plugin's <code>PluginActivator</code> is
+     * state to <code>STOPPING</code>, the {@link ctkPluginActivator#stop} method
+     * of this plugin's <code>ctkPluginActivator</code> is
      * called. If that method throws an exception, this method must continue to
-     * stop this plugin and a <code>PluginException</code> must be thrown after
+     * stop this plugin and a <code>ctkPluginException</code> must be thrown after
      * completion of the remaining steps.
      *
      * <li>Any services registered by this plugin must be unregistered.
@@ -389,12 +389,12 @@
      * <li>Any listeners registered by this plugin must be removed.
      *
      * <li>If this plugin's state is <code>UNINSTALLED</code>, because this
-     * plugin was uninstalled while the <code>PluginActivator::stop</code> method
-     * was running, a <code>PluginException</code> must be thrown.
+     * plugin was uninstalled while the <code>ctkPluginActivator::stop</code> method
+     * was running, a <code>ctkPluginException</code> must be thrown.
      *
      * <li>This plugin's state is set to <code>RESOLVED</code>.
      *
-     * <li>A plugin event of type {@link PluginEvent::STOPPED} is fired.
+     * <li>A plugin event of type {@link ctkPluginEvent::STOPPED} is fired.
      * </ol>
      *
      * <b>Preconditions </b>
@@ -403,22 +403,22 @@
      * </ul>
      * <b>Postconditions, no exceptions thrown </b>
      * <ul>
-     * <li>Plugin autostart setting is modified unless the
+     * <li>ctkPlugin autostart setting is modified unless the
      * {@link #STOP_TRANSIENT} option was set.
      * <li><code>getState()</code> not in &#x007B; <code>ACTIVE</code>,
      * <code>STOPPING</code> &#x007D;.
-     * <li><code>PluginActivator::stop</code> has been called and did not throw
+     * <li><code>ctkPluginActivator::stop</code> has been called and did not throw
      * an exception.
      * </ul>
      * <b>Postconditions, when an exception is thrown </b>
      * <ul>
-     * <li>Plugin autostart setting is modified unless the
+     * <li>ctkPlugin autostart setting is modified unless the
      * {@link #STOP_TRANSIENT} option was set.
      * </ul>
      *
      * @param options The options for stoping this bundle. See
      *        {@link #STOP_TRANSIENT}.
-     * @throws PluginException If this plugin's <code>PluginActivator</code>
+     * @throws ctkPluginException If this plugin's <code>ctkPluginActivator</code>
      *         threw an exception.
      * @throws std::logic_error If this plugin has been uninstalled or this
      *         plugin tries to change its own state.
@@ -426,22 +426,22 @@
     virtual void stop(const StopOptions& options = 0);
 
     /**
-     * Returns this plugin's {@link PluginContext}. The returned
-     * <code>PluginContext</code> can be used by the caller to act on behalf
+     * Returns this plugin's {@link ctkPluginContext}. The returned
+     * <code>ctkPluginContext</code> can be used by the caller to act on behalf
      * of this plugin.
      *
      * <p>
      * If this plugin is not in the {@link #STARTING}, {@link #ACTIVE}, or
      * {@link #STOPPING} states, then this
-     * plugin has no valid <code>PluginContext</code>. This method will
+     * plugin has no valid <code>ctkPluginContext</code>. This method will
      * return <code>0</code> if this plugin has no valid
-     * <code>PluginContext</code>.
+     * <code>ctkPluginContext</code>.
      *
-     * @return A <code>PluginContext</code> for this plugin or
+     * @return A <code>ctkPluginContext</code> for this plugin or
      *         <code>0</code> if this plugin has no valid
-     *         <code>PluginContext</code>.
+     *         <code>ctkPluginContext</code>.
      */
-    PluginContext* getPluginContext() const;
+    ctkPluginContext* getPluginContext() const;
 
     /**
      * Returns this plugin's unique identifier. This plugin is assigned a unique
@@ -472,7 +472,7 @@
      *
      * <p>
      * The location identifier is the location passed to
-     * <code>PluginContext::installPlugin</code> when a plugin is installed.
+     * <code>ctkPluginContext::installPlugin</code> when a plugin is installed.
      * The location identifier does not change while this plugin remains
      * installed, even if this plugin is updated.
      *
@@ -496,12 +496,12 @@
      * they are present in the Manifest file:
      *
      * <pre>
-     *     Plugin-Name
-     *     Plugin-Vendor
-     *     Plugin-Version
-     *     Plugin-Description
-     *     Plugin-DocURL
-     *     Plugin-ContactAddress
+     *     ctkPlugin-Name
+     *     ctkPlugin-Vendor
+     *     ctkPlugin-ctkVersion
+     *     ctkPlugin-Description
+     *     ctkPlugin-DocURL
+     *     ctkPlugin-ContactAddress
      * </pre>
      *
      * <p>
@@ -515,7 +515,7 @@
 
     /**
      * Returns the symbolic name of this plugin as specified by its
-     * <code>Plugin-SymbolicName</code> manifest header. The plugin symbolic
+     * <code>ctkPlugin-SymbolicName</code> manifest header. The plugin symbolic
      * name together with a version must identify a unique plugin. The plugin
      * symbolic name should be based on the reverse domain name naming
      * convention like that used for java packages.
@@ -572,8 +572,8 @@
 
     /**
      * Returns the version of this plugin as specified by its
-     * <code>Plugin-Version</code> manifest header. If this plugin does not have a
-     * specified version then {@link Version#emptyVersion} is returned.
+     * <code>ctkPlugin-ctkVersion</code> manifest header. If this plugin does not have a
+     * specified version then {@link ctkVersion#emptyVersion} is returned.
      *
      * <p>
      * This method must continue to return this plugin's version while
@@ -581,22 +581,22 @@
      *
      * @return The version of this plugin.
      */
-    Version getVersion() const;
+    ctkVersion getVersion() const;
 
   protected:
 
-    friend class PluginFramework;
-    friend class PluginFrameworkContext;
-    friend class Plugins;
-    friend class ServiceReferencePrivate;
+    friend class ctkPluginFramework;
+    friend class ctkPluginFrameworkContext;
+    friend class ctkPlugins;
+    friend class ctkServiceReferencePrivate;
 
-    PluginPrivate * const d_ptr;
+    ctkPluginPrivate * const d_ptr;
 
-    Plugin(PluginFrameworkContext* fw, PluginArchive* ba);
-    Plugin(PluginPrivate& dd);
+    ctkPlugin(ctkPluginFrameworkContext* fw, ctkPluginArchive* ba);
+    ctkPlugin(ctkPluginPrivate& dd);
   };
 
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(ctk::Plugin::States)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctk::ctkPlugin::States)
 
 #endif // CTKPLUGIN_H

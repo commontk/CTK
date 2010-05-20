@@ -33,36 +33,36 @@
 #include "ctkServices_p.h"
 
 
-  class Plugin;
+  class ctkPlugin;
 
-  class PluginFrameworkContext {
+  class ctkPluginFrameworkContext {
 
   public:
 
       /**
        * All plugins in this framework.
        */
-      Plugins* plugins;
+      ctkPlugins* plugins;
 
       /**
        * All listeners in this framework.
        */
-      PluginFrameworkListeners listeners;
+      ctkPluginFrameworkListeners listeners;
 
       /**
        * All registered services in this framework.
        */
-      Services services;
+      ctkServices services;
 
       /**
        * System plugin
        */
-      PluginFramework systemPlugin;
+      ctkPluginFramework systemPlugin;
 
       /**
-       * Plugin storage
+       * ctkPlugin storage
        */
-      PluginStorage storage;
+      ctkPluginStorage storage;
 
       /**
        * Framework id.
@@ -79,13 +79,13 @@
        */
       static int globalId;
 
-      PluginFrameworkFactory::Properties props;
+      ctkPluginFrameworkFactory::Properties props;
 
       /**
        * Contruct a framework context
        *
        */
-      PluginFrameworkContext(const PluginFrameworkFactory::Properties& initProps);
+      ctkPluginFrameworkContext(const ctkPluginFrameworkFactory::Properties& initProps);
 
 
       /**
@@ -112,18 +112,18 @@
        * Check that the plugin belongs to this framework instance.
        *
        */
-      void checkOurPlugin(Plugin* plugin) const;
+      void checkOurPlugin(ctkPlugin* plugin) const;
 
 
       /**
        * Check that the plugin specified can resolve all its
-       * Require-Plugin constraints.
+       * Require-ctkPlugin constraints.
        *
-       * @param plugin Plugin to check, must be in INSTALLED state
+       * @param plugin ctkPlugin to check, must be in INSTALLED state
        *
-       * @throws PluginException
+       * @throws ctkPluginException
        */
-      void resolvePlugin(PluginPrivate* plugin);
+      void resolvePlugin(ctkPluginPrivate* plugin);
 
 
       /**
@@ -134,9 +134,9 @@
 
   private:
 
-      QSet<PluginPrivate*> tempResolved;
+      QSet<ctkPluginPrivate*> tempResolved;
 
-      void checkRequirePlugin(PluginPrivate* plugin);
+      void checkRequirePlugin(ctkPluginPrivate* plugin);
   };
 
 

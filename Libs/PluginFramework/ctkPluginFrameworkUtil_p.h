@@ -23,7 +23,7 @@
 #include <QStringList>
 
 
-  class PluginFrameworkUtil
+  class ctkPluginFrameworkUtil
   {
   public:
 

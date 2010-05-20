@@ -27,16 +27,16 @@
 #include <QDebug>
 
 
-  const QString Version::SEPARATOR = ".";
-  const QRegExp Version::RegExp = QRegExp("[a-zA-Z0-9_\\-]*");
+  const QString ctkVersion::SEPARATOR = ".";
+  const QRegExp ctkVersion::RegExp = QRegExp("[a-zA-Z0-9_\\-]*");
 
-  const Version& Version::emptyVersion()
+  const ctkVersion& ctkVersion::emptyVersion()
   {
-    static Version emptyV;
+    static ctkVersion emptyV;
     return emptyV;
   }
 
-  Version& Version::operator=(const Version& v)
+  ctkVersion& ctkVersion::operator=(const ctkVersion& v)
   {
     majorVersion = v.majorVersion;
     minorVersion = v.minorVersion;
@@ -45,32 +45,32 @@
     return *this;
   }
 
-  Version::Version()
+  ctkVersion::ctkVersion()
     : majorVersion(0), minorVersion(0), microVersion(0), qualifier("")
   {
 
   }
 
 
-  void Version::validate()
+  void ctkVersion::validate()
   {
     if (!RegExp.exactMatch(qualifier))
       throw std::invalid_argument(std::string("invalid qualifier: ") + qualifier.toStdString());
   }
 
-  Version::Version(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion)
+  ctkVersion::ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion)
     : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier("")
   {
 
   }
 
-  Version::Version(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion, const QString& qualifier)
+  ctkVersion::ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion, const QString& qualifier)
      : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier(qualifier)
   {
     this->validate();
   }
 
-  Version::Version(const QString& version)
+  ctkVersion::ctkVersion(const QString& version)
     : majorVersion(0), minorVersion(0), microVersion(0)
   {
     unsigned int maj = 0;
@@ -113,14 +113,14 @@
     this->validate();
   }
 
-  Version::Version(const Version& version)
+  ctkVersion::ctkVersion(const ctkVersion& version)
   : majorVersion(version.majorVersion), minorVersion(version.minorVersion),
     microVersion(version.microVersion), qualifier(version.qualifier)
   {
 
   }
 
-  Version Version::parseVersion(const QString& version)
+  ctkVersion ctkVersion::parseVersion(const QString& version)
   {
     if (version.isEmpty())
     {
@@ -133,30 +133,30 @@
       return emptyVersion();
     }
 
-    return Version(version2);
+    return ctkVersion(version2);
   }
 
-  unsigned int Version::getMajor() const
+  unsigned int ctkVersion::getMajor() const
   {
     return majorVersion;
   }
 
-  unsigned int Version::getMinor() const
+  unsigned int ctkVersion::getMinor() const
   {
     return minorVersion;
   }
 
-  unsigned int Version::getMicro() const
+  unsigned int ctkVersion::getMicro() const
   {
     return microVersion;
   }
 
-  QString Version::getQualifier() const
+  QString ctkVersion::getQualifier() const
   {
     return qualifier;
   }
 
-  QString Version::toString() const
+  QString ctkVersion::toString() const
   {
     QString result;
     result += QString::number(majorVersion) + SEPARATOR + QString::number(minorVersion) + SEPARATOR + QString::number(microVersion);
@@ -167,7 +167,7 @@
     return result;
   }
 
-  bool Version::operator==(const Version& other) const
+  bool ctkVersion::operator==(const ctkVersion& other) const
   {
     if (&other == this)
     { // quicktest
@@ -178,7 +178,7 @@
         == other.microVersion) && qualifier == other.qualifier;
   }
 
-  int Version::compare(const Version& other) const
+  int ctkVersion::compare(const ctkVersion& other) const
   {
     if (&other == this)
     { // quicktest
@@ -216,7 +216,7 @@
   }
 
 
-QDebug operator<<(QDebug dbg, const ctk::Version& v)
+QDebug operator<<(QDebug dbg, const ctk::ctkVersion& v)
 {
   dbg << v.toString();
 

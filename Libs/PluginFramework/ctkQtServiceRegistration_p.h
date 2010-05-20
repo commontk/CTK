@@ -28,14 +28,14 @@
 #include <QServiceInterfaceDescriptor>
 
 
-  class PluginPrivate;
+  class ctkPluginPrivate;
 
-  class QtServiceRegistration : public ServiceRegistration
+  class ctkQtServiceRegistration : public ctkServiceRegistration
   {
 
   public:
 
-    QtServiceRegistration(PluginPrivate* plugin,
+    ctkQtServiceRegistration(ctkPluginPrivate* plugin,
                           QtMobility::QServiceInterfaceDescriptor serviceDescriptor,
                           const ServiceProperties& props);
   };

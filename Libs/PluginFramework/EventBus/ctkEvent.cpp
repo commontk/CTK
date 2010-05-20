@@ -2,11 +2,11 @@
 #include "ctkEvent.h"
 
 
-  class EventPrivate {
+  class ctkEventPrivate {
 
   public:
 
-    EventPrivate(const QString& topic, const LDAPSearchFilter::Dictionary& properties)
+    ctkEventPrivate(const QString& topic, const ctkLDAPSearchFilter::Dictionary& properties)
       : ref(1), topic(topic), properties(properties)
     {
 
@@ -14,13 +14,13 @@
 
     QAtomicInt ref;
     const QString topic;
-    const LDAPSearchFilter::Dictionary properties;
+    const ctkLDAPSearchFilter::Dictionary properties;
 
   };
 
 
-  Event::Event(const QString& topic, const LDAPSearchFilter::Dictionary& properties)
-    : d(new EventPrivate(topic, properties))
+  ctkEvent::ctkEvent(const QString& topic, const ctkLDAPSearchFilter::Dictionary& properties)
+    : d(new ctkEventPrivate(topic, properties))
   {
 
   }
@@ -28,19 +28,19 @@
   /*
    * This is fast thanks to implicit sharing
    */
-  Event::Event(const Event &event)
+  ctkEvent::ctkEvent(const ctkEvent &event)
     : d(event.d)
   {
     d->ref.ref();
   }
 
-  Event::~Event()
+  ctkEvent::~ctkEvent()
   {
     if (!d->ref.deref())
       delete d;
   }
 
-  bool Event::operator==(const Event& other) const
+  bool ctkEvent::operator==(const ctkEvent& other) const
   {
     if (d == other.d)
       return true;
@@ -52,22 +52,22 @@
     return false;
   }
 
-  const QVariant& Event::property(const QString& name) const
+  const QVariant& ctkEvent::property(const QString& name) const
   {
     d->properties[name];
   }
 
-  QStringList Event::propertyNames() const
+  QStringList ctkEvent::propertyNames() const
   {
     d->properties.keys();
   }
 
-  const QString& Event::topic() const
+  const QString& ctkEvent::topic() const
   {
     d->topic;
   }
 
-  bool Event::matches(const LDAPSearchFilter& filter) const
+  bool ctkEvent::matches(const ctkLDAPSearchFilter& filter) const
   {
     // TODO
     return true;

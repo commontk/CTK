@@ -25,10 +25,10 @@
 #include <QServiceInterfaceDescriptor>
 
 
-  QtServiceRegistration::QtServiceRegistration(PluginPrivate* plugin,
+  ctkQtServiceRegistration::ctkQtServiceRegistration(ctkPluginPrivate* plugin,
                                                QtMobility::QServiceInterfaceDescriptor serviceDescriptor,
                                                const ServiceProperties& props)
-    : ServiceRegistration(*new QtServiceRegistrationPrivate(this, plugin, serviceDescriptor, props))
+    : ctkServiceRegistration(*new ctkQtServiceRegistrationPrivate(this, plugin, serviceDescriptor, props))
   {
 
   }

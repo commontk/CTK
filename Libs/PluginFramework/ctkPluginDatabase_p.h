@@ -28,15 +28,15 @@
 
 
 // CTK class forward declarations
-class PluginStorage;
-class PluginArchive;
+class ctkPluginStorage;
+class ctkPluginArchive;
 
-class PluginDatabase {
+class ctkPluginDatabase {
 
   public:
-    PluginDatabase(PluginStorage* storage);
+    ctkPluginDatabase(ctkPluginStorage* storage);
 
-    virtual ~PluginDatabase();
+    virtual ~ctkPluginDatabase();
 
     /**
      * Opens the plugin database. If the database does not
@@ -44,17 +44,17 @@ class PluginDatabase {
      *
      * @see setDatabasePath(const QString&)
      * @see getDatabasePath()
-     * @see PluginDatabaseException
+     * @see ctkPluginDatabaseException
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     void open();
 
     /**
-     * Closes the plugin database. Throws a PluginDatabaseException
+     * Closes the plugin database. Throws a ctkPluginDatabaseException
      * of type DB_CONNECTION_INVALID if the database is invalid.
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     void close();
 
@@ -82,7 +82,7 @@ class PluginDatabase {
      * @param res The path to the resource in the plugin
      * @return The byte array of the cached resource
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     QByteArray getPluginResource(long pluginId, const QString& res) const;
 
@@ -93,7 +93,7 @@ class PluginDatabase {
      * @param path A resource path relative to the plugin specific resource prefix.
      * @return A QStringList containing the cached resource entries.
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     QStringList findResourcesPath(long pluginId, const QString& path) const;
 
@@ -104,26 +104,26 @@ class PluginDatabase {
      *
      * @param location The URL to the plugin.
      * @param localPath The path to the plugin library on the local file system.
-     * @param createArchive If \c true (default) a new PluginArchive instance is returned.
+     * @param createArchive If \c true (default) a new ctkPluginArchive instance is returned.
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
-    PluginArchive* insertPlugin(const QUrl& location, const QString& localPath, bool createArchive = true);
+    ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath, bool createArchive = true);
 
     /**
-     * Removes all persisted data related to the given PluginArchive.
+     * Removes all persisted data related to the given ctkPluginArchive.
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
-    void removeArchive(const PluginArchive* pa);
+    void removeArchive(const ctkPluginArchive* pa);
 
     /**
-     * Reads the persisted plugin data and returns a PluginArchive object
+     * Reads the persisted plugin data and returns a ctkPluginArchive object
      * for each plugin which is not in state UNINSTALLED.
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
-    QList<PluginArchive*> getPluginArchives() const;
+    QList<ctkPluginArchive*> getPluginArchives() const;
 
 
   private:
@@ -133,7 +133,7 @@ class PluginDatabase {
     /**
      *  Helper method that creates the database tables:
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     void createTables();
     bool dropTables();
@@ -148,7 +148,7 @@ class PluginDatabase {
     /**
      * Checks the database connection.
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     void checkConnection() const;
 
@@ -170,28 +170,28 @@ class PluginDatabase {
      * transaction.  If called standalone, it's single query is implicitly
      * wrapped in it's own transaction.
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     void executeQuery(QSqlQuery* query, const QString &statement, const QList<QVariant> &bindValues = QList<QVariant>()) const;
 
     /**
      * Begins a transcaction based on the \a type which can be Read or Write.
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     void beginTransaction(QSqlQuery* query, TransactionType);
 
     /**
      * Commits a transaction
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     void commitTransaction(QSqlQuery* query);
 
     /**
      * Rolls back a transaction
      *
-     * @throws PluginDatabaseException
+     * @throws ctkPluginDatabaseException
      */
     void rollbackTransaction(QSqlQuery* query);
 
@@ -200,7 +200,7 @@ class PluginDatabase {
     QString m_connectionName;
     bool m_isDatabaseOpen;
     bool m_inTransaction;
-    PluginStorage* m_PluginStorage;
+    ctkPluginStorage* m_PluginStorage;
 };
 
 

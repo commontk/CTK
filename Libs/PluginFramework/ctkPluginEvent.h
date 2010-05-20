@@ -28,29 +28,29 @@
 #include "CTKPluginFrameworkExport.h"
 
 
-  class Plugin;
-  class PluginEventData;
+  class ctkPlugin;
+  class ctkPluginEventData;
 
   /**
    * An event from the Framework describing a plugin lifecycle change.
    * <p>
-   * <code>PluginEvent</code> objects are delivered to slots connected
-   * to PluginContext::pluginChanged() or to registerd event handlers
+   * <code>ctkPluginEvent</code> objects are delivered to slots connected
+   * to ctkPluginContext::pluginChanged() or to registerd event handlers
    * for the topic "org.commontk/framework/pluginChanged"
    * when a change occurs in a plugins's lifecycle. A type code is used to identify
    * the event type for future extendability.
    *
-   * @see PluginContext#connectPluginListener
-   * @see EventBus
+   * @see ctkPluginContext#connectPluginListener
+   * @see ctkEventBus
    */
-  class CTK_PLUGINFW_EXPORT PluginEvent : public QObject
+  class CTK_PLUGINFW_EXPORT ctkPluginEvent : public QObject
   {
     Q_OBJECT
     Q_PROPERTY(Type type READ getType CONSTANT)
-    Q_PROPERTY(Plugin* plugin READ getPlugin CONSTANT)
+    Q_PROPERTY(ctkPlugin* plugin READ getPlugin CONSTANT)
     Q_ENUMS(Type)
 
-    QSharedDataPointer<PluginEventData> d;
+    QSharedDataPointer<ctkPluginEventData> d;
 
   public:
 
@@ -73,16 +73,16 @@
      * @param type The event type.
      * @param plugin The plugin which had a lifecycle change.
      */
-    PluginEvent(Type type, Plugin* plugin);
+    ctkPluginEvent(Type type, ctkPlugin* plugin);
 
-    PluginEvent(const PluginEvent& other);
+    ctkPluginEvent(const ctkPluginEvent& other);
 
     /**
      * Returns the plugin which had a lifecycle change.
      *
      * @return The plugin that had a change occur in its lifecycle.
      */
-    Plugin* getPlugin() const;
+    ctkPlugin* getPlugin() const;
 
     /**
      * Returns the type of lifecyle event. The type values are:
@@ -106,24 +106,24 @@
 
   };
 
-  class PluginEventData : public QSharedData
+  class ctkPluginEventData : public QSharedData
   {
   public:
 
-    PluginEventData(PluginEvent::Type type, Plugin* plugin)
+    ctkPluginEventData(ctkPluginEvent::Type type, ctkPlugin* plugin)
       : type(type), plugin(plugin)
     {
 
     }
 
-    PluginEventData(const PluginEventData& other)
+    ctkPluginEventData(const ctkPluginEventData& other)
       : QSharedData(other), type(other.type), plugin(other.plugin)
     {
 
     }
 
-    const PluginEvent::Type type;
-    Plugin* const plugin;
+    const ctkPluginEvent::Type type;
+    ctkPlugin* const plugin;
   };
 
 

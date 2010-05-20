@@ -29,35 +29,35 @@
 #include "ctkServiceReference.h"
 
 
-  class PluginPrivate;
-  class ServiceRegistration;
+  class ctkPluginPrivate;
+  class ctkServiceRegistration;
 
-  class ServiceRegistrationPrivate
+  class ctkServiceRegistrationPrivate
   {
 
   protected:
 
-    ServiceRegistration* const q_ptr;
+    ctkServiceRegistration* const q_ptr;
 
     /**
-     * Service or ServiceFactory object.
+     * Service or ctkServiceFactory object.
      */
     QObject* service;
 
   public:
 
-    Q_DECLARE_PUBLIC(ServiceRegistration);
+    Q_DECLARE_PUBLIC(ctkServiceRegistration);
 
 
     /**
-     * Plugin registering this service.
+     * ctkPlugin registering this service.
      */
-    PluginPrivate* plugin;
+    ctkPluginPrivate* plugin;
 
     /**
      * Reference object to this service registration.
      */
-    ServiceReference* reference;
+    ctkServiceReference* reference;
 
     /**
      * Service properties.
@@ -65,19 +65,19 @@
     ServiceProperties properties;
 
     /**
-     * Plugins dependent on this service. Integer is used as
+     * ctkPlugins dependent on this service. Integer is used as
      * reference counter, counting number of unbalanced getService().
      */
-    QHash<Plugin*,int> dependents;
+    QHash<ctkPlugin*,int> dependents;
 
     /**
      * Object instances that factory has produced.
      */
-    QHash<Plugin*, QObject*> serviceInstances;
+    QHash<ctkPlugin*, QObject*> serviceInstances;
 
     /**
      * Is service available. I.e., if <code>true</code> then holders
-     * of a ServiceReference for the service are allowed to get it.
+     * of a ctkServiceReference for the service are allowed to get it.
      */
     volatile bool available;
 
@@ -95,18 +95,18 @@
 
     QMutex propsLock;
 
-    ServiceRegistrationPrivate(ServiceRegistration* sr, PluginPrivate* plugin, QObject* service,
+    ctkServiceRegistrationPrivate(ctkServiceRegistration* sr, ctkPluginPrivate* plugin, QObject* service,
                                const ServiceProperties& props);
 
-    virtual ~ServiceRegistrationPrivate();
+    virtual ~ctkServiceRegistrationPrivate();
 
     /**
      * Check if a plugin uses this service
      *
-     * @param p Plugin to check
+     * @param p ctkPlugin to check
      * @return true if plugin uses this service
      */
-    bool isUsedByPlugin(Plugin* p);
+    bool isUsedByPlugin(ctkPlugin* p);
 
     virtual QObject* getService();
 

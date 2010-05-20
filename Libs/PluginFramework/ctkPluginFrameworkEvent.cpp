@@ -22,41 +22,41 @@
 #include "ctkPluginFrameworkEvent.h"
 
 
-  PluginFrameworkEvent::PluginFrameworkEvent()
+  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent()
     : d(0)
   {
 
   }
 
-  PluginFrameworkEvent::PluginFrameworkEvent(Type type, Plugin* plugin, const std::exception& fwException)
-    : d(new PluginFrameworkEventData(type, plugin, fwException.what()))
+  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin, const std::exception& fwException)
+    : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
   {
 
   }
 
-  PluginFrameworkEvent::PluginFrameworkEvent(Type type, Plugin* plugin)
-    : d(new PluginFrameworkEventData(type, plugin, QString()))
+  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin)
+    : d(new ctkPluginFrameworkEventData(type, plugin, QString()))
   {
 
   }
 
-  PluginFrameworkEvent::PluginFrameworkEvent(const PluginFrameworkEvent& other)
+  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other)
     : d(other.d)
   {
 
   }
 
-  QString PluginFrameworkEvent::getErrorString() const
+  QString ctkPluginFrameworkEvent::getErrorString() const
   {
     return d->errorString;
   }
 
-  Plugin* PluginFrameworkEvent::getPlugin() const
+  ctkPlugin* ctkPluginFrameworkEvent::getPlugin() const
   {
     return d->plugin;
   }
 
-  PluginFrameworkEvent::Type PluginFrameworkEvent::getType() const
+  ctkPluginFrameworkEvent::Type ctkPluginFrameworkEvent::getType() const
   {
     return d->type;
 

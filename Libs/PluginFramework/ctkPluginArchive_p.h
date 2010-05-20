@@ -34,13 +34,13 @@ class QIODevice;
 typedef quint64 qtimestamp;
 
 // CTK foraward declarations
-class PluginStorage;
+class ctkPluginStorage;
 
 /**
 * Class for managing plugin data.
 *
 */
-class PluginArchive {
+class ctkPluginArchive {
 
 public:
 
@@ -69,8 +69,8 @@ int id;
 qtimestamp lastModified;
 QUrl location;
 QString localPluginPath;
-PluginManifest manifest;
-PluginStorage* storage;
+ctkPluginManifest manifest;
+ctkPluginStorage* storage;
 
 public:
 
@@ -78,7 +78,7 @@ public:
  * Construct new plugin archive.
  *
  */
-PluginArchive(PluginStorage* pluginStorage, const QUrl& pluginLocation,
+ctkPluginArchive(ctkPluginStorage* pluginStorage, const QUrl& pluginLocation,
 	      const QString& localPluginPath, int pluginId);
 
 /**
@@ -100,7 +100,7 @@ QHash<QString,QString> getUnlocalizedAttributes() const;
 /**
  * Get plugin identifier for this plugin archive.
  *
- * @return Plugin identifier.
+ * @return ctkPlugin identifier.
  */
 int getPluginId() const;
 
@@ -200,7 +200,7 @@ void setAutostartSetting(int setting);
 
 /**
  * Remove plugin from persistent storage.
- * This will delete the current PluginArchive instance.
+ * This will delete the current ctkPluginArchive instance.
  */
 void purge();
 

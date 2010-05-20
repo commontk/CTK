@@ -22,10 +22,10 @@
 #include "ctkLDAPSearchFilter.h"
 
 
-  class LDAPSearchFilterPrivate {
+  class ctkLDAPSearchFilterPrivate {
   public:
 
-    LDAPSearchFilterPrivate()
+    ctkLDAPSearchFilterPrivate()
       : ref(1)
     {}
 
@@ -33,41 +33,41 @@
 
   };
 
-  LDAPSearchFilter::LDAPSearchFilter(const QString& filter)
-    : d(new LDAPSearchFilterPrivate())
+  ctkLDAPSearchFilter::ctkLDAPSearchFilter(const QString& filter)
+    : d(new ctkLDAPSearchFilterPrivate())
   {
 
   }
 
-  LDAPSearchFilter::LDAPSearchFilter(const LDAPSearchFilter& filter)
+  ctkLDAPSearchFilter::ctkLDAPSearchFilter(const ctkLDAPSearchFilter& filter)
     : d(filter.d)
   {
     d->ref.ref();
   }
 
-  LDAPSearchFilter::~LDAPSearchFilter()
+  ctkLDAPSearchFilter::~ctkLDAPSearchFilter()
   {
     if (!d->ref.deref())
       delete d;
   }
 
-  bool LDAPSearchFilter::match(const Dictionary& dictionary) const
+  bool ctkLDAPSearchFilter::match(const Dictionary& dictionary) const
   {
     return true;
   }
 
-  bool LDAPSearchFilter::matchCase(const Dictionary& dictionary) const
+  bool ctkLDAPSearchFilter::matchCase(const Dictionary& dictionary) const
   {
     return true;
   }
 
-  bool LDAPSearchFilter::operator==(const LDAPSearchFilter& other) const
+  bool ctkLDAPSearchFilter::operator==(const ctkLDAPSearchFilter& other) const
   {
     // TODO
     return true;
   }
 
-  LDAPSearchFilter& LDAPSearchFilter::operator=(const LDAPSearchFilter& filter)
+  ctkLDAPSearchFilter& ctkLDAPSearchFilter::operator=(const ctkLDAPSearchFilter& filter)
   {
     if (d != filter.d)
     {

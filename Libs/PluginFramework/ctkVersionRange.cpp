@@ -24,14 +24,14 @@
 #include <stdexcept>
 
 
-  const VersionRange& VersionRange::defaultVersionRange()
+  const ctkVersionRange& ctkVersionRange::defaultVersionRange()
   {
-    static VersionRange defaultVR;
+    static ctkVersionRange defaultVR;
     return defaultVR;
   }
 
 
-  VersionRange::VersionRange(const QString& vr)
+  ctkVersionRange::ctkVersionRange(const QString& vr)
   {
     bool op = vr.startsWith("(");
     bool ob = vr.startsWith("[");
@@ -43,8 +43,8 @@
 
       if (comma > 0 && (cp || cb))
       {
-        low = new Version(vr.mid(1, comma-1).trimmed());
-        high = new Version(vr.mid(comma+1, vr.length()-comma-2).trimmed());
+        low = new ctkVersion(vr.mid(1, comma-1).trimmed());
+        high = new ctkVersion(vr.mid(comma+1, vr.length()-comma-2).trimmed());
         lowIncluded = ob;
         highIncluded = cb;
       }
@@ -55,33 +55,33 @@
     }
     else
     {
-      low = new Version(vr);
+      low = new ctkVersion(vr);
       high = 0;
       lowIncluded = true;
       highIncluded = false;
     }
   }
 
-  VersionRange::VersionRange()
+  ctkVersionRange::ctkVersionRange()
   {
-    low = new Version(Version::emptyVersion());
+    low = new ctkVersion(ctkVersion::emptyVersion());
     high = 0;
     lowIncluded = true;
     highIncluded = false;
   }
 
-  VersionRange::~VersionRange()
+  ctkVersionRange::~ctkVersionRange()
   {
     delete low;
     delete high;
   }
 
-  bool VersionRange::isSpecified() const
+  bool ctkVersionRange::isSpecified() const
   {
     return !(*this == defaultVersionRange());
   }
 
-  bool VersionRange::withinRange(const Version& ver) const
+  bool ctkVersionRange::withinRange(const ctkVersion& ver) const
   {
     if (*this == defaultVersionRange())
     {
@@ -101,7 +101,7 @@
     return false;
   }
 
-  bool VersionRange::withinRange(const VersionRange& range) const
+  bool ctkVersionRange::withinRange(const ctkVersionRange& range) const
   {
     if (*this == range) {
       return true;
@@ -120,12 +120,12 @@
     return false;
   }
 
-  int VersionRange::compare(const VersionRange& obj) const
+  int ctkVersionRange::compare(const ctkVersionRange& obj) const
   {
     return low->compare(*obj.low);
   }
 
-  QString VersionRange::toString() const
+  QString ctkVersionRange::toString() const
   {
     if (high)
     {
@@ -155,7 +155,7 @@
     }
   }
 
-  bool VersionRange::operator==(const VersionRange& r) const
+  bool ctkVersionRange::operator==(const ctkVersionRange& r) const
   {
     if (*low == *(r.low))
     {

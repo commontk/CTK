@@ -30,7 +30,7 @@
 #include "CTKPluginFrameworkExport.h"
 
 
-  class CTK_PLUGINFW_EXPORT PluginException : public std::runtime_error
+  class CTK_PLUGINFW_EXPORT ctkPluginException : public std::runtime_error
   {
   public:
 
@@ -74,13 +74,13 @@
       DUPLICATE_BUNDLE_ERROR
     };
 
-    PluginException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception& cause = std::exception());
-    PluginException(const QString& msg, const std::exception& cause);
+    ctkPluginException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception& cause = std::exception());
+    ctkPluginException(const QString& msg, const std::exception& cause);
 
-    PluginException(const PluginException& o);
-    PluginException& operator=(const PluginException& o);
+    ctkPluginException(const ctkPluginException& o);
+    ctkPluginException& operator=(const ctkPluginException& o);
 
-    ~PluginException() throw() {}
+    ~ctkPluginException() throw() {}
 
     std::exception getCause() const;
     void setCause(const std::exception&) throw(std::logic_error);
@@ -95,6 +95,6 @@
   };
 
 
-CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::PluginException& exc);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::ctkPluginException& exc);
 
 #endif // CTKPLUGINEXCEPTION_H

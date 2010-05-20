@@ -28,30 +28,30 @@
 #include "CTKPluginFrameworkExport.h"
 
 
-  class Plugin;
-  class PluginFrameworkEventData;
+  class ctkPlugin;
+  class ctkPluginFrameworkEventData;
 
   /**
    * A general event from the Framework.
    *
    * <p>
-   * <code>PluginFrameworkEvent</code> objects are delivered to slots connected
+   * <code>ctkPluginFrameworkEvent</code> objects are delivered to slots connected
    * <code>FrameworkListener</code>s when a general event occurs within the plugin
    * environment. A type code is used to identify the event type for future
    * extendability.
    *
-   * @see PluginContext#connectFrameworkListener
-   * @see EventBus
+   * @see ctkPluginContext#connectFrameworkListener
+   * @see ctkEventBus
    */
-  class CTK_PLUGINFW_EXPORT PluginFrameworkEvent : public QObject
+  class CTK_PLUGINFW_EXPORT ctkPluginFrameworkEvent : public QObject
   {
     Q_OBJECT
     Q_PROPERTY(Type type READ getType CONSTANT)
-    Q_PROPERTY(Plugin* plugin READ getPlugin CONSTANT)
+    Q_PROPERTY(ctkPlugin* plugin READ getPlugin CONSTANT)
     Q_PROPERTY(QString errorString READ getErrorString CONSTANT)
     Q_ENUMS(Type)
 
-    QSharedDataPointer<PluginFrameworkEventData> d;
+    QSharedDataPointer<ctkPluginFrameworkEventData> d;
 
   public:
 
@@ -63,7 +63,7 @@
        * This event is fired when the Framework has started after all installed
        * plugins that are marked to be started have been started and the Framework
        * has reached the initial start level. The source of this event is the
-       * System Plugin.
+       * System ctkPlugin.
        */
       STARTED,
 
@@ -97,7 +97,7 @@
        * <p>
        * This event is fired when the Framework has been stopped because of a stop
        * operation on the system plugin. The source of this event is the System
-       * Plugin.
+       * ctkPlugin.
        */
       STOPPED,
 
@@ -107,7 +107,7 @@
        * <p>
        * This event is fired when the Framework has been stopped because of an
        * update operation on the system plugin. The Framework will be restarted
-       * after this event is fired. The source of this event is the System Plugin.
+       * after this event is fired. The source of this event is the System ctkPlugin.
        */
       STOPPED_UPDATE,
 
@@ -116,7 +116,7 @@
        *
        * <p>
        * This event is fired when the Framework did not stop before the wait
-       * timeout expired. The source of this event is the System Plugin.
+       * timeout expired. The source of this event is the System ctkPlugin.
        */
       WAIT_TIMEDOUT
 
@@ -125,7 +125,7 @@
     /**
      * Default constructor for use with the Qt meta object system.
      */
-    PluginFrameworkEvent();
+    ctkPluginFrameworkEvent();
 
     /**
      * Creates a Framework event regarding the specified plugin and exception.
@@ -134,7 +134,7 @@
      * @param plugin The event source.
      * @param fwException The related exception.
      */
-    PluginFrameworkEvent(Type type, Plugin* plugin, const std::exception& fwException);
+    ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin, const std::exception& fwException);
 
     /**
      * Creates a Framework event regarding the specified plugin.
@@ -142,9 +142,9 @@
      * @param type The event type.
      * @param plugin The event source.
      */
-    PluginFrameworkEvent(Type type, Plugin* plugin);
+    ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin);
 
-    PluginFrameworkEvent(const PluginFrameworkEvent& other);
+    ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other);
 
     /**
      * Returns the exception error string related to this event.
@@ -159,7 +159,7 @@
      *
      * @return The plugin associated with the event.
      */
-    Plugin* getPlugin() const;
+    ctkPlugin* getPlugin() const;
 
     /**
      * Returns the type of framework event.
@@ -182,17 +182,17 @@
   };
 
 
-  class PluginFrameworkEventData : public QSharedData
+  class ctkPluginFrameworkEventData : public QSharedData
   {
   public:
 
-    PluginFrameworkEventData(PluginFrameworkEvent::Type type, Plugin* plugin, const QString& exc)
+    ctkPluginFrameworkEventData(ctkPluginFrameworkEvent::Type type, ctkPlugin* plugin, const QString& exc)
       : plugin(plugin), errorString(exc), type(type)
     {
 
     }
 
-    PluginFrameworkEventData(const PluginFrameworkEventData& other)
+    ctkPluginFrameworkEventData(const ctkPluginFrameworkEventData& other)
       : QSharedData(other), plugin(other.plugin), errorString(other.errorString),
         type(other.type)
     {
@@ -200,9 +200,9 @@
     }
 
     /**
-     * Plugin related to the event.
+     * ctkPlugin related to the event.
      */
-    Plugin* const	plugin;
+    ctkPlugin* const	plugin;
 
     /**
      * Exception related to the event.
@@ -212,7 +212,7 @@
     /**
      * Type of event.
      */
-    const PluginFrameworkEvent::Type type;
+    const ctkPluginFrameworkEvent::Type type;
   };
 
 

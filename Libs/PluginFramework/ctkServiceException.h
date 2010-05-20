@@ -30,7 +30,7 @@
 #include "CTKPluginFrameworkExport.h"
 
 
-  class CTK_PLUGINFW_EXPORT ServiceException : public std::runtime_error
+  class CTK_PLUGINFW_EXPORT ctkServiceException : public std::runtime_error
   {
   public:
 
@@ -52,7 +52,7 @@
        */
       FACTORY_EXCEPTION	= 3,
       /**
-       * The exception is a subclass of ServiceException. The subclass should be
+       * The exception is a subclass of ctkServiceException. The subclass should be
        * examined for the type of the exception.
        */
       SUBCLASSED			= 4,
@@ -62,13 +62,13 @@
       REMOTE 				= 5
     };
 
-    ServiceException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception& cause = std::exception());
-    ServiceException(const QString& msg, const std::exception& cause);
+    ctkServiceException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception& cause = std::exception());
+    ctkServiceException(const QString& msg, const std::exception& cause);
 
-    ServiceException(const ServiceException& o);
-    ServiceException& operator=(const ServiceException& o);
+    ctkServiceException(const ctkServiceException& o);
+    ctkServiceException& operator=(const ctkServiceException& o);
 
-    ~ServiceException() throw() {}
+    ~ctkServiceException() throw() {}
 
     std::exception getCause() const;
     void setCause(const std::exception&) throw(std::logic_error);
@@ -83,6 +83,6 @@
   };
 
 
-CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::ServiceException& exc);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::ctkServiceException& exc);
 
 #endif // CTKSERVICEEXCEPTION_H
