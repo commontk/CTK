@@ -54,17 +54,17 @@ bool ctkEvent::operator==(const ctkEvent& other) const
 
 const QVariant& ctkEvent::property(const QString& name) const
 {
-  d->properties[name];
+  return d->properties[name];
 }
 
 QStringList ctkEvent::propertyNames() const
 {
-  d->properties.keys();
+  return d->properties.keys();
 }
 
 const QString& ctkEvent::topic() const
 {
-  d->topic;
+  return d->topic;
 }
 
 bool ctkEvent::matches(const ctkLDAPSearchFilter& filter) const

@@ -134,13 +134,11 @@
   {
     Q_D(ctkPluginContext);
     // TODO check permissions for a direct connection
-    receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(pluginChanged(ctkPluginEvent)), method, type);
+    return receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(pluginChanged(ctkPluginEvent)), method, type);
   }
 
   bool ctkPluginContext::connectFrameworkListener(const QObject* receiver, const char* method, Qt::ConnectionType type)
   {
     Q_D(ctkPluginContext);
-    receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(frameworkEvent(ctkPluginFrameworkEvent)), method, type);
-
-
-}
+    return receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(frameworkEvent(ctkPluginFrameworkEvent)), method, type);
+  }
