@@ -47,11 +47,13 @@ public:
   qreal        RangeXOffSet;
   qreal        RangeYDiff;
   qreal        RangeYOffSet;
+  QColor       VerticalGradientColor;
 };
 
 ctkTransferFunctionScenePrivate::ctkTransferFunctionScenePrivate()
 {
   this->TransferFunction = 0;
+  this->VerticalGradientColor = QColor::fromRgbF(1., 0., 0., 1. );
 }
 
 //-----------------------------------------------------------------------------
@@ -234,9 +236,22 @@ void ctkTransferFunctionScene::computeGradient()
   qreal startPos = this->mapXToScene(this->posX(startCP->x()));
   qreal nextPos;
   
+  //
+  //if we have no colors in value (i.e. can't convert value to color)
+  if (! d->TransferFunction->value(0).canConvert<QColor>())
+    {
+    // create vertical gradient
+    d->Gradient = QLinearGradient(0., 0., 0., 1.);
+    // red
+    d->Gradient.setColorAt(0, d->VerticalGradientColor );
+    // to black
+    d->Gradient.setColorAt(1, QColor::fromRgbF(0., 0., 0., 1. ));
+    return;
+    }
+
+  // classic gradient if we have colors in value
   d->Gradient = QLinearGradient(0., 0., 1., 0.);
   d->Gradient.setColorAt(startPos, this->color(startCP));
-
   for(int i = 1; i < count; ++i)
     {
     nextCP = d->TransferFunction->controlPoint(i);
@@ -265,7 +280,7 @@ void ctkTransferFunctionScene::computeGradient()
         {
         d->Gradient.setColorAt(this->mapXToScene(this->posX(p)), this->color(p));
         }
-      nextPos = this->mapXToScene(this->posX(points[points.size() - 1])); 
+      nextPos = this->mapXToScene(this->posX(points[points.size() - 1]));
       }
     //qDebug() << i << points[0] << points[1] << points[2] << points[3];
     delete startCP;
@@ -438,4 +453,16 @@ qreal ctkTransferFunctionScene::mapYFromScene(qreal scenePosY)const
 {
   CTK_D(const ctkTransferFunctionScene);
   return ((this->height() - scenePosY) / d->RangeYDiff) + d->RangeYOffSet ;
+}
+//-----------------------------------------------------------------------------
+QColor ctkTransferFunctionScene::verticalGradientColor() const
+{
+  CTK_D( const ctkTransferFunctionScene );
+  return d->VerticalGradientColor;
+}
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionScene::setVerticalGradientColor( QColor verticalGradientColor )
+{
+  CTK_D( ctkTransferFunctionScene );
+  d->VerticalGradientColor = verticalGradientColor;
 }

@@ -37,7 +37,9 @@ class ctkTransferFunctionScenePrivate;
 //-----------------------------------------------------------------------------
 class CTK_WIDGETS_EXPORT ctkTransferFunctionScene: public QGraphicsScene
 {
-  Q_OBJECT;
+  Q_OBJECT
+  Q_PROPERTY(QColor VerticalGradientColor READ verticalGradientColor WRITE setVerticalGradientColor)
+
 public:
   ctkTransferFunctionScene(QObject* parent = 0);
   ctkTransferFunctionScene(ctkTransferFunction* transferFunction, QObject* parent = 0);
@@ -77,6 +79,9 @@ public:
 
   void computeCurve();
   void computeGradient();
+
+  QColor verticalGradientColor()const;
+  void setVerticalGradientColor(QColor verticalGradientColor);
 
 protected slots:
   virtual void onTransferFunctionChanged();

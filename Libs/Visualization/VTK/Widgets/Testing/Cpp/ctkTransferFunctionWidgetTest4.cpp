@@ -46,10 +46,10 @@ int ctkTransferFunctionWidgetTest4(int argc, char * argv [] )
   vtkSmartPointer<vtkPiecewiseFunction> pwf =
     vtkSmartPointer<vtkPiecewiseFunction>::New();
   //
-  pwf->AddPoint(0., 0.1);
-  pwf->AddPoint(0.2,.2);
-  pwf->AddPoint(0.3, .5);
-  pwf->AddPoint(0.9, .5);
+  pwf->AddPoint(0., 0.3, .5, .5);
+  pwf->AddPoint(0.2,.2, .5, .5);
+  pwf->AddPoint(0.3, .5, .5, .5);
+  pwf->AddPoint(0.9, .5, .5, .5);
 
   vtkSmartPointer<vtkColorTransferFunction> ctf =
     vtkSmartPointer<vtkColorTransferFunction>::New();
