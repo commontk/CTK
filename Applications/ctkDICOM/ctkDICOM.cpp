@@ -49,18 +49,21 @@ int main(int argc, char** argv)
     }
 
   ctkDICOM myCTK;
-  if (!myCTK.openDatabase( datbaseFileName ))
-    {
-    std::cerr << "Error when opening the data base file: " << datbaseFileName
-              << " error: " << myCTK.GetLastError().toStdString();
+  try { myCTK.openDatabase( datbaseFileName ); }
+  catch (std::exception e)
+  {
+    std::cerr << "Database error:" << qPrintable(myCTK.GetLastError());
+    myCTK.closeDatabase();
     return EXIT_FAILURE;
-    }
-  if (!myCTK.initializeDatabase(datbaseScriptFileName))
-    {
+  }
+
+  try { myCTK.initializeDatabase(datbaseScriptFileName); }
+  catch (std::exception e)
+  {
     std::cerr << "Error when initializing the data base: " << datbaseScriptFileName
               << " error: " << myCTK.GetLastError().toStdString();
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDICOMModel model;
   model.setDatabase(myCTK.database());
