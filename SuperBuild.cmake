@@ -204,12 +204,14 @@ ExternalProject_Add(${proj}
     -DCTK_CXX_FLAGS:STRING=${CTK_CXX_FLAGS}
     -DCTK_C_FLAGS:STRING=${CTK_C_FLAGS}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+	  -DZMQ_DIR:PATH=${ZMQ_DIR}                     # FindVTK expects VTK_DIR variable to be defined
+	  -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR}     # FindOpenIGTLink expects OpenIGTLink_DIR variable to be defined
     -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
-    -DDCMTK_DIR:PATH=${DCMTK_DIR} # FindDCMTK expects DCMTK_DIR
-    -DVTK_DIR:PATH=${VTK_DIR}     # FindVTK expects VTK_DIR
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}    # FindPythonQt expects PYTHON_INCLUDE_DIR
-    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}        # FindPythonQt expects PYTHON_LIBRARY
-    -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR
+    -DDCMTK_DIR:PATH=${DCMTK_DIR} # FindDCMTK expects DCMTK_DIR variable to be defined
+    -DVTK_DIR:PATH=${VTK_DIR}     # FindVTK expects VTK_DIR variable to be defined
+    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}    # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
+    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}        # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+    -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR variable to be defined
     -Dlog4cpp_DIR:PATH=${log4cpp_DIR} # Findlog4cpp expects a log4cpp_DIR variable to be defined
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${CMAKE_BINARY_DIR}/CTK-build
