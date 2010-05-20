@@ -97,6 +97,26 @@ FIND_LIBRARY( DCMTK_dcmdata_LIBRARY dcmdata
   NO_DEFAULT_PATH
 )
 
+FIND_PATH( DCMTK_dcmnet_INCLUDE_DIR dimse.h
+  PATHS
+    ${DCMTK_DIR}/include/dcmnet
+    ${DCMTK_DIR}/include/dcmtk/dcmnet
+    ${DCMTK_DIR}/dcmnet
+    ${DCMTK_DIR}/dcmnet/include
+  NO_DEFAULT_PATH
+)
+
+FIND_LIBRARY( DCMTK_dcmnet_LIBRARY dcmnet
+  PATHS
+    ${DCMTK_DIR}/dcmnet/libsrc
+    ${DCMTK_DIR}/dcmnet/libsrc/Release
+    ${DCMTK_DIR}/dcmnet/libsrc/Debug
+    ${DCMTK_DIR}/dcmnet/Release
+    ${DCMTK_DIR}/dcmnet/Debug
+    ${DCMTK_DIR}/lib
+  NO_DEFAULT_PATH
+)
+
 FIND_PATH( DCMTK_dcmimgle_INCLUDE_DIR dcmimage.h
   PATHS
     ${DCMTK_DIR}/dcmimgle/include
@@ -126,20 +146,14 @@ FIND_LIBRARY(DCMTK_imagedb_LIBRARY imagedb
   NO_DEFAULT_PATH
   )
 
-FIND_LIBRARY(DCMTK_dcmnet_LIBRARY dcmnet
-  PATHS
-    ${DCMTK_DIR}/dcmnet/libsrc/Release
-    ${DCMTK_DIR}/dcmnet/libsrc/Debug
-    ${DCMTK_DIR}/dcmnet/libsrc/
-  NO_DEFAULT_PATH
-  )
-
 IF( DCMTK_config_INCLUDE_DIR 
     AND DCMTK_ofstd_INCLUDE_DIR 
     AND DCMTK_ofstd_LIBRARY
     AND DCMTK_oflog_LIBRARY
     AND DCMTK_dcmdata_INCLUDE_DIR
     AND DCMTK_dcmdata_LIBRARY
+    AND DCMTK_dcmnet_INCLUDE_DIR
+    AND DCMTK_dcmnet_LIBRARY    
     AND DCMTK_dcmimgle_INCLUDE_DIR
     AND DCMTK_dcmimgle_LIBRARY )
 
@@ -159,11 +173,13 @@ IF( DCMTK_config_INCLUDE_DIR
     ${DCMTK_config_INCLUDE_DIR}
     ${DCMTK_ofstd_INCLUDE_DIR}
     ${DCMTK_dcmdata_INCLUDE_DIR}
+    ${DCMTK_dcmnet_INCLUDE_DIR}
     ${DCMTK_dcmimgle_INCLUDE_DIR}
   )
 
   SET( DCMTK_LIBRARIES
     ${DCMTK_dcmimgle_LIBRARY}
+    ${DCMTK_dcmnet_LIBRARY}    
     ${DCMTK_dcmdata_LIBRARY}
     ${DCMTK_ofstd_LIBRARY}
     ${DCMTK_oflog_LIBRARY}
@@ -176,13 +192,6 @@ IF( DCMTK_config_INCLUDE_DIR
    ${DCMTK_imagedb_LIBRARY}
    )
   ENDIF(DCMTK_imagedb_LIBRARY)
-
-  IF(DCMTK_dcmnet_LIBRARY)
-   SET( DCMTK_LIBRARIES
-   ${DCMTK_LIBRARIES}
-   ${DCMTK_dcmnet_LIBRARY}
-   )
-  ENDIF(DCMTK_dcmnet_LIBRARY)
 
   IF( WIN32 )
     SET( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} ws2_32 netapi32 wsock32)
@@ -198,6 +207,8 @@ ENDIF( DCMTK_config_INCLUDE_DIR
     AND DCMTK_oflog_LIBRARY
     AND DCMTK_dcmdata_INCLUDE_DIR
     AND DCMTK_dcmdata_LIBRARY
+    AND DCMTK_dcmnet_INCLUDE_DIR
+    AND DCMTK_dcmnet_LIBRARY    
     AND DCMTK_dcmimgle_INCLUDE_DIR
     AND DCMTK_dcmimgle_LIBRARY )
 
@@ -226,6 +237,8 @@ MARK_AS_ADVANCED(
   DCMTK_config_INCLUDE_DIR
   DCMTK_dcmdata_INCLUDE_DIR
   DCMTK_dcmdata_LIBRARY
+  DCMTK_dcmnet_INCLUDE_DIR
+  DCMTK_dcmnet_LIBRARY
   DCMTK_dcmimgle_INCLUDE_DIR
   DCMTK_dcmimgle_LIBRARY
   DCMTK_imagedb_LIBRARY 
