@@ -86,6 +86,8 @@ public:
   void setCause(const std::exception&) throw(std::logic_error);
   Type getType() const;
 
+  const char* what() const throw();
+
 
 private:
 

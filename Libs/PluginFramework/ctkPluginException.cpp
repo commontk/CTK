@@ -67,6 +67,16 @@ ctkPluginException::Type ctkPluginException::getType() const
   return type;
 }
 
+const char* ctkPluginException::what() const throw()
+{
+  static std::string fullMsg;
+  fullMsg = std::string(std::runtime_error::what());
+  const char* causeMsg = getCause().what();
+  if (causeMsg) fullMsg += std::string("\n  Caused by: ") + causeMsg;
+
+  return fullMsg.c_str();
+}
+
 
 QDebug operator<<(QDebug dbg, const ctkPluginException& exc)
 {
