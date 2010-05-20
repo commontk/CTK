@@ -9,72 +9,68 @@
 
 #include <iostream>
 
-namespace ctk {
+class ctkEventHandlerWrapper : public QObject {
 
-  class EventHandlerWrapper : public QObject {
+  Q_OBJECT
 
-    Q_OBJECT
+private:
 
-  private:
+  ctkEventBus::Properties properties;
+  QStringList topicList;
+  ctkLDAPSearchFilter filter;
 
-    EventBus::Properties properties;
-    QStringList topicList;
-    LDAPSearchFilter filter;
+public:
 
-  public:
+  ctkEventHandlerWrapper(const QObject* subscriber, const char* handler, const ctkEventBus::Properties& properties)
+    : properties(properties)
+  {
+    connect(this, SIGNAL(notifySubscriber(Event)), subscriber, handler);
+  }
 
-    EventHandlerWrapper(const QObject* subscriber, const char* handler, const EventBus::Properties& properties)
-      : properties(properties)
+  QStringList topics() const
+  {
+    return topicList;
+  }
+
+  bool init()
+  {
+    topicList.clear();
+
+    // Get topic names
+    QVariant v = properties[EventConstants::EVENT_TOPIC];
+    topicList = v.toStringList();
+
+    if (topicList.empty())
     {
-      connect(this, SIGNAL(notifySubscriber(Event)), subscriber, handler);
+      return false;
     }
 
-    QStringList topics() const
+    v = properties[EventConstants::EVENT_FILTER];
+    filter = ctkLDAPSearchFilter(v.toString());
+  }
+
+  void handleEvent(const ctkEvent& event /*, const Permission& perm */)
+  {
+    if (!event.matches(filter)) return;
+
+    // should do permissions checks now somehow
+    // ...
+
+    try {
+      emit notifySubscriber(event);
+    }
+    catch (const std::exception& e)
     {
-      return topicList;
+      // TODO logging
+      std::cerr << "Exception occured during publishing " << qPrintable(event.topic()) << ": " << e.what() << std::endl;
     }
 
-    bool init()
-    {
-      topicList.clear();
+  }
 
-      // Get topic names
-      QVariant v = properties[EventConstants::EVENT_TOPIC];
-      topicList = v.toStringList();
+signals:
 
-      if (topicList.empty())
-      {
-        return false;
-      }
+  void notifySubscriber(const ctkEvent&);
 
-      v = properties[EventConstants::EVENT_FILTER];
-      filter = LDAPSearchFilter(v.toString());
-    }
-
-    void handleEvent(const Event& event /*, const Permission& perm */)
-    {
-      if (!event.matches(filter)) return;
-
-      // should do permissions checks now somehow
-      // ...
-
-      try {
-        emit notifySubscriber(event);
-      }
-      catch (const std::exception& e)
-      {
-        // TODO logging
-        std::cerr << "Exception occured during publishing " << qPrintable(event.topic()) << ": " << e.what() << std::endl;
-      }
-
-    }
-
-  signals:
-
-    void notifySubscriber(const Event&);
-
-  };
-
-}
+};
 
 #endif // CTKEVENTHANDLERWRAPPER_P_H

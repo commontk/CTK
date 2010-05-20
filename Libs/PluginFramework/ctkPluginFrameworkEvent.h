@@ -63,7 +63,7 @@
        * This event is fired when the Framework has started after all installed
        * plugins that are marked to be started have been started and the Framework
        * has reached the initial start level. The source of this event is the
-       * System ctkPlugin.
+       * System Plugin.
        */
       STARTED,
 
@@ -97,7 +97,7 @@
        * <p>
        * This event is fired when the Framework has been stopped because of a stop
        * operation on the system plugin. The source of this event is the System
-       * ctkPlugin.
+       * Plugin.
        */
       STOPPED,
 
@@ -107,7 +107,7 @@
        * <p>
        * This event is fired when the Framework has been stopped because of an
        * update operation on the system plugin. The Framework will be restarted
-       * after this event is fired. The source of this event is the System ctkPlugin.
+       * after this event is fired. The source of this event is the System Plugin.
        */
       STOPPED_UPDATE,
 
@@ -116,7 +116,7 @@
        *
        * <p>
        * This event is fired when the Framework did not stop before the wait
-       * timeout expired. The source of this event is the System ctkPlugin.
+       * timeout expired. The source of this event is the System Plugin.
        */
       WAIT_TIMEDOUT
 
@@ -200,7 +200,7 @@
     }
 
     /**
-     * ctkPlugin related to the event.
+     * Plugin related to the event.
      */
     ctkPlugin* const	plugin;
 

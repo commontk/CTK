@@ -24,55 +24,54 @@
 #include <QDebug>
 
 
-  ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const Type& type, const std::exception& cause)
-    : std::runtime_error(msg.toStdString()),
-      type(type), cause(cause)
-  {
-
-  }
-
-  ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const std::exception& cause)
-    : std::runtime_error(msg.toStdString()),
-      type(UNSPECIFIED), cause(cause)
-  {
-
-  }
-
-  ctkPluginDatabaseException::ctkPluginDatabaseException(const ctkPluginDatabaseException& o)
-    : std::runtime_error(o.what()),
-      type(o.type), cause(o.cause)
-  {
-
-  }
-
-  ctkPluginDatabaseException& ctkPluginDatabaseException::operator=(const ctkPluginDatabaseException& o)
-  {
-    std::runtime_error::operator=(o);
-    type = o.type;
-    cause = o.cause;
-    return *this;
-  }
-
-  std::exception ctkPluginDatabaseException::getCause() const
-  {
-    return cause;
-  }
-
-  void ctkPluginDatabaseException::setCause(const std::exception& cause) throw(std::logic_error)
-  {
-    if (!cause.what()) throw std::logic_error("The cause for this ctkPluginDatabaseException instance is already set");
-
-    this->cause = cause;
-  }
-
-  ctkPluginDatabaseException::Type ctkPluginDatabaseException::getType() const
-  {
-    return type;
-  }
+ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const Type& type, const std::exception& cause)
+  : std::runtime_error(msg.toStdString()),
+    type(type), cause(cause)
+{
 
 }
 
-QDebug operator<<(QDebug dbg, const ctk::ctkPluginDatabaseException& exc)
+ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const std::exception& cause)
+  : std::runtime_error(msg.toStdString()),
+    type(UNSPECIFIED), cause(cause)
+{
+
+}
+
+ctkPluginDatabaseException::ctkPluginDatabaseException(const ctkPluginDatabaseException& o)
+  : std::runtime_error(o.what()),
+    type(o.type), cause(o.cause)
+{
+
+}
+
+ctkPluginDatabaseException& ctkPluginDatabaseException::operator=(const ctkPluginDatabaseException& o)
+{
+  std::runtime_error::operator=(o);
+  type = o.type;
+  cause = o.cause;
+  return *this;
+}
+
+std::exception ctkPluginDatabaseException::getCause() const
+{
+  return cause;
+}
+
+void ctkPluginDatabaseException::setCause(const std::exception& cause) throw(std::logic_error)
+{
+  if (!cause.what()) throw std::logic_error("The cause for this ctkPluginDatabaseException instance is already set");
+
+  this->cause = cause;
+}
+
+ctkPluginDatabaseException::Type ctkPluginDatabaseException::getType() const
+{
+  return type;
+}
+
+
+QDebug operator<<(QDebug dbg, const ctkPluginDatabaseException& exc)
 {
   dbg << "ctkPluginDatabaseException:" << exc.what();
 
@@ -80,4 +79,5 @@ QDebug operator<<(QDebug dbg, const ctk::ctkPluginDatabaseException& exc)
   if (causeMsg) dbg << "  Caused by:" << causeMsg;
 
   return dbg.maybeSpace();
+}
 

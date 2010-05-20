@@ -50,7 +50,7 @@
 
 
     /**
-     * ctkPlugin registering this service.
+     * Plugin registering this service.
      */
     ctkPluginPrivate* plugin;
 
@@ -65,7 +65,7 @@
     ServiceProperties properties;
 
     /**
-     * ctkPlugins dependent on this service. Integer is used as
+     * Plugins dependent on this service. Integer is used as
      * reference counter, counting number of unbalanced getService().
      */
     QHash<ctkPlugin*,int> dependents;
@@ -103,7 +103,7 @@
     /**
      * Check if a plugin uses this service
      *
-     * @param p ctkPlugin to check
+     * @param p Plugin to check
      * @return true if plugin uses this service
      */
     bool isUsedByPlugin(ctkPlugin* p);

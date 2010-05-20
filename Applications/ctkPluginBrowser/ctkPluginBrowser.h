@@ -30,35 +30,32 @@
 
 #include <ctkPluginFrameworkEvent.h>
 
-namespace ctk {
 
-  class PluginFramework;
+class ctkPluginFramework;
 
-  class PluginBrowser : public QMainWindow
-  {
-    Q_OBJECT
+class ctkPluginBrowser : public QMainWindow
+{
+  Q_OBJECT
 
-  public:
+public:
 
-    PluginBrowser(PluginFramework* framework);
+  ctkPluginBrowser(ctkPluginFramework* framework);
 
-  private slots:
+private slots:
 
-    void pluginSelected(const QModelIndex& index);
-    void pluginDoubleClicked(const QModelIndex& index);
-    void qtResourceDoubleClicked(const QModelIndex& index);
-    void dbResourceDoubleClicked(const QModelIndex& index);
+  void pluginSelected(const QModelIndex& index);
+  void pluginDoubleClicked(const QModelIndex& index);
+  void qtResourceDoubleClicked(const QModelIndex& index);
+  void dbResourceDoubleClicked(const QModelIndex& index);
 
-    void frameworkEvent(const PluginFrameworkEvent& event);
+  void frameworkEvent(const ctkPluginFrameworkEvent& event);
 
-  private:
+private:
 
-    PluginFramework* framework;
+  ctkPluginFramework* framework;
 
-    Ui::PluginBrowserWindow ui;
-    PluginBrowserEditors* editors;
-  };
-
-}
+  Ui::ctkPluginBrowserWindow ui;
+  ctkPluginBrowserEditors* editors;
+};
 
 #endif // CTKPLUGINBROWSER_H

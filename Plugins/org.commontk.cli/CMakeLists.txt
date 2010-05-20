@@ -3,7 +3,7 @@ PROJECT(org_commontk_cli)
 SET(PLUGIN_export_directive "org_commontk_cli_EXPORT")
 
 SET(PLUGIN_SRCS
-  ctkCLIPlugin.cxx
+  ctkCLIPlugin.cpp
 )
 
 SET(PLUGIN_MOC_SRCS

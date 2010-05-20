@@ -12,28 +12,23 @@
 
 #include <QServicePluginInterface>
 
-using namespace QtMobility;
+class ctkCLIPlugin : public QObject,
+                  public ctkPluginActivator,
+                  public QtMobility::QServicePluginInterface
+{
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator QtMobility::QServicePluginInterface)
 
-namespace ctk {
+public:
 
-  class CLIPlugin : public QObject,
-                    public PluginActivator,
-                    public QServicePluginInterface
-  {
-    Q_OBJECT
-    Q_INTERFACES(ctk::PluginActivator QtMobility::QServicePluginInterface)
+  void start(ctkPluginContext* context);
+  void stop(ctkPluginContext* context);
 
-  public:
+  QObject* createInstance(const QtMobility::QServiceInterfaceDescriptor& descriptor,
+                          QtMobility::QServiceContext* context,
+                          QtMobility::QAbstractSecuritySession* session);
 
-    void start(PluginContext* context);
-    void stop(PluginContext* context);
+};
 
-    QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
-                            QServiceContext* context,
-                            QAbstractSecuritySession* session);
-
-  };
-
-}
 
 #endif /* CTKCLIPLUGIN_H_ */

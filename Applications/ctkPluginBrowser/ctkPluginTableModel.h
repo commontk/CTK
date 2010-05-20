@@ -28,30 +28,26 @@
 
 #include <ctkPlugin.h>
 
-namespace ctk {
+class ctkPluginContext;
 
-  class PluginContext;
+class ctkPluginTableModel : public QAbstractTableModel
+{
+public:
 
-  class PluginTableModel : public QAbstractTableModel
-  {
-  public:
+  ctkPluginTableModel(ctkPluginContext* pc, QObject* parent = 0);
 
-    PluginTableModel(PluginContext* pc, QObject* parent = 0);
+  QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
 
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+  int columnCount(const QModelIndex& parent = QModelIndex()) const;
+  int rowCount(const QModelIndex& parent = QModelIndex()) const;
 
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
-    int rowCount(const QModelIndex& parent = QModelIndex()) const;
+private:
 
-  private:
+  QString getStringForState(const ctkPlugin::State state) const;
 
-    QString getStringForState(const Plugin::State state) const;
-
-    QList<Plugin*> plugins;
-  };
-
-}
+  QList<ctkPlugin*> plugins;
+};
 
 #endif // CTKPLUGINTABLEMODEL_H

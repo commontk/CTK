@@ -25,29 +25,25 @@
 #include <QObject>
 #include <QTabWidget>
 
-namespace ctk {
+class ctkPluginBrowserEditors : public QObject
+{
+  Q_OBJECT
 
-  class PluginBrowserEditors : public QObject
-  {
-    Q_OBJECT
+public:
 
-  public:
+  ctkPluginBrowserEditors(QWidget* editorArea);
 
-    PluginBrowserEditors(QWidget* editorArea);
+  void openEditor(const QString& location, const QByteArray& content, const QString& title, const QString& tooltip = QString());
 
-    void openEditor(const QString& location, const QByteArray& content, const QString& title, const QString& tooltip = QString());
+private:
 
-  private:
+  QStringList editorLocations;
 
-    QStringList editorLocations;
+  QTabWidget tabWidget;
 
-    QTabWidget tabWidget;
+private slots:
 
-  private slots:
-
-    void tabCloseRequested(int index);
-  };
-
-}
+  void tabCloseRequested(int index);
+};
 
 #endif // CTKPLUGINBROWSEREDITORS_H

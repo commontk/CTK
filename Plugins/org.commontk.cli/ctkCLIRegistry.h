@@ -25,17 +25,13 @@
 
 #include <QObject>
 
-namespace ctk {
+class ctkCLIRegistry : public QObject
+{
+  Q_OBJECT
 
-  class CLIRegistry : public QObject
-  {
-    Q_OBJECT
-
-  public:
+public:
 
 
-  };
-
-}
+};
 
 #endif // CTKCLIREGISTRY_H

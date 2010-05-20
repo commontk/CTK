@@ -53,6 +53,4 @@ protected:
 
 };
 
-}
-
 #endif // CTKLDAPSEARCHFILTER_H

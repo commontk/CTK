@@ -29,41 +29,41 @@
 #include <QString>
 
 
-  class CTK_PLUGINFW_EXPORT ctkPluginDatabaseException : public std::runtime_error
-  {
-  public:
+class CTK_PLUGINFW_EXPORT ctkPluginDatabaseException : public std::runtime_error
+{
+public:
 
-    enum Type {
-      UNSPECIFIED,
-      DB_CONNECTION_INVALID,
-      DB_NOT_OPEN_ERROR,
-      DB_NOT_FOUND_ERROR,
-      DB_CREATE_DIR_ERROR,
-      DB_WRITE_ERROR,
-      DB_FILE_INVALID,
-      DB_SQL_ERROR
-    };
-
-    ctkPluginDatabaseException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception& cause = std::exception());
-    ctkPluginDatabaseException(const QString& msg, const std::exception& cause);
-
-    ctkPluginDatabaseException(const ctkPluginDatabaseException& o);
-    ctkPluginDatabaseException& operator=(const ctkPluginDatabaseException& o);
-
-    ~ctkPluginDatabaseException() throw() {}
-
-    std::exception getCause() const;
-    void setCause(const std::exception&) throw(std::logic_error);
-    Type getType() const;
-
-
-  private:
-
-    Type type;
-    std::exception cause;
+  enum Type {
+    UNSPECIFIED,
+    DB_CONNECTION_INVALID,
+    DB_NOT_OPEN_ERROR,
+    DB_NOT_FOUND_ERROR,
+    DB_CREATE_DIR_ERROR,
+    DB_WRITE_ERROR,
+    DB_FILE_INVALID,
+    DB_SQL_ERROR
   };
 
+  ctkPluginDatabaseException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception& cause = std::exception());
+  ctkPluginDatabaseException(const QString& msg, const std::exception& cause);
 
-CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::ctkPluginDatabaseException& exc);
+  ctkPluginDatabaseException(const ctkPluginDatabaseException& o);
+  ctkPluginDatabaseException& operator=(const ctkPluginDatabaseException& o);
+
+  ~ctkPluginDatabaseException() throw() {}
+
+  std::exception getCause() const;
+  void setCause(const std::exception&) throw(std::logic_error);
+  Type getType() const;
+
+
+private:
+
+  Type type;
+  std::exception cause;
+};
+
+
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkPluginDatabaseException& exc);
 
 #endif // CTKPLUGINDATABASEEXCEPTION_H

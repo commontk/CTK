@@ -19,21 +19,34 @@
 
 =============================================================================*/
 
-#include <QCoreApplication>
+#include <ctkPluginFrameworkFactory.h>
+#include <ctkPluginFramework.h>
+#include <ctkPluginException.h>
 
-#include <PluginFramework/ctkPluginManager.h>
+#include "ctkPluginBrowser.h"
 
-int main(int argc, char** argv)
+#include <QApplication>
+
+
+int main(int argv, char** argc)
 {
-  QCoreApplication app(argc, argv);
+  QApplication app(argv, argc);
 
-  ctk::PluginManager pluginManager;
-  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-  pluginManager.startAllPlugins();
+  ctkPluginFrameworkFactory fwFactory;
+  ctkPluginFramework* framework = fwFactory.getFramework();
 
-  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  try {
+    framework->init();
+  }
+  catch (const ctkPluginException& exc)
+  {
+    qCritical() << "Failed to initialize the plug-in framework:" << exc;
+    exit(1);
+  }
 
-  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+  ctkPluginBrowser browser(framework);
+  browser.show();
 
-  return 0;
+  return app.exec();
+
 }

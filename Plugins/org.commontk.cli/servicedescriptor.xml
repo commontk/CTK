@@ -6,7 +6,7 @@
       <name>org.commontk.cli.ICLIManager</name>
       <version>1.0</version>
       <capabilities></capabilities>
-      <customproperty key="objectclass">ctk::ICLIManager</customproperty>
+      <customproperty key="objectclass">ctkICLIManager</customproperty>
       <description>Interface that allows to discover and manage CLI modules</description>
     </interface>
   </service>

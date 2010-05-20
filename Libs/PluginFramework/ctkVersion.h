@@ -29,10 +29,10 @@
 
 
   /**
-   * ctkVersion identifier for plug-ins and packages.
+   * Version identifier for plug-ins and packages.
    *
    * <p>
-   * ctkVersion identifiers have four components.
+   * Version identifiers have four components.
    * <ol>
    * <li>Major version. A non-negative integer.</li>
    * <li>Minor version. A non-negative integer.</li>
@@ -232,6 +232,6 @@
   };
 
 
-CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::ctkVersion& v);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkVersion& v);
 
 #endif // CTKVERSION_H

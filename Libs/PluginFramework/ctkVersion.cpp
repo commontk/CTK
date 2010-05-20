@@ -27,196 +27,196 @@
 #include <QDebug>
 
 
-  const QString ctkVersion::SEPARATOR = ".";
-  const QRegExp ctkVersion::RegExp = QRegExp("[a-zA-Z0-9_\\-]*");
+const QString ctkVersion::SEPARATOR = ".";
+const QRegExp ctkVersion::RegExp = QRegExp("[a-zA-Z0-9_\\-]*");
 
-  const ctkVersion& ctkVersion::emptyVersion()
+const ctkVersion& ctkVersion::emptyVersion()
+{
+  static ctkVersion emptyV;
+  return emptyV;
+}
+
+ctkVersion& ctkVersion::operator=(const ctkVersion& v)
+{
+  majorVersion = v.majorVersion;
+  minorVersion = v.minorVersion;
+  microVersion = v.microVersion;
+  qualifier = v.qualifier;
+  return *this;
+}
+
+ctkVersion::ctkVersion()
+  : majorVersion(0), minorVersion(0), microVersion(0), qualifier("")
+{
+
+}
+
+
+void ctkVersion::validate()
+{
+  if (!RegExp.exactMatch(qualifier))
+    throw std::invalid_argument(std::string("invalid qualifier: ") + qualifier.toStdString());
+}
+
+ctkVersion::ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion)
+  : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier("")
+{
+
+}
+
+ctkVersion::ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion, const QString& qualifier)
+   : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier(qualifier)
+{
+  this->validate();
+}
+
+ctkVersion::ctkVersion(const QString& version)
+  : majorVersion(0), minorVersion(0), microVersion(0)
+{
+  unsigned int maj = 0;
+  unsigned int min = 0;
+  unsigned int mic = 0;
+  QString qual("");
+
+  QStringList st = version.split(SEPARATOR);
+
+  if (st.empty()) return;
+
+  QStringListIterator i(st);
+
+  bool ok = true;
+  maj = i.next().toUInt(&ok);
+
+  if (i.hasNext())
   {
-    static ctkVersion emptyV;
-    return emptyV;
-  }
-
-  ctkVersion& ctkVersion::operator=(const ctkVersion& v)
-  {
-    majorVersion = v.majorVersion;
-    minorVersion = v.minorVersion;
-    microVersion = v.microVersion;
-    qualifier = v.qualifier;
-    return *this;
-  }
-
-  ctkVersion::ctkVersion()
-    : majorVersion(0), minorVersion(0), microVersion(0), qualifier("")
-  {
-
-  }
-
-
-  void ctkVersion::validate()
-  {
-    if (!RegExp.exactMatch(qualifier))
-      throw std::invalid_argument(std::string("invalid qualifier: ") + qualifier.toStdString());
-  }
-
-  ctkVersion::ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion)
-    : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier("")
-  {
-
-  }
-
-  ctkVersion::ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion, const QString& qualifier)
-     : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier(qualifier)
-  {
-    this->validate();
-  }
-
-  ctkVersion::ctkVersion(const QString& version)
-    : majorVersion(0), minorVersion(0), microVersion(0)
-  {
-    unsigned int maj = 0;
-    unsigned int min = 0;
-    unsigned int mic = 0;
-    QString qual("");
-
-    QStringList st = version.split(SEPARATOR);
-
-    if (st.empty()) return;
-
-    QStringListIterator i(st);
-
-    bool ok = true;
-    maj = i.next().toUInt(&ok);
-
+    min = i.next().toUInt(&ok);
     if (i.hasNext())
     {
-      min = i.next().toUInt(&ok);
+      mic = i.next().toUInt(&ok);
       if (i.hasNext())
       {
-        mic = i.next().toUInt(&ok);
+        qual = i.next();
         if (i.hasNext())
         {
-          qual = i.next();
-          if (i.hasNext())
-          {
-             ok = false;
-          }
+           ok = false;
         }
       }
     }
-
-    if (!ok) throw std::invalid_argument("invalid format");
-
-    majorVersion = maj;
-    minorVersion = min;
-    microVersion = mic;
-    qualifier = qual;
-    this->validate();
   }
 
-  ctkVersion::ctkVersion(const ctkVersion& version)
-  : majorVersion(version.majorVersion), minorVersion(version.minorVersion),
-    microVersion(version.microVersion), qualifier(version.qualifier)
-  {
+  if (!ok) throw std::invalid_argument("invalid format");
 
+  majorVersion = maj;
+  minorVersion = min;
+  microVersion = mic;
+  qualifier = qual;
+  this->validate();
+}
+
+ctkVersion::ctkVersion(const ctkVersion& version)
+: majorVersion(version.majorVersion), minorVersion(version.minorVersion),
+  microVersion(version.microVersion), qualifier(version.qualifier)
+{
+
+}
+
+ctkVersion ctkVersion::parseVersion(const QString& version)
+{
+  if (version.isEmpty())
+  {
+    return emptyVersion();
   }
 
-  ctkVersion ctkVersion::parseVersion(const QString& version)
+  QString version2 = version.trimmed();
+  if (version2.isEmpty())
   {
-    if (version.isEmpty())
-    {
-      return emptyVersion();
-    }
-
-    QString version2 = version.trimmed();
-    if (version2.isEmpty())
-    {
-      return emptyVersion();
-    }
-
-    return ctkVersion(version2);
+    return emptyVersion();
   }
 
-  unsigned int ctkVersion::getMajor() const
+  return ctkVersion(version2);
+}
+
+unsigned int ctkVersion::getMajor() const
+{
+  return majorVersion;
+}
+
+unsigned int ctkVersion::getMinor() const
+{
+  return minorVersion;
+}
+
+unsigned int ctkVersion::getMicro() const
+{
+  return microVersion;
+}
+
+QString ctkVersion::getQualifier() const
+{
+  return qualifier;
+}
+
+QString ctkVersion::toString() const
+{
+  QString result;
+  result += QString::number(majorVersion) + SEPARATOR + QString::number(minorVersion) + SEPARATOR + QString::number(microVersion);
+  if (!qualifier.isEmpty())
   {
-    return majorVersion;
+    result += SEPARATOR + qualifier;
+  }
+  return result;
+}
+
+bool ctkVersion::operator==(const ctkVersion& other) const
+{
+  if (&other == this)
+  { // quicktest
+    return true;
   }
 
-  unsigned int ctkVersion::getMinor() const
-  {
-    return minorVersion;
+  return (majorVersion == other.majorVersion) && (minorVersion == other.minorVersion) && (microVersion
+      == other.microVersion) && qualifier == other.qualifier;
+}
+
+int ctkVersion::compare(const ctkVersion& other) const
+{
+  if (&other == this)
+  { // quicktest
+    return 0;
   }
 
-  unsigned int ctkVersion::getMicro() const
+  if (majorVersion < other.majorVersion)
   {
-    return microVersion;
+    return -1;
   }
 
-  QString ctkVersion::getQualifier() const
+  if (majorVersion == other.majorVersion)
   {
-    return qualifier;
-  }
 
-  QString ctkVersion::toString() const
-  {
-    QString result;
-    result += QString::number(majorVersion) + SEPARATOR + QString::number(minorVersion) + SEPARATOR + QString::number(microVersion);
-    if (!qualifier.isEmpty())
-    {
-      result += SEPARATOR + qualifier;
-    }
-    return result;
-  }
-
-  bool ctkVersion::operator==(const ctkVersion& other) const
-  {
-    if (&other == this)
-    { // quicktest
-      return true;
-    }
-
-    return (majorVersion == other.majorVersion) && (minorVersion == other.minorVersion) && (microVersion
-        == other.microVersion) && qualifier == other.qualifier;
-  }
-
-  int ctkVersion::compare(const ctkVersion& other) const
-  {
-    if (&other == this)
-    { // quicktest
-      return 0;
-    }
-
-    if (majorVersion < other.majorVersion)
+    if (minorVersion < other.minorVersion)
     {
       return -1;
     }
 
-    if (majorVersion == other.majorVersion)
+    if (minorVersion == other.minorVersion)
     {
 
-      if (minorVersion < other.minorVersion)
+      if (microVersion < other.microVersion)
       {
         return -1;
       }
 
-      if (minorVersion == other.minorVersion)
+      if (microVersion == other.microVersion)
       {
-
-        if (microVersion < other.microVersion)
-        {
-          return -1;
-        }
-
-        if (microVersion == other.microVersion)
-        {
-          return qualifier.compare(other.qualifier);
-        }
+        return qualifier.compare(other.qualifier);
       }
     }
-    return 1;
   }
+  return 1;
+}
 
 
-QDebug operator<<(QDebug dbg, const ctk::ctkVersion& v)
+QDebug operator<<(QDebug dbg, const ctkVersion& v)
 {
   dbg << v.toString();
 

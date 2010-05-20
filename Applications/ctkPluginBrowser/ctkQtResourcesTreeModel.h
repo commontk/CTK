@@ -25,33 +25,29 @@
 #include <QAbstractItemModel>
 #include <QDir>
 
-namespace ctk {
+class ctkQtResourceTreeItem;
 
-  class QtResourceTreeItem;
+class ctkQtResourcesTreeModel : public QAbstractItemModel
+{
+public:
 
-  class QtResourcesTreeModel : public QAbstractItemModel
-  {
-  public:
+  ctkQtResourcesTreeModel(QObject* parent = 0);
+  ~ctkQtResourcesTreeModel();
 
-    QtResourcesTreeModel(QObject* parent = 0);
-    ~QtResourcesTreeModel();
+  QVariant data(const QModelIndex &index, int role) const;
+  Qt::ItemFlags flags(const QModelIndex &index) const;
+  QVariant headerData(int section, Qt::Orientation orientation,
+                     int role = Qt::DisplayRole) const;
+  QModelIndex index(int row, int column,
+                   const QModelIndex &parent = QModelIndex()) const;
+  QModelIndex parent(const QModelIndex &index) const;
+  int rowCount(const QModelIndex &parent = QModelIndex()) const;
+  int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
-    QVariant data(const QModelIndex &index, int role) const;
-    Qt::ItemFlags flags(const QModelIndex &index) const;
-    QVariant headerData(int section, Qt::Orientation orientation,
-                       int role = Qt::DisplayRole) const;
-    QModelIndex index(int row, int column,
-                     const QModelIndex &parent = QModelIndex()) const;
-    QModelIndex parent(const QModelIndex &index) const;
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+private:
 
-  private:
+  ctkQtResourceTreeItem* rootItem;
 
-    QtResourceTreeItem* rootItem;
-
-  };
-
-}
+};
 
 #endif // CTKQTRESOURCESTREEMODEL_H

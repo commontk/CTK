@@ -5,12 +5,12 @@ PROJECT(ctkPluginBrowser)
 #
 
 SET(KIT_SRCS
-  ctkPluginBrowser.cxx
-  ctkPluginBrowserEditors.cxx
-  ctkPluginBrowserMain.cxx
-  ctkPluginTableModel.cxx
-  ctkPluginResourcesTreeModel.cxx
-  ctkQtResourcesTreeModel.cxx
+  ctkPluginBrowser.cpp
+  ctkPluginBrowserEditors.cpp
+  ctkPluginBrowserMain.cpp
+  ctkPluginTableModel.cpp
+  ctkPluginResourcesTreeModel.cpp
+  ctkQtResourcesTreeModel.cpp
 )
 
 # Headers that should run through moc

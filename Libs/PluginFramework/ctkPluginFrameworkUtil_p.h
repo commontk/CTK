@@ -19,31 +19,36 @@
 
 =============================================================================*/
 
+#ifndef CTKPLUGINFRAMEWORKUTIL_P_H
+#define CTKPLUGINFRAMEWORKUTIL_P_H
+
 #include <QMap>
 #include <QStringList>
 
 
-  class ctkPluginFrameworkUtil
-  {
-  public:
+class ctkPluginFrameworkUtil
+{
+public:
 
-    /**
-       * Parse strings of format:
-       *
-       *   ENTRY (, ENTRY)*
-       *   ENTRY = key (; key)* (; PARAM)*
-       *   PARAM = attribute '=' value
-       *   PARAM = directive ':=' value
-       *
-       * @param a Attribute being parsed
-       * @param s String to parse
-       * @param single If true, only allow one key per ENTRY
-       * @param unique Only allow unique parameters for each ENTRY.
-       * @param single_entry If true, only allow one ENTRY is allowed.
-       * @return QMap<QString, QString> mapping attributes to values.
-       * @exception std::invalid_argument If syntax error in input string.
-       */
-      static QList<QMap<QString, QStringList> > parseEntries(const QString& a, const QString& s,
-                                                 bool single, bool unique, bool single_entry);
+  /**
+     * Parse strings of format:
+     *
+     *   ENTRY (, ENTRY)*
+     *   ENTRY = key (; key)* (; PARAM)*
+     *   PARAM = attribute '=' value
+     *   PARAM = directive ':=' value
+     *
+     * @param a Attribute being parsed
+     * @param s String to parse
+     * @param single If true, only allow one key per ENTRY
+     * @param unique Only allow unique parameters for each ENTRY.
+     * @param single_entry If true, only allow one ENTRY is allowed.
+     * @return QMap<QString, QString> mapping attributes to values.
+     * @exception std::invalid_argument If syntax error in input string.
+     */
+    static QList<QMap<QString, QStringList> > parseEntries(const QString& a, const QString& s,
+                                               bool single, bool unique, bool single_entry);
 
-}
+};
+
+#endif // CTKPLUGINFRAMEWORKUTIL_P_H

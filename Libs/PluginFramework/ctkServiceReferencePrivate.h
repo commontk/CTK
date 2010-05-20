@@ -46,7 +46,7 @@ class QObject;
     /**
      * Unget the service object.
      *
-     * @param plugin ctkPlugin who wants remove service.
+     * @param plugin Plugin who wants remove service.
      * @param checkRefCounter If true decrement refence counter and remove service
      *                        if we reach zero. If false remove service without
      *                        checking refence counter.

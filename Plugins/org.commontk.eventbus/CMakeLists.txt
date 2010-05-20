@@ -3,8 +3,8 @@ PROJECT(org_commontk_eventbus)
 SET(PLUGIN_export_directive "org_commontk_eventbus_EXPORT")
 
 SET(PLUGIN_SRCS
-  ctkEventBusImpl.cxx
-  ctkEventBusPlugin.cxx
+  ctkEventBusImpl.cpp
+  ctkEventBusPlugin.cpp
 )
 
 SET(PLUGIN_MOC_SRCS

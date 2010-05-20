@@ -7,46 +7,42 @@
 #include <QHash>
 #include <QSet>
 
-namespace ctk {
+class ctkEventHandlerWrapper;
 
-  class EventHandlerWrapper;
+class ctkEventBusImpl : public QObject,
+                     public ctkEventBus
+{
+  Q_OBJECT
+  Q_INTERFACES(ctkEventBus)
 
-  class EventBusImpl : public QObject,
-                       public EventBus
-  {
-    Q_OBJECT
-    Q_INTERFACES(ctk::EventBus)
+public:
 
-  public:
+  static ctkEventBusImpl* instance();
 
-    static EventBusImpl* instance();
+  void postEvent(const ctkEvent& event);
+  void sendEvent(const ctkEvent& event);
 
-    void postEvent(const Event& event);
-    void sendEvent(const Event& event);
+  void publishSignal(const QObject* publisher, const char* signal);
 
-    void publishSignal(const QObject* publisher, const char* signal);
+  void subscribeSlot(const QObject* subscriber, const char* member, const Properties& properties);
 
-    void subscribeSlot(const QObject* subscriber, const char* member, const Properties& properties);
+protected:
 
-  protected:
+  typedef QList<ctkEventHandlerWrapper*> HandlerList;
 
-    typedef QList<EventHandlerWrapper*> HandlerList;
+  HandlerList globalWildcard;
 
-    HandlerList globalWildcard;
+  QHash<QString, HandlerList> topicName;
 
-    QHash<QString, HandlerList> topicName;
+  void dispatchEvent(const ctkEvent& event, bool isAsync);
 
-    void dispatchEvent(const Event& event, bool isAsync);
+  void bucket(ctkEventHandlerWrapper* wrapper);
 
-    void bucket(EventHandlerWrapper* wrapper);
+  QSet<ctkEventHandlerWrapper*> handlers(const QString& topic);
 
-    QSet<EventHandlerWrapper*> handlers(const QString& topic);
+private:
 
-  private:
-
-    EventBusImpl();
-  };
-
-}
+  ctkEventBusImpl();
+};
 
 #endif // CTKEVENTBUSIMPL_H

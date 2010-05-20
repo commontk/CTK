@@ -41,42 +41,42 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkLDAPSearchFilter.cxx
-  ctkPlugin.cxx
-  ctkPluginArchive.cxx
-  ctkPluginConstants.cxx
-  ctkPluginContext.cxx
-  ctkPluginDatabase.cxx
-  ctkPluginDatabaseException.cxx
-  ctkPluginEvent.cxx
-  ctkPluginException.cxx
-  ctkPluginFramework.cxx
-  ctkPluginFrameworkFactory.cxx
-  ctkPluginFrameworkContext.cxx
-  ctkPluginFrameworkEvent.cxx
-  ctkPluginFrameworkListeners.cxx
-  ctkPluginFrameworkPrivate.cxx
-  ctkPluginFrameworkUtil.cxx
-  ctkPluginManager.cxx
-  ctkPluginManifest.cxx
-  ctkPluginPrivate.cxx
-  ctkPlugins.cxx
-  ctkQtServiceRegistration.cxx
-  ctkQtServiceRegistrationPrivate.cxx
-  ctkRequirePlugin.cxx
-  ctkServiceException.cxx
-  ctkServiceReference.cxx
-  ctkServiceReferencePrivate.cxx
-  ctkServiceRegistration.cxx
-  ctkServiceRegistrationPrivate.cxx
-  ctkServices.cxx
-  ctkPluginStorage.cxx
-  ctkVersion.cxx
-  ctkVersionRange.cxx
+  ctkLDAPSearchFilter.cpp
+  ctkPlugin.cpp
+  ctkPluginArchive.cpp
+  ctkPluginConstants.cpp
+  ctkPluginContext.cpp
+  ctkPluginDatabase.cpp
+  ctkPluginDatabaseException.cpp
+  ctkPluginEvent.cpp
+  ctkPluginException.cpp
+  ctkPluginFramework.cpp
+  ctkPluginFrameworkFactory.cpp
+  ctkPluginFrameworkContext.cpp
+  ctkPluginFrameworkEvent.cpp
+  ctkPluginFrameworkListeners.cpp
+  ctkPluginFrameworkPrivate.cpp
+  ctkPluginFrameworkUtil.cpp
+  ctkPluginManager.cpp
+  ctkPluginManifest.cpp
+  ctkPluginPrivate.cpp
+  ctkPlugins.cpp
+  ctkQtServiceRegistration.cpp
+  ctkQtServiceRegistrationPrivate.cpp
+  ctkRequirePlugin.cpp
+  ctkServiceException.cpp
+  ctkServiceReference.cpp
+  ctkServiceReferencePrivate.cpp
+  ctkServiceRegistration.cpp
+  ctkServiceRegistrationPrivate.cpp
+  ctkServices.cpp
+  ctkPluginStorage.cpp
+  ctkVersion.cpp
+  ctkVersionRange.cpp
 
   # EventBus sources
-  EventBus/ctkEvent.cxx
-  EventBus/ctkEventConstants.cxx
+  EventBus/ctkEvent.cpp
+  EventBus/ctkEventConstants.cpp
   )
 
 # Headers that should run through moc

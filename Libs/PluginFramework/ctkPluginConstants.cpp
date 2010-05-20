@@ -21,30 +21,30 @@
 
 #include "ctkPluginConstants.h"
 
-  const QString	PluginConstants::SYSTEM_PLUGIN_LOCATION = "System ctkPlugin";
-  const QString	PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.plugin";
+const QString	PluginConstants::SYSTEM_PLUGIN_LOCATION = "System Plugin";
+const QString	PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.plugin";
 
-  const QString PluginConstants::FRAMEWORK_STORAGE = "org.commontk.pluginfw.storage";
+const QString PluginConstants::FRAMEWORK_STORAGE = "org.commontk.pluginfw.storage";
 
-  const QString	PluginConstants::PLUGIN_SYMBOLICNAME = "ctkPlugin-SymbolicName";
-  const QString PluginConstants::PLUGIN_COPYRIGHT = "ctkPlugin-Copyright";
-  const QString PluginConstants::PLUGIN_DESCRIPTION = "ctkPlugin-Description";
-  const QString PluginConstants::PLUGIN_NAME = "ctkPlugin-Name";
-  const QString PluginConstants::PLUGIN_LOCALIZATION = "ctkPlugin-Localization";
-  const QString PluginConstants::PLUGIN_LOCALIZATION_DEFAULT_BASENAME = "CTK-INF/l10n/plugin";
-  const QString PluginConstants::REQUIRE_PLUGIN = "Require-ctkPlugin";
-  const QString PluginConstants::PLUGIN_VERSION_ATTRIBUTE = "plugin-version";
-  const QString	PluginConstants::PLUGIN_VERSION = "ctkPlugin-ctkVersion";
-  const QString	PluginConstants::PLUGIN_ACTIVATIONPOLICY = "ctkPlugin-ActivationPolicy";
+const QString	PluginConstants::PLUGIN_SYMBOLICNAME = "Plugin-SymbolicName";
+const QString PluginConstants::PLUGIN_COPYRIGHT = "Plugin-Copyright";
+const QString PluginConstants::PLUGIN_DESCRIPTION = "Plugin-Description";
+const QString PluginConstants::PLUGIN_NAME = "Plugin-Name";
+const QString PluginConstants::PLUGIN_LOCALIZATION = "Plugin-Localization";
+const QString PluginConstants::PLUGIN_LOCALIZATION_DEFAULT_BASENAME = "CTK-INF/l10n/plugin";
+const QString PluginConstants::REQUIRE_PLUGIN = "Require-Plugin";
+const QString PluginConstants::PLUGIN_VERSION_ATTRIBUTE = "plugin-version";
+const QString	PluginConstants::PLUGIN_VERSION = "Plugin-Version";
+const QString	PluginConstants::PLUGIN_ACTIVATIONPOLICY = "Plugin-ActivationPolicy";
 
-  const QString	PluginConstants::ACTIVATION_EAGER = "eager";
+const QString	PluginConstants::ACTIVATION_EAGER = "eager";
 
-  const QString PluginConstants::RESOLUTION_DIRECTIVE = "resolution";
-  const QString PluginConstants::RESOLUTION_MANDATORY = "mandatory";
-  const QString PluginConstants::RESOLUTION_OPTIONAL = "optional";
+const QString PluginConstants::RESOLUTION_DIRECTIVE = "resolution";
+const QString PluginConstants::RESOLUTION_MANDATORY = "mandatory";
+const QString PluginConstants::RESOLUTION_OPTIONAL = "optional";
 
 
-  const QString PluginConstants::OBJECTCLASS = "objectclass";
-  const QString PluginConstants::SERVICE_ID = "service.id";
-  const QString PluginConstants::SERVICE_RANKING = "service.ranking";
+const QString PluginConstants::OBJECTCLASS = "objectclass";
+const QString PluginConstants::SERVICE_ID = "service.id";
+const QString PluginConstants::SERVICE_RANKING = "service.ranking";
 

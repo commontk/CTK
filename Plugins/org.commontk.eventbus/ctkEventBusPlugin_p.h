@@ -5,28 +5,24 @@
 
 #include <QServicePluginInterface>
 
-using namespace QtMobility;
 
-namespace ctk {
+class ctkEventBusPlugin : public QObject,
+                   public ctkPluginActivator,
+                   public QtMobility::QServicePluginInterface
+{
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator QtMobility::QServicePluginInterface)
 
-  class EventBusPlugin : public QObject,
-                     public PluginActivator,
-                     public QServicePluginInterface
-  {
-    Q_OBJECT
-    Q_INTERFACES(ctk::PluginActivator QtMobility::QServicePluginInterface)
+public:
 
-  public:
+  void start(ctkPluginContext* context);
+  void stop(ctkPluginContext* context);
 
-    void start(PluginContext* context);
-    void stop(PluginContext* context);
+  QObject* createInstance(const QtMobility::QServiceInterfaceDescriptor& descriptor,
+                          QtMobility::QServiceContext* context,
+                          QtMobility::QAbstractSecuritySession* session);
 
-    QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
-                            QServiceContext* context,
-                            QAbstractSecuritySession* session);
+};
 
-  };
-
-}
 
 #endif // CTKEVENTBUSPLUGIN_H

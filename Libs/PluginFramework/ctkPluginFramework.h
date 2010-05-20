@@ -32,7 +32,7 @@
   class ctkPluginFrameworkPrivate;
 
   /**
-   * A %ctkPluginFramework instance. A %ctkPluginFramework is also known as a System %ctkPlugin.
+   * A %ctkPluginFramework instance. A %ctkPluginFramework is also known as a System %Plugin.
    *
    * <p>
    * %ctkPluginFramework instances are created using a ctkPluginFrameworkFactory. The methods
@@ -53,7 +53,7 @@
      * must:
      * <ul>
      * <li>Be in the {@link #STARTING} state.</li>
-     * <li>Have a valid ctkPlugin Context.</li>
+     * <li>Have a valid Plugin Context.</li>
      * <li>Be at start level 0.</li>
      * <li>Have event handling enabled.</li>
      * <li>Have create ctkPlugin objects for all installed plugins.</li>

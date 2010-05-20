@@ -110,8 +110,6 @@ public:
 
 };
 
-}
-
-Q_DECLARE_INTERFACE(ctk::ctkPluginActivator, "org.commontk.pluginfw.pluginactivator")
+Q_DECLARE_INTERFACE(ctkPluginActivator, "org.commontk.pluginfw.pluginactivator")
 
 #endif /* CTKPLUGINACTIVATOR_H_ */

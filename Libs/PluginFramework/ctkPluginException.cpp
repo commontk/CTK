@@ -22,53 +22,53 @@
 #include "ctkPluginException.h"
 
 
-  ctkPluginException::ctkPluginException(const QString& msg, const Type& type, const std::exception& cause)
-    : std::runtime_error(msg.toStdString()),
-      type(type), cause(cause)
-  {
+ctkPluginException::ctkPluginException(const QString& msg, const Type& type, const std::exception& cause)
+  : std::runtime_error(msg.toStdString()),
+    type(type), cause(cause)
+{
 
-  }
+}
 
-  ctkPluginException::ctkPluginException(const QString& msg, const std::exception& cause)
-    : std::runtime_error(msg.toStdString()),
-      type(UNSPECIFIED), cause(cause)
-  {
+ctkPluginException::ctkPluginException(const QString& msg, const std::exception& cause)
+  : std::runtime_error(msg.toStdString()),
+    type(UNSPECIFIED), cause(cause)
+{
 
-  }
+}
 
-  ctkPluginException::ctkPluginException(const ctkPluginException& o)
-    : std::runtime_error(o.what()), type(o.type), cause(o.cause)
-  {
+ctkPluginException::ctkPluginException(const ctkPluginException& o)
+  : std::runtime_error(o.what()), type(o.type), cause(o.cause)
+{
 
-  }
+}
 
-  ctkPluginException& ctkPluginException::operator=(const ctkPluginException& o)
-  {
-    std::runtime_error::operator=(o);
-    type = o.type;
-    cause = o.cause;
-    return *this;
-  }
+ctkPluginException& ctkPluginException::operator=(const ctkPluginException& o)
+{
+  std::runtime_error::operator=(o);
+  type = o.type;
+  cause = o.cause;
+  return *this;
+}
 
-  std::exception ctkPluginException::getCause() const
-  {
-    return cause;
-  }
+std::exception ctkPluginException::getCause() const
+{
+  return cause;
+}
 
-  void ctkPluginException::setCause(const std::exception& cause) throw(std::logic_error)
-  {
-    if (!cause.what()) throw std::logic_error("The cause for this ctkPluginException instance is already set");
+void ctkPluginException::setCause(const std::exception& cause) throw(std::logic_error)
+{
+  if (!cause.what()) throw std::logic_error("The cause for this ctkPluginException instance is already set");
 
-    this->cause = cause;
-  }
+  this->cause = cause;
+}
 
-  ctkPluginException::Type ctkPluginException::getType() const
-  {
-    return type;
-  }
+ctkPluginException::Type ctkPluginException::getType() const
+{
+  return type;
+}
 
 
-QDebug operator<<(QDebug dbg, const ctk::ctkPluginException& exc)
+QDebug operator<<(QDebug dbg, const ctkPluginException& exc)
 {
   dbg << "ctkPluginException:" << exc.what();
 

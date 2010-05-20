@@ -39,7 +39,7 @@
 #define PLUGINDATABASE "pluginfw.db"
 
 //database table names
-#define PLUGINS_TABLE "ctkPlugins"
+#define PLUGINS_TABLE "Plugins"
 #define PLUGIN_RESOURCES_TABLE "PluginResources"
 
 //separator
@@ -47,19 +47,17 @@
 
 
 
-  enum TBindIndexes
-  {
-    EBindIndex=0,
-    EBindIndex1,
-    EBindIndex2,
-    EBindIndex3,
-    EBindIndex4,
-    EBindIndex5,
-    EBindIndex6,
-    EBindIndex7
-  };
-
-
+enum TBindIndexes
+{
+  EBindIndex=0,
+  EBindIndex1,
+  EBindIndex2,
+  EBindIndex3,
+  EBindIndex4,
+  EBindIndex5,
+  EBindIndex6,
+  EBindIndex7
+};
 
 ctkPluginDatabase::ctkPluginDatabase(ctkPluginStorage* storage)
 :m_isDatabaseOpen(false), m_inTransaction(false), m_PluginStorage(storage)
@@ -183,7 +181,7 @@ void ctkPluginDatabase::updateDB()
 
   beginTransaction(&query, Write);
 
-  QString statement = "SELECT ID, Location, LocalPath, Timestamp, SymbolicName, ctkVersion FROM ctkPlugins WHERE State != ?";
+  QString statement = "SELECT ID, Location, LocalPath, Timestamp, SymbolicName, Version FROM Plugins WHERE State != ?";
   QList<QVariant> bindValues;
   bindValues.append(ctkPlugin::UNINSTALLED);
 
@@ -216,7 +214,7 @@ void ctkPluginDatabase::updateDB()
 
   try
   {
-    statement = "DELETE FROM ctkPlugins WHERE ID=?";
+    statement = "DELETE FROM Plugins WHERE ID=?";
     QListIterator<qlonglong> idIter(outdatedIds);
     while (idIter.hasNext())
     {
@@ -287,7 +285,7 @@ ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QS
 
   beginTransaction(&query, Write);
 
-  QString statement = "INSERT INTO ctkPlugins(Location,LocalPath,SymbolicName,ctkVersion,State,Timestamp) VALUES(?,?,?,?,?,?)";
+  QString statement = "INSERT INTO Plugins(Location,LocalPath,SymbolicName,Version,State,Timestamp) VALUES(?,?,?,?,?,?)";
 
   QList<QVariant> bindValues;
   bindValues.append(location.toString());
@@ -357,7 +355,7 @@ ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QS
     ctkPluginArchive* archive = new ctkPluginArchive(m_PluginStorage, location, localPath,
                                                pluginId);;
 
-    statement = "UPDATE ctkPlugins SET SymbolicName=?,ctkVersion=? WHERE ID=?";
+    statement = "UPDATE Plugins SET SymbolicName=?,Version=? WHERE ID=?";
     QString versionString = archive->getAttribute(PluginConstants::PLUGIN_VERSION);
     bindValues.clear();
     bindValues.append(archive->getAttribute(PluginConstants::PLUGIN_SYMBOLICNAME));
@@ -428,7 +426,7 @@ void ctkPluginDatabase::removeArchive(const ctkPluginArchive *pa)
   QSqlDatabase database = QSqlDatabase::database(m_connectionName);
   QSqlQuery query(database);
 
-  QString statement = "DELETE FROM ctkPlugins WHERE ID=?";
+  QString statement = "DELETE FROM Plugins WHERE ID=?";
 
   QList<QVariant> bindValues;
   bindValues.append(pa->getPluginId());
@@ -584,12 +582,12 @@ void ctkPluginDatabase::createTables()
     //Begin Transaction
     beginTransaction(&query, Write);
 
-    QString statement("CREATE TABLE ctkPlugins("
+    QString statement("CREATE TABLE Plugins("
                       "ID INTEGER PRIMARY KEY,"
                       "Location TEXT NOT NULL UNIQUE,"
                       "LocalPath TEXT NOT NULL UNIQUE,"
                       "SymbolicName TEXT NOT NULL,"
-                      "ctkVersion TEXT NOT NULL,"
+                      "Version TEXT NOT NULL,"
                       "State INTEGER NOT NULL,"
                       "Timestamp TEXT NOT NULL)");
     try
@@ -606,7 +604,7 @@ void ctkPluginDatabase::createTables()
                 "PluginID INTEGER NOT NULL,"
                 "ResourcePath TEXT NOT NULL, "
                 "Resource BLOB NOT NULL,"
-                "FOREIGN KEY(PluginID) REFERENCES ctkPlugins(ID) ON DELETE CASCADE)";
+                "FOREIGN KEY(PluginID) REFERENCES Plugins(ID) ON DELETE CASCADE)";
     try
     {
       executeQuery(&query, statement);
@@ -764,7 +762,7 @@ QList<ctkPluginArchive*> ctkPluginDatabase::getPluginArchives() const
   checkConnection();
 
   QSqlQuery query(QSqlDatabase::database(m_connectionName));
-  QString statement("SELECT ID, Location, LocalPath FROM ctkPlugins WHERE State != ?");
+  QString statement("SELECT ID, Location, LocalPath FROM Plugins WHERE State != ?");
   QList<QVariant> bindValues;
   bindValues.append(ctkPlugin::UNINSTALLED);
 
