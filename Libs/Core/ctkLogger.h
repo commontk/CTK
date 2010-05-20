@@ -36,6 +36,45 @@ public:
   explicit ctkLogger ( QString name, QObject* parent = 0 );
   virtual ~ctkLogger ();
   
+  void debug ( QString s );
+  void info ( QString s );
+  void notice ( QString s );
+  void warn ( QString s );
+  void warning ( QString s );
+  void error ( QString s );
+  void crit ( QString s );
+  void critical ( QString s );
+  void alert ( QString s );
+  void emerg ( QString s );
+  void emergercy ( QString s );
+  void fatal ( QString s );
+
+  void setDebug();
+  void setInfo();
+  void setNotice();
+  void setWarn();
+  void setWarning();
+  void setError();
+  void setCrit();
+  void setCritical();
+  void setAlert();
+  void setEmerg();
+  void setEmergercy();
+  void setFatal();
+
+  bool isDebugEnabled();
+  bool isInfoEnabled();
+  bool isNoticeEnabled();
+  bool isWarnEnabled();
+  bool isWarningEnabled();
+  bool isErrorEnabled();
+  bool isCritEnabled();
+  bool isCriticalEnabled();
+  bool isAlertEnabled();
+  bool isEmergEnabled();
+  bool isEmergercyEnabled();
+  bool isFatalEnabled();
+
 private:
   class ctkInternal;
   ctkInternal *Internal;
