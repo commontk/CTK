@@ -32,10 +32,22 @@
 #include "ctkTransferFunctionGradientItem.h"
 #include "ctkTransferFunctionScene.h"
 
+class ctkTransferFunctionGradientItemPrivate:public ctkPrivate<ctkTransferFunctionGradientItem>
+{
+public:
+  ctkTransferFunctionGradientItemPrivate();
+  bool Mask;
+};
+
+ctkTransferFunctionGradientItemPrivate::ctkTransferFunctionGradientItemPrivate()
+{
+  this->Mask = true;
+}
 //-----------------------------------------------------------------------------
 ctkTransferFunctionGradientItem::ctkTransferFunctionGradientItem(QGraphicsItem* parentGraphicsItem)
   :ctkTransferFunctionItem(parentGraphicsItem)
 {
+  CTK_INIT_PRIVATE(ctkTransferFunctionGradientItem);
 }
 
 //-----------------------------------------------------------------------------
@@ -43,7 +55,6 @@ ctkTransferFunctionGradientItem::ctkTransferFunctionGradientItem(
   ctkTransferFunction* transferFunction, QGraphicsItem* parentItem)
   :ctkTransferFunctionItem(transferFunction, parentItem)
 {
- this->Mask = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -58,9 +69,10 @@ void ctkTransferFunctionGradientItem::paint(
   ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   Q_ASSERT(tfScene);
 
+  const QGradient& gradient = tfScene->gradient();
+
   if ( this->mask() )
     {
-    const QGradient& gradient = tfScene->gradient();
     const QPainterPath& curve = tfScene->curve();
     QPainterPath closedPath = curve;
     QRectF position = this->rect();
@@ -77,7 +89,6 @@ void ctkTransferFunctionGradientItem::paint(
     }
   else
     {
-    const QGradient& gradient = tfScene->gradient();
     painter->fillRect(this->rect(), gradient);
     }
 }
@@ -85,11 +96,13 @@ void ctkTransferFunctionGradientItem::paint(
 //-----------------------------------------------------------------------------
 bool ctkTransferFunctionGradientItem::mask() const
 {
-  return this->Mask;
+  CTK_D( const ctkTransferFunctionGradientItem );
+  return d->Mask;
 }
 
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionGradientItem::setMask( bool mask )
 {
-  this->Mask = mask;
+  CTK_D( ctkTransferFunctionGradientItem );
+  d->Mask = mask;
 }

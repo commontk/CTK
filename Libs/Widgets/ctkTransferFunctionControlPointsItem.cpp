@@ -119,7 +119,6 @@ void ctkTransferFunctionControlPointsItem::paint(
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
-  qDebug() << "mouse press caught";
   CTK_D(ctkTransferFunctionControlPointsItem);
   QWidget* w = e->widget();
   ctkTransferFunctionWidget* view = qobject_cast<ctkTransferFunctionWidget*>(e->widget()->parentWidget());
@@ -162,21 +161,29 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
     e->ignore();
     return;
     }
-  //qreal range[2];
-  //this->transferFunction()->range(range);
-  //qreal newPos = range[0] + e->pos().x() / (this->rect().width() / (range[1] - range[0]));
-  //newPos = qBound(range[0], newPos, range[1]);
+
   ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   Q_ASSERT(tfScene);
   QPointF newPos = tfScene->mapPointFromScene(e->pos());
-  this->transferFunction()->setControlPointPos(d->SelectedPoint, newPos.x());
-  this->transferFunction()->setControlPointValue(d->SelectedPoint, newPos.y());
+
+  // Deal with borders
+  if(d->SelectedPoint == 0 || d->SelectedPoint == this->transferFunction()->count() )
+    {
+    qDebug() << "border" ;
+    }
+  else if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() < newPos.x() &&
+      this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() > newPos.x())
+    {
+    // update pos of the point
+    this->transferFunction()->setControlPointPos( d->SelectedPoint, newPos.x());
+    // update value of the point
+    this->transferFunction()->setControlPointValue( d->SelectedPoint, newPos.y());
+    }
 }
 
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 {
-  qDebug() << "mouse release caught";
   CTK_D(ctkTransferFunctionControlPointsItem);
   if (d->SelectedPoint < 0)
     {

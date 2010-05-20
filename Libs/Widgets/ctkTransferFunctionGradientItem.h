@@ -23,19 +23,21 @@
 
 /// Qt includes
 #include <QGraphicsObject>
+#include <QColor>
 
 /// CTK includes
 #include "CTKWidgetsExport.h"
 #include "ctkPimpl.h"
 #include "ctkTransferFunctionItem.h"
 
-//class ctkTransferFunctionGradientItemPrivate;
+class ctkTransferFunctionGradientItemPrivate;
 
 //-----------------------------------------------------------------------------
 class CTK_WIDGETS_EXPORT ctkTransferFunctionGradientItem: public ctkTransferFunctionItem
 {
   Q_OBJECT
   Q_PROPERTY(bool Mask READ mask WRITE setMask)
+
 public:
   ctkTransferFunctionGradientItem(QGraphicsItem* parent = 0);
   ctkTransferFunctionGradientItem(ctkTransferFunction* transferFunction, 
@@ -48,7 +50,7 @@ public:
   void setMask(bool mask);
 
 private:
-  bool Mask;
+  CTK_DECLARE_PRIVATE(ctkTransferFunctionGradientItem);
 };
 
 #endif

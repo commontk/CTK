@@ -215,7 +215,7 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
     valuesCTF[5] >= 0. && valuesCTF[5] <= 1.);   // Sharpness
 
   double subPointsCTF[30];
-  double subPointsPWF[30];
+  double subPointsPWF[10];
   d->ColorTransferFunction->GetTable(cp->x(), valuesCTF[0], 10, subPointsCTF);
   d->PiecewiseFunction->GetTable(cp->x(), valuesCTF[0], 10, subPointsPWF);
   qreal interval = (valuesCTF[0] - cp->x()) / 9.;
@@ -226,9 +226,7 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
 	  qreal green =  subPointsCTF[3*i+1];
 	  qreal blue =  subPointsCTF[3*i+2];
 	  qreal alpha = subPointsPWF[i];
-	  QColor compositeValue;
-	  compositeValue.setRgb(red*255, green*255, blue*255, alpha*255 );
-	  //compositeValue. (red, green, blue, alpha);
+	  QColor compositeValue = QColor::fromRgbF(red, green, blue, alpha );
     cp->SubPoints << ctkPoint(cp->x() + interval*i, compositeValue);
   }
   return cp;
