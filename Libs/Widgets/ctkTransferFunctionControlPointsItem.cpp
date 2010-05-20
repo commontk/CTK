@@ -28,8 +28,8 @@
 #include <QVariant>
 
 /// CTK includes
-#include "ctkTransferFunction.h"
 #include "ctkTransferFunctionControlPointsItem.h"
+#include "ctkTransferFunctionScene.h"
 
 //-----------------------------------------------------------------------------
 class ctkTransferFunctionControlPointsItemPrivate: 
@@ -46,7 +46,7 @@ public:
 //-----------------------------------------------------------------------------
 ctkTransferFunctionControlPointsItemPrivate::ctkTransferFunctionControlPointsItemPrivate()
 {
-  this->PointSize = QSizeF(10.,10.);
+  this->PointSize = QSizeF(0.01,0.01);
   this->SelectedPoint = -1;
 }
 
@@ -90,74 +90,19 @@ void ctkTransferFunctionControlPointsItem::paint(
     return;
     }
 
-  qreal rangeXDiff = this->rangeXDiff();
-  qreal rangeXOffSet = this->rangeXOffSet();
-
-  qreal rangeYDiff = this->rangeYDiff();
-  qreal rangeYOffSet = this->rangeYDiff();
-
-  ctkControlPoint* startCP = this->transferFunction()->controlPoint(0);
-  ctkControlPoint* endCP = 0;
-  qreal start = 0;
-  qreal end = 0;
-
-  QPainterPath path;
- // this->x(controlpoint)
-  QPointF startPos(startCP->x() - rangeXOffSet, this->y(startCP->value()) - rangeYOffSet);
-  startPos.rx() *= rangeXDiff;
-  startPos.setY(this->rect().height() 
-                - startPos.y() * rangeYDiff);
+  ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
+  Q_ASSERT(tfScene);
   
-  d->ControlPoints.clear();
-  d->ControlPoints << startPos;
-
-  path.moveTo(startPos);
-  for(int i = 1; i < count; ++i)
-    {
-    endCP = this->transferFunction()->controlPoint(i);
-    if (dynamic_cast<ctkNonLinearControlPoint*>(startCP))
-      {
-      QList<ctkPoint> points = this->nonLinearPoints(startCP, endCP);
-      int j;
-      for (j = 1; j < points.count(); ++j)
-        {
-        path.lineTo(
-          QPointF(
-            this->transferFunction2ScreenCoordinates(points[j].X,
-                                                     this->y(points[j].Value))));
-        }
-      j = points.count() - 1;
-      d->ControlPoints << QPointF( this->transferFunction2ScreenCoordinates(
-        points[j].X,
-        this->y(points[j].Value)));
-      }
-    else //dynamic_cast<ctkBezierControlPoint*>(startCP))
-      {
-      QList<ctkPoint> points = this->bezierParams(startCP, endCP);
-      QList<ctkPoint>::iterator it = points.begin();
-      QList<QPointF> bezierPoints;
-      foreach(const ctkPoint& p, points)
-        {
-        bezierPoints << 
-          QPointF((p.X - rangeXOffSet)* rangeXDiff , 
-                  this->rect().height() - (this->y(p.Value) - rangeYOffSet)* rangeYDiff);
-        }
-      path.cubicTo(bezierPoints[1], bezierPoints[2], bezierPoints[3]);
-      d->ControlPoints << bezierPoints[3];
-      }
-    //qDebug() << i << points[0] << points[1] << points[2] << points[3];
-    delete startCP;
-    startCP = endCP;
-    }
-  if (startCP)
-    {
-    delete startCP;
-    }
+  const QPainterPath& curve = tfScene->curve();
   painter->setRenderHint(QPainter::Antialiasing);
-  painter->setPen(QPen(QColor(255, 255, 255, 191), 1));
-  painter->drawPath(path);
+  QPen pen(QColor(255, 255, 255, 191), 1);
+  pen.setCosmetic(true);
+  painter->setPen(pen);
+  painter->drawPath(curve);
 
+  d->ControlPoints = tfScene->points();
   QPainterPath points;
+  points.setFillRule(Qt::WindingFill);
   foreach(const QPointF& point, d->ControlPoints)
     {
     points.addEllipse(point, d->PointSize.width(), d->PointSize.height());

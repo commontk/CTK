@@ -37,7 +37,7 @@ class ctkTransferFunctionItemPrivate :
 {
 public:
   ctkTransferFunctionItemPrivate();
-
+  void init();
   QRectF               Rect;
   ctkTransferFunction* TransferFunction;
 };
@@ -46,6 +46,13 @@ public:
 ctkTransferFunctionItemPrivate::ctkTransferFunctionItemPrivate()
 {
   this->TransferFunction = 0;
+  this->Rect = QRectF(0.,0.,1.,1.);
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionItemPrivate::init()
+{
+  CTK_P(ctkTransferFunctionItem);
 }
 
 //-----------------------------------------------------------------------------
@@ -53,6 +60,7 @@ ctkTransferFunctionItem::ctkTransferFunctionItem(QGraphicsItem* parentGraphicsIt
   :QGraphicsObject(parentGraphicsItem)
 {
   CTK_INIT_PRIVATE(ctkTransferFunctionItem);
+  ctk_d()->init();
 }
 
 //-----------------------------------------------------------------------------
@@ -61,6 +69,7 @@ ctkTransferFunctionItem::ctkTransferFunctionItem(
   :QGraphicsObject(parentItem)
 {
   CTK_INIT_PRIVATE(ctkTransferFunctionItem);
+  ctk_d()->init();
   this->setTransferFunction(transferFunction);
 }
 
@@ -74,14 +83,7 @@ ctkTransferFunctionItem::~ctkTransferFunctionItem()
 void ctkTransferFunctionItem::setTransferFunction(ctkTransferFunction* transferFunction)
 {
   CTK_D(ctkTransferFunctionItem);
-  if (d->TransferFunction == transferFunction)
-    {
-    return;
-    }
   d->TransferFunction = transferFunction;
-  connect(d->TransferFunction, SIGNAL(changed()),
-          this, SLOT(onTransferFunctionChanged()));
-  this->update();
 }
 
 //-----------------------------------------------------------------------------
@@ -89,12 +91,6 @@ ctkTransferFunction* ctkTransferFunctionItem::transferFunction() const
 {
   CTK_D(const ctkTransferFunctionItem);
   return d->TransferFunction;
-}
-
-//-----------------------------------------------------------------------------
-void ctkTransferFunctionItem::onTransferFunctionChanged()
-{
-  this->update();
 }
 
 //-----------------------------------------------------------------------------

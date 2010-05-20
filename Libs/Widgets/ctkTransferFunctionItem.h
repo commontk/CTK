@@ -69,8 +69,7 @@ protected:
 
   QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end)const;
   QList<ctkPoint> nonLinearPoints(ctkControlPoint* start, ctkControlPoint* end)const;
-protected slots:
-  virtual void onTransferFunctionChanged();
+
 private:
   CTK_DECLARE_PRIVATE(ctkTransferFunctionItem);
 };
