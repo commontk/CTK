@@ -43,7 +43,7 @@ public:
   /// open the SQLite database in @param file. If the file does not
   /// exist, a new database is created and initialized with the
   /// default schema
-  virtual bool openDatabase(const QString& file);
+  virtual void openDatabase(const QString& file);
 
   const QSqlDatabase& database() const;
   const QString& GetLastError() const; 

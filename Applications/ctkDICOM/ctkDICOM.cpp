@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 
   // set up the database 
   const char *datbaseFileName = "/tmp/test.db";
-  const char *datbaseScriptFileName = "/Users/pieper/ctk/latest/CTK/Libs/DICOM/Core/Resources/dicom-sample.sql";
+  const char *datbaseScriptFileName = "/home/nolden/CTK/Libs/DICOM/Core/Resources/dicom-sample.sql";
   if (argc > 1)
     {
     datbaseFileName = argv[1];
@@ -49,12 +49,16 @@ int main(int argc, char** argv)
     }
 
   ctkDICOM myCTK;
-  if (!myCTK.openDatabase( datbaseFileName ))
-    {
+  try
+  {
+    myCTK.openDatabase( datbaseFileName );
+  }
+  catch (std::exception e)
+  {
     std::cerr << "Error when opening the data base file: " << datbaseFileName
-              << " error: " << myCTK.GetLastError().toStdString();
+              << " error: " << e.what();
     return EXIT_FAILURE;
-    }
+  }
   if (!myCTK.initializeDatabase(datbaseScriptFileName))
     {
     std::cerr << "Error when initializing the data base: " << datbaseScriptFileName
