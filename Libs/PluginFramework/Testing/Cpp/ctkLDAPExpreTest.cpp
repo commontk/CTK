@@ -22,6 +22,7 @@
 #include "ctkLDAPExpr.h"
 
 #include <iostream>
+#include <cstdlib>
 
 #include <QVariant>
 
