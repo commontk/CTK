@@ -73,6 +73,7 @@ SET(KIT_SRCS
   ctkPluginStorage.cpp
   ctkVersion.cpp
   ctkVersionRange.cpp
+  ctkLDAPExpr.cpp
 
   # EventBus sources
   EventBus/ctkEvent.cpp
@@ -119,6 +120,6 @@ ctkMacroBuildLib(
   )
 
 # Testing
-#IF(BUILD_TESTING)
-#  ADD_SUBDIRECTORY(Testing)
-#ENDIF(BUILD_TESTING)
+IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+ENDIF(BUILD_TESTING)

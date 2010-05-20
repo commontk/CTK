@@ -31,43 +31,11 @@
 #include "ctkPluginConstants.h"
 #include "ctkServiceRegistrationPrivate.h"
 #include "ctkQtServiceRegistration_p.h"
+#include "ctkLDAPExpr.h"
 
 
   using namespace QtMobility;
 
-  //TODO: this is just a mock class. ctkWait for the real thing
-  class ctkLDAPExpr
-  {
-
-  public:
-
-    ctkLDAPExpr(const QString& filter)
-    {
-
-    }
-
-    /**
-     * Get object class set matched by this LDAP expression. This will not work
-     * with wildcards and NOT expressions. If a set can not be determined return null.
-     *
-     * @return Set of classes matched, otherwise <code>null</code>.
-     */
-    QSet<QString> getMatchedObjectClasses() const
-    {
-      QSet<QString> objClasses;
-      return objClasses;
-    }
-
-
-    /**
-     * Evaluate this LDAP filter.
-     */
-    bool evaluate(const ServiceProperties& p, bool matchCase)
-    {
-      return true;
-    }
-
-  };
 
 
   struct ServiceRegistrationComparator
