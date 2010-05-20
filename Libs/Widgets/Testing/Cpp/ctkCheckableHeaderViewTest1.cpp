@@ -23,6 +23,8 @@
 #include <QApplication>
 #include <QTableView>
 #include <QFileSystemModel>
+#include <QStandardItem>
+#include <QStandardItemModel>
 
 // CTK includes
 #include "ctkCheckableHeaderView.h"
@@ -36,13 +38,22 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  QFileSystemModel dir;
-  dir.setRootPath(QDir::currentPath());
+#if 0
+    QFileSystemModel model;
+    model.setRootPath(QDir::currentPath());
+#else
+    QStandardItemModel model;
+    QStandardItem item;
+    item.insertColumns(0, 5);
+    item.insertRows(0, 7);
+    model.insertRow(0, &item);
+#endif
+
   QTableView table;
-  table.setModel(&dir);
+  table.setModel(&model);
 
 
-  dir.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+  model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
   QHeaderView* previousHeaderView = table.horizontalHeader();
   ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, &table);
   qDebug() << previousHeaderView->isClickable();
