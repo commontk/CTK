@@ -61,9 +61,6 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
 {
   CTK_D(ctkDICOMQueryRetrieveWidget);
 
-  logger.setDebug();
-  logger.debug("initiating query");
-
   d->serverNodeWidget->populateQuery();
   d->queryWidget->populateQuery();
 
