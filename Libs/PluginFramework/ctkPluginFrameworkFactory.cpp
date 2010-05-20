@@ -23,7 +23,6 @@
 
 #include "ctkPluginFrameworkContext_p.h"
 
-namespace ctk {
 
   PluginFrameworkFactory::PluginFrameworkFactory(const Properties& initProps)
     : fwCtx(new PluginFrameworkContext(initProps))
@@ -39,6 +38,5 @@ namespace ctk {
   PluginFramework* PluginFrameworkFactory::getFramework()
   {
     return &(fwCtx->systemPlugin);
-  }
 
 }

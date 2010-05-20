@@ -25,7 +25,6 @@
 
 class QObject;
 
-namespace ctk {
 
   class ServiceRegistrationPrivate;
   class Plugin;
@@ -62,5 +61,4 @@ namespace ctk {
     ServiceRegistrationPrivate* registration;
   };
 
-}
 #endif // CTKSERVICEREFERENCEPRIVATE_H

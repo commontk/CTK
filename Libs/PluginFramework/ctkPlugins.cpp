@@ -32,7 +32,6 @@
 
 #include <QUrl>
 
-namespace ctk {
 
   Plugins::Plugins(PluginFrameworkContext* fw) {
     fwCtx = fw;
@@ -338,6 +337,5 @@ namespace ctk {
         }
       }
     }
-  }
 
 }

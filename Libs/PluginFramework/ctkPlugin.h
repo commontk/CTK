@@ -26,7 +26,6 @@
 
 #include "ctkVersion.h"
 
-namespace ctk {
 
   class PluginArchive;
   class PluginFrameworkContext;
@@ -597,7 +596,6 @@ namespace ctk {
     Plugin(PluginPrivate& dd);
   };
 
-}
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctk::Plugin::States)
 

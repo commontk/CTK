@@ -22,7 +22,6 @@
 #include <QMap>
 #include <QStringList>
 
-namespace ctk {
 
   class PluginFrameworkUtil
   {
@@ -46,6 +45,5 @@ namespace ctk {
        */
       static QList<QMap<QString, QStringList> > parseEntries(const QString& a, const QString& s,
                                                  bool single, bool unique, bool single_entry);
-  };
 
 }

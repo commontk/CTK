@@ -26,7 +26,6 @@
 
 class QIODevice;
 
-namespace ctk {
 
   class PluginManifest
   {
@@ -53,6 +52,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKPLUGINMANIFEST_P_H

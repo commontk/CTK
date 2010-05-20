@@ -21,7 +21,6 @@
 
 #include "ctkServiceRegistrationPrivate.h"
 
-namespace ctk {
 
   ServiceRegistrationPrivate::ServiceRegistrationPrivate(ServiceRegistration* sr,
                                                          PluginPrivate* plugin, QObject* service,
@@ -48,5 +47,4 @@ namespace ctk {
     return service;
   }
 
-}
 

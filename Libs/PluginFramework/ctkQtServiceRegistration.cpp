@@ -24,7 +24,6 @@
 
 #include <QServiceInterfaceDescriptor>
 
-namespace ctk {
 
   QtServiceRegistration::QtServiceRegistration(PluginPrivate* plugin,
                                                QtMobility::QServiceInterfaceDescriptor serviceDescriptor,
@@ -34,5 +33,4 @@ namespace ctk {
 
   }
 
-}
 

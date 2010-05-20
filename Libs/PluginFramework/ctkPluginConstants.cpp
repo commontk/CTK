@@ -21,8 +21,6 @@
 
 #include "ctkPluginConstants.h"
 
-namespace ctk {
-
   const QString	PluginConstants::SYSTEM_PLUGIN_LOCATION = "System Plugin";
   const QString	PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.plugin";
 
@@ -50,4 +48,3 @@ namespace ctk {
   const QString PluginConstants::SERVICE_ID = "service.id";
   const QString PluginConstants::SERVICE_RANKING = "service.ranking";
 
-}

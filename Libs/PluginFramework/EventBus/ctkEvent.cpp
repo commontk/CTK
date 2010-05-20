@@ -1,7 +1,6 @@
 
 #include "ctkEvent.h"
 
-namespace ctk {
 
   class EventPrivate {
 
@@ -72,6 +71,5 @@ namespace ctk {
   {
     // TODO
     return true;
-  }
 
 }

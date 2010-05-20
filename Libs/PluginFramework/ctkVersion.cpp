@@ -26,7 +26,6 @@
 #include <QStringListIterator>
 #include <QDebug>
 
-namespace ctk {
 
   const QString Version::SEPARATOR = ".";
   const QRegExp Version::RegExp = QRegExp("[a-zA-Z0-9_\\-]*");
@@ -216,7 +215,6 @@ namespace ctk {
     return 1;
   }
 
-}
 
 QDebug operator<<(QDebug dbg, const ctk::Version& v)
 {

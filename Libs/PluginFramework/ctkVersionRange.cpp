@@ -23,7 +23,6 @@
 
 #include <stdexcept>
 
-namespace ctk {
 
   const VersionRange& VersionRange::defaultVersionRange()
   {
@@ -172,6 +171,5 @@ namespace ctk {
       }
     }
     return false;
-  }
 
 }

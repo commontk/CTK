@@ -25,7 +25,6 @@
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkQtServiceRegistration_p.h"
 
-namespace ctk {
 
   QtServiceRegistrationPrivate::QtServiceRegistrationPrivate(QtServiceRegistration* sr,
                                PluginPrivate* plugin,
@@ -46,5 +45,4 @@ namespace ctk {
     return this->plugin->fwCtx->services.qServiceManager.loadInterface(serviceDescriptor);
   }
 
-}
 

@@ -9,7 +9,6 @@
 
 #include <ctkLDAPSearchFilter.h>
 
-namespace ctk {
 
   class EventPrivate;
 
@@ -38,6 +37,5 @@ namespace ctk {
     EventPrivate * const d;
   };
 
-}
 
 #endif // CTKEVENT_H

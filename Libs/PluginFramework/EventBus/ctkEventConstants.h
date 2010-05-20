@@ -5,7 +5,6 @@
 
 #include "CTKPluginFrameworkExport.h"
 
-namespace ctk {
 
   struct CTK_PLUGINFW_EXPORT EventConstants {
 
@@ -14,6 +13,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKEVENTCONSTANTS_H

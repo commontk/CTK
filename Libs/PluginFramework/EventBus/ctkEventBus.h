@@ -3,7 +3,6 @@
 
 #include "ctkEvent.h"
 
-namespace ctk {
 
   class EventBus {
 
@@ -22,7 +21,6 @@ namespace ctk {
 
   };
 
-}
 
 Q_DECLARE_INTERFACE(ctk::EventBus, "org.commontk.core.EventBus")
 

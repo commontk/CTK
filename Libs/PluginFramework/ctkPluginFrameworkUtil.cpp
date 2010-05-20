@@ -25,7 +25,6 @@
 
 #include <stdexcept>
 
-namespace ctk {
 
   /**
    * Class for tokenize an attribute string.
@@ -300,6 +299,5 @@ namespace ctk {
       } while (!at.getEnd());
     }
     return result;
-  }
 
 }

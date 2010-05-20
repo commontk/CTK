@@ -28,7 +28,6 @@
 
 #include "CTKPluginFrameworkExport.h"
 
-namespace ctk {
 
   class ServiceRegistrationPrivate;
   class ServiceReferencePrivate;
@@ -179,6 +178,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKSERVICEREFERENCE_H

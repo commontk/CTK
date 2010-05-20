@@ -27,7 +27,6 @@
 
 #include <QMutex>
 
-namespace ctk {
 
   class PluginFrameworkContext;
 
@@ -47,6 +46,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKPLUGINFRAMEWORKPRIVATE_P_H

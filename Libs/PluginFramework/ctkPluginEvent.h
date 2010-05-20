@@ -27,7 +27,6 @@
 
 #include "CTKPluginFrameworkExport.h"
 
-namespace ctk {
 
   class Plugin;
   class PluginEventData;
@@ -127,6 +126,5 @@ namespace ctk {
     Plugin* const plugin;
   };
 
-}
 
 #endif // CTKPLUGINEVENT_H

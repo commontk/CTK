@@ -29,7 +29,6 @@
 
 #include <stdexcept>
 
-namespace ctk {
 
   class PluginContextPrivate
   {
@@ -142,7 +141,6 @@ namespace ctk {
   {
     Q_D(PluginContext);
     receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(frameworkEvent(PluginFrameworkEvent)), method, type);
-  }
 
 
 }

@@ -27,7 +27,6 @@
 
 #include "CTKPluginFrameworkExport.h"
 
-namespace ctk {
 
   /**
    * Version identifier for plug-ins and packages.
@@ -232,7 +231,6 @@ namespace ctk {
 
   };
 
-}
 
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::Version& v);
 

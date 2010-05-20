@@ -27,7 +27,6 @@
 
 #include <stdexcept>
 
-namespace ctk {
 
   PluginManifest::PluginManifest()
   {
@@ -138,6 +137,5 @@ namespace ctk {
   QStringList PluginManifest::getSections() const
   {
     return sections.keys();
-  }
 
 }

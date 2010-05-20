@@ -23,7 +23,6 @@
 
 #include <QDebug>
 
-namespace ctk {
 
   ServiceException::ServiceException(const QString& msg, const Type& type, const std::exception& cause)
     : std::runtime_error(msg.toStdString()),
@@ -80,6 +79,5 @@ QDebug operator<<(QDebug dbg, const ctk::ServiceException& exc)
   if (causeMsg) dbg << "  Caused by:" << causeMsg;
 
   return dbg.maybeSpace();
-}
 
 

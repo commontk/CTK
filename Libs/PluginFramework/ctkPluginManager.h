@@ -27,7 +27,6 @@
 
 #include <CTKPluginFrameworkExport.h>
 
-namespace ctk {
 
   using namespace QtMobility;
 
@@ -54,7 +53,6 @@ namespace ctk {
 
   };
 
-}
 
 
 #endif /* CTKPLUGINMANAGER_H_ */

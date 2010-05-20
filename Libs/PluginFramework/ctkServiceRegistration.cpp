@@ -29,7 +29,6 @@
 
 #include <stdexcept>
 
-namespace ctk {
 
   ServiceRegistration::ServiceRegistration(PluginPrivate* plugin, QObject* service,
                       const ServiceProperties& props)
@@ -159,6 +158,5 @@ namespace ctk {
   {
     Q_D(const ServiceRegistration);
     return d->reference->operator <(*(o.d_func()->reference));
-  }
 
 }

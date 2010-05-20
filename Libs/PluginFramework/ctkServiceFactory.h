@@ -26,7 +26,6 @@
 
 #include "CTKPluginFrameworkExport.h"
 
-namespace ctk {
 
   /**
    * Allows services to provide customized service objects in the plugin
@@ -115,5 +114,4 @@ namespace ctk {
         QObject* service) = 0;
   };
 
-}
 

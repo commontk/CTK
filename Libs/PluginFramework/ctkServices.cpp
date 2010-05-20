@@ -32,7 +32,6 @@
 #include "ctkServiceRegistrationPrivate.h"
 #include "ctkQtServiceRegistration_p.h"
 
-namespace ctk {
 
   using namespace QtMobility;
 
@@ -478,5 +477,4 @@ QList<ServiceRegistration*> Services::getUsedByPlugin(Plugin* p) const
   return res;
 }
 
-}
 

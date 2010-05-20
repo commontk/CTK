@@ -27,7 +27,6 @@
 
 #include <QServiceInterfaceDescriptor>
 
-namespace ctk {
 
   class PluginPrivate;
 
@@ -41,6 +40,5 @@ namespace ctk {
                           const ServiceProperties& props);
   };
 
-}
 
 #endif // CTKQTSERVICEREGISTRATION_P_H

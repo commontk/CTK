@@ -22,7 +22,6 @@
 #include "ctkPluginEvent.h"
 
 
-namespace ctk {
 
   PluginEvent::PluginEvent(Type type, Plugin* plugin)
     : d(new PluginEventData(type, plugin))
@@ -44,6 +43,5 @@ namespace ctk {
   PluginEvent::Type PluginEvent::getType() const
   {
     return d->type;
-  }
 
 }

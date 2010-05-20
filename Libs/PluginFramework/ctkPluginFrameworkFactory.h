@@ -28,7 +28,6 @@
 
 #include "CTKPluginFrameworkExport.h"
 
-namespace ctk {
 
   class PluginFramework;
   class PluginFrameworkContext;
@@ -77,6 +76,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKPLUGINFRAMEWORKFACTORY_H

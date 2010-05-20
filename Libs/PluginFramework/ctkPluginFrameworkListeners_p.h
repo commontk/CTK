@@ -27,7 +27,6 @@
 #include <ctkPluginEvent.h>
 #include <ctkPluginFrameworkEvent.h>
 
-namespace ctk {
 
   class PluginFrameworkListeners : public QObject
   {
@@ -50,6 +49,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKPLUGINFRAMEWORKLISTENERS_H

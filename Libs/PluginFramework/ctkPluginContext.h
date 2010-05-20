@@ -34,7 +34,6 @@
 #include "CTKPluginFrameworkExport.h"
 
 
-namespace ctk {
 
   // CTK class forward declarations
   class Plugin;
@@ -356,6 +355,5 @@ namespace ctk {
     PluginContextPrivate * const d_ptr;
   };
 
-}
 
 #endif /* CTKPLUGINCONTEXT_H_ */

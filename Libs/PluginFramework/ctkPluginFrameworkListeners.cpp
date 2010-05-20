@@ -21,7 +21,6 @@
 
 #include "ctkPluginFrameworkListeners_p.h"
 
-namespace ctk {
 
   void PluginFrameworkListeners::frameworkError(Plugin* p, const std::exception& e)
   {
@@ -36,6 +35,5 @@ namespace ctk {
   void PluginFrameworkListeners::emitPluginChanged(const PluginEvent& event)
   {
     emit pluginChanged(event);
-  }
 
 }

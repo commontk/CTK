@@ -24,7 +24,6 @@
 
 #include <ctkVersionRange_p.h>
 
-namespace ctk {
 
   class PluginPrivate;
 
@@ -45,6 +44,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKREQUIREPLUGIN_P_H

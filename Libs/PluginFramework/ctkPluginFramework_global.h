@@ -25,10 +25,8 @@
 
 #include <QHash>
 
-namespace ctk {
 
   typedef QHash<QString, QVariant> ServiceProperties;
 
-}
 
 #endif // CTKPLUGINFRAMEWORK_GLOBAL_H

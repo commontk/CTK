@@ -27,7 +27,6 @@
 
 #include <QStringList>
 
-namespace ctk {
 
   Plugin::Plugin(PluginFrameworkContext* fw,
                  PluginArchive* pa)
@@ -175,6 +174,5 @@ namespace ctk {
   {
     Q_D(const Plugin);
     return d->version;
-  }
 
 }

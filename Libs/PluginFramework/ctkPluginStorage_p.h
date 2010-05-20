@@ -30,7 +30,6 @@
 // Qt class forward declarations
 class QIODevice;
 
-namespace ctk {
 
   // CTK class forward declarations
   class PluginArchive;
@@ -142,6 +141,5 @@ namespace ctk {
 
 };
 
-}
 
 #endif // CTKPLUGINSTORAGE_P_H

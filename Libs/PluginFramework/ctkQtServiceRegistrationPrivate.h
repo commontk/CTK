@@ -27,7 +27,6 @@
 
 #include "QServiceInterfaceDescriptor"
 
-namespace ctk {
 
   class QtServiceRegistration;
 
@@ -48,6 +47,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKQTSERVICEREGISTRATIONPRIVATE_H

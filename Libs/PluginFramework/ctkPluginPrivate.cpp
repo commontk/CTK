@@ -28,7 +28,6 @@
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginActivator.h"
 
-namespace ctk {
 
   const Plugin::States PluginPrivate::RESOLVED_FLAGS = Plugin::RESOLVED | Plugin::STARTING | Plugin::ACTIVE | Plugin::STOPPING;
 
@@ -265,6 +264,5 @@ namespace ctk {
 //    for (Iterator i = s.iterator(); i.hasNext(); ) {
 //      ((ServiceRegistrationImpl) i.next()).reference.ungetService(this, false);
 //    }
-  }
 
 }

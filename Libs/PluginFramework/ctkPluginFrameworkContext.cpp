@@ -25,7 +25,6 @@
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginConstants.h"
 
-namespace ctk {
 
   QMutex PluginFrameworkContext::globalFwLock;
   int PluginFrameworkContext::globalId = 1;
@@ -178,7 +177,6 @@ namespace ctk {
         }
       }
     }
-  }
 
 
 }

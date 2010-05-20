@@ -28,32 +28,30 @@
 #include <QString>
 #include <QVariant>
 
-namespace ctk {
+class LDAPSearchFilterPrivate;
 
-  class LDAPSearchFilterPrivate;
+class CTK_PLUGINFW_EXPORT LDAPSearchFilter {
 
-  class CTK_PLUGINFW_EXPORT LDAPSearchFilter {
+public:
 
-  public:
+  typedef QMap<QString, QVariant> Dictionary;
 
-    typedef QMap<QString, QVariant> Dictionary;
+  LDAPSearchFilter(const QString& filter = "");
+  LDAPSearchFilter(const LDAPSearchFilter& filter);
 
-    LDAPSearchFilter(const QString& filter = "");
-    LDAPSearchFilter(const LDAPSearchFilter& filter);
+  ~LDAPSearchFilter();
 
-    ~LDAPSearchFilter();
+  bool match(const Dictionary& dictionary) const;
+  bool matchCase(const Dictionary& dictionary) const;
 
-    bool match(const Dictionary& dictionary) const;
-    bool matchCase(const Dictionary& dictionary) const;
+  bool operator==(const LDAPSearchFilter& other) const;
+  LDAPSearchFilter& operator=(const LDAPSearchFilter& filter);
 
-    bool operator==(const LDAPSearchFilter& other) const;
-    LDAPSearchFilter& operator=(const LDAPSearchFilter& filter);
+protected:
 
-  protected:
+  LDAPSearchFilterPrivate * d;
 
-    LDAPSearchFilterPrivate * d;
-
-  };
+};
 
 }
 

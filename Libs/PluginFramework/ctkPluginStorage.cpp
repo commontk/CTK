@@ -31,7 +31,6 @@
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginDatabaseException.h"
 
-namespace ctk {
 
   PluginStorage::PluginStorage(PluginFrameworkContext* framework)
     : framework(framework), pluginDatabase(this)
@@ -147,6 +146,5 @@ namespace ctk {
       qDebug() << QString("Getting plugin resource paths for %1 failed:").arg(path) << exc;
       return QStringList();
     }
-  }
 
 }

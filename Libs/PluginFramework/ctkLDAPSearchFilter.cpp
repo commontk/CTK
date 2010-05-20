@@ -21,7 +21,6 @@
 
 #include "ctkLDAPSearchFilter.h"
 
-namespace ctk {
 
   class LDAPSearchFilterPrivate {
   public:
@@ -80,7 +79,6 @@ namespace ctk {
     }
 
     return *this;
-  }
 
 
 }

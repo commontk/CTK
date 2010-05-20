@@ -32,7 +32,6 @@
 #include "ctkServiceRegistration.h"
 #include "ctkPluginPrivate_p.h"
 
-namespace ctk {
 
 /**
  * Here we handle all the services that are registered in the framework.
@@ -187,7 +186,6 @@ public:
 
 };
 
-}
 
 
 #endif // CTKSERVICES_P_H

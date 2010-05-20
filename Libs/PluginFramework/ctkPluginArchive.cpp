@@ -27,7 +27,6 @@
 #include <QStringList>
 #include <QFile>
 
-namespace ctk {
 
   const QString PluginArchive::AUTOSTART_SETTING_STOPPED("stopped");
   const QString PluginArchive::AUTOSTART_SETTING_EAGER("eager");
@@ -129,7 +128,6 @@ namespace ctk {
   void PluginArchive::purge()
   {
     storage->removeArchive(this);
-  }
 
 
 }

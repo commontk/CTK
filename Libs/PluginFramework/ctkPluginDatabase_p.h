@@ -26,7 +26,6 @@
 #include <QList>
 
 
-namespace ctk {
 
 // CTK class forward declarations
 class PluginStorage;
@@ -204,6 +203,5 @@ class PluginDatabase {
     PluginStorage* m_PluginStorage;
 };
 
-}
 
 #endif // CTKPLUGINDATABASE_P_H

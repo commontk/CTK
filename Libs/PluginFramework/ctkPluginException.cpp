@@ -21,7 +21,6 @@
 
 #include "ctkPluginException.h"
 
-namespace ctk {
 
   PluginException::PluginException(const QString& msg, const Type& type, const std::exception& cause)
     : std::runtime_error(msg.toStdString()),
@@ -68,7 +67,6 @@ namespace ctk {
     return type;
   }
 
-}
 
 QDebug operator<<(QDebug dbg, const ctk::PluginException& exc)
 {

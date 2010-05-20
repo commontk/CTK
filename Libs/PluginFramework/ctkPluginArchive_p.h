@@ -31,184 +31,181 @@
 // Qt forward declarations
 class QIODevice;
 
-namespace ctk {
-
 typedef quint64 qtimestamp;
 
 // CTK foraward declarations
 class PluginStorage;
 
 /**
- * Class for managing plugin data.
- *
- */
+* Class for managing plugin data.
+*
+*/
 class PluginArchive {
 
 public:
 
-  /**
-   * Autostart setting stopped.
-   * @see PluginArchiveInterface#setAutostartSetting(const QString&)
-   */
-  static const QString AUTOSTART_SETTING_STOPPED; // = "stopped"
+/**
+ * Autostart setting stopped.
+ * @see PluginArchiveInterface#setAutostartSetting(const QString&)
+ */
+static const QString AUTOSTART_SETTING_STOPPED; // = "stopped"
 
-  /**
-   * Autostart setting eager.
-   * @see PluginArchiveInterface#setAutostartSetting(const QString&)
-   */
-  static const QString AUTOSTART_SETTING_EAGER; // = "eager"
+/**
+ * Autostart setting eager.
+ * @see PluginArchiveInterface#setAutostartSetting(const QString&)
+ */
+static const QString AUTOSTART_SETTING_EAGER; // = "eager"
 
-  /**
-   * Autostart setting declared activation policy.
-   * @see PluginArchiveInterface#setAutostartSetting(const QString&)
-   */
-  static const QString AUTOSTART_SETTING_ACTIVATION_POLICY; // = "activation_policy"
+/**
+ * Autostart setting declared activation policy.
+ * @see PluginArchiveInterface#setAutostartSetting(const QString&)
+ */
+static const QString AUTOSTART_SETTING_ACTIVATION_POLICY; // = "activation_policy"
 
 private:
 
-  int autostartSetting;
-  int id;
-  qtimestamp lastModified;
-  QUrl location;
-  QString localPluginPath;
-  PluginManifest manifest;
-  PluginStorage* storage;
+int autostartSetting;
+int id;
+qtimestamp lastModified;
+QUrl location;
+QString localPluginPath;
+PluginManifest manifest;
+PluginStorage* storage;
 
 public:
 
-  /**
-   * Construct new plugin archive.
-   *
-   */
-  PluginArchive(PluginStorage* pluginStorage, const QUrl& pluginLocation,
-                const QString& localPluginPath, int pluginId);
+/**
+ * Construct new plugin archive.
+ *
+ */
+PluginArchive(PluginStorage* pluginStorage, const QUrl& pluginLocation,
+	      const QString& localPluginPath, int pluginId);
 
-  /**
-   * Get an attribute from the manifest of a plugin.
-   *
-   * Not localized
-   *
-   * @param key Name of attribute to get.
-   * @return A string with result or null if the entry doesn't exists.
-   */
-  QString getAttribute(const QString& key) const;
+/**
+ * Get an attribute from the manifest of a plugin.
+ *
+ * Not localized
+ *
+ * @param key Name of attribute to get.
+ * @return A string with result or null if the entry doesn't exists.
+ */
+QString getAttribute(const QString& key) const;
 
-  /**
-   * @returns the (raw/unlocalized) attributes
-   */
-  QHash<QString,QString> getUnlocalizedAttributes() const;
-
-
-  /**
-   * Get plugin identifier for this plugin archive.
-   *
-   * @return Plugin identifier.
-   */
-  int getPluginId() const;
+/**
+ * @returns the (raw/unlocalized) attributes
+ */
+QHash<QString,QString> getUnlocalizedAttributes() const;
 
 
-  /**
-   * Get plugin location for this plugin archive.
-   *
-   * @return Bundle location.
-   */
-  QUrl getPluginLocation() const;
-
-   /**
-    * Get the path to the plugin library on the local
-    * file system
-    *
-    * @return Path to the plugin library
-    */
-   QString getLibLocation() const;
+/**
+ * Get plugin identifier for this plugin archive.
+ *
+ * @return Plugin identifier.
+ */
+int getPluginId() const;
 
 
-  /**
-   * Get a Qt resource as a byte array from a plugin. The resource
-   * is cached and may be aquired even if the plugin is not active.
-   *
-   * @param component Resource to get the byte array from.
-   * @return QByteArray to the entry (empty if it doesn't exist).
-   */
-  QByteArray getPluginResource(const QString& component) const;
+/**
+ * Get plugin location for this plugin archive.
+ *
+ * @return Bundle location.
+ */
+QUrl getPluginLocation() const;
+
+ /**
+  * Get the path to the plugin library on the local
+  * file system
+  *
+  * @return Path to the plugin library
+  */
+ QString getLibLocation() const;
 
 
-  /**
-   * Returns a QStringList of all the paths
-   * to entries within the plugin whose longest sub-path matches the supplied
-   * path argument.
-   *
-   * @param name
-   * @return
-   */
-  QStringList findResourcesPath(const QString& path) const;
+/**
+ * Get a Qt resource as a byte array from a plugin. The resource
+ * is cached and may be aquired even if the plugin is not active.
+ *
+ * @param component Resource to get the byte array from.
+ * @return QByteArray to the entry (empty if it doesn't exist).
+ */
+QByteArray getPluginResource(const QString& component) const;
 
 
-  /**
-   * Get stored plugin start level.
-   */
-  int getStartLevel() const;
+/**
+ * Returns a QStringList of all the paths
+ * to entries within the plugin whose longest sub-path matches the supplied
+ * path argument.
+ *
+ * @param name
+ * @return
+ */
+QStringList findResourcesPath(const QString& path) const;
 
 
-  /**
-   * Set stored plugin start level.
-   */
-  void setStartLevel(int level);
+/**
+ * Get stored plugin start level.
+ */
+int getStartLevel() const;
 
 
-  /**
-   * Get last modified timestamp.
-   */
-  qtimestamp getLastModified() const;
+/**
+ * Set stored plugin start level.
+ */
+void setStartLevel(int level);
 
 
-  /**
-   * Set stored last modified timestamp.
-   */
-  void setLastModified(qtimestamp timemillisecs);
+/**
+ * Get last modified timestamp.
+ */
+qtimestamp getLastModified() const;
 
 
-  /**
-   * Get auto-start setting.
-   *
-   * @return the autostart setting. "-1" if the plugin is not started.
-   */
-  int getAutostartSetting() const;
+/**
+ * Set stored last modified timestamp.
+ */
+void setLastModified(qtimestamp timemillisecs);
 
 
-  /**
-   * Set the auto-start setting.
-   *
-   * @param setting the autostart setting to use.
-   */
-  void setAutostartSetting(int setting);
+/**
+ * Get auto-start setting.
+ *
+ * @return the autostart setting. "-1" if the plugin is not started.
+ */
+int getAutostartSetting() const;
 
 
-  /**
-   * Get certificate chains associated with a plugin.
-   *
-   * @param onlyTrusted Only return trusted certificates.
-   * @return All certificates or null if bundle is unsigned.
-   */
-  //QList<> getCertificateChains(bool onlyTrusted) const;
+/**
+ * Set the auto-start setting.
+ *
+ * @param setting the autostart setting to use.
+ */
+void setAutostartSetting(int setting);
 
 
-  /**
-   * Mark certificate associated with the plugin as trusted.
-   *
-   */
-  //void trustCertificateChain(QList<> trustedChain);
+/**
+ * Get certificate chains associated with a plugin.
+ *
+ * @param onlyTrusted Only return trusted certificates.
+ * @return All certificates or null if bundle is unsigned.
+ */
+//QList<> getCertificateChains(bool onlyTrusted) const;
 
 
-  /**
-   * Remove plugin from persistent storage.
-   * This will delete the current PluginArchive instance.
-   */
-  void purge();
+/**
+ * Mark certificate associated with the plugin as trusted.
+ *
+ */
+//void trustCertificateChain(QList<> trustedChain);
+
+
+/**
+ * Remove plugin from persistent storage.
+ * This will delete the current PluginArchive instance.
+ */
+void purge();
 
 };
 
-}
 
 
 #endif // CTKPLUGINARCHIVE_P_H

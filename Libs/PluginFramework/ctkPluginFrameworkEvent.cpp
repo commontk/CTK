@@ -21,7 +21,6 @@
 
 #include "ctkPluginFrameworkEvent.h"
 
-namespace ctk {
 
   PluginFrameworkEvent::PluginFrameworkEvent()
     : d(0)
@@ -60,6 +59,5 @@ namespace ctk {
   PluginFrameworkEvent::Type PluginFrameworkEvent::getType() const
   {
     return d->type;
-  }
 
 }

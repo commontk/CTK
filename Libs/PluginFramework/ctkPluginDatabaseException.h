@@ -28,7 +28,6 @@
 
 #include <QString>
 
-namespace ctk {
 
   class CTK_PLUGINFW_EXPORT PluginDatabaseException : public std::runtime_error
   {
@@ -64,7 +63,6 @@ namespace ctk {
     std::exception cause;
   };
 
-}
 
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::PluginDatabaseException& exc);
 

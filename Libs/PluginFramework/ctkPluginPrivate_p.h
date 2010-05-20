@@ -29,7 +29,6 @@
 #include <QHash>
 #include <QPluginLoader>
 
-namespace ctk {
 
   class PluginActivator;
   class PluginArchive;
@@ -198,6 +197,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKPLUGINPRIVATE_P_H

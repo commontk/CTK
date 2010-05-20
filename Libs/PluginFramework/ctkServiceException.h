@@ -29,7 +29,6 @@
 
 #include "CTKPluginFrameworkExport.h"
 
-namespace ctk {
 
   class CTK_PLUGINFW_EXPORT ServiceException : public std::runtime_error
   {
@@ -83,7 +82,6 @@ namespace ctk {
 
   };
 
-}
 
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctk::ServiceException& exc);
 

@@ -28,7 +28,6 @@
 #include <QStringList>
 #include <QMutexLocker>
 
-namespace ctk {
 
   ServiceReference::ServiceReference(ServiceRegistrationPrivate* reg)
     : d_ptr(new ServiceReferencePrivate(reg))
@@ -112,6 +111,5 @@ namespace ctk {
   bool ServiceReference::operator==(const ServiceReference& reference) const
   {
     return d_func()->registration == reference.d_func()->registration;
-  }
 
 }

@@ -28,7 +28,6 @@
 #include "ctkPluginArchive_p.h"
 
 
-namespace ctk {
 
   PluginFramework::PluginFramework(PluginFrameworkContext* fw)
     : Plugin(*new PluginFrameworkPrivate(*this, fw))
@@ -157,6 +156,5 @@ namespace ctk {
     //TODO security
     Q_D(PluginFramework);
     return d->systemHeaders;
-  }
 
 }

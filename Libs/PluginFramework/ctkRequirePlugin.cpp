@@ -24,7 +24,6 @@
 #include "ctkPluginConstants.h"
 #include "ctkPluginPrivate_p.h"
 
-namespace ctk {
 
   RequirePlugin::RequirePlugin(PluginPrivate* requestor,
                 const QString& name, const QString& res,
@@ -60,6 +59,5 @@ namespace ctk {
       return false;
     }
     return pluginRange.withinRange(rp.pluginRange);
-  }
 
 }

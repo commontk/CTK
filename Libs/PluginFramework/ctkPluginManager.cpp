@@ -27,7 +27,6 @@
 #include <QLibrary>
 #include <QApplication>
 
-namespace ctk {
 
 class PluginManagerPrivate
 {
@@ -121,6 +120,5 @@ void PluginManager::startAllPlugins()
        }
   }
 
-}
 
 }

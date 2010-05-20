@@ -26,7 +26,6 @@
 
 #include "CTKPluginFrameworkExport.h"
 
-namespace ctk {
 
   struct CTK_PLUGINFW_EXPORT PluginConstants {
 
@@ -303,6 +302,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKPLUGINCONSTANTS_H

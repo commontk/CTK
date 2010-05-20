@@ -27,7 +27,6 @@
 #include <QReadWriteLock>
 
 
-namespace ctk {
 
   // CTK class forward declarations
   class Plugin;
@@ -174,6 +173,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKPLUGINS_H

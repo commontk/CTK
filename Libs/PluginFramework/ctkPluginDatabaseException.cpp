@@ -23,7 +23,6 @@
 
 #include <QDebug>
 
-namespace ctk {
 
   PluginDatabaseException::PluginDatabaseException(const QString& msg, const Type& type, const std::exception& cause)
     : std::runtime_error(msg.toStdString()),
@@ -81,5 +80,4 @@ QDebug operator<<(QDebug dbg, const ctk::PluginDatabaseException& exc)
   if (causeMsg) dbg << "  Caused by:" << causeMsg;
 
   return dbg.maybeSpace();
-}
 

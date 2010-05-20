@@ -32,7 +32,6 @@
 #include "ctkPluginFrameworkListeners_p.h"
 #include "ctkServices_p.h"
 
-namespace ctk {
 
   class Plugin;
 
@@ -140,6 +139,5 @@ namespace ctk {
       void checkRequirePlugin(PluginPrivate* plugin);
   };
 
-}
 
 #endif // CTKPLUGINFRAMEWORKCONTEXT_P_H

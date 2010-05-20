@@ -46,7 +46,6 @@
 #define PLUGINDATABASE_PATH_SEPARATOR "//"
 
 
-namespace ctk {
 
   enum TBindIndexes
   {
@@ -796,6 +795,5 @@ QList<PluginArchive*> PluginDatabase::getPluginArchives() const
   }
 
   return archives;
-}
 
 }

@@ -28,7 +28,6 @@
 
 #include "ctkServiceReference.h"
 
-namespace ctk {
 
   class PluginPrivate;
   class ServiceRegistration;
@@ -113,6 +112,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKSERVICEREGISTRATIONPRIVATE_H

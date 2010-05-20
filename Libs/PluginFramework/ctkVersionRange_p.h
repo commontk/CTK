@@ -24,7 +24,6 @@
 
 #include "ctkVersion.h"
 
-namespace ctk {
 
   /**
    * Class representing CTK version ranges.
@@ -119,6 +118,5 @@ namespace ctk {
 
   };
 
-}
 
 #endif // CTKVERSIONRANGE_H

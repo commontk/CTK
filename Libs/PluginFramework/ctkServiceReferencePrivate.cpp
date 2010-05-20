@@ -31,7 +31,6 @@
 #include "ctkServiceRegistrationPrivate.h"
 #include "ctkPluginFrameworkContext_p.h"
 
-namespace ctk {
 
   ServiceReferencePrivate::ServiceReferencePrivate(ServiceRegistrationPrivate* reg)
     : registration(reg)
@@ -173,5 +172,4 @@ namespace ctk {
   }
 
 
-}
 

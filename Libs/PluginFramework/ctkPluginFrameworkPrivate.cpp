@@ -26,7 +26,6 @@
 
 #include "ctkPluginFrameworkContext_p.h"
 
-namespace ctk {
 
   PluginFrameworkPrivate::PluginFrameworkPrivate(PluginFramework& qq, PluginFrameworkContext* fw)
     : PluginPrivate(qq, fw, 0, PluginConstants::SYSTEM_PLUGIN_LOCATION,
@@ -48,6 +47,5 @@ namespace ctk {
   void PluginFrameworkPrivate::initSystemPlugin()
   {
     this->pluginContext = new PluginContext(this);
-  }
 
 }
