@@ -313,13 +313,13 @@ QList<ctkServiceReference*> ctkServices::get(const QString& clazz, const QString
   QMutexLocker lock(&mutex);
 
   QListIterator<ctkServiceRegistration*>* s = 0;
-  ctkLDAPExpr ldap("");
+  ctkLDAPExpr* ldap = 0;
   if (clazz.isEmpty())
   {
     if (!filter.isEmpty())
     {
-      ldap = ctkLDAPExpr(filter);
-      QSet<QString> matched = ldap.getMatchedObjectClasses();
+      ldap = new ctkLDAPExpr(filter);
+      QSet<QString> matched = ldap->getMatchedObjectClasses();
       if (!matched.isEmpty())
       {
         //TODO
@@ -368,7 +368,7 @@ QList<ctkServiceReference*> ctkServices::get(const QString& clazz, const QString
     }
     if (!filter.isEmpty())
     {
-      ldap = ctkLDAPExpr(filter);
+      ldap = new ctkLDAPExpr(filter);
     }
   }
 
@@ -378,13 +378,14 @@ QList<ctkServiceReference*> ctkServices::get(const QString& clazz, const QString
     ctkServiceRegistration* sr = s->next();
     ctkServiceReference* sri = sr->getReference();
 
-    if (filter.isEmpty() || ldap.evaluate(sr->d_func()->properties, false))
+    if (filter.isEmpty() || ldap->evaluate(sr->d_func()->properties, false))
     {
       res.push_back(sri);
     }
   }
 
   delete s;
+  delete ldap;
 
   return res;
 }
