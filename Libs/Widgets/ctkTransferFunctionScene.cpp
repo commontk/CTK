@@ -164,7 +164,7 @@ void ctkTransferFunctionScene::computeCurve()
   ctkControlPoint* startCP = d->TransferFunction->controlPoint(0);
   ctkControlPoint* nextCP = 0;
 
-  QPointF startPos = this->mapPointToScreen(startCP);
+  QPointF startPos = this->mapPointToScene(startCP);
   
   d->Points.clear();
   d->Points << startPos;
@@ -180,10 +180,10 @@ void ctkTransferFunctionScene::computeCurve()
       int j;
       for (j = 1; j < points.count(); ++j)
         {
-        d->Path.lineTo(this->mapPointToScreen(points[j]));
+        d->Path.lineTo(this->mapPointToScene(points[j]));
         }
       j = points.count() - 1;
-      d->Points << this->mapPointToScreen(points[j]);
+      d->Points << this->mapPointToScene(points[j]);
       }
     else //dynamic_cast<ctkBezierControlPoint*>(startCP))
       {
@@ -192,7 +192,7 @@ void ctkTransferFunctionScene::computeCurve()
       QList<QPointF> bezierPoints;
       foreach(const ctkPoint& p, points)
         {
-        bezierPoints << this->mapPointToScreen(p);
+        bezierPoints << this->mapPointToScene(p);
         }
       d->Path.cubicTo(bezierPoints[1], bezierPoints[2], bezierPoints[3]);
       d->Points << bezierPoints[3];
@@ -231,7 +231,7 @@ void ctkTransferFunctionScene::computeGradient()
   ctkControlPoint* startCP = d->TransferFunction->controlPoint(0);
   ctkControlPoint* nextCP = 0;
 
-  qreal startPos = this->mapXToScreen(this->posX(startCP->x()));
+  qreal startPos = this->mapXToScene(this->posX(startCP->x()));
   qreal nextPos;
   
   d->Gradient = QLinearGradient(0., 0., 1., 0.);
@@ -240,7 +240,7 @@ void ctkTransferFunctionScene::computeGradient()
   for(int i = 1; i < count; ++i)
     {
     nextCP = d->TransferFunction->controlPoint(i);
-    nextPos = this->mapXToScreen(this->posX(nextCP));
+    nextPos = this->mapXToScene(this->posX(nextCP));
     if (this->transferFunction()->isDiscrete())
       {
       qreal midPoint = (startPos + nextPos)  / 2;
@@ -252,7 +252,7 @@ void ctkTransferFunctionScene::computeGradient()
       QList<ctkPoint> points = this->nonLinearPoints(startCP, nextCP);
       foreach(const ctkPoint& p, points)
         {
-        d->Gradient.setColorAt(this->mapXToScreen(this->posX(p)), this->color(p));
+        d->Gradient.setColorAt(this->mapXToScene(this->posX(p)), this->color(p));
         }
       //no need, d->Gradient.setColorAt(nextPos, this->color(nextCP));
       }
@@ -263,9 +263,9 @@ void ctkTransferFunctionScene::computeGradient()
       QList<QPointF> bezierPoints;
       foreach(const ctkPoint& p, points)
         {
-        d->Gradient.setColorAt(this->mapXToScreen(this->posX(p)), this->color(p));
+        d->Gradient.setColorAt(this->mapXToScene(this->posX(p)), this->color(p));
         }
-      nextPos = this->mapXToScreen(this->posX(points[points.size() - 1])); 
+      nextPos = this->mapXToScene(this->posX(points[points.size() - 1])); 
       }
     //qDebug() << i << points[0] << points[1] << points[2] << points[3];
     delete startCP;
@@ -399,43 +399,43 @@ qreal ctkTransferFunctionScene::posY(const QVariant& value)const
 }
 
 //-----------------------------------------------------------------------------
-QPointF ctkTransferFunctionScene::mapPointToScreen(const ctkControlPoint* cp)const
+QPointF ctkTransferFunctionScene::mapPointToScene(const ctkControlPoint* cp)const
 {
-  return QPointF(this->mapXToScreen(this->posX(cp->x())),
-                 this->mapYToScreen(this->posY(cp->value())));
+  return QPointF(this->mapXToScene(this->posX(cp->x())),
+                 this->mapYToScene(this->posY(cp->value())));
 }
 
 //-----------------------------------------------------------------------------
-QPointF ctkTransferFunctionScene::mapPointToScreen(const ctkPoint& point)const
+QPointF ctkTransferFunctionScene::mapPointToScene(const ctkPoint& point)const
 {
-  return QPointF( this->mapXToScreen(this->posX(point.X)),
-                  this->mapYToScreen(this->posY(point.Value)));
+  return QPointF( this->mapXToScene(this->posX(point.X)),
+                  this->mapYToScene(this->posY(point.Value)));
 }
 
 //-----------------------------------------------------------------------------
-qreal ctkTransferFunctionScene::mapXToScreen(qreal xPos)const
+qreal ctkTransferFunctionScene::mapXToScene(qreal xPos)const
 {
   CTK_D(const ctkTransferFunctionScene);
   return (xPos - d->RangeXOffSet) * d->RangeXDiff;
 }
 
 //-----------------------------------------------------------------------------
-qreal ctkTransferFunctionScene::mapYToScreen(qreal yPos)const
+qreal ctkTransferFunctionScene::mapYToScene(qreal yPos)const
 {
   CTK_D(const ctkTransferFunctionScene);
   return this->height() - (yPos - d->RangeYOffSet) * d->RangeYDiff;
 }
 
 //-----------------------------------------------------------------------------
-qreal ctkTransferFunctionScene::mapXFromScreen(qreal screenPosX)const
+qreal ctkTransferFunctionScene::mapXFromScene(qreal scenePosX)const
 {
   CTK_D(const ctkTransferFunctionScene);
-  return (screenPosX / d->RangeXDiff) + d->RangeXOffSet;
+  return (scenePosX / d->RangeXDiff) + d->RangeXOffSet;
 }
 
 //-----------------------------------------------------------------------------
-qreal ctkTransferFunctionScene::mapYFromScreen(qreal screenPosY)const
+qreal ctkTransferFunctionScene::mapYFromScene(qreal scenePosY)const
 {
   CTK_D(const ctkTransferFunctionScene);
-  return ((this->height() - screenPosY) / d->RangeYDiff) + d->RangeYOffSet ;
+  return ((this->height() - scenePosY) / d->RangeYDiff) + d->RangeYOffSet ;
 }

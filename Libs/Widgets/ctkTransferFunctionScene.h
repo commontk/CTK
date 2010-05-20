@@ -58,13 +58,15 @@ public:
   qreal posY(const QVariant& tfV)const;
   QColor color(const QVariant& tfV) const;
   
-  QPointF mapPointToScreen(const ctkControlPoint* cp)const;
-  QPointF mapPointToScreen(const ctkPoint& point)const;
+  QPointF mapPointToScene(const ctkControlPoint* cp)const;
+  QPointF mapPointToScene(const ctkPoint& point)const;
+  
  
-  qreal mapXToScreen(qreal posX)const;
-  qreal mapYToScreen(qreal posY)const;
-  qreal mapXFromScreen(qreal screenPosX)const;
-  qreal mapYFromScreen(qreal screenPosY)const;
+  qreal mapXToScene(qreal posX)const;
+  qreal mapYToScene(qreal posY)const;
+  qreal mapXFromScene(qreal ScenePosX)const;
+  qreal mapYFromScene(qreal ScenePosY)const;
+  inline QPointF mapPointFromScene(const QPointF& point)const;
 
   QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end) const;
   QList<ctkPoint> nonLinearPoints(ctkControlPoint* start, ctkControlPoint* end) const;
@@ -112,6 +114,12 @@ qreal ctkTransferFunctionScene::posY(const ctkPoint& point)const
 QColor ctkTransferFunctionScene::color(const ctkPoint& point) const
 {
   return this->color(point.Value);
+}
+
+QPointF ctkTransferFunctionScene::mapPointFromScene(const QPointF& point)const
+{
+  return QPointF(this->mapXFromScene(point.x()),
+                 this->mapYFromScene(point.y()));
 }
 
 #endif

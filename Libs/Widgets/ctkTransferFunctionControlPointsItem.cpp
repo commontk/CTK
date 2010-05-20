@@ -30,6 +30,7 @@
 /// CTK includes
 #include "ctkTransferFunctionControlPointsItem.h"
 #include "ctkTransferFunctionScene.h"
+#include "ctkTransferFunctionWidget.h"
 
 //-----------------------------------------------------------------------------
 class ctkTransferFunctionControlPointsItemPrivate: 
@@ -39,14 +40,14 @@ public:
   ctkTransferFunctionControlPointsItemPrivate();
   void init();
   QList<QPointF> ControlPoints;
-  QSizeF         PointSize;
+  QSize          PointSize;
   int            SelectedPoint;
 };
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionControlPointsItemPrivate::ctkTransferFunctionControlPointsItemPrivate()
 {
-  this->PointSize = QSizeF(12,12);
+  this->PointSize = QSize(12,12);
   this->SelectedPoint = -1;
 }
 
@@ -120,31 +121,35 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
 {
   qDebug() << "mouse press caught";
   CTK_D(ctkTransferFunctionControlPointsItem);
-  QRectF pointArea(QPointF(0,0), d->PointSize*2.);
+  QWidget* w = e->widget();
+  ctkTransferFunctionWidget* view = qobject_cast<ctkTransferFunctionWidget*>(e->widget()->parentWidget());
+  Q_ASSERT(view);
+  // e->pos() is ok, pointArea should be in the world coordiate
+  QRect pointViewArea(QPoint(-d->PointSize.width() / 2, -d->PointSize.height() / 2), d->PointSize);
+  QPolygonF pointItemArea = this->mapFromScene(view->mapToScene(pointViewArea));
   d->SelectedPoint = -1;
   for(int i = 0; i < d->ControlPoints.count(); ++i)
     {
-    pointArea.moveCenter(d->ControlPoints[i]);
-    if (pointArea.contains(e->pos()))
+    if (pointItemArea.translated(d->ControlPoints[i]).containsPoint(e->pos(), Qt::OddEvenFill))
       {
       d->SelectedPoint = i;
       break;
       }
     }
-  if (d->SelectedPoint < 0)
+  if (d->SelectedPoint >= 0)
     {
-    //QPointF currentPoint( e->pos() );
-  //  e->pos()->x();
-    //this->transferFunction()->insertControlPoint( e->pos().x() );
-
+    return;
+    }
+  ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
+  Q_ASSERT(tfScene);
+  
   // convert coordinates
-  QPointF functionCoordinates = screen2TransferFunctionCoordinates( e->pos().x(), e->pos().y());
+  QPointF tfPos = tfScene->mapPointFromScene(e->pos());
   // add point to transfer function
   // returns index
-  int index = this->transferFunction()->insertControlPoint( functionCoordinates.x());
+  int index = this->transferFunction()->insertControlPoint( tfPos.x());
   // update value of the point
-  this->transferFunction()->setControlPointValue( index, functionCoordinates.y());
-    }
+  this->transferFunction()->setControlPointValue( index, tfPos.y());
 }
 
 //-----------------------------------------------------------------------------
@@ -157,12 +162,15 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
     e->ignore();
     return;
     }
-  qreal range[2];
-  this->transferFunction()->range(range);
-  qreal newPos = range[0] + e->pos().x() / (this->rect().width() / (range[1] - range[0]));
-  newPos = qBound(range[0], newPos, range[1]);
-  this->transferFunction()->setControlPointPos(d->SelectedPoint, newPos);
-  //this->transferFunction()->setControlPointValue(d->SelectedPoint, e->y());
+  //qreal range[2];
+  //this->transferFunction()->range(range);
+  //qreal newPos = range[0] + e->pos().x() / (this->rect().width() / (range[1] - range[0]));
+  //newPos = qBound(range[0], newPos, range[1]);
+  ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
+  Q_ASSERT(tfScene);
+  QPointF newPos = tfScene->mapPointFromScene(e->pos());
+  this->transferFunction()->setControlPointPos(d->SelectedPoint, newPos.x());
+  this->transferFunction()->setControlPointValue(d->SelectedPoint, newPos.y());
 }
 
 //-----------------------------------------------------------------------------
