@@ -27,6 +27,8 @@ SET(KIT_SRCS
   ctkVTKColorTransferFunction.h
   ctkVTKCommandOptions.cpp
   ctkVTKCommandOptions.h
+  ctkVTKCompositeFunction.cpp
+  ctkVTKCompositeFunction.h
   ctkVTKConnection.cpp
   ctkVTKConnection.h
   ctkVTKLookupTable.cpp
@@ -42,6 +44,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkVTKColorTransferFunction.h
   ctkVTKConnection.h
+  ctkVTKCompositeFunction.h
   ctkVTKLookupTable.h
   ctkVTKObjectEventsObserver.h
   ctkVTKPiecewiseFunction.h
