@@ -55,8 +55,8 @@ int ctkTransferFunctionWidgetTest3(int argc, char * argv [] )
   // the widget is not really shown here, only when app.exec() is called
   transferFunctionWidget.show();
 
-//  QTimer autoExit;
-//  QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-//  autoExit.start(1000);
+  QTimer autoExit;
+  QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
+  autoExit.start(1000);
   return app.exec();
 }
