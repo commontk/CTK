@@ -20,6 +20,8 @@ SET(KIT_SRCS
   ctkDICOMServerNodeWidget.h
   ctkDICOMQueryWidget.cpp
   ctkDICOMQueryWidget.h
+  ctkDICOMQueryResultsTabWidget.cpp
+  ctkDICOMQueryResultsTabWidget.h
   )
 
 # Headers that should run through moc

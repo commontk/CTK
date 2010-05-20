@@ -78,5 +78,6 @@ int main(int argc, char** argv)
   treeView->setModel(&model);
 
   queryRetrieve.show();
+  queryRetrieve.raise();
   return app.exec();
 }

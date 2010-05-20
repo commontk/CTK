@@ -37,6 +37,9 @@ public:
   typedef QWidget Superclass;
   explicit ctkDICOMQueryWidget(QWidget* parent=0);
   virtual ~ctkDICOMQueryWidget();
+  
+  /// set properties of query based on current widget state
+  void populateQuery (/*ctkDICOMQuery &query*/);
 
 private:
   CTK_DECLARE_PRIVATE(ctkDICOMQueryWidget);

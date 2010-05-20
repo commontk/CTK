@@ -1,3 +1,4 @@
+#include <iostream>
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMQueryWidget.h"
@@ -33,3 +34,20 @@ ctkDICOMQueryWidget::~ctkDICOMQueryWidget()
 }
 
 
+//----------------------------------------------------------------------------
+void ctkDICOMQueryWidget::populateQuery(/*ctkDICOMQuery &query*/)
+{
+  CTK_D(ctkDICOMQueryWidget);
+  if ( d->CT->isChecked() )
+  {
+    std::cerr << "CT\n";
+    //query.addModality( "CT" );
+  }
+
+  if ( d->MR->isChecked() )
+  {
+    std::cerr << "MR\n";
+    //query.addModality( "CT" );
+  }
+
+}

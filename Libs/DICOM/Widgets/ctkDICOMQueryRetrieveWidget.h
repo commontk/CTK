@@ -41,6 +41,7 @@ public:
 
 public slots:
     void processQuery();
+    void onTabCloseRequested(int index);
 
 private:
   CTK_DECLARE_PRIVATE(ctkDICOMQueryRetrieveWidget);

@@ -37,7 +37,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QTableWidget" name="tableWidget">
+        <widget class="QTableWidget" name="nodeTable">
          <row>
           <property name="text">
            <string>Localhost</string>
@@ -45,7 +45,7 @@
          </row>
          <column>
           <property name="text">
-           <string>Select</string>
+           <string/>
           </property>
          </column>
          <column>

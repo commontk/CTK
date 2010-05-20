@@ -24,7 +24,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="ctkDICOMServerNodeWidget" name="locationWidget" native="true">
+       <widget class="ctkDICOMServerNodeWidget" name="serverNodeWidget" native="true">
         <property name="minimumSize">
          <size>
           <width>300</width>
@@ -118,9 +118,12 @@
     </widget>
    </item>
    <item>
-    <widget class="QTabWidget" name="results">
+    <widget class="ctkDICOMQueryResultsTabWidget" name="results">
      <property name="currentIndex">
       <number>0</number>
+     </property>
+     <property name="tabsClosable">
+      <bool>true</bool>
      </property>
      <widget class="QWidget" name="tab">
       <property name="enabled">
@@ -155,6 +158,12 @@
    <class>ctkDICOMServerNodeWidget</class>
    <extends>QWidget</extends>
    <header>ctkDICOMServerNodeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDICOMQueryResultsTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>ctkDICOMQueryResultsTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

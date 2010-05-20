@@ -179,7 +179,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="QCheckBox" name="checkBox">
+          <widget class="QCheckBox" name="CT">
            <property name="text">
             <string>CT</string>
            </property>
@@ -189,7 +189,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="checkBox_5">
+          <widget class="QCheckBox" name="MR">
            <property name="text">
             <string>MR</string>
            </property>

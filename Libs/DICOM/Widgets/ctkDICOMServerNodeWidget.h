@@ -38,6 +38,9 @@ public:
   explicit ctkDICOMServerNodeWidget(QWidget* parent=0);
   virtual ~ctkDICOMServerNodeWidget();
 
+  /// set properties of query based on current widget state
+  void populateQuery (/*ctkDICOMQuery &query*/);
+
 private:
   CTK_DECLARE_PRIVATE(ctkDICOMServerNodeWidget);
 };

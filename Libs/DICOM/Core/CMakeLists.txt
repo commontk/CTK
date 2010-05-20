@@ -24,19 +24,19 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   ctkDICOM.cpp
   ctkDICOM.h
-  ctkDICOMQuery.cpp
-  ctkDICOMQuery.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
+  ctkDICOMFind.cpp
+  ctkDICOMFind.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkDICOM.h
   ctkDICOMModel.h
-  ctkDICOMQuery.h
+  ctkDICOMFind.h
   )
 
 # UI files

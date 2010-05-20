@@ -18,6 +18,11 @@
  
 =========================================================================*/
 
+#include <iostream>
+
+/// CTK includes
+#include <ctkCheckableHeaderView.h>
+
 // ctkDICOMWidgets includes
 #include "ctkDICOMServerNodeWidget.h"
 #include "ui_ctkDICOMServerNodeWidget.h"
@@ -44,6 +49,18 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
   CTK_D(ctkDICOMServerNodeWidget);
   
   d->setupUi(this);
+
+  // checkable headers.
+  d->nodeTable->model()->setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
+  QHeaderView* previousHeaderView = d->nodeTable->horizontalHeader();
+  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->nodeTable);
+  headerView->setClickable(previousHeaderView->isClickable());
+  headerView->setMovable(previousHeaderView->isMovable());
+  headerView->setHighlightSections(previousHeaderView->highlightSections());
+  //headerView->setModel(previousHeaderView->model());
+  //headerView->setSelectionModel(previousHeaderView->selectionModel());
+  headerView->setPropagateToItems(true);
+  d->nodeTable->setHorizontalHeader(headerView);
 }
 
 //----------------------------------------------------------------------------
@@ -52,3 +69,10 @@ ctkDICOMServerNodeWidget::~ctkDICOMServerNodeWidget()
 }
 
 
+//----------------------------------------------------------------------------
+void ctkDICOMServerNodeWidget::populateQuery(/*ctkDICOMQuery &query*/)
+{
+  CTK_D(ctkDICOMServerNodeWidget);
+
+  std::cerr << "server node\n";
+}
