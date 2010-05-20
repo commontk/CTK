@@ -15,8 +15,9 @@ int ctkDICOMTest1(int argc, char * argv []) {
   QApplication app(argc, argv);
   QTextStream out(stdout);
   ctkDICOM myCTK;
-  if ( myCTK.openDatabase( argv[1]) )
-    {
+  try
+  {
+    myCTK.openDatabase( argv[1]);
     out << "open db success\n";
     /// make sure it is empty and properly initialized
     if (! myCTK.initializeDatabase() ) {
@@ -30,11 +31,11 @@ int ctkDICOMTest1(int argc, char * argv []) {
     };
     myCTK.closeDatabase(); 
     }
-  else
-    { 
-    out << "ERROR: " ;
-    out << myCTK.GetLastError();
-    }
+  catch (std::exception e)
+  {
+    out << "ERROR: " << e.what();
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
 

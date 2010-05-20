@@ -25,13 +25,14 @@
 #include <QGraphicsScene>
 
 /// CTK includes
-#include "CTKWidgetsExport.h"
 #include "ctkPimpl.h"
+#include "ctkTransferFunction.h"
+#include "CTKWidgetsExport.h"
 
-class ctkTransferFunction;
+//class ctkTransferFunction;
 class ctkTransferFunctionScenePrivate;
-class ctkControlPoint;
-class ctkPoint;
+//class ctkControlPoint;
+//class ctkPoint;
 
 //-----------------------------------------------------------------------------
 class CTK_WIDGETS_EXPORT ctkTransferFunctionScene: public QGraphicsScene
@@ -45,26 +46,37 @@ public:
   void setTransferFunction(ctkTransferFunction* transferFunction);
   ctkTransferFunction* transferFunction()const;
 
-  qreal y(const QVariant& v) const;
-  QColor color(const QVariant& v) const;
+  inline qreal posX(const ctkControlPoint* cp)const;
+  inline qreal posY(const ctkControlPoint* cp)const;
+  inline QColor color(const ctkControlPoint* cp) const;
 
-  qreal posX(const qreal& x)const;
-  qreal posY(const QVariant& value)const;
+  inline qreal posX(const ctkPoint& point)const;
+  inline qreal posY(const ctkPoint& point)const;
+  inline QColor color(const ctkPoint& point) const;
+
+  qreal posX(const qreal& tfX)const;
+  qreal posY(const QVariant& tfV)const;
+  QColor color(const QVariant& tfV) const;
   
-  QPointF mapPointToScreen(const ctkControlPoint* cp)const;
-  QPointF mapPointToScreen(const ctkPoint& point)const;
+  QPointF mapPointToScene(const ctkControlPoint* cp)const;
+  QPointF mapPointToScene(const ctkPoint& point)const;
+  
  
-  qreal mapXToScreen(qreal posX)const;
-  qreal mapYToScreen(qreal posY)const;
-  qreal mapXFromScreen(qreal screenPosX)const;
-  qreal mapYFromScreen(qreal screenPosY)const;
+  qreal mapXToScene(qreal posX)const;
+  qreal mapYToScene(qreal posY)const;
+  qreal mapXFromScene(qreal ScenePosX)const;
+  qreal mapYFromScene(qreal ScenePosY)const;
+  inline QPointF mapPointFromScene(const QPointF& point)const;
 
   QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end) const;
   QList<ctkPoint> nonLinearPoints(ctkControlPoint* start, ctkControlPoint* end) const;
 
   const QPainterPath& curve()const;
   const QList<QPointF>& points()const;
+  const QGradient& gradient()const;
+
   void computeCurve();
+  void computeGradient();
 
 protected slots:
   virtual void onTransferFunctionChanged();
@@ -77,5 +89,37 @@ protected:
 private:
   CTK_DECLARE_PRIVATE(ctkTransferFunctionScene);
 };
+
+qreal ctkTransferFunctionScene::posX(const ctkControlPoint* cp)const
+{
+  return this->posX(cp->x());
+}
+qreal ctkTransferFunctionScene::posY(const ctkControlPoint* cp)const
+{
+  return this->posY(cp->value());
+}
+QColor ctkTransferFunctionScene::color(const ctkControlPoint* cp) const
+{
+  return this->color(cp->value());
+}
+
+qreal ctkTransferFunctionScene::posX(const ctkPoint& point)const
+{
+  return this->posX(point.X);
+}
+qreal ctkTransferFunctionScene::posY(const ctkPoint& point)const
+{
+  return this->posY(point.Value);
+}
+QColor ctkTransferFunctionScene::color(const ctkPoint& point) const
+{
+  return this->color(point.Value);
+}
+
+QPointF ctkTransferFunctionScene::mapPointFromScene(const QPointF& point)const
+{
+  return QPointF(this->mapXFromScene(point.x()),
+                 this->mapYFromScene(point.y()));
+}
 
 #endif

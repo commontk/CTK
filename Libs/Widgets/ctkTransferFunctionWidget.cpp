@@ -54,6 +54,7 @@ void ctkTransferFunctionWidgetPrivate::init()
   p->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   p->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   //p->setViewport(new QGLWidget);
+  p->setRenderHint(QPainter::Antialiasing);
 }
 
 //-----------------------------------------------------------------------------

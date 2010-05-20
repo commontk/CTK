@@ -1,21 +1,30 @@
-PROJECT(CTKVisualizationVTKCore)
+PROJECT(CTKMessagingCore)
 
 #
 # 3rd party dependencies
 #
 
-FIND_PACKAGE(VTK)
-# TODO In case VTK is passed directly using VTK_DIR, check expected options
-IF(NOT VTK_FOUND)
-  MESSAGE(FATAL_ERROR "error: VTK package is required to build ${PROJECT_NAME}")
+FIND_PACKAGE(ZMQ)
+# TODO In case ZMQ is passed directly using ZMQ_DIR, check expected options
+IF(NOT ZMQ_FOUND)
+  MESSAGE(FATAL_ERROR "error: ZMQ package is required to build ${PROJECT_NAME}")
 ENDIF()
-INCLUDE(${VTK_USE_FILE})
+INCLUDE(${ZMQ_USE_FILE})
+
+
+#FIND_PACKAGE(OpenIGTLink)
+# TODO In case OpenIGTLink is passed directly using OpenIGTLink_DIR, check expected options
+#IF(NOT OpenIGTLink_FOUND)
+#  MESSAGE(FATAL_ERROR "error: OpenIGTLink package is required to build ${PROJECT_NAME}")
+#ENDIF()
+#INCLUDE(${OpenIGTLink_USE_FILE})
+
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_VISUALIZATION_VTK_CORE_EXPORT")
+SET(KIT_export_directive "CTK_MESSAGING_CORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
@@ -23,46 +32,29 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkVTKColorTransferFunction.cpp
-  ctkVTKColorTransferFunction.h
-  ctkVTKCommandOptions.cpp
-  ctkVTKCommandOptions.h
-  ctkVTKCompositeFunction.cpp
-  ctkVTKCompositeFunction.h
-  ctkVTKConnection.cpp
-  ctkVTKConnection.h
-  ctkVTKLookupTable.cpp
-  ctkVTKLookupTable.h
-  ctkVTKObject.h
-  ctkVTKObjectEventsObserver.cpp
-  ctkVTKObjectEventsObserver.h
-  ctkVTKPiecewiseFunction.cpp
-  ctkVTKPiecewiseFunction.h
+  ctkMessagingServer.h
+  ctkMessagingServer.cpp
+  ctkMessagingClient.h
+  ctkMessagingClient.cpp
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkVTKColorTransferFunction.h
-  ctkVTKConnection.h
-  ctkVTKCompositeFunction.h
-  ctkVTKLookupTable.h
-  ctkVTKObjectEventsObserver.h
-  ctkVTKPiecewiseFunction.h
   )
 
 # UI files
 SET(KIT_UI_FORMS
-)
+  )
 
 # Resources
 SET(KIT_resources
-)
+  )
 
 # Set VTK_LIBRARIES variable
-SET(VTK_LIBRARIES
-  vtkCommon
-  vtkFiltering
-  )
+#SET(ZMQ_LIBRARIES
+#  vtkCommon
+#  vtkFiltering
+#  )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'

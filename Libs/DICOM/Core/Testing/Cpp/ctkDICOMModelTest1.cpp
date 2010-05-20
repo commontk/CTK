@@ -31,12 +31,16 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
     }
   
   ctkDICOM myCTK;
-  if (!myCTK.openDatabase( argv[1] ))
-    {
+  try
+  {
+    myCTK.openDatabase( argv[1] );
+  }
+  catch (std::exception e)
+  {
     std::cerr << "Error when opening the data base file: " << argv[1] 
-              << " error: " << myCTK.GetLastError().toStdString();
+              << " error: " << e.what();
     return EXIT_FAILURE;
-    }
+  }
   if (!myCTK.initializeDatabase(argv[2]))
     {
     std::cerr << "Error when initializing the data base: " << argv[2] 

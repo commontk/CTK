@@ -177,23 +177,31 @@ ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
   ctkNonLinearControlPoint* cp = new ctkNonLinearControlPoint();
   cp->P.X = values[0];
   cp->P.Value = rgb;
-  d->ColorTransferFunction->GetNodeValue(index + 1, values);
-  Q_ASSERT(values[0] >= d->ColorTransferFunction->GetRange()[0] &&
-           values[0] <= d->ColorTransferFunction->GetRange()[1] &&
-           values[1] >= 0. && values[1] <= 1. &&  // Red
-           values[2] >= 0. && values[2] <= 1. &&  // Green
-           values[3] >= 0. && values[3] <= 1. &&  // Blue
-           values[4] >= 0. && values[4] <= 1. &&  // MidPoint
-           values[5] >= 0. && values[5] <= 1.);   // Sharpness
+  double nextValues[6];
+  d->ColorTransferFunction->GetNodeValue(index + 1, nextValues);
+  Q_ASSERT(nextValues[0] >= d->ColorTransferFunction->GetRange()[0] &&
+           nextValues[0] <= d->ColorTransferFunction->GetRange()[1] &&
+           nextValues[1] >= 0. && nextValues[1] <= 1. &&  // Red
+           nextValues[2] >= 0. && nextValues[2] <= 1. &&  // Green
+           nextValues[3] >= 0. && nextValues[3] <= 1. &&  // Blue
+           nextValues[4] >= 0. && nextValues[4] <= 1. &&  // MidPoint
+           nextValues[5] >= 0. && nextValues[5] <= 1.);   // Sharpness
+  // Optimization: don't use SubPoints when the sharpness is 0.
+  if (values[5] == 0.)
+    {
+    cp->SubPoints << ctkPoint(values[0], rgb);
+    rgb = QColor::fromRgbF(nextValues[1], nextValues[2], nextValues[3]);
+    cp->SubPoints << ctkPoint(nextValues[0], rgb);
+    return cp;
+    } 
   double subPoints[30];
   d->ColorTransferFunction->GetTable(cp->x(), values[0], 10, subPoints);
   qreal interval = (values[0] - cp->x()) / 9.;
   for(int i = 0; i < 10; ++i)
     {
-    
-    QColor rgb = QColor::fromRgbF(subPoints[3*i], 
-                                  subPoints[3*i+1],
-                                  subPoints[3*i+2]);
+    rgb = QColor::fromRgbF(subPoints[3*i], 
+                           subPoints[3*i+1],
+                           subPoints[3*i+2]);
     cp->SubPoints << ctkPoint(cp->x() + interval*i, rgb);
     }
   return cp;

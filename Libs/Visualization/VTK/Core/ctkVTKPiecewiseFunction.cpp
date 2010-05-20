@@ -163,17 +163,27 @@ ctkControlPoint* ctkVTKPiecewiseFunction::controlPoint(int index)const
   ctkNonLinearControlPoint* cp = new ctkNonLinearControlPoint();
   cp->P.X = values[0];
   cp->P.Value = values[1];
-  d->PiecewiseFunction->GetNodeValue(index + 1, values);
+  // Optimization: don't use Subpoints if sharpness == 0
+  if (values[3] == 0.)
+    {
+    cp->SubPoints << ctkPoint(values[0], values[1]);
+    } 
+  double nextValues[4];
+  d->PiecewiseFunction->GetNodeValue(index + 1, nextValues);
 
-
-  Q_ASSERT(values[0] >= range[0] && values[0] <= range[1]  &&  // X
-           values[1] >= rangeY[0].toDouble() && values[1] <= rangeY[1].toDouble()  &&  // Y
-           values[2] >= 0. && values[2] <= 1. &&                // Midpoint
-           values[3] >= 0. && values[3] <= 1. );                // Sharpness
-
+  Q_ASSERT(nextValues[0] >= range[0] && nextValues[0] <= range[1]  &&  // X
+           nextValues[1] >= rangeY[0].toDouble() && nextValues[1] <= rangeY[1].toDouble()  &&  // Y
+           nextValues[2] >= 0. && nextValues[2] <= 1. &&                // Midpoint
+           nextValues[3] >= 0. && nextValues[3] <= 1. );                // Sharpness
+  // Optimization: Don't use Subpoints if sharpness == 0
+  if (values[3] == 0.)
+    {
+    cp->SubPoints << ctkPoint(nextValues[0], nextValues[1]);
+    return cp;
+    }
   double subPoints[100];
-  d->PiecewiseFunction->GetTable(cp->x(), values[0], 100, subPoints);
-  qreal interval = (values[0] - cp->x()) / 99.;
+  d->PiecewiseFunction->GetTable(cp->x(), nextValues[0], 100, subPoints);
+  qreal interval = (nextValues[0] - cp->x()) / 99.;
 
   // subPoints[i] since value varies (not like in color transfer function widget)
   for(int i = 0; i < 100; ++i)

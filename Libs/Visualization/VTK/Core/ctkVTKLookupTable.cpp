@@ -162,10 +162,13 @@ ctkControlPoint* ctkVTKLookupTable::controlPoint(int index)const
 QVariant ctkVTKLookupTable::value(qreal pos)const
 {
   CTK_D(const ctkVTKLookupTable);
-  QSharedPointer<ctkControlPoint> point = 
-    QSharedPointer<ctkControlPoint>(this->controlPoint(this->posToIndex(pos)));
-  return point->P.Value;
+  Q_ASSERT(d->LookupTable.GetPointer());
+  double rgb[3];
+  d->LookupTable->GetColor(pos, rgb);
+  double alpha = d->LookupTable->GetOpacity(pos);
+  return QColor::fromRgbF(rgb[0], rgb[1], rgb[2], alpha);
 }
+
 //-----------------------------------------------------------------------------
 int ctkVTKLookupTable::insertControlPoint(const ctkControlPoint& cp)
 {
@@ -173,6 +176,7 @@ int ctkVTKLookupTable::insertControlPoint(const ctkControlPoint& cp)
   qDebug() << "ctkVTKLookupTable doesn't support insertControlPoint";
   return -1;
 }
+
 //-----------------------------------------------------------------------------
 // insert point with value = 0
 int ctkVTKLookupTable::insertControlPoint(qreal pos)
