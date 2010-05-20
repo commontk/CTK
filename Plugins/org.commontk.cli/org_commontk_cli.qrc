@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource prefix="/org_commontk_cli">
+  <file>servicedescriptor.xml</file>
+ </qresource>
+</RCC>

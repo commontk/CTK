@@ -1,23 +1,20 @@
-PROJECT(org_commontk_cli)
+PROJECT(org_commontk_eventbus)
 
-SET(PLUGIN_export_directive "org_commontk_cli_EXPORT")
+SET(PLUGIN_export_directive "org_commontk_eventbus_EXPORT")
 
 SET(PLUGIN_SRCS
-  ctkCLIPlugin.cpp
+  ctkEventBusImpl.cpp
+  ctkEventBusPlugin.cpp
 )
 
 SET(PLUGIN_MOC_SRCS
-  ctkCLIPlugin.h
-  ctkCLIRegistry.h
-  ctkICLIManager.h
+  ctkEventBusImpl_p.h
+  ctkEventBusPlugin_p.h
+  ctkEventHandlerWrapper_p.h
 )
 
 SET(PLUGIN_resources
-
-)
-
-SET(PLUGIN_cached_resourcefiles
-  servicedescriptor.xml
+  org_commontk_eventbus.qrc
 )
 
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Plugins)
@@ -30,6 +27,5 @@ ctkMacroBuildPlugin(
   SRCS ${PLUGIN_SRCS}
   MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
-  CACHED_RESOURCEFILES ${PLUGIN_cached_resourcefiles}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}
 )

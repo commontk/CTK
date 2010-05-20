@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service>
+  <name>ctkEventBus</name>
+    <filepath>libCTKCore</filepath>
+    <interface>
+      <name>org.commontk.core.EventBus</name>
+      <version>1.0</version>
+      <capabilities></capabilities>
+      <description>Interface for the CTK event bus</description>
+    </interface>
+</service>

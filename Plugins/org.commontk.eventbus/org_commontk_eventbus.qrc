@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/org_commontk_eventbus">
+        <file>servicedescriptor.xml</file>
+    </qresource>
+</RCC>

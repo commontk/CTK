@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <service>
+    <name>org.commontk.cli_0.0.0</name>
+    <filepath>liborg_commontk_cli</filepath>
+    <interface>
+      <name>org.commontk.cli.ICLIManager</name>
+      <version>1.0</version>
+      <capabilities></capabilities>
+      <customproperty key="objectclass">ctkICLIManager</customproperty>
+      <description>Interface that allows to discover and manage CLI modules</description>
+    </interface>
+  </service>

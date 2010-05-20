@@ -129,6 +129,8 @@ INCLUDE(CMake/ctkMacroValidateBuildOptions.cmake)
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkFunctionGenerateDGraphInput.cmake)
 INCLUDE(CMake/ctkFunctionGenerateProjectXml.cmake)
+INCLUDE(CMake/ctkMacroGeneratePluginManifest.cmake)
+INCLUDE(CMake/ctkMacroGeneratePluginResourceFile.cmake)
 
 # Used by CTKGenerateCTKConfig.cmake
 SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)
@@ -231,6 +233,7 @@ ENDIF()
 #
 SET(CTK_LIBS
   Core:ON
+  PluginFramework:ON
   Widgets:OFF
   DICOM/Core:OFF
   DICOM/Widgets:OFF
@@ -246,13 +249,16 @@ SET(CTK_LIBS
 # CTK Plugins - Use ON or OFF to indicate if the plugin should be built by default
 #
 SET(CTK_PLUGINS
-  #org.commontk.cli:OFF
+  org.commontk.eventbus:ON
+  org.commontk.cli:OFF
   )
 
 #-----------------------------------------------------------------------------
 # CTK Applications - Use ON or OFF to indicate if the application should be built by default
 #
 SET(CTK_APPLICATIONS
+  ctkCLIPluginExplorer:OFF
+  ctkPluginBrowser:OFF
   ctkDICOM:OFF
   ctkDICOMIndexer:OFF
   )
