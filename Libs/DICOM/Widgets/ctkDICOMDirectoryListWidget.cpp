@@ -1,7 +1,15 @@
 
 #include <QFileDialog>
 #include <QSqlQueryModel>
+#include <QSqlTableModel>
 #include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
+#include <QSqlField>
+
+
+
+#include <QDebug>
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMDirectoryListWidget.h"
@@ -16,14 +24,14 @@ class ctkDICOMDirectoryListWidgetPrivate: public ctkPrivate<ctkDICOMDirectoryLis
 public:
   ctkDICOMDirectoryListWidgetPrivate(){}
   ctkDICOM* dicom;
-  QSqlQueryModel* directoryListModel;
+  QSqlTableModel* directoryListModel;
 };
 
 //----------------------------------------------------------------------------
 // ctkDICOMDirectoryListWidgetPrivate methods
 
 
-//----------------------------------------------------------------------------
+//---------------------------
 // ctkDICOMDirectoryListWidget methods
 
 //----------------------------------------------------------------------------
@@ -37,7 +45,8 @@ ctkDICOMDirectoryListWidget::ctkDICOMDirectoryListWidget(QWidget* _parent):Super
   connect(d->addButton, SIGNAL(clicked()), this, SLOT(addDirectoryClicked()));
   connect(d->removeButton, SIGNAL(clicked()), this, SLOT(removeDirectoryClicked()));
 
-  d->directoryListModel = new QSqlQueryModel(this);
+  d->removeButton->setDisabled(true);
+
 
 
 }
@@ -51,7 +60,25 @@ ctkDICOMDirectoryListWidget::~ctkDICOMDirectoryListWidget()
 void ctkDICOMDirectoryListWidget::addDirectoryClicked()
 {
   CTK_D(ctkDICOMDirectoryListWidget);
-  QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"));
+  QString newDir = QFileDialog::getExistingDirectory(this, tr("Open Directory"));
+
+  if ( !newDir.isEmpty() )
+  {
+    QSqlRecord newDirRecord;
+    newDirRecord.append(QSqlField("Dirname",QVariant::String));
+    newDirRecord.setValue("Dirname",newDir);
+    bool success = d->directoryListModel->insertRecord(-1,newDirRecord);
+    bool success2 = d->directoryListModel->submitAll();
+    if ( !success2 )
+    {
+      qDebug() << d->directoryListModel->lastError();
+    }
+    //addDirectoryQuery.prepare("insert into Directories VALUES ( :dirname )");
+    //addDirectoryQuery.bindValue(":dirname",newDir);
+    //addDirectoryQuery.exec();
+
+//    d->directoryListModel;
+  }
 
 //d->directoryListView->setModel(NULL);
 // d->tableView->setModel(NULL);
@@ -60,18 +87,36 @@ void ctkDICOMDirectoryListWidget::addDirectoryClicked()
 //----------------------------------------------------------------------------
 void ctkDICOMDirectoryListWidget::removeDirectoryClicked()
 {
-
+  CTK_D(ctkDICOMDirectoryListWidget);
+  while ( ! d->directoryListView->selectionModel()->selectedIndexes().empty() )
+  {
+    d->directoryListModel->removeRow(
+        d->directoryListView->selectionModel()->selectedIndexes().first().row()
+    );
+  }
 }
 
 void ctkDICOMDirectoryListWidget::setDICOM(ctkDICOM* dicom)
 {
   CTK_D(ctkDICOMDirectoryListWidget);
   d->dicom = dicom;
-  QSqlQuery getDirectoriesQuery(dicom->database());
-  getDirectoriesQuery.exec("SELECT Dirname from Directories");
-  std::cout << getDirectoriesQuery.size();
-  d->directoryListModel->setQuery(getDirectoriesQuery);
-  //d->directoryListView->setModel(d->directoryListModel);
+  d->directoryListModel =  new QSqlTableModel(this,d->dicom->database());
+  d->directoryListModel->setTable("Directories");
+  d->directoryListModel->setEditStrategy(QSqlTableModel::OnFieldChange);
+  d->directoryListModel->select();
   d->directoryListView->setModel(d->directoryListModel);
 
+  connect ( d->directoryListView->selectionModel(),
+            SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+            this,
+            SLOT(directorySelectionChanged(const QItemSelection & , const QItemSelection &  )));
+
+
+}
+//----------------------------------------------------------------------------
+
+void ctkDICOMDirectoryListWidget::directorySelectionChanged( const QItemSelection  & selected, const QItemSelection  & deselected )
+{
+  CTK_D(ctkDICOMDirectoryListWidget);
+  d->removeButton->setEnabled( ! selected.empty() );
 }

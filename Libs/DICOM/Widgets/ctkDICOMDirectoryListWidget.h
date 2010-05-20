@@ -23,6 +23,8 @@
 
 // Qt includes 
 #include <QWidget>
+#include <QItemSelection>
+
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -44,7 +46,7 @@ public:
 public slots:
   void addDirectoryClicked();
   void removeDirectoryClicked();
-
+  void directorySelectionChanged( const QItemSelection  & selected, const QItemSelection  & deselected );
 
 private:
   CTK_DECLARE_PRIVATE(ctkDICOMDirectoryListWidget);
