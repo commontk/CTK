@@ -64,6 +64,8 @@ SET(KIT_SRCS
   ctkTransferFunctionItem.h
   ctkTransferFunctionWidget.cpp
   ctkTransferFunctionWidget.h
+  ctkTransferFunctionScene.cpp
+  ctkTransferFunctionScene.h
   ctkTreeComboBox.cpp
   ctkTreeComboBox.h
   )
@@ -97,6 +99,7 @@ SET(KIT_MOC_SRCS
   ctkTransferFunctionItem.h
   ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionWidget.h
+  ctkTransferFunctionScene.h
   ctkTreeComboBox.h
   )
 

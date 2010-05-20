@@ -46,6 +46,7 @@ public:
   virtual QVariant value(qreal pos)const;
   virtual int count()const;
   virtual bool isDiscrete()const;
+  virtual bool isEditable()const;
 
   virtual void range(qreal& minRange, qreal& maxRange)const;
   virtual QVariant minValue()const;
@@ -59,6 +60,9 @@ public:
 
   void setLookupTable(vtkLookupTable* lookupTable);
   vtkLookupTable* lookupTable()const;
+protected:
+  qreal indexToPos(int index)const;
+  int posToIndex(qreal pos)const;
 private:
   CTK_DECLARE_PRIVATE(ctkVTKLookupTable);
 };

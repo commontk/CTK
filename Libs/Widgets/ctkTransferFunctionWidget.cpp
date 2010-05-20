@@ -18,14 +18,15 @@
  
 =========================================================================*/
 /// Qt includes
+#include <QDebug>
+//#include <QGLWidget>
 #include <QGraphicsScene>
 #include <QResizeEvent>
-#include <QDebug>
 
 /// CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkTransferFunctionWidget.h"
-#include "ctkTransferFunctionItem.h"
+#include "ctkTransferFunctionScene.h"
 #include "ctkTransferFunctionGradientItem.h"
 #include "ctkTransferFunctionControlPointsItem.h"
 
@@ -34,17 +35,25 @@ class ctkTransferFunctionWidgetPrivate: public ctkPrivate<ctkTransferFunctionWid
 {
   CTK_DECLARE_PUBLIC(ctkTransferFunctionWidget);
 public:
+  ctkTransferFunctionWidgetPrivate();
   void init();
   ctkTransferFunction* TransferFunction;
 };
 
 //-----------------------------------------------------------------------------
+ctkTransferFunctionWidgetPrivate::ctkTransferFunctionWidgetPrivate()
+{
+  this->TransferFunction = 0;
+}
+
+//-----------------------------------------------------------------------------
 void ctkTransferFunctionWidgetPrivate::init()
 {
   CTK_P(ctkTransferFunctionWidget);
-  p->setScene(new QGraphicsScene(p));
+  p->setScene(new ctkTransferFunctionScene(p));
   p->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   p->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  //p->setViewport(new QGLWidget);
 }
 
 //-----------------------------------------------------------------------------
@@ -74,15 +83,19 @@ void ctkTransferFunctionWidget::setTransferFunction(ctkTransferFunction* transfe
 {
   CTK_D(ctkTransferFunctionWidget);
   d->TransferFunction = transferFunction;
-  Q_ASSERT(this->scene());
-  this->scene()->clear();
+  ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
+  Q_ASSERT(tfScene);
+  tfScene->clear();
+  tfScene->setTransferFunction(transferFunction);
+
   ctkTransferFunctionGradientItem* gradient = 
     new ctkTransferFunctionGradientItem(transferFunction);
-  gradient->setRect(0, 0, this->width(), this->height());
+  //gradient->setRect(tfScene->sceneRect());
   this->scene()->addItem(gradient);
+
   ctkTransferFunctionControlPointsItem* controlPoints = 
     new ctkTransferFunctionControlPointsItem(transferFunction);
-  controlPoints->setRect(0, 0, this->width(), this->height());
+  //controlPoints->setRect(tfScene->sceneRect());
   this->scene()->addItem(controlPoints);
 }
 
@@ -95,7 +108,9 @@ ctkTransferFunction* ctkTransferFunctionWidget::transferFunction()const
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionWidget::resizeEvent(QResizeEvent * event)
 {
+  /*
   QRectF sceneRect(QPointF(0,0),event->size());
+  this->scene()->setSceneRect(sceneRect);
   foreach(QGraphicsItem * item, this->scene()->items())
     {
     ctkTransferFunctionItem* rectItem = 
@@ -105,8 +120,12 @@ void ctkTransferFunctionWidget::resizeEvent(QResizeEvent * event)
       rectItem->setRect(sceneRect);
       }
     }
-  this->scene()->setSceneRect(sceneRect);
-  
+  */
+  QMatrix zoomMatrix;
+  zoomMatrix.scale(event->size().width(), event->size().height());
+  bool blocked = this->blockSignals(true);
+  this->setMatrix(zoomMatrix);
+  this->blockSignals(blocked);
   this->QGraphicsView::resizeEvent(event);
   // Control points are resized by the view transform, we want
   // fixed size control points, lines...

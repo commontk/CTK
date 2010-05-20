@@ -51,9 +51,3 @@ ctkTransferFunction::~ctkTransferFunction()
   // this->ControlPoints->clear();
   // emit changed();
 }
-
-ctkBezierControlPoint*  ctkTransferFunction::toto()
-{
-  return new ctkBezierControlPoint();
-}
-
