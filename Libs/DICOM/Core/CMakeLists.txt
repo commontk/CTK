@@ -28,15 +28,12 @@ SET(KIT_SRCS
   ctkDICOMIndexer.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
-  ctkDICOMFind.cpp
-  ctkDICOMFind.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkDICOM.h
   ctkDICOMModel.h
-  ctkDICOMFind.h
   )
 
 # UI files
