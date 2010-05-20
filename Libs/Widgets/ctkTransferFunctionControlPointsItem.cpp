@@ -46,7 +46,7 @@ public:
 //-----------------------------------------------------------------------------
 ctkTransferFunctionControlPointsItemPrivate::ctkTransferFunctionControlPointsItemPrivate()
 {
-  this->PointSize = QSizeF(0.01,0.01);
+  this->PointSize = QSizeF(12,12);
   this->SelectedPoint = -1;
 }
 
@@ -94,21 +94,25 @@ void ctkTransferFunctionControlPointsItem::paint(
   Q_ASSERT(tfScene);
   
   const QPainterPath& curve = tfScene->curve();
-  painter->setRenderHint(QPainter::Antialiasing);
   QPen pen(QColor(255, 255, 255, 191), 1);
   pen.setCosmetic(true);
   painter->setPen(pen);
   painter->drawPath(curve);
 
   d->ControlPoints = tfScene->points();
-  QPainterPath points;
-  points.setFillRule(Qt::WindingFill);
+  painter->setBrush(QBrush(QColor(191, 191, 191, 127)));
+  painter->save();
+  QTransform transform = painter->transform();
+  painter->setTransform(QTransform());
   foreach(const QPointF& point, d->ControlPoints)
     {
-    points.addEllipse(point, d->PointSize.width(), d->PointSize.height());
+    QPointF pos = transform.map(point);
+    painter->drawEllipse(pos.x() - d->PointSize.width() / 2, 
+                         pos.y() - d->PointSize.height() / 2, 
+                         d->PointSize.width(), d->PointSize.width());
+    //points.addEllipse(point, d->PointSize.width(), d->PointSize.height());
     }
-  painter->setBrush(QBrush(QColor(191, 191, 191, 127)));
-  painter->drawPath(points);
+  painter->restore();
 }
 
 //-----------------------------------------------------------------------------
