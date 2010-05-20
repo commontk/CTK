@@ -89,6 +89,7 @@ public:
   virtual void range(qreal& minRange, qreal& maxRange)const=0;
   virtual QVariant minValue()const = 0;
   virtual QVariant maxValue()const = 0;
+  inline void valueRange(QVariant range[2])const;
   ///
   virtual int insertControlPoint(const ctkControlPoint& cp) = 0;
   virtual int insertControlPoint(qreal pos) = 0;
@@ -116,6 +117,13 @@ QVariant ctkTransferFunction::value(int index)const
 void ctkTransferFunction::range(qreal rangeValues[2])const
 {
   this->range(rangeValues[0], rangeValues[1]);
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunction::valueRange(QVariant rangeValues[2])const
+{
+  rangeValues[0] = this->minValue();
+  rangeValues[1] = this->maxValue();
 }
 
 #endif
