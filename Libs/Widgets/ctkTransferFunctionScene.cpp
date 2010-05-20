@@ -19,12 +19,16 @@
 =========================================================================*/
 /// Qt includes
 #include <QGraphicsScene>
+#include <QLinearGradient>
 #include <QResizeEvent>
 #include <QDebug>
 
 /// CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkTransferFunctionScene.h"
+
+/// STL includes
+#include <limits>
 
 //-----------------------------------------------------------------------------
 class ctkTransferFunctionScenePrivate: public ctkPrivate<ctkTransferFunctionScene>
@@ -35,6 +39,7 @@ public:
   QRectF               OldRect;
   ctkTransferFunction* TransferFunction;
   QPainterPath   Path;
+  QLinearGradient Gradient;
   QList<QPointF> Points;
   qreal        WorldRangeX[2];
   QVariant     WorldRangeY[2];
@@ -106,6 +111,7 @@ const QPainterPath& ctkTransferFunctionScene::curve()const
   if (d->Path.isEmpty())// || this->sceneRect() != d->OldRect)
     {
     const_cast<ctkTransferFunctionScene*>(this)->computeCurve();
+    const_cast<ctkTransferFunctionScene*>(this)->computeGradient();
     }
   return d->Path;
 }
@@ -117,8 +123,21 @@ const QList<QPointF>& ctkTransferFunctionScene::points()const
   if (d->Path.isEmpty())// || this->sceneRect() != d->OldRect)
     {
     const_cast<ctkTransferFunctionScene*>(this)->computeCurve();
+    const_cast<ctkTransferFunctionScene*>(this)->computeGradient();
     }
   return d->Points;
+}
+
+//-----------------------------------------------------------------------------
+const QGradient& ctkTransferFunctionScene::gradient()const
+{
+  CTK_D(const ctkTransferFunctionScene);
+  if (d->Path.isEmpty())// || this->sceneRect() != d->OldRect)
+    {
+    const_cast<ctkTransferFunctionScene*>(this)->computeCurve();
+    const_cast<ctkTransferFunctionScene*>(this)->computeGradient();
+    }
+  return d->Gradient;
 }
 
 //-----------------------------------------------------------------------------
@@ -133,8 +152,8 @@ void ctkTransferFunctionScene::computeCurve()
     }
   qDebug() << "computeCurve" << this->sceneRect();
   d->TransferFunction->range(d->WorldRangeX[0], d->WorldRangeX[1]);
-  d->WorldRangeY[0] = this->y(d->TransferFunction->minValue());
-  d->WorldRangeY[1] = this->y(d->TransferFunction->maxValue());
+  d->WorldRangeY[0] = this->posY(d->TransferFunction->minValue());
+  d->WorldRangeY[1] = this->posY(d->TransferFunction->maxValue());
 
   d->RangeXDiff   = this->computeRangeXDiff(this->sceneRect(), d->WorldRangeX);
   d->RangeXOffSet = this->computeRangeXOffset(d->WorldRangeX);
@@ -189,6 +208,78 @@ void ctkTransferFunctionScene::computeCurve()
 }
 
 //-----------------------------------------------------------------------------
+void ctkTransferFunctionScene::computeGradient()
+{
+  CTK_D(ctkTransferFunctionScene);
+
+  int count = d->TransferFunction ? d->TransferFunction->count() : 0;
+  if (count <= 0)
+    {
+    return;
+    }
+  qDebug() << "computeCurve" << this->sceneRect();
+  d->TransferFunction->range(d->WorldRangeX[0], d->WorldRangeX[1]);
+  d->WorldRangeY[0] = this->posY(d->TransferFunction->minValue());
+  d->WorldRangeY[1] = this->posY(d->TransferFunction->maxValue());
+
+  d->RangeXDiff   = this->computeRangeXDiff(QRectF(0.,0.,1.,1.), d->WorldRangeX);
+  d->RangeXOffSet = this->computeRangeXOffset(d->WorldRangeX);
+
+  d->RangeYDiff   = this->computeRangeYDiff(QRectF(0.,0.,1.,1.), d->WorldRangeY);
+  d->RangeYOffSet = this->computeRangeYOffset(d->WorldRangeY);
+
+  ctkControlPoint* startCP = d->TransferFunction->controlPoint(0);
+  ctkControlPoint* nextCP = 0;
+
+  qreal startPos = this->mapXToScreen(this->posX(startCP->x()));
+  qreal nextPos;
+  
+  d->Gradient = QLinearGradient(0., 0., 1., 0.);
+  d->Gradient.setColorAt(startPos, this->color(startCP));
+
+  for(int i = 1; i < count; ++i)
+    {
+    nextCP = d->TransferFunction->controlPoint(i);
+    nextPos = this->mapXToScreen(this->posX(nextCP));
+    if (this->transferFunction()->isDiscrete())
+      {
+      qreal midPoint = (startPos + nextPos)  / 2;
+      d->Gradient.setColorAt(midPoint, this->color(startCP));
+      d->Gradient.setColorAt(midPoint + std::numeric_limits<qreal>::epsilon(), this->color(nextCP));
+      }
+    else if (dynamic_cast<ctkNonLinearControlPoint*>(startCP))
+      {
+      QList<ctkPoint> points = this->nonLinearPoints(startCP, nextCP);
+      foreach(const ctkPoint& p, points)
+        {
+        d->Gradient.setColorAt(this->mapXToScreen(this->posX(p)), this->color(p));
+        }
+      //no need, d->Gradient.setColorAt(nextPos, this->color(nextCP));
+      }
+    else //dynamic_cast<ctkBezierControlPoint*>(startCP))
+      { // TODO handle bezier points with color
+      QList<ctkPoint> points = this->bezierParams(startCP, nextCP);
+      QList<ctkPoint>::iterator it = points.begin();
+      QList<QPointF> bezierPoints;
+      foreach(const ctkPoint& p, points)
+        {
+        d->Gradient.setColorAt(this->mapXToScreen(this->posX(p)), this->color(p));
+        }
+      nextPos = this->mapXToScreen(this->posX(points[points.size() - 1])); 
+      }
+    //qDebug() << i << points[0] << points[1] << points[2] << points[3];
+    delete startCP;
+    startCP = nextCP;
+    startPos = nextPos;
+    }
+  d->Gradient.setColorAt(startPos, this->color(startCP));
+  if (startCP)
+    {
+    delete startCP;
+    }
+}
+
+//-----------------------------------------------------------------------------
 QList<ctkPoint> ctkTransferFunctionScene::bezierParams(
   ctkControlPoint* start, ctkControlPoint* end) const
 {
@@ -229,18 +320,6 @@ QList<ctkPoint> ctkTransferFunctionScene::nonLinearPoints(
     return points;
     }
   return nonLinearCP->SubPoints;
-}
-
-
-//-----------------------------------------------------------------------------
-qreal ctkTransferFunctionScene::y(const QVariant& v) const
-{ 
-  Q_ASSERT(v.canConvert<qreal>() || v.canConvert<QColor>());
-  if (v.canConvert<QColor>())
-    {
-    return v.value<QColor>().alphaF();
-    }
-  return v.toReal();
 }
 
 //-----------------------------------------------------------------------------
