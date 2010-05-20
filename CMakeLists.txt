@@ -50,6 +50,7 @@ ENDFOREACH()
 PROJECT(CTK)
 #-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 # Default to shared library
 SET(CTK_LIBRARY_MODE "SHARED")
 SET(CTK_BUILD_SHARED_LIBS TRUE)
@@ -57,15 +58,13 @@ SET(CTK_BUILD_SHARED_LIBS TRUE)
 #-----------------------------------------------------------------------------
 # Output directories.
 #
-IF(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-  SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CTK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-ENDIF()
-IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-  SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CTK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-ENDIF()
-IF(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-  SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CTK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-ENDIF()
+FOREACH(type LIBRARY RUNTIME ARCHIVE)
+  IF(NOT CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
+    SET(CMAKE_${type}_OUTPUT_DIRECTORY ${${PROJECT_NAME}_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+  ELSE()
+    SET(CMAKE_${type}_OUTPUT_DIRECTORY ${CTK_CMAKE_${type}_OUTPUT_DIRECTORY} CACHE INTERNAL "Single output directory for building all libraries.")
+  ENDIF()
+ENDFOREACH()
 
 #-----------------------------------------------------------------------------
 # Install directories, used for install rules.
@@ -485,3 +484,4 @@ INCLUDE(Utilities/KWStyle/KWStyle.cmake)
 # the end of the whole configuration process, as a "last step".
 # This directory is typically the last SUBDIRS in the main CMakeLists.txt.
 ADD_SUBDIRECTORY(Utilities/LastConfigureStep)
+
