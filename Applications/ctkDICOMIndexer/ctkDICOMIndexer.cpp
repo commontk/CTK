@@ -34,7 +34,7 @@
 
 void print_usage()
 {
-  std::cerr << "Usage: ";
+  std::cerr << "Usage:\n";
   std::cerr << "  1. ctkDICOMIndexer --add <database.db> <sourceDir> [destDir]\n";
   std::cerr << "     Adds (or refreshes) sourceDir to the index of the database.\n";
   std::cerr << "     Creates the database if it is not valid..\n";
@@ -42,7 +42,7 @@ void print_usage()
   std::cerr << "  2. ctkDICOMIndexer --init <database.db> [sqlScript]\n";
   std::cerr << "     Reinitialize the database. Uses default schema or the provided sqlScript file.\n";
   std::cerr << "  3. ctkDICOMIndexer --cleanup <database.db>\n";
-  std::cerr << "     Remove non-existent files from the database.";
+  std::cerr << "     Remove non-existent files from the database.\n";
   return;
 }
 
@@ -66,17 +66,12 @@ int main(int argc, char** argv)
   ctkDICOM myCTK;
 
 
-  if (!myCTK.openDatabase( argv[2]))
-  {
-    std::cerr << "Database error:" << qPrintable(myCTK.GetLastError());
-    myCTK.closeDatabase();
-    return EXIT_FAILURE;
-  }
-  else
+  try
   {
     if (std::string("--add") == argv[1])
     {
       {
+        myCTK.openDatabase( argv[2] );
         if (argc > 4)
         {
           idx.addDirectory(myCTK.database(),argv[3],argv[4]);
@@ -89,6 +84,7 @@ int main(int argc, char** argv)
     }
     else if (std::string("--init") == argv[1])
     {
+      myCTK.openDatabase( argv[2] );
       if (argc > 2)
       {
         myCTK.initializeDatabase(argv[2]);
@@ -102,6 +98,17 @@ int main(int argc, char** argv)
     {
       // TODO
     }
+    else
+    {
+      print_usage();
+      return EXIT_FAILURE;
+    }
+  }
+  catch (std::exception e)
+  {
+    std::cerr << "Database error:" << qPrintable(myCTK.GetLastError());
+    myCTK.closeDatabase();
+    return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
 }

@@ -31,6 +31,7 @@
 
 // STD includes
 #include <iostream>
+#include <stdexcept>
 
 //----------------------------------------------------------------------------
 class ctkDICOMPrivate: public ctkPrivate<ctkDICOM>
@@ -67,7 +68,7 @@ ctkDICOM::~ctkDICOM()
 }
 
 //----------------------------------------------------------------------------
-bool ctkDICOM::openDatabase(const QString& databaseFileName)
+void ctkDICOM::openDatabase(const QString& databaseFileName)
 {
   CTK_D(ctkDICOM);
   d->Database = QSqlDatabase::addDatabase("QSQLITE","DICOM-DB");
@@ -75,13 +76,12 @@ bool ctkDICOM::openDatabase(const QString& databaseFileName)
   if ( ! (d->Database.open()) )
     {
     d->LastError = d->Database.lastError().text();
-    return false;
+    throw std::runtime_error(qPrintable(d->LastError));
     }
   if ( d->Database.tables().empty() ) 
     {
     initializeDatabase();
     }
-  return true;
 }
 
 //------------------------------------------------------------------------------
