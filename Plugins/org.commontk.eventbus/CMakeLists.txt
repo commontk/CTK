@@ -17,8 +17,6 @@ SET(PLUGIN_resources
   org_commontk_eventbus.qrc
 )
 
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Plugins)
-
 ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(

@@ -20,8 +20,6 @@ SET(PLUGIN_cached_resourcefiles
   servicedescriptor.xml
 )
 
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Plugins)
-
 ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
