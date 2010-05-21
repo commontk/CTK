@@ -65,18 +65,24 @@ MARK_AS_ADVANCED(CTK_SUPERBUILD)
 # Output directories.
 #
 FOREACH(type LIBRARY RUNTIME ARCHIVE)
-  IF(DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY AND
-     NOT CTK_CMAKE_${type}_OUTPUT_DIRECTORY STREQUAL "")
+  IF(DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
     # Make sure the directory exists
     IF(NOT EXISTS ${CTK_CMAKE_${type}_OUTPUT_DIRECTORY})
       MESSAGE(FATAL_ERROR "CTK_CMAKE_${type}_OUTPUT_DIRECTORY is set to a non-existing directory [${CTK_CMAKE_${type}_OUTPUT_DIRECTORY}]")
     ENDIF()
   ENDIF()
   
-  IF(CTK_SUPERBUILD OR NOT DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
+  IF(CTK_SUPERBUILD)
     SET(output_dir ${${PROJECT_NAME}_BINARY_DIR}/bin)
+    IF(NOT DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
+      SET(CTK_CMAKE_${type}_OUTPUT_DIRECTORY ${${PROJECT_NAME}_BINARY_DIR}/CTK-build/bin)
+    ENDIF()
   ELSE()
-    SET(output_dir ${CTK_CMAKE_${type}_OUTPUT_DIRECTORY})
+    IF(NOT DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
+      SET(output_dir ${${PROJECT_NAME}_BINARY_DIR}/bin)
+    ELSE()
+      SET(output_dir ${CTK_CMAKE_${type}_OUTPUT_DIRECTORY})
+    ENDIF()
   ENDIF()
   SET(CMAKE_${type}_OUTPUT_DIRECTORY ${output_dir} CACHE INTERNAL "Single output directory for building all libraries.")
 ENDFOREACH()
