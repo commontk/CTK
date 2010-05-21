@@ -148,7 +148,10 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
   // returns index
   int index = this->transferFunction()->insertControlPoint( tfPos.x());
   // update value of the point
-  this->transferFunction()->setControlPointValue( index, tfPos.y());
+  if (!QSharedPointer<ctkControlPoint>(this->transferFunction()->controlPoint(index))->value().canConvert<QColor>())
+    {
+    this->transferFunction()->setControlPointValue( index, tfPos.y());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -170,14 +173,17 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
   if(d->SelectedPoint == 0 || d->SelectedPoint == this->transferFunction()->count() )
     {
     qDebug() << "border" ;
+    return;
     }
-  else if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() < newPos.x() &&
-      this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() > newPos.x())
+  else if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > newPos.x() ||
+      this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() < newPos.x())
     {
-    // update pos of the point
-    this->transferFunction()->setControlPointPos( d->SelectedPoint, newPos.x());
-    // update value of the point
-    this->transferFunction()->setControlPointValue( d->SelectedPoint, newPos.y());
+    return;
+    }
+  this->transferFunction()->setControlPointPos(d->SelectedPoint, newPos.x());
+  if (!QSharedPointer<ctkControlPoint>(this->transferFunction()->controlPoint(d->SelectedPoint))->value().canConvert<QColor>())
+    {
+    this->transferFunction()->setControlPointValue(d->SelectedPoint, newPos.y());
     }
 }
 

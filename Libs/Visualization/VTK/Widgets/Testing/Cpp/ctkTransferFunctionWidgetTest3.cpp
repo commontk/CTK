@@ -57,6 +57,6 @@ int ctkTransferFunctionWidgetTest3(int argc, char * argv [] )
 
   QTimer autoExit;
   QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-  autoExit.start(1000);
+  //autoExit.start(1000);
   return app.exec();
 }

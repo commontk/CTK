@@ -24,11 +24,13 @@
 #include <QResizeEvent>
 
 /// CTK includes
+#include "ctkHistogram.h"
 #include "ctkTransferFunction.h"
 #include "ctkTransferFunctionWidget.h"
 #include "ctkTransferFunctionScene.h"
 #include "ctkTransferFunctionGradientItem.h"
 #include "ctkTransferFunctionControlPointsItem.h"
+#include "ctkTransferFunctionHistogramItem.h"
 
 //-----------------------------------------------------------------------------
 class ctkTransferFunctionWidgetPrivate: public ctkPrivate<ctkTransferFunctionWidget>
@@ -89,16 +91,27 @@ void ctkTransferFunctionWidget::setTransferFunction(ctkTransferFunction* transfe
   tfScene->clear();
   tfScene->setTransferFunction(transferFunction);
 
-  bool useMask = true;
   ctkTransferFunctionGradientItem* gradient = 
     new ctkTransferFunctionGradientItem(transferFunction);
-  //gradient->setRect(tfScene->sceneRect());
+  gradient->setRect(tfScene->sceneRect());
   this->scene()->addItem(gradient);
 
-  ctkTransferFunctionControlPointsItem* controlPoints = 
-    new ctkTransferFunctionControlPointsItem(transferFunction);
-  //controlPoints->setRect(tfScene->sceneRect());
-  this->scene()->addItem(controlPoints);
+  if (qobject_cast<ctkHistogram*>(transferFunction) != 0)
+    {
+    gradient->setMask(false);
+    ctkHistogram* histogram = qobject_cast<ctkHistogram*>(transferFunction);
+    ctkTransferFunctionHistogramItem* histogramItem = 
+      new ctkTransferFunctionHistogramItem(histogram);
+    //controlPoints->setRect(tfScene->sceneRect());
+    this->scene()->addItem(histogramItem);
+    }
+  else
+    {
+    ctkTransferFunctionControlPointsItem* controlPoints = 
+      new ctkTransferFunctionControlPointsItem(transferFunction);
+    //controlPoints->setRect(tfScene->sceneRect());
+    this->scene()->addItem(controlPoints);
+    } 
 }
 
 //-----------------------------------------------------------------------------

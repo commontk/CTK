@@ -31,6 +31,8 @@ SET(KIT_SRCS
   ctkVTKCompositeFunction.h
   ctkVTKConnection.cpp
   ctkVTKConnection.h
+  ctkVTKHistogram.cpp
+  ctkVTKHistogram.h
   ctkVTKLookupTable.cpp
   ctkVTKLookupTable.h
   ctkVTKObject.h
@@ -46,6 +48,7 @@ SET(KIT_MOC_SRCS
   ctkVTKConnection.h
   ctkVTKCompositeFunction.h
   ctkVTKLookupTable.h
+  ctkVTKHistogram.h
   ctkVTKObjectEventsObserver.h
   ctkVTKPiecewiseFunction.h
   )

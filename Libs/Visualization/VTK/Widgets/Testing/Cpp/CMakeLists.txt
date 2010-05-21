@@ -5,6 +5,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkTransferFunctionWidgetTest2.cpp
   ctkTransferFunctionWidgetTest3.cpp
   ctkTransferFunctionWidgetTest4.cpp
+  ctkTransferFunctionWidgetTest5.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -35,3 +36,4 @@ SIMPLE_TEST( ctkTransferFunctionWidgetTest1 )
 SIMPLE_TEST( ctkTransferFunctionWidgetTest2 )
 SIMPLE_TEST( ctkTransferFunctionWidgetTest3 )
 SIMPLE_TEST( ctkTransferFunctionWidgetTest4 )
+SIMPLE_TEST( ctkTransferFunctionWidgetTest5 )

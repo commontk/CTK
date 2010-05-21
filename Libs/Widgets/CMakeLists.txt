@@ -60,6 +60,8 @@ SET(KIT_SRCS
   ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionGradientItem.cpp
   ctkTransferFunctionGradientItem.h
+  ctkTransferFunctionHistogramItem.cpp
+  ctkTransferFunctionHistogramItem.h
   ctkTransferFunctionItem.cpp
   ctkTransferFunctionItem.h
   ctkTransferFunctionWidget.cpp
@@ -96,6 +98,7 @@ SET(KIT_MOC_SRCS
   ctkTitleComboBox.h
   ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionGradientItem.h
+  ctkTransferFunctionHistogramItem.h
   ctkTransferFunctionItem.h
   ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionWidget.h

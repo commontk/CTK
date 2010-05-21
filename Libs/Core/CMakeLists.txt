@@ -37,6 +37,8 @@ SET(KIT_SRCS
   ctkDependencyGraph.h
   ctkLogger.cpp
   ctkLogger.h
+  ctkHistogram.cpp
+  ctkHistogram.h
   ctkModelTester.cpp
   ctkModelTester.h
   ctkPimpl.h
@@ -57,9 +59,10 @@ ENDIF()
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkLogger.h 
+  ctkHistogram.h
   ctkModelTester.h
   ctkTransferFunction.h
-)
+  )
 
 # UI files
 SET(KIT_UI_FORMS

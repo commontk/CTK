@@ -176,7 +176,22 @@ void ctkTransferFunctionScene::computeCurve()
   for(int i = 1; i < count; ++i)
     {
     nextCP = d->TransferFunction->controlPoint(i);
-    if (dynamic_cast<ctkNonLinearControlPoint*>(startCP))
+    if (this->transferFunction()->isDiscrete())
+      {
+      QPointF nextPos = this->mapPointToScene(nextCP);
+      qreal midPosX = (startPos.x() + nextPos.x()) / 2.;
+      
+      d->Path.lineTo(QPointF(midPosX, startPos.y()));
+      d->Path.lineTo(QPointF(midPosX, nextPos.y()));
+      
+      d->Points << nextPos;
+      startPos = nextPos;
+      if (i == count -1)
+        {
+        d->Path.lineTo(nextPos);
+        }
+      }
+    else if (dynamic_cast<ctkNonLinearControlPoint*>(startCP))
       {
       QList<ctkPoint> points = this->nonLinearPoints(startCP, nextCP);
       int j;

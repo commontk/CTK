@@ -3,6 +3,7 @@ SET(KIT ${PROJECT_NAME})
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkAddRemoveComboBoxTest1.cpp
   ctkButtonGroupTest1.cpp
+  ctkCheckableHeaderViewTest1.cpp
   ctkCollapsibleButtonTest1.cpp
   ctkCollapsibleGroupBoxTest1.cpp
   ctkColorPickerButtonTest1.cpp
@@ -16,8 +17,6 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkSliderSpinBoxWidgetTest1.cpp
   ctkTitleComboBoxTest1.cpp
   ctkTreeComboBoxTest1.cpp
-  ctkCheckableHeaderViewTest1.cpp
-  #EXTRA_INCLUDE TestingMacros.h
   )
 
 SET (TestsToRun ${Tests})
@@ -44,6 +43,7 @@ ENDMACRO( SIMPLE_TEST  )
 
 SIMPLE_TEST( ctkAddRemoveComboBoxTest1 )
 SIMPLE_TEST( ctkButtonGroupTest1 )
+SIMPLE_TEST( ctkCheckableHeaderViewTest1 )
 SIMPLE_TEST( ctkCollapsibleButtonTest1 )
 SIMPLE_TEST( ctkCollapsibleGroupBoxTest1 )
 SIMPLE_TEST( ctkColorPickerButtonTest1 )
@@ -52,7 +52,6 @@ SIMPLE_TEST( ctkDoubleRangeSliderTest1 )
 SIMPLE_TEST( ctkDoubleSliderTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
-SIMPLE_TEST( ctkCheckableHeaderViewTest1 )
 SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
 SIMPLE_TEST( ctkSliderSpinBoxWidgetTest1 )
