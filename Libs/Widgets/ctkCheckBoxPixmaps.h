@@ -56,9 +56,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPixmap>
 
 /// CTK includes
+#include "ctkPimpl.h"
 #include "CTKWidgetsExport.h"
 
+class QPixmap;
 class QWidget;
+class ctkCheckBoxPixmapsPrivate;
 
 ///
 /// ctkCheckBoxPixmaps is a helper class that can used to create pixmaps for
@@ -69,36 +72,28 @@ class CTK_WIDGETS_EXPORT ctkCheckBoxPixmaps : public QObject
   typedef QObject Superclass;
 
 public:
-  /// parent cannot be NULL.
-  ctkCheckBoxPixmaps(QWidget* parent);
+  ///
+  /// The widget is used to retrieve the style of the checkboxes
+  /// If the widget is 0 (not recommended) use the QApplication style.
+  ctkCheckBoxPixmaps(QWidget* parent = 0);
 
+  ///
   /// Returns a pixmap for the given state .
-  QPixmap pixmap(Qt::CheckState state, bool active) const;
-  QPixmap pixmap(int state, bool active) const
-    {
-    return this->pixmap(static_cast<Qt::CheckState>(state), active);
-    }
-
+  /// The pixmaps have been cached so the cost of the function is minimum.
+  const QPixmap& pixmap(Qt::CheckState state, bool active) const;
+  ///
+  /// Utility function that can take an int for the state.
+  /// Best to be avoided.
+  inline const QPixmap& pixmap(int state, bool active) const;
 
 private:
   Q_DISABLE_COPY(ctkCheckBoxPixmaps)
-
-  enum PixmapStateIndex
-    {
-    Checked                 = 0,
-    PartiallyChecked        = 1,
-    UnChecked               = 2,
-    
-    // All active states in lower half
-    Checked_Active          = 3,
-    PartiallyChecked_Active = 4,
-    UnChecked_Active        = 5,
-   
-    PixmapCount             = 6
-    };
-  QPixmap Pixmaps[6];
+  CTK_DECLARE_PRIVATE(ctkCheckBoxPixmaps);
 };
 
+const QPixmap& ctkCheckBoxPixmaps::pixmap(int state, bool active) const
+{
+  return this->pixmap(static_cast<Qt::CheckState>(state), active);
+}
+
 #endif
-
-

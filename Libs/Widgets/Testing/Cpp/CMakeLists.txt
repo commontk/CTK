@@ -3,6 +3,7 @@ SET(KIT ${PROJECT_NAME})
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkAddRemoveComboBoxTest1.cpp
   ctkButtonGroupTest1.cpp
+  ctkCheckBoxPixmapsTest1.cpp
   ctkCheckableHeaderViewTest1.cpp
   ctkCollapsibleButtonTest1.cpp
   ctkCollapsibleGroupBoxTest1.cpp
@@ -43,6 +44,7 @@ ENDMACRO( SIMPLE_TEST  )
 
 SIMPLE_TEST( ctkAddRemoveComboBoxTest1 )
 SIMPLE_TEST( ctkButtonGroupTest1 )
+SIMPLE_TEST( ctkCheckBoxPixmapsTest1 )
 SIMPLE_TEST( ctkCheckableHeaderViewTest1 )
 SIMPLE_TEST( ctkCollapsibleButtonTest1 )
 SIMPLE_TEST( ctkCollapsibleGroupBoxTest1 )

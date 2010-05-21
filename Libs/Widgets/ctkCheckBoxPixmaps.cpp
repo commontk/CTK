@@ -50,21 +50,42 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ========================================================================*/
 
 // Qt includes
-#include <QWidget>
+#include <QApplication>
 #include <QPainter>
 #include <QPixmap>
 #include <QStyle>
 #include <QStyleOptionButton>
+#include <QWidget>
 
 // CTK includes
 #include "ctkCheckBoxPixmaps.h"
+
+class ctkCheckBoxPixmapsPrivate: public ctkPrivate<ctkCheckBoxPixmaps>
+{
+public:
+  
+  enum PixmapStateIndex
+    {
+    Checked                 = 0,
+    PartiallyChecked        = 1,
+    UnChecked               = 2,
+    
+    // All active states in lower half
+    Checked_Active          = 3,
+    PartiallyChecked_Active = 4,
+    UnChecked_Active        = 5,
+   
+    PixmapCount             = 6
+    };
+  QPixmap Pixmaps[7];
+};
 
 //-----------------------------------------------------------------------------
 ctkCheckBoxPixmaps::ctkCheckBoxPixmaps(QWidget* parentWidget)
   : Superclass(parentWidget)
 {
-  Q_ASSERT(parentWidget != 0);
-
+  CTK_INIT_PRIVATE(ctkCheckBoxPixmaps);
+  CTK_D(ctkCheckBoxPixmaps);
   // Initialize the pixmaps. The following style array should
   // correspond to the PixmapStateIndex enum.
   const QStyle::State PixmapStyle[] =
@@ -78,37 +99,42 @@ ctkCheckBoxPixmaps::ctkCheckBoxPixmaps(QWidget* parentWidget)
     };
 
   QStyleOptionButton option;
-  QRect r = parentWidget->style()->subElementRect(
+  QStyle* style = parentWidget ? parentWidget->style() : qApp->style();
+  QRect r = style->subElementRect(
       QStyle::SE_CheckBoxIndicator, &option, parentWidget);
   option.rect = QRect(QPoint(0,0), r.size());
-  for(int i = 0; i < ctkCheckBoxPixmaps::PixmapCount; i++)
+  for(int i = 0; i < ctkCheckBoxPixmapsPrivate::PixmapCount; i++)
     {
-    this->Pixmaps[i] = QPixmap(r.size());
-    this->Pixmaps[i].fill(QColor(0, 0, 0, 0));
-    QPainter painter(&this->Pixmaps[i]);
+    d->Pixmaps[i] = QPixmap(r.size());
+    d->Pixmaps[i].fill(QColor(0, 0, 0, 0));
+    QPainter painter(&d->Pixmaps[i]);
     option.state = PixmapStyle[i];
-    parentWidget->style()->drawPrimitive(
+    style->drawPrimitive(
         QStyle::PE_IndicatorCheckBox, &option, &painter, parentWidget);
     }
 }
 
 //-----------------------------------------------------------------------------
-QPixmap ctkCheckBoxPixmaps::pixmap(Qt::CheckState state, bool active) const
+const QPixmap& ctkCheckBoxPixmaps::pixmap(Qt::CheckState state, bool active) const
 {
+  CTK_D(const ctkCheckBoxPixmaps);
   int offset = active ? 3 : 0;
   switch (state)
     {
-  case Qt::Checked:
-    return this->Pixmaps[offset + Checked];
+    case Qt::Checked:
+      return d->Pixmaps[offset + ctkCheckBoxPixmapsPrivate::Checked];
 
-  case Qt::Unchecked:
-    return this->Pixmaps[offset + UnChecked];
+    case Qt::Unchecked:
+      return d->Pixmaps[offset + ctkCheckBoxPixmapsPrivate::UnChecked];
 
-  case Qt::PartiallyChecked:
-    return this->Pixmaps[offset + PartiallyChecked];
+    case Qt::PartiallyChecked:
+      return d->Pixmaps[offset + ctkCheckBoxPixmapsPrivate::PartiallyChecked];
+
+    default:
+      return d->Pixmaps[ctkCheckBoxPixmapsPrivate::PixmapCount];
     }
 
-  return QPixmap();
+  return d->Pixmaps[ctkCheckBoxPixmapsPrivate::PixmapCount];
 }
 
 
