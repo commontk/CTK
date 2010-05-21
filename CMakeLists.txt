@@ -297,10 +297,6 @@ OPTION(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 #MARK_AS_ADVANCED(CTK_USE_KWSTYLE)
 
 #---------------------------------------------------------------------------
-# Documentation
-ADD_SUBDIRECTORY( Documentation )
-
-#---------------------------------------------------------------------------
 # Will contain a list of sub-directory without option ON or OFF
 #
 SET(CTK_LIBS_SUBDIRS )
@@ -499,6 +495,11 @@ ENDFOREACH()
 # Style Checking configuration
 #
 INCLUDE(Utilities/KWStyle/KWStyle.cmake)
+
+#---------------------------------------------------------------------------
+# Documentation
+#
+ADD_SUBDIRECTORY( Documentation )
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as
