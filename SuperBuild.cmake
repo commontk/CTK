@@ -34,6 +34,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION ${cmake_version_required})
 #
 
 #-----------------------------------------------------------------------------
+# Make sure ${CTK_BINARY_DIR}/CTK-build/bin exists
+# May be used by some external project to install libs (e.g QtMobility)
+IF(NOT EXISTS ${CTK_BINARY_DIR}/CTK-build/bin)
+  FILE(MAKE_DIRECTORY ${CTK_BINARY_DIR}/CTK-build/bin)
+ENDIF()
+
+#-----------------------------------------------------------------------------
 # Enable and setup External project global properties
 #
 INCLUDE(ExternalProject)
