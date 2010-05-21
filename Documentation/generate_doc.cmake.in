@@ -17,18 +17,24 @@ set(PROJECT_NAME CTK)
 #
 set(OUTPUT_DIRECTORY "@CMAKE_CURRENT_BINARY_DIR@")
 
+# DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:
+# Path to the Doxygen output directory (where the resulting archive(s) should be stored).
+# Example:
+#   DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+#
+set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY "@DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY@")
+
 # CREATE_HTML_TARZ_ARCHIVE RESULTING_HTML_TARZ_ARCHIVE_FILE:
 # Create a compressed (gzip) tar archive of the html directory (located
-# under the OUTPUT_DIRECTORY), and name of the resulting archive file. 
+# under the DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY), and name of the resulting archive file.
 # Note: your doxyfile should be configured to enable HTML creation 
 #       (using GENERATE_HTML   YES)
 # Example: 
 #   CREATE_HTML_TARZ_ARCHIVE ON
-#   CREATE_HTML_TARZ_ARCHIVE @DOCUMENTATION_HTML_TARZ@
-#   RESULTING_HTML_TARZ_ARCHIVE_FILE ${OUTPUT_DIRECTORY}/CTK@CTK_MAJOR_VERSION@.@CTK_MINOR_VERSION@-html.tar.gz
+#   RESULTING_HTML_TARZ_ARCHIVE_FILE ${OUTPUT_DIRECTORY}/${PROJECT_NAME}-html.tar.gz
 #
 set(CREATE_HTML_TARZ_ARCHIVE @CTK_DOCUMENTATION_HTML_TARZ@)
-set(RESULTING_HTML_TARZ_ARCHIVE_FILE "${OUTPUT_DIRECTORY}/${PROJECT_NAME}-@CTK_MAJOR_VERSION@.@CTK_MINOR_VERSION@-html.tar.gz")
+set(RESULTING_HTML_TARZ_ARCHIVE_FILE "${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}/${PROJECT_NAME}-html.tar.gz")
 
 
 # ----------------------------------------------------------------------------
