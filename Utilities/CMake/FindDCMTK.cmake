@@ -66,6 +66,15 @@ FIND_LIBRARY( DCMTK_ofstd_LIBRARY ofstd
   NO_DEFAULT_PATH
 )
 
+FIND_PATH( DCMTK_oflog_INCLUDE_DIR logger.h
+  PATHS
+    ${DCMTK_DIR}/oflog/include
+    ${DCMTK_DIR}/oflog
+    ${DCMTK_DIR}/include/oflog
+    ${DCMTK_DIR}/include/dcmtk/oflog
+  NO_DEFAULT_PATH
+)
+
 FIND_LIBRARY( DCMTK_oflog_LIBRARY oflog
   PATHS
     ${DCMTK_DIR}/oflog/libsrc
@@ -138,6 +147,7 @@ FIND_LIBRARY( DCMTK_dcmimgle_LIBRARY dcmimgle
 )
 
 # MM: I could not find this library on debian system / dcmtk 3.5.4
+# Michael Onken: this module is now called dcmqrdb. I will re-work that script soon...
 FIND_LIBRARY(DCMTK_imagedb_LIBRARY imagedb
   PATHS
     ${DCMTK_DIR}/imagectn/libsrc/Release
@@ -149,6 +159,7 @@ FIND_LIBRARY(DCMTK_imagedb_LIBRARY imagedb
 IF( DCMTK_config_INCLUDE_DIR 
     AND DCMTK_ofstd_INCLUDE_DIR 
     AND DCMTK_ofstd_LIBRARY
+    AND DCMTK_oflog_INCLUDE_DIR    
     AND DCMTK_oflog_LIBRARY
     AND DCMTK_dcmdata_INCLUDE_DIR
     AND DCMTK_dcmdata_LIBRARY
@@ -172,6 +183,7 @@ IF( DCMTK_config_INCLUDE_DIR
     ${DCMTK_DIR}/include
     ${DCMTK_config_INCLUDE_DIR}
     ${DCMTK_ofstd_INCLUDE_DIR}
+    ${DCMTK_oflog_INCLUDE_DIR}    
     ${DCMTK_dcmdata_INCLUDE_DIR}
     ${DCMTK_dcmnet_INCLUDE_DIR}
     ${DCMTK_dcmimgle_INCLUDE_DIR}
@@ -181,8 +193,8 @@ IF( DCMTK_config_INCLUDE_DIR
     ${DCMTK_dcmimgle_LIBRARY}
     ${DCMTK_dcmnet_LIBRARY}    
     ${DCMTK_dcmdata_LIBRARY}
+    ${DCMTK_oflog_LIBRARY}    
     ${DCMTK_ofstd_LIBRARY}
-    ${DCMTK_oflog_LIBRARY}
     ${DCMTK_config_LIBRARY}
   )
 
@@ -204,6 +216,7 @@ IF( DCMTK_config_INCLUDE_DIR
 ENDIF( DCMTK_config_INCLUDE_DIR 
     AND DCMTK_ofstd_INCLUDE_DIR 
     AND DCMTK_ofstd_LIBRARY
+    AND DCMTK_oflog_INCLUDE_DIR
     AND DCMTK_oflog_LIBRARY
     AND DCMTK_dcmdata_INCLUDE_DIR
     AND DCMTK_dcmdata_LIBRARY
@@ -242,9 +255,9 @@ MARK_AS_ADVANCED(
   DCMTK_dcmimgle_INCLUDE_DIR
   DCMTK_dcmimgle_LIBRARY
   DCMTK_imagedb_LIBRARY 
-  DCMTK_dcmnet_LIBRARY
   DCMTK_ofstd_INCLUDE_DIR
   DCMTK_ofstd_LIBRARY
+  DCMTK_oflog_INCLUDE_DIR
   DCMTK_oflog_LIBRARY
   )
 
