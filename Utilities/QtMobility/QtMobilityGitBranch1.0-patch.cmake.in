@@ -16,7 +16,7 @@ if(error_code)
   endif()
 endif()
 
-
+INCLUDE(@CTK_SOURCE_DIR@/CMake/ctkFunctionLFtoCRLF.cmake)
 INCLUDE(@CTK_SOURCE_DIR@/CMake/ctkFunctionApplyPatches.cmake)
 
 SET(patch_dir @qtmobility_patch_dir@)
