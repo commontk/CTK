@@ -30,7 +30,7 @@
 #include "ctkTransferFunctionScene.h"
 #include "ctkTransferFunctionGradientItem.h"
 #include "ctkTransferFunctionControlPointsItem.h"
-#include "ctkTransferFunctionHistogramItem.h"
+#include "ctkTransferFunctionBarsItem.h"
 
 //-----------------------------------------------------------------------------
 class ctkTransferFunctionWidgetPrivate: public ctkPrivate<ctkTransferFunctionWidget>
@@ -93,15 +93,14 @@ void ctkTransferFunctionWidget::setTransferFunction(ctkTransferFunction* transfe
 
   ctkTransferFunctionGradientItem* gradient = 
     new ctkTransferFunctionGradientItem(transferFunction);
-  gradient->setRect(tfScene->sceneRect());
+  //gradient->setRect(tfScene->sceneRect());
   this->scene()->addItem(gradient);
 
   if (qobject_cast<ctkHistogram*>(transferFunction) != 0)
     {
     gradient->setMask(false);
-    ctkHistogram* histogram = qobject_cast<ctkHistogram*>(transferFunction);
-    ctkTransferFunctionHistogramItem* histogramItem = 
-      new ctkTransferFunctionHistogramItem(histogram);
+    ctkTransferFunctionBarsItem* histogramItem = 
+      new ctkTransferFunctionBarsItem(transferFunction);
     //controlPoints->setRect(tfScene->sceneRect());
     this->scene()->addItem(histogramItem);
     }
