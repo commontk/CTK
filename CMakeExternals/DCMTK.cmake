@@ -1,6 +1,7 @@
 #
 # DCMTK
 #
+
 SET(DCMTK_DEPENDS)
 ctkMacroShouldAddExternalProject(DCMTK_LIBRARIES add_project)
 IF(${add_project})
@@ -8,6 +9,7 @@ IF(${add_project})
     SET(proj DCMTK)
 #     MESSAGE(STATUS "Adding project:${proj}")
     SET(DCMTK_DEPENDS ${proj})
+
     ExternalProject_Add(${proj}
         DOWNLOAD_COMMAND ""
         CMAKE_GENERATOR ${gen}
@@ -17,5 +19,12 @@ IF(${add_project})
           -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
         )
     SET(DCMTK_DIR ${ep_install_dir})
+
+    ExternalProject_Add_Step(${proj} force_rebuild
+      COMMENT "Force ${proj} re-build"
+      DEPENDERS build    # Steps that depend on this step
+      ALWAYS 1
+      WORKING_DIRECTORY ${ep_build_dir}/${proj}
+      )
   ENDIF()
 ENDIF()
