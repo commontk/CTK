@@ -283,6 +283,7 @@ SET(CTK_APPLICATIONS
   ctkPluginBrowser:OFF
   ctkDICOM:OFF
   ctkDICOMIndexer:OFF
+  ctkDICOMDemoSCU:OFF
   )
   
 #-----------------------------------------------------------------------------
