@@ -156,7 +156,9 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
 
   double valuesPWF[4];
   double valuesCTF[6];
-  double* range = d->PiecewiseFunction->GetRange();
+  double* rangePWF = d->PiecewiseFunction->GetRange();
+  double* rangeCTF = d->ColorTransferFunction->GetRange();
+
   d->PiecewiseFunction->GetNodeValue(index, valuesPWF);
   d->ColorTransferFunction->GetNodeValue(index, valuesCTF);
 
@@ -164,15 +166,15 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
   rangeY[0] = this->minValue();
   rangeY[1] = this->maxValue();
 
-// test piecewise
-  Q_ASSERT(valuesPWF[0] >= range[0] && valuesPWF[0] <= range [1] &&  // X
+  // test piecewise
+  Q_ASSERT(valuesPWF[0] >= rangePWF[0] && valuesPWF[0] <= rangePWF [1] &&  // X
     valuesPWF[1] >= rangeY[0].toDouble() && valuesPWF[1] <= rangeY[1].toDouble()  &&  // Y
     valuesPWF[2] >= 0. && valuesPWF[2] <= 1. &&                // Midpoint
     valuesPWF[3] >= 0. && valuesPWF[3] <= 1. );                // Sharpness
 
   // test color transfer
-  Q_ASSERT(valuesCTF[0] >= d->ColorTransferFunction->GetRange()[0] &&
-    valuesCTF[0] <= d->ColorTransferFunction->GetRange()[1] &&
+  Q_ASSERT(valuesCTF[0] >= rangeCTF[0] &&
+    valuesCTF[0] <= rangeCTF[1] &&
     valuesCTF[1] >= 0. && valuesCTF[1] <= 1. &&  // Red
     valuesCTF[2] >= 0. && valuesCTF[2] <= 1. &&  // Green
     valuesCTF[3] >= 0. && valuesCTF[3] <= 1. &&  // Blue
@@ -185,8 +187,8 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
     ctkControlPoint* cp = new ctkControlPoint();
     cp->P.X = valuesPWF[0];
     // update value of QVariant
-    QColor compositeValue(valuesCTF[1], valuesCTF[2], valuesCTF[3], valuesPWF[1]);
-    cp->P.Value = compositeValue;
+    cp->P.Value = QColor::fromRgbF(
+      valuesCTF[1], valuesCTF[2], valuesCTF[3], valuesPWF[1]);
     return cp;
     }
 
@@ -195,40 +197,50 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
   ctkNonLinearControlPoint* cp = new ctkNonLinearControlPoint();
   cp->P.X = valuesPWF[0];
   // update value of QVariant
-  QColor compositeValue(valuesCTF[1], valuesCTF[2], valuesCTF[3], valuesPWF[1]);
-  cp->P.Value = compositeValue;
+  cp->P.Value = QColor::fromRgbF(valuesCTF[1], valuesCTF[2], valuesCTF[3], valuesPWF[1]);
 
-  d->PiecewiseFunction->GetNodeValue(index + 1, valuesPWF);
-  d->ColorTransferFunction->GetNodeValue(index +1, valuesCTF);
+  double nextValuesPWF[4], nextValuesCTF[6];
+  d->PiecewiseFunction->GetNodeValue(index + 1, nextValuesPWF);
+  d->ColorTransferFunction->GetNodeValue(index + 1, nextValuesCTF);
 
-  Q_ASSERT(valuesPWF[0] >= range[0] && valuesPWF[0] <= range[1]  &&  // X
-    valuesPWF[1] >= rangeY[0].toDouble() && valuesPWF[1] <= rangeY[1].toDouble()  &&  // Y
-    valuesPWF[2] >= 0. && valuesPWF[2] <= 1. &&                // Midpoint
-    valuesPWF[3] >= 0. && valuesPWF[3] <= 1. );                // Sharpness
+  Q_ASSERT(nextValuesPWF[0] >= rangePWF[0] && nextValuesPWF[0] <= rangePWF[1]  &&  // X
+    nextValuesPWF[1] >= rangeY[0].toDouble() && nextValuesPWF[1] <= rangeY[1].toDouble()  &&  // Y
+    nextValuesPWF[2] >= 0. && nextValuesPWF[2] <= 1. &&                // Midpoint
+    nextValuesPWF[3] >= 0. && nextValuesPWF[3] <= 1. );                // Sharpness
 
-  Q_ASSERT(valuesCTF[0] >= d->ColorTransferFunction->GetRange()[0] &&
-    valuesCTF[0] <= d->ColorTransferFunction->GetRange()[1] &&
-    valuesCTF[1] >= 0. && valuesCTF[1] <= 1. &&  // Red
-    valuesCTF[2] >= 0. && valuesCTF[2] <= 1. &&  // Green
-    valuesCTF[3] >= 0. && valuesCTF[3] <= 1. &&  // Blue
-    valuesCTF[4] >= 0. && valuesCTF[4] <= 1. &&  // MidPoint
-    valuesCTF[5] >= 0. && valuesCTF[5] <= 1.);   // Sharpness
+  Q_ASSERT(nextValuesCTF[0] >= rangeCTF[0] &&
+    nextValuesCTF[0] <= rangeCTF[1] &&
+    nextValuesCTF[1] >= 0. && nextValuesCTF[1] <= 1. &&  // Red
+    nextValuesCTF[2] >= 0. && nextValuesCTF[2] <= 1. &&  // Green
+    nextValuesCTF[3] >= 0. && nextValuesCTF[3] <= 1. &&  // Blue
+    nextValuesCTF[4] >= 0. && nextValuesCTF[4] <= 1. &&  // MidPoint
+    nextValuesCTF[5] >= 0. && nextValuesCTF[5] <= 1.);   // Sharpness
 
-  double subPointsCTF[30];
-  double subPointsPWF[10];
-  d->ColorTransferFunction->GetTable(cp->x(), valuesCTF[0], 10, subPointsCTF);
-  d->PiecewiseFunction->GetTable(cp->x(), valuesCTF[0], 10, subPointsPWF);
-  qreal interval = (valuesCTF[0] - cp->x()) / 9.;
+  // Optimization: don't use subPoints if the ramp is linear (sharpness == 0)
+  if (valuesPWF[3] == 0. && valuesCTF[5] == 0.)
+    {
+    cp->SubPoints << ctkPoint(valuesPWF[0], QColor::fromRgbF(
+      valuesCTF[1], valuesCTF[2], valuesCTF[3], valuesPWF[1]));
+    cp->SubPoints << ctkPoint(nextValuesPWF[0], QColor::fromRgbF(
+      nextValuesCTF[1], nextValuesCTF[2], nextValuesCTF[3], nextValuesPWF[1]));
+    return cp;
+    }
 
-  for(int i = 0; i < 10; ++i)
-  {
-	  qreal red =  subPointsCTF[3*i];
-	  qreal green =  subPointsCTF[3*i+1];
-	  qreal blue =  subPointsCTF[3*i+2];
-	  qreal alpha = subPointsPWF[i];
-	  QColor compositeValue = QColor::fromRgbF(red, green, blue, alpha );
+  double subPointsCTF[300];
+  double subPointsPWF[100];
+  d->ColorTransferFunction->GetTable(cp->x(), nextValuesCTF[0], 100, subPointsCTF);
+  d->PiecewiseFunction->GetTable(cp->x(), nextValuesCTF[0], 100, subPointsPWF);
+  qreal interval = (nextValuesCTF[0] - cp->x()) / 99.;
+
+  for(int i = 0; i < 100; ++i)
+    {
+    qreal red =  subPointsCTF[3*i];
+    qreal green =  subPointsCTF[3*i+1];
+    qreal blue =  subPointsCTF[3*i+2];
+    qreal alpha = subPointsPWF[i];
+    QColor compositeValue = QColor::fromRgbF(red, green, blue, alpha );
     cp->SubPoints << ctkPoint(cp->x() + interval*i, compositeValue);
-  }
+    }
   return cp;
 }
 

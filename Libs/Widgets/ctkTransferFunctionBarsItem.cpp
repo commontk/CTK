@@ -105,10 +105,8 @@ void ctkTransferFunctionBarsItem::paint(
   painter->setBrush(QBrush(QColor(191, 191, 191, 127)));
 
   qreal barWidth = d->BarWidth * (this->rect().width() / (points.size() - 1)); 
-  qDebug() << "WIDTH: " << barWidth;
   foreach(const QPointF& point, points)
     {
-    qDebug() << point << point.x()-barWidth/2 << this->rect().height() - point.y();
     bars.addRect(point.x()-barWidth/2, this->rect().height() - point.y(),
                  barWidth, point.y());
     }
