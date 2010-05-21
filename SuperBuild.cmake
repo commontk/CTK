@@ -102,7 +102,7 @@ ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCI
 # ExternalProjects
 #
 SET(external_projects
-  log4cpp
+  log4qt
   KWStyle
   PythonQt
   DCMTK
@@ -129,7 +129,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   DEPENDS
     # Mandatory dependencies
-    ${log4cpp_DEPENDS}
+    ${log4qt_DEPENDS}
     # Optionnal dependencies
     ${QtMobility_DEPENDS}
     ${kwstyle_DEPENDS}
@@ -224,7 +224,7 @@ ExternalProject_Add(${proj}
     -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}    # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
     -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}        # FindPythonQt expects PYTHON_LIBRARY variable to be defined
     -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR variable to be defined
-    -Dlog4cpp_DIR:PATH=${log4cpp_DIR} # Findlog4cpp expects a log4cpp_DIR variable to be defined
+    -Dlog4qt_DIR:PATH=${log4qt_DIR} # Findlog4qt expects a log4qt_DIR variable to be defined
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
   BUILD_COMMAND ""

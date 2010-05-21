@@ -59,7 +59,9 @@ public:
   ~ctkDICOMQueryPrivate();
   QString CallingAETitle;
   QString CalledAETitle;
+  QString Host;
   int Port;
+  DcmSCU SCU;
 
 };
 
@@ -110,6 +112,16 @@ const QString& ctkDICOMQuery::calledAETitle()
   CTK_D(ctkDICOMQuery);
   return d->CalledAETitle;
 }
+void ctkDICOMQuery::setHost ( QString host )
+{
+  CTK_D(ctkDICOMQuery);
+  d->Host = host;
+}
+const QString& ctkDICOMQuery::host()
+{
+  CTK_D(ctkDICOMQuery);
+  return d->Host;
+}
 void ctkDICOMQuery::setPort ( int port ) 
 {
   CTK_D(ctkDICOMQuery);
@@ -124,22 +136,35 @@ int ctkDICOMQuery::port()
 
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::query(QSqlDatabase database, QString callingAETitle, QString calledAETitle, int port )
+void ctkDICOMQuery::query(QSqlDatabase database )
 {
+  CTK_D(ctkDICOMQuery);
   QSqlDatabase db = database;
-    OFString patientsName, patientID, patientsBirthDate, patientsBirthTime, patientsSex,
-      patientComments, patientsAge;
+  
+  OFList<OFString> transferSyntaxes;
+  transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
 
-    OFString studyInstanceUID, studyID, studyDate, studyTime,
-      accessionNumber, modalitiesInStudy, institutionName, performingPhysiciansName, referringPhysician, studyDescription;
-
-    OFString seriesInstanceUID, seriesDate, seriesTime,
-      seriesDescription, bodyPartExamined, frameOfReferenceUID,
-      contrastAgent, scanningSequence;
-    OFString instanceNumber;
-
-  // db.commit();
-  // db.close();
-
+  d->SCU.addPresentationContext ( UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+  d->SCU.setAETitle ( this->callingAETitle().toStdString() );
+  d->SCU.setPeerAETitle ( this->calledAETitle().toStdString() );
+  d->SCU.setPeerHostName ( this->host().toStdString() );
+  if ( !d->SCU.initNetwork().good() ) 
+    {
+    std::cerr << "Error initializing the network" << std::endl;
+    }
+  d->SCU.negotiateAssociation();
+  OFString abstractSyntax;
+  OFString transferSyntax;
+  if ( d->SCU.sendECHORequest ( 0 ).good() )
+    {
+    std::cout << "ECHO Sucessful" << std::endl;
+    } 
+  else
+    {
+    std::cerr << "ECHO Failed" << std::endl;
+    }
+  d->SCU.closeAssociation ( DUL_PEERREQUESTEDRELEASE );
 }
 

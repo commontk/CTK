@@ -26,8 +26,10 @@
 #include <QSqlDatabase>
 
 // CTK includes
+#include <ctkPimpl.h>
 #include "CTKCoreExport.h"
 
+class ctkLoggerPrivate;
 class CTK_CORE_EXPORT ctkLogger : public QObject
 {
   Q_OBJECT
@@ -38,46 +40,27 @@ public:
   
   void debug ( QString s );
   void info ( QString s );
-  void notice ( QString s );
+  void trace ( QString s );
   void warn ( QString s );
-  void warning ( QString s );
   void error ( QString s );
-  void crit ( QString s );
-  void critical ( QString s );
-  void alert ( QString s );
-  void emerg ( QString s );
-  void emergercy ( QString s );
   void fatal ( QString s );
 
   void setDebug();
   void setInfo();
-  void setNotice();
-  void setWarn();
-  void setWarning();
+  void setTrace();
   void setError();
-  void setCrit();
-  void setCritical();
-  void setAlert();
-  void setEmerg();
-  void setEmergercy();
+  void setWarn();
   void setFatal();
 
   bool isDebugEnabled();
   bool isInfoEnabled();
-  bool isNoticeEnabled();
+  bool isTraceEnabled();
   bool isWarnEnabled();
-  bool isWarningEnabled();
   bool isErrorEnabled();
-  bool isCritEnabled();
-  bool isCriticalEnabled();
-  bool isAlertEnabled();
-  bool isEmergEnabled();
-  bool isEmergercyEnabled();
   bool isFatalEnabled();
 
 private:
-  class ctkInternal;
-  ctkInternal *Internal;
+  CTK_DECLARE_PRIVATE(ctkLogger);
 };
 
 #endif
