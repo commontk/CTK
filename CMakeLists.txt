@@ -56,14 +56,29 @@ SET(CTK_LIBRARY_MODE "SHARED")
 SET(CTK_BUILD_SHARED_LIBS TRUE)
 
 #-----------------------------------------------------------------------------
+# Superbuild Option - Enabled by default
+#
+OPTION(CTK_SUPERBUILD "Build CTK and the projects it depends on via SuperBuild.cmake." ON)
+MARK_AS_ADVANCED(CTK_SUPERBUILD)
+
+#-----------------------------------------------------------------------------
 # Output directories.
 #
 FOREACH(type LIBRARY RUNTIME ARCHIVE)
-  IF(NOT CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
-    SET(CMAKE_${type}_OUTPUT_DIRECTORY ${${PROJECT_NAME}_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-  ELSE()
-    SET(CMAKE_${type}_OUTPUT_DIRECTORY ${CTK_CMAKE_${type}_OUTPUT_DIRECTORY} CACHE INTERNAL "Single output directory for building all libraries.")
+  IF(DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY AND
+     NOT CTK_CMAKE_${type}_OUTPUT_DIRECTORY STREQUAL "")
+    # Make sure the directory exists
+    IF(NOT EXISTS ${CTK_CMAKE_${type}_OUTPUT_DIRECTORY})
+      MESSAGE(FATAL_ERROR "CTK_CMAKE_${type}_OUTPUT_DIRECTORY is set to a non-existing directory [${CTK_CMAKE_${type}_OUTPUT_DIRECTORY}]")
+    ENDIF()
   ENDIF()
+  
+  IF(CTK_SUPERBUILD OR NOT DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
+    SET(output_dir ${${PROJECT_NAME}_BINARY_DIR}/bin)
+  ELSE()
+    SET(output_dir ${CTK_CMAKE_${type}_OUTPUT_DIRECTORY})
+  ENDIF()
+  SET(CMAKE_${type}_OUTPUT_DIRECTORY ${output_dir} CACHE INTERNAL "Single output directory for building all libraries.")
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
@@ -321,12 +336,6 @@ FOREACH(app ${CTK_APPLICATIONS})
   OPTION(CTK_APP_${app_name} "Build ${app_name} Application." ${app_value})
   LIST(APPEND CTK_APPLICATIONS_SUBDIRS "${app_name}")
 ENDFOREACH()
-
-#-----------------------------------------------------------------------------
-# Superbuild Option - Enabled by default
-#
-OPTION(CTK_SUPERBUILD "Build CTK and the projects it depends on via SuperBuild.cmake." ON)
-MARK_AS_ADVANCED(CTK_SUPERBUILD)
 
 #-----------------------------------------------------------------------------
 # Generate target_directories list - List of directory corresponding to the different
