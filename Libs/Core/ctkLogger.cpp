@@ -25,181 +25,118 @@
 #include "ctkLogger.h"
 
 // log4cpp
-#include <log4cpp/BasicConfigurator.hh>
-#include <log4cpp/PropertyConfigurator.hh>
-#include <log4cpp/Layout.hh>
-#include <log4cpp/Priority.hh>
-#include <log4cpp/Category.hh>
-#include <log4cpp/PatternLayout.hh>
-#include <log4cpp/BasicLayout.hh>
-#include <log4cpp/OstreamAppender.hh>
-#include <log4cpp/FileAppender.hh>
+#include "log4qt/log4qt.h"
+#include "log4qt/logger.h"
 
-
-class ctkLogger::ctkInternal {
+class ctkLoggerPrivate: public ctkPrivate<ctkLogger>
+{
 public:
-  ctkInternal( QString name ) : Logger ( ::log4cpp::Category::getInstance ( name.toStdString().c_str() ) ) {
-  }
-  log4cpp::Category& Logger;
+  ctkLoggerPrivate() {};
+  ~ctkLoggerPrivate() {};
+  Log4Qt::Logger *Logger;
 };
 
 ctkLogger::ctkLogger(QString name, QObject* _parent): Superclass(_parent)
 {
-  this->Internal = new ctkInternal ( name );
+  CTK_D(ctkLogger);
+  d->Logger = Log4Qt::Logger::logger( name.toStdString().c_str() );
 }
 
 ctkLogger::~ctkLogger()
 {
-  delete this->Internal;
 }
-
-
 
 void ctkLogger::debug ( QString s ) 
 { 
-  this->Internal->Logger.debug ( s.toStdString() );
+  CTK_D(ctkLogger);
+  d->Logger->debug ( s );
 }
 void ctkLogger::info ( QString s ) 
 { 
-  this->Internal->Logger.info ( s.toStdString() );
+  CTK_D(ctkLogger);
+  d->Logger->info ( s );
 }
-void ctkLogger::notice ( QString s ) 
+void ctkLogger::trace ( QString s ) 
 { 
-  this->Internal->Logger.notice ( s.toStdString() );
+  CTK_D(ctkLogger);
+  d->Logger->trace ( s );
 }
 void ctkLogger::warn ( QString s ) 
 { 
-  this->Internal->Logger.warn ( s.toStdString() );
-}
-void ctkLogger::warning ( QString s ) 
-{ 
-  this->Internal->Logger.warn ( s.toStdString() );
+  CTK_D(ctkLogger);
+  d->Logger->warn ( s );
 }
 void ctkLogger::error ( QString s ) 
 { 
-  this->Internal->Logger.error ( s.toStdString() );
-}
-void ctkLogger::crit ( QString s ) 
-{ 
-  this->Internal->Logger.crit ( s.toStdString() );
-}
-void ctkLogger::critical ( QString s ) 
-{ 
-  this->Internal->Logger.crit ( s.toStdString() );
-}
-void ctkLogger::alert ( QString s ) 
-{ 
-  this->Internal->Logger.alert ( s.toStdString() );
-}
-void ctkLogger::emerg ( QString s ) 
-{ 
-  this->Internal->Logger.emerg ( s.toStdString() );
-}
-void ctkLogger::emergercy ( QString s ) 
-{ 
-  this->Internal->Logger.emerg ( s.toStdString() );
+  CTK_D(ctkLogger);
+  d->Logger->error ( s );
 }
 void ctkLogger::fatal ( QString s ) 
 { 
-  this->Internal->Logger.fatal ( s.toStdString() );
+  CTK_D(ctkLogger);
+  d->Logger->fatal ( s );
 }
 
 void ctkLogger::setDebug() 
-{ 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::DEBUG ); 
+{
+  CTK_D(ctkLogger);
+  d->Logger->setLevel ( Log4Qt::Level ( Log4Qt::Level::DEBUG_INT ) ); 
 }
 void ctkLogger::setInfo() 
 { 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::INFO ); 
+  CTK_D(ctkLogger);
+  d->Logger->setLevel ( Log4Qt::Level ( Log4Qt::Level::INFO_INT ) ); 
 }
-void ctkLogger::setNotice() 
+void ctkLogger::setTrace() 
 { 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::NOTICE ); 
+  CTK_D(ctkLogger);
+  d->Logger->setLevel ( Log4Qt::Level ( Log4Qt::Level::TRACE_INT ) ); 
 }
 void ctkLogger::setWarn() 
 { 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::WARN ); 
-}
-void ctkLogger::setWarning() 
-{ 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::WARN ); 
+  CTK_D(ctkLogger);
+  d->Logger->setLevel ( Log4Qt::Level ( Log4Qt::Level::WARN_INT ) ); 
 }
 void ctkLogger::setError() 
 { 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::ERROR ); 
-}
-void ctkLogger::setCrit() 
-{ 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::CRIT ); 
-}
-void ctkLogger::setCritical() 
-{ 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::CRIT ); 
-}
-void ctkLogger::setAlert() 
-{ 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::ALERT ); 
-}
-void ctkLogger::setEmerg() 
-{ 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::EMERG ); 
-}
-void ctkLogger::setEmergercy() 
-{ 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::EMERG ); 
+  CTK_D(ctkLogger);
+  d->Logger->setLevel ( Log4Qt::Level ( Log4Qt::Level::ERROR_INT ) ); 
 }
 void ctkLogger::setFatal() 
 { 
-  this->Internal->Logger.setPriority ( log4cpp::Priority::FATAL ); 
+  CTK_D(ctkLogger);
+  d->Logger->setLevel ( Log4Qt::Level ( Log4Qt::Level::FATAL_INT ) ); 
 }
 
 bool ctkLogger::isDebugEnabled() 
 { 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::DEBUG ); 
+  CTK_D(ctkLogger);
+  return d->Logger->isDebugEnabled(); 
 }
 bool ctkLogger::isInfoEnabled() 
 { 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::INFO ); 
+  CTK_D(ctkLogger);
+  return d->Logger->isInfoEnabled(); 
 }
-bool ctkLogger::isNoticeEnabled() 
+bool ctkLogger::isTraceEnabled() 
 { 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::NOTICE ); 
+  CTK_D(ctkLogger);
+  return d->Logger->isTraceEnabled(); 
 }
 bool ctkLogger::isWarnEnabled() 
 { 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::WARN ); 
-}
-bool ctkLogger::isWarningEnabled() 
-{ 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::WARN ); 
+  CTK_D(ctkLogger);
+  return d->Logger->isWarnEnabled(); 
 }
 bool ctkLogger::isErrorEnabled() 
 { 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::ERROR ); 
-}
-bool ctkLogger::isCritEnabled() 
-{ 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::CRIT ); 
-}
-bool ctkLogger::isCriticalEnabled() 
-{ 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::CRIT ); 
-}
-bool ctkLogger::isAlertEnabled() 
-{ 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::ALERT ); 
-}
-bool ctkLogger::isEmergEnabled() 
-{ 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::EMERG ); 
-}
-bool ctkLogger::isEmergercyEnabled() 
-{ 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::EMERG ); 
+  CTK_D(ctkLogger);
+  return d->Logger->isErrorEnabled(); 
 }
 bool ctkLogger::isFatalEnabled() 
 { 
-  return this->Internal->Logger.isPriorityEnabled ( log4cpp::Priority::FATAL ); 
+  CTK_D(ctkLogger);
+  return d->Logger->isFatalEnabled(); 
 }
 
 

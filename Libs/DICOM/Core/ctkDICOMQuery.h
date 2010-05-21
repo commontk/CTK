@@ -46,11 +46,13 @@ public:
   const QString& callingAETitle();
   void setCalledAETitle ( QString calledAETitle );
   const QString& calledAETitle();
+  void setHost ( QString host );
+  const QString& host();
   void setPort ( int port );
   int port();
   
   /// Query a remote DICOM Image Store SCP
-  void query(QSqlDatabase database, QString callingAETitle, QString calledAETitle, int port );
+  void query(QSqlDatabase database);
 
 private:
   CTK_DECLARE_PRIVATE(ctkDICOMQuery);
