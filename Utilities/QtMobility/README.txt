@@ -1,9 +1,8 @@
 This directory contains a stripped QtMobility 1.0.0 tar ball containing
-only the service framework sources. The following files are patched by
-CMake:
+only the service framework sources. The following files have been modified:
 
-- qtmobility.pro [ALL] (exclude the plugins directory)
-- configure.bat [WIN32] (skip compile tests)
+- qtmobility.pro (exclude the plugins directory)
+- configure.bat (skip compile tests)
 
 On Windows, Perl would be needed for a working install step (for
 generating the header file wrappers). To avoid having another
