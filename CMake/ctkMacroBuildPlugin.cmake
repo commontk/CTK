@@ -183,8 +183,9 @@ MACRO(ctkMacroBuildPlugin)
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
     COMPILE_FLAGS "-DQT_PLUGIN"
-	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins"
-	PREFIX "lib"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins"
+    PREFIX "lib"
     )
 
   # Note: The plugin may be installed in some other location ???
