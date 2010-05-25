@@ -4,13 +4,16 @@ PROJECT(CTKPluginFramework)
 # 3rd party dependencies
 #
 
-
-# use the QtMobility SuperBuild paths for now
-# we should add a FindQtMobility later
-SET(QTMOBILITY_INCLUDE_DIRS 
+SET(_qtmob_config "${CTK_BINARY_DIR}/../Utilities/QtMobility/QtMobilityConfig.cmake")
+IF(EXISTS ${_qtmob_config})
+  INCLUDE(${_qtmob_config})
+ELSE()
+  SET(QTMOBILITY_LIBRARY_DIR "${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+  SET(QTMOBILITY_INCLUDE_DIRS 
   "${CTK_BINARY_DIR}/../CMakeExternals/Source/QtMobility/install/include"
   )
-SET(QTMOBILITY_LIBRARY_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+ENDIF()
+
 FIND_LIBRARY(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG QtServiceFrameworkd
              PATHS ${QTMOBILITY_LIBRARY_DIR}
              )

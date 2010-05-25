@@ -44,7 +44,11 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   framework->getPluginContext()->connectFrameworkListener(this, SLOT(frameworkEvent(ctkPluginFrameworkEvent)));
 
   QStringList pluginDirs;
-  pluginDirs << qApp->applicationDirPath() + "/Plugins";
+#ifdef CMAKE_INTDIR
+  pluginDirs << qApp->applicationDirPath() + "/../plugins/" CMAKE_INTDIR "/";
+#else
+  pluginDirs << qApp->applicationDirPath() + "/plugins/";
+#endif
 
   QStringListIterator dirIt(pluginDirs);
   while (dirIt.hasNext())
@@ -52,7 +56,9 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
     QApplication::addLibraryPath(dirIt.next());
   }
 
-  QDirIterator dirIter(pluginDirs.at(0), QDir::Files);
+  QStringList libFilter;
+  libFilter << "*.dll" << "*.so" << "*.dylib";
+  QDirIterator dirIter(pluginDirs.at(0), libFilter, QDir::Files);
   while(dirIter.hasNext())
   {
     try

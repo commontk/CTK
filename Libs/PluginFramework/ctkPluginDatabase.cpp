@@ -545,6 +545,7 @@ QString ctkPluginDatabase::getDatabasePath() const
       path = m_databasePath;
     }
 
+	qDebug() << "Using database:" << path;
     return path;
 }
 
@@ -679,6 +680,7 @@ bool ctkPluginDatabase::dropTables()
       }
     }
   }
+  return true;
 }
 
 
