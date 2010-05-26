@@ -1,0 +1,10 @@
+# Ignore all dotfiles...
+.*
+# except for .gitignore
+!.gitignore
+
+# Exclude Kdevelop4 files ...
+.kdev*
+
+# Exclude QtCreator files ...
+CMakeLists.txt.user
