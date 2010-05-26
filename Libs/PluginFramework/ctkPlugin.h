@@ -87,7 +87,7 @@ public:
      * <code>%ctkPlugin</code> object may still be available and used for
      * introspection.
      */
-    UNINSTALLED,
+    UNINSTALLED = 0x00000001,
 
     /**
      * The plugin is installed but not yet resolved.
@@ -101,7 +101,7 @@ public:
      * code dependencies and move the plugin to the <code>RESOLVED</code>
      * state.
      */
-    INSTALLED,
+    INSTALLED = 0x00000002,
 
     /**
      * The plugin is resolved and is able to be started.
@@ -119,7 +119,7 @@ public:
      * <code>RESOLVED</code> state before it can be started. The Framework may
      * attempt to resolve a plugin at any time.
      */
-    RESOLVED,
+    RESOLVED = 0x00000004,
 
     /**
      * The plugin is in the process of starting.
@@ -137,7 +137,7 @@ public:
      * plugin may remain in this state for some time until the activation is
      * triggered.
      */
-    STARTING,
+    STARTING = 0x00000008,
 
     /**
      * The plugin is in the process of stopping.
@@ -149,7 +149,7 @@ public:
      * <code>ctkPluginActivator::stop</code> method completes the plugin is
      * stopped and must move to the <code>RESOLVED</code> state.
      */
-    STOPPING,
+    STOPPING = 0x00000010,
 
     /**
      * The plugin is now running.
@@ -158,7 +158,7 @@ public:
      * A plugin is in the <code>ACTIVE</code> state when it has been
      * successfully started and activated.
      */
-    ACTIVE
+    ACTIVE = 0x00000020
   };
 
   /**
