@@ -29,6 +29,7 @@
 
 #include "ctkServiceFactory.h"
 #include "ctkPluginConstants.h"
+#include "ctkServiceException.h"
 #include "ctkServiceRegistrationPrivate.h"
 #include "ctkQtServiceRegistration_p.h"
 #include "ctkLDAPExpr.h"
@@ -146,7 +147,7 @@ ctkServiceRegistration* ctkServices::registerService(ctkPluginPrivate* plugin,
     }
   }
 
-  //ctkServiceReference* r = res->getReference();
+  //ctkServiceReference r = res->getReference();
   // TODO
   //Listeners l = bundle.fwCtx.listeners;
   //l.serviceChanged(l.getMatchingServiceListeners(r),
@@ -289,13 +290,13 @@ QList<ctkServiceRegistration*> ctkServices::get(const QString& clazz) const
 }
 
 
-ctkServiceReference* ctkServices::get(ctkPluginPrivate* plugin, const QString& clazz) const
+ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& clazz) const
 {
   QMutexLocker lock(&mutex);
   try {
-    QList<ctkServiceReference*> srs = get(clazz, QString());
+    QList<ctkServiceReference> srs = get(clazz, QString());
     qDebug() << "get service ref" << clazz << "for plugin"
-             << plugin->location << " = " << srs;
+             << plugin->location << " = " << srs.size() << "refs";
 
     if (!srs.isEmpty()) {
       return srs.front();
@@ -304,11 +305,11 @@ ctkServiceReference* ctkServices::get(ctkPluginPrivate* plugin, const QString& c
   catch (const std::invalid_argument& )
   { }
 
-  return 0;
+  throw ctkServiceException(QString("No service registered for: ") + clazz);
 }
 
 
-QList<ctkServiceReference*> ctkServices::get(const QString& clazz, const QString& filter) const
+QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString& filter) const
 {
   QMutexLocker lock(&mutex);
 
@@ -364,7 +365,7 @@ QList<ctkServiceReference*> ctkServices::get(const QString& clazz, const QString
     }
     else
     {
-      return QList<ctkServiceReference*>();
+      return QList<ctkServiceReference>();
     }
     if (!filter.isEmpty())
     {
@@ -372,11 +373,11 @@ QList<ctkServiceReference*> ctkServices::get(const QString& clazz, const QString
     }
   }
 
-  QList<ctkServiceReference*> res;
+  QList<ctkServiceReference> res;
   while (s->hasNext())
   {
     ctkServiceRegistration* sr = s->next();
-    ctkServiceReference* sri = sr->getReference();
+    ctkServiceReference sri = sr->getReference();
 
     if (filter.isEmpty() || ldap->evaluate(sr->d_func()->properties, false))
     {

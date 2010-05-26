@@ -245,7 +245,7 @@
      *         contains an invalid filter expression that cannot be parsed.
      * @throws std::logic_error If this ctkPluginContext is no longer valid.
      */
-    QList<ctkServiceReference*> getServiceReferences(const QString& clazz, const QString& filter = QString());
+    QList<ctkServiceReference> getServiceReferences(const QString& clazz, const QString& filter = QString());
 
     /**
      * Returns a <code>ctkServiceReference</code> object for a service that
@@ -274,9 +274,10 @@
      * @return A <code>ctkServiceReference</code> object, or <code>0</code> if
      *         no services are registered which implement the named class.
      * @throws std::logic_error If this ctkPluginContext is no longer valid.
+     * @throws ctkServiceException It no service was registered under the given class name.
      * @see #getServiceReferences(const QString&, const QString&)
      */
-    ctkServiceReference* getServiceReference(const QString& clazz);
+    ctkServiceReference getServiceReference(const QString& clazz);
 
     /**
      * Returns the service object referenced by the specified
@@ -335,7 +336,7 @@
      * @see #ungetService(ctkServiceReference*)
      * @see ctkServiceFactory
      */
-    QObject* getService(ctkServiceReference* reference);
+    QObject* getService(ctkServiceReference reference);
 
     ctkPlugin* installPlugin(const QUrl& location, QIODevice* in = 0);
 

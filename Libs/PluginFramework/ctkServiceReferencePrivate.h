@@ -23,42 +23,50 @@
 #ifndef CTKSERVICEREFERENCEPRIVATE_H
 #define CTKSERVICEREFERENCEPRIVATE_H
 
+#include <QAtomicInt>
+
 class QObject;
 
+class ctkServiceRegistrationPrivate;
+class ctkPlugin;
 
-  class ctkServiceRegistrationPrivate;
-  class ctkPlugin;
+class ctkServiceReferencePrivate
+{
+public:
 
-  class ctkServiceReferencePrivate
-  {
-  public:
+  ctkServiceReferencePrivate(ctkServiceRegistrationPrivate* reg);
 
-    ctkServiceReferencePrivate(ctkServiceRegistrationPrivate* reg);
+  virtual ~ctkServiceReferencePrivate() {}
 
-    /**
-      * Get the service object.
-      *
-      * @param plugin requester of service.
-      * @return Service requested or null in case of failure.
-      */
-    QObject* getService(ctkPlugin* plugin);
+  /**
+    * Get the service object.
+    *
+    * @param plugin requester of service.
+    * @return Service requested or null in case of failure.
+    */
+  QObject* getService(ctkPlugin* plugin);
 
-    /**
-     * Unget the service object.
-     *
-     * @param plugin Plugin who wants remove service.
-     * @param checkRefCounter If true decrement refence counter and remove service
-     *                        if we reach zero. If false remove service without
-     *                        checking refence counter.
-     * @return True if service was remove or false if only refence counter was
-     *         decremented.
-     */
-    bool ungetService(ctkPlugin* plugin, bool checkRefCounter);
+  /**
+   * Unget the service object.
+   *
+   * @param plugin Plugin who wants remove service.
+   * @param checkRefCounter If true decrement refence counter and remove service
+   *                        if we reach zero. If false remove service without
+   *                        checking refence counter.
+   * @return True if service was remove or false if only refence counter was
+   *         decremented.
+   */
+  bool ungetService(ctkPlugin* plugin, bool checkRefCounter);
 
-    /**
-     * Link to registration object for this reference.
-     */
-    ctkServiceRegistrationPrivate* registration;
-  };
+  /**
+   * Reference count for implicitly shared private implementation.
+   */
+  QAtomicInt ref;
+
+  /**
+   * Link to registration object for this reference.
+   */
+  ctkServiceRegistrationPrivate* registration;
+};
 
 #endif // CTKSERVICEREFERENCEPRIVATE_H

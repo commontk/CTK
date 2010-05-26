@@ -103,30 +103,25 @@
     return d->plugin->fwCtx->services.registerService(d->plugin, clazzes, service, properties);
   }
 
-  QList<ctkServiceReference*> ctkPluginContext::getServiceReferences(const QString& clazz, const QString& filter)
+  QList<ctkServiceReference> ctkPluginContext::getServiceReferences(const QString& clazz, const QString& filter)
   {
     Q_D(ctkPluginContext);
     d->isPluginContextValid();
     return d->plugin->fwCtx->services.get(clazz, filter);
   }
 
-  ctkServiceReference* ctkPluginContext::getServiceReference(const QString& clazz)
+  ctkServiceReference ctkPluginContext::getServiceReference(const QString& clazz)
   {
     Q_D(ctkPluginContext);
     d->isPluginContextValid();
     return d->plugin->fwCtx->services.get(d->plugin, clazz);
   }
 
-  QObject* ctkPluginContext::getService(ctkServiceReference* reference)
+  QObject* ctkPluginContext::getService(ctkServiceReference reference)
   {
-    if (reference == 0)
-    {
-      throw std::invalid_argument("Null ctkServiceReference is not valid");
-    }
-
     Q_D(ctkPluginContext);
     d->isPluginContextValid();
-    return reference->d_func()->getService(d->plugin->q_func());
+    return reference.d_func()->getService(d->plugin->q_func());
   }
 
   bool ctkPluginContext::connectPluginListener(const QObject* receiver, const char* method,

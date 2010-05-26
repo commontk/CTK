@@ -25,6 +25,7 @@
 #include "ctkPluginResourcesTreeModel.h"
 #include "ctkQtResourcesTreeModel.h"
 #include "ctkServiceReference.h"
+#include "ctkServiceException.h"
 #include "ctkPluginConstants.h"
 
 #include <ui_ctkPluginBrowserMainWindow.h>
@@ -112,20 +113,27 @@ void ctkPluginBrowser::pluginDoubleClicked(const QModelIndex& index)
   QString location = QString("/") + plugin->getSymbolicName() + "/META-INF/MANIFEST.MF";
   editors->openEditor(location, mfContent, location + " [cached]");
 
-  QList<ctkServiceReference*> serviceRefs = plugin->getPluginContext()->getServiceReferences("");
-  QListIterator<ctkServiceReference*> it(serviceRefs);
+  QList<ctkServiceReference> serviceRefs = plugin->getPluginContext()->getServiceReferences("");
+  QListIterator<ctkServiceReference> it(serviceRefs);
   while (it.hasNext())
   {
-    ctkServiceReference* ref = it.next();
-    qDebug() << "Service from" << ref->getPlugin()->getSymbolicName() << ":" << ref->getPropertyKeys();
-    qDebug() << "Object Classes:" << ref->getProperty(PluginConstants::OBJECTCLASS).toStringList();
+    ctkServiceReference ref(it.next());
+    qDebug() << "Service from" << ref.getPlugin()->getSymbolicName() << ":" << ref.getPropertyKeys();
+    qDebug() << "Object Classes:" << ref.getProperty(PluginConstants::OBJECTCLASS).toStringList();
   }
 
-  ctkServiceReference* cliRef = plugin->getPluginContext()->getServiceReference("ctkICLIManager");
-  QObject* cliService = plugin->getPluginContext()->getService(cliRef);
-  if (cliService)
-    qDebug() << "Got service object: " << cliService->metaObject()->className();
-  else qDebug() << "Got null service";
+  try
+  {
+    ctkServiceReference cliRef(plugin->getPluginContext()->getServiceReference("ctkICLIManager"));
+    QObject* cliService = plugin->getPluginContext()->getService(cliRef);
+    if (cliService)
+      qDebug() << "Got service object: " << cliService->metaObject()->className();
+    else qDebug() << "Got null service";
+  }
+  catch (const ctkServiceException& e)
+  {
+    qDebug() << e;
+  }
 }
 
 void ctkPluginBrowser::qtResourceDoubleClicked(const QModelIndex& index)

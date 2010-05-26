@@ -67,6 +67,8 @@
 
   public:
 
+    ctkServiceReference(const ctkServiceReference& ref);
+
     ~ctkServiceReference();
 
     /**
@@ -166,6 +168,8 @@
 
     bool operator==(const ctkServiceReference& reference) const;
 
+    ctkServiceReference& operator=(const ctkServiceReference& reference);
+
 
   protected:
 
@@ -174,7 +178,7 @@
 
     ctkServiceReference(ctkServiceRegistrationPrivate* reg);
 
-    ctkServiceReferencePrivate * const d_ptr;
+    ctkServiceReferencePrivate * d_ptr;
 
   };
 

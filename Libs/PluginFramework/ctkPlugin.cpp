@@ -111,7 +111,7 @@
 
   void ctkPlugin::stop(const StopOptions& options)
   {
-    Q_UNUSED(options)
+    //TODO Plugin::stop()
   }
 
   ctkPluginContext* ctkPlugin::getPluginContext() const

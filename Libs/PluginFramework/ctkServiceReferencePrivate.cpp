@@ -33,7 +33,7 @@
 
 
   ctkServiceReferencePrivate::ctkServiceReferencePrivate(ctkServiceRegistrationPrivate* reg)
-    : registration(reg)
+    : ref(1), registration(reg)
   {
   }
 
@@ -122,50 +122,47 @@
   {
     QMutexLocker lock(&registration->propsLock);
     bool hadReferences = false;
-    if (registration->reference != 0)
+    bool removeService = false;
+
+    int count= registration->dependents.value(plugin);
+    if (count > 0)
     {
-      bool removeService = false;
+      hadReferences = true;
+    }
 
-      int count= registration->dependents.value(plugin);
-      if (count > 0)
+    if(checkRefCounter)
+    {
+      if (count > 1)
       {
-        hadReferences = true;
+          registration->dependents[plugin] = count - 1;
       }
-
-      if(checkRefCounter)
-      {
-        if (count > 1)
-        {
-            registration->dependents[plugin] = count - 1;
-        }
-        else if(count == 1)
-        {
-          removeService = true;
-        }
-      }
-      else
+      else if(count == 1)
       {
         removeService = true;
       }
+    }
+    else
+    {
+      removeService = true;
+    }
 
-      if (removeService)
+    if (removeService)
+    {
+      QObject* sfi = registration->serviceInstances[plugin];
+      registration->serviceInstances.remove(plugin);
+      if (sfi != 0)
       {
-        QObject* sfi = registration->serviceInstances[plugin];
-        registration->serviceInstances.remove(plugin);
-        if (sfi != 0)
+        try
         {
-          try
-          {
-            qobject_cast<ctkServiceFactory*>(registration->getService())->ungetService(plugin,
-                registration->q_func(), sfi);
-          }
-          catch (const std::exception& e)
-          {
-            plugin->d_func()->fwCtx->listeners.frameworkError(registration->plugin->q_func(), e);
-          }
+          qobject_cast<ctkServiceFactory*>(registration->getService())->ungetService(plugin,
+              registration->q_func(), sfi);
         }
-        registration->dependents.remove(plugin);
+        catch (const std::exception& e)
+        {
+          plugin->d_func()->fwCtx->listeners.frameworkError(registration->plugin->q_func(), e);
+        }
       }
+      registration->dependents.remove(plugin);
     }
 
     return hadReferences;

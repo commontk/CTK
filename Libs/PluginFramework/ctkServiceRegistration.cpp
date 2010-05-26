@@ -30,31 +30,31 @@
 #include <stdexcept>
 
 
-  ctkServiceRegistration::ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
-                      const ServiceProperties& props)
-    : d_ptr(new ctkServiceRegistrationPrivate(this, plugin, service, props))
-  {
+ctkServiceRegistration::ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
+                    const ServiceProperties& props)
+  : d_ptr(new ctkServiceRegistrationPrivate(this, plugin, service, props))
+{
 
-  }
+}
 
-  ctkServiceRegistration::ctkServiceRegistration(ctkServiceRegistrationPrivate& dd)
-    : d_ptr(&dd)
-  {
+ctkServiceRegistration::ctkServiceRegistration(ctkServiceRegistrationPrivate& dd)
+  : d_ptr(&dd)
+{
 
-  }
+}
 
-  ctkServiceReference* ctkServiceRegistration::getReference()
-  {
-    Q_D(ctkServiceRegistration);
+ctkServiceReference ctkServiceRegistration::getReference() const
+{
+  Q_D(const ctkServiceRegistration);
 
-    if (!d->available) throw std::logic_error("Service is unregistered");
+  if (!d->available) throw std::logic_error("Service is unregistered");
 
-    return d->reference;
-  }
+  return d->reference;
+}
 
-  void ctkServiceRegistration::setProperties(const ServiceProperties& properties)
-  {
-    Q_UNUSED(properties)
+void ctkServiceRegistration::setProperties(const ServiceProperties& properties)
+{
+  Q_UNUSED(properties)
 //    QMutexLocker lock(eventLock);
 //          Set before;
 //          // TBD, optimize the locking of services
@@ -87,77 +87,76 @@
 //                            new ServiceEvent(ServiceEvent.MODIFIED_ENDMATCH, reference),
 //                            null);
 
-  }
+}
 
-  void ctkServiceRegistration::unregister()
+void ctkServiceRegistration::unregister()
+{
+  Q_D(ctkServiceRegistration);
+
+  if (d->unregistering) return; // Silently ignore redundant unregistration.
   {
-    Q_D(ctkServiceRegistration);
+    QMutexLocker lock(&d->eventLock);
+    if (d->unregistering) return;
+    d->unregistering = true;
 
-    if (d->unregistering) return; // Silently ignore redundant unregistration.
+    if (d->available)
     {
-      QMutexLocker lock(&d->eventLock);
-      if (d->unregistering) return;
-      d->unregistering = true;
-
-      if (d->available)
+      if (d->plugin)
       {
-        if (d->plugin)
-        {
-          d->plugin->fwCtx->services.removeServiceRegistration(this);
-        }
-      }
-      else
-      {
-        throw std::logic_error("Service is unregistered");
+        d->plugin->fwCtx->services.removeServiceRegistration(this);
       }
     }
-
-    if (d->plugin)
+    else
     {
-      //TODO
+      throw std::logic_error("Service is unregistered");
+    }
+  }
+
+  if (d->plugin)
+  {
+    //TODO
 //      bundle.fwCtx.listeners
 //            .serviceChanged(bundle.fwCtx.listeners.getMatchingServiceListeners(reference),
 //                            new ServiceEvent(ServiceEvent.UNREGISTERING, reference),
 //                            null);
-    }
-
-    {
-      QMutexLocker lock(&d->eventLock);
-      {
-        QMutexLocker lock2(&d->propsLock);
-        d->available = false;
-        if (d->plugin)
-        {
-          for (QHashIterator<ctkPlugin*, QObject*> i(d->serviceInstances); i.hasNext();)
-          {
-            QObject* obj = i.next().value();
-            try
-            {
-              // NYI, don't call inside lock
-              qobject_cast<ctkServiceFactory*>(d->service)->ungetService(i.key(),
-                                                         this,
-                                                         obj);
-            }
-            catch (const std::exception& ue)
-            {
-              ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::ERROR, d->plugin->q_func(), ue);
-              d->plugin->fwCtx->listeners
-                  .emitFrameworkEvent(pfwEvent);
-            }
-          }
-        }
-        d->plugin = 0;
-        d->dependents.clear();
-        d->service = 0;
-        d->serviceInstances.clear();;
-        d->unregistering = false;
-      }
-    }
   }
 
-  bool ctkServiceRegistration::operator<(const ctkServiceRegistration& o) const
   {
-    Q_D(const ctkServiceRegistration);
-    return d->reference->operator <(*(o.d_func()->reference));
+    QMutexLocker lock(&d->eventLock);
+    {
+      QMutexLocker lock2(&d->propsLock);
+      d->available = false;
+      if (d->plugin)
+      {
+        for (QHashIterator<ctkPlugin*, QObject*> i(d->serviceInstances); i.hasNext();)
+        {
+          QObject* obj = i.next().value();
+          try
+          {
+            // NYI, don't call inside lock
+            qobject_cast<ctkServiceFactory*>(d->service)->ungetService(i.key(),
+                                                       this,
+                                                       obj);
+          }
+          catch (const std::exception& ue)
+          {
+            ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::ERROR, d->plugin->q_func(), ue);
+            d->plugin->fwCtx->listeners
+                .emitFrameworkEvent(pfwEvent);
+          }
+        }
+      }
+      d->plugin = 0;
+      d->dependents.clear();
+      d->service = 0;
+      d->serviceInstances.clear();;
+      d->unregistering = false;
+    }
+  }
+}
 
+bool ctkServiceRegistration::operator<(const ctkServiceRegistration& o) const
+{
+  Q_D(const ctkServiceRegistration);
+  return d->reference <(o.d_func()->reference);
 }
