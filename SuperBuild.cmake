@@ -150,14 +150,14 @@ FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# Convenient macro allowing to define superbuild arg
+# Convenient function allowing to define superbuild arg
 #
-MACRO(ctk_set_superbuild_boolean_arg ctk_cmake_var)
-  SET(superbuild_${ctk_cmake_var} ON)
-  IF(DEFINED ${ctk_cmake_var} AND NOT ${ctk_cmake_var})
-    SET(superbuild_${ctk_cmake_var} OFF)
+FUNCTION(ctk_set_superbuild_boolean_arg ctk_cmake_var)
+  SET(superbuild_${ctk_cmake_var} OFF)
+  IF(DEFINED ${ctk_cmake_var})
+    SET(superbuild_${ctk_cmake_var} ${${ctk_cmake_var}} PARENT_SCOPE)
   ENDIF()
-ENDMACRO()
+ENDFUNCTION()
 
 #-----------------------------------------------------------------------------
 # Set superbuild boolean args
