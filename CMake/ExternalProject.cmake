@@ -771,11 +771,12 @@ function(_ep_add_download_command name)
     list(APPEND depends ${stamp_dir}/${name}-svninfo.txt)
   elseif(git_repository)
     #find_package(Git)
-    # Legacy - Some dashboard are configured using Git_EXECUTABLE
-    if(DEFINED Git_EXECUTABLE)
-      set(git_EXECUTABLE ${Git_EXECUTABLE})
-    endif()
-    find_program(git_EXECUTABLE NAMES git.cmd git eg.cmd eg DOC "git command line client")
+    find_program(git_EXECUTABLE 
+      NAMES git.cmd git eg.cmd eg 
+      PATHS
+       "C:/Program Files/Git/bin"
+       "C:/Program Files (x86)/Git/bin"
+      DOC "git command line client")
     if(NOT git_EXECUTABLE)
       message(FATAL_ERROR "error: could not find git for clone of ${name} - Make sure git_EXECUTABLE is set properly")
     endif()
