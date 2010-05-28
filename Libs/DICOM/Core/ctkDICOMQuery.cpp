@@ -65,6 +65,8 @@ public:
   QString Host;
   int Port;
   DcmSCU SCU;
+  QSqlDatabase db;
+  DcmDataset* query;
 
 };
 
@@ -74,11 +76,26 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMQueryPrivate::ctkDICOMQueryPrivate()
 {
+  query = new DcmDataset();
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMQueryPrivate::~ctkDICOMQueryPrivate()
 {
+  delete query;
+}
+
+
+// Find callback
+static void QueryCallback (void *callbackData, 
+                           T_DIMSE_C_FindRQ* /*request*/, 
+                           int /*responseCount*/, 
+                           T_DIMSE_C_FindRSP* /*rsp*/, 
+                           DcmDataset *responseIdentifiers) {
+  ctkDICOMQueryPrivate* d = (ctkDICOMQueryPrivate*) callbackData;
+  OFString StudyDescription;
+  responseIdentifiers->findAndGetOFString ( DCM_StudyDescription, StudyDescription );
+  logger.debug ( QString ( "Found study description: " ) + QString ( StudyDescription.c_str() ) );
 }
 
 //------------------------------------------------------------------------------
@@ -142,8 +159,8 @@ int ctkDICOMQuery::port()
 void ctkDICOMQuery::query(QSqlDatabase database )
 {
   CTK_D(ctkDICOMQuery);
-  QSqlDatabase db = database;
-
+  d->db = database;
+  
   if ( logger.isDebugEnabled() )
     {
     std::cout << "Debugging ctkDICOMQuery" << std::endl;
@@ -178,6 +195,48 @@ void ctkDICOMQuery::query(QSqlDatabase database )
   else
     {
     std::cerr << "ECHO Failed" << std::endl;
+    }
+  // Clear the query
+  unsigned long elements = d->query->card();
+  // Clean it out
+  for ( unsigned long i = 0; i < elements; i++ ) 
+    {
+    d->query->remove ( (unsigned long) 0 );
+    }
+  d->query->insertEmptyElement ( DCM_QueryRetrieveLevel );
+  d->query->insertEmptyElement ( DCM_PatientID );
+  d->query->insertEmptyElement ( DCM_PatientsName );
+  d->query->insertEmptyElement ( DCM_PatientsBirthDate );
+  d->query->insertEmptyElement ( DCM_StudyID );
+  d->query->insertEmptyElement ( DCM_StudyInstanceUID );
+  d->query->insertEmptyElement ( DCM_StudyDescription );
+  d->query->insertEmptyElement ( DCM_StudyDate );
+  d->query->insertEmptyElement ( DCM_StudyID );
+  d->query->insertEmptyElement ( DCM_PatientID );
+  d->query->insertEmptyElement ( DCM_PatientsName );
+  d->query->insertEmptyElement ( DCM_SeriesNumber );
+  d->query->insertEmptyElement ( DCM_SeriesDescription );
+  d->query->insertEmptyElement ( DCM_StudyInstanceUID );
+  d->query->insertEmptyElement ( DCM_SeriesInstanceUID );
+  d->query->insertEmptyElement ( DCM_StudyTime );
+  d->query->insertEmptyElement ( DCM_SeriesDate );
+  d->query->insertEmptyElement ( DCM_SeriesTime );
+  d->query->insertEmptyElement ( DCM_Modality );
+  d->query->insertEmptyElement ( DCM_ModalitiesInStudy );
+  d->query->insertEmptyElement ( DCM_AccessionNumber );
+  d->query->insertEmptyElement ( DCM_NumberOfSeriesRelatedInstances ); // Number of images in the series
+  d->query->insertEmptyElement ( DCM_NumberOfStudyRelatedInstances ); // Number of images in the series
+  d->query->insertEmptyElement ( DCM_NumberOfStudyRelatedSeries ); // Number of images in the series
+  d->query->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
+
+  OFCondition status = d->SCU.sendFINDRequest ( 0, d->query, QueryCallback, (void*)d );
+  if ( status.good() )
+    {
+    logger.debug ( "Find succeded" );
+    }
+  else
+    {
+    logger.error ( "Find failed" );
     }
   d->SCU.closeAssociation ( DUL_PEERREQUESTEDRELEASE );
 }
