@@ -771,8 +771,10 @@ function(_ep_add_download_command name)
     list(APPEND depends ${stamp_dir}/${name}-svninfo.txt)
   elseif(git_repository)
     #find_package(Git)
+    # If 'git.cmd' are 'eg.cmd' are used, execute_process fails and outputs the following error:
+    #  'chcp' is not recognized as an internal or external command, operable program or batch file
     find_program(git_EXECUTABLE 
-      NAMES git.cmd git eg.cmd eg 
+      NAMES git eg 
       PATHS
        "C:/Program Files/Git/bin"
        "C:/Program Files (x86)/Git/bin"
