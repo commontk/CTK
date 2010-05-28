@@ -22,9 +22,9 @@ IF(${add_project})
   SET(qtmobility_patch_dir ${CTK_SOURCE_DIR}/Utilities/QtMobility/)
   SET(qtmobility_configured_patch_dir ${CTK_BINARY_DIR}/Utilities/QtMobility/)
   SET(qtmobility_patchscript
-    ${CTK_BINARY_DIR}/Utilities/QtMobility/QtMobility-1.0.0-patch.cmake)
+    ${qtmobility_configured_patch_dir}/QtMobility-1.0.0-patch.cmake)
   CONFIGURE_FILE(
-    ${CTK_SOURCE_DIR}/Utilities/QtMobility/QtMobility-1.0.0-patch.cmake.in
+    ${qtmobility_patch_dir}/QtMobility-1.0.0-patch.cmake.in
     ${qtmobility_patchscript} @ONLY)
 
   # Define configure options
@@ -39,18 +39,30 @@ IF(${add_project})
   ENDIf()
   
   SET(qtmobility_make_cmd)
+  SET(qtmobility_install_cmd)
   IF(UNIX OR MINGW)
     SET(qtmobility_make_cmd make)
+    SET(qtmobility_config_args -${qtmobility_build_type} -libdir ${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY} -no-docs -modules ${qtmobility_modules})
+    SET(qtmobility_install_cmd ${qtmobility_make_cmd} install)
   ELSEIF(WIN32)
     SET(qtmobility_make_cmd nmake)
+    SET(qtmobility_win32_install_prefix ${ep_source_dir}/${proj}/install/)
+    FILE(TO_NATIVE_PATH ${qtmobility_win32_install_prefix} qtmobility_win32_native_install_prefix)
+    SET(qtmobility_config_args -${qtmobility_build_type} -qt ${QT_BINARY_DIR} -prefix ${qtmobility_win32_native_install_prefix} -no-docs -modules ${qtmobility_modules})
+  
+    CONFIGURE_FILE(${qtmobility_patch_dir}/QtMobility-1.0.0-install-win32.cmake.in
+                   ${qtmobility_configured_patch_dir}/QtMobility-1.0.0-install-win32.cmake @ONLY)
+				   
+    SET(qtmobility_install_cmd ${CMAKE_COMMAND} -D INTERMEDIATE_DIRECTORY:STRING=$(IntDir) -P ${qtmobility_configured_patch_dir}/QtMobility-1.0.0-install-win32.cmake)
   ENDIF()
-
+  
   ExternalProject_Add(${proj}
     URL ${CTK_SOURCE_DIR}/Utilities/QtMobility/qt-mobility-servicefw-opensource-src-1.0.0.tar.gz
     PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure -${qtmobility_build_type} -libdir ${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY} -no-docs -modules ${qtmobility_modules}
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure ${qtmobility_config_args}
     BUILD_COMMAND ${qtmobility_make_cmd}
-    INSTALL_COMMAND ${qtmobility_make_cmd} install
+    INSTALL_COMMAND ${qtmobility_install_cmd}
     BUILD_IN_SOURCE 1
     )
+	
 ENDIF()

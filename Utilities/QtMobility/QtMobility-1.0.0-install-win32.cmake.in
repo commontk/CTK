@@ -1,0 +1,25 @@
+EXECUTE_PROCESS(COMMAND @qtmobility_make_cmd@ install
+                OUTPUT_VARIABLE _output)
+
+IF(_output)
+  MESSAGE(${_output})
+ENDIF()
+
+GET_FILENAME_COMPONENT(_int_dir ${INTERMEDIATE_DIRECTORY} NAME)
+
+FILE(GLOB _files "@qtmobility_win32_install_prefix@/lib/*")
+FOREACH(_file ${_files})
+  CONFIGURE_FILE(${_file} "@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/" COPYONLY)
+  MESSAGE("Copying ${_file} to @CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/")
+ENDFOREACH()
+
+FILE(GLOB _files "@qtmobility_patch_dir@/include/*")
+FOREACH(_file ${_files})
+  CONFIGURE_FILE(${_file} "@qtmobility_win32_install_prefix@/include/" COPYONLY)
+  MESSAGE("Copying ${_file} to @qtmobility_win32_install_prefix@/include/")
+ENDFOREACH()
+
+SET(_qtmob_config "SET(QTMOBILITY_LIBRARY_DIR \"@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/\")
+SET(QTMOBILITY_INCLUDE_DIRS \"@qtmobility_win32_install_prefix@/include/\")")
+
+FILE(WRITE "@qtmobility_configured_patch_dir@/QtMobilityConfig.cmake" ${_qtmob_config})

@@ -18,11 +18,6 @@
 # 
 ###########################################################################
 
-SET(cmake_version_required "2.8")
-SET(cmake_version_required_dash "2-8")
-
-CMAKE_MINIMUM_REQUIRED(VERSION ${cmake_version_required})
-
 # 
 # CTK_KWSTYLE_EXECUTABLE
 # DCMTK_DIR
@@ -70,11 +65,6 @@ ENDIF()
 
 # Use this value where semi-colons are needed in ep_add args:
 set(sep "^^")
-
-#-----------------------------------------------------------------------------
-# Update CMake module path
-#
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
 #-----------------------------------------------------------------------------
 # Collect CTK library target dependencies
@@ -160,14 +150,14 @@ FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# Convenient macro allowing to define superbuild arg
+# Convenient function allowing to define superbuild arg
 #
-MACRO(ctk_set_superbuild_boolean_arg ctk_cmake_var)
-  SET(superbuild_${ctk_cmake_var} ON)
-  IF(DEFINED ${ctk_cmake_var} AND NOT ${ctk_cmake_var})
-    SET(superbuild_${ctk_cmake_var} OFF)
+FUNCTION(ctk_set_superbuild_boolean_arg ctk_cmake_var)
+  SET(superbuild_${ctk_cmake_var} OFF)
+  IF(DEFINED ${ctk_cmake_var})
+    SET(superbuild_${ctk_cmake_var} ${${ctk_cmake_var}} PARENT_SCOPE)
   ENDIF()
-ENDMACRO()
+ENDFUNCTION()
 
 #-----------------------------------------------------------------------------
 # Set superbuild boolean args
@@ -176,6 +166,9 @@ ENDMACRO()
 SET(ctk_cmake_boolean_args
   BUILD_TESTING
   CTK_USE_KWSTYLE
+  WITH_COVERAGE
+  DOCUMENTATION_TARGET_IN_ALL
+  CTEST_USE_LAUNCHERS
   ${ctk_libs_bool_vars}
   ${ctk_plugins_bool_vars}
   ${ctk_applications_bool_vars}
@@ -203,10 +196,7 @@ ExternalProject_Add(${proj}
   CMAKE_ARGS
     ${ctk_superbuild_boolean_args}
     -DCTK_SUPERBUILD:BOOL=OFF
-    -DWITH_COVERAGE:BOOL=${WITH_COVERAGE}
-    -DDOCUMENTATION_TARGET_IN_ALL:BOOL=${DOCUMENTATION_TARGET_IN_ALL}
     -DDOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
-    -DCTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
     -DCTK_SUPERBUILD_BINARY_DIR:PATH=${CTK_BINARY_DIR}
     -DCTK_CMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH=${CTK_CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
     -DCTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH=${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY}
@@ -221,10 +211,10 @@ ExternalProject_Add(${proj}
     -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
     -DDCMTK_DIR:PATH=${DCMTK_DIR} # FindDCMTK expects DCMTK_DIR variable to be defined
     -DVTK_DIR:PATH=${VTK_DIR}     # FindVTK expects VTK_DIR variable to be defined
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}    # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
-    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}        # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}     # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
+    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}         # FindPythonQt expects PYTHON_LIBRARY variable to be defined
     -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR variable to be defined
-    -Dlog4qt_DIR:PATH=${log4qt_DIR} # Findlog4qt expects a log4qt_DIR variable to be defined
+    -Dlog4qt_DIR:PATH=${log4qt_DIR} # Findlog4qt expects log4qt_DIR variable to be defined
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
   BUILD_COMMAND ""

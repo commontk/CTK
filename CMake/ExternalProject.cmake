@@ -18,9 +18,10 @@
 #    [SVN_REVISION rev]          # Revision to checkout from Subversion repo
 #    [SVN_USERNAME john ]        # Username to use for Subversion checkout and update
 #    [SVN_PASSWORD doe ]         # Password to use for Subversion checkout and update
+#    [GIT_REPOSITORY url]        # URL of GIT repo
+#    [GIT_TAG tag]               # Git branch name, commit id or tag
 #    [URL /.../src.tgz]          # Full path or URL of source
 #    [TIMEOUT seconds]           # Time allowed for file download operations
-#    [GIT_REPOSITORY url]        # URL of GIT repo
 #   #--Update/Patch step----------
 #    [UPDATE_COMMAND cmd...]     # Source work-tree update command
 #    [PATCH_COMMAND cmd...]      # Command to patch downloaded source
@@ -205,6 +206,92 @@ define_property(DIRECTORY PROPERTY "EP_PREFIX" INHERITED
   "ExternalProject module."
   )
 
+function(_ep_write_gitclone_script script_filename source_dir git_EXECUTABLE git_repository git_tag src_name work_dir)
+  file(WRITE ${script_filename}
+"execute_process(
+  COMMAND \${CMAKE_COMMAND} -E remove_directory \"${source_dir}\"
+  RESULT_VARIABLE error_code
+  )
+if(error_code)
+  message(FATAL_ERROR \"Failed to remove directory: '${source_dir}'\")
+endif()
+
+execute_process(
+  COMMAND \"${git_EXECUTABLE}\" clone \"${git_repository}\" \"${src_name}\"
+  WORKING_DIRECTORY \"${work_dir}\"
+  RESULT_VARIABLE error_code
+  )
+if(error_code)
+  message(FATAL_ERROR \"Failed to clone repository: '${git_repository}'\")
+endif()
+
+if(NOT \"${git_tag}\" STREQUAL \"\")
+  execute_process(
+    COMMAND \"${git_EXECUTABLE}\" checkout ${git_tag}
+    WORKING_DIRECTORY \"${work_dir}/${src_name}\"
+    RESULT_VARIABLE error_code
+    ERROR_QUIET
+    )
+  if(error_code)
+    message(FATAL_ERROR \"Failed to checkout tag: '${git_tag}'\")
+  endif()
+endif()
+"
+)
+endfunction(_ep_write_gitclone_script)
+
+#
+# Since patch may have been applied: git reset --hard HEAD
+# Switch back to master: git checkout master
+# Pull in changes: git pull 
+# If a tag is specified, attempt to checkout: git checkout TAG
+# If patch_cmd is specified, attempt to re-apply the patches
+function(_ep_write_gitupdate_script script_filename source_dir git_EXECUTABLE git_repository git_tag src_name work_dir patch_cmd)
+  file(WRITE ${script_filename}
+"execute_process(
+  COMMAND \"${git_EXECUTABLE}\" reset --hard HEAD
+  WORKING_DIRECTORY \"${work_dir}\"
+  RESULT_VARIABLE error_code
+  )
+execute_process(
+  COMMAND \"${git_EXECUTABLE}\" checkout master
+  WORKING_DIRECTORY \"${work_dir}\"
+  RESULT_VARIABLE error_code
+  )
+if(error_code)
+  message(FATAL_ERROR \"Failed to checkout master - repository: ${git_repository}\")
+endif()
+execute_process(
+  COMMAND \"${git_EXECUTABLE}\" pull
+  WORKING_DIRECTORY \"${work_dir}\"
+  RESULT_VARIABLE error_code
+  )
+if(error_code)
+  message(FATAL_ERROR \"Failed to pull - repository: ${git_repository}\")
+endif()
+if(NOT \"${git_tag}\" STREQUAL \"\")
+  execute_process(
+    COMMAND \"${git_EXECUTABLE}\" checkout ${git_tag}
+    WORKING_DIRECTORY \"${work_dir}\"
+    RESULT_VARIABLE error_code
+    ERROR_QUIET
+    )
+  if(error_code)
+    message(FATAL_ERROR \"Failed to checkout tag ${git_tag} - repository: ${git_repository}\")
+  endif()
+endif()
+if(NOT \"${patch_cmd}\" STREQUAL \"\")
+  execute_process(
+    COMMAND \"${patch_cmd}\"
+    WORKING_DIRECTORY \"${work_dir}\"
+    RESULT_VARIABLE error_code
+    )
+  if(error_code)
+    message(FATAL_ERROR \"Failed to apply patch for ${name}\")
+  endif()
+endif()
+")
+endfunction(_ep_write_gitupdate_script)
 
 function(_ep_write_downloadfile_script script_filename remote local timeout)
   if(timeout)
@@ -684,22 +771,21 @@ function(_ep_add_download_command name)
     list(APPEND depends ${stamp_dir}/${name}-svninfo.txt)
   elseif(git_repository)
     #find_package(Git)
-    find_program(Git_EXECUTABLE git
+    find_program(git_EXECUTABLE 
+      NAMES git.cmd git eg.cmd eg 
       PATHS
-        "C:/Program Files/Git/bin"
-        "C:/Program Files (x86)/Git/bin"
+       "C:/Program Files/Git/bin"
+       "C:/Program Files (x86)/Git/bin"
       DOC "git command line client")
-    mark_as_advanced(Git_EXECUTABLE)
-    if(NOT Git_EXECUTABLE)
-      message(FATAL_ERROR "error: could not find git to clone ${name} - Make sure Git_EXECUTABLE is set properly")
+    if(NOT git_EXECUTABLE)
+      message(FATAL_ERROR "error: could not find git for clone of ${name} - Make sure git_EXECUTABLE is set properly")
     endif()
 
-    # TODO  [GIT_REVISION revision]        # Revision to checkout from GIT repo
-    #get_property(git_revision TARGET ${name} PROPERTY _EP_GIT_REVISION)
+    get_property(git_tag TARGET ${name} PROPERTY _EP_GIT_TAG)
 
     set(repository ${git_repository})
     set(module)
-    set(tag ${git_revision})
+    set(tag ${git_tag})
     configure_file(
       "${CMAKE_ROOT}/Modules/RepositoryInfo.txt.in"
       "${stamp_dir}/${name}-gitinfo.txt"
@@ -707,26 +793,16 @@ function(_ep_add_download_command name)
       )
 
     get_filename_component(src_name "${source_dir}" NAME)
-    get_filename_component(work_dir "${source_dir}/../" REALPATH)
+    get_filename_component(work_dir "${source_dir}" PATH)
 
-    # Since Git doesn't allow to clone if the repository exists,
-    # let's create a cmake script that will be invoked as a download command.
-    # That script will delete the source directory and call the appropriate git clone command
-    file(WRITE ${tmp_dir}/${name}-gitclone.cmake "
-execute_process(
-  COMMAND \"${CMAKE_COMMAND}\" -E remove_directory \"${source_dir}\"
-  RESULT_VARIABLE error_code
-  )
-execute_process(
-  COMMAND \"${Git_EXECUTABLE}\" clone \"${git_repository}\" \"${src_name}\"
-  WORKING_DIRECTORY \"${work_dir}\"
-  RESULT_VARIABLE error_code
-  )
-if(error_code)
-  message(FATAL_ERROR \"Failed to clone repository: ${git_repository}\")
-endif()
-")    
-    set(comment "Performing download step (GIT clone) for '${name}'")
+    # Since git clone doesn't succeed if the non-empty source_dir exists,
+    # create a cmake script to invoke as download command.
+    # The script will delete the source directory and then call git clone.
+    #
+    _ep_write_gitclone_script(${tmp_dir}/${name}-gitclone.cmake ${source_dir}
+	  ${git_EXECUTABLE} ${git_repository} "${git_tag}" ${src_name} ${work_dir})
+	  
+    set(comment "Performing download step (git clone) for '${name}'")
     set(cmd ${CMAKE_COMMAND} -P ${tmp_dir}/${name}-gitclone.cmake)
     list(APPEND depends ${stamp_dir}/${name}-gitinfo.txt)
   elseif(url)
@@ -790,12 +866,7 @@ function(_ep_add_update_command name)
   get_property(git_repository TARGET ${name} PROPERTY _EP_GIT_REPOSITORY)
   
   # Patch
-  get_property(patch_cmd_set TARGET ${name} PROPERTY _EP_PATCH_COMMAND SET)
   get_property(patch_cmd TARGET ${name} PROPERTY _EP_PATCH_COMMAND)
-  set(patch_work_dir)
-  if(patch_cmd_set)
-    set(patch_work_dir ${source_dir})
-  endif()
 
   set(work_dir)
   set(comment)
@@ -824,40 +895,19 @@ function(_ep_add_update_command name)
     set(cmd ${Subversion_SVN_EXECUTABLE} up ${svn_revision} --username=${svn_username} --password=${svn_password})
     set(always 1)
   elseif(git_repository)
-    if(NOT Git_EXECUTABLE)
+    if(NOT git_EXECUTABLE)
       message(FATAL_ERROR "error: could not find git for pull of ${name}")
     endif()
     set(work_dir ${source_dir})
-
+    get_filename_component(src_name "${source_dir}" NAME)
+    
+    get_property(git_tag TARGET ${name} PROPERTY _EP_GIT_TAG)
+    
     # The following script will allow to reset, pull and re-apply patches
-    file(WRITE ${tmp_dir}/${name}-gitupdate.cmake "
-execute_process(
-  COMMAND \"${Git_EXECUTABLE}\" reset --hard HEAD
-  WORKING_DIRECTORY \"${work_dir}\"
-  RESULT_VARIABLE error_code
-  )
-execute_process(
-  COMMAND \"${Git_EXECUTABLE}\" pull
-  WORKING_DIRECTORY \"${work_dir}\"
-  RESULT_VARIABLE error_code
-  )
-if(error_code)
-  message(FATAL_ERROR \"Failed to pull - repository: ${git_repository}\")
-endif()
-if(${patch_cmd_set})
-  execute_process(
-    COMMAND \"${patch_cmd}\"
-    WORKING_DIRECTORY \"${patch_work_dir}\"
-    RESULT_VARIABLE error_code
-    )
-  if(error_code)
-    message(FATAL_ERROR \"Failed to apply patch for ${name}\")
-  endif()
-endif()
-")
+    _ep_write_gitupdate_script(${tmp_dir}/${name}-gitupdate.cmake ${source_dir} ${git_EXECUTABLE} 
+    ${git_repository} "${git_tag}" ${src_name} ${work_dir} "${patch_cmd}")
 
-    set(comment "Performing update step (GIT pull) for '${name}'")
-    #get_property(git_revision TARGET ${name} PROPERTY _EP_GIT_REVISION)
+    set(comment "Performing update step (git pull) for '${name}'")
     set(cmd ${CMAKE_COMMAND} -P ${tmp_dir}/${name}-gitupdate.cmake)
     set(always 1)
   endif()
