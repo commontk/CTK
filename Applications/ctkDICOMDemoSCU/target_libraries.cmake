@@ -5,5 +5,5 @@
 # 
 
 SET(target_libraries
-   DCMTK_LIBRARIES
+  CTKDICOMCore
   )

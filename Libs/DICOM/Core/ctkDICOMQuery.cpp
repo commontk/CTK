@@ -32,6 +32,7 @@
 
 // ctkDICOM includes
 #include "ctkDICOMQuery.h"
+#include "ctkLogger.h"
 
 // DCMTK includes
 #ifndef WIN32
@@ -50,6 +51,8 @@
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
 
 #include <dcmtk/dcmnet/scu.h>
+
+static ctkLogger logger ( "org.commontk.core.Logger" );
 
 //------------------------------------------------------------------------------
 class ctkDICOMQueryPrivate: public ctkPrivate<ctkDICOMQuery>
@@ -140,21 +143,32 @@ void ctkDICOMQuery::query(QSqlDatabase database )
 {
   CTK_D(ctkDICOMQuery);
   QSqlDatabase db = database;
-  
+
+  if ( logger.isDebugEnabled() )
+    {
+    std::cout << "Debugging ctkDICOMQuery" << std::endl;
+    }
+  d->SCU.setAETitle ( this->callingAETitle().toStdString() );
+  d->SCU.setPeerAETitle ( this->calledAETitle().toStdString() );
+  d->SCU.setPeerHostName ( this->host().toStdString() );
+  d->SCU.setPeerPort ( this->port() );
+
+  logger.error ( "Setting Transfer Syntaxes" );
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
 
-  d->SCU.addPresentationContext ( UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes );
-  d->SCU.setAETitle ( this->callingAETitle().toStdString() );
-  d->SCU.setPeerAETitle ( this->calledAETitle().toStdString() );
-  d->SCU.setPeerHostName ( this->host().toStdString() );
+  // d->SCU.addPresentationContext ( UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+  d->SCU.addPresentationContext ( UID_VerificationSOPClass, transferSyntaxes );
   if ( !d->SCU.initNetwork().good() ) 
     {
     std::cerr << "Error initializing the network" << std::endl;
+    return;
     }
+  logger.debug ( "Negotiating Association" );
   d->SCU.negotiateAssociation();
+  logger.debug ( "Sending Echo" );
   OFString abstractSyntax;
   OFString transferSyntax;
   if ( d->SCU.sendECHORequest ( 0 ).good() )

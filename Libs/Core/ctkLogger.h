@@ -23,7 +23,6 @@
 
 // Qt includes 
 #include <QObject>
-#include <QSqlDatabase>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -37,6 +36,8 @@ public:
   typedef QObject Superclass;
   explicit ctkLogger ( QString name, QObject* parent = 0 );
   virtual ~ctkLogger ();
+
+  static void configure();
   
   void debug ( QString s );
   void info ( QString s );

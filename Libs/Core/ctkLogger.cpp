@@ -27,6 +27,7 @@
 // log4cpp
 #include "log4qt/log4qt.h"
 #include "log4qt/logger.h"
+#include "log4qt/basicconfigurator.h"
 
 class ctkLoggerPrivate: public ctkPrivate<ctkLogger>
 {
@@ -44,6 +45,11 @@ ctkLogger::ctkLogger(QString name, QObject* _parent): Superclass(_parent)
 
 ctkLogger::~ctkLogger()
 {
+}
+
+void ctkLogger::configure()
+{
+  Log4Qt::BasicConfigurator::configure();
 }
 
 void ctkLogger::debug ( QString s ) 

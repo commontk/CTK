@@ -284,6 +284,7 @@ SET(CTK_APPLICATIONS
   ctkDICOM:OFF
   ctkDICOMIndexer:OFF
   ctkDICOMDemoSCU:OFF
+  ctkDICOMQuery:OFF
   )
   
 #-----------------------------------------------------------------------------
