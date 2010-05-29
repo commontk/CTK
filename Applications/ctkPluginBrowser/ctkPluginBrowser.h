@@ -50,12 +50,18 @@ private slots:
 
   void frameworkEvent(const ctkPluginFrameworkEvent& event);
 
+  void startPlugin();
+  void stopPlugin();
+
 private:
 
   ctkPluginFramework* framework;
 
   Ui::ctkPluginBrowserWindow ui;
   ctkPluginBrowserEditors* editors;
+
+  QAction* startPluginAction;
+  QAction* stopPluginAction;
 };
 
 #endif // CTKPLUGINBROWSER_H

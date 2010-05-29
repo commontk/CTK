@@ -26,6 +26,7 @@ SET(KIT_UI_FORMS
 
 # Resources
 SET(KIT_resources
+  ctkPluginBrowserResources.qrc
 )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake

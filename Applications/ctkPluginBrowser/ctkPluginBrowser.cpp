@@ -89,6 +89,18 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   connect(ui.pluginsTableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(pluginDoubleClicked(QModelIndex)));
   connect(ui.pluginResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(dbResourceDoubleClicked(QModelIndex)));
   connect(ui.qtResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(qtResourceDoubleClicked(QModelIndex)));
+
+  startPluginAction = new QAction(QIcon(":/pluginbrowser/images/run.png"), "Start Plugin", this);
+  stopPluginAction = new QAction(QIcon(":/pluginbrowser/images/stop.png"), "Stop Plugin", this);
+
+  connect(startPluginAction, SIGNAL(triggered()), this, SLOT(startPlugin()));
+  connect(stopPluginAction, SIGNAL(triggered()), this, SLOT(stopPlugin()));
+
+  startPluginAction->setEnabled(false);
+  stopPluginAction->setEnabled(false);
+
+  ui.pluginToolBar->addAction(startPluginAction);
+  ui.pluginToolBar->addAction(stopPluginAction);
 }
 
 void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
@@ -97,7 +109,22 @@ void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
 
   ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
 
+  startPluginAction->setEnabled(false);
+  stopPluginAction->setEnabled(false);
+
   if (!plugin) return;
+
+  const ctkPlugin::States startStates = ctkPlugin::INSTALLED | ctkPlugin::RESOLVED | ctkPlugin::STOPPING;
+  const ctkPlugin::States stopStates = ctkPlugin::STARTING | ctkPlugin::ACTIVE;
+  if (startStates.testFlag(plugin->getState()))
+  {
+    startPluginAction->setEnabled(true);
+  }
+
+  if (stopStates.testFlag(plugin->getState()))
+  {
+    stopPluginAction->setEnabled(true);
+  }
 
   QAbstractItemModel* oldModel = ui.pluginResourcesTreeView->model();
   ui.pluginResourcesTreeView->setModel(new ctkPluginResourcesTreeModel(plugin, this));
@@ -161,4 +188,22 @@ void ctkPluginBrowser::dbResourceDoubleClicked(const QModelIndex& index)
 void ctkPluginBrowser::frameworkEvent(const ctkPluginFrameworkEvent& event)
 {
   qDebug() << "FrameworkEvent: [" << event.getPlugin()->getSymbolicName() << "]" << event.getErrorString();
+}
+
+void ctkPluginBrowser::startPlugin()
+{
+  QModelIndex selection = ui.pluginsTableView->selectionModel()->currentIndex();
+  QVariant v = selection.data(Qt::UserRole);
+
+  ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
+  plugin->start();
+}
+
+void ctkPluginBrowser::stopPlugin()
+{
+  QModelIndex selection = ui.pluginsTableView->selectionModel()->currentIndex();
+  QVariant v = selection.data(Qt::UserRole);
+
+  ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
+  plugin->stop();
 }
