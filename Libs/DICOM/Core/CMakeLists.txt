@@ -26,6 +26,8 @@ SET(KIT_SRCS
   ctkDICOM.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
+  ctkDICOMIndexerBase.cpp
+  ctkDICOMIndexerBase.h
   ctkDICOMQuery.cpp
   ctkDICOMQuery.h
   ctkDICOMModel.cpp
@@ -37,6 +39,7 @@ SET(KIT_MOC_SRCS
   ctkDICOM.h
   ctkDICOMModel.h
   ctkDICOMQuery.h
+  ctkDICOMIndexerBase.h
   )
 
 # UI files

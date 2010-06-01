@@ -52,7 +52,7 @@
 
 #include <dcmtk/dcmnet/scu.h>
 
-static ctkLogger logger ( "org.commontk.core.Logger" );
+static ctkLogger logger ( "org.commontk.dicom.DICOMQuery" );
 
 //------------------------------------------------------------------------------
 class ctkDICOMQueryPrivate: public ctkPrivate<ctkDICOMQuery>
@@ -91,11 +91,16 @@ static void QueryCallback (void *callbackData,
                            T_DIMSE_C_FindRQ* /*request*/, 
                            int /*responseCount*/, 
                            T_DIMSE_C_FindRSP* /*rsp*/, 
-                           DcmDataset *responseIdentifiers) {
-  ctkDICOMQueryPrivate* d = (ctkDICOMQueryPrivate*) callbackData;
-  OFString StudyDescription;
-  responseIdentifiers->findAndGetOFString ( DCM_StudyDescription, StudyDescription );
-  logger.debug ( QString ( "Found study description: " ) + QString ( StudyDescription.c_str() ) );
+                           DcmDataset *dataset) {
+  ctkDICOMQuery* query = (ctkDICOMQuery*) callbackData;
+  OFString StudyDescription, PatientID, PatientsName;
+  dataset->findAndGetOFString ( DCM_StudyDescription, StudyDescription );
+  dataset->findAndGetOFString ( DCM_PatientID, PatientID );
+  dataset->findAndGetOFString ( DCM_PatientsName, PatientsName );
+  logger.debug ( "Found study description: " + QString ( StudyDescription.c_str() ) 
+                 + " for Patient: " + QString ( PatientsName.c_str() )
+                 + "/" + QString ( PatientID.c_str() ) );
+  query->insert ( dataset );
 }
 
 //------------------------------------------------------------------------------
@@ -229,7 +234,7 @@ void ctkDICOMQuery::query(QSqlDatabase database )
   d->query->insertEmptyElement ( DCM_NumberOfStudyRelatedSeries ); // Number of images in the series
   d->query->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
 
-  OFCondition status = d->SCU.sendFINDRequest ( 0, d->query, QueryCallback, (void*)d );
+  OFCondition status = d->SCU.sendFINDRequest ( 0, d->query, QueryCallback, (void*)this );
   if ( status.good() )
     {
     logger.debug ( "Find succeded" );

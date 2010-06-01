@@ -35,7 +35,7 @@
 void print_usage()
 {
   std::cerr << "Usage:\n";
-  std::cerr << "  ctkDICOMQuery callingAETitle calledAETitle host port\n";
+  std::cerr << "  ctkDICOMQuery database callingAETitle calledAETitle host port\n";
   return;
 }
 
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     std::cout << "Debugging" << std::endl;
     }
 
-  if (argc < 4)
+  if (argc < 5)
   {
     print_usage();
     return EXIT_FAILURE;
@@ -63,17 +63,19 @@ int main(int argc, char** argv)
   QApplication app(argc, argv);
   QTextStream out(stdout);
 
-  ctkDICOMQuery query;
+  ctkDICOM myCTK;
+  myCTK.openDatabase ( argv[1] );
 
-  query.setCallingAETitle ( QString ( argv[1] ) );
-  query.setCalledAETitle ( QString ( argv[2] ) );
-  query.setHost ( QString ( argv[3] ) );
+  ctkDICOMQuery query;
+  query.setCallingAETitle ( QString ( argv[2] ) );
+  query.setCalledAETitle ( QString ( argv[3] ) );
+  query.setHost ( QString ( argv[4] ) );
   int port;
   bool ok;
-  port = QString ( argv[4] ).toInt ( &ok );
+  port = QString ( argv[5] ).toInt ( &ok );
   if ( !ok )
     {
-    std::cerr << "Could not convert " << argv[4] << " to an integer" << std::endl;
+    std::cerr << "Could not convert " << argv[5] << " to an integer" << std::endl;
     print_usage();
     return EXIT_FAILURE;
     }
@@ -81,8 +83,7 @@ int main(int argc, char** argv)
 
   try
     {
-    QSqlDatabase db;
-    query.query ( db );
+    query.query ( myCTK.database() );
     }
   catch (std::exception e)
   {
