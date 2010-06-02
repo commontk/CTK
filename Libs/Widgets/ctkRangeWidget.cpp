@@ -36,13 +36,14 @@ public:
   int synchronizedSpinBoxWidth()const;
   void synchronizeSiblingSpinBox(int newWidth);
   static bool equal(double v1, double v2);
+  void relayout();
 
-
-  bool   Tracking;
-  bool   Changing;
-  double MinimumValueBeforeChange;
-  double MaximumValueBeforeChange;
-  bool   AutoSpinBoxWidth;
+  bool          Tracking;
+  bool          Changing;
+  double        MinimumValueBeforeChange;
+  double        MaximumValueBeforeChange;
+  bool          AutoSpinBoxWidth;
+  Qt::Alignment SpinBoxAlignment;
 };
 
 // --------------------------------------------------------------------------
@@ -59,6 +60,7 @@ ctkRangeWidgetPrivate::ctkRangeWidgetPrivate()
   this->MinimumValueBeforeChange = 0.;
   this->MaximumValueBeforeChange = 0.;
   this->AutoSpinBoxWidth = true;
+  this->SpinBoxAlignment = Qt::AlignVCenter;
 }
 
 // --------------------------------------------------------------------------
@@ -112,6 +114,33 @@ void ctkRangeWidgetPrivate::synchronizeSiblingSpinBox(int width)
       sibling->ctk_d()->MinimumSpinBox->setMinimumWidth(width);
       sibling->ctk_d()->MaximumSpinBox->setMinimumWidth(width);
       }
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkRangeWidgetPrivate::relayout()
+{
+  CTK_P(ctkRangeWidget);
+  this->GridLayout->removeWidget(this->MinimumSpinBox);
+  this->GridLayout->removeWidget(this->MaximumSpinBox);
+  this->GridLayout->removeWidget(this->Slider);
+  if (this->SpinBoxAlignment & Qt::AlignTop)
+    {
+    this->GridLayout->addWidget(this->MinimumSpinBox,0,0);
+    this->GridLayout->addWidget(this->MaximumSpinBox,0,2);
+    this->GridLayout->addWidget(this->Slider,1,0,1,3);
+    }
+  else if (this->SpinBoxAlignment & Qt::AlignVCenter)
+    {
+    this->GridLayout->addWidget(this->MinimumSpinBox,0,0);
+    this->GridLayout->addWidget(this->Slider,0,1);
+    this->GridLayout->addWidget(this->MaximumSpinBox,0,2);
+    }
+  else if (this->SpinBoxAlignment & Qt::AlignBottom)
+    {
+    this->GridLayout->addWidget(this->MinimumSpinBox,1,0);
+    this->GridLayout->addWidget(this->MaximumSpinBox,1,2);
+    this->GridLayout->addWidget(this->Slider,0, 0, 1, 3);
     }
 }
 
@@ -482,12 +511,31 @@ void ctkRangeWidget::reset()
 void ctkRangeWidget::setSpinBoxAlignment(Qt::Alignment alignment)
 {
   CTK_D(ctkRangeWidget);
+  if (d->SpinBoxAlignment == alignment)
+    {
+    return;
+    }
+  d->SpinBoxAlignment = alignment;
+  d->relayout();
+}
+
+// -------------------------------------------------------------------------
+Qt::Alignment ctkRangeWidget::spinBoxAlignment()const
+{
+  CTK_D(const ctkRangeWidget);
+  return d->SpinBoxAlignment;
+}
+
+// -------------------------------------------------------------------------
+void ctkRangeWidget::setSpinBoxTextAlignment(Qt::Alignment alignment)
+{
+  CTK_D(ctkRangeWidget);
   d->MinimumSpinBox->setAlignment(alignment);
   d->MaximumSpinBox->setAlignment(alignment);
 }
 
 // -------------------------------------------------------------------------
-Qt::Alignment ctkRangeWidget::spinBoxAlignment()const
+Qt::Alignment ctkRangeWidget::spinBoxTextAlignment()const
 {
   CTK_D(const ctkRangeWidget);
   Q_ASSERT(d->MinimumSpinBox->alignment() == d->MaximumSpinBox->alignment());

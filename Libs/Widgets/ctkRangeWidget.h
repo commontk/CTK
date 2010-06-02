@@ -44,6 +44,7 @@ class CTK_WIDGETS_EXPORT ctkRangeWidget : public QWidget
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
   Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
+  Q_PROPERTY(Qt::Alignment spinBoxTextAlignment READ spinBoxTextAlignment WRITE setSpinBoxTextAlignment)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
 
@@ -124,11 +125,18 @@ public:
   void setTickInterval(double ti);
 
   /// 
-  /// This property holds the alignment of the spin box.
-  /// Possible Values are Qt::AlignLeft, Qt::AlignRight, and Qt::AlignHCenter.
-  /// By default, the alignment is Qt::AlignLeft
+  /// This property holds the alignment of the spin boxes.
+  /// Possible Values are Qt::AlignTop, Qt::AlignBottom, and Qt::AlignVCenter.
+  /// By default, the alignment is Qt::AlignVCenter
   void setSpinBoxAlignment(Qt::Alignment alignment);
   Qt::Alignment spinBoxAlignment()const;
+  
+  /// 
+  /// This property holds the alignment of the text inside the spin boxes.
+  /// Possible Values are Qt::AlignLeft, Qt::AlignRight, and Qt::AlignHCenter.
+  /// By default, the alignment is Qt::AlignLeft
+  void setSpinBoxTextAlignment(Qt::Alignment alignment);
+  Qt::Alignment spinBoxTextAlignment()const;
 
   /// 
   /// This property holds whether slider tracking is enabled.
