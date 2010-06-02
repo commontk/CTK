@@ -65,8 +65,8 @@ public:
   QString Host;
   int Port;
   DcmSCU SCU;
-  QSqlDatabase db;
   DcmDataset* query;
+  QStringList StudyInstanceUIDList;
 
 };
 
@@ -93,14 +93,16 @@ static void QueryCallback (void *callbackData,
                            T_DIMSE_C_FindRSP* /*rsp*/, 
                            DcmDataset *dataset) {
   ctkDICOMQuery* query = (ctkDICOMQuery*) callbackData;
-  OFString StudyDescription, PatientID, PatientsName;
+  OFString StudyDescription, PatientID, PatientsName, SeriesDescription, StudyInstanceUID;
   dataset->findAndGetOFString ( DCM_StudyDescription, StudyDescription );
+  dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
   dataset->findAndGetOFString ( DCM_PatientID, PatientID );
   dataset->findAndGetOFString ( DCM_PatientsName, PatientsName );
   logger.debug ( "Found study description: " + QString ( StudyDescription.c_str() ) 
                  + " for Patient: " + QString ( PatientsName.c_str() )
                  + "/" + QString ( PatientID.c_str() ) );
   query->insert ( dataset );
+  query->addStudyInstanceUID ( QString ( StudyInstanceUID.c_str() ) );
 }
 
 //------------------------------------------------------------------------------
@@ -114,6 +116,12 @@ ctkDICOMQuery::ctkDICOMQuery()
 //------------------------------------------------------------------------------
 ctkDICOMQuery::~ctkDICOMQuery()
 {
+}
+
+void ctkDICOMQuery::addStudyInstanceUID ( QString s )
+{
+  CTK_D(ctkDICOMQuery);
+  d->StudyInstanceUIDList.append ( s );
 }
 
 /// Set methods for connectivity
@@ -163,13 +171,17 @@ int ctkDICOMQuery::port()
 //------------------------------------------------------------------------------
 void ctkDICOMQuery::query(QSqlDatabase database )
 {
+  ctkDICOMIndexerBase::setDatabase ( database );
   CTK_D(ctkDICOMQuery);
-  d->db = database;
-  
-  if ( logger.isDebugEnabled() )
+  if ( this->database().isOpen() )
     {
-    std::cout << "Debugging ctkDICOMQuery" << std::endl;
+    logger.debug ( "DB open in Query" );
     }
+  else
+    {
+    logger.debug ( "DB not open in Query" );
+    }
+  d->StudyInstanceUIDList.clear();
   d->SCU.setAETitle ( this->callingAETitle().toStdString() );
   d->SCU.setPeerAETitle ( this->calledAETitle().toStdString() );
   d->SCU.setPeerHostName ( this->host().toStdString() );
@@ -243,6 +255,27 @@ void ctkDICOMQuery::query(QSqlDatabase database )
     {
     logger.error ( "Find failed" );
     }
+
+  // Now search each Study
+  d->query->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
+  foreach ( QString StudyInstanceUID, d->StudyInstanceUIDList )
+    {
+    logger.debug ( "Starting Series C-FIND for Series: " + StudyInstanceUID );
+    d->query->putAndInsertString ( DCM_StudyInstanceUID, StudyInstanceUID.toStdString().c_str() );
+    status = d->SCU.sendFINDRequest ( 0, d->query, QueryCallback, (void*)this );
+    if ( status.good() )
+      {
+      logger.debug ( "Find succeded for Series: " + StudyInstanceUID );
+      }
+    else
+      {
+      logger.error ( "Find failed for Series: " + StudyInstanceUID );
+      }
+    }
+    
+    
+
+
   d->SCU.closeAssociation ( DUL_PEERREQUESTEDRELEASE );
 }
 

@@ -49,11 +49,6 @@ int main(int argc, char** argv)
   ctkLogger logger ( "org.commontk.core.Logger" );
   logger.setDebug();
 
-  if ( logger.isDebugEnabled() )
-    {
-    std::cout << "Debugging" << std::endl;
-    }
-
   if (argc < 5)
   {
     print_usage();
@@ -64,7 +59,19 @@ int main(int argc, char** argv)
   QTextStream out(stdout);
 
   ctkDICOM myCTK;
+  logger.debug ( "Opening database " + QString ( argv[1] ) );
   myCTK.openDatabase ( argv[1] );
+  logger.debug ( "Last error: " + myCTK.GetLastError() );
+  if ( myCTK.database().isOpen() ) 
+    {
+    logger.debug ( "Database is open" );
+    }
+  else
+    {
+    logger.debug ( "Database is not open" );
+    }
+
+  
 
   ctkDICOMQuery query;
   query.setCallingAETitle ( QString ( argv[2] ) );

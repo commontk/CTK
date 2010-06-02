@@ -40,6 +40,8 @@ public:
   explicit ctkDICOMIndexerBase();
   virtual ~ctkDICOMIndexerBase();
   void setDatabase ( QSqlDatabase database );
+  const QSqlDatabase& database() const;
+
   /**
    * Will create an entry in the appropriate tables for this dataset.
    */

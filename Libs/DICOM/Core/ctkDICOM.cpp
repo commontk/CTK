@@ -118,6 +118,7 @@ bool ctkDICOMPrivate::executeScript(const QString& script) {
   {
     if (! (*it).startsWith("--") )
       {
+      qDebug() << *it << "\n";
       query.exec(*it);
       if (query.lastError().type())
         {

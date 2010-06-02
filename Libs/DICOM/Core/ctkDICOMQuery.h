@@ -55,6 +55,9 @@ public:
   /// Query a remote DICOM Image Store SCP
   void query(QSqlDatabase database);
 
+  // Add a StudyInstanceUID to be queried
+  void addStudyInstanceUID ( QString StudyInstanceUID );
+
 private:
   CTK_DECLARE_PRIVATE(ctkDICOMQuery);
 };
