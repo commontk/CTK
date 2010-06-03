@@ -20,7 +20,7 @@ SET(KIT_include_directories
   
 # Source files
 SET(KIT_SRCS
-  ctkDICOMDemoSCU.cpp
+  ctkDICOMDemoSCUMain.cpp
   )
 
 # Headers that should run through moc

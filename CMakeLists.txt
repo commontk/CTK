@@ -280,11 +280,11 @@ SET(CTK_PLUGINS
 #
 SET(CTK_APPLICATIONS
   ctkCLIPluginExplorer:OFF
-  ctkPluginBrowser:OFF
   ctkDICOM:OFF
   ctkDICOMIndexer:OFF
   ctkDICOMDemoSCU:OFF
   ctkDICOMQuery:OFF
+  ctkPluginBrowser:OFF
   )
   
 #-----------------------------------------------------------------------------

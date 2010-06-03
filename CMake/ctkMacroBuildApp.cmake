@@ -41,6 +41,16 @@ MACRO(ctkMacroBuildApp)
 #     SET(MY_LIBRARY_TYPE "SHARED")
 #   ENDIF()
 
+  # Make sure either the source or the binary directory associated with the application
+  # contains a file named ${MY_NAME}Main.cpp
+  set(expected_mainfile ${MY_NAME}Main.cpp)
+  if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${expected_mainfile} AND
+      NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${expected_mainfile}.in AND
+      NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${expected_mainfile})
+    MESSAGE(FATAL_ERROR "Application directory: ${MY_NAME} should contains"
+                        " a file named ${expected_mainfile} or ${expected_mainfile}.in")
+  endif()
+
   # Define library name
   SET(proj_name ${MY_NAME})
 

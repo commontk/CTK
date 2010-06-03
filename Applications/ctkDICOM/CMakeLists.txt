@@ -6,7 +6,7 @@ PROJECT(ctkDICOM)
   
 # Source files
 SET(KIT_SRCS
-  ctkDICOM.cpp
+  ctkDICOMMain.cpp
   )
 
 # Headers that should run through moc
