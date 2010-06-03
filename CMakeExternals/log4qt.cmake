@@ -17,13 +17,6 @@ IF(${add_project})
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         )
     SET(log4qt_DIR ${ep_install_dir})
-
-    ExternalProject_Add_Step(${proj} force_rebuild
-      COMMENT "Force ${proj} re-build"
-      DEPENDERS build    # Steps that depend on this step
-      ALWAYS 1
-      WORKING_DIRECTORY ${ep_build_dir}/${proj}
-      )
       
   ENDIF()
 ENDIF()
