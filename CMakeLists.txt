@@ -292,6 +292,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMQuery:OFF
   ctkDICOMRetrieve:OFF
   ctkPluginBrowser:OFF
+  ctkSimplePythonShell:OFF
   )
   
 #-----------------------------------------------------------------------------
