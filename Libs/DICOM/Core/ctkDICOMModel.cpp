@@ -31,7 +31,9 @@
 
 // ctkDICOM includes
 #include "ctkDICOMModel.h"
+#include "ctkLogger.h"
 
+static ctkLogger logger ( "org.commontk.dicom.DICOMModel" );
 struct Node;
 
 //------------------------------------------------------------------------------
@@ -258,6 +260,7 @@ QString ctkDICOMModelPrivate::generateQuery(const QString& fields, const QString
     {
     res += QString(" ORDER BY ") + this->Sort;
     }
+  logger.debug ( "ctkDICOMModelPrivate::generateQuery: query is: " + res );
   return res;
 }
 
@@ -274,18 +277,22 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
     case ctkDICOMModelPrivate::RootType:
       //query = QString("SELECT  FROM ");
       query = this->generateQuery("UID as UID, PatientsName as Name, PatientsAge as Age, PatientsBirthDate as Date, PatientID as \"Subject ID\"","Patients");
+      logger.debug ( "ctkDICOMModelPrivate::updateQueries for Root: query is: " + query );
       break;
     case ctkDICOMModelPrivate::PatientType:
       //query = QString("SELECT  FROM Studies WHERE PatientsUID='%1'").arg(node->UID);
-      query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPysiciansName as Performer", "Studies",QString("PatientsUID='%1'").arg(node->UID));
+      query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPhysiciansName as Performer", "Studies",QString("PatientsUID='%1'").arg(node->UID));
+      logger.debug ( "ctkDICOMModelPrivate::updateQueries for Patient: query is: " + query );
       break;
     case ctkDICOMModelPrivate::StudyType:
       //query = QString("SELECT SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='%1'").arg(node->UID);
       query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number","Series",QString("StudyInstanceUID='%1'").arg(node->UID));
+      logger.debug ( "ctkDICOMModelPrivate::updateQueries for Study: query is: " + query );
       break;
     case ctkDICOMModelPrivate::SeriesType:
       //query = QString("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'").arg(node->UID);
-      // query = this->generateQuery("Filename as UID, Filename as Name, SeriesInstanceUID as Date", "Images", QString("SeriesInstanceUID='%1'").arg(node->UID));
+      query = this->generateQuery("Filename as UID, Filename as Name, SeriesInstanceUID as Date", "Images", QString("SeriesInstanceUID='%1'").arg(node->UID));
+      logger.debug ( "ctkDICOMModelPrivate::updateQueries for Series: query is: " + query );
       break;
     case ctkDICOMModelPrivate::ImageType:
       break;

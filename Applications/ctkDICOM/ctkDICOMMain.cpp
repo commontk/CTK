@@ -29,11 +29,15 @@
 #include "ctkDICOM.h"
 #include "ctkDICOMModel.h"
 
+// Logger
+#include "ctkLogger.h"
+
 // STD includes
 #include <iostream>
 
 int main(int argc, char** argv)
 {
+  ctkLogger::configure();
   QApplication app(argc, argv);
 
   // set up the database 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>743</width>
-    <height>793</height>
+    <width>762</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -129,19 +129,20 @@
       <property name="enabled">
        <bool>true</bool>
       </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <attribute name="title">
        <string>Local</string>
       </attribute>
-      <widget class="QTreeView" name="treeView">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>60</y>
-         <width>719</width>
-         <height>224</height>
-        </rect>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QTreeView" name="treeView"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
