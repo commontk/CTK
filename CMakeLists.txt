@@ -140,6 +140,7 @@ INCLUDE(CMake/ctkMacroBuildLib.cmake)
 INCLUDE(CMake/ctkMacroBuildPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildApp.cmake)
 INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
+INCLUDE(CMake/ctkMacroCompilePythonScript.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
