@@ -587,10 +587,12 @@ void ctkRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
     d->m_SubclassWidth = (d->m_MaximumPosition - d->m_MinimumPosition) / 2;
     qMax(d->m_SubclassPosition - d->m_MinimumPosition, d->m_MaximumPosition - d->m_SubclassPosition);
     this->setSliderDown(true);
-    if (!d->m_SelectedHandles & ctkRangeSliderPrivate::MinimumHandle || 
-        !d->m_SelectedHandles & ctkRangeSliderPrivate::MaximumHandle)
+    if (!(d->m_SelectedHandles & QFlags<ctkRangeSliderPrivate::Handle>(
+            ctkRangeSliderPrivate::MinimumHandle)) || 
+        !(d->m_SelectedHandles & QFlags<ctkRangeSliderPrivate::Handle>(ctkRangeSliderPrivate::MaximumHandle)))
       {
-      d->m_SelectedHandles = QFlags<ctkRangeSliderPrivate::Handle>(ctkRangeSliderPrivate::MinimumHandle) | 
+      d->m_SelectedHandles = 
+        QFlags<ctkRangeSliderPrivate::Handle>(ctkRangeSliderPrivate::MinimumHandle) | 
         QFlags<ctkRangeSliderPrivate::Handle>(ctkRangeSliderPrivate::MaximumHandle);
       this->update(lr.united(ur).united(sr));
       }
