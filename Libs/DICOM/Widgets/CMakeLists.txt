@@ -30,6 +30,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMDirectoryListWidget.h
+  ctkDICOMServerNodeWidget.h
   )
 
 # UI files - includes new widgets

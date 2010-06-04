@@ -60,6 +60,9 @@
          </column>
         </widget>
        </item>
+       <item>
+        <widget class="QListView" name="listView"/>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -74,14 +77,14 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QPushButton" name="removeButton">
+       <widget class="QPushButton" name="addButton">
         <property name="text">
          <string>Add</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="addButton">
+       <widget class="QPushButton" name="removeButton">
         <property name="text">
          <string>Remove</string>
         </property>

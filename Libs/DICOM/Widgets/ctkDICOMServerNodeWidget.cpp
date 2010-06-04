@@ -61,6 +61,13 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
   //headerView->setSelectionModel(previousHeaderView->selectionModel());
   headerView->setPropagateToItems(true);
   d->nodeTable->setHorizontalHeader(headerView);
+
+  d->removeButton->setEnabled(false);
+
+  connect(d->addButton,SIGNAL(clicked()), this, SLOT(addNode()));
+  connect(d->nodeTable,SIGNAL(cellActivated(int,int)), this, SLOT(updateState(int,int)));
+
+
 }
 
 //----------------------------------------------------------------------------
@@ -70,9 +77,27 @@ ctkDICOMServerNodeWidget::~ctkDICOMServerNodeWidget()
 
 
 //----------------------------------------------------------------------------
+void ctkDICOMServerNodeWidget::addNode()
+{
+  CTK_D(ctkDICOMServerNodeWidget);
+
+  std::cerr << "add server node\n";
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMServerNodeWidget::updateState(int row, int column)
+{
+  CTK_D(ctkDICOMServerNodeWidget);
+
+  d->removeButton->setEnabled(true);
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMServerNodeWidget::populateQuery(/*ctkDICOMQuery &query*/)
 {
   CTK_D(ctkDICOMServerNodeWidget);
 
-  std::cerr << "server node\n";
+  std::cerr << "server node populate\n";
 }
+
+

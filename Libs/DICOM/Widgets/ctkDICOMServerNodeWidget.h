@@ -33,13 +33,19 @@ class ctkDICOMServerNodeWidgetPrivate;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMServerNodeWidget : public QWidget
 {
+Q_OBJECT;
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMServerNodeWidget(QWidget* parent=0);
   virtual ~ctkDICOMServerNodeWidget();
 
+
   /// set properties of query based on current widget state
   void populateQuery (/*ctkDICOMQuery &query*/);
+
+public slots:
+  void addNode ();
+  void updateState (int row, int column);
 
 private:
   CTK_DECLARE_PRIVATE(ctkDICOMServerNodeWidget);
