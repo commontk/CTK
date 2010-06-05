@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QStyle>
@@ -37,12 +38,14 @@ public:
   QPushButton* PushButton;
   QString      DialogCaption;
   ctkDirectoryButton::Options DialogOptions;
+  bool         DisplayAbsolutePath;
 };
 
 //-----------------------------------------------------------------------------
 ctkDirectoryButtonPrivate::ctkDirectoryButtonPrivate()
 {
   this->DialogOptions = ctkDirectoryButton::ShowDirsOnly;
+  this->DisplayAbsolutePath = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -64,6 +67,7 @@ ctkDirectoryButton::ctkDirectoryButton(QWidget * parentWidget)
   CTK_INIT_PRIVATE(ctkDirectoryButton);
   CTK_D(ctkDirectoryButton);
   d->init();
+  d->PushButton->setText(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
   d->PushButton->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));
 }
     
@@ -76,7 +80,7 @@ ctkDirectoryButton::ctkDirectoryButton(const QString& dir,
   CTK_D(ctkDirectoryButton);
   d->init();
   d->Directory = QDir(dir);
-  d->PushButton->setText(d->Directory.path());
+  d->PushButton->setText(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
   d->PushButton->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));
 }
 
@@ -89,7 +93,7 @@ ctkDirectoryButton::ctkDirectoryButton(
   CTK_D(ctkDirectoryButton);
   d->init();
   d->Directory = QDir(dir);
-  d->PushButton->setText(d->Directory.path());
+  d->PushButton->setText(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
   d->PushButton->setIcon(icon);
 }
 
@@ -98,13 +102,13 @@ void ctkDirectoryButton::setDirectory(const QString& dir)
 {
   CTK_D(ctkDirectoryButton);
   QDir newDirectory(dir);
-  if (d->Directory == newDirectory )
+  if (d->Directory == newDirectory)
     {
     return;
     }
   d->Directory = newDirectory;
-  d->PushButton->setText(d->Directory.path());
-  emit directoryChanged(d->Directory.path());
+  d->PushButton->setText(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
+  emit directoryChanged(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
 }
 
 //-----------------------------------------------------------------------------
