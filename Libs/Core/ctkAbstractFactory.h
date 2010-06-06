@@ -39,6 +39,7 @@ class ctkAbstractFactoryItem
 {
 public:
   explicit ctkAbstractFactoryItem(const QString& key);
+  virtual ~ctkAbstractFactoryItem(){}
   
   virtual QString loadErrorString()const;
   virtual bool load() = 0;

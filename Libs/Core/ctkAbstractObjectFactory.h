@@ -46,6 +46,7 @@ protected:
   typedef BaseClassType *(*InstantiateObjectFunc)();
 public:
   explicit ctkFactoryObjectItem(const QString& key);
+  virtual ~ctkFactoryObjectItem(){}
   virtual bool load();
 protected:
   virtual BaseClassType* instanciator();

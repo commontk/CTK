@@ -34,6 +34,7 @@ class ctkFactoryPluginItem : public ctkAbstractFactoryItem<BaseClassType>
 {
 public:
   explicit ctkFactoryPluginItem(const QString& key, const QString& path);
+  virtual ~ctkFactoryPluginItem(){}
   virtual bool load();
   QString path()const;
   virtual QString loadErrorString()const;
