@@ -40,6 +40,7 @@
 #include "ctkRangeSliderPlugin.h"
 #include "ctkRangeWidgetPlugin.h"
 #include "ctkTitleComboBoxPlugin.h"
+#include "ctkTransferFunctionWidgetPlugin.h"
 #include "ctkTreeComboBoxPlugin.h"
 #include "ctkSliderSpinBoxWidgetPlugin.h"
 
@@ -68,6 +69,7 @@ public:
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
             << new ctkTitleComboBoxPlugin
+            << new ctkTransferFunctionWidgetPlugin
             << new ctkTreeComboBoxPlugin
             << new ctkSliderSpinBoxWidgetPlugin;
     return plugins;
