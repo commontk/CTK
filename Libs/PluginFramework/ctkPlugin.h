@@ -182,7 +182,7 @@ public:
      *
      * @see #start(const StartOptions&)
      */
-    START_TRANSIENT,
+    START_TRANSIENT = 0x00000001,
 
     /**
      * The plugin start operation must activate the plugin according to the
@@ -197,7 +197,7 @@ public:
      * @see PluginConstants#PLUGIN_ACTIVATIONPOLICY
      * @see #start(const StartOptions&)
      */
-    START_ACTIVATION_POLICY
+    START_ACTIVATION_POLICY = 0x00000002
 
   };
 
@@ -221,7 +221,7 @@ public:
      *
      * @see #stop(const StopOptions&)
      */
-    STOP_TRANSIENT
+    STOP_TRANSIENT = 0x00000001
   };
 
   /**
