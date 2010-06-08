@@ -57,9 +57,9 @@ int ctkTransferFunctionWidgetTest1(int argc, char * argv [] )
 
   //ctf->AddRGBPoint(0.7, 0.0,0.0,0.0);
   //ctkTransferFunctionWidget* toto = new ctkTransferFunctionWidget();
+  QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QTimer autoExit;
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(1000);
     }

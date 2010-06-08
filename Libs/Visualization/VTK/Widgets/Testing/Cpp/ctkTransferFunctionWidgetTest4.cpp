@@ -65,9 +65,9 @@ int ctkTransferFunctionWidgetTest4(int argc, char * argv [] )
   // the widget is not really shown here, only when app.exec() is called
   transferFunctionWidget.show();
 
+  QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QTimer autoExit;
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(1000);
     }
