@@ -150,7 +150,7 @@ void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
 QVariant ctkVTKHistogram::minValue()const
 {
   CTK_D(const ctkVTKHistogram);
-  return d->MinBin;
+  return 0;//d->MinBin;
 }
 
 //-----------------------------------------------------------------------------
@@ -219,6 +219,7 @@ void ctkVTKHistogram::setComponent(int component)
   // need rebuild
 }
 
+//-----------------------------------------------------------------------------
 int ctkVTKHistogram::component()const
 {
   CTK_D(const ctkVTKHistogram);
@@ -240,7 +241,7 @@ void populateBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
   int* binsPtr = bins->WritePointer(0, bins->GetNumberOfTuples());
 
   // reset bins to 0
-  memset(binsPtr, bins->GetNumberOfTuples()*sizeof(int), 0);
+  memset(binsPtr, 0, bins->GetNumberOfComponents()*bins->GetNumberOfTuples()*sizeof(int));
 
   const vtkIdType componentNumber = scalars->GetNumberOfComponents();
   const vtkIdType tupleNumber = scalars->GetNumberOfTuples();
@@ -267,9 +268,9 @@ void populateIrregularBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
 {
   vtkDataArray* scalars = histogram->dataArray();
 
-  int* binsPtr = bins->WritePointer(0, bins->GetNumberOfTuples());
+  int* binsPtr = bins->WritePointer(0, bins->GetNumberOfComponents()*bins->GetNumberOfTuples());
   // reset bins to 0
-  memset(binsPtr, bins->GetNumberOfTuples() * sizeof(int), 0);
+  memset(binsPtr, 0, bins->GetNumberOfTuples() * sizeof(int));
 
   const vtkIdType componentNumber = scalars->GetNumberOfComponents();
   const vtkIdType tupleNumber = scalars->GetNumberOfTuples();
