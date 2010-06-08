@@ -29,7 +29,7 @@
 #include "ctkPimpl.h"
 #include "ctkTransferFunction.h"
 
-class ctkControlPoint;
+struct ctkControlPoint;
 class ctkTransferFunctionItemPrivate;
 
 /// 
@@ -74,16 +74,19 @@ private:
   CTK_DECLARE_PRIVATE(ctkTransferFunctionItem);
 };
 
+//-----------------------------------------------------------------------------
 void ctkTransferFunctionItem::setRect(qreal x, qreal y, qreal width, qreal height)
 {
   this->setRect(QRectF(x,y,width,height));
 }
 
+//-----------------------------------------------------------------------------
 qreal ctkTransferFunctionItem::y(const ctkPoint& p)const
 {
   return this->y(p.Value);
 }
 
+//-----------------------------------------------------------------------------
 QColor ctkTransferFunctionItem::color(const ctkPoint& p)const
 {
   return this->color(p.Value);
