@@ -31,17 +31,22 @@
 #include "ctkTransferFunctionBarsItem.h"
 #include "ctkTransferFunctionScene.h"
 
+// std includes
+#include <cmath>
+
 //-----------------------------------------------------------------------------
 class ctkTransferFunctionBarsItemPrivate: public ctkPrivate<ctkTransferFunctionBarsItem>
 {
 public:
   ctkTransferFunctionBarsItemPrivate();
   qreal BarWidth;
+  bool  Log;
 };
 
 ctkTransferFunctionBarsItemPrivate::ctkTransferFunctionBarsItemPrivate()
 {
-  this->BarWidth = 0.7;
+  this->BarWidth = 0.6180; // golden ratio... why not.
+  this->Log = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -107,8 +112,13 @@ void ctkTransferFunctionBarsItem::paint(
   qreal barWidth = d->BarWidth * (this->rect().width() / (points.size() - 1)); 
   foreach(const QPointF& point, points)
     {
-    bars.addRect(point.x()-barWidth/2, this->rect().height() - point.y(),
-                 barWidth, point.y());
+    qreal barHeight = point.y();
+    if (d->Log && barHeight != 1.)
+      {
+      barHeight = this->rect().height() - log( tfScene->mapYFromScene(barHeight) )/log(this->transferFunction()->maxValue().toReal());// 1. - (-log(barHeight)/100.);
+      }
+    bars.addRect(point.x() - barWidth/2, this->rect().height(),
+                 barWidth, barHeight - this->rect().height() );
     }
   painter->drawPath(bars);
 }
