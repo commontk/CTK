@@ -175,6 +175,7 @@
 
     friend class ctkServiceRegistrationPrivate;
     friend class ctkPluginContext;
+    friend class ctkPluginPrivate;
 
     ctkServiceReference(ctkServiceRegistrationPrivate* reg);
 

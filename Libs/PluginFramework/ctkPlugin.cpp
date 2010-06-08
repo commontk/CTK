@@ -111,7 +111,65 @@
 
   void ctkPlugin::stop(const StopOptions& options)
   {
-    //TODO Plugin::stop()
+    Q_D(ctkPlugin);
+
+    const std::exception* savedException = 0;
+
+    //1:
+    if (d->state == UNINSTALLED)
+    {
+      throw std::logic_error("Plugin is uninstalled");
+    }
+
+    //2: If activating or deactivating, wait a litle
+    // We don't support threaded start/stop methods, so we don't need to wait
+    //waitOnActivation(fwCtx.packages, "Plugin::stop", false);
+
+    //3:
+    if ((options & STOP_TRANSIENT) == 0)
+    {
+      d->ignoreAutostartSetting();
+    }
+    bool wasStarted = false;
+
+    switch (d->state)
+    {
+    case INSTALLED:
+    case RESOLVED:
+    case STOPPING:
+    case UNINSTALLED:
+      //4:
+      return;
+
+    case ACTIVE:
+      wasStarted = true;
+    case STARTING: // Lazy start...
+      try
+      {
+        d->stop0(wasStarted);
+      }
+      catch (const std::exception* exc)
+      {
+        savedException = exc;
+      }
+      break;
+    };
+
+    if (d->state != UNINSTALLED)
+    {
+      d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, this));
+    }
+    if (savedException)
+    {
+      if (const ctkPluginException* pluginExc = dynamic_cast<const ctkPluginException*>(savedException))
+      {
+        throw pluginExc;
+      }
+      else
+      {
+        throw dynamic_cast<const std::logic_error*>(savedException);
+      }
+    }
   }
 
   ctkPluginContext* ctkPlugin::getPluginContext() const

@@ -19,32 +19,27 @@
 
 =============================================================================*/
 
-#include "ctkPluginEvent.h"
+#ifndef CTKPLUGINCONTEXTPRIVATE_H
+#define CTKPLUGINCONTEXTPRIVATE_H
 
-ctkPluginEvent::ctkPluginEvent()
-  : d(0)
+class ctkPluginPrivate;
+
+class ctkPluginContextPrivate
 {
 
-}
+public:
 
-ctkPluginEvent::ctkPluginEvent(Type type, ctkPlugin* plugin)
-  : d(new ctkPluginEventData(type, plugin))
-{
+  ctkPluginPrivate* plugin;
 
-}
+  ctkPluginContextPrivate(ctkPluginPrivate* plugin);
 
-ctkPluginEvent::ctkPluginEvent(const ctkPluginEvent& other)
-  : QObject(), d(other.d)
-{
+  /**
+   * Check that the plugin is still valid.
+   */
+  void isPluginContextValid() const;
 
-}
+  void invalidate();
 
-ctkPlugin* ctkPluginEvent::getPlugin() const
-{
-  return d->plugin;
-}
+};
 
-ctkPluginEvent::Type ctkPluginEvent::getType() const
-{
-  return d->type;
-}
+#endif // CTKPLUGINCONTEXTPRIVATE_H

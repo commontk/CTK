@@ -33,6 +33,7 @@
     : ctkPlugin(*new ctkPluginFrameworkPrivate(*this, fw))
   {
     qRegisterMetaType<ctkPluginFrameworkEvent>("ctkPluginFrameworkEvent");
+    qRegisterMetaType<ctkPluginEvent>("ctkPluginEvent");
   }
 
   void ctkPluginFramework::init()

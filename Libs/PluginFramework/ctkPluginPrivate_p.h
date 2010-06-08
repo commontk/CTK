@@ -30,172 +30,179 @@
 #include <QPluginLoader>
 
 
-  class ctkPluginActivator;
-  class ctkPluginArchive;
-  class ctkPluginFrameworkContext;
+class ctkPluginActivator;
+class ctkPluginArchive;
+class ctkPluginFrameworkContext;
 
-  class ctkPluginPrivate {
+class ctkPluginPrivate {
 
-  protected:
+protected:
 
-    ctkPlugin * const q_ptr;
+  ctkPlugin * const q_ptr;
 
-  public:
+public:
 
-    Q_DECLARE_PUBLIC(ctkPlugin)
+  Q_DECLARE_PUBLIC(ctkPlugin)
 
-    /**
-     * Construct a new plugin based on a ctkPluginArchive.
-     *
-     * @param fw ctkPluginFrameworkContext for this plugin.
-     * @param ba ctkPlugin archive representing the shared library and cached data
-     * @param checkContext AccessConrolContext to do permission checks against.
-     * @exception std::invalid_argument Faulty manifest for bundle
-     */
-    ctkPluginPrivate(ctkPlugin& qq, ctkPluginFrameworkContext* fw,
-               ctkPluginArchive* pa /*, Object checkContext*/);
+  /**
+   * Construct a new plugin based on a ctkPluginArchive.
+   *
+   * @param fw ctkPluginFrameworkContext for this plugin.
+   * @param ba ctkPlugin archive representing the shared library and cached data
+   * @param checkContext AccessConrolContext to do permission checks against.
+   * @exception std::invalid_argument Faulty manifest for bundle
+   */
+  ctkPluginPrivate(ctkPlugin& qq, ctkPluginFrameworkContext* fw,
+                   ctkPluginArchive* pa /*, Object checkContext*/);
 
-    /**
-     * Construct a new empty ctkPlugin.
-     *
-     * Only called for the system plugin
-     *
-     * @param fw Framework for this plugin.
-     */
-    ctkPluginPrivate(ctkPlugin& qq,
-                  ctkPluginFrameworkContext* fw,
-                  long id,
-                  const QString& loc,
-                  const QString& sym,
-                  const ctkVersion& ver);
+  /**
+   * Construct a new empty ctkPlugin.
+   *
+   * Only called for the system plugin
+   *
+   * @param fw Framework for this plugin.
+   */
+  ctkPluginPrivate(ctkPlugin& qq,
+                   ctkPluginFrameworkContext* fw,
+                   long id,
+                   const QString& loc,
+                   const QString& sym,
+                   const ctkVersion& ver);
 
-    virtual ~ctkPluginPrivate();
+  virtual ~ctkPluginPrivate();
 
-    /**
-     * Get updated plugin state. That means check if an installed
-     * plugin has been resolved.
-     *
-     * @return ctkPlugin state
-     */
-    ctkPlugin::State getUpdatedState();
+  /**
+   * Get updated plugin state. That means check if an installed
+   * plugin has been resolved.
+   *
+   * @return ctkPlugin state
+   */
+  ctkPlugin::State getUpdatedState();
 
-    /**
-     * Save the autostart setting to the persistent plugin storage.
-     *
-     * @param setting The autostart options to save.
-     */
-    void setAutostartSetting(const ctkPlugin::StartOptions& setting);
+  /**
+   * Save the autostart setting to the persistent plugin storage.
+   *
+   * @param setting The autostart options to save.
+   */
+  void setAutostartSetting(const ctkPlugin::StartOptions& setting);
 
-    /**
-     * Performs the actual activation.
-     */
-    void finalizeActivation();
+  void ignoreAutostartSetting();
 
-    /**
-     * Union of flags allowing plugin class access
-     */
-    static const ctkPlugin::States RESOLVED_FLAGS;
+  /**
+   * Performs the actual activation.
+   */
+  void finalizeActivation();
 
-    ctkPluginFrameworkContext * const fwCtx;
+  /**
+   * Performs the actual stopping.
+   */
+  void stop0(bool wasStarted);
 
-    /**
-     * ctkPlugin identifier
-     */
-    const long id;
+  /**
+   * Union of flags allowing plugin class access
+   */
+  static const ctkPlugin::States RESOLVED_FLAGS;
 
-    /**
-     * ctkPlugin location identifier
-     */
-    const QString location;
+  ctkPluginFrameworkContext * const fwCtx;
 
-    /**
-     * ctkPlugin symbolic name
-     */
-    QString symbolicName;
+  /**
+   * ctkPlugin identifier
+   */
+  const long id;
 
-    /**
-     * ctkPlugin version
-     */
-    ctkVersion version;
+  /**
+   * ctkPlugin location identifier
+   */
+  const QString location;
 
-    /**
-     * State of the plugin
-     */
-    ctkPlugin::State state;
+  /**
+   * ctkPlugin symbolic name
+   */
+  QString symbolicName;
 
-    /**
-     * ctkPlugin archive
-     */
-    ctkPluginArchive* archive;
+  /**
+   * ctkPlugin version
+   */
+  ctkVersion version;
 
-    /**
-     * ctkPluginContext for the plugin
-     */
-    ctkPluginContext* pluginContext;
+  /**
+   * State of the plugin
+   */
+  ctkPlugin::State state;
 
-    /**
-     * ctkPluginActivator for the plugin
-     */
-    ctkPluginActivator* pluginActivator;
+  /**
+   * ctkPlugin archive
+   */
+  ctkPluginArchive* archive;
 
-    /**
-     * The Qt plugin loader for the plugin
-     */
-    QPluginLoader pluginLoader;
+  /**
+   * ctkPluginContext for the plugin
+   */
+  ctkPluginContext* pluginContext;
 
-    /**
-     * Time when the plugin was last modified
-     */
-    long lastModified;
+  /**
+   * ctkPluginActivator for the plugin
+   */
+  ctkPluginActivator* pluginActivator;
 
-    /**
-     * Stores the default locale entries when uninstalled
-     */
-    QHash<QString, QString> cachedHeaders;
+  /**
+   * The Qt plugin loader for the plugin
+   */
+  QPluginLoader pluginLoader;
 
-    /**
-     * Stores the raw manifest headers
-     */
-    QHash<QString, QString> cachedRawHeaders;
+  /**
+   * Time when the plugin was last modified
+   */
+  long lastModified;
 
-    /**
-     * True when this plugin has its activation policy
-     * set to "eager"
-     */
-    bool eagerActivation;
+  /**
+   * Stores the default locale entries when uninstalled
+   */
+  QHash<QString, QString> cachedHeaders;
 
-    /** True during the finalization of an activation. */
-    bool activating;
+  /**
+   * Stores the raw manifest headers
+   */
+  QHash<QString, QString> cachedRawHeaders;
 
-    /** True during the state change from active to resolved. */
-    bool deactivating;
+  /**
+   * True when this plugin has its activation policy
+   * set to "eager"
+   */
+  bool eagerActivation;
 
-    /** Saved exception of resolve failure */
-    //ctkPluginException resolveFailException;
+  /** True during the finalization of an activation. */
+  bool activating;
 
-    /** List of ctkRequirePlugin entries. */
-    QList<ctkRequirePlugin*> require;
+  /** True during the state change from active to resolved. */
+  bool deactivating;
 
-  private:
+  /** Saved exception of resolve failure */
+  //ctkPluginException resolveFailException;
 
-    /**
-     * Check manifest and cache certain manifest headers as variables.
-     */
-    void checkManifestHeaders();
+  /** List of ctkRequirePlugin entries. */
+  QList<ctkRequirePlugin*> require;
 
-    // This could potentially be run in its own thread,
-    // parallelizing plugin activations
-    void start0();
+private:
 
-    /**
-     * Remove a plugins registered listeners, registered services and
-     * used services.
-     *
-     */
-    void removePluginResources();
+  /**
+   * Check manifest and cache certain manifest headers as variables.
+   */
+  void checkManifestHeaders();
+
+  // This could potentially be run in its own thread,
+  // parallelizing plugin activations
+  void start0();
+
+  /**
+   * Remove a plugins registered listeners, registered services and
+   * used services.
+   *
+   */
+  void removePluginResources();
 
 
-  };
+};
 
 
 #endif // CTKPLUGINPRIVATE_P_H
