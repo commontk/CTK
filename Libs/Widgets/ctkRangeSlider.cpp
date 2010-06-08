@@ -297,6 +297,10 @@ void ctkRangeSlider::setValues(int l, int u)
   
   if (isSliderDown())
     {
+    if (emitMinPosChanged || emitMaxPosChanged)
+      {
+      emit positionsChanged(minimumValue, maximumValue);
+      }
     if (emitMinPosChanged)
       {
       emit minimumPositionChanged(minimumValue);
@@ -305,10 +309,11 @@ void ctkRangeSlider::setValues(int l, int u)
       {
       emit maximumPositionChanged(maximumValue);
       }
-    if (emitMinPosChanged || emitMaxPosChanged)
-      {
-      emit positionsChanged(minimumValue, maximumValue);
-      }
+    }
+  if (emitMinValChanged || emitMaxValChanged)
+    {
+    emit valuesChanged(d->m_MinimumValue, 
+                       d->m_MaximumValue);
     }
   if (emitMinValChanged)
     {
@@ -317,11 +322,6 @@ void ctkRangeSlider::setValues(int l, int u)
   if (emitMaxValChanged)
     {
     emit maximumValueChanged(maximumValue);
-    }
-  if (emitMinValChanged || emitMaxValChanged)
-    {
-    emit valuesChanged(d->m_MinimumValue, 
-                       d->m_MaximumValue);
     }
   if (emitMinPosChanged || emitMaxPosChanged || 
       emitMinValChanged || emitMaxValChanged)

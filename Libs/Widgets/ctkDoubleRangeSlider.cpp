@@ -419,6 +419,7 @@ void ctkDoubleRangeSlider::onMinValueChanged(int newValue)
     return;
     }
   d->MinValue = doubleNewValue;
+  emit this->valuesChanged(d->MinValue, d->MaxValue);
   emit this->minimumValueChanged(d->MinValue);
 }
 
@@ -432,14 +433,35 @@ void ctkDoubleRangeSlider::onMaxValueChanged(int newValue)
     return;
     }
   d->MaxValue = doubleNewValue;
+  emit this->valuesChanged(d->MinValue, d->MaxValue);
   emit this->maximumValueChanged(d->MaxValue);
 }
 
 // --------------------------------------------------------------------------
-void ctkDoubleRangeSlider::onValuesChanged(int min, int max)
+void ctkDoubleRangeSlider::onValuesChanged(int newMinValue, int newMaxValue)
 {
   CTK_D(ctkDoubleRangeSlider);
-  emit this->valuesChanged(d->minFromInt(min), d->maxFromInt(max));
+  double doubleNewMinValue = d->minFromInt(newMinValue);
+  double doubleNewMaxValue = d->maxFromInt(newMaxValue);
+
+  bool emitMinValueChanged = (d->MinValue != doubleNewMinValue);
+  bool emitMaxValueChanged = (d->MaxValue != doubleNewMaxValue);
+
+  if (!emitMinValueChanged && !emitMaxValueChanged)
+    {
+    return;
+    }
+  d->MinValue = doubleNewMinValue;
+  d->MaxValue = doubleNewMaxValue;
+  emit this->valuesChanged(d->MinValue, d->MaxValue);
+  if (emitMinValueChanged)
+    {
+    emit this->minimumValueChanged(d->MinValue);
+    }
+  if (emitMaxValueChanged)
+    {
+    emit this->maximumValueChanged(d->MaxValue);
+    }
 }
 
 // --------------------------------------------------------------------------

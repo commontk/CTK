@@ -158,17 +158,20 @@ ctkRangeWidget::ctkRangeWidget(QWidget* _parent) : Superclass(_parent)
   d->MaximumSpinBox->setMaximum(d->Slider->maximum());
   d->MinimumSpinBox->setValue(d->Slider->minimumValue());
   d->MaximumSpinBox->setValue(d->Slider->maximumValue());
-  this->connect(d->Slider, SIGNAL(minimumValueChanged(double)), d->MinimumSpinBox, SLOT(setValue(double)));
+  
+  //this->connect(d->Slider, SIGNAL(minimumValueChanged(double)), d->MinimumSpinBox, SLOT(setValue(double)));
+  //this->connect(d->Slider, SIGNAL(maximumValueChanged(double)), d->MaximumSpinBox, SLOT(setValue(double)));
+  this->connect(d->Slider, SIGNAL(valuesChanged(double, double)), this, SLOT(changeValues(double,double)));
+  this->connect(d->Slider, SIGNAL(minimumValueChanged(double)), this, SLOT(changeMinimumValue(double)));
+  this->connect(d->Slider, SIGNAL(maximumValueChanged(double)), this, SLOT(changeMaximumValue(double)));
+  
   this->connect(d->MinimumSpinBox, SIGNAL(valueChanged(double)), d->Slider, SLOT(setMinimumValue(double)));
-  this->connect(d->Slider, SIGNAL(maximumValueChanged(double)), d->MaximumSpinBox, SLOT(setValue(double)));
   this->connect(d->MaximumSpinBox, SIGNAL(valueChanged(double)), d->Slider, SLOT(setMaximumValue(double)));
   this->connect(d->MinimumSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setMinimumToMaximumSpinBox(double)));
   this->connect(d->MaximumSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setMaximumToMinimumSpinBox(double)));
 
   this->connect(d->Slider, SIGNAL(sliderPressed()), this, SLOT(startChanging()));
   this->connect(d->Slider, SIGNAL(sliderReleased()), this, SLOT(stopChanging()));
-  this->connect(d->Slider, SIGNAL(minimumValueChanged(double)), this, SLOT(changeMinimumValue(double)));
-  this->connect(d->Slider, SIGNAL(maximumValueChanged(double)), this, SLOT(changeMaximumValue(double)));
   d->MinimumSpinBox->installEventFilter(this);
   d->MaximumSpinBox->installEventFilter(this);
 }
@@ -384,6 +387,14 @@ void ctkRangeWidget::changeMaximumValue(double newValue)
     {
     emit this->maximumValueChanged(newValue);
     }
+}
+
+// --------------------------------------------------------------------------
+void ctkRangeWidget::changeValues(double newMinValue, double newMaxValue)
+{
+  CTK_D(ctkRangeWidget);
+  d->MinimumSpinBox->setValue(newMinValue);
+  d->MaximumSpinBox->setValue(newMaxValue);
 }
 
 // --------------------------------------------------------------------------

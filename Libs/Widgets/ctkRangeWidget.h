@@ -177,6 +177,7 @@ signals:
 protected slots:
   void startChanging();
   void stopChanging();
+  void changeValues(double newMinValue, double newMaxValue);
   void changeMinimumValue(double value);
   void changeMaximumValue(double value);
   void setMinimumToMaximumSpinBox(double minimum);
