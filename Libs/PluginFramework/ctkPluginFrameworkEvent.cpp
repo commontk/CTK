@@ -22,42 +22,41 @@
 #include "ctkPluginFrameworkEvent.h"
 
 
-  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent()
-    : d(0)
-  {
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent()
+  : d(0)
+{
 
-  }
+}
 
-  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin, const std::exception& fwException)
-    : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
-  {
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin, const std::exception& fwException)
+  : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
+{
 
-  }
+}
 
-  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin)
-    : d(new ctkPluginFrameworkEventData(type, plugin, QString()))
-  {
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin)
+  : d(new ctkPluginFrameworkEventData(type, plugin, QString()))
+{
 
-  }
+}
 
-  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other)
-    : QObject(), d(other.d)
-  {
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other)
+  : QObject(), d(other.d)
+{
 
-  }
+}
 
-  QString ctkPluginFrameworkEvent::getErrorString() const
-  {
-    return d->errorString;
-  }
+QString ctkPluginFrameworkEvent::getErrorString() const
+{
+  return d->errorString;
+}
 
-  ctkPlugin* ctkPluginFrameworkEvent::getPlugin() const
-  {
-    return d->plugin;
-  }
+ctkPlugin* ctkPluginFrameworkEvent::getPlugin() const
+{
+  return d->plugin;
+}
 
-  ctkPluginFrameworkEvent::Type ctkPluginFrameworkEvent::getType() const
-  {
-    return d->type;
-
+ctkPluginFrameworkEvent::Type ctkPluginFrameworkEvent::getType() const
+{
+  return d->type;
 }

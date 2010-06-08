@@ -28,26 +28,26 @@
 #include <ctkPluginFrameworkEvent.h>
 
 
-  class ctkPluginFrameworkListeners : public QObject
-  {
+class ctkPluginFrameworkListeners : public QObject
+{
 
-    Q_OBJECT
+  Q_OBJECT
 
-  public:
+public:
 
-    void frameworkError(ctkPlugin* p, const std::exception& e);
+  void frameworkError(ctkPlugin* p, const std::exception& e);
 
-    void emitPluginChanged(const ctkPluginEvent& event);
+  void emitPluginChanged(const ctkPluginEvent& event);
 
-    void emitFrameworkEvent(const ctkPluginFrameworkEvent& event);
+  void emitFrameworkEvent(const ctkPluginFrameworkEvent& event);
 
-  signals:
+signals:
 
-    void pluginChanged(const ctkPluginEvent& event);
+  void pluginChanged(const ctkPluginEvent& event);
 
-    void frameworkEvent(const ctkPluginFrameworkEvent& event);
+  void frameworkEvent(const ctkPluginFrameworkEvent& event);
 
-  };
+};
 
 
 #endif // CTKPLUGINFRAMEWORKLISTENERS_H
