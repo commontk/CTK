@@ -17,6 +17,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkPluginBrowser.h
   ctkPluginBrowserEditors.h
+  ctkPluginTableModel.h
   )
 
 # UI files

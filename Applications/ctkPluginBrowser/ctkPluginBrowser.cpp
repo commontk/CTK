@@ -42,7 +42,19 @@
 ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   : framework(framework)
 {
+  pluginEventTypeToString[ctkPluginEvent::INSTALLED] = "Installed";
+  pluginEventTypeToString[ctkPluginEvent::LAZY_ACTIVATION] = "Lazy Activation";
+  pluginEventTypeToString[ctkPluginEvent::RESOLVED] = "Resolved";
+  pluginEventTypeToString[ctkPluginEvent::STARTED] = "Started";
+  pluginEventTypeToString[ctkPluginEvent::STARTING] = "Starting";
+  pluginEventTypeToString[ctkPluginEvent::STOPPED] = "Stopped";
+  pluginEventTypeToString[ctkPluginEvent::STOPPING] = "Stopping";
+  pluginEventTypeToString[ctkPluginEvent::UNINSTALLED] = "Uninstalled";
+  pluginEventTypeToString[ctkPluginEvent::UNRESOLVED] = "Unresolved";
+  pluginEventTypeToString[ctkPluginEvent::UPDATED] = "Updated";
+
   framework->getPluginContext()->connectFrameworkListener(this, SLOT(frameworkEvent(ctkPluginFrameworkEvent)));
+  framework->getPluginContext()->connectPluginListener(this, SLOT(pluginEvent(ctkPluginEvent)));
 
   QStringList pluginDirs;
 #ifdef CMAKE_INTDIR
@@ -108,7 +120,15 @@ void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
   QVariant v = index.data(Qt::UserRole);
 
   ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
+  updatePluginToolbar(plugin);
 
+  QAbstractItemModel* oldModel = ui.pluginResourcesTreeView->model();
+  ui.pluginResourcesTreeView->setModel(new ctkPluginResourcesTreeModel(plugin, this));
+  if (oldModel) oldModel->deleteLater();;
+}
+
+void ctkPluginBrowser::updatePluginToolbar(ctkPlugin* plugin)
+{
   startPluginAction->setEnabled(false);
   stopPluginAction->setEnabled(false);
 
@@ -125,10 +145,6 @@ void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
   {
     stopPluginAction->setEnabled(true);
   }
-
-  QAbstractItemModel* oldModel = ui.pluginResourcesTreeView->model();
-  ui.pluginResourcesTreeView->setModel(new ctkPluginResourcesTreeModel(plugin, this));
-  if (oldModel) oldModel->deleteLater();;
 }
 
 void ctkPluginBrowser::pluginDoubleClicked(const QModelIndex& index)
@@ -188,6 +204,18 @@ void ctkPluginBrowser::dbResourceDoubleClicked(const QModelIndex& index)
 void ctkPluginBrowser::frameworkEvent(const ctkPluginFrameworkEvent& event)
 {
   qDebug() << "FrameworkEvent: [" << event.getPlugin()->getSymbolicName() << "]" << event.getErrorString();
+}
+
+void ctkPluginBrowser::pluginEvent(const ctkPluginEvent& event)
+{
+  qDebug() << "PluginEvent: [" << event.getPlugin()->getSymbolicName() << "]" << pluginEventTypeToString[event.getType()];
+
+  ctkPlugin* plugin = event.getPlugin();
+  QModelIndexList selection = ui.pluginsTableView->selectionModel()->selectedIndexes();
+  if (!selection.isEmpty() && selection.first().data(Qt::UserRole).toLongLong() == plugin->getPluginId())
+  {
+    updatePluginToolbar(plugin);
+  }
 }
 
 void ctkPluginBrowser::startPlugin()

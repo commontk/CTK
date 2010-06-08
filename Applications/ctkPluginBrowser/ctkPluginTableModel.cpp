@@ -28,6 +28,7 @@ ctkPluginTableModel::ctkPluginTableModel(ctkPluginContext* pc, QObject* parent)
   : QAbstractTableModel(parent)
 {
   plugins = pc->getPlugins();
+  pc->connectPluginListener(this, SLOT(pluginChanged(ctkPluginEvent)));
 }
 
 QVariant ctkPluginTableModel::data(const QModelIndex& index, int role) const
@@ -113,4 +114,11 @@ QString ctkPluginTableModel::getStringForState(const ctkPlugin::State state) con
   case ctkPlugin::ACTIVE: return active;
   default: return QString("unknown");
   }
+}
+
+void ctkPluginTableModel::pluginChanged(const ctkPluginEvent& event)
+{
+  QModelIndex topLeftIndex = createIndex(plugins.indexOf(event.getPlugin()), 0, 0);
+  QModelIndex bottomRightIndex = createIndex(topLeftIndex.row(), columnCount()-1, 0);
+  emit dataChanged(topLeftIndex, bottomRightIndex);
 }

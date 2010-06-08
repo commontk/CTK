@@ -28,6 +28,7 @@
 
 #include "ctkPluginBrowserEditors.h"
 
+#include <ctkPluginEvent.h>
 #include <ctkPluginFrameworkEvent.h>
 
 
@@ -49,11 +50,16 @@ private slots:
   void dbResourceDoubleClicked(const QModelIndex& index);
 
   void frameworkEvent(const ctkPluginFrameworkEvent& event);
+  void pluginEvent(const ctkPluginEvent& event);
 
   void startPlugin();
   void stopPlugin();
 
 private:
+
+  void updatePluginToolbar(ctkPlugin* plugin);
+
+  QMap<ctkPluginEvent::Type, QString> pluginEventTypeToString;
 
   ctkPluginFramework* framework;
 
