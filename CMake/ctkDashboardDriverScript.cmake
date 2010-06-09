@@ -23,6 +23,7 @@
 # steps of the different CTK sub-project (library, application or plugins)
 #
 
+#-----------------------------------------------------------------------------
 # The following variable are expected to be define in the top-level script:
 set(expected_variables
   ADDITIONNAL_CMAKECACHE_OPTION
@@ -58,14 +59,16 @@ foreach(var ${expected_variables})
   endif()
 endforeach()
 
+set(git_repository http://github.com/commontk/CTK.git)
+
 # Should binary directory be cleaned?
 set(empty_binary_directory FALSE)
 
 # Attempt to build and test also if 'ctest_update' returned an error
 set(force_build FALSE)
 
+# Set model options
 set(model "")
-
 if (SCRIPT_MODE STREQUAL "experimental")
   set(empty_binary_directory FALSE)
   set(force_build TRUE)
@@ -95,7 +98,7 @@ if(empty_binary_directory)
 endif()
 
 if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
-  set(CTEST_CHECKOUT_COMMAND "${CTEST_GIT_COMMAND} clone http://github.com/commontk/CTK.git ${CTEST_SOURCE_DIRECTORY}")
+  set(CTEST_CHECKOUT_COMMAND "${CTEST_GIT_COMMAND} clone ${git_repository} ${CTEST_SOURCE_DIRECTORY}")
 endif()
 
 set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
@@ -137,7 +140,7 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
     ctest_submit(FILES "${CTEST_BINARY_DIRECTORY}/Project.xml")
 
     # Build top level
-    message("Build SuperBuild")
+    message("----------- [ Build SuperBuild ] -----------")
     ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
     ctest_submit(PARTS Build)
     
@@ -176,7 +179,7 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
      
      # Loop over kit suffixes and try to build the corresponding target
      foreach(kit_suffixe ${kit_suffixes})
-       message("Build ${subproject}${kit_suffixe}")
+       message("----------- [ Build ${subproject}${kit_suffixe} ] -----------")
        set(CTEST_BUILD_TARGET "${subproject}${kit_suffixe}")
        ctest_build(BUILD "${ctk_build_dir}" APPEND)
      endforeach()
@@ -191,7 +194,7 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
     foreach(subproject ${CTEST_PROJECT_SUBPROJECTS})
       set_property(GLOBAL PROPERTY SubProject ${subproject})
       set_property(GLOBAL PROPERTY Label ${subproject})
-      message("Test ${subproject}")
+      message("----------- [ Test ${subproject} ] -----------")
 
       ctest_test(
         BUILD "${ctk_build_dir}" 
@@ -203,7 +206,7 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
 
       # Coverage per sub-project (library, application or plugin)
       if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
-        message("Coverage ${subproject}")
+        message("----------- [ Coverage ${subproject} ] -----------")
         ctest_coverage(BUILD "${ctk_build_dir}" LABELS "${subproject}")
         ctest_submit(PARTS Coverage)
       endif ()
@@ -220,14 +223,14 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
     
     # Global coverage ... 
     if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
-      message("Global coverage")
+      message("----------- [ Global coverage ] -----------")
       ctest_coverage(BUILD "${ctk_build_dir}")
       ctest_submit(PARTS Coverage)
     endif ()
     
     # Global dynamic analysis ...
     if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND)
-        message("Global memcheck")
+        message("----------- [ Global memcheck ] -----------")
         ctest_memcheck(BUILD "${ctk_build_dir}")
         ctest_submit(PARTS MemCheck)
       endif ()
