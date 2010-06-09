@@ -5,7 +5,7 @@ PROJECT(ctkCLIPluginExplorer)
 #
 
 SET(KIT_SRCS
-  ctkCLIPluginExplorerMain.cxx
+  ctkCLIPluginExplorerMain.cpp
 )
 
 # Headers that should run through moc
