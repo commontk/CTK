@@ -465,8 +465,8 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/UseCTK.cmake.in
 #-----------------------------------------------------------------------------
 # Set C/CXX Flags
 #
-SET(CMAKE_CXX_FLAGS ${CTK_CXX_FLAGS})
-SET(CMAKE_C_FLAGS ${CTK_C_FLAGS})
+SET(CMAKE_CXX_FLAGS ${CTK_CXX_FLAGS} CACHE STRING "CMake C Flags" FORCE)
+SET(CMAKE_C_FLAGS ${CTK_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
 
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories
