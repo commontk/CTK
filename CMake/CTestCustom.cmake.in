@@ -75,4 +75,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # Visual studio spurious warnings...
   "The following environment variables were not found"
+  
+  # QtMobility 
+  "warning: jobserver unavailable: using -j1.  Add `+' to parent make rule."
   )
