@@ -33,11 +33,6 @@ SET(CTEST_CUSTOM_WARNING_MATCH
 
 SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
-  # cmake suppressions
-  "CMake.*Utilities.cmcurl"
-  "CMake.*Source.kwsys.*warn_unused_result"
-  "CMake.*Source.*cm.*cxx"
-  "CMake.*Source.*cm.*h"
 
   # kwstyle suppressions
   "[Kk][Ww][Ss]tyle.*kws.*cxx"
