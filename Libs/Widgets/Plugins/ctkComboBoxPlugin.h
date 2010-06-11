@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,24 +15,24 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
-#ifndef __ctkTitleComboBoxPlugin_h
-#define __ctkTitleComboBoxPlugin_h
+#ifndef __ctkComboBoxPlugin_h
+#define __ctkComboBoxPlugin_h
 
 // CTK includes
 #include "ctkWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkTitleComboBoxPlugin :
+class CTK_WIDGETS_PLUGINS_EXPORT ctkComboBoxPlugin :
   public QObject,
   public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkTitleComboBoxPlugin(QObject *_parent = 0);
-  
+  ctkComboBoxPlugin(QObject *_parent = 0);
+
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;
   QIcon    icon() const;

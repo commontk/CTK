@@ -9,7 +9,7 @@ SET(KIT_export_directive "CTK_WIDGETS_EXPORT")
 # Additional directories to include
 SET(KIT_include_directories
   )
-  
+
 # Source files
 SET(KIT_SRCS
   ctkAddRemoveComboBox.cpp
@@ -20,6 +20,8 @@ SET(KIT_SRCS
   ctkCheckableHeaderView.h
   ctkCheckBoxPixmaps.cpp
   ctkCheckBoxPixmaps.h
+  ctkComboBox.cpp
+  ctkComboBox.h
   ctkCollapsibleButton.cpp
   ctkCollapsibleButton.h
   ctkCollapsibleGroupBox.cpp
@@ -54,8 +56,6 @@ SET(KIT_SRCS
   ctkSliderSpinBoxWidget.h
   ctkTestApplication.cpp
   ctkTestApplication.h
-  ctkTitleComboBox.cpp
-  ctkTitleComboBox.h
   ctkTransferFunctionControlPointsItem.cpp
   ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionGradientItem.cpp
@@ -78,6 +78,7 @@ SET(KIT_MOC_SRCS
   ctkButtonGroup.h
   ctkCheckableHeaderView.h
   ctkCheckBoxPixmaps.h
+  ctkComboBox.h
   ctkCollapsibleButton.h
   ctkCollapsibleGroupBox.h
   ctkColorPickerButton.h
@@ -95,7 +96,6 @@ SET(KIT_MOC_SRCS
   ctkSettings.h
   ctkSliderSpinBoxWidget.h
   ctkTestApplication.h
-  ctkTitleComboBox.h
   ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionGradientItem.h
   ctkTransferFunctionBarsItem.h

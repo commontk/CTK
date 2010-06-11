@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,26 +15,25 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 // Qt includes
 #include <QApplication>
 
 // CTK includes
-#include "ctkTitleComboBox.h"
+#include "ctkComboBox.h"
 
 // STD includes
 #include <stdlib.h>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkTitleComboBoxTest1(int argc, char * argv [] )
+int ctkComboBoxTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkTitleComboBox ctkObject;
-
+  ctkComboBox ctkObject;
 
   return EXIT_SUCCESS;
 }

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,55 +15,55 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 // CTK includes
-#include "ctkTitleComboBoxPlugin.h"
-#include "ctkTitleComboBox.h"
+#include "ctkComboBoxPlugin.h"
+#include "ctkComboBox.h"
 
 //-----------------------------------------------------------------------------
-ctkTitleComboBoxPlugin::ctkTitleComboBoxPlugin(QObject *_parent)
+ctkComboBoxPlugin::ctkComboBoxPlugin(QObject *_parent)
         : QObject(_parent)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkTitleComboBoxPlugin::createWidget(QWidget *_parent)
+QWidget *ctkComboBoxPlugin::createWidget(QWidget *_parent)
 {
-  ctkTitleComboBox* _widget = new ctkTitleComboBox(_parent);
+  ctkComboBox* _widget = new ctkComboBox(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkTitleComboBoxPlugin::domXml() const
+QString ctkComboBoxPlugin::domXml() const
 {
-  return "<widget class=\"ctkTitleComboBox\" \
+  return "<widget class=\"ctkComboBox\" \
           name=\"CTKTitleComboBox\">\n"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkTitleComboBoxPlugin::icon() const
+QIcon ctkComboBoxPlugin::icon() const
 {
   return QIcon(":/Icons/combobox.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkTitleComboBoxPlugin::includeFile() const
+QString ctkComboBoxPlugin::includeFile() const
 {
-  return "ctkTitleComboBox.h";
+  return "ctkComboBox.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkTitleComboBoxPlugin::isContainer() const
+bool ctkComboBoxPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkTitleComboBoxPlugin::name() const
+QString ctkComboBoxPlugin::name() const
 {
-  return "ctkTitleComboBox";
+  return "ctkComboBox";
 }

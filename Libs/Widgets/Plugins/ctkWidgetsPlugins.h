@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 #ifndef __ctkWidgetsPlugins_h
@@ -26,6 +26,7 @@
 
 // CTK includes
 #include "CTKWidgetsPluginsExport.h"
+#include "ctkComboBoxPlugin.h"
 #include "ctkCollapsibleButtonPlugin.h"
 #include "ctkCollapsibleGroupBoxPlugin.h"
 #include "ctkColorPickerButtonPlugin.h"
@@ -39,7 +40,6 @@
 #include "ctkMenuButtonPlugin.h"
 #include "ctkRangeSliderPlugin.h"
 #include "ctkRangeWidgetPlugin.h"
-#include "ctkTitleComboBoxPlugin.h"
 #include "ctkTransferFunctionWidgetPlugin.h"
 #include "ctkTreeComboBoxPlugin.h"
 #include "ctkSliderSpinBoxWidgetPlugin.h"
@@ -55,7 +55,8 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new ctkCollapsibleButtonPlugin
+    plugins << new ctkComboBoxPlugin
+            << new ctkCollapsibleButtonPlugin
             << new ctkCollapsibleGroupBoxPlugin
             << new ctkColorPickerButtonPlugin
             << new ctkCoordinatesWidgetPlugin
@@ -68,7 +69,6 @@ public:
             << new ctkMenuButtonPlugin
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
-            << new ctkTitleComboBoxPlugin
             << new ctkTransferFunctionWidgetPlugin
             << new ctkTreeComboBoxPlugin
             << new ctkSliderSpinBoxWidgetPlugin;
