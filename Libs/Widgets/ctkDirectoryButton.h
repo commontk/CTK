@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 #ifndef __ctkDirectoryButton_h
@@ -39,7 +39,7 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   // QFileDialog::Options is not a meta-type, we need to create our own.
   Q_FLAGS(Option Options);
 
-public: 
+public:
   // QFileDialog::Options is not a meta-type, we need to create our own.
   enum Option
     {
@@ -52,20 +52,20 @@ public:
       HideNameFilterDetails = 0x00000040
     };
   Q_DECLARE_FLAGS(Options, Option)
-    
+
   ctkDirectoryButton(QWidget * parent = 0);
   ctkDirectoryButton(const QString& directory, QWidget * parent = 0);
   ctkDirectoryButton(const QIcon& icon, const QString& directory, QWidget * parent = 0);
 
   void setDirectory(const QString& directory);
   QString directory()const;
-  
+
   ///
   /// The title of the file dialog used to select a new directory
   /// If caption is not set, internally use QWidget::tooltip()
   void setCaption(const QString& caption);
   const QString& caption()const;
-  
+
   void setOptions(const Options& options);
   const Options& options()const;
 
@@ -77,7 +77,7 @@ signals:
   /// directoryChanged is emitted when the current directory changes
   ///if you want a directoryChanged signal as a utility. Feel free to add it
   void directoryChanged(const QString&);
-
+  void directorySelected(const QString&);
 private:
   CTK_DECLARE_PRIVATE(ctkDirectoryButton);
 };
