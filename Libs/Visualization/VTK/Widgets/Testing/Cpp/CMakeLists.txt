@@ -1,11 +1,24 @@
 SET(KIT ${PROJECT_NAME})
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+#
+# Tests
+#
+SET(TEST_SOURCES
   ctkTransferFunctionWidgetTest1.cpp
   ctkTransferFunctionWidgetTest2.cpp
   ctkTransferFunctionWidgetTest3.cpp
   ctkTransferFunctionWidgetTest4.cpp
   ctkTransferFunctionWidgetTest5.cpp
+  )
+
+#
+# Tests expecting CTKData to be set
+#
+IF(EXISTS "${CTKData_DIR}")
+ENDIF()
+
+CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+  ${TEST_SOURCES}
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -23,7 +36,7 @@ IF(WIN32)
 ENDIF(WIN32)
 
 MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
+  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} -D "${CTKData_DIR}/Data")
   SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
 ENDMACRO( SIMPLE_TEST  )
 
@@ -31,9 +44,14 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
-#SIMPLE_TEST( ctkVTKObjectTest1 )
 SIMPLE_TEST( ctkTransferFunctionWidgetTest1 )
 SIMPLE_TEST( ctkTransferFunctionWidgetTest2 )
 SIMPLE_TEST( ctkTransferFunctionWidgetTest3 )
 SIMPLE_TEST( ctkTransferFunctionWidgetTest4 )
 SIMPLE_TEST( ctkTransferFunctionWidgetTest5 )
+
+#
+# Add Tests expecting CTKData to be set
+#
+IF(EXISTS "${CTKData_DIR}")
+ENDIF()
