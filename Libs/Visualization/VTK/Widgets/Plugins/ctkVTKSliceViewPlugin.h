@@ -18,34 +18,27 @@
  
 =========================================================================*/
 
-#ifndef __ctkVTKWidgetsPlugins_h
-#define __ctkVTKWidgetsPlugins_h
-
-// Qt includes
-#include <QDesignerCustomWidgetCollectionInterface>
+#ifndef __ctkVTKSliceViewPlugin_h
+#define __ctkVTKSliceViewPlugin_h
 
 // CTK includes
-#include "CTKVisualizationVTKWidgetsPluginsExport.h"
-#include "ctkVTKRenderViewPlugin.h"
-#include "ctkVTKSliceViewPlugin.h"
+#include "ctkVTKWidgetsAbstractPlugin.h"
 
-
-/// \class Group the plugins in one library
-class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKWidgetsPlugins :
+class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKSliceViewPlugin :
   public QObject,
-  public QDesignerCustomWidgetCollectionInterface
+  public ctkVTKWidgetsAbstractPlugin
 {
   Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
-  QList<QDesignerCustomWidgetInterface*> customWidgets() const
-    {
-    QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new ctkVTKRenderViewPlugin;
-    plugins << new ctkVTKSliceViewPlugin;
-    return plugins;
-    }
+  ctkVTKSliceViewPlugin(QObject *_parent = 0);
+  
+  QWidget *createWidget(QWidget *_parent);
+  QString domXml() const;
+  QString includeFile() const;
+  bool isContainer() const;
+  QString name() const;
+  
 };
 
 #endif

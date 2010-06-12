@@ -15,6 +15,8 @@ SET(PLUGIN_SRCS
 
   ctkVTKRenderViewPlugin.cpp
   ctkVTKRenderViewPlugin.h
+  ctkVTKSliceViewPlugin.cpp
+  ctkVTKSliceViewPlugin.h
   )
 
 # Headers that should run through moc
@@ -22,6 +24,7 @@ SET(PLUGIN_MOC_SRCS
   ctkVTKWidgetsPlugins.h
 
   ctkVTKRenderViewPlugin.h
+  ctkVTKSliceViewPlugin.h
   )
 
 # Resources
