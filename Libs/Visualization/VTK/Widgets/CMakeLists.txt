@@ -31,6 +31,9 @@ SET(KIT_SRCS
   ctkVTKRenderView.cpp
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
+  ctkVTKSliceView.cpp
+  ctkVTKSliceView.h
+  ctkVTKSliceView_p.h
   )
 
 # Headers that should run through moc
@@ -39,6 +42,8 @@ SET(KIT_MOC_SRCS
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
+  ctkVTKSliceView.h
+  ctkVTKSliceView_p.h
   )
 
 # UI files
