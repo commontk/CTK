@@ -208,6 +208,7 @@ ExternalProject_Add(${proj}
     -DCTK_CXX_FLAGS:STRING=${CTK_CXX_FLAGS}
     -DCTK_C_FLAGS:STRING=${CTK_C_FLAGS}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+    -DCTKData_DIR:PATH=${CTKData_DIR}
 	  -DZMQ_DIR:PATH=${ZMQ_DIR}                     # FindVTK expects VTK_DIR variable to be defined
 	  -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR}     # FindOpenIGTLink expects OpenIGTLink_DIR variable to be defined
     -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
