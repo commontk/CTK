@@ -86,25 +86,6 @@ ctkDICOMQueryPrivate::~ctkDICOMQueryPrivate()
 }
 
 
-// Find callback
-static void QueryCallback (void *callbackData, 
-                           T_DIMSE_C_FindRQ* /*request*/, 
-                           int /*responseCount*/, 
-                           T_DIMSE_C_FindRSP* /*rsp*/, 
-                           DcmDataset *dataset) {
-  ctkDICOMQuery* query = (ctkDICOMQuery*) callbackData;
-  OFString StudyDescription, PatientID, PatientsName, SeriesDescription, StudyInstanceUID;
-  dataset->findAndGetOFString ( DCM_StudyDescription, StudyDescription );
-  dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
-  dataset->findAndGetOFString ( DCM_PatientID, PatientID );
-  dataset->findAndGetOFString ( DCM_PatientsName, PatientsName );
-  logger.debug ( "Found study description: " + QString ( StudyDescription.c_str() ) 
-                 + " for Patient: " + QString ( PatientsName.c_str() )
-                 + "/" + QString ( PatientID.c_str() ) );
-  query->insert ( dataset );
-  query->addStudyInstanceUID ( QString ( StudyInstanceUID.c_str() ) );
-}
-
 //------------------------------------------------------------------------------
 // ctkDICOMQuery methods
 
@@ -246,7 +227,9 @@ void ctkDICOMQuery::query(QSqlDatabase database )
   d->query->insertEmptyElement ( DCM_NumberOfStudyRelatedSeries ); // Number of images in the series
   d->query->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
 
-  OFCondition status = d->SCU.sendFINDRequest ( 0, d->query, QueryCallback, (void*)this );
+  FINDResponses *responses = new FINDResponses();
+
+  OFCondition status = d->SCU.sendFINDRequest ( 0, d->query, responses );
   if ( status.good() )
     {
     logger.debug ( "Find succeded" );
@@ -256,26 +239,45 @@ void ctkDICOMQuery::query(QSqlDatabase database )
     logger.error ( "Find failed" );
     }
 
+  for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
+    {
+    DcmDataset *dataset = (*it)->m_dataset;
+    if ( dataset != NULL )
+      {
+      this->insert ( dataset );
+      OFString StudyInstanceUID;
+      dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
+      this->addStudyInstanceUID ( QString ( StudyInstanceUID.c_str() ) );
+      }
+    }
+  delete responses;
+
   // Now search each Study
   d->query->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
   foreach ( QString StudyInstanceUID, d->StudyInstanceUIDList )
     {
     logger.debug ( "Starting Series C-FIND for Series: " + StudyInstanceUID );
     d->query->putAndInsertString ( DCM_StudyInstanceUID, StudyInstanceUID.toStdString().c_str() );
-    status = d->SCU.sendFINDRequest ( 0, d->query, QueryCallback, (void*)this );
+    responses = new FINDResponses();
+    status = d->SCU.sendFINDRequest ( 0, d->query, responses );
     if ( status.good() )
       {
       logger.debug ( "Find succeded for Series: " + StudyInstanceUID );
+      for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
+        {
+        DcmDataset *dataset = (*it)->m_dataset;
+        if ( dataset != NULL )
+          {
+          this->insert ( dataset );
+          }
+        }
       }
     else
       {
       logger.error ( "Find failed for Series: " + StudyInstanceUID );
       }
+    delete responses;
     }
-    
-    
-
-
   d->SCU.closeAssociation ( DUL_PEERREQUESTEDRELEASE );
 }
 
