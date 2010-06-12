@@ -92,6 +92,7 @@ ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCI
 # ExternalProjects
 #
 SET(external_projects
+  CTKData
   log4qt
   KWStyle
   PythonQt
@@ -121,6 +122,7 @@ ExternalProject_Add(${proj}
     # Mandatory dependencies
     ${log4qt_DEPENDS}
     # Optionnal dependencies
+    ${CTKData_DEPENDS}
     ${QtMobility_DEPENDS}
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
