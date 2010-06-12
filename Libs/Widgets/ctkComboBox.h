@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,47 +15,48 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
-#ifndef __ctkTitleComboBox_h
-#define __ctkTitleComboBox_h
+#ifndef __ctkComboBox_h
+#define __ctkComboBox_h
 
 // Qt includes
 #include <QComboBox>
 
 // CTK includes
+#include "ctkPimpl.h"
 #include "CTKWidgetsExport.h"
+class ctkComboBoxPrivate;
 
-class CTK_WIDGETS_EXPORT ctkTitleComboBox : public QComboBox
+class CTK_WIDGETS_EXPORT ctkComboBox : public QComboBox
 {
   Q_OBJECT
-  Q_PROPERTY(QString title READ title WRITE setTitle)
-  Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
+  Q_PROPERTY(QString defaultText READ defaultText WRITE setDefaultText)
+  Q_PROPERTY(QIcon defaultIcon READ defaultIcon WRITE setDefaultIcon)
+  Q_PROPERTY(bool forceDefault READ isDefaultForced WRITE forceDefault)
 
 public:
-  explicit ctkTitleComboBox(QWidget* parent = 0);
-  virtual ~ctkTitleComboBox();
+  explicit ctkComboBox(QWidget* parent = 0);
+  virtual ~ctkComboBox();
 
-  void setTitle(const QString&);
-  QString title()const;
-  
-  void setIcon(const QIcon&);
-  QIcon icon()const;
+  void setDefaultText(const QString&);
+  QString defaultText()const;
+
+  void setDefaultIcon(const QIcon&);
+  QIcon defaultIcon()const;
+
+  void forceDefault(bool forceDefault);
+  bool isDefaultForced()const;
 
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
 
 protected:
   virtual void paintEvent(QPaintEvent*);
-  virtual QSize recomputeSizeHint(QSize &sh)const;
 
-  QString Title;
-  QIcon   Icon;
-  
 private:
-  mutable QSize MinimumSizeHint;
-  mutable QSize SizeHint;
+  CTK_DECLARE_PRIVATE(ctkComboBox);
 };
 
 #endif

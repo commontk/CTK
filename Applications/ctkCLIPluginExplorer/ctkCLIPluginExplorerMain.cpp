@@ -19,9 +19,12 @@
 
 =============================================================================*/
 
+// Qt includes
 #include <QCoreApplication>
+#include <QDebug>
 
-#include <PluginFramework/ctkPluginManager.h>
+// CTK includes
+#include <ctkPluginManager.h>
 
 int main(int argc, char** argv)
 {

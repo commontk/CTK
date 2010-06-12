@@ -102,12 +102,23 @@ void ctkDirectoryButton::setDirectory(const QString& dir)
 {
   CTK_D(ctkDirectoryButton);
   QDir newDirectory(dir);
+
   if (d->Directory == newDirectory)
     {
+    emit directorySelected(d->DisplayAbsolutePath ?
+                           newDirectory.absolutePath() :
+                           newDirectory.path());
     return;
     }
+
   d->Directory = newDirectory;
+
   d->PushButton->setText(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
+
+  emit directorySelected(d->DisplayAbsolutePath ?
+                         newDirectory.absolutePath() :
+                         newDirectory.path());
+
   emit directoryChanged(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
 }
 
@@ -150,11 +161,11 @@ const ctkDirectoryButton::Options& ctkDirectoryButton::options()const
 void ctkDirectoryButton::browse()
 {
   CTK_D(ctkDirectoryButton);
-  QString dir = 
+  QString dir =
     QFileDialog::getExistingDirectory(
-      this, 
-      d->DialogCaption.isEmpty() ? this->toolTip() : d->DialogCaption, 
-      d->Directory.path(), 
+      this,
+      d->DialogCaption.isEmpty() ? this->toolTip() : d->DialogCaption,
+      d->Directory.path(),
       QFlags<QFileDialog::Option>(int(d->DialogOptions)));
   // An empty directory means that the user cancelled the dialog.
   if (dir.isEmpty())

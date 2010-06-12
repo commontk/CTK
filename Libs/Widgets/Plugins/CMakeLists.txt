@@ -13,6 +13,8 @@ SET(PLUGIN_SRCS
   ctkWidgetsAbstractPlugin.cpp
   ctkWidgetsAbstractPlugin.h
 
+  ctkComboBoxPlugin.cpp
+  ctkComboBoxPlugin.h
   ctkCollapsibleButtonPlugin.cpp
   ctkCollapsibleButtonPlugin.h
   ctkCollapsibleGroupBoxPlugin.cpp
@@ -41,8 +43,6 @@ SET(PLUGIN_SRCS
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.cpp
   ctkRangeWidgetPlugin.h
-  ctkTitleComboBoxPlugin.cpp
-  ctkTitleComboBoxPlugin.h
   ctkTransferFunctionWidgetPlugin.cpp
   ctkTransferFunctionWidgetPlugin.h
   ctkTreeComboBoxPlugin.cpp
@@ -55,6 +55,7 @@ SET(PLUGIN_SRCS
 SET(PLUGIN_MOC_SRCS
   ctkWidgetsPlugins.h
 
+  ctkComboBoxPlugin.h
   ctkCollapsibleButtonPlugin.h
   ctkCollapsibleGroupBoxPlugin.h
   ctkColorPickerButtonPlugin.h
@@ -69,7 +70,6 @@ SET(PLUGIN_MOC_SRCS
   ctkMenuButtonPlugin.h
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.h
-  ctkTitleComboBoxPlugin.h
   ctkTransferFunctionWidgetPlugin.h
   ctkTreeComboBoxPlugin.h
   ctkSliderSpinBoxWidgetPlugin.h

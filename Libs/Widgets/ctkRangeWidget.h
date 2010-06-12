@@ -31,6 +31,10 @@
 
 class ctkRangeWidgetPrivate;
 
+///
+/// ctkRangeWidget is a wrapper around a ctkDoubleRangeSlider and 2 QSpinBoxes
+/// \image html http:\\www.commontk.org/images/1/14/CtkRangeWidget.png
+/// \sa ctkSliderSpinBoxWidget, ctkDoubleRangeSlider, QSpinBox
 class CTK_WIDGETS_EXPORT ctkRangeWidget : public QWidget
 {
   Q_OBJECT
@@ -52,23 +56,25 @@ public:
   /// Superclass typedef
   typedef QWidget Superclass;
 
-  /// Constructors
+  /// Constructor
+  /// If \li parent is null, ctkRangeWidget will be a top-leve widget
+  /// \note The \li parent can be set later using QWidget::setParent()
   explicit ctkRangeWidget(QWidget* parent = 0);
 
-  /// 
+  ///
   /// This property holds the sliders and spinbox minimum value.
   /// FIXME: Test following specs.
-  /// When setting this property, the maximum is adjusted if necessary 
-  /// to ensure that the range remains valid. 
+  /// When setting this property, the maximum is adjusted if necessary
+  /// to ensure that the range remains valid.
   /// Also the slider's current value is adjusted to be within the new range.
   double minimum()const;
   void setMinimum(double minimum);
-  
-  /// 
+
+  ///
   /// This property holds the sliders and spinbox minimum value.
   /// FIXME: Test following specs.
-  /// When setting this property, the maximum is adjusted if necessary 
-  /// to ensure that the range remains valid. 
+  /// When setting this property, the maximum is adjusted if necessary
+  /// to ensure that the range remains valid.
   /// Also the slider's current value is adjusted to be within the new range.
   double maximum()const;
   void setMaximum(double maximum);
@@ -76,78 +82,79 @@ public:
   /// Utility function that set the min/max in once
   void setRange(double min, double max);
 
-  /// 
+  ///
   /// This property holds the slider and spinbox minimum value.
   /// ctkRangeWidget forces the value to be within the
   /// legal range: minimum <= minimumValue <= maximumValue <= maximum.
   double minimumValue()const;
 
-  /// 
+  ///
   /// This property holds the slider and spinbox maximum value.
   /// ctkRangeWidget forces the value to be within the
   /// legal range: minimum <= minimumValue <= maximumValue <= maximum.
   double maximumValue()const;
 
-  /// 
+  ///
   /// This property holds the single step.
-  /// The smaller of two natural steps that the 
-  /// slider provides and typically corresponds to the 
+  /// The smaller of two natural steps that the
+  /// slider provides and typically corresponds to the
   /// user pressing an arrow key.
   double singleStep()const;
   void setSingleStep(double step);
 
-  /// 
+  ///
   /// This property holds the precision of the spin box, in decimals.
-  /// Sets how many decimals the spinbox will use for displaying and interpreting doubles.
+  /// Sets how many decimals the spinbox will use for displaying and
+  /// interpreting doubles.
   int decimals()const;
   void setDecimals(int decimals);
 
   ///
   /// This property holds the spin box's prefix.
-  /// The prefix is prepended to the start of the displayed value. 
+  /// The prefix is prepended to the start of the displayed value.
   /// Typical use is to display a unit of measurement or a currency symbol
   QString prefix()const;
   void setPrefix(const QString& prefix);
 
   ///
   /// This property holds the spin box's suffix.
-  /// The suffix is appended to the end of the displayed value. 
+  /// The suffix is appended to the end of the displayed value.
   /// Typical use is to display a unit of measurement or a currency symbol
   QString suffix()const;
   void setSuffix(const QString& suffix);
 
-  /// 
+  ///
   /// This property holds the interval between tickmarks.
-  /// This is a value interval, not a pixel interval. 
+  /// This is a value interval, not a pixel interval.
   /// If it is 0, the slider will choose between lineStep() and pageStep().
   /// The default value is 0.
   double tickInterval()const;
   void setTickInterval(double ti);
 
-  /// 
+  ///
   /// This property holds the alignment of the spin boxes.
   /// Possible Values are Qt::AlignTop, Qt::AlignBottom, and Qt::AlignVCenter.
   /// By default, the alignment is Qt::AlignVCenter
   void setSpinBoxAlignment(Qt::Alignment alignment);
   Qt::Alignment spinBoxAlignment()const;
-  
-  /// 
+
+  ///
   /// This property holds the alignment of the text inside the spin boxes.
   /// Possible Values are Qt::AlignLeft, Qt::AlignRight, and Qt::AlignHCenter.
   /// By default, the alignment is Qt::AlignLeft
   void setSpinBoxTextAlignment(Qt::Alignment alignment);
   Qt::Alignment spinBoxTextAlignment()const;
 
-  /// 
+  ///
   /// This property holds whether slider tracking is enabled.
-  /// If tracking is enabled (the default), the widget emits the valueChanged() 
-  /// signal while the slider or spinbox is being dragged. If tracking is 
-  /// disabled, the widget emits the valueChanged() signal only when the user 
+  /// If tracking is enabled (the default), the widget emits the valueChanged()
+  /// signal while the slider or spinbox is being dragged. If tracking is
+  /// disabled, the widget emits the valueChanged() signal only when the user
   /// releases the slider or spinbox.
   void setTracking(bool enable);
   bool hasTracking()const;
 
-  /// 
+  ///
   /// Set/Get the auto spinbox width
   /// When the autoSpinBoxWidth property is on, the width of the SpinBox is
   /// set to the same width of the largest QSpinBox of its
@@ -156,7 +163,7 @@ public:
   void setAutoSpinBoxWidth(bool autoWidth);
 
 public slots:
-  /// 
+  ///
   /// Reset the slider and spinbox to zero (value and position)
   void reset();
   void setMinimumValue(double value);
@@ -182,7 +189,7 @@ protected slots:
   void changeMaximumValue(double value);
   void setMinimumToMaximumSpinBox(double minimum);
   void setMaximumToMinimumSpinBox(double maximum);
-  
+
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
 private:
