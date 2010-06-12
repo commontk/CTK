@@ -33,6 +33,8 @@ SET(KIT_SRCS
   ctkAbstractQObjectFactory.tpp
   ctkAbstractLibraryFactory.h
   ctkAbstractLibraryFactory.tpp
+  ctkCommandLineParser.cpp
+  ctkCommandLineParser.h
   ctkDependencyGraph.cpp
   ctkDependencyGraph.h
   ctkLogger.cpp

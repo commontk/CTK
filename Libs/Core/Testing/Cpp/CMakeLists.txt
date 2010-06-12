@@ -6,6 +6,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkAbstractObjectFactoryTest1.cpp
   ctkAbstractPluginFactoryTest1.cpp
   ctkAbstractQObjectFactoryTest1.cpp
+  ctkCommandLineParserTest1.cpp
   ctkModelTesterTest1.cpp
   ctkUtilsTest1.cpp
   ctkDependencyGraphTest1.cpp
@@ -36,8 +37,9 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
-SIMPLE_TEST( ctkModelTesterTest1 )
-SIMPLE_TEST( ctkUtilsTest1 )
+SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
+SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
+SIMPLE_TEST( ctkUtilsTest1 )
