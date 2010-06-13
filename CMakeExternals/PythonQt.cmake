@@ -20,30 +20,11 @@ IF(${add_project})
     IF(NOT PYTHONLIBS_FOUND)
       MESSAGE(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
     ENDIF()
-
-    # Patch program
-    FIND_PROGRAM(CTK_PATCH_EXECUTABLE patch
-      "C:/Program Files/GnuWin32/bin"
-      "C:/Program Files (x86)/GnuWin32/bin")
-    MARK_AS_ADVANCED(CTK_PATCH_EXECUTABLE)
-    IF(NOT CTK_PATCH_EXECUTABLE)
-      MESSAGE(FATAL_ERROR "error: Patch is required to build ${PROJECT_NAME}. Set CTK_PATCH_EXECUTABLE")
-    ENDIF()
-
-    # Configure patch script
-    SET(pythonqt_src_dir ${ep_source_dir}/${proj})
-    SET(pythonqt_patch_dir ${CTK_SOURCE_DIR}/Utilities/PythonQt/)
-    SET(pythonqt_configured_patch_dir ${CTK_BINARY_DIR}/Utilities/PythonQt/)
-    SET(pythonqt_patchscript
-      ${CTK_BINARY_DIR}/Utilities/PythonQt/PythonQt-trunk-patch.cmake)
-    CONFIGURE_FILE(
-      ${CTK_SOURCE_DIR}/Utilities/PythonQt/PythonQt-trunk-patch.cmake.in
-      ${pythonqt_patchscript} @ONLY)
       
     ExternalProject_Add(${proj}
-      SVN_REPOSITORY "http://pythonqt.svn.sourceforge.net/svnroot/pythonqt/trunk"
+      GIT_REPOSITORY "git://github.com/commontk/PythonQt.git"
+      GIT_TAG "patched"
       CMAKE_GENERATOR ${gen}
-      PATCH_COMMAND ${CMAKE_COMMAND} -P ${pythonqt_patchscript}
       BUILD_COMMAND ""
       CMAKE_ARGS
         ${ep_common_args}
