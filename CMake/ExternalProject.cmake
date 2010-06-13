@@ -240,59 +240,6 @@ endif()
 )
 endfunction(_ep_write_gitclone_script)
 
-#
-# Since patch may have been applied: git reset --hard HEAD
-# Switch back to master: git checkout master
-# Pull in changes: git pull 
-# If a tag is specified, attempt to checkout: git checkout TAG
-# If patch_cmd is specified, attempt to re-apply the patches
-function(_ep_write_gitupdate_script script_filename source_dir git_EXECUTABLE git_repository git_tag src_name work_dir patch_cmd)
-  file(WRITE ${script_filename}
-"execute_process(
-  COMMAND \"${git_EXECUTABLE}\" reset --hard HEAD
-  WORKING_DIRECTORY \"${work_dir}\"
-  RESULT_VARIABLE error_code
-  )
-execute_process(
-  COMMAND \"${git_EXECUTABLE}\" checkout master
-  WORKING_DIRECTORY \"${work_dir}\"
-  RESULT_VARIABLE error_code
-  )
-if(error_code)
-  message(FATAL_ERROR \"Failed to checkout master - repository: ${git_repository}\")
-endif()
-execute_process(
-  COMMAND \"${git_EXECUTABLE}\" pull
-  WORKING_DIRECTORY \"${work_dir}\"
-  RESULT_VARIABLE error_code
-  )
-if(error_code)
-  message(FATAL_ERROR \"Failed to pull - repository: ${git_repository}\")
-endif()
-if(NOT \"${git_tag}\" STREQUAL \"\")
-  execute_process(
-    COMMAND \"${git_EXECUTABLE}\" checkout ${git_tag}
-    WORKING_DIRECTORY \"${work_dir}\"
-    RESULT_VARIABLE error_code
-    ERROR_QUIET
-    )
-  if(error_code)
-    message(FATAL_ERROR \"Failed to checkout tag ${git_tag} - repository: ${git_repository}\")
-  endif()
-endif()
-if(NOT \"${patch_cmd}\" STREQUAL \"\")
-  execute_process(
-    COMMAND \"${patch_cmd}\"
-    WORKING_DIRECTORY \"${work_dir}\"
-    RESULT_VARIABLE error_code
-    )
-  if(error_code)
-    message(FATAL_ERROR \"Failed to apply patch for ${name}\")
-  endif()
-endif()
-")
-endfunction(_ep_write_gitupdate_script)
-
 function(_ep_write_downloadfile_script script_filename remote local timeout)
   if(timeout)
     set(timeout_args TIMEOUT ${timeout})
@@ -698,6 +645,17 @@ function(_ep_add_mkdir_command name)
     )
 endfunction(_ep_add_mkdir_command)
 
+function(_ep_get_git_version git_EXECUTABLE git_version_var)
+  if(git_EXECUTABLE)
+    execute_process(
+      COMMAND "${git_EXECUTABLE}" --version
+      OUTPUT_VARIABLE ov
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    string(REGEX REPLACE "^git version (.+)$" "\\1" version "${ov}")
+    set(${git_version_var} "${version}" PARENT_SCOPE)
+  endif()
+endfunction()
 
 function(_ep_add_download_command name)
   ExternalProject_Get_Property(${name} source_dir stamp_dir download_dir tmp_dir)
@@ -782,8 +740,20 @@ function(_ep_add_download_command name)
     if(NOT git_EXECUTABLE)
       message(FATAL_ERROR "error: could not find git for clone of ${name} - Make sure git_EXECUTABLE is set properly")
     endif()
+    
+    # The git submodule update '--recursive' flag requires git >= v1.6.5
+    #
+    _ep_get_git_version("${git_EXECUTABLE}" git_version)
+    if(git_version VERSION_LESS 1.6.5)
+      message(FATAL_ERROR "error: git version 1.6.5 or later required for 'git submodule update --recursive': git_version='${git_version}'")
+    endif()
 
     get_property(git_tag TARGET ${name} PROPERTY _EP_GIT_TAG)
+    # Since the default branch in git repository may be different from 'master', 
+    # let's NOT default to 'master'
+    #if(NOT git_tag)
+    #  set(git_tag "master")
+    #endif()
 
     set(repository ${git_repository})
     set(module)
@@ -866,9 +836,6 @@ function(_ep_add_update_command name)
   get_property(cvs_repository TARGET ${name} PROPERTY _EP_CVS_REPOSITORY)
   get_property(svn_repository TARGET ${name} PROPERTY _EP_SVN_REPOSITORY)
   get_property(git_repository TARGET ${name} PROPERTY _EP_GIT_REPOSITORY)
-  
-  # Patch
-  get_property(patch_cmd TARGET ${name} PROPERTY _EP_PATCH_COMMAND)
 
   set(work_dir)
   set(comment)
@@ -898,19 +865,21 @@ function(_ep_add_update_command name)
     set(always 1)
   elseif(git_repository)
     if(NOT git_EXECUTABLE)
-      message(FATAL_ERROR "error: could not find git for pull of ${name}")
+      message(FATAL_ERROR "error: could not find git for fetch of ${name}")
     endif()
+    set(comment "Performing update step (git fetch) for '${name}'")
     set(work_dir ${source_dir})
-    get_filename_component(src_name "${source_dir}" NAME)
-    
     get_property(git_tag TARGET ${name} PROPERTY _EP_GIT_TAG)
-    
-    # The following script will allow to reset, pull and re-apply patches
-    _ep_write_gitupdate_script(${tmp_dir}/${name}-gitupdate.cmake ${source_dir} ${git_EXECUTABLE} 
-    ${git_repository} "${git_tag}" ${src_name} ${work_dir} "${patch_cmd}")
+    # Since the default branch in git repository may be different from 'master', 
+    # let's NOT default to 'master'
+    #if(NOT git_tag)
+    #  set(git_tag "master")
+    #endif()
 
-    set(comment "Performing update step (git pull) for '${name}'")
-    set(cmd ${CMAKE_COMMAND} -P ${tmp_dir}/${name}-gitupdate.cmake)
+    set(cmd ${git_EXECUTABLE} fetch
+      COMMAND ${git_EXECUTABLE} checkout ${git_tag}
+      COMMAND ${git_EXECUTABLE} submodule update --recursive
+      )
     set(always 1)
   endif()
 
