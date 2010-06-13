@@ -3,6 +3,12 @@
 #
 SET(CTKData_DEPENDS)
 IF(BUILD_TESTING)
+  
+  # Sanity checks
+  IF(DEFINED CTKData_DIR AND NOT EXISTS ${CTKData_DIR})
+    MESSAGE(FATAL_ERROR "CTKData_DIR variable is defined but corresponds to non-existing directory")
+  ENDIF()
+  
   IF(NOT DEFINED CTKData_DIR)
     SET(proj CTKData)
   #   MESSAGE(STATUS "Adding project:${proj}")
@@ -14,5 +20,5 @@ IF(BUILD_TESTING)
         INSTALL_COMMAND ""
         )
 	  SET(CTKData_DIR ${ep_build_dir}/${proj})
-	ENDIF()
+  ENDIF()
 ENDIF()

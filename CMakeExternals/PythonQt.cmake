@@ -4,6 +4,12 @@
 SET(PythonQt_DEPENDS)
 ctkMacroShouldAddExternalProject(PYTHONQT_LIBRARIES add_project)
 IF(${add_project})
+  
+  # Sanity checks
+  IF(DEFINED PYTHONQT_INSTALL_DIR AND NOT EXISTS ${PYTHONQT_INSTALL_DIR})
+    MESSAGE(FATAL_ERROR "PYTHONQT_INSTALL_DIR variable is defined but corresponds to non-existing directory")
+  ENDIF()
+  
   IF(NOT DEFINED PYTHONQT_INSTALL_DIR)
     SET(proj PythonQt)
   #   MESSAGE(STATUS "Adding project:${proj}")

@@ -5,6 +5,12 @@
 SET(DCMTK_DEPENDS)
 ctkMacroShouldAddExternalProject(DCMTK_LIBRARIES add_project)
 IF(${add_project})
+  
+  # Sanity checks
+  IF(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
+    MESSAGE(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to non-existing directory")
+  ENDIF()
+  
   IF(NOT DEFINED DCMTK_DIR)
     SET(proj DCMTK)
 #     MESSAGE(STATUS "Adding project:${proj}")

@@ -4,6 +4,12 @@
 SET (VTK_DEPENDS)
 ctkMacroShouldAddExternalProject(VTK_LIBRARIES add_project)
 IF(${add_project})
+  
+  # Sanity checks
+  IF(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
+    MESSAGE(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
+  ENDIF()
+  
   IF(NOT DEFINED VTK_DIR)
     SET(proj VTK)
 #     MESSAGE(STATUS "Adding project:${proj}")

@@ -3,6 +3,12 @@
 #
 SET(kwstyle_DEPENDS)
 IF(CTK_USE_KWSTYLE)
+  
+  # Sanity checks
+  IF(DEFINED CTK_KWSTYLE_EXECUTABLE AND NOT EXISTS ${CTK_KWSTYLE_EXECUTABLE})
+    MESSAGE(FATAL_ERROR "CTK_KWSTYLE_EXECUTABLE variable is defined but corresponds to non-existing executable")
+  ENDIF()
+  
   IF(NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
     SET(proj KWStyle-CVSHEAD)
     SET(kwstyle_DEPENDS ${proj})

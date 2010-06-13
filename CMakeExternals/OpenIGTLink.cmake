@@ -4,6 +4,12 @@
 SET (OpenIGTLink_DEPENDS)
 ctkMacroShouldAddExternalProject(OpenIGTLink_LIBRARIES add_project)
 IF(${add_project})
+  
+  # Sanity checks
+  IF(DEFINED OpenIGTLink_DIR AND NOT EXISTS ${OpenIGTLink_DIR})
+    MESSAGE(FATAL_ERROR "OpenIGTLink_DIR variable is defined but corresponds to non-existing directory")
+  ENDIF()
+  
   IF(NOT DEFINED OpenIGTLink_DIR)
     SET(proj OpenIGTLink)
   #   MESSAGE(STATUS "Adding project:${proj}")
