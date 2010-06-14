@@ -6,9 +6,9 @@ SET(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
 # CMake Macros
 INCLUDE(CMake/ctkMacroBFDCheck.cmake)
 
-FIND_PACKAGE(log4qt)
-if ( NOT log4qt_FOUND )
-  MESSAGE(FATAL_ERROR "error: log4qt package is required to build ${PROJECT_NAME}" )
+FIND_PACKAGE(Log4Qt)
+if (NOT Log4Qt_FOUND)
+  MESSAGE(FATAL_ERROR "error: Log4Qt package is required to build ${PROJECT_NAME}" )
 endif()
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
@@ -18,7 +18,7 @@ SET(KIT_export_directive "CTK_CORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
-  ${log4qt_INCLUDE_DIR}
+  ${Log4Qt_INCLUDE_DIR}
   )
   
 # Source files
