@@ -874,6 +874,7 @@ function(_ep_add_update_command name)
 
     set(cmd ${git_EXECUTABLE} fetch
       COMMAND ${git_EXECUTABLE} checkout ${git_tag}
+      COMMAND ${git_EXECUTABLE} pull
       COMMAND ${git_EXECUTABLE} submodule update --recursive
       )
     set(always 1)
