@@ -749,11 +749,9 @@ function(_ep_add_download_command name)
     endif()
 
     get_property(git_tag TARGET ${name} PROPERTY _EP_GIT_TAG)
-    # Since the default branch in git repository may be different from 'master', 
-    # let's NOT default to 'master'
-    #if(NOT git_tag)
-    #  set(git_tag "master")
-    #endif()
+    if(NOT git_tag)
+      set(git_tag "master")
+    endif()
 
     set(repository ${git_repository})
     set(module)
@@ -870,11 +868,9 @@ function(_ep_add_update_command name)
     set(comment "Performing update step (git fetch) for '${name}'")
     set(work_dir ${source_dir})
     get_property(git_tag TARGET ${name} PROPERTY _EP_GIT_TAG)
-    # Since the default branch in git repository may be different from 'master', 
-    # let's NOT default to 'master'
-    #if(NOT git_tag)
-    #  set(git_tag "master")
-    #endif()
+    if(NOT git_tag)
+      set(git_tag "master")
+    endif()
 
     set(cmd ${git_EXECUTABLE} fetch
       COMMAND ${git_EXECUTABLE} checkout ${git_tag}
