@@ -1,7 +1,7 @@
 
 // CTK includes
 #include "ctkSimplePythonManager.h"
-//#include "qSlicerBaseQTBasePythonQtDecorators.h"
+#include "ctkSimplePythonQtDecorators.h"
 
 //-----------------------------------------------------------------------------
 ctkSimplePythonManager::ctkSimplePythonManager(QObject* _parent) : Superclass(_parent)
@@ -28,8 +28,8 @@ void ctkSimplePythonManager::preInitialization()
   Superclass::preInitialization();
 
   // Register decorators
-  //this->registerPythonQtDecorator(new qSlicerBaseQTBasePythonQtDecorators(this));
-
+  this->registerPythonQtDecorator(new ctkSimplePythonQtDecorators(this));  
+  
   // Add object to python interpreter context
   //this->addObjectToPythonMain("_qSlicerCoreApplicationInstance", app);
 

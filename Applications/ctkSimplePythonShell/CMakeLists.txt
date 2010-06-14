@@ -7,12 +7,14 @@ PROJECT(ctkSimplePythonShell)
 SET(KIT_SRCS
   ctkSimplePythonManager.cpp
   ctkSimplePythonManager.h
+  ctkSimplePythonQtDecorators.h
   ctkSimplePythonShellMain.cpp
 )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkSimplePythonManager.h
+  ctkSimplePythonQtDecorators.h
   )
 
 # UI files
