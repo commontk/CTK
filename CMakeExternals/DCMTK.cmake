@@ -17,9 +17,9 @@ IF(${add_project})
     SET(DCMTK_DEPENDS ${proj})
 
     ExternalProject_Add(${proj}
-        DOWNLOAD_COMMAND ""
+        GIT_REPOSITORY "git://github.com/commontk/DCMTK.git"
         CMAKE_GENERATOR ${gen}
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/${proj}
+        BUILD_COMMAND ""
         CMAKE_ARGS
           ${ep_common_args}
           -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
