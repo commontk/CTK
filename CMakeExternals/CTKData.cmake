@@ -19,6 +19,6 @@ IF(BUILD_TESTING)
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
         )
-	  SET(CTKData_DIR ${ep_build_dir}/${proj})
+	  SET(CTKData_DIR ${ep_source_dir}/${proj})
   ENDIF()
 ENDIF()
