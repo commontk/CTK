@@ -36,6 +36,14 @@ class CTK_WIDGETS_EXPORT ctkTransferFunctionControlPointsItem: public ctkTransfe
 {
   Q_OBJECT
 public:
+
+  enum MOVE_TYPE{
+    STOP_MOVE = 0,
+    SWITCH_MOVE,
+    DRAW_MOVE,
+    FUSION_MOVE
+  };
+
   explicit ctkTransferFunctionControlPointsItem(QGraphicsItem* parent = 0);
   ctkTransferFunctionControlPointsItem(ctkTransferFunction* transferFunction, 
                                        QGraphicsItem* parent = 0);
@@ -49,6 +57,29 @@ protected:
   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
 private:
   CTK_DECLARE_PRIVATE(ctkTransferFunctionControlPointsItem);
+
+  /*
+   * \brief Update the position of a point when a move mouse event occurs
+   */
+  void updatePointPosition( QPointF iPoint );
+  /*
+   * \brief Stop "moving point" if its position reaches another point
+   */
+  void stopPoints( QPointF iPointF );
+  /*
+   * \brief Switch "moving point" and "reached point" when "moving point" reaches a point.
+   * Position of "reached point" - IS NOT - lost.
+   */
+  void switchPoints( QPointF iPointF );
+  /*
+   * \brief Switch "moving point" and "reached point" when "moving point" reaches a point.
+   * Position of "reached point" - IS - lost.
+   */
+  void drawPoints( QPointF iPointF );
+  /*
+   * \brief The moving (or reached point?) is deleted
+   */
+  void fusionPoints( QPointF iPointF );
 };
 
 #endif

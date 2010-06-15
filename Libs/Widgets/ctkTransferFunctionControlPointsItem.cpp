@@ -147,6 +147,8 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
   // add point to transfer function
   // returns index
   int index = this->transferFunction()->insertControlPoint( tfPos.x());
+
+  //NOT WORKING IN COMPOSITE
   // update value of the point
   if (!QSharedPointer<ctkControlPoint>(this->transferFunction()->controlPoint(index))->value().canConvert<QColor>())
     {
@@ -157,7 +159,6 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
-  qDebug() << "mouse caught";
   CTK_D(ctkTransferFunctionControlPointsItem);
   if (d->SelectedPoint < 0)
     {
@@ -172,21 +173,118 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
   // Deal with borders
   if(d->SelectedPoint == 0 || d->SelectedPoint == this->transferFunction()->count() )
     {
+    // BEHAVIOR TO BE IMPLEMENTED
+    // int borderBehavior = tfScene->borderBehavior();
+    // LockBorder
+    // Create new point on border at same height
+    // Create new point on border on top
+    // Create new point on border on bottom
     qDebug() << "border" ;
     return;
     }
-  else if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > newPos.x() ||
-      this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() < newPos.x())
+  else
     {
-    return;
-    }
-  this->transferFunction()->setControlPointPos(d->SelectedPoint, newPos.x());
-  if (!QSharedPointer<ctkControlPoint>(this->transferFunction()->controlPoint(d->SelectedPoint))->value().canConvert<QColor>())
-    {
-    this->transferFunction()->setControlPointValue(d->SelectedPoint, newPos.y());
+    // TO BE IMPLEMENTED
+    //int movePointsBehavior = tfScene->movePointsBehavior();
+    // initialize to BLOCK_MOVE for now
+    int movePointsBehavior = STOP_MOVE;
+
+    switch( movePointsBehavior ){
+      case STOP_MOVE:
+        stopPoints(newPos);
+        break;
+      case SWITCH_MOVE:
+        switchPoints(newPos);
+        break;
+      case DRAW_MOVE:
+        drawPoints(newPos);
+        break;
+      case FUSION_MOVE:
+        fusionPoints(newPos);
+        break;
+      default:
+        break;
+      }
     }
 }
 
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionControlPointsItem::stopPoints( QPointF iPointF )
+{
+  CTK_D(ctkTransferFunctionControlPointsItem);
+
+  if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > iPointF.x() ||
+      this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() < iPointF.x())
+    {
+    return;
+    }
+
+  updatePointPosition(iPointF);
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionControlPointsItem::switchPoints( QPointF iPointF )
+{
+  CTK_D(ctkTransferFunctionControlPointsItem);
+
+  // Increment or decrement selected point?
+  // Don't need to check borders since it is done just before calling this method...
+  if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > iPointF.x() )
+    {
+    // NOT WORKING IF COMPOSITE TRANSFER FUNCTION
+    double value = this->transferFunction()->value(d->SelectedPoint-1 ).toDouble();
+    d->SelectedPoint -= 1;
+    this->transferFunction()->setControlPointValue(d->SelectedPoint+1, value);
+    }
+  else if ( this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() < iPointF.x() )
+    {
+    double value = this->transferFunction()->value(d->SelectedPoint + 1 ).toDouble();
+    d->SelectedPoint += 1;
+    this->transferFunction()->setControlPointValue(d->SelectedPoint-1, value);
+    }
+
+  updatePointPosition(iPointF);
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionControlPointsItem::drawPoints( QPointF iPointF )
+{
+  CTK_D(ctkTransferFunctionControlPointsItem);
+
+  // Increment or decrement selected point
+  if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > iPointF.x() )
+    {
+    //change the selected point
+    d->SelectedPoint = d->SelectedPoint -1;
+    }
+  else if ( this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() < iPointF.x() )
+    {
+    d->SelectedPoint = d->SelectedPoint +1;
+    }
+
+  updatePointPosition(iPointF);
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionControlPointsItem::fusionPoints( QPointF iPointF )
+{
+  // TO BE IMPLEMENTED
+  // if 2 points are to close: delete one..?
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionControlPointsItem::updatePointPosition( QPointF iPoint )
+{
+  CTK_D(ctkTransferFunctionControlPointsItem);
+
+  this->transferFunction()->setControlPointPos(d->SelectedPoint, iPoint.x());
+
+  // TEST NOT WORKING IN COMPOSITE TRANSFER FUNCTION
+  if (!QSharedPointer<ctkControlPoint>(this->transferFunction()->controlPoint(d->SelectedPoint))->value().canConvert<QColor>())
+  {
+  this->transferFunction()->setControlPointValue(d->SelectedPoint, iPoint.y());
+  }
+}
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 {
