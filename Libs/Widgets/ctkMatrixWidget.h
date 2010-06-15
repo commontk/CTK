@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 #ifndef __ctkMatrixWidget_h
@@ -30,10 +30,15 @@
 
 class ctkMatrixWidgetPrivate;
 
+///
+/// ctkMatrixWidget is the base class of matrix widgets.
+/// \todo Add a property to handle wether the user can edit values
+/// \todo Wrap model signals to emit signals when the matrix is changed.
+/// Right now you can connect to the signal:
+/// matrixWidget->model()->dataChanged(...)
 class CTK_WIDGETS_EXPORT ctkMatrixWidget : public QTableWidget
 {
   Q_OBJECT
-
 public:
   /// Superclass typedef
   typedef QTableWidget Superclass;
@@ -42,32 +47,30 @@ public:
   explicit ctkMatrixWidget(QWidget* parent = 0);
   virtual ~ctkMatrixWidget(){}
 
-  /// 
-  /// Set / Get values
-  double value(int i, int j);
+  ///
+  /// Set / Get values of the matrix
+  /// \li i is the row index, \li j is the column index
+  /// \warning there is no check that the indexes are inside their
+  /// valid range
+  double value(int i, int j)const;
   void setValue(int i, int j, double value);
   void setVector(const QVector<double> & vector);
 
-  /// 
-  /// Overloaded - See QWidget
+  ///
+  /// Reimplemented from QAbstractScrollArea
   virtual QSize minimumSizeHint () const;
   virtual QSize sizeHint () const;
 
-
 public slots:
-
-  /// 
-  /// Reset to zero
+  ///
+  /// Reset the matrix to identity
   void reset();
 
-protected slots:
-  /// 
-  /// Adjust columns/rows size according to width/height
-  void adjustRowsColumnsSize(int width, int height);
-
 protected:
-  /// 
-  virtual void resizeEvent(QResizeEvent * event);
+  ///
+  /// Reimplemented from QTableView
+  /// Share the width/height evenly between columns/rows.
+  virtual void updateGeometries();
 
 private:
   CTK_DECLARE_PRIVATE(ctkMatrixWidget);
