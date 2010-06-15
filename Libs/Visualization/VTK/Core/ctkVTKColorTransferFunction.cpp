@@ -243,11 +243,21 @@ int ctkVTKColorTransferFunction::insertControlPoint(const ctkControlPoint& cp)
   return index;
 }
 //-----------------------------------------------------------------------------
-// insert point with value = 0
 int ctkVTKColorTransferFunction::insertControlPoint(qreal pos)
 {
-  // nothing
-  int index = 0;
+  CTK_D(ctkVTKColorTransferFunction);
+  int index = -1;
+  if (d->ColorTransferFunction.GetPointer() == 0)
+    {
+    return index;
+    }
+
+  // Get color at the given position
+  double* rgb = d->ColorTransferFunction->GetColor( pos );
+
+  // Add new point with the appropriate color
+  index = d->ColorTransferFunction->AddRGBPoint(
+    pos, rgb[0], rgb[1], rgb[2]);
 
   return index;
 }
