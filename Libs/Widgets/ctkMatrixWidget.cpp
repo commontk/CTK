@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 // CTK includes
@@ -50,6 +50,12 @@ ctkMatrixWidget::ctkMatrixWidget(QWidget* _parent) : Superclass(4, 4, _parent)
   this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+  // Don't expand for no reason
+  this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+  // Disable the frame by default
+  this->setFrameStyle(QFrame::NoFrame);
+
   // Define prototype item
   QTableWidgetItem* _item = new QTableWidgetItem();
   _item->setData(Qt::DisplayRole, QVariant(0.0));
@@ -65,7 +71,17 @@ ctkMatrixWidget::ctkMatrixWidget(QWidget* _parent) : Superclass(4, 4, _parent)
 // --------------------------------------------------------------------------
 QSize ctkMatrixWidget::minimumSizeHint () const
 {
-  return QSize(this->columnCount() * 25, this->rowCount() * 25);
+  int maxWidth = this->sizeHintForColumn(0);
+  for (int j = 1; j < this->columnCount(); ++j)
+    {
+    maxWidth = qMax(maxWidth, this->sizeHintForColumn(j));
+    }
+  int maxHeight = this->sizeHintForRow(0);
+  for (int i = 1; i < this->rowCount(); ++i)
+    {
+    maxHeight = qMax(maxHeight, this->sizeHintForRow(i));
+    }
+  return QSize(maxWidth*this->columnCount(), maxHeight*this->rowCount());
 }
 
 // --------------------------------------------------------------------------
@@ -75,32 +91,34 @@ QSize ctkMatrixWidget::sizeHint () const
 }
 
 // --------------------------------------------------------------------------
-void ctkMatrixWidget::resizeEvent(QResizeEvent * _event)
+void ctkMatrixWidget::updateGeometries()
 {
-  this->Superclass::resizeEvent(_event);
-  this->adjustRowsColumnsSize(_event->size().width(), _event->size().height());
-}
-
-// --------------------------------------------------------------------------
-void ctkMatrixWidget::adjustRowsColumnsSize(int _width, int _height)
-{
-  int colwidth = _width / this->columnCount();
-  int lastColwidth = colwidth + (_width - colwidth * this->columnCount());
-  //qDebug() << "width:" << width << ",col-width:" << colwidth;
-  for (int j=0; j < this->columnCount(); j++)
+  QSize viewportSize = this->viewport()->size();
+  // columns
+  const int ccount = this->columnCount();
+  int colWidth = viewportSize.width() / ccount;
+  int lastColWidth = colWidth
+    + (viewportSize.width() - colWidth * ccount);
+  for (int j=0; j < ccount; j++)
     {
-    bool lastColumn = (j==(this->columnCount()-1));
-    this->setColumnWidth(j, lastColumn ? lastColwidth : colwidth);
+    bool lastColumn = (j==(ccount-1));
+    int newWidth = lastColumn ? lastColWidth : colWidth;
+    this->setColumnWidth(j, newWidth);
+    Q_ASSERT(this->columnWidth(j) == newWidth);
+    }
+  // rows
+  const int rcount = this->rowCount();
+  int rowHeight = viewportSize.height() / rcount;
+  int lastRowHeight = rowHeight + (viewportSize.height() - rowHeight * rcount);
+  for (int i=0; i < rcount; i++)
+    {
+    bool lastRow = (i==(rcount-1));
+    int newHeight = lastRow ? lastRowHeight : rowHeight;
+    this->setRowHeight(i, newHeight);
+    Q_ASSERT(this->rowHeight(i) == newHeight);
     }
 
-  int rowheight = _height / this->rowCount();
-  int lastRowheight = rowheight + (_height - rowheight * this->rowCount());
-  //qDebug() << "height:" << height << ", row-height:" << rowheight;
-  for (int i=0; i < this->rowCount(); i++)
-    {
-    bool lastRow = (i==(this->rowCount()-1));
-    this->setRowHeight(i, lastRow ? lastRowheight : rowheight);
-    }
+  this->Superclass::updateGeometries();
 }
 
 // --------------------------------------------------------------------------
@@ -121,9 +139,10 @@ void ctkMatrixWidget::reset()
 }
 
 // --------------------------------------------------------------------------
-double ctkMatrixWidget::value(int i, int j)
+double ctkMatrixWidget::value(int i, int j)const
 {
-  if (i<0 || i>=(this->rowCount()) || j<0 || j>=this->columnCount()) { return 0; }
+  Q_ASSERT( i>=0 && i<this->rowCount() &&
+            j>=0 && j<this->columnCount());
 
   return this->item(i, j)->data(Qt::DisplayRole).toDouble();
 }
@@ -131,7 +150,8 @@ double ctkMatrixWidget::value(int i, int j)
 // --------------------------------------------------------------------------
 void ctkMatrixWidget::setValue(int i, int j, double _value)
 {
-  if (i<0 || i>=(this->rowCount()) || j<0 || j>=this->columnCount()) { return; }
+  Q_ASSERT( i>=0 && i<this->rowCount() &&
+            j>=0 && j<this->columnCount());
 
   this->item(i, j)->setData(Qt::DisplayRole, QVariant(_value));
 }
