@@ -40,6 +40,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString cornerAnnotationText READ cornerAnnotationText WRITE setCornerAnnotationText)
+  Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
 public:
   /// Constructors
   typedef QWidget   Superclass;
@@ -77,6 +78,9 @@ public:
 
   /// Get a reference to the associated vtkRenderer
   vtkRenderer* renderer()const;
+
+  /// Return if rendering is enabled
+  bool renderEnabled() const;
 
   /// Enable/Disable rendering
   void setRenderEnabled(bool value);

@@ -217,3 +217,4 @@ CTK_GET_CXX(ctkVTKRenderView, vtkRenderer*, renderer, Renderer);
 
 //----------------------------------------------------------------------------
 CTK_SET_CXX(ctkVTKRenderView, bool, setRenderEnabled, RenderEnabled);
+CTK_GET_CXX(ctkVTKRenderView, bool, renderEnabled, RenderEnabled);
