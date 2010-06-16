@@ -42,6 +42,8 @@
 #include <vtkWeakPointer.h>
 #include <vtkImageMapper.h>
 
+#include <vtkOrientationMarkerWidget.h>
+
 class vtkRenderWindowInteractor;
 
 
@@ -54,8 +56,15 @@ public:
   RenderWindowItem(const QColor& rendererBackgroundColor, double colorWindow, double colorLevel);
   void setViewport(double xMin, double yMin, double viewportWidth, double viewportHeight);
 
+  /// Create the actor supporing the image mapper
+  void setupImageMapperActor(double colorWindow, double colorLevel);
+
+  /// Create a box around the renderer.
+  void setupHighlightBoxActor(bool visible = false);
+
   vtkSmartPointer<vtkRenderer>     Renderer;
   vtkSmartPointer<vtkImageMapper>  ImageMapper;
+  vtkSmartPointer<vtkActor2D>      HighlightBoxActor;
 };
 
 //-----------------------------------------------------------------------------
@@ -73,7 +82,7 @@ public:
   void setupDefaultInteractor();
 
   /// Update render window ImageMapper Z slice according to \a layoutType
-  void updateRenderWindowItemZIndex(ctkVTKSliceView::RenderWindowLayoutType layoutType);
+  void updateRenderWindowItemsZIndex(ctkVTKSliceView::RenderWindowLayoutType layoutType);
 
   QVTKWidget*                                   VTKWidget;
   vtkSmartPointer<vtkRenderWindow>              RenderWindow;
@@ -85,6 +94,7 @@ public:
   ctkVTKSliceView::RenderWindowLayoutType       RenderWindowLayoutType;
   
   vtkSmartPointer<vtkAxesActor>                 Axes;
+  vtkSmartPointer<vtkOrientationMarkerWidget>   Orientation;
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
 
   vtkWeakPointer<vtkRenderWindowInteractor>     CurrentInteractor;
