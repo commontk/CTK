@@ -40,6 +40,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString cornerAnnotationText READ cornerAnnotationText WRITE setCornerAnnotationText)
+  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
   Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
 public:
   /// Constructors
@@ -67,8 +68,9 @@ public:
   void setCornerAnnotationText(const QString& text);
   QString cornerAnnotationText() const;
 
-  /// Set background color
-  void setBackgroundColor(double r, double g, double b);
+  /// Set/Get background color
+  void setBackgroundColor(const QColor& newBackgroundColor);
+  QColor backgroundColor() const;
 
   /// Get active camera
   vtkCamera* activeCamera();

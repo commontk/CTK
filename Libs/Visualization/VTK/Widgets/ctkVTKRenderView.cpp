@@ -184,11 +184,22 @@ QString ctkVTKRenderView::cornerAnnotationText() const
 }
 
 // --------------------------------------------------------------------------
-void ctkVTKRenderView::setBackgroundColor(double r, double g, double b)
+void ctkVTKRenderView::setBackgroundColor(const QColor& newBackgroundColor)
 {
   CTK_D(ctkVTKRenderView);
-  double background_color[3] = {r, g, b};
-  d->Renderer->SetBackground(background_color);
+
+  d->Renderer->SetBackground(newBackgroundColor.redF(),
+                             newBackgroundColor.greenF(),
+                             newBackgroundColor.blueF());
+}
+
+//----------------------------------------------------------------------------
+QColor ctkVTKRenderView::backgroundColor() const
+{
+  CTK_D(const ctkVTKRenderView);
+  double color[3] = {0, 0, 0};
+  d->Renderer->GetBackground(color);
+  return QColor::fromRgbF(color[0], color[1], color[2]);
 }
 
 //----------------------------------------------------------------------------
