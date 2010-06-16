@@ -39,6 +39,7 @@ class vtkCamera;
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString cornerAnnotationText READ cornerAnnotationText WRITE setCornerAnnotationText)
 public:
   /// Constructors
   typedef QWidget   Superclass;
@@ -61,8 +62,9 @@ public:
   /// Get current interactor style
   vtkInteractorObserver* interactorStyle();
 
-  /// Set corner annotation text
+  /// Set/Get corner annotation \a text
   void setCornerAnnotationText(const QString& text);
+  QString cornerAnnotationText() const;
 
   /// Set background color
   void setBackgroundColor(double r, double g, double b);

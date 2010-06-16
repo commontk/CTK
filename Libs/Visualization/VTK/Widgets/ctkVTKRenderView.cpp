@@ -176,6 +176,13 @@ void ctkVTKRenderView::setCornerAnnotationText(const QString& text)
   d->CornerAnnotation->SetText(2, text.toLatin1());
 }
 
+//----------------------------------------------------------------------------
+QString ctkVTKRenderView::cornerAnnotationText() const
+{
+  CTK_D(const ctkVTKRenderView);
+  return QLatin1String(d->CornerAnnotation->GetText(2));
+}
+
 // --------------------------------------------------------------------------
 void ctkVTKRenderView::setBackgroundColor(double r, double g, double b)
 {
