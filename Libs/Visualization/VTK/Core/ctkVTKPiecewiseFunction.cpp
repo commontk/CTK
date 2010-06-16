@@ -284,3 +284,15 @@ vtkPiecewiseFunction* ctkVTKPiecewiseFunction::piecewiseFunction()const
   CTK_D(const ctkVTKPiecewiseFunction);
   return d->PiecewiseFunction;
 }
+
+//-----------------------------------------------------------------------------
+void ctkVTKPiecewiseFunction::removeControlPoint( qreal pos )
+{
+  CTK_D(ctkVTKPiecewiseFunction);
+  int index = -1;
+  if (d->PiecewiseFunction.GetPointer() == 0)
+  {
+  return;
+  }
+  d->PiecewiseFunction->RemovePoint( pos );
+}

@@ -108,6 +108,8 @@ void ctkTransferFunctionWidget::setTransferFunction(ctkTransferFunction* transfe
     {
     ctkTransferFunctionControlPointsItem* controlPoints = 
       new ctkTransferFunctionControlPointsItem(transferFunction);
+    // Useful for key events
+    controlPoints->setFlags(QGraphicsItem::ItemIsFocusable);
     //controlPoints->setRect(tfScene->sceneRect());
     this->scene()->addItem(controlPoints);
     } 

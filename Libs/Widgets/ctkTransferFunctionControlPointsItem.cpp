@@ -26,6 +26,7 @@
 #include <QPainter>
 #include <QtGlobal>
 #include <QVariant>
+#include <QKeyEvent>
 
 /// CTK includes
 #include "ctkTransferFunctionControlPointsItem.h"
@@ -280,11 +281,12 @@ void ctkTransferFunctionControlPointsItem::updatePointPosition( QPointF iPoint )
   this->transferFunction()->setControlPointPos(d->SelectedPoint, iPoint.x());
 
   // TEST NOT WORKING IN COMPOSITE TRANSFER FUNCTION
-  if (!QSharedPointer<ctkControlPoint>(this->transferFunction()->controlPoint(d->SelectedPoint))->value().canConvert<QColor>())
+  if ( ! QSharedPointer<ctkControlPoint>(this->transferFunction()->controlPoint(d->SelectedPoint))->value().canConvert<QColor>() )
   {
   this->transferFunction()->setControlPointValue(d->SelectedPoint, iPoint.y());
   }
 }
+
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 {
@@ -295,4 +297,23 @@ void ctkTransferFunctionControlPointsItem::mouseReleaseEvent(QGraphicsSceneMouse
     return;
     }
   d->SelectedPoint = -1;
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionControlPointsItem::keyPressEvent ( QKeyEvent * keyEvent )
+{
+    CTK_D(ctkTransferFunctionControlPointsItem);
+
+    // if a point is selected, "d" and "D" = delete the point
+    if (d->SelectedPoint >= 0)
+      {
+      if ( ! QString::compare(keyEvent->text(), "d") || ! QString::compare(keyEvent->text(), "D") )
+        {
+        // Get value of selected point
+        qreal xValue = this->transferFunction()->controlPoint( d->SelectedPoint )->x();
+        // remove point using value ( can't use point ID because it could engender
+        // problems when multiple points selection implemented)
+        this->transferFunction()->removeControlPoint( xValue );
+        }
+      }
 }

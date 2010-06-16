@@ -94,6 +94,8 @@ public:
   virtual int insertControlPoint(const ctkControlPoint& cp) = 0;
   virtual int insertControlPoint(qreal pos) = 0;
 
+  virtual void removeControlPoint( qreal pos ) = 0;
+
   /// 
   /// be careful with it, as changing the value might require
   /// more changes to ctkControlPoint.

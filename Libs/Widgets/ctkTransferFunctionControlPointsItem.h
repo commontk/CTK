@@ -55,6 +55,7 @@ protected:
   virtual void mousePressEvent(QGraphicsSceneMouseEvent* e);
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
+  virtual void keyPressEvent (QKeyEvent * keyEvent);
 private:
   CTK_DECLARE_PRIVATE(ctkTransferFunctionControlPointsItem);
 

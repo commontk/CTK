@@ -387,9 +387,16 @@ vtkPiecewiseFunction* ctkVTKCompositeFunction::piecewiseFunction()const
   CTK_D(const ctkVTKCompositeFunction);
   return d->PiecewiseFunction;
 }
+
 //-----------------------------------------------------------------------------
 vtkColorTransferFunction* ctkVTKCompositeFunction::colorTransferFunction()const
 {
   CTK_D(const ctkVTKCompositeFunction);
   return d->ColorTransferFunction;
+}
+
+//-----------------------------------------------------------------------------
+void ctkVTKCompositeFunction::removeControlPoint( qreal pos )
+{
+  // TO BE IMPLEMENTED
 }

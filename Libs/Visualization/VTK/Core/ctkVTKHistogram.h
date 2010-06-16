@@ -58,6 +58,8 @@ public:
 
   void setNumberOfBins(int number);
 
+  virtual void removeControlPoint( qreal pos );
+
   virtual void build();
 protected:
   qreal indexToPos(int index)const;

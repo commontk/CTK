@@ -58,6 +58,8 @@ public:
   virtual void setControlPointPos(int index, qreal pos);
   virtual void setControlPointValue(int index, const QVariant& value);
 
+  virtual void removeControlPoint( qreal pos );
+
   void setLookupTable(vtkLookupTable* lookupTable);
   vtkLookupTable* lookupTable()const;
 protected:

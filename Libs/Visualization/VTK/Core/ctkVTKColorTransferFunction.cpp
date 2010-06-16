@@ -304,3 +304,10 @@ vtkColorTransferFunction* ctkVTKColorTransferFunction::colorTransferFunction()co
   CTK_D(const ctkVTKColorTransferFunction);
   return d->ColorTransferFunction;
 }
+
+//-----------------------------------------------------------------------------
+void ctkVTKColorTransferFunction::removeControlPoint( qreal pos )
+{
+  CTK_D(ctkVTKColorTransferFunction);
+  d->ColorTransferFunction->RemovePoint( pos );
+}

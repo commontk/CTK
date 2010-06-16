@@ -62,6 +62,8 @@ public:
   virtual void setControlPointPos(int index, qreal pos);
   virtual void setControlPointValue(int index, const QVariant& value);
 
+  virtual void removeControlPoint( qreal pos );
+
   void setPiecewiseFunction(vtkPiecewiseFunction* piecewiseFunction);
   void setColorTransferFunction(vtkColorTransferFunction* colorTansferFunction);
 
