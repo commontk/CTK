@@ -83,6 +83,9 @@ public:
   /// Note that the same camera is used with all the renderWindowItem
   vtkCamera* activeCamera();
 
+  /// Set actice camera
+  void setActiveCamera(vtkCamera* newActiveCamera);
+
   /// Reset cameras associated with all renderWindowItem
   void resetCamera();
   
@@ -92,6 +95,9 @@ public:
   /// Get a reference to the associated vtkRenderer(s) identified by its \a id
   vtkRenderer* renderer(int id);
 
+  /// Get a reference to the associated vtkRenderer(s) given its posiion in the grid
+  /// \sa renderer(int)
+  vtkRenderer* renderer(int rowId, int columnId);
 
   /// The layout type determines how the image slices should be displayed
   /// within the different render view items.
@@ -106,6 +112,13 @@ public:
 
   /// Split the current vtkRenderWindow in \a rowCount per \a columnCount grid
   void setRenderWindowLayout(int rowCount, int columnCount);
+
+  /// Highlight / Unhighlight a render view item given its \a id
+  void setHighlightedById(int id, bool value);
+
+  ///  Highlight / Unhighlight a render view item given its position in the grid
+  /// \sa setHighlighted(int, bool)
+  void setHighlighted(int rowId, int columnId, bool value);
 
   /// Convenient function allowing to compute the renderWindowItemId
   /// given \a rowId and \a columnId.
