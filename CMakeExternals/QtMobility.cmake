@@ -64,5 +64,8 @@ IF(${add_project})
     INSTALL_COMMAND ${qtmobility_install_cmd}
     BUILD_IN_SOURCE 1
     )
+    
+  # Since the full path of QtMobility library is used, there is not need to add 
+  # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 	
 ENDIF()

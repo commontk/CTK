@@ -31,5 +31,10 @@ IF(${add_project})
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       )
     SET(VTK_DIR ${ep_build_dir}/${proj})
+    
+    # Since the link directories associated with VTK is used, it makes sens to 
+    # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory
+    LIST(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${VTK_DIR}/bin)
+  
   ENDIF()
 ENDIF()

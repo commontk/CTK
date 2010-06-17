@@ -21,5 +21,8 @@ IF(CTK_USE_KWSTYLE)
         ${ep_common_args}
       )
     SET(CTK_KWSTYLE_EXECUTABLE ${ep_install_dir}/bin/KWStyle)
+    
+    # Since KWStyle is an executable, there is not need to add its corresponding 
+    # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
   ENDIF()
 ENDIF()

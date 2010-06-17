@@ -32,5 +32,9 @@ IF(${add_project})
       ALWAYS 1
       WORKING_DIRECTORY ${ep_build_dir}/${proj}
       )
+      
+    # Since DCMTK is statically build, there is not need to add its corresponding 
+    # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
+    
   ENDIF()
 ENDIF()

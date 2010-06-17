@@ -29,6 +29,14 @@
 #
 
 #-----------------------------------------------------------------------------
+# Declare CTK_EXTERNAL_LIBRARY_DIRS variable - This variable stores
+# the library output directory associated with the different external project
+# It's then used in Utilities/LastConfigureStep/CTKGenerateCTKConfig.cmake to 
+# configure CTKConfig.cmake.in
+# This variable would then be exposed to project building against CTK
+SET(CTK_EXTERNAL_LIBRARY_DIRS)
+
+#-----------------------------------------------------------------------------
 # Make sure ${CTK_BINARY_DIR}/CTK-build/bin exists
 # May be used by some external project to install libs (e.g QtMobility)
 IF(NOT EXISTS ${CTK_BINARY_DIR}/CTK-build/bin)
@@ -207,6 +215,7 @@ ExternalProject_Add(${proj}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCTK_CXX_FLAGS:STRING=${CTK_CXX_FLAGS}
     -DCTK_C_FLAGS:STRING=${CTK_C_FLAGS}
+    -DCTK_EXTERNAL_LIBRARY_DIRS:STRING=${CTK_EXTERNAL_LIBRARY_DIRS}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     -DCTKData_DIR:PATH=${CTKData_DIR}
 	  -DZMQ_DIR:PATH=${ZMQ_DIR}                     # FindVTK expects VTK_DIR variable to be defined
