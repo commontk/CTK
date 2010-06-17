@@ -151,7 +151,6 @@ int ctkVTKLookupTable::posToIndex(qreal pos)const
 //-----------------------------------------------------------------------------
 ctkControlPoint* ctkVTKLookupTable::controlPoint(int index)const
 {
-  CTK_D(const ctkVTKLookupTable);
   ctkControlPoint* cp = new ctkControlPoint();
   cp->P.X = this->indexToPos(index);
   cp->P.Value = this->value(cp->P.X);
@@ -172,7 +171,8 @@ QVariant ctkVTKLookupTable::value(qreal pos)const
 //-----------------------------------------------------------------------------
 int ctkVTKLookupTable::insertControlPoint(const ctkControlPoint& cp)
 {
-  CTK_D(ctkVTKLookupTable);
+  Q_UNUSED(cp);
+  //CTK_D(ctkVTKLookupTable);
   qDebug() << "ctkVTKLookupTable doesn't support insertControlPoint";
   return -1;
 }
@@ -181,6 +181,7 @@ int ctkVTKLookupTable::insertControlPoint(const ctkControlPoint& cp)
 // insert point with value = 0
 int ctkVTKLookupTable::insertControlPoint(qreal pos)
 {
+  Q_UNUSED(pos);
   // nothing
   int index = 0;
 
@@ -189,7 +190,9 @@ int ctkVTKLookupTable::insertControlPoint(qreal pos)
 //-----------------------------------------------------------------------------
 void ctkVTKLookupTable::setControlPointPos(int index, qreal pos)
 {
-  CTK_D(ctkVTKLookupTable);
+  Q_UNUSED(index);
+  Q_UNUSED(pos);
+  //CTK_D(ctkVTKLookupTable);
   // TODO, inform that nothing is done here.
   qDebug() << "ctkVTKLookupTable doesn't support setControlPointPos";
   return;

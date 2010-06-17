@@ -407,6 +407,8 @@ void ctkRangeSlider::setPositions(int min, int max)
 // --------------------------------------------------------------------------
 void ctkRangeSlider::onRangeChanged(int minimum, int maximum)
 {
+  Q_UNUSED(minimum);
+  Q_UNUSED(maximum);
   CTK_D(ctkRangeSlider);
   this->setValues(d->m_MinimumValue, d->m_MaximumValue);
 }

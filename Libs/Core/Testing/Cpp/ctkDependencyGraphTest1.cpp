@@ -113,9 +113,9 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  int corigin = graph.cycleOrigin();
+  //int corigin = graph.cycleOrigin();
 
-  int cend = graph.cycleEnd();
+  //int cend = graph.cycleEnd();
 
   QList<int> path;
   QList<int> expectedPath;

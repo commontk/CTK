@@ -85,6 +85,8 @@ ctkTransferFunctionControlPointsItem::~ctkTransferFunctionControlPointsItem()
 void ctkTransferFunctionControlPointsItem::paint(
   QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
+  Q_UNUSED(option);
+  Q_UNUSED(widget);
   CTK_D(ctkTransferFunctionControlPointsItem);
   int count = this->transferFunction() ? this->transferFunction()->count() : 0;
   if (count <= 0)
@@ -121,7 +123,6 @@ void ctkTransferFunctionControlPointsItem::paint(
 void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
   CTK_D(ctkTransferFunctionControlPointsItem);
-  QWidget* w = e->widget();
   ctkTransferFunctionWidget* view = qobject_cast<ctkTransferFunctionWidget*>(e->widget()->parentWidget());
   Q_ASSERT(view);
   // e->pos() is ok, pointArea should be in the world coordiate

@@ -52,7 +52,7 @@ ctkTransferFunctionItemPrivate::ctkTransferFunctionItemPrivate()
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionItemPrivate::init()
 {
-  CTK_P(ctkTransferFunctionItem);
+  //CTK_P(ctkTransferFunctionItem);
 }
 
 //-----------------------------------------------------------------------------
@@ -264,7 +264,6 @@ qreal ctkTransferFunctionItem::rangeYOffSet()
   QVariant rangeY[2];
   rangeY[0] = d->TransferFunction->minValue();
   rangeY[1] = d->TransferFunction->maxValue();
-  qreal rangeYOffSet;
   if (rangeY[0].canConvert<qreal>())
     {
     if (rangeY[1].toReal() == rangeY[0].toReal())

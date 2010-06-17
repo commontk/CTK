@@ -146,8 +146,8 @@ void ctkMenuButton::paintEvent(QPaintEvent * _event)
   QColor buttonColor = this->palette().button().color();
   QColor darkColor;
   darkColor.setHsv(buttonColor.hue(),
-                   qMin(255, (int)(buttonColor.saturation()*1.9)),
-                   qMin(255, (int)(buttonColor.value()*0.7)));
+                   qMin(255, static_cast<int>(buttonColor.saturation()*1.9)),
+                   qMin(255, static_cast<int>(buttonColor.value()*0.7)));
   painter.setPen(buttonColor.darker(130));
   int borderSize = 2;
   painter.drawLine(QPoint(downArrowRect.left() - 1, downArrowRect.top() + borderSize),

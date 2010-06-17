@@ -337,11 +337,19 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
         std::stringstream query_string;
 
         query_string << "INSERT INTO Series VALUES('"
-          << seriesInstanceUID << "','" << studyInstanceUID << "','" << (int) seriesNumber << "','"
+          << seriesInstanceUID << "','"
+          << studyInstanceUID << "','"
+          << static_cast<int>(seriesNumber) << "','"
           << QDate::fromString(seriesDate.c_str(), "yyyyMMdd").toString("yyyy-MM-dd").toStdString() << "','"
-          << seriesTime << "','" << seriesDescription << "','" << bodyPartExamined << "','"
-          << frameOfReferenceUID << "','" << (int) acquisitionNumber << "','" << contrastAgent << "','"
-          << scanningSequence << "','" << (int) echoNumber << "','" << (int) temporalPosition << "')";
+          << seriesTime << "','"
+          << seriesDescription << "','"
+          << bodyPartExamined << "','"
+          << frameOfReferenceUID << "','"
+          << static_cast<int>(acquisitionNumber) << "','"
+          << contrastAgent << "','"
+          << scanningSequence << "','"
+          << static_cast<int>(echoNumber) << "','"
+          << static_cast<int>(temporalPosition) << "')";
 
         query.exec(query_string.str().c_str());
       }

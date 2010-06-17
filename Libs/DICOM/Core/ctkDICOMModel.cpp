@@ -357,6 +357,7 @@ void ctkDICOMModelPrivate::fetch(const QModelIndex& indexValue, int limit)
 //------------------------------------------------------------------------------
 ctkDICOMModel::ctkDICOMModel(QObject* parentValue)
 {
+  Q_UNUSED(parentValue);
   CTK_INIT_PRIVATE(ctkDICOMModel);
   ctk_d()->init();
 }
@@ -423,6 +424,7 @@ void ctkDICOMModel::fetchMore ( const QModelIndex & parentValue )
 //------------------------------------------------------------------------------
 Qt::ItemFlags ctkDICOMModel::flags ( const QModelIndex & indexValue ) const
 {
+  Q_UNUSED(indexValue);
   return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 

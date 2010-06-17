@@ -234,17 +234,17 @@ void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
       statement.prepare ( "INSERT INTO Series ( 'SeriesInstanceUID', 'StudyInstanceUID', 'SeriesNumber', 'SeriesDate', 'SeriesTime', 'SeriesDescription', 'BodyPartExamined', 'FrameOfReferenceUID', 'AcquisitionNumber', 'ContrastAgent', 'ScanningSequence', 'EchoNumber', 'TemporalPosition' ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
       statement.bindValue ( 0, QString ( seriesInstanceUID.c_str() ) );
       statement.bindValue ( 1, QString ( studyInstanceUID.c_str() ) );
-      statement.bindValue ( 2, (int) seriesNumber );
+      statement.bindValue ( 2, static_cast<int>(seriesNumber) );
       statement.bindValue ( 3, QString ( seriesDate.c_str() ) );
       statement.bindValue ( 4, QDate::fromString ( seriesTime.c_str(), "yyyyMMdd" ) );
       statement.bindValue ( 5, QString ( seriesDescription.c_str() ) );
       statement.bindValue ( 6, QString ( bodyPartExamined.c_str() ) );
       statement.bindValue ( 7, QString ( frameOfReferenceUID.c_str() ) );
-      statement.bindValue ( 8, (int) acquisitionNumber );
+      statement.bindValue ( 8, static_cast<int>(acquisitionNumber) );
       statement.bindValue ( 9, QString ( contrastAgent.c_str() ) );
       statement.bindValue ( 10, QString ( scanningSequence.c_str() ) );
-      statement.bindValue ( 11, (int) echoNumber );
-      statement.bindValue ( 12, (int) temporalPosition );
+      statement.bindValue ( 11, static_cast<int>(echoNumber) );
+      statement.bindValue ( 12, static_cast<int>(temporalPosition) );
       if ( !statement.exec() )
         {
         logger.error ( "Error executing statament: " + statement.lastQuery() + " Error: " + statement.lastError().text() );

@@ -92,6 +92,8 @@ qreal ctkTransferFunctionBarsItem::barWidth()const
 void ctkTransferFunctionBarsItem::paint(
   QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
+  Q_UNUSED(option);
+  Q_UNUSED(widget);
   CTK_D(ctkTransferFunctionBarsItem);
   int count = this->transferFunction() ? this->transferFunction()->count() : 0;
   if (count <= 0)

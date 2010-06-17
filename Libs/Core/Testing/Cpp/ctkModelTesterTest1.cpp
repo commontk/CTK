@@ -65,17 +65,18 @@ int ctkModelTesterTest1(int argc, char * argv [] )
     QList<QTreeWidgetItem *> items;
     for (int i = 0; i < 10; ++i)
       {
-      items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString("item: %1").arg(i))));
+      items.append(new QTreeWidgetItem(
+          reinterpret_cast<QTreeWidget*>(0), QStringList(QString("item: %1").arg(i))));
       }
     treeWidget.addTopLevelItems(items);
     treeWidget.takeTopLevelItem(0);
     treeWidget.takeTopLevelItem(treeWidget.topLevelItemCount() / 2 );
     treeWidget.takeTopLevelItem(treeWidget.topLevelItemCount() - 1);
     treeWidget.insertTopLevelItem(0, new QTreeWidgetItem(&treeWidget, QStringList("new item 0")));
-    treeWidget.insertTopLevelItem(treeWidget.topLevelItemCount() / 2, 
-                                  new QTreeWidgetItem((QTreeWidget*)0, QStringList("new item 1")));
-    treeWidget.insertTopLevelItem(treeWidget.topLevelItemCount(), 
-                                  new QTreeWidgetItem((QTreeWidget*)0, QStringList("new item 2")));
+    treeWidget.insertTopLevelItem(treeWidget.topLevelItemCount() / 2, new QTreeWidgetItem(
+        reinterpret_cast<QTreeWidget*>(0), QStringList("new item 1")));
+    treeWidget.insertTopLevelItem(treeWidget.topLevelItemCount(), new QTreeWidgetItem(
+        reinterpret_cast<QTreeWidget*>(0), QStringList("new item 2")));
     new QTreeWidgetItem(treeWidget.topLevelItem(0), QStringList("new item 3"));
     QAbstractItemModel* model = treeWidget.model();
     model->setData(model->index(0,0),QString("foo"));

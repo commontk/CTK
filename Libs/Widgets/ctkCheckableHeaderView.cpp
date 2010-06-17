@@ -328,6 +328,7 @@ void ctkCheckableHeaderView::updateHeaders(int first, int last)
 void ctkCheckableHeaderView::updateHeadersFromItems(const QModelIndex & topLeft,
                                                      const QModelIndex & bottomRight)
 {
+  Q_UNUSED(bottomRight);
   CTK_D(ctkCheckableHeaderView);
   if(d->ItemsAreUpdating || !d->PropagateToItems || 
      topLeft.parent() != this->rootIndex())

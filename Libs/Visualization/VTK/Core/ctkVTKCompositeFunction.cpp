@@ -267,6 +267,7 @@ QVariant ctkVTKCompositeFunction::value(qreal pos)const
 //-----------------------------------------------------------------------------
 int ctkVTKCompositeFunction::insertControlPoint(const ctkControlPoint& cp)
 {
+  Q_UNUSED(cp);
   CTK_D(ctkVTKCompositeFunction);
   int index = -1;
   // check piecewise

@@ -149,7 +149,7 @@ void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKHistogram::minValue()const
 {
-  CTK_D(const ctkVTKHistogram);
+  //CTK_D(const ctkVTKHistogram);
   return 0;//d->MinBin;
 }
 
@@ -173,7 +173,6 @@ ctkControlPoint* ctkVTKHistogram::controlPoint(int index)const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKHistogram::value(qreal pos)const
 {
-  CTK_D(const ctkVTKHistogram);
   QSharedPointer<ctkControlPoint> point(this->controlPoint(this->posToIndex(pos)));
   return point->value();
 }
@@ -296,7 +295,7 @@ void populateIrregularBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
       {
       continue;
       }
-    binsPtr[vtkMath::Floor(((double)*ptr - offset) * binWidth)]++;
+    binsPtr[vtkMath::Floor((static_cast<double>(*ptr) - offset) * binWidth)]++;
     }
 }
 

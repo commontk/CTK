@@ -120,7 +120,6 @@ void ctkRangeWidgetPrivate::synchronizeSiblingSpinBox(int width)
 // --------------------------------------------------------------------------
 void ctkRangeWidgetPrivate::relayout()
 {
-  CTK_P(ctkRangeWidget);
   this->GridLayout->removeWidget(this->MinimumSpinBox);
   this->GridLayout->removeWidget(this->MaximumSpinBox);
   this->GridLayout->removeWidget(this->Slider);
