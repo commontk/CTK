@@ -55,7 +55,7 @@ set(SCRIPT_MODE "experimental") # "experimental", "continuous", "nightly"
 # Project specific properties
 #
 set(CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/CTK")
-set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/CTK-Superbuild-${SCRIPT_MODE}")
+set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/CTK-Superbuild-${CTEST_BUILD_CONFIGURATION}-${SCRIPT_MODE}")
 
 # Additionnal CMakeCache options - For example:
 # CTK_LIB_Widgets:BOOL=ON

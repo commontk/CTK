@@ -48,8 +48,20 @@ SET(CTK_LIBRARIES @CTK_LIBRARIES@)
 # The CTK include file directories.
 SET(CTK_INCLUDE_DIRS "@CTK_INCLUDE_DIRS_CONFIG@")
  
-# The CTK library directories.
+# The CTK library directories. Note that if
+# CTK_CONFIGURATION_TYPES is set (see below) then these directories
+# will be the parent directories under which there will be a directory
+# of runtime binaries for each configuration type.
 SET(CTK_LIBRARY_DIRS "@CTK_LIBRARY_DIRS_CONFIG@")
+
+# The CTK external project libraries.
+SET(CTK_EXTERNAL_LIBRARIES "@CTK_EXTERNAL_LIBRARIES_CONFIG@")
+
+# The CTK external project library directories. Note that if
+# CTK_CONFIGURATION_TYPES is set (see below) then these directories
+# will be the parent directories under which there will be a directory
+# of runtime binaries for each configuration type.
+SET(CTK_EXTERNAL_LIBRARY_DIRS "@CTK_EXTERNAL_LIBRARY_DIRS_CONFIG@")
  
 # The CTK binary executable directories. Note that if
 # CTK_CONFIGURATION_TYPES is set (see below) then these directories

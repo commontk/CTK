@@ -24,6 +24,9 @@ IF(${add_project})
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         )
     SET(Log4Qt_DIR ${ep_install_dir})
+    
+    # Since Log4Qt is statically build, there is not need to add its corresponding 
+    # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
       
   ENDIF()
 ENDIF()

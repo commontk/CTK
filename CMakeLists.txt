@@ -240,6 +240,12 @@ ENDIF()
 SET(CTK_C_FLAGS "${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}")
 SET(CTK_CXX_FLAGS "${VISIBILITY_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}")
 
+IF(CMAKE_CXX_COMPILER_ID AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  SET(cflags "-fdiagnostics-show-option -Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -fstack-protector-all -D_FORTIFY_SOURCE=2")
+  SET(CTK_C_FLAGS "${cflags} ${CTK_C_FLAGS}")
+  SET(CTK_CXX_FLAGS "${cflags} -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
+ENDIF()
+
 #-----------------------------------------------------------------------------
 # QT
 #
@@ -459,8 +465,8 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/UseCTK.cmake.in
 #-----------------------------------------------------------------------------
 # Set C/CXX Flags
 #
-SET(CMAKE_CXX_FLAGS ${CTK_CXX_FLAGS})
-SET(CMAKE_C_FLAGS ${CTK_C_FLAGS})
+SET(CMAKE_CXX_FLAGS ${CTK_CXX_FLAGS} CACHE STRING "CMake C Flags" FORCE)
+SET(CMAKE_C_FLAGS ${CTK_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
 
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories

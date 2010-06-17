@@ -33,5 +33,9 @@ IF(${add_project})
         -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       )
     SET(PYTHONQT_INSTALL_DIR ${ep_install_dir})
+    
+    # Since the full path of PythonQt library is used, there is not need to add 
+    # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
+    
   ENDIF()
 ENDIF()
