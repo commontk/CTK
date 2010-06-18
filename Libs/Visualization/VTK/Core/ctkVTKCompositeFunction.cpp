@@ -399,5 +399,6 @@ vtkColorTransferFunction* ctkVTKCompositeFunction::colorTransferFunction()const
 //-----------------------------------------------------------------------------
 void ctkVTKCompositeFunction::removeControlPoint( qreal pos )
 {
+  Q_UNUSED(pos);
   // TO BE IMPLEMENTED
 }

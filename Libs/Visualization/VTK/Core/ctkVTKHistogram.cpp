@@ -339,5 +339,6 @@ void ctkVTKHistogram::build()
 //-----------------------------------------------------------------------------
 void ctkVTKHistogram::removeControlPoint( qreal pos )
 {
+  Q_UNUSED(pos);
   // TO BE IMPLEMENTED
 }

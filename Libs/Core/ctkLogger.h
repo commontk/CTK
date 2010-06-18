@@ -34,17 +34,17 @@ class CTK_CORE_EXPORT ctkLogger : public QObject
   Q_OBJECT
 public:
   typedef QObject Superclass;
-  explicit ctkLogger ( QString name, QObject* parent = 0 );
+  explicit ctkLogger(QString name, QObject* parent = 0);
   virtual ~ctkLogger ();
 
   static void configure();
   
-  void debug ( QString s );
-  void info ( QString s );
-  void trace ( QString s );
-  void warn ( QString s );
-  void error ( QString s );
-  void fatal ( QString s );
+  void debug(const QString& s);
+  void info(const QString& s);
+  void trace(const QString& s);
+  void warn(const QString& s);
+  void error(const QString& s);
+  void fatal(const QString& s);
 
   void setDebug();
   void setInfo();

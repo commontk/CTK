@@ -270,6 +270,7 @@ void ctkTransferFunctionControlPointsItem::drawPoints( QPointF iPointF )
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::fusionPoints( QPointF iPointF )
 {
+  Q_UNUSED(iPointF);
   // TO BE IMPLEMENTED
   // if 2 points are to close: delete one..?
 }
