@@ -30,6 +30,7 @@
 /// CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkTransferFunctionItem.h"
+#include "ctkTransferFunctionScene.h"
 
 //-----------------------------------------------------------------------------
 class ctkTransferFunctionItemPrivate : 
@@ -84,6 +85,11 @@ void ctkTransferFunctionItem::setTransferFunction(ctkTransferFunction* transferF
 {
   CTK_D(ctkTransferFunctionItem);
   d->TransferFunction = transferFunction;
+  if (this->scene())
+    {
+    connect(d->TransferFunction,SIGNAL(changed()),
+            this->scene(), SLOT(update()),Qt::UniqueConnection);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -118,7 +124,7 @@ QRectF ctkTransferFunctionItem::boundingRect()const
   CTK_D(const ctkTransferFunctionItem);
   return d->Rect;
 }
-
+/*
 //-----------------------------------------------------------------------------
 QList<ctkPoint> ctkTransferFunctionItem::bezierParams(
   ctkControlPoint* start, ctkControlPoint* end) const
@@ -309,4 +315,17 @@ QPointF ctkTransferFunctionItem::screen2TransferFunctionCoordinates( qreal x, qr
       ( - y + this->rect().height() )/this->rangeYDiff() + this->rangeYOffSet());
 
   return transferFunctionCoordinates;
+}
+*/
+
+//-----------------------------------------------------------------------------
+QVariant ctkTransferFunctionItem::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant& value)
+{
+  QVariant res = this->QGraphicsObject::itemChange(change, value);
+  if (change == QGraphicsItem::ItemSceneChange && this->scene())
+    {
+    connect(this->transferFunction(),SIGNAL(changed()),
+            this->scene(), SLOT(update()),Qt::UniqueConnection);
+    }
+  return res;
 }

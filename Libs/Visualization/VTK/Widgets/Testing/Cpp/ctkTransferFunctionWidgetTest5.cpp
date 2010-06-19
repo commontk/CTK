@@ -59,7 +59,7 @@ int ctkTransferFunctionWidgetTest5(int argc, char * argv [] )
   transferFunctionWidget.show();
   ctkTransferFunctionBarsItem * histogramItem = new ctkTransferFunctionBarsItem;
   histogramItem->setTransferFunction(histogram.data());
-  qobject_cast<ctkTransferFunctionScene*>(transferFunctionWidget.scene())->setTransferFunction(histogram.data());
+  //qobject_cast<ctkTransferFunctionScene*>(transferFunctionWidget.scene())->setTransferFunction(histogram.data());
   transferFunctionWidget.scene()->addItem(histogramItem);
 
   QTimer autoExit;

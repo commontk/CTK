@@ -29,6 +29,7 @@
 /// CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkTransferFunctionBarsItem.h"
+#include "ctkTransferFunctionRepresentation.h"
 #include "ctkTransferFunctionScene.h"
 
 // std includes
@@ -119,9 +120,11 @@ void ctkTransferFunctionBarsItem::paint(
     return;
     }
 
-  ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
-  Q_ASSERT(tfScene);
-  const QList<QPointF>& points = tfScene->points();
+  ctkTransferFunctionRepresentation* tfRep = this->transferFunction()->representation();
+  //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
+  //Q_ASSERT(tfScene);
+  //const QList<QPointF>& points = tfScene->points();
+  const QList<QPointF>& points = tfRep->points();
 
   QPainterPath bars;
   QPen pen( QColor(255, 255, 255, 191), 1);
@@ -152,7 +155,8 @@ void ctkTransferFunctionBarsItem::paint(
     qreal barHeight = point.y();
     if (useLog && barHeight != 1.)
       {
-      barHeight = this->rect().height() - log( tfScene->mapYFromScene(barHeight) )/log(this->transferFunction()->maxValue().toReal());// 1. - (-log(barHeight)/100.);
+      //barHeight = this->rect().height() - log( tfScene->mapYFromScene(barHeight) )/log(this->transferFunction()->maxValue().toReal());// 1. - (-log(barHeight)/100.);
+      barHeight = this->rect().height() - log( tfRep->mapYFromScene(barHeight) )/log(this->transferFunction()->maxValue().toReal());// 1. - (-log(barHeight)/100.);
       }
     bars.addRect(point.x() - barWidth/2, this->rect().height(),
                  barWidth, barHeight - this->rect().height() );

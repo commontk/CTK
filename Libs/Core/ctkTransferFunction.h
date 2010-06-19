@@ -28,7 +28,11 @@
 #include <QVariant>
 
 /// CTK includes
+#include "ctkPimpl.h"
 #include "CTKCoreExport.h"
+
+class ctkTransferFunctionPrivate;
+class ctkTransferFunctionRepresentation;
 
 //-----------------------------------------------------------------------------
 struct CTK_CORE_EXPORT ctkPoint
@@ -104,8 +108,12 @@ public:
   /// be careful with it, as changing the value might require
   /// more changes to ctkControlPoint.
   virtual void setControlPointValue(int index, const QVariant& value)=0;
+
+  ctkTransferFunctionRepresentation* representation()const;
 signals:
   void changed();
+private:
+  CTK_DECLARE_PRIVATE(ctkTransferFunction);
 };
 
 //-----------------------------------------------------------------------------

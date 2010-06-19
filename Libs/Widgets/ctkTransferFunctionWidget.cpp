@@ -89,7 +89,7 @@ void ctkTransferFunctionWidget::setTransferFunction(ctkTransferFunction* transfe
   ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   Q_ASSERT(tfScene);
   tfScene->clear();
-  tfScene->setTransferFunction(transferFunction);
+  //tfScene->setTransferFunction(transferFunction);
 
   ctkTransferFunctionGradientItem* gradient = 
     new ctkTransferFunctionGradientItem(transferFunction);

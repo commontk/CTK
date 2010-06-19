@@ -30,6 +30,7 @@
 
 /// CTK includes
 #include "ctkTransferFunctionControlPointsItem.h"
+#include "ctkTransferFunctionRepresentation.h"
 #include "ctkTransferFunctionScene.h"
 #include "ctkTransferFunctionWidget.h"
 
@@ -94,16 +95,17 @@ void ctkTransferFunctionControlPointsItem::paint(
     return;
     }
 
-  ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
-  Q_ASSERT(tfScene);
+  //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
+  //Q_ASSERT(tfScene);
+  ctkTransferFunctionRepresentation* tfRep = this->transferFunction()->representation();
   
-  const QPainterPath& curve = tfScene->curve();
+  const QPainterPath& curve = tfRep->curve();
   QPen pen(QColor(255, 255, 255, 191), 1);
   pen.setCosmetic(true);
   painter->setPen(pen);
   painter->drawPath(curve);
 
-  d->ControlPoints = tfScene->points();
+  d->ControlPoints = tfRep->points();
   painter->setBrush(QBrush(QColor(191, 191, 191, 127)));
   painter->save();
   QTransform transform = painter->transform();
@@ -141,11 +143,12 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
     {
     return;
     }
-  ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
-  Q_ASSERT(tfScene);
+  //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
+  //Q_ASSERT(tfScene);
+  ctkTransferFunctionRepresentation* tfRep = this->transferFunction()->representation();
   
   // convert coordinates
-  QPointF tfPos = tfScene->mapPointFromScene(e->pos());
+  QPointF tfPos = tfRep->mapPointFromScene(e->pos());
   // add point to transfer function
   // returns index
   int index = this->transferFunction()->insertControlPoint( tfPos.x());
@@ -168,9 +171,11 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
     return;
     }
 
-  ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
-  Q_ASSERT(tfScene);
-  QPointF newPos = tfScene->mapPointFromScene(e->pos());
+  //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
+  //Q_ASSERT(tfScene);
+  ctkTransferFunctionRepresentation* tfRep = this->transferFunction()->representation();
+
+  QPointF newPos = tfRep->mapPointFromScene(e->pos());
 
   // Deal with borders
   if(d->SelectedPoint == 0 || d->SelectedPoint == this->transferFunction()->count() )

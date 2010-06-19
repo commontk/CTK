@@ -63,7 +63,6 @@ int ctkVTKColorTransferFunction::count()const
   CTK_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
-    Q_ASSERT(d->ColorTransferFunction.GetPointer());
     return -1;
     }
   return d->ColorTransferFunction->GetSize();
