@@ -68,6 +68,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctkAbstractPythonManager.h>
 #include "ctkPythonShell.h"
 
+// Disable warnings related to Python macros and functions
+// See http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html
+// Note: Ideally the incriminated functions and macros should be fixed upstream ...
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+
 //----------------------------------------------------------------------------
 class ctkPythonShellCompleter : public ctkConsoleWidgetCompleter
 {
