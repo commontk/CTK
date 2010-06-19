@@ -24,30 +24,19 @@
 #    2-myflags: -fprofile-arcs
 #    3-myflags: -fprofile-arcs -Wall
 
-FUNCTION(ctkFunctionCheckCompilerFlags CXX_FLAGS_TO_TEST RESULT_VAR)
+INCLUDE(TestCXXAcceptsFlag)
+
+FUNCTION(ctkFunctionCheckCompilerFlags CXX_FLAG_TO_TEST RESULT_VAR)
   
-  IF(CXX_FLAGS_TO_TEST STREQUAL "")
-    MESSAGE(FATAL_ERROR "CXX_FLAGS_TO_TEST shouldn't be empty")
+  IF(CXX_FLAG_TO_TEST STREQUAL "")
+    MESSAGE(FATAL_ERROR "CXX_FLAG_TO_TEST shouldn't be empty")
   ENDIF()
   
-  SET(bindir ${CMAKE_BINARY_DIR})
-  SET(srcfile ${bindir}/ctkFunctionCheckCompilerFlags.cpp)
-  
-  FILE(WRITE ${srcfile} "
-#include <iostream>
-int main(int, char**) { std::cout << \"Rock climbing is awesome\" << std::endl;}
-")
-  
-  SET(is_valid 0)
-  TRY_COMPILE(
-    is_valid ${bindir} ${srcfile}
-    CMAKE_FLAGS "-DCMAKE_CXX_FLAGS:STRING=${CXX_FLAGS_TO_TEST}"
-    )
-  
-  IF(is_valid)
-    SET(${RESULT_VAR} "${${RESULT_VAR}} ${CXX_FLAGS_TO_TEST}" PARENT_SCOPE)
+  CHECK_CXX_ACCEPTS_FLAG(${CXX_FLAG_TO_TEST} HAS_FLAG)
+
+  IF(HAS_FLAG)
+    SET(${RESULT_VAR} "${${RESULT_VAR}} ${CXX_FLAG_TO_TEST}" PARENT_SCOPE)
   ENDIF()
-  
-  MESSAGE(STATUS "Compiler Flags [${CXX_FLAGS_TO_TEST}] supported")
+
 ENDFUNCTION()
 
