@@ -51,9 +51,11 @@ public:
   /// If a render has already been scheduled, this called is a no-op
   void scheduleRender();
 
+public slots:
   /// Force a render even if a render is already ocurring
   void forceRender();
 
+public:
   /// Get underlying RenderWindow
   vtkRenderWindow* renderWindow()const;
   

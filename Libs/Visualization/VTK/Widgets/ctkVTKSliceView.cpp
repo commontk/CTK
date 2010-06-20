@@ -26,6 +26,7 @@
 // CTK includes
 #include "ctkVTKSliceView.h"
 #include "ctkVTKSliceView_p.h"
+#include "ctkLogger.h"
 
 // VTK includes
 #include <vtkRendererCollection.h>
@@ -42,6 +43,10 @@
 // Convenient macro
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
+//--------------------------------------------------------------------------
+static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKSliceView");
+//--------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
 // RenderWindowItem methods
@@ -277,6 +282,7 @@ void ctkVTKSliceView::scheduleRender()
 {
   CTK_D(ctkVTKSliceView);
 
+  logger.trace("scheduleRender");
   if (!d->RenderEnabled)
     {
     return;
@@ -296,6 +302,7 @@ void ctkVTKSliceView::forceRender()
     {
     return;
     }
+  logger.trace("forceRender");
   d->RenderWindow->Render();
   d->RenderPending = false;
 }
@@ -550,20 +557,20 @@ CTK_GET_CXX(ctkVTKSliceView, double, colorWindow, ColorWindow);
 CTK_GET_CXX(ctkVTKSliceView, double, colorLevel, ColorLevel);
 
 //----------------------------------------------------------------------------
-void ctkVTKSliceView::setImageData(vtkImageData* imageDataToSet)
+void ctkVTKSliceView::setImageData(vtkImageData* newImageData)
 {
   CTK_D(ctkVTKSliceView);
 
   foreach(const QSharedPointer<RenderWindowItem>& item, d->RenderWindowItemList)
     {
-    item->ImageMapper->SetInput(imageDataToSet);
+    item->ImageMapper->SetInput(newImageData);
     }
 
-  if (imageDataToSet)
+  if (newImageData)
     {
     d->updateRenderWindowItemsZIndex(d->RenderWindowLayoutType);
     }
 
-  d->ImageData = imageDataToSet;
+  d->ImageData = newImageData;
 }
 
