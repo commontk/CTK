@@ -42,7 +42,7 @@ public:
   ctkTransferFunctionBarsItemPrivate();
   qreal  BarWidth;
   QColor BarColor;
-  bool   LogMode;
+  ctkTransferFunctionBarsItem::LogMode   LogMode;
 };
 
 //-----------------------------------------------------------------------------
