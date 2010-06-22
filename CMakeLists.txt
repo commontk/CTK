@@ -217,11 +217,8 @@ MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
 #-----------------------------------------------------------------------------
 # Set symbol visibility Flags
 #
-IF(CMAKE_CXX_COMPILER_ID)
-  # Set the default symbol visibility to hidden for gcc
-  IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    SET(VISIBILITY_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
-  ENDIF()
+IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  SET(VISIBILITY_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
 ENDIF()
 
 #-----------------------------------------------------------------------------
