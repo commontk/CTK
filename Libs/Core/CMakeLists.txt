@@ -47,6 +47,8 @@ SET(KIT_SRCS
   ctkSingleton.h
   ctkTransferFunction.cpp
   ctkTransferFunction.h
+  ctkTransferFunctionRepresentation.cpp
+  ctkTransferFunctionRepresentation.h
   ctkUtils.cpp
   ctkUtils.h
   )
@@ -64,6 +66,7 @@ SET(KIT_MOC_SRCS
   ctkHistogram.h
   ctkModelTester.h
   ctkTransferFunction.h
+  ctkTransferFunctionRepresentation.h
   )
 
 # UI files

@@ -139,7 +139,9 @@ ctkControlPoint* ctkVTKPiecewiseFunction::controlPoint(int index)const
   Q_ASSERT(index >= 0 && index < this->count());
 
   double values[4];
+#ifndef QT_NO_DEBUG
   double* range = d->PiecewiseFunction->GetRange();
+#endif
   d->PiecewiseFunction->GetNodeValue(index, values);
 
   QVariant rangeY[2];
@@ -289,10 +291,9 @@ vtkPiecewiseFunction* ctkVTKPiecewiseFunction::piecewiseFunction()const
 void ctkVTKPiecewiseFunction::removeControlPoint( qreal pos )
 {
   CTK_D(ctkVTKPiecewiseFunction);
-  int index = -1;
   if (d->PiecewiseFunction.GetPointer() == 0)
-  {
-  return;
-  }
+    {
+    return;
+    }
   d->PiecewiseFunction->RemovePoint( pos );
 }

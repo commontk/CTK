@@ -303,11 +303,20 @@ void populateIrregularBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
 void ctkVTKHistogram::build()
 {
   CTK_D(ctkVTKHistogram);
-  
+
+  if (d->DataArray.GetPointer() == 0)
+    {
+    d->MinBin = 0;
+    d->MaxBin = 0;
+    d->Bins->SetNumberOfTuples(0);
+    return;
+    }
+
   const int binCount = d->computeNumberOfBins();
 
   d->Bins->SetNumberOfComponents(1);
   d->Bins->SetNumberOfTuples(binCount);
+
 
   if (static_cast<double>(binCount) != (d->Range[1] - d->Range[2]))
     {
@@ -339,5 +348,6 @@ void ctkVTKHistogram::build()
 //-----------------------------------------------------------------------------
 void ctkVTKHistogram::removeControlPoint( qreal pos )
 {
+  Q_UNUSED(pos);
   // TO BE IMPLEMENTED
 }

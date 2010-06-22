@@ -49,7 +49,7 @@ public:
   inline void setRect(qreal x, qreal y, qreal width, qreal height);
   void setRect(const QRectF& rectangle);
   QRectF rect()const;
-
+/*
   qreal rangeXDiff();
   qreal rangeXOffSet();
 
@@ -58,18 +58,18 @@ public:
 
   QPointF transferFunction2ScreenCoordinates( qreal x, qreal y);
   QPointF screen2TransferFunctionCoordinates( qreal x, qreal y);
-
+*/
   virtual QRectF boundingRect()const;
 protected:
-  qreal y(const QVariant& value)const;
-  inline qreal y(const ctkPoint& point)const;
+  //qreal y(const QVariant& value)const;
+  //inline qreal y(const ctkPoint& point)const;
 
   QColor color(const QVariant& value)const;
   inline QColor color(const ctkPoint& point)const;
 
-  QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end)const;
-  QList<ctkPoint> nonLinearPoints(ctkControlPoint* start, ctkControlPoint* end)const;
-
+  //QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end)const;
+  //QList<ctkPoint> nonLinearPoints(ctkControlPoint* start, ctkControlPoint* end)const;
+  virtual QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant& value);
 private:
   CTK_DECLARE_PRIVATE(ctkTransferFunctionItem);
 };
@@ -79,7 +79,7 @@ void ctkTransferFunctionItem::setRect(qreal x, qreal y, qreal width, qreal heigh
 {
   this->setRect(QRectF(x,y,width,height));
 }
-
+/*
 //-----------------------------------------------------------------------------
 qreal ctkTransferFunctionItem::y(const ctkPoint& p)const
 {
@@ -91,5 +91,5 @@ QColor ctkTransferFunctionItem::color(const ctkPoint& p)const
 {
   return this->color(p.Value);
 }
-
+*/
 #endif

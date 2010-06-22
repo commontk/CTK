@@ -227,5 +227,6 @@ vtkLookupTable* ctkVTKLookupTable::lookupTable()const
 //-----------------------------------------------------------------------------
 void ctkVTKLookupTable::removeControlPoint( qreal pos )
 {
+  Q_UNUSED(pos);
   // TO BE IMPLEMENTED
 }

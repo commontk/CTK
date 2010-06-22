@@ -19,6 +19,7 @@
 =========================================================================*/
 /// CTK includes
 #include "ctkTransferFunction.h"
+#include "ctkTransferFunctionRepresentation.h"
 
 //-----------------------------------------------------------------------------
 ctkControlPoint::~ctkControlPoint()
@@ -36,9 +37,26 @@ ctkNonLinearControlPoint::~ctkNonLinearControlPoint()
 }
 
 //-----------------------------------------------------------------------------
+class ctkTransferFunctionPrivate:public ctkPrivate<ctkTransferFunction>
+{
+public:
+  ctkTransferFunctionPrivate();
+  ctkTransferFunctionRepresentation* Representation;
+};
+
+//-----------------------------------------------------------------------------
+ctkTransferFunctionPrivate::ctkTransferFunctionPrivate()
+{
+  this->Representation = 0;
+}
+
+//-----------------------------------------------------------------------------
 ctkTransferFunction::ctkTransferFunction(QObject* parentObject)
   :QObject(parentObject)
 {
+  CTK_INIT_PRIVATE(ctkTransferFunction);
+  CTK_D(ctkTransferFunction);
+  d->Representation = new ctkTransferFunctionRepresentation(this);
 }
 
 //-----------------------------------------------------------------------------
@@ -50,4 +68,11 @@ ctkTransferFunction::~ctkTransferFunction()
   //   }
   // this->ControlPoints->clear();
   // emit changed();
+}
+
+//-----------------------------------------------------------------------------
+ctkTransferFunctionRepresentation* ctkTransferFunction::representation()const
+{
+  CTK_D(const ctkTransferFunction);
+  return d->Representation;
 }

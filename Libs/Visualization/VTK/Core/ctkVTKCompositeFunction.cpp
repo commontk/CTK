@@ -156,9 +156,10 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
 
   double valuesPWF[4];
   double valuesCTF[6];
+#ifndef QT_NO_DEBUG
   double* rangePWF = d->PiecewiseFunction->GetRange();
   double* rangeCTF = d->ColorTransferFunction->GetRange();
-
+#endif
   d->PiecewiseFunction->GetNodeValue(index, valuesPWF);
   d->ColorTransferFunction->GetNodeValue(index, valuesCTF);
 
@@ -317,7 +318,9 @@ int ctkVTKCompositeFunction::insertControlPoint(qreal pos)
       d->ColorTransferFunction->AddRGBPoint( pos, color[0], color[1], color[2] );
 
   // Add point to piecewise
+#ifndef QT_NO_DEBUG
   int indexPiecewise =
+#endif
       d->PiecewiseFunction->AddPoint( pos, 0);
 
   // check index
@@ -399,5 +402,6 @@ vtkColorTransferFunction* ctkVTKCompositeFunction::colorTransferFunction()const
 //-----------------------------------------------------------------------------
 void ctkVTKCompositeFunction::removeControlPoint( qreal pos )
 {
+  Q_UNUSED(pos);
   // TO BE IMPLEMENTED
 }

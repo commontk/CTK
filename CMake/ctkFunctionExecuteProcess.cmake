@@ -19,6 +19,10 @@
 ###########################################################################
 
 #
+# Same as EXECUTE_PROCESS command except it can accept the extra parameter: PATH_LIST
+#
+# According to the platform, either PATH, LD_LIBRARY_PATH or DYLD_LIBRARY_PATH
+# will be updated using the paths specified using PATH_LIST
 #
 #
 

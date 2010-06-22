@@ -30,8 +30,10 @@
 /// CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkTransferFunctionGradientItem.h"
+#include "ctkTransferFunctionRepresentation.h"
 #include "ctkTransferFunctionScene.h"
 
+//-----------------------------------------------------------------------------
 class ctkTransferFunctionGradientItemPrivate:public ctkPrivate<ctkTransferFunctionGradientItem>
 {
 public:
@@ -39,6 +41,7 @@ public:
   bool Mask;
 };
 
+//-----------------------------------------------------------------------------
 ctkTransferFunctionGradientItemPrivate::ctkTransferFunctionGradientItemPrivate()
 {
   this->Mask = true;
@@ -68,15 +71,20 @@ void ctkTransferFunctionGradientItem::paint(
 {
   Q_UNUSED(option);
   Q_UNUSED(widget);
-  ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
-  Q_ASSERT(tfScene);
 
-  const QGradient& gradient = tfScene->gradient();
+  if (this->transferFunction()->count() <= 0)
+    {
+    return;
+    }
+  //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
+  //Q_ASSERT(tfScene);
+  ctkTransferFunctionRepresentation* tfRep = this->transferFunction()->representation();
+
+  const QGradient& gradient = tfRep->gradient();
 
   if ( this->mask() )
     {
-    const QPainterPath& curve = tfScene->curve();
-    QPainterPath closedPath = curve;
+    QPainterPath closedPath = tfRep->curve();
     QRectF position = this->rect();
     // link to last point
     closedPath.lineTo(position.x() + position.width(), position.y() + position.height());
