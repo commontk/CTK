@@ -350,13 +350,20 @@ void ctkRangeWidget::stopChanging()
     return;
     }
   d->Changing = false;
+  bool changed = false;
   if (qAbs(this->minimumValue() - d->MinimumValueBeforeChange) > (this->singleStep() * 0.000000001))
     {
     emit this->minimumValueChanged(this->minimumValue());
+    changed = true;
     }
   if (qAbs(this->maximumValue() - d->MaximumValueBeforeChange) > (this->singleStep() * 0.000000001))
     {
     emit this->maximumValueChanged(this->maximumValue());
+    changed = true;
+    }
+  if (changed)
+    {
+    emit this->valuesChanged(this->minimumValue(), this->maximumValue());
     }
 }
 
@@ -371,6 +378,7 @@ void ctkRangeWidget::changeMinimumValue(double newValue)
   if (!d->Changing)
     {
     emit this->minimumValueChanged(newValue);
+    emit this->valuesChanged(newValue, this->maximumValue());
     }
 }
 
@@ -385,6 +393,7 @@ void ctkRangeWidget::changeMaximumValue(double newValue)
   if (!d->Changing)
     {
     emit this->maximumValueChanged(newValue);
+    emit this->valuesChanged(this->minimumValue(), newValue);
     }
 }
 
