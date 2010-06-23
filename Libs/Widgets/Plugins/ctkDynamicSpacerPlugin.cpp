@@ -38,7 +38,7 @@ QWidget *ctkDynamicSpacerPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString ctkDynamicSpacerPlugin::domXml() const
 {
-  return "<widget class=\"ctkDynamicSpacer\" name=\"CTKSpacer\">\n"
+  return "<widget class=\"ctkDynamicSpacer\" name=\"DynamicSpacer\">\n"
     "</widget>\n";
 }
 

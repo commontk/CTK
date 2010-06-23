@@ -40,7 +40,7 @@ QWidget *ctkMatrixWidgetPlugin::createWidget(QWidget *_parent)
 QString ctkMatrixWidgetPlugin::domXml() const
 {
   return "<widget class=\"ctkMatrixWidget\" \
-          name=\"CTKMatrixWidget\">\n"
+          name=\"MatrixWidget\">\n"
           "</widget>\n";
 }
 

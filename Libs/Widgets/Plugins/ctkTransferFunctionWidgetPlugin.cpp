@@ -40,7 +40,7 @@ QWidget *ctkTransferFunctionWidgetPlugin::createWidget(QWidget *_parent)
 QString ctkTransferFunctionWidgetPlugin::domXml() const
 {
   return "<widget class=\"ctkTransferFunctionWidget\" \
-          name=\"ctkTransferFunctionWidget\">\n"
+          name=\"TransferFunctionWidget\">\n"
           "</widget>\n";
 }
 

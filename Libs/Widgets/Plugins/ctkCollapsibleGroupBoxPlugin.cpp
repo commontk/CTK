@@ -41,7 +41,7 @@ QWidget *ctkCollapsibleGroupBoxPlugin::createWidget(QWidget *_parent)
 QString ctkCollapsibleGroupBoxPlugin::domXml() const
 {
   return "<widget class=\"ctkCollapsibleGroupBox\" \
-          name=\"CTKCollapsibleGroupBox\">\n"
+          name=\"CollapsibleGroupBox\">\n"
           " <property name=\"geometry\">\n"
           "  <rect>\n"
           "   <x>0</x>\n"

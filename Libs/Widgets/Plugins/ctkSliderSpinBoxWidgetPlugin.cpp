@@ -40,7 +40,7 @@ QWidget *ctkSliderSpinBoxWidgetPlugin::createWidget(QWidget *_parent)
 QString ctkSliderSpinBoxWidgetPlugin::domXml() const
 {
   return "<widget class=\"ctkSliderSpinBoxWidget\" \
-          name=\"ctkSliderSpinBoxWidget\">\n"
+          name=\"SliderSpinBoxWidget\">\n"
           "</widget>\n";
 }
 
