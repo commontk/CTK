@@ -43,8 +43,8 @@ SET(PLUGIN_SRCS
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.cpp
   ctkRangeWidgetPlugin.h
-  ctkTransferFunctionWidgetPlugin.cpp
-  ctkTransferFunctionWidgetPlugin.h
+  ctkTransferFunctionViewPlugin.cpp
+  ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.cpp
   ctkTreeComboBoxPlugin.h
   ctkSliderSpinBoxWidgetPlugin.cpp
@@ -70,7 +70,7 @@ SET(PLUGIN_MOC_SRCS
   ctkMenuButtonPlugin.h
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.h
-  ctkTransferFunctionWidgetPlugin.h
+  ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.h
   ctkSliderSpinBoxWidgetPlugin.h
   )

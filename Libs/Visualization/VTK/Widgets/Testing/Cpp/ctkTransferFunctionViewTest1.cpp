@@ -25,43 +25,52 @@
 
 // CTK includes
 #include "ctkTransferFunction.h"
-#include "ctkTransferFunctionWidget.h"
-#include "ctkVTKLookupTable.h"
+#include "ctkTransferFunctionControlPointsItem.h"
+#include "ctkTransferFunctionGradientItem.h"
+#include "ctkTransferFunctionView.h"
+#include "ctkVTKColorTransferFunction.h"
 
 // VTK includes
-#include <vtkLookupTable.h>
+#include <vtkColorTransferFunction.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkTransferFunctionWidgetTest2(int argc, char * argv [] )
+int ctkTransferFunctionViewTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   
-  vtkSmartPointer<vtkLookupTable> ctf = 
-    vtkSmartPointer<vtkLookupTable>::New();
-
-  ctf->SetNumberOfTableValues(32);
-  ctf->SetHueRange(0.,1.);
-  ctf->SetSaturationRange(1.,1.);
-  ctf->SetValueRange(1.,1.);
-  ctf->SetAlphaRange(1.,1.);
-  ctf->Build();
+  vtkSmartPointer<vtkColorTransferFunction> ctf = 
+    vtkSmartPointer<vtkColorTransferFunction>::New();
+  //
+  ctf->AddRGBPoint(0.2, 1.,0.,0., 0.5, 0.);
+  //ctf->AddRGBPoint(0.5, 0.,0.,1.);
+  ctf->AddRGBPoint(0.8, 0.,1.,0.);
+  //ctf->AddHSVPoint(0., 0.,1.,1.);
+  //ctf->AddHSVPoint(1., 0.66666,1.,1.);
 
   QSharedPointer<ctkTransferFunction> transferFunction = 
-    QSharedPointer<ctkTransferFunction>(new ctkVTKLookupTable(ctf));
-  ctkTransferFunctionWidget transferFunctionWidget(transferFunction.data(), 0);
+    QSharedPointer<ctkTransferFunction>(new ctkVTKColorTransferFunction(ctf));
+  ctkTransferFunctionView transferFunctionView(0);
+  ctkTransferFunctionGradientItem* gradient = 
+    new ctkTransferFunctionGradientItem(transferFunction.data());
+  ctkTransferFunctionControlPointsItem* controlPoints = 
+    new ctkTransferFunctionControlPointsItem(transferFunction.data());
+  
+  transferFunctionView.scene()->addItem(gradient);
+  transferFunctionView.scene()->addItem(controlPoints);
   // the widget is not really shown here, only when app.exec() is called
-  transferFunctionWidget.show();
+  transferFunctionView.show();
 
+  //ctf->AddRGBPoint(0.7, 0.0,0.0,0.0);
+  //ctkTransferFunctionView* toto = new ctkTransferFunctionView();
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(1000);
     }
-
   return app.exec();
 }

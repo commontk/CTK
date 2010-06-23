@@ -4,11 +4,11 @@ SET(KIT ${PROJECT_NAME})
 # Tests
 #
 SET(TEST_SOURCES
-  ctkTransferFunctionWidgetTest1.cpp
-  ctkTransferFunctionWidgetTest2.cpp
-  ctkTransferFunctionWidgetTest3.cpp
-  ctkTransferFunctionWidgetTest4.cpp
-  ctkTransferFunctionWidgetTest5.cpp
+  ctkTransferFunctionViewTest1.cpp
+  ctkTransferFunctionViewTest2.cpp
+  ctkTransferFunctionViewTest3.cpp
+  ctkTransferFunctionViewTest4.cpp
+  ctkTransferFunctionViewTest5.cpp
   )
 
 #
@@ -44,11 +44,11 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
-SIMPLE_TEST( ctkTransferFunctionWidgetTest1 )
-SIMPLE_TEST( ctkTransferFunctionWidgetTest2 )
-SIMPLE_TEST( ctkTransferFunctionWidgetTest3 )
-SIMPLE_TEST( ctkTransferFunctionWidgetTest4 )
-SIMPLE_TEST( ctkTransferFunctionWidgetTest5 )
+SIMPLE_TEST( ctkTransferFunctionViewTest1 )
+SIMPLE_TEST( ctkTransferFunctionViewTest2 )
+SIMPLE_TEST( ctkTransferFunctionViewTest3 )
+SIMPLE_TEST( ctkTransferFunctionViewTest4 )
+SIMPLE_TEST( ctkTransferFunctionViewTest5 )
 
 #
 # Add Tests expecting CTKData to be set

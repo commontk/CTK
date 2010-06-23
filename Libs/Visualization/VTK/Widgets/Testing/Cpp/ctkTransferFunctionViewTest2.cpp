@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
-
+ 
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
+ 
 =========================================================================*/
 
 // Qt includes
@@ -25,35 +25,45 @@
 
 // CTK includes
 #include "ctkTransferFunction.h"
-#include "ctkTransferFunctionWidget.h"
-#include "ctkVTKPiecewiseFunction.h"
+#include "ctkTransferFunctionControlPointsItem.h"
+#include "ctkTransferFunctionGradientItem.h"
+#include "ctkTransferFunctionView.h"
+#include "ctkVTKLookupTable.h"
 
 // VTK includes
-#include <vtkPiecewiseFunction.h>
+#include <vtkLookupTable.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkTransferFunctionWidgetTest3(int argc, char * argv [] )
+int ctkTransferFunctionViewTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
+  
+  vtkSmartPointer<vtkLookupTable> ctf = 
+    vtkSmartPointer<vtkLookupTable>::New();
 
-  vtkSmartPointer<vtkPiecewiseFunction> pwf =
-    vtkSmartPointer<vtkPiecewiseFunction>::New();
-  //
-  pwf->AddPoint(0., 1.);
-  pwf->AddPoint(0.2, 1.2);
-  pwf->AddPoint(0.3, 1.5);
-  pwf->AddPoint(0.4, 2., 0.5, 0.5);
-  pwf->AddPoint(0.9, 1.5);
+  ctf->SetNumberOfTableValues(32);
+  ctf->SetHueRange(0.,1.);
+  ctf->SetSaturationRange(1.,1.);
+  ctf->SetValueRange(1.,1.);
+  ctf->SetAlphaRange(1.,1.);
+  ctf->Build();
 
-  QSharedPointer<ctkTransferFunction> transferFunction =
-    QSharedPointer<ctkTransferFunction>(new ctkVTKPiecewiseFunction(pwf));
-  ctkTransferFunctionWidget transferFunctionWidget(transferFunction.data(), 0);
+  QSharedPointer<ctkTransferFunction> transferFunction = 
+    QSharedPointer<ctkTransferFunction>(new ctkVTKLookupTable(ctf));
+  ctkTransferFunctionView transferFunctionView(0);
+    ctkTransferFunctionGradientItem* gradient = 
+    new ctkTransferFunctionGradientItem(transferFunction.data());
+  ctkTransferFunctionControlPointsItem* controlPoints = 
+    new ctkTransferFunctionControlPointsItem(transferFunction.data());
+  
+  transferFunctionView.scene()->addItem(gradient);
+  transferFunctionView.scene()->addItem(controlPoints);
   // the widget is not really shown here, only when app.exec() is called
-  transferFunctionWidget.show();
+  transferFunctionView.show();
 
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
