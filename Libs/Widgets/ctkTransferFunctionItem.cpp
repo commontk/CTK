@@ -322,7 +322,7 @@ QPointF ctkTransferFunctionItem::screen2TransferFunctionCoordinates( qreal x, qr
 QVariant ctkTransferFunctionItem::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant& value)
 {
   QVariant res = this->QGraphicsObject::itemChange(change, value);
-  if (change == QGraphicsItem::ItemSceneChange && this->scene())
+  if (change == QGraphicsItem::ItemSceneHasChanged && this->scene())
     {
     connect(this->transferFunction(),SIGNAL(changed()),
             this->scene(), SLOT(update()),Qt::UniqueConnection);

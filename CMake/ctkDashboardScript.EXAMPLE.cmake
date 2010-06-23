@@ -77,6 +77,11 @@ find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
 find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
 find_program(CTEST_GIT_COMMAND NAMES git)
 
+#
+# Git repository - Overwrite the default value provided by the driver script
+#
+# set(GIT_REPOSITORY http://github.com/YOURUSERNAME/CTK.git)
+
 ##########################################
 # WARNING: DO NOT EDIT BEYOND THIS POINT #
 ##########################################
