@@ -49,7 +49,7 @@ public:
 
   /// 
   void SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, QString qt_slot, float priority);
+    const QObject* qt_obj, QString qt_slot, float priority = 0.f);
 
   /// 
   /// Check the validity of the parameters. Parameters must be valid to add 
