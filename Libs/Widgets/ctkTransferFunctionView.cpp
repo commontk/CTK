@@ -95,5 +95,4 @@ void ctkTransferFunctionView::resizeEvent(QResizeEvent * event)
   // Control points are resized by the view transform, we want
   // fixed size control points, lines...
   //this->fitInView(this->scene()->sceneRect());
-  qDebug() << "resize event caught";
 }
