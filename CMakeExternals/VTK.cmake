@@ -15,7 +15,7 @@ IF(${add_project})
 #     MESSAGE(STATUS "Adding project:${proj}")
     SET(VTK_DEPENDS ${proj})
     ExternalProject_Add(${proj}
-      GIT_REPOSITORY git://vtk.org/VTK.git
+      GIT_REPOSITORY ${git_protocol}://vtk.org/VTK.git
       INSTALL_COMMAND ""
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS

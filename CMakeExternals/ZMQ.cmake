@@ -15,7 +15,7 @@ IF(${add_project})
   #   MESSAGE(STATUS "Adding project:${proj}")
     SET(ZMQ_DEPENDS ${proj})
     ExternalProject_Add(${proj}
-        GIT_REPOSITORY git://github.com/PatrickCheng/zeromq2.git
+        GIT_REPOSITORY ${git_protocol}://github.com/PatrickCheng/zeromq2.git
         INSTALL_COMMAND ""
         CMAKE_GENERATOR ${gen}
         CMAKE_ARGS
