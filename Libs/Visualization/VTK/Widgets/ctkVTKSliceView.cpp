@@ -528,6 +528,7 @@ void ctkVTKSliceView::setRenderWindowLayout(int rowCount, int columnCount)
   d->RenderWindowColumnCount = columnCount;
 
   d->setupRendering();
+  d->setupCornerAnnotation();
 
   if (d->ImageData)
     {
