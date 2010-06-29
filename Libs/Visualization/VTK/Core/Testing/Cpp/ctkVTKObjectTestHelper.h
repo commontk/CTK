@@ -17,7 +17,7 @@ class ctkVTKObjectTest: public QObject
   Q_OBJECT
   QVTK_OBJECT
 public:
-  ctkVTKObjectTest();
+  ctkVTKObjectTest(QObject* parent = 0);
 
   bool test();
 
@@ -27,6 +27,7 @@ public:
 
   void resetSlotCalls();
 
+  void emitSignalEmitted();
 public slots:
   void onVTKObjectModifiedPublic();
   void deleteConnection();

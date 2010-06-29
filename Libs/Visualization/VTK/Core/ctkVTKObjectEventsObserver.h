@@ -50,11 +50,6 @@ public:
   virtual void printAdditionalInfo();
 
   /// 
-  /// Enable / Disable all ctkVTKConnections
-  void setAllEnabled( bool enable );
-  bool allEnabled()const;
-
-  /// 
   /// Add a connection, an Id allowing to uniquely identify the connection is also returned
   QString addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
