@@ -18,6 +18,7 @@ SET(TEST_SOURCES
 IF(EXISTS "${CTKData_DIR}")
   LIST(APPEND TEST_SOURCES
     ctkVTKSliceViewTest1.cpp
+    ctkVTKRenderViewTest1.cpp
     )
 ENDIF()
 
@@ -61,4 +62,5 @@ SIMPLE_TEST( ctkTransferFunctionViewTest5 )
 IF(EXISTS "${CTKData_DIR}")
   #
   SIMPLE_TEST( ctkVTKSliceViewTest1 )
+  SIMPLE_TEST( ctkVTKRenderViewTest1 )
 ENDIF()
