@@ -146,6 +146,13 @@ public:
   /// Set image data
   void setImageData(vtkImageData* newImageData);
   
+
+signals:
+  void resized(QResizeEvent*);
+
+protected:
+  virtual void resizeEvent(QResizeEvent * event);
+
 private:
   CTK_DECLARE_PRIVATE(ctkVTKSliceView);
 }; 

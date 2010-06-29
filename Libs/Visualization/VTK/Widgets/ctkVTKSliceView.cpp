@@ -575,3 +575,11 @@ void ctkVTKSliceView::setImageData(vtkImageData* newImageData)
   d->ImageData = newImageData;
 }
 
+
+//----------------------------------------------------------------------------
+void ctkVTKSliceView::resizeEvent(QResizeEvent * event)
+{
+  this->QWidget::resizeEvent(event);
+  emit this->resized(event);
+}
+
