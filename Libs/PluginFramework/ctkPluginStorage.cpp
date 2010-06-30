@@ -54,12 +54,16 @@
 
   ctkPluginArchive* ctkPluginStorage::updatePluginArchive(ctkPluginArchive* old, const QString& localPath)
   {
+    Q_UNUSED(old)
+    Q_UNUSED(localPath)
     //return new BundleArchiveImpl((BundleArchiveImpl)old, is);
     return 0;
   }
 
   void ctkPluginStorage::replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA)
   {
+    Q_UNUSED(oldPA)
+    Q_UNUSED(newPA)
 //    int pos;
 //    long id = oldBA.getBundleId();
 //    synchronized (archives) {

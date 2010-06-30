@@ -30,7 +30,7 @@
   }
 
   ctkPluginEvent::ctkPluginEvent(const ctkPluginEvent& other)
-    : d(other.d)
+    : QObject(), d(other.d)
   {
 
   }

@@ -22,63 +22,64 @@
 #include "ctkLDAPSearchFilter.h"
 
 
-  class ctkLDAPSearchFilterPrivate {
-  public:
+class ctkLDAPSearchFilterPrivate {
+public:
 
-    ctkLDAPSearchFilterPrivate()
-      : ref(1)
-    {}
+  ctkLDAPSearchFilterPrivate()
+    : ref(1)
+  {}
 
-    QAtomicInt ref;
+  QAtomicInt ref;
 
-  };
+};
 
-  ctkLDAPSearchFilter::ctkLDAPSearchFilter(const QString& filter)
-    : d(new ctkLDAPSearchFilterPrivate())
-  {
+ctkLDAPSearchFilter::ctkLDAPSearchFilter(const QString& filter)
+  : d(new ctkLDAPSearchFilterPrivate())
+{
+  Q_UNUSED(filter)
+}
 
-  }
+ctkLDAPSearchFilter::ctkLDAPSearchFilter(const ctkLDAPSearchFilter& filter)
+  : d(filter.d)
+{
+  d->ref.ref();
+}
 
-  ctkLDAPSearchFilter::ctkLDAPSearchFilter(const ctkLDAPSearchFilter& filter)
-    : d(filter.d)
-  {
-    d->ref.ref();
-  }
+ctkLDAPSearchFilter::~ctkLDAPSearchFilter()
+{
+  if (!d->ref.deref())
+    delete d;
+}
 
-  ctkLDAPSearchFilter::~ctkLDAPSearchFilter()
+bool ctkLDAPSearchFilter::match(const Dictionary& dictionary) const
+{
+  Q_UNUSED(dictionary)
+  return true;
+}
+
+bool ctkLDAPSearchFilter::matchCase(const Dictionary& dictionary) const
+{
+  Q_UNUSED(dictionary)
+  return true;
+}
+
+bool ctkLDAPSearchFilter::operator==(const ctkLDAPSearchFilter& other) const
+{
+  // TODO
+  Q_UNUSED(other)
+  return true;
+}
+
+ctkLDAPSearchFilter& ctkLDAPSearchFilter::operator=(const ctkLDAPSearchFilter& filter)
+{
+  if (d != filter.d)
   {
     if (!d->ref.deref())
       delete d;
+
+    d = filter.d;
+    d->ref.ref();
   }
 
-  bool ctkLDAPSearchFilter::match(const Dictionary& dictionary) const
-  {
-    return true;
-  }
-
-  bool ctkLDAPSearchFilter::matchCase(const Dictionary& dictionary) const
-  {
-    return true;
-  }
-
-  bool ctkLDAPSearchFilter::operator==(const ctkLDAPSearchFilter& other) const
-  {
-    // TODO
-    return true;
-  }
-
-  ctkLDAPSearchFilter& ctkLDAPSearchFilter::operator=(const ctkLDAPSearchFilter& filter)
-  {
-    if (d != filter.d)
-    {
-      if (!d->ref.deref())
-        delete d;
-
-      d = filter.d;
-      d->ref.ref();
-    }
-
-    return *this;
-
-
+  return *this;
 }

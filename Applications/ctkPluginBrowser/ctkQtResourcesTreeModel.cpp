@@ -81,6 +81,8 @@ ctkQtResourceTreeItem::~ctkQtResourceTreeItem()
 
 ctkQtResourceTreeItem* ctkQtResourceTreeItem::child(int row)
 {
+  Q_UNUSED(row)
+
   return 0;
 }
 
@@ -198,6 +200,10 @@ Qt::ItemFlags ctkQtResourcesTreeModel::flags(const QModelIndex &index) const
 QVariant ctkQtResourcesTreeModel::headerData(int section, Qt::Orientation orientation,
                    int role) const
 {
+  Q_UNUSED(section)
+  Q_UNUSED(orientation)
+  Q_UNUSED(role)
+
   return QVariant();
 }
 
@@ -250,5 +256,7 @@ int ctkQtResourcesTreeModel::rowCount(const QModelIndex &parent) const
 
 int ctkQtResourcesTreeModel::columnCount(const QModelIndex &parent) const
 {
+  Q_UNUSED(parent)
+
   return 1;
 }

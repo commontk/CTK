@@ -82,11 +82,15 @@ QVariant ctkPluginTableModel::headerData(int section, Qt::Orientation orientatio
 
 int ctkPluginTableModel::columnCount(const QModelIndex& parent) const
 {
+  Q_UNUSED(parent)
+
   return 3;
 }
 
 int ctkPluginTableModel::rowCount(const QModelIndex& parent) const
 {
+  Q_UNUSED(parent)
+
   return plugins.size();
 }
 
