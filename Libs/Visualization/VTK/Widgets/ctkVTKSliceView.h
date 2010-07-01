@@ -63,6 +63,9 @@ public slots:
   /// Force a render even if a render is already ocurring
   void forceRender();
 
+  /// Reset cameras associated with all renderWindowItem
+  void resetCamera();
+
 public:
 
   /// Get underlying RenderWindow
@@ -89,9 +92,6 @@ public:
 
   /// Set actice camera
   void setActiveCamera(vtkCamera* newActiveCamera);
-
-  /// Reset cameras associated with all renderWindowItem
-  void resetCamera();
   
   /// Return number of underlying renderer
   int rendererCount();
@@ -146,6 +146,13 @@ public:
   /// Set image data
   void setImageData(vtkImageData* newImageData);
   
+
+signals:
+  void resized(QResizeEvent*);
+
+protected:
+  virtual void resizeEvent(QResizeEvent * event);
+
 private:
   CTK_DECLARE_PRIVATE(ctkVTKSliceView);
 }; 

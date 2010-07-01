@@ -528,6 +528,7 @@ void ctkVTKSliceView::setRenderWindowLayout(int rowCount, int columnCount)
   d->RenderWindowColumnCount = columnCount;
 
   d->setupRendering();
+  d->setupCornerAnnotation();
 
   if (d->ImageData)
     {
@@ -572,5 +573,13 @@ void ctkVTKSliceView::setImageData(vtkImageData* newImageData)
     }
 
   d->ImageData = newImageData;
+}
+
+
+//----------------------------------------------------------------------------
+void ctkVTKSliceView::resizeEvent(QResizeEvent * event)
+{
+  this->QWidget::resizeEvent(event);
+  emit this->resized(event);
 }
 

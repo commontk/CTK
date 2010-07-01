@@ -16,6 +16,10 @@ SET(TEST_SOURCES
 # Tests expecting CTKData to be set
 #
 IF(EXISTS "${CTKData_DIR}")
+  LIST(APPEND TEST_SOURCES
+    ctkVTKSliceViewTest1.cpp
+    ctkVTKRenderViewTest1.cpp
+    )
 ENDIF()
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
@@ -56,4 +60,7 @@ SIMPLE_TEST( ctkTransferFunctionViewTest5 )
 # Add Tests expecting CTKData to be set
 #
 IF(EXISTS "${CTKData_DIR}")
+  #
+  SIMPLE_TEST( ctkVTKSliceViewTest1 )
+  SIMPLE_TEST( ctkVTKRenderViewTest1 )
 ENDIF()
