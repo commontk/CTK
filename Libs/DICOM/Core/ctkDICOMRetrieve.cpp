@@ -66,7 +66,7 @@ public:
   int CallingPort;
   int CalledPort;
   DcmSCU SCU;
-  DcmDataset* query;
+  DcmDataset* parameters;
 };
 
 //------------------------------------------------------------------------------
@@ -75,13 +75,13 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate()
 {
-  query = new DcmDataset();
+  parameters = new DcmDataset();
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
 {
-  delete query;
+  delete parameters;
 }
 
 
@@ -156,4 +156,55 @@ int ctkDICOMRetrieve::calledPort()
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::retrieveSeries ( QString seriesInstanceUID, QDir directory ) {
+  CTK_D(ctkDICOMRetrieve);
+  logger.info ( "Starting retrieveSeries" );
+  DcmSCU scu;
+  scu.setAETitle ( this->callingAETitle().toStdString() );
+  scu.setPeerAETitle ( this->calledAETitle().toStdString() );
+  scu.setPeerHostName ( this->host().toStdString() );
+  scu.setPeerPort ( this->calledPort() );
+
+  logger.error ( "Setting Transfer Syntaxes" );
+  OFList<OFString> transferSyntaxes;
+  transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
+  scu.addPresentationContext ( UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+
+
+  if ( !scu.initNetwork().good() ) 
+    {
+    logger.error ( "Error initializing the network" );
+    return;
+    }
+  logger.debug ( "Negotiating Association" );
+  if ( !scu.negotiateAssociation().good() )
+    {
+    logger.error ( "Error negotiating association" );
+    return;
+    }
+  // Clear the query
+  unsigned long elements = d->parameters->card();
+  // Clean it out
+  for ( unsigned long i = 0; i < elements; i++ ) 
+    {
+    d->parameters->remove ( (unsigned long) 0 );
+    }
+  d->parameters->putAndInsertString ( DCM_SeriesInstanceUID, seriesInstanceUID.toStdString().c_str() );
+
+  MOVEResponses *responses = new MOVEResponses();
+  OFCondition status = scu.sendMOVERequest ( 0, d->parameters, responses );
+  if ( status.good() )
+    {
+    logger.debug ( "Find succeded" );
+    }
+  else
+    {
+    logger.error ( "Find failed" );
+    }
+  return;
+  
 }
+void ctkDICOMRetrieve::retrieveStudy ( QString studyInstanceUID, QDir directory ) {
+}
+

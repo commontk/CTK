@@ -174,8 +174,8 @@ void ctkDICOMQuery::query(QSqlDatabase database )
   transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
 
-  // d->SCU.addPresentationContext ( UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes );
-  d->SCU.addPresentationContext ( UID_VerificationSOPClass, transferSyntaxes );
+  d->SCU.addPresentationContext ( UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+  // d->SCU.addPresentationContext ( UID_VerificationSOPClass, transferSyntaxes );
   if ( !d->SCU.initNetwork().good() ) 
     {
     std::cerr << "Error initializing the network" << std::endl;
@@ -183,17 +183,7 @@ void ctkDICOMQuery::query(QSqlDatabase database )
     }
   logger.debug ( "Negotiating Association" );
   d->SCU.negotiateAssociation();
-  logger.debug ( "Sending Echo" );
-  OFString abstractSyntax;
-  OFString transferSyntax;
-  if ( d->SCU.sendECHORequest ( 0 ).good() )
-    {
-    std::cout << "ECHO Sucessful" << std::endl;
-    } 
-  else
-    {
-    std::cerr << "ECHO Failed" << std::endl;
-    }
+
   // Clear the query
   unsigned long elements = d->query->card();
   // Clean it out
@@ -201,7 +191,7 @@ void ctkDICOMQuery::query(QSqlDatabase database )
     {
     d->query->remove ( (unsigned long) 0 );
     }
-  d->query->insertEmptyElement ( DCM_QueryRetrieveLevel );
+//  d->query->insertEmptyElement ( DCM_QueryRetrieveLevel );
   d->query->insertEmptyElement ( DCM_PatientID );
   d->query->insertEmptyElement ( DCM_PatientsName );
   d->query->insertEmptyElement ( DCM_PatientsBirthDate );
@@ -229,7 +219,27 @@ void ctkDICOMQuery::query(QSqlDatabase database )
 
   FINDResponses *responses = new FINDResponses();
 
-  OFCondition status = d->SCU.sendFINDRequest ( 0, d->query, responses );
+  Uint16 presentationContex = 0;
+  presentationContex = d->SCU.findPresentationContextID ( UID_FINDStudyRootQueryRetrieveInformationModel, UID_LittleEndianExplicitTransferSyntax );
+  if ( presentationContex == 0 )
+    {
+  presentationContex = d->SCU.findPresentationContextID ( UID_FINDStudyRootQueryRetrieveInformationModel, UID_BigEndianExplicitTransferSyntax );
+    }
+  if ( presentationContex == 0 )
+    {
+    presentationContex = d->SCU.findPresentationContextID ( UID_FINDStudyRootQueryRetrieveInformationModel, UID_LittleEndianImplicitTransferSyntax );
+    }
+
+  if ( presentationContex == 0 )
+    {
+    logger.error ( "Failed to find acceptable presentation context" );
+    }
+  else
+    {
+    logger.info ( "Found useful presentation context" );
+    }
+
+  OFCondition status = d->SCU.sendFINDRequest ( presentationContex, d->query, responses );
   if ( status.good() )
     {
     logger.debug ( "Find succeded" );
