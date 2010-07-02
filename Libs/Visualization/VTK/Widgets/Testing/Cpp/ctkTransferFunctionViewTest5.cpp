@@ -26,8 +26,8 @@
 // CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkTransferFunctionBarsItem.h"
-#include "ctkTransferFunctionWidget.h"
 #include "ctkTransferFunctionScene.h"
+#include "ctkTransferFunctionView.h"
 #include "ctkVTKHistogram.h"
 
 // VTK includes
@@ -38,7 +38,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkTransferFunctionWidgetTest5(int argc, char * argv [] )
+int ctkTransferFunctionViewTest5(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   
@@ -54,14 +54,15 @@ int ctkTransferFunctionWidgetTest5(int argc, char * argv [] )
     QSharedPointer<ctkVTKHistogram>(new ctkVTKHistogram(intArray));
   histogram->build();
   //ctkTransferFunctionWidget transferFunctionWidget(histogram.data(), 0);
-  ctkTransferFunctionWidget transferFunctionWidget;
-  // the widget is not really shown here, only when app.exec() is called
-  transferFunctionWidget.show();
+  ctkTransferFunctionView transferFunctionWidget;
+  
   ctkTransferFunctionBarsItem * histogramItem = new ctkTransferFunctionBarsItem;
   histogramItem->setTransferFunction(histogram.data());
   //qobject_cast<ctkTransferFunctionScene*>(transferFunctionWidget.scene())->setTransferFunction(histogram.data());
   transferFunctionWidget.scene()->addItem(histogramItem);
-
+  // the widget is not really shown here, only when app.exec() is called
+  transferFunctionWidget.show();
+  
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {

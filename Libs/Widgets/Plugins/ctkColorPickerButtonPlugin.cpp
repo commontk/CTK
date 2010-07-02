@@ -38,7 +38,7 @@ QWidget *ctkColorPickerButtonPlugin::createWidget(QWidget *_parent)
 QString ctkColorPickerButtonPlugin::domXml() const
 {
   return "<widget class=\"ctkColorPickerButton\" \
-          name=\"CTKColorPickerButton\">\n"
+          name=\"ColorPickerButton\">\n"
           "</widget>\n";
 }
 

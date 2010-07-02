@@ -19,51 +19,51 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkTransferFunctionWidgetPlugin.h"
-#include "ctkTransferFunctionWidget.h"
+#include "ctkTransferFunctionViewPlugin.h"
+#include "ctkTransferFunctionView.h"
 
 //-----------------------------------------------------------------------------
-ctkTransferFunctionWidgetPlugin::ctkTransferFunctionWidgetPlugin(QObject *_parent)
+ctkTransferFunctionViewPlugin::ctkTransferFunctionViewPlugin(QObject *_parent)
         : QObject(_parent)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkTransferFunctionWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *ctkTransferFunctionViewPlugin::createWidget(QWidget *_parent)
 {
-  ctkTransferFunctionWidget* _widget = new ctkTransferFunctionWidget(_parent);
+  ctkTransferFunctionView* _widget = new ctkTransferFunctionView(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkTransferFunctionWidgetPlugin::domXml() const
+QString ctkTransferFunctionViewPlugin::domXml() const
 {
-  return "<widget class=\"ctkTransferFunctionWidget\" \
-          name=\"ctkTransferFunctionWidget\">\n"
+  return "<widget class=\"ctkTransferFunctionView\" \
+          name=\"TransferFunctionView\">\n"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkTransferFunctionWidgetPlugin::icon() const
+QIcon ctkTransferFunctionViewPlugin::icon() const
 {
   return QIcon();
 }
 
 //-----------------------------------------------------------------------------
-QString ctkTransferFunctionWidgetPlugin::includeFile() const
+QString ctkTransferFunctionViewPlugin::includeFile() const
 {
-  return "ctkTransferFunctionWidget.h";
+  return "ctkTransferFunctionView.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkTransferFunctionWidgetPlugin::isContainer() const
+bool ctkTransferFunctionViewPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkTransferFunctionWidgetPlugin::name() const
+QString ctkTransferFunctionViewPlugin::name() const
 {
-  return "ctkTransferFunctionWidget";
+  return "ctkTransferFunctionView";
 }

@@ -39,7 +39,7 @@ QWidget *ctkCollapsibleButtonPlugin::createWidget(QWidget *_parent)
 QString ctkCollapsibleButtonPlugin::domXml() const
 {
   return "<widget class=\"ctkCollapsibleButton\" \
-          name=\"CTKCollapsibleButton\">\n"
+          name=\"CollapsibleButton\">\n"
           " <property name=\"geometry\">\n"
           "  <rect>\n"
           "   <x>0</x>\n"

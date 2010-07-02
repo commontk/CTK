@@ -25,7 +25,7 @@
   ctkServiceRegistrationPrivate::ctkServiceRegistrationPrivate(ctkServiceRegistration* sr,
                                                          ctkPluginPrivate* plugin, QObject* service,
                                                          const ServiceProperties& props)
-                               : q_ptr(sr), plugin(plugin), service(service), reference(new ctkServiceReference(this)),
+                               : q_ptr(sr), service(service), plugin(plugin), reference(new ctkServiceReference(this)),
                                properties(props), available(true), unregistering(false)
   {
 

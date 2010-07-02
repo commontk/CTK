@@ -40,7 +40,7 @@ QWidget *ctkDirectoryButtonPlugin::createWidget(QWidget *_parent)
 QString ctkDirectoryButtonPlugin::domXml() const
 {
   return "<widget class=\"ctkDirectoryButton\" \
-          name=\"CTKDirectoryButton\">\n"
+          name=\"DirectoryButton\">\n"
           "</widget>\n";
 }
 

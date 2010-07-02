@@ -41,7 +41,7 @@
   }
 
   ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other)
-    : d(other.d)
+    : QObject(), d(other.d)
   {
 
   }

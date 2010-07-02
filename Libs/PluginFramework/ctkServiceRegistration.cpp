@@ -54,6 +54,7 @@
 
   void ctkServiceRegistration::setProperties(const ServiceProperties& properties)
   {
+    Q_UNUSED(properties)
 //    QMutexLocker lock(eventLock);
 //          Set before;
 //          // TBD, optimize the locking of services

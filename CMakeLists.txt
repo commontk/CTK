@@ -217,18 +217,15 @@ MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
 #-----------------------------------------------------------------------------
 # Set symbol visibility Flags
 #
-IF(CMAKE_CXX_COMPILER_ID)
-  # Set the default symbol visibility to hidden for gcc
-  IF(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    SET(VISIBILITY_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
-  ENDIF()
+IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  SET(VISIBILITY_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
 ENDIF()
 
 #-----------------------------------------------------------------------------
 # Set coverage Flags
 #
 IF(WITH_COVERAGE)
-  IF(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     SET(coverage_flags "-g -fprofile-arcs -ftest-coverage -O3 -DNDEBUG")
     SET(COVERAGE_CXX_FLAGS ${coverage_flags})
     SET(COVERAGE_C_FLAGS ${coverage_flags})
@@ -241,7 +238,7 @@ ENDIF()
 SET(CTK_C_FLAGS "${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}")
 SET(CTK_CXX_FLAGS "${VISIBILITY_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}")
 
-IF(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
   ctkFunctionCheckCompilerFlags("-fstack-protector-all" cflags)

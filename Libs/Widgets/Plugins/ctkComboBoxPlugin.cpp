@@ -40,7 +40,7 @@ QWidget *ctkComboBoxPlugin::createWidget(QWidget *_parent)
 QString ctkComboBoxPlugin::domXml() const
 {
   return "<widget class=\"ctkComboBox\" \
-          name=\"CTKTitleComboBox\">\n"
+          name=\"ComboBox\">\n"
           "</widget>\n";
 }
 

@@ -40,7 +40,7 @@ QWidget *ctkFittedTextBrowserPlugin::createWidget(QWidget *_parent)
 QString ctkFittedTextBrowserPlugin::domXml() const
 {
   return "<widget class=\"ctkFittedTextBrowser\" \
-          name=\"CTKFittedTextBrowser\">\n"
+          name=\"FittedTextBrowser\">\n"
           "</widget>\n";
 }
 

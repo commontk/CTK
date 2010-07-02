@@ -40,7 +40,7 @@ QWidget *ctkRangeWidgetPlugin::createWidget(QWidget *_parent)
 QString ctkRangeWidgetPlugin::domXml() const
 {
   return "<widget class=\"ctkRangeWidget\" \
-          name=\"ctkRangeWidget\">\n"
+          name=\"RangeWidget\">\n"
           "</widget>\n";
 }
 

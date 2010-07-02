@@ -44,6 +44,16 @@ IF(NOT EXISTS ${CTK_BINARY_DIR}/CTK-build/bin)
 ENDIF()
 
 #-----------------------------------------------------------------------------
+# Git protocole option
+#
+option(CTK_USE_GIT_PROTOCOL "If behind a firewall turn this OFF to use http instead." ON)
+
+set(git_protocol "git")
+if(NOT CTK_USE_GIT_PROTOCOL)
+  set(git_protocol "http")
+endif()
+
+#-----------------------------------------------------------------------------
 # Enable and setup External project global properties
 #
 INCLUDE(ExternalProject)

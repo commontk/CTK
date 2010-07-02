@@ -130,7 +130,7 @@ void ctkPluginBrowser::pluginDoubleClicked(const QModelIndex& index)
 
 void ctkPluginBrowser::qtResourceDoubleClicked(const QModelIndex& index)
 {
-
+  Q_UNUSED(index)
 }
 
 void ctkPluginBrowser::dbResourceDoubleClicked(const QModelIndex& index)

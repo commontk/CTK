@@ -191,7 +191,7 @@ void ctkTransferFunctionRepresentation::computeCurve()
     {
     return;
     }
-  qDebug() << "computeCurve" << d->rect();
+
   d->TransferFunction->range(d->WorldRangeX[0], d->WorldRangeX[1]);
   d->WorldRangeY[0] = this->posY(d->TransferFunction->minValue());
   d->WorldRangeY[1] = this->posY(d->TransferFunction->maxValue());

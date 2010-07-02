@@ -84,6 +84,8 @@ ctkPluginResourceTreeItem::~ctkPluginResourceTreeItem()
 
 ctkPluginResourceTreeItem* ctkPluginResourceTreeItem::child(int row)
 {
+  Q_UNUSED(row)
+
   return 0;
 }
 
@@ -190,7 +192,7 @@ QVariant ctkPluginResourcesTreeModel::data(const QModelIndex &index, int role) c
   if (!index.isValid())
     return QVariant();
 
-  if (role == Qt::DisplayRole | role == Qt::UserRole)
+  if ((role == Qt::DisplayRole) | (role == Qt::UserRole))
   {
     ctkPluginResourceTreeItem* item = static_cast<ctkPluginResourceTreeItem*>(index.internalPointer());
     return item->data(role);
@@ -210,6 +212,10 @@ Qt::ItemFlags ctkPluginResourcesTreeModel::flags(const QModelIndex &index) const
 QVariant ctkPluginResourcesTreeModel::headerData(int section, Qt::Orientation orientation,
                    int role) const
 {
+  Q_UNUSED(section)
+  Q_UNUSED(orientation)
+  Q_UNUSED(role)
+
   return QVariant();
 }
 
@@ -267,5 +273,7 @@ int ctkPluginResourcesTreeModel::rowCount(const QModelIndex &parent) const
 
 int ctkPluginResourcesTreeModel::columnCount(const QModelIndex &parent) const
 {
+  Q_UNUSED(parent)
+
   return 1;
 }

@@ -39,7 +39,7 @@ QWidget *ctkCoordinatesWidgetPlugin::createWidget(QWidget *_parent)
 QString ctkCoordinatesWidgetPlugin::domXml() const
 {
   return "<widget class=\"ctkCoordinatesWidget\" \
-          name=\"CTKCoordinatesWidget\">\n"
+          name=\"CoordinatesWidget\">\n"
           "</widget>\n";
 }
 

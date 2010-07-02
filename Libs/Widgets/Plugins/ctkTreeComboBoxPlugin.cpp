@@ -40,7 +40,7 @@ QWidget *ctkTreeComboBoxPlugin::createWidget(QWidget *_parent)
 QString ctkTreeComboBoxPlugin::domXml() const
 {
   return "<widget class=\"ctkTreeComboBox\" \
-          name=\"CTKTreeComboBox\">\n"
+          name=\"TreeComboBox\">\n"
           "</widget>\n";
 }
 

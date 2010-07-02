@@ -18,11 +18,13 @@ using namespace QtMobility;
 
 void ctkEventBusPlugin::start(ctkPluginContext* context)
 {
+  Q_UNUSED(context)
   std::cout << "ctkCore Plugin started\n";
 }
 
 void ctkEventBusPlugin::stop(ctkPluginContext* context)
 {
+  Q_UNUSED(context)
   std::cout << "ctkCore Plugin stopped\n";
 }
 
@@ -30,11 +32,16 @@ QObject* ctkEventBusPlugin::createInstance(const QServiceInterfaceDescriptor& de
                             QServiceContext* context,
                             QAbstractSecuritySession* session)
 {
+  Q_UNUSED(context)
+  Q_UNUSED(session)
+
   std::cout << "Creating service instance for " << descriptor.interfaceName().toStdString() << std::endl;
   if (descriptor.interfaceName() == "org.commontk.core.EventBus")
   {
     return ctkEventBusImpl::instance();
   }
+
+  return 0;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_eventbus, ctkEventBusPlugin)

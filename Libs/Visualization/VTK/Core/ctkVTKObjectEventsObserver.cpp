@@ -63,8 +63,8 @@ public:
     return ctk_p()->findChildren<ctkVTKConnection*>();
   }
   
-  bool                            AllEnabled;
-  bool                            AllBlocked;
+  bool AllBlocked;
+  bool ObserveDeletion;
 };
 
 //-----------------------------------------------------------------------------
@@ -83,39 +83,15 @@ void ctkVTKObjectEventsObserver::printAdditionalInfo()
   this->Superclass::dumpObjectInfo();
   CTK_D(ctkVTKObjectEventsObserver);
   qDebug() << "ctkVTKObjectEventsObserver:" << this << endl
-           << " AllEnabled:" << d->AllEnabled << endl
            << " AllBlocked:" << d->AllBlocked << endl
            << " Parent:" << (this->parent()?this->parent()->objectName():"NULL") << endl
            << " Connection count:" << d->connections().count();
 
   // Loop through all connection
-  foreach (ctkVTKConnection* connection, d->connections())
+  foreach (const ctkVTKConnection* connection, d->connections())
     {
-    connection->printAdditionalInfo();
+    qDebug() << *connection;
     }
-}
-
-//-----------------------------------------------------------------------------
-bool ctkVTKObjectEventsObserver::allEnabled()const
-{
-  return ctk_d()->AllEnabled;
-}
-
-//-----------------------------------------------------------------------------
-void ctkVTKObjectEventsObserver::setAllEnabled(bool enable)
-{
-  CTK_D(ctkVTKObjectEventsObserver);
-  // FIXME: maybe a particular module has been enabled/disabled
-  if (d->AllEnabled == enable) 
-    { 
-    return; 
-    }
-  // Loop through VTKQtConnections to enable/disable
-  foreach(ctkVTKConnection* connection, d->connections())
-    {
-    connection->setEnabled(enable);
-    }
-  d->AllEnabled = enable;
 }
 
 //-----------------------------------------------------------------------------
@@ -162,7 +138,7 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
   const QObject* qt_obj, const char* qt_slot, float priority)
 {
   CTK_D(ctkVTKObjectEventsObserver);
-  if (!ctkVTKConnection::ValidateParameters(vtk_obj, vtk_event, qt_obj, qt_slot))
+  if (!ctkVTKConnection::isValid(vtk_obj, vtk_event, qt_obj, qt_slot))
     {
     qDebug() << "ctkVTKObjectEventsObserver::addConnection(...) - Invalid parameters - "
              << ctkVTKConnection::shortDescription(vtk_obj, vtk_event, qt_obj, qt_slot);
@@ -182,10 +158,10 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
 
   // Instantiate a new connection, set its parameters and add it to the list
   ctkVTKConnection * connection = new ctkVTKConnection(this);
-  connection->SetParameters(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
+  connection->observeDeletion(d->ObserveDeletion);
+  connection->setup(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
 
   // If required, establish connection
-  connection->setEnabled(d->AllEnabled);
   connection->setBlocked(d->AllBlocked);
 
   return connection->id();
@@ -249,7 +225,7 @@ int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lo
   
   foreach (ctkVTKConnection* connection, connections)
     {
-    connection->deleteConnection();
+    delete connection;
     }
   return connections.count();
 }
@@ -260,8 +236,9 @@ int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lo
 //-----------------------------------------------------------------------------
 ctkVTKObjectEventsObserverPrivate::ctkVTKObjectEventsObserverPrivate()
 {
-  this->AllEnabled = true;
   this->AllBlocked = false;
+  // ObserveDeletion == false  hasn't been that well tested...
+  this->ObserveDeletion = true;
 }
 
 //-----------------------------------------------------------------------------

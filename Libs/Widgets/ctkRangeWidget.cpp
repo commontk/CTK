@@ -350,11 +350,18 @@ void ctkRangeWidget::stopChanging()
     return;
     }
   d->Changing = false;
-  if (qAbs(this->minimumValue() - d->MinimumValueBeforeChange) > (this->singleStep() * 0.000000001))
+  bool emitMinValChanged = qAbs(this->minimumValue() - d->MinimumValueBeforeChange) > (this->singleStep() * 0.000000001);
+  bool emitMaxValChanged = qAbs(this->maximumValue() - d->MaximumValueBeforeChange) > (this->singleStep() * 0.000000001);
+  if (emitMinValChanged || emitMaxValChanged)
+    {
+	// emit the valuesChanged signal first
+    emit this->valuesChanged(this->minimumValue(), this->maximumValue());
+    }
+  if (emitMinValChanged)
     {
     emit this->minimumValueChanged(this->minimumValue());
     }
-  if (qAbs(this->maximumValue() - d->MaximumValueBeforeChange) > (this->singleStep() * 0.000000001))
+  if (emitMaxValChanged)
     {
     emit this->maximumValueChanged(this->maximumValue());
     }
@@ -370,8 +377,9 @@ void ctkRangeWidget::changeMinimumValue(double newValue)
     }
   if (!d->Changing)
     {
+    emit this->valuesChanged(newValue, this->maximumValue());
     emit this->minimumValueChanged(newValue);
-    }
+	}
 }
 
 // --------------------------------------------------------------------------
@@ -384,6 +392,7 @@ void ctkRangeWidget::changeMaximumValue(double newValue)
     }
   if (!d->Changing)
     {
+    emit this->valuesChanged(this->minimumValue(), newValue);
     emit this->maximumValueChanged(newValue);
     }
 }

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
-
+ 
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
+ 
 =========================================================================*/
 
 // Qt includes
@@ -25,41 +25,50 @@
 
 // CTK includes
 #include "ctkTransferFunction.h"
-#include "ctkTransferFunctionWidget.h"
-#include "ctkVTKPiecewiseFunction.h"
+#include "ctkTransferFunctionBarsItem.h"
+#include "ctkTransferFunctionScene.h"
+#include "ctkTransferFunctionView.h"
+#include "ctkVTKHistogram.h"
 
 // VTK includes
-#include <vtkPiecewiseFunction.h>
+#include <vtkIntArray.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkTransferFunctionWidgetTest3(int argc, char * argv [] )
+int ctkTransferFunctionBarsItemTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-
-  vtkSmartPointer<vtkPiecewiseFunction> pwf =
-    vtkSmartPointer<vtkPiecewiseFunction>::New();
-  //
-  pwf->AddPoint(0., 1.);
-  pwf->AddPoint(0.2, 1.2);
-  pwf->AddPoint(0.3, 1.5);
-  pwf->AddPoint(0.4, 2., 0.5, 0.5);
-  pwf->AddPoint(0.9, 1.5);
-
-  QSharedPointer<ctkTransferFunction> transferFunction =
-    QSharedPointer<ctkTransferFunction>(new ctkVTKPiecewiseFunction(pwf));
-  ctkTransferFunctionWidget transferFunctionWidget(transferFunction.data(), 0);
+  
+  vtkSmartPointer<vtkIntArray> intArray = 
+    vtkSmartPointer<vtkIntArray>::New();
+  intArray->SetNumberOfComponents(1);
+  intArray->SetNumberOfTuples(20000);
+  for (int i = 0; i < 20000; ++i)
+    {
+    intArray->SetValue(i, rand() % 10);
+    }
+  QSharedPointer<ctkVTKHistogram> histogram = 
+    QSharedPointer<ctkVTKHistogram>(new ctkVTKHistogram(intArray));
+  histogram->build();
+  
+  ctkTransferFunctionView transferFunctionView;
+  
+  ctkTransferFunctionBarsItem * histogramItem = new ctkTransferFunctionBarsItem;
+  histogramItem->setTransferFunction(histogram.data());
+  histogramItem->setBarWidth(1.);
+  transferFunctionView.scene()->addItem(histogramItem);
+  
   // the widget is not really shown here, only when app.exec() is called
-  transferFunctionWidget.show();
-
+  transferFunctionView.show();
+  
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    autoExit.start(100);
     }
 
   return app.exec();
