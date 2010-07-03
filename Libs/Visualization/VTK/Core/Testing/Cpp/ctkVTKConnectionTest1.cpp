@@ -19,7 +19,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkTimerLog.h>
 
-void doit(vtkObject* obj, unsigned long event, void* client_data, void* param)
+void doit(vtkObject* vtkNotUsed(obj), unsigned long vtkNotUsed(event),
+          void* client_data, void* vtkNotUsed(param))
 {
   QTimer* t = reinterpret_cast<QTimer*>(client_data);
   t->stop();
@@ -28,10 +29,10 @@ void doit(vtkObject* obj, unsigned long event, void* client_data, void* param)
 int ctkVTKConnectionTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   int objects = 1000;
   int events = 100;
-  
+
   vtkObject* obj = vtkObject::New();
   vtkObject* obj2 = vtkObject::New();
   vtkObject* obj3 = vtkObject::New();
@@ -41,7 +42,7 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
   QObject*   topObject = new QObject(0);
   // It could be here any kind of Qt object, QTimer has a no op slot so use it
   QTimer*    slotObject = new QTimer(topObject);
-  
+
   for (int i = 0; i < objects; ++i)
     {
     ctkVTKConnection* connection = new ctkVTKConnection(topObject);
@@ -52,7 +53,7 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
     vtkCallbackCommand* callback = vtkCallbackCommand::New();
     callback->SetClientData(slotObject);
     callback->SetCallback(doit);
-    
+
     obj2->AddObserver(vtkCommand::ModifiedEvent, callback);
     callback->Delete();
 
@@ -65,29 +66,29 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
     connection3->observeDeletion(false);
     connection3->setup(obj4, vtkCommand::ModifiedEvent,
                       new QTimer(topObject), SLOT(stop()));
-    
+
     ctkVTKConnection* connection4 = new ctkVTKConnection(topObject);
     connection4->observeDeletion(true);
     connection4->setup(obj5, vtkCommand::ModifiedEvent,
                       slotObject, SLOT(stop()));
     }
 
-  vtkSmartPointer<vtkTimerLog> timerLog = 
+  vtkSmartPointer<vtkTimerLog> timerLog =
     vtkSmartPointer<vtkTimerLog>::New();
-  
+
   timerLog->StartTimer();
   for (int i = 0; i < events; ++i)
     {
     obj->Modified();
     }
   timerLog->StopTimer();
-  
+
   double t1 = timerLog->GetElapsedTime();
   qDebug() << events << "events listened by" << objects << "objects (ctkVTKConnection): " << t1 << "seconds";
 
   // Callback only
 
-  vtkSmartPointer<vtkTimerLog> timerLog2 = 
+  vtkSmartPointer<vtkTimerLog> timerLog2 =
     vtkSmartPointer<vtkTimerLog>::New();
   timerLog2->StartTimer();
   for (int i = 0; i < events; ++i)
@@ -101,29 +102,29 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
   double ratio = t1 / t2;
   qDebug() << "ctkVTKConnection / vtkCallbacks: " << ratio;
 
-  vtkSmartPointer<vtkTimerLog> timerLog3 = 
+  vtkSmartPointer<vtkTimerLog> timerLog3 =
     vtkSmartPointer<vtkTimerLog>::New();
-  
+
   timerLog3->StartTimer();
   for (int i = 0; i < events; ++i)
     {
     obj3->Modified();
     }
   timerLog3->StopTimer();
-  
+
   double t3 = timerLog3->GetElapsedTime();
   qDebug() << events << "events listened by" << objects << "objects (observed ctkVTKConnection): " << t3 << "seconds";
 
-  vtkSmartPointer<vtkTimerLog> timerLog4 = 
+  vtkSmartPointer<vtkTimerLog> timerLog4 =
     vtkSmartPointer<vtkTimerLog>::New();
-  
+
   timerLog4->StartTimer();
   for (int i = 0; i < events; ++i)
     {
     obj4->Modified();
     }
   timerLog4->StopTimer();
-  
+
   double t4 = timerLog4->GetElapsedTime();
   qDebug() << events << "events listened by" << objects << "objects (ctkVTKConnection, 1-1): " << t4 << "seconds";
 
@@ -136,7 +137,7 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
 
   obj4->Delete();
   obj5->Delete();
-  
+
   // Ideally a ratio ~= 1. but the ratio can be more in Debug mode... up to 2.
   if (ratio > 2.)
     {
