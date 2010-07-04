@@ -34,6 +34,11 @@ class QStyleOptionButton;
 
 /// Description
 /// A Collapsible widget that show/hide its children depending on its checked/collapsed properties
+/// Warning: As ctkCollapsibleButton forces the Visiblity of its children to
+/// true when it get expanded, any Visibility property is lost. All the widgets
+/// will be visible. To avoid this behavior, use an intermediate widget that
+/// contains all the children (they would become grandchildren and their
+/// will remain relative to their parent: ctkCollapsibleButton's unique child.
 class CTK_WIDGETS_EXPORT ctkCollapsibleButton : public QAbstractButton
 {
   Q_OBJECT
