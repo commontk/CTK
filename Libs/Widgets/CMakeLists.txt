@@ -40,6 +40,8 @@ SET(KIT_SRCS
   ctkDoubleSlider.h
   ctkDynamicSpacer.cpp
   ctkDynamicSpacer.h
+  ctkFileDialog.cpp
+  ctkFileDialog.h
   ctkFittedTextBrowser.cpp
   ctkFittedTextBrowser.h
   ctkMatrixWidget.cpp
@@ -88,6 +90,7 @@ SET(KIT_MOC_SRCS
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
   ctkDynamicSpacer.h
+  ctkFileDialog.h
   ctkFittedTextBrowser.h
   ctkMatrixWidget.h
   ctkMenuButton.h
