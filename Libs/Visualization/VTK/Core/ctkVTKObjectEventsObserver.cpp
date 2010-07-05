@@ -104,9 +104,9 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObj
     // Check that old_object and new_object are the same type
     if (vtk_obj && !vtk_obj->IsA(old_vtk_obj->GetClassName()))
       {
-      qCritical() << "Old vtkObject (type:" << old_vtk_obj->GetClassName() << ") to disconnect and "
-                  << "the new VtkObject (type:" << vtk_obj->GetClassName() << ") to connect"
-                  << "should have the same type.";
+      qDebug() << "Previous vtkObject (type:" << old_vtk_obj->GetClassName() << ") to disconnect"
+               << "and new vtkObject (type:" << vtk_obj->GetClassName() << ") to connect"
+               << "have a different type.";
       return connectionId;
       }
     // Disconnect old vtkObject
