@@ -95,6 +95,11 @@ public:
   double maximumValue()const;
 
   ///
+  /// Utility function that returns both values at the same time
+  /// Returns minimumValue and maximumValue
+  void values(double &minValue, double &maxValue)const;
+
+  ///
   /// This property holds the single step.
   /// The smaller of two natural steps that the
   /// slider provides and typically corresponds to the

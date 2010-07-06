@@ -7,8 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>302</width>
-    <height>20</height>
+    <height>27</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>ctkSliderSpinBoxWidget</string>
@@ -34,13 +40,8 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkRangeSlider</class>
-   <extends>QSlider</extends>
-   <header>ctkRangeSlider.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkDoubleRangeSlider</class>
-   <extends>ctkRangeSlider</extends>
+   <extends>QWidget</extends>
    <header>ctkDoubleRangeSlider.h</header>
   </customwidget>
  </customwidgets>

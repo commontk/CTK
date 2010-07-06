@@ -251,6 +251,16 @@ double ctkRangeWidget::previousSliderPosition()
 */
 
 // --------------------------------------------------------------------------
+void ctkRangeWidget::values(double &minValue, double &maxValue)const
+{
+  CTK_D(const ctkRangeWidget);
+  Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
+  Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
+  minValue = d->Changing ? d->MinimumValueBeforeChange : d->Slider->minimumValue();
+  maxValue = d->Changing ? d->MaximumValueBeforeChange : d->Slider->maximumValue();
+}
+
+// --------------------------------------------------------------------------
 double ctkRangeWidget::minimumValue()const
 {
   CTK_D(const ctkRangeWidget);

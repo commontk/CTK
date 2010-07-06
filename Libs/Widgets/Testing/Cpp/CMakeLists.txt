@@ -12,6 +12,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkCoordinatesWidgetTest1.cpp
   ctkDoubleRangeSliderTest1.cpp
   ctkDoubleSliderTest1.cpp
+  ctkFileDialogTest1.cpp
   ctkFittedTextBrowserTest1.cpp
   ctkMatrixWidgetTest1.cpp
   ctkRangeSliderTest1.cpp
@@ -53,6 +54,7 @@ SIMPLE_TEST( ctkComboBoxTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest1 )
 SIMPLE_TEST( ctkDoubleSliderTest1 )
+SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
 SIMPLE_TEST( ctkRangeSliderTest1 )
