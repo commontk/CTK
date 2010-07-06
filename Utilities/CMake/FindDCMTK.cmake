@@ -106,6 +106,59 @@ FIND_LIBRARY( DCMTK_dcmdata_LIBRARY dcmdata
   NO_DEFAULT_PATH
 )
 
+FIND_PATH( DCMTK_dcmjpeg_INCLUDE_DIR djdecode.h
+  PATHS
+    ${DCMTK_DIR}/include/dcmjpeg
+    ${DCMTK_DIR}/include/dcmtk/dcmjpeg
+    ${DCMTK_DIR}/dcmjpeg
+    ${DCMTK_DIR}/dcmjpeg/include
+  NO_DEFAULT_PATH
+)
+
+FIND_LIBRARY( DCMTK_dcmjpeg_LIBRARY dcmjpeg
+  PATHS
+    ${DCMTK_DIR}/dcmjpeg/libsrc
+    ${DCMTK_DIR}/dcmjpeg/libsrc/Release
+    ${DCMTK_DIR}/dcmjpeg/libsrc/Debug
+    ${DCMTK_DIR}/dcmjpeg/Release
+    ${DCMTK_DIR}/dcmjpeg/Debug
+    ${DCMTK_DIR}/lib
+  NO_DEFAULT_PATH
+)
+
+FIND_LIBRARY( DCMTK_ijg12_LIBRARY ijg12
+  PATHS
+    ${DCMTK_DIR}/dcmjpeg/libsrc
+    ${DCMTK_DIR}/dcmjpeg/libsrc/Release
+    ${DCMTK_DIR}/dcmjpeg/libsrc/Debug
+    ${DCMTK_DIR}/dcmjpeg/Release
+    ${DCMTK_DIR}/dcmjpeg/Debug
+    ${DCMTK_DIR}/lib
+  NO_DEFAULT_PATH
+)
+
+FIND_LIBRARY( DCMTK_ijg16_LIBRARY ijg16
+  PATHS
+    ${DCMTK_DIR}/dcmjpeg/libsrc
+    ${DCMTK_DIR}/dcmjpeg/libsrc/Release
+    ${DCMTK_DIR}/dcmjpeg/libsrc/Debug
+    ${DCMTK_DIR}/dcmjpeg/Release
+    ${DCMTK_DIR}/dcmjpeg/Debug
+    ${DCMTK_DIR}/lib
+  NO_DEFAULT_PATH
+)
+
+FIND_LIBRARY( DCMTK_ijg8_LIBRARY ijg8
+  PATHS
+    ${DCMTK_DIR}/dcmjpeg/libsrc
+    ${DCMTK_DIR}/dcmjpeg/libsrc/Release
+    ${DCMTK_DIR}/dcmjpeg/libsrc/Debug
+    ${DCMTK_DIR}/dcmjpeg/Release
+    ${DCMTK_DIR}/dcmjpeg/Debug
+    ${DCMTK_DIR}/lib
+  NO_DEFAULT_PATH
+)
+
 FIND_PATH( DCMTK_dcmnet_INCLUDE_DIR dimse.h
   PATHS
     ${DCMTK_DIR}/include/dcmnet
@@ -163,6 +216,8 @@ IF( DCMTK_config_INCLUDE_DIR
     AND DCMTK_oflog_LIBRARY
     AND DCMTK_dcmdata_INCLUDE_DIR
     AND DCMTK_dcmdata_LIBRARY
+    AND DCMTK_dcmjpeg_INCLUDE_DIR
+    AND DCMTK_dcmjpeg_LIBRARY
     AND DCMTK_dcmnet_INCLUDE_DIR
     AND DCMTK_dcmnet_LIBRARY    
     AND DCMTK_dcmimgle_INCLUDE_DIR
@@ -185,6 +240,7 @@ IF( DCMTK_config_INCLUDE_DIR
     ${DCMTK_ofstd_INCLUDE_DIR}
     ${DCMTK_oflog_INCLUDE_DIR}    
     ${DCMTK_dcmdata_INCLUDE_DIR}
+    ${DCMTK_dcmjpeg_INCLUDE_DIR}
     ${DCMTK_dcmnet_INCLUDE_DIR}
     ${DCMTK_dcmimgle_INCLUDE_DIR}
   )
@@ -192,7 +248,11 @@ IF( DCMTK_config_INCLUDE_DIR
   SET( DCMTK_LIBRARIES
     ${DCMTK_dcmimgle_LIBRARY}
     ${DCMTK_dcmnet_LIBRARY}    
+    ${DCMTK_dcmjpeg_LIBRARY}
     ${DCMTK_dcmdata_LIBRARY}
+    ${DCMTK_ijg8_LIBRARY}
+    ${DCMTK_ijg12_LIBRARY}
+    ${DCMTK_ijg16_LIBRARY}
     ${DCMTK_oflog_LIBRARY}    
     ${DCMTK_ofstd_LIBRARY}
     ${DCMTK_config_LIBRARY}
@@ -213,17 +273,7 @@ IF( DCMTK_config_INCLUDE_DIR
 #     SET( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} ${DCMTK_wrap_LIBRARY} )
 #   ENDIF()
 
-ENDIF( DCMTK_config_INCLUDE_DIR 
-    AND DCMTK_ofstd_INCLUDE_DIR 
-    AND DCMTK_ofstd_LIBRARY
-    AND DCMTK_oflog_INCLUDE_DIR
-    AND DCMTK_oflog_LIBRARY
-    AND DCMTK_dcmdata_INCLUDE_DIR
-    AND DCMTK_dcmdata_LIBRARY
-    AND DCMTK_dcmnet_INCLUDE_DIR
-    AND DCMTK_dcmnet_LIBRARY    
-    AND DCMTK_dcmimgle_INCLUDE_DIR
-    AND DCMTK_dcmimgle_LIBRARY )
+ENDIF()
 
 FIND_PROGRAM(DCMTK_DCMDUMP_EXECUTABLE dcmdump
   PATHS

@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   QTextStream out(stdout);
 
   QString SeriesUID ( argv[1] );
-  QDir OutputDirectory ( argv[1] );
+  QDir OutputDirectory ( argv[2] );
   QString CallingAETitle ( argv[3] ); 
   bool ok;
   int CallingPort = QString ( argv[4] ).toInt ( &ok );
@@ -87,10 +87,19 @@ int main(int argc, char** argv)
   retrieve.setCalledPort ( CalledPort );
   retrieve.setHost ( Host );
 
+  logger.info ( "SeriesUID: " + SeriesUID + "\n" 
+                + "OutputDirectory: " + OutputDirectory.absolutePath() + "\n"
+                + "CallingAETitle: " + CallingAETitle + "\n"
+                + "CallingPort: " + QString ( CallingPort ) + "\n"
+                + "CalledAEtitle: " + CalledAETitle + "\n"
+                + "Host: " + Host + "\n"
+                + "CalledPort: " + QString ( CalledPort ) + "\n" );
+
+
   logger.info ( "Starting to retrieve" );
   try
     {
-    retrieve.retrieveSeries ( SeriesUID, QDir ( OutputDirectory ) );
+    retrieve.retrieveSeries ( SeriesUID, OutputDirectory );
     }
   catch (std::exception e)
     {
