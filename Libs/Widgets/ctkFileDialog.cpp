@@ -118,7 +118,7 @@ void ctkFileDialog::setBottomWidget(QWidget* widget, const QString& label)
   QDialogButtonBox* buttonBox = this->findChild<QDialogButtonBox*>();
   Q_ASSERT(buttonBox);
   gridLayout->removeWidget(buttonBox);
-  gridLayout->addWidget(buttonBox, 2, 2, 3, 1);
+  gridLayout->addWidget(buttonBox, 2, 2, widget ? 3 : 2, 1);
 }
 
 //------------------------------------------------------------------------------
