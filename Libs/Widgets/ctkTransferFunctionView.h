@@ -18,8 +18,8 @@
  
 =========================================================================*/
 
-#ifndef __ctkTransferFunctionWidget_h
-#define __ctkTransferFunctionWidget_h
+#ifndef __ctkTransferFunctionView_h
+#define __ctkTransferFunctionView_h
 
 /// Qt includes
 #include <QGraphicsView>
@@ -29,19 +29,15 @@
 #include "ctkPimpl.h"
 
 class ctkTransferFunction;
-class ctkTransferFunctionWidgetPrivate;
+class ctkTransferFunctionViewPrivate;
 
 //-----------------------------------------------------------------------------
-class CTK_WIDGETS_EXPORT ctkTransferFunctionWidget: public QGraphicsView
+class CTK_WIDGETS_EXPORT ctkTransferFunctionView: public QGraphicsView
 {
   Q_OBJECT;
 public:
-  ctkTransferFunctionWidget(QWidget* parent = 0);
-  ctkTransferFunctionWidget(ctkTransferFunction* transferFunction, QWidget* parent = 0);
-  virtual ~ctkTransferFunctionWidget();
-
-  void setTransferFunction(ctkTransferFunction* transferFunction);
-  ctkTransferFunction* transferFunction()const;
+  ctkTransferFunctionView(QWidget* parent = 0);
+  virtual ~ctkTransferFunctionView();
 protected:
   virtual void resizeEvent(QResizeEvent * event);
   /*
@@ -50,7 +46,7 @@ protected:
   virtual void mouseReleaseEvent ( QMouseEvent * event );*/
 
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionWidget);
+  CTK_DECLARE_PRIVATE(ctkTransferFunctionView);
 };
 
 #endif

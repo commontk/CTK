@@ -22,7 +22,7 @@ IF(${add_project})
     ENDIF()
       
     ExternalProject_Add(${proj}
-      GIT_REPOSITORY "git://github.com/commontk/PythonQt.git"
+      GIT_REPOSITORY "${git_protocol}://github.com/commontk/PythonQt.git"
       GIT_TAG "patched"
       CMAKE_GENERATOR ${gen}
       BUILD_COMMAND ""

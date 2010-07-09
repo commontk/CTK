@@ -90,6 +90,7 @@
 
   void ctkPluginArchive::setStartLevel(int level)
   {
+    Q_UNUSED(level)
     //TODO
 //    if (startLevel != level)
 //    {

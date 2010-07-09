@@ -242,7 +242,7 @@ void ctkPluginDatabase::updateDB()
             error == QtMobility::QServiceManager::ComponentNotFound))
       {
         throw ctkServiceException(QString("Removing service named ") + serviceName +
-                               " failed: " + QString::number(serviceManager.error()));
+                               " failed: " + QString::number(static_cast<unsigned int>(error)));
       }
     }
   }

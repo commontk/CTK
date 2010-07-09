@@ -40,6 +40,8 @@ SET(KIT_SRCS
   ctkDoubleSlider.h
   ctkDynamicSpacer.cpp
   ctkDynamicSpacer.h
+  ctkFileDialog.cpp
+  ctkFileDialog.h
   ctkFittedTextBrowser.cpp
   ctkFittedTextBrowser.h
   ctkMatrixWidget.cpp
@@ -56,18 +58,18 @@ SET(KIT_SRCS
   ctkSliderSpinBoxWidget.h
   ctkTestApplication.cpp
   ctkTestApplication.h
+  ctkTransferFunctionBarsItem.cpp
+  ctkTransferFunctionBarsItem.h
   ctkTransferFunctionControlPointsItem.cpp
   ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionGradientItem.cpp
   ctkTransferFunctionGradientItem.h
-  ctkTransferFunctionBarsItem.cpp
-  ctkTransferFunctionBarsItem.h
   ctkTransferFunctionItem.cpp
   ctkTransferFunctionItem.h
-  ctkTransferFunctionWidget.cpp
-  ctkTransferFunctionWidget.h
   ctkTransferFunctionScene.cpp
   ctkTransferFunctionScene.h
+  ctkTransferFunctionView.cpp
+  ctkTransferFunctionView.h
   ctkTreeComboBox.cpp
   ctkTreeComboBox.h
   )
@@ -88,6 +90,7 @@ SET(KIT_MOC_SRCS
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
   ctkDynamicSpacer.h
+  ctkFileDialog.h
   ctkFittedTextBrowser.h
   ctkMatrixWidget.h
   ctkMenuButton.h
@@ -96,13 +99,12 @@ SET(KIT_MOC_SRCS
   ctkSettings.h
   ctkSliderSpinBoxWidget.h
   ctkTestApplication.h
+  ctkTransferFunctionBarsItem.h
   ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionGradientItem.h
-  ctkTransferFunctionBarsItem.h
   ctkTransferFunctionItem.h
-  ctkTransferFunctionControlPointsItem.h
-  ctkTransferFunctionWidget.h
   ctkTransferFunctionScene.h
+  ctkTransferFunctionView.h
   ctkTreeComboBox.h
   )
 

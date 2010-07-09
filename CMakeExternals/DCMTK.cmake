@@ -17,7 +17,7 @@ IF(${add_project})
     SET(DCMTK_DEPENDS ${proj})
 
     ExternalProject_Add(${proj}
-        GIT_REPOSITORY "git://github.com/commontk/DCMTK.git"
+        GIT_REPOSITORY "${git_protocol}://github.com/commontk/DCMTK.git"
         CMAKE_GENERATOR ${gen}
         BUILD_COMMAND ""
         CMAKE_ARGS

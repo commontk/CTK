@@ -423,6 +423,7 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
 
   QStylePainter painter(this);
   option.subControls = QStyle::SC_SliderGroove;
+  option.sliderPosition = this->minimum(); // don't highlight the SliderGroove
   painter.drawComplexControl(QStyle::CC_Slider, option);
 
   option.sliderPosition = d->m_MinimumPosition;

@@ -25,7 +25,7 @@
 
     bool operator==(const ctkEvent& other) const;
 
-    const QVariant& property(const QString& name) const;
+    QVariant property(const QString& name) const;
     QStringList propertyNames() const;
 
     const QString& topic() const;

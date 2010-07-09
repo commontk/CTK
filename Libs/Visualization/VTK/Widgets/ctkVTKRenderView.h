@@ -48,12 +48,15 @@ public:
   explicit ctkVTKRenderView(QWidget* parent = 0);
   virtual ~ctkVTKRenderView();
 
+public slots:
+
   /// If a render has already been scheduled, this called is a no-op
   void scheduleRender();
 
   /// Force a render even if a render is already ocurring
   void forceRender();
 
+public:
   /// Get underlying RenderWindow
   vtkRenderWindow* renderWindow()const;
   

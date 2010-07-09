@@ -25,7 +25,9 @@
 
 // CTK includes
 #include "ctkTransferFunction.h"
-#include "ctkTransferFunctionWidget.h"
+#include "ctkTransferFunctionControlPointsItem.h"
+#include "ctkTransferFunctionGradientItem.h"
+#include "ctkTransferFunctionView.h"
 #include "ctkVTKLookupTable.h"
 
 // VTK includes
@@ -36,7 +38,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkTransferFunctionWidgetTest2(int argc, char * argv [] )
+int ctkTransferFunctionViewTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   
@@ -52,9 +54,16 @@ int ctkTransferFunctionWidgetTest2(int argc, char * argv [] )
 
   QSharedPointer<ctkTransferFunction> transferFunction = 
     QSharedPointer<ctkTransferFunction>(new ctkVTKLookupTable(ctf));
-  ctkTransferFunctionWidget transferFunctionWidget(transferFunction.data(), 0);
+  ctkTransferFunctionView transferFunctionView(0);
+    ctkTransferFunctionGradientItem* gradient = 
+    new ctkTransferFunctionGradientItem(transferFunction.data());
+  ctkTransferFunctionControlPointsItem* controlPoints = 
+    new ctkTransferFunctionControlPointsItem(transferFunction.data());
+  
+  transferFunctionView.scene()->addItem(gradient);
+  transferFunctionView.scene()->addItem(controlPoints);
   // the widget is not really shown here, only when app.exec() is called
-  transferFunctionWidget.show();
+  transferFunctionView.show();
 
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")

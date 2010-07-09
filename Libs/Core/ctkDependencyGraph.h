@@ -36,7 +36,7 @@ class CTK_CORE_EXPORT ctkDependencyGraph
 {
 public:
   ctkDependencyGraph(int nvertices);
-  ~ctkDependencyGraph();
+  virtual ~ctkDependencyGraph();
   
   void printAdditionalInfo();
   void printGraph();

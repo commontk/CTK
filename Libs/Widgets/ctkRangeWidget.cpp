@@ -251,6 +251,16 @@ double ctkRangeWidget::previousSliderPosition()
 */
 
 // --------------------------------------------------------------------------
+void ctkRangeWidget::values(double &minValue, double &maxValue)const
+{
+  CTK_D(const ctkRangeWidget);
+  Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
+  Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
+  minValue = d->Changing ? d->MinimumValueBeforeChange : d->Slider->minimumValue();
+  maxValue = d->Changing ? d->MaximumValueBeforeChange : d->Slider->maximumValue();
+}
+
+// --------------------------------------------------------------------------
 double ctkRangeWidget::minimumValue()const
 {
   CTK_D(const ctkRangeWidget);
@@ -350,11 +360,18 @@ void ctkRangeWidget::stopChanging()
     return;
     }
   d->Changing = false;
-  if (qAbs(this->minimumValue() - d->MinimumValueBeforeChange) > (this->singleStep() * 0.000000001))
+  bool emitMinValChanged = qAbs(this->minimumValue() - d->MinimumValueBeforeChange) > (this->singleStep() * 0.000000001);
+  bool emitMaxValChanged = qAbs(this->maximumValue() - d->MaximumValueBeforeChange) > (this->singleStep() * 0.000000001);
+  if (emitMinValChanged || emitMaxValChanged)
+    {
+	// emit the valuesChanged signal first
+    emit this->valuesChanged(this->minimumValue(), this->maximumValue());
+    }
+  if (emitMinValChanged)
     {
     emit this->minimumValueChanged(this->minimumValue());
     }
-  if (qAbs(this->maximumValue() - d->MaximumValueBeforeChange) > (this->singleStep() * 0.000000001))
+  if (emitMaxValChanged)
     {
     emit this->maximumValueChanged(this->maximumValue());
     }
@@ -370,8 +387,9 @@ void ctkRangeWidget::changeMinimumValue(double newValue)
     }
   if (!d->Changing)
     {
+    emit this->valuesChanged(newValue, this->maximumValue());
     emit this->minimumValueChanged(newValue);
-    }
+	}
 }
 
 // --------------------------------------------------------------------------
@@ -384,6 +402,7 @@ void ctkRangeWidget::changeMaximumValue(double newValue)
     }
   if (!d->Changing)
     {
+    emit this->valuesChanged(this->minimumValue(), newValue);
     emit this->maximumValueChanged(newValue);
     }
 }

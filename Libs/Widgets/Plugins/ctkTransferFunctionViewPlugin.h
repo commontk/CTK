@@ -18,20 +18,20 @@
  
 =========================================================================*/
 
-#ifndef __ctkTransferFunctionWidgetPlugin_h
-#define __ctkTransferFunctionWidgetPlugin_h
+#ifndef __ctkTransferFunctionViewPlugin_h
+#define __ctkTransferFunctionViewPlugin_h
 
 // CTK includes
 #include "ctkWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkTransferFunctionWidgetPlugin :
+class CTK_WIDGETS_PLUGINS_EXPORT ctkTransferFunctionViewPlugin :
   public QObject,
   public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkTransferFunctionWidgetPlugin(QObject *_parent = 0);
+  ctkTransferFunctionViewPlugin(QObject *_parent = 0);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

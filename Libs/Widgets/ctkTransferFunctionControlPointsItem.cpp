@@ -32,7 +32,7 @@
 #include "ctkTransferFunctionControlPointsItem.h"
 #include "ctkTransferFunctionRepresentation.h"
 #include "ctkTransferFunctionScene.h"
-#include "ctkTransferFunctionWidget.h"
+#include "ctkTransferFunctionView.h"
 
 //-----------------------------------------------------------------------------
 class ctkTransferFunctionControlPointsItemPrivate: 
@@ -125,7 +125,7 @@ void ctkTransferFunctionControlPointsItem::paint(
 void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
   CTK_D(ctkTransferFunctionControlPointsItem);
-  ctkTransferFunctionWidget* view = qobject_cast<ctkTransferFunctionWidget*>(e->widget()->parentWidget());
+  ctkTransferFunctionView* view = qobject_cast<ctkTransferFunctionView*>(e->widget()->parentWidget());
   Q_ASSERT(view);
   // e->pos() is ok, pointArea should be in the world coordiate
   QRect pointViewArea(QPoint(-d->PointSize.width() / 2, -d->PointSize.height() / 2), d->PointSize);

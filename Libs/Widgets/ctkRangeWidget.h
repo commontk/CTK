@@ -95,6 +95,11 @@ public:
   double maximumValue()const;
 
   ///
+  /// Utility function that returns both values at the same time
+  /// Returns minimumValue and maximumValue
+  void values(double &minValue, double &maxValue)const;
+
+  ///
   /// This property holds the single step.
   /// The smaller of two natural steps that the
   /// slider provides and typically corresponds to the
@@ -180,6 +185,7 @@ signals:
   void minimumValueIsChanging(double value);
   void maximumValueChanged(double value);
   void maximumValueIsChanging(double value);
+  void valuesChanged(double minValue, double maxValue);
 
 protected slots:
   void startChanging();

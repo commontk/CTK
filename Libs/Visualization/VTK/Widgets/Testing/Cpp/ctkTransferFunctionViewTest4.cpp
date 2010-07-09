@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 // Qt includes
@@ -25,10 +25,13 @@
 
 // CTK includes
 #include "ctkTransferFunction.h"
-#include "ctkTransferFunctionWidget.h"
-#include "ctkVTKColorTransferFunction.h"
+#include "ctkTransferFunctionControlPointsItem.h"
+#include "ctkTransferFunctionGradientItem.h"
+#include "ctkTransferFunctionView.h"
+#include "ctkVTKCompositeFunction.h"
 
 // VTK includes
+#include <vtkPiecewiseFunction.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkSmartPointer.h>
 
@@ -36,27 +39,41 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkTransferFunctionWidgetTest1(int argc, char * argv [] )
+int ctkTransferFunctionViewTest4(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
-  vtkSmartPointer<vtkColorTransferFunction> ctf = 
+
+  // Points have to be between 0 and 1
+
+  vtkSmartPointer<vtkPiecewiseFunction> pwf =
+    vtkSmartPointer<vtkPiecewiseFunction>::New();
+  //
+  pwf->AddPoint(0., 0.3, .5, .5);
+  pwf->AddPoint(0.2,.2, .5, .5);
+  pwf->AddPoint(0.3, .5, .5, .5);
+  pwf->AddPoint(0.9, .5, .5, .5);
+
+  vtkSmartPointer<vtkColorTransferFunction> ctf =
     vtkSmartPointer<vtkColorTransferFunction>::New();
   //
-  ctf->AddRGBPoint(0.2, 1.,0.,0., 0.5, 0.);
-  //ctf->AddRGBPoint(0.5, 0.,0.,1.);
-  ctf->AddRGBPoint(0.8, 0.,1.,0.);
-  //ctf->AddHSVPoint(0., 0.,1.,1.);
-  //ctf->AddHSVPoint(1., 0.66666,1.,1.);
+  ctf->AddRGBPoint(0., 1.,0.,0., 0., 0.);
+  ctf->AddRGBPoint(0.2, 0.,1.,0., 0.5, 0.);
+  ctf->AddRGBPoint(0.3, 1.,0.,0.6, 0.5, 0.);
+  ctf->AddRGBPoint(0.9, 0.,0.,1., 0.5, 0.);
 
-  QSharedPointer<ctkTransferFunction> transferFunction = 
-    QSharedPointer<ctkTransferFunction>(new ctkVTKColorTransferFunction(ctf));
-  ctkTransferFunctionWidget transferFunctionWidget(transferFunction.data(), 0);
+  QSharedPointer<ctkTransferFunction> transferFunction =
+    QSharedPointer<ctkTransferFunction>(new ctkVTKCompositeFunction(pwf, ctf));
+  ctkTransferFunctionView transferFunctionView(0);
+  ctkTransferFunctionGradientItem* gradient = 
+    new ctkTransferFunctionGradientItem(transferFunction.data());
+  ctkTransferFunctionControlPointsItem* controlPoints = 
+    new ctkTransferFunctionControlPointsItem(transferFunction.data());
+  
+  transferFunctionView.scene()->addItem(gradient);
+  transferFunctionView.scene()->addItem(controlPoints);
   // the widget is not really shown here, only when app.exec() is called
-  transferFunctionWidget.show();
+  transferFunctionView.show();
 
-  //ctf->AddRGBPoint(0.7, 0.0,0.0,0.0);
-  //ctkTransferFunctionWidget* toto = new ctkTransferFunctionWidget();
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {

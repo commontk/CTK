@@ -59,7 +59,10 @@ foreach(var ${expected_variables})
   endif()
 endforeach()
 
-set(git_repository http://github.com/commontk/CTK.git)
+# If the dashscript doesn't define a GIT_REPOSITORY variable, let's define it here.
+if (NOT DEFINED GIT_REPOSITORY OR GIT_REPOSITORY STREQUAL "")
+  set(GIT_REPOSITORY http://github.com/commontk/CTK.git)
+endif()
 
 # Should binary directory be cleaned?
 set(empty_binary_directory FALSE)
@@ -98,7 +101,7 @@ if(empty_binary_directory)
 endif()
 
 if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
-  set(CTEST_CHECKOUT_COMMAND "${CTEST_GIT_COMMAND} clone ${git_repository} ${CTEST_SOURCE_DIRECTORY}")
+  set(CTEST_CHECKOUT_COMMAND "${CTEST_GIT_COMMAND} clone ${GIT_REPOSITORY} ${CTEST_SOURCE_DIRECTORY}")
 endif()
 
 set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")

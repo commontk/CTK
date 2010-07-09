@@ -47,6 +47,7 @@ public:
 
     v = properties[EventConstants::EVENT_FILTER];
     filter = ctkLDAPSearchFilter(v.toString());
+    return true;
   }
 
   void handleEvent(const ctkEvent& event /*, const Permission& perm */)

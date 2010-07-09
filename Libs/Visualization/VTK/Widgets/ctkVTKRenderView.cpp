@@ -25,11 +25,16 @@
 // CTK includes
 #include "ctkVTKRenderView.h"
 #include "ctkVTKRenderView_p.h"
+#include "ctkLogger.h"
 
 // VTK includes
 #include <vtkRendererCollection.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkTextProperty.h>
+
+//--------------------------------------------------------------------------
+static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKRenderView");
+//--------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
 // ctkVTKRenderViewPrivate methods
@@ -49,6 +54,7 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate()
 // --------------------------------------------------------------------------
 void ctkVTKRenderViewPrivate::setupCornerAnnotation()
 {
+  logger.trace("setupCornerAnnotation");
   if (!this->Renderer->HasViewProp(this->CornerAnnotation))
     {
     this->Renderer->AddViewProp(this->CornerAnnotation);
@@ -62,6 +68,7 @@ void ctkVTKRenderViewPrivate::setupCornerAnnotation()
 //---------------------------------------------------------------------------
 void ctkVTKRenderViewPrivate::setupRendering()
 {
+  logger.trace("setupRendering");
   Q_ASSERT(this->RenderWindow);
   this->RenderWindow->SetAlphaBitPlanes(1);
   this->RenderWindow->SetMultiSamples(0);
@@ -81,6 +88,7 @@ void ctkVTKRenderViewPrivate::setupRendering()
 //---------------------------------------------------------------------------
 void ctkVTKRenderViewPrivate::setupDefaultInteractor()
 {
+  logger.trace("setupDefaultInteractor");
   CTK_P(ctkVTKRenderView);
   p->setInteractor(this->RenderWindow->GetInteractor());
 }
@@ -113,6 +121,10 @@ ctkVTKRenderView::~ctkVTKRenderView()
 void ctkVTKRenderView::scheduleRender()
 {
   CTK_D(ctkVTKRenderView);
+
+  logger.trace(QString("scheduleRender - RenderEnabled: %1 - RenderPending: %2").
+               arg(d->RenderEnabled).arg(d->RenderPending));
+
   if (!d->RenderEnabled)
     {
     return;
@@ -128,6 +140,9 @@ void ctkVTKRenderView::scheduleRender()
 void ctkVTKRenderView::forceRender()
 {
   CTK_D(ctkVTKRenderView);
+
+  logger.trace(QString("forceRender - RenderEnabled: %1").arg(d->RenderEnabled));
+
   if (!d->RenderEnabled)
     {
     return;
@@ -146,6 +161,9 @@ CTK_GET_CXX(ctkVTKRenderView, vtkRenderWindowInteractor*, interactor, CurrentInt
 void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
 {
   CTK_D(ctkVTKRenderView);
+
+  logger.trace("setInteractor");
+
   d->RenderWindow->SetInteractor(newInteractor);
   d->Orientation->SetOrientationMarker(d->Axes);
   d->Orientation->SetInteractor(newInteractor);
@@ -172,6 +190,7 @@ vtkInteractorObserver* ctkVTKRenderView::interactorStyle()
 void ctkVTKRenderView::setCornerAnnotationText(const QString& text)
 {
   CTK_D(ctkVTKRenderView);
+  logger.trace(QString("setCornerAnnotationText: %1").arg(text));
   d->CornerAnnotation->ClearAllTexts();
   d->CornerAnnotation->SetText(2, text.toLatin1());
 }
@@ -187,6 +206,8 @@ QString ctkVTKRenderView::cornerAnnotationText() const
 void ctkVTKRenderView::setBackgroundColor(const QColor& newBackgroundColor)
 {
   CTK_D(ctkVTKRenderView);
+
+  logger.trace(QString("setBackgroundColor: %1").arg(newBackgroundColor.name()));
 
   d->Renderer->SetBackground(newBackgroundColor.redF(),
                              newBackgroundColor.greenF(),
@@ -220,6 +241,7 @@ vtkCamera* ctkVTKRenderView::activeCamera()
 void ctkVTKRenderView::resetCamera()
 {
   CTK_D(ctkVTKRenderView);
+  logger.trace("resetCamera");
   d->Renderer->ResetCamera();
 }
 

@@ -28,7 +28,8 @@ void ctkEventBusImpl::sendEvent(const ctkEvent& event)
 
 void ctkEventBusImpl::publishSignal(const QObject* publisher, const char* signal)
 {
-
+  Q_UNUSED(publisher)
+  Q_UNUSED(signal)
 }
 
 void ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member, const Properties& properties)
@@ -45,6 +46,8 @@ void ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* membe
 
 void ctkEventBusImpl::dispatchEvent(const ctkEvent& event, bool isAsync)
 {
+  Q_UNUSED(isAsync)
+
   QString topic = event.topic();
 
   QSet<ctkEventHandlerWrapper*> eventHandlers = this->handlers(topic);
@@ -65,6 +68,8 @@ void ctkEventBusImpl::bucket(ctkEventHandlerWrapper* wrapper)
 
 QSet<ctkEventHandlerWrapper*> ctkEventBusImpl::handlers(const QString& topic)
 {
+  Q_UNUSED(topic)
+
   // TODO
   return globalWildcard.toSet();
 }

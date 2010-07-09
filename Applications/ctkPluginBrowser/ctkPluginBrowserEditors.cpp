@@ -38,6 +38,8 @@ ctkPluginBrowserEditors::ctkPluginBrowserEditors(QWidget* editorArea)
 void ctkPluginBrowserEditors::openEditor(const QString &location, const QByteArray& content,
                                  const QString& title, const QString& tooltip)
 {
+  Q_UNUSED(tooltip)
+
   if (editorLocations.contains(location))
   {
     int index = editorLocations.indexOf(location);

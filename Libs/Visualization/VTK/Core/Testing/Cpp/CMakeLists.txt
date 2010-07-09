@@ -39,7 +39,9 @@ CONFIGURE_FILE(
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkVTKCommandOptionsTest1.cpp
+  ctkVTKConnectionTest1.cpp
   ctkVTKObjectTest1.cpp
+  ctkVTKObjectEventsObserverTest1.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -65,7 +67,9 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
+SIMPLE_TEST( ctkVTKConnectionTest1 )
 SIMPLE_TEST( ctkVTKObjectTest1 )
+SIMPLE_TEST( ctkVTKObjectEventsObserverTest1 )
 
 ADD_TEST( ctkVTKCommandOptionsTest1 ${KIT_TESTS}
           ctkVTKCommandOptionsTest1 --help )

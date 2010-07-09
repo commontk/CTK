@@ -40,28 +40,22 @@ Q_OBJECT
 public:
   typedef QObject Superclass;
   explicit ctkVTKConnection(QObject* parent);
+  virtual ~ctkVTKConnection();
 
-  /// 
-  virtual void printAdditionalInfo();
+  ///
   QString shortDescription();
   static QString shortDescription(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot = "");
 
   /// 
-  void SetParameters(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, QString qt_slot, float priority);
+  void setup(vtkObject* vtk_obj, unsigned long vtk_event,
+    const QObject* qt_obj, QString qt_slot, float priority = 0.f);
 
   /// 
   /// Check the validity of the parameters. Parameters must be valid to add 
   /// a connection
-  static bool ValidateParameters(vtkObject* vtk_obj, unsigned long vtk_event,
+  static bool isValid(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot);
-
-  /// 
-  /// Actually do the connection. Parameters must have been set prior to it
-  /// Disconnecting (enable = false) removes the connection.
-  void setEnabled(bool enable);
-  bool isEnabled()const;
 
   /// 
   /// Temporarilly block any signals/slots. If the event is fired, the slot
@@ -76,12 +70,13 @@ public:
 
   /// 
   /// Return a string uniquely identifying the connection within the current process
-  QString id()const;
-public slots:
-  ///
-  /// Safe deletion
-  void deleteConnection();
+  QString  id()const;
+  QObject* object()const;
 
+  /// false by default, it is slower to observe vtk object deletion
+  void observeDeletion(bool enable);
+  bool deletionObserved()const;
+  
 signals:
   /// 
   /// The qt signal emited by the VTK Callback
@@ -93,11 +88,21 @@ signals:
   /// argument are matching:
   /// connect(obj1,SIGNAL(signalFunc(A,B,C,D)),obj2,SLOT(slotFunc(A)));
   void emitExecute(vtkObject* caller, void* call_data, unsigned long vtk_event, void* client_data);
-protected:
-  virtual ~ctkVTKConnection();
+
+  /// The signal is fired when the observed vtk object or the receiving qt 
+  /// object is deleted. It can conveniently connected to the deleteLater 
+  /// slot
+  void isBroke();
+
+protected slots:
+  void vtkObjectDeleted();
+  void qobjectDeleted();
 
 private:
   CTK_DECLARE_PRIVATE(ctkVTKConnection);
+  friend QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
 };
+
+QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
 
 #endif

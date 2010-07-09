@@ -46,7 +46,7 @@ QWidget *ctkMenuButtonPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString ctkMenuButtonPlugin::domXml() const
 {
-  return "<widget class=\"ctkMenuButton\" name=\"CTKMenuButton\">\n"
+  return "<widget class=\"ctkMenuButton\" name=\"MenuButton\">\n"
          " <property name=\"text\">"
          "  <string>MenuButton</string>"
          " </property>"

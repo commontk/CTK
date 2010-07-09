@@ -146,7 +146,7 @@ ctkServiceRegistration* ctkServices::registerService(ctkPluginPrivate* plugin,
     }
   }
 
-  ctkServiceReference* r = res->getReference();
+  //ctkServiceReference* r = res->getReference();
   // TODO
   //Listeners l = bundle.fwCtx.listeners;
   //l.serviceChanged(l.getMatchingServiceListeners(r),
@@ -421,7 +421,7 @@ QList<ctkServiceRegistration*> ctkServices::getRegisteredByPlugin(ctkPluginPriva
   for (QHashIterator<ctkServiceRegistration*, QStringList> i(services); i.hasNext(); )
   {
     ctkServiceRegistration* sr = i.next().key();
-    if (sr->d_func()->plugin = p)
+    if ((sr->d_func()->plugin = p))
     {
       res.push_back(sr);
     }

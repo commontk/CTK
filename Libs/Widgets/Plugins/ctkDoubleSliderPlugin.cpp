@@ -38,7 +38,7 @@ QWidget *ctkDoubleSliderPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString ctkDoubleSliderPlugin::domXml() const
 {
-  return "<widget class=\"ctkDoubleSlider\" name=\"CTKSlider\">\n"
+  return "<widget class=\"ctkDoubleSlider\" name=\"DoubleSlider\">\n"
     "<property name=\"orientation\">\n"
     "  <enum>Qt::Horizontal</enum>\n"
     " </property>\n"

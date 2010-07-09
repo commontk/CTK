@@ -23,6 +23,7 @@ public:
     this->IgnoreRest = ignoreRest;
     this->NumberOfParametersToProcess = 0;
     }
+  virtual ~CommandLineParserArgumentDescriptionBase(){}
   virtual bool addParameter(const QString& value) = 0;
   QString helpText(int fieldWidth, const char charPad);
   QString LongArg;
@@ -89,6 +90,7 @@ QString CommandLineParserArgumentDescriptionBase::helpText(int fieldWidth, const
       this->RegularExpression = _REGEXP;                                                \
       this->ArgumentType = #_TYPE;                                                      \
       }                                                                                 \
+    virtual ~ CommandLineParser##_NAME##ArgumentDescription(){}                         \
      virtual bool addParameter(const QString& value);                                   \
     _TYPE* Variable;                                                                    \
     _TYPE DefaultValue;                                                                 \
