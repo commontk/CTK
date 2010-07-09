@@ -74,6 +74,12 @@ public:
   int CalledPort;
   DcmSCU SCU;
   DcmDataset* parameters;
+
+  // do the retrieve, handling both series and study retrieves
+  enum RetrieveType { RetrieveSeries, RetrieveStudy };
+  void retrieve ( QString UID, QDir directory, RetrieveType retriveType );
+  
+
 };
 
 //------------------------------------------------------------------------------
@@ -90,6 +96,123 @@ ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
 {
   delete parameters;
 }
+
+void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveType retriveType ) {
+
+  // Register the JPEG libraries in case we need them
+  //   (registration only happens once, so it's okay to call repeatedly)
+  // register global JPEG decompression codecs
+  DJDecoderRegistration::registerCodecs();
+  // register global JPEG compression codecs
+  DJEncoderRegistration::registerCodecs();
+  // register RLE compression codec
+  DcmRLEEncoderRegistration::registerCodecs();
+  // register RLE decompression codec
+  DcmRLEDecoderRegistration::registerCodecs();
+
+  // Set the DCMTK log level
+  log4cplus::Logger rootLogger = log4cplus::Logger::getRoot();
+  rootLogger.setLogLevel(log4cplus::DEBUG_LOG_LEVEL);
+
+  DcmSCU scu;
+  scu.setAETitle ( CallingAETitle.toStdString() );
+  scu.setPort ( CallingPort );
+  scu.setPeerAETitle ( CalledAETitle.toStdString() );
+  scu.setPeerHostName ( Host.toStdString() );
+  scu.setPeerPort ( CalledPort );
+
+  logger.error ( "Setting Transfer Syntaxes" );
+  OFList<OFString> transferSyntaxes;
+  transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
+  scu.addPresentationContext ( UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+  scu.addPresentationContext ( UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+
+
+  if ( !scu.initNetwork().good() ) 
+    {
+    logger.error ( "Error initializing the network" );
+    return;
+    }
+  logger.debug ( "Negotiating Association" );
+  if ( !scu.negotiateAssociation().good() )
+    {
+    logger.error ( "Error negotiating association" );
+    return;
+    }
+  // Clear the query
+  unsigned long elements = this->parameters->card();
+  // Clean it out
+  for ( unsigned long i = 0; i < elements; i++ ) 
+    {
+    this->parameters->remove ( 0ul );
+    }
+  if ( retriveType == RetrieveSeries )
+    {
+    this->parameters->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
+    this->parameters->putAndInsertString ( DCM_SeriesInstanceUID, UID.toStdString().c_str() );
+    } 
+  else
+    {
+    this->parameters->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
+    this->parameters->putAndInsertString ( DCM_StudyInstanceUID, UID.toStdString().c_str() );  
+    }
+
+  MOVEResponses *responses = new MOVEResponses();
+  OFCondition status = scu.sendMOVERequest ( 0, this->parameters, responses );
+  if ( status.good() )
+    {
+    logger.debug ( "Find succeded" );
+
+    // Try to create the directory
+    directory.mkpath ( directory.absolutePath() );
+
+    // Write the responses out to disk
+    for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
+      {
+      DcmDataset *dataset = (*it)->m_dataset;
+      if ( dataset != NULL )
+        {
+        // Save in correct directory
+        E_TransferSyntax output_transfersyntax = dataset->getOriginalXfer();
+        dataset->chooseRepresentation( output_transfersyntax, NULL );
+        
+        if ( !dataset->canWriteXfer( output_transfersyntax ) )
+          {
+          // Pick EXS_LittleEndianExplicit as our default
+          output_transfersyntax = EXS_LittleEndianExplicit;
+          }
+        
+        DcmXfer opt_oxferSyn( output_transfersyntax );
+        if ( !dataset->chooseRepresentation( opt_oxferSyn.getXfer(), NULL ).bad() )
+          {
+          DcmFileFormat* fileformat = new DcmFileFormat ( dataset );
+          
+          // Follow dcmdjpeg example
+          fileformat->loadAllDataIntoMemory();
+          OFString SOPInstanceUID;
+          dataset->findAndGetOFString ( DCM_SOPInstanceUID, SOPInstanceUID );
+          QFileInfo fi ( directory, QString ( SOPInstanceUID.c_str() ) );
+          logger.debug ( "Saving file: " + fi.absoluteFilePath() );
+          status = fileformat->saveFile ( fi.absoluteFilePath().toStdString().c_str(), opt_oxferSyn.getXfer() );
+          if ( !status.good() )
+            {
+            logger.error ( "Error saving file: " + fi.absoluteFilePath() + " Error is " + status.text() );
+            }
+          
+          delete fileformat;
+          }
+        }
+      }
+    }
+  else
+    {
+    logger.error ( "MOVE Request failed: " + QString ( status.text() ) );
+    }
+  delete responses;
+}
+
 
 
 
@@ -165,114 +288,14 @@ int ctkDICOMRetrieve::calledPort()
 void ctkDICOMRetrieve::retrieveSeries ( QString seriesInstanceUID, QDir directory ) {
   CTK_D(ctkDICOMRetrieve);
   logger.info ( "Starting retrieveSeries" );
-
-  // Register the JPEG libraries in case we need them
-  //   (registration only happens once, so it's okay to call repeatedly)
-  // register global JPEG decompression codecs
-  DJDecoderRegistration::registerCodecs();
-  // register global JPEG compression codecs
-  DJEncoderRegistration::registerCodecs();
-  // register RLE compression codec
-  DcmRLEEncoderRegistration::registerCodecs();
-  // register RLE decompression codec
-  DcmRLEDecoderRegistration::registerCodecs();
-
-  // Set the DCMTK log level
-  log4cplus::Logger rootLogger = log4cplus::Logger::getRoot();
-  rootLogger.setLogLevel(log4cplus::DEBUG_LOG_LEVEL);
-
-  DcmSCU scu;
-  scu.setAETitle ( this->callingAETitle().toStdString() );
-  scu.setPort ( this->callingPort() );
-  scu.setPeerAETitle ( this->calledAETitle().toStdString() );
-  scu.setPeerHostName ( this->host().toStdString() );
-  scu.setPeerPort ( this->calledPort() );
-
-  logger.error ( "Setting Transfer Syntaxes" );
-  OFList<OFString> transferSyntaxes;
-  transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
-  transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
-  transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
-  scu.addPresentationContext ( UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes );
-  scu.addPresentationContext ( UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
-
-
-  if ( !scu.initNetwork().good() ) 
-    {
-    logger.error ( "Error initializing the network" );
-    return;
-    }
-  logger.debug ( "Negotiating Association" );
-  if ( !scu.negotiateAssociation().good() )
-    {
-    logger.error ( "Error negotiating association" );
-    return;
-    }
-  // Clear the query
-  unsigned long elements = d->parameters->card();
-  // Clean it out
-  for ( unsigned long i = 0; i < elements; i++ ) 
-    {
-    d->parameters->remove ( (unsigned long) 0 );
-    }
-  d->parameters->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
-  d->parameters->putAndInsertString ( DCM_SeriesInstanceUID, seriesInstanceUID.toStdString().c_str() );
-
-  MOVEResponses *responses = new MOVEResponses();
-  OFCondition status = scu.sendMOVERequest ( 0, d->parameters, responses );
-  if ( status.good() )
-    {
-    logger.debug ( "Find succeded" );
-
-    // Try to create the directory
-    directory.mkpath ( directory.absolutePath() );
-
-    // Write the responses out to disk
-    for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
-      {
-      DcmDataset *dataset = (*it)->m_dataset;
-      if ( dataset != NULL )
-        {
-        // Save in correct directory
-        E_TransferSyntax output_transfersyntax = dataset->getOriginalXfer();
-        dataset->chooseRepresentation( output_transfersyntax, NULL );
-        
-        if ( !dataset->canWriteXfer( output_transfersyntax ) )
-          {
-          // Pick EXS_LittleEndianExplicit as our default
-          output_transfersyntax = EXS_LittleEndianExplicit;
-          }
-        
-        DcmXfer opt_oxferSyn( output_transfersyntax );
-        if ( !dataset->chooseRepresentation( opt_oxferSyn.getXfer(), NULL ).bad() )
-          {
-          DcmFileFormat* fileformat = new DcmFileFormat ( dataset );
-          
-          // Follow dcmdjpeg example
-          fileformat->loadAllDataIntoMemory();
-          OFString SOPInstanceUID;
-          dataset->findAndGetOFString ( DCM_SOPInstanceUID, SOPInstanceUID );
-          QFileInfo fi ( directory, QString ( SOPInstanceUID.c_str() ) );
-          logger.debug ( "Saving file: " + fi.absoluteFilePath() );
-          status = fileformat->saveFile ( fi.absoluteFilePath().toStdString().c_str(), opt_oxferSyn.getXfer() );
-          if ( !status.good() )
-            {
-            logger.error ( "Error saving file: " + fi.absoluteFilePath() + " Error is " + status.text() );
-            }
-          
-          delete fileformat;
-          }
-        }
-      }
-    }
-  else
-    {
-    logger.error ( "MOVE Request failed: " + QString ( status.text() ) );
-    }
-  delete responses;
+  d->retrieve ( seriesInstanceUID, directory, ctkDICOMRetrievePrivate::RetrieveSeries );
   return;
 }
 
 void ctkDICOMRetrieve::retrieveStudy ( QString studyInstanceUID, QDir directory ) {
+  CTK_D(ctkDICOMRetrieve);
+  logger.info ( "Starting retrieveStudy" );
+  d->retrieve ( studyInstanceUID, directory, ctkDICOMRetrievePrivate::RetrieveStudy );
+  return;
 }
 

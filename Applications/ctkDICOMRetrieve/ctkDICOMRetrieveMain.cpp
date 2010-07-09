@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   QTextStream out(stdout);
 
   QString SeriesUID ( argv[1] );
@@ -90,10 +90,10 @@ int main(int argc, char** argv)
   logger.info ( "SeriesUID: " + SeriesUID + "\n" 
                 + "OutputDirectory: " + OutputDirectory.absolutePath() + "\n"
                 + "CallingAETitle: " + CallingAETitle + "\n"
-                + "CallingPort: " + QString ( CallingPort ) + "\n"
+                + "CallingPort: " + QString::number ( CallingPort ) + "\n"
                 + "CalledAEtitle: " + CalledAETitle + "\n"
                 + "Host: " + Host + "\n"
-                + "CalledPort: " + QString ( CalledPort ) + "\n" );
+                + "CalledPort: " + QString::number ( CalledPort ) + "\n" );
 
 
   logger.info ( "Starting to retrieve" );

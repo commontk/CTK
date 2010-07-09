@@ -189,9 +189,8 @@ void ctkDICOMQuery::query(QSqlDatabase database )
   // Clean it out
   for ( unsigned long i = 0; i < elements; i++ ) 
     {
-    d->query->remove ( (unsigned long) 0 );
+    d->query->remove ( 0ul );
     }
-//  d->query->insertEmptyElement ( DCM_QueryRetrieveLevel );
   d->query->insertEmptyElement ( DCM_PatientID );
   d->query->insertEmptyElement ( DCM_PatientsName );
   d->query->insertEmptyElement ( DCM_PatientsBirthDate );

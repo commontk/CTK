@@ -24,7 +24,6 @@
 
 // Qt includes 
 #include <QObject>
-#include <QSqlDatabase>
 #include <QDir>
 
 // CTK includes
