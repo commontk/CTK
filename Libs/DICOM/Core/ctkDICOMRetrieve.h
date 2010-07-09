@@ -24,7 +24,6 @@
 
 // Qt includes 
 #include <QObject>
-#include <QSqlDatabase>
 #include <QDir>
 
 // CTK includes
@@ -54,8 +53,10 @@ public:
 
   // Could be a slot...
   void retrieveSeries ( QString seriesInstanceUID, QDir directory );
+  void retrieveStudy ( QString studyInstanceUID, QDir directory );
 
 private:
+  void retrieve ( QDir directory );
   CTK_DECLARE_PRIVATE(ctkDICOMRetrieve);
 
 };

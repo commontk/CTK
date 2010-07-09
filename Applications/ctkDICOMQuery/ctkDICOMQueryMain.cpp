@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   QTextStream out(stdout);
 
   ctkDICOM myCTK;
