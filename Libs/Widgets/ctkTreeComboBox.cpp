@@ -32,23 +32,24 @@
 class ctkTreeComboBoxPrivate: public ctkPrivate<ctkTreeComboBox>
 {
 public:
+  ctkTreeComboBoxPrivate();
   bool SkipNextHide;
   bool ResetPopupSize;
-  
-  void init()
-  {
-    this->SkipNextHide = false;
-    this->ResetPopupSize = false;
-  }
+  bool RootSet;
+  QPersistentModelIndex Root;
 };
+
+ctkTreeComboBoxPrivate::ctkTreeComboBoxPrivate()
+{
+  this->SkipNextHide = false;
+  this->ResetPopupSize = false;
+  this->RootSet = false;
+}
 
 // -------------------------------------------------------------------------
 ctkTreeComboBox::ctkTreeComboBox(QWidget* _parent):Superclass(_parent)
 {
   CTK_INIT_PRIVATE(ctkTreeComboBox);
-  CTK_D(ctkTreeComboBox);
-  
-  d->init();
   QTreeView* treeView = new QTreeView(this);
   treeView->setHeaderHidden(true);
   this->setView(treeView);
@@ -109,7 +110,13 @@ bool ctkTreeComboBox::eventFilter(QObject* object, QEvent* _event)
 // -------------------------------------------------------------------------
 void ctkTreeComboBox::showPopup()
 {
-  this->setRootModelIndex(QModelIndex());
+  CTK_D(ctkTreeComboBox);
+  if (!d->RootSet)
+    {
+    d->Root = this->rootModelIndex();
+    d->RootSet = true;
+    }
+  this->setRootModelIndex(QModelIndex(d->Root));
   this->QComboBox::showPopup();
 }
 

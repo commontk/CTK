@@ -29,7 +29,9 @@
 
 #include "CTKWidgetsExport.h"
 
+class ctkTreeComboBoxPrivate;
 class QTreeView;
+
 /// Description:
 /// ComboBox that displays the items as a tree view.
 /// See below for a use case:
@@ -43,9 +45,6 @@ class QTreeView;
 ///    model.appendRow(new QStandardItem("Test3"));
 ///    combo.setModel(&model);
 ///    combo.show();
-//
-class ctkTreeComboBoxPrivate;
-
 class CTK_WIDGETS_EXPORT ctkTreeComboBox : public QComboBox
 {
   Q_OBJECT
