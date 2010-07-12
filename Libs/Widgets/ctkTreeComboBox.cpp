@@ -165,3 +165,9 @@ void ctkTreeComboBox::paintEvent(QPaintEvent *p)
   //qDebug() << this->itemText(0) << this->itemText(1);
   this->QComboBox::paintEvent(p);
 }
+
+// -------------------------------------------------------------------------
+QTreeView* ctkTreeComboBox::treeView()const
+{
+  return qobject_cast<QTreeView*>(this->view());
+}

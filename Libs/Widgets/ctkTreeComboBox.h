@@ -29,6 +29,7 @@
 
 #include "CTKWidgetsExport.h"
 
+class QTreeView;
 /// Description:
 /// ComboBox that displays the items as a tree view.
 /// See below for a use case:
@@ -56,6 +57,11 @@ public:
   virtual bool eventFilter(QObject* object, QEvent* event);
   virtual void showPopup();
   virtual void hidePopup();
+  
+  /// ctkTreeComboBox uses a QTreeView for its model view. treeView() is a
+  /// utility function that cast QComboBox::view() into a QTreeView.
+  /// \sa view()
+  QTreeView* treeView()const;
 
 protected:
   virtual void paintEvent(QPaintEvent*);
