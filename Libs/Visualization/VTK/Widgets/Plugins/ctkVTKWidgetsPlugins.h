@@ -28,7 +28,7 @@
 #include "CTKVisualizationVTKWidgetsPluginsExport.h"
 #include "ctkVTKRenderViewPlugin.h"
 #include "ctkVTKSliceViewPlugin.h"
-
+#include "ctkVTKTextPropertyWidgetPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKWidgetsPlugins :
@@ -44,6 +44,7 @@ public:
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkVTKRenderViewPlugin;
     plugins << new ctkVTKSliceViewPlugin;
+    plugins << new ctkVTKTextPropertyWidgetPlugin;
     return plugins;
     }
 };

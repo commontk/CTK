@@ -34,6 +34,8 @@ SET(KIT_SRCS
   ctkVTKSliceView.cpp
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
+  ctkVTKTextPropertyWidget.cpp
+  ctkVTKTextPropertyWidget.h
   )
 
 # Headers that should run through moc
@@ -44,10 +46,12 @@ SET(KIT_MOC_SRCS
   ctkVTKRenderView_p.h
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
+  ctkVTKTextPropertyWidget.h
   )
 
 # UI files
 SET(KIT_UI_FORMS
+  Resources/UI/ctkVTKTextPropertyWidget.ui
 )
 
 # Resources
