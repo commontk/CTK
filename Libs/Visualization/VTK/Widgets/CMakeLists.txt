@@ -31,6 +31,8 @@ SET(KIT_SRCS
   ctkVTKRenderView.cpp
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
+  ctkVTKScalarBarWidget.cpp
+  ctkVTKScalarBarWidget.h
   ctkVTKSliceView.cpp
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
@@ -44,6 +46,7 @@ SET(KIT_MOC_SRCS
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
+  ctkVTKScalarBarWidget.h
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
   ctkVTKTextPropertyWidget.h
@@ -51,11 +54,13 @@ SET(KIT_MOC_SRCS
 
 # UI files
 SET(KIT_UI_FORMS
+  Resources/UI/ctkVTKScalarBarWidget.ui
   Resources/UI/ctkVTKTextPropertyWidget.ui
 )
 
 # Resources
 SET(KIT_resources
+
 )
 
 # Set VTK_LIBRARIES variable

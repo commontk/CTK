@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ctkVTKScalarBarWidget</class>
+ <widget class="QWidget" name="ctkVTKScalarBarWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>311</width>
+    <height>535</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>vtkScalarBarWidget</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0" colspan="2">
+    <widget class="QCheckBox" name="DisplayScalarBarCheckBox">
+     <property name="text">
+      <string>Display scalar bar</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QGroupBox" name="TitleGroupBox">
+     <property name="title">
+      <string>Title properties:</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="ctkVTKTextPropertyWidget" name="TitleTextPropertyWidget"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QGroupBox" name="LabelsGroupBox">
+     <property name="title">
+      <string>Labels properties:</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="ctkVTKTextPropertyWidget" name="LabelsTextPropertyWidget">
+        <property name="textLabel">
+         <string>Format:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="MaxNumberOfColorsLabel">
+     <property name="text">
+      <string>Maximum number of colors:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QSpinBox" name="MaxNumberOfColorsSpinBox">
+     <property name="minimum">
+      <number>2</number>
+     </property>
+     <property name="maximum">
+      <number>9999</number>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="NumberOfLabelsLabel">
+     <property name="text">
+      <string>Number of labels:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QSpinBox" name="NumberOfLabelsSpinBox">
+     <property name="maximum">
+      <number>64</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkVTKTextPropertyWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkVTKTextPropertyWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

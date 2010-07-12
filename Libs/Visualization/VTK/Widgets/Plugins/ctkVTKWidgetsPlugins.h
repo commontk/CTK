@@ -27,6 +27,7 @@
 // CTK includes
 #include "CTKVisualizationVTKWidgetsPluginsExport.h"
 #include "ctkVTKRenderViewPlugin.h"
+#include "ctkVTKScalarBarWidgetPlugin.h"
 #include "ctkVTKSliceViewPlugin.h"
 #include "ctkVTKTextPropertyWidgetPlugin.h"
 
@@ -43,6 +44,7 @@ public:
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkVTKRenderViewPlugin;
+    plugins << new ctkVTKScalarBarWidgetPlugin;
     plugins << new ctkVTKSliceViewPlugin;
     plugins << new ctkVTKTextPropertyWidgetPlugin;
     return plugins;
