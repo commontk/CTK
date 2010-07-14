@@ -151,6 +151,8 @@ protected:
   // Description:
   // Rendering is done here.
   virtual void paintEvent(QPaintEvent* ev);
+  virtual void initMinimumSliderStyleOption(QStyleOptionSlider* option) const;
+  virtual void initMaximumSliderStyleOption(QStyleOptionSlider* option) const;
 
 private:
   CTK_DECLARE_PRIVATE(ctkRangeSlider);

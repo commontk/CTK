@@ -29,6 +29,7 @@
 
 #include "CTKWidgetsExport.h"
 
+class ctkDoubleRangeSlider;
 class ctkRangeWidgetPrivate;
 
 ///
@@ -198,6 +199,11 @@ protected slots:
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
+
+  /// can be used to change the slider by a custom one
+  ctkDoubleRangeSlider* slider()const;
+  void setSlider(ctkDoubleRangeSlider* slider);
+
 private:
   CTK_DECLARE_PRIVATE(ctkRangeWidget);
 

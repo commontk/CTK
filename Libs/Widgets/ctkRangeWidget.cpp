@@ -32,6 +32,8 @@ class ctkRangeWidgetPrivate: public ctkPrivate<ctkRangeWidget>,
 {
 public:
   ctkRangeWidgetPrivate();
+  void connectSlider();
+
   void updateSpinBoxWidth();
   int synchronizedSpinBoxWidth()const;
   void synchronizeSiblingSpinBox(int newWidth);
@@ -61,6 +63,32 @@ ctkRangeWidgetPrivate::ctkRangeWidgetPrivate()
   this->MaximumValueBeforeChange = 0.;
   this->AutoSpinBoxWidth = true;
   this->SpinBoxAlignment = Qt::AlignVCenter;
+}
+
+// --------------------------------------------------------------------------
+void ctkRangeWidgetPrivate::connectSlider()
+{
+  CTK_P(ctkRangeWidget);
+  QObject::connect(this->Slider, SIGNAL(valuesChanged(double, double)),
+                   p, SLOT(changeValues(double,double)));
+  QObject::connect(this->Slider, SIGNAL(minimumValueChanged(double)),
+                   p, SLOT(changeMinimumValue(double)));
+  QObject::connect(this->Slider, SIGNAL(maximumValueChanged(double)),
+                   p, SLOT(changeMaximumValue(double)));
+
+  QObject::connect(this->MinimumSpinBox, SIGNAL(valueChanged(double)),
+                   this->Slider, SLOT(setMinimumValue(double)));
+  QObject::connect(this->MaximumSpinBox, SIGNAL(valueChanged(double)),
+                   this->Slider, SLOT(setMaximumValue(double)));
+  QObject::connect(this->MinimumSpinBox, SIGNAL(valueChanged(double)),
+                   p, SLOT(setMinimumToMaximumSpinBox(double)));
+  QObject::connect(this->MaximumSpinBox, SIGNAL(valueChanged(double)),
+                   p, SLOT(setMaximumToMinimumSpinBox(double)));
+
+  QObject::connect(this->Slider, SIGNAL(sliderPressed()),
+                   p, SLOT(startChanging()));
+  QObject::connect(this->Slider, SIGNAL(sliderReleased()),
+                   p, SLOT(stopChanging()));
 }
 
 // --------------------------------------------------------------------------
@@ -158,19 +186,8 @@ ctkRangeWidget::ctkRangeWidget(QWidget* _parent) : Superclass(_parent)
   d->MinimumSpinBox->setValue(d->Slider->minimumValue());
   d->MaximumSpinBox->setValue(d->Slider->maximumValue());
   
-  //this->connect(d->Slider, SIGNAL(minimumValueChanged(double)), d->MinimumSpinBox, SLOT(setValue(double)));
-  //this->connect(d->Slider, SIGNAL(maximumValueChanged(double)), d->MaximumSpinBox, SLOT(setValue(double)));
-  this->connect(d->Slider, SIGNAL(valuesChanged(double, double)), this, SLOT(changeValues(double,double)));
-  this->connect(d->Slider, SIGNAL(minimumValueChanged(double)), this, SLOT(changeMinimumValue(double)));
-  this->connect(d->Slider, SIGNAL(maximumValueChanged(double)), this, SLOT(changeMaximumValue(double)));
-  
-  this->connect(d->MinimumSpinBox, SIGNAL(valueChanged(double)), d->Slider, SLOT(setMinimumValue(double)));
-  this->connect(d->MaximumSpinBox, SIGNAL(valueChanged(double)), d->Slider, SLOT(setMaximumValue(double)));
-  this->connect(d->MinimumSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setMinimumToMaximumSpinBox(double)));
-  this->connect(d->MaximumSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setMaximumToMinimumSpinBox(double)));
+  d->connectSlider();
 
-  this->connect(d->Slider, SIGNAL(sliderPressed()), this, SLOT(startChanging()));
-  this->connect(d->Slider, SIGNAL(sliderReleased()), this, SLOT(stopChanging()));
   d->MinimumSpinBox->installEventFilter(this);
   d->MaximumSpinBox->installEventFilter(this);
 }
@@ -599,3 +616,32 @@ void ctkRangeWidget::setAutoSpinBoxWidth(bool autoWidth)
   d->AutoSpinBoxWidth = autoWidth;
   d->updateSpinBoxWidth();
 }
+
+// -------------------------------------------------------------------------
+ctkDoubleRangeSlider* ctkRangeWidget::slider()const
+{
+  CTK_D(const ctkRangeWidget);
+  return d->Slider;
+}
+
+// -------------------------------------------------------------------------
+void ctkRangeWidget::setSlider(ctkDoubleRangeSlider* slider)
+{
+  CTK_D(ctkRangeWidget);
+
+  slider->setOrientation(d->Slider->orientation());
+  slider->setMinimum(d->Slider->minimum());
+  slider->setMaximum(d->Slider->maximum());
+  slider->setValues(d->Slider->minimumValue(), d->Slider->maximumValue());
+  slider->setSingleStep(d->Slider->singleStep());
+  slider->setTracking(d->Slider->hasTracking());
+  slider->setTickInterval(d->Slider->tickInterval());
+
+  delete d->Slider;
+  d->Slider = slider;
+
+  d->connectSlider();
+
+  d->relayout();
+}
+

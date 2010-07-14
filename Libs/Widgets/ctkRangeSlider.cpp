@@ -190,7 +190,7 @@ void ctkRangeSliderPrivate::drawMinimumSlider( QStylePainter* painter ) const
 {
   CTK_P(const ctkRangeSlider);
   QStyleOptionSlider option;
-  p->initStyleOption( &option );
+  p->initMinimumSliderStyleOption( &option );
 
   option.subControls = QStyle::SC_SliderHandle;
   option.sliderValue = m_MinimumValue;
@@ -210,7 +210,7 @@ void ctkRangeSliderPrivate::drawMaximumSlider( QStylePainter* painter ) const
 {
   CTK_P(const ctkRangeSlider);
   QStyleOptionSlider option;
-  p->Superclass::initStyleOption( &option );
+  p->initMaximumSliderStyleOption( &option );
 
   option.subControls = QStyle::SC_SliderHandle;
   option.sliderValue = m_MaximumValue;
@@ -220,7 +220,6 @@ void ctkRangeSliderPrivate::drawMaximumSlider( QStylePainter* painter ) const
     option.activeSubControls = QStyle::SC_SliderHandle;
     option.state |= QStyle::State_Sunken;
     }
-
   painter->drawComplexControl(QStyle::CC_Slider, option);
 }
 
@@ -661,3 +660,14 @@ void ctkRangeSlider::mouseReleaseEvent(QMouseEvent* mouseEvent)
   this->update();
 }
 
+// --------------------------------------------------------------------------
+void ctkRangeSlider::initMinimumSliderStyleOption(QStyleOptionSlider* option) const
+{
+  this->initStyleOption(option);
+}
+
+// --------------------------------------------------------------------------
+void ctkRangeSlider::initMaximumSliderStyleOption(QStyleOptionSlider* option) const
+{
+  this->initStyleOption(option);
+}

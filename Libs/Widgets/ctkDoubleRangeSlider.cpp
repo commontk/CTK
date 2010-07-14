@@ -37,6 +37,7 @@ public:
   double minFromInt(int _value)const;
   double maxFromInt(int _value)const;
   void init();
+  void connectSlider();
   void updateMinOffset(double value);
   void updateMaxOffset(double value);
 
@@ -80,16 +81,31 @@ void ctkDoubleRangeSliderPrivate::init()
   this->MaxValue = this->Slider->maximumValue();
   this->SingleStep = this->Slider->singleStep();
 
-  p->connect(this->Slider, SIGNAL(minimumValueChanged(int)), p, SLOT(onMinValueChanged(int)));
-  p->connect(this->Slider, SIGNAL(maximumValueChanged(int)), p, SLOT(onMaxValueChanged(int)));
-  p->connect(this->Slider, SIGNAL(valuesChanged(int,int)), p, SLOT(onValuesChanged(int,int)));
+  this->connectSlider();
+}
 
-  p->connect(this->Slider, SIGNAL(minimumPositionChanged(int)), p, SLOT(onMinPosChanged(int)));
-  p->connect(this->Slider, SIGNAL(maximumPositionChanged(int)), p, SLOT(onMaxPosChanged(int)));
-  p->connect(this->Slider, SIGNAL(positionsChanged(int,int)), p, SLOT(onPositionsChanged(int,int)));
+// --------------------------------------------------------------------------
+void ctkDoubleRangeSliderPrivate::connectSlider()
+{
+  CTK_P(ctkDoubleRangeSlider);
+  p->connect(this->Slider, SIGNAL(minimumValueChanged(int)),
+             p, SLOT(onMinValueChanged(int)));
+  p->connect(this->Slider, SIGNAL(maximumValueChanged(int)),
+             p, SLOT(onMaxValueChanged(int)));
+  p->connect(this->Slider, SIGNAL(valuesChanged(int,int)),
+             p, SLOT(onValuesChanged(int,int)));
 
-  p->connect(this->Slider, SIGNAL(sliderPressed()), p, SIGNAL(sliderPressed()));
-  p->connect(this->Slider, SIGNAL(sliderReleased()), p, SIGNAL(sliderReleased()));
+  p->connect(this->Slider, SIGNAL(minimumPositionChanged(int)),
+             p, SLOT(onMinPosChanged(int)));
+  p->connect(this->Slider, SIGNAL(maximumPositionChanged(int)),
+             p, SLOT(onMaxPosChanged(int)));
+  p->connect(this->Slider, SIGNAL(positionsChanged(int,int)),
+             p, SLOT(onPositionsChanged(int,int)));
+
+  p->connect(this->Slider, SIGNAL(sliderPressed()),
+             p, SIGNAL(sliderPressed()));
+  p->connect(this->Slider, SIGNAL(sliderReleased()),
+             p, SIGNAL(sliderReleased()));
 }
 
 // --------------------------------------------------------------------------
@@ -477,9 +493,34 @@ void ctkDoubleRangeSlider::onMaxPosChanged(int newPosition)
   CTK_D(const ctkDoubleRangeSlider);
   emit this->maximumPositionChanged(d->maxFromInt(newPosition));
 }
+
 // --------------------------------------------------------------------------
 void ctkDoubleRangeSlider::onPositionsChanged(int min, int max)
 {
   CTK_D(const ctkDoubleRangeSlider);
   emit this->positionsChanged(d->minFromInt(min), d->maxFromInt(max));
+}
+
+// --------------------------------------------------------------------------
+ctkRangeSlider* ctkDoubleRangeSlider::slider()const
+{
+  CTK_D(const ctkDoubleRangeSlider);
+  return d->Slider;
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleRangeSlider::setSlider(ctkRangeSlider* slider)
+{
+  CTK_D(ctkDoubleRangeSlider);
+  slider->setOrientation(d->Slider->orientation());
+  slider->setMinimum(d->Slider->minimum());
+  slider->setMaximum(d->Slider->maximum());
+  slider->setValues(d->Slider->minimumValue(), d->Slider->maximumValue());
+  slider->setSingleStep(d->Slider->singleStep());
+  slider->setTracking(d->Slider->hasTracking());
+  slider->setTickInterval(d->Slider->tickInterval());
+  delete d->Slider;
+  qobject_cast<QHBoxLayout*>(this->layout())->addWidget(slider);
+  d->Slider = slider;
+  d->connectSlider();
 }

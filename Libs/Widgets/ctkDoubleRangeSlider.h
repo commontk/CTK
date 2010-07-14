@@ -29,6 +29,7 @@
 #include <ctkPimpl.h>
 #include "CTKWidgetsExport.h"
 
+class ctkRangeSlider;
 class ctkDoubleRangeSliderPrivate;
 class CTK_WIDGETS_EXPORT ctkDoubleRangeSlider : public QWidget
 {
@@ -211,6 +212,11 @@ protected slots:
   void onMinPosChanged(int value);
   void onMaxPosChanged(int value);
   void onPositionsChanged(int min, int max);
+
+protected:
+  ctkRangeSlider* slider()const;
+  void setSlider(ctkRangeSlider* slider);
+
 private:
   CTK_DECLARE_PRIVATE(ctkDoubleRangeSlider);
 };
