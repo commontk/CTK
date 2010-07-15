@@ -4,6 +4,7 @@
 // Qt includes
 #include <QString>
 #include <QStringList>
+#include <QVariant>
 
 // CTK includes
 #include "CTKCoreExport.h"
@@ -16,7 +17,7 @@ public:
   ctkCommandLineParser();
   ~ctkCommandLineParser();
   
-  bool parseArguments(const QStringList& arguments);
+  QHash<QString /*longarg*/, QVariant> parseArguments(const QStringList &arguments, bool* ok = 0);
 
   QString errorString();
   
@@ -25,22 +26,10 @@ public:
   bool argumentAdded(const QString& argument);
 
   bool argumentParsed(const QString& argument);
-  
-  void addBooleanArgument(const char* longarg, const char* shortarg, bool* var, 
-                          const QString& argHelp = QString(), const bool& defaultValue = false,
-                          bool ignoreRest = false);
 
-  void addStringArgument(const char* longarg, const char* shortarg, QString* var, 
-                         const QString& argHelp = QString(), const QString& defaultValue = QString(),
-                         bool ignoreRest = false);
-
-  void addIntegerArgument(const char* longarg, const char* shortarg, int* var,
-                         const QString& argHelp = QString(), const int& defaultValue = 0,
-                         bool ignoreRest = false);
-
-  void addStringListArgument(const char* longarg, const char* shortarg, QStringList* var,
-                             const QString& argHelp = QString(),
-                             const QStringList& defaultValue = QStringList());
+  void addArgument(const QString& longarg, const QString& shortarg,
+                   QVariant::Type type, const QString& argHelp = QString(),
+                   const QVariant& defaultValue = QVariant(), bool ignoreRest = false);
 
   bool setExactMatchRegularExpression(const QString& argument, const QString& expression,
                                       const QString& ExactMatchFailedMessage);

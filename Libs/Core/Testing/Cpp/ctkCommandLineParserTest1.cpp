@@ -17,7 +17,9 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments1 << "--test-string";
   arguments1 << "ctkrocks";
   ctkCommandLineParser parser1;
-  if (!parser1.parseArguments(arguments1))
+  bool ok = false;
+  parser1.parseArguments(arguments1, &ok);
+  if (!ok)
     {
     qCritical() << "Test1 - Failed to parse arguments";
     return EXIT_FAILURE;
@@ -33,16 +35,17 @@ int ctkCommandLineParserTest1(int, char*[])
     return EXIT_FAILURE;
     }
 
-  // Test2 - Check if addBooleanArgument() worked as expected
+  // Test2 - Check if addArgument() for a boolean workes as expected
   QStringList arguments2;
   arguments2 << "ctkCommandLineParserTest1";
   arguments2 << "--test-bool";
   arguments2 << "--test-string";
   arguments2 << "ctkrocks";
-  bool testBool = false;
   ctkCommandLineParser parser2;
-  parser2.addBooleanArgument("--test-bool", 0, &testBool, "This is a test bool", false);
-  if (!parser2.parseArguments(arguments2))
+  parser2.addArgument("--test-bool", "", QVariant::Bool, "This is a test bool", false);
+  ok = false;
+  QHash<QString, QVariant> parsedArgs = parser2.parseArguments(arguments2, &ok);
+  if (!ok)
     {
     qCritical() << "Test2 - Failed to parse arguments";
     return EXIT_FAILURE;
@@ -58,78 +61,72 @@ int ctkCommandLineParserTest1(int, char*[])
     return EXIT_FAILURE;
     }
 
-  if (!testBool)
+  if (parsedArgs["--test-bool"].isNull() || !parsedArgs["--test-bool"].toBool())
     {
     qCritical() << "Test2 - Failed to parse --test-bool";
     return EXIT_FAILURE;
     }
 
-  // Test3 - check if addStringArgument(), addIntegerArgument() and addStringListArgument() works
+  // Test3 - check if adding QString, int, and QStringList arguments works
   QStringList arguments3;
   arguments3 << "ctkCommandLineParserTest1";
   arguments3 << "--test-string" << "TestingIsGood";
   arguments3 << "--test-string2"<< "CTKSuperRocks";
   arguments3 << "--test-integer"<< "-3";
   arguments3 << "--test-stringlist"<< "item1" << "item2" << "item3";
-  QString testString;
-  QString testString2;
-  int testInteger = 1;
-  QStringList testStringlist;
   ctkCommandLineParser parser3;
-  parser3.addStringArgument("--test-string", 0, &testString, "This is a test string");
-  parser3.addStringArgument("--test-string2", 0, &testString2, "This is a test string2", "CTKGood");
-  parser3.addIntegerArgument("--test-integer", 0, &testInteger, "This is a test integer");
-  parser3.addStringListArgument("--test-stringlist", 0, &testStringlist,
+  parser3.addArgument("--test-string", "", QVariant::String, "This is a test string");
+  parser3.addArgument("--test-string2", "", QVariant::String, "This is a test string2", "CTKGood");
+  parser3.addArgument("--test-integer", "", QVariant::Int, "This is a test integer");
+  parser3.addArgument("--test-stringlist", "", QVariant::StringList,
                                 "This is a test stringlist");
-  if (!parser3.parseArguments(arguments3))
+  ok = false;
+  parsedArgs = parser3.parseArguments(arguments3, &ok);
+  if (!ok)
     {
     qCritical() << "Test3 - Failed to parse arguments";
     return EXIT_FAILURE;
     }
 
   QString expectedTestString = "TestingIsGood";
-  if (testString != expectedTestString)
+  if (parsedArgs["--test-string"].toString() != expectedTestString)
     {
-    qCritical() << "Test3 - Failed - testString" << testString
+    qCritical() << "Test3 - Failed - testString" << parsedArgs["--test-string"].toString()
         << ", expectedTestString" << expectedTestString;
     return EXIT_FAILURE;
     }
 
   QString expectedTestString2 = "CTKSuperRocks";
-  if (testString2 != expectedTestString2)
+  if (parsedArgs["--test-string2"].toString() != expectedTestString2)
     {
-    qCritical() << "Test3 - Failed - testString2" << testString2
+    qCritical() << "Test3 - Failed - testString2" << parsedArgs["--test-string2"].toString()
         << ", expectedTestString2" << expectedTestString2;
     return EXIT_FAILURE;
     }
 
   int expectedTestInteger = -3;
-  if (testInteger != expectedTestInteger)
+  if (parsedArgs["--test-integer"].toInt() != expectedTestInteger)
     {
-    qCritical() << "Test3 - Failed - testInteger" << testInteger
+    qCritical() << "Test3 - Failed - testInteger" << parsedArgs["--test-integer"].toInt()
         << ", expectedTestInteger" << expectedTestInteger;
     return EXIT_FAILURE;
     }
 
   QStringList expectedTestStringlist;
   expectedTestStringlist << "item1" << "item2" << "item3";
-  if (testStringlist != expectedTestStringlist)
+  if (parsedArgs["--test-stringlist"].toStringList() != expectedTestStringlist)
     {
-    qCritical() << "Test3 - Failed - testStringlist" << testStringlist
+    qCritical() << "Test3 - Failed - testStringlist" << parsedArgs["--test-stringlist"].toStringList()
         << ", expectedTestStringlist" << expectedTestStringlist;
     return EXIT_FAILURE;
     }
 
   // Test4 - check if helpText() works as expected
   ctkCommandLineParser parser4;
-  QString helpString;
-  QString helpString1;
-  QString helpString2;
-  QString helpString3;
-  parser4.addStringArgument("--help-string", 0, &helpString, "This is an help string");
-  parser4.addStringArgument("--help-string-med", 0, &helpString1, "");
-  parser4.addStringArgument("--help-string-long", "-hs2", &helpString2, "This is an help string too !");
-  parser4.addStringArgument(0, "-hs3", &helpString3, "This is an help string too for sure !?");
+  parser4.addArgument("--help-string", "", QVariant::String, "This is an help string");
+  parser4.addArgument("--help-string-med", "", QVariant::String, "");
+  parser4.addArgument("--help-string-long", "-hs2", QVariant::String, "This is an help string too !");
+  parser4.addArgument("", "-hs3", QVariant::String, "This is an help string too for sure !?");
 
   QString expectedHelpString;
   QTextStream streamExpectedHelpString(&expectedHelpString);
@@ -170,32 +167,28 @@ int ctkCommandLineParserTest1(int, char*[])
     return EXIT_FAILURE;
     }
 
-  bool test5Bool = false;
-  QString test5String;
-  int test5Int = 0;
-  QStringList test5List;
-  parser5.addStringListArgument("--list", 0, &test5List, "Test5 list");
+  parser5.addArgument("--list", "", QVariant::StringList, "Test5 list");
   if (!parser5.setExactMatchRegularExpression("--list","item[0-9]",
                                               "Element of the form item[0-9] are expected."))
     {
     qCritical() << "Test5 - Problem with setExactMatchRegularExpression(StringListArg)";
     return EXIT_FAILURE;
     }
-  parser5.addStringArgument("--string", 0, &test5String, "Test5 string");
+  parser5.addArgument("--string", "", QVariant::String, "Test5 string");
   if (!parser5.setExactMatchRegularExpression("--string","ctkStop|ctkStart",
                                               "ctkStop or ctkStart is expected."))
     {
     qCritical() << "Test5 - Problem with setExactMatchRegularExpression(StringArg)";
     return EXIT_FAILURE;
     }
-  parser5.addBooleanArgument("--bool", 0, &test5Bool, "Test5 bool");
+  parser5.addArgument("--bool", "", QVariant::Bool, "Test5 bool");
   if (parser5.setExactMatchRegularExpression("--bool",".*", "invalid"))
     {
     qCritical() << "Test5 - Problem with setExactMatchRegularExpression(BooleanArg) - "
                    "The function should return false if a boolean argument is passed";
     return EXIT_FAILURE;
     }
-  parser5.addIntegerArgument("--int", 0, &test5Int, "Test5 int");
+  parser5.addArgument("--int", "", QVariant::Int, "Test5 int");
   if (!parser5.setExactMatchRegularExpression("--int","[1-3]",
                                               "Value 1, 2 or 3 is expected."))
     {
@@ -209,7 +202,9 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments5 << "--int"<< "2";
   arguments5 << "--list"<< "item2" << "item3";
   
-  if (!parser5.parseArguments(arguments5))
+  ok = false;
+  parser5.parseArguments(arguments5, &ok);
+  if (!ok)
     {
     qCritical() << "Test5 - Failed to parse arguments";
     return EXIT_FAILURE;
@@ -221,7 +216,9 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments5 << "--int"<< "2";
   arguments5 << "--list"<< "item2" << "item3";
 
-  if (parser5.parseArguments(arguments5))
+  ok = false;
+  parser5.parseArguments(arguments5, &ok);
+  if (ok)
     {
     qCritical() << "Test5 - parseArguments() should return False - 'ctkStopp' isn't a valid string";
     return EXIT_FAILURE;
@@ -244,7 +241,9 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments5 << "--int"<< "4";
   arguments5 << "--list"<< "item2" << "item3";
 
-  if (parser5.parseArguments(arguments5))
+  ok = false;
+  parser5.parseArguments(arguments5, &ok);
+  if (ok)
     {
     qCritical() << "Test5 - parseArguments() should return False - '4' isn't a valid int";
     return EXIT_FAILURE;
@@ -267,7 +266,9 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments5 << "--int"<< "2";
   arguments5 << "--list"<< "item2" << "item10";
 
-  if (parser5.parseArguments(arguments5))
+  ok = false;
+  parser5.parseArguments(arguments5, &ok);
+  if (ok)
     {
     qCritical() << "Test5 - parseArguments() should return False "
                    "- 'item10' isn't a valid list element";
@@ -287,17 +288,17 @@ int ctkCommandLineParserTest1(int, char*[])
     
   // Test6 - Check if the parser handle the case when value of parameter is omitted
   ctkCommandLineParser parser6;
-  QString test6String;
-  bool test6Bool = false;
-  parser6.addStringArgument("--string", 0, &test6String, "This is a string");
-  parser6.addBooleanArgument("--bool", 0, &test6Bool, "This is a bool");
+  parser6.addArgument("--string", "", QVariant::String, "This is a string");
+  parser6.addArgument("--bool", "", QVariant::Bool, "This is a bool");
   
   QStringList arguments6; 
   arguments6 << "ctkCommandLineParserTest1"
              << "--string";
   
   // since --string is missing a parameter, parseArgument is expected to fail
-  if (parser6.parseArguments(arguments6))
+  ok = false;
+  parser6.parseArguments(arguments6, &ok);
+  if (ok)
     {
     qCritical() << "Test6 - Problem with parseArguments()";
     return EXIT_FAILURE;
@@ -310,20 +311,22 @@ int ctkCommandLineParserTest1(int, char*[])
   // Test7 - Check if addBooleanArgument and ignore_rest=true works as expected
   ctkCommandLineParser parser7;
   bool test7Bool = false;
-  parser7.addBooleanArgument("--bool", 0, &test7Bool, "This is a boolean",
+  parser7.addArgument("--bool", "", QVariant::Bool, "This is a boolean",
                              false /*defaultValue*/, true /* ignoreRest*/);
   QStringList arguments7;
   arguments7 << "ctkCommandLineParserTest1";
   arguments7 << "--bool";
   arguments7 << expectedUnparsedArguments;
 
-  if (!parser7.parseArguments(arguments7))
+  ok = false;
+  parsedArgs = parser7.parseArguments(arguments7, &ok);
+  if (!ok)
     {
     qCritical() << "Test7 - Failed to parse arguments";
     return EXIT_FAILURE;
     }
   bool expectedTest7Bool = true;
-  if (test7Bool != expectedTest7Bool)
+  if (parsedArgs["--bool"].toBool() != expectedTest7Bool)
     {
     qCritical() << "Test7 - Failed - test7Bool" << test7Bool
         << ", expectedTest7Bool" << expectedTest7Bool;
@@ -339,8 +342,7 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Test8 - Check if addStringArgument and ignore_rest=true works as expected
   ctkCommandLineParser parser8;
-  QString test8String;
-  parser8.addStringArgument("--string", 0, &test8String, "This is a string",
+  parser8.addArgument("--string", "", QVariant::String, "This is a string",
                             QString() /*defaultValue*/, true /* ignoreRest*/);
 
   QStringList arguments8;
@@ -348,16 +350,18 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments8 << "--string" << "ctk";
   arguments8 << expectedUnparsedArguments;
 
-  if (!parser8.parseArguments(arguments8))
+  ok = false;
+  parsedArgs = parser8.parseArguments(arguments8, &ok);
+  if (!ok)
     {
     qCritical() << "Test8 - Failed to parse arguments";
     return EXIT_FAILURE;
     }
 
   QString expectedTest8String = "ctk";
-  if (test8String != expectedTest8String)
+  if (parsedArgs["--string"].toString() != expectedTest8String)
     {
-    qCritical() << "Test8 - Failed - test8String" << test8String
+    qCritical() << "Test8 - Failed - test8String" << parsedArgs["--string"].toString()
         << ", expectedTest8String" << expectedTest8String;
     return EXIT_FAILURE;
     }
@@ -369,10 +373,9 @@ int ctkCommandLineParserTest1(int, char*[])
     return EXIT_FAILURE;
     }
 
-  // Test9 - Check if addIntegerArgument and ignore_rest=true works as expected
+  // Test9 - Check if addArgument for int and ignore_rest=true works as expected
   ctkCommandLineParser parser9;
-  int test9Int = 0;
-  parser9.addIntegerArgument("--integer", 0, &test9Int, "This is an integer",
+  parser9.addArgument("--integer", "", QVariant::Int, "This is an integer",
                              0 /*defaultValue*/, true /* ignoreRest*/);
 
   QStringList arguments9;
@@ -380,16 +383,18 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments9 << "--integer" << "74";
   arguments9 << expectedUnparsedArguments;
 
-  if (!parser9.parseArguments(arguments9))
+  ok = false;
+  parsedArgs = parser9.parseArguments(arguments9, &ok);
+  if (!ok)
     {
     qCritical() << "Test9 - Failed to parse arguments";
     return EXIT_FAILURE;
     }
 
   int expectedTest9Int = 74;
-  if (test9Int != expectedTest9Int)
+  if (parsedArgs["--integer"].toInt() != expectedTest9Int)
     {
-    qCritical() << "Test9 - Failed - test9Int" << test9Int
+    qCritical() << "Test9 - Failed - test9Int" << parsedArgs["--integer"].toInt()
         << ", expectedTest9Int" << expectedTest9Int;
     return EXIT_FAILURE;
     }
@@ -403,8 +408,7 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Test10 - Check if argumentParsed works as expected
   ctkCommandLineParser parser10;
-  bool test10bool = false;
-  parser10.addBooleanArgument("--bool", 0, &test10bool, "This is a boolean");
+  parser10.addArgument("--bool", "", QVariant::Bool, "This is a boolean");
 
   // Since parseArguments hasn't been called, argumentParsed should return False
   if(parser10.argumentParsed("--bool"))
@@ -417,7 +421,9 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments10 << "ctkCommandLineParserTest1";
   arguments10 << "--bool";
 
-  if (!parser10.parseArguments(arguments10))
+  ok = false;
+  parser10.parseArguments(arguments10, &ok);
+  if (!ok)
     {
     qCritical() << "Test10 - Failed to parse arguments.";
     return EXIT_FAILURE;
