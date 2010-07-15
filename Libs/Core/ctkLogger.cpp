@@ -99,6 +99,13 @@ void ctkLogger::fatal(const QString& s)
 }
 
 //-----------------------------------------------------------------------------
+void ctkLogger::setOff()
+{
+  CTK_D(ctkLogger);
+  d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::OFF_INT));
+}
+
+//-----------------------------------------------------------------------------
 void ctkLogger::setDebug()
 {
   CTK_D(ctkLogger);
@@ -138,6 +145,13 @@ void ctkLogger::setFatal()
 { 
   CTK_D(ctkLogger);
   d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::FATAL_INT));
+}
+
+//-----------------------------------------------------------------------------
+bool ctkLogger::isOffEnabled()
+{
+  CTK_D(ctkLogger);
+  return !d->Logger->isEnabledFor(Log4Qt::Level(Log4Qt::Level::OFF_INT));
 }
 
 //-----------------------------------------------------------------------------

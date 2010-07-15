@@ -46,6 +46,7 @@ public:
   void error(const QString& s);
   void fatal(const QString& s);
 
+  void setOff();
   void setDebug();
   void setInfo();
   void setTrace();
@@ -53,6 +54,7 @@ public:
   void setWarn();
   void setFatal();
 
+  bool isOffEnabled();
   bool isDebugEnabled();
   bool isInfoEnabled();
   bool isTraceEnabled();
