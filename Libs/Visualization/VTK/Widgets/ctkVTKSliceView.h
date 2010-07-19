@@ -66,6 +66,18 @@ public slots:
   /// Reset cameras associated with all renderWindowItem
   void resetCamera();
 
+  /// Set image data
+  void setImageData(vtkImageData* newImageData);
+
+  /// Set corner annotation \a text
+  void setCornerAnnotationText(const QString& text);
+
+  /// Set background color
+  void setBackgroundColor(const QColor& newBackgroundColor);
+
+  /// Enable/Disable rendering
+  void setRenderEnabled(bool value);
+
 public:
 
   /// Get underlying RenderWindow
@@ -78,12 +90,10 @@ public:
   /// Get current interactor style
   vtkInteractorObserver* interactorStyle();
   
-  /// Set/Get corner annotation \a text
-  void setCornerAnnotationText(const QString& text);
+  /// Get corner annotation text
   QString cornerAnnotationText() const;
 
-  /// Set/Get background color
-  void setBackgroundColor(const QColor& newBackgroundColor);
+  /// Get background color
   QColor backgroundColor() const;
 
   /// Get active camera
@@ -134,21 +144,15 @@ public:
   /// Return if rendering is enabled
   bool renderEnabled() const;
 
-  /// Enable/Disable rendering
-  void setRenderEnabled(bool value);
-
   /// Get current color window
   double colorWindow() const;
 
   /// Get current color level
   double colorLevel() const;
-
-  /// Set image data
-  void setImageData(vtkImageData* newImageData);
   
 
 signals:
-  void resized(QResizeEvent*);
+  void resized(const QSize& size, const QSize& oldSize);
 
 protected:
   virtual void resizeEvent(QResizeEvent * event);
