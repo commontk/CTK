@@ -22,6 +22,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QDebug>
+#include <QResizeEvent>
 
 // CTK includes
 #include "ctkVTKSliceView.h"
@@ -580,6 +581,6 @@ void ctkVTKSliceView::setImageData(vtkImageData* newImageData)
 void ctkVTKSliceView::resizeEvent(QResizeEvent * event)
 {
   this->QWidget::resizeEvent(event);
-  emit this->resized(event);
+  emit this->resized(event->size(), event->oldSize());
 }
 

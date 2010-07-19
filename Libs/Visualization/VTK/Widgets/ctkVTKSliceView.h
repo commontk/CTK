@@ -152,7 +152,7 @@ public:
   
 
 signals:
-  void resized(QResizeEvent*);
+  void resized(const QSize& size, const QSize& oldSize);
 
 protected:
   virtual void resizeEvent(QResizeEvent * event);
