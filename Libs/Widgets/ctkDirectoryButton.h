@@ -35,11 +35,16 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   Q_OBJECT
   Q_PROPERTY(QString directory READ directory WRITE setDirectory)
   Q_PROPERTY(QString caption READ caption WRITE setCaption)
+#if QT_VERSION >= 0x040603
+  Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
+#else
   Q_PROPERTY(Options options READ options WRITE setOptions)
   // QFileDialog::Options is not a meta-type, we need to create our own.
   Q_FLAGS(Option Options);
+#endif
 
 public:
+#if QT_VERSION < 0x040603
   // QFileDialog::Options is not a meta-type, we need to create our own.
   enum Option
     {
@@ -52,7 +57,7 @@ public:
       HideNameFilterDetails = 0x00000040
     };
   Q_DECLARE_FLAGS(Options, Option)
-
+#endif
   ctkDirectoryButton(QWidget * parent = 0);
   ctkDirectoryButton(const QString& directory, QWidget * parent = 0);
   ctkDirectoryButton(const QIcon& icon, const QString& directory, QWidget * parent = 0);
@@ -66,8 +71,13 @@ public:
   void setCaption(const QString& caption);
   const QString& caption()const;
 
+#if QT_VERSION >= 0x040603
+  void setOptions(const QFileDialog::Options& options);
+  const QFileDialog::Options& options()const;
+#else
   void setOptions(const Options& options);
   const Options& options()const;
+#endif
 
 public slots:
   void browse();
@@ -82,6 +92,8 @@ private:
   CTK_DECLARE_PRIVATE(ctkDirectoryButton);
 };
 
+#if QT_VERSION < 0x040603
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkDirectoryButton::Options);
+#endif
 
 #endif

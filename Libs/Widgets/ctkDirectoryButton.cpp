@@ -37,14 +37,22 @@ public:
   QDir         Directory;
   QPushButton* PushButton;
   QString      DialogCaption;
+#if QT_VERSION >= 0x040603
+  QFileDialog::Options DialogOptions;
+#else
   ctkDirectoryButton::Options DialogOptions;
+#endif
   bool         DisplayAbsolutePath;
 };
 
 //-----------------------------------------------------------------------------
 ctkDirectoryButtonPrivate::ctkDirectoryButtonPrivate()
 {
+#if QT_VERSION >= 0x040603
+  this->DialogOptions = QFileDialog::ShowDirsOnly;
+#else
   this->DialogOptions = ctkDirectoryButton::ShowDirsOnly;
+#endif
   this->DisplayAbsolutePath = true;
 }
 
@@ -144,14 +152,22 @@ const QString& ctkDirectoryButton::caption()const
 }
 
 //-----------------------------------------------------------------------------
+#if QT_VERSION >= 0x040603
+void ctkDirectoryButton::setOptions(const QFileDialog::Options& dialogOptions)
+#else
 void ctkDirectoryButton::setOptions(const Options& dialogOptions)
+#endif
 {
   CTK_D(ctkDirectoryButton);
   d->DialogOptions = dialogOptions;
 }
 
 //-----------------------------------------------------------------------------
+#if QT_VERSION >= 0x040603
+const QFileDialog::Options& ctkDirectoryButton::options()const
+#else
 const ctkDirectoryButton::Options& ctkDirectoryButton::options()const
+#endif
 {
   CTK_D(const ctkDirectoryButton);
   return d->DialogOptions;
@@ -166,7 +182,11 @@ void ctkDirectoryButton::browse()
       this,
       d->DialogCaption.isEmpty() ? this->toolTip() : d->DialogCaption,
       d->Directory.path(),
+#if QT_VERSION >= 0x040603
+      d->DialogOptions);
+#else
       QFlags<QFileDialog::Option>(int(d->DialogOptions)));
+#endif
   // An empty directory means that the user cancelled the dialog.
   if (dir.isEmpty())
     {
