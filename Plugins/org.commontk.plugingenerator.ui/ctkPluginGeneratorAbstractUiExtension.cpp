@@ -21,8 +21,26 @@
 
 #include "ctkPluginGeneratorAbstractUiExtension.h"
 
+class ctkPluginGeneratorAbstractUiExtensionPrivate
+{
+public:
+
+  ctkPluginGeneratorAbstractUiExtensionPrivate()
+    : sectionWidget(0)
+  {
+
+  }
+
+  QWidget* sectionWidget;
+
+  QString description;
+  QString title;
+  QString message;
+  QIcon icon;
+};
+
 ctkPluginGeneratorAbstractUiExtension::ctkPluginGeneratorAbstractUiExtension()
-  : sectionWidget(0)
+  : d_ptr(new ctkPluginGeneratorAbstractUiExtensionPrivate())
 {
 
 }
@@ -34,73 +52,68 @@ ctkPluginGeneratorAbstractUiExtension::~ctkPluginGeneratorAbstractUiExtension()
 
 QWidget* ctkPluginGeneratorAbstractUiExtension::getWidget()
 {
-  return sectionWidget;
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  return d->sectionWidget;
 }
 
 QString ctkPluginGeneratorAbstractUiExtension::getDescription() const
 {
-  return this->description;
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  return d->description;
 }
 
 QString ctkPluginGeneratorAbstractUiExtension::getTitle() const
 {
-  return this->title;
-}
-
-QString ctkPluginGeneratorAbstractUiExtension::getErrorMessage() const
-{
-  return this->errorMessage;
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  return d->title;
 }
 
 QString ctkPluginGeneratorAbstractUiExtension::getMessage() const
 {
-  return this->message;
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  return d->message;
 }
 
 QIcon ctkPluginGeneratorAbstractUiExtension::getIcon() const
 {
-  return this->icon;
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  return d->icon;
 }
 
 void ctkPluginGeneratorAbstractUiExtension::setDescription(const QString& description)
 {
-  if (this->description != description)
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  if (d->description != description)
   {
-    this->description = description;
+    d->description = description;
     emit descriptionChanged(description);
   }
 }
 
 void ctkPluginGeneratorAbstractUiExtension::setTitle(const QString& title)
 {
-  if (this->title != title)
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  if (d->title != title)
   {
-    this->title = title;
+    d->title = title;
     emit titleChanged(title);
-  }
-}
-
-void ctkPluginGeneratorAbstractUiExtension::setErrorMessage(const QString& errorMsg)
-{
-  if (this->errorMessage != errorMsg)
-  {
-    this->errorMessage = errorMsg;
-    emit errorMessageChanged(errorMsg);
   }
 }
 
 void ctkPluginGeneratorAbstractUiExtension::setMessage(const QString& msg)
 {
-  if (this->message != msg)
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  if (d->message != msg)
   {
-    this->message = msg;
+    d->message = msg;
     emit messageChanged(msg);
   }
 }
 
 void ctkPluginGeneratorAbstractUiExtension::setIcon(const QIcon& icon)
 {
-  this->icon = icon;
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  d->icon = icon;
   emit iconChanged(icon);
 }
 

@@ -25,9 +25,12 @@
 #include <QObject>
 #include <QIcon>
 
-class QWidget;
+#include <ctkPluginGeneratorAbstractExtension.h>
 
-class ctkPluginGeneratorAbstractUiExtension : public QObject
+class QWidget;
+class ctkPluginGeneratorAbstractUiExtensionPrivate;
+
+class ctkPluginGeneratorAbstractUiExtension : public ctkPluginGeneratorAbstractExtension
 {
 
   Q_OBJECT
@@ -53,7 +56,6 @@ signals:
 
   void descriptionChanged(const QString&);
   void titleChanged(const QString&);
-  void errorMessageChanged(const QString&);
   void messageChanged(const QString&);
   void iconChanged(const QIcon&);
 
@@ -62,20 +64,15 @@ protected:
   void setDescription(const QString& description);
   void setTitle(const QString& title);
 
-  void setErrorMessage(const QString& errorMsg);
   void setMessage(const QString& msg);
 
   void setIcon(const QIcon& icon);
 
 private:
 
-  QWidget* sectionWidget;
+  Q_DECLARE_PRIVATE(ctkPluginGeneratorAbstractUiExtension)
 
-  QString description;
-  QString title;
-  QString errorMessage;
-  QString message;
-  QIcon icon;
+  const QScopedPointer<ctkPluginGeneratorAbstractUiExtensionPrivate> d_ptr;
 
 };
 

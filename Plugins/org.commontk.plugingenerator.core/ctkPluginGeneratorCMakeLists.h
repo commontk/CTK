@@ -37,7 +37,7 @@ public:
   static const QString PLUGIN_MOC_SRCS_MARKER;
   static const QString PLUGIN_RESOURCES_MARKER;
 
-  ctkPluginGeneratorCMakeLists(QObject *parent = 0);
+  ctkPluginGeneratorCMakeLists(ctkPluginGeneratorAbstractTemplate *parent = 0);
 
   QString generateContent();
 

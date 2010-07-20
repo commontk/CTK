@@ -23,12 +23,18 @@
 #ifndef CTKPLUGINGENERATORABSTRACTEXTENSION_H
 #define CTKPLUGINGENERATORABSTRACTEXTENSION_H
 
+#include <QObject>
 #include <QHash>
 
-class ctkPluginGeneratorAbstractExtension
+class ctkPluginGeneratorAbstractExtensionPrivate;
+
+class ctkPluginGeneratorAbstractExtension : public QObject
 {
+  Q_OBJECT
+
 public:
     ctkPluginGeneratorAbstractExtension();
+    virtual ~ctkPluginGeneratorAbstractExtension();
 
     virtual void getCommandLineArgs() const = 0;
 
@@ -37,15 +43,25 @@ public:
 
     bool isValid() const;
 
-    void setErrorMessage(const QString& errMsg);
     QString getErrorMessage() const;
 
     void generate();
 
+signals:
+
+    void errorMessageChanged(const QString&);
+
 protected:
+
+    void setErrorMessage(const QString& errMsg);
 
     virtual void verifyParameter(const QHash<QString, QVariant>& params) = 0;
 
+private:
+
+    Q_DECLARE_PRIVATE(ctkPluginGeneratorAbstractExtension)
+
+    const QScopedPointer<ctkPluginGeneratorAbstractExtensionPrivate> d_ptr;
 
 };
 

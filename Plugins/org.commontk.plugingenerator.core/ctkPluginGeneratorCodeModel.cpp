@@ -25,6 +25,8 @@
 #include <QDir>
 #include <QHash>
 
+#include <stdexcept>
+
 class ctkPluginGeneratorCodeModelPrivate
 {
 public:
@@ -37,7 +39,7 @@ class ctkPluginGeneratorFolderTemplate : public ctkPluginGeneratorAbstractTempla
 {
 public:
 
-  ctkPluginGeneratorFolderTemplate(const QString& name, ctkPluginGeneratorAbstractTemplate* parent)
+  ctkPluginGeneratorFolderTemplate(const QString& name, ctkPluginGeneratorAbstractTemplate* parent = 0)
     : ctkPluginGeneratorAbstractTemplate(name, parent)
   {}
 
@@ -60,7 +62,7 @@ public:
     }
     else
     {
-      throw std::exception("The directory " + location.append(this->objectName()).toAscii() + " could not be created");
+      throw std::runtime_error(std::string("The directory ") + (location + this->objectName()).toStdString() + " could not be created");
     }
   }
 };
@@ -95,7 +97,7 @@ void ctkPluginGeneratorCodeModel::addTemplate(ctkPluginGeneratorAbstractTemplate
       {
         if (!dynamic_cast<ctkPluginGeneratorFolderTemplate*>(d->rootTemplates[rootEntry]))
         {
-          throw std::exception("The segment \"" + rootEntry.toAscii() + "\" in \"" + path.toAscii() + "\" is not a folder");
+          throw std::runtime_error(std::string("The segment \"") + rootEntry.toStdString() + "\" in \"" + path.toStdString() + "\" is not a folder");
         }
         parentTemplate = d->rootTemplates[rootEntry];
       }
@@ -111,14 +113,14 @@ void ctkPluginGeneratorCodeModel::addTemplate(ctkPluginGeneratorAbstractTemplate
         bool childFound = false;
         while (children.hasNext())
         {
-          QObject* child = it.next();
+          QObject* child = children.next();
           if (child->objectName() == currEntry)
           {
             childFound = true;
             parentTemplate = qobject_cast<ctkPluginGeneratorAbstractTemplate*>(child);
             if (parentTemplate == 0)
             {
-              throw std::exception("The segment \"" + currEntry.toAscii() + "\" in \"" + path.toAscii() + "\" is not a folder");
+              throw std::runtime_error(std::string("The segment \"") + currEntry.toStdString() + "\" in \"" + path.toStdString() + "\" is not a folder");
             }
             break;
           }
@@ -139,7 +141,7 @@ void ctkPluginGeneratorCodeModel::create(const QString& location)
 {
   Q_D(ctkPluginGeneratorCodeModel);
 
-  QListIterator<ctkPluginGeneratorAbstractTemplate*> it(d->rootTemplates);
+  QListIterator<ctkPluginGeneratorAbstractTemplate*> it(d->rootTemplates.values());
   while (it.hasNext())
   {
     ctkPluginGeneratorAbstractTemplate* templ = it.next();

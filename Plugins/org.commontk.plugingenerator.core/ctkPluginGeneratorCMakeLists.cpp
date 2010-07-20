@@ -30,7 +30,7 @@ const QString ctkPluginGeneratorCMakeLists::PLUGIN_SRCS_MARKER = "plugin_srcs";
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_MOC_SRCS_MARKER = "plugin_moc_srcs";
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_RESOURCES_MARKER = "plugin_resources";
 
-ctkPluginGeneratorCMakeLists::ctkPluginGeneratorCMakeLists(QObject *parent) :
+ctkPluginGeneratorCMakeLists::ctkPluginGeneratorCMakeLists(ctkPluginGeneratorAbstractTemplate *parent) :
     ctkPluginGeneratorAbstractTemplate("CMakeLists.txt", parent)
 {
 }

@@ -22,6 +22,34 @@
 
 #include "ctkPluginGeneratorAbstractExtension.h"
 
-ctkPluginGeneratorAbstractExtension::ctkPluginGeneratorAbstractExtension()
+class ctkPluginGeneratorAbstractExtensionPrivate
 {
+public:
+
+  QString errorMessage;
+};
+
+ctkPluginGeneratorAbstractExtension::ctkPluginGeneratorAbstractExtension()
+  : d_ptr(new ctkPluginGeneratorAbstractExtensionPrivate())
+{
+}
+
+ctkPluginGeneratorAbstractExtension::~ctkPluginGeneratorAbstractExtension()
+{
+}
+
+QString ctkPluginGeneratorAbstractExtension::getErrorMessage() const
+{
+  Q_D(const ctkPluginGeneratorAbstractExtension);
+  return d->errorMessage;
+}
+
+void ctkPluginGeneratorAbstractExtension::setErrorMessage(const QString& errorMsg)
+{
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  if (d->errorMessage != errorMsg)
+  {
+    d->errorMessage = errorMsg;
+    emit errorMessageChanged(errorMsg);
+  }
 }
