@@ -20,18 +20,18 @@
 =============================================================================*/
 
 
-#include "ctkPluginGeneratorMainSection.h"
+#include "ctkPluginGeneratorMainExtension.h"
 
-ctkPluginGeneratorMainSection::ctkPluginGeneratorMainSection()
+ctkPluginGeneratorMainExtension::ctkPluginGeneratorMainExtension()
   : ui(0)
 {
 
 }
 
 
-QWidget* ctkPluginGeneratorMainSection::createWidget(QWidget* parent)
+QWidget* ctkPluginGeneratorMainExtension::createWidget(QWidget* parent)
 {
-  ui = new Ui::ctkPluginGeneratorMainSection();
+  ui = new Ui::ctkPluginGeneratorMainExtension();
   QWidget* container = new QWidget(parent);
   ui->setupUi(container);
 
@@ -40,12 +40,12 @@ QWidget* ctkPluginGeneratorMainSection::createWidget(QWidget* parent)
   return container;
 }
 
-void ctkPluginGeneratorMainSection::connectSignals()
+void ctkPluginGeneratorMainExtension::connectSignals()
 {
   connect(ui->symbolicNameEdit, SIGNAL(textChanged(QString)), this, SLOT(verifySection()));
 }
 
-void ctkPluginGeneratorMainSection::verifySection()
+void ctkPluginGeneratorMainExtension::verifySection()
 {
   if (ui->symbolicNameEdit->text().isEmpty())
   {

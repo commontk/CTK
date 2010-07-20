@@ -20,31 +20,33 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORMAINSECTION_H
-#define CTKPLUGINGENERATORMAINSECTION_H
+#ifndef CTKPLUGINGENERATORABSTRACTEXTENSION_H
+#define CTKPLUGINGENERATORABSTRACTEXTENSION_H
 
-#include "ctkPluginGeneratorAbstractUiSection.h"
+#include <QHash>
 
-#include "ui_ctkPluginGeneratorMainSection.h"
-
-class ctkPluginGeneratorMainSection : public ctkPluginGeneratorAbstractUiSection
+class ctkPluginGeneratorAbstractExtension
 {
-  Q_OBJECT
-
 public:
-    ctkPluginGeneratorMainSection();
+    ctkPluginGeneratorAbstractExtension();
 
-protected slots:
+    virtual void getCommandLineArgs() const = 0;
 
-    void verifySection();
+    void setParameter(const QHash<QString, QVariant>& params);
+    QHash<QString, QVariant> getParameter() const;
+
+    bool isValid() const;
+
+    void setErrorMessage(const QString& errMsg);
+    QString getErrorMessage() const;
+
+    void generate();
 
 protected:
 
-    QWidget* createWidget(QWidget* parent);
+    virtual void verifyParameter(const QHash<QString, QVariant>& params) = 0;
 
-    void connectSignals();
 
-    Ui::ctkPluginGeneratorMainSection* ui;
 };
 
-#endif // CTKPLUGINGENERATORMAINSECTION_H
+#endif // CTKPLUGINGENERATORABSTRACTEXTENSION_H

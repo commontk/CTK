@@ -3,18 +3,18 @@ PROJECT(org_commontk_plugingenerator_ui)
 SET(PLUGIN_export_directive "org_commontk_plugingenerator_ui_EXPORT")
 
 SET(PLUGIN_SRCS
-  ctkPluginGeneratorAbstractUiSection.cpp
-  ctkPluginGeneratorMainSection.cpp
+  ctkPluginGeneratorAbstractUiExtension.cpp
+  ctkPluginGeneratorMainExtension.cpp
 )
 
 SET(PLUGIN_MOC_SRCS
-  ctkPluginGeneratorAbstractUiSection.h
-  ctkPluginGeneratorMainSection.h
+  ctkPluginGeneratorAbstractUiExtension.h
+  ctkPluginGeneratorMainExtension.h
 )
 
 SET(PLUGIN_UI_FORMS
-  ctkPluginGeneratorMainSection.ui
-  ctkPluginGeneratorManifestSection.ui
+  ctkPluginGeneratorMainExtension.ui
+  ctkPluginGeneratorManifestExtension.ui
 )
 
 SET(PLUGIN_resources

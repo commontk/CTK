@@ -20,31 +20,8 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATOREXTENSION_H
-#define CTKPLUGINGENERATOREXTENSION_H
+#include "ctkPluginGeneratorAbstractExtension.h"
 
-class ctkPluginGeneratorExtension
+ctkPluginGeneratorAbstractExtension::ctkPluginGeneratorAbstractExtension()
 {
-public:
-    ctkPluginGeneratorExtension();
-
-    virtual void GetCommandLineArgs() const = 0;
-
-    void SetParameter(const QHash<QString, QVariant>& params);
-    QHash<QString, QVariant> GetParameter() const;
-
-    bool IsValid() const;
-
-    void SetErrorMessage(const QString& errMsg);
-    QString GetErrorMessage() const;
-
-    void Generate()
-
-protected:
-
-    virtual void VerifyParameter(const QHash<QString, QVariant>& params) = 0;
-
-
-};
-
-#endif // CTKPLUGINGENERATOREXTENSION_H
+}

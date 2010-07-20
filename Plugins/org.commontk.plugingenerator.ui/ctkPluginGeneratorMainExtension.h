@@ -20,8 +20,31 @@
 =============================================================================*/
 
 
-#include "ctkPluginGeneratorExtension.h"
+#ifndef CTKPLUGINGENERATORMAINEXTENSION_H
+#define CTKPLUGINGENERATORMAINEXTENSION_H
 
-ctkPluginGeneratorExtension::ctkPluginGeneratorExtension()
+#include "ctkPluginGeneratorAbstractUiExtension.h"
+
+#include "ui_ctkPluginGeneratorMainExtension.h"
+
+class ctkPluginGeneratorMainExtension : public ctkPluginGeneratorAbstractUiExtension
 {
-}
+  Q_OBJECT
+
+public:
+    ctkPluginGeneratorMainExtension();
+
+protected slots:
+
+    void verifySection();
+
+protected:
+
+    QWidget* createWidget(QWidget* parent);
+
+    void connectSignals();
+
+    Ui::ctkPluginGeneratorMainExtension* ui;
+};
+
+#endif // CTKPLUGINGENERATORMAINEXTENSION_H

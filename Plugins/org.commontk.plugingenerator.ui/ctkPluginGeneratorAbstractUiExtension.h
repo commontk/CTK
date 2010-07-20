@@ -19,23 +19,23 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINGENERATORUISECTION_H
-#define CTKPLUGINGENERATORUISECTION_H
+#ifndef CTKPLUGINGENERATORABSTRACTUIEXTENSION_H
+#define CTKPLUGINGENERATORABSTRACTUIEXTENSION_H
 
 #include <QObject>
 #include <QIcon>
 
 class QWidget;
 
-class ctkPluginGeneratorAbstractUiSection : public QObject
+class ctkPluginGeneratorAbstractUiExtension : public QObject
 {
 
   Q_OBJECT
 
 public:
 
-  ctkPluginGeneratorAbstractUiSection();
-  virtual ~ctkPluginGeneratorAbstractUiSection();
+  ctkPluginGeneratorAbstractUiExtension();
+  virtual ~ctkPluginGeneratorAbstractUiExtension();
 
   QWidget* getWidget();
 
@@ -79,4 +79,4 @@ private:
 
 };
 
-#endif // CTKPLUGINGENERATORUISECTION_H
+#endif // CTKPLUGINGENERATORABSTRACTUIEXTENSION_H

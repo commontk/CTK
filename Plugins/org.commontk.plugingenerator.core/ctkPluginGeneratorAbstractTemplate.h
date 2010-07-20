@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QScopedPointer>
+#include <QStringList>
 
 class ctkPluginGeneratorAbstractTemplatePrivate;
 
@@ -34,19 +35,30 @@ class ctkPluginGeneratorAbstractTemplate : public QObject
 
 public:
 
-    ctkPluginGeneratorAbstractTemplate(const QString& name, QObject* parent = 0);
+  enum Position {
+    START,
+    END
+  };
 
-    void AddContent(const QString& marker, const QString& content);
+  ctkPluginGeneratorAbstractTemplate(const QString& name, ctkPluginGeneratorAbstractTemplate* parent = 0);
 
-    QString GetContent(const QString& marker) const;
+  virtual ~ctkPluginGeneratorAbstractTemplate();
 
-    virtual QStringList GetMarkers() const;
+  void addContent(const QString& marker, const QString& content, Position pos = END);
 
-    virtual QString GenerateContent() = 0;
+  QStringList getContent(const QString& marker) const;
+
+  virtual void create(const QString& location);
+
+  virtual QStringList getMarkers() const;
+
+  virtual QString generateContent() = 0;
 
 private:
 
-    const QScopedPointer<ctkPluginGeneratorAbstractTemplatePrivate> d_ptr;
+  Q_DECLARE_PRIVATE(ctkPluginGeneratorAbstractTemplate)
+
+  const QScopedPointer<ctkPluginGeneratorAbstractTemplatePrivate> d_ptr;
 };
 
 #endif // CTKPLUGINGENERATORABSTRACTTEMPLATE_H

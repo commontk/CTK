@@ -19,50 +19,50 @@
 
 =============================================================================*/
 
-#include "ctkPluginGeneratorAbstractUiSection.h"
+#include "ctkPluginGeneratorAbstractUiExtension.h"
 
-ctkPluginGeneratorAbstractUiSection::ctkPluginGeneratorAbstractUiSection()
+ctkPluginGeneratorAbstractUiExtension::ctkPluginGeneratorAbstractUiExtension()
   : sectionWidget(0)
 {
 
 }
 
-ctkPluginGeneratorAbstractUiSection::~ctkPluginGeneratorAbstractUiSection()
+ctkPluginGeneratorAbstractUiExtension::~ctkPluginGeneratorAbstractUiExtension()
 {
 
 }
 
-QWidget* ctkPluginGeneratorAbstractUiSection::getWidget()
+QWidget* ctkPluginGeneratorAbstractUiExtension::getWidget()
 {
   return sectionWidget;
 }
 
-QString ctkPluginGeneratorAbstractUiSection::getDescription() const
+QString ctkPluginGeneratorAbstractUiExtension::getDescription() const
 {
   return this->description;
 }
 
-QString ctkPluginGeneratorAbstractUiSection::getTitle() const
+QString ctkPluginGeneratorAbstractUiExtension::getTitle() const
 {
   return this->title;
 }
 
-QString ctkPluginGeneratorAbstractUiSection::getErrorMessage() const
+QString ctkPluginGeneratorAbstractUiExtension::getErrorMessage() const
 {
   return this->errorMessage;
 }
 
-QString ctkPluginGeneratorAbstractUiSection::getMessage() const
+QString ctkPluginGeneratorAbstractUiExtension::getMessage() const
 {
   return this->message;
 }
 
-QIcon ctkPluginGeneratorAbstractUiSection::getIcon() const
+QIcon ctkPluginGeneratorAbstractUiExtension::getIcon() const
 {
   return this->icon;
 }
 
-void ctkPluginGeneratorAbstractUiSection::setDescription(const QString& description)
+void ctkPluginGeneratorAbstractUiExtension::setDescription(const QString& description)
 {
   if (this->description != description)
   {
@@ -71,7 +71,7 @@ void ctkPluginGeneratorAbstractUiSection::setDescription(const QString& descript
   }
 }
 
-void ctkPluginGeneratorAbstractUiSection::setTitle(const QString& title)
+void ctkPluginGeneratorAbstractUiExtension::setTitle(const QString& title)
 {
   if (this->title != title)
   {
@@ -80,7 +80,7 @@ void ctkPluginGeneratorAbstractUiSection::setTitle(const QString& title)
   }
 }
 
-void ctkPluginGeneratorAbstractUiSection::setErrorMessage(const QString& errorMsg)
+void ctkPluginGeneratorAbstractUiExtension::setErrorMessage(const QString& errorMsg)
 {
   if (this->errorMessage != errorMsg)
   {
@@ -89,7 +89,7 @@ void ctkPluginGeneratorAbstractUiSection::setErrorMessage(const QString& errorMs
   }
 }
 
-void ctkPluginGeneratorAbstractUiSection::setMessage(const QString& msg)
+void ctkPluginGeneratorAbstractUiExtension::setMessage(const QString& msg)
 {
   if (this->message != msg)
   {
@@ -98,7 +98,7 @@ void ctkPluginGeneratorAbstractUiSection::setMessage(const QString& msg)
   }
 }
 
-void ctkPluginGeneratorAbstractUiSection::setIcon(const QIcon& icon)
+void ctkPluginGeneratorAbstractUiExtension::setIcon(const QIcon& icon)
 {
   this->icon = icon;
   emit iconChanged(icon);

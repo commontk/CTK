@@ -20,39 +20,29 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORCODEMODEL_H
-#define CTKPLUGINGENERATORCODEMODEL_H
-
-#include <QObject>
-#include <QScopedPointer>
+#ifndef CTKPLUGINGENERATORCMAKELISTS_H
+#define CTKPLUGINGENERATORCMAKELISTS_H
 
 #include "ctkPluginGeneratorAbstractTemplate.h"
 
-class ctkPluginGeneratorCodeModelPrivate;
-
-class ctkPluginGeneratorCodeModel : public QObject
+class ctkPluginGeneratorCMakeLists : public ctkPluginGeneratorAbstractTemplate
 {
-
   Q_OBJECT
 
 public:
-    ctkPluginGeneratorCodeModel();
 
-    virtual ~ctkPluginGeneratorCodeModel();
+  static const QString PLUGIN_PROJECT_NAME_MARKER;
+  static const QString PLUGIN_EXPORT_DIRECTIVE_MARKER;
+  static const QString PLUGIN_SRCS_MARKER;
+  static const QString PLUGIN_MOC_SRCS_MARKER;
+  static const QString PLUGIN_RESOURCES_MARKER;
 
-    void addTemplate(ctkPluginGeneratorAbstractTemplate* templ, const QString& path = "");
+  ctkPluginGeneratorCMakeLists(QObject *parent = 0);
 
-    ctkPluginGeneratorAbstractTemplate* getTemplate(const QString& path) const;
+  QString generateContent();
 
-    void create(const QString& location);
-
-private:
-
-    Q_DECLARE_PRIVATE(ctkPluginGeneratorCodeModel)
-
-    const QScopedPointer<ctkPluginGeneratorCodeModelPrivate> d_ptr;
-
+  QStringList getMarkers() const;
 
 };
 
-#endif // CTKPLUGINGENERATORCODEMODEL_H
+#endif // CTKPLUGINGENERATORCMAKELISTS_H

@@ -23,39 +23,61 @@
 #include "ctkPluginGeneratorAbstractTemplate.h"
 
 #include <QHash>
+#include <QFile>
 
 class ctkPluginGeneratorAbstractTemplatePrivate
 {
 public:
 
-  QHash<QString, QString> contentMap;
+  QHash<QString, QStringList> contentMap;
 };
 
 ctkPluginGeneratorAbstractTemplate::ctkPluginGeneratorAbstractTemplate(
-    const QString& name, QObject* parent)
+    const QString& name, ctkPluginGeneratorAbstractTemplate* parent)
       : QObject(parent), d_ptr(new ctkPluginGeneratorAbstractTemplatePrivate)
 {
   this->setObjectName(name);
 }
 
-void ctkPluginGeneratorAbstractTemplate::AddContent(const QString &marker, const QString &content)
+ctkPluginGeneratorAbstractTemplate::~ctkPluginGeneratorAbstractTemplate()
 {
-  Q_D(ctkPluginGeneratorAbstractTemplate);
-  d->contentMap.insert(marker, content);
+
 }
 
-QString ctkPluginGeneratorAbstractTemplate::GetContent(const QString &marker) const
+void ctkPluginGeneratorAbstractTemplate::addContent(const QString &marker, const QString &content, Position pos)
 {
   Q_D(ctkPluginGeneratorAbstractTemplate);
+  if (pos == START)
+  {
+    d->contentMap[marker].prepend(content);
+  }
+  else if (pos == END)
+  {
+    d->contentMap[marker].append(content);
+  }
+}
+
+QStringList ctkPluginGeneratorAbstractTemplate::getContent(const QString &marker) const
+{
+  Q_D(const ctkPluginGeneratorAbstractTemplate);
   if (d->contentMap.contains(marker))
   {
     return d->contentMap[marker];
   }
 
-  return QString();
+  return QStringList();
 }
 
-QStringList ctkPluginGeneratorAbstractTemplate::GetMarkers() const
+void ctkPluginGeneratorAbstractTemplate::create(const QString& location)
+{
+  const QString filename = location + "/" + this->objectName();
+  QFile file(filename);
+  file.open(QIODevice::WriteOnly | QIODevice::Text);
+  file.write(this->generateContent().toAscii());
+  file.close();
+}
+
+QStringList ctkPluginGeneratorAbstractTemplate::getMarkers() const
 {
   return QStringList();
 }
