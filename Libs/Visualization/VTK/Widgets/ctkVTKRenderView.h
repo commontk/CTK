@@ -56,6 +56,15 @@ public slots:
   /// Force a render even if a render is already ocurring
   void forceRender();
 
+  /// Set background color
+  void setBackgroundColor(const QColor& newBackgroundColor);
+
+  /// Enable/Disable rendering
+  void setRenderEnabled(bool value);
+
+  /// Set corner annotation \a text
+  void setCornerAnnotationText(const QString& text);
+
 public:
   /// Get underlying RenderWindow
   vtkRenderWindow* renderWindow()const;
@@ -67,12 +76,10 @@ public:
   /// Get current interactor style
   vtkInteractorObserver* interactorStyle();
 
-  /// Set/Get corner annotation \a text
-  void setCornerAnnotationText(const QString& text);
+  /// Get corner annotation \a text
   QString cornerAnnotationText() const;
 
-  /// Set/Get background color
-  void setBackgroundColor(const QColor& newBackgroundColor);
+  /// Get background color
   QColor backgroundColor() const;
 
   /// Get active camera
@@ -86,9 +93,6 @@ public:
 
   /// Return if rendering is enabled
   bool renderEnabled() const;
-
-  /// Enable/Disable rendering
-  void setRenderEnabled(bool value);
   
 private:
   CTK_DECLARE_PRIVATE(ctkVTKRenderView);
