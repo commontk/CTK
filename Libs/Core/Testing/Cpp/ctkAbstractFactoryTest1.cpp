@@ -29,13 +29,13 @@
 #include <cstdlib>
 #include <iostream>
 
+
 //-----------------------------------------------------------------------------
 int ctkAbstractFactoryTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkAbstractFactory< ctkModelTester >  qctkObject;
-
+  ctkAbstractFactory<ctkModelTester> factory;
 
   return EXIT_SUCCESS;
 }

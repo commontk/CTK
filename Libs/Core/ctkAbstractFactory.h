@@ -34,6 +34,9 @@
 #endif
 
 //----------------------------------------------------------------------------
+/// ctkAbstractFactoryItem is the base class of factory items. They are
+/// uniquely defined by a key and are responsible for creating/holding an
+/// instance of a BaseClassType object.
 template<typename BaseClassType>
 class ctkAbstractFactoryItem
 {
@@ -43,28 +46,36 @@ public:
   
   virtual QString loadErrorString()const;
   virtual bool load() = 0;
+  
   BaseClassType* instantiate();
-  bool instantiated();
-  QString key();
+  bool instantiated()const;
   virtual void uninstantiate();
+  
+  QString key()const;
+  
   void setVerbose(bool value);
-  bool verbose();
+  bool verbose()const;
+
 protected:
+  /// Must be reimplemented in subclasses to instanciate a BaseClassType*
   virtual BaseClassType* instanciator() = 0;
   BaseClassType* Instance;
+
 private:
   QString Key;
   bool Verbose;
 };
 
 //----------------------------------------------------------------------------
+/// ctkAbstractFactory is the base class of all the factory where items need
+/// to be registered before being instantiated.
+/// ctkAbstractFactory contains a collection of ctkAbstractFactoryItems that
+/// are uniquely identifyed by a key. Subclasses of ctkAbstractFactory are
+/// responsible for populating the list of ctkAbstractFactoryItems.
+/// BaseClassType could be any type (most probably a QObject) 
 template<typename BaseClassType>
 class ctkAbstractFactory
 {
-protected:
-  typedef typename QHash<QString, QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > >::const_iterator ConstIterator;
-  typedef typename QHash<QString, QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > >::iterator       Iterator;
-
 public:
   /// 
   /// Constructor/Desctructor
@@ -73,16 +84,18 @@ public:
   virtual void printAdditionalInfo();
 
   /// 
-  /// Create an instance of the object
+  /// Create an instance of the object. The item corresponding to the key
+  /// should have been registered before.
   virtual BaseClassType * instantiate(const QString& itemKey);
 
   /// 
-  /// Uninstanciate the object
+  /// Uninstanciate the object. Do nothing if the item given by the key has
+  /// not be instantiated nor registered.
   void uninstantiate(const QString& itemKey);
 
   /// 
-  /// Get list of all registered item names
-  QStringList names() const;
+  /// Get list of all registered item keys.
+  QStringList keys() const;
 
   /// 
   /// Register items with the factory
@@ -92,7 +105,7 @@ public:
   /// Enabled verbose output
   /// Warning and error message will be printed to standard outputs
   void setVerbose(bool value);
-  bool verbose();
+  bool verbose()const;
 
 protected:
 
@@ -104,6 +117,9 @@ protected:
   /// 
   /// Get a Factory item given its itemKey. Return 0 if any.
   ctkAbstractFactoryItem<BaseClassType> * item(const QString& itemKey)const;
+
+  typedef typename QHash<QString, QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > >::const_iterator ConstIterator;
+  typedef typename QHash<QString, QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > >::iterator       Iterator;
 
 private:
   ctkAbstractFactory(const ctkAbstractFactory &); /// Not implemented

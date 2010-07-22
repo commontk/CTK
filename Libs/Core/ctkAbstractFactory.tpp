@@ -60,7 +60,7 @@ BaseClassType* ctkAbstractFactoryItem<BaseClassType>::instantiate()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFactoryItem<BaseClassType>::instantiated() 
+bool ctkAbstractFactoryItem<BaseClassType>::instantiated()const 
 {
   return (this->Instance != 0); 
 }
@@ -68,7 +68,7 @@ bool ctkAbstractFactoryItem<BaseClassType>::instantiated()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-QString ctkAbstractFactoryItem<BaseClassType>::key() 
+QString ctkAbstractFactoryItem<BaseClassType>::key()const
 { 
   return this->Key; 
 }
@@ -96,7 +96,7 @@ void ctkAbstractFactoryItem<BaseClassType>::setVerbose(bool value)
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFactoryItem<BaseClassType>::verbose()
+bool ctkAbstractFactoryItem<BaseClassType>::verbose()const
 {
   return this->Verbose;
 }
@@ -147,7 +147,7 @@ void ctkAbstractFactory<BaseClassType>::uninstantiate(const QString& itemKey)
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-QStringList ctkAbstractFactory<BaseClassType>::names() const
+QStringList ctkAbstractFactory<BaseClassType>::keys() const
 {
   // Since by construction, we checked if a name was already in the QHash,
   // there is no need to call 'uniqueKeys'
@@ -206,7 +206,7 @@ void ctkAbstractFactory<BaseClassType>::setVerbose(bool value)
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFactory<BaseClassType>::verbose()
+bool ctkAbstractFactory<BaseClassType>::verbose()const
 {
   return this->Verbose;
 }
