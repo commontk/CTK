@@ -224,6 +224,20 @@ QColor ctkVTKRenderView::backgroundColor() const
 }
 
 //----------------------------------------------------------------------------
+void ctkVTKRenderView::setOrientationWidgetVisible(bool visible)
+{
+  CTK_D(ctkVTKRenderView);
+  d->Orientation->SetEnabled(visible);
+}
+
+//----------------------------------------------------------------------------
+bool ctkVTKRenderView::orientationWidgetVisible()
+{
+  CTK_D(ctkVTKRenderView);
+  return d->Orientation->GetEnabled();
+}
+
+//----------------------------------------------------------------------------
 vtkCamera* ctkVTKRenderView::activeCamera()
 {
   CTK_D(ctkVTKRenderView);
