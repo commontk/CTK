@@ -30,6 +30,10 @@
 #include "CTKWidgetsExport.h"
 class ctkDirectoryButtonPrivate;
 
+/// ctkDirectoryButton is a QPushButton to select a directory path.
+/// The absolute path is displayed on the button. When clicked, a
+/// file dialog pops up to select a new directory path.
+/// \sa QPushButton, QDir
 class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
 {
   Q_OBJECT
@@ -47,21 +51,28 @@ public:
 #if QT_VERSION < 0x040603
   // QFileDialog::Options is not a meta-type, we need to create our own.
   enum Option
-    {
-      ShowDirsOnly          = 0x00000001,
-      DontResolveSymlinks   = 0x00000002,
-      DontConfirmOverwrite  = 0x00000004,
-      DontUseSheet          = 0x00000008,
-      DontUseNativeDialog   = 0x00000010,
-      ReadOnly              = 0x00000020,
-      HideNameFilterDetails = 0x00000040
-    };
+  {
+    ShowDirsOnly          = 0x00000001,
+    DontResolveSymlinks   = 0x00000002,
+    DontConfirmOverwrite  = 0x00000004,
+    DontUseSheet          = 0x00000008,
+    DontUseNativeDialog   = 0x00000010,
+    ReadOnly              = 0x00000020,
+    HideNameFilterDetails = 0x00000040
+  };
   Q_DECLARE_FLAGS(Options, Option)
 #endif
+
+  /// Constructor
+  /// Creates a default ctkDirectoryButton that points to the application
+  /// current directory.
   ctkDirectoryButton(QWidget * parent = 0);
+  /// Constructor
+  /// Creates a ctkDirectoryButton that points to the given directory path
   ctkDirectoryButton(const QString& directory, QWidget * parent = 0);
   ctkDirectoryButton(const QIcon& icon, const QString& directory, QWidget * parent = 0);
 
+  /// Set/get the current directory
   void setDirectory(const QString& directory);
   QString directory()const;
 
@@ -71,6 +82,8 @@ public:
   void setCaption(const QString& caption);
   const QString& caption()const;
 
+  /// Options of the file dialog pop up.
+  /// \sa QFileDialog::getExistingDirectory
 #if QT_VERSION >= 0x040603
   void setOptions(const QFileDialog::Options& options);
   const QFileDialog::Options& options()const;
@@ -80,13 +93,17 @@ public:
 #endif
 
 public slots:
+  /// browse() opens a pop up where the user can select a new directory for the
+  /// button. browse() is automatically called when the button is clicked.
   void browse();
 
 signals:
-  ///
-  /// directoryChanged is emitted when the current directory changes
-  ///if you want a directoryChanged signal as a utility. Feel free to add it
+  /// directoryChanged is emitted when the current directory changes.
+  /// Programatically or by the user via the file dialog that pop up when 
+  /// clicking on the button.
   void directoryChanged(const QString&);
+  /// directorySelected() is emitted anytime the current directory is set
+  /// (even if the new directory is the same than the current value)
   void directorySelected(const QString&);
 private:
   CTK_DECLARE_PRIVATE(ctkDirectoryButton);

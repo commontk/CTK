@@ -42,6 +42,7 @@ public:
 #else
   ctkDirectoryButton::Options DialogOptions;
 #endif
+  // TODO expose DisplayAbsolutePath into the API
   bool         DisplayAbsolutePath;
 };
 

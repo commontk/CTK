@@ -31,7 +31,7 @@
 ///
 /// ctkColorPickerButton is a QPushButton that refers to a color. The color 
 /// and the name of the color (i.e. #FFFFFF) are displayed on the button.
-/// When clicked, a color dialog shows up to select a new color 
+/// When clicked, a color dialog pops up to select a new color 
 /// for the QPushButton. 
 class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 {
