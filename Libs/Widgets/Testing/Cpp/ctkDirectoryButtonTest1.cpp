@@ -35,7 +35,12 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   ctkDirectoryButton ctkObject;
+#if QT_VERSION >= 0x040603
   ctkObject.setOptions(QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
+#else
+  ctkObject.setOptions(ctkDirectoryButton::ShowDirsOnly |
+                       ctkDirectoryButton::ReadOnly);
+#endif
   ctkObject.show();
 
   QTimer autoExit;
