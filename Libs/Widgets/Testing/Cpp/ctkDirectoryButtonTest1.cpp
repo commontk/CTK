@@ -35,7 +35,7 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   ctkDirectoryButton ctkObject;
-#if QT_VERSION >= 0x040603
+#if QT_VERSION >= 0x040700
   ctkObject.setOptions(QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
 #else
   ctkObject.setOptions(ctkDirectoryButton::ShowDirsOnly |

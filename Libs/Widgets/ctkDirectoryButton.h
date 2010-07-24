@@ -39,7 +39,7 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   Q_OBJECT
   Q_PROPERTY(QString directory READ directory WRITE setDirectory)
   Q_PROPERTY(QString caption READ caption WRITE setCaption)
-#if QT_VERSION >= 0x040603
+#if QT_VERSION >= 0x040700
   Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
 #else
   Q_PROPERTY(Options options READ options WRITE setOptions)
@@ -48,7 +48,7 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
 #endif
 
 public:
-#if QT_VERSION < 0x040603
+#if QT_VERSION < 0x040700
   // QFileDialog::Options is not a meta-type, we need to create our own.
   enum Option
   {
@@ -84,7 +84,7 @@ public:
 
   /// Options of the file dialog pop up.
   /// \sa QFileDialog::getExistingDirectory
-#if QT_VERSION >= 0x040603
+#if QT_VERSION >= 0x040700
   void setOptions(const QFileDialog::Options& options);
   const QFileDialog::Options& options()const;
 #else
@@ -109,7 +109,7 @@ private:
   CTK_DECLARE_PRIVATE(ctkDirectoryButton);
 };
 
-#if QT_VERSION < 0x040603
+#if QT_VERSION < 0x040700
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkDirectoryButton::Options);
 #endif
 
