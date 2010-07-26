@@ -343,6 +343,12 @@ void ctkSliderSpinBoxWidget::setPrefix(const QString& newPrefix)
 {
   CTK_D(ctkSliderSpinBoxWidget);
   d->SpinBox->setPrefix(newPrefix);
+#if QT_VERSION < 0x040800
+  /// Setting the prefix doesn't recompute the sizehint, do it manually here:
+  /// See: http://bugreports.qt.nokia.com/browse/QTBUG-9530
+  d->SpinBox->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
+#endif
+  d->updateSpinBoxWidth();
 }
 
 // --------------------------------------------------------------------------
@@ -357,6 +363,12 @@ void ctkSliderSpinBoxWidget::setSuffix(const QString& newSuffix)
 {
   CTK_D(ctkSliderSpinBoxWidget);
   d->SpinBox->setSuffix(newSuffix);
+#if QT_VERSION < 0x040800
+  /// Setting the suffix doesn't recompute the sizehint, do it manually here:
+  /// See: http://bugreports.qt.nokia.com/browse/QTBUG-9530
+  d->SpinBox->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
+#endif
+  d->updateSpinBoxWidth();
 }
 
 // --------------------------------------------------------------------------
