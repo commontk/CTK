@@ -34,6 +34,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkInteractorStyleImage.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkLightBoxRendererManager.h>
 
 // STD includes
 #include <iostream>
@@ -82,8 +83,8 @@ int ctkVTKSliceViewTest1(int argc, char * argv [] )
   ctkVTKSliceView sliceView;
   sliceView.resize(300, 300);
   sliceView.setImageData(image);
-  sliceView.setRenderWindowLayout(4, 4);
-  sliceView.setHighlighted(0, 0, true);
+  sliceView.lightBoxRendererManager()->SetRenderWindowLayout(4, 3);
+  sliceView.lightBoxRendererManager()->SetHighlighted(1, 1, true);
   sliceView.setCornerAnnotationText("CTK");
   sliceView.scheduleRender();
   sliceView.show();
