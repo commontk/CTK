@@ -40,6 +40,8 @@ SET(KIT_SRCS
   ctkVTKObjectEventsObserver.h
   ctkVTKPiecewiseFunction.cpp
   ctkVTKPiecewiseFunction.h
+  vtkLightBoxRendererManager.cpp
+  vtkLightBoxRendererManager.h
   )
 
 # Headers that should run through moc
@@ -65,6 +67,8 @@ SET(KIT_resources
 SET(VTK_LIBRARIES
   vtkCommon
   vtkFiltering
+  vtkRendering
+  vtkHybrid
   )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
