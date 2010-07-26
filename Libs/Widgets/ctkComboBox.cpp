@@ -45,7 +45,7 @@ public:
 // -------------------------------------------------------------------------
 ctkComboBoxPrivate::ctkComboBoxPrivate()
 {
-  this->DefaultText = "Select an item...";
+  this->DefaultText = "";
   this->ForceDefault = false;
   this->ElideMode = Qt::ElideNone;
 }
