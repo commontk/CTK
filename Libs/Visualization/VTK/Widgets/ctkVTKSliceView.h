@@ -78,7 +78,7 @@ public:
   void setInteractor(vtkRenderWindowInteractor* newInteractor);
 
   /// Get current interactor style
-  vtkInteractorObserver* interactorStyle();
+  vtkInteractorObserver* interactorStyle()const;
 
   /// Get corner annotation text
   /// \sa setCornerAnnotationText();

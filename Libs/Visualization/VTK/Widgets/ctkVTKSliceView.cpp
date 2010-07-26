@@ -141,6 +141,31 @@ CTK_SET_CXX(ctkVTKSliceView, bool, setRenderEnabled, RenderEnabled);
 CTK_GET_CXX(ctkVTKSliceView, bool, renderEnabled, RenderEnabled);
 
 //----------------------------------------------------------------------------
+vtkRenderWindowInteractor* ctkVTKSliceView::interactor() const
+{
+  CTK_D(const ctkVTKSliceView);
+  return d->RenderWindow->GetInteractor();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKSliceView::setInteractor(vtkRenderWindowInteractor* newInteractor)
+{
+  CTK_D(const ctkVTKSliceView);
+  d->RenderWindow->SetInteractor(newInteractor);
+}
+
+//----------------------------------------------------------------------------
+vtkInteractorObserver* ctkVTKSliceView::interactorStyle()const
+{
+  CTK_D(const ctkVTKSliceView);
+  if (!d->RenderWindow->GetInteractor())
+    {
+    return 0;
+    }
+  return d->RenderWindow->GetInteractor()->GetInteractorStyle();
+}
+
+//----------------------------------------------------------------------------
 void ctkVTKSliceView::resetCamera()
 {
   CTK_D(ctkVTKSliceView);
