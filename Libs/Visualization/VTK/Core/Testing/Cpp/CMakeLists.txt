@@ -1,21 +1,22 @@
 SET(KIT ${PROJECT_NAME})
 
 #
-# Pre-requisites
+# Tests
 #
-
-INCLUDE_DIRECTORIES(
- ${CMAKE_CURRENT_SOURCE_DIR}
- ${CMAKE_CURRENT_BINARY_DIR}
- )
-  
-# Create ctkVTKObjectTestHelper source list
-
-SET(KIT_HELPER_SRCS
-  ctkVTKObjectTestHelper.cpp
+SET(TEST_SOURCES
+  ctkVTKCommandOptionsTest1.cpp
+  ctkVTKConnectionTest1.cpp
+  ctkVTKObjectTest1.cpp
   )
 
-QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
+#
+# Tests expecting CTKData to be set
+#
+IF(EXISTS "${CTKData_DIR}")
+  LIST(APPEND TEST_SOURCES
+    vtkLightBoxRendererManagerTest1.cpp
+    )
+ENDIF()
 
 #
 # Testing data
@@ -25,8 +26,16 @@ SET(TESTING_DATA ${CMAKE_CURRENT_SOURCE_DIR}/Data)
 
 # Resource file used for testing is generated running:
 #    bin/ctkVisualizationVTKCoreCppTests ctkVTKCommandOptionsTest1 --generate-test-data
-
 SET(CTKVTKCOMMANDOPTIONSTEST_SETTINGS ${TESTING_DATA}/Settings/ctkVTKCommandOptionsTest1.ini)
+
+#
+# Pre-requisites
+#
+
+INCLUDE_DIRECTORIES(
+ ${CMAKE_CURRENT_SOURCE_DIR}
+ ${CMAKE_CURRENT_BINARY_DIR}
+ )
 
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/ctkVisualizationVTKCoreCppTestsConfigure.h.in
@@ -34,13 +43,21 @@ CONFIGURE_FILE(
   )
 
 #
+# Test helpers
+#
+
+SET(KIT_HELPER_SRCS
+  ctkVTKObjectTestHelper.cpp
+  )
+
+QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
+
+#
 # Tests
 #
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
-  ctkVTKCommandOptionsTest1.cpp
-  ctkVTKConnectionTest1.cpp
-  ctkVTKObjectTest1.cpp
+  ${TEST_SOURCES}
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -58,7 +75,11 @@ IF(WIN32)
 ENDIF(WIN32)
 
 MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
+  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME}
+            -D ${CTKData_DIR}/Data
+            -V ${CTKData_DIR}/Baseline/Libs/Visualization/VTK/Core/${TESTNAME}.png
+            -T ${CTK_BINARY_DIR}/Testing/Temporary
+            )
   SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
 ENDMACRO( SIMPLE_TEST  )
 
@@ -68,6 +89,13 @@ ENDMACRO( SIMPLE_TEST  )
 
 SIMPLE_TEST( ctkVTKObjectTest1 )
 SIMPLE_TEST( ctkVTKConnectionTest1 )
+
+#
+# Add Tests expecting CTKData to be set
+#
+IF(EXISTS "${CTKData_DIR}")
+  SIMPLE_TEST( vtkLightBoxRendererManagerTest1 )
+ENDIF()
 
 ADD_TEST( ctkVTKCommandOptionsTest1 ${KIT_TESTS}
           ctkVTKCommandOptionsTest1 --help )
