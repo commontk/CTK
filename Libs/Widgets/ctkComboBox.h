@@ -35,19 +35,26 @@ class CTK_WIDGETS_EXPORT ctkComboBox : public QComboBox
   Q_PROPERTY(QString defaultText READ defaultText WRITE setDefaultText)
   Q_PROPERTY(QIcon defaultIcon READ defaultIcon WRITE setDefaultIcon)
   Q_PROPERTY(bool forceDefault READ isDefaultForced WRITE forceDefault)
+  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
 
 public:
   explicit ctkComboBox(QWidget* parent = 0);
   virtual ~ctkComboBox();
 
+  /// Empty by default (same behavior as QComboBox)
   void setDefaultText(const QString&);
   QString defaultText()const;
 
+  /// Empty by default (same behavior as QComboBox)
   void setDefaultIcon(const QIcon&);
   QIcon defaultIcon()const;
 
   void forceDefault(bool forceDefault);
   bool isDefaultForced()const;
+
+  /// Qt::ElideNone by default (same behavior as QComboBox)
+  void setElideMode(const Qt::TextElideMode& newMode);
+  Qt::TextElideMode elideMode()const;
 
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
