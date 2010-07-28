@@ -61,9 +61,6 @@ public:
   /// \sa setRenderWindowLayout() renderWindowLayoutType()
   enum RenderWindowLayoutType{LeftRightTopBottom = 0, LeftRightBottomTop};
 
-  /// If a render has already been scheduled, this called is a no-op
-  void scheduleRender();
-
   /// Return if rendering is enabled
   bool renderEnabled() const;
 
@@ -99,6 +96,9 @@ public:
   double colorWindow()const;
 
 public slots:
+
+  /// If a render has already been scheduled, this called is a no-op
+  void scheduleRender();
 
   /// Force a render even if a render is already ocurring
   void forceRender();
