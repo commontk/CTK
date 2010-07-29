@@ -45,19 +45,22 @@ int ctkVTKSliceViewTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   // Test arguments
-  bool interactive = false;
-  QString data_directory;
   QString filename = "HeadMRVolume.mhd";
 
   // Command line parser
   ctkCommandLineParser parser;
-  parser.addBooleanArgument(0, "-I", &interactive);
-  parser.addStringArgument(0, "-D", &data_directory);
-  if (!parser.parseArguments(app.arguments()))
+  parser.addArgument("", "-I", QVariant::Bool);
+  parser.addArgument("", "-D", QVariant::String);
+  bool ok = false;
+  QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments(), &ok);
+  if (!ok)
     {
     std::cerr << qPrintable(parser.errorString()) << std::endl;
     return EXIT_FAILURE;
     }
+
+  bool interactive = parsedArgs["-I"].toBool();
+  QString data_directory = parsedArgs["-D"].toString();
 
   QString imageFilename = data_directory + "/" + filename;
 
