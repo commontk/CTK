@@ -594,3 +594,22 @@ void ctkCollapsibleButton::childEvent(QChildEvent* c)
     }
   QWidget::childEvent(c);
 }
+
+//-----------------------------------------------------------------------------
+bool ctkCollapsibleButton::event(QEvent *event)
+{
+  if (event->type() == QEvent::StyleChange
+      || event->type() == QEvent::FontChange
+#ifdef Q_WS_MAC
+      || event->type() == QEvent::MacSizeChange
+#endif
+      )
+    {
+    this->setContentsMargins(0, this->buttonSizeHint().height(),0 , 0);
+    if (this->collapsed())
+      {
+      this->setMaximumHeight(this->sizeHint().height());
+      }
+    }
+  return QAbstractButton::event(event);
+}

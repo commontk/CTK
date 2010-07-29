@@ -105,12 +105,16 @@ public:
   Qt::Alignment indicatorAlignment()const;
 
   /// 
-  /// Reimplement for internal reasons
+  /// Reimplemented for internal reasons
   virtual QSize minimumSizeHint()const;
 
   /// 
-  /// Reimplement for internal reasons
+  /// Reimplemented for internal reasons
   virtual QSize sizeHint()const;
+
+  /// Reimplemented to update the size of the button in case of font/style
+  /// change
+  virtual bool event(QEvent* event);
 
 signals:
   /// 
