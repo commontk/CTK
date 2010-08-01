@@ -1,6 +1,7 @@
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
+  ctkActionsWidgetTest1.cpp
   ctkAddRemoveComboBoxTest1.cpp
   ctkButtonGroupTest1.cpp
   ctkCheckBoxPixmapsTest1.cpp
@@ -44,6 +45,7 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
+SIMPLE_TEST( ctkActionsWidgetTest1 )
 SIMPLE_TEST( ctkAddRemoveComboBoxTest1 )
 SIMPLE_TEST( ctkButtonGroupTest1 )
 SIMPLE_TEST( ctkCheckBoxPixmapsTest1 )

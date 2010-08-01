@@ -12,6 +12,8 @@ SET(KIT_include_directories
 
 # Source files
 SET(KIT_SRCS
+  ctkActionsWidget.cpp
+  ctkActionsWidget.h
   ctkAddRemoveComboBox.cpp
   ctkAddRemoveComboBox.h
   ctkButtonGroup.cpp
@@ -76,6 +78,7 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkActionsWidget.h
   ctkAddRemoveComboBox.h
   ctkButtonGroup.h
   ctkCheckableHeaderView.h
