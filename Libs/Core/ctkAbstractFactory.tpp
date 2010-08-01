@@ -32,9 +32,8 @@
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-ctkAbstractFactoryItem<BaseClassType>::ctkAbstractFactoryItem(const QString& _key)
+ctkAbstractFactoryItem<BaseClassType>::ctkAbstractFactoryItem()
   :Instance()
-  ,Key(_key)
 {
   this->Verbose = false;
 }
@@ -63,14 +62,6 @@ template<typename BaseClassType>
 bool ctkAbstractFactoryItem<BaseClassType>::instantiated()const 
 {
   return (this->Instance != 0); 
-}
-
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-QString ctkAbstractFactoryItem<BaseClassType>::key()const
-{ 
-  return this->Key; 
 }
 
 //----------------------------------------------------------------------------
@@ -156,11 +147,11 @@ QStringList ctkAbstractFactory<BaseClassType>::keys() const
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFactory<BaseClassType>::registerItem(
+bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
   const QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > & _item)
 {
   // Sanity checks
-  if (!_item || _item->key().isEmpty() || this->item(_item->key()))
+  if (!_item || key.isEmpty() || this->item(key))
     {
     return false;
     }
@@ -175,13 +166,13 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(
       }
     if (this->verbose())
       {
-      qCritical() << "Failed to load object:" << _item->key() << errorStr ;
+      qCritical() << "Failed to load object:" << key << errorStr ;
       }
     return false;
     }
   
   // Store its reference using a QSharedPointer
-  this->RegisteredItemMap[_item->key()] = _item;
+  this->RegisteredItemMap[key] = _item;
   return true;
 }
 

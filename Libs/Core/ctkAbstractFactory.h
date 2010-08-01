@@ -41,7 +41,7 @@ template<typename BaseClassType>
 class ctkAbstractFactoryItem
 {
 public:
-  explicit ctkAbstractFactoryItem(const QString& key);
+  explicit ctkAbstractFactoryItem();
   virtual ~ctkAbstractFactoryItem(){}
   
   virtual QString loadErrorString()const;
@@ -50,8 +50,6 @@ public:
   BaseClassType* instantiate();
   bool instantiated()const;
   virtual void uninstantiate();
-  
-  QString key()const;
   
   void setVerbose(bool value);
   bool verbose()const;
@@ -62,7 +60,6 @@ protected:
   BaseClassType* Instance;
 
 private:
-  QString Key;
   bool Verbose;
 };
 
@@ -112,7 +109,7 @@ protected:
   /// 
   /// Call the load method associated with the item.
   /// If succesfully loaded, add it to the internal map.
-  bool registerItem(const QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > & item);
+  bool registerItem(const QString& key, const QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > & item);
 
   /// 
   /// Get a Factory item given its itemKey. Return 0 if any.

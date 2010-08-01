@@ -32,13 +32,6 @@
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType, typename ClassType>
-ctkFactoryObjectItem<BaseClassType,ClassType>::ctkFactoryObjectItem(const QString& _key)
-  :ctkAbstractFactoryItem<BaseClassType>(_key)
-{
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType, typename ClassType>
 bool ctkFactoryObjectItem<BaseClassType,ClassType>::load()
 {
   this->instantiateObjectFunc = &instantiateObject<BaseClassType, ClassType>;
@@ -55,15 +48,10 @@ BaseClassType* ctkFactoryObjectItem<BaseClassType,ClassType>::instanciator()
 //----------------------------------------------------------------------------
 // ctkAbstractObjectFactory methods
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkAbstractObjectFactory<BaseClassType>::ctkAbstractObjectFactory()
-{
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-ctkAbstractObjectFactory<BaseClassType>::~ctkAbstractObjectFactory()
+:ctkAbstractFactory<BaseClassType>()
 {
 }
 
@@ -79,9 +67,9 @@ bool ctkAbstractObjectFactory<BaseClassType>::registerObject(const QString& key)
     }
   QSharedPointer<ctkFactoryObjectItem<BaseClassType, ClassType> > objectItem =
     QSharedPointer<ctkFactoryObjectItem<BaseClassType, ClassType> >(
-      new ctkFactoryObjectItem<BaseClassType, ClassType>(key) );
+      new ctkFactoryObjectItem<BaseClassType, ClassType>() );
   objectItem->setVerbose(this->verbose());
-  return this->registerItem(objectItem);
+  return this->registerItem(key, objectItem);
 }
 
 #endif

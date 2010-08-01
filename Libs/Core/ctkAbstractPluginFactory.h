@@ -33,8 +33,7 @@ template<typename BaseClassType>
 class ctkFactoryPluginItem : public ctkAbstractFactoryItem<BaseClassType>
 {
 public:
-  explicit ctkFactoryPluginItem(const QString& key, const QString& path);
-  virtual ~ctkFactoryPluginItem(){}
+  explicit ctkFactoryPluginItem(const QString& path);
   virtual bool load();
   QString path()const;
   virtual QString loadErrorString()const;
@@ -48,25 +47,21 @@ private:
 };
 
 //----------------------------------------------------------------------------
-template<typename BaseClassType, typename FactoryItemType = ctkFactoryPluginItem<BaseClassType> >
+template<typename BaseClassType>
 class ctkAbstractPluginFactory : public ctkAbstractFactory<BaseClassType>
 {
 public:
-  /// 
   /// Constructor
   explicit ctkAbstractPluginFactory();
-  virtual ~ctkAbstractPluginFactory();
-
-  ///
-  /// Return a name allowing to uniquely identify the plugin
-  /// By default, it return \a fileName 
-  virtual QString fileNameToKey(const QString& fileName);
 
   ///
   /// Register a plugin in the factory
   /// The parameter \a key passed by reference will be updated with the
   /// associated object name obtained using ::fileNameToKey()
-  virtual bool registerLibrary(const QFileInfo& file, QString& key);
+  virtual bool registerLibrary(const QString& key, const QFileInfo& file);
+
+protected:
+  virtual ctkAbstractFactoryItem<BaseClassType>* createFactoryPluginItem(const QFileInfo& file);
 
 private:
   ctkAbstractPluginFactory(const ctkAbstractPluginFactory &);  /// Not implemented

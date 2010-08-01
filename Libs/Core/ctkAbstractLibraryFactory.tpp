@@ -29,9 +29,8 @@
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-ctkFactoryLibraryItem<BaseClassType>::ctkFactoryLibraryItem(const QString& _key,
-                                                            const QString& _path)
-  :ctkAbstractFactoryItem<BaseClassType>(_key)
+ctkFactoryLibraryItem<BaseClassType>::ctkFactoryLibraryItem(const QString& _path)
+  :ctkAbstractFactoryItem<BaseClassType>()
   ,Path(_path)
 {
 }
@@ -124,50 +123,68 @@ void* ctkFactoryLibraryItem<BaseClassType>::symbolAddress(const QString& symbol)
 // ctkAbstractLibraryFactory methods
 
 //-----------------------------------------------------------------------------
-template<typename BaseClassType, typename FactoryItemType>
-ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::ctkAbstractLibraryFactory()
+template<typename BaseClassType>
+ctkAbstractLibraryFactory<BaseClassType>::ctkAbstractLibraryFactory()
   :ctkAbstractFactory<BaseClassType>()
 {
 }
   
 //-----------------------------------------------------------------------------
-template<typename BaseClassType, typename FactoryItemType>
-ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::~ctkAbstractLibraryFactory()
+template<typename BaseClassType>
+ctkAbstractLibraryFactory<BaseClassType>::~ctkAbstractLibraryFactory()
 {
 }
 
 //-----------------------------------------------------------------------------
-template<typename BaseClassType, typename FactoryItemType>
-void ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::setSymbols(
+template<typename BaseClassType>
+void ctkAbstractLibraryFactory<BaseClassType>::setSymbols(
   const QStringList& symbols) 
 {
   this->Symbols = symbols; 
 }
 
 //-----------------------------------------------------------------------------
-template<typename BaseClassType, typename FactoryItemType>
-QString ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::fileNameToKey(
-  const QString& fileName)
+template<typename BaseClassType>
+bool ctkAbstractLibraryFactory<BaseClassType>::registerLibrary(
+  const QString& key, const QFileInfo& file)
 {
-  return fileName; 
-}
-
-//-----------------------------------------------------------------------------
-template<typename BaseClassType, typename FactoryItemType>
-bool ctkAbstractLibraryFactory<BaseClassType, FactoryItemType>::registerLibrary(
-  const QFileInfo& file, QString& key)
-{
-  key = this->fileNameToKey(file.fileName());
-  // Check if already registered
-  if (this->item(key))
+  QSharedPointer<ctkFactoryLibraryItem<BaseClassType> > itemToRegister =
+    QSharedPointer<ctkFactoryLibraryItem<BaseClassType> >(
+      this->createFactoryLibraryItem(file));
+      //new ctkFactoryLibraryItem<BaseClassType>(key, file.filePath()));
+  if (itemToRegister.isNull())
     {
     return false;
     }
-  QSharedPointer<FactoryItemType> _item =
-    QSharedPointer<FactoryItemType>(new FactoryItemType(key, file.filePath()));
-  _item->setVerbose(this->verbose());
-  _item->setSymbols(this->Symbols);
-  return this->registerItem(_item);
+  itemToRegister->setVerbose(this->verbose());
+  itemToRegister->setSymbols(this->Symbols);
+  return this->registerItem(key, itemToRegister);
+}
+
+//-----------------------------------------------------------------------------
+template<typename BaseClassType>
+bool ctkAbstractLibraryFactory<BaseClassType>::registerQLibrary(
+  const QString& key, const QFileInfo& file)
+{
+  // Skip if current file isn't a library
+  if (!QLibrary::isLibrary(file.fileName()))
+    {
+    return false;
+    }
+  if (this->verbose())
+    {
+    qDebug() << "Attempt to register QLibrary:" << file.fileName();
+    }
+  return this->registerLibrary(key, file);
+}
+
+//-----------------------------------------------------------------------------
+template<typename BaseClassType>
+ctkFactoryLibraryItem<BaseClassType>* ctkAbstractLibraryFactory<BaseClassType>::
+createFactoryLibraryItem(const QFileInfo& library)const
+{
+  Q_UNUSED(library);
+  return 0;
 }
 
 #endif
