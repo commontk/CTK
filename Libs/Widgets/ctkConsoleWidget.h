@@ -62,13 +62,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class ctkConsoleWidgetCompleter;
 
-/**
-  Qt widget that provides an interactive console - you can send text to the
-  console by calling printString() and receive user input by connecting to the
-  executeCommand() slot.
-  
-  \sa pqPythonShell, pqOutputWindow
-*/
+
+/// Qwidget that provides an interactive console - you can send text to the
+/// console by calling printString() and receive user input by connecting to the
+/// executeCommand() slot.
+///  
+/// \sa pqPythonShell, pqOutputWindow
 class CTK_WIDGETS_EXPORT ctkConsoleWidget : public QWidget
 {
   Q_OBJECT

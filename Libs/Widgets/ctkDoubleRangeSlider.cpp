@@ -56,6 +56,8 @@ public:
 // --------------------------------------------------------------------------
 ctkDoubleRangeSliderPrivate::ctkDoubleRangeSliderPrivate()
 {
+  // the initial values will be overwritten in
+  // ctkDoubleRangeSliderPrivate::init()
   this->Slider = 0;
   this->Minimum = 0.;
   this->Maximum = 99.;

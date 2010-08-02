@@ -27,20 +27,28 @@
 // CTK includes
 #include "CTKWidgetsExport.h"
 
+/// A QGroupBox with an arrow indicator that shows/hides the groupbox contents
+/// when clicked.
 class CTK_WIDGETS_EXPORT ctkCollapsibleGroupBox : public QGroupBox
 {
   Q_OBJECT
 public:
   explicit ctkCollapsibleGroupBox(QWidget* parent = 0);
   virtual ~ctkCollapsibleGroupBox();
+
+  /// Reimplemtented for internal reasons
   virtual int heightForWidth(int w) const;
+  /// Reimplemtented for internal reasons
   virtual QSize minimumSizeHint()const;
+  /// Reimplemtented for internal reasons
   virtual QSize sizeHint()const;
 
 protected slots:
+  /// called when the arrow indicator is clicked
   virtual void expand(bool expand);
 
 protected:
+  /// reimplemented for internal reasons
   virtual void childEvent(QChildEvent*);
 
 #if QT_VERSION < 0x040600
@@ -50,7 +58,9 @@ protected:
 #endif
   virtual void resizeEvent(QResizeEvent*);
 
+  /// Size of the widget for collapsing
   QSize OldSize;
+  /// Maximum allowed height
   int   MaxHeight;
 };
 

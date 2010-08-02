@@ -31,6 +31,9 @@
 
 class ctkDoubleSliderPrivate;
 
+/// ctkDoubleSlider is a QSlider that controls doubles instead of integers.
+/// ctkDoubleSlider internally aggregates a QSlider
+/// \sa ctkRangeSlider, ctkDoubleRangeSlider, ctkRangeWidget
 class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
 {
   Q_OBJECT
@@ -47,10 +50,11 @@ public:
   /// Superclass typedef
   typedef QWidget Superclass;
 
-  /// 
-  /// Constructors
-  /// Vertical by default
+  /// Constructors, builds a slider whose default values are the same as
+  /// QSlider (vertical by default).
   explicit ctkDoubleSlider(QWidget* parent = 0);
+  /// Constructors, builds a slider whose default values are the same as
+  /// QSlider (vertical by default).
   explicit ctkDoubleSlider(Qt::Orientation orient, QWidget* parent = 0);
   /// Destructor
   virtual ~ctkDoubleSlider();

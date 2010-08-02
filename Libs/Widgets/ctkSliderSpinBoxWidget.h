@@ -31,6 +31,11 @@
 
 class ctkSliderSpinBoxWidgetPrivate;
 
+///
+/// ctkSliderSpinBoxWidget is a wrapper around a ctkDoubleSlider and a
+/// synchronized QDoubleSpinBox.
+/// TODO: rename ctkSliderSpinBoxWidget into ctkSliderWidget
+/// \sa ctkRangeWidget, ctkDoubleRangeSlider, QSpinBox
 class CTK_WIDGETS_EXPORT ctkSliderSpinBoxWidget : public QWidget
 {
   Q_OBJECT

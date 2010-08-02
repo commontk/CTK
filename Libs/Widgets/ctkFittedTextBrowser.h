@@ -27,6 +27,12 @@
 // CTK includes
 #include "CTKWidgetsExport.h"
 
+/// ctkFittedTextBrowser is a QTextBrowser that adapts its height depending
+/// on its contents and the width available. It always tries to show the whole
+/// contents. ctkFittedTextBrowser doesn't resize itself but acts on the
+/// sizeHint, minimumSizeHint and heightForWidth. Here sizeHint() and 
+/// minimumSizeHint() are the same as ctkFittedTextBrowser always try to
+/// show the whole contents.
 class CTK_WIDGETS_EXPORT ctkFittedTextBrowser : public QTextBrowser
 {
   Q_OBJECT
@@ -35,8 +41,11 @@ public:
   ctkFittedTextBrowser(QWidget* parent = 0);
   virtual ~ctkFittedTextBrowser();
 
+  /// Reimplemented for internal reasons
   virtual QSize sizeHint() const;
+  /// Reimplemented for internal reasons
   virtual QSize minimumSizeHint() const;
+  /// Reimplemented for internal reasons
   virtual int heightForWidth(int width) const;
 
 protected slots:

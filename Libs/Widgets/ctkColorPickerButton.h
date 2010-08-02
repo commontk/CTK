@@ -32,16 +32,18 @@
 /// ctkColorPickerButton is a QPushButton that refers to a color. The color 
 /// and the name of the color (i.e. #FFFFFF) are displayed on the button.
 /// When clicked, a color dialog pops up to select a new color 
-/// for the QPushButton. 
+/// for the QPushButton.
 class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 {
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true)
 public:
+  /// By default, the color is black
   explicit ctkColorPickerButton(QWidget* parent = 0);
+  /// By default, the color is black
   explicit ctkColorPickerButton(const QString& text, QWidget* parent = 0 );
   explicit ctkColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
-  virtual ~ctkColorPickerButton(){}
+  virtual ~ctkColorPickerButton();
   
   ///
   /// Current selected color
@@ -49,15 +51,20 @@ public:
 
 public slots:
   ///
-  /// Set a new current color
+  /// Set a new current color without opening a dialog
   void setColor(const QColor& color);
 
   /// 
   /// Opens a color dialog to select a new current color.
-  void changeColor(bool change = true);
+  void changeColor();
 
 signals:
+  /// colorChanged is fired anytime a new color is set. Programatically or
+  /// by the user when choosing a color from the color dialog
   void colorChanged(QColor);
+
+protected slots:
+  void onToggled(bool change = true);
 
 protected:
   QColor Color;

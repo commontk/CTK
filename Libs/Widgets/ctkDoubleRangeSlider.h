@@ -31,6 +31,11 @@
 
 class ctkRangeSlider;
 class ctkDoubleRangeSliderPrivate;
+
+/// ctkDoubleRangeSlider is a slider that controls 2 numbers as double.
+/// ctkDoubleRangeSlider internally aggregates a ctkRangeSlider (not in the
+/// API to prevent misuse). Only subclasses can have access to it.
+/// \sa ctkRangeSlider, ctkDoubleSlider, ctkRangeWidget
 class CTK_WIDGETS_EXPORT ctkDoubleRangeSlider : public QWidget
 {
   Q_OBJECT      
@@ -48,8 +53,12 @@ public:
   // Superclass typedef
   typedef QWidget Superclass;
   
-  // Constructors
+  /// Constructor, builds a ctkDoubleRangeSlider whose default values are the same
+  /// as ctkRangeSlider.
   ctkDoubleRangeSlider( Qt::Orientation o, QWidget* par= 0 );
+
+  /// Constructor, builds a ctkDoubleRangeSlider whose default values are the same
+  /// as ctkRangeSlider.
   ctkDoubleRangeSlider( QWidget* par = 0 );
   
   /// 
@@ -215,6 +224,7 @@ protected slots:
 
 protected:
   ctkRangeSlider* slider()const;
+  /// Subclasses can change the internal slider
   void setSlider(ctkRangeSlider* slider);
 
 private:

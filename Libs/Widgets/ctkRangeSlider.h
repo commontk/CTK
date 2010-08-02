@@ -38,8 +38,9 @@ class ctkRangeSliderPrivate;
 /// Values are comprised between the range of the slider. (see setRange(), 
 /// minimum() and maximum()). The upper bound can't be smaller than the 
 /// lower bound and vice-versa.
-/// FIXME: support triggerAction(QAbstractSlider::SliderSingleStepSub) that
+/// TODO: support triggerAction(QAbstractSlider::SliderSingleStepSub) that
 /// moves both values at a time.
+/// \sa ctkDoubleRangeSlider, ctkDoubleSlider, ctkRangeWidget
 class CTK_WIDGETS_EXPORT ctkRangeSlider : public QSlider
 {
   Q_OBJECT
@@ -51,7 +52,7 @@ class CTK_WIDGETS_EXPORT ctkRangeSlider : public QSlider
 public:
   // Superclass typedef
   typedef QSlider Superclass;
-  // Constructors
+  /// Constructor, builds a ctkRangeSlider that ranges from 0 to 100
   explicit ctkRangeSlider( Qt::Orientation o, QWidget* par= 0 );
   explicit ctkRangeSlider( QWidget* par = 0 );
   virtual ~ctkRangeSlider();
