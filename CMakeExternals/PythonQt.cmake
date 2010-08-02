@@ -14,6 +14,14 @@ IF(${add_project})
     SET(proj PythonQt)
   #   MESSAGE(STATUS "Adding project:${proj}")
     SET(PythonQt_DEPENDS ${proj})
+    
+    # Expose PythonQt options
+    SET(ep_PythonQt_args)
+    foreach(qtlib gui network opengl sql svg uitools webkit xml xmlpatterns)
+      OPTION(CTK_PythonQt_Wrap_Qt${qtlib} "Make all of Qt${qtlib} available in python" OFF)
+      MARK_AS_ADVANCED(CTK_PythonQt_Wrap_Qt${qtlib})
+      LIST(APPEND ep_PythonQt_args -DPythonQt_Wrap_Qt${qtlib}:BOOL=${CTK_PythonQt_Wrap_Qt${qtlib}})
+    endforeach()
 
     # Python is required
     FIND_PACKAGE(PythonLibs)
@@ -31,6 +39,7 @@ IF(${add_project})
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
         -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
+        ${ep_PythonQt_args}
       )
     SET(PYTHONQT_INSTALL_DIR ${ep_install_dir})
     
