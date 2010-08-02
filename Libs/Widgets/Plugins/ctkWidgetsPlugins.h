@@ -26,10 +26,11 @@
 
 // CTK includes
 #include "CTKWidgetsPluginsExport.h"
-#include "ctkComboBoxPlugin.h"
+#include "ctkActionsWidgetPlugin.h"
 #include "ctkCollapsibleButtonPlugin.h"
 #include "ctkCollapsibleGroupBoxPlugin.h"
 #include "ctkColorPickerButtonPlugin.h"
+#include "ctkComboBoxPlugin.h"
 #include "ctkCoordinatesWidgetPlugin.h"
 #include "ctkDirectoryButtonPlugin.h"
 #include "ctkDoubleRangeSliderPlugin.h"
@@ -55,10 +56,11 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new ctkComboBoxPlugin
+    plugins << new ctkActionsWidgetPlugin
             << new ctkCollapsibleButtonPlugin
             << new ctkCollapsibleGroupBoxPlugin
             << new ctkColorPickerButtonPlugin
+            << new ctkComboBoxPlugin
             << new ctkCoordinatesWidgetPlugin
             << new ctkDirectoryButtonPlugin
             << new ctkDoubleRangeSliderPlugin
