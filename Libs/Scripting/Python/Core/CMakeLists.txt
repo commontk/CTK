@@ -43,13 +43,13 @@ SET(KIT_resources
 #
 # Configure file describing which Qt modules are wrapped
 #
-FOREACH(qtlib gui network opengl sql svg uitools webkit xml xmlpatterns)
-  STRING(TOUPPER ${qtlib} qtlib_uppercase)
-  SET(CTK_PYTHONQT_WRAP_QT${qtlib_uppercase} ${CTK_PythonQt_Wrap_Qt${qtlib}})
+FOREACH(qtlib GUI NETWORK OPENGL SQL SVG UITOOLS WEBKIT XML XMLPATTERNS)
+  SET(CTK_PYTHONQT_WRAP_QT${qtlib} ${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
+  #message(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}:${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
 ENDFOREACH()
 
 # TODO Ideally a file named ctkScripingPythonWidgetsConfigure.h should
-# also be configured, this file should deal with module depending only on QtGui
+# also be configured, this file should deal with Qt Module depending only on QtGui
 
 CONFIGURE_FILE(
   ctkScriptingPythonCoreConfigure.h.in

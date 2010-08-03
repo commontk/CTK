@@ -1,0 +1,18 @@
+#
+# See CMake/ctkMacroAddCtkLibraryOptions.cmake
+#
+# This file should list of options available for considered CTK library
+# For example: MYOPT1:OFF MYOPT2:ON
+#
+
+SET(ctk_library_options
+  PYTHONQT_WRAP_QTGUI:OFF
+  PYTHONQT_WRAP_QTNETWORK:OFF
+  PYTHONQT_WRAP_QTOPENGL:OFF
+  PYTHONQT_WRAP_QTSQL:OFF
+  PYTHONQT_WRAP_QTSVG:OFF
+  PYTHONQT_WRAP_QTUITOOLS:OFF
+  PYTHONQT_WRAP_QTWEBKIT:OFF
+  PYTHONQT_WRAP_QTXML:OFF
+  PYTHONQT_WRAP_QTXMLPATTERNS:OFF
+  )

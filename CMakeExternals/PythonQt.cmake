@@ -15,12 +15,11 @@ IF(${add_project})
   #   MESSAGE(STATUS "Adding project:${proj}")
     SET(PythonQt_DEPENDS ${proj})
     
-    # Expose PythonQt options
+    # Generate ep_PythonQt_args
     SET(ep_PythonQt_args)
     foreach(qtlib gui network opengl sql svg uitools webkit xml xmlpatterns)
-      OPTION(CTK_PythonQt_Wrap_Qt${qtlib} "Make all of Qt${qtlib} available in python" OFF)
-      MARK_AS_ADVANCED(CTK_PythonQt_Wrap_Qt${qtlib})
-      LIST(APPEND ep_PythonQt_args -DPythonQt_Wrap_Qt${qtlib}:BOOL=${CTK_PythonQt_Wrap_Qt${qtlib}})
+      STRING(TOUPPER ${qtlib} qtlib_uppercase)
+      LIST(APPEND ep_PythonQt_args -DPythonQt_Wrap_Qt${qtlib}:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib_uppercase}})
     endforeach()
 
     # Python is required
