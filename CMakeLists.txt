@@ -140,6 +140,7 @@ INCLUDE(CMake/ctkMacroBuildLib.cmake)
 INCLUDE(CMake/ctkMacroBuildPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildApp.cmake)
 INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
+INCLUDE(CMake/ctkMacroCompilePythonScript.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
@@ -292,6 +293,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMQuery:OFF
   ctkDICOMRetrieve:OFF
   ctkPluginBrowser:OFF
+  ctkSimplePythonShell:OFF
   )
   
 #-----------------------------------------------------------------------------
@@ -329,6 +331,7 @@ SET(CTK_APPLICATIONS_SUBDIRS )
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
 #
+SET(ctk_lib_options_list) # This list will be updated in ctkFunctionExtractOptionNameAndValue
 FOREACH(lib ${CTK_LIBS})
   ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
   OPTION(CTK_LIB_${lib_name} "Enable ${lib_name} Library." ${lib_value})
