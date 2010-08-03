@@ -38,6 +38,7 @@ MACRO(ctkMacroAddCtkLibraryOptions lib)
       ctkFunctionExtractOptionNameAndValue(${option} option_name option_value)
       OPTION(CTK_LIB_${lib}_${option_name} "Enable ${lib} Library ${option_name} option." ${option_value})
       MARK_AS_ADVANCED(CTK_LIB_${lib}_${option_name})
+      LIST(APPEND ctk_lib_options_list CTK_LIB_${lib}_${option_name})
     ENDFOREACH()
     
   ENDIF()

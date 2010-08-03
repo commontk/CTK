@@ -328,6 +328,7 @@ SET(CTK_APPLICATIONS_SUBDIRS )
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
 #
+SET(ctk_lib_options_list) # This list will be updated in ctkFunctionExtractOptionNameAndValue
 FOREACH(lib ${CTK_LIBS})
   ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
   OPTION(CTK_LIB_${lib_name} "Enable ${lib_name} Library." ${lib_value})

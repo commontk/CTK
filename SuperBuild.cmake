@@ -192,6 +192,7 @@ SET(ctk_cmake_boolean_args
   ${ctk_libs_bool_vars}
   ${ctk_plugins_bool_vars}
   ${ctk_applications_bool_vars}
+  ${ctk_lib_options_list}
   )
 
 SET(ctk_superbuild_boolean_args)
