@@ -170,16 +170,6 @@ FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# Convenient function allowing to define superbuild arg
-#
-FUNCTION(ctk_set_superbuild_boolean_arg ctk_cmake_var)
-  SET(superbuild_${ctk_cmake_var} OFF)
-  IF(DEFINED ${ctk_cmake_var})
-    SET(superbuild_${ctk_cmake_var} ${${ctk_cmake_var}} PARENT_SCOPE)
-  ENDIF()
-ENDFUNCTION()
-
-#-----------------------------------------------------------------------------
 # Set superbuild boolean args
 #
 
@@ -192,12 +182,12 @@ SET(ctk_cmake_boolean_args
   ${ctk_libs_bool_vars}
   ${ctk_plugins_bool_vars}
   ${ctk_applications_bool_vars}
+  ${ctk_lib_options_list}
   )
 
 SET(ctk_superbuild_boolean_args)
 FOREACH(ctk_cmake_arg ${ctk_cmake_boolean_args})
-  ctk_set_superbuild_boolean_arg(${ctk_cmake_arg})
-  LIST(APPEND ctk_superbuild_boolean_args -D${ctk_cmake_arg}:BOOL=${superbuild_${ctk_cmake_arg}})
+  LIST(APPEND ctk_superbuild_boolean_args -D${ctk_cmake_arg}:BOOL=${${ctk_cmake_arg}})
 ENDFOREACH()
 
 # MESSAGE("CMake args:")
