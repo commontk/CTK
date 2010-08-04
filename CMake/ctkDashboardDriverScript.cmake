@@ -125,7 +125,7 @@ CTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
 QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
 SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:BOOL=TRUE
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}
-DOCUMENTATION_TARGET_IN_ALL:BOOL=${WITH_DOCUMENTATION}
+#DOCUMENTATION_TARGET_IN_ALL:BOOL=${WITH_DOCUMENTATION}
 DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
 ${ADDITIONNAL_CMAKECACHE_OPTION}
 ")
@@ -189,6 +189,12 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
      
      ctest_submit(PARTS Build)
     endforeach()
+    
+    if (WITH_DOCUMENTATION)
+      # Build Documentation target
+      set(CTEST_BUILD_TARGET "doc")
+      ctest_build(BUILD "${ctk_build_dir}" APPEND)
+    endif()
     
     # HACK Unfortunately ctest_coverage ignores the build argument, try to force it...
     file(READ ${ctk_build_dir}/CMakeFiles/TargetDirectories.txt ctk_build_coverage_dirs)
