@@ -1,20 +1,17 @@
-PROJECT(org_commontk_eventbus)
+PROJECT(org_commontk_a)
 
-SET(PLUGIN_export_directive "org_commontk_eventbus_EXPORT")
+SET(PLUGIN_export_directive "org_commontk_a_EXPORT")
 
 SET(PLUGIN_SRCS
-  ctkEventBusImpl.cpp
-  ctkEventBusPlugin.cpp
+  ctkAPlugin.cpp
 )
 
 SET(PLUGIN_MOC_SRCS
-  ctkEventBusImpl_p.h
-  ctkEventBusPlugin_p.h
-  ctkEventHandlerWrapper_p.h
+  ctkAPlugin.h
 )
 
 SET(PLUGIN_resources
-  org_commontk_eventbus.qrc
+
 )
 
 ctkMacroGetTargetLibraries(PLUGIN_target_libraries)

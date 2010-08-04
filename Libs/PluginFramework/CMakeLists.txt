@@ -101,7 +101,7 @@ SET(KIT_resources
 
 # Create a MANIFEST.MF resource for the PluginFramework library,
 # pretending that is is a plugin (the system plugin)
-ctkMacroGeneratePluginManifest(KIT_SRCS
+ctkFunctionGeneratePluginManifest(KIT_SRCS
   SYMBOLIC_NAME "system.plugin"
   VERSION "0.9.9"
   )

@@ -42,21 +42,17 @@
 # Plugin-License
 # Plugin-Name
 # Require-Plugin
-# Plugin-SymbolicName
 # Plugin-Vendor
 # Plugin-Version
 #
 MACRO(ctkMacroBuildPlugin)
   CtkMacroParseArguments(MY
-    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;LIBRARY_TYPE"
+    "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;LIBRARY_TYPE"
     ""
     ${ARGN}
     )
 
   # Sanity checks
-  IF(NOT DEFINED MY_NAME)
-    MESSAGE(SEND_ERROR "NAME is mandatory")
-  ENDIF()
   IF(NOT DEFINED MY_EXPORT_DIRECTIVE)
     MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
   ENDIF()
@@ -65,7 +61,35 @@ MACRO(ctkMacroBuildPlugin)
   ENDIF()
 
   # Define library name
-  SET(lib_name ${MY_NAME})
+  SET(lib_name ${PROJECT_NAME})
+
+  # Clear the variables for the manifest headers
+  SET(Plugin-ActivationPolicy )
+  SET(Plugin-Category )
+  SET(Plugin-ContactAddress )
+  SET(Plugin-Copyright )
+  SET(Plugin-Description )
+  SET(Plugin-DocURL )
+  SET(Plugin-Icon )
+  SET(Plugin-License )
+  SET(Plugin-Name )
+  SET(Require-Plugin )
+  SET(Plugin-SymbolicName )
+  SET(Plugin-Vendor )
+  SET(Plugin-Version )
+
+  # If a file named manifest_headers.cmake exists, read it
+  SET(manifest_headers_dep )
+  IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
+    INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
+    SET(manifest_headers_dep "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
+  ENDIF()
+
+  STRING(REPLACE "_" "." Plugin-SymbolicName ${lib_name})
+
+  # Create a list of plugin dependencies
+  STRING(REPLACE "." "_" require_plugin "${Require-Plugin}")
+  MESSAGE("require_plugin: ${require_plugin}")
 
   # --------------------------------------------------------------------------
   # Include dirs
@@ -75,6 +99,15 @@ MACRO(ctkMacroBuildPlugin)
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MY_INCLUDE_DIRECTORIES}
     )
+
+  # Add the include directories from the plugin dependencies
+  FOREACH(plugin ${require_plugin})
+    LIST(APPEND my_includes
+         ${${plugin}_SOURCE_DIR}
+         ${${plugin}_BINARY_DIR}
+         )
+  ENDFOREACH()
+
   INCLUDE_DIRECTORIES(
     ${my_includes}
     )
@@ -102,36 +135,9 @@ MACRO(ctkMacroBuildPlugin)
     QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
   ENDIF()
 
-  # Clear the variables for the manifest headers
-  SET(Plugin-ActivationPolicy )
-  SET(Plugin-Category )
-  SET(Plugin-ContactAddress )
-  SET(Plugin-Copyright )
-  SET(Plugin-Description )
-  SET(Plugin-DocURL )
-  SET(Plugin-Icon )
-  SET(Plugin-License )
-  SET(Plugin-Name )
-  SET(Require-Plugin )
-  SET(Plugin-SymbolicName )
-  SET(Plugin-Vendor )
-  SET(Plugin-Version )
-
-  # If a file named manifest_headers.cmake exists, read it
-  SET(manifest_headers_dep )
-  IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
-    INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
-    SET(manifest_headers_dep "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
-  ENDIF()
-
-  # Set the plugin_symbolicname to the library name if it is not set
-  IF(NOT Plugin-SymbolicName)
-    STRING(REPLACE "_" "." Plugin-SymbolicName ${lib_name})
-  ENDIF()
-
   # Add the generated manifest qrc file
   SET(manifest_qrc_src )
-  ctkMacroGeneratePluginManifest(manifest_qrc_src
+  ctkFunctionGeneratePluginManifest(manifest_qrc_src
     ACTIVATIONPOLICY ${Plugin-ActivationPolicy}
     CATEGORY ${Plugin-Category}
     CONTACT_ADDRESS ${Plugin-ContactAddress}
@@ -199,6 +205,7 @@ MACRO(ctkMacroBuildPlugin)
   
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
+    ${require_plugin}
     )
   TARGET_LINK_LIBRARIES(${lib_name} ${my_libs})
   
