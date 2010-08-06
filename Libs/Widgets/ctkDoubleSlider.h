@@ -33,6 +33,11 @@ class ctkDoubleSliderPrivate;
 
 /// ctkDoubleSlider is a QSlider that controls doubles instead of integers.
 /// ctkDoubleSlider internally aggregates a QSlider
+/// TODO: ctkDoubleSlider tries to represent a double value with integers. It's
+/// of course non-optimal and can lead to errors, it would be better if
+/// ctkDoubleSlider works like QDoubleSpinBox, where the value is a QVariant
+/// and the conversion between double and integer is only done to convert
+/// to/from screen coordinates.
 /// \sa ctkRangeSlider, ctkDoubleRangeSlider, ctkRangeWidget
 class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
 {
