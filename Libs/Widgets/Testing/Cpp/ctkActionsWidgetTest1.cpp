@@ -74,7 +74,6 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
     qDebug() << "Invalid custom action" << actionItem->text();
     QCTK_EXIT_TEST(EXIT_FAILURE);
     }
-  qDebug() << "oui" ;
   // check update on change 
   action->setText("new custom action");
   QStandardItem* changedActionItem = actionsWidget->model()->item(9);
