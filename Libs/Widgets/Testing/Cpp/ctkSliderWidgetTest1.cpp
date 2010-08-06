@@ -22,23 +22,23 @@
 #include <QApplication>
 
 // CTK includes
-#include "ctkSliderSpinBoxWidget.h"
+#include "ctkSliderWidget.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
+int ctkSliderWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkSliderSpinBoxWidget sliderSpinBox;
+  ctkSliderWidget sliderSpinBox;
 
   // the first part of the tests infer 2 decimals
   if (sliderSpinBox.decimals() != 2)
     {
-    std::cerr << "ctkSliderSpinBoxWidget::decimals default value failed."
+    std::cerr << "ctkSliderWidget::decimals default value failed."
               << sliderSpinBox.decimals() << std::endl;
     return EXIT_FAILURE;
     }
@@ -47,7 +47,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
 
   if (!qFuzzyCompare(sliderSpinBox.value(), 32.12))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setValue failed."
+    std::cerr << "ctkSliderWidget::setValue failed."
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
     }
@@ -57,7 +57,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (!qFuzzyCompare(sliderSpinBox.minimum(), 10.01) || 
       !qFuzzyCompare(sliderSpinBox.value(), 32.12))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setMinimum failed."
+    std::cerr << "ctkSliderWidget::setMinimum failed."
               << sliderSpinBox.minimum() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -68,7 +68,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (!qFuzzyCompare(sliderSpinBox.maximum(), 2050.99) || 
       !qFuzzyCompare(sliderSpinBox.value(), 32.12))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setMaximum failed."
+    std::cerr << "ctkSliderWidget::setMaximum failed."
               << sliderSpinBox.maximum() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -79,7 +79,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (!qFuzzyCompare(sliderSpinBox.singleStep(), 0.1) || 
       !qFuzzyCompare(sliderSpinBox.value(), 32.12))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setSingleStep failed."
+    std::cerr << "ctkSliderWidget::setSingleStep failed."
               << sliderSpinBox.singleStep() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -92,7 +92,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
       !qFuzzyCompare(sliderSpinBox.minimum(), 10.0) ||
       !qFuzzyCompare(sliderSpinBox.maximum(), 2051.0))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setDecimals failed."
+    std::cerr << "ctkSliderWidget::setDecimals failed."
               << sliderSpinBox.decimals() << " "
               << sliderSpinBox.value() << " " 
               << sliderSpinBox.minimum() << " " 
@@ -104,7 +104,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
 
   if (!qFuzzyCompare(sliderSpinBox.value(), 77.8))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setValue failed."
+    std::cerr << "ctkSliderWidget::setValue failed."
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
     }  
@@ -114,7 +114,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (!qFuzzyCompare(sliderSpinBox.tickInterval(), 0.1) || 
       !qFuzzyCompare(sliderSpinBox.value(), 77.8))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setTickInterval failed."
+    std::cerr << "ctkSliderWidget::setTickInterval failed."
               << sliderSpinBox.tickInterval() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -125,7 +125,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (!qFuzzyCompare(sliderSpinBox.minimum(), 80.6) || 
       !qFuzzyCompare(sliderSpinBox.value(), 80.6))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setMinimum failed."
+    std::cerr << "ctkSliderWidget::setMinimum failed."
               << sliderSpinBox.minimum() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -135,7 +135,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
 
   if (!qFuzzyCompare(sliderSpinBox.value(), 80.6))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::reset failed."
+    std::cerr << "ctkSliderWidget::reset failed."
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
     }
@@ -145,7 +145,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (sliderSpinBox.spinBoxAlignment() != Qt::AlignRight || 
       !qFuzzyCompare(sliderSpinBox.value(), 80.6))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setSpinBoxAlignment failed."
+    std::cerr << "ctkSliderWidget::setSpinBoxAlignment failed."
               << sliderSpinBox.spinBoxAlignment() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -156,7 +156,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (sliderSpinBox.isAutoSpinBoxWidth() != false || 
       !qFuzzyCompare(sliderSpinBox.value(), 80.6))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setAutoSpinBoxWidth failed."
+    std::cerr << "ctkSliderWidget::setAutoSpinBoxWidth failed."
               << sliderSpinBox.isAutoSpinBoxWidth() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -167,7 +167,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (sliderSpinBox.prefix() != "$" || 
       !qFuzzyCompare(sliderSpinBox.value(), 80.6))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setPrefix failed."
+    std::cerr << "ctkSliderWidget::setPrefix failed."
               << sliderSpinBox.prefix().toLatin1().data() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -178,7 +178,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
   if (sliderSpinBox.suffix() != "mm" || 
       !qFuzzyCompare(sliderSpinBox.value(), 80.6))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setSuffix failed."
+    std::cerr << "ctkSliderWidget::setSuffix failed."
               << sliderSpinBox.suffix().toLatin1().data() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
@@ -190,7 +190,7 @@ int ctkSliderSpinBoxWidgetTest1(int argc, char * argv [] )
       !qFuzzyCompare(sliderSpinBox.minimum(), 81) ||
       !qFuzzyCompare(sliderSpinBox.maximum(), 2051))
     {
-    std::cerr << "ctkSliderSpinBoxWidget::setDecimals failed."
+    std::cerr << "ctkSliderWidget::setDecimals failed."
               << sliderSpinBox.value() << " " 
               << sliderSpinBox.minimum() << " " 
               << sliderSpinBox.maximum() << std::endl;

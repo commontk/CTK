@@ -43,7 +43,7 @@
 #include "ctkRangeWidgetPlugin.h"
 #include "ctkTransferFunctionViewPlugin.h"
 #include "ctkTreeComboBoxPlugin.h"
-#include "ctkSliderSpinBoxWidgetPlugin.h"
+#include "ctkSliderWidgetPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins : public QObject,
@@ -71,7 +71,7 @@ public:
             << new ctkMenuButtonPlugin
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
-            << new ctkSliderSpinBoxWidgetPlugin
+            << new ctkSliderWidgetPlugin
             << new ctkTransferFunctionViewPlugin
             << new ctkTreeComboBoxPlugin;
     return plugins;

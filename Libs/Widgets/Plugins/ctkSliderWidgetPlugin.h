@@ -18,20 +18,20 @@
  
 =========================================================================*/
 
-#ifndef __ctkSliderSpinBoxWidgetPlugin_h
-#define __ctkSliderSpinBoxWidgetPlugin_h
+#ifndef __ctkSliderWidgetPlugin_h
+#define __ctkSliderWidgetPlugin_h
 
 // CTK includes
 #include "ctkWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkSliderSpinBoxWidgetPlugin :
+class CTK_WIDGETS_PLUGINS_EXPORT ctkSliderWidgetPlugin :
   public QObject,
   public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkSliderSpinBoxWidgetPlugin(QObject *_parent = 0);
+  ctkSliderWidgetPlugin(QObject *_parent = 0);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

@@ -18,8 +18,8 @@
  
 =========================================================================*/
 
-#ifndef __ctkSliderSpinBoxWidget_h
-#define __ctkSliderSpinBoxWidget_h
+#ifndef __ctkSliderWidget_h
+#define __ctkSliderWidget_h
 
 // Qt includes
 #include <QSlider>
@@ -29,14 +29,13 @@
 
 #include "CTKWidgetsExport.h"
 
-class ctkSliderSpinBoxWidgetPrivate;
+class ctkSliderWidgetPrivate;
 
 ///
-/// ctkSliderSpinBoxWidget is a wrapper around a ctkDoubleSlider and a
-/// synchronized QDoubleSpinBox.
-/// TODO: rename ctkSliderSpinBoxWidget into ctkSliderWidget
+/// ctkSliderWidget is a wrapper around a ctkDoubleSlider and a QDoubleSpinBox
+/// where the slider value and the spinbox value are synchronized.
 /// \sa ctkRangeWidget, ctkDoubleRangeSlider, QSpinBox
-class CTK_WIDGETS_EXPORT ctkSliderSpinBoxWidget : public QWidget
+class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
@@ -56,8 +55,8 @@ public:
   typedef QWidget Superclass;
 
   /// Constructors
-  explicit ctkSliderSpinBoxWidget(QWidget* parent = 0);
-  virtual ~ctkSliderSpinBoxWidget(){}
+  explicit ctkSliderWidget(QWidget* parent = 0);
+  virtual ~ctkSliderWidget(){}
 
   /// 
   /// This property holds the sliders and spinbox minimum value.
@@ -88,7 +87,7 @@ public:
 
   /// 
   /// This property holds the slider and spinbox current value.
-  /// ctkSliderSpinBoxWidget forces the value to be within the
+  /// ctkSliderWidget forces the value to be within the
   /// legal range: minimum <= value <= maximum.
   double value()const;
 
@@ -148,7 +147,7 @@ public:
   /// Set/Get the auto spinbox width
   /// When the autoSpinBoxWidth property is on, the width of the SpinBox is
   /// set to the same width of the largest QSpinBox of its
-  // ctkSliderSpinBoxWidget siblings.
+  // ctkSliderWidget siblings.
   bool isAutoSpinBoxWidth()const;
   void setAutoSpinBoxWidth(bool autoWidth);
 
@@ -175,7 +174,7 @@ protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
   
 private:
-  CTK_DECLARE_PRIVATE(ctkSliderSpinBoxWidget);
+  CTK_DECLARE_PRIVATE(ctkSliderWidget);
 
 };
 

@@ -19,51 +19,51 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkSliderSpinBoxWidgetPlugin.h"
-#include "ctkSliderSpinBoxWidget.h"
+#include "ctkSliderWidgetPlugin.h"
+#include "ctkSliderWidget.h"
 
 //-----------------------------------------------------------------------------
-ctkSliderSpinBoxWidgetPlugin::ctkSliderSpinBoxWidgetPlugin(QObject *_parent)
+ctkSliderWidgetPlugin::ctkSliderWidgetPlugin(QObject *_parent)
         : QObject(_parent)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkSliderSpinBoxWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *ctkSliderWidgetPlugin::createWidget(QWidget *_parent)
 {
-  ctkSliderSpinBoxWidget* _widget = new ctkSliderSpinBoxWidget(_parent);
+  ctkSliderWidget* _widget = new ctkSliderWidget(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSliderSpinBoxWidgetPlugin::domXml() const
+QString ctkSliderWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkSliderSpinBoxWidget\" \
+  return "<widget class=\"ctkSliderWidget\" \
           name=\"SliderSpinBoxWidget\">\n"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkSliderSpinBoxWidgetPlugin::icon() const
+QIcon ctkSliderWidgetPlugin::icon() const
 {
   return QIcon(":/Icons/sliderspinbox.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSliderSpinBoxWidgetPlugin::includeFile() const
+QString ctkSliderWidgetPlugin::includeFile() const
 {
-  return "ctkSliderSpinBoxWidget.h";
+  return "ctkSliderWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkSliderSpinBoxWidgetPlugin::isContainer() const
+bool ctkSliderWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSliderSpinBoxWidgetPlugin::name() const
+QString ctkSliderWidgetPlugin::name() const
 {
-  return "ctkSliderSpinBoxWidget";
+  return "ctkSliderWidget";
 }

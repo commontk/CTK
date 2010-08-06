@@ -19,7 +19,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkMatrixWidgetTest1.cpp
   ctkRangeSliderTest1.cpp
   ctkRangeWidgetTest1.cpp
-  ctkSliderSpinBoxWidgetTest1.cpp
+  ctkSliderWidgetTest1.cpp
   ctkTreeComboBoxTest1.cpp
   )
 
@@ -63,5 +63,5 @@ SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
 SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
-SIMPLE_TEST( ctkSliderSpinBoxWidgetTest1 )
+SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )

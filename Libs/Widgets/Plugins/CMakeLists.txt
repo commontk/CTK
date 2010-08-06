@@ -49,8 +49,8 @@ SET(PLUGIN_SRCS
   ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.cpp
   ctkTreeComboBoxPlugin.h
-  ctkSliderSpinBoxWidgetPlugin.cpp
-  ctkSliderSpinBoxWidgetPlugin.h
+  ctkSliderWidgetPlugin.cpp
+  ctkSliderWidgetPlugin.h
   )
 
 # Headers that should run through moc
@@ -75,7 +75,7 @@ SET(PLUGIN_MOC_SRCS
   ctkRangeWidgetPlugin.h
   ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.h
-  ctkSliderSpinBoxWidgetPlugin.h
+  ctkSliderWidgetPlugin.h
   )
 
 # Resources
