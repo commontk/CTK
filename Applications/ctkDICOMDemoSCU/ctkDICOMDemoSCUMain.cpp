@@ -48,7 +48,7 @@ int main(int argc, char** argv)
   
   // Setup SCU
   DcmSCU scu;
-  scu.setPeerHostName(host);
+  scu.setPeerHostName(OFString(host.c_str()));
   scu.setPeerPort(port);
   OFString verificationSOP = UID_VerificationSOPClass;
   OFList<OFString> ts;

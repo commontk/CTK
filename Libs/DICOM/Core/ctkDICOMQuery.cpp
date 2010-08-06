@@ -163,9 +163,9 @@ void ctkDICOMQuery::query(QSqlDatabase database )
     logger.debug ( "DB not open in Query" );
     }
   d->StudyInstanceUIDList.clear();
-  d->SCU.setAETitle ( this->callingAETitle().toStdString() );
-  d->SCU.setPeerAETitle ( this->calledAETitle().toStdString() );
-  d->SCU.setPeerHostName ( this->host().toStdString() );
+  d->SCU.setAETitle ( OFString(this->callingAETitle().toStdString().c_str()) );
+  d->SCU.setPeerAETitle ( OFString(this->calledAETitle().toStdString().c_str()) );
+  d->SCU.setPeerHostName ( OFString(this->host().toStdString().c_str()) );
   d->SCU.setPeerPort ( this->port() );
 
   logger.error ( "Setting Transfer Syntaxes" );
