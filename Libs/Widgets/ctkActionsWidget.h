@@ -37,7 +37,14 @@ class QStandardItemModel;
 class QStandardItem;
 class QTreeView;
 
-//---------------------------------------------------------------------------
+/// ctkActionsWidget presents a list of QAction to the user. The QAction's are
+/// displayed in a multi column tree view. The columns contain the QAction's
+/// text, shortcut, context and tooltip in that order.
+/// The typical use is to show what shortcuts are associated to what commands
+/// in an application.
+/// ctkActionsWidget internally uses a QStandardItemModel where each item data
+/// (QStandardItem::data) contain a pointer to the QAction.
+/// QActions can optionally be ordered by group
 class CTK_WIDGETS_EXPORT ctkActionsWidget : public QWidget
 {
   Q_OBJECT
@@ -87,7 +94,9 @@ private:
   CTK_DECLARE_PRIVATE(ctkActionsWidget);
 };
 
-//---------------------------------------------------------------------------
+/// ctkSortFilterActionsProxyModel is a utility class that is needed by
+/// ctkActionsWidget. It's a specialization of a QSortFilterProxyModel and
+/// control what action is visible to the tree view.
 class ctkSortFilterActionsProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT
@@ -106,7 +115,9 @@ private:
   CTK_DECLARE_PRIVATE(ctkSortFilterActionsProxyModel);
 };
 
-//---------------------------------------------------------------------------
+/// ctkRichTextItemDelegate is a utility class that is needed by
+/// ctkActionsWidget. It control how QAction tree items are displayed when the
+/// text is written in HTML.
 class ctkRichTextItemDelegate : public QStyledItemDelegate
 {
   Q_OBJECT
