@@ -258,7 +258,7 @@ void ctkSliderWidget::stopChanging()
 void ctkSliderWidget::changeValue(double newValue)
 {
   CTK_D(ctkSliderWidget);
-  //if (d->Tracking)
+  if (!d->Tracking)
     {
     emit this->valueIsChanging(newValue);
     }

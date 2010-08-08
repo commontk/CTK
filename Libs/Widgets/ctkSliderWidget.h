@@ -158,10 +158,17 @@ public slots:
   void setValue(double value);
 
 signals:
-  /// Use with care:
-  /// sliderMoved is emitted only when the user moves the slider
-  //void sliderMoved(double position);
+  /// When tracking is on (default), valueChanged is emitted when the
+  /// user drags the slider.
+  /// If tracking is off, valueChanged() is emitted only when the user
+  /// releases the mouse.
+  /// \sa valueIsChanging QAbstractSlider::valueChanged
   void valueChanged(double value);
+
+  /// valueIsChanging() is emitted whenever the slider is dragged and tracking
+  /// is turned off. You might want to use valueChanged instead.
+  /// It behaves the same way than QAbstractSlider::sliderMoved()
+  /// \sa valueChanged QAbstractSlider::sliderMoved
   void valueIsChanging(double value);
 
 protected slots:
