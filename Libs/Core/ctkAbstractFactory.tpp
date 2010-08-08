@@ -153,6 +153,11 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
   // Sanity checks
   if (!_item || key.isEmpty() || this->item(key))
     {
+    if (this->verbose())
+      {
+      qDebug() << __FUNCTION__ << "key is empty or already exists:"
+               << key << "; item: " << _item;
+      }
     return false;
     }
   
