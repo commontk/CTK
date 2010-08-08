@@ -84,7 +84,7 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
     QCTK_EXIT_TEST(EXIT_FAILURE);
     }
   widget.addAction(action);
-  //QCTK_EXIT_TEST(EXIT_SUCCESS);
+  QCTK_EXIT_TEST(EXIT_SUCCESS);
   //QTimer::singleShot(500, QApplication::instance(), SLOT(quit()));
 }
 
