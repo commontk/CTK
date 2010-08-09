@@ -43,6 +43,9 @@
 # List all libraries
 SET(CTK_LIBRARIES @CTK_LIBRARIES@)
 
+# List all CTK libraries wrapped with PythonQt
+SET(CTK_WRAPPED_LIBRARIES_PYTHONQT @CTK_WRAPPED_LIBRARIES_PYTHONQT@)
+
 @CTK_CONFIG_INSTALL_ONLY@
 
 # The CTK include file directories.
