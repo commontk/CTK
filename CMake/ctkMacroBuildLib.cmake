@@ -136,6 +136,9 @@ MACRO(ctkMacroBuildLib)
       KIT_PYTHONQT_SRCS "${MY_SRCS}" ${CTK_WRAP_PYTHONQT_FULL})
     ADD_LIBRARY(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
     TARGET_LINK_LIBRARIES(${lib_name}PythonQt ${lib_name})
+    IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+      SET_TARGET_PROPERTIES(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
+    ENDIF()
 
     # Update list of libraries wrapped with PythonQt
     SET(CTK_WRAPPED_LIBRARIES_PYTHONQT
