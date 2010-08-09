@@ -11,8 +11,8 @@ cmake_minimum_required(VERSION 2.8)
 
 #
 # For additional information, 
-# See http://github.com/pieper/CTK/raw/master/CMake/ctkDashboardScript.EXAMPLE.cmake
-# See http://github.com/pieper/CTK/raw/master/CMake/ctkDashboardDriverScript.cmake
+# See http://github.com/commontk/CTK/raw/master/CMake/ctkDashboardScript.EXAMPLE.cmake
+# See http://github.com/commontk/CTK/raw/master/CMake/ctkDashboardDriverScript.cmake
 #
 
 #
@@ -117,7 +117,7 @@ ENDMACRO()
 #
 # Download and include dashboard driver script 
 #
-set(url http://github.com/pieper/CTK/raw/master/CMake/ctkDashboardDriverScript.cmake)
+set(url http://github.com/commontk/CTK/raw/master/CMake/ctkDashboardDriverScript.cmake)
 set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)
 downloadFile(${url} ${dest})
 INCLUDE(${dest})
