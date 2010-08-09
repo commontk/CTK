@@ -83,7 +83,10 @@ SET(CTK_RUNTIME_LIBRARY_DIRS "@CTK_RUNTIME_LIBRARY_DIRS_CONFIG@")
 # will be the parent directories under which there will be a directory
 # of runtime libraries for each configuration type.
 SET(CTK_QTDESIGNERPLUGINS_DIR "@CTK_QTDESIGNERPLUGINS_DIR_CONFIG@")
- 
+
+# CTK PythonQt install directory
+SET(CTK_PYTHONQT_INSTALL_DIR "@CTK_PYTHONQT_INSTALL_DIR_CONFIG@")
+
 # The CTK version number
 SET(CTK_MAJOR_VERSION "@CTK_MAJOR_VERSION@")
 SET(CTK_MINOR_VERSION "@CTK_MINOR_VERSION@")
