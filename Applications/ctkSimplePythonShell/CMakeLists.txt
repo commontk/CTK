@@ -33,6 +33,11 @@ ctkMacroGetTargetLibraries(KIT_target_libraries)
 SET(KIT_include_directories
   )
 
+IF(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+  LIST(APPEND KIT_target_libraries CTKCorePythonQt)
+  LIST(APPEND KIT_target_libraries CTKWidgetsPythonQt)
+ENDIF()
+
 ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
