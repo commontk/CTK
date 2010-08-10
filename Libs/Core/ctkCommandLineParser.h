@@ -331,7 +331,7 @@ public:
    * registered as a regular argument via <code>addArgument()</code>.
    *
    * @param disableLongArg Long argument name.
-   * @param disalbeShortArg Short argument name.
+   * @param disableShortArg Short argument name.
    *
    * @see ctkCommandLineParser(QSettings*)
    */

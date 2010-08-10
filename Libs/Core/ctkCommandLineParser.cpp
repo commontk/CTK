@@ -14,7 +14,7 @@
 
 namespace
 {
-
+// --------------------------------------------------------------------------
 class CommandLineParserArgumentDescription
 {
 public:
@@ -623,6 +623,7 @@ void ctkCommandLineParser::addArgument(const QString& longarg, const QString& sh
   this->Internal->GroupToArgumentDescriptionListMap[this->Internal->CurrentGroup] << argDesc;
 }
 
+// --------------------------------------------------------------------------
 void ctkCommandLineParser::addDeprecatedArgument(
     const QString& longarg, const QString& shortarg, const QString& argHelp)
 {
@@ -681,6 +682,7 @@ void ctkCommandLineParser::mergeSettings(bool merge)
   this->Internal->MergeSettings = merge;
 }
 
+// --------------------------------------------------------------------------
 bool ctkCommandLineParser::settingsEnabled() const
 {
   return this->Internal->UseQSettings;
