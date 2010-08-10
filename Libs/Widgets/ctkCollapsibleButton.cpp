@@ -87,6 +87,9 @@ void ctkCollapsibleButtonPrivate::init()
                                QSizePolicy::Preferred, 
                                QSizePolicy::DefaultType));
   p->setContentsMargins(0, p->buttonSizeHint().height(),0 , 0);
+  // by default QAbstractButton changed the background role to Button
+  // we want a regular background 
+  p->setBackgroundRole(QPalette::Window);
 
   QObject::connect(p, SIGNAL(toggled(bool)),
                    p, SLOT(onToggled(bool)));
@@ -543,34 +546,34 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
                         opt.text, QPalette::ButtonText);
 
   // Draw Frame around contents
-  QStyleOptionFrameV3 f;
-  f.init(this);
+  QStyleOptionFrameV3 fopt;
+  fopt.init(this);
   // HACK: on some styles, the frame doesn't exactly touch the button.
-  // this is because the button has some kind of extra border. 
+  // this is because the button has some kind of extra border.
   if (qobject_cast<QCleanlooksStyle*>(this->style()) != 0)
     {
-    f.rect.setTop(buttonHeight - 1);
+    fopt.rect.setTop(buttonHeight - 1);
     }
   else
     {
-    f.rect.setTop(buttonHeight);
+    fopt.rect.setTop(buttonHeight);
     }
-  f.frameShape = d->ContentsFrameShape;
+  fopt.frameShape = d->ContentsFrameShape;
   switch (d->ContentsFrameShadow)
     {
     case QFrame::Sunken:
-      f.state |= QStyle::State_Sunken;
+      fopt.state |= QStyle::State_Sunken;
       break;
     case QFrame::Raised:
-      f.state |= QStyle::State_Raised;
+      fopt.state |= QStyle::State_Raised;
       break;
     default:
     case QFrame::Plain:
       break;
     }
-  f.lineWidth = d->ContentsLineWidth;
-  f.midLineWidth = d->ContentsMidLineWidth;
-  style()->drawControl(QStyle::CE_ShapedFrame, &f, &p, this);
+  fopt.lineWidth = d->ContentsLineWidth;
+  fopt.midLineWidth = d->ContentsMidLineWidth;
+  style()->drawControl(QStyle::CE_ShapedFrame, &fopt, &p, this);
 }
 
 //-----------------------------------------------------------------------------
