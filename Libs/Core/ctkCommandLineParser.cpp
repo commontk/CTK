@@ -523,6 +523,20 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
 }
 
 // -------------------------------------------------------------------------
+QHash<QString, QVariant> ctkCommandLineParser::parseArguments(int argc, char** argv, bool* ok)
+{
+  QStringList arguments;
+
+  // Create a QStringList of arguments
+  for(int i = 0; i < argc; ++i)
+    {
+    arguments << argv[i];
+    }
+
+  return this->parseArguments(arguments, ok);
+}
+
+// -------------------------------------------------------------------------
 QString ctkCommandLineParser::errorString() const
 {
   return this->Internal->ErrorString;

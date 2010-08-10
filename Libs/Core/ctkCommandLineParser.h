@@ -124,6 +124,12 @@ public:
   QHash<QString, QVariant> parseArguments(const QStringList &arguments, bool* ok = 0);
 
   /**
+    * Convenient method allowing to parse a given list of command line arguments.
+    * @see parseArguments(const QStringList &, bool*)
+    */
+  QHash<QString, QVariant> parseArguments(int argc, char** argv, bool* ok = 0);
+
+  /**
    * Returns a detailed error description if a call to <code>parseArguments()</code>
    * failed.
    *
