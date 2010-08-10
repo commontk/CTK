@@ -33,9 +33,14 @@
 class ctkIconEnginePluginPrivate;
 class ctkIconEnginePrivate;
 
-/// if you want to use it in your application, don't forget to declare
-/// Q_EXPORT_PLUGIN2(yourplugin, ctkIconEnginePlugin)
-/// Currently
+/// ctkIconEnginePlugin must be loaded when starting the application.
+/// \code
+/// QApplication myApp;
+/// QCoreApplication::addLibraryPath("MyApp-build/plugins");
+/// \endcode
+/// where the plugin must be located in "MyApp-build/plugins/iconengines"
+/// don't forget to declare in the cpp file:
+///   Q_EXPORT_PLUGIN2(yourpluginName, ctkIconEnginePlugin)
 class CTK_WIDGETS_EXPORT ctkIconEnginePlugin: public QIconEnginePluginV2
 {
   Q_OBJECT;
@@ -59,8 +64,30 @@ private:
 };
 
 //------------------------------------------------------------------------------
-/// Only support files in ressources.
-/// TODO: support any files (not just files in resources)
+/// ctkIconEngine is an icon engine that behaves like the default Qt icon engine
+/// QPixmapIconEngine(ctkPixmapIconEngine)), but can automatically support icons
+/// in multiple size. When adding a file to an icon, it will automatically check
+/// if the same file name exists in a different directory. This allows the
+/// application to contains icons in different size,e.g. :/Icons/Small/edit.png
+/// and :/Icons/Large/edit.png.
+/// Without ctkIconEngine, QIcon already support mutltiple files:
+/// \code
+///  QIcon editIcon;
+///  editIcon.addFile(":/Icons/Small/edit.png");
+///  editIcon.addFile(":/Icons/Large/edit.png");
+/// \endcode
+/// Using ctkIconEngine, adding a file to an icon will automatically search for
+/// any icon in a different directory:
+/// \code
+///  ctkIconEngine* autoIconEngine;
+///  autoIconEngine->setSizeDirectories(QStringList() << "Large" << "Small"; 
+///  QIcon editIcon(autoIconEngine);
+///  editIcon.addFile(":/Icons/Small/edit.png");
+/// \endcode
+/// where the large version of the icon is automatically added.
+/// It is mostly useful when using the designer, where only 1 icon file can
+/// be specified. It must be used with ctkIconEnginePlugin
+/// TODO: support more than just files in ressources.
 class CTK_WIDGETS_EXPORT ctkIconEngine: public ctkPixmapIconEngine
 {
 public:
