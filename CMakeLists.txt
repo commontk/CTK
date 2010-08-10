@@ -123,10 +123,11 @@ SET(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
-# Clear CTK_BASE_INCLUDE_DIRS and CTK_BASE_LIBRARIES
+# Clear CTK_BASE_INCLUDE_DIRS, CTK_BASE_LIBRARIES and CTK_WRAPPED_LIBRARIES_PYTHONQT
 #
 SET(CTK_BASE_LIBRARIES CACHE INTERNAL "CTK base libraries" FORCE)
 SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
+SET(CTK_WRAPPED_LIBRARIES_PYTHONQT CACHE INTERNAL "CTK libraries wrapped using PythonQt" FORCE)
 
 # Variable use in CTKConfig.cmake.in
 SET(CTK_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
@@ -141,6 +142,7 @@ INCLUDE(CMake/ctkMacroBuildPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildApp.cmake)
 INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
 INCLUDE(CMake/ctkMacroCompilePythonScript.cmake)
+INCLUDE(CMake/ctkMacroWrapPythonQt.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
@@ -352,6 +354,20 @@ FOREACH(app ${CTK_APPLICATIONS})
   OPTION(CTK_APP_${app_name} "Build ${app_name} Application." ${app_value})
   LIST(APPEND CTK_APPLICATIONS_SUBDIRS "${app_name}")
 ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# CTK Python wrapping - Propose the option only if CTK_LIB_Scriping/Python/Core is ON
+IF(CTK_LIB_Scripting/Python/Core)
+  OPTION(CTK_WRAP_PYTHONQT_FULL "Wrap CTK classes using Qt meta-object system into Python language" OFF)
+  OPTION(CTK_WRAP_PYTHONQT_LIGHT "Wrap CTK classes using Qt meta-object system into Python language" OFF)
+  IF(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
+    MESSAGE(SEND_ERROR "CTK_WRAP_PYTHONQT_{LIGHT,FULL} options are mutually exclusive. Please enable only one !")
+  ENDIF()
+ELSE()
+  # Note that an unset boolean variable is considered to be False
+  UNSET(CTK_WRAP_PYTHONQT_FULL CACHE)
+  UNSET(CTK_WRAP_PYTHONQT_LIGHT CACHE)
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Generate target_directories list - List of directory corresponding to the different

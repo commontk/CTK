@@ -114,6 +114,7 @@ SET(external_projects
   Log4Qt
   KWStyle
   PythonQt
+  PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
   DCMTK
   ZMQ
   QtMobility
@@ -145,10 +146,11 @@ ExternalProject_Add(${proj}
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
     ${PythonQt_DEPENDS}
+    ${PythonQtGenerator_DEPENDS}
     ${ZMQ_DEPENDS}
     ${OpenIGTLink_DEPENDS}
     ${VTK_DEPENDS}
-    ${XIP_DEPENDS}
+    ${XIP_DEPENDS}    
 )
 
 #-----------------------------------------------------------------------------
@@ -179,6 +181,8 @@ SET(ctk_cmake_boolean_args
   WITH_COVERAGE
   DOCUMENTATION_TARGET_IN_ALL
   CTEST_USE_LAUNCHERS
+  CTK_WRAP_PYTHONQT_FULL
+  CTK_WRAP_PYTHONQT_LIGHT
   ${ctk_libs_bool_vars}
   ${ctk_plugins_bool_vars}
   ${ctk_applications_bool_vars}
@@ -217,15 +221,18 @@ ExternalProject_Add(${proj}
     -DCTK_C_FLAGS:STRING=${CTK_C_FLAGS}
     -DCTK_EXTERNAL_LIBRARY_DIRS:STRING=${CTK_EXTERNAL_LIBRARY_DIRS}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+    # External projects
     -DCTKData_DIR:PATH=${CTKData_DIR}
 	  -DZMQ_DIR:PATH=${ZMQ_DIR}                     # FindVTK expects VTK_DIR variable to be defined
 	  -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR}     # FindOpenIGTLink expects OpenIGTLink_DIR variable to be defined
     -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
     -DDCMTK_DIR:PATH=${DCMTK_DIR} # FindDCMTK expects DCMTK_DIR variable to be defined
     -DVTK_DIR:PATH=${VTK_DIR}     # FindVTK expects VTK_DIR variable to be defined
+    -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}   # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
     -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}     # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
     -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}         # FindPythonQt expects PYTHON_LIBRARY variable to be defined
     -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR variable to be defined
+    -DPYTHONQTGENERATOR_EXECUTABLE:FILEPATH=${PYTHONQTGENERATOR_EXECUTABLE} #FindPythonQtGenerator expects PYTHONQTGENERATOR_EXECUTABLE to be defined
     -DLog4Qt_DIR:PATH=${Log4Qt_DIR} # FindLog4Qt expects Log4Qt_DIR variable to be defined
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
