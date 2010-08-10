@@ -33,6 +33,17 @@ ctkMacroGetTargetLibraries(KIT_target_libraries)
 SET(KIT_include_directories
   )
 
+# Configure file will be configured using CTK_WRAP_PYTHONQT_{LIGHT, FULL} variable
+CONFIGURE_FILE(
+  ctkSimplePythonShellConfigure.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/ctkSimplePythonShellConfigure.h
+  )
+  
+IF(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+  LIST(APPEND KIT_target_libraries CTKCorePythonQt)
+  LIST(APPEND KIT_target_libraries CTKWidgetsPythonQt)
+ENDIF()
+
 ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
   INCLUDE_DIRECTORIES ${KIT_include_directories}

@@ -1,0 +1,13 @@
+#ifndef __ctkSimplePythonShellConfigure_h
+#define __ctkSimplePythonShellConfigure_h
+
+
+///
+/// Here is where system computed values get stored
+///
+
+#cmakedefine CTK_WRAP_PYTHONQT_LIGHT
+#cmakedefine CTK_WRAP_PYTHONQT_FULL
+
+#endif
+
