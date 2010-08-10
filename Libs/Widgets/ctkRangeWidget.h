@@ -34,7 +34,7 @@ class ctkRangeWidgetPrivate;
 
 ///
 /// ctkRangeWidget is a wrapper around a ctkDoubleRangeSlider and 2 QSpinBoxes
-/// \image html http:\\www.commontk.org/images/1/14/CtkRangeWidget.png
+/// \image html http://www.commontk.org/images/1/14/CtkRangeWidget.png
 /// \sa ctkSliderSpinBoxWidget, ctkDoubleRangeSlider, QSpinBox
 class CTK_WIDGETS_EXPORT ctkRangeWidget : public QWidget
 {
