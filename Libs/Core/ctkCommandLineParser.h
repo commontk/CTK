@@ -360,6 +360,15 @@ public:
    */
   bool settingsEnabled() const;
 
+
+  /**
+    * Can be used to teach the parser to stop parsing the arguments and return False when
+    * an unknown argument is encountered. By default <code>StrictMode</code> is disabled.
+    *
+    * @see parseArguments(const QStringList &, bool*)
+    */
+  void setStrictModeEnabled(bool strictMode);
+
 private:
   class ctkInternal;
   ctkInternal * Internal;

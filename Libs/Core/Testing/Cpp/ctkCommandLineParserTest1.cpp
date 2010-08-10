@@ -702,5 +702,52 @@ int ctkCommandLineParserTest1(int, char*[])
     return EXIT_FAILURE;
   }
 
+  // Test16 - Check if strictMode works
+  settings.clear();
+
+  ctkCommandLineParser parser16(&settings);
+  parser16.enableSettings();
+  parser16.addArgument("--test-bool", "", QVariant::Bool);
+  parser16.setStrictModeEnabled(true);
+
+  QStringList arguments16;
+  arguments16 << "ctkCommandLineParserTest1";
+  arguments16 << "--test-bool";
+
+  // parseArguments should NOT fail
+  ok = false;
+  parsedArgs = parser16.parseArguments(arguments16, &ok);
+  if (!ok)
+  {
+    qCritical() << "Test16-1 - parsing arguments failed.";
+    return EXIT_FAILURE;
+  }
+
+  // Since two identical arguments are provided, parseArguments should fail
+  arguments16.clear();
+  arguments16 << "ctkCommandLineParserTest1";
+  arguments16 << "--test-bool";
+  arguments16 << "--test-bool";
+  ok = false;
+  parsedArgs = parser16.parseArguments(arguments16, &ok);
+  if (ok)
+  {
+    qCritical() << "Test16-2 - parsing arguments should fail.";
+    return EXIT_FAILURE;
+  }
+
+  // Since an unknown argument is provided, parseArguments should fail
+  arguments16.clear();
+  arguments16 << "ctkCommandLineParserTest1";
+  arguments16 << "--test-bool";
+  arguments16 << "test-bool";
+  ok = false;
+  parsedArgs = parser16.parseArguments(arguments16, &ok);
+  if (ok)
+  {
+    qCritical() << "Test16-3 - parsing arguments should fail.";
+    return EXIT_FAILURE;
+  }
+
   return EXIT_SUCCESS;
 }

@@ -197,7 +197,7 @@ class ctkCommandLineParser::ctkInternal
 public:
   ctkInternal(QSettings* settings)
     : Debug(false), FieldWidth(0), UseQSettings(false),
-      Settings(settings), MergeSettings(true)
+      Settings(settings), MergeSettings(true), StrictMode(false)
   {}
 
   ~ctkInternal() { qDeleteAll(ArgumentDescriptionList); }
@@ -221,6 +221,7 @@ public:
   QString     DisableQSettingsLongArg;
   QString     DisableQSettingsShortArg;
   bool        MergeSettings;
+  bool        StrictMode;
 };
 
 // --------------------------------------------------------------------------
@@ -284,6 +285,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
     }
   }
 
+  bool error = false;
   bool ignoreRest = false;
   bool useSettings = this->Internal->UseQSettings;
   CommandLineParserArgumentDescription * currentArgDesc = 0;
@@ -305,6 +307,12 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
     if (!(argument.startsWith(this->Internal->LongPrefix)
       || argument.startsWith(this->Internal->ShortPrefix)))
     {
+      if (this->Internal->StrictMode)
+        {
+        this->Internal->ErrorString = QString("Unknown argument %1").arg(argument);
+        error = true;
+        break;
+        }
       this->Internal->UnparsedArguments << argument;
       continue;
     }
@@ -312,6 +320,12 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
     // Skip if argument has already been parsed ...
     if (this->Internal->ProcessedArguments.contains(argument))
       {
+      if (this->Internal->StrictMode)
+        {
+        this->Internal->ErrorString = QString("Argument %1 already processed !").arg(argument);
+        error = true;
+        break;
+        }
       qDebug() << "Skipping argument" << argument << " - Already processed !";
       continue;
       }
@@ -430,11 +444,20 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
       }
     else
       {
+      if (this->Internal->StrictMode)
+        {
+        this->Internal->ErrorString = QString("Unknown argument %1").arg(argument);
+        error = true;
+        break;
+        }
       this->Internal->UnparsedArguments << argument;
       }
     }
 
-  if (ok) *ok = true;
+  if (ok)
+    {
+    *ok = !error;
+    }
 
   QSettings* settings = 0;
   if (this->Internal->UseQSettings && useSettings)
@@ -723,5 +746,11 @@ void ctkCommandLineParser::setArgumentPrefix(const QString& longPrefix, const QS
 {
   this->Internal->LongPrefix = longPrefix;
   this->Internal->ShortPrefix = shortPrefix;
+}
+
+// --------------------------------------------------------------------------
+void ctkCommandLineParser::setStrictModeEnabled(bool strictMode)
+{
+  this->Internal->StrictMode = strictMode;
 }
 
