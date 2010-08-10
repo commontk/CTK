@@ -46,10 +46,14 @@ SET(KIT_SRCS
   ctkFileDialog.h
   ctkFittedTextBrowser.cpp
   ctkFittedTextBrowser.h
+  ctkIconEnginePlugin.cpp
+  ctkIconEnginePlugin.h
   ctkMatrixWidget.cpp
   ctkMatrixWidget.h
   ctkMenuButton.cpp
   ctkMenuButton.h
+  ctkPixmapIconEngine.cpp
+  ctkPixmapIconEngine.h
   ctkRangeSlider.cpp
   ctkRangeSlider.h
   ctkRangeWidget.cpp
@@ -95,6 +99,7 @@ SET(KIT_MOC_SRCS
   ctkDynamicSpacer.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
+  ctkIconEnginePlugin.h
   ctkMatrixWidget.h
   ctkMenuButton.h
   ctkRangeSlider.h
