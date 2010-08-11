@@ -261,6 +261,8 @@ ctkPythonShell::ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget*
 
   this->setObjectName("pythonShell");
 
+  this->setFocusProxy(&this->Implementation->Console);
+
   ctkPythonShellCompleter* completer = new ctkPythonShellCompleter(*this);
   this->Implementation->Console.setCompleter(completer);
   
