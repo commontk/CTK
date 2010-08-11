@@ -297,13 +297,16 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
   QList<CommandLineParserArgumentDescription*> parsedArgDescriptions;
   for(int i = 1; i < arguments.size(); ++i)
     {
-
     QString argument = arguments.at(i);
     if (this->Internal->Debug) { qDebug() << "Processing" << argument; }
 
     // should argument be ignored ?
     if (ignoreRest)
       {
+      if (this->Internal->Debug)
+        {
+        qDebug() << "  Skipping: IgnoreRest flag was been set";
+        }
       this->Internal->UnparsedArguments << argument;
       continue;
       }
@@ -318,6 +321,10 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
         error = true;
         break;
         }
+      if (this->Internal->Debug)
+        {
+        qDebug() << "  Skipping: It does not start with the defined prefix";
+        }
       this->Internal->UnparsedArguments << argument;
       continue;
       }
@@ -331,7 +338,10 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
         error = true;
         break;
         }
-      qDebug() << "Skipping argument" << argument << " - Already processed !";
+      if (this->Internal->Debug)
+        {
+        qDebug() << "  Skipping: Already processed !";
+        }
       continue;
       }
 
@@ -361,6 +371,10 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
       this->Internal->ProcessedArguments << currentArgDesc->ShortArg << currentArgDesc->LongArg;
       int numberOfParametersToProcess = currentArgDesc->NumberOfParametersToProcess;
       ignoreRest = currentArgDesc->IgnoreRest;
+      if (this->Internal->Debug && ignoreRest)
+        {
+        qDebug() << "  IgnoreRest flag is True";
+        }
 
       // Is the number of parameters associated with the argument being processed known ?
       if (numberOfParametersToProcess == 0)
@@ -384,7 +398,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
           QString parameter = arguments.at(i + j);
           if (this->Internal->Debug)
             {
-            qDebug() << "Processing parameter" << j << ", value:" << parameter;
+            qDebug() << "  Processing parameter" << j << ", value:" << parameter;
             }
           if (this->argumentAdded(parameter))
             {
@@ -412,7 +426,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
         {
         if (this->Internal->Debug)
           {
-          qDebug() << "Proccessing StringList ...";
+          qDebug() << "  Proccessing StringList ...";
           }
         int j = 1;
         while(j + i < arguments.size())
@@ -421,14 +435,14 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
             {
             if (this->Internal->Debug)
               {
-              qDebug() << "No more parameter for" << argument;
+              qDebug() << "  No more parameter for" << argument;
               }
             break;
             }
           QString parameter = arguments.at(j + i);
           if (this->Internal->Debug)
             {
-            qDebug() << "Processing parameter" << j << ", value:" << parameter;
+            qDebug() << "  Processing parameter" << j << ", value:" << parameter;
             }
           if (!currentArgDesc->addParameter(parameter))
             {
@@ -453,6 +467,10 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
         this->Internal->ErrorString = QString("Unknown argument %1").arg(argument);
         error = true;
         break;
+        }
+      if (this->Internal->Debug)
+        {
+        qDebug() << "  Skipping: Unknown argument";
         }
       this->Internal->UnparsedArguments << argument;
       }
