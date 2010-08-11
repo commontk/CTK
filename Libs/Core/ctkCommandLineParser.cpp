@@ -239,7 +239,15 @@ CommandLineParserArgumentDescription*
   QString unprefixedArg = argument;
   if (!LongPrefix.isEmpty() && argument.startsWith(LongPrefix))
     {
-    unprefixedArg = argument.mid(LongPrefix.length());
+    // Case when (ShortPrefix + UnPrefixedArgument) matches LongPrefix
+    if (argument == LongPrefix && !ShortPrefix.isEmpty() && argument.startsWith(ShortPrefix))
+      {
+      unprefixedArg = argument.mid(ShortPrefix.length());
+      }
+    else
+      {
+      unprefixedArg = argument.mid(LongPrefix.length());
+      }
     }
   else if (!ShortPrefix.isEmpty() && argument.startsWith(ShortPrefix))
     {

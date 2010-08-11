@@ -339,6 +339,39 @@ int ctkCommandLineParserTest1(int, char*[])
     return EXIT_FAILURE;
     }
 
+  // Test7b - Same as Test7 using
+  ctkCommandLineParser parser7b;
+  parser7b.setArgumentPrefix("--", "-");
+  parser7b.addArgument("--bool", "-", QVariant::Bool, "This is a boolean",
+                      false /*defaultValue*/, true /* ignoreRest*/);
+  QStringList arguments7b;
+  arguments7b << "ctkCommandLineParserTest1";
+  arguments7b << "--";
+  arguments7b << expectedUnparsedArguments;
+
+  ok = false;
+  parsedArgs = parser7b.parseArguments(arguments7b, &ok);
+  if (!ok)
+    {
+    qCritical() << "Test7b - Failed to parse arguments";
+    return EXIT_FAILURE;
+    }
+  bool expectedTest7bBool = true;
+  bool test7bBool = parsedArgs["--bool"].toBool();
+  if (test7bBool != expectedTest7bBool)
+    {
+    qCritical() << "Test7b - Failed - test7bBool" << test7bBool
+        << ", expectedTest7bBool" << expectedTest7bBool;
+    return EXIT_FAILURE;
+    }
+
+  if (parser7b.unparsedArguments() != expectedUnparsedArguments)
+    {
+    qCritical() << "Test7b - Failed - expectedUnparsedArguments " << expectedUnparsedArguments
+                << ", parser7b.unparsedArguments" << parser7b.unparsedArguments();
+    return EXIT_FAILURE;
+    }
+
   // Test8 - Check if addStringArgument and ignore_rest=true works as expected
   ctkCommandLineParser parser8;
   parser8.addArgument("--string", "", QVariant::String, "This is a string",
