@@ -149,6 +149,9 @@ protected:
   virtual void mouseMoveEvent(QMouseEvent* ev);
   virtual void mouseReleaseEvent(QMouseEvent* ev);
 
+  bool isMinimumSliderDown()const;
+  bool isMaximumSliderDown()const;
+
   // Description:
   // Rendering is done here.
   virtual void paintEvent(QPaintEvent* ev);

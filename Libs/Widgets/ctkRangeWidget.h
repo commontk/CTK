@@ -196,6 +196,7 @@ protected slots:
   void changeMaximumValue(double value);
   void setMinimumToMaximumSpinBox(double minimum);
   void setMaximumToMinimumSpinBox(double maximum);
+  void onSliderRangeChanged(double min, double max);
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);

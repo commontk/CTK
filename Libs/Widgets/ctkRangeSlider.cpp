@@ -661,6 +661,20 @@ void ctkRangeSlider::mouseReleaseEvent(QMouseEvent* mouseEvent)
 }
 
 // --------------------------------------------------------------------------
+bool ctkRangeSlider::isMinimumSliderDown()const
+{
+  CTK_D(const ctkRangeSlider);
+  return d->m_SelectedHandles & ctkRangeSliderPrivate::MinimumHandle;
+}
+
+// --------------------------------------------------------------------------
+bool ctkRangeSlider::isMaximumSliderDown()const
+{
+  CTK_D(const ctkRangeSlider);
+  return d->m_SelectedHandles & ctkRangeSliderPrivate::MaximumHandle;
+}
+
+// --------------------------------------------------------------------------
 void ctkRangeSlider::initMinimumSliderStyleOption(QStyleOptionSlider* option) const
 {
   this->initStyleOption(option);

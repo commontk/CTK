@@ -193,7 +193,13 @@ signals:
   /// or programmatically when setSliderDown(false) is called. 
   void sliderReleased();
 
-    
+  ///
+  /// This signal is emitted when the slider range has changed, with min being
+  /// the new minimum, and max being the new maximum.
+  /// Warning: don't confound with valuesChanged(double, double);
+  /// \sa QAbstractSlider::rangeChanged()
+  void rangeChanged(double min, double max);
+
 public slots:
   /// 
   /// This property holds the slider's current minimum value.
@@ -221,6 +227,7 @@ protected slots:
   void onMinPosChanged(int value);
   void onMaxPosChanged(int value);
   void onPositionsChanged(int min, int max);
+  void onRangeChanged(int min, int max);
 
 protected:
   ctkRangeSlider* slider()const;
