@@ -30,40 +30,40 @@ public:
       Deprecated(deprecated), DefaultValue(defaultValue), Value(type), ValueType(type)
   {
     if (defaultValue.isValid())
-    {
+      {
       Value = defaultValue;
-    }
+      }
 
     switch (type)
-    {
-    case QVariant::String:
       {
+      case QVariant::String:
+        {
         NumberOfParametersToProcess = 1;
         RegularExpression = ".*";
-      }
-      break;
-    case QVariant::Bool:
-      {
+        }
+        break;
+      case QVariant::Bool:
+        {
         NumberOfParametersToProcess = 0;
         RegularExpression = "";
-      }
-      break;
-    case QVariant::StringList:
-      {
+        }
+        break;
+      case QVariant::StringList:
+        {
         NumberOfParametersToProcess = -1;
         RegularExpression = ".*";
-      }
-      break;
-    case QVariant::Int:
-      {
+        }
+        break;
+      case QVariant::Int:
+        {
         NumberOfParametersToProcess = 1;
         RegularExpression = "-?[0-9]+";
         ExactMatchFailedMessage = "A negative or positive integer is expected.";
+        }
+        break;
+      default:
+        ExactMatchFailedMessage = QString("Type %1 not supported.").arg(static_cast<int>(type));
       }
-      break;
-    default:
-      ExactMatchFailedMessage = QString("Type %1 not supported.").arg(static_cast<int>(type));
-    }
 
   }
 
@@ -93,51 +93,51 @@ public:
 bool CommandLineParserArgumentDescription::addParameter(const QString& value)
 {
   if (!RegularExpression.isEmpty())
-  {
+    {
     // Validate value
     QRegExp regexp(this->RegularExpression);
     if (!regexp.exactMatch(value))
-    {
+      {
       return false;
+      }
     }
-  }
 
   switch (Value.type())
-  {
-  case QVariant::String:
     {
-      Value.setValue(value);
-    }
-    break;
-  case QVariant::Bool:
-    {
-      Value.setValue(!QString::compare(value, "true", Qt::CaseInsensitive));
-    }
-    break;
-  case QVariant::StringList:
-    {
-      if (Value.isNull())
+    case QVariant::String:
       {
+      Value.setValue(value);
+      }
+      break;
+    case QVariant::Bool:
+      {
+      Value.setValue(!QString::compare(value, "true", Qt::CaseInsensitive));
+      }
+      break;
+    case QVariant::StringList:
+      {
+      if (Value.isNull())
+        {
         QStringList list;
         list << value;
         Value.setValue(list);
-      }
+        }
       else
-      {
+        {
         QStringList list = Value.toStringList();
         list << value;
         Value.setValue(list);
+        }
       }
-    }
-    break;
-  case QVariant::Int:
-    {
+      break;
+    case QVariant::Int:
+      {
       Value.setValue(value.toInt());
+      }
+      break;
+    default:
+      return false;
     }
-    break;
-  default:
-    return false;
-  }
 
   return true;
 }
@@ -152,36 +152,36 @@ QString CommandLineParserArgumentDescription::helpText(int fieldWidth, const cha
 
   QString shortAndLongArg;
   if (!this->ShortArg.isEmpty())
-  {
+    {
     shortAndLongArg += QString("  %1%2").arg(this->ShortArgPrefix).arg(this->ShortArg);
-  }
+    }
 
   if (!this->LongArg.isEmpty())
-  {
+    {
     if (this->ShortArg.isEmpty())
-    {
+      {
       shortAndLongArg.append("  ");
-    }
+      }
     else
-    {
+      {
       shortAndLongArg.append(", ");
-    }
+      }
 
     shortAndLongArg += QString("%1%2").arg(this->LongArgPrefix).arg(this->LongArg);
-  }
+    }
 
   if(!this->ArgHelp.isEmpty())
-  {
+    {
     stream.setFieldWidth(fieldWidth);
-  }
+    }
 
   stream  << shortAndLongArg;
   stream.setFieldWidth(0);
   stream << this->ArgHelp;
   if (!this->DefaultValue.isNull())
-  {
+    {
     stream << " (default: " << this->DefaultValue.toString() << ")";
-  }
+    }
   stream << "\n";
   return text;
 }
@@ -204,8 +204,8 @@ public:
   
   CommandLineParserArgumentDescription* argumentDescription(const QString& argument);
   
-  QList<CommandLineParserArgumentDescription*>          ArgumentDescriptionList;
-  QHash<QString, CommandLineParserArgumentDescription*> ArgNameToArgumentDescriptionMap;
+  QList<CommandLineParserArgumentDescription*>                 ArgumentDescriptionList;
+  QHash<QString, CommandLineParserArgumentDescription*>        ArgNameToArgumentDescriptionMap;
   QMap<QString, QList<CommandLineParserArgumentDescription*> > GroupToArgumentDescriptionListMap;
   
   QStringList UnparsedArguments; 
@@ -233,17 +233,17 @@ CommandLineParserArgumentDescription*
 {
   QString unprefixedArg = argument;
   if (!LongPrefix.isEmpty() && argument.startsWith(LongPrefix))
-  {
+    {
     unprefixedArg = argument.mid(LongPrefix.length());
-  }
+    }
   else if (!ShortPrefix.isEmpty() && argument.startsWith(ShortPrefix))
-  {
+    {
     unprefixedArg = argument.mid(ShortPrefix.length());
-  }
+    }
   else if (!LongPrefix.isEmpty() && !ShortPrefix.isEmpty())
-  {
+    {
     return 0;
-  }
+    }
 
   if (this->ArgNameToArgumentDescriptionMap.contains(unprefixedArg))
     {
@@ -277,13 +277,13 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
   this->Internal->ErrorString.clear();
   foreach (CommandLineParserArgumentDescription* desc,
            this->Internal->ArgumentDescriptionList)
-  {
+    {
     desc->Value = QVariant(desc->ValueType);
     if (desc->DefaultValue.isValid())
-    {
+      {
       desc->Value = desc->DefaultValue;
+      }
     }
-  }
 
   bool error = false;
   bool ignoreRest = false;
@@ -306,7 +306,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
     // Skip if the argument does not start with the defined prefix
     if (!(argument.startsWith(this->Internal->LongPrefix)
       || argument.startsWith(this->Internal->ShortPrefix)))
-    {
+      {
       if (this->Internal->StrictMode)
         {
         this->Internal->ErrorString = QString("Unknown argument %1").arg(argument);
@@ -315,7 +315,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
         }
       this->Internal->UnparsedArguments << argument;
       continue;
-    }
+      }
 
     // Skip if argument has already been parsed ...
     if (this->Internal->ProcessedArguments.contains(argument))
@@ -336,23 +336,22 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
     // Is there a corresponding argument description ?
     if (currentArgDesc)
       {
-
       // If the argument is deprecated, print the help text but continue processing
       if (currentArgDesc->Deprecated)
-      {
+        {
         qWarning().nospace() << "Deprecated argument " << argument << ": "  << currentArgDesc->ArgHelp;
-      }
+        }
       else
-      {
+        {
         parsedArgDescriptions.push_back(currentArgDesc);
-      }
+        }
 
       // Is the argument the special "disable QSettings" argument?
       if ((!currentArgDesc->LongArg.isEmpty() && currentArgDesc->LongArg == this->Internal->DisableQSettingsLongArg)
         || (!currentArgDesc->ShortArg.isEmpty() && currentArgDesc->ShortArg == this->Internal->DisableQSettingsShortArg))
-      {
+        {
         useSettings = false;
-      }
+        }
 
       this->Internal->ProcessedArguments << currentArgDesc->ShortArg << currentArgDesc->LongArg;
       int numberOfParametersToProcess = currentArgDesc->NumberOfParametersToProcess;
@@ -374,7 +373,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
             this->Internal->ErrorString = 
                 missingParameterError.arg(argument).arg(j-1).arg(numberOfParametersToProcess);
             if (this->Internal->Debug) { qDebug() << this->Internal->ErrorString; }
-            if (ok) *ok = false;
+            if (ok) { *ok = false; }
             return QHash<QString, QVariant>();
             }
           QString parameter = arguments.at(i + j);
@@ -387,7 +386,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
             this->Internal->ErrorString =
                 missingParameterError.arg(argument).arg(j-1).arg(numberOfParametersToProcess);
             if (this->Internal->Debug) { qDebug() << this->Internal->ErrorString; }
-            if (ok) *ok = false;
+            if (ok) { *ok = false; }
             return QHash<QString, QVariant>();
             }
           if (!currentArgDesc->addParameter(parameter))
@@ -397,7 +396,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
                 arg(argument).arg(currentArgDesc->ExactMatchFailedMessage);
 
             if (this->Internal->Debug) { qDebug() << this->Internal->ErrorString; }
-            if (ok) *ok = false;
+            if (ok) { *ok = false; }
             return QHash<QString, QVariant>();
             }
           }
@@ -433,7 +432,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
                 arg(argument).arg(currentArgDesc->ExactMatchFailedMessage);
 
             if (this->Internal->Debug) { qDebug() << this->Internal->ErrorString; }
-            if (ok) *ok = false;
+            if (ok) { *ok = false; }
             return QHash<QString, QVariant>();
             }
           j++;
@@ -461,86 +460,88 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
 
   QSettings* settings = 0;
   if (this->Internal->UseQSettings && useSettings)
-  {
+    {
     if (this->Internal->Settings)
-    {
+      {
       settings = this->Internal->Settings;
-    }
+      }
     else
-    {
+      {
       // Use a default constructed QSettings instance
       settings = new QSettings();
+      }
     }
-  }
 
   QHash<QString, QVariant> parsedArguments;
   QListIterator<CommandLineParserArgumentDescription*> it(this->Internal->ArgumentDescriptionList);
   while (it.hasNext())
-  {
+    {
     QString key;
     CommandLineParserArgumentDescription* desc = it.next();
     if (!desc->LongArg.isEmpty())
-    {
+      {
       key = desc->LongArg;
-    }
+      }
     else
-    {
+      {
       key = desc->ShortArg;
-    }
+      }
 
     if (parsedArgDescriptions.contains(desc))
-    {
+      {
       // The argument was supplied on the command line, so use the given value
 
       if (this->Internal->MergeSettings && settings)
-      {
+        {
         // Merge with QSettings
         QVariant settingsVal = settings->value(key);
 
         if (desc->ValueType == QVariant::StringList &&
             settingsVal.canConvert(QVariant::StringList))
-        {
+          {
           QStringList stringList = desc->Value.toStringList();
           stringList.append(settingsVal.toStringList());
           parsedArguments.insert(key, stringList);
-        }
+          }
         else
-        {
+          {
           // do a normal insert
           parsedArguments.insert(key, desc->Value);
+          }
         }
-      }
       else
-      {
+        {
         // No merging, just insert all user values
         parsedArguments.insert(key, desc->Value);
+        }
       }
-    }
     else
-    {
-      if (settings)
       {
+      if (settings)
+        {
         // If there is a valid QSettings entry for the argument, use the value
         QVariant settingsVal = settings->value(key, desc->Value);
         if (!settingsVal.isNull())
-        {
+          {
           parsedArguments.insert(key, settingsVal);
+          }
         }
-      }
       else
-      {
+        {
         // Just insert the arguments with valid default values
         if (!desc->Value.isNull())
-        {
+          {
           parsedArguments.insert(key, desc->Value);
+          }
         }
       }
     }
-  }
 
   // If we created a default QSettings instance, delete it
   if (settings && !this->Internal->Settings)
+    {
     delete settings;
+    }
 
   return parsedArguments;
 }
@@ -602,22 +603,22 @@ void ctkCommandLineParser::addArgument(const QString& longarg, const QString& sh
 
   int argWidth = 0;
   if (!longarg.isEmpty())
-  {
+    {
     this->Internal->ArgNameToArgumentDescriptionMap[longarg] = argDesc;
     argWidth += longarg.length() + this->Internal->LongPrefix.length();
-  }
+    }
   if (!shortarg.isEmpty())
-  {
+    {
     this->Internal->ArgNameToArgumentDescriptionMap[shortarg] = argDesc;
     argWidth += shortarg.length() + this->Internal->ShortPrefix.length() + 2;
-  }
+    }
   argWidth += 5;
 
   // Set the field width for the arguments
   if (argWidth > this->Internal->FieldWidth)
-  {
+    {
     this->Internal->FieldWidth = argWidth;
-  }
+    }
 
   this->Internal->ArgumentDescriptionList << argDesc;
   this->Internal->GroupToArgumentDescriptionListMap[this->Internal->CurrentGroup] << argDesc;
@@ -700,33 +701,33 @@ QString ctkCommandLineParser::helpText(const char charPad) const
   QMapIterator<QString, QList<CommandLineParserArgumentDescription*> > it(
       this->Internal->GroupToArgumentDescriptionListMap);
   while(it.hasNext())
-  {
+    {
     it.next();
     if (!it.key().isEmpty())
-    {
+      {
       stream << "\n" << it.key() << "\n";
-    }
+      }
     foreach(CommandLineParserArgumentDescription* argDesc, it.value())
-    {
+      {
       if (argDesc->Deprecated)
-      {
+        {
         deprecatedArgs << argDesc;
-      }
+        }
       else
-      {
+        {
         stream << argDesc->helpText(this->Internal->FieldWidth, charPad);
+        }
       }
     }
-  }
 
   if (!deprecatedArgs.empty())
-  {
+    {
     stream << "\nDeprecated arguments:\n";
     foreach(CommandLineParserArgumentDescription* argDesc, deprecatedArgs)
-    {
+      {
       stream << argDesc->helpText(this->Internal->FieldWidth, charPad);
+      }
     }
-  }
 
   return text;
 }

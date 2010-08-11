@@ -456,36 +456,36 @@ int ctkCommandLineParserTest1(int, char*[])
   ok = false;
   parsedArgs = parser11.parseArguments(arguments11, &ok);
   if (!ok)
-  {
+    {
     qCritical() << "Test11 - Failed to parse arguments: " << parser11.errorString();
     return EXIT_FAILURE;
-  }
+    }
 
   if (!parser11.unparsedArguments().contains("test-string"))
-  {
+    {
     qCritical() << "Test11 - argument test-string should be unknown.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (!parser11.argumentParsed("test-string") || !parser11.argumentParsed("i"))
-  {
+    {
     qCritical() << "Test11 - Problem with argumentParsed().";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs["test-string"].toString() != "Unix-style")
-  {
+    {
     qCritical() << "Test11 - Failed argument: test-string, got: " << parsedArgs["test-string"].toString()
         << ", expected: " << "Unix-style";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs["i"].toInt() != 5)
-  {
+    {
     qCritical() << "Test11 - Failed argument: i, got: " << parsedArgs["i"].toInt()
         << ", expected: " << 5;
     return EXIT_FAILURE;
-  }
+    }
 
   // Test12 - Check if the returned hash map contains the correct entries
   ctkCommandLineParser parser12;
@@ -496,34 +496,34 @@ int ctkCommandLineParserTest1(int, char*[])
 
   parsedArgs = parser12.parseArguments(arguments12);
   if (!parsedArgs.isEmpty())
-  {
+    {
     qCritical() << "Test12 - Returned hash map should be empty.";
     return EXIT_FAILURE;
-  }
+    }
 
   arguments12 << "--test-list" << "--test-list2";
   parsedArgs = parser12.parseArguments(arguments12);
   if (parsedArgs.size() != 1 || !parsedArgs.contains("--test-list"))
-  {
+    {
     qCritical() << "Test12 - Returned hash map contains wrong elements.";
     return EXIT_FAILURE;
-  }
+    }
 
   // Test13 - Check that supplying a default value works
   ctkCommandLineParser parser13;
   parser13.addArgument("", "-d", QVariant::Int, "Argument with default value", 3);
   parsedArgs = parser13.parseArguments(QStringList(), &ok);
   if (!parsedArgs.contains("-d"))
-  {
+    {
     qCritical() << "Test13 - Returned hash map does not contain argument with default value.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs["-d"].toInt() != 3)
-  {
+    {
     qCritical() << "Test13 - Returned hash map contains wrong argument parameter.";
     return EXIT_FAILURE;
-  }
+    }
 
   // ==================== QSettings tests ====================
 
@@ -547,10 +547,10 @@ int ctkCommandLineParserTest1(int, char*[])
 
   //  Check that QSettings are ignored
   if (parsedArgs.size() != 1 || parsedArgs["s"] != "short")
-  {
+    {
     qCritical() << "Test14 - Parsed arguments must only contain -s short.";
     return EXIT_FAILURE;
-  }
+    }
 
   // Now use QSettings
   parser14.enableSettings("disable-settings");
@@ -558,57 +558,57 @@ int ctkCommandLineParserTest1(int, char*[])
   parsedArgs = parser14.parseArguments(arguments14);
 
   if (!parser14.settingsEnabled())
-  {
+    {
     qCritical() << "Test14 - Disabling settings failed.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parser14.unparsedArguments().size() != 1 ||
       !parser14.unparsedArguments().contains("unknown"))
-  {
+    {
     qCritical() << "Test14 - Parsing unknown arguments failed.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs.contains("invalid"))
-  {
+    {
     qCritical() << "Test14 - Invalid QSettings value found.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs.size() != 2)
-  {
+    {
     qCritical() << "Test14 - Wrong number of parsed arguments.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs["s"] != "short")
-  {
+    {
     qCritical() << "Test14 - QSettings values must not overwrite user values.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs["long-settings-argument"].toInt() != 5)
-  {
+    {
     qCritical() << "Test14 - Missing value from QSettings.";
     return EXIT_FAILURE;
-  }
+    }
 
   arguments14.clear();
   arguments14 << "ctkCommandLineParserTest1";
   parsedArgs = parser14.parseArguments(arguments14);
 
   if (parsedArgs.size() != 2)
-  {
+    {
     qCritical() << "Test14 - Only QSettings values corresponding to arguments must be included.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs["s"] != "settings-short")
-  {
+    {
     qCritical() << "Test14 - QSettings value should be used as default parameter.";
     return EXIT_FAILURE;
-  }
+    }
 
   // Disable QSettings via command line argument
   arguments14.clear();
@@ -619,17 +619,17 @@ int ctkCommandLineParserTest1(int, char*[])
   parsedArgs = parser14.parseArguments(arguments14);
 
   if (parsedArgs["long-settings-argument"].toInt() != 12)
-  {
+    {
     qCritical() << "Test14 - Wrong parameter for argument: long-settings-argument.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs["s"] != "my-short")
-  {
+    {
     qCritical() << parsedArgs;
     qCritical() << "Test14 - Default value for argument -s not used.";
     return EXIT_FAILURE;
-  }
+    }
 
   // Test15 - Check that merging with QSettings works
   settings.clear();
@@ -647,60 +647,60 @@ int ctkCommandLineParserTest1(int, char*[])
   ok = false;
   parsedArgs = parser15.parseArguments(arguments15, &ok);
   if (!ok)
-  {
+    {
     qCritical() << "Test15 - parsing arguments failed.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs.contains("--list-argument"))
-  {
+    {
     QStringList list = parsedArgs["--list-argument"].toStringList();
     if (list.size() != 3)
-    {
+      {
       qCritical() << "Test15 - Parameter merging failed.";
       return EXIT_FAILURE;
-    }
+      }
     if (!list.contains("a") || !list.contains("b") || !list.contains("z"))
-    {
+      {
       qCritical() << "Test15 - Merged list contains wrong elements.";
       return EXIT_FAILURE;
+      }
     }
-  }
   else
-  {
+    {
     qCritical() << "Test15 - --list-argument was not parsed.";
     return EXIT_FAILURE;
-  }
+    }
 
   // Test with disabled merging
   parser15.mergeSettings(false);
   ok = false;
   parsedArgs = parser15.parseArguments(arguments15, &ok);
   if (!ok)
-  {
+    {
     qCritical() << "Test15 - parsing arguments failed.";
     return EXIT_FAILURE;
-  }
+    }
 
   if (parsedArgs.contains("--list-argument"))
-  {
+    {
     QStringList list = parsedArgs["--list-argument"].toStringList();
     if (list.size() != 2)
-    {
+      {
       qCritical() << "Test15 - Disabling merging failed.";
       return EXIT_FAILURE;
-    }
+      }
     if (!list.contains("a") || !list.contains("b"))
-    {
+      {
       qCritical() << "Test15 - List contains wrong elements.";
       return EXIT_FAILURE;
+      }
     }
-  }
   else
-  {
+    {
     qCritical() << "Test15 - --list-argument was not parsed.";
     return EXIT_FAILURE;
-  }
+    }
 
   // Test16 - Check if strictMode works
   settings.clear();
@@ -718,10 +718,10 @@ int ctkCommandLineParserTest1(int, char*[])
   ok = false;
   parsedArgs = parser16.parseArguments(arguments16, &ok);
   if (!ok)
-  {
+    {
     qCritical() << "Test16-1 - parsing arguments failed.";
     return EXIT_FAILURE;
-  }
+    }
 
   // Since two identical arguments are provided, parseArguments should fail
   arguments16.clear();
@@ -731,10 +731,10 @@ int ctkCommandLineParserTest1(int, char*[])
   ok = false;
   parsedArgs = parser16.parseArguments(arguments16, &ok);
   if (ok)
-  {
+    {
     qCritical() << "Test16-2 - parsing arguments should fail.";
     return EXIT_FAILURE;
-  }
+    }
 
   // Since an unknown argument is provided, parseArguments should fail
   arguments16.clear();
@@ -744,10 +744,10 @@ int ctkCommandLineParserTest1(int, char*[])
   ok = false;
   parsedArgs = parser16.parseArguments(arguments16, &ok);
   if (ok)
-  {
+    {
     qCritical() << "Test16-3 - parsing arguments should fail.";
     return EXIT_FAILURE;
-  }
+    }
 
   return EXIT_SUCCESS;
 }
