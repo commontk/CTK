@@ -73,7 +73,7 @@ class CTK_WIDGETS_EXPORT ctkConsoleWidget : public QWidget
   Q_OBJECT
   
 public:
-  ctkConsoleWidget(QWidget* Parent);
+  ctkConsoleWidget(QWidget* parent = 0);
   virtual ~ctkConsoleWidget();
 
   /// Returns the current formatting that will be used by printString
