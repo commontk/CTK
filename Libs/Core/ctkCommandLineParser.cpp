@@ -71,7 +71,7 @@ public:
 
   bool addParameter(const QString& value);
 
-  QString helpText(int fieldWidth, const char charPad);
+  QString helpText(int fieldWidth, const char charPad, const QString& settingsValue = "");
 
   QString LongArg;
   QString LongArgPrefix;
@@ -143,7 +143,8 @@ bool CommandLineParserArgumentDescription::addParameter(const QString& value)
 }
 
 // --------------------------------------------------------------------------
-QString CommandLineParserArgumentDescription::helpText(int fieldWidth, const char charPad)
+QString CommandLineParserArgumentDescription::helpText(int fieldWidth, const char charPad,
+                                                       const QString& settingsValue)
 {
   QString text;
   QTextStream stream(&text);
@@ -178,7 +179,11 @@ QString CommandLineParserArgumentDescription::helpText(int fieldWidth, const cha
   stream  << shortAndLongArg;
   stream.setFieldWidth(0);
   stream << this->ArgHelp;
-  if (!this->DefaultValue.isNull())
+  if (!settingsValue.isNull())
+    {
+    stream << " (default: " << settingsValue << ")";
+    }
+  else if (!this->DefaultValue.isNull())
     {
     stream << " (default: " << this->DefaultValue.toString() << ")";
     }
@@ -715,7 +720,22 @@ QString ctkCommandLineParser::helpText(const char charPad) const
         }
       else
         {
-        stream << argDesc->helpText(this->Internal->FieldWidth, charPad);
+        // Extract associated value from settings if any
+        QString settingsValue;
+        if (this->Internal->Settings)
+          {
+          QString key;
+          if (!argDesc->LongArg.isEmpty())
+            {
+            key = argDesc->LongArg;
+            }
+          else
+            {
+            key = argDesc->ShortArg;
+            }
+          settingsValue = this->Internal->Settings->value(key).toString();
+          }
+        stream << argDesc->helpText(this->Internal->FieldWidth, charPad, settingsValue);
         }
       }
     }
