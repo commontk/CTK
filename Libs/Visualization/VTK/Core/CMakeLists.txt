@@ -24,8 +24,6 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   ctkVTKColorTransferFunction.cpp
   ctkVTKColorTransferFunction.h
-  ctkVTKCommandOptions.cpp
-  ctkVTKCommandOptions.h
   ctkVTKCompositeFunction.cpp
   ctkVTKCompositeFunction.h
   ctkVTKConnection.cpp
