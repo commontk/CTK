@@ -300,18 +300,6 @@ void ctkPythonShell::clear()
   this->Implementation->promptForInput();
 }
 
-// //----------------------------------------------------------------------------
-// void ctkPythonShell::makeCurrent()
-// {
-//   this->Implementation->Interpreter->MakeCurrent();
-// }
-// 
-// //----------------------------------------------------------------------------
-// void ctkPythonShell::releaseControl()
-// {
-//   this->Implementation->Interpreter->ReleaseControl();
-// }
-
 //----------------------------------------------------------------------------
 void ctkPythonShell::executeScript(const QString& script)
 {
