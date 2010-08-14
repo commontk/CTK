@@ -166,6 +166,7 @@ int main(int argc, char** argv)
     // Skip empty line or commented line
     if (line.isEmpty() || line.startsWith("#"))
       {
+      line = in.readLine();
       continue;
       }
 
