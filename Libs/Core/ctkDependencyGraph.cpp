@@ -39,7 +39,7 @@ public:
   ctkInternal(ctkDependencyGraph* p);
   
   /// Compute indegree
-  void computeIndegrees(QVarLengthArray<int, MAXV>& computedIndegrees);
+  void computeOutdegrees(QVarLengthArray<int, MAXV>& computedOutdegrees);
   
   /// Traverse tree using Depth-first_search
   void traverseUsingDFS(int v);
@@ -61,7 +61,7 @@ public:
   
   /// See http://en.wikipedia.org/wiki/Adjacency_list
   QVarLengthArray<QVarLengthArray<int,MAXDEGREE>*, MAXV+1> Edges;
-  QVarLengthArray<int, MAXV+1> Degree;
+  QVarLengthArray<int, MAXV+1> OutDegree;
   int NVertices;
   int NEdges;
   
@@ -101,18 +101,18 @@ ctkDependencyGraph::ctkInternal::ctkInternal(ctkDependencyGraph* p)
 }
 
 //----------------------------------------------------------------------------
-void ctkDependencyGraph::ctkInternal::computeIndegrees(QVarLengthArray<int, MAXV>& computedIndegrees)
+void ctkDependencyGraph::ctkInternal::computeOutdegrees(QVarLengthArray<int, MAXV>& computedOutdegrees)
 {
 	for (int i=1; i <= this->NVertices; i++)
 	  {
-	  computedIndegrees[i] = 0;
+    computedOutdegrees[i] = 0;
 	  }
 
 	for (int i=1; i <= this->NVertices; i++) 
 	  {
-		for (int j=0; j < this->Degree[i]; j++) 
+    for (int j=0; j < this->OutDegree[i]; j++)
 		  {
-		  computedIndegrees[ this->edge(i,j) ] ++;
+      computedOutdegrees[ this->edge(i,j) ] ++;
 		  }
 		}
 }
@@ -130,7 +130,7 @@ void ctkDependencyGraph::ctkInternal::traverseUsingDFS(int v)
 	this->processVertex(v);
 
   int y; // successor vertex
-	for (int i=0; i<this->Degree[v]; i++)
+  for (int i=0; i<this->OutDegree[v]; i++)
 	  {
 		y = this->edge(v, i);
 		if (this->P->shouldExcludeEdge(this->edge(v, i)) == false)
@@ -229,7 +229,7 @@ void ctkDependencyGraph::ctkInternal::findPathsRec(
   
   QList<int> branch(*path);
   int child = from;
-  for (int j=0; j < this->Degree[child]; j++)
+  for (int j=0; j < this->OutDegree[child]; j++)
     {
     if (j == 0)
       {
@@ -264,11 +264,11 @@ ctkDependencyGraph::ctkDependencyGraph(int nvertices)
   this->Internal->Discovered.resize(nvertices + 1);
   this->Internal->Parent.resize(nvertices + 1);
   this->Internal->Edges.resize(nvertices + 1);
-  this->Internal->Degree.resize(nvertices + 1);
+  this->Internal->OutDegree.resize(nvertices + 1);
 
   for (int i=1; i <= nvertices; i++)
     {
-    this->Internal->Degree[i] = 0;
+    this->Internal->OutDegree[i] = 0;
     }
     
   // initialize Edge adjacency list
@@ -332,7 +332,7 @@ void ctkDependencyGraph::printGraph()
   for(int i=1; i <= this->Internal->NVertices; i++)
     {
     std::cout << i << ":";
-    for (int j=0; j < this->Internal->Degree[i]; j++)
+    for (int j=0; j < this->Internal->OutDegree[i]; j++)
       {
       std::cout << " " << this->Internal->edge(i, j);
       }
@@ -408,13 +408,13 @@ void ctkDependencyGraph::insertEdge(int from, int to)
   
   // resize if needed
   int capacity = this->Internal->Edges[from]->capacity(); 
-  if (this->Internal->Degree[from] > capacity)
+  if (this->Internal->OutDegree[from] > capacity)
     {
     this->Internal->Edges[from]->resize(capacity + capacity * 0.3);
     }
 
-  this->Internal->setEdge(from, this->Internal->Degree[from], to);
-  this->Internal->Degree[from]++;
+  this->Internal->setEdge(from, this->Internal->OutDegree[from], to);
+  this->Internal->OutDegree[from]++;
 
   this->Internal->NEdges++;
 }
@@ -467,41 +467,41 @@ void ctkDependencyGraph::findPath(int from, int to, QList<int>& path)
 //----------------------------------------------------------------------------
 bool ctkDependencyGraph::topologicalSort(QList<int>& sorted)
 {
-	QVarLengthArray<int, MAXV> indegree; // indegree of each vertex
-	QQueue<int> zeroin;	  // vertices of indegree 0
+  QVarLengthArray<int, MAXV> outdegree; // outdegree of each vertex
+  QQueue<int> zeroout;	  // vertices of outdegree 0
 	int x, y;			        // current and next vertex
   
-  indegree.resize(this->Internal->NVertices + 1);
+  outdegree.resize(this->Internal->NVertices + 1);
 	
 	// resize if needed
 	if (this->Internal->NVertices > MAXV)
 	  {
-	  indegree.resize(this->Internal->NVertices);
+    outdegree.resize(this->Internal->NVertices);
 	  }
 
-	this->Internal->computeIndegrees(indegree);
+  this->Internal->computeOutdegrees(outdegree);
 	
 	for (int i=1; i <= this->Internal->NVertices; i++)
 	  {
-		if (indegree[i] == 0) 
+    if (outdegree[i] == 0)
 		  {
-		  zeroin.enqueue(i);
+      zeroout.enqueue(i);
 		  }
 		}
 
 	int j=0;
-	while (zeroin.empty() == false) 
+  while (zeroout.empty() == false)
 	  {
 		j = j+1;
-		x = zeroin.dequeue();
+    x = zeroout.dequeue();
 		sorted << x;
-		for (int i=0; i < this->Internal->Degree[x]; i++)
+    for (int i=0; i < this->Internal->OutDegree[x]; i++)
 		  {
 			y = this->Internal->edge(x, i);
-			indegree[y] --;
-			if (indegree[y] == 0)
+      outdegree[y] --;
+      if (outdegree[y] == 0)
 			  {
-			  zeroin.enqueue(y);
+        zeroout.enqueue(y);
 			  }
 		  }
 	  }
