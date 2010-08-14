@@ -89,6 +89,9 @@ public:
   /// Return false if the graph contains cycles
   /// See cycleDetected, cycleOrigin, cycleEnd
   bool topologicalSort(QList<int>& sorted);
+
+  /// Retrieve all vertices with indegree 0
+  void sourceVertices(QList<int>& sources);
   
 private:
   class ctkInternal; 

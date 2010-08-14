@@ -58,10 +58,13 @@ public:
   
   void setEdge(int vertice, int degree, int value);
   int edge(int vertice, int degree);
+
+  void verticesWithIndegree(int indegree, QList<int>& list);
   
   /// See http://en.wikipedia.org/wiki/Adjacency_list
   QVarLengthArray<QVarLengthArray<int,MAXDEGREE>*, MAXV+1> Edges;
   QVarLengthArray<int, MAXV+1> OutDegree;
+  QVarLengthArray<int, MAXV+1> InDegree;
   int NVertices;
   int NEdges;
   
@@ -248,6 +251,19 @@ void ctkDependencyGraph::ctkInternal::findPathsRec(
       }
     }
 }
+
+void ctkDependencyGraph::ctkInternal::verticesWithIndegree(int indegree, QList<int>& list)
+{
+  Q_ASSERT(indegree >= 0);
+
+  for (int i=1; i <= this->NVertices; i++)
+    {
+    if (this->InDegree[i] == indegree)
+      {
+      list << i;
+      }
+    }
+}
     
 //----------------------------------------------------------------------------
 // ctkDependencyGraph methods
@@ -265,10 +281,12 @@ ctkDependencyGraph::ctkDependencyGraph(int nvertices)
   this->Internal->Parent.resize(nvertices + 1);
   this->Internal->Edges.resize(nvertices + 1);
   this->Internal->OutDegree.resize(nvertices + 1);
+  this->Internal->InDegree.resize(nvertices + 1);
 
   for (int i=1; i <= nvertices; i++)
     {
     this->Internal->OutDegree[i] = 0;
+    this->Internal->InDegree[i] = 0;
     }
     
   // initialize Edge adjacency list
@@ -415,6 +433,7 @@ void ctkDependencyGraph::insertEdge(int from, int to)
 
   this->Internal->setEdge(from, this->Internal->OutDegree[from], to);
   this->Internal->OutDegree[from]++;
+  this->Internal->InDegree[to]++;
 
   this->Internal->NEdges++;
 }
@@ -512,4 +531,9 @@ bool ctkDependencyGraph::topologicalSort(QList<int>& sorted)
 		}
 		
   return true;
+}
+
+void ctkDependencyGraph::sourceVertices(QList<int>& sources)
+{
+  this->Internal->verticesWithIndegree(0, sources);
 }
