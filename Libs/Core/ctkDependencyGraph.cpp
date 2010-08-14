@@ -163,7 +163,7 @@ void ctkDependencyGraph::ctkInternal::traverseUsingDFS(int v)
 //----------------------------------------------------------------------------
 void ctkDependencyGraph::ctkInternal::processEdge(int from, int to)
 {
-  if (this->Parent[from] != to)
+  if (this->Discovered[to] == true)
     {
     this->CycleDetected = true;
     this->CycleOrigin = to; 
