@@ -483,19 +483,14 @@ void ctkDependencyGraph::findPaths(int from, int to, QList<QList<int>* >& paths)
 //----------------------------------------------------------------------------
 void ctkDependencyGraph::findPath(int from, int to, QList<int>& path)
 {
-  int child = from;
-  int parent = this->Internal->edge(child, 0);
-  path << child; 
-  while (parent > 0)
+  QList<QList<int>* > paths;
+  this->findPaths(from, to, paths);
+  if (!paths.empty())
     {
-    path << parent;
-    if (parent == to)
-      {
-      break;
-      }
-    child = parent;
-    parent = this->Internal->edge(child, 0);
+    path << *(paths.first());
     }
+
+  qDeleteAll(paths);
 }
 
 //----------------------------------------------------------------------------
