@@ -38,7 +38,7 @@ class ctkDependencyGraph::ctkInternal
 public:
   ctkInternal(ctkDependencyGraph* p);
   
-  /// Compute indegree
+  /// Compute outdegree
   void computeOutdegrees(QVarLengthArray<int, MAXV>& computedOutdegrees);
   
   /// Traverse tree using Depth-first_search
