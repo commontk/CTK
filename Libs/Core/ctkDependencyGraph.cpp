@@ -138,9 +138,9 @@ void ctkDependencyGraph::ctkInternal::traverseUsingDFS(int v)
 		y = this->edge(v, i);
 		if (this->P->shouldExcludeEdge(this->edge(v, i)) == false)
 		  {
+      this->Parent[y] = v;
 			if (this->Discovered[y] == false)
 			  {
-				this->Parent[y] = v;
 				this->traverseUsingDFS(y);
 			  } 
 			else 
