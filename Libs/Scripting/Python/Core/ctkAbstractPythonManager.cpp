@@ -53,7 +53,7 @@ void PythonQt_init_QtSvg(PyObject*);
 #endif
 
 #ifdef CTK_PYTHONQT_WRAP_QTUITOOLS
-void PythonQt_init_QtUITools(PyObject*);
+void PythonQt_init_QtUiTools(PyObject*);
 #endif
 
 #ifdef CTK_PYTHONQT_WRAP_QTWEBKIT
@@ -133,7 +133,7 @@ void ctkAbstractPythonManager::initPythonQt()
   #endif
 
   #ifdef CTK_PYTHONQT_WRAP_QTUITOOLS
-  PythonQt_init_QtUITools(0);
+  PythonQt_init_QtUiTools(0);
   #endif
 
   #ifdef CTK_PYTHONQT_WRAP_QTWEBKIT
