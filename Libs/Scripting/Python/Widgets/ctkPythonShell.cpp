@@ -147,7 +147,8 @@ public:
 struct ctkPythonShell::pqImplementation
 {
   pqImplementation(QWidget* _parent, ctkAbstractPythonManager* pythonManager)
-    : Console(_parent), PythonManager(pythonManager)
+    : Console(_parent), PythonManager(pythonManager), MultilineStatement(false),
+    InteractiveConsole(0)
   {
   }
 
@@ -200,16 +201,74 @@ struct ctkPythonShell::pqImplementation
 //     this->Interpreter = 0;
 //     }
 
+  //----------------------------------------------------------------------------
+  void initializeInteractiveConsole()
+  {
+    qDebug() << "initializeInteractiveConsole";
+    // set up the code.InteractiveConsole instance that we'll use.
+    const char* code =
+      "import code\n"
+      "__ctkConsole=code.InteractiveConsole(locals())\n";
+    PyRun_SimpleString(code);
+
+    // Now get the reference to __ctkConsole and save the pointer.
+    PyObject* main_module = PyImport_AddModule("__main__");
+    PyObject* global_dict = PyModule_GetDict(main_module);
+    this->InteractiveConsole = PyDict_GetItemString(
+      global_dict, "__ctkConsole");
+    if (!this->InteractiveConsole)
+      {
+      qCritical("Failed to locate the InteractiveConsole object.");
+      }
+  }
+
+
+//----------------------------------------------------------------------------
+  bool push(const QString& code)
+  {
+    bool ret_value = false;
+
+    QString buffer = code;
+    // The embedded python interpreter cannot handle DOS line-endings, see
+    // http://sourceforge.net/tracker/?group_id=5470&atid=105470&func=detail&aid=1167922
+    buffer.remove('\r');
+
+    PyObject *res = PyObject_CallMethod(this->InteractiveConsole,
+                                        const_cast<char*>("push"),
+                                        const_cast<char*>("z"),
+                                        buffer.toAscii().data());
+    if (res)
+      {
+      int status = 0;
+      if (PyArg_Parse(res, "i", &status))
+        {
+        ret_value = (status > 0);
+        }
+      Py_DECREF(res);
+      }
+    return ret_value;
+  }
+//----------------------------------------------------------------------------
+void resetBuffer()
+  {
+  if (this->InteractiveConsole)
+    {
+    //this->MakeCurrent();
+    const char* code = "__ctkConsole.resetbuffer()\n";
+    PyRun_SimpleString(code);
+    //this->ReleaseControl();
+    }
+  }
+
 //----------------------------------------------------------------------------
   void executeCommand(const QString& command)
   {
-//     this->MultilineStatement = 
-//       this->Interpreter->Push(Command.toAscii().data());
-    if (command.length())
-      {
-      Q_ASSERT(this->PythonManager);
-      this->PythonManager->executeString(command);
-      }
+    this->MultilineStatement = this->push(command);
+//    if (command.length())
+//      {
+//      Q_ASSERT(this->PythonManager);
+//      this->PythonManager->executeString(command);
+//      }
   }
   
 //----------------------------------------------------------------------------
@@ -244,6 +303,8 @@ struct ctkPythonShell::pqImplementation
 
   /// Indicates if the last statement processes was incomplete.
   bool MultilineStatement;
+
+  PyObject* InteractiveConsole;
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -273,6 +334,7 @@ ctkPythonShell::ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget*
   // The call to mainContext() ensures that python has been initialized.
   Q_ASSERT(this->Implementation->PythonManager);
   this->Implementation->PythonManager->mainContext();
+  this->Implementation->initializeInteractiveConsole();
 
   QTextCharFormat format = this->Implementation->Console.getFormat();
   format.setForeground(QColor(0, 0, 255));
@@ -301,18 +363,6 @@ void ctkPythonShell::clear()
   this->Implementation->Console.clear();
   this->Implementation->promptForInput();
 }
-
-// //----------------------------------------------------------------------------
-// void ctkPythonShell::makeCurrent()
-// {
-//   this->Implementation->Interpreter->MakeCurrent();
-// }
-// 
-// //----------------------------------------------------------------------------
-// void ctkPythonShell::releaseControl()
-// {
-//   this->Implementation->Interpreter->ReleaseControl();
-// }
 
 //----------------------------------------------------------------------------
 void ctkPythonShell::executeScript(const QString& script)

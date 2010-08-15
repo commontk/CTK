@@ -68,8 +68,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class ctkAbstractPythonManager;
 
-class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonShell :
-  public QWidget
+class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonShell : public QWidget
 {
   Q_OBJECT
   
@@ -78,20 +77,8 @@ public:
   ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget* _parent = 0);
   ~ctkPythonShell();
 
-
-  /// Initializes the interpretor. If an interpretor is already setup (by an
-  /// earlier call to this method), it will be destroyed.
-//   void initializeInterpretor(int argc, char* argv[]);
-//   void initializeInterpretor();
-
   /// Prints some text on the shell.
   void printMessage(const QString&);
-
-  /// Calls MakeCurrent in the internal vtkPVPythonInteractiveInterpretor instance
-//   void makeCurrent();
-
-  /// Calls ReleaseControl in the internal vtkPVPythonInteractiveInterpretor instance
-//   void releaseControl();
 
   /// Given a python variable name, lookup its attributes and return them in a
   /// string list.
