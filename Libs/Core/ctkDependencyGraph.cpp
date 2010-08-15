@@ -390,12 +390,27 @@ bool ctkDependencyGraph::shouldExcludeEdge(int edge)
 
 //----------------------------------------------------------------------------
 bool ctkDependencyGraph::checkForCycle()
-{
+{ 
   if (this->Internal->NEdges > 0)
     {
-    // get a valid vertice Id
-    int verticeId = 1;
-    this->Internal->traverseUsingDFS(verticeId);
+    int id = 1;
+    bool verticesLeft = true;
+    while (verticesLeft)
+      {
+      this->Internal->traverseUsingDFS(id);
+      if (this->cycleDetected()) return true;
+
+      for (int i=0; i < this->Internal->Processed.size(); i++)
+        {
+        if (this->Internal->Processed[i] == false)
+          {
+          verticesLeft = true;
+          id = i;
+          break;
+          }
+        verticesLeft = false;
+        }
+      }
     }
   return this->cycleDetected();
 }
