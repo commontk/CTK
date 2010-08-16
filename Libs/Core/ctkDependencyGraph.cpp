@@ -60,7 +60,17 @@ public:
   int edge(int vertice, int degree);
 
   void verticesWithIndegree(int indegree, QList<int>& list);
-  
+
+  int subgraphSize(int rootId);
+  void subgraphSizeRec(int rootId, QSet<int>& uniqueVertices);
+
+  void subgraphInsert(ctkDependencyGraph& subgraph, int rootId,
+                      QHash<int,int>& subgraphIdToGlobal, QHash<int,int>& globalIdToSubgraph);
+
+  int getOrGenerateSubgraphId(QHash<int, int>& subgraphIdToGlobal,
+                      QHash<int, int>& globalIdToSubgraph,
+                      int globalId);
+
   /// See http://en.wikipedia.org/wiki/Adjacency_list
   QVarLengthArray<QVarLengthArray<int,MAXDEGREE>*, MAXV+1> Edges;
   QVarLengthArray<int, MAXV+1> OutDegree;
@@ -263,6 +273,64 @@ void ctkDependencyGraph::ctkInternal::verticesWithIndegree(int indegree, QList<i
       list << i;
       }
     }
+}
+
+void ctkDependencyGraph::ctkInternal::subgraphSizeRec(int rootId, QSet<int>& uniqueVertices)
+{
+  Q_ASSERT(rootId > 0);
+
+  for (int i = 0; i < this->OutDegree[rootId]; ++i)
+    {
+    int child = this->edge(rootId, i);
+    uniqueVertices << child;
+    subgraphSizeRec(child, uniqueVertices);
+    }
+}
+
+int ctkDependencyGraph::ctkInternal::subgraphSize(int rootId)
+{
+  Q_ASSERT(rootId > 0);
+
+  QSet<int> vertices;
+  vertices << rootId;
+  this->subgraphSizeRec(rootId, vertices);
+  return vertices.size();
+}
+
+void ctkDependencyGraph::ctkInternal::subgraphInsert(
+    ctkDependencyGraph& subgraph, int rootId,
+    QHash<int,int>& subgraphIdToGlobal, QHash<int,int>& globalIdToSubgraph)
+{
+  int from = this->getOrGenerateSubgraphId(subgraphIdToGlobal, globalIdToSubgraph, rootId);
+  for (int i = 0; i < this->OutDegree[rootId]; ++i)
+  {
+    int childId = this->edge(rootId, i);
+    int to = this->getOrGenerateSubgraphId(subgraphIdToGlobal, globalIdToSubgraph,
+                                           childId);
+
+    subgraph.insertEdge(from, to);
+    this->subgraphInsert(subgraph, childId, subgraphIdToGlobal, globalIdToSubgraph);
+  }
+}
+
+int ctkDependencyGraph::ctkInternal::getOrGenerateSubgraphId(
+    QHash<int, int>& subgraphIdToGlobal,
+    QHash<int, int>& globalIdToSubgraph,
+    int globalId)
+{
+  // If needed, generate vertex id
+  int subgraphId = -1;
+  if (!globalIdToSubgraph.keys().contains(globalId))
+    {
+    subgraphId = globalIdToSubgraph.keys().size() + 1;
+    globalIdToSubgraph[globalId] = subgraphId;
+    subgraphIdToGlobal[subgraphId] = globalId;
+    }
+  else
+    {
+    subgraphId = globalIdToSubgraph[globalId];
+    }
+  return subgraphId;
 }
     
 //----------------------------------------------------------------------------
@@ -494,8 +562,24 @@ void ctkDependencyGraph::findPath(int from, int to, QList<int>& path)
 }
 
 //----------------------------------------------------------------------------
-bool ctkDependencyGraph::topologicalSort(QList<int>& sorted)
+bool ctkDependencyGraph::topologicalSort(QList<int>& sorted, int rootId)
 {
+  if (rootId > 0)
+    {
+    ctkDependencyGraph subgraph(this->Internal->subgraphSize(rootId));
+    QHash<int,int> subgraphIdToGlobal;
+    QHash<int,int> globalIdToSubgraph;
+    this->Internal->subgraphInsert(subgraph, rootId, subgraphIdToGlobal, globalIdToSubgraph);
+
+    QList<int> subgraphSorted;
+    bool result = subgraph.topologicalSort(subgraphSorted);
+    foreach(int subgraphId, subgraphSorted)
+      {
+      sorted << subgraphIdToGlobal[subgraphId];
+      }
+    return result;
+    }
+
   QVarLengthArray<int, MAXV> outdegree; // outdegree of each vertex
   QQueue<int> zeroout;	  // vertices of outdegree 0
 	int x, y;			        // current and next vertex

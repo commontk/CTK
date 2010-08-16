@@ -85,10 +85,11 @@ public:
   /// Called each time an edge is visited
   virtual void processEdge(int /*from*/, int /*to*/){}
   
-  /// Perform a topological search
+  /// Perform a topological sort
   /// Return false if the graph contains cycles
+  /// If a rootId is given, the subgraph starting at the root id is sorted
   /// See cycleDetected, cycleOrigin, cycleEnd
-  bool topologicalSort(QList<int>& sorted);
+  bool topologicalSort(QList<int>& sorted, int rootId = -1);
 
   /// Retrieve all vertices with indegree 0
   void sourceVertices(QList<int>& sources);
