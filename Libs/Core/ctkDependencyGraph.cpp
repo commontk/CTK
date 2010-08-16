@@ -461,22 +461,50 @@ bool ctkDependencyGraph::checkForCycle()
 { 
   if (this->Internal->NEdges > 0)
     {
-    int id = 1;
-    bool verticesLeft = true;
-    while (verticesLeft)
+    // Store unprocessed vertex ids
+    QList<int> uncheckedVertices;
+    for (int i = 1; i <= this->Internal->NVertices; ++i)
       {
-      this->Internal->traverseUsingDFS(id);
+        uncheckedVertices << i;
+      }
+
+    // Start the cycle detection on the source vertices
+    QList<int> sources;
+    this->sourceVertices(sources);
+    foreach(int sourceId, sources)
+      {
+      this->Internal->traverseUsingDFS(sourceId);
       if (this->cycleDetected()) return true;
 
       for (int i=0; i < this->Internal->Processed.size(); i++)
         {
-        if (this->Internal->Processed[i] == false)
-          {
-          verticesLeft = true;
-          id = i;
-          break;
-          }
-        verticesLeft = false;
+          if (this->Internal->Processed[i] == true)
+            {
+            uncheckedVertices.removeOne(i);
+            }
+
+          this->Internal->Discovered[i] = false;
+          this->Internal->Processed[i] = false;
+        }
+      }
+
+    // If a component does not have a source vertex,
+    // i.e. it is a cycle a -> b -> a, check all non
+    // processed vertices.
+    while (!uncheckedVertices.empty())
+      {
+      this->Internal->traverseUsingDFS(uncheckedVertices.last());
+      if (this->cycleDetected()) return true;
+
+      for (int i=0; i < this->Internal->Processed.size(); i++)
+        {
+          if (this->Internal->Processed[i] == true)
+            {
+            uncheckedVertices.removeOne(i);
+            }
+
+          this->Internal->Discovered[i] = false;
+          this->Internal->Processed[i] = false;
         }
       }
     }
