@@ -256,34 +256,32 @@ int main(int argc, char** argv)
       std::cout << std::endl;
       }
     }
+
+  if (verbose)
+    {
+    QList<int> sources;
+    mygraph.sourceVertices(sources);
+    qDebug() << "Source vertices: " << sources;
+    }
     
   if (outputPath)
     {
     // TODO Make sure label is valid
     QList<int> out;
-    if (mygraph.topologicalSort(out))
+    int labelId = vertexLabelToId[label];
+    if (mygraph.topologicalSort(out, labelId))
       {
-      // Assume all targets depend on the first lib
-      int rootId = out.last();
-      int labelId = vertexLabelToId[label];
-      QList<QList<int>*> paths;
-      mygraph.findPaths(labelId, rootId, paths);
-      for(int i=0; i < paths.size(); i++)
+      for(int i=0; i < out.size(); i++)
         {
-        QList<int>* p = paths[i];
-        Q_ASSERT(p);
-        for(int j=0; j < p->size(); j++)
-          {
-          int id = p->at(j);
+        int id = out.at(i);
+        if (vertexIdToLabel[id].isEmpty())
+          std::cout << "<" << id << ">";
+        else
           std::cout << vertexIdToLabel[id].toStdString();
-          if (j != p->size() - 1)
-            {
-            std::cout << " ";
-            }
-          }
-        if (i != paths.size() - 1)
+
+        if (i != out.size() - 1)
           {
-          std::cout << ";";
+          std::cout << " ";
           }
         }
       }
