@@ -63,8 +63,6 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories with_option)
       ENDIF()
       #MESSAGE(STATUS target_project_name:${target_project_name})
 
-      LIST(APPEND vertices ${target_project_name})
-
       # Make sure the variable is cleared
       SET(dependencies )
 
@@ -77,16 +75,24 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories with_option)
       # filter dependencies starting with CTK
       ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
 
+      IF(ctk_dependencies)
+        LIST(APPEND vertices ${target_project_name})
+      ENDIF()
+
       # Generate XML related to the dependencies
       FOREACH(dependency_name ${ctk_dependencies})
         LIST(APPEND edges ${dependency_name})
         SET(dgraph_list ${dgraph_list} "${target_project_name} ${dependency_name}\n")
+        LIST(APPEND vertices ${dependency_name})
       ENDFOREACH()
 
     ENDIF()
     
   ENDFOREACH()
 
+  IF(vertices)
+    LIST(REMOVE_DUPLICATES vertices)
+  ENDIF()
   LIST(LENGTH vertices numberOfVertices)
   LIST(LENGTH edges numberOfEdges)
 
