@@ -11,9 +11,17 @@
 
 #include <iostream>
 
+// Test include paths
+#include <ctkClassA.h>
+#include <ctkClassB.h>
+
 void ctkCPlugin::start(ctkPluginContext* context)
 {
   Q_UNUSED(context)
+
+  //ctkClassA a;
+  ctkClassB b;
+
   std::cout << "C Plugin started\n";
 }
 

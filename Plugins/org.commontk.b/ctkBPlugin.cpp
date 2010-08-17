@@ -11,9 +11,15 @@
 
 #include <iostream>
 
+#include <ctkClassA.h>
+#include <ctkPlugin.h>
+
 void ctkBPlugin::start(ctkPluginContext* context)
 {
   Q_UNUSED(context)
+
+  ctkClassA a;
+
   std::cout << "B Plugin started\n";
 }
 

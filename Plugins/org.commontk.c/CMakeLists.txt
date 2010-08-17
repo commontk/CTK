@@ -3,6 +3,7 @@ PROJECT(org_commontk_c)
 SET(PLUGIN_export_directive "org_commontk_c_EXPORT")
 
 SET(PLUGIN_SRCS
+  ctkClassC.cpp
   ctkCPlugin.cpp
 )
 
