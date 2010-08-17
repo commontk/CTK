@@ -87,10 +87,6 @@ MACRO(ctkMacroBuildPlugin)
 
   STRING(REPLACE "_" "." Plugin-SymbolicName ${lib_name})
 
-  # Create a list of plugin dependencies
-  STRING(REPLACE "." "_" require_plugin "${Require-Plugin}")
-  MESSAGE("require_plugin: ${require_plugin}")
-
   # --------------------------------------------------------------------------
   # Include dirs
   SET(my_includes
@@ -101,12 +97,16 @@ MACRO(ctkMacroBuildPlugin)
     )
 
   # Add the include directories from the plugin dependencies
-  FOREACH(plugin ${require_plugin})
+  # The variable ${lib_name}_DEPENDENCIES is set in the
+  # macro ctkMacroValidateBuildOptions
+  FOREACH(dep ${${lib_name}_DEPENDENCIES})
     LIST(APPEND my_includes
-         ${${plugin}_SOURCE_DIR}
-         ${${plugin}_BINARY_DIR}
+         ${${dep}_SOURCE_DIR}
+         ${${dep}_BINARY_DIR}
          )
   ENDFOREACH()
+
+  LIST(REMOVE_DUPLICATES my_includes)
 
   INCLUDE_DIRECTORIES(
     ${my_includes}
@@ -205,7 +205,6 @@ MACRO(ctkMacroBuildPlugin)
   
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
-    ${require_plugin}
     )
   TARGET_LINK_LIBRARIES(${lib_name} ${my_libs})
   

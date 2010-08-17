@@ -24,34 +24,57 @@
 MACRO(ctkMacroGetTargetLibraries varname)
 
   SET(filepath ${CMAKE_CURRENT_SOURCE_DIR}/target_libraries.cmake)
+  SET(manifestpath ${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
 
-  # Check if "target_libraries.cmake" file exists
-  IF(NOT EXISTS ${filepath})
-    MESSAGE(FATAL_ERROR "${filepath} doesn't exists !")
+  # Check if "target_libraries.cmake" or "manifest_headers.cmake" file exists
+  IF(NOT EXISTS ${filepath} AND NOT EXISTS ${manifestpath})
+    MESSAGE(FATAL_ERROR "${filepath} or ${manifestpath} doesn't exists !")
   ENDIF()
 
   # Make sure the variable is cleared
   SET(target_libraries )
+  SET(Require-Plugin )
 
-  # Let's make sure target_libraries contains only strings
-  FILE(STRINGS "${filepath}" stringtocheck) # read content of 'filepath' into 'stringtocheck'
-  STRING(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
-  FOREACH(incorrect_element ${incorrect_elements})
-    STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
-    MESSAGE(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
-  ENDFOREACH()
+  IF(EXISTS ${filepath})
+    # Let's make sure target_libraries contains only strings
+    FILE(STRINGS "${filepath}" stringtocheck) # read content of 'filepath' into 'stringtocheck'
+    STRING(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    FOREACH(incorrect_element ${incorrect_elements})
+      STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      MESSAGE(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
+    ENDFOREACH()
 
-  INCLUDE(${filepath})
+    INCLUDE(${filepath})
 
-  # Loop over all target library, if it does *NOT* start with "CTK",
-  # let's resolve the variable to access its content
-  FOREACH(target_library ${target_libraries})
-    IF(${target_library} MATCHES "^CTK[a-zA-Z0-9]+$")
-      LIST(APPEND ${varname} ${target_library})
-    ELSE()
-      LIST(APPEND ${varname} "${${target_library}}")
-    ENDIF()
-  ENDFOREACH()
+    # Loop over all target library, if it does *NOT* start with "CTK",
+    # let's resolve the variable to access its content
+    FOREACH(target_library ${target_libraries})
+      IF(${target_library} MATCHES "^CTK[a-zA-Z0-9]+$")
+        LIST(APPEND ${varname} ${target_library})
+      ELSE()
+        LIST(APPEND ${varname} "${${target_library}}")
+      ENDIF()
+    ENDFOREACH()
+  ENDIF()
+
+  IF(EXISTS ${manifestpath})
+    # Let's make sure Require-Plugins contains only strings
+    FILE(STRINGS "${manifestpath}" stringtocheck) # read content of 'manifestpath' into 'stringtocheck'
+    STRING(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    FOREACH(incorrect_element ${incorrect_elements})
+      STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      MESSAGE(FATAL_ERROR "In ${manifestpath}, ${incorrect_element} should be replaced by ${correct_element}")
+    ENDFOREACH()
+
+    INCLUDE(${manifestpath})
+
+    # Loop over all plugin dependencies,
+    FOREACH(plugin_symbolicname ${Require-Plugin})
+      STRING(REPLACE "." "_" plugin_library ${plugin_symbolicname})
+      LIST(APPEND ${varname} ${plugin_library})
+    ENDFOREACH()
+  ENDIF()
+
 ENDMACRO()
 
 #
@@ -63,27 +86,49 @@ MACRO(ctkMacroCollectTargetLibraryNames target_dir varname)
   SET(lib_targets)
 
   SET(filepath ${target_dir}/target_libraries.cmake)
-  #MESSAGE(STATUS filepath:${filepath})
+  SET(manifestpath ${target_dir}/manifest_headers.cmake)
 
-  # Check if "target_libraries.cmake" file exists
-  IF(NOT EXISTS ${filepath})
-    MESSAGE(FATAL_ERROR "${filepath} doesn't exists !")
+  # Check if "target_libraries.cmake" or "manifest_headers.cmake" file exists
+  IF(NOT EXISTS ${filepath} AND NOT EXISTS ${manifestpath})
+    MESSAGE(FATAL_ERROR "${filepath} or ${manifestpath} doesn't exists !")
   ENDIF()
 
-  # Let's make sure target_libraries contains only strings
-  FILE(STRINGS "${filepath}" stringtocheck)
-  STRING(REGEX MATCHALL "[^#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
-  FOREACH(incorrect_element ${incorrect_elements})
-    STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
-    MESSAGE(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
-  ENDFOREACH()
-
   # Make sure the variable is cleared
-  SET(target_libraries)
+  SET(target_libraries )
+  SET(Require-Plugin )
 
-  INCLUDE(${filepath})
+  IF(EXISTS ${filepath})
+    # Let's make sure target_libraries contains only strings
+    FILE(STRINGS "${filepath}" stringtocheck) # read content of 'filepath' into 'stringtocheck'
+    STRING(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    FOREACH(incorrect_element ${incorrect_elements})
+      STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      MESSAGE(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
+    ENDFOREACH()
 
-  LIST(APPEND ${varname} ${target_libraries})
+    INCLUDE(${filepath})
+
+    LIST(APPEND ${varname} ${target_libraries})
+  ENDIF()
+
+  IF(EXISTS ${manifestpath})
+    # Let's make sure Require-Plugins contains only strings
+    FILE(STRINGS "${manifestpath}" stringtocheck) # read content of 'manifestpath' into 'stringtocheck'
+    STRING(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    FOREACH(incorrect_element ${incorrect_elements})
+      STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      MESSAGE(FATAL_ERROR "In ${manifestpath}, ${incorrect_element} should be replaced by ${correct_element}")
+    ENDFOREACH()
+
+    INCLUDE(${manifestpath})
+
+    # Loop over all plugin dependencies
+    FOREACH(plugin_symbolicname ${Require-Plugin})
+      STRING(REPLACE "." "_" plugin_library ${plugin_symbolicname})
+      LIST(APPEND ${varname} ${plugin_library})
+    ENDFOREACH()
+  ENDIF()
+
   LIST(REMOVE_DUPLICATES ${varname})
 ENDMACRO()
 
@@ -121,25 +166,30 @@ MACRO(ctkMacroCollectAllTargetLibraries targets subdir varname)
       ctkMacroCollectTargetLibraryNames(${target_dir} target_libraries)
     ENDIF()
 
-    LIST(APPEND ${varname} ${target_libraries})
-    LIST(REMOVE_DUPLICATES ${varname})
+    IF(target_libraries)
+      LIST(APPEND ${varname} ${target_libraries})
+      LIST(REMOVE_DUPLICATES ${varname})
+    ENDIF()
   ENDFOREACH()
   
 ENDMACRO()
 
 #
-# Extract all library names starting with CTK uppercase
+# Extract all library names starting with CTK uppercase or org_commontk_
 #
 MACRO(ctkMacroGetAllCTKTargetLibraries all_target_libraries varname)
   SET(re_ctklib "^(c|C)(t|T)(k|K)[a-zA-Z0-9]+$")
+  SET(re_ctkplugin "^org_commontk_[a-zA-Z0-9]+$")
   SET(_tmp_list)
   LIST(APPEND _tmp_list ${all_target_libraries})
   ctkMacroListFilter(_tmp_list re_ctklib OUTPUT_VARIABLE ${varname})
+  ctkMacroListFilter(_tmp_list re_ctkplugin)
+  LIST(APPEND ${varname} ${_tmp_list})
   #MESSAGE(STATUS varname:${varname}:${${varname}})
 ENDMACRO()
 
 #
-# Extract all library names *NOT* starting with CTK uppercase
+# Extract all library names *NOT* starting with CTK uppercase or org_commontk_
 #
 MACRO(ctkMacroGetAllNonCTKTargetLibraries all_target_libraries varname)
   ctkMacroGetAllCTKTargetLibraries("${all_target_libraries}" all_ctk_libraries)
