@@ -18,6 +18,9 @@
  
 =========================================================================*/
 
+// Qt includes
+#include <QDebug>
+
 // CTK includes
 #include "ctkDynamicSpacer.h"
 
@@ -98,9 +101,17 @@ void ctkDynamicSpacer::setInactiveSizePolicy(QSizePolicy newInactiveSizePolicy)
 }
 
 // -----------------------------------------------------------------------------
+bool ctkDynamicSpacer::isActivated()const
+{
+  CTK_D(const ctkDynamicSpacer);
+  return d->Enable;
+}
+
+// -----------------------------------------------------------------------------
 void ctkDynamicSpacer::activate(bool enableSizePolicy)
 {
   CTK_D(ctkDynamicSpacer);
+  qDebug() << "Activate " << enableSizePolicy << (enableSizePolicy ? "Active" : "Inactive") << "size policy";
   d->Enable = enableSizePolicy;
   this->setSizePolicy(
     d->Enable ? d->ActiveSizePolicy : d->InactiveSizePolicy);

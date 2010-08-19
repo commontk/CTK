@@ -38,7 +38,7 @@ class CTK_WIDGETS_EXPORT ctkDynamicSpacer : public QWidget
   Q_OBJECT
   Q_PROPERTY(QSizePolicy activeSizePolicy READ activeSizePolicy WRITE setActiveSizePolicy);
   Q_PROPERTY(QSizePolicy inactiveSizePolicy READ inactiveSizePolicy WRITE setInactiveSizePolicy);
-
+  Q_PROPERTY(bool activate READ isActivated WRITE activate);
 public:
   /// Constructor, builds a ctkDynamicSpacer, inactive by default
   ctkDynamicSpacer(QWidget *parent = 0);
@@ -53,6 +53,11 @@ public:
   QSizePolicy inactiveSizePolicy() const;
   void setInactiveSizePolicy(QSizePolicy sizePolicy);
   inline void setInactiveSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical);
+
+  /// Return the what size policy is current:
+  /// false is inactive Size Policy that is current
+  /// true is active SizePolicy that is current
+  bool isActivated()const;
 
 public slots:
   /// Change the size policy. If enable is true, activeSizePolicy is used,
