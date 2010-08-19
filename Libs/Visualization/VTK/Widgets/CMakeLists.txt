@@ -25,6 +25,8 @@ SET(KIT_SRCS
   ctkVTKAbstractMatrixWidget.cpp
   ctkVTKAbstractMatrixWidget.h
   ctkVTKAbstractMatrixWidget_p.h
+  ctkVTKChartView.cpp
+  ctkVTKChartView.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.cpp
@@ -32,6 +34,8 @@ SET(KIT_SRCS
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.cpp
   ctkVTKScalarBarWidget.h
+  ctkVTKScalarsToColorsView.cpp
+  ctkVTKScalarsToColorsView.h
   ctkVTKSliceView.cpp
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
@@ -42,10 +46,12 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkVTKAbstractMatrixWidget_p.h
+  ctkVTKChartView.h
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.h
+  ctkVTKScalarsToColorsView.h
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
   ctkVTKTextPropertyWidget.h
@@ -65,8 +71,9 @@ SET(KIT_resources
 # Set VTK_LIBRARIES variable
 SET(VTK_LIBRARIES
   QVTK
+  vtkCharts
   )
-  
+
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
