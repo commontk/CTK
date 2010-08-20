@@ -111,7 +111,6 @@ bool ctkDynamicSpacer::isActivated()const
 void ctkDynamicSpacer::activate(bool enableSizePolicy)
 {
   CTK_D(ctkDynamicSpacer);
-  qDebug() << "Activate " << enableSizePolicy << (enableSizePolicy ? "Active" : "Inactive") << "size policy";
   d->Enable = enableSizePolicy;
   this->setSizePolicy(
     d->Enable ? d->ActiveSizePolicy : d->InactiveSizePolicy);
