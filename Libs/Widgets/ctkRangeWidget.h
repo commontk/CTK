@@ -39,10 +39,10 @@ class ctkRangeWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkRangeWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
   Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue)
   Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue)
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)

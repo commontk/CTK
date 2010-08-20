@@ -38,11 +38,11 @@ class ctkSliderWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double value READ value WRITE setValue)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
