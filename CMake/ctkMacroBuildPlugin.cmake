@@ -200,6 +200,11 @@ MACRO(ctkMacroBuildPlugin)
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
     )
+
+  IF(MINGW)
+    LIST(APPEND my_libs ssp) # add stack smash protection lib
+  ENDIF()
+
   TARGET_LINK_LIBRARIES(${lib_name} ${my_libs})
   
   # Install headers
