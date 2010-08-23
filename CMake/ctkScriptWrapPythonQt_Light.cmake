@@ -36,6 +36,7 @@
 #          -DWRAP_INT_DIR:STRING=subir/subir/
 #          -DOUTPUT_DIR:PATH=/path  -DQT_QMAKE_EXECUTABLE:PATH=/path/to/qt/qmake
 #          -DPYTHON_EXECUTABLE:FILEPATH=/path/to/python
+#          -DPYTHON_LIBRARY_PATH:PATH=/path/to/pythonlib
 #          -P ctkScriptWrapPythonQt_Light.cmake
 #
 
@@ -62,7 +63,7 @@ ENDFUNCTION()
 # Convenient function allowing to invoke re.search(regex, string) using the given interpreter.
 # Note that is_matching will be set to True if there is a match
 #
-FUNCTION(reSearchFile python_exe regex file is_matching)
+FUNCTION(reSearchFile python_exe python_library_path regex file is_matching)
 
   set(python_cmd "import re\; f = open('${file}', 'r')\;
 res = re.search\(\"${regex}\", f.read(), re.MULTILINE\)\;
@@ -70,6 +71,14 @@ if res == None: print \"FALSE\"
 else: print \"TRUE\"
 ")
   #message("python_cmd: ${python_cmd}")
+  
+  IF(WIN32)
+    SET(ENV{PATH} ${python_library_path};$ENV{PATH})
+  ELSEIF(APPLE)
+    SET(ENV{DYLD_LIBRARY_PATH} ${python_library_path}:$ENV{DYLD_LIBRARY_PATH})
+  ELSE()
+    SET(ENV{LD_LIBRARY_PATH} ${python_library_path}:$ENV{LD_LIBRARY_PATH})
+  ENDIF()
 
   EXECUTE_PROCESS(
     COMMAND ${python_exe} -c ${python_cmd};
@@ -96,7 +105,7 @@ FOREACH(var WRAPPING_NAMESPACE TARGET SOURCES INCLUDE_DIRS WRAP_INT_DIR)
 ENDFOREACH()
 
 # Check for non-existing ${var}
-FOREACH(var QT_QMAKE_EXECUTABLE OUTPUT_DIR PYTHON_EXECUTABLE)
+FOREACH(var QT_QMAKE_EXECUTABLE OUTPUT_DIR PYTHON_EXECUTABLE PYTHON_LIBRARY_PATH)
   IF(NOT EXISTS ${${var}})
     MESSAGE(SEND_ERROR "Failed to find ${var} when calling ctkScriptWrapPythonQt")
   ENDIF()
@@ -129,7 +138,7 @@ FOREACH(FILE ${SOURCES})
   IF("${parentClassName}" STREQUAL "")
     # Does constructor signature is of the form: myclass()
     SET(regex "[^~]${className}[\\s\\n]*\\([\\s\\n]*\\)")
-    reSearchFile(${PYTHON_EXECUTABLE} ${regex} ${FILE} is_matching)
+    reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH} ${regex} ${FILE} is_matching)
     IF(is_matching)
       SET(parentClassName "No")
       log("${TMP_FILENAME} - constructor of the form: ${className}\(\)")
@@ -139,7 +148,7 @@ FOREACH(FILE ${SOURCES})
   IF("${parentClassName}" STREQUAL "")
     # Does constructor signature is of the form: myclass(QObject * parent ...)
     SET(regex "${className}[\\s\\n]*\\([\\s\\n]*QObject[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\))")
-    reSearchFile(${PYTHON_EXECUTABLE} ${regex} ${FILE} is_matching)
+    reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH} ${regex} ${FILE} is_matching)
     IF(is_matching)
       SET(parentClassName "QObject")
       log("${TMP_FILENAME} - constructor of the form: ${className}\(QObject * parent ... \)")
@@ -149,7 +158,7 @@ FOREACH(FILE ${SOURCES})
   IF("${parentClassName}" STREQUAL "")
     # Does constructor signature is of the form: myclass(QWidget * parent ...)
     SET(regex "${className}[\\s\\n]*\\([\\s\\n]*QWidget[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\))")
-    reSearchFile(${PYTHON_EXECUTABLE} ${regex} ${FILE} is_matching)
+    reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH} ${regex} ${FILE} is_matching)
     IF(is_matching)
       SET(parentClassName "QWidget")
       log("${TMP_FILENAME} - constructor of the form: ${className}\(QWidget * parent ... \)")
