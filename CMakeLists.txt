@@ -277,9 +277,6 @@ SET(CTK_LIBS
 # CTK Plugins - Use ON or OFF to indicate if the plugin should be built by default
 #
 SET(CTK_PLUGINS
-  org.commontk.a:OFF
-  org.commontk.b:OFF
-  org.commontk.c:OFF
   org.commontk.eventbus:ON
   org.commontk.cli:OFF
   )
