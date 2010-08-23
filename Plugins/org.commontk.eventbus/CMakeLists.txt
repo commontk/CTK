@@ -20,7 +20,6 @@ SET(PLUGIN_resources
 ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
-  NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
   MOC_SRCS ${PLUGIN_MOC_SRCS}

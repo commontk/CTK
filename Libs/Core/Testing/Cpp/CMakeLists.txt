@@ -10,6 +10,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkModelTesterTest1.cpp
   ctkUtilsTest1.cpp
   ctkDependencyGraphTest1.cpp
+  ctkDependencyGraphTest2.cpp
   ctkPimplTest1.cpp
   ctkSingletonTest1.cpp
   #EXTRA_INCLUDE TestingMacros.h
@@ -39,6 +40,7 @@ ENDMACRO( SIMPLE_TEST  )
 
 SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
+SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )

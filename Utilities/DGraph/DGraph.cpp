@@ -35,7 +35,7 @@
 //----------------------------------------------------------------------------
 QString help(const QString& progName)
 {
-  QString msg = "Usage: %1 <graphfile> [-paths Label]";
+  QString msg = "Usage: %1 <graphfile> [-paths Label | -sort Label]";
   return msg.arg(progName);
 }
 
@@ -81,6 +81,7 @@ int main(int argc, char** argv)
     }
 
   bool outputPath = false;
+  bool outputSort = false;
   QString label;
   if (argc == 3)
     {
@@ -89,14 +90,23 @@ int main(int argc, char** argv)
     }
   if (argc == 4)
     {
-    if (QString(argv[2]).compare("-paths")!=0)
+    QString arg2 = QString::fromLatin1(argv[2]);
+    if (arg2.compare("-paths")!=0 && arg2.compare("-sort")!=0)
       {
-      displayError(argv[0], QString("Wrong argument: %1").arg(argv[2]));
+      displayError(argv[0], QString("Wrong argument: %1").arg(arg2));
       return EXIT_FAILURE;
       }
     label = QLatin1String(argv[3]);
     outputTopologicalOrder = false;
-    outputPath = true;
+    if (arg2.compare("-paths") == 0)
+      {
+      outputPath = true;
+      }
+    else
+      {
+      outputSort = true;
+      }
+
     if (verbose)
       {
       qDebug() << "label:" << label; 
@@ -166,6 +176,7 @@ int main(int argc, char** argv)
     // Skip empty line or commented line
     if (line.isEmpty() || line.startsWith("#"))
       {
+      line = in.readLine();
       continue;
       }
 
@@ -206,7 +217,7 @@ int main(int argc, char** argv)
   if (mygraph.cycleDetected())
     {
     std::cerr << "Cycle detected !" << std::endl;
-    QList<int> path; 
+    QList<int> path;
     mygraph.findPath(mygraph.cycleOrigin(), mygraph.cycleEnd(), path);
     
     for(int i = 0; i < path.size(); ++i)
@@ -255,6 +266,13 @@ int main(int argc, char** argv)
       std::cout << std::endl;
       }
     }
+
+  if (verbose)
+    {
+    QList<int> sources;
+    mygraph.sourceVertices(sources);
+    qDebug() << "Source vertices: " << sources;
+    }
     
   if (outputPath)
     {
@@ -262,27 +280,52 @@ int main(int argc, char** argv)
     QList<int> out;
     if (mygraph.topologicalSort(out))
       {
-      // Assume all targets depend on the first lib
-      int rootId = out.last();
-      int labelId = vertexLabelToId[label];
-      QList<QList<int>*> paths;
-      mygraph.findPaths(labelId, rootId, paths);
-      for(int i=0; i < paths.size(); i++)
+      for(int i=0; i < out.size(); i++)
         {
-        QList<int>* p = paths[i];
-        Q_ASSERT(p);
-        for(int j=0; j < p->size(); j++)
+        // Assume all targets depend on the first lib
+        // We could get all sinks and find all paths
+        // from the rootId to the sink vertices.
+        int rootId = out.last();
+        int labelId = vertexLabelToId[label];
+        QList<QList<int>*> paths;
+        mygraph.findPaths(labelId, rootId, paths);
+        for(int i=0; i < paths.size(); i++)
           {
-          int id = p->at(j);
-          std::cout << vertexIdToLabel[id].toStdString();
-          if (j != p->size() - 1)
+          QList<int>* p = paths[i];
+          Q_ASSERT(p);
+          for(int j=0; j < p->size(); j++)
             {
-            std::cout << " ";
+            int id = p->at(j);
+            std::cout << vertexIdToLabel[id].toStdString();
+            if (j != p->size() - 1)
+              {
+              std::cout << " ";
+              }
+            }
+          if (i != paths.size() - 1)
+            {
+            std::cout << ";";
             }
           }
-        if (i != paths.size() - 1)
+        }
+      }
+    }
+
+  if (outputSort)
+    {
+    // TODO Make sure label is valid
+    QList<int> out;
+    int labelId = vertexLabelToId[label];
+    if (mygraph.topologicalSort(out, labelId))
+      {
+      for(int i=0; i < out.size(); i++)
+        {
+        int id = out.at(i);
+        std::cout << vertexIdToLabel[id].toStdString();
+
+        if (i != out.size() - 1)
           {
-          std::cout << ";";
+          std::cout << " ";
           }
         }
       }

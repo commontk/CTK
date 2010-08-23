@@ -151,7 +151,7 @@ INCLUDE(CMake/ctkMacroValidateBuildOptions.cmake)
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkFunctionGenerateDGraphInput.cmake)
 INCLUDE(CMake/ctkFunctionGenerateProjectXml.cmake)
-INCLUDE(CMake/ctkMacroGeneratePluginManifest.cmake)
+INCLUDE(CMake/ctkFunctionGeneratePluginManifest.cmake)
 INCLUDE(CMake/ctkMacroGeneratePluginResourceFile.cmake)
 INCLUDE(CMake/ctkFunctionCheckCompilerFlags.cmake)
 
@@ -348,6 +348,18 @@ FOREACH(plugin ${CTK_PLUGINS})
   LIST(APPEND CTK_PLUGINS_SUBDIRS "${plugin_name}")
 ENDFOREACH()
 
+# Create a file with variables containing the paths to the source, binary, and library directory
+# of each enabled plugin. This is needed to setup include and library dependencies to other plugins
+#SET(CTK_PLUGIN_LIST "${CMAKE_CURRENT_BINARY_DIR}/ctkPluginList.cmake")
+#SET(CTK_PLUGINS_SUBDIRS_ENABLED )
+#FOREACH(plugin ${CTK_PLUGINS_SUBDIRS})
+#  IF (CTK_PLUGIN_${plugin})
+#    LIST(APPEND CTK_PLUGINS_SUBDIRS_ENABLED Plugins/${plugin})
+#  ENDIF()
+#ENDFOREACH()
+#ctkMacroGeneratePluginList(FILE ${CTK_PLUGIN_LIST}
+#                           DIRECTORIES ${CTK_PLUGINS_SUBDIRS_ENABLED})
+
 # Build options associated with CTK applications
 FOREACH(app ${CTK_APPLICATIONS})
   ctkFunctionExtractOptionNameAndValue(${app} app_name app_value)
@@ -501,7 +513,7 @@ ENDFOREACH()
 # Add CTK plugin subdirectories
 #
 FOREACH(plugin ${CTK_PLUGINS_SUBDIRS})
-  IF (CTK_PLUGIN_${plugin})
+  IF(CTK_PLUGIN_${plugin})
     ADD_SUBDIRECTORY(Plugins/${plugin})
   ENDIF()
 ENDFOREACH()

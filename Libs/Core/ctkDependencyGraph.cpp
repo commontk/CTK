@@ -38,8 +38,8 @@ class ctkDependencyGraph::ctkInternal
 public:
   ctkInternal(ctkDependencyGraph* p);
   
-  /// Compute indegree
-  void computeIndegrees(QVarLengthArray<int, MAXV>& computedIndegrees);
+  /// Compute outdegree
+  void computeOutdegrees(QVarLengthArray<int, MAXV>& computedOutdegrees);
   
   /// Traverse tree using Depth-first_search
   void traverseUsingDFS(int v);
@@ -58,10 +58,23 @@ public:
   
   void setEdge(int vertice, int degree, int value);
   int edge(int vertice, int degree);
-  
+
+  void verticesWithIndegree(int indegree, QList<int>& list);
+
+  int subgraphSize(int rootId);
+  void subgraphSizeRec(int rootId, QSet<int>& uniqueVertices);
+
+  void subgraphInsert(ctkDependencyGraph& subgraph, int rootId,
+                      QHash<int,int>& subgraphIdToGlobal, QHash<int,int>& globalIdToSubgraph);
+
+  int getOrGenerateSubgraphId(QHash<int, int>& subgraphIdToGlobal,
+                      QHash<int, int>& globalIdToSubgraph,
+                      int globalId);
+
   /// See http://en.wikipedia.org/wiki/Adjacency_list
   QVarLengthArray<QVarLengthArray<int,MAXDEGREE>*, MAXV+1> Edges;
-  QVarLengthArray<int, MAXV+1> Degree;
+  QVarLengthArray<int, MAXV+1> OutDegree;
+  QVarLengthArray<int, MAXV+1> InDegree;
   int NVertices;
   int NEdges;
   
@@ -101,18 +114,18 @@ ctkDependencyGraph::ctkInternal::ctkInternal(ctkDependencyGraph* p)
 }
 
 //----------------------------------------------------------------------------
-void ctkDependencyGraph::ctkInternal::computeIndegrees(QVarLengthArray<int, MAXV>& computedIndegrees)
+void ctkDependencyGraph::ctkInternal::computeOutdegrees(QVarLengthArray<int, MAXV>& computedOutdegrees)
 {
 	for (int i=1; i <= this->NVertices; i++)
 	  {
-	  computedIndegrees[i] = 0;
+    computedOutdegrees[i] = 0;
 	  }
 
 	for (int i=1; i <= this->NVertices; i++) 
 	  {
-		for (int j=0; j < this->Degree[i]; j++) 
+    for (int j=0; j < this->OutDegree[i]; j++)
 		  {
-		  computedIndegrees[ this->edge(i,j) ] ++;
+      computedOutdegrees[ this->edge(i,j) ] ++;
 		  }
 		}
 }
@@ -130,14 +143,14 @@ void ctkDependencyGraph::ctkInternal::traverseUsingDFS(int v)
 	this->processVertex(v);
 
   int y; // successor vertex
-	for (int i=0; i<this->Degree[v]; i++)
+  for (int i=0; i<this->OutDegree[v]; i++)
 	  {
 		y = this->edge(v, i);
 		if (this->P->shouldExcludeEdge(this->edge(v, i)) == false)
 		  {
+      this->Parent[y] = v;
 			if (this->Discovered[y] == false)
 			  {
-				this->Parent[y] = v;
 				this->traverseUsingDFS(y);
 			  } 
 			else 
@@ -160,7 +173,7 @@ void ctkDependencyGraph::ctkInternal::traverseUsingDFS(int v)
 //----------------------------------------------------------------------------
 void ctkDependencyGraph::ctkInternal::processEdge(int from, int to)
 {
-  if (this->Parent[from] != to)
+  if (this->Discovered[to] == true)
     {
     this->CycleDetected = true;
     this->CycleOrigin = to; 
@@ -229,7 +242,7 @@ void ctkDependencyGraph::ctkInternal::findPathsRec(
   
   QList<int> branch(*path);
   int child = from;
-  for (int j=0; j < this->Degree[child]; j++)
+  for (int j=0; j < this->OutDegree[child]; j++)
     {
     if (j == 0)
       {
@@ -248,6 +261,77 @@ void ctkDependencyGraph::ctkInternal::findPathsRec(
       }
     }
 }
+
+void ctkDependencyGraph::ctkInternal::verticesWithIndegree(int indegree, QList<int>& list)
+{
+  Q_ASSERT(indegree >= 0);
+
+  for (int i=1; i <= this->NVertices; i++)
+    {
+    if (this->InDegree[i] == indegree)
+      {
+      list << i;
+      }
+    }
+}
+
+void ctkDependencyGraph::ctkInternal::subgraphSizeRec(int rootId, QSet<int>& uniqueVertices)
+{
+  Q_ASSERT(rootId > 0);
+
+  for (int i = 0; i < this->OutDegree[rootId]; ++i)
+    {
+    int child = this->edge(rootId, i);
+    uniqueVertices << child;
+    subgraphSizeRec(child, uniqueVertices);
+    }
+}
+
+int ctkDependencyGraph::ctkInternal::subgraphSize(int rootId)
+{
+  Q_ASSERT(rootId > 0);
+
+  QSet<int> vertices;
+  vertices << rootId;
+  this->subgraphSizeRec(rootId, vertices);
+  return vertices.size();
+}
+
+void ctkDependencyGraph::ctkInternal::subgraphInsert(
+    ctkDependencyGraph& subgraph, int rootId,
+    QHash<int,int>& subgraphIdToGlobal, QHash<int,int>& globalIdToSubgraph)
+{
+  int from = this->getOrGenerateSubgraphId(subgraphIdToGlobal, globalIdToSubgraph, rootId);
+  for (int i = 0; i < this->OutDegree[rootId]; ++i)
+  {
+    int childId = this->edge(rootId, i);
+    int to = this->getOrGenerateSubgraphId(subgraphIdToGlobal, globalIdToSubgraph,
+                                           childId);
+
+    subgraph.insertEdge(from, to);
+    this->subgraphInsert(subgraph, childId, subgraphIdToGlobal, globalIdToSubgraph);
+  }
+}
+
+int ctkDependencyGraph::ctkInternal::getOrGenerateSubgraphId(
+    QHash<int, int>& subgraphIdToGlobal,
+    QHash<int, int>& globalIdToSubgraph,
+    int globalId)
+{
+  // If needed, generate vertex id
+  int subgraphId = -1;
+  if (!globalIdToSubgraph.keys().contains(globalId))
+    {
+    subgraphId = globalIdToSubgraph.keys().size() + 1;
+    globalIdToSubgraph[globalId] = subgraphId;
+    subgraphIdToGlobal[subgraphId] = globalId;
+    }
+  else
+    {
+    subgraphId = globalIdToSubgraph[globalId];
+    }
+  return subgraphId;
+}
     
 //----------------------------------------------------------------------------
 // ctkDependencyGraph methods
@@ -264,11 +348,13 @@ ctkDependencyGraph::ctkDependencyGraph(int nvertices)
   this->Internal->Discovered.resize(nvertices + 1);
   this->Internal->Parent.resize(nvertices + 1);
   this->Internal->Edges.resize(nvertices + 1);
-  this->Internal->Degree.resize(nvertices + 1);
+  this->Internal->OutDegree.resize(nvertices + 1);
+  this->Internal->InDegree.resize(nvertices + 1);
 
   for (int i=1; i <= nvertices; i++)
     {
-    this->Internal->Degree[i] = 0;
+    this->Internal->OutDegree[i] = 0;
+    this->Internal->InDegree[i] = 0;
     }
     
   // initialize Edge adjacency list
@@ -332,7 +418,7 @@ void ctkDependencyGraph::printGraph()
   for(int i=1; i <= this->Internal->NVertices; i++)
     {
     std::cout << i << ":";
-    for (int j=0; j < this->Internal->Degree[i]; j++)
+    for (int j=0; j < this->Internal->OutDegree[i]; j++)
       {
       std::cout << " " << this->Internal->edge(i, j);
       }
@@ -372,12 +458,55 @@ bool ctkDependencyGraph::shouldExcludeEdge(int edge)
 
 //----------------------------------------------------------------------------
 bool ctkDependencyGraph::checkForCycle()
-{
+{ 
   if (this->Internal->NEdges > 0)
     {
-    // get a valid vertice Id
-    int verticeId = 1;
-    this->Internal->traverseUsingDFS(verticeId);
+    // Store unprocessed vertex ids
+    QList<int> uncheckedVertices;
+    for (int i = 1; i <= this->Internal->NVertices; ++i)
+      {
+        uncheckedVertices << i;
+      }
+
+    // Start the cycle detection on the source vertices
+    QList<int> sources;
+    this->sourceVertices(sources);
+    foreach(int sourceId, sources)
+      {
+      this->Internal->traverseUsingDFS(sourceId);
+      if (this->cycleDetected()) return true;
+
+      for (int i=0; i < this->Internal->Processed.size(); i++)
+        {
+          if (this->Internal->Processed[i] == true)
+            {
+            uncheckedVertices.removeOne(i);
+            }
+
+          this->Internal->Discovered[i] = false;
+          this->Internal->Processed[i] = false;
+        }
+      }
+
+    // If a component does not have a source vertex,
+    // i.e. it is a cycle a -> b -> a, check all non
+    // processed vertices.
+    while (!uncheckedVertices.empty())
+      {
+      this->Internal->traverseUsingDFS(uncheckedVertices.last());
+      if (this->cycleDetected()) return true;
+
+      for (int i=0; i < this->Internal->Processed.size(); i++)
+        {
+          if (this->Internal->Processed[i] == true)
+            {
+            uncheckedVertices.removeOne(i);
+            }
+
+          this->Internal->Discovered[i] = false;
+          this->Internal->Processed[i] = false;
+        }
+      }
     }
   return this->cycleDetected();
 }
@@ -408,13 +537,14 @@ void ctkDependencyGraph::insertEdge(int from, int to)
   
   // resize if needed
   int capacity = this->Internal->Edges[from]->capacity(); 
-  if (this->Internal->Degree[from] > capacity)
+  if (this->Internal->OutDegree[from] > capacity)
     {
     this->Internal->Edges[from]->resize(capacity + capacity * 0.3);
     }
 
-  this->Internal->setEdge(from, this->Internal->Degree[from], to);
-  this->Internal->Degree[from]++;
+  this->Internal->setEdge(from, this->Internal->OutDegree[from], to);
+  this->Internal->OutDegree[from]++;
+  this->Internal->InDegree[to]++;
 
   this->Internal->NEdges++;
 }
@@ -449,59 +579,70 @@ void ctkDependencyGraph::findPaths(int from, int to, QList<QList<int>* >& paths)
 //----------------------------------------------------------------------------
 void ctkDependencyGraph::findPath(int from, int to, QList<int>& path)
 {
-  int child = from;
-  int parent = this->Internal->edge(child, 0);
-  path << child; 
-  while (parent > 0)
+  QList<QList<int>* > paths;
+  this->findPaths(from, to, paths);
+  if (!paths.empty())
     {
-    path << parent;
-    if (parent == to)
-      {
-      break;
-      }
-    child = parent;
-    parent = this->Internal->edge(child, 0);
+    path << *(paths.first());
     }
+
+  qDeleteAll(paths);
 }
 
 //----------------------------------------------------------------------------
-bool ctkDependencyGraph::topologicalSort(QList<int>& sorted)
+bool ctkDependencyGraph::topologicalSort(QList<int>& sorted, int rootId)
 {
-	QVarLengthArray<int, MAXV> indegree; // indegree of each vertex
-	QQueue<int> zeroin;	  // vertices of indegree 0
+  if (rootId > 0)
+    {
+    ctkDependencyGraph subgraph(this->Internal->subgraphSize(rootId));
+    QHash<int,int> subgraphIdToGlobal;
+    QHash<int,int> globalIdToSubgraph;
+    this->Internal->subgraphInsert(subgraph, rootId, subgraphIdToGlobal, globalIdToSubgraph);
+
+    QList<int> subgraphSorted;
+    bool result = subgraph.topologicalSort(subgraphSorted);
+    foreach(int subgraphId, subgraphSorted)
+      {
+      sorted << subgraphIdToGlobal[subgraphId];
+      }
+    return result;
+    }
+
+  QVarLengthArray<int, MAXV> outdegree; // outdegree of each vertex
+  QQueue<int> zeroout;	  // vertices of outdegree 0
 	int x, y;			        // current and next vertex
   
-  indegree.resize(this->Internal->NVertices + 1);
+  outdegree.resize(this->Internal->NVertices + 1);
 	
 	// resize if needed
 	if (this->Internal->NVertices > MAXV)
 	  {
-	  indegree.resize(this->Internal->NVertices);
+    outdegree.resize(this->Internal->NVertices);
 	  }
 
-	this->Internal->computeIndegrees(indegree);
+  this->Internal->computeOutdegrees(outdegree);
 	
 	for (int i=1; i <= this->Internal->NVertices; i++)
 	  {
-		if (indegree[i] == 0) 
+    if (outdegree[i] == 0)
 		  {
-		  zeroin.enqueue(i);
+      zeroout.enqueue(i);
 		  }
 		}
 
 	int j=0;
-	while (zeroin.empty() == false) 
+  while (zeroout.empty() == false)
 	  {
 		j = j+1;
-		x = zeroin.dequeue();
+    x = zeroout.dequeue();
 		sorted << x;
-		for (int i=0; i < this->Internal->Degree[x]; i++)
+    for (int i=0; i < this->Internal->OutDegree[x]; i++)
 		  {
 			y = this->Internal->edge(x, i);
-			indegree[y] --;
-			if (indegree[y] == 0)
+      outdegree[y] --;
+      if (outdegree[y] == 0)
 			  {
-			  zeroin.enqueue(y);
+        zeroout.enqueue(y);
 			  }
 		  }
 	  }
@@ -512,4 +653,9 @@ bool ctkDependencyGraph::topologicalSort(QList<int>& sorted)
 		}
 		
   return true;
+}
+
+void ctkDependencyGraph::sourceVertices(QList<int>& sources)
+{
+  this->Internal->verticesWithIndegree(0, sources);
 }
