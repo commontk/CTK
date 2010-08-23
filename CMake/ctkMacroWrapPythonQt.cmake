@@ -69,10 +69,11 @@ ENDFUNCTION()
 #
 FUNCTION(ctkMacroWrapPythonQt_reSearchFile python_exe python_library_path regex file is_matching)
 
-  set(python_cmd "import re\; f = open('${file}', 'r')\;
-res = re.search\(\"${regex}\", f.read(), re.MULTILINE\)\;
-if res == None: print \"FALSE\"
-else: print \"TRUE\"
+  set(python_cmd "import re
+f = open('${file}', 'r')
+res = re.search('${regex}', f.read(), re.MULTILINE)
+if res == None: print 'FALSE'
+else: print 'TRUE'
 ")
   #message("python_cmd: ${python_cmd}")
 
