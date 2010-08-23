@@ -35,7 +35,7 @@
 //----------------------------------------------------------------------------
 QString help(const QString& progName)
 {
-  QString msg = "Usage: %1 <graphfile> [-paths Label]";
+  QString msg = "Usage: %1 <graphfile> [-paths Label | -sort Label]";
   return msg.arg(progName);
 }
 
