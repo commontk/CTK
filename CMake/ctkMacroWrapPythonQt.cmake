@@ -67,7 +67,7 @@ ENDFUNCTION()
 # Convenient function allowing to invoke re.search(regex, string) using the given interpreter.
 # Note that is_matching will be set to True if there is a match
 #
-FUNCTION(ctkMacroWrapPythonQt_reSearchFile python_exe regex file is_matching)
+FUNCTION(ctkMacroWrapPythonQt_reSearchFile python_exe python_library_path regex file is_matching)
 
   set(python_cmd "import re\; f = open('${file}', 'r')\;
 res = re.search\(\"${regex}\", f.read(), re.MULTILINE\)\;
@@ -76,8 +76,9 @@ else: print \"TRUE\"
 ")
   #message("python_cmd: ${python_cmd}")
 
+  ctkMacroSetPaths("${python_library_path}")
   EXECUTE_PROCESS(
-    COMMAND ${python_exe} -c ${python_cmd};
+    COMMAND ${python_exe} -c ${python_cmd}
     RESULT_VARIABLE result
     OUTPUT_VARIABLE output
     ERROR_VARIABLE error
@@ -98,9 +99,17 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   ENDIF()
   
   find_package(PythonInterp)
-  IF(NOT EXISTS "${PYTHON_EXECUTABLE}")
+  IF(NOT PYTHONINTERP_FOUND)
     MESSAGE(SEND_ERROR "PYTHON_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
   ENDIF()
+
+  find_package(PythonLibs)
+  IF(NOT PYTHONLIBS_FOUND)
+    MESSAGE(SEND_ERROR "PYTHON_LIBRARY not specified or inexistent when calling ctkMacroWrapPythonQt")
+  ENDIF()
+
+  # Extract python lib path
+  get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARY} PATH)
   
   # Clear log file
   FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "")
@@ -167,7 +176,8 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       IF(NOT IS_WRAP_FULL)
         # Constructor with either QWidget or QObject as first parameter
         SET(regex "[^~]${className}[\\s\\n]*\\([\\s\\n]*((QObject|QWidget)[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\)|\\)))")
-        ctkMacroWrapPythonQt_reSearchFile(${PYTHON_EXECUTABLE} ${regex} ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} is_matching)
+        ctkMacroWrapPythonQt_reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH}
+                                          ${regex} ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} is_matching)
         IF(NOT is_matching)
           SET(skip_wrapping TRUE)
           ctkMacroWrapPythonQt_log("${FILE}: skipping - Missing expected constructor signature")
@@ -178,7 +188,8 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     IF(NOT skip_wrapping)
       # Skip wrapping if object has a virtual pure method 
       SET(regex "virtual[\\w\\n\\s\\(\\)]+\\=[\\s\\n]*(0|NULL)[\\s\\n]*\\x3b")
-      ctkMacroWrapPythonQt_reSearchFile(${PYTHON_EXECUTABLE} ${regex} ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} is_matching)
+      ctkMacroWrapPythonQt_reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH}
+                                        ${regex} ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} is_matching)
       IF(is_matching)
         SET(skip_wrapping TRUE)
         ctkMacroWrapPythonQt_log("${FILE}: skipping - Contains a virtual pure method")
