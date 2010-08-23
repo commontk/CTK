@@ -29,8 +29,9 @@
 void print_usage()
 {
   std::cerr << "Usage: \n";
-  std::cerr << "  ctkDICOMDemoSCU peer port\n";
+  std::cerr << "  ctkDICOMDemoSCU peer port [peerAETitle]\n";
   std::cerr << "     Issues ECHO request to the given host and given port.\n"; 
+  std::cerr << "     Optional peerAETitle tells what application entity to address.\n"; 
   return;
 }
 
@@ -45,10 +46,15 @@ int main(int argc, char** argv)
   
   std::string host = argv[1];
   unsigned int port = atoi(argv[2]);
-  
+  std::string peerAET  = "";
+  if (argc > 3)
+  {
+    peerAET = argv[3];
+  }
+    
   // Setup SCU
   DcmSCU scu;
-  scu.setPeerHostName(OFString(host.c_str()));
+  scu.setPeerHostName(host);
   scu.setPeerPort(port);
   OFString verificationSOP = UID_VerificationSOPClass;
   OFList<OFString> ts;
@@ -56,6 +62,10 @@ int main(int argc, char** argv)
   ts.push_back(UID_BigEndianExplicitTransferSyntax);  
   ts.push_back(UID_LittleEndianImplicitTransferSyntax);
   scu.addPresentationContext(verificationSOP, ts);
+  if (peerAET != "")
+  {
+    scu.setPeerAETitle(peerAET);
+  }
   OFCondition result = scu.initNetwork();
   if (result.bad())
   {
