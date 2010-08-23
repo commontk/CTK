@@ -441,10 +441,19 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
                                       &option, 
                                       QStyle::SC_SliderGroove, 
                                       this);
-  QRect rangeBox = QRect( 
-      QPoint( qMin( lr.center().x(), ur.center().x() ), sr.center().y() - 2), 
+  QRect rangeBox;
+  if (option.orientation == Qt::Horizontal)
+    {
+    rangeBox = QRect(
+      QPoint(qMin( lr.center().x(), ur.center().x() ), sr.center().y() - 2),
       QPoint(qMax( lr.center().x(), ur.center().x() ), sr.center().y() + 1));
-
+    }
+  else
+    {
+    rangeBox = QRect(
+      QPoint(sr.center().x() - 2, qMin( lr.center().y(), ur.center().y() )),
+      QPoint(sr.center().x() + 1, qMax( lr.center().y(), ur.center().y() )));
+    }
 
   // -----------------------------
   // Render the range
@@ -458,8 +467,17 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
   // Create default colors based on the transfer function.
   //
   QColor highlight = this->palette().color(QPalette::Normal, QPalette::Highlight);
-  QLinearGradient gradient( groove.center().x(), groove.top(),
-                            groove.center().x(), groove.bottom());
+  QLinearGradient gradient;
+  if (option.orientation == Qt::Horizontal)
+    {
+    gradient = QLinearGradient( groove.center().x(), groove.top(),
+                                groove.center().x(), groove.bottom());
+    }
+  else
+    {
+    gradient = QLinearGradient( groove.left(), groove.center().y(),
+                                groove.right(), groove.center().y());
+    }
 
   // TODO: Set this based on the supplied transfer function
   QColor l = Qt::darkGray;
@@ -497,7 +515,9 @@ void ctkRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
     mouseEvent->ignore();
     return;
     }
-  
+  int pos = this->orientation() == Qt::Horizontal ?
+    mouseEvent->pos().x() : mouseEvent->pos().y();
+
   QStyleOptionSlider option;
   this->initStyleOption( &option );
 
@@ -520,7 +540,8 @@ void ctkRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
     d->m_SubclassPosition = d->m_MinimumPosition;
 
     // save the position of the mouse inside the handle for later
-    d->m_SubclassClickOffset = mouseEvent->x() - lr.left();
+    d->m_SubclassClickOffset = pos - (this->orientation() == Qt::Horizontal ?
+      lr.left() : lr.top());
 
     this->setSliderDown(true);
 
@@ -554,7 +575,8 @@ void ctkRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
     d->m_SubclassPosition = d->m_MaximumPosition;
 
     // save the position of the mouse inside the handle for later
-    d->m_SubclassClickOffset = mouseEvent->x() - ur.left();
+    d->m_SubclassClickOffset = pos - (this->orientation() == Qt::Horizontal ?
+      ur.left() : ur.top());
 
     this->setSliderDown(true);
 
@@ -579,13 +601,16 @@ void ctkRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
                                       &option, 
                                       QStyle::SC_SliderGroove, 
                                       this);
+  int minCenter = (this->orientation() == Qt::Horizontal ?
+    lr.center().x() : ur.center().y());
+  int maxCenter = (this->orientation() == Qt::Horizontal ?
+    ur.center().x() : lr.center().y());
   if (control == QStyle::SC_SliderGroove &&
-      mouseEvent->x() > lr.center().x() &&
-      mouseEvent->x() < ur.center().x())
+      pos > minCenter && pos < maxCenter)
     {
     // warning lost of precision it might be fatal
     d->m_SubclassPosition = (d->m_MinimumPosition + d->m_MaximumPosition) / 2.;
-    d->m_SubclassClickOffset = mouseEvent->x() - d->pixelPosFromRangeValue(d->m_SubclassPosition);
+    d->m_SubclassClickOffset = pos - d->pixelPosFromRangeValue(d->m_SubclassPosition);
     d->m_SubclassWidth = (d->m_MaximumPosition - d->m_MinimumPosition) / 2;
     qMax(d->m_SubclassPosition - d->m_MinimumPosition, d->m_MaximumPosition - d->m_SubclassPosition);
     this->setSliderDown(true);
@@ -614,13 +639,15 @@ void ctkRangeSlider::mouseMoveEvent(QMouseEvent* mouseEvent)
     mouseEvent->ignore();
     return;
     }
+  int pos = this->orientation() == Qt::Horizontal ?
+    mouseEvent->pos().x() : mouseEvent->pos().y();
+
   QStyleOptionSlider option;
   this->initStyleOption(&option);
 
   const int m = style()->pixelMetric( QStyle::PM_MaximumDragDistance, &option, this );
 
-  int newPosition = d->pixelPosToRangeValue(
-    mouseEvent->x() - d->m_SubclassClickOffset);
+  int newPosition = d->pixelPosToRangeValue(pos - d->m_SubclassClickOffset);
 
   if (m >= 0)
     {
