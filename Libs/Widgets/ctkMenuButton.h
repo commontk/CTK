@@ -32,7 +32,11 @@
 class ctkMenuButtonPrivate;
 
 /// Description
-/// A Menu widget that show/hide its children depending on its checked/collapsed properties
+/// ctkMenuButton is a QPushButton that separates the clickable area for
+/// poping up the optional QMenu from the traditional area of the QPushButton.
+/// The menu indicator in the button has its own button and clicking it pops
+/// up the menu.
+/// ctkMenuButton makes sense only if a QMenu is set.
 class CTK_WIDGETS_EXPORT ctkMenuButton : public QPushButton
 {
   Q_OBJECT
@@ -42,14 +46,19 @@ public:
   ctkMenuButton(const QString& text, QWidget *parent = 0);
   virtual ~ctkMenuButton();
 
+  /// Reimplemented for internal reasons
   virtual QSize minimumSizeHint()const;
+  /// Reimplemented for internal reasons
   virtual QSize sizeHint()const;
 
 protected:
+  /// Reimplemented for internal reasons
   virtual void paintEvent(QPaintEvent*);
+  /// Reimplemented for internal reasons
   virtual void mousePressEvent(QMouseEvent* event);
-
+  /// Reimplemented for internal reasons
   virtual bool hitButton(const QPoint & pos) const;
+  /// Reimplemented for internal reasons
   virtual void initStyleOption ( QStyleOptionButton * option ) const;
 private:
   CTK_DECLARE_PRIVATE(ctkMenuButton);

@@ -31,6 +31,14 @@
 
 class ctkDoubleSliderPrivate;
 
+/// ctkDoubleSlider is a QSlider that controls doubles instead of integers.
+/// ctkDoubleSlider internally aggregates a QSlider
+/// TODO: ctkDoubleSlider tries to represent a double value with integers. It's
+/// of course non-optimal and can lead to errors, it would be better if
+/// ctkDoubleSlider works like QDoubleSpinBox, where the value is a QVariant
+/// and the conversion between double and integer is only done to convert
+/// to/from screen coordinates.
+/// \sa ctkRangeSlider, ctkDoubleRangeSlider, ctkRangeWidget
 class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
 {
   Q_OBJECT
@@ -47,10 +55,11 @@ public:
   /// Superclass typedef
   typedef QWidget Superclass;
 
-  /// 
-  /// Constructors
-  /// Vertical by default
+  /// Constructors, builds a slider whose default values are the same as
+  /// QSlider (vertical by default).
   explicit ctkDoubleSlider(QWidget* parent = 0);
+  /// Constructors, builds a slider whose default values are the same as
+  /// QSlider (vertical by default).
   explicit ctkDoubleSlider(Qt::Orientation orient, QWidget* parent = 0);
   /// Destructor
   virtual ~ctkDoubleSlider();
@@ -137,10 +146,6 @@ public slots:
   /// The orientation must be Qt::Vertical (the default) or Qt::Horizontal.
   void setOrientation(Qt::Orientation orientation);
 
-protected slots:
-  void onValueChanged(int value);
-  void onSliderMoved(int position);
-
 signals:
   ///
   /// This signal is emitted when the slider value has changed, with the new
@@ -163,7 +168,19 @@ signals:
   /// This signal is emitted when the user releases the slider with the mouse, 
   /// or programmatically when setSliderDown(false) is called.
   void sliderReleased();
-  
+
+  ///
+  /// This signal is emitted when the slider range has changed, with min being
+  /// the new minimum, and max being the new maximum.
+  /// Warning: don't confound with valuesChanged(double, double);
+  /// \sa QAbstractSlider::rangeChanged()
+  void rangeChanged(double min, double max);
+
+protected slots:
+  void onValueChanged(int value);
+  void onSliderMoved(int position);
+  void onRangeChanged(int min, int max);
+
 private:
   CTK_DECLARE_PRIVATE(ctkDoubleSlider);
 };

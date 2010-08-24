@@ -33,13 +33,18 @@ class ctkButtonGroupPrivate;
 
 ///
 /// ctkButtonGroup is a QButtonGroup with a different behavior when exclusive.
-/// An exclusive ctkButtonGroup switches off the previously checked button when 
-/// a new button is checked.
-/// Use ctkButtonGroup the same way than QButtonGroup (see QButtonGroup doc).
-/// i.e. : ctkButtonGroup* buttonGroup = new ctkButtonGroup(parent);
+/// An exclusive ctkButtonGroup switches off the previously checked button when
+/// a new button is checked. ctkButtonGroup doesn't enforce that 1 button is
+/// checked at all time (contrary to QButtonGroup). If a button is checked it is
+/// possible to uncheck it without having to check another button.
+/// Use ctkButtonGroup the same way than QButtonGroup.
+/// \code
+/// ctkButtonGroup* buttonGroup = new ctkButtonGroup(parent);
 /// buttonGroup->addButton(button1);
 /// buttonGroup->addButton(button2);
-/// By default ctkButtonGroup is exclusive. 
+/// \endcode
+/// By default ctkButtonGroup is exclusive.
+/// \sa QButtonGroup
 class CTK_WIDGETS_EXPORT ctkButtonGroup : public QButtonGroup
 {
   Q_OBJECT

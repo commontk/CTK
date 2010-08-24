@@ -5,7 +5,6 @@ PROJECT(CTKVisualizationVTKWidgets)
 #
 
 FIND_PACKAGE(VTK)
-# TODO In case VTK is passed directly using VTK_DIR, check expected options
 IF(NOT VTK_FOUND)
   MESSAGE(FATAL_ERROR "error: VTK package is required to build ${PROJECT_NAME}")
 ENDIF()

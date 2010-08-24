@@ -24,12 +24,49 @@
 
 // CTK includes
 #include "ctkAbstractPythonManager.h"
+#include "ctkScriptingPythonCoreConfigure.h"
 
 // PythonQT includes
 #include <PythonQt.h>
 
 // STD includes
 #include <csignal>
+
+#ifdef CTK_PYTHONQT_WRAP_QTGUI
+void PythonQt_init_QtGui(PyObject*);
+#endif
+
+#ifdef CTK_PYTHONQT_WRAP_QTNETWORK
+void PythonQt_init_QtNetwork(PyObject*);
+#endif
+
+#ifdef CTK_PYTHONQT_WRAP_QTOPENGL
+void PythonQt_init_QtOpenGL(PyObject*);
+#endif
+
+#ifdef CTK_PYTHONQT_WRAP_QTSQL
+void PythonQt_init_QtSql(PyObject*);
+#endif
+
+#ifdef CTK_PYTHONQT_WRAP_QTSVG
+void PythonQt_init_QtSvg(PyObject*); 
+#endif
+
+#ifdef CTK_PYTHONQT_WRAP_QTUITOOLS
+void PythonQt_init_QtUiTools(PyObject*);
+#endif
+
+#ifdef CTK_PYTHONQT_WRAP_QTWEBKIT
+void PythonQt_init_QtWebKit(PyObject*);
+#endif
+
+#ifdef CTK_PYTHONQT_WRAP_QTXML
+void PythonQt_init_QtXml(PyObject*);
+#endif
+
+#ifdef CTK_PYTHONQT_WRAP_QTXMLPATTERNS
+void PythonQt_init_QtXmlPatterns(PyObject*);
+#endif
 
 //-----------------------------------------------------------------------------
 ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclass(_parent)
@@ -74,7 +111,43 @@ void ctkAbstractPythonManager::initPythonQt()
                 SLOT(printStdout(const QString&)));
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString&)),
                 SLOT(printStderr(const QString&)));
+  
+  #ifdef CTK_PYTHONQT_WRAP_QTGUI
+  PythonQt_init_QtGui(0);
+  #endif
 
+  #ifdef CTK_PYTHONQT_WRAP_QTNETWORK
+  PythonQt_init_QtNetwork(0);
+  #endif
+
+  #ifdef CTK_PYTHONQT_WRAP_QTOPENGL
+  PythonQt_init_QtOpenGL(0);
+  #endif
+
+  #ifdef CTK_PYTHONQT_WRAP_QTSQL
+  PythonQt_init_QtSql(0);
+  #endif
+
+  #ifdef CTK_PYTHONQT_WRAP_QTSVG
+  PythonQt_init_QtSvg(0); 
+  #endif
+
+  #ifdef CTK_PYTHONQT_WRAP_QTUITOOLS
+  PythonQt_init_QtUiTools(0);
+  #endif
+
+  #ifdef CTK_PYTHONQT_WRAP_QTWEBKIT
+  PythonQt_init_QtWebKit(0);
+  #endif
+
+  #ifdef CTK_PYTHONQT_WRAP_QTXML
+  PythonQt_init_QtXml(0);
+  #endif
+
+  #ifdef CTK_PYTHONQT_WRAP_QTXMLPATTERNS
+  PythonQt_init_QtXmlPatterns(0);
+  #endif
+  
   QStringList initCode;
   initCode << "import sys";
   foreach (QString path, this->pythonPaths())

@@ -32,29 +32,30 @@
 //-----------------------------------------------------------------------------
 class ctkMatrixWidgetPrivate: public ctkPrivate<ctkMatrixWidget>
 {
+public:
+  void init();
 };
 
-// --------------------------------------------------------------------------
-ctkMatrixWidget::ctkMatrixWidget(QWidget* _parent) : Superclass(4, 4, _parent)
+//-----------------------------------------------------------------------------
+void ctkMatrixWidgetPrivate::init()
 {
-  CTK_INIT_PRIVATE(ctkMatrixWidget);
-
+  CTK_P(ctkMatrixWidget);
   // Set Read-only
-  this->setEditTriggers(ctkMatrixWidget::NoEditTriggers);
+  p->setEditTriggers(ctkMatrixWidget::NoEditTriggers);
 
   // Hide headers
-  this->verticalHeader()->hide();
-  this->horizontalHeader()->hide();
+  p->verticalHeader()->hide();
+  p->horizontalHeader()->hide();
 
   // Disable scrollBars
-  this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  p->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  p->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   // Don't expand for no reason
-  this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+  p->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
   // Disable the frame by default
-  this->setFrameStyle(QFrame::NoFrame);
+  p->setFrameStyle(QFrame::NoFrame);
 
   // Define prototype item
   QTableWidgetItem* _item = new QTableWidgetItem();
@@ -62,10 +63,27 @@ ctkMatrixWidget::ctkMatrixWidget(QWidget* _parent) : Superclass(4, 4, _parent)
   _item->setTextAlignment(Qt::AlignCenter);
 
   // The table takes ownership of the prototype.
-  this->setItemPrototype(_item);
+  p->setItemPrototype(_item);
 
   // Initialize
-  this->reset();
+  p->reset();
+}
+
+// --------------------------------------------------------------------------
+ctkMatrixWidget::ctkMatrixWidget(QWidget* _parent) : Superclass(4, 4, _parent)
+{
+  CTK_INIT_PRIVATE(ctkMatrixWidget);
+  CTK_D(ctkMatrixWidget);
+  d->init();
+}
+
+// --------------------------------------------------------------------------
+ctkMatrixWidget::ctkMatrixWidget(int rows, int columns, QWidget* _parent)
+  : Superclass(rows, columns, _parent)
+{
+  CTK_INIT_PRIVATE(ctkMatrixWidget);
+  CTK_D(ctkMatrixWidget);
+  d->init();
 }
 
 // --------------------------------------------------------------------------

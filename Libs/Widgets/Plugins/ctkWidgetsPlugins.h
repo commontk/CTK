@@ -26,10 +26,11 @@
 
 // CTK includes
 #include "CTKWidgetsPluginsExport.h"
-#include "ctkComboBoxPlugin.h"
+#include "ctkActionsWidgetPlugin.h"
 #include "ctkCollapsibleButtonPlugin.h"
 #include "ctkCollapsibleGroupBoxPlugin.h"
 #include "ctkColorPickerButtonPlugin.h"
+#include "ctkComboBoxPlugin.h"
 #include "ctkCoordinatesWidgetPlugin.h"
 #include "ctkDirectoryButtonPlugin.h"
 #include "ctkDoubleRangeSliderPlugin.h"
@@ -42,7 +43,7 @@
 #include "ctkRangeWidgetPlugin.h"
 #include "ctkTransferFunctionViewPlugin.h"
 #include "ctkTreeComboBoxPlugin.h"
-#include "ctkSliderSpinBoxWidgetPlugin.h"
+#include "ctkSliderWidgetPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins : public QObject,
@@ -55,10 +56,11 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new ctkComboBoxPlugin
+    plugins << new ctkActionsWidgetPlugin
             << new ctkCollapsibleButtonPlugin
             << new ctkCollapsibleGroupBoxPlugin
             << new ctkColorPickerButtonPlugin
+            << new ctkComboBoxPlugin
             << new ctkCoordinatesWidgetPlugin
             << new ctkDirectoryButtonPlugin
             << new ctkDoubleRangeSliderPlugin
@@ -69,7 +71,7 @@ public:
             << new ctkMenuButtonPlugin
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
-            << new ctkSliderSpinBoxWidgetPlugin
+            << new ctkSliderWidgetPlugin
             << new ctkTransferFunctionViewPlugin
             << new ctkTreeComboBoxPlugin;
     return plugins;

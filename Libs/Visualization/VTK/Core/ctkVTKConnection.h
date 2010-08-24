@@ -33,6 +33,12 @@
 class vtkObject;
 class ctkVTKConnectionPrivate;
 
+/// Warning the slot must have its signature order:
+/// vtkObject*, vtkObject* : sender, callData
+/// or
+/// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
+/// Of course the slot can contain less parameters, but always the same order
+/// though.
 class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKConnection : public QObject
 {
 Q_OBJECT
@@ -48,6 +54,12 @@ public:
     const QObject* qt_obj, QString qt_slot = "");
 
   /// 
+  /// Warning the slot must have its signature order:
+  /// vtkObject*, vtkObject* : sender, callData
+  /// or
+  /// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
+  /// Of course the slot can contain less parameters, but always the same order
+  /// though.
   void setup(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot, float priority = 0.f);
 

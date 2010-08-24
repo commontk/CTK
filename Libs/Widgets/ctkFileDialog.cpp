@@ -57,6 +57,9 @@ void ctkFileDialogPrivate::init()
   Q_ASSERT(button);
   this->AcceptButtonState =
     button->isEnabledTo(qobject_cast<QWidget*>(button->parent()));
+  // TODO: catching the event of the enable state is not enough, if the user 
+  // double click on the file, the dialog will be accepted, that event should
+  // be intercepted as well
   button->installEventFilter(p);
 }
 
@@ -93,6 +96,7 @@ void ctkFileDialog::setBottomWidget(QWidget* widget, const QString& label)
 {
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(this->layout());
   QWidget* oldBottomWidget = this->bottomWidget();
+  // remove the old widget from the layout if any
   if (oldBottomWidget)
     {
     if (oldBottomWidget == widget)
@@ -115,10 +119,12 @@ void ctkFileDialog::setBottomWidget(QWidget* widget, const QString& label)
     {
     gridLayout->addWidget(widget,4, 0,1, 2);
     }
+  // The dialog button box is no longer spanned on 2 rows but on 3 rows if
+  // there is a "bottom widget" 
   QDialogButtonBox* buttonBox = this->findChild<QDialogButtonBox*>();
   Q_ASSERT(buttonBox);
   gridLayout->removeWidget(buttonBox);
-  gridLayout->addWidget(buttonBox, 2, 2, 3, 1);
+  gridLayout->addWidget(buttonBox, 2, 2, widget ? 3 : 2, 1);
 }
 
 //------------------------------------------------------------------------------

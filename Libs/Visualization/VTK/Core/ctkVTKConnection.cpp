@@ -342,7 +342,7 @@ bool ctkVTKConnection::isEqual(vtkObject* vtk_obj, unsigned long vtk_event,
 {
   CTK_D(const ctkVTKConnection);
   
-  if (d->VTKObject != vtk_obj)
+  if (vtk_obj && d->VTKObject != vtk_obj)
     {
     return false;
     }

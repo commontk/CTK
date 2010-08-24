@@ -28,22 +28,48 @@
 #include <cstdlib>
 #include <iostream>
 
+int ObjectConstructed = 0; 
+
 //-----------------------------------------------------------------------------
-class BaseClassHelperType
+class Object
 {
 public:
+  Object()
+  {
+    ++ObjectConstructed;
+  }
+  ~Object()
+  {
+    --ObjectConstructed;
+  }
 };
 
 //-----------------------------------------------------------------------------
-class FactoryItemHelper
+class ObjectFactoryItem : public ctkFactoryLibraryItem<Object>
 {
 public:
-  FactoryItemHelper( QString &, QString )
-    {
-    }
-  void setSymbols(const QStringList& )
-    {
-    }
+  ObjectFactoryItem(const QString& path)
+    :ctkFactoryLibraryItem<Object>(path)
+  {
+  }
+protected:
+  virtual Object* instanciator(){return new Object;}
+};
+
+//-----------------------------------------------------------------------------
+class ObjectFactory : public ctkAbstractLibraryFactory<Object>
+{
+public:
+  virtual void registerItems()
+  {
+    qDebug() << "Registering items";
+  }
+  
+protected:
+  virtual ctkFactoryLibraryItem<Object>* createFactoryLibraryItem(const QFileInfo& file)const
+  {
+    return new ObjectFactoryItem(file.filePath());
+  }
 };
 
 //-----------------------------------------------------------------------------
@@ -51,9 +77,8 @@ int ctkAbstractLibraryFactoryTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-//  typedef ctkAbstractLibraryFactory < BaseClassHelperType, FactoryItemHelper >  FactoryType;
-//  FactoryType  ctkObject;
-
+  ObjectFactory factory;
+  factory.registerItems();
 
   return EXIT_SUCCESS;
 }

@@ -29,8 +29,8 @@
 
 ///
 /// ctkCoordinatesWidget is a simple container of dimension coordinates.
-/// For each coordinate a spinbox is associated, everytime a value is modified
-/// the signal valueChanged is fired.
+/// For each coordinate a double spinbox is associated, everytime a value is
+/// modified, the signal valueChanged is fired.
 class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
 {
   Q_OBJECT 
@@ -45,22 +45,22 @@ public:
   virtual ~ctkCoordinatesWidget();
 
   /// 
-  /// Set/Get the dimension of the point (3D by default)
+  /// Set/Get the dimension of the point (3 by default)
   void setDimension(int dim);
   int dimension() const;
 
   /// 
-  /// Set/Get the single step of the QDoubleSpinBoxes 
+  /// Set/Get the single step of each coordinate QDoubleSpinBoxes 
   void setSingleStep(double step);
   double singleStep() const;
 
   /// 
-  /// Set/Get the minimum value of the QDoubleSpinBoxes 
+  /// Set/Get the minimum value of each coordinate QDoubleSpinBoxes 
   void setMinimum(double minimum);
   double minimum() const;
 
   /// 
-  /// Set/Get the maximum value of the QDoubleSpinBoxes 
+  /// Set/Get the maximum value of each coordinate QDoubleSpinBoxes 
   void setMaximum(double minimum);
   double maximum() const;
 
@@ -76,7 +76,8 @@ public:
 
 signals:
   ///
-  /// valueChanged is fired anytime one coordinate is modified
+  /// valueChanged is fired anytime a coordinate is modified, the returned
+  /// value is the point coordinates
   void valueChanged(double* pos);
 
 protected slots:

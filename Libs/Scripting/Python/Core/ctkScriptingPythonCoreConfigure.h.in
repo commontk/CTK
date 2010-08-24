@@ -1,0 +1,19 @@
+#ifndef __ctkScriptingPythonCoreConfigure_h
+#define __ctkScriptingPythonCoreConfigure_h
+
+
+///
+/// Here is where system computed values get stored
+///
+
+#cmakedefine CTK_PYTHONQT_WRAP_QTGUI
+#cmakedefine CTK_PYTHONQT_WRAP_QTNETWORK
+#cmakedefine CTK_PYTHONQT_WRAP_QTOPENGL
+#cmakedefine CTK_PYTHONQT_WRAP_QTSQL
+#cmakedefine CTK_PYTHONQT_WRAP_QTSVG
+#cmakedefine CTK_PYTHONQT_WRAP_QTUITOOLS
+#cmakedefine CTK_PYTHONQT_WRAP_QTWEBKIT
+#cmakedefine CTK_PYTHONQT_WRAP_QTXML
+#cmakedefine CTK_PYTHONQT_WRAP_QTXMLPATTERNS
+
+#endif

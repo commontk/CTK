@@ -45,6 +45,7 @@ class QTreeView;
 ///    model.appendRow(new QStandardItem("Test3"));
 ///    combo.setModel(&model);
 ///    combo.show();
+/// TODO fix size of the view
 class CTK_WIDGETS_EXPORT ctkTreeComboBox : public QComboBox
 {
   Q_OBJECT

@@ -113,12 +113,12 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
 
     IF(${${option_name}})
       # Obtain dependency path
-      ctkFunctionExecuteProcess(
-        COMMAND "${executable}" "${CTK_BINARY_DIR}/DGraphInput-alldep.txt" -sort ${target_project_name}
-        PATH_LIST \"${QT_INSTALLED_LIBRARY_DIR}\"
+      ctkMacroSetPaths("${QT_INSTALLED_LIBRARY_DIR}")
+      EXECUTE_PROCESS(
+        COMMAND "${executable}" "${CTK_BINARY_DIR}/DGraphInput-alldep.txt" -paths ${target_project_name}
         WORKING_DIRECTORY ${CTK_BINARY_DIR}
         RESULT_VARIABLE RESULT_VAR
-        OUTPUT_VARIABLE dep_path
+        OUTPUT_VARIABLE dep_paths
         ERROR_VARIABLE error
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
@@ -126,27 +126,23 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
         MESSAGE(FATAL_ERROR "Failed to obtain dependence path of ${subir}.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
       ENDIF()
 
+      FOREACH(dep_path ${dep_paths})
 
-      # Set a variable for each target containing its dependencies
-      # Needed for setting individual include directories for plugins,
-      # depending on other plugins.
-      SET(${target_project_name}_DEPENDENCIES )
+        # Convert 'dep_path' to a list
+        STRING(REPLACE " " "\\;" dep_path_list ${dep_path})
+        SET(dep_path_list ${dep_path_list})
 
-      # Convert 'dep_path' to a list
-      SET(dep_path_list ${dep_path})
-      LIST(REMOVE_ITEM dep_path_list ${target_project_name})
-      LIST(APPEND ${target_project_name}_DEPENDENCIES ${dep_path_list})
-
-      #MESSAGE("path for ${target_project_name} is: ${dep_path_list}")
-
-      # Check if all target included in the dependency path are enabled
-      FOREACH(dep ${dep_path_list})
-        ctkMacroGetOptionName("${target_directories_with_target_name}" ${dep} dep_option)
-        IF(NOT ${${dep_option}})
-          # Enable option
-          MESSAGE(STATUS "Enabling option [${dep_option}] required by [${target_project_name}]")
-          SET(${dep_option} ON CACHE BOOL "Enable ${target_project_name} library" FORCE)
-        ENDIF()
+        #MESSAGE("path for ${target_project_name} is: ${dep_path}")
+        
+        # Check if all target included in the dependency path are enabled
+        FOREACH(dep ${dep_path_list})
+          ctkMacroGetOptionName("${target_directories_with_target_name}" ${dep} dep_option)
+          IF(NOT ${${dep_option}})
+            # Enable option
+            MESSAGE(STATUS "Enabling option [${dep_option}] required by [${target_project_name}]")
+            SET(${dep_option} ON CACHE BOOL "Enable ${target_project_name} library" FORCE)
+          ENDIF()
+        ENDFOREACH()
       ENDFOREACH()
     ENDIF()
     

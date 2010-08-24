@@ -65,6 +65,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class QDialog;
 class QMainWindow;
 
+/// ctkSettings is a QSettings that additionally can save and restore the 
+/// state (position/size) of QMainWindow and QDialogs.
 class CTK_WIDGETS_EXPORT ctkSettings : public QSettings
 {
   Q_OBJECT
