@@ -188,7 +188,7 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     
     IF(NOT skip_wrapping)
       # Skip wrapping if object has a virtual pure method 
-      SET(regex "virtual[\\w\\n\\s\\(\\)]+\\=[\\s\\n]*(0|NULL)[\\s\\n]*\\x3b")
+      SET(regex "virtual[\\w\\n\\s\\*\\(\\)]+\\=[\\s\\n]*(0|NULL)[\\s\\n]*\\x3b")
       ctkMacroWrapPythonQt_reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH}
                                         ${regex} ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} is_matching)
       IF(is_matching)
