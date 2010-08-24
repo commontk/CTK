@@ -263,15 +263,18 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     COMMENT "PythonQt ${wrap_type} Wrapping - Generating ${wrapper_init_cpp_filename}"
     VERBATIM
     )
-    
+  
+  # Clear variable
+  SET(moc_flags)
+  
+  # Grab moc flags
+  QT4_GET_MOC_FLAGS(moc_flags)
+  
   # Prepare custom_command argument
   SET(moc_flags_arg)
   FOREACH(flag ${moc_flags})
     SET(moc_flags_arg "${moc_flags_arg}^^${flag}")
   ENDFOREACH()
-  
-  # Use Moc to process the wrapper headers
-  QT4_GET_MOC_FLAGS(moc_flags)
   
   SET(wrapper_master_moc_filename moc_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_all.cpp)
   SET(wrapper_master_moc_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_master_moc_filename})
