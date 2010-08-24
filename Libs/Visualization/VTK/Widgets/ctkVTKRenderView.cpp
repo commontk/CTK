@@ -123,7 +123,8 @@ void ctkVTKRenderView::scheduleRender()
   CTK_D(ctkVTKRenderView);
 
   logger.trace(QString("scheduleRender - RenderEnabled: %1 - RenderPending: %2").
-               arg(d->RenderEnabled).arg(d->RenderPending));
+               arg(d->RenderEnabled ? "true" : "false")
+               .arg(d->RenderPending ? "true:" : "false"));
 
   if (!d->RenderEnabled)
     {
@@ -141,7 +142,8 @@ void ctkVTKRenderView::forceRender()
 {
   CTK_D(ctkVTKRenderView);
 
-  logger.trace(QString("forceRender - RenderEnabled: %1").arg(d->RenderEnabled));
+  logger.trace(QString("forceRender - RenderEnabled: %1")
+               .arg(d->RenderEnabled ? "true" : "false"));
 
   if (!d->RenderEnabled)
     {
