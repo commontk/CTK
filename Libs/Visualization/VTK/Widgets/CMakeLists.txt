@@ -36,6 +36,8 @@ SET(KIT_SRCS
   ctkVTKScalarBarWidget.h
   ctkVTKScalarsToColorsView.cpp
   ctkVTKScalarsToColorsView.h
+  ctkVTKScalarsToColorsWidget.cpp
+  ctkVTKScalarsToColorsWidget.h
   ctkVTKSliceView.cpp
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
@@ -52,6 +54,7 @@ SET(KIT_MOC_SRCS
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.h
   ctkVTKScalarsToColorsView.h
+  ctkVTKScalarsToColorsWidget.h
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
   ctkVTKTextPropertyWidget.h
@@ -60,6 +63,7 @@ SET(KIT_MOC_SRCS
 # UI files
 SET(KIT_UI_FORMS
   Resources/UI/ctkVTKScalarBarWidget.ui
+  Resources/UI/ctkVTKScalarsToColorsWidget.ui
   Resources/UI/ctkVTKTextPropertyWidget.ui
 )
 
