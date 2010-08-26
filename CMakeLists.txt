@@ -220,7 +220,8 @@ MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
 #-----------------------------------------------------------------------------
 # Set symbol visibility Flags
 #
-IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+# MinGW does not export all symbols automatically, so no need to set flags
+IF(CMAKE_COMPILER_IS_GNUCXX AND NOT MINGW)
   SET(VISIBILITY_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
 ENDIF()
 
@@ -241,8 +242,12 @@ ENDIF()
 SET(CTK_C_FLAGS "${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}")
 SET(CTK_CXX_FLAGS "${VISIBILITY_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}")
 
-IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
+  IF(MINGW)
+    # suppress warnings about auto imported symbols
+    SET(cflags "--enable-auto-import ${cflags}")
+  ENDIF()
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
   ctkFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
   SET(CTK_C_FLAGS "${cflags} ${CTK_C_FLAGS}")
