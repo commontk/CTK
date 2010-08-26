@@ -19,12 +19,8 @@ MACRO(ctkMacroCompilePythonScript kit_name python_source_files dest_dir)
     ADD_CUSTOM_COMMAND(DEPENDS ${src}
                         COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
                         OUTPUT ${tgt}
-                        COMMENT "source copy")
+                        COMMENT "Copying ${file_we}")
   ENDFOREACH()
-  
-  ADD_CUSTOM_TARGET(Copy${kit_name}PythonFiles
-                  ALL
-                  DEPENDS ${copied_python_files})
   
   # Byte compile the Python files.
   SET(compile_all_script "${CMAKE_CURRENT_BINARY_DIR}/compile_all_${kit_name}.py")
@@ -39,10 +35,10 @@ file.write('Done')
 ")
 
   ADD_CUSTOM_COMMAND(
-    COMMAND ${PYTHON_EXECUTABLE}
-    ARGS  "${compile_all_script}"
+    COMMAND ${PYTHON_EXECUTABLE} ${compile_all_script}
     DEPENDS ${copied_python_files}  ${compile_all_script}
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${kit_name}_python_compile_complete"
+    COMMENT "Compiling ${kit_name} python files"
     )
   
   ADD_CUSTOM_TARGET(${kit_name}_pyc ALL
