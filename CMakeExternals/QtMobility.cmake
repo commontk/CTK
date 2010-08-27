@@ -30,7 +30,7 @@ IF(${add_project})
   # Define configure options
   SET(qtmobility_modules "serviceframework")
   SET(qtmobility_build_type "release")
-  IF(UNIX)
+  IF(UNIX OR MINGW)
     IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
       SET(qtmobility_build_type "debug")
     ENDIF()
