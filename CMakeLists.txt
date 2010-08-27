@@ -244,12 +244,13 @@ SET(CTK_CXX_FLAGS "${VISIBILITY_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CX
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
-  IF(MINGW)
-    # suppress warnings about auto imported symbols
-    SET(cflags "--enable-auto-import ${cflags}")
-  ENDIF()
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
   ctkFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
+  IF(MINGW)
+    # suppress warnings about auto imported symbols
+    SET(CTK_CXX_FLAGS "-Wl,--enable-auto-import ${CTK_CXX_FLAGS}")
+  ENDIF()
+  
   SET(CTK_C_FLAGS "${cflags} ${CTK_C_FLAGS}")
   SET(CTK_CXX_FLAGS "${cflags} -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
 ENDIF()
