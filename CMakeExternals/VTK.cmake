@@ -10,6 +10,11 @@ IF(${add_project})
     MESSAGE(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
   
+  SET(additional_vtk_cmakevars )
+  IF(MINGW)
+    SET(additional_vtk_cmakevars "-DCMAKE_USE_PTHREADS:BOOL=OFF")
+  ENDIF()
+  
   IF(NOT DEFINED VTK_DIR)
     SET(proj VTK)
 #     MESSAGE(STATUS "Adding project:${proj}")
@@ -20,6 +25,7 @@ IF(${add_project})
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${ep_common_args}
+        ${additional_vtk_cmakevars}
         -DVTK_WRAP_TCL:BOOL=OFF
         -DVTK_WRAP_PYTHON:BOOL=OFF
         -DVTK_WRAP_JAVA:BOOL=OFF
