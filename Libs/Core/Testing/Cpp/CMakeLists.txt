@@ -12,6 +12,9 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkDependencyGraphTest1.cpp
   ctkPimplTest1.cpp
   ctkSingletonTest1.cpp
+  ctkWorkflowTest1.cpp
+  ctkWorkflowTest2.cpp
+  ctkWorkflowTest3.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -20,7 +23,24 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests})
+SET(Tests_SRCS
+  ctkBranchingWorkflowStep.h
+  ctkExampleDerivedWorkflowStep.cpp
+  ctkExampleDerivedWorkflowStep.h
+  ctkExampleWorkflowStepUsingSignalsAndSlots.cpp
+  ctkExampleWorkflowStepUsingSignalsAndSlots.h
+)
+
+SET(Tests_MOC_SRCS
+  ctkBranchingWorkflowStep.h
+  ctkExampleWorkflowStepUsingSignalsAndSlots.h
+  ctkExampleDerivedWorkflowStep.h
+)
+
+SET(MY_MOC_CXX)
+QT4_WRAP_CPP(MY_MOC_CXX ${Tests_MOC_SRCS})
+
+ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_SRCS} ${MY_MOC_CXX})
 TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
@@ -43,3 +63,6 @@ SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
 SIMPLE_TEST( ctkUtilsTest1 )
+SIMPLE_TEST( ctkWorkflowTest1 )
+SIMPLE_TEST( ctkWorkflowTest2 )
+SIMPLE_TEST( ctkWorkflowTest3 )
