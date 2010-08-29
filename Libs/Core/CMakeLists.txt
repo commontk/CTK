@@ -20,7 +20,7 @@ SET(KIT_export_directive "CTK_CORE_EXPORT")
 SET(KIT_include_directories
   ${Log4Qt_INCLUDE_DIR}
   )
-  
+
 # Source files
 SET(KIT_SRCS
   ctkAbstractFactory.h
@@ -51,6 +51,11 @@ SET(KIT_SRCS
   ctkTransferFunctionRepresentation.h
   ctkUtils.cpp
   ctkUtils.h
+  ctkWorkflow.h
+  ctkWorkflow.cpp
+  ctkWorkflowStep.h
+  ctkWorkflowStep.cpp
+  ctkWorkflowTransitions.h
   )
 
 IF(CTK_HAVE_BFD)
@@ -67,6 +72,9 @@ SET(KIT_MOC_SRCS
   ctkModelTester.h
   ctkTransferFunction.h
   ctkTransferFunctionRepresentation.h
+  ctkWorkflow.h
+  ctkWorkflowStep.h
+ ctkWorkflowTransitions.h
   )
 
 # UI files

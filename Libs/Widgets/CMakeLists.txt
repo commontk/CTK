@@ -78,6 +78,18 @@ SET(KIT_SRCS
   ctkTransferFunctionView.h
   ctkTreeComboBox.cpp
   ctkTreeComboBox.h
+  ctkWorkflowAbstractPagedWidget.cpp
+  ctkWorkflowAbstractPagedWidget.h
+  ctkWorkflowButtonBoxWidget.cpp
+  ctkWorkflowButtonBoxWidget.h
+  ctkWorkflowStackedWidget.cpp
+  ctkWorkflowStackedWidget.h
+  ctkWorkflowTabWidget.cpp
+  ctkWorkflowTabWidget.h
+  ctkWorkflowWidget.cpp
+  ctkWorkflowWidget.h
+  ctkWorkflowWidgetStep.cpp
+  ctkWorkflowWidgetStep.h
   )
 
 # Headers that should run through moc
@@ -114,6 +126,12 @@ SET(KIT_MOC_SRCS
   ctkTransferFunctionScene.h
   ctkTransferFunctionView.h
   ctkTreeComboBox.h
+  ctkWorkflowAbstractPagedWidget.h
+  ctkWorkflowButtonBoxWidget.h
+  ctkWorkflowStackedWidget.h
+  ctkWorkflowTabWidget.h
+  ctkWorkflowWidget.h
+  ctkWorkflowWidgetStep.h
   )
 
 # UI files
