@@ -22,6 +22,10 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkRangeWidgetTest1.cpp
   ctkSliderWidgetTest1.cpp
   ctkTreeComboBoxTest1.cpp
+  ctkWorkflowWidgetTest1.cpp
+  ctkWorkflowWidgetTest2.cpp
+  ctkExampleUseOfWorkflowWidgetUsingDerivedSteps.cpp
+  ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots.cpp
   )
 
 SET (TestsToRun ${Tests})
@@ -29,7 +33,22 @@ REMOVE (TestsToRun ${KIT}CppTests.cxx)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests})
+SET(Tests_SRCS
+  ctkExampleDerivedWorkflowWidgetStep.cpp
+  ctkExampleDerivedWorkflowWidgetStep.h
+  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.cpp
+  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.h
+)
+
+SET(Tests_MOC_SRCS
+  ctkExampleDerivedWorkflowWidgetStep.h
+  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.h
+)
+
+SET(MY_MOC_CXX)
+QT4_WRAP_CPP(MY_MOC_CXX ${Tests_MOC_SRCS})
+
+ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_SRCS} ${MY_MOC_CXX})
 TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME})
 
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
@@ -67,3 +86,7 @@ SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )
+SIMPLE_TEST( ctkWorkflowWidgetTest1 )
+SIMPLE_TEST( ctkWorkflowWidgetTest2 )
+SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingDerivedSteps )
+SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots )
