@@ -33,11 +33,12 @@ class ctkWorkflowTabWidgetPrivate;
 
 
 ///
-/// ctkWorkflowStackedWidget is the basis for a workflow with a user
+/// \brief ctkWorkflowStackedWidget is the basis for a workflow with a user
 /// interface containing a QTabWidget.
-/// It is a child of ctkWorkflowAbstractPagedWidget and therefore is a
-/// ctkWorkflow (i.e. a state machine).  Its client area is a
-/// QTabWidget, onto which step-specific widgets can be placed.
+///
+/// The client area is a QTabWidget, onto which step-specific
+/// widgets can be placed.
+///
 /// Multiple workflow steps can correspond to the same page of the
 /// QStackedWidget.  The main widget can be inserted directly inside
 /// another user interface.
@@ -45,20 +46,13 @@ class ctkWorkflowTabWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkWorkflowTabWidget : public ctkWorkflowAbstractPagedWidget
 {
   Q_OBJECT
-    // TODO DESIGNER: properties here
 
 public:
-  ///
-  /// Superclass typedef
+
   typedef ctkWorkflowAbstractPagedWidget Superclass;
+  explicit ctkWorkflowTabWidget(QWidget* newParent = 0);
+  virtual ~ctkWorkflowTabWidget(){}
 
-  ///
-  /// Constructors
-  explicit ctkWorkflowTabWidget(QWidget* parent = 0);
-  virtual ~ctkWorkflowTabWidget();
-
-
-  ///
   /// Provided for advanced customization: get the client area.
   /// A workflow containing a user interface is made up of steps
   /// (ctkWorkflowWidgetStep).  Each step should either:
@@ -81,26 +75,21 @@ public:
   /// ctkWorkflowTabWidget::getWidgetFromIndex(index)->setLayout()
   virtual QTabWidget* clientArea();
 
-  ///
   /// Provided for advanced customization: get the widget
   /// corresponding to the page of the given index
   virtual QWidget* getWidgetFromIndex(int index);
 
 protected:
-  ///
+
   /// Add a widget to a new page of the client area.
   /// The label will be the name of the tab.
   virtual void addWidgetToClientArea(QWidget* widget, const QString& label);
 
-  ///
-  /// Set the current widget to that of the page containing the given
-  /// widget
+  /// Set the current widget to that of the page containing the given widget
   virtual void setCurrentWidget(QWidget* widget) ;
-
 
 private:
   CTK_DECLARE_PRIVATE(ctkWorkflowTabWidget);
-
 };
 
 #endif
