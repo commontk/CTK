@@ -67,7 +67,8 @@ public:
     BackButtonHidden = 0x1,
     BackButtonDisabled = 0x2,
     NextButtonHidden = 0x4,
-    NextButtonDisabled = 0x8
+    NextButtonDisabled = 0x8,
+    ButtonBoxHidden = 0x10
   };
   Q_DECLARE_FLAGS(ButtonBoxHints, ButtonBoxHint)
 

@@ -64,12 +64,12 @@ public:
   QWidget* errorSection;
   QWidget* buttonSection;
 
-  QLabel* titleLabel;
-  QLabel* subTitleLabel;
-  QLabel* preTextLabel;
+  QLabel*  titleLabel;
+  QLabel*  subTitleLabel;
+  QLabel*  preTextLabel;
   QWidget* clientArea;
-  QLabel* postTextLabel;
-  QLabel* errorLabel;
+  QLabel*  postTextLabel;
+  QLabel*  errorLabel;
 
   // orientation for layout of this widget, and of the client area
   // (for use with QBoxLayout only)
@@ -275,8 +275,6 @@ void ctkWorkflowWidget::updateClientArea(ctkWorkflowStep* currentStep)
   // to normal, for the next time
   CTK_D(ctkWorkflowWidget);
 
-  //ctkWorkflowStep* currentStep = d->workflow->currentStep();
-
   if (currentStep)
     {
     d->stepShownPreviously = d->stepShownCurrently;
@@ -297,11 +295,12 @@ void ctkWorkflowWidget::updateClientArea(ctkWorkflowStep* currentStep)
           }
         }
       }
+    ctkWorkflowWidgetStep* currentWidgetStep = qobject_cast<ctkWorkflowWidgetStep*>(currentStep);
     // show/enable the current step
-    if (ctkWorkflowWidgetStep* step = qobject_cast<ctkWorkflowWidgetStep*>(currentStep))
+    if (currentWidgetStep)
       {
-      step->showUserInterface();
-      if (QWidget* stepArea = step->stepArea())
+      currentWidgetStep->showUserInterface();
+      if (QWidget* stepArea = currentWidgetStep->stepArea())
         {
         // add the step's client area to the widget if we haven't before
         if (!this->isAncestorOf(stepArea))
@@ -317,6 +316,13 @@ void ctkWorkflowWidget::updateClientArea(ctkWorkflowStep* currentStep)
     // update the button box widget if we have one
     if (d->buttonBoxWidget)
       {
+      // Hide button bar if specified by the steps
+      bool hideButtonBar = false;
+      if(currentWidgetStep)
+        {
+        hideButtonBar = currentWidgetStep->buttonBoxHints() & ctkWorkflowWidgetStep::ButtonBoxHidden;
+        }
+      d->buttonBoxWidget->setHidden(hideButtonBar);
       d->buttonBoxWidget->updateButtons();
       }
     }
