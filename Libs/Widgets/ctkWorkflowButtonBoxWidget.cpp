@@ -330,7 +330,6 @@ void ctkWorkflowButtonBoxWidget::setNextButtonDefaultText(const QString& default
 {
   CTK_D(ctkWorkflowButtonBoxWidget);
   d->NextButtonDefaultText = defaultText;
-  this->updateButtons();
   if (d->Workflow)
     {
     this->updateButtons();
