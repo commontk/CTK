@@ -136,6 +136,7 @@ ctkWorkflowWidget::ctkWorkflowWidget(QWidget* _parent) : Superclass(_parent)
 
   // layout components vertically by default
   QBoxLayout* layout = new QBoxLayout(d->direction);
+  layout->setContentsMargins(0, 0, 0, 0);
   this->setLayout(layout);
   layout->addWidget(d->titleSection);
   layout->addWidget(d->subTitleSection);
@@ -240,6 +241,7 @@ QWidget* ctkWorkflowWidget::clientArea()
     if (!d->clientSection->layout())
       {
       d->clientSection->setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
+      d->clientSection->layout()->setContentsMargins(0, 0, 0, 0);
       }
     d->clientSection->layout()->addWidget(d->clientArea);
     }
@@ -260,6 +262,7 @@ void ctkWorkflowWidget::addWidget(QWidget* widget)
     if (!clientArea->layout())
       {
       clientArea->setLayout(new QBoxLayout(d->clientAreaDirection));
+      clientArea->layout()->setContentsMargins(0, 0, 0, 0);
       }
 
     clientArea->layout()->addWidget(widget);
