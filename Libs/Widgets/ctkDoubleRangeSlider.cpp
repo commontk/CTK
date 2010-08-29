@@ -86,6 +86,9 @@ void ctkDoubleRangeSliderPrivate::init()
   this->MaxValue = this->Slider->maximumValue();
   this->SingleStep = this->Slider->singleStep();
 
+  p->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed,
+                               QSizePolicy::Slider));
+
   this->connectSlider();
 }
 
