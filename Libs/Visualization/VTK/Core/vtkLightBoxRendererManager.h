@@ -61,6 +61,22 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
   /// Split the current vtkRenderWindow in \a rowCount per \a columnCount grid
   void SetRenderWindowLayout(int rowCount, int columnCount);
 
+  /// Set the \a rowCount
+  /// \sa SetRenderWindowLayout
+  void SetRenderWindowRowCount(int newRowCount);
+
+  /// Get number of rows
+  /// \sa SetRenderWindowLayout
+  int GetRenderWindowRowCount();
+
+  /// Set the \a columnCount
+  /// \sa SetRenderWindowLayout
+  void SetRenderWindowColumnCount(int newColumnCount);
+
+  /// Get number of columns
+  /// \sa SetRenderWindowLayout
+  int GetRenderWindowColumnCount();
+
   /// Highlight / Unhighlight a render view item given its \a id
   void SetHighlightedById(int id, bool highlighted);
 
