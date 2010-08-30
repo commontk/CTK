@@ -126,6 +126,14 @@ public slots:
 
   /// Set color window
   void setColorWindow(double newColorWindow);
+
+  /// Change the number of row of the associated lightBox
+  /// \sa lightBoxRendererManager()
+  void setLightBoxRendererManagerRowCount(int newRowCount);
+
+  /// Change the number of column of the associated lightBox
+  /// \sa lightBoxRendererManager()
+  void setLightBoxRendererManagerColumnCount(int newColumnCount);
   
 signals:
   void resized(const QSize& size, const QSize& oldSize);
