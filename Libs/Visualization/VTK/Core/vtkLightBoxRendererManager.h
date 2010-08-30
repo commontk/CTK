@@ -83,6 +83,15 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
   ///  Highlight / Unhighlight a render view item given its position in the grid
   /// \sa setHighlighted(int, bool)
   void SetHighlighted(int rowId, int columnId, bool highlighted);
+
+  /// \sa SetHighlighted SetHighlightedBoxColorById
+  void SetHighlightedBoxColor(double highlightedBoxColor[3]);
+
+  /// \brief Set the color of the box displayed around the highlighted item
+  /// identified by \a id
+  /// The highlightedBox is set with a width of 3 screen units.
+  /// \sa SetHighlightedById SetHighlighted vtkProperty2D::SetLineWidth
+  double* GetHighlightedBoxColor()const;
   
   /// Convenient function allowing to compute the renderWindowItemId
   /// given \a rowId and \a columnId.

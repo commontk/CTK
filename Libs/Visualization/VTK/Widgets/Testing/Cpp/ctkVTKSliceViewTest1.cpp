@@ -92,6 +92,7 @@ int ctkVTKSliceViewTest1(int argc, char * argv [] )
 
   // .. and its associated layout
   QVBoxLayout * topLevelLayout = new QVBoxLayout(&widget);
+  topLevelLayout->setContentsMargins(0, 0, 0, 0);
 
   // Horizontal layout to contain the spinboxes
   QHBoxLayout * spinBoxLayout = new QHBoxLayout;
@@ -118,6 +119,7 @@ int ctkVTKSliceViewTest1(int argc, char * argv [] )
   sliceView->setRenderEnabled(true);
   sliceView->setMinimumSize(600, 600);
   sliceView->setImageData(image);
+  sliceView->setHighlightedBoxColor(QColor(Qt::yellow));
   sliceView->lightBoxRendererManager()->SetRenderWindowLayout(defaultRowCount, defaultColumnCount);
   sliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);
   sliceView->setCornerAnnotationText("CTK");
