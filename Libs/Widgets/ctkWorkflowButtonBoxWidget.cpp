@@ -225,8 +225,12 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateGoToButtons(ctkWorkflowStep* curre
       p->layout()->addWidget(goToButton);
       QObject::connect(goToButton, SIGNAL(clicked()), p, SLOT(prepareGoToStep()));
       this->GoToButtonToStepMap[goToButton] = step;
+      // if the goTo step has an icon associated with it, then add it to the button
+      if (ctkWorkflowWidgetStep* wwStep = qobject_cast<ctkWorkflowWidgetStep*>(step))
+        {
+        goToButton->setIcon(wwStep->icon());
+        }
       }
-      
     }
 
   // Show/hide the goTo buttons depending on whether they are accessible from the current step

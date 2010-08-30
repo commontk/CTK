@@ -24,6 +24,7 @@
 // QT includes
 class QObject;
 class QWidget;
+class QIcon;
 #include <QBoxLayout>
 #include <QFlags>
 
@@ -128,6 +129,9 @@ public:
 
   void setButtonBoxHints(ButtonBoxHints buttonBoxHints);
   ButtonBoxHints buttonBoxHints()const;
+
+  QIcon icon()const;
+  void setIcon(const QIcon& newIcon);
 
 protected:
 
