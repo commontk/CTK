@@ -66,7 +66,7 @@ SIMPLE_TEST( ctkVTKScalarsToColorsViewTest1 )
 SIMPLE_TEST( ctkVTKScalarsToColorsViewTest2 )
 SIMPLE_TEST( ctkVTKScalarsToColorsViewTest3 )
 SIMPLE_TEST( ctkVTKScalarsToColorsViewTest4 )
-SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1.cpp )
+SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1 )
 
 #
 # Add Tests expecting CTKData to be set
