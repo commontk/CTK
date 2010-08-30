@@ -22,9 +22,13 @@
 #include <QApplication>
 #include <QTimer>
 #include <QDebug>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QSpinBox>
 
 // CTK includes
 #include "ctkCommandLineParser.h"
+#include "ctkVTKObjectEventsObserver.h"
 #include "ctkVTKSliceView.h"
 
 // VTK includes
@@ -80,14 +84,56 @@ int ctkVTKSliceViewTest1(int argc, char * argv [] )
   imageReader->Update();
   vtkSmartPointer<vtkImageData> image = imageReader->GetOutput();
 
-  ctkVTKSliceView sliceView;
-  sliceView.resize(300, 300);
-  sliceView.setImageData(image);
-  sliceView.lightBoxRendererManager()->SetRenderWindowLayout(4, 3);
-  sliceView.lightBoxRendererManager()->SetHighlighted(1, 1, true);
-  sliceView.setCornerAnnotationText("CTK");
-  sliceView.scheduleRender();
-  sliceView.show();
+  // Top level widget
+  QWidget widget;
+
+  // .. and its associated layout
+  QVBoxLayout * topLevelLayout = new QVBoxLayout(&widget);
+
+  // Horizontal layout to contain the spinboxes
+  QHBoxLayout * spinBoxLayout = new QHBoxLayout;
+  topLevelLayout->addLayout(spinBoxLayout);
+
+  int defaultRowCount = 4;
+  int defaultColumnCount = 3;
+
+  // SpinBox to change number of row in lightBox
+  QSpinBox * rowSpinBox = new QSpinBox;
+  rowSpinBox->setRange(1, 10);
+  rowSpinBox->setSingleStep(1);
+  rowSpinBox->setValue(defaultRowCount);
+  spinBoxLayout->addWidget(rowSpinBox);
+
+  // SpinBox to change number of column in lightBox
+  QSpinBox * columnSpinBox = new QSpinBox;
+  columnSpinBox->setRange(1, 10);
+  columnSpinBox->setSingleStep(1);
+  columnSpinBox->setValue(defaultColumnCount);
+  spinBoxLayout->addWidget(columnSpinBox);
+
+  ctkVTKSliceView * sliceView = new ctkVTKSliceView;
+  sliceView->setRenderEnabled(true);
+  sliceView->setMinimumSize(600, 600);
+  sliceView->setImageData(image);
+  sliceView->lightBoxRendererManager()->SetRenderWindowLayout(defaultRowCount, defaultColumnCount);
+  sliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);
+  sliceView->setCornerAnnotationText("CTK");
+  sliceView->scheduleRender();
+  topLevelLayout->addWidget(sliceView);
+
+  // Set connection
+  QObject::connect(rowSpinBox, SIGNAL(valueChanged(int)),
+                   sliceView, SLOT(setLightBoxRendererManagerRowCount(int)));
+  QObject::connect(columnSpinBox, SIGNAL(valueChanged(int)),
+                   sliceView, SLOT(setLightBoxRendererManagerColumnCount(int)));
+
+  ctkVTKObjectEventsObserver vtkObserver;
+  vtkObserver.addConnection(sliceView->lightBoxRendererManager(), vtkCommand::ModifiedEvent,
+                            sliceView, SLOT(scheduleRender()));
+
+  widget.show();
+
+  // TODO Add image regression test
 
   if (!interactive)
     {
