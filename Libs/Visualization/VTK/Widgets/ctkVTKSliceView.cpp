@@ -265,3 +265,17 @@ void ctkVTKSliceView::resizeEvent(QResizeEvent * event)
   emit this->resized(event->size(), event->oldSize());
 }
 
+//----------------------------------------------------------------------------
+void ctkVTKSliceView::setLightBoxRendererManagerRowCount(int newRowCount)
+{
+  CTK_D(ctkVTKSliceView);
+  d->LightBoxRendererManager->SetRenderWindowRowCount(newRowCount);
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKSliceView::setLightBoxRendererManagerColumnCount(int newColumnCount)
+{
+  CTK_D(ctkVTKSliceView);
+  d->LightBoxRendererManager->SetRenderWindowColumnCount(newColumnCount);
+}
+

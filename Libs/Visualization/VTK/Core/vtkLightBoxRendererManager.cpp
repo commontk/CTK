@@ -552,6 +552,30 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
 }
 
 //----------------------------------------------------------------------------
+int vtkLightBoxRendererManager::GetRenderWindowRowCount()
+{
+  return this->Internal->RenderWindowRowCount;
+}
+
+//----------------------------------------------------------------------------
+void vtkLightBoxRendererManager::SetRenderWindowRowCount(int newRowCount)
+{
+  this->SetRenderWindowLayout(newRowCount, this->GetRenderWindowColumnCount());
+}
+
+//----------------------------------------------------------------------------
+int vtkLightBoxRendererManager::GetRenderWindowColumnCount()
+{
+  return this->Internal->RenderWindowColumnCount;
+}
+
+//----------------------------------------------------------------------------
+void vtkLightBoxRendererManager::SetRenderWindowColumnCount(int newColumnCount)
+{
+  this->SetRenderWindowLayout(this->GetRenderWindowRowCount(), newColumnCount);
+}
+
+//----------------------------------------------------------------------------
 void vtkLightBoxRendererManager::SetHighlightedById(int id, bool highlighted)
 {
   if (!this->IsInitialized())
