@@ -44,17 +44,12 @@ class ctkWorkflowAbstractPagedWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkWorkflowAbstractPagedWidget : public ctkWorkflowWidget
 {
   Q_OBJECT
-    // TODO DESIGNER: properties here
 
 public:
-  ///
-  /// Superclass typedef
-  typedef ctkWorkflowWidget Superclass;
 
-  ///
-  /// Constructors
-  explicit ctkWorkflowAbstractPagedWidget(QWidget* parent = 0);
-  virtual ~ctkWorkflowAbstractPagedWidget();
+  typedef ctkWorkflowWidget Superclass;
+  explicit ctkWorkflowAbstractPagedWidget(QWidget* newParent = 0);
+  virtual ~ctkWorkflowAbstractPagedWidget(){}
 
   /// only need to do if you're specifying an index/label, otherwise
   /// the workflow's steps will be added automatically
@@ -62,8 +57,6 @@ public:
   virtual void addStepArea(ctkWorkflowWidgetStep* step, int index);
   virtual void addStepArea(ctkWorkflowWidgetStep* step, int index, const QString& label);
 
-
-  ///
   /// Add a widget to the client area, which is the area where
   /// custom-step content should be placed.  If you are adding
   /// ctkWorkflowWidgetSteps to this workflow, you will probably want
@@ -92,7 +85,6 @@ public:
   virtual void addWidget(QWidget* widget, int index);
   virtual void addWidget(QWidget* widget, int index, const QString& label);
 
-  ///
   /// Sets the direction of the QBoxLayout that manages this widget's
   /// client area, i.e. the layout manager for the area onto which the
   /// step's widgets should be placed (default
@@ -103,7 +95,6 @@ public:
   /// and future pages.
   virtual void setClientAreaDirection(const QBoxLayout::Direction& direction, int index = -1);
 
-  ///
   /// Provided for advanced customization: get the client area.
   /// A workflow containing a user interface is made up of steps
   /// (ctkWorkflowWidgetStep).  Each step should either:
@@ -124,16 +115,12 @@ public:
   /// likely not allow you to customize the client area layout.
   /// Customize specific pages instead using
   /// ctkWorkflowAbstractPagedWidget::getWidgetFromIndex(index)->setLayout()
-  /// Reimplement this function in derived classes
   virtual QWidget* clientArea() = 0;
 
-  ///
   /// Provided for advanced customization: get the widget
   /// corresponding to the page of the given index
-  /// Reimplement this function in derived classes
   virtual QWidget* getWidgetFromIndex(int index) = 0;
 
-  ///
   /// Provided for advanced customization: shows a given widget within
   /// the client area.
   /// A workflow containing a user interface is made up of steps
@@ -154,16 +141,12 @@ public:
   virtual void showWidget(QWidget* widget);
 
 protected:
-  ///
+
   /// Add a widget to a new page of the client area, with a page label
   /// that may or may not be considered by the derived class
-  /// Reimplement this function in derived classes
   virtual void addWidgetToClientArea(QWidget* widget, const QString& label) = 0;
 
-  ///
-  /// Set the current widget to that of the page containing the given
-  /// widget
-  /// Reimplement this function in derived classes
+  /// Set the current widget to that of the page containing the given widget
   virtual void setCurrentWidget(QWidget* widget) = 0;
 
 private:

@@ -39,9 +39,8 @@ class ctkWorkflowStackedWidgetPrivate: public ctkPrivate<ctkWorkflowStackedWidge
 public:
   CTK_DECLARE_PUBLIC(ctkWorkflowStackedWidget);
   ctkWorkflowStackedWidgetPrivate();
-  ~ctkWorkflowStackedWidgetPrivate();
 
-  QStackedWidget* clientArea;
+  QStackedWidget* ClientArea;
 };
 
 // --------------------------------------------------------------------------
@@ -50,26 +49,16 @@ public:
 //---------------------------------------------------------------------------
 ctkWorkflowStackedWidgetPrivate::ctkWorkflowStackedWidgetPrivate()
 {
-  this->clientArea = 0;
-}
-
-//---------------------------------------------------------------------------
-ctkWorkflowStackedWidgetPrivate::~ctkWorkflowStackedWidgetPrivate()
-{
+  this->ClientArea = 0;
 }
 
 // --------------------------------------------------------------------------
-// ctkWorkflowStackedWidgetMethods
+// ctkWorkflowStackedWidget methods
 
 // --------------------------------------------------------------------------
-ctkWorkflowStackedWidget::ctkWorkflowStackedWidget(QWidget* _parent) : Superclass(_parent)
+ctkWorkflowStackedWidget::ctkWorkflowStackedWidget(QWidget* newParent) : Superclass(newParent)
 {
   CTK_INIT_PRIVATE(ctkWorkflowStackedWidget);
-}
-
-// --------------------------------------------------------------------------
-ctkWorkflowStackedWidget::~ctkWorkflowStackedWidget()
-{
 }
 
 // --------------------------------------------------------------------------
@@ -77,17 +66,17 @@ QStackedWidget* ctkWorkflowStackedWidget::clientArea()
 {
   CTK_D(ctkWorkflowStackedWidget);
 
-  if (!d->clientArea)
+  if (!d->ClientArea)
     {
-    d->clientArea = new QStackedWidget;
+    d->ClientArea = new QStackedWidget;
 
     if (!this->clientSection()->layout())
       {
       this->clientSection()->setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
       }
-    this->clientSection()->layout()->addWidget(d->clientArea);
+    this->clientSection()->layout()->addWidget(d->ClientArea);
     }
-  return d->clientArea;
+  return d->ClientArea;
 }
 
 // --------------------------------------------------------------------------
@@ -95,19 +84,19 @@ void ctkWorkflowStackedWidget::addWidgetToClientArea(QWidget* widget, const QStr
 {
   Q_UNUSED(label);
 
-  if (widget)
+  if (!widget)
     {
-    QStackedWidget* clientArea = this->clientArea();
-
-    // set the default layout if there isn't one
-    if (!clientArea->layout())
-      {
-      clientArea->setLayout(new QBoxLayout(this->clientAreaDirection()));
-      return;
-      }
-
-    clientArea->layout()->addWidget(widget);
+    return;
     }
+
+  // set the default layout if there isn't one
+  if (!this->clientArea()->layout())
+    {
+    this->clientArea()->setLayout(new QBoxLayout(this->clientAreaDirection()));
+    return;
+    }
+
+  this->clientArea()->layout()->addWidget(widget);
 }
 
 // --------------------------------------------------------------------------
@@ -115,13 +104,13 @@ QWidget* ctkWorkflowStackedWidget::getWidgetFromIndex(int index)
 {
   CTK_D(ctkWorkflowStackedWidget);
 
-  if (!d->clientArea)
+  if (!d->ClientArea)
     {
-    logger.error("getWidgetFromIndex - clientArea is Null");
+    logger.error("getWidgetFromIndex - ClientArea is Null");
     return 0;
     }
 
-  return d->clientArea->widget(index);
+  return d->ClientArea->widget(index);
 }
 
 // --------------------------------------------------------------------------
@@ -129,14 +118,14 @@ void ctkWorkflowStackedWidget::setCurrentWidget(QWidget* widget)
 {
   CTK_D(ctkWorkflowStackedWidget);
 
-  if (!d->clientArea)
+  if (!d->ClientArea)
     {
-    logger.error("setCurrentWidget - clientArea is Null");
+    logger.error("setCurrentWidget - ClientArea is Null");
     return;
     }
 
   if (widget)
     {
-    d->clientArea->setCurrentWidget(widget);
+    d->ClientArea->setCurrentWidget(widget);
     }
 }

@@ -35,8 +35,7 @@ class ctkWorkflowAbstractPagedWidgetPrivate: public ctkPrivate<ctkWorkflowAbstra
 {
 public:
   CTK_DECLARE_PUBLIC(ctkWorkflowAbstractPagedWidget);
-  ctkWorkflowAbstractPagedWidgetPrivate();
-  ~ctkWorkflowAbstractPagedWidgetPrivate();
+  ctkWorkflowAbstractPagedWidgetPrivate(){}
 
   // maintain a map of <widget, pageArea> pairs to find the
   // page that a widget belongs to
@@ -46,30 +45,13 @@ public:
 };
 
 // --------------------------------------------------------------------------
-// ctkWorkflowAbstractPagedWidgetPrivate methods
-
-//---------------------------------------------------------------------------
-ctkWorkflowAbstractPagedWidgetPrivate::ctkWorkflowAbstractPagedWidgetPrivate()
-{
-}
-
-//---------------------------------------------------------------------------
-ctkWorkflowAbstractPagedWidgetPrivate::~ctkWorkflowAbstractPagedWidgetPrivate()
-{
-}
-
-// --------------------------------------------------------------------------
 // ctkWorkflowAbstractPagedWidgetMethods
 
 // --------------------------------------------------------------------------
-ctkWorkflowAbstractPagedWidget::ctkWorkflowAbstractPagedWidget(QWidget* _parent) : Superclass(_parent)
+ctkWorkflowAbstractPagedWidget::ctkWorkflowAbstractPagedWidget(QWidget* newParent) :
+    Superclass(newParent)
 {
   CTK_INIT_PRIVATE(ctkWorkflowAbstractPagedWidget);
-}
-
-// --------------------------------------------------------------------------
-ctkWorkflowAbstractPagedWidget::~ctkWorkflowAbstractPagedWidget()
-{
 }
 
 // --------------------------------------------------------------------------

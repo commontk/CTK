@@ -39,7 +39,6 @@ class ctkWorkflowTabWidgetPrivate: public ctkPrivate<ctkWorkflowTabWidget>
 public:
   CTK_DECLARE_PUBLIC(ctkWorkflowTabWidget);
   ctkWorkflowTabWidgetPrivate();
-  ~ctkWorkflowTabWidgetPrivate();
 
   QTabWidget* clientArea;
 };
@@ -53,23 +52,13 @@ ctkWorkflowTabWidgetPrivate::ctkWorkflowTabWidgetPrivate()
   this->clientArea = 0;
 }
 
-//---------------------------------------------------------------------------
-ctkWorkflowTabWidgetPrivate::~ctkWorkflowTabWidgetPrivate()
-{
-}
+// --------------------------------------------------------------------------
+// ctkWorkflowTabWidget methods
 
 // --------------------------------------------------------------------------
-// ctkWorkflowTabWidgetMethods
-
-// --------------------------------------------------------------------------
-ctkWorkflowTabWidget::ctkWorkflowTabWidget(QWidget* _parent) : Superclass(_parent)
+ctkWorkflowTabWidget::ctkWorkflowTabWidget(QWidget* newParent) : Superclass(newParent)
 {
   CTK_INIT_PRIVATE(ctkWorkflowTabWidget);
-}
-
-// --------------------------------------------------------------------------
-ctkWorkflowTabWidget::~ctkWorkflowTabWidget()
-{
 }
 
 // --------------------------------------------------------------------------
@@ -122,7 +111,7 @@ void ctkWorkflowTabWidget::setCurrentWidget(QWidget* widget)
 
   if (!d->clientArea)
     {
-    logger.error("sdetCurrentWidget - clientArea is Null");
+    logger.error("setCurrentWidget - clientArea is Null");
     return;
     }
 
