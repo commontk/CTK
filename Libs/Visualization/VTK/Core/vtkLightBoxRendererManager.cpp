@@ -210,7 +210,7 @@ vtkLightBoxRendererManager::vtkInternal::vtkInternal(vtkLightBoxRendererManager*
   this->RendererBackgroundColor[1] = 0.0;
   this->RendererBackgroundColor[2] = 0.0;
   // Default highlightedBox color: green
-  this->HighlightedBoxColor[0] = 1.0;
+  this->HighlightedBoxColor[0] = 0.0;
   this->HighlightedBoxColor[1] = 1.0;
   this->HighlightedBoxColor[2] = 0.0;
 }
@@ -622,8 +622,8 @@ void vtkLightBoxRendererManager::SetHighlightedBoxColor(double newHighlightedBox
     }
 
   if (this->Internal->HighlightedBoxColor[0] == newHighlightedBoxColor[0] &&
-      this->Internal->HighlightedBoxColor[1] == newHighlightedBoxColor[2] &&
-      this->Internal->HighlightedBoxColor[2] == newHighlightedBoxColor[3])
+      this->Internal->HighlightedBoxColor[1] == newHighlightedBoxColor[1] &&
+      this->Internal->HighlightedBoxColor[2] == newHighlightedBoxColor[2])
     {
     return;
     }

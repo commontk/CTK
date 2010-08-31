@@ -158,6 +158,14 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
     std::cerr << "line " << __LINE__ << " - Problem with SetImageData()" << std::endl;
     return EXIT_FAILURE;
     }
+  
+  double highlightedboxColor[3] = {0.0, 1.0, 0.0};
+  lightBoxRendererManager->SetHighlightedBoxColor(highlightedboxColor);
+  if (mtime != lightBoxRendererManager->GetMTime())
+    {
+    std::cerr << "line " << __LINE__ << " - Problem with SetHighlightedBoxColor()" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   //----------------------------------------------------------------------------
   // Initialize
