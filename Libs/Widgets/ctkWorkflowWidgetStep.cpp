@@ -22,6 +22,7 @@
 #include <QWidget>
 #include <QList>
 #include <QDebug>
+#include <QIcon>
 
 // CTK includes
 #include "ctkWorkflowWidgetStep.h"
@@ -66,6 +67,8 @@ public:
   bool                        hasButtonBoxWidget;
 
   ctkWorkflowWidgetStep::ButtonBoxHints  ButtonBoxHints;
+
+  QIcon icon;
 };
 
 //-----------------------------------------------------------------------------
@@ -79,6 +82,8 @@ ctkWorkflowWidgetStepPrivate::ctkWorkflowWidgetStepPrivate()
   this->hasButtonBoxWidget = false;
 
   stepAreaDirection = QBoxLayout::TopToBottom;
+
+  icon = QIcon();
 }
 
 //-----------------------------------------------------------------------------
@@ -110,6 +115,8 @@ CTK_SET_CXX(ctkWorkflowWidgetStep, const QString&, setNextButtonText, nextButton
 // CTK_SET_CXX(ctkWorkflowWidgetStep, QList<QString>, setFinishButtonTexts, finishButtonTexts);
 CTK_GET_CXX(ctkWorkflowWidgetStep, bool, hasButtonBoxWidget, hasButtonBoxWidget);
 CTK_SET_CXX(ctkWorkflowWidgetStep, bool, setHasButtonBoxWidget, hasButtonBoxWidget);
+CTK_GET_CXX(ctkWorkflowWidgetStep, QIcon, icon, icon);
+CTK_SET_CXX(ctkWorkflowWidgetStep, const QIcon&, setIcon, icon);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CXX(ctkWorkflowWidgetStep, ctkWorkflowWidgetStep::ButtonBoxHints,

@@ -25,6 +25,8 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QList>
+#include <QIcon>
+#include <QStyle>
 
 // CTK includes
 #include "ctkWorkflow.h"
@@ -67,6 +69,13 @@ bool buttonClickTest(QApplication& app, int defaultTime, ctkExampleDerivedWorkfl
   if (shown->name() != workflowWidget->title() || shown->description() != workflowWidget->subTitle())
     {
     std::cerr << "Incorrect widget title/subtitle" << std::endl;
+    return false;
+    }
+
+  // ensure that the finish button has an icon
+  if (shownFinishButton && shownFinishButton->icon().isNull())
+    {
+    std::cerr << "Incorrect finish icon visibility" << std::endl;
     return false;
     }
 
@@ -819,6 +828,9 @@ int runWorkflowWidgetTest(ctkWorkflowWidget* workflowWidget, QApplication& app, 
     tabWidget->addStepArea(testStep3, 1, "tab2");
     }
   testStep3->setHasButtonBoxWidget(true);
+
+  // icon test - add an icon to testStep3, should show up as a icon on the finish button
+  testStep3->setIcon(testStep3->stepArea()->style()->standardIcon(QStyle::SP_ArrowUp));
 
   workflow->addTransition(testStep2, testStep3);
   
