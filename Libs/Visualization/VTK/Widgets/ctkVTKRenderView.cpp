@@ -51,6 +51,10 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate()
   this->RenderPending = false;
   this->RenderEnabled = false;
   this->ZoomFactor = 0.05;
+  this->RotateDegrees = 5;
+  this->PitchDirection = ctkVTKRenderView::PitchUp;
+  this->RollDirection = ctkVTKRenderView::RollRight;
+  this->YawDirection = ctkVTKRenderView::YawLeft;
 }
 
 // --------------------------------------------------------------------------
@@ -282,6 +286,70 @@ CTK_SET_CXX(ctkVTKRenderView, bool, setRenderEnabled, RenderEnabled);
 CTK_GET_CXX(ctkVTKRenderView, bool, renderEnabled, RenderEnabled);
 
 //----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, int, rotateDegrees, RotateDegrees);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setRotateDegrees(int newRotateDegrees)
+{
+  CTK_D(ctkVTKRenderView);
+  d->RotateDegrees = qAbs(newRotateDegrees);
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::PitchDirection, pitchDirection, PitchDirection);
+CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::PitchDirection, setPitchDirection, PitchDirection);
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RollDirection, rollDirection, RollDirection);
+CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::RollDirection, setRollDirection, RollDirection);
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::YawDirection, yawDirection, YawDirection);
+CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::YawDirection, setYawDirection, YawDirection);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::pitch()
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  vtkCamera *cam = d->Renderer->GetActiveCamera();
+  cam->Elevation(d->PitchDirection == Self::PitchDown ? d->RotateDegrees : -d->RotateDegrees);
+  cam->OrthogonalizeViewUp();
+  d->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::roll()
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  vtkCamera *cam = d->Renderer->GetActiveCamera();
+  cam->Roll(d->RollDirection == Self::RollLeft ? d->RotateDegrees : -d->RotateDegrees);
+  cam->OrthogonalizeViewUp();
+  d->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::yaw()
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  vtkCamera *cam = d->Renderer->GetActiveCamera();
+  cam->Azimuth(d->YawDirection == Self::YawLeft ? d->RotateDegrees : -d->RotateDegrees);
+  cam->OrthogonalizeViewUp();
+  d->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//----------------------------------------------------------------------------
 void ctkVTKRenderView::setZoomFactor(double newZoomFactor)
 {
   CTK_D(ctkVTKRenderView);
@@ -295,6 +363,10 @@ CTK_GET_CXX(ctkVTKRenderView, double, zoomFactor, ZoomFactor);
 void ctkVTKRenderView::zoomIn()
 {
   CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
   d->zoom(d->ZoomFactor);
 }
 
@@ -302,5 +374,9 @@ void ctkVTKRenderView::zoomIn()
 void ctkVTKRenderView::zoomOut()
 {
   CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
   d->zoom(-d->ZoomFactor);
 }

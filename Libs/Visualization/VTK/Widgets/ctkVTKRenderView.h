@@ -45,8 +45,20 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
   Q_PROPERTY(bool orientationWidgetVisible READ orientationWidgetVisible
              WRITE setOrientationWidgetVisible)
   Q_PROPERTY(double zoomFactor READ zoomFactor WRITE setZoomFactor)
+  Q_PROPERTY(int rotateDegrees READ rotateDegrees WRITE setRotateDegrees)
+  Q_ENUMS(PitchDirection)
+  Q_PROPERTY(PitchDirection pitchDirection READ pitchDirection WRITE setPitchDirection)
+  Q_ENUMS(RollDirection)
+  Q_PROPERTY(RollDirection rollDirection READ rollDirection WRITE setRollDirection)
+  Q_ENUMS(YawDirection)
+  Q_PROPERTY(YawDirection yawDirection READ yawDirection WRITE setYawDirection)
 
 public:
+
+  enum PitchDirection { PitchUp, PitchDown };
+  enum RollDirection {RollLeft, RollRight};
+  enum YawDirection {YawLeft, YawRight};
+
   /// Constructors
   typedef QWidget   Superclass;
   explicit ctkVTKRenderView(QWidget* parent = 0);
@@ -72,8 +84,26 @@ public slots:
   /// Show/Hide Orientation widget
   void setOrientationWidgetVisible(bool visible);
 
+  /// Set absolute amount degrees the view should be either pitched, rolled or yawed with.
+  /// \sa pitch setPitchDirection roll setRollDirection yaw setYawDirection
+  /// \note The default is 5 degrees
+  void setRotateDegrees(int newRotateDegrees);
+
+  /// Pitch view of X degrees. X been set using setRotateDegrees
+  /// \sa setRotateDegrees
+  void pitch();
+
+  /// Rool view of X degrees. X been set using setRotateDegrees
+  /// \sa setRotateDegrees
+  void roll();
+
+  /// Yaw view of X degrees. X been set using setRotateDegrees
+  /// \sa setRotateDegrees
+  void yaw();
+
   /// \brief Set zoom factor
   /// zoomFactor is a value between 0.0 and 1.0
+  /// \note The default value is 0.05
   void setZoomFactor(double newZoomFactor);
 
   /// Zoom in using the \a zoomfactor
@@ -115,6 +145,18 @@ public:
 
   /// Return if rendering is enabled
   bool renderEnabled() const;
+
+  /// Return amount of degrees used to either pitch, roll or yaw the view
+  int rotateDegrees()const;
+
+  PitchDirection pitchDirection()const;
+  void setPitchDirection(PitchDirection newPitchDirection);
+
+  RollDirection rollDirection()const;
+  void setRollDirection(RollDirection newRollDirection);
+
+  YawDirection yawDirection()const;
+  void setYawDirection(YawDirection newYawDirection);
 
   /// Return zoom factor
   double zoomFactor()const;

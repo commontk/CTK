@@ -67,6 +67,10 @@ public:
   vtkSmartPointer<vtkOrientationMarkerWidget>   Orientation;
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
   double                                        ZoomFactor;
+  int                                           RotateDegrees;
+  ctkVTKRenderView::PitchDirection              PitchDirection;
+  ctkVTKRenderView::RollDirection               RollDirection;
+  ctkVTKRenderView::YawDirection                YawDirection;
 
   vtkWeakPointer<vtkRenderWindowInteractor>     CurrentInteractor;
 
