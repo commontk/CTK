@@ -114,6 +114,13 @@ public slots:
   /// \sa setZoomFactor
   void zoomOut();
 
+  /// Set the focal point
+  void setFocalPoint(int x, int y, int z);
+
+  /// \brief Reset focal point
+  /// The visible scene bbox is computed, then the camera is recentered around its centroid.
+  void resetFocalPoint();
+
 public:
   /// Get underlying RenderWindow
   vtkRenderWindow* renderWindow()const;

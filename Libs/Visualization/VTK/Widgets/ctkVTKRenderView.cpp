@@ -380,3 +380,30 @@ void ctkVTKRenderView::zoomOut()
     }
   d->zoom(-d->ZoomFactor);
 }
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setFocalPoint(int x, int y, int z)
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  vtkCamera * camera = d->Renderer->GetActiveCamera();
+  camera->SetFocalPoint(x, y, z);
+  camera->ComputeViewPlaneNormal();
+  camera->OrthogonalizeViewUp();
+  d->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::resetFocalPoint()
+{
+  CTK_D(ctkVTKRenderView);
+  double bounds[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  d->Renderer->ComputeVisiblePropBounds(bounds);
+  double x_center = (bounds[1] + bounds[0]) / 2.0;
+  double y_center = (bounds[3] + bounds[2]) / 2.0;
+  double z_center = (bounds[5] + bounds[4]) / 2.0;
+  this->setFocalPoint(x_center, y_center, z_center);
+}
