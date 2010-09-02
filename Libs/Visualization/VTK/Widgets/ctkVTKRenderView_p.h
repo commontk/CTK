@@ -50,6 +50,8 @@ class ctkVTKRenderViewPrivate : public QObject,
 public:
   ctkVTKRenderViewPrivate();
 
+  void zoom(double zoomFactor);
+
   /// Convenient setup methods
   void setupCornerAnnotation();
   void setupRendering();
@@ -64,6 +66,11 @@ public:
   vtkSmartPointer<vtkAxesActor>                 Axes;
   vtkSmartPointer<vtkOrientationMarkerWidget>   Orientation;
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
+  double                                        ZoomFactor;
+  int                                           RotateDegrees;
+  ctkVTKRenderView::PitchDirection              PitchDirection;
+  ctkVTKRenderView::RollDirection               RollDirection;
+  ctkVTKRenderView::YawDirection                YawDirection;
 
   vtkWeakPointer<vtkRenderWindowInteractor>     CurrentInteractor;
 

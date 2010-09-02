@@ -31,6 +31,7 @@
 #include <vtkRendererCollection.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkTextProperty.h>
+#include <vtkCamera.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKRenderView");
@@ -49,6 +50,11 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate()
   this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->RenderPending = false;
   this->RenderEnabled = false;
+  this->ZoomFactor = 0.05;
+  this->RotateDegrees = 5;
+  this->PitchDirection = ctkVTKRenderView::PitchUp;
+  this->RollDirection = ctkVTKRenderView::RollRight;
+  this->YawDirection = ctkVTKRenderView::YawLeft;
 }
 
 // --------------------------------------------------------------------------
@@ -93,6 +99,24 @@ void ctkVTKRenderViewPrivate::setupDefaultInteractor()
   p->setInteractor(this->RenderWindow->GetInteractor());
 }
 
+//----------------------------------------------------------------------------
+void ctkVTKRenderViewPrivate::zoom(double zoomFactor)
+{
+  Q_ASSERT(this->Renderer->IsActiveCameraCreated());
+  vtkCamera * camera = this->Renderer->GetActiveCamera();
+
+  if (camera->GetParallelProjection())
+    {
+    camera->SetParallelScale(camera->GetParallelScale() / (1 + zoomFactor));
+    }
+  else
+    {
+    camera->Dolly(1 + zoomFactor);
+    this->Renderer->ResetCameraClippingRange();
+    this->Renderer->UpdateLightsGeometryToFollowCamera();
+    }
+}
+
 //---------------------------------------------------------------------------
 // ctkVTKRenderView methods
 
@@ -110,11 +134,6 @@ ctkVTKRenderView::ctkVTKRenderView(QWidget* _parent) : Superclass(_parent)
 
   d->setupRendering();
   d->setupDefaultInteractor();
-}
-
-// --------------------------------------------------------------------------
-ctkVTKRenderView::~ctkVTKRenderView()
-{
 }
 
 //----------------------------------------------------------------------------
@@ -267,3 +286,126 @@ CTK_GET_CXX(ctkVTKRenderView, vtkRenderer*, renderer, Renderer);
 //----------------------------------------------------------------------------
 CTK_SET_CXX(ctkVTKRenderView, bool, setRenderEnabled, RenderEnabled);
 CTK_GET_CXX(ctkVTKRenderView, bool, renderEnabled, RenderEnabled);
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, int, rotateDegrees, RotateDegrees);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setRotateDegrees(int newRotateDegrees)
+{
+  CTK_D(ctkVTKRenderView);
+  d->RotateDegrees = qAbs(newRotateDegrees);
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::PitchDirection, pitchDirection, PitchDirection);
+CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::PitchDirection, setPitchDirection, PitchDirection);
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RollDirection, rollDirection, RollDirection);
+CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::RollDirection, setRollDirection, RollDirection);
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::YawDirection, yawDirection, YawDirection);
+CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::YawDirection, setYawDirection, YawDirection);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::pitch()
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  vtkCamera *cam = d->Renderer->GetActiveCamera();
+  cam->Elevation(d->PitchDirection == Self::PitchDown ? d->RotateDegrees : -d->RotateDegrees);
+  cam->OrthogonalizeViewUp();
+  d->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::roll()
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  vtkCamera *cam = d->Renderer->GetActiveCamera();
+  cam->Roll(d->RollDirection == Self::RollLeft ? d->RotateDegrees : -d->RotateDegrees);
+  cam->OrthogonalizeViewUp();
+  d->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::yaw()
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  vtkCamera *cam = d->Renderer->GetActiveCamera();
+  cam->Azimuth(d->YawDirection == Self::YawLeft ? d->RotateDegrees : -d->RotateDegrees);
+  cam->OrthogonalizeViewUp();
+  d->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setZoomFactor(double newZoomFactor)
+{
+  CTK_D(ctkVTKRenderView);
+  d->ZoomFactor = qBound(0.0, qAbs(newZoomFactor), 1.0);
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, double, zoomFactor, ZoomFactor);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::zoomIn()
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  d->zoom(d->ZoomFactor);
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::zoomOut()
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  d->zoom(-d->ZoomFactor);
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setFocalPoint(int x, int y, int z)
+{
+  CTK_D(ctkVTKRenderView);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  vtkCamera * camera = d->Renderer->GetActiveCamera();
+  camera->SetFocalPoint(x, y, z);
+  camera->ComputeViewPlaneNormal();
+  camera->OrthogonalizeViewUp();
+  d->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::resetFocalPoint()
+{
+  CTK_D(ctkVTKRenderView);
+  double bounds[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  d->Renderer->ComputeVisiblePropBounds(bounds);
+  double x_center = (bounds[1] + bounds[0]) / 2.0;
+  double y_center = (bounds[3] + bounds[2]) / 2.0;
+  double z_center = (bounds[5] + bounds[4]) / 2.0;
+  this->setFocalPoint(x_center, y_center, z_center);
+}
