@@ -31,6 +31,7 @@
 #include <vtkRendererCollection.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkTextProperty.h>
+#include <vtkCamera.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKRenderView");
@@ -49,6 +50,7 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate()
   this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->RenderPending = false;
   this->RenderEnabled = false;
+  this->ZoomFactor = 0.05;
 }
 
 // --------------------------------------------------------------------------
@@ -93,6 +95,24 @@ void ctkVTKRenderViewPrivate::setupDefaultInteractor()
   p->setInteractor(this->RenderWindow->GetInteractor());
 }
 
+//----------------------------------------------------------------------------
+void ctkVTKRenderViewPrivate::zoom(double zoomFactor)
+{
+  Q_ASSERT(this->Renderer->IsActiveCameraCreated());
+  vtkCamera * camera = this->Renderer->GetActiveCamera();
+
+  if (camera->GetParallelProjection())
+    {
+    camera->SetParallelScale(camera->GetParallelScale() / (1 + zoomFactor));
+    }
+  else
+    {
+    camera->Dolly(1 + zoomFactor);
+    this->Renderer->ResetCameraClippingRange();
+    this->Renderer->UpdateLightsGeometryToFollowCamera();
+    }
+}
+
 //---------------------------------------------------------------------------
 // ctkVTKRenderView methods
 
@@ -110,11 +130,6 @@ ctkVTKRenderView::ctkVTKRenderView(QWidget* _parent) : Superclass(_parent)
 
   d->setupRendering();
   d->setupDefaultInteractor();
-}
-
-// --------------------------------------------------------------------------
-ctkVTKRenderView::~ctkVTKRenderView()
-{
 }
 
 //----------------------------------------------------------------------------
@@ -265,3 +280,27 @@ CTK_GET_CXX(ctkVTKRenderView, vtkRenderer*, renderer, Renderer);
 //----------------------------------------------------------------------------
 CTK_SET_CXX(ctkVTKRenderView, bool, setRenderEnabled, RenderEnabled);
 CTK_GET_CXX(ctkVTKRenderView, bool, renderEnabled, RenderEnabled);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setZoomFactor(double newZoomFactor)
+{
+  CTK_D(ctkVTKRenderView);
+  d->ZoomFactor = qBound(0.0, qAbs(newZoomFactor), 1.0);
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, double, zoomFactor, ZoomFactor);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::zoomIn()
+{
+  CTK_D(ctkVTKRenderView);
+  d->zoom(d->ZoomFactor);
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::zoomOut()
+{
+  CTK_D(ctkVTKRenderView);
+  d->zoom(-d->ZoomFactor);
+}

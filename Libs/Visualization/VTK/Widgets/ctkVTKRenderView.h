@@ -44,11 +44,13 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
   Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
   Q_PROPERTY(bool orientationWidgetVisible READ orientationWidgetVisible
              WRITE setOrientationWidgetVisible)
+  Q_PROPERTY(double zoomFactor READ zoomFactor WRITE setZoomFactor)
+
 public:
   /// Constructors
   typedef QWidget   Superclass;
   explicit ctkVTKRenderView(QWidget* parent = 0);
-  virtual ~ctkVTKRenderView();
+  virtual ~ctkVTKRenderView(){}
 
 public slots:
 
@@ -69,6 +71,18 @@ public slots:
 
   /// Show/Hide Orientation widget
   void setOrientationWidgetVisible(bool visible);
+
+  /// \brief Set zoom factor
+  /// zoomFactor is a value between 0.0 and 1.0
+  void setZoomFactor(double newZoomFactor);
+
+  /// Zoom in using the \a zoomfactor
+  /// \sa setZoomFactor
+  void zoomIn();
+
+  /// Zoom out using the \a zoomfactor
+  /// \sa setZoomFactor
+  void zoomOut();
 
 public:
   /// Get underlying RenderWindow
@@ -101,6 +115,9 @@ public:
 
   /// Return if rendering is enabled
   bool renderEnabled() const;
+
+  /// Return zoom factor
+  double zoomFactor()const;
   
 private:
   CTK_DECLARE_PRIVATE(ctkVTKRenderView);
