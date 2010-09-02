@@ -45,22 +45,23 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
   Q_PROPERTY(bool orientationWidgetVisible READ orientationWidgetVisible
              WRITE setOrientationWidgetVisible)
   Q_PROPERTY(double zoomFactor READ zoomFactor WRITE setZoomFactor)
-  Q_PROPERTY(int rotateDegrees READ rotateDegrees WRITE setRotateDegrees)
-  Q_ENUMS(PitchDirection)
-  Q_PROPERTY(PitchDirection pitchDirection READ pitchDirection WRITE setPitchDirection)
-  Q_ENUMS(RollDirection)
-  Q_PROPERTY(RollDirection rollDirection READ rollDirection WRITE setRollDirection)
-  Q_ENUMS(YawDirection)
-  Q_PROPERTY(YawDirection yawDirection READ yawDirection WRITE setYawDirection)
+  Q_PROPERTY(int pitchRollYawIncrement READ pitchRollYawIncrement WRITE setPitchRollYawIncrement)
+  Q_ENUMS(RotateDirection)
+  Q_PROPERTY(RotateDirection pitchDirection READ pitchDirection WRITE setPitchDirection)
+  Q_PROPERTY(RotateDirection rollDirection READ rollDirection WRITE setRollDirection)
+  Q_PROPERTY(RotateDirection yawDirection READ yawDirection WRITE setYawDirection)
+  Q_PROPERTY(RotateDirection spinDirection READ spinDirection WRITE setSpinDirection)
+  Q_PROPERTY(bool spinEnabled READ spinEnabled WRITE setSpinEnabled)
+  Q_PROPERTY(int spinIncrement READ spinIncrement WRITE setSpinIncrement)
+  Q_PROPERTY(int animationIntervalMs READ animationIntervalMs WRITE setAnimationIntervalMs)
+  Q_PROPERTY(bool rockEnabled READ rockEnabled WRITE setRockEnabled)
+  Q_PROPERTY(int rockLength READ rockLength WRITE setRockLength)
 
 public:
 
-  enum PitchDirection { PitchUp, PitchDown };
-  enum RollDirection {RollLeft, RollRight};
-  enum YawDirection {YawLeft, YawRight};
+  enum RotateDirection { PitchUp, PitchDown, RollLeft, RollRight, YawLeft, YawRight };
 
-  /// Constructors
-  typedef QWidget   Superclass;
+  typedef QWidget Superclass;
   explicit ctkVTKRenderView(QWidget* parent = 0);
   virtual ~ctkVTKRenderView(){}
 
@@ -87,19 +88,39 @@ public slots:
   /// Set absolute amount degrees the view should be either pitched, rolled or yawed with.
   /// \sa pitch setPitchDirection roll setRollDirection yaw setYawDirection
   /// \note The default is 5 degrees
-  void setRotateDegrees(int newRotateDegrees);
+  void setPitchRollYawIncrement(int newPitchRollYawIncrement);
 
-  /// Pitch view of X degrees. X been set using setRotateDegrees
-  /// \sa setRotateDegrees
+  /// Pitch view of X degrees. X been set using setPitchRollYawIncrement
+  /// \sa setPitchRollYawIncrement setPitchDirection
   void pitch();
 
-  /// Rool view of X degrees. X been set using setRotateDegrees
-  /// \sa setRotateDegrees
+  /// Rool view of X degrees. X been set using setPitchRollYawIncrement
+  /// \sa setPitchRollYawIncrement setRollDirection
   void roll();
 
-  /// Yaw view of X degrees. X been set using setRotateDegrees
-  /// \sa setRotateDegrees
+  /// Yaw view of X degrees. X been set using setPitchRollYawIncrement
+  /// \sa setPitchRollYawIncrement setYawDirection
   void yaw();
+
+  /// Enable or Disbled the animated spin of the view
+  void setSpinEnabled(bool enabled);
+
+  /// Set number of degrees in spin increment
+  /// \sa setSpinDirection setSpinIntervalMs
+  void setSpinIncrement(int newSpinIncrement);
+
+  /// Amount of wait time between spin or rock increments
+  /// \sa setSpinIncrement setRockIncrement
+  void setAnimationIntervalMs(int ms);
+
+  /// Enable or Disbled the animated rock of the view
+  void setRockEnabled(bool enabled);
+
+  /// Set length of the rock animation
+  void setRockLength(int newRockLength);
+
+  /// Set increment of animated rock
+  void setRockIncrement(int newRockIncrement);
 
   /// \brief Set zoom factor
   /// zoomFactor is a value between 0.0 and 1.0
@@ -153,17 +174,40 @@ public:
   /// Return if rendering is enabled
   bool renderEnabled() const;
 
-  /// Return amount of degrees used to either pitch, roll or yaw the view
-  int rotateDegrees()const;
+  /// Return pitch, roll or yaw increment (in degree)
+  int pitchRollYawIncrement()const;
 
-  PitchDirection pitchDirection()const;
-  void setPitchDirection(PitchDirection newPitchDirection);
+  /// Return if animated spin is enabled
+  bool spinEnabled() const;
 
-  RollDirection rollDirection()const;
-  void setRollDirection(RollDirection newRollDirection);
+  /// Return spin increment (in degrees)
+  /// \sa setSpinIncrement
+  int spinIncrement()const;
 
-  YawDirection yawDirection()const;
-  void setYawDirection(YawDirection newYawDirection);
+  /// Amount of waiting time between spin or rock increment
+  /// \sa setAnimationIntervalMs
+  int animationIntervalMs()const;
+
+  /// Return if animated rock is enabled
+  bool rockEnabled() const;
+
+  /// Return length of the rock animation
+  int rockLength() const;
+
+  /// Return increment of animated rock
+  int rockIncrement() const;
+
+  RotateDirection pitchDirection()const;
+  void setPitchDirection(RotateDirection newPitchDirection);
+
+  RotateDirection rollDirection()const;
+  void setRollDirection(RotateDirection newRollDirection);
+
+  RotateDirection yawDirection()const;
+  void setYawDirection(RotateDirection newYawDirection);
+
+  RotateDirection spinDirection()const;
+  void setSpinDirection(RotateDirection newSpinDirection);
 
   /// Return zoom factor
   double zoomFactor()const;
