@@ -25,6 +25,7 @@
 // CTK includes
 #include "ctkWorkflow.h"
 #include "ctkWorkflowStep.h"
+#include "ctkWorkflowStep_p.h"
 #include "ctkWorkflowTransitions.h"
 #include "ctkLogger.h"
 
@@ -538,7 +539,7 @@ void ctkWorkflowPrivate::validateInternal(ctkWorkflowStep* step)
 
   if (step->hasValidateCommand())
     {
-    emit step->invokeValidateCommand(this->DesiredBranchId);
+    step->invokeValidateCommand(this->DesiredBranchId);
     }
   else
     {
@@ -564,7 +565,7 @@ void ctkWorkflowPrivate::onEntryInternal(
 
   if (step->hasOnEntryCommand())
     {
-    emit step->invokeOnEntryCommand(comingFrom, transitionType);
+    step->invokeOnEntryCommand(comingFrom, transitionType);
     }
   else
     {
@@ -590,7 +591,7 @@ void ctkWorkflowPrivate::onExitInternal(
 
   if (step->hasOnExitCommand())
     {
-    emit step->invokeOnExitCommand(goingTo, transitionType);
+    step->invokeOnExitCommand(goingTo, transitionType);
     }
   else
     {
@@ -788,17 +789,17 @@ void ctkWorkflow::connectStep(ctkWorkflowStep* step)
 
   if (!step->hasValidateCommand())
     {
-    QObject::connect(step, SIGNAL(validationComplete(bool, const QString&)), this, SLOT(evaluateValidationResults(bool, const QString&)));
+    QObject::connect(step->ctkWorkflowStepQObject(), SIGNAL(validationComplete(bool, const QString&)), this, SLOT(evaluateValidationResults(bool, const QString&)));
     }
 
   if (!step->hasOnEntryCommand())
     {
-    QObject::connect(step, SIGNAL(onEntryComplete()), this, SLOT(processingAfterOnEntry()));
+    QObject::connect(step->ctkWorkflowStepQObject(), SIGNAL(onEntryComplete()), this, SLOT(processingAfterOnEntry()));
     }
 
   if (!step->hasOnExitCommand())
     {
-    QObject::connect(step, SIGNAL(onExitComplete()), this, SLOT(processingAfterOnExit()));
+    QObject::connect(step->ctkWorkflowStepQObject(), SIGNAL(onExitComplete()), this, SLOT(processingAfterOnExit()));
     }
 }
 

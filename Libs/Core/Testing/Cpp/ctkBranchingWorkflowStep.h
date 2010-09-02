@@ -28,7 +28,6 @@
 //-----------------------------------------------------------------------------
 class ctkBranchingWorkflowStep : public ctkWorkflowStep
 {
-  Q_OBJECT
 
 public:
 
@@ -44,7 +43,7 @@ public:
   virtual void validate(const QString& desiredBranchId = QString())
   {
     Q_UNUSED(desiredBranchId);
-    emit validationComplete(true, this->branchId);
+    this->validationComplete(true, this->branchId);
   }
 
 private:

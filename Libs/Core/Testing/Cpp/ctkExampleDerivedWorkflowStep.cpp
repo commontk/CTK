@@ -57,7 +57,7 @@ ctkExampleDerivedWorkflowStep::ctkExampleDerivedWorkflowStep(ctkWorkflow* newWor
 void ctkExampleDerivedWorkflowStep::validate(const QString& desiredBranchId)
 {
   // Always returns true in this simple example
-  emit validationComplete(true,desiredBranchId);
+  this->validationComplete(true,desiredBranchId);
 }
 
 //-----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ void ctkExampleDerivedWorkflowStep::onEntry(
   d->numberOfTimesRanOnEntry++;
 
   // signals that we are finished
-  emit onEntryComplete();
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -90,7 +90,7 @@ void ctkExampleDerivedWorkflowStep::onExit(
   d->numberOfTimesRanOnExit++;
 
   // signals that we are finished
-  emit onExitComplete();
+  this->onExitComplete();
 }
 
 //-----------------------------------------------------------------------------

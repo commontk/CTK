@@ -39,7 +39,6 @@ class QLineEdit;
 
 class ctkExampleDerivedWorkflowWidgetStep : public ctkWorkflowWidgetStep
 {
-  Q_OBJECT
 
 public:
   typedef ctkWorkflowWidgetStep Superclass;
@@ -62,13 +61,11 @@ public:
   int numberOfTimesRanOnEntry()const;
   int numberOfTimesRanOnExit()const;
 
-protected slots:
-
   ///
   /// Adds the label and line edit on this step's user interface to
   /// the given list, which will be used by the superclass's
   /// showUserInterface() function
-  virtual void populateStepWidgetsList(QList<QWidget*>& stepWidgetsList);
+  virtual void createUserInterface();
 
 protected:
 

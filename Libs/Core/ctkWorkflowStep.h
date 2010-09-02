@@ -22,7 +22,8 @@
 #define __ctkWorkflowStep_h
 
 // Qt includes
-#include <QObject>
+class QObject;
+class QState;
 
 // CTK includes
 #include "ctkPimpl.h"
@@ -31,20 +32,17 @@
 class ctkWorkflow;
 
 class ctkWorkflowStepPrivate;
-class QState;
 
 /// \brief ctkWorkflowStep is the basis for a workflow step.
 ///
 /// A workflow step is a placeholder for various states and transitions that are used in a
 /// typical workflow. Such steps can be added to instances of the ctkWorkflow class.
 
-class CTK_CORE_EXPORT ctkWorkflowStep : public QObject
+class CTK_CORE_EXPORT ctkWorkflowStep
 {
-  Q_OBJECT
 
 public:
-  typedef QObject Superclass;
-  explicit ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId = QString());
+  explicit ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId);
   virtual ~ctkWorkflowStep(){}
 
   /// Get the \a workflow associated with this step
@@ -62,9 +60,8 @@ public:
   void setDescription(const QString& newDescription);
 
   ///
-  /// Set/get \a statusText
+  /// Get \a statusText
   QString statusText()const;
-  void setStatusText(const QString& newText);
 
   ///
   /// Set/get whether a validationCommand has been provided in a separate QObject
@@ -86,10 +83,18 @@ public:
   bool hasOnExitCommand()const;
   void setHasOnExitCommand(bool newHasOnExitCommand);
 
+  /// Get QObject associated with this step, to connect signals/slots
+  QObject* ctkWorkflowStepQObject();
+
 protected:
 
   /// Set step Id
   void setId(const QString& newStepId);
+
+  /// Set workflow
+  void setWorkflow(ctkWorkflow* newWorkflow);
+
+  void setStatusText(const QString& newText);
 
   /// \brief Get the step's processing state.
   ///
@@ -98,17 +103,7 @@ protected:
 
   /// \brief Get the step's validation state.
   ///
-  /// The validate(const QString&) method is the key component to define for this state to work as expected.
-  /// This state is used to validate the processing pertaining to this
-  /// step, then branch to the next step's processingState state on
-  /// success, or back to the current step's processingState state on
-  /// error.
-  ///
-  /// When the validation state emits its entered() signal, the corresponding workflow's
-  /// attemptToGoToNextStep() slot is called.
-  ///
-  /// This function calls the step's validate(const QString&) method to evaluate
-  /// whether one can transition to the next step.
+  /// This state is used to validate the processing associated with this step.
   QState* validationState()const;
 
   /// \brief Get the step's validation transition.
@@ -145,8 +140,8 @@ protected:
   ///\brief  Reimplement this function for step-specific processing when entering a step.
   ///
   /// To define a custom step, developers can either reimplement the onEntry() method in a subclass
-  /// of ctkWorkflowStep, or create a ctkWorkflowStep instance and set the onEntryCommand to point
-  /// to a callback of their choice.
+  /// of ctkWorkflowStep, or create a ctkWorkflowStep instance and use signals and slots, as
+  /// similarly as described for validate().
   ///
   /// Each step should be self-contained, \a comingFrom and \a transitionType may
   /// be used only to decide on how processing should be done for the current step.
@@ -160,86 +155,83 @@ protected:
   /// \brief Reimplement this function for step-specific processing when exiting a step.
   ///
   /// To define a custom step, developers can either reimplement the onExit() method
-  /// in a subclass of ctkWorkflowStep, or create a ctkWorkflowStep instance and set the
-  /// onExitCommand to point to a callback of their choice.
+  /// in a subclass of ctkWorkflowStep, or create a ctkWorkflowStep instance and use signals and
+  /// slots, similarly as described for validate().
   ///
   /// Each step should be self-contained, \a goingTo and \a transitionType may be used only to
   /// decide on how processing should be done for the current step.
   ///
   /// \param goingTo gives the step that the state machine will go to after
   /// transitioning from this step.
+  ///
   /// \param transitionType gives the type of the transition used to get to this step.
   virtual void onExit(const ctkWorkflowStep* goingTo,
                       const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
   /// \brief Validates the computation performed in this step's processing state.
   ///
-  /// The validate(const QString&) function is called from the workflow's attemptToGoToNextStep() slot,
-  /// which is invoked by the validatationState state's entered() signal.  It must emit a
-  /// signal with a single integer parameter.  This signal is connected to the workflow's
-  /// evaluateValidationResults(int) slot, which then performs conditional transition to
-  /// the next state.
-  ///
   /// When creating a custom step, developers can create a validate(const QString&) method is one of two ways:
   /// 1) Reimplement the validate(const QString&) method in a subclass of
   /// ctkWorkflowStep, following these instructions:
   /// <ul>
-  ///   <li>*do* call the Superclass's validate(const QString&) function, and fail if it returns 0</li>
-  ///   <li>emit the signal ctkWorkflowStep::validateComplete(int) (1 on successful validation,
-  /// 0 on failure)</li>
-  ///   <li>return an int (1 on successful validation, 0 otherwise)</li>
+  ///   <li>emit the signal ctkWorkflowStep::validateComplete(bool, const QString&) (true on successful validation,
+  /// false on failure; the QString is the desired branchId to use with branching workflows)</li>
   /// </ul>
   //
   /// OR:
   ///
   /// 2) Create an instance of a ctkWorkflowStep then:
   /// <ul>
-  ///  <li>Call setHasValidateCommand(1) on the step *before* adding the step to the workflow</li>
+  ///  <li>Call setHasValidateCommand(1) on the step
   ///  <li>Create a slot foo() associated with any QObject*, following these instructions:</li>
   ///  <ul>
-  ///    <li>There is *NO* need to call the Superclass's validate(const QString&) function
-  /// (error checking is performed before the invokeValidateCommand(const QString&)
-  /// signal is emitted)</li>
-  ///     <li>Emit a signal bar(int) (1 on successful validation, 0 on
+  ///     <li>Emit a signal bar(int, const QString&) (true on successful validation, false on
   /// failure)</li>
-  ///     <li>Return: 1 on successful validation, 0 otherwise</li>
   ///     <li>Set the following two connections:</li>
   ///     <ul>
   ///       <li>QObject::connect(step, SIGNAL(invokeValidateCommand(const QString&)), object,
-  /// SLOT(foo()))</li>
-  ///       <li>QObject::connect(object, SIGNAl(bar(int)), workflow,
-  /// SLOT(evaluateValidationResults(int)))</li>
+  /// SLOT(foo(const QString&)))</li>
+  ///       <li>QObject::connect(object, SIGNAl(bar(bool, const QString&)), workflow,
+  /// SLOT(evaluateValidationResults(bool, const QString&)))</li>
   ///      </ul>
   ///    </ul>
   ///  </ul>
-  ///
-  /// \note ctkWorkflowStep does not function within a workflow as implemented here,
-  /// one of the above two methods must be followed
   virtual void validate(const QString& desiredBranchId = QString());
 
-signals:
-  /// \brief Signal indicating that validation of this step's processing should be performed.
-  ///
-  /// \note Should be used if a validationCommand has been provided
-  /// See method 2 described in validation()
+  /// \brief Signal (emitted by the private implementation) indicating that validation of this
+  /// step's processing should be performed.
   ///
   /// \sa validation()
   void invokeValidateCommand(const QString& desiredBranchId = QString())const;
 
-  /// \brief Signal indicating that validation of this step's processing has completed.
+  /// \brief Signal (emitted by the private implementation) indicating that validation of this
+  /// step's processing has completed.
   ///
-  /// \note Should be used if a validationCommand has not been provided
-  /// See method 1 described in validation()
-  ///
-  /// \param validationSuceeded 1 on successful validation, 0 on failure
+  /// \sa validation()
   void validationComplete(bool validationSuceeded, const QString& branchId = QString())const;
 
+  /// \brief Signal (emitted by the private implementation) indicating that the step's 'onEntry'
+  /// processing should be performed.
+  ///
+  /// \sa onEntry()
   void invokeOnEntryCommand(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const;
 
+  /// \brief Signal (emitted by the private implementation) indicating that the step's 'onEntry'
+  /// processing has completed.
+  ///
+  /// \sa onEntry()
   void onEntryComplete()const;
 
+  /// \brief Signal (emitted by the private implementation) indicating that the step's 'onExit'
+  /// processing should be performed.
+  ///
+  /// \sa onExit()
   void invokeOnExitCommand(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const;
 
+  /// \brief Signal (emitted by the private implementation) indicating that the step's 'onExit'
+  /// processing has completed.
+  ///
+  /// \sa onExit()
   void onExitComplete()const;
 
 private:

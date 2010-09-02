@@ -36,8 +36,6 @@ class ctkExampleDerivedWorkflowStepPrivate;
 class ctkExampleDerivedWorkflowStep : public ctkWorkflowStep
 {
 
-  Q_OBJECT
-
 public:
 
   typedef ctkWorkflowStep Superclass;

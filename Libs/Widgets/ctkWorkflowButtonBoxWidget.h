@@ -105,7 +105,7 @@ public:
 public slots:
   /// Updates the buttons to reflect the current status of the workflow, and should be called
   /// whenever the workflow's current step has changed
-  virtual void updateButtons();
+  virtual void updateButtons(ctkWorkflowStep* currentStep);
 
 protected slots:
   /// is called when a 'goTo' button is clicked, and retrieves the corresponding goTo step's id to

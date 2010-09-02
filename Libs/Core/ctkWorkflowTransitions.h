@@ -35,19 +35,9 @@
 /// occurs only when the transition event's EventTransitionType matches the transition's
 /// TransitionType).
 ///
-/// ctkWorkflowInterstepTransition: for transition between states of different steps (i.e. when
-/// transitioning between steps).  The transition occurs only when the transition event's
-/// EventTransitionType matches the transition's TransitionType, and when the transition event's
-/// EventId matches the transition's Id.
-///
-/// Example:
-/// \code
-/// ctkWorkflowInterstepTransition *transition = new
-/// ctkWorkflowInterstepTransition(ctkWorkflowInterstepTransition::TransitionToNextStep, "branchId");
-///
-/// workflow.postEvent(new
-/// ctkWorkflowInterstepTransition(ctkWorkflowInterstepTransition::TransitionToNextStep, "branchId")
-/// \endcode
+/// ctkWorkflowInterstepTransition: for transition between states of different steps.  The
+/// transition occurs only when the transition event's EventTransitionType matches the transition's
+/// TransitionType and the transition event's EventId matches the transition's Id.
 
 //-----------------------------------------------------------------------------
 struct CTK_CORE_EXPORT ctkWorkflowIntrastepTransitionEvent : public QEvent

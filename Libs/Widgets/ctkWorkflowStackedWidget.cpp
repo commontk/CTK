@@ -20,10 +20,12 @@
 
 // Qt includes
 #include <QStackedWidget>
-#include <QBoxLayout>
+#include <QWidget>
+#include <QString>
 
 // CTK includes
 #include "ctkWorkflowStackedWidget.h"
+#include "ctkWorkflowButtonBoxWidget.h"
 #include "ctkLogger.h"
 
 // STD includes
@@ -49,7 +51,6 @@ public:
 //---------------------------------------------------------------------------
 ctkWorkflowStackedWidgetPrivate::ctkWorkflowStackedWidgetPrivate()
 {
-  this->ClientArea = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -59,70 +60,46 @@ ctkWorkflowStackedWidgetPrivate::ctkWorkflowStackedWidgetPrivate()
 ctkWorkflowStackedWidget::ctkWorkflowStackedWidget(QWidget* newParent) : Superclass(newParent)
 {
   CTK_INIT_PRIVATE(ctkWorkflowStackedWidget);
+  CTK_D(ctkWorkflowStackedWidget);
+  d->ClientArea = 0;
 }
 
 // --------------------------------------------------------------------------
-QStackedWidget* ctkWorkflowStackedWidget::clientArea()
+QWidget* ctkWorkflowStackedWidget::clientArea()
 {
   CTK_D(ctkWorkflowStackedWidget);
-
-  if (!d->ClientArea)
-    {
-    d->ClientArea = new QStackedWidget;
-
-    if (!this->clientSection()->layout())
-      {
-      this->clientSection()->setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
-      }
-    this->clientSection()->layout()->addWidget(d->ClientArea);
-    }
   return d->ClientArea;
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStackedWidget::addWidgetToClientArea(QWidget* widget, const QString& label)
+void ctkWorkflowStackedWidget::initClientArea()
+{
+  CTK_D(ctkWorkflowStackedWidget);
+  if (!d->ClientArea)
+    {
+    d->ClientArea = new QStackedWidget(this);
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStackedWidget::createNewPage(QWidget* widget)
+{  
+  CTK_D(ctkWorkflowStackedWidget);
+  Q_ASSERT(d->ClientArea);
+
+  if (widget)
+    {
+    d->ClientArea->layout()->addWidget(widget);
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStackedWidget::showPage(QWidget* widget, const QString& label)
 {
   Q_UNUSED(label);
 
-  if (!widget)
-    {
-    return;
-    }
-
-  // set the default layout if there isn't one
-  if (!this->clientArea()->layout())
-    {
-    this->clientArea()->setLayout(new QBoxLayout(this->clientAreaDirection()));
-    return;
-    }
-
-  this->clientArea()->layout()->addWidget(widget);
-}
-
-// --------------------------------------------------------------------------
-QWidget* ctkWorkflowStackedWidget::getWidgetFromIndex(int index)
-{
   CTK_D(ctkWorkflowStackedWidget);
-
-  if (!d->ClientArea)
-    {
-    logger.error("getWidgetFromIndex - ClientArea is Null");
-    return 0;
-    }
-
-  return d->ClientArea->widget(index);
-}
-
-// --------------------------------------------------------------------------
-void ctkWorkflowStackedWidget::setCurrentWidget(QWidget* widget)
-{
-  CTK_D(ctkWorkflowStackedWidget);
-
-  if (!d->ClientArea)
-    {
-    logger.error("setCurrentWidget - ClientArea is Null");
-    return;
-    }
+  Q_ASSERT(d->ClientArea);
 
   if (widget)
     {

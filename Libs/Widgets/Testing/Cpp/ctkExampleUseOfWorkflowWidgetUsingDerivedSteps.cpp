@@ -25,6 +25,7 @@
 // CTK includes
 #include "ctkWorkflow.h"
 #include "ctkWorkflowTabWidget.h"
+#include "ctkWorkflowGroupBox.h"
 #include "ctkExampleDerivedWorkflowWidgetStep.h"
 
 // STD includes
@@ -55,23 +56,24 @@ int ctkExampleUseOfWorkflowWidgetUsingDerivedSteps ( int argc, char * argv [] )
   // create the workflow's UI component
   ctkWorkflowTabWidget* workflowWidget = new ctkWorkflowTabWidget;
   workflowWidget->setWorkflow(workflow);
-  workflowWidget->setPreText("I am some pre-text");
-  workflowWidget->setPostText("I am some post-text");
-  workflowWidget->setHideWidgetsOfNonCurrentSteps(hideWidgets);
+  ctkWorkflowGroupBox* groupBox = workflowWidget->workflowGroupBox();
+  groupBox->setPreText("I am some pre-text");
+  groupBox->setPostText("I am some post-text");
+  groupBox->setHideWidgetsOfNonCurrentSteps(hideWidgets);
 
   // create and add the first workflow step
   ctkExampleDerivedWorkflowWidgetStep* testStep1 = new ctkExampleDerivedWorkflowWidgetStep(workflow, "Step 1");
   testStep1->setName("Step 1");
   testStep1->setDescription("I am in step 1");
   // can specify the name of the tab
-  workflowWidget->addStepArea(testStep1, "tab 1");
+  workflowWidget->associateStepWithLabel(testStep1, "name 1");
 
   // create and add the second workflow step
   ctkExampleDerivedWorkflowWidgetStep* testStep2 = new ctkExampleDerivedWorkflowWidgetStep(workflow, "Step 2");
   testStep2->setName("Step 2");
   testStep2->setDescription("I am in step 2");
   // a new tab is automatically created
-  workflowWidget->addStepArea(testStep2, "tab 2");
+  workflowWidget->associateStepWithLabel(testStep2, "name 2");
 
   // create and add a third workflow step
   ctkExampleDerivedWorkflowWidgetStep* testStep3 = new ctkExampleDerivedWorkflowWidgetStep(workflow, "Step 3");
@@ -79,7 +81,7 @@ int ctkExampleUseOfWorkflowWidgetUsingDerivedSteps ( int argc, char * argv [] )
   testStep3->setDescription("I am in step 3");
   // can place a step on a tab that was previously created by
   // specifying its index
-  workflowWidget->addStepArea(testStep3, 1);
+  workflowWidget->associateStepWithPage(testStep3, 1, "name 3");
 
   // add the steps to the workflow
   workflow->addTransition(testStep1, testStep2);

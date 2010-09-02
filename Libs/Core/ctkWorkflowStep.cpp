@@ -19,12 +19,14 @@
   =========================================================================*/
 
 // Qt includes
+#include <QObject>
 #include <QState>
 
 // CTK includes
-#include "ctkLogger.h"
 #include "ctkWorkflowStep.h"
+#include "ctkWorkflowStep_p.h"
 #include "ctkWorkflow.h"
+#include "ctkLogger.h"
 
 // STD includes
 #include <iostream>
@@ -32,32 +34,6 @@
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.core.ctkWorkflowStep");
 //--------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-class ctkWorkflowStepPrivate: public ctkPrivate<ctkWorkflowStep>
-{
-public:
-  CTK_DECLARE_PUBLIC(ctkWorkflowStep);
-  ctkWorkflowStepPrivate();
-  ~ctkWorkflowStepPrivate();
-
-  ctkWorkflow* Workflow;
-
-  QString      Id;
-  QString      Name;
-  QString      Description;
-  QString      StatusText;
-
-  QState* ProcessingState;
-  QState* ValidationState;
-
-  ctkWorkflowIntrastepTransition* ValidationTransition;
-  ctkWorkflowIntrastepTransition* ValidationFailedTransition;
-
-  bool HasValidateCommand;
-  bool HasOnEntryCommand;
-  bool HasOnExitCommand;
-};
 
 // --------------------------------------------------------------------------
 // ctkWorkflowStepPrivate methods
@@ -99,17 +75,53 @@ ctkWorkflowStepPrivate::~ctkWorkflowStepPrivate()
 }
 
 // --------------------------------------------------------------------------
+void ctkWorkflowStepPrivate::validationCompleteInternal(bool validationResults, const QString& branchId)const
+{
+  emit validationComplete(validationResults, branchId);
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStepPrivate::onEntryCompleteInternal()const
+{
+  emit onEntryComplete();
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStepPrivate::onExitCompleteInternal()const
+{
+  emit onExitComplete();
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStepPrivate::invokeValidateCommandInternal(const QString& desiredBranchId)const
+{  
+  emit invokeValidateCommand(desiredBranchId);
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStepPrivate::invokeOnEntryCommandInternal(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
+{
+  emit invokeOnEntryCommand(comingFrom, transitionType);
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStepPrivate::invokeOnExitCommandInternal(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
+{
+  emit invokeOnExitCommand(goingTo, transitionType);
+}
+
+// --------------------------------------------------------------------------
 // ctkWorkflowStep methods
 
 // --------------------------------------------------------------------------
-ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId) : Superclass()
+ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId)
 {
   CTK_INIT_PRIVATE(ctkWorkflowStep);
   CTK_D(ctkWorkflowStep);
 
   if (newId.isEmpty())
     {
-    d->Id = this->metaObject()->className();
+     d->Id = d->metaObject()->className();
     }
   else
     {
@@ -121,6 +133,7 @@ ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId)
 
 // --------------------------------------------------------------------------
 CTK_GET_CXX(ctkWorkflowStep, ctkWorkflow*, workflow, Workflow);
+CTK_SET_CXX(ctkWorkflowStep, ctkWorkflow*, setWorkflow, Workflow);
 
 // --------------------------------------------------------------------------
 CTK_GET_CXX(ctkWorkflowStep, QString, id, Id);
@@ -160,12 +173,61 @@ CTK_GET_CXX(ctkWorkflowStep, ctkWorkflowIntrastepTransition*,
             validationFailedTransition, ValidationFailedTransition);
 
 // --------------------------------------------------------------------------
+QObject* ctkWorkflowStep::ctkWorkflowStepQObject()
+{
+  CTK_D(ctkWorkflowStep);
+  return d;
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStep::validationComplete(bool validationResults, const QString& branchId)const
+{
+  CTK_D(const ctkWorkflowStep);
+  d->validationCompleteInternal(validationResults, branchId);
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStep::onEntryComplete()const
+{
+  CTK_D(const ctkWorkflowStep);
+  d->onEntryCompleteInternal();
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStep::onExitComplete()const
+{
+  CTK_D(const ctkWorkflowStep);
+  d->onExitCompleteInternal();
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStep::invokeValidateCommand(const QString& desiredBranchId)const
+{  
+  CTK_D(const ctkWorkflowStep);
+  d->invokeValidateCommandInternal(desiredBranchId);
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStep::invokeOnEntryCommand(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
+{
+  CTK_D(const ctkWorkflowStep);
+  d->invokeOnEntryCommandInternal(comingFrom, transitionType);
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStep::invokeOnExitCommand(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
+{
+  CTK_D(const ctkWorkflowStep);
+  d->invokeOnExitCommandInternal(goingTo, transitionType);
+}
+
+// --------------------------------------------------------------------------
 void ctkWorkflowStep::validate(const QString& desiredBranchId)
 {
   CTK_D(ctkWorkflowStep);
   logger.info(QString("validate - validating the input from %1").arg(d->Name));
 
-  emit this->validationComplete(true, desiredBranchId);
+  this->validationComplete(true, desiredBranchId);
 }
 
 
@@ -177,7 +239,7 @@ void ctkWorkflowStep::onEntry(const ctkWorkflowStep* comingFrom,
   Q_UNUSED(transitionType);
 
   // Signals that we are finished
-  emit this->onEntryComplete();
+  this->onEntryComplete();
 }
 
 // --------------------------------------------------------------------------
@@ -187,6 +249,6 @@ void ctkWorkflowStep::onExit(const ctkWorkflowStep* goingTo,
   Q_UNUSED(goingTo);
   Q_UNUSED(transitionType);
 
-  // Signals that we are finished
-  emit this->onExitComplete();
+ // Signals that we are finished
+ this->onExitComplete();
 }
