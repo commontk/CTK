@@ -263,7 +263,7 @@ void ctkVTKRenderView::forceRender()
   logger.trace(QString("forceRender - RenderEnabled: %1")
                .arg(d->RenderEnabled ? "true" : "false"));
 
-  if (!d->RenderEnabled)
+  if (!d->RenderEnabled || !this->isVisible())
     {
     return;
     }

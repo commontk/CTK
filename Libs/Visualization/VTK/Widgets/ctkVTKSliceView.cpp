@@ -120,7 +120,7 @@ void ctkVTKSliceView::scheduleRender()
 void ctkVTKSliceView::forceRender()
 {
   CTK_D(ctkVTKSliceView);
-  if (!d->RenderEnabled)
+  if (!d->RenderEnabled  || !this->isVisible())
     {
     return;
     }
