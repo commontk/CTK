@@ -21,6 +21,7 @@
 // Qt includes
 #include <QTimer>
 #include <QVBoxLayout>
+#include <QDebug>
 
 // CTK includes
 #include "ctkVTKRenderView.h"
@@ -51,10 +52,17 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate()
   this->RenderPending = false;
   this->RenderEnabled = false;
   this->ZoomFactor = 0.05;
-  this->RotateDegrees = 5;
+  this->PitchRollYawIncrement = 5;
   this->PitchDirection = ctkVTKRenderView::PitchUp;
   this->RollDirection = ctkVTKRenderView::RollRight;
   this->YawDirection = ctkVTKRenderView::YawLeft;
+  this->SpinDirection = ctkVTKRenderView::YawRight;
+  this->SpinEnabled = false;
+  this->AnimationIntervalMs = 5;
+  this->SpinIncrement = 2;
+  this->RockEnabled = false;
+  this->RockIncrement = 0;
+  this->RockLength = 200;
 }
 
 // --------------------------------------------------------------------------
@@ -115,6 +123,97 @@ void ctkVTKRenderViewPrivate::zoom(double zoomFactor)
     this->Renderer->ResetCameraClippingRange();
     this->Renderer->UpdateLightsGeometryToFollowCamera();
     }
+}
+
+//---------------------------------------------------------------------------
+void ctkVTKRenderViewPrivate::pitch(int rotateDegrees,
+                                    ctkVTKRenderView::RotateDirection pitchDirection)
+{
+  Q_ASSERT(this->Renderer->IsActiveCameraCreated());
+  Q_ASSERT(rotateDegrees >= 0);
+  vtkCamera *cam = this->Renderer->GetActiveCamera();
+  cam->Elevation(pitchDirection == ctkVTKRenderView::PitchDown ? rotateDegrees : -rotateDegrees);
+  cam->OrthogonalizeViewUp();
+  this->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//---------------------------------------------------------------------------
+void ctkVTKRenderViewPrivate::roll(int rotateDegrees,
+                                    ctkVTKRenderView::RotateDirection rollDirection)
+{
+  Q_ASSERT(this->Renderer->IsActiveCameraCreated());
+  Q_ASSERT(rotateDegrees >= 0);
+
+  vtkCamera *cam = this->Renderer->GetActiveCamera();
+  cam->Roll(rollDirection == ctkVTKRenderView::RollLeft ? rotateDegrees : -rotateDegrees);
+  cam->OrthogonalizeViewUp();
+  this->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//---------------------------------------------------------------------------
+void ctkVTKRenderViewPrivate::yaw(int rotateDegrees,
+                                    ctkVTKRenderView::RotateDirection yawDirection)
+{
+  Q_ASSERT(this->Renderer->IsActiveCameraCreated());
+  Q_ASSERT(rotateDegrees >= 0);
+  vtkCamera *cam = this->Renderer->GetActiveCamera();
+  cam->Azimuth(yawDirection == ctkVTKRenderView::YawLeft ? rotateDegrees : -rotateDegrees);
+  cam->OrthogonalizeViewUp();
+  this->Renderer->UpdateLightsGeometryToFollowCamera();
+}
+
+//---------------------------------------------------------------------------
+void ctkVTKRenderViewPrivate::doSpin()
+{
+  if (!this->SpinEnabled)
+    {
+    return;
+    }
+
+  switch (this->SpinDirection)
+    {
+    case ctkVTKRenderView::PitchUp:
+    case ctkVTKRenderView::PitchDown:
+      this->pitch(this->SpinIncrement, this->SpinDirection);
+      break;
+    case ctkVTKRenderView::RollLeft:
+    case ctkVTKRenderView::RollRight:
+      this->roll(this->SpinIncrement, this->SpinDirection);
+      break;
+    case ctkVTKRenderView::YawLeft:
+    case ctkVTKRenderView::YawRight:
+      this->yaw(this->SpinIncrement, this->SpinDirection);
+      break;
+    }
+
+  QTimer::singleShot(this->AnimationIntervalMs, this, SLOT(doSpin()));
+}
+
+//---------------------------------------------------------------------------
+void ctkVTKRenderViewPrivate::doRock()
+{
+  Q_ASSERT(this->Renderer->IsActiveCameraCreated());
+
+  if (!this->RockEnabled)
+    {
+    return;
+    }
+
+  vtkCamera *camera = this->Renderer->GetActiveCamera();
+
+  double frac = static_cast<double>(this->RockIncrement) / static_cast<double>(this->RockLength);
+  double az = 1.5 * cos (2.0 * 3.1415926 * (frac - floor(frac)));
+  this->RockIncrement = 1 + this->RockIncrement;
+  this->RockIncrement = this->RockIncrement % this->RockLength;
+
+  // Move the camera
+  camera->Azimuth(az);
+  camera->OrthogonalizeViewUp();
+
+  //Make the lighting follow the camera to avoid illumination changes
+  this->Renderer->UpdateLightsGeometryToFollowCamera();
+
+  QTimer::singleShot(this->AnimationIntervalMs, this, SLOT(doRock()));
 }
 
 //---------------------------------------------------------------------------
@@ -288,26 +387,60 @@ CTK_SET_CXX(ctkVTKRenderView, bool, setRenderEnabled, RenderEnabled);
 CTK_GET_CXX(ctkVTKRenderView, bool, renderEnabled, RenderEnabled);
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, int, rotateDegrees, RotateDegrees);
+CTK_GET_CXX(ctkVTKRenderView, int, pitchRollYawIncrement, PitchRollYawIncrement);
 
 //----------------------------------------------------------------------------
-void ctkVTKRenderView::setRotateDegrees(int newRotateDegrees)
+void ctkVTKRenderView::setPitchRollYawIncrement(int newPitchRollYawIncrement)
 {
   CTK_D(ctkVTKRenderView);
-  d->RotateDegrees = qAbs(newRotateDegrees);
+  d->PitchRollYawIncrement = qAbs(newPitchRollYawIncrement);
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::PitchDirection, pitchDirection, PitchDirection);
-CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::PitchDirection, setPitchDirection, PitchDirection);
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, pitchDirection, PitchDirection);
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RollDirection, rollDirection, RollDirection);
-CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::RollDirection, setRollDirection, RollDirection);
+void ctkVTKRenderView::setPitchDirection(ctkVTKRenderView::RotateDirection newPitchDirection)
+{
+  CTK_D(ctkVTKRenderView);
+  if (newPitchDirection != Self::PitchUp && newPitchDirection != Self::PitchDown)
+    {
+    return;
+    }
+  d->PitchDirection = newPitchDirection;
+}
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::YawDirection, yawDirection, YawDirection);
-CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::YawDirection, setYawDirection, YawDirection);
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, rollDirection, RollDirection);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setRollDirection(ctkVTKRenderView::RotateDirection newRollDirection)
+{
+  CTK_D(ctkVTKRenderView);
+  if (newRollDirection != Self::RollLeft && newRollDirection != Self::RollRight)
+    {
+    return;
+    }
+  d->RollDirection = newRollDirection;
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, yawDirection, YawDirection);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setYawDirection(ctkVTKRenderView::RotateDirection newYawDirection)
+{
+  CTK_D(ctkVTKRenderView);
+  if (newYawDirection != Self::YawLeft && newYawDirection != Self::YawRight)
+    {
+    return;
+    }
+  d->YawDirection = newYawDirection;
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, spinDirection, SpinDirection);
+CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, setSpinDirection, SpinDirection);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::pitch()
@@ -317,10 +450,7 @@ void ctkVTKRenderView::pitch()
     {
     return;
     }
-  vtkCamera *cam = d->Renderer->GetActiveCamera();
-  cam->Elevation(d->PitchDirection == Self::PitchDown ? d->RotateDegrees : -d->RotateDegrees);
-  cam->OrthogonalizeViewUp();
-  d->Renderer->UpdateLightsGeometryToFollowCamera();
+  d->pitch(d->PitchRollYawIncrement, d->PitchDirection);
 }
 
 //----------------------------------------------------------------------------
@@ -331,10 +461,7 @@ void ctkVTKRenderView::roll()
     {
     return;
     }
-  vtkCamera *cam = d->Renderer->GetActiveCamera();
-  cam->Roll(d->RollDirection == Self::RollLeft ? d->RotateDegrees : -d->RotateDegrees);
-  cam->OrthogonalizeViewUp();
-  d->Renderer->UpdateLightsGeometryToFollowCamera();
+  d->roll(d->PitchRollYawIncrement, d->RollDirection);
 }
 
 //----------------------------------------------------------------------------
@@ -345,11 +472,82 @@ void ctkVTKRenderView::yaw()
     {
     return;
     }
-  vtkCamera *cam = d->Renderer->GetActiveCamera();
-  cam->Azimuth(d->YawDirection == Self::YawLeft ? d->RotateDegrees : -d->RotateDegrees);
-  cam->OrthogonalizeViewUp();
-  d->Renderer->UpdateLightsGeometryToFollowCamera();
+  d->yaw(d->PitchRollYawIncrement, d->YawDirection);
 }
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setSpinEnabled(bool enabled)
+{
+  CTK_D(ctkVTKRenderView);
+  if (enabled == d->SpinEnabled)
+    {
+    return;
+    }
+  d->SpinEnabled = enabled;
+  d->RockEnabled = false;
+
+  QTimer::singleShot(0, d, SLOT(doSpin()));
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, bool, spinEnabled, SpinEnabled);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setSpinIncrement(int newSpinIncrement)
+{
+  CTK_D(ctkVTKRenderView);
+  d->SpinIncrement = qAbs(newSpinIncrement);
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, int, spinIncrement, SpinIncrement);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setAnimationIntervalMs(int newAnimationIntervalMs)
+{
+  CTK_D(ctkVTKRenderView);
+  d->AnimationIntervalMs = qAbs(newAnimationIntervalMs);
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, int, animationIntervalMs, AnimationIntervalMs);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setRockEnabled(bool enabled)
+{
+  CTK_D(ctkVTKRenderView);
+  if (enabled == d->RockEnabled)
+    {
+    return;
+    }
+  d->RockEnabled = enabled;
+  d->SpinEnabled = false;
+
+  QTimer::singleShot(0, d, SLOT(doRock()));
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, bool, rockEnabled, RockEnabled);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setRockLength(int newRockLength)
+{
+  CTK_D(ctkVTKRenderView);
+  d->RockLength = qAbs(newRockLength);
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, int, rockLength, RockLength);
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setRockIncrement(int newRockIncrement)
+{
+  CTK_D(ctkVTKRenderView);
+  d->RockIncrement = qAbs(newRockIncrement);
+}
+
+//----------------------------------------------------------------------------
+CTK_GET_CXX(ctkVTKRenderView, int, rockIncrement, RockIncrement);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setZoomFactor(double newZoomFactor)
