@@ -22,22 +22,22 @@
 #include "ctkPluginGenerator.h"
 #include "ui_ctkPluginGeneratorMainWindow.h"
 
+#include <ctkPluginFramework.h>
 
-ctkPluginGenerator::ctkPluginGenerator(QWidget *parent) :
+
+ctkPluginGenerator::ctkPluginGenerator(ctkPluginFramework* framework, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::ctkPluginGeneratorMainWindow)
+    framework(framework), ui(new Ui::ctkPluginGeneratorMainWindow),
+    mode(EDIT)
 {
     ui->setupUi(this);
 
     this->setStatusBar(0);
 
+    connect(ui->previewButton, SIGNAL(clicked()), this, SLOT(previewClicked()));
     connect(ui->cancelButton, SIGNAL(clicked()), qApp, SLOT(quit()));
 
-    //ctkPluginGeneratorAbstractSection* section = new ctkPluginGeneratorMainSection();
-    //ui->sectionsStack->addWidget(section->createWidget(ui->sectionsStack));
-    //sectionList.append(section);
 
-    //connect(section, SIGNAL(errorMessageChanged(QString)), this, SLOT(sectionErrorMessage(QString)));
 }
 
 ctkPluginGenerator::~ctkPluginGenerator()
@@ -50,3 +50,18 @@ void ctkPluginGenerator::sectionErrorMessage(const QString& errorMsg)
   ui->sectionMessageLabel->setText(errorMsg);
 }
 
+void ctkPluginGenerator::previewClicked()
+{
+  if (mode == EDIT)
+  {
+    ui->modeStack->setCurrentWidget(ui->previewPage);
+    ui->previewButton->setText(tr("<< Back"));
+    mode = PREVIEW;
+  }
+  else
+  {
+    ui->modeStack->setCurrentWidget(ui->editPage);
+    ui->previewButton->setText(tr("Preview >>"));
+    mode = EDIT;
+  }
+}

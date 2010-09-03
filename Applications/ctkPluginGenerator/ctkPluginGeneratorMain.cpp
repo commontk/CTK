@@ -32,19 +32,19 @@ int main(int argv, char** argc)
 {
   QApplication app(argv, argc);
 
-  //ctkPluginFrameworkFactory fwFactory;
-  //ctkPluginFramework* framework = fwFactory.getFramework();
+  ctkPluginFrameworkFactory fwFactory;
+  ctkPluginFramework* framework = fwFactory.getFramework();
 
-//  try {
-//    framework->init();
-//  }
-//  catch (const ctkPluginException& exc)
-//  {
-//    qCritical() << "Failed to initialize the plug-in framework:" << exc;
-//    exit(1);
-//  }
+  try {
+    framework->init();
+  }
+  catch (const ctkPluginException& exc)
+  {
+    qCritical() << "Failed to initialize the plug-in framework:" << exc;
+    exit(1);
+  }
 
-  ctkPluginGenerator generator; //(framework);
+  ctkPluginGenerator generator(framework);
   generator.show();
 
   return app.exec();

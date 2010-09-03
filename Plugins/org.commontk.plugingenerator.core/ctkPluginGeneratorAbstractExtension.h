@@ -26,9 +26,11 @@
 #include <QObject>
 #include <QHash>
 
+#include <org_commontk_plugingenerator_core_Export.h>
+
 class ctkPluginGeneratorAbstractExtensionPrivate;
 
-class ctkPluginGeneratorAbstractExtension : public QObject
+class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorAbstractExtension : public QObject
 {
   Q_OBJECT
 

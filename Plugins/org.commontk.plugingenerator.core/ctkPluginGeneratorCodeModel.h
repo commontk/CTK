@@ -30,10 +30,8 @@
 
 class ctkPluginGeneratorCodeModelPrivate;
 
-class ctkPluginGeneratorCodeModel : public QObject
+class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorCodeModel : public QObject
 {
-
-  Q_OBJECT
 
 public:
     ctkPluginGeneratorCodeModel();

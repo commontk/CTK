@@ -27,7 +27,6 @@
 
 class ctkPluginGeneratorCMakeLists : public ctkPluginGeneratorAbstractTemplate
 {
-  Q_OBJECT
 
 public:
 

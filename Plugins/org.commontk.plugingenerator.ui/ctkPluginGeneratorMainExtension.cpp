@@ -28,7 +28,6 @@ ctkPluginGeneratorMainExtension::ctkPluginGeneratorMainExtension()
 
 }
 
-
 QWidget* ctkPluginGeneratorMainExtension::createWidget(QWidget* parent)
 {
   ui = new Ui::ctkPluginGeneratorMainExtension();
@@ -36,6 +35,8 @@ QWidget* ctkPluginGeneratorMainExtension::createWidget(QWidget* parent)
   ui->setupUi(container);
 
   connectSignals();
+
+  setTitle(tr("Main"));
 
   return container;
 }
@@ -49,7 +50,7 @@ void ctkPluginGeneratorMainExtension::verifySection()
 {
   if (ui->symbolicNameEdit->text().isEmpty())
   {
-    this->setErrorMessage("The symbolic name cannot be empty");
+    this->setErrorMessage(tr("The symbolic name cannot be empty"));
   }
   else
   {

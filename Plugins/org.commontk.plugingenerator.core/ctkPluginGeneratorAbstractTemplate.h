@@ -27,9 +27,11 @@
 #include <QScopedPointer>
 #include <QStringList>
 
+#include <org_commontk_plugingenerator_core_Export.h>
+
 class ctkPluginGeneratorAbstractTemplatePrivate;
 
-class ctkPluginGeneratorAbstractTemplate : public QObject
+class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorAbstractTemplate : public QObject
 {
   Q_OBJECT
 

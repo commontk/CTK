@@ -24,7 +24,9 @@
 
 #include <QMainWindow>
 
-#include <ctkPluginGeneratorAbstractSection.h>
+#include <ctkPluginGeneratorAbstractUiExtension.h>
+
+class ctkPluginFramework;
 
 namespace Ui {
     class ctkPluginGeneratorMainWindow;
@@ -35,18 +37,29 @@ class ctkPluginGenerator : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit ctkPluginGenerator(QWidget *parent = 0);
+    explicit ctkPluginGenerator(ctkPluginFramework* framework, QWidget *parent = 0);
     ~ctkPluginGenerator();
 
-public slots:
+protected slots:
 
     void sectionErrorMessage(const QString& errorMsg);
 
+    void previewClicked();
+
 private:
 
-    QList<ctkPluginGeneratorAbstractSection*> sectionList;
+    enum GeneratorMode {
+      EDIT,
+      PREVIEW
+    };
+
+    ctkPluginFramework *const framework;
+
+    QList<ctkPluginGeneratorAbstractUiExtension*> uiExtensionList;
 
     Ui::ctkPluginGeneratorMainWindow *ui;
+
+    GeneratorMode mode;
 };
 
 #endif // CTKPLUGINGENERATOR_H

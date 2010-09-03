@@ -52,37 +52,37 @@ ctkPluginGeneratorAbstractUiExtension::~ctkPluginGeneratorAbstractUiExtension()
 
 QWidget* ctkPluginGeneratorAbstractUiExtension::getWidget()
 {
-  Q_D(ctkPluginGeneratorAbstractExtension);
+  Q_D(ctkPluginGeneratorAbstractUiExtension);
   return d->sectionWidget;
 }
 
 QString ctkPluginGeneratorAbstractUiExtension::getDescription() const
 {
-  Q_D(ctkPluginGeneratorAbstractExtension);
+  Q_D(const ctkPluginGeneratorAbstractUiExtension);
   return d->description;
 }
 
 QString ctkPluginGeneratorAbstractUiExtension::getTitle() const
 {
-  Q_D(ctkPluginGeneratorAbstractExtension);
+  Q_D(const ctkPluginGeneratorAbstractUiExtension);
   return d->title;
 }
 
 QString ctkPluginGeneratorAbstractUiExtension::getMessage() const
 {
-  Q_D(ctkPluginGeneratorAbstractExtension);
+  Q_D(const ctkPluginGeneratorAbstractUiExtension);
   return d->message;
 }
 
 QIcon ctkPluginGeneratorAbstractUiExtension::getIcon() const
 {
-  Q_D(ctkPluginGeneratorAbstractExtension);
+  Q_D(const ctkPluginGeneratorAbstractUiExtension);
   return d->icon;
 }
 
 void ctkPluginGeneratorAbstractUiExtension::setDescription(const QString& description)
 {
-  Q_D(ctkPluginGeneratorAbstractExtension);
+  Q_D(ctkPluginGeneratorAbstractUiExtension);
   if (d->description != description)
   {
     d->description = description;
@@ -92,7 +92,7 @@ void ctkPluginGeneratorAbstractUiExtension::setDescription(const QString& descri
 
 void ctkPluginGeneratorAbstractUiExtension::setTitle(const QString& title)
 {
-  Q_D(ctkPluginGeneratorAbstractExtension);
+  Q_D(ctkPluginGeneratorAbstractUiExtension);
   if (d->title != title)
   {
     d->title = title;
@@ -102,7 +102,7 @@ void ctkPluginGeneratorAbstractUiExtension::setTitle(const QString& title)
 
 void ctkPluginGeneratorAbstractUiExtension::setMessage(const QString& msg)
 {
-  Q_D(ctkPluginGeneratorAbstractExtension);
+  Q_D(ctkPluginGeneratorAbstractUiExtension);
   if (d->message != msg)
   {
     d->message = msg;
@@ -112,7 +112,7 @@ void ctkPluginGeneratorAbstractUiExtension::setMessage(const QString& msg)
 
 void ctkPluginGeneratorAbstractUiExtension::setIcon(const QIcon& icon)
 {
-  Q_D(ctkPluginGeneratorAbstractExtension);
+  Q_D(ctkPluginGeneratorAbstractUiExtension);
   d->icon = icon;
   emit iconChanged(icon);
 }

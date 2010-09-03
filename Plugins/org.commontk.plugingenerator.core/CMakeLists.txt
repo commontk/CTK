@@ -10,7 +10,8 @@ SET(PLUGIN_SRCS
 )
 
 SET(PLUGIN_MOC_SRCS
-  
+  ctkPluginGeneratorAbstractExtension.h
+  ctkPluginGeneratorAbstractTemplate.h
 )
 
 SET(PLUGIN_UI_FORMS
