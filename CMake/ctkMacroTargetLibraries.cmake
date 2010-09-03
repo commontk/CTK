@@ -49,7 +49,8 @@ MACRO(ctkMacroGetTargetLibraries varname)
     # Loop over all target library, if it does *NOT* start with "CTK",
     # let's resolve the variable to access its content
     FOREACH(target_library ${target_libraries})
-      IF(${target_library} MATCHES "^CTK[a-zA-Z0-9]+$")
+      IF(${target_library} MATCHES "^CTK[a-zA-Z0-9]+$" OR
+         ${target_library} MATCHES "^org_commontk_[a-zA-Z0-9_]+$")
         LIST(APPEND ${varname} ${target_library})
       ELSE()
         LIST(APPEND ${varname} "${${target_library}}")
@@ -179,7 +180,7 @@ ENDMACRO()
 #
 MACRO(ctkMacroGetAllCTKTargetLibraries all_target_libraries varname)
   SET(re_ctklib "^(c|C)(t|T)(k|K)[a-zA-Z0-9]+$")
-  SET(re_ctkplugin "^org_commontk_[a-zA-Z0-9]+$")
+  SET(re_ctkplugin "^org_commontk_[a-zA-Z0-9_]+$")
   SET(_tmp_list)
   LIST(APPEND _tmp_list ${all_target_libraries})
   ctkMacroListFilter(_tmp_list re_ctklib OUTPUT_VARIABLE ${varname})
