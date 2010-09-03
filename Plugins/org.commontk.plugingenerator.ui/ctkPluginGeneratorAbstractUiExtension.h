@@ -27,10 +27,12 @@
 
 #include <ctkPluginGeneratorAbstractExtension.h>
 
+#include <org_commontk_plugingenerator_ui_Export.h>
+
 class QWidget;
 class ctkPluginGeneratorAbstractUiExtensionPrivate;
 
-class ctkPluginGeneratorAbstractUiExtension : public ctkPluginGeneratorAbstractExtension
+class org_commontk_plugingenerator_ui_EXPORT ctkPluginGeneratorAbstractUiExtension : public ctkPluginGeneratorAbstractExtension
 {
 
   Q_OBJECT
