@@ -32,6 +32,11 @@ ctkMacroGetTargetLibraries(KIT_target_libraries)
 SET(KIT_include_directories
 )
 
+# Fix this after having discussed include dependencies with Jc
+FOREACH(_dep ${${PROJECT_NAME}_DEPENDENCIES})
+  INCLUDE_DIRECTORIES(${${_dep}_SOURCE_DIR} ${${_dep}_BINARY_DIR})
+ENDFOREACH()
+
 ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
   INCLUDE_DIRECTORIES ${KIT_include_directories}

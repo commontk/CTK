@@ -126,9 +126,16 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
         MESSAGE(FATAL_ERROR "Failed to obtain dependence path of ${target_project_name}.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
       ENDIF()
 
+      # Set a variable for each target containing its dependencies
+      # Needed for setting individual include directories for plugins,
+      # depending on other plugins.
+      SET(${target_project_name}_DEPENDENCIES )
+
       # Convert 'dep_path' to a list
       STRING(REPLACE " " "\\;" dep_path_list ${dep_path})
       SET(dep_path_list ${dep_path_list})
+      LIST(REMOVE_ITEM dep_path_list ${target_project_name})
+      LIST(APPEND ${target_project_name}_DEPENDENCIES ${dep_path_list})
 
       #MESSAGE("path for ${target_project_name} is: ${dep_path_list}")
         
