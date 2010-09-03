@@ -169,7 +169,7 @@
           }
         }
 
-        if (!ok && pr->resolution == PluginConstants::RESOLUTION_MANDATORY)
+        if (!ok && pr->resolution == ctkPluginConstants::RESOLUTION_MANDATORY)
         {
           tempResolved.clear();
           qDebug() << "checkRequirePlugin: failed to satisfy:" << pr->name;

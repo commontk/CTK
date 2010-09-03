@@ -28,14 +28,14 @@
 
 
   ctkPluginFrameworkPrivate::ctkPluginFrameworkPrivate(ctkPluginFramework& qq, ctkPluginFrameworkContext* fw)
-    : ctkPluginPrivate(qq, fw, 0, PluginConstants::SYSTEM_PLUGIN_LOCATION,
-                    PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
+    : ctkPluginPrivate(qq, fw, 0, ctkPluginConstants::SYSTEM_PLUGIN_LOCATION,
+                    ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
                     // TODO: read version from the manifest resource
                     ctkVersion(0, 9, 0))
   {
-    systemHeaders.insert(PluginConstants::PLUGIN_SYMBOLICNAME, symbolicName);
-    systemHeaders.insert(PluginConstants::PLUGIN_NAME, location);
-    systemHeaders.insert(PluginConstants::PLUGIN_VERSION, version.toString());
+    systemHeaders.insert(ctkPluginConstants::PLUGIN_SYMBOLICNAME, symbolicName);
+    systemHeaders.insert(ctkPluginConstants::PLUGIN_NAME, location);
+    systemHeaders.insert(ctkPluginConstants::PLUGIN_VERSION, version.toString());
   }
 
   void ctkPluginFrameworkPrivate::init()

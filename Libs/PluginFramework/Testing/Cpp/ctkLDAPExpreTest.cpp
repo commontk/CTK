@@ -57,7 +57,7 @@ int TestParsing( )
   {
     ctkLDAPExpr ldap( "(cn=Babs Jensen)" );
     ldap = ctkLDAPExpr( "(!(cn=Tim Howes))" );
-    ldap = ctkLDAPExpr( "(&(" + PluginConstants::OBJECTCLASS + "=Person)(|(sn=Jensen)(cn=Babs J*)))" );
+    ldap = ctkLDAPExpr( "(&(" + ctkPluginConstants::OBJECTCLASS + "=Person)(|(sn=Jensen)(cn=Babs J*)))" );
     ldap = ctkLDAPExpr( "(o=univ*of*mich*)" );
     ldap = ctkLDAPExpr( "(cn=Babs Jensen)" );
   }

@@ -89,8 +89,8 @@
                                   "instances.");
     }
 
-    int r1 = getProperty(PluginConstants::SERVICE_RANKING).toInt();
-    int r2 = reference.getProperty(PluginConstants::SERVICE_RANKING).toInt();
+    int r1 = getProperty(ctkPluginConstants::SERVICE_RANKING).toInt();
+    int r2 = reference.getProperty(ctkPluginConstants::SERVICE_RANKING).toInt();
 
     if (r1 != r2)
     {
@@ -99,8 +99,8 @@
     }
     else
     {
-      qlonglong id1 = getProperty(PluginConstants::SERVICE_ID).toLongLong();
-      qlonglong id2 = reference.getProperty(PluginConstants::SERVICE_ID).toLongLong();
+      qlonglong id1 = getProperty(ctkPluginConstants::SERVICE_ID).toLongLong();
+      qlonglong id2 = reference.getProperty(ctkPluginConstants::SERVICE_ID).toLongLong();
 
       // otherwise compare using IDs,
       // is less than if it has a higher ID.

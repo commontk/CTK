@@ -73,10 +73,10 @@
 
     if (!classes.isEmpty())
     {
-      props.insert(PluginConstants::OBJECTCLASS, classes);
+      props.insert(ctkPluginConstants::OBJECTCLASS, classes);
     }
 
-    props.insert(PluginConstants::SERVICE_ID, sid != -1 ? sid : nextServiceID++);
+    props.insert(ctkPluginConstants::SERVICE_ID, sid != -1 ? sid : nextServiceID++);
 
     return props;
   }
@@ -192,7 +192,7 @@ void ctkServices::registerService(ctkPluginPrivate* plugin, QByteArray serviceDe
     while (keyIt.hasNext())
     {
       QString key = keyIt.next();
-      if (key == PluginConstants::OBJECTCLASS)
+      if (key == ctkPluginConstants::OBJECTCLASS)
       {
         classAttrFound = true;
         classes << descr.customAttribute(key);
@@ -206,7 +206,7 @@ void ctkServices::registerService(ctkPluginPrivate* plugin, QByteArray serviceDe
     if (!classAttrFound)
     {
       throw std::invalid_argument(std::string("The custom attribute \"") +
-                                  PluginConstants::OBJECTCLASS.toStdString() +
+                                  ctkPluginConstants::OBJECTCLASS.toStdString() +
                                   "\" is missing in the interface description of \"" +
                                   descr.interfaceName().toStdString());
     }
@@ -395,7 +395,7 @@ void ctkServices::removeServiceRegistration(ctkServiceRegistration* sr)
 {
   QMutexLocker lock(&mutex);
 
-  QStringList classes = sr->d_func()->properties.value(PluginConstants::OBJECTCLASS).toStringList();
+  QStringList classes = sr->d_func()->properties.value(ctkPluginConstants::OBJECTCLASS).toStringList();
   services.remove(sr);
   for (QStringListIterator i(classes); i.hasNext(); )
   {

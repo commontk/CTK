@@ -157,9 +157,9 @@
      * <li>The Framework adds the following service properties to the service
      * properties from the specified <code>ServiceProperties</code> (which may be
      * omitted): <br/>
-     * A property named {@link PluginConstants#SERVICE_ID} identifying the
+     * A property named {@link ctkPluginConstants#SERVICE_ID} identifying the
      * registration number of the service <br/>
-     * A property named {@link PluginConstants#OBJECTCLASS} containing all the
+     * A property named {@link ctkPluginConstants#OBJECTCLASS} containing all the
      * specified classes. <br/>
      * Properties with these names in the specified <code>ServiceProperties</code> will
      * be ignored.
@@ -172,12 +172,12 @@
      *
      * @param clazzes The class names under which the service can be located.
      *        The class names will be stored in the service's
-     *        properties under the key {@link PluginConstants#OBJECTCLASS}.
+     *        properties under the key {@link ctkPluginConstants#OBJECTCLASS}.
      * @param service The service object or a <code>ctkServiceFactory</code>
      *        object.
      * @param properties The properties for this service. The keys in the
      *        properties object must all be <code>QString</code> objects. See
-     *        {@link PluginConstants} for a list of standard service property keys.
+     *        {@link ctkPluginConstants} for a list of standard service property keys.
      *        Changes should not be made to this object after calling this
      *        method. To update the service's properties the
      *        {@link ctkServiceRegistration::setProperties} method must be called.
@@ -264,10 +264,10 @@
      * specified class.
      * <p>
      * If multiple such services exist, the service with the highest ranking (as
-     * specified in its {@link PluginConstants::SERVICE_RANKING} property) is returned.
+     * specified in its {@link ctkPluginConstants::SERVICE_RANKING} property) is returned.
      * <p>
      * If there is a tie in ranking, the service with the lowest service ID (as
-     * specified in its {@link PluginConstants::SERVICE_ID} property); that is, the
+     * specified in its {@link ctkPluginConstants::SERVICE_ID} property); that is, the
      * service that was registered first is returned.
      *
      * @param clazz The class name with which the service was registered.

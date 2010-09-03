@@ -21,30 +21,30 @@
 
 #include "ctkPluginConstants.h"
 
-const QString	PluginConstants::SYSTEM_PLUGIN_LOCATION = "System Plugin";
-const QString	PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.plugin";
+const QString	ctkPluginConstants::SYSTEM_PLUGIN_LOCATION = "System Plugin";
+const QString	ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.plugin";
 
-const QString PluginConstants::FRAMEWORK_STORAGE = "org.commontk.pluginfw.storage";
+const QString ctkPluginConstants::FRAMEWORK_STORAGE = "org.commontk.pluginfw.storage";
 
-const QString	PluginConstants::PLUGIN_SYMBOLICNAME = "Plugin-SymbolicName";
-const QString PluginConstants::PLUGIN_COPYRIGHT = "Plugin-Copyright";
-const QString PluginConstants::PLUGIN_DESCRIPTION = "Plugin-Description";
-const QString PluginConstants::PLUGIN_NAME = "Plugin-Name";
-const QString PluginConstants::PLUGIN_LOCALIZATION = "Plugin-Localization";
-const QString PluginConstants::PLUGIN_LOCALIZATION_DEFAULT_BASENAME = "CTK-INF/l10n/plugin";
-const QString PluginConstants::REQUIRE_PLUGIN = "Require-Plugin";
-const QString PluginConstants::PLUGIN_VERSION_ATTRIBUTE = "plugin-version";
-const QString	PluginConstants::PLUGIN_VERSION = "Plugin-Version";
-const QString	PluginConstants::PLUGIN_ACTIVATIONPOLICY = "Plugin-ActivationPolicy";
+const QString	ctkPluginConstants::PLUGIN_SYMBOLICNAME = "Plugin-SymbolicName";
+const QString ctkPluginConstants::PLUGIN_COPYRIGHT = "Plugin-Copyright";
+const QString ctkPluginConstants::PLUGIN_DESCRIPTION = "Plugin-Description";
+const QString ctkPluginConstants::PLUGIN_NAME = "Plugin-Name";
+const QString ctkPluginConstants::PLUGIN_LOCALIZATION = "Plugin-Localization";
+const QString ctkPluginConstants::PLUGIN_LOCALIZATION_DEFAULT_BASENAME = "CTK-INF/l10n/plugin";
+const QString ctkPluginConstants::REQUIRE_PLUGIN = "Require-Plugin";
+const QString ctkPluginConstants::PLUGIN_VERSION_ATTRIBUTE = "plugin-version";
+const QString	ctkPluginConstants::PLUGIN_VERSION = "Plugin-Version";
+const QString	ctkPluginConstants::PLUGIN_ACTIVATIONPOLICY = "Plugin-ActivationPolicy";
 
-const QString	PluginConstants::ACTIVATION_EAGER = "eager";
+const QString	ctkPluginConstants::ACTIVATION_EAGER = "eager";
 
-const QString PluginConstants::RESOLUTION_DIRECTIVE = "resolution";
-const QString PluginConstants::RESOLUTION_MANDATORY = "mandatory";
-const QString PluginConstants::RESOLUTION_OPTIONAL = "optional";
+const QString ctkPluginConstants::RESOLUTION_DIRECTIVE = "resolution";
+const QString ctkPluginConstants::RESOLUTION_MANDATORY = "mandatory";
+const QString ctkPluginConstants::RESOLUTION_OPTIONAL = "optional";
 
 
-const QString PluginConstants::OBJECTCLASS = "objectclass";
-const QString PluginConstants::SERVICE_ID = "service.id";
-const QString PluginConstants::SERVICE_RANKING = "service.ranking";
+const QString ctkPluginConstants::OBJECTCLASS = "objectclass";
+const QString ctkPluginConstants::SERVICE_ID = "service.id";
+const QString ctkPluginConstants::SERVICE_RANKING = "service.ranking";
 

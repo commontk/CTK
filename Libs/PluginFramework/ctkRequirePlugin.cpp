@@ -29,22 +29,22 @@
                 const QString& name, const QString& res,
                 const QString& range)
                   : name(name),
-                  resolution(res.isEmpty() ? PluginConstants::RESOLUTION_MANDATORY : res),
+                  resolution(res.isEmpty() ? ctkPluginConstants::RESOLUTION_MANDATORY : res),
                   pluginRange(range.isEmpty() ? ctkVersionRange::defaultVersionRange() : range)
   {
 
-    if (resolution != PluginConstants::RESOLUTION_MANDATORY &&
-        resolution != PluginConstants::RESOLUTION_OPTIONAL )
+    if (resolution != ctkPluginConstants::RESOLUTION_MANDATORY &&
+        resolution != ctkPluginConstants::RESOLUTION_OPTIONAL )
     {
       QString what = QString("Invalid directive : '")
-                     + PluginConstants::RESOLUTION_DIRECTIVE + ":=" + this->resolution
+                     + ctkPluginConstants::RESOLUTION_DIRECTIVE + ":=" + this->resolution
                      + "' in manifest header '"
-                     + PluginConstants::REQUIRE_PLUGIN + ": " + this->name
+                     + ctkPluginConstants::REQUIRE_PLUGIN + ": " + this->name
                      + "' of plugin with id " + requestor->id
                      + " (" + requestor->symbolicName + ")"
                      + ". The value must be either '"
-                     + PluginConstants::RESOLUTION_MANDATORY + "' or '"
-                     + PluginConstants::RESOLUTION_OPTIONAL  + "'.";
+                     + ctkPluginConstants::RESOLUTION_MANDATORY + "' or '"
+                     + ctkPluginConstants::RESOLUTION_OPTIONAL  + "'.";
       throw std::invalid_argument(what.toStdString());
       }
 
@@ -53,8 +53,8 @@
 
   bool ctkRequirePlugin::overlap(const ctkRequirePlugin& rp) const
   {
-    if (resolution == PluginConstants::RESOLUTION_MANDATORY &&
-        rp.resolution != PluginConstants::RESOLUTION_MANDATORY)
+    if (resolution == ctkPluginConstants::RESOLUTION_MANDATORY &&
+        rp.resolution != ctkPluginConstants::RESOLUTION_MANDATORY)
     {
       return false;
     }

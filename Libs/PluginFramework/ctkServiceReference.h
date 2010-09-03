@@ -142,16 +142,16 @@
      *
      * <p>
      * If this <code>ctkServiceReference</code> and the specified
-     * <code>ctkServiceReference</code> have the same {@link PluginConstants::SERVICE_ID
+     * <code>ctkServiceReference</code> have the same {@link ctkPluginConstants::SERVICE_ID
      * service id} they are equal. This <code>ctkServiceReference</code> is less
      * than the specified <code>ctkServiceReference</code> if it has a lower
-     * {@link PluginConstants::SERVICE_RANKING service ranking} and greater if it has a
+     * {@link ctkPluginConstants::SERVICE_RANKING service ranking} and greater if it has a
      * higher service ranking. Otherwise, if this <code>ctkServiceReference</code>
      * and the specified <code>ctkServiceReference</code> have the same
-     * {@link PluginConstants::SERVICE_RANKING service ranking}, this
+     * {@link ctkPluginConstants::SERVICE_RANKING service ranking}, this
      * <code>ctkServiceReference</code> is less than the specified
      * <code>ctkServiceReference</code> if it has a higher
-     * {@link PluginConstants::SERVICE_ID service id} and greater if it has a lower
+     * {@link ctkPluginConstants::SERVICE_ID service id} and greater if it has a lower
      * service id.
      *
      * @param reference The <code>ctkServiceReference</code> to be compared.

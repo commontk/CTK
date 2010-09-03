@@ -27,7 +27,7 @@
 #include "CTKPluginFrameworkExport.h"
 
 
-struct CTK_PLUGINFW_EXPORT PluginConstants {
+struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
 
   /**
    * Location identifier of the CTK <i>system plugin</i>, which is defined

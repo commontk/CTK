@@ -112,7 +112,7 @@ public:
      * include:
      * <ul>
      * <li>The plugin's required plugin dependencies from its
-     * {@link PluginConstants::REQUIRE_PLUGIN} Manifest header.
+     * {@link ctkPluginConstants::REQUIRE_PLUGIN} Manifest header.
      * </ul>
      * <p>
      * Note that the plugin is not active yet. A plugin must be put in the
@@ -133,7 +133,7 @@ public:
      * <code>ACTIVE</code> state.
      * <p>
      * If the plugin does not have a
-     * {@link PluginConstants#ACTIVATION_EAGER eager activation policy}, then the
+     * {@link ctkPluginConstants#ACTIVATION_EAGER eager activation policy}, then the
      * plugin may remain in this state for some time until the activation is
      * triggered.
      */
@@ -187,14 +187,14 @@ public:
     /**
      * The plugin start operation must activate the plugin according to the
      * plugin's declared
-     * {@link PluginConstants#PLUGIN_ACTIVATIONPOLICY activation policy}.
+     * {@link ctkPluginConstants#PLUGIN_ACTIVATIONPOLICY activation policy}.
      *
      * <p>
      * This bit may be set when calling {@link #start(const StartOptions&)} to notify the
      * framework that the plugin must be activated using the plugin's declared
      * activation policy.
      *
-     * @see PluginConstants#PLUGIN_ACTIVATIONPOLICY
+     * @see ctkPluginConstants#PLUGIN_ACTIVATIONPOLICY
      * @see #start(const StartOptions&)
      */
     START_ACTIVATION_POLICY
@@ -284,7 +284,7 @@ public:
    * followed when this plugin's activation is later triggered.
    * </ul>
    * If the {@link #START_ACTIVATION_POLICY} option is set and this
-   * plugin's declared activation policy is {@link PluginConstants#ACTIVATION_EAGER
+   * plugin's declared activation policy is {@link ctkPluginConstants#ACTIVATION_EAGER
    * eager} then:
    * <i></i>
    * <li>This plugin's state is set to <code>STARTING</code>.

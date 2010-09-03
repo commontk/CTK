@@ -70,7 +70,7 @@
      * Updates the properties associated with a service.
      *
      * <p>
-     * The {@link PluginConstants#OBJECTCLASS} and {@link PluginConstants#SERVICE_ID} keys
+     * The {@link ctkPluginConstants#OBJECTCLASS} and {@link ctkPluginConstants#SERVICE_ID} keys
      * cannot be modified by this method. These values are set by the Framework
      * when the service is registered in the environment.
      *
@@ -81,7 +81,7 @@
      * <li>A service event of type {@link ServiceEvent#MODIFIED} is fired.
      * </ol>
      *
-     * @param properties The properties for this service. See {@link PluginConstants}
+     * @param properties The properties for this service. See {@link ctkPluginConstants}
      *        for a list of standard service property keys. Changes should not
      *        be made to this object after calling this method. To update the
      *        service's properties this method should be called again.

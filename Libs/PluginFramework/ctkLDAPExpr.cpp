@@ -68,7 +68,7 @@ QSet<QString> ctkLDAPExpr::getMatchedObjectClasses() const
   QSet<QString> objClasses;
   if (d->m_operator == EQ) 
   {
-    if (d->m_attrName.compare(PluginConstants::OBJECTCLASS, Qt::CaseInsensitive) &&
+    if (d->m_attrName.compare(ctkPluginConstants::OBJECTCLASS, Qt::CaseInsensitive) &&
       d->m_attrValue.indexOf(WILDCARD) < 0) 
     {
       objClasses.insert( d->m_attrValue );
