@@ -123,7 +123,7 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
       IF(RESULT_VAR)
-        MESSAGE(FATAL_ERROR "Failed to obtain dependence path of ${subir}.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
+        MESSAGE(FATAL_ERROR "Failed to obtain dependence path of ${target_project_name}.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
       ENDIF()
 
       # Convert 'dep_path' to a list
