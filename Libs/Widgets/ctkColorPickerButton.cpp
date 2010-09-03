@@ -36,6 +36,7 @@ ctkColorPickerButton::ctkColorPickerButton(QWidget* _parent)
   this->setColor(Qt::black);
 
   this->setCheckable(true);
+  this->setDisplayColorName(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -47,6 +48,7 @@ ctkColorPickerButton::ctkColorPickerButton(const QString& _text, QWidget* _paren
 
   // Customize
   this->setCheckable(true);
+  this->setDisplayColorName(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -60,6 +62,7 @@ ctkColorPickerButton::ctkColorPickerButton(const QColor& _color,
 
   // Customize
   this->setCheckable(true);
+  this->setDisplayColorName(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -84,6 +87,12 @@ void ctkColorPickerButton::onToggled(bool change)
 }
 
 //-----------------------------------------------------------------------------
+void ctkColorPickerButton::setDisplayColorName(bool displayColorName)
+{
+  this->DisplayColorName = displayColorName;
+}
+
+//-----------------------------------------------------------------------------
 void ctkColorPickerButton::setColor(const QColor& newColor)
 {
   if (newColor == this->Color)
@@ -100,7 +109,12 @@ void ctkColorPickerButton::setColor(const QColor& newColor)
   p.drawRect(2, 2, pix.width() - 5, pix.height() - 5);
 
   this->setIcon(QIcon(pix));
-  this->setText(newColor.name());
+  
+  // Update the button text to the color name, if selected
+  if (this->DisplayColorName)
+    {
+    this->setText(newColor.name());
+    }
   
   this->Color = newColor;
   emit colorChanged(this->Color);
@@ -111,3 +125,10 @@ QColor ctkColorPickerButton::color()const
 {
   return this->Color;
 }
+
+//-----------------------------------------------------------------------------
+bool ctkColorPickerButton::displayColorName()const
+{
+  return this->DisplayColorName;
+}
+
