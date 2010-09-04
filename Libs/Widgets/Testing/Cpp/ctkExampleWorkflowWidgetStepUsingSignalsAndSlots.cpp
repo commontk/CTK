@@ -19,6 +19,7 @@
   =========================================================================*/
 
 // Qt includes
+#include <QWidget>
 #include <QLabel>
 #include <QLineEdit>
 
@@ -40,6 +41,7 @@ public:
   ~ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate(){}
 
   /// elements of this step's user interface
+  QWidget* widget;
   QLabel* label;
   QLineEdit* lineEdit;
   int defaultLineEditValue;
@@ -57,6 +59,7 @@ public:
 //-----------------------------------------------------------------------------
 ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate::ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate()
 {
+  this->widget = 0;
   this->label = 0;
   this->lineEdit = 0;
 
@@ -76,6 +79,8 @@ ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::ctkExampleWorkflowWidgetStepUs
 }
 
 //-----------------------------------------------------------------------------
+CTK_GET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QWidget*, widget, widget);
+CTK_SET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QWidget*, setWidget, widget);
 CTK_GET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLabel*, label, label);
 CTK_SET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLabel*, setLabel, label);
 CTK_GET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLineEdit*, lineEdit, lineEdit);
@@ -118,16 +123,26 @@ void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::onExit(
 }
 
 //-----------------------------------------------------------------------------
-void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::populateStepWidgetsList(
-    QList<QWidget*>& stepWidgetsList)
+void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::createUserInterface()
 {
-  // add the user interface elements to the list
   CTK_D(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
+
+  if (!d->widget)
+    {
+    return;
+    }
+
+  if (!d->widget->layout())
+    {
+    QVBoxLayout* layout = new QVBoxLayout();
+    d->widget->setLayout(layout);
+    }
+
   if (!d->label)
     {
     d->label = new QLabel();
     d->label->setText("enter a number greater than or equal to 10");
-    stepWidgetsList << d->label;
+    d->widget->layout()->addWidget(d->label);
     }
 
   if (!d->lineEdit)
@@ -135,11 +150,11 @@ void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::populateStepWidgetsList(
     d->lineEdit = new QLineEdit();
     d->lineEdit->setInputMask("000");
     d->lineEdit->setText("10");
-    stepWidgetsList << d->lineEdit;
+    d->widget->layout()->addWidget(d->lineEdit);
     }
 
   // signals that we are finished
-  emit populateStepWidgetsListComplete();
+  emit createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------

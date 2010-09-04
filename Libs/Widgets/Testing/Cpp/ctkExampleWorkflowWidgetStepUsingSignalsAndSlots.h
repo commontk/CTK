@@ -30,6 +30,7 @@ class ctkWorkflowWidget;
 class ctkWorkflowStep;
 class QLabel;
 class QLineEdit;
+class QWidget;
 
 ///
 /// ctkExampleWorkflowWidgetStepUsingSignalsAndSlots represents an example
@@ -82,6 +83,10 @@ public:
   explicit ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(QObject* parent = 0);
   virtual ~ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(){}
 
+  // Set/get the widget onto which this step's user interface will be placed
+  QWidget* widget()const;
+  void setWidget(QWidget* widget);
+
   /// Set/get the label on this step's user interface
   QLabel* label()const;
   void setLabel(QLabel* label);
@@ -111,8 +116,8 @@ public slots:
 
   /// Adds the label and line edit on this step's user interface to
   /// the given list, which will be used by the superclass's
-  /// showUserInterface() function
-  virtual void populateStepWidgetsList(QList<QWidget*>& stepWidgetsList);
+  /// showUserInterface() function 
+  virtual void createUserInterface();
 
 signals:
 
@@ -121,7 +126,7 @@ signals:
   void validationComplete(bool validationSucceeded, const QString& branchId="")const;
   void onEntryComplete()const;
   void onExitComplete()const;
-  void populateStepWidgetsListComplete()const;
+  void createUserInterfaceComplete()const;
 
 private:
   CTK_DECLARE_PRIVATE(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);

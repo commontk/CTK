@@ -33,9 +33,7 @@ SET(Tests_SRCS
 )
 
 SET(Tests_MOC_SRCS
-  ctkBranchingWorkflowStep.h
   ctkExampleWorkflowStepUsingSignalsAndSlots.h
-  ctkExampleDerivedWorkflowStep.h
 )
 
 SET(MY_MOC_CXX)

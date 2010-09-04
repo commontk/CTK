@@ -21,6 +21,7 @@
 // Qt includes
 #include <QLabel>
 #include <QLineEdit>
+#include <QVBoxLayout>
 
 // CTK includes
 #include "ctkExampleDerivedWorkflowWidgetStep.h"
@@ -94,7 +95,7 @@ void ctkExampleDerivedWorkflowWidgetStep::onEntry(const ctkWorkflowStep* comingF
   d->numberOfTimesRanOnEntry++;
 
   // signals that we are finished
-  emit onEntryComplete();
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -109,24 +110,26 @@ void ctkExampleDerivedWorkflowWidgetStep::onExit(const ctkWorkflowStep* goingTo,
   d->numberOfTimesRanOnExit++;
 
   // signals that we are finished
-  emit onExitComplete();
+  this->onExitComplete();
 }
 
 //-----------------------------------------------------------------------------
-void ctkExampleDerivedWorkflowWidgetStep::populateStepWidgetsList(QList<QWidget*>& stepWidgetsList)
+void ctkExampleDerivedWorkflowWidgetStep::createUserInterface()
 {
-  std::cout << "populating" << std::endl;
-
-  // don't forget to call the superclass's functioon
-  this->Superclass::populateStepWidgetsList(stepWidgetsList);
-
-  // add the user interface elements to the list
   CTK_D(ctkExampleDerivedWorkflowWidgetStep);
+
+  // create widgets the first time through
+  if (!this->layout())
+    {
+    QVBoxLayout* layout = new QVBoxLayout();
+    this->setLayout(layout);
+    }
+
   if (!d->label)
     {
     d->label = new QLabel();
     d->label->setText(this->name() + ": enter a number greater than or equal to 10");
-    stepWidgetsList << d->label;
+    this->layout()->addWidget(d->label);
     }
 
   if (!d->lineEdit)
@@ -134,11 +137,11 @@ void ctkExampleDerivedWorkflowWidgetStep::populateStepWidgetsList(QList<QWidget*
     d->lineEdit = new QLineEdit();
     d->lineEdit->setInputMask("000");
     d->lineEdit->setText(QString::number(d->defaultLineEditValue));
-    stepWidgetsList << d->lineEdit;
+    this->layout()->addWidget(d->lineEdit);
     }
 
   // signals that we are finished
-  emit populateStepWidgetsListComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -178,5 +181,5 @@ void ctkExampleDerivedWorkflowWidgetStep::validate(const QString& desiredBranchI
     }
  
   // return the validation results
-  emit validationComplete(retVal, desiredBranchId);
+  this->validationComplete(retVal, desiredBranchId);
 }

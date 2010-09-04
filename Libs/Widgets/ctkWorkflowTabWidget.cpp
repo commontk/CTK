@@ -20,10 +20,13 @@
 
 // Qt includes
 #include <QTabWidget>
-#include <QBoxLayout>
+#include <QWidget>
+#include <QString>
+#include <QDebug>
 
 // CTK includes
 #include "ctkWorkflowTabWidget.h"
+#include "ctkWorkflowButtonBoxWidget.h"
 #include "ctkLogger.h"
 
 // STD includes
@@ -40,7 +43,7 @@ public:
   CTK_DECLARE_PUBLIC(ctkWorkflowTabWidget);
   ctkWorkflowTabWidgetPrivate();
 
-  QTabWidget* clientArea;
+  QTabWidget* ClientArea;
 };
 
 // --------------------------------------------------------------------------
@@ -49,7 +52,6 @@ public:
 //---------------------------------------------------------------------------
 ctkWorkflowTabWidgetPrivate::ctkWorkflowTabWidgetPrivate()
 {
-  this->clientArea = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -59,64 +61,48 @@ ctkWorkflowTabWidgetPrivate::ctkWorkflowTabWidgetPrivate()
 ctkWorkflowTabWidget::ctkWorkflowTabWidget(QWidget* newParent) : Superclass(newParent)
 {
   CTK_INIT_PRIVATE(ctkWorkflowTabWidget);
+  CTK_D(ctkWorkflowTabWidget);
+  d->ClientArea = 0;
 }
 
 // --------------------------------------------------------------------------
-QTabWidget* ctkWorkflowTabWidget::clientArea()
+QWidget* ctkWorkflowTabWidget::clientArea()
 {
   CTK_D(ctkWorkflowTabWidget);
-
-  if (!d->clientArea)
-    {
-    d->clientArea = new QTabWidget;
-
-    if (!this->clientSection()->layout())
-      {
-      this->clientSection()->setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
-      }
-    this->clientSection()->layout()->addWidget(d->clientArea);
-    }
-  return d->clientArea;
+  return d->ClientArea;
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowTabWidget::addWidgetToClientArea(QWidget* widget, const QString& label)
+void ctkWorkflowTabWidget::initClientArea()
 {
+  CTK_D(ctkWorkflowTabWidget);
+  if (!d->ClientArea)
+    {
+    d->ClientArea = new QTabWidget(this);
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowTabWidget::createNewPage(QWidget* widget)
+{
+  CTK_D(ctkWorkflowTabWidget);
+  Q_ASSERT(d->ClientArea);
   if (widget)
     {
-    QTabWidget* clientArea = this->clientArea();
-
-    clientArea->addTab(widget, label);
+    d->ClientArea->addTab(widget, "");
     }
 }
 
 // --------------------------------------------------------------------------
-QWidget* ctkWorkflowTabWidget::getWidgetFromIndex(int index)
+void ctkWorkflowTabWidget::showPage(QWidget* widget, const QString& label)
 {
   CTK_D(ctkWorkflowTabWidget);
-
-  if (!d->clientArea)
-    {
-    logger.error("getWidgetFromIndex - clientArea is Null");
-    return 0;;
-    }
-
-  return d->clientArea->widget(index);
-}
-
-// --------------------------------------------------------------------------
-void ctkWorkflowTabWidget::setCurrentWidget(QWidget* widget)
-{
-  CTK_D(ctkWorkflowTabWidget);
-
-  if (!d->clientArea)
-    {
-    logger.error("setCurrentWidget - clientArea is Null");
-    return;
-    }
-
+  Q_ASSERT(d->ClientArea);
   if (widget)
     {
-    d->clientArea->setCurrentWidget(widget);
+    d->ClientArea->setCurrentWidget(widget);
+    int index = d->ClientArea->indexOf(widget);
+    d->ClientArea->setTabText(index, label);
     }
 }
+

@@ -55,6 +55,7 @@ SET(KIT_SRCS
   ctkWorkflow.cpp
   ctkWorkflowStep.h
   ctkWorkflowStep.cpp
+  ctkWorkflowStep_p.h
   ctkWorkflowTransitions.h
   )
 
@@ -73,7 +74,7 @@ SET(KIT_MOC_SRCS
   ctkTransferFunction.h
   ctkTransferFunctionRepresentation.h
   ctkWorkflow.h
-  ctkWorkflowStep.h
+  ctkWorkflowStep_p.h
  ctkWorkflowTransitions.h
   )
 

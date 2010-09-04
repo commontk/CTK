@@ -45,6 +45,7 @@
 #include "ctkTreeComboBoxPlugin.h"
 #include "ctkSliderWidgetPlugin.h"
 #include "ctkWorkflowButtonBoxWidgetPlugin.h"
+#include "ctkWorkflowWidgetStepPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins : public QObject,
@@ -75,7 +76,8 @@ public:
             << new ctkSliderWidgetPlugin
             << new ctkTransferFunctionViewPlugin
             << new ctkTreeComboBoxPlugin
-            << new ctkWorkflowButtonBoxWidgetPlugin;
+            << new ctkWorkflowButtonBoxWidgetPlugin
+            << new ctkWorkflowWidgetStepPlugin;
     return plugins;
     }
 };

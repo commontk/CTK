@@ -15,45 +15,31 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
+ 
 =========================================================================*/
 
-#ifndef __ctkWorkflowTabWidget_h
-#define __ctkWorkflowTabWidget_h
-
-// Qt includes
-class QWidget;
-class QString;
+#ifndef __ctkWorkflowWidgetStepPlugin_h
+#define __ctkWorkflowWidgetStepPlugin_h
 
 // CTK includes
-#include "ctkWorkflowAbstractPagedWidget.h"
-#include "ctkPimpl.h"
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsAbstractPlugin.h"
 
-class ctkWorkflowTabWidgetPrivate;
-
-///
-/// \brief ctkWorkflowTabWidget is the basis for a workflow with a user
-class CTK_WIDGETS_EXPORT ctkWorkflowTabWidget : public ctkWorkflowAbstractPagedWidget
+class CTK_WIDGETS_PLUGINS_EXPORT ctkWorkflowWidgetStepPlugin :
+  public QObject,
+  public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  typedef ctkWorkflowAbstractPagedWidget Superclass;
+  ctkWorkflowWidgetStepPlugin(QObject *newParent = 0);
 
-  explicit ctkWorkflowTabWidget(QWidget* parent = 0);
-  virtual ~ctkWorkflowTabWidget(){};
+  QWidget *createWidget(QWidget *newParent);
+  QString  domXml() const;
+  QIcon    icon() const;
+  QString  includeFile() const;
+  bool     isContainer() const;
+  QString  name() const;
 
-  virtual void createNewPage(QWidget* widget);
-
-  virtual void showPage(QWidget* widget, const QString& label);
-
-  virtual void initClientArea();
-
-  virtual QWidget* clientArea();
-
-private:
-  CTK_DECLARE_PRIVATE(ctkWorkflowTabWidget);
 };
 
 #endif
