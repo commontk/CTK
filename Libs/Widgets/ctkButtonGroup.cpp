@@ -39,27 +39,39 @@ ctkButtonGroup::ctkButtonGroup(QObject* _parent)
   :QButtonGroup(_parent)
 {
   CTK_INIT_PRIVATE(ctkButtonGroup);
-  connect(this, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(onButtonClicked(QAbstractButton*)));
-  connect(this, SIGNAL(buttonPressed(QAbstractButton*)), this, SLOT(onButtonPressed(QAbstractButton*)));
+  CTK_D(ctkButtonGroup);
+  d->IsLastButtonPressedChecked = false;
+  // we need to connect to button{Clicked,Pressed}(int) instead of
+  // button{Clicked,Pressed}(QAbstractButton*) in order to be first to catch the
+  // signals
+  connect(this, SIGNAL(buttonClicked(int)), this, SLOT(onButtonClicked(int)));
+  connect(this, SIGNAL(buttonPressed(int)), this, SLOT(onButtonPressed(int)));
 }
 
 //------------------------------------------------------------------------------
-void ctkButtonGroup::onButtonClicked(QAbstractButton *clickedButton)
+void ctkButtonGroup::onButtonClicked(int buttonId)
 {
   CTK_D(ctkButtonGroup);
+  QAbstractButton* clickedButton = this->button(buttonId);
+  Q_ASSERT(clickedButton);
   if (!this->exclusive() || !d->IsLastButtonPressedChecked)
     {
     return;
     }
+  // here the button is clicked and we click it again... so we want to
+  // uncheck, a behavior not supported by QButtonGroup.
+  // The only way to uncheck the button is to remove it from the group, and put it back
   this->removeButton(clickedButton);
   clickedButton->setChecked(false);
   this->addButton(clickedButton);
+  d->IsLastButtonPressedChecked = false;
 }
 
 //------------------------------------------------------------------------------
-void ctkButtonGroup::onButtonPressed(QAbstractButton *pressedButton)
+void ctkButtonGroup::onButtonPressed(int buttonId)
 {
   CTK_D(ctkButtonGroup);
+  QAbstractButton* pressedButton = this->button(buttonId);
   Q_ASSERT(pressedButton);
   d->IsLastButtonPressedChecked = pressedButton->isChecked();
 }

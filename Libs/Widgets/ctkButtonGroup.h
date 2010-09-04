@@ -52,8 +52,8 @@ public:
   explicit ctkButtonGroup(QObject *_parent = 0);
 
 protected slots:
-  void onButtonClicked(QAbstractButton * button);
-  void onButtonPressed(QAbstractButton * button);
+  void onButtonClicked(int button);
+  void onButtonPressed(int button);
 
 private:
   CTK_DECLARE_PRIVATE(ctkButtonGroup);
