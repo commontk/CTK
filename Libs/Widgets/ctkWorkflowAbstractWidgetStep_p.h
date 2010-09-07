@@ -18,8 +18,8 @@
  
   =========================================================================*/
 
-#ifndef __ctkAbstractWorkflowWidgetStep_p_h
-#define __ctkAbstractWorkflowWidgetStep_p_h
+#ifndef __ctkWorkflowAbstractWidgetStep_p_h
+#define __ctkWorkflowAbstractWidgetStep_p_h
 
 // Qt includes
 #include <QObject>
@@ -28,20 +28,20 @@
 class QWidget;
 
 // CTK includes
-#include "ctkAbstractWorkflowWidgetStep.h"
+#include "ctkWorkflowAbstractWidgetStep.h"
 #include "ctkWorkflowStep_p.h"
 //class ctkWorkflowButtonBoxWidget;
 
 //-----------------------------------------------------------------------------
-class ctkAbstractWorkflowWidgetStepPrivate : public QObject,
-                                             public ctkPrivate<ctkAbstractWorkflowWidgetStep>
+class ctkWorkflowAbstractWidgetStepPrivate : public QObject,
+                                             public ctkPrivate<ctkWorkflowAbstractWidgetStep>
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(ctkAbstractWorkflowWidgetStep);
+  CTK_DECLARE_PUBLIC(ctkWorkflowAbstractWidgetStep);
 
 public:
-  ctkAbstractWorkflowWidgetStepPrivate();
-  ~ctkAbstractWorkflowWidgetStepPrivate(){}
+  ctkWorkflowAbstractWidgetStepPrivate();
+  ~ctkWorkflowAbstractWidgetStepPrivate(){}
 
 protected:
 
@@ -55,7 +55,7 @@ protected:
   QString backButtonText;
   QString nextButtonText;
 
-  ctkAbstractWorkflowWidgetStep::ButtonBoxHints  ButtonBoxHints;
+  ctkWorkflowAbstractWidgetStep::ButtonBoxHints  ButtonBoxHints;
 
   QIcon icon;
 
