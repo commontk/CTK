@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
-    <height>480</height>
+    <width>521</width>
+    <height>525</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -60,8 +60,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>447</width>
-           <height>450</height>
+           <width>519</width>
+           <height>489</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -180,6 +180,19 @@
      </layout>
     </widget>
    </item>
+   <item>
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
+     <property name="inactiveSizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="activate" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -190,11 +203,33 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>ctkDynamicSpacer</class>
+   <extends>QWidget</extends>
+   <header>ctkDynamicSpacer.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkFittedTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>ctkFittedTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>CollapsibleButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DynamicSpacer</receiver>
+   <slot>activate(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>260</x>
+     <y>259</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>260</x>
+     <y>524</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
