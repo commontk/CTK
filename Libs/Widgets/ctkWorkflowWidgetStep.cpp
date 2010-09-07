@@ -62,7 +62,7 @@ ctkWorkflowWidgetStepPrivate::ctkWorkflowWidgetStepPrivate()
 
 //-----------------------------------------------------------------------------
 ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(ctkWorkflow* newWorkflow, 
-  const QString& newId, QWidget* newParent) : QWidget(newParent), ctkAbstractWorkflowWidgetStep(newWorkflow, newId)
+  const QString& newId, QWidget* newParent) : QWidget(newParent), ctkWorkflowAbstractWidgetStep(newWorkflow, newId)
 {
   CTK_INIT_PRIVATE(ctkWorkflowWidgetStep);
   CTK_D(ctkWorkflowWidgetStep);
@@ -70,7 +70,7 @@ ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(ctkWorkflow* newWorkflow,
 }
 
 //-----------------------------------------------------------------------------
-ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(QWidget* newParent) : QWidget(newParent), ctkAbstractWorkflowWidgetStep(0, QString())
+ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(QWidget* newParent) : QWidget(newParent), ctkWorkflowAbstractWidgetStep(0, QString())
 {
   CTK_INIT_PRIVATE(ctkWorkflowWidgetStep);
   CTK_D(ctkWorkflowWidgetStep);

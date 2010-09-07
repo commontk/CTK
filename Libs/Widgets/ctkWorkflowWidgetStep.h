@@ -31,7 +31,7 @@
 #include "ctkPimpl.h"
 #include "ctkWorkflowStep.h"
 #include "ctkWorkflowTransitions.h"
-#include "ctkAbstractWorkflowWidgetStep.h"
+#include "ctkWorkflowAbstractWidgetStep.h"
 #include "CTKWidgetsExport.h"
 
 class ctkWorkflowWidgetStepPrivate;
@@ -40,12 +40,12 @@ class ctkWorkflowGroupBox;
 class ctkWorkflow;
 
 ///
-/// \brief A concrete implementation of ctkAbstractWorkflowWidgetStep that derives from QWidget.
+/// \brief A concrete implementation of ctkWorkflowAbstractWidgetStep that derives from QWidget.
 
 class ctkWorkflowWidgetStepPlugin;
 
 class CTK_WIDGETS_EXPORT ctkWorkflowWidgetStep : public QWidget,
-                                                 public ctkAbstractWorkflowWidgetStep
+                                                 public ctkWorkflowAbstractWidgetStep
 { 
   Q_OBJECT
   Q_PROPERTY(QString id READ id WRITE setId)
@@ -57,7 +57,7 @@ class CTK_WIDGETS_EXPORT ctkWorkflowWidgetStep : public QWidget,
 
 public:
 
-  typedef ctkAbstractWorkflowWidgetStep Superclass;
+  typedef ctkWorkflowAbstractWidgetStep Superclass;
   explicit ctkWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId, QWidget* newParent = 0);
   explicit ctkWorkflowWidgetStep(QWidget* newParent = 0);
   virtual ~ctkWorkflowWidgetStep(){};
@@ -66,9 +66,9 @@ public:
 
   //-----------------------------------------------------------------------------
   // To have ButtonBoxHints displayed as a propery in QtDesigner ... 
-  // Since ctkAbstractWorkflowWidgetStep is not a QObject, there is no way to 
-  // add ctkAbstractWorkflowWidgetStep::ButtonBoxHints to the meta object system using 
-  // the QFLAGS(ctkAbstractWorkflowWidgetStep::ButtonBoxHints)
+  // Since ctkWorkflowAbstractWidgetStep is not a QObject, there is no way to 
+  // add ctkWorkflowAbstractWidgetStep::ButtonBoxHints to the meta object system using 
+  // the QFLAGS(ctkWorkflowAbstractWidgetStep::ButtonBoxHints)
   // The following enums, setter and getter serve as proxy for qtdesigner plugin
   // TODO Ideally, the following code should be private ..
   enum ButtonBoxHintForPlugin {

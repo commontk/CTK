@@ -12,9 +12,9 @@ SET(KIT_include_directories
 
 # Source files
 SET(KIT_SRCS
-  ctkAbstractWorkflowWidgetStep.cpp
-  ctkAbstractWorkflowWidgetStep.h
-  ctkAbstractWorkflowWidgetStep_p.h
+  ctkWorkflowAbstractWidgetStep.cpp
+  ctkWorkflowAbstractWidgetStep.h
+  ctkWorkflowAbstractWidgetStep_p.h
   ctkActionsWidget.cpp
   ctkActionsWidget.h
   ctkAddRemoveComboBox.cpp
@@ -99,7 +99,7 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkAbstractWorkflowWidgetStep_p.h
+  ctkWorkflowAbstractWidgetStep_p.h
   ctkActionsWidget.h
   ctkAddRemoveComboBox.h
   ctkButtonGroup.h

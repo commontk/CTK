@@ -43,7 +43,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-bool buttonClickTestSignalSlot(QApplication& app, int defaultTime, ctkAbstractWorkflowWidgetStep* currentStep, QWidget* shownStepArea, QLineEdit* shownLineEdit, QLabel* shownLabel, QWidget* hiddenStepArea, QLineEdit* hiddenLineEdit, QLabel* hiddenLabel, ctkWorkflow* workflow, ctkWorkflowWidget* workflowWidget, QPushButton* backButton, QPushButton* nextButton, QPushButton* finishButton1=0, QPushButton* finishButton2=0)
+bool buttonClickTestSignalSlot(QApplication& app, int defaultTime, ctkWorkflowAbstractWidgetStep* currentStep, QWidget* shownStepArea, QLineEdit* shownLineEdit, QLabel* shownLabel, QWidget* hiddenStepArea, QLineEdit* hiddenLineEdit, QLabel* hiddenLabel, ctkWorkflow* workflow, ctkWorkflowWidget* workflowWidget, QPushButton* backButton, QPushButton* nextButton, QPushButton* finishButton1=0, QPushButton* finishButton2=0)
 {
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
@@ -611,10 +611,10 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
   QObject::connect(qObject2, SIGNAL(onExitComplete()), workflow, SLOT(processingAfterOnExit()));
 
   // use the qObjects for populating the stepWidgetsList
-  QObject::connect(step1->ctkAbstractWorkflowWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject1, SLOT(createUserInterface()));
-  QObject::connect(qObject1, SIGNAL(createUserInterfaceComplete()), step1->ctkAbstractWorkflowWidgetStepQObject(), SIGNAL(showUserInterfaceComplete()));
-  QObject::connect(step2->ctkAbstractWorkflowWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject2, SLOT(createUserInterface()));
-  QObject::connect(qObject2, SIGNAL(createUserInterfaceComplete()), step2->ctkAbstractWorkflowWidgetStepQObject(), SIGNAL(showUserInterfaceComplete()));
+  QObject::connect(step1->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject1, SLOT(createUserInterface()));
+  QObject::connect(qObject1, SIGNAL(createUserInterfaceComplete()), step1->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(showUserInterfaceComplete()));
+  QObject::connect(step2->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject2, SLOT(createUserInterface()));
+  QObject::connect(qObject2, SIGNAL(createUserInterfaceComplete()), step2->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(showUserInterfaceComplete()));
 
   step1->setHasValidateCommand(1);
   step2->setHasValidateCommand(1);
@@ -682,8 +682,8 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
   QObject::connect(qObject3, SIGNAL(onExitComplete()), workflow, SLOT(processingAfterOnExit()));
 
   // use the qObjects for populating the stepWidgetsList
-  QObject::connect(step3->ctkAbstractWorkflowWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject3, SLOT(createUserInterface()));
-  QObject::connect(qObject3, SIGNAL(createUserInterfaceComplete()), step3->ctkAbstractWorkflowWidgetStepQObject(), SIGNAL(createUserInterfaceComplete()));
+  QObject::connect(step3->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject3, SLOT(createUserInterface()));
+  QObject::connect(qObject3, SIGNAL(createUserInterfaceComplete()), step3->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(createUserInterfaceComplete()));
 
   step3->setHasValidateCommand(1);
   step3->setHasOnEntryCommand(1);

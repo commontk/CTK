@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkAbstractWorkflowWidgetStep_h
-#define __ctkAbstractWorkflowWidgetStep_h 
+#ifndef __ctkWorkflowAbstractWidgetStep_h
+#define __ctkWorkflowAbstractWidgetStep_h 
 
 // QT includes
 class QObject;
@@ -36,10 +36,10 @@ class QIcon;
 //class ctkWorkflowButtonBoxWidget;
 class ctkWorkflowGroupBox;
 
-class ctkAbstractWorkflowWidgetStepPrivate;
+class ctkWorkflowAbstractWidgetStepPrivate;
 
 ///
-/// \brief ctkAbstractWorkflowWidgetStep is a convienience class to quickly
+/// \brief ctkWorkflowAbstractWidgetStep is a convienience class to quickly
 /// construct a ctkWorkflowStep with a user interface.
 ///
 /// It embeds a QWidget* stepArea, onto which step-specific widgets can be placed.
@@ -48,15 +48,15 @@ class ctkAbstractWorkflowWidgetStepPrivate;
 /// added with the appropriate signals and slots.
 /// To create a custom step, you can derive from this class and
 /// implement only two functions:
-/// 1) ctkAbstractWorkflowWidgetStep::populateStepWidgetsList(), to define the
+/// 1) ctkWorkflowAbstractWidgetStep::populateStepWidgetsList(), to define the
 /// step-specific widgets;
-/// 2) ctkAbstractWorkflowWidgetStep::validate(const QString&), to validate the processing
+/// 2) ctkWorkflowAbstractWidgetStep::validate(const QString&), to validate the processing
 /// state associated with this step.
 /// For additional customization, you can reimplement
 /// showUserInterface() and hideUserInterface() in derived classes.
 /// \sa showUserInterface() hideUserInterface()
 
-class CTK_WIDGETS_EXPORT ctkAbstractWorkflowWidgetStep : public ctkWorkflowStep
+class CTK_WIDGETS_EXPORT ctkWorkflowAbstractWidgetStep : public ctkWorkflowStep
 {
 public:
 
@@ -71,8 +71,8 @@ public:
   Q_DECLARE_FLAGS(ButtonBoxHints, ButtonBoxHint)
 
   typedef ctkWorkflowStep Superclass;
-  explicit ctkAbstractWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId);
-  virtual ~ctkAbstractWorkflowWidgetStep(){}
+  explicit ctkWorkflowAbstractWidgetStep(ctkWorkflow* newWorkflow, const QString& newId);
+  virtual ~ctkWorkflowAbstractWidgetStep(){}
 
   /// \brief Override the back button text of any ctkWorkflowButtonBox when this step
   /// is the current step
@@ -95,7 +95,7 @@ public:
   void setIcon(const QIcon& newIcon);
 
   /// Get the QObject associated with this step, to connect signals/slots
-  QObject* ctkAbstractWorkflowWidgetStepQObject();
+  QObject* ctkWorkflowAbstractWidgetStepQObject();
 
   /// Returns the QWidget onto which this step's user interface elements are placed.
   virtual QWidget* stepArea() = 0;
@@ -147,11 +147,11 @@ protected:
   void showUserInterfaceComplete()const;
 
 private:
-  CTK_DECLARE_PRIVATE(ctkAbstractWorkflowWidgetStep);
+  CTK_DECLARE_PRIVATE(ctkWorkflowAbstractWidgetStep);
   friend class ctkWorkflowGroupBox; // For access to showUserInterface()
 };
 
- Q_DECLARE_OPERATORS_FOR_FLAGS(ctkAbstractWorkflowWidgetStep::ButtonBoxHints)
+ Q_DECLARE_OPERATORS_FOR_FLAGS(ctkWorkflowAbstractWidgetStep::ButtonBoxHints)
 
 #endif
 
