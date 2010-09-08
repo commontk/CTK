@@ -20,7 +20,10 @@
 
 // Qt includes
 #include <QApplication>
+#include <QHBoxLayout>
 #include <QPushButton>
+#include <QSignalSpy>
+#include <QTimer>
 
 // CTK includes
 #include "ctkButtonGroup.h"
@@ -35,10 +38,18 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  QPushButton* button1 = new QPushButton(0);
-  QPushButton* button2 = new QPushButton(0);
-  QPushButton* button3 = new QPushButton(0);
-  ctkCollapsibleButton* button4 = new ctkCollapsibleButton(0);
+  QWidget widget(0);
+  widget.show();
+  QHBoxLayout* layout = new QHBoxLayout(&widget);
+  QPushButton* button1 = new QPushButton(&widget);
+  layout->addWidget(button1);
+  QPushButton* button2 = new QPushButton(&widget);
+  layout->addWidget(button2);
+  QPushButton* button3 = new QPushButton(&widget);
+  layout->addWidget(button3);
+  ctkCollapsibleButton* button4 = new ctkCollapsibleButton(&widget);
+  layout->addWidget(button4);
+  widget.setLayout(layout);
 
   button1->setCheckable(true);
   button2->setCheckable(true);
@@ -49,7 +60,6 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
   button4->setChecked(true);
   
   ctkButtonGroup buttonGroup(0);
-  //QButtonGroup buttonGroup(0);
 
   buttonGroup.addButton(button1);
   buttonGroup.addButton(button2);
@@ -128,7 +138,40 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
               << button2->isChecked() << std::endl;
     return EXIT_FAILURE;
     }
-
-  return EXIT_SUCCESS;
+  qRegisterMetaType<QAbstractButton*>("QAbstractButton*");
+  QSignalSpy spy(&buttonGroup, SIGNAL(buttonClicked(QAbstractButton*)));
+  QSignalSpy spyInt(&buttonGroup, SIGNAL(buttonClicked(int)));
+  button1->click();
+  if (spy.count() != 1 || spyInt.count() != 1)
+    {
+    std::cerr << "ctkButtonGroup::click7 failed"
+              << button1->isChecked() << ", "
+              << spy.count() << "clicks" << std::endl;
+    return EXIT_FAILURE;
+    }
+  button4->click();
+  if (spy.count() != 2 || spyInt.count() != 2)
+    {
+    std::cerr << "ctkButtonGroup::click8 failed"
+              << button4->isChecked() << ", "
+              << spy.count() << "clicks" << std::endl;
+    return EXIT_FAILURE;
+    }
+  button4->click();
+  if (spy.count() != 3 || spyInt.count() != 3)
+    {
+    std::cerr << "ctkButtonGroup::click9 failed"
+              << button4->isChecked() << ", "
+              << spy.count() << "clicks" << std::endl;
+    return EXIT_FAILURE;
+    }
+  QTimer autoExit;
+  if (argc < 2 || QString(argv[1]) != "-I")
+    {
+    std::cout << argc << argv[1] << std::endl;
+    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
+    autoExit.start(500);
+    }
+  return app.exec();
 }
 

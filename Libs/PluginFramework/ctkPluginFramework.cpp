@@ -117,7 +117,7 @@
 
   QStringList ctkPluginFramework::getResourceList(const QString& path) const
   {
-    QString resourcePath = QString(":/") + PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME;
+    QString resourcePath = QString(":/") + ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME;
     if (path.startsWith('/'))
       resourcePath += path;
     else
@@ -141,7 +141,7 @@
 
   QByteArray ctkPluginFramework::getResource(const QString& path) const
   {
-    QString resourcePath = QString(":/") + PluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME;
+    QString resourcePath = QString(":/") + ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME;
     if (path.startsWith('/'))
       resourcePath += path;
     else

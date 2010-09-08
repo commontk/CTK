@@ -67,6 +67,7 @@ void ctkDirectoryButtonPrivate::init()
   l->addWidget(this->PushButton);
   l->setContentsMargins(0,0,0,0);
   p->setLayout(l);
+  p->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed, QSizePolicy::ButtonBox));
 }
 
 //-----------------------------------------------------------------------------

@@ -55,6 +55,18 @@ public:
   void setupRendering();
   void setupDefaultInteractor();
 
+  void zoom(double zoomFactor);
+
+  void pitch(int rotateDegrees, ctkVTKRenderView::RotateDirection pitchDirection);
+  void roll(int rotateDegrees, ctkVTKRenderView::RotateDirection rollDirection);
+  void yaw(int rotateDegrees, ctkVTKRenderView::RotateDirection yawDirection);
+
+public slots:
+  void doSpin();
+  void doRock();
+
+public:
+
   QVTKWidget*                                   VTKWidget;
   vtkSmartPointer<vtkRenderer>                  Renderer;
   vtkSmartPointer<vtkRenderWindow>              RenderWindow;
@@ -64,6 +76,18 @@ public:
   vtkSmartPointer<vtkAxesActor>                 Axes;
   vtkSmartPointer<vtkOrientationMarkerWidget>   Orientation;
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
+  double                                        ZoomFactor;
+  int                                           PitchRollYawIncrement;
+  ctkVTKRenderView::RotateDirection             PitchDirection;
+  ctkVTKRenderView::RotateDirection             RollDirection;
+  ctkVTKRenderView::RotateDirection             YawDirection;
+  ctkVTKRenderView::RotateDirection             SpinDirection;
+  bool                                          SpinEnabled;
+  int                                           AnimationIntervalMs;
+  int                                           SpinIncrement;
+  bool                                          RockEnabled;
+  int                                           RockIncrement;
+  int                                           RockLength;
 
   vtkWeakPointer<vtkRenderWindowInteractor>     CurrentInteractor;
 

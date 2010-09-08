@@ -50,7 +50,7 @@
      * the following properties:
      *
      * <p>
-     * <ul><li>PluginConstants::FRAMEWORK_STORAGE</li>
+     * <ul><li>ctkPluginConstants::FRAMEWORK_STORAGE</li>
      * </ul>
      *
      * @param initProps The plugin framework configuration properties.

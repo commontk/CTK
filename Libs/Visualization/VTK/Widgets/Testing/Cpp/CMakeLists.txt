@@ -42,9 +42,6 @@ ADD_EXECUTABLE(${KIT}CppTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-IF(WIN32)
-  SET(KIT_TESTS ${CPP_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CppTests)
-ENDIF(WIN32)
 
 MACRO( SIMPLE_TEST  TESTNAME )
   ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} -D "${CTKData_DIR}/Data")
@@ -66,7 +63,7 @@ SIMPLE_TEST( ctkVTKScalarsToColorsViewTest1 )
 SIMPLE_TEST( ctkVTKScalarsToColorsViewTest2 )
 SIMPLE_TEST( ctkVTKScalarsToColorsViewTest3 )
 SIMPLE_TEST( ctkVTKScalarsToColorsViewTest4 )
-SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1.cpp )
+SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1 )
 
 #
 # Add Tests expecting CTKData to be set

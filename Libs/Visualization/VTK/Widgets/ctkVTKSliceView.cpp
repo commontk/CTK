@@ -120,7 +120,7 @@ void ctkVTKSliceView::scheduleRender()
 void ctkVTKSliceView::forceRender()
 {
   CTK_D(ctkVTKSliceView);
-  if (!d->RenderEnabled)
+  if (!d->RenderEnabled  || !this->isVisible())
     {
     return;
     }
@@ -216,6 +216,27 @@ void ctkVTKSliceView::setBackgroundColor(const QColor& newBackgroundColor)
 }
 
 //----------------------------------------------------------------------------
+QColor ctkVTKSliceView::highlightedBoxColor()const
+{
+  CTK_D(const ctkVTKSliceView);
+  double* color = d->LightBoxRendererManager->GetHighlightedBoxColor();
+  QColor c;
+  c.setRgbF(color[0], color[1], color[2]);
+  return c;
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKSliceView::setHighlightedBoxColor(const QColor& newHighlightedBoxColor)
+{
+  CTK_D(ctkVTKSliceView);
+  double color[3];
+  color[0] = newHighlightedBoxColor.redF();
+  color[1] = newHighlightedBoxColor.greenF();
+  color[2] = newHighlightedBoxColor.blueF();
+  d->LightBoxRendererManager->SetHighlightedBoxColor(color);
+}
+
+//----------------------------------------------------------------------------
 ctkVTKSliceView::RenderWindowLayoutType ctkVTKSliceView::renderWindowLayoutType()const
 {
   CTK_D(const ctkVTKSliceView);
@@ -263,5 +284,19 @@ void ctkVTKSliceView::resizeEvent(QResizeEvent * event)
 {
   this->QWidget::resizeEvent(event);
   emit this->resized(event->size(), event->oldSize());
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKSliceView::setLightBoxRendererManagerRowCount(int newRowCount)
+{
+  CTK_D(ctkVTKSliceView);
+  d->LightBoxRendererManager->SetRenderWindowRowCount(newRowCount);
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKSliceView::setLightBoxRendererManagerColumnCount(int newColumnCount)
+{
+  CTK_D(ctkVTKSliceView);
+  d->LightBoxRendererManager->SetRenderWindowColumnCount(newColumnCount);
 }
 

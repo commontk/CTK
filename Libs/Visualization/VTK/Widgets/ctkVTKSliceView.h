@@ -46,6 +46,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceView : public QWidget
              READ renderWindowLayoutType WRITE setRenderWindowLayoutType)
   Q_PROPERTY(QString cornerAnnotationText READ cornerAnnotationText WRITE setCornerAnnotationText)
   Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
+  Q_PROPERTY(QColor highlightedBoxColor READ highlightedBoxColor WRITE setHighlightedBoxColor)
   Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
   Q_PROPERTY(double ColorLevel READ colorLevel WRITE setColorLevel)
   Q_PROPERTY(double ColorWindow READ colorWindow WRITE setColorWindow)
@@ -85,6 +86,10 @@ public:
   /// \sa setBackgroundColor();
   QColor backgroundColor()const;
 
+  /// Get highlightedBox color
+  /// \sa setHighlightedBoxColor();
+  QColor highlightedBoxColor()const;
+
   /// Get renderWindow layout type
   /// \sa setRenderWindowLayoutType();
   RenderWindowLayoutType renderWindowLayoutType()const;
@@ -115,6 +120,9 @@ public slots:
   /// Set background color
   void setBackgroundColor(const QColor& newBackgroundColor);
 
+  /// Set highlightedBox color
+  void setHighlightedBoxColor(const QColor& newHighlightedBoxColor);
+
   /// Enable/Disable rendering
   void setRenderEnabled(bool value);
 
@@ -126,6 +134,14 @@ public slots:
 
   /// Set color window
   void setColorWindow(double newColorWindow);
+
+  /// Change the number of row of the associated lightBox
+  /// \sa lightBoxRendererManager()
+  void setLightBoxRendererManagerRowCount(int newRowCount);
+
+  /// Change the number of column of the associated lightBox
+  /// \sa lightBoxRendererManager()
+  void setLightBoxRendererManagerColumnCount(int newColumnCount);
   
 signals:
   void resized(const QSize& size, const QSize& oldSize);

@@ -26,7 +26,7 @@
 #include <QHash>
 
 
-  typedef QHash<QString, QVariant> ServiceProperties;
+typedef QHash<QString, QVariant> ServiceProperties;
 
 
 #endif // CTKPLUGINFRAMEWORK_GLOBAL_H

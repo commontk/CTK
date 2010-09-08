@@ -158,6 +158,14 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
     std::cerr << "line " << __LINE__ << " - Problem with SetImageData()" << std::endl;
     return EXIT_FAILURE;
     }
+  
+  double highlightedboxColor[3] = {0.0, 1.0, 0.0};
+  lightBoxRendererManager->SetHighlightedBoxColor(highlightedboxColor);
+  if (mtime != lightBoxRendererManager->GetMTime())
+    {
+    std::cerr << "line " << __LINE__ << " - Problem with SetHighlightedBoxColor()" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   //----------------------------------------------------------------------------
   // Initialize
@@ -183,8 +191,10 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   lightBoxRendererManager->SetRenderWindowLayout(4, 5);
   lightBoxRendererManager->SetHighlighted(2,2,true);
   lightBoxRendererManager->SetColorWindowAndLevel(100, 100);
-  double color[3] = {0.5, 0.5, 0.5};
-  lightBoxRendererManager->SetBackgroundColor(color);
+  double backgroundColor[3] = {0.5, 0.5, 0.5};
+  lightBoxRendererManager->SetBackgroundColor(backgroundColor);
+  double highlightedBoxColor[3] = {1.0, 1.0, 0.0};
+  lightBoxRendererManager->SetHighlightedBoxColor(highlightedBoxColor);
 
   int retval = vtkRegressionTestImage(rw);
   if (retval == vtkRegressionTester::DO_INTERACTOR)

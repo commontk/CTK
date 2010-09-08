@@ -32,13 +32,18 @@ class ctkMatrixWidgetPrivate;
 
 ///
 /// ctkMatrixWidget is the base class of matrix widgets.
-/// \todo Add a property to handle wether the user can edit values
 /// \todo Wrap model signals to emit signals when the matrix is changed.
 /// Right now you can connect to the signal:
 /// matrixWidget->model()->dataChanged(...)
 class CTK_WIDGETS_EXPORT ctkMatrixWidget : public QTableWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool editable READ editable WRITE setEditable)
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)   
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
+
 public:
   /// Superclass typedef
   typedef QTableWidget Superclass;
@@ -52,11 +57,54 @@ public:
   ///
   /// Set / Get values of the matrix
   /// \li i is the row index, \li j is the column index
-  /// \warning there is no check that the indexes are inside their
+  /// \warning There is no check that the indexes are inside their
   /// valid range
+  /// \warning The value of a matrix element will not be changed on an attempt to set it to a value
+  /// that is less than the minimum or greater than the maximum.
   double value(int i, int j)const;
   void setValue(int i, int j, double value);
   void setVector(const QVector<double> & vector);
+
+  ///
+  /// This property determines whether the user can edit values
+  bool editable()const;
+  void setEditable(bool newEditable);
+
+  /// 
+  /// This property holds the minimum value of matrix elements.
+  ///
+  /// Any matrix elements whose values are less than the new minimum value will be reset to equal
+  /// the new minimum value.
+  double minimum()const;
+  void setMinimum(double newMinimum);
+  
+  /// 
+  /// This property holds the maximum value of matrix elements.
+  ///
+  /// Any matrix elements whose values are greater than the new maximum value will be reset to equal
+  /// the new maximum value.
+  double maximum()const;
+  void setMaximum(double newMaximum);
+
+  /// Description
+  /// Utility function that sets the min/max at once.
+  void setRange(double newMinimum, double newMaximum);
+
+  /// 
+  /// This property holds the step value of the spinbox.
+  ///
+  /// When the user uses the arrows to change the value of the spinbox used to adjust the value of
+  /// a matrix element, the value will be incremented/decremented by the amount of the singleStep.
+  double singleStep()const;
+  void setSingleStep(double step);
+
+  /// 
+  /// This property holds the precision of the spinbox, in decimals.
+  ///
+  /// Dictates how many decimals will be used for displaying and interpreting doubles by the spinbox
+  /// used to adjust the value of a matrix element.
+  int decimals()const;
+  void setDecimals(int decimals);
 
   ///
   /// Reimplemented from QAbstractScrollArea

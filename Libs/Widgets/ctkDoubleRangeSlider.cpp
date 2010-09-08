@@ -86,6 +86,9 @@ void ctkDoubleRangeSliderPrivate::init()
   this->MaxValue = this->Slider->maximumValue();
   this->SingleStep = this->Slider->singleStep();
 
+  p->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed,
+                               QSizePolicy::Slider));
+
   this->connectSlider();
 }
 
@@ -312,6 +315,7 @@ void ctkDoubleRangeSlider::setMinimumValue(double newMinValue)
     // similar to the old value.
     if (qAbs(newMinValue - oldValue) > (d->SingleStep * 0.000000001))
       {
+      emit this->valuesChanged(newMinValue, this->maximumValue());
       emit this->minimumValueChanged(newMinValue);
       }
     }
@@ -349,16 +353,55 @@ void ctkDoubleRangeSlider::setMaximumValue(double newMaxValue)
     // similar to the old value.
     if (qAbs(newMaxValue - oldValue) > (d->SingleStep * 0.000000001))
       {
+      emit this->valuesChanged(this->minimumValue(), newMaxValue);
       emit this->maximumValueChanged(newMaxValue);
       }
     }
 }
 
 // --------------------------------------------------------------------------
-void ctkDoubleRangeSlider::setValues(double newMinValue, double newMaxValue)
+void ctkDoubleRangeSlider::setValues(double newMinVal, double newMaxVal)
 {
-  this->setMinimumValue(qMin(newMinValue, newMaxValue));
-  this->setMaximumValue(qMax(newMinValue, newMaxValue));
+  CTK_D(ctkDoubleRangeSlider);
+  // We can't call setMinimumValue() and setMaximumValue() as they would
+  // generate an inconsistent state. when minimumValueChanged() is fired the
+  // new max value wouldn't be updated yet.
+  double newMinValue = qMin(newMinVal, newMaxVal);
+  double newMaxValue = qMax(newMinVal, newMaxVal);
+  d->updateMinOffset(newMinValue);
+  d->updateMaxOffset(newMaxValue);
+  int newMinIntValue = d->toInt(newMinValue);
+  int newMaxIntValue = d->toInt(newMaxValue);
+  if (newMinIntValue != d->Slider->minimumValue() ||
+      newMaxIntValue != d->Slider->maximumValue())
+    {
+    // d->Slider will emit a maximumValueChanged signal that is connected to
+    // ctkDoubleSlider::onValueChanged
+    d->Slider->setValues(newMinIntValue, newMaxIntValue);
+    }
+  else
+    {
+    double oldMinValue = d->MinValue;
+    double oldMaxValue = d->MaxValue;
+    d->MinValue = newMinValue;
+    d->MaxValue = newMaxValue;
+    // don't emit a valuechanged signal if the new value is quite
+    // similar to the old value.
+    bool minChanged = qAbs(newMinValue - oldMinValue) > (d->SingleStep * 0.000000001);
+    bool maxChanged = qAbs(newMaxValue - oldMaxValue) > (d->SingleStep * 0.000000001);
+    if (minChanged || maxChanged)
+      {
+      emit this->valuesChanged(newMinValue, newMaxValue);
+      if (minChanged)
+        {
+        emit this->minimumValueChanged(newMinValue);
+        }
+      if (maxChanged)
+        {
+        emit this->maximumValueChanged(newMaxValue);
+        }
+      }
+    }
 }
 
 // --------------------------------------------------------------------------

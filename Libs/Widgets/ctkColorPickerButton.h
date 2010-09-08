@@ -37,6 +37,7 @@ class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 {
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true)
+  Q_PROPERTY(bool displayColorName READ displayColorName WRITE setDisplayColorName DESIGNABLE true)
 public:
   /// By default, the color is black
   explicit ctkColorPickerButton(QWidget* parent = 0);
@@ -44,10 +45,14 @@ public:
   explicit ctkColorPickerButton(const QString& text, QWidget* parent = 0 );
   explicit ctkColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
   virtual ~ctkColorPickerButton();
-  
+ 
   ///
   /// Current selected color
   QColor color()const;
+
+  ///
+  /// Display the color name after color selection
+  bool displayColorName()const;
 
 public slots:
   ///
@@ -57,6 +62,11 @@ public slots:
   /// 
   /// Opens a color dialog to select a new current color.
   void changeColor();
+
+  ///
+  /// Toggle the display of the color name after color selection.
+  /// By default, this is activated.
+  void setDisplayColorName(bool displayColorName);
 
 signals:
   /// colorChanged is fired anytime a new color is set. Programatically or
@@ -68,6 +78,7 @@ protected slots:
 
 protected:
   QColor Color;
+  bool DisplayColorName;
 };
 
 #endif

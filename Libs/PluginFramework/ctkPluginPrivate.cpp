@@ -49,15 +49,15 @@ ctkPluginPrivate::ctkPluginPrivate(
   checkManifestHeaders();
 
   // fill require list
-  QString requireString = archive->getAttribute(PluginConstants::REQUIRE_PLUGIN);
-  QList<QMap<QString, QStringList> > requireList = ctkPluginFrameworkUtil::parseEntries(PluginConstants::REQUIRE_PLUGIN,
+  QString requireString = archive->getAttribute(ctkPluginConstants::REQUIRE_PLUGIN);
+  QList<QMap<QString, QStringList> > requireList = ctkPluginFrameworkUtil::parseEntries(ctkPluginConstants::REQUIRE_PLUGIN,
                                                                                         requireString, true, true, false);
   QListIterator<QMap<QString, QStringList> > i(requireList);
   while (i.hasNext())
   {
     const QMap<QString, QStringList>& e = i.next();
-    const QStringList& res = e.value(PluginConstants::RESOLUTION_DIRECTIVE);
-    const QStringList& version = e.value(PluginConstants::PLUGIN_VERSION_ATTRIBUTE);
+    const QStringList& res = e.value(ctkPluginConstants::RESOLUTION_DIRECTIVE);
+    const QStringList& version = e.value(ctkPluginConstants::PLUGIN_VERSION_ATTRIBUTE);
     ctkRequirePlugin* rp = new ctkRequirePlugin(this, e.value("$key").front(),
                                                 res.empty() ? QString() : res.front(),
                                                 version.empty() ? QString() : version.front());
@@ -139,7 +139,7 @@ void ctkPluginPrivate::ignoreAutostartSetting()
 
 void ctkPluginPrivate::checkManifestHeaders()
 {
-  symbolicName = archive->getAttribute(PluginConstants::PLUGIN_SYMBOLICNAME);
+  symbolicName = archive->getAttribute(ctkPluginConstants::PLUGIN_SYMBOLICNAME);
 
   if (symbolicName.isEmpty())
   {
@@ -147,7 +147,7 @@ void ctkPluginPrivate::checkManifestHeaders()
                                 qPrintable(location));
   }
 
-  QString mpv = archive->getAttribute(PluginConstants::PLUGIN_VERSION);
+  QString mpv = archive->getAttribute(ctkPluginConstants::PLUGIN_VERSION);
   if (!mpv.isEmpty())
   {
     try
@@ -157,12 +157,12 @@ void ctkPluginPrivate::checkManifestHeaders()
     catch (const std::exception& e)
     {
       throw std::invalid_argument(std::string("ctkPlugin does not specify a valid ") +
-                                  qPrintable(PluginConstants::PLUGIN_VERSION) + " header. Got exception: " + e.what());
+                                  qPrintable(ctkPluginConstants::PLUGIN_VERSION) + " header. Got exception: " + e.what());
     }
   }
 
-  QString ap = archive->getAttribute(PluginConstants::PLUGIN_ACTIVATIONPOLICY);
-  if (PluginConstants::ACTIVATION_EAGER == ap)
+  QString ap = archive->getAttribute(ctkPluginConstants::PLUGIN_ACTIVATIONPOLICY);
+  if (ctkPluginConstants::ACTIVATION_EAGER == ap)
   {
     eagerActivation = true;
   }

@@ -55,7 +55,6 @@ public:
   virtual ~ctkTreeComboBox(){}
 
   virtual bool eventFilter(QObject* object, QEvent* event);
-  virtual void showPopup();
   virtual void hidePopup();
   
   /// ctkTreeComboBox uses a QTreeView for its model view. treeView() is a
@@ -67,8 +66,7 @@ protected:
   virtual void paintEvent(QPaintEvent*);
   
 protected slots:
-  void onExpanded(const QModelIndex&);
-  void onCollapsed(const QModelIndex&);
+  void resizePopup();
   
 private:
   CTK_DECLARE_PRIVATE(ctkTreeComboBox);

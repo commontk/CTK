@@ -64,9 +64,9 @@ private:
 };
 
 //----------------------------------------------------------------------------
-/// ctkAbstractFactory is the base class of all the factory where items need
+/// \brief ctkAbstractFactory is the base class of all the factory where items need
 /// to be registered before being instantiated.
-/// ctkAbstractFactory contains a collection of ctkAbstractFactoryItems that
+/// \paragraph ctkAbstractFactory contains a collection of ctkAbstractFactoryItems that
 /// are uniquely identifyed by a key. Subclasses of ctkAbstractFactory are
 /// responsible for populating the list of ctkAbstractFactoryItems.
 /// BaseClassType could be any type (most probably a QObject) 
@@ -74,44 +74,42 @@ template<typename BaseClassType>
 class ctkAbstractFactory
 {
 public:
-  /// 
+
   /// Constructor/Desctructor
   explicit ctkAbstractFactory();
   virtual ~ctkAbstractFactory();
   virtual void printAdditionalInfo();
 
-  /// 
-  /// Create an instance of the object. The item corresponding to the key
-  /// should have been registered before.
+  /// \brief Create an instance of the object.
+  /// The item corresponding to the key should have been registered before.
   virtual BaseClassType * instantiate(const QString& itemKey);
 
-  /// 
-  /// Uninstanciate the object. Do nothing if the item given by the key has
-  /// not be instantiated nor registered.
+  /// \brief Uninstanciate the object.
+  /// Do nothing if the item given by the key has not be instantiated nor registered.
   void uninstantiate(const QString& itemKey);
 
-  /// 
+  /// \brief Get path associated with the item identified by \a itemKey
+  /// Should be overloaded in subclasse
+  virtual QString path(const QString& itemKey){ Q_UNUSED(itemKey); return QString(); }
+
   /// Get list of all registered item keys.
   QStringList keys() const;
 
-  /// 
-  /// Register items with the factory
+  /// \brief Register items with the factory
   /// Method provided for convenience - Should be overloaded in subclasse
   virtual void registerItems(){}
 
-  /// Enabled verbose output
+  /// \brief Enabled verbose output
   /// Warning and error message will be printed to standard outputs
   void setVerbose(bool value);
   bool verbose()const;
 
 protected:
 
-  /// 
-  /// Call the load method associated with the item.
+  /// \brief Call the load method associated with the item.
   /// If succesfully loaded, add it to the internal map.
   bool registerItem(const QString& key, const QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > & item);
 
-  /// 
   /// Get a Factory item given its itemKey. Return 0 if any.
   ctkAbstractFactoryItem<BaseClassType> * item(const QString& itemKey)const;
 

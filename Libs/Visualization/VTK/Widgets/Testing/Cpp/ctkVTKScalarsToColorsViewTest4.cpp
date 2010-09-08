@@ -17,24 +17,8 @@
   limitations under the License.
 
 =========================================================================*/
-/*
-// Qt includes
-#include <QApplication>
-#include <QSharedPointer>
-#include <QTimer>
-
-// CTK includes
-#include "ctkVTKScalarsToColorsView.h"
 
 // VTK includes
-#include <vtkColorTransferFunction.h>
-#include <vtkPiecewiseFunction.h>
-#include <vtkPlot.h>
-#include <vtkSmartPointer.h>
-
-// STD includes
-#include <iostream>
-*/
 #include "vtkRenderWindow.h"
 #include "vtkSmartPointer.h"
 #include "vtkChartXY.h"
@@ -43,46 +27,12 @@
 #include "vtkFloatArray.h"
 #include "vtkContextView.h"
 #include "vtkContextScene.h"
+#include <vtkRegressionTestImage.h>
 #include "vtkRenderWindowInteractor.h"
+
 //-----------------------------------------------------------------------------
 int ctkVTKScalarsToColorsViewTest4(int argc, char * argv [] )
 {
-  /*
-  QApplication app(argc, argv);
-
-  // Opacity function 1
-  vtkSmartPointer<vtkPiecewiseFunction> opacityFunction1 =
-    vtkSmartPointer<vtkPiecewiseFunction>::New();
-  opacityFunction1->AddPoint(0.,0.0);
-  opacityFunction1->AddPoint(0.2, 0.75);
-  opacityFunction1->AddPoint(0.35, 0.65);
-  opacityFunction1->AddPoint(0.8, 0.);
-
-  // Opacity function 2
-  vtkSmartPointer<vtkPiecewiseFunction> opacityFunction2 =
-    vtkSmartPointer<vtkPiecewiseFunction>::New();
-  opacityFunction2->AddPoint(0.4, 0.0);
-  opacityFunction2->AddPoint(0.5, 0.60);
-  opacityFunction2->AddPoint(0.9, 0.85);
-  opacityFunction2->AddPoint(1.0, 0.0);
-
-  ctkVTKScalarsToColorsView view(0);
-  // add transfer function item
-  vtkPlot* p1 = view.addOpacityFunction(opacityFunction1);
-  p1->SetColor(194, 66, 66, 255);
-  vtkPlot* p2 = view.addOpacityFunction(opacityFunction2);
-  p2->SetColor(193, 255, 66, 255);
-  view.fitAxesToBounds();
-  view.show();
-
-  QTimer autoExit;
-  if (argc < 2 || QString(argv[1]) != "-I")
-    {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
-    }
-  return app.exec();
-  */
   // Set up a 2D scene, add an XY chart to it
   vtkSmartPointer<vtkContextView> view =
       vtkSmartPointer<vtkContextView>::New();
@@ -132,6 +82,11 @@ int ctkVTKScalarsToColorsViewTest4(int argc, char * argv [] )
 
   //Finally render the scene and compare the image to a reference image
   view->GetRenderWindow()->SetMultiSamples(0);
-  view->GetInteractor()->Start();
-  return EXIT_SUCCESS;
+  int retval = vtkRegressionTestImage(view->GetRenderWindow());
+  if (retval == vtkRegressionTester::DO_INTERACTOR)
+    {
+    view->GetRenderWindow()->GetInteractor()->Initialize();
+    view->GetRenderWindow()->GetInteractor()->Start();
+    }
+  return !retval;
 }

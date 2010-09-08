@@ -13,6 +13,9 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkDependencyGraphTest2.cpp
   ctkPimplTest1.cpp
   ctkSingletonTest1.cpp
+  ctkWorkflowTest1.cpp
+  ctkWorkflowTest2.cpp
+  ctkWorkflowTest3.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -21,13 +24,25 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests})
+SET(Tests_SRCS
+  ctkBranchingWorkflowStep.h
+  ctkExampleDerivedWorkflowStep.cpp
+  ctkExampleDerivedWorkflowStep.h
+  ctkExampleWorkflowStepUsingSignalsAndSlots.cpp
+  ctkExampleWorkflowStepUsingSignalsAndSlots.h
+)
+
+SET(Tests_MOC_SRCS
+  ctkExampleWorkflowStepUsingSignalsAndSlots.h
+)
+
+SET(MY_MOC_CXX)
+QT4_WRAP_CPP(MY_MOC_CXX ${Tests_MOC_SRCS})
+
+ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_SRCS} ${MY_MOC_CXX})
 TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-IF(WIN32)
-  SET(KIT_TESTS ${CPP_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CppTests)
-ENDIF(WIN32)
 
 MACRO( SIMPLE_TEST  TESTNAME )
   ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
@@ -45,3 +60,6 @@ SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
 SIMPLE_TEST( ctkUtilsTest1 )
+SIMPLE_TEST( ctkWorkflowTest1 )
+SIMPLE_TEST( ctkWorkflowTest2 )
+SIMPLE_TEST( ctkWorkflowTest3 )

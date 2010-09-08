@@ -48,7 +48,7 @@
         if (count == 0)
         {
           QStringList classes =
-              registration->properties.value(PluginConstants::OBJECTCLASS).toStringList();
+              registration->properties.value(ctkPluginConstants::OBJECTCLASS).toStringList();
           registration->dependents[plugin] = 1;
           if (ctkServiceFactory* serviceFactory = qobject_cast<ctkServiceFactory*>(registration->getService()))
           {

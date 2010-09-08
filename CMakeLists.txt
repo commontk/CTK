@@ -87,14 +87,6 @@ FOREACH(type LIBRARY RUNTIME ARCHIVE)
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# Install directories, used for install rules.
-#
-SET(CTK_INSTALL_BIN_DIR "bin")
-SET(CTK_INSTALL_LIB_DIR "lib")
-SET(CTK_INSTALL_INCLUDE_DIR "include")
-SET(CTK_INSTALL_DOC_DIR "doc")
-
-#-----------------------------------------------------------------------------
 # CTK version number.  An even minor number corresponds to releases.
 #
 SET(CTK_MAJOR_VERSION 0)
@@ -112,6 +104,14 @@ IF(NOT CTK_NO_LIBRARY_VERSION)
     SOVERSION "${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}"
     )
 ENDIF()
+
+#-----------------------------------------------------------------------------
+# Install directories, used for install rules.
+#
+SET(CTK_INSTALL_BIN_DIR "bin")
+SET(CTK_INSTALL_LIB_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
+SET(CTK_INSTALL_INCLUDE_DIR "include/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
+SET(CTK_INSTALL_DOC_DIR "doc")
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
@@ -288,6 +288,8 @@ SET(CTK_LIBS
 SET(CTK_PLUGINS
   org.commontk.eventbus:ON
   org.commontk.cli:OFF
+  org.commontk.plugingenerator.core:OFF
+  org.commontk.plugingenerator.ui:OFF
   )
 
 #-----------------------------------------------------------------------------
@@ -301,6 +303,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMQuery:OFF
   ctkDICOMRetrieve:OFF
   ctkPluginBrowser:OFF
+  ctkPluginGenerator:OFF
   ctkSimplePythonShell:OFF
   )
   

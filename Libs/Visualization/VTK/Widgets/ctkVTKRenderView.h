@@ -44,11 +44,26 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
   Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
   Q_PROPERTY(bool orientationWidgetVisible READ orientationWidgetVisible
              WRITE setOrientationWidgetVisible)
+  Q_PROPERTY(double zoomFactor READ zoomFactor WRITE setZoomFactor)
+  Q_PROPERTY(int pitchRollYawIncrement READ pitchRollYawIncrement WRITE setPitchRollYawIncrement)
+  Q_ENUMS(RotateDirection)
+  Q_PROPERTY(RotateDirection pitchDirection READ pitchDirection WRITE setPitchDirection)
+  Q_PROPERTY(RotateDirection rollDirection READ rollDirection WRITE setRollDirection)
+  Q_PROPERTY(RotateDirection yawDirection READ yawDirection WRITE setYawDirection)
+  Q_PROPERTY(RotateDirection spinDirection READ spinDirection WRITE setSpinDirection)
+  Q_PROPERTY(bool spinEnabled READ spinEnabled WRITE setSpinEnabled)
+  Q_PROPERTY(int spinIncrement READ spinIncrement WRITE setSpinIncrement)
+  Q_PROPERTY(int animationIntervalMs READ animationIntervalMs WRITE setAnimationIntervalMs)
+  Q_PROPERTY(bool rockEnabled READ rockEnabled WRITE setRockEnabled)
+  Q_PROPERTY(int rockLength READ rockLength WRITE setRockLength)
+
 public:
-  /// Constructors
-  typedef QWidget   Superclass;
+
+  enum RotateDirection { PitchUp, PitchDown, RollLeft, RollRight, YawLeft, YawRight };
+
+  typedef QWidget Superclass;
   explicit ctkVTKRenderView(QWidget* parent = 0);
-  virtual ~ctkVTKRenderView();
+  virtual ~ctkVTKRenderView(){}
 
 public slots:
 
@@ -69,6 +84,63 @@ public slots:
 
   /// Show/Hide Orientation widget
   void setOrientationWidgetVisible(bool visible);
+
+  /// Set absolute amount degrees the view should be either pitched, rolled or yawed with.
+  /// \sa pitch setPitchDirection roll setRollDirection yaw setYawDirection
+  /// \note The default is 5 degrees
+  void setPitchRollYawIncrement(int newPitchRollYawIncrement);
+
+  /// Pitch view of X degrees. X been set using setPitchRollYawIncrement
+  /// \sa setPitchRollYawIncrement setPitchDirection
+  void pitch();
+
+  /// Rool view of X degrees. X been set using setPitchRollYawIncrement
+  /// \sa setPitchRollYawIncrement setRollDirection
+  void roll();
+
+  /// Yaw view of X degrees. X been set using setPitchRollYawIncrement
+  /// \sa setPitchRollYawIncrement setYawDirection
+  void yaw();
+
+  /// Enable or Disbled the animated spin of the view
+  void setSpinEnabled(bool enabled);
+
+  /// Set number of degrees in spin increment
+  /// \sa setSpinDirection setSpinIntervalMs
+  void setSpinIncrement(int newSpinIncrement);
+
+  /// Amount of wait time between spin or rock increments
+  /// \sa setSpinIncrement setRockIncrement
+  void setAnimationIntervalMs(int ms);
+
+  /// Enable or Disbled the animated rock of the view
+  void setRockEnabled(bool enabled);
+
+  /// Set length of the rock animation
+  void setRockLength(int newRockLength);
+
+  /// Set increment of animated rock
+  void setRockIncrement(int newRockIncrement);
+
+  /// \brief Set zoom factor
+  /// zoomFactor is a value between 0.0 and 1.0
+  /// \note The default value is 0.05
+  void setZoomFactor(double newZoomFactor);
+
+  /// Zoom in using the \a zoomfactor
+  /// \sa setZoomFactor
+  void zoomIn();
+
+  /// Zoom out using the \a zoomfactor
+  /// \sa setZoomFactor
+  void zoomOut();
+
+  /// Set the focal point
+  void setFocalPoint(int x, int y, int z);
+
+  /// \brief Reset focal point
+  /// The visible scene bbox is computed, then the camera is recentered around its centroid.
+  void resetFocalPoint();
 
 public:
   /// Get underlying RenderWindow
@@ -101,6 +173,44 @@ public:
 
   /// Return if rendering is enabled
   bool renderEnabled() const;
+
+  /// Return pitch, roll or yaw increment (in degree)
+  int pitchRollYawIncrement()const;
+
+  /// Return if animated spin is enabled
+  bool spinEnabled() const;
+
+  /// Return spin increment (in degrees)
+  /// \sa setSpinIncrement
+  int spinIncrement()const;
+
+  /// Amount of waiting time between spin or rock increment
+  /// \sa setAnimationIntervalMs
+  int animationIntervalMs()const;
+
+  /// Return if animated rock is enabled
+  bool rockEnabled() const;
+
+  /// Return length of the rock animation
+  int rockLength() const;
+
+  /// Return increment of animated rock
+  int rockIncrement() const;
+
+  RotateDirection pitchDirection()const;
+  void setPitchDirection(RotateDirection newPitchDirection);
+
+  RotateDirection rollDirection()const;
+  void setRollDirection(RotateDirection newRollDirection);
+
+  RotateDirection yawDirection()const;
+  void setYawDirection(RotateDirection newYawDirection);
+
+  RotateDirection spinDirection()const;
+  void setSpinDirection(RotateDirection newSpinDirection);
+
+  /// Return zoom factor
+  double zoomFactor()const;
   
 private:
   CTK_DECLARE_PRIVATE(ctkVTKRenderView);

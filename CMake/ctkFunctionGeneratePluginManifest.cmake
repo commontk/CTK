@@ -88,6 +88,8 @@ FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
   FILE(WRITE "${_manifest_filepath}" "${_manifest_content}")
   FILE(WRITE "${_manifest_qrc_filepath}" "${_manifest_qrc_content}")
 
-  QT4_ADD_RESOURCES(${QRC_SRCS} ${_manifest_qrc_filepath})
+  QT4_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
+
+  SET(${QRC_SRCS} ${${QRC_SRCS}} ${_qrc_src} PARENT_SCOPE)
 
 ENDFUNCTION()

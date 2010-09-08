@@ -356,9 +356,9 @@ ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QS
                                                pluginId);;
 
     statement = "UPDATE Plugins SET SymbolicName=?,Version=? WHERE ID=?";
-    QString versionString = archive->getAttribute(PluginConstants::PLUGIN_VERSION);
+    QString versionString = archive->getAttribute(ctkPluginConstants::PLUGIN_VERSION);
     bindValues.clear();
-    bindValues.append(archive->getAttribute(PluginConstants::PLUGIN_SYMBOLICNAME));
+    bindValues.append(archive->getAttribute(ctkPluginConstants::PLUGIN_SYMBOLICNAME));
     bindValues.append(versionString.isEmpty() ? "0.0.0" : versionString);
     bindValues.append(pluginId);
 

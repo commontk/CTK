@@ -12,6 +12,9 @@ SET(KIT_include_directories
 
 # Source files
 SET(KIT_SRCS
+  ctkWorkflowAbstractWidgetStep.cpp
+  ctkWorkflowAbstractWidgetStep.h
+  ctkWorkflowAbstractWidgetStep_p.h
   ctkActionsWidget.cpp
   ctkActionsWidget.h
   ctkAddRemoveComboBox.cpp
@@ -78,10 +81,25 @@ SET(KIT_SRCS
   ctkTransferFunctionView.h
   ctkTreeComboBox.cpp
   ctkTreeComboBox.h
+  ctkWorkflowAbstractPagedWidget.cpp
+  ctkWorkflowAbstractPagedWidget.h
+  ctkWorkflowButtonBoxWidget.cpp
+  ctkWorkflowButtonBoxWidget.h
+  ctkWorkflowGroupBox.cpp
+  ctkWorkflowGroupBox.h
+  ctkWorkflowStackedWidget.cpp
+  ctkWorkflowStackedWidget.h
+  ctkWorkflowTabWidget.cpp
+  ctkWorkflowTabWidget.h
+  ctkWorkflowWidget.cpp
+  ctkWorkflowWidget.h
+  ctkWorkflowWidgetStep.cpp
+  ctkWorkflowWidgetStep.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkWorkflowAbstractWidgetStep_p.h
   ctkActionsWidget.h
   ctkAddRemoveComboBox.h
   ctkButtonGroup.h
@@ -114,6 +132,13 @@ SET(KIT_MOC_SRCS
   ctkTransferFunctionScene.h
   ctkTransferFunctionView.h
   ctkTreeComboBox.h
+  ctkWorkflowAbstractPagedWidget.h
+  ctkWorkflowButtonBoxWidget.h
+  ctkWorkflowGroupBox.h
+  ctkWorkflowStackedWidget.h
+  ctkWorkflowTabWidget.h
+  ctkWorkflowWidget.h
+  ctkWorkflowWidgetStep.h
   )
 
 # UI files
@@ -121,6 +146,7 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
   Resources/UI/ctkRangeWidget.ui
   Resources/UI/ctkSliderWidget.ui
+  Resources/UI/ctkWorkflowGroupBox.ui
   )
 
 # Resources
