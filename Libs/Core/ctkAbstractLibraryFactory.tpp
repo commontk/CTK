@@ -22,7 +22,7 @@
 #define __ctkAbstractLibraryFactory_tpp
 
 // CTK includes
-#include "ctkAbstractFactory.h"
+#include "ctkAbstractLibraryFactory.h"
 
 //----------------------------------------------------------------------------
 // ctkFactoryLibraryItem methods
@@ -176,6 +176,16 @@ bool ctkAbstractLibraryFactory<BaseClassType>::registerQLibrary(
     qDebug() << "Attempt to register QLibrary:" << file.fileName();
     }
   return this->registerLibrary(key, file);
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+QString ctkAbstractLibraryFactory<BaseClassType>::path(const QString& key)
+{
+  ctkFactoryLibraryItem<BaseClassType>* _item =
+      dynamic_cast<ctkFactoryLibraryItem<BaseClassType>*>(this->item(key));
+  Q_ASSERT(_item);
+  return _item->path();
 }
 
 //-----------------------------------------------------------------------------

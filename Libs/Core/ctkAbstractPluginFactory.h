@@ -54,11 +54,11 @@ public:
   /// Constructor
   explicit ctkAbstractPluginFactory();
 
-  ///
   /// Register a plugin in the factory
-  /// The parameter \a key passed by reference will be updated with the
-  /// associated object name obtained using ::fileNameToKey()
   virtual bool registerLibrary(const QString& key, const QFileInfo& file);
+
+  /// Get path associated with the plugin identified by \a key
+  virtual QString path(const QString& key);
 
 protected:
   virtual ctkAbstractFactoryItem<BaseClassType>* createFactoryPluginItem(const QFileInfo& file);

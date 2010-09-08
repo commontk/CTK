@@ -49,8 +49,8 @@ public:
   void setSymbols(const QStringList& symbols);
 
   /// 
-  /// Resolve symbols
-  /// Note that the function will return False if it fails to resolve on
+  /// \brief Resolve symbols
+  /// \note The function will return False if it fails to resolve one
   /// of the required symbols set using ::setSymbols
   bool resolve();
   
@@ -75,19 +75,19 @@ public:
   explicit ctkAbstractLibraryFactory();
   virtual ~ctkAbstractLibraryFactory();
 
-  /// 
   /// Set the list of symbols
   void setSymbols(const QStringList& symbols);
   
-  /// 
-  /// Register a plugin in the factory
+  /// \brief Register a plugin in the factory
   /// The parameter \a key must be unique
   bool registerLibrary(const QString& key, const QFileInfo& file);
 
-  /// 
-  /// Utility function to register a QLibrary
+  /// \brief Utility function to register a QLibrary
   /// The parameter \a key must be unique
   bool registerQLibrary(const QString& key, const QFileInfo& file);
+
+  /// Get path associated with the library identified by \a key
+  virtual QString path(const QString& key);
 
 protected:
   virtual ctkFactoryLibraryItem<BaseClassType>* createFactoryLibraryItem(

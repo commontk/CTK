@@ -58,7 +58,7 @@ class ctkAbstractObjectFactory : public ctkAbstractFactory<BaseClassType>
 {
 public:
   explicit ctkAbstractObjectFactory();
-  /// 
+
   /// Register an object in the factory
   template<typename ClassType>
   bool registerObject(const QString& key);

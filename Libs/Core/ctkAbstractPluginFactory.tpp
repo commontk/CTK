@@ -121,6 +121,16 @@ bool ctkAbstractPluginFactory<BaseClassType>::registerLibrary(const QString& key
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
+QString ctkAbstractPluginFactory<BaseClassType>::path(const QString& key)
+{
+  ctkFactoryPluginItem<BaseClassType>* _item =
+      dynamic_cast<ctkFactoryPluginItem<BaseClassType>*>(this->item(key));
+  Q_ASSERT(_item);
+  return _item->path();
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
 ctkAbstractFactoryItem<BaseClassType>* ctkAbstractPluginFactory<BaseClassType>::createFactoryPluginItem(const QFileInfo& file)
 {
   return new ctkFactoryPluginItem<BaseClassType>(file.filePath());
