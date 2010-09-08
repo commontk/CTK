@@ -20,13 +20,37 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORCMDARG_H
-#define CTKPLUGINGENERATORCMDARG_H
+#ifndef CTKPLUGINGENERATORCOREPLUGIN_H
+#define CTKPLUGINGENERATORCOREPLUGIN_H
 
-class ctkPluginGeneratorCmdArg
+#include <ctkPluginActivator.h>
+
+class ctkPluginGeneratorCodeModel;
+
+class ctkPluginGeneratorCorePlugin : public QObject,
+                                     public ctkPluginActivator
 {
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator)
+
 public:
-    ctkPluginGeneratorCmdArg();
+
+  void start(ctkPluginContext* context);
+  void stop(ctkPluginContext* context);
+
+  ctkPluginContext* getContext() const;
+
+  ctkPluginGeneratorCodeModel* getCodeModel() const;
+
+  static ctkPluginGeneratorCorePlugin* getInstance();
+
+private:
+
+  static ctkPluginGeneratorCorePlugin* instance;
+
+  ctkPluginContext* pluginContext;
+
+  ctkPluginGeneratorCodeModel* codeModel;
 };
 
-#endif // CTKPLUGINGENERATORCMDARG_H
+#endif // CTKPLUGINGENERATORCOREPLUGIN_H

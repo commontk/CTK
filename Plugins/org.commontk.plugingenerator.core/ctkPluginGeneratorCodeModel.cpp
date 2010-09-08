@@ -27,12 +27,19 @@
 
 #include <stdexcept>
 
+
 class ctkPluginGeneratorCodeModelPrivate
 {
 public:
 
   QHash<QString, ctkPluginGeneratorAbstractTemplate*> rootTemplates;
+  QHash<QString, QString> contentMap;
 
+  QString symbolicNameWithPeriods;
+  QString symbolicNameWithUnderscores;
+  QString exportMacro;
+  QString exportMacroInclude;
+  QString license;
 };
 
 class ctkPluginGeneratorFolderTemplate : public ctkPluginGeneratorAbstractTemplate
@@ -76,13 +83,86 @@ ctkPluginGeneratorCodeModel::~ctkPluginGeneratorCodeModel()
 {
 }
 
+void ctkPluginGeneratorCodeModel::addContent(const QString& marker, const QString& content)
+{
+  Q_D(ctkPluginGeneratorCodeModel);
+  d->contentMap[marker] = content;
+}
+
+QString ctkPluginGeneratorCodeModel::getContent(const QString& marker) const
+{
+  Q_D(const ctkPluginGeneratorCodeModel);
+  if (d->contentMap.contains(marker))
+  {
+    return d->contentMap[marker];
+  }
+  return QString();
+}
+
+void ctkPluginGeneratorCodeModel::setExportMacro(const QString& exportMacro)
+{
+  Q_D(ctkPluginGeneratorCodeModel);
+  d->exportMacro = exportMacro;
+}
+
+QString ctkPluginGeneratorCodeModel::getExportMacro() const
+{
+  Q_D(const ctkPluginGeneratorCodeModel);
+  return d->exportMacro;
+}
+
+void ctkPluginGeneratorCodeModel::setExportMacroInclude(const QString& exportMacroInclude)
+{
+  Q_D(ctkPluginGeneratorCodeModel);
+  d->exportMacroInclude = exportMacroInclude;
+}
+
+QString ctkPluginGeneratorCodeModel::getExportMacroInclude() const
+{
+  Q_D(const ctkPluginGeneratorCodeModel);
+  return d->exportMacroInclude;
+}
+
+void ctkPluginGeneratorCodeModel::setSymbolicName(const QString& symbolicName)
+{
+  Q_D(ctkPluginGeneratorCodeModel);
+  d->symbolicNameWithPeriods = QString(symbolicName).replace("_", ".");
+  d->symbolicNameWithUnderscores = QString(symbolicName).replace(".", "_");
+}
+
+QString ctkPluginGeneratorCodeModel::getSymbolicName(bool withPeriods) const
+{
+  Q_D(const ctkPluginGeneratorCodeModel);
+  if (withPeriods)
+  {
+    return d->symbolicNameWithPeriods;
+  }
+ return d->symbolicNameWithUnderscores;
+}
+
+void ctkPluginGeneratorCodeModel::setLicense(const QString& license)
+{
+  Q_D(ctkPluginGeneratorCodeModel);
+  d->license = license;
+}
+
+QString ctkPluginGeneratorCodeModel::getLicense() const
+{
+  Q_D(const ctkPluginGeneratorCodeModel);
+  return d->license;
+}
+
 void ctkPluginGeneratorCodeModel::addTemplate(ctkPluginGeneratorAbstractTemplate *templ,
                                               const QString& path)
 {
   Q_D(ctkPluginGeneratorCodeModel);
+
+  templ->setCodeModel(this);
+
   if (path.isEmpty())
   {
     d->rootTemplates.insert(templ->objectName(), templ);
+    templ->setParent(this);
   }
   else
   {
@@ -137,6 +217,50 @@ void ctkPluginGeneratorCodeModel::addTemplate(ctkPluginGeneratorAbstractTemplate
   }
 }
 
+ctkPluginGeneratorAbstractTemplate* ctkPluginGeneratorCodeModel::getTemplate(const QString& path) const
+{
+  Q_D(const ctkPluginGeneratorCodeModel);
+
+  if (!path.contains("/"))
+  {
+    foreach(ctkPluginGeneratorAbstractTemplate* t, d->rootTemplates)
+    {
+      if (t->objectName() == path) return t;
+      ctkPluginGeneratorAbstractTemplate* child =
+          t->findChild<ctkPluginGeneratorAbstractTemplate*>(path);
+      if (child) return child;
+    }
+    return 0;
+  }
+
+  QStringList paths = path.split("/", QString::SkipEmptyParts);
+  if (paths.empty()) return 0;
+
+  QObject* currChild = d->rootTemplates[paths.front()];
+  paths.pop_front();
+
+  int depth = 0;
+  foreach (QString curr, paths)
+  {
+    foreach (QObject* child, currChild->children())
+    {
+      if (child->objectName() == curr)
+      {
+        currChild = child;
+        ++depth;
+        break;
+      }
+    }
+  }
+
+  if (paths.size() == depth)
+  {
+    return qobject_cast<ctkPluginGeneratorAbstractTemplate*>(currChild);
+  }
+
+  return 0;
+}
+
 void ctkPluginGeneratorCodeModel::create(const QString& location)
 {
   Q_D(ctkPluginGeneratorCodeModel);
@@ -147,4 +271,11 @@ void ctkPluginGeneratorCodeModel::create(const QString& location)
     ctkPluginGeneratorAbstractTemplate* templ = it.next();
     templ->create(location);
   }
+}
+
+void ctkPluginGeneratorCodeModel::reset()
+{
+  Q_D(ctkPluginGeneratorCodeModel);
+  qDeleteAll(d->rootTemplates.values());
+  d->rootTemplates.clear();
 }

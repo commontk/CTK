@@ -32,17 +32,36 @@ class ctkPluginGeneratorCodeModelPrivate;
 
 class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorCodeModel : public QObject
 {
+  Q_OBJECT
 
 public:
-    ctkPluginGeneratorCodeModel();
 
-    virtual ~ctkPluginGeneratorCodeModel();
+  ctkPluginGeneratorCodeModel();
 
-    void addTemplate(ctkPluginGeneratorAbstractTemplate* templ, const QString& path = "");
+  virtual ~ctkPluginGeneratorCodeModel();
 
-    ctkPluginGeneratorAbstractTemplate* getTemplate(const QString& path) const;
+  void addTemplate(ctkPluginGeneratorAbstractTemplate* templ, const QString& path = "");
 
-    void create(const QString& location);
+  ctkPluginGeneratorAbstractTemplate* getTemplate(const QString& path) const;
+
+  void addContent(const QString& marker, const QString& content);
+  QString getContent(const QString& marker) const;
+
+  void setExportMacro(const QString& exportMacro);
+  QString getExportMacro() const;
+
+  void setExportMacroInclude(const QString& exportMacroInclude);
+  QString getExportMacroInclude() const;
+
+  void setSymbolicName(const QString& symbolicName);
+  QString getSymbolicName(bool withPeriods = false) const;
+
+  void setLicense(const QString& license);
+  QString getLicense() const;
+
+  void create(const QString& location);
+
+  void reset();
 
 private:
 

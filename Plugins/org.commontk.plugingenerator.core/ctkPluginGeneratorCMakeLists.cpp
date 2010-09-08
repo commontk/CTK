@@ -22,13 +22,15 @@
 
 #include "ctkPluginGeneratorCMakeLists.h"
 
+#include "ctkPluginGeneratorConstants.h"
+
 #include <QTextStream>
 
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_PROJECT_NAME_MARKER = "plugin_project_name";
-const QString ctkPluginGeneratorCMakeLists::PLUGIN_EXPORT_DIRECTIVE_MARKER = "plugin_export_directive";
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_SRCS_MARKER = "plugin_srcs";
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_MOC_SRCS_MARKER = "plugin_moc_srcs";
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_RESOURCES_MARKER = "plugin_resources";
+const QString ctkPluginGeneratorCMakeLists::PLUGIN_UI_FORMS_MARKER = "plugin_ui_forms";
 
 ctkPluginGeneratorCMakeLists::ctkPluginGeneratorCMakeLists(ctkPluginGeneratorAbstractTemplate *parent) :
     ctkPluginGeneratorAbstractTemplate("CMakeLists.txt", parent)
@@ -42,20 +44,36 @@ QString ctkPluginGeneratorCMakeLists::generateContent()
 
   stream
     << "PROJECT(" << this->getContent(PLUGIN_PROJECT_NAME_MARKER).front() << ")\n\n"
-    << "SET(PLUGIN_export_directive \"" << this->getContent(PLUGIN_EXPORT_DIRECTIVE_MARKER).front() << "\")\n\n"
+    << "SET(PLUGIN_export_directive \"" << this->getContent(ctkPluginGeneratorConstants::PLUGIN_EXPORTMACRO_MARKER).front() << "\")\n\n"
     << "SET(PLUGIN_SRCS\n";
 
-  for (QStringListIterator it(this->getContent(PLUGIN_SRCS_MARKER)); it.hasNext();)
+  QStringList markerContent = this->getContent(PLUGIN_SRCS_MARKER);
+  markerContent.sort();
+  for (QStringListIterator it(markerContent); it.hasNext();)
   {
     stream << "  " << it.next() << "\n";
   }
 
   stream
     << ")\n\n"
-    << "# Files which should be processed my Qts moc\n"
+    << "# Files which should be processed by Qts moc\n"
     << "SET(PLUGIN_MOC_SRCS\n";
 
-  for (QStringListIterator it(this->getContent(PLUGIN_MOC_SRCS_MARKER)); it.hasNext();)
+  markerContent = this->getContent(PLUGIN_MOC_SRCS_MARKER);
+  markerContent.sort();
+  for (QStringListIterator it(markerContent); it.hasNext();)
+  {
+    stream << "  " << it.next() << "\n";
+  }
+
+  stream
+    << ")\n\n"
+    << "# Qt Designer files which should be processed by Qts uic\n"
+    << "SET(PLUGIN_UI_FORMS\n";
+
+  markerContent = this->getContent(PLUGIN_UI_FORMS_MARKER);
+  markerContent.sort();
+  for (QStringListIterator it(markerContent); it.hasNext();)
   {
     stream << "  " << it.next() << "\n";
   }
@@ -65,20 +83,23 @@ QString ctkPluginGeneratorCMakeLists::generateContent()
     << "# QRC Files which should be compiled into the plugin\n"
     << "SET(PLUGIN_resources\n";
 
-  for (QStringListIterator it(this->getContent(PLUGIN_RESOURCES_MARKER)); it.hasNext();)
+  markerContent = this->getContent(PLUGIN_RESOURCES_MARKER);
+  markerContent.sort();
+  for (QStringListIterator it(markerContent); it.hasNext();)
   {
     stream << "  " << it.next() << "\n";
   }
 
   stream
     << ")\n\n"
-    << "#Compute the library dependencies\n"
+    << "#Compute the plugin dependencies\n"
     << "ctkMacroGetTargetLibraries(PLUGIN_target_libraries)\n\n"
     << "ctkMacroBuildPlugin(\n"
     << "  NAME ${PROJECT_NAME}\n"
     << "  EXPORT_DIRECTIVE ${PLUGIN_export_directive}\n"
     << "  SRCS ${PLUGIN_SRCS}\n"
     << "  MOC_SRCS ${PLUGIN_MOC_SRCS}\n"
+    << "  UI_FORMS ${PLUGIN_UI_FORMS}\n"
     << "  RESOURCES ${PLUGIN_resources}\n"
     << "  TARGET_LIBRARIES ${PLUGIN_target_libraries}\n"
     << ")\n";
@@ -88,11 +109,12 @@ QString ctkPluginGeneratorCMakeLists::generateContent()
 
 QStringList ctkPluginGeneratorCMakeLists::getMarkers() const
 {
-  QStringList markers;
+  QStringList markers = ctkPluginGeneratorAbstractTemplate::getMarkers();
+
   markers << PLUGIN_PROJECT_NAME_MARKER
-      << PLUGIN_EXPORT_DIRECTIVE_MARKER
       << PLUGIN_SRCS_MARKER
       << PLUGIN_MOC_SRCS_MARKER
       << PLUGIN_RESOURCES_MARKER;
+
   return markers;
 }

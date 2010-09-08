@@ -7,21 +7,24 @@ PROJECT(ctkPluginGenerator)
 SET(KIT_SRCS
   ctkPluginGenerator.cpp
   ctkPluginGeneratorMain.cpp
+  ctkPluginGeneratorOptionsDialog.cpp
 )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkPluginGenerator.h
+  ctkPluginGenerator_p.h
+  ctkPluginGeneratorOptionsDialog_p.h
 )
 
 # UI files
 SET(KIT_UI_FORMS
   ctkPluginGeneratorMainWindow.ui
+  ctkPluginGeneratorOptionsDialog.ui
 )
 
 # Resources
 SET(KIT_resources
-  
+  ctkPluginGenerator.qrc
 )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake

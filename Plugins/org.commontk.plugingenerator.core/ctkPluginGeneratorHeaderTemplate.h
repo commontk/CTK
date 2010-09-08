@@ -20,29 +20,30 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORCMAKELISTS_H
-#define CTKPLUGINGENERATORCMAKELISTS_H
+#ifndef CTKPLUGINGENERATORHEADERTEMPLATE_H
+#define CTKPLUGINGENERATORHEADERTEMPLATE_H
 
 #include "ctkPluginGeneratorAbstractTemplate.h"
 
-class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorCMakeLists
-  : public ctkPluginGeneratorAbstractTemplate
+class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorHeaderTemplate : public ctkPluginGeneratorAbstractTemplate
 {
-
 public:
 
-  static const QString PLUGIN_PROJECT_NAME_MARKER;
-  static const QString PLUGIN_SRCS_MARKER;
-  static const QString PLUGIN_MOC_SRCS_MARKER;
-  static const QString PLUGIN_RESOURCES_MARKER;
-  static const QString PLUGIN_UI_FORMS_MARKER;
+  static const QString H_CLASSNAME_MARKER;
+  static const QString H_INCLUDES_MARKER;
+  static const QString H_FORWARD_DECL_MARKER;
+  static const QString H_FORWARD_DECL_NAMESPACE_MARKER;
+  static const QString H_SUPERCLASSES_MARKER;
+  static const QString H_DEFAULT_ACCESS_MARKER;
+  static const QString H_PUBLIC_MARKER;
+  static const QString H_PROTECTED_MARKER;
+  static const QString H_PRIVATE_MARKER;
 
-  ctkPluginGeneratorCMakeLists(ctkPluginGeneratorAbstractTemplate *parent = 0);
-
-  QString generateContent();
+  ctkPluginGeneratorHeaderTemplate(const QString& name, ctkPluginGeneratorAbstractTemplate* parent = 0);
 
   QStringList getMarkers() const;
 
+  QString generateContent();
 };
 
-#endif // CTKPLUGINGENERATORCMAKELISTS_H
+#endif // CTKPLUGINGENERATORHEADERTEMPLATE_H

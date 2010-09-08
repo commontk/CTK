@@ -20,37 +20,34 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORMAINEXTENSION_H
-#define CTKPLUGINGENERATORMAINEXTENSION_H
+#include "ctkPluginGeneratorOptionsDialog_p.h"
+#include "ui_ctkPluginGeneratorOptionsDialog.h"
 
-#include "ctkPluginGeneratorAbstractUiExtension.h"
+#include <ctkPluginGeneratorConstants.h>
 
-#include "ui_ctkPluginGeneratorMainExtension.h"
+#include <QSettings>
 
-class ctkPluginGeneratorMainExtension : public ctkPluginGeneratorAbstractUiExtension
+ctkPluginGeneratorOptionsDialog::ctkPluginGeneratorOptionsDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::ctkPluginGeneratorOptionsDialog)
 {
-  Q_OBJECT
+    ui->setupUi(this);
 
-public:
-    ctkPluginGeneratorMainExtension();
+    QSettings settings;
+    ui->licenseEdit->setPlainText(settings.value(
+        ctkPluginGeneratorConstants::PLUGIN_LICENSE_MARKER).toString());
+}
 
-protected slots:
+ctkPluginGeneratorOptionsDialog::~ctkPluginGeneratorOptionsDialog()
+{
+    delete ui;
+}
 
-    void updateParameters();
-    void symbolicNameChanged();
-    void activatorClassChanged();
+void ctkPluginGeneratorOptionsDialog::accept()
+{
+  QSettings settings;
+  settings.setValue(ctkPluginGeneratorConstants::PLUGIN_LICENSE_MARKER,
+                    ui->licenseEdit->toPlainText());
 
-protected:
-
-    bool verifyParameters(const QHash<QString, QVariant>& params);
-    void updateCodeModel(const QHash<QString, QVariant>& params);
-
-    QWidget* createWidget();
-
-    void connectSignals();
-
-    Ui::ctkPluginGeneratorMainExtension* ui;
-
-};
-
-#endif // CTKPLUGINGENERATORMAINEXTENSION_H
+  QDialog::accept();
+}

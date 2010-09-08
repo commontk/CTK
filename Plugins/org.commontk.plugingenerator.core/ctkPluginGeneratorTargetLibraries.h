@@ -20,8 +20,24 @@
 =============================================================================*/
 
 
-#include "ctkPluginGeneratorCmdArg.h"
+#ifndef CTKPLUGINGENERATORTARGETLIBRARIES_H
+#define CTKPLUGINGENERATORTARGETLIBRARIES_H
 
-ctkPluginGeneratorCmdArg::ctkPluginGeneratorCmdArg()
+#include "ctkPluginGeneratorAbstractTemplate.h"
+
+class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorTargetLibraries
+  : public ctkPluginGeneratorAbstractTemplate
 {
-}
+
+public:
+
+  static const QString TARGETLIBRARIES_MARKER;
+
+  ctkPluginGeneratorTargetLibraries(ctkPluginGeneratorAbstractTemplate* parent = 0);
+
+  QString generateContent();
+
+  QStringList getMarkers() const;
+};
+
+#endif // CTKPLUGINGENERATORTARGETLIBRARIES_H

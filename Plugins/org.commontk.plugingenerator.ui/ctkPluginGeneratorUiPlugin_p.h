@@ -19,47 +19,28 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINGENERATOR_H
-#define CTKPLUGINGENERATOR_H
 
-#include <QMainWindow>
+#ifndef CTKPLUGINGENERATORUIPLUGIN_H
+#define CTKPLUGINGENERATORUIPLUGIN_H
 
-#include <ctkPluginGeneratorAbstractUiExtension.h>
+#include <ctkPluginActivator.h>
 
-class ctkPluginFramework;
+class ctkPluginGeneratorAbstractUiExtension;
 
-namespace Ui {
-    class ctkPluginGeneratorMainWindow;
-}
-
-class ctkPluginGenerator : public QMainWindow
+class ctkPluginGeneratorUiPlugin : public QObject,
+                                   public ctkPluginActivator
 {
-    Q_OBJECT
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator)
 
 public:
-    explicit ctkPluginGenerator(ctkPluginFramework* framework, QWidget *parent = 0);
-    ~ctkPluginGenerator();
 
-protected slots:
-
-    void sectionErrorMessage(const QString& errorMsg);
-
-    void previewClicked();
+  void start(ctkPluginContext* context);
+  void stop(ctkPluginContext* context);
 
 private:
 
-    enum GeneratorMode {
-      EDIT,
-      PREVIEW
-    };
-
-    ctkPluginFramework *const framework;
-
-    QList<ctkPluginGeneratorAbstractUiExtension*> uiExtensionList;
-
-    Ui::ctkPluginGeneratorMainWindow *ui;
-
-    GeneratorMode mode;
+  ctkPluginGeneratorAbstractUiExtension* mainExtension;
 };
 
-#endif // CTKPLUGINGENERATOR_H
+#endif // CTKPLUGINGENERATORUIPLUGIN_H

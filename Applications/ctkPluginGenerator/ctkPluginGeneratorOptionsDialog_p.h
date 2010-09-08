@@ -20,37 +20,27 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORMAINEXTENSION_H
-#define CTKPLUGINGENERATORMAINEXTENSION_H
+#ifndef CTKPLUGINGENERATOROPTIONSDIALOG_H
+#define CTKPLUGINGENERATOROPTIONSDIALOG_H
 
-#include "ctkPluginGeneratorAbstractUiExtension.h"
+#include <QDialog>
 
-#include "ui_ctkPluginGeneratorMainExtension.h"
+namespace Ui {
+    class ctkPluginGeneratorOptionsDialog;
+}
 
-class ctkPluginGeneratorMainExtension : public ctkPluginGeneratorAbstractUiExtension
+class ctkPluginGeneratorOptionsDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-    ctkPluginGeneratorMainExtension();
+    explicit ctkPluginGeneratorOptionsDialog(QWidget *parent = 0);
+    ~ctkPluginGeneratorOptionsDialog();
 
-protected slots:
+    void accept();
 
-    void updateParameters();
-    void symbolicNameChanged();
-    void activatorClassChanged();
-
-protected:
-
-    bool verifyParameters(const QHash<QString, QVariant>& params);
-    void updateCodeModel(const QHash<QString, QVariant>& params);
-
-    QWidget* createWidget();
-
-    void connectSignals();
-
-    Ui::ctkPluginGeneratorMainExtension* ui;
-
+private:
+    Ui::ctkPluginGeneratorOptionsDialog *ui;
 };
 
-#endif // CTKPLUGINGENERATORMAINEXTENSION_H
+#endif // CTKPLUGINGENERATOROPTIONSDIALOG_H

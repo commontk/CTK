@@ -20,37 +20,32 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORMAINEXTENSION_H
-#define CTKPLUGINGENERATORMAINEXTENSION_H
+#ifndef CTKPLUGINGENERATORCPPTEMPLATE_H
+#define CTKPLUGINGENERATORCPPTEMPLATE_H
 
-#include "ctkPluginGeneratorAbstractUiExtension.h"
+#include "ctkPluginGeneratorAbstractTemplate.h"
 
-#include "ui_ctkPluginGeneratorMainExtension.h"
-
-class ctkPluginGeneratorMainExtension : public ctkPluginGeneratorAbstractUiExtension
+class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorCppTemplate : public ctkPluginGeneratorAbstractTemplate
 {
-  Q_OBJECT
-
 public:
-    ctkPluginGeneratorMainExtension();
 
-protected slots:
+  static const QString CPP_CLASSNAME_MARKER;
+  static const QString CPP_INCLUDES_MARKER;
+  static const QString CPP_GLOBAL_MARKER;
+  static const QString CPP_METHODS_MARKER;
+  static const QString CPP_CONSTRUCTOR_INITLIST_MARKER;
+  static const QString CPP_CONSTRUCTOR_BODY_MARKER;
+  static const QString CPP_DESTRUCTOR_BODY_MARKER;
 
-    void updateParameters();
-    void symbolicNameChanged();
-    void activatorClassChanged();
+  ctkPluginGeneratorCppTemplate(const QString& name, ctkPluginGeneratorAbstractTemplate* parent = 0);
+
+  QStringList getMarkers() const;
+
+  QString generateContent();
 
 protected:
 
-    bool verifyParameters(const QHash<QString, QVariant>& params);
-    void updateCodeModel(const QHash<QString, QVariant>& params);
-
-    QWidget* createWidget();
-
-    void connectSignals();
-
-    Ui::ctkPluginGeneratorMainExtension* ui;
-
+  QString getClassNameToken() const;
 };
 
-#endif // CTKPLUGINGENERATORMAINEXTENSION_H
+#endif // CTKPLUGINGENERATORCPPTEMPLATE_H

@@ -20,37 +20,22 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORMAINEXTENSION_H
-#define CTKPLUGINGENERATORMAINEXTENSION_H
+#include "ctkPluginGeneratorConstants.h"
 
-#include "ctkPluginGeneratorAbstractUiExtension.h"
+#include <QStringList>
 
-#include "ui_ctkPluginGeneratorMainExtension.h"
+const QString ctkPluginGeneratorConstants::PLUGIN_LICENSE_MARKER = "plugin_license";
+const QString ctkPluginGeneratorConstants::PLUGIN_EXPORTMACRO_MARKER = "plugin_exportmacro";
+const QString ctkPluginGeneratorConstants::PLUGIN_NAMESPACE_MARKER = "plugin_namespace";
 
-class ctkPluginGeneratorMainExtension : public ctkPluginGeneratorAbstractUiExtension
+QStringList ctkPluginGeneratorConstants::getGlobalMarkers()
 {
-  Q_OBJECT
+  return QStringList()
+      << PLUGIN_LICENSE_MARKER
+      << PLUGIN_EXPORTMACRO_MARKER
+      << PLUGIN_NAMESPACE_MARKER;
+}
 
-public:
-    ctkPluginGeneratorMainExtension();
-
-protected slots:
-
-    void updateParameters();
-    void symbolicNameChanged();
-    void activatorClassChanged();
-
-protected:
-
-    bool verifyParameters(const QHash<QString, QVariant>& params);
-    void updateCodeModel(const QHash<QString, QVariant>& params);
-
-    QWidget* createWidget();
-
-    void connectSignals();
-
-    Ui::ctkPluginGeneratorMainExtension* ui;
-
-};
-
-#endif // CTKPLUGINGENERATORMAINEXTENSION_H
+const QString ctkPluginGeneratorConstants::TEMPLATE_CMAKELISTS_TXT = "CMakeLists.txt";
+const QString ctkPluginGeneratorConstants::TEMPLATE_PLUGINACTIVATOR_H = "PluginActivator.h";
+const QString ctkPluginGeneratorConstants::TEMPLATE_PLUGINACTIVATOR_CPP = "PluginActivator.cpp";

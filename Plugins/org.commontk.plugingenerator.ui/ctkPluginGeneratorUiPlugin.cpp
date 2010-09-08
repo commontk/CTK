@@ -20,37 +20,32 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORMAINEXTENSION_H
-#define CTKPLUGINGENERATORMAINEXTENSION_H
+#include "ctkPluginGeneratorUiPlugin_p.h"
 
-#include "ctkPluginGeneratorAbstractUiExtension.h"
+#include "ctkPluginGeneratorMainExtension.h"
 
-#include "ui_ctkPluginGeneratorMainExtension.h"
+#include <ctkPluginConstants.h>
 
-class ctkPluginGeneratorMainExtension : public ctkPluginGeneratorAbstractUiExtension
+#include <QtPlugin>
+#include <QDebug>
+
+void ctkPluginGeneratorUiPlugin::start(ctkPluginContext* context)
 {
-  Q_OBJECT
+  mainExtension = new ctkPluginGeneratorMainExtension();
 
-public:
-    ctkPluginGeneratorMainExtension();
+  ServiceProperties props;
+  props.insert(ctkPluginConstants::SERVICE_RANKING, 0);
+  context->registerService(QStringList("ctkPluginGeneratorAbstractUiExtension"),
+                           mainExtension, props);
 
-protected slots:
+  qDebug() << "Registered Main Extension";
+}
 
-    void updateParameters();
-    void symbolicNameChanged();
-    void activatorClassChanged();
+void ctkPluginGeneratorUiPlugin::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context)
 
-protected:
+  delete mainExtension;
+}
 
-    bool verifyParameters(const QHash<QString, QVariant>& params);
-    void updateCodeModel(const QHash<QString, QVariant>& params);
-
-    QWidget* createWidget();
-
-    void connectSignals();
-
-    Ui::ctkPluginGeneratorMainExtension* ui;
-
-};
-
-#endif // CTKPLUGINGENERATORMAINEXTENSION_H
+Q_EXPORT_PLUGIN2(org_commontk_plugingenerator_ui, ctkPluginGeneratorUiPlugin)

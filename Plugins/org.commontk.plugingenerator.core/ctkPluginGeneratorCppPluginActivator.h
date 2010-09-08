@@ -20,37 +20,26 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINGENERATORMAINEXTENSION_H
-#define CTKPLUGINGENERATORMAINEXTENSION_H
+#ifndef CTKPLUGINGENERATORCPPPLUGINACTIVATOR_H
+#define CTKPLUGINGENERATORCPPPLUGINACTIVATOR_H
 
-#include "ctkPluginGeneratorAbstractUiExtension.h"
+#include "ctkPluginGeneratorCppTemplate.h"
 
-#include "ui_ctkPluginGeneratorMainExtension.h"
-
-class ctkPluginGeneratorMainExtension : public ctkPluginGeneratorAbstractUiExtension
+class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorCppPluginActivator
+  : public ctkPluginGeneratorCppTemplate
 {
-  Q_OBJECT
 
 public:
-    ctkPluginGeneratorMainExtension();
 
-protected slots:
+  static const QString PLUGINACTIVATOR_START_MARKER;
+  static const QString PLUGINACTIVATOR_STOP_MARKER;
 
-    void updateParameters();
-    void symbolicNameChanged();
-    void activatorClassChanged();
+  ctkPluginGeneratorCppPluginActivator(ctkPluginGeneratorAbstractTemplate* parent = 0);
 
-protected:
+  QString generateContent();
 
-    bool verifyParameters(const QHash<QString, QVariant>& params);
-    void updateCodeModel(const QHash<QString, QVariant>& params);
-
-    QWidget* createWidget();
-
-    void connectSignals();
-
-    Ui::ctkPluginGeneratorMainExtension* ui;
+  QStringList getMarkers() const;
 
 };
 
-#endif // CTKPLUGINGENERATORMAINEXTENSION_H
+#endif // CTKPLUGINGENERATORCPPPLUGINACTIVATOR_H

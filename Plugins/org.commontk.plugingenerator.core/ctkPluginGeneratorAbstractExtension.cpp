@@ -22,11 +22,21 @@
 
 #include "ctkPluginGeneratorAbstractExtension.h"
 
+#include "ctkPluginGeneratorCorePlugin_p.h"
+
+#include <QVariant>
+
 class ctkPluginGeneratorAbstractExtensionPrivate
 {
 public:
 
+  ctkPluginGeneratorAbstractExtensionPrivate()
+    : valid(true)
+  {}
+
+  bool valid;
   QString errorMessage;
+  QHash<QString, QVariant> parameters;
 };
 
 ctkPluginGeneratorAbstractExtension::ctkPluginGeneratorAbstractExtension()
@@ -38,10 +48,51 @@ ctkPluginGeneratorAbstractExtension::~ctkPluginGeneratorAbstractExtension()
 {
 }
 
+void ctkPluginGeneratorAbstractExtension::setParameter(const QHash<QString, QVariant>& params)
+{
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  d->parameters = params;
+}
+
+void ctkPluginGeneratorAbstractExtension::setParameter(const QString& name, const QVariant& value)
+{
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  d->parameters[name] = value;
+}
+
+QHash<QString, QVariant> ctkPluginGeneratorAbstractExtension::getParameter() const
+{
+  Q_D(const ctkPluginGeneratorAbstractExtension);
+  return d->parameters;
+}
+
+bool ctkPluginGeneratorAbstractExtension::isValid() const
+{
+  Q_D(const ctkPluginGeneratorAbstractExtension);
+  return d->valid;
+}
+
+void ctkPluginGeneratorAbstractExtension::validate()
+{
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  d->valid = verifyParameters(d->parameters);
+}
+
+void ctkPluginGeneratorAbstractExtension::updateCodeModel()
+{
+  Q_D(ctkPluginGeneratorAbstractExtension);
+  this->updateCodeModel(d->parameters);
+}
+
 QString ctkPluginGeneratorAbstractExtension::getErrorMessage() const
 {
   Q_D(const ctkPluginGeneratorAbstractExtension);
   return d->errorMessage;
+}
+
+ctkPluginGeneratorCodeModel* ctkPluginGeneratorAbstractExtension::getCodeModel() const
+{
+  return ctkPluginGeneratorCorePlugin::getInstance()->getCodeModel();
 }
 
 void ctkPluginGeneratorAbstractExtension::setErrorMessage(const QString& errorMsg)

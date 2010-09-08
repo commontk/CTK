@@ -5,13 +5,21 @@ SET(PLUGIN_export_directive "org_commontk_plugingenerator_core_EXPORT")
 SET(PLUGIN_SRCS
   ctkPluginGeneratorAbstractExtension.cpp
   ctkPluginGeneratorAbstractTemplate.cpp
+  ctkPluginGeneratorConstants.cpp
+  ctkPluginGeneratorCorePlugin.cpp
   ctkPluginGeneratorCMakeLists.cpp
   ctkPluginGeneratorCodeModel.cpp
+  ctkPluginGeneratorCppPluginActivator
+  ctkPluginGeneratorCppTemplate.cpp
+  ctkPluginGeneratorHeaderTemplate.cpp
+  ctkPluginGeneratorTargetLibraries.cpp
 )
 
 SET(PLUGIN_MOC_SRCS
   ctkPluginGeneratorAbstractExtension.h
   ctkPluginGeneratorAbstractTemplate.h
+  ctkPluginGeneratorCodeModel.h
+  ctkPluginGeneratorCorePlugin_p.h
 )
 
 SET(PLUGIN_UI_FORMS

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/generatordefaults">
+        <file alias="license.txt">DefaultLicense.txt</file>
+    </qresource>
+</RCC>

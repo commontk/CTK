@@ -29,6 +29,7 @@
 #include <org_commontk_plugingenerator_core_Export.h>
 
 class ctkPluginGeneratorAbstractExtensionPrivate;
+class ctkPluginGeneratorCodeModel;
 
 class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorAbstractExtension : public QObject
 {
@@ -38,16 +39,19 @@ public:
     ctkPluginGeneratorAbstractExtension();
     virtual ~ctkPluginGeneratorAbstractExtension();
 
-    virtual void getCommandLineArgs() const = 0;
+    //virtual void getCommandLineArgs() const = 0;
 
     void setParameter(const QHash<QString, QVariant>& params);
+    void setParameter(const QString& name, const QVariant& value);
     QHash<QString, QVariant> getParameter() const;
 
     bool isValid() const;
+    void validate();
+    void updateCodeModel();
 
     QString getErrorMessage() const;
 
-    void generate();
+    ctkPluginGeneratorCodeModel* getCodeModel() const;
 
 signals:
 
@@ -57,7 +61,8 @@ protected:
 
     void setErrorMessage(const QString& errMsg);
 
-    virtual void verifyParameter(const QHash<QString, QVariant>& params) = 0;
+    virtual bool verifyParameters(const QHash<QString, QVariant>& params) = 0;
+    virtual void updateCodeModel(const QHash<QString, QVariant>& params) = 0;
 
 private:
 

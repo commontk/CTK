@@ -118,7 +118,7 @@ void ctkPluginBrowser::pluginDoubleClicked(const QModelIndex& index)
   {
     ctkServiceReference* ref = it.next();
     qDebug() << "Service from" << ref->getPlugin()->getSymbolicName() << ":" << ref->getPropertyKeys();
-    qDebug() << "Object Classes:" << ref->getProperty(PluginConstants::OBJECTCLASS).toStringList();
+    qDebug() << "Object Classes:" << ref->getProperty(ctkPluginConstants::OBJECTCLASS).toStringList();
   }
 
   ctkServiceReference* cliRef = plugin->getPluginContext()->getServiceReference("ctkICLIManager");

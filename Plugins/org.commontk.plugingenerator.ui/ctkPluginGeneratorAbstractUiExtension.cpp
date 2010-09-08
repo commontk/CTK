@@ -26,12 +26,12 @@ class ctkPluginGeneratorAbstractUiExtensionPrivate
 public:
 
   ctkPluginGeneratorAbstractUiExtensionPrivate()
-    : sectionWidget(0)
+    : extensionWidget(0)
   {
 
   }
 
-  QWidget* sectionWidget;
+  QWidget* extensionWidget;
 
   QString description;
   QString title;
@@ -53,7 +53,12 @@ ctkPluginGeneratorAbstractUiExtension::~ctkPluginGeneratorAbstractUiExtension()
 QWidget* ctkPluginGeneratorAbstractUiExtension::getWidget()
 {
   Q_D(ctkPluginGeneratorAbstractUiExtension);
-  return d->sectionWidget;
+  if (d->extensionWidget == 0)
+  {
+    d->extensionWidget = this->createWidget();
+  }
+
+  return d->extensionWidget;
 }
 
 QString ctkPluginGeneratorAbstractUiExtension::getDescription() const

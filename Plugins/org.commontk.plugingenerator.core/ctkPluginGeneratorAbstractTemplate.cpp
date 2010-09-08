@@ -22,6 +22,9 @@
 
 #include "ctkPluginGeneratorAbstractTemplate.h"
 
+#include "ctkPluginGeneratorCodeModel.h"
+#include "ctkPluginGeneratorConstants.h"
+
 #include <QHash>
 #include <QFile>
 
@@ -29,6 +32,13 @@ class ctkPluginGeneratorAbstractTemplatePrivate
 {
 public:
 
+  ctkPluginGeneratorAbstractTemplatePrivate()
+    : codeModel(0)
+  {}
+
+  ctkPluginGeneratorCodeModel* codeModel;
+
+  QString filename;
   QHash<QString, QStringList> contentMap;
 };
 
@@ -44,16 +54,59 @@ ctkPluginGeneratorAbstractTemplate::~ctkPluginGeneratorAbstractTemplate()
 
 }
 
+void ctkPluginGeneratorAbstractTemplate::setCodeModel(ctkPluginGeneratorCodeModel *codeModel)
+{
+  Q_D(ctkPluginGeneratorAbstractTemplate);
+  d->codeModel = codeModel;
+}
+
+void ctkPluginGeneratorAbstractTemplate::setFilename(const QString& filename)
+{
+  Q_D(ctkPluginGeneratorAbstractTemplate);
+  d->filename = filename;
+}
+
+QString ctkPluginGeneratorAbstractTemplate::getFilename() const
+{
+  Q_D(const ctkPluginGeneratorAbstractTemplate);
+
+  QString filename = this->objectName();
+  if(!d->filename.isEmpty())
+  {
+    filename = d->filename;
+  }
+
+  return filename;
+}
+
+void ctkPluginGeneratorAbstractTemplate::reset()
+{
+  Q_D(ctkPluginGeneratorAbstractTemplate);
+  d->contentMap.clear();
+}
+
 void ctkPluginGeneratorAbstractTemplate::addContent(const QString &marker, const QString &content, Position pos)
 {
   Q_D(ctkPluginGeneratorAbstractTemplate);
-  if (pos == START)
+  switch (pos)
   {
-    d->contentMap[marker].prepend(content);
-  }
-  else if (pos == END)
-  {
-    d->contentMap[marker].append(content);
+  case PREPEND:
+    {
+      d->contentMap[marker].prepend(content);
+      break;
+    }
+  case APPEND:
+    {
+      d->contentMap[marker].append(content);
+      break;
+    }
+  case REPLACE:
+    {
+      QStringList& v = d->contentMap[marker];
+      v.clear();
+      v.append(content);
+      break;
+    }
   }
 }
 
@@ -65,13 +118,21 @@ QStringList ctkPluginGeneratorAbstractTemplate::getContent(const QString &marker
     return d->contentMap[marker];
   }
 
+  QString globalDefault = d->codeModel->getContent(marker);
+  if (!globalDefault.isEmpty())
+  {
+    return QStringList(globalDefault);
+  }
+
   return QStringList();
 }
 
 void ctkPluginGeneratorAbstractTemplate::create(const QString& location)
 {
-  const QString filename = location + "/" + this->objectName();
-  QFile file(filename);
+  QString filename = getFilename();
+
+  const QString path = location + "/" + filename;
+  QFile file(path);
   file.open(QIODevice::WriteOnly | QIODevice::Text);
   file.write(this->generateContent().toAscii());
   file.close();
@@ -79,6 +140,11 @@ void ctkPluginGeneratorAbstractTemplate::create(const QString& location)
 
 QStringList ctkPluginGeneratorAbstractTemplate::getMarkers() const
 {
-  return QStringList();
+  return ctkPluginGeneratorConstants::getGlobalMarkers();
 }
 
+QString ctkPluginGeneratorAbstractTemplate::getSymbolicName(bool withPeriods) const
+{
+  Q_D(const ctkPluginGeneratorAbstractTemplate);
+  return d->codeModel->getSymbolicName(withPeriods);
+}

@@ -5,11 +5,13 @@ SET(PLUGIN_export_directive "org_commontk_plugingenerator_ui_EXPORT")
 SET(PLUGIN_SRCS
   ctkPluginGeneratorAbstractUiExtension.cpp
   ctkPluginGeneratorMainExtension.cpp
+  ctkPluginGeneratorUiPlugin.cpp
 )
 
 SET(PLUGIN_MOC_SRCS
   ctkPluginGeneratorAbstractUiExtension.h
   ctkPluginGeneratorMainExtension.h
+  ctkPluginGeneratorUiPlugin_p.h
 )
 
 SET(PLUGIN_UI_FORMS

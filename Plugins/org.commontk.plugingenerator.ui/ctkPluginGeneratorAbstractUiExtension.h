@@ -44,12 +44,9 @@ public:
 
   QWidget* getWidget();
 
-  virtual QWidget* createWidget(QWidget* parent) = 0;
-
   QString getDescription() const;
   QString getTitle() const;
 
-  QString getErrorMessage() const;
   QString getMessage() const;
 
   QIcon getIcon() const;
@@ -62,6 +59,8 @@ signals:
   void iconChanged(const QIcon&);
 
 protected:
+
+  virtual QWidget* createWidget() = 0;
 
   void setDescription(const QString& description);
   void setTitle(const QString& title);

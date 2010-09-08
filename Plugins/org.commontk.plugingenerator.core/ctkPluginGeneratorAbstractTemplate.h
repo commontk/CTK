@@ -29,6 +29,7 @@
 
 #include <org_commontk_plugingenerator_core_Export.h>
 
+class ctkPluginGeneratorCodeModel;
 class ctkPluginGeneratorAbstractTemplatePrivate;
 
 class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorAbstractTemplate : public QObject
@@ -38,27 +39,41 @@ class org_commontk_plugingenerator_core_EXPORT ctkPluginGeneratorAbstractTemplat
 public:
 
   enum Position {
-    START,
-    END
+    PREPEND,
+    APPEND,
+    REPLACE
   };
 
   ctkPluginGeneratorAbstractTemplate(const QString& name, ctkPluginGeneratorAbstractTemplate* parent = 0);
 
   virtual ~ctkPluginGeneratorAbstractTemplate();
 
-  void addContent(const QString& marker, const QString& content, Position pos = END);
+  void setFilename(const QString& filename);
+  QString getFilename() const;
+
+  void addContent(const QString& marker, const QString& content, Position pos = APPEND);
 
   QStringList getContent(const QString& marker) const;
 
   virtual void create(const QString& location);
 
+  void reset();
+
   virtual QStringList getMarkers() const;
 
   virtual QString generateContent() = 0;
 
+protected:
+
+  QString getSymbolicName(bool withPeriods = false) const;
+
 private:
 
+  friend class ctkPluginGeneratorCodeModel;
+
   Q_DECLARE_PRIVATE(ctkPluginGeneratorAbstractTemplate)
+
+  void setCodeModel(ctkPluginGeneratorCodeModel* codeModel);
 
   const QScopedPointer<ctkPluginGeneratorAbstractTemplatePrivate> d_ptr;
 };
