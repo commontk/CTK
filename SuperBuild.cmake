@@ -118,6 +118,7 @@ SET(external_projects
   DCMTK
   ZMQ
   QtMobility
+  QtSOAP
   OpenIGTLink
   VTK
   XIP
@@ -143,6 +144,7 @@ ExternalProject_Add(${proj}
     # Optionnal dependencies
     ${CTKData_DEPENDS}
     ${QtMobility_DEPENDS}
+    ${QtSOAP_DEPENDS}
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
     ${PythonQt_DEPENDS}
