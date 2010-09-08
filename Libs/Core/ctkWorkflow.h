@@ -87,7 +87,7 @@ public:
                              const ctkWorkflow::TransitionDirectionality directionality
                                = ctkWorkflow::Bidirectional);
 
-  /// \Determine whether a transition has already been added
+  /// \brief Determine whether a transition has already been added
   /// <ul>
   ///  <li>If a branch id is not given or is empty: a transition exists if a transition has been
   /// previously added with the same origin, destination and directionality</li>

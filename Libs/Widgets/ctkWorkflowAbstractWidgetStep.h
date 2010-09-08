@@ -114,35 +114,29 @@ public:
 
 protected:
 
-  ///
   /// Creates the user interface associated with this step.
   virtual void createUserInterface() = 0;
 
-  ///
   /// Prepares the step to be shown.
   virtual void showUserInterface();
 
   /// \brief Signal (emitted by the private implementation) indicating that the step's
   /// createUserInterface() method should be called.
-  ///
   /// \sa createUserInterface()
   void invokeCreateUserInterfaceCommand()const;
 
   /// \brief Signal (emitted by the private implementation) indicating that the step's
   /// createUserInterface() method has completed.
-  ///
   /// \sa createUserInterface()
   void createUserInterfaceComplete()const;
 
   /// \brief Signal (emitted by the private implementation) indicating that the step's
   /// 'showUserInterface() method should be called.
-  ///
   /// \sa showUserInterface()
   void invokeShowUserInterfaceCommand()const;
 
   /// \brief Signal (emitted by the private implementation) indicating that the step's
   /// showUserInterface() method has completed.
-  ///
   /// \sa showUserInterface()
   void showUserInterfaceComplete()const;
 

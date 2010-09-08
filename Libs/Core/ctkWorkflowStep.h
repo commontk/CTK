@@ -59,11 +59,9 @@ public:
   QString description()const;
   void setDescription(const QString& newDescription);
 
-  ///
   /// Get \a statusText
   QString statusText()const;
 
-  ///
   /// Set/get whether a validationCommand has been provided in a separate QObject
   /// \note see method 2 described for validation()
   /// \sa validation()
@@ -137,7 +135,7 @@ protected:
   /// ctkWorkflowTransitionType::ValidationFailedTransition.
   ctkWorkflowIntrastepTransition* validationFailedTransition()const;
 
-  ///\brief  Reimplement this function for step-specific processing when entering a step.
+  /// \brief  Reimplement this function for step-specific processing when entering a step.
   ///
   /// To define a custom step, developers can either reimplement the onEntry() method in a subclass
   /// of ctkWorkflowStep, or create a ctkWorkflowStep instance and use signals and slots, as
