@@ -115,10 +115,10 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
   rootLogger.setLogLevel(log4cplus::DEBUG_LOG_LEVEL);
 
   DcmSCU scu;
-  scu.setAETitle ( CallingAETitle.toStdString() );
+  scu.setAETitle ( OFString(CallingAETitle.toStdString().c_str()) );
   scu.setPort ( CallingPort );
-  scu.setPeerAETitle ( CalledAETitle.toStdString() );
-  scu.setPeerHostName ( Host.toStdString() );
+  scu.setPeerAETitle ( OFString(CalledAETitle.toStdString().c_str()) );
+  scu.setPeerHostName ( OFString(Host.toStdString().c_str()) );
   scu.setPeerPort ( CalledPort );
 
   logger.error ( "Setting Transfer Syntaxes" );

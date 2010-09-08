@@ -32,9 +32,8 @@
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-ctkAbstractFactoryItem<BaseClassType>::ctkAbstractFactoryItem(const QString& _key)
+ctkAbstractFactoryItem<BaseClassType>::ctkAbstractFactoryItem()
   :Instance()
-  ,Key(_key)
 {
   this->Verbose = false;
 }
@@ -60,17 +59,9 @@ BaseClassType* ctkAbstractFactoryItem<BaseClassType>::instantiate()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFactoryItem<BaseClassType>::instantiated() 
+bool ctkAbstractFactoryItem<BaseClassType>::instantiated()const 
 {
   return (this->Instance != 0); 
-}
-
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-QString ctkAbstractFactoryItem<BaseClassType>::key() 
-{ 
-  return this->Key; 
 }
 
 //----------------------------------------------------------------------------
@@ -96,7 +87,7 @@ void ctkAbstractFactoryItem<BaseClassType>::setVerbose(bool value)
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFactoryItem<BaseClassType>::verbose()
+bool ctkAbstractFactoryItem<BaseClassType>::verbose()const
 {
   return this->Verbose;
 }
@@ -147,7 +138,7 @@ void ctkAbstractFactory<BaseClassType>::uninstantiate(const QString& itemKey)
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-QStringList ctkAbstractFactory<BaseClassType>::names() const
+QStringList ctkAbstractFactory<BaseClassType>::keys() const
 {
   // Since by construction, we checked if a name was already in the QHash,
   // there is no need to call 'uniqueKeys'
@@ -156,12 +147,17 @@ QStringList ctkAbstractFactory<BaseClassType>::names() const
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFactory<BaseClassType>::registerItem(
+bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
   const QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > & _item)
 {
   // Sanity checks
-  if (!_item || _item->key().isEmpty() || this->item(_item->key()))
+  if (!_item || key.isEmpty() || this->item(key))
     {
+    if (this->verbose())
+      {
+      qDebug() << __FUNCTION__ << "key is empty or already exists:"
+               << key << "; item: " << _item;
+      }
     return false;
     }
   
@@ -175,13 +171,13 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(
       }
     if (this->verbose())
       {
-      qCritical() << "Failed to load object:" << _item->key() << errorStr ;
+      qCritical() << "Failed to load object:" << key << errorStr ;
       }
     return false;
     }
   
   // Store its reference using a QSharedPointer
-  this->RegisteredItemMap[_item->key()] = _item;
+  this->RegisteredItemMap[key] = _item;
   return true;
 }
 
@@ -206,7 +202,7 @@ void ctkAbstractFactory<BaseClassType>::setVerbose(bool value)
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFactory<BaseClassType>::verbose()
+bool ctkAbstractFactory<BaseClassType>::verbose()const
 {
   return this->Verbose;
 }

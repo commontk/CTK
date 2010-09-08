@@ -40,7 +40,7 @@
      </property>
      <property name="icon">
       <iconset resource="../CTKWidgets.qrc">
-       <normaloff>:/Icons/plus-16.png</normaloff>:/Icons/plus-16.png</iconset>
+       <normaloff>:/Icons/plus.png</normaloff>:/Icons/plus.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -63,7 +63,7 @@
      </property>
      <property name="icon">
       <iconset resource="../CTKWidgets.qrc">
-       <normaloff>:/Icons/minus-16.png</normaloff>:/Icons/minus-16.png</iconset>
+       <normaloff>:/Icons/minus.png</normaloff>:/Icons/minus.png</iconset>
      </property>
      <property name="iconSize">
       <size>

@@ -53,6 +53,10 @@ public:
   bool     LookOffWhenChecked;
 
   int      MaximumHeight;  // use carefully
+
+  // Tuning of the button look&feel
+  Qt::Alignment TextAlignment;
+  Qt::Alignment IndicatorAlignment;
 };
 
 //-----------------------------------------------------------------------------
@@ -76,10 +80,16 @@ void ctkCollapsibleButtonPrivate::init()
   
   this->MaximumHeight = p->maximumHeight();
 
+  this->TextAlignment = Qt::AlignLeft | Qt::AlignVCenter;
+  this->IndicatorAlignment = Qt::AlignLeft | Qt::AlignVCenter;
+
   p->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
                                QSizePolicy::Preferred, 
                                QSizePolicy::DefaultType));
   p->setContentsMargins(0, p->buttonSizeHint().height(),0 , 0);
+  // by default QAbstractButton changed the background role to Button
+  // we want a regular background 
+  p->setBackgroundRole(QPalette::Window);
 
   QObject::connect(p, SIGNAL(toggled(bool)),
                    p, SLOT(onToggled(bool)));
@@ -278,6 +288,36 @@ void ctkCollapsibleButton::setContentsMidLineWidth(int w)
 }
 
 //-----------------------------------------------------------------------------
+void ctkCollapsibleButton::setButtonTextAlignment(Qt::Alignment textAlignment)
+{
+  CTK_D(ctkCollapsibleButton);
+  d->TextAlignment = textAlignment;
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+Qt::Alignment ctkCollapsibleButton::buttonTextAlignment()const
+{
+  CTK_D(const ctkCollapsibleButton);
+  return d->TextAlignment;
+}
+
+//-----------------------------------------------------------------------------
+void ctkCollapsibleButton::setIndicatorAlignment(Qt::Alignment indicatorAlignment)
+{
+  CTK_D(ctkCollapsibleButton);
+  d->IndicatorAlignment = indicatorAlignment;
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+Qt::Alignment ctkCollapsibleButton::indicatorAlignment()const
+{
+  CTK_D(const ctkCollapsibleButton);
+  return d->IndicatorAlignment;
+}
+
+//-----------------------------------------------------------------------------
 QSize ctkCollapsibleButton::buttonSizeHint()const
 {
   int w = 0, h = 0;
@@ -400,16 +440,58 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
                               style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this));
   opt.iconSize = indicatorSize;
   style()->drawControl(QStyle::CE_PushButtonBevel, &opt, &p, this);
-  // is PE_PanelButtonCommand better ?
+  // TBD is PE_PanelButtonCommand better ?
   //style()->drawPrimitive(QStyle::PE_PanelButtonCommand, &opt, &p, this);
   int buttonHeight = opt.rect.height();
-
+  uint tf = d->TextAlignment;
+  if (this->style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, this))
+    {
+    tf |= Qt::TextShowMnemonic;
+    }
+  else
+    {
+    tf |= Qt::TextHideMnemonic;
+    }
+  int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, opt.text).width();
+  int indicatorSpacing = this->style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, this);
+  int buttonMargin = this->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, this);
   // Draw Indicator
   QStyleOption indicatorOpt;
   indicatorOpt.init(this);
-  indicatorOpt.rect = QRect((buttonHeight - indicatorSize.width()) / 2, 
-                            (buttonHeight - indicatorSize.height()) / 2,
-                            indicatorSize.width(), indicatorSize.height());
+  if (d->IndicatorAlignment & Qt::AlignLeft)
+    {
+    indicatorOpt.rect = QRect((buttonHeight - indicatorSize.width()) / 2,
+                              (buttonHeight - indicatorSize.height()) / 2,
+                              indicatorSize.width(), indicatorSize.height());
+    }
+  else if (d->IndicatorAlignment & Qt::AlignHCenter)
+    {
+    int w = indicatorSize.width();
+    if (!opt.text.isEmpty() && (d->TextAlignment & Qt::AlignHCenter))
+      {
+      w += textWidth + indicatorSpacing;
+      }
+    indicatorOpt.rect = QRect(opt.rect.x()+ opt.rect.width() /2 - w / 2,
+                              (buttonHeight - indicatorSize.height()) / 2,
+                              indicatorSize.width(), indicatorSize.height());
+    if (d->TextAlignment & Qt::AlignLeft &&
+        indicatorOpt.rect.left() < opt.rect.x() + buttonMargin + textWidth)
+      {
+      indicatorOpt.rect.moveLeft(opt.rect.x() + buttonMargin + textWidth);
+      }
+    else if (d->TextAlignment & Qt::AlignRight &&
+             indicatorOpt.rect.right() > opt.rect.right() - buttonMargin - textWidth)
+      {
+      indicatorOpt.rect.moveRight(opt.rect.right() - buttonMargin - textWidth);
+      }
+    }
+  else if (d->IndicatorAlignment & Qt::AlignRight)
+    {
+    indicatorOpt.rect = QRect(opt.rect.width() - (buttonHeight - indicatorSize.width()) / 2
+                                - indicatorSize.width(),
+                              (buttonHeight - indicatorSize.height()) / 2,
+                              indicatorSize.width(), indicatorSize.height());
+    }
   if (d->Collapsed)
     {
     style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &indicatorOpt, &p, this);
@@ -420,49 +502,78 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
     }
 
   // Draw Text
-  int indicatorSpacing = style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, this);
-  opt.rect.setLeft( indicatorOpt.rect.right() + indicatorSpacing);
-  uint tf = Qt::AlignVCenter | Qt::AlignLeft;
-  if (this->style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, this))
+  if (d->TextAlignment & Qt::AlignLeft)
     {
-    tf |= Qt::TextShowMnemonic;
+    if (d->IndicatorAlignment & Qt::AlignLeft)
+      {
+      opt.rect.setLeft(indicatorOpt.rect.right() + indicatorSpacing);
+      }
+    else
+      {
+      opt.rect.setLeft(opt.rect.x() + buttonMargin);
+      }
     }
-  else
+  else if (d->TextAlignment & Qt::AlignHCenter)
     {
-    tf |= Qt::TextHideMnemonic;
+    if (d->IndicatorAlignment & Qt::AlignHCenter)
+      {
+      opt.rect.setLeft(indicatorOpt.rect.right() + indicatorSpacing);
+      }
+    else
+      {
+      opt.rect.setLeft(opt.rect.x() + opt.rect.width() / 2 - textWidth / 2);
+      if (d->IndicatorAlignment & Qt::AlignLeft)
+        {
+        opt.rect.setLeft( qMin(indicatorOpt.rect.left() + indicatorSpacing, opt.rect.left()) );
+        }
+      }
     }
+  else if (d->TextAlignment & Qt::AlignRight)
+    {
+    if (d->IndicatorAlignment & Qt::AlignRight)
+      {
+      opt.rect.setLeft(indicatorOpt.rect.left() - indicatorSpacing - textWidth);
+      }
+    else
+      {
+      opt.rect.setLeft(opt.rect.right() - buttonMargin - textWidth);
+      }
+    }
+  // all the computations have been made infering the text would be left oriented
+  tf &= ~Qt::AlignHCenter & ~Qt::AlignRight;
+  tf |= Qt::AlignLeft;
   style()->drawItemText(&p, opt.rect, tf, opt.palette, (opt.state & QStyle::State_Enabled),
                         opt.text, QPalette::ButtonText);
 
   // Draw Frame around contents
-  QStyleOptionFrameV3 f;
-  f.init(this);
+  QStyleOptionFrameV3 fopt;
+  fopt.init(this);
   // HACK: on some styles, the frame doesn't exactly touch the button.
-  // this is because the button has some kind of extra border. 
+  // this is because the button has some kind of extra border.
   if (qobject_cast<QCleanlooksStyle*>(this->style()) != 0)
     {
-    f.rect.setTop(buttonHeight - 1);
+    fopt.rect.setTop(buttonHeight - 1);
     }
   else
     {
-    f.rect.setTop(buttonHeight);
+    fopt.rect.setTop(buttonHeight);
     }
-  f.frameShape = d->ContentsFrameShape;
+  fopt.frameShape = d->ContentsFrameShape;
   switch (d->ContentsFrameShadow)
     {
     case QFrame::Sunken:
-      f.state |= QStyle::State_Sunken;
+      fopt.state |= QStyle::State_Sunken;
       break;
     case QFrame::Raised:
-      f.state |= QStyle::State_Raised;
+      fopt.state |= QStyle::State_Raised;
       break;
     default:
     case QFrame::Plain:
       break;
     }
-  f.lineWidth = d->ContentsLineWidth;
-  f.midLineWidth = d->ContentsMidLineWidth;
-  style()->drawControl(QStyle::CE_ShapedFrame, &f, &p, this);
+  fopt.lineWidth = d->ContentsLineWidth;
+  fopt.midLineWidth = d->ContentsMidLineWidth;
+  style()->drawControl(QStyle::CE_ShapedFrame, &fopt, &p, this);
 }
 
 //-----------------------------------------------------------------------------
@@ -485,4 +596,23 @@ void ctkCollapsibleButton::childEvent(QChildEvent* c)
       }
     }
   QWidget::childEvent(c);
+}
+
+//-----------------------------------------------------------------------------
+bool ctkCollapsibleButton::event(QEvent *event)
+{
+  if (event->type() == QEvent::StyleChange
+      || event->type() == QEvent::FontChange
+#ifdef Q_WS_MAC
+      || event->type() == QEvent::MacSizeChange
+#endif
+      )
+    {
+    this->setContentsMargins(0, this->buttonSizeHint().height(),0 , 0);
+    if (this->collapsed())
+      {
+      this->setMaximumHeight(this->sizeHint().height());
+      }
+    }
+  return QAbstractButton::event(event);
 }

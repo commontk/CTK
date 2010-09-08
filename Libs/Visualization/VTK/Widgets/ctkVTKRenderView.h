@@ -42,6 +42,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
   Q_PROPERTY(QString cornerAnnotationText READ cornerAnnotationText WRITE setCornerAnnotationText)
   Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
   Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
+  Q_PROPERTY(bool orientationWidgetVisible READ orientationWidgetVisible
+             WRITE setOrientationWidgetVisible)
 public:
   /// Constructors
   typedef QWidget   Superclass;
@@ -56,6 +58,18 @@ public slots:
   /// Force a render even if a render is already ocurring
   void forceRender();
 
+  /// Set background color
+  void setBackgroundColor(const QColor& newBackgroundColor);
+
+  /// Enable/Disable rendering
+  void setRenderEnabled(bool value);
+
+  /// Set corner annotation \a text
+  void setCornerAnnotationText(const QString& text);
+
+  /// Show/Hide Orientation widget
+  void setOrientationWidgetVisible(bool visible);
+
 public:
   /// Get underlying RenderWindow
   vtkRenderWindow* renderWindow()const;
@@ -67,13 +81,14 @@ public:
   /// Get current interactor style
   vtkInteractorObserver* interactorStyle();
 
-  /// Set/Get corner annotation \a text
-  void setCornerAnnotationText(const QString& text);
+  /// Get corner annotation \a text
   QString cornerAnnotationText() const;
 
-  /// Set/Get background color
-  void setBackgroundColor(const QColor& newBackgroundColor);
+  /// Get background color
   QColor backgroundColor() const;
+
+  /// Get Orientation widget visibility
+  bool orientationWidgetVisible();
 
   /// Get active camera
   vtkCamera* activeCamera();
@@ -86,9 +101,6 @@ public:
 
   /// Return if rendering is enabled
   bool renderEnabled() const;
-
-  /// Enable/Disable rendering
-  void setRenderEnabled(bool value);
   
 private:
   CTK_DECLARE_PRIVATE(ctkVTKRenderView);

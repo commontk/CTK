@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ctkSliderSpinBoxWidget</class>
- <widget class="QWidget" name="ctkSliderSpinBoxWidget">
+ <class>ctkSliderWidget</class>
+ <widget class="QWidget" name="ctkSliderWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>ctkSliderSpinBoxWidget</string>
+   <string>ctkSliderWidget</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">

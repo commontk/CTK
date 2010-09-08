@@ -31,6 +31,11 @@
 
 class ctkRangeSlider;
 class ctkDoubleRangeSliderPrivate;
+
+/// ctkDoubleRangeSlider is a slider that controls 2 numbers as double.
+/// ctkDoubleRangeSlider internally aggregates a ctkRangeSlider (not in the
+/// API to prevent misuse). Only subclasses can have access to it.
+/// \sa ctkRangeSlider, ctkDoubleSlider, ctkRangeWidget
 class CTK_WIDGETS_EXPORT ctkDoubleRangeSlider : public QWidget
 {
   Q_OBJECT      
@@ -48,8 +53,12 @@ public:
   // Superclass typedef
   typedef QWidget Superclass;
   
-  // Constructors
+  /// Constructor, builds a ctkDoubleRangeSlider whose default values are the same
+  /// as ctkRangeSlider.
   ctkDoubleRangeSlider( Qt::Orientation o, QWidget* par= 0 );
+
+  /// Constructor, builds a ctkDoubleRangeSlider whose default values are the same
+  /// as ctkRangeSlider.
   ctkDoubleRangeSlider( QWidget* par = 0 );
   
   /// 
@@ -184,7 +193,13 @@ signals:
   /// or programmatically when setSliderDown(false) is called. 
   void sliderReleased();
 
-    
+  ///
+  /// This signal is emitted when the slider range has changed, with min being
+  /// the new minimum, and max being the new maximum.
+  /// Warning: don't confound with valuesChanged(double, double);
+  /// \sa QAbstractSlider::rangeChanged()
+  void rangeChanged(double min, double max);
+
 public slots:
   /// 
   /// This property holds the slider's current minimum value.
@@ -212,9 +227,11 @@ protected slots:
   void onMinPosChanged(int value);
   void onMaxPosChanged(int value);
   void onPositionsChanged(int min, int max);
+  void onRangeChanged(int min, int max);
 
 protected:
   ctkRangeSlider* slider()const;
+  /// Subclasses can change the internal slider
   void setSlider(ctkRangeSlider* slider);
 
 private:

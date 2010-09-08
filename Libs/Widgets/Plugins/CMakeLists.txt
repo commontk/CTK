@@ -13,14 +13,16 @@ SET(PLUGIN_SRCS
   ctkWidgetsAbstractPlugin.cpp
   ctkWidgetsAbstractPlugin.h
 
-  ctkComboBoxPlugin.cpp
-  ctkComboBoxPlugin.h
+  ctkActionsWidgetPlugin.cpp
+  ctkActionsWidgetPlugin.h
   ctkCollapsibleButtonPlugin.cpp
   ctkCollapsibleButtonPlugin.h
   ctkCollapsibleGroupBoxPlugin.cpp
   ctkCollapsibleGroupBoxPlugin.h
   ctkColorPickerButtonPlugin.cpp
   ctkColorPickerButtonPlugin.h
+  ctkComboBoxPlugin.cpp
+  ctkComboBoxPlugin.h
   ctkCoordinatesWidgetPlugin.cpp
   ctkCoordinatesWidgetPlugin.h
   ctkDirectoryButtonPlugin.cpp
@@ -47,18 +49,19 @@ SET(PLUGIN_SRCS
   ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.cpp
   ctkTreeComboBoxPlugin.h
-  ctkSliderSpinBoxWidgetPlugin.cpp
-  ctkSliderSpinBoxWidgetPlugin.h
+  ctkSliderWidgetPlugin.cpp
+  ctkSliderWidgetPlugin.h
   )
 
 # Headers that should run through moc
 SET(PLUGIN_MOC_SRCS
   ctkWidgetsPlugins.h
 
-  ctkComboBoxPlugin.h
+  ctkActionsWidgetPlugin.h
   ctkCollapsibleButtonPlugin.h
   ctkCollapsibleGroupBoxPlugin.h
   ctkColorPickerButtonPlugin.h
+  ctkComboBoxPlugin.h
   ctkCoordinatesWidgetPlugin.h
   ctkDirectoryButtonPlugin.h
   ctkDoubleRangeSliderPlugin.h
@@ -72,7 +75,7 @@ SET(PLUGIN_MOC_SRCS
   ctkRangeWidgetPlugin.h
   ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.h
-  ctkSliderSpinBoxWidgetPlugin.h
+  ctkSliderWidgetPlugin.h
   )
 
 # Resources

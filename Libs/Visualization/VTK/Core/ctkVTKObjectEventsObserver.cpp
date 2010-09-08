@@ -280,7 +280,8 @@ ctkVTKObjectEventsObserverPrivate::findConnections(
   const QObject* qt_obj, const char* qt_slot)
 {
   bool all_info = true;
-  if(qt_slot == NULL || qt_obj == NULL || vtk_event == vtkCommand::NoEvent)
+  if(vtk_obj == NULL || qt_slot == NULL ||
+     qt_obj == NULL || vtk_event == vtkCommand::NoEvent)
     {
     all_info = false;
     }

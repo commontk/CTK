@@ -5,7 +5,7 @@
 #
 
 SET(target_libraries
+  Log4Qt_LIBRARIES
   QT_LIBRARIES
   BFD_LIBRARIES
-  Log4Qt_LIBRARIES
   )

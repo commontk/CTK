@@ -3,7 +3,7 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #
 
-MACRO(ctkMacroGeneratePluginManifest QRC_SRCS)
+FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
 
   CtkMacroParseArguments(MY
     "ACTIVATIONPOLICY;CATEGORY;CONTACT_ADDRESS;COPYRIGHT;DESCRIPTION;DOC_URL;ICON;LICENSE;NAME;REQUIRE_PLUGIN;SYMBOLIC_NAME;VENDOR;VERSION"
@@ -60,7 +60,8 @@ MACRO(ctkMacroGeneratePluginManifest QRC_SRCS)
   ENDIF()
 
   IF(DEFINED MY_REQUIRE_PLUGIN)
-    SET(_manifest_content "${_manifest_content}\nRequire-Plugin: ${MY_REQUIRE_PLUGIN}")
+    STRING(REPLACE ";" "," require_plugin "${MY_REQUIRE_PLUGIN}")
+    SET(_manifest_content "${_manifest_content}\nRequire-Plugin: ${require_plugin}")
   ENDIF()
 
   IF(DEFINED MY_VENDOR)
@@ -89,4 +90,4 @@ MACRO(ctkMacroGeneratePluginManifest QRC_SRCS)
 
   QT4_ADD_RESOURCES(${QRC_SRCS} ${_manifest_qrc_filepath})
 
-ENDMACRO()
+ENDFUNCTION()

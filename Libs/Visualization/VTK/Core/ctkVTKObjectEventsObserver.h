@@ -51,18 +51,36 @@ public:
 
   /// 
   /// Add a connection, an Id allowing to uniquely identify the connection is also returned
+  /// Warning the slot must have its signature order:
+  /// vtkObject*, vtkObject* : sender, callData
+  /// or
+  /// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
+  /// Of course the slot can contain less parameters, but always the same order
+  /// though.
   QString addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
 
   ///
   /// Utility function that remove a connection on old_vtk_obj and add a connection
   /// to vtk_obj (same event, object, slot, priority)
+  /// Warning the slot must have its signature order:
+  /// vtkObject*, vtkObject* : sender, callData
+  /// or
+  /// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
+  /// Of course the slot can contain less parameters, but always the same order
+  /// though.
   QString addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
 
   ///
   /// Utility function that remove a connection on old_vtk_obj and add a connection
   /// to vtk_obj (same event, object, slot, priority)
+  /// Warning the slot must have its signature order:
+  /// vtkObject*, vtkObject* : sender, callData
+  /// or
+  /// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
+  /// Of course the slot can contain less parameters, but always the same order
+  /// though.
   QString reconnection(vtkObject* vtk_obj, unsigned long vtk_event,
                        const QObject* qt_obj, const char* qt_slot, 
                        float priority = 0.0);

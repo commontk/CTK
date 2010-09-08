@@ -34,15 +34,15 @@ class ctkRangeWidgetPrivate;
 
 ///
 /// ctkRangeWidget is a wrapper around a ctkDoubleRangeSlider and 2 QSpinBoxes
-/// \image html http:\\www.commontk.org/images/1/14/CtkRangeWidget.png
+/// \image html http://www.commontk.org/images/1/14/CtkRangeWidget.png
 /// \sa ctkSliderSpinBoxWidget, ctkDoubleRangeSlider, QSpinBox
 class CTK_WIDGETS_EXPORT ctkRangeWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
   Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue)
   Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue)
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
@@ -196,6 +196,7 @@ protected slots:
   void changeMaximumValue(double value);
   void setMinimumToMaximumSpinBox(double minimum);
   void setMaximumToMinimumSpinBox(double maximum);
+  void onSliderRangeChanged(double min, double max);
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);

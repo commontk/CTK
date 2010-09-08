@@ -12,6 +12,8 @@ SET(KIT_include_directories
 
 # Source files
 SET(KIT_SRCS
+  ctkActionsWidget.cpp
+  ctkActionsWidget.h
   ctkAddRemoveComboBox.cpp
   ctkAddRemoveComboBox.h
   ctkButtonGroup.cpp
@@ -44,18 +46,22 @@ SET(KIT_SRCS
   ctkFileDialog.h
   ctkFittedTextBrowser.cpp
   ctkFittedTextBrowser.h
+  ctkIconEnginePlugin.cpp
+  ctkIconEnginePlugin.h
   ctkMatrixWidget.cpp
   ctkMatrixWidget.h
   ctkMenuButton.cpp
   ctkMenuButton.h
+  ctkPixmapIconEngine.cpp
+  ctkPixmapIconEngine.h
   ctkRangeSlider.cpp
   ctkRangeSlider.h
   ctkRangeWidget.cpp
   ctkRangeWidget.h
   ctkSettings.cpp
   ctkSettings.h
-  ctkSliderSpinBoxWidget.cpp
-  ctkSliderSpinBoxWidget.h
+  ctkSliderWidget.cpp
+  ctkSliderWidget.h
   ctkTestApplication.cpp
   ctkTestApplication.h
   ctkTransferFunctionBarsItem.cpp
@@ -76,6 +82,7 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkActionsWidget.h
   ctkAddRemoveComboBox.h
   ctkButtonGroup.h
   ctkCheckableHeaderView.h
@@ -92,12 +99,13 @@ SET(KIT_MOC_SRCS
   ctkDynamicSpacer.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
+  ctkIconEnginePlugin.h
   ctkMatrixWidget.h
   ctkMenuButton.h
   ctkRangeSlider.h
   ctkRangeWidget.h
   ctkSettings.h
-  ctkSliderSpinBoxWidget.h
+  ctkSliderWidget.h
   ctkTestApplication.h
   ctkTransferFunctionBarsItem.h
   ctkTransferFunctionControlPointsItem.h
@@ -112,7 +120,7 @@ SET(KIT_MOC_SRCS
 SET(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
   Resources/UI/ctkRangeWidget.ui
-  Resources/UI/ctkSliderSpinBoxWidget.ui
+  Resources/UI/ctkSliderWidget.ui
   )
 
 # Resources

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,55 +15,55 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 // CTK includes
-#include "ctkSliderSpinBoxWidgetPlugin.h"
-#include "ctkSliderSpinBoxWidget.h"
+#include "ctkActionsWidgetPlugin.h"
+#include "ctkActionsWidget.h"
 
 //-----------------------------------------------------------------------------
-ctkSliderSpinBoxWidgetPlugin::ctkSliderSpinBoxWidgetPlugin(QObject *_parent)
+ctkActionsWidgetPlugin::ctkActionsWidgetPlugin(QObject *_parent)
         : QObject(_parent)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkSliderSpinBoxWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *ctkActionsWidgetPlugin::createWidget(QWidget *_parent)
 {
-  ctkSliderSpinBoxWidget* _widget = new ctkSliderSpinBoxWidget(_parent);
+  ctkActionsWidget* _widget = new ctkActionsWidget(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSliderSpinBoxWidgetPlugin::domXml() const
+QString ctkActionsWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkSliderSpinBoxWidget\" \
-          name=\"SliderSpinBoxWidget\">\n"
+  return "<widget class=\"ctkActionsWidget\" \
+          name=\"ActionsWidget\">\n"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkSliderSpinBoxWidgetPlugin::icon() const
+QIcon ctkActionsWidgetPlugin::icon() const
 {
-  return QIcon(":/Icons/sliderspinbox.png");
+  return QIcon(":/Icons/table.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSliderSpinBoxWidgetPlugin::includeFile() const
+QString ctkActionsWidgetPlugin::includeFile() const
 {
-  return "ctkSliderSpinBoxWidget.h";
+  return "ctkActionsWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkSliderSpinBoxWidgetPlugin::isContainer() const
+bool ctkActionsWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSliderSpinBoxWidgetPlugin::name() const
+QString ctkActionsWidgetPlugin::name() const
 {
-  return "ctkSliderSpinBoxWidget";
+  return "ctkActionsWidget";
 }

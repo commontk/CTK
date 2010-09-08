@@ -10,6 +10,12 @@ SET(TEST_SOURCES
   ctkTransferFunctionViewTest3.cpp
   ctkTransferFunctionViewTest4.cpp
   ctkTransferFunctionViewTest5.cpp
+  ctkVTKChartViewTest1.cpp
+  ctkVTKScalarsToColorsViewTest1.cpp
+  ctkVTKScalarsToColorsViewTest2.cpp
+  ctkVTKScalarsToColorsViewTest3.cpp
+  ctkVTKScalarsToColorsViewTest4.cpp
+  ctkVTKScalarsToColorsWidgetTest1.cpp
   )
 
 #
@@ -55,6 +61,12 @@ SIMPLE_TEST( ctkTransferFunctionViewTest2 )
 SIMPLE_TEST( ctkTransferFunctionViewTest3 )
 SIMPLE_TEST( ctkTransferFunctionViewTest4 )
 SIMPLE_TEST( ctkTransferFunctionViewTest5 )
+SIMPLE_TEST( ctkVTKChartViewTest1 )
+SIMPLE_TEST( ctkVTKScalarsToColorsViewTest1 )
+SIMPLE_TEST( ctkVTKScalarsToColorsViewTest2 )
+SIMPLE_TEST( ctkVTKScalarsToColorsViewTest3 )
+SIMPLE_TEST( ctkVTKScalarsToColorsViewTest4 )
+SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1.cpp )
 
 #
 # Add Tests expecting CTKData to be set

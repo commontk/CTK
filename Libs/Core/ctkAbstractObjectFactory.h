@@ -45,8 +45,6 @@ class ctkFactoryObjectItem : public ctkAbstractFactoryItem<BaseClassType>
 protected:
   typedef BaseClassType *(*InstantiateObjectFunc)();
 public:
-  explicit ctkFactoryObjectItem(const QString& key);
-  virtual ~ctkFactoryObjectItem(){}
   virtual bool load();
 protected:
   virtual BaseClassType* instanciator();
@@ -59,11 +57,7 @@ template<typename BaseClassType>
 class ctkAbstractObjectFactory : public ctkAbstractFactory<BaseClassType>
 {
 public:
-  /// 
-  /// Constructor/Desctructor
   explicit ctkAbstractObjectFactory();
-  virtual ~ctkAbstractObjectFactory();
-
   /// 
   /// Register an object in the factory
   template<typename ClassType>

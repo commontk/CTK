@@ -42,6 +42,7 @@ public:
 
   bool          Tracking;
   bool          Changing;
+  bool          SettingRange;
   double        MinimumValueBeforeChange;
   double        MaximumValueBeforeChange;
   bool          AutoSpinBoxWidth;
@@ -59,6 +60,7 @@ ctkRangeWidgetPrivate::ctkRangeWidgetPrivate()
 {
   this->Tracking = true;
   this->Changing = false;
+  this->SettingRange = false;
   this->MinimumValueBeforeChange = 0.;
   this->MaximumValueBeforeChange = 0.;
   this->AutoSpinBoxWidth = true;
@@ -89,6 +91,8 @@ void ctkRangeWidgetPrivate::connectSlider()
                    p, SLOT(startChanging()));
   QObject::connect(this->Slider, SIGNAL(sliderReleased()),
                    p, SLOT(stopChanging()));
+  QObject::connect(this->Slider, SIGNAL(rangeChanged(double, double)),
+                   p, SLOT(onSliderRangeChanged(double, double)));
 }
 
 // --------------------------------------------------------------------------
@@ -215,7 +219,9 @@ void ctkRangeWidget::setMinimum(double min)
   d->MinimumSpinBox->setMinimum(min);
   // SpinBox can truncate min (depending on decimals).
   // use Spinbox's min to set Slider's min
+  d->SettingRange = true;
   d->Slider->setMinimum(d->MinimumSpinBox->minimum());
+  d->SettingRange = false;
   Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(),d->Slider->minimum()));
   d->updateSpinBoxWidth();
 }
@@ -227,7 +233,9 @@ void ctkRangeWidget::setMaximum(double max)
   d->MaximumSpinBox->setMaximum(max);
   // SpinBox can truncate max (depending on decimals).
   // use Spinbox's max to set Slider's max
+  d->SettingRange = true;
   d->Slider->setMaximum(d->MaximumSpinBox->maximum());
+  d->SettingRange = false;
   Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
   d->updateSpinBoxWidth();
 }
@@ -241,11 +249,24 @@ void ctkRangeWidget::setRange(double min, double max)
   d->MaximumSpinBox->setMaximum(qMax(min,max));
   // SpinBox can truncate the range (depending on decimals).
   // use Spinbox's range to set Slider's range
+  d->SettingRange = true;
   d->Slider->setRange(d->MinimumSpinBox->minimum(), d->MaximumSpinBox->maximum());
+  d->SettingRange = false;
   Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(), d->Slider->minimum()));
   Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
   d->updateSpinBoxWidth();
 }
+
+// --------------------------------------------------------------------------
+void ctkRangeWidget::onSliderRangeChanged(double min, double max)
+{
+  CTK_D(ctkRangeWidget);
+  if (!d->SettingRange)
+    {
+    this->setRange(min, max);
+    }
+}
+
 /*
 // --------------------------------------------------------------------------
 double ctkRangeWidget::sliderPosition()const

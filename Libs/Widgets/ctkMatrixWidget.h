@@ -43,8 +43,10 @@ public:
   /// Superclass typedef
   typedef QTableWidget Superclass;
 
-  /// Constructors
+  /// Constructor, builds a 4x4 matrix
   explicit ctkMatrixWidget(QWidget* parent = 0);
+  /// Constructor, builds a custom rowsXcolumns matrix
+  explicit ctkMatrixWidget(int rows, int columns, QWidget* parent = 0);
   virtual ~ctkMatrixWidget(){}
 
   ///

@@ -40,6 +40,22 @@ SET(KIT_UI_FORMS
 SET(KIT_resources
 )
 
+#
+# Configure file describing which Qt modules are wrapped
+#
+FOREACH(qtlib GUI NETWORK OPENGL SQL SVG UITOOLS WEBKIT XML XMLPATTERNS)
+  SET(CTK_PYTHONQT_WRAP_QT${qtlib} ${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
+  #message(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}:${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
+ENDFOREACH()
+
+# TODO Ideally a file named ctkScripingPythonWidgetsConfigure.h should
+# also be configured, this file should deal with Qt Module depending only on QtGui
+
+CONFIGURE_FILE(
+  ctkScriptingPythonCoreConfigure.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/ctkScriptingPythonCoreConfigure.h
+  )
+
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)

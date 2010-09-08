@@ -5,7 +5,10 @@ IF(_output)
   MESSAGE(${_output})
 ENDIF()
 
-GET_FILENAME_COMPONENT(_int_dir ${INTERMEDIATE_DIRECTORY} NAME)
+SET(_int_dir )
+IF(INTERMEDIATE_DIRECTORY)
+  GET_FILENAME_COMPONENT(_int_dir ${INTERMEDIATE_DIRECTORY} NAME)
+ENDIF()
 
 FILE(GLOB _files "@qtmobility_win32_install_prefix@/lib/*")
 FOREACH(_file ${_files})

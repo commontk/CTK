@@ -31,26 +31,37 @@
 class ctkDynamicSpacerPrivate;
 
 /// Description
-/// A Menu widget that show/hide its children depending on its checked/collapsed properties
+/// A spacer widget that has a dynamic size policy controllable via its slot
+/// activate(bool). It can be usefully when you don't want a rigid layout. 
 class CTK_WIDGETS_EXPORT ctkDynamicSpacer : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QSizePolicy activeSizePolicy READ activeSizePolicy WRITE setActiveSizePolicy);
   Q_PROPERTY(QSizePolicy inactiveSizePolicy READ inactiveSizePolicy WRITE setInactiveSizePolicy);
-
+  Q_PROPERTY(bool activate READ isActivated WRITE activate);
 public:
+  /// Constructor, builds a ctkDynamicSpacer, inactive by default
   ctkDynamicSpacer(QWidget *parent = 0);
   virtual ~ctkDynamicSpacer();
 
+  /// The active size policy of the spacer. By default the same as QWidget
   QSizePolicy activeSizePolicy() const;
   void setActiveSizePolicy(QSizePolicy sizePolicy);
   inline void setActiveSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical);
 
+  /// The inactive size policy of the spacer. By default the same as QWidget. 
   QSizePolicy inactiveSizePolicy() const;
   void setInactiveSizePolicy(QSizePolicy sizePolicy);
   inline void setInactiveSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical);
 
+  /// Return the what size policy is current:
+  /// false is inactive Size Policy that is current
+  /// true is active SizePolicy that is current
+  bool isActivated()const;
+
 public slots:
+  /// Change the size policy. If enable is true, activeSizePolicy is used,
+  /// inactiveSizePolicy otherwise
   void activate(bool enable);
 
 private:
@@ -61,5 +72,11 @@ void ctkDynamicSpacer::setActiveSizePolicy(QSizePolicy::Policy horizontal, QSize
 {
   this->setActiveSizePolicy(QSizePolicy(horizontal, vertical));
 }
+
+void ctkDynamicSpacer::setInactiveSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical)
+{
+  this->setInactiveSizePolicy(QSizePolicy(horizontal, vertical));
+}
+
 
 #endif

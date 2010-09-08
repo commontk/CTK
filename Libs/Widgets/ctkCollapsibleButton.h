@@ -32,13 +32,13 @@
 class ctkCollapsibleButtonPrivate;
 class QStyleOptionButton;
 
-/// Description
-/// A Collapsible widget that show/hide its children depending on its checked/collapsed properties
+/// A collapsible button that shows/hides its children depending on its
+/// checked/collapsed property.
 /// Warning: As ctkCollapsibleButton forces the Visiblity of its children to
-/// true when it get expanded, any Visibility property is lost. All the widgets
-/// will be visible. To avoid this behavior, use an intermediate widget that
-/// contains all the children (they would become grandchildren and their
-/// will remain relative to their parent: ctkCollapsibleButton's unique child.
+/// true when it get expanded, any child Visibility property is lost. All the widgets
+/// will then be visible. To avoid this behavior, use an intermediate widget that
+/// contains all the children (they would become grandchildren and their Visibility property
+/// will remain relative to their parent, ctkCollapsibleButton's unique child widget.
 class CTK_WIDGETS_EXPORT ctkCollapsibleButton : public QAbstractButton
 {
   Q_OBJECT
@@ -49,6 +49,9 @@ class CTK_WIDGETS_EXPORT ctkCollapsibleButton : public QAbstractButton
   Q_PROPERTY(QFrame::Shadow contentsFrameShadow READ contentsFrameShadow WRITE setContentsFrameShadow)
   Q_PROPERTY(int contentsLineWidth READ contentsLineWidth WRITE setContentsLineWidth)
   Q_PROPERTY(int contentsMidLineWidth READ contentsMidLineWidth WRITE setContentsMidLineWidth)
+
+  Q_PROPERTY(Qt::Alignment buttonTextAlignment READ buttonTextAlignment WRITE setButtonTextAlignment)
+  Q_PROPERTY(Qt::Alignment indicatorAlignment READ indicatorAlignment WRITE setIndicatorAlignment)
 
 public:
   ctkCollapsibleButton(QWidget *parent = 0);
@@ -89,13 +92,29 @@ public:
   int contentsMidLineWidth() const;
   void setContentsMidLineWidth(int);
 
+  ///
+  /// Set the alignment of the text on the button,
+  /// Qt::Left|Qt::VCenter by default.
+  void setButtonTextAlignment(Qt::Alignment textAlignment);
+  Qt::Alignment buttonTextAlignment()const;
+
+  ///
+  /// Set the alignment of the indicator (arrow) on the button,
+  /// Qt::Left|Qt::VCenter by default.
+  void setIndicatorAlignment(Qt::Alignment indicatorAlignment);
+  Qt::Alignment indicatorAlignment()const;
+
   /// 
-  /// Reimplement for internal reasons
+  /// Reimplemented for internal reasons
   virtual QSize minimumSizeHint()const;
 
   /// 
-  /// Reimplement for internal reasons
+  /// Reimplemented for internal reasons
   virtual QSize sizeHint()const;
+
+  /// Reimplemented to update the size of the button in case of font/style
+  /// change
+  virtual bool event(QEvent* event);
 
 signals:
   /// 

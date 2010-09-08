@@ -30,6 +30,10 @@
 
 class ctkFileDialogPrivate;
 
+/// Customizable QFileDialog.
+/// An extra widget can be added at the bottom of the dialog
+/// under the file format combobox. The Accept button is also controllable
+/// using setAcceptButtonEnable()
 class CTK_WIDGETS_EXPORT ctkFileDialog : public QFileDialog
 {
   Q_OBJECT
@@ -37,18 +41,29 @@ class CTK_WIDGETS_EXPORT ctkFileDialog : public QFileDialog
 public:
   // Superclass typedef
   typedef QFileDialog Superclass;
-  // Constructors
+  /// Constructor
+  /// By default, behaves like a QFileDialog
+  /// \sa QFileDialog()
   explicit ctkFileDialog(QWidget *parent = 0,
               const QString &caption = QString(),
               const QString &directory = QString(),
               const QString &filter = QString());
   virtual ~ctkFileDialog();
-
+  
+  /// Add an extra widget under the file format combobox. If a label is
+  /// given, it will appear in the first column.
+  /// The widget is reparented to ctkFileDialog
   void setBottomWidget(QWidget* widget, const QString& label=QString());
+
+  /// Return the extra widget if any
   QWidget* bottomWidget()const;
 
+  /// Internally used
   bool eventFilter(QObject *obj, QEvent *event);
 public slots:
+  /// Can be used to prevent the accept button to be enabled. It's typically
+  /// a slot that can be connected to assure that the user doesn't accept the
+  /// dialog if a value is not set in the extra bottom widget.
   void setAcceptButtonEnable(bool enable);
 
 private:

@@ -5,7 +5,6 @@ PROJECT(CTKVisualizationVTKWidgets)
 #
 
 FIND_PACKAGE(VTK)
-# TODO In case VTK is passed directly using VTK_DIR, check expected options
 IF(NOT VTK_FOUND)
   MESSAGE(FATAL_ERROR "error: VTK package is required to build ${PROJECT_NAME}")
 ENDIF()
@@ -26,6 +25,8 @@ SET(KIT_SRCS
   ctkVTKAbstractMatrixWidget.cpp
   ctkVTKAbstractMatrixWidget.h
   ctkVTKAbstractMatrixWidget_p.h
+  ctkVTKChartView.cpp
+  ctkVTKChartView.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.cpp
@@ -33,6 +34,10 @@ SET(KIT_SRCS
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.cpp
   ctkVTKScalarBarWidget.h
+  ctkVTKScalarsToColorsView.cpp
+  ctkVTKScalarsToColorsView.h
+  ctkVTKScalarsToColorsWidget.cpp
+  ctkVTKScalarsToColorsWidget.h
   ctkVTKSliceView.cpp
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
@@ -43,10 +48,13 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkVTKAbstractMatrixWidget_p.h
+  ctkVTKChartView.h
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.h
+  ctkVTKScalarsToColorsView.h
+  ctkVTKScalarsToColorsWidget.h
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
   ctkVTKTextPropertyWidget.h
@@ -55,6 +63,7 @@ SET(KIT_MOC_SRCS
 # UI files
 SET(KIT_UI_FORMS
   Resources/UI/ctkVTKScalarBarWidget.ui
+  Resources/UI/ctkVTKScalarsToColorsWidget.ui
   Resources/UI/ctkVTKTextPropertyWidget.ui
 )
 
@@ -66,8 +75,9 @@ SET(KIT_resources
 # Set VTK_LIBRARIES variable
 SET(VTK_LIBRARIES
   QVTK
+  vtkCharts
   )
-  
+
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)

@@ -41,6 +41,7 @@ class ctkDoubleSliderPrivate: public ctkPrivate<ctkDoubleSlider>
   QSlider*    Slider;
   double      Minimum;
   double      Maximum;
+  bool        SettingRange;
   // we should have a Offset and SliderPositionOffset (and MinimumOffset?)
   double      Offset;
   double      SingleStep;
@@ -53,6 +54,7 @@ ctkDoubleSliderPrivate::ctkDoubleSliderPrivate()
   this->Slider = 0;
   this->Minimum = 0.;
   this->Maximum = 100.;
+  this->SettingRange = false;
   this->Offset = 0.;
   this->SingleStep = 1.;
   this->Value = 0.;
@@ -76,6 +78,8 @@ void ctkDoubleSliderPrivate::init()
   p->connect(this->Slider, SIGNAL(sliderMoved(int)), p, SLOT(onSliderMoved(int)));
   p->connect(this->Slider, SIGNAL(sliderPressed()), p, SIGNAL(sliderPressed()));
   p->connect(this->Slider, SIGNAL(sliderReleased()), p, SIGNAL(sliderReleased()));
+  p->connect(this->Slider, SIGNAL(rangeChanged(int, int)),
+             p, SLOT(onRangeChanged(int, int)));
 
   p->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed,
                                QSizePolicy::Slider));
@@ -143,7 +147,10 @@ void ctkDoubleSlider::setMinimum(double min)
     {
     d->updateOffset(d->Minimum);
     }
+  d->SettingRange = true;
   d->Slider->setMinimum(d->toInt(min));
+  d->SettingRange = false;
+  emit this->rangeChanged(d->Minimum, d->Maximum);
 }
 
 // --------------------------------------------------------------------------
@@ -155,7 +162,10 @@ void ctkDoubleSlider::setMaximum(double max)
     {
     d->updateOffset(d->Maximum);
     }
+  d->SettingRange = true;
   d->Slider->setMaximum(d->toInt(max));
+  d->SettingRange = false;
+  emit this->rangeChanged(d->Minimum, d->Maximum);
 }
 
 // --------------------------------------------------------------------------
@@ -173,8 +183,10 @@ void ctkDoubleSlider::setRange(double min, double max)
     {
     d->updateOffset(d->Maximum);
     }
-  
+  d->SettingRange = true;
   d->Slider->setRange(d->toInt(min), d->toInt(max));
+  d->SettingRange = false;
+  emit this->rangeChanged(d->Minimum, d->Maximum);
 }
 
 // --------------------------------------------------------------------------
@@ -332,6 +344,16 @@ void ctkDoubleSlider::onSliderMoved(int newPosition)
 {
   CTK_D(const ctkDoubleSlider);
   emit this->sliderMoved(d->fromInt(newPosition));
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleSlider::onRangeChanged(int min, int max)
+{
+  CTK_D(const ctkDoubleSlider);
+  if (!d->SettingRange)
+    {
+    this->setRange(d->fromInt(min), d->fromInt(max));
+    }
 }
 
 

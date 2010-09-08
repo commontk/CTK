@@ -123,10 +123,11 @@ SET(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
-# Clear CTK_BASE_INCLUDE_DIRS and CTK_BASE_LIBRARIES
+# Clear CTK_BASE_INCLUDE_DIRS, CTK_BASE_LIBRARIES and CTK_WRAPPED_LIBRARIES_PYTHONQT
 #
 SET(CTK_BASE_LIBRARIES CACHE INTERNAL "CTK base libraries" FORCE)
 SET(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
+SET(CTK_WRAPPED_LIBRARIES_PYTHONQT CACHE INTERNAL "CTK libraries wrapped using PythonQt" FORCE)
 
 # Variable use in CTKConfig.cmake.in
 SET(CTK_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
@@ -135,20 +136,22 @@ SET(CTK_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
 # CMake Function(s) and Macro(s)
 #
 INCLUDE(CMake/ctkMacroParseArguments.cmake)
+INCLUDE(CMake/ctkMacroSetPaths.cmake)
 INCLUDE(CMake/ctkMacroListFilter.cmake)
 INCLUDE(CMake/ctkMacroBuildLib.cmake)
 INCLUDE(CMake/ctkMacroBuildPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildApp.cmake)
 INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
+INCLUDE(CMake/ctkMacroCompilePythonScript.cmake)
+INCLUDE(CMake/ctkMacroWrapPythonQt.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
 INCLUDE(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
 INCLUDE(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
-INCLUDE(CMake/ctkFunctionExecuteProcess.cmake)
 INCLUDE(CMake/ctkMacroValidateBuildOptions.cmake)
 INCLUDE(CMake/ctkMacroAddCtkLibraryOptions.cmake)
 INCLUDE(CMake/ctkFunctionGenerateDGraphInput.cmake)
 INCLUDE(CMake/ctkFunctionGenerateProjectXml.cmake)
-INCLUDE(CMake/ctkMacroGeneratePluginManifest.cmake)
+INCLUDE(CMake/ctkFunctionGeneratePluginManifest.cmake)
 INCLUDE(CMake/ctkMacroGeneratePluginResourceFile.cmake)
 INCLUDE(CMake/ctkFunctionCheckCompilerFlags.cmake)
 
@@ -217,7 +220,8 @@ MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
 #-----------------------------------------------------------------------------
 # Set symbol visibility Flags
 #
-IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+# MinGW does not export all symbols automatically, so no need to set flags
+IF(CMAKE_COMPILER_IS_GNUCXX AND NOT MINGW)
   SET(VISIBILITY_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
 ENDIF()
 
@@ -238,10 +242,15 @@ ENDIF()
 SET(CTK_C_FLAGS "${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}")
 SET(CTK_CXX_FLAGS "${VISIBILITY_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}")
 
-IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
   ctkFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
+  IF(MINGW)
+    # suppress warnings about auto imported symbols
+    SET(CTK_CXX_FLAGS "-Wl,--enable-auto-import ${CTK_CXX_FLAGS}")
+  ENDIF()
+  
   SET(CTK_C_FLAGS "${cflags} ${CTK_C_FLAGS}")
   SET(CTK_CXX_FLAGS "${cflags} -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
 ENDIF()
@@ -292,6 +301,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMQuery:OFF
   ctkDICOMRetrieve:OFF
   ctkPluginBrowser:OFF
+  ctkSimplePythonShell:OFF
   )
   
 #-----------------------------------------------------------------------------
@@ -329,6 +339,7 @@ SET(CTK_APPLICATIONS_SUBDIRS )
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
 #  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
 #
+SET(ctk_lib_options_list) # This list will be updated in ctkFunctionExtractOptionNameAndValue
 FOREACH(lib ${CTK_LIBS})
   ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
   OPTION(CTK_LIB_${lib_name} "Enable ${lib_name} Library." ${lib_value})
@@ -343,12 +354,38 @@ FOREACH(plugin ${CTK_PLUGINS})
   LIST(APPEND CTK_PLUGINS_SUBDIRS "${plugin_name}")
 ENDFOREACH()
 
+# Create a file with variables containing the paths to the source, binary, and library directory
+# of each enabled plugin. This is needed to setup include and library dependencies to other plugins
+#SET(CTK_PLUGIN_LIST "${CMAKE_CURRENT_BINARY_DIR}/ctkPluginList.cmake")
+#SET(CTK_PLUGINS_SUBDIRS_ENABLED )
+#FOREACH(plugin ${CTK_PLUGINS_SUBDIRS})
+#  IF (CTK_PLUGIN_${plugin})
+#    LIST(APPEND CTK_PLUGINS_SUBDIRS_ENABLED Plugins/${plugin})
+#  ENDIF()
+#ENDFOREACH()
+#ctkMacroGeneratePluginList(FILE ${CTK_PLUGIN_LIST}
+#                           DIRECTORIES ${CTK_PLUGINS_SUBDIRS_ENABLED})
+
 # Build options associated with CTK applications
 FOREACH(app ${CTK_APPLICATIONS})
   ctkFunctionExtractOptionNameAndValue(${app} app_name app_value)
   OPTION(CTK_APP_${app_name} "Build ${app_name} Application." ${app_value})
   LIST(APPEND CTK_APPLICATIONS_SUBDIRS "${app_name}")
 ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# CTK Python wrapping - Propose the option only if CTK_LIB_Scriping/Python/Core is ON
+IF(CTK_LIB_Scripting/Python/Core)
+  OPTION(CTK_WRAP_PYTHONQT_FULL "Wrap CTK classes using Qt meta-object system into Python language" OFF)
+  OPTION(CTK_WRAP_PYTHONQT_LIGHT "Wrap CTK classes using Qt meta-object system into Python language" OFF)
+  IF(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
+    MESSAGE(SEND_ERROR "CTK_WRAP_PYTHONQT_{LIGHT,FULL} options are mutually exclusive. Please enable only one !")
+  ENDIF()
+ELSE()
+  # Note that an unset boolean variable is considered to be False
+  UNSET(CTK_WRAP_PYTHONQT_FULL CACHE)
+  UNSET(CTK_WRAP_PYTHONQT_LIGHT CACHE)
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Generate target_directories list - List of directory corresponding to the different
@@ -408,18 +445,23 @@ ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${targe
 ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" TRUE)
 
 # Obtain list of target ordered topologically
-ctkFunctionExecuteProcess(
+ctkMacroSetPaths("${QT_INSTALLED_LIBRARY_DIR}")
+EXECUTE_PROCESS(
   COMMAND "${DGraph_EXECUTABLE}" "${CTK_BINARY_DIR}/DGraphInput.txt"
-  PATH_LIST \"${QT_INSTALLED_LIBRARY_DIR}\"
   WORKING_DIRECTORY ${CTK_BINARY_DIR}
   RESULT_VARIABLE RESULT_VAR
-  OUTPUT_VARIABLE CTEST_PROJECT_SUBPROJECTS
+  OUTPUT_VARIABLE CTEST_PROJECT_SUBPROJECTS_OUTPUT
   ERROR_VARIABLE error
   OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+  )      
 IF(RESULT_VAR)
   MESSAGE(FATAL_ERROR "Failed to obtain list of target ordered topologically.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
 ENDIF()
+
+
+# Convert 'CTEST_PROJECT_SUBPROJECTS_OUTPUT' to a list
+STRING(REPLACE " " "\\;" CTEST_PROJECT_SUBPROJECTS ${CTEST_PROJECT_SUBPROJECTS_OUTPUT})
+SET(CTEST_PROJECT_SUBPROJECTS ${CTEST_PROJECT_SUBPROJECTS})
 
 # If the list of subproject is empty, let's at least build CTKCore
 LIST(LENGTH CTEST_PROJECT_SUBPROJECTS subproject_count)
@@ -482,7 +524,7 @@ ENDFOREACH()
 # Add CTK plugin subdirectories
 #
 FOREACH(plugin ${CTK_PLUGINS_SUBDIRS})
-  IF (CTK_PLUGIN_${plugin})
+  IF(CTK_PLUGIN_${plugin})
     ADD_SUBDIRECTORY(Plugins/${plugin})
   ENDIF()
 ENDFOREACH()

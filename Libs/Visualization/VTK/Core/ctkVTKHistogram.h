@@ -19,7 +19,7 @@
 =========================================================================*/
 
 #ifndef __ctkVTKHistogram_h
-#define __ctkVTKLookupTable_h
+#define __ctkVTKHistogram_h
 
 // CTK includes
 #include "ctkHistogram.h"

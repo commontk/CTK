@@ -18,6 +18,9 @@
  
 =========================================================================*/
 
+// Qt includes
+#include <QDebug>
+
 // CTK includes
 #include "ctkDynamicSpacer.h"
 
@@ -26,11 +29,19 @@ class ctkDynamicSpacerPrivate : public ctkPrivate<ctkDynamicSpacer>
 {
   CTK_DECLARE_PUBLIC(ctkDynamicSpacer);
 public:
+  ctkDynamicSpacerPrivate();
   void init();
 
+  bool        Enable;
   QSizePolicy ActiveSizePolicy;
   QSizePolicy InactiveSizePolicy;
 };
+
+// -----------------------------------------------------------------------------
+ctkDynamicSpacerPrivate::ctkDynamicSpacerPrivate()
+{
+  this->Enable = false;
+}
 
 // -----------------------------------------------------------------------------
 void ctkDynamicSpacerPrivate::init()
@@ -65,6 +76,10 @@ void ctkDynamicSpacer::setActiveSizePolicy(QSizePolicy newActiveSizePolicy)
 {
   CTK_D(ctkDynamicSpacer);
   d->ActiveSizePolicy = newActiveSizePolicy;
+  if (d->Enable)
+    {
+    this->setSizePolicy(d->ActiveSizePolicy);
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -79,12 +94,24 @@ void ctkDynamicSpacer::setInactiveSizePolicy(QSizePolicy newInactiveSizePolicy)
 {
   CTK_D(ctkDynamicSpacer);
   d->InactiveSizePolicy = newInactiveSizePolicy;
+  if (!d->Enable)
+    {
+    this->setSizePolicy(d->InactiveSizePolicy);
+    }
+}
+
+// -----------------------------------------------------------------------------
+bool ctkDynamicSpacer::isActivated()const
+{
+  CTK_D(const ctkDynamicSpacer);
+  return d->Enable;
 }
 
 // -----------------------------------------------------------------------------
 void ctkDynamicSpacer::activate(bool enableSizePolicy)
 {
   CTK_D(ctkDynamicSpacer);
+  d->Enable = enableSizePolicy;
   this->setSizePolicy(
-    enableSizePolicy ? d->ActiveSizePolicy : d->InactiveSizePolicy);
+    d->Enable ? d->ActiveSizePolicy : d->InactiveSizePolicy);
 }

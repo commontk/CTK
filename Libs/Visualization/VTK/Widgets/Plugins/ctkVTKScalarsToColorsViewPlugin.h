@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,31 +15,29 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
-#ifndef __ctkSliderSpinBoxWidgetPlugin_h
-#define __ctkSliderSpinBoxWidgetPlugin_h
+#ifndef __ctkVTKScalarsToColorsViewPlugin_h
+#define __ctkVTKScalarsToColorsViewPlugin_h
 
 // CTK includes
-#include "ctkWidgetsAbstractPlugin.h"
+#include "ctkVTKWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkSliderSpinBoxWidgetPlugin :
+class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKScalarsToColorsViewPlugin :
   public QObject,
-  public ctkWidgetsAbstractPlugin
+  public ctkVTKWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkSliderSpinBoxWidgetPlugin(QObject *_parent = 0);
+  ctkVTKScalarsToColorsViewPlugin(QObject *_parent = 0);
 
   QWidget *createWidget(QWidget *_parent);
-  QString  domXml() const;
-  QIcon    icon() const;
-  QString  includeFile() const;
-  bool     isContainer() const;
-  QString  name() const;
-
+  QString domXml() const;
+  QString includeFile() const;
+  bool isContainer() const;
+  QString name() const;
 };
 
 #endif

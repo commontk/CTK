@@ -38,7 +38,7 @@ protected:
   typedef typename QHash<QString, void*>::iterator       Iterator;
 
 public:
-  explicit ctkFactoryLibraryItem(const QString& key, const QString& path);
+  explicit ctkFactoryLibraryItem(const QString& path);
   virtual ~ctkFactoryLibraryItem(){}
   virtual bool load();
   QString path()const;
@@ -66,7 +66,7 @@ private:
 };
 
 //----------------------------------------------------------------------------
-template<typename BaseClassType, typename FactoryItemType>
+template<typename BaseClassType>
 class ctkAbstractLibraryFactory : public ctkAbstractFactory<BaseClassType>
 {
 public:
@@ -78,17 +78,20 @@ public:
   /// 
   /// Set the list of symbols
   void setSymbols(const QStringList& symbols);
-
-  ///
-  /// Return a name allowing to uniquely identify the library
-  /// By default, it return \a fileName
-  virtual QString fileNameToKey(const QString& fileName);
   
   /// 
   /// Register a plugin in the factory
-  /// The parameter \a key passed by reference will be updated with the
-  /// associated object name obtained using ::fileNameToKey()
-  virtual bool registerLibrary(const QFileInfo& file, QString& key);
+  /// The parameter \a key must be unique
+  bool registerLibrary(const QString& key, const QFileInfo& file);
+
+  /// 
+  /// Utility function to register a QLibrary
+  /// The parameter \a key must be unique
+  bool registerQLibrary(const QString& key, const QFileInfo& file);
+
+protected:
+  virtual ctkFactoryLibraryItem<BaseClassType>* createFactoryLibraryItem(
+    const QFileInfo& library)const;
 
 private:
   ctkAbstractLibraryFactory(const ctkAbstractLibraryFactory &);  /// Not implemented

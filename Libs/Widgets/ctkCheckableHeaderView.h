@@ -66,7 +66,8 @@ class ctkCheckableHeaderViewPrivate;
 /// ctkCheckableHeaderView is a QHeaderView that can display a checkbox 
 /// for any header section.
 /// If propageteToItems, the check state of the header section is set to
-/// all items in the header row/column of the QAbstractItemModel
+/// all items in the header row/column of the QAbstractItemModel if the 
+/// items are checkable.
 /// ctkCheckableHeaderView also supports row/column sorting.
 class CTK_WIDGETS_EXPORT ctkCheckableHeaderView : public QHeaderView
 {
@@ -76,7 +77,10 @@ public:
   ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent=0);
   virtual ~ctkCheckableHeaderView();
 
+  /// Reimplemented for internal reasons
   virtual void setModel(QAbstractItemModel *model);
+
+  /// Reimplemented for internal reasons
   virtual void setRootIndex(const QModelIndex &index);
 
   /// 

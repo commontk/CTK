@@ -123,7 +123,8 @@ void ctkVTKRenderView::scheduleRender()
   CTK_D(ctkVTKRenderView);
 
   logger.trace(QString("scheduleRender - RenderEnabled: %1 - RenderPending: %2").
-               arg(d->RenderEnabled).arg(d->RenderPending));
+               arg(d->RenderEnabled ? "true" : "false")
+               .arg(d->RenderPending ? "true:" : "false"));
 
   if (!d->RenderEnabled)
     {
@@ -141,7 +142,8 @@ void ctkVTKRenderView::forceRender()
 {
   CTK_D(ctkVTKRenderView);
 
-  logger.trace(QString("forceRender - RenderEnabled: %1").arg(d->RenderEnabled));
+  logger.trace(QString("forceRender - RenderEnabled: %1")
+               .arg(d->RenderEnabled ? "true" : "false"));
 
   if (!d->RenderEnabled)
     {
@@ -221,6 +223,20 @@ QColor ctkVTKRenderView::backgroundColor() const
   double color[3] = {0, 0, 0};
   d->Renderer->GetBackground(color);
   return QColor::fromRgbF(color[0], color[1], color[2]);
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::setOrientationWidgetVisible(bool visible)
+{
+  CTK_D(ctkVTKRenderView);
+  d->Orientation->SetEnabled(visible);
+}
+
+//----------------------------------------------------------------------------
+bool ctkVTKRenderView::orientationWidgetVisible()
+{
+  CTK_D(ctkVTKRenderView);
+  return d->Orientation->GetEnabled();
 }
 
 //----------------------------------------------------------------------------

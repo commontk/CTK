@@ -5,7 +5,6 @@ PROJECT(CTKVisualizationVTKCore)
 #
 
 FIND_PACKAGE(VTK)
-# TODO In case VTK is passed directly using VTK_DIR, check expected options
 IF(NOT VTK_FOUND)
   MESSAGE(FATAL_ERROR "error: VTK package is required to build ${PROJECT_NAME}")
 ENDIF()
@@ -25,8 +24,6 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   ctkVTKColorTransferFunction.cpp
   ctkVTKColorTransferFunction.h
-  ctkVTKCommandOptions.cpp
-  ctkVTKCommandOptions.h
   ctkVTKCompositeFunction.cpp
   ctkVTKCompositeFunction.h
   ctkVTKConnection.cpp
@@ -40,6 +37,8 @@ SET(KIT_SRCS
   ctkVTKObjectEventsObserver.h
   ctkVTKPiecewiseFunction.cpp
   ctkVTKPiecewiseFunction.h
+  vtkLightBoxRendererManager.cpp
+  vtkLightBoxRendererManager.h
   )
 
 # Headers that should run through moc
@@ -65,6 +64,8 @@ SET(KIT_resources
 SET(VTK_LIBRARIES
   vtkCommon
   vtkFiltering
+  vtkRendering
+  vtkHybrid
   )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake

@@ -36,6 +36,7 @@ public:
   QString DefaultText;
   QIcon   DefaultIcon;
   bool    ForceDefault;
+  Qt::TextElideMode ElideMode;
 
   mutable QSize MinimumSizeHint;
   mutable QSize SizeHint;
@@ -44,109 +45,9 @@ public:
 // -------------------------------------------------------------------------
 ctkComboBoxPrivate::ctkComboBoxPrivate()
 {
-  this->DefaultText = "Select an item...";
+  this->DefaultText = "";
   this->ForceDefault = false;
-}
-
-// -------------------------------------------------------------------------
-ctkComboBox::ctkComboBox(QWidget* _parent)
-  : QComboBox(_parent)
-{
-  CTK_INIT_PRIVATE(ctkComboBox);
-}
-
-// -------------------------------------------------------------------------
-ctkComboBox::~ctkComboBox()
-{
-}
-
-// -------------------------------------------------------------------------
-void ctkComboBox::setDefaultText(const QString& newDefaultText)
-{
-  CTK_D(ctkComboBox);
-  d->DefaultText = newDefaultText;
-  d->SizeHint = QSize();
-  this->updateGeometry();
-}
-
-// -------------------------------------------------------------------------
-QString ctkComboBox::defaultText()const
-{
-  CTK_D(const ctkComboBox);
-  return d->DefaultText;
-}
-
-// -------------------------------------------------------------------------
-void ctkComboBox::setDefaultIcon(const QIcon& newIcon)
-{
-  CTK_D(ctkComboBox);
-  d->DefaultIcon = newIcon;
-  d->SizeHint = QSize();
-  this->updateGeometry();
-}
-
-// -------------------------------------------------------------------------
-QIcon ctkComboBox::defaultIcon()const
-{
-  CTK_D(const ctkComboBox);
-  return d->DefaultIcon;
-}
-
-// -------------------------------------------------------------------------
-void ctkComboBox::forceDefault(bool newForceDefault)
-{
-  CTK_D(ctkComboBox);
-  if (newForceDefault == d->ForceDefault)
-    {
-    return;
-    }
-  d->ForceDefault = newForceDefault;
-  d->SizeHint = QSize();
-  this->updateGeometry();
-}
-
-// -------------------------------------------------------------------------
-bool ctkComboBox::isDefaultForced()const
-{
-  CTK_D(const ctkComboBox);
-  return d->ForceDefault;
-}
-
-// -------------------------------------------------------------------------
-void ctkComboBox::paintEvent(QPaintEvent*)
-{
-  CTK_D(ctkComboBox);
-  QStylePainter painter(this);
-  painter.setPen(palette().color(QPalette::Text));
-
-  QStyleOptionComboBox opt;
-  d->initStyleOption(&opt);
-
-  // draw the combobox frame, focusrect and selected etc.
-  painter.drawComplexControl(QStyle::CC_ComboBox, opt);
-  // draw the icon and text
-  painter.drawControl(QStyle::CE_ComboBoxLabel, opt);
-}
-
-// -------------------------------------------------------------------------
-QSize ctkComboBox::minimumSizeHint() const
-{
-  CTK_D(const ctkComboBox);
-  return d->recomputeSizeHint(d->MinimumSizeHint);
-}
-
-// -------------------------------------------------------------------------
-/*!
-    \reimp
-
-    This implementation caches the size hint to avoid resizing when
-    the contents change dynamically. To invalidate the cached value
-    change the \l sizeAdjustPolicy.
-*/
-QSize ctkComboBox::sizeHint() const
-{
-  CTK_D(const ctkComboBox);
-  return d->recomputeSizeHint(d->SizeHint);
+  this->ElideMode = Qt::ElideNone;
 }
 
 // -------------------------------------------------------------------------
@@ -255,4 +156,126 @@ void ctkComboBoxPrivate::initStyleOption(QStyleOptionComboBox* opt)const
     opt->currentText = this->DefaultText;
     opt->currentIcon = this->DefaultIcon;
     }
+  QRect textRect = p->style()->subControlRect(
+    QStyle::CC_ComboBox, opt, QStyle::SC_ComboBoxEditField, p);
+  // TODO substract icon size
+  opt->currentText = opt->fontMetrics.elidedText(opt->currentText,
+                                                 this->ElideMode,
+                                                 textRect.width());
+}
+
+
+// -------------------------------------------------------------------------
+ctkComboBox::ctkComboBox(QWidget* _parent)
+  : QComboBox(_parent)
+{
+  CTK_INIT_PRIVATE(ctkComboBox);
+}
+
+// -------------------------------------------------------------------------
+ctkComboBox::~ctkComboBox()
+{
+}
+
+// -------------------------------------------------------------------------
+void ctkComboBox::setDefaultText(const QString& newDefaultText)
+{
+  CTK_D(ctkComboBox);
+  d->DefaultText = newDefaultText;
+  d->SizeHint = QSize();
+  this->update();
+}
+
+// -------------------------------------------------------------------------
+QString ctkComboBox::defaultText()const
+{
+  CTK_D(const ctkComboBox);
+  return d->DefaultText;
+}
+
+// -------------------------------------------------------------------------
+void ctkComboBox::setDefaultIcon(const QIcon& newIcon)
+{
+  CTK_D(ctkComboBox);
+  d->DefaultIcon = newIcon;
+  d->SizeHint = QSize();
+  this->update();
+}
+
+// -------------------------------------------------------------------------
+QIcon ctkComboBox::defaultIcon()const
+{
+  CTK_D(const ctkComboBox);
+  return d->DefaultIcon;
+}
+
+// -------------------------------------------------------------------------
+void ctkComboBox::forceDefault(bool newForceDefault)
+{
+  CTK_D(ctkComboBox);
+  if (newForceDefault == d->ForceDefault)
+    {
+    return;
+    }
+  d->ForceDefault = newForceDefault;
+  d->SizeHint = QSize();
+  this->updateGeometry();
+}
+
+// -------------------------------------------------------------------------
+void ctkComboBox::setElideMode(const Qt::TextElideMode& newMode)
+{
+  CTK_D(ctkComboBox);
+  d->ElideMode = newMode;
+  this->update();
+}
+// -------------------------------------------------------------------------
+Qt::TextElideMode ctkComboBox::elideMode()const
+{
+  CTK_D(const ctkComboBox);
+  return d->ElideMode;
+}
+
+// -------------------------------------------------------------------------
+bool ctkComboBox::isDefaultForced()const
+{
+  CTK_D(const ctkComboBox);
+  return d->ForceDefault;
+}
+
+// -------------------------------------------------------------------------
+void ctkComboBox::paintEvent(QPaintEvent*)
+{
+  CTK_D(ctkComboBox);
+  QStylePainter painter(this);
+  painter.setPen(palette().color(QPalette::Text));
+
+  QStyleOptionComboBox opt;
+  d->initStyleOption(&opt);
+
+  // draw the combobox frame, focusrect and selected etc.
+  painter.drawComplexControl(QStyle::CC_ComboBox, opt);
+  // draw the icon and text
+  painter.drawControl(QStyle::CE_ComboBoxLabel, opt);
+}
+
+// -------------------------------------------------------------------------
+QSize ctkComboBox::minimumSizeHint() const
+{
+  CTK_D(const ctkComboBox);
+  return d->recomputeSizeHint(d->MinimumSizeHint);
+}
+
+// -------------------------------------------------------------------------
+/*!
+    \reimp
+
+    This implementation caches the size hint to avoid resizing when
+    the contents change dynamically. To invalidate the cached value
+    change the \l sizeAdjustPolicy.
+*/
+QSize ctkComboBox::sizeHint() const
+{
+  CTK_D(const ctkComboBox);
+  return d->recomputeSizeHint(d->SizeHint);
 }

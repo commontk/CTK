@@ -18,8 +18,8 @@
  
 =========================================================================*/
 
-#ifndef __ctkSliderSpinBoxWidget_h
-#define __ctkSliderSpinBoxWidget_h
+#ifndef __ctkSliderWidget_h
+#define __ctkSliderWidget_h
 
 // Qt includes
 #include <QSlider>
@@ -29,16 +29,20 @@
 
 #include "CTKWidgetsExport.h"
 
-class ctkSliderSpinBoxWidgetPrivate;
+class ctkSliderWidgetPrivate;
 
-class CTK_WIDGETS_EXPORT ctkSliderSpinBoxWidget : public QWidget
+///
+/// ctkSliderWidget is a wrapper around a ctkDoubleSlider and a QDoubleSpinBox
+/// where the slider value and the spinbox value are synchronized.
+/// \sa ctkRangeWidget, ctkDoubleRangeSlider, QSpinBox
+class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double value READ value WRITE setValue)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
@@ -51,8 +55,8 @@ public:
   typedef QWidget Superclass;
 
   /// Constructors
-  explicit ctkSliderSpinBoxWidget(QWidget* parent = 0);
-  virtual ~ctkSliderSpinBoxWidget(){}
+  explicit ctkSliderWidget(QWidget* parent = 0);
+  virtual ~ctkSliderWidget(){}
 
   /// 
   /// This property holds the sliders and spinbox minimum value.
@@ -83,7 +87,7 @@ public:
 
   /// 
   /// This property holds the slider and spinbox current value.
-  /// ctkSliderSpinBoxWidget forces the value to be within the
+  /// ctkSliderWidget forces the value to be within the
   /// legal range: minimum <= value <= maximum.
   double value()const;
 
@@ -143,7 +147,7 @@ public:
   /// Set/Get the auto spinbox width
   /// When the autoSpinBoxWidth property is on, the width of the SpinBox is
   /// set to the same width of the largest QSpinBox of its
-  // ctkSliderSpinBoxWidget siblings.
+  // ctkSliderWidget siblings.
   bool isAutoSpinBoxWidth()const;
   void setAutoSpinBoxWidth(bool autoWidth);
 
@@ -154,10 +158,17 @@ public slots:
   void setValue(double value);
 
 signals:
-  /// Use with care:
-  /// sliderMoved is emitted only when the user moves the slider
-  //void sliderMoved(double position);
+  /// When tracking is on (default), valueChanged is emitted when the
+  /// user drags the slider.
+  /// If tracking is off, valueChanged() is emitted only when the user
+  /// releases the mouse.
+  /// \sa valueIsChanging QAbstractSlider::valueChanged
   void valueChanged(double value);
+
+  /// valueIsChanging() is emitted whenever the slider is dragged and tracking
+  /// is turned off. You might want to use valueChanged instead.
+  /// It behaves the same way than QAbstractSlider::sliderMoved()
+  /// \sa valueChanged QAbstractSlider::sliderMoved
   void valueIsChanging(double value);
 
 protected slots:
@@ -170,7 +181,7 @@ protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
   
 private:
-  CTK_DECLARE_PRIVATE(ctkSliderSpinBoxWidget);
+  CTK_DECLARE_PRIVATE(ctkSliderWidget);
 
 };
 
