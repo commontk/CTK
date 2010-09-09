@@ -11,7 +11,7 @@ IF(${add_project})
   SET(QtSOAP_DEPENDS ${proj})
 
   IF(WIN32)
-    SET(_qtsoap_url "http://get.qt.nokia.com/qt/solutions/lgpl/qtsoap-2.7_1-opensource.zip")
+    SET(_qtsoap_url "${CTK_SOURCE_DIR}/Utilities/QtSOAP/qtsoap-2.7_1-opensource-win32.tar.gz")
     SET(_make_cmd nmake)
     IF(MINGW)
       SET(_make_cmd mingw32-make)
