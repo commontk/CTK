@@ -77,6 +77,8 @@ ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclas
 //-----------------------------------------------------------------------------
 ctkAbstractPythonManager::~ctkAbstractPythonManager()
 {
+  PyThreadState* state = PyThreadState_Get();
+  Py_EndInterpreter(state);
   PythonQt::cleanup();
 }
 
