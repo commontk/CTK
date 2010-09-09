@@ -1,0 +1,13 @@
+set(work_dir @ep_source_dir@)
+set(proj_dir ${work_dir}/@proj@)
+
+EXECUTE_PROCESS(
+  COMMAND @QT_QMAKE_EXECUTABLE@
+  COMMAND @_make_cmd@
+  WORKING_DIRECTORY ${proj_dir}
+  ERROR_VARIABLE _error
+)
+
+IF(_error)
+  MESSAGE("${_error}")
+ENDIF()

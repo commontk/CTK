@@ -20,39 +20,37 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#ifndef CTKDICOMHOSTSERVERPRIVATE_H
+#define CTKDICOMHOSTSERVERPRIVATE_H
 
-#include <ctkPluginActivator.h>
+#include <QObject>
+#include <QtSoapMessage>
+
+#include <ctkSimpleSoapServer.h>
 
 class ctkDicomHostInterface;
 
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
+class ctkDicomHostServerPrivate : public QObject
 {
   Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
 
 public:
+  ctkDicomHostServerPrivate(QObject *parent = 0);
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
+  ctkSimpleSoapServer server;
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+public slots:
 
-  static ctkDicomWG23AppPlugin* getInstance();
-
-  ctkPluginContext* getPluginContext() const;
-
+  void incomingSoapMessage(const QtSoapMessage& message,
+                           QtSoapMessage* reply);
 
 private:
 
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
+  void processGetAvailableScreen(const QtSoapMessage& message,
+                                 QtSoapMessage* reply);
 
-  ctkDicomHostInterface* hostInterface;
+  ctkDicomHostInterface* serviceBinding;
 
-}; // ctkDicomWG23AppPlugin
+};
 
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+#endif // CTKDICOMHOSTSERVERPRIVATE_H

@@ -20,39 +20,33 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#ifndef CTKDICOMWG23TYPES_H
+#define CTKDICOMWG23TYPES_H
 
-#include <ctkPluginActivator.h>
+namespace {
 
-class ctkDicomHostInterface;
+  enum State {
+    IDLE,
+    INPROGRESS,
+    COMPLETED,
+    SUSPENDED,
+    CANCELED,
+    EXIT
+  };
 
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
-{
-  Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
+  enum StatusType {
+    INFORMATION,
+    WARNING,
+    ERROR,
+    FATALERROR
+  };
 
-public:
+  struct Status {
+    StatusType statusType;
+    QString codingSchemeDesignator;
+    QString codeValue;
+    QString codeMeaning;
+  };
+}
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
-
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
-
-  static ctkDicomWG23AppPlugin* getInstance();
-
-  ctkPluginContext* getPluginContext() const;
-
-
-private:
-
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
-
-  ctkDicomHostInterface* hostInterface;
-
-}; // ctkDicomWG23AppPlugin
-
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+#endif // CTKDICOMWG23TYPES_H

@@ -20,39 +20,24 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#include "ctkSimpleSoapServer.h"
 
-#include <ctkPluginActivator.h>
+#include "ctkSoapConnectionRunnable_p.h"
 
-class ctkDicomHostInterface;
-
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
+ctkSimpleSoapServer::ctkSimpleSoapServer(QObject *parent) :
+    QTcpServer(parent)
 {
-  Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
+  qRegisterMetaType<QtSoapMessage>("QtSoapMessage");
+}
 
-public:
+void ctkSimpleSoapServer::incomingConnection(int socketDescriptor)
+{
+  qDebug() << "New incoming connection";
+  ctkSoapConnectionRunnable* runnable = new ctkSoapConnectionRunnable(socketDescriptor);
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
+  connect(runnable, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
+          this, SIGNAL(incomingSoapMessage(QtSoapMessage, QtSoapMessage*)),
+          Qt::BlockingQueuedConnection);
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
-
-  static ctkDicomWG23AppPlugin* getInstance();
-
-  ctkPluginContext* getPluginContext() const;
-
-
-private:
-
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
-
-  ctkDicomHostInterface* hostInterface;
-
-}; // ctkDicomWG23AppPlugin
-
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+  QThreadPool::globalInstance()->start(runnable);
+}

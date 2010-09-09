@@ -20,39 +20,30 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#ifndef CTKDICOMAPPINTERFACE_H
+#define CTKDICOMAPPINTERFACE_H
 
-#include <ctkPluginActivator.h>
+#include <QObject>
+#include <QRect>
 
-class ctkDicomHostInterface;
+#include "ctkDicomWG23Types.h"
 
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
+#include <org_commontk_dicom_wg23_core_Export.h>
+
+class org_commontk_dicom_wg23_core_EXPORT ctkDicomAppInterface : public QObject
 {
   Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
 
 public:
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
+  // Application interface methods
+  virtual State getState() = 0;
+  virtual bool setState(State newState) = 0;
+  virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+  // Data exchange interface methods
+  // ...
 
-  static ctkDicomWG23AppPlugin* getInstance();
+};
 
-  ctkPluginContext* getPluginContext() const;
-
-
-private:
-
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
-
-  ctkDicomHostInterface* hostInterface;
-
-}; // ctkDicomWG23AppPlugin
-
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+#endif // CTKDICOMAPPINTERFACE_H

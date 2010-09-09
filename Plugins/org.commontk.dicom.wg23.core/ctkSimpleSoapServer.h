@@ -20,39 +20,33 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#ifndef CTKSIMPLESOAPSERVER_H
+#define CTKSIMPLESOAPSERVER_H
 
-#include <ctkPluginActivator.h>
+#include <QTcpServer>
 
-class ctkDicomHostInterface;
+#include <qtsoap.h>
 
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
+#include <org_commontk_dicom_wg23_core_Export.h>
+
+class org_commontk_dicom_wg23_core_EXPORT ctkSimpleSoapServer : public QTcpServer
 {
   Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
 
 public:
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
+  ctkSimpleSoapServer(QObject *parent = 0);
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+signals:
 
-  static ctkDicomWG23AppPlugin* getInstance();
+  void incomingSoapMessage(const QtSoapMessage& message, QtSoapMessage* reply);
 
-  ctkPluginContext* getPluginContext() const;
+public slots:
 
+protected:
 
-private:
+  void incomingConnection(int socketDescriptor);
 
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
+};
 
-  ctkDicomHostInterface* hostInterface;
-
-}; // ctkDicomWG23AppPlugin
-
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+#endif // CTKSIMPLESOAPSERVER_H

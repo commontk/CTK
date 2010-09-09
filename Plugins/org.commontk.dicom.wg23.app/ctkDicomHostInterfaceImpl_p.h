@@ -20,39 +20,35 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#ifndef DICOMHOSTINTERFACEIMPL_P_H
+#define DICOMHOSTINTERFACEIMPL_P_H
 
-#include <ctkPluginActivator.h>
+#include <ctkDicomHostInterface.h>
 
-class ctkDicomHostInterface;
+#include <QEventLoop>
+#include <QtSoapHttpTransport>
 
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
+class ctkDicomHostInterfaceImpl : public ctkDicomHostInterface
 {
   Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
 
 public:
+    ctkDicomHostInterfaceImpl();
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
+    virtual QString generateUID();
+    virtual QRect getAvailableScreen(const QRect& preferredScreen);
+    virtual QString getOutputLocation(const QStringList& preferredProtocols);
+    virtual void notifyStateChanged(State state);
+    virtual void notifyStatus(const Status& status);
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+private slots:
 
-  static ctkDicomWG23AppPlugin* getInstance();
-
-  ctkPluginContext* getPluginContext() const;
-
+    void responseReady();
 
 private:
 
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
+    QEventLoop blockingLoop;
+    QtSoapHttpTransport http;
+};
 
-  ctkDicomHostInterface* hostInterface;
-
-}; // ctkDicomWG23AppPlugin
-
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+#endif // DICOMHOSTINTERFACEIMPL_P_H

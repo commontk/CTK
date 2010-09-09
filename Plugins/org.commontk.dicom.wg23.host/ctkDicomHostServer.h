@@ -20,39 +20,22 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#ifndef CTKDICOMHOSTSERVER_H
+#define CTKDICOMHOSTSERVER_H
 
-#include <ctkPluginActivator.h>
+#include <QScopedPointer>
 
-class ctkDicomHostInterface;
+class ctkDicomHostServerPrivate;
 
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
+class ctkDicomHostServer
 {
-  Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
 
 public:
+  ctkDicomHostServer();
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
+  Q_DECLARE_PRIVATE(ctkDicomHostServer)
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+  const QScopedPointer<ctkDicomHostServerPrivate> d_ptr;
+};
 
-  static ctkDicomWG23AppPlugin* getInstance();
-
-  ctkPluginContext* getPluginContext() const;
-
-
-private:
-
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
-
-  ctkDicomHostInterface* hostInterface;
-
-}; // ctkDicomWG23AppPlugin
-
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+#endif // CTKDICOMHOSTSERVER_H

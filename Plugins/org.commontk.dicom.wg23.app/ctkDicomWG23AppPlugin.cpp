@@ -21,6 +21,9 @@
 
 
 #include "ctkDicomWG23AppPlugin_p.h"
+
+#include <ctkDicomHostInterfaceImpl_p.h>
+
 #include <QtPlugin>
 
 ctkDicomWG23AppPlugin* ctkDicomWG23AppPlugin::instance = 0;
@@ -28,6 +31,7 @@ ctkDicomWG23AppPlugin* ctkDicomWG23AppPlugin::instance = 0;
 ctkDicomWG23AppPlugin::ctkDicomWG23AppPlugin()
   : context(0)
 {
+
 }
 
 ctkDicomWG23AppPlugin::~ctkDicomWG23AppPlugin()
@@ -39,11 +43,16 @@ void ctkDicomWG23AppPlugin::start(ctkPluginContext* context)
 {
   instance = this;
   this->context = context;
+
+  hostInterface = new ctkDicomHostInterfaceImpl();
+  context->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
 }
 
 void ctkDicomWG23AppPlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
+
+  delete hostInterface;
 }
 
 ctkDicomWG23AppPlugin* ctkDicomWG23AppPlugin::getInstance()

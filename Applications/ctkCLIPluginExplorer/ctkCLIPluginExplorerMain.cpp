@@ -24,19 +24,19 @@
 #include <QDebug>
 
 // CTK includes
-#include <ctkPluginManager.h>
+//#include <ctkPluginManager.h>
 
 int main(int argc, char** argv)
 {
   QCoreApplication app(argc, argv);
 
-  ctkPluginManager pluginManager;
-  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-  pluginManager.startAllPlugins();
+//  ctkPluginManager pluginManager;
+//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
+//  pluginManager.startAllPlugins();
 
-  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
 
-  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
 
   return 0;
 }

@@ -20,39 +20,35 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#ifndef CTKSOAPCONNECTIONRUNNABLE_P_H
+#define CTKSOAPCONNECTIONRUNNABLE_P_H
 
-#include <ctkPluginActivator.h>
+#include <QObject>
+#include <QRunnable>
+#include <QTcpSocket>
 
-class ctkDicomHostInterface;
+#include <qtsoap.h>
 
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
+class ctkSoapConnectionRunnable : public QObject, public QRunnable
 {
   Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
 
 public:
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
+  ctkSoapConnectionRunnable(int socketDescriptor);
+  ~ctkSoapConnectionRunnable();
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+  void run();
 
-  static ctkDicomWG23AppPlugin* getInstance();
+signals:
 
-  ctkPluginContext* getPluginContext() const;
-
+  void incomingSoapMessage(const QtSoapMessage& message, QtSoapMessage* reply);
 
 private:
 
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
+  void readClient(QTcpSocket& socket);
 
-  ctkDicomHostInterface* hostInterface;
+  int socketDescriptor;
+};
 
-}; // ctkDicomWG23AppPlugin
-
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+#endif // CTKSOAPCONNECTIONRUNNABLE_P_H

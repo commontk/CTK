@@ -20,39 +20,32 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#ifndef CTKDICOMHOSTINTERFACE_H
+#define CTKDICOMHOSTINTERFACE_H
 
-#include <ctkPluginActivator.h>
+#include <QObject>
+#include <QRect>
 
-class ctkDicomHostInterface;
+#include "ctkDicomWG23Types.h"
 
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
+#include <org_commontk_dicom_wg23_core_Export.h>
+
+class org_commontk_dicom_wg23_core_EXPORT ctkDicomHostInterface : public QObject
 {
   Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
 
 public:
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
+  // Host interface methods
+  virtual QString generateUID() = 0;
+  virtual QRect getAvailableScreen(const QRect& preferredScreen) = 0;
+  virtual QString getOutputLocation(const QStringList& preferredProtocols) = 0;
+  virtual void notifyStateChanged(State state) = 0;
+  virtual void notifyStatus(const Status& status) = 0;
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+  // Data exchange interface methods
+  // ...
 
-  static ctkDicomWG23AppPlugin* getInstance();
+};
 
-  ctkPluginContext* getPluginContext() const;
-
-
-private:
-
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
-
-  ctkDicomHostInterface* hostInterface;
-
-}; // ctkDicomWG23AppPlugin
-
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+#endif // CTKDICOMHOSTINTERFACE_H

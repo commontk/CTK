@@ -3,11 +3,14 @@ PROJECT(org_commontk_dicom_wg23_host)
 SET(PLUGIN_export_directive "org_commontk_dicom_wg23_host_EXPORT")
 
 SET(PLUGIN_SRCS
+  ctkDicomHostServer.cpp
+  ctkDicomHostServerPrivate.cpp
   ctkDicomWG23HostPlugin.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
+  ctkDicomHostServerPrivate.h
   ctkDicomWG23HostPlugin_p.h
 )
 
