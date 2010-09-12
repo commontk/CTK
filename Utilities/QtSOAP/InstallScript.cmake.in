@@ -1,27 +1,8 @@
 set(work_dir @ep_source_dir@)
 set(proj_dir ${work_dir}/@proj@)
 
-SET(_int_dir )
-IF(INTERMEDIATE_DIRECTORY)
-  GET_FILENAME_COMPONENT(_int_dir ${INTERMEDIATE_DIRECTORY} NAME)
-ENDIF()
+SET(_qtsoap_lib_dir "${proj_dir}/lib")
+SET(_qtsoap_include_dir "${proj_dir}/src/")
 
-FILE(GLOB _files "${proj_dir}/lib/*")
-FOREACH(_file ${_files})
-  CONFIGURE_FILE(${_file} "@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/" COPYONLY)
-  MESSAGE("Copying ${_file} to @CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/")
-ENDFOREACH()
-
-
-SET(_qtsoap_config "
-FIND_LIBRARY(QTSOAP_LIBRARY_RELEASE QtSolutions_SOAP-2.7 \"@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/\")
-FIND_LIBRARY(QTSOAP_LIBRARY_DEBUG QtSolutions_SOAP-2.7d \"@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/\")
-IF(QTSOAP_LIBRARY_DEBUG-FOUND)
-SET(QTSOAP_LIBRARY \"debug ${QTSOAP_LIBRARY_DEBUG}\")
-ENDIF()
-IF(QTSOAP_LIBRARY_RELEASE-FOUND)
-SET(QTSOAP_LIBRARY ${QTSOAP_LIBRARY} \"optimized ${QTSOAP_LIBRARY_RELEASE}\")
-ENDIF()
-SET(QTSOAP_INCLUDE_DIR \"${proj_dir}/src/\")")
-
-FILE(WRITE "@CTK_BINARY_DIR@/Utilities/QtSOAP/QtSOAPConfig.cmake" ${_qtsoap_config})
+CONFIGURE_FILE("@CTK_SOURCE_DIR@/Utilities/QtSOAP/QtSOAPConfig.cmake.in"
+               "@CTK_BINARY_DIR@/Utilities/QtSOAP/QtSOAPConfig.cmake" @ONLY)
