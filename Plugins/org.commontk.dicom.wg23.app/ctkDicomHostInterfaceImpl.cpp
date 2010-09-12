@@ -118,12 +118,12 @@ QString ctkDicomHostInterfaceImpl::getOutputLocation(const QStringList& preferre
   return QString();
 }
 
-void ctkDicomHostInterfaceImpl::notifyStateChanged(State state)
+void ctkDicomHostInterfaceImpl::notifyStateChanged(ctkDicomWG23::State state)
 {
   Q_UNUSED(state)
 }
 
-void ctkDicomHostInterfaceImpl::notifyStatus(const Status& status)
+void ctkDicomHostInterfaceImpl::notifyStatus(const ctkDicomWG23::Status& status)
 {
   Q_UNUSED(status)
 }

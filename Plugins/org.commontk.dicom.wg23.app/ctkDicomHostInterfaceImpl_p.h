@@ -38,8 +38,8 @@ public:
     virtual QString generateUID();
     virtual QRect getAvailableScreen(const QRect& preferredScreen);
     virtual QString getOutputLocation(const QStringList& preferredProtocols);
-    virtual void notifyStateChanged(State state);
-    virtual void notifyStatus(const Status& status);
+    virtual void notifyStateChanged(ctkDicomWG23::State state);
+    virtual void notifyStatus(const ctkDicomWG23::Status& status);
 
 private slots:
 

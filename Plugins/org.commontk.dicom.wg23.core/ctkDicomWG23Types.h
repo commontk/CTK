@@ -23,7 +23,7 @@
 #ifndef CTKDICOMWG23TYPES_H
 #define CTKDICOMWG23TYPES_H
 
-namespace {
+namespace ctkDicomWG23 {
 
   enum State {
     IDLE,
@@ -47,6 +47,7 @@ namespace {
     QString codeValue;
     QString codeMeaning;
   };
+
 }
 
 #endif // CTKDICOMWG23TYPES_H

@@ -37,8 +37,8 @@ class org_commontk_dicom_wg23_core_EXPORT ctkDicomAppInterface : public QObject
 public:
 
   // Application interface methods
-  virtual State getState() = 0;
-  virtual bool setState(State newState) = 0;
+  virtual ctkDicomWG23::State getState() = 0;
+  virtual bool setState(ctkDicomWG23::State newState) = 0;
   virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
 
   // Data exchange interface methods

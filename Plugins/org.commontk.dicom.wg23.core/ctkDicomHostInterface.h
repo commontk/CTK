@@ -40,8 +40,8 @@ public:
   virtual QString generateUID() = 0;
   virtual QRect getAvailableScreen(const QRect& preferredScreen) = 0;
   virtual QString getOutputLocation(const QStringList& preferredProtocols) = 0;
-  virtual void notifyStateChanged(State state) = 0;
-  virtual void notifyStatus(const Status& status) = 0;
+  virtual void notifyStateChanged(ctkDicomWG23::State state) = 0;
+  virtual void notifyStatus(const ctkDicomWG23::Status& status) = 0;
 
   // Data exchange interface methods
   // ...
