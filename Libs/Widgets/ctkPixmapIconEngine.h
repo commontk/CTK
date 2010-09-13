@@ -106,7 +106,6 @@ private:
     ctkPixmapIconEngineEntry *tryMatch(const QSize &size, QIcon::Mode mode, QIcon::State state);
     QVector<ctkPixmapIconEngineEntry> pixmaps;
 
-    friend QDataStream &operator<<(QDataStream &s, const QIcon &icon);
     friend class QIconThemeEngine;
 };
 
