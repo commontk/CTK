@@ -168,7 +168,6 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    std::cout << argc << argv[1] << std::endl;
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(500);
     }
