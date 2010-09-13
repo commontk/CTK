@@ -24,8 +24,13 @@
 #include <ctkPluginException.h>
 
 #include <ctkDicomExampleHost.h>
+#include <ctkHostAppExampleWidget.h>
+#include <ui_ctkExampleHostMainWindow.h>
 
 #include <QApplication>
+#include <QMainWindow>
+#include <QVBoxLayout>
+
 #include <QString>
 #include <QStringList>
 #include <QDirIterator>
@@ -82,10 +87,22 @@ int main(int argv, char** argc)
 
   framework->start();
 
+
   ctkDicomExampleHost* host = new ctkDicomExampleHost();
 
-  QWidget placeholder;
-  placeholder.show();
+
+  QMainWindow mainWindow;
+  Ui::MainWindow ui;
+  ui.setupUi(&mainWindow);
+
+  mainWindow.addDockWidget(static_cast<Qt::DockWidgetArea>(4),new ctkHostAppExampleWidget());
+
+//  QVBoxLayout* layout = new QVBoxLayout(&mainWindow);
+
+//  ctkHostAppExampleWidget* placeholder = new ctkHostAppExampleWidget(&mainWindow);
+
+//  layout->addWidget(placeholder);
+  mainWindow.show();
 
   return app.exec();
 

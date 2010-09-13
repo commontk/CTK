@@ -6,16 +6,18 @@ PROJECT(ctkExampleHost)
 
 SET(KIT_SRCS
   ctkExampleHostMain.cpp
+  ctkHostAppExampleWidget.cpp
 )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-
+  ctkHostAppExampleWidget.h
 )
 
 # UI files
 SET(KIT_UI_FORMS
-  
+  ctkHostAppExampleWidget.ui
+  ctkExampleHostMainWindow.ui
 )
 
 # Resources
