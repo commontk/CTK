@@ -20,7 +20,7 @@
 =============================================================================*/
 
 
-#include "ctkDicomHostInterfaceImpl_p.h"
+#include "ctkDicomHostServicePrivate.h"
 
 #include <QApplication>
 #include <QCursor>
@@ -28,24 +28,24 @@
 
 #include <stdexcept>
 
-ctkDicomHostInterfaceImpl::ctkDicomHostInterfaceImpl()
+ctkDicomHostService::ctkDicomHostService()
 {
   connect(&http, SIGNAL(responseReady()), this, SLOT(responseReady()));
 
   http.setHost("127.0.0.1", false, 8080);
 }
 
-void ctkDicomHostInterfaceImpl::responseReady()
+void ctkDicomHostService::responseReady()
 {
   blockingLoop.exit();
 }
 
-QString ctkDicomHostInterfaceImpl::generateUID()
+QString ctkDicomHostService::generateUID()
 {
   return QString();
 }
 
-QRect ctkDicomHostInterfaceImpl::getAvailableScreen(const QRect& preferredScreen)
+QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 {
   http.setAction("GetAvailableScreen");
 
@@ -112,18 +112,18 @@ QRect ctkDicomHostInterfaceImpl::getAvailableScreen(const QRect& preferredScreen
   return resultRect;
 }
 
-QString ctkDicomHostInterfaceImpl::getOutputLocation(const QStringList& preferredProtocols)
+QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProtocols)
 {
   Q_UNUSED(preferredProtocols)
   return QString();
 }
 
-void ctkDicomHostInterfaceImpl::notifyStateChanged(ctkDicomWG23::State state)
+void ctkDicomHostService::notifyStateChanged(ctkDicomWG23::State state)
 {
   Q_UNUSED(state)
 }
 
-void ctkDicomHostInterfaceImpl::notifyStatus(const ctkDicomWG23::Status& status)
+void ctkDicomHostService::notifyStatus(const ctkDicomWG23::Status& status)
 {
   Q_UNUSED(status)
 }

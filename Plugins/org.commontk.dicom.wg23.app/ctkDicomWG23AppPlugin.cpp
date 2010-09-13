@@ -22,7 +22,7 @@
 
 #include "ctkDicomWG23AppPlugin_p.h"
 
-#include <ctkDicomHostInterfaceImpl_p.h>
+#include <ctkDicomHostServicePrivate.h>
 
 #include <QtPlugin>
 
@@ -44,7 +44,7 @@ void ctkDicomWG23AppPlugin::start(ctkPluginContext* context)
   instance = this;
   this->context = context;
 
-  hostInterface = new ctkDicomHostInterfaceImpl();
+  hostInterface = new ctkDicomHostService();
   context->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
 }
 

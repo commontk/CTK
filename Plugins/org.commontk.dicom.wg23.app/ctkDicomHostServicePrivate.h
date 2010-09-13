@@ -28,12 +28,12 @@
 #include <QEventLoop>
 #include <QtSoapHttpTransport>
 
-class ctkDicomHostInterfaceImpl : public ctkDicomHostInterface
+class ctkDicomHostService : public ctkDicomHostInterface
 {
   Q_OBJECT
 
 public:
-    ctkDicomHostInterfaceImpl();
+    ctkDicomHostService();
 
     virtual QString generateUID();
     virtual QRect getAvailableScreen(const QRect& preferredScreen);
