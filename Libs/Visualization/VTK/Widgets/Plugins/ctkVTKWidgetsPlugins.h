@@ -28,7 +28,9 @@
 #include "CTKVisualizationVTKWidgetsPluginsExport.h"
 #include "ctkVTKRenderViewPlugin.h"
 #include "ctkVTKScalarBarWidgetPlugin.h"
+#ifdef CTK_USE_CHARTS
 #include "ctkVTKScalarsToColorsViewPlugin.h"
+#endif
 #include "ctkVTKSliceViewPlugin.h"
 #include "ctkVTKTextPropertyWidgetPlugin.h"
 
@@ -46,7 +48,9 @@ public:
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkVTKRenderViewPlugin;
     plugins << new ctkVTKScalarBarWidgetPlugin;
+#ifdef CTK_USE_CHARTS
     plugins << new ctkVTKScalarsToColorsViewPlugin;
+#endif
     plugins << new ctkVTKSliceViewPlugin;
     plugins << new ctkVTKTextPropertyWidgetPlugin;
     return plugins;

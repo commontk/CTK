@@ -25,8 +25,6 @@ SET(KIT_SRCS
   ctkVTKAbstractMatrixWidget.cpp
   ctkVTKAbstractMatrixWidget.h
   ctkVTKAbstractMatrixWidget_p.h
-  ctkVTKChartView.cpp
-  ctkVTKChartView.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.cpp
@@ -34,10 +32,6 @@ SET(KIT_SRCS
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.cpp
   ctkVTKScalarBarWidget.h
-  ctkVTKScalarsToColorsView.cpp
-  ctkVTKScalarsToColorsView.h
-  ctkVTKScalarsToColorsWidget.cpp
-  ctkVTKScalarsToColorsWidget.h
   ctkVTKSliceView.cpp
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
@@ -48,13 +42,10 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkVTKAbstractMatrixWidget_p.h
-  ctkVTKChartView.h
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.h
-  ctkVTKScalarsToColorsView.h
-  ctkVTKScalarsToColorsWidget.h
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
   ctkVTKTextPropertyWidget.h
@@ -63,7 +54,6 @@ SET(KIT_MOC_SRCS
 # UI files
 SET(KIT_UI_FORMS
   Resources/UI/ctkVTKScalarBarWidget.ui
-  Resources/UI/ctkVTKScalarsToColorsWidget.ui
   Resources/UI/ctkVTKTextPropertyWidget.ui
 )
 
@@ -75,8 +65,34 @@ SET(KIT_resources
 # Set VTK_LIBRARIES variable
 SET(VTK_LIBRARIES
   QVTK
-  vtkCharts
   )
+
+IF(VTK_VERSION VERSION_GREATER 5.7)
+  SET(CTK_USE_CHARTS 1)
+ENDIF(VTK_VERSION VERSION_GREATER 5.7)
+
+IF (${CTK_USE_CHARTS})
+  SET(KIT_SRCS
+      ctkVTKChartView.cpp
+      ctkVTKChartView.h
+      ctkVTKScalarsToColorsView.cpp
+      ctkVTKScalarsToColorsView.h
+      ctkVTKScalarsToColorsWidget.cpp
+      ctkVTKScalarsToColorsWidget.h
+      ${KIT_SRCS})
+  SET(KIT_MOC_SRCS 
+      ctkVTKChartView.h
+      ctkVTKScalarsToColorsView.h
+      ctkVTKScalarsToColorsWidget.h
+      ${KIT_MOC_SRCS})
+  SET(KIT_UI_FORMS
+      Resources/UI/ctkVTKScalarsToColorsWidget.ui 
+      ${KIT_UI_FORMS})
+  SET(VTK_LIBRARIES
+      vtkCharts
+      ${VTK_LIBRARIES})
+  ADD_DEFINITIONS(-DCTK_USE_CHARTS)
+ENDIF(${CTK_USE_CHARTS})
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
