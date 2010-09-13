@@ -366,8 +366,8 @@ void ctkDoubleRangeSlider::setValues(double newMinVal, double newMaxVal)
   // We can't call setMinimumValue() and setMaximumValue() as they would
   // generate an inconsistent state. when minimumValueChanged() is fired the
   // new max value wouldn't be updated yet.
-  double newMinValue = qMin(newMinVal, newMaxVal);
-  double newMaxValue = qMax(newMinVal, newMaxVal);
+  double newMinValue = qBound(d->Minimum, qMin(newMinVal, newMaxVal), d->Maximum);
+  double newMaxValue = qBound(d->Minimum, qMax(newMinVal, newMaxVal), d->Maximum);
   d->updateMinOffset(newMinValue);
   d->updateMaxOffset(newMaxValue);
   int newMinIntValue = d->toInt(newMinValue);
