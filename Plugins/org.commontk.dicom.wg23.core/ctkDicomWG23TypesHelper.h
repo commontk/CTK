@@ -28,8 +28,9 @@
 #include <QRect>
 
 class ctkDicomSoapRectangle :public QtSoapStruct {
-
-    ctkDicomSoapRectangle(const QtSoapQName & name,const QRect& rect):QtSoapStruct(name){
+    public: 
+    ctkDicomSoapRectangle(const QString & name,const QRect& rect):
+        QtSoapStruct(QtSoapQName(name)){
         this->insert(new QtSoapSimpleType(QtSoapQName("Height"), 
                     rect.height()));
         this->insert(new QtSoapSimpleType(QtSoapQName("Width"), 
@@ -38,7 +39,6 @@ class ctkDicomSoapRectangle :public QtSoapStruct {
                     rect.x()));
         this->insert(new QtSoapSimpleType(QtSoapQName("RefPointY"), 
                     rect.y()));
-
     };
 
     static QRect getQRect (const QtSoapType& type){
@@ -50,8 +50,9 @@ class ctkDicomSoapRectangle :public QtSoapStruct {
 };
 
 class ctkDicomSoapState : public QtSoapSimpleType{
-   ctkDicomSoapState ( const QtSoapQName & name, ctkDicomWG23::State s ):
-       QtSoapSimpleType ( name, s ){};
+    public:
+   ctkDicomSoapState ( const QString & name, ctkDicomWG23::State s ):
+       QtSoapSimpleType ( QtSoapQName(name), s ){};
 
    static ctkDicomWG23::State getState(const QtSoapType& type){
         return  static_cast<ctkDicomWG23::State> (type.value().toInt());
@@ -60,9 +61,10 @@ class ctkDicomSoapState : public QtSoapSimpleType{
 
 
 class ctkDicomSoapStatus : public QtSoapStruct{
-    ctkDicomSoapStatus ( const QtSoapQName & name,
+    public: 
+    ctkDicomSoapStatus ( const QString & name,
             const ctkDicomWG23::Status* s ):
-       QtSoapStruct ( name ){
+       QtSoapStruct ( QtSoapQName(name) ){
         this->insert(new QtSoapSimpleType(QtSoapQName("StatusType"), 
                     s->statusType) );
         this->insert(new QtSoapSimpleType(
