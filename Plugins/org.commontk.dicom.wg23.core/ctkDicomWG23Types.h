@@ -20,7 +20,7 @@
 =============================================================================*/
 
 #include <QString>
-#include <QVector>
+#include <QList>
 #include <QUuid>
 
 #ifndef CTKDICOMWG23TYPES_H
@@ -74,13 +74,13 @@ namespace ctkDicomWG23 {
 
   struct Series {
     QString seriesUID;
-    QVector<ObjectDescriptor> objectDescriptors;
+    QList<ObjectDescriptor> objectDescriptors;
   };
 
   struct Study {
     QString studyUID;
-    QVector<ObjectDescriptor> objectDescriptors;
-    QVector<Series> series;
+    QList<ObjectDescriptor> objectDescriptors;
+    QList<Series> series;
   };
 
   struct Patient {
@@ -89,13 +89,13 @@ namespace ctkDicomWG23 {
     QString assigningAuthority;
     QString sex;
     QString birthDate;
-    QVector<ObjectDescriptor> objectDescriptors;
-    QVector<Study> studies;
+    QList<ObjectDescriptor> objectDescriptors;
+    QList<Study> studies;
   };
 
   struct AvailableData {
-    QVector<ObjectDescriptor> objectDescriptors;
-    QVector<Patient> patients;
+    QList<ObjectDescriptor> objectDescriptors;
+    QList<Patient> patients;
   };
 
 }
