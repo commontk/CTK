@@ -19,6 +19,8 @@ SET(PLUGIN_SRCS
   ctkDicomWG23CorePlugin.cpp
   ctkSimpleSoapServer.cpp
   ctkSoapConnectionRunnable.cpp
+  ctkDicomWG23Types.h
+  ctkDicomWG23TypesHelper.h
 )
 
 # Files which should be processed by Qts moc

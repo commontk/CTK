@@ -29,6 +29,7 @@
 #include <QHostAddress>
 
 #include <stdexcept>
+#include <ctkDicomWG23TypesHelper.h>
 
 ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(QObject *parent) :
     QObject(parent)
@@ -64,24 +65,40 @@ void ctkDicomHostServerPrivate::incomingSoapMessage(const QtSoapMessage& message
   {
     processGetAvailableScreen(message, reply);
   }
+  if (methodName == "notifyStateChanged")
+  {
+    processNotifyStateChanged(message, reply);
+  }
+  if (methodName == "notifyStatus")
+  {
+    processNotifyStatus(message, reply);
+  }
 }
 
 void ctkDicomHostServerPrivate::processGetAvailableScreen(
     const QtSoapMessage &message, QtSoapMessage *reply)
 {
   const QtSoapType& preferredScreenType = message.method()["preferredScreen"];
-  QRect preferredScreen(preferredScreenType["RefPointX"].value().toInt(),
-                        preferredScreenType["RefPointY"].value().toInt(),
-                        preferredScreenType["Width"].value().toInt(),
-                        preferredScreenType["Height"].value().toInt());
+  const QRect preferredScreen = ctkDicomSoapRectangle::getQRect(preferredScreenType);
 
-  QRect result = serviceBinding->getAvailableScreen(preferredScreen);
+  const QRect result = serviceBinding->getAvailableScreen(preferredScreen);
 
   reply->setMethod("GetAvailableScreenResponse");
-  QtSoapStruct* availableScreenType = new QtSoapStruct(QtSoapQName("availableScreen"));
-  availableScreenType->insert(new QtSoapSimpleType(QtSoapQName("Height"), result.height()));
-  availableScreenType->insert(new QtSoapSimpleType(QtSoapQName("Width"), result.width()));
-  availableScreenType->insert(new QtSoapSimpleType(QtSoapQName("RefPointX"), result.x()));
-  availableScreenType->insert(new QtSoapSimpleType(QtSoapQName("RefPointY"), result.y()));
+  QtSoapStruct* availableScreenType = new ctkDicomSoapRectangle("availableScreen",result);
   reply->addMethodArgument(availableScreenType);
+}
+
+void ctkDicomHostServerPrivate::processNotifyStateChanged(
+    const QtSoapMessage &message, QtSoapMessage *reply)
+{
+    const QtSoapType& stateType = message.method()["state"];
+    serviceBinding->notifyStateChanged(ctkDicomSoapState::getState(stateType));
+}
+
+void ctkDicomHostServerPrivate::processNotifyStatus(
+    const QtSoapMessage &message, QtSoapMessage *reply)
+{
+    const QtSoapType& status = message.method()["status"];
+    serviceBinding->notifyStatus(ctkDicomSoapStatus::getStatus(status));
+
 }

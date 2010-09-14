@@ -20,34 +20,42 @@
 =============================================================================*/
 
 
-#ifndef CTKSIMPLESOAPSERVER_H
-#define CTKSIMPLESOAPSERVER_H
+#include "ctkDicomExampleHostPlugin_p.h"
+#include <QtPlugin>
 
-#include <QTcpServer>
+ctkDicomExampleHostPlugin* ctkDicomExampleHostPlugin::instance = 0;
 
-#include <qtsoap.h>
-
-#include <org_commontk_dicom_wg23_core_Export.h>
-#include <ctkDicomWG23Types.h>
-
-class org_commontk_dicom_wg23_core_EXPORT ctkSimpleSoapServer : public QTcpServer
+ctkDicomExampleHostPlugin::ctkDicomExampleHostPlugin()
+  : context(0)
 {
-  Q_OBJECT
+}
 
-public:
+ctkDicomExampleHostPlugin::~ctkDicomExampleHostPlugin()
+{
+  
+}
 
-  ctkSimpleSoapServer(QObject *parent = 0);
+void ctkDicomExampleHostPlugin::start(ctkPluginContext* context)
+{
+  instance = this;
+  this->context = context;
+}
 
-signals:
+void ctkDicomExampleHostPlugin::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context)
+}
 
-  void incomingSoapMessage(const QtSoapMessage& message, QtSoapMessage* reply);
+ctkDicomExampleHostPlugin* ctkDicomExampleHostPlugin::getInstance()
+{
+  return instance;
+}
 
-public slots:
+ctkPluginContext* ctkDicomExampleHostPlugin::getPluginContext() const
+{
+  return context;
+}
 
-protected:
+Q_EXPORT_PLUGIN2(org_commontk_dicom_examplehost, ctkDicomExampleHostPlugin)
 
-  void incomingConnection(int socketDescriptor);
 
-};
-
-#endif // CTKSIMPLESOAPSERVER_H
