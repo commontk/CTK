@@ -20,6 +20,7 @@ class ctkDicomAbstractHostPrivate
 
   int port;
   ctkDicomHostServer* server;
+  // ctkDicomWG23::Status
 };
 
 ctkDicomAbstractHost::ctkDicomAbstractHost(int port) : d_ptr(new ctkDicomAbstractHostPrivate(this,port))
@@ -30,4 +31,8 @@ int ctkDicomAbstractHost::getPort() const
 {
   Q_D(const ctkDicomAbstractHost);
   return d->port;
+}
+
+ctkDicomAbstractHost::~ctkDicomAbstractHost()
+{
 }
