@@ -8,16 +8,15 @@ ENDIF()
 SET(PLUGIN_export_directive "org_commontk_dicom_wg23_app_EXPORT")
 
 SET(PLUGIN_SRCS
-  ctkDicomHostServicePrivate.cpp
-  ctkDicomWG23AppPlugin.cpp
   ctkDicomAppServer.cpp
+  ctkDicomAppServerPrivate.cpp
+  ctkDicomWG23AppPlugin.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
-  ctkDicomHostServicePrivate.h
+  ctkDicomAppServerPrivate.h
   ctkDicomWG23AppPlugin_p.h
-  ctkDicomAppServer.h
 )
 
 # Qt Designer files which should be processed by Qts uic

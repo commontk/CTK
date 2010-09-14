@@ -20,39 +20,39 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23APPPLUGIN_P_H
-#define CTKDICOMWG23APPPLUGIN_P_H
+#ifndef DICOMAPPINTERFACEIMPL_P_H
+#define DICOMAPPINTERFACEIMPL_P_H
 
-#include <ctkPluginActivator.h>
+#include <ctkDicomAppInterface.h>
 
-class ctkDicomAppInterface;
+#include <QEventLoop>
+#include <QtSoapHttpTransport>
 
-class ctkDicomWG23AppPlugin :
-  public QObject, public ctkPluginActivator
+class ctkDicomAppServerPrivate : public ctkDicomAppInterface
 {
   Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
 
 public:
+  ctkDicomAppServerPrivate(QObject *parent = 0);
 
-  ctkDicomWG23AppPlugin();
-  ~ctkDicomWG23AppPlugin();
+  ctkSimpleSoapServer server;
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+public slots:
 
-  static ctkDicomWG23AppPlugin* getInstance();
-
-  ctkPluginContext* getPluginContext() const;
-
+  void incomingSoapMessage(const QtSoapMessage& message,
+                           QtSoapMessage* reply);
 
 private:
 
-  static ctkDicomWG23AppPlugin* instance;
-  ctkPluginContext* context;
+  void processGetState(const QtSoapMessage& message,
+                       QtSoapMessage* reply);
+  void processSetState(const QtSoapMessage& message,
+                       QtSoapMessage* reply);
+  void processBringToFront(const QtSoapMessage& message,
+                           QtSoapMessage* reply);
 
-  ctkDicomAppInterface* appInterface;
+  ctkDicomAppInterface* serviceBinding;
 
-}; // ctkDicomWG23AppPlugin
+};
 
-#endif // CTKDICOMWG23APPPLUGIN_P_H
+#endif // DICOMAPPINTERFACEIMPL_P_H

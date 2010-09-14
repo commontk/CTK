@@ -22,12 +22,10 @@
 
 #include "ctkDicomAppServer.h"
 
+#include "ctkDicomAppServerPrivate.h"
+
 ctkDicomAppServer::ctkDicomAppServer()
+  : d_ptr(new ctkDicomAppServerPrivate)
 {
 
-}
-
-ctkDicomAppServer::~ctkDicomAppServer()
-{
-  
 }

@@ -19,20 +19,24 @@
 
 =============================================================================*/
 
-#include <QObject>
-
 #ifndef CTKDICOMAPPPSERVER_H
 #define CTKDICOMAPPPSERVER_H
 
-class ctkDicomAppServer : public QObject
+#include <QScopedPointer>
+
+class ctkDicomAppServerPrivate;
+
+class ctkDicomAppServer
 {
-  Q_OBJECT
 
 public:
-
   ctkDicomAppServer();
-  ~ctkDicomAppServer();
 
-}; // ctkDicomAppServer
+private:
+
+  Q_DECLARE_PRIVATE(ctkDicomAppServer)
+
+  const QScopedPointer<ctkDicomAppServerPrivate> d_ptr;
+};
 
 #endif // CTKDICOMAPPPSERVER_H
