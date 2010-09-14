@@ -23,6 +23,9 @@
 #include <ctkPluginFramework.h>
 #include <ctkPluginException.h>
 
+// for testing purposes use:
+// --hostURL http://localhost:8081/host --applicationURL http://localhost:8082/app dicomapp
+
 // replace "//$" with nothing as soon as ctkDicomAppServer/ctkDicomHostService exist
 //$#include <ctkDicomAppServer.h>
 //$#include <ctkDicomHostService.h>
@@ -74,7 +77,6 @@ int main(int argv, char** argc)
   QString appURL = qApp->arguments().at(4);
 
   // setup the plugin framework
-
   ctkPluginFrameworkFactory fwFactory;
   ctkPluginFramework* framework = fwFactory.getFramework();
 
@@ -145,13 +147,6 @@ int main(int argv, char** argc)
     exit(3);
   }
 
-  // setup the communication infrastructure: DicomAppServer and DicomHostService
-
-//$  ctkDicomAppServer * appServer = new ctkDicomAppServer(appURL);
-
-//$  ctkDicomHostInterface * hostInterface = new ctkDicomHostService(hostURL);
-//$  framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
-
   // start the plugin with the business logic
   try
   {
@@ -162,6 +157,11 @@ int main(int argv, char** argc)
   {
     qCritical() << e.what();
   }
+
+  // setup the communication infrastructure: DicomAppServer and DicomHostService
+//$  ctkDicomAppServer * appServer = new ctkDicomAppServer(appURL); // accesses the app-plugin via getService("ctkDicomAppInterface");
+//$  ctkDicomHostInterface * hostInterface = new ctkDicomHostService(hostURL);
+//$  framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
 
   framework->start();
 
