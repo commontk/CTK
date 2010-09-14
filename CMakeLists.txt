@@ -291,6 +291,7 @@ SET(CTK_PLUGINS
   org.commontk.dicom.wg23.app:OFF
   org.commontk.dicom.wg23.core:OFF
   org.commontk.dicom.wg23.host:OFF
+  org.commontk.dicom.examplehost:OFF
   org.commontk.example.dicomapp:OFF
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
