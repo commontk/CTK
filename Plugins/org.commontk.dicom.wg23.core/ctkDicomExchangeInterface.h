@@ -20,31 +20,32 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMAPPINTERFACE_H
-#define CTKDICOMAPPINTERFACE_H
+#ifndef ctkDicomExchangeInterface_H
+#define ctkDicomExchangeInterface_H
 
 #include <QObject>
 #include <QRect>
 
 #include "ctkDicomWG23Types.h"
-#include "ctkDicomExchangeInterface.h"
 
 #include <org_commontk_dicom_wg23_core_Export.h>
 
-class org_commontk_dicom_wg23_core_EXPORT ctkDicomAppInterface : public ctkDicomExchangeInterface
+class org_commontk_dicom_wg23_core_EXPORT ctkDicomExchangeInterface : public QObject
 {
   Q_OBJECT
 
 public:
 
-  // Application interface methods
-  virtual ctkDicomWG23::State getState() = 0;
-  virtual bool setState(ctkDicomWG23::State newState) = 0;
-  virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
+  // Host interface methods
+//  virtual QString generateUID() = 0;
+//  virtual QRect getAvailableScreen(const QRect& preferredScreen) = 0;
+//  virtual QString getOutputLocation(const QStringList& preferredProtocols) = 0;
+//  virtual void notifyStateChanged(ctkDicomWG23::State state) = 0;
+//  virtual void notifyStatus(const ctkDicomWG23::Status& status) = 0;
 
   // Data exchange interface methods
   // ...
 
 };
 
-#endif // CTKDICOMAPPINTERFACE_H
+#endif // ctkDicomExchangeInterface_H

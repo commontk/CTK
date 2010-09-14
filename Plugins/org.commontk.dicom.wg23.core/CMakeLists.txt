@@ -23,8 +23,11 @@ SET(PLUGIN_SRCS
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
+
   ctkDicomAppInterface.h
+  ctkDicomExchangeInterface.h
   ctkDicomHostInterface.h
+
   ctkDicomWG23CorePlugin_p.h
   ctkSimpleSoapServer.h
   ctkSoapConnectionRunnable_p.h

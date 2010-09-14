@@ -27,10 +27,11 @@
 #include <QRect>
 
 #include "ctkDicomWG23Types.h"
+#include "ctkDicomExchangeInterface.h"
 
 #include <org_commontk_dicom_wg23_core_Export.h>
 
-class org_commontk_dicom_wg23_core_EXPORT ctkDicomHostInterface : public QObject
+class org_commontk_dicom_wg23_core_EXPORT ctkDicomHostInterface : public ctkDicomExchangeInterface
 {
   Q_OBJECT
 
