@@ -19,28 +19,27 @@
 
 =============================================================================*/
 
-#include "ctkDicomHostServer.h"
 
-#include "ctkDicomHostServerPrivate.h"
+#include <QApplication>
+#include <QString>
+#include <QStringList>
+#include <QDirIterator>
+#include <QWidget>
+#include <QUrl>
 
-ctkDicomHostServer::ctkDicomHostServer(ctkDicomHostInterface* hostInterface, int port)
-  : d_ptr(new ctkDicomHostServerPrivate(hostInterface, port))
+int main(int argv, char** argc)
 {
+  QApplication app(argv, argc);
 
-}
-ctkDicomHostServer::~ctkDicomHostServer()
-{
+  qApp->setOrganizationName("CTK");
+  qApp->setOrganizationDomain("commontk.org");
+  qApp->setApplicationName("ctkExampleHost");
 
-int ctkDicomHostServer::StartApplication(QString AppPath, QString App_URL, int port){
-    QStringList l;
-    l.append("--hostURL");
-    l.append("localhost:"+d_ptr->port);
-    l.append("--applicationURL");
-    l.append(App_URL+":"+QString(port));
-    if (!QProcess::startDetached (
-            AppPath,l))
-    {
-        qCritical()<<"application failed to start!";
-    }
+
+  
+  QWidget placeholder;
+  placeholder.show();
+
+  return app.exec();
 
 }

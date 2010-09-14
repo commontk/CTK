@@ -39,6 +39,8 @@ private:
   Q_DECLARE_PRIVATE(ctkDicomHostServer)
 
   const QScopedPointer<ctkDicomHostServerPrivate> d_ptr;
+
+
 };
 
 #endif // CTKDICOMHOSTSERVER_H

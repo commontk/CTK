@@ -308,6 +308,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMQuery:OFF
   ctkDICOMRetrieve:OFF
   ctkExampleHost:OFF
+  ctkExampleHost2:OFF
   ctkPluginBrowser:OFF
   ctkPluginGenerator:OFF
   ctkSimplePythonShell:OFF

@@ -42,6 +42,8 @@ ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* host
   }
 }
 
+
+
 void ctkDicomHostServerPrivate::incomingSoapMessage(const QtSoapMessage& message,
                                               QtSoapMessage* reply)
 {
@@ -50,7 +52,7 @@ void ctkDicomHostServerPrivate::incomingSoapMessage(const QtSoapMessage& message
 
   qDebug() << "Received soap method request: " << methodName;
 
-  if (methodName == "GetAvailableScreen")
+  if (methodName == "getAvailableScreen")
   {
     processGetAvailableScreen(message, reply);
   }
@@ -72,7 +74,7 @@ void ctkDicomHostServerPrivate::processGetAvailableScreen(
 
   const QRect result = hostInterface->getAvailableScreen(preferredScreen);
 
-  reply->setMethod("GetAvailableScreenResponse");
+  reply->setMethod("getAvailableScreenResponse");
   QtSoapStruct* availableScreenType = new ctkDicomSoapRectangle("availableScreen",result);
   reply->addMethodArgument(availableScreenType);
 }
@@ -89,5 +91,4 @@ void ctkDicomHostServerPrivate::processNotifyStatus(
 {
     const QtSoapType& status = message.method()["status"];
     hostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(status));
-
 }
