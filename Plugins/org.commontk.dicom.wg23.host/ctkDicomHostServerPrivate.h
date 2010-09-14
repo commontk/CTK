@@ -35,9 +35,11 @@ class ctkDicomHostServerPrivate : public QObject
   Q_OBJECT
 
 public:
-  ctkDicomHostServerPrivate(QObject *parent = 0);
+  ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port);
 
   ctkSimpleSoapServer server;
+  ctkDicomHostInterface* hostInterface;
+  int port;
 
 public slots:
 

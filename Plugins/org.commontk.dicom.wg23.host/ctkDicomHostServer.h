@@ -23,6 +23,8 @@
 #ifndef CTKDICOMHOSTSERVER_H
 #define CTKDICOMHOSTSERVER_H
 
+class ctkDicomHostInterface;
+
 #include <QScopedPointer>
 
 class ctkDicomHostServerPrivate;
@@ -31,7 +33,7 @@ class ctkDicomHostServer
 {
 
 public:
-  ctkDicomHostServer();
+  ctkDicomHostServer(ctkDicomHostInterface* hostInterface, int port);
 
   Q_DECLARE_PRIVATE(ctkDicomHostServer)
 

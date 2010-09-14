@@ -22,8 +22,6 @@
 
 #include "ctkDicomHostServerPrivate.h"
 
-#include "ctkDicomWG23HostPlugin_p.h"
-
 #include <ctkDicomHostInterface.h>
 
 #include <QHostAddress>
@@ -31,25 +29,16 @@
 #include <stdexcept>
 #include <ctkDicomWG23TypesHelper.h>
 
-ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(QObject *parent) :
-    QObject(parent)
+ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port) :
+    hostInterface(hostInterface), port(port)
 {
-  ctkPluginContext* context = ctkDicomWG23HostPlugin::getInstance()->getPluginContext();
-  ctkServiceReference* serviceRef = context->getServiceReference("ctkDicomHostInterface");
-  if (!serviceRef)
-  {
-    // this will change after mergin changes from branch plugin_framework
-    throw std::runtime_error("No Dicom Host Service found");
-  }
-
-  serviceBinding = qobject_cast<ctkDicomHostInterface*>(context->getService(serviceRef));
 
   connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));
 
-  if (!server.listen(QHostAddress::LocalHost, 8080))
+  if (!server.listen(QHostAddress::LocalHost, this->port))
   {
-    qCritical() << "Listening to 127.0.0.1:8080 failed.";
+    qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
   }
 }
 
@@ -81,7 +70,7 @@ void ctkDicomHostServerPrivate::processGetAvailableScreen(
   const QtSoapType& preferredScreenType = message.method()["preferredScreen"];
   const QRect preferredScreen = ctkDicomSoapRectangle::getQRect(preferredScreenType);
 
-  const QRect result = serviceBinding->getAvailableScreen(preferredScreen);
+  const QRect result = hostInterface->getAvailableScreen(preferredScreen);
 
   reply->setMethod("GetAvailableScreenResponse");
   QtSoapStruct* availableScreenType = new ctkDicomSoapRectangle("availableScreen",result);
@@ -92,13 +81,13 @@ void ctkDicomHostServerPrivate::processNotifyStateChanged(
     const QtSoapMessage &message, QtSoapMessage *reply)
 {
     const QtSoapType& stateType = message.method()["state"];
-    serviceBinding->notifyStateChanged(ctkDicomSoapState::getState(stateType));
+    hostInterface->notifyStateChanged(ctkDicomSoapState::getState(stateType));
 }
 
 void ctkDicomHostServerPrivate::processNotifyStatus(
     const QtSoapMessage &message, QtSoapMessage *reply)
 {
     const QtSoapType& status = message.method()["status"];
-    serviceBinding->notifyStatus(ctkDicomSoapStatus::getStatus(status));
+    hostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(status));
 
 }
