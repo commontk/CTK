@@ -28,3 +28,6 @@ ctkDicomHostServer::ctkDicomHostServer(ctkDicomHostInterface* hostInterface, int
 {
 
 }
+ctkDicomHostServer::~ctkDicomHostServer()
+{
+}

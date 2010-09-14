@@ -34,7 +34,8 @@ class ctkDicomHostServer
 
 public:
   ctkDicomHostServer(ctkDicomHostInterface* hostInterface, int port);
-
+  ~ctkDicomHostServer();
+private:
   Q_DECLARE_PRIVATE(ctkDicomHostServer)
 
   const QScopedPointer<ctkDicomHostServerPrivate> d_ptr;

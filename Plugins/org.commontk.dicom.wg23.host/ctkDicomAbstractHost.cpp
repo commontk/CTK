@@ -4,17 +4,25 @@
 class ctkDicomAbstractHostPrivate
 {
   public:
-  ctkDicomAbstractHostPrivate(int port) : port(port)
+  ctkDicomAbstractHostPrivate(ctkDicomAbstractHost* hostInterface, int port) : port(port)
   {
     // start server
-
+    if (!port)
+    {
+      port = 8080;
+    }
+    server = new ctkDicomHostServer(hostInterface,port);
+  }
+  ~ctkDicomAbstractHostPrivate()
+  {
+    delete server;
   }
 
   int port;
-
+  ctkDicomHostServer* server;
 };
 
-ctkDicomAbstractHost::ctkDicomAbstractHost(int port) : d_ptr(new ctkDicomAbstractHostPrivate(port))
+ctkDicomAbstractHost::ctkDicomAbstractHost(int port) : d_ptr(new ctkDicomAbstractHostPrivate(this,port))
 {
 }
 
