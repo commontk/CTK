@@ -78,14 +78,14 @@ void ctkDicomHostServerPrivate::processGetAvailableScreen(
 }
 
 void ctkDicomHostServerPrivate::processNotifyStateChanged(
-    const QtSoapMessage &message, QtSoapMessage *reply)
+    const QtSoapMessage &message, QtSoapMessage * /* reply */)
 {
     const QtSoapType& stateType = message.method()["state"];
     hostInterface->notifyStateChanged(ctkDicomSoapState::getState(stateType));
 }
 
 void ctkDicomHostServerPrivate::processNotifyStatus(
-    const QtSoapMessage &message, QtSoapMessage *reply)
+    const QtSoapMessage &message, QtSoapMessage * /* reply */)
 {
     const QtSoapType& status = message.method()["status"];
     hostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(status));
