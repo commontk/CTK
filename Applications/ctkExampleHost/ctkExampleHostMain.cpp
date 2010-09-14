@@ -28,6 +28,7 @@
 #include <QStringList>
 #include <QDirIterator>
 #include <QWidget>
+#include <QUrl>
 
 int main(int argv, char** argc)
 {
@@ -57,25 +58,25 @@ int main(int argv, char** argc)
 
   qApp->addLibraryPath(pluginPath);
 
-//  QStringList libFilter;
-//  libFilter << "*.dll" << "*.so" << "*.dylib";
-//  QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
-//  while(dirIter.hasNext())
-//  {
-//    try
-//    {
-//      QString fileLocation = dirIter.next();
-//      if (fileLocation.contains("org_commontk_dicom_wg23"))
-//      {
-//        ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
-//        plugin->start(ctkPlugin::START_TRANSIENT);
-//      }
-//    }
-//    catch (const ctkPluginException& e)
-//    {
-//      qCritical() << e.what();
-//    }
-//  }
+  QStringList libFilter;
+  libFilter << "*.dll" << "*.so" << "*.dylib";
+  QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
+  while(dirIter.hasNext())
+  {
+    try
+    {
+      QString fileLocation = dirIter.next();
+      if (fileLocation.contains("org_commontk_dicom_wg23"))
+      {
+        ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
+        plugin->start(ctkPlugin::START_TRANSIENT);
+      }
+    }
+    catch (const ctkPluginException& e)
+    {
+      qCritical() << e.what();
+    }
+  }
 
   framework->start();
 

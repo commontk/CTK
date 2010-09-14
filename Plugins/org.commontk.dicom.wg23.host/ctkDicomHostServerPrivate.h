@@ -48,6 +48,10 @@ private:
 
   void processGetAvailableScreen(const QtSoapMessage& message,
                                  QtSoapMessage* reply);
+  void processNotifyStateChanged(const QtSoapMessage& message,
+                                 QtSoapMessage* reply);
+  void processNotifyStatus(const QtSoapMessage& message,
+                                 QtSoapMessage* reply);
 
   ctkDicomHostInterface* serviceBinding;
 

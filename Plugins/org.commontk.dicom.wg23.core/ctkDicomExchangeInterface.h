@@ -39,8 +39,8 @@ public:
   // Data exchange interface methods
   //
 
-  virtual bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData) = 0;
-  virtual QList<ctkDicomWG23::ObjectLocator> getData(QList<QUuid> objectUUIDs, QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData) = 0;
+  //virtual bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData) = 0;
+  //virtual QList<ctkDicomWG23::ObjectLocator> getData(QList<QUuid> objectUUIDs, QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData) = 0;
 
   //    8.3.3 getAsModels(objectUUIDs : ArrayOfUUID, classUID : UID, supportedInfosetTypes : ArrayOfMimeType) : ModelSetDescriptor	33
 //    8.3.4 queryModel(models : ArrayOfUUID, xpaths : ArrayOfString) : ArrayOfQueryResult	34

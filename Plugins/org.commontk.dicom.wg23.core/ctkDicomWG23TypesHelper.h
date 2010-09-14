@@ -24,16 +24,72 @@
 #define CTKDICOM23TYPESHELPER_H
 
 #include <QtSoapStruct>
-#include <QtSoapName>
+#include <QtSoapQName>
 #include <QRect>
 
-class ctkDicomSoapRectangle (QtSoapStruct) {
+class ctkDicomSoapRectangle :public QtSoapStruct {
 
-    ctkDicomSoapRectangle(Const QtSoapName & name,Const QRect rect):QtSoapStruct(){
+    ctkDicomSoapRectangle(const QtSoapQName & name,const QRect& rect):QtSoapStruct(name){
+        this->insert(new QtSoapSimpleType(QtSoapQName("Height"), 
+                    rect.height()));
+        this->insert(new QtSoapSimpleType(QtSoapQName("Width"), 
+                    rect.width()));
+        this->insert(new QtSoapSimpleType(QtSoapQName("RefPointX"),
+                    rect.x()));
+        this->insert(new QtSoapSimpleType(QtSoapQName("RefPointY"), 
+                    rect.y()));
 
     };
 
-    static QRect getQRect (Const QtSoapType& type);
+    static QRect getQRect (const QtSoapType& type){
+        return QRect (type["RefPointX"].value().toInt(),
+                        type["RefPointY"].value().toInt(),
+                        type["Width"].value().toInt(),
+                        type["Height"].value().toInt());
+    };
 };
+
+class ctkDicomSoapState : public QtSoapSimpleType{
+   ctkDicomSoapState ( const QtSoapQName & name, ctkDicomWG23::State s ):
+       QtSoapSimpleType ( name, s ){};
+
+   static ctkDicomWG23::State getState(const QtSoapType& type){
+        return  static_cast<ctkDicomWG23::State> (type.value().toInt());
+   };
+};
+
+
+class ctkDicomSoapStatus : public QtSoapStruct{
+    ctkDicomSoapStatus ( const QtSoapQName & name,
+            const ctkDicomWG23::Status* s ):
+       QtSoapStruct ( name ){
+        this->insert(new QtSoapSimpleType(QtSoapQName("StatusType"), 
+                    s->statusType) );
+        this->insert(new QtSoapSimpleType(
+                    QtSoapQName("CodingSchemeDesignator"), 
+                    s->codingSchemeDesignator) );
+        this->insert(new QtSoapSimpleType(
+                    QtSoapQName("CodeValue"), 
+                    s->codeValue) );
+        this->insert(new QtSoapSimpleType(
+                    QtSoapQName("CodeMeaning"), 
+                    s->codeMeaning) );
+    };
+   static ctkDicomWG23::Status getStatus(const QtSoapType& type){
+        ctkDicomWG23::Status s;
+        
+        s.statusType = static_cast<ctkDicomWG23::StatusType>
+            (type["StatusType"].value().toInt());
+        s.codingSchemeDesignator = 
+            type["CodingSchemeDesignator"].value().toString();
+        s.codeValue = 
+            type["CodeValue"].value().toString();
+        s.codeMeaning = 
+            type["CodeMeaning"].value().toString();
+        return s;
+   };
+};
+
+
 
 #endif

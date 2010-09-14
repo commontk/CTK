@@ -28,6 +28,7 @@
 #include <qtsoap.h>
 
 #include <org_commontk_dicom_wg23_core_Export.h>
+#include <ctkDicomWG23Types.h>
 
 class org_commontk_dicom_wg23_core_EXPORT ctkSimpleSoapServer : public QTcpServer
 {

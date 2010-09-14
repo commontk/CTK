@@ -29,6 +29,7 @@
 #include <QHostAddress>
 
 #include <stdexcept>
+#include <ctkDicomWG23TypesHelper.h>
 
 ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(QObject *parent) :
     QObject(parent)
@@ -64,6 +65,14 @@ void ctkDicomHostServerPrivate::incomingSoapMessage(const QtSoapMessage& message
   {
     processGetAvailableScreen(message, reply);
   }
+  if (methodName == "notifyStateChanged")
+  {
+    processNotifyStateChanged(message, reply);
+  }
+  if (methodName == "notifyStatus")
+  {
+    processNotifyStatus(message, reply);
+  }
 }
 
 void ctkDicomHostServerPrivate::processGetAvailableScreen(
@@ -84,4 +93,22 @@ void ctkDicomHostServerPrivate::processGetAvailableScreen(
   availableScreenType->insert(new QtSoapSimpleType(QtSoapQName("RefPointX"), result.x()));
   availableScreenType->insert(new QtSoapSimpleType(QtSoapQName("RefPointY"), result.y()));
   reply->addMethodArgument(availableScreenType);
+}
+
+void ctkDicomHostServerPrivate::processNotifyStateChanged(
+    const QtSoapMessage &message, QtSoapMessage *reply)
+{
+    ctkDicomWG23::State state;
+    const QtSoapType& stateType = message.method()["state"];
+
+
+
+}
+
+void ctkDicomHostServerPrivate::processNotifyStatus(
+    const QtSoapMessage &message, QtSoapMessage *reply)
+{
+    ctkDicomWG23::State state;
+    const QtSoapType& stateType = message.method()["status"];
+
 }
