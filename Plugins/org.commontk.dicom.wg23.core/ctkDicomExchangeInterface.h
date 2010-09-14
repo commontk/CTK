@@ -36,13 +36,6 @@ class org_commontk_dicom_wg23_core_EXPORT ctkDicomExchangeInterface : public QOb
 
 public:
 
-  // Host interface methods
-//  virtual QString generateUID() = 0;
-//  virtual QRect getAvailableScreen(const QRect& preferredScreen) = 0;
-//  virtual QString getOutputLocation(const QStringList& preferredProtocols) = 0;
-//  virtual void notifyStateChanged(ctkDicomWG23::State state) = 0;
-//  virtual void notifyStatus(const ctkDicomWG23::Status& status) = 0;
-
   // Data exchange interface methods
   // ...
 
