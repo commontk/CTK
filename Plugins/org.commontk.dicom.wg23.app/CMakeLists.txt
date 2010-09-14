@@ -1,10 +1,5 @@
 PROJECT(org_commontk_dicom_wg23_app)
 
-FIND_PACKAGE(QtSOAP)
-IF(NOT QtSOAP_FOUND)
-  MESSAGE(FATAL_ERROR "error: QtSOAP package is required to build ${PROJECT_NAME}" )
-ENDIF()
-
 SET(PLUGIN_export_directive "org_commontk_dicom_wg23_app_EXPORT")
 
 SET(PLUGIN_SRCS
@@ -33,7 +28,6 @@ ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
-  INCLUDE_DIRECTORIES ${QTSOAP_INCLUDE_DIR}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
   MOC_SRCS ${PLUGIN_MOC_SRCS}
