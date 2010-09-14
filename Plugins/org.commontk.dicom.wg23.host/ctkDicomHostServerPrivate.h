@@ -53,7 +53,7 @@ private:
   void processNotifyStatus(const QtSoapMessage& message,
                                  QtSoapMessage* reply);
   //void processGenerateUID(const QtSoapMessage& message,
-                                 QtSoapMessage* reply);
+  //                               QtSoapMessage* reply);
 
   ctkDicomHostInterface* serviceBinding;
 
