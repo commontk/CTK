@@ -23,6 +23,8 @@
 #include <ctkPluginFramework.h>
 #include <ctkPluginException.h>
 
+#include <ctkDicomExampleHost.h>
+
 #include <QApplication>
 #include <QString>
 #include <QStringList>
@@ -66,7 +68,7 @@ int main(int argv, char** argc)
     try
     {
       QString fileLocation = dirIter.next();
-      if (fileLocation.contains("org_commontk_dicom_wg23"))
+      if (fileLocation.contains("org_commontk_dicom"))
       {
         ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
         plugin->start(ctkPlugin::START_TRANSIENT);
@@ -79,6 +81,8 @@ int main(int argv, char** argc)
   }
 
   framework->start();
+
+  ctkDicomExampleHost* host = new ctkDicomExampleHost();
 
   QWidget placeholder;
   placeholder.show();

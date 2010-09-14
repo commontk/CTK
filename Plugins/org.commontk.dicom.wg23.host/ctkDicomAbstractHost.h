@@ -4,6 +4,8 @@
 #include <ctkDicomHostInterface.h>
 #include <QScopedPointer>
 
+#include <org_commontk_dicom_wg23_host_Export.h>
+
 class ctkDicomAbstractHostPrivate;
 
 /**
@@ -15,7 +17,7 @@ class ctkDicomAbstractHostPrivate;
   * The methods of the ctkDicomHostInterface have to be implemented for the business logic,
   *
   */
-class ctkDicomAbstractHost : public ctkDicomHostInterface
+class org_commontk_dicom_wg23_host_EXPORT ctkDicomAbstractHost : public ctkDicomHostInterface
 {
 public:
     /**

@@ -5,6 +5,6 @@
 # 
 
 SET(target_libraries
-  CTKPluginFramework
-  org_commontk_dicom_wg23_host
+  org_commontk_dicom_examplehost
+
   )

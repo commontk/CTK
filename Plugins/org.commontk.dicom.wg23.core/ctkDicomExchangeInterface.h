@@ -48,6 +48,7 @@ public:
 //    8.3.6 releaseData(objectUUIDs : ArrayOfUUID): void	35
 //    8.3.7 releaseModels(objectUUIDs : ArrayOfUUID): void
 
+  virtual ~ctkDicomExchangeInterface() {}
 };
 
 #endif // ctkDicomExchangeInterface_H

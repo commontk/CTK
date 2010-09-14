@@ -1,5 +1,5 @@
 #include "ctkDicomExampleHost.h"
 
-ctkDicomExampleHost::ctkDicomExampleHost()
+ctkDicomExampleHost::ctkDicomExampleHost() : ctkDicomAbstractHost(8080)
 {
 }
