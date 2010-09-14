@@ -4,6 +4,7 @@ SET(PLUGIN_export_directive "org_commontk_dicom_examplehost_EXPORT")
 
 SET(PLUGIN_SRCS
   ctkDicomExampleHostPlugin.cpp
+  ctkDicomExampleHost.cpp
 )
 
 # Files which should be processed by Qts moc
