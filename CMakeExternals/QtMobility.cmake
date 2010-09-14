@@ -72,5 +72,13 @@ IF(${add_project})
     
   # Since the full path of QtMobility library is used, there is not need to add 
   # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
+
+  IF(UNIX)
+    SET(QTMOBILITY_QTSERVICEFW_LIBRARIES_INCLUDE_DIRS 
+        "${CTK_BINARY_DIR}/../CMakeExternals/Source/QtMobility/install/include")
+  ELSE()
+    SET(QTMOBILITY_QTSERVICEFW_LIBRARIES_INCLUDE_DIRS
+        "${qtmobility_win32_install_prefix}/include")
+  ENDIF()
 	
 ENDIF()

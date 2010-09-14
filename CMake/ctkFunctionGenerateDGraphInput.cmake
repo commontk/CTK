@@ -21,10 +21,16 @@
 #
 # Generate a DGrapgh input file expected by DGraph executable.
 #
-FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories with_option)
+FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories)
   IF(NOT EXISTS ${dir})
     MESSAGE(FATAL_ERROR "Directory ${dir} doesn't exist!")
   ENDIF()
+
+  CtkMacroParseArguments(MY
+    ""
+    "WITH_OPTION;WITH_EXTERNALS"
+    ${ARGN}
+    )
 
   SET(dgraph_list )
 
@@ -48,7 +54,7 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories with_option)
     ENDIF()
 
     SET(include_dep 1)
-    IF(${with_option})
+    IF(MY_WITH_OPTION)
       SET(include_dep ${${option_name}})
     ENDIF()
     IF(${include_dep})
