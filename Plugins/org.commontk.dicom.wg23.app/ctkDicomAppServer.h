@@ -19,12 +19,12 @@
 
 =============================================================================*/
 
+#include <QObject>
 
 #ifndef CTKDICOMAPPPSERVER_H
 #define CTKDICOMAPPPSERVER_H
 
-class ctkDicomAppServer :
-  public QObject
+class ctkDicomAppServer : public QObject
 {
   Q_OBJECT
 
