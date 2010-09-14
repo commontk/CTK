@@ -11,6 +11,7 @@ SET(PLUGIN_SRCS
   ctkDicomAppServer.cpp
   ctkDicomAppServerPrivate.cpp
   ctkDicomWG23AppPlugin.cpp
+  ctkDicomAbstractApp.cpp
 )
 
 # Files which should be processed by Qts moc

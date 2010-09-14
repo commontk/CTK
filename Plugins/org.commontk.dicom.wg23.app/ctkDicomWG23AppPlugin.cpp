@@ -22,8 +22,6 @@
 
 #include "ctkDicomWG23AppPlugin_p.h"
 
-#include <ctkDicomAppServerPrivate.h>
-
 #include <QtPlugin>
 
 ctkDicomWG23AppPlugin* ctkDicomWG23AppPlugin::instance = 0;
@@ -43,16 +41,11 @@ void ctkDicomWG23AppPlugin::start(ctkPluginContext* context)
 {
   instance = this;
   this->context = context;
-
-  appInterface = new ctkDicomAppService();
-  context->registerService(QStringList("ctkDicomAppInterface"), appInterface);
 }
 
 void ctkDicomWG23AppPlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
-
-  delete appInterface;
 }
 
 ctkDicomWG23AppPlugin* ctkDicomWG23AppPlugin::getInstance()

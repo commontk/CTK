@@ -19,13 +19,15 @@
 
 =============================================================================*/
 
-
 #include "ctkDicomAppServer.h"
 
 #include "ctkDicomAppServerPrivate.h"
 
-ctkDicomAppServer::ctkDicomAppServer()
-  : d_ptr(new ctkDicomAppServerPrivate)
+ctkDicomAppServer::ctkDicomAppServer(ctkDicomAppInterface* appInterface, int port)
+  : d_ptr(new ctkDicomAppServerPrivate(appInterface, port))
 {
 
+}
+ctkDicomAppServer::~ctkDicomAppServer()
+{
 }

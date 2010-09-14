@@ -20,22 +20,26 @@
 =============================================================================*/
 
 
-#ifndef DICOMAPPINTERFACEIMPL_P_H
-#define DICOMAPPINTERFACEIMPL_P_H
+#ifndef CTKDICOMAPPSERVERPRIVATE_H
+#define CTKDICOMAPPSERVERPRIVATE_H
 
-#include <ctkDicomAppInterface.h>
+#include <QObject>
+#include <QtSoapMessage>
 
-#include <QEventLoop>
-#include <QtSoapHttpTransport>
+#include <ctkSimpleSoapServer.h>
 
-class ctkDicomAppServerPrivate : public ctkDicomAppInterface
+class ctkDicomAppInterface;
+
+class ctkDicomAppServerPrivate : public QObject
 {
   Q_OBJECT
 
 public:
-  ctkDicomAppServerPrivate(QObject *parent = 0);
+  ctkDicomAppServerPrivate(ctkDicomAppInterface* appInterface, int port);
 
   ctkSimpleSoapServer server;
+  ctkDicomAppInterface* appInterface;
+  int port;
 
 public slots:
 
@@ -51,8 +55,6 @@ private:
   void processBringToFront(const QtSoapMessage& message,
                            QtSoapMessage* reply);
 
-  ctkDicomAppInterface* serviceBinding;
-
 };
 
-#endif // DICOMAPPINTERFACEIMPL_P_H
+#endif // CTKDICOMAPPSERVERPRIVATE_H

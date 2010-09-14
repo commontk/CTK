@@ -22,6 +22,8 @@
 #ifndef CTKDICOMAPPPSERVER_H
 #define CTKDICOMAPPPSERVER_H
 
+class ctkDicomAppInterface;
+
 #include <QScopedPointer>
 
 class ctkDicomAppServerPrivate;
@@ -30,7 +32,8 @@ class ctkDicomAppServer
 {
 
 public:
-  ctkDicomAppServer();
+  ctkDicomAppServer(ctkDicomAppInterface* appInterface, int port);
+  ~ctkDicomAppServer();
 
 private:
 

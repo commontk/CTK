@@ -22,7 +22,6 @@
 
 #include "ctkDicomAppServerPrivate.h"
 
-#include "ctkDicomWG23AppPlugin_p.h"
 #include <ctkDicomAppInterface.h>
 
 #include <QHostAddress>
@@ -30,25 +29,16 @@
 #include <stdexcept>
 #include <ctkDicomWG23TypesHelper.h>
 
-ctkDicomAppServerPrivate::ctkDicomAppServerPrivate(QObject *parent) :
-    QObject(parent)
+ctkDicomAppServerPrivate::ctkDicomAppServerPrivate(ctkDicomAppInterface* appInterface, int port) :
+    appInterface(appInterface), port(port)
 {
-  ctkPluginContext* context = ctkDicomWG23AppPlugin::getInstance()->getPluginContext();
-  ctkServiceReference* serviceRef = context->getServiceReference("ctkDicomAppInterface");
-  if (!serviceRef)
-  {
-    // this will change after mergin changes from branch plugin_framework
-    throw std::runtime_error("No Dicom App Service found");
-  }
-
-  serviceBinding = qobject_cast<ctkDicomAppInterface*>(context->getService(serviceRef));
 
   connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));
 
-  if (!server.listen(QHostAddress::LocalHost, 8080))
+  if (!server.listen(QHostAddress::LocalHost, this->port))
   {
-    qCritical() << "Listening to 127.0.0.1:8080 failed.";
+    qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
   }
 }
 
@@ -77,10 +67,10 @@ void ctkDicomAppServerPrivate::incomingSoapMessage(const QtSoapMessage& message,
 void ctkDicomAppServerPrivate::processGetState(
     const QtSoapMessage &message, QtSoapMessage *reply)
 {
-    const ctkDicomWG23::State result = serviceBinding->getState();
+    const ctkDicomWG23::State result = appInterface->getState();
 
     reply->setMethod("GetState");
-    QtSoapStruct* stateType = new ctkDicomSoapState("state",result);
+    QtSoapSimpleType* stateType = new ctkDicomSoapState("state",result);
     reply->addMethodArgument(stateType);
 }
 
@@ -88,7 +78,7 @@ void ctkDicomAppServerPrivate::processSetState(
     const QtSoapMessage &message, QtSoapMessage *reply)
 {
     const QtSoapType& stateType = message.method()["state"];
-    serviceBinding->setState(ctkDicomSoapState::getState(stateType));
+    appInterface->setState(ctkDicomSoapState::getState(stateType));
 }
 
 void ctkDicomAppServerPrivate::processBringToFront(
@@ -97,5 +87,5 @@ void ctkDicomAppServerPrivate::processBringToFront(
    const QtSoapType& requestedScreenAreaType = message.method()["requestedScreenArea"];
    const QRect requestedScreenArea = ctkDicomSoapRectangle::getQRect(requestedScreenAreaType);
 
-   serviceBinding->bringToFront(requestedScreenArea);
+   appInterface->bringToFront(requestedScreenArea);
 }
