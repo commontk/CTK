@@ -19,10 +19,17 @@
 
 =============================================================================*/
 
+#include <QString>
+#include <QVector>
+#include <QUuid>
 
 #ifndef CTKDICOMWG23TYPES_H
 #define CTKDICOMWG23TYPES_H
 
+/**
+  * \brief Typedefs and classes defined in the interfaces of DICOM Supplement 118.
+  *
+  */
 namespace ctkDicomWG23 {
 
   enum State {
@@ -46,6 +53,49 @@ namespace ctkDicomWG23 {
     QString codingSchemeDesignator;
     QString codeValue;
     QString codeMeaning;
+  };
+
+  struct ObjectLocator {
+    QUuid locator;
+    QUuid source;
+    QString transferSyntax;
+    qint64 length;
+    qint64 offset;
+    QString URI;
+  };
+
+  class ObjectDescriptor {
+    QUuid descriptorUUID;
+    QString mimeType;
+    QString classUID;
+    QString transferSyntaxUID;
+    QString modality;
+  };
+
+  struct Series {
+    QString seriesUID;
+    QVector<ObjectDescriptor> objectDescriptors;
+  };
+
+  struct Study {
+    QString studyUID;
+    QVector<ObjectDescriptor> objectDescriptors;
+    QVector<Series> series;
+  };
+
+  struct Patient {
+    QString name;
+    QString id;
+    QString assigningAuthority;
+    QString sex;
+    QString birthDate;
+    QVector<ObjectDescriptor> objectDescriptors;
+    QVector<Study> studies;
+  };
+
+  struct AvailableData {
+    QVector<ObjectDescriptor> objectDescriptors;
+    QVector<Patient> patients;
   };
 
 }
