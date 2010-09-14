@@ -21,7 +21,10 @@
 
 
 #include "ctkExampleDicomAppPlugin_p.h"
+#include "ctkExampleDicomAppLogic_p.h"
 #include <QtPlugin>
+#include <QStringList.h>
+#include <QString.h>
 
 ctkExampleDicomAppPlugin* ctkExampleDicomAppPlugin::instance = 0;
 
@@ -39,6 +42,17 @@ void ctkExampleDicomAppPlugin::start(ctkPluginContext* context)
 {
   instance = this;
   this->context = context;
+  context->registerService(QStringList("ctkDicomAppInterface"), 
+    new ctkExampleDicomAppLogic(new ServiceAccessor<ctkDicomHostInterface>(context,"ctkDicomHostInterface")));
+
+  //ctkServiceReference* serviceRef = context->getServiceReference("ctkDicomHostInterface");
+  //if (!serviceRef)
+  //{
+  //  // this will change after merging changes from branch plugin_framework
+  //  throw std::runtime_error("No Dicom Host Service found");
+  //}
+  //ctkDicomHostInterface*
+  //  serviceBinding = qobject_cast<ctkDicomHostInterface*>(context->getService(serviceRef));
 }
 
 void ctkExampleDicomAppPlugin::stop(ctkPluginContext* context)
