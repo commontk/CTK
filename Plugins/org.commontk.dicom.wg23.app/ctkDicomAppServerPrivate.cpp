@@ -41,15 +41,6 @@ ctkDicomAppServerPrivate::ctkDicomAppServerPrivate(int port) :
   {
     qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
   }
-
-  ctkPluginContext* context = ctkDicomWG23AppPlugin::getInstance()->getPluginContext();
-  ctkServiceReference* serviceRef = context->getServiceReference("ctkDicomAppInterface");
-  if (!serviceRef)
-  {
-    // this will change after merging changes from branch plugin_framework
-    throw std::runtime_error("No Dicom App Service found");
-  }
-  appInterface = qobject_cast<ctkDicomAppInterface*>(context->getService(serviceRef));
 }
 
 void ctkDicomAppServerPrivate::incomingSoapMessage(const QtSoapMessage& message,
@@ -59,6 +50,18 @@ void ctkDicomAppServerPrivate::incomingSoapMessage(const QtSoapMessage& message,
   QString methodName = method.name().name();
 
   qDebug() << "Received soap method request: " << methodName;
+
+  if(appInterface == NULL)
+  {
+    ctkPluginContext* context = ctkDicomWG23AppPlugin::getInstance()->getPluginContext();
+    ctkServiceReference* serviceRef = context->getServiceReference("ctkDicomAppInterface");
+    if (!serviceRef)
+    {
+      // this will change after merging changes from branch plugin_framework
+      throw std::runtime_error("No Dicom App Service found");
+    }
+    appInterface = qobject_cast<ctkDicomAppInterface*>(context->getService(serviceRef));
+  }
 
   if (methodName == "getState")
   {

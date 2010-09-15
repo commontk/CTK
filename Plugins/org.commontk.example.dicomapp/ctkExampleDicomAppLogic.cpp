@@ -29,6 +29,14 @@
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface> host)
   : host(host)
 {
+  try
+  {
+    host->notifyStateChanged(ctkDicomWG23::IDLE);
+  }
+  catch (const std::runtime_error& e)
+  {
+    qCritical() << e.what();
+  }
 }
 
 ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
@@ -59,5 +67,12 @@ bool ctkExampleDicomAppLogic::bringToFront(const QRect& requestedScreenArea)
 void ctkExampleDicomAppLogic::do_something()
 {
   QRect preferred;
-  QRect rect = host->getAvailableScreen(preferred);
+  try
+  {
+    QRect rect = host->getAvailableScreen(preferred);
+  }
+  catch (const std::runtime_error& e)
+  {
+    qCritical() << e.what();
+  }
 }

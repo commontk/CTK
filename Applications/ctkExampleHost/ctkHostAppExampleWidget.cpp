@@ -26,7 +26,7 @@ void ctkHostAppExampleWidget::startButtonClicked()
     qDebug() << "start button clicked";
     if (host)
     {
-      // host->StartApplication(appFileName);
+      host->StartApplication(appFileName);
     }
 }
 

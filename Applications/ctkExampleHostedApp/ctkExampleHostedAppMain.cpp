@@ -148,7 +148,13 @@ int main(int argv, char** argc)
     exit(3);
   }
 
-  // start the plugin with the business logic
+  // setup the communication infrastructure: DicomAppServer and DicomHostService
+  ctkDicomAppServer * appServer = new ctkDicomAppServer(QUrl(appURL).port()); // accesses the app-plugin via getService("ctkDicomAppInterface");
+//$  ctkDicomHostInterface * hostInterface = new ctkDicomHostService(QUrl(hostURL).port());
+//$  framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
+
+  // install and start the plugin with the business logic and remember pointer to start it later
+  ctkPlugin* plugin;
   try
   {
     ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(pluginFileLocation));
@@ -159,15 +165,10 @@ int main(int argv, char** argc)
     qCritical() << e.what();
   }
 
-  // setup the communication infrastructure: DicomAppServer and DicomHostService
-  ctkDicomAppServer * appServer = new ctkDicomAppServer(QUrl(appURL).port()); // accesses the app-plugin via getService("ctkDicomAppInterface");
-//$  ctkDicomHostInterface * hostInterface = new ctkDicomHostService(QUrl(hostURL).port());
-//$  framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
-
   framework->start();
 
-  QWidget placeholder;
-  placeholder.show();
+  //QWidget placeholder;
+  //placeholder.show();
 
   return app.exec();
 }
