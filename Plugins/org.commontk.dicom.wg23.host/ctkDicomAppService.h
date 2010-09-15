@@ -19,31 +19,31 @@
 
 =============================================================================*/
 
-#ifndef CTKDICOMHOSTSERVICEPRIVATE_H
-#define CTKDICOMHOSTSERVICEPRIVATE_H
 
-#include <ctkDicomWG23Types.h>
+#ifndef CTKDICOMHOSTSERVICE_H
+#define CTKDICOMHOSTSERVICE_H
 
-#include <QEventLoop>
-#include <QtSoapHttpTransport>
+#include <ctkDicomAppInterface.h>
+#include <QScopedPointer>
+#include <org_commontk_dicom_wg23_host_Export.h>
 
-class ctkDicomHostServicePrivate : public QObject
+class ctkDicomServicePrivate;
+
+class org_commontk_dicom_wg23_host_EXPORT ctkDicomAppService : public ctkDicomAppInterface
 {
-  Q_OBJECT
 
 public:
-  ctkDicomHostServicePrivate(int port);
+  ctkDicomAppService(int port);
+  ~ctkDicomAppService();
 
-  QtSoapType askHost(const QString& methodName, QtSoapType* soapStruct);
-    
-  QEventLoop blockingLoop;
-  QtSoapHttpTransport http;
+  ctkDicomWG23::State getState();
+  bool setState(ctkDicomWG23::State newState);
+  bool bringToFront(const QRect& requestedScreenArea);
 
-  int port;
+private:
+  Q_DECLARE_PRIVATE(ctkDicomService)
 
-private slots:
-
-  void responseReady();
+  const QScopedPointer<ctkDicomServicePrivate> d_ptr;
 };
 
-#endif // CTKDICOMHOSTSERVICEPRIVATE_H
+#endif // CTKDICOMHOSTSERVICE_H

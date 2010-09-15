@@ -19,7 +19,7 @@
 
 =============================================================================*/
 
-#include "ctkDicomHostServicePrivate.h"
+#include "ctkDicomServicePrivate.h"
 #include "ctkDicomWG23TypesHelper.h"
 
 #include <QApplication>
@@ -28,19 +28,19 @@
 
 #include <stdexcept>
 
-ctkDicomHostServicePrivate::ctkDicomHostServicePrivate(int port)
+ctkDicomServicePrivate::ctkDicomServicePrivate(int port)
 {
   connect(&http, SIGNAL(responseReady()), this, SLOT(responseReady()));
 
   http.setHost("127.0.0.1", false, port);
 }
 
-void ctkDicomHostServicePrivate::responseReady()
+void ctkDicomServicePrivate::responseReady()
 {
   blockingLoop.exit();
 }
 
-QtSoapType ctkDicomHostServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
+QtSoapType ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
 {
   http.setAction(methodName);
 

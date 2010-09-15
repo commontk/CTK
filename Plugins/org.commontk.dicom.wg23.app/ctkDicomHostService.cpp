@@ -21,12 +21,12 @@
 
 #include "ctkDicomHostService.h"
 
-#include "ctkDicomHostServicePrivate.h"
+#include "ctkDicomServicePrivate.h"
 
 #include "ctkDicomWG23TypesHelper.h"
 
 ctkDicomHostService::ctkDicomHostService(int port)
-  : d_ptr(new ctkDicomHostServicePrivate(port))
+  : d_ptr(new ctkDicomServicePrivate(port))
 {
 
 }
@@ -36,7 +36,7 @@ ctkDicomHostService::~ctkDicomHostService()
 
 QString ctkDicomHostService::generateUID()
 {
-  Q_D(ctkDicomHostService);
+  Q_D(ctkDicomService);
 
   const QtSoapType& result = d->askHost("generateUID", NULL);
   QString resultUID = ctkDicomSoapUID::getUID(result);
@@ -53,7 +53,7 @@ QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProto
 
 QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 {
-  Q_D(ctkDicomHostService);
+  Q_D(ctkDicomService);
 
   QtSoapStruct* input = new ctkDicomSoapRectangle("preferredScreen", preferredScreen);
   const QtSoapType& result = d->askHost("getAvailableScreen", input);
@@ -64,14 +64,14 @@ QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 
 void ctkDicomHostService::notifyStateChanged(ctkDicomWG23::State state)
 {
-  Q_D(ctkDicomHostService);
+  Q_D(ctkDicomService);
   QtSoapType* input = new ctkDicomSoapState("stateChanged", state);
   d->askHost("notifyStateChanged", input);
 }
 
 void ctkDicomHostService::notifyStatus(const ctkDicomWG23::Status& status)
 {
-  Q_D(ctkDicomHostService);
+  Q_D(ctkDicomService);
   QtSoapStruct* input = new ctkDicomSoapStatus("status", status);
   d->askHost("notifyStatus", input);
 }

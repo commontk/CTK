@@ -26,6 +26,7 @@
 #include <QtSoapStruct>
 #include <QtSoapQName>
 #include <QRect>
+#include <ctkDicomWG23Types.h>
 
 class ctkDicomSoapRectangle :public QtSoapStruct {
     public: 
@@ -93,13 +94,23 @@ class ctkDicomSoapStatus : public QtSoapStruct{
 };
 
 class ctkDicomSoapUID : public QtSoapSimpleType{
-public:
-ctkDicomSoapUID ( const QString & name, const QString& uid ):
+    public:
+    ctkDicomSoapUID ( const QString & name, const QString& uid ):
    QtSoapSimpleType ( QtSoapQName(name), uid ){};
 
-static QString getUID(const QtSoapType& type){
-	return static_cast<QString> (type.value().toString());
+    static QString getUID(const QtSoapType& type){
+        return type.value().toString();
+    };
 };
+
+class ctkDicomSoapBool : public QtSoapSimpleType{
+    public:
+    ctkDicomSoapBool ( const QString & name, const bool& boolean ):
+   QtSoapSimpleType ( QtSoapQName(name), boolean ){};
+
+    static bool getBool(const QtSoapType& type){
+        return  type.value().toBool();
+    };
 
 };
 

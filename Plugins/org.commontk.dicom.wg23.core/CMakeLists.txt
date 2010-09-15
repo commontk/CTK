@@ -19,6 +19,7 @@ SET(PLUGIN_SRCS
   ctkDicomWG23CorePlugin.cpp
   ctkSimpleSoapServer.cpp
   ctkSoapConnectionRunnable.cpp
+  ctkDicomServicePrivate.cpp
   ctkDicomWG23Types.h
   ctkDicomWG23TypesHelper.h
 )
@@ -29,7 +30,7 @@ SET(PLUGIN_MOC_SRCS
   ctkDicomAppInterface.h
   ctkDicomExchangeInterface.h
   ctkDicomHostInterface.h
-
+  ctkDicomServicePrivate.h
   ctkDicomWG23CorePlugin_p.h
   ctkSimpleSoapServer.h
   ctkSoapConnectionRunnable_p.h
