@@ -47,6 +47,8 @@ public:
   int callingPort();
   void setCalledPort ( int port );
   int calledPort();
+  void setMoveDestinationAETitle ( QString moveDestinationAETitle );
+  const QString& moveDestinationAETitle();
 
   // Could be a slot...
   void retrieveSeries ( QString seriesInstanceUID, QDir directory );

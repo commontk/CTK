@@ -74,6 +74,7 @@ public:
   int CalledPort;
   DcmSCU SCU;
   DcmDataset* parameters;
+  QString MoveDestinationAETitle;
 
   // do the retrieve, handling both series and study retrieves
   enum RetrieveType { RetrieveSeries, RetrieveStudy };
@@ -119,8 +120,9 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
   scu.setPeerAETitle ( OFString(CalledAETitle.toStdString().c_str()) );
   scu.setPeerHostName ( OFString(Host.toStdString().c_str()) );
   scu.setPeerPort ( CalledPort );
+  scu.setMoveDestinationAETitle ( OFString(MoveDestinationAETitle.toStdString().c_str()) );
 
-  logger.error ( "Setting Transfer Syntaxes" );
+  logger.info ( "Setting Transfer Syntaxes" );
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
@@ -140,6 +142,8 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
     logger.error ( "Error negotiating association" );
     return;
     }
+
+  logger.debug ( "Setting Parameters" );
   // Clear the query
   unsigned long elements = this->parameters->card();
   // Clean it out
@@ -158,14 +162,21 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
     this->parameters->putAndInsertString ( DCM_StudyInstanceUID, UID.toStdString().c_str() );  
     }
 
+  logger.debug ( "Sending Move Request" );
   MOVEResponses *responses = new MOVEResponses();
   OFCondition status = scu.sendMOVERequest ( 0, this->parameters, responses );
   if ( status.good() )
     {
     logger.debug ( "Find succeded" );
 
+    logger.debug ( "Making Output Directory" );
     // Try to create the directory
     directory.mkpath ( directory.absolutePath() );
+
+    if ( responses->begin() == responses->end() )
+      {
+      logger.error ( "No responses!" );
+      }
 
     // Write the responses out to disk
     for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
@@ -173,6 +184,7 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
       DcmDataset *dataset = (*it)->m_dataset;
       if ( dataset != NULL )
         {
+        logger.debug ( "Got a valid dataset" );
         // Save in correct directory
         E_TransferSyntax output_transfersyntax = dataset->getOriginalXfer();
         dataset->chooseRepresentation( output_transfersyntax, NULL );
@@ -294,6 +306,19 @@ int ctkDICOMRetrieve::calledPort()
 {
   Q_D(ctkDICOMRetrieve);
   return d->CalledPort;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::setMoveDestinationAETitle ( QString moveDestinationAETitle )
+{
+  Q_D(ctkDICOMRetrieve);
+  d->MoveDestinationAETitle = moveDestinationAETitle;
+}
+//------------------------------------------------------------------------------
+const QString& ctkDICOMRetrieve::moveDestinationAETitle()
+{
+  Q_D(ctkDICOMRetrieve);
+  return d->MoveDestinationAETitle;
 }
 
 //------------------------------------------------------------------------------
