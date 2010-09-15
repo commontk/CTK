@@ -14,6 +14,7 @@ void ctkDicomExampleHost::StartApplication(QString AppPath, const QUrl& App_URL)
     l.append("--applicationURL");
     l.append(App_URL.toString());
 
+    this->appProcess.setProcessChannelMode(QProcess::ForwardedChannels);
     this->appProcess.start(AppPath,l);
 
 }
