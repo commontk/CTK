@@ -27,7 +27,7 @@
 // --hostURL http://localhost:8081/host --applicationURL http://localhost:8082/app dicomapp
 
 // replace "//$" with nothing as soon as ctkDicomAppServer/ctkDicomHostService exist
-//$#include <ctkDicomAppServer.h>
+#include <ctkDicomAppServer.h>
 //$#include <ctkDicomHostService.h>
 
 #include <QApplication>
@@ -159,8 +159,8 @@ int main(int argv, char** argc)
   }
 
   // setup the communication infrastructure: DicomAppServer and DicomHostService
-//$  ctkDicomAppServer * appServer = new ctkDicomAppServer(appURL); // accesses the app-plugin via getService("ctkDicomAppInterface");
-//$  ctkDicomHostInterface * hostInterface = new ctkDicomHostService(hostURL);
+  ctkDicomAppServer * appServer = new ctkDicomAppServer(QUrl(appURL).port()); // accesses the app-plugin via getService("ctkDicomAppInterface");
+//$  ctkDicomHostInterface * hostInterface = new ctkDicomHostService(QUrl(hostURL).port());
 //$  framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
 
   framework->start();

@@ -23,8 +23,8 @@
 
 #include "ctkDicomAppServerPrivate.h"
 
-ctkDicomAppServer::ctkDicomAppServer(ctkDicomAppInterface* appInterface, int port)
-  : d_ptr(new ctkDicomAppServerPrivate(appInterface, port))
+ctkDicomAppServer::ctkDicomAppServer(int port)
+  : d_ptr(new ctkDicomAppServerPrivate(port))
 {
 
 }

@@ -29,7 +29,7 @@
 ctkExampleDicomAppPlugin* ctkExampleDicomAppPlugin::instance = 0;
 
 ctkExampleDicomAppPlugin::ctkExampleDicomAppPlugin()
-  : context(0)
+  : context(0), appLogic(0)
 {
 }
 
@@ -43,7 +43,7 @@ void ctkExampleDicomAppPlugin::start(ctkPluginContext* context)
   instance = this;
   this->context = context;
   context->registerService(QStringList("ctkDicomAppInterface"), 
-    new ctkExampleDicomAppLogic(new ServiceAccessor<ctkDicomHostInterface>(context,"ctkDicomHostInterface")));
+    appLogic = new ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface>(context,"ctkDicomHostInterface")));
 
   //ctkServiceReference* serviceRef = context->getServiceReference("ctkDicomHostInterface");
   //if (!serviceRef)

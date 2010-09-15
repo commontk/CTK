@@ -26,14 +26,15 @@
 class ctkDicomAppInterface;
 
 #include <QScopedPointer>
+#include <org_commontk_dicom_wg23_app_Export.h>
 
 class ctkDicomAppServerPrivate;
 
-class ctkDicomAppServer
+class org_commontk_dicom_wg23_app_EXPORT ctkDicomAppServer
 {
 
 public:
-  ctkDicomAppServer(ctkDicomAppInterface* appInterface, int port);
+  ctkDicomAppServer(int port);
   ~ctkDicomAppServer();
 
 private:

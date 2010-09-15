@@ -33,7 +33,7 @@ public:
   ServiceAccessor(ctkPluginContext* context, const QString& clazz) : context(context), clazz(clazz)
   {
   }
-  TServiceType* call()
+  TServiceType* operator->()
   {
     ctkServiceReference* serviceRef = context->getServiceReference(clazz);
     if (!serviceRef)
@@ -43,9 +43,13 @@ public:
     }
     return qobject_cast<TServiceType*>(context->getService(serviceRef));
   }
+  TServiceType* operator*()
+  {
+    return operator->();
+  }
 private:
   ctkPluginContext* context;
-  const QString& clazz;
+  const QString clazz;
 };
 
 
@@ -56,7 +60,7 @@ class ctkExampleDicomAppLogic :
 
 public:
 
-  ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface>* host);
+  ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface> host);
   ~ctkExampleDicomAppLogic();
 
   // ctkDicomAppInterface
@@ -69,7 +73,7 @@ public:
   // some logic
   void do_something();
 private:
-  ServiceAccessor<ctkDicomHostInterface>* host;
+  ServiceAccessor<ctkDicomHostInterface> host;
 
 }; // ctkExampleDicomAppLogic
 

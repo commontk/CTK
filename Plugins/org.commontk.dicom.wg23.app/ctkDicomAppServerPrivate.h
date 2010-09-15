@@ -35,7 +35,7 @@ class ctkDicomAppServerPrivate : public QObject
   Q_OBJECT
 
 public:
-  ctkDicomAppServerPrivate(ctkDicomAppInterface* appInterface, int port);
+  ctkDicomAppServerPrivate(int port);
 
   ctkSimpleSoapServer server;
   ctkDicomAppInterface* appInterface;

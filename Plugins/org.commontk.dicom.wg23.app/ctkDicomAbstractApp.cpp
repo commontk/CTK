@@ -11,7 +11,7 @@ class ctkDicomAbstractAppPrivate
     {
       port = 8080;
     }
-    server = new ctkDicomAppServer(appInterface,port);
+    server = new ctkDicomAppServer(port);
   }
   ~ctkDicomAbstractAppPrivate()
   {

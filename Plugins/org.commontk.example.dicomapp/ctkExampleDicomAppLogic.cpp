@@ -23,15 +23,16 @@
 #include "ctkExampleDicomAppLogic_p.h"
 #include <QtPlugin>
 #include <QRect>
+#include <QDebug>
+#include <QPushButton>
 
-ctkExampleDicomAppLogic::ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface>* host)
+ctkExampleDicomAppLogic::ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface> host)
   : host(host)
 {
 }
 
 ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
 {
-  delete host;
 }
 
 ctkDicomWG23::State ctkExampleDicomAppLogic::getState()
@@ -42,6 +43,11 @@ ctkDicomWG23::State ctkExampleDicomAppLogic::getState()
 bool ctkExampleDicomAppLogic::setState(ctkDicomWG23::State newState)
 {
   qDebug() << "setState called";
+  if (newState == ctkDicomWG23::INPROGRESS)
+  {
+    QPushButton *button = new QPushButton("Button from App");
+    button->show();
+  }
   return false;
 }
 
@@ -53,5 +59,5 @@ bool ctkExampleDicomAppLogic::bringToFront(const QRect& requestedScreenArea)
 void ctkExampleDicomAppLogic::do_something()
 {
   QRect preferred;
-  QRect rect = host->call()->getAvailableScreen(preferred);
+  QRect rect = host->getAvailableScreen(preferred);
 }

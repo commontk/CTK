@@ -23,16 +23,17 @@
 #include "ctkDicomAppServerPrivate.h"
 
 #include <ctkDicomAppInterface.h>
+#include <ctkServiceReference.h>
 
 #include <QHostAddress>
 
 #include <stdexcept>
 #include <ctkDicomWG23TypesHelper.h>
+#include <ctkDicomWG23AppPlugin_p.h>
 
-ctkDicomAppServerPrivate::ctkDicomAppServerPrivate(ctkDicomAppInterface* appInterface, int port) :
-    appInterface(appInterface), port(port)
+ctkDicomAppServerPrivate::ctkDicomAppServerPrivate(int port) :
+    appInterface(0), port(port)
 {
-
   connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));
 
@@ -40,6 +41,15 @@ ctkDicomAppServerPrivate::ctkDicomAppServerPrivate(ctkDicomAppInterface* appInte
   {
     qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
   }
+
+  ctkPluginContext* context = ctkDicomWG23AppPlugin::getInstance()->getPluginContext();
+  ctkServiceReference* serviceRef = context->getServiceReference("ctkDicomAppInterface");
+  if (!serviceRef)
+  {
+    // this will change after merging changes from branch plugin_framework
+    throw std::runtime_error("No Dicom App Service found");
+  }
+  appInterface = qobject_cast<ctkDicomAppInterface*>(context->getService(serviceRef));
 }
 
 void ctkDicomAppServerPrivate::incomingSoapMessage(const QtSoapMessage& message,

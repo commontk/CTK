@@ -25,6 +25,8 @@
 
 #include <ctkPluginActivator.h>
 
+class ctkExampleDicomAppLogic;
+
 class ctkExampleDicomAppPlugin :
   public QObject, public ctkPluginActivator
 {
@@ -43,6 +45,7 @@ public:
 
   ctkPluginContext* getPluginContext() const;
 
+  ctkExampleDicomAppLogic* appLogic;
 
 private:
 
