@@ -9,11 +9,12 @@ class org_commontk_dicom_examplehost_EXPORT ctkDicomExampleHost : public ctkDico
 public:
     ctkDicomExampleHost();
 
+    virtual int StartApplication(QString AppPath, QString App_URL, int port);
     virtual QString generateUID() { return ""; }
     virtual QRect getAvailableScreen(const QRect& preferredScreen) { return QRect(); }
     virtual QString getOutputLocation(const QStringList& preferredProtocols) { return ""; }
-    virtual void notifyStateChanged(ctkDicomWG23::State state) {}
-    virtual void notifyStatus(const ctkDicomWG23::Status& status) {}
+    virtual void notifyStateChanged(ctkDicomWG23::State state);
+    virtual void notifyStatus(const ctkDicomWG23::Status& status);
 
 };
 

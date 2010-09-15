@@ -30,17 +30,4 @@ ctkDicomHostServer::ctkDicomHostServer(ctkDicomHostInterface* hostInterface, int
 }
 ctkDicomHostServer::~ctkDicomHostServer()
 {
-
-int ctkDicomHostServer::StartApplication(QString AppPath, QString App_URL, int port){
-    QStringList l;
-    l.append("--hostURL");
-    l.append("localhost:"+d_ptr->port);
-    l.append("--applicationURL");
-    l.append(App_URL+":"+QString(port));
-    if (!QProcess::startDetached (
-            AppPath,l))
-    {
-        qCritical()<<"application failed to start!";
-    }
-
 }
