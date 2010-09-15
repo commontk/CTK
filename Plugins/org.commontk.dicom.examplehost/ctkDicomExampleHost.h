@@ -19,6 +19,7 @@ public:
     virtual void notifyStateChanged(ctkDicomWG23::State state);
     virtual void notifyStatus(const ctkDicomWG23::Status& status);
     const QProcess& getAppProcess() const { return appProcess; }
+    ~ctkDicomExampleHost();
 
 signals:
     void stateChangedReceived(ctkDicomWG23::State state);

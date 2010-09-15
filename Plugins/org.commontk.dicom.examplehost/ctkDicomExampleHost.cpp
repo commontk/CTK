@@ -41,3 +41,8 @@ void ctkDicomExampleHost::notifyStatus(const ctkDicomWG23::Status& status){
     qDebug()<< "new status received:"<<status.codeMeaning;
     emit statusReceived(status);;
 }
+
+ctkDicomExampleHost::~ctkDicomExampleHost()
+{
+  this->appProcess.terminate();
+}
