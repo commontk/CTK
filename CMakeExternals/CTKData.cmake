@@ -9,16 +9,23 @@ IF(BUILD_TESTING)
     MESSAGE(FATAL_ERROR "CTKData_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
   
+  SET(proj CTKData)
+  set(proj_DEPENDENCIES)
+  
+  SET(CTKData_DEPENDS ${proj})
+  
   IF(NOT DEFINED CTKData_DIR)
-    SET(proj CTKData)
   #   MESSAGE(STATUS "Adding project:${proj}")
-    SET(CTKData_DEPENDS ${proj})
     ExternalProject_Add(${proj}
-        GIT_REPOSITORY ${git_protocol}://github.com/commontk/CTKData.git
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-        )
+      GIT_REPOSITORY ${git_protocol}://github.com/commontk/CTKData.git
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND ""
+      INSTALL_COMMAND ""
+      DEPENDS
+        ${proj_DEPENDENCIES}
+      )
 	  SET(CTKData_DIR ${ep_source_dir}/${proj})
+	ELSE()
+	  ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
 ENDIF()

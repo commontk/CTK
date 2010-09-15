@@ -10,10 +10,13 @@ IF(${add_project})
     MESSAGE(FATAL_ERROR "PYTHONQT_INSTALL_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
   
+  SET(proj PythonQt)
+  SET(proj_DEPENDENCIES)
+  
+  SET(PythonQt_DEPENDS ${proj})
+  
   IF(NOT DEFINED PYTHONQT_INSTALL_DIR)
-    SET(proj PythonQt)
   #   MESSAGE(STATUS "Adding project:${proj}")
-    SET(PythonQt_DEPENDS ${proj})
     
     # Generate ep_PythonQt_args
     SET(ep_PythonQt_args)
@@ -39,11 +42,15 @@ IF(${add_project})
         -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
         -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
         ${ep_PythonQt_args}
+      DEPENDS
+        ${proj_DEPENDENCIES}
       )
     SET(PYTHONQT_INSTALL_DIR ${ep_install_dir})
     
     # Since the full path of PythonQt library is used, there is not need to add 
     # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-    
+  
+  ELSE()
+    ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
 ENDIF()
