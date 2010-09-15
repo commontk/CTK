@@ -51,7 +51,7 @@ int main(int argv, char** argc)
 
   qApp->setOrganizationName("CTK");
   qApp->setOrganizationDomain("commontk.org");
-  qApp->setApplicationName("ctkExampleHost");
+  qApp->setApplicationName("ctkExampleHostedApp");
 
   // parse the command line
   qDebug() << "################################################################";
