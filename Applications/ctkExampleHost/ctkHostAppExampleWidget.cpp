@@ -63,12 +63,22 @@ void ctkHostAppExampleWidget::appProcessError(QProcess::ProcessError error)
 
 void ctkHostAppExampleWidget::appProcessStateChanged(QProcess::ProcessState state)
 {
+  QString labelText;
   switch (state){
   case QProcess::Running:
     ui->processStateLabel->setText("Running");
     break;
   case QProcess::NotRunning:
-    ui->processStateLabel->setText("Not Running");
+    if (host->getAppProcess().exitStatus() == QProcess::CrashExit )
+    {
+        labelText = "crashed";
+    }
+    else
+    {
+      labelText = "Not Running, last exit code ";
+      labelText.append(QString::number(host->getAppProcess().exitCode()));
+    }
+    ui->processStateLabel->setText(labelText);
     break;
   case QProcess::Starting:
     ui->processStateLabel->setText("Starting");
