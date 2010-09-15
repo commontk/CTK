@@ -26,6 +26,7 @@
 #include <ctkPluginActivator.h>
 #include <ctkDicomAppInterface.h>
 #include <ctkDicomHostInterface.h>
+#include <stdexcept>
 
 template <class TServiceType>
 class ServiceAccessor {

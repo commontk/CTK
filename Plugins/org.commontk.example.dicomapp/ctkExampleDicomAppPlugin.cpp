@@ -23,13 +23,13 @@
 #include "ctkExampleDicomAppPlugin_p.h"
 #include "ctkExampleDicomAppLogic_p.h"
 #include <QtPlugin>
-#include <QStringList.h>
-#include <QString.h>
+#include <QStringList>
+#include <QString>
 
 ctkExampleDicomAppPlugin* ctkExampleDicomAppPlugin::instance = 0;
 
 ctkExampleDicomAppPlugin::ctkExampleDicomAppPlugin()
-  : context(0), appLogic(0)
+  : appLogic(0), context(0)
 {
 }
 
