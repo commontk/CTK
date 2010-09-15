@@ -275,6 +275,7 @@ SET(CTK_LIBS
   DICOM/Core:OFF
   DICOM/Widgets:OFF
   Messaging/Core:OFF
+  ModuleDescription:OFF
   Scripting/Python/Core:OFF
   Scripting/Python/Widgets:OFF
   Visualization/VTK/Core:OFF
@@ -463,13 +464,13 @@ ENDIF()
 
 
 # Convert 'CTEST_PROJECT_SUBPROJECTS_OUTPUT' to a list
-STRING(REPLACE " " "\\;" CTEST_PROJECT_SUBPROJECTS ${CTEST_PROJECT_SUBPROJECTS_OUTPUT})
-SET(CTEST_PROJECT_SUBPROJECTS ${CTEST_PROJECT_SUBPROJECTS})
-
-# If the list of subproject is empty, let's at least build CTKCore
 LIST(LENGTH CTEST_PROJECT_SUBPROJECTS subproject_count)
 IF (subproject_count EQUAL 0)
+  # If the list of subproject is empty, let's at least build CTKCore
   SET(CTEST_PROJECT_SUBPROJECTS CTKCore)
+ELSE( )
+  STRING(REPLACE " " "\\;" CTEST_PROJECT_SUBPROJECTS ${CTEST_PROJECT_SUBPROJECTS_OUTPUT})
+  SET(CTEST_PROJECT_SUBPROJECTS ${CTEST_PROJECT_SUBPROJECTS})
 ENDIF()
 
 # Configure CTestConfigSubProject.cmake used that could be used by CTest scripts
