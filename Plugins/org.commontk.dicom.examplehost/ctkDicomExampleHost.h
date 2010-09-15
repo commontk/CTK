@@ -4,12 +4,14 @@
 #include <ctkDicomAbstractHost.h>
 #include <org_commontk_dicom_examplehost_Export.h>
 
+#include <QUrl>
+
 class org_commontk_dicom_examplehost_EXPORT ctkDicomExampleHost : public ctkDicomAbstractHost{
     Q_OBJECT
 public:
     ctkDicomExampleHost();
 
-    virtual int StartApplication(QString AppPath, QString App_URL, int port);
+    virtual void StartApplication(QString AppPath, const QUrl& App_URL = QUrl("http://localhost:8081/"));
     virtual QString generateUID() { return ""; }
     virtual QRect getAvailableScreen(const QRect& preferredScreen);
     virtual QString getOutputLocation(const QStringList& /*preferredProtocols*/) { return ""; }

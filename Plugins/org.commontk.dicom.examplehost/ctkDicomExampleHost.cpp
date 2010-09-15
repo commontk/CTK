@@ -6,12 +6,12 @@ ctkDicomExampleHost::ctkDicomExampleHost() : ctkDicomAbstractHost(8080)
 {
 }
 
-int ctkDicomExampleHost::StartApplication(QString AppPath, QString App_URL, int port){
+void ctkDicomExampleHost::StartApplication(QString AppPath, const QUrl& App_URL){
     QStringList l;
     l.append("--hostURL");
-    l.append("localhost:"+this->getPort());
+    l.append(QString("localhost:") + this->getPort() );
     l.append("--applicationURL");
-    l.append(App_URL+":"+QString(port));
+    l.append(App_URL.toString());
     if (!QProcess::startDetached (
             AppPath,l))
     {
@@ -30,7 +30,7 @@ QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){
 
 
 void ctkDicomExampleHost::notifyStateChanged(ctkDicomWG23::State state){
-    qDebug()<< "new state received:"<< state;
+    qDebug()<< "new state received:"<< static_cast<int>(state);
     emit stateChangedReceived(state);
 }
 
