@@ -53,7 +53,7 @@ QtSoapType ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType
 
   http.submitRequest(request, "/IHostService");
 
-  qDebug() << "Submitted request GetAvailableScreen";
+  qDebug() << "Submitted request " << methodName;
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
@@ -74,8 +74,8 @@ QtSoapType ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType
 
   const QtSoapType &meth = response.method();
 
-  if (!meth.isValid() || meth.type() != QtSoapType::Struct)
-    qDebug() << "SOAP returning NIL: invalid or type != Struct";
+  if (!meth.isValid())
+    qDebug() << "SOAP returning invalid.";
 
   const QtSoapStruct &m = dynamic_cast<const QtSoapStruct &>(meth);
   if (m.count() == 0)

@@ -47,12 +47,14 @@ void print_usage()
 int main(int argv, char** argc)
 {
   QApplication app(argv, argc);
+  qDebug() << "################################################################";
 
   qApp->setOrganizationName("CTK");
   qApp->setOrganizationDomain("commontk.org");
   qApp->setApplicationName("ctkExampleHost");
 
   // parse the command line
+  qDebug() << "################################################################";
 
   if(qApp->arguments().size() < 5)
   {
@@ -68,6 +70,7 @@ int main(int argv, char** argc)
     exit(1);
   }
   QString hostURL = qApp->arguments().at(2);
+  qDebug() << "hostURL is: " << hostURL << " . Extracted port is: " << QUrl(hostURL).port();
 
   if(qApp->arguments().at(3) != "--applicationURL")
   {
@@ -76,6 +79,7 @@ int main(int argv, char** argc)
     exit(1);
   }
   QString appURL = qApp->arguments().at(4);
+  qDebug() << "appURL is: " << appURL << " . Extracted port is: " << QUrl(appURL).port();
 
   // setup the plugin framework
   ctkPluginFrameworkFactory fwFactory;
@@ -148,12 +152,12 @@ int main(int argv, char** argc)
     qCritical() << "  Plugin path: " << pluginPath;
     exit(3);
   }
-
+qCritical() << "app about to start 1";
   // setup the communication infrastructure: DicomAppServer and DicomHostService
   ctkDicomAppServer * appServer = new ctkDicomAppServer(QUrl(appURL).port()); // accesses the app-plugin via getService("ctkDicomAppInterface");
   ctkDicomHostInterface * hostInterface = new ctkDicomHostService(QUrl(hostURL).port());
   framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
-
+qCritical() << "app about to start 2";
   // install and start the plugin with the business logic and remember pointer to start it later
   ctkPlugin* plugin;
   try
@@ -166,8 +170,9 @@ int main(int argv, char** argc)
     qCritical() << e.what();
   }
 
+qCritical() << "app about to start 3";
   framework->start();
-
+qCritical() << "app about to start 4";
   //QWidget placeholder;
   //placeholder.show();
 
