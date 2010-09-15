@@ -4,6 +4,7 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <QProcess>
 
 ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
     QWidget(parent),
@@ -11,8 +12,11 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
 {
     qDebug() << "setup ui";
     ui->setupUi(this);
+    ui->crashLabel->setVisible(false);
+    ui->messageOutput->setVisible(false);
     this->host = new ctkDicomExampleHost();
-
+    connect(&this->host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
+    connect(&this->host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));
   }
 
 
@@ -48,3 +52,28 @@ void ctkHostAppExampleWidget::loadButtonClicked()
       this->ui->applicationPathLabel->setText(QString("<font color='red'>Not executable:</font>").append(this->appFileName));
     }
 }
+void ctkHostAppExampleWidget::appProcessError(QProcess::ProcessError error)
+{
+  if (error == QProcess::Crashed)
+  {
+    qDebug() << "crash detected";
+    ui->crashLabel->setVisible(true);
+  }
+  }
+
+void ctkHostAppExampleWidget::appProcessStateChanged(QProcess::ProcessState state)
+{
+  switch (state){
+  case QProcess::Running:
+    ui->processStateLabel->setText("Running");
+    break;
+  case QProcess::NotRunning:
+    ui->processStateLabel->setText("Not Running");
+    break;
+  case QProcess::Starting:
+    ui->processStateLabel->setText("Starting");
+    break;
+  default:
+    ;
+  }
+  }

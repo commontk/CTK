@@ -7,16 +7,15 @@ ctkDicomExampleHost::ctkDicomExampleHost() : ctkDicomAbstractHost(8080)
 }
 
 void ctkDicomExampleHost::StartApplication(QString AppPath, const QUrl& App_URL){
+
     QStringList l;
     l.append("--hostURL");
     l.append(QString("localhost:") + this->getPort() );
     l.append("--applicationURL");
     l.append(App_URL.toString());
-    if (!QProcess::startDetached (
-            AppPath,l))
-    {
-        qCritical() << "application failed to start!";
-    }
+
+    this->appProcess.start(AppPath,l);
+
 }
 
 QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){

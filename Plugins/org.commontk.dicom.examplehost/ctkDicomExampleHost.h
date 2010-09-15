@@ -5,6 +5,7 @@
 #include <org_commontk_dicom_examplehost_Export.h>
 
 #include <QUrl>
+#include <QProcess>
 
 class org_commontk_dicom_examplehost_EXPORT ctkDicomExampleHost : public ctkDicomAbstractHost{
     Q_OBJECT
@@ -17,11 +18,15 @@ public:
     virtual QString getOutputLocation(const QStringList& /*preferredProtocols*/) { return ""; }
     virtual void notifyStateChanged(ctkDicomWG23::State state);
     virtual void notifyStatus(const ctkDicomWG23::Status& status);
+    const QProcess& getAppProcess() const { return appProcess; }
 
 signals:
     void stateChangedReceived(ctkDicomWG23::State state);
     void statusReceived(const ctkDicomWG23::Status& status);
     void giveAvailableScreen(QRect rect);
+
+  protected:
+    QProcess appProcess;
 };
 
 #endif // CTKDICOMEXAMPLEHOST_H

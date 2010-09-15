@@ -2,6 +2,8 @@
 #define CTKHOSTAPPEXAMPLEWIDGET_H
 
 #include <QWidget>
+#include <QProcess>
+
 
 class ctkDicomExampleHost;
 
@@ -20,6 +22,9 @@ public slots:
     void startButtonClicked();
     void stopButtonClicked();
     void loadButtonClicked();
+    void appProcessError(QProcess::ProcessError error);
+    void appProcessStateChanged(QProcess::ProcessState state);
+
 protected:
     ctkDicomExampleHost* host;
     QString appFileName;
