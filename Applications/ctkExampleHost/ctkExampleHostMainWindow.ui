@@ -16,20 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QFrame" name="placeHolderFrame">
-      <property name="frameShape">
-       <enum>QFrame::Box</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <property name="lineWidth">
-       <number>3</number>
-      </property>
-      <property name="midLineWidth">
-       <number>0</number>
-      </property>
-     </widget>
+     <widget class="ctkHostAppExampleWidget" name="controlWidget" native="true"/>
     </item>
    </layout>
   </widget>
@@ -54,6 +41,14 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkHostAppExampleWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkHostAppExampleWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

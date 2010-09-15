@@ -87,15 +87,11 @@ int main(int argv, char** argc)
 
   framework->start();
 
-
-  ctkDicomExampleHost* host = new ctkDicomExampleHost();
-
-
   QMainWindow mainWindow;
   Ui::MainWindow ui;
   ui.setupUi(&mainWindow);
 
-  mainWindow.addDockWidget(static_cast<Qt::DockWidgetArea>(4),new ctkHostAppExampleWidget());
+ // mainWindow.addDockWidget(static_cast<Qt::DockWidgetArea>(4),new ctkHostAppExampleWidget());
 
 //  QVBoxLayout* layout = new QVBoxLayout(&mainWindow);
 
