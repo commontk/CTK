@@ -13,6 +13,11 @@ void ctkDicomExampleHost::StartApplication(QString AppPath, const QUrl& App_URL)
     l.append(QString("localhost:") + this->getPort() );
     l.append("--applicationURL");
     l.append(App_URL.toString());
+    if (!QProcess::startDetached (
+            AppPath,l))
+    {
+        qCritical() << "application failed to start!";
+    }
 
     this->appProcess.setProcessChannelMode(QProcess::ForwardedChannels);
     this->appProcess.start(AppPath,l);

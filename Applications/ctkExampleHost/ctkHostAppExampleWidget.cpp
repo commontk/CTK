@@ -15,6 +15,7 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
     ui->crashLabel->setVisible(false);
     ui->messageOutput->setVisible(false);
     this->host = new ctkDicomExampleHost();
+
     connect(&this->host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
     connect(&this->host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));
   }
@@ -52,6 +53,17 @@ void ctkHostAppExampleWidget::loadButtonClicked()
       this->ui->applicationPathLabel->setText(QString("<font color='red'>Not executable:</font>").append(this->appFileName));
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 void ctkHostAppExampleWidget::appProcessError(QProcess::ProcessError error)
 {
   if (error == QProcess::Crashed)
