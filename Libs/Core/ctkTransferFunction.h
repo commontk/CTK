@@ -112,8 +112,12 @@ public:
   ctkTransferFunctionRepresentation* representation()const;
 signals:
   void changed();
+protected:
+  QScopedPointer<ctkTransferFunctionPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunction);
+  Q_DECLARE_PRIVATE(ctkTransferFunction);
+  Q_DISABLE_COPY(ctkTransferFunction);
 };
 
 //-----------------------------------------------------------------------------

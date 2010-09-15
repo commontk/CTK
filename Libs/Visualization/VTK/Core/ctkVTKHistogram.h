@@ -65,8 +65,12 @@ protected:
   qreal indexToPos(int index)const;
   int posToIndex(qreal pos)const;
 
+protected:
+  QScopedPointer<ctkVTKHistogramPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKHistogram);
+  Q_DECLARE_PRIVATE(ctkVTKHistogram);
+  Q_DISABLE_COPY(ctkVTKHistogram);
 };
 
 #endif

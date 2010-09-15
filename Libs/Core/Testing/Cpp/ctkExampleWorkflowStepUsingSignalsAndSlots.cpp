@@ -28,7 +28,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-class ctkExampleWorkflowStepUsingSignalsAndSlotsPrivate : public ctkPrivate<ctkExampleWorkflowStepUsingSignalsAndSlots>
+class ctkExampleWorkflowStepUsingSignalsAndSlotsPrivate
 {
 public:
   ctkExampleWorkflowStepUsingSignalsAndSlotsPrivate();
@@ -54,8 +54,13 @@ ctkExampleWorkflowStepUsingSignalsAndSlotsPrivate::ctkExampleWorkflowStepUsingSi
 
 //-----------------------------------------------------------------------------
 ctkExampleWorkflowStepUsingSignalsAndSlots::ctkExampleWorkflowStepUsingSignalsAndSlots(QObject* _parent) : Superclass(_parent)
+  , d_ptr(new ctkExampleWorkflowStepUsingSignalsAndSlotsPrivate)
 {
-  CTK_INIT_PRIVATE(ctkExampleWorkflowStepUsingSignalsAndSlots);
+}
+
+//-----------------------------------------------------------------------------
+ctkExampleWorkflowStepUsingSignalsAndSlots::~ctkExampleWorkflowStepUsingSignalsAndSlots()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -80,7 +85,7 @@ void ctkExampleWorkflowStepUsingSignalsAndSlots::onEntry(const ctkWorkflowStep* 
 
   // simply implements our counter of the number of times we have run
   // this function
-  CTK_D(ctkExampleWorkflowStepUsingSignalsAndSlots);
+  Q_D(ctkExampleWorkflowStepUsingSignalsAndSlots);
   d->numberOfTimesRanOnEntry++;
 
   // signals that we are finished
@@ -95,7 +100,7 @@ void ctkExampleWorkflowStepUsingSignalsAndSlots::onExit(const ctkWorkflowStep* g
 
   // simply implements our counter of the number of times we have run
   // this function
-  CTK_D(ctkExampleWorkflowStepUsingSignalsAndSlots);
+  Q_D(ctkExampleWorkflowStepUsingSignalsAndSlots);
   d->numberOfTimesRanOnExit++;
 
   // signals that we are finished

@@ -35,14 +35,9 @@
   class ctkPluginFrameworkContext;
 
   class ctkPluginPrivate {
-
-  protected:
-
-    ctkPlugin * const q_ptr;
-
   public:
-
-    Q_DECLARE_PUBLIC(ctkPlugin)
+    Q_DECLARE_PUBLIC(ctkPlugin);
+    ctkPlugin * const q_ptr;
 
     /**
      * Construct a new plugin based on a ctkPluginArchive.

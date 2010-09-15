@@ -137,8 +137,12 @@ protected:
   virtual void mouseReleaseEvent(QMouseEvent *e);
   bool isPointInCheckBox(int section, QPoint pos)const;
 
+protected:
+  QScopedPointer<ctkCheckableHeaderViewPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkCheckableHeaderView);
+  Q_DECLARE_PRIVATE(ctkCheckableHeaderView);
+  Q_DISABLE_COPY(ctkCheckableHeaderView);
 };
 
 //-----------------------------------------------------------------------------

@@ -72,9 +72,9 @@
     for (int i = 0; i < allPAs.size(); ++i)
     {
       ctkPluginArchive* pa = allPAs[i];
-      ctkPlugin* p = plugins->getPlugin(pa->getPluginLocation().toString());
-      log() << " #" << p->getPluginId() << " " << p->getSymbolicName() << ":"
-          << p->getVersion() << " location:" << p->getLocation();
+      ctkPlugin* plugin = plugins->getPlugin(pa->getPluginLocation().toString());
+      log() << " #" << plugin->getPluginId() << " " << plugin->getSymbolicName() << ":"
+          << plugin->getVersion() << " location:" << plugin->getLocation();
     }
   }
 

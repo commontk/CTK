@@ -39,10 +39,9 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowWidget");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowWidgetPrivate: public ctkPrivate<ctkWorkflowWidget>
+class ctkWorkflowWidgetPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(ctkWorkflowWidget);
   ctkWorkflowWidgetPrivate();
   ~ctkWorkflowWidgetPrivate();
 
@@ -78,9 +77,9 @@ ctkWorkflowWidgetPrivate::~ctkWorkflowWidgetPrivate()
 
 // --------------------------------------------------------------------------
 ctkWorkflowWidget::ctkWorkflowWidget(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new ctkWorkflowWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(ctkWorkflowWidget);
-  CTK_D(ctkWorkflowWidget); 
+  Q_D(ctkWorkflowWidget); 
   d->WorkflowGroupBox = new ctkWorkflowGroupBox(this);
   d->ButtonBoxWidget = new ctkWorkflowButtonBoxWidget();
 }
@@ -100,7 +99,7 @@ CTK_GET_CXX(ctkWorkflowWidget, ctkWorkflowButtonBoxWidget*, buttonBoxWidget, But
 // --------------------------------------------------------------------------
 void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)
 {
-  CTK_D(ctkWorkflowWidget);
+  Q_D(ctkWorkflowWidget);
 
   if (!newWorkflow)
     {
@@ -133,7 +132,7 @@ void ctkWorkflowWidget::onCurrentStepChanged(ctkWorkflowStep* currentStep)
 // --------------------------------------------------------------------------
 void ctkWorkflowWidget::updateStepUI(ctkWorkflowStep* currentStep)
 {
-  CTK_D(ctkWorkflowWidget);
+  Q_D(ctkWorkflowWidget);
   Q_ASSERT(currentStep);
   Q_ASSERT(d->WorkflowGroupBox);
 
@@ -158,7 +157,7 @@ void ctkWorkflowWidget::updateStepUI(ctkWorkflowStep* currentStep)
 // --------------------------------------------------------------------------
 void ctkWorkflowWidget::updateButtonBoxUI(ctkWorkflowStep* currentStep)
 {
-  CTK_D(ctkWorkflowWidget);
+  Q_D(ctkWorkflowWidget);
   Q_ASSERT(currentStep);
   
   // Update the button box widget if we want to show it

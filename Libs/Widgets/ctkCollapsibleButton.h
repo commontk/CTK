@@ -143,8 +143,12 @@ protected:
   /// but don't want to fill in all the information themselves.
   virtual void initStyleOption(QStyleOptionButton* option)const;
 
+protected:
+  QScopedPointer<ctkCollapsibleButtonPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkCollapsibleButton);
+  Q_DECLARE_PRIVATE(ctkCollapsibleButton);
+  Q_DISABLE_COPY(ctkCollapsibleButton);
 };
 
 #endif

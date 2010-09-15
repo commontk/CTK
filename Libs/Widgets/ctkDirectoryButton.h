@@ -71,6 +71,9 @@ public:
   /// Creates a ctkDirectoryButton that points to the given directory path
   ctkDirectoryButton(const QString& directory, QWidget * parent = 0);
   ctkDirectoryButton(const QIcon& icon, const QString& directory, QWidget * parent = 0);
+  
+  /// Destructor
+  virtual ~ctkDirectoryButton();
 
   /// Set/get the current directory
   void setDirectory(const QString& directory);
@@ -105,8 +108,12 @@ signals:
   /// directorySelected() is emitted anytime the current directory is set
   /// (even if the new directory is the same than the current value)
   void directorySelected(const QString&);
+protected:
+  QScopedPointer<ctkDirectoryButtonPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDirectoryButton);
+  Q_DECLARE_PRIVATE(ctkDirectoryButton);
+  Q_DISABLE_COPY(ctkDirectoryButton);
 };
 
 #if QT_VERSION < 0x040700

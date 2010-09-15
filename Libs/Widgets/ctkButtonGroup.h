@@ -50,13 +50,18 @@ class CTK_WIDGETS_EXPORT ctkButtonGroup : public QButtonGroup
   Q_OBJECT
 public:
   explicit ctkButtonGroup(QObject *_parent = 0);
+  virtual ~ctkButtonGroup();
 
 protected slots:
   void onButtonClicked(int button);
   void onButtonPressed(int button);
 
+protected:
+  QScopedPointer<ctkButtonGroupPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkButtonGroup);
+  Q_DECLARE_PRIVATE(ctkButtonGroup);
+  Q_DISABLE_COPY(ctkButtonGroup);
 };
 
 #endif

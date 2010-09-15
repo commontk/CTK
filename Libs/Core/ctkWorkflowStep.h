@@ -43,7 +43,7 @@ class CTK_CORE_EXPORT ctkWorkflowStep
 
 public:
   explicit ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId);
-  virtual ~ctkWorkflowStep(){}
+  virtual ~ctkWorkflowStep();
 
   /// Get the \a workflow associated with this step
   ctkWorkflow* workflow()const;
@@ -232,9 +232,12 @@ protected:
   /// \sa onExit()
   void onExitComplete()const;
 
-private:
+protected:
+  QScopedPointer<ctkWorkflowStepPrivate> d_ptr;
 
-  CTK_DECLARE_PRIVATE(ctkWorkflowStep);
+private:
+  Q_DECLARE_PRIVATE(ctkWorkflowStep);
+  Q_DISABLE_COPY(ctkWorkflowStep);
   friend class ctkWorkflow;        // For access to processingState, validationState, setWorkflow, validate
   friend class ctkWorkflowPrivate; // For access to invokeOn{Entry,Exit}Command, on{Entry,Exit}
 };

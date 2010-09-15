@@ -110,8 +110,12 @@ protected slots:
   void vtkObjectDeleted();
   void qobjectDeleted();
 
+protected:
+  QScopedPointer<ctkVTKConnectionPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKConnection);
+  Q_DECLARE_PRIVATE(ctkVTKConnection);
+  Q_DISABLE_COPY(ctkVTKConnection);
   friend QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
 };
 

@@ -181,8 +181,12 @@ protected slots:
   void onSliderMoved(int position);
   void onRangeChanged(int min, int max);
 
+protected:
+  QScopedPointer<ctkDoubleSliderPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDoubleSlider);
+  Q_DECLARE_PRIVATE(ctkDoubleSlider);
+  Q_DISABLE_COPY(ctkDoubleSlider);
 };
 
 #endif

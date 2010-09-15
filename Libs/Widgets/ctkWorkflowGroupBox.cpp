@@ -36,12 +36,10 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowGroupBox");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowGroupBoxPrivate: public ctkPrivate<ctkWorkflowGroupBox>,
-                                  public Ui_ctkWorkflowGroupBox
+class ctkWorkflowGroupBoxPrivate: public Ui_ctkWorkflowGroupBox
                                   
 {
 public:
-  CTK_DECLARE_PUBLIC(ctkWorkflowGroupBox);
   ctkWorkflowGroupBoxPrivate();
   ~ctkWorkflowGroupBoxPrivate();
 
@@ -81,9 +79,9 @@ void ctkWorkflowGroupBoxPrivate::setupUi(ctkWorkflowGroupBox* widget)
 
 // --------------------------------------------------------------------------
 ctkWorkflowGroupBox::ctkWorkflowGroupBox(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new ctkWorkflowGroupBoxPrivate)
 {
-  CTK_INIT_PRIVATE(ctkWorkflowGroupBox);
-  CTK_D(ctkWorkflowGroupBox);
+  Q_D(ctkWorkflowGroupBox);
   d->setupUi(this);
 }
 
@@ -100,7 +98,7 @@ CTK_GET_CXX(ctkWorkflowGroupBox, QLayout*, clientAreaLayout, ClientAreaLayout);
 // --------------------------------------------------------------------------
 void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
 {
-  CTK_D(ctkWorkflowGroupBox);
+  Q_D(ctkWorkflowGroupBox);
 
   d->StepShownPreviously = d->StepShownCurrently;
   d->StepShownCurrently = currentStep;
@@ -156,69 +154,69 @@ void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
 // --------------------------------------------------------------------------
 QString ctkWorkflowGroupBox::title()const
 {
-  CTK_D(const ctkWorkflowGroupBox);
+  Q_D(const ctkWorkflowGroupBox);
   return d->CollapsibleButton->text();
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowGroupBox::setTitle(const QString& newTitleText)
 {
-  CTK_D(ctkWorkflowGroupBox);
+  Q_D(ctkWorkflowGroupBox);
   d->CollapsibleButton->setText(newTitleText);
 }
 
 // --------------------------------------------------------------------------
 QString ctkWorkflowGroupBox::subTitle()const
 {
-  CTK_D(const ctkWorkflowGroupBox);
+  Q_D(const ctkWorkflowGroupBox);
   return d->SubTitleTextBrowser->toPlainText();
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowGroupBox::setSubTitle(const QString& newSubTitleText)
 {
-  CTK_D(ctkWorkflowGroupBox);
+  Q_D(ctkWorkflowGroupBox);
   d->SubTitleTextBrowser->setPlainText(newSubTitleText);
 }
 
 // --------------------------------------------------------------------------
 QString ctkWorkflowGroupBox::preText()const
 {
-  CTK_D(const ctkWorkflowGroupBox);
+  Q_D(const ctkWorkflowGroupBox);
   return d->PreTextBrowser->toPlainText();
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowGroupBox::setPreText(const QString& newPreText)
 {
-  CTK_D(ctkWorkflowGroupBox);
+  Q_D(ctkWorkflowGroupBox);
   d->PreTextBrowser->setPlainText(newPreText);
 }
 
 // --------------------------------------------------------------------------
 QString ctkWorkflowGroupBox::postText()const
 {
-  CTK_D(const ctkWorkflowGroupBox);
+  Q_D(const ctkWorkflowGroupBox);
   return d->PostTextBrowser->toPlainText();
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowGroupBox::setPostText(const QString& newPostText)
 {
-  CTK_D(ctkWorkflowGroupBox);
+  Q_D(ctkWorkflowGroupBox);
   d->PostTextBrowser->setPlainText(newPostText);
 }
 
 // --------------------------------------------------------------------------
 QString ctkWorkflowGroupBox::errorText()const
 {
-  CTK_D(const ctkWorkflowGroupBox);
+  Q_D(const ctkWorkflowGroupBox);
   return d->ErrorTextBrowser->toPlainText();
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowGroupBox::setErrorText(const QString& newErrorText)
 {
-  CTK_D(ctkWorkflowGroupBox);
+  Q_D(ctkWorkflowGroupBox);
   d->ErrorTextBrowser->setPlainText(newErrorText);
 }

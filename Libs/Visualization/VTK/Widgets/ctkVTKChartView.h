@@ -54,8 +54,12 @@ public:
 
   void fitAxesToBounds();
 
+protected:
+  QScopedPointer<ctkVTKChartViewPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKChartView);
+  Q_DECLARE_PRIVATE(ctkVTKChartView);
+  Q_DISABLE_COPY(ctkVTKChartView);
 };
 
 #endif

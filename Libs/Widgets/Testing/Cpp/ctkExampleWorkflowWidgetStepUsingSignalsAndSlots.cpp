@@ -33,10 +33,9 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-class ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate : public ctkPrivate<ctkExampleWorkflowWidgetStepUsingSignalsAndSlots>
+class ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
   ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate();
   ~ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate(){}
 
@@ -74,8 +73,13 @@ ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate::ctkExampleWorkflowWidge
 
 //-----------------------------------------------------------------------------
 ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(QObject* _parent) : Superclass(_parent)
+  , d_ptr(new ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate)
 {
-  CTK_INIT_PRIVATE(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
+}
+
+//-----------------------------------------------------------------------------
+ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::~ctkExampleWorkflowWidgetStepUsingSignalsAndSlots()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -98,7 +102,7 @@ void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::onEntry(
 
   // simply implements our counter of the number of times we have run
   // this function
-  CTK_D(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
+  Q_D(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
   d->numberOfTimesRanOnEntry++;
 
   // signals that we are finished
@@ -115,7 +119,7 @@ void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::onExit(
 
   // simply implements our counter of the number of times we have run
   // this function
-  CTK_D(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
+  Q_D(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
   d->numberOfTimesRanOnExit++;
 
   // signals that we are finished
@@ -125,7 +129,7 @@ void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::onExit(
 //-----------------------------------------------------------------------------
 void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::createUserInterface()
 {
-  CTK_D(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
+  Q_D(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
 
   if (!d->widget)
     {
@@ -160,7 +164,7 @@ void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::createUserInterface()
 //-----------------------------------------------------------------------------
 void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::validate(const QString& desiredBranchId)
 {
-  CTK_D(const ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
+  Q_D(const ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
   bool retVal;
   int val;
   bool ok;

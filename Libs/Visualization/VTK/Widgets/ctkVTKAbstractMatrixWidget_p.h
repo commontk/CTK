@@ -33,13 +33,17 @@
 
 class vtkMatrix4x4;
 
-class ctkVTKAbstractMatrixWidgetPrivate: public QObject,
-                                         public ctkPrivate<ctkVTKAbstractMatrixWidget>
+class ctkVTKAbstractMatrixWidgetPrivate: public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_DECLARE_PUBLIC(ctkVTKAbstractMatrixWidget);
+
+protected:
+  ctkVTKAbstractMatrixWidget* const q_ptr;
+
 public:  
-  ctkVTKAbstractMatrixWidgetPrivate();
+  ctkVTKAbstractMatrixWidgetPrivate(ctkVTKAbstractMatrixWidget& object);
   void init();
 
   void setMatrix(vtkMatrix4x4* matrix);

@@ -44,6 +44,7 @@ public:
   /// Constructors
   ctkVTKTextPropertyWidget(QWidget* parentWidget);
   ctkVTKTextPropertyWidget(vtkTextProperty* textProperty, QWidget* parentWidget);
+  virtual ~ctkVTKTextPropertyWidget();
 
   vtkTextProperty* textProperty()const;
 
@@ -71,8 +72,12 @@ signals:
 protected slots:
   void updateFromTextProperty();
 
+protected:
+  QScopedPointer<ctkVTKTextPropertyWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKTextPropertyWidget);
+  Q_DECLARE_PRIVATE(ctkVTKTextPropertyWidget);
+  Q_DISABLE_COPY(ctkVTKTextPropertyWidget);
 };
 
 #endif

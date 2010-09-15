@@ -29,55 +29,62 @@
 #include <vtkScalarBarWidget.h>
 
 //-----------------------------------------------------------------------------
-class ctkVTKScalarBarWidgetPrivate
-  : public ctkPrivate<ctkVTKScalarBarWidget>
-  , public Ui_ctkVTKScalarBarWidget
+class ctkVTKScalarBarWidgetPrivate: public Ui_ctkVTKScalarBarWidget
 {
+  Q_DECLARE_PUBLIC(ctkVTKScalarBarWidget);
+protected:
+  ctkVTKScalarBarWidget* const q_ptr;
 public:
-  ctkVTKScalarBarWidgetPrivate();
+  ctkVTKScalarBarWidgetPrivate(ctkVTKScalarBarWidget& object);
   void init();
   vtkScalarBarWidget* ScalarBarWidget;
 };
 
 //-----------------------------------------------------------------------------
-ctkVTKScalarBarWidgetPrivate::ctkVTKScalarBarWidgetPrivate()
+ctkVTKScalarBarWidgetPrivate::ctkVTKScalarBarWidgetPrivate(ctkVTKScalarBarWidget& object)
+  :q_ptr(&object)
 {
   this->ScalarBarWidget = 0;
 }
 
 //-----------------------------------------------------------------------------
+ctkVTKScalarBarWidget::~ctkVTKScalarBarWidget()
+{
+}
+
+//-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidgetPrivate::init()
 {
-  CTK_P(ctkVTKScalarBarWidget);
-  this->setupUi(p);
-  p->setEnabled(this->ScalarBarWidget != 0);
+  Q_Q(ctkVTKScalarBarWidget);
+  this->setupUi(q);
+  q->setEnabled(this->ScalarBarWidget != 0);
   QObject::connect(this->DisplayScalarBarCheckBox, SIGNAL(toggled(bool)),
-                   p, SLOT(setDisplay(bool)));
+                   q, SLOT(setDisplay(bool)));
   QObject::connect(this->MaxNumberOfColorsSpinBox, SIGNAL(valueChanged(int)),
-                   p, SLOT(setMaxNumberOfColors(int)));
+                   q, SLOT(setMaxNumberOfColors(int)));
   QObject::connect(this->NumberOfLabelsSpinBox, SIGNAL(valueChanged(int)),
-                   p, SLOT(setNumberOfLabels(int)));
+                   q, SLOT(setNumberOfLabels(int)));
   QObject::connect(this->TitleTextPropertyWidget, SIGNAL(textChanged(const QString&)),
-                   p, SLOT(setTitle(const QString&)));
+                   q, SLOT(setTitle(const QString&)));
   QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(textChanged(const QString&)),
-                   p, SLOT(setLabelsFormat(const QString&)));
+                   q, SLOT(setLabelsFormat(const QString&)));
 }
 
 //-----------------------------------------------------------------------------
 ctkVTKScalarBarWidget::ctkVTKScalarBarWidget(QWidget* parentWidget)
   :QWidget(parentWidget)
+  , d_ptr(new ctkVTKScalarBarWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkVTKScalarBarWidget);
-  CTK_D(ctkVTKScalarBarWidget);
+  Q_D(ctkVTKScalarBarWidget);
   d->init();
 }
 
 //-----------------------------------------------------------------------------
 ctkVTKScalarBarWidget::ctkVTKScalarBarWidget(vtkScalarBarWidget* scalarBarWidget, QWidget* parentWidget)
   :QWidget(parentWidget)
+  , d_ptr(new ctkVTKScalarBarWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkVTKScalarBarWidget);
-  CTK_D(ctkVTKScalarBarWidget);
+  Q_D(ctkVTKScalarBarWidget);
   d->init();
   this->setScalarBarWidget(scalarBarWidget);
 }
@@ -85,7 +92,7 @@ ctkVTKScalarBarWidget::ctkVTKScalarBarWidget(vtkScalarBarWidget* scalarBarWidget
 //-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::setScalarBarWidget(vtkScalarBarWidget* scalarBarWidget)
 {
-  CTK_D(ctkVTKScalarBarWidget);
+  Q_D(ctkVTKScalarBarWidget);
   if (scalarBarWidget == d->ScalarBarWidget)
     {
     return;
@@ -103,14 +110,14 @@ void ctkVTKScalarBarWidget::setScalarBarWidget(vtkScalarBarWidget* scalarBarWidg
 //-----------------------------------------------------------------------------
 vtkScalarBarWidget* ctkVTKScalarBarWidget::scalarBarWidget()const
 {
-  CTK_D(const ctkVTKScalarBarWidget);
+  Q_D(const ctkVTKScalarBarWidget);
   return d->ScalarBarWidget;
 }
 
 //-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::updateFromScalarBarWidget()
 {
-  CTK_D(const ctkVTKScalarBarWidget);
+  Q_D(const ctkVTKScalarBarWidget);
 
   vtkScalarBarActor* actor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
@@ -134,7 +141,7 @@ void ctkVTKScalarBarWidget::updateFromScalarBarWidget()
 //-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::setDisplay(bool visible)
 {
-  CTK_D(ctkVTKScalarBarWidget);
+  Q_D(ctkVTKScalarBarWidget);
   if (d->ScalarBarWidget == 0)
     {
     return;
@@ -145,7 +152,7 @@ void ctkVTKScalarBarWidget::setDisplay(bool visible)
 //-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::setMaxNumberOfColors(int colorCount)
 {
-  CTK_D(ctkVTKScalarBarWidget);
+  Q_D(ctkVTKScalarBarWidget);
   vtkScalarBarActor* actor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   if (actor == 0)
@@ -158,7 +165,7 @@ void ctkVTKScalarBarWidget::setMaxNumberOfColors(int colorCount)
 //-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::setNumberOfLabels(int labelCount)
 {
-  CTK_D(ctkVTKScalarBarWidget);
+  Q_D(ctkVTKScalarBarWidget);
   vtkScalarBarActor* actor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   if (actor == 0)
@@ -171,7 +178,7 @@ void ctkVTKScalarBarWidget::setNumberOfLabels(int labelCount)
 //-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::setTitle(const QString& title)
 {
-  CTK_D(ctkVTKScalarBarWidget);
+  Q_D(ctkVTKScalarBarWidget);
   vtkScalarBarActor* actor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   if (actor == 0)
@@ -184,7 +191,7 @@ void ctkVTKScalarBarWidget::setTitle(const QString& title)
 //-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::setLabelsFormat(const QString& format)
 {
-  CTK_D(ctkVTKScalarBarWidget);
+  Q_D(ctkVTKScalarBarWidget);
   vtkScalarBarActor* actor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   if (actor == 0)

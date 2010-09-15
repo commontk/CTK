@@ -40,10 +40,13 @@
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKScalarsToColorsView");
 //----------------------------------------------------------------------------
 
-class ctkVTKScalarsToColorsViewPrivate: public ctkPrivate<ctkVTKScalarsToColorsView>
+class ctkVTKScalarsToColorsViewPrivate
 {
+  Q_DECLARE_PUBLIC(ctkVTKScalarsToColorsView);
+protected:
+  ctkVTKScalarsToColorsView* const q_ptr;
 public:
-  ctkVTKScalarsToColorsViewPrivate();
+  ctkVTKScalarsToColorsViewPrivate(ctkVTKScalarsToColorsView& object);
   void init();
   void updateChart();
 };
@@ -52,15 +55,16 @@ public:
 // ctkVTKScalarsToColorsViewPrivate methods
 
 // ----------------------------------------------------------------------------
-ctkVTKScalarsToColorsViewPrivate::ctkVTKScalarsToColorsViewPrivate()
+ctkVTKScalarsToColorsViewPrivate::ctkVTKScalarsToColorsViewPrivate(ctkVTKScalarsToColorsView& object)
+  :q_ptr(&object)
 {
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsViewPrivate::init()
 {
-  CTK_P(ctkVTKScalarsToColorsView);
-  vtkChartXY* chart = p->chart();
+  Q_Q(ctkVTKScalarsToColorsView);
+  vtkChartXY* chart = q->chart();
   chart->SetAutoAxes(false);
   chart->SetHiddenAxisBorder(0);
   chart->GetAxis(0)->SetVisible(false);
@@ -81,9 +85,9 @@ void ctkVTKScalarsToColorsViewPrivate::updateChart()
 // ----------------------------------------------------------------------------
 ctkVTKScalarsToColorsView::ctkVTKScalarsToColorsView(QWidget* parentWidget)
   :ctkVTKChartView(parentWidget)
+  , d_ptr(new ctkVTKScalarsToColorsViewPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkVTKScalarsToColorsView);
-  CTK_D(ctkVTKScalarsToColorsView);
+  Q_D(ctkVTKScalarsToColorsView);
   d->init();
 }
 
@@ -95,7 +99,7 @@ ctkVTKScalarsToColorsView::~ctkVTKScalarsToColorsView()
 // ----------------------------------------------------------------------------
 vtkPlot* ctkVTKScalarsToColorsView::addLookupTable(vtkLookupTable* lut)
 {
-  CTK_D(ctkVTKScalarsToColorsView);
+  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkLookupTableItem> item =
     vtkSmartPointer<vtkLookupTableItem>::New();
   item->SetLookupTable(lut);
@@ -106,7 +110,7 @@ vtkPlot* ctkVTKScalarsToColorsView::addLookupTable(vtkLookupTable* lut)
 // ----------------------------------------------------------------------------
 vtkPlot* ctkVTKScalarsToColorsView::addColorTransferFunction(vtkColorTransferFunction* colorTF)
 {
-  CTK_D(ctkVTKScalarsToColorsView);
+  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkColorTransferFunctionItem> item =
     vtkSmartPointer<vtkColorTransferFunctionItem>::New();
   item->SetColorTransferFunction(colorTF);
@@ -118,7 +122,7 @@ vtkPlot* ctkVTKScalarsToColorsView::addColorTransferFunction(vtkColorTransferFun
 // ----------------------------------------------------------------------------
 vtkPlot* ctkVTKScalarsToColorsView::addOpacityFunction(vtkPiecewiseFunction* opacityTF)
 {
-  CTK_D(ctkVTKScalarsToColorsView);
+  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkPiecewiseFunctionItem> item =
     vtkSmartPointer<vtkPiecewiseFunctionItem>::New();
   item->SetPiecewiseFunction(opacityTF);
@@ -137,7 +141,7 @@ vtkPlot* ctkVTKScalarsToColorsView::addOpacityFunction(vtkPiecewiseFunction* opa
 // ----------------------------------------------------------------------------
 vtkPlot* ctkVTKScalarsToColorsView::addCompositeFunction(vtkColorTransferFunction* colorTF, vtkPiecewiseFunction* opacityTF)
 {
-  CTK_D(ctkVTKScalarsToColorsView);
+  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkCompositeTransferFunctionItem> item =
     vtkSmartPointer<vtkCompositeTransferFunctionItem>::New();
   item->SetColorTransferFunction(colorTF);

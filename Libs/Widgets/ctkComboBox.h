@@ -76,8 +76,12 @@ protected:
   /// Reimplemented for internal reasons
   virtual void paintEvent(QPaintEvent*);
 
+protected:
+  QScopedPointer<ctkComboBoxPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkComboBox);
+  Q_DECLARE_PRIVATE(ctkComboBox);
+  Q_DISABLE_COPY(ctkComboBox);
 };
 
 #endif

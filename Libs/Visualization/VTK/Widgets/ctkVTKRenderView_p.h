@@ -42,13 +42,16 @@
 class vtkRenderWindowInteractor;
 
 //-----------------------------------------------------------------------------
-class ctkVTKRenderViewPrivate : public QObject,
-                                public ctkPrivate<ctkVTKRenderView>
+class ctkVTKRenderViewPrivate : public QObject
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(ctkVTKRenderView);
+  Q_DECLARE_PUBLIC(ctkVTKRenderView);
+
+protected:
+  ctkVTKRenderView* const q_ptr;
+
 public:
-  ctkVTKRenderViewPrivate();
+  ctkVTKRenderViewPrivate(ctkVTKRenderView& object);
 
   /// Convenient setup methods
   void setupCornerAnnotation();

@@ -42,8 +42,12 @@ public:
   virtual ~ctkVTKScalarsToColorsWidget();
 
   ctkVTKScalarsToColorsView* view()const;
+protected:
+  QScopedPointer<ctkVTKScalarsToColorsWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKScalarsToColorsWidget);
+  Q_DECLARE_PRIVATE(ctkVTKScalarsToColorsWidget);
+  Q_DISABLE_COPY(ctkVTKScalarsToColorsWidget);
 };
 
 #endif

@@ -61,6 +61,9 @@ public:
   /// as ctkRangeSlider.
   ctkDoubleRangeSlider( QWidget* par = 0 );
   
+  /// Destructor
+  virtual ~ctkDoubleRangeSlider();
+  
   /// 
   /// This property holds the single step.
   /// The smaller of two natural steps that an abstract sliders provides and
@@ -234,8 +237,12 @@ protected:
   /// Subclasses can change the internal slider
   void setSlider(ctkRangeSlider* slider);
 
+protected:
+  QScopedPointer<ctkDoubleRangeSliderPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDoubleRangeSlider);
+  Q_DECLARE_PRIVATE(ctkDoubleRangeSlider);
+  Q_DISABLE_COPY(ctkDoubleRangeSlider);
 };
 
 #endif

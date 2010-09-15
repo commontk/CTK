@@ -52,6 +52,7 @@ class CTK_WIDGETS_EXPORT ctkActionsWidget : public QWidget
   Q_PROPERTY(bool menuActionsVisible READ areMenuActionsVisible WRITE setMenuActionsVisible)
 public:
   explicit ctkActionsWidget(QWidget* parent = 0);
+  virtual ~ctkActionsWidget();
 
   /// Add an action into a specified group (or at top level if group is empty)
   /// An action can be added multiple times (in a different group). Once added,
@@ -89,9 +90,13 @@ protected:
     ContextColumn,
     DetailsColumn
   };
+protected:
+  QScopedPointer<ctkActionsWidgetPrivate> d_ptr;
+
 private:
+  Q_DECLARE_PRIVATE(ctkActionsWidget);
+  Q_DISABLE_COPY(ctkActionsWidget);
   friend class ctkSortFilterActionsProxyModel;
-  CTK_DECLARE_PRIVATE(ctkActionsWidget);
 };
 
 /// ctkSortFilterActionsProxyModel is a utility class that is needed by
@@ -111,8 +116,11 @@ public:
 
 protected:
   bool filterAcceptsRow(int source_row, const QModelIndex & source_parent) const;
+  QScopedPointer<ctkSortFilterActionsProxyModelPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkSortFilterActionsProxyModel);
+  Q_DECLARE_PRIVATE(ctkSortFilterActionsProxyModel);
+  Q_DISABLE_COPY(ctkSortFilterActionsProxyModel);
 };
 
 /// ctkRichTextItemDelegate is a utility class that is needed by

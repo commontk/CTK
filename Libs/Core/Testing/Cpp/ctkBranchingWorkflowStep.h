@@ -33,7 +33,6 @@ public:
 
   typedef ctkWorkflowStep Superclass;
   explicit ctkBranchingWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId) : Superclass(newWorkflow, newId){};
-  virtual ~ctkBranchingWorkflowStep(){}
 
   void setBranchId(const QString& newId)
   {

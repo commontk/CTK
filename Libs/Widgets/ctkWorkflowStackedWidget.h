@@ -43,7 +43,7 @@ public:
 
   typedef ctkWorkflowAbstractPagedWidget Superclass;
   explicit ctkWorkflowStackedWidget(QWidget* newParent = 0);
-  virtual ~ctkWorkflowStackedWidget(){}
+  virtual ~ctkWorkflowStackedWidget();
 
   virtual void createNewPage(QWidget* widget);
 
@@ -53,8 +53,12 @@ public:
 
   virtual QWidget* clientArea();
 
+protected:
+  QScopedPointer<ctkWorkflowStackedWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkWorkflowStackedWidget);
+  Q_DECLARE_PRIVATE(ctkWorkflowStackedWidget);
+  Q_DISABLE_COPY(ctkWorkflowStackedWidget);
 
 };
 

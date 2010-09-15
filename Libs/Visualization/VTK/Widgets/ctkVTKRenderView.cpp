@@ -42,7 +42,8 @@ static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKRenderView
 // ctkVTKRenderViewPrivate methods
 
 // --------------------------------------------------------------------------
-ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate()
+ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate(ctkVTKRenderView& object)
+  :q_ptr(&object)
 {
   this->Renderer = vtkSmartPointer<vtkRenderer>::New();
   this->RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -103,8 +104,8 @@ void ctkVTKRenderViewPrivate::setupRendering()
 void ctkVTKRenderViewPrivate::setupDefaultInteractor()
 {
   logger.trace("setupDefaultInteractor");
-  CTK_P(ctkVTKRenderView);
-  p->setInteractor(this->RenderWindow->GetInteractor());
+  Q_Q(ctkVTKRenderView);
+  q->setInteractor(this->RenderWindow->GetInteractor());
 }
 
 //----------------------------------------------------------------------------
@@ -221,9 +222,9 @@ void ctkVTKRenderViewPrivate::doRock()
 
 // --------------------------------------------------------------------------
 ctkVTKRenderView::ctkVTKRenderView(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new ctkVTKRenderViewPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkVTKRenderView);
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   
   d->VTKWidget = new QVTKWidget(this);
   this->setLayout(new QVBoxLayout);
@@ -236,9 +237,14 @@ ctkVTKRenderView::ctkVTKRenderView(QWidget* _parent) : Superclass(_parent)
 }
 
 //----------------------------------------------------------------------------
+ctkVTKRenderView::~ctkVTKRenderView()
+{
+}
+
+//----------------------------------------------------------------------------
 void ctkVTKRenderView::scheduleRender()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
 
   logger.trace(QString("scheduleRender - RenderEnabled: %1 - RenderPending: %2").
                arg(d->RenderEnabled ? "true" : "false")
@@ -258,7 +264,7 @@ void ctkVTKRenderView::scheduleRender()
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::forceRender()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
 
   logger.trace(QString("forceRender - RenderEnabled: %1")
                .arg(d->RenderEnabled ? "true" : "false"));
@@ -280,7 +286,7 @@ CTK_GET_CXX(ctkVTKRenderView, vtkRenderWindowInteractor*, interactor, CurrentInt
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
 
   logger.trace("setInteractor");
 
@@ -295,7 +301,7 @@ void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
 //----------------------------------------------------------------------------
 vtkInteractorObserver* ctkVTKRenderView::interactorStyle()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (d->CurrentInteractor)
     {
     return d->CurrentInteractor->GetInteractorStyle();
@@ -309,7 +315,7 @@ vtkInteractorObserver* ctkVTKRenderView::interactorStyle()
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setCornerAnnotationText(const QString& text)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   logger.trace(QString("setCornerAnnotationText: %1").arg(text));
   d->CornerAnnotation->ClearAllTexts();
   d->CornerAnnotation->SetText(2, text.toLatin1());
@@ -318,14 +324,14 @@ void ctkVTKRenderView::setCornerAnnotationText(const QString& text)
 //----------------------------------------------------------------------------
 QString ctkVTKRenderView::cornerAnnotationText() const
 {
-  CTK_D(const ctkVTKRenderView);
+  Q_D(const ctkVTKRenderView);
   return QLatin1String(d->CornerAnnotation->GetText(2));
 }
 
 // --------------------------------------------------------------------------
 void ctkVTKRenderView::setBackgroundColor(const QColor& newBackgroundColor)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
 
   logger.trace(QString("setBackgroundColor: %1").arg(newBackgroundColor.name()));
 
@@ -337,7 +343,7 @@ void ctkVTKRenderView::setBackgroundColor(const QColor& newBackgroundColor)
 //----------------------------------------------------------------------------
 QColor ctkVTKRenderView::backgroundColor() const
 {
-  CTK_D(const ctkVTKRenderView);
+  Q_D(const ctkVTKRenderView);
   double color[3] = {0, 0, 0};
   d->Renderer->GetBackground(color);
   return QColor::fromRgbF(color[0], color[1], color[2]);
@@ -346,21 +352,21 @@ QColor ctkVTKRenderView::backgroundColor() const
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setOrientationWidgetVisible(bool visible)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   d->Orientation->SetEnabled(visible);
 }
 
 //----------------------------------------------------------------------------
 bool ctkVTKRenderView::orientationWidgetVisible()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   return d->Orientation->GetEnabled();
 }
 
 //----------------------------------------------------------------------------
 vtkCamera* ctkVTKRenderView::activeCamera()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (d->Renderer->IsActiveCameraCreated())
     {
     return d->Renderer->GetActiveCamera();
@@ -374,7 +380,7 @@ vtkCamera* ctkVTKRenderView::activeCamera()
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::resetCamera()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   logger.trace("resetCamera");
   d->Renderer->ResetCamera();
 }
@@ -392,7 +398,7 @@ CTK_GET_CXX(ctkVTKRenderView, int, pitchRollYawIncrement, PitchRollYawIncrement)
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setPitchRollYawIncrement(int newPitchRollYawIncrement)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   d->PitchRollYawIncrement = qAbs(newPitchRollYawIncrement);
 }
 
@@ -402,8 +408,9 @@ CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, pitchDirection,
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setPitchDirection(ctkVTKRenderView::RotateDirection newPitchDirection)
 {
-  CTK_D(ctkVTKRenderView);
-  if (newPitchDirection != Self::PitchUp && newPitchDirection != Self::PitchDown)
+  Q_D(ctkVTKRenderView);
+  if (newPitchDirection != ctkVTKRenderView::PitchUp &&
+      newPitchDirection != ctkVTKRenderView::PitchDown)
     {
     return;
     }
@@ -416,8 +423,9 @@ CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, rollDirection, 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setRollDirection(ctkVTKRenderView::RotateDirection newRollDirection)
 {
-  CTK_D(ctkVTKRenderView);
-  if (newRollDirection != Self::RollLeft && newRollDirection != Self::RollRight)
+  Q_D(ctkVTKRenderView);
+  if (newRollDirection != ctkVTKRenderView::RollLeft &&
+      newRollDirection != ctkVTKRenderView::RollRight)
     {
     return;
     }
@@ -430,8 +438,9 @@ CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, yawDirection, Y
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setYawDirection(ctkVTKRenderView::RotateDirection newYawDirection)
 {
-  CTK_D(ctkVTKRenderView);
-  if (newYawDirection != Self::YawLeft && newYawDirection != Self::YawRight)
+  Q_D(ctkVTKRenderView);
+  if (newYawDirection != ctkVTKRenderView::YawLeft &&
+      newYawDirection != ctkVTKRenderView::YawRight)
     {
     return;
     }
@@ -445,7 +454,7 @@ CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, setSpinDirectio
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::pitch()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (!d->Renderer->IsActiveCameraCreated())
     {
     return;
@@ -456,7 +465,7 @@ void ctkVTKRenderView::pitch()
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::roll()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (!d->Renderer->IsActiveCameraCreated())
     {
     return;
@@ -467,7 +476,7 @@ void ctkVTKRenderView::roll()
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::yaw()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (!d->Renderer->IsActiveCameraCreated())
     {
     return;
@@ -478,7 +487,7 @@ void ctkVTKRenderView::yaw()
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setSpinEnabled(bool enabled)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (enabled == d->SpinEnabled)
     {
     return;
@@ -495,7 +504,7 @@ CTK_GET_CXX(ctkVTKRenderView, bool, spinEnabled, SpinEnabled);
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setSpinIncrement(int newSpinIncrement)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   d->SpinIncrement = qAbs(newSpinIncrement);
 }
 
@@ -505,7 +514,7 @@ CTK_GET_CXX(ctkVTKRenderView, int, spinIncrement, SpinIncrement);
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setAnimationIntervalMs(int newAnimationIntervalMs)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   d->AnimationIntervalMs = qAbs(newAnimationIntervalMs);
 }
 
@@ -515,7 +524,7 @@ CTK_GET_CXX(ctkVTKRenderView, int, animationIntervalMs, AnimationIntervalMs);
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setRockEnabled(bool enabled)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (enabled == d->RockEnabled)
     {
     return;
@@ -532,7 +541,7 @@ CTK_GET_CXX(ctkVTKRenderView, bool, rockEnabled, RockEnabled);
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setRockLength(int newRockLength)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   d->RockLength = qAbs(newRockLength);
 }
 
@@ -542,7 +551,7 @@ CTK_GET_CXX(ctkVTKRenderView, int, rockLength, RockLength);
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setRockIncrement(int newRockIncrement)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   d->RockIncrement = qAbs(newRockIncrement);
 }
 
@@ -552,7 +561,7 @@ CTK_GET_CXX(ctkVTKRenderView, int, rockIncrement, RockIncrement);
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setZoomFactor(double newZoomFactor)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   d->ZoomFactor = qBound(0.0, qAbs(newZoomFactor), 1.0);
 }
 
@@ -562,7 +571,7 @@ CTK_GET_CXX(ctkVTKRenderView, double, zoomFactor, ZoomFactor);
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::zoomIn()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (!d->Renderer->IsActiveCameraCreated())
     {
     return;
@@ -573,7 +582,7 @@ void ctkVTKRenderView::zoomIn()
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::zoomOut()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (!d->Renderer->IsActiveCameraCreated())
     {
     return;
@@ -584,7 +593,7 @@ void ctkVTKRenderView::zoomOut()
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setFocalPoint(int x, int y, int z)
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   if (!d->Renderer->IsActiveCameraCreated())
     {
     return;
@@ -599,7 +608,7 @@ void ctkVTKRenderView::setFocalPoint(int x, int y, int z)
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::resetFocalPoint()
 {
-  CTK_D(ctkVTKRenderView);
+  Q_D(ctkVTKRenderView);
   double bounds[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   d->Renderer->ComputeVisiblePropBounds(bounds);
   double x_center = (bounds[1] + bounds[0]) / 2.0;

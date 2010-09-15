@@ -58,6 +58,10 @@ public:
   ctkModelTester(QAbstractItemModel *model, QObject *parent = 0);
 
   ///
+  /// Destructor
+  virtual ~ctkModelTester();
+
+  ///
   /// Set the model to be tested, the model must remain valid during 
   /// the life ctkModelTester.
   void setModel(QAbstractItemModel* model);
@@ -145,8 +149,12 @@ protected:
   /// Utility function that process the result of a test
   virtual void test(bool result, const QString& errorString)const;
   
+protected:
+  QScopedPointer<ctkModelTesterPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkModelTester);
+  Q_DECLARE_PRIVATE(ctkModelTester);
+  Q_DISABLE_COPY(ctkModelTester);
 };
 
 #endif

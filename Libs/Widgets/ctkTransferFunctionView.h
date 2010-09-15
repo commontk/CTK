@@ -45,8 +45,12 @@ protected:
   virtual void mousePressEvent ( QMouseEvent * event );
   virtual void mouseReleaseEvent ( QMouseEvent * event );*/
 
+protected:
+  QScopedPointer<ctkTransferFunctionViewPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionView);
+  Q_DECLARE_PRIVATE(ctkTransferFunctionView);
+  Q_DISABLE_COPY(ctkTransferFunctionView);
 };
 
 #endif

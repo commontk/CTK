@@ -35,7 +35,7 @@
 #include <limits>
 
 //-----------------------------------------------------------------------------
-class ctkVTKHistogramPrivate: public ctkPrivate<ctkVTKHistogram>
+class ctkVTKHistogramPrivate
 {
 public:
   ctkVTKHistogramPrivate();
@@ -100,16 +100,16 @@ int ctkVTKHistogramPrivate::computeNumberOfBins()const
 //-----------------------------------------------------------------------------
 ctkVTKHistogram::ctkVTKHistogram(QObject* parentObject)
   :ctkHistogram(parentObject)
+  , d_ptr(new ctkVTKHistogramPrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKHistogram);
 }
 
 //-----------------------------------------------------------------------------
 ctkVTKHistogram::ctkVTKHistogram(vtkDataArray* dataArray, 
                                  QObject* parentObject)
   :ctkHistogram(parentObject)
+  , d_ptr(new ctkVTKHistogramPrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKHistogram);
   this->setDataArray(dataArray);
 }
 
@@ -121,14 +121,14 @@ ctkVTKHistogram::~ctkVTKHistogram()
 //-----------------------------------------------------------------------------
 int ctkVTKHistogram::count()const
 {
-  CTK_D(const ctkVTKHistogram);
+  Q_D(const ctkVTKHistogram);
   return d->Bins->GetNumberOfTuples();
 }
 
 //-----------------------------------------------------------------------------
 void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
 {
-  CTK_D(const ctkVTKHistogram);
+  Q_D(const ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
     {
     Q_ASSERT(d->DataArray.GetPointer());
@@ -149,21 +149,21 @@ void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKHistogram::minValue()const
 {
-  //CTK_D(const ctkVTKHistogram);
+  //Q_D(const ctkVTKHistogram);
   return 0;//d->MinBin;
 }
 
 //-----------------------------------------------------------------------------
 QVariant ctkVTKHistogram::maxValue()const
 {
-  CTK_D(const ctkVTKHistogram);
+  Q_D(const ctkVTKHistogram);
   return d->MaxBin;
 }
 
 //-----------------------------------------------------------------------------
 ctkControlPoint* ctkVTKHistogram::controlPoint(int index)const
 {
-  CTK_D(const ctkVTKHistogram);
+  Q_D(const ctkVTKHistogram);
   ctkHistogramBar* cp = new ctkHistogramBar();
   cp->P.X = this->indexToPos(index);
   cp->P.Value = d->Bins->GetValue(index);
@@ -196,7 +196,7 @@ int ctkVTKHistogram::posToIndex(qreal pos)const
 //-----------------------------------------------------------------------------
 void ctkVTKHistogram::setDataArray(vtkDataArray* newDataArray)
 {
-  CTK_D(ctkVTKHistogram);
+  Q_D(ctkVTKHistogram);
   d->DataArray = newDataArray;
   this->qvtkReconnect(d->DataArray,vtkCommand::ModifiedEvent,
                       this, SIGNAL(changed()));
@@ -206,14 +206,14 @@ void ctkVTKHistogram::setDataArray(vtkDataArray* newDataArray)
 //-----------------------------------------------------------------------------
 vtkDataArray* ctkVTKHistogram::dataArray()const
 {
-  CTK_D(const ctkVTKHistogram);
+  Q_D(const ctkVTKHistogram);
   return d->DataArray;
 }
 
 //-----------------------------------------------------------------------------
 void ctkVTKHistogram::setComponent(int component)
 {
-  CTK_D(ctkVTKHistogram);
+  Q_D(ctkVTKHistogram);
   d->Component = component;
   // need rebuild
 }
@@ -221,14 +221,14 @@ void ctkVTKHistogram::setComponent(int component)
 //-----------------------------------------------------------------------------
 int ctkVTKHistogram::component()const
 {
-  CTK_D(const ctkVTKHistogram);
+  Q_D(const ctkVTKHistogram);
   return d->Component;
 }
 
 //-----------------------------------------------------------------------------
 void ctkVTKHistogram::setNumberOfBins(int number)
 {
-  CTK_D(ctkVTKHistogram);
+  Q_D(ctkVTKHistogram);
   d->UserNumberOfBins = number;
 }
 
@@ -302,7 +302,7 @@ void populateIrregularBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
 //-----------------------------------------------------------------------------
 void ctkVTKHistogram::build()
 {
-  CTK_D(ctkVTKHistogram);
+  Q_D(ctkVTKHistogram);
 
   if (d->DataArray.GetPointer() == 0)
     {

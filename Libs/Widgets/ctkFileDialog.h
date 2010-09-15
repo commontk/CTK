@@ -66,8 +66,12 @@ public slots:
   /// dialog if a value is not set in the extra bottom widget.
   void setAcceptButtonEnable(bool enable);
 
+protected:
+  QScopedPointer<ctkFileDialogPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkFileDialog);
+  Q_DECLARE_PRIVATE(ctkFileDialog);
+  Q_DISABLE_COPY(ctkFileDialog);
 };
 
 #endif

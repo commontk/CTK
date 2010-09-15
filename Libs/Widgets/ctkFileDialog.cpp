@@ -30,10 +30,13 @@
 #include "ctkFileDialog.h"
 
 //------------------------------------------------------------------------------
-class ctkFileDialogPrivate: public ctkPrivate<ctkFileDialog>
+class ctkFileDialogPrivate
 {
+  Q_DECLARE_PUBLIC(ctkFileDialog);
+protected:
+  ctkFileDialog* const q_ptr;
 public:
-  ctkFileDialogPrivate();
+  ctkFileDialogPrivate(ctkFileDialog& object);
   void init();
   QPushButton* acceptButton()const;
   bool AcceptButtonEnable;
@@ -42,7 +45,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
-ctkFileDialogPrivate::ctkFileDialogPrivate()
+ctkFileDialogPrivate::ctkFileDialogPrivate(ctkFileDialog& object)
+  :q_ptr(&object)
 {
   this->IgnoreEvent = false;
   this->AcceptButtonEnable = true;
@@ -52,7 +56,7 @@ ctkFileDialogPrivate::ctkFileDialogPrivate()
 //------------------------------------------------------------------------------
 void ctkFileDialogPrivate::init()
 {
-  CTK_P(ctkFileDialog);
+  Q_Q(ctkFileDialog);
   QPushButton* button = this->acceptButton();
   Q_ASSERT(button);
   this->AcceptButtonState =
@@ -60,17 +64,17 @@ void ctkFileDialogPrivate::init()
   // TODO: catching the event of the enable state is not enough, if the user 
   // double click on the file, the dialog will be accepted, that event should
   // be intercepted as well
-  button->installEventFilter(p);
+  button->installEventFilter(q);
 }
 
 //------------------------------------------------------------------------------
 QPushButton* ctkFileDialogPrivate::acceptButton()const
 {
-  CTK_P(const ctkFileDialog);
-  QDialogButtonBox* buttonBox = p->findChild<QDialogButtonBox*>();
+  Q_Q(const ctkFileDialog);
+  QDialogButtonBox* buttonBox = q->findChild<QDialogButtonBox*>();
   Q_ASSERT(buttonBox);
   QDialogButtonBox::StandardButton button =
-    (p->acceptMode() == QFileDialog::AcceptOpen ? QDialogButtonBox::Open : QDialogButtonBox::Save);
+    (q->acceptMode() == QFileDialog::AcceptOpen ? QDialogButtonBox::Open : QDialogButtonBox::Save);
   return buttonBox->button(button);
 }
 
@@ -80,9 +84,9 @@ ctkFileDialog::ctkFileDialog(QWidget *parentWidget,
               const QString &directory,
               const QString &filter)
   :QFileDialog(parentWidget, caption, directory, filter)
+  , d_ptr(new ctkFileDialogPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkFileDialog);
-  CTK_D(ctkFileDialog);
+  Q_D(ctkFileDialog);
   d->init();
 }
 
@@ -138,7 +142,7 @@ QWidget* ctkFileDialog::bottomWidget()const
 //------------------------------------------------------------------------------
 void ctkFileDialog::setAcceptButtonEnable(bool enable)
 {
-  CTK_D(ctkFileDialog);
+  Q_D(ctkFileDialog);
   d->AcceptButtonEnable = enable;
   d->acceptButton()->setEnabled(d->AcceptButtonEnable && d->AcceptButtonState);
 }
@@ -146,7 +150,7 @@ void ctkFileDialog::setAcceptButtonEnable(bool enable)
 //------------------------------------------------------------------------------
 bool ctkFileDialog::eventFilter(QObject *obj, QEvent *event)
 {
-  CTK_D(ctkFileDialog);
+  Q_D(ctkFileDialog);
   QPushButton* button = d->acceptButton();
   if (obj == button && event->type() == QEvent::EnabledChange &&
       !d->IgnoreEvent)

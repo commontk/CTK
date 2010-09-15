@@ -60,7 +60,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // CTK includes
 #include "ctkCheckBoxPixmaps.h"
 
-class ctkCheckBoxPixmapsPrivate: public ctkPrivate<ctkCheckBoxPixmaps>
+class ctkCheckBoxPixmapsPrivate
 {
 public:
   
@@ -83,9 +83,9 @@ public:
 //-----------------------------------------------------------------------------
 ctkCheckBoxPixmaps::ctkCheckBoxPixmaps(QWidget* parentWidget)
   : Superclass(parentWidget)
+  , d_ptr(new ctkCheckBoxPixmapsPrivate)
 {
-  CTK_INIT_PRIVATE(ctkCheckBoxPixmaps);
-  CTK_D(ctkCheckBoxPixmaps);
+  Q_D(ctkCheckBoxPixmaps);
   // Initialize the pixmaps. The following style array should
   // correspond to the PixmapStateIndex enum.
   const QStyle::State PixmapStyle[] =
@@ -115,9 +115,14 @@ ctkCheckBoxPixmaps::ctkCheckBoxPixmaps(QWidget* parentWidget)
 }
 
 //-----------------------------------------------------------------------------
+ctkCheckBoxPixmaps::~ctkCheckBoxPixmaps()
+{
+}
+
+//-----------------------------------------------------------------------------
 const QPixmap& ctkCheckBoxPixmaps::pixmap(Qt::CheckState state, bool active) const
 {
-  CTK_D(const ctkCheckBoxPixmaps);
+  Q_D(const ctkCheckBoxPixmaps);
   int offset = active ? 3 : 0;
   switch (state)
     {

@@ -100,8 +100,12 @@ protected:
   virtual void setSubTitle(const QString& newSubTitle);
   virtual void setErrorText(const QString& newErrorText);
 
+protected:
+  QScopedPointer<ctkWorkflowGroupBoxPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkWorkflowGroupBox);
+  Q_DECLARE_PRIVATE(ctkWorkflowGroupBox);
+  Q_DISABLE_COPY(ctkWorkflowGroupBox);
 
 };
 

@@ -87,9 +87,9 @@
     QStringListIterator i(pluginsToStart);
     while (i.hasNext())
     {
-      ctkPlugin* p = d->fwCtx->plugins->getPlugin(i.next());
+      ctkPlugin* plugin = d->fwCtx->plugins->getPlugin(i.next());
       try {
-        const int autostartSetting = p->d_func()->archive->getAutostartSetting();
+        const int autostartSetting = plugin->d_func()->archive->getAutostartSetting();
         // Launch must not change the autostart setting of a plugin
         StartOptions option = ctkPlugin::START_TRANSIENT;
         if (ctkPlugin::START_ACTIVATION_POLICY == autostartSetting)
@@ -97,11 +97,11 @@
           // Transient start according to the plugins activation policy.
           option |= ctkPlugin::START_ACTIVATION_POLICY;
         }
-        p->start(option);
+        plugin->start(option);
       }
       catch (const ctkPluginException& pe)
       {
-        d->fwCtx->listeners.frameworkError(p, pe);
+        d->fwCtx->listeners.frameworkError(plugin, pe);
       }
     }
 

@@ -60,8 +60,12 @@ protected:
   virtual bool hitButton(const QPoint & pos) const;
   /// Reimplemented for internal reasons
   virtual void initStyleOption ( QStyleOptionButton * option ) const;
+protected:
+  QScopedPointer<ctkMenuButtonPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkMenuButton);
+  Q_DECLARE_PRIVATE(ctkMenuButton);
+  Q_DISABLE_COPY(ctkMenuButton);
 };
 
 #endif

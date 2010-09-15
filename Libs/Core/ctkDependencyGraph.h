@@ -22,8 +22,10 @@
 #define __ctkDependencyGraph_h
 
 // Qt includes
+#include <QScopedPointer>
 #include <QString>
 #include <QList>
+#include <QtGlobal>
 
 // CTK includes
 #if !defined(NO_SYMBOL_EXPORT)
@@ -31,6 +33,7 @@
 #else
 #define CTK_CORE_EXPORT
 #endif
+class ctkDependencyGraphPrivate;
 
 class CTK_CORE_EXPORT ctkDependencyGraph
 {
@@ -38,26 +41,26 @@ public:
   ctkDependencyGraph(int nvertices);
   virtual ~ctkDependencyGraph();
   
-  void printAdditionalInfo();
-  void printGraph();
+  void printAdditionalInfo()const;
+  void printGraph()const;
   
   /// Get the number of vertices associated with current graph
-  int numberOfVertices();
+  int numberOfVertices()const;
   
   /// Get the number of edges associated with current graph
-  int numberOfEdges();
+  int numberOfEdges()const;
   
   /// Traverse graph and check for cycle
   bool checkForCycle();
   
   /// Return true if there is at least one cycle
-  bool cycleDetected();
+  bool cycleDetected()const;
   
   /// If a cycle has been detected, return the origin of the cycle otherwise 0.
-  int cycleOrigin();
+  int cycleOrigin()const;
   
   /// If a cycle has been detected, return the end of the cycle otherwise 0.
-  int cycleEnd();
+  int cycleEnd()const;
   
   // The traverse of the tree will print information on standard output
   void setVerbose(bool verbose);
@@ -80,7 +83,7 @@ public:
   
   /// The default implementation check if 'edge' is in the list of edge to exclude
   /// See setEdgeListToExclude
-  virtual bool shouldExcludeEdge(int edge);
+  virtual bool shouldExcludeEdge(int edge)const;
   
   /// Called each time an edge is visited
   virtual void processEdge(int /*from*/, int /*to*/){}
@@ -93,10 +96,13 @@ public:
 
   /// Retrieve all vertices with indegree 0
   void sourceVertices(QList<int>& sources);
-  
+
+protected:
+  QScopedPointer<ctkDependencyGraphPrivate> d_ptr;
+
 private:
-  class ctkInternal; 
-  ctkInternal* Internal;
+  Q_DECLARE_PRIVATE(ctkDependencyGraph);
+  Q_DISABLE_COPY(ctkDependencyGraph);
 };
 
 #endif

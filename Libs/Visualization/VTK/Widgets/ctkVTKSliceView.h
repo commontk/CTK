@@ -149,8 +149,12 @@ signals:
 protected:
   virtual void resizeEvent(QResizeEvent * event);
 
+protected:
+  QScopedPointer<ctkVTKSliceViewPrivate> d_ptr;
+  
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKSliceView);
+  Q_DECLARE_PRIVATE(ctkVTKSliceView);
+  Q_DISABLE_COPY(ctkVTKSliceView);
 }; 
 
 #endif

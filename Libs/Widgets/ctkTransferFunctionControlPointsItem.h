@@ -56,8 +56,12 @@ protected:
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
   virtual void keyPressEvent (QKeyEvent * keyEvent);
+protected:
+  QScopedPointer<ctkTransferFunctionControlPointsItemPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionControlPointsItem);
+  Q_DECLARE_PRIVATE(ctkTransferFunctionControlPointsItem);
+  Q_DISABLE_COPY(ctkTransferFunctionControlPointsItem);
 
   /*
    * \brief Update the position of a point when a move mouse event occurs

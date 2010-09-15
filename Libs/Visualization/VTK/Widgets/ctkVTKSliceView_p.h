@@ -44,11 +44,9 @@
 class vtkRenderWindowInteractor;
 
 //-----------------------------------------------------------------------------
-class ctkVTKSliceViewPrivate : public QObject,
-                               public ctkPrivate<ctkVTKSliceView>
+class ctkVTKSliceViewPrivate : public QObject
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(ctkVTKSliceView);
 public:
   ctkVTKSliceViewPrivate();
 

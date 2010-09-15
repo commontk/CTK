@@ -78,8 +78,12 @@ protected:
   // Triggers updates of the buttonBoxWidget when the current workflow step has changed.
   void updateButtonBoxUI(ctkWorkflowStep* currentStep);
  
+protected:
+  QScopedPointer<ctkWorkflowWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkWorkflowWidget);
+  Q_DECLARE_PRIVATE(ctkWorkflowWidget);
+  Q_DISABLE_COPY(ctkWorkflowWidget);
 
 };
 

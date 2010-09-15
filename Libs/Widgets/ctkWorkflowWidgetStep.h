@@ -60,7 +60,7 @@ public:
   typedef ctkWorkflowAbstractWidgetStep Superclass;
   explicit ctkWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId, QWidget* newParent = 0);
   explicit ctkWorkflowWidgetStep(QWidget* newParent = 0);
-  virtual ~ctkWorkflowWidgetStep(){};
+  virtual ~ctkWorkflowWidgetStep();
 
   virtual QWidget* stepArea();
 
@@ -88,8 +88,12 @@ protected:
 
   virtual void createUserInterface(){}
 
+protected:
+  QScopedPointer<ctkWorkflowWidgetStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkWorkflowWidgetStep);
+  Q_DECLARE_PRIVATE(ctkWorkflowWidgetStep);
+  Q_DISABLE_COPY(ctkWorkflowWidgetStep);
 
 };
 

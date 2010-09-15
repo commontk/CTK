@@ -56,7 +56,7 @@ public:
 
   /// Constructors
   explicit ctkSliderWidget(QWidget* parent = 0);
-  virtual ~ctkSliderWidget(){}
+  virtual ~ctkSliderWidget();
 
   /// 
   /// This property holds the sliders and spinbox minimum value.
@@ -180,8 +180,12 @@ protected slots:
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
   
+protected:
+  QScopedPointer<ctkSliderWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkSliderWidget);
+  Q_DECLARE_PRIVATE(ctkSliderWidget);
+  Q_DISABLE_COPY(ctkSliderWidget);
 
 };
 

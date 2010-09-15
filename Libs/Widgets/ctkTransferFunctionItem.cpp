@@ -33,8 +33,7 @@
 #include "ctkTransferFunctionScene.h"
 
 //-----------------------------------------------------------------------------
-class ctkTransferFunctionItemPrivate : 
-  public ctkPrivate<ctkTransferFunctionItem>
+class ctkTransferFunctionItemPrivate
 {
 public:
   ctkTransferFunctionItemPrivate();
@@ -53,24 +52,26 @@ ctkTransferFunctionItemPrivate::ctkTransferFunctionItemPrivate()
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionItemPrivate::init()
 {
-  //CTK_P(ctkTransferFunctionItem);
+  //Q_Q(ctkTransferFunctionItem);
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionItem::ctkTransferFunctionItem(QGraphicsItem* parentGraphicsItem)
   :QGraphicsObject(parentGraphicsItem)
+  , d_ptr(new ctkTransferFunctionItemPrivate)
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionItem);
-  ctk_d()->init();
+  Q_D(ctkTransferFunctionItem);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionItem::ctkTransferFunctionItem(
   ctkTransferFunction* transferFunction, QGraphicsItem* parentItem)
   :QGraphicsObject(parentItem)
+  , d_ptr(new ctkTransferFunctionItemPrivate)
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionItem);
-  ctk_d()->init();
+  Q_D(ctkTransferFunctionItem);
+  d->init();
   this->setTransferFunction(transferFunction);
 }
 
@@ -83,7 +84,7 @@ ctkTransferFunctionItem::~ctkTransferFunctionItem()
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionItem::setTransferFunction(ctkTransferFunction* transferFunction)
 {
-  CTK_D(ctkTransferFunctionItem);
+  Q_D(ctkTransferFunctionItem);
   d->TransferFunction = transferFunction;
   if (this->scene())
     {
@@ -95,14 +96,14 @@ void ctkTransferFunctionItem::setTransferFunction(ctkTransferFunction* transferF
 //-----------------------------------------------------------------------------
 ctkTransferFunction* ctkTransferFunctionItem::transferFunction() const
 {
-  CTK_D(const ctkTransferFunctionItem);
+  Q_D(const ctkTransferFunctionItem);
   return d->TransferFunction;
 }
 
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionItem::setRect(const QRectF& newRect)
 {
-  CTK_D(ctkTransferFunctionItem);
+  Q_D(ctkTransferFunctionItem);
   if (d->Rect == newRect)
     {
     return;
@@ -114,14 +115,14 @@ void ctkTransferFunctionItem::setRect(const QRectF& newRect)
 //-----------------------------------------------------------------------------
 QRectF ctkTransferFunctionItem::rect() const
 {
-  CTK_D(const ctkTransferFunctionItem);
+  Q_D(const ctkTransferFunctionItem);
   return d->Rect;
 }
 
 //-----------------------------------------------------------------------------
 QRectF ctkTransferFunctionItem::boundingRect()const
 {
-  CTK_D(const ctkTransferFunctionItem);
+  Q_D(const ctkTransferFunctionItem);
   return d->Rect;
 }
 /*
@@ -199,7 +200,7 @@ QColor ctkTransferFunctionItem::color(const QVariant& v) const
 qreal ctkTransferFunctionItem::rangeXDiff()
 {
   // pointer to private class
-  CTK_D(ctkTransferFunctionItem);
+  Q_D(ctkTransferFunctionItem);
 
   qreal rangeX[2];
   d->TransferFunction->range(rangeX);
@@ -210,7 +211,7 @@ qreal ctkTransferFunctionItem::rangeXDiff()
 qreal ctkTransferFunctionItem::rangeXOffSet()
 {
   // pointer to private class
-  CTK_D(ctkTransferFunctionItem);
+  Q_D(ctkTransferFunctionItem);
 
   qreal rangeX[2];
   d->TransferFunction->range(rangeX);
@@ -221,7 +222,7 @@ qreal ctkTransferFunctionItem::rangeXOffSet()
 qreal ctkTransferFunctionItem::rangeYDiff()
 {
   // pointer to private class
-  CTK_D(ctkTransferFunctionItem);
+  Q_D(ctkTransferFunctionItem);
 
   QVariant rangeY[2];
   rangeY[0] = d->TransferFunction->minValue();
@@ -265,7 +266,7 @@ qreal ctkTransferFunctionItem::rangeYDiff()
 qreal ctkTransferFunctionItem::rangeYOffSet()
 {
   // pointer to private class
-  CTK_D(ctkTransferFunctionItem);
+  Q_D(ctkTransferFunctionItem);
 
   QVariant rangeY[2];
   rangeY[0] = d->TransferFunction->minValue();

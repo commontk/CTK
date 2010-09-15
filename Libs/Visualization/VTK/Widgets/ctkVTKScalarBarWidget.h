@@ -41,6 +41,7 @@ public:
   /// Constructors
   ctkVTKScalarBarWidget(QWidget* parentWidget);
   ctkVTKScalarBarWidget(vtkScalarBarWidget* scalarBar, QWidget* parentWidget);
+  virtual ~ctkVTKScalarBarWidget();
 
   vtkScalarBarWidget* scalarBarWidget()const;
 
@@ -55,8 +56,12 @@ public slots:
 protected slots:
   void updateFromScalarBarWidget();
 
+protected:
+  QScopedPointer<ctkVTKScalarBarWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKScalarBarWidget);
+  Q_DECLARE_PRIVATE(ctkVTKScalarBarWidget);
+  Q_DISABLE_COPY(ctkVTKScalarBarWidget);
 };
 
 #endif

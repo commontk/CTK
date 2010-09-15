@@ -30,10 +30,13 @@
 // CTK includes
 #include "ctkRangeSlider.h"
 
-class ctkRangeSliderPrivate:public ctkPrivate<ctkRangeSlider>
+class ctkRangeSliderPrivate
 {
+  Q_DECLARE_PUBLIC(ctkRangeSlider);
+protected:
+  ctkRangeSlider* const q_ptr;
 public:
-  ctkRangeSliderPrivate();
+  ctkRangeSliderPrivate(ctkRangeSlider& object);
   void init();
   
   // Description:
@@ -85,7 +88,8 @@ public:
 };
 
 // --------------------------------------------------------------------------
-ctkRangeSliderPrivate::ctkRangeSliderPrivate()
+ctkRangeSliderPrivate::ctkRangeSliderPrivate(ctkRangeSlider& object)
+  :q_ptr(&object)
 {
   this->m_MinimumValue = 0;
   this->m_MaximumValue = 100;
@@ -102,12 +106,12 @@ ctkRangeSliderPrivate::ctkRangeSliderPrivate()
 // --------------------------------------------------------------------------
 void ctkRangeSliderPrivate::init()
 {
-  CTK_P(ctkRangeSlider);
-  this->m_MinimumValue = p->minimum();
-  this->m_MaximumValue = p->maximum();
-  this->m_MinimumPosition = p->minimum();
-  this->m_MaximumPosition = p->maximum();
-  p->connect(p, SIGNAL(rangeChanged(int, int)), p, SLOT(onRangeChanged(int, int)));
+  Q_Q(ctkRangeSlider);
+  this->m_MinimumValue = q->minimum();
+  this->m_MaximumValue = q->maximum();
+  this->m_MinimumPosition = q->minimum();
+  this->m_MaximumPosition = q->maximum();
+  q->connect(q, SIGNAL(rangeChanged(int, int)), q, SLOT(onRangeChanged(int, int)));
 }
 
 // --------------------------------------------------------------------------
@@ -115,18 +119,18 @@ void ctkRangeSliderPrivate::init()
 //
 int ctkRangeSliderPrivate::pixelPosToRangeValue( int pos ) const
 {
-  CTK_P(const ctkRangeSlider);
+  Q_Q(const ctkRangeSlider);
   QStyleOptionSlider option;
-  p->initStyleOption( &option );
+  q->initStyleOption( &option );
 
-  QRect gr = p->style()->subControlRect( QStyle::CC_Slider, 
+  QRect gr = q->style()->subControlRect( QStyle::CC_Slider, 
                                             &option, 
                                             QStyle::SC_SliderGroove, 
-                                            p );
-  QRect sr = p->style()->subControlRect( QStyle::CC_Slider, 
+                                            q );
+  QRect sr = q->style()->subControlRect( QStyle::CC_Slider, 
                                             &option, 
                                             QStyle::SC_SliderHandle, 
-                                            p );
+                                            q );
   int sliderMin, sliderMax, sliderLength;
   if (option.orientation == Qt::Horizontal) 
     {
@@ -141,8 +145,8 @@ int ctkRangeSliderPrivate::pixelPosToRangeValue( int pos ) const
     sliderMax = gr.bottom() - sliderLength + 1;
     }
 
-  return QStyle::sliderValueFromPosition( p->minimum(), 
-                                          p->maximum(), 
+  return QStyle::sliderValueFromPosition( q->minimum(), 
+                                          q->maximum(), 
                                           pos - sliderMin,
                                           sliderMax - sliderMin, 
                                           option.upsideDown );
@@ -151,18 +155,18 @@ int ctkRangeSliderPrivate::pixelPosToRangeValue( int pos ) const
 //---------------------------------------------------------------------------
 int ctkRangeSliderPrivate::pixelPosFromRangeValue( int val ) const
 {
-  CTK_P(const ctkRangeSlider);
+  Q_Q(const ctkRangeSlider);
   QStyleOptionSlider option;
-  p->initStyleOption( &option );
+  q->initStyleOption( &option );
 
-  QRect gr = p->style()->subControlRect( QStyle::CC_Slider, 
+  QRect gr = q->style()->subControlRect( QStyle::CC_Slider, 
                                             &option, 
                                             QStyle::SC_SliderGroove, 
-                                            p );
-  QRect sr = p->style()->subControlRect( QStyle::CC_Slider, 
+                                            q );
+  QRect sr = q->style()->subControlRect( QStyle::CC_Slider, 
                                             &option, 
                                             QStyle::SC_SliderHandle, 
-                                            p );
+                                            q );
   int sliderMin, sliderMax, sliderLength;
   if (option.orientation == Qt::Horizontal) 
     {
@@ -177,8 +181,8 @@ int ctkRangeSliderPrivate::pixelPosFromRangeValue( int val ) const
     sliderMax = gr.bottom() - sliderLength + 1;
     }
 
-  return QStyle::sliderPositionFromValue( p->minimum(), 
-                                          p->maximum(), 
+  return QStyle::sliderPositionFromValue( q->minimum(), 
+                                          q->maximum(), 
                                           val,
                                           sliderMax - sliderMin, 
                                           option.upsideDown ) + sliderMin;
@@ -188,9 +192,9 @@ int ctkRangeSliderPrivate::pixelPosFromRangeValue( int val ) const
 // Draw slider at the bottom end of the range
 void ctkRangeSliderPrivate::drawMinimumSlider( QStylePainter* painter ) const
 {
-  CTK_P(const ctkRangeSlider);
+  Q_Q(const ctkRangeSlider);
   QStyleOptionSlider option;
-  p->initMinimumSliderStyleOption( &option );
+  q->initMinimumSliderStyleOption( &option );
 
   option.subControls = QStyle::SC_SliderHandle;
   option.sliderValue = m_MinimumValue;
@@ -208,9 +212,9 @@ void ctkRangeSliderPrivate::drawMinimumSlider( QStylePainter* painter ) const
 // Draw slider at the top end of the range
 void ctkRangeSliderPrivate::drawMaximumSlider( QStylePainter* painter ) const
 {
-  CTK_P(const ctkRangeSlider);
+  Q_Q(const ctkRangeSlider);
   QStyleOptionSlider option;
-  p->initMaximumSliderStyleOption( &option );
+  q->initMaximumSliderStyleOption( &option );
 
   option.subControls = QStyle::SC_SliderHandle;
   option.sliderValue = m_MaximumValue;
@@ -226,18 +230,20 @@ void ctkRangeSliderPrivate::drawMaximumSlider( QStylePainter* painter ) const
 // --------------------------------------------------------------------------
 ctkRangeSlider::ctkRangeSlider(QWidget* parent)
   : QSlider(parent)
+  , d_ptr(new ctkRangeSliderPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkRangeSlider);
-  ctk_d()->init();
+  Q_D(ctkRangeSlider);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
 ctkRangeSlider::ctkRangeSlider( Qt::Orientation o,
                                   QWidget* parentObject )
   :QSlider(o, parentObject)
+  , d_ptr(new ctkRangeSliderPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkRangeSlider);
-  ctk_d()->init();
+  Q_D(ctkRangeSlider);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
@@ -248,35 +254,35 @@ ctkRangeSlider::~ctkRangeSlider()
 // --------------------------------------------------------------------------
 int ctkRangeSlider::minimumValue() const
 {
-  CTK_D(const ctkRangeSlider);
+  Q_D(const ctkRangeSlider);
   return d->m_MinimumValue;
 }
 
 // --------------------------------------------------------------------------
 void ctkRangeSlider::setMinimumValue( int min )
 {
-  CTK_D(ctkRangeSlider);
+  Q_D(ctkRangeSlider);
   this->setValues( min, qMax(d->m_MaximumValue,min) );
 }
 
 // --------------------------------------------------------------------------
 int ctkRangeSlider::maximumValue() const
 {
-  CTK_D(const ctkRangeSlider);
+  Q_D(const ctkRangeSlider);
   return d->m_MaximumValue;
 }
 
 // --------------------------------------------------------------------------
 void ctkRangeSlider::setMaximumValue( int max )
 {
-  CTK_D(ctkRangeSlider);
+  Q_D(ctkRangeSlider);
   this->setValues( qMin(d->m_MinimumValue, max), max );
 }
 
 // --------------------------------------------------------------------------
 void ctkRangeSlider::setValues(int l, int u)
 {
-  CTK_D(ctkRangeSlider);
+  Q_D(ctkRangeSlider);
   const int minimumValue = 
     qBound(this->minimum(), qMin(l,u), this->maximum());
   const int maximumValue = 
@@ -332,35 +338,35 @@ void ctkRangeSlider::setValues(int l, int u)
 // --------------------------------------------------------------------------
 int ctkRangeSlider::minimumPosition() const
 {
-  CTK_D(const ctkRangeSlider);
+  Q_D(const ctkRangeSlider);
   return d->m_MinimumPosition;
 }
 
 // --------------------------------------------------------------------------
 int ctkRangeSlider::maximumPosition() const
 {
-  CTK_D(const ctkRangeSlider);
+  Q_D(const ctkRangeSlider);
   return d->m_MaximumPosition;
 }
 
 // --------------------------------------------------------------------------
 void ctkRangeSlider::setMinimumPosition(int l)
 {
-  CTK_D(const ctkRangeSlider);
+  Q_D(const ctkRangeSlider);
   this->setPositions(l, qMax(l, d->m_MaximumPosition));
 }
 
 // --------------------------------------------------------------------------
 void ctkRangeSlider::setMaximumPosition(int u)
 {
-  CTK_D(const ctkRangeSlider);
+  Q_D(const ctkRangeSlider);
   this->setPositions(qMin(d->m_MinimumPosition, u), u);
 }
 
 // --------------------------------------------------------------------------
 void ctkRangeSlider::setPositions(int min, int max)
 {
-  CTK_D(ctkRangeSlider);
+  Q_D(ctkRangeSlider);
   const int minPosition = 
     qBound(this->minimum(), qMin(min, max), this->maximum());
   const int maxPosition = 
@@ -408,7 +414,7 @@ void ctkRangeSlider::onRangeChanged(int minimum, int maximum)
 {
   Q_UNUSED(minimum);
   Q_UNUSED(maximum);
-  CTK_D(ctkRangeSlider);
+  Q_D(ctkRangeSlider);
   this->setValues(d->m_MinimumValue, d->m_MaximumValue);
 }
 
@@ -416,7 +422,7 @@ void ctkRangeSlider::onRangeChanged(int minimum, int maximum)
 // Render
 void ctkRangeSlider::paintEvent( QPaintEvent* )
 {
-  CTK_D(ctkRangeSlider);
+  Q_D(ctkRangeSlider);
   QStyleOptionSlider option;
   this->initStyleOption(&option);
 
@@ -509,7 +515,7 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
 // Standard Qt UI events
 void ctkRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
 {
-  CTK_D(ctkRangeSlider);
+  Q_D(ctkRangeSlider);
   if (minimum() == maximum() || (mouseEvent->buttons() ^ mouseEvent->button()))
     {
     mouseEvent->ignore();
@@ -633,7 +639,7 @@ void ctkRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
 // Standard Qt UI events
 void ctkRangeSlider::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
-  CTK_D(ctkRangeSlider);
+  Q_D(ctkRangeSlider);
   if (!d->m_SelectedHandles)
     {
     mouseEvent->ignore();
@@ -678,7 +684,7 @@ void ctkRangeSlider::mouseMoveEvent(QMouseEvent* mouseEvent)
 // Standard Qt UI mouseEvents
 void ctkRangeSlider::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
-  CTK_D(ctkRangeSlider);
+  Q_D(ctkRangeSlider);
   this->QSlider::mouseReleaseEvent(mouseEvent);
 
   setSliderDown(false);
@@ -690,14 +696,14 @@ void ctkRangeSlider::mouseReleaseEvent(QMouseEvent* mouseEvent)
 // --------------------------------------------------------------------------
 bool ctkRangeSlider::isMinimumSliderDown()const
 {
-  CTK_D(const ctkRangeSlider);
+  Q_D(const ctkRangeSlider);
   return d->m_SelectedHandles & ctkRangeSliderPrivate::MinimumHandle;
 }
 
 // --------------------------------------------------------------------------
 bool ctkRangeSlider::isMaximumSliderDown()const
 {
-  CTK_D(const ctkRangeSlider);
+  Q_D(const ctkRangeSlider);
   return d->m_SelectedHandles & ctkRangeSliderPrivate::MaximumHandle;
 }
 

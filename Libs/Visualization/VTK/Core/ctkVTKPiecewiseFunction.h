@@ -62,8 +62,12 @@ public:
 
   void setPiecewiseFunction(vtkPiecewiseFunction* piecewiseFunction);
   vtkPiecewiseFunction* piecewiseFunction()const;
+protected:
+  QScopedPointer<ctkVTKPiecewiseFunctionPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKPiecewiseFunction);
+  Q_DECLARE_PRIVATE(ctkVTKPiecewiseFunction);
+  Q_DISABLE_COPY(ctkVTKPiecewiseFunction);
 };
 
 #endif

@@ -43,8 +43,7 @@ static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKScalarsToC
 //----------------------------------------------------------------------------
 
 class ctkVTKScalarsToColorsWidgetPrivate:
-  public Ui_ctkVTKScalarsToColorsWidget,
-  public ctkPrivate<ctkVTKScalarsToColorsWidget>
+  public Ui_ctkVTKScalarsToColorsWidget
 {
 public:
   ctkVTKScalarsToColorsWidgetPrivate();
@@ -73,9 +72,9 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
 // ----------------------------------------------------------------------------
 ctkVTKScalarsToColorsWidget::ctkVTKScalarsToColorsWidget(QWidget* parentWidget)
   :QWidget(parentWidget)
+  , d_ptr(new ctkVTKScalarsToColorsWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKScalarsToColorsWidget);
-  CTK_D(ctkVTKScalarsToColorsWidget);
+  Q_D(ctkVTKScalarsToColorsWidget);
   d->setupUi(this);
 }
 
@@ -87,6 +86,6 @@ ctkVTKScalarsToColorsWidget::~ctkVTKScalarsToColorsWidget()
 // ----------------------------------------------------------------------------
 ctkVTKScalarsToColorsView* ctkVTKScalarsToColorsWidget::view()const
 {
-  CTK_D(const ctkVTKScalarsToColorsWidget);
+  Q_D(const ctkVTKScalarsToColorsWidget);
   return d->View;
 }

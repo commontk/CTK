@@ -52,7 +52,7 @@ class CTK_WIDGETS_EXPORT ctkTreeComboBox : public QComboBox
 public:
   typedef QComboBox Superclass;
   explicit ctkTreeComboBox(QWidget* parent = 0);
-  virtual ~ctkTreeComboBox(){}
+  virtual ~ctkTreeComboBox();
 
   virtual bool eventFilter(QObject* object, QEvent* event);
   virtual void hidePopup();
@@ -68,8 +68,12 @@ protected:
 protected slots:
   void resizePopup();
   
+protected:
+  QScopedPointer<ctkTreeComboBoxPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTreeComboBox);
+  Q_DECLARE_PRIVATE(ctkTreeComboBox);
+  Q_DISABLE_COPY(ctkTreeComboBox);
 };
 
 #endif

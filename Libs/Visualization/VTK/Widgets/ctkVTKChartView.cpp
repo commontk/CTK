@@ -38,10 +38,13 @@
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKChartView");
 //----------------------------------------------------------------------------
 
-class ctkVTKChartViewPrivate: public ctkPrivate<ctkVTKChartView>
+class ctkVTKChartViewPrivate
 {
+  Q_DECLARE_PUBLIC(ctkVTKChartView);
+protected:
+  ctkVTKChartView* const q_ptr;
 public:
-  ctkVTKChartViewPrivate();
+  ctkVTKChartViewPrivate(ctkVTKChartView& object);
   void init();
 
   vtkSmartPointer<vtkContextView> ContextView;
@@ -52,7 +55,8 @@ public:
 // ctkVTKChartViewPrivate methods
 
 // ----------------------------------------------------------------------------
-ctkVTKChartViewPrivate::ctkVTKChartViewPrivate()
+ctkVTKChartViewPrivate::ctkVTKChartViewPrivate(ctkVTKChartView& object)
+  :q_ptr(&object)
 {
   this->ContextView = vtkSmartPointer<vtkContextView>::New();
   this->Chart = vtkSmartPointer<vtkChartXY>::New();
@@ -62,11 +66,11 @@ ctkVTKChartViewPrivate::ctkVTKChartViewPrivate()
 // ----------------------------------------------------------------------------
 void ctkVTKChartViewPrivate::init()
 {
-  CTK_P(ctkVTKChartView);
-  this->ContextView->SetInteractor(p->GetInteractor());
-  p->SetRenderWindow(this->ContextView->GetRenderWindow());
+  Q_Q(ctkVTKChartView);
+  this->ContextView->SetInteractor(q->GetInteractor());
+  q->SetRenderWindow(this->ContextView->GetRenderWindow());
   // low def for now (faster)
-  //p->GetRenderWindow()->SetMultiSamples(0);
+  //q->GetRenderWindow()->SetMultiSamples(0);
   //vtkOpenGLContextDevice2D::SafeDownCast(this->ContextView->GetContext()->GetDevice())
   //                                       ->SetStringRendererToQt();
 }
@@ -77,9 +81,9 @@ void ctkVTKChartViewPrivate::init()
 // ----------------------------------------------------------------------------
 ctkVTKChartView::ctkVTKChartView(QWidget* parentWidget)
   :QVTKWidget(parentWidget)
+  , d_ptr(new ctkVTKChartViewPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkVTKChartView);
-  CTK_D(ctkVTKChartView);
+  Q_D(ctkVTKChartView);
   d->init();
   this->setAutomaticImageCacheEnabled(true);
 }
@@ -92,28 +96,28 @@ ctkVTKChartView::~ctkVTKChartView()
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::setTitle(const QString& newTitle)
 {
-  CTK_D(ctkVTKChartView);
+  Q_D(ctkVTKChartView);
   d->Chart->SetTitle(newTitle.toLatin1());
 }
 
 // ----------------------------------------------------------------------------
 QString ctkVTKChartView::title()const
 {
-  CTK_D(const ctkVTKChartView);
+  Q_D(const ctkVTKChartView);
   return d->Chart->GetTitle();
 }
 
 // ----------------------------------------------------------------------------
 vtkChartXY* ctkVTKChartView::chart()const
 {
-  CTK_D(const ctkVTKChartView);
+  Q_D(const ctkVTKChartView);
   return d->Chart;
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::addPlot(vtkPlot* plot)
 {
-  CTK_D(ctkVTKChartView);
+  Q_D(ctkVTKChartView);
   d->Chart->AddPlot(plot);
 }
 

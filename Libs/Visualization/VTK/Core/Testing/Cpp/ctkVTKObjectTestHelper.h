@@ -18,6 +18,7 @@ class ctkVTKObjectTest: public QObject
   QVTK_OBJECT
 public:
   ctkVTKObjectTest(QObject* parent = 0);
+  virtual ~ctkVTKObjectTest();
 
   bool test();
 
@@ -41,8 +42,12 @@ private slots:
 signals:
   void signalEmitted();
 
+protected:
+  QScopedPointer<ctkVTKObjectTestPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKObjectTest);
+  Q_DECLARE_PRIVATE(ctkVTKObjectTest);
+  Q_DISABLE_COPY(ctkVTKObjectTest);
 };
 
 #endif

@@ -46,8 +46,12 @@ public:
   vtkPlot* addOpacityFunction(vtkPiecewiseFunction* opacityTF);
   vtkPlot* addCompositeFunction(vtkColorTransferFunction* colorTF, vtkPiecewiseFunction* opacityTF);
 
+protected:
+  QScopedPointer<ctkVTKScalarsToColorsViewPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKScalarsToColorsView);
+  Q_DECLARE_PRIVATE(ctkVTKScalarsToColorsView);
+  Q_DISABLE_COPY(ctkVTKScalarsToColorsView);
 };
 
 #endif

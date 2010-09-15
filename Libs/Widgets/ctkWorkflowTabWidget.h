@@ -42,7 +42,7 @@ public:
   typedef ctkWorkflowAbstractPagedWidget Superclass;
 
   explicit ctkWorkflowTabWidget(QWidget* parent = 0);
-  virtual ~ctkWorkflowTabWidget(){};
+  virtual ~ctkWorkflowTabWidget();
 
   virtual void createNewPage(QWidget* widget);
 
@@ -52,8 +52,12 @@ public:
 
   virtual QWidget* clientArea();
 
+protected:
+  QScopedPointer<ctkWorkflowTabWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkWorkflowTabWidget);
+  Q_DECLARE_PRIVATE(ctkWorkflowTabWidget);
+  Q_DISABLE_COPY(ctkWorkflowTabWidget);
 };
 
 #endif

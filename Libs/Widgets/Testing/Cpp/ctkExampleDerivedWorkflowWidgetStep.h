@@ -43,7 +43,7 @@ class ctkExampleDerivedWorkflowWidgetStep : public ctkWorkflowWidgetStep
 public:
   typedef ctkWorkflowWidgetStep Superclass;
   explicit ctkExampleDerivedWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId);
-  virtual ~ctkExampleDerivedWorkflowWidgetStep(){}
+  virtual ~ctkExampleDerivedWorkflowWidgetStep();
  
   ///
   /// Set/get the label on this step's user interface
@@ -79,8 +79,12 @@ protected:
   /// Increments the counter numberOfTimesRanOnExit
   virtual void onExit(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
+protected:
+  QScopedPointer<ctkExampleDerivedWorkflowWidgetStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkExampleDerivedWorkflowWidgetStep);
+  Q_DECLARE_PRIVATE(ctkExampleDerivedWorkflowWidgetStep);
+  Q_DISABLE_COPY(ctkExampleDerivedWorkflowWidgetStep);
 
 };
 

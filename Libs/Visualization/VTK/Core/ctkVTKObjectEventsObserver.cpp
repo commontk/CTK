@@ -34,10 +34,13 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class ctkVTKObjectEventsObserverPrivate: public ctkPrivate<ctkVTKObjectEventsObserver>
+class ctkVTKObjectEventsObserverPrivate
 {
+  Q_DECLARE_PUBLIC(ctkVTKObjectEventsObserver);
+protected:
+  ctkVTKObjectEventsObserver* const q_ptr;
 public:
-  ctkVTKObjectEventsObserverPrivate();
+  ctkVTKObjectEventsObserverPrivate(ctkVTKObjectEventsObserver& object);
 
   /// 
   /// Check if a connection has already been added
@@ -60,7 +63,8 @@ public:
   
   inline QList<ctkVTKConnection*> connections()const
   {
-    return ctk_p()->findChildren<ctkVTKConnection*>();
+    Q_Q(const ctkVTKObjectEventsObserver);
+    return q->findChildren<ctkVTKConnection*>();
   }
   
   bool AllBlocked;
@@ -72,16 +76,21 @@ public:
 
 //-----------------------------------------------------------------------------
 ctkVTKObjectEventsObserver::ctkVTKObjectEventsObserver(QObject* _parent):Superclass(_parent)
+  , d_ptr(new ctkVTKObjectEventsObserverPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkVTKObjectEventsObserver);
   this->setProperty("QVTK_OBJECT", true);
+}
+
+//-----------------------------------------------------------------------------
+ctkVTKObjectEventsObserver::~ctkVTKObjectEventsObserver()
+{
 }
 
 //-----------------------------------------------------------------------------
 void ctkVTKObjectEventsObserver::printAdditionalInfo()
 {
   this->Superclass::dumpObjectInfo();
-  CTK_D(ctkVTKObjectEventsObserver);
+  Q_D(ctkVTKObjectEventsObserver);
   qDebug() << "ctkVTKObjectEventsObserver:" << this << endl
            << " AllBlocked:" << d->AllBlocked << endl
            << " Parent:" << (this->parent()?this->parent()->objectName():"NULL") << endl
@@ -137,7 +146,7 @@ QString ctkVTKObjectEventsObserver::reconnection(vtkObject* vtk_obj,
 QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
   const QObject* qt_obj, const char* qt_slot, float priority)
 {
-  CTK_D(ctkVTKObjectEventsObserver);
+  Q_D(ctkVTKObjectEventsObserver);
   if (!ctkVTKConnection::isValid(vtk_obj, vtk_event, qt_obj, qt_slot))
     {
     qDebug() << "ctkVTKObjectEventsObserver::addConnection(...) - Invalid parameters - "
@@ -170,7 +179,7 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
 //-----------------------------------------------------------------------------
 void ctkVTKObjectEventsObserver::blockAllConnections(bool block)
 {
-  CTK_D(ctkVTKObjectEventsObserver);
+  Q_D(ctkVTKObjectEventsObserver);
   this->printAdditionalInfo();
   if (d->AllBlocked == block) { return; }
 
@@ -184,7 +193,7 @@ void ctkVTKObjectEventsObserver::blockAllConnections(bool block)
 //-----------------------------------------------------------------------------
 void ctkVTKObjectEventsObserver::blockConnection(const QString& id, bool blocked)
 {
-  CTK_D(ctkVTKObjectEventsObserver);
+  Q_D(ctkVTKObjectEventsObserver);
   ctkVTKConnection* connection = d->findConnection(id);
   if (connection == 0)
     {
@@ -197,7 +206,7 @@ void ctkVTKObjectEventsObserver::blockConnection(const QString& id, bool blocked
 int ctkVTKObjectEventsObserver::blockConnection(bool block, vtkObject* vtk_obj,
   unsigned long vtk_event, const QObject* qt_obj)
 {
-  CTK_D(ctkVTKObjectEventsObserver);
+  Q_D(ctkVTKObjectEventsObserver);
   if (!vtk_obj)
     {
     qDebug() << "ctkVTKObjectEventsObserver::blockConnectionRecursive"
@@ -218,7 +227,7 @@ int ctkVTKObjectEventsObserver::blockConnection(bool block, vtkObject* vtk_obj,
 int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot)
 {
-  CTK_D(ctkVTKObjectEventsObserver);
+  Q_D(ctkVTKObjectEventsObserver);
 
   QList<ctkVTKConnection*> connections =
     d->findConnections(vtk_obj, vtk_event, qt_obj, qt_slot);
@@ -234,7 +243,8 @@ int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lo
 // ctkVTKObjectEventsObserverPrivate methods
 
 //-----------------------------------------------------------------------------
-ctkVTKObjectEventsObserverPrivate::ctkVTKObjectEventsObserverPrivate()
+ctkVTKObjectEventsObserverPrivate::ctkVTKObjectEventsObserverPrivate(ctkVTKObjectEventsObserver& object)
+  :q_ptr(&object)
 {
   this->AllBlocked = false;
   // ObserveDeletion == false  hasn't been that well tested...
