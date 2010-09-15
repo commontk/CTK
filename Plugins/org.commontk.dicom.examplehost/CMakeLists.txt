@@ -10,6 +10,7 @@ SET(PLUGIN_SRCS
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
   ctkDicomExampleHostPlugin_p.h
+  ctkDicomExampleHost.h
 )
 
 # Qt Designer files which should be processed by Qts uic

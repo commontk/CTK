@@ -19,10 +19,20 @@ int ctkDicomExampleHost::StartApplication(QString AppPath, QString App_URL, int 
     }
 }
 
-void ctkDicomExampleHost::notifyStateChanged(ctkDicomWG23::State state){
+QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){
+    qDebug()<< "set screen from preferredScreen:"<< preferredScreen;
+    QRect rect (preferredScreen);
+    emit giveAvailableScreen(rect);
+    return rect;
+}
 
+
+void ctkDicomExampleHost::notifyStateChanged(ctkDicomWG23::State state){
+    qDebug()<< "new state received:"<< state;
+    emit stateChangedReceived(state);
 }
 
 void ctkDicomExampleHost::notifyStatus(const ctkDicomWG23::Status& status){
-
+    qDebug()<< "new status received:"<<status.codeMeaning;
+    emit statusReceived(status);;
 }
