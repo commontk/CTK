@@ -19,6 +19,7 @@
 
 =============================================================================*/
 
+
 #ifndef CTKDICOMAPPPSERVER_H
 #define CTKDICOMAPPPSERVER_H
 
@@ -36,7 +37,6 @@ public:
   ~ctkDicomAppServer();
 
 private:
-
   Q_DECLARE_PRIVATE(ctkDicomAppServer)
 
   const QScopedPointer<ctkDicomAppServerPrivate> d_ptr;

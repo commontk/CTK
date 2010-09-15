@@ -23,6 +23,7 @@ public:
       */
     ctkDicomAbstractApp(int port = 0);
     int getPort() const;
+    ~ctkDicomAbstractApp();
 
 private:
     Q_DECLARE_PRIVATE(ctkDicomAbstractApp)

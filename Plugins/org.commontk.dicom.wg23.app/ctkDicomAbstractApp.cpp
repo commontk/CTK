@@ -31,3 +31,7 @@ int ctkDicomAbstractApp::getPort() const
   Q_D(const ctkDicomAbstractApp);
   return d->port;
 }
+
+ctkDicomAbstractApp::~ctkDicomAbstractApp()
+{
+}
