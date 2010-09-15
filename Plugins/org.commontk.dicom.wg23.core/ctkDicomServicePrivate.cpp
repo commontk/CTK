@@ -42,6 +42,8 @@ void ctkDicomServicePrivate::responseReady()
 
 QtSoapType ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
 {
+  qDebug() << "Submitting request " << methodName;
+
   http.setAction(methodName);
 
   QtSoapMessage request;
@@ -49,6 +51,7 @@ QtSoapType ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType
   if( soapType != NULL )
   {
     request.addMethodArgument(soapType);
+    qDebug() << "  Argument type is " << soapType->typeName();
   }
 
   http.submitRequest(request, "/IHostService");
@@ -67,32 +70,10 @@ QtSoapType ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType
 
   if (response.isFault())
   {
-    throw std::runtime_error("server error");
+    throw std::runtime_error("ctkDicomServicePrivate: server error (response.IsFault())");
   }
 
   qDebug() << "Response: " << response.toXmlString();
 
-  const QtSoapType &meth = response.method();
-
-  if (!meth.isValid())
-    qDebug() << "SOAP returning invalid.";
-
-  const QtSoapStruct &m = dynamic_cast<const QtSoapStruct &>(meth);
-  if (m.count() == 0)
-    qDebug() << "SOAP returning NIL: count == 0";
-
-
-  const QtSoapType& screenResult = response.returnValue();
-  if (!screenResult.isValid())
-  {
-    //throw std::runtime_error("invalid return value");
-    qDebug() << response.errorString() << response.faultString().toString();
-    qDebug() << response.toXmlString();
-  }
-  else
-  {
-    qDebug() << screenResult.count();
-  }  
-
-  return screenResult;
+  return response.returnValue();
 }
