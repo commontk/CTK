@@ -125,6 +125,7 @@ int main(int argv, char** argc)
       if (fileLocation.contains("org_commontk_dicom_wg23"))
       {
         ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
+        plugin->start(ctkPlugin::START_TRANSIENT);
       }
       if (fileLocation.contains(pluginName))
       {
