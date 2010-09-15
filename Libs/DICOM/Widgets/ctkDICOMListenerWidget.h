@@ -24,9 +24,6 @@
 // Qt includes 
 #include <QWidget>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMWidgetsExport.h"
 
 class ctkDICOMListenerWidgetPrivate;
@@ -38,8 +35,12 @@ public:
   explicit ctkDICOMListenerWidget(QWidget* parent=0);
   virtual ~ctkDICOMListenerWidget();
 
+protected:
+  QScopedPointer<ctkDICOMListenerWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMListenerWidget);
+  Q_DECLARE_PRIVATE(ctkDICOMListenerWidget);
+  Q_DISABLE_COPY(ctkDICOMListenerWidget);
 };
 
 #endif

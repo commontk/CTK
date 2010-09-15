@@ -50,7 +50,7 @@
 #define MITK_INFO std::cout
 
 //------------------------------------------------------------------------------
-class ctkDICOMIndexerPrivate: public ctkPrivate<ctkDICOMIndexer>
+class ctkDICOMIndexerPrivate
 {
 public:
   ctkDICOMIndexerPrivate();
@@ -75,7 +75,7 @@ ctkDICOMIndexerPrivate::~ctkDICOMIndexerPrivate()
 // ctkDICOMIndexer methods
 
 //------------------------------------------------------------------------------
-ctkDICOMIndexer::ctkDICOMIndexer()
+ctkDICOMIndexer::ctkDICOMIndexer():d_ptr(new ctkDICOMIndexerPrivate)
 {
 }
 

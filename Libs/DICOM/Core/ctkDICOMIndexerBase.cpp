@@ -49,10 +49,12 @@
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMIndexerBase" );
+//------------------------------------------------------------------------------
+static ctkLogger logger("org.commontk.dicom.DICOMIndexerBase" );
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-class ctkDICOMIndexerBasePrivate: public ctkPrivate<ctkDICOMIndexerBase>
+class ctkDICOMIndexerBasePrivate
 {
 public:
   ctkDICOMIndexerBasePrivate();
@@ -87,22 +89,26 @@ ctkDICOMIndexerBase::~ctkDICOMIndexerBase()
 {
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMIndexerBase::setDatabase ( QSqlDatabase database ) {
-  CTK_D(ctkDICOMIndexerBase);
+  Q_D(ctkDICOMIndexerBase);
   d->db = database;
 }
 
+//------------------------------------------------------------------------------
 const QSqlDatabase& ctkDICOMIndexerBase::database () const {
-  CTK_D(const ctkDICOMIndexerBase);
+  Q_D(const ctkDICOMIndexerBase);
   return d->db;
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMIndexerBase::insert ( DcmDataset *dataset ) {
   this->insert ( dataset, QString() );
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
-  CTK_D(ctkDICOMIndexerBase);
+  Q_D(ctkDICOMIndexerBase);
 
   // Check to see if the file has already been loaded
   QSqlQuery fileExists ( d->db );

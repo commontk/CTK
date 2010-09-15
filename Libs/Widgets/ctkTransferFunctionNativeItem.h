@@ -27,7 +27,6 @@
 
 /// CTK includes
 #include "CTKWidgetsExport.h"
-#include "ctkPimpl.h"
 #include "ctkTransferFunctionItem.h"
 
 class ctkTransferFunctionNativeItemPrivate;
@@ -45,8 +44,12 @@ public:
 
   virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
 
+protected:
+  QScopedPointer<ctkTransferFunctionNativeItemPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionNativeItem);
+  Q_DECLARE_PRIVATE(ctkTransferFunctionNativeItem);
+  Q_DISABLE_COPY(ctkTransferFunctionNativeItem);
 };
 
 #endif

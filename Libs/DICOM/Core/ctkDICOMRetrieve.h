@@ -26,9 +26,6 @@
 #include <QObject>
 #include <QDir>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMCoreExport.h"
 
 class ctkDICOMRetrievePrivate;
@@ -55,9 +52,14 @@ public:
   void retrieveSeries ( QString seriesInstanceUID, QDir directory );
   void retrieveStudy ( QString studyInstanceUID, QDir directory );
 
+protected:
+  QScopedPointer<ctkDICOMRetrievePrivate> d_ptr;
+  
 private:
   void retrieve ( QDir directory );
-  CTK_DECLARE_PRIVATE(ctkDICOMRetrieve);
+  
+  Q_DECLARE_PRIVATE(ctkDICOMRetrieve);
+  Q_DISABLE_COPY(ctkDICOMRetrieve);
 
 };
 

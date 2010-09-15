@@ -1,4 +1,5 @@
 
+// Qt includes
 #include <QFileDialog>
 #include <QSqlQueryModel>
 #include <QSqlTableModel>
@@ -6,24 +7,21 @@
 #include <QSqlRecord>
 #include <QSqlError>
 #include <QSqlField>
-
-
-
 #include <QDebug>
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMDirectoryListWidget.h"
 #include "ui_ctkDICOMDirectoryListWidget.h"
 
+// STD includes
 #include <iostream>
 
 //----------------------------------------------------------------------------
-class ctkDICOMDirectoryListWidgetPrivate: public ctkPrivate<ctkDICOMDirectoryListWidget>,
-                                     public Ui_ctkDICOMDirectoryListWidget
+class ctkDICOMDirectoryListWidgetPrivate: public Ui_ctkDICOMDirectoryListWidget
 {
 public:
   ctkDICOMDirectoryListWidgetPrivate(){}
-  ctkDICOM* dicom;
+  ctkDICOM*       dicom;
   QSqlTableModel* directoryListModel;
 };
 
@@ -35,10 +33,10 @@ public:
 // ctkDICOMDirectoryListWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMDirectoryListWidget::ctkDICOMDirectoryListWidget(QWidget* _parent):Superclass(_parent)
+ctkDICOMDirectoryListWidget::ctkDICOMDirectoryListWidget(QWidget* _parent):Superclass(_parent), 
+  d_ptr(new ctkDICOMDirectoryListWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(ctkDICOMDirectoryListWidget);
-  CTK_D(ctkDICOMDirectoryListWidget);
+  Q_D(ctkDICOMDirectoryListWidget);
 
   d->setupUi(this);
 
@@ -46,9 +44,6 @@ ctkDICOMDirectoryListWidget::ctkDICOMDirectoryListWidget(QWidget* _parent):Super
   connect(d->removeButton, SIGNAL(clicked()), this, SLOT(removeDirectoryClicked()));
 
   d->removeButton->setDisabled(true);
-
-
-
 }
 
 //----------------------------------------------------------------------------
@@ -59,7 +54,7 @@ ctkDICOMDirectoryListWidget::~ctkDICOMDirectoryListWidget()
 //----------------------------------------------------------------------------
 void ctkDICOMDirectoryListWidget::addDirectoryClicked()
 {
-  CTK_D(ctkDICOMDirectoryListWidget);
+  Q_D(ctkDICOMDirectoryListWidget);
   QString newDir = QFileDialog::getExistingDirectory(this, tr("Open Directory"));
 
   if ( !newDir.isEmpty() )
@@ -67,7 +62,7 @@ void ctkDICOMDirectoryListWidget::addDirectoryClicked()
     QSqlRecord newDirRecord;
     newDirRecord.append(QSqlField("Dirname",QVariant::String));
     newDirRecord.setValue("Dirname",newDir);
-    bool success = d->directoryListModel->insertRecord(-1,newDirRecord);
+    /*bool success = */d->directoryListModel->insertRecord(-1,newDirRecord);
     bool success2 = d->directoryListModel->submitAll();
     if ( !success2 )
     {
@@ -87,7 +82,7 @@ void ctkDICOMDirectoryListWidget::addDirectoryClicked()
 //----------------------------------------------------------------------------
 void ctkDICOMDirectoryListWidget::removeDirectoryClicked()
 {
-  CTK_D(ctkDICOMDirectoryListWidget);
+  Q_D(ctkDICOMDirectoryListWidget);
   while ( ! d->directoryListView->selectionModel()->selectedIndexes().empty() )
   {
     d->directoryListModel->removeRow(
@@ -96,9 +91,10 @@ void ctkDICOMDirectoryListWidget::removeDirectoryClicked()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkDICOMDirectoryListWidget::setDICOM(ctkDICOM* dicom)
 {
-  CTK_D(ctkDICOMDirectoryListWidget);
+  Q_D(ctkDICOMDirectoryListWidget);
   d->dicom = dicom;
   d->directoryListModel =  new QSqlTableModel(this,d->dicom->database());
   d->directoryListModel->setTable("Directories");
@@ -110,13 +106,12 @@ void ctkDICOMDirectoryListWidget::setDICOM(ctkDICOM* dicom)
             SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
             this,
             SLOT(directorySelectionChanged(const QItemSelection & , const QItemSelection &  )));
-
-
 }
-//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void ctkDICOMDirectoryListWidget::directorySelectionChanged( const QItemSelection  & selected, const QItemSelection  & deselected )
 {
-  CTK_D(ctkDICOMDirectoryListWidget);
+  Q_UNUSED(deselected);
+  Q_D(ctkDICOMDirectoryListWidget);
   d->removeButton->setEnabled( ! selected.empty() );
 }

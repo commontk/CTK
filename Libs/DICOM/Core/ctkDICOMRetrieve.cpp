@@ -30,7 +30,7 @@
 #include <QFileInfo>
 #include <QDebug>
 
-// ctkDICOM includes
+// ctkDICOMCore includes
 #include "ctkDICOMRetrieve.h"
 #include "ctkLogger.h"
 
@@ -59,10 +59,10 @@
 
 #include "dcmtk/oflog/oflog.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMRetrieve" );
+static ctkLogger logger("org.commontk.dicom.DICOMRetrieve");
 
 //------------------------------------------------------------------------------
-class ctkDICOMRetrievePrivate: public ctkPrivate<ctkDICOMRetrieve>
+class ctkDICOMRetrievePrivate
 {
 public:
   ctkDICOMRetrievePrivate();
@@ -78,8 +78,6 @@ public:
   // do the retrieve, handling both series and study retrieves
   enum RetrieveType { RetrieveSeries, RetrieveStudy };
   void retrieve ( QString UID, QDir directory, RetrieveType retriveType );
-  
-
 };
 
 //------------------------------------------------------------------------------
@@ -97,6 +95,7 @@ ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
   delete parameters;
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveType retriveType ) {
 
   // Register the JPEG libraries in case we need them
@@ -213,9 +212,6 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
   delete responses;
 }
 
-
-
-
 //------------------------------------------------------------------------------
 // ctkDICOMRetrieve methods
 
@@ -229,71 +225,88 @@ ctkDICOMRetrieve::~ctkDICOMRetrieve()
 {
 }
 
+//------------------------------------------------------------------------------
 /// Set methods for connectivity
 void ctkDICOMRetrieve::setCallingAETitle ( QString callingAETitle )
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->CallingAETitle = callingAETitle;
 }
+
+//------------------------------------------------------------------------------
 const QString& ctkDICOMRetrieve::callingAETitle() 
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->CallingAETitle;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCalledAETitle ( QString calledAETitle )
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->CalledAETitle = calledAETitle;
 }
+
+//------------------------------------------------------------------------------
 const QString& ctkDICOMRetrieve::calledAETitle()
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->CalledAETitle;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setHost ( QString host )
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->Host = host;
 }
+
+//------------------------------------------------------------------------------
 const QString& ctkDICOMRetrieve::host()
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->Host;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCallingPort ( int port ) 
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->CallingPort = port;
 }
+
+//------------------------------------------------------------------------------
 int ctkDICOMRetrieve::callingPort()
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->CallingPort;
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCalledPort ( int port ) 
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->CalledPort = port;
 }
+
+//------------------------------------------------------------------------------
 int ctkDICOMRetrieve::calledPort()
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->CalledPort;
 }
 
-
-
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::retrieveSeries ( QString seriesInstanceUID, QDir directory ) {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   logger.info ( "Starting retrieveSeries" );
   d->retrieve ( seriesInstanceUID, directory, ctkDICOMRetrievePrivate::RetrieveSeries );
   return;
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::retrieveStudy ( QString studyInstanceUID, QDir directory ) {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   logger.info ( "Starting retrieveStudy" );
   d->retrieve ( studyInstanceUID, directory, ctkDICOMRetrievePrivate::RetrieveStudy );
   return;

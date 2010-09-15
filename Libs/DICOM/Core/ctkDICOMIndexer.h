@@ -24,9 +24,6 @@
 // Qt includes 
 #include <QSqlDatabase>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMCoreExport.h"
 
 class ctkDICOMIndexerPrivate;
@@ -39,8 +36,13 @@ public:
   void addDirectory(QSqlDatabase database, const QString& directoryName, const QString& destinationDirectoryName = "");
   void refreshDatabase(QSqlDatabase database, const QString& directoryName);
 
+protected:
+  QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
+  
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMIndexer);
+  Q_DECLARE_PRIVATE(ctkDICOMIndexer);
+  Q_DISABLE_COPY(ctkDICOMIndexer);
+
 };
 
 #endif

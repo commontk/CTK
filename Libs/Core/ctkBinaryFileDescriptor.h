@@ -35,9 +35,6 @@
 // Qt includes
 #include <QString>
 
-// CTK includes
-#include "ctkPimpl.h"
-
 #include "CTKWidgetsExport.h"
 
 /// Allows to resolve global symbols contained into an executable.
@@ -66,8 +63,12 @@ public:
   /// Get the address of a symbol in memory
   void* resolve(const char * symbol);
 
+protected:
+  QScopedPointer<ctkBinaryFileDescriptorPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkBinaryFileDescriptor);
+  Q_DECLARE_PRIVATE(ctkBinaryFileDescriptor);
+  Q_DISABLE_COPY(ctkBinaryFileDescriptor);
 
 };
 

@@ -24,9 +24,6 @@
 // Qt includes 
 #include <QWidget>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMWidgetsExport.h"
 
 class ctkDICOMServerNodeWidgetPrivate;
@@ -47,8 +44,12 @@ public slots:
   void addNode ();
   void updateState (int row, int column);
 
+protected:
+  QScopedPointer<ctkDICOMServerNodeWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMServerNodeWidget);
+  Q_DECLARE_PRIVATE(ctkDICOMServerNodeWidget);
+  Q_DISABLE_COPY(ctkDICOMServerNodeWidget);
 };
 
 #endif

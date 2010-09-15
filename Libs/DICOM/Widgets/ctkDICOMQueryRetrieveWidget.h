@@ -24,9 +24,6 @@
 // Qt includes 
 #include <QWidget>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMWidgetsExport.h"
 
 class ctkDICOMQueryRetrieveWidgetPrivate;
@@ -43,8 +40,12 @@ public slots:
     void processQuery();
     void onTabCloseRequested(int index);
 
+protected:
+  QScopedPointer<ctkDICOMQueryRetrieveWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMQueryRetrieveWidget);
+  Q_DECLARE_PRIVATE(ctkDICOMQueryRetrieveWidget);
+  Q_DISABLE_COPY(ctkDICOMQueryRetrieveWidget);
 };
 
 #endif

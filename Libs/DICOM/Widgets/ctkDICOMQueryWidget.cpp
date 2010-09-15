@@ -1,12 +1,14 @@
-#include <iostream>
+
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMQueryWidget.h"
 #include "ui_ctkDICOMQueryWidget.h"
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
-class ctkDICOMQueryWidgetPrivate: public ctkPrivate<ctkDICOMQueryWidget>,
-                                  public Ui_ctkDICOMQueryWidget
+class ctkDICOMQueryWidgetPrivate: public Ui_ctkDICOMQueryWidget
 {
 public:
   ctkDICOMQueryWidgetPrivate(){}
@@ -20,10 +22,10 @@ public:
 // ctkDICOMQueryWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMQueryWidget::ctkDICOMQueryWidget(QWidget* _parent):Superclass(_parent)
+ctkDICOMQueryWidget::ctkDICOMQueryWidget(QWidget* _parent):Superclass(_parent), 
+  d_ptr(new ctkDICOMQueryWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(ctkDICOMQueryWidget);
-  CTK_D(ctkDICOMQueryWidget);
+  Q_D(ctkDICOMQueryWidget);
   
   d->setupUi(this);
 }
@@ -37,7 +39,7 @@ ctkDICOMQueryWidget::~ctkDICOMQueryWidget()
 //----------------------------------------------------------------------------
 void ctkDICOMQueryWidget::populateQuery(/*ctkDICOMQuery &query*/)
 {
-  CTK_D(ctkDICOMQueryWidget);
+  Q_D(ctkDICOMQueryWidget);
   if ( d->CT->isChecked() )
   {
     std::cerr << "CT\n";

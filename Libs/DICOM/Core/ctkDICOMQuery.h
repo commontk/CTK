@@ -58,8 +58,12 @@ public:
   // Add a StudyInstanceUID to be queried
   void addStudyInstanceUID ( QString StudyInstanceUID );
 
+protected:
+  QScopedPointer<ctkDICOMQueryPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMQuery);
+  Q_DECLARE_PRIVATE(ctkDICOMQuery);
+  Q_DISABLE_COPY(ctkDICOMQuery);
 };
 
 #endif

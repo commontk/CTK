@@ -24,9 +24,6 @@
 // Qt includes 
 #include <QWidget>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMWidgetsExport.h"
 
 class ctkDICOMQueryWidgetPrivate;
@@ -41,8 +38,12 @@ public:
   /// set properties of query based on current widget state
   void populateQuery (/*ctkDICOMQuery &query*/);
 
+protected:
+  QScopedPointer<ctkDICOMQueryWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMQueryWidget);
+  Q_DECLARE_PRIVATE(ctkDICOMQueryWidget);
+  Q_DISABLE_COPY(ctkDICOMQueryWidget);
 };
 
 #endif

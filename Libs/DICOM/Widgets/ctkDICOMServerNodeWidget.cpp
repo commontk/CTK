@@ -18,8 +18,6 @@
  
 =========================================================================*/
 
-#include <iostream>
-
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
 
@@ -27,9 +25,11 @@
 #include "ctkDICOMServerNodeWidget.h"
 #include "ui_ctkDICOMServerNodeWidget.h"
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
-class ctkDICOMServerNodeWidgetPrivate: public ctkPrivate<ctkDICOMServerNodeWidget>,
-                                       public Ui_ctkDICOMServerNodeWidget
+class ctkDICOMServerNodeWidgetPrivate: public Ui_ctkDICOMServerNodeWidget
 {
 public:
   ctkDICOMServerNodeWidgetPrivate(){}
@@ -43,10 +43,10 @@ public:
 // ctkDICOMServerNodeWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(_parent)
+ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(_parent), 
+  d_ptr(new ctkDICOMServerNodeWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(ctkDICOMServerNodeWidget);
-  CTK_D(ctkDICOMServerNodeWidget);
+  Q_D(ctkDICOMServerNodeWidget);
   
   d->setupUi(this);
 
@@ -79,7 +79,7 @@ ctkDICOMServerNodeWidget::~ctkDICOMServerNodeWidget()
 //----------------------------------------------------------------------------
 void ctkDICOMServerNodeWidget::addNode()
 {
-  CTK_D(ctkDICOMServerNodeWidget);
+  //Q_D(ctkDICOMServerNodeWidget);
 
   std::cerr << "add server node\n";
 }
@@ -87,7 +87,9 @@ void ctkDICOMServerNodeWidget::addNode()
 //----------------------------------------------------------------------------
 void ctkDICOMServerNodeWidget::updateState(int row, int column)
 {
-  CTK_D(ctkDICOMServerNodeWidget);
+  Q_UNUSED(row);
+  Q_UNUSED(column);
+  Q_D(ctkDICOMServerNodeWidget);
 
   d->removeButton->setEnabled(true);
 }
@@ -95,7 +97,7 @@ void ctkDICOMServerNodeWidget::updateState(int row, int column)
 //----------------------------------------------------------------------------
 void ctkDICOMServerNodeWidget::populateQuery(/*ctkDICOMQuery &query*/)
 {
-  CTK_D(ctkDICOMServerNodeWidget);
+  //Q_D(ctkDICOMServerNodeWidget);
 
   std::cerr << "server node populate\n";
 }

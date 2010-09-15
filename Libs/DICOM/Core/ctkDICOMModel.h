@@ -25,9 +25,6 @@
 #include <QAbstractItemModel>
 #include <QSqlDatabase>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMCoreExport.h"
 
 class ctkDICOMModelPrivate;
@@ -56,8 +53,12 @@ public:
   // Sorting resets the model because fetched/unfetched items could disappear/appear respectively.
   virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
+protected:
+  QScopedPointer<ctkDICOMModelPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMModel);
+  Q_DECLARE_PRIVATE(ctkDICOMModel);
+  Q_DISABLE_COPY(ctkDICOMModel);
 };
 
 #endif
