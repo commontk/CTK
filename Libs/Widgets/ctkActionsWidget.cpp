@@ -283,6 +283,11 @@ ctkSortFilterActionsProxyModelPrivate::ctkSortFilterActionsProxyModelPrivate(ctk
 }
 
 //-----------------------------------------------------------------------------
+ctkSortFilterActionsProxyModel::~ctkSortFilterActionsProxyModel()
+{
+}
+
+//-----------------------------------------------------------------------------
 ctkSortFilterActionsProxyModel::ctkSortFilterActionsProxyModel(QObject* parentObject)
  :QSortFilterProxyModel(parentObject)
   , d_ptr(new ctkSortFilterActionsProxyModelPrivate(*this))

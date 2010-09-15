@@ -106,7 +106,8 @@ class ctkSortFilterActionsProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT
 public:
-  ctkSortFilterActionsProxyModel(QObject* parent=0);
+  explicit ctkSortFilterActionsProxyModel(QObject* parent=0);
+  virtual ~ctkSortFilterActionsProxyModel();
 
   void setActionsWithNoShortcutVisible(bool);
   bool areActionsWithNoShortcutVisible()const;
