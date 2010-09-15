@@ -63,19 +63,19 @@ class ctkDicomSoapState : public QtSoapSimpleType{
 class ctkDicomSoapStatus : public QtSoapStruct{
     public: 
     ctkDicomSoapStatus ( const QString & name,
-            const ctkDicomWG23::Status* s ):
+            const ctkDicomWG23::Status& s ):
        QtSoapStruct ( QtSoapQName(name) ){
         this->insert(new QtSoapSimpleType(QtSoapQName("StatusType"), 
-                    s->statusType) );
+                    s.statusType) );
         this->insert(new QtSoapSimpleType(
                     QtSoapQName("CodingSchemeDesignator"), 
-                    s->codingSchemeDesignator) );
+                    s.codingSchemeDesignator) );
         this->insert(new QtSoapSimpleType(
                     QtSoapQName("CodeValue"), 
-                    s->codeValue) );
+                    s.codeValue) );
         this->insert(new QtSoapSimpleType(
                     QtSoapQName("CodeMeaning"), 
-                    s->codeMeaning) );
+                    s.codeMeaning) );
     };
    static ctkDicomWG23::Status getStatus(const QtSoapType& type){
         ctkDicomWG23::Status s;
@@ -90,6 +90,17 @@ class ctkDicomSoapStatus : public QtSoapStruct{
             type["CodeMeaning"].value().toString();
         return s;
    };
+};
+
+class ctkDicomSoapUID : public QtSoapSimpleType{
+public:
+ctkDicomSoapUID ( const QString & name, const QString& uid ):
+   QtSoapSimpleType ( QtSoapQName(name), uid ){};
+
+static QString getUID(const QtSoapType& type){
+	return static_cast<QString> (type.value().toString());
+};
+
 };
 
 

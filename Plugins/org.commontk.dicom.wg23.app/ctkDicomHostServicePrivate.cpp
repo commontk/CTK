@@ -19,8 +19,8 @@
 
 =============================================================================*/
 
-
 #include "ctkDicomHostServicePrivate.h"
+#include "ctkDicomWG23TypesHelper.h"
 
 #include <QApplication>
 #include <QCursor>
@@ -28,37 +28,28 @@
 
 #include <stdexcept>
 
-ctkDicomHostService::ctkDicomHostService()
+ctkDicomHostServicePrivate::ctkDicomHostServicePrivate()
 {
   connect(&http, SIGNAL(responseReady()), this, SLOT(responseReady()));
 
   http.setHost("127.0.0.1", false, 8080);
 }
 
-void ctkDicomHostService::responseReady()
+void ctkDicomHostServicePrivate::responseReady()
 {
   blockingLoop.exit();
 }
 
-QString ctkDicomHostService::generateUID()
+QtSoapType ctkDicomHostServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
 {
-  return QString();
-}
-
-QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
-{
-  http.setAction("GetAvailableScreen");
+  http.setAction(methodName);
 
   QtSoapMessage request;
-  request.setMethod("GetAvailableScreen");
-
-  QtSoapStruct* preferredScreenType = new QtSoapStruct(QtSoapQName("preferredScreen"));
-  preferredScreenType->insert(new QtSoapSimpleType(QtSoapQName("Height"), preferredScreen.height()));
-  preferredScreenType->insert(new QtSoapSimpleType(QtSoapQName("Width"), preferredScreen.width()));
-  preferredScreenType->insert(new QtSoapSimpleType(QtSoapQName("RefPointX"), preferredScreen.x()));
-  preferredScreenType->insert(new QtSoapSimpleType(QtSoapQName("RefPointY"), preferredScreen.y()));
-
-  request.addMethodArgument(preferredScreenType);
+  request.setMethod(methodName);
+  if( soapType != NULL )
+  {
+    request.addMethodArgument(soapType);
+  }
 
   http.submitRequest(request, "/IHostService");
 
@@ -97,33 +88,45 @@ QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
     //throw std::runtime_error("invalid return value");
     qDebug() << response.errorString() << response.faultString().toString();
     qDebug() << response.toXmlString();
-    return QRect();
   }
+  else
+  {
+    qDebug() << screenResult.count();
+  }  
 
-  qDebug() << screenResult.count() << screenResult["Height"].typeName();
-  QRect resultRect;
-  resultRect.setHeight(screenResult["Height"].toInt());
-  resultRect.setWidth(screenResult["Width"].toInt());
-  resultRect.setX(screenResult["RefPointX"].toInt());
-  resultRect.setY(screenResult["RefPointY"].toInt());
-
-  qDebug() << "x:" << resultRect.x() << " y:" << resultRect.y();
-
-  return resultRect;
+  return screenResult;
 }
 
-QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProtocols)
+QString ctkDicomHostServicePrivate::generateUID()
+{
+  const QtSoapType& result = askHost("generateUID", NULL);
+  QString resultUID = ctkDicomSoapUID::getUID(result);
+  return resultUID;
+}
+
+QString ctkDicomHostServicePrivate::getOutputLocation(const QStringList& preferredProtocols)
 {
   Q_UNUSED(preferredProtocols)
   return QString();
 }
 
-void ctkDicomHostService::notifyStateChanged(ctkDicomWG23::State state)
+QRect ctkDicomHostServicePrivate::getAvailableScreen(const QRect& preferredScreen)
 {
-  Q_UNUSED(state)
+  QtSoapStruct* input = new ctkDicomSoapRectangle("preferredScreen", preferredScreen);
+  const QtSoapType& result = askHost("getAvailableScreen", input);
+  QRect resultRect = ctkDicomSoapRectangle::getQRect(result);
+  qDebug() << "x:" << resultRect.x() << " y:" << resultRect.y();
+  return resultRect;
 }
 
-void ctkDicomHostService::notifyStatus(const ctkDicomWG23::Status& status)
+void ctkDicomHostServicePrivate::notifyStateChanged(ctkDicomWG23::State state)
 {
-  Q_UNUSED(status)
+  QtSoapType* input = new ctkDicomSoapState("stateChanged", state);
+  askHost("notifyStateChanged", input);
+}
+
+void ctkDicomHostServicePrivate::notifyStatus(const ctkDicomWG23::Status& status)
+{
+  QtSoapStruct* input = new ctkDicomSoapStatus("status", status);
+  askHost("notifyStatus", input);
 }
