@@ -28,7 +28,8 @@
 
 // replace "//$" with nothing as soon as ctkDicomAppServer/ctkDicomHostService exist
 #include <ctkDicomAppServer.h>
-//$#include <ctkDicomHostService.h>
+#include <ctkDicomHostService.h>
+#include <ctkDicomHostInterface.h>
 
 #include <QApplication>
 #include <QString>
@@ -150,8 +151,8 @@ int main(int argv, char** argc)
 
   // setup the communication infrastructure: DicomAppServer and DicomHostService
   ctkDicomAppServer * appServer = new ctkDicomAppServer(QUrl(appURL).port()); // accesses the app-plugin via getService("ctkDicomAppInterface");
-//$  ctkDicomHostInterface * hostInterface = new ctkDicomHostService(QUrl(hostURL).port());
-//$  framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
+  ctkDicomHostInterface * hostInterface = new ctkDicomHostService(QUrl(hostURL).port());
+  framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
 
   // install and start the plugin with the business logic and remember pointer to start it later
   ctkPlugin* plugin;

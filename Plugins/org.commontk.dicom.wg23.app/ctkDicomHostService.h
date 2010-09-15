@@ -23,16 +23,24 @@
 #ifndef CTKDICOMHOSTSERVICE_H
 #define CTKDICOMHOSTSERVICE_H
 
+#include <ctkDicomHostInterface.h>
 #include <QScopedPointer>
+#include <org_commontk_dicom_wg23_app_Export.h>
 
 class ctkDicomHostServicePrivate;
 
-class ctkDicomHostService
+class org_commontk_dicom_wg23_app_EXPORT ctkDicomHostService : public ctkDicomHostInterface
 {
 
 public:
-  ctkDicomHostService();
+  ctkDicomHostService(int port);
   ~ctkDicomHostService();
+
+  QString generateUID();
+  QRect getAvailableScreen(const QRect& preferredScreen);
+  QString getOutputLocation(const QStringList& preferredProtocols);
+  void notifyStateChanged(ctkDicomWG23::State state);
+  void notifyStatus(const ctkDicomWG23::Status& status);
 
 private:
   Q_DECLARE_PRIVATE(ctkDicomHostService)

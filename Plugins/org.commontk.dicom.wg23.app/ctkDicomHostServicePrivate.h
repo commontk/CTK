@@ -23,34 +23,27 @@
 #define CTKDICOMHOSTSERVICEPRIVATE_H
 
 #include <ctkDicomWG23Types.h>
-#include <ctkDicomHostInterface.h>
 
 #include <QEventLoop>
 #include <QtSoapHttpTransport>
 
-class ctkDicomHostServicePrivate : public ctkDicomHostInterface
+class ctkDicomHostServicePrivate : public QObject
 {
   Q_OBJECT
 
 public:
-  ctkDicomHostServicePrivate();
-
-  QString generateUID();
-  QRect getAvailableScreen(const QRect& preferredScreen);
-  QString getOutputLocation(const QStringList& preferredProtocols);
-  void notifyStateChanged(ctkDicomWG23::State state);
-  void notifyStatus(const ctkDicomWG23::Status& status);
-
-private slots:
-
-  void responseReady();
-
-private:
+  ctkDicomHostServicePrivate(int port);
 
   QtSoapType askHost(const QString& methodName, QtSoapType* soapStruct);
     
   QEventLoop blockingLoop;
   QtSoapHttpTransport http;
+
+  int port;
+
+private slots:
+
+  void responseReady();
 };
 
 #endif // CTKDICOMHOSTSERVICEPRIVATE_H

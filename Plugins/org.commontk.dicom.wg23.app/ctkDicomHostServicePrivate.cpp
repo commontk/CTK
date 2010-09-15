@@ -28,11 +28,11 @@
 
 #include <stdexcept>
 
-ctkDicomHostServicePrivate::ctkDicomHostServicePrivate()
+ctkDicomHostServicePrivate::ctkDicomHostServicePrivate(int port)
 {
   connect(&http, SIGNAL(responseReady()), this, SLOT(responseReady()));
 
-  http.setHost("127.0.0.1", false, 8080);
+  http.setHost("127.0.0.1", false, port);
 }
 
 void ctkDicomHostServicePrivate::responseReady()
@@ -95,38 +95,4 @@ QtSoapType ctkDicomHostServicePrivate::askHost(const QString& methodName, QtSoap
   }  
 
   return screenResult;
-}
-
-QString ctkDicomHostServicePrivate::generateUID()
-{
-  const QtSoapType& result = askHost("generateUID", NULL);
-  QString resultUID = ctkDicomSoapUID::getUID(result);
-  return resultUID;
-}
-
-QString ctkDicomHostServicePrivate::getOutputLocation(const QStringList& preferredProtocols)
-{
-  Q_UNUSED(preferredProtocols)
-  return QString();
-}
-
-QRect ctkDicomHostServicePrivate::getAvailableScreen(const QRect& preferredScreen)
-{
-  QtSoapStruct* input = new ctkDicomSoapRectangle("preferredScreen", preferredScreen);
-  const QtSoapType& result = askHost("getAvailableScreen", input);
-  QRect resultRect = ctkDicomSoapRectangle::getQRect(result);
-  qDebug() << "x:" << resultRect.x() << " y:" << resultRect.y();
-  return resultRect;
-}
-
-void ctkDicomHostServicePrivate::notifyStateChanged(ctkDicomWG23::State state)
-{
-  QtSoapType* input = new ctkDicomSoapState("stateChanged", state);
-  askHost("notifyStateChanged", input);
-}
-
-void ctkDicomHostServicePrivate::notifyStatus(const ctkDicomWG23::Status& status)
-{
-  QtSoapStruct* input = new ctkDicomSoapStatus("status", status);
-  askHost("notifyStatus", input);
 }
