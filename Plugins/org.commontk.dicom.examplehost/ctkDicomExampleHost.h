@@ -10,7 +10,7 @@
 class org_commontk_dicom_examplehost_EXPORT ctkDicomExampleHost : public ctkDicomAbstractHost{
     Q_OBJECT
 public:
-    ctkDicomExampleHost();
+    ctkDicomExampleHost(QWidget* placeholderWidget);
 
     virtual void StartApplication(QString AppPath, const QUrl& App_URL = QUrl("http://localhost:8081/"));
     virtual QString generateUID() { return ""; }
@@ -25,8 +25,10 @@ signals:
     void statusReceived(const ctkDicomWG23::Status& status);
     void giveAvailableScreen(QRect rect);
 
-  protected:
+protected:
     QProcess appProcess;
+    QWidget* placeholderWidget;
+
 };
 
 #endif // CTKDICOMEXAMPLEHOST_H

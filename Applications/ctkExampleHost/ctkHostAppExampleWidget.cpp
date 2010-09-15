@@ -14,10 +14,11 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
     ui->setupUi(this);
     ui->crashLabel->setVisible(false);
     ui->messageOutput->setVisible(false);
-    this->host = new ctkDicomExampleHost();
+    this->host = new ctkDicomExampleHost(ui->placeholderFrame);
 
     connect(&this->host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
     connect(&this->host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));
+    connect(ui->placeholderFrame,SIGNAL(resized()),SLOT(placeholderResized()));
   }
 
 
@@ -99,3 +100,7 @@ void ctkHostAppExampleWidget::appProcessStateChanged(QProcess::ProcessState stat
     ;
   }
   }
+void ctkHostAppExampleWidget::placeholderResized()
+{
+  qDebug() << "resized";
+}

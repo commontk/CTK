@@ -25,6 +25,8 @@ public slots:
     void appProcessError(QProcess::ProcessError error);
     void appProcessStateChanged(QProcess::ProcessState state);
 
+    void placeholderResized();
+
 protected:
     ctkDicomExampleHost* host;
     QString appFileName;

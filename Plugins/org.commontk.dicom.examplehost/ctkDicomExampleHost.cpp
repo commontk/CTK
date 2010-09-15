@@ -2,7 +2,7 @@
 #include <QProcess>
 #include <QtDebug>
 
-ctkDicomExampleHost::ctkDicomExampleHost() : ctkDicomAbstractHost(8080)
+ctkDicomExampleHost::ctkDicomExampleHost(QWidget* placeholderWidget) : placeholderWidget(placeholderWidget),ctkDicomAbstractHost(8080)
 {
 }
 

@@ -5,12 +5,14 @@ SET(PLUGIN_export_directive "org_commontk_dicom_examplehost_EXPORT")
 SET(PLUGIN_SRCS
   ctkDicomExampleHostPlugin.cpp
   ctkDicomExampleHost.cpp
+  ctkHostedAppPlaceholderWidget.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
   ctkDicomExampleHostPlugin_p.h
   ctkDicomExampleHost.h
+  ctkHostedAppPlaceholderWidget.h
 )
 
 # Qt Designer files which should be processed by Qts uic

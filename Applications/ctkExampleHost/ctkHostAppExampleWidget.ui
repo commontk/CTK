@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>583</width>
-    <height>572</height>
+    <height>593</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -177,7 +177,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="placeholderFrame">
+    <widget class="ctkHostedAppPlaceholderWidget" name="placeholderFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -241,6 +241,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkHostedAppPlaceholderWidget</class>
+   <extends>QFrame</extends>
+   <header>ctkHostedAppPlaceholderWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
