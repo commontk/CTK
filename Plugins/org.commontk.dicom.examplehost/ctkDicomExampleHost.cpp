@@ -16,9 +16,7 @@ void ctkDicomExampleHost::StartApplication(QString AppPath, const QUrl& App_URL)
             AppPath,l))
     {
         qCritical() << "application failed to start!";
-        return 0;
     }
-    return 1;
 }
 
 QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){
