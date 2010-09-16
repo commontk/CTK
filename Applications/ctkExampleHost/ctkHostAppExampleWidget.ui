@@ -65,6 +65,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="runButton">
+       <property name="text">
+        <string>Run</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="stopButton">
        <property name="text">
         <string>Stop</string>
@@ -258,8 +265,8 @@
    <slot>startButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>54</x>
-     <y>70</y>
+     <x>64</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
      <x>269</x>
@@ -274,8 +281,8 @@
    <slot>stopButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>185</x>
-     <y>70</y>
+     <x>246</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
      <x>238</x>
@@ -290,8 +297,8 @@
    <slot>loadButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>55</x>
-     <y>35</y>
+     <x>65</x>
+     <y>32</y>
     </hint>
     <hint type="destinationlabel">
      <x>87</x>
@@ -306,12 +313,28 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>28</x>
-     <y>123</y>
+     <x>38</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel">
      <x>151</x>
      <y>184</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>runButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkHostAppExampleWidget</receiver>
+   <slot>runButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>122</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>538</y>
     </hint>
    </hints>
   </connection>
@@ -320,5 +343,6 @@
   <slot>startButtonClicked()</slot>
   <slot>stopButtonClicked()</slot>
   <slot>loadButtonClicked()</slot>
+  <slot>runButtonClicked()</slot>
  </slots>
 </ui>

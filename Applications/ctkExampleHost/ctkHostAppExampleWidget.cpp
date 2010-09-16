@@ -1,6 +1,7 @@
 #include "ctkHostAppExampleWidget.h"
 #include "ui_ctkHostAppExampleWidget.h"
 #include "ctkDicomExampleHost.h"
+#include "ctkDicomAppService.h"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -33,6 +34,16 @@ void ctkHostAppExampleWidget::startButtonClicked()
     if (host)
     {
       host->StartApplication(appFileName);
+    }
+}
+
+void ctkHostAppExampleWidget::runButtonClicked()
+{
+    qDebug() << "run button clicked";
+    if (host)
+    {
+      bool reply = host->getDicomAppService()->setState(ctkDicomWG23::INPROGRESS);
+      qDebug() << "  setState(INPROGRESS) returned: " << reply;
     }
 }
 

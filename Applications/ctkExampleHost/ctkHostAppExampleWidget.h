@@ -19,9 +19,10 @@ public:
     explicit ctkHostAppExampleWidget(QWidget *parent = 0);
     ~ctkHostAppExampleWidget();
 public slots:
-    void startButtonClicked();
-    void stopButtonClicked();
     void loadButtonClicked();
+    void startButtonClicked();
+    void runButtonClicked();
+    void stopButtonClicked();
     void appProcessError(QProcess::ProcessError error);
     void appProcessStateChanged(QProcess::ProcessState state);
 
