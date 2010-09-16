@@ -189,7 +189,7 @@ class ctkDicomSoapArrayOfString : public QtSoapArray{
 
     static QStringList* getArray(const QtSoapArray& array){
         QStringList * list = new QStringList();
-        for (int i; i < array.count() ; i++ ){
+        for (int i = 0; i < array.count() ; i++ ){
             const QString str = array.at(i).value().toString();
             list->append( str);
         }
