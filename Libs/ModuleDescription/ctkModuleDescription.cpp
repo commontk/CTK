@@ -51,12 +51,8 @@ QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module)
   //os << "Logo: " << module.GetLogo() << endl;
 
   os << "ParameterGroups: " << endl;
-  QVector<ctkModuleParameterGroup>::const_iterator it = module.parameterGroups().begin();
-  while (it != module.parameterGroups().end())
-    {
-    os << *it;
-    ++it;
-    }
+  foreach( const ctkModuleParameterGroup& it, module.parameterGroups())
+  { os << it; }
   return os;
 }
 

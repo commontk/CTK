@@ -55,11 +55,7 @@ QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup &group)
   os << QHash<QString, QString>(group);
 
   os << "  Parameters: " << endl;
-  QVector<ctkModuleParameter>::const_iterator it = group.parameters().begin();
-  while (it != group.parameters().end())
-    {
-    os << *it;
-    ++it;
-    }
+  foreach( const ctkModuleParameter& it, group.parameters())
+  { os << it; }
   return os;
 }
