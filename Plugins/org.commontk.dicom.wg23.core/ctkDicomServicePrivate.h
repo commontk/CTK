@@ -27,6 +27,7 @@
 #include <QEventLoop>
 #include <QtSoapHttpTransport>
 #include <org_commontk_dicom_wg23_core_Export.h>
+#include <ctkDicomExchangeInterface.h>
 
 class org_commontk_dicom_wg23_core_EXPORT ctkDicomServicePrivate : public QObject
 {
@@ -35,7 +36,8 @@ class org_commontk_dicom_wg23_core_EXPORT ctkDicomServicePrivate : public QObjec
 public:
   ctkDicomServicePrivate(int port);
 
-  const QtSoapType & askHost(const QString& methodName, QtSoapType* soapStruct);
+  const QtSoapType & askHost(const QString& methodName, const QList<QtSoapType*>& soapTypes);
+  const QtSoapType & askHost(const QString& methodName, QtSoapType* soapType);
     
   QEventLoop blockingLoop;
   QtSoapHttpTransport http;

@@ -173,5 +173,31 @@ class ctkDicomSoapArrayOfString : public QtSoapArray{
     };
 
 };
+class ctkDicomSoapAvailableData :public QtSoapStruct {
+public:
+    ctkDicomSoapAvailableData ( const QString & name,
+            const ctkDicomWG23::AvailableData& ad ):
+       QtSoapStruct ( QtSoapQName(name) ){
+
+        QList<ctkDicomWG23::ObjectDescriptor> objectDescriptors;
+        QList<ctkDicomWG23::Patient> patients;
+        //TO BE IMPLEMENTED!!!!!!!!!!!!!!!
+        //this->insert(new QtSoapSimpleType(QtSoapQName("StatusType"),
+        //            s.statusType) );
+    };
+   static ctkDicomWG23::AvailableData getAvailableData (const QtSoapType& type){
+        ctkDicomWG23::AvailableData ad;
+        type;
+
+//        s.codingSchemeDesignator =
+//            type["CodingSchemeDesignator"].value().toString();
+//        s.codeValue =
+//            type["CodeValue"].value().toString();
+//        s.codeMeaning =
+//            type["CodeMeaning"].value().toString();
+        return ad;
+   };
+};
+
 
 #endif

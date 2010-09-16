@@ -27,7 +27,6 @@
 #include <QRect>
 
 #include "ctkDicomWG23Types.h"
-
 #include <org_commontk_dicom_wg23_core_Export.h>
 
 class org_commontk_dicom_wg23_core_EXPORT ctkDicomExchangeInterface : public QObject
@@ -39,13 +38,15 @@ public:
   // Data exchange interface methods
   //
 
-  //virtual bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData) = 0;
-  //virtual QList<ctkDicomWG23::ObjectLocator> getData(QList<QUuid> objectUUIDs, QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData) = 0;
+  virtual bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)=0;
+
+  virtual QList<ctkDicomWG23::ObjectLocator> getData(QList<QUuid> objectUUIDs, QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData) = 0;
 
   //    8.3.3 getAsModels(objectUUIDs : ArrayOfUUID, classUID : UID, supportedInfosetTypes : ArrayOfMimeType) : ModelSetDescriptor	33
 //    8.3.4 queryModel(models : ArrayOfUUID, xpaths : ArrayOfString) : ArrayOfQueryResult	34
 //    8.3.5 queryInfoset(models : ArrayOfUUID, xpaths : ArrayOfString) : ArrayOfQueryResultInfoset	34
 //    8.3.6 releaseData(objectUUIDs : ArrayOfUUID): void	35
+  virtual void releaseData(QList<QUuid> objectUUIDs) = 0;
 //    8.3.7 releaseModels(objectUUIDs : ArrayOfUUID): void
 
   virtual ~ctkDicomExchangeInterface() {}

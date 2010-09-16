@@ -20,31 +20,29 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMAPPINTERFACE_H
-#define CTKDICOMAPPINTERFACE_H
+#ifndef CTKDICOMEXCHANGESERVICE_H
+#define CTKDICOMEXCHANGESERVICE_H
 
-#include <QObject>
-#include <QRect>
-
-#include "ctkDicomWG23Types.h"
-#include "ctkDicomExchangeInterface.h"
-
+#include <ctkDicomExchangeInterface.h>
+#include <QScopedPointer>
 #include <org_commontk_dicom_wg23_core_Export.h>
 
-class org_commontk_dicom_wg23_core_EXPORT ctkDicomAppInterface : public QObject
+class ctkDicomServicePrivate;
+
+class org_commontk_dicom_wg23_core_EXPORT ctkDicomExchangeService : public ctkDicomExchangeInterface
 {
-  Q_OBJECT
 
 public:
+  ctkDicomExchangeService(ushort port);
+  ~ctkDicomExchangeService();
 
-  // Application interface methods
-  virtual ctkDicomWG23::State getState() = 0;
-  virtual bool setState(ctkDicomWG23::State newState) = 0;
-  virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
+  bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
+  QList<ctkDicomWG23::ObjectLocator> getData(QList<QUuid> objectUUIDs,
+                                             QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData);
+  void releaseData(QList<QUuid> objectUUIDs);
 
-  // Data exchange interface methods
-  // ...
 
+protected:
+  ctkDicomServicePrivate * d;
 };
-
-#endif // CTKDICOMAPPINTERFACE_H
+#endif // CTKDICOMEXCHANGESERVICE_H

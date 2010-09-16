@@ -31,7 +31,7 @@
 
 #include <org_commontk_dicom_wg23_core_Export.h>
 
-class org_commontk_dicom_wg23_core_EXPORT ctkDicomHostInterface : public ctkDicomExchangeInterface
+class org_commontk_dicom_wg23_core_EXPORT ctkDicomHostInterface: public QObject
 {
   Q_OBJECT
 

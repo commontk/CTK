@@ -24,16 +24,16 @@
 #define CTKDICOMHOSTSERVICE_H
 
 #include <ctkDicomHostInterface.h>
-#include <QScopedPointer>
+#include <ctkDicomExchangeService.h>
 #include <org_commontk_dicom_wg23_app_Export.h>
 
-class ctkDicomServicePrivate;
 
-class org_commontk_dicom_wg23_app_EXPORT ctkDicomHostService : public ctkDicomHostInterface
+
+class org_commontk_dicom_wg23_app_EXPORT ctkDicomHostService : public ctkDicomExchangeService,public ctkDicomHostInterface
 {
 
 public:
-  ctkDicomHostService(int port);
+  ctkDicomHostService(ushort port);
   ~ctkDicomHostService();
 
   QString generateUID();
@@ -43,9 +43,8 @@ public:
   void notifyStatus(const ctkDicomWG23::Status& status);
 
 private:
-  Q_DECLARE_PRIVATE(ctkDicomService)
+  ctkDicomServicePrivate * d;
 
-  const QScopedPointer<ctkDicomServicePrivate> d_ptr;
 };
 
 #endif // CTKDICOMHOSTSERVICE_H

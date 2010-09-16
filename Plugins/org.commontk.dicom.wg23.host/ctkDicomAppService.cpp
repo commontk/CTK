@@ -25,8 +25,8 @@
 
 #include "ctkDicomWG23TypesHelper.h"
 
-ctkDicomAppService::ctkDicomAppService(int port)
-  : d_ptr(new ctkDicomServicePrivate(port))
+ctkDicomAppService::ctkDicomAppService(ushort port):
+  ctkDicomExchangeService(port)
 {
 
 }
@@ -37,14 +37,14 @@ ctkDicomAppService::~ctkDicomAppService()
 
 ctkDicomWG23::State ctkDicomAppService::getState()
 {
-  Q_D(ctkDicomService);
+  //Q_D(ctkDicomService);
   const QtSoapType & result = d->askHost("getState", NULL);
   return ctkDicomSoapState::getState(result);
 }
 
 bool ctkDicomAppService::setState(ctkDicomWG23::State newState)
 {
-  Q_D(ctkDicomService);
+  //Q_D(ctkDicomService);
   QtSoapType* input = new ctkDicomSoapState("state", newState);
   const QtSoapType & result = d->askHost("setState", input);
   return ctkDicomSoapBool::getBool(result);
@@ -52,7 +52,7 @@ bool ctkDicomAppService::setState(ctkDicomWG23::State newState)
 
 bool ctkDicomAppService::bringToFront(const QRect& requestedScreenArea)
 {
-  Q_D(ctkDicomService);
+  //Q_D(ctkDicomService);
   QtSoapType* input = new ctkDicomSoapRectangle("requestedScreenArea", requestedScreenArea);
   const QtSoapType & result = d->askHost("bringToFront", input);
   return ctkDicomSoapBool::getBool(result);

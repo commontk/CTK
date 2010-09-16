@@ -40,7 +40,15 @@ void ctkDicomServicePrivate::responseReady()
   blockingLoop.exit();
 }
 
-const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
+const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
+                                                   QtSoapType* soapType ){
+    QList<QtSoapType*> list;
+    list.append(soapType);
+    return askHost(methodName,list);
+}
+
+const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
+                                                   const QList<QtSoapType*>& soapTypes )
 {
   qDebug() << "Submitting request " << methodName;
 
@@ -48,10 +56,14 @@ const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName, Qt
 
   QtSoapMessage request;
   request.setMethod(methodName);
-  if( soapType != NULL )
+  if( !soapTypes.isEmpty())
   {
-    request.addMethodArgument(soapType);
-    qDebug() << "  Argument type is " << soapType->typeName();
+      for (QList<QtSoapType*>::ConstIterator it = soapTypes.begin();
+            it < soapTypes.constEnd(); it++){
+        request.addMethodArgument(*it);
+        qDebug() << "  Argument type added " << (*it)->typeName();
+    }
+
   }
 
   http.submitRequest(request, "/IHostService");
