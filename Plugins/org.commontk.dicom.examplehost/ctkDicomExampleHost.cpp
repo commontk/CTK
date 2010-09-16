@@ -1,8 +1,13 @@
 #include "ctkDicomExampleHost.h"
+#include "ctkDicomWG23TypesHelper.h"
+
 #include <QProcess>
 #include <QtDebug>
 
-ctkDicomExampleHost::ctkDicomExampleHost(QWidget* placeholderWidget, int hostPort, int appPort) : placeholderWidget(placeholderWidget),ctkDicomAbstractHost(hostPort, appPort)
+ctkDicomExampleHost::ctkDicomExampleHost(QWidget* placeholderWidget, int hostPort, int appPort) :
+    ctkDicomAbstractHost(hostPort, appPort),
+    placeholderWidget(placeholderWidget),
+    applicationState(ctkDicomWG23::IDLE)
 {
 }
 
@@ -34,7 +39,7 @@ QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){
 
 
 void ctkDicomExampleHost::notifyStateChanged(ctkDicomWG23::State state){
-    qDebug()<< "new state received:"<< static_cast<int>(state);
+    qDebug()<< "new state received:"<< ctkDicomSoapState::toStringValue(state);
     emit stateChangedReceived(state);
 }
 

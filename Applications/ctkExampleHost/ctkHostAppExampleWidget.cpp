@@ -2,6 +2,7 @@
 #include "ui_ctkHostAppExampleWidget.h"
 #include "ctkDicomExampleHost.h"
 #include "ctkDicomAppService.h"
+#include <ctkDicomWG23TypesHelper.h>
 
 #include <QDebug>
 #include <QFileDialog>
@@ -20,6 +21,8 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
     connect(&this->host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
     connect(&this->host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));
     connect(ui->placeholderFrame,SIGNAL(resized()),SLOT(placeholderResized()));
+    connect(this->host,SIGNAL( stateChangeReceived(ctkDicomWG23::State)),SLOT(appStateChanged(ctkDicomWG23::State)));
+
   }
 
 
@@ -73,14 +76,6 @@ void ctkHostAppExampleWidget::setAppFileName(QString name)
   }
 }
 
-
-
-
-
-
-
-
-
 void ctkHostAppExampleWidget::appProcessError(QProcess::ProcessError error)
 {
   if (error == QProcess::Crashed)
@@ -120,4 +115,9 @@ void ctkHostAppExampleWidget::placeholderResized()
 {
   qDebug() << "resized";
   //ui->placeholderFrame->printPosition();
+}
+
+void ctkHostAppExampleWidget::appStateChanged(ctkDicomWG23::State state)
+{
+   ui->statusLabel->setText(ctkDicomSoapState::toStringValue(state));
 }

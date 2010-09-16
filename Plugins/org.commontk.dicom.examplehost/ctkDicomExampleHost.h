@@ -29,7 +29,7 @@ signals:
 protected:
     QProcess appProcess;
     QWidget* placeholderWidget;
-
+    ctkDicomWG23::State applicationState;
 };
 
 #endif // CTKDICOMEXAMPLEHOST_H
