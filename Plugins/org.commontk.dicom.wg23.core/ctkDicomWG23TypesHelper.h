@@ -28,6 +28,8 @@
 #include <QRect>
 #include <ctkDicomWG23Types.h>
 
+#include <stdexcept>
+
 class ctkDicomSoapRectangle :public QtSoapStruct {
     public: 
     ctkDicomSoapRectangle(const QString & name,const QRect& rect):
@@ -53,11 +55,45 @@ class ctkDicomSoapRectangle :public QtSoapStruct {
 class ctkDicomSoapState : public QtSoapSimpleType{
     public:
    ctkDicomSoapState ( const QString & name, ctkDicomWG23::State s ):
-       QtSoapSimpleType ( QtSoapQName(name), s ){};
+       QtSoapSimpleType ( QtSoapQName(name), toStringValue(s) ){};
 
    static ctkDicomWG23::State getState(const QtSoapType& type){
-        return  static_cast<ctkDicomWG23::State> (type.value().toInt());
+        return fromString( type.value().toString() );
    };
+
+   static ctkDicomWG23::State fromString(QString string)
+   {
+     if (string == "IDLE") return ctkDicomWG23::IDLE;
+     if (string == "INPROGRESS") return ctkDicomWG23::INPROGRESS;
+     if (string == "COMPLETED") return ctkDicomWG23::COMPLETED;
+     if (string == "SUSPENDED") return ctkDicomWG23::SUSPENDED;
+     if (string == "CANCELED") return ctkDicomWG23::CANCELED;
+     if (string == "EXIT") return ctkDicomWG23::EXIT;
+     throw std::runtime_error( string.prepend("Invalid STATE:").toStdString() );
+     return ctkDicomWG23::EXIT;
+   }
+   static QString toStringValue(ctkDicomWG23::State state)
+   {
+     switch(state)
+     {
+     case ctkDicomWG23::IDLE:
+         return "IDLE";
+     case ctkDicomWG23::INPROGRESS:
+         return "INPROGRESS";
+     case ctkDicomWG23::COMPLETED:
+         return "COMPLETED";
+     case ctkDicomWG23::SUSPENDED:
+         return "SUSPENDED";
+     case ctkDicomWG23::CANCELED:
+         return "CANCELED";
+     case ctkDicomWG23::EXIT:
+         return "EXIT";
+     default:
+       throw std::runtime_error( "Invalid value for state" );
+
+     }
+   }
+
 };
 
 
