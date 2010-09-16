@@ -118,5 +118,5 @@ void ctkHostAppExampleWidget::appProcessStateChanged(QProcess::ProcessState stat
 void ctkHostAppExampleWidget::placeholderResized()
 {
   qDebug() << "resized";
-  ui->placeholderFrame->printPosition();
+  //ui->placeholderFrame->printPosition();
 }
