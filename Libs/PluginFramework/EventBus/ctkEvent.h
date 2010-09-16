@@ -19,7 +19,7 @@
     typedef QMap<QString, QVariant> Properties;
 
     //TODO: what are we doing about malformed topic strings? Use exceptions in CTK?
-    ctkEvent(const QString& topic, const ctkLDAPSearchFilter::Dictionary& properties = Properties());
+    ctkEvent(const QString& topic, const ctkDictionary& properties = ctkDictionary());
     ctkEvent(const ctkEvent& event);
     ~ctkEvent();
 

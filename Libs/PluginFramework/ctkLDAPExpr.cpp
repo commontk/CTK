@@ -31,7 +31,7 @@ const QString ctkLDAPExpr::EOS       = "Unexpected end of query";
 const QString ctkLDAPExpr::MALFORMED = "Malformed query";
 const QString ctkLDAPExpr::OPERATOR  = "Undefined operator";
 
-ctkLDAPExpr::ctkLDAPExpr( const QString &filter ) throw (ctkInvalidSyntaxException)
+ctkLDAPExpr::ctkLDAPExpr( const QString &filter ) throw (std::invalid_argument)
 {
   ParseState ps(filter);
   try {
@@ -124,7 +124,7 @@ bool ctkLDAPExpr::isSimple(
   return false;
 }
 
-bool ctkLDAPExpr::query( const QString &filter, const ctkDictionary &pd ) throw (ctkInvalidSyntaxException)
+bool ctkLDAPExpr::query( const QString &filter, const ctkDictionary &pd ) throw (std::invalid_argument)
 {
   return ctkLDAPExpr(filter).evaluate(pd, false);
 }
@@ -289,7 +289,7 @@ bool ctkLDAPExpr::patSubstr( const QString &s, const QString &pat )
   return s.isNull() ? false : patSubstr(s,0,pat,0);
 }
 
-ctkLDAPExpr ctkLDAPExpr::parseExpr( ParseState &ps ) throw (ctkInvalidSyntaxException)
+ctkLDAPExpr ctkLDAPExpr::parseExpr( ParseState &ps ) throw (std::invalid_argument)
 {
   ps.skipWhite();
   if (!ps.prefix("("))
@@ -320,7 +320,7 @@ ctkLDAPExpr ctkLDAPExpr::parseExpr( ParseState &ps ) throw (ctkInvalidSyntaxExce
   return ctkLDAPExpr(op, v);
 }
 
-ctkLDAPExpr ctkLDAPExpr::parseSimple( ParseState &ps ) throw (ctkInvalidSyntaxException)
+ctkLDAPExpr ctkLDAPExpr::parseSimple( ParseState &ps ) throw (std::invalid_argument)
 {
   QString attrName = ps.getAttributeName();
   if (attrName.isNull())
@@ -393,7 +393,7 @@ const QString ctkLDAPExpr::toQString() const
   return res;
 }
 
-ctkLDAPExpr::ParseState::ParseState( const QString &str ) throw (ctkInvalidSyntaxException)
+ctkLDAPExpr::ParseState::ParseState( const QString &str ) throw (std::invalid_argument)
 {
   m_str = str;
   if (m_str.length() == 0)
@@ -484,8 +484,8 @@ const QString ctkLDAPExpr::ParseState::getAttributeValue()
   return sb;
 }
 
-void ctkLDAPExpr::ParseState::error( const QString &m ) throw (ctkInvalidSyntaxException)
+void ctkLDAPExpr::ParseState::error( const QString &m ) throw (std::invalid_argument)
 {
   QString error = m + ": " + (m_str.isNull() ? "" : m_str.mid(m_pos) );
-  throw ctkInvalidSyntaxException( error.toStdString() );
+  throw std::invalid_argument( error.toStdString() );
 }

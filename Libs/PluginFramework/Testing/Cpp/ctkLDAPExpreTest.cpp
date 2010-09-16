@@ -61,7 +61,7 @@ int TestParsing( )
     ldap = ctkLDAPExpr( "(o=univ*of*mich*)" );
     ldap = ctkLDAPExpr( "(cn=Babs Jensen)" );
   }
-  catch ( ctkInvalidSyntaxException &e )
+  catch ( std::invalid_argument &e )
   {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
@@ -74,7 +74,7 @@ int TestParsing( )
     ctkLDAPExpr ldap( "cn=Babs Jensen)" );
     return EXIT_FAILURE;
   }
-  catch ( ctkInvalidSyntaxException &e )
+  catch ( std::invalid_argument &e )
   {
     // Nothing to do
     int i = 0;
@@ -135,7 +135,7 @@ int TestEvaluate( )
       return EXIT_FAILURE;
     }
   }
-  catch ( ctkInvalidSyntaxException &e )
+  catch ( std::invalid_argument &e )
   {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;

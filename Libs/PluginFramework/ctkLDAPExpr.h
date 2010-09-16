@@ -20,6 +20,8 @@ limitations under the License.
 =============================================================================*/
 
 #include "ctkPluginConstants.h"
+#include "ctkPluginFramework_global.h"
+
 #include <exception>
 
 #include <QString>
@@ -28,10 +30,6 @@ limitations under the License.
 
 #include <stdexcept>
 
-
-
-typedef std::invalid_argument ctkInvalidSyntaxException;
-typedef QHash< QString, QVariant > ctkDictionary;
 class ctkLDAPExprData;
 
 /**
@@ -56,7 +54,7 @@ public:
 
 public:
   //!
-  ctkLDAPExpr(const QString &filter) throw ( ctkInvalidSyntaxException );
+  ctkLDAPExpr(const QString &filter) throw ( std::invalid_argument );
 
   //!
   ctkLDAPExpr(const ctkLDAPExpr& other);
@@ -65,7 +63,7 @@ public:
    * Get object class set matched by this LDAP expression. This will not work
    * with wildcards and NOT expressions. If a set can not be determined return null.
    *
-   * @return std::set of classes matched, otherwise <code>null</code>.
+   * @return A set of classes matched, otherwise an empty set.
    */
   QSet<QString> getMatchedObjectClasses() const;
 
@@ -99,7 +97,7 @@ public:
 
   //! 
   static bool query(const QString &filter, const ctkDictionary &pd)
-    throw (ctkInvalidSyntaxException);
+      throw (std::invalid_argument);
 
   //! Evaluate this LDAP filter.
   bool evaluate(const ctkDictionary &p, bool matchCase) const;
@@ -130,7 +128,7 @@ private:
     QString m_str;
 
   public:
-    ParseState(const QString &str) throw (ctkInvalidSyntaxException);
+    ParseState(const QString &str) throw (std::invalid_argument);
 
     //! Move m_pos to remove the prefix \a pre
     bool prefix(const QString &pre);
@@ -156,17 +154,17 @@ private:
     const QString getAttributeValue();
 
     //! Throw InvalidSyntaxException exception
-    void error(const QString &m) throw (ctkInvalidSyntaxException);
+    void error(const QString &m) throw (std::invalid_argument);
 
   };
 
   //!
   static ctkLDAPExpr parseExpr(ParseState &ps)
-    throw (ctkInvalidSyntaxException);
+    throw (std::invalid_argument);
 
   //!
   static ctkLDAPExpr parseSimple(ParseState &ps)
-    throw (ctkInvalidSyntaxException);
+    throw (std::invalid_argument);
 
 private:
   //!

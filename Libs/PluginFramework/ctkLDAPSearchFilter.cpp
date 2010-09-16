@@ -52,12 +52,12 @@ ctkLDAPSearchFilter::~ctkLDAPSearchFilter()
     delete d;
 }
 
-bool ctkLDAPSearchFilter::match(const Dictionary& dictionary) const
+bool ctkLDAPSearchFilter::match(const ctkDictionary& dictionary) const
 {
   return d->ldapExpr.evaluate(dictionary, false);
 }
 
-bool ctkLDAPSearchFilter::matchCase(const Dictionary& dictionary) const
+bool ctkLDAPSearchFilter::matchCase(const ctkDictionary& dictionary) const
 {
   return d->ldapExpr.evaluate(dictionary, true);
 }
