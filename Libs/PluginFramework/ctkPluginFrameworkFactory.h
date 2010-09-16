@@ -28,6 +28,7 @@
 
 #include "CTKPluginFrameworkExport.h"
 
+#include "ctkPluginFramework_global.h"
 
   class ctkPluginFramework;
   class ctkPluginFrameworkContext;
@@ -39,13 +40,11 @@
 
   public:
 
-    typedef QHash<QString, QVariant> Properties;
-
     /**
      * Create a new <code>%ctkPluginFrameworkFactory</code> instance.
      *
      * <p>
-     * The Properties map is used to configure the ctkPluginFramework. The
+     * The ctkProperties map is used to configure the ctkPluginFramework. The
      * plugin framework instance created with #getFramework() must interpret
      * the following properties:
      *
@@ -58,7 +57,7 @@
      *        must use some reasonable default configuration if certain
      *        properties are not provided.
      */
-    ctkPluginFrameworkFactory(const Properties& initProps = Properties());
+    ctkPluginFrameworkFactory(const ctkProperties& initProps = ctkProperties());
 
     ~ctkPluginFrameworkFactory();
 

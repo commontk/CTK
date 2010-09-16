@@ -24,7 +24,7 @@ public:
 
   void publishSignal(const QObject* publisher, const char* signal);
 
-  void subscribeSlot(const QObject* subscriber, const char* member, const Properties& properties);
+  void subscribeSlot(const QObject* subscriber, const char* member, const ctkProperties& properties);
 
 protected:
 

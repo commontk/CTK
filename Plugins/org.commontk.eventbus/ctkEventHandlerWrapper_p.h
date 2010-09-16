@@ -15,13 +15,13 @@ class ctkEventHandlerWrapper : public QObject {
 
 private:
 
-  ctkEventBus::Properties properties;
+  ctkProperties properties;
   QStringList topicList;
   ctkLDAPSearchFilter filter;
 
 public:
 
-  ctkEventHandlerWrapper(const QObject* subscriber, const char* handler, const ctkEventBus::Properties& properties)
+  ctkEventHandlerWrapper(const QObject* subscriber, const char* handler, const ctkProperties& properties)
     : properties(properties)
   {
     connect(this, SIGNAL(notifySubscriber(Event)), subscriber, handler);

@@ -32,7 +32,7 @@ void ctkEventBusImpl::publishSignal(const QObject* publisher, const char* signal
   Q_UNUSED(signal)
 }
 
-void ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member, const Properties& properties)
+void ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member, const ctkProperties& properties)
 {
 
   // TODO check for duplicates

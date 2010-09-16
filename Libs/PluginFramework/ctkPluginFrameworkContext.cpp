@@ -31,7 +31,7 @@
 
 
   ctkPluginFrameworkContext::ctkPluginFrameworkContext(
-      const ctkPluginFrameworkFactory::Properties& initProps)
+      const ctkProperties& initProps)
         : plugins(0), services(this), systemPlugin(this),
         storage(this), props(initProps)
   {
