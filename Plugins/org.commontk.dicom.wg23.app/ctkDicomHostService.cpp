@@ -69,7 +69,7 @@ void ctkDicomHostService::notifyStateChanged(ctkDicomWG23::State state)
 {
   Q_D(ctkDicomService);
 
-  QtSoapType* input = new ctkDicomSoapState("stateChanged", state);
+  QtSoapType* input = new ctkDicomSoapState("state", state);
   d->askHost("notifyStateChanged", input);
 }
 
