@@ -1,45 +1,72 @@
 #include "ctkDicomExampleHost.h"
+#include "ctkDicomWG23TypesHelper.h"
+
 #include <QProcess>
 #include <QtDebug>
+#include <QRect>
 
-ctkDicomExampleHost::ctkDicomExampleHost() : ctkDicomAbstractHost(8080)
+#include <iostream>
+
+<<<<<<< HEAD
+ctkDicomExampleHost::ctkDicomExampleHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
+=======
+ctkDicomExampleHost::ctkDicomExampleHost(QWidget* placeholderWidget, int hostPort, int appPort) :
+>>>>>>> ENH: display application state change messages in the gui
+    ctkDicomAbstractHost(hostPort, appPort),
+    placeholderWidget(placeholderWidget),
+    applicationState(ctkDicomWG23::IDLE)
 {
+  connect(&this->appProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
 }
 
-void ctkDicomExampleHost::StartApplication(QString AppPath, const QUrl& App_URL){
+void ctkDicomExampleHost::StartApplication(QString AppPath){
 
     QStringList l;
     l.append("--hostURL");
-    l.append(QString("localhost:") + this->getPort() );
+    l.append(QString("http://localhost:") + QString::number(this->getHostPort()) );
     l.append("--applicationURL");
-    l.append(App_URL.toString());
-<<<<<<< HEAD
-    if (!QProcess::startDetached (
-            AppPath,l))
-    {
-        qCritical() << "application failed to start!";
-    }
-=======
+    l.append(QString("http://localhost:") + QString::number(this->getAppPort()));
+    l.append("dicomapp"); // the app plugin to use - has to be changed later
 
+    qDebug() << "starting application: " << AppPath << " " << l;
+    this->appProcess.setProcessChannelMode(QProcess::MergedChannels);
     this->appProcess.start(AppPath,l);
 
->>>>>>> CHG: keep track of the state of the hosted application process and display it in GUI
 }
 
 QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){
-    qDebug()<< "set screen from preferredScreen:"<< preferredScreen;
-    QRect rect (preferredScreen);
+    qDebug()<< "Application asked for this area:"<< preferredScreen;
+
+    QRect rect (this->placeholderWidget->getAbsolutePosition());
     emit giveAvailableScreen(rect);
     return rect;
 }
 
 
 void ctkDicomExampleHost::notifyStateChanged(ctkDicomWG23::State state){
-    qDebug()<< "new state received:"<< static_cast<int>(state);
+    qDebug()<< "new state received:"<< ctkDicomSoapState::toStringValue(state);
     emit stateChangedReceived(state);
 }
 
 void ctkDicomExampleHost::notifyStatus(const ctkDicomWG23::Status& status){
     qDebug()<< "new status received:"<<status.codeMeaning;
     emit statusReceived(status);;
+}
+
+ctkDicomExampleHost::~ctkDicomExampleHost()
+{
+  qDebug() << "Exiting host: trying to terminate app";
+  this->appProcess.terminate();
+  qDebug() << "Exiting host: trying to kill app";
+  this->appProcess.kill();
+}
+
+void ctkDicomExampleHost::forwardConsoleOutput()
+{
+  while( this->appProcess.bytesAvailable() )
+  {
+    QString line( this->appProcess.readLine() );
+    line.prepend(">>>> ");
+    std::cout << line.toStdString();
+  }
 }
