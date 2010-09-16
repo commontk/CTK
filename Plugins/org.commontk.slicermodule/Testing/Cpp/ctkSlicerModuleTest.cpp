@@ -93,7 +93,7 @@ int ctkSlicerModuleTest(int argc, char * argv [] )
     QTextStream stream( &file );
 
     // Parse XML file
-    reader->setXml( stream.readAll() );
+    reader->setXmlContent( stream.readAll() );
     reader->Update();
 
     // Print module description

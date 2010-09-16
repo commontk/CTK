@@ -22,7 +22,7 @@ void ctkSlicerModuleReader::Update()
   int errorLine;
   int errorColumn;
 
-  if (!domDocument.setContent(xmlContent(), &errorStr, &errorLine,
+  if (!domDocument.setContent(XmlContent, &errorStr, &errorLine,
     &errorColumn)) {
       throw std::runtime_error( 
         tr("Parse error at line %1, column %2:\n%3")

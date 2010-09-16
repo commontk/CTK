@@ -31,23 +31,14 @@ ctkModuleDescriptionReader::~ctkModuleDescriptionReader()
 
 }
 
-QString ctkModuleDescriptionReader::xmlContent() const
-{
-  return this->XmlContent;
-}
-
-void ctkModuleDescriptionReader::setXml( QString val )
+void ctkModuleDescriptionReader::setXmlContent( const QString &val )
 {
   this->XmlContent = val;
 }
 
-ctkModuleDescription ctkModuleDescriptionReader::moduleDescription() const
+const ctkModuleDescription &ctkModuleDescriptionReader::moduleDescription() const
 {
   return this->Description;
 }
 
-void ctkModuleDescriptionReader::setDescription( ctkModuleDescription val )
-{
-  this->Description = val;
-}
 

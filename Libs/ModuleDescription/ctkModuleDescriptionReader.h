@@ -40,12 +40,10 @@ public:
   ~ctkModuleDescriptionReader();
 
   //! xml is the content of the XML file
-  QString xmlContent() const;
-  void setXml(QString val);
+  void setXmlContent(const QString &val);
 
   //!
-  ctkModuleDescription moduleDescription() const;
-  void setDescription(ctkModuleDescription val);
+  const ctkModuleDescription &moduleDescription() const;
 
 protected:
   ///

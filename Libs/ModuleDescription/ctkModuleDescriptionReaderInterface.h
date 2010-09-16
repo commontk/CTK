@@ -37,10 +37,10 @@ public:
   ~ctkModuleDescriptionReaderInterface(){};
 
   //! xml is the content of the XML file
-  virtual void setXml(QString val) = 0;
+  virtual void setXmlContent(const QString &val) = 0;
 
   //!
-  virtual ctkModuleDescription moduleDescription() const = 0;
+  virtual const ctkModuleDescription &moduleDescription() const = 0;
 
   //!
   virtual void Update( ) = 0;
