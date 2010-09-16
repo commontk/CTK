@@ -106,13 +106,23 @@ void ctkDicomHostServerPrivate::processNotifyStatus(
 void ctkDicomHostServerPrivate::processGenerateUID(
   const QtSoapMessage& message, QtSoapMessage* reply) const
 {
-  Q_UNUSED(message)
-  Q_UNUSED(reply)
+  const QString uid = hostInterface->generateUID();
+
+  reply->setMethod("generateUID");
+  QtSoapType* type = new ctkDicomSoapUID("uid",uid);
+  reply->addMethodArgument(type);
 }
 
 void ctkDicomHostServerPrivate::processGetOutputLocation(
   const QtSoapMessage& message, QtSoapMessage* reply) const
 {
-  Q_UNUSED(message)
-  Q_UNUSED(reply)
+  const QtSoapType& inputType = message.method()["preferredProtocols"];
+  const QStringList* preferredProtocols = ctkDicomSoapArrayOfString::getArray(
+    dynamic_cast<const QtSoapArray&>(inputType));
+
+  const QString result = hostInterface->getOutputLocation(*preferredProtocols);
+
+  reply->setMethod("getOutputLocation");
+  QtSoapType* resultType = new QtSoapSimpleType ( QtSoapQName("preferredProtocols"), result );
+  reply->addMethodArgument(resultType);
 }
