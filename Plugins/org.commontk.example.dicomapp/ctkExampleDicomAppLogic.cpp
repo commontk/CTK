@@ -56,7 +56,7 @@ bool ctkExampleDicomAppLogic::setState(ctkDicomWG23::State newState)
     QPushButton *button = new QPushButton("Button from App");
     button->show();
   }
-  return false;
+  return true;
 }
 
 bool ctkExampleDicomAppLogic::bringToFront(const QRect& requestedScreenArea)

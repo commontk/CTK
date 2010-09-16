@@ -2,6 +2,7 @@
 #define CTKDICOMABSTRACTHOST_H
 
 #include <ctkDicomHostInterface.h>
+#include <ctkDicomAppInterface.h>
 #include <QScopedPointer>
 
 #include <org_commontk_dicom_wg23_host_Export.h>
@@ -23,10 +24,12 @@ public:
     /**
       * Start the soap sever on the specified port or choose port automatically.
       */
-    ctkDicomAbstractHost(int port = 0);
-    int getPort() const;
+    ctkDicomAbstractHost(int hostPort = 0, int appPort = 0);
+    int getHostPort() const;
+    int getAppPort() const;
     ~ctkDicomAbstractHost();
 
+    ctkDicomAppInterface* getDicomAppService() const;
 private:
     Q_DECLARE_PRIVATE(ctkDicomAbstractHost)
     const QScopedPointer<ctkDicomAbstractHostPrivate> d_ptr;

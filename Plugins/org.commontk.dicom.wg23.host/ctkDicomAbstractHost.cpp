@@ -1,38 +1,60 @@
 #include "ctkDicomAbstractHost.h"
 #include "ctkDicomHostServer.h"
+#include "ctkDicomAppService.h"
 
 class ctkDicomAbstractHostPrivate
 {
   public:
-  ctkDicomAbstractHostPrivate(ctkDicomAbstractHost* hostInterface, int port) : port(port)
+  ctkDicomAbstractHostPrivate(ctkDicomAbstractHost* hostInterface, int hostPort, int appPort) : hostPort(hostPort), appPort(appPort)
   {
     // start server
-    if (!port)
+    if (hostPort==0)
     {
-      port = 8080;
+      hostPort = 8080;
     }
-    server = new ctkDicomHostServer(hostInterface,port);
+    if (appPort==0)
+    {
+      appPort = 8081;
+    }
+
+    server = new ctkDicomHostServer(hostInterface,hostPort);
+    appService = new ctkDicomAppService(appPort);
   }
   ~ctkDicomAbstractHostPrivate()
   {
     delete server;
+    delete appService;
   }
 
-  int port;
+  int hostPort;
+  int appPort;
   ctkDicomHostServer* server;
+  ctkDicomAppInterface* appService;
   // ctkDicomWG23::Status
 };
 
-ctkDicomAbstractHost::ctkDicomAbstractHost(int port) : d_ptr(new ctkDicomAbstractHostPrivate(this,port))
+ctkDicomAbstractHost::ctkDicomAbstractHost(int hostPort, int appPort) : d_ptr(new ctkDicomAbstractHostPrivate(this,hostPort,appPort))
 {
 }
 
-int ctkDicomAbstractHost::getPort() const
+int ctkDicomAbstractHost::getHostPort() const
 {
   Q_D(const ctkDicomAbstractHost);
-  return d->port;
+  return d->hostPort;
+}
+
+int ctkDicomAbstractHost::getAppPort() const
+{
+  Q_D(const ctkDicomAbstractHost);
+  return d->appPort;
 }
 
 ctkDicomAbstractHost::~ctkDicomAbstractHost()
 {
+}
+
+ctkDicomAppInterface* ctkDicomAbstractHost::getDicomAppService() const
+{
+  Q_D(const ctkDicomAbstractHost);
+  return d->appService;
 }

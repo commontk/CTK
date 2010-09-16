@@ -2,17 +2,17 @@
 #include <QProcess>
 #include <QtDebug>
 
-ctkDicomExampleHost::ctkDicomExampleHost(QWidget* placeholderWidget) : placeholderWidget(placeholderWidget),ctkDicomAbstractHost(8080)
+ctkDicomExampleHost::ctkDicomExampleHost(QWidget* placeholderWidget, int hostPort, int appPort) : placeholderWidget(placeholderWidget),ctkDicomAbstractHost(hostPort, appPort)
 {
 }
 
-void ctkDicomExampleHost::StartApplication(QString AppPath, const QUrl& App_URL){
+void ctkDicomExampleHost::StartApplication(QString AppPath){
 
     QStringList l;
     l.append("--hostURL");
-    l.append(QString("http://localhost:") + QString::number(this->getPort()) );
+    l.append(QString("http://localhost:") + QString::number(this->getHostPort()) );
     l.append("--applicationURL");
-    l.append(App_URL.toString());
+    l.append(QString("http://localhost:") + QString::number(this->getAppPort()));
     l.append("dicomapp"); // the app plugin to use - has to be changed later
     if (!QProcess::startDetached (
             AppPath,l))
