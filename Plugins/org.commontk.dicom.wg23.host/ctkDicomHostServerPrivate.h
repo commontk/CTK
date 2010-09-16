@@ -49,15 +49,15 @@ public slots:
 private:
 
   void processGetAvailableScreen(const QtSoapMessage& message,
-                                 QtSoapMessage* reply);
+                                 QtSoapMessage* reply) const;
   void processNotifyStateChanged(const QtSoapMessage& message,
-                                 QtSoapMessage* reply);
+                                 QtSoapMessage* reply) const;
   void processNotifyStatus(const QtSoapMessage& message,
-                                 QtSoapMessage* reply);
-  //void processGenerateUID(const QtSoapMessage& message,
-  //                               QtSoapMessage* reply);
-
-  ctkDicomHostInterface* serviceBinding;
+                                 QtSoapMessage* reply) const;
+  void processGenerateUID(const QtSoapMessage& message,
+                                 QtSoapMessage* reply) const;
+  void processGetOutputLocation(const QtSoapMessage& message,
+                                 QtSoapMessage* reply) const;
 
 };
 

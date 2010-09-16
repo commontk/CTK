@@ -19,7 +19,6 @@
 
 =============================================================================*/
 
-
 #include "ctkDicomHostServerPrivate.h"
 
 #include <ctkDicomHostInterface.h>
@@ -42,10 +41,8 @@ ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* host
   }
 }
 
-
-
-void ctkDicomHostServerPrivate::incomingSoapMessage(const QtSoapMessage& message,
-                                              QtSoapMessage* reply)
+void ctkDicomHostServerPrivate::incomingSoapMessage(
+  const QtSoapMessage& message, QtSoapMessage* reply)
 {
   const QtSoapType& method = message.method();
   QString methodName = method.name().name();
@@ -56,18 +53,32 @@ void ctkDicomHostServerPrivate::incomingSoapMessage(const QtSoapMessage& message
   {
     processGetAvailableScreen(message, reply);
   }
-  if (methodName == "notifyStateChanged")
+  else if (methodName == "notifyStateChanged")
   {
     processNotifyStateChanged(message, reply);
   }
-  if (methodName == "notifyStatus")
+  else if (methodName == "notifyStatus")
   {
     processNotifyStatus(message, reply);
+  }
+  else if (methodName == "generateUID")
+  {
+    processGenerateUID(message, reply);
+  }
+  else if (methodName == "getOutputLocation")
+  {
+    processGetOutputLocation(message, reply);
+  }
+  else
+  {
+    // error
+    reply->setFaultCode( QtSoapMessage::Server );
+    reply->setFaultString( "Unknown method." );
   }
 }
 
 void ctkDicomHostServerPrivate::processGetAvailableScreen(
-    const QtSoapMessage &message, QtSoapMessage *reply)
+    const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   const QtSoapType& preferredScreenType = message.method()["preferredScreen"];
   const QRect preferredScreen = ctkDicomSoapRectangle::getQRect(preferredScreenType);
@@ -80,15 +91,29 @@ void ctkDicomHostServerPrivate::processGetAvailableScreen(
 }
 
 void ctkDicomHostServerPrivate::processNotifyStateChanged(
-    const QtSoapMessage &message, QtSoapMessage * /* reply */)
+    const QtSoapMessage &message, QtSoapMessage * /* reply */) const
 {
     const QtSoapType& stateType = message.method()["state"];
     hostInterface->notifyStateChanged(ctkDicomSoapState::getState(stateType));
 }
 
 void ctkDicomHostServerPrivate::processNotifyStatus(
-    const QtSoapMessage &message, QtSoapMessage * /* reply */)
+    const QtSoapMessage &message, QtSoapMessage * /* reply */) const
 {
     const QtSoapType& status = message.method()["status"];
     hostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(status));
+}
+
+void ctkDicomHostServerPrivate::processGenerateUID(
+  const QtSoapMessage& message, QtSoapMessage* reply) const
+{
+  Q_UNUSED(message)
+  Q_UNUSED(reply)
+}
+
+void ctkDicomHostServerPrivate::processGetOutputLocation(
+  const QtSoapMessage& message, QtSoapMessage* reply) const
+{
+  Q_UNUSED(message)
+  Q_UNUSED(reply)
 }
