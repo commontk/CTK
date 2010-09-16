@@ -10,20 +10,28 @@ IF(${add_project})
     MESSAGE(FATAL_ERROR "ZMQ_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
   
+  SET(proj ZMQ)
+  SET(proj_DEPENDENCIES)
+  
+  SET(ZMQ_DEPENDS ${proj})
+  
   IF(NOT DEFINED ZMQ_DIR)
-    SET(proj ZMQ)
   #   MESSAGE(STATUS "Adding project:${proj}")
-    SET(ZMQ_DEPENDS ${proj})
     ExternalProject_Add(${proj}
-        GIT_REPOSITORY ${git_protocol}://github.com/PatrickCheng/zeromq2.git
-        INSTALL_COMMAND ""
-        CMAKE_GENERATOR ${gen}
-        CMAKE_ARGS
-          ${ep_common_args}
-		  -DBUILD_SHARED_LIBS:BOOL=ON 
-		  -DZMQ_BUILD_DEVICES:BOOL=ON
-		  -DZMQ_BUILD_PERFORMANCE_TESTS:BOOL=ON
+      GIT_REPOSITORY ${git_protocol}://github.com/PatrickCheng/zeromq2.git
+      INSTALL_COMMAND ""
+      CMAKE_GENERATOR ${gen}
+      CMAKE_ARGS
+        ${ep_common_args}
+		    -DBUILD_SHARED_LIBS:BOOL=ON 
+		    -DZMQ_BUILD_DEVICES:BOOL=ON
+		    -DZMQ_BUILD_PERFORMANCE_TESTS:BOOL=ON
+		  DEPENDS
+		    ${proj_DEPENDENCIES}
       )
 	  SET(ZMQ_DIR ${ep_build_dir}/${proj})
+	
+	ELSE()
+    ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
 	ENDIF()
 ENDIF()
