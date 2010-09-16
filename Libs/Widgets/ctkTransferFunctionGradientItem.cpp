@@ -46,6 +46,7 @@ ctkTransferFunctionGradientItemPrivate::ctkTransferFunctionGradientItemPrivate()
 {
   this->Mask = true;
 }
+
 //-----------------------------------------------------------------------------
 ctkTransferFunctionGradientItem::ctkTransferFunctionGradientItem(QGraphicsItem* parentGraphicsItem)
   :ctkTransferFunctionItem(parentGraphicsItem)
@@ -57,6 +58,7 @@ ctkTransferFunctionGradientItem::ctkTransferFunctionGradientItem(QGraphicsItem* 
 ctkTransferFunctionGradientItem::ctkTransferFunctionGradientItem(
   ctkTransferFunction* transferFunction, QGraphicsItem* parentItem)
   :ctkTransferFunctionItem(transferFunction, parentItem)
+  , d_ptr(new ctkTransferFunctionGradientItemPrivate)
 {
 }
 
