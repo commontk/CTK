@@ -23,6 +23,7 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
   }
 
 
+
 ctkHostAppExampleWidget::~ctkHostAppExampleWidget()
 {
     delete ui;
@@ -55,18 +56,21 @@ void ctkHostAppExampleWidget::stopButtonClicked()
 void ctkHostAppExampleWidget::loadButtonClicked()
 {
     qDebug() << "load button clicked";
-    this->appFileName = QFileDialog::getOpenFileName(this,"Choose hosted application",QApplication::applicationDirPath());
-    if (QFile(this->appFileName).permissions() & QFile::ExeUser )
-    {
-     this->ui->applicationPathLabel->setText(this->appFileName);
-    }
-    else
-    {
-      this->ui->applicationPathLabel->setText(QString("<font color='red'>Not executable:</font>").append(this->appFileName));
-    }
+    this->setAppFileName(QFileDialog::getOpenFileName(this,"Choose hosted application",QApplication::applicationDirPath()));
 }
 
-
+void ctkHostAppExampleWidget::setAppFileName(QString name)
+{
+  this->appFileName = name;
+  if (QFile(this->appFileName).permissions() & QFile::ExeUser )
+  {
+    this->ui->applicationPathLabel->setText(this->appFileName);
+  }
+  else
+  {
+    this->ui->applicationPathLabel->setText(QString("<font color='red'>Not executable:</font>").append(this->appFileName));
+  }
+}
 
 
 
@@ -114,4 +118,5 @@ void ctkHostAppExampleWidget::appProcessStateChanged(QProcess::ProcessState stat
 void ctkHostAppExampleWidget::placeholderResized()
 {
   qDebug() << "resized";
+  ui->placeholderFrame->printPosition();
 }

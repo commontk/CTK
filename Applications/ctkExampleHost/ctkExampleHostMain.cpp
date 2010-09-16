@@ -91,6 +91,10 @@ int main(int argv, char** argc)
   QMainWindow mainWindow;
   Ui::MainWindow ui;
   ui.setupUi(&mainWindow);
+  if ( QApplication::argc() > 1 )
+  {
+    ui.controlWidget->setAppFileName(QApplication::argv()[1]);
+  }
 
 //  mainWindow.addDockWidget(static_cast<Qt::DockWidgetArea>(4),new ctkHostAppExampleWidget());
 

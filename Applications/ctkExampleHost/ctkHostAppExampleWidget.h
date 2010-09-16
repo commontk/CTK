@@ -17,6 +17,8 @@ class ctkHostAppExampleWidget : public QWidget
 
 public:
     explicit ctkHostAppExampleWidget(QWidget *parent = 0);
+    void setAppFileName(QString name);
+
     ~ctkHostAppExampleWidget();
 public slots:
     void loadButtonClicked();
