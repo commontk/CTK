@@ -291,6 +291,7 @@ SET(CTK_PLUGINS
   org.commontk.cli:OFF
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
+  org.commontk.slicermodule:OFF
   )
 
 #-----------------------------------------------------------------------------

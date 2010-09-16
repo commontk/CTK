@@ -20,10 +20,13 @@ SET(KIT_SRCS
   ctkModuleParameter.cpp
   ctkModuleParameterGroup.h
   ctkModuleParameterGroup.cpp
+  ctkModuleDescriptionReader.cpp
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkModuleDescriptionReaderInterface.h
+  ctkModuleDescriptionReader.h
 )
 
 # UI files
