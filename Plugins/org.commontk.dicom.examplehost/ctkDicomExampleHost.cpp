@@ -5,12 +5,14 @@
 #include <QtDebug>
 #include <QRect>
 
+#include <iostream>
 
 ctkDicomExampleHost::ctkDicomExampleHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
     placeholderWidget(placeholderWidget),
     applicationState(ctkDicomWG23::IDLE)
 {
+  connect(&this->appProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
 }
 
 void ctkDicomExampleHost::StartApplication(QString AppPath){
@@ -21,13 +23,9 @@ void ctkDicomExampleHost::StartApplication(QString AppPath){
     l.append("--applicationURL");
     l.append(QString("http://localhost:") + QString::number(this->getAppPort()));
     l.append("dicomapp"); // the app plugin to use - has to be changed later
-    if (!QProcess::startDetached (
-            AppPath,l))
-    {
-        qCritical() << "application failed to start!";
-    }
-    qDebug() << "starting application: " << AppPath << " " << l;
 
+    qDebug() << "starting application: " << AppPath << " " << l;
+    this->appProcess.setProcessChannelMode(QProcess::MergedChannels);
     this->appProcess.start(AppPath,l);
 
 }
@@ -57,4 +55,14 @@ ctkDicomExampleHost::~ctkDicomExampleHost()
   this->appProcess.terminate();
   qDebug() << "Exiting host: trying to kill app";
   this->appProcess.kill();
+}
+
+void ctkDicomExampleHost::forwardConsoleOutput()
+{
+  while( this->appProcess.bytesAvailable() )
+  {
+    QString line( this->appProcess.readLine() );
+    line.prepend(">>>> ");
+    std::cout << line.toStdString();
+  }
 }

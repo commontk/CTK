@@ -32,6 +32,8 @@ protected:
     QProcess appProcess;
     ctkHostedAppPlaceholderWidget* placeholderWidget;
     ctkDicomWG23::State applicationState;
+  protected slots:
+    void forwardConsoleOutput();
 };
 
 #endif // CTKDICOMEXAMPLEHOST_H
