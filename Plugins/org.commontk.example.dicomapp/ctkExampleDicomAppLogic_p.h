@@ -73,6 +73,10 @@ public:
 
   // some logic
   void do_something();
+signals:
+  void stateChanged(int);
+protected slots:
+  void changeState(int);
 private:
   ServiceAccessor<ctkDicomHostInterface> host;
 

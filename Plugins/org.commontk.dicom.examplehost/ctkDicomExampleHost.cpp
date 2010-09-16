@@ -23,23 +23,28 @@ void ctkDicomExampleHost::StartApplication(QString AppPath){
     l.append("--applicationURL");
     l.append(QString("http://localhost:") + QString::number(this->getAppPort()));
     l.append("dicomapp"); // the app plugin to use - has to be changed later
-
+    //if (!QProcess::startDetached (
+    //{
+    //    qCritical() << "application failed to start!";
+    //}
+    //qDebug() << "starting application: " << AppPath << " " << l;
     qDebug() << "starting application: " << AppPath << " " << l;
     this->appProcess.setProcessChannelMode(QProcess::MergedChannels);
     this->appProcess.start(AppPath,l);
-
 }
 
 QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){
     qDebug()<< "Application asked for this area:"<< preferredScreen;
 
     QRect rect (this->placeholderWidget->getAbsolutePosition());
+
     emit giveAvailableScreen(rect);
     return rect;
 }
 
 
 void ctkDicomExampleHost::notifyStateChanged(ctkDicomWG23::State state){
+    qDebug()<< "new state received:"<< static_cast<int>(state);
     qDebug()<< "new state received:"<< ctkDicomSoapState::toStringValue(state);
     emit stateChangedReceived(state);
 }

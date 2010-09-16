@@ -29,14 +29,8 @@
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface> host)
   : host(host)
 {
-  try
-  {
-    host->notifyStateChanged(ctkDicomWG23::IDLE);
-  }
-  catch (const std::runtime_error& e)
-  {
-    qCritical() << e.what();
-  }
+  connect(this, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)), Qt::QueuedConnection);
+  emit stateChanged(ctkDicomWG23::IDLE);
 }
 
 ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
@@ -51,11 +45,7 @@ ctkDicomWG23::State ctkExampleDicomAppLogic::getState()
 bool ctkExampleDicomAppLogic::setState(ctkDicomWG23::State newState)
 {
   qDebug() << "setState called";
-  if (newState == ctkDicomWG23::INPROGRESS)
-  {
-    QPushButton *button = new QPushButton("Button from App");
-    button->show();
-  }
+  emit stateChanged(newState);
   return true;
 }
 
@@ -66,13 +56,37 @@ bool ctkExampleDicomAppLogic::bringToFront(const QRect& requestedScreenArea)
 
 void ctkExampleDicomAppLogic::do_something()
 {
-  QRect preferred;
+  QPushButton *button = new QPushButton("Button from App");
   try
   {
+    QRect preferred(50,50,100,100);
+    qDebug() << "  Asking:getAvailableScreen";
     QRect rect = host->getAvailableScreen(preferred);
+    qDebug() << "  got sth:" << rect.top();
+    button->move(rect.topLeft());
+    button->resize(rect.size());
   }
   catch (const std::runtime_error& e)
   {
     qCritical() << e.what();
+  }
+  button->show();
+}
+
+void ctkExampleDicomAppLogic::changeState(int anewstate)
+{
+  ctkDicomWG23::State newstate = (ctkDicomWG23::State)anewstate;
+  try
+  {
+    host->notifyStateChanged(newstate);
+  }
+  catch (const std::runtime_error& e)
+  {
+    qCritical() << e.what();
+  }
+
+  if (newstate == ctkDicomWG23::INPROGRESS)
+  {
+    do_something();
   }
 }
