@@ -94,7 +94,7 @@
         </font>
        </property>
        <property name="text">
-        <string>IDLE</string>
+        <string>-</string>
        </property>
       </widget>
      </item>
