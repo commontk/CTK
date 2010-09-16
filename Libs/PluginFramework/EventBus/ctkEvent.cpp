@@ -69,7 +69,5 @@ const QString& ctkEvent::topic() const
 
 bool ctkEvent::matches(const ctkLDAPSearchFilter& filter) const
 {
-  Q_UNUSED(filter)
-  // TODO
-  return true;
+  return filter.matchCase(d->properties);
 }

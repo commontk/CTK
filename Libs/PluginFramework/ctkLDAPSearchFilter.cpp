@@ -21,22 +21,23 @@
 
 #include "ctkLDAPSearchFilter.h"
 
+#include "ctkLDAPExpr.h"
+
 
 class ctkLDAPSearchFilterPrivate {
 public:
 
-  ctkLDAPSearchFilterPrivate()
-    : ref(1)
+  ctkLDAPSearchFilterPrivate(const QString& filter)
+    : ref(1), ldapExpr(filter)
   {}
 
   QAtomicInt ref;
-
+  ctkLDAPExpr ldapExpr;
 };
 
 ctkLDAPSearchFilter::ctkLDAPSearchFilter(const QString& filter)
-  : d(new ctkLDAPSearchFilterPrivate())
+  : d(new ctkLDAPSearchFilterPrivate(filter))
 {
-  Q_UNUSED(filter)
 }
 
 ctkLDAPSearchFilter::ctkLDAPSearchFilter(const ctkLDAPSearchFilter& filter)
@@ -53,21 +54,17 @@ ctkLDAPSearchFilter::~ctkLDAPSearchFilter()
 
 bool ctkLDAPSearchFilter::match(const Dictionary& dictionary) const
 {
-  Q_UNUSED(dictionary)
-  return true;
+  return d->ldapExpr.evaluate(dictionary, false);
 }
 
 bool ctkLDAPSearchFilter::matchCase(const Dictionary& dictionary) const
 {
-  Q_UNUSED(dictionary)
-  return true;
+  return d->ldapExpr.evaluate(dictionary, true);
 }
 
 bool ctkLDAPSearchFilter::operator==(const ctkLDAPSearchFilter& other) const
 {
-  // TODO
-  Q_UNUSED(other)
-  return true;
+  return d->ldapExpr.toString() == other.d->ldapExpr.toString();
 }
 
 ctkLDAPSearchFilter& ctkLDAPSearchFilter::operator=(const ctkLDAPSearchFilter& filter)
