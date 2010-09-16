@@ -8,10 +8,6 @@
 // CTKVTK includes
 #include "ctkVTKConnection.h"
 
-// STD includes
-#include <cstdlib>
-#include <iostream>
-
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkCommand.h>
@@ -19,6 +15,11 @@
 #include <vtkSmartPointer.h>
 #include <vtkTimerLog.h>
 
+// STD includes
+#include <cstdlib>
+#include <iostream>
+
+//-----------------------------------------------------------------------------
 void doit(vtkObject* vtkNotUsed(obj), unsigned long vtkNotUsed(event),
           void* client_data, void* vtkNotUsed(param))
 {
@@ -26,6 +27,7 @@ void doit(vtkObject* vtkNotUsed(obj), unsigned long vtkNotUsed(event),
   t->stop();
 }
 
+//-----------------------------------------------------------------------------
 int ctkVTKConnectionTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
@@ -138,10 +140,12 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
   obj4->Delete();
   obj5->Delete();
 
-  // Ideally a ratio ~= 1. but the ratio can be more in Debug mode... up to 2.
-  if (ratio > 2.)
+#ifdef QT_NO_DEBUG // In Debug mode, the ratio can be over 2 !
+  // Ideally a ratio ~= 1.
+  if (ratio > 1.2)
     {
     return EXIT_FAILURE;
     }
+#endif
   return EXIT_SUCCESS;
 }
