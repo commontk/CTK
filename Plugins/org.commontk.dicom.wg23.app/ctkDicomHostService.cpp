@@ -45,10 +45,13 @@ QString ctkDicomHostService::generateUID()
 
 QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProtocols)
 {
-  //Q_D(ctkDicomHostService);
+  Q_D(ctkDicomService);
 
-  Q_UNUSED(preferredProtocols)
-  return QString();
+  QtSoapStruct* input = dynamic_cast<QtSoapStruct*>(
+    new ctkDicomSoapArrayOfString("preferredProtocols", preferredProtocols));
+  const QtSoapType& result = d->askHost("getOutputLocation", input);
+  QString resultString = result.value().toString();
+  return resultString;
 }
 
 QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
@@ -65,6 +68,7 @@ QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 void ctkDicomHostService::notifyStateChanged(ctkDicomWG23::State state)
 {
   Q_D(ctkDicomService);
+
   QtSoapType* input = new ctkDicomSoapState("stateChanged", state);
   d->askHost("notifyStateChanged", input);
 }
@@ -72,6 +76,7 @@ void ctkDicomHostService::notifyStateChanged(ctkDicomWG23::State state)
 void ctkDicomHostService::notifyStatus(const ctkDicomWG23::Status& status)
 {
   Q_D(ctkDicomService);
+
   QtSoapStruct* input = new ctkDicomSoapStatus("status", status);
   d->askHost("notifyStatus", input);
 }
