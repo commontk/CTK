@@ -3,8 +3,10 @@
 
 #include <QProcess>
 #include <QtDebug>
+#include <QRect>
 
-ctkDicomExampleHost::ctkDicomExampleHost(QWidget* placeholderWidget, int hostPort, int appPort) :
+
+ctkDicomExampleHost::ctkDicomExampleHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
     placeholderWidget(placeholderWidget),
     applicationState(ctkDicomWG23::IDLE)
@@ -31,8 +33,9 @@ void ctkDicomExampleHost::StartApplication(QString AppPath){
 }
 
 QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){
-    qDebug()<< "set screen from preferredScreen:"<< preferredScreen;
-    QRect rect (preferredScreen);
+    qDebug()<< "Application asked for this area:"<< preferredScreen;
+
+    QRect rect (this->placeholderWidget->getAbsolutePosition());
     emit giveAvailableScreen(rect);
     return rect;
 }

@@ -2,6 +2,8 @@
 #define CTKDICOMEXAMPLEHOST_H
 
 #include <ctkDicomAbstractHost.h>
+#include <ctkHostedAppPlaceholderWidget.h>
+
 #include <org_commontk_dicom_examplehost_Export.h>
 
 #include <QUrl>
@@ -10,7 +12,7 @@
 class org_commontk_dicom_examplehost_EXPORT ctkDicomExampleHost : public ctkDicomAbstractHost{
     Q_OBJECT
 public:
-    ctkDicomExampleHost(QWidget* placeholderWidget, int hostPort = 8080, int appPort = 8081);
+    ctkDicomExampleHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort = 8080, int appPort = 8081);
 
     virtual void StartApplication(QString AppPath);
     virtual QString generateUID() { return ""; }
@@ -28,7 +30,7 @@ signals:
 
 protected:
     QProcess appProcess;
-    QWidget* placeholderWidget;
+    ctkHostedAppPlaceholderWidget* placeholderWidget;
     ctkDicomWG23::State applicationState;
 };
 
