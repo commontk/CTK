@@ -2,7 +2,7 @@
 
 Library: CTK
 
-Copyright (c) 2010 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Copyright (c) 2010 CISTIB - Universitat Pompeu Fabra
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,26 +19,20 @@ limitations under the License.
 =============================================================================*/
 
 
-#include "ctkModuleDescriptionReader.h"
+#include "ctkModuleDescriptionConverter.h"
 
-ctkModuleDescriptionReader::ctkModuleDescriptionReader() 
+ctkModuleDescriptionConverter::ctkModuleDescriptionConverter() 
 {
 
 }
 
-ctkModuleDescriptionReader::~ctkModuleDescriptionReader()
+ctkModuleDescriptionConverter::~ctkModuleDescriptionConverter()
 {
 
 }
 
-void ctkModuleDescriptionReader::setXmlContent( const QString &val )
+void ctkModuleDescriptionConverter::setModuleDescription( const ctkModuleDescription &val )
 {
-  this->XmlContent = val;
+  this->ModuleDescription = val;
 }
-
-const ctkModuleDescription &ctkModuleDescriptionReader::moduleDescription() const
-{
-  return this->ModuleDescription;
-}
-
 

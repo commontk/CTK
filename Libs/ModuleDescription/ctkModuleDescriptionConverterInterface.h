@@ -48,7 +48,7 @@ public:
   virtual void Update( ) = 0;
 
   //!
-  virtual const QVariant& GetOutput( ) = 0;
+  virtual const QVariant GetOutput( ) = 0;
 };
 
 #endif

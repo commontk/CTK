@@ -49,7 +49,7 @@ protected:
   ///
   QString XmlContent;
   ///
-  ctkModuleDescription Description;
+  ctkModuleDescription ModuleDescription;
 };
 
 #endif

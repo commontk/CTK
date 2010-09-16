@@ -4,13 +4,17 @@ SET(PLUGIN_export_directive "org_commontk_slicermodule_EXPORT")
 
 SET(PLUGIN_SRCS
   ctkSlicerModulePlugin.cpp
+  ctkSlicerModuleReader.h
   ctkSlicerModuleReader.cxx
+  ctkSlicerModuleStringConverter.h
+  ctkSlicerModuleStringConverter.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
   ctkSlicerModulePlugin_p.h
   ctkSlicerModuleReader.h
+  ctkSlicerModuleStringConverter.h
 )
 
 # Qt Designer files which should be processed by Qts uic

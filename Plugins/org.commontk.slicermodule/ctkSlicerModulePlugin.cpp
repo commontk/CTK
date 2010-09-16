@@ -21,6 +21,7 @@
 
 #include "ctkSlicerModulePlugin_p.h"
 #include "ctkSlicerModuleReader.h"
+#include "ctkSlicerModuleStringConverter.h"
 #include <QtPlugin>
 #include <QDebug>
 
@@ -45,6 +46,10 @@ void ctkSlicerModulePlugin::start(ctkPluginContext* context)
   context->registerService(QStringList("ctkModuleDescriptionReaderInterface"),
     this->reader);
 
+  this->stringConverter = new ctkSlicerModuleStringConverter( );
+  context->registerService(QStringList("ctkModuleDescriptionConverterInterface"),
+    this->stringConverter);
+
   qDebug() << "Registered Slicer Module Description";
 }
 
@@ -52,6 +57,10 @@ void ctkSlicerModulePlugin::stop(ctkPluginContext* context)
 {
   delete this->reader;
   this->reader = NULL;
+
+  delete this->stringConverter;
+  this->stringConverter = NULL;
+
   Q_UNUSED(context)
 }
 

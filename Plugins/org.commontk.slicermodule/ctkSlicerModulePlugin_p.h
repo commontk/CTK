@@ -25,6 +25,7 @@
 #include <ctkPluginActivator.h>
 
 class ctkModuleDescriptionReaderInterface;
+class ctkSlicerModuleStringConverter;
 
 class ctkSlicerModulePlugin :
   public QObject, public ctkPluginActivator
@@ -50,6 +51,7 @@ private:
   static ctkSlicerModulePlugin* instance;
   ctkPluginContext* context;
   ctkModuleDescriptionReaderInterface* reader;
+  ctkSlicerModuleStringConverter* stringConverter;
 
 
 }; // ctkSlicerModulePlugin

@@ -24,12 +24,17 @@
 #include "ctkPluginFramework.h"
 #include "ctkPluginException.h"
 #include "ctkModuleDescriptionReaderInterface.h"
+#include "ctkModuleDescriptionConverterInterface.h"
 #include "ctkCommandLineParser.h"
 
 // STD includes
 #include <iostream>
 
 #include "QFile"
+
+
+ctkModuleDescription ReadModuleDescription( ctkPluginContext* context, const QString &xmlFileName ) ;
+void BuildCommandLine( ctkPluginContext* context, const ctkModuleDescription& module ) ;
 
 
 //-----------------------------------------------------------------------------
@@ -74,30 +79,10 @@ int ctkSlicerModuleTest(int argc, char * argv [] )
 
     framework->start();
 
-    ctkServiceReference* serviceRef;
-    serviceRef = framework->getPluginContext()->getServiceReference( 
-      "ctkModuleDescriptionReaderInterface" );
+    ctkModuleDescription module;
+    module = ReadModuleDescription( framework->getPluginContext(), xmlFileName );
 
-    ctkModuleDescriptionReaderInterface* reader;
-    reader = qobject_cast<ctkModuleDescriptionReaderInterface*>
-      (framework->getPluginContext()->getService(serviceRef));
-
-
-    // Read file
-    QFile file( xmlFileName );
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-      std::cout << "XML file " << xmlFileName.toStdString( ) << " could not be opened." << endl;
-      return false;
-    }
-    QTextStream stream( &file );
-
-    // Parse XML file
-    reader->setXmlContent( stream.readAll() );
-    reader->Update();
-
-    // Print module description
-    QTextStream(stdout) << reader->moduleDescription( );
+    BuildCommandLine( framework->getPluginContext(), module );
 
   }
   catch (const ctkPluginException& e)
@@ -107,3 +92,53 @@ int ctkSlicerModuleTest(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
+
+
+
+ctkModuleDescription ReadModuleDescription( 
+    ctkPluginContext* context, const QString &xmlFileName )
+{
+
+  ctkServiceReference* serviceRef;
+  serviceRef = context->getServiceReference( 
+    "ctkModuleDescriptionReaderInterface" );
+
+  ctkModuleDescriptionReaderInterface* reader;
+  reader = qobject_cast<ctkModuleDescriptionReaderInterface*>
+    (context->getService(serviceRef));
+
+
+  // Read file
+  QFile file( xmlFileName );
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    std::cout << "XML file " << xmlFileName.toStdString( ) << " could not be opened." << endl;
+    exit(1);
+  }
+  QTextStream stream( &file );
+
+  // Parse XML file
+  reader->setXmlContent( stream.readAll() );
+  reader->Update();
+  QTextStream(stdout) << reader->moduleDescription( );
+
+  return reader->moduleDescription( );
+}
+
+void BuildCommandLine( ctkPluginContext* context, const ctkModuleDescription& module )
+{
+  ctkServiceReference* serviceRef;
+  serviceRef = context->getServiceReference( 
+    "ctkModuleDescriptionConverterInterface" );
+
+  ctkModuleDescriptionConverterInterface* converter;
+  converter = qobject_cast<ctkModuleDescriptionConverterInterface*>
+    (context->getService(serviceRef));
+
+  QStringList commandLineString;
+  converter->setModuleDescription( module );
+  converter->Update();
+  commandLineString = converter->GetOutput().toStringList();
+  QTextStream(stdout) << commandLineString;
+}
+
