@@ -45,5 +45,8 @@ void ctkDicomExampleHost::notifyStatus(const ctkDicomWG23::Status& status){
 
 ctkDicomExampleHost::~ctkDicomExampleHost()
 {
+  qDebug() << "Exiting host: trying to terminate app";
   this->appProcess.terminate();
+  qDebug() << "Exiting host: trying to kill app";
+  this->appProcess.kill();
 }

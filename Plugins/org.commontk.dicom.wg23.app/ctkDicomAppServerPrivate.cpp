@@ -49,7 +49,7 @@ void ctkDicomAppServerPrivate::incomingSoapMessage(const QtSoapMessage& message,
   const QtSoapType& method = message.method();
   QString methodName = method.name().name();
 
-  qDebug() << "Received soap method request: " << methodName;
+  qDebug() << "AppServer: Received soap method request: " << methodName;
 
   if(appInterface == NULL)
   {
@@ -91,7 +91,11 @@ void ctkDicomAppServerPrivate::processSetState(
     const QtSoapMessage &message, QtSoapMessage *reply)
 {
     const QtSoapType& stateType = message.method()["state"];
-    appInterface->setState(ctkDicomSoapState::getState(stateType));
+    bool result = appInterface->setState(ctkDicomSoapState::getState(stateType));
+  
+    reply->setMethod("SetState");
+    QtSoapType* stateLegal = new ctkDicomSoapBool("stateLegal",result);
+    reply->addMethodArgument(stateLegal);
 }
 
 void ctkDicomAppServerPrivate::processBringToFront(
@@ -100,5 +104,8 @@ void ctkDicomAppServerPrivate::processBringToFront(
    const QtSoapType& requestedScreenAreaType = message.method()["requestedScreenArea"];
    const QRect requestedScreenArea = ctkDicomSoapRectangle::getQRect(requestedScreenAreaType);
 
-   appInterface->bringToFront(requestedScreenArea);
+   reply->setMethod("bringToFront");
+   bool result = appInterface->bringToFront(requestedScreenArea);
+   QtSoapType* received = new ctkDicomSoapBool("received",result);
+   reply->addMethodArgument(received);
 }

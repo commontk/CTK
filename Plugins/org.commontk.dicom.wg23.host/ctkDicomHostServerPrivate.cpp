@@ -31,7 +31,6 @@
 ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port) :
     hostInterface(hostInterface), port(port)
 {
-
   connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));
 
@@ -47,7 +46,7 @@ void ctkDicomHostServerPrivate::incomingSoapMessage(
   const QtSoapType& method = message.method();
   QString methodName = method.name().name();
 
-  qDebug() << "Received soap method request: " << methodName;
+  qDebug() << "HostServer: Received soap method request: " << methodName;
 
   if (methodName == "getAvailableScreen")
   {
@@ -93,15 +92,15 @@ void ctkDicomHostServerPrivate::processGetAvailableScreen(
 void ctkDicomHostServerPrivate::processNotifyStateChanged(
     const QtSoapMessage &message, QtSoapMessage * /* reply */) const
 {
-    const QtSoapType& stateType = message.method()["state"];
-    hostInterface->notifyStateChanged(ctkDicomSoapState::getState(stateType));
+  const QtSoapType& stateType = message.method()["state"];
+  hostInterface->notifyStateChanged(ctkDicomSoapState::getState(stateType));
 }
 
 void ctkDicomHostServerPrivate::processNotifyStatus(
     const QtSoapMessage &message, QtSoapMessage * /* reply */) const
 {
-    const QtSoapType& status = message.method()["status"];
-    hostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(status));
+  const QtSoapType& status = message.method()["status"];
+  hostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(status));
 }
 
 void ctkDicomHostServerPrivate::processGenerateUID(

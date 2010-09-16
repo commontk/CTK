@@ -40,7 +40,7 @@ void ctkDicomServicePrivate::responseReady()
   blockingLoop.exit();
 }
 
-QtSoapType ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
+const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
 {
   qDebug() << "Submitting request " << methodName;
 
@@ -75,5 +75,11 @@ QtSoapType ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType
 
   qDebug() << "Response: " << response.toXmlString();
 
-  return response.returnValue();
+  const QtSoapType &returnValue = response.returnValue();
+
+  qDebug() << " Is returnValue valid:" << returnValue.isValid();
+  qDebug() << " Name of returnValue:" << returnValue.name().name();
+  qDebug() << " Value of returnValue:" << returnValue.value().toString();
+
+  return returnValue;
 }

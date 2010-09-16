@@ -35,7 +35,7 @@ class org_commontk_dicom_wg23_core_EXPORT ctkDicomServicePrivate : public QObjec
 public:
   ctkDicomServicePrivate(int port);
 
-  QtSoapType askHost(const QString& methodName, QtSoapType* soapStruct);
+  const QtSoapType & askHost(const QString& methodName, QtSoapType* soapStruct);
     
   QEventLoop blockingLoop;
   QtSoapHttpTransport http;
