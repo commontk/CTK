@@ -174,6 +174,30 @@ class ctkDicomSoapArrayOfString : public QtSoapArray{
 
 };
 
+//Not easy to template, will see later for other types
+class ctkDicomSoapArrayOfString : public QtSoapArray{
+    public:
+    ctkDicomSoapArrayOfString ( const QString & name, const QStringList array):
+            QtSoapArray ( QtSoapQName(name),QtSoapType::String,
+                          array.size()){
+
+        for (QStringList::ConstIterator it = array.constBegin();
+                it < array.constEnd(); it++){
+            this->append(new QtSoapSimpleType(QtSoapQName("string"),*it));
+        }
+    };
+
+    static QStringList* getArray(const QtSoapArray& array){
+        QStringList * list = new QStringList();
+        for (int i; i < array.count() ; i++ ){
+            const QString str = array.at(i).value().toString();
+            list->append( str);
+        }
+        return list;
+    };
+
+};
+
 
 
 #endif
