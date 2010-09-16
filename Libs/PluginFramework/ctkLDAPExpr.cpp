@@ -344,7 +344,7 @@ ctkLDAPExpr ctkLDAPExpr::parseSimple( ParseState &ps ) throw (std::invalid_argum
   return ctkLDAPExpr(op, attrName, attrValue);
 }
 
-const QString ctkLDAPExpr::toQString() const
+const QString ctkLDAPExpr::toString() const
 {
   QString res;
   res.append("(");
@@ -386,7 +386,7 @@ const QString ctkLDAPExpr::toQString() const
       break;
     }
     for (int i = 0; i < d->m_args.length( ); i++) {
-      res.append(d->m_args[i].toQString());
+      res.append(d->m_args[i].toString());
     }
   }
   res.append(")");

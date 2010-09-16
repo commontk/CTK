@@ -103,7 +103,7 @@ public:
   bool evaluate(const ctkDictionary &p, bool matchCase) const;
 
   //! 
-  const QString toQString() const;
+  const QString toString() const;
 
 
 private:
