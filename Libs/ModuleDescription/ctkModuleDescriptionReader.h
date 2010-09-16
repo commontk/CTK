@@ -21,8 +21,6 @@ limitations under the License.
 #ifndef __ctkModuleDescriptionReader_h
 #define __ctkModuleDescriptionReader_h
 
-#include <QString>
-
 #include "CTKModuleDescriptionExport.h"
 #include "ctkModuleDescriptionReaderInterface.h"
 

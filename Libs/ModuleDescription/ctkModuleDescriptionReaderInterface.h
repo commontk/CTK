@@ -33,8 +33,6 @@ class CTK_MODULDESC_EXPORT ctkModuleDescriptionReaderInterface : public QObject
 {
     Q_OBJECT
 public:
-  ctkModuleDescriptionReaderInterface(){};
-  ~ctkModuleDescriptionReaderInterface(){};
 
   //! xml is the content of the XML file
   virtual void setXmlContent(const QString &val) = 0;
@@ -43,7 +41,7 @@ public:
   virtual const ctkModuleDescription &moduleDescription() const = 0;
 
   //!
-  virtual void Update( ) = 0;
+  virtual void update( ) = 0;
 
 };
 

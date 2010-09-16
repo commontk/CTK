@@ -21,9 +21,12 @@
 #ifndef __ctkModuleDescription_h
 #define __ctkModuleDescription_h
 
-#include "QHash"
-#include "QIcon"
+// Qt includes
+#include <QHash>
+#include <QIcon>
+#include <QVector>
 
+// Module parameter
 #include "ctkModuleParameterGroup.h"
 
 /**
@@ -55,9 +58,8 @@ public:
 
   void operator=(const ctkModuleDescription &md);
 
-  
-  void setLogo(const QIcon& logo);
-  const QIcon& logo() const;
+  void setIcon(const QIcon& logo);
+  const QIcon& icon() const;
   
   void addParameterGroup(const ctkModuleParameterGroup &group);
 
@@ -88,13 +90,12 @@ public:
   /// geometry, etc.) are written to the file.
   bool writeParameterFile(const QString& filename, bool withHandlesToBulkParameters = true);
 
-
 private:
 
   /// Groups of parameters
   QVector<ctkModuleParameterGroup> ParameterGroups;
-  /// Logo
-  QIcon Logo;
+  /// Icon of the module
+  QIcon Icon;
 };
 
 CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module);

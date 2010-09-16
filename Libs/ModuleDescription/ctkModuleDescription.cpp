@@ -33,7 +33,7 @@ ctkModuleDescription::ctkModuleDescription(const ctkModuleDescription &md)
   : QHash<QString, QString>( QHash<QString, QString>( md ) )
 {
   this->ParameterGroups = md.ParameterGroups;
-  this->Logo = md.Logo;
+  this->Icon = md.Icon;
 }
 
 //----------------------------------------------------------------------------
@@ -41,18 +41,20 @@ void ctkModuleDescription::operator=(const ctkModuleDescription &md)
 {
  QHash<QString, QString>::operator=(md);
 	this->ParameterGroups = md.ParameterGroups;
-	this->Logo = md.Logo;
+	this->Icon = md.Icon;
 }
 
 //----------------------------------------------------------------------------
 QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module)
 {
   os << QHash<QString, QString>(module);
-  //os << "Logo: " << module.GetLogo() << endl;
+  //os << "Icon: " << module.icon() << endl;
 
   os << "ParameterGroups: " << endl;
   foreach( const ctkModuleParameterGroup& it, module.parameterGroups())
-  { os << it; }
+    {
+    os << it;
+    }
   return os;
 }
 
@@ -61,24 +63,12 @@ QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module)
 bool ctkModuleDescription::hasReturnParameters() const
 {
   // iterate over each parameter group
-  QVector<ctkModuleParameterGroup>::const_iterator pgbeginit
-    = this->ParameterGroups.begin();
-  QVector<ctkModuleParameterGroup>::const_iterator pgendit
-    = this->ParameterGroups.end();
-  QVector<ctkModuleParameterGroup>::const_iterator pgit;
-  
-  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+  foreach( const ctkModuleParameterGroup& group, this->ParameterGroups)
     {
     // iterate over each parameter in this group
-    QVector<ctkModuleParameter>::const_iterator pbeginit
-      = (*pgit).parameters().begin();
-    QVector<ctkModuleParameter>::const_iterator pendit
-      = (*pgit).parameters().end();
-    QVector<ctkModuleParameter>::const_iterator pit;
-
-    for (pit = pbeginit; pit != pendit; ++pit)
+    foreach( const ctkModuleParameter& param, group.parameters())
       {
-      if ((*pit).isReturnParameter())
+      if (param.isReturnParameter())
         {
         return true;
         }
@@ -91,12 +81,12 @@ bool ctkModuleDescription::hasReturnParameters() const
 //----------------------------------------------------------------------------
 bool ctkModuleDescription::setParameterDefaultValue(const QString& name, const QString& value)
 {
-  ctkModuleParameter* param = parameter( name );
+  ctkModuleParameter* param = this->parameter( name );
   if ( param )
-  {
+    {
     (*param)[ "Default" ] = value;
     return true;
-  }
+    }
 
   return false;
 }
@@ -129,20 +119,19 @@ ctkModuleParameter* ctkModuleDescription::parameter(const QString& name)
         }
       }    
     }
-
-  return NULL;
+  return 0;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription ::setLogo(const QIcon& logo)
+void ctkModuleDescription ::setIcon(const QIcon& logo)
 {
-  this->Logo = logo;
+  this->Icon = logo;
 }
 
 //----------------------------------------------------------------------------
-const QIcon& ctkModuleDescription::logo() const
+const QIcon& ctkModuleDescription::icon() const
 {
-  return this->Logo;
+  return this->Icon;
 }
 
 //----------------------------------------------------------------------------
@@ -169,9 +158,9 @@ bool ctkModuleDescription ::readParameterFile(const QString& filename)
     QStringList list = line.split( "=" );
     key = list[ 0 ].trimmed();
     if ( list.size() == 1 )
-    {
+      {
       continue;
-    }
+      }
     value = list[ 1 ].trimmed();
 
     
@@ -207,35 +196,23 @@ writeParameterFile(const QString& filename, bool withHandlesToBulkParameters)
 
   QTextStream in(&rtp);
   // iterate over each parameter group
-  QVector<ctkModuleParameterGroup>::const_iterator pgbeginit
-    = this->ParameterGroups.begin();
-  QVector<ctkModuleParameterGroup>::const_iterator pgendit
-    = this->ParameterGroups.end();
-  QVector<ctkModuleParameterGroup>::const_iterator pgit;
-  
-  for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+  foreach(const ctkModuleParameterGroup& group, this->ParameterGroups)
     {
     // iterate over each parameter in this group
-    QVector<ctkModuleParameter>::const_iterator pbeginit
-      = (*pgit).parameters().begin();
-    QVector<ctkModuleParameter>::const_iterator pendit
-      = (*pgit).parameters().end();
-    QVector<ctkModuleParameter>::const_iterator pit;
-
-    for (pit = pbeginit; pit != pendit; ++pit)
+    foreach(const ctkModuleParameter& param, group.parameters())
       {
       // write out all parameters or just the ones that are not bulk parameters
       if (withHandlesToBulkParameters
           || (!withHandlesToBulkParameters 
-              && ((*pit)[ "Tag" ] != "image"
-                  && (*pit)[ "Tag" ] != "geometry"
-                  && (*pit)[ "Tag" ] != "transform"
-                  && (*pit)[ "Tag" ] != "table"
-                  && (*pit)[ "Tag" ] != "measurement"
-                  && (*pit)[ "Tag" ] != "point"  // point and region are special
-                  && (*pit)[ "Tag" ] != "region")))
+              && (param[ "Tag" ] != "image"
+              && param[ "Tag" ] != "geometry"
+              && param[ "Tag" ] != "transform"
+              && param[ "Tag" ] != "table"
+              && param[ "Tag" ] != "measurement"
+              && param[ "Tag" ] != "point"  // point and region are special
+              && param[ "Tag" ] != "region")))
         {
-        in << (*pit)[ "Name" ] << " = " << (*pit)[ "Default" ] << endl;
+        in << param[ "Name" ] << " = " << param[ "Default" ] << endl;
 
         // multiple="true" may have to be handled differently
         }
@@ -245,21 +222,25 @@ writeParameterFile(const QString& filename, bool withHandlesToBulkParameters)
   return true;
 }
 
+//----------------------------------------------------------------------------
 void ctkModuleDescription::addParameterGroup( const ctkModuleParameterGroup &group )
 {
 	this->ParameterGroups.push_back(group);
 }
 
+//----------------------------------------------------------------------------
 const QVector<ctkModuleParameterGroup>& ctkModuleDescription::parameterGroups() const
 {
 	return this->ParameterGroups;
 }
 
+//----------------------------------------------------------------------------
 QVector<ctkModuleParameterGroup>& ctkModuleDescription::parameterGroups()
 {
 	return this->ParameterGroups;
 }
 
+//----------------------------------------------------------------------------
 void ctkModuleDescription::setParameterGroups( const QVector<ctkModuleParameterGroup>& groups )
 {
 	this->ParameterGroups = groups;

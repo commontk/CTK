@@ -38,7 +38,6 @@ class CTK_MODULDESC_EXPORT ctkModuleParameter : public QHash<QString, QString>
 {
 public:
   ctkModuleParameter();
-  virtual ~ctkModuleParameter() {}
   ctkModuleParameter(const ctkModuleParameter& parameter);
 
   /// Simple return types are parameters on output channel with no
@@ -50,11 +49,6 @@ public:
 
   /// Is an index type?
   virtual bool isIndexParameter() const;
-
-protected:
-
-  
-private:
 
 };
 

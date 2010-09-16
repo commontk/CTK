@@ -32,10 +32,10 @@
 class CTK_MODULDESC_EXPORT ctkModuleParameterGroup : public QHash<QString, QString>
 {
 public:
-  ctkModuleParameterGroup() {};
+  ctkModuleParameterGroup();
   ctkModuleParameterGroup(const ctkModuleParameterGroup &parameters);
 
-  void operator=(const ctkModuleParameterGroup &parameters);
+  //void operator=(const ctkModuleParameterGroup &parameters);
 
   void addParameter(const ctkModuleParameter &parameter);
 

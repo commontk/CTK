@@ -21,8 +21,8 @@ limitations under the License.
 #include "ctkSlicerModuleReader.h"
 #include <QtXml/QDomDocument>
 
-
-void ctkSlicerModuleReader::Update()
+// ----------------------------------------------------------------------------
+void ctkSlicerModuleReader::update()
 {
   QDomDocument domDocument;
   QString errorStr;

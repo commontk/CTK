@@ -21,13 +21,7 @@
 #ifndef __ctkSlicerModuleReader_h
 #define __ctkSlicerModuleReader_h
 
-#include <string>
-
 #include "ctkModuleDescriptionReader.h"
-
-class ModuleDescription;
-class ModuleParameterGroup;
-
 
 /**
  * Reader of Slicer Module XML description
@@ -37,10 +31,7 @@ class ctkSlicerModuleReader : public ctkModuleDescriptionReader
 {
   Q_OBJECT
 public:
-  ctkSlicerModuleReader() {};
-  ~ctkSlicerModuleReader() {};
-
-  void Update( );
+  virtual void update();
 };
 
 #endif

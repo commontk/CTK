@@ -21,24 +21,26 @@ limitations under the License.
 
 #include "ctkModuleDescriptionReader.h"
 
+//----------------------------------------------------------------------------
 ctkModuleDescriptionReader::ctkModuleDescriptionReader() 
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkModuleDescriptionReader::~ctkModuleDescriptionReader()
 {
 
 }
 
+//----------------------------------------------------------------------------
 void ctkModuleDescriptionReader::setXmlContent( const QString &val )
 {
   this->XmlContent = val;
 }
 
+//----------------------------------------------------------------------------
 const ctkModuleDescription &ctkModuleDescriptionReader::moduleDescription() const
 {
   return this->ModuleDescription;
 }
-
-

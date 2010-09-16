@@ -20,6 +20,12 @@ limitations under the License.
 
 #include "ctkModuleParameterGroup.h"
 
+//----------------------------------------------------------------------------
+ctkModuleParameterGroup::ctkModuleParameterGroup()
+{
+}
+
+//----------------------------------------------------------------------------
 ctkModuleParameterGroup
 ::ctkModuleParameterGroup(const ctkModuleParameterGroup &parameters)
   : QHash<QString, QString>( QHash<QString, QString>( parameters ) )
@@ -27,29 +33,35 @@ ctkModuleParameterGroup
   this->Parameters = parameters.Parameters;
 }
 
-void
-ctkModuleParameterGroup
+//----------------------------------------------------------------------------
+/* this is done automatically no?
+void ctkModuleParameterGroup
 ::operator=(const ctkModuleParameterGroup &parameters)
 {
   QHash<QString, QString>::operator=(parameters);
   this->Parameters = parameters.Parameters;
 }
+*/
 
+//----------------------------------------------------------------------------
 void ctkModuleParameterGroup::addParameter( const ctkModuleParameter &parameter )
 {
   this->Parameters.push_back(parameter);
 }
 
+//----------------------------------------------------------------------------
 const QVector<ctkModuleParameter>& ctkModuleParameterGroup::parameters() const
 {
   return this->Parameters;
 }
 
+//----------------------------------------------------------------------------
 QVector<ctkModuleParameter>& ctkModuleParameterGroup::parameters()
 {
   return this->Parameters;
 }
 
+//----------------------------------------------------------------------------
 QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup &group)
 { 
   os << QHash<QString, QString>(group);

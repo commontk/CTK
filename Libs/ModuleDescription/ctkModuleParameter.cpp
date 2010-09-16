@@ -21,15 +21,18 @@ limitations under the License.
 #include "ctkModuleParameter.h"
 #include "QStringList"
 
+//----------------------------------------------------------------------------
 ctkModuleParameter::ctkModuleParameter()
 {
 }
 
+//----------------------------------------------------------------------------
 ctkModuleParameter::ctkModuleParameter(const ctkModuleParameter& parameter)
   : QHash<QString, QString>( QHash<QString, QString>( parameter ) )
 {
 }
 
+//----------------------------------------------------------------------------
 bool ctkModuleParameter::isReturnParameter() const
 {
   // could check for tag == float, int, float-vector, ...
@@ -41,11 +44,13 @@ bool ctkModuleParameter::isReturnParameter() const
   return false;
 }
 
+//----------------------------------------------------------------------------
 bool ctkModuleParameter::isFlagParameter() const
 {
   return ((*this)["Flag"] != "" || (*this)[ "LongFlag" ] != "");
 }
 
+//----------------------------------------------------------------------------
 bool ctkModuleParameter::isIndexParameter() const
 {
   return ((*this)[ "Index" ] != "");
@@ -82,33 +87,21 @@ QTextStream & operator<<(QTextStream &os, const ctkModuleParameter &parameter)
 
 //----------------------------------------------------------------------------
 QTextStream & operator<<(QTextStream &os, const QStringList &list)
-{ 
-  QStringList::const_iterator fit;  
-
-  for (fit = list.begin();fit != list.end(); ++fit)
-  {
-    if (fit != list.begin())
-    {
-      os << ", ";
-    }
-    os << (*fit);
-  }
-  os << endl;
-
+{
+  os << list.join(", ") << endl;
   return os;
 }
-
 
 //----------------------------------------------------------------------------
 QTextStream & operator<<(QTextStream &os, const QHash<QString, QString> &hash)
 { 
   QHash<QString,QString>::const_iterator itProp;
   for ( itProp = hash.begin( ) ; 
-    itProp != hash.end( ) ; 
-    itProp++ )
-  {
-    os << QString( itProp.key( ) + ": " + itProp.value( ) ) << endl;
-  }
+        itProp != hash.end( ) ; 
+        itProp++ )
+    {
+    os << itProp.key( ) << ": " << itProp.value( ) << endl;
+    }
 
   return os;
 }
