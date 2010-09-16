@@ -26,7 +26,8 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
 
 ctkHostAppExampleWidget::~ctkHostAppExampleWidget()
 {
-    delete ui;
+  delete host;
+  delete ui;
 }
 
 void ctkHostAppExampleWidget::startButtonClicked()

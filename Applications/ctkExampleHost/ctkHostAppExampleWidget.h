@@ -19,7 +19,7 @@ public:
     explicit ctkHostAppExampleWidget(QWidget *parent = 0);
     void setAppFileName(QString name);
 
-    ~ctkHostAppExampleWidget();
+    virtual ~ctkHostAppExampleWidget();
 public slots:
     void loadButtonClicked();
     void startButtonClicked();
