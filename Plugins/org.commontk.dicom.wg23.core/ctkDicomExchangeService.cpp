@@ -46,11 +46,21 @@ bool ctkDicomExchangeService::notifyDataAvailable(
     return ctkDicomSoapBool::getBool(result);
 }
 
+
+
 QList<ctkDicomWG23::ObjectLocator> ctkDicomExchangeService::getData(
         QList<QUuid> objectUUIDs,
         QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData){
-    QList<ctkDicomWG23::ObjectLocator> ol;
-    return ol;
+
+    //Q_D(ctkDicomService);
+    QList<QtSoapType*> list;
+
+    list << new ctkDicomSoapArrayOfUUIDS("objectUUIDS",objectUUIDs);
+    list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxUIDs", acceptableTransferSyntaxUIDs);
+    list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
+    const QtSoapType & result = d->askHost("getData",list);
+    QList<ctkDicomWG23::ObjectLocator>t;
+    return t;//ctkDicomSoapObjectLocator::getArrayOfObjectLocator(result);
 }
 
 void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs){

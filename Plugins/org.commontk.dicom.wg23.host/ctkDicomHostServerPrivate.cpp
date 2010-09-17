@@ -117,7 +117,7 @@ void ctkDicomHostServerPrivate::processGetOutputLocation(
   const QtSoapMessage& message, QtSoapMessage* reply) const
 {
   const QtSoapType& inputType = message.method()["preferredProtocols"];
-  const QStringList* preferredProtocols = ctkDicomSoapArrayOfString::getArray(
+  const QStringList* preferredProtocols = ctkDicomSoapArrayOfStringType::getArray(
     dynamic_cast<const QtSoapArray&>(inputType));
 
   const QString result = hostInterface->getOutputLocation(*preferredProtocols);

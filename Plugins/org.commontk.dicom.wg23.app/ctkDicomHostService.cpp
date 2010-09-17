@@ -48,7 +48,7 @@ QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProto
   //Q_D(ctkDicomHostService);
 
   QtSoapStruct* input = dynamic_cast<QtSoapStruct*>(
-    new ctkDicomSoapArrayOfString("preferredProtocols", preferredProtocols));
+    new ctkDicomSoapArrayOfStringType("string","preferredProtocols", preferredProtocols));
   const QtSoapType& result = d->askHost("getOutputLocation", input);
   QString resultString = result.value().toString();
   return resultString;
