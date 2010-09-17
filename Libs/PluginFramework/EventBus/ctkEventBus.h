@@ -3,10 +3,7 @@
 
 #include "ctkEvent.h"
 
-<<<<<<< Updated upstream
 
-class ctkEventBus {
-=======
 /**
  * The Event Bus service. Plugins wishing to publish events can either
  * obtain the Event Bus service and call one of the event delivery methods
@@ -14,7 +11,6 @@ class ctkEventBus {
  *
  */
 class CTK_PLUGINFW_EXPORT ctkEventBus {
->>>>>>> Stashed changes
 
 public:
 
@@ -40,9 +36,6 @@ public:
    */
   virtual void sendEvent(const ctkEvent& event) = 0;
 
-<<<<<<< Updated upstream
-  virtual void publishSignal(const QObject* publisher, const char* signal) = 0;
-=======
   /**
    * Publish (register) a Qt signal for event delivery. Emitting the signal
    * has the same effect as calling postEvent() if <code>type</code> is
@@ -90,7 +83,6 @@ public:
    * @return Returns an id which can be used to update the properties.
    */
   virtual QString subscribeSlot(const QObject* subscriber, const char* member, const ctkProperties& properties) = 0;
->>>>>>> Stashed changes
 
   /**
    * Updates the properties of a previously registered slot. This can be used
