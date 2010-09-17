@@ -19,38 +19,34 @@
 
 =============================================================================*/
 
+#ifndef CTKEXCHANGESOAPMESSAGEPROCESSOR_H
+#define CTKEXCHANGESOAPMESSAGEPROCESSOR_H
 
-#ifndef CTKDICOMAPPSERVERPRIVATE_H
-#define CTKDICOMAPPSERVERPRIVATE_H
+#include "ctkSoapMessageProcessor.h"
+#include "ctkDicomExchangeInterface.h"
 
-#include <QObject>
-#include <QtSoapMessage>
-
-#include <ctkSimpleSoapServer.h>
-#include <ctkSoapMessageProcessorList.h>
-
-class ctkDicomAppInterface;
-
-class ctkDicomAppServerPrivate : public QObject
+class ctkExchangeSoapMessageProcessor : public ctkSoapMessageProcessor
 {
-  Q_OBJECT
 
 public:
-  ctkDicomAppServerPrivate(int port);
 
-  ctkSimpleSoapServer server;
-  int port;
+  ctkExchangeSoapMessageProcessor( ctkDicomExchangeInterface* inter );
 
-public slots:
-
-  void incomingSoapMessage(const QtSoapMessage& message,
-                           QtSoapMessage* reply);
-
+  bool process(
+    const QtSoapMessage& message,
+    QtSoapMessage* reply) const;
+    
 private:
 
-  ctkSoapMessageProcessorList processors;
-  ctkDicomAppInterface* appInterface;
+  void processNotifyDataAvailable(const QtSoapMessage& message,
+                       QtSoapMessage* reply) const;
+  void processGetData(const QtSoapMessage& message,
+                       QtSoapMessage* reply) const;
+  void processReleaseData(const QtSoapMessage& message,
+                           QtSoapMessage* reply) const;
+               
+  ctkDicomExchangeInterface* exchangeInterface;
 
 };
 
-#endif // CTKDICOMAPPSERVERPRIVATE_H
+#endif // CTKEXCHANGESOAPMESSAGEPROCESSOR_H

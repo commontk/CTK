@@ -19,38 +19,41 @@
 
 =============================================================================*/
 
+#ifndef CTKSOAPMESSAGEPROCESSOR_H
+#define CTKSOAPMESSAGEPROCESSOR_H
 
-#ifndef CTKDICOMAPPSERVERPRIVATE_H
-#define CTKDICOMAPPSERVERPRIVATE_H
+#include <qtsoap.h>
 
-#include <QObject>
-#include <QtSoapMessage>
+#include <org_commontk_dicom_wg23_core_Export.h>
 
-#include <ctkSimpleSoapServer.h>
-#include <ctkSoapMessageProcessorList.h>
-
-class ctkDicomAppInterface;
-
-class ctkDicomAppServerPrivate : public QObject
+class org_commontk_dicom_wg23_core_EXPORT ctkSoapMessageProcessor
 {
-  Q_OBJECT
 
 public:
-  ctkDicomAppServerPrivate(int port);
 
-  ctkSimpleSoapServer server;
-  int port;
-
-public slots:
-
-  void incomingSoapMessage(const QtSoapMessage& message,
-                           QtSoapMessage* reply);
-
-private:
-
-  ctkSoapMessageProcessorList processors;
-  ctkDicomAppInterface* appInterface;
+	/**
+	* Process a Soap Message and set the input reply.
+	* @input message The message to process.
+	* @input reply The reply to the input message.
+	* @return True if the message could be processed.
+	*/
+	virtual bool process( 
+		const QtSoapMessage& message,
+    QtSoapMessage* reply) const
+  {
+    // to implement
+    return false;
+  }
+		
+	bool operator==( const ctkSoapMessageProcessor& rhs )
+	{
+		if( this == &rhs )
+		{
+			return true;
+		}
+		return false;
+	}
 
 };
 
-#endif // CTKDICOMAPPSERVERPRIVATE_H
+#endif // CTKSOAPMESSAGEPROCESSOR_H

@@ -19,38 +19,33 @@
 
 =============================================================================*/
 
+#include "ctkSoapMessageProcessorList.h"
 
-#ifndef CTKDICOMAPPSERVERPRIVATE_H
-#define CTKDICOMAPPSERVERPRIVATE_H
-
-#include <QObject>
-#include <QtSoapMessage>
-
-#include <ctkSimpleSoapServer.h>
-#include <ctkSoapMessageProcessorList.h>
-
-class ctkDicomAppInterface;
-
-class ctkDicomAppServerPrivate : public QObject
+void ctkSoapMessageProcessorList::push_back( const ctkSoapMessageProcessor& processor )
 {
-  Q_OBJECT
+	processors.push_back( processor );
+}
 
-public:
-  ctkDicomAppServerPrivate(int port);
+void ctkSoapMessageProcessorList::remove( const ctkSoapMessageProcessor& processor )
+{
+	processors.remove( processor );
+}
 
-  ctkSimpleSoapServer server;
-  int port;
-
-public slots:
-
-  void incomingSoapMessage(const QtSoapMessage& message,
-                           QtSoapMessage* reply);
-
-private:
-
-  ctkSoapMessageProcessorList processors;
-  ctkDicomAppInterface* appInterface;
-
-};
-
-#endif // CTKDICOMAPPSERVERPRIVATE_H
+bool ctkSoapMessageProcessorList::process(
+	const QtSoapMessage& message,
+	QtSoapMessage* reply ) const
+{
+  for( std::list<ctkSoapMessageProcessor>::const_iterator it = processors.begin(); 
+    it != processors.end(); it++)
+	{
+		if( it->process( message, reply ) )
+		{
+			return true;
+		}
+	}
+	// if still here, no processor could process the message
+	reply->setFaultCode( QtSoapMessage::Server );
+    reply->setFaultString( "No processor found to process message." );
+	return false;
+}
+		

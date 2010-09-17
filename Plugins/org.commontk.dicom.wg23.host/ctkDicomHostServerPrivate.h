@@ -19,7 +19,6 @@
 
 =============================================================================*/
 
-
 #ifndef CTKDICOMHOSTSERVERPRIVATE_H
 #define CTKDICOMHOSTSERVERPRIVATE_H
 
@@ -27,6 +26,7 @@
 #include <QtSoapMessage>
 
 #include <ctkSimpleSoapServer.h>
+#include <ctkSoapMessageProcessorList.h>
 
 class ctkDicomHostInterface;
 
@@ -38,7 +38,6 @@ public:
   ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port);
 
   ctkSimpleSoapServer server;
-  ctkDicomHostInterface* hostInterface;
   int port;
 
 public slots:
@@ -48,16 +47,8 @@ public slots:
 
 private:
 
-  void processGetAvailableScreen(const QtSoapMessage& message,
-                                 QtSoapMessage* reply) const;
-  void processNotifyStateChanged(const QtSoapMessage& message,
-                                 QtSoapMessage* reply) const;
-  void processNotifyStatus(const QtSoapMessage& message,
-                                 QtSoapMessage* reply) const;
-  void processGenerateUID(const QtSoapMessage& message,
-                                 QtSoapMessage* reply) const;
-  void processGetOutputLocation(const QtSoapMessage& message,
-                                 QtSoapMessage* reply) const;
+  ctkSoapMessageProcessorList processors;
+  ctkDicomHostInterface* hostInterface;
 
 };
 

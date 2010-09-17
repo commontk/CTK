@@ -19,38 +19,31 @@
 
 =============================================================================*/
 
+#ifndef CTKSOAPMESSAGEPROCESSORLIST_H
+#define CTKSOAPMESSAGEPROCESSORLIST_H
 
-#ifndef CTKDICOMAPPSERVERPRIVATE_H
-#define CTKDICOMAPPSERVERPRIVATE_H
+#include <list>
+#include "ctkSoapMessageProcessor.h"
 
-#include <QObject>
-#include <QtSoapMessage>
+#include <org_commontk_dicom_wg23_core_Export.h>
 
-#include <ctkSimpleSoapServer.h>
-#include <ctkSoapMessageProcessorList.h>
-
-class ctkDicomAppInterface;
-
-class ctkDicomAppServerPrivate : public QObject
+class org_commontk_dicom_wg23_core_EXPORT ctkSoapMessageProcessorList : public ctkSoapMessageProcessor
 {
-  Q_OBJECT
 
 public:
-  ctkDicomAppServerPrivate(int port);
 
-  ctkSimpleSoapServer server;
-  int port;
+	void push_back( const ctkSoapMessageProcessor& processor );
 
-public slots:
-
-  void incomingSoapMessage(const QtSoapMessage& message,
-                           QtSoapMessage* reply);
-
+	void remove( const ctkSoapMessageProcessor& processor );
+	
+	bool process(
+		const QtSoapMessage& message,
+		QtSoapMessage* reply) const;
+		
 private:
 
-  ctkSoapMessageProcessorList processors;
-  ctkDicomAppInterface* appInterface;
+	std::list<ctkSoapMessageProcessor> processors;
 
 };
 
-#endif // CTKDICOMAPPSERVERPRIVATE_H
+#endif // CTKSOAPMESSAGEPROCESSORLIST_H

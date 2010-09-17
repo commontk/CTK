@@ -23,7 +23,9 @@ SET(PLUGIN_SRCS
   ctkDicomWG23Types.h
   ctkDicomWG23TypesHelper.h
   ctkDicomExchangeService.cpp
-  )
+  ctkSoapMessageProcessorList.cpp
+  ctkExchangeSoapMessageProcessor.cpp
+)
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS

@@ -28,6 +28,10 @@
 #include <stdexcept>
 #include <ctkDicomWG23TypesHelper.h>
 
+#include <ctkExchangeSoapMessageProcessor.h>
+#include "ctkHostSoapMessageProcessor.h"
+
+
 ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port) :
     hostInterface(hostInterface), port(port)
 {
@@ -38,91 +42,16 @@ ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* host
   {
     qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
   }
+
+  ctkHostSoapMessageProcessor hostProcessor( hostInterface );
+  processors.push_back(hostProcessor);
+  //ctkExchangeSoapMessageProcessor exchangeProcessor( hostInterface );
+  //processors.push_back(exchangeProcessor);
 }
 
 void ctkDicomHostServerPrivate::incomingSoapMessage(
   const QtSoapMessage& message, QtSoapMessage* reply)
 {
-  const QtSoapType& method = message.method();
-  QString methodName = method.name().name();
-
-  qDebug() << "HostServer: Received soap method request: " << methodName;
-
-  if (methodName == "getAvailableScreen")
-  {
-    processGetAvailableScreen(message, reply);
-  }
-  else if (methodName == "notifyStateChanged")
-  {
-    processNotifyStateChanged(message, reply);
-  }
-  else if (methodName == "notifyStatus")
-  {
-    processNotifyStatus(message, reply);
-  }
-  else if (methodName == "generateUID")
-  {
-    processGenerateUID(message, reply);
-  }
-  else if (methodName == "getOutputLocation")
-  {
-    processGetOutputLocation(message, reply);
-  }
-  else
-  {
-    // error
-    reply->setFaultCode( QtSoapMessage::Server );
-    reply->setFaultString( "Unknown method." );
-  }
+  processors.process(message, reply);
 }
 
-void ctkDicomHostServerPrivate::processGetAvailableScreen(
-    const QtSoapMessage &message, QtSoapMessage *reply) const
-{
-  const QtSoapType& preferredScreenType = message.method()["preferredScreen"];
-  const QRect preferredScreen = ctkDicomSoapRectangle::getQRect(preferredScreenType);
-
-  const QRect result = hostInterface->getAvailableScreen(preferredScreen);
-
-  reply->setMethod("getAvailableScreenResponse");
-  QtSoapStruct* availableScreenType = new ctkDicomSoapRectangle("availableScreen",result);
-  reply->addMethodArgument(availableScreenType);
-}
-
-void ctkDicomHostServerPrivate::processNotifyStateChanged(
-    const QtSoapMessage &message, QtSoapMessage * /* reply */) const
-{
-  const QtSoapType& stateType = message.method()["state"];
-  hostInterface->notifyStateChanged(ctkDicomSoapState::getState(stateType));
-}
-
-void ctkDicomHostServerPrivate::processNotifyStatus(
-    const QtSoapMessage &message, QtSoapMessage * /* reply */) const
-{
-  const QtSoapType& status = message.method()["status"];
-  hostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(status));
-}
-
-void ctkDicomHostServerPrivate::processGenerateUID(
-  const QtSoapMessage& message, QtSoapMessage* reply) const
-{
-  const QString uid = hostInterface->generateUID();
-
-  reply->setMethod("generateUID");
-  QtSoapType* type = new ctkDicomSoapUID("uid",uid);
-  reply->addMethodArgument(type);
-}
-
-void ctkDicomHostServerPrivate::processGetOutputLocation(
-  const QtSoapMessage& message, QtSoapMessage* reply) const
-{
-  const QtSoapType& inputType = message.method()["preferredProtocols"];
-  const QStringList* preferredProtocols = ctkDicomSoapArrayOfStringType::getArray(
-    dynamic_cast<const QtSoapArray&>(inputType));
-
-  const QString result = hostInterface->getOutputLocation(*preferredProtocols);
-
-  reply->setMethod("getOutputLocation");
-  QtSoapType* resultType = new QtSoapSimpleType ( QtSoapQName("preferredProtocols"), result );
-  reply->addMethodArgument(resultType);
-}
