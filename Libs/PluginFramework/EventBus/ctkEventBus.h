@@ -53,7 +53,8 @@ public:
 
   /**
    * Subsribe for (observe) events. The slot is called whenever an event is sent
-   * which matches the supplied properties.
+   * which matches the topic string and LDAP search expression contained
+   * in the properties.
    *
    * Slots should be registered with a property EventConstants::EVENT_TOPIC.
    * The value being a QString or QStringList object that describes which
