@@ -67,7 +67,7 @@ QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 
 void ctkDicomHostService::notifyStateChanged(ctkDicomWG23::State state)
 {
-  Q_D(ctkDicomService);
+  //Q_D(ctkDicomService);
 
   QtSoapType* input = new ctkDicomSoapState("state", state);
   d->askHost("notifyStateChanged", input);
