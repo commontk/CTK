@@ -76,6 +76,7 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
   if ( settings.value("ServerNodeCount").toInt() == 0 )
   {
     node["Name"] = "localhost";
+    node["CheckState"] = Qt::Checked;
     node["AETitle"] = "CTK_AE";
     node["Address"] = "localhost";
     node["Port"] = "11112";
@@ -91,6 +92,7 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
     node = settings.value(QString("ServerNodes/%1").arg(row)).toMap();
     QTableWidgetItem *newItem;
     newItem = new QTableWidgetItem( node["Name"].toString() );
+    newItem->setCheckState( Qt::CheckState(node["CheckState"].toInt()) );
     d->nodeTable->setItem(row, 0, newItem);
     newItem = new QTableWidgetItem( node["AETitle"].toString() );
     d->nodeTable->setItem(row, 1, newItem);
@@ -182,6 +184,7 @@ void ctkDICOMServerNodeWidget::saveSettings()
       {
         node[keys.at(k)] = d->nodeTable->item(row,k)->text();
       }
+      node["CheckState"] = d->nodeTable->item(row,0)->checkState();
       settings.setValue(QString("ServerNodes/%1").arg(row), QVariant(node));
     }
   }
