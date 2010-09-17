@@ -229,6 +229,7 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
 
 //------------------------------------------------------------------------------
 ctkDICOMRetrieve::ctkDICOMRetrieve()
+   : d_ptr(new ctkDICOMRetrievePrivate)
 {
 }
 

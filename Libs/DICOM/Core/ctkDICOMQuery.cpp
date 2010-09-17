@@ -91,6 +91,7 @@ ctkDICOMQueryPrivate::~ctkDICOMQueryPrivate()
 
 //------------------------------------------------------------------------------
 ctkDICOMQuery::ctkDICOMQuery()
+   : d_ptr(new ctkDICOMQueryPrivate)
 {
 }
 

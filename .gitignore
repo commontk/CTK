@@ -13,3 +13,6 @@
 
 # Exclude QtCreator files ...
 CMakeLists.txt.user
+
+# ignore ctags file
+tags

@@ -544,7 +544,11 @@ FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
     ADD_SUBDIRECTORY(Applications/${app})
   ENDIF()
 ENDFOREACH()
-ADD_SUBDIRECTORY(Applications/Testing)
+
+IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Applications/Testing)
+ENDIF(BUILD_TESTING)
+
 
 #-----------------------------------------------------------------------------
 # Add general purpose subdirectories

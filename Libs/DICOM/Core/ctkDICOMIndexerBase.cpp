@@ -81,6 +81,7 @@ ctkDICOMIndexerBasePrivate::~ctkDICOMIndexerBasePrivate()
 
 //------------------------------------------------------------------------------
 ctkDICOMIndexerBase::ctkDICOMIndexerBase()
+   : d_ptr(new ctkDICOMIndexerBasePrivate)
 {
 }
 
