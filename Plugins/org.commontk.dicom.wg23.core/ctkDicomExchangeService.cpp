@@ -48,7 +48,7 @@ bool ctkDicomExchangeService::notifyDataAvailable(
 
 
 
-QList<ctkDicomWG23::ObjectLocator> ctkDicomExchangeService::getData(
+QList<ctkDicomWG23::ObjectLocator>* ctkDicomExchangeService::getData(
         QList<QUuid> objectUUIDs,
         QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData){
 
@@ -59,8 +59,7 @@ QList<ctkDicomWG23::ObjectLocator> ctkDicomExchangeService::getData(
     list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxUIDs", acceptableTransferSyntaxUIDs);
     list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
     const QtSoapType & result = d->askHost("getData",list);
-    QList<ctkDicomWG23::ObjectLocator>t;
-    return t;//ctkDicomSoapObjectLocator::getArrayOfObjectLocator(result);
+    return ctkDicomSoapArrayOfObjectLocators::getArray(static_cast<const QtSoapArray &>(result));
 }
 
 void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs){

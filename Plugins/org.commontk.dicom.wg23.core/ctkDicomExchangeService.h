@@ -37,7 +37,7 @@ public:
   ~ctkDicomExchangeService();
 
   bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
-  QList<ctkDicomWG23::ObjectLocator> getData(QList<QUuid> objectUUIDs,
+  QList<ctkDicomWG23::ObjectLocator> *getData(QList<QUuid> objectUUIDs,
                                              QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData);
   void releaseData(QList<QUuid> objectUUIDs);
 

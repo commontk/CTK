@@ -475,4 +475,29 @@ public:
 };
 
 
+class ctkDicomSoapArrayOfObjectLocators : public QtSoapArray{
+    public:
+    ctkDicomSoapArrayOfObjectLocators ( const QString & name, const QList<ctkDicomWG23::ObjectLocator> &array):
+            QtSoapArray ( QtSoapQName(name),QtSoapType::String,
+                          array.size()){
+
+        for (QList<ctkDicomWG23::ObjectLocator>::ConstIterator it = array.constBegin();
+                it < array.constEnd(); it++){
+                    this->append(new ctkDicomSoapObjectLocator("objectLocator",(*it)));
+        }
+    };
+
+    static QList<ctkDicomWG23::ObjectLocator>* getArray(const QtSoapArray& array){
+        QList<ctkDicomWG23::ObjectLocator> * list = new QList<ctkDicomWG23::ObjectLocator>();
+
+        for (int i = 0; i < array.count() ; i++ ){
+            const ctkDicomWG23::ObjectLocator ol =
+                    ctkDicomSoapObjectLocator::getObjectLocator(array.at(i));
+            list->append(ol);
+        }
+        return list;
+    };
+
+};
+
 #endif

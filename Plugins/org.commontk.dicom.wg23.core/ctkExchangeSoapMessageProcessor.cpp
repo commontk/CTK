@@ -88,7 +88,7 @@ void ctkExchangeSoapMessageProcessor::processGetData(
   const QtSoapType& inputType3 = message.method()["includeBulkData"];
   const bool includeBulkData = ctkDicomSoapBool::getBool(inputType3);
   // query interface
-  const QList<ctkDicomWG23::ObjectLocator> result = exchangeInterface->getData(
+  const QList<ctkDicomWG23::ObjectLocator>* result = exchangeInterface->getData(
     *objectUUIDs, *acceptableTransferSyntaxUIDs, includeBulkData);
   // set reply message
   reply->setMethod("getData");
