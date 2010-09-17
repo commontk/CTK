@@ -26,10 +26,10 @@
 #include "ctkDicomWG23TypesHelper.h"
 
 ctkDicomHostService::ctkDicomHostService(ushort port):
-    ctkDicomExchangeService(port), d(new ctkDicomServicePrivate(port))
+    service(ctkDicomExchangeService(port)), d(new ctkDicomServicePrivate(port))
 {
-
 }
+
 ctkDicomHostService::~ctkDicomHostService()
 {
 }
@@ -78,4 +78,24 @@ void ctkDicomHostService::notifyStatus(const ctkDicomWG23::Status& status)
   //Q_D(ctkDicomService);
   QtSoapStruct* input = new ctkDicomSoapStatus("status", status);
   d->askHost("notifyStatus", input);
+}
+
+// Exchange methods
+
+bool ctkDicomHostService::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+{
+  return service.notifyDataAvailable(data, lastData);
+}
+
+QList<ctkDicomWG23::ObjectLocator>* ctkDicomHostService::getData(
+  QList<QUuid> objectUUIDs, 
+  QList<QString> acceptableTransferSyntaxUIDs, 
+  bool includeBulkData)
+{
+  return service.getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
+}
+
+void ctkDicomHostService::releaseData(QList<QUuid> objectUUIDs)
+{
+  service.releaseData(objectUUIDs);
 }

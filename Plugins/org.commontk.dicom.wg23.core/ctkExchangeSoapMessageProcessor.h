@@ -24,8 +24,9 @@
 
 #include "ctkSoapMessageProcessor.h"
 #include "ctkDicomExchangeInterface.h"
+#include <org_commontk_dicom_wg23_core_Export.h>
 
-class ctkExchangeSoapMessageProcessor : public ctkSoapMessageProcessor
+class org_commontk_dicom_wg23_core_EXPORT ctkExchangeSoapMessageProcessor : public ctkSoapMessageProcessor
 {
 
 public:

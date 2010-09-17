@@ -90,3 +90,19 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
     do_something();
   }
 }
+
+bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+{
+  return false;
+}
+
+QList<ctkDicomWG23::ObjectLocator>* ctkExampleDicomAppLogic::getData(
+  QList<QUuid> objectUUIDs, 
+  QList<QString> acceptableTransferSyntaxUIDs, 
+  bool includeBulkData)
+{
+  return NULL;
+}
+void ctkExampleDicomAppLogic::releaseData(QList<QUuid> objectUUIDs)
+{
+}

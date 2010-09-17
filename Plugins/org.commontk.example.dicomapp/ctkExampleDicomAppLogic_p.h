@@ -70,6 +70,12 @@ public:
   bool bringToFront(const QRect& requestedScreenArea);
 
   // ctkDicomExchangeInterface
+  bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
+  QList<ctkDicomWG23::ObjectLocator>* getData(
+    QList<QUuid> objectUUIDs, 
+    QList<QString> acceptableTransferSyntaxUIDs, 
+    bool includeBulkData);
+  void releaseData(QList<QUuid> objectUUIDs);
 
   // some logic
   void do_something();

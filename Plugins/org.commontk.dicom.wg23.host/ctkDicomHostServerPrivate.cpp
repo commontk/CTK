@@ -45,8 +45,8 @@ ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* host
 
   ctkHostSoapMessageProcessor* hostProcessor = new ctkHostSoapMessageProcessor( hostInterface );
   processors.push_back(hostProcessor);
-  //ctkExchangeSoapMessageProcessor exchangeProcessor( hostInterface );
-  //processors.push_back(exchangeProcessor);
+  ctkExchangeSoapMessageProcessor* exchangeProcessor = new ctkExchangeSoapMessageProcessor( hostInterface );
+  processors.push_back(exchangeProcessor);
 }
 
 void ctkDicomHostServerPrivate::incomingSoapMessage(

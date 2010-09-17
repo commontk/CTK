@@ -31,7 +31,7 @@
 
 #include <org_commontk_dicom_wg23_core_Export.h>
 
-class org_commontk_dicom_wg23_core_EXPORT ctkDicomAppInterface : public QObject
+class org_commontk_dicom_wg23_core_EXPORT ctkDicomAppInterface : public ctkDicomExchangeInterface
 {
   Q_OBJECT
 
@@ -43,7 +43,7 @@ public:
   virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
 
   // Data exchange interface methods
-  // ...
+  // inherited from ctkDicomExchangeInterface
 
 };
 

@@ -63,8 +63,8 @@ void ctkDicomAppServerPrivate::incomingSoapMessage(
     
     ctkAppSoapMessageProcessor* appProcessor = new ctkAppSoapMessageProcessor( appInterface );
     processors.push_back(appProcessor);
-    //ctkExchangeSoapMessageProcessor exchangeProcessor( appInterface );
-    //processors.push_back(exchangeProcessor);
+    ctkExchangeSoapMessageProcessor* exchangeProcessor = new ctkExchangeSoapMessageProcessor( appInterface );
+    processors.push_back(exchangeProcessor);
   }
   
   processors.process(message, reply);

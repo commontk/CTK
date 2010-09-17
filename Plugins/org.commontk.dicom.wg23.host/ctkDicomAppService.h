@@ -27,9 +27,7 @@
 #include <ctkDicomExchangeService.h>
 #include <org_commontk_dicom_wg23_host_Export.h>
 
-
-class org_commontk_dicom_wg23_host_EXPORT ctkDicomAppService : public ctkDicomExchangeService,
-                                                               public ctkDicomAppInterface
+class org_commontk_dicom_wg23_host_EXPORT ctkDicomAppService : public ctkDicomAppInterface
 {
 
 public:
@@ -40,8 +38,18 @@ public:
   bool setState(ctkDicomWG23::State newState);
   bool bringToFront(const QRect& requestedScreenArea);
 
+  // Exchange methods
+  bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
+  QList<ctkDicomWG23::ObjectLocator>* getData(
+    QList<QUuid> objectUUIDs, 
+    QList<QString> acceptableTransferSyntaxUIDs, 
+    bool includeBulkData);
+  void releaseData(QList<QUuid> objectUUIDs);
+
 private:
   ctkDicomServicePrivate * d;
+
+  ctkDicomExchangeService service;
 };
 
 #endif // CTKDICOMAPPSERVICE_H

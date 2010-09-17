@@ -26,10 +26,10 @@
 #include "ctkDicomWG23TypesHelper.h"
 
 ctkDicomAppService::ctkDicomAppService(ushort port):
-  ctkDicomExchangeService(port), d(new ctkDicomServicePrivate(port))
+  service(ctkDicomExchangeService(port)), d(new ctkDicomServicePrivate(port))
 {
-
 }
+
 ctkDicomAppService::~ctkDicomAppService()
 {
 }
@@ -56,4 +56,24 @@ bool ctkDicomAppService::bringToFront(const QRect& requestedScreenArea)
   QtSoapType* input = new ctkDicomSoapRectangle("requestedScreenArea", requestedScreenArea);
   const QtSoapType & result = d->askHost("bringToFront", input);
   return ctkDicomSoapBool::getBool(result);
+}
+
+// Exchange methods
+
+bool ctkDicomAppService::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+{
+  return service.notifyDataAvailable(data, lastData);
+}
+
+QList<ctkDicomWG23::ObjectLocator>* ctkDicomAppService::getData(
+  QList<QUuid> objectUUIDs, 
+  QList<QString> acceptableTransferSyntaxUIDs, 
+  bool includeBulkData)
+{
+  return service.getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
+}
+
+void ctkDicomAppService::releaseData(QList<QUuid> objectUUIDs)
+{
+  service.releaseData(objectUUIDs);
 }
