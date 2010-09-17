@@ -71,7 +71,7 @@ void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
   bool result = exchangeInterface->notifyDataAvailable(data, lastData);
   // set reply message
   reply->setMethod("notifyDataAvailable");
-  QtSoapType* resultType = new ctkDicomSoapBool("stateLegal",result);
+  QtSoapType* resultType = new ctkDicomSoapBool("dataAvailable",result);
   reply->addMethodArgument(resultType);
 }
 
@@ -92,7 +92,7 @@ void ctkExchangeSoapMessageProcessor::processGetData(
     *objectUUIDs, *acceptableTransferSyntaxUIDs, includeBulkData);
   // set reply message
   reply->setMethod("getData");
-  QtSoapType* resultType;
+  QtSoapType* resultType = new ctkDicomSoapArrayOfObjectLocators("arrayOfObjectLocator", *result);
   reply->addMethodArgument(resultType);
 }
 
