@@ -40,6 +40,10 @@ int main(int argc, char** argv)
   ctkLogger::configure();
   QApplication app(argc, argv);
 
+  app.setOrganizationName("commontk");
+  app.setOrganizationDomain("commontk.org");
+  app.setApplicationName("ctkDICOM");
+
   // set up the database 
   const char *datbaseFileName = "/tmp/test.db";
   const char *datbaseScriptFileName = "/Users/pieper/ctk/latest/CTK/Libs/DICOM/Core/Resources/dicom-sample.sql";

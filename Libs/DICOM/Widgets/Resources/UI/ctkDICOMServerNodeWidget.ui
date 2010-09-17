@@ -38,11 +38,18 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QTableWidget" name="nodeTable">
-         <row>
-          <property name="text">
-           <string>Localhost</string>
-          </property>
-         </row>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>Name</string>
@@ -58,10 +65,12 @@
            <string>Address</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>Port</string>
+          </property>
+         </column>
         </widget>
-       </item>
-       <item>
-        <widget class="QListView" name="listView"/>
        </item>
       </layout>
      </widget>
@@ -79,7 +88,7 @@
       <item>
        <widget class="QPushButton" name="addButton">
         <property name="text">
-         <string>Add</string>
+         <string>Add...</string>
         </property>
        </widget>
       </item>

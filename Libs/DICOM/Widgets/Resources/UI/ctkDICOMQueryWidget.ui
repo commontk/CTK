@@ -158,10 +158,38 @@
              </widget>
             </item>
             <item>
-             <widget class="QDateTimeEdit" name="dateTimeEdit"/>
+             <widget class="QDateTimeEdit" name="dateTimeEdit">
+              <property name="date">
+               <date>
+                <year>2010</year>
+                <month>1</month>
+                <day>1</day>
+               </date>
+              </property>
+              <property name="displayFormat">
+               <string>MMM/dd/yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item>
-             <widget class="QDateTimeEdit" name="dateTimeEdit_2"/>
+             <widget class="QDateTimeEdit" name="dateTimeEdit_2">
+              <property name="date">
+               <date>
+                <year>2010</year>
+                <month>12</month>
+                <day>31</day>
+               </date>
+              </property>
+              <property name="displayFormat">
+               <string>MMM/dd/yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>

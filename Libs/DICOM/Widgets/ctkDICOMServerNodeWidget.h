@@ -26,6 +26,7 @@
 
 #include "CTKDICOMWidgetsExport.h"
 
+class QTableWidgetItem;
 class ctkDICOMServerNodeWidgetPrivate;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMServerNodeWidget : public QWidget
@@ -42,7 +43,10 @@ public:
 
 public slots:
   void addNode ();
-  void updateState (int row, int column);
+  void removeNode ();
+  void onCellChanged (int row, int column);
+  void onCurrentItemChanged(QTableWidgetItem* current, QTableWidgetItem *previous);
+  void saveSettings ();
 
 protected:
   QScopedPointer<ctkDICOMServerNodeWidgetPrivate> d_ptr;
