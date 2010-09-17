@@ -58,14 +58,14 @@ public:
    * Slots should be registered with a property EventConstants::EVENT_TOPIC.
    * The value being a QString or QStringList object that describes which
    * topics the slot is interested in. A wildcard (’*’ \u002A) may be used as
-   * the last token of a topic name, for example com/action/*. This matches any
-   * topic that shares the same first tokens. For example, com/action/* matches
+   * the last token of a topic name, for example com/action&#47*. This matches any
+   * topic that shares the same first tokens. For example, com/action&#47* matches
    * com/action/listen. Slot which have not been specified with the EVENT_TOPIC
    * property must not receive events.
    * The value of each entry in the EVENT_TOPIC property must conform to the
    * following grammar:
    * \verbatim
-   * topic-scope ::= ’*’ | ( topic ’/*’ ? )
+   * topic-scope ::= ’*’ | ( topic ’&#47*’ ? )
    * \endverbatim
    *
    * Slots can also be registered with a property named EventConstants::EVENT_FILTER.
