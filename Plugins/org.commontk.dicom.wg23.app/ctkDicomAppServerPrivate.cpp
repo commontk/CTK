@@ -61,7 +61,7 @@ void ctkDicomAppServerPrivate::incomingSoapMessage(
     }
     appInterface = qobject_cast<ctkDicomAppInterface*>(context->getService(serviceRef));
     
-    ctkAppSoapMessageProcessor appProcessor( appInterface );
+    ctkAppSoapMessageProcessor* appProcessor = new ctkAppSoapMessageProcessor( appInterface );
     processors.push_back(appProcessor);
     //ctkExchangeSoapMessageProcessor exchangeProcessor( appInterface );
     //processors.push_back(exchangeProcessor);

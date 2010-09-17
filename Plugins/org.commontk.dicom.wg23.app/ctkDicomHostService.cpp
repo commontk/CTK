@@ -26,7 +26,7 @@
 #include "ctkDicomWG23TypesHelper.h"
 
 ctkDicomHostService::ctkDicomHostService(ushort port):
-    ctkDicomExchangeService(port)
+    ctkDicomExchangeService(port), d(new ctkDicomServicePrivate(port))
 {
 
 }

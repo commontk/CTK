@@ -32,17 +32,15 @@ class org_commontk_dicom_wg23_core_EXPORT ctkSoapMessageProcessorList : public c
 
 public:
 
-	void push_back( const ctkSoapMessageProcessor& processor );
+	void push_back( ctkSoapMessageProcessor* processor );
 
-	void remove( const ctkSoapMessageProcessor& processor );
-	
 	bool process(
 		const QtSoapMessage& message,
 		QtSoapMessage* reply) const;
 		
 private:
 
-	std::list<ctkSoapMessageProcessor> processors;
+	std::list<ctkSoapMessageProcessor*> processors;
 
 };
 

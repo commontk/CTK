@@ -43,7 +43,7 @@ ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* host
     qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
   }
 
-  ctkHostSoapMessageProcessor hostProcessor( hostInterface );
+  ctkHostSoapMessageProcessor* hostProcessor = new ctkHostSoapMessageProcessor( hostInterface );
   processors.push_back(hostProcessor);
   //ctkExchangeSoapMessageProcessor exchangeProcessor( hostInterface );
   //processors.push_back(exchangeProcessor);

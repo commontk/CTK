@@ -21,24 +21,19 @@
 
 #include "ctkSoapMessageProcessorList.h"
 
-void ctkSoapMessageProcessorList::push_back( const ctkSoapMessageProcessor& processor )
+void ctkSoapMessageProcessorList::push_back( ctkSoapMessageProcessor* processor )
 {
 	processors.push_back( processor );
-}
-
-void ctkSoapMessageProcessorList::remove( const ctkSoapMessageProcessor& processor )
-{
-	processors.remove( processor );
 }
 
 bool ctkSoapMessageProcessorList::process(
 	const QtSoapMessage& message,
 	QtSoapMessage* reply ) const
 {
-  for( std::list<ctkSoapMessageProcessor>::const_iterator it = processors.begin(); 
+  for( std::list<ctkSoapMessageProcessor*>::const_iterator it = processors.begin(); 
     it != processors.end(); it++)
 	{
-		if( it->process( message, reply ) )
+		if( (*it)->process( message, reply ) )
 		{
 			return true;
 		}
