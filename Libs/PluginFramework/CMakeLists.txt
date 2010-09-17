@@ -39,7 +39,6 @@ SET(KIT_export_directive "CTK_PLUGINFW_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
-  ${QTMOBILITY_INCLUDE_DIRS}
   )
   
 # Source files

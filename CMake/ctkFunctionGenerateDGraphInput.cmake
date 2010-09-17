@@ -78,8 +78,12 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories)
       # Make sure the variable is cleared
       SET(ctk_dependencies)
 
-      # filter dependencies starting with CTK
-      ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
+      IF(MY_WITH_EXTERNALS)
+        SET(ctk_dependencies ${dependencies})
+      ELSE()
+        # filter dependencies starting with CTK org org_commontk_
+        ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
+      ENDIF()
 
       IF(ctk_dependencies)
         LIST(APPEND vertices ${target_project_name})
@@ -104,8 +108,10 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories)
 
   SET(dgraph_list "${numberOfVertices} ${numberOfEdges}\n" ${dgraph_list})
 
-  IF(${with_option})
+  IF(MY_WITH_OPTION)
     SET(filename "${dir}/DGraphInput.txt")
+  ELSEIF(MY_WITH_EXTERNALS)
+    SET(filename "${dir}/DGraphInput-alldep-withext.txt")
   ELSE()
     SET(filename "${dir}/DGraphInput-alldep.txt")
   ENDIF()

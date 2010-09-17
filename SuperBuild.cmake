@@ -125,9 +125,16 @@ SET(external_projects
   )
 
 # Include external projects
+SET(dependency_args )
 FOREACH(p ${external_projects})
   INCLUDE(CMakeExternals/${p}.cmake)
+  IF(${p}_enabling_variable)
+    LIST(APPEND dependency_args 
+      "-D${${p}_enabling_variable}_INCLUDE_DIRS:STRING=${${${p}_enabling_variable}_INCLUDE_DIRS}")
+  ENDIF()
 ENDFOREACH()
+
+MESSAGE("Superbuild args: ${dependency_args}")
    
 #-----------------------------------------------------------------------------
 # CTK Utilities
@@ -235,6 +242,7 @@ ExternalProject_Add(${proj}
     -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR variable to be defined
     -DPYTHONQTGENERATOR_EXECUTABLE:FILEPATH=${PYTHONQTGENERATOR_EXECUTABLE} #FindPythonQtGenerator expects PYTHONQTGENERATOR_EXECUTABLE to be defined
     -DLog4Qt_DIR:PATH=${Log4Qt_DIR} # FindLog4Qt expects Log4Qt_DIR variable to be defined
+    ${dependency_args}
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
   BUILD_COMMAND ""

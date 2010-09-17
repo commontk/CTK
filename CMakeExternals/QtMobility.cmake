@@ -2,7 +2,8 @@
 # QtMobility
 #
 SET(QtMobility_DEPENDS)
-ctkMacroShouldAddExternalProject(QTMOBILITY_QTSERVICEFW_LIBRARIES add_project)
+SET(QtMobility_enabling_variable QTMOBILITY_QTSERVICEFW_LIBRARIES)
+ctkMacroShouldAddExternalProject(${QtMobility_enabling_variable} add_project)
 IF(${add_project})
   SET(proj QtMobility)
 #   MESSAGE(STATUS "Adding project:${proj}")
@@ -74,10 +75,10 @@ IF(${add_project})
   # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 
   IF(UNIX)
-    SET(QTMOBILITY_QTSERVICEFW_LIBRARIES_INCLUDE_DIRS 
-        "${CTK_BINARY_DIR}/../CMakeExternals/Source/QtMobility/install/include")
+    SET(${QtMobility_enabling_variable}_INCLUDE_DIRS 
+        "${CTK_BINARY_DIR}/CMakeExternals/Source/QtMobility/install/include")
   ELSE()
-    SET(QTMOBILITY_QTSERVICEFW_LIBRARIES_INCLUDE_DIRS
+    SET(${QtMobility_enabling_variable}_INCLUDE_DIRS
         "${qtmobility_win32_install_prefix}/include")
   ENDIF()
 	

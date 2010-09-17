@@ -90,7 +90,6 @@ MACRO(ctkMacroBuildPlugin)
   # --------------------------------------------------------------------------
   # Include dirs
   SET(my_includes
-    ${CTK_BASE_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MY_INCLUDE_DIRECTORIES}
@@ -99,11 +98,22 @@ MACRO(ctkMacroBuildPlugin)
   # Add the include directories from the plugin dependencies
   # The variable ${lib_name}_DEPENDENCIES is set in the
   # macro ctkMacroValidateBuildOptions
-  FOREACH(dep ${${lib_name}_DEPENDENCIES})
+  SET(ctk_deps )
+  SET(ext_deps )
+  ctkMacroGetAllCTKTargetLibraries("${${lib_name}_DEPENDENCIES}" ctk_deps)
+  ctkMacroGetAllNonCTKTargetLibraries("${${lib_name}_DEPENDENCIES}" ext_deps)
+
+  FOREACH(dep ${ctk_deps})
+    MESSAGE("Adding ctk include path for ${dep}")
     LIST(APPEND my_includes
          ${${dep}_SOURCE_DIR}
          ${${dep}_BINARY_DIR}
          )
+  ENDFOREACH()
+
+  FOREACH(dep ${ext_deps})
+MESSAGE("Adding ext include path for ${dep}: ${${dep}_INCLUDE_DIRS}")
+    LIST(APPEND my_includes ${${dep}_INCLUDE_DIRS})
   ENDFOREACH()
 
   LIST(REMOVE_DUPLICATES my_includes)

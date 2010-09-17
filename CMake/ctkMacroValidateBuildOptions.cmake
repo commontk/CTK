@@ -115,7 +115,7 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
       # Obtain dependency path
       ctkMacroSetPaths("${QT_INSTALLED_LIBRARY_DIR}")
       EXECUTE_PROCESS(
-        COMMAND "${executable}" "${CTK_BINARY_DIR}/DGraphInput-alldep.txt" -sort ${target_project_name}
+        COMMAND "${executable}" "${CTK_BINARY_DIR}/DGraphInput-alldep-withext.txt" -sort ${target_project_name}
         WORKING_DIRECTORY ${CTK_BINARY_DIR}
         RESULT_VARIABLE RESULT_VAR
         OUTPUT_VARIABLE dep_path
@@ -139,8 +139,10 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
 
       #MESSAGE("path for ${target_project_name} is: ${dep_path_list}")
         
-      # Check if all target included in the dependency path are enabled
-      FOREACH(dep ${dep_path_list})
+      # Check if all CTK targets included in the dependency path are enabled
+      SET(ctk_dep_path_list )
+      ctkMacroGetAllCTKTargetLibraries("${dep_path_list}" ctk_dep_path_list)
+      FOREACH(dep ${ctk_dep_path_list})
         ctkMacroGetOptionName("${target_directories_with_target_name}" ${dep} dep_option)
         IF(NOT ${${dep_option}})
           # Enable option

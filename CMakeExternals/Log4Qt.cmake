@@ -2,7 +2,8 @@
 # Log4Qt
 #
 SET(Log4Qt_DEPENDS)
-ctkMacroShouldAddExternalProject(Log4Qt_LIBRARIES add_project)
+SET(Log4Qt_enabling_variable Log4Qt_LIBRARIES)
+ctkMacroShouldAddExternalProject(${Log4Qt_enabling_variable} add_project)
 IF(${add_project})
 
   # Sanity checks
@@ -29,6 +30,7 @@ IF(${add_project})
         ${proj_DEPENDENCIES}
       )
     SET(Log4Qt_DIR ${ep_install_dir})
+    SET(Log4Qt_FOUND 1)
     
     # Since Log4Qt is statically build, there is not need to add its corresponding 
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
@@ -36,4 +38,12 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+
+  FIND_PACKAGE(Log4Qt)
+  IF(NOT Log4Qt_FOUND)
+    MESSAGE(FATAL_ERROR "error: Log4Qt package is required" )
+  ELSE()
+    SET(${Log4Qt_enabling_variable}_INCLUDE_DIRS ${Log4Qt_INCLUDE_DIR})
+  ENDIF()
+
 ENDIF()

@@ -423,7 +423,8 @@ MARK_AS_ADVANCED(DGraph_EXECUTABLE)
 #-----------------------------------------------------------------------------
 # Let's make sure the enabled/disabled libraries, plugins or applications are coherent
 #
-ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" FALSE)
+ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}")
+ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" WITH_EXTERNALS)
 ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${target_directories}")
 
 #-----------------------------------------------------------------------------
@@ -449,7 +450,7 @@ ENDIF()
 #
 
 # Generate DGraph input file expected by DGraph
-ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" TRUE)
+ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" WITH_OPTION)
 
 # Obtain list of target ordered topologically
 ctkMacroSetPaths("${QT_INSTALLED_LIBRARY_DIR}")

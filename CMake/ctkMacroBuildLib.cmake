@@ -47,15 +47,40 @@ MACRO(ctkMacroBuildLib)
   # --------------------------------------------------------------------------
   # Include dirs
   SET(my_includes
-    ${CTK_BASE_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     # with CMake >2.9, use QT4_MAKE_OUTPUT_FILE instead ?
     ${CMAKE_CURRENT_BINARY_DIR}/Resources/UI
     ${MY_INCLUDE_DIRECTORIES}
     )  
-  SET(CTK_BASE_INCLUDE_DIRS ${my_includes} CACHE INTERNAL "CTK includes" FORCE)
-  INCLUDE_DIRECTORIES(${CTK_BASE_INCLUDE_DIRS})
+
+  MESSAGE("setting up include dirs for ${lib_name}")
+
+  # Add the include directories from the library dependencies
+  # The variable ${lib_name}_DEPENDENCIES is set in the
+  # macro ctkMacroValidateBuildOptions
+  SET(ctk_deps )
+  SET(ext_deps )
+  ctkMacroGetAllCTKTargetLibraries("${${lib_name}_DEPENDENCIES}" ctk_deps)
+  ctkMacroGetAllNonCTKTargetLibraries("${${lib_name}_DEPENDENCIES}" ext_deps)
+
+  FOREACH(dep ${ctk_deps})
+    LIST(APPEND my_includes
+         ${${dep}_SOURCE_DIR}
+         ${${dep}_BINARY_DIR}
+         )
+  ENDFOREACH()
+
+  FOREACH(dep ${ext_deps})
+    LIST(APPEND my_includes ${${dep}_INCLUDE_DIRS})
+  ENDFOREACH()
+
+  LIST(REMOVE_DUPLICATES my_includes)
+
+  INCLUDE_DIRECTORIES(
+    ${my_includes}
+    )
+
 
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${MY_EXPORT_DIRECTIVE})
   SET(MY_EXPORT_HEADER_PREFIX ${MY_NAME})
