@@ -71,3 +71,19 @@ void ctkDicomExampleHost::forwardConsoleOutput()
     std::cout << line.toStdString();
   }
 }
+
+bool ctkDicomExampleHost::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+{
+  return false;
+}
+
+QList<ctkDicomWG23::ObjectLocator>* ctkDicomExampleHost::getData(
+  QList<QUuid> objectUUIDs, 
+  QList<QString> acceptableTransferSyntaxUIDs, 
+  bool includeBulkData)
+{
+  return NULL;
+}
+void ctkDicomExampleHost::releaseData(QList<QUuid> objectUUIDs)
+{
+}

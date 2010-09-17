@@ -31,7 +31,7 @@
 
 #include <org_commontk_dicom_wg23_core_Export.h>
 
-class org_commontk_dicom_wg23_core_EXPORT ctkDicomHostInterface : public ctkDicomExchangeInterface
+class org_commontk_dicom_wg23_core_EXPORT ctkDicomHostInterface: public ctkDicomExchangeInterface
 {
   Q_OBJECT
 
@@ -45,7 +45,7 @@ public:
   virtual void notifyStatus(const ctkDicomWG23::Status& status) = 0;
 
   // Data exchange interface methods
-  // ...
+  // inherited from ctkDicomExchangeInterface
 
 };
 

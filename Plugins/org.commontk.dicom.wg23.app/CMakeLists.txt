@@ -13,6 +13,7 @@ SET(PLUGIN_SRCS
   ctkDicomWG23AppPlugin.cpp
   ctkDicomAbstractApp.cpp
   ctkDicomHostService.cpp
+  ctkAppSoapMessageProcessor.cpp
 )
 
 # Files which should be processed by Qts moc

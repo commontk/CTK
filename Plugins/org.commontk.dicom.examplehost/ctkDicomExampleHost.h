@@ -20,6 +20,14 @@ public:
     virtual QString getOutputLocation(const QStringList& /*preferredProtocols*/) { return ""; }
     virtual void notifyStateChanged(ctkDicomWG23::State state);
     virtual void notifyStatus(const ctkDicomWG23::Status& status);
+    // exchange methods
+    virtual bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
+    virtual QList<ctkDicomWG23::ObjectLocator>* getData(
+      QList<QUuid> objectUUIDs, 
+      QList<QString> acceptableTransferSyntaxUIDs, 
+      bool includeBulkData);
+    virtual void releaseData(QList<QUuid> objectUUIDs);
+    
     const QProcess& getAppProcess() const { return appProcess; }
     ~ctkDicomExampleHost();
 

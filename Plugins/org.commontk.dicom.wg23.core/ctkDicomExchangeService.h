@@ -20,39 +20,29 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMHOSTSERVICE_H
-#define CTKDICOMHOSTSERVICE_H
+#ifndef CTKDICOMEXCHANGESERVICE_H
+#define CTKDICOMEXCHANGESERVICE_H
 
-#include <ctkDicomHostInterface.h>
-#include <ctkDicomExchangeService.h>
-#include <org_commontk_dicom_wg23_app_Export.h>
+#include <ctkDicomExchangeInterface.h>
+#include <QScopedPointer>
+#include <org_commontk_dicom_wg23_core_Export.h>
 
-class org_commontk_dicom_wg23_app_EXPORT ctkDicomHostService : public ctkDicomHostInterface
+class ctkDicomServicePrivate;
+
+class org_commontk_dicom_wg23_core_EXPORT ctkDicomExchangeService : public ctkDicomExchangeInterface
 {
 
 public:
-  ctkDicomHostService(ushort port, QString path);
-  ~ctkDicomHostService();
+  ctkDicomExchangeService(ushort port, QString path);
+  ~ctkDicomExchangeService();
 
-  QString generateUID();
-  QRect getAvailableScreen(const QRect& preferredScreen);
-  QString getOutputLocation(const QStringList& preferredProtocols);
-  void notifyStateChanged(ctkDicomWG23::State state);
-  void notifyStatus(const ctkDicomWG23::Status& status);
-
-  // Exchange methods
   bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
-  QList<ctkDicomWG23::ObjectLocator>* getData(
-    QList<QUuid> objectUUIDs, 
-    QList<QString> acceptableTransferSyntaxUIDs, 
-    bool includeBulkData);
+  QList<ctkDicomWG23::ObjectLocator> *getData(QList<QUuid> objectUUIDs,
+                                             QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData);
   void releaseData(QList<QUuid> objectUUIDs);
 
-private:
+
+protected:
   ctkDicomServicePrivate * d;
-
-  ctkDicomExchangeService service;
-
 };
-
-#endif // CTKDICOMHOSTSERVICE_H
+#endif // CTKDICOMEXCHANGESERVICE_H

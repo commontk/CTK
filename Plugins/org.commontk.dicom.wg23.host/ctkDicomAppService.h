@@ -20,30 +20,36 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMHOSTSERVICE_H
-#define CTKDICOMHOSTSERVICE_H
+#ifndef CTKDICOMAPPSERVICE_H
+#define CTKDICOMAPPSERVICE_H
 
 #include <ctkDicomAppInterface.h>
-#include <QScopedPointer>
+#include <ctkDicomExchangeService.h>
 #include <org_commontk_dicom_wg23_host_Export.h>
-
-class ctkDicomServicePrivate;
 
 class org_commontk_dicom_wg23_host_EXPORT ctkDicomAppService : public ctkDicomAppInterface
 {
 
 public:
-  ctkDicomAppService(int port, QString path);
+  ctkDicomAppService(ushort port, QString path);
   ~ctkDicomAppService();
 
   ctkDicomWG23::State getState();
   bool setState(ctkDicomWG23::State newState);
   bool bringToFront(const QRect& requestedScreenArea);
 
-private:
-  Q_DECLARE_PRIVATE(ctkDicomService)
+  // Exchange methods
+  bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
+  QList<ctkDicomWG23::ObjectLocator>* getData(
+    QList<QUuid> objectUUIDs, 
+    QList<QString> acceptableTransferSyntaxUIDs, 
+    bool includeBulkData);
+  void releaseData(QList<QUuid> objectUUIDs);
 
-  const QScopedPointer<ctkDicomServicePrivate> d_ptr;
+private:
+  ctkDicomServicePrivate * d;
+
+  ctkDicomExchangeService service;
 };
 
-#endif // CTKDICOMHOSTSERVICE_H
+#endif // CTKDICOMAPPSERVICE_H

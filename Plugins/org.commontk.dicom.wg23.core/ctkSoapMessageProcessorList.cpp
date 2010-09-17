@@ -19,32 +19,28 @@
 
 =============================================================================*/
 
+#include "ctkSoapMessageProcessorList.h"
 
-#ifndef CTKDICOMAPPINTERFACE_H
-#define CTKDICOMAPPINTERFACE_H
-
-#include <QObject>
-#include <QRect>
-
-#include "ctkDicomWG23Types.h"
-#include "ctkDicomExchangeInterface.h"
-
-#include <org_commontk_dicom_wg23_core_Export.h>
-
-class org_commontk_dicom_wg23_core_EXPORT ctkDicomAppInterface : public ctkDicomExchangeInterface
+void ctkSoapMessageProcessorList::push_back( ctkSoapMessageProcessor* processor )
 {
-  Q_OBJECT
+	processors.push_back( processor );
+}
 
-public:
-
-  // Application interface methods
-  virtual ctkDicomWG23::State getState() = 0;
-  virtual bool setState(ctkDicomWG23::State newState) = 0;
-  virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
-
-  // Data exchange interface methods
-  // inherited from ctkDicomExchangeInterface
-
-};
-
-#endif // CTKDICOMAPPINTERFACE_H
+bool ctkSoapMessageProcessorList::process(
+	const QtSoapMessage& message,
+	QtSoapMessage* reply ) const
+{
+  for( std::list<ctkSoapMessageProcessor*>::const_iterator it = processors.begin(); 
+    it != processors.end(); it++)
+	{
+		if( (*it)->process( message, reply ) )
+		{
+			return true;
+		}
+	}
+	// if still here, no processor could process the message
+	reply->setFaultCode( QtSoapMessage::Server );
+    reply->setFaultString( "No processor found to process message." );
+	return false;
+}
+		

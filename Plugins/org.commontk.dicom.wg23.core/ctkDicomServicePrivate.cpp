@@ -43,7 +43,15 @@ void ctkDicomServicePrivate::responseReady()
   blockingLoop.exit();
 }
 
-const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
+const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
+                                                   QtSoapType* soapType ){
+    QList<QtSoapType*> list;
+    list.append(soapType);
+    return askHost(methodName,list);
+}
+
+const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
+                                                   const QList<QtSoapType*>& soapTypes )
 {
   QString action="\"";
   //action.append(methodName);
@@ -54,10 +62,13 @@ const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName, Qt
 
   QtSoapMessage request;
   request.setMethod(QtSoapQName(methodName,"http://wg23.dicom.nema.org/"));
-  if( soapType != NULL )
+  if( !soapTypes.isEmpty())
   {
-    request.addMethodArgument(soapType);
-    qDebug() << "  Argument type is " << soapType->typeName() << ". Argument name is " << soapType->name().name();
+      for (QList<QtSoapType*>::ConstIterator it = soapTypes.begin();
+            it < soapTypes.constEnd(); it++){
+        request.addMethodArgument(*it);
+        qDebug() << "  Argument type added " << (*it)->typeName() << ". Argument name is " << (*it)->name().name();;
+    }
   }
   qDebug() << request.toXmlString();
 

@@ -19,32 +19,35 @@
 
 =============================================================================*/
 
+#ifndef CTKEXCHANGESOAPMESSAGEPROCESSOR_H
+#define CTKEXCHANGESOAPMESSAGEPROCESSOR_H
 
-#ifndef CTKDICOMAPPINTERFACE_H
-#define CTKDICOMAPPINTERFACE_H
-
-#include <QObject>
-#include <QRect>
-
-#include "ctkDicomWG23Types.h"
+#include "ctkSoapMessageProcessor.h"
 #include "ctkDicomExchangeInterface.h"
-
 #include <org_commontk_dicom_wg23_core_Export.h>
 
-class org_commontk_dicom_wg23_core_EXPORT ctkDicomAppInterface : public ctkDicomExchangeInterface
+class org_commontk_dicom_wg23_core_EXPORT ctkExchangeSoapMessageProcessor : public ctkSoapMessageProcessor
 {
-  Q_OBJECT
 
 public:
 
-  // Application interface methods
-  virtual ctkDicomWG23::State getState() = 0;
-  virtual bool setState(ctkDicomWG23::State newState) = 0;
-  virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
+  ctkExchangeSoapMessageProcessor( ctkDicomExchangeInterface* inter );
 
-  // Data exchange interface methods
-  // inherited from ctkDicomExchangeInterface
+  bool process(
+    const QtSoapMessage& message,
+    QtSoapMessage* reply) const;
+    
+private:
+
+  void processNotifyDataAvailable(const QtSoapMessage& message,
+                       QtSoapMessage* reply) const;
+  void processGetData(const QtSoapMessage& message,
+                       QtSoapMessage* reply) const;
+  void processReleaseData(const QtSoapMessage& message,
+                           QtSoapMessage* reply) const;
+               
+  ctkDicomExchangeInterface* exchangeInterface;
 
 };
 
-#endif // CTKDICOMAPPINTERFACE_H
+#endif // CTKEXCHANGESOAPMESSAGEPROCESSOR_H

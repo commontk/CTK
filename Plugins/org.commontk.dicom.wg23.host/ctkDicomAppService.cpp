@@ -25,11 +25,11 @@
 
 #include "ctkDicomWG23TypesHelper.h"
 
-ctkDicomAppService::ctkDicomAppService(int port, QString path)
-  : d_ptr(new ctkDicomServicePrivate(port, path))
+ctkDicomAppService::ctkDicomAppService(ushort port, QString path):
+  service(port, path), d(new ctkDicomServicePrivate(port, path))
 {
-
 }
+
 ctkDicomAppService::~ctkDicomAppService()
 {
 }
@@ -37,14 +37,14 @@ ctkDicomAppService::~ctkDicomAppService()
 
 ctkDicomWG23::State ctkDicomAppService::getState()
 {
-  Q_D(ctkDicomService);
+  //Q_D(ctkDicomService);
   const QtSoapType & result = d->askHost("getState", NULL);
   return ctkDicomSoapState::getState(result);
 }
 
 bool ctkDicomAppService::setState(ctkDicomWG23::State newState)
 {
-  Q_D(ctkDicomService);
+  //Q_D(ctkDicomService);
   QtSoapType* input = new ctkDicomSoapState("newState", newState);
   const QtSoapType & result = d->askHost("setState", input);
   return ctkDicomSoapBool::getBool(result);
@@ -52,8 +52,28 @@ bool ctkDicomAppService::setState(ctkDicomWG23::State newState)
 
 bool ctkDicomAppService::bringToFront(const QRect& requestedScreenArea)
 {
-  Q_D(ctkDicomService);
+  //Q_D(ctkDicomService);
   QtSoapType* input = new ctkDicomSoapRectangle("requestedScreenArea", requestedScreenArea);
   const QtSoapType & result = d->askHost("bringToFront", input);
   return ctkDicomSoapBool::getBool(result);
+}
+
+// Exchange methods
+
+bool ctkDicomAppService::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+{
+  return service.notifyDataAvailable(data, lastData);
+}
+
+QList<ctkDicomWG23::ObjectLocator>* ctkDicomAppService::getData(
+  QList<QUuid> objectUUIDs, 
+  QList<QString> acceptableTransferSyntaxUIDs, 
+  bool includeBulkData)
+{
+  return service.getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
+}
+
+void ctkDicomAppService::releaseData(QList<QUuid> objectUUIDs)
+{
+  service.releaseData(objectUUIDs);
 }

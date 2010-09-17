@@ -64,7 +64,7 @@ namespace ctkDicomWG23 {
     QString URI;
   };
 
-  class ObjectDescriptor {
+  struct ObjectDescriptor {
     QUuid descriptorUUID;
     QString mimeType;
     QString classUID;

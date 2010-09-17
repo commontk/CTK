@@ -49,7 +49,7 @@ bool ctkExampleDicomAppLogic::setState(ctkDicomWG23::State newState)
   return true;
 }
 
-bool ctkExampleDicomAppLogic::bringToFront(const QRect& requestedScreenArea)
+bool ctkExampleDicomAppLogic::bringToFront(const QRect& /*requestedScreenArea*/)
 {
   return false;
 }
@@ -75,7 +75,7 @@ void ctkExampleDicomAppLogic::do_something()
 
 void ctkExampleDicomAppLogic::changeState(int anewstate)
 {
-  ctkDicomWG23::State newstate = (ctkDicomWG23::State)anewstate;
+  ctkDicomWG23::State newstate = static_cast<ctkDicomWG23::State>(anewstate);
   try
   {
     host->notifyStateChanged(newstate);
@@ -89,4 +89,20 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
   {
     do_something();
   }
+}
+
+bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+{
+  return false;
+}
+
+QList<ctkDicomWG23::ObjectLocator>* ctkExampleDicomAppLogic::getData(
+  QList<QUuid> objectUUIDs, 
+  QList<QString> acceptableTransferSyntaxUIDs, 
+  bool includeBulkData)
+{
+  return NULL;
+}
+void ctkExampleDicomAppLogic::releaseData(QList<QUuid> objectUUIDs)
+{
 }

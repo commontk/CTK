@@ -22,6 +22,9 @@ SET(PLUGIN_SRCS
   ctkDicomServicePrivate.cpp
   ctkDicomWG23Types.h
   ctkDicomWG23TypesHelper.h
+  ctkDicomExchangeService.cpp
+  ctkSoapMessageProcessorList.cpp
+  ctkExchangeSoapMessageProcessor.cpp
 )
 
 # Files which should be processed by Qts moc
@@ -34,6 +37,7 @@ SET(PLUGIN_MOC_SRCS
   ctkDicomWG23CorePlugin_p.h
   ctkSimpleSoapServer.h
   ctkSoapConnectionRunnable_p.h
+  ctkDicomExchangeService.h
 )
 
 # Qt Designer files which should be processed by Qts uic
