@@ -36,7 +36,6 @@ ctkSoapConnectionRunnable::~ctkSoapConnectionRunnable()
 
 void ctkSoapConnectionRunnable::run()
 {
-  QTcpSocket tcpSocket;
   if (!tcpSocket.setSocketDescriptor(socketDescriptor))
   {
     // error handling
@@ -56,35 +55,55 @@ void ctkSoapConnectionRunnable::run()
 
 void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
 {
-  bool wsdlRequest = false;
+  QString requestType;
+  int contentLength = -1;
   //qDebug() << socket->readAll();
   while (socket.canReadLine()) {
     QString line = socket.readLine();
     qDebug() << line;
     if(line.contains("?wsdl HTTP"))
     {
-      wsdlRequest = true;
+      requestType = "?wsdl";
+    }
+    if(line.contains("?xsd=1"))
+    {
+      requestType = "?xsd=1";
+    }
+    if(line.contains("SoapAction"))
+    {
+      requestType = line;
+    }
+    if(line.contains("Content-Length: "))
+    {
+      contentLength = line.section(':',1).trimmed().toInt();
     }
     if (line.trimmed().isEmpty())
     {
       QString content;
-      if(wsdlRequest)
+      if(requestType.startsWith("?"))
       {
-        wsdlRequest = false;
-        emit incomingWSDLMessage("wsdl", &content);
+        QByteArray body = socket.readAll();
+        emit incomingWSDLMessage(requestType, &content);
       }
       else
       {
         // Read the http body, which contains the soap message
-        QByteArray body = socket.readAll();
-        qDebug() << body;
-
-        if (body.trimmed().isEmpty())
+        int bytesRead = 0;
+        QByteArray body;
+        while(body.size() < contentLength)
         {
-          qDebug() << "Message body empty";
-          content = "";
+          QByteArray bodyPart = socket.read(contentLength);
+          qDebug() << bodyPart;
+          bytesRead += bodyPart.size();
+          body.append(bodyPart);
+          qDebug() << " Expected content-length: " << contentLength << ". Bytes read so far: " << body.size();
+          if (body.size()<contentLength)
+          {
+            qDebug() << " Message body too small. Trying to read more.";
+            tcpSocket.waitForReadyRead(-1);
+          }
         }
-        else
+        if(body.trimmed().isEmpty()==false)
         {
           QtSoapMessage msg;
           if (!msg.setContent(body))
@@ -116,10 +135,12 @@ void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
 
       block.append(content);
 
-      //qDebug() << block;
+      qDebug() << block;
 
       socket.write(block);
 
+      requestType = "";
+      contentLength = -1;
     }
   }
 }

@@ -50,6 +50,8 @@ private:
   void readClient(QTcpSocket& socket);
 
   int socketDescriptor;
+
+  QTcpSocket tcpSocket;
 };
 
 #endif // CTKSOAPCONNECTIONRUNNABLE_P_H

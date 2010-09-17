@@ -33,7 +33,7 @@ class org_commontk_dicom_wg23_core_EXPORT ctkDicomServicePrivate : public QObjec
   Q_OBJECT
 
 public:
-  ctkDicomServicePrivate(int port);
+  ctkDicomServicePrivate(int port, QString path);
 
   const QtSoapType & askHost(const QString& methodName, QtSoapType* soapStruct);
     
@@ -41,6 +41,7 @@ public:
   QtSoapHttpTransport http;
 
   int port;
+  QString path;
 
 private slots:
 

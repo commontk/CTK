@@ -28,7 +28,10 @@
 
 #include <stdexcept>
 
-ctkDicomServicePrivate::ctkDicomServicePrivate(int port)
+
+#include <iostream>
+
+ctkDicomServicePrivate::ctkDicomServicePrivate(int port, QString path) : path(path)
 {
   connect(&http, SIGNAL(responseReady()), this, SLOT(responseReady()));
 
@@ -42,19 +45,23 @@ void ctkDicomServicePrivate::responseReady()
 
 const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
 {
-  qDebug() << "Submitting request " << methodName << " to path " << "/HostInterface";
+  QString action="\"";
+  //action.append(methodName);
+  action.append("\"");
+  http.setAction(action);
 
-  http.setAction(methodName);
+  std::cout << "Submitting action " << action.toStdString() << " method " << methodName.toStdString() << " to path " << path.toStdString();
 
   QtSoapMessage request;
-  request.setMethod(methodName);
+  request.setMethod(QtSoapQName(methodName,"http://wg23.dicom.nema.org/"));
   if( soapType != NULL )
   {
     request.addMethodArgument(soapType);
-    qDebug() << "  Argument type is " << soapType->typeName();
+    qDebug() << "  Argument type is " << soapType->typeName() << ". Argument name is " << soapType->name().name();
   }
+  qDebug() << request.toXmlString();
 
-  http.submitRequest(request, "/HostInterface");//"/IHostService");
+  http.submitRequest(request, path);;
 
   qDebug() << "Submitted request " << methodName ;
 
@@ -70,7 +77,11 @@ const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName, Qt
 
   if (response.isFault())
   {
-    throw std::runtime_error("ctkDicomServicePrivate: server error (response.IsFault())");
+    qCritical() << "ctkDicomServicePrivate: server error (response.IsFault())";
+    qDebug() << response.faultString().toString().toLatin1().constData() << endl;
+    qDebug() << response.toXmlString();
+    return response.returnValue();
+//    throw std::runtime_error("ctkDicomServicePrivate: server error (response.IsFault())");
   }
 
   qDebug() << "Response: " << response.toXmlString();

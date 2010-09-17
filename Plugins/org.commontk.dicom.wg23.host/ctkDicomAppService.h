@@ -33,7 +33,7 @@ class org_commontk_dicom_wg23_host_EXPORT ctkDicomAppService : public ctkDicomAp
 {
 
 public:
-  ctkDicomAppService(int port);
+  ctkDicomAppService(int port, QString path);
   ~ctkDicomAppService();
 
   ctkDicomWG23::State getState();

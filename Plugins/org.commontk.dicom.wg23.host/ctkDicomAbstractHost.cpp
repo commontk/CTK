@@ -18,7 +18,7 @@ class ctkDicomAbstractHostPrivate
     }
 
     server = new ctkDicomHostServer(hostInterface,hostPort);
-    appService = new ctkDicomAppService(appPort);
+    appService = new ctkDicomAppService(appPort, "/ApplicationInterface");
   }
   ~ctkDicomAbstractHostPrivate()
   {

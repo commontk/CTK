@@ -25,8 +25,8 @@
 
 #include "ctkDicomWG23TypesHelper.h"
 
-ctkDicomAppService::ctkDicomAppService(int port)
-  : d_ptr(new ctkDicomServicePrivate(port))
+ctkDicomAppService::ctkDicomAppService(int port, QString path)
+  : d_ptr(new ctkDicomServicePrivate(port, path))
 {
 
 }
@@ -45,7 +45,7 @@ ctkDicomWG23::State ctkDicomAppService::getState()
 bool ctkDicomAppService::setState(ctkDicomWG23::State newState)
 {
   Q_D(ctkDicomService);
-  QtSoapType* input = new ctkDicomSoapState("state", newState);
+  QtSoapType* input = new ctkDicomSoapState("newState", newState);
   const QtSoapType & result = d->askHost("setState", input);
   return ctkDicomSoapBool::getBool(result);
 }

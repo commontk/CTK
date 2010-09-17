@@ -45,7 +45,7 @@ ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* host
 void ctkDicomHostServerPrivate::incomingWSDLMessage(
   const QString& message, QString* reply)
 {
-  if (message == "wsdl")
+  if (message == "?wsdl")
   {
     QFile wsdlfile(":/dah/HostService.wsdl");
     wsdlfile.open(QFile::ReadOnly | QFile::Text);
@@ -53,8 +53,21 @@ void ctkDicomHostServerPrivate::incomingWSDLMessage(
     {
       QTextStream textstream(&wsdlfile);
       *reply = textstream.readAll();
-      reply->replace("REPLACE_WITH_ACTUAL_URL","http://127.0.0.1:8080/HostInterface");
-      reply->replace("HostService_schema1.xsd","http://127.0.0.1:8080/HostInterface?xsd=1");
+      QString actualURL="http://localhost:";
+      actualURL+=QString::number(port)+"/HostInterface"; // FIXME: has to be replaced by url provided by host
+      reply->replace("REPLACE_WITH_ACTUAL_URL",actualURL);
+      reply->replace("HostService_schema1.xsd",actualURL+"?xsd=1");
+      //reply->replace("<soap:body use=\"literal\"/>","<soap:body use=\"literal\"></soap:body>");
+    }
+  }
+  else if (message == "?xsd=1")
+  {
+    QFile wsdlfile(":/dah/HostService_schema1.xsd");
+    wsdlfile.open(QFile::ReadOnly | QFile::Text);
+    if(wsdlfile.isOpen())
+    {
+      QTextStream textstream(&wsdlfile);
+      *reply = textstream.readAll();
     }
   }
 }
@@ -111,7 +124,7 @@ void ctkDicomHostServerPrivate::processGetAvailableScreen(
 void ctkDicomHostServerPrivate::processNotifyStateChanged(
     const QtSoapMessage &message, QtSoapMessage * /* reply */) const
 {
-  const QtSoapType& stateType = message.method()["state"];
+  const QtSoapType& stateType = message.method()[0];//["state"]; java sends ["newState"];
   hostInterface->notifyStateChanged(ctkDicomSoapState::getState(stateType));
 }
 

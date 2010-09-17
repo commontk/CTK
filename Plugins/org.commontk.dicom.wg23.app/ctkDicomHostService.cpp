@@ -25,8 +25,8 @@
 
 #include "ctkDicomWG23TypesHelper.h"
 
-ctkDicomHostService::ctkDicomHostService(int port)
-  : d_ptr(new ctkDicomServicePrivate(port))
+ctkDicomHostService::ctkDicomHostService(int port, QString path)
+  : d_ptr(new ctkDicomServicePrivate(port, path))
 {
 
 }
@@ -69,7 +69,7 @@ void ctkDicomHostService::notifyStateChanged(ctkDicomWG23::State state)
 {
   Q_D(ctkDicomService);
 
-  QtSoapType* input = new ctkDicomSoapState("state", state);
+  QtSoapType* input = new ctkDicomSoapState("newState", state); // spec would be "state", jave has "newState"
   d->askHost("notifyStateChanged", input);
 }
 

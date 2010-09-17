@@ -36,10 +36,42 @@ ctkDicomAppServerPrivate::ctkDicomAppServerPrivate(int port) :
 {
   connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));
+  connect(&server, SIGNAL(incomingWSDLMessage(QString,QString*)),
+          this, SLOT(incomingWSDLMessage(QString,QString*)));
 
   if (!server.listen(QHostAddress::LocalHost, this->port))
   {
     qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
+  }
+}
+
+void ctkDicomAppServerPrivate::incomingWSDLMessage(
+  const QString& message, QString* reply)
+{
+  if (message == "?wsdl")
+  {
+    QFile wsdlfile(":/dah/ApplicationService.wsdl");
+    wsdlfile.open(QFile::ReadOnly | QFile::Text);
+    if(wsdlfile.isOpen())
+    {
+      QTextStream textstream(&wsdlfile);
+      *reply = textstream.readAll();
+      QString actualURL="http://localhost:";
+      actualURL+=QString::number(port)+"/ApplicationInterface"; // FIXME: has to be replaced by url provided by host
+      reply->replace("REPLACE_WITH_ACTUAL_URL",actualURL);
+      reply->replace("ApplicationService_schema1.xsd",actualURL+"?xsd=1");
+      //reply->replace("<soap:body use=\"literal\"/>","<soap:body use=\"literal\"></soap:body>");
+    }
+  }
+  else if (message == "?xsd=1")
+  {
+    QFile wsdlfile(":/dah/HostService_schema1.xsd");
+    wsdlfile.open(QFile::ReadOnly | QFile::Text);
+    if(wsdlfile.isOpen())
+    {
+      QTextStream textstream(&wsdlfile);
+      *reply = textstream.readAll();
+    }
   }
 }
 
@@ -90,7 +122,7 @@ void ctkDicomAppServerPrivate::processGetState(
 void ctkDicomAppServerPrivate::processSetState(
     const QtSoapMessage &message, QtSoapMessage *reply)
 {
-    const QtSoapType& stateType = message.method()["state"];
+    const QtSoapType& stateType = message.method()[0];//["state"];
     bool result = appInterface->setState(ctkDicomSoapState::getState(stateType));
   
     reply->setMethod("SetState");

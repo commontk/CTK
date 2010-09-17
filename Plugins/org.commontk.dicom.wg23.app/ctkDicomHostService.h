@@ -33,7 +33,7 @@ class org_commontk_dicom_wg23_app_EXPORT ctkDicomHostService : public ctkDicomHo
 {
 
 public:
-  ctkDicomHostService(int port);
+  ctkDicomHostService(int port, QString path);
   ~ctkDicomHostService();
 
   QString generateUID();
