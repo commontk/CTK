@@ -95,6 +95,8 @@ SET(KIT_SRCS
   ctkWorkflowWidget.h
   ctkWorkflowWidgetStep.cpp
   ctkWorkflowWidgetStep.h
+  ctkDateRangeWidget.cpp
+  ctkDateRangeWidget.h
   )
 
 # Headers that should run through moc
@@ -139,12 +141,14 @@ SET(KIT_MOC_SRCS
   ctkWorkflowTabWidget.h
   ctkWorkflowWidget.h
   ctkWorkflowWidgetStep.h
+  ctkDateRangeWidget.h
   )
 
 # UI files
 SET(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
   Resources/UI/ctkRangeWidget.ui
+  Resources/UI/ctkDateRangeWidget.ui
   Resources/UI/ctkSliderWidget.ui
   Resources/UI/ctkWorkflowGroupBox.ui
   )
