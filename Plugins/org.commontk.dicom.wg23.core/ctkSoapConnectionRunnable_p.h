@@ -43,6 +43,7 @@ public:
 signals:
 
   void incomingSoapMessage(const QtSoapMessage& message, QtSoapMessage* reply);
+  void incomingWSDLMessage(const QString& message, QString* reply);
 
 private:
 

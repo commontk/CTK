@@ -39,5 +39,9 @@ void ctkSimpleSoapServer::incomingConnection(int socketDescriptor)
           this, SIGNAL(incomingSoapMessage(QtSoapMessage, QtSoapMessage*)),
           Qt::BlockingQueuedConnection);
 
+  connect(runnable, SIGNAL(incomingWSDLMessage(QString,QString*)),
+          this, SIGNAL(incomingWSDLMessage(QString, QString*)),
+          Qt::BlockingQueuedConnection);
+
   QThreadPool::globalInstance()->start(runnable);
 }

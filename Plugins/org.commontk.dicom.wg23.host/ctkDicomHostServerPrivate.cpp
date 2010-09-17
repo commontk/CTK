@@ -33,10 +33,29 @@ ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* host
 {
   connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));
+  connect(&server, SIGNAL(incomingWSDLMessage(QString,QString*)),
+          this, SLOT(incomingWSDLMessage(QString,QString*)));
 
   if (!server.listen(QHostAddress::LocalHost, this->port))
   {
     qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
+  }
+}
+
+void ctkDicomHostServerPrivate::incomingWSDLMessage(
+  const QString& message, QString* reply)
+{
+  if (message == "wsdl")
+  {
+    QFile wsdlfile(":/dah/HostService.wsdl");
+    wsdlfile.open(QFile::ReadOnly | QFile::Text);
+    if(wsdlfile.isOpen())
+    {
+      QTextStream textstream(&wsdlfile);
+      *reply = textstream.readAll();
+      reply->replace("REPLACE_WITH_ACTUAL_URL","http://127.0.0.1:8080/HostInterface");
+      reply->replace("HostService_schema1.xsd","http://127.0.0.1:8080/HostInterface?xsd=1");
+    }
   }
 }
 

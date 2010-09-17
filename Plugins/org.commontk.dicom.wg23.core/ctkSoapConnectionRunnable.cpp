@@ -56,51 +56,67 @@ void ctkSoapConnectionRunnable::run()
 
 void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
 {
+  bool wsdlRequest = false;
   //qDebug() << socket->readAll();
   while (socket.canReadLine()) {
     QString line = socket.readLine();
     qDebug() << line;
+    if(line.contains("?wsdl HTTP"))
+    {
+      wsdlRequest = true;
+    }
     if (line.trimmed().isEmpty())
     {
-      // Read the http body, which contains the soap message
-      QByteArray body = socket.readAll();
-      qDebug() << body;
-
-      if (body.trimmed().isEmpty())
+      QString content;
+      if(wsdlRequest)
       {
-        qDebug() << "Message body empty";
-        return;
+        wsdlRequest = false;
+        emit incomingWSDLMessage("wsdl", &content);
       }
-
-      QtSoapMessage msg;
-      if (!msg.setContent(body))
+      else
       {
-        qDebug() << "QtSoap import failed:" << msg.errorString();
-        return;
+        // Read the http body, which contains the soap message
+        QByteArray body = socket.readAll();
+        qDebug() << body;
+
+        if (body.trimmed().isEmpty())
+        {
+          qDebug() << "Message body empty";
+          content = "";
+        }
+        else
+        {
+          QtSoapMessage msg;
+          if (!msg.setContent(body))
+          {
+            qDebug() << "QtSoap import failed:" << msg.errorString();
+            return;
+          }
+
+          QtSoapMessage reply;
+          emit incomingSoapMessage(msg, &reply);
+
+          if (reply.isFault())
+          {
+            qDebug() << "QtSoap reply faulty";
+            return;
+          }
+
+          qDebug() << "SOAP reply:";
+
+          content = reply.toXmlString();
+        }
       }
-
-      QtSoapMessage reply;
-      emit incomingSoapMessage(msg, &reply);
-
-      if (reply.isFault())
-      {
-        qDebug() << "QtSoap reply faulty";
-        return;
-      }
-
-      qDebug() << "SOAP reply:";
-
-      QString soapContent = reply.toXmlString();
 
       QByteArray block;
       block.append("HTTP/1.1 200 OK\n");
       block.append("Content-Type: text/xml;charset=utf-8\n");
-      block.append("Content-Length: ").append(QString::number(soapContent.size())).append("\n");
+      block.append("Content-Length: ").append(QString::number(content.size())).append("\n");
       block.append("\n");
 
-      block.append(soapContent);
+      block.append(content);
 
-      qDebug() << block;
+      //qDebug() << block;
 
       socket.write(block);
 

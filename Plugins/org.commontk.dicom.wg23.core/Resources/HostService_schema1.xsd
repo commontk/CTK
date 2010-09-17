@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="qualified" version="1.0"
+	targetNamespace="http://wg23.dicom.nema.org/"
+	xmlns:tns="http://wg23.dicom.nema.org/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<xs:element name="generateUID" type="tns:generateUID"/>
+	<xs:element name="generateUIDResponse" type="tns:generateUIDResponse"/>
+	<xs:element name="getAsModels" type="tns:getAsModels"/>
+	<xs:element name="getAsModelsResponse" type="tns:getAsModelsResponse"/>
+	<xs:element name="getAvailableScreen" type="tns:getAvailableScreen"/>
+	<xs:element name="getAvailableScreenResponse"
+		type="tns:getAvailableScreenResponse"/>
+	<xs:element name="getDataAsFile" type="tns:getDataAsFile"/>
+	<xs:element name="getDataAsFileResponse" type="tns:getDataAsFileResponse"/>
+	<xs:element name="getDataAsSpecificTypeFile"
+		type="tns:getDataAsSpecificTypeFile"/>
+	<xs:element name="getDataAsSpecificTypeFileResponse"
+		type="tns:getDataAsSpecificTypeFileResponse"/>
+	<xs:element name="getOutputDir" type="tns:getOutputDir"/>
+	<xs:element name="getOutputDirResponse" type="tns:getOutputDirResponse"/>
+	<xs:element name="getTmpDir" type="tns:getTmpDir"/>
+	<xs:element name="getTmpDirResponse" type="tns:getTmpDirResponse"/>
+	<xs:element name="notifyDataAvailable" type="tns:notifyDataAvailable"/>
+	<xs:element name="notifyDataAvailableResponse"
+		type="tns:notifyDataAvailableResponse"/>
+	<xs:element name="notifyStateChanged" type="tns:notifyStateChanged"/>
+	<xs:element name="notifyStateChangedResponse"
+		type="tns:notifyStateChangedResponse"/>
+	<xs:element name="notifyStatus" type="tns:notifyStatus"/>
+	<xs:element name="notifyStatusResponse" type="tns:notifyStatusResponse"/>
+	<xs:element name="queryModel" type="tns:queryModel"/>
+	<xs:element name="queryModelResponse" type="tns:queryModelResponse"/>
+	
+	<xs:complexType name="getDataAsFile">
+		<xs:sequence>
+			<xs:element name="uuids" type="tns:ArrayOfUUID"/>
+			<xs:element name="includeBulkData" type="xs:boolean"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="getDataAsFileResponse">
+		<xs:sequence>
+			<xs:element name="objectLocators" type="tns:ArrayOfObjectLocator"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="getDataAsSpecificTypeFile">
+		<xs:sequence>
+			<xs:element name="objectUUIDs" type="tns:ArrayOfUUID"/>
+			<xs:element name="mimeType" type="xs:string"/>
+			<xs:element name="transferSyntaxUID" type="tns:uid"/>
+			<xs:element name="includeBulkData" type="xs:boolean"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="getDataAsSpecificTypeFileResponse">
+		<xs:sequence>
+			<xs:element name="objectLocators" type="tns:ArrayOfObjectLocator"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="uuid">
+		<xs:sequence>
+			<xs:element name="uuid" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="objectLocator">
+		<xs:sequence>
+			<xs:element name="uuid" type="tns:uuid"/>
+			<xs:element name="uri" type="xs:anyURI"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="getAvailableScreen">
+		<xs:sequence>
+			<xs:element name="appPreferredScreen" type="tns:rectangle"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="rectangle">
+		<xs:sequence>
+			<xs:element name="refPointX" type="xs:int"/>
+			<xs:element name="refPointY" type="xs:int"/>
+			<xs:element name="width" type="xs:int"/>
+			<xs:element name="height" type="xs:int"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="getAvailableScreenResponse">
+		<xs:sequence>
+			<xs:element name="retval" type="tns:rectangle"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="notifyDataAvailable">
+		<xs:sequence>
+			<xs:element name="availableData" type="tns:availableData"/>
+			<xs:element name="lastData" type="xs:boolean"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="availableData">
+		<xs:sequence>
+			<xs:element name="patients" type="tns:ArrayOfPatient"/>
+			<xs:element name="objectDescriptors"
+				type="tns:ArrayOfObjectDescriptor"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="patient">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="objectDescriptors"
+				type="tns:ArrayOfObjectDescriptor"/>
+			<xs:element name="studies" type="tns:ArrayOfStudy"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="study">
+		<xs:sequence>
+			<xs:element name="studyUID" type="xs:string"/>
+			<xs:element name="objectDescriptors"
+				type="tns:ArrayOfObjectDescriptor"/>
+			<xs:element name="series" type="tns:ArrayOfSeries"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="series">
+		<xs:sequence>
+			<xs:element name="seriesUID" type="xs:string"/>
+			<xs:element name="objectDescriptors"
+				type="tns:ArrayOfObjectDescriptor"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="modality">
+		<xs:sequence>
+			<xs:element name="modality" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="objectDescriptor">
+		<xs:sequence>
+			<xs:element name="uuid" type="tns:uuid"/>
+			<xs:element name="mimeType" type="xs:string"/>
+			<xs:element name="classUID" type="tns:uid"/>
+			<xs:element name="transferSyntaxUID" type="tns:uid"/>
+			<xs:element name="modality" type="tns:modality"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="uid">
+		<xs:sequence>
+			<xs:element name="uid" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="notifyDataAvailableResponse">
+		<xs:sequence>
+			<xs:element name="retval" type="xs:boolean"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="queryModel">
+		<xs:sequence>
+			<xs:element name="objUUIDs" type="tns:ArrayOfUUID"/>
+			<xs:element name="modelXpaths" type="tns:ArrayOfString"/>
+			<xs:element name="includeBulkDataPointers" type="xs:boolean"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="queryModelResponse">
+		<xs:sequence>
+			<xs:element name="queryResults" type="tns:ArrayOfQueryResult"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="queryResult">
+		<xs:sequence>
+			<xs:element name="model" type="tns:uuid"/>
+			<xs:element name="xpath" type="xs:string"/>
+			<xs:element name="results" type="tns:ArrayOfString"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="getAsModels">
+		<xs:sequence>
+			<xs:element name="uuids" type="tns:ArrayOfUUID"/>
+			<xs:element name="classUID" type="tns:uid"/>
+			<xs:element name="transferSyntaxUID" type="tns:uid"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="getAsModelsResponse">
+		<xs:sequence>
+			<xs:element name="retval" type="tns:modelSetDescriptor"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="modelSetDescriptor">
+		<xs:sequence>
+			<xs:element name="models" type="tns:ArrayOfUUID"/>
+			<xs:element name="failedSourceObjects" type="tns:ArrayOfUUID"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="notifyStatus">
+		<xs:sequence>
+			<xs:element name="newStatus" type="tns:status"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="status">
+		<xs:sequence>
+			<xs:element name="codeValue" type="xs:int"/>
+			<xs:element name="codingSchemeDesignator" type="xs:string"/>
+			<xs:element name="message" type="xs:string"/>
+			<xs:element name="statusType" type="tns:statusType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="notifyStatusResponse">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="notifyStateChanged">
+		<xs:sequence>
+			<xs:element name="newState" type="tns:state"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="notifyStateChangedResponse">
+		<xs:sequence/>
+	</xs:complexType>
+	
+	<xs:complexType name="getTmpDir">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="getTmpDirResponse">
+		<xs:sequence>
+			<xs:element name="retval" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="generateUID">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="generateUIDResponse">
+		<xs:sequence>
+			<xs:element name="retval" type="tns:uid"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="getOutputDir">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="getOutputDirResponse">
+		<xs:sequence>
+			<xs:element name="retval" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="ArrayOfUUID">
+		<xs:sequence>
+			<xs:element name="uuid" type="tns:uuid" minOccurs="0"
+				maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfPatient">
+		<xs:sequence>
+			<xs:element name="patient" type="tns:patient" minOccurs="0"
+				maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfStudy">
+		<xs:sequence>
+			<xs:element name="study" type="tns:study" minOccurs="0"
+				maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfSeries">
+		<xs:sequence>
+			<xs:element name="series" type="tns:series" minOccurs="0"
+				maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfObjectLocator">
+		<xs:sequence>
+			<xs:element name="objectLocator" type="tns:objectLocator" minOccurs="0"
+				maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfObjectDescriptor">
+		<xs:sequence>
+			<xs:element name="objectDescriptor" type="tns:objectDescriptor"
+				minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfString">
+		<xs:sequence>
+			<xs:element name="string" type="xs:string" minOccurs="0"
+				maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfQueryResult">
+		<xs:sequence>
+			<xs:element name="queryResult" type="tns:queryResult" minOccurs="0"
+				maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="statusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FATALERROR"/>
+			<xs:enumeration value="WARNING"/>
+			<xs:enumeration value="ERROR"/>
+			<xs:enumeration value="INFORMATION"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="state">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EXIT"/>
+			<xs:enumeration value="CANCELED"/>
+			<xs:enumeration value="SUSPENDED"/>
+			<xs:enumeration value="COMPLETED"/>
+			<xs:enumeration value="INPROGRESS"/>
+			<xs:enumeration value="IDLE"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

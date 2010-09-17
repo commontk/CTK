@@ -42,7 +42,7 @@ void ctkDicomServicePrivate::responseReady()
 
 const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName, QtSoapType* soapType )
 {
-  qDebug() << "Submitting request " << methodName;
+  qDebug() << "Submitting request " << methodName << " to path " << "/HostInterface";
 
   http.setAction(methodName);
 
@@ -54,9 +54,9 @@ const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName, Qt
     qDebug() << "  Argument type is " << soapType->typeName();
   }
 
-  http.submitRequest(request, "/IHostService");
+  http.submitRequest(request, "/HostInterface");//"/IHostService");
 
-  qDebug() << "Submitted request " << methodName;
+  qDebug() << "Submitted request " << methodName ;
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 

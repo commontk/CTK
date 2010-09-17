@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/dah">
+  <file>HostService.wsdl</file>
+  <file>ApplicationService.wsdl</file>
+</qresource>
+</RCC>
+
+

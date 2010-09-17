@@ -42,6 +42,7 @@ SET(PLUGIN_UI_FORMS
 
 # QRC Files which should be compiled into the plugin
 SET(PLUGIN_resources
+  Resources/dah_wsdl.qrc
 )
 
 #Compute the plugin dependencies
