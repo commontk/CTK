@@ -58,7 +58,7 @@ SET(CTK_EXTERNAL_LIBRARIES)
 # target dependency which are neither CTK or static library
 SET(link_type)
 FOREACH(ctk_target_dependency ${ctk_target_dependencies})
-  STRING(REGEX MATCH "(general|optimized|debug)" is_link_type ${ctk_target_dependency})
+  STRING(REGEX MATCH "^(general|optimized|debug)$" is_link_type ${ctk_target_dependency})
   IF(is_link_type)
     SET(link_type ${ctk_target_dependency})
   ELSE()
