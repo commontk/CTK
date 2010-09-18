@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QTimer>
 
 // CTK includes
 #include "ctkDateRangeWidget.h"
@@ -34,9 +35,14 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   ctkDateRangeWidget dateRange;
-
-
   dateRange.show();
+  dateRange.onToday();
+  dateRange.onYesterday();
+  dateRange.onAnyDate();
+  dateRange.onLastMonth();
+  dateRange.onLastWeek();
+  dateRange.onSelectRange();
+
   return EXIT_SUCCESS;
 }
 
