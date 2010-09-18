@@ -22,7 +22,8 @@ void ctkDicomExampleHost::StartApplication(QString AppPath){
     l.append(QString("http://localhost:") + QString::number(this->getHostPort()) + "/HostInterface" );
     l.append("--applicationURL");
     l.append(QString("http://localhost:") + QString::number(this->getAppPort()) + "/ApplicationInterface" );
-    l.append("dicomapp"); // the app plugin to use - has to be changed later
+    //by default, the ctkExampleHostedApp uses the org.commontk.dah.exampleapp plugin
+    //l.append("dicomapp"); // the app plugin to use - has to be changed later
     //if (!QProcess::startDetached (
     //{
     //    qCritical() << "application failed to start!";
