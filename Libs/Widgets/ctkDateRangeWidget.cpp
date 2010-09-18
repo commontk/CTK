@@ -59,12 +59,15 @@ ctkDateRangeWidget::ctkDateRangeWidget(QWidget* _parent) : Superclass(_parent)
   
   d->setupUi(this);
 
+  d->StartDate->setVisible(false);
+  d->EndDate->setVisible(false);
+
   QObject::connect(d->AnyDate, SIGNAL(clicked()),this, SLOT(onAnyDate()));
   QObject::connect(d->Today, SIGNAL(clicked()),this, SLOT(onToday()));
   QObject::connect(d->Yesterday, SIGNAL(clicked()),this, SLOT(onYesterday()));
   QObject::connect(d->LastWeek, SIGNAL(clicked()),this, SLOT(onLastWeek()));
   QObject::connect(d->LastMonth, SIGNAL(clicked()),this, SLOT(onLastMonth()));
-  //QObject::connect(d->SelectRange, SIGNAL(clicked()),this, SLOT(onSelectRange()));
+  QObject::connect(d->SelectRange, SIGNAL(clicked()),this, SLOT(onSelectRange()));
 }
 
 // --------------------------------------------------------------------------
@@ -113,42 +116,72 @@ void ctkDateRangeWidget::setDateTimeRange(QDateTime startDateTime, QDateTime end
 void ctkDateRangeWidget::onAnyDate()
 {
   Q_D(const ctkDateRangeWidget);
-  logger.info("selected AnyDate");
+  d->StartDate->setEnabled(false);
+  d->EndDate->setEnabled(false);
+  d->StartDate->setVisible(false);
+  d->EndDate->setVisible(false);
 }
 
 // --------------------------------------------------------------------------
 void ctkDateRangeWidget::onToday()
 {
   Q_D(const ctkDateRangeWidget);
-  logger.info("selected Today");
+  QDateTime now = QDateTime::currentDateTime();
+  d->StartDate->setDate(now.date());
+  d->EndDate->setDate(now.date().addDays(1));
+  d->StartDate->setEnabled(false);
+  d->EndDate->setEnabled(false);
+  d->StartDate->setVisible(true);
+  d->EndDate->setVisible(true);
 }
 
 // --------------------------------------------------------------------------
 void ctkDateRangeWidget::onYesterday()
 {
   Q_D(const ctkDateRangeWidget);
-  logger.info("selected Yesterday");
+  QDateTime now = QDateTime::currentDateTime();
+  d->StartDate->setDate(now.date().addDays(-1));
+  d->EndDate->setDate(now.date());
+  d->StartDate->setEnabled(false);
+  d->EndDate->setEnabled(false);
+  d->StartDate->setVisible(true);
+  d->EndDate->setVisible(true);
 }
 
 // --------------------------------------------------------------------------
 void ctkDateRangeWidget::onLastWeek()
 {
   Q_D(const ctkDateRangeWidget);
-  logger.info("selected LastWeek");
+  QDateTime now = QDateTime::currentDateTime();
+  d->StartDate->setDate(now.date().addDays(-7));
+  d->EndDate->setDate(now.date());
+  d->StartDate->setEnabled(false);
+  d->EndDate->setEnabled(false);
+  d->StartDate->setVisible(true);
+  d->EndDate->setVisible(true);
 }
 
 // --------------------------------------------------------------------------
 void ctkDateRangeWidget::onLastMonth()
 {
   Q_D(const ctkDateRangeWidget);
-  logger.info("selected LastMonth");
+  QDateTime now = QDateTime::currentDateTime();
+  d->StartDate->setDate(now.date().addDays(-31));
+  d->EndDate->setDate(now.date());
+  d->StartDate->setEnabled(false);
+  d->EndDate->setEnabled(false);
+  d->StartDate->setVisible(true);
+  d->EndDate->setVisible(true);
 }
 
 // --------------------------------------------------------------------------
 void ctkDateRangeWidget::onSelectRange()
 {
   Q_D(const ctkDateRangeWidget);
-  logger.info("selected SelectRange");
+  d->StartDate->setEnabled(true);
+  d->EndDate->setEnabled(true);
+  d->StartDate->setVisible(true);
+  d->EndDate->setVisible(true);
 }
 
 
@@ -157,6 +190,7 @@ void ctkDateRangeWidget::setIncludeTime(bool includeTime)
 {
   Q_D(ctkDateRangeWidget);
   d->includeTime = includeTime;
+  logger.error("including time in the date range is not supported now");
   if ( includeTime )
   {
     // TODO: set time format 
@@ -173,6 +207,7 @@ void ctkDateRangeWidget::setIncludeTime(bool includeTime)
 // -------------------------------------------------------------------------
 bool ctkDateRangeWidget::includeTime()const
 {
+  logger.error("including time in the date range is not supported now");
   Q_D(const ctkDateRangeWidget);
   return d->includeTime;
 }
