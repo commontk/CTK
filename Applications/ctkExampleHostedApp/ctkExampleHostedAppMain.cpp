@@ -111,8 +111,7 @@ int main(int argv, char** argc)
   }
   else
   {
-    pluginName = "org_commontk_dicomhosting_app_";
-    pluginName += QFileInfo(qApp->arguments().at(0)).fileName();
+    pluginName = "org_commontk_dah_exampleapp";
   }
 
   // try to find the plugin and install all plugins available in 
@@ -122,15 +121,17 @@ int main(int argv, char** argc)
   QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
   bool pluginFound = false;
   QString pluginFileLocation;
+  QList<ctkPlugin*> installedPlugins;
   while(dirIter.hasNext())
   {
     try
     {
       QString fileLocation = dirIter.next();
-      if (fileLocation.contains("org_commontk_dicom_wg23"))
+      if (fileLocation.contains("org_commontk_dah") && !fileLocation.contains(pluginName))
       {
         ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
-        plugin->start(ctkPlugin::START_TRANSIENT);
+        installedPlugins << plugin;
+        //plugin->start(ctkPlugin::START_TRANSIENT);
       }
       if (fileLocation.contains(pluginName))
       {
@@ -142,6 +143,18 @@ int main(int argv, char** argc)
     {
       qCritical() << e.what();
     }
+  }
+
+  try
+  {
+    foreach(ctkPlugin* plugin, installedPlugins)
+    {
+      plugin->start(ctkPlugin::START_TRANSIENT);
+    }
+  }
+  catch (const ctkPluginException& e)
+  {
+    qCritical() << e.what();
   }
 
   // if we did not find the business logic: abort

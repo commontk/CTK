@@ -288,11 +288,11 @@ SET(CTK_LIBS
 SET(CTK_PLUGINS
   org.commontk.eventbus:ON
   org.commontk.cli:OFF
-  org.commontk.dicom.wg23.app:OFF
-  org.commontk.dicom.wg23.core:OFF
-  org.commontk.dicom.wg23.host:OFF
-  org.commontk.dicom.examplehost:OFF
-  org.commontk.example.dicomapp:OFF
+  org.commontk.dah.app:OFF
+  org.commontk.dah.core:OFF
+  org.commontk.dah.exampleapp:OFF
+  org.commontk.dah.examplehost:OFF
+  org.commontk.dah.host:OFF
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
   )

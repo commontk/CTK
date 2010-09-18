@@ -68,21 +68,36 @@ int main(int argv, char** argc)
   QStringList libFilter;
   libFilter << "*.dll" << "*.so" << "*.dylib";
   QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
+
+  QStringList pluginsToInstall;
+  pluginsToInstall << "org_commontk_dah_core" << "org_commontk_dah_host"
+                   << "org_commontk_dah_examplehost";
+
+  QList<ctkPlugin*> installedPlugins;
   while(dirIter.hasNext())
   {
     try
     {
       QString fileLocation = dirIter.next();
-      if (fileLocation.contains("org_commontk_dicom"))
+      foreach(QString pluginToInstall, pluginsToInstall)
       {
-        ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
-        plugin->start(ctkPlugin::START_TRANSIENT);
+        if (fileLocation.contains(pluginToInstall))
+        {
+          ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
+          installedPlugins << plugin;
+          break;
+        }
       }
     }
     catch (const ctkPluginException& e)
     {
       qCritical() << e.what();
     }
+  }
+
+  foreach(ctkPlugin* plugin, installedPlugins)
+  {
+    plugin->start(ctkPlugin::START_TRANSIENT);
   }
 
   framework->start();

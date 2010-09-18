@@ -5,6 +5,6 @@
 # 
 
 SET(target_libraries
-  org_commontk_dicom_examplehost
+  org_commontk_dah_examplehost
 
   )
