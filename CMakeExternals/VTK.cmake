@@ -8,6 +8,8 @@ IF(${add_project})
   IF(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
     MESSAGE(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
+
+  SET(VTK_enabling_variable VTK_LIBRARIES)
   
   SET(additional_vtk_cmakevars )
   IF(MINGW)
@@ -49,5 +51,8 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+
+  SET(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
+  SET(${VTK_enabling_variable}_FIND_PACKAGE_CMD VTK)
 ENDIF()
 

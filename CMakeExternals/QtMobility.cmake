@@ -2,9 +2,9 @@
 # QtMobility
 #
 SET(QtMobility_DEPENDS)
-SET(QtMobility_enabling_variable QTMOBILITY_QTSERVICEFW_LIBRARIES)
-ctkMacroShouldAddExternalProject(${QtMobility_enabling_variable} add_project)
+ctkMacroShouldAddExternalProject(QTMOBILITY_QTSERVICEFW_LIBRARIES add_project)
 IF(${add_project})
+  SET(QtMobility_enabling_variable QTMOBILITY_QTSERVICEFW_LIBRARIES)
   SET(proj QtMobility)
 #   MESSAGE(STATUS "Adding project:${proj}")
   SET(QtMobility_DEPENDS ${proj})

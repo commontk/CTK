@@ -71,8 +71,11 @@ MACRO(ctkMacroBuildLib)
          )
   ENDFOREACH()
 
+MESSAGE("[${lib_name}] ext deps: ${ext_deps}")
   FOREACH(dep ${ext_deps})
-    LIST(APPEND my_includes ${${dep}_INCLUDE_DIRS})
+MESSAGE("[${lib_name}] ${dep}_INCLUDE_DIRS: ${${dep}_INCLUDE_DIRS}")
+    STRING(REPLACE "^" ";" _include_dirs "${${dep}_INCLUDE_DIRS}")
+    LIST(APPEND my_includes ${_include_dirs})
   ENDFOREACH()
 
   LIST(REMOVE_DUPLICATES my_includes)

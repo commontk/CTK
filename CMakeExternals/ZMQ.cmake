@@ -9,6 +9,8 @@ IF(${add_project})
   IF(DEFINED ZMQ_DIR AND NOT EXISTS ${ZMQ_DIR})
     MESSAGE(FATAL_ERROR "ZMQ_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
+
+  SET(ZMQ_enabling_variable ZMQ_LIBRARIES)
   
   SET(proj ZMQ)
   SET(proj_DEPENDENCIES)
@@ -29,9 +31,12 @@ IF(${add_project})
 		  DEPENDS
 		    ${proj_DEPENDENCIES}
       )
-	  SET(ZMQ_DIR ${ep_build_dir}/${proj})
+    SET(ZMQ_DIR ${ep_build_dir}/${proj})
 	
-	ELSE()
+  ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-	ENDIF()
+  ENDIF()
+
+  SET(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
+  SET(${ZMQ_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
 ENDIF()

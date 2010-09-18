@@ -78,7 +78,8 @@ MACRO(ctkMacroBuildApp)
   ENDFOREACH()
 
   FOREACH(dep ${ext_deps})
-    LIST(APPEND my_includes ${${dep}_INCLUDE_DIRS})
+    STRING(REPLACE "^" ";" _include_dirs "${${dep}_INCLUDE_DIRS}")
+    LIST(APPEND my_includes ${_include_dirs})
   ENDFOREACH()
 
   LIST(REMOVE_DUPLICATES my_includes)

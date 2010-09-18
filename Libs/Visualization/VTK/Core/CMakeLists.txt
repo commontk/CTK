@@ -3,11 +3,6 @@ PROJECT(CTKVisualizationVTKCore)
 #
 # 3rd party dependencies
 #
-
-FIND_PACKAGE(VTK)
-IF(NOT VTK_FOUND)
-  MESSAGE(FATAL_ERROR "error: VTK package is required to build ${PROJECT_NAME}")
-ENDIF()
 INCLUDE(${VTK_USE_FILE})
 
 #

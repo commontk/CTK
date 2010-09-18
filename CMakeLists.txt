@@ -498,6 +498,43 @@ IF(CTK_SUPERBUILD)
 ENDIF()
 
 #-----------------------------------------------------------------------------
+# Expand variables containing include directories for external projects
+# This relies on the variable EXTERNAL_TARGETS set in ctkMacroValidateBuildOptions
+FOREACH(_external_target ${EXTERNAL_TARGETS})
+  IF(${_external_target}_FIND_PACKAGE_CMD)
+MESSAGE("Calling FIND_PACKAGE(${${_external_target}_FIND_PACKAGE_CMD})")
+    FIND_PACKAGE(${${_external_target}_FIND_PACKAGE_CMD})
+  ENDIF()
+ENDFOREACH()
+
+FOREACH(_external_target ${EXTERNAL_TARGETS})
+  IF(${_external_target}_INCLUDE_DIRS)
+  STRING(REPLACE "^" ";" _include_variable_list "${${_external_target}_INCLUDE_DIRS}")
+  IF(_include_variable_list)
+MESSAGE("[${_external_target}] Resolving include variables: ${${_external_target}_INCLUDE_DIRS}")
+    #LIST(LENGTH _include_variable_list _list_length)
+    SET(${_external_target}_INCLUDE_DIRS "")
+    #IF(_list_length GREATER 1)
+      FOREACH(_include_variable ${_include_variable_list})
+        #SET(${_external_target}_INCLUDE_DIRS
+        #    "${${_external_target}_INCLUDE_DIRS}^${${_include_variable}}")
+MESSAGE("[${_external_target}] Appending ${${_include_variable}}")
+        IF(${_include_variable})
+          LIST(APPEND ${_external_target}_INCLUDE_DIRS ${${_include_variable}})
+        ELSE()
+          LIST(APPEND ${_external_target}_INCLUDE_DIRS ${_include_variable})
+        ENDIF()
+MESSAGE("[${_external_target}] New dirs: ${${_external_target}_INCLUDE_DIRS}")
+      ENDFOREACH()
+MESSAGE("[${_external_target}] Appended dirs: ${${_external_target}_INCLUDE_DIRS}")
+    #ELSE()
+    #  SET(${_external_target}_INCLUDE_DIRS ${_include_variable_list})
+    #ENDIF()
+  ENDIF()
+  ENDIF()
+ENDFOREACH()
+
+#-----------------------------------------------------------------------------
 # CTK_SUPERBUILD_BINARY_DIR
 
 # If CTK_SUPERBUILD_BINARY_DIR isn't defined, it means CTK is *NOT* build using Superbuild.

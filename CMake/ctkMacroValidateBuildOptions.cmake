@@ -84,6 +84,7 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
       )
   ENDFOREACH()
 
+  SET(EXTERNAL_TARGETS ) # This is used in CMakeLists.txt
   FOREACH(target_info ${target_directories_with_target_name})
 
     # extract target_dir and option_name
@@ -138,10 +139,19 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
       LIST(APPEND ${target_project_name}_DEPENDENCIES ${dep_path_list})
 
       #MESSAGE("path for ${target_project_name} is: ${dep_path_list}")
-        
+
       # Check if all CTK targets included in the dependency path are enabled
       SET(ctk_dep_path_list )
+      SET(ext_dep_path_list ${dep_path_list})
       ctkMacroGetAllCTKTargetLibraries("${dep_path_list}" ctk_dep_path_list)
+      IF(ctk_dep_path_list)
+        LIST(REMOVE_ITEM ext_dep_path_list ${ctk_dep_path_list})
+      ENDIF()
+
+      IF(ext_dep_path_list)
+        LIST(APPEND EXTERNAL_TARGETS ${ext_dep_path_list})
+      ENDIF()
+
       FOREACH(dep ${ctk_dep_path_list})
         ctkMacroGetOptionName("${target_directories_with_target_name}" ${dep} dep_option)
         IF(NOT ${${dep_option}})
@@ -153,6 +163,10 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
     ENDIF()
     
   ENDFOREACH()
+
+  IF(EXTERNAL_TARGETS)
+    LIST(REMOVE_DUPLICATES EXTERNAL_TARGETS)
+  ENDIF()
 
   #MESSAGE(STATUS "Validated: CTK_LIB_*, CTK_PLUGIN_*, CTK_APP_*")
 ENDMACRO()

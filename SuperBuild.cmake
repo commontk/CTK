@@ -129,8 +129,18 @@ SET(dependency_args )
 FOREACH(p ${external_projects})
   INCLUDE(CMakeExternals/${p}.cmake)
   IF(${p}_enabling_variable)
+    # Provide the include directories either directly or provide the variable name
+    # used by the corresponding Find<package>.cmake files. 
+    # The top-level CMakeLists.txt file will expand the variable names if not in
+    # superbuild mode. The include dirs are then used in 
+    # ctkMacroBuildApp, ctkMacroBuildLib, and ctkMacroBuildPlugin
+    STRING(REPLACE ";" "^" _include_dirs "${${${p}_enabling_variable}_INCLUDE_DIRS}")
     LIST(APPEND dependency_args 
-      "-D${${p}_enabling_variable}_INCLUDE_DIRS:STRING=${${${p}_enabling_variable}_INCLUDE_DIRS}")
+         -D${${p}_enabling_variable}_INCLUDE_DIRS:STRING=${_include_dirs})
+    IF(${${p}_enabling_variable}_FIND_PACKAGE_CMD)
+      LIST(APPEND dependency_args
+           -D${${p}_enabling_variable}_FIND_PACKAGE_CMD:STRING=${${${p}_enabling_variable}_FIND_PACKAGE_CMD})
+    ENDIF()
   ENDIF()
 ENDFOREACH()
 

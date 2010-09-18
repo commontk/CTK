@@ -9,6 +9,8 @@ IF(${add_project})
   IF(DEFINED PYTHONQT_INSTALL_DIR AND NOT EXISTS ${PYTHONQT_INSTALL_DIR})
     MESSAGE(FATAL_ERROR "PYTHONQT_INSTALL_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
+
+  SET(PythonQt_enabling_variable PYTHONQT_LIBRARIES)
   
   SET(proj PythonQt)
   SET(proj_DEPENDENCIES)
@@ -53,4 +55,7 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+
+  SET(${PythonQt_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR PYTHON_INCLUDE_DIRS)
+  SET(${PythonQt_enabling_variable}_FIND_PACKAGE_CMD PythonQt)
 ENDIF()

@@ -1,13 +1,5 @@
 PROJECT(CTKScriptingPythonCore)
 
-#
-# 3rd party dependencies
-#
-
-FIND_PACKAGE(PythonQt)
-IF(NOT PYTHONQT_FOUND)
-  MESSAGE(FATAL_ERROR "error: PythonQt package is required to build ${PROJECT_NAME}")
-ENDIF()
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
@@ -17,8 +9,6 @@ SET(KIT_export_directive "CTK_SCRIPTING_PYTHON_CORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
-  ${PYTHON_INCLUDE_DIRS}
-  ${PYTHONQT_INCLUDE_DIR}
   )
   
 # Source files

@@ -10,6 +10,8 @@ IF(${add_project})
   IF(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
     MESSAGE(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
+
+  SET(DCMTK_enabling_variable DCMTK_LIBRARIES)
   
   SET(proj DCMTK)
   SET(proj_DEPENDENCIES)
@@ -45,4 +47,7 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+
+  SET(${DCMTK_enabling_variable}_INCLUDE_DIRS DCMTK_INCLUDE_DIR)
+  SET(${DCMTK_enabling_variable}_FIND_PACKAGE_CMD DCMTK)
 ENDIF()
