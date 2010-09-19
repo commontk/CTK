@@ -20,12 +20,12 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23HOSTPLUGIN_P_H
-#define CTKDICOMWG23HOSTPLUGIN_P_H
+#ifndef CTKDICOMHOSTPLUGIN_P_H
+#define CTKDICOMHOSTPLUGIN_P_H
 
 #include <ctkPluginActivator.h>
 
-class ctkDicomWG23HostPlugin :
+class ctkDicomHostPlugin :
   public QObject, public ctkPluginActivator
 {
   Q_OBJECT
@@ -33,23 +33,23 @@ class ctkDicomWG23HostPlugin :
 
 public:
 
-  ctkDicomWG23HostPlugin();
-  ~ctkDicomWG23HostPlugin();
+  ctkDicomHostPlugin();
+  ~ctkDicomHostPlugin();
 
   void start(ctkPluginContext* context);
   void stop(ctkPluginContext* context);
 
-  static ctkDicomWG23HostPlugin* getInstance();
+  static ctkDicomHostPlugin* getInstance();
 
   ctkPluginContext* getPluginContext() const;
 
 
 private:
 
-  static ctkDicomWG23HostPlugin* instance;
+  static ctkDicomHostPlugin* instance;
   ctkPluginContext* context;
 
 
-}; // ctkDicomWG23HostPlugin
+}; // ctkDicomHostPlugin
 
-#endif // CTKDICOMWG23HOSTPLUGIN_P_H
+#endif // CTKDICOMHOSTPLUGIN_P_H

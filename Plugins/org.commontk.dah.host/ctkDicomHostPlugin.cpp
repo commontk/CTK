@@ -20,42 +20,42 @@
 =============================================================================*/
 
 
-#include "ctkDicomWG23HostPlugin_p.h"
+#include "ctkDicomHostPlugin_p.h"
 #include <QtPlugin>
 
-ctkDicomWG23HostPlugin* ctkDicomWG23HostPlugin::instance = 0;
+ctkDicomHostPlugin* ctkDicomHostPlugin::instance = 0;
 
-ctkDicomWG23HostPlugin::ctkDicomWG23HostPlugin()
+ctkDicomHostPlugin::ctkDicomHostPlugin()
   : context(0)
 {
 }
 
-ctkDicomWG23HostPlugin::~ctkDicomWG23HostPlugin()
+ctkDicomHostPlugin::~ctkDicomHostPlugin()
 {
   
 }
 
-void ctkDicomWG23HostPlugin::start(ctkPluginContext* context)
+void ctkDicomHostPlugin::start(ctkPluginContext* context)
 {
   instance = this;
   this->context = context;
 }
 
-void ctkDicomWG23HostPlugin::stop(ctkPluginContext* context)
+void ctkDicomHostPlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
 }
 
-ctkDicomWG23HostPlugin* ctkDicomWG23HostPlugin::getInstance()
+ctkDicomHostPlugin* ctkDicomHostPlugin::getInstance()
 {
   return instance;
 }
 
-ctkPluginContext* ctkDicomWG23HostPlugin::getPluginContext() const
+ctkPluginContext* ctkDicomHostPlugin::getPluginContext() const
 {
   return context;
 }
 
-Q_EXPORT_PLUGIN2(org_commontk_dah_host, ctkDicomWG23HostPlugin)
+Q_EXPORT_PLUGIN2(org_commontk_dah_host, ctkDicomHostPlugin)
 
 
