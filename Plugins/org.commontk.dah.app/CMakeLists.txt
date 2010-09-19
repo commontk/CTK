@@ -10,7 +10,7 @@ SET(PLUGIN_export_directive "org_commontk_dah_app_EXPORT")
 SET(PLUGIN_SRCS
   ctkDicomAppServer.cpp
   ctkDicomAppServerPrivate.cpp
-  ctkDicomWG23AppPlugin.cpp
+  ctkDicomAppPlugin.cpp
   ctkDicomAbstractApp.cpp
   ctkDicomHostService.cpp
   ctkAppSoapMessageProcessor.cpp
@@ -19,7 +19,7 @@ SET(PLUGIN_SRCS
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
   ctkDicomAppServerPrivate.h
-  ctkDicomWG23AppPlugin_p.h
+  ctkDicomAppPlugin_p.h
 )
 
 # Qt Designer files which should be processed by Qts uic

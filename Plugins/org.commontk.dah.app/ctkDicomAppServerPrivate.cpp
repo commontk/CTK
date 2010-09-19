@@ -29,7 +29,7 @@
 
 #include <stdexcept>
 #include <ctkDicomWG23TypesHelper.h>
-#include <ctkDicomWG23AppPlugin_p.h>
+#include <ctkDicomAppPlugin_p.h>
 
 #include <ctkExchangeSoapMessageProcessor.h>
 #include "ctkAppSoapMessageProcessor.h"
@@ -84,7 +84,7 @@ void ctkDicomAppServerPrivate::incomingSoapMessage(
 {
   if(appInterface == NULL)
   {
-    ctkPluginContext* context = ctkDicomWG23AppPlugin::getInstance()->getPluginContext();
+    ctkPluginContext* context = ctkDicomAppPlugin::getInstance()->getPluginContext();
     ctkServiceReference* serviceRef = context->getServiceReference("ctkDicomAppInterface");
     if (!serviceRef)
     {

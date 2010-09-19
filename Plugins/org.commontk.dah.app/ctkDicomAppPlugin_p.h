@@ -20,44 +20,36 @@
 =============================================================================*/
 
 
-#include "ctkDicomWG23AppPlugin_p.h"
+#ifndef CTKDICOMAPPPLUGIN_P_H
+#define CTKDICOMAPPPLUGIN_P_H
 
-#include <QtPlugin>
+#include <ctkPluginActivator.h>
 
-ctkDicomWG23AppPlugin* ctkDicomWG23AppPlugin::instance = 0;
-
-ctkDicomWG23AppPlugin::ctkDicomWG23AppPlugin()
-  : context(0)
+class ctkDicomAppPlugin :
+  public QObject, public ctkPluginActivator
 {
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator)
 
-}
+public:
 
-ctkDicomWG23AppPlugin::~ctkDicomWG23AppPlugin()
-{
-  
-}
+  ctkDicomAppPlugin();
+  ~ctkDicomAppPlugin();
 
-void ctkDicomWG23AppPlugin::start(ctkPluginContext* context)
-{
-  instance = this;
-  this->context = context;
-}
+  void start(ctkPluginContext* context);
+  void stop(ctkPluginContext* context);
 
-void ctkDicomWG23AppPlugin::stop(ctkPluginContext* context)
-{
-  Q_UNUSED(context)
-}
+  static ctkDicomAppPlugin* getInstance();
 
-ctkDicomWG23AppPlugin* ctkDicomWG23AppPlugin::getInstance()
-{
-  return instance;
-}
-
-ctkPluginContext* ctkDicomWG23AppPlugin::getPluginContext() const
-{
-  return context;
-}
-
-Q_EXPORT_PLUGIN2(org_commontk_dah_app, ctkDicomWG23AppPlugin)
+  ctkPluginContext* getPluginContext() const;
 
 
+private:
+
+  static ctkDicomAppPlugin* instance;
+  ctkPluginContext* context;
+
+
+}; // ctkDicomAppPlugin
+
+#endif // CTKDICOMAPPPLUGIN_P_H

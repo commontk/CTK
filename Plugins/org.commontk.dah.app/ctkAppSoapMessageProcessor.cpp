@@ -22,8 +22,7 @@
 #include "ctkAppSoapMessageProcessor.h"
 
 #include <ctkDicomWG23TypesHelper.h>
-#include "ctkPluginContext.h"
-#include "ctkDicomWG23AppPlugin_p.h"
+
 
 ctkAppSoapMessageProcessor::ctkAppSoapMessageProcessor(ctkDicomAppInterface* inter)
 : appInterface(inter)
