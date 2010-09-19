@@ -16,7 +16,7 @@ SET(PLUGIN_include_directories
 )
 
 SET(PLUGIN_SRCS
-  ctkDicomWG23CorePlugin.cpp
+  ctkDicomAppHostingCorePlugin.cpp
   ctkSimpleSoapServer.cpp
   ctkSoapConnectionRunnable.cpp
   ctkDicomServicePrivate.cpp
@@ -34,7 +34,7 @@ SET(PLUGIN_MOC_SRCS
   ctkDicomExchangeInterface.h
   ctkDicomHostInterface.h
   ctkDicomServicePrivate.h
-  ctkDicomWG23CorePlugin_p.h
+  ctkDicomAppHostingCorePlugin_p.h
   ctkSimpleSoapServer.h
   ctkSoapConnectionRunnable_p.h
   ctkDicomExchangeService.h

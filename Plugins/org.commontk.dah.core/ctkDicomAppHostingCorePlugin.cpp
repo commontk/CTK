@@ -20,36 +20,42 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMWG23COREPLUGIN_P_H
-#define CTKDICOMWG23COREPLUGIN_P_H
+#include "ctkDicomAppHostingCorePlugin_p.h"
+#include <QtPlugin>
 
-#include <ctkPluginActivator.h>
+ctkDicomAppHostingCorePlugin* ctkDicomAppHostingCorePlugin::instance = 0;
 
-class ctkDicomWG23CorePlugin :
-  public QObject, public ctkPluginActivator
+ctkDicomAppHostingCorePlugin::ctkDicomAppHostingCorePlugin()
+  : context(0)
 {
-  Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
+}
 
-public:
+ctkDicomAppHostingCorePlugin::~ctkDicomAppHostingCorePlugin()
+{
+  
+}
 
-  ctkDicomWG23CorePlugin();
-  ~ctkDicomWG23CorePlugin();
+void ctkDicomAppHostingCorePlugin::start(ctkPluginContext* context)
+{
+  instance = this;
+  this->context = context;
+}
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+void ctkDicomAppHostingCorePlugin::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context)
+}
 
-  static ctkDicomWG23CorePlugin* getInstance();
+ctkDicomAppHostingCorePlugin* ctkDicomAppHostingCorePlugin::getInstance()
+{
+  return instance;
+}
 
-  ctkPluginContext* getPluginContext() const;
+ctkPluginContext* ctkDicomAppHostingCorePlugin::getPluginContext() const
+{
+  return context;
+}
+
+Q_EXPORT_PLUGIN2(org_commontk_dah_core, ctkDicomAppHostingCorePlugin)
 
 
-private:
-
-  static ctkDicomWG23CorePlugin* instance;
-  ctkPluginContext* context;
-
-
-}; // ctkDicomWG23CorePlugin
-
-#endif // CTKDICOMWG23COREPLUGIN_P_H
