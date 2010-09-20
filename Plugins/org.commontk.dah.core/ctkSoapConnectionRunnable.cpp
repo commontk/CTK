@@ -36,6 +36,7 @@ ctkSoapConnectionRunnable::~ctkSoapConnectionRunnable()
 
 void ctkSoapConnectionRunnable::run()
 {
+  QTcpSocket tcpSocket;
   if (!tcpSocket.setSocketDescriptor(socketDescriptor))
   {
     // error handling
@@ -100,7 +101,7 @@ void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
           if (body.size()<contentLength)
           {
             qDebug() << " Message body too small. Trying to read more.";
-            tcpSocket.waitForReadyRead(-1);
+            socket.waitForReadyRead(-1);
           }
         }
         if(body.trimmed().isEmpty()==false)

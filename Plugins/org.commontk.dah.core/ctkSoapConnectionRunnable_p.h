@@ -51,7 +51,6 @@ private:
 
   int socketDescriptor;
 
-  QTcpSocket tcpSocket;
 };
 
 #endif // CTKSOAPCONNECTIONRUNNABLE_P_H
