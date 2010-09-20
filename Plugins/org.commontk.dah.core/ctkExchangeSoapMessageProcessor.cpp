@@ -99,8 +99,10 @@ void ctkExchangeSoapMessageProcessor::processGetData(
 void ctkExchangeSoapMessageProcessor::processReleaseData(
     const QtSoapMessage &message, QtSoapMessage *reply) const
 {
+  Q_UNUSED(message)
+  Q_UNUSED(reply)
   // extract arguments from input message
-  const QtSoapType& inputType = message.method()["objectUUIDs"];
+  //const QtSoapType& inputType = message.method()["objectUUIDs"];
   const QList<QUuid> objectUUIDs;
   // query interface
   exchangeInterface->releaseData(objectUUIDs);

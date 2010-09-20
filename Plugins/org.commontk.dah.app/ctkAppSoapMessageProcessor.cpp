@@ -63,6 +63,8 @@ bool ctkAppSoapMessageProcessor::process(
 void ctkAppSoapMessageProcessor::processGetState(
     const QtSoapMessage &message, QtSoapMessage *reply) const
 {
+  Q_UNUSED(message)
+
   // extract arguments from input message: nothing to be done
   // query interface
   const ctkDicomAppHosting::State result = appInterface->getState();

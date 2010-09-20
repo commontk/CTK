@@ -63,7 +63,7 @@ QList<ctkDicomAppHosting::ObjectLocator>* ctkDicomExchangeService::getData(
 }
 
 void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs){
-
+  Q_UNUSED(objectUUIDs)
 }
 
 

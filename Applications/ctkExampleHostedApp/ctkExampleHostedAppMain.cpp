@@ -167,12 +167,12 @@ int main(int argv, char** argc)
   }
 qCritical() << "app about to start 1";
   // setup the communication infrastructure: DicomAppServer and DicomHostService
-  ctkDicomAppServer * appServer = new ctkDicomAppServer(QUrl(appURL).port()); // accesses the app-plugin via getService("ctkDicomAppInterface");
+  /*ctkDicomAppServer * appServer =*/ new ctkDicomAppServer(QUrl(appURL).port()); // accesses the app-plugin via getService("ctkDicomAppInterface");
   ctkDicomHostInterface * hostInterface = new ctkDicomHostService(QUrl(hostURL).port(), "/HostInterface");
   framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
 qCritical() << "app about to start 2";
   // install and start the plugin with the business logic and remember pointer to start it later
-  ctkPlugin* plugin;
+  //ctkPlugin* plugin;
   try
   {
     ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(pluginFileLocation));

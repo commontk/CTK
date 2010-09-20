@@ -6,6 +6,7 @@ class ctkDicomAbstractAppPrivate
   public:
   ctkDicomAbstractAppPrivate(ctkDicomAbstractApp* appInterface, int port) : port(port)
   {
+    Q_UNUSED(appInterface)
     // start server
     if (!port)
     {

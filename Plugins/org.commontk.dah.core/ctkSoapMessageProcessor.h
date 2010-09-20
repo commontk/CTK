@@ -41,6 +41,8 @@ public:
 		const QtSoapMessage& message,
     QtSoapMessage* reply) const
   {
+    Q_UNUSED(message)
+    Q_UNUSED(reply)
     // to implement
     return false;
   }

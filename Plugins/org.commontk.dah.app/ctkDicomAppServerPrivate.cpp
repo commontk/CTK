@@ -35,7 +35,7 @@
 #include "ctkAppSoapMessageProcessor.h"
 
 ctkDicomAppServerPrivate::ctkDicomAppServerPrivate(int port) :
-      appInterface(0), port(port)
+      port(port), appInterface(0)
 {
   connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));

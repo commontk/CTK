@@ -33,7 +33,7 @@
 
 
 ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port) :
-    hostInterface(hostInterface), port(port)
+    port(port), hostInterface(hostInterface)
 {
   connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));

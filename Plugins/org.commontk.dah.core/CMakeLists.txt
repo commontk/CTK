@@ -29,7 +29,6 @@ SET(PLUGIN_SRCS
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
-
   ctkDicomAppInterface.h
   ctkDicomExchangeInterface.h
   ctkDicomHostInterface.h
@@ -37,7 +36,6 @@ SET(PLUGIN_MOC_SRCS
   ctkDicomAppHostingCorePlugin_p.h
   ctkSimpleSoapServer.h
   ctkSoapConnectionRunnable_p.h
-  ctkDicomExchangeService.h
 )
 
 # Qt Designer files which should be processed by Qts uic

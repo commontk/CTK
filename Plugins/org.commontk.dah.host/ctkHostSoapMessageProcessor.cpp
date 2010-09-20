@@ -107,6 +107,7 @@ void ctkHostSoapMessageProcessor::processNotifyStatus(
 void ctkHostSoapMessageProcessor::processGenerateUID(
   const QtSoapMessage& message, QtSoapMessage* reply) const
 {
+  Q_UNUSED(message)
   // extract arguments from input message: nothing to be done
   // query interface
   const QString uid = hostInterface->generateUID();

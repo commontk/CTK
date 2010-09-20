@@ -26,7 +26,7 @@
 #include "ctkDicomAppHostingTypesHelper.h"
 
 ctkDicomAppService::ctkDicomAppService(ushort port, QString path):
-  service(port, path), d(new ctkDicomServicePrivate(port, path))
+  d(new ctkDicomServicePrivate(port, path)), service(port, path)
 {
 }
 
