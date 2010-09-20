@@ -26,43 +26,44 @@
 #include "ctkDicomAppHostingTypesHelper.h"
 
 ctkDicomExchangeService::ctkDicomExchangeService(ushort port, QString path)
- : d(new ctkDicomServicePrivate(port, path))
+  : d(new ctkDicomServicePrivate(port, path))
 {
 
 }
+
 ctkDicomExchangeService::~ctkDicomExchangeService()
 {
-    delete d;
-    d = NULL;
+  delete d;
+  d = NULL;
 }
 
 bool ctkDicomExchangeService::notifyDataAvailable(
-        ctkDicomAppHosting::AvailableData data, bool lastData){
-    //Q_D(ctkDicomService);
-    QList<QtSoapType*> list;
-    list << new ctkDicomSoapAvailableData("data", data);
-    list << new ctkDicomSoapBool("lastData", lastData);
-    const QtSoapType & result = d->askHost("notifyDataAvailable",list);
-    return ctkDicomSoapBool::getBool(result);
+    ctkDicomAppHosting::AvailableData data, bool lastData)
+{
+  //Q_D(ctkDicomService);
+  QList<QtSoapType*> list;
+  list << new ctkDicomSoapAvailableData("data", data);
+  list << new ctkDicomSoapBool("lastData", lastData);
+  const QtSoapType & result = d->askHost("notifyDataAvailable",list);
+  return ctkDicomSoapBool::getBool(result);
 }
-
-
 
 QList<ctkDicomAppHosting::ObjectLocator>* ctkDicomExchangeService::getData(
-        QList<QUuid> objectUUIDs,
-        QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData){
+    QList<QUuid> objectUUIDs,
+    QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData)
+{
+  //Q_D(ctkDicomService);
+  QList<QtSoapType*> list;
 
-    //Q_D(ctkDicomService);
-    QList<QtSoapType*> list;
-
-    list << new ctkDicomSoapArrayOfUUIDS("objectUUIDS",objectUUIDs);
-    list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxUIDs", acceptableTransferSyntaxUIDs);
-    list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
-    const QtSoapType & result = d->askHost("getData",list);
-    return ctkDicomSoapArrayOfObjectLocators::getArray(static_cast<const QtSoapArray &>(result));
+  list << new ctkDicomSoapArrayOfUUIDS("objectUUIDS",objectUUIDs);
+  list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxUIDs", acceptableTransferSyntaxUIDs);
+  list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
+  const QtSoapType & result = d->askHost("getData",list);
+  return ctkDicomSoapArrayOfObjectLocators::getArray(static_cast<const QtSoapArray &>(result));
 }
 
-void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs){
+void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs)
+{
   Q_UNUSED(objectUUIDs)
 }
 

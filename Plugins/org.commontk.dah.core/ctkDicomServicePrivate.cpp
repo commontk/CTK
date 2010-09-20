@@ -44,10 +44,11 @@ void ctkDicomServicePrivate::responseReady()
 }
 
 const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
-                                                   QtSoapType* soapType ){
-    QList<QtSoapType*> list;
-    list.append(soapType);
-    return askHost(methodName,list);
+                                                   QtSoapType* soapType )
+{
+  QList<QtSoapType*> list;
+  list.append(soapType);
+  return askHost(methodName,list);
 }
 
 const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
@@ -64,10 +65,10 @@ const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
   request.setMethod(QtSoapQName(methodName,"http://wg23.dicom.nema.org/"));
   if( !soapTypes.isEmpty())
   {
-      for (QList<QtSoapType*>::ConstIterator it = soapTypes.begin();
-            it < soapTypes.constEnd(); it++){
-        request.addMethodArgument(*it);
-        qDebug() << "  Argument type added " << (*it)->typeName() << ". Argument name is " << (*it)->name().name();;
+    for (QList<QtSoapType*>::ConstIterator it = soapTypes.begin();
+    it < soapTypes.constEnd(); it++){
+      request.addMethodArgument(*it);
+      qDebug() << "  Argument type added " << (*it)->typeName() << ". Argument name is " << (*it)->name().name();;
     }
   }
   qDebug() << request.toXmlString();
@@ -92,7 +93,7 @@ const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
     qDebug() << response.faultString().toString().toLatin1().constData() << endl;
     qDebug() << response.toXmlString();
     return response.returnValue();
-//    throw std::runtime_error("ctkDicomServicePrivate: server error (response.IsFault())");
+    //    throw std::runtime_error("ctkDicomServicePrivate: server error (response.IsFault())");
   }
 
   qDebug() << "Response: " << response.toXmlString();

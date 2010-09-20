@@ -16,8 +16,8 @@ SET(KIT_MOC_SRCS
 
 # UI files
 SET(KIT_UI_FORMS
-  ctkHostAppExampleWidget.ui
   ctkExampleHostMainWindow.ui
+  ctkHostAppExampleWidget.ui
 )
 
 # Resources

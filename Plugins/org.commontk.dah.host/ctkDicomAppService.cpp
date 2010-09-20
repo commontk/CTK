@@ -34,7 +34,6 @@ ctkDicomAppService::~ctkDicomAppService()
 {
 }
 
-
 ctkDicomAppHosting::State ctkDicomAppService::getState()
 {
   //Q_D(ctkDicomService);

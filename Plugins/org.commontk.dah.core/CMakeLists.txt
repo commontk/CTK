@@ -17,23 +17,25 @@ SET(PLUGIN_include_directories
 
 SET(PLUGIN_SRCS
   ctkDicomAppHostingCorePlugin.cpp
-  ctkSimpleSoapServer.cpp
-  ctkSoapConnectionRunnable.cpp
-  ctkDicomServicePrivate.cpp
   ctkDicomAppHostingTypes.h
   ctkDicomAppHostingTypesHelper.h
+  ctkDicomAppInterface.h
   ctkDicomExchangeService.cpp
-  ctkSoapMessageProcessorList.cpp
+  ctkDicomHostInterface.h
+  ctkDicomServicePrivate.cpp
   ctkExchangeSoapMessageProcessor.cpp
+  ctkSimpleSoapServer.cpp
+  ctkSoapConnectionRunnable.cpp
+  ctkSoapMessageProcessorList.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
+  ctkDicomAppHostingCorePlugin_p.h
   ctkDicomAppInterface.h
   ctkDicomExchangeInterface.h
   ctkDicomHostInterface.h
   ctkDicomServicePrivate.h
-  ctkDicomAppHostingCorePlugin_p.h
   ctkSimpleSoapServer.h
   ctkSoapConnectionRunnable_p.h
 )

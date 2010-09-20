@@ -45,4 +45,5 @@ public:
 protected:
   ctkDicomServicePrivate * d;
 };
+
 #endif // CTKDICOMEXCHANGESERVICE_H

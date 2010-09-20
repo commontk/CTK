@@ -23,24 +23,24 @@
 
 void ctkSoapMessageProcessorList::push_back( ctkSoapMessageProcessor* processor )
 {
-	processors.push_back( processor );
+  processors.push_back( processor );
 }
 
 bool ctkSoapMessageProcessorList::process(
-	const QtSoapMessage& message,
-	QtSoapMessage* reply ) const
+    const QtSoapMessage& message,
+    QtSoapMessage* reply ) const
 {
-  for( std::list<ctkSoapMessageProcessor*>::const_iterator it = processors.begin(); 
-    it != processors.end(); it++)
-	{
-		if( (*it)->process( message, reply ) )
-		{
-			return true;
-		}
-	}
-	// if still here, no processor could process the message
-	reply->setFaultCode( QtSoapMessage::Server );
-    reply->setFaultString( "No processor found to process message." );
-	return false;
+  for(std::list<ctkSoapMessageProcessor*>::const_iterator it = processors.begin();
+      it != processors.end(); it++)
+  {
+    if( (*it)->process( message, reply ) )
+    {
+      return true;
+    }
+  }
+  // if still here, no processor could process the message
+  reply->setFaultCode( QtSoapMessage::Server );
+  reply->setFaultString( "No processor found to process message." );
+  return false;
 }
-		
+

@@ -32,15 +32,14 @@ class org_commontk_dah_core_EXPORT ctkSoapMessageProcessorList : public ctkSoapM
 
 public:
 
-	void push_back( ctkSoapMessageProcessor* processor );
+  void push_back( ctkSoapMessageProcessor* processor );
 
-	bool process(
-		const QtSoapMessage& message,
-		QtSoapMessage* reply) const;
-		
+  bool process(const QtSoapMessage& message,
+               QtSoapMessage* reply) const;
+
 private:
 
-	std::list<ctkSoapMessageProcessor*> processors;
+  std::list<ctkSoapMessageProcessor*> processors;
 
 };
 

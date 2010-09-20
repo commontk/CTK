@@ -3,15 +3,15 @@ PROJECT(org_commontk_dah_examplehost)
 SET(PLUGIN_export_directive "org_commontk_dah_examplehost_EXPORT")
 
 SET(PLUGIN_SRCS
-  ctkExampleDicomHostPlugin.cpp
   ctkExampleDicomHost.cpp
+  ctkExampleDicomHostPlugin.cpp
   ctkHostedAppPlaceholderWidget.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
-  ctkExampleDicomHostPlugin_p.h
   ctkExampleDicomHost.h
+  ctkExampleDicomHostPlugin_p.h
   ctkHostedAppPlaceholderWidget.h
 )
 

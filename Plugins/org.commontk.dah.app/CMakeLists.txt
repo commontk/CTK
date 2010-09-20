@@ -8,18 +8,18 @@ ENDIF()
 SET(PLUGIN_export_directive "org_commontk_dah_app_EXPORT")
 
 SET(PLUGIN_SRCS
+  ctkAppSoapMessageProcessor.cpp
+  ctkDicomAbstractApp.cpp
+  ctkDicomAppPlugin.cpp
   ctkDicomAppServer.cpp
   ctkDicomAppServerPrivate.cpp
-  ctkDicomAppPlugin.cpp
-  ctkDicomAbstractApp.cpp
   ctkDicomHostService.cpp
-  ctkAppSoapMessageProcessor.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
-  ctkDicomAppServerPrivate.h
   ctkDicomAppPlugin_p.h
+  ctkDicomAppServerPrivate.h
 )
 
 # Qt Designer files which should be processed by Qts uic

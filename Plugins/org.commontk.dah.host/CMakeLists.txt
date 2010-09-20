@@ -3,18 +3,18 @@ PROJECT(org_commontk_dah_host)
 SET(PLUGIN_export_directive "org_commontk_dah_host_EXPORT")
 
 SET(PLUGIN_SRCS
+  ctkDicomAbstractHost.cpp
+  ctkDicomAppService.cpp  
+  ctkDicomHostPlugin.cpp  
   ctkDicomHostServer.cpp
   ctkDicomHostServerPrivate.cpp
-  ctkDicomHostPlugin.cpp
-  ctkDicomAbstractHost.cpp
-  ctkDicomAppService.cpp
   ctkHostSoapMessageProcessor.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
-  ctkDicomHostServerPrivate.h
   ctkDicomHostPlugin_p.h
+  ctkDicomHostServerPrivate.h
 )
 
 # Qt Designer files which should be processed by Qts uic

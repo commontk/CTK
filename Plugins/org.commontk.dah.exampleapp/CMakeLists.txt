@@ -3,14 +3,14 @@ PROJECT(org_commontk_dah_exampleapp)
 SET(PLUGIN_export_directive "org_commontk_example_dicomapp_EXPORT")
 
 SET(PLUGIN_SRCS
-  ctkExampleDicomAppPlugin.cpp
   ctkExampleDicomAppLogic.cpp
+  ctkExampleDicomAppPlugin.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
-  ctkExampleDicomAppPlugin_p.h
   ctkExampleDicomAppLogic_p.h
+  ctkExampleDicomAppPlugin_p.h
 )
 
 # Qt Designer files which should be processed by Qts uic
