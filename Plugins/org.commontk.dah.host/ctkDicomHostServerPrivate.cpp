@@ -29,7 +29,7 @@
 #include <ctkDicomWG23TypesHelper.h>
 
 #include <ctkExchangeSoapMessageProcessor.h>
-#include "ctkHostSoapMessageProcessor.h"
+#include "ctkHostSoapMessageProcessor_p.h"
 
 
 ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port) :

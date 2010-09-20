@@ -19,7 +19,7 @@
 
 =============================================================================*/
 
-#include "ctkHostSoapMessageProcessor.h"
+#include "ctkHostSoapMessageProcessor_p.h"
 
 #include <ctkDicomWG23TypesHelper.h>
 
