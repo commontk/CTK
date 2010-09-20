@@ -65,13 +65,13 @@ public:
   ~ctkExampleDicomAppLogic();
 
   // ctkDicomAppInterface
-  ctkDicomWG23::State getState();
-  bool setState(ctkDicomWG23::State newState);
+  ctkDicomAppHosting::State getState();
+  bool setState(ctkDicomAppHosting::State newState);
   bool bringToFront(const QRect& requestedScreenArea);
 
   // ctkDicomExchangeInterface
-  bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
-  QList<ctkDicomWG23::ObjectLocator>* getData(
+  bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  QList<ctkDicomAppHosting::ObjectLocator>* getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData);

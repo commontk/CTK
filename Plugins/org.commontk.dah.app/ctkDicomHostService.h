@@ -37,12 +37,12 @@ public:
   QString generateUID();
   QRect getAvailableScreen(const QRect& preferredScreen);
   QString getOutputLocation(const QStringList& preferredProtocols);
-  void notifyStateChanged(ctkDicomWG23::State state);
-  void notifyStatus(const ctkDicomWG23::Status& status);
+  void notifyStateChanged(ctkDicomAppHosting::State state);
+  void notifyStatus(const ctkDicomAppHosting::Status& status);
 
   // Exchange methods
-  bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
-  QList<ctkDicomWG23::ObjectLocator>* getData(
+  bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  QList<ctkDicomAppHosting::ObjectLocator>* getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData);

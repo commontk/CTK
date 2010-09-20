@@ -2,7 +2,7 @@
 #include "ui_ctkHostAppExampleWidget.h"
 #include "ctkExampleDicomHost.h"
 #include "ctkDicomAppService.h"
-#include <ctkDicomWG23TypesHelper.h>
+#include <ctkDicomAppHostingTypesHelper.h>
 
 #include <QDebug>
 #include <QFileDialog>
@@ -21,7 +21,7 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
     connect(&this->host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
     connect(&this->host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));
     connect(ui->placeholderFrame,SIGNAL(resized()),SLOT(placeholderResized()));
-    connect(this->host,SIGNAL( stateChangeReceived(ctkDicomWG23::State)),SLOT(appStateChanged(ctkDicomWG23::State)));
+    connect(this->host,SIGNAL( stateChangeReceived(ctkDicomAppHosting::State)),SLOT(appStateChanged(ctkDicomAppHosting::State)));
 
   }
 
@@ -47,7 +47,7 @@ void ctkHostAppExampleWidget::runButtonClicked()
     qDebug() << "run button clicked";
     if (host)
     {
-      bool reply = host->getDicomAppService()->setState(ctkDicomWG23::INPROGRESS);
+      bool reply = host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
       qDebug() << "  setState(INPROGRESS) returned: " << reply;
     }
 }
@@ -117,7 +117,7 @@ void ctkHostAppExampleWidget::placeholderResized()
   //ui->placeholderFrame->printPosition();
 }
 
-void ctkHostAppExampleWidget::appStateChanged(ctkDicomWG23::State state)
+void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
 {
    ui->statusLabel->setText(ctkDicomSoapState::toStringValue(state));
 }

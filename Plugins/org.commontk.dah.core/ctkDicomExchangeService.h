@@ -36,8 +36,8 @@ public:
   ctkDicomExchangeService(ushort port, QString path);
   ~ctkDicomExchangeService();
 
-  bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
-  QList<ctkDicomWG23::ObjectLocator> *getData(QList<QUuid> objectUUIDs,
+  bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  QList<ctkDicomAppHosting::ObjectLocator> *getData(QList<QUuid> objectUUIDs,
                                              QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData);
   void releaseData(QList<QUuid> objectUUIDs);
 

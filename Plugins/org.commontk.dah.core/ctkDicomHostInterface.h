@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QRect>
 
-#include "ctkDicomWG23Types.h"
+#include "ctkDicomAppHostingTypes.h"
 #include "ctkDicomExchangeInterface.h"
 
 #include <org_commontk_dah_core_Export.h>
@@ -41,8 +41,8 @@ public:
   virtual QString generateUID() = 0;
   virtual QRect getAvailableScreen(const QRect& preferredScreen) = 0;
   virtual QString getOutputLocation(const QStringList& preferredProtocols) = 0;
-  virtual void notifyStateChanged(ctkDicomWG23::State state) = 0;
-  virtual void notifyStatus(const ctkDicomWG23::Status& status) = 0;
+  virtual void notifyStateChanged(ctkDicomAppHosting::State state) = 0;
+  virtual void notifyStatus(const ctkDicomAppHosting::Status& status) = 0;
 
   // Data exchange interface methods
   // inherited from ctkDicomExchangeInterface

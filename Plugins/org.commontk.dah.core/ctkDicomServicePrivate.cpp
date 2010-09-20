@@ -20,7 +20,7 @@
 =============================================================================*/
 
 #include "ctkDicomServicePrivate.h"
-#include "ctkDicomWG23TypesHelper.h"
+#include "ctkDicomAppHostingTypesHelper.h"
 
 #include <QApplication>
 #include <QCursor>

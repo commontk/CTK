@@ -30,7 +30,7 @@ class ctkDicomAbstractHostPrivate
   int appPort;
   ctkDicomHostServer* server;
   ctkDicomAppInterface* appService;
-  // ctkDicomWG23::Status
+  // ctkDicomAppHosting::Status
 };
 
 ctkDicomAbstractHost::ctkDicomAbstractHost(int hostPort, int appPort) : d_ptr(new ctkDicomAbstractHostPrivate(this,hostPort,appPort))

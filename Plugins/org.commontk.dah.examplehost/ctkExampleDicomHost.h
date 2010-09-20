@@ -18,11 +18,11 @@ public:
     virtual QString generateUID() { return ""; }
     virtual QRect getAvailableScreen(const QRect& preferredScreen);
     virtual QString getOutputLocation(const QStringList& /*preferredProtocols*/) { return ""; }
-    virtual void notifyStateChanged(ctkDicomWG23::State state);
-    virtual void notifyStatus(const ctkDicomWG23::Status& status);
+    virtual void notifyStateChanged(ctkDicomAppHosting::State state);
+    virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
     // exchange methods
-    virtual bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData);
-    virtual QList<ctkDicomWG23::ObjectLocator>* getData(
+    virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+    virtual QList<ctkDicomAppHosting::ObjectLocator>* getData(
       QList<QUuid> objectUUIDs, 
       QList<QString> acceptableTransferSyntaxUIDs, 
       bool includeBulkData);
@@ -32,14 +32,14 @@ public:
     ~ctkExampleDicomHost();
 
 signals:
-    void stateChangedReceived(ctkDicomWG23::State state);
-    void statusReceived(const ctkDicomWG23::Status& status);
+    void stateChangedReceived(ctkDicomAppHosting::State state);
+    void statusReceived(const ctkDicomAppHosting::Status& status);
     void giveAvailableScreen(QRect rect);
 
 protected:
     QProcess appProcess;
     ctkHostedAppPlaceholderWidget* placeholderWidget;
-    ctkDicomWG23::State applicationState;
+    ctkDicomAppHosting::State applicationState;
   protected slots:
     void forwardConsoleOutput();
 };

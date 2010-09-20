@@ -30,19 +30,19 @@ ctkExampleDicomAppLogic::ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInt
   : host(host)
 {
   connect(this, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)), Qt::QueuedConnection);
-  emit stateChanged(ctkDicomWG23::IDLE);
+  emit stateChanged(ctkDicomAppHosting::IDLE);
 }
 
 ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
 {
 }
 
-ctkDicomWG23::State ctkExampleDicomAppLogic::getState()
+ctkDicomAppHosting::State ctkExampleDicomAppLogic::getState()
 {
-  return ctkDicomWG23::IDLE;
+  return ctkDicomAppHosting::IDLE;
 }
 
-bool ctkExampleDicomAppLogic::setState(ctkDicomWG23::State newState)
+bool ctkExampleDicomAppLogic::setState(ctkDicomAppHosting::State newState)
 {
   qDebug() << "setState called";
   emit stateChanged(newState);
@@ -75,7 +75,7 @@ void ctkExampleDicomAppLogic::do_something()
 
 void ctkExampleDicomAppLogic::changeState(int anewstate)
 {
-  ctkDicomWG23::State newstate = static_cast<ctkDicomWG23::State>(anewstate);
+  ctkDicomAppHosting::State newstate = static_cast<ctkDicomAppHosting::State>(anewstate);
   try
   {
     host->notifyStateChanged(newstate);
@@ -85,18 +85,18 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
     qCritical() << e.what();
   }
 
-  if (newstate == ctkDicomWG23::INPROGRESS)
+  if (newstate == ctkDicomAppHosting::INPROGRESS)
   {
     do_something();
   }
 }
 
-bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
 {
   return false;
 }
 
-QList<ctkDicomWG23::ObjectLocator>* ctkExampleDicomAppLogic::getData(
+QList<ctkDicomAppHosting::ObjectLocator>* ctkExampleDicomAppLogic::getData(
   QList<QUuid> objectUUIDs, 
   QList<QString> acceptableTransferSyntaxUIDs, 
   bool includeBulkData)

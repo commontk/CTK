@@ -21,7 +21,7 @@
 
 #include "ctkAppSoapMessageProcessor.h"
 
-#include <ctkDicomWG23TypesHelper.h>
+#include <ctkDicomAppHostingTypesHelper.h>
 
 
 ctkAppSoapMessageProcessor::ctkAppSoapMessageProcessor(ctkDicomAppInterface* inter)
@@ -65,7 +65,7 @@ void ctkAppSoapMessageProcessor::processGetState(
 {
   // extract arguments from input message: nothing to be done
   // query interface
-  const ctkDicomWG23::State result = appInterface->getState();
+  const ctkDicomAppHosting::State result = appInterface->getState();
   // set reply message
   reply->setMethod("getState");
   QtSoapSimpleType* resultType = new ctkDicomSoapState("getStateResponse",result);

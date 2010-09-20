@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QProcess>
 
-#include <ctkDicomWG23Types.h>
+#include <ctkDicomAppHostingTypes.h>
 
 class ctkExampleDicomHost;
 
@@ -28,7 +28,7 @@ public slots:
     void stopButtonClicked();
     void appProcessError(QProcess::ProcessError error);
     void appProcessStateChanged(QProcess::ProcessState state);
-    void appStateChanged(ctkDicomWG23::State state);
+    void appStateChanged(ctkDicomAppHosting::State state);
 
     void placeholderResized();
 

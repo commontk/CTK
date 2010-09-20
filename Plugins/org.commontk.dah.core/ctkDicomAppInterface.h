@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QRect>
 
-#include "ctkDicomWG23Types.h"
+#include "ctkDicomAppHostingTypes.h"
 #include "ctkDicomExchangeInterface.h"
 
 #include <org_commontk_dah_core_Export.h>
@@ -38,8 +38,8 @@ class org_commontk_dah_core_EXPORT ctkDicomAppInterface : public ctkDicomExchang
 public:
 
   // Application interface methods
-  virtual ctkDicomWG23::State getState() = 0;
-  virtual bool setState(ctkDicomWG23::State newState) = 0;
+  virtual ctkDicomAppHosting::State getState() = 0;
+  virtual bool setState(ctkDicomAppHosting::State newState) = 0;
   virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
 
   // Data exchange interface methods

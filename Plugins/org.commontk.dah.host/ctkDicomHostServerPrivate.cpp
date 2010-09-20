@@ -26,7 +26,7 @@
 #include <QHostAddress>
 
 #include <stdexcept>
-#include <ctkDicomWG23TypesHelper.h>
+#include <ctkDicomAppHostingTypesHelper.h>
 
 #include <ctkExchangeSoapMessageProcessor.h>
 #include "ctkHostSoapMessageProcessor_p.h"

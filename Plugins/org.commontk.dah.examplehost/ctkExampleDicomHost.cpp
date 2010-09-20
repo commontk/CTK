@@ -1,5 +1,5 @@
 #include "ctkExampleDicomHost.h"
-#include "ctkDicomWG23TypesHelper.h"
+#include "ctkDicomAppHostingTypesHelper.h"
 
 #include <QProcess>
 #include <QtDebug>
@@ -10,7 +10,7 @@
 ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
     placeholderWidget(placeholderWidget),
-    applicationState(ctkDicomWG23::IDLE)
+    applicationState(ctkDicomAppHosting::IDLE)
 {
   connect(&this->appProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
 }
@@ -44,13 +44,13 @@ QRect ctkExampleDicomHost::getAvailableScreen(const QRect& preferredScreen){
 }
 
 
-void ctkExampleDicomHost::notifyStateChanged(ctkDicomWG23::State state){
+void ctkExampleDicomHost::notifyStateChanged(ctkDicomAppHosting::State state){
     qDebug()<< "new state received:"<< static_cast<int>(state);
     qDebug()<< "new state received:"<< ctkDicomSoapState::toStringValue(state);
     emit stateChangedReceived(state);
 }
 
-void ctkExampleDicomHost::notifyStatus(const ctkDicomWG23::Status& status){
+void ctkExampleDicomHost::notifyStatus(const ctkDicomAppHosting::Status& status){
     qDebug()<< "new status received:"<<status.codeMeaning;
     emit statusReceived(status);;
 }
@@ -73,12 +73,12 @@ void ctkExampleDicomHost::forwardConsoleOutput()
   }
 }
 
-bool ctkExampleDicomHost::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+bool ctkExampleDicomHost::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
 {
   return false;
 }
 
-QList<ctkDicomWG23::ObjectLocator>* ctkExampleDicomHost::getData(
+QList<ctkDicomAppHosting::ObjectLocator>* ctkExampleDicomHost::getData(
   QList<QUuid> objectUUIDs, 
   QList<QString> acceptableTransferSyntaxUIDs, 
   bool includeBulkData)

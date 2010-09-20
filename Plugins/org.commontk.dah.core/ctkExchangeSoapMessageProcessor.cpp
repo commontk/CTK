@@ -21,7 +21,7 @@
 
 #include "ctkExchangeSoapMessageProcessor.h"
 
-#include <ctkDicomWG23TypesHelper.h>
+#include <ctkDicomAppHostingTypesHelper.h>
 
 ctkExchangeSoapMessageProcessor::ctkExchangeSoapMessageProcessor(ctkDicomExchangeInterface* inter)
 : exchangeInterface(inter)
@@ -64,7 +64,7 @@ void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["data"];
-  const ctkDicomWG23::AvailableData data = ctkDicomSoapAvailableData::getAvailableData(inputType);
+  const ctkDicomAppHosting::AvailableData data = ctkDicomSoapAvailableData::getAvailableData(inputType);
   const QtSoapType& inputType2 = message.method()["lastData"];
   const bool lastData = ctkDicomSoapBool::getBool(inputType2);
   // query interface
@@ -88,7 +88,7 @@ void ctkExchangeSoapMessageProcessor::processGetData(
   const QtSoapType& inputType3 = message.method()["includeBulkData"];
   const bool includeBulkData = ctkDicomSoapBool::getBool(inputType3);
   // query interface
-  const QList<ctkDicomWG23::ObjectLocator>* result = exchangeInterface->getData(
+  const QList<ctkDicomAppHosting::ObjectLocator>* result = exchangeInterface->getData(
     *objectUUIDs, *acceptableTransferSyntaxUIDs, includeBulkData);
   // set reply message
   reply->setMethod("getData");

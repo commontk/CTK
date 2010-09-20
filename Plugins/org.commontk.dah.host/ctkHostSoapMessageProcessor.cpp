@@ -21,7 +21,7 @@
 
 #include "ctkHostSoapMessageProcessor_p.h"
 
-#include <ctkDicomWG23TypesHelper.h>
+#include <ctkDicomAppHostingTypesHelper.h>
 
 
 ctkHostSoapMessageProcessor::ctkHostSoapMessageProcessor( ctkDicomHostInterface* inter )

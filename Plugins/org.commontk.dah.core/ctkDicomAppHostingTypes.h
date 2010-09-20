@@ -23,14 +23,14 @@
 #include <QList>
 #include <QUuid>
 
-#ifndef CTKDICOMWG23TYPES_H
-#define CTKDICOMWG23TYPES_H
+#ifndef CTKDICOMAPPHOSTINGTYPES_H
+#define CTKDICOMAPPHOSTINGTYPES_H
 
 /**
   * \brief Typedefs and classes defined in the interfaces of DICOM Supplement 118.
   *
   */
-namespace ctkDicomWG23 {
+namespace ctkDicomAppHosting {
 
   enum State {
     IDLE,
@@ -100,4 +100,4 @@ namespace ctkDicomWG23 {
 
 }
 
-#endif // CTKDICOMWG23TYPES_H
+#endif // CTKDICOMAPPHOSTINGTYPES

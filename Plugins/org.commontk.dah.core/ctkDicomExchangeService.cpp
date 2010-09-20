@@ -23,7 +23,7 @@
 
 #include "ctkDicomServicePrivate.h"
 
-#include "ctkDicomWG23TypesHelper.h"
+#include "ctkDicomAppHostingTypesHelper.h"
 
 ctkDicomExchangeService::ctkDicomExchangeService(ushort port, QString path)
  : d(new ctkDicomServicePrivate(port, path))
@@ -37,7 +37,7 @@ ctkDicomExchangeService::~ctkDicomExchangeService()
 }
 
 bool ctkDicomExchangeService::notifyDataAvailable(
-        ctkDicomWG23::AvailableData data, bool lastData){
+        ctkDicomAppHosting::AvailableData data, bool lastData){
     //Q_D(ctkDicomService);
     QList<QtSoapType*> list;
     list << new ctkDicomSoapAvailableData("data", data);
@@ -48,7 +48,7 @@ bool ctkDicomExchangeService::notifyDataAvailable(
 
 
 
-QList<ctkDicomWG23::ObjectLocator>* ctkDicomExchangeService::getData(
+QList<ctkDicomAppHosting::ObjectLocator>* ctkDicomExchangeService::getData(
         QList<QUuid> objectUUIDs,
         QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData){
 

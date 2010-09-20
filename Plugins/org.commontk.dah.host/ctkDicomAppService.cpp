@@ -23,7 +23,7 @@
 
 #include "ctkDicomServicePrivate.h"
 
-#include "ctkDicomWG23TypesHelper.h"
+#include "ctkDicomAppHostingTypesHelper.h"
 
 ctkDicomAppService::ctkDicomAppService(ushort port, QString path):
   service(port, path), d(new ctkDicomServicePrivate(port, path))
@@ -35,14 +35,14 @@ ctkDicomAppService::~ctkDicomAppService()
 }
 
 
-ctkDicomWG23::State ctkDicomAppService::getState()
+ctkDicomAppHosting::State ctkDicomAppService::getState()
 {
   //Q_D(ctkDicomService);
   const QtSoapType & result = d->askHost("getState", NULL);
   return ctkDicomSoapState::getState(result);
 }
 
-bool ctkDicomAppService::setState(ctkDicomWG23::State newState)
+bool ctkDicomAppService::setState(ctkDicomAppHosting::State newState)
 {
   //Q_D(ctkDicomService);
   QtSoapType* input = new ctkDicomSoapState("newState", newState);
@@ -60,12 +60,12 @@ bool ctkDicomAppService::bringToFront(const QRect& requestedScreenArea)
 
 // Exchange methods
 
-bool ctkDicomAppService::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+bool ctkDicomAppService::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
 {
   return service.notifyDataAvailable(data, lastData);
 }
 
-QList<ctkDicomWG23::ObjectLocator>* ctkDicomAppService::getData(
+QList<ctkDicomAppHosting::ObjectLocator>* ctkDicomAppService::getData(
   QList<QUuid> objectUUIDs, 
   QList<QString> acceptableTransferSyntaxUIDs, 
   bool includeBulkData)

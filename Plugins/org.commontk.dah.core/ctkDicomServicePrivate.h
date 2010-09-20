@@ -22,7 +22,7 @@
 #ifndef CTKDICOMSERVICEPRIVATE_H
 #define CTKDICOMSERVICEPRIVATE_H
 
-#include <ctkDicomWG23Types.h>
+#include <ctkDicomAppHostingTypes.h>
 
 #include <QEventLoop>
 #include <QtSoapHttpTransport>

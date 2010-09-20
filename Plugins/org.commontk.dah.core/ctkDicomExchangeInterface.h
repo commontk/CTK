@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QRect>
 
-#include "ctkDicomWG23Types.h"
+#include "ctkDicomAppHostingTypes.h"
 #include <org_commontk_dah_core_Export.h>
 
 class org_commontk_dah_core_EXPORT ctkDicomExchangeInterface : public QObject
@@ -37,9 +37,9 @@ public:
 
   // Data exchange interface methods
 
-  virtual bool notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData) = 0;
+  virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData) = 0;
 
-  virtual QList<ctkDicomWG23::ObjectLocator>* getData(
+  virtual QList<ctkDicomAppHosting::ObjectLocator>* getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData) = 0;

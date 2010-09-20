@@ -26,7 +26,7 @@
 #include <QtSoapStruct>
 #include <QtSoapQName>
 #include <QRect>
-#include <ctkDicomWG23Types.h>
+#include <ctkDicomAppHostingTypes.h>
 
 #include <stdexcept>
 
@@ -54,39 +54,39 @@ class ctkDicomSoapRectangle :public QtSoapStruct {
 
 class ctkDicomSoapState : public QtSoapSimpleType{
     public:
-   ctkDicomSoapState ( const QString & name, ctkDicomWG23::State s ):
+   ctkDicomSoapState ( const QString & name, ctkDicomAppHosting::State s ):
        QtSoapSimpleType ( QtSoapQName(name), toStringValue(s) ){};
 
-   static ctkDicomWG23::State getState(const QtSoapType& type){
+   static ctkDicomAppHosting::State getState(const QtSoapType& type){
         return fromString( type.value().toString() );
    };
 
-   static ctkDicomWG23::State fromString(QString string)
+   static ctkDicomAppHosting::State fromString(QString string)
    {
-     if (string == "IDLE") return ctkDicomWG23::IDLE;
-     if (string == "INPROGRESS") return ctkDicomWG23::INPROGRESS;
-     if (string == "COMPLETED") return ctkDicomWG23::COMPLETED;
-     if (string == "SUSPENDED") return ctkDicomWG23::SUSPENDED;
-     if (string == "CANCELED") return ctkDicomWG23::CANCELED;
-     if (string == "EXIT") return ctkDicomWG23::EXIT;
+     if (string == "IDLE") return ctkDicomAppHosting::IDLE;
+     if (string == "INPROGRESS") return ctkDicomAppHosting::INPROGRESS;
+     if (string == "COMPLETED") return ctkDicomAppHosting::COMPLETED;
+     if (string == "SUSPENDED") return ctkDicomAppHosting::SUSPENDED;
+     if (string == "CANCELED") return ctkDicomAppHosting::CANCELED;
+     if (string == "EXIT") return ctkDicomAppHosting::EXIT;
      throw std::runtime_error( string.prepend("Invalid STATE:").toStdString() );
-     return ctkDicomWG23::EXIT;
+     return ctkDicomAppHosting::EXIT;
    }
-   static QString toStringValue(ctkDicomWG23::State state)
+   static QString toStringValue(ctkDicomAppHosting::State state)
    {
      switch(state)
      {
-     case ctkDicomWG23::IDLE:
+     case ctkDicomAppHosting::IDLE:
          return "IDLE";
-     case ctkDicomWG23::INPROGRESS:
+     case ctkDicomAppHosting::INPROGRESS:
          return "INPROGRESS";
-     case ctkDicomWG23::COMPLETED:
+     case ctkDicomAppHosting::COMPLETED:
          return "COMPLETED";
-     case ctkDicomWG23::SUSPENDED:
+     case ctkDicomAppHosting::SUSPENDED:
          return "SUSPENDED";
-     case ctkDicomWG23::CANCELED:
+     case ctkDicomAppHosting::CANCELED:
          return "CANCELED";
-     case ctkDicomWG23::EXIT:
+     case ctkDicomAppHosting::EXIT:
          return "EXIT";
      default:
        throw std::runtime_error( "Invalid value for state" );
@@ -100,7 +100,7 @@ class ctkDicomSoapState : public QtSoapSimpleType{
 class ctkDicomSoapStatus : public QtSoapStruct{
     public: 
     ctkDicomSoapStatus ( const QString & name,
-            const ctkDicomWG23::Status& s ):
+            const ctkDicomAppHosting::Status& s ):
        QtSoapStruct ( QtSoapQName(name) ){
         this->insert(new QtSoapSimpleType(QtSoapQName("StatusType"), 
                     s.statusType) );
@@ -114,10 +114,10 @@ class ctkDicomSoapStatus : public QtSoapStruct{
                     QtSoapQName("CodeMeaning"), 
                     s.codeMeaning) );
     };
-   static ctkDicomWG23::Status getStatus(const QtSoapType& type){
-        ctkDicomWG23::Status s;
+   static ctkDicomAppHosting::Status getStatus(const QtSoapType& type){
+        ctkDicomAppHosting::Status s;
         
-        s.statusType = static_cast<ctkDicomWG23::StatusType>
+        s.statusType = static_cast<ctkDicomAppHosting::StatusType>
             (type["StatusType"].value().toInt());
         s.codingSchemeDesignator = 
             type["CodingSchemeDesignator"].value().toString();
@@ -201,7 +201,7 @@ class ctkDicomSoapArrayOfUUIDS : public QtSoapArray{
 class ctkDicomSoapObjectDescriptor : public QtSoapStruct{
 public:
     ctkDicomSoapObjectDescriptor ( const QString & name,
-        const ctkDicomWG23::ObjectDescriptor& od ):
+        const ctkDicomAppHosting::ObjectDescriptor& od ):
     QtSoapStruct ( QtSoapQName(name) ){
         this->insert(new QtSoapSimpleType(QtSoapQName("DescriptorUUID"),
                 od.descriptorUUID) );
@@ -219,8 +219,8 @@ public:
                 od.modality) );
     };
 
-    static ctkDicomWG23::ObjectDescriptor getObjectDescriptor(const QtSoapType& type){
-         ctkDicomWG23::ObjectDescriptor od;
+    static ctkDicomAppHosting::ObjectDescriptor getObjectDescriptor(const QtSoapType& type){
+         ctkDicomAppHosting::ObjectDescriptor od;
 
          od.descriptorUUID = QUuid(type["DescriptorUUID"].value().toString());
          od.mimeType =
@@ -238,28 +238,28 @@ public:
 class ctkDicomSoapSeries : public QtSoapStruct{
     public:
         ctkDicomSoapSeries ( const QString & name,
-            const ctkDicomWG23::Series& s ):
+            const ctkDicomAppHosting::Series& s ):
         QtSoapStruct ( QtSoapQName(name) ){
             this->insert(new QtSoapSimpleType(QtSoapQName("SeriesUID"),
                     s.seriesUID) );
         QtSoapArray * odescriptors = new QtSoapArray( QtSoapQName("ObjectDescriptors"),QtSoapType::Other,
                           s.objectDescriptors.size());
 
-        for (QList<ctkDicomWG23::ObjectDescriptor>::ConstIterator it = s.objectDescriptors.constBegin();
+        for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator it = s.objectDescriptors.constBegin();
                 it < s.objectDescriptors.constEnd(); it++){
             odescriptors->append(new ctkDicomSoapObjectDescriptor("ObjectDescriptor",*it));
         }
         this->insert(odescriptors);
     };
 
-    static ctkDicomWG23::Series getSeries(const QtSoapType& type){
-         ctkDicomWG23::Series s;
+    static ctkDicomAppHosting::Series getSeries(const QtSoapType& type){
+         ctkDicomAppHosting::Series s;
 
          s.seriesUID = type["SeriesUID"].value().toString();
-         QList<ctkDicomWG23::ObjectDescriptor> list;
+         QList<ctkDicomAppHosting::ObjectDescriptor> list;
          const QtSoapArray& array = static_cast<const QtSoapArray&> (type["ObjectDescriptors"]);
          for (int i = 0; i < array.count() ; i++ ){
-             const ctkDicomWG23::ObjectDescriptor od =
+             const ctkDicomAppHosting::ObjectDescriptor od =
                      ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
              list.append(od);
          }
@@ -273,14 +273,14 @@ class ctkDicomSoapSeries : public QtSoapStruct{
 class ctkDicomSoapStudy : public QtSoapStruct{
     public:
         ctkDicomSoapStudy ( const QString & name,
-            const ctkDicomWG23::Study& s ):
+            const ctkDicomAppHosting::Study& s ):
         QtSoapStruct ( QtSoapQName(name) ){
             this->insert(new QtSoapSimpleType(QtSoapQName("StudyUID"),
                     s.studyUID) );
         QtSoapArray * odescriptors = new QtSoapArray( QtSoapQName("ObjectDescriptors"),QtSoapType::Other,
                           s.objectDescriptors.size());
 
-        for (QList<ctkDicomWG23::ObjectDescriptor>::ConstIterator it = s.objectDescriptors.constBegin();
+        for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator it = s.objectDescriptors.constBegin();
                 it < s.objectDescriptors.constEnd(); it++){
             odescriptors->append(new ctkDicomSoapObjectDescriptor("ObjectDescriptor",*it));
         }
@@ -289,29 +289,29 @@ class ctkDicomSoapStudy : public QtSoapStruct{
         QtSoapArray * series = new QtSoapArray( QtSoapQName("Series"),QtSoapType::Other,
                           s.series.size());
 
-        for (QList<ctkDicomWG23::Series>::ConstIterator it = s.series.constBegin();
+        for (QList<ctkDicomAppHosting::Series>::ConstIterator it = s.series.constBegin();
                 it < s.series.constEnd(); it++){
             series->append(new ctkDicomSoapSeries("Series",*it));
         }
         this->insert(series);
     };
 
-    static ctkDicomWG23::Study getStudy(const QtSoapType& type){
-         ctkDicomWG23::Study s;
+    static ctkDicomAppHosting::Study getStudy(const QtSoapType& type){
+         ctkDicomAppHosting::Study s;
 
          s.studyUID = type["StudyUID"].value().toString();
-         QList<ctkDicomWG23::ObjectDescriptor> list;
+         QList<ctkDicomAppHosting::ObjectDescriptor> list;
          const QtSoapArray& array = static_cast<const QtSoapArray&> (type["ObjectDescriptors"]);
          for (int i = 0; i < array.count() ; i++ ){
-             const ctkDicomWG23::ObjectDescriptor od =
+             const ctkDicomAppHosting::ObjectDescriptor od =
                      ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
              list.append(od);
          }
          s.objectDescriptors = list;
-         QList<ctkDicomWG23::Series> listSeries;
+         QList<ctkDicomAppHosting::Series> listSeries;
          const QtSoapArray& array2 = static_cast<const QtSoapArray&> (type["Series"]);
          for (int i = 0; i < array2.count() ; i++ ){
-             const ctkDicomWG23::Series series =
+             const ctkDicomAppHosting::Series series =
                      ctkDicomSoapSeries::getSeries(array2.at(i));
              listSeries.append(series);
          }
@@ -324,7 +324,7 @@ class ctkDicomSoapStudy : public QtSoapStruct{
 class ctkDicomSoapPatient : public QtSoapStruct{
     public:
         ctkDicomSoapPatient ( const QString & name,
-            const ctkDicomWG23::Patient& p ):
+            const ctkDicomAppHosting::Patient& p ):
         QtSoapStruct ( QtSoapQName(name) ){
             this->insert(new QtSoapSimpleType(QtSoapQName("Name"),
                     p.name) );
@@ -339,7 +339,7 @@ class ctkDicomSoapPatient : public QtSoapStruct{
             QtSoapArray * odescriptors = new QtSoapArray( QtSoapQName("ObjectDescriptors"),QtSoapType::Other,
                           p.objectDescriptors.size());
 
-            for (QList<ctkDicomWG23::ObjectDescriptor>::ConstIterator it = p.objectDescriptors.constBegin();
+            for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator it = p.objectDescriptors.constBegin();
                 it < p.objectDescriptors.constEnd(); it++){
                 odescriptors->append(new ctkDicomSoapObjectDescriptor("ObjectDescriptor",*it));
             }
@@ -348,15 +348,15 @@ class ctkDicomSoapPatient : public QtSoapStruct{
             QtSoapArray * study = new QtSoapArray( QtSoapQName("Studies"),QtSoapType::Other,
                               p.studies.size());
 
-            for (QList<ctkDicomWG23::Study>::ConstIterator it = p.studies.constBegin();
+            for (QList<ctkDicomAppHosting::Study>::ConstIterator it = p.studies.constBegin();
                 it < p.studies.constEnd(); it++){
                 study->append(new ctkDicomSoapStudy("Study",*it));
             }
             this->insert(study);
         };
 
-        static ctkDicomWG23::Patient getPatient(const QtSoapType& type){
-             ctkDicomWG23::Patient p;
+        static ctkDicomAppHosting::Patient getPatient(const QtSoapType& type){
+             ctkDicomAppHosting::Patient p;
 
              p.name = type["Name"].value().toString();
              p.id = type["ID"].value().toString();
@@ -364,19 +364,19 @@ class ctkDicomSoapPatient : public QtSoapStruct{
              p.sex = type["Sex"].value().toString();
              p.birthDate = type["Birthdate"].value().toString();
 
-             QList<ctkDicomWG23::ObjectDescriptor> list;
+             QList<ctkDicomAppHosting::ObjectDescriptor> list;
              const QtSoapArray& array = static_cast<const QtSoapArray&> (type["ObjectDescriptors"]);
              for (int i = 0; i < array.count() ; i++ ){
-                 const ctkDicomWG23::ObjectDescriptor od =
+                 const ctkDicomAppHosting::ObjectDescriptor od =
                          ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
                  list.append(od);
              }
 
              p.objectDescriptors = list;
-             QList<ctkDicomWG23::Study> listPatient;
+             QList<ctkDicomAppHosting::Study> listPatient;
              const QtSoapArray& array2 = static_cast<const QtSoapArray&> (type["Studies"]);
              for (int i = 0; i < array2.count() ; i++ ){
-                 const ctkDicomWG23::Study study =
+                 const ctkDicomAppHosting::Study study =
                          ctkDicomSoapStudy::getStudy(array2.at(i));
                  listPatient.append(study);
              }
@@ -390,12 +390,12 @@ class ctkDicomSoapPatient : public QtSoapStruct{
 class ctkDicomSoapAvailableData :public QtSoapStruct {
 public:
     ctkDicomSoapAvailableData ( const QString & name,
-            const ctkDicomWG23::AvailableData& ad ):
+            const ctkDicomAppHosting::AvailableData& ad ):
        QtSoapStruct ( QtSoapQName(name) ){
         QtSoapArray * odescriptors = new QtSoapArray( QtSoapQName("ObjectDescriptors"),QtSoapType::Other,
                       ad.objectDescriptors.size());
 
-        for (QList<ctkDicomWG23::ObjectDescriptor>::ConstIterator it = ad.objectDescriptors.constBegin();
+        for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator it = ad.objectDescriptors.constBegin();
             it < ad.objectDescriptors.constEnd(); it++){
             odescriptors->append(new ctkDicomSoapObjectDescriptor("ObjectDescriptor",*it));
         }
@@ -404,27 +404,27 @@ public:
         QtSoapArray * patient = new QtSoapArray( QtSoapQName("Patient"),QtSoapType::Other,
                           ad.patients.size());
 
-        for (QList<ctkDicomWG23::Patient>::ConstIterator it = ad.patients.constBegin();
+        for (QList<ctkDicomAppHosting::Patient>::ConstIterator it = ad.patients.constBegin();
             it < ad.patients.constEnd(); it++){
             patient->append(new ctkDicomSoapPatient("Patient",*it));
         }
         this->insert(patient);
     };
-   static ctkDicomWG23::AvailableData getAvailableData (const QtSoapType& type){
-        ctkDicomWG23::AvailableData ad;
+   static ctkDicomAppHosting::AvailableData getAvailableData (const QtSoapType& type){
+        ctkDicomAppHosting::AvailableData ad;
 
-        QList<ctkDicomWG23::ObjectDescriptor> list;
+        QList<ctkDicomAppHosting::ObjectDescriptor> list;
         const QtSoapArray& array = static_cast<const QtSoapArray&> (type["ObjectDescriptors"]);
         for (int i = 0; i < array.count() ; i++ ){
-            const ctkDicomWG23::ObjectDescriptor od =
+            const ctkDicomAppHosting::ObjectDescriptor od =
                     ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
             list.append(od);
         }
         ad.objectDescriptors = list;
-        QList<ctkDicomWG23::Patient> listPatients;
+        QList<ctkDicomAppHosting::Patient> listPatients;
         const QtSoapArray& array2 = static_cast<const QtSoapArray&> (type["Patients"]);
         for (int i = 0; i < array2.count() ; i++ ){
-            const ctkDicomWG23::Patient patient =
+            const ctkDicomAppHosting::Patient patient =
                     ctkDicomSoapPatient::getPatient(array2.at(i));
             listPatients.append(patient);
         }
@@ -436,7 +436,7 @@ public:
 class ctkDicomSoapObjectLocator : public QtSoapStruct{
 public:
     ctkDicomSoapObjectLocator ( const QString & name,
-        const ctkDicomWG23::ObjectLocator& ol ):
+        const ctkDicomAppHosting::ObjectLocator& ol ):
     QtSoapStruct ( QtSoapQName(name) ){
         this->insert(new QtSoapSimpleType(QtSoapQName("Locator"),
                 ol.locator) );
@@ -457,8 +457,8 @@ public:
                 ol.URI) );
     };
 
-    static ctkDicomWG23::ObjectLocator getObjectLocator(const QtSoapType& type){
-         ctkDicomWG23::ObjectLocator ol;
+    static ctkDicomAppHosting::ObjectLocator getObjectLocator(const QtSoapType& type){
+         ctkDicomAppHosting::ObjectLocator ol;
 
          ol.locator = QUuid(type["Locator"].value().toString());
          ol.source = QUuid(type["Source"].value().toString());
@@ -477,21 +477,21 @@ public:
 
 class ctkDicomSoapArrayOfObjectLocators : public QtSoapArray{
     public:
-    ctkDicomSoapArrayOfObjectLocators ( const QString & name, const QList<ctkDicomWG23::ObjectLocator> &array):
+    ctkDicomSoapArrayOfObjectLocators ( const QString & name, const QList<ctkDicomAppHosting::ObjectLocator> &array):
             QtSoapArray ( QtSoapQName(name),QtSoapType::String,
                           array.size()){
 
-        for (QList<ctkDicomWG23::ObjectLocator>::ConstIterator it = array.constBegin();
+        for (QList<ctkDicomAppHosting::ObjectLocator>::ConstIterator it = array.constBegin();
                 it < array.constEnd(); it++){
                     this->append(new ctkDicomSoapObjectLocator("objectLocator",(*it)));
         }
     };
 
-    static QList<ctkDicomWG23::ObjectLocator>* getArray(const QtSoapArray& array){
-        QList<ctkDicomWG23::ObjectLocator> * list = new QList<ctkDicomWG23::ObjectLocator>();
+    static QList<ctkDicomAppHosting::ObjectLocator>* getArray(const QtSoapArray& array){
+        QList<ctkDicomAppHosting::ObjectLocator> * list = new QList<ctkDicomAppHosting::ObjectLocator>();
 
         for (int i = 0; i < array.count() ; i++ ){
-            const ctkDicomWG23::ObjectLocator ol =
+            const ctkDicomAppHosting::ObjectLocator ol =
                     ctkDicomSoapObjectLocator::getObjectLocator(array.at(i));
             list->append(ol);
         }

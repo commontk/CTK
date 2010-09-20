@@ -20,8 +20,8 @@ SET(PLUGIN_SRCS
   ctkSimpleSoapServer.cpp
   ctkSoapConnectionRunnable.cpp
   ctkDicomServicePrivate.cpp
-  ctkDicomWG23Types.h
-  ctkDicomWG23TypesHelper.h
+  ctkDicomAppHostingTypes.h
+  ctkDicomAppHostingTypesHelper.h
   ctkDicomExchangeService.cpp
   ctkSoapMessageProcessorList.cpp
   ctkExchangeSoapMessageProcessor.cpp
