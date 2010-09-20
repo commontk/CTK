@@ -23,7 +23,7 @@
 #include <ctkPluginFramework.h>
 #include <ctkPluginException.h>
 
-#include <ctkDicomExampleHost.h>
+#include <ctkExampleDicomHost.h>
 #include <ctkHostAppExampleWidget.h>
 #include <ui_ctkExampleHostMainWindow.h>
 

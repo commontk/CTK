@@ -20,12 +20,12 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMEXAMPLEHOSTPLUGIN_P_H
-#define CTKDICOMEXAMPLEHOSTPLUGIN_P_H
+#ifndef CTKEXAMPLEDICOMHOSTPLUGIN_P_H
+#define CTKEXAMPLEDICOMHOSTPLUGIN_P_H
 
 #include <ctkPluginActivator.h>
 
-class ctkDicomExampleHostPlugin :
+class ctkExampleDicomHostPlugin :
   public QObject, public ctkPluginActivator
 {
   Q_OBJECT
@@ -33,23 +33,23 @@ class ctkDicomExampleHostPlugin :
 
 public:
 
-  ctkDicomExampleHostPlugin();
-  ~ctkDicomExampleHostPlugin();
+  ctkExampleDicomHostPlugin();
+  ~ctkExampleDicomHostPlugin();
 
   void start(ctkPluginContext* context);
   void stop(ctkPluginContext* context);
 
-  static ctkDicomExampleHostPlugin* getInstance();
+  static ctkExampleDicomHostPlugin* getInstance();
 
   ctkPluginContext* getPluginContext() const;
 
 
 private:
 
-  static ctkDicomExampleHostPlugin* instance;
+  static ctkExampleDicomHostPlugin* instance;
   ctkPluginContext* context;
 
 
-}; // ctkDicomExampleHostPlugin
+}; // ctkExampleDicomHostPlugin
 
-#endif // CTKDICOMEXAMPLEHOSTPLUGIN_P_H
+#endif // CTKEXAMPLEDICOMHOSTPLUGIN_P_H

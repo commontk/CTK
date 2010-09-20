@@ -1,6 +1,6 @@
 #include "ctkHostAppExampleWidget.h"
 #include "ui_ctkHostAppExampleWidget.h"
-#include "ctkDicomExampleHost.h"
+#include "ctkExampleDicomHost.h"
 #include "ctkDicomAppService.h"
 #include <ctkDicomWG23TypesHelper.h>
 
@@ -16,7 +16,7 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
     ui->setupUi(this);
     ui->crashLabel->setVisible(false);
     ui->messageOutput->setVisible(false);
-    this->host = new ctkDicomExampleHost(ui->placeholderFrame);
+    this->host = new ctkExampleDicomHost(ui->placeholderFrame);
 
     connect(&this->host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
     connect(&this->host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));

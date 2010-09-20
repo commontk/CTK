@@ -1,4 +1,4 @@
-#include "ctkDicomExampleHost.h"
+#include "ctkExampleDicomHost.h"
 #include "ctkDicomWG23TypesHelper.h"
 
 #include <QProcess>
@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-ctkDicomExampleHost::ctkDicomExampleHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
+ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
     placeholderWidget(placeholderWidget),
     applicationState(ctkDicomWG23::IDLE)
@@ -15,7 +15,7 @@ ctkDicomExampleHost::ctkDicomExampleHost(ctkHostedAppPlaceholderWidget* placehol
   connect(&this->appProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
 }
 
-void ctkDicomExampleHost::StartApplication(QString AppPath){
+void ctkExampleDicomHost::StartApplication(QString AppPath){
 
     QStringList l;
     l.append("--hostURL");
@@ -34,7 +34,7 @@ void ctkDicomExampleHost::StartApplication(QString AppPath){
     this->appProcess.start(AppPath,l);
 }
 
-QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){
+QRect ctkExampleDicomHost::getAvailableScreen(const QRect& preferredScreen){
     qDebug()<< "Application asked for this area:"<< preferredScreen;
 
     QRect rect (this->placeholderWidget->getAbsolutePosition());
@@ -44,18 +44,18 @@ QRect ctkDicomExampleHost::getAvailableScreen(const QRect& preferredScreen){
 }
 
 
-void ctkDicomExampleHost::notifyStateChanged(ctkDicomWG23::State state){
+void ctkExampleDicomHost::notifyStateChanged(ctkDicomWG23::State state){
     qDebug()<< "new state received:"<< static_cast<int>(state);
     qDebug()<< "new state received:"<< ctkDicomSoapState::toStringValue(state);
     emit stateChangedReceived(state);
 }
 
-void ctkDicomExampleHost::notifyStatus(const ctkDicomWG23::Status& status){
+void ctkExampleDicomHost::notifyStatus(const ctkDicomWG23::Status& status){
     qDebug()<< "new status received:"<<status.codeMeaning;
     emit statusReceived(status);;
 }
 
-ctkDicomExampleHost::~ctkDicomExampleHost()
+ctkExampleDicomHost::~ctkExampleDicomHost()
 {
   qDebug() << "Exiting host: trying to terminate app";
   this->appProcess.terminate();
@@ -63,7 +63,7 @@ ctkDicomExampleHost::~ctkDicomExampleHost()
   this->appProcess.kill();
 }
 
-void ctkDicomExampleHost::forwardConsoleOutput()
+void ctkExampleDicomHost::forwardConsoleOutput()
 {
   while( this->appProcess.bytesAvailable() )
   {
@@ -73,18 +73,18 @@ void ctkDicomExampleHost::forwardConsoleOutput()
   }
 }
 
-bool ctkDicomExampleHost::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
+bool ctkExampleDicomHost::notifyDataAvailable(ctkDicomWG23::AvailableData data, bool lastData)
 {
   return false;
 }
 
-QList<ctkDicomWG23::ObjectLocator>* ctkDicomExampleHost::getData(
+QList<ctkDicomWG23::ObjectLocator>* ctkExampleDicomHost::getData(
   QList<QUuid> objectUUIDs, 
   QList<QString> acceptableTransferSyntaxUIDs, 
   bool includeBulkData)
 {
   return NULL;
 }
-void ctkDicomExampleHost::releaseData(QList<QUuid> objectUUIDs)
+void ctkExampleDicomHost::releaseData(QList<QUuid> objectUUIDs)
 {
 }

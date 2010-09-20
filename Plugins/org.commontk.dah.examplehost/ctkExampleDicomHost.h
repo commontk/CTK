@@ -1,5 +1,5 @@
-#ifndef CTKDICOMEXAMPLEHOST_H
-#define CTKDICOMEXAMPLEHOST_H
+#ifndef CTKEXAMPLEDICOMHOST_H
+#define CTKEXAMPLEDICOMHOST_H
 
 #include <ctkDicomAbstractHost.h>
 #include <ctkHostedAppPlaceholderWidget.h>
@@ -9,10 +9,10 @@
 #include <QUrl>
 #include <QProcess>
 
-class org_commontk_dah_examplehost_EXPORT ctkDicomExampleHost : public ctkDicomAbstractHost{
+class org_commontk_dah_examplehost_EXPORT ctkExampleDicomHost : public ctkDicomAbstractHost{
     Q_OBJECT
 public:
-    ctkDicomExampleHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort = 8080, int appPort = 8081);
+    ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort = 8080, int appPort = 8081);
 
     virtual void StartApplication(QString AppPath);
     virtual QString generateUID() { return ""; }
@@ -29,7 +29,7 @@ public:
     virtual void releaseData(QList<QUuid> objectUUIDs);
     
     const QProcess& getAppProcess() const { return appProcess; }
-    ~ctkDicomExampleHost();
+    ~ctkExampleDicomHost();
 
 signals:
     void stateChangedReceived(ctkDicomWG23::State state);
@@ -44,4 +44,4 @@ protected:
     void forwardConsoleOutput();
 };
 
-#endif // CTKDICOMEXAMPLEHOST_H
+#endif // CTKEXAMPLEDICOMHOST_H

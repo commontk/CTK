@@ -20,42 +20,42 @@
 =============================================================================*/
 
 
-#include "ctkDicomExampleHostPlugin_p.h"
+#include "ctkExampleDicomHostPlugin_p.h"
 #include <QtPlugin>
 
-ctkDicomExampleHostPlugin* ctkDicomExampleHostPlugin::instance = 0;
+ctkExampleDicomHostPlugin* ctkExampleDicomHostPlugin::instance = 0;
 
-ctkDicomExampleHostPlugin::ctkDicomExampleHostPlugin()
+ctkExampleDicomHostPlugin::ctkExampleDicomHostPlugin()
   : context(0)
 {
 }
 
-ctkDicomExampleHostPlugin::~ctkDicomExampleHostPlugin()
+ctkExampleDicomHostPlugin::~ctkExampleDicomHostPlugin()
 {
   
 }
 
-void ctkDicomExampleHostPlugin::start(ctkPluginContext* context)
+void ctkExampleDicomHostPlugin::start(ctkPluginContext* context)
 {
   instance = this;
   this->context = context;
 }
 
-void ctkDicomExampleHostPlugin::stop(ctkPluginContext* context)
+void ctkExampleDicomHostPlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
 }
 
-ctkDicomExampleHostPlugin* ctkDicomExampleHostPlugin::getInstance()
+ctkExampleDicomHostPlugin* ctkExampleDicomHostPlugin::getInstance()
 {
   return instance;
 }
 
-ctkPluginContext* ctkDicomExampleHostPlugin::getPluginContext() const
+ctkPluginContext* ctkExampleDicomHostPlugin::getPluginContext() const
 {
   return context;
 }
 
-Q_EXPORT_PLUGIN2(org_commontk_dah_examplehost_Export_Export, ctkDicomExampleHostPlugin)
+Q_EXPORT_PLUGIN2(org_commontk_dah_examplehost_Export_Export, ctkExampleDicomHostPlugin)
 
 

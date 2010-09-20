@@ -6,7 +6,7 @@
 
 #include <ctkDicomWG23Types.h>
 
-class ctkDicomExampleHost;
+class ctkExampleDicomHost;
 
 namespace Ui {
     class ctkHostAppExampleWidget;
@@ -33,7 +33,7 @@ public slots:
     void placeholderResized();
 
 protected:
-    ctkDicomExampleHost* host;
+    ctkExampleDicomHost* host;
     QString appFileName;
 
 private:
