@@ -22,6 +22,10 @@
 #include "ctkEventConstants.h"
 
 
-  const QString EventConstants::EVENT_TOPIC = "event.topics";
-  const QString EventConstants::EVENT_FILTER = "event.filter";
+const QString EventConstants::EVENT_TOPIC = "event.topics";
+const QString EventConstants::EVENT_FILTER = "event.filter";
+
+const QString EventConstants::PLUGIN_SYMBOLICNAME = "plugin.symbolicName";
+const QString EventConstants::PLUGIN_ID = "plugin.id";
+const QString EventConstants::PLUGIN_VERSION = "plugin.version";
 
