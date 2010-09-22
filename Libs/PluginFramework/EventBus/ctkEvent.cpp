@@ -21,6 +21,9 @@
 
 #include "ctkEvent.h"
 
+#include "ctkEventConstants.h"
+
+#include <stdexcept>
 
 class ctkEventPrivate {
 
@@ -29,12 +32,42 @@ public:
   ctkEventPrivate(const QString& topic, const ctkDictionary& properties)
     : ref(1), topic(topic), properties(properties)
   {
+    validateTopicName(topic);
+    this->properties.insert(EventConstants::EVENT_TOPIC, topic);
+  }
 
+  static void validateTopicName(const QString& topic)
+  {
+    if (topic.isEmpty())
+    {
+      throw std::invalid_argument("empty topic");
+    }
+
+    // Can't start or end with a '/' but anywhere else is okay
+    // Can't have "//" as that implies empty token
+    if (topic.startsWith("/") || topic.endsWith("/") ||
+        topic.contains("//"))
+    {
+      throw std::invalid_argument(QString("invalid topic: %1").arg(topic).toStdString());
+    }
+
+    QString::const_iterator topicEnd = topic.end();
+    QChar A('A'), Z('Z'), a('a'), z('z'), zero('0'), nine('9');
+    QChar dash('-'), slash('/'), underscore('_');
+    for (QString::const_iterator i = topic.begin(); i < topicEnd; ++i)
+    {
+      QChar c(*i);
+      if ((A <= c) && (c <= Z)) continue;
+      if ((a <= c) && (c <= z)) continue;
+      if ((zero <= c) && (c <= nine)) continue;
+      if ((c == underscore) || (c == dash) || (c == slash)) continue;
+      throw std::invalid_argument(QString("invalid topic: %1").arg(topic).toStdString());
+    }
   }
 
   QAtomicInt ref;
   const QString topic;
-  const ctkDictionary properties;
+  ctkDictionary properties;
 
 };
 
