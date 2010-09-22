@@ -80,6 +80,7 @@ SET(KIT_SRCS
 
   # EventBus sources
   EventBus/ctkEvent.cpp
+  EventBus/ctkEventBus.h
   EventBus/ctkEventConstants.cpp
   )
 
