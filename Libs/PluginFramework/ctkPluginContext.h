@@ -338,6 +338,64 @@
      */
     QObject* getService(ctkServiceReference reference);
 
+    /**
+     * Installs a plugin from the specified <code>QIODevice</code> object.
+     *
+     * <p>
+     * If the specified <code>QIODevice</code> is <code>null</code>, the
+     * Framework must create the <code>QIODevice</code> from which to read the
+     * plugin by interpreting, in an implementation dependent manner, the
+     * specified <code>location</code>.
+     *
+     * <p>
+     * The specified <code>location</code> identifier will be used as the
+     * identity of the plugin. Every installed plugin is uniquely identified by
+     * its location identifier which is typically in the form of a URL.
+     *
+     * <p>
+     * The following steps are required to install a plugin:
+     * <ol>
+     * <li>If a plugin containing the same location identifier is already
+     * installed, the <code>ctkPlugin</code> object for that plugin is returned.
+     *
+     * <li>The plugin's content is read from the input stream. If this fails, a
+     * {@link ctkPluginException} is thrown.
+     *
+     * <li>The plugin's associated resources are allocated. The associated
+     * resources minimally consist of a unique identifier and a persistent
+     * storage area. If this step fails, a <code>ctkPluginException</code>
+     * is thrown.
+     *
+     * <li>The plugin's state is set to <code>INSTALLED</code>.
+     *
+     * <li>A plugin event of type {@link ctkPluginEvent#INSTALLED} is fired.
+     *
+     * <li>The <code>ctkPlugin</code> object for the newly or previously installed
+     * plugin is returned.
+     * </ol>
+     *
+     * <b>Postconditions, no exceptions thrown </b>
+     * <ul>
+     * <li><code>getState()</code> in &#x007B; <code>INSTALLED</code>,
+     * <code>RESOLVED</code> &#x007D;.
+     * <li>Plugin has a unique ID.
+     * </ul>
+     * <b>Postconditions, when an exception is thrown </b>
+     * <ul>
+     * <li>Plugin is not installed and no trace of the plugin exists.
+     * </ul>
+     *
+     * @param location The location identifier of the plugin to install.
+     * @param input The <code>QIODevice</code> object from which this plugin
+     *        will be read or <code>null</code> to indicate the Framework must
+     *        create the I/O device from the specified location identifier.
+     *        The I/O device must always be closed when this method completes,
+     *        even if an exception is thrown.
+     * @return The <code>ctkPlugin</code> object of the installed plugin.
+     * @throws ctkPluginException If the I/O device cannot be read or the
+     *         installation failed.
+     * @throws std::logic_error If this ctkPluginContext is no longer valid.
+     */
     ctkPlugin* installPlugin(const QUrl& location, QIODevice* in = 0);
 
 
