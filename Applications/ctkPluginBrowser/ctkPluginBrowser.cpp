@@ -102,15 +102,19 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   connect(ui.pluginResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(dbResourceDoubleClicked(QModelIndex)));
   connect(ui.qtResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(qtResourceDoubleClicked(QModelIndex)));
 
+  startPluginNowAction = new QAction(QIcon(":/pluginbrowser/images/run-now.png"), "Start Plugin (ignore activation policy)", this);
   startPluginAction = new QAction(QIcon(":/pluginbrowser/images/run.png"), "Start Plugin", this);
   stopPluginAction = new QAction(QIcon(":/pluginbrowser/images/stop.png"), "Stop Plugin", this);
 
+  connect(startPluginNowAction, SIGNAL(triggered()), this, SLOT(startPluginNow()));
   connect(startPluginAction, SIGNAL(triggered()), this, SLOT(startPlugin()));
   connect(stopPluginAction, SIGNAL(triggered()), this, SLOT(stopPlugin()));
 
+  startPluginNowAction->setEnabled(false);
   startPluginAction->setEnabled(false);
   stopPluginAction->setEnabled(false);
 
+  ui.pluginToolBar->addAction(startPluginNowAction);
   ui.pluginToolBar->addAction(startPluginAction);
   ui.pluginToolBar->addAction(stopPluginAction);
 }
@@ -130,6 +134,7 @@ void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
 
 void ctkPluginBrowser::updatePluginToolbar(ctkPlugin* plugin)
 {
+  startPluginNowAction->setEnabled(false);
   startPluginAction->setEnabled(false);
   stopPluginAction->setEnabled(false);
 
@@ -139,6 +144,7 @@ void ctkPluginBrowser::updatePluginToolbar(ctkPlugin* plugin)
   const ctkPlugin::States stopStates = ctkPlugin::STARTING | ctkPlugin::ACTIVE;
   if (startStates.testFlag(plugin->getState()))
   {
+    startPluginNowAction->setEnabled(true);
     startPluginAction->setEnabled(true);
   }
 
@@ -221,11 +227,21 @@ void ctkPluginBrowser::pluginEvent(const ctkPluginEvent& event)
 
 void ctkPluginBrowser::startPlugin()
 {
+  startPlugin(ctkPlugin::START_TRANSIENT | ctkPlugin::START_ACTIVATION_POLICY);
+}
+
+void ctkPluginBrowser::startPluginNow()
+{
+  startPlugin(ctkPlugin::START_TRANSIENT);
+}
+
+void ctkPluginBrowser::startPlugin(ctkPlugin::StartOptions options)
+{
   QModelIndex selection = ui.pluginsTableView->selectionModel()->currentIndex();
   QVariant v = selection.data(Qt::UserRole);
 
   ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
-  plugin->start();
+  plugin->start(options);
 }
 
 void ctkPluginBrowser::stopPlugin()

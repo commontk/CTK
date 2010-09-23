@@ -30,6 +30,7 @@
 
 #include <ctkPluginEvent.h>
 #include <ctkPluginFrameworkEvent.h>
+#include <ctkPlugin.h>
 
 
 class ctkPluginFramework;
@@ -53,11 +54,13 @@ private slots:
   void pluginEvent(const ctkPluginEvent& event);
 
   void startPlugin();
+  void startPluginNow();
   void stopPlugin();
 
 private:
 
   void updatePluginToolbar(ctkPlugin* plugin);
+  void startPlugin(ctkPlugin::StartOptions options);
 
   QMap<ctkPluginEvent::Type, QString> pluginEventTypeToString;
 
@@ -66,6 +69,7 @@ private:
   Ui::ctkPluginBrowserWindow ui;
   ctkPluginBrowserEditors* editors;
 
+  QAction* startPluginNowAction;
   QAction* startPluginAction;
   QAction* stopPluginAction;
 };
