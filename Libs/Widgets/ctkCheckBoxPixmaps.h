@@ -76,6 +76,7 @@ public:
   /// The widget is used to retrieve the style of the checkboxes
   /// If the widget is 0 (not recommended) use the QApplication style.
   ctkCheckBoxPixmaps(QWidget* parent = 0);
+  virtual ~ctkCheckBoxPixmaps();
 
   ///
   /// Returns a pixmap for the given state .
@@ -86,9 +87,12 @@ public:
   /// Best to be avoided.
   inline const QPixmap& pixmap(int state, bool active) const;
 
+protected:
+  QScopedPointer<ctkCheckBoxPixmapsPrivate> d_ptr;
+
 private:
-  Q_DISABLE_COPY(ctkCheckBoxPixmaps)
-  CTK_DECLARE_PRIVATE(ctkCheckBoxPixmaps);
+  Q_DECLARE_PRIVATE(ctkCheckBoxPixmaps);
+  Q_DISABLE_COPY(ctkCheckBoxPixmaps);
 };
 
 const QPixmap& ctkCheckBoxPixmaps::pixmap(int state, bool active) const

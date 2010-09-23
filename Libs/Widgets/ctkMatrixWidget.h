@@ -52,7 +52,7 @@ public:
   explicit ctkMatrixWidget(QWidget* parent = 0);
   /// Constructor, builds a custom rowsXcolumns matrix
   explicit ctkMatrixWidget(int rows, int columns, QWidget* parent = 0);
-  virtual ~ctkMatrixWidget(){}
+  virtual ~ctkMatrixWidget();
 
   ///
   /// Set / Get values of the matrix
@@ -121,9 +121,15 @@ protected:
   /// Reimplemented from QTableView
   /// Share the width/height evenly between columns/rows.
   virtual void updateGeometries();
-
+  
+  ///
+  /// protected constructor to derive private implementations
+  ctkMatrixWidget(int rows, int columns,
+                  ctkMatrixWidgetPrivate& pvt, QWidget* parent=0);
 private:
-  CTK_DECLARE_PRIVATE(ctkMatrixWidget);
+  QScopedPointer<ctkMatrixWidgetPrivate> d_ptr;
+  Q_DECLARE_PRIVATE(ctkMatrixWidget);
+  Q_DISABLE_COPY(ctkMatrixWidget);
 };
 
 #endif

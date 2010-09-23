@@ -35,8 +35,8 @@
 #include <gl\gl.h>							// Header File For The OpenGL32 Library
 #include <gl\glu.h>							// Header File For The GLu32 Library
 
-
-class ctkTransferFunctionNativeItemPrivate:public ctkPrivate<ctkTransferFunctionNativeItem>
+//----------------------------------------------------------------------------
+class ctkTransferFunctionNativeItemPrivate
 {
 public:
   ctkTransferFunctionNativeItemPrivate();
@@ -45,11 +45,13 @@ public:
   GLuint		Texture[1];
 };
 
+//----------------------------------------------------------------------------
 ctkTransferFunctionNativeItemPrivate::ctkTransferFunctionNativeItemPrivate()
 {
   this->Texture[0] = GL_INVALID_VALUE;
 }
 
+//----------------------------------------------------------------------------
 void ctkTransferFunctionNativeItemPrivate::initTexture()
 {
   glGenTextures(1, &this->Texture[0]);
@@ -73,17 +75,16 @@ ctkTransferFunctionNativeItemPrivate::~ctkTransferFunctionNativeItemPrivate()
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionNativeItem::ctkTransferFunctionNativeItem(QGraphicsItem* parentGraphicsItem)
-  :ctkTransferFunctionItem(parentGraphicsItem)
+  :ctkTransferFunctionItem(parentGraphicsItem), d_ptr(new ctkTransferFunctionNativeItemPrivate)
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionNativeItem);
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionNativeItem::ctkTransferFunctionNativeItem(
   ctkTransferFunction* transferFunction, QGraphicsItem* parentItem)
-  :ctkTransferFunctionItem(transferFunction, parentItem)
+  :ctkTransferFunctionItem(transferFunction, parentItem), 
+  d_ptr(new ctkTransferFunctionNativeItemPrivate)
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionNativeItem);
 }
 
 //-----------------------------------------------------------------------------
@@ -95,7 +96,7 @@ ctkTransferFunctionNativeItem::~ctkTransferFunctionNativeItem()
 void ctkTransferFunctionNativeItem::paint(
   QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-  CTK_D(ctkTransferFunctionNativeItem);
+  Q_D(ctkTransferFunctionNativeItem);
   painter->beginNativePainting();
 
   if (d->Texture[0] == GL_INVALID_VALUE)

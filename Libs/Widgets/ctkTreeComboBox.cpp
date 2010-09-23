@@ -37,10 +37,13 @@
 #include "ctkTreeComboBox.h"
 
 // -------------------------------------------------------------------------
-class ctkTreeComboBoxPrivate: public ctkPrivate<ctkTreeComboBox>
+class ctkTreeComboBoxPrivate
 {
+  Q_DECLARE_PUBLIC(ctkTreeComboBox);
+protected:
+  ctkTreeComboBox* const q_ptr;
 public:
-  ctkTreeComboBoxPrivate();
+  ctkTreeComboBoxPrivate(ctkTreeComboBox& object);
   int computeWidthHint()const;
 
   bool SkipNextHide;
@@ -50,7 +53,8 @@ public:
 };
 
 // -------------------------------------------------------------------------
-ctkTreeComboBoxPrivate::ctkTreeComboBoxPrivate()
+ctkTreeComboBoxPrivate::ctkTreeComboBoxPrivate(ctkTreeComboBox& object)
+  :q_ptr(&object)
 {
   this->SkipNextHide = false;
   this->RootSet = false;
@@ -60,14 +64,14 @@ ctkTreeComboBoxPrivate::ctkTreeComboBoxPrivate()
 // -------------------------------------------------------------------------
 int ctkTreeComboBoxPrivate::computeWidthHint()const
 {
-  CTK_P(const ctkTreeComboBox);
-  return p->view()->sizeHintForColumn(p->modelColumn());
+  Q_Q(const ctkTreeComboBox);
+  return q->view()->sizeHintForColumn(q->modelColumn());
 }
 
 // -------------------------------------------------------------------------
 ctkTreeComboBox::ctkTreeComboBox(QWidget* _parent):Superclass(_parent)
+  , d_ptr(new ctkTreeComboBoxPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkTreeComboBox);
   QTreeView* treeView = new QTreeView(this);
   treeView->setHeaderHidden(true);
   this->setView(treeView);
@@ -81,9 +85,14 @@ ctkTreeComboBox::ctkTreeComboBox(QWidget* _parent):Superclass(_parent)
 }
 
 // -------------------------------------------------------------------------
+ctkTreeComboBox::~ctkTreeComboBox()
+{
+}
+
+// -------------------------------------------------------------------------
 bool ctkTreeComboBox::eventFilter(QObject* object, QEvent* _event)
 {
-  CTK_D(ctkTreeComboBox);
+  Q_D(ctkTreeComboBox);
   Q_UNUSED(object);
   bool res = false;
   d->SendCurrentItem = false;
@@ -143,7 +152,7 @@ bool ctkTreeComboBox::eventFilter(QObject* object, QEvent* _event)
 // -------------------------------------------------------------------------
 void ctkTreeComboBox::hidePopup()
 {
-  CTK_D(ctkTreeComboBox);
+  Q_D(ctkTreeComboBox);
   
   if (d->SkipNextHide)
     {// don't hide the popup if the selected item is a parent.
@@ -188,7 +197,7 @@ QTreeView* ctkTreeComboBox::treeView()const
 void ctkTreeComboBox::resizePopup()
 {
   // copied from QComboBox.cpp
-  CTK_D(ctkTreeComboBox);
+  Q_D(ctkTreeComboBox);
 
   QStyle * const style = this->style();
   QWidget* container = qobject_cast<QWidget*>(this->view()->parent());

@@ -39,7 +39,7 @@ protected:
 
 public:
   explicit ctkFactoryLibraryItem(const QString& path);
-  virtual ~ctkFactoryLibraryItem(){}
+ 
   virtual bool load();
   QString path()const;
   virtual QString loadErrorString()const;

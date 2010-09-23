@@ -25,9 +25,6 @@
 #include <QObject>
 #include <QSqlDatabase>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMCoreExport.h"
 
 class ctkDICOMIndexerBasePrivate;
@@ -51,8 +48,12 @@ public:
    */
   void insert ( DcmDataset *dataset );
 
+protected:
+  QScopedPointer<ctkDICOMIndexerBasePrivate> d_ptr;
+  
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMIndexerBase);
+  Q_DECLARE_PRIVATE(ctkDICOMIndexerBase);
+  Q_DISABLE_COPY(ctkDICOMIndexerBase);
 };
 
 #endif

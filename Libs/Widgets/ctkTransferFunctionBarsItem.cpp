@@ -38,10 +38,14 @@
 #include <cmath>
 
 //-----------------------------------------------------------------------------
-class ctkTransferFunctionBarsItemPrivate: public ctkPrivate<ctkTransferFunctionBarsItem>
+class ctkTransferFunctionBarsItemPrivate
 {
+  Q_DECLARE_PUBLIC(ctkTransferFunctionBarsItem);
+protected:
+  ctkTransferFunctionBarsItem* const q_ptr;
+
 public:
-  ctkTransferFunctionBarsItemPrivate();
+  ctkTransferFunctionBarsItemPrivate(ctkTransferFunctionBarsItem& object);
 
   QPainterPath createBarsPath(ctkTransferFunction* tf, const QList<QPointF>& points, qreal barWidth, bool useLog, const QRectF& rect);
   QPainterPath createAreaPath(ctkTransferFunction* tf, const QList<QPointF>& points, qreal barWidth, bool useLog, const QRectF& rect);
@@ -54,7 +58,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-ctkTransferFunctionBarsItemPrivate::ctkTransferFunctionBarsItemPrivate()
+ctkTransferFunctionBarsItemPrivate::ctkTransferFunctionBarsItemPrivate(ctkTransferFunctionBarsItem& object)
+  :q_ptr(&object)
 {
   this->BarWidthRatio = 0.6180; // golden ratio... why not.
   this->BarColor = QColor(191, 191, 191, 127);
@@ -66,16 +71,16 @@ ctkTransferFunctionBarsItemPrivate::ctkTransferFunctionBarsItemPrivate()
 //-----------------------------------------------------------------------------
 ctkTransferFunctionBarsItem::ctkTransferFunctionBarsItem(QGraphicsItem* parentGraphicsItem)
   :ctkTransferFunctionItem(parentGraphicsItem)
+  , d_ptr(new ctkTransferFunctionBarsItemPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionBarsItem);
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionBarsItem::ctkTransferFunctionBarsItem(
   ctkTransferFunction* transferFunc, QGraphicsItem* parentItem)
   :ctkTransferFunctionItem(transferFunc, parentItem)
+  , d_ptr(new ctkTransferFunctionBarsItemPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionBarsItem);
 }
 
 //-----------------------------------------------------------------------------
@@ -86,7 +91,7 @@ ctkTransferFunctionBarsItem::~ctkTransferFunctionBarsItem()
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionBarsItem::setBarWidth(qreal newBarWidthRatio)
 {
-  CTK_D(ctkTransferFunctionBarsItem);
+  Q_D(ctkTransferFunctionBarsItem);
   newBarWidthRatio = qBound(0., newBarWidthRatio, 1.);
   if (d->BarWidthRatio == newBarWidthRatio)
     {
@@ -99,21 +104,21 @@ void ctkTransferFunctionBarsItem::setBarWidth(qreal newBarWidthRatio)
 //-----------------------------------------------------------------------------
 qreal ctkTransferFunctionBarsItem::barWidth()const
 {
-  CTK_D(const ctkTransferFunctionBarsItem);
+  Q_D(const ctkTransferFunctionBarsItem);
   return d->BarWidthRatio;
 }
 
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionBarsItem::setBarColor(const QColor& color)
 {
-  CTK_D(ctkTransferFunctionBarsItem);
+  Q_D(ctkTransferFunctionBarsItem);
   d->BarColor = color;
 }
 
 //-----------------------------------------------------------------------------
 QColor ctkTransferFunctionBarsItem::barColor()const
 {
-  CTK_D(const ctkTransferFunctionBarsItem);
+  Q_D(const ctkTransferFunctionBarsItem);
   return d->BarColor;
 }
 
@@ -121,7 +126,7 @@ QColor ctkTransferFunctionBarsItem::barColor()const
 void ctkTransferFunctionBarsItem::paint(
   QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-  CTK_D(ctkTransferFunctionBarsItem);
+  Q_D(ctkTransferFunctionBarsItem);
   Q_UNUSED(option);
   Q_UNUSED(widget);
 
@@ -171,17 +176,17 @@ void ctkTransferFunctionBarsItem::paint(
 //-----------------------------------------------------------------------------
 qreal ctkTransferFunctionBarsItemPrivate::barWidth()const
 {
-  CTK_P(const ctkTransferFunctionBarsItem);
-  ctkTransferFunction* tf = p->transferFunction();
+  Q_Q(const ctkTransferFunctionBarsItem);
+  ctkTransferFunction* tf = q->transferFunction();
   Q_ASSERT(tf);
-  return this->BarWidthRatio * (p->rect().width() / (tf->representation()->points().size() - 1));
+  return this->BarWidthRatio * (q->rect().width() / (tf->representation()->points().size() - 1));
 }
 
 //-----------------------------------------------------------------------------
 bool ctkTransferFunctionBarsItemPrivate::useLog()const
 {
-  CTK_P(const ctkTransferFunctionBarsItem);
-  ctkTransferFunction* tf = p->transferFunction();
+  Q_Q(const ctkTransferFunctionBarsItem);
+  ctkTransferFunction* tf = q->transferFunction();
   Q_ASSERT(tf);
 
   bool useLog = false;

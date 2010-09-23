@@ -35,8 +35,11 @@ public:
   virtual ~ctkMessagingClient();
   
 
-private:
-//  CTK_DECLARE_PRIVATE(ctkMessagingClient);
+//protected:
+//  QScopedPointer<ctkMessagingClientPrivate> d_ptr;
+//private:
+//  Q_DECLARE_PRIVATE(ctkMessagingClient);
+//  Q_DISABLE_COPY(ctkMessagingClient);
 
 };
 

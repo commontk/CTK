@@ -29,7 +29,7 @@
 #include <QTime>
 #include <QDebug>
 
-// ctkDICOM includes
+// ctkDICOMCore includes
 #include "ctkDICOMModel.h"
 #include "ctkLogger.h"
 
@@ -37,10 +37,14 @@ static ctkLogger logger ( "org.commontk.dicom.DICOMModel" );
 struct Node;
 
 //------------------------------------------------------------------------------
-class ctkDICOMModelPrivate:public ctkPrivate<ctkDICOMModel>
+class ctkDICOMModelPrivate
 {
+  Q_DECLARE_PUBLIC(ctkDICOMModel);
+protected:
+  ctkDICOMModel* const q_ptr;
+  
 public:
-  ctkDICOMModelPrivate();
+  ctkDICOMModelPrivate(ctkDICOMModel&);
   virtual ~ctkDICOMModelPrivate();
   void init();
 
@@ -94,7 +98,7 @@ struct Node
 };
 
 //------------------------------------------------------------------------------
-ctkDICOMModelPrivate::ctkDICOMModelPrivate()
+ctkDICOMModelPrivate::ctkDICOMModelPrivate(ctkDICOMModel& o):q_ptr(&o)
 {
   this->RootNode     = 0;
 }
@@ -123,7 +127,7 @@ Node* ctkDICOMModelPrivate::nodeFromIndex(const QModelIndex& indexValue)const
 //------------------------------------------------------------------------------
 QModelIndexList ctkDICOMModelPrivate::indexListFromNode(const Node* node)const
 {
-  CTK_P(const ctkDICOMModel);
+  Q_Q(const ctkDICOMModel);
   Q_ASSERT(node);
   QModelIndexList indexList;
   
@@ -148,7 +152,7 @@ QModelIndexList ctkDICOMModelPrivate::indexListFromNode(const Node* node)const
     }
   for (int column = 0 ; column < this->Headers.size(); ++column)
     {
-    indexList.append(p->createIndex(row, column, parentNode));
+    indexList.append(q->createIndex(row, column, parentNode));
     }
   return indexList;
 }
@@ -307,7 +311,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
 //------------------------------------------------------------------------------
 void ctkDICOMModelPrivate::fetch(const QModelIndex& indexValue, int limit)
 {
-  CTK_P(ctkDICOMModel);
+  Q_Q(ctkDICOMModel);
   Node* node = this->nodeFromIndex(indexValue);
   if (node->AtEnd || limit <= node->RowCount || node->Fetching/*|| bottom.column() == -1*/)
     {
@@ -342,10 +346,10 @@ void ctkDICOMModelPrivate::fetch(const QModelIndex& indexValue, int limit)
     }
   if (newRowCount > 0 && newRowCount > node->RowCount) 
     {
-    p->beginInsertRows(indexValue, node->RowCount, newRowCount - 1);
+    q->beginInsertRows(indexValue, node->RowCount, newRowCount - 1);
     node->RowCount = newRowCount;
     node->Fetching = false;
-    p->endInsertRows();
+    q->endInsertRows();
     } 
   else 
     {
@@ -355,11 +359,11 @@ void ctkDICOMModelPrivate::fetch(const QModelIndex& indexValue, int limit)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMModel::ctkDICOMModel(QObject* parentValue)
+ctkDICOMModel::ctkDICOMModel(QObject* parentValue): d_ptr(new ctkDICOMModelPrivate(*this))
 {
   Q_UNUSED(parentValue);
-  CTK_INIT_PRIVATE(ctkDICOMModel);
-  ctk_d()->init();
+  Q_D(ctkDICOMModel);
+  d->init();
 }
 
 //------------------------------------------------------------------------------
@@ -370,7 +374,7 @@ ctkDICOMModel::~ctkDICOMModel()
 //------------------------------------------------------------------------------
 bool ctkDICOMModel::canFetchMore ( const QModelIndex & parentValue ) const
 {
-  CTK_D(const ctkDICOMModel);
+  Q_D(const ctkDICOMModel);
   Node* node = d->nodeFromIndex(parentValue);
   return !node->AtEnd;
 }
@@ -378,7 +382,7 @@ bool ctkDICOMModel::canFetchMore ( const QModelIndex & parentValue ) const
 //------------------------------------------------------------------------------
 int ctkDICOMModel::columnCount ( const QModelIndex & _parent ) const
 {
-  CTK_D(const ctkDICOMModel);
+  Q_D(const ctkDICOMModel);
   Q_UNUSED(_parent);
   return d->RootNode != 0 ? d->Headers.size() : 0;
 }
@@ -386,7 +390,7 @@ int ctkDICOMModel::columnCount ( const QModelIndex & _parent ) const
 //------------------------------------------------------------------------------
 QVariant ctkDICOMModel::data ( const QModelIndex & indexValue, int role ) const
 {
-  CTK_D(const ctkDICOMModel);
+  Q_D(const ctkDICOMModel);
   if (role & ~(Qt::DisplayRole | Qt::EditRole))
     {
     return QVariant();
@@ -416,7 +420,7 @@ QVariant ctkDICOMModel::data ( const QModelIndex & indexValue, int role ) const
 //------------------------------------------------------------------------------
 void ctkDICOMModel::fetchMore ( const QModelIndex & parentValue )
 {
-  CTK_D(ctkDICOMModel);
+  Q_D(ctkDICOMModel);
   Node* node = d->nodeFromIndex(parentValue);
   d->fetch(parentValue, qMax(node->RowCount, 0) + 256);
 }
@@ -431,7 +435,7 @@ Qt::ItemFlags ctkDICOMModel::flags ( const QModelIndex & indexValue ) const
 //------------------------------------------------------------------------------
 bool ctkDICOMModel::hasChildren ( const QModelIndex & parentValue ) const
 {
-  CTK_D(const ctkDICOMModel);
+  Q_D(const ctkDICOMModel);
   if (parentValue.column() > 0)
     {
     return false;
@@ -452,7 +456,7 @@ bool ctkDICOMModel::hasChildren ( const QModelIndex & parentValue ) const
 //------------------------------------------------------------------------------
 QVariant ctkDICOMModel::headerData(int section, Qt::Orientation orientation, int role)const
 {
-  CTK_D(const ctkDICOMModel);
+  Q_D(const ctkDICOMModel);
   // @bug: this expression is not "valid", DisplayRole and EditRole are not bitmasks
   if (role & ~(Qt::DisplayRole | Qt::EditRole))
     {
@@ -470,7 +474,7 @@ QVariant ctkDICOMModel::headerData(int section, Qt::Orientation orientation, int
 //------------------------------------------------------------------------------
 QModelIndex ctkDICOMModel::index ( int row, int column, const QModelIndex & parentValue ) const
 {
-  CTK_D(const ctkDICOMModel);
+  Q_D(const ctkDICOMModel);
   if (d->RootNode == 0 || parentValue.column() > 0)
     {
     return QModelIndex();
@@ -497,7 +501,7 @@ QModelIndex ctkDICOMModel::index ( int row, int column, const QModelIndex & pare
 //------------------------------------------------------------------------------
 QModelIndex ctkDICOMModel::parent ( const QModelIndex & indexValue ) const
 {
-  CTK_D(const ctkDICOMModel);
+  Q_D(const ctkDICOMModel);
   Node* node = d->nodeFromIndex(indexValue);
   Q_ASSERT(node);
   Node* parentNode = node->Parent;
@@ -530,7 +534,7 @@ QModelIndex ctkDICOMModel::parent ( const QModelIndex & indexValue ) const
 //------------------------------------------------------------------------------
 int ctkDICOMModel::rowCount ( const QModelIndex & parentValue ) const
 {
-  CTK_D(const ctkDICOMModel);
+  Q_D(const ctkDICOMModel);
   if (d->RootNode == 0 || parentValue.column() > 0)
     {
     return 0;
@@ -547,7 +551,7 @@ int ctkDICOMModel::rowCount ( const QModelIndex & parentValue ) const
 //------------------------------------------------------------------------------
 void ctkDICOMModel::setDatabase(const QSqlDatabase &db)
 {
-  CTK_D(ctkDICOMModel);
+  Q_D(ctkDICOMModel);
 
   this->beginResetModel();
   d->DataBase = db;
@@ -582,7 +586,7 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db)
 //------------------------------------------------------------------------------
 void ctkDICOMModel::sort(int column, Qt::SortOrder order)
 {
-  CTK_D(ctkDICOMModel);
+  Q_D(ctkDICOMModel);
   /* The following would work if there is no fetch involved.
      ORDER BY doesn't just apply on the fetched item. By sorting
      new items can show up in the model, and we need to be more
@@ -612,7 +616,7 @@ void ctkDICOMModel::sort(int column, Qt::SortOrder order)
 //------------------------------------------------------------------------------
 bool ctkDICOMModel::setHeaderData ( int section, Qt::Orientation orientation, const QVariant & value, int role)
 {
-  CTK_D(ctkDICOMModel);
+  Q_D(ctkDICOMModel);
   if (role & ~(Qt::DisplayRole | Qt::EditRole))
     {
     return false;

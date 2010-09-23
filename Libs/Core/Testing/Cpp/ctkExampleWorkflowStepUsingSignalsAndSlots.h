@@ -75,7 +75,7 @@ class ctkExampleWorkflowStepUsingSignalsAndSlots : public QObject
 public:
   typedef QObject Superclass;
   explicit ctkExampleWorkflowStepUsingSignalsAndSlots(QObject* parent = 0);
-  virtual ~ctkExampleWorkflowStepUsingSignalsAndSlots(){}
+  virtual ~ctkExampleWorkflowStepUsingSignalsAndSlots();
 
   /// Get the values for the counters of the number of times we have
   /// run the onEntry() and onExit() functions
@@ -105,8 +105,12 @@ signals:
   void onEntryComplete()const;
   void onExitComplete()const;
 
+protected:
+  QScopedPointer<ctkExampleWorkflowStepUsingSignalsAndSlotsPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkExampleWorkflowStepUsingSignalsAndSlots);
+  Q_DECLARE_PRIVATE(ctkExampleWorkflowStepUsingSignalsAndSlots);
+  Q_DISABLE_COPY(ctkExampleWorkflowStepUsingSignalsAndSlots);
 
 };
 

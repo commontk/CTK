@@ -57,8 +57,12 @@ public:
     AutoLog =2
   };
   virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+protected:
+  QScopedPointer<ctkTransferFunctionBarsItemPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionBarsItem);
+  Q_DECLARE_PRIVATE(ctkTransferFunctionBarsItem);
+  Q_DISABLE_COPY(ctkTransferFunctionBarsItem);
 };
 
 #endif

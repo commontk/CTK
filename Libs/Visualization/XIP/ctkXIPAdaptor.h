@@ -24,9 +24,6 @@
 // Qt includes 
 #include <QObject>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKVisualizationXIPExport.h"
 
 class ctkXIPAdaptorPrivate;
@@ -38,8 +35,12 @@ public:
   explicit ctkXIPAdaptor(QObject* parent = 0);
   virtual ~ctkXIPAdaptor();
   
+protected:
+  QScopedPointer<ctkXIPAdaptorPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkXIPAdaptor);
+  Q_DECLARE_PRIVATE(ctkXIPAdaptor);
+  Q_DISABLE_COPY(ctkXIPAdaptor);
 };
 
 #endif

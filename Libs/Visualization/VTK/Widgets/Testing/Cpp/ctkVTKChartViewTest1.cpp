@@ -48,7 +48,7 @@ int ctkVTKChartViewTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkVTKChartView* view = new ctkVTKChartView(0);
+  ctkVTKChartView view(0);
 
   // Create a table with some points in it...
   VTK_CREATE(vtkTable, table);
@@ -82,22 +82,22 @@ int ctkVTKChartViewTest1(int argc, char * argv [] )
   vtkPlotBar* bar = vtkPlotBar::New();
   bar->SetInput(table, 0, 1);
   bar->SetColor(0, 255, 0, 255);
-  view->addPlot(bar);
+  view.addPlot(bar);
   bar->Delete();
 
   bar = vtkPlotBar::New();
   bar->SetInput(table, 0, 2);
   bar->SetColor(255, 0, 0, 255);
-  view->addPlot(bar);
+  view.addPlot(bar);
   bar->Delete();
 
   bar = vtkPlotBar::New();
   bar->SetInput(table, 0, 3);
   bar->SetColor(0, 0, 255, 255);
-  view->addPlot(bar);
+  view.addPlot(bar);
   bar->Delete();
 
-  view->show();
+  view.show();
 
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")

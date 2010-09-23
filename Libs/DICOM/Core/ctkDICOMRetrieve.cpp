@@ -30,7 +30,7 @@
 #include <QFileInfo>
 #include <QDebug>
 
-// ctkDICOM includes
+// ctkDICOMCore includes
 #include "ctkDICOMRetrieve.h"
 #include "ctkLogger.h"
 
@@ -59,10 +59,10 @@
 
 #include "dcmtk/oflog/oflog.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMRetrieve" );
+static ctkLogger logger("org.commontk.dicom.DICOMRetrieve");
 
 //------------------------------------------------------------------------------
-class ctkDICOMRetrievePrivate: public ctkPrivate<ctkDICOMRetrieve>
+class ctkDICOMRetrievePrivate
 {
 public:
   ctkDICOMRetrievePrivate();
@@ -74,12 +74,11 @@ public:
   int CalledPort;
   DcmSCU SCU;
   DcmDataset* parameters;
+  QString MoveDestinationAETitle;
 
   // do the retrieve, handling both series and study retrieves
   enum RetrieveType { RetrieveSeries, RetrieveStudy };
   void retrieve ( QString UID, QDir directory, RetrieveType retriveType );
-  
-
 };
 
 //------------------------------------------------------------------------------
@@ -97,6 +96,7 @@ ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
   delete parameters;
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveType retriveType ) {
 
   // Register the JPEG libraries in case we need them
@@ -120,8 +120,9 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
   scu.setPeerAETitle ( OFString(CalledAETitle.toStdString().c_str()) );
   scu.setPeerHostName ( OFString(Host.toStdString().c_str()) );
   scu.setPeerPort ( CalledPort );
+  scu.setMoveDestinationAETitle ( OFString(MoveDestinationAETitle.toStdString().c_str()) );
 
-  logger.error ( "Setting Transfer Syntaxes" );
+  logger.info ( "Setting Transfer Syntaxes" );
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
@@ -141,6 +142,8 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
     logger.error ( "Error negotiating association" );
     return;
     }
+
+  logger.debug ( "Setting Parameters" );
   // Clear the query
   unsigned long elements = this->parameters->card();
   // Clean it out
@@ -159,14 +162,21 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
     this->parameters->putAndInsertString ( DCM_StudyInstanceUID, UID.toStdString().c_str() );  
     }
 
+  logger.debug ( "Sending Move Request" );
   MOVEResponses *responses = new MOVEResponses();
   OFCondition status = scu.sendMOVERequest ( 0, this->parameters, responses );
   if ( status.good() )
     {
     logger.debug ( "Find succeded" );
 
+    logger.debug ( "Making Output Directory" );
     // Try to create the directory
     directory.mkpath ( directory.absolutePath() );
+
+    if ( responses->begin() == responses->end() )
+      {
+      logger.error ( "No responses!" );
+      }
 
     // Write the responses out to disk
     for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
@@ -174,6 +184,7 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
       DcmDataset *dataset = (*it)->m_dataset;
       if ( dataset != NULL )
         {
+        logger.debug ( "Got a valid dataset" );
         // Save in correct directory
         E_TransferSyntax output_transfersyntax = dataset->getOriginalXfer();
         dataset->chooseRepresentation( output_transfersyntax, NULL );
@@ -213,14 +224,12 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
   delete responses;
 }
 
-
-
-
 //------------------------------------------------------------------------------
 // ctkDICOMRetrieve methods
 
 //------------------------------------------------------------------------------
 ctkDICOMRetrieve::ctkDICOMRetrieve()
+   : d_ptr(new ctkDICOMRetrievePrivate)
 {
 }
 
@@ -229,71 +238,101 @@ ctkDICOMRetrieve::~ctkDICOMRetrieve()
 {
 }
 
+//------------------------------------------------------------------------------
 /// Set methods for connectivity
 void ctkDICOMRetrieve::setCallingAETitle ( QString callingAETitle )
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->CallingAETitle = callingAETitle;
 }
+
+//------------------------------------------------------------------------------
 const QString& ctkDICOMRetrieve::callingAETitle() 
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->CallingAETitle;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCalledAETitle ( QString calledAETitle )
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->CalledAETitle = calledAETitle;
 }
+
+//------------------------------------------------------------------------------
 const QString& ctkDICOMRetrieve::calledAETitle()
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->CalledAETitle;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setHost ( QString host )
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->Host = host;
 }
+
+//------------------------------------------------------------------------------
 const QString& ctkDICOMRetrieve::host()
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->Host;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCallingPort ( int port ) 
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->CallingPort = port;
 }
+
+//------------------------------------------------------------------------------
 int ctkDICOMRetrieve::callingPort()
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->CallingPort;
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCalledPort ( int port ) 
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   d->CalledPort = port;
 }
+
+//------------------------------------------------------------------------------
 int ctkDICOMRetrieve::calledPort()
 {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   return d->CalledPort;
 }
 
-
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::setMoveDestinationAETitle ( QString moveDestinationAETitle )
+{
+  Q_D(ctkDICOMRetrieve);
+  d->MoveDestinationAETitle = moveDestinationAETitle;
+}
+//------------------------------------------------------------------------------
+const QString& ctkDICOMRetrieve::moveDestinationAETitle()
+{
+  Q_D(ctkDICOMRetrieve);
+  return d->MoveDestinationAETitle;
+}
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::retrieveSeries ( QString seriesInstanceUID, QDir directory ) {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   logger.info ( "Starting retrieveSeries" );
   d->retrieve ( seriesInstanceUID, directory, ctkDICOMRetrievePrivate::RetrieveSeries );
   return;
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMRetrieve::retrieveStudy ( QString studyInstanceUID, QDir directory ) {
-  CTK_D(ctkDICOMRetrieve);
+  Q_D(ctkDICOMRetrieve);
   logger.info ( "Starting retrieveStudy" );
   d->retrieve ( studyInstanceUID, directory, ctkDICOMRetrievePrivate::RetrieveStudy );
   return;

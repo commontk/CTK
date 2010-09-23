@@ -33,10 +33,13 @@
 #include "ctkActionsWidget.h"
 
 //-----------------------------------------------------------------------------
-class ctkActionsWidgetPrivate:public ctkPrivate<ctkActionsWidget>
+class ctkActionsWidgetPrivate
 {
+  Q_DECLARE_PUBLIC(ctkActionsWidget);
+protected:
+  ctkActionsWidget* const q_ptr;
 public:
-  ctkActionsWidgetPrivate();
+  ctkActionsWidgetPrivate(ctkActionsWidget& object);
   void setupUI();
   void updateItems(QList<QStandardItem*>& items, QAction* action);
 
@@ -46,7 +49,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-ctkActionsWidgetPrivate::ctkActionsWidgetPrivate()
+ctkActionsWidgetPrivate::ctkActionsWidgetPrivate(ctkActionsWidget& object)
+  :q_ptr(&object)
 {
   this->ActionsModel = 0;
   this->SortFilterActionsProxyModel = 0;
@@ -56,21 +60,21 @@ ctkActionsWidgetPrivate::ctkActionsWidgetPrivate()
 //-----------------------------------------------------------------------------
 void ctkActionsWidgetPrivate::setupUI()
 {
-  CTK_P(ctkActionsWidget);
+  Q_Q(ctkActionsWidget);
 
-  this->ActionsModel = new QStandardItemModel(p);
+  this->ActionsModel = new QStandardItemModel(q);
   this->ActionsModel->setColumnCount(4);
   QStringList headers;
   headers << "Action" << "Shortcut" << "Context" << "Details";
   this->ActionsModel->setHorizontalHeaderLabels(headers);
 
-  this->SortFilterActionsProxyModel = new ctkSortFilterActionsProxyModel(p);
+  this->SortFilterActionsProxyModel = new ctkSortFilterActionsProxyModel(q);
   this->SortFilterActionsProxyModel->setSourceModel(this->ActionsModel);
 
-  this->ActionsTreeView = new QTreeView(p);
-  QVBoxLayout* layout = new QVBoxLayout(p);
+  this->ActionsTreeView = new QTreeView(q);
+  QVBoxLayout* layout = new QVBoxLayout(q);
   layout->addWidget(this->ActionsTreeView);
-  p->setLayout(layout);
+  q->setLayout(layout);
   this->ActionsTreeView->setModel(this->SortFilterActionsProxyModel);
   this->ActionsTreeView->setAlternatingRowColors(true);
   //this->ActionsTreeView->setItemDelegate(new ctkRichTextItemDelegate);
@@ -113,16 +117,21 @@ void ctkActionsWidgetPrivate
 //-----------------------------------------------------------------------------
 ctkActionsWidget::ctkActionsWidget(QWidget* parentWidget)
   :QWidget(parentWidget)
+  , d_ptr(new ctkActionsWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkActionsWidget);
-  CTK_D(ctkActionsWidget);
+  Q_D(ctkActionsWidget);
   d->setupUI();
+}
+
+//-----------------------------------------------------------------------------
+ctkActionsWidget::~ctkActionsWidget()
+{
 }
 
 //-----------------------------------------------------------------------------
 void ctkActionsWidget::addAction(QAction* action, const QString& group)
 {
-  CTK_D(ctkActionsWidget);
+  Q_D(ctkActionsWidget);
   QStandardItem* actionGroupItem = this->groupItem(group);
   Q_ASSERT(actionGroupItem);
   QList<QStandardItem*> actionItems;
@@ -159,14 +168,14 @@ void ctkActionsWidget::addActions(QList<QAction*> actions, const QString& group)
 //-----------------------------------------------------------------------------
 void ctkActionsWidget::clear()
 {
-  CTK_D(ctkActionsWidget);
+  Q_D(ctkActionsWidget);
   d->ActionsModel->clear();
 }
 
 //-----------------------------------------------------------------------------
 QStandardItem* ctkActionsWidget::groupItem(const QString& group)
 {
-  CTK_D(ctkActionsWidget);
+  Q_D(ctkActionsWidget);
   if (group.isEmpty())
     {
     return d->ActionsModel->invisibleRootItem();
@@ -187,42 +196,42 @@ QStandardItem* ctkActionsWidget::groupItem(const QString& group)
 //-----------------------------------------------------------------------------
 QStandardItemModel* ctkActionsWidget::model()const
 {
-  CTK_D(const ctkActionsWidget);
+  Q_D(const ctkActionsWidget);
   return d->ActionsModel;
 }
 
 //-----------------------------------------------------------------------------
 void ctkActionsWidget::setActionsWithNoShortcutVisible(bool show)
 {
-  CTK_D(ctkActionsWidget);
+  Q_D(ctkActionsWidget);
   d->SortFilterActionsProxyModel->setActionsWithNoShortcutVisible(show);
 }
 
 //-----------------------------------------------------------------------------
 bool ctkActionsWidget::areActionsWithNoShortcutVisible()const
 {
-  CTK_D(const ctkActionsWidget);
+  Q_D(const ctkActionsWidget);
   return d->SortFilterActionsProxyModel->areActionsWithNoShortcutVisible();
 }
 
 //-----------------------------------------------------------------------------
 void ctkActionsWidget::setMenuActionsVisible(bool show)
 {
-  CTK_D(ctkActionsWidget);
+  Q_D(ctkActionsWidget);
   d->SortFilterActionsProxyModel->setMenuActionsVisible(show);
 }
 
 //-----------------------------------------------------------------------------
 bool ctkActionsWidget::areMenuActionsVisible()const
 {
-  CTK_D(const ctkActionsWidget);
+  Q_D(const ctkActionsWidget);
   return d->SortFilterActionsProxyModel->areMenuActionsVisible();
 }
 
 //-----------------------------------------------------------------------------
 void ctkActionsWidget::updateAction()
 {
-  CTK_D(ctkActionsWidget);
+  Q_D(ctkActionsWidget);
   QAction* action = qobject_cast<QAction*>(this->sender());
   Q_ASSERT(action);
   QModelIndexList foundActions =
@@ -250,37 +259,45 @@ void ctkActionsWidget::updateAction()
 //-----------------------------------------------------------------------------
 QTreeView* ctkActionsWidget::view()const
 {
-  CTK_D(const ctkActionsWidget);
+  Q_D(const ctkActionsWidget);
   return d->ActionsTreeView;
 }
 
 //-----------------------------------------------------------------------------
-class ctkSortFilterActionsProxyModelPrivate: public ctkPrivate<ctkSortFilterActionsProxyModel>
+class ctkSortFilterActionsProxyModelPrivate
 {
+protected:
+  ctkSortFilterActionsProxyModel* const q_ptr;
 public:
-  ctkSortFilterActionsProxyModelPrivate();
+  ctkSortFilterActionsProxyModelPrivate(ctkSortFilterActionsProxyModel& object);
   bool                   ActionsWithNoShortcutVisible;
   bool                   MenuActionsVisible;
 };
 
 //-----------------------------------------------------------------------------
-ctkSortFilterActionsProxyModelPrivate::ctkSortFilterActionsProxyModelPrivate()
+ctkSortFilterActionsProxyModelPrivate::ctkSortFilterActionsProxyModelPrivate(ctkSortFilterActionsProxyModel& object)
+  :q_ptr(&object)
 {
   this->ActionsWithNoShortcutVisible = true;
   this->MenuActionsVisible = true;
 }
 
 //-----------------------------------------------------------------------------
+ctkSortFilterActionsProxyModel::~ctkSortFilterActionsProxyModel()
+{
+}
+
+//-----------------------------------------------------------------------------
 ctkSortFilterActionsProxyModel::ctkSortFilterActionsProxyModel(QObject* parentObject)
  :QSortFilterProxyModel(parentObject)
+  , d_ptr(new ctkSortFilterActionsProxyModelPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkSortFilterActionsProxyModel);
 }
 
 //-----------------------------------------------------------------------------
 void ctkSortFilterActionsProxyModel::setActionsWithNoShortcutVisible(bool visible)
 {
-  CTK_D(ctkSortFilterActionsProxyModel);
+  Q_D(ctkSortFilterActionsProxyModel);
   d->ActionsWithNoShortcutVisible = visible;
   this->invalidateFilter();
 }
@@ -288,14 +305,14 @@ void ctkSortFilterActionsProxyModel::setActionsWithNoShortcutVisible(bool visibl
 //-----------------------------------------------------------------------------
 bool ctkSortFilterActionsProxyModel::areActionsWithNoShortcutVisible()const
 {
-  CTK_D(const ctkSortFilterActionsProxyModel);
+  Q_D(const ctkSortFilterActionsProxyModel);
   return d->ActionsWithNoShortcutVisible;
 }
 
 //-----------------------------------------------------------------------------
 void ctkSortFilterActionsProxyModel::setMenuActionsVisible(bool visible)
 {
-  CTK_D(ctkSortFilterActionsProxyModel);
+  Q_D(ctkSortFilterActionsProxyModel);
   d->MenuActionsVisible = visible;
   this->invalidateFilter();
 }
@@ -303,14 +320,14 @@ void ctkSortFilterActionsProxyModel::setMenuActionsVisible(bool visible)
 //-----------------------------------------------------------------------------
 bool ctkSortFilterActionsProxyModel::areMenuActionsVisible()const
 {
-  CTK_D(const ctkSortFilterActionsProxyModel);
+  Q_D(const ctkSortFilterActionsProxyModel);
   return d->MenuActionsVisible;
 }
 
 //-----------------------------------------------------------------------------
 bool ctkSortFilterActionsProxyModel::filterAcceptsRow(int source_row, const QModelIndex & source_parent) const
 {
-  CTK_D(const ctkSortFilterActionsProxyModel);
+  Q_D(const ctkSortFilterActionsProxyModel);
   QStandardItem* shortcutItem = qobject_cast<QStandardItemModel*>(
     this->sourceModel())->itemFromIndex(
       source_parent.child(source_row, ctkActionsWidget::ShortcutColumn));

@@ -30,7 +30,7 @@
 #include <QFileInfo>
 #include <QDebug>
 
-// ctkDICOM includes
+// ctkDICOMCore includes
 #include "ctkDICOMQuery.h"
 #include "ctkLogger.h"
 
@@ -55,7 +55,7 @@
 static ctkLogger logger ( "org.commontk.dicom.DICOMQuery" );
 
 //------------------------------------------------------------------------------
-class ctkDICOMQueryPrivate: public ctkPrivate<ctkDICOMQuery>
+class ctkDICOMQueryPrivate
 {
 public:
   ctkDICOMQueryPrivate();
@@ -91,6 +91,7 @@ ctkDICOMQueryPrivate::~ctkDICOMQueryPrivate()
 
 //------------------------------------------------------------------------------
 ctkDICOMQuery::ctkDICOMQuery()
+   : d_ptr(new ctkDICOMQueryPrivate)
 {
 }
 
@@ -101,49 +102,49 @@ ctkDICOMQuery::~ctkDICOMQuery()
 
 void ctkDICOMQuery::addStudyInstanceUID ( QString s )
 {
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   d->StudyInstanceUIDList.append ( s );
 }
 
 /// Set methods for connectivity
 void ctkDICOMQuery::setCallingAETitle ( QString callingAETitle )
 {
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   d->CallingAETitle = callingAETitle;
 }
 const QString& ctkDICOMQuery::callingAETitle() 
 {
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   return d->CallingAETitle;
 }
 void ctkDICOMQuery::setCalledAETitle ( QString calledAETitle )
 {
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   d->CalledAETitle = calledAETitle;
 }
 const QString& ctkDICOMQuery::calledAETitle()
 {
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   return d->CalledAETitle;
 }
 void ctkDICOMQuery::setHost ( QString host )
 {
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   d->Host = host;
 }
 const QString& ctkDICOMQuery::host()
 {
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   return d->Host;
 }
 void ctkDICOMQuery::setPort ( int port ) 
 {
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   d->Port = port;
 }
 int ctkDICOMQuery::port()
 {
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   return d->Port;
 }
 
@@ -153,7 +154,7 @@ int ctkDICOMQuery::port()
 void ctkDICOMQuery::query(QSqlDatabase database )
 {
   ctkDICOMIndexerBase::setDatabase ( database );
-  CTK_D(ctkDICOMQuery);
+  Q_D(ctkDICOMQuery);
   if ( this->database().isOpen() )
     {
     logger.debug ( "DB open in Query" );

@@ -22,9 +22,11 @@ public:
   void postEvent(const ctkEvent& event);
   void sendEvent(const ctkEvent& event);
 
-  void publishSignal(const QObject* publisher, const char* signal);
+  void publishSignal(const QObject* publisher, const char* signal, const QString& topic, Qt::ConnectionType type = Qt::QueuedConnection);
 
-  void subscribeSlot(const QObject* subscriber, const char* member, const Properties& properties);
+  QString subscribeSlot(const QObject* subscriber, const char* member, const ctkProperties& properties);
+
+  void updateProperties(const QString& subscriptionId, const ctkProperties& properties);
 
 protected:
 

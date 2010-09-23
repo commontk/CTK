@@ -27,19 +27,18 @@
 #include "ctkButtonGroup.h"
 
 //-----------------------------------------------------------------------------
-class ctkButtonGroupPrivate : public ctkPrivate<ctkButtonGroup>
+class ctkButtonGroupPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(ctkButtonGroup);
   bool IsLastButtonPressedChecked;
 };
 
 //------------------------------------------------------------------------------
 ctkButtonGroup::ctkButtonGroup(QObject* _parent)
   :QButtonGroup(_parent)
+  , d_ptr(new ctkButtonGroupPrivate)
 {
-  CTK_INIT_PRIVATE(ctkButtonGroup);
-  CTK_D(ctkButtonGroup);
+  Q_D(ctkButtonGroup);
   d->IsLastButtonPressedChecked = false;
   // we need to connect to button{Clicked,Pressed}(int) instead of
   // button{Clicked,Pressed}(QAbstractButton*) in order to be first to catch the
@@ -49,9 +48,14 @@ ctkButtonGroup::ctkButtonGroup(QObject* _parent)
 }
 
 //------------------------------------------------------------------------------
+ctkButtonGroup::~ctkButtonGroup()
+{
+}
+
+//------------------------------------------------------------------------------
 void ctkButtonGroup::onButtonClicked(int buttonId)
 {
-  CTK_D(ctkButtonGroup);
+  Q_D(ctkButtonGroup);
   QAbstractButton* clickedButton = this->button(buttonId);
   Q_ASSERT(clickedButton);
   if (!this->exclusive() || !d->IsLastButtonPressedChecked)
@@ -70,7 +74,7 @@ void ctkButtonGroup::onButtonClicked(int buttonId)
 //------------------------------------------------------------------------------
 void ctkButtonGroup::onButtonPressed(int buttonId)
 {
-  CTK_D(ctkButtonGroup);
+  Q_D(ctkButtonGroup);
   QAbstractButton* pressedButton = this->button(buttonId);
   Q_ASSERT(pressedButton);
   d->IsLastButtonPressedChecked = pressedButton->isChecked();

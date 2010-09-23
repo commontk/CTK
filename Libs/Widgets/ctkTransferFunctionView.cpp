@@ -33,36 +33,40 @@
 #include "ctkTransferFunctionView.h"
 
 //-----------------------------------------------------------------------------
-class ctkTransferFunctionViewPrivate: public ctkPrivate<ctkTransferFunctionView>
+class ctkTransferFunctionViewPrivate
 {
-  CTK_DECLARE_PUBLIC(ctkTransferFunctionView);
+  Q_DECLARE_PUBLIC(ctkTransferFunctionView);
+protected:
+  ctkTransferFunctionView* const q_ptr;
 public:
-  ctkTransferFunctionViewPrivate();
+  ctkTransferFunctionViewPrivate(ctkTransferFunctionView& object);
   void init();
 };
 
 //-----------------------------------------------------------------------------
-ctkTransferFunctionViewPrivate::ctkTransferFunctionViewPrivate()
+ctkTransferFunctionViewPrivate::ctkTransferFunctionViewPrivate(ctkTransferFunctionView& object)
+  :q_ptr(&object)
 {
 }
 
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionViewPrivate::init()
 {
-  CTK_P(ctkTransferFunctionView);
-  p->setScene(new ctkTransferFunctionScene(p));
-  p->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  p->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  //p->setViewport(new QGLWidget);
-  p->setRenderHint(QPainter::Antialiasing);
+  Q_Q(ctkTransferFunctionView);
+  q->setScene(new ctkTransferFunctionScene(q));
+  q->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  q->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  //q->setViewport(new QGLWidget);
+  q->setRenderHint(QPainter::Antialiasing);
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionView::ctkTransferFunctionView(QWidget* parentWidget)
   :QGraphicsView(parentWidget)
+  , d_ptr(new ctkTransferFunctionViewPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionView);
-  ctk_d()->init();
+  Q_D(ctkTransferFunctionView);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------

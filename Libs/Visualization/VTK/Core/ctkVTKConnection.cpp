@@ -42,8 +42,11 @@ QString convertPointerToString(void* pointer)
 }
 
 //-----------------------------------------------------------------------------
-class ctkVTKConnectionPrivate: public ctkPrivate<ctkVTKConnection>
+class ctkVTKConnectionPrivate
 {
+  Q_DECLARE_PUBLIC(ctkVTKConnection);
+protected:
+  ctkVTKConnection* const q_ptr;
 public:
   enum
     {
@@ -53,7 +56,7 @@ public:
     };
 
   typedef ctkVTKConnectionPrivate Self;
-  ctkVTKConnectionPrivate();
+  ctkVTKConnectionPrivate(ctkVTKConnection& object);
   ~ctkVTKConnectionPrivate();
 
   void connect();
@@ -85,7 +88,8 @@ public:
 // ctkVTKConnectionPrivate methods
 
 //-----------------------------------------------------------------------------
-ctkVTKConnectionPrivate::ctkVTKConnectionPrivate()
+ctkVTKConnectionPrivate::ctkVTKConnectionPrivate(ctkVTKConnection& object)
+  :q_ptr(&object)
 {
   this->Callback    = vtkSmartPointer<vtkCallbackCommand>::New();
   this->Callback->SetCallback(ctkVTKConnectionPrivate::DoCallback);
@@ -110,7 +114,7 @@ ctkVTKConnectionPrivate::~ctkVTKConnectionPrivate()
 //-----------------------------------------------------------------------------
 void ctkVTKConnectionPrivate::connect()
 {
-  CTK_P(ctkVTKConnection);
+  Q_Q(ctkVTKConnection);
   
   if (this->Connected)
     {
@@ -121,11 +125,11 @@ void ctkVTKConnectionPrivate::connect()
   switch (this->SlotType)
     {
     case ctkVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
-      QObject::connect(p, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
+      QObject::connect(q, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
         this->QtObject, this->QtSlot.toLatin1().data(), Qt::AutoConnection);
       break;
     case ctkVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
-      QObject::connect(p, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
+      QObject::connect(q, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
                        this->QtObject, this->QtSlot.toLatin1().data(), Qt::AutoConnection);
       break;
     default:
@@ -150,7 +154,7 @@ void ctkVTKConnectionPrivate::connect()
       }
     // Remove itself from its parent when vtkObject is deleted
     QObject::connect(this->QtObject, SIGNAL(destroyed(QObject*)), 
-                     p, SLOT(qobjectDeleted()));
+                     q, SLOT(qobjectDeleted()));
     }
   this->Connected = true;
 }
@@ -158,7 +162,7 @@ void ctkVTKConnectionPrivate::connect()
 //-----------------------------------------------------------------------------
 void ctkVTKConnectionPrivate::disconnect()
 {
-  CTK_P(ctkVTKConnection);
+  Q_Q(ctkVTKConnection);
   
   if (!this->Connected) 
     { 
@@ -170,11 +174,11 @@ void ctkVTKConnectionPrivate::disconnect()
     switch (this->SlotType)
       {
       case ctkVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
-        QObject::disconnect(p, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
+        QObject::disconnect(q, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
                             this->QtObject,this->QtSlot.toLatin1().data());
         break;
       case ctkVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
-        QObject::disconnect(p, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
+        QObject::disconnect(q, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
                             this->QtObject, this->QtSlot.toLatin1().data());
         break;
       default:
@@ -196,7 +200,7 @@ void ctkVTKConnectionPrivate::disconnect()
     {
     //this->VTKObject->AddObserver(vtkCommand::DeleteEvent, this->Callback); has already been removed
     QObject::disconnect(this->QtObject, SIGNAL(destroyed(QObject*)),
-                        p, SIGNAL(isBroke()));
+                        q, SIGNAL(isBroke()));
     }
 
   this->Connected = false;
@@ -208,14 +212,14 @@ void ctkVTKConnectionPrivate::disconnect()
 //-----------------------------------------------------------------------------
 ctkVTKConnection::ctkVTKConnection(QObject* _parent):
   Superclass(_parent)
+  , d_ptr(new ctkVTKConnectionPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkVTKConnection);
 }
 
 //-----------------------------------------------------------------------------
 ctkVTKConnection::~ctkVTKConnection()
 {
-  CTK_D(ctkVTKConnection);
+  Q_D(ctkVTKConnection);
   if (d->ObserveDeletion)
     {
     d->disconnect();
@@ -225,21 +229,21 @@ ctkVTKConnection::~ctkVTKConnection()
 //-----------------------------------------------------------------------------
 QString ctkVTKConnection::id()const
 {
-  CTK_D(const ctkVTKConnection);
+  Q_D(const ctkVTKConnection);
   return d->Id;
 }
 
 //-----------------------------------------------------------------------------
 QObject* ctkVTKConnection::object()const
 {
-  CTK_D(const ctkVTKConnection);
+  Q_D(const ctkVTKConnection);
   return const_cast<QObject*>(d->QtObject);
 }
 
 //-----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection)
 {
-  const ctkVTKConnectionPrivate* d = connection.ctk_d();
+  const ctkVTKConnectionPrivate* d = connection.d_func();
   dbg.nospace() << "ctkVTKConnection:" << &connection << endl
                 << "Id:" << d->Id << endl
                 << " VTKObject:" << d->VTKObject->GetClassName()
@@ -257,9 +261,9 @@ QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection)
 //-----------------------------------------------------------------------------
 QString ctkVTKConnection::shortDescription()
 {
-  CTK_D(ctkVTKConnection);
+  Q_D(ctkVTKConnection);
   
-  return Self::shortDescription(d->VTKObject, d->VTKEvent, d->QtObject, d->QtSlot);
+  return ctkVTKConnection::shortDescription(d->VTKObject, d->VTKEvent, d->QtObject, d->QtSlot);
 }
 
 //-----------------------------------------------------------------------------
@@ -298,9 +302,9 @@ void ctkVTKConnection::setup(vtkObject* vtk_obj, unsigned long vtk_event,
                              const QObject* qt_obj, QString qt_slot, 
                              float priority)
 {
-  CTK_D(ctkVTKConnection);
+  Q_D(ctkVTKConnection);
   
-  if (!Self::isValid(vtk_obj, vtk_event, qt_obj, qt_slot)) 
+  if (!ctkVTKConnection::isValid(vtk_obj, vtk_event, qt_obj, qt_slot)) 
     { 
     return; 
     }
@@ -325,14 +329,14 @@ void ctkVTKConnection::setup(vtkObject* vtk_obj, unsigned long vtk_event,
 //-----------------------------------------------------------------------------
 void ctkVTKConnection::setBlocked(bool block)
 {
-  CTK_D(ctkVTKConnection);
+  Q_D(ctkVTKConnection);
   d->Blocked = block;
 }
 
 //-----------------------------------------------------------------------------
 bool ctkVTKConnection::isBlocked()const
 {
-  CTK_D(const ctkVTKConnection);
+  Q_D(const ctkVTKConnection);
   return d->Blocked;
 }
 
@@ -340,7 +344,7 @@ bool ctkVTKConnection::isBlocked()const
 bool ctkVTKConnection::isEqual(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, QString qt_slot)const
 {
-  CTK_D(const ctkVTKConnection);
+  Q_D(const ctkVTKConnection);
   
   if (vtk_obj && d->VTKObject != vtk_obj)
     {
@@ -377,7 +381,7 @@ void ctkVTKConnectionPrivate::DoCallback(vtkObject* vtk_obj, unsigned long event
 void ctkVTKConnectionPrivate::execute(vtkObject* vtk_obj, unsigned long vtk_event,
   void* client_data, void* call_data)
 {
-  CTK_P(ctkVTKConnection);
+  Q_Q(ctkVTKConnection);
   
   Q_ASSERT(this->Connected);
   if (this->Blocked) 
@@ -385,7 +389,7 @@ void ctkVTKConnectionPrivate::execute(vtkObject* vtk_obj, unsigned long vtk_even
     return; 
     }
 
-  QPointer<ctkVTKConnection> connection(p);
+  QPointer<ctkVTKConnection> connection(q);
   if(!this->ObserveDeletion ||
      vtk_event != vtkCommand::DeleteEvent ||
      this->VTKEvent == vtkCommand::DeleteEvent)
@@ -406,11 +410,11 @@ void ctkVTKConnectionPrivate::execute(vtkObject* vtk_obj, unsigned long vtk_even
               << "QObject(" << this->QtObject->objectName() << ")"
               << " may be incorrect.";
             }
-          emit p->emitExecute(vtk_obj, callDataAsVtkObject);
+          emit q->emitExecute(vtk_obj, callDataAsVtkObject);
           }
         break;
       case ctkVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
-        emit p->emitExecute(vtk_obj, call_data, vtk_event, client_data);
+        emit q->emitExecute(vtk_obj, call_data, vtk_event, client_data);
         break;
       default:
         // Should never reach
@@ -423,25 +427,25 @@ void ctkVTKConnectionPrivate::execute(vtkObject* vtk_obj, unsigned long vtk_even
   if (!connection.isNull() &&
       vtk_event == vtkCommand::DeleteEvent)
     {
-    p->vtkObjectDeleted();
+    q->vtkObjectDeleted();
     }
 }
 
 void ctkVTKConnection::observeDeletion(bool enable)
 {
-  CTK_D(ctkVTKConnection);
+  Q_D(ctkVTKConnection);
   d->ObserveDeletion = enable;
 }
 
 bool ctkVTKConnection::deletionObserved()const
 {
-  CTK_D(const ctkVTKConnection);
+  Q_D(const ctkVTKConnection);
   return d->ObserveDeletion;
 }
 
 void ctkVTKConnection::vtkObjectDeleted()
 {
-  CTK_D(ctkVTKConnection);
+  Q_D(ctkVTKConnection);
   d->VTKObject = 0;
   d->disconnect();
   emit isBroke();
@@ -449,7 +453,7 @@ void ctkVTKConnection::vtkObjectDeleted()
 
 void ctkVTKConnection::qobjectDeleted()
 {
-  CTK_D(ctkVTKConnection);
+  Q_D(ctkVTKConnection);
   d->QtObject = 0;
   d->disconnect();
   emit isBroke();

@@ -79,9 +79,9 @@ void ctkVTKSliceViewPrivate::setupRendering()
 
 // --------------------------------------------------------------------------
 ctkVTKSliceView::ctkVTKSliceView(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new ctkVTKSliceViewPrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKSliceView);
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   
   d->VTKWidget = new QVTKWidget(this);
   this->setLayout(new QVBoxLayout);
@@ -102,7 +102,7 @@ ctkVTKSliceView::~ctkVTKSliceView()
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::scheduleRender()
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
 
   logger.trace("scheduleRender");
   if (!d->RenderEnabled)
@@ -119,7 +119,7 @@ void ctkVTKSliceView::scheduleRender()
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::forceRender()
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   if (!d->RenderEnabled  || !this->isVisible())
     {
     return;
@@ -143,21 +143,21 @@ CTK_GET_CXX(ctkVTKSliceView, bool, renderEnabled, RenderEnabled);
 //----------------------------------------------------------------------------
 vtkRenderWindowInteractor* ctkVTKSliceView::interactor() const
 {
-  CTK_D(const ctkVTKSliceView);
+  Q_D(const ctkVTKSliceView);
   return d->RenderWindow->GetInteractor();
 }
 
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setInteractor(vtkRenderWindowInteractor* newInteractor)
 {
-  CTK_D(const ctkVTKSliceView);
+  Q_D(const ctkVTKSliceView);
   d->RenderWindow->SetInteractor(newInteractor);
 }
 
 //----------------------------------------------------------------------------
 vtkInteractorObserver* ctkVTKSliceView::interactorStyle()const
 {
-  CTK_D(const ctkVTKSliceView);
+  Q_D(const ctkVTKSliceView);
   if (!d->RenderWindow->GetInteractor())
     {
     return 0;
@@ -168,7 +168,7 @@ vtkInteractorObserver* ctkVTKSliceView::interactorStyle()const
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::resetCamera()
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->ResetCamera();
 }
 
@@ -176,28 +176,28 @@ void ctkVTKSliceView::resetCamera()
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setImageData(vtkImageData* newImageData)
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetImageData(newImageData);
 }
 
 //----------------------------------------------------------------------------
 QString ctkVTKSliceView::cornerAnnotationText()const
 {
-  CTK_D(const ctkVTKSliceView);
+  Q_D(const ctkVTKSliceView);
   return QString::fromStdString(d->LightBoxRendererManager->GetCornerAnnotationText());
 }
 
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setCornerAnnotationText(const QString& text)
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetCornerAnnotationText(text.toStdString());
 }
 
 //----------------------------------------------------------------------------
 QColor ctkVTKSliceView::backgroundColor()const
 {
-  CTK_D(const ctkVTKSliceView);
+  Q_D(const ctkVTKSliceView);
   double* color = d->LightBoxRendererManager->GetBackgroundColor();
   QColor c;
   c.setRgbF(color[0], color[1], color[2]);
@@ -207,7 +207,7 @@ QColor ctkVTKSliceView::backgroundColor()const
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setBackgroundColor(const QColor& newBackgroundColor)
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   double color[3];
   color[0] = newBackgroundColor.redF();
   color[1] = newBackgroundColor.greenF();
@@ -218,7 +218,7 @@ void ctkVTKSliceView::setBackgroundColor(const QColor& newBackgroundColor)
 //----------------------------------------------------------------------------
 QColor ctkVTKSliceView::highlightedBoxColor()const
 {
-  CTK_D(const ctkVTKSliceView);
+  Q_D(const ctkVTKSliceView);
   double* color = d->LightBoxRendererManager->GetHighlightedBoxColor();
   QColor c;
   c.setRgbF(color[0], color[1], color[2]);
@@ -228,7 +228,7 @@ QColor ctkVTKSliceView::highlightedBoxColor()const
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setHighlightedBoxColor(const QColor& newHighlightedBoxColor)
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   double color[3];
   color[0] = newHighlightedBoxColor.redF();
   color[1] = newHighlightedBoxColor.greenF();
@@ -239,7 +239,7 @@ void ctkVTKSliceView::setHighlightedBoxColor(const QColor& newHighlightedBoxColo
 //----------------------------------------------------------------------------
 ctkVTKSliceView::RenderWindowLayoutType ctkVTKSliceView::renderWindowLayoutType()const
 {
-  CTK_D(const ctkVTKSliceView);
+  Q_D(const ctkVTKSliceView);
   return static_cast<ctkVTKSliceView::RenderWindowLayoutType>(
       d->LightBoxRendererManager->GetRenderWindowLayoutType());
 }
@@ -247,35 +247,35 @@ ctkVTKSliceView::RenderWindowLayoutType ctkVTKSliceView::renderWindowLayoutType(
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setRenderWindowLayoutType(RenderWindowLayoutType layoutType)
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetRenderWindowLayoutType(layoutType);
 }
 
 //----------------------------------------------------------------------------
 double ctkVTKSliceView::colorLevel()const
 {
-  CTK_D(const ctkVTKSliceView);
+  Q_D(const ctkVTKSliceView);
   return d->LightBoxRendererManager->GetColorLevel();
 }
 
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setColorLevel(double newColorLevel)
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetColorLevel(newColorLevel);
 }
 
 //----------------------------------------------------------------------------
 double ctkVTKSliceView::colorWindow()const
 {
-  CTK_D(const ctkVTKSliceView);
+  Q_D(const ctkVTKSliceView);
   return d->LightBoxRendererManager->GetColorWindow();
 }
 
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setColorWindow(double newColorWindow)
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetColorWindow(newColorWindow);
 }
 
@@ -289,14 +289,14 @@ void ctkVTKSliceView::resizeEvent(QResizeEvent * event)
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setLightBoxRendererManagerRowCount(int newRowCount)
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetRenderWindowRowCount(newRowCount);
 }
 
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setLightBoxRendererManagerColumnCount(int newColumnCount)
 {
-  CTK_D(ctkVTKSliceView);
+  Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetRenderWindowColumnCount(newColumnCount);
 }
 

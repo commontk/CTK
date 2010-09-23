@@ -25,12 +25,10 @@
 #include <QWidget>
 #include <QItemSelection>
 
-
-// CTK includes
-#include <ctkPimpl.h>
-
+// ctkDICOMWidgets includes
 #include "CTKDICOMWidgetsExport.h"
 #include "ctkDICOM.h"
+
 class ctkDICOMDirectoryListWidgetPrivate;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMDirectoryListWidget : public QWidget
@@ -48,8 +46,12 @@ public slots:
   void removeDirectoryClicked();
   void directorySelectionChanged( const QItemSelection  & selected, const QItemSelection  & deselected );
 
+protected:
+  QScopedPointer<ctkDICOMDirectoryListWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMDirectoryListWidget);
+  Q_DECLARE_PRIVATE(ctkDICOMDirectoryListWidget);
+  Q_DISABLE_COPY(ctkDICOMDirectoryListWidget);
 };
 
 #endif

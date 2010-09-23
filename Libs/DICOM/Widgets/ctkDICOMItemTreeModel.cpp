@@ -22,7 +22,7 @@
 #include "ctkDICOMItemTreeModel.h"
 
 //----------------------------------------------------------------------------
-class ctkDICOMItemTreeModelPrivate: public ctkPrivate<ctkDICOMItemTreeModel>
+class ctkDICOMItemTreeModelPrivate
 {
 public:
   ctkDICOMItemTreeModelPrivate(){}
@@ -36,10 +36,10 @@ public:
 // ctkDICOMItemTreeModel methods
 
 //----------------------------------------------------------------------------
-ctkDICOMItemTreeModel::ctkDICOMItemTreeModel(QObject* _parent):Superclass(_parent)
+ctkDICOMItemTreeModel::ctkDICOMItemTreeModel(QObject* _parent):Superclass(_parent), 
+  d_ptr(new ctkDICOMItemTreeModelPrivate)
 {
-  CTK_INIT_PRIVATE(ctkDICOMItemTreeModel);
-  //CTK_D(ctkDICOMItemTreeModel);
+  //Q_D(ctkDICOMItemTreeModel);
 
 }
 

@@ -25,9 +25,6 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMWidgetsExport.h"
 
 class ctkDICOMItemTreeModelPrivate;
@@ -54,8 +51,12 @@ public:
   virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
   virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
+protected:
+  QScopedPointer<ctkDICOMItemTreeModelPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOMItemTreeModel);
+  Q_DECLARE_PRIVATE(ctkDICOMItemTreeModel);
+  Q_DISABLE_COPY(ctkDICOMItemTreeModel);
 };
 
 #endif

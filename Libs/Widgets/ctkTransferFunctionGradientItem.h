@@ -49,8 +49,12 @@ public:
   bool mask()const;
   void setMask(bool mask);
 
+protected:
+  QScopedPointer<ctkTransferFunctionGradientItemPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionGradientItem);
+  Q_DECLARE_PRIVATE(ctkTransferFunctionGradientItem);
+  Q_DISABLE_COPY(ctkTransferFunctionGradientItem);
 };
 
 #endif

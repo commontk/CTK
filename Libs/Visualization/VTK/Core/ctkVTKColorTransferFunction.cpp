@@ -30,7 +30,7 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class ctkVTKColorTransferFunctionPrivate: public ctkPrivate<ctkVTKColorTransferFunction>
+class ctkVTKColorTransferFunctionPrivate
 {
 public:
   vtkSmartPointer<vtkColorTransferFunction> ColorTransferFunction;
@@ -39,16 +39,16 @@ public:
 //-----------------------------------------------------------------------------
 ctkVTKColorTransferFunction::ctkVTKColorTransferFunction(QObject* parentObject)
   :ctkTransferFunction(parentObject)
+  , d_ptr(new ctkVTKColorTransferFunctionPrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKColorTransferFunction);
 }
 
 //-----------------------------------------------------------------------------
 ctkVTKColorTransferFunction::ctkVTKColorTransferFunction(vtkColorTransferFunction* colorTransferFunction, 
                                                          QObject* parentObject)
   :ctkTransferFunction(parentObject)
+  , d_ptr(new ctkVTKColorTransferFunctionPrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKColorTransferFunction);
   this->setColorTransferFunction(colorTransferFunction);
 }
 
@@ -60,7 +60,7 @@ ctkVTKColorTransferFunction::~ctkVTKColorTransferFunction()
 //-----------------------------------------------------------------------------
 int ctkVTKColorTransferFunction::count()const
 {
-  CTK_D(const ctkVTKColorTransferFunction);
+  Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
     return -1;
@@ -83,7 +83,7 @@ bool ctkVTKColorTransferFunction::isEditable()const
 //-----------------------------------------------------------------------------
 void ctkVTKColorTransferFunction::range(qreal& minRange, qreal& maxRange)const
 {
-  CTK_D(const ctkVTKColorTransferFunction);
+  Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
     Q_ASSERT(d->ColorTransferFunction.GetPointer());
@@ -100,7 +100,7 @@ void ctkVTKColorTransferFunction::range(qreal& minRange, qreal& maxRange)const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKColorTransferFunction::minValue()const
 {
-  CTK_D(const ctkVTKColorTransferFunction);
+  Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
     Q_ASSERT(d->ColorTransferFunction.GetPointer());
@@ -127,7 +127,7 @@ QVariant ctkVTKColorTransferFunction::minValue()const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKColorTransferFunction::maxValue()const
 {
-  CTK_D(const ctkVTKColorTransferFunction);
+  Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
     Q_ASSERT(d->ColorTransferFunction.GetPointer());
@@ -154,7 +154,7 @@ QVariant ctkVTKColorTransferFunction::maxValue()const
 //-----------------------------------------------------------------------------
 ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
 {
-  CTK_D(const ctkVTKColorTransferFunction);
+  Q_D(const ctkVTKColorTransferFunction);
   Q_ASSERT(index >= 0 && index < this->count());
 	double values[6];
   d->ColorTransferFunction->GetNodeValue(index, values);
@@ -209,7 +209,7 @@ ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKColorTransferFunction::value(qreal pos)const
 {
-  CTK_D(const ctkVTKColorTransferFunction);
+  Q_D(const ctkVTKColorTransferFunction);
   Q_ASSERT(d->ColorTransferFunction.GetPointer());
   double rgb[3];
   d->ColorTransferFunction->GetColor(pos, rgb);
@@ -220,7 +220,7 @@ QVariant ctkVTKColorTransferFunction::value(qreal pos)const
 //-----------------------------------------------------------------------------
 int ctkVTKColorTransferFunction::insertControlPoint(const ctkControlPoint& cp)
 {
-  CTK_D(ctkVTKColorTransferFunction);
+  Q_D(ctkVTKColorTransferFunction);
   int index = -1;
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
@@ -244,7 +244,7 @@ int ctkVTKColorTransferFunction::insertControlPoint(const ctkControlPoint& cp)
 //-----------------------------------------------------------------------------
 int ctkVTKColorTransferFunction::insertControlPoint(qreal pos)
 {
-  CTK_D(ctkVTKColorTransferFunction);
+  Q_D(ctkVTKColorTransferFunction);
   int index = -1;
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
@@ -263,7 +263,7 @@ int ctkVTKColorTransferFunction::insertControlPoint(qreal pos)
 //-----------------------------------------------------------------------------
 void ctkVTKColorTransferFunction::setControlPointPos(int index, qreal pos)
 {
-  CTK_D(ctkVTKColorTransferFunction);
+  Q_D(ctkVTKColorTransferFunction);
   double values[6];
   d->ColorTransferFunction->GetNodeValue(index, values);
   values[0] = pos;
@@ -275,7 +275,7 @@ void ctkVTKColorTransferFunction::setControlPointPos(int index, qreal pos)
 //-----------------------------------------------------------------------------
 void ctkVTKColorTransferFunction::setControlPointValue(int index, const QVariant& value)
 {
-  CTK_D(ctkVTKColorTransferFunction);
+  Q_D(ctkVTKColorTransferFunction);
   Q_ASSERT(value.value<QColor>().isValid());
   QColor rgb = value.value<QColor>();
   double values[6];
@@ -290,7 +290,7 @@ void ctkVTKColorTransferFunction::setControlPointValue(int index, const QVariant
 //-----------------------------------------------------------------------------
 void ctkVTKColorTransferFunction::setColorTransferFunction(vtkColorTransferFunction* colorTransferFunction)
 {
-  CTK_D(ctkVTKColorTransferFunction);
+  Q_D(ctkVTKColorTransferFunction);
   d->ColorTransferFunction = colorTransferFunction;
   this->qvtkReconnect(d->ColorTransferFunction,vtkCommand::ModifiedEvent,
                       this, SIGNAL(changed()));
@@ -300,13 +300,13 @@ void ctkVTKColorTransferFunction::setColorTransferFunction(vtkColorTransferFunct
 //-----------------------------------------------------------------------------
 vtkColorTransferFunction* ctkVTKColorTransferFunction::colorTransferFunction()const
 {
-  CTK_D(const ctkVTKColorTransferFunction);
+  Q_D(const ctkVTKColorTransferFunction);
   return d->ColorTransferFunction;
 }
 
 //-----------------------------------------------------------------------------
 void ctkVTKColorTransferFunction::removeControlPoint( qreal pos )
 {
-  CTK_D(ctkVTKColorTransferFunction);
+  Q_D(ctkVTKColorTransferFunction);
   d->ColorTransferFunction->RemovePoint( pos );
 }

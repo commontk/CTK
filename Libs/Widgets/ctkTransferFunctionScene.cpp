@@ -31,9 +31,8 @@
 #include <limits>
 
 //-----------------------------------------------------------------------------
-class ctkTransferFunctionScenePrivate: public ctkPrivate<ctkTransferFunctionScene>
+class ctkTransferFunctionScenePrivate
 {
-  CTK_DECLARE_PUBLIC(ctkTransferFunctionScene);
 public:
   ctkTransferFunctionScenePrivate();
 };
@@ -46,8 +45,8 @@ ctkTransferFunctionScenePrivate::ctkTransferFunctionScenePrivate()
 //-----------------------------------------------------------------------------
 ctkTransferFunctionScene::ctkTransferFunctionScene(QObject* parentObject)
   :QGraphicsScene(parentObject)
+  , d_ptr(new ctkTransferFunctionScenePrivate)
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionScene);
 }
 
 ctkTransferFunctionScene::~ctkTransferFunctionScene()

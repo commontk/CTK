@@ -43,8 +43,12 @@ public:
   ctkTransferFunctionScene(QObject* parent = 0);
   virtual ~ctkTransferFunctionScene();
 
+protected:
+  QScopedPointer<ctkTransferFunctionScenePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionScene);
+  Q_DECLARE_PRIVATE(ctkTransferFunctionScene);
+  Q_DISABLE_COPY(ctkTransferFunctionScene);
 };
 
 #endif

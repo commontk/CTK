@@ -62,8 +62,12 @@ public:
   bool isErrorEnabled();
   bool isFatalEnabled();
 
+protected:
+  QScopedPointer<ctkLoggerPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkLogger);
+  Q_DECLARE_PRIVATE(ctkLogger);
+  Q_DISABLE_COPY(ctkLogger);
 };
 
 #endif

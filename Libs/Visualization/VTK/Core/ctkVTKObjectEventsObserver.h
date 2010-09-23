@@ -45,7 +45,7 @@ Q_OBJECT
 public:
   typedef QObject Superclass;
   explicit ctkVTKObjectEventsObserver(QObject* parent = 0);
-  virtual ~ctkVTKObjectEventsObserver(){}
+  virtual ~ctkVTKObjectEventsObserver();
 
   virtual void printAdditionalInfo();
 
@@ -104,8 +104,12 @@ public:
                       unsigned long vtk_event, const QObject* qt_obj);
   void blockConnection(const QString& id, bool blocked);
 
+protected:
+  QScopedPointer<ctkVTKObjectEventsObserverPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKObjectEventsObserver);
+  Q_DECLARE_PRIVATE(ctkVTKObjectEventsObserver);
+  Q_DISABLE_COPY(ctkVTKObjectEventsObserver);
 
 };
 

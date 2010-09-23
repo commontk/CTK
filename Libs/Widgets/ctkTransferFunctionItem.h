@@ -70,8 +70,12 @@ protected:
   //QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end)const;
   //QList<ctkPoint> nonLinearPoints(ctkControlPoint* start, ctkControlPoint* end)const;
   virtual QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant& value);
+protected:
+  QScopedPointer<ctkTransferFunctionItemPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionItem);
+  Q_DECLARE_PRIVATE(ctkTransferFunctionItem);
+  Q_DISABLE_COPY(ctkTransferFunctionItem);
 };
 
 //-----------------------------------------------------------------------------

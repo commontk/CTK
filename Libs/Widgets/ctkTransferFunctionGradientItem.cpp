@@ -34,7 +34,7 @@
 #include "ctkTransferFunctionScene.h"
 
 //-----------------------------------------------------------------------------
-class ctkTransferFunctionGradientItemPrivate:public ctkPrivate<ctkTransferFunctionGradientItem>
+class ctkTransferFunctionGradientItemPrivate
 {
 public:
   ctkTransferFunctionGradientItemPrivate();
@@ -46,17 +46,19 @@ ctkTransferFunctionGradientItemPrivate::ctkTransferFunctionGradientItemPrivate()
 {
   this->Mask = true;
 }
+
 //-----------------------------------------------------------------------------
 ctkTransferFunctionGradientItem::ctkTransferFunctionGradientItem(QGraphicsItem* parentGraphicsItem)
   :ctkTransferFunctionItem(parentGraphicsItem)
+  , d_ptr(new ctkTransferFunctionGradientItemPrivate)
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionGradientItem);
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionGradientItem::ctkTransferFunctionGradientItem(
   ctkTransferFunction* transferFunction, QGraphicsItem* parentItem)
   :ctkTransferFunctionItem(transferFunction, parentItem)
+  , d_ptr(new ctkTransferFunctionGradientItemPrivate)
 {
 }
 
@@ -106,13 +108,13 @@ void ctkTransferFunctionGradientItem::paint(
 //-----------------------------------------------------------------------------
 bool ctkTransferFunctionGradientItem::mask() const
 {
-  CTK_D( const ctkTransferFunctionGradientItem );
+  Q_D( const ctkTransferFunctionGradientItem );
   return d->Mask;
 }
 
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionGradientItem::setMask( bool mask )
 {
-  CTK_D( ctkTransferFunctionGradientItem );
+  Q_D( ctkTransferFunctionGradientItem );
   d->Mask = mask;
 }

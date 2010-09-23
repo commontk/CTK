@@ -32,10 +32,9 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-class ctkExampleDerivedWorkflowWidgetStepPrivate : public ctkPrivate<ctkExampleDerivedWorkflowWidgetStep>
+class ctkExampleDerivedWorkflowWidgetStepPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(ctkExampleDerivedWorkflowWidgetStep);
   ctkExampleDerivedWorkflowWidgetStepPrivate();
   ~ctkExampleDerivedWorkflowWidgetStepPrivate(){}
 
@@ -71,8 +70,13 @@ ctkExampleDerivedWorkflowWidgetStepPrivate::ctkExampleDerivedWorkflowWidgetStepP
 //-----------------------------------------------------------------------------
 ctkExampleDerivedWorkflowWidgetStep::ctkExampleDerivedWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId) :
   Superclass(newWorkflow, newId)
+  , d_ptr(new ctkExampleDerivedWorkflowWidgetStepPrivate)
 {
-  CTK_INIT_PRIVATE(ctkExampleDerivedWorkflowWidgetStep);
+}
+
+//-----------------------------------------------------------------------------
+ctkExampleDerivedWorkflowWidgetStep::~ctkExampleDerivedWorkflowWidgetStep()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -91,7 +95,7 @@ void ctkExampleDerivedWorkflowWidgetStep::onEntry(const ctkWorkflowStep* comingF
 
   // simply implements our counter of the number of times we have run
   // this function
-  CTK_D(ctkExampleDerivedWorkflowWidgetStep);
+  Q_D(ctkExampleDerivedWorkflowWidgetStep);
   d->numberOfTimesRanOnEntry++;
 
   // signals that we are finished
@@ -106,7 +110,7 @@ void ctkExampleDerivedWorkflowWidgetStep::onExit(const ctkWorkflowStep* goingTo,
 
   // simply implements our counter of the number of times we have run
   // this function
-  CTK_D(ctkExampleDerivedWorkflowWidgetStep);
+  Q_D(ctkExampleDerivedWorkflowWidgetStep);
   d->numberOfTimesRanOnExit++;
 
   // signals that we are finished
@@ -116,7 +120,7 @@ void ctkExampleDerivedWorkflowWidgetStep::onExit(const ctkWorkflowStep* goingTo,
 //-----------------------------------------------------------------------------
 void ctkExampleDerivedWorkflowWidgetStep::createUserInterface()
 {
-  CTK_D(ctkExampleDerivedWorkflowWidgetStep);
+  Q_D(ctkExampleDerivedWorkflowWidgetStep);
 
   // create widgets the first time through
   if (!this->layout())
@@ -147,7 +151,7 @@ void ctkExampleDerivedWorkflowWidgetStep::createUserInterface()
 //-----------------------------------------------------------------------------
 void ctkExampleDerivedWorkflowWidgetStep::validate(const QString& desiredBranchId)
 {
-  CTK_D(const ctkExampleDerivedWorkflowWidgetStep);
+  Q_D(const ctkExampleDerivedWorkflowWidgetStep);
   bool retVal = 0;
 
   int val = 0;

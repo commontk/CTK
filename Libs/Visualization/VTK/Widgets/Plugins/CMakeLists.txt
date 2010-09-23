@@ -17,8 +17,6 @@ SET(PLUGIN_SRCS
   ctkVTKRenderViewPlugin.h
   ctkVTKScalarBarWidgetPlugin.cpp
   ctkVTKScalarBarWidgetPlugin.h
-  ctkVTKScalarsToColorsViewPlugin.cpp
-  ctkVTKScalarsToColorsViewPlugin.h
   ctkVTKSliceViewPlugin.cpp
   ctkVTKSliceViewPlugin.h
   ctkVTKTextPropertyWidgetPlugin.cpp
@@ -31,10 +29,19 @@ SET(PLUGIN_MOC_SRCS
 
   ctkVTKRenderViewPlugin.h
   ctkVTKScalarBarWidgetPlugin.h
-  ctkVTKScalarsToColorsViewPlugin.h
   ctkVTKSliceViewPlugin.h
   ctkVTKTextPropertyWidgetPlugin.h
   )
+  
+IF(CTK_USE_CHARTS)
+  SET(PLUGIN_SRCS
+      ctkVTKScalarsToColorsViewPlugin.cpp
+      ctkVTKScalarsToColorsViewPlugin.h
+      ${PLUGIN_SRCS})
+  SET(PLUGIN_MOC_SRCS
+      ctkVTKScalarsToColorsViewPlugin.h
+      ${PLUGIN_MOC_SRCS})
+ENDIF(CTK_USE_CHARTS)
 
 # Resources
 SET(PLUGIN_resources

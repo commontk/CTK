@@ -25,7 +25,7 @@
 #include "ctkXIPAdaptor.h"
 
 //----------------------------------------------------------------------------
-class ctkXIPAdaptorPrivate: public ctkPrivate<ctkXIPAdaptor>
+class ctkXIPAdaptorPrivate
 {
 public:
   ctkXIPAdaptorPrivate();
@@ -43,9 +43,8 @@ ctkXIPAdaptorPrivate::ctkXIPAdaptorPrivate()
 // ctkXIPAdaptorWidget methods
 
 //------------------------------------------------------------------------------
-ctkXIPAdaptor::ctkXIPAdaptor(QObject* _parent): Superclass(_parent)
+ctkXIPAdaptor::ctkXIPAdaptor(QObject* _parent): Superclass(_parent), d_ptr(new ctkXIPAdaptorPrivate)
 {
-  CTK_INIT_PRIVATE(ctkXIPAdaptor);
 }
 
 //----------------------------------------------------------------------------

@@ -31,6 +31,7 @@
 
 // CTK includes
 #include "ctkBinaryFileDescriptor.h"
+#include "ctkPimpl.h"
 
 // BinUtils includes
 #include <bfd.h>
@@ -41,7 +42,7 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-class ctkBinaryFileDescriptorPrivate: public ctkPrivate<ctkBinaryFileDescriptor>
+class ctkBinaryFileDescriptorPrivate
 {
 public:
   // Convenient typedefs
@@ -141,16 +142,15 @@ void* ctkBinaryFileDescriptorPrivate::resolve(const char * symbol)
 // ctkBinaryFileDescriptor methods
 
 // --------------------------------------------------------------------------
-ctkBinaryFileDescriptor::ctkBinaryFileDescriptor()
+ctkBinaryFileDescriptor::ctkBinaryFileDescriptor(): d_ptr(new ctkBinaryFileDescriptorPrivate)
 {
-  CTK_INIT_PRIVATE(ctkBinaryFileDescriptor);
 }
 
 // --------------------------------------------------------------------------
-ctkBinaryFileDescriptor::ctkBinaryFileDescriptor(const QString& _fileName)
+ctkBinaryFileDescriptor::ctkBinaryFileDescriptor(const QString& _fileName): 
+  d_ptr(new ctkBinaryFileDescriptorPrivate)
 {
-  CTK_INIT_PRIVATE(ctkBinaryFileDescriptor);
-  CTK_D(ctkBinaryFileDescriptor);
+  Q_D(ctkBinaryFileDescriptor);
   d->FileName = _fileName;
 }
 
@@ -166,14 +166,14 @@ CTK_SET_CXX(ctkBinaryFileDescriptor, const QString&, setFileName, FileName);
 // --------------------------------------------------------------------------
 bool ctkBinaryFileDescriptor::isLoaded() const
 {
-  CTK_D(const ctkBinaryFileDescriptor);
+  Q_D(const ctkBinaryFileDescriptor);
   return (d->BFD != 0);
 }
 
 // --------------------------------------------------------------------------
 bool ctkBinaryFileDescriptor::load()
 {
-  CTK_D(ctkBinaryFileDescriptor);
+  Q_D(ctkBinaryFileDescriptor);
   
   bfd_init();
   bfd * abfd = bfd_openr(d->FileName.toLatin1(), NULL);
@@ -196,7 +196,7 @@ bool ctkBinaryFileDescriptor::load()
 // --------------------------------------------------------------------------
 bool ctkBinaryFileDescriptor::unload()
 {
-  CTK_D(ctkBinaryFileDescriptor);
+  Q_D(ctkBinaryFileDescriptor);
   
   if (d->BFD)
     {
@@ -209,6 +209,6 @@ bool ctkBinaryFileDescriptor::unload()
 // --------------------------------------------------------------------------
 void* ctkBinaryFileDescriptor::resolve(const char * symbol)
 {
-  CTK_D(ctkBinaryFileDescriptor);
+  Q_D(ctkBinaryFileDescriptor);
   return d->resolve(symbol);
 }

@@ -39,7 +39,8 @@ static ctkLogger logger("org.commontk.core.ctkWorkflowStep");
 // ctkWorkflowStepPrivate methods
 
 // --------------------------------------------------------------------------
-ctkWorkflowStepPrivate::ctkWorkflowStepPrivate()
+ctkWorkflowStepPrivate::ctkWorkflowStepPrivate(ctkWorkflowStep& object)
+  :q_ptr(&object)
 {
   this->Workflow = 0;
 
@@ -115,9 +116,9 @@ void ctkWorkflowStepPrivate::invokeOnExitCommandInternal(const ctkWorkflowStep* 
 
 // --------------------------------------------------------------------------
 ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId)
+  : d_ptr(new ctkWorkflowStepPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkWorkflowStep);
-  CTK_D(ctkWorkflowStep);
+  Q_D(ctkWorkflowStep);
 
   if (newId.isEmpty())
     {
@@ -129,6 +130,11 @@ ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId)
     }
 
   d->Workflow = newWorkflow;
+}
+
+// --------------------------------------------------------------------------
+ctkWorkflowStep::~ctkWorkflowStep()
+{
 }
 
 // --------------------------------------------------------------------------
@@ -175,56 +181,56 @@ CTK_GET_CXX(ctkWorkflowStep, ctkWorkflowIntrastepTransition*,
 // --------------------------------------------------------------------------
 QObject* ctkWorkflowStep::ctkWorkflowStepQObject()
 {
-  CTK_D(ctkWorkflowStep);
+  Q_D(ctkWorkflowStep);
   return d;
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStep::validationComplete(bool validationResults, const QString& branchId)const
 {
-  CTK_D(const ctkWorkflowStep);
+  Q_D(const ctkWorkflowStep);
   d->validationCompleteInternal(validationResults, branchId);
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStep::onEntryComplete()const
 {
-  CTK_D(const ctkWorkflowStep);
+  Q_D(const ctkWorkflowStep);
   d->onEntryCompleteInternal();
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStep::onExitComplete()const
 {
-  CTK_D(const ctkWorkflowStep);
+  Q_D(const ctkWorkflowStep);
   d->onExitCompleteInternal();
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStep::invokeValidateCommand(const QString& desiredBranchId)const
 {  
-  CTK_D(const ctkWorkflowStep);
+  Q_D(const ctkWorkflowStep);
   d->invokeValidateCommandInternal(desiredBranchId);
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStep::invokeOnEntryCommand(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
 {
-  CTK_D(const ctkWorkflowStep);
+  Q_D(const ctkWorkflowStep);
   d->invokeOnEntryCommandInternal(comingFrom, transitionType);
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStep::invokeOnExitCommand(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
 {
-  CTK_D(const ctkWorkflowStep);
+  Q_D(const ctkWorkflowStep);
   d->invokeOnExitCommandInternal(goingTo, transitionType);
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStep::validate(const QString& desiredBranchId)
 {
-  CTK_D(ctkWorkflowStep);
+  Q_D(ctkWorkflowStep);
   logger.info(QString("validate - validating the input from %1").arg(d->Name));
 
   this->validationComplete(true, desiredBranchId);

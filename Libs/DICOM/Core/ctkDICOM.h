@@ -25,9 +25,6 @@
 #include <QObject>
 #include <QSqlDatabase>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 #include "CTKDICOMCoreExport.h"
 
 class ctkDICOMPrivate;
@@ -54,8 +51,14 @@ public:
   ///
   /// delete all data and reinitialize the database.
   bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
+
+protected:
+  QScopedPointer<ctkDICOMPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDICOM);
+  Q_DECLARE_PRIVATE(ctkDICOM);
+  Q_DISABLE_COPY(ctkDICOM);
+
 };
 
 #endif

@@ -30,7 +30,7 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class ctkVTKLookupTablePrivate: public ctkPrivate<ctkVTKLookupTable>
+class ctkVTKLookupTablePrivate
 {
 public:
   vtkSmartPointer<vtkLookupTable> LookupTable;
@@ -39,16 +39,16 @@ public:
 //-----------------------------------------------------------------------------
 ctkVTKLookupTable::ctkVTKLookupTable(QObject* parentObject)
   :ctkTransferFunction(parentObject)
+  , d_ptr(new ctkVTKLookupTablePrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKLookupTable);
 }
 
 //-----------------------------------------------------------------------------
 ctkVTKLookupTable::ctkVTKLookupTable(vtkLookupTable* lookupTable, 
                                      QObject* parentObject)
   :ctkTransferFunction(parentObject)
+  , d_ptr(new ctkVTKLookupTablePrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKLookupTable);
   this->setLookupTable(lookupTable);
 }
 
@@ -60,7 +60,7 @@ ctkVTKLookupTable::~ctkVTKLookupTable()
 //-----------------------------------------------------------------------------
 int ctkVTKLookupTable::count()const
 {
-  CTK_D(const ctkVTKLookupTable);
+  Q_D(const ctkVTKLookupTable);
   if (d->LookupTable.GetPointer() == 0)
     {
     Q_ASSERT(d->LookupTable.GetPointer());
@@ -84,7 +84,7 @@ bool ctkVTKLookupTable::isEditable()const
 //-----------------------------------------------------------------------------
 void ctkVTKLookupTable::range(qreal& minRange, qreal& maxRange)const
 {
-  CTK_D(const ctkVTKLookupTable);
+  Q_D(const ctkVTKLookupTable);
   if (d->LookupTable.GetPointer() == 0)
     {
     Q_ASSERT(d->LookupTable.GetPointer());
@@ -101,7 +101,7 @@ void ctkVTKLookupTable::range(qreal& minRange, qreal& maxRange)const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKLookupTable::minValue()const
 {
-  CTK_D(const ctkVTKLookupTable);
+  Q_D(const ctkVTKLookupTable);
   if (d->LookupTable.GetPointer() == 0)
     {
     Q_ASSERT(d->LookupTable.GetPointer());
@@ -118,7 +118,7 @@ QVariant ctkVTKLookupTable::minValue()const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKLookupTable::maxValue()const
 {
-  CTK_D(const ctkVTKLookupTable);
+  Q_D(const ctkVTKLookupTable);
   if (d->LookupTable.GetPointer() == 0)
     {
     Q_ASSERT(d->LookupTable.GetPointer());
@@ -135,7 +135,7 @@ QVariant ctkVTKLookupTable::maxValue()const
 //-----------------------------------------------------------------------------
 qreal ctkVTKLookupTable::indexToPos(int index)const
 {
-  CTK_D(const ctkVTKLookupTable);
+  Q_D(const ctkVTKLookupTable);
   double* range = d->LookupTable->GetRange();
   return range[0] + index * ((range[1] - range[0]) / (d->LookupTable->GetNumberOfColors() - 1));
 }
@@ -143,7 +143,7 @@ qreal ctkVTKLookupTable::indexToPos(int index)const
 //-----------------------------------------------------------------------------
 int ctkVTKLookupTable::posToIndex(qreal pos)const
 {
-  CTK_D(const ctkVTKLookupTable);
+  Q_D(const ctkVTKLookupTable);
   double* range = d->LookupTable->GetRange();
   return (pos - range[0]) / ((range[1] - range[0]) / (d->LookupTable->GetNumberOfColors() - 1));
 }
@@ -160,7 +160,7 @@ ctkControlPoint* ctkVTKLookupTable::controlPoint(int index)const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKLookupTable::value(qreal pos)const
 {
-  CTK_D(const ctkVTKLookupTable);
+  Q_D(const ctkVTKLookupTable);
   Q_ASSERT(d->LookupTable.GetPointer());
   double rgb[3];
   d->LookupTable->GetColor(pos, rgb);
@@ -172,7 +172,7 @@ QVariant ctkVTKLookupTable::value(qreal pos)const
 int ctkVTKLookupTable::insertControlPoint(const ctkControlPoint& cp)
 {
   Q_UNUSED(cp);
-  //CTK_D(ctkVTKLookupTable);
+  //Q_D(ctkVTKLookupTable);
   qDebug() << "ctkVTKLookupTable doesn't support insertControlPoint";
   return -1;
 }
@@ -192,7 +192,7 @@ void ctkVTKLookupTable::setControlPointPos(int index, qreal pos)
 {
   Q_UNUSED(index);
   Q_UNUSED(pos);
-  //CTK_D(ctkVTKLookupTable);
+  //Q_D(ctkVTKLookupTable);
   // TODO, inform that nothing is done here.
   qDebug() << "ctkVTKLookupTable doesn't support setControlPointPos";
   return;
@@ -201,7 +201,7 @@ void ctkVTKLookupTable::setControlPointPos(int index, qreal pos)
 //-----------------------------------------------------------------------------
 void ctkVTKLookupTable::setControlPointValue(int index, const QVariant& value)
 {
-  CTK_D(ctkVTKLookupTable);
+  Q_D(ctkVTKLookupTable);
   Q_ASSERT(value.value<QColor>().isValid());
   QColor rgba = value.value<QColor>();
   d->LookupTable->SetTableValue(index, rgba.redF(), rgba.greenF(), rgba.blueF(), rgba.alphaF());
@@ -210,7 +210,7 @@ void ctkVTKLookupTable::setControlPointValue(int index, const QVariant& value)
 //-----------------------------------------------------------------------------
 void ctkVTKLookupTable::setLookupTable(vtkLookupTable* lookupTable)
 {
-  CTK_D(ctkVTKLookupTable);
+  Q_D(ctkVTKLookupTable);
   d->LookupTable = lookupTable;
   this->qvtkReconnect(d->LookupTable,vtkCommand::ModifiedEvent,
                       this, SIGNAL(changed()));
@@ -220,7 +220,7 @@ void ctkVTKLookupTable::setLookupTable(vtkLookupTable* lookupTable)
 //-----------------------------------------------------------------------------
 vtkLookupTable* ctkVTKLookupTable::lookupTable()const
 {
-  CTK_D(const ctkVTKLookupTable);
+  Q_D(const ctkVTKLookupTable);
   return d->LookupTable;
 }
 

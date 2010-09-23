@@ -379,6 +379,10 @@ ENDFOREACH()
 #-----------------------------------------------------------------------------
 # CTK Python wrapping - Propose the option only if CTK_LIB_Scriping/Python/Core is ON
 IF(CTK_LIB_Scripting/Python/Core)
+  find_package(PythonInterp)
+  IF(NOT PYTHONINTERP_FOUND)
+    MESSAGE(SEND_ERROR "PYTHON_EXECUTABLE not specified or inexistent when CTK_LIB_Scripting is enabled")
+  ENDIF()
   OPTION(CTK_WRAP_PYTHONQT_FULL "Wrap CTK classes using Qt meta-object system into Python language" OFF)
   OPTION(CTK_WRAP_PYTHONQT_LIGHT "Wrap CTK classes using Qt meta-object system into Python language" OFF)
   IF(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
@@ -540,6 +544,11 @@ FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
     ADD_SUBDIRECTORY(Applications/${app})
   ENDIF()
 ENDFOREACH()
+
+IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Applications/Testing)
+ENDIF(BUILD_TESTING)
+
 
 #-----------------------------------------------------------------------------
 # Add general purpose subdirectories

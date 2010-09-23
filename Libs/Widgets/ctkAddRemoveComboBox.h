@@ -50,7 +50,7 @@ public:
   
   /// Constructors
   explicit ctkAddRemoveComboBox(QWidget* parent = 0);
-  virtual ~ctkAddRemoveComboBox(){}
+  virtual ~ctkAddRemoveComboBox();
   virtual void printAdditionalInfo();
   
   /// 
@@ -161,8 +161,12 @@ private slots:
   void onRowsInserted(const QModelIndex & parent, int start, int end);
   void onRowsRemoved(const QModelIndex & parent, int start, int end);
 
+protected:
+  QScopedPointer<ctkAddRemoveComboBoxPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkAddRemoveComboBox);
+  Q_DECLARE_PRIVATE(ctkAddRemoveComboBox);
+  Q_DISABLE_COPY(ctkAddRemoveComboBox);
 };
 
 #endif

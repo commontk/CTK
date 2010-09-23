@@ -216,8 +216,12 @@ signals:
   /// \note This signal is not emitted in the process of going to a goToStep
   void currentStepChanged(ctkWorkflowStep* currentStep);
 
+protected:
+  QScopedPointer<ctkWorkflowPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkWorkflow);
+  Q_DECLARE_PRIVATE(ctkWorkflow);
+  Q_DISABLE_COPY(ctkWorkflow);
 };
 
 #endif

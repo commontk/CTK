@@ -72,7 +72,7 @@ public:
 
   typedef ctkWorkflowStep Superclass;
   explicit ctkWorkflowAbstractWidgetStep(ctkWorkflow* newWorkflow, const QString& newId);
-  virtual ~ctkWorkflowAbstractWidgetStep(){}
+  virtual ~ctkWorkflowAbstractWidgetStep();
 
   /// \brief Override the back button text of any ctkWorkflowButtonBox when this step
   /// is the current step
@@ -140,8 +140,12 @@ protected:
   /// \sa showUserInterface()
   void showUserInterfaceComplete()const;
 
+protected:
+  QScopedPointer<ctkWorkflowAbstractWidgetStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkWorkflowAbstractWidgetStep);
+  Q_DECLARE_PRIVATE(ctkWorkflowAbstractWidgetStep);
+  Q_DISABLE_COPY(ctkWorkflowAbstractWidgetStep);
   friend class ctkWorkflowGroupBox; // For access to showUserInterface()
 };
 

@@ -61,7 +61,7 @@ public:
   typedef QWidget Superclass;
   explicit ctkWorkflowButtonBoxWidget(ctkWorkflow* newWorkflow, QWidget* newParent = 0);
   explicit ctkWorkflowButtonBoxWidget(QWidget* newParent = 0);
-  virtual ~ctkWorkflowButtonBoxWidget(){}
+  virtual ~ctkWorkflowButtonBoxWidget();
 
   /// Get the workflow associated with the widget
   ctkWorkflow* workflow()const;
@@ -112,8 +112,12 @@ protected slots:
   /// send to the workflow
   virtual void prepareGoToStep();
 
+protected:
+  QScopedPointer<ctkWorkflowButtonBoxWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkWorkflowButtonBoxWidget);
+  Q_DECLARE_PRIVATE(ctkWorkflowButtonBoxWidget);
+  Q_DISABLE_COPY(ctkWorkflowButtonBoxWidget);
 
 };
 

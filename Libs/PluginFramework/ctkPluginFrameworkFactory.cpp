@@ -24,7 +24,7 @@
 #include "ctkPluginFrameworkContext_p.h"
 
 
-  ctkPluginFrameworkFactory::ctkPluginFrameworkFactory(const Properties& initProps)
+  ctkPluginFrameworkFactory::ctkPluginFrameworkFactory(const ctkProperties& initProps)
     : fwCtx(new ctkPluginFrameworkContext(initProps))
   {
 

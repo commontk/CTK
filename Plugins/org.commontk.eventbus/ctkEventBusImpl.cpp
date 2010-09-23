@@ -26,13 +26,16 @@ void ctkEventBusImpl::sendEvent(const ctkEvent& event)
   dispatchEvent(event, false);
 }
 
-void ctkEventBusImpl::publishSignal(const QObject* publisher, const char* signal)
+void ctkEventBusImpl::publishSignal(const QObject* publisher, const char* signal, const QString& topic,
+                                    Qt::ConnectionType type)
 {
   Q_UNUSED(publisher)
   Q_UNUSED(signal)
+  Q_UNUSED(topic)
+  Q_UNUSED(type)
 }
 
-void ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member, const Properties& properties)
+QString ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member, const ctkProperties& properties)
 {
 
   // TODO check for duplicates
@@ -42,6 +45,15 @@ void ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* membe
   {
     bucket(wrapper);
   }
+
+  // TODO return id
+  return QString();
+}
+
+void ctkEventBusImpl::updateProperties(const QString& subscriptionId, const ctkProperties& properties)
+{
+  Q_UNUSED(subscriptionId)
+  Q_UNUSED(properties)
 }
 
 void ctkEventBusImpl::dispatchEvent(const ctkEvent& event, bool isAsync)

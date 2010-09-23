@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +15,8 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
-=========================================================================*/
 
-#include <iostream>
+=========================================================================*/
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
@@ -27,9 +25,18 @@
 #include "ctkDICOMServerNodeWidget.h"
 #include "ui_ctkDICOMServerNodeWidget.h"
 
+// STD includes
+#include <iostream>
+
+// Qt includes
+#include <QList>
+#include <QMap>
+#include <QVariant>
+#include <QSettings>
+#include <QTableWidgetItem>
+
 //----------------------------------------------------------------------------
-class ctkDICOMServerNodeWidgetPrivate: public ctkPrivate<ctkDICOMServerNodeWidget>,
-                                       public Ui_ctkDICOMServerNodeWidget
+class ctkDICOMServerNodeWidgetPrivate: public Ui_ctkDICOMServerNodeWidget
 {
 public:
   ctkDICOMServerNodeWidgetPrivate(){}
@@ -43,11 +50,11 @@ public:
 // ctkDICOMServerNodeWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(_parent)
+ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(_parent),
+  d_ptr(new ctkDICOMServerNodeWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(ctkDICOMServerNodeWidget);
-  CTK_D(ctkDICOMServerNodeWidget);
-  
+  Q_D(ctkDICOMServerNodeWidget);
+ 
   d->setupUi(this);
 
   // checkable headers.
@@ -57,17 +64,60 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
   headerView->setClickable(previousHeaderView->isClickable());
   headerView->setMovable(previousHeaderView->isMovable());
   headerView->setHighlightSections(previousHeaderView->highlightSections());
-  //headerView->setModel(previousHeaderView->model());
-  //headerView->setSelectionModel(previousHeaderView->selectionModel());
   headerView->setPropagateToItems(true);
   d->nodeTable->setHorizontalHeader(headerView);
 
   d->removeButton->setEnabled(false);
 
-  connect(d->addButton,SIGNAL(clicked()), this, SLOT(addNode()));
-  connect(d->nodeTable,SIGNAL(cellActivated(int,int)), this, SLOT(updateState(int,int)));
 
+  QSettings settings;
 
+  QMap<QString, QVariant> node;
+  if ( settings.value("ServerNodeCount").toInt() == 0 )
+  {
+    node["Name"] = "localhost";
+    node["CheckState"] = Qt::Checked;
+    node["AETitle"] = "CTK_AE";
+    node["Address"] = "localhost";
+    node["Port"] = "11112";
+    settings.setValue("ServerNodeCount", 3);
+    settings.setValue("ServerNodes/0", QVariant(node));
+    settings.sync();
+  }
+
+  int count = settings.value("ServerNodeCount").toInt();
+  d->nodeTable->setRowCount(count);
+  for (int row = 0; row < count; row++)
+  {
+    node = settings.value(QString("ServerNodes/%1").arg(row)).toMap();
+    QTableWidgetItem *newItem;
+    newItem = new QTableWidgetItem( node["Name"].toString() );
+    newItem->setCheckState( Qt::CheckState(node["CheckState"].toInt()) );
+    d->nodeTable->setItem(row, 0, newItem);
+    newItem = new QTableWidgetItem( node["AETitle"].toString() );
+    d->nodeTable->setItem(row, 1, newItem);
+    newItem = new QTableWidgetItem( node["Address"].toString() );
+    d->nodeTable->setItem(row, 2, newItem);
+    newItem = new QTableWidgetItem( node["Port"].toString() );
+    d->nodeTable->setItem(row, 3, newItem);
+  }
+
+  connect(d->addButton
+    ,SIGNAL(clicked()),
+    this,
+    SLOT(addNode()));
+  connect(d->removeButton
+    ,SIGNAL(clicked()),
+    this,
+    SLOT(removeNode()));
+  connect(d->nodeTable,
+    SIGNAL(cellChanged(int,int)),
+    this,
+    SLOT(onCellChanged(int,int)));
+  connect(d->nodeTable,
+    SIGNAL(currentItemChanged(QTableWidgetItem*, QTableWidgetItem*)),
+    this,
+    SLOT(onCurrentItemChanged(QTableWidgetItem*, QTableWidgetItem*)));
 }
 
 //----------------------------------------------------------------------------
@@ -79,23 +129,73 @@ ctkDICOMServerNodeWidget::~ctkDICOMServerNodeWidget()
 //----------------------------------------------------------------------------
 void ctkDICOMServerNodeWidget::addNode()
 {
-  CTK_D(ctkDICOMServerNodeWidget);
+  Q_D(ctkDICOMServerNodeWidget);
 
-  std::cerr << "add server node\n";
+  d->nodeTable->setRowCount( d->nodeTable->rowCount() + 1 );
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget::updateState(int row, int column)
+void ctkDICOMServerNodeWidget::removeNode()
 {
-  CTK_D(ctkDICOMServerNodeWidget);
+  Q_D(ctkDICOMServerNodeWidget);
 
-  d->removeButton->setEnabled(true);
+  d->nodeTable->removeRow( d->nodeTable->currentRow() );
+  d->removeButton->setEnabled(false);
+  this->saveSettings();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMServerNodeWidget::onCellChanged(int row, int column)
+{
+  Q_UNUSED(row);
+  Q_UNUSED(column);
+
+  this->saveSettings();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMServerNodeWidget::onCurrentItemChanged(QTableWidgetItem* current, QTableWidgetItem *previous)
+{
+  Q_UNUSED(current);
+  Q_UNUSED(previous);
+
+  Q_D(ctkDICOMServerNodeWidget);
+  if (d->nodeTable->rowCount() > 1)
+  {
+    d->removeButton->setEnabled(true);
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMServerNodeWidget::saveSettings()
+{
+  Q_D(ctkDICOMServerNodeWidget);
+
+  QSettings settings;
+  QMap<QString, QVariant> node;
+  int count = d->nodeTable->rowCount();
+  QStringList keys;
+  keys << "Name" << "AETitle" << "Address" << "Port";
+  for (int row = 0; row < count; row++)
+  {
+    for (int k = 0; k < keys.size(); ++k)
+    {
+      if ( d->nodeTable->item(row,k) )
+      {
+        node[keys.at(k)] = d->nodeTable->item(row,k)->text();
+      }
+      node["CheckState"] = d->nodeTable->item(row,0)->checkState();
+      settings.setValue(QString("ServerNodes/%1").arg(row), QVariant(node));
+    }
+  }
+  settings.setValue("ServerNodeCount", count);
+  settings.sync();
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMServerNodeWidget::populateQuery(/*ctkDICOMQuery &query*/)
 {
-  CTK_D(ctkDICOMServerNodeWidget);
+  //Q_D(ctkDICOMServerNodeWidget);
 
   std::cerr << "server node populate\n";
 }

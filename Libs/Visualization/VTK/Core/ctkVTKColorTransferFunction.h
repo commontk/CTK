@@ -63,8 +63,12 @@ public:
 
   void setColorTransferFunction(vtkColorTransferFunction* colorTransferFunction);
   vtkColorTransferFunction* colorTransferFunction()const;
+protected:
+  QScopedPointer<ctkVTKColorTransferFunctionPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKColorTransferFunction);
+  Q_DECLARE_PRIVATE(ctkVTKColorTransferFunction);
+  Q_DISABLE_COPY(ctkVTKColorTransferFunction);
 };
 
 #endif

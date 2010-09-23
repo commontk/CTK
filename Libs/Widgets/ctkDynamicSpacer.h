@@ -64,8 +64,12 @@ public slots:
   /// inactiveSizePolicy otherwise
   void activate(bool enable);
 
+protected:
+  QScopedPointer<ctkDynamicSpacerPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkDynamicSpacer);
+  Q_DECLARE_PRIVATE(ctkDynamicSpacer);
+  Q_DISABLE_COPY(ctkDynamicSpacer);
 };
 
 void ctkDynamicSpacer::setActiveSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical)

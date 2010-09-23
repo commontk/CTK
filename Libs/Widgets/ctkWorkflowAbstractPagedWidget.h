@@ -32,7 +32,6 @@ class ctkWorkflowStep;
 
 class ctkWorkflowAbstractPagedWidgetPrivate;
 
-
 /// ctkWorkflowAbstractPagedWidget is the basis for a workflow with a
 /// user interface containing multiple pages.
 /// By default, each step is placed onto its own page.  Multiple workflow steps can be placed on the
@@ -45,7 +44,7 @@ public:
 
   typedef ctkWorkflowWidget Superclass;
   explicit ctkWorkflowAbstractPagedWidget(QWidget* newParent = 0);
-  virtual ~ctkWorkflowAbstractPagedWidget(){}
+  virtual ~ctkWorkflowAbstractPagedWidget();
 
   /// Optionally specify the label to be displayed on the page shown for the given step.
   virtual void associateStepWithLabel(ctkWorkflowStep* step, QString label);
@@ -74,9 +73,12 @@ protected:
 
   virtual void showPage(QWidget* widget, const QString& label) = 0;
 
-private:
-  CTK_DECLARE_PRIVATE(ctkWorkflowAbstractPagedWidget);
+protected:
+  QScopedPointer<ctkWorkflowAbstractPagedWidgetPrivate> d_ptr;
 
+private:
+  Q_DECLARE_PRIVATE(ctkWorkflowAbstractPagedWidget);
+  Q_DISABLE_COPY(ctkWorkflowAbstractPagedWidget);
 };
 
 #endif

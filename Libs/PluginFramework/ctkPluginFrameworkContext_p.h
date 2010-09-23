@@ -79,13 +79,13 @@
        */
       static int globalId;
 
-      ctkPluginFrameworkFactory::Properties props;
+      ctkProperties props;
 
       /**
        * Contruct a framework context
        *
        */
-      ctkPluginFrameworkContext(const ctkPluginFrameworkFactory::Properties& initProps);
+      ctkPluginFrameworkContext(const ctkProperties& initProps);
 
 
       /**

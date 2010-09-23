@@ -91,8 +91,12 @@ protected:
   qreal computeRangeXOffset(qreal rangeX[2]);
   qreal computeRangeYDiff(const QRectF& rect, const QVariant rangeY[2]);
   qreal computeRangeYOffset(const QVariant rangeY[2]);
+protected:
+  QScopedPointer<ctkTransferFunctionRepresentationPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkTransferFunctionRepresentation);
+  Q_DECLARE_PRIVATE(ctkTransferFunctionRepresentation);
+  Q_DISABLE_COPY(ctkTransferFunctionRepresentation);
 };
 
 qreal ctkTransferFunctionRepresentation::posX(const ctkControlPoint* cp)const

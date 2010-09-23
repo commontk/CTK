@@ -69,8 +69,12 @@ public:
 
   vtkPiecewiseFunction*     piecewiseFunction()const;
   vtkColorTransferFunction* colorTransferFunction()const;
+protected:
+  QScopedPointer<ctkVTKCompositeFunctionPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKCompositeFunction);
+  Q_DECLARE_PRIVATE(ctkVTKCompositeFunction);
+  Q_DISABLE_COPY(ctkVTKCompositeFunction);
 };
 
 #endif

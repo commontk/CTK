@@ -158,8 +158,12 @@ protected:
   virtual void initMinimumSliderStyleOption(QStyleOptionSlider* option) const;
   virtual void initMaximumSliderStyleOption(QStyleOptionSlider* option) const;
 
+protected:
+  QScopedPointer<ctkRangeSliderPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkRangeSlider);
+  Q_DECLARE_PRIVATE(ctkRangeSlider);
+  Q_DISABLE_COPY(ctkRangeSlider);
 };
 
 #endif

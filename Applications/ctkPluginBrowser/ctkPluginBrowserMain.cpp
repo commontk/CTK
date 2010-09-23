@@ -32,6 +32,10 @@ int main(int argv, char** argc)
 {
   QApplication app(argv, argc);
 
+  app.setOrganizationName("commontk");
+  app.setOrganizationDomain("commontk.org");
+  app.setApplicationName("ctkPluginBrowser");
+
   ctkPluginFrameworkFactory fwFactory;
   ctkPluginFramework* framework = fwFactory.getFramework();
 

@@ -29,10 +29,13 @@
 #include <limits>
 
 //-----------------------------------------------------------------------------
-class ctkDoubleSliderPrivate: public ctkPrivate<ctkDoubleSlider>
+class ctkDoubleSliderPrivate
 {
-  public:
-  ctkDoubleSliderPrivate();
+  Q_DECLARE_PUBLIC(ctkDoubleSlider);
+protected:
+  ctkDoubleSlider* const q_ptr;
+public:
+  ctkDoubleSliderPrivate(ctkDoubleSlider& object);
   int toInt(double _value)const;
   double fromInt(int _value)const;
   void init();
@@ -49,7 +52,8 @@ class ctkDoubleSliderPrivate: public ctkPrivate<ctkDoubleSlider>
 };
 
 // --------------------------------------------------------------------------
-ctkDoubleSliderPrivate::ctkDoubleSliderPrivate()
+ctkDoubleSliderPrivate::ctkDoubleSliderPrivate(ctkDoubleSlider& object)
+  :q_ptr(&object)
 {
   this->Slider = 0;
   this->Minimum = 0.;
@@ -63,9 +67,9 @@ ctkDoubleSliderPrivate::ctkDoubleSliderPrivate()
 // --------------------------------------------------------------------------
 void ctkDoubleSliderPrivate::init()
 {
-  CTK_P(ctkDoubleSlider);
-  this->Slider = new QSlider(p);
-  QHBoxLayout* l = new QHBoxLayout(p);
+  Q_Q(ctkDoubleSlider);
+  this->Slider = new QSlider(q);
+  QHBoxLayout* l = new QHBoxLayout(q);
   l->addWidget(this->Slider);
   l->setContentsMargins(0,0,0,0);
   
@@ -74,14 +78,14 @@ void ctkDoubleSliderPrivate::init()
   this->SingleStep = this->Slider->singleStep();
   this->Value = this->Slider->value();
 
-  p->connect(this->Slider, SIGNAL(valueChanged(int)), p, SLOT(onValueChanged(int)));
-  p->connect(this->Slider, SIGNAL(sliderMoved(int)), p, SLOT(onSliderMoved(int)));
-  p->connect(this->Slider, SIGNAL(sliderPressed()), p, SIGNAL(sliderPressed()));
-  p->connect(this->Slider, SIGNAL(sliderReleased()), p, SIGNAL(sliderReleased()));
-  p->connect(this->Slider, SIGNAL(rangeChanged(int, int)),
-             p, SLOT(onRangeChanged(int, int)));
+  q->connect(this->Slider, SIGNAL(valueChanged(int)), q, SLOT(onValueChanged(int)));
+  q->connect(this->Slider, SIGNAL(sliderMoved(int)), q, SLOT(onSliderMoved(int)));
+  q->connect(this->Slider, SIGNAL(sliderPressed()), q, SIGNAL(sliderPressed()));
+  q->connect(this->Slider, SIGNAL(sliderReleased()), q, SIGNAL(sliderReleased()));
+  q->connect(this->Slider, SIGNAL(rangeChanged(int, int)),
+             q, SLOT(onRangeChanged(int, int)));
 
-  p->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed,
+  q->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed,
                                QSizePolicy::Slider));
 }
   
@@ -119,17 +123,19 @@ void ctkDoubleSliderPrivate::updateOffset(double value)
 
 // --------------------------------------------------------------------------
 ctkDoubleSlider::ctkDoubleSlider(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new ctkDoubleSliderPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkDoubleSlider);
-  ctk_d()->init();
+  Q_D(ctkDoubleSlider);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
 ctkDoubleSlider::ctkDoubleSlider(Qt::Orientation _orientation, QWidget* _parent)
   : Superclass(_parent)
+  , d_ptr(new ctkDoubleSliderPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkDoubleSlider);
-  ctk_d()->init();
+  Q_D(ctkDoubleSlider);
+  d->init();
   this->setOrientation(_orientation);
 }
 
@@ -141,7 +147,7 @@ ctkDoubleSlider::~ctkDoubleSlider()
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setMinimum(double min)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   d->Minimum = min;
   if (d->Minimum >= d->Value)
     {
@@ -156,7 +162,7 @@ void ctkDoubleSlider::setMinimum(double min)
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setMaximum(double max)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   d->Maximum = max;
   if (d->Maximum <= d->Value)
     {
@@ -171,7 +177,7 @@ void ctkDoubleSlider::setMaximum(double max)
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setRange(double min, double max)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   d->Minimum = min;
   d->Maximum = max;
   
@@ -192,42 +198,42 @@ void ctkDoubleSlider::setRange(double min, double max)
 // --------------------------------------------------------------------------
 double ctkDoubleSlider::minimum()const
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   return d->Minimum;
 }
 
 // --------------------------------------------------------------------------
 double ctkDoubleSlider::maximum()const
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   return d->Maximum;
 }
 
 // --------------------------------------------------------------------------
 double ctkDoubleSlider::sliderPosition()const
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   return d->fromInt(d->Slider->sliderPosition());
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setSliderPosition(double newSliderPosition)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   d->Slider->setSliderPosition(d->toInt(newSliderPosition));
 }
 
 // --------------------------------------------------------------------------
 double ctkDoubleSlider::value()const
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   return d->Value;
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setValue(double newValue)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   newValue = qBound(d->Minimum, newValue, d->Maximum);
   d->updateOffset(newValue);
   int newIntValue = d->toInt(newValue);
@@ -253,14 +259,14 @@ void ctkDoubleSlider::setValue(double newValue)
 // --------------------------------------------------------------------------
 double ctkDoubleSlider::singleStep()const
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   return d->SingleStep;
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setSingleStep(double newStep)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   d->SingleStep = newStep;
   // update the new values of the QSlider
   double _value = d->Value;
@@ -275,56 +281,56 @@ void ctkDoubleSlider::setSingleStep(double newStep)
 // --------------------------------------------------------------------------
 double ctkDoubleSlider::tickInterval()const
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   return d->fromInt(d->Slider->tickInterval());
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setTickInterval(double newTickInterval)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   d->Slider->setTickInterval(d->toInt(newTickInterval));
 }
 
 // --------------------------------------------------------------------------
 bool ctkDoubleSlider::hasTracking()const
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   return d->Slider->hasTracking();
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setTracking(bool enable)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   d->Slider->setTracking(enable);
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::triggerAction( QAbstractSlider::SliderAction action)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   d->Slider->triggerAction(action);
 }
 
 // --------------------------------------------------------------------------
 Qt::Orientation ctkDoubleSlider::orientation()const
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   return d->Slider->orientation();
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setOrientation(Qt::Orientation newOrientation)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   d->Slider->setOrientation(newOrientation);
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::onValueChanged(int newValue)
 {
-  CTK_D(ctkDoubleSlider);
+  Q_D(ctkDoubleSlider);
   double doubleNewValue = d->fromInt(newValue);
 /*
   qDebug() << "onValueChanged: " << newValue << "->"<< d->fromInt(newValue+d->Offset) 
@@ -342,14 +348,14 @@ void ctkDoubleSlider::onValueChanged(int newValue)
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::onSliderMoved(int newPosition)
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   emit this->sliderMoved(d->fromInt(newPosition));
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::onRangeChanged(int min, int max)
 {
-  CTK_D(const ctkDoubleSlider);
+  Q_D(const ctkDoubleSlider);
   if (!d->SettingRange)
     {
     this->setRange(d->fromInt(min), d->fromInt(max));

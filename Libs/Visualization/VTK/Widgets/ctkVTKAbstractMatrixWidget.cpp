@@ -30,15 +30,22 @@
 #include <vtkMatrix4x4.h>
 
 // --------------------------------------------------------------------------
-ctkVTKAbstractMatrixWidgetPrivate::ctkVTKAbstractMatrixWidgetPrivate()
+ctkVTKAbstractMatrixWidgetPrivate::ctkVTKAbstractMatrixWidgetPrivate(ctkVTKAbstractMatrixWidget& object)
   :QObject(0) // will be reparented in init()
+  ,q_ptr(&object)
 {
 }
 
+// --------------------------------------------------------------------------
+ctkVTKAbstractMatrixWidget::~ctkVTKAbstractMatrixWidget()
+{
+}
+
+// --------------------------------------------------------------------------
 void ctkVTKAbstractMatrixWidgetPrivate::init()
 {
-  CTK_P(ctkVTKAbstractMatrixWidget);
-  this->setParent(p);
+  Q_Q(ctkVTKAbstractMatrixWidget);
+  this->setParent(q);
   this->updateMatrix();
 }
 
@@ -61,13 +68,13 @@ vtkMatrix4x4* ctkVTKAbstractMatrixWidgetPrivate::matrix() const
 // --------------------------------------------------------------------------
 void ctkVTKAbstractMatrixWidgetPrivate::updateMatrix()
 {
-  CTK_P(ctkVTKAbstractMatrixWidget);
+  Q_Q(ctkVTKAbstractMatrixWidget);
   // if there is no transform to show/edit, disable the widget
-  p->setEnabled(this->Matrix != 0);
+  q->setEnabled(this->Matrix != 0);
 
   if (this->Matrix == 0)
     {
-    p->reset();
+    q->reset();
     return;
     }
   QVector<double> vector;
@@ -79,26 +86,27 @@ void ctkVTKAbstractMatrixWidgetPrivate::updateMatrix()
       vector.append(this->Matrix->GetElement(i,j)); 
       }
     }
-  p->setVector( vector );
+  q->setVector( vector );
 }
 
 // --------------------------------------------------------------------------
 ctkVTKAbstractMatrixWidget::ctkVTKAbstractMatrixWidget(QWidget* parentVariable) : Superclass(parentVariable)
+  , d_ptr(new ctkVTKAbstractMatrixWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkVTKAbstractMatrixWidget);
-  ctk_d()->init();
+  Q_D(ctkVTKAbstractMatrixWidget);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
 vtkMatrix4x4* ctkVTKAbstractMatrixWidget::matrix()const
 {
-  CTK_D(const ctkVTKAbstractMatrixWidget);
+  Q_D(const ctkVTKAbstractMatrixWidget);
   return d->matrix();
 }
 
 // --------------------------------------------------------------------------
 void ctkVTKAbstractMatrixWidget::setMatrixInternal(vtkMatrix4x4* matrixVariable)
 {
-  CTK_D(ctkVTKAbstractMatrixWidget);
+  Q_D(ctkVTKAbstractMatrixWidget);
   d->setMatrix(matrixVariable);
 }

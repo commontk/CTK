@@ -30,7 +30,7 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkSmartPointer.h>
 
-class ctkVTKCompositeFunctionPrivate: public ctkPrivate<ctkVTKCompositeFunction>
+class ctkVTKCompositeFunctionPrivate
 {
 public:
   vtkSmartPointer<vtkPiecewiseFunction>     PiecewiseFunction;
@@ -42,8 +42,8 @@ ctkVTKCompositeFunction::ctkVTKCompositeFunction(vtkPiecewiseFunction* piecewise
                                                  vtkColorTransferFunction* colorTransferFunction,
                                                  QObject* parentObject)
   :ctkTransferFunction(parentObject)
+  , d_ptr(new ctkVTKCompositeFunctionPrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKCompositeFunction);
   this->setPiecewiseFunction(piecewiseFunction);
   this->setColorTransferFunction(colorTransferFunction);
 }
@@ -56,7 +56,7 @@ ctkVTKCompositeFunction::~ctkVTKCompositeFunction()
 //-----------------------------------------------------------------------------
 int ctkVTKCompositeFunction::count()const
 {
-  CTK_D(const ctkVTKCompositeFunction);
+  Q_D(const ctkVTKCompositeFunction);
   // count points from piecewise
   // could be from color transfer function
   if (d->PiecewiseFunction.GetPointer() == 0)
@@ -94,7 +94,7 @@ bool ctkVTKCompositeFunction::isEditable()const
 //-----------------------------------------------------------------------------
 void ctkVTKCompositeFunction::range(qreal& minRange, qreal& maxRange)const
 {
-  CTK_D(const ctkVTKCompositeFunction);
+  Q_D(const ctkVTKCompositeFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
     {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
@@ -111,7 +111,7 @@ void ctkVTKCompositeFunction::range(qreal& minRange, qreal& maxRange)const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKCompositeFunction::minValue()const
 {
-  CTK_D(const ctkVTKCompositeFunction);
+  Q_D(const ctkVTKCompositeFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
     {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
@@ -131,7 +131,7 @@ QVariant ctkVTKCompositeFunction::minValue()const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKCompositeFunction::maxValue()const
 {
-  CTK_D(const ctkVTKCompositeFunction);
+  Q_D(const ctkVTKCompositeFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
     {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
@@ -151,7 +151,7 @@ QVariant ctkVTKCompositeFunction::maxValue()const
 //-----------------------------------------------------------------------------
 ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
 {
-  CTK_D(const ctkVTKCompositeFunction);
+  Q_D(const ctkVTKCompositeFunction);
   Q_ASSERT(index >= 0 && index < this->count());
 
   double valuesPWF[4];
@@ -248,7 +248,7 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
 //-----------------------------------------------------------------------------
 QVariant ctkVTKCompositeFunction::value(qreal pos)const
 {
-  CTK_D(const ctkVTKCompositeFunction);
+  Q_D(const ctkVTKCompositeFunction);
   Q_ASSERT(d->PiecewiseFunction.GetPointer());
   Q_ASSERT(d->ColorTransferFunction.GetPointer());
 
@@ -269,7 +269,7 @@ QVariant ctkVTKCompositeFunction::value(qreal pos)const
 int ctkVTKCompositeFunction::insertControlPoint(const ctkControlPoint& cp)
 {
   Q_UNUSED(cp);
-  CTK_D(ctkVTKCompositeFunction);
+  Q_D(ctkVTKCompositeFunction);
   int index = -1;
   // check piecewise
   if (d->PiecewiseFunction.GetPointer() == 0)
@@ -298,7 +298,7 @@ int ctkVTKCompositeFunction::insertControlPoint(const ctkControlPoint& cp)
 //-----------------------------------------------------------------------------
 int ctkVTKCompositeFunction::insertControlPoint(qreal pos)
 {
-  CTK_D(ctkVTKCompositeFunction);
+  Q_D(ctkVTKCompositeFunction);
   int index = -1;
   // check piecewise
   if (d->PiecewiseFunction.GetPointer() == 0)
@@ -334,7 +334,7 @@ int ctkVTKCompositeFunction::insertControlPoint(qreal pos)
 //-----------------------------------------------------------------------------
 void ctkVTKCompositeFunction::setControlPointPos(int index, qreal pos)
 {
-  CTK_D(ctkVTKCompositeFunction);
+  Q_D(ctkVTKCompositeFunction);
 
   // update X pos in the CTF
   double valuesColor[6];
@@ -356,7 +356,7 @@ void ctkVTKCompositeFunction::setControlPointPos(int index, qreal pos)
 //-----------------------------------------------------------------------------
 void ctkVTKCompositeFunction::setControlPointValue(int index, const QVariant& value)
 {
-  CTK_D(ctkVTKCompositeFunction);
+  Q_D(ctkVTKCompositeFunction);
   // QVariant = RGBA
 
   double values[4];
@@ -369,7 +369,7 @@ void ctkVTKCompositeFunction::setControlPointValue(int index, const QVariant& va
 //-----------------------------------------------------------------------------
 void ctkVTKCompositeFunction::setPiecewiseFunction(vtkPiecewiseFunction* piecewiseFunction)
 {
-  CTK_D(ctkVTKCompositeFunction);
+  Q_D(ctkVTKCompositeFunction);
   d->PiecewiseFunction = piecewiseFunction;
   this->qvtkReconnect(d->PiecewiseFunction,vtkCommand::ModifiedEvent,
                       this, SIGNAL(changed()));
@@ -378,7 +378,7 @@ void ctkVTKCompositeFunction::setPiecewiseFunction(vtkPiecewiseFunction* piecewi
 //-----------------------------------------------------------------------------
 void ctkVTKCompositeFunction::setColorTransferFunction(vtkColorTransferFunction* colorTransferFunction)
 {
-  CTK_D(ctkVTKCompositeFunction);
+  Q_D(ctkVTKCompositeFunction);
   d->ColorTransferFunction = colorTransferFunction;
   this->qvtkReconnect(d->ColorTransferFunction,vtkCommand::ModifiedEvent,
                       this, SIGNAL(changed()));
@@ -388,14 +388,14 @@ void ctkVTKCompositeFunction::setColorTransferFunction(vtkColorTransferFunction*
 //-----------------------------------------------------------------------------
 vtkPiecewiseFunction* ctkVTKCompositeFunction::piecewiseFunction()const
 {
-  CTK_D(const ctkVTKCompositeFunction);
+  Q_D(const ctkVTKCompositeFunction);
   return d->PiecewiseFunction;
 }
 
 //-----------------------------------------------------------------------------
 vtkColorTransferFunction* ctkVTKCompositeFunction::colorTransferFunction()const
 {
-  CTK_D(const ctkVTKCompositeFunction);
+  Q_D(const ctkVTKCompositeFunction);
   return d->ColorTransferFunction;
 }
 

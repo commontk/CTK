@@ -31,9 +31,8 @@
 #include <limits>
 
 //-----------------------------------------------------------------------------
-class ctkTransferFunctionRepresentationPrivate: public ctkPrivate<ctkTransferFunctionRepresentation>
+class ctkTransferFunctionRepresentationPrivate
 {
-  CTK_DECLARE_PUBLIC(ctkTransferFunctionRepresentation);
 public:
   ctkTransferFunctionRepresentationPrivate();
 
@@ -84,16 +83,16 @@ qreal ctkTransferFunctionRepresentationPrivate::height()const
 //-----------------------------------------------------------------------------
 ctkTransferFunctionRepresentation::ctkTransferFunctionRepresentation(QObject* parentObject)
   :QObject(parentObject)
+  , d_ptr(new ctkTransferFunctionRepresentationPrivate)
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionRepresentation);
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionRepresentation::ctkTransferFunctionRepresentation(
   ctkTransferFunction* transferFunction, QObject* parentObject)
   :QObject(parentObject)
+  , d_ptr(new ctkTransferFunctionRepresentationPrivate)
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionRepresentation);
   this->setTransferFunction(transferFunction);
 }
 
@@ -105,20 +104,20 @@ ctkTransferFunctionRepresentation::~ctkTransferFunctionRepresentation()
 //-----------------------------------------------------------------------------
 QColor ctkTransferFunctionRepresentation::verticalGradientColor() const
 {
-  CTK_D( const ctkTransferFunctionRepresentation );
+  Q_D( const ctkTransferFunctionRepresentation );
   return d->VerticalGradientColor;
 }
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionRepresentation::setVerticalGradientColor( QColor verticalGradientColor )
 {
-  CTK_D( ctkTransferFunctionRepresentation );
+  Q_D( ctkTransferFunctionRepresentation );
   d->VerticalGradientColor = verticalGradientColor;
 }
 
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionRepresentation::setTransferFunction(ctkTransferFunction* transferFunction)
 {
-  CTK_D(ctkTransferFunctionRepresentation);
+  Q_D(ctkTransferFunctionRepresentation);
   if (d->TransferFunction == transferFunction)
     {
     return;
@@ -133,13 +132,14 @@ void ctkTransferFunctionRepresentation::setTransferFunction(ctkTransferFunction*
 //-----------------------------------------------------------------------------
 ctkTransferFunction* ctkTransferFunctionRepresentation::transferFunction()const
 {
-  return ctk_d()->TransferFunction;
+  Q_D(const ctkTransferFunctionRepresentation);
+  return d->TransferFunction;
 }
 
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionRepresentation::onTransferFunctionChanged()
 {
-  CTK_D(ctkTransferFunctionRepresentation);
+  Q_D(ctkTransferFunctionRepresentation);
   // delete cache here
   d->Path = QPainterPath();
   d->Points.clear();
@@ -148,7 +148,7 @@ void ctkTransferFunctionRepresentation::onTransferFunctionChanged()
 //-----------------------------------------------------------------------------
 const QPainterPath& ctkTransferFunctionRepresentation::curve()const
 {
-  CTK_D(const ctkTransferFunctionRepresentation);
+  Q_D(const ctkTransferFunctionRepresentation);
   if (d->Path.isEmpty())
     {
     const_cast<ctkTransferFunctionRepresentation*>(this)->computeCurve();
@@ -160,7 +160,7 @@ const QPainterPath& ctkTransferFunctionRepresentation::curve()const
 //-----------------------------------------------------------------------------
 const QList<QPointF>& ctkTransferFunctionRepresentation::points()const
 {
-  CTK_D(const ctkTransferFunctionRepresentation);
+  Q_D(const ctkTransferFunctionRepresentation);
   if (d->Path.isEmpty())
     {
     const_cast<ctkTransferFunctionRepresentation*>(this)->computeCurve();
@@ -172,7 +172,7 @@ const QList<QPointF>& ctkTransferFunctionRepresentation::points()const
 //-----------------------------------------------------------------------------
 const QGradient& ctkTransferFunctionRepresentation::gradient()const
 {
-  CTK_D(const ctkTransferFunctionRepresentation);
+  Q_D(const ctkTransferFunctionRepresentation);
   if (d->Path.isEmpty())
     {
     const_cast<ctkTransferFunctionRepresentation*>(this)->computeCurve();
@@ -184,7 +184,7 @@ const QGradient& ctkTransferFunctionRepresentation::gradient()const
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionRepresentation::computeCurve()
 {
-  CTK_D(ctkTransferFunctionRepresentation);
+  Q_D(ctkTransferFunctionRepresentation);
 
   int count = d->TransferFunction ? d->TransferFunction->count() : 0;
   if (count <= 0)
@@ -266,7 +266,7 @@ void ctkTransferFunctionRepresentation::computeCurve()
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionRepresentation::computeGradient()
 {
-  CTK_D(ctkTransferFunctionRepresentation);
+  Q_D(ctkTransferFunctionRepresentation);
 
   int count = d->TransferFunction ? d->TransferFunction->count() : 0;
   if (count <= 0)
@@ -483,27 +483,27 @@ QPointF ctkTransferFunctionRepresentation::mapPointToScene(const ctkPoint& point
 //-----------------------------------------------------------------------------
 qreal ctkTransferFunctionRepresentation::mapXToScene(qreal xPos)const
 {
-  CTK_D(const ctkTransferFunctionRepresentation);
+  Q_D(const ctkTransferFunctionRepresentation);
   return (xPos - d->RangeXOffSet) * d->RangeXDiff;
 }
 
 //-----------------------------------------------------------------------------
 qreal ctkTransferFunctionRepresentation::mapYToScene(qreal yPos)const
 {
-  CTK_D(const ctkTransferFunctionRepresentation);
+  Q_D(const ctkTransferFunctionRepresentation);
   return d->height() - (yPos - d->RangeYOffSet) * d->RangeYDiff;
 }
 
 //-----------------------------------------------------------------------------
 qreal ctkTransferFunctionRepresentation::mapXFromScene(qreal scenePosX)const
 {
-  CTK_D(const ctkTransferFunctionRepresentation);
+  Q_D(const ctkTransferFunctionRepresentation);
   return (scenePosX / d->RangeXDiff) + d->RangeXOffSet;
 }
 
 //-----------------------------------------------------------------------------
 qreal ctkTransferFunctionRepresentation::mapYFromScene(qreal scenePosY)const
 {
-  CTK_D(const ctkTransferFunctionRepresentation);
+  Q_D(const ctkTransferFunctionRepresentation);
   return ((d->height() - scenePosY) / d->RangeYDiff) + d->RangeYOffSet ;
 }

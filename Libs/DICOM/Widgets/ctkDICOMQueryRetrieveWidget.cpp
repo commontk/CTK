@@ -11,8 +11,7 @@
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMQueryRetrieveWidget");
 
 //----------------------------------------------------------------------------
-class ctkDICOMQueryRetrieveWidgetPrivate: public ctkPrivate<ctkDICOMQueryRetrieveWidget>,
-                                          public Ui_ctkDICOMQueryRetrieveWidget
+class ctkDICOMQueryRetrieveWidgetPrivate: public Ui_ctkDICOMQueryRetrieveWidget
 {
 public:
   ctkDICOMQueryRetrieveWidgetPrivate(){}
@@ -26,10 +25,10 @@ public:
 // ctkDICOMQueryRetrieveWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* _parent):Superclass(_parent)
+ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* _parent):Superclass(_parent), 
+  d_ptr(new ctkDICOMQueryRetrieveWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(ctkDICOMQueryRetrieveWidget);
-  CTK_D(ctkDICOMQueryRetrieveWidget);
+  Q_D(ctkDICOMQueryRetrieveWidget);
   
   d->setupUi(this);
 
@@ -46,7 +45,7 @@ ctkDICOMQueryRetrieveWidget::~ctkDICOMQueryRetrieveWidget()
 //----------------------------------------------------------------------------
 void ctkDICOMQueryRetrieveWidget::onTabCloseRequested(int index)
 {
-  CTK_D(ctkDICOMQueryRetrieveWidget);
+  Q_D(ctkDICOMQueryRetrieveWidget);
 
   if (index == 0)
   {
@@ -59,7 +58,7 @@ void ctkDICOMQueryRetrieveWidget::onTabCloseRequested(int index)
 //----------------------------------------------------------------------------
 void ctkDICOMQueryRetrieveWidget::processQuery()
 {
-  CTK_D(ctkDICOMQueryRetrieveWidget);
+  Q_D(ctkDICOMQueryRetrieveWidget);
 
   d->serverNodeWidget->populateQuery();
   d->queryWidget->populateQuery();

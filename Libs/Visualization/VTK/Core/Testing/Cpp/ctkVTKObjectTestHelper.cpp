@@ -10,7 +10,7 @@
 #include <vtkObject.h>
 
 //------------------------------------------------------------------------------
-class ctkVTKObjectTestPrivate : public ctkPrivate<ctkVTKObjectTest>
+class ctkVTKObjectTestPrivate
 {
 public:
   ctkVTKObjectTestPrivate();
@@ -29,15 +29,20 @@ ctkVTKObjectTestPrivate::ctkVTKObjectTestPrivate()
 
 //------------------------------------------------------------------------------
 ctkVTKObjectTest::ctkVTKObjectTest(QObject* parentObject)
-:QObject(parentObject)
+  : QObject(parentObject)
+  , d_ptr(new ctkVTKObjectTestPrivate)
 {
-  CTK_INIT_PRIVATE(ctkVTKObjectTest);
+}
+
+//------------------------------------------------------------------------------
+ctkVTKObjectTest::~ctkVTKObjectTest()
+{
 }
 
 //------------------------------------------------------------------------------
 bool ctkVTKObjectTest::test()
 {
-  CTK_D(ctkVTKObjectTest);
+  Q_D(ctkVTKObjectTest);
   // should do nothing but shouldn't fail neither
   qDebug() << "The following can generate error message.";
   qDebug() << "Disconnect:";
@@ -218,7 +223,7 @@ bool ctkVTKObjectTest::test()
 //------------------------------------------------------------------------------
 void ctkVTKObjectTest::resetSlotCalls()
 {
-  CTK_D(ctkVTKObjectTest);
+  Q_D(ctkVTKObjectTest);
   d->PublicSlotCalled = 0;
   d->ProtectedSlotCalled = 0;
   d->PrivateSlotCalled = 0;
@@ -233,8 +238,9 @@ void ctkVTKObjectTest::emitSignalEmitted()
 //------------------------------------------------------------------------------
 void ctkVTKObjectTest::onVTKObjectModifiedPublic()
 {
+  Q_D(ctkVTKObjectTest);
   //qDebug() << __FUNCTION__;
-  ctk_d()->PublicSlotCalled = true;
+  d->PublicSlotCalled = true;
 }
 
 //------------------------------------------------------------------------------
@@ -247,13 +253,15 @@ void ctkVTKObjectTest::deleteConnection()
 //------------------------------------------------------------------------------
 void ctkVTKObjectTest::onVTKObjectModifiedProtected()
 {
+  Q_D(ctkVTKObjectTest);
   //qDebug() << __FUNCTION__;
-  ctk_d()->ProtectedSlotCalled = true;
+  d->ProtectedSlotCalled = true;
 }
 
 //------------------------------------------------------------------------------
 void ctkVTKObjectTest::onVTKObjectModifiedPrivate()
 {
+  Q_D(ctkVTKObjectTest);
   //qDebug() << __FUNCTION__;
-  ctk_d()->PrivateSlotCalled = true;
+  d->PrivateSlotCalled = true;
 }

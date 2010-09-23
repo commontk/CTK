@@ -37,7 +37,7 @@ ctkNonLinearControlPoint::~ctkNonLinearControlPoint()
 }
 
 //-----------------------------------------------------------------------------
-class ctkTransferFunctionPrivate:public ctkPrivate<ctkTransferFunction>
+class ctkTransferFunctionPrivate
 {
 public:
   ctkTransferFunctionPrivate();
@@ -53,9 +53,9 @@ ctkTransferFunctionPrivate::ctkTransferFunctionPrivate()
 //-----------------------------------------------------------------------------
 ctkTransferFunction::ctkTransferFunction(QObject* parentObject)
   :QObject(parentObject)
+  , d_ptr(new ctkTransferFunctionPrivate)
 {
-  CTK_INIT_PRIVATE(ctkTransferFunction);
-  CTK_D(ctkTransferFunction);
+  Q_D(ctkTransferFunction);
   d->Representation = new ctkTransferFunctionRepresentation(this);
 }
 
@@ -73,6 +73,6 @@ ctkTransferFunction::~ctkTransferFunction()
 //-----------------------------------------------------------------------------
 ctkTransferFunctionRepresentation* ctkTransferFunction::representation()const
 {
-  CTK_D(const ctkTransferFunction);
+  Q_D(const ctkTransferFunction);
   return d->Representation;
 }

@@ -34,14 +34,14 @@ class QState;
 class ctkWorkflow;
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowStepPrivate: public QObject,
-                              public ctkPrivate<ctkWorkflowStep>
+class ctkWorkflowStepPrivate: public QObject
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(ctkWorkflowStep);
+  Q_DECLARE_PUBLIC(ctkWorkflowStep);
 
 public:
-  ctkWorkflowStepPrivate();
+  ctkWorkflowStep* q_ptr;
+  ctkWorkflowStepPrivate(ctkWorkflowStep& object);
   ~ctkWorkflowStepPrivate();
 
 protected:

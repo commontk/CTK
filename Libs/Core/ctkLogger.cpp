@@ -30,18 +30,19 @@
 #include <log4qt/logger.h>
 #include <log4qt/basicconfigurator.h>
 
-class ctkLoggerPrivate: public ctkPrivate<ctkLogger>
+//-----------------------------------------------------------------------------
+class ctkLoggerPrivate
 {
 public:
-  ctkLoggerPrivate(){};
-  ~ctkLoggerPrivate(){};
   Log4Qt::Logger *Logger;
 };
 
 //-----------------------------------------------------------------------------
-ctkLogger::ctkLogger(QString name, QObject* _parent): Superclass(_parent)
+ctkLogger::ctkLogger(QString name, QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new ctkLoggerPrivate)
 {
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger = Log4Qt::Logger::logger( name.toStdString().c_str());
 }
 
@@ -59,140 +60,140 @@ void ctkLogger::configure()
 //-----------------------------------------------------------------------------
 void ctkLogger::debug(const QString& s)
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->debug(s);
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::info(const QString& s)
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->info(s);
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::trace(const QString& s)
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->trace(s);
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::warn(const QString& s)
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->warn(s);
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::error(const QString& s)
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->error(s);
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::fatal(const QString& s)
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->fatal(s);
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::setOff()
 {
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::OFF_INT));
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::setDebug()
 {
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::DEBUG_INT));
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::setInfo()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::INFO_INT));
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::setTrace()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::TRACE_INT));
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::setWarn()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::WARN_INT));
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::setError()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::ERROR_INT));
 }
 
 //-----------------------------------------------------------------------------
 void ctkLogger::setFatal()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::FATAL_INT));
 }
 
 //-----------------------------------------------------------------------------
 bool ctkLogger::isOffEnabled()
 {
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   return !d->Logger->isEnabledFor(Log4Qt::Level(Log4Qt::Level::OFF_INT));
 }
 
 //-----------------------------------------------------------------------------
 bool ctkLogger::isDebugEnabled()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   return d->Logger->isDebugEnabled(); 
 }
 
 //-----------------------------------------------------------------------------
 bool ctkLogger::isInfoEnabled()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   return d->Logger->isInfoEnabled(); 
 }
 
 //-----------------------------------------------------------------------------
 bool ctkLogger::isTraceEnabled()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   return d->Logger->isTraceEnabled(); 
 }
 
 //-----------------------------------------------------------------------------
 bool ctkLogger::isWarnEnabled()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   return d->Logger->isWarnEnabled(); 
 }
 
 //-----------------------------------------------------------------------------
 bool ctkLogger::isErrorEnabled()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   return d->Logger->isErrorEnabled(); 
 }
 
 //-----------------------------------------------------------------------------
 bool ctkLogger::isFatalEnabled()
 { 
-  CTK_D(ctkLogger);
+  Q_D(ctkLogger);
   return d->Logger->isFatalEnabled(); 
 }
 

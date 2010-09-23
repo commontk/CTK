@@ -36,10 +36,9 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowStackedWidget");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowStackedWidgetPrivate: public ctkPrivate<ctkWorkflowStackedWidget>
+class ctkWorkflowStackedWidgetPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(ctkWorkflowStackedWidget);
   ctkWorkflowStackedWidgetPrivate();
 
   QStackedWidget* ClientArea;
@@ -58,23 +57,28 @@ ctkWorkflowStackedWidgetPrivate::ctkWorkflowStackedWidgetPrivate()
 
 // --------------------------------------------------------------------------
 ctkWorkflowStackedWidget::ctkWorkflowStackedWidget(QWidget* newParent) : Superclass(newParent)
+  , d_ptr(new ctkWorkflowStackedWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(ctkWorkflowStackedWidget);
-  CTK_D(ctkWorkflowStackedWidget);
+  Q_D(ctkWorkflowStackedWidget);
   d->ClientArea = 0;
+}
+
+// --------------------------------------------------------------------------
+ctkWorkflowStackedWidget::~ctkWorkflowStackedWidget()
+{
 }
 
 // --------------------------------------------------------------------------
 QWidget* ctkWorkflowStackedWidget::clientArea()
 {
-  CTK_D(ctkWorkflowStackedWidget);
+  Q_D(ctkWorkflowStackedWidget);
   return d->ClientArea;
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStackedWidget::initClientArea()
 {
-  CTK_D(ctkWorkflowStackedWidget);
+  Q_D(ctkWorkflowStackedWidget);
   if (!d->ClientArea)
     {
     d->ClientArea = new QStackedWidget(this);
@@ -84,7 +88,7 @@ void ctkWorkflowStackedWidget::initClientArea()
 // --------------------------------------------------------------------------
 void ctkWorkflowStackedWidget::createNewPage(QWidget* widget)
 {  
-  CTK_D(ctkWorkflowStackedWidget);
+  Q_D(ctkWorkflowStackedWidget);
   Q_ASSERT(d->ClientArea);
 
   if (widget)
@@ -98,7 +102,7 @@ void ctkWorkflowStackedWidget::showPage(QWidget* widget, const QString& label)
 {
   Q_UNUSED(label);
 
-  CTK_D(ctkWorkflowStackedWidget);
+  Q_D(ctkWorkflowStackedWidget);
   Q_ASSERT(d->ClientArea);
 
   if (widget)

@@ -65,8 +65,12 @@ public:
 protected:
   qreal indexToPos(int index)const;
   int posToIndex(qreal pos)const;
+protected:
+  QScopedPointer<ctkVTKLookupTablePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKLookupTable);
+  Q_DECLARE_PRIVATE(ctkVTKLookupTable);
+  Q_DISABLE_COPY(ctkVTKLookupTable);
 };
 
 #endif

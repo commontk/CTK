@@ -37,10 +37,9 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowTabWidget");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowTabWidgetPrivate: public ctkPrivate<ctkWorkflowTabWidget>
+class ctkWorkflowTabWidgetPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(ctkWorkflowTabWidget);
   ctkWorkflowTabWidgetPrivate();
 
   QTabWidget* ClientArea;
@@ -59,23 +58,28 @@ ctkWorkflowTabWidgetPrivate::ctkWorkflowTabWidgetPrivate()
 
 // --------------------------------------------------------------------------
 ctkWorkflowTabWidget::ctkWorkflowTabWidget(QWidget* newParent) : Superclass(newParent)
+  , d_ptr(new ctkWorkflowTabWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(ctkWorkflowTabWidget);
-  CTK_D(ctkWorkflowTabWidget);
+  Q_D(ctkWorkflowTabWidget);
   d->ClientArea = 0;
+}
+
+// --------------------------------------------------------------------------
+ctkWorkflowTabWidget::~ctkWorkflowTabWidget()
+{
 }
 
 // --------------------------------------------------------------------------
 QWidget* ctkWorkflowTabWidget::clientArea()
 {
-  CTK_D(ctkWorkflowTabWidget);
+  Q_D(ctkWorkflowTabWidget);
   return d->ClientArea;
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowTabWidget::initClientArea()
 {
-  CTK_D(ctkWorkflowTabWidget);
+  Q_D(ctkWorkflowTabWidget);
   if (!d->ClientArea)
     {
     d->ClientArea = new QTabWidget(this);
@@ -85,7 +89,7 @@ void ctkWorkflowTabWidget::initClientArea()
 // --------------------------------------------------------------------------
 void ctkWorkflowTabWidget::createNewPage(QWidget* widget)
 {
-  CTK_D(ctkWorkflowTabWidget);
+  Q_D(ctkWorkflowTabWidget);
   Q_ASSERT(d->ClientArea);
   if (widget)
     {
@@ -96,7 +100,7 @@ void ctkWorkflowTabWidget::createNewPage(QWidget* widget)
 // --------------------------------------------------------------------------
 void ctkWorkflowTabWidget::showPage(QWidget* widget, const QString& label)
 {
-  CTK_D(ctkWorkflowTabWidget);
+  Q_D(ctkWorkflowTabWidget);
   Q_ASSERT(d->ClientArea);
   if (widget)
     {

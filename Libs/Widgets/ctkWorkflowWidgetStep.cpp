@@ -40,10 +40,9 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowWidgetStep");
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowWidgetStepPrivate: public ctkPrivate<ctkWorkflowWidgetStep>
+class ctkWorkflowWidgetStepPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(ctkWorkflowWidgetStep);
   ctkWorkflowWidgetStepPrivate();
   ~ctkWorkflowWidgetStepPrivate(){};
   ctkWorkflowWidgetStep::ButtonBoxHintForPlugin ButtonBoxHintsForPlugin;
@@ -63,18 +62,23 @@ ctkWorkflowWidgetStepPrivate::ctkWorkflowWidgetStepPrivate()
 //-----------------------------------------------------------------------------
 ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(ctkWorkflow* newWorkflow, 
   const QString& newId, QWidget* newParent) : QWidget(newParent), ctkWorkflowAbstractWidgetStep(newWorkflow, newId)
+  , d_ptr(new ctkWorkflowWidgetStepPrivate)
 {
-  CTK_INIT_PRIVATE(ctkWorkflowWidgetStep);
-  CTK_D(ctkWorkflowWidgetStep);
-  d->ButtonBoxHintsForPlugin = Self::qNoHints;
+  Q_D(ctkWorkflowWidgetStep);
+  d->ButtonBoxHintsForPlugin = ctkWorkflowWidgetStep::qNoHints;
 }
 
 //-----------------------------------------------------------------------------
 ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(QWidget* newParent) : QWidget(newParent), ctkWorkflowAbstractWidgetStep(0, QString())
+  , d_ptr(new ctkWorkflowWidgetStepPrivate)
 {
-  CTK_INIT_PRIVATE(ctkWorkflowWidgetStep);
-  CTK_D(ctkWorkflowWidgetStep);
-  d->ButtonBoxHintsForPlugin = Self::qNoHints;
+  Q_D(ctkWorkflowWidgetStep);
+  d->ButtonBoxHintsForPlugin = ctkWorkflowWidgetStep::qNoHints;
+}
+
+//-----------------------------------------------------------------------------
+ctkWorkflowWidgetStep::~ctkWorkflowWidgetStep()
+{
 }
 
 //-----------------------------------------------------------------------------

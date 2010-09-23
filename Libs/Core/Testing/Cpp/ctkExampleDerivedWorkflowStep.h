@@ -40,7 +40,7 @@ public:
 
   typedef ctkWorkflowStep Superclass;
   explicit ctkExampleDerivedWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId);
-  virtual ~ctkExampleDerivedWorkflowStep(){}
+  virtual ~ctkExampleDerivedWorkflowStep();
 
   /// Get the values for the counters of the number of times we have
   /// run the onEntry() and onExit() functions
@@ -57,8 +57,12 @@ public:
   virtual void onExit(const ctkWorkflowStep* goingTo,
                       const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
+protected:
+  QScopedPointer<ctkExampleDerivedWorkflowStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkExampleDerivedWorkflowStep);
+  Q_DECLARE_PRIVATE(ctkExampleDerivedWorkflowStep);
+  Q_DISABLE_COPY(ctkExampleDerivedWorkflowStep);
 
 };
 

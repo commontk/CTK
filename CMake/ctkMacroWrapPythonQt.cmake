@@ -99,18 +99,20 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     MESSAGE(SEND_ERROR "PYTHONQTGENERATOR_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
   ENDIF()
   
+  # TODO: this find package seems not to work when called form a superbuild, but the call is needed
+  # in general to find the python interpreter.  In CTK, the toplevel CMakeLists.txt does the find
+  # package so this is a no-op.  Other uses of this file may need to have this call so it is still enabled.
   find_package(PythonInterp)
   IF(NOT PYTHONINTERP_FOUND)
     MESSAGE(SEND_ERROR "PYTHON_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
   ENDIF()
 
-  find_package(PythonLibs)
-  IF(NOT PYTHONLIBS_FOUND)
-    MESSAGE(SEND_ERROR "PYTHON_LIBRARY not specified or inexistent when calling ctkMacroWrapPythonQt")
-  ENDIF()
-
   # Extract python lib path
-  get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARY} PATH)
+  get_filename_component(PYTHON_DIR_PATH ${PYTHON_EXECUTABLE} PATH)
+  set(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH}/../lib)
+  IF(WIN32)
+    set(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH}/../bin)
+  ENDIF(WIN32)
   
   # Clear log file
   FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "")

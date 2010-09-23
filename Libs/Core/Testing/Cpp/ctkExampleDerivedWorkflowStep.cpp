@@ -22,7 +22,7 @@
 #include "ctkExampleDerivedWorkflowStep.h"
 
 //-----------------------------------------------------------------------------
-class ctkExampleDerivedWorkflowStepPrivate : public ctkPrivate<ctkExampleDerivedWorkflowStep>
+class ctkExampleDerivedWorkflowStepPrivate
 {
 public:
   ctkExampleDerivedWorkflowStepPrivate();
@@ -49,8 +49,13 @@ ctkExampleDerivedWorkflowStepPrivate::ctkExampleDerivedWorkflowStepPrivate()
 //-----------------------------------------------------------------------------
 ctkExampleDerivedWorkflowStep::ctkExampleDerivedWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId) :
   Superclass(newWorkflow, newId)
+  , d_ptr(new ctkExampleDerivedWorkflowStepPrivate)
 {
-  CTK_INIT_PRIVATE(ctkExampleDerivedWorkflowStep);
+}
+
+//-----------------------------------------------------------------------------
+ctkExampleDerivedWorkflowStep::~ctkExampleDerivedWorkflowStep()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -69,7 +74,7 @@ void ctkExampleDerivedWorkflowStep::onEntry(
   Q_UNUSED(transitionType);
 
   // Simply implements our counter of the number of times we have run this function
-  CTK_D(ctkExampleDerivedWorkflowStep);
+  Q_D(ctkExampleDerivedWorkflowStep);
   d->numberOfTimesRanOnEntry++;
 
   // signals that we are finished
@@ -86,7 +91,7 @@ void ctkExampleDerivedWorkflowStep::onExit(
 
   // simply implements our counter of the number of times we have run
   // this function
-  CTK_D(ctkExampleDerivedWorkflowStep);
+  Q_D(ctkExampleDerivedWorkflowStep);
   d->numberOfTimesRanOnExit++;
 
   // signals that we are finished

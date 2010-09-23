@@ -35,16 +35,9 @@
 
 #include <QDebug>
 
-//database name
-#define PLUGINDATABASE "pluginfw.db"
-
 //database table names
 #define PLUGINS_TABLE "Plugins"
 #define PLUGIN_RESOURCES_TABLE "PluginResources"
-
-//separator
-#define PLUGINDATABASE_PATH_SEPARATOR "//"
-
 
 
 enum TBindIndexes
@@ -532,16 +525,27 @@ QString ctkPluginDatabase::getDatabasePath() const
     QString path;
     if(m_databasePath.isEmpty())
     {
-      QSettings settings(QSettings::UserScope, "commontk", QApplication::applicationName());
+      QSettings settings;
       path = settings.value("PluginDB/Path").toString();
       if (path.isEmpty())
       {
-        path = QDir::currentPath();
-        if (path.lastIndexOf(PLUGINDATABASE_PATH_SEPARATOR) != path.length() -1)
+        path = QApplication::applicationDirPath();
+        if (path.lastIndexOf("/") != path.length() -1)
         {
-          path.append(PLUGINDATABASE_PATH_SEPARATOR);
+          path.append("/");
         }
-        path.append(PLUGINDATABASE);
+        QString appName = QApplication::applicationName();
+        appName.replace(" ", "");
+        if (!appName.isEmpty())
+        {
+          path.append(appName + "_plugins.db");
+        }
+        else
+        {
+          path.append("pluginfw.db");
+          qWarning() << "Warning: Using generic plugin database name. You should "
+              "set an application name via QCoreApplication::setApplicationName()";
+        }
       }
       path = QDir::toNativeSeparators(path);
     }

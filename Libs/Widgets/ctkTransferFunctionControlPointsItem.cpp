@@ -35,11 +35,15 @@
 #include "ctkTransferFunctionView.h"
 
 //-----------------------------------------------------------------------------
-class ctkTransferFunctionControlPointsItemPrivate: 
-  public ctkPrivate<ctkTransferFunctionControlPointsItem>
+class ctkTransferFunctionControlPointsItemPrivate
 {
+  Q_DECLARE_PUBLIC(ctkTransferFunctionControlPointsItem);
+
+protected:
+  ctkTransferFunctionControlPointsItem* q_ptr;
+  
 public:
-  ctkTransferFunctionControlPointsItemPrivate();
+  ctkTransferFunctionControlPointsItemPrivate(ctkTransferFunctionControlPointsItem& object);
   void init();
   QList<QPointF> ControlPoints;
   QSize          PointSize;
@@ -47,7 +51,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-ctkTransferFunctionControlPointsItemPrivate::ctkTransferFunctionControlPointsItemPrivate()
+ctkTransferFunctionControlPointsItemPrivate::ctkTransferFunctionControlPointsItemPrivate(ctkTransferFunctionControlPointsItem& object)
+  :q_ptr(&object)
 {
   this->PointSize = QSize(12,12);
   this->SelectedPoint = -1;
@@ -56,25 +61,27 @@ ctkTransferFunctionControlPointsItemPrivate::ctkTransferFunctionControlPointsIte
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItemPrivate::init()
 {
-  CTK_P(ctkTransferFunctionControlPointsItem);
-  p->setAcceptedMouseButtons(Qt::LeftButton);
+  Q_Q(ctkTransferFunctionControlPointsItem);
+  q->setAcceptedMouseButtons(Qt::LeftButton);
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionControlPointsItem::ctkTransferFunctionControlPointsItem(QGraphicsItem* parentGraphicsItem)
   :ctkTransferFunctionItem(parentGraphicsItem)
+  , d_ptr(new ctkTransferFunctionControlPointsItemPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionControlPointsItem);
-  ctk_d()->init();
+  Q_D(ctkTransferFunctionControlPointsItem);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionControlPointsItem::ctkTransferFunctionControlPointsItem(
   ctkTransferFunction* transferFunction, QGraphicsItem* parentItem)
   :ctkTransferFunctionItem(transferFunction, parentItem)
+  , d_ptr(new ctkTransferFunctionControlPointsItemPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkTransferFunctionControlPointsItem);
-  ctk_d()->init();
+  Q_D(ctkTransferFunctionControlPointsItem);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
@@ -88,7 +95,7 @@ void ctkTransferFunctionControlPointsItem::paint(
 {
   Q_UNUSED(option);
   Q_UNUSED(widget);
-  CTK_D(ctkTransferFunctionControlPointsItem);
+  Q_D(ctkTransferFunctionControlPointsItem);
   int count = this->transferFunction() ? this->transferFunction()->count() : 0;
   if (count <= 0)
     {
@@ -124,7 +131,7 @@ void ctkTransferFunctionControlPointsItem::paint(
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
-  CTK_D(ctkTransferFunctionControlPointsItem);
+  Q_D(ctkTransferFunctionControlPointsItem);
   ctkTransferFunctionView* view = qobject_cast<ctkTransferFunctionView*>(e->widget()->parentWidget());
   Q_ASSERT(view);
   // e->pos() is ok, pointArea should be in the world coordiate
@@ -164,7 +171,7 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
-  CTK_D(ctkTransferFunctionControlPointsItem);
+  Q_D(ctkTransferFunctionControlPointsItem);
   if (d->SelectedPoint < 0)
     {
     e->ignore();
@@ -218,7 +225,7 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::stopPoints( QPointF iPointF )
 {
-  CTK_D(ctkTransferFunctionControlPointsItem);
+  Q_D(ctkTransferFunctionControlPointsItem);
 
   if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > iPointF.x() ||
       this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() < iPointF.x())
@@ -232,7 +239,7 @@ void ctkTransferFunctionControlPointsItem::stopPoints( QPointF iPointF )
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::switchPoints( QPointF iPointF )
 {
-  CTK_D(ctkTransferFunctionControlPointsItem);
+  Q_D(ctkTransferFunctionControlPointsItem);
 
   // Increment or decrement selected point?
   // Don't need to check borders since it is done just before calling this method...
@@ -256,7 +263,7 @@ void ctkTransferFunctionControlPointsItem::switchPoints( QPointF iPointF )
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::drawPoints( QPointF iPointF )
 {
-  CTK_D(ctkTransferFunctionControlPointsItem);
+  Q_D(ctkTransferFunctionControlPointsItem);
 
   // Increment or decrement selected point
   if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > iPointF.x() )
@@ -283,7 +290,7 @@ void ctkTransferFunctionControlPointsItem::fusionPoints( QPointF iPointF )
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::updatePointPosition( QPointF iPoint )
 {
-  CTK_D(ctkTransferFunctionControlPointsItem);
+  Q_D(ctkTransferFunctionControlPointsItem);
 
   this->transferFunction()->setControlPointPos(d->SelectedPoint, iPoint.x());
 
@@ -297,7 +304,7 @@ void ctkTransferFunctionControlPointsItem::updatePointPosition( QPointF iPoint )
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 {
-  CTK_D(ctkTransferFunctionControlPointsItem);
+  Q_D(ctkTransferFunctionControlPointsItem);
   if (d->SelectedPoint < 0)
     {
     e->ignore();
@@ -309,7 +316,7 @@ void ctkTransferFunctionControlPointsItem::mouseReleaseEvent(QGraphicsSceneMouse
 //-----------------------------------------------------------------------------
 void ctkTransferFunctionControlPointsItem::keyPressEvent ( QKeyEvent * keyEvent )
 {
-    CTK_D(ctkTransferFunctionControlPointsItem);
+    Q_D(ctkTransferFunctionControlPointsItem);
 
     // if a point is selected, "d" and "D" = delete the point
     if (d->SelectedPoint >= 0)

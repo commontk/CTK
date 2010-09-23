@@ -11,13 +11,17 @@ IF(${add_project})
     MESSAGE(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
   
+  SET(proj DCMTK)
+  SET(proj_DEPENDENCIES)
+  
+  SET(DCMTK_DEPENDS ${proj})
+  
   IF(NOT DEFINED DCMTK_DIR)
-    SET(proj DCMTK)
 #     MESSAGE(STATUS "Adding project:${proj}")
-    SET(DCMTK_DEPENDS ${proj})
 
     ExternalProject_Add(${proj}
         GIT_REPOSITORY "${git_protocol}://github.com/commontk/DCMTK.git"
+        GIT_TAG "patched"
         CMAKE_GENERATOR ${gen}
         BUILD_COMMAND ""
         CMAKE_ARGS
@@ -31,10 +35,14 @@ IF(${add_project})
       DEPENDERS build    # Steps that depend on this step
       ALWAYS 1
       WORKING_DIRECTORY ${ep_build_dir}/${proj}
+      DEPENDS
+        ${proj_DEPENDENCIES}
       )
       
     # Since DCMTK is statically build, there is not need to add its corresponding 
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-    
+  
+  ELSE()
+    ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
 ENDIF()

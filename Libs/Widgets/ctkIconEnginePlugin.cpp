@@ -27,7 +27,7 @@
 
 #include "ctkIconEnginePlugin.h"
 
-class ctkIconEnginePluginPrivate:public ctkPrivate<ctkIconEnginePlugin>
+class ctkIconEnginePluginPrivate
 {
 public:
   QStringList SizeDirectories;
@@ -36,14 +36,19 @@ public:
 //------------------------------------------------------------------------------
 ctkIconEnginePlugin::ctkIconEnginePlugin(QObject* parentObject)
  :QIconEnginePluginV2(parentObject)
+  , d_ptr(new ctkIconEnginePluginPrivate)
 {
-  CTK_INIT_PRIVATE(ctkIconEnginePlugin);
+}
+
+//------------------------------------------------------------------------------
+ctkIconEnginePlugin::~ctkIconEnginePlugin()
+{
 }
 
 //------------------------------------------------------------------------------
 QIconEngineV2* ctkIconEnginePlugin::create(const QString& fileName)
 {
-  CTK_D(ctkIconEnginePlugin);
+  Q_D(ctkIconEnginePlugin);
   Q_UNUSED(fileName);
   ctkIconEngine* iconEngine = new ctkIconEngine;
   iconEngine->setSizeDirectories(d->SizeDirectories);
@@ -64,19 +69,19 @@ QStringList ctkIconEnginePlugin::keys()const
 //------------------------------------------------------------------------------
 void ctkIconEnginePlugin::setSizeDirectories(const QStringList& sizeDirectories)
 {
-  CTK_D(ctkIconEnginePlugin);
+  Q_D(ctkIconEnginePlugin);
   d->SizeDirectories = sizeDirectories;
 }
 
 //------------------------------------------------------------------------------
 QStringList ctkIconEnginePlugin::sizeDirectories()const
 {
-  CTK_D(const ctkIconEnginePlugin);
+  Q_D(const ctkIconEnginePlugin);
   return d->SizeDirectories;
 }
 
 //------------------------------------------------------------------------------
-class ctkIconEnginePrivate:public ctkPrivate<ctkIconEngine>
+class ctkIconEnginePrivate
 {
 public:
   QStringList SizeDirectories;
@@ -84,15 +89,20 @@ public:
 
 //------------------------------------------------------------------------------
 ctkIconEngine::ctkIconEngine()
+  : d_ptr(new ctkIconEnginePrivate)
 {
-  CTK_INIT_PRIVATE(ctkIconEngine);
+}
+
+//------------------------------------------------------------------------------
+ctkIconEngine::~ctkIconEngine()
+{
 }
 
 //------------------------------------------------------------------------------
 void ctkIconEngine::addFile(const QString& fileName, const QSize& size,
                             QIcon::Mode mode, QIcon::State state)
 {
-  CTK_D(ctkIconEngine);
+  Q_D(ctkIconEngine);
   this->Superclass::addFile(fileName, size, mode, state);
   QString sizeDirectory;
   foreach(QString directory, d->SizeDirectories)
@@ -134,13 +144,13 @@ void ctkIconEngine::addFile(const QString& fileName, const QSize& size,
 //------------------------------------------------------------------------------
 void ctkIconEngine::setSizeDirectories(const QStringList& sizeDirectories)
 {
-  CTK_D(ctkIconEngine);
+  Q_D(ctkIconEngine);
   d->SizeDirectories = sizeDirectories;
 }
 
 //------------------------------------------------------------------------------
 QStringList ctkIconEngine::sizeDirectories()const
 {
-  CTK_D(const ctkIconEngine);
+  Q_D(const ctkIconEngine);
   return d->SizeDirectories;
 }

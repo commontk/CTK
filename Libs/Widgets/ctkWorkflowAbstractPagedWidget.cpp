@@ -39,11 +39,13 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowWidget");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowAbstractPagedWidgetPrivate: public ctkPrivate<ctkWorkflowAbstractPagedWidget>
+class ctkWorkflowAbstractPagedWidgetPrivate
 {
+  Q_DECLARE_PUBLIC(ctkWorkflowAbstractPagedWidget);
+protected:
+  ctkWorkflowAbstractPagedWidget* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(ctkWorkflowAbstractPagedWidget);
-  ctkWorkflowAbstractPagedWidgetPrivate();
+  ctkWorkflowAbstractPagedWidgetPrivate(ctkWorkflowAbstractPagedWidget& object);
   ~ctkWorkflowAbstractPagedWidgetPrivate();
 
   // Maintain maps to associate:
@@ -69,7 +71,8 @@ public:
 // ctkWorkflowAbstractPagedWidgetPrivate methods
 
 //---------------------------------------------------------------------------
-ctkWorkflowAbstractPagedWidgetPrivate::ctkWorkflowAbstractPagedWidgetPrivate()
+ctkWorkflowAbstractPagedWidgetPrivate::ctkWorkflowAbstractPagedWidgetPrivate(ctkWorkflowAbstractPagedWidget& object)
+  :q_ptr(&object)
 {
   this->GroupBoxShownPreviously = 0;
   this->GroupBoxShownCurrently = 0;
@@ -83,17 +86,17 @@ ctkWorkflowAbstractPagedWidgetPrivate::~ctkWorkflowAbstractPagedWidgetPrivate()
 //---------------------------------------------------------------------------
 void ctkWorkflowAbstractPagedWidgetPrivate::createNewWorkflowGroupBox(int index)
 {
-  CTK_P(ctkWorkflowAbstractPagedWidget);
+  Q_Q(ctkWorkflowAbstractPagedWidget);
 
-  ctkWorkflowGroupBox* recipe = p->workflowGroupBox();
+  ctkWorkflowGroupBox* recipe = q->workflowGroupBox();
   Q_ASSERT(recipe);
 
-  ctkWorkflowGroupBox* newGroupBox = new ctkWorkflowGroupBox(p);
+  ctkWorkflowGroupBox* newGroupBox = new ctkWorkflowGroupBox(q);
   newGroupBox->setPreText(recipe->preText());
   newGroupBox->setPostText(recipe->postText());
   newGroupBox->setHideWidgetsOfNonCurrentSteps(recipe->hideWidgetsOfNonCurrentSteps());
 
-  p->createNewPage(newGroupBox);
+  q->createNewPage(newGroupBox);
   this->IndexToGroupBoxMap[index] = newGroupBox;
 }
 
@@ -102,16 +105,21 @@ void ctkWorkflowAbstractPagedWidgetPrivate::createNewWorkflowGroupBox(int index)
 
 // --------------------------------------------------------------------------
 ctkWorkflowAbstractPagedWidget::ctkWorkflowAbstractPagedWidget(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new ctkWorkflowAbstractPagedWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkWorkflowAbstractPagedWidget);
-  CTK_D(ctkWorkflowAbstractPagedWidget);
+  Q_D(ctkWorkflowAbstractPagedWidget);
   d->NumPages = 0;
+}
+
+// --------------------------------------------------------------------------
+ctkWorkflowAbstractPagedWidget::~ctkWorkflowAbstractPagedWidget()
+{
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowAbstractPagedWidget::associateStepWithPage(ctkWorkflowStep* step, int index)
 {
-  CTK_D(ctkWorkflowAbstractPagedWidget);
+  Q_D(ctkWorkflowAbstractPagedWidget);
 
   if (index < 0)
     {
@@ -133,7 +141,7 @@ void ctkWorkflowAbstractPagedWidget::associateStepWithPage(ctkWorkflowStep* step
 // --------------------------------------------------------------------------
 void ctkWorkflowAbstractPagedWidget::associateStepWithLabel(ctkWorkflowStep* step, QString label)
 {
-  CTK_D(ctkWorkflowAbstractPagedWidget);
+  Q_D(ctkWorkflowAbstractPagedWidget);
 
   if (step)
     {
@@ -151,7 +159,7 @@ void ctkWorkflowAbstractPagedWidget::associateStepWithPage(ctkWorkflowStep* step
 // --------------------------------------------------------------------------
 ctkWorkflowGroupBox* ctkWorkflowAbstractPagedWidget::workflowGroupBox(ctkWorkflowStep* step)const
 {
-  CTK_D(const ctkWorkflowAbstractPagedWidget);
+  Q_D(const ctkWorkflowAbstractPagedWidget);
 
   if (d->StepToIndexMap.contains(step))
     {
@@ -168,7 +176,7 @@ ctkWorkflowGroupBox* ctkWorkflowAbstractPagedWidget::workflowGroupBox(ctkWorkflo
 // --------------------------------------------------------------------------
 void ctkWorkflowAbstractPagedWidget::updateStepUI(ctkWorkflowStep* currentStep)
 {
-  CTK_D(ctkWorkflowAbstractPagedWidget);
+  Q_D(ctkWorkflowAbstractPagedWidget);
   Q_ASSERT(currentStep);
   Q_ASSERT(this->workflowGroupBox());
 

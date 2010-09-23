@@ -27,10 +27,13 @@
 #include "ctkComboBox.h"
 
 // -------------------------------------------------------------------------
-class ctkComboBoxPrivate: public ctkPrivate<ctkComboBox>
+class ctkComboBoxPrivate
 {
+  Q_DECLARE_PUBLIC(ctkComboBox);
+protected:
+  ctkComboBox* const q_ptr;
 public:
-  ctkComboBoxPrivate();
+  ctkComboBoxPrivate(ctkComboBox& object);
   void initStyleOption(QStyleOptionComboBox* opt)const;
   QSize recomputeSizeHint(QSize &sh) const;
   QString DefaultText;
@@ -43,7 +46,8 @@ public:
 };
 
 // -------------------------------------------------------------------------
-ctkComboBoxPrivate::ctkComboBoxPrivate()
+ctkComboBoxPrivate::ctkComboBoxPrivate(ctkComboBox& object)
+  :q_ptr(&object)
 {
   this->DefaultText = "";
   this->ForceDefault = false;
@@ -53,21 +57,21 @@ ctkComboBoxPrivate::ctkComboBoxPrivate()
 // -------------------------------------------------------------------------
 QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
 {
-  CTK_P(const ctkComboBox);
+  Q_Q(const ctkComboBox);
   if (sh.isValid())
     {
     return sh.expandedTo(QApplication::globalStrut());
     }
 
   bool hasIcon = false;
-  int count = p->count();
-  QSize iconSize = p->iconSize();
-  const QFontMetrics &fm = p->fontMetrics();
+  int count = q->count();
+  QSize iconSize = q->iconSize();
+  const QFontMetrics &fm = q->fontMetrics();
 
   // text width
-  if (&sh == &this->SizeHint || p->minimumContentsLength() == 0)
+  if (&sh == &this->SizeHint || q->minimumContentsLength() == 0)
     {
-    switch (p->sizeAdjustPolicy())
+    switch (q->sizeAdjustPolicy())
       {
       case QComboBox::AdjustToContents:
       case QComboBox::AdjustToContentsOnFirstShow:
@@ -84,14 +88,14 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
           }
         for (int i = 0; i < count; ++i)
           {
-          if (!p->itemIcon(i).isNull())
+          if (!q->itemIcon(i).isNull())
             {
             hasIcon = true;
-            sh.setWidth(qMax(sh.width(), fm.boundingRect(p->itemText(i)).width() + iconSize.width() + 4));
+            sh.setWidth(qMax(sh.width(), fm.boundingRect(q->itemText(i)).width() + iconSize.width() + 4));
             }
           else
             {
-            sh.setWidth(qMax(sh.width(), fm.boundingRect(p->itemText(i)).width()));
+            sh.setWidth(qMax(sh.width(), fm.boundingRect(q->itemText(i)).width()));
             }
           }
         break;
@@ -102,7 +106,7 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
           }
         for (int i = 0; i < count && !hasIcon; ++i)
           {
-          hasIcon = !p->itemIcon(i).isNull();
+          hasIcon = !q->itemIcon(i).isNull();
           }
         break;
       case QComboBox::AdjustToMinimumContentsLengthWithIcon:
@@ -121,13 +125,13 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
 
     for (int i = 0; i < count && !hasIcon; ++i)
       {
-      hasIcon = !p->itemIcon(i).isNull();
+      hasIcon = !q->itemIcon(i).isNull();
       }
     }
-  if (p->minimumContentsLength() > 0)
+  if (q->minimumContentsLength() > 0)
     {
     sh.setWidth(qMax(sh.width(),
-                     p->minimumContentsLength() * fm.width(QLatin1Char('X'))
+                     q->minimumContentsLength() * fm.width(QLatin1Char('X'))
                      + (hasIcon ? iconSize.width() + 4 : 0)));
     }
 
@@ -141,23 +145,23 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
   // add style and strut values
   QStyleOptionComboBox opt;
   this->initStyleOption(&opt);
-  sh = p->style()->sizeFromContents(QStyle::CT_ComboBox, &opt, sh, p);
+  sh = q->style()->sizeFromContents(QStyle::CT_ComboBox, &opt, sh, q);
   return sh.expandedTo(QApplication::globalStrut());
 }
 
 // -------------------------------------------------------------------------
 void ctkComboBoxPrivate::initStyleOption(QStyleOptionComboBox* opt)const
 {
-  CTK_P(const ctkComboBox);
-  p->initStyleOption(opt);
-  if (p->currentIndex() == -1 ||
+  Q_Q(const ctkComboBox);
+  q->initStyleOption(opt);
+  if (q->currentIndex() == -1 ||
       this->ForceDefault)
     {
     opt->currentText = this->DefaultText;
     opt->currentIcon = this->DefaultIcon;
     }
-  QRect textRect = p->style()->subControlRect(
-    QStyle::CC_ComboBox, opt, QStyle::SC_ComboBoxEditField, p);
+  QRect textRect = q->style()->subControlRect(
+    QStyle::CC_ComboBox, opt, QStyle::SC_ComboBoxEditField, q);
   // TODO substract icon size
   opt->currentText = opt->fontMetrics.elidedText(opt->currentText,
                                                  this->ElideMode,
@@ -168,8 +172,8 @@ void ctkComboBoxPrivate::initStyleOption(QStyleOptionComboBox* opt)const
 // -------------------------------------------------------------------------
 ctkComboBox::ctkComboBox(QWidget* _parent)
   : QComboBox(_parent)
+  , d_ptr(new ctkComboBoxPrivate(*this))
 {
-  CTK_INIT_PRIVATE(ctkComboBox);
 }
 
 // -------------------------------------------------------------------------
@@ -180,7 +184,7 @@ ctkComboBox::~ctkComboBox()
 // -------------------------------------------------------------------------
 void ctkComboBox::setDefaultText(const QString& newDefaultText)
 {
-  CTK_D(ctkComboBox);
+  Q_D(ctkComboBox);
   d->DefaultText = newDefaultText;
   d->SizeHint = QSize();
   this->update();
@@ -189,14 +193,14 @@ void ctkComboBox::setDefaultText(const QString& newDefaultText)
 // -------------------------------------------------------------------------
 QString ctkComboBox::defaultText()const
 {
-  CTK_D(const ctkComboBox);
+  Q_D(const ctkComboBox);
   return d->DefaultText;
 }
 
 // -------------------------------------------------------------------------
 void ctkComboBox::setDefaultIcon(const QIcon& newIcon)
 {
-  CTK_D(ctkComboBox);
+  Q_D(ctkComboBox);
   d->DefaultIcon = newIcon;
   d->SizeHint = QSize();
   this->update();
@@ -205,14 +209,14 @@ void ctkComboBox::setDefaultIcon(const QIcon& newIcon)
 // -------------------------------------------------------------------------
 QIcon ctkComboBox::defaultIcon()const
 {
-  CTK_D(const ctkComboBox);
+  Q_D(const ctkComboBox);
   return d->DefaultIcon;
 }
 
 // -------------------------------------------------------------------------
 void ctkComboBox::forceDefault(bool newForceDefault)
 {
-  CTK_D(ctkComboBox);
+  Q_D(ctkComboBox);
   if (newForceDefault == d->ForceDefault)
     {
     return;
@@ -225,28 +229,28 @@ void ctkComboBox::forceDefault(bool newForceDefault)
 // -------------------------------------------------------------------------
 void ctkComboBox::setElideMode(const Qt::TextElideMode& newMode)
 {
-  CTK_D(ctkComboBox);
+  Q_D(ctkComboBox);
   d->ElideMode = newMode;
   this->update();
 }
 // -------------------------------------------------------------------------
 Qt::TextElideMode ctkComboBox::elideMode()const
 {
-  CTK_D(const ctkComboBox);
+  Q_D(const ctkComboBox);
   return d->ElideMode;
 }
 
 // -------------------------------------------------------------------------
 bool ctkComboBox::isDefaultForced()const
 {
-  CTK_D(const ctkComboBox);
+  Q_D(const ctkComboBox);
   return d->ForceDefault;
 }
 
 // -------------------------------------------------------------------------
 void ctkComboBox::paintEvent(QPaintEvent*)
 {
-  CTK_D(ctkComboBox);
+  Q_D(ctkComboBox);
   QStylePainter painter(this);
   painter.setPen(palette().color(QPalette::Text));
 
@@ -262,7 +266,7 @@ void ctkComboBox::paintEvent(QPaintEvent*)
 // -------------------------------------------------------------------------
 QSize ctkComboBox::minimumSizeHint() const
 {
-  CTK_D(const ctkComboBox);
+  Q_D(const ctkComboBox);
   return d->recomputeSizeHint(d->MinimumSizeHint);
 }
 
@@ -276,6 +280,6 @@ QSize ctkComboBox::minimumSizeHint() const
 */
 QSize ctkComboBox::sizeHint() const
 {
-  CTK_D(const ctkComboBox);
+  Q_D(const ctkComboBox);
   return d->recomputeSizeHint(d->SizeHint);
 }

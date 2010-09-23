@@ -20,7 +20,7 @@
 
 // ZMQ includes
 
-// ctkDICOM includes
+// ctkMessagingCore includes
 #include "ctkMessagingClient.h"
 
 // STD includes
@@ -28,7 +28,7 @@
 
 
 //------------------------------------------------------------------------------
-ctkMessagingClient::ctkMessagingClient()
+ctkMessagingClient::ctkMessagingClient()/*:d_ptr(new ctkMessagingClientPrivate)*/
 {
 }
 

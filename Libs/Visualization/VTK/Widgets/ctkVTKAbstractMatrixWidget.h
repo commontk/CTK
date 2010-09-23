@@ -39,13 +39,18 @@ public:
   
   /// Constructors
   ctkVTKAbstractMatrixWidget(QWidget* parent);
+  virtual ~ctkVTKAbstractMatrixWidget();
   vtkMatrix4x4* matrix()const;
 
 protected:
   void setMatrixInternal(vtkMatrix4x4* matrix);
 
+protected:
+  QScopedPointer<ctkVTKAbstractMatrixWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKAbstractMatrixWidget);
+  Q_DECLARE_PRIVATE(ctkVTKAbstractMatrixWidget);
+  Q_DISABLE_COPY(ctkVTKAbstractMatrixWidget);
 }; 
 
 #endif

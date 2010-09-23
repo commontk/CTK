@@ -63,7 +63,7 @@ public:
 
   typedef QWidget Superclass;
   explicit ctkVTKRenderView(QWidget* parent = 0);
-  virtual ~ctkVTKRenderView(){}
+  virtual ~ctkVTKRenderView();
 
 public slots:
 
@@ -212,8 +212,12 @@ public:
   /// Return zoom factor
   double zoomFactor()const;
   
+protected:
+  QScopedPointer<ctkVTKRenderViewPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkVTKRenderView);
+  Q_DECLARE_PRIVATE(ctkVTKRenderView);
+  Q_DISABLE_COPY(ctkVTKRenderView);
 }; 
 
 #endif

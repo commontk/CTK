@@ -57,6 +57,7 @@ endif()
 # Enable and setup External project global properties
 #
 INCLUDE(ExternalProject)
+INCLUDE(ctkMacroEmptyExternalProject)
 
 SET(ep_base "${CMAKE_BINARY_DIR}/CMakeExternals")
 SET_PROPERTY(DIRECTORY PROPERTY EP_BASE ${ep_base})

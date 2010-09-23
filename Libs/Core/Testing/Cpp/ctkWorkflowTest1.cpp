@@ -90,7 +90,7 @@ int transitionTest(ctkWorkflow* workflow, int defaultTime, QApplication& app, ct
 }
 
 //-----------------------------------------------------------------------------
-int testStartWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app, int shouldRun, ctkExampleDerivedWorkflowStep* expectedStep=0, ctkExampleDerivedWorkflowStep* step1=0, int step1Entry=0, int step1Exit=0, ctkExampleDerivedWorkflowStep* step2=0, int step2Entry=0, int step2Exit=0, ctkExampleDerivedWorkflowStep* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleDerivedWorkflowStep* step4=0, int step4Entry=0, int step4Exit=0)
+int testStartWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app, bool shouldRun, ctkExampleDerivedWorkflowStep* expectedStep=0, ctkExampleDerivedWorkflowStep* step1=0, int step1Entry=0, int step1Exit=0, ctkExampleDerivedWorkflowStep* step2=0, int step2Entry=0, int step2Exit=0, ctkExampleDerivedWorkflowStep* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleDerivedWorkflowStep* step4=0, int step4Entry=0, int step4Exit=0)
 {
   workflow->start();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
@@ -150,7 +150,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   // workflow with no steps
   // try erroneously starting with no steps
 
-  if (!testStartWorkflow(workflow, defaultTime, app, 0))
+  if (!testStartWorkflow(workflow, defaultTime, app, false))
     {
     std::cerr << "empty workflow is running after start()";
     return EXIT_FAILURE;
@@ -164,7 +164,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
     }
 
   // try erroneously starting with no initial step
-  if (!testStartWorkflow(workflow, defaultTime, app, 0))
+  if (!testStartWorkflow(workflow, defaultTime, app, false))
     {
     std::cerr << "workflow is running after start() with no initial step";
     return EXIT_FAILURE;
@@ -177,7 +177,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   workflow->setInitialStep(step1);
 
   // try starting with one step
-  if (!testStartWorkflow(workflow, defaultTime, app, 1, step1, step1, 1, 0, step2, 0, 0))
+  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 1, 0, step2, 0, 0))
     {
     std::cerr << "workflow is not running after start() with a single step";
     return EXIT_FAILURE;
@@ -218,7 +218,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
     }
 
   // start the workflow
-  if (!testStartWorkflow(workflow, defaultTime, app, 1, step1, step1, 2, 1, step2, 0, 0))
+  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 2, 1, step2, 0, 0))
     {
     std::cerr << "workflow is not running after start() with two steps";
     return EXIT_FAILURE;
@@ -319,7 +319,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // now that we've stopped and restarted the state machine, we should
   // be back in the initial step (step 1)
-  if (!testStartWorkflow(workflow, defaultTime, app, 1, step1, step1, 4, 3, step2, 1, 1, step3, 0, 0))
+  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 4, 3, step2, 1, 1, step3, 0, 0))
     {
     std::cerr << "workflow is not running after start() with three steps";
     return EXIT_FAILURE;
@@ -367,7 +367,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   // workflow with a finish step (step 3)
 
   // restart the workflow
-  if (!testStartWorkflow(workflow, defaultTime, app, 1, step1, step1, 5, 4, step2, 3, 3, step3, 1, 1))
+  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 5, 4, step2, 3, 3, step3, 1, 1))
     {
     std::cerr << "workflow with finish step is not running after start()";
     return EXIT_FAILURE;
@@ -404,7 +404,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   workflow->addTransition(step3, step4);
 
   // restart the workflow
-  if (!testStartWorkflow(workflow, defaultTime, app, 1, step1, step1, 8, 7, step2, 5, 5, step3, 3, 3, step4, 0, 0))
+  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 8, 7, step2, 5, 5, step3, 3, 3, step4, 0, 0))
     {
     std::cerr << "workflow with two finish steps is not running after start()";
     return EXIT_FAILURE;

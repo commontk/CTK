@@ -81,7 +81,7 @@ public:
 
   typedef QObject Superclass;
   explicit ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(QObject* parent = 0);
-  virtual ~ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(){}
+  virtual ~ctkExampleWorkflowWidgetStepUsingSignalsAndSlots();
 
   // Set/get the widget onto which this step's user interface will be placed
   QWidget* widget()const;
@@ -128,8 +128,12 @@ signals:
   void onExitComplete()const;
   void createUserInterfaceComplete()const;
 
+protected:
+  QScopedPointer<ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
+  Q_DECLARE_PRIVATE(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
+  Q_DISABLE_COPY(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots);
 
 };
 
