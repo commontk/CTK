@@ -77,7 +77,7 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
     try
     {
       ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(dirIter.next()).toString());
-      plugin->start(ctkPlugin::START_ACTIVATION_POLICY);
+      //plugin->start(ctkPlugin::START_ACTIVATION_POLICY);
     }
     catch (const ctkPluginException& e)
     {
