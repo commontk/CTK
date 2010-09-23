@@ -194,6 +194,8 @@ private:
   // parallelizing plugin activations
   void start0();
 
+  void startDependencies();
+
   /**
    * Remove a plugins registered listeners, registered services and
    * used services.

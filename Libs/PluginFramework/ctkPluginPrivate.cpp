@@ -192,6 +192,8 @@ void ctkPluginPrivate::finalizeActivation()
     }
     try
     {
+      // start dependencies
+      startDependencies();
       //TODO maybe call this in its own thread
       start0();
     }
@@ -282,6 +284,34 @@ void ctkPluginPrivate::stop0(bool wasStarted)
   if (savedException)
   {
     throw savedException;
+  }
+}
+
+void ctkPluginPrivate::startDependencies()
+{
+  QListIterator<ctkRequirePlugin*> i(this->require);
+  while (i.hasNext())
+  {
+    ctkRequirePlugin* pr = i.next();
+    QList<ctkPlugin*> pl = fwCtx->plugins->getPlugins(pr->name, pr->pluginRange);
+    if (pl.isEmpty())
+    {
+      if (pr->resolution == ctkPluginConstants::RESOLUTION_MANDATORY)
+      {
+        // We should never get here, since the plugin can only be
+        // started if all its dependencies could be resolved.
+        throw ctkPluginException(
+            QString("Internal error: dependent plugin %1 inside version range %2 is not installed.").
+            arg(pr->name).arg(pr->pluginRange.toString()));
+      }
+      else
+      {
+        continue;
+      }
+    }
+
+    // We take the first plugin in the list (highest version number)
+    pl.front()->start();
   }
 }
 
