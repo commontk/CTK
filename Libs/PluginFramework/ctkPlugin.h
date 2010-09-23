@@ -597,5 +597,7 @@ protected:
 
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPlugin::States)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPlugin::StartOptions)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPlugin::StopOptions)
 
 #endif // CTKPLUGIN_H
