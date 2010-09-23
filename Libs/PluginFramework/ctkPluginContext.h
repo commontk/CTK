@@ -100,6 +100,17 @@
     ~ctkPluginContext();
 
     /**
+     * Returns the value of the specified property. If the key is not found in
+     * the Framework properties, the system properties are then searched. The
+     * method returns an invalid QVariant if the property is not found.
+     *
+     * @param key The name of the requested property.
+     * @return The value of the requested property, or an invalid QVariant if
+     *         the property is undefined.
+     */
+    QVariant getProperty(const QString& key) const;
+
+    /**
      * Returns the <code>ctkPlugin</code> object associated with this
      * <code>ctkPluginContext</code>. This plugin is called the context plugin.
      *

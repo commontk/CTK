@@ -58,6 +58,13 @@ ctkPluginContext::~ctkPluginContext()
   delete d;
 }
 
+QVariant ctkPluginContext::getProperty(const QString& key) const
+{
+  Q_D(const ctkPluginContext);
+  d->isPluginContextValid();
+  return d->plugin->fwCtx->props.value(key);
+}
+
 ctkPlugin* ctkPluginContext::getPlugin() const
 {
   Q_D(const ctkPluginContext);
