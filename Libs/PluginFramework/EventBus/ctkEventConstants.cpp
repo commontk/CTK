@@ -27,5 +27,6 @@ const QString EventConstants::EVENT_FILTER = "event.filter";
 
 const QString EventConstants::PLUGIN_SYMBOLICNAME = "plugin.symbolicName";
 const QString EventConstants::PLUGIN_ID = "plugin.id";
+const QString EventConstants::PLUGIN = "plugin";
 const QString EventConstants::PLUGIN_VERSION = "plugin.version";
 
