@@ -273,6 +273,27 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
   static const QString SERVICE_ID; //	= "service.id"
 
   /**
+   * Service property identifying a service's persistent identifier.
+   *
+   * <p>
+   * This property may be supplied in the <code>properties</code>
+   * <code>ctkDictionary</code> object passed to the
+   * <code>ctkPluginContext#registerService</code> method. The value of this
+   * property must be of type <code>QString</code> or <code>QStringList</code>.
+   *
+   * <p>
+   * A service's persistent identifier uniquely identifies the service and
+   * persists across multiple Framework invocations.
+   *
+   * <p>
+   * By convention, every plugin has its own unique namespace, starting with
+   * the plugin's identifier (see {@link ctkPlugin#getPluginId}) and followed by
+   * a dot (.). A plugin may use this as the prefix of the persistent
+   * identifiers for the services it registers.
+   */
+  static const QString SERVICE_PID; // = "service.pid"
+
+  /**
    * Service property identifying a service's ranking number.
    *
    * <p>

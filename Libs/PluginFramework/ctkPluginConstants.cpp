@@ -46,5 +46,6 @@ const QString ctkPluginConstants::RESOLUTION_OPTIONAL = "optional";
 
 const QString ctkPluginConstants::OBJECTCLASS = "objectclass";
 const QString ctkPluginConstants::SERVICE_ID = "service.id";
+const QString ctkPluginConstants::SERVICE_PID = "service.pid";
 const QString ctkPluginConstants::SERVICE_RANKING = "service.ranking";
 
