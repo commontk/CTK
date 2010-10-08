@@ -22,7 +22,7 @@ limitations under the License.
 #include <QVector>
 
 
-void ctkSlicerModuleStringConverter::Update()
+void ctkSlicerModuleStringConverter::update()
 {
   SetTarget( );
 
@@ -36,11 +36,11 @@ const QVariant ctkSlicerModuleStringConverter::GetOutput()
 
 void ctkSlicerModuleStringConverter::SetAllParameters()
 {
-  foreach( const ctkModuleParameterGroup& itGroup, this->ModuleDescription.parameterGroups())
+  foreach( const ctkModuleParameterGroup* itGroup, this->ModuleDescription.parameterGroups())
   {
-    foreach( const ctkModuleParameter& itParam, itGroup.parameters())
+    foreach( const ctkModuleParameter* itParam, itGroup->parameters())
     {
-      SetParameterValue( itParam );
+      SetParameterValue( *itParam );
     }
   }
 }

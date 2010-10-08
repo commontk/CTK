@@ -29,12 +29,12 @@ void ctkModuleDescription::addParameterGroup( ctkModuleParameterGroup* group )
   Q_ASSERT(group);
 	this->ParameterGroups.push_back(group);
 }
-/*
+
 //----------------------------------------------------------------------------
 const QVector<ctkModuleParameterGroup*>& ctkModuleDescription::parameterGroups() const
 {
 	return this->ParameterGroups;
-}*/
+}
 
 //----------------------------------------------------------------------------
 bool ctkModuleDescription::hasReturnParameters() const

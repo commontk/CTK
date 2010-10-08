@@ -36,6 +36,8 @@ public:
   
   /// Takes ownership of parameter
   void addParameter(ctkModuleParameter* parameter);
+  const QVector<ctkModuleParameter*>& parameters() const;
+
   /// Returns 0 if not found.
   ctkModuleParameter* parameter(const QString& parameterName)const;
   /// Returns true if at least 1 parameter is a return type

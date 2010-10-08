@@ -59,7 +59,7 @@ public:
   
   void addParameterGroup(ctkModuleParameterGroup* group);
 
-  //const QVector<ctkModuleParameterGroup*>& parameterGroups() const;
+  const QVector<ctkModuleParameterGroup*>& parameterGroups() const;
   
   // Return the group that contain the parameter associated to the name
   ctkModuleParameterGroup* parameterGroup(const QString& parameterName) const;

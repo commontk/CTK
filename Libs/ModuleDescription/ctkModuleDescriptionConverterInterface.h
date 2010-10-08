@@ -45,7 +45,7 @@ public:
   virtual void setModuleDescription(const ctkModuleDescription &val) = 0;
 
   //!
-  virtual void Update( ) = 0;
+  virtual void update( ) = 0;
 
   //!
   virtual const QVariant GetOutput( ) = 0;

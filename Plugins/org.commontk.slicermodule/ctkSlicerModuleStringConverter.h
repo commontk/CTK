@@ -41,7 +41,7 @@ public:
   ~ctkSlicerModuleStringConverter() {};
 
   ///
-  void Update( );
+  void update( );
 
   ///
   virtual const QVariant GetOutput( );

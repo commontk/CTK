@@ -38,6 +38,12 @@ void ctkModuleParameterGroup::addParameter( ctkModuleParameter* parameter )
 }
 
 //----------------------------------------------------------------------------
+const QVector<ctkModuleParameter*>& ctkModuleParameterGroup::parameters() const
+{
+	return this->Parameters;
+}
+
+//----------------------------------------------------------------------------
 ctkModuleParameter* ctkModuleParameterGroup::parameter( const QString& parameterName )const
 {
   foreach(ctkModuleParameter* param, this->Parameters)

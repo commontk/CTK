@@ -4,8 +4,9 @@ SET(PLUGIN_export_directive "org_commontk_slicermodule_EXPORT")
 
 SET(PLUGIN_SRCS
   ctkSlicerModulePlugin.cpp
+  ctkSlicerModulePlugin_p.h
+  ctkSlicerModuleReader.cpp
   ctkSlicerModuleReader.h
-  ctkSlicerModuleReader.cxx
   ctkSlicerModuleStringConverter.h
   ctkSlicerModuleStringConverter.cpp
 )

@@ -18,20 +18,20 @@
  
 =========================================================================*/
 
+// Qt includes
+#include <QFile>
+
 // CTK includes
 #include "ctkModuleDescription.h"
 #include "ctkPluginFrameworkFactory.h"
 #include "ctkPluginFramework.h"
 #include "ctkPluginException.h"
-#include "ctkModuleDescriptionReaderInterface.h"
+#include "ctkModuleDescriptionReader.h"
 #include "ctkModuleDescriptionConverterInterface.h"
 #include "ctkCommandLineParser.h"
 
 // STD includes
 #include <iostream>
-
-#include "QFile"
-
 
 ctkModuleDescription ReadModuleDescription( ctkPluginContext* context, const QString &xmlFileName ) ;
 void BuildCommandLine( ctkPluginContext* context, const ctkModuleDescription& module ) ;
@@ -103,8 +103,8 @@ ctkModuleDescription ReadModuleDescription(
   serviceRef = context->getServiceReference( 
     "ctkModuleDescriptionReaderInterface" );
 
-  ctkModuleDescriptionReaderInterface* reader;
-  reader = qobject_cast<ctkModuleDescriptionReaderInterface*>
+  ctkModuleDescriptionReader* reader;
+  reader = qobject_cast<ctkModuleDescriptionReader*>
     (context->getService(serviceRef));
 
 
@@ -115,11 +115,10 @@ ctkModuleDescription ReadModuleDescription(
     std::cout << "XML file " << xmlFileName.toStdString( ) << " could not be opened." << endl;
     exit(1);
   }
-  QTextStream stream( &file );
 
   // Parse XML file
-  reader->setXmlContent( stream.readAll() );
-  reader->Update();
+  reader->setInput( &file );
+  reader->update();
   QTextStream(stdout) << reader->moduleDescription( );
 
   return reader->moduleDescription( );
@@ -137,7 +136,7 @@ void BuildCommandLine( ctkPluginContext* context, const ctkModuleDescription& mo
 
   QStringList commandLineString;
   converter->setModuleDescription( module );
-  converter->Update();
+  converter->update();
   commandLineString = converter->GetOutput().toStringList();
   QTextStream(stdout) << commandLineString;
 }

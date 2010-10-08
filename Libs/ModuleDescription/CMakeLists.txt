@@ -20,6 +20,7 @@ SET(KIT_SRCS
   ctkModuleParameter.cpp
   ctkModuleParameterGroup.h
   ctkModuleParameterGroup.cpp
+  ctkModuleDescriptionReaderInterface.cpp
   ctkModuleDescriptionReaderInterface.h
   ctkModuleDescriptionReader.h
   ctkModuleDescriptionReader.cpp
