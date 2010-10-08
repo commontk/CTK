@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QApplication>
 #include <QFile>
 
 // CTK includes
@@ -40,7 +41,7 @@ void BuildCommandLine( ctkPluginContext* context, const ctkModuleDescription& mo
 //-----------------------------------------------------------------------------
 int ctkSlicerModuleTest(int argc, char * argv [] )
 {
-
+  QApplication app(argc, argv);
   ctkCommandLineParser parser;
   parser.addArgument("", "-F", QVariant::String);
   bool ok = false;

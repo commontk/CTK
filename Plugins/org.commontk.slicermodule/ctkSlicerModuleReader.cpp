@@ -24,10 +24,82 @@ limitations under the License.
 
 // CTK includes
 #include "ctkSlicerModuleReader.h"
+class ctkDefaultMessageHandler : public QAbstractMessageHandler
+{
+public:
+  ctkDefaultMessageHandler(): QAbstractMessageHandler(0)
+  {
+  }
+
+  QString statusMessage() const
+  {
+  return m_description;
+  }
+
+  int line() const
+  {
+    return m_sourceLocation.line();
+  }
+
+  int column() const
+  {
+    return m_sourceLocation.column();
+  }
+
+protected:
+  virtual void handleMessage(QtMsgType type, const QString &description,
+                             const QUrl &identifier, const QSourceLocation &sourceLocation)
+  {
+    Q_UNUSED(type);
+    Q_UNUSED(identifier);
+
+    m_messageType = type;
+    m_description = description;
+    m_sourceLocation = sourceLocation;
+  }
+
+private:
+   QtMsgType m_messageType;
+   QString m_description;
+   QSourceLocation m_sourceLocation;
+ };
+ 
+// ----------------------------------------------------------------------------
+bool ctkSlicerModuleReader::validate()const
+{
+  ctkDefaultMessageHandler errorHandler;
+
+  QXmlSchema schema;
+  schema.setMessageHandler(&errorHandler);
+  schema.load(QUrl::fromLocalFile(":slicerModuleDescription.xsd"));
+  
+  bool res = schema.isValid();
+  if (!res)
+    {
+    QString error = errorHandler.statusMessage();
+    throw std::runtime_error( tr("Invalid Schema %1")
+      .arg(errorHandler.statusMessage()).toStdString() );
+    }
+
+  QXmlSchemaValidator validator(schema);
+  res = validator.validate(this->Device);
+
+  if (!res)
+    {
+    throw std::runtime_error( tr("Invalid XML(%1,%2):\n %3")
+      .arg(errorHandler.line())
+      .arg(errorHandler.column())
+      .arg(errorHandler.statusMessage()).toStdString());
+    }
+  this->Device->reset();
+  return res;
+}
 
 // ----------------------------------------------------------------------------
 void ctkSlicerModuleReader::update()
 {
+  // Verify the xml is correct
+  this->validate();
 
   QXmlSimpleReader xmlReader;
   QXmlInputSource *source = new QXmlInputSource(this->Device);

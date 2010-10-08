@@ -24,6 +24,7 @@ SET(PLUGIN_UI_FORMS
 
 # QRC Files which should be compiled into the plugin
 SET(PLUGIN_resources
+  Resources/org_commontk_slicermodule.qrc
 )
 
 
@@ -46,6 +47,7 @@ ctkMacroBuildPlugin(
 )
 
 SET( QT_USE_QTXML ON )
+SET( QT_USE_QTXMLPATTERNS ON )
 INCLUDE(${QT_USE_FILE})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${QT_LIBRARIES})
 

@@ -40,6 +40,7 @@ class ctkSlicerModuleReader : public ctkModuleDescriptionReader
   Q_OBJECT
 public:
   virtual void update();
+  bool validate()const; 
 };
 
 /**
