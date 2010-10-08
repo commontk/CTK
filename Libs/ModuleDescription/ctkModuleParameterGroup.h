@@ -32,20 +32,20 @@
 class CTK_MODULDESC_EXPORT ctkModuleParameterGroup : public QHash<QString, QString>
 {
 public:
-  ctkModuleParameterGroup();
-  ctkModuleParameterGroup(const ctkModuleParameterGroup &parameters);
-
-  //void operator=(const ctkModuleParameterGroup &parameters);
-
-  void addParameter(const ctkModuleParameter &parameter);
-
-  const QVector<ctkModuleParameter>& parameters() const;
-
-  QVector<ctkModuleParameter>& parameters();
+  virtual ~ctkModuleParameterGroup();
+  
+  /// Takes ownership of parameter
+  void addParameter(ctkModuleParameter* parameter);
+  /// Returns 0 if not found.
+  ctkModuleParameter* parameter(const QString& parameterName)const;
+  /// Returns true if at least 1 parameter is a return type
+  bool hasReturnParameters()const;
+  bool writeParameterFile(QTextStream& in, bool withHandlesToBulkParameters = true)const;
   
 private:
+  friend CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup &group);
   ///
-  QVector<ctkModuleParameter> Parameters;
+  QVector<ctkModuleParameter*> Parameters;
 };
 
 CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup &group);

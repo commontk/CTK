@@ -21,44 +21,73 @@ limitations under the License.
 #include "ctkModuleParameterGroup.h"
 
 //----------------------------------------------------------------------------
-ctkModuleParameterGroup::ctkModuleParameterGroup()
+ctkModuleParameterGroup::~ctkModuleParameterGroup()
 {
+  foreach(ctkModuleParameter* param, this->Parameters)
+    {
+    delete param;
+    }
+  this->Parameters.clear();
 }
 
 //----------------------------------------------------------------------------
-ctkModuleParameterGroup
-::ctkModuleParameterGroup(const ctkModuleParameterGroup &parameters)
-  : QHash<QString, QString>( QHash<QString, QString>( parameters ) )
+void ctkModuleParameterGroup::addParameter( ctkModuleParameter* parameter )
 {
-  this->Parameters = parameters.Parameters;
-}
-
-//----------------------------------------------------------------------------
-/* this is done automatically no?
-void ctkModuleParameterGroup
-::operator=(const ctkModuleParameterGroup &parameters)
-{
-  QHash<QString, QString>::operator=(parameters);
-  this->Parameters = parameters.Parameters;
-}
-*/
-
-//----------------------------------------------------------------------------
-void ctkModuleParameterGroup::addParameter( const ctkModuleParameter &parameter )
-{
+  Q_ASSERT(parameter);
   this->Parameters.push_back(parameter);
 }
 
 //----------------------------------------------------------------------------
-const QVector<ctkModuleParameter>& ctkModuleParameterGroup::parameters() const
+ctkModuleParameter* ctkModuleParameterGroup::parameter( const QString& parameterName )const
 {
-  return this->Parameters;
+  foreach(ctkModuleParameter* param, this->Parameters)
+    {
+    if ((*param)["Name"] == parameterName)
+      {
+      return param;
+      }
+    }
+  return 0;
 }
 
 //----------------------------------------------------------------------------
-QVector<ctkModuleParameter>& ctkModuleParameterGroup::parameters()
+bool ctkModuleParameterGroup::hasReturnParameters() const
 {
-  return this->Parameters;
+  // iterate over each parameter in this group
+  foreach(const ctkModuleParameter* param, this->Parameters)
+    {
+    if (param->isReturnParameter())
+      {
+      return true;
+      }
+    }
+  return false;
+}
+
+//----------------------------------------------------------------------------
+bool ctkModuleParameterGroup::
+writeParameterFile(QTextStream& in, bool withHandlesToBulkParameters)const
+{
+  // iterate over each parameter in this group
+  foreach(const ctkModuleParameter* moduleParameter, this->Parameters)
+    {
+    const ctkModuleParameter& param = *moduleParameter;
+    // write out all parameters or just the ones that are not bulk parameters
+    if (withHandlesToBulkParameters
+        || (!withHandlesToBulkParameters 
+            && (param[ "Tag" ] != "image"
+            && param[ "Tag" ] != "geometry"
+            && param[ "Tag" ] != "transform"
+            && param[ "Tag" ] != "table"
+            && param[ "Tag" ] != "measurement"
+            && param[ "Tag" ] != "point"  // point and region are special
+            && param[ "Tag" ] != "region")))
+      {
+      in << param[ "Name" ] << " = " << param[ "Default" ] << endl;
+      // multiple="true" may have to be handled differently
+      }
+    }
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -67,7 +96,9 @@ QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup &group)
   os << QHash<QString, QString>(group);
 
   os << "  Parameters: " << endl;
-  foreach( const ctkModuleParameter& it, group.parameters())
-  { os << it; }
+  foreach (const ctkModuleParameter* it, group.Parameters)
+    {
+    os << *it;
+    }
   return os;
 }

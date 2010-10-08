@@ -18,34 +18,11 @@ limitations under the License.
 
 =============================================================================*/
 
-#ifndef __ctkModuleDescriptionReaderInterface_h
-#define __ctkModuleDescriptionReaderInterface_h
-
-// Qt includes
-#include <QObject>
-#include <QString>
-
 // CTK includes
-#include "ctkModuleDescription.h"
-#include "CTKModuleDescriptionExport.h"
+#include "ctkModuleDescriptionReaderInterface.h"
 
-/** 
- * \brief Interface of ModuleDescription reader
- */
-class CTK_MODULDESC_EXPORT ctkModuleDescriptionReaderInterface : public QObject
+//-----------------------------------------------------------------------------
+const ctkModuleDescription& ctkModuleDescriptionReaderInterface::moduleDescription()const
 {
-  Q_OBJECT
-public:
-
-  //!
-  virtual void update( ) = 0;
-
-  //! Returns the populated module description.
-  //! Note: the module description is set after update() is called
-  const ctkModuleDescription &moduleDescription() const;
-
-protected:
-  ctkModuleDescription ModuleDescription;
-};
-
-#endif
+  return this->ModuleDescription;
+}

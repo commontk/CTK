@@ -22,26 +22,12 @@ limitations under the License.
 #include "QStringList"
 
 //----------------------------------------------------------------------------
-ctkModuleParameter::ctkModuleParameter()
-{
-}
-
-//----------------------------------------------------------------------------
-ctkModuleParameter::ctkModuleParameter(const ctkModuleParameter& parameter)
-  : QHash<QString, QString>( QHash<QString, QString>( parameter ) )
-{
-}
-
-//----------------------------------------------------------------------------
 bool ctkModuleParameter::isReturnParameter() const
 {
   // could check for tag == float, int, float-vector, ...
-  if ( (*this)["Channel"] == "output" 
-    && !this->isFlagParameter() && !this->isIndexParameter())
-  {
-    return true;
-  }
-  return false;
+  return (*this)["Channel"] == "output" 
+         && !this->isFlagParameter()
+         && !this->isIndexParameter();
 }
 
 //----------------------------------------------------------------------------
@@ -83,7 +69,6 @@ QTextStream & operator<<(QTextStream &os, const ctkModuleParameter &parameter)
 
   return os;
 }
-
 
 //----------------------------------------------------------------------------
 QTextStream & operator<<(QTextStream &os, const QStringList &list)

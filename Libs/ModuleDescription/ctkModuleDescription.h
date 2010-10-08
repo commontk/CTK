@@ -53,29 +53,25 @@
 class CTK_MODULDESC_EXPORT ctkModuleDescription : public QHash<QString, QString>
 {
 public:
-  ctkModuleDescription();
-  ctkModuleDescription(const ctkModuleDescription &md);
-
-  void operator=(const ctkModuleDescription &md);
-
+  // Optional icon associated to the module
   void setIcon(const QIcon& logo);
   const QIcon& icon() const;
   
-  void addParameterGroup(const ctkModuleParameterGroup &group);
+  void addParameterGroup(ctkModuleParameterGroup* group);
 
-  const QVector<ctkModuleParameterGroup>& parameterGroups() const;
-
-  QVector<ctkModuleParameterGroup>& parameterGroups();
+  //const QVector<ctkModuleParameterGroup*>& parameterGroups() const;
   
-  void setParameterGroups(const QVector<ctkModuleParameterGroup>& groups);
-
+  // Return the group that contain the parameter associated to the name
+  ctkModuleParameterGroup* parameterGroup(const QString& parameterName) const;
+  // Return the first parameter corresponding to the name from any group
+  ctkModuleParameter* parameter(const QString& parameterName) const;
+  
   // Does the module have any simple (primitive) return types?
   bool hasReturnParameters() const;
 
-  bool setParameterDefaultValue(const QString& name,
+  /// TODO: move to ctkModuleParameter
+  bool setParameterDefaultValue(const QString& parameterName,
                                 const QString& value);
-
-  ctkModuleParameter* parameter(const QString& name);
 
   ///
   /// Read a parameter file. Syntax of file is "name: value" for each
@@ -88,12 +84,12 @@ public:
   /// the parameters.  The "withHandlesToBulkParameters" parameter
   /// controls whether the handles to the bulk parameters (image,
   /// geometry, etc.) are written to the file.
-  bool writeParameterFile(const QString& filename, bool withHandlesToBulkParameters = true);
+  bool writeParameterFile(const QString& filename, bool withHandlesToBulkParameters = true)const;
 
 private:
-
+  friend CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module);
   /// Groups of parameters
-  QVector<ctkModuleParameterGroup> ParameterGroups;
+  QVector<ctkModuleParameterGroup*> ParameterGroups;
   /// Icon of the module
   QIcon Icon;
 };

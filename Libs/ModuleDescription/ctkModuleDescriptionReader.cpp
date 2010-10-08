@@ -18,29 +18,22 @@ limitations under the License.
 
 =============================================================================*/
 
-
 #include "ctkModuleDescriptionReader.h"
 
 //----------------------------------------------------------------------------
 ctkModuleDescriptionReader::ctkModuleDescriptionReader() 
 {
-
+  this->Device = 0;
 }
 
-//----------------------------------------------------------------------------
-ctkModuleDescriptionReader::~ctkModuleDescriptionReader()
+//-----------------------------------------------------------------------------
+void ctkModuleDescriptionReader::setInput(QIODevice * device)
 {
-
+  this->Device = device;
 }
 
-//----------------------------------------------------------------------------
-void ctkModuleDescriptionReader::setXmlContent( const QString &val )
+//-----------------------------------------------------------------------------
+QIODevice* ctkModuleDescriptionReader::input()const
 {
-  this->XmlContent = val;
-}
-
-//----------------------------------------------------------------------------
-const ctkModuleDescription &ctkModuleDescriptionReader::moduleDescription() const
-{
-  return this->ModuleDescription;
+  return this->Device;
 }

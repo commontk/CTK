@@ -24,30 +24,27 @@ limitations under the License.
 #include "CTKModuleDescriptionExport.h"
 #include "ctkModuleDescriptionReaderInterface.h"
 
+class QIODevice;
 /** 
- * \brief Base Reader of ModuleDescription
+ * \brief Base XML Reader of ModuleDescription
  *
- * This is the base interface
+ * This specialized ctkModuleDescriptionReaderInterface can initialize
+ * a module description from an XML file. update() must be reimplemented
+ * in inherited classes.
  */
 class CTK_MODULDESC_EXPORT ctkModuleDescriptionReader :
-  virtual public ctkModuleDescriptionReaderInterface
+  public ctkModuleDescriptionReaderInterface
 {
   Q_OBJECT
 public:
   ctkModuleDescriptionReader();
-  ~ctkModuleDescriptionReader();
 
   //! xml is the content of the XML file
-  void setXmlContent(const QString &val);
-
-  //!
-  const ctkModuleDescription &moduleDescription() const;
+  void setInput(QIODevice * device);
+  QIODevice* input()const;
 
 protected:
-  ///
-  QString XmlContent;
-  ///
-  ctkModuleDescription ModuleDescription;
+  QIODevice*           Device;
 };
 
 #endif

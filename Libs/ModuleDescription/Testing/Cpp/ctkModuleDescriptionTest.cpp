@@ -80,9 +80,8 @@ int ctkModuleDescriptionTest(int argc, char * argv [] )
   module[ "AlternativeTarget" ] = "MyAlternativeTarget";
   module[ "Location" ] = "MyLocation";
 
-
-  group.addParameter( param );
-  module.addParameterGroup( group );
+  group.addParameter( new ctkModuleParameter(param) );
+  module.addParameterGroup( new ctkModuleParameterGroup(group) );
 
   QTextStream(stdout)<< module;
 

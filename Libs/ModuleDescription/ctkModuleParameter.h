@@ -37,19 +37,15 @@
 class CTK_MODULDESC_EXPORT ctkModuleParameter : public QHash<QString, QString>
 {
 public:
-  ctkModuleParameter();
-  ctkModuleParameter(const ctkModuleParameter& parameter);
-
   /// Simple return types are parameters on output channel with no
   /// flags and without a specified index 
-  virtual bool isReturnParameter() const;
+  bool isReturnParameter() const;
   
   /// Has a flag or a long flag?
-  virtual bool isFlagParameter() const;
+  bool isFlagParameter() const;
 
   /// Is an index type?
-  virtual bool isIndexParameter() const;
-
+  bool isIndexParameter() const;
 };
 
 CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleParameter &parameter);
