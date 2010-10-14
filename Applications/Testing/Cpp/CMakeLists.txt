@@ -1,7 +1,22 @@
-SET(KIT ${PROJECT_NAME})
+SET(KIT CTKApplication)
+
+SET(KIT_TEST_SRCS)
+
+## Query / Retrieve Testing
+if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
+  LIST(APPEND KIT_TEST_SRCS
+    ctkDICOMApplicationTest1.cpp
+    )
+endif()
+
+# If there is no tests, exit
+LIST(LENGTH KIT_TEST_SRCS KIT_TEST_SRCS_LENGTH)
+if(${KIT_TEST_SRCS_LENGTH} EQUAL 0)
+  RETURN()
+endif()
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
-  ctkDICOMApplicationTest1.cpp
+  ${KIT_TEST_SRCS}
   )
 
 SET (TestsToRun ${Tests})

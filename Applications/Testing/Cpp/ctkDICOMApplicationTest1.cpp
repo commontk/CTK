@@ -1,7 +1,7 @@
 
 // Qt includes
 #include <QTextStream>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QProcess>
 
 // STD includes
@@ -23,7 +23,7 @@ findscu -aet CTK_AE -aec COMMONTK -P -k 0010,0010=\* localhost 11112 patqry.dcm
 
 int ctkDICOMApplicationTest1(int argc, char * argv []) {
   
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   QTextStream out(stdout);
 
   if ( argc < 10 )
