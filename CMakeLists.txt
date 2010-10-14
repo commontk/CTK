@@ -377,24 +377,6 @@ FOREACH(app ${CTK_APPLICATIONS})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# CTK Python wrapping - Propose the option only if CTK_LIB_Scriping/Python/Core is ON
-IF(CTK_LIB_Scripting/Python/Core)
-  find_package(PythonInterp)
-  IF(NOT PYTHONINTERP_FOUND)
-    MESSAGE(SEND_ERROR "PYTHON_EXECUTABLE not specified or inexistent when CTK_LIB_Scripting is enabled")
-  ENDIF()
-  OPTION(CTK_WRAP_PYTHONQT_FULL "Wrap CTK classes using Qt meta-object system into Python language" OFF)
-  OPTION(CTK_WRAP_PYTHONQT_LIGHT "Wrap CTK classes using Qt meta-object system into Python language" OFF)
-  IF(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
-    MESSAGE(SEND_ERROR "CTK_WRAP_PYTHONQT_{LIGHT,FULL} options are mutually exclusive. Please enable only one !")
-  ENDIF()
-ELSE()
-  # Note that an unset boolean variable is considered to be False
-  UNSET(CTK_WRAP_PYTHONQT_FULL CACHE)
-  UNSET(CTK_WRAP_PYTHONQT_LIGHT CACHE)
-ENDIF()
-
-#-----------------------------------------------------------------------------
 # Generate target_directories list - List of directory corresponding to the different
 # libraries, plugins and applications associated with the corresponding option name.
 #
@@ -443,6 +425,24 @@ MARK_AS_ADVANCED(DGraph_EXECUTABLE)
 #
 ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" FALSE)
 ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${target_directories}")
+
+#-----------------------------------------------------------------------------
+# CTK Python wrapping - Propose the option only if CTK_LIB_Scriping/Python/Core is ON
+IF(CTK_LIB_Scripting/Python/Core)
+  find_package(PythonInterp)
+  IF(NOT PYTHONINTERP_FOUND)
+    MESSAGE(SEND_ERROR "PYTHON_EXECUTABLE not specified or inexistent when CTK_LIB_Scripting is enabled")
+  ENDIF()
+  OPTION(CTK_WRAP_PYTHONQT_FULL "Wrap CTK classes using Qt meta-object system into Python language" OFF)
+  OPTION(CTK_WRAP_PYTHONQT_LIGHT "Wrap CTK classes using Qt meta-object system into Python language" OFF)
+  IF(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
+    MESSAGE(SEND_ERROR "CTK_WRAP_PYTHONQT_{LIGHT,FULL} options are mutually exclusive. Please enable only one !")
+  ENDIF()
+ELSE()
+  # Note that an unset boolean variable is considered to be False
+  UNSET(CTK_WRAP_PYTHONQT_FULL CACHE)
+  UNSET(CTK_WRAP_PYTHONQT_LIGHT CACHE)
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # DGraph
