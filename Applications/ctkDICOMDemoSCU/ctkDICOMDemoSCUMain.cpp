@@ -44,9 +44,9 @@ int main(int argc, char** argv)
     return 2;
   } 
   
-  OString host(argv[1]);
+  OFString host(argv[1]);
   unsigned int port = atoi(argv[2]);
-  OString peerAET;
+  OFString peerAET;
   if (argc > 3)
   {
     peerAET = argv[3];
