@@ -80,6 +80,9 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   qDebug() << model.rowCount() << model.columnCount();
   qDebug() << model.index(0,0);
   viewer.show();
-  //return app.exec();
+  if (argc > 3 && QString(argv[3]) == "-I")
+    {
+    return app.exec();
+    }
   return EXIT_SUCCESS;
 }
