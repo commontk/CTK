@@ -31,7 +31,7 @@
  * or publish a Qt signal for a specific event topic.
  *
  */
-class CTK_PLUGINFW_EXPORT ctkEventBus {
+class ctkEventBus {
 
 public:
 
