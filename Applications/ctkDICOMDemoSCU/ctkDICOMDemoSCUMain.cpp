@@ -44,9 +44,9 @@ int main(int argc, char** argv)
     return 2;
   } 
   
-  std::string host = argv[1];
+  OString host(argv[1]);
   unsigned int port = atoi(argv[2]);
-  std::string peerAET  = "";
+  OString peerAET;
   if (argc > 3)
   {
     peerAET = argv[3];
