@@ -247,6 +247,25 @@ ctkRangeSlider::ctkRangeSlider( Qt::Orientation o,
 }
 
 // --------------------------------------------------------------------------
+ctkRangeSlider::ctkRangeSlider(ctkRangeSliderPrivate* impl, QWidget* parent)
+  : QSlider(parent)
+  , d_ptr(impl)
+{
+  Q_D(ctkRangeSlider);
+  d->init();
+}
+
+// --------------------------------------------------------------------------
+ctkRangeSlider::ctkRangeSlider( ctkRangeSliderPrivate* impl, Qt::Orientation o,
+                                QWidget* parentObject )
+  :QSlider(o, parentObject)
+  , d_ptr(impl)
+{
+  Q_D(ctkRangeSlider);
+  d->init();
+}
+
+// --------------------------------------------------------------------------
 ctkRangeSlider::~ctkRangeSlider()
 {
 }
