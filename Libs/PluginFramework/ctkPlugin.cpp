@@ -83,18 +83,7 @@
     //4: Resolve plugin (if needed)
     d->getUpdatedState();
 
-    //5: Register Qt Mobility service xml files
-    //only register if we are not already in the STARTING state
-    if (d->state != STARTING)
-    {
-      QByteArray serviceDescriptor = getResource("servicedescriptor.xml");
-      if (!serviceDescriptor.isEmpty())
-      {
-        d->fwCtx->services.registerService(d, serviceDescriptor);
-      }
-    }
-
-    //6: Eager?
+    //5: Eager?
     if ((options & START_ACTIVATION_POLICY) && !d->eagerActivation )
     {
       if (STARTING == d->state) return;
@@ -107,6 +96,19 @@
     {
       d->finalizeActivation();
     }
+
+    //6: Register Qt Mobility service xml files
+    //only register if we are not already in the STARTING
+    //or ACTIVE state
+    if (d->state & STARTING || d->state & ACTIVE)
+    {
+      QByteArray serviceDescriptor = getResource("servicedescriptor.xml");
+      if (!serviceDescriptor.isEmpty())
+      {
+        d->fwCtx->services.registerService(d, serviceDescriptor);
+      }
+    }
+
   }
 
   void ctkPlugin::stop(const StopOptions& options)
