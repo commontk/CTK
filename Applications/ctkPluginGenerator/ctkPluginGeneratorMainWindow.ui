@@ -320,7 +320,7 @@ p, li { white-space: pre-wrap; }
           <string>Choose output directory</string>
          </property>
          <property name="options">
-          <set>ctkDirectoryButton::HideNameFilterDetails|ctkDirectoryButton::ShowDirsOnly</set>
+          <set>QFileDialog::HideNameFilterDetails</set>
          </property>
         </widget>
        </item>
@@ -398,7 +398,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
