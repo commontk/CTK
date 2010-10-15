@@ -31,6 +31,8 @@
 
   class ctkServiceRegistrationPrivate;
   class ctkServiceReferencePrivate;
+  class ctkServiceEvent;
+  template<class Item, class Related> class ctkPluginAbstractTracked;
 
   /**
    * A reference to a service.
@@ -173,15 +175,25 @@
 
   protected:
 
+    friend class ctkLDAPSearchFilter;
     friend class ctkServiceRegistrationPrivate;
     friend class ctkPluginContext;
     friend class ctkPluginPrivate;
+    friend class ctkPluginFrameworkListeners;
+    friend class ctkServiceTrackerPrivate;
+    friend class ctkServiceTracker;
+    friend class ctkPluginAbstractTracked<ctkServiceReference, ctkServiceEvent>;
 
     ctkServiceReference(ctkServiceRegistrationPrivate* reg);
+
+    bool isNull() const;
 
     ctkServiceReferencePrivate * d_ptr;
 
   };
+
+uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceReference& serviceRef);
+QDebug CTK_PLUGINFW_EXPORT operator<<(QDebug dbg, const ctkServiceReference& serviceRef);
 
 
 #endif // CTKSERVICEREFERENCE_H

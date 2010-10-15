@@ -25,6 +25,8 @@
 
 #include <QAtomicInt>
 
+#include "ctkPluginFramework_global.h"
+
 class QObject;
 
 class ctkServiceRegistrationPrivate;
@@ -57,6 +59,14 @@ public:
    *         decremented.
    */
   bool ungetService(ctkPlugin* plugin, bool checkRefCounter);
+
+  /**
+   * Get all properties registered with this service.
+   *
+   * @return A ServiceProperties object containing properties or being empty
+   *         if service has been removed.
+   */
+  ServiceProperties getProperties() const;
 
   /**
    * Reference count for implicitly shared private implementation.

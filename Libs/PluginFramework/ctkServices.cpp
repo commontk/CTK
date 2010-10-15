@@ -29,10 +29,11 @@
 
 #include "ctkServiceFactory.h"
 #include "ctkPluginConstants.h"
+#include "ctkPluginFrameworkContext_p.h"
 #include "ctkServiceException.h"
 #include "ctkServiceRegistrationPrivate.h"
 #include "ctkQtServiceRegistration_p.h"
-#include "ctkLDAPExpr.h"
+#include "ctkLDAPExpr_p.h"
 
 
   using namespace QtMobility;
@@ -147,12 +148,10 @@ ctkServiceRegistration* ctkServices::registerService(ctkPluginPrivate* plugin,
     }
   }
 
-  //ctkServiceReference r = res->getReference();
-  // TODO
-  //Listeners l = bundle.fwCtx.listeners;
-  //l.serviceChanged(l.getMatchingServiceListeners(r),
-  //                 new ServiceEvent(ServiceEvent.REGISTERED, r),
-  //                 null);
+  ctkServiceReference r = res->getReference();
+  plugin->fwCtx->listeners.serviceChanged(
+      plugin->fwCtx->listeners.getMatchingServiceSlots(r),
+      ctkServiceEvent(ctkServiceEvent::REGISTERED, r));
   return res;
 }
 
@@ -225,12 +224,10 @@ void ctkServices::registerService(ctkPluginPrivate* plugin, QByteArray serviceDe
       s.insert(ip, res);
     }
 
-    //ctkServiceReference* r = res->getReference();
-    // TODO
-    //Listeners l = bundle.fwCtx.listeners;
-    //l.serviceChanged(l.getMatchingServiceListeners(r),
-    //                 new ServiceEvent(ServiceEvent.REGISTERED, r),
-    //                 null);
+    ctkServiceReference r = res->getReference();
+    plugin->fwCtx->listeners.serviceChanged(
+        plugin->fwCtx->listeners.getMatchingServiceSlots(r),
+        ctkServiceEvent(ctkServiceEvent::REGISTERED, r));
   }
 }
 
@@ -314,37 +311,30 @@ QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString&
   QMutexLocker lock(&mutex);
 
   QListIterator<ctkServiceRegistration*>* s = 0;
-  ctkLDAPExpr* ldap = 0;
+  QList<ctkServiceRegistration*> v;
+  ctkLDAPExpr ldap;
   if (clazz.isEmpty())
   {
     if (!filter.isEmpty())
     {
-      ldap = new ctkLDAPExpr(filter);
-      QSet<QString> matched = ldap->getMatchedObjectClasses();
+      ldap = ctkLDAPExpr(filter);
+      QSet<QString> matched = ldap.getMatchedObjectClasses();
       if (!matched.isEmpty())
       {
-        //TODO
-//        ArrayList v = null;
-//        boolean vReadOnly = true;;
-//        for (Iterator i = matched.iterator(); i.hasNext(); ) {
-//          ArrayList cl = (ArrayList) classServices.get(i.next());
-//          if (cl != null) {
-//            if (v == null) {
-//              v = cl;
-//            } else {
-//              if (vReadOnly) {
-//                v = new ArrayList(v);
-//                vReadOnly = false;
-//              }
-//              v.addAll(cl);
-//            }
-//          }
-//        }
-//        if (v != null) {
-//          s = v.iterator();
-//        } else {
-//          return null;
-//        }
+        v.clear();
+        foreach (QString className, matched)
+        {
+          const QList<ctkServiceRegistration*>& cl = classServices[className];
+          v += cl;
+        }
+        if (!v.isEmpty())
+        {
+          s = new QListIterator<ctkServiceRegistration*>(v);
+        }
+        else
+        {
+          return QList<ctkServiceReference>();
+        }
       }
       else
       {
@@ -369,7 +359,7 @@ QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString&
     }
     if (!filter.isEmpty())
     {
-      ldap = new ctkLDAPExpr(filter);
+      ldap = ctkLDAPExpr(filter);
     }
   }
 
@@ -379,14 +369,13 @@ QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString&
     ctkServiceRegistration* sr = s->next();
     ctkServiceReference sri = sr->getReference();
 
-    if (filter.isEmpty() || ldap->evaluate(sr->d_func()->properties, false))
+    if (filter.isEmpty() || ldap.evaluate(sr->d_func()->properties, false))
     {
       res.push_back(sri);
     }
   }
 
   delete s;
-  delete ldap;
 
   return res;
 }

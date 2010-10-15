@@ -46,6 +46,11 @@ ctkServiceReference::~ctkServiceReference()
     delete d_ptr;
 }
 
+bool ctkServiceReference::isNull() const
+{
+  return d_func()->registration == 0;
+}
+
 QVariant ctkServiceReference::getProperty(const QString& key) const
 {
   Q_D(const ctkServiceReference);
@@ -122,4 +127,25 @@ ctkServiceReference& ctkServiceReference::operator=(const ctkServiceReference& r
     delete curr_d;
 
   return *this;
+}
+
+uint qHash(const ctkServiceReference& serviceRef)
+{
+  return qHash(serviceRef.getProperty(ctkPluginConstants::SERVICE_ID).toLongLong());
+}
+
+QDebug operator<<(QDebug dbg, const ctkServiceReference& serviceRef)
+{
+  dbg.nospace() << "Reference for service object registered from "
+      << serviceRef.getPlugin()->getSymbolicName() << " " << serviceRef.getPlugin()->getVersion()
+      << " (";
+  int i = serviceRef.getPropertyKeys().size();
+  foreach(QString key, serviceRef.getPropertyKeys())
+  {
+    dbg.nospace() << key << "=" << serviceRef.getProperty(key).toString();
+    if (--i > 0) dbg.nospace() << ",";
+  }
+  dbg.nospace() << ")";
+
+  return dbg.maybeSpace();
 }
