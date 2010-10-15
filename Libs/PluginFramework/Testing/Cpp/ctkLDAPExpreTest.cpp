@@ -19,7 +19,7 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkLDAPExpr.h"
+#include "ctkLDAPExpr_p.h"
 
 #include <iostream>
 #include <cstdlib>
