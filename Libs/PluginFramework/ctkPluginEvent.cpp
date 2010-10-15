@@ -21,8 +21,34 @@
 
 #include "ctkPluginEvent.h"
 
+class ctkPluginEventData : public QSharedData
+{
+public:
+
+  ctkPluginEventData(ctkPluginEvent::Type type, ctkPlugin* plugin)
+    : type(type), plugin(plugin)
+  {
+
+  }
+
+  ctkPluginEventData(const ctkPluginEventData& other)
+    : QSharedData(other), type(other.type), plugin(other.plugin)
+  {
+
+  }
+
+  const ctkPluginEvent::Type type;
+  ctkPlugin *const plugin;
+};
+
+
 ctkPluginEvent::ctkPluginEvent()
   : d(0)
+{
+
+}
+
+ctkPluginEvent::~ctkPluginEvent()
 {
 
 }
@@ -34,7 +60,7 @@ ctkPluginEvent::ctkPluginEvent(Type type, ctkPlugin* plugin)
 }
 
 ctkPluginEvent::ctkPluginEvent(const ctkPluginEvent& other)
-  : QObject(), d(other.d)
+  : d(other.d)
 {
 
 }

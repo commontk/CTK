@@ -22,7 +22,6 @@
 #ifndef CTKPLUGINEVENT_H
 #define CTKPLUGINEVENT_H
 
-#include <QObject>
 #include <QSharedDataPointer>
 
 #include "CTKPluginFrameworkExport.h"
@@ -35,20 +34,15 @@ class ctkPluginEventData;
  * An event from the Framework describing a plugin lifecycle change.
  * <p>
  * <code>ctkPluginEvent</code> objects are delivered to slots connected
- * to ctkPluginContext::pluginChanged() or to registerd event handlers
- * for the topic "org.commontk/framework/pluginChanged"
- * when a change occurs in a plugins's lifecycle. A type code is used to identify
+ * via ctkPluginContext::connectPluginListener() when a change
+ * occurs in a plugins's lifecycle. A type code is used to identify
  * the event type for future extendability.
  *
  * @see ctkPluginContext#connectPluginListener
  * @see ctkEventBus
  */
-class CTK_PLUGINFW_EXPORT ctkPluginEvent : public QObject
+class CTK_PLUGINFW_EXPORT ctkPluginEvent
 {
-  Q_OBJECT
-  Q_PROPERTY(Type type READ getType CONSTANT)
-  Q_PROPERTY(ctkPlugin* plugin READ getPlugin CONSTANT)
-  Q_ENUMS(Type)
 
   QSharedDataPointer<ctkPluginEventData> d;
 
@@ -71,6 +65,8 @@ public:
    * Default constructor for use with the Qt meta object system.
    */
   ctkPluginEvent();
+
+  ~ctkPluginEvent();
 
   /**
    * Creates a plugin event of the specified type.
@@ -109,27 +105,5 @@ public:
   Type getType() const;
 
 };
-
-
-class ctkPluginEventData : public QSharedData
-{
-public:
-
-  ctkPluginEventData(ctkPluginEvent::Type type, ctkPlugin* plugin)
-    : type(type), plugin(plugin)
-  {
-
-  }
-
-  ctkPluginEventData(const ctkPluginEventData& other)
-    : QSharedData(other), type(other.type), plugin(other.plugin)
-  {
-
-  }
-
-  const ctkPluginEvent::Type type;
-  ctkPlugin* const plugin;
-};
-
 
 #endif // CTKPLUGINEVENT_H

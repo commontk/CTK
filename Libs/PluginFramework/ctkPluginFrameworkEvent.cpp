@@ -21,9 +21,49 @@
 
 #include "ctkPluginFrameworkEvent.h"
 
+#include <QString>
+
+class ctkPluginFrameworkEventData : public QSharedData
+{
+public:
+
+  ctkPluginFrameworkEventData(ctkPluginFrameworkEvent::Type type, ctkPlugin* plugin, const QString& exc)
+    : plugin(plugin), errorString(exc), type(type)
+  {
+
+  }
+
+  ctkPluginFrameworkEventData(const ctkPluginFrameworkEventData& other)
+    : QSharedData(other), plugin(other.plugin), errorString(other.errorString),
+      type(other.type)
+  {
+
+  }
+
+  /**
+   * Plugin related to the event.
+   */
+  ctkPlugin* const	plugin;
+
+  /**
+   * Exception related to the event.
+   */
+  const QString errorString;
+
+  /**
+   * Type of event.
+   */
+  const ctkPluginFrameworkEvent::Type type;
+};
+
 
 ctkPluginFrameworkEvent::ctkPluginFrameworkEvent()
   : d(0)
+{
+
+}
+
+ctkPluginFrameworkEvent::~ctkPluginFrameworkEvent()
 {
 
 }
@@ -41,7 +81,7 @@ ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin)
 }
 
 ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other)
-  : QObject(), d(other.d)
+  : d(other.d)
 {
 
 }
