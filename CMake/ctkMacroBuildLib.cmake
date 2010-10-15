@@ -54,8 +54,6 @@ MACRO(ctkMacroBuildLib)
     ${MY_INCLUDE_DIRECTORIES}
     )  
 
-  MESSAGE("setting up include dirs for ${lib_name}")
-
   # Add the include directories from the library dependencies
   # The variable ${lib_name}_DEPENDENCIES is set in the
   # macro ctkMacroValidateBuildOptions
@@ -71,9 +69,7 @@ MACRO(ctkMacroBuildLib)
          )
   ENDFOREACH()
 
-MESSAGE("[${lib_name}] ext deps: ${ext_deps}")
   FOREACH(dep ${ext_deps})
-MESSAGE("[${lib_name}] ${dep}_INCLUDE_DIRS: ${${dep}_INCLUDE_DIRS}")
     STRING(REPLACE "^" ";" _include_dirs "${${dep}_INCLUDE_DIRS}")
     LIST(APPEND my_includes ${_include_dirs})
   ENDFOREACH()

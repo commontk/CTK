@@ -144,7 +144,7 @@ FOREACH(p ${external_projects})
   ENDIF()
 ENDFOREACH()
 
-MESSAGE("Superbuild args: ${dependency_args}")
+#MESSAGE("Superbuild args: ${dependency_args}")
    
 #-----------------------------------------------------------------------------
 # CTK Utilities
