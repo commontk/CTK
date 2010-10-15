@@ -46,6 +46,7 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   ctkLDAPSearchFilter.cpp
   ctkPlugin.cpp
+  #ctkPluginAbstractTracked.cpp
   ctkPluginArchive.cpp
   ctkPluginConstants.cpp
   ctkPluginContext.cpp
@@ -74,8 +75,12 @@ SET(KIT_SRCS
   ctkServiceReferencePrivate.cpp
   ctkServiceRegistration.cpp
   ctkServiceRegistrationPrivate.cpp
+  ctkServiceTracker.cpp
+  ctkServiceTrackerCustomizer.h
+  ctkServiceTrackerPrivate.cpp
   ctkServices.cpp
   ctkServiceSlotEntry.cpp
+  ctkTrackedService.cpp
   ctkPluginStorage.cpp
   ctkVersion.cpp
   ctkVersionRange.cpp
@@ -91,6 +96,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkPluginFrameworkListeners_p.h
   ctkServiceFactory.h
+  ctkTrackedService_p.h
 )
 
 # UI files
