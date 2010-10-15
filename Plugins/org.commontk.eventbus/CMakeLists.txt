@@ -14,7 +14,11 @@ SET(PLUGIN_MOC_SRCS
 )
 
 SET(PLUGIN_resources
-  org_commontk_eventbus.qrc
+  #org_commontk_eventbus.qrc
+)
+
+SET(PLUGIN_CACHED_RESOURCEFILES
+  servicedescriptor.xml
 )
 
 ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
@@ -24,5 +28,6 @@ ctkMacroBuildPlugin(
   SRCS ${PLUGIN_SRCS}
   MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
+  CACHED_RESOURCEFILES ${PLUGIN_CACHED_RESOURCEFILES}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}
 )
