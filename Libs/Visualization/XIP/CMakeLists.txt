@@ -15,10 +15,6 @@ PROJECT(CTKVisualizationXIP)
 
 SET(KIT_export_directive "CTK_VISUALIZATION_XIP_EXPORT")
 
-# Additional directories to include
-SET(KIT_include_directories
-  #${DCMTK_INCLUDE_DIR}
-  )
   
 # Source files
 SET(KIT_SRCS
@@ -46,7 +42,6 @@ ctkMacroGetTargetLibraries(KIT_target_libraries)
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
-  INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}

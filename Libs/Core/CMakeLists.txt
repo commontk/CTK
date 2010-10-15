@@ -12,10 +12,6 @@ INCLUDE(CMake/ctkMacroBFDCheck.cmake)
 
 SET(KIT_export_directive "CTK_CORE_EXPORT")
 
-# Additional directories to include
-SET(KIT_include_directories
-  )
-
 # Source files
 SET(KIT_SRCS
   ctkAbstractFactory.h
@@ -90,7 +86,6 @@ ctkMacroGetTargetLibraries(KIT_target_libraries)
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
-  INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
