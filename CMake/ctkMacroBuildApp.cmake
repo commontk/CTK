@@ -47,7 +47,7 @@ MACRO(ctkMacroBuildApp)
   if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${expected_mainfile} AND
       NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${expected_mainfile}.in AND
       NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${expected_mainfile})
-    MESSAGE(FATAL_ERROR "Application directory: ${MY_NAME} should contains"
+    MESSAGE(FATAL_ERROR "Application directory: ${MY_NAME} should contain"
                         " a file named ${expected_mainfile} or ${expected_mainfile}.in")
   endif()
 
