@@ -1,8 +1,8 @@
-# File name: ctkDashboardDriverScript.cmake
 #
 # OS: Ubuntu 9.04 2.6.28-18-generic
 # Hardware: x86_64 GNU/Linux
 # GPU: NA
+#
 
 # Note: The specific version and processor type of this machine should be reported in the 
 # header above. Indeed, this file will be send to the dashboard as a NOTE file. 
@@ -10,9 +10,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 #
-# For additional information, 
-# See http://github.com/commontk/CTK/raw/master/CMake/ctkDashboardScript.EXAMPLE.cmake
-# See http://github.com/commontk/CTK/raw/master/CMake/ctkDashboardDriverScript.cmake
+# For additional information, see http://www.commontk.org/index.php/Dashboard_setup
 #
 
 #
@@ -70,8 +68,6 @@ set(TEST_TO_EXCLUDE_REGEX "")
 
 # set any extra environment variables here
 set(ENV{DISPLAY} ":0")
-set(ENV{CXX} "/usr/bin/g++")
-set(ENV{CC} "/usr/bin/gcc")
 
 find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
 find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
