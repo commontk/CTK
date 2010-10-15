@@ -120,10 +120,19 @@ QObject* ctkPluginContext::getService(ctkServiceReference reference)
   return reference.d_func()->getService(d->plugin->q_func());
 }
 
+ bool ctkPluginContext::ungetService(const ctkServiceReference& reference)
+ {
+   Q_D(ctkPluginContext);
+   d->isPluginContextValid();
+   ctkServiceReference ref = reference;
+   return ref.d_func()->ungetService(d->plugin->q_func(), true);
+ }
+
 bool ctkPluginContext::connectPluginListener(const QObject* receiver, const char* method,
                                              Qt::ConnectionType type)
 {
   Q_D(ctkPluginContext);
+  d->isPluginContextValid();
   // TODO check permissions for a direct connection
   return receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(pluginChanged(ctkPluginEvent)), method, type);
 }
@@ -131,5 +140,23 @@ bool ctkPluginContext::connectPluginListener(const QObject* receiver, const char
 bool ctkPluginContext::connectFrameworkListener(const QObject* receiver, const char* method, Qt::ConnectionType type)
 {
   Q_D(ctkPluginContext);
+  d->isPluginContextValid();
+  // TODO check permissions for a direct connection
   return receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(frameworkEvent(ctkPluginFrameworkEvent)), method, type);
+}
+
+void ctkPluginContext::connectServiceListener(QObject* receiver, const char* slot,
+                                             const QString& filter)
+{
+  Q_D(ctkPluginContext);
+  d->isPluginContextValid();
+  d->plugin->fwCtx->listeners.addServiceSlot(getPlugin(), receiver, slot, filter);
+}
+
+void ctkPluginContext::disconnectServiceListener(QObject* receiver,
+                                                const char* slot)
+{
+  Q_D(ctkPluginContext);
+  d->isPluginContextValid();
+  d->plugin->fwCtx->listeners.removeServiceSlot(getPlugin(), receiver, slot);
 }

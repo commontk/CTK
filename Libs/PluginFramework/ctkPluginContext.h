@@ -350,6 +350,47 @@
     QObject* getService(ctkServiceReference reference);
 
     /**
+     * Releases the service object referenced by the specified
+     * <code>ctkServiceReference</code> object. If the context plugin's use count
+     * for the service is zero, this method returns <code>false</code>.
+     * Otherwise, the context plugins's use count for the service is decremented
+     * by one.
+     *
+     * <p>
+     * The service's service object should no longer be used and all references
+     * to it should be destroyed when a bundle's use count for the service drops
+     * to zero.
+     *
+     * <p>
+     * The following steps are required to unget the service object:
+     * <ol>
+     * <li>If the context plugin's use count for the service is zero or the
+     * service has been unregistered, <code>false</code> is returned.
+     * <li>The context plugin's use count for this service is decremented by
+     * one.
+     * <li>If the context plugin's use count for the service is currently zero
+     * and the service was registered with a <code>ctkServiceFactory</code> object,
+     * the
+     * {@link ctkServiceFactory#ungetService(ctkPlugin*, ctkServiceRegistration*, QObject*)}
+     * method is called to release the service object for the context plugin.
+     * <li><code>true</code> is returned.
+     * </ol>
+     *
+     * @param reference A reference to the service to be released.
+     * @return <code>false</code> if the context plugin's use count for the
+     *         service is zero or if the service has been unregistered;
+     *         <code>true</code> otherwise.
+     * @throws std::logic_error If this ctkPluginContext is no
+     *         longer valid.
+     * @throws std::invalid_argument If the specified
+     *         <code>ctkServiceReference</code> was not created by the same
+     *         framework instance as this <code>ctkPluginContext</code>.
+     * @see #getService
+     * @see ctkServiceFactory
+     */
+    bool ungetService(const ctkServiceReference& reference);
+
+    /**
      * Installs a plugin from the specified <code>QIODevice</code> object.
      *
      * <p>
@@ -409,10 +450,96 @@
      */
     ctkPlugin* installPlugin(const QUrl& location, QIODevice* in = 0);
 
+    /**
+     * Connects the specified <code>slot</code> to the context
+     * plugins's signal which is emitted when a plugin has
+     * a lifecycle state change. The signature of the slot
+     * must be "slotName(ctkPluginEvent)".
+     *
+     * @param receiver The object to connect to.
+     * @param slot The slot to be connected.
+     * @param type The Qt connection type.
+     * @throws std::logic_error If this ctkPluginContext is no
+     *         longer valid.
+     * @see ctkPluginEvent
+     * @see ctkEventBus
+     */
+    bool connectPluginListener(const QObject* receiver, const char* slot, Qt::ConnectionType type = Qt::QueuedConnection);
 
-    bool connectPluginListener(const QObject* receiver, const char* method, Qt::ConnectionType type = Qt::QueuedConnection);
+    /**
+     * Connects the specified <code>slot</code> to the context
+     * plugin's signal which emits general Framework events. The signature
+     * of the slot must be "slotName(ctkPluginFrameworkEvent)".
+     *
+     * @param receiver The object to connect to.
+     * @param slot The slot to be connected.
+     * @param type The Qt connection type.
+     * @throws std::logic_error If this ctkPluginContext is no
+     *         longer valid.
+     * @see ctkPluginFrameworkEvent
+     * @see ctkEventBus
+     */
+    bool connectFrameworkListener(const QObject* receiver, const char* slot, Qt::ConnectionType type = Qt::QueuedConnection);
 
-    bool connectFrameworkListener(const QObject* receiver, const char* method, Qt::ConnectionType type = Qt::QueuedConnection);
+    /**
+     * Connects the specified <code>slot</code> with the
+     * specified <code>filter</code> to the context plugins's signal emitting
+     * service events when a service has a lifecycle state change. The signature
+     * of the slot must be "slotName(const ctkServiceEvent&)", but only the name
+     * of the slot must be provided as the argument.
+     * See {@link ctkLDAPSearchFilter} for a description of
+     * the filter syntax.
+     *
+     * <p>
+     * If the context plugin's list of listeners already contains a the same
+     * slot for the given receiver, then this
+     * method replaces that slot's filter (which may be <code>null</code>)
+     * with the specified one (which may be <code>null</code>).
+     *
+     * <p>
+     * The slot is called if the filter criteria is met. To filter based
+     * upon the class of the service, the filter should reference the
+     * {@link ctkPluginConstants#OBJECTCLASS} property. If <code>filter</code> is
+     * <code>null</code>, all services are considered to match the filter.
+     *
+     * <p>
+     * When using a <code>filter</code>, it is possible that the
+     * <code>ctkServiceEvent</code>s for the complete lifecycle of a service
+     * will not be delivered to the slot. For example, if the
+     * <code>filter</code> only matches when the property <code>x</code> has
+     * the value <code>1</code>, the listener will not be called if the
+     * service is registered with the property <code>x</code> not set to the
+     * value <code>1</code>. Subsequently, when the service is modified
+     * setting property <code>x</code> to the value <code>1</code>, the
+     * filter will match and the slot will be called with a
+     * <code>ServiceEvent</code> of type <code>MODIFIED</code>. Thus, the
+     * slot will not be called with a <code>ServiceEvent</code> of type
+     * <code>REGISTERED</code>.
+     *
+     * @param receiver The object to connect to.
+     * @param slot The name of the slot to be connected.
+     * @param filter The filter criteria.
+     * @param type The Qt connection type.
+     * @throws std::invalid_argument If <code>filter</code> contains an
+     *         invalid filter string that cannot be parsed.
+     * @throws std::logic_error If this ctkPluginContext is no
+     *         longer valid.
+     * @see ctkServiceEvent
+     * @see disconnectServiceListener()
+     * @see ctkEventBus
+     */
+    void connectServiceListener(QObject* receiver, const char* slot,
+                                const QString& filter = QString());
+
+    /**
+     * Disconnects a slot which has been previously connected
+     * with a call to connectServiceListener().
+     *
+     * @param receiver The object containing the slot.
+     * @param slot The slot to be disconnected.
+     * @see connectServiceListener()
+     */
+    void disconnectServiceListener(QObject* receiver, const char* slot);
 
   protected:
 
