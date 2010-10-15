@@ -31,6 +31,7 @@
 #include <ctkPluginEvent.h>
 #include <ctkPluginFrameworkEvent.h>
 #include <ctkPlugin.h>
+#include <ctkServiceEvent.h>
 
 
 class ctkPluginFramework;
@@ -52,6 +53,7 @@ private slots:
 
   void frameworkEvent(const ctkPluginFrameworkEvent& event);
   void pluginEvent(const ctkPluginEvent& event);
+  void serviceEvent(const ctkServiceEvent& event);
 
   void startPlugin();
   void startPluginNow();

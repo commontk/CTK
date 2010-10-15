@@ -60,6 +60,7 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
 
   framework->getPluginContext()->connectFrameworkListener(this, SLOT(frameworkEvent(ctkPluginFrameworkEvent)));
   framework->getPluginContext()->connectPluginListener(this, SLOT(pluginEvent(ctkPluginEvent)));
+  framework->getPluginContext()->connectServiceListener(this, "serviceEvent");
 
   QStringList pluginDirs;
 #ifdef CMAKE_INTDIR
@@ -240,6 +241,11 @@ void ctkPluginBrowser::pluginEvent(const ctkPluginEvent& event)
   {
     updatePluginToolbar(plugin);
   }
+}
+
+void ctkPluginBrowser::serviceEvent(const ctkServiceEvent &event)
+{
+  qDebug() << "ServiceEvent: [" << event.getType() << "]" << event.getServiceReference().getUsingPlugins();
 }
 
 void ctkPluginBrowser::startPlugin()
