@@ -67,12 +67,15 @@ SET(KIT_SRCS
   ctkQtServiceRegistration.cpp
   ctkQtServiceRegistrationPrivate.cpp
   ctkRequirePlugin.cpp
+  ctkServiceEvent.cpp
   ctkServiceException.cpp
+  ctkServiceFactory.h
   ctkServiceReference.cpp
   ctkServiceReferencePrivate.cpp
   ctkServiceRegistration.cpp
   ctkServiceRegistrationPrivate.cpp
   ctkServices.cpp
+  ctkServiceSlotEntry.cpp
   ctkPluginStorage.cpp
   ctkVersion.cpp
   ctkVersionRange.cpp
