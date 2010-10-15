@@ -59,6 +59,8 @@ private slots:
 
 private:
 
+  void closeEvent(QCloseEvent* closeEvent);
+
   void updatePluginToolbar(ctkPlugin* plugin);
   void startPlugin(ctkPlugin::StartOptions options);
 

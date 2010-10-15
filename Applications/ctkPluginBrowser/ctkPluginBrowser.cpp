@@ -38,6 +38,11 @@
 #include <QStringList>
 #include <QDirIterator>
 #include <QUrl>
+#include <QSettings>
+#include <QCloseEvent>
+
+#define SETTINGS_WND_GEOM "mainwindow.geom"
+#define SETTINGS_WND_STATE "mainwindow.state"
 
 ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   : framework(framework)
@@ -89,6 +94,8 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
 
   ui.setupUi(this);
 
+  tabifyDockWidget(ui.qtResourcesDockWidget, ui.pluginResourcesDockWidget);
+
   editors = new ctkPluginBrowserEditors(ui.centralwidget);
 
   QAbstractItemModel* pluginTableModel = new ctkPluginTableModel(framework->getPluginContext(), this);
@@ -117,6 +124,16 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   ui.pluginToolBar->addAction(startPluginNowAction);
   ui.pluginToolBar->addAction(startPluginAction);
   ui.pluginToolBar->addAction(stopPluginAction);
+
+  QSettings settings;
+  if(settings.contains(SETTINGS_WND_GEOM))
+  {
+    this->restoreGeometry(settings.value(SETTINGS_WND_GEOM).toByteArray());
+  }
+  if (settings.contains(SETTINGS_WND_STATE))
+  {
+    this->restoreState(settings.value(SETTINGS_WND_STATE).toByteArray());
+  }
 }
 
 void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
@@ -251,4 +268,12 @@ void ctkPluginBrowser::stopPlugin()
 
   ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
   plugin->stop();
+}
+
+void ctkPluginBrowser::closeEvent(QCloseEvent *closeEvent)
+{
+  QSettings settings;
+  settings.setValue(SETTINGS_WND_GEOM, this->saveGeometry());
+  settings.setValue(SETTINGS_WND_STATE, this->saveState());
+  QMainWindow::closeEvent(closeEvent);
 }
