@@ -28,7 +28,10 @@
 
 #include "ctkPluginBrowserEditors.h"
 
+#include <ctkPluginEvent.h>
 #include <ctkPluginFrameworkEvent.h>
+#include <ctkPlugin.h>
+#include <ctkServiceEvent.h>
 
 
 class ctkPluginFramework;
@@ -49,13 +52,30 @@ private slots:
   void dbResourceDoubleClicked(const QModelIndex& index);
 
   void frameworkEvent(const ctkPluginFrameworkEvent& event);
+  void pluginEvent(const ctkPluginEvent& event);
+  void serviceEvent(const ctkServiceEvent& event);
+
+  void startPlugin();
+  void startPluginNow();
+  void stopPlugin();
 
 private:
+
+  void closeEvent(QCloseEvent* closeEvent);
+
+  void updatePluginToolbar(ctkPlugin* plugin);
+  void startPlugin(ctkPlugin::StartOptions options);
+
+  QMap<ctkPluginEvent::Type, QString> pluginEventTypeToString;
 
   ctkPluginFramework* framework;
 
   Ui::ctkPluginBrowserWindow ui;
   ctkPluginBrowserEditors* editors;
+
+  QAction* startPluginNowAction;
+  QAction* startPluginAction;
+  QAction* stopPluginAction;
 };
 
 #endif // CTKPLUGINBROWSER_H

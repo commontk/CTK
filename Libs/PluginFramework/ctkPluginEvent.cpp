@@ -21,27 +21,56 @@
 
 #include "ctkPluginEvent.h"
 
+class ctkPluginEventData : public QSharedData
+{
+public:
 
-
-  ctkPluginEvent::ctkPluginEvent(Type type, ctkPlugin* plugin)
-    : d(new ctkPluginEventData(type, plugin))
+  ctkPluginEventData(ctkPluginEvent::Type type, ctkPlugin* plugin)
+    : type(type), plugin(plugin)
   {
 
   }
 
-  ctkPluginEvent::ctkPluginEvent(const ctkPluginEvent& other)
-    : QObject(), d(other.d)
+  ctkPluginEventData(const ctkPluginEventData& other)
+    : QSharedData(other), type(other.type), plugin(other.plugin)
   {
 
   }
 
-  ctkPlugin* ctkPluginEvent::getPlugin() const
-  {
-    return d->plugin;
-  }
+  const ctkPluginEvent::Type type;
+  ctkPlugin *const plugin;
+};
 
-  ctkPluginEvent::Type ctkPluginEvent::getType() const
-  {
-    return d->type;
 
+ctkPluginEvent::ctkPluginEvent()
+  : d(0)
+{
+
+}
+
+ctkPluginEvent::~ctkPluginEvent()
+{
+
+}
+
+ctkPluginEvent::ctkPluginEvent(Type type, ctkPlugin* plugin)
+  : d(new ctkPluginEventData(type, plugin))
+{
+
+}
+
+ctkPluginEvent::ctkPluginEvent(const ctkPluginEvent& other)
+  : d(other.d)
+{
+
+}
+
+ctkPlugin* ctkPluginEvent::getPlugin() const
+{
+  return d->plugin;
+}
+
+ctkPluginEvent::Type ctkPluginEvent::getType() const
+{
+  return d->type;
 }

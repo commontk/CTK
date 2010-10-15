@@ -64,7 +64,7 @@
      *         unregistered.
      * @return <code>ctkServiceReference</code> object.
      */
-    ctkServiceReference* getReference();
+    ctkServiceReference getReference() const;
 
     /**
      * Updates the properties associated with a service.

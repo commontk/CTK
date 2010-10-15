@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/pluginbrowser">
+        <file>images/linkicon.png</file>
+        <file>images/run.png</file>
+        <file>images/stop.png</file>
+        <file>images/run-now.png</file>
+    </qresource>
+</RCC>

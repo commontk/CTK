@@ -117,19 +117,19 @@ ctkPluginGenerator::ctkPluginGenerator(ctkPluginFramework* framework, QWidget *p
           this, SLOT(extensionItemClicked(QListWidgetItem*)));
   connect(ui->previewTreeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(previewIndexChanged(QModelIndex)));
 
-  QList<ctkServiceReference*> serviceRefs = framework->getPluginContext()->
+  QList<ctkServiceReference> serviceRefs = framework->getPluginContext()->
                                             getServiceReferences("ctkPluginGeneratorAbstractUiExtension");
-  QListIterator<ctkServiceReference*> it(serviceRefs);
+  QListIterator<ctkServiceReference> it(serviceRefs);
   while (it.hasNext())
   {
-    ctkServiceReference* serviceRef = it.next();
+    ctkServiceReference serviceRef = it.next();
     ctkPluginGeneratorAbstractUiExtension* extension =
         qobject_cast<ctkPluginGeneratorAbstractUiExtension*>(framework->getPluginContext()->getService(serviceRef));
     qDebug() << "Service reference found";
     if (extension)
     {
       qDebug() << "inserted";
-      int ranking = serviceRef->getProperty(ctkPluginConstants::SERVICE_RANKING).toInt();
+      int ranking = serviceRef.getProperty(ctkPluginConstants::SERVICE_RANKING).toInt();
       if (ranking > 0)
       {
         uiExtensionMap.insert(ranking, extension);
@@ -249,13 +249,8 @@ void ctkPluginGenerator::generateClicked()
 
 QString ctkPluginGenerator::createPlugin(const QString& path)
 {
-  ctkServiceReference* codeModelRef = framework->getPluginContext()->
+  ctkServiceReference codeModelRef = framework->getPluginContext()->
                                       getServiceReference("ctkPluginGeneratorCodeModel");
-  if (!codeModelRef)
-  {
-    QString msg(tr("Retrieving service \"%1\" failed.").arg("ctkPluginGeneratorCodeModel"));
-    throw std::runtime_error(msg.toStdString());
-  }
 
   ctkPluginGeneratorCodeModel* codeModel =
       qobject_cast<ctkPluginGeneratorCodeModel*>(framework->getPluginContext()->getService(codeModelRef));

@@ -42,6 +42,7 @@ SET(KIT_export_directive "CTK_PLUGINFW_EXPORT")
 SET(KIT_SRCS
   ctkLDAPSearchFilter.cpp
   ctkPlugin.cpp
+  #ctkPluginAbstractTracked.cpp
   ctkPluginArchive.cpp
   ctkPluginConstants.cpp
   ctkPluginContext.cpp
@@ -63,12 +64,19 @@ SET(KIT_SRCS
   ctkQtServiceRegistration.cpp
   ctkQtServiceRegistrationPrivate.cpp
   ctkRequirePlugin.cpp
+  ctkServiceEvent.cpp
   ctkServiceException.cpp
+  ctkServiceFactory.h
   ctkServiceReference.cpp
   ctkServiceReferencePrivate.cpp
   ctkServiceRegistration.cpp
   ctkServiceRegistrationPrivate.cpp
+  ctkServiceTracker.cpp
+  ctkServiceTrackerCustomizer.h
+  ctkServiceTrackerPrivate.cpp
   ctkServices.cpp
+  ctkServiceSlotEntry.cpp
+  ctkTrackedService.cpp
   ctkPluginStorage.cpp
   ctkVersion.cpp
   ctkVersionRange.cpp
@@ -82,10 +90,9 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkPluginEvent.h
-  ctkPluginFrameworkEvent.h
   ctkPluginFrameworkListeners_p.h
   ctkServiceFactory.h
+  ctkTrackedService_p.h
 )
 
 # UI files

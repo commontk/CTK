@@ -25,6 +25,7 @@
 #include "ctkPluginResourcesTreeModel.h"
 #include "ctkQtResourcesTreeModel.h"
 #include "ctkServiceReference.h"
+#include "ctkServiceException.h"
 #include "ctkPluginConstants.h"
 
 #include <ui_ctkPluginBrowserMainWindow.h>
@@ -37,11 +38,29 @@
 #include <QStringList>
 #include <QDirIterator>
 #include <QUrl>
+#include <QSettings>
+#include <QCloseEvent>
+
+#define SETTINGS_WND_GEOM "mainwindow.geom"
+#define SETTINGS_WND_STATE "mainwindow.state"
 
 ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   : framework(framework)
 {
+  pluginEventTypeToString[ctkPluginEvent::INSTALLED] = "Installed";
+  pluginEventTypeToString[ctkPluginEvent::LAZY_ACTIVATION] = "Lazy Activation";
+  pluginEventTypeToString[ctkPluginEvent::RESOLVED] = "Resolved";
+  pluginEventTypeToString[ctkPluginEvent::STARTED] = "Started";
+  pluginEventTypeToString[ctkPluginEvent::STARTING] = "Starting";
+  pluginEventTypeToString[ctkPluginEvent::STOPPED] = "Stopped";
+  pluginEventTypeToString[ctkPluginEvent::STOPPING] = "Stopping";
+  pluginEventTypeToString[ctkPluginEvent::UNINSTALLED] = "Uninstalled";
+  pluginEventTypeToString[ctkPluginEvent::UNRESOLVED] = "Unresolved";
+  pluginEventTypeToString[ctkPluginEvent::UPDATED] = "Updated";
+
   framework->getPluginContext()->connectFrameworkListener(this, SLOT(frameworkEvent(ctkPluginFrameworkEvent)));
+  framework->getPluginContext()->connectPluginListener(this, SLOT(pluginEvent(ctkPluginEvent)));
+  framework->getPluginContext()->connectServiceListener(this, "serviceEvent");
 
   QStringList pluginDirs;
 #ifdef CMAKE_INTDIR
@@ -64,7 +83,7 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
     try
     {
       ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(dirIter.next()).toString());
-      plugin->start(ctkPlugin::START_ACTIVATION_POLICY);
+      //plugin->start(ctkPlugin::START_ACTIVATION_POLICY);
     }
     catch (const ctkPluginException& e)
     {
@@ -75,6 +94,8 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   framework->start();
 
   ui.setupUi(this);
+
+  tabifyDockWidget(ui.qtResourcesDockWidget, ui.pluginResourcesDockWidget);
 
   editors = new ctkPluginBrowserEditors(ui.centralwidget);
 
@@ -88,6 +109,32 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   connect(ui.pluginsTableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(pluginDoubleClicked(QModelIndex)));
   connect(ui.pluginResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(dbResourceDoubleClicked(QModelIndex)));
   connect(ui.qtResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(qtResourceDoubleClicked(QModelIndex)));
+
+  startPluginNowAction = new QAction(QIcon(":/pluginbrowser/images/run-now.png"), "Start Plugin (ignore activation policy)", this);
+  startPluginAction = new QAction(QIcon(":/pluginbrowser/images/run.png"), "Start Plugin", this);
+  stopPluginAction = new QAction(QIcon(":/pluginbrowser/images/stop.png"), "Stop Plugin", this);
+
+  connect(startPluginNowAction, SIGNAL(triggered()), this, SLOT(startPluginNow()));
+  connect(startPluginAction, SIGNAL(triggered()), this, SLOT(startPlugin()));
+  connect(stopPluginAction, SIGNAL(triggered()), this, SLOT(stopPlugin()));
+
+  startPluginNowAction->setEnabled(false);
+  startPluginAction->setEnabled(false);
+  stopPluginAction->setEnabled(false);
+
+  ui.pluginToolBar->addAction(startPluginNowAction);
+  ui.pluginToolBar->addAction(startPluginAction);
+  ui.pluginToolBar->addAction(stopPluginAction);
+
+  QSettings settings;
+  if(settings.contains(SETTINGS_WND_GEOM))
+  {
+    this->restoreGeometry(settings.value(SETTINGS_WND_GEOM).toByteArray());
+  }
+  if (settings.contains(SETTINGS_WND_STATE))
+  {
+    this->restoreState(settings.value(SETTINGS_WND_STATE).toByteArray());
+  }
 }
 
 void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
@@ -95,12 +142,34 @@ void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
   QVariant v = index.data(Qt::UserRole);
 
   ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
-
-  if (!plugin) return;
+  if (!plugin) return;  
+  updatePluginToolbar(plugin);
 
   QAbstractItemModel* oldModel = ui.pluginResourcesTreeView->model();
   ui.pluginResourcesTreeView->setModel(new ctkPluginResourcesTreeModel(plugin, this));
   if (oldModel) oldModel->deleteLater();;
+}
+
+void ctkPluginBrowser::updatePluginToolbar(ctkPlugin* plugin)
+{
+  startPluginNowAction->setEnabled(false);
+  startPluginAction->setEnabled(false);
+  stopPluginAction->setEnabled(false);
+
+  if (!plugin) return;
+
+  const ctkPlugin::States startStates = ctkPlugin::INSTALLED | ctkPlugin::RESOLVED | ctkPlugin::STOPPING;
+  const ctkPlugin::States stopStates = ctkPlugin::STARTING | ctkPlugin::ACTIVE;
+  if (startStates.testFlag(plugin->getState()))
+  {
+    startPluginNowAction->setEnabled(true);
+    startPluginAction->setEnabled(true);
+  }
+
+  if (stopStates.testFlag(plugin->getState()))
+  {
+    stopPluginAction->setEnabled(true);
+  }
 }
 
 void ctkPluginBrowser::pluginDoubleClicked(const QModelIndex& index)
@@ -112,20 +181,27 @@ void ctkPluginBrowser::pluginDoubleClicked(const QModelIndex& index)
   QString location = QString("/") + plugin->getSymbolicName() + "/META-INF/MANIFEST.MF";
   editors->openEditor(location, mfContent, location + " [cached]");
 
-  QList<ctkServiceReference*> serviceRefs = plugin->getPluginContext()->getServiceReferences("");
-  QListIterator<ctkServiceReference*> it(serviceRefs);
+  QList<ctkServiceReference> serviceRefs = plugin->getPluginContext()->getServiceReferences("");
+  QListIterator<ctkServiceReference> it(serviceRefs);
   while (it.hasNext())
   {
-    ctkServiceReference* ref = it.next();
-    qDebug() << "Service from" << ref->getPlugin()->getSymbolicName() << ":" << ref->getPropertyKeys();
-    qDebug() << "Object Classes:" << ref->getProperty(ctkPluginConstants::OBJECTCLASS).toStringList();
+    ctkServiceReference ref(it.next());
+    qDebug() << "Service from" << ref.getPlugin()->getSymbolicName() << ":" << ref.getPropertyKeys();
+    qDebug() << "Object Classes:" << ref.getProperty(ctkPluginConstants::OBJECTCLASS).toStringList();
   }
 
-  ctkServiceReference* cliRef = plugin->getPluginContext()->getServiceReference("ctkICLIManager");
-  QObject* cliService = plugin->getPluginContext()->getService(cliRef);
-  if (cliService)
-    qDebug() << "Got service object: " << cliService->metaObject()->className();
-  else qDebug() << "Got null service";
+  try
+  {
+    ctkServiceReference cliRef(plugin->getPluginContext()->getServiceReference("ctkICLIManager"));
+    QObject* cliService = plugin->getPluginContext()->getService(cliRef);
+    if (cliService)
+      qDebug() << "Got service object: " << cliService->metaObject()->className();
+    else qDebug() << "Got null service";
+  }
+  catch (const ctkServiceException& e)
+  {
+    qDebug() << e;
+  }
 }
 
 void ctkPluginBrowser::qtResourceDoubleClicked(const QModelIndex& index)
@@ -153,4 +229,57 @@ void ctkPluginBrowser::dbResourceDoubleClicked(const QModelIndex& index)
 void ctkPluginBrowser::frameworkEvent(const ctkPluginFrameworkEvent& event)
 {
   qDebug() << "FrameworkEvent: [" << event.getPlugin()->getSymbolicName() << "]" << event.getErrorString();
+}
+
+void ctkPluginBrowser::pluginEvent(const ctkPluginEvent& event)
+{
+  qDebug() << "PluginEvent: [" << event.getPlugin()->getSymbolicName() << "]" << pluginEventTypeToString[event.getType()];
+
+  ctkPlugin* plugin = event.getPlugin();
+  QModelIndexList selection = ui.pluginsTableView->selectionModel()->selectedIndexes();
+  if (!selection.isEmpty() && selection.first().data(Qt::UserRole).toLongLong() == plugin->getPluginId())
+  {
+    updatePluginToolbar(plugin);
+  }
+}
+
+void ctkPluginBrowser::serviceEvent(const ctkServiceEvent &event)
+{
+  qDebug() << "ServiceEvent: [" << event.getType() << "]" << event.getServiceReference().getUsingPlugins();
+}
+
+void ctkPluginBrowser::startPlugin()
+{
+  startPlugin(ctkPlugin::START_TRANSIENT | ctkPlugin::START_ACTIVATION_POLICY);
+}
+
+void ctkPluginBrowser::startPluginNow()
+{
+  startPlugin(ctkPlugin::START_TRANSIENT);
+}
+
+void ctkPluginBrowser::startPlugin(ctkPlugin::StartOptions options)
+{
+  QModelIndex selection = ui.pluginsTableView->selectionModel()->currentIndex();
+  QVariant v = selection.data(Qt::UserRole);
+
+  ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
+  plugin->start(options);
+}
+
+void ctkPluginBrowser::stopPlugin()
+{
+  QModelIndex selection = ui.pluginsTableView->selectionModel()->currentIndex();
+  QVariant v = selection.data(Qt::UserRole);
+
+  ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
+  plugin->stop();
+}
+
+void ctkPluginBrowser::closeEvent(QCloseEvent *closeEvent)
+{
+  QSettings settings;
+  settings.setValue(SETTINGS_WND_GEOM, this->saveGeometry());
+  settings.setValue(SETTINGS_WND_STATE, this->saveState());
+  QMainWindow::closeEvent(closeEvent);
 }

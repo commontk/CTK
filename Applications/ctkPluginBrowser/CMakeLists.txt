@@ -17,6 +17,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkPluginBrowser.h
   ctkPluginBrowserEditors.h
+  ctkPluginTableModel.h
   )
 
 # UI files
@@ -26,6 +27,7 @@ SET(KIT_UI_FORMS
 
 # Resources
 SET(KIT_resources
+  ctkPluginBrowserResources.qrc
 )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake

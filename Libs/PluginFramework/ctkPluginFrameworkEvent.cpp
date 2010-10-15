@@ -21,43 +21,82 @@
 
 #include "ctkPluginFrameworkEvent.h"
 
+#include <QString>
 
-  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent()
-    : d(0)
+class ctkPluginFrameworkEventData : public QSharedData
+{
+public:
+
+  ctkPluginFrameworkEventData(ctkPluginFrameworkEvent::Type type, ctkPlugin* plugin, const QString& exc)
+    : plugin(plugin), errorString(exc), type(type)
   {
 
   }
 
-  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin, const std::exception& fwException)
-    : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
+  ctkPluginFrameworkEventData(const ctkPluginFrameworkEventData& other)
+    : QSharedData(other), plugin(other.plugin), errorString(other.errorString),
+      type(other.type)
   {
 
   }
 
-  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin)
-    : d(new ctkPluginFrameworkEventData(type, plugin, QString()))
-  {
+  /**
+   * Plugin related to the event.
+   */
+  ctkPlugin* const	plugin;
 
-  }
+  /**
+   * Exception related to the event.
+   */
+  const QString errorString;
 
-  ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other)
-    : QObject(), d(other.d)
-  {
+  /**
+   * Type of event.
+   */
+  const ctkPluginFrameworkEvent::Type type;
+};
 
-  }
 
-  QString ctkPluginFrameworkEvent::getErrorString() const
-  {
-    return d->errorString;
-  }
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent()
+  : d(0)
+{
 
-  ctkPlugin* ctkPluginFrameworkEvent::getPlugin() const
-  {
-    return d->plugin;
-  }
+}
 
-  ctkPluginFrameworkEvent::Type ctkPluginFrameworkEvent::getType() const
-  {
-    return d->type;
+ctkPluginFrameworkEvent::~ctkPluginFrameworkEvent()
+{
 
+}
+
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin, const std::exception& fwException)
+  : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
+{
+
+}
+
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin)
+  : d(new ctkPluginFrameworkEventData(type, plugin, QString()))
+{
+
+}
+
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other)
+  : d(other.d)
+{
+
+}
+
+QString ctkPluginFrameworkEvent::getErrorString() const
+{
+  return d->errorString;
+}
+
+ctkPlugin* ctkPluginFrameworkEvent::getPlugin() const
+{
+  return d->plugin;
+}
+
+ctkPluginFrameworkEvent::Type ctkPluginFrameworkEvent::getType() const
+{
+  return d->type;
 }

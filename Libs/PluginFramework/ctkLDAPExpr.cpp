@@ -19,48 +19,156 @@ limitations under the License.
 
 =============================================================================*/
 
-#include "ctkLDAPExpr.h"
+#include "ctkLDAPExpr_p.h"
 #include <QSet>
 #include <QVariant>
+#include <QStringList>
+
+const int ctkLDAPExpr::AND     =  0;
+const int ctkLDAPExpr::OR      =  1;
+const int ctkLDAPExpr::NOT     =  2;
+const int ctkLDAPExpr::EQ      =  4;
+const int ctkLDAPExpr::LE      =  8;
+const int ctkLDAPExpr::GE      = 16;
+const int ctkLDAPExpr::APPROX  = 32;
+const int ctkLDAPExpr::COMPLEX = ctkLDAPExpr::AND | ctkLDAPExpr::OR | ctkLDAPExpr::NOT;
+const int ctkLDAPExpr::SIMPLE  = ctkLDAPExpr::EQ | ctkLDAPExpr::LE | ctkLDAPExpr::GE | ctkLDAPExpr::APPROX;
 
 const QChar ctkLDAPExpr::WILDCARD = 65535;
 const QString ctkLDAPExpr::WILDCARD_QString = QString( WILDCARD );
-const QString ctkLDAPExpr::NULLQ      = "Null query";
+const QString ctkLDAPExpr::NULLQ     = "Null query";
 const QString ctkLDAPExpr::GARBAGE   = "Trailing garbage";
 const QString ctkLDAPExpr::EOS       = "Unexpected end of query";
 const QString ctkLDAPExpr::MALFORMED = "Malformed query";
 const QString ctkLDAPExpr::OPERATOR  = "Undefined operator";
 
+//! Contains the current parser position and parsing utility methods.
+class ctkLDAPExpr::ParseState
+{
+
+private:
+
+  int m_pos;
+  QString m_str;
+
+public:
+
+  ParseState(const QString &str) throw (std::invalid_argument);
+
+  //! Move m_pos to remove the prefix \a pre
+  bool prefix(const QString &pre);
+
+  /** Peek a char at m_pos
+  \note If index out of bounds, throw exception
+  */
+  QChar peek();
+
+  //! Increment m_pos by n
+  void skip(int n);
+
+  //! return string from m_pos until the end
+  QString rest() const;
+
+  //! Move m_pos until there's no spaces
+  void skipWhite();
+
+  //! Get string until special chars. Move m_pos
+  QString getAttributeName();
+
+  //! Get string and convert * to WILDCARD
+  QString getAttributeValue();
+
+  //! Throw InvalidSyntaxException exception
+  void error(const QString &m) const throw (std::invalid_argument);
+
+};
+
+/**
+\brief LDAP Expression Data
+\date 19 May 2010
+\author Xavi Planes
+\ingroup ctkPluginFramework
+*/
+class ctkLDAPExprData : public QSharedData
+{
+public:
+
+  ctkLDAPExprData( int op, QList<ctkLDAPExpr> args )
+    : m_operator(op), m_args(args)
+  {
+  }
+
+  ctkLDAPExprData( int op, QString attrName, QString attrValue )
+    : m_operator(op), m_attrName(attrName), m_attrValue(attrValue)
+  {
+  }
+
+  ctkLDAPExprData( const ctkLDAPExprData& other )
+    : QSharedData(other), m_operator(other.m_operator),
+    m_args(other.m_args), m_attrName(other.m_attrName),
+    m_attrValue(other.m_attrValue)
+  {
+  }
+
+  //!
+  int m_operator;
+  //!
+  QList<ctkLDAPExpr> m_args;
+  //!
+  QString m_attrName;
+  //!
+  QString m_attrValue;
+};
+
+ctkLDAPExpr::ctkLDAPExpr()
+{
+
+}
+
 ctkLDAPExpr::ctkLDAPExpr( const QString &filter ) throw (std::invalid_argument)
 {
   ParseState ps(filter);
-  try {
-
+  try
+  {
     ctkLDAPExpr expr = parseExpr(ps);
  
-    if (ps.rest().trimmed ().length() != 0)
+    if (!ps.rest().trimmed().isEmpty())
+    {
       ps.error(GARBAGE + " '" + ps.rest() + "'");
+    }
 
-    d = new ctkLDAPExprData( *expr.d.data() );
+    d = expr.d;
 
-  } catch ( std::out_of_range e) {
+  }
+  catch (const std::out_of_range&)
+  {
     ps.error(EOS);
   }
 }
 
 ctkLDAPExpr::ctkLDAPExpr( int op, const QList<ctkLDAPExpr> &args )
+  : d(new ctkLDAPExprData(op, args))
 {
-  d = new ctkLDAPExprData( op, args );
 }
 
 ctkLDAPExpr::ctkLDAPExpr( int op, const QString &attrName, const QString &attrValue )
+  : d(new ctkLDAPExprData(op, attrName, attrValue))
 {
-  d = new ctkLDAPExprData( op, attrName, attrValue );
 }
 
 ctkLDAPExpr::ctkLDAPExpr( const ctkLDAPExpr& other )
+  : d(other.d)
 {
-  d = new ctkLDAPExprData( *other.d.data() );
+}
+
+ctkLDAPExpr& ctkLDAPExpr::operator=(const ctkLDAPExpr& other)
+{
+  d = other.d;
+  return *this;
+}
+
+ctkLDAPExpr::~ctkLDAPExpr()
+{
 }
 
 QSet<QString> ctkLDAPExpr::getMatchedObjectClasses() const
@@ -103,15 +211,20 @@ QSet<QString> ctkLDAPExpr::getMatchedObjectClasses() const
 }
 
 bool ctkLDAPExpr::isSimple( 
-  const QList<QString> &keywords, 
-  QHash<int, QList<QString> > &cache, 
+  const QStringList& keywords,
+  LocalCache& cache,
   bool matchCase ) const
 {
+  if (cache.isEmpty())
+  {
+    cache.resize(keywords.size());
+  }
+
   if (d->m_operator == EQ) {
     int index;
     if ((index = keywords.indexOf(matchCase ? d->m_attrName : d->m_attrName.toLower())) >= 0 &&
       d->m_attrValue.indexOf(WILDCARD) < 0) {
-        cache[index] += d->m_attrValue;
+        cache[index] = QStringList(d->m_attrValue);
         return true;
     }
   } else if (d->m_operator == OR) {
@@ -122,6 +235,11 @@ bool ctkLDAPExpr::isSimple(
     return true;
   }
   return false;
+}
+
+bool ctkLDAPExpr::isNull() const
+{
+  return !d;
 }
 
 bool ctkLDAPExpr::query( const QString &filter, const ctkDictionary &pd ) throw (std::invalid_argument)
@@ -164,9 +282,9 @@ bool ctkLDAPExpr::compare( const QVariant &obj, int op, const QString &s ) const
     return true;
   try {
     if ( obj.canConvert<QString>( ) ) {
-      return compareQString(obj.toString(), op, s);
+      return compareString(obj.toString(), op, s);
     } else if (obj.canConvert<char>( ) ) {
-      return compareQString(obj.toString(), op, s);
+      return compareString(obj.toString(), op, s);
     } else if (obj.canConvert<bool>( ) ) {
       if (op==LE || op==GE)
         return false;
@@ -228,7 +346,7 @@ bool ctkLDAPExpr::compare( const QVariant &obj, int op, const QString &s ) const
   return false;
 }
 
-bool ctkLDAPExpr::compareQString( const QString &s1, int op, const QString &s2 )
+bool ctkLDAPExpr::compareString( const QString &s1, int op, const QString &s2 )
 {
   switch(op) {
   case LE:
@@ -238,13 +356,13 @@ bool ctkLDAPExpr::compareQString( const QString &s1, int op, const QString &s2 )
   case EQ:
     return patSubstr(s1,s2);
   case APPROX:
-    return fixupQString(s2) == fixupQString(s1);
+    return fixupString(s2) == fixupString(s1);
   default:
     return false;
   }
 }
 
-const QString ctkLDAPExpr::fixupQString( const QString &s )
+QString ctkLDAPExpr::fixupString( const QString &s )
 {
   QString sb;
   int len = s.length();
@@ -395,9 +513,12 @@ const QString ctkLDAPExpr::toString() const
 
 ctkLDAPExpr::ParseState::ParseState( const QString &str ) throw (std::invalid_argument)
 {
-  m_str = str;
-  if (m_str.length() == 0)
+  if (str.isEmpty())
+  {
     error(NULLQ);
+  }
+
+  m_str = str;
   m_pos = 0;
 }
 
@@ -423,7 +544,7 @@ void ctkLDAPExpr::ParseState::skip( int n )
   m_pos += n;
 }
 
-const QString ctkLDAPExpr::ParseState::rest()
+QString ctkLDAPExpr::ParseState::rest() const
 {
   return m_str.mid(m_pos);
 }
@@ -435,7 +556,7 @@ void ctkLDAPExpr::ParseState::skipWhite()
   }
 }
 
-const QString ctkLDAPExpr::ParseState::getAttributeName()
+QString ctkLDAPExpr::ParseState::getAttributeName()
 {
   int start = m_pos;
   int n = -1;
@@ -455,7 +576,7 @@ const QString ctkLDAPExpr::ParseState::getAttributeName()
   return m_str.mid(start, n);
 }
 
-const QString ctkLDAPExpr::ParseState::getAttributeValue()
+QString ctkLDAPExpr::ParseState::getAttributeValue()
 {
   QString sb;
   bool exit = false;
@@ -484,7 +605,7 @@ const QString ctkLDAPExpr::ParseState::getAttributeValue()
   return sb;
 }
 
-void ctkLDAPExpr::ParseState::error( const QString &m ) throw (std::invalid_argument)
+void ctkLDAPExpr::ParseState::error( const QString &m ) const throw (std::invalid_argument)
 {
   QString error = m + ": " + (m_str.isNull() ? "" : m_str.mid(m_pos) );
   throw std::invalid_argument( error.toStdString() );

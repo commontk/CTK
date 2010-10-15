@@ -19,42 +19,27 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINTABLEMODEL_H
-#define CTKPLUGINTABLEMODEL_H
+#ifndef CTKPLUGINCONTEXTPRIVATE_H
+#define CTKPLUGINCONTEXTPRIVATE_H
 
-#include <QAbstractTableModel>
+class ctkPluginPrivate;
 
-#include <QList>
-
-#include <ctkPlugin.h>
-
-class ctkPluginContext;
-
-class ctkPluginTableModel : public QAbstractTableModel
+class ctkPluginContextPrivate
 {
-
-  Q_OBJECT
 
 public:
 
-  ctkPluginTableModel(ctkPluginContext* pc, QObject* parent = 0);
+  ctkPluginPrivate* plugin;
 
-  QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+  ctkPluginContextPrivate(ctkPluginPrivate* plugin);
 
-  QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+  /**
+   * Check that the plugin is still valid.
+   */
+  void isPluginContextValid() const;
 
-  int columnCount(const QModelIndex& parent = QModelIndex()) const;
-  int rowCount(const QModelIndex& parent = QModelIndex()) const;
+  void invalidate();
 
-protected slots:
-
-  void pluginChanged(const ctkPluginEvent& event);
-
-private:
-
-  QString getStringForState(const ctkPlugin::State state) const;
-
-  QList<ctkPlugin*> plugins;
 };
 
-#endif // CTKPLUGINTABLEMODEL_H
+#endif // CTKPLUGINCONTEXTPRIVATE_H

@@ -22,29 +22,27 @@
 #include "ctkServiceRegistrationPrivate.h"
 
 
-  ctkServiceRegistrationPrivate::ctkServiceRegistrationPrivate(ctkServiceRegistration* sr,
-                                                         ctkPluginPrivate* plugin, QObject* service,
-                                                         const ServiceProperties& props)
-                               : q_ptr(sr), service(service), plugin(plugin), reference(new ctkServiceReference(this)),
-                               properties(props), available(true), unregistering(false)
-  {
+ctkServiceRegistrationPrivate::ctkServiceRegistrationPrivate(ctkServiceRegistration* sr,
+                                                       ctkPluginPrivate* plugin, QObject* service,
+                                                       const ServiceProperties& props)
+                             : q_ptr(sr), service(service), plugin(plugin), reference(this),
+                             properties(props), available(true), unregistering(false)
+{
 
-  }
+}
 
-  ctkServiceRegistrationPrivate::~ctkServiceRegistrationPrivate()
-  {
-    delete reference;
-  }
+ctkServiceRegistrationPrivate::~ctkServiceRegistrationPrivate()
+{
 
-  bool ctkServiceRegistrationPrivate::isUsedByPlugin(ctkPlugin* p)
-  {
-    QHash<ctkPlugin*, int> deps = dependents;
-    return deps.contains(p);
-  }
+}
 
-  QObject* ctkServiceRegistrationPrivate::getService()
-  {
-    return service;
-  }
+bool ctkServiceRegistrationPrivate::isUsedByPlugin(ctkPlugin* p)
+{
+  QHash<ctkPlugin*, int> deps = dependents;
+  return deps.contains(p);
+}
 
-
+QObject* ctkServiceRegistrationPrivate::getService()
+{
+  return service;
+}

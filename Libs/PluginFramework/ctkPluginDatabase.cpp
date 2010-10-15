@@ -262,6 +262,11 @@ ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QS
 
   // Assemble the data for the sql record
   QFileInfo fileInfo(localPath);
+  if (!fileInfo.exists())
+  {
+    throw std::invalid_argument((localPath + " does not exist").toStdString());
+  }
+
   const QString lastModified = fileInfo.lastModified().toString(Qt::ISODate);
 
   QString resourcePrefix = fileInfo.baseName();

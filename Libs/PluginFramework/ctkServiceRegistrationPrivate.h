@@ -57,7 +57,7 @@
     /**
      * Reference object to this service registration.
      */
-    ctkServiceReference* reference;
+    ctkServiceReference reference;
 
     /**
      * Service properties.

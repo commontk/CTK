@@ -88,6 +88,12 @@ struct CTK_PLUGINFW_EXPORT EventConstants {
   static const QString PLUGIN_ID; // = "plugin.id";
 
   /**
+   * The ctkPlugin object of the plugin relevant to the event. The type of the
+   * value for this event property is {@link ctkPlugin}.
+   */
+  static const QString PLUGIN; // = "plugin";
+
+  /**
    * The version of the plugin relevant to the event. The type of the value
    * for this event property is {@link ctkVersion}.
    */

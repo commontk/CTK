@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <service>
-  <name>ctkEventBus</name>
-    <filepath>libCTKCore</filepath>
+  <name>org.commontk.eventbus_0.0.0</name>
+    <filepath>liborg_commontk_eventbus</filepath>
     <interface>
       <name>org.commontk.core.EventBus</name>
       <version>1.0</version>
       <capabilities></capabilities>
+      <customproperty key="objectclass">ctkEventBus</customproperty>
       <description>Interface for the CTK event bus</description>
     </interface>
 </service>

@@ -19,14 +19,17 @@ limitations under the License.
 
 =============================================================================*/
 
+#ifndef CTKLDAPEXPR_P_H
+#define CTKLDAPEXPR_P_H
+
 #include "ctkPluginConstants.h"
 #include "ctkPluginFramework_global.h"
-
-#include <exception>
 
 #include <QString>
 #include <QHash>
 #include <QSharedDataPointer>
+#include <QVector>
+#include <QStringList>
 
 #include <stdexcept>
 
@@ -38,26 +41,39 @@ class ctkLDAPExprData;
 \author Xavi Planes
 \ingroup ctkPluginFramework
 */
-class CTK_PLUGINFW_EXPORT ctkLDAPExpr {
+class ctkLDAPExpr {
 
 public:
-  const static int AND     =  0;
-  const static int OR      =  1;
-  const static int NOT     =  2;
-  const static int EQ      =  4;
-  const static int LE      =  8;
-  const static int GE      = 16;
-  const static int APPROX  = 32;
-  const static int COMPLEX = AND | OR | NOT;
-  const static int SIMPLE  = EQ | LE | GE | APPROX;
+
+  const static int AND;     // =  0;
+  const static int OR;      // =  1;
+  const static int NOT;     // =  2;
+  const static int EQ;      // =  4;
+  const static int LE;      // =  8;
+  const static int GE;      // = 16;
+  const static int APPROX;  // = 32;
+  const static int COMPLEX; // = AND | OR | NOT;
+  const static int SIMPLE;  // = EQ | LE | GE | APPROX;
+
   typedef char Byte;
+  typedef QVector<QStringList> LocalCache;
 
-public:
+  /**
+   * Creates an invalid ctkLDAPExpr object. Use with care.
+   *
+   * @see isNull()
+   */
+  ctkLDAPExpr();
+
   //!
   ctkLDAPExpr(const QString &filter) throw ( std::invalid_argument );
 
   //!
   ctkLDAPExpr(const ctkLDAPExpr& other);
+
+  ctkLDAPExpr& operator=(const ctkLDAPExpr& other);
+
+  ~ctkLDAPExpr();
 
   /**
    * Get object class set matched by this LDAP expression. This will not work
@@ -66,7 +82,6 @@ public:
    * @return A set of classes matched, otherwise an empty set.
    */
   QSet<QString> getMatchedObjectClasses() const;
-
 
   /**
    * Checks if this LDAP expression is "simple". The definition of
@@ -91,9 +106,18 @@ public:
    * <code>false</code> otherwise.
    */
   bool isSimple(
-    const QList<QString> &keywords, 
-    QHash<int, QList<QString> > &cache, 
+    const QStringList& keywords,
+    LocalCache& cache,
     bool matchCase) const;
+
+  /**
+   * Returns <code>true</code> if this instance is invalid, i.e. it was
+   * constructed using ctkLDAPExpr().
+   *
+   * @return <code>true</code> if the expression is invalid,
+   *         <code>false</code> otherwise.
+   */
+  bool isNull() const;
 
   //! 
   static bool query(const QString &filter, const ctkDictionary &pd)
@@ -107,56 +131,14 @@ public:
 
 
 private:
-  //!
-  bool compare(const QVariant &obj, int op, const QString &s) const;
 
-  //! 
-  static bool compareQString(const QString &s1, int op, const QString &s2);
-
-  //! 
-  const static QString fixupQString(const QString &s);
-
-  //! 
-  static bool patSubstr(const QString &s, const QString &pat);
+  class ParseState;
 
   //!
-  static bool patSubstr(const QString &s, int si, const QString &pat, int pi);
+  ctkLDAPExpr(int op, const QList<ctkLDAPExpr> &args);
 
-  //! Contains the current parser position and parsing utility methods.
-  class ParseState {
-    int m_pos;
-    QString m_str;
-
-  public:
-    ParseState(const QString &str) throw (std::invalid_argument);
-
-    //! Move m_pos to remove the prefix \a pre
-    bool prefix(const QString &pre);
-
-    /** Peek a char at m_pos
-    \note If index out of bounds, throw exception
-    */
-    QChar peek();
-
-    //! Increment m_pos by n
-    void skip(int n);
-
-    //! return string from m_pos until the end
-    const QString rest();
-
-    //! Move m_pos until there's no spaces
-    void skipWhite();
-
-    //! Get string until special chars. Move m_pos
-    const QString getAttributeName();
-
-    //! Get string and convert * to WILDCARD
-    const QString getAttributeValue();
-
-    //! Throw InvalidSyntaxException exception
-    void error(const QString &m) throw (std::invalid_argument);
-
-  };
+  //!
+  ctkLDAPExpr(int op, const QString &attrName, const QString &attrValue);
 
   //!
   static ctkLDAPExpr parseExpr(ParseState &ps)
@@ -166,15 +148,22 @@ private:
   static ctkLDAPExpr parseSimple(ParseState &ps)
     throw (std::invalid_argument);
 
-private:
   //!
-  ctkLDAPExpr(int op, const QList<ctkLDAPExpr> &args);
+  bool compare(const QVariant &obj, int op, const QString &s) const;
+
+  //! 
+  static bool compareString(const QString &s1, int op, const QString &s2);
+
+  //! 
+  static QString fixupString(const QString &s);
+
+  //! 
+  static bool patSubstr(const QString &s, const QString &pat);
 
   //!
-  ctkLDAPExpr(int op, const QString &attrName, const QString &attrValue);
+  static bool patSubstr(const QString &s, int si, const QString &pat, int pi);
 
 
-private:
   const static QChar WILDCARD; // = 65535;
   const static QString WILDCARD_QString;// = QString( WILDCARD );
 
@@ -184,56 +173,10 @@ private:
   const static QString MALFORMED;// = "Malformed query";
   const static QString OPERATOR;//  = "Undefined m_operator";
 
-private:
-
   //! Shared pointer
   QSharedDataPointer<ctkLDAPExprData> d;
 
 };
 
 
-/**
-\brief LDAP Expression Data
-\date 19 May 2010
-\author Xavi Planes
-\ingroup ctkPluginFramework
-*/
-class ctkLDAPExprData : public QSharedData
-{
-public:
-
-  ctkLDAPExprData( int op, QList<ctkLDAPExpr> args )
-  {
-    m_operator = op;
-    m_args = args;
-    m_attrName = QString::Null( );
-    m_attrValue = QString::Null( );
-  }
-
-  ctkLDAPExprData( int op, QString attrName, QString attrValue )
-  {
-    m_operator = op;
-    m_args.clear();
-    m_attrName = attrName;
-    m_attrValue = attrValue;
-  }
-
-  ctkLDAPExprData( const ctkLDAPExprData& other ) : QSharedData(other)
-  {
-    m_operator = other.m_operator;
-    m_args = other.m_args;
-    m_attrName = other.m_attrName;
-    m_attrValue = other.m_attrValue;
-  }
-
-  //!
-  int m_operator;
-  //!
-  QList<ctkLDAPExpr> m_args;
-  //!
-  QString m_attrName;
-  //!
-  QString m_attrValue;
-};
-
-
+#endif // CTKLDAPEXPR_P_H

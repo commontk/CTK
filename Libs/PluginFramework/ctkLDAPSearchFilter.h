@@ -24,33 +24,38 @@
 
 #include "CTKPluginFrameworkExport.h"
 
-#include "ctkPluginFramework_global.h"
+#include "ctkServiceReference.h"
 
-#include <QMap>
-#include <QString>
-#include <QVariant>
+#include <QSharedDataPointer>
+#include <QDebug>
 
-class ctkLDAPSearchFilterPrivate;
+class ctkLDAPSearchFilterData;
 
 class CTK_PLUGINFW_EXPORT ctkLDAPSearchFilter {
 
 public:
 
-  ctkLDAPSearchFilter(const QString& filter = "");
-  ctkLDAPSearchFilter(const ctkLDAPSearchFilter& filter);
+  ctkLDAPSearchFilter();
+  ctkLDAPSearchFilter(const QString& filter);
+  ctkLDAPSearchFilter(const ctkLDAPSearchFilter& other);
 
   ~ctkLDAPSearchFilter();
 
+  bool match(const ctkServiceReference& reference) const;
   bool match(const ctkDictionary& dictionary) const;
   bool matchCase(const ctkDictionary& dictionary) const;
+
+  QString toString() const;
 
   bool operator==(const ctkLDAPSearchFilter& other) const;
   ctkLDAPSearchFilter& operator=(const ctkLDAPSearchFilter& filter);
 
 protected:
 
-  ctkLDAPSearchFilterPrivate * d;
+  QSharedDataPointer<ctkLDAPSearchFilterData> d;
 
 };
+
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkLDAPSearchFilter& filter);
 
 #endif // CTKLDAPSEARCHFILTER_H
