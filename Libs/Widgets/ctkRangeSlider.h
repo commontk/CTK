@@ -35,9 +35,14 @@ class ctkRangeSliderPrivate;
 ///
 /// A ctkRangeSlider is a slider that lets you input 2 values instead of one
 /// (see QSlider). These values are typically a lower and upper bound.
-/// Values are comprised between the range of the slider. (see setRange(), 
-/// minimum() and maximum()). The upper bound can't be smaller than the 
+/// Values are comprised between the range of the slider. See setRange(), 
+/// minimum() and maximum(). The upper bound can't be smaller than the 
 /// lower bound and vice-versa.
+/// When setting new values (setMinimumValue(), setMaximumValue() or
+/// setValues()), make sure they lie between the range (minimum(), maximum())
+/// of the slider, they would be forced otherwised. If it is not the behavior
+/// you desire, you can set the range first (setRange(), setMinimum(),
+/// setMaximum())
 /// TODO: support triggerAction(QAbstractSlider::SliderSingleStepSub) that
 /// moves both values at a time.
 /// \sa ctkDoubleRangeSlider, ctkDoubleSlider, ctkRangeWidget
@@ -52,22 +57,24 @@ class CTK_WIDGETS_EXPORT ctkRangeSlider : public QSlider
 public:
   // Superclass typedef
   typedef QSlider Superclass;
-  /// Constructor, builds a ctkRangeSlider that ranges from 0 to 100
+  /// Constructor, builds a ctkRangeSlider that ranges from 0 to 100 and has
+  /// a lower and upper values of 0 and 100 respectively, other properties
+  /// are set the QSlider default properties.
   explicit ctkRangeSlider( Qt::Orientation o, QWidget* par= 0 );
   explicit ctkRangeSlider( QWidget* par = 0 );
   virtual ~ctkRangeSlider();
 
   /// 
   /// This property holds the slider's current minimum value.
-  /// The slider forces the minimum value to be within the legal range: 
-  /// minimum <= minvalue <= maxvalue <= maximum.
+  /// The slider silently forces minimumValue to be within the legal range: 
+  /// minimum() <= minimumValue() <= maximumValue() <= maximum().
   /// Changing the minimumValue also changes the minimumPosition.
   int minimumValue() const;
 
   /// 
   /// This property holds the slider's current maximum value.
   /// The slider forces the maximum value to be within the legal range: 
-  /// minimum <= minvalue <= maxvalue <= maximum.
+  /// The slider silently forces maximumValue to be within the legal range: 
   /// Changing the maximumValue also changes the maximumPosition.
   int maximumValue() const;
 
@@ -123,20 +130,27 @@ signals:
 public slots:
   /// 
   /// This property holds the slider's current minimum value.
-  /// The slider forces the minimum value to be within the legal range: 
-  /// minimum <= minvalue <= maxvalue <= maximum.
-  /// Changing the minimumValue also changes the minimumPosition.
+  /// The slider silently forces min to be within the legal range: 
+  /// minimum() <= min <= maximumValue() <= maximum().
+  /// Note: Changing the minimumValue also changes the minimumPosition.
+  /// \sa stMaximumValue, setValues, setMinimum, setMaximum, setRange
   void setMinimumValue(int min);
 
   /// 
   /// This property holds the slider's current maximum value.
-  /// The slider forces the maximum value to be within the legal range: 
-  /// minimum <= minvalue <= maxvalue <= maximum.
-  /// Changing the maximumValue also changes the maximumPosition.
+  /// The slider silently forces max to be within the legal range: 
+  /// minimum() <= minimumValue() <= max <= maximum().
+  /// Note: Changing the maximumValue also changes the maximumPosition.
+  /// \sa stMinimumValue, setValues, setMinimum, setMaximum, setRange
   void setMaximumValue(int max);
 
   ///
   /// Utility function that set the minimum value and maximum value at once.
+  /// The slider silently forces min and max to be within the legal range: 
+  /// minimum() <= min <= max <= maximum().
+  /// Note: Changing the minimumValue and maximumValue also changes the 
+  /// minimumPosition and maximumPosition.
+  /// \sa setMinimumValue, setMaximumValue, setMinimum, setMaximum, setRange
   void setValues(int min, int max);
 
 protected slots:
