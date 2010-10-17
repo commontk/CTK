@@ -39,7 +39,6 @@ class ctkPluginEventData;
  * the event type for future extendability.
  *
  * @see ctkPluginContext#connectPluginListener
- * @see ctkEventBus
  */
 class CTK_PLUGINFW_EXPORT ctkPluginEvent
 {
@@ -49,15 +48,99 @@ class CTK_PLUGINFW_EXPORT ctkPluginEvent
 public:
 
   enum Type {
+    /**
+     * The plugin has been installed.
+     *
+     * @see ctkPluginContext::installBundle(const QString&)
+     */
     INSTALLED,
+
+    /**
+     * The plugin has been started.
+     * <p>
+     * The plugin's
+     * \link ctkPluginActivator::start(ctkPluginContext*) ctkPluginActivator start\endlink method
+     * has been executed.
+     *
+     * @see ctkPlugin::start()
+     */
     STARTED,
+
+    /**
+     * The plugin has been stopped.
+     * <p>
+     * The plugin's
+     * \link ctkPluginActivator::stop(ctkPluginContext*) ctkPluginActivator stop\endlink method
+     * has been executed.
+     *
+     * @see ctkPlugin::stop()
+     */
     STOPPED,
+
+    /**
+     * The plugin has been updated.
+     *
+     * @see ctkPlugin::update()
+     */
     UPDATED,
+
+    /**
+     * The plugin has been uninstalled.
+     *
+     * @see ctkPlugin::uninstall()
+     */
     UNINSTALLED,
+
+    /**
+     * The plugin has been resolved.
+     *
+     * @see ctkPlugin::RESOLVED
+     */
     RESOLVED,
+
+    /**
+     * The plugin has been unresolved.
+     *
+     * @see ctkPlugin::INSTALLED
+     */
     UNRESOLVED,
+
+    /**
+     * The plugin is about to be activated.
+     * <p>
+     * The plugin's
+     * \link ctkPluginActivator::start(ctkPluginContext*) ctkPluginActivator start\endlink method
+     * is about to be called. This
+     * event is only delivered to synchronuous slots, which have been registered with
+     * Qt::DirectConnection or Qt::BlockingQueuedConnection in ctkPluginContext::connectPluginListener().
+     *
+     * @see ctkPlugin::start()
+     */
     STARTING,
+
+    /**
+     * The plugin is about to deactivated.
+     * <p>
+     * The plugin's
+     * \link ctkPluginActivator::stop(ctkPluginContext*) ctkPluginActivator stop\endlink method
+     * is about to be called. This
+     * event is only delivered to synchronuous slots, which have been registered with
+     * Qt::DirectConnection or Qt::BlockingQueuedConnection in ctkPluginContext::connectPluginListener().
+     *
+     * @see ctkPlugin::stop()
+     */
     STOPPING,
+
+    /**
+     * The plugin will be lazily activated.
+     * <p>
+     * The plugin has a \link ctkPluginConstant::ACTIVATION_LAZY lazy activation policy\endlink
+     * and is waiting to be activated. It is now in the
+     * \link ctkPlugin::STARTING STARTING\endlink state and has a valid
+     * <code>ctkPluginContext</code>. This
+     * event is only delivered to synchronuous slots, which have been registered with
+     * Qt::DirectConnection or Qt::BlockingQueuedConnection in ctkPluginContext::connectPluginListener().
+     */
     LAZY_ACTIVATION
   };
 
