@@ -68,6 +68,11 @@ ctkPluginFrameworkEvent::~ctkPluginFrameworkEvent()
 
 }
 
+bool ctkPluginFrameworkEvent::isNull() const
+{
+  return !d;
+}
+
 ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin, const std::exception& fwException)
   : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
 {

@@ -125,6 +125,15 @@ public:
   ~ctkPluginFrameworkEvent();
 
   /**
+   * Can be used to check if this ctkPluginFrameworkEvent instance is valid,
+   * or if it has been constructed using the default constructor.
+   *
+   * @return <code>true</code> if this event object is valid,
+   *         <code>false</code> otherwise.
+   */
+  bool isNull() const;
+
+  /**
    * Creates a Framework event regarding the specified plugin and exception.
    *
    * @param type The event type.

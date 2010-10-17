@@ -110,6 +110,15 @@ public:
   ~ctkServiceEvent();
 
   /**
+   * Can be used to check if this ctkServiceEvent instance is valid,
+   * or if it has been constructed using the default constructor.
+   *
+   * @return <code>true</code> if this event object is valid,
+   *         <code>false</code> otherwise.
+   */
+  bool isNull() const;
+
+  /**
    * Creates a new service event object.
    *
    * @param type The event type.

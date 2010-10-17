@@ -152,6 +152,15 @@ public:
   ~ctkPluginEvent();
 
   /**
+   * Can be used to check if this ctkPluginEvent instance is valid,
+   * or if it has been constructed using the default constructor.
+   *
+   * @return <code>true</code> if this event object is valid,
+   *         <code>false</code> otherwise.
+   */
+  bool isNull() const;
+
+  /**
    * Creates a plugin event of the specified type.
    *
    * @param type The event type.

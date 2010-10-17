@@ -53,6 +53,11 @@ ctkPluginEvent::~ctkPluginEvent()
 
 }
 
+bool ctkPluginEvent::isNull() const
+{
+  return !d;
+}
+
 ctkPluginEvent::ctkPluginEvent(Type type, ctkPlugin* plugin)
   : d(new ctkPluginEventData(type, plugin))
 {

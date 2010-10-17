@@ -53,6 +53,11 @@ ctkServiceEvent::~ctkServiceEvent()
 
 }
 
+bool ctkServiceEvent::isNull() const
+{
+  return !d;
+}
+
 ctkServiceEvent::ctkServiceEvent(Type type, const ctkServiceReference& reference)
   : d(new ctkServiceEventData(type, reference))
 {
