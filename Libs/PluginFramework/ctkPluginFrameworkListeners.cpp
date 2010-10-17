@@ -138,7 +138,14 @@ void ctkPluginFrameworkListeners::emitFrameworkEvent(const ctkPluginFrameworkEve
 
 void ctkPluginFrameworkListeners::emitPluginChanged(const ctkPluginEvent& event)
 {
-  emit pluginChanged(event);
+  emit pluginChangedDirect(event);
+
+  if (!(event.getType() == ctkPluginEvent::STARTING ||
+      event.getType() == ctkPluginEvent::STOPPING ||
+      event.getType() == ctkPluginEvent::LAZY_ACTIVATION))
+  {
+    emit pluginChangedQueued(event);
+  }
 }
 
 void ctkPluginFrameworkListeners::serviceChanged(

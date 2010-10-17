@@ -95,7 +95,8 @@ public:
 
 signals:
 
-  void pluginChanged(const ctkPluginEvent& event);
+  void pluginChangedDirect(const ctkPluginEvent& event);
+  void pluginChangedQueued(const ctkPluginEvent& event);
 
   void frameworkEvent(const ctkPluginFrameworkEvent& event);
 

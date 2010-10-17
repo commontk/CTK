@@ -134,7 +134,18 @@ bool ctkPluginContext::connectPluginListener(const QObject* receiver, const char
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
   // TODO check permissions for a direct connection
-  return receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(pluginChanged(ctkPluginEvent)), method, type);
+  if (type == Qt::DirectConnection || type == Qt::BlockingQueuedConnection)
+  {
+    return receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(pluginChangedDirect(ctkPluginEvent)), method, type);
+  }
+  else if (type == Qt::QueuedConnection)
+  {
+    return receiver->connect(&(d->plugin->fwCtx->listeners), SIGNAL(pluginChangedQueued(ctkPluginEvent)), method, type);
+  }
+  else
+  {
+    throw std::invalid_argument("Only Qt::DirectConnection, Qt::QueuedConnection, or Qt::BlockingQueuedConnection are allowed as type argument.");
+  }
 }
 
 bool ctkPluginContext::connectFrameworkListener(const QObject* receiver, const char* method, Qt::ConnectionType type)
