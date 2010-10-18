@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,17 +15,17 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 // Qt includes
 #include <QApplication>
+#include <QTimer>
 
 // CTK includes
 #include "ctkMatrixWidget.h"
 
 // STD includes
-#include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
@@ -33,9 +33,14 @@ int ctkMatrixWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkMatrixWidget ctkObject;
+  ctkMatrixWidget matrixWidget;
+  matrixWidget.show();
 
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
 
-  return EXIT_SUCCESS;
+  return app.exec();
 }
 

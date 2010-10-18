@@ -38,16 +38,18 @@
 namespace
 {
 //-----------------------------------------------------------------------------
-  class CustomDoubleSpinBox : public QDoubleSpinBox
+  class ctkMatrixDoubleSpinBox : public QDoubleSpinBox
   {
   public:
-    CustomDoubleSpinBox(QWidget * newParent):QDoubleSpinBox(newParent)
+    ctkMatrixDoubleSpinBox(QWidget * parentWidget)
+      : QDoubleSpinBox(parentWidget)
     {
-      // We know that the parentWidget of newParent will be a ctkMatrixWidget because this object is
+      // We know that the parentWidget() of parentWidget will be a
+      // ctkMatrixWidget because this object is
       // created by the QItemEditorFactory
-      ctkMatrixWidget* matrixWidget = qobject_cast<ctkMatrixWidget*>(newParent->parentWidget());
+      ctkMatrixWidget* matrixWidget =
+        qobject_cast<ctkMatrixWidget*>(parentWidget->parentWidget());
       Q_ASSERT(matrixWidget);
-      
       this->setMinimum(matrixWidget->minimum());
       this->setMaximum(matrixWidget->maximum());
       this->setDecimals(matrixWidget->decimals());
@@ -69,9 +71,10 @@ public:
   void validateElements();
 
   // Parameters for the spinbox used to change the value of matrix elements
+  /// TODO: use a QDoubleSpinBox directly ?
   double Minimum;
   double Maximum;
-  int Decimals;
+  int    Decimals;
   double SingleStep;
 };
 
@@ -85,14 +88,15 @@ ctkMatrixWidgetPrivate::ctkMatrixWidgetPrivate(ctkMatrixWidget& object)
 void ctkMatrixWidgetPrivate::init()
 {
   Q_Q(ctkMatrixWidget);
-  // Set Read-only
-  q->setEditable(false);
 
   // Set parameters for the spinbox
   this->Minimum = -100;
   this->Maximum = 100;
   this->Decimals = 2;
   this->SingleStep = 0.01;
+
+  // Don't select the items
+  q->setSelectionMode(QAbstractItemView::NoSelection);
 
   // Hide headers
   q->verticalHeader()->hide();
@@ -110,7 +114,7 @@ void ctkMatrixWidgetPrivate::init()
 
   // Register custom editors
   QItemEditorFactory *editorFactory = new QItemEditorFactory;
-  editorFactory->registerEditor(QVariant::Double, new QStandardItemEditorCreator<CustomDoubleSpinBox>);
+  editorFactory->registerEditor(QVariant::Double, new QStandardItemEditorCreator<ctkMatrixDoubleSpinBox>);
 
   QStyledItemDelegate* defaultItemDelegate =
     qobject_cast<QStyledItemDelegate*>(q->itemDelegate());
@@ -125,8 +129,11 @@ void ctkMatrixWidgetPrivate::init()
   // The table takes ownership of the prototype.
   q->setItemPrototype(_item);
 
+  // Set Read-only
+  q->setEditable(true);
+
   // Initialize
-  q->reset();
+  q->identity();
 }
 
 // --------------------------------------------------------------------------
@@ -289,7 +296,7 @@ void ctkMatrixWidget::updateGeometries()
 }
 
 // --------------------------------------------------------------------------
-void ctkMatrixWidget::reset()
+void ctkMatrixWidget::identity()
 {
   Q_D(ctkMatrixWidget);
   // Initialize 4x4 matrix
@@ -333,10 +340,8 @@ void ctkMatrixWidget::setValue(int i, int j, double _value)
   Q_ASSERT( i>=0 && i<this->rowCount() &&
             j>=0 && j<this->columnCount());
 
-  if (_value >= d->Minimum && _value <= d->Maximum)
-    {
-    this->item(i, j)->setData(Qt::DisplayRole, QVariant(_value));
-    }
+  _value = qBound(d->Minimum, _value, d->Maximum);
+  this->item(i, j)->setData(Qt::DisplayRole, QVariant(_value));
 }
 
 // --------------------------------------------------------------------------
@@ -347,11 +352,8 @@ void ctkMatrixWidget::setVector(const QVector<double> & vector)
     {
     for (int j=0; j < this->columnCount(); j++)
       {
-      double value = vector.at(i * this->columnCount() + j);
-      if  (value >= d->Minimum && value <= d->Maximum)
-        {
-        this->item(i,j)->setData(Qt::DisplayRole, QVariant(value));
-        }
+      double value = qBound(d->Minimum, vector.at(i * this->columnCount() + j), d->Maximum);
+      this->item(i,j)->setData(Qt::DisplayRole, QVariant(value));
       }
     }
 }

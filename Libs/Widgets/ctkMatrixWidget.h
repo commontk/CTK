@@ -114,7 +114,7 @@ public:
 public slots:
   ///
   /// Reset the matrix to identity
-  void reset();
+  void identity();
 
 protected:
   ///
