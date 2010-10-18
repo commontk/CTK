@@ -108,14 +108,14 @@ public:
 
   /**
    * Tracked services: <code>ctkServiceReference</code> -> customized Object and
-   * <code>ServiceListener</code> object
+   * <code>ctkServiceSlotEntry</code> object
    */
   QSharedPointer<ctkTrackedService> trackedService;
 
   /**
-   * Accessor method for the current Tracked object. This method is only
+   * Accessor method for the current ctkTrackedService object. This method is only
    * intended to be used by the unsynchronized methods which do not modify the
-   * tracked field.
+   * trackedService field.
    *
    * @return The current Tracked object.
    */

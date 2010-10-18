@@ -83,7 +83,9 @@ public:
    *        <code>ctkServiceTracker</code> will be used as the
    *        <code>ctkServiceTrackerCustomizer</code> and this
    *        <code>ctkServiceTracker</code> will call the
-   *        <code>ctkServiceTrackerCustomizer</code> methods on itself.
+   *        <code>ctkServiceTrackerCustomizer</code> methods on itself. If the
+   *        customizer is not <code>null</code>, this <code>ctkServiceTracker</code>
+   *        takes ownership of the customizer.
    */
   ctkServiceTracker(ctkPluginContext* context,
                     const ctkServiceReference& reference,
@@ -105,7 +107,9 @@ public:
    *        <code>ctkServiceTracker</code> will be used as the
    *        <code>ctkServiceTrackerCustomizer</code> and this
    *        <code>ctkServiceTracker</code> will call the
-   *        <code>ctkServiceTrackerCustomizer</code> methods on itself.
+   *        <code>ctkServiceTrackerCustomizer</code> methods on itself. If the
+   *        customizer is not <code>null</code>, this <code>ctkServiceTracker</code>
+   *        takes ownership of the customizer.
    */
   ctkServiceTracker(ctkPluginContext* context, const QString& clazz,
                         ctkServiceTrackerCustomizer* customizer = 0);
@@ -127,7 +131,9 @@ public:
    *        customizer is null, then this <code>ctkServiceTracker</code> will be
    *        used as the <code>ctkServiceTrackerCustomizer</code> and this
    *        <code>ctkServiceTracker</code> will call the
-   *        <code>ctkServiceTrackerCustomizer</code> methods on itself.
+   *        <code>ctkServiceTrackerCustomizer</code> methods on itself. If the
+   *        customizer is not <code>null</code>, this <code>ctkServiceTracker</code>
+   *        takes ownership of the customizer.
    */
   ctkServiceTracker(ctkPluginContext* context, const ctkLDAPSearchFilter& filter,
                         ctkServiceTrackerCustomizer* customizer = 0);
