@@ -60,6 +60,8 @@ SET(KIT_SRCS
   ctkPluginManager.cpp
   ctkPluginManifest.cpp
   ctkPluginPrivate.cpp
+  ctkPluginTracker.cpp
+  ctkPluginTrackerPrivate.cpp
   ctkPlugins.cpp
   ctkQtServiceRegistration.cpp
   ctkQtServiceRegistrationPrivate.cpp
@@ -76,6 +78,7 @@ SET(KIT_SRCS
   ctkServiceTrackerPrivate.cpp
   ctkServices.cpp
   ctkServiceSlotEntry.cpp
+  ctkTrackedPlugin.cpp
   ctkTrackedService.cpp
   ctkPluginStorage.cpp
   ctkVersion.cpp
@@ -92,6 +95,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkPluginFrameworkListeners_p.h
   ctkServiceFactory.h
+  ctkTrackedPlugin_p.h
   ctkTrackedService_p.h
 )
 
