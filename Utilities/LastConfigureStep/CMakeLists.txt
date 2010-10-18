@@ -79,6 +79,9 @@ FOREACH(ctk_target_dependency ${ctk_target_dependencies})
   ENDIF()
 ENDFOREACH()
 
+# Clean variable
+LIST(REMOVE_DUPLICATES CTK_BASE_INCLUDE_DIRS)
+
 #-----------------------------------------------------------------------------
 # Create the CTKConfig.cmake file containing the CTK configuration.
 # Since it might generate configuration file depending
