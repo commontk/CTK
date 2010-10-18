@@ -73,7 +73,7 @@ private:
    * @return Customized object for the tracked item or <code>null</code>
    *         if the item is not to be tracked.
    */
-  QObject* customizerAdding(ctkServiceReference item, ctkServiceEvent related);
+  QVariant customizerAdding(ctkServiceReference item, ctkServiceEvent related);
 
   /**
    * Call the specific customizer modified method. This method must not be
@@ -84,7 +84,7 @@ private:
    * @param object Customized object for the tracked item.
    */
   void customizerModified(ctkServiceReference item,
-                          ctkServiceEvent related, QObject* object) ;
+                          ctkServiceEvent related, QVariant object) ;
 
   /**
    * Call the specific customizer removed method. This method must not be
@@ -95,7 +95,7 @@ private:
    * @param object Customized object for the tracked item.
    */
   void customizerRemoved(ctkServiceReference item,
-                         ctkServiceEvent related, QObject* object) ;
+                         ctkServiceEvent related, QVariant object) ;
 };
 
 #endif // CTKTRACKEDSERVICE_P_H

@@ -101,22 +101,24 @@ void ctkTrackedService::modified()
   serviceTracker->d_func()->modified();
 }
 
-QObject* ctkTrackedService::customizerAdding(ctkServiceReference item, ctkServiceEvent related)
+QVariant ctkTrackedService::customizerAdding(ctkServiceReference item, ctkServiceEvent related)
 {
   Q_UNUSED(related)
-  return customizer->addingService(item);
+  QVariant var;
+  var.setValue(customizer->addingService(item));
+  return var;
 }
 
 void ctkTrackedService::customizerModified(ctkServiceReference item,
-                        ctkServiceEvent related, QObject* object)
+                        ctkServiceEvent related, QVariant object)
 {
   Q_UNUSED(related)
-  customizer->modifiedService(item, object);
+  customizer->modifiedService(item, object.value<QObject*>());
 }
 
 void ctkTrackedService::customizerRemoved(ctkServiceReference item,
-                       ctkServiceEvent related, QObject* object)
+                       ctkServiceEvent related, QVariant object)
 {
   Q_UNUSED(related)
-  customizer->removedService(item, object);
+  customizer->removedService(item, object.value<QObject*>());
 }

@@ -295,7 +295,7 @@ QObject* ctkServiceTracker::getService(const ctkServiceReference& reference) con
   }
   {
     QMutexLocker lockT(t.data());
-    return t->getCustomizedObject(reference);
+    return t->getCustomizedObject(reference).value<QObject*>();
   }
 }
 

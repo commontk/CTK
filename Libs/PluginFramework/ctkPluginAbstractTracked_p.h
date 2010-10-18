@@ -27,6 +27,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QLinkedList>
+#include <QVariant>
 
 /**
  * Abstract class to track items. If a Tracker is reused (closed then reopened),
@@ -119,7 +120,7 @@ public:
    *
    * @GuardedBy this
    */
-  QObject* getCustomizedObject(Item item) const;
+  QVariant getCustomizedObject(Item item) const;
 
   /**
    * Return the list of tracked items.
@@ -158,7 +159,7 @@ public:
    * @return Customized object for the tracked item or <code>null</code> if
    *         the item is not to be tracked.
    */
-  virtual QObject* customizerAdding(Item item, Related related) = 0;
+  virtual QVariant customizerAdding(Item item, Related related) = 0;
 
   /**
    * Call the specific customizer modified method. This method must not be
@@ -169,7 +170,7 @@ public:
    * @param object Customized object for the tracked item.
    */
   virtual void customizerModified(Item item, Related related,
-      QObject* object) = 0;
+      QVariant object) = 0;
 
   /**
    * Call the specific customizer removed method. This method must not be
@@ -180,7 +181,7 @@ public:
    * @param object Customized object for the tracked item.
    */
   virtual void customizerRemoved(Item item, Related related,
-      QObject* object) = 0;
+      QVariant object) = 0;
 
   /**
    * List of items in the process of being added. This is used to deal with
@@ -244,7 +245,7 @@ private:
    *
    * @GuardedBy this
    */
-  QHash<Item, QObject*> tracked;
+  QHash<Item, QVariant> tracked;
 
   /**
    * Modification count. This field is initialized to zero and incremented by
@@ -254,7 +255,7 @@ private:
    */
   QAtomicInt trackingCount;
 
-  bool customizerAddingFinal(Item item, QObject* custom);
+  bool customizerAddingFinal(Item item, const QVariant& custom);
 
 };
 
