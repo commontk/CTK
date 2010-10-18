@@ -595,9 +595,14 @@ protected:
   ctkPlugin(ctkPluginPrivate& dd);
 };
 
+Q_DECLARE_METATYPE(ctkPlugin*)
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPlugin::States)
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPlugin::StartOptions)
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPlugin::StopOptions)
+
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, ctkPlugin::State state);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, const ctkPlugin& plugin);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, ctkPlugin const * plugin);
 
 #endif // CTKPLUGIN_H
