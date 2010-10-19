@@ -23,6 +23,7 @@ ctkDICOMQueryResultsTabWidget::~ctkDICOMQueryResultsTabWidget()
 //----------------------------------------------------------------------------
 void ctkDICOMQueryResultsTabWidget::disableCloseOnTab(int index)
 {
+  Q_UNUSED(index);
   this->tabBar()->setTabButton(0, QTabBar::RightSide, 0);
   this->tabBar()->setTabButton(0, QTabBar::LeftSide, 0);
 }

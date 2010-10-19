@@ -39,7 +39,7 @@ class QLineEdit;
 
 class ctkExampleDerivedWorkflowWidgetStep : public ctkWorkflowWidgetStep
 {
-
+  Q_OBJECT
 public:
   typedef ctkWorkflowWidgetStep Superclass;
   explicit ctkExampleDerivedWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId);
