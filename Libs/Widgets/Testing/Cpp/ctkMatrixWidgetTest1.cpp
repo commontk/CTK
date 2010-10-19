@@ -33,8 +33,9 @@ int ctkMatrixWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkMatrixWidget matrixWidget;
+  ctkMatrixWidget matrixWidget(5,6);
   matrixWidget.show();
+  matrixWidget.setRowCount(8);
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {

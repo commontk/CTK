@@ -22,15 +22,17 @@
 #include "ctkMatrixWidget.h"
 
 // Qt includes
-#include <Qt>
-#include <QHeaderView>
-#include <QVariant>
-#include <QTableWidgetItem>
-#include <QResizeEvent>
-#include <QDoubleSpinBox>
-#include <QItemEditorFactory>
-#include <QStyledItemDelegate>
 #include <QDebug>
+#include <QDoubleSpinBox>
+#include <QHBoxLayout>
+#include <QHeaderView>
+#include <QItemEditorFactory>
+#include <QResizeEvent>
+#include <QStyledItemDelegate>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QVariant>
+#include <Qt>
 
 //-----------------------------------------------------------------------------
 // Custom item editors
@@ -48,7 +50,7 @@ namespace
       // ctkMatrixWidget because this object is
       // created by the QItemEditorFactory
       ctkMatrixWidget* matrixWidget =
-        qobject_cast<ctkMatrixWidget*>(parentWidget->parentWidget());
+        qobject_cast<ctkMatrixWidget*>(parentWidget->parentWidget()->parent());
       Q_ASSERT(matrixWidget);
       this->setMinimum(matrixWidget->minimum());
       this->setMaximum(matrixWidget->maximum());
@@ -65,13 +67,16 @@ class ctkMatrixWidgetPrivate
 protected:
   ctkMatrixWidget* const q_ptr;
 public:
-  ctkMatrixWidgetPrivate(ctkMatrixWidget& object);
+  ctkMatrixWidgetPrivate(ctkMatrixWidget& object, int rows = 4, int columns = 4);
 
   void init();
-  void validateElements();
+  void validateItems();
+  void updateGeometries();
+  void setIdentityItem(int i, int j);
+
+  QTableWidget* Table;
 
   // Parameters for the spinbox used to change the value of matrix elements
-  /// TODO: use a QDoubleSpinBox directly ?
   double Minimum;
   double Maximum;
   int    Decimals;
@@ -79,15 +84,22 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-ctkMatrixWidgetPrivate::ctkMatrixWidgetPrivate(ctkMatrixWidget& object)
+ctkMatrixWidgetPrivate::ctkMatrixWidgetPrivate(ctkMatrixWidget& object, int rows, int columns)
   :q_ptr(&object)
 {
+  this->Table = new QTableWidget(rows, columns);
 }
 
 //-----------------------------------------------------------------------------
 void ctkMatrixWidgetPrivate::init()
 {
   Q_Q(ctkMatrixWidget);
+
+  this->Table->setParent(q);
+  QHBoxLayout* layout = new QHBoxLayout(q);
+  layout->addWidget(this->Table);
+  layout->setContentsMargins(0,0,0,0);
+  q->setLayout(layout);
 
   // Set parameters for the spinbox
   this->Minimum = -100;
@@ -96,70 +108,118 @@ void ctkMatrixWidgetPrivate::init()
   this->SingleStep = 0.01;
 
   // Don't select the items
-  q->setSelectionMode(QAbstractItemView::NoSelection);
+  this->Table->setSelectionMode(QAbstractItemView::NoSelection);
 
   // Hide headers
-  q->verticalHeader()->hide();
-  q->horizontalHeader()->hide();
+  this->Table->verticalHeader()->hide();
+  this->Table->horizontalHeader()->hide();
 
   // Disable scrollBars
-  q->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  q->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->Table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->Table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   // Don't expand for no reason
   q->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
   // Disable the frame by default
-  q->setFrameStyle(QFrame::NoFrame);
+  this->Table->setFrameStyle(QFrame::NoFrame);
 
   // Register custom editors
   QItemEditorFactory *editorFactory = new QItemEditorFactory;
   editorFactory->registerEditor(QVariant::Double, new QStandardItemEditorCreator<ctkMatrixDoubleSpinBox>);
 
   QStyledItemDelegate* defaultItemDelegate =
-    qobject_cast<QStyledItemDelegate*>(q->itemDelegate());
+    qobject_cast<QStyledItemDelegate*>(this->Table->itemDelegate());
   Q_ASSERT(defaultItemDelegate);
   defaultItemDelegate->setItemEditorFactory(editorFactory);
 
   // Define prototype item
-  QTableWidgetItem* _item = new QTableWidgetItem();
+  QTableWidgetItem* _item = new QTableWidgetItem;
   _item->setData(Qt::DisplayRole, QVariant(0.0));
   _item->setTextAlignment(Qt::AlignCenter);
 
   // The table takes ownership of the prototype.
-  q->setItemPrototype(_item);
+  this->Table->setItemPrototype(_item);
 
   // Set Read-only
   q->setEditable(true);
 
   // Initialize
-  q->identity();
+  this->validateItems();
+
+  this->updateGeometries();
 }
 
 // --------------------------------------------------------------------------
-void ctkMatrixWidgetPrivate::validateElements()
+void ctkMatrixWidgetPrivate::validateItems()
 {
   Q_Q(ctkMatrixWidget);
-  for (int i=0; i < q->rowCount(); i++)
+  for (int i=0; i < q->rowCount(); ++i)
     {
-    for (int j=0; j < q->columnCount(); j++)
+    for (int j=0; j < q->columnCount(); ++j)
       {
-      double value = q->item(i, j)->data(Qt::DisplayRole).toDouble();
-      if (value < this->Minimum)
+      QTableWidgetItem* item = this->Table->item(i, j);
+      if (!item)
         {
-        q->item(i,j)->setData(Qt::DisplayRole, QVariant(this->Minimum));
+        this->Table->setItem(i, j , this->Table->itemPrototype()->clone());
+        this->setIdentityItem(i, j);
         }
-      if (value > this->Maximum)
+      else
         {
-        q->item(i,j)->setData(Qt::DisplayRole, QVariant(this->Maximum));
+        double value = item->data(Qt::DisplayRole).toDouble();
+        item->setData(Qt::DisplayRole,
+                      qBound(this->Minimum, value, this->Maximum));
         }
       }
     }
 }
 
 // --------------------------------------------------------------------------
+void ctkMatrixWidgetPrivate::setIdentityItem(int i, int j)
+{
+  Q_Q(ctkMatrixWidget);
+  // the item must exist first
+  Q_ASSERT(this->Table->item(i, j));
+  // identity matrix has 1 on the diagonal, 0 everywhere else
+  double value = (i == j ? 1. : 0.);
+  // set the value to the table
+  q->setValue(i, j, value);
+}
+
+// --------------------------------------------------------------------------
+void ctkMatrixWidgetPrivate::updateGeometries()
+{
+  Q_Q(ctkMatrixWidget);
+  QSize viewportSize = q->size();
+  // columns
+  const int ccount = q->columnCount();
+  int colWidth = viewportSize.width() / ccount;
+  int lastColWidth = colWidth
+    + (viewportSize.width() - colWidth * ccount);
+  for (int j=0; j < ccount; j++)
+    {
+    bool lastColumn = (j==(ccount-1));
+    int newWidth = lastColumn ? lastColWidth : colWidth;
+    this->Table->setColumnWidth(j, newWidth);
+    Q_ASSERT(this->Table->columnWidth(j) == newWidth);
+    }
+  // rows
+  const int rcount = q->rowCount();
+  int rowHeight = viewportSize.height() / rcount;
+  int lastRowHeight = rowHeight + (viewportSize.height() - rowHeight * rcount);
+  for (int i=0; i < rcount; i++)
+    {
+    bool lastRow = (i==(rcount-1));
+    int newHeight = lastRow ? lastRowHeight : rowHeight;
+    this->Table->setRowHeight(i, newHeight);
+    Q_ASSERT(this->Table->rowHeight(i) == newHeight);
+    }
+  this->Table->updateGeometry();
+}
+
+// --------------------------------------------------------------------------
 ctkMatrixWidget::ctkMatrixWidget(QWidget* _parent)
-  :Superclass(4, 4, _parent)
+  :Superclass(_parent)
   ,d_ptr(new ctkMatrixWidgetPrivate(*this))
 {
   Q_D(ctkMatrixWidget);
@@ -168,17 +228,17 @@ ctkMatrixWidget::ctkMatrixWidget(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 ctkMatrixWidget::ctkMatrixWidget(int rows, int columns, QWidget* _parent)
-  :Superclass(rows, columns, _parent)
-  ,d_ptr(new ctkMatrixWidgetPrivate(*this))
+  : QWidget(_parent)
+  , d_ptr(new ctkMatrixWidgetPrivate(*this, rows, columns))
 {
   Q_D(ctkMatrixWidget);
   d->init();
 }
 
 // --------------------------------------------------------------------------
-ctkMatrixWidget::ctkMatrixWidget(int rows, int columns, ctkMatrixWidgetPrivate& pvt,
+ctkMatrixWidget::ctkMatrixWidget(ctkMatrixWidgetPrivate& pvt,
                                  QWidget* _parent)
-  :Superclass(rows, columns, _parent)
+  : Superclass(_parent)
   ,d_ptr(&pvt)
 {
   Q_D(ctkMatrixWidget);
@@ -191,22 +251,50 @@ ctkMatrixWidget::~ctkMatrixWidget()
 }
 
 // --------------------------------------------------------------------------
+int ctkMatrixWidget::columnCount()const
+{
+  Q_D(const ctkMatrixWidget);
+  return d->Table->columnCount();
+}
+
+// --------------------------------------------------------------------------
+void ctkMatrixWidget::setColumnCount(int rc)
+{
+  Q_D(ctkMatrixWidget);
+  d->Table->setColumnCount(rc);
+  d->validateItems();
+  d->updateGeometries();
+}
+
+// --------------------------------------------------------------------------
+int ctkMatrixWidget::rowCount()const
+{
+  Q_D(const ctkMatrixWidget);
+  return d->Table->rowCount();
+}
+
+// --------------------------------------------------------------------------
+void ctkMatrixWidget::setRowCount(int rc)
+{
+  Q_D(ctkMatrixWidget);
+  d->Table->setRowCount(rc);
+  d->validateItems();
+  d->updateGeometries();
+}
+
+// --------------------------------------------------------------------------
 bool ctkMatrixWidget::editable()const
 {
-  return this->editTriggers();
+  Q_D(const ctkMatrixWidget);
+  return d->Table->editTriggers();
 }
 
 // --------------------------------------------------------------------------
 void ctkMatrixWidget::setEditable(bool newEditable)
 {
-  if (newEditable)
-    {
-    this->setEditTriggers(ctkMatrixWidget::DoubleClicked);
-    }
-  else
-    {
-    this->setEditTriggers(ctkMatrixWidget::NoEditTriggers);
-    }
+  Q_D(ctkMatrixWidget);
+  d->Table->setEditTriggers(
+    newEditable ? QTableWidget::DoubleClicked : QTableWidget::NoEditTriggers);
 }
 
 // --------------------------------------------------------------------------
@@ -222,7 +310,7 @@ void ctkMatrixWidget::setMinimum(double newMinimum)
 {
   Q_D(ctkMatrixWidget);
   d->Minimum = newMinimum;
-  d->validateElements();
+  d->validateItems();
 }
 
 // --------------------------------------------------------------------------
@@ -230,7 +318,7 @@ void ctkMatrixWidget::setMaximum(double newMaximum)
 {
   Q_D(ctkMatrixWidget);
   d->Maximum = newMaximum;
-  d->validateElements();
+  d->validateItems();
 }
 
 // --------------------------------------------------------------------------
@@ -239,21 +327,22 @@ void ctkMatrixWidget::setRange(double newMinimum, double newMaximum)
   Q_D(ctkMatrixWidget);
   d->Minimum = newMinimum;
   d->Maximum = newMaximum;
-  d->validateElements();
+  d->validateItems();
 }
 
 // --------------------------------------------------------------------------
 QSize ctkMatrixWidget::minimumSizeHint() const
 {
-  int maxWidth = this->sizeHintForColumn(0);
+  Q_D(const ctkMatrixWidget);
+  int maxWidth = d->Table->horizontalHeader()->sectionSizeHint(0);
   for (int j = 1; j < this->columnCount(); ++j)
     {
-    maxWidth = qMax(maxWidth, this->sizeHintForColumn(j));
+    maxWidth = qMax(maxWidth, d->Table->horizontalHeader()->sectionSizeHint(j));
     }
-  int maxHeight = this->sizeHintForRow(0);
+  int maxHeight = d->Table->verticalHeader()->sectionSizeHint(0);
   for (int i = 1; i < this->rowCount(); ++i)
     {
-    maxHeight = qMax(maxHeight, this->sizeHintForRow(i));
+    maxHeight = qMax(maxHeight, d->Table->verticalHeader()->sectionSizeHint(i));
     }
   return QSize(maxWidth*this->columnCount(), maxHeight*this->rowCount());
 }
@@ -265,34 +354,11 @@ QSize ctkMatrixWidget::sizeHint() const
 }
 
 // --------------------------------------------------------------------------
-void ctkMatrixWidget::updateGeometries()
+void ctkMatrixWidget::resizeEvent(QResizeEvent* event)
 {
-  QSize viewportSize = this->viewport()->size();
-  // columns
-  const int ccount = this->columnCount();
-  int colWidth = viewportSize.width() / ccount;
-  int lastColWidth = colWidth
-    + (viewportSize.width() - colWidth * ccount);
-  for (int j=0; j < ccount; j++)
-    {
-    bool lastColumn = (j==(ccount-1));
-    int newWidth = lastColumn ? lastColWidth : colWidth;
-    this->setColumnWidth(j, newWidth);
-    Q_ASSERT(this->columnWidth(j) == newWidth);
-    }
-  // rows
-  const int rcount = this->rowCount();
-  int rowHeight = viewportSize.height() / rcount;
-  int lastRowHeight = rowHeight + (viewportSize.height() - rowHeight * rcount);
-  for (int i=0; i < rcount; i++)
-    {
-    bool lastRow = (i==(rcount-1));
-    int newHeight = lastRow ? lastRowHeight : rowHeight;
-    this->setRowHeight(i, newHeight);
-    Q_ASSERT(this->rowHeight(i) == newHeight);
-    }
-
-  this->Superclass::updateGeometries();
+  Q_D(ctkMatrixWidget);
+  this->Superclass::resizeEvent(event);
+  d->updateGeometries();
 }
 
 // --------------------------------------------------------------------------
@@ -304,22 +370,7 @@ void ctkMatrixWidget::identity()
     {
     for (int j=0; j < this->columnCount(); j++)
       {
-      this->setItem(i, j, this->itemPrototype()->clone());
-      if (i == j)
-        {
-        if (d->Maximum < 1.0)
-          {
-          this->setValue(i, j, d->Maximum);
-          }
-        else if (d->Minimum > 1.0)
-          {
-          this->setValue(i, j, d->Minimum);
-          }
-        else
-          {
-          this->setValue(i, j, 1.0);
-          }
-        }
+      d->setIdentityItem(i,j);
       }
     }
 }
@@ -327,10 +378,11 @@ void ctkMatrixWidget::identity()
 // --------------------------------------------------------------------------
 double ctkMatrixWidget::value(int i, int j)const
 {
+  Q_D(const ctkMatrixWidget);
   Q_ASSERT( i>=0 && i<this->rowCount() &&
             j>=0 && j<this->columnCount());
 
-  return this->item(i, j)->data(Qt::DisplayRole).toDouble();
+  return d->Table->item(i, j)->data(Qt::DisplayRole).toDouble();
 }
 
 // --------------------------------------------------------------------------
@@ -340,8 +392,8 @@ void ctkMatrixWidget::setValue(int i, int j, double _value)
   Q_ASSERT( i>=0 && i<this->rowCount() &&
             j>=0 && j<this->columnCount());
 
-  _value = qBound(d->Minimum, _value, d->Maximum);
-  this->item(i, j)->setData(Qt::DisplayRole, QVariant(_value));
+  d->Table->item(i, j)->setData(Qt::DisplayRole,
+                                QVariant(qBound(d->Minimum, _value, d->Maximum)));
 }
 
 // --------------------------------------------------------------------------
@@ -352,8 +404,10 @@ void ctkMatrixWidget::setVector(const QVector<double> & vector)
     {
     for (int j=0; j < this->columnCount(); j++)
       {
-      double value = qBound(d->Minimum, vector.at(i * this->columnCount() + j), d->Maximum);
-      this->item(i,j)->setData(Qt::DisplayRole, QVariant(value));
+      double value = qBound(d->Minimum,
+                            vector.at(i * this->columnCount() + j),
+                            d->Maximum);
+      d->Table->item(i,j)->setData(Qt::DisplayRole, QVariant(value));
       }
     }
 }

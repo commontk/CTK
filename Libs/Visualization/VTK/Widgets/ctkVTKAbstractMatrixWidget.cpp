@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 // Qt includes
@@ -30,9 +30,10 @@
 #include <vtkMatrix4x4.h>
 
 // --------------------------------------------------------------------------
-ctkVTKAbstractMatrixWidgetPrivate::ctkVTKAbstractMatrixWidgetPrivate(ctkVTKAbstractMatrixWidget& object)
-  :QObject(0) // will be reparented in init()
-  ,q_ptr(&object)
+ctkVTKAbstractMatrixWidgetPrivate
+::ctkVTKAbstractMatrixWidgetPrivate(ctkVTKAbstractMatrixWidget& object)
+  : QObject(0) // will be reparented in init()
+  , q_ptr(&object)
 {
 }
 
@@ -52,7 +53,7 @@ void ctkVTKAbstractMatrixWidgetPrivate::init()
 // --------------------------------------------------------------------------
 void ctkVTKAbstractMatrixWidgetPrivate::setMatrix(vtkMatrix4x4* matrixVariable)
 {
-  qvtkReconnect(this->Matrix.GetPointer(), matrixVariable, 
+  qvtkReconnect(this->Matrix.GetPointer(), matrixVariable,
                 vtkCommand::ModifiedEvent, this, SLOT(updateMatrix()));
 
   this->Matrix = matrixVariable;
@@ -74,7 +75,7 @@ void ctkVTKAbstractMatrixWidgetPrivate::updateMatrix()
 
   if (this->Matrix == 0)
     {
-    q->reset();
+    q->identity();
     return;
     }
   QVector<double> vector;
@@ -83,14 +84,15 @@ void ctkVTKAbstractMatrixWidgetPrivate::updateMatrix()
     {
     for (int j=0; j < 4; j++)
       {
-      vector.append(this->Matrix->GetElement(i,j)); 
+      vector.append(this->Matrix->GetElement(i,j));
       }
     }
   q->setVector( vector );
 }
 
 // --------------------------------------------------------------------------
-ctkVTKAbstractMatrixWidget::ctkVTKAbstractMatrixWidget(QWidget* parentVariable) : Superclass(parentVariable)
+ctkVTKAbstractMatrixWidget::ctkVTKAbstractMatrixWidget(QWidget* parentVariable)
+  : Superclass(parentVariable)
   , d_ptr(new ctkVTKAbstractMatrixWidgetPrivate(*this))
 {
   Q_D(ctkVTKAbstractMatrixWidget);
