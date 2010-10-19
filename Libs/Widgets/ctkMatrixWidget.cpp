@@ -283,7 +283,7 @@ void ctkMatrixWidget::setRowCount(int rc)
 }
 
 // --------------------------------------------------------------------------
-bool ctkMatrixWidget::editable()const
+bool ctkMatrixWidget::isEditable()const
 {
   Q_D(const ctkMatrixWidget);
   return d->Table->editTriggers();
@@ -303,13 +303,13 @@ CTK_GET_CXX(ctkMatrixWidget, double, maximum, Maximum);
 CTK_GET_CXX(ctkMatrixWidget, double, singleStep, SingleStep);
 CTK_SET_CXX(ctkMatrixWidget, double, setSingleStep, SingleStep);
 CTK_GET_CXX(ctkMatrixWidget, int, decimals, Decimals);
-CTK_SET_CXX(ctkMatrixWidget, int, setDecimals, Decimals);
 
 // --------------------------------------------------------------------------
 void ctkMatrixWidget::setMinimum(double newMinimum)
 {
   Q_D(ctkMatrixWidget);
   d->Minimum = newMinimum;
+  d->Maximum = qMax(newMinimum, d->Maximum);
   d->validateItems();
 }
 
@@ -317,6 +317,7 @@ void ctkMatrixWidget::setMinimum(double newMinimum)
 void ctkMatrixWidget::setMaximum(double newMaximum)
 {
   Q_D(ctkMatrixWidget);
+  d->Minimum = qMin(d->Minimum, newMaximum);
   d->Maximum = newMaximum;
   d->validateItems();
 }
@@ -325,9 +326,16 @@ void ctkMatrixWidget::setMaximum(double newMaximum)
 void ctkMatrixWidget::setRange(double newMinimum, double newMaximum)
 {
   Q_D(ctkMatrixWidget);
-  d->Minimum = newMinimum;
-  d->Maximum = newMaximum;
+  d->Minimum = qMin(newMinimum, newMaximum);
+  d->Maximum = qMax(newMinimum, newMaximum);
   d->validateItems();
+}
+
+// --------------------------------------------------------------------------
+void ctkMatrixWidget::setDecimals(int decimals)
+{
+  Q_D(ctkMatrixWidget);
+  d->Decimals = qMax(0, decimals);
 }
 
 // --------------------------------------------------------------------------

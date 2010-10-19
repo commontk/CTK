@@ -40,7 +40,7 @@ class CTK_WIDGETS_EXPORT ctkMatrixWidget: public QWidget
   Q_OBJECT
   Q_PROPERTY(int columnCount READ columnCount WRITE setColumnCount)
   Q_PROPERTY(int rowCount READ rowCount WRITE setRowCount)
-  Q_PROPERTY(bool editable READ editable WRITE setEditable)
+  Q_PROPERTY(bool editable READ isEditable WRITE setEditable)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
@@ -50,7 +50,7 @@ public:
   /// Superclass typedef
   typedef QWidget Superclass;
 
-  /// Constructor, builds a 4x4 matrix
+  /// Constructor, builds a 4x4 identity matrix
   explicit ctkMatrixWidget(QWidget* parent = 0);
   /// Constructor, builds a custom rowsXcolumns matrix
   explicit ctkMatrixWidget(int rows, int columns, QWidget* parent = 0);
@@ -78,8 +78,9 @@ public:
   void setVector(const QVector<double> & vector);
 
   ///
-  /// This property determines whether the user can edit values
-  bool editable()const;
+  /// This property determines whether the user can edit values by
+  /// double clicking on the items. True by default
+  bool isEditable()const;
   void setEditable(bool newEditable);
 
   ///
