@@ -45,20 +45,18 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Retrieve To</string>
+         <string>Local Database</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox">
-        <property name="enabled">
-         <bool>false</bool>
+       <widget class="ctkDirectoryButton" name="sqlDirectory" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
         </property>
-        <item>
-         <property name="text">
-          <string>Set Directory...</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item>
@@ -165,6 +163,12 @@
    <class>ctkDICOMQueryResultsTabWidget</class>
    <extends>QTabWidget</extends>
    <header>ctkDICOMQueryResultsTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDirectoryButton</class>
+   <extends>QWidget</extends>
+   <header>ctkDirectoryButton.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,6 +1,7 @@
 #include <QDebug>
 #include <QTreeView>
 #include <QTabBar>
+#include <QSettings>
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMQueryRetrieveWidget.h"
@@ -35,11 +36,26 @@ ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* _parent):Super
   d->results->disableCloseOnTab(0);
   connect(d->queryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
   connect(d->results, SIGNAL(tabCloseRequested(int)), this, SLOT(onTabCloseRequested(int)));
+  connect(d->sqlDirectory, SIGNAL(directoryChanged(const QString&)), this, SLOT(onDatabaseDirectoryChanged(const QString&)));
+
+  QSettings settings;
+  if ( settings.value("DatabaseDirectory", "") != "" )
+  {
+    d->sqlDirectory->setDirectory(settings.value("DatabaseDirectory").toString());
+  }
 }
 
 //----------------------------------------------------------------------------
 ctkDICOMQueryRetrieveWidget::~ctkDICOMQueryRetrieveWidget()
 {
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQueryRetrieveWidget::onDatabaseDirectoryChanged(const QString& directory)
+{
+  QSettings settings;
+  settings.setValue("DatabaseDirectory", directory);
+  settings.sync();
 }
 
 //----------------------------------------------------------------------------
