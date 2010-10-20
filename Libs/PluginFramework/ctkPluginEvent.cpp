@@ -70,6 +70,12 @@ ctkPluginEvent::ctkPluginEvent(const ctkPluginEvent& other)
 
 }
 
+ctkPluginEvent& ctkPluginEvent::operator=(const ctkPluginEvent& other)
+{
+  d = other.d;
+  return *this;
+}
+
 ctkPlugin* ctkPluginEvent::getPlugin() const
 {
   return d->plugin;

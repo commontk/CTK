@@ -152,6 +152,8 @@ public:
 
   ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other);
 
+  ctkPluginFrameworkEvent& operator=(const ctkPluginFrameworkEvent& other);
+
   /**
    * Returns the exception error string related to this event.
    *

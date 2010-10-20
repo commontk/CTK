@@ -70,6 +70,12 @@ ctkServiceEvent::ctkServiceEvent(const ctkServiceEvent& other)
 
 }
 
+ctkServiceEvent& ctkServiceEvent::operator=(const ctkServiceEvent& other)
+{
+  d = other.d;
+  return *this;
+}
+
 ctkServiceReference ctkServiceEvent::getServiceReference() const
 {
   return d->reference;

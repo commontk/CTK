@@ -129,6 +129,8 @@ public:
 
   ctkServiceEvent(const ctkServiceEvent& other);
 
+  ctkServiceEvent& operator=(const ctkServiceEvent& other);
+
   /**
    * Returns a reference to the service that had a change occur in its
    * lifecycle.

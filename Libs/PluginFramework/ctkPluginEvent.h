@@ -170,6 +170,8 @@ public:
 
   ctkPluginEvent(const ctkPluginEvent& other);
 
+  ctkPluginEvent& operator=(const ctkPluginEvent& other);
+
   /**
    * Returns the plugin which had a lifecycle change.
    *

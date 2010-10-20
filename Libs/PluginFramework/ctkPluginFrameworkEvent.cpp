@@ -91,6 +91,12 @@ ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& 
 
 }
 
+ctkPluginFrameworkEvent& ctkPluginFrameworkEvent::operator=(const ctkPluginFrameworkEvent& other)
+{
+  d = other.d;
+  return *this;
+}
+
 QString ctkPluginFrameworkEvent::getErrorString() const
 {
   return d->errorString;
