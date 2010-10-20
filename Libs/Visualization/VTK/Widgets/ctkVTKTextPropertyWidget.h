@@ -53,6 +53,19 @@ public:
 
   QString text()const;
   QString textLabel()const;
+  
+  /// Color of vtkTextProperty
+  QColor color()const;
+  /// Opacity of vtkTextProperty
+  double opacity()const;
+  /// Font of vtkTextProperty
+  QString font()const;
+  /// Is the text bold
+  bool isBold()const;
+  /// Is the text italic
+  bool isItalic()const;
+  /// Has the text shadows
+  bool hasShadow()const;
 
 public slots:
   void setTextProperty(vtkTextProperty* textProperty);
