@@ -58,7 +58,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QCompleter>
 
 // CTK includes
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 class ctkConsoleWidgetCompleter;
 

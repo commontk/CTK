@@ -24,7 +24,7 @@
 
 #include <QString>
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 /**
  * Defines standard names for event properties

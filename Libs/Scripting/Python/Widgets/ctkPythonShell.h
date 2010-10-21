@@ -56,7 +56,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QWidget>
 
 // CTK includes
-#include "CTKScriptingPythonWidgetsExport.h"
+#include "ctkScriptingPythonWidgetsExport.h"
 
 /**
   Qt widget that provides an interactive "shell" interface to an embedded Python interpreter.

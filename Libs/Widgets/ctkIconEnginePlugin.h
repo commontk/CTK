@@ -28,7 +28,7 @@
 // CTK includes
 #include "ctkPimpl.h"
 #include "ctkPixmapIconEngine.h"
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 class ctkIconEnginePluginPrivate;
 class ctkIconEnginePrivate;

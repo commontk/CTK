@@ -27,7 +27,7 @@ class QString;
 // CTK includes
 #include "ctkWorkflowWidget.h"
 #include "ctkPimpl.h"
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 class ctkWorkflowStep;
 
 class ctkWorkflowAbstractPagedWidgetPrivate;

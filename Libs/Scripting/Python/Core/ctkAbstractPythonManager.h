@@ -27,7 +27,7 @@
 #include <QStringList>
 
 // CTK includes
-#include "CTKScriptingPythonCoreExport.h"
+#include "ctkScriptingPythonCoreExport.h"
 
 class PythonQtObjectPtr;
 

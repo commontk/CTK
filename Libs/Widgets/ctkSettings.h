@@ -60,7 +60,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QSettings>
 
 // CTK includes
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 class QDialog;
 class QMainWindow;

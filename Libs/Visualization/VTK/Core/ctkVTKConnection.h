@@ -28,7 +28,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-#include "CTKVisualizationVTKCoreExport.h"
+#include "ctkVisualizationVTKCoreExport.h"
 
 class vtkObject;
 class ctkVTKConnectionPrivate;

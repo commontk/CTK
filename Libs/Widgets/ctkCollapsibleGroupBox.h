@@ -25,7 +25,7 @@
 #include <QGroupBox>
 
 // CTK includes
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 /// A QGroupBox with an arrow indicator that shows/hides the groupbox contents
 /// when clicked.

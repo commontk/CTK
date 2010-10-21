@@ -66,7 +66,7 @@
 #include <QPixmap>
 #include <QVector>
 
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 struct ctkPixmapIconEngineEntry
 {

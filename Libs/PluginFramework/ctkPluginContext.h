@@ -31,7 +31,7 @@
 
 #include "ctkPluginEvent.h"
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 
 

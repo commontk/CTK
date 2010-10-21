@@ -27,7 +27,7 @@
 /// CTK includes
 #include "ctkPimpl.h"
 #include "ctkTransferFunction.h"
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 //class ctkTransferFunction;
 class ctkTransferFunctionScenePrivate;

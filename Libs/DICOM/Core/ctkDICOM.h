@@ -25,7 +25,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 
-#include "CTKDICOMCoreExport.h"
+#include "ctkDICOMCoreExport.h"
 
 class ctkDICOMPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOM : public QObject

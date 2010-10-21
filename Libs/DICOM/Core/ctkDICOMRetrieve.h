@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QDir>
 
-#include "CTKDICOMCoreExport.h"
+#include "ctkDICOMCoreExport.h"
 
 class ctkDICOMRetrievePrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject

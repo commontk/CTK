@@ -24,7 +24,7 @@
 
 #include <QString>
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 
 struct CTK_PLUGINFW_EXPORT ctkPluginConstants {

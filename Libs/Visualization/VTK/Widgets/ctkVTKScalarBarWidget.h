@@ -26,7 +26,7 @@
 
 // CTK includes
 #include <ctkPimpl.h>
-#include "CTKVisualizationVTKWidgetsExport.h"
+#include "ctkVisualizationVTKWidgetsExport.h"
 #include "ctkVTKObject.h"
 
 class ctkVTKScalarBarWidgetPrivate;

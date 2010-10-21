@@ -25,7 +25,7 @@
 #include <QString>
 #include <QRegExp>
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 
   /**

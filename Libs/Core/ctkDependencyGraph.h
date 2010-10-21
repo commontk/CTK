@@ -29,7 +29,7 @@
 
 // CTK includes
 #if !defined(NO_SYMBOL_EXPORT)
-#include "CTKCoreExport.h"
+#include "ctkCoreExport.h"
 #else
 #define CTK_CORE_EXPORT
 #endif

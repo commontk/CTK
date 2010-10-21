@@ -29,7 +29,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 class QComboBox;
 class ctkAddRemoveComboBoxPrivate;

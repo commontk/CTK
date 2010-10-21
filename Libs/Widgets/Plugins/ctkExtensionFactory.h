@@ -25,7 +25,7 @@
 #include <QtDesigner/QExtensionFactory>
 
 // CTK includes
-#include "CTKWidgetsPluginsExport.h"
+#include "ctkWidgetsPluginsExport.h"
 
 class QExtensionManager;
 

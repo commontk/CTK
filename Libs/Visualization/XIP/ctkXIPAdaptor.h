@@ -24,7 +24,7 @@
 // Qt includes 
 #include <QObject>
 
-#include "CTKVisualizationXIPExport.h"
+#include "ctkVisualizationXIPExport.h"
 
 class ctkXIPAdaptorPrivate;
 class CTK_VISUALIZATION_XIP_EXPORT ctkXIPAdaptor : public QObject

@@ -28,7 +28,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-#include "CTKDICOMCoreExport.h"
+#include "ctkDICOMCoreExport.h"
 #include "ctkDICOMIndexerBase.h"
 
 class ctkDICOMQueryPrivate;

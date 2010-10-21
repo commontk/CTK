@@ -26,7 +26,7 @@
 
 // CTK includes
 #include "ctkPimpl.h"
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 class ctkComboBoxPrivate;
 
 /// ctkComboBox is an advanced QComboBox. It allows the display of a default

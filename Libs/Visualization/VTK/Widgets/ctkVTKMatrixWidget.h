@@ -23,7 +23,7 @@
 
 // CTK includes
 #include "ctkVTKAbstractMatrixWidget.h"
-#include "CTKVisualizationVTKWidgetsExport.h"
+#include "ctkVisualizationVTKWidgetsExport.h"
 
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKMatrixWidget
   : public ctkVTKAbstractMatrixWidget

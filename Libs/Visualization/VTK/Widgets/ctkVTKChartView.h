@@ -23,7 +23,7 @@
 
 // CTK includes
 #include <ctkPimpl.h>
-#include "CTKVisualizationVTKWidgetsExport.h"
+#include "ctkVisualizationVTKWidgetsExport.h"
 class ctkVTKChartViewPrivate;
 
 // VTK includes

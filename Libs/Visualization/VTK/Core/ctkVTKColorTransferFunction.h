@@ -24,7 +24,7 @@
 // CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkPimpl.h"
-#include "CTKVisualizationVTKCoreExport.h"
+#include "ctkVisualizationVTKCoreExport.h"
 #include "ctkVTKObject.h"
 
 class vtkColorTransferFunction;

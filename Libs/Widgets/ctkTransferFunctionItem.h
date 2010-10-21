@@ -25,7 +25,7 @@
 #include <QGraphicsObject>
 
 /// CTK includes
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 #include "ctkPimpl.h"
 #include "ctkTransferFunction.h"
 

@@ -26,7 +26,7 @@
 #include <QColor>
 
 /// CTK includes
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 #include "ctkTransferFunctionItem.h"
 
 class ctkTransferFunctionNativeItemPrivate;

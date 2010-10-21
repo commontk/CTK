@@ -27,7 +27,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-#include "CTKVisualizationVTKWidgetsExport.h"
+#include "ctkVisualizationVTKWidgetsExport.h"
 
 class ctkVTKSliceViewPrivate;
 class vtkLightBoxRendererManager;

@@ -22,7 +22,7 @@
 #ifndef CTKLDAPSEARCHFILTER_H
 #define CTKLDAPSEARCHFILTER_H
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 #include "ctkServiceReference.h"
 

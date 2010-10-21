@@ -27,7 +27,7 @@
 #include <QString>
 #include <QDebug>
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 
 class CTK_PLUGINFW_EXPORT ctkPluginException : public std::runtime_error

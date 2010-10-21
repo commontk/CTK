@@ -25,7 +25,7 @@
 #include "ctkPlugin.h"
 
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 
   class ctkPluginFrameworkContext;

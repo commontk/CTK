@@ -27,7 +27,7 @@
 // STD includes
 #include <vector>
 
-#include "CTKCoreExport.h"
+#include "ctkCoreExport.h"
 
 namespace ctk {
 ///

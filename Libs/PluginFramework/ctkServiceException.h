@@ -27,7 +27,7 @@
 
 #include <QString>
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 
 class CTK_PLUGINFW_EXPORT ctkServiceException : public std::runtime_error

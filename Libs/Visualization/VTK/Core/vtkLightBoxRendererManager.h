@@ -3,7 +3,7 @@
 
 #include <vtkObject.h>
 
-#include "CTKVisualizationVTKCoreExport.h"
+#include "ctkVisualizationVTKCoreExport.h"
 
 class vtkRenderWindow;
 class vtkRenderer;

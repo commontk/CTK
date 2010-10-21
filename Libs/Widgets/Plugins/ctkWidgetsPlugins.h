@@ -25,7 +25,7 @@
 #include <QDesignerCustomWidgetCollectionInterface>
 
 // CTK includes
-#include "CTKWidgetsPluginsExport.h"
+#include "ctkWidgetsPluginsExport.h"
 #include "ctkActionsWidgetPlugin.h"
 #include "ctkCollapsibleButtonPlugin.h"
 #include "ctkCollapsibleGroupBoxPlugin.h"

@@ -26,7 +26,7 @@
 #include <QTabWidget>
 
 
-#include "CTKDICOMWidgetsExport.h"
+#include "ctkDICOMWidgetsExport.h"
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryResultsTabWidget : public QTabWidget
 {

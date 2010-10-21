@@ -30,7 +30,7 @@ class QIcon;
 
 // CTK includes
 #include "ctkPimpl.h"
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 #include "ctkWorkflowStep.h"
 #include "ctkWorkflowTransitions.h"
 //class ctkWorkflowButtonBoxWidget;

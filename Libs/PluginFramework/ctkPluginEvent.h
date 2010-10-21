@@ -24,7 +24,7 @@
 
 #include <QSharedDataPointer>
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 
 class ctkPlugin;

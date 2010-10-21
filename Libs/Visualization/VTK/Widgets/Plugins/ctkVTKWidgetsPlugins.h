@@ -25,7 +25,7 @@
 #include <QDesignerCustomWidgetCollectionInterface>
 
 // CTK includes
-#include "CTKVisualizationVTKWidgetsPluginsExport.h"
+#include "ctkVisualizationVTKWidgetsPluginsExport.h"
 #include "ctkVTKRenderViewPlugin.h"
 #include "ctkVTKScalarBarWidgetPlugin.h"
 #ifdef CTK_USE_CHARTS

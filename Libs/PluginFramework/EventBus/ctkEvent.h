@@ -22,7 +22,7 @@
 #ifndef CTKEVENT_H
 #define CTKEVENT_H
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 #include <QMap>
 #include <QVariant>

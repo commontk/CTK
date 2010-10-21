@@ -57,7 +57,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /// CTK includes
 #include "ctkPimpl.h"
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 class QPixmap;
 class QWidget;

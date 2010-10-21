@@ -9,7 +9,7 @@
 class QSettings;
 
 // CTK includes
-#include "CTKCoreExport.h"
+#include "ctkCoreExport.h"
 
 /**
  * The CTK command line parser.

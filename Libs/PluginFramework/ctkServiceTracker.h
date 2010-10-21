@@ -25,7 +25,7 @@
 
 #include <QScopedPointer>
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 #include "ctkServiceReference.h"
 #include "ctkServiceTrackerCustomizer.h"

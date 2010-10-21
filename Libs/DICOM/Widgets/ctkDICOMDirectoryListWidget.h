@@ -26,7 +26,7 @@
 #include <QItemSelection>
 
 // ctkDICOMWidgets includes
-#include "CTKDICOMWidgetsExport.h"
+#include "ctkDICOMWidgetsExport.h"
 #include "ctkDICOM.h"
 
 class ctkDICOMDirectoryListWidgetPrivate;

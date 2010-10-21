@@ -25,7 +25,7 @@
 #include <QAbstractItemModel>
 #include <QSqlDatabase>
 
-#include "CTKDICOMCoreExport.h"
+#include "ctkDICOMCoreExport.h"
 
 class ctkDICOMModelPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMModel : public QAbstractItemModel

@@ -22,7 +22,7 @@
 #ifndef CTKPLUGINDATABASEEXCEPTION_H
 #define CTKPLUGINDATABASEEXCEPTION_H
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 #include <stdexcept>
 

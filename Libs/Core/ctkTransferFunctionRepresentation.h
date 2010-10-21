@@ -30,7 +30,7 @@
 /// CTK includes
 #include "ctkPimpl.h"
 #include "ctkTransferFunction.h"
-#include "CTKCoreExport.h"
+#include "ctkCoreExport.h"
 
 class ctkTransferFunction;
 class ctkTransferFunctionRepresentationPrivate;

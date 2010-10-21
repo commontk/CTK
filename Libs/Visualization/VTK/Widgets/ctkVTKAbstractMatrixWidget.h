@@ -25,7 +25,7 @@
 #include <ctkMatrixWidget.h>
 #include <ctkVTKObject.h>
 
-#include "CTKVisualizationVTKWidgetsExport.h"
+#include "ctkVisualizationVTKWidgetsExport.h"
 
 class vtkMatrix4x4;
 class ctkVTKAbstractMatrixWidgetPrivate;

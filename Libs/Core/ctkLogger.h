@@ -26,7 +26,7 @@
 
 // CTK includes
 #include <ctkPimpl.h>
-#include "CTKCoreExport.h"
+#include "ctkCoreExport.h"
 
 class ctkLoggerPrivate;
 class CTK_CORE_EXPORT ctkLogger : public QObject

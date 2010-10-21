@@ -26,7 +26,7 @@
 #include <QColor>
 
 // CTK includes
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 ///
 /// ctkColorPickerButton is a QPushButton that refers to a color. The color 

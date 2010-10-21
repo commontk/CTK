@@ -30,7 +30,7 @@
 
 /// CTK includes
 #include "ctkTransferFunction.h"
-#include "CTKCoreExport.h"
+#include "ctkCoreExport.h"
 
 //-----------------------------------------------------------------------------
 struct CTK_CORE_EXPORT ctkHistogramBar : public ctkControlPoint

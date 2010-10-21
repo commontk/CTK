@@ -32,7 +32,7 @@
 #include "ctkWorkflowStep.h"
 #include "ctkWorkflowTransitions.h"
 #include "ctkWorkflowAbstractWidgetStep.h"
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 class ctkWorkflowWidgetStepPrivate;
 class ctkWorkflowButtonBoxWidget;

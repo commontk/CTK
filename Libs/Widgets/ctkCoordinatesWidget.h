@@ -25,7 +25,7 @@
 #include <QWidget>
 
 // CTK includes
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 ///
 /// ctkCoordinatesWidget is a simple container of dimension coordinates.

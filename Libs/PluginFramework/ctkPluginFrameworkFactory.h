@@ -26,7 +26,7 @@
 #include <QString>
 #include <QVariant>
 
-#include "CTKPluginFrameworkExport.h"
+#include "ctkPluginFrameworkExport.h"
 
 #include "ctkPluginFramework_global.h"
 

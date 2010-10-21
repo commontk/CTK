@@ -25,7 +25,7 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
-#include "CTKDICOMWidgetsExport.h"
+#include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMItemTreeModelPrivate;
 

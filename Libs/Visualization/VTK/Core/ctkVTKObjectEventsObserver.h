@@ -32,7 +32,7 @@
 /// VTK includes
 #include <vtkCommand.h>
 
-#include "CTKVisualizationVTKCoreExport.h"
+#include "ctkVisualizationVTKCoreExport.h"
 
 class ctkVTKConnection;
 class vtkObject;

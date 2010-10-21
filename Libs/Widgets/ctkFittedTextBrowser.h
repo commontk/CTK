@@ -25,7 +25,7 @@
 #include <QTextBrowser>
 
 // CTK includes
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 /// ctkFittedTextBrowser is a QTextBrowser that adapts its height depending
 /// on its contents and the width available. It always tries to show the whole

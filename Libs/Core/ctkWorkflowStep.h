@@ -27,7 +27,7 @@ class QState;
 
 // CTK includes
 #include "ctkPimpl.h"
-#include "CTKCoreExport.h"
+#include "ctkCoreExport.h"
 #include "ctkWorkflowTransitions.h"
 class ctkWorkflow;
 

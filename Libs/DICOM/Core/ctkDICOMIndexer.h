@@ -24,7 +24,7 @@
 // Qt includes 
 #include <QSqlDatabase>
 
-#include "CTKDICOMCoreExport.h"
+#include "ctkDICOMCoreExport.h"
 
 class ctkDICOMIndexerPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer

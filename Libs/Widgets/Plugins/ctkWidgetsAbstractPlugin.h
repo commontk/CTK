@@ -25,7 +25,7 @@
 #include <QDesignerCustomWidgetInterface>
 
 // CTK includes
-#include "CTKWidgetsPluginsExport.h"
+#include "ctkWidgetsPluginsExport.h"
 
 class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsAbstractPlugin :
   public QDesignerCustomWidgetInterface

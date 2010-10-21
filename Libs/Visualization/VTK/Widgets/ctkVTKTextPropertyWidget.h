@@ -27,7 +27,7 @@
 // CTK includes
 #include "ctkPimpl.h"
 #include "ctkVTKObject.h"
-#include "CTKVisualizationVTKWidgetsExport.h"
+#include "ctkVisualizationVTKWidgetsExport.h"
 
 class ctkVTKTextPropertyWidgetPrivate;
 class vtkTextProperty;
