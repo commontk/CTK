@@ -56,7 +56,7 @@ int ctkVTKTextPropertyWidgetTest1(int argc, char * argv [] )
   bool shadow = textProperty->GetShadow();
   
   textPropertyWidget.setTextProperty(textProperty);
-  //textProperty->Delete();
+  textProperty->Delete();
   
   if (textPropertyWidget.textProperty() != textProperty)
     {
