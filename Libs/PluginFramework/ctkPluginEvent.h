@@ -200,4 +200,7 @@ public:
 
 };
 
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, ctkPluginEvent::Type eventType);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, const ctkPluginEvent& event);
+
 #endif // CTKPLUGINEVENT_H

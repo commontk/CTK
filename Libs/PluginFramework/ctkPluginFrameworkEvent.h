@@ -189,4 +189,7 @@ public:
   Type getType() const;
 };
 
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, ctkPluginFrameworkEvent::Type type);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkPluginFrameworkEvent& event);
+
 #endif // CTKPLUGINFRAMEWORKEVENT_H

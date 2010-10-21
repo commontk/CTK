@@ -156,6 +156,7 @@ public:
 
 };
 
-QDebug CTK_PLUGINFW_EXPORT operator<<(QDebug dbg, ctkServiceEvent::Type type);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, ctkServiceEvent::Type type);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkServiceEvent& event);
 
 #endif // CTKSERVICEEVENT_H

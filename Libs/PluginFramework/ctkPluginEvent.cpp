@@ -21,6 +21,10 @@
 
 #include "ctkPluginEvent.h"
 
+#include "ctkPlugin.h"
+
+#include <QDebug>
+
 class ctkPluginEventData : public QSharedData
 {
 public:
@@ -84,4 +88,32 @@ ctkPlugin* ctkPluginEvent::getPlugin() const
 ctkPluginEvent::Type ctkPluginEvent::getType() const
 {
   return d->type;
+}
+
+QDebug operator<<(QDebug debug, ctkPluginEvent::Type eventType)
+{
+  switch (eventType)
+  {
+  case ctkPluginEvent::INSTALLED:       return debug << "INSTALLED";
+  case ctkPluginEvent::STARTED:         return debug << "STARTED";
+  case ctkPluginEvent::STOPPED:         return debug << "STOPPED";
+  case ctkPluginEvent::UPDATED:         return debug << "UPDATED";
+  case ctkPluginEvent::UNINSTALLED:     return debug << "UNINSTALLED";
+  case ctkPluginEvent::RESOLVED:        return debug << "RESOLVED";
+  case ctkPluginEvent::UNRESOLVED:      return debug << "UNRESOLVED";
+  case ctkPluginEvent::STARTING:        return debug << "STARTING";
+  case ctkPluginEvent::STOPPING:        return debug << "STOPPING";
+  case ctkPluginEvent::LAZY_ACTIVATION: return debug << "LAZY_ACTIVATION";
+
+  default: return debug << "Unknown plugin event type (" << static_cast<int>(eventType) << ")";
+  }
+}
+
+QDebug operator<<(QDebug debug, const ctkPluginEvent& event)
+{
+  if (event.isNull()) return debug << "NONE";
+
+  ctkPlugin* p = event.getPlugin();
+  debug.nospace() << event.getType() << " #" << p->getPluginId() << " (" << p->getLocation() << ")";
+  return debug.maybeSpace();
 }

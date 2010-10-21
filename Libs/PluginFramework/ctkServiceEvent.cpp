@@ -21,6 +21,11 @@
 
 #include "ctkServiceEvent.h"
 
+#include "ctkServiceReference.h"
+#include "ctkPluginConstants.h"
+
+#include <QStringList>
+
 class ctkServiceEventData : public QSharedData
 {
 public:
@@ -90,21 +95,24 @@ QDebug operator<<(QDebug dbg, ctkServiceEvent::Type type)
 {
   switch(type)
   {
-  case ctkServiceEvent::MODIFIED:
-    dbg.nospace() << "MODIFIED";
-    break;
-  case ctkServiceEvent::MODIFIED_ENDMATCH:
-    dbg.nospace() << "MODIFIED_ENDMATCH";
-    break;
-  case ctkServiceEvent::REGISTERED:
-    dbg.nospace() << "REGISTERED";
-    break;
-  case ctkServiceEvent::UNREGISTERING:
-    dbg.nospace() << "UNREGISTERING";
-    break;
-  default:
-    dbg.nospace() << "unknown event type " << static_cast<int>(type);
-  }
+  case ctkServiceEvent::MODIFIED:          return dbg << "MODIFIED";
+  case ctkServiceEvent::MODIFIED_ENDMATCH: return dbg << "MODIFIED_ENDMATCH";
+  case ctkServiceEvent::REGISTERED:        return dbg << "REGISTERED";
+  case ctkServiceEvent::UNREGISTERING:     return dbg << "UNREGISTERING";
 
+  default: return dbg << "unknown service event type (" << static_cast<int>(type) << ")";
+  }
+}
+
+QDebug operator<<(QDebug dbg, const ctkServiceEvent& event)
+{
+  if (event.isNull()) return dbg << "NONE";
+
+  ctkServiceReference sr = event.getServiceReference();
+  // Some events will not have a service reference
+  qlonglong sid = sr.getProperty(ctkPluginConstants::SERVICE_ID).toLongLong();
+  QStringList classes = sr.getProperty(ctkPluginConstants::OBJECTCLASS).toStringList();
+
+  dbg.nospace() << event.getType() << " " << sid << " objectClass=" << classes;
   return dbg.maybeSpace();
 }

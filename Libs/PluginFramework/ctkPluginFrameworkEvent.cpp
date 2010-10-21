@@ -21,7 +21,10 @@
 
 #include "ctkPluginFrameworkEvent.h"
 
+#include "ctkPlugin.h"
+
 #include <QString>
+#include <QDebug>
 
 class ctkPluginFrameworkEventData : public QSharedData
 {
@@ -110,4 +113,32 @@ ctkPlugin* ctkPluginFrameworkEvent::getPlugin() const
 ctkPluginFrameworkEvent::Type ctkPluginFrameworkEvent::getType() const
 {
   return d->type;
+}
+
+QDebug operator<<(QDebug dbg, ctkPluginFrameworkEvent::Type type)
+{
+  switch (type)
+  {
+  case ctkPluginFrameworkEvent::STARTED:        return dbg << "STARTED";
+  case ctkPluginFrameworkEvent::ERROR:          return dbg << "ERROR";
+  case ctkPluginFrameworkEvent::WARNING:        return dbg << "WARNING";
+  case ctkPluginFrameworkEvent::INFO:           return dbg << "INFO";
+  case ctkPluginFrameworkEvent::STOPPED:        return dbg << "STOPPED";
+  case ctkPluginFrameworkEvent::STOPPED_UPDATE: return dbg << "STOPPED_UPDATE";
+  case ctkPluginFrameworkEvent::WAIT_TIMEDOUT:  return dbg << "WATI_TIMEDOUT";
+
+  default: return dbg << "unknown plugin framework event type (" << static_cast<int>(type) << ")";
+  }
+}
+
+QDebug operator<<(QDebug dbg, const ctkPluginFrameworkEvent& event)
+{
+  if (event.isNull()) return dbg << "NONE";
+
+  ctkPlugin* p = event.getPlugin();
+  QString err = event.getErrorString();
+
+  dbg.nospace() << event.getType() << " #" << p->getPluginId() << " ("
+      << p->getLocation() << ")" << (err.isEmpty() ? "" : " exception: ") << err;
+  return dbg.maybeSpace();
 }
