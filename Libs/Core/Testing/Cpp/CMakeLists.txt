@@ -30,6 +30,8 @@ SET(Tests_SRCS
   ctkExampleDerivedWorkflowStep.h
   ctkExampleWorkflowStepUsingSignalsAndSlots.cpp
   ctkExampleWorkflowStepUsingSignalsAndSlots.h
+  ctkSingletonTestHelper.cpp
+  ctkSingletonTestHelper.h
   )
 
 SET(Tests_MOC_SRCS

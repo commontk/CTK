@@ -18,6 +18,12 @@
 
 =========================================================================*/
 
+/**
+\class ctkSingleton ctkSingleton
+\brief Utility macros allowing to declare a singleton
+
+*/
+
 #ifndef __ctkSingleton_h
 #define __ctkSingleton_h
 
@@ -32,12 +38,12 @@
 
 //-----------------------------------------------------------------------------
 /// Should be included as a class protected member
-//
-#define CTK_SINGLETON_DECLARE(NAME)      \
-static NAME* Instance;                    \
-static void classInitialize();            \
-static void classFinalize();              \
-friend class NAME##Initialize;
+#define CTK_SINGLETON_DECLARE(NAME)                \
+static NAME* Instance;                             \
+static void classInitialize();                     \
+static void classFinalize();                       \
+friend class NAME##Initialize;                     \
+typedef NAME Self;
   
 //-----------------------------------------------------------------------------
 /// Help macro allowing to declare the utility class to make sure
@@ -48,7 +54,7 @@ friend class NAME##Initialize;
 /// The instance (NAME##Initializer) will show up in any translation unit
 /// that uses NAME.  It will make sure NAME is initialized before it is used.
 /// 
-#define CTK_SINGLETON_DECLARE_INITIALIZER(EXPORT_DIRECTIVE,NAME)  \
+#define CTK_SINGLETON_DECLARE_INITIALIZER(EXPORT_DIRECTIVE,NAME)   \
 class EXPORT_DIRECTIVE NAME##Initialize                            \
 {                                                                  \
 public:                                                            \
@@ -89,7 +95,7 @@ NAME* NAME::Instance;
 
 //----------------------------------------------------------------------------
 //
-/// This should be added at the end of the CXX file
+/// This should be added at the end of the CPP file
 //
 #define CTK_SINGLETON_DEFINE(NAME)                  \
 void NAME::classInitialize()                        \
@@ -104,16 +110,5 @@ void NAME::classFinalize()                          \
                                                     \
 CTK_SINGLETON_DEFINE_INITIALIZER(NAME)
 
-
-//----------------------------------------------------------------------------
-//
-/// Helper macro
-//
-/// TODO Documentation
-//
-#define CTK_SINGLETON_DECLARE_PRIVATE(PUB)       \
-PUB(const PUB&);                                 \
-void operator=(const PUB&);                      \
-CTK_DECLARE_PRIVATE(PUB);
 
 #endif //__ctkSingleton_h
