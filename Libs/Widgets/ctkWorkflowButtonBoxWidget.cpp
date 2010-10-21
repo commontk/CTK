@@ -315,7 +315,7 @@ void ctkWorkflowButtonBoxWidget::setWorkflow(ctkWorkflow * newWorkflow)
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowButtonBoxWidget, QString, backButtonDefaultText,
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QString, backButtonDefaultText,
             BackButtonDefaultText);
 
 //-----------------------------------------------------------------------------
@@ -334,7 +334,7 @@ void ctkWorkflowButtonBoxWidget::setBackButtonDefaultText(const QString& default
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowButtonBoxWidget, QString, nextButtonDefaultText,
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QString, nextButtonDefaultText,
             NextButtonDefaultText);
 
 //-----------------------------------------------------------------------------
@@ -353,11 +353,11 @@ void ctkWorkflowButtonBoxWidget::setNextButtonDefaultText(const QString& default
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowButtonBoxWidget, ctkWorkflow*, workflow, Workflow);
-CTK_GET_CXX(ctkWorkflowButtonBoxWidget, QPushButton*, backButton, BackButton);
-CTK_GET_CXX(ctkWorkflowButtonBoxWidget, QBoxLayout::Direction, direction, Direction);
-CTK_GET_CXX(ctkWorkflowButtonBoxWidget, bool, hideInvalidButtons, HideInvalidButtons);
-CTK_SET_CXX(ctkWorkflowButtonBoxWidget, bool, setHideInvalidButtons, HideInvalidButtons);
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, ctkWorkflow*, workflow, Workflow);
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QPushButton*, backButton, BackButton);
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QBoxLayout::Direction, direction, Direction);
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, bool, hideInvalidButtons, HideInvalidButtons);
+CTK_SET_CPP(ctkWorkflowButtonBoxWidget, bool, setHideInvalidButtons, HideInvalidButtons);
 
 //-----------------------------------------------------------------------------
 // TODO will be list of next buttons for branching workflow

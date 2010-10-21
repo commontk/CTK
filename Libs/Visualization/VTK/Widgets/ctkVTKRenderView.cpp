@@ -278,10 +278,10 @@ void ctkVTKRenderView::forceRender()
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, vtkRenderWindow*, renderWindow, RenderWindow);
+CTK_GET_CPP(ctkVTKRenderView, vtkRenderWindow*, renderWindow, RenderWindow);
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, vtkRenderWindowInteractor*, interactor, CurrentInteractor);
+CTK_GET_CPP(ctkVTKRenderView, vtkRenderWindowInteractor*, interactor, CurrentInteractor);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
@@ -386,14 +386,14 @@ void ctkVTKRenderView::resetCamera()
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, vtkRenderer*, renderer, Renderer);
+CTK_GET_CPP(ctkVTKRenderView, vtkRenderer*, renderer, Renderer);
 
 //----------------------------------------------------------------------------
-CTK_SET_CXX(ctkVTKRenderView, bool, setRenderEnabled, RenderEnabled);
-CTK_GET_CXX(ctkVTKRenderView, bool, renderEnabled, RenderEnabled);
+CTK_SET_CPP(ctkVTKRenderView, bool, setRenderEnabled, RenderEnabled);
+CTK_GET_CPP(ctkVTKRenderView, bool, renderEnabled, RenderEnabled);
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, int, pitchRollYawIncrement, PitchRollYawIncrement);
+CTK_GET_CPP(ctkVTKRenderView, int, pitchRollYawIncrement, PitchRollYawIncrement);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setPitchRollYawIncrement(int newPitchRollYawIncrement)
@@ -403,7 +403,7 @@ void ctkVTKRenderView::setPitchRollYawIncrement(int newPitchRollYawIncrement)
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, pitchDirection, PitchDirection);
+CTK_GET_CPP(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, pitchDirection, PitchDirection);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setPitchDirection(ctkVTKRenderView::RotateDirection newPitchDirection)
@@ -418,7 +418,7 @@ void ctkVTKRenderView::setPitchDirection(ctkVTKRenderView::RotateDirection newPi
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, rollDirection, RollDirection);
+CTK_GET_CPP(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, rollDirection, RollDirection);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setRollDirection(ctkVTKRenderView::RotateDirection newRollDirection)
@@ -433,7 +433,7 @@ void ctkVTKRenderView::setRollDirection(ctkVTKRenderView::RotateDirection newRol
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, yawDirection, YawDirection);
+CTK_GET_CPP(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, yawDirection, YawDirection);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setYawDirection(ctkVTKRenderView::RotateDirection newYawDirection)
@@ -448,8 +448,8 @@ void ctkVTKRenderView::setYawDirection(ctkVTKRenderView::RotateDirection newYawD
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, spinDirection, SpinDirection);
-CTK_SET_CXX(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, setSpinDirection, SpinDirection);
+CTK_GET_CPP(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, spinDirection, SpinDirection);
+CTK_SET_CPP(ctkVTKRenderView, ctkVTKRenderView::RotateDirection, setSpinDirection, SpinDirection);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::pitch()
@@ -499,7 +499,7 @@ void ctkVTKRenderView::setSpinEnabled(bool enabled)
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, bool, spinEnabled, SpinEnabled);
+CTK_GET_CPP(ctkVTKRenderView, bool, spinEnabled, SpinEnabled);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setSpinIncrement(int newSpinIncrement)
@@ -509,7 +509,7 @@ void ctkVTKRenderView::setSpinIncrement(int newSpinIncrement)
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, int, spinIncrement, SpinIncrement);
+CTK_GET_CPP(ctkVTKRenderView, int, spinIncrement, SpinIncrement);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setAnimationIntervalMs(int newAnimationIntervalMs)
@@ -519,7 +519,7 @@ void ctkVTKRenderView::setAnimationIntervalMs(int newAnimationIntervalMs)
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, int, animationIntervalMs, AnimationIntervalMs);
+CTK_GET_CPP(ctkVTKRenderView, int, animationIntervalMs, AnimationIntervalMs);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setRockEnabled(bool enabled)
@@ -536,7 +536,7 @@ void ctkVTKRenderView::setRockEnabled(bool enabled)
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, bool, rockEnabled, RockEnabled);
+CTK_GET_CPP(ctkVTKRenderView, bool, rockEnabled, RockEnabled);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setRockLength(int newRockLength)
@@ -546,7 +546,7 @@ void ctkVTKRenderView::setRockLength(int newRockLength)
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, int, rockLength, RockLength);
+CTK_GET_CPP(ctkVTKRenderView, int, rockLength, RockLength);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setRockIncrement(int newRockIncrement)
@@ -556,7 +556,7 @@ void ctkVTKRenderView::setRockIncrement(int newRockIncrement)
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, int, rockIncrement, RockIncrement);
+CTK_GET_CPP(ctkVTKRenderView, int, rockIncrement, RockIncrement);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setZoomFactor(double newZoomFactor)
@@ -566,7 +566,7 @@ void ctkVTKRenderView::setZoomFactor(double newZoomFactor)
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKRenderView, double, zoomFactor, ZoomFactor);
+CTK_GET_CPP(ctkVTKRenderView, double, zoomFactor, ZoomFactor);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::zoomIn()

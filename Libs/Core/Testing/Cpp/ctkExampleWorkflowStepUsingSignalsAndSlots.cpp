@@ -108,6 +108,6 @@ void ctkExampleWorkflowStepUsingSignalsAndSlots::onExit(const ctkWorkflowStep* g
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(ctkExampleWorkflowStepUsingSignalsAndSlots, int, numberOfTimesRanOnEntry, numberOfTimesRanOnEntry);
-CTK_GET_CXX(ctkExampleWorkflowStepUsingSignalsAndSlots, int, numberOfTimesRanOnExit, numberOfTimesRanOnExit);
+CTK_GET_CPP(ctkExampleWorkflowStepUsingSignalsAndSlots, int, numberOfTimesRanOnEntry, numberOfTimesRanOnEntry);
+CTK_GET_CPP(ctkExampleWorkflowStepUsingSignalsAndSlots, int, numberOfTimesRanOnExit, numberOfTimesRanOnExit);
 

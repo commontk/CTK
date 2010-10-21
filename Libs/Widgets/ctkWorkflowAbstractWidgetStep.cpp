@@ -104,25 +104,25 @@ ctkWorkflowAbstractWidgetStep::~ctkWorkflowAbstractWidgetStep()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowAbstractWidgetStep, int, hasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
-CTK_SET_CXX(ctkWorkflowAbstractWidgetStep, int, setHasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
-CTK_GET_CXX(ctkWorkflowAbstractWidgetStep, int, hasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
-CTK_SET_CXX(ctkWorkflowAbstractWidgetStep, int, setHasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
-CTK_GET_CXX(ctkWorkflowAbstractWidgetStep, QString, backButtonText, backButtonText);
-CTK_SET_CXX(ctkWorkflowAbstractWidgetStep, const QString&, setBackButtonText, backButtonText);
-CTK_GET_CXX(ctkWorkflowAbstractWidgetStep, QString, nextButtonText, nextButtonText);
-CTK_SET_CXX(ctkWorkflowAbstractWidgetStep, const QString&, setNextButtonText, nextButtonText);
-// CTK_GET_CXX(ctkWorkflowAbstractWidgetStep, QList<QString>, finishButtonTexts, finishButtonTexts);
-// CTK_SET_CXX(ctkWorkflowAbstractWidgetStep, QList<QString>, setFinishButtonTexts, finishButtonTexts);
-//CTK_GET_CXX(ctkWorkflowAbstractWidgetStep, bool, hasButtonBoxWidget, hasButtonBoxWidget);
-//CTK_SET_CXX(ctkWorkflowAbstractWidgetStep, bool, setHasButtonBoxWidget, hasButtonBoxWidget);
-CTK_GET_CXX(ctkWorkflowAbstractWidgetStep, QIcon, icon, icon);
-CTK_SET_CXX(ctkWorkflowAbstractWidgetStep, const QIcon&, setIcon, icon);
+CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, int, hasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
+CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, int, setHasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
+CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, int, hasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
+CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, int, setHasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
+CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, QString, backButtonText, backButtonText);
+CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, const QString&, setBackButtonText, backButtonText);
+CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, QString, nextButtonText, nextButtonText);
+CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, const QString&, setNextButtonText, nextButtonText);
+// CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, QList<QString>, finishButtonTexts, finishButtonTexts);
+// CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, QList<QString>, setFinishButtonTexts, finishButtonTexts);
+//CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, bool, hasButtonBoxWidget, hasButtonBoxWidget);
+//CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, bool, setHasButtonBoxWidget, hasButtonBoxWidget);
+CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, QIcon, icon, icon);
+CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, const QIcon&, setIcon, icon);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowAbstractWidgetStep, ctkWorkflowAbstractWidgetStep::ButtonBoxHints,
+CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, ctkWorkflowAbstractWidgetStep::ButtonBoxHints,
             buttonBoxHints, ButtonBoxHints);
-CTK_SET_CXX(ctkWorkflowAbstractWidgetStep, ctkWorkflowAbstractWidgetStep::ButtonBoxHints,
+CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, ctkWorkflowAbstractWidgetStep::ButtonBoxHints,
             setButtonBoxHints, ButtonBoxHints);
 
 //-----------------------------------------------------------------------------

@@ -200,7 +200,7 @@ void ctkAddRemoveComboBox::setEmptyText(const QString& text)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkAddRemoveComboBox, QString, emptyText, EmptyText);
+CTK_GET_CPP(ctkAddRemoveComboBox, QString, emptyText, EmptyText);
 
 // --------------------------------------------------------------------------
 void ctkAddRemoveComboBox::onRowsInserted(const QModelIndex & _parent, int start, int end)
@@ -394,7 +394,7 @@ int ctkAddRemoveComboBox::count()const
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkAddRemoveComboBox, bool, empty, HasEmptyItem);
+CTK_GET_CPP(ctkAddRemoveComboBox, bool, empty, HasEmptyItem);
 
 // --------------------------------------------------------------------------
 void ctkAddRemoveComboBox::setCurrentIndex(int index)

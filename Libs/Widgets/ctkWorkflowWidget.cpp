@@ -90,11 +90,11 @@ ctkWorkflowWidget::~ctkWorkflowWidget()
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowWidget, ctkWorkflow*, workflow, Workflow);
-CTK_GET_CXX(ctkWorkflowWidget, ctkWorkflowGroupBox*, workflowGroupBox, WorkflowGroupBox);
-CTK_GET_CXX(ctkWorkflowWidget, bool, showButtonBoxWidget, ShowButtonBoxWidget);
-CTK_SET_CXX(ctkWorkflowWidget, bool, setShowButtonBoxWidget, ShowButtonBoxWidget);
-CTK_GET_CXX(ctkWorkflowWidget, ctkWorkflowButtonBoxWidget*, buttonBoxWidget, ButtonBoxWidget);
+CTK_GET_CPP(ctkWorkflowWidget, ctkWorkflow*, workflow, Workflow);
+CTK_GET_CPP(ctkWorkflowWidget, ctkWorkflowGroupBox*, workflowGroupBox, WorkflowGroupBox);
+CTK_GET_CPP(ctkWorkflowWidget, bool, showButtonBoxWidget, ShowButtonBoxWidget);
+CTK_SET_CPP(ctkWorkflowWidget, bool, setShowButtonBoxWidget, ShowButtonBoxWidget);
+CTK_GET_CPP(ctkWorkflowWidget, ctkWorkflowButtonBoxWidget*, buttonBoxWidget, ButtonBoxWidget);
 
 // --------------------------------------------------------------------------
 void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)

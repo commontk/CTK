@@ -41,17 +41,17 @@ SET(Tests_SRCS
   ctkExampleDerivedWorkflowWidgetStep.h
   ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.cpp
   ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.h
-)
+  )
 
 SET(Tests_MOC_SRCS
   ctkExampleDerivedWorkflowWidgetStep.h
   ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.h
-)
+  )
 
-SET(MY_MOC_CXX)
-QT4_WRAP_CPP(MY_MOC_CXX ${Tests_MOC_SRCS})
+SET(Tests_MOC_CPP)
+QT4_WRAP_CPP(MY_MOC_CPP ${Tests_MOC_SRCS})
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_SRCS} ${MY_MOC_CXX})
+ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP})
 TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME})
 
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)

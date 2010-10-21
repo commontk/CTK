@@ -888,9 +888,9 @@ bool ctkWorkflow::hasStep(const QString& id)const
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflow, ctkWorkflowStep*, initialStep, InitialStep);
-CTK_SET_CXX(ctkWorkflow, ctkWorkflowStep*, setInitialStep, InitialStep);
-CTK_GET_CXX(ctkWorkflow, ctkWorkflowStep*, currentStep, CurrentStep);
+CTK_GET_CPP(ctkWorkflow, ctkWorkflowStep*, initialStep, InitialStep);
+CTK_SET_CPP(ctkWorkflow, ctkWorkflowStep*, setInitialStep, InitialStep);
+CTK_GET_CPP(ctkWorkflow, ctkWorkflowStep*, currentStep, CurrentStep);
 
 // --------------------------------------------------------------------------
 void ctkWorkflow::start()

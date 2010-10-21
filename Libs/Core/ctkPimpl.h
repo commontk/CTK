@@ -58,7 +58,7 @@ macro.
  *
  * Also make sure the Pimpl is initalized
  */
-#define CTK_CONSTRUCTOR_NO_ARG_CXX(PUB)  \
+#define CTK_CONSTRUCTOR_NO_ARG_CPP(PUB)  \
   PUB::PUB(): d_ptr(new PUB##Private)    \
     {                                    \
     }
@@ -68,7 +68,7 @@ macro.
  *
  * Also make sure the Pimpl is initalized
  */
-#define CTK_CONSTRUCTOR_1_ARG_CXX(PUB, _ARG1)   \
+#define CTK_CONSTRUCTOR_1_ARG_CPP(PUB, _ARG1)   \
   PUB::PUB(_ARG1 _parent)                       \
     : Superclass( _parent )                     \
     , d_ptr(new PUB##Private)                   \
@@ -82,7 +82,7 @@ macro.
  * the name of the public class (PUB), the type of the argument to return (_TYPE),
  * the name of the getter(_NAME) and the name of the variable in the Private class(_VARNAME).
  */
-#define CTK_SET_CXX(PUB, _TYPE, _NAME, _VARNAME)    \
+#define CTK_SET_CPP(PUB, _TYPE, _NAME, _VARNAME)    \
   void PUB::_NAME(_TYPE var)                        \
   {                                                 \
     Q_D(PUB);                                       \
@@ -96,7 +96,7 @@ macro.
  * the name of the public class (PUB), the type of the argument to return (_TYPE),
  * the name of the setter(_NAME) and the name of the variable in the Private class(_VARNAME).
  */
-#define CTK_GET_CXX(PUB, _TYPE, _NAME, _VARNAME)   \
+#define CTK_GET_CPP(PUB, _TYPE, _NAME, _VARNAME)   \
   _TYPE PUB::_NAME()const                          \
   {                                                \
     Q_D(const PUB);                                \
