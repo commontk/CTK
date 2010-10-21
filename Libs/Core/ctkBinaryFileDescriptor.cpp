@@ -160,8 +160,8 @@ ctkBinaryFileDescriptor::~ctkBinaryFileDescriptor()
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkBinaryFileDescriptor, QString, fileName, FileName);
-CTK_SET_CXX(ctkBinaryFileDescriptor, const QString&, setFileName, FileName);
+CTK_GET_CPP(ctkBinaryFileDescriptor, QString, fileName, FileName);
+CTK_SET_CPP(ctkBinaryFileDescriptor, const QString&, setFileName, FileName);
 
 // --------------------------------------------------------------------------
 bool ctkBinaryFileDescriptor::isLoaded() const

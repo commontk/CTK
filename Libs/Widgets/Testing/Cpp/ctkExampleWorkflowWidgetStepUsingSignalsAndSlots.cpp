@@ -83,14 +83,14 @@ ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::~ctkExampleWorkflowWidgetStepU
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QWidget*, widget, widget);
-CTK_SET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QWidget*, setWidget, widget);
-CTK_GET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLabel*, label, label);
-CTK_SET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLabel*, setLabel, label);
-CTK_GET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLineEdit*, lineEdit, lineEdit);
-CTK_SET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLineEdit*, setLineEdit, lineEdit);
-CTK_GET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, int, numberOfTimesRanOnEntry, numberOfTimesRanOnEntry);
-CTK_GET_CXX(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, int, numberOfTimesRanOnExit, numberOfTimesRanOnExit);
+CTK_GET_CPP(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QWidget*, widget, widget);
+CTK_SET_CPP(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QWidget*, setWidget, widget);
+CTK_GET_CPP(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLabel*, label, label);
+CTK_SET_CPP(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLabel*, setLabel, label);
+CTK_GET_CPP(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLineEdit*, lineEdit, lineEdit);
+CTK_SET_CPP(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, QLineEdit*, setLineEdit, lineEdit);
+CTK_GET_CPP(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, int, numberOfTimesRanOnEntry, numberOfTimesRanOnEntry);
+CTK_GET_CPP(ctkExampleWorkflowWidgetStepUsingSignalsAndSlots, int, numberOfTimesRanOnExit, numberOfTimesRanOnExit);
 
 //-----------------------------------------------------------------------------
 void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::onEntry(

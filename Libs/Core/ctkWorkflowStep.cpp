@@ -138,44 +138,44 @@ ctkWorkflowStep::~ctkWorkflowStep()
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, ctkWorkflow*, workflow, Workflow);
-CTK_SET_CXX(ctkWorkflowStep, ctkWorkflow*, setWorkflow, Workflow);
+CTK_GET_CPP(ctkWorkflowStep, ctkWorkflow*, workflow, Workflow);
+CTK_SET_CPP(ctkWorkflowStep, ctkWorkflow*, setWorkflow, Workflow);
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, QString, id, Id);
-CTK_SET_CXX(ctkWorkflowStep, const QString&, setId, Id);
+CTK_GET_CPP(ctkWorkflowStep, QString, id, Id);
+CTK_SET_CPP(ctkWorkflowStep, const QString&, setId, Id);
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, QString, name, Name);
-CTK_SET_CXX(ctkWorkflowStep, const QString&, setName, Name);
+CTK_GET_CPP(ctkWorkflowStep, QString, name, Name);
+CTK_SET_CPP(ctkWorkflowStep, const QString&, setName, Name);
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, QString, description, Description);
-CTK_SET_CXX(ctkWorkflowStep, const QString&, setDescription, Description);
+CTK_GET_CPP(ctkWorkflowStep, QString, description, Description);
+CTK_SET_CPP(ctkWorkflowStep, const QString&, setDescription, Description);
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, QString, statusText, StatusText);
-CTK_SET_CXX(ctkWorkflowStep, const QString&, setStatusText, StatusText);
+CTK_GET_CPP(ctkWorkflowStep, QString, statusText, StatusText);
+CTK_SET_CPP(ctkWorkflowStep, const QString&, setStatusText, StatusText);
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, bool, hasValidateCommand, HasValidateCommand);
-CTK_SET_CXX(ctkWorkflowStep, bool, setHasValidateCommand, HasValidateCommand);
+CTK_GET_CPP(ctkWorkflowStep, bool, hasValidateCommand, HasValidateCommand);
+CTK_SET_CPP(ctkWorkflowStep, bool, setHasValidateCommand, HasValidateCommand);
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, bool, hasOnEntryCommand, HasOnEntryCommand);
-CTK_SET_CXX(ctkWorkflowStep, bool, setHasOnEntryCommand, HasOnEntryCommand);
+CTK_GET_CPP(ctkWorkflowStep, bool, hasOnEntryCommand, HasOnEntryCommand);
+CTK_SET_CPP(ctkWorkflowStep, bool, setHasOnEntryCommand, HasOnEntryCommand);
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, bool, hasOnExitCommand, HasOnExitCommand);
-CTK_SET_CXX(ctkWorkflowStep, bool, setHasOnExitCommand, HasOnExitCommand);
+CTK_GET_CPP(ctkWorkflowStep, bool, hasOnExitCommand, HasOnExitCommand);
+CTK_SET_CPP(ctkWorkflowStep, bool, setHasOnExitCommand, HasOnExitCommand);
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, QState*, processingState, ProcessingState);
-CTK_GET_CXX(ctkWorkflowStep, QState*, validationState, ValidationState);
+CTK_GET_CPP(ctkWorkflowStep, QState*, processingState, ProcessingState);
+CTK_GET_CPP(ctkWorkflowStep, QState*, validationState, ValidationState);
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowStep, ctkWorkflowIntrastepTransition*, validationTransition, ValidationTransition);
-CTK_GET_CXX(ctkWorkflowStep, ctkWorkflowIntrastepTransition*,
+CTK_GET_CPP(ctkWorkflowStep, ctkWorkflowIntrastepTransition*, validationTransition, ValidationTransition);
+CTK_GET_CPP(ctkWorkflowStep, ctkWorkflowIntrastepTransition*,
             validationFailedTransition, ValidationFailedTransition);
 
 // --------------------------------------------------------------------------

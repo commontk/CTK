@@ -82,7 +82,7 @@ macro.
  * the name of the public class (PUB), the type of the argument to return (_TYPE),
  * the name of the getter(_NAME) and the name of the variable in the Private class(_VARNAME).
  */
-#define CTK_SET_CXX(PUB, _TYPE, _NAME, _VARNAME)    \
+#define CTK_SET_CPP(PUB, _TYPE, _NAME, _VARNAME)    \
   void PUB::_NAME(_TYPE var)                        \
   {                                                 \
     Q_D(PUB);                                       \
@@ -96,7 +96,7 @@ macro.
  * the name of the public class (PUB), the type of the argument to return (_TYPE),
  * the name of the setter(_NAME) and the name of the variable in the Private class(_VARNAME).
  */
-#define CTK_GET_CXX(PUB, _TYPE, _NAME, _VARNAME)   \
+#define CTK_GET_CPP(PUB, _TYPE, _NAME, _VARNAME)   \
   _TYPE PUB::_NAME()const                          \
   {                                                \
     Q_D(const PUB);                                \

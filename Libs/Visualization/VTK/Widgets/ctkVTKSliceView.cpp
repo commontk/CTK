@@ -130,15 +130,15 @@ void ctkVTKSliceView::forceRender()
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKSliceView, vtkRenderWindow*, renderWindow, RenderWindow);
+CTK_GET_CPP(ctkVTKSliceView, vtkRenderWindow*, renderWindow, RenderWindow);
 
 //----------------------------------------------------------------------------
-CTK_GET_CXX(ctkVTKSliceView, vtkLightBoxRendererManager*,
+CTK_GET_CPP(ctkVTKSliceView, vtkLightBoxRendererManager*,
             lightBoxRendererManager, LightBoxRendererManager);
 
 //----------------------------------------------------------------------------
-CTK_SET_CXX(ctkVTKSliceView, bool, setRenderEnabled, RenderEnabled);
-CTK_GET_CXX(ctkVTKSliceView, bool, renderEnabled, RenderEnabled);
+CTK_SET_CPP(ctkVTKSliceView, bool, setRenderEnabled, RenderEnabled);
+CTK_GET_CPP(ctkVTKSliceView, bool, renderEnabled, RenderEnabled);
 
 //----------------------------------------------------------------------------
 vtkRenderWindowInteractor* ctkVTKSliceView::interactor() const

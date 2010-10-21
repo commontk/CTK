@@ -99,6 +99,6 @@ void ctkExampleDerivedWorkflowStep::onExit(
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(ctkExampleDerivedWorkflowStep, int, numberOfTimesRanOnEntry, numberOfTimesRanOnEntry);
-CTK_GET_CXX(ctkExampleDerivedWorkflowStep, int, numberOfTimesRanOnExit, numberOfTimesRanOnExit);
+CTK_GET_CPP(ctkExampleDerivedWorkflowStep, int, numberOfTimesRanOnEntry, numberOfTimesRanOnEntry);
+CTK_GET_CPP(ctkExampleDerivedWorkflowStep, int, numberOfTimesRanOnExit, numberOfTimesRanOnExit);
 

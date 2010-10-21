@@ -91,9 +91,9 @@ ctkWorkflowGroupBox::~ctkWorkflowGroupBox()
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkWorkflowGroupBox, bool, hideWidgetsOfNonCurrentSteps, HideWidgetsOfNonCurrentSteps);
-CTK_SET_CXX(ctkWorkflowGroupBox, bool, setHideWidgetsOfNonCurrentSteps, HideWidgetsOfNonCurrentSteps);
-CTK_GET_CXX(ctkWorkflowGroupBox, QLayout*, clientAreaLayout, ClientAreaLayout);
+CTK_GET_CPP(ctkWorkflowGroupBox, bool, hideWidgetsOfNonCurrentSteps, HideWidgetsOfNonCurrentSteps);
+CTK_SET_CPP(ctkWorkflowGroupBox, bool, setHideWidgetsOfNonCurrentSteps, HideWidgetsOfNonCurrentSteps);
+CTK_GET_CPP(ctkWorkflowGroupBox, QLayout*, clientAreaLayout, ClientAreaLayout);
 
 // --------------------------------------------------------------------------
 void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)

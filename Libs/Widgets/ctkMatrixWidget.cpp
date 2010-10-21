@@ -298,11 +298,11 @@ void ctkMatrixWidget::setEditable(bool newEditable)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(ctkMatrixWidget, double, minimum, Minimum);
-CTK_GET_CXX(ctkMatrixWidget, double, maximum, Maximum);
-CTK_GET_CXX(ctkMatrixWidget, double, singleStep, SingleStep);
-CTK_SET_CXX(ctkMatrixWidget, double, setSingleStep, SingleStep);
-CTK_GET_CXX(ctkMatrixWidget, int, decimals, Decimals);
+CTK_GET_CPP(ctkMatrixWidget, double, minimum, Minimum);
+CTK_GET_CPP(ctkMatrixWidget, double, maximum, Maximum);
+CTK_GET_CPP(ctkMatrixWidget, double, singleStep, SingleStep);
+CTK_SET_CPP(ctkMatrixWidget, double, setSingleStep, SingleStep);
+CTK_GET_CPP(ctkMatrixWidget, int, decimals, Decimals);
 
 // --------------------------------------------------------------------------
 void ctkMatrixWidget::setMinimum(double newMinimum)
