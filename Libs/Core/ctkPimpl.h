@@ -58,7 +58,7 @@ macro.
  *
  * Also make sure the Pimpl is initalized
  */
-#define CTK_CONSTRUCTOR_NO_ARG_CXX(PUB)  \
+#define CTK_CONSTRUCTOR_NO_ARG_CPP(PUB)  \
   PUB::PUB(): d_ptr(new PUB##Private)    \
     {                                    \
     }
@@ -68,7 +68,7 @@ macro.
  *
  * Also make sure the Pimpl is initalized
  */
-#define CTK_CONSTRUCTOR_1_ARG_CXX(PUB, _ARG1)   \
+#define CTK_CONSTRUCTOR_1_ARG_CPP(PUB, _ARG1)   \
   PUB::PUB(_ARG1 _parent)                       \
     : Superclass( _parent )                     \
     , d_ptr(new PUB##Private)                   \
