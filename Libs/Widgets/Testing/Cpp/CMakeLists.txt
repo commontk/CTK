@@ -19,6 +19,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkFittedTextBrowserTest1.cpp
   ctkMatrixWidgetTest1.cpp
   ctkMatrixWidgetTest2.cpp
+  ctkMenuButtonTest1.cpp
   ctkRangeSliderTest1.cpp
   ctkRangeWidgetTest1.cpp
   ctkDateRangeWidgetTest1.cpp
@@ -82,6 +83,7 @@ SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest2 )
+SIMPLE_TEST( ctkMenuButtonTest1 )
 SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
 SIMPLE_TEST( ctkDateRangeWidgetTest1 )
