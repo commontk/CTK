@@ -105,6 +105,14 @@ FILE(WRITE ${OUTPUT_DIR}/${WRAP_INT_DIR}build_${TARGET}.txt "
 </typesystem>
 ")
 
+# Read include dirs from file
+IF(WIN32)
+  IF(NOT EXISTS ${INCLUDE_DIRS})
+    MESSAGE(SEND_ERROR "On Windows, INCLUDE_DIRS should be the name of the file containing the include directories !")
+  ENDIF()
+  FILE(READ ${INCLUDE_DIRS} INCLUDE_DIRS)
+ENDIF()
+
 # Compute QTDIR
 GET_FILENAME_COMPONENT(QTDIR ${QT_QMAKE_EXECUTABLE}/../../ REALPATH)
 SET(ENV{QTDIR} ${QTDIR})

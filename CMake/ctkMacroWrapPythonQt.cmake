@@ -242,6 +242,16 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   # Create intermediate output directory
   EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir})
   
+  # On Windows, to avoid "too long input" error, dump INCLUDE_DIRS_TO_WRAP into a file
+  IF(WIN32)
+    # File containing the moc flags
+    SET(include_dirs_to_wrap_filename includeDirsToWrap_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}.txt)
+    SET(include_dirs_to_wrap_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${include_dirs_to_wrap_filename})
+    FILE(WRITE ${include_dirs_to_wrap_file} ${INCLUDE_DIRS_TO_WRAP})
+    # The arg passed to the custom command will be the file containing the list of include dirs to wrap
+    SET(INCLUDE_DIRS_TO_WRAP ${include_dirs_to_wrap_file})
+  ENDIF()
+  
   set(wrapper_init_cpp_filename ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp)
   set(wrapper_init_cpp_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_init_cpp_filename})
   
