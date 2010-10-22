@@ -329,19 +329,25 @@ SET(CTK_APPLICATIONS_SUBDIRS )
 
 #-----------------------------------------------------------------------------
 # Build options associated with CTK libraries
-# Note also that if
-# the file Libs/<DIR>/<LIBNAME>/ctk_library_options.cmake exists and look like:
+#
+# The following FOREACH loops are used to:
+#   1) Add build options associated with either libraries, plugins and applications
+#   2) Update either CTK_LIBS_SUBDIRS, CTK_PLUGINS_SUBDIRS or CTK_APPS_SUBDIRS variables
+# 
+# For CTK libraries, if the file Libs/<DIR>/<LIBNAME>/ctk_library_options.cmake exists,
+# in addition to 'CTK_LIB_<DIR>/<LIBNAME>' option, the following ones
+# will also be available in CMake configure menu:
+#  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
+#  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
+#
+# The file Libs/<DIR>/<LIBNAME>/ctk_library_options.cmake should look like:
 #
 #     SET(ctk_library_options
 #       OPT1:OFF
 #       OPT2:ON
 #       )
-#
-# In addition to 'CTK_LIB_<DIR>/<LIBNAME>' option, the following ones
-# will also be available in CMake configure menu:
-#  CTK_LIB_<DIR>/<LIBNAME>_OPT1  (set to OFF)
-#  CTK_LIB_<DIR>/<LIBNAME>_OPT2  (set to ON)
-#
+
+# Build options associated with CTK libraries
 SET(ctk_lib_options_list) # This list will be updated in ctkFunctionExtractOptionNameAndValue
 FOREACH(lib ${CTK_LIBS})
   ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
