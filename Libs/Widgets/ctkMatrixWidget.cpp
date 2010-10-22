@@ -102,6 +102,7 @@ void ctkMatrixWidgetPrivate::init()
   q->setLayout(layout);
 
   // Set parameters for the spinbox
+  // TODO: not sure [-100. 100.] is the right default range
   this->Minimum = -100;
   this->Maximum = 100;
   this->Decimals = 2;
@@ -140,6 +141,12 @@ void ctkMatrixWidgetPrivate::init()
 
   // The table takes ownership of the prototype.
   this->Table->setItemPrototype(_item);
+
+  QObject::connect(this->Table, SIGNAL(cellChanged(int, int)),
+                   q, SIGNAL(matrixChanged()));
+  /// \todo Wrap model signals to emit signals when the matrix is changed.
+/// Right now you can connect to the signal:
+/// matrixWidget->model()->dataChanged(...)
 
   // Set Read-only
   q->setEditable(true);
@@ -408,6 +415,8 @@ void ctkMatrixWidget::setValue(int i, int j, double _value)
 void ctkMatrixWidget::setVector(const QVector<double> & vector)
 {
   Q_D(ctkMatrixWidget);
+  bool blocked = this->blockSignals(true);
+  bool modified = false;
   for (int i=0; i < this->rowCount(); i++)
     {
     for (int j=0; j < this->columnCount(); j++)
@@ -415,7 +424,17 @@ void ctkMatrixWidget::setVector(const QVector<double> & vector)
       double value = qBound(d->Minimum,
                             vector.at(i * this->columnCount() + j),
                             d->Maximum);
+      double oldValue = d->Table->item(i,j)->data(Qt::DisplayRole).toDouble();
       d->Table->item(i,j)->setData(Qt::DisplayRole, QVariant(value));
+      if (oldValue != value)
+        {
+        modified = true;
+        }
       }
+    }
+  this->blockSignals(blocked);
+  if (modified)
+    {
+    this->emit matrixChanged();
     }
 }

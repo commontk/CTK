@@ -175,12 +175,24 @@ int ctkMatrixWidgetTest2(int argc, char * argv [] )
     }
 
   matrixWidget.identity();
-  if (matrixWidget.value(0,0) != 1. ||
-      matrixWidget.value(1,0) != 0.)
+  if (matrixWidget.value(0,0) != 10. ||
+      matrixWidget.value(1,0) != 10.)
     {
     std::cerr << "ctkMatrixWidget::identity() failed:"
               << matrixWidget.value(0,0) << " "
               << matrixWidget.value(1,0) <<std::endl;
+    return EXIT_FAILURE;
+    }
+
+  matrixWidget.setRange(-100, 100.);
+  matrixWidget.identity();
+
+  if (matrixWidget.value(1,1) != 1. ||
+      matrixWidget.value(0,2) != 0.)
+    {
+    std::cerr << "ctkMatrixWidget::identity() failed:"
+              << matrixWidget.value(1,1) << " "
+              << matrixWidget.value(0,2) <<std::endl;
     return EXIT_FAILURE;
     }
  

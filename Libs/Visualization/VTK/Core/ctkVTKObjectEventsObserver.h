@@ -49,7 +49,7 @@ public:
 
   virtual void printAdditionalInfo();
 
-  /// 
+  ///
   /// Add a connection, an Id allowing to uniquely identify the connection is also returned
   /// Warning the slot must have its signature order:
   /// vtkObject*, vtkObject* : sender, callData
@@ -82,27 +82,37 @@ public:
   /// Of course the slot can contain less parameters, but always the same order
   /// though.
   QString reconnection(vtkObject* vtk_obj, unsigned long vtk_event,
-                       const QObject* qt_obj, const char* qt_slot, 
+                       const QObject* qt_obj, const char* qt_slot,
                        float priority = 0.0);
 
-  /// 
+  ///
   /// Remove a connection
   int removeConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
                        const QObject* qt_obj = 0, const char* qt_slot = 0);
 
-  /// 
+  ///
   /// Remove all the connections
   inline int removeAllConnections();
 
   ///
   /// Temporarilly block all the connection
-  void blockAllConnections(bool block);
-  
-  /// 
-  /// Block/Unblock a connection.
+  /// Returns the previous value of connectionsBlocked()
+  bool blockAllConnections(bool block);
+
+  ///
+  /// Returns true if connections are blocked; otherwise returns false.
+  /// Connections are not blocked by default.
+  bool connectionsBlocked()const;
+
+  ///
+  /// Block/Unblock one or multiple connection.
+  /// Return the number of connections blocked/unblocked
   int blockConnection(bool block, vtkObject* vtk_obj,
                       unsigned long vtk_event, const QObject* qt_obj);
-  void blockConnection(const QString& id, bool blocked);
+  /// Block/Unblock a connection
+  /// Return true if the connection exists and was blocked, otherwise returns
+  /// false.
+  bool blockConnection(const QString& id, bool blocked);
 
 protected:
   QScopedPointer<ctkVTKObjectEventsObserverPrivate> d_ptr;
@@ -116,7 +126,7 @@ private:
 //-----------------------------------------------------------------------------
 int ctkVTKObjectEventsObserver::removeAllConnections()
 {
-  return this->removeConnection(0);
+  return this->removeConnection(0, vtkCommand::NoEvent, 0, 0);
 }
 
 #endif

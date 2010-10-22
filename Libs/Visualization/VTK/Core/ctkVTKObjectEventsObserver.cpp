@@ -42,31 +42,31 @@ protected:
 public:
   ctkVTKObjectEventsObserverPrivate(ctkVTKObjectEventsObserver& object);
 
-  /// 
+  ///
   /// Check if a connection has already been added
   bool containsConnection(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot);
 
-  /// 
+  ///
   /// Return a reference toward the corresponding connection or 0 if doesn't exist
   ctkVTKConnection* findConnection(const QString& id);
 
-  /// 
+  ///
   /// Return a reference toward the corresponding connection or 0 if doesn't exist
   ctkVTKConnection* findConnection(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot);
 
-  /// 
+  ///
   /// Return all the references that match the given parameters
   QList<ctkVTKConnection*> findConnections(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot);
-  
+
   inline QList<ctkVTKConnection*> connections()const
   {
     Q_Q(const ctkVTKObjectEventsObserver);
     return q->findChildren<ctkVTKConnection*>();
   }
-  
+
   bool AllBlocked;
   bool ObserveDeletion;
 };
@@ -125,21 +125,21 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObj
     {
     connectionId = this->addConnection(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
     }
-  return connectionId; 
+  return connectionId;
 }
 
 //-----------------------------------------------------------------------------
 QString ctkVTKObjectEventsObserver::reconnection(vtkObject* vtk_obj,
-  unsigned long vtk_event, const QObject* qt_obj, 
+  unsigned long vtk_event, const QObject* qt_obj,
   const char* qt_slot, float priority)
 {
-  QString connectionId; 
+  QString connectionId;
   this->removeConnection(0, vtk_event, qt_obj, qt_slot);
   if (vtk_obj)
     {
     connectionId = this->addConnection(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
     }
-  return connectionId; 
+  return connectionId;
 }
 
 //-----------------------------------------------------------------------------
@@ -177,29 +177,45 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
 }
 
 //-----------------------------------------------------------------------------
-void ctkVTKObjectEventsObserver::blockAllConnections(bool block)
+bool ctkVTKObjectEventsObserver::blockAllConnections(bool block)
 {
   Q_D(ctkVTKObjectEventsObserver);
-  this->printAdditionalInfo();
-  if (d->AllBlocked == block) { return; }
+
+  if (d->AllBlocked == block)
+    {
+    return d->AllBlocked;
+    }
+
+  bool oldAllBlocked = d->AllBlocked;
 
   foreach (ctkVTKConnection* connection, d->connections())
     {
     connection->setBlocked(block);
     }
   d->AllBlocked = block;
+  return oldAllBlocked;
 }
 
 //-----------------------------------------------------------------------------
-void ctkVTKObjectEventsObserver::blockConnection(const QString& id, bool blocked)
+bool ctkVTKObjectEventsObserver::connectionsBlocked()const
+{
+  Q_D(const ctkVTKObjectEventsObserver);
+  return d->AllBlocked;
+}
+
+//-----------------------------------------------------------------------------
+bool ctkVTKObjectEventsObserver::blockConnection(const QString& id, bool blocked)
 {
   Q_D(ctkVTKObjectEventsObserver);
   ctkVTKConnection* connection = d->findConnection(id);
   if (connection == 0)
     {
-    return;
+    qWarning() << "no connection for id " << id;
+    return false;
     }
+  bool oldBlocked = connection->isBlocked();
   connection->setBlocked(blocked);
+  return oldBlocked;
 }
 
 //-----------------------------------------------------------------------------
@@ -231,7 +247,7 @@ int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lo
 
   QList<ctkVTKConnection*> connections =
     d->findConnections(vtk_obj, vtk_event, qt_obj, qt_slot);
-  
+
   foreach (ctkVTKConnection* connection, connections)
     {
     delete connection;
@@ -300,9 +316,9 @@ ctkVTKObjectEventsObserverPrivate::findConnections(
   // Loop through all connection
   foreach (ctkVTKConnection* connection, this->connections())
     {
-    if (connection->isEqual(vtk_obj, vtk_event, qt_obj, qt_slot)) 
+    if (connection->isEqual(vtk_obj, vtk_event, qt_obj, qt_slot))
       {
-      foundConnections.append(connection); 
+      foundConnections.append(connection);
       if (all_info)
         {
         break;

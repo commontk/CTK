@@ -48,6 +48,9 @@ public:
 protected:
   void setMatrixInternal(vtkMatrix4x4* matrix);
 
+  virtual void setColumnCount(int newColumnCount);
+  virtual void setRowCount(int newRowCount);
+
 protected:
   QScopedPointer<ctkVTKAbstractMatrixWidgetPrivate> d_ptr;
 

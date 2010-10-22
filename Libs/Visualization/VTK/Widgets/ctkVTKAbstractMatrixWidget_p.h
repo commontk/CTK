@@ -29,7 +29,7 @@
 #include "ctkVTKAbstractMatrixWidget.h"
 
 // VTK includes
-#include <vtkWeakPointer.h>
+#include <vtkSmartPointer.h>
 
 class vtkMatrix4x4;
 
@@ -42,7 +42,7 @@ class ctkVTKAbstractMatrixWidgetPrivate: public QObject
 protected:
   ctkVTKAbstractMatrixWidget* const q_ptr;
 
-public:  
+public:
   ctkVTKAbstractMatrixWidgetPrivate(ctkVTKAbstractMatrixWidget& object);
   void init();
 
@@ -50,12 +50,13 @@ public:
   vtkMatrix4x4* matrix()const;
 
 public slots:
-  /// 
+  ///
   /// Triggered upon VTK transform modified event
   void updateMatrix();
+  void updateVTKMatrix();
 
 protected:
-  vtkWeakPointer<vtkMatrix4x4> Matrix;
+  vtkSmartPointer<vtkMatrix4x4> Matrix;
 };
 
-#endif 
+#endif
