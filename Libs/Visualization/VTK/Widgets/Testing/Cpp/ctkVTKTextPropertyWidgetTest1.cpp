@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDebug>
 #include <QTimer>
 
 // CTK includes
@@ -109,14 +110,16 @@ int ctkVTKTextPropertyWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  // QColor handles floating points on 16bit integers
   textPropertyWidget.setColor(QColor::fromRgbF(0.333, 0.666, 0.999));
   textProperty->GetColor(color);
 
-  if (qFuzzyCompare(color[0], 0.333) ||
-      qFuzzyCompare(color[1], 0.666) ||
-      qFuzzyCompare(color[2], 0.999))
+  if (color[0] < 0.3329 || color[0] > 0.3331 ||
+      color[1] < 0.6659 || color[1] > 0.6661 ||
+      color[2] < 0.9989 || color[2] > 0.9991)
     {
-    std::cerr << "ctkVTKTextPropertyWidget::setColor() failed" << std::endl;
+    std::cerr << "ctkVTKTextPropertyWidget::setColor() failed: "
+              << color[0]<< " " << color[1] << " " << color[2] << std::endl;
     return EXIT_FAILURE;
     }
 
