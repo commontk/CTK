@@ -277,7 +277,18 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   FOREACH(flag ${moc_flags})
     SET(moc_flags_arg "${moc_flags_arg}^^${flag}")
   ENDFOREACH()
+
+  # On Windows, to avoid "too long input" error, dump moc flags.
+  IF(WIN32)
+    # File containing the moc flags
+    SET(wrapper_moc_flags_filename mocflags_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_all.txt)
+    SET(wrapper_master_moc_flags_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_moc_flags_filename})
+    FILE(WRITE ${wrapper_master_moc_flags_file} ${moc_flags_arg})
+    # The arg passed to the custom command will be the file containing the list of moc flags
+    SET(moc_flags_arg ${wrapper_master_moc_flags_file})
+  ENDIF()
   
+  # File to run through moc
   SET(wrapper_master_moc_filename moc_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_all.cpp)
   SET(wrapper_master_moc_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_master_moc_filename})
   

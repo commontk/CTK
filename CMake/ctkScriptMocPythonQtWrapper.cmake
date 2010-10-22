@@ -51,6 +51,14 @@ ENDFOREACH()
 # Convert wrapping namespace to subdir
 STRING(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
 
+# Read moc flags from file
+IF(WIN32)
+  IF(NOT EXISTS ${MOC_FLAGS})
+    MESSAGE(SEND_ERROR "On Windows, MOC_FLAGS should be the name of the file containing the moc flags !")
+  ENDIF()
+  FILE(READ ${MOC_FLAGS} MOC_FLAGS)
+ENDIF()
+
 # Convert ^^ separated string to list
 STRING(REPLACE "^^" ";" MOC_FLAGS "${MOC_FLAGS}")
 
