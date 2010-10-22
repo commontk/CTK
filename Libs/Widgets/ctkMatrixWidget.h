@@ -32,9 +32,6 @@ class ctkMatrixWidgetPrivate;
 
 ///
 /// ctkMatrixWidget is the base class of matrix widgets.
-/// \todo Wrap model signals to emit signals when the matrix is changed.
-/// Right now you can connect to the signal:
-/// matrixWidget->model()->dataChanged(...)
 class CTK_WIDGETS_EXPORT ctkMatrixWidget: public QWidget
 {
   Q_OBJECT
@@ -59,12 +56,12 @@ public:
   /// Set the number of columns of the matrix
   /// \sa rowCount, setRowCount
   int columnCount()const;
-  void setColumnCount(int newColumnCount);
+  virtual void setColumnCount(int newColumnCount);
 
   /// Set the number of rows of the matrix
   /// \sa columnCount, setColumnCount
   int rowCount()const;
-  void setRowCount(int newRowCount);
+  virtual void setRowCount(int newRowCount);
 
   ///
   /// Set / Get values of the matrix
@@ -129,6 +126,9 @@ public slots:
   ///
   /// Reset the matrix to identity
   void identity();
+
+signals:
+  void matrixChanged();
 
 protected:
   virtual void resizeEvent(QResizeEvent* event);

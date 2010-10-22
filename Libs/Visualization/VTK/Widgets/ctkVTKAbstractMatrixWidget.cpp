@@ -47,6 +47,7 @@ void ctkVTKAbstractMatrixWidgetPrivate::init()
 {
   Q_Q(ctkVTKAbstractMatrixWidget);
   this->setParent(q);
+  connect(q, SIGNAL(matrixChanged()), this, SLOT(updateVTKMatrix()));
   this->updateMatrix();
 }
 
@@ -71,15 +72,14 @@ void ctkVTKAbstractMatrixWidgetPrivate::updateMatrix()
 {
   Q_Q(ctkVTKAbstractMatrixWidget);
   // if there is no transform to show/edit, disable the widget
-  q->setEnabled(this->Matrix != 0);
+  q->setEnabled(this->Matrix.GetPointer() != 0);
 
-  if (this->Matrix == 0)
+  if (this->Matrix.GetPointer() == 0)
     {
     q->identity();
     return;
     }
   QVector<double> vector;
-  //todo: fasten the loop
   for (int i=0; i < 4; i++)
     {
     for (int j=0; j < 4; j++)
@@ -91,8 +91,30 @@ void ctkVTKAbstractMatrixWidgetPrivate::updateMatrix()
 }
 
 // --------------------------------------------------------------------------
+void ctkVTKAbstractMatrixWidgetPrivate::updateVTKMatrix()
+{
+  Q_Q(ctkVTKAbstractMatrixWidget);
+  if (this->Matrix.GetPointer() == 0)
+    {
+    return;
+    }
+  double elements[16];
+  int n = 0;
+  for (int i=0; i < 4; i++)
+    {
+    for (int j=0; j < 4; j++)
+      {
+      elements[n++] = q->value(i,j);
+      }
+    }
+  bool blocked = this->qvtkBlockAll(true);
+  this->Matrix->DeepCopy(elements);
+  this->qvtkBlockAll(blocked);
+}
+
+// --------------------------------------------------------------------------
 ctkVTKAbstractMatrixWidget::ctkVTKAbstractMatrixWidget(QWidget* parentVariable)
-  : Superclass(parentVariable)
+  : Superclass(4, 4, parentVariable)
   , d_ptr(new ctkVTKAbstractMatrixWidgetPrivate(*this))
 {
   Q_D(ctkVTKAbstractMatrixWidget);
@@ -111,4 +133,18 @@ void ctkVTKAbstractMatrixWidget::setMatrixInternal(vtkMatrix4x4* matrixVariable)
 {
   Q_D(ctkVTKAbstractMatrixWidget);
   d->setMatrix(matrixVariable);
+}
+
+// --------------------------------------------------------------------------
+void ctkVTKAbstractMatrixWidget::setColumnCount(int newColumnCount)
+{
+  Q_UNUSED(newColumnCount);
+  this->Superclass::setColumnCount(4);
+}
+
+// --------------------------------------------------------------------------
+void ctkVTKAbstractMatrixWidget::setRowCount(int newRowCount)
+{
+  Q_UNUSED(newRowCount);
+  this->Superclass::setRowCount(4);
 }

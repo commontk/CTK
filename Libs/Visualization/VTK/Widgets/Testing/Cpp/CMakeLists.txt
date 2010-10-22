@@ -4,6 +4,7 @@ SET(KIT ${PROJECT_NAME})
 # Tests
 #
 SET(TEST_SOURCES
+  ctkVTKMatrixWidgetTest1.cpp
   ctkTransferFunctionBarsItemTest1.cpp
   ctkTransferFunctionViewTest1.cpp
   ctkTransferFunctionViewTest2.cpp
@@ -58,6 +59,7 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
+SIMPLE_TEST( ctkVTKMatrixWidgetTest1 )
 SIMPLE_TEST( ctkTransferFunctionBarsItemTest1 )
 SIMPLE_TEST( ctkTransferFunctionViewTest1 )
 SIMPLE_TEST( ctkTransferFunctionViewTest2 )
