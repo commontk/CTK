@@ -279,7 +279,7 @@ SET(CTK_LIBS
   Scripting/Python/Widgets:OFF
   Visualization/VTK/Core:OFF
   Visualization/VTK/Widgets:OFF
-  Visualization/XIP:OFF
+  #Visualization/XIP:OFF # XIP library need some love :) - Let's disable it for now :(
   )
 
 #-----------------------------------------------------------------------------
