@@ -87,24 +87,31 @@ void qvtkBlock(const QString& id, bool blocked)                          \
 
 //-----------------------------------------------------------------------------
 #define QVTK_OBJECT_BLOCKALL_CONNECTION_METHOD                          \
-void qvtkBlockAll()                                                     \
+bool qvtkBlockAll()                                                     \
 {                                                                       \
-  MyQVTK.blockAllConnections(true);                                     \
+  return MyQVTK.blockAllConnections(true);                              \
 }
 
 //-----------------------------------------------------------------------------
-#define QVTK_OBJECT_UNBLOCK_CONNECTION_METHOD                             \
-void qvtkUnblock(vtkObject* vtk_obj, unsigned long vtk_event,             \
-  const QObject* qt_obj)                                                  \
-{                                                                         \
-  MyQVTK.blockConnection(false, vtk_obj, vtk_event, qt_obj);              \
+#define QVTK_OBJECT_BLOCKALL_CONNECTION_METHOD2                         \
+bool qvtkBlockAll(bool block)                                           \
+{                                                                       \
+  return MyQVTK.blockAllConnections(block);                             \
+}
+
+//-----------------------------------------------------------------------------
+#define QVTK_OBJECT_UNBLOCK_CONNECTION_METHOD                           \
+void qvtkUnblock(vtkObject* vtk_obj, unsigned long vtk_event,           \
+  const QObject* qt_obj)                                                \
+{                                                                       \
+  MyQVTK.blockConnection(false, vtk_obj, vtk_event, qt_obj);            \
 }
 
 //-----------------------------------------------------------------------------
 #define QVTK_OBJECT_UNBLOCKALL_CONNECTION_METHOD                        \
-void qvtkUnblockAll()                                                   \
+bool qvtkUnblockAll()                                                   \
 {                                                                       \
-  MyQVTK.blockAllConnections(false);                                    \
+  return MyQVTK.blockAllConnections(false);                             \
 }
 
 //-----------------------------------------------------------------------------
@@ -119,6 +126,7 @@ protected:                                         \
   QVTK_OBJECT_BLOCK_CONNECTION_METHOD2             \
   QVTK_OBJECT_UNBLOCK_CONNECTION_METHOD            \
   QVTK_OBJECT_BLOCKALL_CONNECTION_METHOD           \
+  QVTK_OBJECT_BLOCKALL_CONNECTION_METHOD2          \
   QVTK_OBJECT_UNBLOCKALL_CONNECTION_METHOD         \
 private:                                           \
   ctkVTKObjectEventsObserver MyQVTK;
