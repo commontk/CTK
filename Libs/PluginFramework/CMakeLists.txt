@@ -42,7 +42,6 @@ SET(KIT_export_directive "CTK_PLUGINFW_EXPORT")
 SET(KIT_SRCS
   ctkLDAPSearchFilter.cpp
   ctkPlugin.cpp
-  #ctkPluginAbstractTracked.cpp
   ctkPluginArchive.cpp
   ctkPluginConstants.cpp
   ctkPluginContext.cpp
