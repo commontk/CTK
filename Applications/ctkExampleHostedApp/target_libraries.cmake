@@ -5,6 +5,5 @@
 # 
 
 SET(target_libraries
-  CTKPluginFramework
   org_commontk_dah_app
   )

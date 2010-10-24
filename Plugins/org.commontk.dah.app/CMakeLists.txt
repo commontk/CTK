@@ -1,10 +1,5 @@
 PROJECT(org_commontk_dah_app)
 
-FIND_PACKAGE(QtSOAP)
-IF(NOT QtSOAP_FOUND)
-  MESSAGE(FATAL_ERROR "error: QtSOAP package is required to build ${PROJECT_NAME}" )
-ENDIF()
-
 SET(PLUGIN_export_directive "org_commontk_dah_app_EXPORT")
 
 SET(PLUGIN_SRCS
