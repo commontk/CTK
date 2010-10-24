@@ -57,7 +57,6 @@ SET(KIT_SRCS
   ctkPluginFrameworkListeners.cpp
   ctkPluginFrameworkPrivate.cpp
   ctkPluginFrameworkUtil.cpp
-  ctkPluginManager.cpp
   ctkPluginManifest.cpp
   ctkPluginPrivate.cpp
   ctkPluginTracker.cpp
