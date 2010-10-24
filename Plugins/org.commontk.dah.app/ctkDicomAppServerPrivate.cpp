@@ -85,12 +85,7 @@ void ctkDicomAppServerPrivate::incomingSoapMessage(
   if(appInterface == NULL)
   {
     ctkPluginContext* context = ctkDicomAppPlugin::getInstance()->getPluginContext();
-    ctkServiceReference* serviceRef = context->getServiceReference("ctkDicomAppInterface");
-    if (!serviceRef)
-    {
-      // this will change after merging changes from branch plugin_framework
-      throw std::runtime_error("No Dicom App Service found");
-    }
+    ctkServiceReference serviceRef = context->getServiceReference("ctkDicomAppInterface");
     appInterface = qobject_cast<ctkDicomAppInterface*>(context->getService(serviceRef));
     
     ctkAppSoapMessageProcessor* appProcessor = new ctkAppSoapMessageProcessor( appInterface );

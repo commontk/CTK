@@ -24,6 +24,7 @@
 #define CTKEXAMPLEDICOMAPPLOGIC_P_H
 
 #include <ctkPluginActivator.h>
+#include <ctkServiceReference.h>
 #include <ctkDicomAppInterface.h>
 #include <ctkDicomHostInterface.h>
 #include <stdexcept>
@@ -36,12 +37,7 @@ public:
   }
   TServiceType* operator->()
   {
-    ctkServiceReference* serviceRef = context->getServiceReference(clazz);
-    if (!serviceRef)
-    {
-      // this will change after merging changes from branch plugin_framework
-      throw std::runtime_error("No Dicom Host Service found");
-    }
+    ctkServiceReference serviceRef = context->getServiceReference(clazz);
     return qobject_cast<TServiceType*>(context->getService(serviceRef));
   }
   TServiceType* operator*()
