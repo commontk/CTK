@@ -39,7 +39,7 @@ public:
 
   virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData) = 0;
 
-  virtual QList<ctkDicomAppHosting::ObjectLocator>* getData(
+  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData) = 0;

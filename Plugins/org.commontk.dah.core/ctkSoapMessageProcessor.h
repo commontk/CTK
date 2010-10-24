@@ -31,6 +31,8 @@ class org_commontk_dah_core_EXPORT ctkSoapMessageProcessor
 
 public:
 
+  virtual ~ctkSoapMessageProcessor() {}
+
 	/**
 	* Process a Soap Message and set the input reply.
 	* @input message The message to process.

@@ -19,7 +19,7 @@
 
 =============================================================================*/
 
-#include "ctkDicomHostService.h"
+#include "ctkDicomHostService_p.h"
 
 #include "ctkDicomServicePrivate.h"
 
@@ -87,7 +87,7 @@ bool ctkDicomHostService::notifyDataAvailable(ctkDicomAppHosting::AvailableData 
   return service.notifyDataAvailable(data, lastData);
 }
 
-QList<ctkDicomAppHosting::ObjectLocator>* ctkDicomHostService::getData(
+QList<ctkDicomAppHosting::ObjectLocator> ctkDicomHostService::getData(
   QList<QUuid> objectUUIDs, 
   QList<QString> acceptableTransferSyntaxUIDs, 
   bool includeBulkData)

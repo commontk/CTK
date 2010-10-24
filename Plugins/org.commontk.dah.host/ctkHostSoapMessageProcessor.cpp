@@ -122,10 +122,10 @@ void ctkHostSoapMessageProcessor::processGetOutputLocation(
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["preferredProtocols"];
-  const QStringList* preferredProtocols = ctkDicomSoapArrayOfStringType::getArray(
+  const QStringList preferredProtocols = ctkDicomSoapArrayOfStringType::getArray(
     dynamic_cast<const QtSoapArray&>(inputType));
   // query interface
-  const QString result = hostInterface->getOutputLocation(*preferredProtocols);
+  const QString result = hostInterface->getOutputLocation(preferredProtocols);
   // set reply message
   reply->setMethod("getOutputLocation");
   QtSoapType* resultType = new QtSoapSimpleType( QtSoapQName("preferredProtocols"), result );

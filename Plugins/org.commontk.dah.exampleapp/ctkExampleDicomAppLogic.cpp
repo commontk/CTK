@@ -98,7 +98,7 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableD
   return false;
 }
 
-QList<ctkDicomAppHosting::ObjectLocator>* ctkExampleDicomAppLogic::getData(
+QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
   QList<QUuid> objectUUIDs, 
   QList<QString> acceptableTransferSyntaxUIDs, 
   bool includeBulkData)
@@ -106,7 +106,7 @@ QList<ctkDicomAppHosting::ObjectLocator>* ctkExampleDicomAppLogic::getData(
   Q_UNUSED(objectUUIDs)
   Q_UNUSED(acceptableTransferSyntaxUIDs)
   Q_UNUSED(includeBulkData)
-  return NULL;
+  return QList<ctkDicomAppHosting::ObjectLocator>();
 }
 void ctkExampleDicomAppLogic::releaseData(QList<QUuid> objectUUIDs)
 {

@@ -195,12 +195,13 @@ public:
     }
   }
 
-  static QStringList* getArray(const QtSoapArray& array)
+  static QStringList getArray(const QtSoapArray& array)
   {
-    QStringList * list = new QStringList();
-    for (int i = 0; i < array.count() ; i++ ){
+    QStringList list;
+    for (int i = 0; i < array.count() ; i++ )
+    {
       const QString str = array.at(i).value().toString();
-      list->append( str);
+      list << str;
     }
     return list;
   }
@@ -223,13 +224,13 @@ public:
     }
   }
 
-  static QList<QUuid>* getArray(const QtSoapArray& array)
+  static QList<QUuid> getArray(const QtSoapArray& array)
   {
-    QList<QUuid> * list = new QList<QUuid>();
+    QList<QUuid> list;
     for (int i = 0; i < array.count() ; i++ )
     {
       const QString str = array.at(i).value().toString();
-      list->append( QUuid(str));
+      list << QUuid(str);
     }
     return list;
   }
@@ -560,15 +561,15 @@ public:
     }
   }
 
-  static QList<ctkDicomAppHosting::ObjectLocator>* getArray(const QtSoapArray& array)
+  static QList<ctkDicomAppHosting::ObjectLocator> getArray(const QtSoapArray& array)
   {
-    QList<ctkDicomAppHosting::ObjectLocator> * list = new QList<ctkDicomAppHosting::ObjectLocator>();
+    QList<ctkDicomAppHosting::ObjectLocator> list;
 
     for (int i = 0; i < array.count() ; i++ )
     {
       const ctkDicomAppHosting::ObjectLocator ol =
           ctkDicomSoapObjectLocator::getObjectLocator(array.at(i));
-      list->append(ol);
+      list << ol;
     }
     return list;
   }

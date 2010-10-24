@@ -67,7 +67,7 @@ public:
 
   // ctkDicomExchangeInterface
   bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
-  QList<ctkDicomAppHosting::ObjectLocator>* getData(
+  QList<ctkDicomAppHosting::ObjectLocator> getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData);

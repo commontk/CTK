@@ -46,7 +46,7 @@ public:
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
   // exchange methods
   virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
-  virtual QList<ctkDicomAppHosting::ObjectLocator>* getData(
+  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
       QList<QUuid> objectUUIDs, 
       QList<QString> acceptableTransferSyntaxUIDs, 
       bool includeBulkData);

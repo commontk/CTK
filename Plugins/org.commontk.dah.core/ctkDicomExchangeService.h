@@ -37,7 +37,7 @@ public:
   ~ctkDicomExchangeService();
 
   bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
-  QList<ctkDicomAppHosting::ObjectLocator> *getData(QList<QUuid> objectUUIDs,
+  QList<ctkDicomAppHosting::ObjectLocator> getData(QList<QUuid> objectUUIDs,
                                              QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData);
   void releaseData(QList<QUuid> objectUUIDs);
 

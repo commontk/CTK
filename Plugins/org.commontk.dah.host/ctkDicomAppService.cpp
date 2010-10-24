@@ -64,7 +64,7 @@ bool ctkDicomAppService::notifyDataAvailable(ctkDicomAppHosting::AvailableData d
   return service.notifyDataAvailable(data, lastData);
 }
 
-QList<ctkDicomAppHosting::ObjectLocator>* ctkDicomAppService::getData(
+QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAppService::getData(
   QList<QUuid> objectUUIDs, 
   QList<QString> acceptableTransferSyntaxUIDs, 
   bool includeBulkData)

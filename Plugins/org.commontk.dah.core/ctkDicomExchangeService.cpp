@@ -48,7 +48,7 @@ bool ctkDicomExchangeService::notifyDataAvailable(
   return ctkDicomSoapBool::getBool(result);
 }
 
-QList<ctkDicomAppHosting::ObjectLocator>* ctkDicomExchangeService::getData(
+QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
     QList<QUuid> objectUUIDs,
     QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData)
 {

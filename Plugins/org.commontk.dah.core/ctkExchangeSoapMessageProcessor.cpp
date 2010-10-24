@@ -80,19 +80,19 @@ void ctkExchangeSoapMessageProcessor::processGetData(
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["objectUUIDs"];
-  const QList<QUuid>* objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(
+  const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(
     dynamic_cast<const QtSoapArray&>(inputType));
   const QtSoapType& inputType2 = message.method()["acceptableTransferSyntaxUIDs"];
-  const QStringList* acceptableTransferSyntaxUIDs = ctkDicomSoapArrayOfStringType::getArray(
+  const QStringList acceptableTransferSyntaxUIDs = ctkDicomSoapArrayOfStringType::getArray(
     dynamic_cast<const QtSoapArray&>(inputType2));
   const QtSoapType& inputType3 = message.method()["includeBulkData"];
   const bool includeBulkData = ctkDicomSoapBool::getBool(inputType3);
   // query interface
-  const QList<ctkDicomAppHosting::ObjectLocator>* result = exchangeInterface->getData(
-    *objectUUIDs, *acceptableTransferSyntaxUIDs, includeBulkData);
+  const QList<ctkDicomAppHosting::ObjectLocator> result = exchangeInterface->getData(
+    objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
   // set reply message
   reply->setMethod("getData");
-  QtSoapType* resultType = new ctkDicomSoapArrayOfObjectLocators("arrayOfObjectLocator", *result);
+  QtSoapType* resultType = new ctkDicomSoapArrayOfObjectLocators("arrayOfObjectLocator", result);
   reply->addMethodArgument(resultType);
 }
 
