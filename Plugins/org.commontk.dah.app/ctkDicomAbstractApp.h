@@ -30,8 +30,7 @@ class ctkDicomAbstractAppPrivate;
 /**
   * Provide a basic implementation for an application app.
   *
-  * It starts a http server and serves one hosted application. Multiple instances
-  * can be used for hosting multiple applications.
+  * TODO: provide helper/convenience methods to ease application development
   *
   * The methods of the ctkDicomAppInterface have to be implemented for the business logic,
   *
@@ -41,11 +40,7 @@ class ctkDicomAbstractApp : public ctkDicomAppInterface
 
 public:
 
-  /**
-   * Start the soap sever on the specified port or choose port automatically.
-   */
-  ctkDicomAbstractApp(int port = 0);
-  int getPort() const;
+  ctkDicomAbstractApp();
   ~ctkDicomAbstractApp();
 
 private:

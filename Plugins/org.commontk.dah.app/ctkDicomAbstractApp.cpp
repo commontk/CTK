@@ -20,41 +20,21 @@
 =============================================================================*/
 
 #include "ctkDicomAbstractApp.h"
-#include "ctkDicomAppServer.h"
 
 class ctkDicomAbstractAppPrivate
 {
 
 public:
 
-  ctkDicomAbstractAppPrivate(ctkDicomAbstractApp* appInterface, int port) : port(port)
+  ctkDicomAbstractAppPrivate()
   {
-    Q_UNUSED(appInterface)
-    // start server
-    if (!port)
-    {
-      port = 8080;
-    }
-    server = new ctkDicomAppServer(port);
+
   }
 
-  ~ctkDicomAbstractAppPrivate()
-  {
-    delete server;
-  }
-
-  int port;
-  ctkDicomAppServer* server;
 };
 
-ctkDicomAbstractApp::ctkDicomAbstractApp(int port) : d_ptr(new ctkDicomAbstractAppPrivate(this,port))
+ctkDicomAbstractApp::ctkDicomAbstractApp() : d_ptr(new ctkDicomAbstractAppPrivate())
 {
-}
-
-int ctkDicomAbstractApp::getPort() const
-{
-  Q_D(const ctkDicomAbstractApp);
-  return d->port;
 }
 
 ctkDicomAbstractApp::~ctkDicomAbstractApp()
