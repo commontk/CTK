@@ -74,16 +74,16 @@ public:
     DUPLICATE_BUNDLE_ERROR
   };
 
-  ctkPluginException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception& cause = std::exception());
-  ctkPluginException(const QString& msg, const std::exception& cause);
+  ctkPluginException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception* cause = 0);
+  ctkPluginException(const QString& msg, const std::exception* cause);
 
   ctkPluginException(const ctkPluginException& o);
   ctkPluginException& operator=(const ctkPluginException& o);
 
   ~ctkPluginException() throw() {}
 
-  std::exception getCause() const;
-  void setCause(const std::exception&) throw(std::logic_error);
+  QString getCause() const;
+  void setCause(const QString&) throw(std::logic_error);
   Type getType() const;
 
   const char* what() const throw();
@@ -92,7 +92,7 @@ public:
 private:
 
   Type type;
-  std::exception cause;
+  QString cause;
 
 };
 

@@ -62,23 +62,24 @@ public:
     REMOTE 				= 5
   };
 
-  ctkServiceException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception& cause = std::exception());
-  ctkServiceException(const QString& msg, const std::exception& cause);
+  ctkServiceException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception* cause = 0);
+  ctkServiceException(const QString& msg, const std::exception* cause);
 
   ctkServiceException(const ctkServiceException& o);
   ctkServiceException& operator=(const ctkServiceException& o);
 
   ~ctkServiceException() throw() {}
 
-  std::exception getCause() const;
-  void setCause(const std::exception&) throw(std::logic_error);
+  QString getCause() const;
+  void setCause(const QString&) throw(std::logic_error);
   Type getType() const;
 
+  const char* what() const throw();
 
 private:
 
   Type type;
-  std::exception cause;
+  QString cause;
 
 };
 

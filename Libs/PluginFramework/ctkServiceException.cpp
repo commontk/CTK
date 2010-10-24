@@ -24,18 +24,24 @@
 #include <QDebug>
 
 
-ctkServiceException::ctkServiceException(const QString& msg, const Type& type, const std::exception& cause)
+ctkServiceException::ctkServiceException(const QString& msg, const Type& type, const std::exception* cause)
   : std::runtime_error(msg.toStdString()),
-    type(type), cause(cause)
+    type(type)
 {
-
+  if (cause)
+  {
+    this->cause = QString(cause->what());
+  }
 }
 
-ctkServiceException::ctkServiceException(const QString& msg, const std::exception& cause)
+ctkServiceException::ctkServiceException(const QString& msg, const std::exception* cause)
   : std::runtime_error(msg.toStdString()),
-    type(UNSPECIFIED), cause(cause)
+    type(UNSPECIFIED)
 {
-
+  if (cause)
+  {
+    this->cause = QString(cause->what());
+  }
 }
 
 ctkServiceException::ctkServiceException(const ctkServiceException& o)
@@ -52,14 +58,14 @@ ctkServiceException& ctkServiceException::operator=(const ctkServiceException& o
   return *this;
 }
 
-std::exception ctkServiceException::getCause() const
+QString ctkServiceException::getCause() const
 {
   return cause;
 }
 
-void ctkServiceException::setCause(const std::exception& cause) throw(std::logic_error)
+void ctkServiceException::setCause(const QString& cause) throw(std::logic_error)
 {
-  if (!cause.what()) throw std::logic_error("The cause for this ctkServiceException instance is already set");
+  if (!this->cause.isEmpty()) throw std::logic_error("The cause for this ctkServiceException instance is already set");
 
   this->cause = cause;
 }
@@ -69,12 +75,19 @@ ctkServiceException::Type ctkServiceException::getType() const
   return type;
 }
 
+const char* ctkServiceException::what() const throw()
+{
+  static std::string fullMsg;
+  fullMsg = std::string(std::runtime_error::what());
+  QString causeMsg = getCause();
+  if (!causeMsg.isEmpty()) fullMsg += std::string("\n  Caused by: ") + causeMsg.toStdString();
+
+  return fullMsg.c_str();
+}
+
 QDebug operator<<(QDebug dbg, const ctkServiceException& exc)
 {
   dbg << "ctkServiceException:" << exc.what();
-
-  const char* causeMsg = exc.getCause().what();
-  if (causeMsg) dbg << "  Caused by:" << causeMsg;
 
   return dbg.maybeSpace();
 }

@@ -248,7 +248,7 @@ void ctkPluginPrivate::stop0(bool wasStarted)
       catch (const std::exception& e)
       {
         savedException = new ctkPluginException("ctkPlugin::stop: PluginActivator stop failed",
-                                                ctkPluginException::ACTIVATOR_ERROR, e);
+                                                ctkPluginException::ACTIVATOR_ERROR, &e);
       }
       if (state == ctkPlugin::UNINSTALLED)
       {
@@ -344,7 +344,7 @@ void ctkPluginPrivate::start0()
   }
   catch (const std::exception& e)
   {
-    throw ctkPluginException("ctkPlugin start failed", ctkPluginException::ACTIVATOR_ERROR, e);
+    throw ctkPluginException("ctkPlugin start failed", ctkPluginException::ACTIVATOR_ERROR, &e);
   }
 
   qDebug() << "activating #" << id << "completed.";

@@ -59,7 +59,7 @@ QObject* ctkServiceReferencePrivate::getService(ctkPlugin* plugin)
           catch (const std::exception& pe)
           {
             ctkServiceException se("ctkServiceFactory throw an exception",
-                                   ctkServiceException::FACTORY_EXCEPTION, pe);
+                                   ctkServiceException::FACTORY_EXCEPTION, &pe);
             plugin->d_func()->fwCtx->listeners.frameworkError
                 (registration->plugin->q_func(), se);
             return 0;

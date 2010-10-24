@@ -22,18 +22,24 @@
 #include "ctkPluginException.h"
 
 
-ctkPluginException::ctkPluginException(const QString& msg, const Type& type, const std::exception& cause)
+ctkPluginException::ctkPluginException(const QString& msg, const Type& type, const std::exception* cause)
   : std::runtime_error(msg.toStdString()),
-    type(type), cause(cause)
+    type(type)
 {
-
+  if (cause)
+  {
+    this->cause = QString(cause->what());
+  }
 }
 
-ctkPluginException::ctkPluginException(const QString& msg, const std::exception& cause)
+ctkPluginException::ctkPluginException(const QString& msg, const std::exception* cause)
   : std::runtime_error(msg.toStdString()),
-    type(UNSPECIFIED), cause(cause)
+    type(UNSPECIFIED)
 {
-
+  if (cause)
+  {
+    this->cause = QString(cause->what());
+  }
 }
 
 ctkPluginException::ctkPluginException(const ctkPluginException& o)
@@ -50,14 +56,14 @@ ctkPluginException& ctkPluginException::operator=(const ctkPluginException& o)
   return *this;
 }
 
-std::exception ctkPluginException::getCause() const
+QString ctkPluginException::getCause() const
 {
   return cause;
 }
 
-void ctkPluginException::setCause(const std::exception& cause) throw(std::logic_error)
+void ctkPluginException::setCause(const QString& cause) throw(std::logic_error)
 {
-  if (!cause.what()) throw std::logic_error("The cause for this ctkPluginException instance is already set");
+  if (!this->cause.isEmpty()) throw std::logic_error("The cause for this ctkPluginException instance is already set");
 
   this->cause = cause;
 }
@@ -71,8 +77,8 @@ const char* ctkPluginException::what() const throw()
 {
   static std::string fullMsg;
   fullMsg = std::string(std::runtime_error::what());
-  const char* causeMsg = getCause().what();
-  if (causeMsg) fullMsg += std::string("\n  Caused by: ") + causeMsg;
+  QString causeMsg = getCause();
+  if (!causeMsg.isEmpty()) fullMsg += std::string("\n  Caused by: ") + causeMsg.toStdString();
 
   return fullMsg.c_str();
 }
@@ -81,9 +87,6 @@ const char* ctkPluginException::what() const throw()
 QDebug operator<<(QDebug dbg, const ctkPluginException& exc)
 {
   dbg << "ctkPluginException:" << exc.what();
-
-  const char* causeMsg = exc.getCause().what();
-  if (causeMsg) dbg << "  Caused by:" << causeMsg;
 
   return dbg.maybeSpace();
 }

@@ -126,7 +126,7 @@
   //      else
   //      {
         throw ctkPluginException(QString("Failed to install plugin: ") + QString(e.what()),
-                                ctkPluginException::UNSPECIFIED, e);
+                                ctkPluginException::UNSPECIFIED, &e);
   //      }
       }
     }
