@@ -119,6 +119,7 @@ SET(external_projects
   DCMTK
   ZMQ
   QtMobility
+  QtSOAP
   OpenIGTLink
   VTK
   XIP
@@ -161,6 +162,7 @@ ExternalProject_Add(${proj}
     # Optionnal dependencies
     ${CTKData_DEPENDS}
     ${QtMobility_DEPENDS}
+    ${QtSOAP_DEPENDS}
     ${kwstyle_DEPENDS}
     ${DCMTK_DEPENDS}
     ${PythonQt_DEPENDS}
@@ -252,6 +254,7 @@ ExternalProject_Add(${proj}
     -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR variable to be defined
     -DPYTHONQTGENERATOR_EXECUTABLE:FILEPATH=${PYTHONQTGENERATOR_EXECUTABLE} #FindPythonQtGenerator expects PYTHONQTGENERATOR_EXECUTABLE to be defined
     -DLog4Qt_DIR:PATH=${Log4Qt_DIR} # FindLog4Qt expects Log4Qt_DIR variable to be defined
+    -DQtSOAP_DIR:PATH=${QtSOAP_DIR} # FindQtSOAP expects QtSOAP_DIR variable to be defined
     ${dependency_args}
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build

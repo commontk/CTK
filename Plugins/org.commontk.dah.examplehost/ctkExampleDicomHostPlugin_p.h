@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,37 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
 
-// CTK includes
-//#include <ctkPluginManager.h>
+#ifndef CTKEXAMPLEDICOMHOSTPLUGIN_P_H
+#define CTKEXAMPLEDICOMHOSTPLUGIN_P_H
 
-int main(int argc, char** argv)
+#include <ctkPluginActivator.h>
+
+class ctkExampleDicomHostPlugin :
+  public QObject, public ctkPluginActivator
 {
-  QCoreApplication app(argc, argv);
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator)
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+public:
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  ctkExampleDicomHostPlugin();
+  ~ctkExampleDicomHostPlugin();
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+  void start(ctkPluginContext* context);
+  void stop(ctkPluginContext* context);
 
-  return 0;
-}
+  static ctkExampleDicomHostPlugin* getInstance();
+
+  ctkPluginContext* getPluginContext() const;
+
+
+private:
+
+  static ctkExampleDicomHostPlugin* instance;
+  ctkPluginContext* context;
+
+
+}; // ctkExampleDicomHostPlugin
+
+#endif // CTKEXAMPLEDICOMHOSTPLUGIN_P_H

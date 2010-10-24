@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,9 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
+#include "ctkHostedAppPlaceholderWidget.h"
 
-// CTK includes
-//#include <ctkPluginManager.h>
-
-int main(int argc, char** argv)
+ctkHostedAppPlaceholderWidget::ctkHostedAppPlaceholderWidget(QWidget *parent) :
+    QFrame(parent)
 {
-  QCoreApplication app(argc, argv);
-
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
-
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
-
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
-
-  return 0;
 }

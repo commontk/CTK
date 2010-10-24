@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,44 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
+#include "ctkDicomAbstractApp.h"
+#include "ctkDicomAppServer.h"
 
-// CTK includes
-//#include <ctkPluginManager.h>
-
-int main(int argc, char** argv)
+class ctkDicomAbstractAppPrivate
 {
-  QCoreApplication app(argc, argv);
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+public:
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  ctkDicomAbstractAppPrivate(ctkDicomAbstractApp* appInterface, int port) : port(port)
+  {
+    Q_UNUSED(appInterface)
+    // start server
+    if (!port)
+    {
+      port = 8080;
+    }
+    server = new ctkDicomAppServer(port);
+  }
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+  ~ctkDicomAbstractAppPrivate()
+  {
+    delete server;
+  }
 
-  return 0;
+  int port;
+  ctkDicomAppServer* server;
+};
+
+ctkDicomAbstractApp::ctkDicomAbstractApp(int port) : d_ptr(new ctkDicomAbstractAppPrivate(this,port))
+{
+}
+
+int ctkDicomAbstractApp::getPort() const
+{
+  Q_D(const ctkDicomAbstractApp);
+  return d->port;
+}
+
+ctkDicomAbstractApp::~ctkDicomAbstractApp()
+{
 }

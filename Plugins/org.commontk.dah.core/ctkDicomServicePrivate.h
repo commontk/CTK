@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,35 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
+#ifndef CTKDICOMSERVICEPRIVATE_H
+#define CTKDICOMSERVICEPRIVATE_H
 
-// CTK includes
-//#include <ctkPluginManager.h>
+#include <ctkDicomAppHostingTypes.h>
 
-int main(int argc, char** argv)
+#include <QEventLoop>
+#include <QtSoapHttpTransport>
+#include <org_commontk_dah_core_Export.h>
+#include <ctkDicomExchangeInterface.h>
+
+class org_commontk_dah_core_EXPORT ctkDicomServicePrivate : public QObject
 {
-  QCoreApplication app(argc, argv);
+  Q_OBJECT
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+public:
+  ctkDicomServicePrivate(int port, QString path);
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  const QtSoapType & askHost(const QString& methodName, const QList<QtSoapType*>& soapTypes);
+  const QtSoapType & askHost(const QString& methodName, QtSoapType* soapType);
+    
+  QEventLoop blockingLoop;
+  QtSoapHttpTransport http;
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+  int port;
+  QString path;
 
-  return 0;
-}
+private slots:
+
+  void responseReady();
+};
+
+#endif // CTKDICOMSERVICEPRIVATE_H

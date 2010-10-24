@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,28 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
 
-// CTK includes
-//#include <ctkPluginManager.h>
+#ifndef CTKDICOMAPPPSERVER_H
+#define CTKDICOMAPPPSERVER_H
 
-int main(int argc, char** argv)
+class ctkDicomAppInterface;
+
+#include <QScopedPointer>
+#include <org_commontk_dah_app_Export.h>
+
+class ctkDicomAppServerPrivate;
+
+class org_commontk_dah_app_EXPORT ctkDicomAppServer
 {
-  QCoreApplication app(argc, argv);
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+public:
+  ctkDicomAppServer(int port);
+  ~ctkDicomAppServer();
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+private:
+  Q_DECLARE_PRIVATE(ctkDicomAppServer)
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+  const QScopedPointer<ctkDicomAppServerPrivate> d_ptr;
+};
 
-  return 0;
-}
+#endif // CTKDICOMAPPPSERVER_H

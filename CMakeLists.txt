@@ -288,6 +288,11 @@ SET(CTK_LIBS
 SET(CTK_PLUGINS
   org.commontk.eventbus:ON
   org.commontk.cli:OFF
+  org.commontk.dah.app:OFF
+  org.commontk.dah.core:OFF
+  org.commontk.dah.exampleapp:OFF
+  org.commontk.dah.examplehost:OFF
+  org.commontk.dah.host:OFF
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
   )
@@ -302,6 +307,8 @@ SET(CTK_APPLICATIONS
   ctkDICOMDemoSCU:OFF
   ctkDICOMQuery:OFF
   ctkDICOMRetrieve:OFF
+  ctkExampleHost:OFF
+  ctkExampleHostedApp:OFF
   ctkPluginBrowser:OFF
   ctkPluginGenerator:OFF
   ctkSimplePythonShell:OFF

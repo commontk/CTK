@@ -1,0 +1,8 @@
+set(work_dir @ep_source_dir@)
+set(proj_dir ${work_dir}/@proj@)
+
+SET(_qtsoap_lib_dir "${proj_dir}/lib")
+SET(_qtsoap_include_dir "${proj_dir}/src/")
+
+CONFIGURE_FILE("@CTK_SOURCE_DIR@/Utilities/QtSOAP/QtSOAPConfig.cmake.in"
+               "@CTK_BINARY_DIR@/Utilities/QtSOAP/QtSOAPConfig.cmake" @ONLY)

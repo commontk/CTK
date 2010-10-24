@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,45 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
 
-// CTK includes
-//#include <ctkPluginManager.h>
+#include "ctkDicomAppPlugin_p.h"
 
-int main(int argc, char** argv)
+#include <QtPlugin>
+
+ctkDicomAppPlugin* ctkDicomAppPlugin::instance = 0;
+
+ctkDicomAppPlugin::ctkDicomAppPlugin()
+  : context(0)
 {
-  QCoreApplication app(argc, argv);
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
-
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
-
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
-
-  return 0;
 }
+
+ctkDicomAppPlugin::~ctkDicomAppPlugin()
+{
+  
+}
+
+void ctkDicomAppPlugin::start(ctkPluginContext* context)
+{
+  instance = this;
+  this->context = context;
+}
+
+void ctkDicomAppPlugin::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context)
+}
+
+ctkDicomAppPlugin* ctkDicomAppPlugin::getInstance()
+{
+  return instance;
+}
+
+ctkPluginContext* ctkDicomAppPlugin::getPluginContext() const
+{
+  return context;
+}
+
+Q_EXPORT_PLUGIN2(org_commontk_dah_app, ctkDicomAppPlugin)
+
+

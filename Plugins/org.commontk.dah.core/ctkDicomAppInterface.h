@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,32 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
 
-// CTK includes
-//#include <ctkPluginManager.h>
+#ifndef CTKDICOMAPPINTERFACE_H
+#define CTKDICOMAPPINTERFACE_H
 
-int main(int argc, char** argv)
+#include <QObject>
+#include <QRect>
+
+#include "ctkDicomAppHostingTypes.h"
+#include "ctkDicomExchangeInterface.h"
+
+#include <org_commontk_dah_core_Export.h>
+
+class org_commontk_dah_core_EXPORT ctkDicomAppInterface : public ctkDicomExchangeInterface
 {
-  QCoreApplication app(argc, argv);
+  Q_OBJECT
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+public:
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  // Application interface methods
+  virtual ctkDicomAppHosting::State getState() = 0;
+  virtual bool setState(ctkDicomAppHosting::State newState) = 0;
+  virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+  // Data exchange interface methods
+  // inherited from ctkDicomExchangeInterface
 
-  return 0;
-}
+};
+
+#endif // CTKDICOMAPPINTERFACE_H

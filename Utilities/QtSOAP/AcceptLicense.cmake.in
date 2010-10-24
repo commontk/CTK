@@ -1,0 +1,4 @@
+set(work_dir @ep_source_dir@)
+set(proj_dir ${work_dir}/@proj@)
+
+FILE(WRITE "${proj_dir}/.licenseAccepted" "license accepted\n")

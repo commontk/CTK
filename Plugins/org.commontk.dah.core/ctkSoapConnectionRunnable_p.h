@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,38 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
 
-// CTK includes
-//#include <ctkPluginManager.h>
+#ifndef CTKSOAPCONNECTIONRUNNABLE_P_H
+#define CTKSOAPCONNECTIONRUNNABLE_P_H
 
-int main(int argc, char** argv)
+#include <QObject>
+#include <QRunnable>
+#include <QTcpSocket>
+
+#include <qtsoap.h>
+
+class ctkSoapConnectionRunnable : public QObject, public QRunnable
 {
-  QCoreApplication app(argc, argv);
+  Q_OBJECT
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+public:
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  ctkSoapConnectionRunnable(int socketDescriptor);
+  ~ctkSoapConnectionRunnable();
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+  void run();
 
-  return 0;
-}
+signals:
+
+  void incomingSoapMessage(const QtSoapMessage& message, QtSoapMessage* reply);
+  void incomingWSDLMessage(const QString& message, QString* reply);
+
+private:
+
+  void readClient(QTcpSocket& socket);
+
+  int socketDescriptor;
+
+};
+
+#endif // CTKSOAPCONNECTIONRUNNABLE_P_H

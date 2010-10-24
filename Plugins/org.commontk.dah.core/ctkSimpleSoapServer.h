@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,36 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
 
-// CTK includes
-//#include <ctkPluginManager.h>
+#ifndef CTKSIMPLESOAPSERVER_H
+#define CTKSIMPLESOAPSERVER_H
 
-int main(int argc, char** argv)
+#include <QTcpServer>
+
+#include <qtsoap.h>
+
+#include <org_commontk_dah_core_Export.h>
+#include <ctkDicomAppHostingTypes.h>
+
+class org_commontk_dah_core_EXPORT ctkSimpleSoapServer : public QTcpServer
 {
-  QCoreApplication app(argc, argv);
+  Q_OBJECT
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+public:
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  ctkSimpleSoapServer(QObject *parent = 0);
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+signals:
 
-  return 0;
-}
+  void incomingSoapMessage(const QtSoapMessage& message, QtSoapMessage* reply);
+  void incomingWSDLMessage(const QString& message, QString* reply);
+
+public slots:
+
+protected:
+
+  void incomingConnection(int socketDescriptor);
+
+};
+
+#endif // CTKSIMPLESOAPSERVER_H

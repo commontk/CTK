@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,39 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
 
-// CTK includes
-//#include <ctkPluginManager.h>
+#ifndef CTKDICOMAPPSERVERPRIVATE_H
+#define CTKDICOMAPPSERVERPRIVATE_H
 
-int main(int argc, char** argv)
+#include <QObject>
+#include <QtSoapMessage>
+
+#include <ctkSimpleSoapServer.h>
+#include <ctkSoapMessageProcessorList.h>
+
+class ctkDicomAppInterface;
+
+class ctkDicomAppServerPrivate : public QObject
 {
-  QCoreApplication app(argc, argv);
+  Q_OBJECT
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+public:
+  ctkDicomAppServerPrivate(int port);
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  ctkSimpleSoapServer server;
+  int port;
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+public slots:
 
-  return 0;
-}
+  void incomingSoapMessage(const QtSoapMessage& message,
+                           QtSoapMessage* reply);
+  void incomingWSDLMessage(const QString& message, QString* reply);
+
+private:
+
+  ctkSoapMessageProcessorList processors;
+  ctkDicomAppInterface* appInterface;
+
+};
+
+#endif // CTKDICOMAPPSERVERPRIVATE_H

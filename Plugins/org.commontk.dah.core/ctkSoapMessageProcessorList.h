@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,28 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-#include <QDebug>
+#ifndef CTKSOAPMESSAGEPROCESSORLIST_H
+#define CTKSOAPMESSAGEPROCESSORLIST_H
 
-// CTK includes
-//#include <ctkPluginManager.h>
+#include <list>
+#include "ctkSoapMessageProcessor.h"
 
-int main(int argc, char** argv)
+#include <org_commontk_dah_core_Export.h>
+
+class org_commontk_dah_core_EXPORT ctkSoapMessageProcessorList : public ctkSoapMessageProcessor
 {
-  QCoreApplication app(argc, argv);
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+public:
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  void push_back( ctkSoapMessageProcessor* processor );
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+  bool process(const QtSoapMessage& message,
+               QtSoapMessage* reply) const;
 
-  return 0;
-}
+private:
+
+  std::list<ctkSoapMessageProcessor*> processors;
+
+};
+
+#endif // CTKSOAPMESSAGEPROCESSORLIST_H
