@@ -20,27 +20,37 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMAPPPSERVER_H
-#define CTKDICOMAPPPSERVER_H
+#ifndef CTKDICOMAPPPSERVER_P_H
+#define CTKDICOMAPPPSERVER_P_H
+
+#include <QObject>
+#include <QtSoapMessage>
+
+#include <ctkSimpleSoapServer.h>
+#include <ctkSoapMessageProcessorList.h>
 
 class ctkDicomAppInterface;
 
-#include <QScopedPointer>
-#include <org_commontk_dah_app_Export.h>
-
-class ctkDicomAppServerPrivate;
-
-class org_commontk_dah_app_EXPORT ctkDicomAppServer
+class ctkDicomAppServer : public QObject
 {
+  Q_OBJECT
 
 public:
   ctkDicomAppServer(int port);
-  ~ctkDicomAppServer();
+
+public slots:
+
+  void incomingSoapMessage(const QtSoapMessage& message,
+                           QtSoapMessage* reply);
+  void incomingWSDLMessage(const QString& message, QString* reply);
 
 private:
-  Q_DECLARE_PRIVATE(ctkDicomAppServer)
 
-  const QScopedPointer<ctkDicomAppServerPrivate> d_ptr;
+  ctkSoapMessageProcessorList processors;
+  ctkSimpleSoapServer server;
+  int port;
+
+  ctkDicomAppInterface* appInterface;
 };
 
-#endif // CTKDICOMAPPPSERVER_H
+#endif // CTKDICOMAPPPSERVER_P_H

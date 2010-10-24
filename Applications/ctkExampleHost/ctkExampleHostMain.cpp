@@ -95,12 +95,12 @@ int main(int argv, char** argc)
     }
   }
 
+  framework->start();
+
   foreach(ctkPlugin* plugin, installedPlugins)
   {
-    plugin->start(ctkPlugin::START_TRANSIENT);
+    plugin->start();
   }
-
-  framework->start();
 
 
   QMainWindow mainWindow;

@@ -20,14 +20,13 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOMHOSTSERVICE_H
-#define CTKDICOMHOSTSERVICE_H
+#ifndef CTKDICOMHOSTSERVICE_P_H
+#define CTKDICOMHOSTSERVICE_P_H
 
 #include <ctkDicomHostInterface.h>
 #include <ctkDicomExchangeService.h>
-#include <org_commontk_dah_app_Export.h>
 
-class org_commontk_dah_app_EXPORT ctkDicomHostService : public ctkDicomHostInterface
+class ctkDicomHostService : public ctkDicomHostInterface
 {
 
 public:
@@ -42,7 +41,7 @@ public:
 
   // Exchange methods
   bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
-  QList<ctkDicomAppHosting::ObjectLocator>* getData(
+  QList<ctkDicomAppHosting::ObjectLocator> getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData);
@@ -55,4 +54,4 @@ private:
 
 };
 
-#endif // CTKDICOMHOSTSERVICE_H
+#endif // CTKDICOMHOSTSERVICE_P_H

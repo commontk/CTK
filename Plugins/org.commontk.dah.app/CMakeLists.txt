@@ -7,14 +7,13 @@ SET(PLUGIN_SRCS
   ctkDicomAbstractApp.cpp
   ctkDicomAppPlugin.cpp
   ctkDicomAppServer.cpp
-  ctkDicomAppServerPrivate.cpp
   ctkDicomHostService.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
   ctkDicomAppPlugin_p.h
-  ctkDicomAppServerPrivate.h
+  ctkDicomAppServer_p.h
 )
 
 # Qt Designer files which should be processed by Qts uic

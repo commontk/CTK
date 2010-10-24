@@ -26,10 +26,6 @@
 // for testing purposes use:
 // --hostURL http://localhost:8081/host --applicationURL http://localhost:8082/app dicomapp
 
-// replace "//$" with nothing as soon as ctkDicomAppServer/ctkDicomHostService exist
-#include <ctkDicomAppServer.h>
-#include <ctkDicomHostService.h>
-#include <ctkDicomHostInterface.h>
 
 #include <QApplication>
 #include <QString>
@@ -82,7 +78,10 @@ int main(int argv, char** argc)
   qDebug() << "appURL is: " << appURL << " . Extracted port is: " << QUrl(appURL).port();
 
   // setup the plugin framework
-  ctkPluginFrameworkFactory fwFactory;
+  ctkProperties fwProps;
+  fwProps.insert("dah.hostURL", hostURL);
+  fwProps.insert("dah.appURL", appURL);
+  ctkPluginFrameworkFactory fwFactory(fwProps);
   ctkPluginFramework* framework = fwFactory.getFramework();
 
   try {
@@ -115,28 +114,24 @@ int main(int argv, char** argc)
   }
 
   // try to find the plugin and install all plugins available in 
-  // pluginPath (but do not start them)
+  // pluginPath containing the string "org_commontk_dah" (but do not start them)
+  ctkPlugin* appPlugin = 0;
   QStringList libFilter;
   libFilter << "*.dll" << "*.so" << "*.dylib";
   QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
-  bool pluginFound = false;
-  QString pluginFileLocation;
-  QList<ctkPlugin*> installedPlugins;
   while(dirIter.hasNext())
   {
     try
     {
       QString fileLocation = dirIter.next();
-      if (fileLocation.contains("org_commontk_dah") && !fileLocation.contains(pluginName))
+      if (fileLocation.contains("org_commontk_dah"))
       {
         ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
-        installedPlugins << plugin;
+        if (fileLocation.contains(pluginName))
+        {
+          appPlugin = plugin;
+        }
         //plugin->start(ctkPlugin::START_TRANSIENT);
-      }
-      if (fileLocation.contains(pluginName))
-      {
-        pluginFound = true;
-        pluginFileLocation = fileLocation;
       }
     }
     catch (const ctkPluginException& e)
@@ -145,49 +140,27 @@ int main(int argv, char** argc)
     }
   }
 
-  try
-  {
-    foreach(ctkPlugin* plugin, installedPlugins)
-    {
-      plugin->start(ctkPlugin::START_TRANSIENT);
-    }
-  }
-  catch (const ctkPluginException& e)
-  {
-    qCritical() << e.what();
-  }
-
   // if we did not find the business logic: abort
-  if(!pluginFound)
+  if(!appPlugin)
   {
     qCritical() << "Could not find plugin.";
     qCritical() << "  Plugin name: " << pluginName;
     qCritical() << "  Plugin path: " << pluginPath;
     exit(3);
   }
-qCritical() << "app about to start 1";
-  // setup the communication infrastructure: DicomAppServer and DicomHostService
-  /*ctkDicomAppServer * appServer =*/ new ctkDicomAppServer(QUrl(appURL).port()); // accesses the app-plugin via getService("ctkDicomAppInterface");
-  ctkDicomHostInterface * hostInterface = new ctkDicomHostService(QUrl(hostURL).port(), "/HostInterface");
-  framework->getPluginContext()->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
-qCritical() << "app about to start 2";
-  // install and start the plugin with the business logic and remember pointer to start it later
-  //ctkPlugin* plugin;
+
+  // start the plugin framework
+  framework->start();
+
+  // start the plugin with the business logic
   try
   {
-    ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(pluginFileLocation));
-    plugin->start(ctkPlugin::START_TRANSIENT);
+    appPlugin->start();
   }
   catch (const ctkPluginException& e)
   {
-    qCritical() << e.what();
+    qCritical() << e;
   }
-
-qCritical() << "app about to start 3";
-  framework->start();
-qCritical() << "app about to start 4";
-  //QWidget placeholder;
-  //placeholder.show();
 
   return app.exec();
 }
