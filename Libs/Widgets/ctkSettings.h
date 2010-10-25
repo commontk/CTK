@@ -76,11 +76,19 @@ public:
     const QString& organization,
     const QString& application,
     QObject* p);
-    
+
+  /// Saves the position, size and layout of the QMainWindow
   void saveState(const QMainWindow& window, const QString& key);
+
+  /// Saves the position and size of the QDialog
   void saveState(const QDialog& dialog, const QString& key);
-  
+
+  /// Restore the position, size and layout of the QMainWindow
+  /// for a given key
   void restoreState(const QString& key, QMainWindow& window);
+  
+  /// Saves the position, size and layout of the QMainWindow
+  /// for a given key
   void restoreState(const QString& key, QDialog& dialog);
 
   /// Calling this method will cause the modified signal to be emited.
