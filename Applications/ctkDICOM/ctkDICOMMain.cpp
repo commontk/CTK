@@ -21,6 +21,8 @@
 // Qt includes
 #include <QApplication>
 #include <QTreeView>
+#include <QSettings>
+#include <QDir>
 
 // CTK widget includes
 #include <ctkDICOMQueryRetrieveWidget.h>
@@ -44,32 +46,45 @@ int main(int argc, char** argv)
   app.setOrganizationDomain("commontk.org");
   app.setApplicationName("ctkDICOM");
 
+  QSettings settings;
+  QString databaseDirectory;
+
   // set up the database 
-  const char *datbaseFileName = "/tmp/test.db";
-  const char *datbaseScriptFileName = "/Users/pieper/ctk/latest/CTK/Libs/DICOM/Core/Resources/dicom-sample.sql";
   if (argc > 1)
     {
-    datbaseFileName = argv[1];
-    }
-  if (argc > 2)
-    {
-    datbaseScriptFileName = argv[2];
+    QString directory(argv[1]);
+    settings.setValue("DatabaseDirectory", directory);
+    settings.sync();
     }
 
-  ctkDICOM myCTK;
-  try { myCTK.openDatabase( datbaseFileName ); }
-  catch (std::exception e)
+  if ( settings.value("DatabaseDirectory", "") == "" )
   {
-    std::cerr << "Database error:" << qPrintable(myCTK.GetLastError());
-    myCTK.closeDatabase();
-    return EXIT_FAILURE;
+    databaseDirectory = QString("./ctkDICOM-Database");
+    std::cerr << "No DatabaseDirectory on command line or in settings.  Using \"" << databaseDirectory.toLatin1().data() << "\".\n";
+  } else
+  {
+    databaseDirectory = settings.value("DatabaseDirectory", "").toString();
   }
 
-  try { myCTK.initializeDatabase(datbaseScriptFileName); }
+  QDir qdir(databaseDirectory);
+  if ( !qdir.exists(databaseDirectory) ) 
+  {
+    if ( !qdir.mkpath(databaseDirectory) )
+    {
+      std::cerr << "Could not create database directory \"" << databaseDirectory.toLatin1().data() << "\".\n";
+      return EXIT_FAILURE;
+    }
+  }
+
+
+  QString databaseFileName = databaseDirectory + QString("/ctkDICOM.sql");
+
+  ctkDICOM myCTK;
+  try { myCTK.openDatabase( databaseFileName ); }
   catch (std::exception e)
   {
-    std::cerr << "Error when initializing the data base: " << datbaseScriptFileName
-              << " error: " << myCTK.GetLastError().toStdString();
+    std::cerr << "Database error:" << qPrintable(myCTK.GetLastError()) << "\n";
+    myCTK.closeDatabase();
     return EXIT_FAILURE;
   }
 

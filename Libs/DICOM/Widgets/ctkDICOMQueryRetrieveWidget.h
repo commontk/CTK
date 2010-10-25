@@ -40,6 +40,7 @@ public slots:
     void onDatabaseDirectoryChanged(const QString& directory);
     void processQuery();
     void onTabCloseRequested(int index);
+    void onAddToDatabase();
 
 protected:
   QScopedPointer<ctkDICOMQueryRetrieveWidgetPrivate> d_ptr;

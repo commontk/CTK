@@ -31,19 +31,13 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>572</width>
-        <height>394</height>
+        <width>580</width>
+        <height>414</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QTableWidget" name="nodeTable">
-         <attribute name="horizontalHeaderStretchLastSection">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="verticalHeaderStretchLastSection">
-          <bool>false</bool>
-         </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
          </attribute>
@@ -88,14 +82,14 @@
       <item>
        <widget class="QPushButton" name="addButton">
         <property name="text">
-         <string>Add...</string>
+         <string>Add Server</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="removeButton">
         <property name="text">
-         <string>Remove</string>
+         <string>Remove Server</string>
         </property>
        </widget>
       </item>

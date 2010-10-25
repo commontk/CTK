@@ -75,13 +75,19 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
   QMap<QString, QVariant> node;
   if ( settings.value("ServerNodeCount").toInt() == 0 )
   {
-    node["Name"] = "localhost";
+    node["Name"] = "Local Database";
     node["CheckState"] = Qt::Checked;
+    node["AETitle"] = "N/A";
+    node["Address"] = "N/A";
+    node["Port"] = "N/A";
+    settings.setValue("ServerNodeCount", 2);
+    settings.setValue("ServerNodes/0", QVariant(node));
+    node["Name"] = "ExampleHost";
+    node["CheckState"] = Qt::Unchecked;
     node["AETitle"] = "CTK_AE";
     node["Address"] = "localhost";
     node["Port"] = "11112";
-    settings.setValue("ServerNodeCount", 3);
-    settings.setValue("ServerNodes/0", QVariant(node));
+    settings.setValue("ServerNodes/1", QVariant(node));
     settings.sync();
   }
 

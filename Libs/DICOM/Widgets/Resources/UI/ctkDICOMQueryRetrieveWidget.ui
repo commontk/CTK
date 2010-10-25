@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>762</width>
+    <width>977</width>
     <height>769</height>
    </rect>
   </property>
@@ -24,17 +24,96 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="ctkDICOMServerNodeWidget" name="serverNodeWidget" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>300</width>
-          <height>200</height>
-         </size>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Data Sources</string>
         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QFrame" name="frame_2">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Local Database</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="ctkDirectoryButton" name="sqlDirectory" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Local directory where cached files and database index file are stored.</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="addToDatabase">
+              <property name="toolTip">
+               <string>Add more files to the local database by browsing the filesystem</string>
+              </property>
+              <property name="text">
+               <string>Add...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_3">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Query Targets</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="ctkDICOMServerNodeWidget" name="serverNodeWidget" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>300</width>
+                <height>200</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
-       <widget class="ctkDICOMQueryWidget" name="queryWidget" native="true"/>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Search Options</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="ctkDICOMQueryWidget" name="queryWidget" native="true"/>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -42,23 +121,6 @@
    <item>
     <widget class="QWidget" name="commandFrame" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Local Database</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="ctkDirectoryButton" name="sqlDirectory" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>30</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">

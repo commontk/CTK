@@ -37,12 +37,14 @@ ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* _parent):Super
   connect(d->queryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
   connect(d->results, SIGNAL(tabCloseRequested(int)), this, SLOT(onTabCloseRequested(int)));
   connect(d->sqlDirectory, SIGNAL(directoryChanged(const QString&)), this, SLOT(onDatabaseDirectoryChanged(const QString&)));
+  connect(d->addToDatabase, SIGNAL(clicked()), this, SLOT(onAddToDatabase()));
 
   QSettings settings;
   if ( settings.value("DatabaseDirectory", "") != "" )
   {
     d->sqlDirectory->setDirectory(settings.value("DatabaseDirectory").toString());
   }
+
 }
 
 //----------------------------------------------------------------------------
@@ -69,6 +71,13 @@ void ctkDICOMQueryRetrieveWidget::onTabCloseRequested(int index)
   }
 
   d->results->removeTab(index);
+}
+
+void ctkDICOMQueryRetrieveWidget::onAddToDatabase()
+{
+  Q_D(ctkDICOMQueryRetrieveWidget);
+
+  //d->
 }
 
 //----------------------------------------------------------------------------
