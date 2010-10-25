@@ -190,10 +190,13 @@ int userInteractionSimulator1(QApplication& app, ctkExampleDerivedWorkflowWidget
 {
   QPushButton* backButton = workflowWidget->buttonBoxWidget()->backButton();
   QPushButton* nextButton = workflowWidget->buttonBoxWidget()->nextButton();
-  QPushButton* finishButton = workflowWidget->buttonBoxWidget()->goToButtons().first();
   Q_ASSERT(backButton);
   Q_ASSERT(nextButton);
+
+#ifndef QT_NO_DEBUG
+  QPushButton* finishButton = workflowWidget->buttonBoxWidget()->goToButtons().first();
   Q_ASSERT(finishButton);
+#endif
 
   QList<derivedTestData*> tests;
 

@@ -1016,8 +1016,10 @@ void ctkWorkflow::goToStep(const QString& targetId)
     return;
     }
 
+#ifndef QT_NO_DEBUG
   ctkWorkflowStep* step = d->stepFromId(targetId);
   Q_ASSERT(step);
+#endif
 
   logger.info(QString("goToStep - Attempting to go to finish step %1").arg(targetId));
 

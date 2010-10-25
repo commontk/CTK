@@ -111,10 +111,12 @@ void ctkWorkflowButtonBoxWidgetPrivate::setupUi(QWidget * newParent)
 //-----------------------------------------------------------------------------
 void ctkWorkflowButtonBoxWidgetPrivate::updateBackButton(ctkWorkflowStep* currentStep)
 {
+#ifndef QT_NO_DEBUG
   Q_Q(ctkWorkflowButtonBoxWidget);
 
   Q_ASSERT(this->Workflow);
   Q_ASSERT(q->layout());
+#endif
 
   ctkWorkflowAbstractWidgetStep* step = dynamic_cast<ctkWorkflowAbstractWidgetStep*>(currentStep);
 
@@ -153,10 +155,12 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateBackButton(ctkWorkflowStep* curren
 // This will change for branching workflows, to look more like updateGoToButtons()
 void ctkWorkflowButtonBoxWidgetPrivate::updateNextButton(ctkWorkflowStep* currentStep)
 {
+#ifndef QT_NO_DEBUG
   Q_Q(ctkWorkflowButtonBoxWidget);
 
   Q_ASSERT(this->Workflow);
   Q_ASSERT(q->layout());
+#endif
 
   ctkWorkflowAbstractWidgetStep* step = dynamic_cast<ctkWorkflowAbstractWidgetStep*>(currentStep);
 
