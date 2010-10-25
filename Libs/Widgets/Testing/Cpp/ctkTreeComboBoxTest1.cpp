@@ -20,6 +20,8 @@
 
 // Qt includes
 #include <QApplication>
+#include <QStandardItemModel>
+#include <QTimer>
 
 // CTK includes
 #include "ctkTreeComboBox.h"
@@ -33,9 +35,31 @@ int ctkTreeComboBoxTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkTreeComboBox ctkObject;
+  ctkTreeComboBox combo;
+  QStandardItemModel model;
+  model.appendRow(new QStandardItem("Test1"));
+  model.item(0)->appendRow(new QStandardItem("Test1.1"));
+  model.item(0)->appendRow(new QStandardItem("Test1.2"));
+  model.item(0)->appendRow(new QStandardItem("Test1.3"));
+  model.appendRow(new QStandardItem("Test2"));
+  model.appendRow(new QStandardItem("Test3"));
+  combo.setModel(&model);
+  
+  if (combo.treeView() == 0)
+    {
+    std::cerr << "No tree view" << std::endl;
+    return EXIT_FAILURE;
+    }
+  combo.show();
+  
+  combo.showPopup();
+  combo.hidePopup();
+  
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
 
-
-  return EXIT_SUCCESS;
+  return app.exec();
 }
 
