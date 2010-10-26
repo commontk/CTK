@@ -230,7 +230,7 @@ ENDIF()
 #
 IF(WITH_COVERAGE)
   IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    SET(coverage_flags "-g -fprofile-arcs -ftest-coverage -O3 -DNDEBUG")
+    SET(coverage_flags "-g -fprofile-arcs -ftest-coverage -O0 -DNDEBUG")
     SET(COVERAGE_CXX_FLAGS ${coverage_flags})
     SET(COVERAGE_C_FLAGS ${coverage_flags})
   ENDIF()
