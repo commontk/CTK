@@ -32,6 +32,13 @@
 // STD includes
 #include <csignal>
 
+#ifdef __GNUC__
+// Disable warnings related to signal() function
+// See http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html
+// Note: Ideally the incriminated functions and macros should be fixed upstream ...
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
+
 #ifdef CTK_PYTHONQT_WRAP_QTGUI
 void PythonQt_init_QtGui(PyObject*);
 #endif
