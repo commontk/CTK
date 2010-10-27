@@ -34,10 +34,12 @@
 class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
 {
   Q_OBJECT 
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
   Q_PROPERTY(int Dimension READ dimension WRITE setDimension)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
+
   Q_PROPERTY(QString coordinates READ coordinatesAsString WRITE setCoordinatesAsString)
     
 public:
@@ -45,51 +47,66 @@ public:
   virtual ~ctkCoordinatesWidget();
 
   /// 
-  /// Set/Get the dimension of the point (3 by default)
+  /// Set/Get the dimension of the point
+  /// The default dimension is 3
   void setDimension(int dim);
   int dimension() const;
+  
+  /// 
+  /// Set/Get the number of decimals of each coordinate QDoubleSpinBoxes 
+  /// The default single step is 3
+  void setDecimals(int decimals);
+  int decimals() const;
+  
 
   /// 
   /// Set/Get the single step of each coordinate QDoubleSpinBoxes 
+  /// The default single step is 1.
   void setSingleStep(double step);
   double singleStep() const;
 
   /// 
   /// Set/Get the minimum value of each coordinate QDoubleSpinBoxes 
+  /// The default minimum is -100000.
   void setMinimum(double minimum);
   double minimum() const;
 
   /// 
   /// Set/Get the maximum value of each coordinate QDoubleSpinBoxes 
+  /// The default maximum is 100000.
   void setMaximum(double minimum);
   double maximum() const;
 
   /// 
   /// Set/Get the coordinates. Use commas between numbers
+  /// i.e. "0,0.0,0." 
   void setCoordinatesAsString(QString pos);
   QString coordinatesAsString()const;
 
   /// 
   /// Set/Get the coordinates
+  /// The default values are 0.
   void setCoordinates(double* pos);
-  double* coordinates()const;
+  double const * coordinates()const;
 
 signals:
   ///
   /// valueChanged is fired anytime a coordinate is modified, the returned
   /// value is the point coordinates
-  void valueChanged(double* pos);
+  /// TODO: Don't fire the signal if the new values are not changed 
+  void coordinatesChanged(double* pos);
 
 protected slots:
-  void coordinateChanged(double);
-  void coordinatesChanged();
+  void updateCoordinate(double);
+  void updateCoordinates();
 
 protected:
   void addSpinBox();
 
+  int     Decimals;
+  double  SingleStep;
   double  Minimum;
   double  Maximum;
-  double  SingleStep;
   int     Dimension;
   double* Coordinates;
 };
