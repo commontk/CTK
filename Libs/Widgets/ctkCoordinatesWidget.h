@@ -31,6 +31,7 @@
 /// ctkCoordinatesWidget is a simple container of dimension coordinates.
 /// For each coordinate a double spinbox is associated, everytime a value is
 /// modified, the signal valueChanged is fired.
+/// TODO: use pimpl
 class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
 {
   Q_OBJECT 
@@ -41,7 +42,7 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
 
   Q_PROPERTY(QString coordinates READ coordinatesAsString WRITE setCoordinatesAsString)
-    
+
 public:
   explicit ctkCoordinatesWidget(QWidget* parent = 0);
   virtual ~ctkCoordinatesWidget();

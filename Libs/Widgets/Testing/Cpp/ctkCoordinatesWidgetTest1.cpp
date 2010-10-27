@@ -161,6 +161,24 @@ int ctkCoordinatesWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  coordinatesWidget.setDimension(0);
+  
+  if (coordinatesWidget.dimension() != 4)
+    {
+    std::cerr << "ctkCoordinatesWidget::setDimension() failed: "
+              << coordinatesWidget.dimension() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  coordinatesWidget.setDimension(3);
+  
+  if (coordinatesWidget.dimension() != 3)
+    {
+    std::cerr << "ctkCoordinatesWidget::setDimension() failed: "
+              << coordinatesWidget.dimension() << std::endl;
+    return EXIT_FAILURE;
+    }
+
   coordinatesWidget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
