@@ -59,6 +59,25 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
 ctkCollapsibleGroupBox::ctkCollapsibleGroupBox(QWidget* _parent)
   :QGroupBox(_parent)
 {
+  this->init();
+}
+
+//-----------------------------------------------------------------------------
+ctkCollapsibleGroupBox::ctkCollapsibleGroupBox(const QString& title, QWidget* _parent)
+  :QGroupBox(title, _parent)
+{
+  this->init();
+}
+
+//-----------------------------------------------------------------------------
+ctkCollapsibleGroupBox::~ctkCollapsibleGroupBox()
+{
+
+}
+
+//-----------------------------------------------------------------------------
+void ctkCollapsibleGroupBox::init()
+{
   this->setCheckable(true);
   connect(this, SIGNAL(toggled(bool)), this, SLOT(expand(bool)));
 
@@ -72,12 +91,6 @@ ctkCollapsibleGroupBox::ctkCollapsibleGroupBox(QWidget* _parent)
     "ctkCollapsibleGroupBox::indicator:unchecked{"
     "image: url(:/Icons/expand-down.png);}");
 #endif
-}
-
-//-----------------------------------------------------------------------------
-ctkCollapsibleGroupBox::~ctkCollapsibleGroupBox()
-{
-
 }
 
 //-----------------------------------------------------------------------------

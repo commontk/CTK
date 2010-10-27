@@ -36,7 +36,8 @@ class CTK_WIDGETS_EXPORT ctkCollapsibleGroupBox : public QGroupBox
 {
   Q_OBJECT
 public:
-  explicit ctkCollapsibleGroupBox(QWidget* parent = 0);
+  ctkCollapsibleGroupBox(QWidget* parent = 0);
+  ctkCollapsibleGroupBox(const QString& title, QWidget* parent = 0);
   virtual ~ctkCollapsibleGroupBox();
   
   /// Utility function to collapse the groupbox
@@ -71,7 +72,8 @@ protected:
   virtual void mouseReleaseEvent(QMouseEvent*);
 #endif
   virtual void resizeEvent(QResizeEvent*);
-
+private:
+  void init();
   /// Size of the widget for collapsing
   QSize OldSize;
   /// Maximum allowed height
