@@ -24,6 +24,7 @@
 
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginFrameworkContext_p.h"
+#include "ctkServices_p.h"
 #include "ctkServiceRegistration.h"
 #include "ctkServiceReference.h"
 #include "ctkServiceReferencePrivate.h"
@@ -96,21 +97,21 @@ ctkServiceRegistration* ctkPluginContext::registerService(const QStringList& cla
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  return d->plugin->fwCtx->services.registerService(d->plugin, clazzes, service, properties);
+  return d->plugin->fwCtx->services->registerService(d->plugin, clazzes, service, properties);
 }
 
 QList<ctkServiceReference> ctkPluginContext::getServiceReferences(const QString& clazz, const QString& filter)
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  return d->plugin->fwCtx->services.get(clazz, filter);
+  return d->plugin->fwCtx->services->get(clazz, filter);
 }
 
 ctkServiceReference ctkPluginContext::getServiceReference(const QString& clazz)
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  return d->plugin->fwCtx->services.get(d->plugin, clazz);
+  return d->plugin->fwCtx->services->get(d->plugin, clazz);
 }
 
 QObject* ctkPluginContext::getService(ctkServiceReference reference)

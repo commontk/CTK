@@ -81,7 +81,7 @@
         throw std::logic_error("INTERNAL ERROR, Illegal state");
       }
 
-      pluginsToStart = d->fwCtx->storage.getStartOnLaunchPlugins();
+      pluginsToStart = d->fwCtx->storage->getStartOnLaunchPlugins();
     }
 
     // Start plugins according to their autostart setting.

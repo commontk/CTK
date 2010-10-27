@@ -23,29 +23,30 @@
 
 #include "ctkPluginFramework.h"
 #include "ctkPluginConstants.h"
-
+#include "ctkPluginContext_p.h"
 #include "ctkPluginFrameworkContext_p.h"
 
 
-  ctkPluginFrameworkPrivate::ctkPluginFrameworkPrivate(ctkPluginFramework& qq, ctkPluginFrameworkContext* fw)
-    : ctkPluginPrivate(qq, fw, 0, ctkPluginConstants::SYSTEM_PLUGIN_LOCATION,
-                    ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
-                    // TODO: read version from the manifest resource
-                    ctkVersion(0, 9, 0))
-  {
-    systemHeaders.insert(ctkPluginConstants::PLUGIN_SYMBOLICNAME, symbolicName);
-    systemHeaders.insert(ctkPluginConstants::PLUGIN_NAME, location);
-    systemHeaders.insert(ctkPluginConstants::PLUGIN_VERSION, version.toString());
-  }
+ctkPluginFrameworkPrivate::ctkPluginFrameworkPrivate(ctkPluginFramework& qq, ctkPluginFrameworkContext* fw)
+  : ctkPluginPrivate(qq, fw, 0, ctkPluginConstants::SYSTEM_PLUGIN_LOCATION,
+                     ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
+                     // TODO: read version from the manifest resource
+                     ctkVersion(0, 9, 0))
+{
+  systemHeaders.insert(ctkPluginConstants::PLUGIN_SYMBOLICNAME, symbolicName);
+  systemHeaders.insert(ctkPluginConstants::PLUGIN_NAME, location);
+  systemHeaders.insert(ctkPluginConstants::PLUGIN_VERSION, version.toString());
+}
 
-  void ctkPluginFrameworkPrivate::init()
-  {
-    this->state = ctkPlugin::STARTING;
-    this->fwCtx->init();
-  }
+void ctkPluginFrameworkPrivate::init()
+{
+  this->state = ctkPlugin::STARTING;
+  this->fwCtx->init();
+}
 
-  void ctkPluginFrameworkPrivate::initSystemPlugin()
-  {
-    this->pluginContext = new ctkPluginContext(this);
+void ctkPluginFrameworkPrivate::initSystemPlugin()
+{
+  this->pluginContext = new ctkPluginContext(this);
 
 }
+

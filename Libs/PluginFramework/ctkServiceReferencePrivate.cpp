@@ -28,6 +28,8 @@
 #include "ctkServiceFactory.h"
 #include "ctkServiceException.h"
 #include "ctkPluginPrivate_p.h"
+
+#include "ctkServices_p.h"
 #include "ctkServiceRegistrationPrivate.h"
 #include "ctkPluginFrameworkContext_p.h"
 
@@ -74,7 +76,7 @@ QObject* ctkServiceReferencePrivate::getService(ctkPlugin* plugin)
           for (QStringListIterator i(classes); i.hasNext(); )
           {
             QString cls = i.next();
-            if (!registration->plugin->fwCtx->services.checkServiceClass(s, cls))
+            if (!registration->plugin->fwCtx->services->checkServiceClass(s, cls))
             {
               ctkServiceException se(QString("ctkServiceFactory produced an object ") +
                                      "that did not implement: " + cls,

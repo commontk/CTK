@@ -29,7 +29,9 @@
 #include "ctkPluginActivator.h"
 #include "ctkPluginContext_p.h"
 
+#include "ctkServices_p.h"
 #include "ctkServiceReferencePrivate.h"
+#include "ctkServiceRegistration.h"
 
 const ctkPlugin::States ctkPluginPrivate::RESOLVED_FLAGS = ctkPlugin::RESOLVED | ctkPlugin::STARTING | ctkPlugin::ACTIVE | ctkPlugin::STOPPING;
 
@@ -358,7 +360,7 @@ void ctkPluginPrivate::removePluginResources()
   // automatic disconnect due to Qt signal slot
   //fwCtx->listeners.removeAllListeners(this);
 
-  QList<ctkServiceRegistration*> srs = fwCtx->services.getRegisteredByPlugin(this);
+  QList<ctkServiceRegistration*> srs = fwCtx->services->getRegisteredByPlugin(this);
   QListIterator<ctkServiceRegistration*> i(srs);
   while (i.hasNext())
   {
@@ -374,7 +376,7 @@ void ctkPluginPrivate::removePluginResources()
     }
   }
 
-  QList<ctkServiceRegistration*> s = fwCtx->services.getUsedByPlugin(q_func());
+  QList<ctkServiceRegistration*> s = fwCtx->services->getUsedByPlugin(q_func());
   QListIterator<ctkServiceRegistration*> i2(s);
   while (i2.hasNext())
   {

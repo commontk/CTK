@@ -30,10 +30,11 @@
 #include "ctkPluginStorage_p.h"
 #include "ctkPlugins_p.h"
 #include "ctkPluginFrameworkListeners_p.h"
-#include "ctkServices_p.h"
 
 
   class ctkPlugin;
+  class ctkPluginStorage;
+  class ctkServices;
 
   class ctkPluginFrameworkContext {
 
@@ -52,7 +53,7 @@
       /**
        * All registered services in this framework.
        */
-      ctkServices services;
+      ctkServices* services;
 
       /**
        * System plugin
@@ -62,7 +63,7 @@
       /**
        * ctkPlugin storage
        */
-      ctkPluginStorage storage;
+      ctkPluginStorage* storage;
 
       /**
        * Framework id.

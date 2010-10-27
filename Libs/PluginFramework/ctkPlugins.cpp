@@ -105,7 +105,7 @@
           //TODO copy the QIODevice to a local cache
         }
 
-        pa = fwCtx->storage.insertPlugin(location, localPluginPath);
+        pa = fwCtx->storage->insertPlugin(location, localPluginPath);
 
         ctkPlugin* res = new ctkPlugin(fwCtx, pa);
         plugins.insert(location.toString(), res);
@@ -281,7 +281,7 @@
   }
 
   void ctkPlugins::load() {
-    QList<ctkPluginArchive*> pas = fwCtx->storage.getAllPluginArchives();
+    QList<ctkPluginArchive*> pas = fwCtx->storage->getAllPluginArchives();
     QListIterator<ctkPluginArchive*> it(pas);
 
     {

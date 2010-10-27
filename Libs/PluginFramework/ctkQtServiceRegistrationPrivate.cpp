@@ -23,6 +23,8 @@
 
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginFrameworkContext_p.h"
+
+#include "ctkServices_p.h"
 #include "ctkQtServiceRegistration_p.h"
 
 
@@ -50,5 +52,5 @@ QObject* ctkQtServiceRegistrationPrivate::getService()
       throw;
     }
   }
-  return this->plugin->fwCtx->services.qServiceManager.loadInterface(serviceDescriptor);
+  return this->plugin->fwCtx->services->qServiceManager.loadInterface(serviceDescriptor);
 }

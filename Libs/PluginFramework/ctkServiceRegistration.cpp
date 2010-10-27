@@ -24,6 +24,8 @@
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginConstants.h"
+
+#include "ctkServices_p.h"
 #include "ctkServiceFactory.h"
 #include "ctkServiceSlotEntry_p.h"
 
@@ -76,7 +78,7 @@ void ctkServiceRegistration::setProperties(const ServiceProperties& props)
       int new_rank = d->properties.value(ctkPluginConstants::SERVICE_RANKING).toInt();
       if (old_rank != new_rank)
       {
-        d->plugin->fwCtx->services.updateServiceRegistrationOrder(this, classes);
+        d->plugin->fwCtx->services->updateServiceRegistrationOrder(this, classes);
       }
     }
     else
@@ -107,7 +109,7 @@ void ctkServiceRegistration::unregister()
     {
       if (d->plugin)
       {
-        d->plugin->fwCtx->services.removeServiceRegistration(this);
+        d->plugin->fwCtx->services->removeServiceRegistration(this);
       }
     }
     else

@@ -24,6 +24,7 @@
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginFrameworkContext_p.h"
+#include "ctkServices_p.h"
 
 #include <QStringList>
 
@@ -105,7 +106,7 @@ void ctkPlugin::start(const StartOptions& options)
     QByteArray serviceDescriptor = getResource("servicedescriptor.xml");
     if (!serviceDescriptor.isEmpty())
     {
-      d->fwCtx->services.registerService(d, serviceDescriptor);
+      d->fwCtx->services->registerService(d, serviceDescriptor);
     }
   }
 

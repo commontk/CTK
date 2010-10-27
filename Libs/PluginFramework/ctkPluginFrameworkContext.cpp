@@ -24,6 +24,7 @@
 #include "ctkPluginFrameworkPrivate_p.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginConstants.h"
+#include "ctkServices_p.h"
 
 
   QMutex ctkPluginFrameworkContext::globalFwLock;
@@ -32,8 +33,8 @@
 
   ctkPluginFrameworkContext::ctkPluginFrameworkContext(
       const ctkProperties& initProps)
-        : plugins(0), services(this), systemPlugin(this),
-        storage(this), props(initProps)
+        : plugins(0), services(0), systemPlugin(this),
+        storage(0), props(initProps)
   {
 
     {
@@ -60,6 +61,8 @@
     ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
     systemPluginPrivate->initSystemPlugin();
 
+    storage = new ctkPluginStorage(this);
+    services = new ctkServices(this);
     plugins = new ctkPlugins(this);
 
     plugins->load();
@@ -68,7 +71,7 @@
 
     log() << "Installed plugins:";
     // Use the ordering in the plugin storage to get a sorted list of plugins.
-    QList<ctkPluginArchive*> allPAs = storage.getAllPluginArchives();
+    QList<ctkPluginArchive*> allPAs = storage->getAllPluginArchives();
     for (int i = 0; i < allPAs.size(); ++i)
     {
       ctkPluginArchive* pa = allPAs[i];
@@ -89,8 +92,12 @@
     delete plugins;
     plugins = 0;
 
-    storage.close();
+    storage->close();
+    delete storage;
+    storage = 0;
 
+    delete services;
+    services = 0;
   }
 
   int ctkPluginFrameworkContext::getId() const
