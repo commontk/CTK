@@ -55,6 +55,11 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
+SIMPLE_TEST( ctkAbstractFactoryTest1 )
+SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 )
+SIMPLE_TEST( ctkAbstractObjectFactoryTest1 )
+SIMPLE_TEST( ctkAbstractPluginFactoryTest1 )
+SIMPLE_TEST( ctkAbstractQObjectFactoryTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
