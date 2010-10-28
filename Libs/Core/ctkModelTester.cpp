@@ -504,7 +504,7 @@ void ctkModelTester::onItemsInserted(const QModelIndex & vparent, Qt::Orientatio
 
   ctkModelTesterPrivate::Change change = d->AboutToBeInserted.pop();
   this->test(change.Parent == vparent, "Parent can't be different");
-  this->test(change.Orientation == Qt::Vertical, "Orientation can't be different");
+  this->test(change.Orientation == orientation, "Orientation can't be different");
   this->test(change.Start == start, "Start can't be different");
   this->test(change.End == end, "End can't be different");
   int count =  (orientation == Qt::Vertical ? d->Model->rowCount(vparent) :d->Model->columnCount(vparent) );
@@ -530,7 +530,7 @@ void ctkModelTester::onItemsRemoved(const QModelIndex & vparent, Qt::Orientation
 
   ctkModelTesterPrivate::Change change = d->AboutToBeRemoved.pop();
   this->test(change.Parent == vparent, "Parent can't be different");
-  this->test(change.Orientation == Qt::Vertical, "Orientation can't be different");
+  this->test(change.Orientation == orientation, "Orientation can't be different");
   this->test(change.Start == start, "Start can't be different");
   this->test(change.End == end, "End can't be different");
   int count = (orientation == Qt::Vertical ? d->Model->rowCount(vparent) :d->Model->columnCount(vparent) );
