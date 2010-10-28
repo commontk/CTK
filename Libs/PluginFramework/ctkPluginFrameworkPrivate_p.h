@@ -42,6 +42,8 @@
 
     void initSystemPlugin();
 
+    void uninitSystemPlugin();
+
     QHash<QString, QString> systemHeaders;
 
   };

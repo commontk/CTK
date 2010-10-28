@@ -85,8 +85,8 @@
   {
     log() << "uninit";
 
-    //ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
-    //systemPluginPrivate->uninitSystemBundle();
+    ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
+    systemPluginPrivate->uninitSystemPlugin();
 
     plugins->clear();
     delete plugins;

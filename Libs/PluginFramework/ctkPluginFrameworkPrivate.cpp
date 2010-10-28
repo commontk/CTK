@@ -47,6 +47,10 @@ void ctkPluginFrameworkPrivate::init()
 void ctkPluginFrameworkPrivate::initSystemPlugin()
 {
   this->pluginContext = new ctkPluginContext(this);
+}
 
+void ctkPluginFrameworkPrivate::uninitSystemPlugin()
+{
+  this->pluginContext->d_func()->invalidate();
 }
 
