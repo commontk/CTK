@@ -48,7 +48,7 @@
 MACRO(ctkMacroBuildPlugin)
   CtkMacroParseArguments(MY
     "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;LIBRARY_TYPE"
-    ""
+    "TEST_PLUGIN"
     ${ARGN}
     )
 
@@ -195,11 +195,18 @@ MACRO(ctkMacroBuildPlugin)
     ${MY_QRC_SRCS}
     )
 
+  SET(runtime_output_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins")
+  SET(library_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins")
+  IF(MY_TEST_PLUGIN)
+    SET(runtime_output_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_plugins")
+    SET(library_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/test_plugins")
+  ENDIF()
+
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
     COMPILE_FLAGS "-DQT_PLUGIN"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins"
+    RUNTIME_OUTPUT_DIRECTORY ${runtime_output_dir}
+    LIBRARY_OUTPUT_DIRECTORY ${library_output_dir}
     PREFIX "lib"
     )
 
