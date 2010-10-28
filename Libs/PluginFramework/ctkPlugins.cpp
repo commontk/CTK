@@ -110,8 +110,7 @@
         ctkPlugin* res = new ctkPlugin(fwCtx, pa);
         plugins.insert(location.toString(), res);
 
-        //TODO send event
-        //fwCtx.listeners.bundleChanged(new BundleEvent(BundleEvent.INSTALLED, b));
+        fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::INSTALLED, res));
 
         return res;
       }
