@@ -42,7 +42,7 @@ public:
   QDir         Directory;
   QPushButton* PushButton;
   QString      DialogCaption;
-#if QT_VERSION >= 0x040700
+#ifdef USE_QFILEDIALOG_OPTIONS
   QFileDialog::Options DialogOptions;
 #else
   ctkDirectoryButton::Options DialogOptions;
@@ -55,7 +55,7 @@ public:
 ctkDirectoryButtonPrivate::ctkDirectoryButtonPrivate(ctkDirectoryButton& object)
   :q_ptr(&object)
 {
-#if QT_VERSION >= 0x040700
+#if USE_QFILEDIALOG_OPTIONS
   this->DialogOptions = QFileDialog::ShowDirsOnly;
 #else
   this->DialogOptions = ctkDirectoryButton::ShowDirsOnly;
@@ -165,7 +165,7 @@ const QString& ctkDirectoryButton::caption()const
 }
 
 //-----------------------------------------------------------------------------
-#if QT_VERSION >= 0x040700
+#ifdef USE_QFILEDIALOG_OPTIONS
 void ctkDirectoryButton::setOptions(const QFileDialog::Options& dialogOptions)
 #else
 void ctkDirectoryButton::setOptions(const Options& dialogOptions)
@@ -176,7 +176,7 @@ void ctkDirectoryButton::setOptions(const Options& dialogOptions)
 }
 
 //-----------------------------------------------------------------------------
-#if QT_VERSION >= 0x040700
+#ifdef USE_QFILEDIALOG_OPTIONS
 const QFileDialog::Options& ctkDirectoryButton::options()const
 #else
 const ctkDirectoryButton::Options& ctkDirectoryButton::options()const
@@ -195,7 +195,7 @@ void ctkDirectoryButton::browse()
       this,
       d->DialogCaption.isEmpty() ? this->toolTip() : d->DialogCaption,
       d->Directory.path(),
-#if QT_VERSION >= 0x040700
+#ifdef USE_QFILEDIALOG_OPTIONS
       d->DialogOptions);
 #else
       QFlags<QFileDialog::Option>(int(d->DialogOptions)));

@@ -18,15 +18,9 @@ SET(KIT_MOC_SRCS
 
 # UI files
 SET(KIT_UI_FORMS
+  ctkPluginGeneratorMainWindow.ui
   ctkPluginGeneratorOptionsDialog.ui
 )
-
-IF (${QTVERSION} VERSION_GREATER "4.7.0" OR
-    ${QTVERSION} VERSION_EQUAL "4.7.0")
-  SET(KIT_UI_FORMS ctkPluginGeneratorMainWindow.ui ${KIT_UI_FORMS})
-ELSE()
-  SET(KIT_UI_FORMS ctkPluginGeneratorMainWindow-pre470.ui ${KIT_UI_FORMS})
-ENDIF()
 
 # Resources
 SET(KIT_resources

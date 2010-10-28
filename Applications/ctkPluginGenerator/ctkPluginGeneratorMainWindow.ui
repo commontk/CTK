@@ -320,7 +320,7 @@ p, li { white-space: pre-wrap; }
           <string>Choose output directory</string>
          </property>
          <property name="options">
-          <set>QFileDialog::HideNameFilterDetails</set>
+          <set>ctkDirectoryButton::HideNameFilterDetails</set>
          </property>
         </widget>
        </item>
