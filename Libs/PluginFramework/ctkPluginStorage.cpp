@@ -29,18 +29,17 @@
 // CTK includes
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginFrameworkContext_p.h"
+#include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginDatabaseException.h"
 
 
   ctkPluginStorage::ctkPluginStorage(ctkPluginFrameworkContext* framework)
     : framework(framework), pluginDatabase(this)
   {
-//    // See if we have a storage database
-//    bundlesDir = Util.getFileStorage(framework, "bs");
-//    if (bundlesDir == null) {
-//      throw RuntimeException("No plugin storage area available!");
-//    }
+    // See if we have a storage database
+    QString path = ctkPluginFrameworkUtil::getFileStorage(framework, "").absoluteFilePath("plugins.db");
 
+    pluginDatabase.setDatabasePath(path);
     pluginDatabase.open();
     archives << pluginDatabase.getPluginArchives();
   }

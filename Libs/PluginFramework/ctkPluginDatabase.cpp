@@ -26,6 +26,7 @@
 #include "ctkPluginException.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginStorage_p.h"
+#include "ctkPluginFrameworkUtil_p.h"
 #include "ctkServiceException.h"
 
 #include <QApplication>
@@ -524,40 +525,16 @@ void ctkPluginDatabase::setDatabasePath(const QString &databasePath)
 
 QString ctkPluginDatabase::getDatabasePath() const
 {
-    QString path;
-    if(m_databasePath.isEmpty())
-    {
-      QSettings settings;
-      path = settings.value("PluginDB/Path").toString();
-      if (path.isEmpty())
-      {
-        path = QApplication::applicationDirPath();
-        if (path.lastIndexOf("/") != path.length() -1)
-        {
-          path.append("/");
-        }
-        QString appName = QApplication::applicationName();
-        appName.replace(" ", "");
-        if (!appName.isEmpty())
-        {
-          path.append(appName + "_plugins.db");
-        }
-        else
-        {
-          path.append("pluginfw.db");
-          qWarning() << "Warning: Using generic plugin database name. You should "
-              "set an application name via QCoreApplication::setApplicationName()";
-        }
-      }
-      path = QDir::toNativeSeparators(path);
-    }
-    else
-    {
-      path = m_databasePath;
-    }
+  QString path = m_databasePath;
+  if(path.isEmpty())
+  {
+    path = QDir::homePath() + "/ctkpluginfw/plugins.db";
+    qWarning() << "No database path set. Using default:" << path;
+  }
 
-	qDebug() << "Using database:" << path;
-    return path;
+  path = QDir::toNativeSeparators(path);
+  qDebug() << "Using database:" << path;
+  return path;
 }
 
 

@@ -24,31 +24,53 @@
 
 #include <QMap>
 #include <QStringList>
+#include <QDir>
 
+class ctkPluginFrameworkContext;
 
 class ctkPluginFrameworkUtil
 {
 public:
 
   /**
-     * Parse strings of format:
-     *
-     *   ENTRY (, ENTRY)*
-     *   ENTRY = key (; key)* (; PARAM)*
-     *   PARAM = attribute '=' value
-     *   PARAM = directive ':=' value
-     *
-     * @param a Attribute being parsed
-     * @param s String to parse
-     * @param single If true, only allow one key per ENTRY
-     * @param unique Only allow unique parameters for each ENTRY.
-     * @param single_entry If true, only allow one ENTRY is allowed.
-     * @return QMap<QString, QString> mapping attributes to values.
-     * @exception std::invalid_argument If syntax error in input string.
-     */
-    static QList<QMap<QString, QStringList> > parseEntries(const QString& a, const QString& s,
-                                               bool single, bool unique, bool single_entry);
+   * Parse strings of format:
+   *
+   *   ENTRY (, ENTRY)*
+   *   ENTRY = key (; key)* (; PARAM)*
+   *   PARAM = attribute '=' value
+   *   PARAM = directive ':=' value
+   *
+   * @param a Attribute being parsed
+   * @param s String to parse
+   * @param single If true, only allow one key per ENTRY
+   * @param unique Only allow unique parameters for each ENTRY.
+   * @param single_entry If true, only allow one ENTRY is allowed.
+   * @return QMap<QString, QString> mapping attributes to values.
+   * @exception std::invalid_argument If syntax error in input string.
+   */
+  static QList<QMap<QString, QStringList> > parseEntries(const QString& a, const QString& s,
+                                                         bool single, bool unique, bool single_entry);
 
+  static QString getFrameworkDir(ctkPluginFrameworkContext* ctx);
+
+  /**
+   * Check for local file storage directory.
+   *
+   * @param name local directory name.
+   * @return A QDir object pointing to the directory. The directory is
+   *         guaranteed to exist.
+   * @throws std::runtime_error if there is no global framework storage
+   *         directory or if the directory could not be created.
+   */
+  static QDir getFileStorage(ctkPluginFrameworkContext* ctx, const QString& name);
+
+  /**
+   * Remove a non-empty directory.
+   *
+   * @param dirName The directory to remove
+   * @returns <code>true</code> on success, <code>false</code> otherwise.
+   */
+  static bool removeDir(const QString& dirName);
 };
 
 #endif // CTKPLUGINFRAMEWORKUTIL_P_H

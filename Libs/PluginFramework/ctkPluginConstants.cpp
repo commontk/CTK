@@ -25,6 +25,8 @@ const QString	ctkPluginConstants::SYSTEM_PLUGIN_LOCATION = "System Plugin";
 const QString	ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.plugin";
 
 const QString ctkPluginConstants::FRAMEWORK_STORAGE = "org.commontk.pluginfw.storage";
+const QString ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN = "org.commontk.pluginfw.storage.clean";
+const QString ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT = "onFirstInit";
 
 const QString	ctkPluginConstants::PLUGIN_SYMBOLICNAME = "Plugin-SymbolicName";
 const QString ctkPluginConstants::PLUGIN_COPYRIGHT = "Plugin-Copyright";

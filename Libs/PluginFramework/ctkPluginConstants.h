@@ -57,6 +57,22 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    */
   static const QString FRAMEWORK_STORAGE; // = "org.commontk.pluginfw.storage"
 
+  /**
+   * Specifies if and when the persistent storage area for the framework
+   * should be cleaned. If this property is not set, then the framework
+   * storage area must not be cleaned.
+   *
+   * @see #FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT
+   */
+  static const QString FRAMEWORK_STORAGE_CLEAN; // = "org.commontk.pluginfw.storage.clean";
+
+  /**
+   * Specifies that the framework storage area must be cleaned before the
+   * framework is initialized for the first time. Subsequent inits, starts or
+   * updates of the framework will not result in cleaning the framework
+   * storage area.
+   */
+  static const QString FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT; //	= "onFirstInit";
 
   /**
    * Manifest header identifying the plugin's symbolic name.

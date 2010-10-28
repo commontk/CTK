@@ -66,6 +66,11 @@
       ctkPluginStorage* storage;
 
       /**
+       * First framework init
+       */
+      bool firstInit;
+
+      /**
        * Framework id.
        */
       int id;
@@ -136,6 +141,12 @@
   private:
 
       QSet<ctkPluginPrivate*> tempResolved;
+
+      /**
+       * Delete framework directory if it exists.
+       *
+       */
+      void deleteFWDir();
 
       void checkRequirePlugin(ctkPluginPrivate* plugin);
   };

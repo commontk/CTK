@@ -20,6 +20,7 @@
 =============================================================================*/
 
 #include "ctkPluginFrameworkUtil_p.h"
+#include "ctkPluginFrameworkContext_p.h"
 
 #include <QString>
 
@@ -298,5 +299,88 @@ QList<QMap<QString, QStringList> > ctkPluginFrameworkUtil::parseEntries(const QS
                                              // param names...
     } while (!at.getEnd());
   }
+  return result;
+}
+
+QString ctkPluginFrameworkUtil::getFrameworkDir(ctkPluginFrameworkContext* ctx)
+{
+  QString s = ctx->props[ctkPluginConstants::FRAMEWORK_STORAGE].toString();
+  if (s.isEmpty())
+  {
+    s = QCoreApplication::applicationDirPath();
+    if (s.lastIndexOf("/") != s.length() -1)
+    {
+      s.append("/");
+    }
+    QString appName = QCoreApplication::applicationName();
+    appName.replace(" ", "");
+    if (!appName.isEmpty())
+    {
+      s.append(appName + "_ctkpluginfw");
+    }
+    else
+    {
+      s.append("ctkpluginfw");
+      qWarning() << "Warning: Using generic plugin framework storage directory:" << s;
+      qWarning() << "You should set an application name via QCoreApplication::setApplicationName()";
+    }
+  }
+  return s;
+}
+
+QDir ctkPluginFrameworkUtil::getFileStorage(ctkPluginFrameworkContext* ctx,
+                                            const QString& name)
+{
+  // See if we have a storage directory
+  QString fwdir = getFrameworkDir(ctx);
+  if (fwdir.isEmpty())
+  {
+    throw std::runtime_error("The framework storge directory is empty");
+  }
+  QDir dir(fwdir + "/" + name);
+  if (dir.exists())
+  {
+    if (!QFileInfo(dir.absolutePath()).isDir())
+    {
+      QString msg("Not a directory: ");
+      msg.append(dir.absolutePath());
+      throw std::runtime_error(msg.toStdString());
+    }
+  }
+  else
+  {
+    if (!dir.mkpath(dir.absolutePath()))
+    {
+      QString msg("Cannot create directory: ");
+      msg.append(dir.absolutePath());
+      throw std::runtime_error(msg.toStdString());
+    }
+  }
+  return dir;
+}
+
+bool ctkPluginFrameworkUtil::removeDir(const QString& dirName)
+{
+  bool result = true;
+  QDir dir(dirName);
+
+  if (dir.exists(dirName))
+  {
+    foreach (QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst))
+    {
+      if (info.isDir()) {
+        result = removeDir(info.absoluteFilePath());
+      }
+      else {
+        result = QFile::remove(info.absoluteFilePath());
+      }
+
+      if (!result) {
+        return result;
+      }
+    }
+    result = dir.rmdir(dirName);
+  }
+
   return result;
 }

@@ -21,6 +21,7 @@
 
 #include "ctkPluginFrameworkContext_p.h"
 
+#include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginFrameworkPrivate_p.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginConstants.h"
@@ -34,7 +35,7 @@
   ctkPluginFrameworkContext::ctkPluginFrameworkContext(
       const ctkProperties& initProps)
         : plugins(0), services(0), systemPlugin(this),
-        storage(0), props(initProps)
+        storage(0), firstInit(true), props(initProps)
   {
 
     {
@@ -49,14 +50,12 @@
   {
     log() << "initializing";
 
-//    if (Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT
-//        .equals(props.getProperty(Constants.FRAMEWORK_STORAGE_CLEAN))) {
-//      deleteFWDir();
-//      // Must remove the storage clean property since it should not be
-//      // used more than once!
-//      props.removeProperty(Constants.FRAMEWORK_STORAGE_CLEAN);
-//    }
-//    props.save();
+    if (firstInit && ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT
+        == props[ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN])
+    {
+      deleteFWDir();
+      firstInit = false;
+    }
 
     ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
     systemPluginPrivate->initSystemPlugin();
@@ -186,4 +185,23 @@
     }
 
 
+}
+
+void ctkPluginFrameworkContext::deleteFWDir()
+{
+  QString d = ctkPluginFrameworkUtil::getFrameworkDir(this);
+
+  QFileInfo fwDirInfo(d);
+  if (fwDirInfo.exists())
+  {
+    if(fwDirInfo.isDir())
+    {
+      log() << "deleting old framework directory.";
+      bool bOK = ctkPluginFrameworkUtil::removeDir(fwDirInfo.absoluteFilePath());
+      if(!bOK)
+      {
+        qDebug() << "Failed to remove existing fwdir" << fwDirInfo.absoluteFilePath();
+      }
+    }
+  }
 }
