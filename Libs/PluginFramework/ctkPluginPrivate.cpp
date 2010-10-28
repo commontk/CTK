@@ -81,6 +81,7 @@ ctkPluginPrivate::ctkPluginPrivate(ctkPlugin& qq,
 ctkPluginPrivate::~ctkPluginPrivate()
 {
   qDeleteAll(require);
+  delete pluginContext;
 }
 
 ctkPlugin::State ctkPluginPrivate::getUpdatedState()
