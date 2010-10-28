@@ -315,7 +315,9 @@ ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QS
   if (!pluginLoader.load())
   {
     rollbackTransaction(&query);
-    throw ctkPluginException(QString("The plugin could not be loaded: %1").arg(localPath));
+    ctkPluginException exc(QString("The plugin could not be loaded: %1").arg(localPath));
+    exc.setCause(pluginLoader.errorString());
+    throw exc;
   }
 
   QDirIterator dirIter(resourcePrefix, QDirIterator::Subdirectories);
