@@ -24,6 +24,7 @@
 // Qt includes
 #include <QDir>
 #include <QFileDialog>
+#include <QIcon>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -43,6 +44,7 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   Q_OBJECT
   Q_PROPERTY(QString directory READ directory WRITE setDirectory)
   Q_PROPERTY(QString caption READ caption WRITE setCaption)
+  Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
   /// public API. We need to create a custom property that will be used when
   /// instanciating a QFileDialog in ctkDirectoryButton::browse()
@@ -90,6 +92,12 @@ public:
   /// If caption is not set, internally use QWidget::tooltip()
   void setCaption(const QString& caption);
   const QString& caption()const;
+
+  ///
+  /// The icon of the button
+  /// By default use QStyle::SP_DirIcon
+  void setIcon(const QIcon& icon);
+  QIcon icon()const;
 
   /// Options of the file dialog pop up.
   /// \sa QFileDialog::getExistingDirectory

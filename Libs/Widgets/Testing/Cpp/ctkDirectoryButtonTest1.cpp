@@ -20,7 +20,9 @@
 
 // Qt includes
 #include <QApplication>
+#include <QStyle>
 #include <QTimer>
+#include <QVBoxLayout>
 
 // CTK includes
 #include "ctkDirectoryButton.h"
@@ -33,22 +35,77 @@
 int ctkDirectoryButtonTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
+  
+  QWidget topLevel;
+  ctkDirectoryButton button;
+  
+  QIcon defaultIcon = button.style()->standardIcon(QStyle::SP_DirIcon);
+  QIcon icon = button.style()->standardIcon(QStyle::SP_MessageBoxQuestion);
+  QIcon icon2 = button.style()->standardIcon(QStyle::SP_DesktopIcon);
 
-  ctkDirectoryButton ctkObject;
-#ifdef USE_QFILEDIALOG_OPTIONS
-  ctkObject.setOptions(QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
-#else
-  ctkObject.setOptions(ctkDirectoryButton::ShowDirsOnly |
-                       ctkDirectoryButton::ReadOnly);
-#endif
-  ctkObject.show();
-
-  QTimer autoExit;
-  if (argc < 2 || QString(argv[1]) != "-I")
+  ctkDirectoryButton button2(".");
+  ctkDirectoryButton button3(icon, "..");
+  
+  QVBoxLayout* layout = new QVBoxLayout;
+  layout->addWidget(&button);
+  layout->addWidget(&button2);
+  layout->addWidget(&button3);
+  topLevel.setLayout(layout);
+  
+  button.setCaption("Select a directory");
+  if (button.caption() != "Select a directory")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(100);
+    std::cerr << "ctkDirectoryButton::setCaption() failed." << std::endl;
+    return EXIT_FAILURE;
     }
+
+  if (button.icon().pixmap(20).toImage() !=
+      defaultIcon.pixmap(20).toImage())
+    {
+    std::cerr << "ctkDirectoryButton::icon() failed." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  button3.setIcon(icon2);
+  if (button3.icon().pixmap(20).toImage() !=
+      icon2.pixmap(20).toImage())
+    {
+    std::cerr << "ctkDirectoryButton::setIcon() failed." << std::endl;
+    return EXIT_FAILURE;
+    }
+  
+#ifdef USE_QFILEDIALOG_OPTIONS
+  button.setOptions(QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
+  if (button.options() != (QFileDialog::ShowDirsOnly |
+                           QFileDialog::ReadOnly))
+#else
+  button.setOptions(ctkDirectoryButton::ShowDirsOnly |
+                    ctkDirectoryButton::ReadOnly);
+  
+  if (button.options() != (ctkDirectoryButton::ShowDirsOnly |
+                           ctkDirectoryButton::ReadOnly))
+#endif
+    {
+    std::cerr<< "ctkDirectoryButton::setOptions failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  button.setDirectory(QDir::home().absolutePath());
+  if ( QDir(button.directory()) != QDir::home())
+    {
+    std::cerr<< "ctkDirectoryButton::setDirectory failed" << button.directory().toStdString() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  //button.browse();
+
+  topLevel.show();
+
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
+
   return app.exec();
 }
 

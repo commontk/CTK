@@ -165,6 +165,21 @@ const QString& ctkDirectoryButton::caption()const
 }
 
 //-----------------------------------------------------------------------------
+void ctkDirectoryButton::setIcon(const QIcon& newIcon)
+{
+  Q_D(const ctkDirectoryButton);
+  return d->PushButton->setIcon(newIcon);
+}
+
+
+//-----------------------------------------------------------------------------
+QIcon ctkDirectoryButton::icon()const
+{
+  Q_D(const ctkDirectoryButton);
+  return d->PushButton->icon();
+}
+
+//-----------------------------------------------------------------------------
 #ifdef USE_QFILEDIALOG_OPTIONS
 void ctkDirectoryButton::setOptions(const QFileDialog::Options& dialogOptions)
 #else
