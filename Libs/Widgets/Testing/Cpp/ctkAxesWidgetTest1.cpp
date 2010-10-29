@@ -42,8 +42,8 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
               << axes.currentAxis() << std::endl;
     return EXIT_FAILURE;
     }
-
-  QSignalSpy spy(&axes, SIGNAL(currentAxisChanged(Axis)));
+  
+  QSignalSpy spy(&axes, SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)));
   axes.setCurrentAxis(ctkAxesWidget::Anterior);
 
   if (axes.currentAxis() != ctkAxesWidget::Anterior ||
@@ -53,12 +53,39 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
               << axes.currentAxis() << " " << spy.count() << std::endl;
     return EXIT_FAILURE;
     }
-  if ( spy.takeFirst().at(0).toInt() == ctkAxesWidget::Anterior)
+  if ( qvariant_cast<ctkAxesWidget::Axis>(spy.takeFirst().at(0)) != ctkAxesWidget::Anterior)
     {
     std::cerr << "ctkAxesWidget fired the wrong current axis : "
               << spy.takeFirst().at(0).toInt() << std::endl;
     return EXIT_FAILURE;
     }
+
+  axes.setAutoReset(true);
+  if ((axes.autoReset() != true) ||
+      (axes.currentAxis() != ctkAxesWidget::None))
+    {
+    std::cerr << "ctkAxesWidget::setAutoReset failed: "
+              << axes.currentAxis() << std::endl;
+    return EXIT_FAILURE;
+    }
+  spy.clear();
+  axes.setCurrentAxis(ctkAxesWidget::Right);
+  if (axes.currentAxis() != ctkAxesWidget::None ||
+      spy.count() != 2)
+    {
+    std::cerr << "ctkAxesWidget::setCurrentAxis() with autoReset ON failed: "
+              << axes.currentAxis() << " " << spy.count() << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (qvariant_cast<ctkAxesWidget::Axis>(spy[0].at(0)) != ctkAxesWidget::Right ||
+      qvariant_cast<ctkAxesWidget::Axis>(spy[1].at(0)) != ctkAxesWidget::None)
+    {
+    std::cerr << "ctkAxesWidget::setCurrentAxis() with autoReset ON failed: "
+            << spy[0].at(0).toInt() << " " << spy[1].at(0).toInt() << std::endl;
+    return EXIT_FAILURE;
+    }
+  axes.setAutoReset(false);
+  axes.setAutoReset(true);
   axes.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )

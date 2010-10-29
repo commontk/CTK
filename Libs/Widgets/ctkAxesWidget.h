@@ -22,12 +22,10 @@
 #define __ctkAxesWidget_h
 
 // Qt includes
+#include <QMetaType>
 #include <QWidget>
-#include <QStyle>
-#include <QSize>
 
 // CTK includes
-#include <ctkPimpl.h>
 #include "CTKWidgetsExport.h"
 
 class ctkAxesWidgetPrivate;
@@ -35,8 +33,9 @@ class ctkAxesWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkAxesWidget : public QWidget
 {
   Q_OBJECT
+  Q_ENUMS(Axis)
   Q_PROPERTY(Axis currentAxis READ currentAxis WRITE setCurrentAxis NOTIFY currentAxisChanged)
-
+  Q_PROPERTY(bool autoReset READ autoReset WRITE setAutoReset)
 public : 
 
   enum Axis
@@ -49,7 +48,6 @@ public :
     Anterior,
     Posterior,
     };
-  Q_ENUMS(Axis)
   
   ctkAxesWidget(QWidget *parent = 0);
   virtual ~ctkAxesWidget();
@@ -58,22 +56,42 @@ public :
   /// Current selected axis. None by default. 
   Axis currentAxis() const;
 
+  ///
+  /// If autoReset is true, anytime the current axis is changed, the current
+  /// axis is automatically reset to None.
+  /// False by default.
+  bool autoReset() const;
+
 signals:
-  void currentAxisChanged(Axis axis);
+  void currentAxisChanged(ctkAxesWidget::Axis axis);
 
 public slots :
+  ///
+  /// Select the current axis and emit the currentAxisChanged signal if it is
+  /// a new one. Warning, if autoReset is true, the currentAxis will automatically
+  /// be reset to None. 
   void setCurrentAxis(Axis axis);
+  
+  ///
+  /// Utility slot that set the current axis to none
+  void setCurrentAxisToNone();
 
-protected slots: 
+  ///
+  /// Set the autoReset property to None anytime the currentAxis is changed.
+  void setAutoReset(bool reset);
+
+protected: 
   void paintEvent(QPaintEvent *);
-  void mousePressEvent(QMouseEvent *mouseEvent); 
+  void mousePressEvent(QMouseEvent *mouseEvent);
+  void mouseMoveEvent(QMouseEvent *mouseEvent);
+  void mouseReleaseEvent(QMouseEvent *mouseEvent);
 
-protected:
   QScopedPointer<ctkAxesWidgetPrivate> d_ptr;
 private :
   Q_DECLARE_PRIVATE(ctkAxesWidget);
   Q_DISABLE_COPY(ctkAxesWidget);
 };
 
+Q_DECLARE_METATYPE(ctkAxesWidget::Axis)
 
 #endif
