@@ -60,6 +60,9 @@ SET(KIT_SRCS
   ctkRangeSlider.h
   ctkRangeWidget.cpp
   ctkRangeWidget.h
+  ctkScreenshotDialog.cpp
+  ctkScreenshotDialog.h
+  ctkScreenshotDialog_p.h
   ctkSettings.cpp
   ctkSettings.h
   ctkSliderWidget.cpp
@@ -124,6 +127,8 @@ SET(KIT_MOC_SRCS
   ctkMenuButton.h
   ctkRangeSlider.h
   ctkRangeWidget.h
+  ctkScreenshotDialog.h
+  ctkScreenshotDialog_p.h
   ctkSettings.h
   ctkSliderWidget.h
   ctkTestApplication.h
@@ -149,6 +154,7 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
   Resources/UI/ctkRangeWidget.ui
   Resources/UI/ctkDateRangeWidget.ui
+  Resources/UI/ctkScreenshotDialog.ui
   Resources/UI/ctkSliderWidget.ui
   Resources/UI/ctkWorkflowGroupBox.ui
   )
