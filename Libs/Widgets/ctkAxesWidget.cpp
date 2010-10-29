@@ -49,10 +49,11 @@ public:
   ctkAxesWidgetPrivate(ctkAxesWidget& object);
   QList<QPoint> extremities(QPoint center, int radius)const;
   QList<QRect> labelRects(const QList<QPoint>& extremities, QSize offset)const;
+  ctkAxesWidget::Axis axisAtPos(QPoint pos)const;
 
   ctkAxesWidget::Axis CurrentAxis;
-  int Offset;
-  bool HighlightCurrentAxis;
+  ctkAxesWidget::Axis HighlightAxis;
+  bool AutoReset;
   
   QStringList AxesLabels;
   QVector<double> AxesAngles;
@@ -63,9 +64,10 @@ public:
 ctkAxesWidgetPrivate::ctkAxesWidgetPrivate(ctkAxesWidget& object)
   :q_ptr(&object)
 {
+  qRegisterMetaType<ctkAxesWidget::Axis>("ctkAxesWidget::Axis");
   this->CurrentAxis = ctkAxesWidget::None;
-  this->Offset = 10;
-  this->HighlightCurrentAxis = true;
+  this->HighlightAxis = ctkAxesWidget::None;
+  this->AutoReset = false;
 
   this->AxesLabels << "R" << "L" << "S" << "I" << "A" << "P";
   this->AxesAngles << 0 <<  3.14159265 << 1.57079633 <<  4.71238898 << 5.49778714 << 2.35619449;
@@ -100,7 +102,49 @@ QList<QRect> ctkAxesWidgetPrivate::labelRects(const QList<QPoint>& extremities, 
                    letterSize);
     }
   return rects;
-}      
+}
+
+//-----------------------------------------------------------------------------
+ctkAxesWidget::Axis ctkAxesWidgetPrivate::axisAtPos(QPoint pos)const
+{
+  Q_Q(const ctkAxesWidget);
+
+  QPoint center = QPoint(q->width(), q->height())  / 2;
+  int length = qMin(q->width(), q->height());
+  int diameter = length / goldenRatio;
+  int blankSize = (length - diameter) / 2;
+  QSize sphereRadius((blankSize / 2) / 1.6180339887,
+                     (blankSize / 2) / 1.6180339887);
+
+  QPointF mousePos = pos - center;
+  double distance2 = 
+    mousePos.x() * mousePos.x() + mousePos.y() * mousePos.y();
+  if (distance2 < sphereRadius.width()*sphereRadius.width())
+    {
+    return ctkAxesWidget::None;
+    }
+  
+  double mouseAngle = atan2(-mousePos.y(), mousePos.x());
+  // mouseAngle is in the interval [-pi,+pi] radians
+  // change it to be in [-pi/8,  7/8 * pi]
+  double PI_8 = 0.392699082;
+  if (mouseAngle < -PI_8)
+    {  
+    mouseAngle += 2. * PI;
+    }
+  
+  for (int i = 0; i < 6; ++i)
+    {
+    if (mouseAngle >= (this->AxesAngles[i] - PI_8) &&
+        mouseAngle <= (this->AxesAngles[i] + PI_8))
+      {
+      // the mouse is over the axis
+      return static_cast<ctkAxesWidget::Axis>(i+1);
+      }
+    }
+  return ctkAxesWidget::None;
+}
+
 
 //ctkAxesWidget
 //-----------------------------------------------------------------------------
@@ -126,14 +170,49 @@ ctkAxesWidget::Axis ctkAxesWidget::currentAxis() const
 void ctkAxesWidget::setCurrentAxis(ctkAxesWidget::Axis newAxis)
 {
   Q_D(ctkAxesWidget);
-
+  d->HighlightAxis = newAxis;
   if (newAxis == d->CurrentAxis)
     {
     return;
     }
   d->CurrentAxis = newAxis;
-  this->update();
+  this->repaint();
   emit currentAxisChanged(d->CurrentAxis);
+}
+
+//-----------------------------------------------------------------------------
+void ctkAxesWidget::setCurrentAxisToNone()
+{
+  this->setCurrentAxis(ctkAxesWidget::None);
+}
+
+// ----------------------------------------------------------------------------
+bool ctkAxesWidget::autoReset() const
+{
+  Q_D(const ctkAxesWidget);
+  return d->AutoReset;
+}
+
+// ----------------------------------------------------------------------------
+void ctkAxesWidget::setAutoReset(bool newAutoReset)
+{
+  Q_D(ctkAxesWidget);
+  if (d->AutoReset == newAutoReset)
+    {
+    return;
+    }
+  d->AutoReset = newAutoReset;
+  if (d->AutoReset)
+    {
+    connect(this, SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
+            this, SLOT(setCurrentAxisToNone()));
+    setCurrentAxisToNone();
+    }
+  else
+    {
+    disconnect(this, SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
+               this, SLOT(setCurrentAxisToNone()));
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -169,10 +248,10 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
     //                                 -sin(d->AxesAngles[i]) * (betweenLetterSpace.height()+halfLetterSize.height()))
     //                                - QPoint(halfLetterSize.width(), halfLetterSize.height()), letterSize);
     QRect rect = labelRects[i];
-    if (d->HighlightCurrentAxis)
+    //if (d->HighlightAxes)
       {
       QFont font = painter.font();
-      font.setBold(d->CurrentAxis == (i + 1));
+      font.setBold(d->HighlightAxis == (i + 1));
       painter.setFont(font);
       }
     painter.drawText(rect, Qt::AlignCenter, d->AxesLabels[i]);
@@ -181,10 +260,10 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
   // Drawing the lines
   for (int i = 0; i < 6; ++i)
     {
-    if (d->HighlightCurrentAxis)
+    //if (d->HighlightAxes)
       {
       QPen pen;
-      if (d->CurrentAxis == (i + 1)) // axes start at 1
+      if (d->HighlightAxis == (i + 1)) // axes start at 1
         {
         pen.setWidth(3);
         //pen.setColor(QColor(64, 64, 72)); // Payne's grey
@@ -200,8 +279,8 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
   // Draw the center sphere
   QRadialGradient rg(QPointF(0.3333, 0.3333),0.7);
   rg.setCoordinateMode(QGradient::ObjectBoundingMode);
-  if (d->HighlightCurrentAxis &&
-      d->CurrentAxis == ctkAxesWidget::None)
+  if (//d->HighlightAxes &&
+      d->HighlightAxis == ctkAxesWidget::None)
     {
     rg.setColorAt(0., this->palette().color(QPalette::Highlight));
     }
@@ -219,41 +298,21 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
 void ctkAxesWidget::mousePressEvent(QMouseEvent *mouseEvent)
 {
   Q_D(ctkAxesWidget);
+  d->HighlightAxis = d->axisAtPos(mouseEvent->pos());
+  this->update();
+}
 
-  QPoint center = QPoint(this->width(), this->height())  / 2;
-  int length = qMin(this->width(), this->height());
-  int diameter = length / goldenRatio;
-  int blankSize = (length - diameter) / 2;
-  QSize sphereRadius((blankSize / 2) / 1.6180339887,
-                     (blankSize / 2) / 1.6180339887);
+// ----------------------------------------------------------------------------------
+void ctkAxesWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
+{
+  Q_D(ctkAxesWidget);
+  d->HighlightAxis = d->axisAtPos(mouseEvent->pos());
+  this->update();
+}
 
-  QPointF mousePos = mouseEvent->pos() - center;
-  double distance2 = 
-    mousePos.x() * mousePos.x() + mousePos.y() * mousePos.y();
-  if (distance2 < sphereRadius.width()*sphereRadius.width())
-    {
-    this->setCurrentAxis(None);
-    return;
-    }
-  
-  double mouseAngle = atan2(-mousePos.y(), mousePos.x());
-  // mouseAngle is in the interval [-pi,+pi] radians
-  // change it to be in [-pi/8,  7/8 * pi]
-  double PI_8 = 0.392699082;
-  if (mouseAngle < -PI_8)
-    {  
-    mouseAngle += 2. * PI;
-    }
-  
-  for (int i = 0; i < 6; ++i)
-    {
-    if (mouseAngle >= (d->AxesAngles[i] - PI_8) &&
-        mouseAngle <= (d->AxesAngles[i] + PI_8))
-      {
-      // the user has clicked close on the axe
-      this->setCurrentAxis(static_cast<Axis>(i+1));
-      return;
-      }
-    }
-  this->setCurrentAxis(None);  
+// ----------------------------------------------------------------------------------
+void ctkAxesWidget::mouseReleaseEvent(QMouseEvent *mouseEvent)
+{
+  Q_D(ctkAxesWidget);
+  this->setCurrentAxis(d->axisAtPos(mouseEvent->pos()));
 }
