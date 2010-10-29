@@ -16,6 +16,8 @@ SET(KIT_SRCS
   ctkActionsWidget.h
   ctkAddRemoveComboBox.cpp
   ctkAddRemoveComboBox.h
+  ctkAxesWidget.cpp
+  ctkAxesWidget.h
   ctkButtonGroup.cpp
   ctkButtonGroup.h
   ctkCheckableHeaderView.cpp
@@ -100,6 +102,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkWorkflowAbstractWidgetStep_p.h
   ctkActionsWidget.h
+  ctkAxesWidget.h
   ctkAddRemoveComboBox.h
   ctkButtonGroup.h
   ctkCheckableHeaderView.h
