@@ -28,25 +28,25 @@
 #include <QMutex>
 
 
-  class ctkPluginFrameworkContext;
+class ctkPluginFrameworkContext;
 
-  class ctkPluginFrameworkPrivate : public ctkPluginPrivate
-  {
-  public:
+class ctkPluginFrameworkPrivate : public ctkPluginPrivate
+{
+public:
 
-    QMutex lock;
+  QMutex lock;
 
-    ctkPluginFrameworkPrivate(ctkPluginFramework& qq, ctkPluginFrameworkContext* fw);
+  ctkPluginFrameworkPrivate(ctkPluginFramework& qq, ctkPluginFrameworkContext* fw);
 
-    void init();
+  void init();
 
-    void initSystemPlugin();
+  void initSystemPlugin();
 
-    void uninitSystemPlugin();
+  void uninitSystemPlugin();
 
-    QHash<QString, QString> systemHeaders;
+  QHash<QString, QString> systemHeaders;
 
-  };
+};
 
 
 #endif // CTKPLUGINFRAMEWORKPRIVATE_P_H

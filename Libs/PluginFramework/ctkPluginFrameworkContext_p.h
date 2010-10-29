@@ -32,124 +32,124 @@
 #include "ctkPluginFrameworkListeners_p.h"
 
 
-  class ctkPlugin;
-  class ctkPluginStorage;
-  class ctkServices;
+class ctkPlugin;
+class ctkPluginStorage;
+class ctkServices;
 
-  class ctkPluginFrameworkContext {
+class ctkPluginFrameworkContext {
 
-  public:
+public:
 
-      /**
-       * All plugins in this framework.
-       */
-      ctkPlugins* plugins;
+  /**
+   * All plugins in this framework.
+   */
+  ctkPlugins* plugins;
 
-      /**
-       * All listeners in this framework.
-       */
-      ctkPluginFrameworkListeners listeners;
+  /**
+   * All listeners in this framework.
+   */
+  ctkPluginFrameworkListeners listeners;
 
-      /**
-       * All registered services in this framework.
-       */
-      ctkServices* services;
+  /**
+   * All registered services in this framework.
+   */
+  ctkServices* services;
 
-      /**
-       * System plugin
-       */
-      ctkPluginFramework systemPlugin;
+  /**
+   * System plugin
+   */
+  ctkPluginFramework systemPlugin;
 
-      /**
-       * ctkPlugin storage
-       */
-      ctkPluginStorage* storage;
+  /**
+   * ctkPlugin storage
+   */
+  ctkPluginStorage* storage;
 
-      /**
-       * First framework init
-       */
-      bool firstInit;
+  /**
+   * First framework init
+   */
+  bool firstInit;
 
-      /**
-       * Framework id.
-       */
-      int id;
+  /**
+   * Framework id.
+   */
+  int id;
 
-      /**
-       * global lock.
-       */
-      static QMutex globalFwLock;
+  /**
+   * global lock.
+   */
+  static QMutex globalFwLock;
 
-      /**
-       * Id to use for next instance of plugin framework.
-       */
-      static int globalId;
+  /**
+   * Id to use for next instance of plugin framework.
+   */
+  static int globalId;
 
-      ctkProperties props;
+  ctkProperties props;
 
-      /**
-       * Contruct a framework context
-       *
-       */
-      ctkPluginFrameworkContext(const ctkProperties& initProps);
-
-
-      /**
-       * Initialize the framework
-       *
-       */
-      void init();
+  /**
+   * Contruct a framework context
+   *
+   */
+  ctkPluginFrameworkContext(const ctkProperties& initProps);
 
 
-      /**
-       * Undo as much as possible of what init() does.
-       *
-       */
-      void uninit();
+  /**
+   * Initialize the framework
+   *
+   */
+  void init();
 
 
-      /**
-       *
-       */
-      int getId() const;
+  /**
+   * Undo as much as possible of what init() does.
+   *
+   */
+  void uninit();
 
 
-      /**
-       * Check that the plugin belongs to this framework instance.
-       *
-       */
-      void checkOurPlugin(ctkPlugin* plugin) const;
+  /**
+   *
+   */
+  int getId() const;
 
 
-      /**
-       * Check that the plugin specified can resolve all its
-       * Require-ctkPlugin constraints.
-       *
-       * @param plugin ctkPlugin to check, must be in INSTALLED state
-       *
-       * @throws ctkPluginException
-       */
-      void resolvePlugin(ctkPluginPrivate* plugin);
+  /**
+   * Check that the plugin belongs to this framework instance.
+   *
+   */
+  void checkOurPlugin(ctkPlugin* plugin) const;
 
 
-      /**
-       * Log message for debugging framework
-       *
-       */
-      QDebug log() const;
+  /**
+   * Check that the plugin specified can resolve all its
+   * Require-ctkPlugin constraints.
+   *
+   * @param plugin ctkPlugin to check, must be in INSTALLED state
+   *
+   * @throws ctkPluginException
+   */
+  void resolvePlugin(ctkPluginPrivate* plugin);
 
-  private:
 
-      QSet<ctkPluginPrivate*> tempResolved;
+  /**
+   * Log message for debugging framework
+   *
+   */
+  QDebug log() const;
 
-      /**
-       * Delete framework directory if it exists.
-       *
-       */
-      void deleteFWDir();
+private:
 
-      void checkRequirePlugin(ctkPluginPrivate* plugin);
-  };
+  QSet<ctkPluginPrivate*> tempResolved;
+
+  /**
+   * Delete framework directory if it exists.
+   *
+   */
+  void deleteFWDir();
+
+  void checkRequirePlugin(ctkPluginPrivate* plugin);
+};
 
 
 #endif // CTKPLUGINFRAMEWORKCONTEXT_P_H

@@ -203,7 +203,6 @@ private:
    */
   void removePluginResources();
 
-
 };
 
 

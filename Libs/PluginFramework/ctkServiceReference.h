@@ -29,168 +29,168 @@
 #include "ctkPluginFrameworkExport.h"
 
 
-  class ctkServiceRegistrationPrivate;
-  class ctkServiceReferencePrivate;
-  class ctkServiceEvent;
-  template<class Item, class Related> class ctkPluginAbstractTracked;
+class ctkServiceRegistrationPrivate;
+class ctkServiceReferencePrivate;
+class ctkServiceEvent;
+template<class Item, class Related> class ctkPluginAbstractTracked;
+
+/**
+ * A reference to a service.
+ *
+ * <p>
+ * The Framework returns <code>ctkServiceReference</code> objects from the
+ * <code>ctkPluginContext::getServiceReference</code> and
+ * <code>ctkPluginContext::getServiceReferences</code> methods.
+ * <p>
+ * A <code>ctkServiceReference</code> object may be shared between plugins and
+ * can be used to examine the properties of the service and to get the service
+ * object.
+ * <p>
+ * Every service registered in the Framework has a unique
+ * <code>ctkServiceRegistration</code> object and may have multiple, distinct
+ * <code>ctkServiceReference</code> objects referring to it.
+ * <code>ctkServiceReference</code> objects associated with a
+ * <code>ctkServiceRegistration</code> are considered equal
+ * (more specifically, their <code>operator==()</code>
+ * method will return <code>true</code> when compared).
+ * <p>
+ * If the same service object is registered multiple times,
+ * <code>ctkServiceReference</code> objects associated with different
+ * <code>ctkServiceRegistration</code> objects are not equal.
+ *
+ * @see ctkPluginContext::getServiceReference
+ * @see ctkPluginContext::getServiceReferences
+ * @see ctkPluginContext::getService
+ * @threadsafe
+ */
+class CTK_PLUGINFW_EXPORT ctkServiceReference {
+
+  Q_DECLARE_PRIVATE(ctkServiceReference)
+
+public:
+
+  ctkServiceReference(const ctkServiceReference& ref);
+
+  ~ctkServiceReference();
 
   /**
-   * A reference to a service.
+   * Returns the property value to which the specified property key is mapped
+   * in the properties <code>ServiceProperties</code> object of the service
+   * referenced by this <code>ctkServiceReference</code> object.
    *
    * <p>
-   * The Framework returns <code>ctkServiceReference</code> objects from the
-   * <code>ctkPluginContext::getServiceReference</code> and
-   * <code>ctkPluginContext::getServiceReferences</code> methods.
-   * <p>
-   * A <code>ctkServiceReference</code> object may be shared between plugins and
-   * can be used to examine the properties of the service and to get the service
-   * object.
-   * <p>
-   * Every service registered in the Framework has a unique
-   * <code>ctkServiceRegistration</code> object and may have multiple, distinct
-   * <code>ctkServiceReference</code> objects referring to it.
-   * <code>ctkServiceReference</code> objects associated with a
-   * <code>ctkServiceRegistration</code> are considered equal
-   * (more specifically, their <code>operator==()</code>
-   * method will return <code>true</code> when compared).
-   * <p>
-   * If the same service object is registered multiple times,
-   * <code>ctkServiceReference</code> objects associated with different
-   * <code>ctkServiceRegistration</code> objects are not equal.
+   * Property keys are case-insensitive.
    *
-   * @see ctkPluginContext::getServiceReference
-   * @see ctkPluginContext::getServiceReferences
-   * @see ctkPluginContext::getService
-   * @threadsafe
+   * <p>
+   * This method must continue to return property values after the service has
+   * been unregistered. This is so references to unregistered services can
+   * still be interrogated.
+   *
+   * @param key The property key.
+   * @return The property value to which the key is mapped; an invalid QVariant
+   *         if there is no property named after the key.
    */
-  class CTK_PLUGINFW_EXPORT ctkServiceReference {
+  QVariant getProperty(const QString& key) const;
 
-    Q_DECLARE_PRIVATE(ctkServiceReference)
+  /**
+   * Returns a list of the keys in the <code>ServiceProperties</code>
+   * object of the service referenced by this <code>ctkServiceReference</code>
+   * object.
+   *
+   * <p>
+   * This method will continue to return the keys after the service has been
+   * unregistered. This is so references to unregistered services can
+   * still be interrogated.
+   *
+   * <p>
+   * This method is not <i>case-preserving</i>; this means that every key in the
+   * returned array is in lower case, which may not be the case for the corresponding key in the
+   * properties <code>ServiceProperties</code> that was passed to the
+   * {@link ctkPluginContext::registerService(const QStringList&, QObject*, const ServiceProperties&)} or
+   * {@link ctkServiceRegistration::setProperties} methods.
+   *
+   * @return A list of property keys.
+   */
+  QStringList getPropertyKeys() const;
 
-  public:
+  /**
+   * Returns the plugin that registered the service referenced by this
+   * <code>ctkServiceReference</code> object.
+   *
+   * <p>
+   * This method must return <code>0</code> when the service has been
+   * unregistered. This can be used to determine if the service has been
+   * unregistered.
+   *
+   * @return The plugin that registered the service referenced by this
+   *         <code>ctkServiceReference</code> object; <code>0</code> if that
+   *         service has already been unregistered.
+   * @see ctkPluginContext::registerService(const QStringList&, QObject* , const ServiceProperties&)
+   */
+  ctkPlugin* getPlugin() const;
 
-    ctkServiceReference(const ctkServiceReference& ref);
+  /**
+   * Returns the plugins that are using the service referenced by this
+   * <code>ctkServiceReference</code> object. Specifically, this method returns
+   * the plugins whose usage count for that service is greater than zero.
+   *
+   * @return A list of plugins whose usage count for the service referenced
+   *         by this <code>ctkServiceReference</code> object is greater than
+   *         zero.
+   */
+  QList<ctkPlugin*> getUsingPlugins() const;
 
-    ~ctkServiceReference();
+  /**
+   * Compares this <code>ctkServiceReference</code> with the specified
+   * <code>ctkServiceReference</code> for order.
+   *
+   * <p>
+   * If this <code>ctkServiceReference</code> and the specified
+   * <code>ctkServiceReference</code> have the same {@link ctkPluginConstants::SERVICE_ID
+   * service id} they are equal. This <code>ctkServiceReference</code> is less
+   * than the specified <code>ctkServiceReference</code> if it has a lower
+   * {@link ctkPluginConstants::SERVICE_RANKING service ranking} and greater if it has a
+   * higher service ranking. Otherwise, if this <code>ctkServiceReference</code>
+   * and the specified <code>ctkServiceReference</code> have the same
+   * {@link ctkPluginConstants::SERVICE_RANKING service ranking}, this
+   * <code>ctkServiceReference</code> is less than the specified
+   * <code>ctkServiceReference</code> if it has a higher
+   * {@link ctkPluginConstants::SERVICE_ID service id} and greater if it has a lower
+   * service id.
+   *
+   * @param reference The <code>ctkServiceReference</code> to be compared.
+   * @return Returns a false or true if this
+   *         <code>ctkServiceReference</code> is less than or greater
+   *         than the specified <code>ctkServiceReference</code>.
+   * @throws std::invalid_argument If the specified
+   *         <code>ctkServiceReference</code> was not created by the same
+   *         framework instance as this <code>ctkServiceReference</code>.
+   */
+  bool operator<(const ctkServiceReference& reference) const;
 
-    /**
-     * Returns the property value to which the specified property key is mapped
-     * in the properties <code>ServiceProperties</code> object of the service
-     * referenced by this <code>ctkServiceReference</code> object.
-     *
-     * <p>
-     * Property keys are case-insensitive.
-     *
-     * <p>
-     * This method must continue to return property values after the service has
-     * been unregistered. This is so references to unregistered services can
-     * still be interrogated.
-     *
-     * @param key The property key.
-     * @return The property value to which the key is mapped; an invalid QVariant
-     *         if there is no property named after the key.
-     */
-    QVariant getProperty(const QString& key) const;
+  bool operator==(const ctkServiceReference& reference) const;
 
-    /**
-     * Returns a list of the keys in the <code>ServiceProperties</code>
-     * object of the service referenced by this <code>ctkServiceReference</code>
-     * object.
-     *
-     * <p>
-     * This method will continue to return the keys after the service has been
-     * unregistered. This is so references to unregistered services can
-     * still be interrogated.
-     *
-     * <p>
-     * This method is not <i>case-preserving</i>; this means that every key in the
-     * returned array is in lower case, which may not be the case for the corresponding key in the
-     * properties <code>ServiceProperties</code> that was passed to the
-     * {@link ctkPluginContext::registerService(const QStringList&, QObject*, const ServiceProperties&)} or
-     * {@link ctkServiceRegistration::setProperties} methods.
-     *
-     * @return A list of property keys.
-     */
-    QStringList getPropertyKeys() const;
-
-    /**
-     * Returns the plugin that registered the service referenced by this
-     * <code>ctkServiceReference</code> object.
-     *
-     * <p>
-     * This method must return <code>0</code> when the service has been
-     * unregistered. This can be used to determine if the service has been
-     * unregistered.
-     *
-     * @return The plugin that registered the service referenced by this
-     *         <code>ctkServiceReference</code> object; <code>0</code> if that
-     *         service has already been unregistered.
-     * @see ctkPluginContext::registerService(const QStringList&, QObject* , const ServiceProperties&)
-     */
-    ctkPlugin* getPlugin() const;
-
-    /**
-     * Returns the plugins that are using the service referenced by this
-     * <code>ctkServiceReference</code> object. Specifically, this method returns
-     * the plugins whose usage count for that service is greater than zero.
-     *
-     * @return A list of plugins whose usage count for the service referenced
-     *         by this <code>ctkServiceReference</code> object is greater than
-     *         zero.
-     */
-    QList<ctkPlugin*> getUsingPlugins() const;
-
-    /**
-     * Compares this <code>ctkServiceReference</code> with the specified
-     * <code>ctkServiceReference</code> for order.
-     *
-     * <p>
-     * If this <code>ctkServiceReference</code> and the specified
-     * <code>ctkServiceReference</code> have the same {@link ctkPluginConstants::SERVICE_ID
-     * service id} they are equal. This <code>ctkServiceReference</code> is less
-     * than the specified <code>ctkServiceReference</code> if it has a lower
-     * {@link ctkPluginConstants::SERVICE_RANKING service ranking} and greater if it has a
-     * higher service ranking. Otherwise, if this <code>ctkServiceReference</code>
-     * and the specified <code>ctkServiceReference</code> have the same
-     * {@link ctkPluginConstants::SERVICE_RANKING service ranking}, this
-     * <code>ctkServiceReference</code> is less than the specified
-     * <code>ctkServiceReference</code> if it has a higher
-     * {@link ctkPluginConstants::SERVICE_ID service id} and greater if it has a lower
-     * service id.
-     *
-     * @param reference The <code>ctkServiceReference</code> to be compared.
-     * @return Returns a false or true if this
-     *         <code>ctkServiceReference</code> is less than or greater
-     *         than the specified <code>ctkServiceReference</code>.
-     * @throws std::invalid_argument If the specified
-     *         <code>ctkServiceReference</code> was not created by the same
-     *         framework instance as this <code>ctkServiceReference</code>.
-     */
-    bool operator<(const ctkServiceReference& reference) const;
-
-    bool operator==(const ctkServiceReference& reference) const;
-
-    ctkServiceReference& operator=(const ctkServiceReference& reference);
+  ctkServiceReference& operator=(const ctkServiceReference& reference);
 
 
-  protected:
+protected:
 
-    friend class ctkLDAPSearchFilter;
-    friend class ctkServiceRegistrationPrivate;
-    friend class ctkPluginContext;
-    friend class ctkPluginPrivate;
-    friend class ctkPluginFrameworkListeners;
-    friend class ctkServiceTrackerPrivate;
-    friend class ctkServiceTracker;
-    friend class ctkPluginAbstractTracked<ctkServiceReference, ctkServiceEvent>;
+  friend class ctkLDAPSearchFilter;
+  friend class ctkServiceRegistrationPrivate;
+  friend class ctkPluginContext;
+  friend class ctkPluginPrivate;
+  friend class ctkPluginFrameworkListeners;
+  friend class ctkServiceTrackerPrivate;
+  friend class ctkServiceTracker;
+  friend class ctkPluginAbstractTracked<ctkServiceReference, ctkServiceEvent>;
 
-    ctkServiceReference(ctkServiceRegistrationPrivate* reg);
+  ctkServiceReference(ctkServiceRegistrationPrivate* reg);
 
-    bool isNull() const;
+  bool isNull() const;
 
-    ctkServiceReferencePrivate * d_ptr;
+  ctkServiceReferencePrivate * d_ptr;
 
-  };
+};
 
 uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceReference& serviceRef);
 QDebug CTK_PLUGINFW_EXPORT operator<<(QDebug dbg, const ctkServiceReference& serviceRef);

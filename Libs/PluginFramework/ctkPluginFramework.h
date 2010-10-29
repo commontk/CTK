@@ -28,96 +28,96 @@
 #include "ctkPluginFrameworkExport.h"
 
 
-  class ctkPluginFrameworkContext;
-  class ctkPluginFrameworkPrivate;
+class ctkPluginFrameworkContext;
+class ctkPluginFrameworkPrivate;
+
+/**
+ * A %ctkPluginFramework instance. A %ctkPluginFramework is also known as a System %Plugin.
+ *
+ * <p>
+ * %ctkPluginFramework instances are created using a ctkPluginFrameworkFactory. The methods
+ * of this class can be used to manage and control the created plugin framework
+ * instance.
+ *
+ * @threadsafe
+ */
+class CTK_PLUGINFW_EXPORT ctkPluginFramework : public ctkPlugin
+{
+
+  Q_DECLARE_PRIVATE(ctkPluginFramework)
+
+public:
 
   /**
-   * A %ctkPluginFramework instance. A %ctkPluginFramework is also known as a System %Plugin.
+   * Initialize this %ctkPluginFramework. After calling this method, this %ctkPluginFramework
+   * must:
+   * <ul>
+   * <li>Be in the {@link #STARTING} state.</li>
+   * <li>Have a valid Plugin Context.</li>
+   * <li>Be at start level 0.</li>
+   * <li>Have event handling enabled.</li>
+   * <li>Have create ctkPlugin objects for all installed plugins.</li>
+   * <li>Have registered any framework services.</li>
+   * </ul>
    *
    * <p>
-   * %ctkPluginFramework instances are created using a ctkPluginFrameworkFactory. The methods
-   * of this class can be used to manage and control the created plugin framework
-   * instance.
+   * This %ctkPluginFramework will not actually be started until {@link #start() start}
+   * is called.
    *
-   * @threadsafe
+   * <p>
+   * This method does nothing if called when this %ctkPluginFramework is in the
+   * {@link #STARTING}, {@link #ACTIVE} or {@link #STOPPING} states.
+   *
+   * @throws ctkPluginException If this %ctkPluginFramework could not be initialized.
    */
-  class CTK_PLUGINFW_EXPORT ctkPluginFramework : public ctkPlugin
-  {
+  void init();
 
-    Q_DECLARE_PRIVATE(ctkPluginFramework)
+  /**
+   * Start this %ctkPluginFramework.
+   *
+   * <p>
+   * The following steps are taken to start this %ctkPluginFramework:
+   * <ol>
+   * <li>If this %ctkPluginFramework is not in the {@link #STARTING} state,
+   * {@link #init() initialize} this %ctkPluginFramework.</li>
+   * <li>All installed plugins must be started in accordance with each
+   * plugin's persistent <i>autostart setting</i>. This means some plugins
+   * will not be started, some will be started with <i>lazy activation</i>
+   * and some will be started with their <i>declared activation</i> policy.
+   * Any exceptions that occur during plugin starting must be wrapped in a
+   * {@link ctkPluginException} and then published as a plugin framework event of type
+   * {@link ctkPluginFrameworkEvent::ERROR}</li>
+   * <li>This %PluinFramework's state is set to {@link #ACTIVE}.</li>
+   * <li>A plugin framework event of type {@link ctkPluginFrameworkEvent::STARTED} is fired</li>
+   * </ol>
+   *
+   * @param options Ignored. There are no start options for the %ctkPluginFramework.
+   * @throws ctkPluginException If this %ctkPluginFramework could not be started.
+   */
+  void start(const ctkPlugin::StartOptions& options = 0);
 
-  public:
+  /**
+   * @see ctkPlugin::getHeaders()
+   */
+  QHash<QString, QString> getHeaders();
 
-    /**
-     * Initialize this %ctkPluginFramework. After calling this method, this %ctkPluginFramework
-     * must:
-     * <ul>
-     * <li>Be in the {@link #STARTING} state.</li>
-     * <li>Have a valid Plugin Context.</li>
-     * <li>Be at start level 0.</li>
-     * <li>Have event handling enabled.</li>
-     * <li>Have create ctkPlugin objects for all installed plugins.</li>
-     * <li>Have registered any framework services.</li>
-     * </ul>
-     *
-     * <p>
-     * This %ctkPluginFramework will not actually be started until {@link #start() start}
-     * is called.
-     *
-     * <p>
-     * This method does nothing if called when this %ctkPluginFramework is in the
-     * {@link #STARTING}, {@link #ACTIVE} or {@link #STOPPING} states.
-     *
-     * @throws ctkPluginException If this %ctkPluginFramework could not be initialized.
-     */
-    void init();
+  /**
+   * @see ctkPlugin::getResourceList()
+   */
+  QStringList getResourceList(const QString& path) const;
 
-    /**
-     * Start this %ctkPluginFramework.
-     *
-     * <p>
-     * The following steps are taken to start this %ctkPluginFramework:
-     * <ol>
-     * <li>If this %ctkPluginFramework is not in the {@link #STARTING} state,
-     * {@link #init() initialize} this %ctkPluginFramework.</li>
-     * <li>All installed plugins must be started in accordance with each
-     * plugin's persistent <i>autostart setting</i>. This means some plugins
-     * will not be started, some will be started with <i>lazy activation</i>
-     * and some will be started with their <i>declared activation</i> policy.
-     * Any exceptions that occur during plugin starting must be wrapped in a
-     * {@link ctkPluginException} and then published as a plugin framework event of type
-     * {@link ctkPluginFrameworkEvent::ERROR}</li>
-     * <li>This %PluinFramework's state is set to {@link #ACTIVE}.</li>
-     * <li>A plugin framework event of type {@link ctkPluginFrameworkEvent::STARTED} is fired</li>
-     * </ol>
-     *
-     * @param options Ignored. There are no start options for the %ctkPluginFramework.
-     * @throws ctkPluginException If this %ctkPluginFramework could not be started.
-     */
-    void start(const ctkPlugin::StartOptions& options = 0);
+  /**
+   * @see ctkPlugin::getResource()
+   */
+  QByteArray getResource(const QString& path) const;
 
-    /**
-     * @see ctkPlugin::getHeaders()
-     */
-    QHash<QString, QString> getHeaders();
+protected:
 
-    /**
-     * @see ctkPlugin::getResourceList()
-     */
-    QStringList getResourceList(const QString& path) const;
+  friend class ctkPluginFrameworkContext;
 
-    /**
-     * @see ctkPlugin::getResource()
-     */
-    QByteArray getResource(const QString& path) const;
+  ctkPluginFramework(ctkPluginFrameworkContext* fw);
 
-  protected:
-
-    friend class ctkPluginFrameworkContext;
-
-    ctkPluginFramework(ctkPluginFrameworkContext* fw);
-
-  };
+};
 
 
 #endif // CTKPLUGINFRAMEWORK_H

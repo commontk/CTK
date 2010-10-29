@@ -33,121 +33,121 @@
 #include "ctkPluginDatabaseException.h"
 
 
-  ctkPluginStorage::ctkPluginStorage(ctkPluginFrameworkContext* framework)
-    : framework(framework), pluginDatabase(this)
-  {
-    // See if we have a storage database
-    QString path = ctkPluginFrameworkUtil::getFileStorage(framework, "").absoluteFilePath("plugins.db");
+ctkPluginStorage::ctkPluginStorage(ctkPluginFrameworkContext* framework)
+  : framework(framework), pluginDatabase(this)
+{
+  // See if we have a storage database
+  QString path = ctkPluginFrameworkUtil::getFileStorage(framework, "").absoluteFilePath("plugins.db");
 
-    pluginDatabase.setDatabasePath(path);
-    pluginDatabase.open();
-    archives << pluginDatabase.getPluginArchives();
-  }
+  pluginDatabase.setDatabasePath(path);
+  pluginDatabase.open();
+  archives << pluginDatabase.getPluginArchives();
+}
 
-  ctkPluginArchive* ctkPluginStorage::insertPlugin(const QUrl& location, const QString& localPath)
-  {
-    ctkPluginArchive* pa = pluginDatabase.insertPlugin(location, localPath);
-    archives.push_back(pa);
-    return pa;
-  }
+ctkPluginArchive* ctkPluginStorage::insertPlugin(const QUrl& location, const QString& localPath)
+{
+  ctkPluginArchive* pa = pluginDatabase.insertPlugin(location, localPath);
+  archives.push_back(pa);
+  return pa;
+}
 
-  ctkPluginArchive* ctkPluginStorage::updatePluginArchive(ctkPluginArchive* old, const QString& localPath)
-  {
-    Q_UNUSED(old)
-    Q_UNUSED(localPath)
-    //return new BundleArchiveImpl((BundleArchiveImpl)old, is);
-    return 0;
-  }
+ctkPluginArchive* ctkPluginStorage::updatePluginArchive(ctkPluginArchive* old, const QString& localPath)
+{
+  Q_UNUSED(old)
+  Q_UNUSED(localPath)
+  //return new BundleArchiveImpl((BundleArchiveImpl)old, is);
+  return 0;
+}
 
-  void ctkPluginStorage::replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA)
-  {
-    Q_UNUSED(oldPA)
-    Q_UNUSED(newPA)
-//    int pos;
-//    long id = oldBA.getBundleId();
-//    synchronized (archives) {
-//      pos = find(id);
-//      if (pos >= archives.size() || archives.get(pos) != oldBA) {
-//        throw new Exception("replaceBundleJar: Old bundle archive not found, pos=" + pos);
-//      }
-//      archives.set(pos, newBA);
-//    }
-  }
+void ctkPluginStorage::replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA)
+{
+  Q_UNUSED(oldPA)
+  Q_UNUSED(newPA)
+  //    int pos;
+  //    long id = oldBA.getBundleId();
+  //    synchronized (archives) {
+  //      pos = find(id);
+  //      if (pos >= archives.size() || archives.get(pos) != oldBA) {
+  //        throw new Exception("replaceBundleJar: Old bundle archive not found, pos=" + pos);
+  //      }
+  //      archives.set(pos, newBA);
+  //    }
+}
 
-  QList<ctkPluginArchive*> ctkPluginStorage::getAllPluginArchives() const
-  {
-    return archives;
-  }
+QList<ctkPluginArchive*> ctkPluginStorage::getAllPluginArchives() const
+{
+  return archives;
+}
 
-  QList<QString> ctkPluginStorage::getStartOnLaunchPlugins()
+QList<QString> ctkPluginStorage::getStartOnLaunchPlugins()
+{
+  QList<QString> res;
+  QListIterator<ctkPluginArchive*> i(archives);
+  while(i.hasNext())
   {
-    QList<QString> res;
-    QListIterator<ctkPluginArchive*> i(archives);
-    while(i.hasNext())
+    ctkPluginArchive* pa = i.next();
+    if (pa->getAutostartSetting() != -1)
     {
-      ctkPluginArchive* pa = i.next();
-      if (pa->getAutostartSetting() != -1)
-      {
-        res.push_back(pa->getPluginLocation().toString());
-      }
-    }
-    return res;
-  }
-
-  ctkPluginStorage::~ctkPluginStorage()
-  {
-    close();
-  }
-
-  void ctkPluginStorage::close()
-  {
-    pluginDatabase.close();
-    qDeleteAll(archives);
-  }
-
-  bool ctkPluginStorage::removeArchive(ctkPluginArchive* pa)
-  {
-    QMutexLocker lock(&archivesLock);
-
-    bool removed = false;
-    try
-    {
-      pluginDatabase.removeArchive(pa);
-      removed = archives.removeAll(pa);
-      delete pa;
-    }
-    catch (const ctkPluginDatabaseException& exc)
-    {
-      qDebug() << "Removing plugin archive failed:" << exc;
-      removed = false;
-    }
-
-    return removed;
-  }
-
-  QByteArray ctkPluginStorage::getPluginResource(long pluginId, const QString& res) const
-  {
-    try
-    {
-      return pluginDatabase.getPluginResource(pluginId, res);
-    }
-    catch (const ctkPluginDatabaseException& exc)
-    {
-      qDebug() << QString("Getting plugin resource %1 failed:").arg(res) << exc;
-      return QByteArray();
+      res.push_back(pa->getPluginLocation().toString());
     }
   }
+  return res;
+}
 
-  QStringList ctkPluginStorage::findResourcesPath(long pluginId, const QString& path) const
+ctkPluginStorage::~ctkPluginStorage()
+{
+  close();
+}
+
+void ctkPluginStorage::close()
+{
+  pluginDatabase.close();
+  qDeleteAll(archives);
+}
+
+bool ctkPluginStorage::removeArchive(ctkPluginArchive* pa)
+{
+  QMutexLocker lock(&archivesLock);
+
+  bool removed = false;
+  try
   {
-    try
-    {
-      return pluginDatabase.findResourcesPath(pluginId, path);
-    }
-    catch (const ctkPluginDatabaseException& exc)
-    {
-      qDebug() << QString("Getting plugin resource paths for %1 failed:").arg(path) << exc;
-      return QStringList();
-    }
+    pluginDatabase.removeArchive(pa);
+    removed = archives.removeAll(pa);
+    delete pa;
+  }
+  catch (const ctkPluginDatabaseException& exc)
+  {
+    qDebug() << "Removing plugin archive failed:" << exc;
+    removed = false;
+  }
+
+  return removed;
+}
+
+QByteArray ctkPluginStorage::getPluginResource(long pluginId, const QString& res) const
+{
+  try
+  {
+    return pluginDatabase.getPluginResource(pluginId, res);
+  }
+  catch (const ctkPluginDatabaseException& exc)
+  {
+    qDebug() << QString("Getting plugin resource %1 failed:").arg(res) << exc;
+    return QByteArray();
+  }
+}
+
+QStringList ctkPluginStorage::findResourcesPath(long pluginId, const QString& path) const
+{
+  try
+  {
+    return pluginDatabase.findResourcesPath(pluginId, path);
+  }
+  catch (const ctkPluginDatabaseException& exc)
+  {
+    qDebug() << QString("Getting plugin resource paths for %1 failed:").arg(path) << exc;
+    return QStringList();
+  }
 
 }
