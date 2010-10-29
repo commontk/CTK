@@ -112,6 +112,8 @@ public:
   ///
   /// If true, the items check states in a row/column are synchronized 
   /// with the check state of the corresponding header section.
+  /// When the property is set to true, the checkstate of the header is
+  /// automatically updated from the checkstate of the items
   void setPropagateToItems(bool propagate);
   bool propagateToItems()const;
 
@@ -126,10 +128,13 @@ public slots:
 
 private slots:
   void updateHeaderData(Qt::Orientation orient, int first, int last);
+
   void insertHeaderSection(const QModelIndex &parent, int first, int last);
   inline void updateHeaders();
-  void updateHeadersFromItems(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 
+  void updateHeadersFromItems(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+  void updateHeadersFromItems();
+  
 protected:
   virtual void updateHeaders(int first, int last);
   virtual void initStyleSectionOption(QStyleOptionHeader *option, int section, QRect rect)const;

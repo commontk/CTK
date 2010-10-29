@@ -214,6 +214,10 @@ void ctkCheckableHeaderView::setRootIndex(const QModelIndex &index)
 void ctkCheckableHeaderView::setPropagateToItems(bool propagate)
 {
   Q_D(ctkCheckableHeaderView);
+  if (d->PropagateToItems == propagate)
+    {
+    return;
+    }
   d->PropagateToItems = propagate;
   if (!this->model())
     {
@@ -224,6 +228,7 @@ void ctkCheckableHeaderView::setPropagateToItems(bool propagate)
     this->connect(
       this->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
       this, SLOT(updateHeadersFromItems(const QModelIndex&, const QModelIndex&)));
+    this->updateHeadersFromItems();
     }
   else
     {
@@ -270,17 +275,18 @@ void ctkCheckableHeaderView::setCheckState(int section, Qt::CheckState checkStat
 
 //-----------------------------------------------------------------------------
 void ctkCheckableHeaderView::updateHeaderData(Qt::Orientation orient,
-                                               int first, int last)
+                                              int firstSection,
+                                              int lastSection)
 {
   if(orient != this->orientation())
     {
     return;
     }
-  this->updateHeaders(first, last);
+  this->updateHeaders(firstSection, lastSection);
 }
 
 //-----------------------------------------------------------------------------
-void ctkCheckableHeaderView::updateHeaders(int first, int last)
+void ctkCheckableHeaderView::updateHeaders(int firstSection, int lastSection)
 {
   Q_D(ctkCheckableHeaderView);
   if(d->HeaderIsUpdating)
@@ -291,8 +297,8 @@ void ctkCheckableHeaderView::updateHeaders(int first, int last)
   QAbstractItemModel *current = this->model();
   Q_ASSERT(current);
 
-  first = qBound(0, first, this->count() -1);
-  last = qBound(0, last, this->count() -1);
+  firstSection = qBound(0, firstSection, this->count() -1);
+  lastSection = qBound(0, lastSection, this->count() -1);
 
   bool active = true;
   if(this->parentWidget())
@@ -302,7 +308,7 @@ void ctkCheckableHeaderView::updateHeaders(int first, int last)
   int maxJ = this->orientation() == Qt::Horizontal ? 
     current->rowCount() : current->columnCount();
   
-  for(int i = first; i <= last; i++)
+  for(int i = firstSection; i <= lastSection; i++)
     {
     QVariant decoration;
     Qt::CheckState checkState;
@@ -329,8 +335,23 @@ void ctkCheckableHeaderView::updateHeaders(int first, int last)
 }
 
 //-----------------------------------------------------------------------------
+void ctkCheckableHeaderView::updateHeadersFromItems()
+{
+  QAbstractItemModel *currentModel = this->model();
+  if (!currentModel)
+    {
+    return;
+    }
+  QModelIndex firstIndex = currentModel->index(0,0);
+  QModelIndex lastIndex =
+    currentModel->index(currentModel->rowCount() - 1,
+                        currentModel->columnCount() -1);
+  this->updateHeadersFromItems(firstIndex, lastIndex);
+}
+
+//-----------------------------------------------------------------------------
 void ctkCheckableHeaderView::updateHeadersFromItems(const QModelIndex & topLeft,
-                                                     const QModelIndex & bottomRight)
+                                                    const QModelIndex & bottomRight)
 {
   Q_UNUSED(bottomRight);
   Q_D(ctkCheckableHeaderView);
