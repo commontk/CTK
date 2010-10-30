@@ -26,7 +26,7 @@
 #include <QWidget>
 
 // CTK includes
-#include "CTKWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
 class ctkAxesWidgetPrivate;
 
