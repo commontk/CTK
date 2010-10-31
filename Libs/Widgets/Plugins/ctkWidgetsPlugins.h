@@ -27,6 +27,7 @@
 // CTK includes
 #include "ctkWidgetsPluginsExport.h"
 #include "ctkActionsWidgetPlugin.h"
+#include "ctkAxesWidgetPlugin.h"
 #include "ctkCollapsibleButtonPlugin.h"
 #include "ctkCollapsibleGroupBoxPlugin.h"
 #include "ctkColorPickerButtonPlugin.h"
@@ -59,6 +60,7 @@ public:
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkActionsWidgetPlugin
+            << new ctkAxesWidgetPlugin
             << new ctkCollapsibleButtonPlugin
             << new ctkCollapsibleGroupBoxPlugin
             << new ctkColorPickerButtonPlugin
