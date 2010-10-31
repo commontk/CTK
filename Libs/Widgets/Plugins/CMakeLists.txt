@@ -15,6 +15,8 @@ SET(PLUGIN_SRCS
 
   ctkActionsWidgetPlugin.cpp
   ctkActionsWidgetPlugin.h
+  ctkAxesWidgetPlugin.cpp
+  ctkAxesWidgetPlugin.h
   ctkCollapsibleButtonPlugin.cpp
   ctkCollapsibleButtonPlugin.h
   ctkCollapsibleGroupBoxPlugin.cpp
@@ -62,6 +64,7 @@ SET(PLUGIN_MOC_SRCS
   ctkWidgetsPlugins.h
 
   ctkActionsWidgetPlugin.h
+  ctkAxesWidgetPlugin.h
   ctkCollapsibleButtonPlugin.h
   ctkCollapsibleGroupBoxPlugin.h
   ctkColorPickerButtonPlugin.h
