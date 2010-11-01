@@ -45,6 +45,7 @@ static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKRenderView
 ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate(ctkVTKRenderView& object)
   :q_ptr(&object)
 {
+  qRegisterMetaType<ctkAxesWidget::Axis>("ctkAxesWidget::Axis");
   this->Renderer = vtkSmartPointer<vtkRenderer>::New();
   this->RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
   this->Axes = vtkSmartPointer<vtkAxesActor>::New();
