@@ -616,3 +616,54 @@ void ctkVTKRenderView::resetFocalPoint()
   double z_center = (bounds[5] + bounds[4]) / 2.0;
   this->setFocalPoint(x_center, y_center, z_center);
 }
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::lookFromAxis(const ctkAxesWidget::Axis& axis, double fov)
+{
+  Q_D(ctkVTKRenderView);
+  Q_ASSERT(d->Renderer);
+  if (!d->Renderer->IsActiveCameraCreated())
+    {
+    return;
+    }
+  vtkCamera * camera = d->Renderer->GetActiveCamera();
+  Q_ASSERT(camera);
+  double widefov = fov*3;
+  double* focalPoint = camera->GetFocalPoint();
+  switch (axis)
+    {
+    case ctkAxesWidget::Right:
+      camera->SetPosition(focalPoint[0]+widefov, focalPoint[1], focalPoint[2]);
+      camera->SetViewUp(0, 0, 1);
+      break;
+    case ctkAxesWidget::Left:
+      camera->SetPosition(focalPoint[0]-widefov, focalPoint[1], focalPoint[2]);
+      camera->SetViewUp(0, 0, 1);
+      break;
+    case ctkAxesWidget::Anterior:
+      camera->SetPosition(focalPoint[0], focalPoint[1]+widefov, focalPoint[2]);
+      camera->SetViewUp(0, 0, 1);
+      break;
+    case ctkAxesWidget::Posterior:
+      camera->SetPosition(focalPoint[0], focalPoint[1]-widefov, focalPoint[2]);
+      camera->SetViewUp(0, 0, 1);
+      break;
+    case ctkAxesWidget::Superior:
+      camera->SetPosition(focalPoint[0], focalPoint[1], focalPoint[2]+widefov);
+      camera->SetViewUp(0, 1, 0);
+      break;
+    case ctkAxesWidget::Inferior:
+      camera->SetPosition(focalPoint[0], focalPoint[1], focalPoint[2]-widefov);
+      camera->SetViewUp(0, 1, 0);
+      break;
+    case ctkAxesWidget::None:
+    default:
+      // do nothing
+      return;
+      break;
+    }
+  d->Renderer->ResetCameraClippingRange();
+  camera->ComputeViewPlaneNormal();
+  camera->OrthogonalizeViewUp();
+  d->Renderer->UpdateLightsGeometryToFollowCamera();
+}

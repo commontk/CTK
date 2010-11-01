@@ -25,6 +25,7 @@
 #include <QWidget>
 
 // CTK includes
+#include <ctkAxesWidget.h>
 #include <ctkPimpl.h>
 
 #include "ctkVisualizationVTKWidgetsExport.h"
@@ -141,6 +142,12 @@ public slots:
   /// \brief Reset focal point
   /// The visible scene bbox is computed, then the camera is recentered around its centroid.
   void resetFocalPoint();
+  
+  /// \brief Change camera to look from a given axis to the focal point
+  /// Translate/Rotate the camera to look from a given axis
+  /// The Field of View (fov) controls how far from the focal point the 
+  /// camera must be (final_pos = focal_point + 3*fov).
+  void lookFromAxis(const ctkAxesWidget::Axis& axis, double fov = 10.);
 
 public:
   /// Get underlying RenderWindow

@@ -81,6 +81,14 @@ int ctkVTKRenderViewTest1(int argc, char * argv [] )
   // Add actor
   renderView.renderer()->AddActor(sphereActor);
 
+  renderView.lookFromAxis(ctkAxesWidget::Right);
+  renderView.lookFromAxis(ctkAxesWidget::Left, 10);
+  renderView.lookFromAxis(ctkAxesWidget::Anterior, 1.);
+  renderView.lookFromAxis(ctkAxesWidget::Posterior, 1.);
+  renderView.lookFromAxis(ctkAxesWidget::Superior, 0.333333);
+  renderView.lookFromAxis(ctkAxesWidget::Inferior, 0.333333);
+  renderView.lookFromAxis(ctkAxesWidget::None, 100.);
+
   if (!interactive)
     {
     QTimer::singleShot(1000, &app, SLOT(quit()));
