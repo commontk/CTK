@@ -80,7 +80,7 @@ BaseClassType* ctkFactoryPluginItem<BaseClassType>::instanciator()
     if (this->verbose())
       {
       qWarning() << "Failed to access interface [" << BaseClassType::staticMetaObject.className()
-               << "] in plugin:" << this->path();
+               << "] in plugin:" << this->path() << "\n instead, got object of type:" << object->metaObject()->className();
       }
     delete object; // Clean memory
     return 0;
