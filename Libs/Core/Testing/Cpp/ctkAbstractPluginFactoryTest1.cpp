@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QPushButton>
 
 // CTK includes
 #include "ctkAbstractPluginFactory.h"
@@ -34,8 +35,6 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkAbstractPluginFactory< ctkDummyPlugin > pluginFactory;
-  pluginFactory.setVerbose(true);
   if (argc <= 1)
     {
     std::cerr << "Missing argument" << std::endl;
@@ -61,10 +60,27 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [] )
       }
     return EXIT_FAILURE;
     }
+  ctkAbstractPluginFactory< ctkDummyPlugin > pluginFactory;
+  pluginFactory.setVerbose(true);
+
+  bool res = pluginFactory.registerLibrary("fail", QFileInfo("foo/bar.txt"));
+  if (res)
+    {
+    std::cerr << "ctkAbstractPluginFactory::registerLibrary() registered bad file"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
   
-  std::cerr<< "true path: " << file.absoluteFilePath().toStdString() << std::endl;
-  pluginFactory.registerLibrary("lib", file);
-  if (pluginFactory.keys().count() != 1)
+  res = pluginFactory.registerLibrary("lib", file);
+  if (!res || pluginFactory.keys().count() != 1)
+    {
+    std::cerr << "ctkAbstractPluginFactory::registerLibrary() failed"
+              << pluginFactory.keys().count() << std::endl;
+    return EXIT_FAILURE;
+    }
+  // register twice must return false
+  res = pluginFactory.registerLibrary("lib", file);
+  if (res || pluginFactory.keys().count() != 1)
     {
     std::cerr << "ctkAbstractPluginFactory::registerLibrary() failed"
               << pluginFactory.keys().count() << std::endl;
@@ -86,6 +102,22 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [] )
 
   pluginFactory.uninstantiate("lib");
   
+  // ctkDummyPlugin is not a QPushButton, it should fail then.
+  ctkAbstractPluginFactory< QPushButton > buttonPluginFactory;
+  buttonPluginFactory.setVerbose(true);
+  // it should register but fail while instanciating
+  res = buttonPluginFactory.registerLibrary("foo", file);
+  if (!res || buttonPluginFactory.keys().count() != 1)
+    {
+    std::cerr << "ctkAbstractPluginFactory::registerLibrary() failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+  QPushButton* button = buttonPluginFactory.instantiate("foo");
+  if (button != 0)
+    {
+    std::cerr << "ctkAbstractPluginFactory::instantiate() failed" << std::endl;
+    return EXIT_FAILURE;
+    }
   return EXIT_SUCCESS;
 }
 
