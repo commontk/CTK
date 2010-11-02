@@ -23,6 +23,8 @@
 // STD includes
 #include <algorithm>
 
+#pragma warning(disable: 4996)
+
 //------------------------------------------------------------------------------
 void ctk::qListToSTLVector(const QStringList& list,
                                  std::vector<char*>& vector)
