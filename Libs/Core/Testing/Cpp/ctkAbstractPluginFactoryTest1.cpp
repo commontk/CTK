@@ -23,7 +23,7 @@
 
 // CTK includes
 #include "ctkAbstractPluginFactory.h"
-#include "ctkModelTester.h"
+#include "ctkDummyPlugin.h"
 
 // STD includes
 #include <cstdlib>
@@ -34,9 +34,58 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkAbstractPluginFactory< ctkModelTester > ctkObject;
+  ctkAbstractPluginFactory< ctkDummyPlugin > pluginFactory;
+  pluginFactory.setVerbose(true);
+  if (argc <= 1)
+    {
+    std::cerr << "Missing argument" << std::endl;
+    return EXIT_FAILURE;
+    }
+  QString filePath(argv[1]);
+  QFileInfo file(filePath);
+  while (filePath.contains("$(OutDir)"))
+    {
+    QString debugFilePath = filePath;
+    debugFilePath.replace("$(OutDir)","Debug");
+    if (QFile::exists(QString(debugFilePath)))
+      {
+      file = QFileInfo(debugFilePath);
+      break;
+      }
+    QString releaseFilePath = filePath;
+    releaseFilePath.replace("$(OutDir)","Release");
+    if (QFile::exists(QString(releaseFilePath)))
+      {
+      file = QFileInfo(releaseFilePath);
+      break;
+      }
+    return EXIT_FAILURE;
+    }
+  
+  std::cerr<< "true path: " << file.absoluteFilePath().toStdString() << std::endl;
+  pluginFactory.registerLibrary("lib", file);
+  if (pluginFactory.keys().count() != 1)
+    {
+    std::cerr << "ctkAbstractPluginFactory::registerLibrary() failed"
+              << pluginFactory.keys().count() << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (QFileInfo(pluginFactory.path("lib")) != file)
+    {
+    std::cerr << "ctkAbstractPluginFactory::registerLibrary() failed"
+              << pluginFactory.path("lib").toStdString() << std::endl;
+    return EXIT_FAILURE;
+    }
 
+  ctkDummyPlugin* plugin = pluginFactory.instantiate("lib");
+  if (plugin == 0)
+    {
+    std::cerr << "ctkAbstractPluginFactory::instantiate() failed" << std::endl;
+    return EXIT_FAILURE;
+    }
 
+  pluginFactory.uninstantiate("lib");
+  
   return EXIT_SUCCESS;
 }
 

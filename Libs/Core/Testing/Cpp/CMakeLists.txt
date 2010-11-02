@@ -1,3 +1,17 @@
+# Dummy plugin
+ADD_DEFINITIONS( -DCTKDummyPlugin)
+ctkMacroBuildLib(
+  NAME "CTKDummyPlugin"
+  EXPORT_DIRECTIVE "CTK_DUMMY_EXPORT"
+  SRCS ctkDummyPlugin.h ctkDummyPlugin.cpp
+  MOC_SRCS "ctkDummyPlugin.h"
+  TARGET_LIBRARIES ${CTK_BASE_LIBRARIES}
+  LIBRARY_TYPE "SHARED"
+  )
+GET_TARGET_PROPERTY(ctkDummyPluginPATH "CTKDummyPlugin" LOCATION)
+REMOVE_DEFINITIONS(-DCTKDummyPlugin)
+
+#normal test
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
@@ -41,8 +55,9 @@ SET(Tests_MOC_SRCS
 SET(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
 
+# Test library
 ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
+TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
 
@@ -58,7 +73,9 @@ ENDMACRO( SIMPLE_TEST  )
 SIMPLE_TEST( ctkAbstractFactoryTest1 )
 SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 )
 SIMPLE_TEST( ctkAbstractObjectFactoryTest1 )
-SIMPLE_TEST( ctkAbstractPluginFactoryTest1 )
+SIMPLE_TEST( ctkAbstractPluginFactoryTest1 "totto")
+ADD_TEST( ctkAbstractPluginFactoryTest1 ${KIT_TESTS} ctkAbstractPluginFactoryTest1 ${ctkDummyPluginPATH})
+SET_PROPERTY(TEST ctkAbstractPluginFactoryTest1 PROPERTY LABELS ${PROJECT_NAME})
 SIMPLE_TEST( ctkAbstractQObjectFactoryTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
