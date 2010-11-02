@@ -83,6 +83,14 @@ public:
   bool nestedInserts()const;
 
   ///
+  /// When TestData is enabled, it checks if the display role of a valid
+  /// model index is valid too.
+  /// You can disable the test if you are ok with temporary invalid display
+  /// roles.
+  void setTestDataEnabled(bool enable);
+  bool testDataEnabled()const;
+
+  ///
   /// Test the data consistency of a QModelIndex.
   /// Note: Only DisplayRole is checked.
   virtual void testData(const QModelIndex& index)const;

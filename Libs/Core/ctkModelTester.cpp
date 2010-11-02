@@ -33,6 +33,7 @@ public:
   QAbstractItemModel *Model;
   bool ThrowOnError;
   bool NestedInserts;
+  bool TestDataEnabled;
 
   struct Change
   {
@@ -59,6 +60,7 @@ ctkModelTesterPrivate::ctkModelTesterPrivate()
   this->Model = 0;
   this->ThrowOnError = true;
   this->NestedInserts = false;
+  this->TestDataEnabled = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -160,6 +162,21 @@ bool ctkModelTester::nestedInserts()const
   return d->NestedInserts;
 }
 
+
+//-----------------------------------------------------------------------------
+void ctkModelTester::setTestDataEnabled( bool enable )
+{
+  Q_D(ctkModelTester);
+  d->TestDataEnabled = enable;
+}
+
+//-----------------------------------------------------------------------------
+bool ctkModelTester::testDataEnabled()const
+{
+  Q_D(const ctkModelTester);
+  return d->TestDataEnabled;
+}
+
 //-----------------------------------------------------------------------------
 void  ctkModelTester::test(bool result, const QString& errorString)const
 {
@@ -205,6 +222,11 @@ void ctkModelTester::testModelIndex(const QModelIndex& index)const
 //-----------------------------------------------------------------------------
 void ctkModelTester::testData(const QModelIndex& index)const
 {
+  Q_D(const ctkModelTester);
+  if (!d->TestDataEnabled)
+    {
+    return;
+    }
   if (!index.isValid())
     {
     this->test(!index.data(Qt::DisplayRole).isValid(), 
