@@ -14,7 +14,7 @@ int main(int argc, char** argv)
   ctkSimplePythonManager pythonManager;
   
   ctkPythonShell shell(&pythonManager);
-  shell.setAttribute(Qt::WA_QuitOnClose, false);
+  shell.setAttribute(Qt::WA_QuitOnClose, true);
   shell.resize(600, 280);
   shell.show();
   

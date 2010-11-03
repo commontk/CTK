@@ -204,7 +204,6 @@ struct ctkPythonShell::pqImplementation
   //----------------------------------------------------------------------------
   void initializeInteractiveConsole()
   {
-    qDebug() << "initializeInteractiveConsole";
     // set up the code.InteractiveConsole instance that we'll use.
     const char* code =
       "import code\n"
