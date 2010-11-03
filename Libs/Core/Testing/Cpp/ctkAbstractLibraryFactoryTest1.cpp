@@ -73,7 +73,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-int ctkAbstractLibraryFactoryTest1(int argc, char * argv [] )
+int ctkAbstractLibraryFactoryTest1(int argc, char * argv [])
 {
   QApplication app(argc, argv);
 
