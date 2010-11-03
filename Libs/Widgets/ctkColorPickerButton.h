@@ -27,6 +27,7 @@
 
 // CTK includes
 #include "ctkWidgetsExport.h"
+class ctkColorPickerButtonPrivate;
 
 ///
 /// ctkColorPickerButton is a QPushButton that refers to a color. The color 
@@ -38,11 +39,17 @@ class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true)
   Q_PROPERTY(bool displayColorName READ displayColorName WRITE setDisplayColorName DESIGNABLE true)
+  Q_PROPERTY(bool showAlpha READ showAlpha WRITE setShowAlpha DESIGNABLE true)
 public:
   /// By default, the color is black
   explicit ctkColorPickerButton(QWidget* parent = 0);
-  /// By default, the color is black
+  /// By default, the color is black. The text will be shown on the button if
+  /// displayColorName is false, otherwise the color name is shown.
+  /// \sa QPushButton::setText
   explicit ctkColorPickerButton(const QString& text, QWidget* parent = 0 );
+  /// The text will be shown on the button if
+  /// displayColorName is false, otherwise the color name is shown.
+  /// \sa setColor, QPushButton::setText 
   explicit ctkColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
   virtual ~ctkColorPickerButton();
  
@@ -53,6 +60,12 @@ public:
   ///
   /// Display the color name after color selection
   bool displayColorName()const;
+  
+  ///
+  /// Returns true if alpha is shown on the color dialog
+  /// \sa QColorDialog::ShowAlphaChannel
+  void setShowAlpha(bool show);
+  bool showAlpha()const;
 
 public slots:
   ///
@@ -77,8 +90,12 @@ protected slots:
   void onToggled(bool change = true);
 
 protected:
-  QColor Color;
-  bool DisplayColorName;
+  virtual void paintEvent(QPaintEvent* event);
+
+  QScopedPointer<ctkColorPickerButtonPrivate> d_ptr;
+private :
+  Q_DECLARE_PRIVATE(ctkColorPickerButton);
+  Q_DISABLE_COPY(ctkColorPickerButton);
 };
 
 #endif
