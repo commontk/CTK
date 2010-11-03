@@ -20,6 +20,8 @@
 
 // Qt includes
 #include <QApplication>
+#include <QTimer>
+#include <QVBoxLayout>
 
 // CTK includes
 #include "ctkColorPickerButton.h"
@@ -33,9 +35,70 @@ int ctkColorPickerButtonTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkColorPickerButton ctkObject;
+  QWidget topLevel;
+  ctkColorPickerButton colorPicker1;
+  ctkColorPickerButton colorPicker2("Select a color");
+  ctkColorPickerButton colorPicker3(Qt::red,"text");
+  
+  QVBoxLayout* layout = new QVBoxLayout;
+  layout->addWidget(&colorPicker1);
+  layout->addWidget(&colorPicker2);
+  layout->addWidget(&colorPicker3);
+  topLevel.setLayout(layout);
 
+  if (!colorPicker1.text().isEmpty() ||
+       colorPicker2.text() != "Select a color" ||
+       colorPicker3.text() != "text")
+    {
+    std::cerr << "ctkColorPickerButton::ctkColorPickerButton wrong default text"
+              << colorPicker1.text().toStdString() << " "
+              << colorPicker2.text().toStdString() << " "
+              << colorPicker3.text().toStdString() << std::endl;
+    return EXIT_FAILURE;
+    }
 
-  return EXIT_SUCCESS;
+  if (colorPicker1.color() != Qt::black || 
+      colorPicker2.color() != Qt::black ||
+      colorPicker3.color() != Qt::red)
+    {
+    std::cerr << "ctkColorPickerButton::ctkColorPickerButton wrong default color"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  
+  colorPicker3.setDisplayColorName(false);
+  
+  if (colorPicker3.displayColorName() ||
+      colorPicker3.text() != "text")
+    {
+    std::cerr << "ctkColorPickerButton::setDisplayColorName failed"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  colorPicker1.setColor(QColor::fromRgbF(1., 0., 0.5));
+
+  if (colorPicker1.color() != QColor::fromRgbF(1., 0., 0.5))
+    {
+    std::cerr << "ctkColorPickerButton::setColor failed"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+    
+  colorPicker2.setShowAlpha(true);
+  if (!colorPicker2.showAlpha())
+    {
+    std::cerr << "ctkColorPickerButton::setShowAlpha failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  topLevel.show();
+  
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(300, &app, SLOT(quit()));
+    }
+  QTimer::singleShot(100, &colorPicker2, SLOT(changeColor()));
+  return app.exec();
 }
 
