@@ -26,11 +26,13 @@
 
 Q_EXPORT_PLUGIN2( ctkDummyPlugin , ctkDummyPlugin)
 
+//-----------------------------------------------------------------------------
 ctkDummyPlugin::ctkDummyPlugin(QObject* parent)
   :QObject(parent)
 {
 }
 
+//-----------------------------------------------------------------------------
 void ctkDummyPlugin::dummyInterface()
 {
 }

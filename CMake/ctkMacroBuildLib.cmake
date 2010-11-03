@@ -167,6 +167,7 @@ MACRO(ctkMacroBuildLib)
     )
 
   IF(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+    set(KIT_PYTHONQT_SRCS) # Clear variable
     ctkMacroWrapPythonQt("org.commontk" ${lib_name}
       KIT_PYTHONQT_SRCS "${MY_SRCS}" ${CTK_WRAP_PYTHONQT_FULL})
     ADD_LIBRARY(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})

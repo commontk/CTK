@@ -31,7 +31,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkAbstractPluginFactoryTest1(int argc, char * argv [] )
+int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
 {
   QApplication app(argc, argv);
 
