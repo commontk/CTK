@@ -50,21 +50,21 @@ int ctkCollapsibleGroupBoxTest1(int argc, char * argv [] )
   vbox->addWidget(radio3);
   vbox->addStretch(1);
   groupBox->setLayout(vbox);
-  
+
   QVBoxLayout* topLevelVBox = new QVBoxLayout;
   topLevelVBox->addWidget(groupBox);
   topLevel.setLayout(topLevelVBox);
-  
+
   topLevel.show();
-  
+
   if (groupBox->collapsed())
     {
     std::cerr<< "Wrong default collapse state." << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   groupBox->setCollapsed(true);
-  
+
   if (groupBox->collapsed() != true)
     {
     std::cerr<< "ctkCollapsibleGroupBox::setCollapsed failed." << std::endl;
@@ -79,18 +79,18 @@ int ctkCollapsibleGroupBoxTest1(int argc, char * argv [] )
     }
 
   groupBox->setChecked(true);
-  
+
   if (groupBox->collapsed() != false)
     {
     std::cerr<< "ctkCollapsibleGroupBox::setChecked failed." << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
-  
+
   return app.exec();
 }
 
