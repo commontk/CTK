@@ -45,6 +45,7 @@ class QTreeView;
 /// ctkActionsWidget internally uses a QStandardItemModel where each item data
 /// (QStandardItem::data) contain a pointer to the QAction.
 /// QActions can optionally be ordered by group
+/// TODO: Add "hide empty group" property to hide empty groups
 class CTK_WIDGETS_EXPORT ctkActionsWidget : public QWidget
 {
   Q_OBJECT
@@ -69,15 +70,20 @@ public:
   /// Return a pointer on a group item (you probably have no use for it)
   QStandardItem* groupItem(const QString& category);
 
-  /// Show/hide QActions that have an empty shortcut
+  /// If true, shows QActions that have an empty shortcut, otherwise hide them.
+  /// True by default
   void setActionsWithNoShortcutVisible(bool show);
   bool areActionsWithNoShortcutVisible()const;
 
-  /// Show/hide QActions that have an empty shortcut
+  /// If true, shows QMenus, otherwise hide them.
+  /// True by default
   void setMenuActionsVisible(bool show);
   bool areMenuActionsVisible()const;
 
+  /// Return the unsorted/unfiltered model of all the actions
   QStandardItemModel* model()const;
+
+  /// return the view used to display the action model
   QTreeView* view()const;
 
 protected slots:

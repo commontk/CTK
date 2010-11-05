@@ -41,6 +41,7 @@ protected:
 public:
   ctkActionsWidgetPrivate(ctkActionsWidget& object);
   void setupUI();
+  void setupHeaders();
   void updateItems(QList<QStandardItem*>& items, QAction* action);
 
   QStandardItemModel*    ActionsModel;
@@ -63,10 +64,7 @@ void ctkActionsWidgetPrivate::setupUI()
   Q_Q(ctkActionsWidget);
 
   this->ActionsModel = new QStandardItemModel(q);
-  this->ActionsModel->setColumnCount(4);
-  QStringList headers;
-  headers << "Action" << "Shortcut" << "Context" << "Details";
-  this->ActionsModel->setHorizontalHeaderLabels(headers);
+  this->setupHeaders();
 
   this->SortFilterActionsProxyModel = new ctkSortFilterActionsProxyModel(q);
   this->SortFilterActionsProxyModel->setSourceModel(this->ActionsModel);
@@ -78,6 +76,15 @@ void ctkActionsWidgetPrivate::setupUI()
   this->ActionsTreeView->setModel(this->SortFilterActionsProxyModel);
   this->ActionsTreeView->setAlternatingRowColors(true);
   //this->ActionsTreeView->setItemDelegate(new ctkRichTextItemDelegate);
+}
+
+//-----------------------------------------------------------------------------
+void ctkActionsWidgetPrivate::setupHeaders()
+{
+  this->ActionsModel->setColumnCount(4);
+  QStringList headers;
+  headers << "Action" << "Shortcut" << "Context" << "Details";
+  this->ActionsModel->setHorizontalHeaderLabels(headers);
 }
 
 //-----------------------------------------------------------------------------
@@ -144,11 +151,14 @@ void ctkActionsWidget::addAction(QAction* action, const QString& group)
     }
 
   d->updateItems(actionItems, action);
+  
   bool expandGroupItem = (actionGroupItem->rowCount() == 0);
   actionGroupItem->appendRow(actionItems);
+  // if the group didn't exist yet or was empty, then open/expand it
+  // automatcally to show its contents. If the group was not empty, then let
+  // it as is (maybe the user closed/collapsed it for a good reason...
   if (expandGroupItem)
     {
-    qDebug() << d->ActionsModel->indexFromItem(actionGroupItem);
     d->ActionsTreeView->expand(
       d->SortFilterActionsProxyModel->mapFromSource(d->ActionsModel->indexFromItem(actionGroupItem)));
     }
@@ -170,6 +180,7 @@ void ctkActionsWidget::clear()
 {
   Q_D(ctkActionsWidget);
   d->ActionsModel->clear();
+  d->setupHeaders();
 }
 
 //-----------------------------------------------------------------------------
@@ -328,9 +339,9 @@ bool ctkSortFilterActionsProxyModel::areMenuActionsVisible()const
 bool ctkSortFilterActionsProxyModel::filterAcceptsRow(int source_row, const QModelIndex & source_parent) const
 {
   Q_D(const ctkSortFilterActionsProxyModel);
+  QModelIndex shortcutIndex = this->sourceModel()->index(source_row, ctkActionsWidget::ShortcutColumn, source_parent);
   QStandardItem* shortcutItem = qobject_cast<QStandardItemModel*>(
-    this->sourceModel())->itemFromIndex(
-      source_parent.child(source_row, ctkActionsWidget::ShortcutColumn));
+    this->sourceModel())->itemFromIndex(shortcutIndex);
   QAction* action = shortcutItem ?
     qobject_cast<QAction*>(shortcutItem->data().value<QObject*>()) : 0;
   if (!action)
