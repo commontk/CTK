@@ -656,6 +656,20 @@ void ctkRangeWidget::setAutoSpinBoxWidth(bool autoWidth)
   d->updateSpinBoxWidth();
 }
 
+// --------------------------------------------------------------------------
+bool ctkRangeWidget::symmetricMoves()const
+{
+  Q_D(const ctkRangeWidget);
+  return d->Slider->symmetricMoves();
+}
+
+// --------------------------------------------------------------------------
+void ctkRangeWidget::setSymmetricMoves(bool symmetry)
+{
+  Q_D(ctkRangeWidget);
+  d->Slider->setSymmetricMoves(symmetry);
+}
+
 // -------------------------------------------------------------------------
 ctkDoubleRangeSlider* ctkRangeWidget::slider()const
 {

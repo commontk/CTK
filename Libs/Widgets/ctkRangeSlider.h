@@ -53,6 +53,7 @@ class CTK_WIDGETS_EXPORT ctkRangeSlider : public QSlider
   Q_PROPERTY(int maximumValue READ maximumValue WRITE setMaximumValue)
   Q_PROPERTY(int minimumPosition READ minimumPosition WRITE setMinimumPosition)
   Q_PROPERTY(int maximumPosition READ maximumPosition WRITE setMaximumPosition)
+  Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves)
 
 public:
   // Superclass typedef
@@ -94,7 +95,13 @@ public:
   /// Utility function that set the minimum position and
   /// maximum position at once.
   void setPositions(int min, int max);
-
+  
+  ///
+  /// When symmetricMoves is true, moving a handle will move the other handle
+  /// symmetrically, otherwise the handles are independent. False by default
+  bool symmetricMoves()const; 
+  void setSymmetricMoves(bool symmetry);
+  
 signals:
   ///
   /// This signal is emitted when the slider minimum value has changed, 

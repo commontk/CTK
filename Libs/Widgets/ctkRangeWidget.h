@@ -52,6 +52,7 @@ class CTK_WIDGETS_EXPORT ctkRangeWidget : public QWidget
   Q_PROPERTY(Qt::Alignment spinBoxTextAlignment READ spinBoxTextAlignment WRITE setSpinBoxTextAlignment)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
+  Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves)
 
 public:
   /// Superclass typedef
@@ -170,6 +171,12 @@ public:
   // ctkRangeWidget siblings.
   bool isAutoSpinBoxWidth()const;
   void setAutoSpinBoxWidth(bool autoWidth);
+  
+  ///
+  /// When symmetricMoves is true, moving a handle will move the other handle
+  /// symmetrically, otherwise the handles are independent. False by default
+  bool symmetricMoves()const;
+  void setSymmetricMoves(bool symmetry);
 
 public slots:
   ///

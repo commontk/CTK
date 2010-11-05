@@ -496,6 +496,20 @@ Qt::Orientation ctkDoubleRangeSlider::orientation()const
 }
 
 // --------------------------------------------------------------------------
+bool ctkDoubleRangeSlider::symmetricMoves()const
+{
+  Q_D(const ctkDoubleRangeSlider);
+  return d->Slider->symmetricMoves();
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleRangeSlider::setSymmetricMoves(bool symmetry)
+{
+  Q_D(ctkDoubleRangeSlider);
+  d->Slider->setSymmetricMoves(symmetry);
+}
+
+// --------------------------------------------------------------------------
 void ctkDoubleRangeSlider::onMinValueChanged(int newValue)
 {
   Q_D(ctkDoubleRangeSlider);
