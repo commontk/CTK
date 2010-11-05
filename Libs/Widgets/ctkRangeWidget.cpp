@@ -256,6 +256,8 @@ void ctkRangeWidget::setRange(double min, double max)
   double oldMin = d->MinimumSpinBox->minimum();
   double oldMax = d->MaximumSpinBox->maximum();
   d->MinimumSpinBox->setMinimum(qMin(min,max));
+  d->MinimumSpinBox->setMaximum(qMax(min,max));
+  d->MaximumSpinBox->setMinimum(qMin(min,max));
   d->MaximumSpinBox->setMaximum(qMax(min,max));
   // SpinBox can truncate the range (depending on decimals).
   // use Spinbox's range to set Slider's range
