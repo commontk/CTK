@@ -190,6 +190,7 @@ signals:
   void maximumValueChanged(double value);
   void maximumValueIsChanging(double value);
   void valuesChanged(double minValue, double maxValue);
+  void rangeChanged(double min, double max);
 
 protected slots:
   void startChanging();

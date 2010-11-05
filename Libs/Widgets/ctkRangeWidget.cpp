@@ -253,6 +253,8 @@ void ctkRangeWidget::setRange(double min, double max)
 {
   Q_D(ctkRangeWidget);
   
+  double oldMin = d->MinimumSpinBox->minimum();
+  double oldMax = d->MaximumSpinBox->maximum();
   d->MinimumSpinBox->setMinimum(qMin(min,max));
   d->MaximumSpinBox->setMaximum(qMax(min,max));
   // SpinBox can truncate the range (depending on decimals).
@@ -263,6 +265,11 @@ void ctkRangeWidget::setRange(double min, double max)
   Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(), d->Slider->minimum()));
   Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
   d->updateSpinBoxWidth();
+  if (oldMin != d->MinimumSpinBox->minimum() ||
+      oldMax != d->MaximumSpinBox->maximum())
+    {
+    emit rangeChanged(d->MinimumSpinBox->minimum(), d->MaximumSpinBox->maximum());
+    }
 }
 
 // --------------------------------------------------------------------------
