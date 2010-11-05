@@ -113,7 +113,7 @@ ENDMACRO()
 #
 # Download and include dashboard driver script 
 #
-set(url http://github.com/commontk/CTK/raw/master/CMake/ctkDashboardDriverScript.cmake)
+set(url http://commontk.org/ctkDashboardDriverScript.cmake)
 set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)
 downloadFile(${url} ${dest})
 INCLUDE(${dest})
