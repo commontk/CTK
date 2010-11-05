@@ -22,8 +22,10 @@
 #include <QAction>
 #include <QDebug>
 #include <QIcon>
+#include <QMenu>
 #include <QStandardItem>
 #include <QStyle>
+#include <QTreeView>
 
 // CTK includes
 #include "ctkActionsWidget.h"
@@ -43,18 +45,19 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
 
   actionsWidget->addAction(new QAction(0));
   actionsWidget->addAction(new QAction(qApp));
+  actionsWidget->clear();
   actionsWidget->addAction(new QAction("Action Text", qApp));
-  actionsWidget->addAction(new QAction(informationIcon, "Action Text", qApp));
+  actionsWidget->addAction(new QAction(informationIcon, "Action Text2", qApp));
 
   actionsWidget->addAction(new QAction(0), "category 1");
   actionsWidget->addAction(new QAction(qApp), "category 1");
-  actionsWidget->addAction(new QAction("Action Text", &widget), "category 1");
-  actionsWidget->addAction(new QAction(informationIcon, "Action Text", qApp), "category 1");
+  actionsWidget->addAction(new QAction("Action Text3", &widget), "category 1");
+  actionsWidget->addAction(new QAction(informationIcon, "Action Text4", qApp), "category 1");
 
   actionsWidget->addAction(new QAction(0), "category 2");
   actionsWidget->addAction(new QAction(qApp), "category 3");
-  actionsWidget->addAction(new QAction("Action Text", &widget), "category 4");
-  actionsWidget->addAction(new QAction(informationIcon, "Action Text", qApp), "category 5");
+  actionsWidget->addAction(new QAction("Action Text5", &widget), "category 4");
+  actionsWidget->addAction(new QAction(informationIcon, "Action Text6", qApp), "category 5");
 
   if (actionsWidget->groupItem("category 1") == 0 || 
       actionsWidget->groupItem("category 1")->rowCount() != 4)
@@ -68,15 +71,15 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
   action->setShortcut(Qt::Key_F1);
   action->setToolTip("custom tooltip");
   actionsWidget->addAction(action);
-  QStandardItem* actionItem = actionsWidget->model()->item(9);
+  QStandardItem* actionItem = actionsWidget->model()->item(7);
   if (!actionItem || actionItem->text() != "custom action")
     {
-    qDebug() << "Invalid custom action" << actionItem->text();
+    qDebug() << "Invalid custom action" << (actionItem ? actionItem->text() : "NaN");
     QCTK_EXIT_TEST(EXIT_FAILURE);
     }
   // check update on change 
   action->setText("new custom action");
-  QStandardItem* changedActionItem = actionsWidget->model()->item(9);
+  QStandardItem* changedActionItem = actionsWidget->model()->item(7);
   if (changedActionItem != actionItem ||
       changedActionItem->text() != "new custom action")
     {
@@ -84,7 +87,51 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
     QCTK_EXIT_TEST(EXIT_FAILURE);
     }
   widget.addAction(action);
-  QCTK_EXIT_TEST(EXIT_SUCCESS);
+  
+  QList<QAction*> actions;
+  actions << new QAction("group action 1",qApp);
+  actions << new QAction("group action 2",qApp);
+  actions << new QAction("group action 3",qApp);
+  actions << new QAction("group action 4",qApp);
+  actions << new QAction("group action 5",qApp);
+  actionsWidget->addActions(actions,"category 6");
+  
+  QMenu menu;
+  actionsWidget->addAction(menu.addAction("&menu action"), "menu category");
+  actionsWidget->addAction(menu.addSeparator(), "menu category");
+  actionsWidget->addAction(menu.addMenu("submenu action")->menuAction(), "menu category");
+  qDebug()<<"filter";
+  actionsWidget->setActionsWithNoShortcutVisible(false);
+  qDebug()<<"endfilter";
+  
+  QModelIndexList actionTextActions = actionsWidget->view()->model()->match(
+    QModelIndex(), Qt::DisplayRole, QString("Action Text"), -1,
+    Qt::MatchStartsWith | Qt::MatchWrap |Qt::MatchRecursive);
+
+  if (actionsWidget->areActionsWithNoShortcutVisible() != false ||
+      actionTextActions.count() != 0)
+    {
+    qDebug() << "ctkActionsWidget::setActionsWithNoShortcutVisible failed: actionTextActions.count()";
+    QCTK_EXIT_TEST(EXIT_FAILURE);
+    }
+
+  actionsWidget->setActionsWithNoShortcutVisible(true);
+
+  actionsWidget->setMenuActionsVisible(false);
+
+  // make sure the submenu action is hidden
+  QModelIndexList submenuActions = actionsWidget->view()->model()->match(
+    QModelIndex(), Qt::DisplayRole, QString("submenu action"), -1,
+    Qt::MatchExactly | Qt::MatchWrap |Qt::MatchRecursive);
+  if (actionsWidget->areMenuActionsVisible() != false ||
+      submenuActions.count() != 0)
+    {
+    qDebug() << "ctkActionsWidget search failed" << submenuActions.count();
+    QCTK_EXIT_TEST(EXIT_FAILURE);
+    }
+  
+  actionsWidget->setMenuActionsVisible(true);
+  //QCTK_EXIT_TEST(EXIT_SUCCESS);
   //QTimer::singleShot(500, QApplication::instance(), SLOT(quit()));
 }
 
