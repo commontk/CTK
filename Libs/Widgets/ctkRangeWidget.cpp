@@ -164,17 +164,29 @@ void ctkRangeWidgetPrivate::relayout()
     this->GridLayout->addWidget(this->MaximumSpinBox,0,2);
     this->GridLayout->addWidget(this->Slider,1,0,1,3);
     }
-  else if (this->SpinBoxAlignment & Qt::AlignVCenter)
-    {
-    this->GridLayout->addWidget(this->MinimumSpinBox,0,0);
-    this->GridLayout->addWidget(this->Slider,0,1);
-    this->GridLayout->addWidget(this->MaximumSpinBox,0,2);
-    }
   else if (this->SpinBoxAlignment & Qt::AlignBottom)
     {
     this->GridLayout->addWidget(this->MinimumSpinBox,1,0);
     this->GridLayout->addWidget(this->MaximumSpinBox,1,2);
     this->GridLayout->addWidget(this->Slider,0, 0, 1, 3);
+    }
+  else if (this->SpinBoxAlignment & Qt::AlignRight)
+    {
+    this->GridLayout->addWidget(this->Slider, 0, 0);
+    this->GridLayout->addWidget(this->MinimumSpinBox,0,1);
+    this->GridLayout->addWidget(this->MaximumSpinBox,0,2);
+    }
+  else if (this->SpinBoxAlignment & Qt::AlignLeft)
+    {
+    this->GridLayout->addWidget(this->MinimumSpinBox,0,0);
+    this->GridLayout->addWidget(this->MaximumSpinBox,0,1);
+    this->GridLayout->addWidget(this->Slider, 0, 2);
+    }
+  else // Qt::AlignVCenter (or any other bad alignment)
+    {
+    this->GridLayout->addWidget(this->MinimumSpinBox,0,0);
+    this->GridLayout->addWidget(this->Slider,0,1);
+    this->GridLayout->addWidget(this->MaximumSpinBox,0,2);
     }
 }
 
