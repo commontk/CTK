@@ -23,7 +23,9 @@
 // STD includes
 #include <algorithm>
 
-#pragma warning(disable: 4996)
+#ifdef _MSC_VER
+  #pragma warning(disable: 4996)
+#endif
 
 //------------------------------------------------------------------------------
 void ctk::qListToSTLVector(const QStringList& list,
