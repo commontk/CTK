@@ -20,24 +20,27 @@
 
 // Qt includes
 #include <QAction>
+#include <QApplication>
 #include <QDebug>
 #include <QIcon>
 #include <QMenu>
 #include <QStandardItem>
 #include <QStyle>
+#include <QTimer>
 #include <QTreeView>
 
 // CTK includes
 #include "ctkActionsWidget.h"
-#include "ctkTestApplication.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
+int ctkActionsWidgetTest1(int argc, char* argv[])
 {
+  QApplication app(argc, argv);
+
   ctkActionsWidget* actionsWidget = new ctkActionsWidget(0);
   actionsWidget->show();
   QWidget widget;
@@ -63,7 +66,7 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
       actionsWidget->groupItem("category 1")->rowCount() != 4)
     {
     qDebug() << "Invalid Category 1";
-    QCTK_EXIT_TEST(EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
 
   // check shortcut
@@ -75,7 +78,7 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
   if (!actionItem || actionItem->text() != "custom action")
     {
     qDebug() << "Invalid custom action" << (actionItem ? actionItem->text() : "NaN");
-    QCTK_EXIT_TEST(EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
   // check update on change 
   action->setText("new custom action");
@@ -84,7 +87,7 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
       changedActionItem->text() != "new custom action")
     {
     qDebug() << "Invalid action update" << changedActionItem->text();
-    QCTK_EXIT_TEST(EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
   widget.addAction(action);
   
@@ -112,7 +115,7 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
       actionTextActions.count() != 0)
     {
     qDebug() << "ctkActionsWidget::setActionsWithNoShortcutVisible failed: actionTextActions.count()";
-    QCTK_EXIT_TEST(EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
 
   actionsWidget->setActionsWithNoShortcutVisible(true);
@@ -127,12 +130,15 @@ QCTK_DECLARE_TEST(ctkActionsWidgetTest1)
       submenuActions.count() != 0)
     {
     qDebug() << "ctkActionsWidget search failed" << submenuActions.count();
-    QCTK_EXIT_TEST(EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
   
   actionsWidget->setMenuActionsVisible(true);
-  //QCTK_EXIT_TEST(EXIT_SUCCESS);
-  //QTimer::singleShot(500, QApplication::instance(), SLOT(quit()));
-}
+  
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
 
-QCTK_RUN_TEST(ctkActionsWidgetTest1);
+  return app.exec();
+}
