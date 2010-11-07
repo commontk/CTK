@@ -39,6 +39,8 @@ class QStyleOptionButton;
 /// will then be visible. To avoid this behavior, use an intermediate widget that
 /// contains all the children (they would become grandchildren and their Visibility property
 /// will remain relative to their parent, ctkCollapsibleButton's unique child widget.
+/// The user QAbstractButton::icon is not visible (it's placeholder is used to display the
+/// collapsible state
 class CTK_WIDGETS_EXPORT ctkCollapsibleButton : public QAbstractButton
 {
   Q_OBJECT

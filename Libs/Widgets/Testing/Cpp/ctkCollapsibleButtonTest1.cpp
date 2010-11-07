@@ -23,6 +23,7 @@
 #include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QStyle>
 #include <QTimer>
 
 // CTK includes
@@ -42,8 +43,10 @@ int ctkCollapsibleButtonTest1(int argc, char * argv [] )
   QDoubleSpinBox *spinBox = new QDoubleSpinBox;
   QPushButton * button= new QPushButton(QObject::tr("Button"));
   ctkCollapsibleButton *collapsibleButton2 = new ctkCollapsibleButton(QObject::tr("Nested Collapsible Button"));
-  ctkCollapsibleButton *collapsibleButton3 = new ctkCollapsibleButton(QObject::tr("Button"));
-  QPushButton * button2 = new QPushButton(QObject::tr("Nested Button"));
+  ctkCollapsibleButton *collapsibleButton3 = new ctkCollapsibleButton(QObject::tr("CollapsibleButton"));
+  // ctkCollapsibleButton::icon is not activated
+  collapsibleButton3->setIcon(collapsibleButton3->style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+  QPushButton * button2 = new QPushButton(QObject::tr("Nested PushButton"));
 
   QVBoxLayout *nestedBox = new QVBoxLayout;
   nestedBox->addWidget(button2);
