@@ -24,6 +24,8 @@ SET(KIT_SRCS
   ctkCheckableHeaderView.h
   ctkCheckBoxPixmaps.cpp
   ctkCheckBoxPixmaps.h
+  ctkCheckablePushButton.cpp
+  ctkCheckablePushButton.h
   ctkComboBox.cpp
   ctkComboBox.h
   ctkCollapsibleButton.cpp
@@ -109,6 +111,7 @@ SET(KIT_MOC_SRCS
   ctkAddRemoveComboBox.h
   ctkButtonGroup.h
   ctkCheckableHeaderView.h
+  ctkCheckablePushButton.h
   ctkCheckBoxPixmaps.h
   ctkComboBox.h
   ctkCollapsibleButton.h
