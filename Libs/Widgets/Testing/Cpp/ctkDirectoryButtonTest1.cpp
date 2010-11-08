@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QSignalSpy>
 #include <QStyle>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -90,14 +91,30 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  QSignalSpy spyDirectoryChanged(&button, SIGNAL(directoryChanged(const QString&)));
+  QSignalSpy spyDirectorySelected(&button, SIGNAL(directorySelected(const QString&)));
+
   button.setDirectory(QDir::home().absolutePath());
-  if ( QDir(button.directory()) != QDir::home())
+  if ( QDir(button.directory()) != QDir::home() ||
+       spyDirectoryChanged.count() != 1 || 
+       spyDirectorySelected.count() != 1)
     {
     std::cerr<< "ctkDirectoryButton::setDirectory failed" << button.directory().toStdString() << std::endl;
     return EXIT_FAILURE;
     }
 
-  //button.browse();
+  spyDirectoryChanged.clear();
+  spyDirectorySelected.clear();
+  // set it again... just to check that it doesn't fire a new signal
+  button.setDirectory(QDir::home().absolutePath());
+
+  if ( QDir(button.directory()) != QDir::home() ||
+       spyDirectoryChanged.count() != 0 || 
+       spyDirectorySelected.count() != 1)
+    {
+    std::cerr<< "ctkDirectoryButton::setDirectory failed" << button.directory().toStdString() << std::endl;
+    return EXIT_FAILURE;
+    }
 
   topLevel.show();
 
@@ -105,6 +122,8 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
+
+  QTimer::singleShot(100, &button, SLOT(browse()));
 
   return app.exec();
 }
