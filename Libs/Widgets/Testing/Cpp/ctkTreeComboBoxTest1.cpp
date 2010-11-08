@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QStandardItemModel>
 #include <QTimer>
+#include <QTreeView>
 
 // CTK includes
 #include "ctkTreeComboBox.h"
@@ -56,14 +57,14 @@ int ctkTreeComboBoxTest1(int argc, char * argv [] )
   bool oldEnabled = QApplication::isEffectEnabled(Qt::UI_AnimateCombo);
   QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false);
   combo.showPopup();
-  combo.hidePopup();
+  combo.treeView()->setExpanded(model.item(0)->index(), true);
   QApplication::setEffectEnabled(Qt::UI_AnimateCombo, oldEnabled);
   
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
+    QTimer::singleShot(100, &combo, SLOT(hidePopup()));
     }
-
   return app.exec();
 }
 
