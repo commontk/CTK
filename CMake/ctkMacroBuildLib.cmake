@@ -59,26 +59,7 @@ MACRO(ctkMacroBuildLib)
     )  
 
   # Add the include directories from the library dependencies
-  # The variable ${lib_name}_DEPENDENCIES is set in the
-  # macro ctkMacroValidateBuildOptions
-  SET(ctk_deps )
-  SET(ext_deps )
-  ctkMacroGetAllCTKTargetLibraries("${${lib_name}_DEPENDENCIES}" ctk_deps)
-  ctkMacroGetAllNonCTKTargetLibraries("${${lib_name}_DEPENDENCIES}" ext_deps)
-
-  FOREACH(dep ${ctk_deps})
-    LIST(APPEND my_includes
-         ${${dep}_SOURCE_DIR}
-         ${${dep}_BINARY_DIR}
-         )
-  ENDFOREACH()
-
-  FOREACH(dep ${ext_deps})
-    STRING(REPLACE "^" ";" _include_dirs "${${dep}_INCLUDE_DIRS}")
-    LIST(APPEND my_includes ${_include_dirs})
-  ENDFOREACH()
-
-  LIST(REMOVE_DUPLICATES my_includes)
+  ctkFunctionGetIncludeDirs(my_includes ${lib_name})
 
   INCLUDE_DIRECTORIES(
     ${my_includes}

@@ -40,13 +40,41 @@
 # to load CTK's settings for an external project.
 
 
+# Import CTK targets
+INCLUDE(@CTK_SUPERBUILD_BINARY_DIR@/CTKExports.cmake)
+
+# Include CTK macros
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroParseArguments.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroSetPaths.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroListFilter.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroBuildPlugin.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroTargetLibraries.cmake) # Import multiple macros
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionExtractOptionNameAndValue.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroValidateBuildOptions.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGenerateDGraphInput.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGeneratePluginManifest.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroGeneratePluginResourceFile.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetIncludeDirs.cmake)
+INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionSetupExternalPlugins.cmake)
+
+SET(CTK_EXPORT_HEADER_TEMPLATE @CTK_EXPORT_HEADER_TEMPLATE@)
+
+# The CTK DGraph executable used to compute target dependency graphs
+SET(CTK_DGRAPH_EXECUTABLE @DGraph_EXECUTABLE@)
+
 # List all libraries
 SET(CTK_LIBRARIES @CTK_LIBRARIES@)
+
+# List all plugins
+SET(CTK_PLUGIN_LIBRARIES @CTK_PLUGIN_LIBRARIES@)
 
 # List all CTK libraries wrapped with PythonQt
 SET(CTK_WRAPPED_LIBRARIES_PYTHONQT @CTK_WRAPPED_LIBRARIES_PYTHONQT@)
 
 @CTK_CONFIG_INSTALL_ONLY@
+
+# Plugin specific include directories
+@CTK_PLUGIN_INCLUDE_DIRS_CONFIG@
 
 # The CTK include file directories.
 SET(CTK_INCLUDE_DIRS "@CTK_INCLUDE_DIRS_CONFIG@")

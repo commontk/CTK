@@ -96,26 +96,8 @@ MACRO(ctkMacroBuildPlugin)
     )
 
   # Add the include directories from the plugin dependencies
-  # The variable ${lib_name}_DEPENDENCIES is set in the
-  # macro ctkMacroValidateBuildOptions
-  SET(ctk_deps )
-  SET(ext_deps )
-  ctkMacroGetAllCTKTargetLibraries("${${lib_name}_DEPENDENCIES}" ctk_deps)
-  ctkMacroGetAllNonCTKTargetLibraries("${${lib_name}_DEPENDENCIES}" ext_deps)
-
-  FOREACH(dep ${ctk_deps})
-    LIST(APPEND my_includes
-         ${${dep}_SOURCE_DIR}
-         ${${dep}_BINARY_DIR}
-         )
-  ENDFOREACH()
-
-  FOREACH(dep ${ext_deps})
-    STRING(REPLACE "^" ";" _include_dirs "${${dep}_INCLUDE_DIRS}")
-    LIST(APPEND my_includes ${_include_dirs})
-  ENDFOREACH()
-
-  LIST(REMOVE_DUPLICATES my_includes)
+  # and external dependencies
+  ctkFunctionGetIncludeDirs(my_includes ${lib_name})
 
   INCLUDE_DIRECTORIES(
     ${my_includes}
@@ -126,7 +108,7 @@ MACRO(ctkMacroBuildPlugin)
   SET(MY_LIBNAME ${lib_name})
   
   CONFIGURE_FILE(
-    ${CTK_SOURCE_DIR}/Libs/ctkExport.h.in
+    ${CTK_EXPORT_HEADER_TEMPLATE}
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
   SET(dynamicHeaders
@@ -195,11 +177,20 @@ MACRO(ctkMacroBuildPlugin)
     ${MY_QRC_SRCS}
     )
 
-  SET(runtime_output_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins")
-  SET(library_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins")
+  # Set the output directory for the plugin
+  SET(output_dir_suffix "plugins")
   IF(MY_TEST_PLUGIN)
-    SET(runtime_output_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_plugins")
-    SET(library_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/test_plugins")
+    SET(output_dir_suffix "test_plugins")
+  ENDIF()
+  IF(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+    SET(runtime_output_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${output_dir_suffix}")
+  ELSE()
+    SET(runtime_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${output_dir_suffix}")
+  ENDIF()
+  IF(CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    SET(library_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${output_dir_suffix}")
+  ELSE()
+    SET(library_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${output_dir_suffix}")
   ENDIF()
 
   # Apply properties to the library target.
@@ -228,6 +219,11 @@ MACRO(ctkMacroBuildPlugin)
   ENDIF()
 
   TARGET_LINK_LIBRARIES(${lib_name} ${my_libs})
+
+  # Update CTK_PLUGINS
+  IF(NOT MY_TEST_PLUGIN)
+    SET(CTK_PLUGIN_LIBRARIES ${CTK_PLUGIN_LIBRARIES} ${lib_name} CACHE INTERNAL "CTK plugins" FORCE)
+  ENDIF()
   
   # Install headers
   #FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
