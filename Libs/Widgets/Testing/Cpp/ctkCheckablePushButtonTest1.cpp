@@ -38,13 +38,13 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   QWidget topLevel;
-  ctkCheckablePushButton button1(QObject::tr("Button1"));
+  ctkCheckablePushButton button1(QObject::tr("My very long text on button"));
   ctkCheckablePushButton button2(QObject::tr("Button2"));
   ctkCheckablePushButton button3(QObject::tr("Button3"));
   ctkCheckablePushButton button4(QObject::tr("Button4"));
   ctkCheckablePushButton button5(QObject::tr("Button5"));
   ctkCheckablePushButton button6(QObject::tr("Button6"));
-  QCheckBox checkBox1(QObject::tr("Checkbox1"));
+  ctkCheckablePushButton button7(QObject::tr("Checkable PushButton"));
 
   QVBoxLayout *layout= new QVBoxLayout;
   layout->addWidget(&button1);
@@ -53,7 +53,7 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   layout->addWidget(&button4);
   layout->addWidget(&button5);
   layout->addWidget(&button6);
-  layout->addWidget(&checkBox1);
+  layout->addWidget(&button7);
   topLevel.setLayout(layout);
 
   topLevel.show();
@@ -86,6 +86,8 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button5.setIndicatorAlignment(Qt::AlignRight);
   
   button6.setIndicatorAlignment(Qt::AlignTop);
+  button7.setButtonTextAlignment(Qt::AlignCenter);
+  button7.setIndicatorAlignment(Qt::AlignLeft);
   
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
