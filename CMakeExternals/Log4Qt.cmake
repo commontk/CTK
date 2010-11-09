@@ -21,7 +21,7 @@ IF(${add_project})
 #     MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/Log4Qt.git"
-      GIT_TAG "patched"
+      GIT_TAG "origin/patched"
       CMAKE_GENERATOR ${gen}
       BUILD_COMMAND ""
       CMAKE_ARGS
