@@ -34,6 +34,8 @@ SET(KIT_SRCS
   ctkVTKSliceView_p.h
   ctkVTKTextPropertyWidget.cpp
   ctkVTKTextPropertyWidget.h
+  ctkVTKThumbnailView.cpp
+  ctkVTKThumbnailView.h
   )
 
 # Headers that should run through moc
@@ -46,6 +48,7 @@ SET(KIT_MOC_SRCS
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
   ctkVTKTextPropertyWidget.h
+  ctkVTKThumbnailView.h
   )
 
 # UI files

@@ -12,6 +12,7 @@ SET(TEST_SOURCES
   ctkTransferFunctionViewTest4.cpp
   ctkTransferFunctionViewTest5.cpp
   ctkVTKTextPropertyWidgetTest1.cpp
+  ctkVTKThumbnailViewTest1.cpp
   )
 
 IF(CTK_USE_CHARTS)
@@ -75,6 +76,7 @@ IF (CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1 )
 ENDIF(CTK_USE_CHARTS)
 SIMPLE_TEST( ctkVTKTextPropertyWidgetTest1 )
+SIMPLE_TEST( ctkVTKThumbnailViewTest1 )
 
 #
 # Add Tests expecting CTKData to be set
