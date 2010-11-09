@@ -52,7 +52,7 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate(ctkVTKRenderView& object)
   this->Orientation = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
   this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->RenderPending = false;
-  this->RenderEnabled = false;
+  this->RenderEnabled = true;
   this->ZoomFactor = 0.05;
   this->PitchRollYawIncrement = 5;
   this->PitchDirection = ctkVTKRenderView::PitchUp;
