@@ -105,14 +105,14 @@ void ctkDynamicSpacer::setInactiveSizePolicy(QSizePolicy newInactiveSizePolicy)
 }
 
 // -----------------------------------------------------------------------------
-bool ctkDynamicSpacer::isActivated()const
+bool ctkDynamicSpacer::isActive()const
 {
   Q_D(const ctkDynamicSpacer);
   return d->Enable;
 }
 
 // -----------------------------------------------------------------------------
-void ctkDynamicSpacer::activate(bool enableSizePolicy)
+void ctkDynamicSpacer::setActive(bool enableSizePolicy)
 {
   Q_D(ctkDynamicSpacer);
   d->Enable = enableSizePolicy;
