@@ -51,19 +51,30 @@ int ctkTreeComboBoxTest1(int argc, char * argv [] )
     std::cerr << "No tree view" << std::endl;
     return EXIT_FAILURE;
     }
+
   combo.show();
+  QApplication::processEvents();
+
   // if the effect UI_AnimateCombo is enabled, the popup doesn't have time
   // to be visible when hidePopup() is called wich doesn't hide the popup.
   bool oldEnabled = QApplication::isEffectEnabled(Qt::UI_AnimateCombo);
   QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false);
   combo.showPopup();
+  QApplication::processEvents();
+
   combo.treeView()->setExpanded(model.item(0)->index(), true);
+  QApplication::processEvents();
+
+  combo.hidePopup();
+  QApplication::processEvents();
+
   QApplication::setEffectEnabled(Qt::UI_AnimateCombo, oldEnabled);
+
+  combo.showPopup();
   
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    QTimer::singleShot(100, &combo, SLOT(hidePopup()));
     }
   return app.exec();
 }
