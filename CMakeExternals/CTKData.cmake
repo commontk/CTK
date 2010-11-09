@@ -18,6 +18,7 @@ IF(BUILD_TESTING)
   #   MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
       GIT_REPOSITORY ${git_protocol}://github.com/commontk/CTKData.git
+      GIT_TAG "origin/master"
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""

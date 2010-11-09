@@ -35,7 +35,7 @@ IF(${add_project})
       
     ExternalProject_Add(${proj}
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/PythonQt.git"
-      GIT_TAG "patched"
+      GIT_TAG "origin/patched"
       CMAKE_GENERATOR ${gen}
       BUILD_COMMAND ""
       CMAKE_ARGS
