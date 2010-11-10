@@ -295,6 +295,7 @@ SET(CTK_PLUGINS
   org.commontk.dah.exampleapp:OFF
   org.commontk.dah.examplehost:OFF
   org.commontk.dah.host:OFF
+  org.commontk.log:OFF
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
   )
