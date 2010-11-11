@@ -15,7 +15,7 @@ IF(${add_project})
     "C:/Program Files (x86)/GnuWin32/bin")
   MARK_AS_ADVANCED(CTK_PATCH_EXECUTABLE)
   IF(NOT CTK_PATCH_EXECUTABLE)
-    MESSAGE(FATAL_ERROR "error: Patch is required to build ${PROJECT_NAME}. Set CTK_PATCH_EXECUTABLE")
+    MESSAGE(FATAL_ERROR "error: Patch is required to build ${proj}. Set CTK_PATCH_EXECUTABLE. If running Windows, you can download it here: http://gnuwin32.sourceforge.net/packages/patch.htm")
   ENDIF()
   
   # Configure patch script
