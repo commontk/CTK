@@ -42,9 +42,9 @@ QString help(const QString& progName)
 //----------------------------------------------------------------------------
 void displayError(const QString& progName, const QString& msg)
 {
-  std::cerr << QString("%1\n%2\n%3\n").arg(progName).
-                                       arg(msg).
-                                       arg(help(progName)).toStdString();
+  std::cerr << qPrintable(QString("%1\n%2\n%3\n").arg(progName).
+                                                 arg(msg).
+                                                 arg(help(progName)));
 }
 
 //----------------------------------------------------------------------------
@@ -222,7 +222,7 @@ int main(int argc, char** argv)
     
     for(int i = 0; i < path.size(); ++i)
       {
-      std::cerr << vertexIdToLabel[path[i]].toStdString();
+      std::cerr << qPrintable(vertexIdToLabel[path[i]]);
       if (i != path.size() - 1)
         {
         std::cerr << " -> ";
@@ -235,7 +235,7 @@ int main(int argc, char** argv)
 
     for(int i = 0; i < path.size(); ++i)
       {
-      std::cerr << vertexIdToLabel[path[i]].toStdString();
+      std::cerr << qPrintable(vertexIdToLabel[path[i]]);
       if (i != path.size() - 1)
         {
         std::cerr << " -> ";
@@ -296,7 +296,7 @@ int main(int argc, char** argv)
           for(int j=0; j < p->size(); j++)
             {
             int id = p->at(j);
-            std::cout << vertexIdToLabel[id].toStdString();
+            std::cout << qPrintable(vertexIdToLabel[id]);
             if (j != p->size() - 1)
               {
               std::cout << " ";
@@ -321,7 +321,7 @@ int main(int argc, char** argv)
       for(int i=0; i < out.size(); i++)
         {
         int id = out.at(i);
-        std::cout << vertexIdToLabel[id].toStdString();
+        std::cout << qPrintable(vertexIdToLabel[id]);
 
         if (i != out.size() - 1)
           {
