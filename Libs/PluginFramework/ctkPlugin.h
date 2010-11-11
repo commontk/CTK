@@ -624,7 +624,7 @@ public:
    * <p>
    *
    * @param path The path name of the resource.
-   * @return A QString to the resource, or a null QString if no resource could be
+   * @return A QByteArray to the resource, or a null QByteArray if no resource could be
    *         found.
    * @throws std::logic_error If this plugin has been
    *         uninstalled.
