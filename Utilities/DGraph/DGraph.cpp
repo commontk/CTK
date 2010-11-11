@@ -257,7 +257,7 @@ int main(int argc, char** argv)
       {
       for(int i=out.size() - 1; i >= 0; --i)
         {
-        std::cout << vertexIdToLabel[out[i]].toStdString();
+        std::cout << qPrintable(vertexIdToLabel[out[i]]);
         if (i != 0)
           {
           std::cout << " ";
