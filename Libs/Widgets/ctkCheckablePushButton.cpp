@@ -48,6 +48,7 @@ public:
   void init();
 
   QRect checkboxRect() const;
+  QSize buttonSizeHint()const;
 
   // Tuning of the button look&feel
   Qt::Alignment TextAlignment;
@@ -129,6 +130,44 @@ QRect ctkCheckablePushButtonPrivate::checkboxRect()const
 }
 
 //-----------------------------------------------------------------------------
+QSize ctkCheckablePushButtonPrivate::buttonSizeHint()const
+{
+  Q_Q(const ctkCheckablePushButton);
+  int w = 0, h = 0;
+
+  QStyleOptionButton opt;
+  opt.initFrom(q);
+  
+  // indicator
+  QSize indicatorSize = QSize(q->style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, q),
+                              q->style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, q));
+  int indicatorSpacing = q->style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, q);
+  int ih = indicatorSize.height();
+  int iw = indicatorSize.width() + indicatorSpacing;
+  w += iw;
+  h = qMax(h, ih);
+  
+  // text 
+  QString string(q->text());
+  bool empty = string.isEmpty();
+  if (empty)
+    {
+    string = QString::fromLatin1("XXXX");
+    }
+  QFontMetrics fm = q->fontMetrics();
+  QSize sz = fm.size(Qt::TextShowMnemonic, string);
+  if(!empty || !w)
+    {
+    w += sz.width();
+    }
+  h = qMax(h, sz.height());
+  //opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
+  QSize buttonSize = (q->style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), q).
+                      expandedTo(QApplication::globalStrut()));
+  return buttonSize;
+}
+
+//-----------------------------------------------------------------------------
 ctkCheckablePushButton::ctkCheckablePushButton(QWidget* _parent)
   :QPushButton(_parent)
   , d_ptr(new ctkCheckablePushButtonPrivate(*this))
@@ -177,6 +216,19 @@ Qt::Alignment ctkCheckablePushButton::indicatorAlignment()const
 {
   Q_D(const ctkCheckablePushButton);
   return d->IndicatorAlignment;
+}
+
+//-----------------------------------------------------------------------------
+QSize ctkCheckablePushButton::minimumSizeHint()const
+{
+  Q_D(const ctkCheckablePushButton);
+  return d->buttonSizeHint();
+}
+
+//-----------------------------------------------------------------------------
+QSize ctkCheckablePushButton::sizeHint()const
+{
+  return this->minimumSizeHint();
 }
 
 //-----------------------------------------------------------------------------
@@ -246,7 +298,7 @@ void ctkCheckablePushButton::paintEvent(QPaintEvent * _event)
       opt.rect.setLeft(opt.rect.x() + opt.rect.width() / 2 - textWidth / 2);
       if (d->IndicatorAlignment & Qt::AlignLeft)
         {
-        opt.rect.setLeft( qMin(indicatorOpt.rect.left() + indicatorSpacing, opt.rect.left()) );
+        opt.rect.setLeft( qMax(indicatorOpt.rect.right() + indicatorSpacing, opt.rect.left()) );
         }
       }
     }

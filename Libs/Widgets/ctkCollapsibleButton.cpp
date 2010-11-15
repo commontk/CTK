@@ -546,7 +546,7 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
       opt.rect.setLeft(opt.rect.x() + opt.rect.width() / 2 - textWidth / 2);
       if (d->IndicatorAlignment & Qt::AlignLeft)
         {
-        opt.rect.setLeft( qMin(indicatorOpt.rect.left() + indicatorSpacing, opt.rect.left()) );
+        opt.rect.setLeft( qMax(indicatorOpt.rect.right() + indicatorSpacing, opt.rect.left()) );
         }
       }
     }

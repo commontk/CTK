@@ -57,6 +57,8 @@ public:
   void setIndicatorAlignment(Qt::Alignment indicatorAlignment);
   Qt::Alignment indicatorAlignment()const;
 
+  virtual QSize minimumSizeHint()const;
+  virtual QSize sizeHint()const;
 
 protected:
   /// Reimplemented for internal reasons
