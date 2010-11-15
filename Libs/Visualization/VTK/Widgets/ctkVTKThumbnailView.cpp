@@ -37,6 +37,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.ctkVTKThumbnailView");
@@ -61,7 +62,7 @@ public:
   void resetCamera();
 
   vtkRenderer*                       Renderer;
-  vtkRenderWindowInteractor*         Interactor;
+  vtkWeakPointer<vtkRenderWindowInteractor> Interactor;
   
   vtkOutlineSource*                  FOVBox;
   vtkPolyDataMapper*                 FOVBoxMapper;
@@ -432,8 +433,8 @@ void ctkVTKThumbnailView::setRendererToListen(vtkRenderer* newRenderer)
 {
   Q_D(ctkVTKThumbnailView);
   d->Renderer = newRenderer;
-  vtkRenderWindow* newRenderWindow = newRenderer->GetRenderWindow();
-  vtkRenderWindowInteractor* newInteractor = newRenderWindow->GetInteractor();
+  vtkRenderWindow* newRenderWindow = newRenderer ? newRenderer->GetRenderWindow() : 0;
+  vtkRenderWindowInteractor* newInteractor = newRenderWindow ? newRenderWindow->GetInteractor() : 0;
   this->qvtkReconnect(d->Interactor, newInteractor,
                       vtkCommand::EndInteractionEvent, this,SLOT(updateCamera()));
   d->Interactor = newInteractor;

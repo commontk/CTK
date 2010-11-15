@@ -111,6 +111,24 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObj
   if (old_vtk_obj)
     {
     // Check that old_object and new_object are the same type
+    // If you have a crash when accessing old_vtk_obj->GetClassName(), that means
+    // old_vtk_obj has been deleted and you should probably have keep
+    // old_vtk_obj into a vtkWeakPointer:
+    // vtkWeakPointer<vtkObject> obj1 = myobj1;
+    // this->addConnection(obj1, vtkCommand::Modified...)
+    // myobj1->Delete();
+    // vtkWeakPointer<vtkObject> obj2 = myobj2;
+    // this->addConnection(obj1, obj2, vtkCommand::Modified...)
+    // ...
+    // Or just call addConnection with a new
+    // vtk_obj of 0 before the vtk_obj is deleted.
+    // vtkObject* obj1 = vtkObject::New();
+    // this->addConnection(obj1, vtkCommand::Modified...)
+    // this->addConnection(obj1, 0, vtkCommand::Modified...)
+    // obj1->Delete();
+    // vtkObject* obj2 = vtkObject::New();
+    // this->addConnection(0, obj2, vtkCommand::Modified...)
+    // ...
     if (vtk_obj && !vtk_obj->IsA(old_vtk_obj->GetClassName()))
       {
       qDebug() << "Previous vtkObject (type:" << old_vtk_obj->GetClassName() << ") to disconnect"
