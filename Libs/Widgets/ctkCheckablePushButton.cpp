@@ -66,7 +66,6 @@ ctkCheckablePushButtonPrivate::ctkCheckablePushButtonPrivate(ctkCheckablePushBut
 //-----------------------------------------------------------------------------
 void ctkCheckablePushButtonPrivate::init()
 {
-  Q_Q(ctkCheckablePushButton);
 }
 
 //-----------------------------------------------------------------------------
@@ -248,7 +247,7 @@ void ctkCheckablePushButton::paintEvent(QPaintEvent * _event)
   style()->drawControl(QStyle::CE_PushButtonBevel, &opt, &p, this);
   // TBD is PE_PanelButtonCommand better ?
   //style()->drawPrimitive(QStyle::PE_PanelButtonCommand, &opt, &p, this);
-  int buttonHeight = opt.rect.height();
+  //int buttonHeight = opt.rect.height();
   uint tf = d->TextAlignment;
   if (this->style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, this))
     {

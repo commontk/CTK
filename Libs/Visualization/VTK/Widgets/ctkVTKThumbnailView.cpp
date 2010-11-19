@@ -283,7 +283,8 @@ void ctkVTKThumbnailViewPrivate::updateCamera()
   int mainViewerWid = ren->GetRenderWindow()->GetSize()[0];
   int mainViewerHit = ren->GetRenderWindow()->GetSize()[1];
   // width of the FOVBox that represents MainViewer window.
-  double boxHalfWid = boxHalfHit * (double)mainViewerWid / (double)mainViewerHit;
+  double boxHalfWid = boxHalfHit * static_cast<double>(mainViewerWid)
+                       / static_cast<double>(mainViewerHit);
 
   // configure and position the FOVBox
   double data [24];
