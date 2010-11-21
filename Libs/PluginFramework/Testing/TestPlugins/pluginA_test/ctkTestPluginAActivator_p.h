@@ -22,9 +22,10 @@
 #ifndef CTKTESTPLUGINAACTIVATOR_P_H
 #define CTKTESTPLUGINAACTIVATOR_P_H
 
-#include <ctkPluginActivator.h>
+#include <QScopedPointer>
 
-class ctkTestPluginAService;
+#include <ctkPluginActivator.h>
+#include <ctkTestPluginAService.h>
 
 class ctkTestPluginAActivator : public QObject,
                                 public ctkPluginActivator
@@ -39,7 +40,7 @@ public:
 
 private:
 
-  ctkTestPluginAService* s;
+  QScopedPointer<ctkTestPluginAService> s;
 
 };
 

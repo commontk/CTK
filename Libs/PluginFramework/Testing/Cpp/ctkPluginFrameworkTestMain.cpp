@@ -81,12 +81,12 @@ int main(int argc, char** argv)
   fwProps.insert(ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN, ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
   fwProps.insert("pluginfw.testDir", pluginDir);
   ctkPluginFrameworkFactory fwFactory(fwProps);
-  ctkPluginFramework* framework = fwFactory.getFramework();
+  QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
   framework->start();
 
   ctkPluginContext* context = framework->getPluginContext();
 
-  ctkPlugin* fwTest = 0;
+  QSharedPointer<ctkPlugin> fwTest;
   QStringList libFilter;
   libFilter << "*.dll" << "*.so" << "*.dylib";
   QDirIterator dirIter(pluginDir, libFilter, QDir::Files);

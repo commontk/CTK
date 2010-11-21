@@ -29,13 +29,12 @@
 
 void ctkTestPluginAActivator::start(ctkPluginContext* context)
 {
-  s = new ctkTestPluginA(context);
+  s.reset(new ctkTestPluginA(context));
 }
 
 void ctkTestPluginAActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
-  delete s;
 }
 
 Q_EXPORT_PLUGIN2(pluginA_test, ctkTestPluginAActivator)

@@ -137,7 +137,7 @@
 
     ctkServiceRegistration(ctkServiceRegistrationPrivate& dd);
 
-    ctkServiceRegistrationPrivate * const d_ptr;
+    const QScopedPointer<ctkServiceRegistrationPrivate> d_ptr;
 
   };
 

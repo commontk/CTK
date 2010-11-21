@@ -25,6 +25,7 @@
 #include <QHash>
 #include <QString>
 #include <QVariant>
+#include <QSharedPointer>
 
 #include "ctkPluginFrameworkExport.h"
 
@@ -67,7 +68,7 @@
      * @return A new, configured ctkPluginFramework instance. The plugin
      *         framework instance must be in the ctkPlugin::INSTALLED state.
      */
-    ctkPluginFramework* getFramework();
+    QSharedPointer<ctkPluginFramework> getFramework();
 
   private:
 

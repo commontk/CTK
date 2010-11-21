@@ -34,8 +34,8 @@ int ctkPluginFrameworkContext::globalId = 1;
 
 ctkPluginFrameworkContext::ctkPluginFrameworkContext(
     const ctkProperties& initProps)
-      : plugins(0), services(0), systemPlugin(this),
-      storage(0), firstInit(true), props(initProps)
+      : plugins(0), services(0), systemPlugin(new ctkPluginFramework(this)),
+      storage(0), firstInit(true), props(initProps), initialized(false)
 {
   {
     QMutexLocker lock(&globalFwLock);
@@ -43,6 +43,14 @@ ctkPluginFrameworkContext::ctkPluginFrameworkContext(
   }
 
   log() << "created";
+}
+
+ctkPluginFrameworkContext::~ctkPluginFrameworkContext()
+{
+  if (initialized)
+  {
+    this->uninit();
+  }
 }
 
 void ctkPluginFrameworkContext::init()
@@ -56,7 +64,7 @@ void ctkPluginFrameworkContext::init()
     firstInit = false;
   }
 
-  ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
+  ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin->d_func();
   systemPluginPrivate->initSystemPlugin();
 
   storage = new ctkPluginStorage(this);
@@ -66,6 +74,7 @@ void ctkPluginFrameworkContext::init()
   plugins->load();
 
   log() << "inited";
+  initialized = true;
 
   log() << "Installed plugins:";
   // Use the ordering in the plugin storage to get a sorted list of plugins.
@@ -81,21 +90,24 @@ void ctkPluginFrameworkContext::init()
 
 void ctkPluginFrameworkContext::uninit()
 {
+  if (!initialized) return;
+
   log() << "uninit";
 
-  ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin.d_func();
+  ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin->d_func();
   systemPluginPrivate->uninitSystemPlugin();
 
   plugins->clear();
   delete plugins;
   plugins = 0;
 
-  storage->close();
-  delete storage;
+  delete storage; // calls storage->close()
   storage = 0;
 
   delete services;
   services = 0;
+
+  initialized = false;
 }
 
 int ctkPluginFrameworkContext::getId() const

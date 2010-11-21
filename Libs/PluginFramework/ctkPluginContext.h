@@ -26,6 +26,7 @@
 #include <QString>
 #include <QVariant>
 #include <QUrl>
+#include <QSharedPointer>
 
 #include "ctkPluginFramework_global.h"
 
@@ -448,7 +449,7 @@
      *         installation failed.
      * @throws std::logic_error If this ctkPluginContext is no longer valid.
      */
-    ctkPlugin* installPlugin(const QUrl& location, QIODevice* in = 0);
+    QSharedPointer<ctkPlugin> installPlugin(const QUrl& location, QIODevice* in = 0);
 
     /**
      * Connects the specified <code>slot</code> to the context

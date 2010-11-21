@@ -36,7 +36,7 @@
 ctkPlugins::ctkPlugins(ctkPluginFrameworkContext* fw)
 {
   fwCtx = fw;
-  plugins.insert(fw->systemPlugin.getLocation(), &fw->systemPlugin);
+  plugins.insert(fw->systemPlugin->getLocation(), fw->systemPlugin);
 }
 
 void ctkPlugins::clear()
@@ -46,7 +46,7 @@ void ctkPlugins::clear()
   fwCtx = 0;
 }
 
-ctkPlugin* ctkPlugins::install(const QUrl& location, QIODevice* in)
+QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* in)
 {
   if (!fwCtx)
   { // This ctkPlugins instance has been closed!
@@ -56,7 +56,7 @@ ctkPlugin* ctkPlugins::install(const QUrl& location, QIODevice* in)
   {
     QWriteLocker lock(&pluginsLock);
 
-    QHash<QString, ctkPlugin*>::const_iterator it = plugins.find(location.toString());
+    QHash<QString, QSharedPointer<ctkPlugin> >::const_iterator it = plugins.find(location.toString());
     if (it != plugins.end())
     {
       return it.value();
@@ -111,10 +111,10 @@ ctkPlugin* ctkPlugins::install(const QUrl& location, QIODevice* in)
 
       pa = fwCtx->storage->insertPlugin(location, localPluginPath);
 
-      ctkPlugin* res = new ctkPlugin(fwCtx, pa);
+      QSharedPointer<ctkPlugin> res(new ctkPlugin(fwCtx, pa));
       plugins.insert(location.toString(), res);
 
-      fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::INSTALLED, res));
+      fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::INSTALLED, res.data()));
 
       return res;
     }
@@ -140,7 +140,7 @@ ctkPlugin* ctkPlugins::install(const QUrl& location, QIODevice* in)
 void ctkPlugins::remove(const QUrl& location)
 {
   QWriteLocker lock(&pluginsLock);
-  delete plugins.take(location.toString());
+  plugins.remove(location.toString());
 }
 
 ctkPlugin* ctkPlugins::getPlugin(int id) const
@@ -153,13 +153,13 @@ ctkPlugin* ctkPlugins::getPlugin(int id) const
   {
     QReadLocker lock(&pluginsLock);
 
-    QHashIterator<QString, ctkPlugin*> it(plugins);
+    QHashIterator<QString, QSharedPointer<ctkPlugin> > it(plugins);
     while (it.hasNext())
     {
-      ctkPlugin* plugin = it.next().value();
+      QSharedPointer<ctkPlugin> plugin = it.next().value();
       if (plugin->getPluginId() == id)
       {
-        return plugin;
+        return plugin.data();
       }
     }
   }
@@ -174,8 +174,8 @@ ctkPlugin* ctkPlugins::getPlugin(const QString& location) const
   }
 
   QReadLocker lock(&pluginsLock);
-  QHash<QString, ctkPlugin*>::const_iterator it = plugins.find(location);
-  if (it != plugins.end()) return it.value();
+  QHash<QString, QSharedPointer<ctkPlugin> >::const_iterator it = plugins.find(location);
+  if (it != plugins.end()) return it.value().data();
   return 0;
 }
 
@@ -189,13 +189,13 @@ ctkPlugin* ctkPlugins::getPlugin(const QString& name, const ctkVersion& version)
   {
     QReadLocker lock(&pluginsLock);
 
-    QHashIterator<QString, ctkPlugin*> it(plugins);
+    QHashIterator<QString, QSharedPointer<ctkPlugin> > it(plugins);
     while (it.hasNext())
     {
-      ctkPlugin* plugin = it.next().value();
+      QSharedPointer<ctkPlugin> plugin = it.next().value();
       if ((name == plugin->getSymbolicName()) && (version == plugin->getVersion()))
       {
-        return plugin;
+        return plugin.data();
       }
     }
   }
@@ -211,7 +211,13 @@ QList<ctkPlugin*> ctkPlugins::getPlugins() const
 
   {
     QReadLocker lock(&pluginsLock);
-    return plugins.values();
+    QList<ctkPlugin*> res;
+    QHashIterator<QString, QSharedPointer<ctkPlugin> > it(plugins);
+    while (it.hasNext())
+    {
+      res.push_back(it.next().value().data());
+    }
+    return res;
   }
 }
 
@@ -221,10 +227,10 @@ QList<ctkPlugin*> ctkPlugins::getPlugins(const QString& name) const
 
   {
     QReadLocker lock(&pluginsLock);
-    QHashIterator<QString, ctkPlugin*> it(plugins);
+    QHashIterator<QString, QSharedPointer<ctkPlugin> > it(plugins);
     while (it.hasNext())
     {
-      ctkPlugin* plugin = it.next().value();
+      ctkPlugin* plugin = it.next().value().data();
       if (name == plugin->getSymbolicName())
       {
         res.push_back(plugin);
@@ -275,13 +281,13 @@ QList<ctkPlugin*> ctkPlugins::getActivePlugins() const
   QList<ctkPlugin*> slist;
   {
     QReadLocker lock(&pluginsLock);
-    QHashIterator<QString, ctkPlugin*> it(plugins);
+    QHashIterator<QString, QSharedPointer<ctkPlugin> > it(plugins);
     while (it.hasNext())
     {
-      ctkPlugin* plugin = it.next().value();
+      QSharedPointer<ctkPlugin> plugin = it.next().value();
       ctkPlugin::State s = plugin->getState();
       if (s == ctkPlugin::ACTIVE || s == ctkPlugin::STARTING) {
-        slist.push_back(plugin);
+        slist.push_back(plugin.data());
       }
     }
   }
@@ -300,7 +306,7 @@ void ctkPlugins::load()
       ctkPluginArchive* pa = it.next();
       try
       {
-        ctkPlugin* plugin = new ctkPlugin(fwCtx, pa);
+        QSharedPointer<ctkPlugin> plugin(new ctkPlugin(fwCtx, pa));
         plugins.insert(pa->getPluginLocation().toString(), plugin);
       }
       catch (const std::exception& e)

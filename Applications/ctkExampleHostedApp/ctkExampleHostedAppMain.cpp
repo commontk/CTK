@@ -82,7 +82,7 @@ int main(int argv, char** argc)
   fwProps.insert("dah.hostURL", hostURL);
   fwProps.insert("dah.appURL", appURL);
   ctkPluginFrameworkFactory fwFactory(fwProps);
-  ctkPluginFramework* framework = fwFactory.getFramework();
+  QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
 
   try {
     framework->init();
@@ -115,7 +115,7 @@ int main(int argv, char** argc)
 
   // try to find the plugin and install all plugins available in 
   // pluginPath containing the string "org_commontk_dah" (but do not start them)
-  ctkPlugin* appPlugin = 0;
+  QSharedPointer<ctkPlugin> appPlugin;
   QStringList libFilter;
   libFilter << "*.dll" << "*.so" << "*.dylib";
   QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
@@ -126,7 +126,7 @@ int main(int argv, char** argc)
       QString fileLocation = dirIter.next();
       if (fileLocation.contains("org_commontk_dah"))
       {
-        ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
+        QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
         if (fileLocation.contains(pluginName))
         {
           appPlugin = plugin;

@@ -102,7 +102,7 @@ ctkPluginStorage::~ctkPluginStorage()
 void ctkPluginStorage::close()
 {
   pluginDatabase.close();
-  qDeleteAll(archives);
+  //qDeleteAll(archives);
 }
 
 bool ctkPluginStorage::removeArchive(ctkPluginArchive* pa)
@@ -114,7 +114,6 @@ bool ctkPluginStorage::removeArchive(ctkPluginArchive* pa)
   {
     pluginDatabase.removeArchive(pa);
     removed = archives.removeAll(pa);
-    delete pa;
   }
   catch (const ctkPluginDatabaseException& exc)
   {

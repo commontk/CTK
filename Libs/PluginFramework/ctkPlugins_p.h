@@ -25,7 +25,7 @@
 #include <QUrl>
 #include <QHash>
 #include <QReadWriteLock>
-
+#include <QSharedPointer>
 
 
   // CTK class forward declarations
@@ -47,7 +47,7 @@
      * Table of all installed plugins in this framework.
      * Key is the plugin location.
      */
-    QHash<QString, ctkPlugin*> plugins;
+    QHash<QString, QSharedPointer<ctkPlugin> > plugins;
 
     /**
      * Link to framework object.
@@ -76,7 +76,7 @@
      *
      * @param location The location to be installed
      */
-    ctkPlugin* install(const QUrl& location, QIODevice* in);
+    QSharedPointer<ctkPlugin> install(const QUrl& location, QIODevice* in);
 
 
     /**

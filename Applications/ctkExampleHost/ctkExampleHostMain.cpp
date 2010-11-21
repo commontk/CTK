@@ -46,7 +46,7 @@ int main(int argv, char** argc)
   qApp->setApplicationName("ctkExampleHost");
 
   ctkPluginFrameworkFactory fwFactory;
-  ctkPluginFramework* framework = fwFactory.getFramework();
+  QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
 
   try {
     framework->init();
@@ -73,7 +73,7 @@ int main(int argv, char** argc)
   pluginsToInstall << "org_commontk_dah_core" << "org_commontk_dah_host"
                    << "org_commontk_dah_examplehost";
 
-  QList<ctkPlugin*> installedPlugins;
+  QList<QSharedPointer<ctkPlugin> > installedPlugins;
   while(dirIter.hasNext())
   {
     try
@@ -83,7 +83,7 @@ int main(int argv, char** argc)
       {
         if (fileLocation.contains(pluginToInstall))
         {
-          ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
+          QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
           installedPlugins << plugin;
           break;
         }
@@ -97,7 +97,7 @@ int main(int argv, char** argc)
 
   framework->start();
 
-  foreach(ctkPlugin* plugin, installedPlugins)
+  foreach(QSharedPointer<ctkPlugin> plugin, installedPlugins)
   {
     plugin->start();
   }

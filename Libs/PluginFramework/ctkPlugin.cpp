@@ -89,7 +89,7 @@ void ctkPlugin::start(const StartOptions& options)
   {
     if (STARTING == d->state) return;
     d->state = STARTING;
-    d->pluginContext = new ctkPluginContext(this->d_func());
+    d->pluginContext.reset(new ctkPluginContext(this->d_func()));
     ctkPluginEvent pluginEvent(ctkPluginEvent::LAZY_ACTIVATION, this);
     d->fwCtx->listeners.emitPluginChanged(pluginEvent);
   }
@@ -179,7 +179,7 @@ ctkPluginContext* ctkPlugin::getPluginContext() const
 {
   //TODO security checks
   Q_D(const ctkPlugin);
-  return d->pluginContext;
+  return d->pluginContext.data();
 }
 
 long ctkPlugin::getPluginId() const

@@ -59,7 +59,7 @@ int main(int argv, char** argc)
   }
 
   ctkPluginFrameworkFactory fwFactory;
-  ctkPluginFramework* framework = fwFactory.getFramework();
+  QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
 
   try {
     framework->init();
@@ -88,7 +88,7 @@ int main(int argv, char** argc)
       QString fileLocation = dirIter.next();
       if (fileLocation.contains("org_commontk_plugingenerator"))
       {
-        ctkPlugin* plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
+        QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
         plugin->start(ctkPlugin::START_TRANSIENT);
       }
     }
@@ -100,7 +100,7 @@ int main(int argv, char** argc)
 
   framework->start();
 
-  ctkPluginGenerator generator(framework);
+  ctkPluginGenerator generator(framework.data());
   generator.show();
 
   return app.exec();

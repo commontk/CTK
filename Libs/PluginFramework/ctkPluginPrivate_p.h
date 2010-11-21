@@ -138,7 +138,7 @@ public:
   /**
    * ctkPluginContext for the plugin
    */
-  ctkPluginContext* pluginContext;
+  QScopedPointer<ctkPluginContext> pluginContext;
 
   /**
    * ctkPluginActivator for the plugin

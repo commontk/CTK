@@ -147,7 +147,7 @@ void ctkPluginFrameworkTestSuite::frame005a()
 // also check that the expected events in the framework occur
 void ctkPluginFrameworkTestSuite::frame020a()
 {
-  pA = 0;
+  pA.clear();
 
   try
   {
@@ -222,8 +222,8 @@ void ctkPluginFrameworkTestSuite::frame025b()
 
     // check the listeners for events
     QList<ctkPluginEvent> pEvts;
-    pEvts.push_back(ctkPluginEvent(ctkPluginEvent::RESOLVED, pA));
-    pEvts.push_back(ctkPluginEvent(ctkPluginEvent::STARTED, pA));
+    pEvts.push_back(ctkPluginEvent(ctkPluginEvent::RESOLVED, pA.data()));
+    pEvts.push_back(ctkPluginEvent(ctkPluginEvent::STARTED, pA.data()));
 
     QList<ctkServiceEvent> seEvts;
     seEvts.push_back(ctkServiceEvent(ctkServiceEvent::REGISTERED, sr1));
@@ -232,7 +232,7 @@ void ctkPluginFrameworkTestSuite::frame025b()
              "Unexpected events");
 
     QList<ctkPluginEvent> syncPEvts;
-    syncPEvts.push_back(ctkPluginEvent(ctkPluginEvent::STARTING, pA));
+    syncPEvts.push_back(ctkPluginEvent(ctkPluginEvent::STARTING, pA.data()));
 
     QVERIFY2(checkSyncListenerEvents(syncPEvts), "Unexpected events");
   }
@@ -310,14 +310,14 @@ bool ctkPluginFrameworkTestSuite::checkListenerEvents(
     bool fwexp, ctkPluginFrameworkEvent::Type fwtype,
     bool pexp, ctkPluginEvent::Type ptype,
     bool sexp, ctkServiceEvent::Type stype,
-    ctkPlugin* pluginX, ctkServiceReference* servX)
+    QSharedPointer<ctkPlugin> pluginX, ctkServiceReference* servX)
 {
   QList<ctkPluginFrameworkEvent> fwEvts;
   QList<ctkPluginEvent> pEvts;
   QList<ctkServiceEvent> seEvts;
 
-  if (fwexp) fwEvts << ctkPluginFrameworkEvent(fwtype, pluginX);
-  if (pexp) pEvts << ctkPluginEvent(ptype, pluginX);
+  if (fwexp) fwEvts << ctkPluginFrameworkEvent(fwtype, pluginX.data());
+  if (pexp) pEvts << ctkPluginEvent(ptype, pluginX.data());
   if (sexp) seEvts << ctkServiceEvent(stype, *servX);
 
   return checkListenerEvents(fwEvts, pEvts, seEvts);

@@ -81,7 +81,7 @@ ctkPluginPrivate::ctkPluginPrivate(ctkPlugin& qq,
 ctkPluginPrivate::~ctkPluginPrivate()
 {
   qDeleteAll(require);
-  delete pluginContext;
+  delete archive;
 }
 
 ctkPlugin::State ctkPluginPrivate::getUpdatedState()
@@ -191,7 +191,7 @@ void ctkPluginPrivate::finalizeActivation()
     //7:
     if (!pluginContext)
     {
-      pluginContext = new ctkPluginContext(this);
+      pluginContext.reset(new ctkPluginContext(this));
     }
     try
     {
@@ -207,7 +207,7 @@ void ctkPluginPrivate::finalizeActivation()
       // NYI, call outside lock
       fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPING, this->q_func()));
       removePluginResources();
-      delete pluginContext;
+      pluginContext.reset();
 
       state = ctkPlugin::RESOLVED;
       // NYI, call outside lock
@@ -246,7 +246,7 @@ void ctkPluginPrivate::stop0(bool wasStarted)
     {
       try
       {
-        pluginActivator->stop(pluginContext);
+        pluginActivator->stop(pluginContext.data());
       }
       catch (const std::exception& e)
       {
@@ -267,7 +267,7 @@ void ctkPluginPrivate::stop0(bool wasStarted)
     if (pluginContext)
     {
       pluginContext->d_func()->invalidate();
-      pluginContext = 0;
+      //pluginContext = 0;
     }
     //8-10:
     removePluginResources();
@@ -337,7 +337,7 @@ void ctkPluginPrivate::start0()
                                ctkPluginException::ACTIVATOR_ERROR);
     }
 
-    pluginActivator->start(pluginContext);
+    pluginActivator->start(pluginContext.data());
 
     if (ctkPlugin::UNINSTALLED == state)
     {

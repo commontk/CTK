@@ -58,7 +58,7 @@ public:
   /**
    * System plugin
    */
-  ctkPluginFramework systemPlugin;
+  QSharedPointer<ctkPluginFramework> systemPlugin;
 
   /**
    * ctkPlugin storage
@@ -92,6 +92,8 @@ public:
    *
    */
   ctkPluginFrameworkContext(const ctkProperties& initProps);
+
+  ~ctkPluginFrameworkContext();
 
 
   /**
@@ -141,6 +143,8 @@ public:
 private:
 
   QSet<ctkPluginPrivate*> tempResolved;
+
+  bool initialized;
 
   /**
    * Delete framework directory if it exists.

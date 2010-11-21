@@ -86,7 +86,7 @@ QList<ctkPlugin*> ctkPluginContext::getPlugins() const
   return d->plugin->fwCtx->plugins->getPlugins();
 }
 
-ctkPlugin* ctkPluginContext::installPlugin(const QUrl& location, QIODevice* in)
+QSharedPointer<ctkPlugin> ctkPluginContext::installPlugin(const QUrl& location, QIODevice* in)
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();

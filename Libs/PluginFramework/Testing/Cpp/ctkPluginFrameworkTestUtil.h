@@ -35,7 +35,7 @@ class ctkPluginFrameworkTestUtil
 {
 public:
 
-  static ctkPlugin* installPlugin(ctkPluginContext* pc, const QString& plugin)
+  static QSharedPointer<ctkPlugin> installPlugin(ctkPluginContext* pc, const QString& plugin)
   { 
     qDebug() << "installPlugin(" << plugin << ")";
     QFileInfo pluginInfo(plugin);

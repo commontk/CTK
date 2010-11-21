@@ -46,7 +46,7 @@ void ctkPluginFrameworkPrivate::init()
 
 void ctkPluginFrameworkPrivate::initSystemPlugin()
 {
-  this->pluginContext = new ctkPluginContext(this);
+  this->pluginContext.reset(new ctkPluginContext(this));
 }
 
 void ctkPluginFrameworkPrivate::uninitSystemPlugin()

@@ -71,7 +71,7 @@ private:
       bool fwexp, ctkPluginFrameworkEvent::Type fwtype,
       bool pexp, ctkPluginEvent::Type ptype,
       bool sexp, ctkServiceEvent::Type stype,
-      ctkPlugin* pluginX, ctkServiceReference* servX);
+      QSharedPointer<ctkPlugin> pluginX, ctkServiceReference* servX);
 
   // Check that the expected events have reached the listeners and
   // reset the events
@@ -100,9 +100,9 @@ private:
   int eventDelay;
 
   ctkPluginContext* pc;
-  ctkPlugin* p;
+  QSharedPointer<ctkPlugin> p;
 
-  ctkPlugin* pA;
+  QSharedPointer<ctkPlugin> pA;
 
 };
 

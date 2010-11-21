@@ -32,11 +32,12 @@
 
   ctkPluginFrameworkFactory::~ctkPluginFrameworkFactory()
   {
+    fwCtx->uninit();
     delete fwCtx;
   }
 
-  ctkPluginFramework* ctkPluginFrameworkFactory::getFramework()
+  QSharedPointer<ctkPluginFramework> ctkPluginFrameworkFactory::getFramework()
   {
-    return &(fwCtx->systemPlugin);
+    return fwCtx->systemPlugin;
 
 }
