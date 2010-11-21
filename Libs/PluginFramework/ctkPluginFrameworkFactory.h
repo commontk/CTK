@@ -37,7 +37,8 @@
   /**
    * A factory for creating ctkPluginFramework instances.
    */
-  class CTK_PLUGINFW_EXPORT ctkPluginFrameworkFactory {
+  class CTK_PLUGINFW_EXPORT ctkPluginFrameworkFactory
+  {
 
   public:
 

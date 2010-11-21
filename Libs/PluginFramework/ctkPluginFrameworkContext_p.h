@@ -36,7 +36,8 @@ class ctkPlugin;
 class ctkPluginStorage;
 class ctkServices;
 
-class ctkPluginFrameworkContext {
+class ctkPluginFrameworkContext
+{
 
 public:
 

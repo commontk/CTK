@@ -36,53 +36,51 @@
 #include "ctkLDAPExpr_p.h"
 
 
-  using namespace QtMobility;
+using namespace QtMobility;
 
 
-
-  struct ServiceRegistrationComparator
+struct ServiceRegistrationComparator
+{
+  bool operator()(const ctkServiceRegistration* a, const ctkServiceRegistration* b) const
   {
-    bool operator()(const ctkServiceRegistration* a, const ctkServiceRegistration* b) const
-    {
-      return *a < *b;
-    }
-  };
+    return *a < *b;
+  }
+};
 
-  ServiceProperties ctkServices::createServiceProperties(const ServiceProperties& in,
-                                                      const QStringList& classes,
-                                                      long sid)
+ServiceProperties ctkServices::createServiceProperties(const ServiceProperties& in,
+                                                       const QStringList& classes,
+                                                       long sid)
+{
+  static qlonglong nextServiceID = 1;
+  ServiceProperties props;
+
+  if (!in.isEmpty())
   {
-    static qlonglong nextServiceID = 1;
-    ServiceProperties props;
-
-    if (!in.isEmpty())
+    for (ServiceProperties::const_iterator it = in.begin(); it != in.end(); ++it)
     {
-      for (ServiceProperties::const_iterator it = in.begin(); it != in.end(); ++it)
+      const QString key = it.key();
+      const QString lcKey = it.key().toLower();
+      for (QListIterator<QString> i(props.keys()); i.hasNext(); )
       {
-        const QString key = it.key();
-        const QString lcKey = it.key().toLower();
-        for (QListIterator<QString> i(props.keys()); i.hasNext(); )
+        if (lcKey == i.next())
         {
-          if (lcKey == i.next())
-          {
-            throw std::invalid_argument(std::string("Several entries for property: ") + key.toStdString());
-          }
+          throw std::invalid_argument(std::string("Several entries for property: ") + key.toStdString());
         }
-
-        props.insert(lcKey, in.value(key));
       }
+
+      props.insert(lcKey, in.value(key));
     }
-
-    if (!classes.isEmpty())
-    {
-      props.insert(ctkPluginConstants::OBJECTCLASS, classes);
-    }
-
-    props.insert(ctkPluginConstants::SERVICE_ID, sid != -1 ? sid : nextServiceID++);
-
-    return props;
   }
 
+  if (!classes.isEmpty())
+  {
+    props.insert(ctkPluginConstants::OBJECTCLASS, classes);
+  }
+
+  props.insert(ctkPluginConstants::SERVICE_ID, sid != -1 ? sid : nextServiceID++);
+
+  return props;
+}
 
 ctkServices::ctkServices(ctkPluginFrameworkContext* fwCtx)
   : mutex(QMutex::Recursive), framework(fwCtx)

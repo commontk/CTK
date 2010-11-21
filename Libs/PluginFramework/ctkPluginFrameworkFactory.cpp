@@ -24,20 +24,19 @@
 #include "ctkPluginFrameworkContext_p.h"
 
 
-  ctkPluginFrameworkFactory::ctkPluginFrameworkFactory(const ctkProperties& initProps)
-    : fwCtx(new ctkPluginFrameworkContext(initProps))
-  {
+ctkPluginFrameworkFactory::ctkPluginFrameworkFactory(const ctkProperties& initProps)
+  : fwCtx(new ctkPluginFrameworkContext(initProps))
+{
 
-  }
+}
 
-  ctkPluginFrameworkFactory::~ctkPluginFrameworkFactory()
-  {
-    fwCtx->uninit();
-    delete fwCtx;
-  }
+ctkPluginFrameworkFactory::~ctkPluginFrameworkFactory()
+{
+  fwCtx->uninit();
+  delete fwCtx;
+}
 
-  QSharedPointer<ctkPluginFramework> ctkPluginFrameworkFactory::getFramework()
-  {
-    return fwCtx->systemPlugin;
-
+QSharedPointer<ctkPluginFramework> ctkPluginFrameworkFactory::getFramework()
+{
+  return fwCtx->systemPlugin;
 }

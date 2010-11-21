@@ -31,113 +31,114 @@
 class QIODevice;
 
 
-  // CTK class forward declarations
-  class ctkPluginArchive;
-  class ctkPluginFrameworkContext;
+// CTK class forward declarations
+class ctkPluginArchive;
+class ctkPluginFrameworkContext;
+
+/**
+ * Storage of all plugin meta-data and resources
+ */
+class ctkPluginStorage
+{
+
+private:
+
+  QMutex archivesLock;
 
   /**
-   * Storage of all plugin meta-data and resources
+   * ctkPlugin id sorted list of all active plugin archives.
    */
-  class ctkPluginStorage {
+  QList<ctkPluginArchive*> archives;
 
-  private:
+  /**
+   * Framework handle.
+   */
+  ctkPluginFrameworkContext* framework;
 
-    QMutex archivesLock;
+  /**
+   * SQLite db caching plug-in metadata and resources
+   */
+  ctkPluginDatabase pluginDatabase;
 
-    /**
-     * ctkPlugin id sorted list of all active plugin archives.
-     */
-    QList<ctkPluginArchive*> archives;
+public:
 
-    /**
-     * Framework handle.
-     */
-    ctkPluginFrameworkContext* framework;
-
-    /**
-     * SQLite db caching plug-in metadata and resources
-     */
-    ctkPluginDatabase pluginDatabase;
-
-  public:
-
-    /**
-     * Create a container for all plugin data in this framework.
-     * Try to restore all saved plugin archive state.
-     *
-     */
-    ctkPluginStorage(ctkPluginFrameworkContext* framework);
+  /**
+   * Create a container for all plugin data in this framework.
+   * Try to restore all saved plugin archive state.
+   *
+   */
+  ctkPluginStorage(ctkPluginFrameworkContext* framework);
 
 
-    /**
-     * Insert a plugin (shared library) into the persistent storage
-     *
-     * @param location Location of the plugin.
-     * @param localPath Path to the plugin on the local file system
-     * @return ctkPlugin archive object.
-     */
-    ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath);
+  /**
+   * Insert a plugin (shared library) into the persistent storage
+   *
+   * @param location Location of the plugin.
+   * @param localPath Path to the plugin on the local file system
+   * @return ctkPlugin archive object.
+   */
+  ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath);
 
 
-    /**
-     * Insert a new plugin (shared library) into the persistent
-     * storagedata as an update
-     * to an existing plugin archive. To commit this data a call to
-     * <code>replacePluginArchive</code> is needed.
-     *
-     * @param old ctkPluginArchive to be replaced.
-     * @param localPath Path to a plugin on the local file system.
-     * @return ctkPlugin archive object.
-     */
-    ctkPluginArchive* updatePluginArchive(ctkPluginArchive* old, const QString& localPath);
+  /**
+   * Insert a new plugin (shared library) into the persistent
+   * storagedata as an update
+   * to an existing plugin archive. To commit this data a call to
+   * <code>replacePluginArchive</code> is needed.
+   *
+   * @param old ctkPluginArchive to be replaced.
+   * @param localPath Path to a plugin on the local file system.
+   * @return ctkPlugin archive object.
+   */
+  ctkPluginArchive* updatePluginArchive(ctkPluginArchive* old, const QString& localPath);
 
 
-    /**
-     * Replace old plugin archive with a new updated plugin archive, that
-     * was created with updatePluginArchive.
-     *
-     * @param oldPA ctkPluginArchive to be replaced.
-     * @param newPA new ctkPluginArchive.
-     */
-    void replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA);
+  /**
+   * Replace old plugin archive with a new updated plugin archive, that
+   * was created with updatePluginArchive.
+   *
+   * @param oldPA ctkPluginArchive to be replaced.
+   * @param newPA new ctkPluginArchive.
+   */
+  void replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA);
 
-    /**
-     * Remove plugin archive from archives list and persistent storage.
-     * The plugin archive is deleted and must not be used afterwards, if
-     * this method returns \a true.
-     *
-     * @param pa ctkPlugin archive to remove.
-     * @return true if element was removed.
-     */
-    bool removeArchive(ctkPluginArchive* pa);
-
-
-    /**
-     * Get all plugin archive objects.
-     *
-     * @return QList of all PluginArchives.
-     */
-    QList<ctkPluginArchive*> getAllPluginArchives() const;
+  /**
+   * Remove plugin archive from archives list and persistent storage.
+   * The plugin archive is deleted and must not be used afterwards, if
+   * this method returns \a true.
+   *
+   * @param pa ctkPlugin archive to remove.
+   * @return true if element was removed.
+   */
+  bool removeArchive(ctkPluginArchive* pa);
 
 
-    /**
-     * Get all plugins to start at next launch of framework.
-     * This list is sorted in increasing plugin id order.
-     *
-     * @return A List with plugin locations.
-     */
-    QList<QString> getStartOnLaunchPlugins();
+  /**
+   * Get all plugin archive objects.
+   *
+   * @return QList of all PluginArchives.
+   */
+  QList<ctkPluginArchive*> getAllPluginArchives() const;
 
-    QByteArray getPluginResource(long pluginId, const QString& res) const;
 
-    QStringList findResourcesPath(long pluginId, const QString& path) const;
+  /**
+   * Get all plugins to start at next launch of framework.
+   * This list is sorted in increasing plugin id order.
+   *
+   * @return A List with plugin locations.
+   */
+  QList<QString> getStartOnLaunchPlugins();
 
-    /**
-     * Close this plugin storage and all bundles in it.
-     */
-    void close();
+  QByteArray getPluginResource(long pluginId, const QString& res) const;
 
-    ~ctkPluginStorage();
+  QStringList findResourcesPath(long pluginId, const QString& path) const;
+
+  /**
+   * Close this plugin storage and all bundles in it.
+   */
+  void close();
+
+  ~ctkPluginStorage();
 
 };
 

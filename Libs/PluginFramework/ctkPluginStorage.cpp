@@ -148,5 +148,4 @@ QStringList ctkPluginStorage::findResourcesPath(long pluginId, const QString& pa
     qDebug() << QString("Getting plugin resource paths for %1 failed:").arg(path) << exc;
     return QStringList();
   }
-
 }

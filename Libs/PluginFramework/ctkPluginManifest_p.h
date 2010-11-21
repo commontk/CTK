@@ -27,30 +27,30 @@
 class QIODevice;
 
 
-  class ctkPluginManifest
-  {
+class ctkPluginManifest
+{
 
-  public:
+public:
 
-    typedef QHash<QString,QString> Attributes;
+  typedef QHash<QString,QString> Attributes;
 
-    ctkPluginManifest();
-    ctkPluginManifest(const QByteArray& in);
+  ctkPluginManifest();
+  ctkPluginManifest(const QByteArray& in);
 
-    void read(const QByteArray& in);
+  void read(const QByteArray& in);
 
-    Attributes getMainAttributes() const;
-    QString getAttribute(const QString& key) const;
-    Attributes getAttributes(const QString& section) const;
+  Attributes getMainAttributes() const;
+  QString getAttribute(const QString& key) const;
+  Attributes getAttributes(const QString& section) const;
 
-    QStringList getSections() const;
+  QStringList getSections() const;
 
-  private:
+private:
 
-    Attributes mainAttributes;
-    QHash<QString, Attributes> sections;
+  Attributes mainAttributes;
+  QHash<QString, Attributes> sections;
 
-  };
+};
 
 
 #endif // CTKPLUGINMANIFEST_P_H

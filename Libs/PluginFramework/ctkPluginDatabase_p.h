@@ -29,7 +29,8 @@
 class ctkPluginStorage;
 class ctkPluginArchive;
 
-class ctkPluginDatabase {
+class ctkPluginDatabase
+{
 
 public:
 
