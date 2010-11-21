@@ -37,10 +37,10 @@ const ctkPlugin::States ctkPluginPrivate::RESOLVED_FLAGS = ctkPlugin::RESOLVED |
 
 
 ctkPluginPrivate::ctkPluginPrivate(
-    ctkPlugin& qq,
+    QWeakPointer<ctkPlugin> qq,
     ctkPluginFrameworkContext* fw,
     ctkPluginArchive* pa)
-      : q_ptr(&qq), fwCtx(fw), id(pa->getPluginId()),
+      : q_ptr(qq), fwCtx(fw), id(pa->getPluginId()),
       location(pa->getPluginLocation().toString()), state(ctkPlugin::INSTALLED),
       archive(pa), pluginContext(0), pluginActivator(0), pluginLoader(pa->getLibLocation()),
       eagerActivation(false), activating(false), deactivating(false)
@@ -67,10 +67,10 @@ ctkPluginPrivate::ctkPluginPrivate(
   }
 }
 
-ctkPluginPrivate::ctkPluginPrivate(ctkPlugin& qq,
+ctkPluginPrivate::ctkPluginPrivate(QWeakPointer<ctkPlugin> qq,
                                    ctkPluginFrameworkContext* fw,
                                    long id, const QString& loc, const QString& sym, const ctkVersion& ver)
-                                     : q_ptr(&qq), fwCtx(fw), id(id), location(loc), symbolicName(sym), version(ver),
+                                     : q_ptr(qq), fwCtx(fw), id(id), location(loc), symbolicName(sym), version(ver),
                                      state(ctkPlugin::INSTALLED), archive(0), pluginContext(0),
                                      pluginActivator(0), eagerActivation(false), activating(false),
                                      deactivating(false)
@@ -100,8 +100,7 @@ ctkPlugin::State ctkPluginPrivate::getUpdatedState()
     }
     catch (const ctkPluginException& pe)
     {
-      Q_Q(ctkPlugin);
-      this->fwCtx->listeners.frameworkError(q, pe);
+      this->fwCtx->listeners.frameworkError(this->q_func().data(), pe);
       throw;
     }
   }
@@ -119,8 +118,7 @@ void ctkPluginPrivate::setAutostartSetting(const ctkPlugin::StartOptions& settin
   }
   catch (const ctkPluginDatabaseException& e)
   {
-    Q_Q(ctkPlugin);
-    this->fwCtx->listeners.frameworkError(q, e);
+    this->fwCtx->listeners.frameworkError(this->q_func().data(), e);
   }
 }
 
@@ -135,8 +133,7 @@ void ctkPluginPrivate::ignoreAutostartSetting()
   }
   catch (const ctkPluginDatabaseException& e)
   {
-    Q_Q(ctkPlugin);
-    this->fwCtx->listeners.frameworkError(q, e);
+    this->fwCtx->listeners.frameworkError(this->q_func().data(), e);
   }
 }
 

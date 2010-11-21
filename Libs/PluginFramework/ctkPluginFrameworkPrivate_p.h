@@ -36,7 +36,7 @@ public:
 
   QMutex lock;
 
-  ctkPluginFrameworkPrivate(ctkPluginFramework& qq, ctkPluginFrameworkContext* fw);
+  ctkPluginFrameworkPrivate(QWeakPointer<ctkPlugin> qq, ctkPluginFrameworkContext* fw);
 
   void init();
 

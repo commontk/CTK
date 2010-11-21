@@ -127,7 +127,7 @@ public:
    *         service has already been unregistered.
    * @see ctkPluginContext::registerService(const QStringList&, QObject* , const ServiceProperties&)
    */
-  ctkPlugin* getPlugin() const;
+  QSharedPointer<ctkPlugin> getPlugin() const;
 
   /**
    * Returns the plugins that are using the service referenced by this
@@ -138,7 +138,7 @@ public:
    *         by this <code>ctkServiceReference</code> object is greater than
    *         zero.
    */
-  QList<ctkPlugin*> getUsingPlugins() const;
+  QList<QSharedPointer<ctkPlugin> > getUsingPlugins() const;
 
   /**
    * Compares this <code>ctkServiceReference</code> with the specified

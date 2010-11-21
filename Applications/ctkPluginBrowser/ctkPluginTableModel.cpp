@@ -35,7 +35,7 @@ QVariant ctkPluginTableModel::data(const QModelIndex& index, int role) const
 {
   if (!index.isValid()) return QVariant();
 
-  ctkPlugin* plugin = plugins.at(index.row());
+  QSharedPointer<ctkPlugin> plugin = plugins.at(index.row());
   if (role == Qt::DisplayRole)
   {
     int col = index.column();

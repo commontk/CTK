@@ -64,22 +64,22 @@ void ctkPluginAbstractTracked<Item,Related>::setInitial(const QList<Item>& list)
   }
 }
 
-template<class Item, class Related>
-void ctkPluginAbstractTracked<Item,Related>::setInitial(const QList<Item*>& list)
-{
-  foreach (Item* item, list)
-  {
-    if (item == 0)
-    {
-      continue;
-    }
-    if (DEBUG)
-    {
-      qDebug() << "ctkPluginAbstractTracked::setInitial:" << item;
-    }
-    initial.push_back(item);
-  }
-}
+//template<class Item, class Related>
+//void ctkPluginAbstractTracked<Item,Related>::setInitial(const QList<QSharedPointer<Item> >& list)
+//{
+//  foreach (Item* item, list)
+//  {
+//    if (item == 0)
+//    {
+//      continue;
+//    }
+//    if (DEBUG)
+//    {
+//      qDebug() << "ctkPluginAbstractTracked::setInitial:" << item;
+//    }
+//    initial.push_back(item);
+//  }
+//}
 
 template<class Item, class Related>
 void ctkPluginAbstractTracked<Item,Related>::trackInitial()

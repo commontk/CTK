@@ -36,9 +36,9 @@ ctkServiceRegistrationPrivate::~ctkServiceRegistrationPrivate()
 
 }
 
-bool ctkServiceRegistrationPrivate::isUsedByPlugin(ctkPlugin* p)
+bool ctkServiceRegistrationPrivate::isUsedByPlugin(QSharedPointer<ctkPlugin> p)
 {
-  QHash<ctkPlugin*, int> deps = dependents;
+  QHash<QSharedPointer<ctkPlugin>, int> deps = dependents;
   return deps.contains(p);
 }
 

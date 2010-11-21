@@ -141,7 +141,7 @@ void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
 {
   QVariant v = index.data(Qt::UserRole);
 
-  ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
+  QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
   if (!plugin) return;  
   updatePluginToolbar(plugin);
 
@@ -150,7 +150,7 @@ void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
   if (oldModel) oldModel->deleteLater();;
 }
 
-void ctkPluginBrowser::updatePluginToolbar(ctkPlugin* plugin)
+void ctkPluginBrowser::updatePluginToolbar(QSharedPointer<ctkPlugin> plugin)
 {
   startPluginNowAction->setEnabled(false);
   startPluginAction->setEnabled(false);
@@ -175,7 +175,7 @@ void ctkPluginBrowser::updatePluginToolbar(ctkPlugin* plugin)
 void ctkPluginBrowser::pluginDoubleClicked(const QModelIndex& index)
 {
   long pluginId = index.data(Qt::UserRole).toLongLong();
-  ctkPlugin* plugin = framework->getPluginContext()->getPlugin(pluginId);
+  QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->getPlugin(pluginId);
 
   QByteArray mfContent = plugin->getResource("/META-INF/MANIFEST.MF");
   QString location = QString("/") + plugin->getSymbolicName() + "/META-INF/MANIFEST.MF";
@@ -219,7 +219,7 @@ void ctkPluginBrowser::dbResourceDoubleClicked(const QModelIndex& index)
   QModelIndex pluginIndex = ui.pluginsTableView->selectionModel()->selectedIndexes().first();
   long pluginId = pluginIndex.data(Qt::UserRole).toLongLong();
 
-  ctkPlugin* plugin = framework->getPluginContext()->getPlugin(pluginId);
+  QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->getPlugin(pluginId);
 
   QByteArray resContent = plugin->getResource(resPath);
   QString location = QString("/") + plugin->getSymbolicName() + resPath;
@@ -235,7 +235,7 @@ void ctkPluginBrowser::pluginEvent(const ctkPluginEvent& event)
 {
   qDebug() << "PluginEvent: [" << event.getPlugin()->getSymbolicName() << "]" << pluginEventTypeToString[event.getType()];
 
-  ctkPlugin* plugin = event.getPlugin();
+  QSharedPointer<ctkPlugin> plugin = event.getPlugin();
   QModelIndexList selection = ui.pluginsTableView->selectionModel()->selectedIndexes();
   if (!selection.isEmpty() && selection.first().data(Qt::UserRole).toLongLong() == plugin->getPluginId())
   {
@@ -263,7 +263,7 @@ void ctkPluginBrowser::startPlugin(ctkPlugin::StartOptions options)
   QModelIndex selection = ui.pluginsTableView->selectionModel()->currentIndex();
   QVariant v = selection.data(Qt::UserRole);
 
-  ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
+  QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
   plugin->start(options);
 }
 
@@ -272,7 +272,7 @@ void ctkPluginBrowser::stopPlugin()
   QModelIndex selection = ui.pluginsTableView->selectionModel()->currentIndex();
   QVariant v = selection.data(Qt::UserRole);
 
-  ctkPlugin* plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
+  QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
   plugin->stop();
 }
 

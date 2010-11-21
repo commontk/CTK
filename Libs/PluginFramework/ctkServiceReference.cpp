@@ -69,12 +69,12 @@ QStringList ctkServiceReference::getPropertyKeys() const
   return d->registration->properties.keys();
 }
 
-ctkPlugin* ctkServiceReference::getPlugin() const
+QSharedPointer<ctkPlugin> ctkServiceReference::getPlugin() const
 {
-  return d_func()->registration->plugin->q_func();
+  return d_func()->registration->plugin->q_func().toStrongRef();
 }
 
-QList<ctkPlugin*> ctkServiceReference::getUsingPlugins() const
+QList<QSharedPointer<ctkPlugin> > ctkServiceReference::getUsingPlugins() const
 {
   Q_D(const ctkServiceReference);
 

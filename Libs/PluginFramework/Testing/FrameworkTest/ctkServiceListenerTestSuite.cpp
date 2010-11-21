@@ -183,7 +183,7 @@ void ctkServiceListener::serviceChanged(const ctkServiceEvent& evt)
     ctkServiceReference sr = evt.getServiceReference();
 
     // Validate that no bundle is marked as using the service
-    QList<ctkPlugin*> usingPlugins = sr.getUsingPlugins();
+    QList<QSharedPointer<ctkPlugin> > usingPlugins = sr.getUsingPlugins();
     if (checkUsingBundles && !usingPlugins.isEmpty())
     {
       teststatus = false;
@@ -270,10 +270,10 @@ void ctkServiceListener::serviceChanged(const ctkServiceEvent& evt)
 void ctkServiceListener::printUsingPlugins(const ctkServiceReference& sr,
                                            const QString& caption)
 {
-  QList<ctkPlugin*> usingPlugins = sr.getUsingPlugins();
+  QList<QSharedPointer<ctkPlugin> > usingPlugins = sr.getUsingPlugins();
 
   qDebug() << (caption.isEmpty() ? "Using plugins: " : caption);
-  foreach(ctkPlugin* plugin, usingPlugins)
+  foreach(QSharedPointer<ctkPlugin> plugin, usingPlugins)
   {
     qDebug() << "  -" << plugin;
   }

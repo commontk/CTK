@@ -44,7 +44,7 @@ QObject* ctkQtServiceRegistrationPrivate::getService()
   {
     try
     {
-      this->plugin->q_func()->start(0);
+      this->plugin->q_func().data()->start(0);
     }
     catch (const ctkPluginException& e)
     {

@@ -23,6 +23,8 @@
 #ifndef CTKTRACKEDPLUGIN_P_H
 #define CTKTRACKEDPLUGIN_P_H
 
+#include <QSharedPointer>
+
 #include "ctkPluginAbstractTracked_p.h"
 #include "ctkPluginEvent.h"
 
@@ -30,7 +32,7 @@ class ctkPluginTracker;
 class ctkPluginTrackerCustomizer;
 
 class ctkTrackedPlugin : public QObject,
-    public ctkPluginAbstractTracked<ctkPlugin*, ctkPluginEvent>
+    public ctkPluginAbstractTracked<QSharedPointer<ctkPlugin>, ctkPluginEvent>
 {
   Q_OBJECT
 
@@ -51,7 +53,7 @@ private slots:
 
 private:
 
-  typedef ctkPluginAbstractTracked<ctkPlugin*, ctkPluginEvent> Superclass;
+  typedef ctkPluginAbstractTracked<QSharedPointer<ctkPlugin>, ctkPluginEvent> Superclass;
 
   ctkPluginTracker* pluginTracker;
   ctkPluginTrackerCustomizer* customizer;
@@ -65,7 +67,7 @@ private:
    * @return Customized object for the tracked item or <code>null</code>
    *         if the item is not to be tracked.
    */
-  QVariant customizerAdding(ctkPlugin* item,
+  QVariant customizerAdding(QSharedPointer<ctkPlugin> item,
                             ctkPluginEvent related);
 
   /**
@@ -76,7 +78,7 @@ private:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  void customizerModified(ctkPlugin* item,
+  void customizerModified(QSharedPointer<ctkPlugin> item,
                           ctkPluginEvent related, QVariant object);
 
   /**
@@ -87,7 +89,7 @@ private:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  void customizerRemoved(ctkPlugin* item,
+  void customizerRemoved(QSharedPointer<ctkPlugin> item,
                          ctkPluginEvent related, QVariant object);
 };
 

@@ -111,10 +111,11 @@ QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* i
 
       pa = fwCtx->storage->insertPlugin(location, localPluginPath);
 
-      QSharedPointer<ctkPlugin> res(new ctkPlugin(fwCtx, pa));
+      QSharedPointer<ctkPlugin> res(new ctkPlugin());
+      res->init(res, fwCtx, pa);
       plugins.insert(location.toString(), res);
 
-      fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::INSTALLED, res.data()));
+      fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::INSTALLED, res));
 
       return res;
     }
@@ -143,7 +144,7 @@ void ctkPlugins::remove(const QUrl& location)
   plugins.remove(location.toString());
 }
 
-ctkPlugin* ctkPlugins::getPlugin(int id) const
+QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(int id) const
 {
   if (!fwCtx)
   { // This plugins instance has been closed!
@@ -159,11 +160,11 @@ ctkPlugin* ctkPlugins::getPlugin(int id) const
       QSharedPointer<ctkPlugin> plugin = it.next().value();
       if (plugin->getPluginId() == id)
       {
-        return plugin.data();
+        return plugin;
       }
     }
   }
-  return 0;
+  return QSharedPointer<ctkPlugin>();
 }
 
 ctkPlugin* ctkPlugins::getPlugin(const QString& location) const
@@ -202,7 +203,7 @@ ctkPlugin* ctkPlugins::getPlugin(const QString& name, const ctkVersion& version)
   return 0;
 }
 
-QList<ctkPlugin*> ctkPlugins::getPlugins() const
+QList<QSharedPointer<ctkPlugin> > ctkPlugins::getPlugins() const
 {
   if (!fwCtx)
   { // This plugins instance has been closed!
@@ -211,13 +212,7 @@ QList<ctkPlugin*> ctkPlugins::getPlugins() const
 
   {
     QReadLocker lock(&pluginsLock);
-    QList<ctkPlugin*> res;
-    QHashIterator<QString, QSharedPointer<ctkPlugin> > it(plugins);
-    while (it.hasNext())
-    {
-      res.push_back(it.next().value().data());
-    }
-    return res;
+    return plugins.values();
   }
 }
 
@@ -306,7 +301,8 @@ void ctkPlugins::load()
       ctkPluginArchive* pa = it.next();
       try
       {
-        QSharedPointer<ctkPlugin> plugin(new ctkPlugin(fwCtx, pa));
+        QSharedPointer<ctkPlugin> plugin(new ctkPlugin());
+        plugin->init(plugin, fwCtx, pa);
         plugins.insert(pa->getPluginLocation().toString(), plugin);
       }
       catch (const std::exception& e)

@@ -28,8 +28,8 @@
 #include "ctkPluginArchive_p.h"
 
 
-ctkPluginFramework::ctkPluginFramework(ctkPluginFrameworkContext* fw)
-  : ctkPlugin(*new ctkPluginFrameworkPrivate(*this, fw))
+ctkPluginFramework::ctkPluginFramework()
+  : ctkPlugin()
 {
   qRegisterMetaType<ctkPluginFrameworkEvent>("ctkPluginFrameworkEvent");
   qRegisterMetaType<ctkPluginEvent>("ctkPluginEvent");

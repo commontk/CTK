@@ -43,7 +43,7 @@ void ctkTrackedPlugin::pluginChanged(const ctkPluginEvent& event)
     return;
   }
 
-  ctkPlugin* plugin = event.getPlugin();
+  QSharedPointer<ctkPlugin> plugin = event.getPlugin();
   ctkPlugin::State state = plugin->getState();
   if (pluginTracker->d_func()->DEBUG)
   {
@@ -68,19 +68,19 @@ void ctkTrackedPlugin::pluginChanged(const ctkPluginEvent& event)
   }
 }
 
-QVariant ctkTrackedPlugin::customizerAdding(ctkPlugin* item,
+QVariant ctkTrackedPlugin::customizerAdding(QSharedPointer<ctkPlugin> item,
     ctkPluginEvent related)
 {
   return customizer->addingPlugin(item, related);
 }
 
-void ctkTrackedPlugin::customizerModified(ctkPlugin* item,
+void ctkTrackedPlugin::customizerModified(QSharedPointer<ctkPlugin> item,
     ctkPluginEvent related, QVariant object)
 {
   customizer->modifiedPlugin(item, related, object);
 }
 
-void ctkTrackedPlugin::customizerRemoved(ctkPlugin* item,
+void ctkTrackedPlugin::customizerRemoved(QSharedPointer<ctkPlugin> item,
     ctkPluginEvent related, QVariant object)
 {
   customizer->removedPlugin(item, related, object);

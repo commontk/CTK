@@ -137,7 +137,7 @@ void ctkServiceRegistration::unregister()
       d->available = false;
       if (d->plugin)
       {
-        for (QHashIterator<ctkPlugin*, QObject*> i(d->serviceInstances); i.hasNext();)
+        for (QHashIterator<QSharedPointer<ctkPlugin>, QObject*> i(d->serviceInstances); i.hasNext();)
         {
           QObject* obj = i.next().value();
           try
@@ -149,7 +149,7 @@ void ctkServiceRegistration::unregister()
           }
           catch (const std::exception& ue)
           {
-            ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::ERROR, d->plugin->q_func(), ue);
+            ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::ERROR, d->plugin->q_func().data(), ue);
             d->plugin->fwCtx->listeners
                 .emitFrameworkEvent(pfwEvent);
           }

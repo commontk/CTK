@@ -39,11 +39,13 @@ class ctkPluginPrivate {
 
 protected:
 
-  ctkPlugin * const q_ptr;
+  const QWeakPointer<ctkPlugin> q_ptr;
 
 public:
 
-  Q_DECLARE_PUBLIC(ctkPlugin)
+  inline QWeakPointer<ctkPlugin> q_func() { return q_ptr; }
+  inline QWeakPointer<const ctkPlugin> q_func() const { return q_ptr; }
+  friend class ctkPlugin;
 
   /**
    * Construct a new plugin based on a ctkPluginArchive.
@@ -53,7 +55,7 @@ public:
    * @param checkContext AccessConrolContext to do permission checks against.
    * @exception std::invalid_argument Faulty manifest for bundle
    */
-  ctkPluginPrivate(ctkPlugin& qq, ctkPluginFrameworkContext* fw,
+  ctkPluginPrivate(QWeakPointer<ctkPlugin> qq, ctkPluginFrameworkContext* fw,
                    ctkPluginArchive* pa /*, Object checkContext*/);
 
   /**
@@ -63,7 +65,7 @@ public:
    *
    * @param fw Framework for this plugin.
    */
-  ctkPluginPrivate(ctkPlugin& qq,
+  ctkPluginPrivate(QWeakPointer<ctkPlugin> qq,
                    ctkPluginFrameworkContext* fw,
                    long id,
                    const QString& loc,

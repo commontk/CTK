@@ -52,7 +52,7 @@ class ctkPluginResourceTreeNode : public ctkPluginResourceTreeItem
 {
 public:
 
-  ctkPluginResourceTreeNode(const ctkPlugin* plugin, const QString& path, ctkPluginResourceTreeNode* parent = 0);
+  ctkPluginResourceTreeNode(QSharedPointer<const ctkPlugin> plugin, const QString& path, ctkPluginResourceTreeNode* parent = 0);
 
   ~ctkPluginResourceTreeNode();
 
@@ -64,7 +64,7 @@ public:
 
 private:
 
-  const ctkPlugin* plugin;
+  QSharedPointer<const ctkPlugin> plugin;
   QList<ctkPluginResourceTreeItem*> children;
 
 };
@@ -136,7 +136,7 @@ ctkPluginResourceTreeNode* ctkPluginResourceTreeItem::parent() const
 }
 
 
-ctkPluginResourceTreeNode::ctkPluginResourceTreeNode(const ctkPlugin* plugin, const QString& path, ctkPluginResourceTreeNode* parent)
+ctkPluginResourceTreeNode::ctkPluginResourceTreeNode(QSharedPointer<const ctkPlugin> plugin, const QString& path, ctkPluginResourceTreeNode* parent)
   : ctkPluginResourceTreeItem(path, parent), plugin(plugin)
 {
   QStringList pathEntries = plugin->getResourceList(path);
@@ -176,7 +176,7 @@ int ctkPluginResourceTreeNode::indexOf(ctkPluginResourceTreeItem* child) const
 }
 
 
-ctkPluginResourcesTreeModel::ctkPluginResourcesTreeModel(const ctkPlugin* plugin, QObject* parent)
+ctkPluginResourcesTreeModel::ctkPluginResourcesTreeModel(QSharedPointer<const ctkPlugin> plugin, QObject* parent)
   : QAbstractItemModel(parent), plugin(plugin)
 {
   rootItem = new ctkPluginResourceTreeNode(plugin, "/");

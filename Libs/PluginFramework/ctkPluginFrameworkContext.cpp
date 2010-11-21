@@ -34,12 +34,13 @@ int ctkPluginFrameworkContext::globalId = 1;
 
 ctkPluginFrameworkContext::ctkPluginFrameworkContext(
     const ctkProperties& initProps)
-      : plugins(0), services(0), systemPlugin(new ctkPluginFramework(this)),
+      : plugins(0), services(0), systemPlugin(new ctkPluginFramework()),
       storage(0), firstInit(true), props(initProps), initialized(false)
 {
   {
     QMutexLocker lock(&globalFwLock);
     id = globalId++;
+    systemPlugin->ctkPlugin::init(new ctkPluginFrameworkPrivate(systemPlugin, this));
   }
 
   log() << "created";
@@ -140,7 +141,7 @@ void ctkPluginFrameworkContext::resolvePlugin(ctkPluginPrivate* plugin)
   if (tempResolved.size() > 0 && !tempResolved.contains(plugin))
   {
     ctkPluginException pe("resolve: InternalError1!", ctkPluginException::RESOLVE_ERROR);
-    listeners.frameworkError(plugin->q_func(), pe);
+    listeners.frameworkError(plugin->q_func().data(), pe);
     throw pe;
   }
 

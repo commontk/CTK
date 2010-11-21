@@ -120,7 +120,7 @@ public:
    *
    * @return A list of <code>ctkPlugin</code>s.
    */
-  QList<ctkPlugin*> getPlugins() const;
+  QList<QSharedPointer<ctkPlugin> > getPlugins() const;
 
   /**
    * Returns the customized object for the specified <code>ctkPlugin</code> if
@@ -131,7 +131,7 @@ public:
    *         <code>null</code> if the specified <code>ctkPlugin</code> is not
    *         being tracked.
    */
-  QVariant getObject(ctkPlugin* plugin) const;
+  QVariant getObject(QSharedPointer<ctkPlugin> plugin) const;
 
   /**
    * Remove a plugin from this <code>ctkPluginTracker</code>.
@@ -143,7 +143,7 @@ public:
    *
    * @param plugin The <code>ctkPlugin</code> to be removed.
    */
-  void remove(ctkPlugin* plugin);
+  void remove(QSharedPointer<ctkPlugin> plugin);
 
   /**
    * Return the number of plugins being tracked by this
@@ -200,7 +200,7 @@ protected:
    * @return The specified plugin.
    * @see ctkPluginTrackerCustomizer::addingPlugin(ctkPlugin*, const ctkPluginEvent&)
    */
-  QVariant addingPlugin(ctkPlugin* plugin, const ctkPluginEvent& event);
+  QVariant addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event);
 
   /**
    * Default implementation of the
@@ -220,7 +220,7 @@ protected:
    * @param object The customized object for the specified ctkPlugin.
    * @see ctkPluginTrackerCustomizer::modifiedPlugin(ctkPlugin*, const ctkPluginEvent&, QVariant)
    */
-  void modifiedPlugin(ctkPlugin* plugin, const ctkPluginEvent& event, QVariant object);
+  void modifiedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, QVariant object);
 
   /**
    * Default implementation of the
@@ -240,7 +240,7 @@ protected:
    * @param object The customized object for the specified plugin.
    * @see ctkPluginTrackerCustomizer::removedPlugin(ctkPlugin*, const ctkPluginEvent&, QVariant)
    */
-  void removedPlugin(ctkPlugin* plugin, const ctkPluginEvent& event, QVariant object);
+  void removedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, QVariant object);
 
 private:
 

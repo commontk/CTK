@@ -29,22 +29,26 @@
 #include <QStringList>
 
 
-ctkPlugin::ctkPlugin(ctkPluginFrameworkContext* fw,
-                     ctkPluginArchive* pa)
-                       : d_ptr(new ctkPluginPrivate(*this, fw, pa))
+ctkPlugin::ctkPlugin()
 {
 
 }
 
-ctkPlugin::ctkPlugin(ctkPluginPrivate& dd)
-  : d_ptr(&dd)
+void ctkPlugin::init(ctkPluginPrivate* dd)
 {
+  d_ptr.reset(dd);
+}
 
+void ctkPlugin::init(const QWeakPointer<ctkPlugin>& self,
+                     ctkPluginFrameworkContext* fw,
+                     ctkPluginArchive* pa)
+{
+  d_ptr.reset(new ctkPluginPrivate(self, fw, pa));
 }
 
 ctkPlugin::~ctkPlugin()
 {
-  delete d_ptr;
+
 }
 
 ctkPlugin::State ctkPlugin::getState() const
@@ -90,7 +94,7 @@ void ctkPlugin::start(const StartOptions& options)
     if (STARTING == d->state) return;
     d->state = STARTING;
     d->pluginContext.reset(new ctkPluginContext(this->d_func()));
-    ctkPluginEvent pluginEvent(ctkPluginEvent::LAZY_ACTIVATION, this);
+    ctkPluginEvent pluginEvent(ctkPluginEvent::LAZY_ACTIVATION, d->q_ptr);
     d->fwCtx->listeners.emitPluginChanged(pluginEvent);
   }
   else
@@ -160,7 +164,7 @@ void ctkPlugin::stop(const StopOptions& options)
 
   if (d->state != UNINSTALLED)
   {
-    d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, this));
+    d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, d->q_ptr));
   }
   if (savedException)
   {
@@ -266,11 +270,11 @@ void ctkPlugin::uninstall()
     // Broadcast events
     if (wasResolved)
     {
-      d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNRESOLVED, this));
+      d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNRESOLVED, d->q_ptr));
     }
 
     d->state = UNINSTALLED;
-    d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNINSTALLED, this));
+    d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNINSTALLED, d->q_ptr));
 
     break;
   }

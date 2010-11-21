@@ -94,7 +94,7 @@
      *         the classes named when the service was registered.
      * @see ctkPluginContext#getService
      */
-    virtual QObject* getService(ctkPlugin* plugin, ctkServiceRegistration* registration) = 0;
+    virtual QObject* getService(QSharedPointer<ctkPlugin> plugin, ctkServiceRegistration* registration) = 0;
 
     /**
      * Releases a service object.
@@ -110,7 +110,7 @@
      *        <code>ctkServiceFactory::getService</code> method.
      * @see ctkPluginContext#ungetService
      */
-    virtual void ungetService(ctkPlugin* plugin, ctkServiceRegistration* registration,
+    virtual void ungetService(QSharedPointer<ctkPlugin> plugin, ctkServiceRegistration* registration,
         QObject* service) = 0;
   };
 

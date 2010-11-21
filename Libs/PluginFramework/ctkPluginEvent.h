@@ -23,6 +23,7 @@
 #define CTKPLUGINEVENT_H
 
 #include <QSharedDataPointer>
+#include <QSharedPointer>
 
 #include "ctkPluginFrameworkExport.h"
 
@@ -166,7 +167,7 @@ public:
    * @param type The event type.
    * @param plugin The plugin which had a lifecycle change.
    */
-  ctkPluginEvent(Type type, ctkPlugin* plugin);
+  ctkPluginEvent(Type type, QSharedPointer<ctkPlugin> plugin);
 
   ctkPluginEvent(const ctkPluginEvent& other);
 
@@ -177,7 +178,7 @@ public:
    *
    * @return The plugin that had a change occur in its lifecycle.
    */
-  ctkPlugin* getPlugin() const;
+  QSharedPointer<ctkPlugin> getPlugin() const;
 
   /**
    * Returns the type of lifecyle event. The type values are:

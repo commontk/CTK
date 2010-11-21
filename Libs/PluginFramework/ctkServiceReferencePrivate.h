@@ -24,6 +24,7 @@
 #define CTKSERVICEREFERENCEPRIVATE_H
 
 #include <QAtomicInt>
+#include <QSharedPointer>
 
 #include "ctkPluginFramework_global.h"
 
@@ -46,7 +47,7 @@ public:
     * @param plugin requester of service.
     * @return Service requested or null in case of failure.
     */
-  QObject* getService(ctkPlugin* plugin);
+  QObject* getService(QSharedPointer<ctkPlugin> plugin);
 
   /**
    * Unget the service object.
@@ -58,7 +59,7 @@ public:
    * @return True if service was remove or false if only refence counter was
    *         decremented.
    */
-  bool ungetService(ctkPlugin* plugin, bool checkRefCounter);
+  bool ungetService(QSharedPointer<ctkPlugin> plugin, bool checkRefCounter);
 
   /**
    * Get all properties registered with this service.

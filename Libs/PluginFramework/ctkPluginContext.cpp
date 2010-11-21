@@ -66,20 +66,20 @@ QVariant ctkPluginContext::getProperty(const QString& key) const
   return d->plugin->fwCtx->props.value(key);
 }
 
-ctkPlugin* ctkPluginContext::getPlugin() const
+QSharedPointer<ctkPlugin> ctkPluginContext::getPlugin() const
 {
   Q_D(const ctkPluginContext);
   d->isPluginContextValid();
   return d->plugin->q_func();
 }
 
-ctkPlugin* ctkPluginContext::getPlugin(long id) const
+QSharedPointer<ctkPlugin> ctkPluginContext::getPlugin(long id) const
 {
   Q_D(const ctkPluginContext);
   return d->plugin->fwCtx->plugins->getPlugin(id);
 }
 
-QList<ctkPlugin*> ctkPluginContext::getPlugins() const
+QList<QSharedPointer<ctkPlugin> > ctkPluginContext::getPlugins() const
 {
   Q_D(const ctkPluginContext);
   d->isPluginContextValid();
@@ -162,7 +162,7 @@ void ctkPluginContext::connectServiceListener(QObject* receiver, const char* slo
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  d->plugin->fwCtx->listeners.addServiceSlot(getPlugin(), receiver, slot, filter);
+  d->plugin->fwCtx->listeners.addServiceSlot(getPlugin().data(), receiver, slot, filter);
 }
 
 void ctkPluginContext::disconnectServiceListener(QObject* receiver,
@@ -170,5 +170,5 @@ void ctkPluginContext::disconnectServiceListener(QObject* receiver,
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  d->plugin->fwCtx->listeners.removeServiceSlot(getPlugin(), receiver, slot);
+  d->plugin->fwCtx->listeners.removeServiceSlot(getPlugin().data(), receiver, slot);
 }

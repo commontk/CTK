@@ -29,7 +29,7 @@ class ctkPluginEventData : public QSharedData
 {
 public:
 
-  ctkPluginEventData(ctkPluginEvent::Type type, ctkPlugin* plugin)
+  ctkPluginEventData(ctkPluginEvent::Type type, QSharedPointer<ctkPlugin> plugin)
     : type(type), plugin(plugin)
   {
 
@@ -42,7 +42,7 @@ public:
   }
 
   const ctkPluginEvent::Type type;
-  ctkPlugin *const plugin;
+  const QSharedPointer<ctkPlugin> plugin;
 };
 
 
@@ -62,7 +62,7 @@ bool ctkPluginEvent::isNull() const
   return !d;
 }
 
-ctkPluginEvent::ctkPluginEvent(Type type, ctkPlugin* plugin)
+ctkPluginEvent::ctkPluginEvent(Type type, QSharedPointer<ctkPlugin> plugin)
   : d(new ctkPluginEventData(type, plugin))
 {
 
@@ -80,7 +80,7 @@ ctkPluginEvent& ctkPluginEvent::operator=(const ctkPluginEvent& other)
   return *this;
 }
 
-ctkPlugin* ctkPluginEvent::getPlugin() const
+QSharedPointer<ctkPlugin> ctkPluginEvent::getPlugin() const
 {
   return d->plugin;
 }
@@ -113,7 +113,7 @@ QDebug operator<<(QDebug debug, const ctkPluginEvent& event)
 {
   if (event.isNull()) return debug << "NONE";
 
-  ctkPlugin* p = event.getPlugin();
+  QSharedPointer<ctkPlugin> p = event.getPlugin();
   debug.nospace() << event.getType() << " #" << p->getPluginId() << " (" << p->getLocation() << ")";
   return debug.maybeSpace();
 }

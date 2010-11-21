@@ -115,7 +115,7 @@ protected:
 
   friend class ctkPluginFrameworkContext;
 
-  ctkPluginFramework(ctkPluginFrameworkContext* fw);
+  ctkPluginFramework();
 
 };
 

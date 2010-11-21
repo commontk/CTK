@@ -27,7 +27,7 @@
 #include "ctkPluginFrameworkContext_p.h"
 
 
-ctkPluginFrameworkPrivate::ctkPluginFrameworkPrivate(ctkPluginFramework& qq, ctkPluginFrameworkContext* fw)
+ctkPluginFrameworkPrivate::ctkPluginFrameworkPrivate(QWeakPointer<ctkPlugin> qq, ctkPluginFrameworkContext* fw)
   : ctkPluginPrivate(qq, fw, 0, ctkPluginConstants::SYSTEM_PLUGIN_LOCATION,
                      ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
                      // TODO: read version from the manifest resource

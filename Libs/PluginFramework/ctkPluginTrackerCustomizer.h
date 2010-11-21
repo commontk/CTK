@@ -81,7 +81,7 @@ struct ctkPluginTrackerCustomizer {
    *         object or <code>null</code> if the specified <code>ctkPlugin</code>
    *         object should not be tracked.
    */
-  virtual QVariant addingPlugin(ctkPlugin* plugin, const ctkPluginEvent& event) = 0;
+  virtual QVariant addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event) = 0;
 
   /**
    * A plugin tracked by the <code>ctkPluginTracker</code> has been modified.
@@ -97,7 +97,7 @@ struct ctkPluginTrackerCustomizer {
    *        with the call to this method.
    * @param object The tracked object for the specified plugin.
    */
-  virtual void modifiedPlugin(ctkPlugin* plugin, const ctkPluginEvent& event,
+  virtual void modifiedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event,
       QVariant object) = 0;
 
   /**
@@ -114,7 +114,7 @@ struct ctkPluginTrackerCustomizer {
    *        with the call to this method.
    * @param object The tracked object for the specified plugin.
    */
-  virtual void removedPlugin(ctkPlugin* plugin, const ctkPluginEvent& event,
+  virtual void removedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event,
       QVariant object) = 0;
 };
 

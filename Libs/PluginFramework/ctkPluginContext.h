@@ -119,7 +119,7 @@ public:
    * @throws std::logic_error If this ctkPluginContext is no
    *         longer valid.
    */
-  ctkPlugin* getPlugin() const;
+  QSharedPointer<ctkPlugin> getPlugin() const;
 
   /**
    * Returns the plugin with the specified identifier.
@@ -128,7 +128,7 @@ public:
    * @return A <code>ctkPlugin</code> object or <code>0</code> if the
    *         identifier does not match any installed plugin.
    */
-  ctkPlugin* getPlugin(long id) const;
+  QSharedPointer<ctkPlugin> getPlugin(long id) const;
 
 
   /**
@@ -142,7 +142,7 @@ public:
    * @return A QList of <code>ctkPlugin</code> objects, one object per
    *         installed plugin.
    */
-  QList<ctkPlugin*> getPlugins() const;
+  QList<QSharedPointer<ctkPlugin> > getPlugins() const;
 
   /**
    * Registers the specified service object with the specified properties

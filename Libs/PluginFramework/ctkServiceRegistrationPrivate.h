@@ -68,12 +68,12 @@
      * Plugins dependent on this service. Integer is used as
      * reference counter, counting number of unbalanced getService().
      */
-    QHash<ctkPlugin*,int> dependents;
+    QHash<QSharedPointer<ctkPlugin>,int> dependents;
 
     /**
      * Object instances that factory has produced.
      */
-    QHash<ctkPlugin*, QObject*> serviceInstances;
+    QHash<QSharedPointer<ctkPlugin>, QObject*> serviceInstances;
 
     /**
      * Is service available. I.e., if <code>true</code> then holders
@@ -106,7 +106,7 @@
      * @param p Plugin to check
      * @return true if plugin uses this service
      */
-    bool isUsedByPlugin(ctkPlugin* p);
+    bool isUsedByPlugin(QSharedPointer<ctkPlugin> p);
 
     virtual QObject* getService();
 

@@ -70,7 +70,7 @@ public:
    * @GuardedBy this
    */
   void setInitial(const QList<Item>& list);
-  void setInitial(const QList<Item*>& list);
+  //void setInitial(const QList<Item*>& list);
 
   /**
    * Track the initial list of items. This is called after events can begin to

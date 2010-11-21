@@ -59,7 +59,7 @@ void ctkPluginTracker::open()
     {
       QMutexLocker lockT(t.data());
       d->context->connectPluginListener(t.data(), SLOT(pluginChanged(ctkPluginEvent)), Qt::DirectConnection);
-      QList<ctkPlugin*> plugins = d->context->getPlugins();
+      QList<QSharedPointer<ctkPlugin> > plugins = d->context->getPlugins();
       int length = plugins.size();
       for (int i = 0; i < length; i++)
       {
@@ -67,10 +67,10 @@ void ctkPluginTracker::open()
         if ((d->mask & state) == 0)
         {
           /* null out plugins whose states are not interesting */
-          plugins[i] = 0;
+          plugins[i].clear();
         }
       }
-      plugins.removeAll(0);
+      plugins.removeAll(QSharedPointer<ctkPlugin>());
       /* set tracked with the initial bundles */
       t->setInitial(plugins);
     }
@@ -83,7 +83,7 @@ void ctkPluginTracker::open()
 void ctkPluginTracker::close()
 {
   Q_D(ctkPluginTracker);
-  QList<ctkPlugin*> plugins;
+  QList<QSharedPointer<ctkPlugin> > plugins;
   QSharedPointer<ctkTrackedPlugin> outgoing;
   {
     QMutexLocker lock(&d->mutex);
@@ -105,19 +105,19 @@ void ctkPluginTracker::close()
     outgoing->disconnect(SLOT(pluginChanged(ctkPluginEvent)));
   }
 
-  foreach (ctkPlugin* plugin, plugins)
+  foreach (QSharedPointer<ctkPlugin> plugin, plugins)
   {
     outgoing->untrack(plugin, ctkPluginEvent());
   }
 }
 
-QList<ctkPlugin*> ctkPluginTracker::getPlugins() const
+QList<QSharedPointer<ctkPlugin> > ctkPluginTracker::getPlugins() const
 {
   Q_D(const ctkPluginTracker);
   QSharedPointer<ctkTrackedPlugin> t = d->tracked();
   if (t.isNull())
   { /* if ctkPluginTracker is not open */
-    return QList<ctkPlugin*>();
+    return QList<QSharedPointer<ctkPlugin> >();
   }
 
   {
@@ -126,7 +126,7 @@ QList<ctkPlugin*> ctkPluginTracker::getPlugins() const
   }
 }
 
-QVariant ctkPluginTracker::getObject(ctkPlugin* plugin) const
+QVariant ctkPluginTracker::getObject(QSharedPointer<ctkPlugin> plugin) const
 {
   Q_D(const ctkPluginTracker);
   QSharedPointer<ctkTrackedPlugin> t = d->tracked();
@@ -141,7 +141,7 @@ QVariant ctkPluginTracker::getObject(ctkPlugin* plugin) const
   }
 }
 
-void ctkPluginTracker::remove(ctkPlugin* plugin)
+void ctkPluginTracker::remove(QSharedPointer<ctkPlugin> plugin)
 {
   Q_D(ctkPluginTracker);
   QSharedPointer<ctkTrackedPlugin> t = d->tracked();
@@ -182,7 +182,7 @@ int ctkPluginTracker::getTrackingCount() const
   }
 }
 
-QVariant ctkPluginTracker::addingPlugin(ctkPlugin* plugin, const ctkPluginEvent& event)
+QVariant ctkPluginTracker::addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event)
 {
   Q_UNUSED(event)
 
@@ -191,7 +191,7 @@ QVariant ctkPluginTracker::addingPlugin(ctkPlugin* plugin, const ctkPluginEvent&
   return var;
 }
 
-void ctkPluginTracker::modifiedPlugin(ctkPlugin* plugin, const ctkPluginEvent& event, QVariant object)
+void ctkPluginTracker::modifiedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, QVariant object)
 {
   Q_UNUSED(plugin)
   Q_UNUSED(event)
@@ -199,7 +199,7 @@ void ctkPluginTracker::modifiedPlugin(ctkPlugin* plugin, const ctkPluginEvent& e
   /* do nothing */
 }
 
-void ctkPluginTracker::removedPlugin(ctkPlugin* plugin, const ctkPluginEvent& event, QVariant object)
+void ctkPluginTracker::removedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, QVariant object)
 {
   Q_UNUSED(plugin)
   Q_UNUSED(event)

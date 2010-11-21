@@ -54,7 +54,7 @@ private:
 
   QString getStringForState(const ctkPlugin::State state) const;
 
-  QList<ctkPlugin*> plugins;
+  QList<QSharedPointer<ctkPlugin> > plugins;
 };
 
 #endif // CTKPLUGINTABLEMODEL_H

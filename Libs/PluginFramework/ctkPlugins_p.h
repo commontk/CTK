@@ -94,7 +94,7 @@
      * @return ctkPlugin or null
      *         if the plugin was not found.
      */
-    ctkPlugin* getPlugin(int id) const;
+    QSharedPointer<ctkPlugin> getPlugin(int id) const;
 
 
     /**
@@ -122,7 +122,7 @@
      *
      * @return A ctkPlugin list with plugins.
      */
-    QList<ctkPlugin*> getPlugins() const;
+    QList<QSharedPointer<ctkPlugin> > getPlugins() const;
 
 
     /**

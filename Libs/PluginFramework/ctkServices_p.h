@@ -182,7 +182,7 @@ public:
    * @param p The plugin
    * @return A set of {@link ctkServiceRegistration} objects
    */
-  QList<ctkServiceRegistration*> getUsedByPlugin(ctkPlugin* p) const;
+  QList<ctkServiceRegistration*> getUsedByPlugin(QSharedPointer<ctkPlugin> p) const;
 
   QString getQServiceManagerErrorString(QtMobility::QServiceManager::Error error);
 

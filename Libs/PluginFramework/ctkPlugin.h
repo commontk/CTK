@@ -650,13 +650,17 @@ protected:
   friend class ctkPlugins;
   friend class ctkServiceReferencePrivate;
 
-  ctkPluginPrivate * const d_ptr;
+  QScopedPointer<ctkPluginPrivate> d_ptr;
 
-  ctkPlugin(ctkPluginFrameworkContext* fw, ctkPluginArchive* ba);
-  ctkPlugin(ctkPluginPrivate& dd);
+  Q_DISABLE_COPY(ctkPlugin)
+
+  ctkPlugin();
+  void init(ctkPluginPrivate* dd);
+  void init(const QWeakPointer<ctkPlugin>& self, ctkPluginFrameworkContext* fw, ctkPluginArchive* ba);
 };
 
 Q_DECLARE_METATYPE(ctkPlugin*)
+Q_DECLARE_METATYPE(QSharedPointer<ctkPlugin>)
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPlugin::States)
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPlugin::StartOptions)

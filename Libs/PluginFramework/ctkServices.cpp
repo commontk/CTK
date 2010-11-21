@@ -418,7 +418,7 @@ QList<ctkServiceRegistration*> ctkServices::getRegisteredByPlugin(ctkPluginPriva
 }
 
 
-QList<ctkServiceRegistration*> ctkServices::getUsedByPlugin(ctkPlugin* p) const
+QList<ctkServiceRegistration*> ctkServices::getUsedByPlugin(QSharedPointer<ctkPlugin> p) const
 {
   QMutexLocker lock(&mutex);
 

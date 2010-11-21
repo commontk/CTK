@@ -63,7 +63,7 @@ private:
 
   void closeEvent(QCloseEvent* closeEvent);
 
-  void updatePluginToolbar(ctkPlugin* plugin);
+  void updatePluginToolbar(QSharedPointer<ctkPlugin> plugin);
   void startPlugin(ctkPlugin::StartOptions options);
 
   QMap<ctkPluginEvent::Type, QString> pluginEventTypeToString;
