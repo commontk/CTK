@@ -101,10 +101,15 @@ void ctkVTKScalarBarWidget::setScalarBarWidget(vtkScalarBarWidget* scalarBarWidg
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   vtkScalarBarActor* newActor =
     scalarBarWidget ? scalarBarWidget->GetScalarBarActor() : 0;
+  qvtkReconnect(d->ScalarBarWidget, scalarBarWidget, vtkCommand::EnableEvent, 
+              this, SLOT(updateFromScalarBarWidget()));
+  qvtkReconnect(d->ScalarBarWidget, scalarBarWidget, vtkCommand::DisableEvent, 
+              this, SLOT(updateFromScalarBarWidget()));
   qvtkReconnect(oldActor, newActor, vtkCommand::ModifiedEvent,
                 this, SLOT(updateFromScalarBarWidget()));
   d->ScalarBarWidget = scalarBarWidget;
   this->updateFromScalarBarWidget();
+  
 }
 
 //-----------------------------------------------------------------------------
@@ -136,6 +141,8 @@ void ctkVTKScalarBarWidget::updateFromScalarBarWidget()
     actor ? actor->GetLabelTextProperty() : 0);
   d->TitleTextPropertyWidget->setText(actor->GetTitle());
   d->LabelsTextPropertyWidget->setText(actor->GetLabelFormat());
+  
+  emit modified();
 }
 
 //-----------------------------------------------------------------------------

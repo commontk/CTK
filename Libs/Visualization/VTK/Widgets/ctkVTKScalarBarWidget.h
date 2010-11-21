@@ -53,6 +53,9 @@ public slots:
   void setTitle(const QString& title);
   void setLabelsFormat(const QString& format);
 
+signals:
+  void modified();
+
 protected slots:
   void updateFromScalarBarWidget();
 
