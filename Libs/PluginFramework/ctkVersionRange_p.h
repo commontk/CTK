@@ -33,8 +33,8 @@
 
   private:
 
-    ctkVersion* low;
-    ctkVersion* high;
+    ctkVersion low;
+    ctkVersion high;
     bool lowIncluded;
     bool highIncluded;
 
@@ -43,7 +43,7 @@
     /**
      * The empty version range "[0.0.0,inf)".
      */
-    static const ctkVersionRange& defaultVersionRange();
+    static ctkVersionRange defaultVersionRange();
 
     /**
      * Construct a ctkVersionRange object.

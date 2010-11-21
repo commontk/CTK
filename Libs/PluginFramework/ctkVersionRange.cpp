@@ -24,7 +24,7 @@
 #include <stdexcept>
 
 
-  const ctkVersionRange& ctkVersionRange::defaultVersionRange()
+  ctkVersionRange ctkVersionRange::defaultVersionRange()
   {
     static ctkVersionRange defaultVR;
     return defaultVR;
@@ -43,8 +43,8 @@
 
       if (comma > 0 && (cp || cb))
       {
-        low = new ctkVersion(vr.mid(1, comma-1).trimmed());
-        high = new ctkVersion(vr.mid(comma+1, vr.length()-comma-2).trimmed());
+        low = ctkVersion(vr.mid(1, comma-1).trimmed());
+        high = ctkVersion(vr.mid(comma+1, vr.length()-comma-2).trimmed());
         lowIncluded = ob;
         highIncluded = cb;
       }
@@ -55,8 +55,8 @@
     }
     else
     {
-      low = new ctkVersion(vr);
-      high = 0;
+      low = ctkVersion(vr);
+      high = ctkVersion();
       lowIncluded = true;
       highIncluded = false;
     }
@@ -64,16 +64,14 @@
 
   ctkVersionRange::ctkVersionRange()
   {
-    low = new ctkVersion(ctkVersion::emptyVersion());
-    high = 0;
+    low = ctkVersion(ctkVersion::emptyVersion());
+    high = ctkVersion();
     lowIncluded = true;
     highIncluded = false;
   }
 
   ctkVersionRange::~ctkVersionRange()
   {
-    delete low;
-    delete high;
   }
 
   bool ctkVersionRange::isSpecified() const
@@ -87,15 +85,15 @@
     {
       return true;
     }
-    int c = low->compare(ver);
+    int c = low.compare(ver);
 
     if (c < 0 || (c == 0 && lowIncluded))
     {
-      if (!high)
+      if (high.isUndefined())
       {
         return true;
       }
-      c = high->compare(ver);
+      c = high.compare(ver);
       return c > 0 || (c == 0 && highIncluded);
     }
     return false;
@@ -106,15 +104,15 @@
     if (*this == range) {
       return true;
     }
-    int c = low->compare(*range.low);
+    int c = low.compare(range.low);
 
     if (c < 0 || (c == 0 && lowIncluded == range.lowIncluded))
     {
-      if (!high)
+      if (high.isUndefined())
       {
         return true;
       }
-      c = high->compare(*range.high);
+      c = high.compare(range.high);
       return c > 0 || (c == 0 && highIncluded == range.highIncluded);
     }
     return false;
@@ -122,12 +120,12 @@
 
   int ctkVersionRange::compare(const ctkVersionRange& obj) const
   {
-    return low->compare(*obj.low);
+    return low.compare(obj.low);
   }
 
   QString ctkVersionRange::toString() const
   {
-    if (high)
+    if (!high.isUndefined())
     {
       QString res;
       if (lowIncluded)
@@ -138,7 +136,7 @@
       {
         res += '(';
       }
-      res += low->toString() + "," + high->toString();
+      res += low.toString() + "," + high.toString();
       if (highIncluded)
       {
         res += ']';
@@ -151,17 +149,17 @@
     }
     else
     {
-      return low->toString();
+      return low.toString();
     }
   }
 
   bool ctkVersionRange::operator==(const ctkVersionRange& r) const
   {
-    if (*low == *(r.low))
+    if (low == r.low)
     {
-      if (high)
+      if (!high.isUndefined())
       {
-        return (*high == *(r.high))  &&
+        return (high == r.high)  &&
           (lowIncluded == r.lowIncluded) &&
           (highIncluded == r.highIncluded);
       }

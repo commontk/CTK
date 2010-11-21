@@ -30,10 +30,16 @@
 const QString ctkVersion::SEPARATOR = ".";
 const QRegExp ctkVersion::RegExp = QRegExp("[a-zA-Z0-9_\\-]*");
 
-const ctkVersion& ctkVersion::emptyVersion()
+ctkVersion ctkVersion::emptyVersion()
 {
-  static ctkVersion emptyV;
+  static ctkVersion emptyV(false);
   return emptyV;
+}
+
+ctkVersion ctkVersion::undefinedVersion()
+{
+  static ctkVersion undefinedV(true);
+  return undefinedV;
 }
 
 ctkVersion& ctkVersion::operator=(const ctkVersion& v)
@@ -42,11 +48,12 @@ ctkVersion& ctkVersion::operator=(const ctkVersion& v)
   minorVersion = v.minorVersion;
   microVersion = v.microVersion;
   qualifier = v.qualifier;
+  undefined = v.undefined;
   return *this;
 }
 
-ctkVersion::ctkVersion()
-  : majorVersion(0), minorVersion(0), microVersion(0), qualifier("")
+ctkVersion::ctkVersion(bool undefined)
+  : majorVersion(0), minorVersion(0), microVersion(0), qualifier(""), undefined(undefined)
 {
 
 }
@@ -56,22 +63,26 @@ void ctkVersion::validate()
 {
   if (!RegExp.exactMatch(qualifier))
     throw std::invalid_argument(std::string("invalid qualifier: ") + qualifier.toStdString());
+
+  undefined = false;
 }
 
 ctkVersion::ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion)
-  : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier("")
+  : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier(""),
+    undefined(false)
 {
 
 }
 
 ctkVersion::ctkVersion(unsigned int majorVersion, unsigned int minorVersion, unsigned int microVersion, const QString& qualifier)
-   : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier(qualifier)
+   : majorVersion(majorVersion), minorVersion(minorVersion), microVersion(microVersion), qualifier(qualifier),
+     undefined(true)
 {
   this->validate();
 }
 
 ctkVersion::ctkVersion(const QString& version)
-  : majorVersion(0), minorVersion(0), microVersion(0)
+  : majorVersion(0), minorVersion(0), microVersion(0), undefined(true)
 {
   unsigned int maj = 0;
   unsigned int min = 0;
@@ -115,7 +126,8 @@ ctkVersion::ctkVersion(const QString& version)
 
 ctkVersion::ctkVersion(const ctkVersion& version)
 : majorVersion(version.majorVersion), minorVersion(version.minorVersion),
-  microVersion(version.microVersion), qualifier(version.qualifier)
+  microVersion(version.microVersion), qualifier(version.qualifier),
+  undefined(version.undefined)
 {
 
 }
@@ -136,28 +148,39 @@ ctkVersion ctkVersion::parseVersion(const QString& version)
   return ctkVersion(version2);
 }
 
+bool ctkVersion::isUndefined() const
+{
+  return undefined;
+}
+
 unsigned int ctkVersion::getMajor() const
 {
+  if (undefined) throw std::logic_error("Version undefined");
   return majorVersion;
 }
 
 unsigned int ctkVersion::getMinor() const
 {
+  if (undefined) throw std::logic_error("Version undefined");
   return minorVersion;
 }
 
 unsigned int ctkVersion::getMicro() const
 {
+  if (undefined) throw std::logic_error("Version undefined");
   return microVersion;
 }
 
 QString ctkVersion::getQualifier() const
 {
+  if (undefined) throw std::logic_error("Version undefined");
   return qualifier;
 }
 
 QString ctkVersion::toString() const
 {
+  if (undefined) return "undefined";
+
   QString result;
   result += QString::number(majorVersion) + SEPARATOR + QString::number(minorVersion) + SEPARATOR + QString::number(microVersion);
   if (!qualifier.isEmpty())
@@ -174,6 +197,10 @@ bool ctkVersion::operator==(const ctkVersion& other) const
     return true;
   }
 
+  if (other.undefined && this->undefined) return true;
+  if (this->undefined) throw std::logic_error("Version undefined");
+  if (other.undefined) return false;
+
   return (majorVersion == other.majorVersion) && (minorVersion == other.minorVersion) && (microVersion
       == other.microVersion) && qualifier == other.qualifier;
 }
@@ -184,6 +211,9 @@ int ctkVersion::compare(const ctkVersion& other) const
   { // quicktest
     return 0;
   }
+
+  if (this->undefined || other.undefined)
+    throw std::logic_error("Cannot compare undefined version");
 
   if (majorVersion < other.majorVersion)
   {

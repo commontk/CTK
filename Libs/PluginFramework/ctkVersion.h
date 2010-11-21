@@ -62,6 +62,8 @@
     static const QString SEPARATOR; //  = "."
     static const QRegExp RegExp;
 
+    bool undefined;
+
 
     /**
      * Called by the ctkVersion constructors to validate the version components.
@@ -72,14 +74,20 @@
 
     ctkVersion& operator=(const ctkVersion& v);
 
-    ctkVersion();
+    ctkVersion(bool undefined = false);
 
   public:
 
     /**
      * The empty version "0.0.0".
      */
-    static const ctkVersion& emptyVersion();
+    static ctkVersion emptyVersion();
+
+    /**
+     * Creates an undefined version identifier, representing either
+     * infinity or minus infinity.
+     */
+    static ctkVersion undefinedVersion();
 
     /**
      * Creates a version identifier from the specified numerical components.
@@ -148,6 +156,14 @@
      *         returned.
      */
     static ctkVersion parseVersion(const QString& version);
+
+    /**
+     * Returns the undefined state of this version identifier.
+     *
+     * @return <code>true</code> if this version identifier is undefined,
+     *         <code>false</code> otherwise.
+     */
+    bool isUndefined() const;
 
     /**
      * Returns the majorVersion component of this version identifier.
