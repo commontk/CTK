@@ -35,7 +35,7 @@ const QString ctkPluginArchive::AUTOSTART_SETTING_ACTIVATION_POLICY("activation_
 ctkPluginArchive::ctkPluginArchive(ctkPluginStorage* pluginStorage,
                                    const QUrl& pluginLocation, const QString& localPluginPath,
                                    int pluginId)
-                                     : autostartSetting(-1), id(pluginId), lastModified(0),
+                                     : autostartSetting(-1), id(pluginId),
                                      location(pluginLocation), localPluginPath(localPluginPath),
                                      storage(pluginStorage)
 {
@@ -99,14 +99,14 @@ void ctkPluginArchive::setStartLevel(int level)
   //    }
 }
 
-qtimestamp ctkPluginArchive::getLastModified() const
+QDateTime ctkPluginArchive::getLastModified() const
 {
   return lastModified;
 }
 
-void ctkPluginArchive::setLastModified(qtimestamp clockticks)
+void ctkPluginArchive::setLastModified(const QDateTime& dateTime)
 {
-  lastModified = clockticks;
+  lastModified = dateTime;
   //TDOO
   //putContent(...)
 }

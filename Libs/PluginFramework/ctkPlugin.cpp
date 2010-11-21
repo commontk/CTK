@@ -175,6 +175,107 @@ void ctkPlugin::stop(const StopOptions& options)
   }
 }
 
+void ctkPlugin::uninstall()
+{
+  bool wasResolved = false;
+
+  Q_D(ctkPlugin);
+  if (d->archive)
+  {
+    try
+    {
+      d->archive->setStartLevel(-2); // Mark as uninstalled
+    }
+    catch (...)
+    { }
+  }
+
+  d->cachedHeaders = getHeaders();
+
+  switch (d->state)
+  {
+  case UNINSTALLED:
+    throw std::logic_error("Plugin is in UNINSTALLED state");
+
+  case STARTING: // Lazy start
+  case ACTIVE:
+  case STOPPING:
+    try
+    {
+      //TODO: If activating or deactivating, wait a litle
+      // we don't use mutliple threads to start plugins for now
+      //d->waitOnActivation(fwCtx.packages, "Bundle.uninstall", false);
+      if (d->state & (ACTIVE | STARTING))
+      {
+        try
+        {
+          d->stop0(d->state == ACTIVE);
+        }
+        catch (const std::exception& exception)
+        {
+          // NYI! not call inside lock
+          d->fwCtx->listeners.frameworkError(this, exception);
+        }
+      }
+    }
+    catch (const std::exception& e)
+    {
+      d->deactivating = false;
+      //fwCtx.packages.notifyAll();
+      d->fwCtx->listeners.frameworkError(this, e);
+    }
+    // Fall through
+  case RESOLVED:
+    wasResolved = true;
+    // Fall through
+  case INSTALLED:
+    d->fwCtx->plugins->remove(d->location);
+    d->pluginActivator = 0;
+
+    //TODO: delete plugin specific storage area
+//    if (d->pluginDir != null)
+//    {
+//      if (!d->pluginDir.delete())
+//      {
+//        // Plugin dir is not deleted completely, make sure we mark
+//        // it as uninstalled for next framework restart
+//        if (null!=archive) {
+//          try {
+//            archive.setStartLevel(-2); // Mark as uninstalled
+//          } catch (Exception e) {
+//            // NYI! Generate FrameworkError if dir still exists!?
+//            fwCtx.debug.println("Failed to mark bundle " + id +
+//                                " as uninstalled, " + bundleDir +
+//                                " must be deleted manually: " + e);
+//          }
+//        }
+//      }
+//      bundleDir = null;
+//    }
+    if (d->archive)
+    {
+      d->archive->purge();
+    }
+
+    // id, location and headers survive after uninstall.
+    // TODO: UNRESOLVED must be sent out during installed state
+    // This needs to be reviewed. See OSGi bug #1374
+    d->state = INSTALLED;
+    d->modified();
+
+    // Broadcast events
+    if (wasResolved)
+    {
+      d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNRESOLVED, this));
+    }
+
+    d->state = UNINSTALLED;
+    d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNINSTALLED, this));
+
+    break;
+  }
+}
+
 ctkPluginContext* ctkPlugin::getPluginContext() const
 {
   //TODO security checks

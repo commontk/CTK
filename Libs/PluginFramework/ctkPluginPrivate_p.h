@@ -28,6 +28,7 @@
 
 #include <QHash>
 #include <QPluginLoader>
+#include <QDateTime>
 
 
 class ctkPluginActivator;
@@ -87,6 +88,8 @@ public:
   void setAutostartSetting(const ctkPlugin::StartOptions& setting);
 
   void ignoreAutostartSetting();
+
+  void modified();
 
   /**
    * Performs the actual activation.
@@ -153,7 +156,7 @@ public:
   /**
    * Time when the plugin was last modified
    */
-  long lastModified;
+  QDateTime lastModified;
 
   /**
    * Stores the default locale entries when uninstalled

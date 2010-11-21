@@ -43,7 +43,7 @@ ctkPluginPrivate::ctkPluginPrivate(
       : q_ptr(&qq), fwCtx(fw), id(pa->getPluginId()),
       location(pa->getPluginLocation().toString()), state(ctkPlugin::INSTALLED),
       archive(pa), pluginContext(0), pluginActivator(0), pluginLoader(pa->getLibLocation()),
-      lastModified(0), eagerActivation(false), activating(false), deactivating(false)
+      eagerActivation(false), activating(false), deactivating(false)
 {
   //TODO
   //checkCertificates(pa);
@@ -72,8 +72,8 @@ ctkPluginPrivate::ctkPluginPrivate(ctkPlugin& qq,
                                    long id, const QString& loc, const QString& sym, const ctkVersion& ver)
                                      : q_ptr(&qq), fwCtx(fw), id(id), location(loc), symbolicName(sym), version(ver),
                                      state(ctkPlugin::INSTALLED), archive(0), pluginContext(0),
-                                     pluginActivator(0), lastModified(0),
-                                     eagerActivation(false), activating(false), deactivating(false)
+                                     pluginActivator(0), eagerActivation(false), activating(false),
+                                     deactivating(false)
 {
 
 }
@@ -137,6 +137,15 @@ void ctkPluginPrivate::ignoreAutostartSetting()
   {
     Q_Q(ctkPlugin);
     this->fwCtx->listeners.frameworkError(q, e);
+  }
+}
+
+void ctkPluginPrivate::modified()
+{
+  lastModified = QDateTime::currentDateTime();
+  if (archive)
+  {
+    archive->setLastModified(lastModified);
   }
 }
 

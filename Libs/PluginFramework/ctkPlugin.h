@@ -425,6 +425,67 @@ public:
   virtual void stop(const StopOptions& options = 0);
 
   /**
+   * Uninstalls this plugin.
+   *
+   * <p>
+   * This method causes the Plugin Framework to notify other plugins that this
+   * plugin is being uninstalled, and then puts this plugin into the
+   * <code>UNINSTALLED</code> state. The Framework must remove any resources
+   * related to this plugin that it is able to remove.
+   *
+   * <p>
+   * If this plugin is required by other plugins which are already resolved,
+   * the Framework must keep this plugin loaded until the
+   * Framework is relaunched.
+   *
+   * <p>
+   * The following steps are required to uninstall a plugin:
+   * <ol>
+   * <li>If this plugin's state is <code>UNINSTALLED</code> then an
+   * <code>std::logic_error</code> is thrown.
+   *
+   * <li>If this plugin's state is <code>ACTIVE</code>, <code>STARTING</code>
+   * or <code>STOPPING</code>, this plugin is stopped as described in the
+   * <code>ctkPlugin::stop</code> method. If <code>ctkPlugin::stop</code> throws an
+   * exception, a Framework event of type ctkFrameworkEvent::ERROR is
+   * fired containing the exception.
+   *
+   * <li>This plugin's state is set to <code>UNINSTALLED</code>.
+   *
+   * <li>A plugin event of type ctkPluginEvent::UNINSTALLED is fired.
+   *
+   * <li>This plugin and any persistent storage area provided for this plugin
+   * by the Framework are removed.
+   * </ol>
+   *
+   * <b>Preconditions </b>
+   * <ul>
+   * <li><code>getState()</code> not in &#x007B; <code>UNINSTALLED</code>
+   * &#x007D;.
+   * </ul>
+   * <b>Postconditions, no exceptions thrown </b>
+   * <ul>
+   * <li><code>getState()</code> in &#x007B; <code>UNINSTALLED</code>
+   * &#x007D;.
+   * <li>This plugin has been uninstalled.
+   * </ul>
+   * <b>Postconditions, when an exception is thrown </b>
+   * <ul>
+   * <li><code>getState()</code> not in &#x007B; <code>UNINSTALLED</code>
+   * &#x007D;.
+   * <li>This plugin has not been uninstalled.
+   * </ul>
+   *
+   * @throws ctkPluginException If the uninstall failed. This can occur if
+   *         another thread is attempting to change this plugin's state and
+   *         does not complete in a timely manner.
+   * @throws std::logic_error If this plugin has been uninstalled or this
+   *         plugin tries to change its own state.
+   * @see #stop()
+   */
+  void uninstall();
+
+  /**
    * Returns this plugin's {@link ctkPluginContext}. The returned
    * <code>ctkPluginContext</code> can be used by the caller to act on behalf
    * of this plugin.

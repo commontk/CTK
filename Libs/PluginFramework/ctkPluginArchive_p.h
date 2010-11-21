@@ -25,13 +25,12 @@
 #include <QString>
 #include <QHash>
 #include <QUrl>
+#include <QDateTime>
 
 #include "ctkPluginManifest_p.h"
 
 // Qt forward declarations
 class QIODevice;
-
-typedef quint64 qtimestamp;
 
 // CTK foraward declarations
 class ctkPluginStorage;
@@ -66,7 +65,7 @@ private:
 
 int autostartSetting;
 int id;
-qtimestamp lastModified;
+QDateTime lastModified;
 QUrl location;
 QString localPluginPath;
 ctkPluginManifest manifest;
@@ -157,13 +156,13 @@ void setStartLevel(int level);
 /**
  * Get last modified timestamp.
  */
-qtimestamp getLastModified() const;
+QDateTime getLastModified() const;
 
 
 /**
  * Set stored last modified timestamp.
  */
-void setLastModified(qtimestamp timemillisecs);
+void setLastModified(const QDateTime& timemillisecs);
 
 
 /**
