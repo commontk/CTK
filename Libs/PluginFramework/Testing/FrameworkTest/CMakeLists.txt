@@ -5,11 +5,13 @@ SET(PLUGIN_export_directive "org_commontk_pluginfwtest_EXPORT")
 SET(PLUGIN_SRCS
   ctkPluginFrameworkTestActivator.cpp
   ctkPluginFrameworkTestSuite.cpp
+  ctkServiceListenerTestSuite.cpp
 )
 
 SET(PLUGIN_MOC_SRCS
   ctkPluginFrameworkTestActivator_p.h
   ctkPluginFrameworkTestSuite_p.h
+  ctkServiceListenerTestSuite_p.h
 )
 
 SET(PLUGIN_UI_FORMS

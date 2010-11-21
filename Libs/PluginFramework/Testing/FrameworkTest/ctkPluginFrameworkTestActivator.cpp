@@ -22,6 +22,7 @@
 #include "ctkPluginFrameworkTestActivator_p.h"
 
 #include "ctkPluginFrameworkTestSuite_p.h"
+#include "ctkServiceListenerTestSuite_p.h"
 
 #include <ctkPluginContext.h>
 #include <ctkPluginConstants.h>
@@ -37,6 +38,10 @@ void ctkPluginFrameworkTestActivator::start(ctkPluginContext* context)
   props.clear();
   props.insert(ctkPluginConstants::SERVICE_PID, frameworkTestSuite->metaObject()->className());
   context->registerService(QStringList("ctkTestSuiteInterface"), frameworkTestSuite, props);
+
+  serviceListenerTestSuite = new ctkServiceListenerTestSuite(context);
+  props.insert(ctkPluginConstants::SERVICE_PID, frameworkTestSuite->metaObject()->className());
+  context->registerService(QStringList("ctkTestSuiteInterface"), serviceListenerTestSuite, props);
 }
 
 void ctkPluginFrameworkTestActivator::stop(ctkPluginContext* context)
@@ -44,6 +49,7 @@ void ctkPluginFrameworkTestActivator::stop(ctkPluginContext* context)
   Q_UNUSED(context);
 
   delete frameworkTestSuite;
+  delete serviceListenerTestSuite;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_pluginfwtest, ctkPluginFrameworkTestActivator)
