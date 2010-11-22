@@ -27,6 +27,8 @@
 // CTK includes
 #include "ctkColorDialog.h"
 
+QList<QWidget*> ctkColorDialog::DefaultTabs;
+
 //------------------------------------------------------------------------------
 class ctkColorDialogPrivate
 {
@@ -64,7 +66,6 @@ void ctkColorDialogPrivate::init()
   this->LeftTabWidget->addTab(this->BasicTab, QObject::tr("Basic"));
 }
 
-
 //------------------------------------------------------------------------------
 ctkColorDialog::ctkColorDialog(QWidget* parent)
   : QColorDialog(parent)
@@ -100,4 +101,30 @@ QWidget* ctkColorDialog::widget(int index)const
 {
   Q_D(const ctkColorDialog);
   return d->LeftTabWidget->widget(index+1);
+}
+
+//------------------------------------------------------------------------------
+QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QString &title,
+                              ColorDialogOptions options)
+{
+  ctkColorDialog dlg(parent);
+  if (!title.isEmpty())
+    {
+    dlg.setWindowTitle(title);
+    }
+  dlg.setOptions(options | QColorDialog::DontUseNativeDialog);
+  dlg.setCurrentColor(initial);
+  foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
+    {
+    dlg.addTab(tab, tab->accessibleDescription());
+    }
+  dlg.exec();
+  return dlg.selectedColor();
+}
+
+//------------------------------------------------------------------------------
+void ctkColorDialog::addDefaultTab(QWidget* widget, const QString& label)
+{
+  widget->setAccessibleDescription(label);
+  ctkColorDialog::DefaultTabs << widget;
 }

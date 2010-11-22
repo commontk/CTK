@@ -51,12 +51,21 @@ public:
   /// Return the extra widget if any
   QWidget* widget(int index)const;
 
-  /// Internally used
-  //bool eventFilter(QObject *obj, QEvent *event);
+  /// Pops up a modal color dialog with the given window \a title (or "Select Color" if none is
+  /// specified), lets the user choose a color, and returns that color. The color is initially set
+  /// to \a initial. The dialog is a child of \a parent. It returns an invalid (see
+  /// QColor::isValid()) color if the user cancels the dialog.
+  ///
+  /// The \a options argument allows you to customize the dialog;
+  /// QColorDialog::DontUseNativeDialog is forced
+  static QColor getColor(const QColor &initial, QWidget *parent,
+                         const QString &title, ColorDialogOptions options);
+  static void addDefaultTab(QWidget* widget, const QString& label);
 
 protected:
   QScopedPointer<ctkColorDialogPrivate> d_ptr;
 
+  static QList<QWidget*> DefaultTabs;
 private:
   Q_DECLARE_PRIVATE(ctkColorDialog);
   Q_DISABLE_COPY(ctkColorDialog);

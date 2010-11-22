@@ -50,6 +50,8 @@ int ctkColorDialogTest1(int argc, char * argv [] )
     {
     return EXIT_FAILURE;
     }
+  ctkColorDialog::addDefaultTab(extraPanel, "Extra");
+  QColor color = ctkColorDialog::getColor(Qt::black,0 , "", 0);
   return EXIT_SUCCESS;
 
 }
