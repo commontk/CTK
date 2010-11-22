@@ -32,6 +32,8 @@ SET(KIT_SRCS
   ctkCollapsibleButton.h
   ctkCollapsibleGroupBox.cpp
   ctkCollapsibleGroupBox.h
+  ctkColorDialog.cpp
+  ctkColorDialog.h
   ctkColorPickerButton.cpp
   ctkColorPickerButton.h
   ctkConsoleWidget.cpp
@@ -116,6 +118,7 @@ SET(KIT_MOC_SRCS
   ctkComboBox.h
   ctkCollapsibleButton.h
   ctkCollapsibleGroupBox.h
+  ctkColorDialog.h
   ctkColorPickerButton.h
   ctkConsoleWidget.h
   ctkCoordinatesWidget.h
