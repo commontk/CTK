@@ -140,7 +140,7 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
     {
     dlg.addTab(tab, tab->windowTitle());
-    if (tab->accessibleDescription().isEmpty())
+    if (!tab->accessibleDescription().isEmpty())
       {
       QObject::connect(tab, tab->accessibleDescription().toLatin1(),
                        &dlg, SLOT(setColor(QColor)));
@@ -150,7 +150,7 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
     {
     dlg.removeTab(dlg.indexOf(tab));
-    if (tab->accessibleDescription().isEmpty())
+    if (!tab->accessibleDescription().isEmpty())
       {
       QObject::disconnect(tab, tab->accessibleDescription().toLatin1(),
                           &dlg, SLOT(setColor(QColor)));
