@@ -46,7 +46,9 @@ public:
   /// Add an extra widget under the file format combobox. If a label is
   /// given, it will appear in the first column.
   /// The widget is reparented to ctkColorDialog
-  /// The ownership of the widget is taken
+  /// The ownership of the widget is taken.
+  /// You must manually connect the color changed signal of the widget 
+  /// to ctkColorDialog::setColor(QColor)
   void addTab(QWidget* widget, const QString& label);
 
   /// The ownership of widget remains the same. The widget is not deleted, 
@@ -72,7 +74,15 @@ public:
   /// QColorDialog::DontUseNativeDialog is forced
   static QColor getColor(const QColor &initial, QWidget *parent,
                          const QString &title, ColorDialogOptions options);
-  static void addDefaultTab(QWidget* widget, const QString& label);
+  /// Add a custom widget as an additional tab of the color dialog created by 
+  /// ctkColorDialog::getColor. \a label is title of the tab and \a signal is the signal fired by 
+  /// the widget whenever a QColor is changed, typically: SIGNAL(currentColorChanged(QColor)). It
+  /// is internally connected to set the current color of the dialog
+  static void addDefaultTab(QWidget* widget, const QString& label, const char* signal = 0);
+
+public slots:
+  /// Slotify QColorDialog::setCurrentColor(QColor)
+  void setColor(const QColor& color);
 
 protected:
   QScopedPointer<ctkColorDialogPrivate> d_ptr;
