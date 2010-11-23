@@ -46,10 +46,22 @@ public:
   /// Add an extra widget under the file format combobox. If a label is
   /// given, it will appear in the first column.
   /// The widget is reparented to ctkColorDialog
+  /// The ownership of the widget is taken
   void addTab(QWidget* widget, const QString& label);
 
+  /// The ownership of widget remains the same. The widget is not deleted, 
+  /// but simply removed from the widget's stacked layout, causing it to be
+  /// hidden.
+  /// It is not possible to remove the "Basic Colors" tab
+  void removeTab(int index);
+
   /// Return the extra widget if any
+  /// It is not possible to retrieave the "Basic colors" tab
   QWidget* widget(int index)const;
+  
+  /// Returns the index position of the page occupied by the widget w,
+  /// or -1 if the widget cannot be found
+  int indexOf(QWidget* widget)const;
 
   /// Pops up a modal color dialog with the given window \a title (or "Select Color" if none is
   /// specified), lets the user choose a color, and returns that color. The color is initially set

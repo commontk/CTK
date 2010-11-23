@@ -97,9 +97,32 @@ void ctkColorDialog::addTab(QWidget* widget, const QString& label)
 }
 
 //------------------------------------------------------------------------------
+void ctkColorDialog::removeTab(int index)
+{
+  Q_D(ctkColorDialog);
+  if (index < 0)
+    {
+    return;
+    }
+  d->LeftTabWidget->removeTab(index + 1);
+}
+
+//------------------------------------------------------------------------------
+int ctkColorDialog::indexOf(QWidget* widget)const
+{
+  Q_D(const ctkColorDialog);
+  int index = d->LeftTabWidget->indexOf(widget);
+  return index >= 0 ? index - 1 : -1;
+}
+
+//------------------------------------------------------------------------------
 QWidget* ctkColorDialog::widget(int index)const
 {
   Q_D(const ctkColorDialog);
+  if (index < 0)
+    {
+    return 0;
+    }
   return d->LeftTabWidget->widget(index+1);
 }
 
@@ -119,6 +142,12 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
     dlg.addTab(tab, tab->accessibleDescription());
     }
   dlg.exec();
+  foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
+    {
+    dlg.removeTab(dlg.indexOf(tab));
+    tab->setParent(0);
+    }
+  
   return dlg.selectedColor();
 }
 
@@ -127,4 +156,5 @@ void ctkColorDialog::addDefaultTab(QWidget* widget, const QString& label)
 {
   widget->setAccessibleDescription(label);
   ctkColorDialog::DefaultTabs << widget;
+  widget->setParent(0);
 }
