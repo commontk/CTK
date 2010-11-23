@@ -139,22 +139,44 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
   dlg.setCurrentColor(initial);
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
     {
-    dlg.addTab(tab, tab->accessibleDescription());
+    dlg.addTab(tab, tab->windowTitle());
+    if (tab->accessibleDescription().isEmpty())
+      {
+      QObject::connect(tab, tab->accessibleDescription().toLatin1(),
+                       &dlg, SLOT(setColor(QColor)));
+      }
     }
   dlg.exec();
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
     {
     dlg.removeTab(dlg.indexOf(tab));
+    if (tab->accessibleDescription().isEmpty())
+      {
+      QObject::disconnect(tab, tab->accessibleDescription().toLatin1(),
+                          &dlg, SLOT(setColor(QColor)));
+      }
     tab->setParent(0);
+    tab->hide();
     }
   
   return dlg.selectedColor();
 }
 
 //------------------------------------------------------------------------------
-void ctkColorDialog::addDefaultTab(QWidget* widget, const QString& label)
+void ctkColorDialog::addDefaultTab(QWidget* widget, const QString& label, const char* signal)
 {
-  widget->setAccessibleDescription(label);
+  // I'm a bit lazy here and the label+ signal should probably be stored in a
+  // separate structure
+  widget->setWindowTitle(label);
+  widget->setAccessibleDescription(signal);
+
   ctkColorDialog::DefaultTabs << widget;
   widget->setParent(0);
 }
+
+//------------------------------------------------------------------------------
+void ctkColorDialog::setColor(const QColor& color)
+{
+  this->QColorDialog::setCurrentColor(color);
+}
+  
