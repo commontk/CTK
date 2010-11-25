@@ -39,6 +39,10 @@
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #endif
 
+#ifdef CTK_PYTHONQT_WRAP_QTCORE
+void PythonQt_init_QtCore(PyObject*);
+#endif
+
 #ifdef CTK_PYTHONQT_WRAP_QTGUI
 void PythonQt_init_QtGui(PyObject*);
 #endif
@@ -120,6 +124,10 @@ void ctkAbstractPythonManager::initPythonQt()
                 SLOT(printStdout(const QString&)));
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString&)),
                 SLOT(printStderr(const QString&)));
+  
+  #ifdef CTK_PYTHONQT_WRAP_QTCORE
+  PythonQt_init_QtCore(0);
+  #endif
   
   #ifdef CTK_PYTHONQT_WRAP_QTGUI
   PythonQt_init_QtGui(0);

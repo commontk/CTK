@@ -6,6 +6,7 @@
 /// Here is where system computed values get stored
 ///
 
+#cmakedefine CTK_PYTHONQT_WRAP_QTCORE
 #cmakedefine CTK_PYTHONQT_WRAP_QTGUI
 #cmakedefine CTK_PYTHONQT_WRAP_QTNETWORK
 #cmakedefine CTK_PYTHONQT_WRAP_QTOPENGL
