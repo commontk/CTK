@@ -64,6 +64,19 @@ SET(CTK_CONFIG_INSTALL_ONLY)
 # The "use" file.
 SET(CTK_USE_FILE ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake)
 
+# Export targets so they can be imported by a project using CTK
+# as an external library
+EXPORT(TARGETS ${CTK_LIBRARIES} ${CTK_PLUGIN_LIBRARIES} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
+
+# Write a set of variables containing plugin specific include directories
+SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG)
+FOREACH(plugin ${CTK_PLUGIN_LIBRARIES})
+  SET(${plugin}_INCLUDE_DIRS ${${plugin}_SOURCE_DIR} ${${plugin}_BINARY_DIR})
+  ctkFunctionGetIncludeDirs(${plugin}_INCLUDE_DIRS ${plugin})
+  SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG "${CTK_PLUGIN_INCLUDE_DIRS_CONFIG}
+SET(${plugin}_INCLUDE_DIRS \"${${plugin}_INCLUDE_DIRS}\")")
+ENDFOREACH()
+
 # Determine the include directories needed.
 SET(CTK_INCLUDE_DIRS_CONFIG
   ${CTK_BASE_INCLUDE_DIRS}

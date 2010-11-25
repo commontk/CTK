@@ -33,7 +33,7 @@
 #
 ###########################################################################
 
-# The commands in this directory are intended to be executed as
+# The commands in this directory are intended to be executed at
 # the end of the whole configuration process, as a "last step".
 # This directory is typically the last SUBDIRS in the main CMakeLists.txt.
 # It enable the above commands to use variables that might have been configured

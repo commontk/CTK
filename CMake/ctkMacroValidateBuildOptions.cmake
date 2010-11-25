@@ -49,6 +49,7 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
     MESSAGE(FATAL_ERROR "Executable ${executable} doesn't exist!")
   ENDIF()
 
+  SET(known_targets)
   SET(target_directories_with_target_name)
   
   # Create target_directories_with_target_name
@@ -82,7 +83,20 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
     LIST(APPEND target_directories_with_target_name
       ${target_dir}^^${option_name}^^${target_project_name}
       )
+
+    LIST(APPEND known_targets ${target_project_name})
   ENDFOREACH()
+
+  # This is for external projects using CTK
+  # The variables CTK_PLUGIN_LIBRARIES and CTK_LIBRARIES are set in CTKConfig.cmake
+  IF(CTK_PLUGIN_LIBRARIES)
+    LIST(APPEND known_targets ${CTK_PLUGIN_LIBRARIES})
+  ENDIF()
+  IF(CTK_LIBRARIES)
+    LIST(APPEND known_targets ${CTK_LIBRARIES})
+  ENDIF()
+
+  #MESSAGE("Known targets: ${known_targets}")
 
   SET(EXTERNAL_TARGETS ) # This is used in CMakeLists.txt
   FOREACH(target_info ${target_directories_with_target_name})
@@ -116,8 +130,8 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
       # Obtain dependency path
       ctkMacroSetPaths("${QT_INSTALLED_LIBRARY_DIR}")
       EXECUTE_PROCESS(
-        COMMAND "${executable}" "${CTK_BINARY_DIR}/DGraphInput-alldep-withext.txt" -sort ${target_project_name}
-        WORKING_DIRECTORY ${CTK_BINARY_DIR}
+        COMMAND "${executable}" "${dir}/DGraphInput-alldep-withext.txt" -sort ${target_project_name}
+        WORKING_DIRECTORY ${dir}
         RESULT_VARIABLE RESULT_VAR
         OUTPUT_VARIABLE dep_path
         ERROR_VARIABLE error
@@ -140,19 +154,29 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
 
       #MESSAGE("path for ${target_project_name} is: ${dep_path_list}")
 
-      # Check if all CTK targets included in the dependency path are enabled
-      SET(ctk_dep_path_list )
+      # Check if all internal CTK targets included in the dependency path are enabled
+      SET(int_dep_path_list )
       SET(ext_dep_path_list ${dep_path_list})
-      ctkMacroGetAllCTKTargetLibraries("${dep_path_list}" ctk_dep_path_list)
-      IF(ctk_dep_path_list)
-        LIST(REMOVE_ITEM ext_dep_path_list ${ctk_dep_path_list})
+      # Allow external projects to override the set of internal targets
+      IF(COMMAND GetMyTargetLibraries)
+        GetMyTargetLibraries("${dep_path_list}" int_dep_path_list)
+      ELSE()
+        ctkMacroGetAllCTKTargetLibraries("${dep_path_list}" int_dep_path_list)
+      ENDIF()
+      IF(int_dep_path_list)
+        LIST(REMOVE_ITEM ext_dep_path_list ${int_dep_path_list})
       ENDIF()
 
       IF(ext_dep_path_list)
         LIST(APPEND EXTERNAL_TARGETS ${ext_dep_path_list})
       ENDIF()
 
-      FOREACH(dep ${ctk_dep_path_list})
+      FOREACH(dep ${int_dep_path_list})
+        LIST(FIND known_targets ${dep} dep_found)
+        IF(dep_found LESS 0)
+          MESSAGE(FATAL_ERROR "${target_project_name} depends on ${dep}, which does not exist")
+        ENDIF()
+
         ctkMacroGetOptionName("${target_directories_with_target_name}" ${dep} dep_option)
         IF(NOT ${${dep_option}})
           # Enable option

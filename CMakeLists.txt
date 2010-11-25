@@ -131,6 +131,7 @@ SET(CTK_WRAPPED_LIBRARIES_PYTHONQT CACHE INTERNAL "CTK libraries wrapped using P
 
 # Variable use in CTKConfig.cmake.in
 SET(CTK_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
+SET(CTK_PLUGIN_LIBRARIES CACHE INTERNAL "CTK plugins" FORCE)
 
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
@@ -154,6 +155,7 @@ INCLUDE(CMake/ctkFunctionGenerateProjectXml.cmake)
 INCLUDE(CMake/ctkFunctionGeneratePluginManifest.cmake)
 INCLUDE(CMake/ctkMacroGeneratePluginResourceFile.cmake)
 INCLUDE(CMake/ctkFunctionCheckCompilerFlags.cmake)
+INCLUDE(CMake/ctkFunctionGetIncludeDirs.cmake)
 
 # Used by CTKGenerateCTKConfig.cmake
 SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)
@@ -561,6 +563,12 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/UseCTK.cmake.in
 #
 SET(CMAKE_CXX_FLAGS ${CTK_CXX_FLAGS} CACHE STRING "CMake C Flags" FORCE)
 SET(CMAKE_C_FLAGS ${CTK_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
+
+#-----------------------------------------------------------------------------
+# Set the header template which defines custom export/import macros
+# for shared libraries
+#
+SET(CTK_EXPORT_HEADER_TEMPLATE "${CTK_SOURCE_DIR}/Libs/ctkExport.h.in")
 
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories
