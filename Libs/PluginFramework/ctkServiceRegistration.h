@@ -52,6 +52,8 @@ class CTK_PLUGINFW_EXPORT ctkServiceRegistration {
 
 public:
 
+  ~ctkServiceRegistration();
+
   /**
    * Returns a <code>ctkServiceReference</code> object for a service being
    * registered.

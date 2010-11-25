@@ -47,6 +47,11 @@ ctkServiceRegistration::ctkServiceRegistration(ctkServiceRegistrationPrivate& dd
 
 }
 
+ctkServiceRegistration::~ctkServiceRegistration()
+{
+
+}
+
 ctkServiceReference ctkServiceRegistration::getReference() const
 {
   Q_D(const ctkServiceRegistration);
