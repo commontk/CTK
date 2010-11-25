@@ -378,7 +378,7 @@ void ctkPluginPrivate::removePluginResources()
     {
       i.next()->unregister();
     }
-    catch (const std::logic_error& ignore)
+    catch (const std::logic_error& /*ignore*/)
     {
       // Someone has unregistered the service after stop completed.
       // This should not occur, but we don't want get stuck in
