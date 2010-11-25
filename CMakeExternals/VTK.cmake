@@ -3,7 +3,7 @@
 #
 SET (VTK_DEPENDS)
 ctkMacroShouldAddExternalProject(VTK_LIBRARIES add_project)
-IF(${add_project})
+IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   # Sanity checks
   IF(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
     MESSAGE(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
@@ -13,7 +13,15 @@ IF(${add_project})
   
   SET(additional_vtk_cmakevars )
   IF(MINGW)
-    SET(additional_vtk_cmakevars "-DCMAKE_USE_PTHREADS:BOOL=OFF")
+    LIST(APPEND additional_vtk_cmakevars -DCMAKE_USE_PTHREADS:BOOL=OFF)
+  ENDIF()
+  
+  IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+    LIST(APPEND additional_vtk_cmakevars
+      -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
+      -DPYTHON_LIBRARIES:FILEPATH=${PYTHON_LIBRARIES}
+      -DPYTHON_DEBUG_LIBRARIES:FILEPATH=${PYTHON_DEBUG_LIBRARIES}
+      )
   ENDIF()
 
   SET(proj VTK)
@@ -32,7 +40,8 @@ IF(${add_project})
         ${ep_common_args}
         ${additional_vtk_cmakevars}
         -DVTK_WRAP_TCL:BOOL=OFF
-        -DVTK_WRAP_PYTHON:BOOL=OFF
+        -DVTK_USE_TK:BOOL=OFF
+        -DVTK_WRAP_PYTHON:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK}
         -DVTK_WRAP_JAVA:BOOL=OFF
         -DBUILD_SHARED_LIBS:BOOL=ON 
         -DDESIRED_QT_VERSION:STRING=4
