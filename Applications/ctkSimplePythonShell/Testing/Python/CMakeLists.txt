@@ -2,7 +2,10 @@
 SET(KIT_TESTS ${CPP_TEST_PATH}/ctkSimplePythonShell)
 
 SET(SCRIPTS
-  DerivedQWidgetTest.py
+  derivedQWidgetTest.py
+  wrappedQInvokableTest.py
+  wrappedQPropertyTest.py
+  wrappedSlotTest.py
   )
 
 IF(CTK_LIB_Widgets)
@@ -10,7 +13,11 @@ IF(CTK_LIB_Widgets)
 ENDIF()
 
 IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  LIST(APPEND SCRIPTS vtkPythonSmoke.py)
+  LIST(APPEND SCRIPTS
+    vtkPythonSmoke.py
+    wrappedVTKQInvokableTest.py
+    wrappedVTKSlotTest.py
+    )
 ENDIF()
 
 

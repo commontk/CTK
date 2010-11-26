@@ -8,6 +8,16 @@
 #include <ctkCommandLineParser.h>
 
 #include "ctkSimplePythonManager.h"
+#include "ctkTestWrappedQProperty.h"
+#include "ctkTestWrappedQInvokable.h"
+#include "ctkTestWrappedSlot.h"
+#include "ctkSimplePythonShellConfigure.h" // For CTK_WRAP_PYTHONQT_USE_VTK
+
+#ifdef CTK_WRAP_PYTHONQT_USE_VTK
+# include "ctkTestWrappedQListOfVTKObject.h"
+# include "ctkTestWrappedVTKSlot.h"
+# include "ctkTestWrappedVTKQInvokable.h"
+#endif
 
 int main(int argc, char** argv)
 {
@@ -52,6 +62,26 @@ int main(int argc, char** argv)
   shell.setProperty("isInteractive", parsedArgs.contains("interactive"));
 
   pythonManager.addObjectToPythonMain("_ctkPythonShellInstance", &shell);
+
+  ctkTestWrappedQProperty testWrappedQProperty;
+  pythonManager.addObjectToPythonMain("_testWrappedQPropertyInstance", &testWrappedQProperty);
+
+  ctkTestWrappedQInvokable testWrappedQInvokable;
+  pythonManager.addObjectToPythonMain("_testWrappedQInvokableInstance", &testWrappedQInvokable);
+
+  ctkTestWrappedSlot testWrappedSlot;
+  pythonManager.addObjectToPythonMain("_testWrappedSlotInstance", &testWrappedSlot);
+
+#ifdef CTK_WRAP_PYTHONQT_USE_VTK
+  ctkTestWrappedVTKQInvokable testWrappedVTKQInvokable;
+  pythonManager.addObjectToPythonMain("_testWrappedVTKQInvokableInstance", &testWrappedVTKQInvokable);
+
+  ctkTestWrappedVTKSlot testWrappedVTKSlot;
+  pythonManager.addObjectToPythonMain("_testWrappedVTKSlotInstance", &testWrappedVTKSlot);
+
+  ctkTestWrappedQListOfVTKObject testWrappedQListOfVTKObject;
+  pythonManager.addObjectToPythonMain("_testWrappedQListOfVTKObjectInstance", &testWrappedQListOfVTKObject);
+#endif
 
   foreach(const QString& script, parser.unparsedArguments())
     {

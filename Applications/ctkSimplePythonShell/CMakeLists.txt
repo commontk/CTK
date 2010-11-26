@@ -14,13 +14,35 @@ SET(KIT_SRCS
   ctkSimplePythonManager.h
   ctkSimplePythonQtDecorators.h
   ctkSimplePythonShellMain.cpp
+  ctkTestWrappedQProperty.h
+  ctkTestWrappedQInvokable.h
+  ctkTestWrappedSlot.h
 )
+
+IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  LIST(APPEND KIT_SRCS
+    ctkTestWrappedQListOfVTKObject.h
+    ctkTestWrappedVTKSlot.h
+    ctkTestWrappedVTKQInvokable.h
+    )
+ENDIF()
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkSimplePythonManager.h
   ctkSimplePythonQtDecorators.h
+  ctkTestWrappedQProperty.h
+  ctkTestWrappedQInvokable.h
+  ctkTestWrappedSlot.h
   )
+
+IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  LIST(APPEND KIT_MOC_SRCS
+    ctkTestWrappedQListOfVTKObject.h
+    ctkTestWrappedVTKSlot.h
+    ctkTestWrappedVTKQInvokable.h
+    )
+ENDIF()
 
 # UI files
 SET(KIT_UI_FORMS
