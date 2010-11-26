@@ -69,6 +69,8 @@ ctkMacroBuildLib(
 # Plugins
 #ADD_SUBDIRECTORY(Plugins)
 
+ADD_SUBDIRECTORY(Python)
+
 # Testing
 IF(BUILD_TESTING)
   #ADD_SUBDIRECTORY(Testing)

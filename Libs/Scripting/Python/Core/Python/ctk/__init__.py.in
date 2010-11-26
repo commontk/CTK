@@ -1,0 +1,13 @@
+""" This module loads all the classes from the wrapped CTK libraries into
+its namespace."""
+
+__kits_to_load = [ @CTK_PYTHON_WRAPPED_LIBRARIES@ ]
+
+for kit in __kits_to_load:
+  try:
+    exec "from PythonQt.CTK%s import *" % (kit)
+  except ImportError as detail:
+    print detail
+   
+# Removing things the user shouldn't have to see.
+del __kits_to_load
