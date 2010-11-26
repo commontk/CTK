@@ -28,8 +28,20 @@ MACRO(ctkMacroCompilePythonScript)
   set(copied_files)
   set(copied_python_files)
   FOREACH(file ${MY_SCRIPTS})
-    SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
-    SET(tgt "${MY_DESTINATION_DIR}/${file}.py")
+    # Append "py" extension if needed
+    get_filename_component(file_ext ${file} EXT)
+    IF(NOT "${file_ext}" MATCHES "py")
+      SET(file "${file}.py")
+    ENDIF()
+
+    SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
+    SET(tgt "${MY_DESTINATION_DIR}/${file}")
+    IF(IS_ABSOLUTE ${file})
+      SET(src ${file})
+      file(RELATIVE_PATH tgt_file ${CMAKE_CURRENT_BINARY_DIR} ${file})
+      SET(tgt "${MY_DESTINATION_DIR}/${tgt_file}")
+    ENDIF()
+
     SET(copied_python_files ${copied_python_files} ${tgt})
     SET(copied_files ${copied_files} ${tgt})
     ADD_CUSTOM_COMMAND(DEPENDS ${src}
