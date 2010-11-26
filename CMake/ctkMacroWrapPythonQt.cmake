@@ -63,6 +63,8 @@ FUNCTION(ctkMacroWrapPythonQt_log msg)
   FILE(APPEND "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "${msg}\n")
 ENDFUNCTION()
 
+INCLUDE(${CTK_CMAKE_DIR}/ctkMacroSetPaths.cmake)
+
 #
 # Convenient function allowing to invoke re.search(regex, string) using the given interpreter.
 # Note that is_matching will be set to True if there is a match
