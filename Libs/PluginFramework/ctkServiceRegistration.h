@@ -141,6 +141,10 @@ protected:
 
   const QScopedPointer<ctkServiceRegistrationPrivate> d_ptr;
 
+private:
+
+  Q_DISABLE_COPY(ctkServiceRegistration)
+
 };
 
 
