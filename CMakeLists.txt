@@ -132,6 +132,10 @@ SET(CTK_WRAPPED_LIBRARIES_PYTHONQT CACHE INTERNAL "CTK libraries wrapped using P
 # Variable use in CTKConfig.cmake.in
 SET(CTK_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
 
+# Used by CTKGenerateCTKConfig.cmake and also used to reference script from other scripts
+SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)
+SET(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
+
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
 #
@@ -154,10 +158,6 @@ INCLUDE(CMake/ctkFunctionGenerateProjectXml.cmake)
 INCLUDE(CMake/ctkFunctionGeneratePluginManifest.cmake)
 INCLUDE(CMake/ctkMacroGeneratePluginResourceFile.cmake)
 INCLUDE(CMake/ctkFunctionCheckCompilerFlags.cmake)
-
-# Used by CTKGenerateCTKConfig.cmake
-SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)
-SET(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
 
 #-----------------------------------------------------------------------------
 # Testing

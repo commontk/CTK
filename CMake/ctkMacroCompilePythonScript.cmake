@@ -5,6 +5,8 @@
 #          ParaView/VTK/Wrapping/Python/CMakeLists.txt
 #
 
+INCLUDE(${CTK_CMAKE_DIR}/ctkMacroParseArguments.cmake)
+
 MACRO(ctkMacroCompilePythonScript)
   ctkMacroParseArguments(MY
     "TARGET_NAME;SCRIPTS;RESOURCES;DESTINATION_DIR;INSTALL_DIR"
