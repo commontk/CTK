@@ -4,7 +4,7 @@ import sys
 # Importing vtk initializes vtkPythonMap owned by vtkPythonUtil and prevent 
 # call to vtkPythonUtil::GetObjectFromPointer() from segfaulting.
 # PythonQt internally uses vtkPythonUtil to properly wrap/unwrap VTK objects
-from ctkvtk import *
+from vtk import *
 
 t = _testWrappedVTKQInvokableInstance.getTable()
 print t.GetClassName()
