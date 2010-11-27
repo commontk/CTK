@@ -1,5 +1,5 @@
 
-from ctkqt import *
+from qt import *
 
 class ExampleWidget(QWidget):
   def __init__(self, parent=None):

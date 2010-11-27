@@ -1,7 +1,7 @@
 
 
 SET(KIT_PYTHON_SCRIPTS
-  ctkqt/__init__
+  qt/__init__
   )
   
 #IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)

@@ -1,6 +1,6 @@
 
 from ctk import *
-from ctkqt import QTimer
+from qt import QTimer
 
 w = ctkMatrixWidget()
 w.show()
