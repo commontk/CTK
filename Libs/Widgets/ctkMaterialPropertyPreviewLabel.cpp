@@ -228,7 +228,7 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
         QVector3D pt;
         pt.setX( (i-size2) / (size2-1) );
         pt.setY( (j-size2) / (size2-1) );
-        pt.setZ( sqrt(1. - pt.x()*pt.x() - pt.y()*pt.y()) );
+        pt.setZ( sqrt(qMax(1. - pt.x()*pt.x() - pt.y()*pt.y(), 0.)) );
         
         QVector3D normal = pt;
         normal.normalize();
