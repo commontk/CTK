@@ -54,6 +54,8 @@ SET(KIT_SRCS
   ctkFittedTextBrowser.h
   ctkIconEnginePlugin.cpp
   ctkIconEnginePlugin.h
+  ctkMaterialPropertyPreviewLabel.cpp
+  ctkMaterialPropertyPreviewLabel.h
   ctkMatrixWidget.cpp
   ctkMatrixWidget.h
   ctkMenuButton.cpp
@@ -129,6 +131,7 @@ SET(KIT_MOC_SRCS
   ctkFileDialog.h
   ctkFittedTextBrowser.h
   ctkIconEnginePlugin.h
+  ctkMaterialPropertyPreviewLabel.h
   ctkMatrixWidget.h
   ctkMenuButton.h
   ctkRangeSlider.h

@@ -18,7 +18,7 @@
 
 =========================================================================*/
 
-//Qt includes
+// Qt includes
 #include <QDebug>
 #include <QBrush>
 #include <QGridLayout>
@@ -26,12 +26,10 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-//CTK includes
+// CTK includes
 #include "ctkAxesWidget.h"
 
-//Test purposes
-#include <QPushButton>
-
+// STD includes
 #include <cmath>
 #include <math.h>
 
