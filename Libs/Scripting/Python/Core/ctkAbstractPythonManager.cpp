@@ -82,7 +82,7 @@ void PythonQt_init_QtXmlPatterns(PyObject*);
 //-----------------------------------------------------------------------------
 ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclass(_parent)
 {
-
+  this->InitFunction = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -175,7 +175,13 @@ void ctkAbstractPythonManager::initPythonQt()
   _mainContext.evalScript(initCode.join("\n"));
 
   this->preInitialization();
+  if (this->InitFunction)
+    {
+    (*this->InitFunction)();
+    }
+  emit this->pythonPreInitialized();
 
+  this->executeInitializationScripts();
   emit this->pythonInitialized();
 }
 
@@ -187,6 +193,11 @@ QStringList ctkAbstractPythonManager::pythonPaths()
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::preInitialization()
+{
+}
+
+//-----------------------------------------------------------------------------
+void ctkAbstractPythonManager::executeInitializationScripts()
 {
 }
 
@@ -228,6 +239,12 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
     {
     main.evalFile(filename);
     }
+}
+
+//-----------------------------------------------------------------------------
+void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
+{
+  this->InitFunction = initFunction;
 }
 
 //-----------------------------------------------------------------------------

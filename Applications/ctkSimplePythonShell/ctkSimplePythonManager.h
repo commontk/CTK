@@ -19,6 +19,7 @@ protected:
 
   virtual QStringList pythonPaths();
   virtual void preInitialization();
+  virtual void executeInitializationScripts();
 
 };
 

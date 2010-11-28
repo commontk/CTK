@@ -46,25 +46,31 @@ public:
   void registerClassForPythonQt(const QMetaObject* metaobject);
   void registerCPPClassForPythonQt(const char* name);
 
-  ///
   /// Execute a python of python code (can be multiple lines separated with newline)
   /// and return the result as a QVariant.
   QVariant executeString(const QString& code);
 
-  ///
   /// Gets the value of the variable looking in the __main__ module.
   /// If the variable is not found returns a default initialized QVariant.
   QVariant getVariable(const QString& varName);
 
-  ///
   /// Execute a python script with the given filename.
   void executeFile(const QString& filename);
 
+  /// Set function that is initialized after preInitialization and before executeInitializationScripts
+  /// \sa preInitialization executeInitializationScripts
+  void setInitializationFunction(void (*initFunction)());
+
 signals:
 
-  ///
-  /// This signal is emitted after python is initialized.  Observers can listen
+  /// This signal is emitted after python is pre-initialized. Observers can listen
   /// for this signal to handle additional initialization steps.
+  /// \sa preInitialization
+  void pythonPreInitialized();
+
+  /// This signal is emitted after python is initialized and scripts are executed
+  /// \sa preInitialization
+  /// \sa executeScripts
   void pythonInitialized();
 
 protected slots:
@@ -76,7 +82,15 @@ protected:
   void initPythonQt();
 
   virtual QStringList     pythonPaths();
+
+  /// Overload this function to load Decorator and pythonQt wrapper at initialization time
   virtual void            preInitialization();
+
+  /// Overload this function to execute script at initialization time
+  virtual void            executeInitializationScripts();
+
+private:
+  void (*InitFunction)();
 
 };
 #endif

@@ -98,13 +98,17 @@ void ctkSimplePythonManager::preInitialization()
   
   // Add object to python interpreter context
   this->addObjectToPythonMain("_ctkSimplePythonShellInstance", qApp);
+}
 
+//-----------------------------------------------------------------------------
+void ctkSimplePythonManager::executeInitializationScripts()
+{
   QString self_dir = QFileInfo(qApp->applicationFilePath()).absolutePath();
 
   QString initFile = self_dir;
-#if defined(CMAKE_INTDIR)
+  #if defined(CMAKE_INTDIR)
   initFile.append("/..");
-#endif
+  #endif
   initFile.append("/Python/ctkSimplePythonShell.py");
 
   Q_ASSERT(QFile::exists(initFile));
