@@ -19,6 +19,8 @@ SET(PLUGIN_SRCS
   ctkVTKScalarBarWidgetPlugin.h
   ctkVTKSliceViewPlugin.cpp
   ctkVTKSliceViewPlugin.h
+  ctkVTKSurfaceMaterialPropertyWidgetPlugin.cpp
+  ctkVTKSurfaceMaterialPropertyWidgetPlugin.h
   ctkVTKTextPropertyWidgetPlugin.cpp
   ctkVTKTextPropertyWidgetPlugin.h
   )
@@ -30,6 +32,7 @@ SET(PLUGIN_MOC_SRCS
   ctkVTKRenderViewPlugin.h
   ctkVTKScalarBarWidgetPlugin.h
   ctkVTKSliceViewPlugin.h
+  ctkVTKSurfaceMaterialPropertyWidgetPlugin.h
   ctkVTKTextPropertyWidgetPlugin.h
   )
   

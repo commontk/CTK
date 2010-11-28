@@ -32,6 +32,7 @@
 #include "ctkVTKScalarsToColorsViewPlugin.h"
 #endif
 #include "ctkVTKSliceViewPlugin.h"
+#include "ctkVTKSurfaceMaterialPropertyWidgetPlugin.h"
 #include "ctkVTKTextPropertyWidgetPlugin.h"
 
 /// \class Group the plugins in one library
@@ -52,6 +53,7 @@ public:
     plugins << new ctkVTKScalarsToColorsViewPlugin;
 #endif
     plugins << new ctkVTKSliceViewPlugin;
+    plugins << new ctkVTKSurfaceMaterialPropertyWidgetPlugin;
     plugins << new ctkVTKTextPropertyWidgetPlugin;
     return plugins;
     }

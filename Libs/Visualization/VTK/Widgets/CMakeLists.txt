@@ -32,6 +32,8 @@ SET(KIT_SRCS
   ctkVTKSliceView.cpp
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
+  ctkVTKSurfaceMaterialPropertyWidget.cpp
+  ctkVTKSurfaceMaterialPropertyWidget.h
   ctkVTKTextPropertyWidget.cpp
   ctkVTKTextPropertyWidget.h
   ctkVTKThumbnailView.cpp
@@ -47,6 +49,7 @@ SET(KIT_MOC_SRCS
   ctkVTKScalarBarWidget.h
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
+  ctkVTKSurfaceMaterialPropertyWidget.h
   ctkVTKTextPropertyWidget.h
   ctkVTKThumbnailView.h
   )

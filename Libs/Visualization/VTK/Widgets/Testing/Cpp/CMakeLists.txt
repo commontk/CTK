@@ -11,6 +11,7 @@ SET(TEST_SOURCES
   ctkTransferFunctionViewTest3.cpp
   ctkTransferFunctionViewTest4.cpp
   ctkTransferFunctionViewTest5.cpp
+  ctkVTKSurfaceMaterialPropertyWidgetTest1.cpp
   ctkVTKTextPropertyWidgetTest1.cpp
   ctkVTKThumbnailViewTest1.cpp
   )
@@ -75,6 +76,7 @@ IF (CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest4 )
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1 )
 ENDIF(CTK_USE_CHARTS)
+SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetTest1 )
 SIMPLE_TEST( ctkVTKTextPropertyWidgetTest1 )
 SIMPLE_TEST( ctkVTKThumbnailViewTest1 )
 
