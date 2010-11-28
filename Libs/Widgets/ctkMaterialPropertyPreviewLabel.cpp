@@ -41,12 +41,14 @@ protected:
 public:
   ctkMaterialPropertyPreviewLabelPrivate(ctkMaterialPropertyPreviewLabel& object);
   
+  QColor Color;
+  double Opacity;
+ 
   double Ambient;
   double Diffuse;
   double Specular;
   double SpecularPower;
-  
-  QColor Color;
+ 
   double GridOpacity;
 };
 
@@ -54,12 +56,13 @@ public:
 ctkMaterialPropertyPreviewLabelPrivate::ctkMaterialPropertyPreviewLabelPrivate(ctkMaterialPropertyPreviewLabel& object)
   :q_ptr(&object)
 {
+  this->Color = Qt::white;
+  this->Opacity = 1.;
   this->Ambient = 0.5;
   this->Diffuse = 0.5;
   this->Specular = 0.5;
   this->SpecularPower = 50;
   
-  this->Color = Qt::white;
   this->GridOpacity = 0.6;
 }
 
@@ -73,11 +76,16 @@ ctkMaterialPropertyPreviewLabel::ctkMaterialPropertyPreviewLabel(QWidget *newPar
 
 //-----------------------------------------------------------------------------
 ctkMaterialPropertyPreviewLabel::ctkMaterialPropertyPreviewLabel(
-  double ambient, double diffuse, double specular, double specularPower, QWidget *newParent)
+  const QColor& color, double opacity,
+  double ambient, double diffuse,
+  double specular, double specularPower,
+  QWidget *newParent)
   : QFrame(newParent)
   , d_ptr(new ctkMaterialPropertyPreviewLabelPrivate(*this))
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
+  d->Color = color;
+  d->Opacity = opacity;
   d->Ambient = ambient;
   d->Diffuse = diffuse;
   d->Specular = specular;
@@ -165,6 +173,21 @@ QColor ctkMaterialPropertyPreviewLabel::color()const
 }
 
 //-----------------------------------------------------------------------------
+void ctkMaterialPropertyPreviewLabel::setOpacity(double newOpacity)
+{
+  Q_D(ctkMaterialPropertyPreviewLabel);
+  d->Opacity = newOpacity;
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+double ctkMaterialPropertyPreviewLabel::opacity()const
+{
+  Q_D(const ctkMaterialPropertyPreviewLabel);
+  return d->Opacity;
+}
+
+//-----------------------------------------------------------------------------
 void ctkMaterialPropertyPreviewLabel::setGridOpacity(double newGridOpacity)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
@@ -195,11 +218,13 @@ QSize ctkMaterialPropertyPreviewLabel::sizeHint()const
 void ctkMaterialPropertyPreviewLabel::paintEvent(QPaintEvent* event)
 {
   Q_UNUSED(event);
-  QImage image(this->size(), QImage::Format_ARGB32);
+  QRect cr = this->contentsRect();
+  QImage image(cr.size(), QImage::Format_ARGB32_Premultiplied);
   this->draw(image);
   
   QPainter widgetPainter(this);
-  widgetPainter.drawImage(0, 0, image);
+  this->drawFrame(&widgetPainter);
+  widgetPainter.drawImage(cr.left(), cr.top(), image);
 }
 
 //-----------------------------------------------------------------------------
@@ -207,6 +232,7 @@ void ctkMaterialPropertyPreviewLabel::paintEvent(QPaintEvent* event)
 void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
+  qreal opacity = d->Opacity;
   qreal ambient = d->Ambient;
   qreal diffuse = d->Diffuse;
   qreal specular = d->Specular;
@@ -222,6 +248,23 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
     {
     for (int j = 0; j < image.height(); ++j)
       {
+      int iGrid = i / size8;
+      int jGrid = j / size8;
+      
+      if (((iGrid / 2) * 2 == iGrid &&
+           (jGrid / 2) * 2 == jGrid) ||
+          ((iGrid / 2) * 2 != iGrid &&
+           (jGrid / 2) * 2 != jGrid))
+        {
+        rgba = qRgba(0, 0, 0, d->GridOpacity * 255);
+        }
+      else
+        {
+        rgba = qRgba(255. * d->GridOpacity,
+                     255. * d->GridOpacity,
+                     255. * d->GridOpacity,
+                     255. * d->GridOpacity);
+        }
       qreal dist = static_cast<qreal>((i-size2)*(i-size2) + (j-size2)*(j-size2));
       if (dist <= radius2)
         {
@@ -252,17 +295,9 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
         ref.setZ( 2.*normal.z()*dot - light.z());
         ref.normalize();
 
-        qreal diffuseComp = diffuse * dot;
-        if (diffuseComp < 0)
-          {
-          diffuseComp = 0.;
-          }
+        qreal diffuseComp = qMax(diffuse * dot, 0.);
         
-        qreal specularDot = QVector3D::dotProduct(ref, view);
-        if (specularDot < 0)
-          {
-          specularDot = 0.;
-          }
+        qreal specularDot = qMax(QVector3D::dotProduct(ref, view), 0.);
         
         qreal specularComp = specular*pow(specularDot, specular_power);
         
@@ -271,26 +306,19 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
         intensity.setY( qMin((ambient + diffuseComp)*d->Color.greenF() + specularComp, 1.));
         intensity.setZ( qMin((ambient + diffuseComp)*d->Color.blueF() + specularComp, 1.));
         
-        rgba = qRgba(static_cast<unsigned char>(255. * intensity.x()),
-                     static_cast<unsigned char>(255. * intensity.y()),
-                     static_cast<unsigned char>(255. * intensity.z()),
-                     255);
-        }
-      else
-        {
-        int iGrid = i / size8;
-        int jGrid = j / size8;
-        
-        if (((iGrid / 2) * 2 == iGrid &&
-             (jGrid / 2) * 2 == jGrid) ||
-            ((iGrid / 2) * 2 != iGrid &&
-             (jGrid / 2) * 2 != jGrid))
+        if (opacity == 1.)
           {
-          rgba = qRgba(0, 0, 0, d->GridOpacity * 255);
+          rgba = qRgba(static_cast<unsigned char>(255. * intensity.x() * opacity),
+                       static_cast<unsigned char>(255. * intensity.y() * opacity),
+                       static_cast<unsigned char>(255. * intensity.z() * opacity),
+                       static_cast<unsigned char>(255. * opacity));
           }
         else
           {
-          rgba = qRgba(255, 255, 255, d->GridOpacity * 255);
+          rgba = qRgba(static_cast<unsigned char>(qMin(255. * intensity.x() * opacity + qRed(rgba)*(1. - opacity), 255.)),
+                       static_cast<unsigned char>(qMin(255. * intensity.y() * opacity + qGreen(rgba)*(1. - opacity), 255.)),
+                       static_cast<unsigned char>(qMin(255. * intensity.z() * opacity + qBlue(rgba)*(1. - opacity), 255.)),
+                       static_cast<unsigned char>(qMin(255. * opacity + qAlpha(rgba)*(1. - opacity), 255.)));
           }
         }
       image.setPixel(i,j,rgba);

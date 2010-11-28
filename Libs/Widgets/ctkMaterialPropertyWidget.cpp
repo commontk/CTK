@@ -55,21 +55,38 @@ ctkMaterialPropertyWidget::ctkMaterialPropertyWidget(QWidget* _parent)
   Q_D(ctkMaterialPropertyWidget);
   
   d->setupUi(this);
+
+  connect(d->ColorPickerButton, SIGNAL(colorChanged(QColor)),
+          this, SLOT(onColorChanged(QColor)));
+  connect(d->OpacitySliderSpinBox, SIGNAL(valueChanged(double)),
+          this, SLOT(onOpacityChanged(double)));
   
+  connect(d->AmbientSliderSpinBox, SIGNAL(valueChanged(double)),
+          this, SLOT(onAmbientChanged(double)));
+  connect(d->DiffuseSliderSpinBox, SIGNAL(valueChanged(double)),
+          this, SLOT(onDiffuseChanged(double)));
+  connect(d->SpecularSliderSpinBox, SIGNAL(valueChanged(double)),
+          this, SLOT(onSpecularChanged(double)));
+  connect(d->SpecularPowerSliderSpinBox, SIGNAL(valueChanged(double)),
+          this, SLOT(onSpecularPowerChanged(double)));
+
+  connect(d->BackfaceCullingCheckBox, SIGNAL(toggled(bool)),
+          this, SLOT(onBackfaceCullingChanged(bool)));
+
   connect(d->PresetsListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
           this, SLOT(selectPreset(QListWidgetItem*)));
-
-  this->addPreset(1.,0.,0.,1.,"Full ambient eliminating all directional shading.");
-  this->addPreset(0.2,1.,0.,1.,"Dull material properties (no specular lighting).");
-  this->addPreset(0.1,0.9,0.2,10.,"Smooth material properties (moderate specular lighting).");
-  this->addPreset(0.1,0.6,0.5,40.,"Shiny material properties (high specular lighting).");
+  // default presets
+  this->addPreset(Qt::white,1.,1.,0.,0.,1.,"Full ambient eliminating all directional shading.");
+  this->addPreset(Qt::white,1.,0.2,1.,0.,1.,"Dull material properties (no specular lighting).");
+  this->addPreset(Qt::white,1.,0.1,0.9,0.2,10.,"Smooth material properties (moderate specular lighting).");
+  this->addPreset(Qt::white,1.,0.1,0.6,0.5,40.,"Shiny material properties (high specular lighting).");
   
   d->PresetsListWidget->viewport()->setAutoFillBackground( false);
   d->PresetsListWidget->setAutoFillBackground( false );
-  d->PresetsListWidget->setMaximumHeight(
-    d->MaterialPropertyPreviewLabel->sizeHint().height()
-    + d->PresetsListWidget->horizontalScrollBar()->sizeHint().height()
-    + 2. * d->PresetsListWidget->frameWidth());
+  d->PresetsListWidget->setMinimumWidth(
+    d->PresetsListWidget->frameWidth() // left frame width
+    + d->PresetsListWidget->count() * d->MaterialPropertyPreviewLabel->sizeHint().width()
+    + d->PresetsListWidget->frameWidth() ); // right frame width
 }
 
 // --------------------------------------------------------------------------
@@ -78,17 +95,45 @@ ctkMaterialPropertyWidget::~ctkMaterialPropertyWidget()
 }
 
 // --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::setColor(const QColor& newColor)
+{
+  Q_D(const ctkMaterialPropertyWidget);
+  d->ColorPickerButton->setColor(newColor);
+}
+
+// --------------------------------------------------------------------------
+QColor ctkMaterialPropertyWidget::color()const
+{
+  Q_D(const ctkMaterialPropertyWidget);
+  return d->ColorPickerButton->color();
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::setOpacity(double newOpacity)
+{
+  Q_D(const ctkMaterialPropertyWidget);
+  d->OpacitySliderSpinBox->setValue(newOpacity);
+}
+
+// --------------------------------------------------------------------------
+double ctkMaterialPropertyWidget::opacity()const
+{
+  Q_D(const ctkMaterialPropertyWidget);
+  return d->OpacitySliderSpinBox->value();
+}
+
+// --------------------------------------------------------------------------
 void ctkMaterialPropertyWidget::setAmbient(double newAmbient)
 {
   Q_D(const ctkMaterialPropertyWidget);
-  d->DiffuseSliderSpinBox->setValue(newAmbient);
+  d->AmbientSliderSpinBox->setValue(newAmbient);
 }
 
 // --------------------------------------------------------------------------
 double ctkMaterialPropertyWidget::ambient()const
 {
   Q_D(const ctkMaterialPropertyWidget);
-  return d->DiffuseSliderSpinBox->value();
+  return d->AmbientSliderSpinBox->value();
 }
 
 // --------------------------------------------------------------------------
@@ -134,19 +179,79 @@ double ctkMaterialPropertyWidget::specularPower()const
 }
 
 // --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::setBackfaceCulling(bool newBackfaceCulling)
+{
+  Q_D(const ctkMaterialPropertyWidget);
+  d->BackfaceCullingCheckBox->setChecked(newBackfaceCulling);
+}
+
+// --------------------------------------------------------------------------
+bool ctkMaterialPropertyWidget::backfaceCulling()const
+{
+  Q_D(const ctkMaterialPropertyWidget);
+  return d->BackfaceCullingCheckBox->isChecked();
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::onColorChanged(const QColor& newColor)
+{
+  emit colorChanged(newColor);
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::onOpacityChanged(double newOpacity)
+{
+  emit opacityChanged(newOpacity);
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::onAmbientChanged(double newAmbient)
+{
+  emit ambientChanged(newAmbient);
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::onDiffuseChanged(double newDiffuse)
+{
+  emit diffuseChanged(newDiffuse);
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::onSpecularChanged(double newSpecular)
+{
+  emit specularChanged(newSpecular);
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::onSpecularPowerChanged(double newSpecularPower)
+{
+  emit specularPowerChanged(newSpecularPower);
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::onBackfaceCullingChanged(bool newBackfaceCulling)
+{
+  emit backfaceCullingChanged(newBackfaceCulling);
+}
+
+// --------------------------------------------------------------------------
 void ctkMaterialPropertyWidget::addPreset(
-  double ambient, double diffuse, double specular, double power, const QString& label)
+  const QColor& color, double opacity,
+  double ambient, double diffuse, double specular, double power,
+  const QString& label)
 {
   Q_D(ctkMaterialPropertyWidget);
   d->PresetsListWidget->addItem("");
   QListWidgetItem* item = d->PresetsListWidget->item(d->PresetsListWidget->count()-1);
   item->setToolTip(label);
-  item->setData(Qt::UserRole, ambient); 
-  item->setData(Qt::UserRole + 1, diffuse);
-  item->setData(Qt::UserRole + 2, specular);
-  item->setData(Qt::UserRole + 3, power);
+  item->setData(Qt::UserRole, color);
+  item->setData(Qt::UserRole + 1, opacity);
+  item->setData(Qt::UserRole + 2, ambient); 
+  item->setData(Qt::UserRole + 3, diffuse);
+  item->setData(Qt::UserRole + 4, specular);
+  item->setData(Qt::UserRole + 5, power);
   ctkMaterialPropertyPreviewLabel* preset =
-    new ctkMaterialPropertyPreviewLabel(ambient, diffuse, specular, power);
+    new ctkMaterialPropertyPreviewLabel(color, opacity, ambient, diffuse, specular, power);
   preset->setColor(d->MaterialPropertyPreviewLabel->color());
   preset->setGridOpacity(d->MaterialPropertyPreviewLabel->gridOpacity());
   item->setSizeHint(preset->sizeHint());
@@ -157,8 +262,27 @@ void ctkMaterialPropertyWidget::addPreset(
 void ctkMaterialPropertyWidget::selectPreset(QListWidgetItem* preset)
 {
   Q_D(ctkMaterialPropertyWidget);
-  d->AmbientSliderSpinBox->setValue(preset->data(Qt::UserRole).toDouble());
-  d->DiffuseSliderSpinBox->setValue(preset->data(Qt::UserRole + 1).toDouble());
-  d->SpecularSliderSpinBox->setValue(preset->data(Qt::UserRole + 2).toDouble());
-  d->SpecularPowerSliderSpinBox->setValue(preset->data(Qt::UserRole + 3).toDouble());
+  d->ColorPickerButton->setColor(preset->data(Qt::UserRole).value<QColor>());
+  d->OpacitySliderSpinBox->setValue(preset->data(Qt::UserRole + 1).toDouble());
+  d->AmbientSliderSpinBox->setValue(preset->data(Qt::UserRole + 2).toDouble());
+  d->DiffuseSliderSpinBox->setValue(preset->data(Qt::UserRole + 3).toDouble());
+  d->SpecularSliderSpinBox->setValue(preset->data(Qt::UserRole + 4).toDouble());
+  d->SpecularPowerSliderSpinBox->setValue(preset->data(Qt::UserRole + 5).toDouble());
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::resizeEvent(QResizeEvent* resize)
+{
+  Q_D(ctkMaterialPropertyWidget);
+  this->QWidget::resizeEvent(resize);
+  d->PresetsListWidget->setMaximumWidth(
+    d->PresetsListWidget->frameWidth() // left frame width
+    + d->PresetsListWidget->count() * d->MaterialPropertyPreviewLabel->sizeHint().width()
+    + d->PresetsListWidget->frameWidth() ); // right frame width
+  d->PresetsListWidget->setMaximumHeight(
+    d->PresetsListWidget->frameWidth() // top frame height
+    + d->MaterialPropertyPreviewLabel->sizeHint().height()
+    + (d->PresetsListWidget->horizontalScrollBar()->isVisibleTo(d->PresetsListWidget) ? 
+      d->PresetsListWidget->horizontalScrollBar()->sizeHint().height() : 0)
+    + d->PresetsListWidget->frameWidth() ); // bottom frame height
 }

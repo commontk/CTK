@@ -39,11 +39,14 @@ class CTK_WIDGETS_EXPORT ctkMaterialPropertyPreviewLabel : public QFrame
   Q_PROPERTY(double specularPower READ specularPower WRITE setSpecularPower)
 
   Q_PROPERTY(QColor color READ color WRITE setColor)
+  Q_PROPERTY(double opacity READ opacity WRITE setOpacity)
   Q_PROPERTY(double gridOpacity READ gridOpacity WRITE setGridOpacity)
 public : 
 
   ctkMaterialPropertyPreviewLabel(QWidget *parent = 0);
-  ctkMaterialPropertyPreviewLabel(double ambient, double diffuse, double specular, double specularPower, QWidget *parent = 0);
+  ctkMaterialPropertyPreviewLabel(const QColor& color, double opacity,
+    double ambient, double diffuse, double specular, double specularPower,
+    QWidget *parent = 0);
   virtual ~ctkMaterialPropertyPreviewLabel();
   
   double ambient()const;
@@ -52,6 +55,7 @@ public :
   double specularPower()const;
   
   QColor color()const;
+  double opacity()const;
   double gridOpacity()const;
 
   /// Reimplemented to make it square
@@ -69,6 +73,8 @@ public slots:
   void setSpecularPower(double newSpecularPower);
   
   void setColor(const QColor& newColor);
+  /// Valid range: [0, 1]
+  void setOpacity(double newOpacity);
   void setGridOpacity(double newGridOpacity);
 
 protected: 
