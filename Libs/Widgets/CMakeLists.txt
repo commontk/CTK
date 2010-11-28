@@ -56,6 +56,8 @@ SET(KIT_SRCS
   ctkIconEnginePlugin.h
   ctkMaterialPropertyPreviewLabel.cpp
   ctkMaterialPropertyPreviewLabel.h
+  ctkMaterialPropertyWidget.cpp
+  ctkMaterialPropertyWidget.h
   ctkMatrixWidget.cpp
   ctkMatrixWidget.h
   ctkMenuButton.cpp
@@ -132,6 +134,7 @@ SET(KIT_MOC_SRCS
   ctkFittedTextBrowser.h
   ctkIconEnginePlugin.h
   ctkMaterialPropertyPreviewLabel.h
+  ctkMaterialPropertyWidget.h
   ctkMatrixWidget.h
   ctkMenuButton.h
   ctkRangeSlider.h
@@ -163,6 +166,7 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
   Resources/UI/ctkRangeWidget.ui
   Resources/UI/ctkDateRangeWidget.ui
+  Resources/UI/ctkMaterialPropertyWidget.ui
   Resources/UI/ctkScreenshotDialog.ui
   Resources/UI/ctkSliderWidget.ui
   Resources/UI/ctkWorkflowGroupBox.ui

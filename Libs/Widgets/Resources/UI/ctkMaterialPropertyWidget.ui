@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ctkMaterialPropertyWidget</class>
+ <widget class="QWidget" name="ctkMaterialPropertyWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>370</width>
+    <height>196</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Material Property</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <property name="labelAlignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="1" column="0">
+    <widget class="QLabel" name="AmbientLabel">
+     <property name="text">
+      <string>Ambient:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="ctkSliderWidget" name="AmbientSliderSpinBox">
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="DiffuseLabel">
+     <property name="text">
+      <string>Diffuse:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="ctkSliderWidget" name="DiffuseSliderSpinBox">
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="SpecularLabel">
+     <property name="text">
+      <string>Specular:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="ctkSliderWidget" name="SpecularSliderSpinBox">
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="SpecularPowerLabel">
+     <property name="toolTip">
+      <string>Specular power</string>
+     </property>
+     <property name="text">
+      <string>Power:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="ctkSliderWidget" name="SpecularPowerSliderSpinBox">
+     <property name="decimals">
+      <number>1</number>
+     </property>
+     <property name="singleStep">
+      <double>0.500000000000000</double>
+     </property>
+     <property name="minimum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>50.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="PresetsLabel">
+     <property name="text">
+      <string>Presets:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QListWidget" name="PresetsListWidget">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="flow">
+      <enum>QListView::LeftToRight</enum>
+     </property>
+     <property name="uniformItemSizes">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="PreviewLabel">
+     <property name="text">
+      <string>Preview:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="ctkMaterialPropertyPreviewLabel" name="MaterialPropertyPreviewLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="ambient">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="diffuse">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="specular">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="specularPower">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="gridOpacity">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkMaterialPropertyPreviewLabel</class>
+   <extends>QFrame</extends>
+   <header>ctkMaterialPropertyPreviewLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>AmbientSliderSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MaterialPropertyPreviewLabel</receiver>
+   <slot>setAmbient(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>65</x>
+     <y>172</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>DiffuseSliderSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MaterialPropertyPreviewLabel</receiver>
+   <slot>setDiffuse(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>74</x>
+     <y>173</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SpecularSliderSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MaterialPropertyPreviewLabel</receiver>
+   <slot>setSpecular(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>135</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>76</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SpecularPowerSliderSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MaterialPropertyPreviewLabel</receiver>
+   <slot>setSpecularPower(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>147</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>74</x>
+     <y>184</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

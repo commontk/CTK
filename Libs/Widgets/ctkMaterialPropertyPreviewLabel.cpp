@@ -59,10 +59,9 @@ ctkMaterialPropertyPreviewLabelPrivate::ctkMaterialPropertyPreviewLabelPrivate(c
   this->Specular = 0.5;
   this->SpecularPower = 50;
   
-  this->Color = Qt::red;
+  this->Color = Qt::white;
   this->GridOpacity = 0.6;
 }
-
 
 //ctkMaterialPropertyPreviewLabel
 //-----------------------------------------------------------------------------
@@ -70,6 +69,19 @@ ctkMaterialPropertyPreviewLabel::ctkMaterialPropertyPreviewLabel(QWidget *newPar
   : QFrame(newParent)
   , d_ptr(new ctkMaterialPropertyPreviewLabelPrivate(*this))
 {
+}
+
+//-----------------------------------------------------------------------------
+ctkMaterialPropertyPreviewLabel::ctkMaterialPropertyPreviewLabel(
+  double ambient, double diffuse, double specular, double specularPower, QWidget *newParent)
+  : QFrame(newParent)
+  , d_ptr(new ctkMaterialPropertyPreviewLabelPrivate(*this))
+{
+  Q_D(ctkMaterialPropertyPreviewLabel);
+  d->Ambient = ambient;
+  d->Diffuse = diffuse;
+  d->Specular = specular;
+  d->SpecularPower = specularPower;  
 }
 
 //-----------------------------------------------------------------------------
@@ -240,7 +252,7 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
         ref.setZ( 2.*normal.z()*dot - light.z());
         ref.normalize();
 
-        qreal diffuseComp = diffuse * .01 * dot;
+        qreal diffuseComp = diffuse * dot;
         if (diffuseComp < 0)
           {
           diffuseComp = 0.;

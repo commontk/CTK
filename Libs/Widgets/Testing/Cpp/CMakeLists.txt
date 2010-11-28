@@ -23,6 +23,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkFileDialogTest1.cpp
   ctkFittedTextBrowserTest1.cpp
   ctkMaterialPropertyPreviewLabelTest1.cpp
+  ctkMaterialPropertyWidgetTest1.cpp
   ctkMatrixWidgetTest1.cpp
   ctkMatrixWidgetTest2.cpp
   ctkMenuButtonTest1.cpp
@@ -94,6 +95,7 @@ SIMPLE_TEST( ctkDynamicSpacerTest2 )
 SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkMaterialPropertyPreviewLabelTest1 )
+SIMPLE_TEST( ctkMaterialPropertyWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest2 )
 SIMPLE_TEST( ctkMenuButtonTest1 )

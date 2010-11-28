@@ -43,6 +43,7 @@ class CTK_WIDGETS_EXPORT ctkMaterialPropertyPreviewLabel : public QFrame
 public : 
 
   ctkMaterialPropertyPreviewLabel(QWidget *parent = 0);
+  ctkMaterialPropertyPreviewLabel(double ambient, double diffuse, double specular, double specularPower, QWidget *parent = 0);
   virtual ~ctkMaterialPropertyPreviewLabel();
   
   double ambient()const;
@@ -64,7 +65,7 @@ public slots:
   void setDiffuse(double newDiffuse);
   /// Valid range: [0,1]
   void setSpecular(double newSpecular);
-  /// Valid range: [0,100]
+  /// Valid range: [1,inf[
   void setSpecularPower(double newSpecularPower);
   
   void setColor(const QColor& newColor);
