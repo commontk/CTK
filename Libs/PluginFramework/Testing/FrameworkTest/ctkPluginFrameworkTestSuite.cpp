@@ -170,7 +170,7 @@ void ctkPluginFrameworkTestSuite::frame020a()
     pc->getServiceReference("ctkTestPluginAService");
     QFAIL("framework test plugin, service from test plugin A unexpectedly found");
   }
-  catch (ctkServiceException& e)
+  catch (ctkServiceException& /*e*/)
   {
 
   }

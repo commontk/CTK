@@ -27,6 +27,7 @@
 #include <ctkPluginException.h>
 #include <ctkPluginConstants.h>
 #include <ctkServiceEvent.h>
+#include <ctkServiceException.h>
 
 #include <ctkPluginFrameworkTestUtil.h>
 
@@ -41,11 +42,23 @@ void ctkServiceListenerTestSuite::initTestCase()
 {
   pA = ctkPluginFrameworkTestUtil::installPlugin(pc, "pluginA_test");
   QVERIFY(pA);
+  pA2 = ctkPluginFrameworkTestUtil::installPlugin(pc, "pluginA2_test");
+  QVERIFY(pA2);
+  pSL1 = ctkPluginFrameworkTestUtil::installPlugin(pc, "pluginSL1_test");
+  QVERIFY(pSL1);
+  pSL3 = ctkPluginFrameworkTestUtil::installPlugin(pc, "pluginSL3_test");
+  QVERIFY(pSL3);
+  pSL4 = ctkPluginFrameworkTestUtil::installPlugin(pc, "pluginSL4_test");
+  QVERIFY(pSL4);
 }
 
 void ctkServiceListenerTestSuite::cleanupTestCase()
 {
   pA->uninstall();
+  pA2->uninstall();
+  pSL1->uninstall();
+  pSL3->uninstall();
+  pSL4->uninstall();
 }
 
 void ctkServiceListenerTestSuite::frameSL05a()
@@ -59,6 +72,242 @@ void ctkServiceListenerTestSuite::frameSL05a()
   teststatus = runStartStopTest("FRAMEsl05A", cnt, pA, events);
 
   QVERIFY(teststatus);
+}
+
+void ctkServiceListenerTestSuite::frameSL10a()
+{
+  int cnt = 1;
+
+  QList<ctkServiceEvent::Type> events;
+  events << ctkServiceEvent::REGISTERED;
+  events << ctkServiceEvent::UNREGISTERING;
+  QVERIFY(runStartStopTest("FRAMEsl10A", cnt, pA2,events));
+}
+
+void ctkServiceListenerTestSuite::frameSL25a()
+{
+  ctkServiceListener sListen(pc, false);
+  try
+  {
+    pc->connectServiceListener(&sListen, "serviceChanged");
+  }
+  catch (const std::logic_error& ise)
+  {
+    qDebug() << "service listener registration failed " << ise.what();
+    QFAIL("service listener registration failed");
+  }
+
+  QList<ctkServiceEvent::Type> expectedServiceEventTypes;
+
+  // Startup
+  expectedServiceEventTypes << ctkServiceEvent::REGISTERED; // ctkActivator at start of pSL1
+  expectedServiceEventTypes << ctkServiceEvent::REGISTERED; // ctkFooService at start of pSL4
+  expectedServiceEventTypes << ctkServiceEvent::REGISTERED; // ctkActivator at start of pSL3
+
+  // Stop pSL4
+  expectedServiceEventTypes << ctkServiceEvent::UNREGISTERING; // ctkFooService at first stop of pSL4
+
+  // Shutdown
+  expectedServiceEventTypes << ctkServiceEvent::UNREGISTERING; // ctkActivator at stop of pSL1
+  expectedServiceEventTypes << ctkServiceEvent::UNREGISTERING; // Activator at stop of pSL3
+
+
+  // Start pSL1 to ensure that the Service interface is available.
+  try
+  {
+    qDebug() << "Starting pSL1: " << pSL1;
+    pSL1->start();
+  }
+  catch (const ctkPluginException& pex)
+  {
+    qDebug() << "Failed to start plugin, got exception:" << pex;
+    QFAIL("Failed to start bundle, got exception: ctkPluginException");
+  }
+  catch (const std::exception& e)
+  {
+    qDebug() << "Failed to start plugin, got exception" << e.what();
+    QFAIL("Failed to start plugin, got exception: std::exception");
+  }
+
+  // Start pSL4 that will require the serivce interface and publish
+  // ctkFooService
+  try
+  {
+    qDebug() << "Starting pSL4:" << pSL4;
+    pSL4->start();
+  }
+  catch (const ctkPluginException& pex)
+  {
+    qDebug() << "Failed to start plugin, got exception:" << pex;
+    QFAIL("Failed to start bundle, got exception: ctkPluginException");
+  }
+  catch (const std::exception& e)
+  {
+    qDebug() << "Failed to start plugin, got exception" << e.what();
+    QFAIL("Failed to start plubin, got exception.");
+  }
+
+  // Start buSL3 that will require the serivce interface and get the service
+  try
+  {
+    qDebug() << "Starting pSL3:" << pSL3;
+    pSL3->start();
+  }
+  catch (const ctkPluginException& pex)
+  {
+    qDebug() << "Failed to start plugin, got exception:" << pex;
+    QFAIL("Failed to start plugin, got exception: ctkPluginException");
+  }
+  catch (const std::exception& e)
+  {
+    qDebug() << "Failed to start plugin, got exception" << e.what();
+    QFAIL("Failed to start plugin, got exception.");
+  }
+
+  // sleep to stabelize state.
+  QTest::qWait(300);
+
+  // Check that pSL3 has been notified about the ctkFooService.
+  qDebug() << "Check that ctkFooService is added to service tracker in pSL3";
+  try
+  {
+    ctkServiceReference pSL3SR
+        = pc->getServiceReference("ctkActivatorSL3");
+    QObject* pSL3Activator = pc->getService(pSL3SR);
+    QVERIFY2(pSL3Activator, "No activator service.");
+
+    QVariant serviceAddedField3 = pSL3Activator->property("serviceAdded");
+    QVERIFY2(serviceAddedField3.isValid() && serviceAddedField3.toBool(),
+             "pluginSL3 not notified about presence of ctkFooService");
+    qDebug() << "pSL3Activator::serviceAdded is true";
+    pc->ungetService(pSL3SR);
+  }
+  catch (const ctkServiceException& se)
+  {
+    qDebug() << "Failed to get service reference:" << se;
+    QFAIL("No activator service reference.");
+  }
+
+  // Check that pSL1 has been notified about the ctkFooService.
+  qDebug() << "Check that ctkFooService is added to service tracker in pSL1";
+  try
+  {
+    ctkServiceReference pSL1SR
+        = pc->getServiceReference("ctkActivatorSL1");
+    QObject* pSL1Activator = pc->getService(pSL1SR);
+    QVERIFY2(pSL1Activator, "No activator service.");
+
+    QVariant serviceAddedField = pSL1Activator->property("serviceAdded");
+    QVERIFY2(serviceAddedField.isValid() && serviceAddedField.toBool(),
+             "bundleSL1 not notified about presence of ctkFooService");
+    qDebug() << "pSL1Activator::serviceAdded is true";
+    pc->ungetService(pSL1SR);
+  }
+  catch (const ctkServiceException& se)
+  {
+    qDebug() << "Failed to get service reference:" << se;
+    QFAIL("No activator service reference.");
+  }
+
+  // Stop the service provider: pSL4
+  try
+  {
+    qDebug() << "Stop pSL4:" << pSL4;
+    pSL4->stop();
+  }
+  catch (const ctkPluginException& pex)
+  {
+    qDebug() << "Failed to stop plugin, got exception:" << pex;
+    QFAIL("Failed to stop bundle, got exception: ctkPluginException");
+  }
+  catch (const std::exception& e)
+  {
+    qDebug() << "Failed to stop plugin, got exception:" << e.what();
+    QFAIL("Failed to stop plugin, got exception.");
+  }
+
+  // sleep to stabelize state.
+  QTest::qWait(300);
+
+
+  // Check that pSL3 has been notified about the removal of ctkFooService.
+  qDebug() << "Check that ctkFooService is removed from service tracker in pSL3";
+  try
+  {
+    ctkServiceReference pSL3SR
+        = pc->getServiceReference("ctkActivatorSL3");
+    QObject* pSL3Activator = pc->getService(pSL3SR);
+    QVERIFY2(pSL3Activator, "No activator service.");
+    QVariant serviceRemovedField3 = pSL3Activator->property("serviceRemoved");
+    QVERIFY2(serviceRemovedField3.isValid() && serviceRemovedField3.toBool(),
+             "pluginSL3 not notified about removal of ctkFooService");
+    qDebug() << "pSL3Activator::serviceRemoved is true";
+    pc->ungetService(pSL3SR);
+  }
+  catch (const ctkServiceException& se)
+  {
+    qDebug() << "Failed to get service reference:" << se;
+    QFAIL("No activator service reference.");
+  }
+
+  // Stop pSL1
+  try
+  {
+    qDebug() << "Stop pSL1:" << pSL1;
+    pSL1->stop();
+  }
+  catch (const ctkPluginException& pex)
+  {
+    qDebug() << "Failed to stop plugin, got exception:" << pex;
+    QFAIL("Failed to stop bundle, got exception: ctkPluginException");
+  }
+  catch (const std::exception& e)
+  {
+    qDebug() << "Failed to stop plugin, got exception" << e.what();
+    QFAIL("Failed to stop plugin, got exception.");
+  }
+
+  // Stop pSL3
+  try
+  {
+    qDebug() << "Stop pSL3:" << pSL3;
+    pSL3->stop();
+  }
+  catch (const ctkPluginException& pex)
+  {
+    qDebug() << "Failed to stop plugin, got exception:" << pex;
+    QFAIL("Failed to stop plugin, got exception: ctkPluginException");
+  }
+  catch (const std::exception& e)
+  {
+    qDebug() << "Failed to stop plugin, got exception" << e.what();
+    QFAIL("Failed to stop plugin, got exception.");
+  }
+
+
+  // sleep to stabelize state.
+  QTest::qWait(300);
+
+  // Check service events seen by this class
+  qDebug() << "Checking ServiceEvents(ServiceListener):";
+  if (!sListen.checkEvents(expectedServiceEventTypes))
+  {
+    qDebug() << "Service listener event notification error";
+    QFAIL("Service listener event notification error");
+  }
+
+
+  QVERIFY2(sListen.teststatus, "Service listener checks");
+  try 
+  {
+    //pc->disconnectServiceListener(&sListen, "serviceChanged");
+    sListen.clearEvents();
+  } 
+  catch (const std::logic_error& ise)
+  {
+    qDebug() << ise.what();
+    QFAIL("service listener removal failed ");
+  }
 }
 
 bool ctkServiceListenerTestSuite::runStartStopTest(

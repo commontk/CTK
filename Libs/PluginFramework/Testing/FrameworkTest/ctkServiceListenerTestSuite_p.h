@@ -45,11 +45,22 @@ private slots:
     void cleanupTestCase();
 
     // test functions
+
+    // Checks that the correct service events
+    // are sent to a registered service listener.
+    // Case where the plugin does not unregister its
+    // service in the stop()-method.
     void frameSL05a();
-//    void frameSL10a();
+
+    // Checks that the correct service events
+    // are sent to a registered service listener.
+    // Case where the plugin unregisters its service
+    // in the stop()-method.
+    void frameSL10a();
+
 //    void frameSL15a();
 //    void frameSL20a();
-//    void frameSL25a();
+    void frameSL25a();
 
 private:
 
@@ -58,6 +69,9 @@ private:
 
     QSharedPointer<ctkPlugin> pA;
     QSharedPointer<ctkPlugin> pA2;
+    QSharedPointer<ctkPlugin> pSL1;
+    QSharedPointer<ctkPlugin> pSL3;
+    QSharedPointer<ctkPlugin> pSL4;
 
     bool runStartStopTest(
       const QString& tcName, int cnt, QSharedPointer<ctkPlugin> targetPlugin,

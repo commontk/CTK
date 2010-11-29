@@ -1,0 +1,7 @@
+set(Plugin-ActivationPolicy "eager")
+set(Plugin-Name "pluginSL1")
+set(Plugin-Version "1.0.0")
+set(Plugin-Description "Test plugin for framework, pluginSL1_test")
+set(Plugin-Vendor "CommonTK")
+set(Plugin-ContactAddress "http://www.commontk.org")
+set(Plugin-Category "test")
