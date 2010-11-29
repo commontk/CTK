@@ -34,14 +34,18 @@ class TestRunner : public QThread
 {
 public:
 
-  TestRunner(ctkPluginContext* context, int argc, char** argv)
-    : context(context), argc(argc), argv(argv)
+  TestRunner(ctkPluginContext* context, long testPluginId, int argc, char** argv)
+    : context(context), testPluginId(testPluginId), argc(argc), argv(argv)
   {
 
   }
 
   void run()
   {
+    // start the main test plugin which registers the test suites (QObject classes)
+    QSharedPointer<ctkPlugin> fwTest = context->getPlugin(testPluginId);
+    fwTest->start();
+
     QList<ctkServiceReference> refs = context->getServiceReferences("ctkTestSuiteInterface");
 
     int result = 0;
@@ -56,6 +60,7 @@ public:
 private:
 
   ctkPluginContext* context;
+  long testPluginId;
   int argc;
   char** argv;
 };
@@ -86,7 +91,7 @@ int main(int argc, char** argv)
 
   ctkPluginContext* context = framework->getPluginContext();
 
-  QSharedPointer<ctkPlugin> fwTest;
+  long fwTestPluginId = -1;
   QStringList libFilter;
   libFilter << "*.dll" << "*.so" << "*.dylib";
   QDirIterator dirIter(pluginDir, libFilter, QDir::Files);
@@ -97,7 +102,7 @@ int main(int argc, char** argv)
     {
       try
       {
-        fwTest = context->installPlugin(QUrl::fromLocalFile(dirIter.filePath()).toString());
+        fwTestPluginId = context->installPlugin(QUrl::fromLocalFile(dirIter.filePath()).toString())->getPluginId();
         break;
       }
       catch (const ctkPluginException& e)
@@ -107,13 +112,10 @@ int main(int argc, char** argv)
     }
   }
 
-  if (!fwTest)
+  if (fwTestPluginId < 0)
   {
     qCritical() << "Could not find the plugin framework test plugin: org.commontk.pluginfwtest";
   }
-
-  // start the main test plugin which registers the test suites (QObject classes)
-  fwTest->start();
 
 //  QList<ctkServiceReference> refs = context->getServiceReferences("ctkTestSuiteInterface");
 
@@ -125,7 +127,7 @@ int main(int argc, char** argv)
 
 //  return result;
 
-  TestRunner runner(context, argc,argv);
+  TestRunner runner(context, fwTestPluginId, argc, argv);
   runner.start();
 
   return app.exec();
