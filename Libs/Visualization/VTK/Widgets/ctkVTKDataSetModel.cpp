@@ -116,6 +116,10 @@ ctkVTKDataSetModel::~ctkVTKDataSetModel()
 void ctkVTKDataSetModel::setDataSet(vtkDataSet* dataSet)
 {
   Q_D(ctkVTKDataSetModel);
+  if (dataSet == d->DataSet.GetPointer())
+    {
+    return;
+    }
   this->qvtkReconnect(d->DataSet, dataSet, vtkCommand::ModifiedEvent,
                       this, SLOT(onDataSetModified(vtkObject*)) );
   d->DataSet = dataSet;
