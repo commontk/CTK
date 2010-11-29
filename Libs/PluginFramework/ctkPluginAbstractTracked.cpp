@@ -101,7 +101,7 @@ void ctkPluginAbstractTracked<Item,Related>::trackInitial()
        * within this synchronized block.
        */
       item = initial.takeFirst();
-      if (tracked.value(item) != 0)
+      if (tracked.value(item).isValid())
       {
         /* if we are already tracking this item */
         if (DEBUG)
