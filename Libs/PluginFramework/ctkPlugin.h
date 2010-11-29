@@ -74,6 +74,7 @@ class ctkPluginPrivate;
 class CTK_PLUGINFW_EXPORT ctkPlugin {
 
   Q_DECLARE_PRIVATE(ctkPlugin)
+  Q_DISABLE_COPY(ctkPlugin)
 
 public:
 
