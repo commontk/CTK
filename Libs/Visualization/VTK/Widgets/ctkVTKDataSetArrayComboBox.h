@@ -46,6 +46,7 @@ public:
   virtual ~ctkVTKDataSetArrayComboBox();
   
   vtkDataArray* currentArray()const;
+  QString currentArrayName()const;
   vtkDataSet* dataSet()const;
 
 public slots:
