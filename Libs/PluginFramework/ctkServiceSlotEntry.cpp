@@ -27,6 +27,8 @@
 
 #include <QSharedData>
 
+#include <cstring>
+
 class ctkServiceSlotEntryData : public QSharedData
 {
 public:
@@ -105,7 +107,7 @@ bool ctkServiceSlotEntry::operator==(const ctkServiceSlotEntry& other) const
 {
   return d->plugin == other.d->plugin &&
          d->receiver == other.d->receiver &&
-         d->slot == other.d->slot;
+         std::strcmp(d->slot, other.d->slot) == 0;
 }
 
 void ctkServiceSlotEntry::invokeSlot(const ctkServiceEvent &event)
