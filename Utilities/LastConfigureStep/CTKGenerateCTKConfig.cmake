@@ -64,9 +64,17 @@ SET(CTK_CONFIG_INSTALL_ONLY)
 # The "use" file.
 SET(CTK_USE_FILE ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake)
 
+# Generate list of target to exports
+SET(CTK_TARGETS_TO_EXPORT ${CTK_LIBRARIES} ${CTK_PLUGIN_LIBRARIES})
+
+# Append CTK PythonQt static libraries
+FOREACH(lib ${CTK_WRAPPED_LIBRARIES_PYTHONQT})
+  LIST(APPEND CTK_TARGETS_TO_EXPORT ${lib}PythonQt)
+ENDFOREACH()
+
 # Export targets so they can be imported by a project using CTK
 # as an external library
-EXPORT(TARGETS ${CTK_LIBRARIES} ${CTK_PLUGIN_LIBRARIES} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
+EXPORT(TARGETS ${CTK_TARGETS_TO_EXPORT} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
 
 # Write a set of variables containing plugin specific include directories
 SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG)
