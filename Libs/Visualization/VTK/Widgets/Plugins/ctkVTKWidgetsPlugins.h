@@ -26,6 +26,7 @@
 
 // CTK includes
 #include "ctkVisualizationVTKWidgetsPluginsExport.h"
+#include "ctkVTKDataSetArrayComboBoxPlugin.h"
 #include "ctkVTKRenderViewPlugin.h"
 #include "ctkVTKScalarBarWidgetPlugin.h"
 #ifdef CTK_USE_CHARTS
@@ -47,6 +48,7 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
+    plugins << new ctkVTKDataSetArrayComboBoxPlugin;
     plugins << new ctkVTKRenderViewPlugin;
     plugins << new ctkVTKScalarBarWidgetPlugin;
 #ifdef CTK_USE_CHARTS
