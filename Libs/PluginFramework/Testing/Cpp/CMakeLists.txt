@@ -1,5 +1,3 @@
-SET(KIT ${PROJECT_NAME})
-
 SET(SRCS
   ctkPluginFrameworkTestMain.cpp
   ctkPluginFrameworkTestUtil.h
@@ -12,10 +10,10 @@ SET(MY_MOC_CXX )
 
 #QT4_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+SET(test_executable ${PROJECT_NAME}Tests)
 
-ADD_EXECUTABLE(${KIT}CppTests ${SRCS} ${MY_MOC_CXX})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME})
+ADD_EXECUTABLE(${test_executable} ${SRCS} ${MY_MOC_CXX})
+TARGET_LINK_LIBRARIES(${test_executable} ${PROJECT_NAME})
 
-ADD_TEST(${PROJECT_NAME} ${KIT}CppTests)
-SET_PROPERTY(TEST ${PROJECT_NAME} PROPERTY LABELS ${PROJECT_NAME})
+ADD_TEST(${test_executable} ${CPP_TEST_PATH}/${test_executable})
+SET_PROPERTY(TEST ${test_executable} PROPERTY LABELS ${PROJECT_NAME})
