@@ -31,7 +31,7 @@
 class ctkPluginTracker;
 class ctkPluginContext;
 class ctkTrackedPlugin;
-class ctkPluginTrackerCustomizer;
+struct ctkPluginTrackerCustomizer;
 
 class ctkPluginTrackerPrivate
 {

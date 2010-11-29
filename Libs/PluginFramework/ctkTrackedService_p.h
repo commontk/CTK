@@ -27,7 +27,7 @@
 #include "ctkServiceEvent.h"
 
 class ctkServiceTracker;
-class ctkServiceTrackerCustomizer;
+struct ctkServiceTrackerCustomizer;
 
 class ctkTrackedService : public QObject,
     public ctkPluginAbstractTracked<ctkServiceReference, ctkServiceEvent>

@@ -31,7 +31,7 @@
 
 class ctkServiceTracker;
 class ctkTrackedService;
-class ctkServiceTrackerCustomizer;
+struct ctkServiceTrackerCustomizer;
 
 class ctkServiceTrackerPrivate {
 

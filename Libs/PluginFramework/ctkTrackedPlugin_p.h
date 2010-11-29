@@ -27,9 +27,10 @@
 
 #include "ctkPluginAbstractTracked_p.h"
 #include "ctkPluginEvent.h"
+#include "ctkPlugin.h"
 
 class ctkPluginTracker;
-class ctkPluginTrackerCustomizer;
+struct ctkPluginTrackerCustomizer;
 
 class ctkTrackedPlugin : public QObject,
     public ctkPluginAbstractTracked<QSharedPointer<ctkPlugin>, ctkPluginEvent>

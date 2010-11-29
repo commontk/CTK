@@ -135,7 +135,7 @@ void ctkServiceTracker::close()
     {
       d->context->disconnectServiceListener(outgoing.data(), "serviceChanged");
     }
-    catch (const std::logic_error& e)
+    catch (const std::logic_error& /*e*/)
     {
       /* In case the context was stopped. */
     }
