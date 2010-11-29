@@ -133,6 +133,10 @@ SET(CTK_WRAPPED_LIBRARIES_PYTHONQT CACHE INTERNAL "CTK libraries wrapped using P
 SET(CTK_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
 SET(CTK_PLUGIN_LIBRARIES CACHE INTERNAL "CTK plugins" FORCE)
 
+# Used by CTKGenerateCTKConfig.cmake and also used to reference script from other scripts
+SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)
+SET(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
+
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
 #
@@ -156,10 +160,6 @@ INCLUDE(CMake/ctkFunctionGeneratePluginManifest.cmake)
 INCLUDE(CMake/ctkMacroGeneratePluginResourceFile.cmake)
 INCLUDE(CMake/ctkFunctionCheckCompilerFlags.cmake)
 INCLUDE(CMake/ctkFunctionGetIncludeDirs.cmake)
-
-# Used by CTKGenerateCTKConfig.cmake
-SET(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)
-SET(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
 
 #-----------------------------------------------------------------------------
 # Testing
@@ -447,7 +447,11 @@ ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${targe
 IF(CTK_LIB_Scripting/Python/Core)
   find_package(PythonInterp)
   IF(NOT PYTHONINTERP_FOUND)
-    MESSAGE(SEND_ERROR "PYTHON_EXECUTABLE not specified or inexistent when CTK_LIB_Scripting is enabled")
+    MESSAGE(SEND_ERROR "PYTHON_EXECUTABLE variable should be set to build CTK_LIB_Scripting/Python")
+  ENDIF()
+  FIND_PACKAGE(PythonLibs)
+  IF(NOT PYTHONLIBS_FOUND)
+    MESSAGE(FATAL_ERROR "PYTHON_LIBRARIES and PYTHON_INCLUDE_DIRS should be set to build CTK_LIB_Scripting/Python")
   ENDIF()
   OPTION(CTK_WRAP_PYTHONQT_FULL "Wrap CTK classes using Qt meta-object system into Python language" OFF)
   OPTION(CTK_WRAP_PYTHONQT_LIGHT "Wrap CTK classes using Qt meta-object system into Python language" OFF)
@@ -481,9 +485,8 @@ IF(RESULT_VAR)
   MESSAGE(FATAL_ERROR "Failed to obtain list of target ordered topologically.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
 ENDIF()
 
-
 # Convert 'CTEST_PROJECT_SUBPROJECTS_OUTPUT' to a list
-STRING(REPLACE " " "\\;" CTEST_PROJECT_SUBPROJECTS ${CTEST_PROJECT_SUBPROJECTS_OUTPUT})
+STRING(REPLACE " " "\\;" CTEST_PROJECT_SUBPROJECTS "${CTEST_PROJECT_SUBPROJECTS_OUTPUT}")
 SET(CTEST_PROJECT_SUBPROJECTS ${CTEST_PROJECT_SUBPROJECTS})
 
 # If the list of subproject is empty, let's at least build CTKCore
@@ -518,7 +521,7 @@ ENDIF()
 FOREACH(_external_target ${EXTERNAL_TARGETS})
   IF(${_external_target}_FIND_PACKAGE_CMD)
     #MESSAGE("Calling FIND_PACKAGE(${${_external_target}_FIND_PACKAGE_CMD})")
-    FIND_PACKAGE(${${_external_target}_FIND_PACKAGE_CMD})
+    FIND_PACKAGE(${${_external_target}_FIND_PACKAGE_CMD} REQUIRED)
   ENDIF()
 ENDFOREACH()
 
@@ -541,6 +544,13 @@ FOREACH(_external_target ${EXTERNAL_TARGETS})
     ENDIF()
   ENDIF()
 ENDFOREACH()
+
+# Since PYTHONQT_USE_VTK library option can be enabled independently of
+# Visualization/VTK/Core, let's make sure VTK has been properly discovered
+IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  FIND_PACKAGE(VTK REQUIRED)
+ENDIF()
+SET(CTK_WRAP_PYTHONQT_USE_VTK ${CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK})
 
 #-----------------------------------------------------------------------------
 # CTK_SUPERBUILD_BINARY_DIR

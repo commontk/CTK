@@ -1,5 +1,11 @@
 PROJECT(CTKScriptingPythonCore)
 
+#
+# 3rd party dependencies
+#
+IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  INCLUDE(${VTK_USE_FILE})
+ENDIF()
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
@@ -30,13 +36,10 @@ SET(KIT_resources
 #
 # Configure file describing which Qt modules are wrapped
 #
-FOREACH(qtlib GUI NETWORK OPENGL SQL SVG UITOOLS WEBKIT XML XMLPATTERNS)
+FOREACH(qtlib CORE GUI NETWORK OPENGL SQL SVG UITOOLS WEBKIT XML XMLPATTERNS)
   SET(CTK_PYTHONQT_WRAP_QT${qtlib} ${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
   #message(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}:${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
 ENDFOREACH()
-
-# TODO Ideally a file named ctkScripingPythonWidgetsConfigure.h should
-# also be configured, this file should deal with Qt Module depending only on QtGui
 
 CONFIGURE_FILE(
   ctkScriptingPythonCoreConfigure.h.in
@@ -46,6 +49,11 @@ CONFIGURE_FILE(
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkMacroGetTargetLibraries(KIT_target_libraries)
+
+# Link against vtkPython if required
+IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  LIST(APPEND KIT_target_libraries vtkPythonCore)
+ENDIF()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
@@ -60,6 +68,8 @@ ctkMacroBuildLib(
 
 # Plugins
 #ADD_SUBDIRECTORY(Plugins)
+
+ADD_SUBDIRECTORY(Python)
 
 # Testing
 IF(BUILD_TESTING)

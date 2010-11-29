@@ -63,6 +63,8 @@ FUNCTION(ctkMacroWrapPythonQt_log msg)
   FILE(APPEND "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "${msg}\n")
 ENDFUNCTION()
 
+INCLUDE(${CTK_CMAKE_DIR}/ctkMacroSetPaths.cmake)
+
 #
 # Convenient function allowing to invoke re.search(regex, string) using the given interpreter.
 # Note that is_matching will be set to True if there is a match
@@ -190,6 +192,7 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     
     IF(NOT skip_wrapping)
       # Skip wrapping if object has a virtual pure method 
+      # "x3b" is the unicode for semicolon
       SET(regex "virtual[\\w\\n\\s\\*\\(\\)]+\\=[\\s\\n]*(0|NULL)[\\s\\n]*\\x3b")
       ctkMacroWrapPythonQt_reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH}
                                         ${regex} ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} is_matching)

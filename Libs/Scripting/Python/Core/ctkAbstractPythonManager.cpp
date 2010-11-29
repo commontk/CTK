@@ -39,6 +39,10 @@
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #endif
 
+#ifdef CTK_PYTHONQT_WRAP_QTCORE
+void PythonQt_init_QtCore(PyObject*);
+#endif
+
 #ifdef CTK_PYTHONQT_WRAP_QTGUI
 void PythonQt_init_QtGui(PyObject*);
 #endif
@@ -78,7 +82,7 @@ void PythonQt_init_QtXmlPatterns(PyObject*);
 //-----------------------------------------------------------------------------
 ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclass(_parent)
 {
-
+  this->InitFunction = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -120,6 +124,10 @@ void ctkAbstractPythonManager::initPythonQt()
                 SLOT(printStdout(const QString&)));
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString&)),
                 SLOT(printStderr(const QString&)));
+  
+  #ifdef CTK_PYTHONQT_WRAP_QTCORE
+  PythonQt_init_QtCore(0);
+  #endif
   
   #ifdef CTK_PYTHONQT_WRAP_QTGUI
   PythonQt_init_QtGui(0);
@@ -167,7 +175,13 @@ void ctkAbstractPythonManager::initPythonQt()
   _mainContext.evalScript(initCode.join("\n"));
 
   this->preInitialization();
+  if (this->InitFunction)
+    {
+    (*this->InitFunction)();
+    }
+  emit this->pythonPreInitialized();
 
+  this->executeInitializationScripts();
   emit this->pythonInitialized();
 }
 
@@ -179,6 +193,11 @@ QStringList ctkAbstractPythonManager::pythonPaths()
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::preInitialization()
+{
+}
+
+//-----------------------------------------------------------------------------
+void ctkAbstractPythonManager::executeInitializationScripts()
 {
 }
 
@@ -220,6 +239,12 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
     {
     main.evalFile(filename);
     }
+}
+
+//-----------------------------------------------------------------------------
+void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
+{
+  this->InitFunction = initFunction;
 }
 
 //-----------------------------------------------------------------------------

@@ -1,0 +1,118 @@
+
+// QT includes
+#include <QFile>
+#include <QFileInfo>
+#include <QApplication>
+
+// PythonQT includes
+#include <PythonQt.h>
+
+// CTK includes
+#include "ctkSimplePythonManager.h"
+#include "ctkSimplePythonQtDecorators.h"
+
+#include "ctkSimplePythonShellConfigure.h" // For CTK_WRAP_PYTHONQT_{LIGHT, FULL}
+
+#if defined(CTK_WRAP_PYTHONQT_LIGHT) || defined(CTK_WRAP_PYTHONQT_FULL)
+// PythonQt wrapper initialization methods
+@CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION@
+#endif
+
+#ifdef CTK_WRAP_PYTHONQT_USE_VTK
+# if defined(CMAKE_INTDIR)
+#  define VTK_PYTHON_LIBRARY_DIR VTK_PYTHON_LIBRARY_DIR_BUILD "/" CMAKE_INTDIR
+# else
+#  define VTK_PYTHON_LIBRARY_DIR VTK_PYTHON_LIBRARY_DIR_BUILD
+# endif
+#endif
+
+//-----------------------------------------------------------------------------
+ctkSimplePythonManager::ctkSimplePythonManager(QObject* _parent) : Superclass(_parent)
+{
+}
+
+//-----------------------------------------------------------------------------
+ctkSimplePythonManager::~ctkSimplePythonManager()
+{
+}
+
+//-----------------------------------------------------------------------------
+QStringList ctkSimplePythonManager::pythonPaths()
+{  
+  QStringList paths;
+  paths << Superclass::pythonPaths();
+
+  QString self_dir = QFileInfo(qApp->applicationFilePath()).absolutePath();
+
+  QString ctk_python_dir = self_dir;
+  #if defined(CMAKE_INTDIR)
+    ctk_python_dir.append("/..");
+  #endif
+  ctk_python_dir.append("/Python");
+  paths << QFileInfo(ctk_python_dir).absoluteFilePath();
+
+#ifdef CTK_WRAP_PYTHONQT_USE_VTK
+
+  // Try to put the VTK python module location in sys.path.
+  QString vtk_build_dir = "/../../CMakeExternals/Build/VTK/Wrapping/Python";
+  bool found_vtk = false;
+  QString vtk_package_dir = self_dir;
+
+#if defined(CMAKE_INTDIR)
+  vtk_package_dir.append("/..");
+#endif
+  vtk_package_dir.append(vtk_build_dir);
+  QFileInfo fi(vtk_package_dir);
+  vtk_package_dir = fi.absoluteFilePath();
+  if (fi.isDir())
+    {
+    // This executable is running from the build tree.  Prepend the
+    // library directory and package directory to the search path.
+    paths << vtk_package_dir;
+    paths << VTK_PYTHON_LIBRARY_DIR;
+    found_vtk = true;
+    }
+
+  Q_ASSERT(found_vtk);
+  if (!found_vtk)
+    {
+    // TODO Handle case when the application is started from an installed tree
+    }
+#endif
+  
+  return paths;
+}
+
+//-----------------------------------------------------------------------------
+void ctkSimplePythonManager::preInitialization()
+{
+  Superclass::preInitialization();
+
+#if defined(CTK_WRAP_PYTHONQT_LIGHT) || defined(CTK_WRAP_PYTHONQT_FULL)
+  // Initialize wrappers
+  @CTK_PYTHONQT_INITIALIZATION_METHOD_CALL@
+#endif
+
+  // Register decorators
+  this->registerPythonQtDecorator(new ctkSimplePythonQtDecorators(this));  
+  
+  // Add object to python interpreter context
+  this->addObjectToPythonMain("_ctkSimplePythonShellInstance", qApp);
+}
+
+//-----------------------------------------------------------------------------
+void ctkSimplePythonManager::executeInitializationScripts()
+{
+  QString self_dir = QFileInfo(qApp->applicationFilePath()).absolutePath();
+
+  QString initFile = self_dir;
+  #if defined(CMAKE_INTDIR)
+  initFile.append("/..");
+  #endif
+  initFile.append("/Python/ctkSimplePythonShell.py");
+
+  Q_ASSERT(QFile::exists(initFile));
+
+  // Evaluate application script
+  this->executeFile(initFile);
+}

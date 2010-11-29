@@ -108,12 +108,13 @@ ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCI
 #
 
 #-----------------------------------------------------------------------------
-# ExternalProjects
+# ExternalProjects - Project should be topologically ordered
 #
 SET(external_projects
   CTKData
   Log4Qt
   KWStyle
+  VTK
   PythonQt
   PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
   DCMTK
@@ -121,7 +122,6 @@ SET(external_projects
   QtMobility
   QtSOAP
   OpenIGTLink
-  VTK
   XIP
   )
 

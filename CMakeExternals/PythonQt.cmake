@@ -20,9 +20,17 @@ IF(${add_project})
   IF(NOT DEFINED PYTHONQT_INSTALL_DIR)
   #   MESSAGE(STATUS "Adding project:${proj}")
     
-    # Generate ep_PythonQt_args
     SET(ep_PythonQt_args)
-    foreach(qtlib gui network opengl sql svg uitools webkit xml xmlpatterns)
+    
+    # Should PythonQt use VTK 
+    IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+      LIST(APPEND proj_DEPENDENCIES VTK)
+      LIST(APPEND ep_PythonQt_args -DVTK_DIR:PATH=${VTK_DIR})
+    ENDIF()
+    LIST(APPEND ep_PythonQt_args -DPythonQt_USE_VTK:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK})
+    
+    # Enable Qt libraries PythonQt wrapping if required
+    foreach(qtlib core gui network opengl sql svg uitools webkit xml xmlpatterns)
       STRING(TOUPPER ${qtlib} qtlib_uppercase)
       LIST(APPEND ep_PythonQt_args -DPythonQt_Wrap_Qt${qtlib}:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib_uppercase}})
     endforeach()
