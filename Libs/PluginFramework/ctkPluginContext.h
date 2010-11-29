@@ -492,7 +492,12 @@ public:
    * the filter syntax.
    *
    * <p>
-   * If the context plugin's list of listeners already contains a the same
+   * If the object to connect to is destroyed, the slot is automatically
+   * disconnected. To explicitly disconnect the slot, use
+   * disconnectServiceListener().
+   *
+   * <p>
+   * If the context plugin's list of listeners already contains the same
    * slot for the given receiver, then this
    * method replaces that slot's filter (which may be <code>null</code>)
    * with the specified one (which may be <code>null</code>).

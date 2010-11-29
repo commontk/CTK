@@ -105,9 +105,9 @@ ctkServiceSlotEntry::~ctkServiceSlotEntry()
 
 bool ctkServiceSlotEntry::operator==(const ctkServiceSlotEntry& other) const
 {
-  return d->plugin == other.d->plugin &&
+  return ((d->plugin == 0 || other.d->plugin == 0) || d->plugin == other.d->plugin) &&
          d->receiver == other.d->receiver &&
-         std::strcmp(d->slot, other.d->slot) == 0;
+         ((d->slot == 0 || other.d->slot == 0) || std::strcmp(d->slot, other.d->slot) == 0);
 }
 
 void ctkServiceSlotEntry::invokeSlot(const ctkServiceEvent &event)

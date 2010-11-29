@@ -100,6 +100,10 @@ signals:
 
   void frameworkEvent(const ctkPluginFrameworkEvent& event);
 
+private slots:
+
+  void serviceListenerDestroyed(QObject* listener);
+
 private:
 
   QMutex mutex;

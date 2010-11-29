@@ -56,6 +56,8 @@ void ctkPluginFrameworkListeners::addServiceSlot(
   }
   serviceSet.insert(sse);
   checkSimple(sse);
+
+  connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(serviceListenerDestroyed(QObject*)));
 }
 
 void ctkPluginFrameworkListeners::removeServiceSlot(ctkPlugin* plugin,
@@ -75,9 +77,14 @@ void ctkPluginFrameworkListeners::removeServiceSlot(ctkPlugin* plugin,
       //listeners.framework.hooks.handleServiceListenerUnreg(sle);
       removeFromCache(currentEntry);
       it.remove();
-      break;
+      if (slot) break;
     }
   }
+}
+
+void ctkPluginFrameworkListeners::serviceListenerDestroyed(QObject *listener)
+{
+  this->removeServiceSlot(0, listener, 0);
 }
 
 QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
