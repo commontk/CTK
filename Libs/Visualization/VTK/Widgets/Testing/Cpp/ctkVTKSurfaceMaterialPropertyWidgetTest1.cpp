@@ -48,10 +48,15 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
   
   vtkProperty* property = vtkProperty::New();
   
+  double color[3];
+  property->GetColor(color);
+  double opacity = property->GetOpacity();
   double ambient = property->GetAmbient();
   double diffuse = property->GetDiffuse();
   double specular = property->GetSpecular();
   double specularPower = property->GetSpecularPower();
+  
+  bool backfaceCulling = property->GetBackfaceCulling();
   
   propertyWidget.setProperty(property);
   property->Delete();
@@ -60,6 +65,18 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setProperty() failed."
               << propertyWidget.property() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (propertyWidget.color() != QColor::fromRgbF(color[0],color[1],color[2]))
+    {
+    std::cerr << "Wrong color: " << propertyWidget.color().rgb() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (propertyWidget.opacity() != opacity)
+    {
+    std::cerr << "Wrong opacity: " << propertyWidget.opacity() << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -87,6 +104,47 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  if (propertyWidget.backfaceCulling() != backfaceCulling)
+    {
+    std::cerr << "Wrong backfaceCulling: " << propertyWidget.backfaceCulling() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  property->SetColor(1., 1., 1.);
+
+  if (propertyWidget.color() != QColor::fromRgbF(1., 1., 1.))
+    {
+    std::cerr << "vtkProperty::SetColor() failed: " << propertyWidget.color().rgb() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  propertyWidget.setColor(Qt::red);
+  property->GetColor(color);
+  if (color[0] != 1. || color[1] != 0. || color[2] !=0)
+    {
+    std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setColor() failed: "
+              << color[0] << " " << color[1] << " " << color[2] << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  property->SetOpacity(0.111);
+
+  if (propertyWidget.opacity() != 0.111)
+    {
+    std::cerr << "vtkProperty::SetOpacity() failed: " << propertyWidget.opacity() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  propertyWidget.setOpacity(0.999);
+  
+  if (property->GetOpacity() != 0.999)
+    {
+    std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setOpacity() failed: "
+              << property->GetOpacity() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
   property->SetAmbient(0.5);
 
   if (propertyWidget.ambient() != 0.5)
@@ -95,7 +153,6 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // QColor handles floating points on 16bit integers
   propertyWidget.setAmbient(0.8);
   
   if (property->GetAmbient() != 0.8)
@@ -113,7 +170,6 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // QColor handles floating points on 16bit integers
   propertyWidget.setDiffuse(0.3);
   
   if (property->GetDiffuse() != 0.3)
@@ -131,7 +187,6 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // QColor handles floating points on 16bit integers
   propertyWidget.setSpecular(0.01);
   
   if (property->GetSpecular() != 0.01)
@@ -149,13 +204,29 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // QColor handles floating points on 16bit integers
   propertyWidget.setSpecularPower(60);
   
   if (property->GetSpecularPower() != 50)
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setSpecularPower() failed: "
               << property->GetSpecularPower() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  property->SetBackfaceCulling(false);
+
+  if (propertyWidget.backfaceCulling() != false)
+    {
+    std::cerr << "vtkProperty::SetBackfaceCulling() failed: " << propertyWidget.backfaceCulling() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  propertyWidget.setBackfaceCulling(true);
+  
+  if (property->GetBackfaceCulling() != true)
+    {
+    std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setBackfaceCulling() failed: "
+              << property->GetBackfaceCulling() << std::endl;
     return EXIT_FAILURE;
     }
 

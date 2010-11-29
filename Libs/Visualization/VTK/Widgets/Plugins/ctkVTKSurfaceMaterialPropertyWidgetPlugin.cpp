@@ -39,7 +39,7 @@ QWidget *ctkVTKSurfaceMaterialPropertyWidgetPlugin::createWidget(QWidget *parent
 QString ctkVTKSurfaceMaterialPropertyWidgetPlugin::domXml() const
 {
   return "<widget class=\"ctkVTKSurfaceMaterialPropertyWidget\" \
-          name=\"VTKTextProperty\">\n"
+          name=\"SurfaceMaterialPropertyWidget\">\n"
           "</widget>\n";
 }
 

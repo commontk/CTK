@@ -45,6 +45,7 @@ public:
 ctkMaterialPropertyWidgetPrivate::ctkMaterialPropertyWidgetPrivate(ctkMaterialPropertyWidget& object)
   :q_ptr(&object)
 {
+  this->PresetsListWidget = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -275,6 +276,10 @@ void ctkMaterialPropertyWidget::resizeEvent(QResizeEvent* resize)
 {
   Q_D(ctkMaterialPropertyWidget);
   this->QWidget::resizeEvent(resize);
+  if (!d->PresetsListWidget)
+    {
+    return;
+    }
   d->PresetsListWidget->setMaximumWidth(
     d->PresetsListWidget->frameWidth() // left frame width
     + d->PresetsListWidget->count() * d->MaterialPropertyPreviewLabel->sizeHint().width()
