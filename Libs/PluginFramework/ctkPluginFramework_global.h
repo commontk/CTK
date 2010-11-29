@@ -29,4 +29,13 @@ typedef QHash<QString, QVariant> ServiceProperties;
 typedef QHash<QString, QVariant> ctkDictionary;
 typedef QHash<QString, QVariant> ctkProperties;
 
+#if QT_VERSION < 0x040700
+#include <QSharedPointer>
+template<class T>
+inline uint qHash(const QSharedPointer<T>& ptr)
+{
+  return qHash<T>(ptr.data());
+}
+#endif
+
 #endif // CTKPLUGINFRAMEWORK_GLOBAL_H
