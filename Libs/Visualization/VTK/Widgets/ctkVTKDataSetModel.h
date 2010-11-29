@@ -61,6 +61,7 @@ public:
   /// 0 if the index doesn't contain a vtkDataArray
   inline vtkDataArray* arrayFromIndex(const QModelIndex& arrayIndex)const;
   vtkDataArray* arrayFromItem(QStandardItem* nodeItem)const;
+  inline QModelIndex indexFromArray(vtkDataArray* dataArray, int column = 0)const;
   QStandardItem* itemFromArray(vtkDataArray* dataArray, int column = 0)const;
   QModelIndexList indexes(vtkDataArray* dataArray)const;
 
@@ -92,6 +93,13 @@ private:
 vtkDataArray* ctkVTKDataSetModel::arrayFromIndex(const QModelIndex &nodeIndex)const
 {
   return this->arrayFromItem(this->itemFromIndex(nodeIndex));
+}
+
+// -----------------------------------------------------------------------------
+QModelIndex ctkVTKDataSetModel::indexFromArray(vtkDataArray* dataArray, int column)const
+{
+  QStandardItem* item = this->itemFromArray(dataArray, column);
+  return item ? item->index() : QModelIndex();
 }
 
 #endif
