@@ -30,25 +30,28 @@
 
 
 ctkPlugin::ctkPlugin()
+: d_ptr(0)
 {
 
 }
 
 void ctkPlugin::init(ctkPluginPrivate* dd)
 {
-  d_ptr.reset(dd);
+  if (d_ptr) throw std::logic_error("ctkPlugin already initialized");
+  d_ptr = dd;
 }
 
 void ctkPlugin::init(const QWeakPointer<ctkPlugin>& self,
                      ctkPluginFrameworkContext* fw,
                      ctkPluginArchive* pa)
 {
-  d_ptr.reset(new ctkPluginPrivate(self, fw, pa));
+  if (d_ptr) throw std::logic_error("ctkPlugin already initialized");
+  d_ptr = new ctkPluginPrivate(self, fw, pa);
 }
 
 ctkPlugin::~ctkPlugin()
 {
-
+  delete d_ptr;
 }
 
 ctkPlugin::State ctkPlugin::getState() const

@@ -650,9 +650,10 @@ protected:
   friend class ctkPlugins;
   friend class ctkServiceReferencePrivate;
 
-  QScopedPointer<ctkPluginPrivate> d_ptr;
-
-  Q_DISABLE_COPY(ctkPlugin)
+  // Do NOT change this to QScopedPointer<ctkPluginPrivate>!
+  // We would need to include ctkPlugin.h (and ctkPluginPrivate_p.h)
+  // at a lot of places...
+  ctkPluginPrivate* d_ptr;
 
   ctkPlugin();
   void init(ctkPluginPrivate* dd);
