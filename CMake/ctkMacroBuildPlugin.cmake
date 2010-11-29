@@ -78,6 +78,14 @@ MACRO(ctkMacroBuildPlugin)
   SET(Plugin-Vendor )
   SET(Plugin-Version )
 
+  IF(MY_TEST_PLUGIN)
+    # Since the test plug-ins are not considered when calculating
+    # target dependencies via DGraph, we add the dependencies
+    # manually here
+    #MESSAGE("${lib_name}_DEPENDENCIES ${MY_TARGET_LIBRARIES}")
+    LIST(APPEND ${lib_name}_DEPENDENCIES ${MY_TARGET_LIBRARIES})
+  ENDIF()
+
   # If a file named manifest_headers.cmake exists, read it
   SET(manifest_headers_dep )
   IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
