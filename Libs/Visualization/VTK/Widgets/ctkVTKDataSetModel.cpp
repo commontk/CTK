@@ -136,7 +136,6 @@ vtkDataSet* ctkVTKDataSetModel::dataSet()const
 //------------------------------------------------------------------------------
 vtkDataArray* ctkVTKDataSetModel::arrayFromItem(QStandardItem* dataArrayItem)const
 {
-  Q_D(const ctkVTKDataSetModel);
   if (dataArrayItem == 0 || dataArrayItem == this->invisibleRootItem())
     {
     return 0;
@@ -292,7 +291,6 @@ void ctkVTKDataSetModel::updateItemFromPointsArray(QStandardItem* item, vtkDataA
 }
 
 //------------------------------------------------------------------------------
-/*
 void ctkVTKDataSetModel::updateItemFromCellsArray(QStandardItem* item, vtkDataArray* dataArray, int column)
 {
   this->updateItemFromArray(item, dataArray, column);
@@ -327,7 +325,6 @@ void ctkVTKDataSetModel::onDataSetModified(vtkObject* dataSet)
 //------------------------------------------------------------------------------
 void ctkVTKDataSetModel::onArrayModified(vtkObject* array)
 {
-  Q_D(ctkVTKDataSetModel);
   vtkDataArray* dataArray = vtkDataArray::SafeDownCast(array);
   Q_ASSERT(dataArray);
   QModelIndexList arrayIndexes = this->indexes(dataArray);

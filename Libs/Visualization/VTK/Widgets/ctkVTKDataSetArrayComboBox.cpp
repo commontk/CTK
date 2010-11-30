@@ -124,7 +124,6 @@ vtkDataArray* ctkVTKDataSetArrayComboBox::currentArray()const
 // --------------------------------------------------------------------------
 QString ctkVTKDataSetArrayComboBox::currentArrayName()const
 {
-  Q_D(const ctkVTKDataSetArrayComboBox);
   vtkDataArray* dataArray = this->currentArray();
   return dataArray ? dataArray->GetName() : "";
 }
