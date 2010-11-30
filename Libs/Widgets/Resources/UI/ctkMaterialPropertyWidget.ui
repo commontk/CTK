@@ -121,6 +121,16 @@
      <property name="specularPower">
       <double>1.000000000000000</double>
      </property>
+     <property name="color">
+      <color alpha="0">
+       <red>255</red>
+       <green>255</green>
+       <blue>255</blue>
+      </color>
+     </property>
+     <property name="opacity">
+      <double>1.000000000000000</double>
+     </property>
      <property name="gridOpacity">
       <double>0.600000000000000</double>
      </property>
@@ -195,6 +205,9 @@
      <property name="maximum">
       <double>1.000000000000000</double>
      </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
     </widget>
    </item>
    <item row="0" column="0">
@@ -206,6 +219,13 @@
    </item>
    <item row="0" column="1" colspan="4">
     <widget class="ctkColorPickerButton" name="ColorPickerButton">
+     <property name="color">
+      <color>
+       <red>255</red>
+       <green>255</green>
+       <blue>255</blue>
+      </color>
+     </property>
      <property name="displayColorName">
       <bool>false</bool>
      </property>
@@ -326,21 +346,21 @@
     </hint>
    </hints>
   </connection>
-   <connection>
-     <sender>OpacitySliderSpinBox</sender>
-     <signal>valueChanged(double)</signal>
-     <receiver>MaterialPropertyPreviewLabel</receiver>
-     <slot>setOpacity(double)</slot>
-     <hints>
-       <hint type="sourcelabel">
-         <x>105</x>
-         <y>24</y>
-       </hint>
-       <hint type="destinationlabel">
-         <x>103</x>
-         <y>191</y>
-       </hint>
-     </hints>
-   </connection>
+  <connection>
+   <sender>OpacitySliderSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MaterialPropertyPreviewLabel</receiver>
+   <slot>setOpacity(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>105</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

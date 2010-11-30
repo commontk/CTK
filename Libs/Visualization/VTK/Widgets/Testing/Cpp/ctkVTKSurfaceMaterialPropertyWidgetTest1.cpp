@@ -36,7 +36,7 @@
 int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-
+ 
   ctkVTKSurfaceMaterialPropertyWidget propertyWidget(0);
   
   if (propertyWidget.isEnabled())
@@ -223,7 +223,7 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
 
   propertyWidget.setBackfaceCulling(true);
   
-  if (property->GetBackfaceCulling() != true)
+  if (property->GetBackfaceCulling() != 1)
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setBackfaceCulling() failed: "
               << property->GetBackfaceCulling() << std::endl;

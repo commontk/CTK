@@ -198,7 +198,7 @@ void ctkVTKSurfaceMaterialPropertyWidget::onSpecularPowerChanged(double newSpecu
 }
 
 // --------------------------------------------------------------------------
-void ctkVTKSurfaceMaterialPropertyWidget::onBackfaceCullingChanged(double newBackfaceCulling)
+void ctkVTKSurfaceMaterialPropertyWidget::onBackfaceCullingChanged(bool newBackfaceCulling)
 {
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onBackfaceCullingChanged(newBackfaceCulling);
