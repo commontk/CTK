@@ -37,29 +37,29 @@
  *
  * <p>
  * <code>%ctkPluginActivator</code> is a Qt interface which must be implemented
- * using the standard Qt %ctkPlugin facilities:
+ * using the standard Qt Plugin facilities:
  *
  * <p>
- * <pre>
- * class MyPlugin : public QObject, public %ctk::ctkPluginActivator
+ * \code
+ * class MyPlugin : public QObject, public %ctkPluginActivator
  * {
  *   Q_OBJECT
- *   Q_INTERFACES(ctk::ctkPluginActivator)
+ *   Q_INTERFACES(ctkPluginActivator)
  *
  * public:
- *   void %start(%ctk::ctkPluginContext* context);
- *   void %stop(%ctk::ctkPluginContext* context);
+ *   void %start(%ctkPluginContext* context);
+ *   void %stop(%ctkPluginContext* context);
  * };
- * </pre>
+ * \endcode
  * And in your implementation file:
- * <pre>
+ * \code
  * Q_EXPORT_PLUGIN2(mypluginlib, MyPlugin)
- * </pre>
+ * \endcode
  * where <code>mypluginlib</code> is the basename of your shared plugin library.
  *
  * <p>
  * See the Qt Documentation about <a href="http://doc.trolltech.com/4.6/plugins-howto.html">
- * How to Create Qt ctkPlugins</a> for details.
+ * How to Create Qt Plugins</a> for details.
  *
  * The class implementing the <code>%ctkPluginActivator</code> interface must have a public
  * constructor that takes no parameters so that a <code>%ctkPluginActivator</code>
