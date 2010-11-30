@@ -77,6 +77,8 @@ SET(KIT_SRCS
   ctkSliderWidget.h
   ctkTestApplication.cpp
   ctkTestApplication.h
+  ctkToolTipTrapper.cpp
+  ctkToolTipTrapper.h
   ctkTransferFunctionBarsItem.cpp
   ctkTransferFunctionBarsItem.h
   ctkTransferFunctionControlPointsItem.cpp
@@ -144,6 +146,7 @@ SET(KIT_MOC_SRCS
   ctkSettings.h
   ctkSliderWidget.h
   ctkTestApplication.h
+  ctkToolTipTrapper.h
   ctkTransferFunctionBarsItem.h
   ctkTransferFunctionControlPointsItem.h
   ctkTransferFunctionGradientItem.h
