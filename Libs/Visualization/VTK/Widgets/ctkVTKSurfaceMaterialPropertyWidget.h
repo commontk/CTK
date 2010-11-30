@@ -59,7 +59,7 @@ protected:
   virtual void onDiffuseChanged(double newDiffuse);
   virtual void onSpecularChanged(double newSpecular);
   virtual void onSpecularPowerChanged(double newSpecularPower);
-  virtual void onBackfaceCullingChanged(double newBackfaceCulling);
+  virtual void onBackfaceCullingChanged(bool newBackfaceCulling);
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKSurfaceMaterialPropertyWidget);
