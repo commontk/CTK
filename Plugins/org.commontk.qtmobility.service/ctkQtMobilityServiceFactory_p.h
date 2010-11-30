@@ -19,18 +19,36 @@
 
 =============================================================================*/
 
-#include "ctkQtServiceRegistration_p.h"
-#include "ctkQtServiceRegistrationPrivate.h"
+
+#ifndef CTKQTMOBILITYSERVICEFACTORY_P_H
+#define CTKQTMOBILITYSERVICEFACTORY_P_H
+
+#include <ctkServiceFactory.h>
 
 #include <QServiceInterfaceDescriptor>
 
+class ctkQtMobilityServiceRuntime;
 
-  ctkQtServiceRegistration::ctkQtServiceRegistration(ctkPluginPrivate* plugin,
-                                               QtMobility::QServiceInterfaceDescriptor serviceDescriptor,
-                                               const ServiceProperties& props)
-    : ctkServiceRegistration(*new ctkQtServiceRegistrationPrivate(this, plugin, serviceDescriptor, props))
-  {
+using namespace QtMobility;
 
-  }
+class ctkQtMobilityServiceFactory : public ctkServiceFactory
+{
 
+public:
 
+  ctkQtMobilityServiceFactory(const QServiceInterfaceDescriptor& descr,
+                              ctkQtMobilityServiceRuntime* sr, QSharedPointer<ctkPlugin> plugin);
+
+  QObject* getService(QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration* registration);
+  void ungetService(QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration* registration, QObject* service);
+
+private:
+
+  int activeCount;
+
+  QServiceInterfaceDescriptor serviceDescriptor;
+  ctkQtMobilityServiceRuntime* sr;
+  QSharedPointer<ctkPlugin> servicePlugin;
+};
+
+#endif // CTKQTMOBILITYSERVICEFACTORY_P_H

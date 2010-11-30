@@ -41,12 +41,6 @@ ctkServiceRegistration::ctkServiceRegistration(ctkPluginPrivate* plugin, QObject
 
 }
 
-ctkServiceRegistration::ctkServiceRegistration(ctkServiceRegistrationPrivate& dd)
-  : d_ptr(&dd)
-{
-
-}
-
 ctkServiceRegistration::~ctkServiceRegistration()
 {
 

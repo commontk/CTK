@@ -20,25 +20,25 @@
 =============================================================================*/
 
 
-#ifndef CTKQTSERVICEREGISTRATION_P_H
-#define CTKQTSERVICEREGISTRATION_P_H
+#ifndef CTKQTMOBILITYSERVICECONSTANTS_P_H
+#define CTKQTMOBILITYSERVICECONSTANTS_P_H
 
-#include "ctkServiceRegistration.h"
+#include <QString>
 
-#include <QServiceInterfaceDescriptor>
+/**
+ * Defines standard names for QtMobility Service constants.
+ */
+struct ctkQtMobilityServiceConstants
+{
 
+  /**
+     * Manifest header specifying the XML document within a plugin that contains
+     * the plugin's QtMobility service descriptor.
+     * <p>
+     * The attribute value may be retrieved from the <code>ctkDictionary</code>
+     * object returned by the <code>ctkPlugin::getHeaders</code> method.
+     */
+  static const QString SERVICE_DESCRIPTOR; // = "Service-Descriptor";
+};
 
-  class ctkPluginPrivate;
-
-  class ctkQtServiceRegistration : public ctkServiceRegistration
-  {
-
-  public:
-
-    ctkQtServiceRegistration(ctkPluginPrivate* plugin,
-                          QtMobility::QServiceInterfaceDescriptor serviceDescriptor,
-                          const ServiceProperties& props);
-  };
-
-
-#endif // CTKQTSERVICEREGISTRATION_P_H
+#endif // CTKQTMOBILITYSERVICECONSTANTS_P_H

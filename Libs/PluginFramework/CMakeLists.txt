@@ -1,37 +1,6 @@
 PROJECT(CTKPluginFramework)
 
 #
-# 3rd party dependencies
-#
-
-SET(_qtmob_config "${CTK_BINARY_DIR}/../Utilities/QtMobility/QtMobilityConfig.cmake")
-IF(EXISTS ${_qtmob_config})
-  INCLUDE(${_qtmob_config})
-ELSE()
-  SET(QTMOBILITY_LIBRARY_DIR "${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
-  SET(QTMOBILITY_INCLUDE_DIRS 
-  "${CTK_BINARY_DIR}/../CMakeExternals/Source/QtMobility/install/include"
-  )
-ENDIF()
-
-FIND_LIBRARY(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG QtServiceFrameworkd
-             PATHS ${QTMOBILITY_LIBRARY_DIR}
-             )
-             
-FIND_LIBRARY(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE QtServiceFramework
-             PATHS ${QTMOBILITY_LIBRARY_DIR}
-             )
-             
-SET(QTMOBILITY_QTSERVICEFW_LIBRARIES )
-IF(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE AND QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG)
-  SET(QTMOBILITY_QTSERVICEFW_LIBRARIES optimized ${QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE} debug ${QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG})
-ELSEIF(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG)
-  SET(QTMOBILITY_QTSERVICEFW_LIBRARIES ${QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG})
-ELSEIF(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE)
-  SET(QTMOBILITY_QTSERVICEFW_LIBRARIES ${QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE})
-ENDIF()
-
-#
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
@@ -61,8 +30,6 @@ SET(KIT_SRCS
   ctkPluginTracker.cpp
   ctkPluginTrackerPrivate.cpp
   ctkPlugins.cpp
-  ctkQtServiceRegistration.cpp
-  ctkQtServiceRegistrationPrivate.cpp
   ctkRequirePlugin.cpp
   ctkServiceEvent.cpp
   ctkServiceException.cpp

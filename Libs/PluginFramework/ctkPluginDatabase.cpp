@@ -32,7 +32,6 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QUrl>
-#include <QServiceManager>
 
 #include <QDebug>
 
@@ -193,7 +192,6 @@ void ctkPluginDatabase::updateDB()
       {
         outdatedIds.append(query.value(EBindIndex).toLongLong());
         outdatedPlugins.append(qMakePair(query.value(EBindIndex1).toString(), query.value(EBindIndex2).toString()));
-        outdatedServiceNames.append(query.value(EBindIndex4).toString() + "_" + query.value(EBindIndex5).toString());
       }
     }
   }
@@ -215,29 +213,6 @@ void ctkPluginDatabase::updateDB()
       bindValues.clear();
       bindValues.append(idIter.next());
       executeQuery(&query, statement, bindValues);
-    }
-  }
-  catch (...)
-  {
-    rollbackTransaction(&query);
-    throw;
-  }
-
-  try
-  {
-    QtMobility::QServiceManager serviceManager;
-    QStringListIterator serviceNameIter(outdatedServiceNames);
-    while (serviceNameIter.hasNext())
-    {
-      QString serviceName = serviceNameIter.next();
-      serviceManager.removeService(serviceName);
-      QtMobility::QServiceManager::Error error = serviceManager.error();
-      if (!(error == QtMobility::QServiceManager::NoError ||
-            error == QtMobility::QServiceManager::ComponentNotFound))
-      {
-        throw ctkServiceException(QString("Removing service named ") + serviceName +
-                               " failed: " + QString::number(static_cast<unsigned int>(error)));
-      }
     }
   }
   catch (...)

@@ -288,7 +288,7 @@ SET(CTK_LIBS
 # CTK Plugins - Use ON or OFF to indicate if the plugin should be built by default
 #
 SET(CTK_PLUGINS
-  org.commontk.eventbus:ON
+  org.commontk.eventbus:OFF
   org.commontk.cli:OFF
   org.commontk.dah.app:OFF
   org.commontk.dah.core:OFF
@@ -299,6 +299,7 @@ SET(CTK_PLUGINS
   org.commontk.log4qt:OFF
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
+  org.commontk.qtmobility.service:OFF
   )
 
 #-----------------------------------------------------------------------------

@@ -137,8 +137,6 @@ protected:
   ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
                          const ServiceProperties& props);
 
-  ctkServiceRegistration(ctkServiceRegistrationPrivate& dd);
-
   const QScopedPointer<ctkServiceRegistrationPrivate> d_ptr;
 
 private:

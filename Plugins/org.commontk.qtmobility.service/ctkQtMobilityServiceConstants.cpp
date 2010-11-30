@@ -20,32 +20,6 @@
 =============================================================================*/
 
 
-#ifndef CTKQTSERVICEREGISTRATIONPRIVATE_H
-#define CTKQTSERVICEREGISTRATIONPRIVATE_H
+#include "ctkQtMobilityServiceConstants_p.h"
 
-#include "ctkServiceRegistrationPrivate.h"
-
-#include "QServiceInterfaceDescriptor"
-
-
-  class ctkQtServiceRegistration;
-
-  class ctkQtServiceRegistrationPrivate : public ctkServiceRegistrationPrivate
-  {
-  public:
-
-    ctkQtServiceRegistrationPrivate(ctkQtServiceRegistration* sr,
-                                 ctkPluginPrivate* plugin,
-                                 QtMobility::QServiceInterfaceDescriptor serviceDescriptor,
-                                 const ServiceProperties& props);
-
-    QObject* getService();
-
-  protected:
-
-    QtMobility::QServiceInterfaceDescriptor serviceDescriptor;
-
-  };
-
-
-#endif // CTKQTSERVICEREGISTRATIONPRIVATE_H
+const QString ctkQtMobilityServiceConstants::SERVICE_DESCRIPTOR = "QtMobility-ServiceDescriptor";

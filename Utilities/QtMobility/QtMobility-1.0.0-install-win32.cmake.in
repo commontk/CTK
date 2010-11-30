@@ -26,7 +26,10 @@ FOREACH(_file ${_files})
   MESSAGE("Copying ${_file} to @qtmobility_win32_install_prefix@/include/")
 ENDFOREACH()
 
-SET(_qtmob_config "SET(QTMOBILITY_LIBRARY_DIR \"@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/\")
-SET(QTMOBILITY_INCLUDE_DIRS \"@qtmobility_win32_install_prefix@/include/\")")
-
-FILE(WRITE "@qtmobility_configured_patch_dir@/QtMobilityConfig.cmake" ${_qtmob_config})
+SET(QTMOBILITY_QTSERVICEFW_INCLUDE_DIR "@qtmobility_win32_install_prefix@/include")
+SET(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG
+    "@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/QtServiceFrameworkd.lib")
+SET(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE
+    "@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/QtServiceFramework.lib")
+    
+CONFIGURE_FILE("@qtmobility_config_in@" "@qtmobility_config_out@" @ONLY)
