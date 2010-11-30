@@ -6,7 +6,7 @@
 FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
 
   CtkMacroParseArguments(MY
-    "ACTIVATIONPOLICY;CATEGORY;CONTACT_ADDRESS;COPYRIGHT;DESCRIPTION;DOC_URL;ICON;LICENSE;NAME;REQUIRE_PLUGIN;SYMBOLIC_NAME;VENDOR;VERSION"
+    "ACTIVATIONPOLICY;CATEGORY;CONTACT_ADDRESS;COPYRIGHT;DESCRIPTION;DOC_URL;ICON;LICENSE;NAME;REQUIRE_PLUGIN;SYMBOLIC_NAME;VENDOR;VERSION;CUSTOM_HEADERS"
     ""
     ${ARGN}
     )
@@ -70,6 +70,13 @@ FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
 
   IF(DEFINED MY_VERSION)
     SET(_manifest_content "${_manifest_content}\nPlugin-Version: ${MY_VERSION}")
+  ENDIF()
+
+  IF(DEFINED MY_CUSTOM_HEADERS)
+    SET(_manifest_content "${_manifest_content}\n")
+    FOREACH(_custom_header ${MY_CUSTOM_HEADERS})
+      SET(_manifest_content "${_manifest_content}\n${_custom_header}: ${${_custom_header}}")
+    ENDFOREACH()
   ENDIF()
 
   SET(_manifest_filename "MANIFEST.MF")

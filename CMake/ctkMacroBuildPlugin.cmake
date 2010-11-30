@@ -78,6 +78,8 @@ MACRO(ctkMacroBuildPlugin)
   SET(Plugin-Vendor )
   SET(Plugin-Version )
 
+  SET(Custom-Headers )
+
   IF(MY_TEST_PLUGIN)
     # Since the test plug-ins are not considered when calculating
     # target dependencies via DGraph, we add the dependencies
@@ -150,6 +152,7 @@ MACRO(ctkMacroBuildPlugin)
     SYMBOLIC_NAME ${Plugin-SymbolicName}
     VENDOR ${Plugin-Vendor}
     VERSION ${Plugin-Version}
+    CUSTOM_HEADERS ${Custom-Headers}
     )
 
   IF(manifest_headers_dep)
