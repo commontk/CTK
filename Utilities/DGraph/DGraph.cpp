@@ -166,7 +166,7 @@ int main(int argc, char** argv)
   QHash<QString, int> vertexLabelToId;
   
   // Regular expression to extract two label
-  QRegExp twolabel_re("^(.+)\\s+(.+)");
+  QRegExp twolabel_re("^\\s*(\\S+)\\s*$|^\\s*(\\S+)\\s*(\\S+)\\s*$");
   
   // Read vertex connection
   int lineNumber = 2;
@@ -185,20 +185,33 @@ int main(int argc, char** argv)
     int pos = twolabel_re.indexIn(line.trimmed());
     if (pos != 0)
       {
-      displayError(argv[0], QString("Error in file '%1' - line:%2 - Expected format is: <label> <label>")
+      displayError(argv[0], QString("Error in file '%1' - line:%2 - Expected format is: <label> [<label>]")
         .arg(filepath).arg(lineNumber));
       return EXIT_FAILURE;
       }
     lineNumber++;
 
     QStringList list = twolabel_re.capturedTexts();
-    Q_ASSERT(list.size() == 3);
+    Q_ASSERT(list.size() == 4);
 
-    int from = getOrGenerateId(vertexIdToLabel, vertexLabelToId, list[1]);
-    int to = getOrGenerateId(vertexIdToLabel, vertexLabelToId, list[2]);
+    int from = -1;
+    int to = -1;
+    if (list[1].isEmpty())
+      {
+      from = getOrGenerateId(vertexIdToLabel, vertexLabelToId, list[2]);
+      to = getOrGenerateId(vertexIdToLabel, vertexLabelToId, list[3]);
+      }
 
-    // Insert edge
-    mygraph.insertEdge(from, to);
+    if (to > -1)
+      {
+      // Insert edge if we got two vertices
+      mygraph.insertEdge(from, to);
+      }
+    else
+      {
+      // Just generate an entry in the vertexIdToLabel map
+      getOrGenerateId(vertexIdToLabel, vertexLabelToId, list[1]);
+      }
 
     line = in.readLine();
     }

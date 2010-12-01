@@ -322,5 +322,196 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   }
 
+  // check that topological ordering and paths
+  // work on disconnected graphs and isolated vertices
+  {
+  const int numberOfVertices = 13;
+
+  ctkDependencyGraph graph(numberOfVertices);
+
+  /* 1 -> 2  -> 3
+   *       \
+   *         -> 4
+   *
+   *         ->  7 ->
+   *       /          \
+   * 5 -> 6  ->  8 ->  9
+   *             ^
+   *             |
+   *            10 -> 11
+   *
+   * 12   13
+   */
+  graph.insertEdge(1,2);
+  graph.insertEdge(2,3);
+  graph.insertEdge(2,4);
+  graph.insertEdge(5,6);
+  graph.insertEdge(6,7);
+  graph.insertEdge(6,8);
+  graph.insertEdge(7,9);
+  graph.insertEdge(8,9);
+  graph.insertEdge(10,8);
+  graph.insertEdge(10,11);
+
+  int expectedNumberOfEdge = 10;
+
+  int nov = graph.numberOfVertices();
+
+  if( nov != numberOfVertices )
+    {
+    qCritical() << "Number of vertices does not match (expected" << numberOfVertices << "got" << nov << ")";
+    return EXIT_FAILURE;
+    }
+
+  int noe = graph.numberOfEdges();
+  if( noe != expectedNumberOfEdge )
+    {
+    qCritical() << "Number of edges does not match (expected" << expectedNumberOfEdge << "got" << noe << ")";
+    return EXIT_FAILURE;
+    }
+
+  bool cfc = graph.checkForCycle();
+
+  if( cfc == true )
+    {
+    qCritical() << "Cycle detection failed";
+    return EXIT_FAILURE;
+    }
+
+  bool cdtd = graph.cycleDetected();
+
+  if( cdtd == true )
+    {
+    qCritical() << "Cycle detected flag wrong";
+    return EXIT_FAILURE;
+    }
+
+  QList<int> sources;
+  graph.sourceVertices(sources);
+
+  QList<int> expectedSources;
+  expectedSources << 1 << 5 << 10 << 12 << 13;
+
+  if (sources != expectedSources)
+    {
+    qCritical() << "Source vertices do not match (expected" << expectedSources << "got" << sources << ")";
+    return EXIT_FAILURE;
+    }
+
+  QList<int> globalSort;
+  graph.topologicalSort(globalSort);
+
+  QList<int> expectedGlobalSort;
+  expectedGlobalSort << 1 << 5 << 10 << 12 << 13 << 2 << 6 << 11 << 3 << 4 << 7 << 8 << 9;
+  if (globalSort != expectedGlobalSort)
+  {
+    qCritical() << "Topological sort error (expected" << expectedGlobalSort << "got" << globalSort << ")";
+    return EXIT_FAILURE;
+  }
+
+  QList<int> subSort10;
+  graph.topologicalSort(subSort10, 10);
+
+  QList<int> expectedSubSort10;
+  expectedSubSort10 << 10 << 8 << 11 << 9;
+  if (subSort10 != expectedSubSort10)
+  {
+    qCritical() << "Topological subgraph sort error (expected" << expectedSubSort10 << "got" << subSort10 << ")";
+    return EXIT_FAILURE;
+  }
+
+  QList<int> subSort12;
+  graph.topologicalSort(subSort12, 12);
+
+  QList<int> expectedSubSort12;
+  expectedSubSort12 << 12;
+  if (subSort12 != expectedSubSort12)
+  {
+    qCritical() << "Topological subgraph sort error (expected" << expectedSubSort12 << "got" << subSort12 << ")";
+    return EXIT_FAILURE;
+  }
+
+  }
+
+  // check that topological ordering and paths
+  // work on a null graph
+  {
+  const int numberOfVertices = 3;
+
+  ctkDependencyGraph graph(numberOfVertices);
+
+  /*
+   * 1  2  3
+   */
+  // a null graph has no edges
+  int expectedNumberOfEdge = 0;
+
+  int nov = graph.numberOfVertices();
+
+  if( nov != numberOfVertices )
+    {
+    qCritical() << "Number of vertices does not match (expected" << numberOfVertices << "got" << nov << ")";
+    return EXIT_FAILURE;
+    }
+
+  int noe = graph.numberOfEdges();
+  if( noe != expectedNumberOfEdge )
+    {
+    qCritical() << "Number of edges does not match (expected" << expectedNumberOfEdge << "got" << noe << ")";
+    return EXIT_FAILURE;
+    }
+
+  bool cfc = graph.checkForCycle();
+
+  if( cfc == true )
+    {
+    qCritical() << "Cycle detection failed";
+    return EXIT_FAILURE;
+    }
+
+  bool cdtd = graph.cycleDetected();
+
+  if( cdtd == true )
+    {
+    qCritical() << "Cycle detected flag wrong";
+    return EXIT_FAILURE;
+    }
+
+  QList<int> sources;
+  graph.sourceVertices(sources);
+
+  QList<int> expectedSources;
+  expectedSources << 1 << 2 << 3;
+
+  if (sources != expectedSources)
+    {
+    qCritical() << "Source vertices do not match (expected" << expectedSources << "got" << sources << ")";
+    return EXIT_FAILURE;
+    }
+
+  QList<int> globalSort;
+  graph.topologicalSort(globalSort);
+
+  QList<int> expectedGlobalSort;
+  expectedGlobalSort << 1 << 2 << 3;
+  if (globalSort != expectedGlobalSort)
+  {
+    qCritical() << "Topological sort error (expected" << expectedGlobalSort << "got" << globalSort << ")";
+    return EXIT_FAILURE;
+  }
+
+  QList<int> subSort2;
+  graph.topologicalSort(subSort2, 2);
+
+  QList<int> expectedSubSort2;
+  expectedSubSort2 << 2;
+  if (subSort2 != expectedSubSort2)
+  {
+    qCritical() << "Topological subgraph sort error (expected" << expectedSubSort2 << "got" << subSort2 << ")";
+    return EXIT_FAILURE;
+  }
+
+  }
+
   return EXIT_SUCCESS;
 }

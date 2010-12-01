@@ -36,6 +36,7 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories)
 
   SET(edges)
   SET(vertices)
+  SET(isolated_vertex_candidates)
   
   FOREACH(target_info ${target_directories})
 
@@ -87,6 +88,9 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories)
 
       IF(ctk_dependencies)
         LIST(APPEND vertices ${target_project_name})
+      ELSE()
+        # isolated vertex candidate
+        LIST(APPEND isolated_vertex_candidates ${target_project_name})
       ENDIF()
 
       # Generate XML related to the dependencies
@@ -98,6 +102,24 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories)
 
     ENDIF()
     
+  ENDFOREACH()
+
+  FOREACH(isolated_vertex_candidate ${isolated_vertex_candidates})
+    SET(_found 0)
+    FOREACH(dgraph_entry ${dgraph_list})
+      STRING(REPLACE "\n" "" dgraph_entry "${dgraph_entry}")
+      STRING(REPLACE " " ";" dgraph_entry "${dgraph_entry}")
+      LIST(FIND dgraph_entry ${isolated_vertex_candidate} _index)
+      IF(_index GREATER -1)
+        SET(_found 1)
+        BREAK()
+      ENDIF()
+    ENDFOREACH()
+
+    IF(NOT _found)
+      LIST(APPEND vertices ${isolated_vertex_candidate})
+      SET(dgraph_list "${isolated_vertex_candidate}\n" ${dgraph_list})
+    ENDIF()
   ENDFOREACH()
 
   IF(vertices)
