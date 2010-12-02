@@ -15,5 +15,7 @@ SET(test_executable ${PROJECT_NAME}CppTests)
 ADD_EXECUTABLE(${test_executable} ${SRCS} ${MY_MOC_CXX})
 TARGET_LINK_LIBRARIES(${test_executable} ${PROJECT_NAME})
 
+ADD_DEPENDENCIES(${test_executable} org_commontk_pluginfwtest)
+
 ADD_TEST(${PROJECT_NAME}Tests ${CPP_TEST_PATH}/${test_executable})
 SET_PROPERTY(TEST ${PROJECT_NAME}Tests PROPERTY LABELS ${PROJECT_NAME})
