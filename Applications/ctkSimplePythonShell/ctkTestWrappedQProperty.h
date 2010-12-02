@@ -10,7 +10,7 @@ class ctkTestWrappedQProperty : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(int Value READ value WRITE setValue);
+  Q_PROPERTY(int value READ value WRITE setValue);
 
 public:
 

@@ -48,8 +48,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceView : public QWidget
   Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
   Q_PROPERTY(QColor highlightedBoxColor READ highlightedBoxColor WRITE setHighlightedBoxColor)
   Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
-  Q_PROPERTY(double ColorLevel READ colorLevel WRITE setColorLevel)
-  Q_PROPERTY(double ColorWindow READ colorWindow WRITE setColorWindow)
+  Q_PROPERTY(double colorLevel READ colorLevel WRITE setColorLevel)
+  Q_PROPERTY(double colorWindow READ colorWindow WRITE setColorWindow)
 
 public:
   /// Constructors

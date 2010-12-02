@@ -39,7 +39,7 @@ class ctkTransferFunctionRepresentationPrivate;
 class CTK_CORE_EXPORT ctkTransferFunctionRepresentation: public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QColor VerticalGradientColor READ verticalGradientColor WRITE setVerticalGradientColor)
+  Q_PROPERTY(QColor verticalGradientColor READ verticalGradientColor WRITE setVerticalGradientColor)
 
 public:
   ctkTransferFunctionRepresentation(QObject* parent = 0);

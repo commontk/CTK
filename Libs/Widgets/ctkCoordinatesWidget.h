@@ -37,7 +37,7 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   Q_OBJECT 
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
   Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
-  Q_PROPERTY(int Dimension READ dimension WRITE setDimension)
+  Q_PROPERTY(int dimension READ dimension WRITE setDimension)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
 
