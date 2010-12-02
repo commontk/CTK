@@ -55,6 +55,10 @@ SET(PLUGIN_SRCS
   ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.cpp
   ctkTreeComboBoxPlugin.h
+  ctkSettingsPanelPlugin.cpp
+  ctkSettingsPanelPlugin.h
+  ctkSettingsWidgetPlugin.cpp
+  ctkSettingsWidgetPlugin.h
   ctkSliderWidgetPlugin.cpp
   ctkSliderWidgetPlugin.h
   ctkWorkflowButtonBoxWidgetPlugin.cpp
@@ -88,6 +92,8 @@ SET(PLUGIN_MOC_SRCS
   ctkRangeWidgetPlugin.h
   ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.h
+  ctkSettingsPanelPlugin.h
+  ctkSettingsWidgetPlugin.h
   ctkSliderWidgetPlugin.h
   ctkWorkflowButtonBoxWidgetPlugin.h
   ctkWorkflowWidgetStepPlugin.h
