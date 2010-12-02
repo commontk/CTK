@@ -73,6 +73,10 @@ SET(KIT_SRCS
   ctkScreenshotDialog_p.h
   ctkSettings.cpp
   ctkSettings.h
+  ctkSettingsPanel.cpp
+  ctkSettingsPanel.h
+  ctkSettingsWidget.cpp
+  ctkSettingsWidget.h
   ctkSliderWidget.cpp
   ctkSliderWidget.h
   ctkTestApplication.cpp
@@ -142,6 +146,8 @@ SET(KIT_MOC_SRCS
   ctkScreenshotDialog.h
   ctkScreenshotDialog_p.h
   ctkSettings.h
+  ctkSettingsPanel.h
+  ctkSettingsWidget.h
   ctkSliderWidget.h
   ctkTestApplication.h
   ctkTransferFunctionBarsItem.h
@@ -168,6 +174,7 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkDateRangeWidget.ui
   Resources/UI/ctkMaterialPropertyWidget.ui
   Resources/UI/ctkScreenshotDialog.ui
+  Resources/UI/ctkSettingsWidget.ui
   Resources/UI/ctkSliderWidget.ui
   Resources/UI/ctkWorkflowGroupBox.ui
   )
