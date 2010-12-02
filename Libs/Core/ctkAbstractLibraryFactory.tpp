@@ -30,8 +30,7 @@
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkFactoryLibraryItem<BaseClassType>::ctkFactoryLibraryItem(const QString& _path)
-  :ctkAbstractFactoryItem<BaseClassType>()
-  ,Path(_path)
+  :ctkAbstractFactoryFileBasedItem<BaseClassType>(_path)
 {
 }
 
@@ -50,13 +49,6 @@ bool ctkFactoryLibraryItem<BaseClassType>::load()
     return true;
     }
   return false;
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-QString ctkFactoryLibraryItem<BaseClassType>::path()const
-{ 
-  return this->Path; 
 }
 
 //----------------------------------------------------------------------------
@@ -90,7 +82,7 @@ bool ctkFactoryLibraryItem<BaseClassType>::resolve()
       {
       if (this->verbose())
         {
-        qWarning() << "Symbol '" << symbol << "' already resolved - Path:" << this->Path;
+        qWarning() << "Symbol '" << symbol << "' already resolved - Path:" << this->path();
         }
       continue;
       }
@@ -125,7 +117,7 @@ void* ctkFactoryLibraryItem<BaseClassType>::symbolAddress(const QString& symbol)
 //-----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkAbstractLibraryFactory<BaseClassType>::ctkAbstractLibraryFactory()
-  :ctkAbstractFactory<BaseClassType>()
+  :ctkAbstractFileBasedFactory<BaseClassType>()
 {
 }
   
@@ -176,16 +168,6 @@ bool ctkAbstractLibraryFactory<BaseClassType>::registerQLibrary(
     qDebug() << "Attempt to register QLibrary:" << file.fileName();
     }
   return this->registerLibrary(key, file);
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-QString ctkAbstractLibraryFactory<BaseClassType>::path(const QString& key)
-{
-  ctkFactoryLibraryItem<BaseClassType>* _item =
-      dynamic_cast<ctkFactoryLibraryItem<BaseClassType>*>(this->item(key));
-  Q_ASSERT(_item);
-  return _item->path();
 }
 
 //-----------------------------------------------------------------------------

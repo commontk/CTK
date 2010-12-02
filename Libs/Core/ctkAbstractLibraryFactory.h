@@ -27,11 +27,11 @@
 #include <QStringList>
 
 // CTK includes
-#include "ctkAbstractFactory.h"
+#include "ctkAbstractFileBasedFactory.h"
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-class ctkFactoryLibraryItem : public ctkAbstractFactoryItem<BaseClassType>
+class ctkFactoryLibraryItem : public ctkAbstractFactoryFileBasedItem<BaseClassType>
 {
 protected:
   typedef typename QHash<QString, void*>::const_iterator ConstIterator;
@@ -41,7 +41,6 @@ public:
   explicit ctkFactoryLibraryItem(const QString& path);
  
   virtual bool load();
-  QString path()const;
   virtual QString loadErrorString()const;
 
   ///
@@ -60,14 +59,13 @@ public:
 
 private:
   QLibrary              Library;
-  QString               Path;
   QHash<QString, void*> ResolvedSymbols;
   QStringList           Symbols;
 };
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-class ctkAbstractLibraryFactory : public ctkAbstractFactory<BaseClassType>
+class ctkAbstractLibraryFactory : public ctkAbstractFileBasedFactory<BaseClassType>
 {
 public:
   /// 
@@ -85,9 +83,6 @@ public:
   /// \brief Utility function to register a QLibrary
   /// The parameter \a key must be unique
   bool registerQLibrary(const QString& key, const QFileInfo& file);
-
-  /// Get path associated with the library identified by \a key
-  virtual QString path(const QString& key);
 
 protected:
   virtual ctkFactoryLibraryItem<BaseClassType>* createFactoryLibraryItem(

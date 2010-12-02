@@ -34,7 +34,7 @@
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkFactoryPluginItem<BaseClassType>::ctkFactoryPluginItem(const QString& _path)
-  :Path(_path)
+  :ctkAbstractFactoryFileBasedItem<BaseClassType>(_path)
 {
 }
 
@@ -44,13 +44,6 @@ bool ctkFactoryPluginItem<BaseClassType>::load()
 {
   this->Loader.setFileName(this->path());
   return this->Loader.load();
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-QString ctkFactoryPluginItem<BaseClassType>::path()const
-{ 
-  return this->Path; 
 }
 
 //----------------------------------------------------------------------------
@@ -94,7 +87,7 @@ BaseClassType* ctkFactoryPluginItem<BaseClassType>::instanciator()
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkAbstractPluginFactory<BaseClassType>::ctkAbstractPluginFactory()
-:ctkAbstractFactory<BaseClassType>()
+:ctkAbstractFileBasedFactory<BaseClassType>()
 {
 }
 
@@ -117,16 +110,6 @@ bool ctkAbstractPluginFactory<BaseClassType>::registerLibrary(const QString& key
   
   _item->setVerbose(this->verbose());
   return this->registerItem(key, _item);
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-QString ctkAbstractPluginFactory<BaseClassType>::path(const QString& key)
-{
-  ctkFactoryPluginItem<BaseClassType>* _item =
-      dynamic_cast<ctkFactoryPluginItem<BaseClassType>*>(this->item(key));
-  Q_ASSERT(_item);
-  return _item->path();
 }
 
 //----------------------------------------------------------------------------

@@ -16,6 +16,8 @@ SET(KIT_export_directive "CTK_CORE_EXPORT")
 SET(KIT_SRCS
   ctkAbstractFactory.h
   ctkAbstractFactory.tpp
+  ctkAbstractFileBasedFactory.h
+  ctkAbstractFileBasedFactory.tpp
   ctkAbstractObjectFactory.h
   ctkAbstractObjectFactory.tpp
   ctkAbstractPluginFactory.h
