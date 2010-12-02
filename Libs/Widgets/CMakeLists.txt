@@ -52,6 +52,8 @@ SET(KIT_SRCS
   ctkFileDialog.h
   ctkFittedTextBrowser.cpp
   ctkFittedTextBrowser.h
+  ctkFontButton.cpp
+  ctkFontButton.h
   ctkIconEnginePlugin.cpp
   ctkIconEnginePlugin.h
   ctkMaterialPropertyPreviewLabel.cpp
@@ -138,6 +140,7 @@ SET(KIT_MOC_SRCS
   ctkDynamicSpacer.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
+  ctkFontButton.h
   ctkIconEnginePlugin.h
   ctkMaterialPropertyPreviewLabel.h
   ctkMaterialPropertyWidget.h

@@ -18,20 +18,20 @@
 
 =========================================================================*/
 
-#ifndef __ctkDirectoryButtonPlugin_h
-#define __ctkDirectoryButtonPlugin_h
+#ifndef __ctkFontButtonPlugin_h
+#define __ctkFontButtonPlugin_h
 
 // CTK includes
 #include "ctkWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkDirectoryButtonPlugin
+class CTK_WIDGETS_PLUGINS_EXPORT ctkFontButtonPlugin
   : public QObject
   , public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkDirectoryButtonPlugin(QObject *_parent = 0);
+  ctkFontButtonPlugin(QObject *_parent = 0);
   
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

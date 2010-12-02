@@ -39,6 +39,8 @@ SET(PLUGIN_SRCS
   #ctkExtensionFactory.h
   ctkFittedTextBrowserPlugin.cpp
   ctkFittedTextBrowserPlugin.h
+  ctkFontButtonPlugin.cpp
+  ctkFontButtonPlugin.h
   ctkMaterialPropertyPreviewLabelPlugin.cpp
   ctkMaterialPropertyPreviewLabelPlugin.h
   ctkMaterialPropertyWidgetPlugin.cpp
@@ -84,6 +86,7 @@ SET(PLUGIN_MOC_SRCS
   ctkDynamicSpacerPlugin.h
   #ctkExtensionFactory.h
   ctkFittedTextBrowserPlugin.h
+  ctkFontButtonPlugin.h
   ctkMaterialPropertyWidgetPlugin.h
   ctkMaterialPropertyPreviewLabelPlugin.h
   ctkMatrixWidgetPlugin.h

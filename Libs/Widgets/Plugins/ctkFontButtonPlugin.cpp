@@ -19,51 +19,51 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkDirectoryButtonPlugin.h"
-#include "ctkDirectoryButton.h"
+#include "ctkFontButtonPlugin.h"
+#include "ctkFontButton.h"
 
 //-----------------------------------------------------------------------------
-ctkDirectoryButtonPlugin::ctkDirectoryButtonPlugin(QObject* pluginParent)
+ctkFontButtonPlugin::ctkFontButtonPlugin(QObject* pluginParent)
   : QObject(pluginParent)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkDirectoryButtonPlugin::createWidget(QWidget* widgetParent)
+QWidget *ctkFontButtonPlugin::createWidget(QWidget* widgetParent)
 {
-  ctkDirectoryButton* newWidget = new ctkDirectoryButton(widgetParent);
+  ctkFontButton* newWidget = new ctkFontButton(widgetParent);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkDirectoryButtonPlugin::domXml() const
+QString ctkFontButtonPlugin::domXml() const
 {
-  return "<widget class=\"ctkDirectoryButton\" \
-          name=\"DirectoryButton\">\n"
+  return "<widget class=\"ctkFontButton\" \
+          name=\"FontButton\">\n"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkDirectoryButtonPlugin::icon() const
+QIcon ctkFontButtonPlugin::icon() const
 {
   return QIcon(":/Icons/pushbutton.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkDirectoryButtonPlugin::includeFile() const
+QString ctkFontButtonPlugin::includeFile() const
 {
-  return "ctkDirectoryButton.h";
+  return "ctkFontButton.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkDirectoryButtonPlugin::isContainer() const
+bool ctkFontButtonPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkDirectoryButtonPlugin::name() const
+QString ctkFontButtonPlugin::name() const
 {
-  return "ctkDirectoryButton";
+  return "ctkFontButton";
 }

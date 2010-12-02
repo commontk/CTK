@@ -38,6 +38,7 @@
 #include "ctkDoubleSliderPlugin.h"
 #include "ctkDynamicSpacerPlugin.h"
 #include "ctkFittedTextBrowserPlugin.h"
+#include "ctkFontButtonPlugin.h"
 #include "ctkMaterialPropertyPreviewLabelPlugin.h"
 #include "ctkMaterialPropertyWidgetPlugin.h"
 #include "ctkMatrixWidgetPlugin.h"
@@ -75,6 +76,7 @@ public:
             << new ctkDoubleSliderPlugin
             << new ctkDynamicSpacerPlugin
             << new ctkFittedTextBrowserPlugin
+            << new ctkFontButtonPlugin
             << new ctkMaterialPropertyPreviewLabelPlugin
             << new ctkMaterialPropertyWidgetPlugin
             << new ctkMatrixWidgetPlugin
