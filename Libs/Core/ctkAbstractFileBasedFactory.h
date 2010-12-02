@@ -18,51 +18,48 @@
 
 =========================================================================*/
 
-#ifndef __ctkAbstractPluginFactory_h
-#define __ctkAbstractPluginFactory_h
+#ifndef __ctkAbstractFileBasedFactory_h
+#define __ctkAbstractFileBasedFactory_h
 
 // Qt includes
-#include <QPluginLoader>
 #include <QFileInfo>
+#include <QStringList>
 
 // CTK includes
-#include "ctkAbstractFileBasedFactory.h"
+#include "ctkAbstractFactory.h"
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-class ctkFactoryPluginItem : public ctkAbstractFactoryFileBasedItem<BaseClassType>
+class ctkAbstractFactoryFileBasedItem : public ctkAbstractFactoryItem<BaseClassType>
 {
 public:
-  explicit ctkFactoryPluginItem(const QString& path);
-  virtual bool load();
-  virtual QString loadErrorString()const;
-
-protected:
-  virtual BaseClassType* instanciator();
+  explicit ctkAbstractFactoryFileBasedItem(const QString& path);
+ 
+  /// Get path associated with the object identified by \a key
+  QString path()const;
 
 private:
-  QPluginLoader    Loader;
+  QString               Path;
 };
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-class ctkAbstractPluginFactory : public ctkAbstractFileBasedFactory<BaseClassType>
+class ctkAbstractFileBasedFactory : public ctkAbstractFactory<BaseClassType>
 {
 public:
+
   /// Constructor
-  explicit ctkAbstractPluginFactory();
+  explicit ctkAbstractFileBasedFactory();
+  virtual ~ctkAbstractFileBasedFactory();
 
-  /// Register a plugin in the factory
-  virtual bool registerLibrary(const QString& key, const QFileInfo& file);
-
-protected:
-  virtual ctkAbstractFactoryItem<BaseClassType>* createFactoryPluginItem(const QFileInfo& file);
+  /// Get path associated with the library identified by \a key
+  virtual QString path(const QString& key);
 
 private:
-  ctkAbstractPluginFactory(const ctkAbstractPluginFactory &);  /// Not implemented
-  void operator=(const ctkAbstractPluginFactory&); /// Not implemented
+  ctkAbstractFileBasedFactory(const ctkAbstractFileBasedFactory &);  /// Not implemented
+  void operator=(const ctkAbstractFileBasedFactory&); /// Not implemented
 };
 
-#include "ctkAbstractPluginFactory.tpp"
+#include "ctkAbstractFileBasedFactory.tpp"
 
 #endif
