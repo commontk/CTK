@@ -44,9 +44,11 @@
 #include "ctkMenuButtonPlugin.h"
 #include "ctkRangeSliderPlugin.h"
 #include "ctkRangeWidgetPlugin.h"
+#include "ctkSettingsPanelPlugin.h"
+#include "ctkSettingsWidgetPlugin.h"
+#include "ctkSliderWidgetPlugin.h"
 #include "ctkTransferFunctionViewPlugin.h"
 #include "ctkTreeComboBoxPlugin.h"
-#include "ctkSliderWidgetPlugin.h"
 #include "ctkWorkflowButtonBoxWidgetPlugin.h"
 #include "ctkWorkflowWidgetStepPlugin.h"
 
@@ -79,6 +81,8 @@ public:
             << new ctkMenuButtonPlugin
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
+            << new ctkSettingsPanelPlugin
+            << new ctkSettingsWidgetPlugin
             << new ctkSliderWidgetPlugin
             << new ctkTransferFunctionViewPlugin
             << new ctkTreeComboBoxPlugin

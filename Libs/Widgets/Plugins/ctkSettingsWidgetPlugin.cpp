@@ -19,50 +19,50 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkMaterialPropertyWidgetPlugin.h"
-#include "ctkMaterialPropertyWidget.h"
+#include "ctkSettingsWidgetPlugin.h"
+#include "ctkSettingsWidget.h"
 
 //-----------------------------------------------------------------------------
-ctkMaterialPropertyWidgetPlugin::ctkMaterialPropertyWidgetPlugin(QObject *pluginParent)
+ctkSettingsWidgetPlugin::ctkSettingsWidgetPlugin(QObject *pluginParent)
   : QObject(pluginParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkMaterialPropertyWidgetPlugin::createWidget(QWidget *widgetParent)
+QWidget *ctkSettingsWidgetPlugin::createWidget(QWidget* widgetParent)
 {
-  ctkMaterialPropertyWidget* newWidget = new ctkMaterialPropertyWidget(widgetParent);
+  ctkSettingsWidget* newWidget = new ctkSettingsWidget(widgetParent);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkMaterialPropertyWidgetPlugin::domXml() const
+QString ctkSettingsWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkMaterialPropertyWidget\" \
-          name=\"MaterialPropertyWidget\">\n"
+  return "<widget class=\"ctkSettingsWidget\" \
+          name=\"SettingsWidget\">\n"
           "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------
-QIcon ctkMaterialPropertyWidgetPlugin::icon() const
+QIcon ctkSettingsWidgetPlugin::icon() const
 {
   return QIcon(":/Icons/widget.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkMaterialPropertyWidgetPlugin::includeFile() const
+QString ctkSettingsWidgetPlugin::includeFile() const
 {
-  return "ctkMaterialPropertyWidget.h";
+  return "ctkSettingsWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkMaterialPropertyWidgetPlugin::isContainer() const
+bool ctkSettingsWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkMaterialPropertyWidgetPlugin::name() const
+QString ctkSettingsWidgetPlugin::name() const
 {
-  return "ctkMaterialPropertyWidget";
+  return "ctkSettingsWidget";
 }
