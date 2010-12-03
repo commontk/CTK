@@ -84,12 +84,9 @@ void ctkServiceTracker::open()
         }
         else
         {
-          if (!d->trackReference.isNull())
+          if (!d->trackReference.getPlugin().isNull())
           {
-            if (d->trackReference.getPlugin())
-            {
-              references.push_back(d->trackReference);
-            }
+            references.push_back(d->trackReference);
           }
           else
           { /* user supplied filter */
@@ -153,7 +150,7 @@ void ctkServiceTracker::close()
   if (d->DEBUG)
   {
     QMutexLocker lock(&d->mutex);
-    if ((d->cachedReference.isNull()) && (d->cachedService == 0))
+    if ((d->cachedReference.getPlugin().isNull()) && (d->cachedService == 0))
     {
       qDebug() << "ctkServiceTracker::close[cached cleared]:"
           << d->filter;
@@ -214,7 +211,7 @@ ctkServiceReference ctkServiceTracker::getServiceReference() const
     QMutexLocker lock(&d->mutex);
     reference = d->cachedReference;
   }
-  if (!reference.isNull())
+  if (!reference.getPlugin().isNull())
   {
     if (d->DEBUG)
     {
@@ -340,7 +337,7 @@ QObject* ctkServiceTracker::getService() const
   try
   {
     ctkServiceReference reference = getServiceReference();
-    if (reference.isNull())
+    if (reference.getPlugin().isNull())
     {
       return 0;
     }

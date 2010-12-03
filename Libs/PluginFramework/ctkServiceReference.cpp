@@ -46,11 +46,6 @@ ctkServiceReference::~ctkServiceReference()
     delete d_ptr;
 }
 
-bool ctkServiceReference::isNull() const
-{
-  return d_func()->registration == 0;
-}
-
 QVariant ctkServiceReference::getProperty(const QString& key) const
 {
   Q_D(const ctkServiceReference);
@@ -71,6 +66,11 @@ QStringList ctkServiceReference::getPropertyKeys() const
 
 QSharedPointer<ctkPlugin> ctkServiceReference::getPlugin() const
 {
+  if (d_func()->registration == 0 || d_func()->registration->plugin == 0)
+  {
+    return QSharedPointer<ctkPlugin>();
+  }
+
   return d_func()->registration->plugin->q_func().toStrongRef();
 }
 

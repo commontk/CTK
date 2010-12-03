@@ -186,8 +186,6 @@ protected:
 
   ctkServiceReference(ctkServiceRegistrationPrivate* reg);
 
-  bool isNull() const;
-
   ctkServiceReferencePrivate * d_ptr;
 
 };
