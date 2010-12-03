@@ -13,6 +13,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkColorDialogTest1.cpp
   ctkColorPickerButtonTest1.cpp
   ctkComboBoxTest1.cpp
+  ctkConfirmExitDialogTest1.cpp
   ctkConsoleWidgetTest1.cpp
   ctkCoordinatesWidgetTest1.cpp
   ctkDirectoryButtonTest1.cpp
@@ -88,6 +89,7 @@ SIMPLE_TEST( ctkCollapsibleGroupBoxTest1 )
 SIMPLE_TEST( ctkColorDialogTest1 )
 SIMPLE_TEST( ctkColorPickerButtonTest1 )
 SIMPLE_TEST( ctkComboBoxTest1 )
+SIMPLE_TEST( ctkConfirmExitDialogTest1 )
 SIMPLE_TEST( ctkConsoleWidgetTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
 SIMPLE_TEST( ctkDirectoryButtonTest1 )
