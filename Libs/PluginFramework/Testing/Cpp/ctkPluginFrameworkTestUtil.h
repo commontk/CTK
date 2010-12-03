@@ -42,7 +42,7 @@ public:
     if (pluginInfo.exists() && pluginInfo.isFile() &&
         QLibrary::isLibrary(pluginInfo.absoluteFilePath()))
     {
-      return pc->installPlugin(QUrl::fromLocalFile(pluginInfo.absoluteFilePath()).toString());
+      return pc->installPlugin(QUrl::fromLocalFile(pluginInfo.absoluteFilePath()));
     }
     else
     {

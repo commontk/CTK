@@ -55,8 +55,16 @@ private slots:
 
   // test functions
   void frame005a();
+  void frame007a();
+  void frame010a();
+  void frame018a();
   void frame020a();
   void frame025b();
+  void frame030b();
+  void frame035b();
+  void frame040a();
+  void frame042a();
+  void frame045a();
 
 private:
 
@@ -100,10 +108,30 @@ private:
   int eventDelay;
 
   ctkPluginContext* pc;
+
   QSharedPointer<ctkPlugin> p;
-
   QSharedPointer<ctkPlugin> pA;
+  QSharedPointer<ctkPlugin> pD;
 
+};
+
+class ctkServiceListenerPFW : public QObject
+{
+  Q_OBJECT
+
+public:
+
+  ctkServiceEvent getEvent() const;
+  QList<ctkServiceEvent> getEvents() const;
+  void clearEvent();
+
+public slots:
+
+  void serviceChanged(const ctkServiceEvent& evt);
+
+private:
+
+  QList<ctkServiceEvent> events;
 };
 
 #endif // CTKPLUGINFRAMEWORKTESTSUITE_P_H

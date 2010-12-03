@@ -143,6 +143,54 @@ void ctkPluginFrameworkTestSuite::frame005a()
   QCOMPARE(QString("http://www.apache.org/licenses/LICENSE-2.0.html"), headers.value(k));
 }
 
+// Extract all information from the getProperty in the ctkPluginContext class
+void ctkPluginFrameworkTestSuite::frame007a()
+{
+  QList<QString> NNList;
+  NNList << ctkPluginConstants::FRAMEWORK_VERSION
+         << ctkPluginConstants::FRAMEWORK_VENDOR;
+
+  foreach(QString k, NNList)
+  {
+    QVariant v = pc->getProperty(k);
+    if(!v.isValid())
+    {
+      QString msg("'%1' not set");
+      QFAIL(qPrintable(msg.arg(k)));
+    }
+  }
+}
+
+// Get context id, location and status of the plugin
+void ctkPluginFrameworkTestSuite::frame010a()
+{
+  qlonglong contextid = p->getPluginId();
+  qDebug() << "CONTEXT ID:" << contextid;
+
+  QString location = p->getLocation();
+  qDebug() << "LOCATION:" << location;
+
+  ctkPlugin::State pstate = p->getState();
+  qDebug() << "PCACTIVE:" << pstate;
+}
+
+//Test result of getServiceReference(). Should throw ctkServiceException
+void ctkPluginFrameworkTestSuite::frame018a()
+{
+  try
+  {
+    ctkServiceReference ref = pc->getServiceReference("illegalname");
+    qDebug() << "Got service reference =" << ref << ", excpected ctkServiceException";
+    QFAIL("Got service reference, excpected NullPointerException");
+  }
+  catch (const ctkServiceException& )
+  {}
+  catch (...)
+  {
+       QFAIL("Got wrong exception, expected ctkServiceException");
+  }
+}
+
 // Load pluginA_test and check that it exists and that its expected service does not exist,
 // also check that the expected events in the framework occur
 void ctkPluginFrameworkTestSuite::frame020a()
@@ -239,6 +287,161 @@ void ctkPluginFrameworkTestSuite::frame025b()
   catch (const ctkServiceException& /*se*/)
   {
     QFAIL("framework test bundle, expected service not found");
+  }
+}
+
+// Stop pluginA_test and check that it gets state RESOLVED
+void ctkPluginFrameworkTestSuite::frame030b()
+{
+  ctkServiceReference sr1
+      = pc->getServiceReference("ctkTestPluginAService");
+
+  try
+  {
+    pA->stop();
+    QVERIFY2(pA->getState() == ctkPlugin::RESOLVED, "pluginA should be RESOLVED");
+
+    QVERIFY(sr1.getPlugin().isNull());
+    QVERIFY(pc->getService(sr1) == 0);
+  }
+  catch (const std::logic_error& ise)
+  {
+    qDebug() << "Unexpected logic_error exception:" << ise.what();
+    QFAIL("framework test plugin, stop plugin pluginA");
+  }
+  catch (const ctkPluginException& pe)
+  {
+    qDebug() << "Unexpected plugin exception:" << pe;
+    QFAIL("framework test plugin, stop plugin pluginA");
+  }
+
+  QList<ctkPluginEvent> pEvts;
+  pEvts << ctkPluginEvent(ctkPluginEvent::STOPPED, pA);
+
+  QList<ctkServiceEvent> seEvts;
+  seEvts << ctkServiceEvent(ctkServiceEvent::UNREGISTERING, sr1);
+
+  QVERIFY2(checkListenerEvents(QList<ctkPluginFrameworkEvent>(), pEvts, seEvts),
+           "Unexpected events");
+
+  QList<ctkPluginEvent> syncPEvts;
+  syncPEvts << ctkPluginEvent(ctkPluginEvent::STOPPING, pA);
+
+  QVERIFY2(checkSyncListenerEvents(syncPEvts), "Unexpected events");
+}
+
+// Uninstall pluginA_test and check that it gets state UNINSTALLED
+void ctkPluginFrameworkTestSuite::frame035b()
+{
+  try
+  {
+    pA->uninstall();
+    QVERIFY2(pA->getState() == ctkPlugin::UNINSTALLED,
+             "pluginA_test should be UNINSTALLED");
+  }
+  catch (const std::logic_error& ise)
+  {
+    qDebug() << "Unexpected logic_error exception:" << ise.what();
+    QFAIL("framework test plugin, uninstall");
+  }
+  catch (const ctkPluginException& pe)
+  {
+    qDebug() << "Unexpected plugin exception:" << pe;
+    QFAIL("framework test plugin, uninstall pluginA_test");
+  }
+
+
+  QList<ctkPluginEvent> pEvts;
+  pEvts << ctkPluginEvent(ctkPluginEvent::UNRESOLVED, pA);
+  pEvts << ctkPluginEvent(ctkPluginEvent::UNINSTALLED, pA);
+
+  QVERIFY2(checkListenerEvents(QList<ctkPluginFrameworkEvent>(),
+                               pEvts, QList<ctkServiceEvent>()),
+           "Unexpected events");
+
+  QVERIFY2(checkSyncListenerEvents(QList<ctkPluginEvent>()),
+           "Unexpected sync events");
+}
+
+// Install pluginD_test, check that a ctkPluginException is thrown
+// as this plugin is not a Qt plugin
+void ctkPluginFrameworkTestSuite::frame040a()
+{
+  bool teststatus = true;
+  bool exception = false;
+  try
+  {
+    pD = ctkPluginFrameworkTestUtil::installPlugin(pc, "pluginD_test");
+    exception = false;
+  }
+  catch (const ctkPluginException& pe)
+  {
+    // This exception is expected
+    qDebug() << "Expected exception" << pe;
+    exception = true;
+  }
+  //      catch (SecurityException secA) {
+  //        QFAIL("framework test plugin " + secA + " :FRAME040A:FAIL");
+  //        teststatus = false;
+  //        exception = true;
+  //      }
+
+  if (exception == false)
+  {
+    teststatus = false;
+  }
+
+  // check the listeners for events, expect no events
+  bool lStat = checkListenerEvents(false, ctkPluginFrameworkEvent::STARTED,
+                                   false , ctkPluginEvent::INSTALLED,
+                                   false, ctkServiceEvent::MODIFIED,
+                                   pD, 0);
+
+  QVERIFY(teststatus == true && pD.isNull() && lStat == true);
+}
+
+// Install a non-existent plug-in
+void ctkPluginFrameworkTestSuite::frame042a()
+{
+  bool exception = false;
+  try
+  {
+    pc->installPlugin(QUrl("file://no-plugin"));
+    exception = false;
+  }
+  catch (const ctkPluginException& pe)
+  {
+    // This exception is expected
+    qDebug() << "Expected exception" << pe;
+    exception = true;
+  }
+
+  // check the listeners for events, expect no events
+  bool lStat = checkListenerEvents(false, ctkPluginFrameworkEvent::STARTED,
+                                   false , ctkPluginEvent::INSTALLED,
+                                   false, ctkServiceEvent::MODIFIED,
+                                   QSharedPointer<ctkPlugin>(), 0);
+
+  QVERIFY(exception == true && lStat == true);
+}
+
+// Add a service listener with a broken LDAP filter to get an exception
+void ctkPluginFrameworkTestSuite::frame045a()
+{
+  ctkServiceListenerPFW sListen1;
+  QString brokenFilter = "A broken LDAP filter";
+
+  try
+  {
+    pc->connectServiceListener(&sListen1, "serviceChanged", brokenFilter);
+  }
+  catch (const std::invalid_argument& ia)
+  {
+    //assertEquals("InvalidSyntaxException.getFilter should be same as input string", brokenFilter, ise.getFilter());
+  }
+  catch (...)
+  {
+    QFAIL("framework test bundle, wrong exception on broken LDAP filter:");
   }
 }
 
@@ -492,4 +695,24 @@ bool ctkPluginFrameworkTestSuite::checkSyncListenerEvents(
 
   syncPluginEvents.clear();
   return listenState;
+}
+
+ctkServiceEvent ctkServiceListenerPFW::getEvent() const
+{
+  return events.size() ? events.last() : ctkServiceEvent();
+}
+
+QList<ctkServiceEvent> ctkServiceListenerPFW::getEvents() const
+{
+  return events;
+}
+void ctkServiceListenerPFW::clearEvent()
+{
+  events.clear();
+}
+
+void ctkServiceListenerPFW::serviceChanged(const ctkServiceEvent& evt)
+{
+  events.push_back(evt);
+  qDebug() << "ctkServiceEvent:" << evt;
 }
