@@ -38,18 +38,32 @@ public:
   ctkConfirmExitDialog(QWidget* newParent = 0);
   virtual ~ctkConfirmExitDialog();
 
+  /// Customize the pixmap
   void setPixmap(const QPixmap& pixmap);
+  
+  /// Customize the text
   void setText(const QString& text);
   
+  /// Synchronize the state of the checkbox "Don't show this message again"
+  /// with the given settings key.
   void setDontShowAnymoreSettingsKey(const QString& key);
   QString dontShowAnymoreSettingsKey()const;
   
+  /// Is the checkbox "Don't show this message again" checked ?
   bool dontShowAnymore()const;
 
+  /// Utility function that opens a dialog to confirm exit.
+  static bool confirmExit(const QString& dontShowAgainKey = QString(),
+                          QWidget* parentWidget = 0);
+
+  /// Reimplemented for internal reasons
   virtual void setVisible(bool visible);
+
 public slots:
+  /// reimplemented for internal reasons
   virtual void accept();
-  
+
+  /// Change the checkbox and the settings if any
   void setDontShowAnymore(bool dontShow);
 
 protected:

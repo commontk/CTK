@@ -204,3 +204,12 @@ void ctkConfirmExitDialog::setVisible(bool visible)
     }
   this->Superclass::setVisible(visible);
 }
+
+//-----------------------------------------------------------------------------
+bool ctkConfirmExitDialog
+::confirmExit(const QString& dontShowAgainKey, QWidget* parentWidget)
+{
+  ctkConfirmExitDialog dialog(parentWidget);
+  dialog.setDontShowAnymoreSettingsKey(dontShowAgainKey);
+  return dialog.exec() == QDialog::Accepted;
+}

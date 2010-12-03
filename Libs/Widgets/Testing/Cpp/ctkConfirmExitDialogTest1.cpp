@@ -73,6 +73,14 @@ int ctkConfirmExitDialogTest1(int argc, char * argv [] )
     std::cerr << "ctkConfirmExitDialog::exec failed:" << std::endl;
     return EXIT_FAILURE;
     }
+  
+  // test the static version
+  if (ctkConfirmExitDialog::confirmExit("DontShow") != true)
+    {
+    std::cerr << "ctkConfirmExitDialog::confirmExit failed:" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   confirmDialog.setDontShowAnymore(false);
   // modal dialog
   confirmDialog.open();
