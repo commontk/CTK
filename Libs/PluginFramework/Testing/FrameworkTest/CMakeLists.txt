@@ -35,12 +35,4 @@ ctkMacroBuildPlugin(
   TEST_PLUGIN
 )
 
-SET(test_plugins
-  pluginA_test
-  pluginA2_test
-  pluginSL1_test
-  pluginSL3_test
-  pluginSL4_test
-)
-
 ADD_DEPENDENCIES(${PROJECT_NAME} ${test_plugins})
