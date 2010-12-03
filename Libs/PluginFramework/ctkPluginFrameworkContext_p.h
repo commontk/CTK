@@ -154,6 +154,8 @@ private:
   void deleteFWDir();
 
   void checkRequirePlugin(ctkPluginPrivate* plugin);
+
+  void initProperties();
 };
 
 

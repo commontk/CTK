@@ -44,6 +44,25 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
 
 
   /**
+   * Framework environment property identifying the Framework version.
+   *
+   * <p>
+   * The value of this property may be retrieved by calling the
+   * <code>ctkPluginContext::getProperty</code> method.
+   */
+  static const QString FRAMEWORK_VERSION; // = "org.commontk.pluginfw.version"
+
+  /**
+   * Framework environment property identifying the Framework implementation
+   * vendor.
+   *
+   * <p>
+   * The value of this property may be retrieved by calling the
+   * <code>ctkPluginContext::getProperty</code> method.
+   */
+  static const QString FRAMEWORK_VENDOR; // = "org.commontk.pluginfw.vendor"
+
+  /**
    * Specifies the persistent storage area used by the framework. The value of
    * this property must be a valid file path in the file system to a
    * directory. If the specified directory does not exist then the framework

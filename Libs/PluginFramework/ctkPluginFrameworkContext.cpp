@@ -43,6 +43,7 @@ ctkPluginFrameworkContext::ctkPluginFrameworkContext(
     systemPlugin->ctkPlugin::init(new ctkPluginFrameworkPrivate(systemPlugin, this));
   }
 
+  initProperties();
   log() << "created";
 }
 
@@ -52,6 +53,12 @@ ctkPluginFrameworkContext::~ctkPluginFrameworkContext()
   {
     this->uninit();
   }
+}
+
+void ctkPluginFrameworkContext::initProperties()
+{
+  props[ctkPluginConstants::FRAMEWORK_VERSION] = "0.9";
+  props[ctkPluginConstants::FRAMEWORK_VENDOR] = "CommonTK";
 }
 
 void ctkPluginFrameworkContext::init()
