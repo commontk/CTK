@@ -141,12 +141,16 @@ void ctkSettingsPanel::updateProperties()
     }
   foreach(const QString& key, d->Properties.keys())
     {
-    QVariant value = d->Settings->contains(key);
+    QVariant value = d->Settings->value(key);
     if (value.isValid())
       {
       bool res = d->setPropertyValue(d->property(key), value);
       Q_ASSERT(res);
       Q_UNUSED(res);
+      }
+    else
+      {
+      this->updateSetting(key);
       }
     }
 }
