@@ -249,6 +249,13 @@ void ctkSettingsDialog::resetSettings()
 void ctkSettingsDialog::restoreDefaultSettings()
 {
   Q_D(ctkSettingsDialog);
+  // The panels may not contain ALL the settings of the application,
+  // for the ones we don't default value, the best is to clear all of them...
+  if (d->Settings)
+    {
+    d->Settings->clear();
+    }
+  // ... and restore settings for the ones we can
   foreach(ctkSettingsPanel* panel, d->Panels.values())
     {
     panel->restoreDefaultSettings();
