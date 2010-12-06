@@ -1,3 +1,4 @@
+import qt, ctk
 
 def app():
   return _ctkSimplePythonShellInstance
