@@ -35,13 +35,23 @@
 int ctkSettingsTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
+  app.setOrganizationName("CommonToolkit");
+  app.setOrganizationDomain("www.commontk.org");
+  app.setApplicationName("CTK");
+  QSettings::setDefaultFormat(QSettings::IniFormat);
+  // Test all the settings constructors
+  ctkSettings settings("CommonToolkit", "CTK", 0);
+  ctkSettings settings2(QSettings::UserScope, "CommonToolkit", "CTK", 0);
+  ctkSettings settings3(QSettings::IniFormat, QSettings::UserScope, "CommonToolkit", "CTK", 0);
+  ctkSettings settings4("foo", QSettings::IniFormat, 0);
+  ctkSettings settings5(0);
   
   QMainWindow mainWindow(0);
   mainWindow.show();
   
   mainWindow.move(123, 123);
   mainWindow.resize(640, 470);
-  ctkSettings settings("CTK", "CTK", 0);
+  
   settings.saveState(mainWindow,"");
   mainWindow.move(100, 100);
   mainWindow.resize(300, 200);
@@ -87,7 +97,7 @@ int ctkSettingsTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
     
-    if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

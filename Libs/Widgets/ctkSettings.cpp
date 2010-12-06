@@ -56,11 +56,41 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDesktopWidget>
 
 //-----------------------------------------------------------------------------
-ctkSettings::ctkSettings(
-    const QString& organization, 
-    const QString& application,
-    QObject* p) :
-  QSettings(QSettings::IniFormat, QSettings::UserScope, organization, application, p)
+ctkSettings::ctkSettings(const QString& organization,
+                         const QString& application,
+                         QObject* parentObject)
+  : QSettings(organization, application, parentObject)
+{
+}
+
+//-----------------------------------------------------------------------------
+ctkSettings::ctkSettings(QSettings::Scope scope,
+                         const QString& organization,
+                         const QString& application,
+                         QObject* parentObject)
+  : QSettings(scope, organization,application, parentObject)
+{
+}
+
+//-----------------------------------------------------------------------------
+ctkSettings::ctkSettings(QSettings::Format format,
+                         QSettings::Scope scope,
+                         const QString& organization,
+                         const QString& application,
+                         QObject* parentObject)
+  : QSettings(format, scope, organization, application, parentObject)
+{
+}
+
+//-----------------------------------------------------------------------------
+ctkSettings::ctkSettings(const QString& fileName, QSettings::Format format, QObject* parentObject)
+  : QSettings(fileName, format, parentObject)
+{
+}
+
+//-----------------------------------------------------------------------------
+ctkSettings::ctkSettings(QObject* parentObject)
+  : QSettings(parentObject)
 {
 }
 
