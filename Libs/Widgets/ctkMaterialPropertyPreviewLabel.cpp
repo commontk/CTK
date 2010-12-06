@@ -58,10 +58,10 @@ ctkMaterialPropertyPreviewLabelPrivate::ctkMaterialPropertyPreviewLabelPrivate(c
 {
   this->Color = Qt::white;
   this->Opacity = 1.;
-  this->Ambient = 0.5;
-  this->Diffuse = 0.5;
-  this->Specular = 0.5;
-  this->SpecularPower = 50;
+  this->Ambient = 0.0;
+  this->Diffuse = 1.0;
+  this->Specular = 0.0;
+  this->SpecularPower = 1;
   
   this->GridOpacity = 0.6;
 }
