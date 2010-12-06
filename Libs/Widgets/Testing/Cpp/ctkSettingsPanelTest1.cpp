@@ -37,6 +37,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
   
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settings.clear();
 
   ctkSettingsPanel settingsPanel;
   settingsPanel.setSettings(&settings);
