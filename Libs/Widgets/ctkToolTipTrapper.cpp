@@ -85,7 +85,6 @@ ctkToolTipTrapper::ctkToolTipTrapper(QObject * newParent)
 //------------------------------------------------------------------------------
 ctkToolTipTrapper::~ctkToolTipTrapper()
 {
-  QCoreApplication::instance()->removeEventFilter(this);
 }
 
 //------------------------------------------------------------------------------
