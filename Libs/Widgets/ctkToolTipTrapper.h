@@ -55,18 +55,33 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Qt includes
 #include <QObject>
 
+// CTK includes
 #include "ctkWidgetsExport.h"
+class ctkToolTipTrapperPrivate;
 
 /// To prevent tooltips from appearing, create an instance of this object.
 class CTK_WIDGETS_EXPORT ctkToolTipTrapper : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY( bool enabled READ isEnabled WRITE setEnabled)
 public:
   typedef QObject Superclass;
   explicit ctkToolTipTrapper(QObject * newParent = 0);
   virtual ~ctkToolTipTrapper();
 
+  bool isEnabled()const;
+
   bool eventFilter(QObject* watched, QEvent* event);
+
+public slots:
+  void setEnabled(bool enable);
+
+protected:
+  QScopedPointer<ctkToolTipTrapperPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(ctkToolTipTrapper);
+  Q_DISABLE_COPY(ctkToolTipTrapper);
 };
 
 #endif

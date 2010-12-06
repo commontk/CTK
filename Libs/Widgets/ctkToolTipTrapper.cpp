@@ -55,10 +55,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // CTK includes
 #include "ctkToolTipTrapper.h"
 
-//------------------------------------------------------------------------------
-ctkToolTipTrapper::ctkToolTipTrapper(QObject * newParent):Superclass(newParent)
+class ctkToolTipTrapperPrivate
 {
-  QCoreApplication::instance()->installEventFilter(this);
+  Q_DECLARE_PUBLIC(ctkToolTipTrapper);
+protected:
+  ctkToolTipTrapper* const q_ptr;
+public:
+  ctkToolTipTrapperPrivate(ctkToolTipTrapper& object);
+
+  bool Enabled;
+};
+
+// --------------------------------------------------------------------------
+ctkToolTipTrapperPrivate::ctkToolTipTrapperPrivate(ctkToolTipTrapper& object)
+  : q_ptr(&object)
+{
+  this->Enabled = false;
+}
+
+//------------------------------------------------------------------------------
+ctkToolTipTrapper::ctkToolTipTrapper(QObject * newParent)
+  : Superclass(newParent)
+  , d_ptr(new ctkToolTipTrapperPrivate(*this))
+{
+  Q_D(ctkToolTipTrapper);
+  this->setEnabled(true);
 }
 
 //------------------------------------------------------------------------------
@@ -68,8 +89,35 @@ ctkToolTipTrapper::~ctkToolTipTrapper()
 }
 
 //------------------------------------------------------------------------------
-bool ctkToolTipTrapper::eventFilter(QObject* /*watched*/, QEvent* input_event)
+bool ctkToolTipTrapper::isEnabled()const
 {
+  Q_D(const ctkToolTipTrapper);
+  return d->Enabled;
+}
+
+//------------------------------------------------------------------------------
+void ctkToolTipTrapper::setEnabled(bool enable)
+{
+  Q_D(ctkToolTipTrapper);
+  if (enable == d->Enabled)
+    {
+    return;
+    }
+  d->Enabled = enable;
+  if (enable)
+    {
+    QCoreApplication::instance()->installEventFilter(this);
+    }
+  else
+    {
+    QCoreApplication::instance()->removeEventFilter(this);
+    }
+}
+
+//------------------------------------------------------------------------------
+bool ctkToolTipTrapper::eventFilter(QObject* watched, QEvent* input_event)
+{
+  Q_UNUSED(watched);
   if(input_event->type() == QEvent::ToolTip)
     {
     return true;
