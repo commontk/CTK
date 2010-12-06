@@ -20,10 +20,11 @@
 
 // Qt includes
 #include <QApplication>
-#include <QCheckBox>
+#include <QTimer>
 
 // CTK includes
 #include "ctkColorDialog.h"
+#include "ctkColorPickerButton.h"
 
 // STD includes
 #include <cstdlib>
@@ -35,21 +36,61 @@ int ctkColorDialogTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   ctkColorDialog colorDialog;
-  QWidget* extraPanel = new QWidget;
+  ctkColorDialog colorDialog1(Qt::red);
+
+  ctkColorPickerButton* extraPanel = new ctkColorPickerButton;
+  QObject::connect(extraPanel, SIGNAL(colorChanged(QColor)),
+                   &colorDialog, SLOT(setColor(QColor)));
   colorDialog.addTab(extraPanel, "Extra");
-  if (extraPanel != colorDialog.widget(0))
+  int index = colorDialog.indexOf(extraPanel);
+  if (index != 0 ||
+      extraPanel != colorDialog.widget(index) ||
+      colorDialog.widget(-1) != 0)
     {
+    std::cerr << "ctkColorDialog::addTab failed" << std::endl;
     return EXIT_FAILURE;
     }
+
+  // fake removeTab
+  colorDialog.removeTab(-1);
+  index = colorDialog.indexOf(extraPanel);
+  if (index != 0 ||
+      colorDialog.widget(0) != extraPanel)
+    {
+    std::cerr << "ctkColorDialog::removeTab failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // true removeTab  
+  colorDialog.removeTab(index);
+  index = colorDialog.indexOf(extraPanel);
+  if (index != -1 ||
+      colorDialog.widget(0) != 0)
+    {
+    std::cerr << "ctkColorDialog::removeTab failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Add the panel back
+  colorDialog.addTab(extraPanel, "Extra chooser");
+  extraPanel->setColor(Qt::darkBlue);
+
+  if (colorDialog.currentColor() != Qt::darkBlue)
+    {
+    std::cerr << "ctkColorDialog::setColor failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  colorDialog.open();
+
   // the following is only in interactive mode
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
-    return EXIT_SUCCESS;
+    QTimer::singleShot(200, &colorDialog, SLOT(accept()));
     }
- if (!colorDialog.exec())
-    {
-    return EXIT_FAILURE;
-    }
+
+  return app.exec();
+
   ctkColorDialog::addDefaultTab(extraPanel, "Extra");
   QColor color = ctkColorDialog::getColor(Qt::black,0 , "", 0);
   return EXIT_SUCCESS;

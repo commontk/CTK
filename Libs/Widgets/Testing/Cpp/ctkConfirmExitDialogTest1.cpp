@@ -84,7 +84,7 @@ int ctkConfirmExitDialogTest1(int argc, char * argv [] )
   confirmDialog.setDontShowAnymore(false);
   // modal dialog
   confirmDialog.open();
-  // the following is only in interactive mode
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &confirmDialog, SLOT(accept()));
