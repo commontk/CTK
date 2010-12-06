@@ -42,7 +42,7 @@ class ctkDirectoryButtonPrivate;
 class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString directory READ directory WRITE setDirectory)
+  Q_PROPERTY(QString directory READ directory WRITE setDirectory NOTIFY directoryChanged)
   Q_PROPERTY(QString caption READ caption WRITE setCaption)
   Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
