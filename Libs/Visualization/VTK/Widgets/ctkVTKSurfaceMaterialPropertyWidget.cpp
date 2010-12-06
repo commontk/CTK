@@ -65,7 +65,6 @@ ctkVTKSurfaceMaterialPropertyWidget::ctkVTKSurfaceMaterialPropertyWidget(vtkProp
   : Superclass(parentWidget)
   , d_ptr(new ctkVTKSurfaceMaterialPropertyWidgetPrivate(*this))
 {
-  Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->setProperty(property);
 }
 

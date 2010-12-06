@@ -187,7 +187,7 @@ void ctkSettingsPanel::setSetting(const QString& key, const QVariant& newVal)
   if (d->Settings->status() != QSettings::NoError)
     {
     logger.warn( QString("Error %1 while writing setting %1")
-      .arg(d->Settings->status())
+      .arg(static_cast<int>(d->Settings->status()))
       .arg(key));
     }
   if (oldVal != newVal)

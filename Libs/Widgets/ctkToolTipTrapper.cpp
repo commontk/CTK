@@ -78,8 +78,15 @@ ctkToolTipTrapper::ctkToolTipTrapper(QObject * newParent)
   : Superclass(newParent)
   , d_ptr(new ctkToolTipTrapperPrivate(*this))
 {
-  Q_D(ctkToolTipTrapper);
   this->setEnabled(true);
+}
+
+//------------------------------------------------------------------------------
+ctkToolTipTrapper::ctkToolTipTrapper(bool enable, QObject * newParent)
+  : Superclass(newParent)
+  , d_ptr(new ctkToolTipTrapperPrivate(*this))
+{
+  this->setEnabled(enable);
 }
 
 //------------------------------------------------------------------------------

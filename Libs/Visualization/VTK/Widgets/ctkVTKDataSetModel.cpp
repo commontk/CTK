@@ -319,6 +319,7 @@ void ctkVTKDataSetModel::updateArrayFromItem(vtkDataArray* dataArray, QStandardI
 //------------------------------------------------------------------------------
 void ctkVTKDataSetModel::onDataSetModified(vtkObject* dataSet)
 {
+  Q_UNUSED(dataSet);
   this->updateDataSet();
 }
 

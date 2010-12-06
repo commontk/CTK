@@ -66,14 +66,26 @@ class CTK_WIDGETS_EXPORT ctkToolTipTrapper : public QObject
   Q_PROPERTY( bool enabled READ isEnabled WRITE setEnabled)
 public:
   typedef QObject Superclass;
-  explicit ctkToolTipTrapper(QObject * newParent = 0);
+  /// Constructs a ToolTip trapper which is a child of objectParent
+  /// The trapper is enabled by default 
+  explicit ctkToolTipTrapper(QObject* objectParent = 0);
+  /// Constructs a ToolTip trapper which is a child of objectParent
+  /// If enable is false, the trapper doesn't install the event filter
+  explicit ctkToolTipTrapper(bool enable, QObject* objectParent = 0);
   virtual ~ctkToolTipTrapper();
 
+  /// Returns true if the eventFilter is installed and ToolTip events are
+  /// filtered
   bool isEnabled()const;
 
+  /// Automatically called when the tooltip is enabled. It prevents the
+  /// tooltips events from being processed. You shouldn't have to call
+  /// it manually.
   bool eventFilter(QObject* watched, QEvent* event);
 
 public slots:
+  /// If true, it installs the eventFilter on the application. Otherwise
+  /// it removes it.
   void setEnabled(bool enable);
 
 protected:
