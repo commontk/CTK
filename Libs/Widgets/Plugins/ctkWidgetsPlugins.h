@@ -46,7 +46,7 @@
 #include "ctkRangeSliderPlugin.h"
 #include "ctkRangeWidgetPlugin.h"
 #include "ctkSettingsPanelPlugin.h"
-#include "ctkSettingsWidgetPlugin.h"
+#include "ctkSettingsDialogPlugin.h"
 #include "ctkSliderWidgetPlugin.h"
 #include "ctkTransferFunctionViewPlugin.h"
 #include "ctkTreeComboBoxPlugin.h"
@@ -84,7 +84,7 @@ public:
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
             << new ctkSettingsPanelPlugin
-            << new ctkSettingsWidgetPlugin
+            << new ctkSettingsDialogPlugin
             << new ctkSliderWidgetPlugin
             << new ctkTransferFunctionViewPlugin
             << new ctkTreeComboBoxPlugin

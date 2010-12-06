@@ -18,32 +18,33 @@
 
 =========================================================================*/
 
-#ifndef __ctkSettingsWidget_h
-#define __ctkSettingsWidget_h
+#ifndef __ctkSettingsDialog_h
+#define __ctkSettingsDialog_h
 
 // Qt includes
-#include <QWidget>
+#include <QDialog>
 
 // CTK includes
 #include "ctkWidgetsExport.h"
 
-class ctkSettingsWidgetPrivate;
-class QTreeWidgetItem;
-class ctkSettingsPanel;
+class QAbstractButton;
 class QSettings;
+class QTreeWidgetItem;
+class ctkSettingsDialogPrivate;
+class ctkSettingsPanel;
 
-class CTK_WIDGETS_EXPORT ctkSettingsWidget : public QWidget
+class CTK_WIDGETS_EXPORT ctkSettingsDialog : public QDialog
 {
   Q_OBJECT
 public:
   /// Superclass typedef
-  typedef QWidget Superclass;
+  typedef QDialog Superclass;
 
   /// Constructor
-  explicit ctkSettingsWidget(QWidget* parent = 0);
+  explicit ctkSettingsDialog(QWidget* parent = 0);
 
   /// Destructor
-  virtual ~ctkSettingsWidget();
+  virtual ~ctkSettingsDialog();
 
   QSettings* settings()const;
   void setSettings(QSettings* settings);
@@ -61,18 +62,27 @@ public slots:
   void setCurrentPanel(ctkSettingsPanel* panel);
   void setCurrentPanel(const QString& label);
 
+  void applySettings();
+  void resetSettings();
+  void restoreDefaultSettings();
+  
+  virtual void accept();
+  virtual void reject();
+
 signals:
   void settingChanged(const QString& key, const QVariant& value);
 
 protected slots:
+  void onSettingChanged(const QString& key, const QVariant& newVal);
   void onCurrentItemChanged(QTreeWidgetItem* currentItem, QTreeWidgetItem* previous);
+  void onDialogButtonClicked(QAbstractButton* button);
 
 protected:
-  QScopedPointer<ctkSettingsWidgetPrivate> d_ptr;
+  QScopedPointer<ctkSettingsDialogPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkSettingsWidget);
-  Q_DISABLE_COPY(ctkSettingsWidget);
+  Q_DECLARE_PRIVATE(ctkSettingsDialog);
+  Q_DISABLE_COPY(ctkSettingsDialog);
 };
 
 #endif

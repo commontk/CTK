@@ -34,7 +34,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkDateRangeWidgetTest1.cpp
   ctkSettingsPanelTest1.cpp
   ctkSettingsTest1.cpp
-  ctkSettingsWidgetTest1.cpp
+  ctkSettingsDialogTest1.cpp
   ctkSliderWidgetTest1.cpp
   ctkTreeComboBoxTest1.cpp
   ctkWorkflowWidgetTest1.cpp
@@ -110,7 +110,7 @@ SIMPLE_TEST( ctkRangeWidgetTest1 )
 SIMPLE_TEST( ctkDateRangeWidgetTest1 )
 SIMPLE_TEST( ctkSettingsPanelTest1 )
 SIMPLE_TEST( ctkSettingsTest1 )
-SIMPLE_TEST( ctkSettingsWidgetTest1 )
+SIMPLE_TEST( ctkSettingsDialogTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )
 SIMPLE_TEST( ctkWorkflowWidgetTest1 )

@@ -21,24 +21,25 @@
 // Qt includes
 #include <QDebug>
 #include <QMap>
+#include <QPushButton>
 #include <QSettings>
 
 // CTK includes
 #include "ctkSettingsPanel.h"
-#include "ctkSettingsWidget.h"
-#include "ui_ctkSettingsWidget.h"
+#include "ctkSettingsDialog.h"
+#include "ui_ctkSettingsDialog.h"
 #include "ctkLogger.h"
 
-static ctkLogger logger("org.commontk.libs.widgets.ctkSettingsWidget");
+static ctkLogger logger("org.commontk.libs.widgets.ctkSettingsDialog");
 
 //-----------------------------------------------------------------------------
-class ctkSettingsWidgetPrivate: public Ui_ctkSettingsWidget
+class ctkSettingsDialogPrivate: public Ui_ctkSettingsDialog
 {
-  Q_DECLARE_PUBLIC(ctkSettingsWidget);
+  Q_DECLARE_PUBLIC(ctkSettingsDialog);
 protected:
-  ctkSettingsWidget* const q_ptr;
+  ctkSettingsDialog* const q_ptr;
 public:
-  ctkSettingsWidgetPrivate(ctkSettingsWidget& object);
+  ctkSettingsDialogPrivate(ctkSettingsDialog& object);
   void init();
 
   ctkSettingsPanel* panel(QTreeWidgetItem* item)const;
@@ -55,37 +56,39 @@ protected:
 };
 
 // --------------------------------------------------------------------------
-ctkSettingsWidgetPrivate::ctkSettingsWidgetPrivate(ctkSettingsWidget& object)
+ctkSettingsDialogPrivate::ctkSettingsDialogPrivate(ctkSettingsDialog& object)
   :q_ptr(&object)
 {
   this->Settings = 0;
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsWidgetPrivate::init()
+void ctkSettingsDialogPrivate::init()
 {
-  Q_Q(ctkSettingsWidget);
+  Q_Q(ctkSettingsDialog);
   this->setupUi(q);
 
   QObject::connect(this->SettingsTreeWidget,
     SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     q, SLOT(onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+  QObject::connect(this->SettingsButtonBox, SIGNAL(clicked(QAbstractButton*)),
+                   q, SLOT(onDialogButtonClicked(QAbstractButton*)));
 }
 
 // --------------------------------------------------------------------------
-ctkSettingsPanel* ctkSettingsWidgetPrivate::panel(QTreeWidgetItem* item)const
+ctkSettingsPanel* ctkSettingsDialogPrivate::panel(QTreeWidgetItem* item)const
 {
   return this->Panels.value(item, 0);
 }
 
 // --------------------------------------------------------------------------
-QTreeWidgetItem* ctkSettingsWidgetPrivate::item(ctkSettingsPanel* panel)const
+QTreeWidgetItem* ctkSettingsDialogPrivate::item(ctkSettingsPanel* panel)const
 {
   return this->Panels.key(panel, this->SettingsTreeWidget->invisibleRootItem());
 }
 
 // --------------------------------------------------------------------------
-QTreeWidgetItem* ctkSettingsWidgetPrivate::item(const QString& label)const
+QTreeWidgetItem* ctkSettingsDialogPrivate::item(const QString& label)const
 {
   QMap<QTreeWidgetItem*, ctkSettingsPanel*>::const_iterator it;
   for (it = this->Panels.constBegin(); it != this->Panels.constEnd(); ++it)
@@ -99,30 +102,30 @@ QTreeWidgetItem* ctkSettingsWidgetPrivate::item(const QString& label)const
 }
 
 // --------------------------------------------------------------------------
-ctkSettingsWidget::ctkSettingsWidget(QWidget* _parent)
+ctkSettingsDialog::ctkSettingsDialog(QWidget* _parent)
   : Superclass(_parent)
-  , d_ptr(new ctkSettingsWidgetPrivate(*this))
+  , d_ptr(new ctkSettingsDialogPrivate(*this))
 {
-  Q_D(ctkSettingsWidget);
+  Q_D(ctkSettingsDialog);
   d->init();
 }
 
 // --------------------------------------------------------------------------
-ctkSettingsWidget::~ctkSettingsWidget()
+ctkSettingsDialog::~ctkSettingsDialog()
 {
 }
 
 // --------------------------------------------------------------------------
-QSettings* ctkSettingsWidget::settings()const
+QSettings* ctkSettingsDialog::settings()const
 {
-  Q_D(const ctkSettingsWidget);
+  Q_D(const ctkSettingsDialog);
   return d->Settings;
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsWidget::setSettings(QSettings* settings)
+void ctkSettingsDialog::setSettings(QSettings* settings)
 {
-  Q_D(ctkSettingsWidget);
+  Q_D(ctkSettingsDialog);
 
   d->Settings = settings;
   foreach(ctkSettingsPanel* panel, d->Panels.values())
@@ -132,10 +135,10 @@ void ctkSettingsWidget::setSettings(QSettings* settings)
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsWidget
+void ctkSettingsDialog
 ::addPanel(ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel)
 {
-  Q_D(ctkSettingsWidget);
+  Q_D(ctkSettingsDialog);
   QTreeWidgetItem* newPanelItem = new QTreeWidgetItem;
   newPanelItem->setText(0, panel->windowTitle());
   newPanelItem->setIcon(0, panel->windowIcon());
@@ -146,12 +149,12 @@ void ctkSettingsWidget
   d->SettingsStackedWidget->addWidget(panel);
 
   connect(panel, SIGNAL(settingChanged(const QString&, const QVariant&)),
-          this, SIGNAL(settingChanged(const QString&, const QVariant&)));
+          this, SLOT(onSettingChanged(const QString&, const QVariant&)));
   panel->setSettings(this->settings());
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsWidget
+void ctkSettingsDialog
 ::addPanel(const QString& label, ctkSettingsPanel* panel, 
            ctkSettingsPanel* parentPanel)
 {
@@ -160,7 +163,7 @@ void ctkSettingsWidget
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsWidget
+void ctkSettingsDialog
 ::addPanel(const QString& label, const QIcon& icon,
            ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel)
 {
@@ -170,32 +173,32 @@ void ctkSettingsWidget
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsWidget::setCurrentPanel(ctkSettingsPanel* panel)
+void ctkSettingsDialog::setCurrentPanel(ctkSettingsPanel* panel)
 {
-  Q_D(ctkSettingsWidget);
+  Q_D(ctkSettingsDialog);
   // eventually calls onCurrentItemChanged() where all the work is done
   d->SettingsTreeWidget->setCurrentItem(d->item(panel));
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsWidget::setCurrentPanel(const QString& label)
+void ctkSettingsDialog::setCurrentPanel(const QString& label)
 {
-  Q_D(ctkSettingsWidget);
+  Q_D(ctkSettingsDialog);
   // eventually calls onCurrentItemChanged() where all the work is done
   d->SettingsTreeWidget->setCurrentItem(d->item(label));
 }
 
 // --------------------------------------------------------------------------
-ctkSettingsPanel* ctkSettingsWidget::currentPanel()const
+ctkSettingsPanel* ctkSettingsDialog::currentPanel()const
 {
-  Q_D(const ctkSettingsWidget);
+  Q_D(const ctkSettingsDialog);
   return d->panel(d->SettingsTreeWidget->currentItem());
 }
 
 // --------------------------------------------------------------------------
-ctkSettingsPanel* ctkSettingsWidget::panel(const QString& label)const
+ctkSettingsPanel* ctkSettingsDialog::panel(const QString& label)const
 {
-  Q_D(const ctkSettingsWidget);
+  Q_D(const ctkSettingsDialog);
   foreach(ctkSettingsPanel* settingsPanel, d->Panels.values())
     {
     if (settingsPanel->windowTitle() == label)
@@ -207,11 +210,83 @@ ctkSettingsPanel* ctkSettingsWidget::panel(const QString& label)const
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsWidget
+void ctkSettingsDialog::accept()
+{
+  this->applySettings();
+  this->Superclass::accept();
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialog::reject()
+{
+  this->resetSettings();
+  this->Superclass::accept();
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialog::applySettings()
+{
+  Q_D(ctkSettingsDialog);
+  foreach(ctkSettingsPanel* panel, d->Panels.values())
+    {
+    panel->applySettings();
+    }
+  d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(false);
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialog::resetSettings()
+{
+  Q_D(ctkSettingsDialog);
+  foreach(ctkSettingsPanel* panel, d->Panels.values())
+    {
+    panel->resetSettings();
+    }
+  d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(false);
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialog::restoreDefaultSettings()
+{
+  Q_D(ctkSettingsDialog);
+  foreach(ctkSettingsPanel* panel, d->Panels.values())
+    {
+    panel->restoreDefaultSettings();
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialog
+::onSettingChanged(const QString& key, const QVariant& newVal)
+{
+  Q_D(ctkSettingsDialog);
+  d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(true);
+  emit settingChanged(key, newVal);
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialog
 ::onCurrentItemChanged(QTreeWidgetItem* currentItem, QTreeWidgetItem* previousItem)
 {
-  Q_D(ctkSettingsWidget);
+  Q_D(ctkSettingsDialog);
   Q_UNUSED(previousItem);
   d->SettingsStackedWidget->setCurrentWidget(
     d->panel(currentItem));
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialog::onDialogButtonClicked(QAbstractButton* button)
+{
+  Q_D(ctkSettingsDialog);
+  switch (d->SettingsButtonBox->standardButton(button))
+    {
+    case QDialogButtonBox::Reset:
+      this->resetSettings();
+      break;
+    case QDialogButtonBox::RestoreDefaults:
+      this->restoreDefaultSettings();
+      break;
+    default:
+      break;
+    }
 }

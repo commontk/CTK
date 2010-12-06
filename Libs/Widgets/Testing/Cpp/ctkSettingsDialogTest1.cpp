@@ -26,33 +26,34 @@
 
 // CTK includes
 #include "ctkSettingsPanel.h"
-#include "ctkSettingsWidget.h"
+#include "ctkSettingsDialog.h"
 
 // STD includes
 #include <stdlib.h>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkSettingsWidgetTest1(int argc, char * argv [] )
+int ctkSettingsDialogTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settings.remove("key 1");
 
-  ctkSettingsWidget settingsWidget;
-  settingsWidget.setSettings(&settings);
+  ctkSettingsDialog settingsDialog;
+  settingsDialog.setSettings(&settings);
 
   ctkSettingsPanel* panel1 = new ctkSettingsPanel;
-  settingsWidget.addPanel("Panel 1", panel1); 
+  settingsDialog.addPanel("Panel 1", panel1); 
   if (panel1->settings() != &settings)
     {
-    std::cerr << "ctkSettingsWidget::addPanel settings failed" << panel1->settings() << std::endl;
+    std::cerr << "ctkSettingsDialog::addPanel settings failed" << panel1->settings() << std::endl;
     return EXIT_FAILURE;
     }
-  settingsWidget.addPanel("Panel 2", new ctkSettingsPanel);
-  settingsWidget.addPanel("Panel 3", new ctkSettingsPanel);
+  settingsDialog.addPanel("Panel 2", new ctkSettingsPanel);
+  settingsDialog.addPanel("Panel 3", new ctkSettingsPanel);
   ctkSettingsPanel* panel4 = new ctkSettingsPanel;
-  settingsWidget.addPanel("Panel 4", panel4, panel1);
+  settingsDialog.addPanel("Panel 4", panel4, panel1);
 
   QCheckBox* box = new QCheckBox(panel4);
   box->setChecked(false); // false by default but we just want to make sure
@@ -72,10 +73,17 @@ int ctkSettingsWidgetTest1(int argc, char * argv [] )
     std::cerr << "Saving to settings failed" << std::endl;
     return EXIT_FAILURE;
     }
+  settingsDialog.resetSettings();
+  boxVal = settings.value("key 1");
+  if (!boxVal.isValid() || boxVal.toBool() != false)
+    {
+    std::cerr << "Reset failed" << std::endl;
+    return EXIT_FAILURE;
+    }
 
-  settingsWidget.setCurrentPanel("Panel 4");
+  settingsDialog.setCurrentPanel("Panel 4");
 
-  settingsWidget.show();
+  settingsDialog.show();
       
   if (argc < 2 || QString(argv[1]) != "-I" )
     {

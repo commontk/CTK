@@ -19,50 +19,50 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkSettingsWidgetPlugin.h"
-#include "ctkSettingsWidget.h"
+#include "ctkSettingsDialogPlugin.h"
+#include "ctkSettingsDialog.h"
 
 //-----------------------------------------------------------------------------
-ctkSettingsWidgetPlugin::ctkSettingsWidgetPlugin(QObject *pluginParent)
+ctkSettingsDialogPlugin::ctkSettingsDialogPlugin(QObject *pluginParent)
   : QObject(pluginParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkSettingsWidgetPlugin::createWidget(QWidget* widgetParent)
+QWidget *ctkSettingsDialogPlugin::createWidget(QWidget* widgetParent)
 {
-  ctkSettingsWidget* newWidget = new ctkSettingsWidget(widgetParent);
+  ctkSettingsDialog* newWidget = new ctkSettingsDialog(widgetParent);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSettingsWidgetPlugin::domXml() const
+QString ctkSettingsDialogPlugin::domXml() const
 {
-  return "<widget class=\"ctkSettingsWidget\" \
-          name=\"SettingsWidget\">\n"
+  return "<widget class=\"ctkSettingsDialog\" \
+          name=\"SettingsDialog\">\n"
           "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------
-QIcon ctkSettingsWidgetPlugin::icon() const
+QIcon ctkSettingsDialogPlugin::icon() const
 {
   return QIcon(":/Icons/widget.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSettingsWidgetPlugin::includeFile() const
+QString ctkSettingsDialogPlugin::includeFile() const
 {
-  return "ctkSettingsWidget.h";
+  return "ctkSettingsDialog.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkSettingsWidgetPlugin::isContainer() const
+bool ctkSettingsDialogPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSettingsWidgetPlugin::name() const
+QString ctkSettingsDialogPlugin::name() const
 {
-  return "ctkSettingsWidget";
+  return "ctkSettingsDialog";
 }

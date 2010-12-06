@@ -18,20 +18,20 @@
 
 =========================================================================*/
 
-#ifndef __ctkSettingsWidgetPlugin_h
-#define __ctkSettingsWidgetPlugin_h
+#ifndef __ctkSettingsDialogPlugin_h
+#define __ctkSettingsDialogPlugin_h
 
 // CTK includes
 #include "ctkWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkSettingsWidgetPlugin :
+class CTK_WIDGETS_PLUGINS_EXPORT ctkSettingsDialogPlugin :
   public QObject,
   public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkSettingsWidgetPlugin(QObject *_parent = 0);
+  ctkSettingsDialogPlugin(QObject *_parent = 0);
   
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

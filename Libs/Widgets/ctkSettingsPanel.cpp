@@ -29,8 +29,47 @@
 
 static ctkLogger logger("org.commontk.libs.widgets.ctkSettingsPanel");
 
-typedef QPair<QObject*, QString> PropertyType;
+struct PropertyType
+{
+  PropertyType();
+  QObject* Object;
+  QString  Property;
+  QVariant PreviousValue;
+  QVariant DefaultValue;
 
+  QVariant value()const;
+  bool setValue(const QVariant& value);
+};
+
+// --------------------------------------------------------------------------
+PropertyType::PropertyType()
+  : Object(0)
+{
+}
+
+// --------------------------------------------------------------------------
+QVariant PropertyType::value()const
+{
+  if (this->Object == 0 ||
+      this->Property.isEmpty())
+    {
+    return QVariant();
+    }
+  return this->Object->property(this->Property.toLatin1());
+}
+
+// --------------------------------------------------------------------------
+bool PropertyType::setValue(const QVariant& val)
+{
+  if (this->Object == 0 || this->Property.isEmpty())
+    {
+    Q_ASSERT(this->Object && !this->Property.isEmpty());
+    return false;
+    }
+  // the following returns true if the property has been added using Q_PROPERTY
+  // false otherwise (and the property is then a dynamic property)
+  return this->Object->setProperty(this->Property.toLatin1(), val);
+}
 //-----------------------------------------------------------------------------
 class ctkSettingsPanelPrivate
 {
@@ -42,14 +81,10 @@ public:
   ctkSettingsPanelPrivate(ctkSettingsPanel& object);
   void init();
 
-  PropertyType property(const QString& key);
-  QVariant propertyValue(const PropertyType& property)const;
-  bool setPropertyValue(const PropertyType& property, const QVariant& val);
-
-  QSettings*                   Settings;
-  QMap<QString, PropertyType > Properties;
-  QSignalMapper*               SignalMapper;
-  bool                         SaveToSettingsWhenRegister;
+  QSettings*                  Settings;
+  QMap<QString, PropertyType> Properties;
+  QSignalMapper*              SignalMapper;
+  bool                        SaveToSettingsWhenRegister;
 };
 
 // --------------------------------------------------------------------------
@@ -72,37 +107,6 @@ void ctkSettingsPanelPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-PropertyType ctkSettingsPanelPrivate::property(const QString& key)
-{
-  PropertyType defaultProp(0, QString());
-  return this->Properties.value(key, defaultProp);
-}
-
-// --------------------------------------------------------------------------
-QVariant ctkSettingsPanelPrivate::propertyValue(const PropertyType& prop)const
-{
-  if (prop.first == 0 ||
-      prop.second.isEmpty())
-    {
-    return QVariant();
-    }
-  return prop.first->property(prop.second.toLatin1());
-}
-
-// --------------------------------------------------------------------------
-bool ctkSettingsPanelPrivate::setPropertyValue(const PropertyType& prop, const QVariant& val)
-{
-  if (prop.first == 0 ||
-      prop.second.isEmpty())
-    {
-    return false;
-    }
-  // the following return true if the property has been added using Q_PROPERTY
-  // false otherwise (and the property is then a dynamic property)
-  return prop.first->setProperty(prop.second.toLatin1(), val);
-}
-
-// --------------------------------------------------------------------------
 ctkSettingsPanel::ctkSettingsPanel(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new ctkSettingsPanelPrivate(*this))
@@ -114,6 +118,7 @@ ctkSettingsPanel::ctkSettingsPanel(QWidget* _parent)
 // --------------------------------------------------------------------------
 ctkSettingsPanel::~ctkSettingsPanel()
 {
+  this->applySettings();
 }
 
 // --------------------------------------------------------------------------
@@ -127,6 +132,10 @@ QSettings* ctkSettingsPanel::settings()const
 void ctkSettingsPanel::setSettings(QSettings* settings)
 {
   Q_D(ctkSettingsPanel);
+  if (d->Settings == settings)
+    {
+    return;
+    }
   d->Settings = settings;
   this->updateProperties();
 }
@@ -141,33 +150,19 @@ void ctkSettingsPanel::updateProperties()
     }
   foreach(const QString& key, d->Properties.keys())
     {
-    QVariant value = d->Settings->value(key);
-    if (value.isValid())
+    if (d->Settings->contains(key))
       {
-      bool res = d->setPropertyValue(d->property(key), value);
+      QVariant value = d->Settings->value(key);
+      PropertyType& prop = d->Properties[key];
+      bool res = prop.setValue(value);
       Q_ASSERT(res);
       Q_UNUSED(res);
+      prop.PreviousValue = value;
       }
     else
       {
       this->updateSetting(key);
       }
-    }
-}
-
-// --------------------------------------------------------------------------
-void ctkSettingsPanel::registerProperty(const QString& key,
-                                        QObject* object,
-                                        const QString& property,
-                                        const char* signal)
-{
-  Q_D(ctkSettingsPanel);
-  d->Properties[key] = PropertyType(object, property);
-  d->SignalMapper->setMapping(object, key);
-  connect(object, signal, d->SignalMapper, SLOT(map()));
-  if (d->SaveToSettingsWhenRegister)
-    {
-    this->updateSetting(key);
     }
 }
 
@@ -179,9 +174,16 @@ void ctkSettingsPanel::updateSetting(const QString& key)
     {
     return;
     }
+  this->setSetting(key, d->Properties[key].value());
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsPanel::setSetting(const QString& key, const QVariant& newVal)
+{
+  Q_D(ctkSettingsPanel);
   QVariant oldVal = d->Settings->value(key);
-  QVariant newVal = d->propertyValue(d->property(key));
   d->Settings->setValue(key, newVal);
+  d->Properties[key].setValue(newVal);
   if (d->Settings->status() != QSettings::NoError)
     {
     logger.warn( QString("Error %1 while writing setting %1")
@@ -191,5 +193,65 @@ void ctkSettingsPanel::updateSetting(const QString& key)
   if (oldVal != newVal)
     {
     emit settingChanged(key, newVal);
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsPanel::registerProperty(const QString& key,
+                                        QObject* object,
+                                        const QString& property,
+                                        const char* signal)
+{
+  Q_D(ctkSettingsPanel);
+  PropertyType prop;
+  prop.Object = object;
+  prop.Property = property;
+  prop.DefaultValue = prop.PreviousValue = prop.value();
+
+  if (d->Settings && d->Settings->contains(key))
+    {
+    QVariant val = d->Settings->value(key);
+    prop.setValue(val);
+    prop.PreviousValue = val;
+    }
+  d->Properties[key] = prop;
+
+  d->SignalMapper->setMapping(object, key);
+  this->connect(object, signal, d->SignalMapper, SLOT(map()));
+  
+  if (d->SaveToSettingsWhenRegister)
+    {
+    this->updateSetting(key);
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsPanel::applySettings()
+{
+  Q_D(ctkSettingsPanel);
+  foreach(const QString& key, d->Properties.keys())
+    {
+    PropertyType& prop = d->Properties[key];
+    prop.PreviousValue = prop.value();
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsPanel::resetSettings()
+{
+  Q_D(ctkSettingsPanel);
+  foreach(const QString& key, d->Properties.keys())
+    {
+    this->setSetting(key, d->Properties[key].PreviousValue);
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsPanel::restoreDefaultSettings()
+{
+  Q_D(ctkSettingsPanel);
+  foreach(const QString& key, d->Properties.keys())
+    {
+    this->setSetting(key, d->Properties[key].DefaultValue);
     }
 }

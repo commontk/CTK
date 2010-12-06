@@ -50,6 +50,13 @@ public:
                         QObject* object,
                         const QString& property,
                         const char* signal);
+  void setSetting(const QString& key, const QVariant& newVal);
+
+public slots:
+  void applySettings();
+  void resetSettings();
+  void restoreDefaultSettings();
+
 signals:
   void settingChanged(const QString& key, const QVariant& value);
 
