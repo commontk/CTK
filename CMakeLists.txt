@@ -108,10 +108,18 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Install directories, used for install rules.
 #
-SET(CTK_INSTALL_BIN_DIR "bin")
-SET(CTK_INSTALL_LIB_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
-SET(CTK_INSTALL_INCLUDE_DIR "include/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
-SET(CTK_INSTALL_DOC_DIR "doc")
+IF(NOT CTK_INSTALL_BIN_DIR)
+  SET(CTK_INSTALL_BIN_DIR "bin")
+ENDIF()
+IF(NOT CTK_INSTALL_LIB_DIR)
+  SET(CTK_INSTALL_LIB_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
+ENDIF()
+IF(NOT CTK_INSTALL_INCLUDE_DIR)
+  SET(CTK_INSTALL_INCLUDE_DIR "include/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
+ENDIF()
+IF(NOT CTK_INSTALL_DOC_DIR)
+  SET(CTK_INSTALL_DOC_DIR "doc")
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
