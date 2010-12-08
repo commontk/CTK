@@ -10,7 +10,6 @@ for kit in __kits_to_load:
   try:
     exec "from PythonQt.CTK%s import *" % (kit)
   except ImportError as detail:
-    global CTK_VERBOSE_IMPORT
     if CTK_VERBOSE_IMPORT: 
       print detail
    
