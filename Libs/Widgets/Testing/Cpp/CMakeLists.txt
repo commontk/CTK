@@ -32,6 +32,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkMenuButtonTest1.cpp
   ctkRangeSliderTest1.cpp
   ctkRangeWidgetTest1.cpp
+  ctkRangeWidgetTest2.cpp
   ctkDateRangeWidgetTest1.cpp
   ctkSettingsPanelTest1.cpp
   ctkSettingsTest1.cpp
@@ -110,6 +111,7 @@ SIMPLE_TEST( ctkMatrixWidgetTest2 )
 SIMPLE_TEST( ctkMenuButtonTest1 )
 SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
+SIMPLE_TEST( ctkRangeWidgetTest2 )
 SIMPLE_TEST( ctkDateRangeWidgetTest1 )
 SIMPLE_TEST( ctkSettingsPanelTest1 )
 SIMPLE_TEST( ctkSettingsTest1 )
