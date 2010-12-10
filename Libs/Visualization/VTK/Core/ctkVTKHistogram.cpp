@@ -317,8 +317,14 @@ void ctkVTKHistogram::build()
   d->Bins->SetNumberOfComponents(1);
   d->Bins->SetNumberOfTuples(binCount);
 
+  if (binCount <= 0)
+    {
+    d->MinBin = 0;
+    d->MaxBin = 0;
+    return;
+    }
 
-  if (static_cast<double>(binCount) != (d->Range[1] - d->Range[2]))
+  if (static_cast<double>(binCount) != (d->Range[1] - d->Range[0]))
     {
     switch(d->DataArray->GetDataType())
       {
