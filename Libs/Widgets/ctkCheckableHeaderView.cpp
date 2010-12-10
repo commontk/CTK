@@ -90,7 +90,7 @@ ctkCheckableHeaderViewPrivate::ctkCheckableHeaderViewPrivate(ctkCheckableHeaderV
   this->ItemsAreUpdating = false;
   this->CheckBoxPixmaps = 0;
   this->Pressed = -1;
-  this->PropagateToItems = false;
+  this->PropagateToItems = true;
 }
 
 //-----------------------------------------------------------------------------

@@ -114,6 +114,7 @@ public:
   /// with the check state of the corresponding header section.
   /// When the property is set to true, the checkstate of the header is
   /// automatically updated from the checkstate of the items
+  /// True by default
   void setPropagateToItems(bool propagate);
   bool propagateToItems()const;
 
