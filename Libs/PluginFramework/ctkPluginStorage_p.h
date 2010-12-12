@@ -46,7 +46,7 @@ private:
   QMutex archivesLock;
 
   /**
-   * ctkPlugin id sorted list of all active plugin archives.
+   * Plugin id sorted list of all active plugin archives.
    */
   QList<ctkPluginArchive*> archives;
 
@@ -75,7 +75,7 @@ public:
    *
    * @param location Location of the plugin.
    * @param localPath Path to the plugin on the local file system
-   * @return ctkPlugin archive object.
+   * @return Plugin archive object.
    */
   ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath);
 
@@ -88,7 +88,7 @@ public:
    *
    * @param old ctkPluginArchive to be replaced.
    * @param localPath Path to a plugin on the local file system.
-   * @return ctkPlugin archive object.
+   * @return Plugin archive object.
    */
   ctkPluginArchive* updatePluginArchive(ctkPluginArchive* old, const QString& localPath);
 
@@ -128,7 +128,7 @@ public:
    * The plugin archive is deleted and must not be used afterwards, if
    * this method returns \a true.
    *
-   * @param pa ctkPlugin archive to remove.
+   * @param pa Plugin archive to remove.
    * @return true if element was removed.
    */
   bool removeArchive(ctkPluginArchive* pa);
