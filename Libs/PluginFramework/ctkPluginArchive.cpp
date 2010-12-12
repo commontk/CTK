@@ -35,7 +35,7 @@ const QString ctkPluginArchive::AUTOSTART_SETTING_ACTIVATION_POLICY("activation_
 ctkPluginArchive::ctkPluginArchive(ctkPluginStorage* pluginStorage,
                                    const QUrl& pluginLocation, const QString& localPluginPath,
                                    int pluginId)
-                                     : autostartSetting(-1), id(pluginId),
+                                     : autostartSetting(-1), id(pluginId), startLevel(-1),
                                      location(pluginLocation), localPluginPath(localPluginPath),
                                      storage(pluginStorage)
 {
@@ -84,19 +84,16 @@ QStringList ctkPluginArchive::findResourcesPath(const QString& path) const
 
 int ctkPluginArchive::getStartLevel() const
 {
-  //TODO
-  return 0;
+  return startLevel;
 }
 
 void ctkPluginArchive::setStartLevel(int level)
 {
-  Q_UNUSED(level)
-  //TODO
-  //    if (startLevel != level)
-  //    {
-  //      startLevel = level;
-  //      putContent(...);
-  //    }
+  if (startLevel != level)
+  {
+    startLevel = level;
+    storage->setStartLevel(this);
+  }
 }
 
 QDateTime ctkPluginArchive::getLastModified() const
@@ -107,8 +104,7 @@ QDateTime ctkPluginArchive::getLastModified() const
 void ctkPluginArchive::setLastModified(const QDateTime& dateTime)
 {
   lastModified = dateTime;
-  //TDOO
-  //putContent(...)
+  storage->setLastModified(this);
 }
 
 int ctkPluginArchive::getAutostartSetting() const
@@ -121,8 +117,7 @@ void ctkPluginArchive::setAutostartSetting(int setting)
   if (autostartSetting != setting)
   {
     autostartSetting = setting;
-    //TODO
-    //putContent(...)
+    storage->setAutostartSetting(this);
   }
 }
 

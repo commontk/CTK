@@ -66,6 +66,7 @@ private:
 
   int autostartSetting;
   int id;
+  int startLevel;
   QDateTime lastModified;
   QUrl location;
   QString localPluginPath;

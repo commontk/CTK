@@ -55,6 +55,7 @@ ctkPluginArchive* ctkPluginStorage::updatePluginArchive(ctkPluginArchive* old, c
 {
   Q_UNUSED(old)
   Q_UNUSED(localPath)
+  //TODO: updatePluginArchive
   //return new BundleArchiveImpl((BundleArchiveImpl)old, is);
   return 0;
 }
@@ -63,6 +64,7 @@ void ctkPluginStorage::replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginAr
 {
   Q_UNUSED(oldPA)
   Q_UNUSED(newPA)
+  //TODO: replacePluginArchive
   //    int pos;
   //    long id = oldBA.getBundleId();
   //    synchronized (archives) {
@@ -72,6 +74,21 @@ void ctkPluginStorage::replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginAr
   //      }
   //      archives.set(pos, newBA);
   //    }
+}
+
+void ctkPluginStorage::setStartLevel(ctkPluginArchive* pa)
+{
+  pluginDatabase.setStartLevel(pa->getPluginId(), pa->getStartLevel());
+}
+
+void ctkPluginStorage::setLastModified(ctkPluginArchive* pa)
+{
+  pluginDatabase.setLastModified(pa->getPluginId(), pa->getLastModified());
+}
+
+void ctkPluginStorage::setAutostartSetting(ctkPluginArchive* pa)
+{
+  pluginDatabase.setAutostartSetting(pa->getPluginId(), pa->getAutostartSetting());
 }
 
 QList<ctkPluginArchive*> ctkPluginStorage::getAllPluginArchives() const

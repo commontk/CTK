@@ -118,6 +118,30 @@ public:
   void removeArchive(const ctkPluginArchive* pa);
 
   /**
+   * Persist the start level
+   *
+   * @param pluginId The Plugin id
+   * @param startLevel The new start level
+   */
+  void setStartLevel(long pluginId, int startLevel);
+
+  /**
+   * Persist the last modification (state change) time
+   *
+   * @param pluginId The Plugin id
+   * @param lastModified The modification time
+   */
+  void setLastModified(long pluginId, const QDateTime& lastModified);
+
+  /**
+   * Persist the auto start setting.
+   *
+   * @param pluginId The Plugin id
+   * @param autostart The new auto start setting
+   */
+  void setAutostartSetting(long pluginId, int autostart);
+
+  /**
    * Reads the persisted plugin data and returns a ctkPluginArchive object
    * for each plugin which is not in state UNINSTALLED.
    *
@@ -137,6 +161,12 @@ private:
    */
   void createTables();
   bool dropTables();
+
+  /**
+   * Remove all plugins which have been marked as uninstalled
+   * (startLevel == -2).
+   */
+  void removeUninstalledPlugins();
 
   /**
    * Helper method that checks if all the expected tables exist in the database.
@@ -194,6 +224,16 @@ private:
    * @throws ctkPluginDatabaseException
    */
   void rollbackTransaction(QSqlQuery* query);
+
+  /**
+   * Returns a string representation of a QDateTime instance.
+   */
+  QString getStringFromQDateTime(const QDateTime& dateTime) const;
+
+  /**
+   * Returns a QDateTime from a string representation.
+   */
+  QDateTime getQDateTimeFromString(const QString& dateTimeString) const;
 
 
   QString m_databasePath;

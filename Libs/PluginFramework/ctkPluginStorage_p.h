@@ -103,6 +103,27 @@ public:
   void replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA);
 
   /**
+   * Persist the plugin start level.
+   *
+   * @param Plugin archive object
+   */
+  void setStartLevel(ctkPluginArchive* pa);
+
+  /**
+   * Persist the last modification (state change) time
+   *
+   * @param Plugin archive object
+   */
+  void setLastModified(ctkPluginArchive* pa);
+
+  /**
+   * Persist the auto start setting.
+   *
+   * @param Plugin archive object
+   */
+  void setAutostartSetting(ctkPluginArchive* pa);
+
+  /**
    * Remove plugin archive from archives list and persistent storage.
    * The plugin archive is deleted and must not be used afterwards, if
    * this method returns \a true.
