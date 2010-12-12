@@ -590,6 +590,27 @@ void vtkLightBoxRendererManager::SetRenderWindowColumnCount(int newColumnCount)
 }
 
 //----------------------------------------------------------------------------
+bool vtkLightBoxRendererManager::GetHighlightedById(int id)
+{
+  if (!this->IsInitialized())
+    {
+    vtkErrorMacro(<< "SetHighlightedById failed - vtkLightBoxRendererManager is NOT initialized");
+    return false;
+    }
+  if (id < 0 || id >= static_cast<int>(this->Internal->RenderWindowItemList.size()))
+    {
+    return false;
+    }
+  return this->Internal->RenderWindowItemList.at(id)->HighlightedBoxActor->GetVisibility();
+}
+
+//----------------------------------------------------------------------------
+bool vtkLightBoxRendererManager::GetHighlighted(int rowId, int columnId)
+{
+  return this->GetHighlightedById(this->ComputeRenderWindowItemId(rowId, columnId));
+}
+
+//----------------------------------------------------------------------------
 void vtkLightBoxRendererManager::SetHighlightedById(int id, bool highlighted)
 {
   if (!this->IsInitialized())
