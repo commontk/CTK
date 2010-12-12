@@ -76,6 +76,7 @@ void ctkPluginFrameworkContext::init()
   systemPluginPrivate->initSystemPlugin();
 
   storage = new ctkPluginStorage(this);
+  dataStorage = ctkPluginFrameworkUtil::getFileStorage(this, "data");
   services = new ctkServices(this);
   plugins = new ctkPlugins(this);
 
@@ -121,6 +122,11 @@ void ctkPluginFrameworkContext::uninit()
 int ctkPluginFrameworkContext::getId() const
 {
   return id;
+}
+
+QFileInfo ctkPluginFrameworkContext::getDataStorage(long id)
+{
+  return QFileInfo(dataStorage, QString::number(id));
 }
 
 void ctkPluginFrameworkContext::checkOurPlugin(ctkPlugin* plugin) const

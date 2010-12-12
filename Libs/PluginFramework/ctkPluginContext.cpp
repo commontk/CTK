@@ -93,6 +93,22 @@ QSharedPointer<ctkPlugin> ctkPluginContext::installPlugin(const QUrl& location, 
   return d->plugin->fwCtx->plugins->install(location, in);
 }
 
+QFileInfo ctkPluginContext::getDataFile(const QString& filename)
+{
+  Q_D(ctkPluginContext);
+  d->isPluginContextValid();
+  QDir dataRoot(d->plugin->getDataRoot().absolutePath());
+  if (!dataRoot.exists())
+  {
+    if (!dataRoot.mkpath(dataRoot.absolutePath()))
+    {
+      qWarning() << "Could not create persistent storage area:" << dataRoot.absolutePath();
+    }
+  }
+
+  return QFileInfo(dataRoot, filename);
+}
+
 ctkServiceRegistration* ctkPluginContext::registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties)
 {
   Q_D(ctkPluginContext);

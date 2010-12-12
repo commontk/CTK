@@ -21,6 +21,7 @@
 
 #include "ctkPlugin.h"
 
+#include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginFrameworkContext_p.h"
@@ -226,26 +227,29 @@ void ctkPlugin::uninstall()
     d->fwCtx->plugins->remove(d->location);
     d->pluginActivator = 0;
 
-    //TODO: delete plugin specific storage area
-//    if (d->pluginDir != null)
-//    {
-//      if (!d->pluginDir.delete())
-//      {
-//        // Plugin dir is not deleted completely, make sure we mark
-//        // it as uninstalled for next framework restart
-//        if (null!=archive) {
-//          try {
-//            archive.setStartLevel(-2); // Mark as uninstalled
-//          } catch (Exception e) {
-//            // NYI! Generate FrameworkError if dir still exists!?
-//            fwCtx.debug.println("Failed to mark bundle " + id +
-//                                " as uninstalled, " + bundleDir +
-//                                " must be deleted manually: " + e);
-//          }
-//        }
-//      }
-//      bundleDir = null;
-//    }
+    if (d->pluginDir.exists())
+    {
+      if (!ctkPluginFrameworkUtil::removeDir(d->pluginDir.absolutePath()))
+      {
+        // Plugin dir is not deleted completely, make sure we mark
+        // it as uninstalled for next framework restart
+        if (d->archive)
+        {
+          try
+          {
+            d->archive->setStartLevel(-2); // Mark as uninstalled
+          }
+          catch (const std::exception& e)
+          {
+            // NYI! Generate FrameworkError if dir still exists!?
+            qDebug() << "Failed to mark plugin" <<  d->id
+                     << "as uninstalled," << d->pluginDir.absoluteFilePath()
+                     << "must be deleted manually:" << e.what();
+          }
+        }
+      }
+      d->pluginDir.setFile("");
+    }
     if (d->archive)
     {
       d->archive->purge();

@@ -67,6 +67,11 @@ public:
   ctkPluginStorage* storage;
 
   /**
+   * Private Plugin data storage
+   */
+  QDir dataStorage;
+
+  /**
    * First framework init
    */
   bool firstInit;
@@ -116,6 +121,10 @@ public:
    */
   int getId() const;
 
+  /**
+   * Get private plugin data storage file handle
+   */
+  QFileInfo getDataStorage(long id);
 
   /**
    * Check that the plugin belongs to this framework instance.

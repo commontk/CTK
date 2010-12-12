@@ -29,6 +29,7 @@
 #include <QHash>
 #include <QPluginLoader>
 #include <QDateTime>
+#include <QFileInfo>
 
 
 class ctkPluginActivator;
@@ -81,6 +82,13 @@ public:
    * @return ctkPlugin state
    */
   ctkPlugin::State getUpdatedState();
+
+  /**
+   * Get root for persistent storage area for this plugin.
+   *
+   * @return A QDir object representing the data root.
+   */
+  QFileInfo getDataRoot();
 
   /**
    * Save the autostart setting to the persistent plugin storage.
@@ -139,6 +147,11 @@ public:
    * ctkPlugin archive
    */
   ctkPluginArchive* archive;
+
+  /**
+   * Directory for plugin data
+   */
+  QFileInfo pluginDir;
 
   /**
    * ctkPluginContext for the plugin

@@ -27,6 +27,7 @@
 #include <QVariant>
 #include <QUrl>
 #include <QSharedPointer>
+#include <QFileInfo>
 
 #include "ctkPluginFramework_global.h"
 
@@ -389,6 +390,30 @@ public:
    * @see ctkServiceFactory
    */
   bool ungetService(const ctkServiceReference& reference);
+
+  /**
+   * Creates a <code>QFileInfo</code> object for a file or directoryin the
+   * persistent storage area provided for the plugin by the Framework.
+   *
+   * <p>
+   * A <code>QFileInfo</code> object for the base directory of the persistent
+   * storage area provided for the context plugin by the Framework can be
+   * obtained by calling this method with an empty string as
+   * <code>filename</code>.
+   *
+   * <p>
+   * If the permissions are enabled, the Framework will
+   * ensure that the plugin has the <code>ctkFilePermission</code> with
+   * actions <code>read</code>,<code>write</code>,<code>delete</code>
+   * for all files (recursively) in the persistent storage area provided for
+   * the context plugin.
+   *
+   * @param filename A relative name to the file or directory to be accessed.
+   * @return A <code>QFileInfo</code> object that represents the requested file
+   *         or directory.
+   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   */
+  QFileInfo getDataFile(const QString& filename);
 
   /**
    * Installs a plugin from the specified <code>QIODevice</code> object.

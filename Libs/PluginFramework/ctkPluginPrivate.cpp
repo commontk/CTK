@@ -50,6 +50,34 @@ ctkPluginPrivate::ctkPluginPrivate(
 
   checkManifestHeaders();
 
+  pluginDir = fwCtx->getDataStorage(id);
+//  int oldStartLevel = archive->getStartLevel();
+  try
+  {
+    //TODO: StartLevel Service
+    //if (fwCtx->startLevelController == 0)
+    //{
+      archive->setStartLevel(0);
+    //}
+//    else
+//    {
+//      if (oldStartLevel == -1)
+//      {
+//        archive->setStartLevel(fwCtx->startLevelController->getInitialPluginStartLevel());
+//      }
+//    }
+  }
+  catch (const std::exception& e)
+  {
+    qDebug() << "Failed to set start level on #" << id << ":" << e.what();
+  }
+
+  lastModified = archive->getLastModified();
+  if (lastModified.isNull())
+  {
+    modified();
+  }
+
   // fill require list
   QString requireString = archive->getAttribute(ctkPluginConstants::REQUIRE_PLUGIN);
   QList<QMap<QString, QStringList> > requireList = ctkPluginFrameworkUtil::parseEntries(ctkPluginConstants::REQUIRE_PLUGIN,
@@ -75,7 +103,7 @@ ctkPluginPrivate::ctkPluginPrivate(QWeakPointer<ctkPlugin> qq,
                                      pluginActivator(0), eagerActivation(false), activating(false),
                                      deactivating(false)
 {
-
+  modified();
 }
 
 ctkPluginPrivate::~ctkPluginPrivate()
@@ -106,6 +134,11 @@ ctkPlugin::State ctkPluginPrivate::getUpdatedState()
   }
 
   return state;
+}
+
+QFileInfo ctkPluginPrivate::getDataRoot()
+{
+  return pluginDir;
 }
 
 void ctkPluginPrivate::setAutostartSetting(const ctkPlugin::StartOptions& setting) {
