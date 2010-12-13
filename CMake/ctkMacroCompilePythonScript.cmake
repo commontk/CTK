@@ -49,7 +49,7 @@ MACRO(ctkMacroCompilePythonScript)
     ADD_CUSTOM_COMMAND(DEPENDS ${src}
                         COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
                         OUTPUT ${tgt}
-                        COMMENT "Copying python script: ${file}.py")
+                        COMMENT "Copying python script: ${file}")
   ENDFOREACH()
 
   IF(DEFINED MY_RESOURCES)
