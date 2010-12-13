@@ -19,6 +19,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkCoordinatesWidgetTest1.cpp
   ctkDirectoryButtonTest1.cpp
   ctkDoubleRangeSliderTest1.cpp
+  ctkDoubleRangeSliderTest2.cpp
   ctkDoubleSliderTest1.cpp
   ctkDynamicSpacerTest1.cpp
   ctkDynamicSpacerTest2.cpp
@@ -98,6 +99,7 @@ SIMPLE_TEST( ctkConsoleWidgetTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
 SIMPLE_TEST( ctkDirectoryButtonTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest1 )
+SIMPLE_TEST( ctkDoubleRangeSliderTest2 )
 SIMPLE_TEST( ctkDoubleSliderTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest2 )
