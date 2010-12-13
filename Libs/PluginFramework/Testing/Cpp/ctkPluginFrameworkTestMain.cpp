@@ -54,7 +54,8 @@ public:
     int result = 0;
     foreach(ctkServiceReference ref, refs)
     {
-      result = QTest::qExec(context->getService(ref), argc, argv);
+      result += QTest::qExec(context->getService(ref), argc, argv);
+      if (result > 0) break;
     }
 
     QCoreApplication::exit(result);
