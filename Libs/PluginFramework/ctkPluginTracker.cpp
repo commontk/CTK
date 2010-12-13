@@ -22,6 +22,7 @@
 
 #include "ctkPluginTracker.h"
 
+#include "ctkPluginContext.h"
 #include "ctkPluginTrackerPrivate.h"
 #include "ctkTrackedPlugin_p.h"
 

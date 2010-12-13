@@ -22,6 +22,7 @@
 #include <ctkPluginFrameworkFactory.h>
 #include <ctkPluginFramework.h>
 #include <ctkPluginException.h>
+#include <ctkPluginContext.h>
 
 // for testing purposes use:
 // --hostURL http://localhost:8081/host --applicationURL http://localhost:8082/app dicomapp
@@ -33,6 +34,7 @@
 #include <QDirIterator>
 #include <QWidget>
 #include <QFileInfo>
+#include <QUrl>
 
 void print_usage()
 {

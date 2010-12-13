@@ -37,11 +37,11 @@ void ctkPluginFrameworkTestActivator::start(ctkPluginContext* context)
   frameworkTestSuite = new ctkPluginFrameworkTestSuite(context);
   props.clear();
   props.insert(ctkPluginConstants::SERVICE_PID, frameworkTestSuite->metaObject()->className());
-  context->registerService(QStringList("ctkTestSuiteInterface"), frameworkTestSuite, props);
+  context->registerService<ctkTestSuiteInterface>(frameworkTestSuite, props);
 
   serviceListenerTestSuite = new ctkServiceListenerTestSuite(context);
   props.insert(ctkPluginConstants::SERVICE_PID, frameworkTestSuite->metaObject()->className());
-  context->registerService(QStringList("ctkTestSuiteInterface"), serviceListenerTestSuite, props);
+  context->registerService<ctkTestSuiteInterface>(serviceListenerTestSuite, props);
 }
 
 void ctkPluginFrameworkTestActivator::stop(ctkPluginContext* context)

@@ -28,5 +28,5 @@
 
 ctkTestPluginA::ctkTestPluginA(ctkPluginContext* pc)
 {
-  pc->registerService(QStringList("ctkTestPluginAService"), this);
+  pc->registerService<ctkTestPluginAService>(this);
 }

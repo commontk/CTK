@@ -22,6 +22,7 @@
 #include <ctkPluginFrameworkFactory.h>
 #include <ctkPluginFramework.h>
 #include <ctkPluginException.h>
+#include <ctkPluginContext.h>
 
 #include <ctkExampleDicomHost.h>
 #include <ctkHostAppExampleWidget.h>

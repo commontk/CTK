@@ -23,6 +23,7 @@
 #include <ctkPluginFramework.h>
 #include <ctkPluginException.h>
 #include <ctkPluginGeneratorConstants.h>
+#include <ctkPluginContext.h>
 
 #include "ctkPluginGenerator_p.h"
 

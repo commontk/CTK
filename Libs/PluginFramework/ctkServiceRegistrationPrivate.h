@@ -26,6 +26,7 @@
 #include <QHash>
 #include <QMutex>
 
+#include "ctkPluginFramework_global.h"
 #include "ctkServiceReference.h"
 
 

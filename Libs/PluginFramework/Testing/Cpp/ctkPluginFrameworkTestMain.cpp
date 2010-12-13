@@ -24,11 +24,14 @@
 #include <QTest>
 #include <QThread>
 
+#include <ctkPluginContext.h>
 #include <ctkPluginConstants.h>
 #include <ctkPluginFrameworkFactory.h>
 #include <ctkPluginFramework.h>
 #include <ctkPluginException.h>
 #include <ctkServiceReference.h>
+
+#include "ctkTestSuiteInterface.h"
 
 class TestRunner : public QThread
 {
@@ -46,7 +49,7 @@ public:
     QSharedPointer<ctkPlugin> fwTest = context->getPlugin(testPluginId);
     fwTest->start();
 
-    QList<ctkServiceReference> refs = context->getServiceReferences("ctkTestSuiteInterface");
+    QList<ctkServiceReference> refs = context->getServiceReferences<ctkTestSuiteInterface>();
 
     int result = 0;
     foreach(ctkServiceReference ref, refs)

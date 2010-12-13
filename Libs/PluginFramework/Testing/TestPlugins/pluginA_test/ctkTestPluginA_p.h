@@ -33,6 +33,7 @@ class ctkTestPluginA : public QObject,
                        public ctkTestPluginAService
 {
   Q_OBJECT
+  Q_INTERFACES(ctkTestPluginAService)
 
 public:
     ctkTestPluginA(ctkPluginContext* pc);

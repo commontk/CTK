@@ -32,6 +32,8 @@
 #include "ctkPluginFramework_global.h"
 
 #include "ctkPluginEvent.h"
+#include "ctkServiceException.h"
+#include "ctkServiceReference.h"
 
 #include "ctkPluginFrameworkExport.h"
 
@@ -40,7 +42,6 @@
 class ctkPlugin;
 class ctkPluginPrivate;
 class ctkServiceRegistration;
-class ctkServiceReference;
 class ctkPluginContextPrivate;
 
 /**
@@ -213,6 +214,41 @@ public:
   ctkServiceRegistration* registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties = ServiceProperties());
 
   /**
+   * Registers the specified service object with the specified properties
+   * under the specified class name with the Framework.
+   *
+   * <p>
+   * This method is otherwise identical to
+   * registerService(const QStringList&, QObject*, const ServiceProperties&) and is provided as
+   * a convenience when <code>service</code> will only be registered under a single
+   * class name. Note that even in this case the value of the service's
+   * ctkPluginConstants::OBJECTCLASS property will be a QStringList, rather
+   * than just a single string.
+   *
+   * @param clazz The class name under which the service can be located.
+   * @param service The service object or a ctkServiceFactory object.
+   * @param properties The properties for this service.
+   * @return A ctkServiceRegistration object for use by the plugin
+   *         registering the service to update the service's properties or to
+   *         unregister the service.
+   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @see registerService(const QStringList&, QObject*, const ServiceProperties&)
+   */
+  ctkServiceRegistration* registerService(const char* clazz, QObject* service, const ServiceProperties& properties = ServiceProperties());
+
+  template<class S>
+  ctkServiceRegistration* registerService(QObject* service, const ServiceProperties& properties = ServiceProperties())
+  {
+    const char* clazz = qobject_interface_iid<S*>();
+    if (clazz == 0)
+    {
+      throw ctkServiceException(QString("The interface class you are registering your service %1 against has no Q_DECLARE_INTERFACE macro")
+                                .arg(service->metaObject()->className()));
+    }
+    return registerService(clazz, service, properties);
+  }
+
+  /**
    * Returns a list of <code>ctkServiceReference</code> objects. The returned
    * list contains services that
    * were registered under the specified class and match the specified filter
@@ -260,6 +296,34 @@ public:
   QList<ctkServiceReference> getServiceReferences(const QString& clazz, const QString& filter = QString());
 
   /**
+   * Returns a list of <code>ctkServiceReference</code> objects. The returned
+   * list contains services that
+   * were registered under the Qt interface id of the template argument <code>S</code>
+   * and match the specified filter expression.
+   *
+   * <p>
+   * This method is identical to getServiceReferences(const QString&, const QString&) except that
+   * the class name for the service object is automatically deduced from the template argument.
+   *
+   * @param filter The filter expression or empty for all
+   *        services.
+   * @return A list of <code>ctkServiceReference</code> objects or
+   *         an empty list if no services are registered which satisfy the
+   *         search.
+   * @throws std::invalid_argument If the specified <code>filter</code>
+   *         contains an invalid filter expression that cannot be parsed.
+   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @see getServiceReferences(const QString&, const QString&)
+   */
+  template<class S>
+  QList<ctkServiceReference> getServiceReferences(const QString& filter = QString())
+  {
+    const char* clazz = qobject_interface_iid<S*>();
+    if (clazz == 0) throw ctkServiceException("The service interface class has no Q_DECLARE_INTERFACE macro");
+    return getServiceReferences(QString(clazz), filter);
+  }
+
+  /**
    * Returns a <code>ctkServiceReference</code> object for a service that
    * implements and was registered under the specified class.
    *
@@ -290,6 +354,29 @@ public:
    * @see #getServiceReferences(const QString&, const QString&)
    */
   ctkServiceReference getServiceReference(const QString& clazz);
+
+  /**
+   * Returns a <code>ctkServiceReference</code> object for a service that
+   * implements and was registered under the specified template class argument.
+   *
+   * <p>
+   * This method is identical to getServiceReference(const QString&) except that
+   * the class name for the service object is automatically deduced from the template argument.
+   *
+   * @return A <code>ctkServiceReference</code> object, or <code>0</code> if
+   *         no services are registered which implement the named class.
+   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @throws ctkServiceException It no service was registered under the given class name.
+   * @see #getServiceReference(const QString&)
+   * @see #getServiceReferences(const QString&)
+   */
+  template<class S>
+  ctkServiceReference getServiceReference()
+  {
+    const char* clazz = qobject_interface_iid<S*>();
+    if (clazz == 0) throw ctkServiceException("The service interface class has no Q_DECLARE_INTERFACE macro");
+    return getServiceReference(QString(clazz));
+  }
 
   /**
    * Returns the service object referenced by the specified
@@ -345,10 +432,38 @@ public:
    * @throws std::invalid_argument If the specified
    *         <code>ctkServiceReference</code> was not created by the same
    *         framework instance as this <code>ctkPluginContext</code>.
-   * @see #ungetService(ctkServiceReference*)
+   * @see #ungetService(const ctkServiceReference&)
    * @see ctkServiceFactory
    */
   QObject* getService(ctkServiceReference reference);
+
+  /**
+   * Returns the service object referenced by the specified
+   * <code>ctkServiceReference</code> object.
+   * <p>
+   * This is a convenience method which is identical to QObject* getService(ctkServiceReference)
+   * except that it casts the service object to the supplied template argument type
+   *
+   * @return A service object for the service associated with
+   *         <code>reference</code> or <code>0</code> if the service is not
+   *         registered, the service object returned by a
+   *         <code>ctkServiceFactory</code> does not implement the classes under
+   *         which it was registered, the <code>ctkServiceFactory</code> threw
+   *         an exception or the service could not be casted to the desired type.
+   * @throws std::logic_error If this ctkPluginContext is no
+   *         longer valid.
+   * @throws std::invalid_argument If the specified
+   *         <code>ctkServiceReference</code> was not created by the same
+   *         framework instance as this <code>ctkPluginContext</code>.
+   * @see #getService(ctkServiceReference)
+   * @see #ungetService(const ctkServiceReference&)
+   * @see ctkServiceFactory
+   */
+  template<class S>
+  S* getService(ctkServiceReference reference)
+  {
+    return qobject_cast<S*>(getService(reference));
+  }
 
   /**
    * Releases the service object referenced by the specified

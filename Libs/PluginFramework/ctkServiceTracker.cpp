@@ -25,6 +25,7 @@
 #include "ctkTrackedService_p.h"
 #include "ctkServiceException.h"
 #include "ctkPluginConstants.h"
+#include "ctkPluginContext.h"
 
 #include <QVarLengthArray>
 #include <QDebug>

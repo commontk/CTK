@@ -23,9 +23,13 @@
 #ifndef CTKTESTPLUGINASERVICE_H
 #define CTKTESTPLUGINASERVICE_H
 
+#include <qglobal.h>
+
 struct ctkTestPluginAService
 {
   virtual ~ctkTestPluginAService() {}
 };
+
+Q_DECLARE_INTERFACE(ctkTestPluginAService, "org.commontk.TestPluginAService")
 
 #endif // CTKTESTPLUGINASERVICE_H

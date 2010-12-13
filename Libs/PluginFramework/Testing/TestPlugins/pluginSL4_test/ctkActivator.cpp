@@ -34,7 +34,7 @@ void ctkActivator::foo()
 void ctkActivator::start(ctkPluginContext* context)
 {
   ctkServiceRegistration* registration =
-      context->registerService(QStringList("ctkFooService"), this);
+      context->registerService<ctkFooService>(this);
   qDebug() << "pluginSL4: Registered" << registration;
 }
 

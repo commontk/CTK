@@ -41,7 +41,7 @@ void ctkActivatorSL3::start(ctkPluginContext* context)
 {
   this->context = context;
 
-  context->registerService(QStringList(this->metaObject()->className()), this);
+  context->registerService(this->metaObject()->className(), this);
   tracker.reset(new ctkServiceTracker(context, "ctkFooService", this));
   tracker->open();
 }

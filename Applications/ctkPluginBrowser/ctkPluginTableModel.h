@@ -27,6 +27,7 @@
 #include <QList>
 
 #include <ctkPlugin.h>
+#include <ctkPluginEvent.h>
 
 class ctkPluginContext;
 

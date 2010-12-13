@@ -36,6 +36,7 @@ class ctkPluginFrameworkTestSuite : public QObject,
                                     public ctkTestSuiteInterface
 {
   Q_OBJECT
+  Q_INTERFACES(ctkTestSuiteInterface)
 
 public:
 

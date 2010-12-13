@@ -116,6 +116,15 @@ ctkServiceRegistration* ctkPluginContext::registerService(const QStringList& cla
   return d->plugin->fwCtx->services->registerService(d->plugin, clazzes, service, properties);
 }
 
+ctkServiceRegistration* ctkPluginContext::registerService(const char* clazz, QObject* service, const ServiceProperties& properties)
+{
+  Q_D(ctkPluginContext);
+  d->isPluginContextValid();
+  QStringList clazzes;
+  clazzes.append(clazz);
+  return d->plugin->fwCtx->services->registerService(d->plugin, clazzes, service, properties);
+}
+
 QList<ctkServiceReference> ctkPluginContext::getServiceReferences(const QString& clazz, const QString& filter)
 {
   Q_D(ctkPluginContext);

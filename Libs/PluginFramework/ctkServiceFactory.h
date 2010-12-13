@@ -26,6 +26,7 @@
 
 #include "ctkPluginFrameworkExport.h"
 
+class ctkServiceRegistration;
 
   /**
    * Allows services to provide customized service objects in the plugin

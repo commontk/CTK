@@ -23,6 +23,7 @@
 
 #include "ctkPluginFramework.h"
 #include "ctkPluginConstants.h"
+#include "ctkPluginContext.h"
 #include "ctkPluginContext_p.h"
 #include "ctkPluginFrameworkContext_p.h"
 

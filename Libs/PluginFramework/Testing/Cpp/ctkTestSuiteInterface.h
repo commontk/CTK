@@ -23,11 +23,13 @@
 #ifndef CTKTESTSUITEINTERFACE_H
 #define CTKTESTSUITEINTERFACE_H
 
-#include <qglobal.h>
+#include <ctkPluginFramework_global.h>
 
 struct ctkTestSuiteInterface
 {
   virtual ~ctkTestSuiteInterface() {}
 };
+
+Q_DECLARE_INTERFACE(ctkTestSuiteInterface, "org.commontk.TestSuiteInterface/1.0")
 
 #endif // CTKTESTSUITEINTERFACE_H

@@ -215,7 +215,7 @@ void ctkPluginFrameworkTestSuite::frame020a()
   // Check that no service reference exist yet.
   try
   {
-    pc->getServiceReference("ctkTestPluginAService");
+    pc->getServiceReference("org.commontk.TestPluginAService");
     QFAIL("framework test plugin, service from test plugin A unexpectedly found");
   }
   catch (ctkServiceException& /*e*/)
@@ -254,7 +254,7 @@ void ctkPluginFrameworkTestSuite::frame025b()
   // Check if pluginA_test registered the expected service
   try
   {
-    ctkServiceReference sr1 = pc->getServiceReference("ctkTestPluginAService");
+    ctkServiceReference sr1 = pc->getServiceReference("org.commontk.TestPluginAService");
     QObject* o1 = pc->getService(sr1);
     QVERIFY2(o1 != 0, "no service object found");
 
@@ -294,7 +294,7 @@ void ctkPluginFrameworkTestSuite::frame025b()
 void ctkPluginFrameworkTestSuite::frame030b()
 {
   ctkServiceReference sr1
-      = pc->getServiceReference("ctkTestPluginAService");
+      = pc->getServiceReference("org.commontk.TestPluginAService");
 
   try
   {

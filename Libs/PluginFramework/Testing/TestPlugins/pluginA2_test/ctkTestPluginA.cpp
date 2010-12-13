@@ -29,7 +29,7 @@
 
 ctkTestPluginA::ctkTestPluginA(ctkPluginContext* pc)
 {
-  sr = pc->registerService(QStringList("ctkTestPluginAService"), this);
+  sr = pc->registerService<ctkTestPluginAService>(this);
 }
 
 void ctkTestPluginA::unregister()

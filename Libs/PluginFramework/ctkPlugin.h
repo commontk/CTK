@@ -22,10 +22,13 @@
 #ifndef CTKPLUGIN_H
 #define CTKPLUGIN_H
 
-#include "ctkPluginContext.h"
+#include <QHash>
+#include <QWeakPointer>
+#include <QMetaType>
 
 #include "ctkVersion.h"
 
+class ctkPluginContext;
 class ctkPluginArchive;
 class ctkPluginFrameworkContext;
 class ctkPluginPrivate;

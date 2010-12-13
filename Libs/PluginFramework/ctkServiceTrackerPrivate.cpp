@@ -23,6 +23,7 @@
 #include "ctkServiceTrackerPrivate.h"
 #include "ctkTrackedService_p.h"
 
+#include "ctkPluginContext.h"
 #include "ctkPluginConstants.h"
 #include "ctkLDAPSearchFilter.h"
 #include "ctkServiceTracker.h"
