@@ -183,6 +183,7 @@ ctkDoubleRangeSlider::~ctkDoubleRangeSlider()
 void ctkDoubleRangeSlider::setMinimum(double min)
 {
   Q_D(ctkDoubleRangeSlider);
+  double oldMin = d->Minimum;
   d->Minimum = min;
   if (d->Minimum >= d->MinValue)
     {// TBD: use same offset
@@ -195,7 +196,10 @@ void ctkDoubleRangeSlider::setMinimum(double min)
   d->SettingRange = true;
   d->Slider->setMinimum(d->toInt(min));
   d->SettingRange = false;
-  emit this->rangeChanged(d->Minimum, d->Maximum);
+  if (d->Minimum != oldMin)
+    {
+    emit this->rangeChanged(d->Minimum, d->Maximum);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -209,6 +213,7 @@ double ctkDoubleRangeSlider::minimum()const
 void ctkDoubleRangeSlider::setMaximum(double max)
 {
   Q_D(ctkDoubleRangeSlider);
+  double oldMax = d->Maximum;
   d->Maximum = max;
   if (d->Maximum <= d->MinValue)
     {// TBD: use same offset
@@ -221,7 +226,10 @@ void ctkDoubleRangeSlider::setMaximum(double max)
   d->SettingRange = true;
   d->Slider->setMaximum(d->toInt(max));
   d->SettingRange = false;
-  emit this->rangeChanged(d->Minimum, d->Maximum);
+  if (d->Maximum != oldMax)
+    {
+    emit this->rangeChanged(d->Minimum, d->Maximum);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -235,6 +243,8 @@ double ctkDoubleRangeSlider::maximum()const
 void ctkDoubleRangeSlider::setRange(double min, double max)
 {
   Q_D(ctkDoubleRangeSlider);
+  double oldMin = d->Minimum;
+  double oldMax = d->Maximum;
   d->Minimum = min;
   d->Maximum = max;
   if (d->Minimum >= d->MinValue)
@@ -256,7 +266,10 @@ void ctkDoubleRangeSlider::setRange(double min, double max)
   d->SettingRange = true;
   d->Slider->setRange(d->toInt(min), d->toInt(max));
   d->SettingRange = false;
-  emit this->rangeChanged(d->Minimum, d->Maximum);
+  if (d->Minimum != oldMin || d->Maximum != oldMax)
+    {
+    emit this->rangeChanged(d->Minimum, d->Maximum);
+    }
 }
 
 // --------------------------------------------------------------------------
