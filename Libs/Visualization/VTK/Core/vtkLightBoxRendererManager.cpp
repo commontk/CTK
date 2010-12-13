@@ -459,7 +459,7 @@ void vtkLightBoxRendererManager::ResetCamera()
 //----------------------------------------------------------------------------
 int vtkLightBoxRendererManager::GetRenderWindowItemCount()
 {
-  return this->Internal->RenderWindowItemList.size();
+  return static_cast<int>(this->Internal->RenderWindowItemList.size());
 }
 
 //----------------------------------------------------------------------------
@@ -525,7 +525,8 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
     return;
     }
 
-  int extraItem = (rowCount * columnCount) - this->Internal->RenderWindowItemList.size();
+  int extraItem = (rowCount * columnCount)
+    - static_cast<int>(this->Internal->RenderWindowItemList.size());
   if (extraItem > 0)
     {
     //std::cout << "Creating " << extraItem << " RenderWindowItem";
