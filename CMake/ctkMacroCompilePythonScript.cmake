@@ -21,7 +21,7 @@ MACRO(ctkMacroCompilePythonScript)
   get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARY} PATH)
   
   # Sanity checks
-  FOREACH(varname TARGET_NAME SCRIPTS DESTINATION_DIR;INSTALL_DIR)
+  FOREACH(varname TARGET_NAME SCRIPTS DESTINATION_DIR INSTALL_DIR)
     IF(NOT DEFINED MY_${varname})
       MESSAGE(SEND_ERROR "${varname} is mandatory")
     ENDIF()
