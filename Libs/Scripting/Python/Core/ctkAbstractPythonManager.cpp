@@ -28,6 +28,7 @@
 
 // PythonQT includes
 #include <PythonQt.h>
+#include <PythonQt_QtBindings.h>
 
 // STD includes
 #include <csignal>
@@ -37,46 +38,6 @@
 // See http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html
 // Note: Ideally the incriminated functions and macros should be fixed upstream ...
 #pragma GCC diagnostic ignored "-Wold-style-cast"
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTCORE
-void PythonQt_init_QtCore(PyObject*);
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTGUI
-void PythonQt_init_QtGui(PyObject*);
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTNETWORK
-void PythonQt_init_QtNetwork(PyObject*);
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTOPENGL
-void PythonQt_init_QtOpenGL(PyObject*);
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTSQL
-void PythonQt_init_QtSql(PyObject*);
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTSVG
-void PythonQt_init_QtSvg(PyObject*); 
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTUITOOLS
-void PythonQt_init_QtUiTools(PyObject*);
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTWEBKIT
-void PythonQt_init_QtWebKit(PyObject*);
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTXML
-void PythonQt_init_QtXml(PyObject*);
-#endif
-
-#ifdef CTK_PYTHONQT_WRAP_QTXMLPATTERNS
-void PythonQt_init_QtXmlPatterns(PyObject*);
 #endif
 
 //-----------------------------------------------------------------------------
@@ -125,45 +86,7 @@ void ctkAbstractPythonManager::initPythonQt()
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString&)),
                 SLOT(printStderr(const QString&)));
   
-  #ifdef CTK_PYTHONQT_WRAP_QTCORE
-  PythonQt_init_QtCore(0);
-  #endif
-  
-  #ifdef CTK_PYTHONQT_WRAP_QTGUI
-  PythonQt_init_QtGui(0);
-  #endif
-
-  #ifdef CTK_PYTHONQT_WRAP_QTNETWORK
-  PythonQt_init_QtNetwork(0);
-  #endif
-
-  #ifdef CTK_PYTHONQT_WRAP_QTOPENGL
-  PythonQt_init_QtOpenGL(0);
-  #endif
-
-  #ifdef CTK_PYTHONQT_WRAP_QTSQL
-  PythonQt_init_QtSql(0);
-  #endif
-
-  #ifdef CTK_PYTHONQT_WRAP_QTSVG
-  PythonQt_init_QtSvg(0); 
-  #endif
-
-  #ifdef CTK_PYTHONQT_WRAP_QTUITOOLS
-  PythonQt_init_QtUiTools(0);
-  #endif
-
-  #ifdef CTK_PYTHONQT_WRAP_QTWEBKIT
-  PythonQt_init_QtWebKit(0);
-  #endif
-
-  #ifdef CTK_PYTHONQT_WRAP_QTXML
-  PythonQt_init_QtXml(0);
-  #endif
-
-  #ifdef CTK_PYTHONQT_WRAP_QTXMLPATTERNS
-  PythonQt_init_QtXmlPatterns(0);
-  #endif
+  PythonQt_init_QtBindings();
   
   QStringList initCode;
   initCode << "import sys";
