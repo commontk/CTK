@@ -62,12 +62,13 @@ MACRO(ctkMacroCompilePythonScript)
                           OUTPUT ${tgt}
                           COMMENT "Copying python resource: ${file}")
     ENDFOREACH()
-
+  ENDIF()
+           
+  IF(copied_files)
     ADD_CUSTOM_TARGET(Copy${MY_TARGET_NAME}PythonFiles
                       ALL
                       DEPENDS ${copied_files})
-  ENDIF()
-                    
+  ENDIF()  
   
   # Byte compile the Python files.
   SET(compile_all_script "${CMAKE_CURRENT_BINARY_DIR}/compile_${MY_TARGET_NAME}_python_scripts.py")
