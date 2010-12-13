@@ -121,8 +121,9 @@ ctkServiceRegistration* ctkServices::registerService(ctkPluginPrivate* plugin,
     {
       if (!checkServiceClass(service, cls))
       {
-        throw std::invalid_argument
-            (std::string("Service object is not an instance of ") + cls.toStdString());
+        QString msg = QString("Service class %1 is not an instance of %2. Maybe you forgot the Q_INTERFACES macro in the service class.")
+            .arg(service->metaObject()->className()).arg(cls);
+        throw std::invalid_argument(msg.toStdString());
       }
     }
   }
