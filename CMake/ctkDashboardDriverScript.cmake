@@ -181,21 +181,23 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
      # Build target
      set(CTEST_BUILD_TARGET "${subproject}")
      ctest_build(BUILD "${ctk_build_dir}" APPEND)
+     ctest_submit(PARTS Build)
      
      # Loop over kit suffixes and try to build the corresponding target
      foreach(kit_suffixe ${kit_suffixes})
        message("----------- [ Build ${subproject}${kit_suffixe} ] -----------")
        set(CTEST_BUILD_TARGET "${subproject}${kit_suffixe}")
        ctest_build(BUILD "${ctk_build_dir}" APPEND)
+       ctest_submit(PARTS Build)
      endforeach()
      
-     ctest_submit(PARTS Build)
     endforeach()
     
     if (WITH_DOCUMENTATION)
       # Build Documentation target
       set(CTEST_BUILD_TARGET "doc")
       ctest_build(BUILD "${ctk_build_dir}" APPEND)
+      ctest_submit(PARTS Build)
     endif()
     
     # HACK Unfortunately ctest_coverage ignores the build argument, try to force it...
