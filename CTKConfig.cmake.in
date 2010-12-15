@@ -41,26 +41,26 @@
 
 
 # Import CTK targets
-INCLUDE(@CTK_SUPERBUILD_BINARY_DIR@/CTKExports.cmake)
+INCLUDE("@CTK_SUPERBUILD_BINARY_DIR@/CTKExports.cmake")
 
 # Include CTK macros
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroParseArguments.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroSetPaths.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroListFilter.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroBuildPlugin.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroTargetLibraries.cmake) # Import multiple macros
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionExtractOptionNameAndValue.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroValidateBuildOptions.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGenerateDGraphInput.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGeneratePluginManifest.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkMacroGeneratePluginResourceFile.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetIncludeDirs.cmake)
-INCLUDE(@CTK_CMAKE_DIR_CONFIG@/ctkFunctionSetupExternalPlugins.cmake)
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroParseArguments.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroSetPaths.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroListFilter.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroBuildPlugin.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroTargetLibraries.cmake") # Import multiple macros
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionExtractOptionNameAndValue.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroValidateBuildOptions.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGenerateDGraphInput.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGeneratePluginManifest.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroGeneratePluginResourceFile.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetIncludeDirs.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionSetupExternalPlugins.cmake")
 
-SET(CTK_EXPORT_HEADER_TEMPLATE @CTK_EXPORT_HEADER_TEMPLATE@)
+SET(CTK_EXPORT_HEADER_TEMPLATE "@CTK_EXPORT_HEADER_TEMPLATE@")
 
 # The CTK DGraph executable used to compute target dependency graphs
-SET(CTK_DGRAPH_EXECUTABLE @DGraph_EXECUTABLE@)
+SET(CTK_DGRAPH_EXECUTABLE "@DGraph_EXECUTABLE@")
 
 # List all libraries
 SET(CTK_LIBRARIES @CTK_LIBRARIES@)
