@@ -255,8 +255,16 @@ SET(CTK_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${VISIBILITY_CXX_FLAGS} ${COVERAGE_CX
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
+  
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
-  ctkFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
+  
+  ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
+  # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
+  # is introduced. If gcc is smaller than 4.4.0 and the build type is Release let's not include the flag.
+  # Doing so should allow to build package made for distribution using older linux distro.
+  IF(${GCC_VERSION} VERSION_GREATER "4.4.0" OR (${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND ${GCC_VERSION} VERSION_LESS "4.4.0"))
+    ctkFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
+  ENDIF()
   IF(MINGW)
     # suppress warnings about auto imported symbols
     SET(CTK_CXX_FLAGS "-Wl,--enable-auto-import ${CTK_CXX_FLAGS}")
