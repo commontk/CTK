@@ -168,6 +168,7 @@ INCLUDE(CMake/ctkFunctionGeneratePluginManifest.cmake)
 INCLUDE(CMake/ctkMacroGeneratePluginResourceFile.cmake)
 INCLUDE(CMake/ctkFunctionCheckCompilerFlags.cmake)
 INCLUDE(CMake/ctkFunctionGetIncludeDirs.cmake)
+INCLUDE(CMake/ctkFunctionGetGccVersion.cmake)
 
 #-----------------------------------------------------------------------------
 # Testing
