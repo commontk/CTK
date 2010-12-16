@@ -20,22 +20,22 @@
 =============================================================================*/
 
 
-#include "ctkServiceTrackerPrivate.h"
 #include "ctkTrackedService_p.h"
 
 #include "ctkPluginContext.h"
 #include "ctkPluginConstants.h"
 #include "ctkLDAPSearchFilter.h"
-#include "ctkServiceTracker.h"
 
 #include <stdexcept>
 
-const bool ctkServiceTrackerPrivate::DEBUG	= true;
+template<class S, class T>
+const bool ctkServiceTrackerPrivate<S,T>::DEBUG	= true;
 
-ctkServiceTrackerPrivate::ctkServiceTrackerPrivate(
-    ctkServiceTracker* st, ctkPluginContext* context,
+template<class S, class T>
+ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
+    ctkServiceTracker<S,T>* st, ctkPluginContext* context,
     const ctkServiceReference& reference,
-    ctkServiceTrackerCustomizer* customizer)
+    ctkServiceTrackerCustomizer<T>* customizer)
   : context(context), customizer(customizer), trackReference(reference),
     trackedService(0), cachedReference(0), cachedService(0), q_ptr(st)
 {
@@ -57,10 +57,11 @@ ctkServiceTrackerPrivate::ctkServiceTrackerPrivate(
   }
 }
 
-ctkServiceTrackerPrivate::ctkServiceTrackerPrivate(
-    ctkServiceTracker* st,
+template<class S, class T>
+ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
+    ctkServiceTracker<S,T>* st,
     ctkPluginContext* context, const QString& clazz,
-    ctkServiceTrackerCustomizer* customizer)
+    ctkServiceTrackerCustomizer<T>* customizer)
       : context(context), customizer(customizer), trackClass(clazz),
         trackReference(0), trackedService(0), cachedReference(0),
         cachedService(0), q_ptr(st)
@@ -84,10 +85,11 @@ ctkServiceTrackerPrivate::ctkServiceTrackerPrivate(
   }
 }
 
-ctkServiceTrackerPrivate::ctkServiceTrackerPrivate(
-    ctkServiceTracker* st,
+template<class S, class T>
+ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
+    ctkServiceTracker<S,T>* st,
     ctkPluginContext* context, const ctkLDAPSearchFilter& filter,
-    ctkServiceTrackerCustomizer* customizer)
+    ctkServiceTrackerCustomizer<T>* customizer)
       : context(context), filter(filter), customizer(customizer),
         listenerFilter(filter.toString()), trackReference(0),
         trackedService(0), cachedReference(0), cachedService(0), q_ptr(st)
@@ -99,7 +101,8 @@ ctkServiceTrackerPrivate::ctkServiceTrackerPrivate(
   }
 }
 
-ctkServiceTrackerPrivate::~ctkServiceTrackerPrivate()
+template<class S, class T>
+ctkServiceTrackerPrivate<S,T>::~ctkServiceTrackerPrivate()
 {
   if (customizer != q_func())
   {
@@ -107,18 +110,21 @@ ctkServiceTrackerPrivate::~ctkServiceTrackerPrivate()
   }
 }
 
-QList<ctkServiceReference> ctkServiceTrackerPrivate::getInitialReferences(const QString& className,
+template<class S, class T>
+QList<ctkServiceReference> ctkServiceTrackerPrivate<S,T>::getInitialReferences(const QString& className,
                                                 const QString& filterString)
 {
   return context->getServiceReferences(className, filterString);
 }
 
-QSharedPointer<ctkTrackedService> ctkServiceTrackerPrivate::tracked() const
+template<class S, class T>
+QSharedPointer<ctkTrackedService<S,T> > ctkServiceTrackerPrivate<S,T>::tracked() const
 {
   return trackedService;
 }
 
-void ctkServiceTrackerPrivate::modified()
+template<class S, class T>
+void ctkServiceTrackerPrivate<S,T>::modified()
 {
   cachedReference = 0; /* clear cached value */
   cachedService = 0; /* clear cached value */

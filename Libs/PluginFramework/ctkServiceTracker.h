@@ -31,8 +31,9 @@
 #include "ctkServiceTrackerCustomizer.h"
 #include "ctkLDAPSearchFilter.h"
 
+template<class S, class T> class ctkTrackedService;
+template<class S, class T> class ctkServiceTrackerPrivate;
 class ctkPluginContext;
-class ctkServiceTrackerPrivate;
 
 /**
  * The <code>ctkServiceTracker</code> class simplifies using services from the
@@ -57,9 +58,18 @@ class ctkServiceTrackerPrivate;
  * <code>ctkServiceTrackerCustomizer</code> implementations must also be
  * thread-safe.
  *
- * @ThreadSafe
+ * \tparam S The type of the service being tracked. The type must be an
+ *         assignable datatype. Further, if the
+ *         <code>ctkServiceTracker(ctkPluginContext*, ctkServiceTrackerCustomizer<T>*)</code>
+ *         constructor is used, the type must have an associated interface id via
+ *         Q_DECLARE_INTERFACE.
+ * \tparam T The type of the tracked object. The type must be an assignable
+ *         datatype, provide a boolean conversion function, and provide
+ *         a constructor and an assignment operator which can handle 0 as an argument.
+ * \threadsafe
  */
-class CTK_PLUGINFW_EXPORT ctkServiceTracker : protected ctkServiceTrackerCustomizer
+template<class S = QObject*, class T = S>
+class ctkServiceTracker : protected ctkServiceTrackerCustomizer<T>
 {
 public:
 
@@ -89,7 +99,7 @@ public:
    */
   ctkServiceTracker(ctkPluginContext* context,
                     const ctkServiceReference& reference,
-                    ctkServiceTrackerCustomizer* customizer = 0);
+                    ctkServiceTrackerCustomizer<T>* customizer = 0);
 
   /**
    * Create a <code>ctkServiceTracker</code> on the specified class name.
@@ -112,7 +122,7 @@ public:
    *        takes ownership of the customizer.
    */
   ctkServiceTracker(ctkPluginContext* context, const QString& clazz,
-                        ctkServiceTrackerCustomizer* customizer = 0);
+                    ctkServiceTrackerCustomizer<T>* customizer = 0);
 
   /**
    * Create a <code>ctkServiceTracker</code> on the specified
@@ -136,7 +146,28 @@ public:
    *        takes ownership of the customizer.
    */
   ctkServiceTracker(ctkPluginContext* context, const ctkLDAPSearchFilter& filter,
-                        ctkServiceTrackerCustomizer* customizer = 0);
+                    ctkServiceTrackerCustomizer<T>* customizer = 0);
+
+  /**
+   * Create a <code>ctkServiceTracker</code> on the class template
+   * argument S.
+   *
+   * <p>
+   * Services registered under the interface name of the class template
+   * argument S will be tracked by this <code>ctkServiceTracker</code>.
+   *
+   * @param context The <code>ctkPluginContext</code> against which the tracking
+   *        is done.
+   * @param customizer The customizer object to call when services are added,
+   *        modified, or removed in this <code>ctkServiceTracker</code>. If
+   *        customizer is null, then this <code>ctkServiceTracker</code> will be
+   *        used as the <code>ctkServiceTrackerCustomizer</code> and this
+   *        <code>ctkServiceTracker</code> will call the
+   *        <code>ctkServiceTrackerCustomizer</code> methods on itself. If the
+   *        customizer is not <code>null</code>, this <code>ctkServiceTracker</code>
+   *        takes ownership of the customizer.
+   */
+  ctkServiceTracker(ctkPluginContext* context, ctkServiceTrackerCustomizer<T>* customizer = 0);
 
   /**
    * Open this <code>ctkServiceTracker</code> and begin tracking services.
@@ -184,7 +215,7 @@ public:
    *        method will wait indefinitely.
    * @return Returns the result of getService().
    */
-  QObject* waitForService(unsigned long timeout);
+  T waitForService(unsigned long timeout);
 
   /**
    * Return a list of <code>ctkServiceReference</code>s for all services being
@@ -225,7 +256,7 @@ public:
    *         by the specified <code>ctkServiceReference</code> is not being
    *         tracked.
    */
-  QObject* getService(const ctkServiceReference& reference) const;
+  T getService(const ctkServiceReference& reference) const;
 
   /**
    * Return a list of service objects for all services being tracked by this
@@ -240,7 +271,7 @@ public:
    * @return A list of service objects or an empty list if no services
    *         are being tracked.
    */
-  QList<QObject*> getServices() const;
+  QList<T> getServices() const;
 
   /**
    * Returns a service object for one of the services being tracked by this
@@ -253,7 +284,7 @@ public:
    * @return A service object or <code>null</code> if no services are being
    *         tracked.
    */
-  QObject* getService() const;
+  T getService() const;
 
   /**
    * Remove a service from this <code>ctkServiceTracker</code>.
@@ -324,7 +355,7 @@ protected:
    *         <code>ctlServiceTracker</code>.
    * @see ctkServiceTrackerCustomizer::addingService(const ctkServiceReference&)
    */
-  QObject* addingService(const ctkServiceReference& reference);
+  T addingService(const ctkServiceReference& reference);
 
   /**
    * Default implementation of the
@@ -341,7 +372,7 @@ protected:
    * @param service The service object for the modified service.
    * @see ctkServiceTrackerCustomizer::modifiedService(const ctkServiceReference&, QObject*)
    */
-  void modifiedService(const ctkServiceReference& reference, QObject* service);
+  void modifiedService(const ctkServiceReference& reference, T service);
 
   /**
    * Default implementation of the
@@ -364,15 +395,31 @@ protected:
    * @param service The service object for the removed service.
    * @see ctkServiceTrackerCustomizer::removedService(const ServiceReference&, QObject*)
    */
-  void removedService(const ctkServiceReference& reference, QObject* service);
+  void removedService(const ctkServiceReference& reference, T service);
 
 private:
 
-  friend class ctkTrackedService;
+  typedef ctkServiceTracker<S,T> ServiceTracker;
+  typedef ctkTrackedService<S,T> TrackedService;
+  typedef ctkServiceTrackerPrivate<S,T> ServiceTrackerPrivate;
+  typedef ctkServiceTrackerCustomizer<T> ServiceTrackerCustomizer;
 
-  Q_DECLARE_PRIVATE(ctkServiceTracker)
+  friend class ctkTrackedService<S,T>;
+  friend class ctkServiceTrackerPrivate<S,T>;
 
-  const QScopedPointer<ctkServiceTrackerPrivate> d_ptr;
+  inline ServiceTrackerPrivate* d_func()
+  {
+    return reinterpret_cast<ServiceTrackerPrivate*>(qGetPtrHelper(d_ptr));
+  }
+
+  inline const ServiceTrackerPrivate* d_func() const
+  {
+    return reinterpret_cast<const ServiceTrackerPrivate*>(qGetPtrHelper(d_ptr));
+  }
+
+  const QScopedPointer<ServiceTrackerPrivate> d_ptr;
 };
+
+#include "ctkServiceTracker.cpp"
 
 #endif // CTKSERVICETRACKER_H

@@ -29,9 +29,11 @@
 
 #include <QScopedPointer>
 
+class ctkFooService;
+
 class ctkActivatorSL3 :
     public QObject, public ctkPluginActivator,
-    public ctkServiceTrackerCustomizer
+    public ctkServiceTrackerCustomizer<ctkFooService*>
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
@@ -49,16 +51,17 @@ public:
   bool serviceAdded() const;
   bool serviceRemoved() const;
 
-  QObject* addingService(const ctkServiceReference& reference);
-  void modifiedService(const ctkServiceReference& reference, QObject* service);
-  void removedService(const ctkServiceReference& reference, QObject* service);
+  ctkFooService* addingService(const ctkServiceReference& reference);
+  void modifiedService(const ctkServiceReference& reference, ctkFooService* service);
+  void removedService(const ctkServiceReference& reference, ctkFooService* service);
 
 private:
 
   bool _serviceAdded;
   bool _serviceRemoved;
 
-  QScopedPointer<ctkServiceTracker> tracker;
+  typedef ctkServiceTracker<ctkFooService*> FooTracker;
+  QScopedPointer<FooTracker> tracker;
   ctkPluginContext* context;
 
 

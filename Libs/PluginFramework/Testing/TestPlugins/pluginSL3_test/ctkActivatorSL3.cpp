@@ -42,7 +42,7 @@ void ctkActivatorSL3::start(ctkPluginContext* context)
   this->context = context;
 
   context->registerService(this->metaObject()->className(), this);
-  tracker.reset(new ctkServiceTracker(context, "ctkFooService", this));
+  tracker.reset(new FooTracker(context, this));
   tracker->open();
 }
 
@@ -62,24 +62,23 @@ bool ctkActivatorSL3::serviceRemoved() const
   return _serviceRemoved;
 }
 
-QObject* ctkActivatorSL3::addingService(const ctkServiceReference& reference)
+ctkFooService* ctkActivatorSL3::addingService(const ctkServiceReference& reference)
 {
   _serviceAdded = true;
   qDebug() << "SL3: Adding reference =" << reference;
 
-  QObject* serviceObject = context->getService(reference);
-  ctkFooService* fooService = qobject_cast<ctkFooService*>(serviceObject);
+  ctkFooService* fooService = context->getService<ctkFooService>(reference);
   fooService->foo();
-  return serviceObject;
+  return fooService;
 }
 
-void ctkActivatorSL3::modifiedService(const ctkServiceReference& reference, QObject* service)
+void ctkActivatorSL3::modifiedService(const ctkServiceReference& reference, ctkFooService* service)
 {
   Q_UNUSED(reference)
   Q_UNUSED(service)
 }
 
-void ctkActivatorSL3::removedService(const ctkServiceReference& reference, QObject* service)
+void ctkActivatorSL3::removedService(const ctkServiceReference& reference, ctkFooService* service)
 {
   Q_UNUSED(service)
   _serviceRemoved = true;

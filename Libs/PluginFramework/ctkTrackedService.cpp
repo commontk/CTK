@@ -20,25 +20,22 @@
 =============================================================================*/
 
 
-#include "ctkTrackedService_p.h"
-
-#include "ctkServiceTracker.h"
-#include "ctkServiceTrackerPrivate.h"
-
-ctkTrackedService::ctkTrackedService(ctkServiceTracker* serviceTracker,
-                  ctkServiceTrackerCustomizer* customizer)
+template<class S, class T>
+ctkTrackedService<S,T>::ctkTrackedService(ctkServiceTracker<S,T>* serviceTracker,
+                  ctkServiceTrackerCustomizer<T>* customizer)
   : serviceTracker(serviceTracker), customizer(customizer)
 {
 
 }
 
-void ctkTrackedService::serviceChanged(const ctkServiceEvent& event)
+template<class S, class T>
+void ctkTrackedService<S,T>::serviceChanged(const ctkServiceEvent& event)
 {
   /*
    * Check if we had a delayed call (which could happen when we
    * close).
    */
-  if (closed)
+  if (this->closed)
   {
     return;
   }
@@ -57,7 +54,7 @@ void ctkTrackedService::serviceChanged(const ctkServiceEvent& event)
     {
       if (!serviceTracker->d_func()->listenerFilter.isNull())
       { // service listener added with filter
-        track(reference, event);
+        this->track(reference, event);
         /*
        * If the customizer throws an unchecked exception, it
        * is safe to let it propagate
@@ -67,7 +64,7 @@ void ctkTrackedService::serviceChanged(const ctkServiceEvent& event)
       { // service listener added without filter
         if (serviceTracker->d_func()->filter.match(reference))
         {
-          track(reference, event);
+          this->track(reference, event);
           /*
          * If the customizer throws an unchecked exception,
          * it is safe to let it propagate
@@ -75,7 +72,7 @@ void ctkTrackedService::serviceChanged(const ctkServiceEvent& event)
         }
         else
         {
-          untrack(reference, event);
+          this->untrack(reference, event);
           /*
          * If the customizer throws an unchecked exception,
          * it is safe to let it propagate
@@ -86,7 +83,7 @@ void ctkTrackedService::serviceChanged(const ctkServiceEvent& event)
     }
   case ctkServiceEvent::MODIFIED_ENDMATCH :
   case ctkServiceEvent::UNREGISTERING :
-    untrack(reference, event);
+    this->untrack(reference, event);
     /*
      * If the customizer throws an unchecked exception, it is
      * safe to let it propagate
@@ -95,30 +92,35 @@ void ctkTrackedService::serviceChanged(const ctkServiceEvent& event)
   }
 }
 
-void ctkTrackedService::modified()
+template<class S, class T>
+void ctkTrackedService<S,T>::modified()
 {
   Superclass::modified(); /* increment the modification count */
   serviceTracker->d_func()->modified();
 }
 
-QVariant ctkTrackedService::customizerAdding(ctkServiceReference item, ctkServiceEvent related)
+template<class S, class T>
+T ctkTrackedService<S,T>::customizerAdding(ctkServiceReference item,
+                                           const ctkServiceEvent& related)
 {
   Q_UNUSED(related)
-  QVariant var;
-  var.setValue(customizer->addingService(item));
-  return var;
+  return customizer->addingService(item);
 }
 
-void ctkTrackedService::customizerModified(ctkServiceReference item,
-                        ctkServiceEvent related, QVariant object)
+template<class S, class T>
+void ctkTrackedService<S,T>::customizerModified(ctkServiceReference item,
+                                                const ctkServiceEvent& related,
+                                                T object)
 {
   Q_UNUSED(related)
-  customizer->modifiedService(item, object.value<QObject*>());
+  customizer->modifiedService(item, object);
 }
 
-void ctkTrackedService::customizerRemoved(ctkServiceReference item,
-                       ctkServiceEvent related, QVariant object)
+template<class S, class T>
+void ctkTrackedService<S,T>::customizerRemoved(ctkServiceReference item,
+                                               const ctkServiceEvent& related,
+                                               T object)
 {
   Q_UNUSED(related)
-  customizer->removedService(item, object.value<QObject*>());
+  customizer->removedService(item, object);
 }

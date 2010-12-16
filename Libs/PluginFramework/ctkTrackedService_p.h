@@ -23,22 +23,19 @@
 #ifndef CTKTRACKEDSERVICE_P_H
 #define CTKTRACKEDSERVICE_P_H
 
+#include "ctkTrackedServiceListener_p.h"
 #include "ctkPluginAbstractTracked_p.h"
 #include "ctkServiceEvent.h"
 
-class ctkServiceTracker;
-struct ctkServiceTrackerCustomizer;
 
-class ctkTrackedService : public QObject,
-    public ctkPluginAbstractTracked<ctkServiceReference, ctkServiceEvent>
+template<class S, class T>
+class ctkTrackedService : public ctkTrackedServiceListener,
+    public ctkPluginAbstractTracked<ctkServiceReference, T, ctkServiceEvent>
 {
-  Q_OBJECT
 
 public:
-  ctkTrackedService(ctkServiceTracker* serviceTracker,
-                    ctkServiceTrackerCustomizer* customizer);
-
-public slots:
+  ctkTrackedService(ctkServiceTracker<S,T>* serviceTracker,
+                    ctkServiceTrackerCustomizer<T>* customizer);
 
   /**
    * Slot connected to service events for the
@@ -51,10 +48,10 @@ public slots:
 
 private:
 
-  typedef ctkPluginAbstractTracked<ctkServiceReference, ctkServiceEvent> Superclass;
+  typedef ctkPluginAbstractTracked<ctkServiceReference, T, ctkServiceEvent> Superclass;
 
-  ctkServiceTracker* serviceTracker;
-  ctkServiceTrackerCustomizer* customizer;
+  ctkServiceTracker<S,T>* serviceTracker;
+  ctkServiceTrackerCustomizer<T>* customizer;
 
   /**
    * Increment the tracking count and tell the tracker there was a
@@ -73,7 +70,7 @@ private:
    * @return Customized object for the tracked item or <code>null</code>
    *         if the item is not to be tracked.
    */
-  QVariant customizerAdding(ctkServiceReference item, ctkServiceEvent related);
+  T customizerAdding(ctkServiceReference item, const ctkServiceEvent& related);
 
   /**
    * Call the specific customizer modified method. This method must not be
@@ -84,7 +81,7 @@ private:
    * @param object Customized object for the tracked item.
    */
   void customizerModified(ctkServiceReference item,
-                          ctkServiceEvent related, QVariant object) ;
+                          const ctkServiceEvent& related, T object) ;
 
   /**
    * Call the specific customizer removed method. This method must not be
@@ -95,7 +92,9 @@ private:
    * @param object Customized object for the tracked item.
    */
   void customizerRemoved(ctkServiceReference item,
-                         ctkServiceEvent related, QVariant object) ;
+                         const ctkServiceEvent& related, T object) ;
 };
+
+#include "ctkTrackedService.cpp"
 
 #endif // CTKTRACKEDSERVICE_P_H

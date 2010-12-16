@@ -20,7 +20,6 @@
 =============================================================================*/
 
 
-#include "ctkServiceTracker.h"
 #include "ctkServiceTrackerPrivate.h"
 #include "ctkTrackedService_p.h"
 #include "ctkServiceException.h"
@@ -34,33 +33,46 @@
 #include <limits>
 
 
-ctkServiceTracker::~ctkServiceTracker()
+template<class S, class T>
+ctkServiceTracker<S,T>::~ctkServiceTracker()
 {
 }
 
-ctkServiceTracker::ctkServiceTracker(ctkPluginContext* context,
-                  const ctkServiceReference& reference,
-                  ctkServiceTrackerCustomizer* customizer)
-  : d_ptr(new ctkServiceTrackerPrivate(this, context, reference, customizer))
+template<class S, class T>
+ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext* context,
+                                          const ctkServiceReference& reference,
+                                          ServiceTrackerCustomizer* customizer)
+  : d_ptr(new ServiceTrackerPrivate(this, context, reference, customizer))
 {
 }
 
-ctkServiceTracker::ctkServiceTracker(ctkPluginContext* context, const QString& clazz,
-                      ctkServiceTrackerCustomizer* customizer)
-  : d_ptr(new ctkServiceTrackerPrivate(this, context, clazz, customizer))
+template<class S, class T>
+ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext* context, const QString& clazz,
+                                          ServiceTrackerCustomizer* customizer)
+  : d_ptr(new ServiceTrackerPrivate(this, context, clazz, customizer))
 {
 }
 
-ctkServiceTracker::ctkServiceTracker(ctkPluginContext* context, const ctkLDAPSearchFilter& filter,
-                      ctkServiceTrackerCustomizer* customizer)
-  : d_ptr(new ctkServiceTrackerPrivate(this, context, filter, customizer))
+template<class S, class T>
+ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext* context, const ctkLDAPSearchFilter& filter,
+                                          ServiceTrackerCustomizer* customizer)
+  : d_ptr(new ServiceTrackerPrivate(this, context, filter, customizer))
 {
 }
 
-void ctkServiceTracker::open()
+template<class S, class T>
+ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext *context, ctkServiceTrackerCustomizer<T> *customizer)
+  : d_ptr(new ServiceTrackerPrivate(this, context, qobject_interface_iid<S>(), customizer))
 {
-  Q_D(ctkServiceTracker);
-  QSharedPointer<ctkTrackedService> t;
+  const char* clazz = qobject_interface_iid<S>();
+  if (clazz == 0) throw ctkServiceException("The service interface class has no Q_DECLARE_INTERFACE macro");
+}
+
+template<class S, class T>
+void ctkServiceTracker<S,T>::open()
+{
+  Q_D(ServiceTracker);
+  QSharedPointer<TrackedService> t;
   {
     QMutexLocker lock(&d->mutex);
     if (d->trackedService)
@@ -70,10 +82,11 @@ void ctkServiceTracker::open()
 
     if (d->DEBUG)
     {
-      qDebug() << "ctkServiceTracker::open: " << d->filter;
+      qDebug() << "ctkServiceTracker<S,T>::open: " << d->filter;
     }
 
-    t = QSharedPointer<ctkTrackedService>(new ctkTrackedService(this, d->customizer));
+    t = QSharedPointer<TrackedService>(
+          new TrackedService(this, d->customizer));
     {
       QMutexLocker lockT(t.data());
       try {
@@ -110,10 +123,11 @@ void ctkServiceTracker::open()
   t->trackInitial(); /* process the initial references */
 }
 
-void ctkServiceTracker::close()
+template<class S, class T>
+void ctkServiceTracker<S,T>::close()
 {
-  Q_D(ctkServiceTracker);
-  QSharedPointer<ctkTrackedService> outgoing;
+  Q_D(ServiceTracker);
+  QSharedPointer<TrackedService> outgoing;
   QList<ctkServiceReference> references;
   {
     QMutexLocker lock(&d->mutex);
@@ -124,7 +138,7 @@ void ctkServiceTracker::close()
     }
     if (d->DEBUG)
     {
-      qDebug() << "ctkServiceTracker::close:" << d->filter;
+      qDebug() << "ctkServiceTracker<S,T>::close:" << d->filter;
     }
     outgoing->close();
     references = getServiceReferences();
@@ -153,19 +167,20 @@ void ctkServiceTracker::close()
     QMutexLocker lock(&d->mutex);
     if ((d->cachedReference.getPlugin().isNull()) && (d->cachedService == 0))
     {
-      qDebug() << "ctkServiceTracker::close[cached cleared]:"
+      qDebug() << "ctkServiceTracker<S,T>::close[cached cleared]:"
           << d->filter;
     }
   }
 }
 
-QObject* ctkServiceTracker::waitForService(unsigned long timeout)
+template<class S, class T>
+T ctkServiceTracker<S,T>::waitForService(unsigned long timeout)
 {
-  Q_D(ctkServiceTracker);
-  QObject* object = getService();
+  Q_D(ServiceTracker);
+  T object = getService();
   while (object == 0)
   {
-    QSharedPointer<ctkTrackedService> t = d->tracked();
+    QSharedPointer<TrackedService> t = d->tracked();
     if (t.isNull())
     { /* if ServiceTracker is not open */
       return 0;
@@ -186,10 +201,11 @@ QObject* ctkServiceTracker::waitForService(unsigned long timeout)
   return object;
 }
 
-QList<ctkServiceReference> ctkServiceTracker::getServiceReferences() const
+template<class S, class T>
+QList<ctkServiceReference> ctkServiceTracker<S,T>::getServiceReferences() const
 {
-  Q_D(const ctkServiceTracker);
-  QSharedPointer<ctkTrackedService> t = d->tracked();
+  Q_D(const ServiceTracker);
+  QSharedPointer<TrackedService> t = d->tracked();
   if (t.isNull())
   { /* if ServiceTracker is not open */
     return QList<ctkServiceReference>();
@@ -204,9 +220,10 @@ QList<ctkServiceReference> ctkServiceTracker::getServiceReferences() const
   }
 }
 
-ctkServiceReference ctkServiceTracker::getServiceReference() const
+template<class S, class T>
+ctkServiceReference ctkServiceTracker<S,T>::getServiceReference() const
 {
-  Q_D(const ctkServiceTracker);
+  Q_D(const ServiceTracker);
   ctkServiceReference reference(0);
   {
     QMutexLocker lock(&d->mutex);
@@ -216,14 +233,14 @@ ctkServiceReference ctkServiceTracker::getServiceReference() const
   {
     if (d->DEBUG)
     {
-      qDebug() << "ctkServiceTracker::getServiceReference[cached]:"
+      qDebug() << "ctkServiceTracker<S,T>::getServiceReference[cached]:"
                    << d->filter;
     }
     return reference;
   }
   if (d->DEBUG)
   {
-    qDebug() << "ctkServiceTracker::getServiceReference:" << d->filter;
+    qDebug() << "ctkServiceTracker<S,T>::getServiceReference:" << d->filter;
   }
   QList<ctkServiceReference> references = getServiceReferences();
   int length = references.size();
@@ -283,24 +300,26 @@ ctkServiceReference ctkServiceTracker::getServiceReference() const
   }
 }
 
-QObject* ctkServiceTracker::getService(const ctkServiceReference& reference) const
+template<class S, class T>
+T ctkServiceTracker<S,T>::getService(const ctkServiceReference& reference) const
 {
-  Q_D(const ctkServiceTracker);
-  QSharedPointer<ctkTrackedService> t = d->tracked();
+  Q_D(const ServiceTracker);
+  QSharedPointer<TrackedService> t = d->tracked();
   if (t.isNull())
   { /* if ServiceTracker is not open */
     return 0;
   }
   {
     QMutexLocker lockT(t.data());
-    return t->getCustomizedObject(reference).value<QObject*>();
+    return t->getCustomizedObject(reference);
   }
 }
 
-QList<QObject*> ctkServiceTracker::getServices() const
+template<class S, class T>
+QList<T> ctkServiceTracker<S,T>::getServices() const
 {
-  Q_D(const ctkServiceTracker);
-  QSharedPointer<ctkTrackedService> t = d->tracked();
+  Q_D(const ServiceTracker);
+  QSharedPointer<TrackedService> t = d->tracked();
   if (t.isNull())
   { /* if ServiceTracker is not open */
     return QList<QObject*>();
@@ -317,22 +336,23 @@ QList<QObject*> ctkServiceTracker::getServices() const
   }
 }
 
-QObject* ctkServiceTracker::getService() const
+template<class S, class T>
+T ctkServiceTracker<S,T>::getService() const
 {
-  Q_D(const ctkServiceTracker);
-  QObject* service = d->cachedService;
+  Q_D(const ServiceTracker);
+  T service = d->cachedService;
   if (service != 0)
   {
     if (d->DEBUG)
     {
-      qDebug() << "ctkServiceTracker::getService[cached]:"
+      qDebug() << "ctkServiceTracker<S,T>::getService[cached]:"
                    << d->filter;
     }
     return service;
   }
   if (d->DEBUG)
   {
-    qDebug() << "ctkServiceTracker::getService:" << d->filter;
+    qDebug() << "ctkServiceTracker<S,T>::getService:" << d->filter;
   }
 
   try
@@ -350,10 +370,11 @@ QObject* ctkServiceTracker::getService() const
   }
 }
 
-void ctkServiceTracker::remove(const ctkServiceReference& reference)
+template<class S, class T>
+void ctkServiceTracker<S,T>::remove(const ctkServiceReference& reference)
 {
-  Q_D(ctkServiceTracker);
-  QSharedPointer<ctkTrackedService> t = d->tracked();
+  Q_D(ServiceTracker);
+  QSharedPointer<TrackedService> t = d->tracked();
   if (t.isNull())
   { /* if ServiceTracker is not open */
     return;
@@ -361,10 +382,11 @@ void ctkServiceTracker::remove(const ctkServiceReference& reference)
   t->untrack(reference, ctkServiceEvent());
 }
 
-int ctkServiceTracker::size() const
+template<class S, class T>
+int ctkServiceTracker<S,T>::size() const
 {
-  Q_D(const ctkServiceTracker);
-  QSharedPointer<ctkTrackedService> t = d->tracked();
+  Q_D(const ServiceTracker);
+  QSharedPointer<TrackedService> t = d->tracked();
   if (t.isNull())
   { /* if ServiceTracker is not open */
     return 0;
@@ -375,10 +397,11 @@ int ctkServiceTracker::size() const
   }
 }
 
-int ctkServiceTracker::getTrackingCount() const
+template<class S, class T>
+int ctkServiceTracker<S,T>::getTrackingCount() const
 {
-  Q_D(const ctkServiceTracker);
-  QSharedPointer<ctkTrackedService> t = d->tracked();
+  Q_D(const ServiceTracker);
+  QSharedPointer<TrackedService> t = d->tracked();
   if (t.isNull())
   { /* if ServiceTracker is not open */
     return -1;
@@ -389,23 +412,26 @@ int ctkServiceTracker::getTrackingCount() const
   }
 }
 
-QObject* ctkServiceTracker::addingService(const ctkServiceReference& reference)
+template<class S, class T>
+T ctkServiceTracker<S,T>::addingService(const ctkServiceReference& reference)
 {
-  Q_D(ctkServiceTracker);
-  return d->context->getService(reference);
+  Q_D(ServiceTracker);
+  return qobject_cast<T>(d->context->getService(reference));
 }
 
-void ctkServiceTracker::modifiedService(const ctkServiceReference& reference, QObject* service)
+template<class S, class T>
+void ctkServiceTracker<S,T>::modifiedService(const ctkServiceReference& reference, T service)
 {
   Q_UNUSED(reference)
   Q_UNUSED(service)
   /* do nothing */
 }
 
-void ctkServiceTracker::removedService(const ctkServiceReference& reference, QObject* service)
+template<class S, class T>
+void ctkServiceTracker<S,T>::removedService(const ctkServiceReference& reference, T service)
 {
   Q_UNUSED(service)
 
-  Q_D(ctkServiceTracker);
+  Q_D(ServiceTracker);
   d->context->ungetService(reference);
 }

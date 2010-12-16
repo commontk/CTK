@@ -30,6 +30,6 @@ struct ctkTestPluginAService
   virtual ~ctkTestPluginAService() {}
 };
 
-Q_DECLARE_INTERFACE(ctkTestPluginAService, "org.commontk.TestPluginAService")
+Q_DECLARE_INTERFACE(ctkTestPluginAService, "org.commontk.pluginAtest.TestPluginAService")
 
 #endif // CTKTESTPLUGINASERVICE_H

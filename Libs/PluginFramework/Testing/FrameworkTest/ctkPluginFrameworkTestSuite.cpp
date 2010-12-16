@@ -254,7 +254,7 @@ void ctkPluginFrameworkTestSuite::frame025b()
   // Check if pluginA_test registered the expected service
   try
   {
-    ctkServiceReference sr1 = pc->getServiceReference("org.commontk.TestPluginAService");
+    ctkServiceReference sr1 = pc->getServiceReference("org.commontk.pluginAtest.TestPluginAService");
     QObject* o1 = pc->getService(sr1);
     QVERIFY2(o1 != 0, "no service object found");
 
@@ -294,7 +294,7 @@ void ctkPluginFrameworkTestSuite::frame025b()
 void ctkPluginFrameworkTestSuite::frame030b()
 {
   ctkServiceReference sr1
-      = pc->getServiceReference("org.commontk.TestPluginAService");
+      = pc->getServiceReference("org.commontk.pluginAtest.TestPluginAService");
 
   try
   {

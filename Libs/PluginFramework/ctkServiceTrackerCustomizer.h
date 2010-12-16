@@ -52,8 +52,10 @@
  * <code>ctkServiceTrackerCustomizer</code> implementations must also be
  * thread-safe.
  *
- * @ThreadSafe
+ * \tparam T The type of the tracked object.
+ * \threadsafe
  */
+template<class T = QObject*>
 struct ctkServiceTrackerCustomizer {
 
   virtual ~ctkServiceTrackerCustomizer() {}
@@ -76,7 +78,7 @@ struct ctkServiceTrackerCustomizer {
    *         service or <code>0</code> if the specified referenced service
    *         should not be tracked.
    */
-  virtual QObject* addingService(const ctkServiceReference& reference) = 0;
+  virtual T addingService(const ctkServiceReference& reference) = 0;
 
   /**
    * A service tracked by the <code>ctkServiceTracker</code> has been modified.
@@ -88,7 +90,7 @@ struct ctkServiceTrackerCustomizer {
    * @param reference The reference to the service that has been modified.
    * @param service The service object for the specified referenced service.
    */
-  virtual void modifiedService(const ctkServiceReference& reference, QObject* service) = 0;
+  virtual void modifiedService(const ctkServiceReference& reference, T service) = 0;
 
   /**
    * A service tracked by the <code>ctkServiceTracker</code> has been removed.
@@ -100,7 +102,7 @@ struct ctkServiceTrackerCustomizer {
    * @param reference The reference to the service that has been removed.
    * @param service The service object for the specified referenced service.
    */
-  virtual void removedService(const ctkServiceReference& reference, QObject* service) = 0;
+  virtual void removedService(const ctkServiceReference& reference, T service) = 0;
 };
 
 #endif // CTKSERVICETRACKERCUSTOMIZER_H

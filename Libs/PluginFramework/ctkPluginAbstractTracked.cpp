@@ -24,37 +24,37 @@
 
 #include <QDebug>
 
-template<class Item, class Related>
-const bool ctkPluginAbstractTracked<Item,Related>::DEBUG	= true;
+template<class S, class T, class R>
+const bool ctkPluginAbstractTracked<S,T,R>::DEBUG	= true;
 
-template<class Item, class Related>
-ctkPluginAbstractTracked<Item,Related>::ctkPluginAbstractTracked()
+template<class S, class T, class R>
+ctkPluginAbstractTracked<S,T,R>::ctkPluginAbstractTracked()
 {
   closed = false;
 }
 
-template<class Item, class Related>
-ctkPluginAbstractTracked<Item,Related>::~ctkPluginAbstractTracked()
+template<class S, class T, class R>
+ctkPluginAbstractTracked<S,T,R>::~ctkPluginAbstractTracked()
 {
 
 }
 
-template<class Item, class Related>
-bool ctkPluginAbstractTracked<Item,Related>::wait(unsigned long timeout)
+template<class S, class T, class R>
+bool ctkPluginAbstractTracked<S,T,R>::wait(unsigned long timeout)
 {
   return waitCond.wait(this, timeout);
 }
 
-template<class Item, class Related>
-void ctkPluginAbstractTracked<Item,Related>::wakeAll()
+template<class S, class T, class R>
+void ctkPluginAbstractTracked<S,T,R>::wakeAll()
 {
   waitCond.wakeAll();
 }
 
-template<class Item, class Related>
-void ctkPluginAbstractTracked<Item,Related>::setInitial(const QList<Item>& list)
+template<class S, class T, class R>
+void ctkPluginAbstractTracked<S,T,R>::setInitial(const QList<S>& list)
 {
-  foreach (Item item, list)
+  foreach (S item, list)
   {
     if (DEBUG)
     {
@@ -64,29 +64,12 @@ void ctkPluginAbstractTracked<Item,Related>::setInitial(const QList<Item>& list)
   }
 }
 
-//template<class Item, class Related>
-//void ctkPluginAbstractTracked<Item,Related>::setInitial(const QList<QSharedPointer<Item> >& list)
-//{
-//  foreach (Item* item, list)
-//  {
-//    if (item == 0)
-//    {
-//      continue;
-//    }
-//    if (DEBUG)
-//    {
-//      qDebug() << "ctkPluginAbstractTracked::setInitial:" << item;
-//    }
-//    initial.push_back(item);
-//  }
-//}
-
-template<class Item, class Related>
-void ctkPluginAbstractTracked<Item,Related>::trackInitial()
+template<class S, class T, class R>
+void ctkPluginAbstractTracked<S,T,R>::trackInitial()
 {
   while (true)
   {
-    Item item(0);
+    S item(0);
     {
       QMutexLocker lock(this);
       if (closed || (initial.size() == 0))
@@ -101,7 +84,7 @@ void ctkPluginAbstractTracked<Item,Related>::trackInitial()
        * within this synchronized block.
        */
       item = initial.takeFirst();
-      if (tracked.value(item).isValid())
+      if (tracked.value(item))
       {
         /* if we are already tracking this item */
         if (DEBUG)
@@ -127,7 +110,7 @@ void ctkPluginAbstractTracked<Item,Related>::trackInitial()
     {
       qDebug() << "ctkPluginAbstractTracked::trackInitial: " << item;
     }
-    trackAdding(item, Related());
+    trackAdding(item, R());
     /*
      * Begin tracking it. We call trackAdding
      * since we have already put the item in the
@@ -136,16 +119,16 @@ void ctkPluginAbstractTracked<Item,Related>::trackInitial()
   }
 }
 
-template<class Item, class Related>
-void ctkPluginAbstractTracked<Item,Related>::close()
+template<class S, class T, class R>
+void ctkPluginAbstractTracked<S,T,R>::close()
 {
   closed = true;
 }
 
-template<class Item, class Related>
-void ctkPluginAbstractTracked<Item,Related>::track(Item item, Related related)
+template<class S, class T, class R>
+void ctkPluginAbstractTracked<S,T,R>::track(S item, R related)
 {
-  QVariant object;
+  T object(0);
   {
     QMutexLocker lock(this);
     if (closed)
@@ -153,7 +136,7 @@ void ctkPluginAbstractTracked<Item,Related>::track(Item item, Related related)
       return;
     }
     object = tracked.value(item);
-    if (object.isNull())
+    if (!object)
     { /* we are not tracking the item */
       if (adding.contains(item))
       {
@@ -176,7 +159,7 @@ void ctkPluginAbstractTracked<Item,Related>::track(Item item, Related related)
     }
   }
 
-  if (object.isNull())
+  if (!object)
   { /* we are not tracking the item */
     trackAdding(item, related);
   }
@@ -191,10 +174,10 @@ void ctkPluginAbstractTracked<Item,Related>::track(Item item, Related related)
   }
 }
 
-template<class Item, class Related>
-void ctkPluginAbstractTracked<Item,Related>::untrack(Item item, Related related)
+template<class S, class T, class R>
+void ctkPluginAbstractTracked<S,T,R>::untrack(S item, R related)
 {
-  QVariant object;
+  T object(0);
   {
     QMutexLocker lock(this);
     if (initial.removeOne(item))
@@ -227,7 +210,7 @@ void ctkPluginAbstractTracked<Item,Related>::untrack(Item item, Related related)
                      * must remove from tracker before
                      * calling customizer callback
                      */
-    if (object.isNull())
+    if (!object)
     { /* are we actually tracking the item */
       return;
     }
@@ -245,38 +228,38 @@ void ctkPluginAbstractTracked<Item,Related>::untrack(Item item, Related related)
    */
 }
 
-template<class Item, class Related>
-int ctkPluginAbstractTracked<Item,Related>::size() const
+template<class S, class T, class R>
+int ctkPluginAbstractTracked<S,T,R>::size() const
 {
   return tracked.size();
 }
 
-template<class Item, class Related>
-QVariant ctkPluginAbstractTracked<Item,Related>::getCustomizedObject(Item item) const
+template<class S, class T, class R>
+T ctkPluginAbstractTracked<S,T,R>::getCustomizedObject(S item) const
 {
   return tracked.value(item);
 }
 
-template<class Item, class Related>
-QList<Item> ctkPluginAbstractTracked<Item,Related>::getTracked() const
+template<class S, class T, class R>
+QList<S> ctkPluginAbstractTracked<S,T,R>::getTracked() const
 {
   return tracked.keys();
 }
 
-template<class Item, class Related>
-void ctkPluginAbstractTracked<Item,Related>::modified()
+template<class S, class T, class R>
+void ctkPluginAbstractTracked<S,T,R>::modified()
 {
   trackingCount.ref();
 }
 
-template<class Item, class Related>
-int ctkPluginAbstractTracked<Item,Related>::getTrackingCount() const
+template<class S, class T, class R>
+int ctkPluginAbstractTracked<S,T,R>::getTrackingCount() const
 {
   return trackingCount;
 }
 
-template<class Item, class Related>
-bool ctkPluginAbstractTracked<Item,Related>::customizerAddingFinal(Item item, const QVariant& custom)
+template<class S, class T, class R>
+bool ctkPluginAbstractTracked<S,T,R>::customizerAddingFinal(S item, const T& custom)
 {
   QMutexLocker lock(this);
   if (adding.removeOne(item) && !closed)
@@ -285,7 +268,7 @@ bool ctkPluginAbstractTracked<Item,Related>::customizerAddingFinal(Item item, co
      * if the item was not untracked during the customizer
      * callback
      */
-    if (!custom.isNull())
+    if (custom)
     {
       tracked.insert(item, custom);
       modified(); /* increment modification count */
@@ -299,14 +282,14 @@ bool ctkPluginAbstractTracked<Item,Related>::customizerAddingFinal(Item item, co
   }
 }
 
-template<class Item, class Related>
-void ctkPluginAbstractTracked<Item,Related>::trackAdding(Item item, Related related)
+template<class S, class T, class R>
+void ctkPluginAbstractTracked<S,T,R>::trackAdding(S item, R related)
 {
   if (DEBUG)
   {
     qDebug() << "ctkPluginAbstractTracked::trackAdding:" << item;
   }
-  QVariant object;
+  T object(0);
   bool becameUntracked = false;
   /* Call customizer outside of synchronized region */
   try
@@ -327,7 +310,7 @@ void ctkPluginAbstractTracked<Item,Related>::trackAdding(Item item, Related rela
   /*
    * The item became untracked during the customizer callback.
    */
-  if (becameUntracked && (!object.isNull()))
+  if (becameUntracked && object)
   {
     if (DEBUG)
     {

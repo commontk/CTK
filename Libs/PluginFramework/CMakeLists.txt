@@ -27,8 +27,8 @@ SET(KIT_SRCS
   ctkPluginFrameworkUtil.cpp
   ctkPluginManifest.cpp
   ctkPluginPrivate.cpp
-  ctkPluginTracker.cpp
-  ctkPluginTrackerPrivate.cpp
+  #ctkPluginTracker.cpp
+  #ctkPluginTrackerPrivate.cpp
   ctkPlugins.cpp
   ctkRequirePlugin.cpp
   ctkServiceEvent.cpp
@@ -38,13 +38,13 @@ SET(KIT_SRCS
   ctkServiceReferencePrivate.cpp
   ctkServiceRegistration.cpp
   ctkServiceRegistrationPrivate.cpp
-  ctkServiceTracker.cpp
-  ctkServiceTrackerCustomizer.h
-  ctkServiceTrackerPrivate.cpp
+  #ctkServiceTracker.cpp
+  #ctkServiceTrackerCustomizer.h
+  #ctkServiceTrackerPrivate.cpp
   ctkServices.cpp
   ctkServiceSlotEntry.cpp
-  ctkTrackedPlugin.cpp
-  ctkTrackedService.cpp
+  #ctkTrackedPlugin.cpp
+  #ctkTrackedService.cpp
   ctkPluginStorage.cpp
   ctkVersion.cpp
   ctkVersionRange.cpp
@@ -60,8 +60,8 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkPluginFrameworkListeners_p.h
   ctkServiceFactory.h
-  ctkTrackedPlugin_p.h
-  ctkTrackedService_p.h
+  #ctkTrackedPlugin_p.h
+  ctkTrackedServiceListener_p.h
 )
 
 # UI files

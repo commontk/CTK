@@ -32,7 +32,6 @@
 class ctkServiceRegistrationPrivate;
 class ctkServiceReferencePrivate;
 class ctkServiceEvent;
-template<class Item, class Related> class ctkPluginAbstractTracked;
 
 /**
  * A reference to a service.
@@ -180,9 +179,9 @@ protected:
   friend class ctkPluginContext;
   friend class ctkPluginPrivate;
   friend class ctkPluginFrameworkListeners;
-  friend class ctkServiceTrackerPrivate;
-  friend class ctkServiceTracker;
-  friend class ctkPluginAbstractTracked<ctkServiceReference, ctkServiceEvent>;
+  template<class S, class T> friend class ctkServiceTracker;
+  template<class S, class T> friend class ctkServiceTrackerPrivate;
+  template<class S, class R, class T> friend class ctkPluginAbstractTracked;
 
   ctkServiceReference(ctkServiceRegistrationPrivate* reg);
 

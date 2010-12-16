@@ -3,8 +3,10 @@
 
 #include <ctkPluginActivator.h>
 
+class QObject;
+
 class ctkLogService;
-class ctkServiceTracker;
+template<class S, class T> class ctkServiceTracker;
 class ctkQtMobilityServiceRuntime;
 
 class ctkQtMobilityServiceActivator : public QObject,
@@ -31,7 +33,9 @@ private:
 
   ctkQtMobilityServiceRuntime* mobsr;
 
-  static ctkServiceTracker* logTracker;
+  typedef ctkServiceTracker<ctkLogService*,ctkLogService*> LogTracker;
+
+  static LogTracker* logTracker;
 
 };
 

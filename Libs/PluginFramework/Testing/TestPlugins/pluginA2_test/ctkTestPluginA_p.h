@@ -37,13 +37,13 @@ class ctkTestPluginA : public QObject,
   Q_INTERFACES(ctkTestPluginAService)
 
 public:
-    ctkTestPluginA(ctkPluginContext* pc);
+  ctkTestPluginA(ctkPluginContext* pc);
 
-    void unregister();
+  void unregister();
 
 private:
 
-    ctkServiceRegistration* sr;
+  ctkServiceRegistration* sr;
 };
 
 #endif // CTKTESTPLUGINA_P_H

@@ -37,9 +37,12 @@
  * tracked items. This is not a public class. It is only for use by the
  * implementation of the Tracker class.
  *
+ * @tparam S The tracked item. It is the key.
+ * @tparam T The value mapped to the tracked item.
+ * @tparam R The reason the tracked item is  being tracked or untracked.
  * @ThreadSafe
  */
-template<class Item, class Related>
+template<class S, class T, class R>
 class ctkPluginAbstractTracked : public QMutex
 {
 
@@ -69,8 +72,7 @@ public:
    *        entries in the list are ignored.
    * @GuardedBy this
    */
-  void setInitial(const QList<Item>& list);
-  //void setInitial(const QList<Item*>& list);
+  void setInitial(const QList<S>& list);
 
   /**
    * Track the initial list of items. This is called after events can begin to
@@ -90,18 +92,18 @@ public:
   /**
    * Begin to track an item.
    *
-   * @param item Item to be tracked.
+   * @param item S to be tracked.
    * @param related Action related object.
    */
-  void track(Item item, Related related);
+  void track(S item, R related);
 
   /**
    * Discontinue tracking the item.
    *
-   * @param item Item to be untracked.
+   * @param item S to be untracked.
    * @param related Action related object.
    */
-  void untrack(Item item, Related related);
+  void untrack(S item, R related);
 
   /**
    * Returns the number of tracked items.
@@ -120,7 +122,7 @@ public:
    *
    * @GuardedBy this
    */
-  QVariant getCustomizedObject(Item item) const;
+  T getCustomizedObject(S item) const;
 
   /**
    * Return the list of tracked items.
@@ -128,7 +130,7 @@ public:
    * @return The tracked items.
    * @GuardedBy this
    */
-  QList<Item> getTracked() const;
+  QList<S> getTracked() const;
 
   /**
    * Increment the modification count. If this method is overridden, the
@@ -154,12 +156,12 @@ public:
    * Call the specific customizer adding method. This method must not be
    * called while synchronized on this object.
    *
-   * @param item Item to be tracked.
+   * @param item S to be tracked.
    * @param related Action related object.
    * @return Customized object for the tracked item or <code>null</code> if
    *         the item is not to be tracked.
    */
-  virtual QVariant customizerAdding(Item item, Related related) = 0;
+  virtual T customizerAdding(S item, const R& related) = 0;
 
   /**
    * Call the specific customizer modified method. This method must not be
@@ -169,8 +171,8 @@ public:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  virtual void customizerModified(Item item, Related related,
-      QVariant object) = 0;
+  virtual void customizerModified(S item, const R& related,
+                                  T object) = 0;
 
   /**
    * Call the specific customizer removed method. This method must not be
@@ -180,8 +182,8 @@ public:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  virtual void customizerRemoved(Item item, Related related,
-      QVariant object) = 0;
+  virtual void customizerRemoved(S item, const R& related,
+                                 T object) = 0;
 
   /**
    * List of items in the process of being added. This is used to deal with
@@ -197,7 +199,7 @@ public:
    *
    * @GuardedBy this
    */
-  QList<Item> adding;
+  QList<S> adding;
 
   /**
    * true if the tracked object is closed.
@@ -224,17 +226,17 @@ public:
    *
    * @GuardedBy this
    */
-  QLinkedList<Item>	initial;
+  QLinkedList<S>	initial;
 
   /**
    * Common logic to add an item to the tracker used by track and
    * trackInitial. The specified item must have been placed in the adding list
    * before calling this method.
    *
-   * @param item Item to be tracked.
+   * @param item S to be tracked.
    * @param related Action related object.
    */
-  void trackAdding(Item item, Related related);
+  void trackAdding(S item, R related);
 
 private:
 
@@ -245,7 +247,7 @@ private:
    *
    * @GuardedBy this
    */
-  QHash<Item, QVariant> tracked;
+  QHash<S, T> tracked;
 
   /**
    * Modification count. This field is initialized to zero and incremented by
@@ -255,7 +257,7 @@ private:
    */
   QAtomicInt trackingCount;
 
-  bool customizerAddingFinal(Item item, const QVariant& custom);
+  bool customizerAddingFinal(S item, const T& custom);
 
 };
 

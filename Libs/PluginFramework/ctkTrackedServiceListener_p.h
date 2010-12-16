@@ -20,23 +20,33 @@
 =============================================================================*/
 
 
-#ifndef CTKTESTPLUGINA_P_H
-#define CTKTESTPLUGINA_P_H
+#ifndef CTKTRACKEDSERVICELISTENER_P_H
+#define CTKTRACKEDSERVICELISTENER_P_H
 
 #include <QObject>
 
-#include "ctkTestPluginAService.h"
+#include "ctkServiceEvent.h"
 
-class ctkPluginContext;
-
-class ctkTestPluginA : public QObject,
-                       public ctkTestPluginAService
+class CTK_PLUGINFW_EXPORT ctkTrackedServiceListener : public QObject
 {
   Q_OBJECT
-  Q_INTERFACES(ctkTestPluginAService)
 
 public:
-  ctkTestPluginA(ctkPluginContext* pc);
+  ctkTrackedServiceListener(QObject *parent = 0)
+    : QObject(parent)
+  {}
+
+public slots:
+
+  /**
+   * Slot connected to service events for the
+   * <code>ctkServiceTracker</code> class. This method must NOT be
+   * synchronized to avoid deadlock potential.
+   *
+   * @param event <code>ctkServiceEvent</code> object from the framework.
+   */
+  virtual void serviceChanged(const ctkServiceEvent& event) = 0;
+
 };
 
-#endif // CTKTESTPLUGINA_P_H
+#endif // CTKTRACKEDSERVICELISTENER_P_H

@@ -15,11 +15,11 @@
 
 #include <QtPlugin>
 
-ctkServiceTracker* ctkQtMobilityServiceActivator::logTracker = 0;
+ctkQtMobilityServiceActivator::LogTracker* ctkQtMobilityServiceActivator::logTracker = 0;
 
 void ctkQtMobilityServiceActivator::start(ctkPluginContext* context)
 {
-  logTracker = new ctkServiceTracker(context, "ctkLogService");
+  logTracker = new LogTracker(context);
   logTracker->open();
   mobsr = new ctkQtMobilityServiceRuntime(context);
   mobsr->start();
@@ -51,7 +51,7 @@ ctkLogService* ctkQtMobilityServiceActivator::getLogService()
     return 0;
   }
 
-  return qobject_cast<ctkLogService*>(logTracker->getService());
+  return logTracker->getService();
 }
 
 void ctkQtMobilityServiceActivator::logError(ctkPluginContext* pc, const QString& msg, std::exception* e)

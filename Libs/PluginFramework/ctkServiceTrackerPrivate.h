@@ -29,27 +29,26 @@
 #include <QMutex>
 #include <QSharedPointer>
 
-class ctkServiceTracker;
-class ctkTrackedService;
-struct ctkServiceTrackerCustomizer;
 
-class ctkServiceTrackerPrivate {
+template<class S, class T>
+class ctkServiceTrackerPrivate
+{
 
 public:
 
-  ctkServiceTrackerPrivate(ctkServiceTracker* st,
+  ctkServiceTrackerPrivate(ctkServiceTracker<S,T>* st,
                            ctkPluginContext* context,
                            const ctkServiceReference& reference,
-                           ctkServiceTrackerCustomizer* customizer);
+                           ctkServiceTrackerCustomizer<T>* customizer);
 
-  ctkServiceTrackerPrivate(ctkServiceTracker* st,
+  ctkServiceTrackerPrivate(ctkServiceTracker<S,T>* st,
       ctkPluginContext* context, const QString& clazz,
-      ctkServiceTrackerCustomizer* customizer);
+      ctkServiceTrackerCustomizer<T>* customizer);
 
   ctkServiceTrackerPrivate(
-      ctkServiceTracker* st,
+      ctkServiceTracker<S,T>* st,
       ctkPluginContext* context, const ctkLDAPSearchFilter& filter,
-      ctkServiceTrackerCustomizer* customizer);
+      ctkServiceTrackerCustomizer<T>* customizer);
 
   ~ctkServiceTrackerPrivate();
 
@@ -85,7 +84,7 @@ public:
   /**
    * The <code>ctkServiceTrackerCustomizer</code> for this tracker.
    */
-  ctkServiceTrackerCustomizer* customizer;
+  ctkServiceTrackerCustomizer<T>* customizer;
 
   /**
    * Filter string for use when adding the ServiceListener. If this field is
@@ -110,7 +109,7 @@ public:
    * Tracked services: <code>ctkServiceReference</code> -> customized Object and
    * <code>ctkServiceSlotEntry</code> object
    */
-  QSharedPointer<ctkTrackedService> trackedService;
+  QSharedPointer<ctkTrackedService<S,T> > trackedService;
 
   /**
    * Accessor method for the current ctkTrackedService object. This method is only
@@ -119,7 +118,7 @@ public:
    *
    * @return The current Tracked object.
    */
-  QSharedPointer<ctkTrackedService> tracked() const;
+  QSharedPointer<ctkTrackedService<S,T> > tracked() const;
 
   /**
    * Called by the ctkTrackedService object whenever the set of tracked services is
@@ -142,16 +141,28 @@ public:
    *
    * This field is volatile since it is accessed by multiple threads.
    */
-  mutable QObject* volatile cachedService;
+  mutable T volatile cachedService;
 
   mutable QMutex mutex;
 
 private:
 
-  Q_DECLARE_PUBLIC(ctkServiceTracker)
+  inline ctkServiceTracker<S,T>* q_func()
+  {
+    return static_cast<ctkServiceTracker<S,T> *>(q_ptr);
+  }
 
-  ctkServiceTracker * const q_ptr;
+  inline const ctkServiceTracker<S,T>* q_func() const
+  {
+    return static_cast<const ctkServiceTracker<S,T> *>(q_ptr);
+  }
+
+  friend class ctkServiceTracker<S,T>;
+
+  ctkServiceTracker<S,T> * const q_ptr;
 
 };
+
+#include "ctkServiceTrackerPrivate.cpp"
 
 #endif // CTKSERVICETRACKERPRIVATE_H
