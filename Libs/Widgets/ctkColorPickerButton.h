@@ -30,24 +30,23 @@
 class ctkColorPickerButtonPrivate;
 
 ///
-/// ctkColorPickerButton is a QPushButton that refers to a color. The color 
+/// ctkColorPickerButton is a QPushButton that refers to a color. The color
 /// and the name of the color (i.e. #FFFFFF) are displayed on the button.
-/// When clicked, a color dialog pops up to select a new color 
+/// When clicked, a color dialog pops up to select a new color
 /// for the QPushButton.
 class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 {
   Q_OBJECT
-  Q_ENUMS(ColorDialogOption)
   Q_FLAGS(ColorDialogOption ColorDialogOptions)
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true)
   Q_PROPERTY(bool displayColorName READ displayColorName WRITE setDisplayColorName DESIGNABLE true)
-  Q_PROPERTY(ColorDialogOptions dialogOptions READ dialogOptions WRITE setDialogOptions DESIGNABLE true)
+  Q_PROPERTY(ColorDialogOptions dialogOptions READ dialogOptions WRITE setDialogOptions)
 public:
   enum ColorDialogOption {
     ShowAlphaChannel    = 0x00000001,
     NoButtons           = 0x00000002,
     DontUseNativeDialog = 0x00000004,
-    UseCTKColorDialog   = 0x00000008
+    UseCTKColorDialog   = 0x0000000C
   };
   Q_DECLARE_FLAGS(ColorDialogOptions, ColorDialogOption)
 
@@ -59,10 +58,10 @@ public:
   explicit ctkColorPickerButton(const QString& text, QWidget* parent = 0 );
   /// The text will be shown on the button if
   /// displayColorName is false, otherwise the color name is shown.
-  /// \sa setColor, QPushButton::setText 
+  /// \sa setColor, QPushButton::setText
   explicit ctkColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
   virtual ~ctkColorPickerButton();
- 
+
   ///
   /// Current selected color
   QColor color()const;
@@ -70,12 +69,12 @@ public:
   ///
   /// Display the color name after color selection
   bool displayColorName()const;
-  
+
   ///
   /// Set the color dialog options to configure the color dialog.
   /// \sa QColorDialog::setOptions QColorDialog::ColorDialogOption
-  void setDialogOptions(ColorDialogOptions options);
-  ColorDialogOptions dialogOptions() const;
+  void setDialogOptions(const ColorDialogOptions& options);
+  const ColorDialogOptions& dialogOptions() const;
 
 
 public slots:

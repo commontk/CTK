@@ -52,7 +52,6 @@ public:
 ctkColorPickerButtonPrivate::ctkColorPickerButtonPrivate(ctkColorPickerButton& object)
   : q_ptr(&object)
 {
-  qRegisterMetaType<ctkColorPickerButton::ColorDialogOptions>("ctkColorPickerButton::ColorDialogOptions");
   this->Color = Qt::black;
   this->DisplayColorName = true;
   this->DialogOptions = 0;
@@ -170,14 +169,14 @@ bool ctkColorPickerButton::displayColorName()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkColorPickerButton::setDialogOptions(ColorDialogOptions options)
+void ctkColorPickerButton::setDialogOptions(const ColorDialogOptions& options)
 {
   Q_D(ctkColorPickerButton);
   d->DialogOptions = options;
 }
 
 //-----------------------------------------------------------------------------
-ctkColorPickerButton::ColorDialogOptions ctkColorPickerButton::dialogOptions()const
+const ctkColorPickerButton::ColorDialogOptions& ctkColorPickerButton::dialogOptions()const
 {
   Q_D(const ctkColorPickerButton);
   return d->DialogOptions;
@@ -191,7 +190,7 @@ void ctkColorPickerButton::setColor(const QColor& newColor)
     {
     return;
     }
-  
+
   d->Color = newColor;
   d->computeIcon();
 
