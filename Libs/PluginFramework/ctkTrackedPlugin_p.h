@@ -92,6 +92,6 @@ private:
                          const ctkPluginEvent& related, T object);
 };
 
-#include "ctkTrackedPlugin.cpp"
+#include "ctkTrackedPlugin.tpp"
 
 #endif // CTKTRACKEDPLUGIN_P_H

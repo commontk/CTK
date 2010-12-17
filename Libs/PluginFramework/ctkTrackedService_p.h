@@ -95,6 +95,6 @@ private:
                          const ctkServiceEvent& related, T object) ;
 };
 
-#include "ctkTrackedService.cpp"
+#include "ctkTrackedService.tpp"
 
 #endif // CTKTRACKEDSERVICE_P_H

@@ -420,6 +420,6 @@ private:
   const QScopedPointer<ServiceTrackerPrivate> d_ptr;
 };
 
-#include "ctkServiceTracker.cpp"
+#include "ctkServiceTracker.tpp"
 
 #endif // CTKSERVICETRACKER_H

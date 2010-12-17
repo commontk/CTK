@@ -11,6 +11,8 @@ SET(KIT_export_directive "CTK_PLUGINFW_EXPORT")
 SET(KIT_SRCS
   ctkLDAPSearchFilter.cpp
   ctkPlugin.cpp
+  ctkPluginAbstractTracked_p.h
+  ctkPluginAbstractTracked.tpp
   ctkPluginArchive.cpp
   ctkPluginConstants.cpp
   ctkPluginContext.cpp
@@ -27,6 +29,10 @@ SET(KIT_SRCS
   ctkPluginFrameworkUtil.cpp
   ctkPluginManifest.cpp
   ctkPluginPrivate.cpp
+  ctkPluginTracker.h
+  ctkPluginTracker.tpp
+  ctkPluginTrackerPrivate.h
+  ctkPluginTrackerPrivate.tpp
   ctkPlugins.cpp
   ctkRequirePlugin.cpp
   ctkServiceEvent.cpp
@@ -38,6 +44,14 @@ SET(KIT_SRCS
   ctkServiceRegistrationPrivate.cpp
   ctkServices.cpp
   ctkServiceSlotEntry.cpp
+  ctkServiceTracker.h
+  ctkServiceTracker.tpp
+  ctkServiceTrackerPrivate.h
+  ctkServiceTrackerPrivate.tpp
+  ctkTrackedPlugin_p.h
+  ctkTrackedPlugin.tpp
+  ctkTrackedService_p.h
+  ctkTrackedService.tpp
   ctkPluginStorage.cpp
   ctkVersion.cpp
   ctkVersionRange.cpp

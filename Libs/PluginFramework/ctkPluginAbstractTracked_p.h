@@ -261,6 +261,6 @@ private:
 
 };
 
-#include "ctkPluginAbstractTracked.cpp"
+#include "ctkPluginAbstractTracked.tpp"
 
 #endif // CTKPLUGINABSTRACTTRACKED_P_H

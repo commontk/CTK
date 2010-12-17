@@ -92,6 +92,6 @@ private:
   ctkPluginTracker<T> * const q_ptr;
 };
 
-#include "ctkPluginTrackerPrivate.cpp"
+#include "ctkPluginTrackerPrivate.tpp"
 
 #endif // CTKPLUGINTRACKERPRIVATE_H

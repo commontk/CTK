@@ -271,6 +271,6 @@ private:
 };
 
 
-#include "ctkPluginTracker.cpp"
+#include "ctkPluginTracker.tpp"
 
 #endif // CTKPLUGINTRACKER_H
