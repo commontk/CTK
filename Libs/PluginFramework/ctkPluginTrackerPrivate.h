@@ -28,17 +28,14 @@
 #include <QSharedPointer>
 #include <QMutex>
 
-class ctkPluginTracker;
-class ctkPluginContext;
-class ctkTrackedPlugin;
-struct ctkPluginTrackerCustomizer;
 
+template<class T>
 class ctkPluginTrackerPrivate
 {
 public:
-  ctkPluginTrackerPrivate(ctkPluginTracker* pt,
+  ctkPluginTrackerPrivate(ctkPluginTracker<T>* pt,
                           ctkPluginContext* context, ctkPlugin::States stateMask,
-                          ctkPluginTrackerCustomizer* customizer);
+                          ctkPluginTrackerCustomizer<T>* customizer);
 
   ~ctkPluginTrackerPrivate();
 
@@ -49,7 +46,7 @@ public:
    *
    * @return The current ctkTrackedPlugin object.
    */
-  QSharedPointer<ctkTrackedPlugin> tracked() const;
+  QSharedPointer<ctkTrackedPlugin<T> > tracked() const;
 
   /* set this to true to compile in debug messages */
   static const bool DEBUG; //	= false;
@@ -62,13 +59,13 @@ public:
   /**
    * The <code>ctkPluginTrackerCustomizer</code> object for this tracker.
    */
-  ctkPluginTrackerCustomizer* customizer;
+  ctkPluginTrackerCustomizer<T>* customizer;
 
   /**
    * Tracked plugins: <code>ctkPlugin</code> object -> customized Object and
    * plugin listener slot.
    */
-  QSharedPointer<ctkTrackedPlugin> trackedPlugin;
+  QSharedPointer<ctkTrackedPlugin<T> > trackedPlugin;
 
   /**
    * State mask for plugins being tracked. This field contains the ORed values
@@ -80,9 +77,21 @@ public:
 
 private:
 
-  Q_DECLARE_PUBLIC(ctkPluginTracker)
+  inline ctkPluginTracker<T>* q_func()
+  {
+    return static_cast<ctkPluginTracker<T> *>(q_ptr);
+  }
 
-  ctkPluginTracker * const q_ptr;
+  inline const ctkPluginTracker<T>* q_func() const
+  {
+    return static_cast<const ctkPluginTracker<T> *>(q_ptr);
+  }
+
+  friend class ctkPluginTracker<T>;
+
+  ctkPluginTracker<T> * const q_ptr;
 };
+
+#include "ctkPluginTrackerPrivate.cpp"
 
 #endif // CTKPLUGINTRACKERPRIVATE_H

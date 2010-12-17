@@ -30,7 +30,8 @@
 #include "ctkPlugin.h"
 #include "ctkPluginTrackerCustomizer.h"
 
-class ctkPluginTrackerPrivate;
+template<class T> class ctkTrackedPlugin;
+template<class T> class ctkPluginTrackerPrivate;
 
 /**
  * The <code>ctkPluginTracker</code> class simplifies tracking plugins much like
@@ -53,9 +54,13 @@ class ctkPluginTrackerPrivate;
  * <code>ctkPluginTrackerCustomizer</code> implementations must also be
  * thread-safe.
  *
- * @ThreadSafe
+ * \tparam T The type of the tracked object. The type must be an assignable
+ *         datatype, provide a boolean conversion function, and provide
+ *         a constructor and an assignment operator which can handle 0 as an argument.
+ * \threadsafe
  */
-class CTK_PLUGINFW_EXPORT ctkPluginTracker : protected ctkPluginTrackerCustomizer
+template<class T = QSharedPointer<ctkPlugin> >
+class ctkPluginTracker : protected ctkPluginTrackerCustomizer<T>
 {
 public:
 
@@ -85,7 +90,7 @@ public:
    * @see ctkPlugin#getState()
    */
   ctkPluginTracker(ctkPluginContext* context, ctkPlugin::States stateMask,
-                   ctkPluginTrackerCustomizer* customizer = 0);
+                   ctkPluginTrackerCustomizer<T>* customizer = 0);
 
   /**
    * Open this <code>ctkPluginTracker</code> and begin tracking plugins.
@@ -131,7 +136,7 @@ public:
    *         <code>null</code> if the specified <code>ctkPlugin</code> is not
    *         being tracked.
    */
-  QVariant getObject(QSharedPointer<ctkPlugin> plugin) const;
+  T getObject(QSharedPointer<ctkPlugin> plugin) const;
 
   /**
    * Remove a plugin from this <code>ctkPluginTracker</code>.
@@ -200,7 +205,7 @@ protected:
    * @return The specified plugin.
    * @see ctkPluginTrackerCustomizer::addingPlugin(ctkPlugin*, const ctkPluginEvent&)
    */
-  QVariant addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event);
+  T addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event);
 
   /**
    * Default implementation of the
@@ -220,7 +225,7 @@ protected:
    * @param object The customized object for the specified ctkPlugin.
    * @see ctkPluginTrackerCustomizer::modifiedPlugin(ctkPlugin*, const ctkPluginEvent&, QVariant)
    */
-  void modifiedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, QVariant object);
+  void modifiedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, T object);
 
   /**
    * Default implementation of the
@@ -240,15 +245,32 @@ protected:
    * @param object The customized object for the specified plugin.
    * @see ctkPluginTrackerCustomizer::removedPlugin(ctkPlugin*, const ctkPluginEvent&, QVariant)
    */
-  void removedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, QVariant object);
+  void removedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, T object);
 
 private:
 
-  friend class ctkTrackedPlugin;
+  typedef ctkPluginTracker<T> PluginTracker;
+  typedef ctkTrackedPlugin<T> TrackedPlugin;
+  typedef ctkPluginTrackerPrivate<T> PluginTrackerPrivate;
+  typedef ctkPluginTrackerCustomizer<T> PluginTrackerCustomizer;
 
-  Q_DECLARE_PRIVATE(ctkPluginTracker)
+  friend class ctkTrackedPlugin<T>;
+  friend class ctkPluginTrackerPrivate<T>;
 
-  const QScopedPointer<ctkPluginTrackerPrivate> d_ptr;
+  inline PluginTrackerPrivate* d_func()
+  {
+    return reinterpret_cast<PluginTrackerPrivate*>(qGetPtrHelper(d_ptr));
+  }
+
+  inline const PluginTrackerPrivate* d_func() const
+  {
+    return reinterpret_cast<const PluginTrackerPrivate*>(qGetPtrHelper(d_ptr));
+  }
+
+  const QScopedPointer<PluginTrackerPrivate> d_ptr;
 };
+
+
+#include "ctkPluginTracker.cpp"
 
 #endif // CTKPLUGINTRACKER_H

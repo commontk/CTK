@@ -20,25 +20,22 @@
 =============================================================================*/
 
 
-#include "ctkTrackedPlugin_p.h"
-
-#include "ctkPluginTracker.h"
-#include "ctkPluginTrackerPrivate.h"
-
-ctkTrackedPlugin::ctkTrackedPlugin(ctkPluginTracker* pluginTracker,
-                 ctkPluginTrackerCustomizer* customizer)
+template<class T>
+ctkTrackedPlugin<T>::ctkTrackedPlugin(ctkPluginTracker<T>* pluginTracker,
+                 ctkPluginTrackerCustomizer<T>* customizer)
   : pluginTracker(pluginTracker), customizer(customizer)
 {
 
 }
 
-void ctkTrackedPlugin::pluginChanged(const ctkPluginEvent& event)
+template<class T>
+void ctkTrackedPlugin<T>::pluginChanged(const ctkPluginEvent& event)
 {
   /*
    * Check if we had a delayed call (which could happen when we
    * close).
    */
-  if (closed)
+  if (this->closed)
   {
     return;
   }
@@ -47,12 +44,12 @@ void ctkTrackedPlugin::pluginChanged(const ctkPluginEvent& event)
   ctkPlugin::State state = plugin->getState();
   if (pluginTracker->d_func()->DEBUG)
   {
-    qDebug() << "ctkTrackedPlugin::pluginChanged[" << state << "]: " << *plugin;
+    qDebug() << "ctkTrackedPlugin<T>::pluginChanged[" << state << "]: " << *plugin;
   }
 
   if (pluginTracker->d_func()->mask & state)
   {
-    track(plugin, event);
+    this->track(plugin, event);
     /*
      * If the customizer throws an exception, it is safe
      * to let it propagate
@@ -60,7 +57,7 @@ void ctkTrackedPlugin::pluginChanged(const ctkPluginEvent& event)
   }
   else
   {
-    untrack(plugin, event);
+    this->untrack(plugin, event);
     /*
      * If the customizer throws an exception, it is safe
      * to let it propagate
@@ -68,20 +65,25 @@ void ctkTrackedPlugin::pluginChanged(const ctkPluginEvent& event)
   }
 }
 
-QVariant ctkTrackedPlugin::customizerAdding(QSharedPointer<ctkPlugin> item,
-    ctkPluginEvent related)
+template<class T>
+T ctkTrackedPlugin<T>::customizerAdding(QSharedPointer<ctkPlugin> item,
+                                     const ctkPluginEvent& related)
 {
   return customizer->addingPlugin(item, related);
 }
 
-void ctkTrackedPlugin::customizerModified(QSharedPointer<ctkPlugin> item,
-    ctkPluginEvent related, QVariant object)
+template<class T>
+void ctkTrackedPlugin<T>::customizerModified(QSharedPointer<ctkPlugin> item,
+                                          const ctkPluginEvent& related,
+                                          T object)
 {
   customizer->modifiedPlugin(item, related, object);
 }
 
-void ctkTrackedPlugin::customizerRemoved(QSharedPointer<ctkPlugin> item,
-    ctkPluginEvent related, QVariant object)
+template<class T>
+void ctkTrackedPlugin<T>::customizerRemoved(QSharedPointer<ctkPlugin> item,
+                                         const ctkPluginEvent& related,
+                                         T object)
 {
   customizer->removedPlugin(item, related, object);
 }

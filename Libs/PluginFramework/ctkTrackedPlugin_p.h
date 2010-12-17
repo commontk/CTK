@@ -25,23 +25,21 @@
 
 #include <QSharedPointer>
 
+#include "ctkTrackedPluginListener_p.h"
 #include "ctkPluginAbstractTracked_p.h"
 #include "ctkPluginEvent.h"
 #include "ctkPlugin.h"
 
-class ctkPluginTracker;
-struct ctkPluginTrackerCustomizer;
 
-class ctkTrackedPlugin : public QObject,
-    public ctkPluginAbstractTracked<QSharedPointer<ctkPlugin>, ctkPluginEvent>
+template<class T>
+class ctkTrackedPlugin : public ctkTrackedPluginListener,
+    public ctkPluginAbstractTracked<QSharedPointer<ctkPlugin>, T, ctkPluginEvent>
 {
-  Q_OBJECT
 
 public:
-  ctkTrackedPlugin(ctkPluginTracker* pluginTracker,
-                   ctkPluginTrackerCustomizer* customizer);
+  ctkTrackedPlugin(ctkPluginTracker<T>* pluginTracker,
+                   ctkPluginTrackerCustomizer<T>* customizer);
 
-private slots:
 
   /**
    * Slot for the <code>ctkPluginTracker</code>
@@ -54,10 +52,10 @@ private slots:
 
 private:
 
-  typedef ctkPluginAbstractTracked<QSharedPointer<ctkPlugin>, ctkPluginEvent> Superclass;
+  typedef ctkPluginAbstractTracked<QSharedPointer<ctkPlugin>, T, ctkPluginEvent> Superclass;
 
-  ctkPluginTracker* pluginTracker;
-  ctkPluginTrackerCustomizer* customizer;
+  ctkPluginTracker<T>* pluginTracker;
+  ctkPluginTrackerCustomizer<T>* customizer;
 
   /**
    * Call the specific customizer adding method. This method must not be
@@ -68,8 +66,8 @@ private:
    * @return Customized object for the tracked item or <code>null</code>
    *         if the item is not to be tracked.
    */
-  QVariant customizerAdding(QSharedPointer<ctkPlugin> item,
-                            ctkPluginEvent related);
+  T customizerAdding(QSharedPointer<ctkPlugin> item,
+                     const ctkPluginEvent& related);
 
   /**
    * Call the specific customizer modified method. This method must not be
@@ -80,7 +78,7 @@ private:
    * @param object Customized object for the tracked item.
    */
   void customizerModified(QSharedPointer<ctkPlugin> item,
-                          ctkPluginEvent related, QVariant object);
+                          const ctkPluginEvent& related, T object);
 
   /**
    * Call the specific customizer removed method. This method must not be
@@ -91,7 +89,9 @@ private:
    * @param object Customized object for the tracked item.
    */
   void customizerRemoved(QSharedPointer<ctkPlugin> item,
-                         ctkPluginEvent related, QVariant object);
+                         const ctkPluginEvent& related, T object);
 };
+
+#include "ctkTrackedPlugin.cpp"
 
 #endif // CTKTRACKEDPLUGIN_P_H

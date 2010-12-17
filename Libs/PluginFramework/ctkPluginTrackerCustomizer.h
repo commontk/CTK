@@ -32,7 +32,7 @@ class ctkPlugin;
 
 /**
  * The <code>ctkPluginTrackerCustomizer</code> interface allows a
- * <code>ctkPluginTracker</code> to customize the <code>Plugin</code>s that are
+ * <code>ctkPluginTracker</code> to customize the <code>ctkPlugin</code>s that are
  * tracked. A <code>ctkPluginTrackerCustomizer</code> is called when a plugin is
  * being added to a <code>ctkPluginTracker</code>. The
  * <code>ctkPluginTrackerCustomizer</code> can then return an object for the
@@ -54,8 +54,10 @@ class ctkPlugin;
  * <code>ctkPluginTrackerCustomizer</code> implementations must also be
  * thread-safe.
  *
- * @ThreadSafe
+ * \tparam T The type of the tracked object.
+ * \threadsafe
  */
+template<class T>
 struct ctkPluginTrackerCustomizer {
 
   virtual ~ctkPluginTrackerCustomizer() {}
@@ -81,7 +83,7 @@ struct ctkPluginTrackerCustomizer {
    *         object or <code>null</code> if the specified <code>ctkPlugin</code>
    *         object should not be tracked.
    */
-  virtual QVariant addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event) = 0;
+  virtual T addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event) = 0;
 
   /**
    * A plugin tracked by the <code>ctkPluginTracker</code> has been modified.
@@ -98,7 +100,7 @@ struct ctkPluginTrackerCustomizer {
    * @param object The tracked object for the specified plugin.
    */
   virtual void modifiedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event,
-      QVariant object) = 0;
+      T object) = 0;
 
   /**
    * A plugin tracked by the <code>ctkPluginTracker</code> has been removed.
@@ -115,7 +117,7 @@ struct ctkPluginTrackerCustomizer {
    * @param object The tracked object for the specified plugin.
    */
   virtual void removedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event,
-      QVariant object) = 0;
+      T object) = 0;
 };
 
 #endif // CTKPLUGINTRACKERCUSTOMIZER_H

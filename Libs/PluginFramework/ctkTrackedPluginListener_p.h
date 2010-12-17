@@ -20,31 +20,33 @@
 =============================================================================*/
 
 
-#include "ctkTrackedPlugin_p.h"
+#ifndef CTKTRACKEDPLUGINLISTENER_P_H
+#define CTKTRACKEDPLUGINLISTENER_P_H
 
-template<class T>
-const bool ctkPluginTrackerPrivate<T>::DEBUG = true;
+#include <QObject>
 
-template<class T>
-ctkPluginTrackerPrivate<T>::ctkPluginTrackerPrivate(
-    ctkPluginTracker<T>* pt, ctkPluginContext* context,
-    ctkPlugin::States stateMask, ctkPluginTrackerCustomizer<T>* customizer)
-  : context(context), customizer(customizer), mask(stateMask), q_ptr(pt)
+#include "ctkPluginEvent.h"
+
+class CTK_PLUGINFW_EXPORT ctkTrackedPluginListener : public QObject
 {
-  this->customizer = customizer ? customizer : q_func();
-}
+  Q_OBJECT
 
-template<class T>
-ctkPluginTrackerPrivate<T>::~ctkPluginTrackerPrivate()
-{
-  if (customizer != q_func())
-  {
-    delete customizer;
-  }
-}
+public:
+  ctkTrackedPluginListener(QObject *parent = 0)
+    : QObject(parent)
+  {}
 
-template<class T>
-QSharedPointer<ctkTrackedPlugin<T> > ctkPluginTrackerPrivate<T>::tracked() const
-{
-  return trackedPlugin;
-}
+public slots:
+
+  /**
+   * Slot for the <code>ctkPluginTracker</code>
+   * class. This method must NOT be synchronized to avoid deadlock
+   * potential.
+   *
+   * @param event <code>ctkPluginEvent</code> object from the framework.
+   */
+  virtual void pluginChanged(const ctkPluginEvent& event) = 0;
+
+};
+
+#endif // CTKTRACKEDPLUGINLISTENER_P_H
