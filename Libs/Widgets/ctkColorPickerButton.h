@@ -38,6 +38,7 @@ class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 {
   Q_OBJECT
   Q_ENUMS(ColorDialogOption)
+  Q_FLAGS(ColorDialogOption ColorDialogOptions)
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true)
   Q_PROPERTY(bool displayColorName READ displayColorName WRITE setDisplayColorName DESIGNABLE true)
   Q_PROPERTY(ColorDialogOptions dialogOptions READ dialogOptions WRITE setDialogOptions DESIGNABLE true)
