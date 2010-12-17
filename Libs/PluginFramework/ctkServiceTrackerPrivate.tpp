@@ -104,10 +104,7 @@ ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
 template<class S, class T>
 ctkServiceTrackerPrivate<S,T>::~ctkServiceTrackerPrivate()
 {
-  if (customizer != q_func())
-  {
-    delete customizer;
-  }
+
 }
 
 template<class S, class T>
