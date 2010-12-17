@@ -46,7 +46,7 @@ public:
     ShowAlphaChannel    = 0x00000001,
     NoButtons           = 0x00000002,
     DontUseNativeDialog = 0x00000004,
-    UseCTKColorDialog   = 0x0000000C
+    UseCTKColorDialog   = 0x00000008
   };
   Q_DECLARE_FLAGS(ColorDialogOptions, ColorDialogOption)
 
