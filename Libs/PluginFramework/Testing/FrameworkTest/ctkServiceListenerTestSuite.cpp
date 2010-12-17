@@ -393,8 +393,8 @@ bool ctkServiceListenerTestSuite::runStartStopTest(
   return teststatus;
 }
 
-ctkServiceListener::ctkServiceListener(ctkPluginContext* pc, bool checkUsingBundles)
-  : checkUsingBundles(checkUsingBundles), teststatus(true), pc(pc)
+ctkServiceListener::ctkServiceListener(ctkPluginContext* pc, bool checkUsingPlugins)
+  : checkUsingPlugins(checkUsingPlugins), teststatus(true), pc(pc)
 {
 
 }
@@ -433,7 +433,7 @@ void ctkServiceListener::serviceChanged(const ctkServiceEvent& evt)
 
     // Validate that no bundle is marked as using the service
     QList<QSharedPointer<ctkPlugin> > usingPlugins = sr.getUsingPlugins();
-    if (checkUsingBundles && !usingPlugins.isEmpty())
+    if (checkUsingPlugins && !usingPlugins.isEmpty())
     {
       teststatus = false;
       printUsingPlugins(sr, "*** Using plugins (unreg) should be empty but is: ");
@@ -452,7 +452,7 @@ void ctkServiceListener::serviceChanged(const ctkServiceEvent& evt)
                  << "while handling unregistering event.";
       }
       qDebug() << "Service (unreg): " << service->metaObject()->className();
-      if (checkUsingBundles && usingPlugins.size() != 1)
+      if (checkUsingPlugins && usingPlugins.size() != 1)
       {
         teststatus = false;
         printUsingPlugins(sr, "*** One using plugin expected "
