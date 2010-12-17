@@ -37,10 +37,19 @@ class ctkColorPickerButtonPrivate;
 class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 {
   Q_OBJECT
+  Q_ENUMS(ColorDialogOption)
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true)
   Q_PROPERTY(bool displayColorName READ displayColorName WRITE setDisplayColorName DESIGNABLE true)
-  Q_PROPERTY(bool showAlpha READ showAlpha WRITE setShowAlpha DESIGNABLE true)
+  Q_PROPERTY(ColorDialogOptions dialogOptions READ dialogOptions WRITE setDialogOptions DESIGNABLE true)
 public:
+  enum ColorDialogOption {
+    ShowAlphaChannel    = 0x00000001,
+    NoButtons           = 0x00000002,
+    DontUseNativeDialog = 0x00000004,
+    UseCTKColorDialog   = 0x0000000C
+  };
+  Q_DECLARE_FLAGS(ColorDialogOptions, ColorDialogOption)
+
   /// By default, the color is black
   explicit ctkColorPickerButton(QWidget* parent = 0);
   /// By default, the color is black. The text will be shown on the button if
@@ -62,17 +71,18 @@ public:
   bool displayColorName()const;
   
   ///
-  /// Returns true if alpha is shown on the color dialog
-  /// \sa QColorDialog::ShowAlphaChannel
-  void setShowAlpha(bool show);
-  bool showAlpha()const;
+  /// Set the color dialog options to configure the color dialog.
+  /// \sa QColorDialog::setOptions QColorDialog::ColorDialogOption
+  void setDialogOptions(ColorDialogOptions options);
+  ColorDialogOptions dialogOptions() const;
+
 
 public slots:
   ///
   /// Set a new current color without opening a dialog
   void setColor(const QColor& color);
 
-  /// 
+  ///
   /// Opens a color dialog to select a new current color.
   void changeColor();
 
@@ -97,5 +107,7 @@ private :
   Q_DECLARE_PRIVATE(ctkColorPickerButton);
   Q_DISABLE_COPY(ctkColorPickerButton);
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkColorPickerButton::ColorDialogOptions)
 
 #endif

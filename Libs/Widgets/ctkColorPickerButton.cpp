@@ -29,6 +29,7 @@
 #include <QStylePainter>
 
 // CTK includes
+#include "ctkColorDialog.h"
 #include "ctkColorPickerButton.h"
 
 class ctkColorPickerButtonPrivate
@@ -44,7 +45,7 @@ public:
   QIcon  Icon;
   QColor Color;
   bool   DisplayColorName;
-  bool   ShowAlpha;
+  ctkColorPickerButton::ColorDialogOptions DialogOptions;
 };
 
 //-----------------------------------------------------------------------------
@@ -53,7 +54,7 @@ ctkColorPickerButtonPrivate::ctkColorPickerButtonPrivate(ctkColorPickerButton& o
 {
   this->Color = Qt::black;
   this->DisplayColorName = true;
-  this->ShowAlpha = false;
+  this->DialogOptions = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -121,14 +122,20 @@ void ctkColorPickerButton::changeColor()
 {
   Q_D(ctkColorPickerButton);
   QColor res;
-  if (d->ShowAlpha)
+    QColorDialog::ColorDialogOptions options;
+    options |= QColorDialog::ColorDialogOption(
+      static_cast<int>(d->DialogOptions & ShowAlphaChannel));
+    options |= QColorDialog::ColorDialogOption(
+      static_cast<int>(d->DialogOptions & NoButtons));
+    options |= QColorDialog::ColorDialogOption(
+      static_cast<int>(d->DialogOptions & DontUseNativeDialog));
+  if (d->DialogOptions & UseCTKColorDialog)
     {
-    res = QColorDialog::getColor(
-      d->Color, this, QString(""), QColorDialog::ShowAlphaChannel );
+    res = ctkColorDialog::getColor(d->Color, this, QString(""),options);
     }
   else
     {
-    res = QColorDialog::getColor(d->Color);
+    res = QColorDialog::getColor(d->Color, this, QString(""), options);
     }
   if (res.isValid())
     {
@@ -162,17 +169,17 @@ bool ctkColorPickerButton::displayColorName()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkColorPickerButton::setShowAlpha(bool show)
+void ctkColorPickerButton::setDialogOptions(ColorDialogOptions options)
 {
   Q_D(ctkColorPickerButton);
-  d->ShowAlpha = show;
+  d->DialogOptions = options;
 }
 
 //-----------------------------------------------------------------------------
-bool ctkColorPickerButton::showAlpha()const
+ctkColorPickerButton::ColorDialogOptions ctkColorPickerButton::dialogOptions()const
 {
   Q_D(const ctkColorPickerButton);
-  return d->ShowAlpha;
+  return d->DialogOptions;
 }
 
 //-----------------------------------------------------------------------------

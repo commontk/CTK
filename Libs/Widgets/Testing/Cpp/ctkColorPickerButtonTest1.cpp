@@ -84,11 +84,12 @@ int ctkColorPickerButtonTest1(int argc, char * argv [] )
               << std::endl;
     return EXIT_FAILURE;
     }
-    
-  colorPicker2.setShowAlpha(true);
-  if (!colorPicker2.showAlpha())
+
+  colorPicker2.setDialogOptions(ctkColorPickerButton::ShowAlphaChannel | ctkColorPickerButton::UseCTKColorDialog);
+  if (!colorPicker2.dialogOptions().testFlag(ctkColorPickerButton::ShowAlphaChannel) ||
+      !colorPicker2.dialogOptions().testFlag(ctkColorPickerButton::UseCTKColorDialog))
     {
-    std::cerr << "ctkColorPickerButton::setShowAlpha failed" << std::endl;
+    std::cerr << "ctkColorPickerButton::setDialogOptions failed" << std::endl;
     return EXIT_FAILURE;
     }
 
