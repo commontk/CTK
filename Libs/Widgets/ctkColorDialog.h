@@ -73,7 +73,7 @@ public:
   /// The \a options argument allows you to customize the dialog;
   /// QColorDialog::DontUseNativeDialog is forced
   static QColor getColor(const QColor &initial, QWidget *parent,
-                         const QString &title, ColorDialogOptions options);
+                         const QString &title, ColorDialogOptions options = 0);
   /// Add a custom widget as an additional tab of the color dialog created by 
   /// ctkColorDialog::getColor. \a label is title of the tab and \a signal is the signal fired by 
   /// the widget whenever a QColor is changed, typically: SIGNAL(currentColorChanged(QColor)). It
