@@ -20,19 +20,19 @@
 =============================================================================*/
 
 
-#include "ctkTestPluginA_p.h"
+#include "ctkTestPluginA2_p.h"
 
 #include <ctkPluginContext.h>
 #include <ctkServiceRegistration.h>
 
 #include <QStringList>
 
-ctkTestPluginA::ctkTestPluginA(ctkPluginContext* pc)
+ctkTestPluginA2::ctkTestPluginA2(ctkPluginContext* pc)
 {
-  sr = pc->registerService<ctkTestPluginAService>(this);
+  sr = pc->registerService<ctkTestPluginA2Service>(this);
 }
 
-void ctkTestPluginA::unregister()
+void ctkTestPluginA2::unregister()
 {
   if (sr)
   {

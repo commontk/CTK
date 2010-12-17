@@ -19,16 +19,16 @@
 
 =============================================================================*/
 
-#ifndef CTKTESTPLUGINAACTIVATOR_P_H
-#define CTKTESTPLUGINAACTIVATOR_P_H
+#ifndef CTKTESTPLUGINA2ACTIVATOR_P_H
+#define CTKTESTPLUGINA2ACTIVATOR_P_H
 
 #include <QScopedPointer>
 
 #include <ctkPluginActivator.h>
 
-#include "ctkTestPluginA_p.h"
+#include "ctkTestPluginA2_p.h"
 
-class ctkTestPluginAActivator : public QObject,
+class ctkTestPluginA2Activator : public QObject,
                                 public ctkPluginActivator
 {
   Q_OBJECT
@@ -41,8 +41,8 @@ public:
 
 private:
 
-  QScopedPointer<ctkTestPluginA> s;
+  QScopedPointer<ctkTestPluginA2> s;
 
 };
 
-#endif // CTKTESTPLUGINAACTIVATOR_P_H
+#endif // CTKTESTPLUGINA2ACTIVATOR_P_H
