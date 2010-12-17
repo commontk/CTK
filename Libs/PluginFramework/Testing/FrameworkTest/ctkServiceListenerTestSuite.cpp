@@ -524,7 +524,7 @@ void ctkServiceListener::printUsingPlugins(const ctkServiceReference& sr,
   qDebug() << (caption.isEmpty() ? "Using plugins: " : caption);
   foreach(QSharedPointer<ctkPlugin> plugin, usingPlugins)
   {
-    qDebug() << "  -" << plugin;
+    qDebug() << "  -" << plugin.data();
   }
 }
 
