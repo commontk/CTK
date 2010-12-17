@@ -9,32 +9,47 @@ SET(KIT_export_directive "CTK_PLUGINFW_EXPORT")
   
 # Source files
 SET(KIT_SRCS
+  ctkLDAPExpr.cpp
+  ctkLDAPExpr_p.h
   ctkLDAPSearchFilter.cpp
   ctkPlugin.cpp
   ctkPluginAbstractTracked_p.h
   ctkPluginAbstractTracked.tpp
   ctkPluginArchive.cpp
+  ctkPluginArchive_p.h
   ctkPluginConstants.cpp
   ctkPluginContext.cpp
+  ctkPluginContext_p.h
   ctkPluginDatabase.cpp
+  ctkPluginDatabase_p.h
   ctkPluginDatabaseException.cpp
   ctkPluginEvent.cpp
   ctkPluginException.cpp
   ctkPluginFramework.cpp
   ctkPluginFrameworkFactory.cpp
   ctkPluginFrameworkContext.cpp
+  ctkPluginFrameworkContext_p.h
   ctkPluginFrameworkEvent.cpp
   ctkPluginFrameworkListeners.cpp
+  ctkPluginFrameworkListeners_p.h
   ctkPluginFrameworkPrivate.cpp
+  ctkPluginFrameworkPrivate_p.h
   ctkPluginFrameworkUtil.cpp
+  ctkPluginFrameworkUtil_p.h
   ctkPluginManifest.cpp
+  ctkPluginManifest_p.h
   ctkPluginPrivate.cpp
+  ctkPluginPrivate_p.h
+  ctkPlugins.cpp
+  ctkPlugins_p.h
+  ctkPluginStorage.cpp
+  ctkPluginStorage_p.h
   ctkPluginTracker.h
   ctkPluginTracker.tpp
   ctkPluginTrackerPrivate.h
   ctkPluginTrackerPrivate.tpp
-  ctkPlugins.cpp
   ctkRequirePlugin.cpp
+  ctkRequirePlugin_p.h
   ctkServiceEvent.cpp
   ctkServiceException.cpp
   ctkServiceFactory.h
@@ -43,19 +58,22 @@ SET(KIT_SRCS
   ctkServiceRegistration.cpp
   ctkServiceRegistrationPrivate.cpp
   ctkServices.cpp
+  ctkServices_p.h
   ctkServiceSlotEntry.cpp
+  ctkServiceSlotEntry_p.h
   ctkServiceTracker.h
   ctkServiceTracker.tpp
   ctkServiceTrackerPrivate.h
   ctkServiceTrackerPrivate.tpp
   ctkTrackedPlugin_p.h
   ctkTrackedPlugin.tpp
+  ctkTrackedPluginListener_p.h
   ctkTrackedService_p.h
   ctkTrackedService.tpp
-  ctkPluginStorage.cpp
+  ctkTrackedServiceListener_p.h
   ctkVersion.cpp
   ctkVersionRange.cpp
-  ctkLDAPExpr.cpp
+  ctkVersionRange_p.h
 
   # EventBus sources
   EventBus/ctkEvent.cpp
