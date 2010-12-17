@@ -274,6 +274,7 @@ void ctkPluginPrivate::stop0(bool wasStarted)
   state = ctkPlugin::STOPPING;
   deactivating = true;
   //6-13:
+  ctkPluginActivator* activator = 0;
   const std::exception* savedException = 0;
   try
   {
@@ -296,6 +297,7 @@ void ctkPluginPrivate::stop0(bool wasStarted)
       {
         throw std::logic_error("Plugin is uninstalled");
       }
+      activator = pluginActivator;
       pluginActivator = 0;
     }
 
@@ -316,11 +318,14 @@ void ctkPluginPrivate::stop0(bool wasStarted)
     savedException = exc;
   }
 
+  delete activator;
+
   if (state != ctkPlugin::UNINSTALLED)
   {
     state = ctkPlugin::RESOLVED;
     deactivating = false;
     //fwCtx.packages.notifyAll();
+    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, q_func()));
   }
 
   if (savedException)
