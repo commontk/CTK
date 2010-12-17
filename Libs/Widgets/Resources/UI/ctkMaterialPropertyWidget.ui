@@ -207,6 +207,9 @@
      <property name="displayColorName">
       <bool>false</bool>
      </property>
+     <property name="dialogOptions">
+      <set>ctkColorPickerButton::UseCTKColorDialog</set>
+     </property>
     </widget>
    </item>
    <item row="6" column="0">
