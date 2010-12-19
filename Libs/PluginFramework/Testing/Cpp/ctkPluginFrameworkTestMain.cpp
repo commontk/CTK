@@ -51,14 +51,11 @@ public:
 
     QList<ctkServiceReference> refs = context->getServiceReferences<ctkTestSuiteInterface>();
 
-    int result = 0;
     foreach(ctkServiceReference ref, refs)
     {
-      result += QTest::qExec(context->getService(ref), argc, argv);
-      if (result > 0) break;
+      int result = QTest::qExec(context->getService(ref), argc, argv);
+      if (result > 0) QCoreApplication::exit(result);
     }
-
-    QCoreApplication::exit(result);
   }
 
 private:
@@ -132,6 +129,7 @@ int main(int argc, char** argv)
 //  return result;
 
   TestRunner runner(context, fwTestPluginId, argc, argv);
+  runner.connect(&runner, SIGNAL(finished()), &app, SLOT(quit()));
   runner.start();
 
   return app.exec();

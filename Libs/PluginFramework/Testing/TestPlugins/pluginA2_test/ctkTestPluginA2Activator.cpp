@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,16 +20,21 @@
 =============================================================================*/
 
 
-#ifndef CTKTESTPLUGINASERVICE_H
-#define CTKTESTPLUGINASERVICE_H
+#include "ctkTestPluginA2Activator_p.h"
 
-#include <qglobal.h>
+#include <ctkPluginContext.h>
 
-struct ctkTestPluginAService
+#include <QtPlugin>
+
+void ctkTestPluginA2Activator::start(ctkPluginContext* context)
 {
-  virtual ~ctkTestPluginAService() {}
-};
+  s.reset(new ctkTestPluginA2(context));
+}
 
-Q_DECLARE_INTERFACE(ctkTestPluginAService, "org.commontk.pluginA2test.TestPluginAService")
+void ctkTestPluginA2Activator::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context)
+  s->unregister();
+}
 
-#endif // CTKTESTPLUGINASERVICE_H
+Q_EXPORT_PLUGIN2(pluginA2_test, ctkTestPluginA2Activator)

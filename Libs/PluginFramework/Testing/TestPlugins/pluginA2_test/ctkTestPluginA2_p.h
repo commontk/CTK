@@ -20,24 +20,24 @@
 =============================================================================*/
 
 
-#ifndef CTKTESTPLUGINA_P_H
-#define CTKTESTPLUGINA_P_H
+#ifndef CTKTESTPLUGINA2_P_H
+#define CTKTESTPLUGINA2_P_H
 
 #include <QObject>
 
-#include "ctkTestPluginAService.h"
+#include "ctkTestPluginA2Service.h"
 
 class ctkPluginContext;
 class ctkServiceRegistration;
 
-class ctkTestPluginA : public QObject,
-                       public ctkTestPluginAService
+class ctkTestPluginA2 : public QObject,
+                       public ctkTestPluginA2Service
 {
   Q_OBJECT
-  Q_INTERFACES(ctkTestPluginAService)
+  Q_INTERFACES(ctkTestPluginA2Service)
 
 public:
-  ctkTestPluginA(ctkPluginContext* pc);
+  ctkTestPluginA2(ctkPluginContext* pc);
 
   void unregister();
 
@@ -46,4 +46,4 @@ private:
   ctkServiceRegistration* sr;
 };
 
-#endif // CTKTESTPLUGINA_P_H
+#endif // CTKTESTPLUGINA2_P_H
