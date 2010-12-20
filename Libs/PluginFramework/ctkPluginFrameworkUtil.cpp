@@ -410,3 +410,7 @@ bool ctkPluginFrameworkUtil::patSubstr(const QString& s, int si, const QString& 
   }
 }
 
+bool pluginIdLessThan(const QSharedPointer<ctkPlugin>& p1, const QSharedPointer<ctkPlugin>& p2)
+{
+  return p1->getPluginId() < p2->getPluginId();
+}

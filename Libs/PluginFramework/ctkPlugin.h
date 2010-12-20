@@ -492,7 +492,7 @@ public:
    *         plugin tries to change its own state.
    * @see #stop()
    */
-  void uninstall();
+  virtual void uninstall();
 
   /**
    * Returns this plugin's {@link ctkPluginContext}. The returned
@@ -718,6 +718,7 @@ public:
 protected:
 
   friend class ctkPluginFramework;
+  friend class ctkPluginFrameworkPrivate;
   friend class ctkPluginFrameworkContext;
   friend class ctkPlugins;
   friend class ctkServiceReferencePrivate;

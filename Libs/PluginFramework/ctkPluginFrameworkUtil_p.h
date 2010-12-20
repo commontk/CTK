@@ -78,6 +78,12 @@ private:
    *
    */
   static bool patSubstr(const QString& s, int si, const QString& pat, int pi);
+
 };
+
+#include <QSharedPointer>
+class ctkPlugin;
+
+bool pluginIdLessThan(const QSharedPointer<ctkPlugin>& p1, const QSharedPointer<ctkPlugin>& p2);
 
 #endif // CTKPLUGINFRAMEWORKUTIL_P_H

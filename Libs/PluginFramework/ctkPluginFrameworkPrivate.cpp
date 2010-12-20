@@ -26,13 +26,17 @@
 #include "ctkPluginContext.h"
 #include "ctkPluginContext_p.h"
 #include "ctkPluginFrameworkContext_p.h"
+#include "ctkPluginFrameworkUtil_p.h"
+
+#include <QtConcurrentRun>
 
 //----------------------------------------------------------------------------
 ctkPluginFrameworkPrivate::ctkPluginFrameworkPrivate(QWeakPointer<ctkPlugin> qq, ctkPluginFrameworkContext* fw)
   : ctkPluginPrivate(qq, fw, 0, ctkPluginConstants::SYSTEM_PLUGIN_LOCATION,
                      ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
                      // TODO: read version from the manifest resource
-                     ctkVersion(0, 9, 0))
+                     ctkVersion(0, 9, 0)),
+    shuttingDown(0)
 {
   systemHeaders.insert(ctkPluginConstants::PLUGIN_SYMBOLICNAME, symbolicName);
   systemHeaders.insert(ctkPluginConstants::PLUGIN_NAME, location);
@@ -58,3 +62,156 @@ void ctkPluginFrameworkPrivate::uninitSystemPlugin()
   this->pluginContext->d_func()->invalidate();
 }
 
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkPrivate::shutdown(bool restart)
+{
+  Locker sync(&lock);
+
+  bool wasActive = false;
+  switch (state)
+  {
+  case ctkPlugin::INSTALLED:
+  case ctkPlugin::RESOLVED:
+    shutdownDone_unlocked(false);
+    break;
+  case ctkPlugin::ACTIVE:
+    wasActive = true;
+    // Fall through
+  case ctkPlugin::STARTING:
+    if (shuttingDown.fetchAndAddOrdered(0) == 0)
+    {
+      try
+      {
+        const bool wa = wasActive;
+        shuttingDown.fetchAndStoreOrdered(1);
+        QtConcurrent::run(this, &ctkPluginFrameworkPrivate::shutdown0, restart, wa);
+      }
+      catch (const std::exception& e)
+      {
+        systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::ERROR, this->q_func(), e));
+      }
+    }
+    break;
+  case ctkPlugin::STOPPING:
+    // Shutdown already inprogress
+    break;
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkPrivate::shutdown0(bool restart, bool wasActive)
+{
+  try
+  {
+    {
+      Locker sync(&lock);
+      waitOnOperation(&lock, QString("Framework::") + (restart ? "update" : "stop"), true);
+      operation = DEACTIVATING;
+      state = ctkPlugin::STOPPING;
+    }
+
+    fwCtx->listeners.emitPluginChanged(
+        ctkPluginEvent(ctkPluginEvent::STOPPING, this->q_func()));
+
+    if (wasActive)
+    {
+      stopAllPlugins();
+    }
+
+    {
+      Locker sync(&lock);
+      fwCtx->uninit();
+      shuttingDown.fetchAndStoreOrdered(0);
+      shutdownDone_unlocked(restart);
+    }
+
+    if (restart)
+    {
+      if (wasActive)
+      {
+        q_func().toStrongRef()->start();
+      }
+      else
+      {
+        init();
+      }
+    }
+  }
+  catch (const std::exception& e)
+  {
+    shuttingDown.fetchAndStoreOrdered(0);
+    systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::ERROR, this->q_func(), e));
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkPrivate::shutdownDone_unlocked(bool restart)
+{
+  ctkPluginFrameworkEvent::Type t = restart ? ctkPluginFrameworkEvent::STOPPED_UPDATE : ctkPluginFrameworkEvent::STOPPED;
+  systemShuttingdownDone_unlocked(ctkPluginFrameworkEvent(t, this->q_func()));
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkPrivate::stopAllPlugins()
+{
+  // TODO start level
+//  if (fwCtx.startLevelController != null)
+//  {
+//    fwCtx.startLevelController.shutdown();
+//  }
+
+  // Stop all active plug-ins, in reverse plug-in ID order
+  // The list will be empty when the start level service is in use.
+  QList<QSharedPointer<ctkPlugin> > activePlugins = fwCtx->plugins->getActivePlugins();
+  qSort(activePlugins.begin(), activePlugins.end(), pluginIdLessThan);
+  QListIterator<QSharedPointer<ctkPlugin> > i(activePlugins);
+  i.toBack();
+  while(i.hasPrevious())
+  {
+    QSharedPointer<ctkPlugin> p = i.previous();
+    try
+    {
+      if (p->getState() & (ctkPlugin::ACTIVE | ctkPlugin::STARTING))
+      {
+        // Stop plugin without changing its autostart setting.
+        p->stop(ctkPlugin::STOP_TRANSIENT);
+      }
+    }
+    catch (const ctkPluginException& pe)
+    {
+      fwCtx->listeners.frameworkError(p, pe);
+    }
+  }
+
+  QList<QSharedPointer<ctkPlugin> > allPlugins = fwCtx->plugins->getPlugins();
+
+  // Set state to INSTALLED and purge any unrefreshed bundles
+  foreach (QSharedPointer<ctkPlugin> p, allPlugins)
+  {
+    if (p->getPluginId() != 0)
+    {
+      p->d_func()->setStateInstalled(false);
+      p->d_func()->purge();
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkPrivate::systemShuttingdownDone(const ctkPluginFrameworkEvent& fe)
+{
+  Locker sync(&lock);
+  systemShuttingdownDone_unlocked(fe);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkPrivate::systemShuttingdownDone_unlocked(const ctkPluginFrameworkEvent& fe)
+{
+
+  if (state != ctkPlugin::INSTALLED)
+  {
+    state = ctkPlugin::RESOLVED;
+    operation.fetchAndStoreOrdered(IDLE);
+    lock.wakeAll();
+  }
+  stopEvent = fe;
+}

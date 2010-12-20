@@ -27,7 +27,6 @@
 
 #include <QMutex>
 
-
 class ctkPluginFrameworkContext;
 
 /**
@@ -37,7 +36,22 @@ class ctkPluginFrameworkPrivate : public ctkPluginPrivate
 {
 public:
 
-  QMutex lock;
+  /**
+   * The event to return to callers waiting in ctkPluginFramework::waitForStop()
+   * when the framework has been stopped.
+   */
+  ctkPluginFrameworkEvent stopEvent;
+
+  /**
+   * The flag indicating that the thread that performs shutdown of this
+   * framework instance is running.
+   */
+  QAtomicInt shuttingDown;
+
+  /**
+   * Lock object
+   */
+  LockObject lock;
 
   ctkPluginFrameworkPrivate(QWeakPointer<ctkPlugin> qq, ctkPluginFrameworkContext* fw);
 
@@ -47,7 +61,66 @@ public:
 
   void uninitSystemPlugin();
 
+  /**
+   * This method starts a thread that stop this Framework,
+   * stopping all started plug-ins.
+   *
+   * <p>If the framework is not started, this method does nothing.
+   * If the framework is started, this method will:
+   * <ol>
+   * <li>Set the state of the ctkPluginFrameworkContext to <i>inactive</i>.</li>
+   * <li>Suspended all started plug-ins as described in the
+   * {@link ctkPlugin#stop()} method except that the persistent
+   * state of the plug-in will continue to be started.
+   * Reports any exceptions that occur during stopping using
+   * <code>ctkPluginFramework</code>s.</li>
+   * <li>Disable event handling.</li>
+   * </ol></p>
+   *
+   */
+  void shutdown(bool restart);
+
   QHash<QString, QString> systemHeaders;
+
+private:
+
+  /**
+   * Stop this FrameworkContext, suspending all started contexts.
+   * This method suspends all started contexts so that they can be
+   * automatically restarted when this FrameworkContext is next launched.
+   *
+   * <p>If the framework is not started, this method does nothing.
+   * If the framework is started, this method will:
+   * <ol>
+   * <li>Set the state of the FrameworkContext to <i>inactive</i>.</li>
+   * <li>Stop all started bundles as described in the
+   * {@link Bundle#stop(int)} method except that the persistent
+   * state of the bundle will continue to be started.
+   * Reports any exceptions that occur during stopping using
+   * <code>FrameworkErrorEvents</code>.</li>
+   * <li>Disable event handling.</li>
+   * </ol>
+   * </p>
+   *
+   */
+  void shutdown0(bool restart, bool wasActive);
+
+  /**
+   * Tell system plugin shutdown finished.
+   */
+  void shutdownDone_unlocked(bool restart);
+
+  /**
+   * Stop and unresolve all plug-ins.
+   */
+  void stopAllPlugins();
+
+  /**
+   * Shutting down is done.
+   */
+  void systemShuttingdownDone(const ctkPluginFrameworkEvent& fe);
+
+  void systemShuttingdownDone_unlocked(const ctkPluginFrameworkEvent& fe);
 
 };
 

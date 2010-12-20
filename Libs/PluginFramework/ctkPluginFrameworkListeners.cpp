@@ -61,7 +61,7 @@ void ctkPluginFrameworkListeners::addServiceSlot(
   serviceSet.insert(sse);
   checkSimple(sse);
 
-  connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(serviceListenerDestroyed(QObject*)));
+  connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(serviceListenerDestroyed(QObject*)), Qt::DirectConnection);
 }
 
 //----------------------------------------------------------------------------
