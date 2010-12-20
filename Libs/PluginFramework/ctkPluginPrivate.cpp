@@ -405,13 +405,13 @@ void ctkPluginPrivate::removePluginResources()
   // automatic disconnect due to Qt signal slot
   //fwCtx->listeners.removeAllListeners(this);
 
-  QList<ctkServiceRegistration*> srs = fwCtx->services->getRegisteredByPlugin(this);
-  QListIterator<ctkServiceRegistration*> i(srs);
+  QList<ctkServiceRegistration> srs = fwCtx->services->getRegisteredByPlugin(this);
+  QMutableListIterator<ctkServiceRegistration> i(srs);
   while (i.hasNext())
   {
     try
     {
-      i.next()->unregister();
+      i.next().unregister();
     }
     catch (const std::logic_error& /*ignore*/)
     {
@@ -421,11 +421,11 @@ void ctkPluginPrivate::removePluginResources()
     }
   }
 
-  QList<ctkServiceRegistration*> s = fwCtx->services->getUsedByPlugin(q_func());
-  QListIterator<ctkServiceRegistration*> i2(s);
+  QList<ctkServiceRegistration> s = fwCtx->services->getUsedByPlugin(q_func());
+  QListIterator<ctkServiceRegistration> i2(s);
   while (i2.hasNext())
   {
-    i2.next()->getReference().d_func()->ungetService(q_func(), false);
+    i2.next().getReference().d_func()->ungetService(q_func(), false);
   }
 
 }

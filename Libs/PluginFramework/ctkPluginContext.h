@@ -34,6 +34,7 @@
 #include "ctkPluginEvent.h"
 #include "ctkServiceException.h"
 #include "ctkServiceReference.h"
+#include "ctkServiceRegistration.h"
 
 #include "ctkPluginFrameworkExport.h"
 
@@ -41,7 +42,6 @@
 // CTK class forward declarations
 class ctkPlugin;
 class ctkPluginPrivate;
-class ctkServiceRegistration;
 class ctkPluginContextPrivate;
 
 /**
@@ -211,7 +211,7 @@ public:
    * @see ctkServiceRegistration
    * @see ctkServiceFactory
    */
-  ctkServiceRegistration* registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties = ServiceProperties());
+  ctkServiceRegistration registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties = ServiceProperties());
 
   /**
    * Registers the specified service object with the specified properties
@@ -234,10 +234,10 @@ public:
    * @throws std::logic_error If this ctkPluginContext is no longer valid.
    * @see registerService(const QStringList&, QObject*, const ServiceProperties&)
    */
-  ctkServiceRegistration* registerService(const char* clazz, QObject* service, const ServiceProperties& properties = ServiceProperties());
+  ctkServiceRegistration registerService(const char* clazz, QObject* service, const ServiceProperties& properties = ServiceProperties());
 
   template<class S>
-  ctkServiceRegistration* registerService(QObject* service, const ServiceProperties& properties = ServiceProperties())
+  ctkServiceRegistration registerService(QObject* service, const ServiceProperties& properties = ServiceProperties())
   {
     const char* clazz = qobject_interface_iid<S*>();
     if (clazz == 0)

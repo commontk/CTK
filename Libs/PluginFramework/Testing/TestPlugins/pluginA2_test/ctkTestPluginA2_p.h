@@ -27,6 +27,8 @@
 
 #include "ctkTestPluginA2Service.h"
 
+#include <ctkServiceRegistration.h>
+
 class ctkPluginContext;
 class ctkServiceRegistration;
 
@@ -43,7 +45,7 @@ public:
 
 private:
 
-  ctkServiceRegistration* sr;
+  ctkServiceRegistration sr;
 };
 
 #endif // CTKTESTPLUGINA2_P_H

@@ -21,6 +21,7 @@
 
 #include "ctkPlugin.h"
 
+#include "ctkPluginContext.h"
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginArchive_p.h"

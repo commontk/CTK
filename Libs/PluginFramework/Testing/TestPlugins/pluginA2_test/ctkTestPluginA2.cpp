@@ -23,7 +23,6 @@
 #include "ctkTestPluginA2_p.h"
 
 #include <ctkPluginContext.h>
-#include <ctkServiceRegistration.h>
 
 #include <QStringList>
 
@@ -36,8 +35,6 @@ void ctkTestPluginA2::unregister()
 {
   if (sr)
   {
-    sr->unregister();
+    sr.unregister();
   }
-  delete sr;
-  sr = 0;
 }
