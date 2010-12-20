@@ -665,7 +665,6 @@ public:
    * @param receiver The object to connect to.
    * @param slot The name of the slot to be connected.
    * @param filter The filter criteria.
-   * @param type The Qt connection type.
    * @throws std::invalid_argument If <code>filter</code> contains an
    *         invalid filter string that cannot be parsed.
    * @throws std::logic_error If this ctkPluginContext is no
