@@ -58,7 +58,7 @@ public:
       if (result > 0) break;
     }
 
-    QCoreApplication::exit(result);
+    if (result > 0) QCoreApplication::exit(result);
   }
 
 private:
@@ -132,6 +132,7 @@ int main(int argc, char** argv)
 //  return result;
 
   TestRunner runner(context, fwTestPluginId, argc, argv);
+  runner.connect(&runner, SIGNAL(finished()), &app, SLOT(quit()));
   runner.start();
 
   return app.exec();

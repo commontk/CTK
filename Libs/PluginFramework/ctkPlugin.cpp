@@ -21,6 +21,7 @@
 
 #include "ctkPlugin.h"
 
+#include "ctkPluginContext.h"
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginArchive_p.h"
@@ -153,10 +154,6 @@ void ctkPlugin::stop(const StopOptions& options)
     break;
   };
 
-  if (d->state != UNINSTALLED)
-  {
-    d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, d->q_ptr));
-  }
   if (savedException)
   {
     if (const ctkPluginException* pluginExc = dynamic_cast<const ctkPluginException*>(savedException))

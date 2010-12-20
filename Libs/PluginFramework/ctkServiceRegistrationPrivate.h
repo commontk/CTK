@@ -41,6 +41,11 @@ protected:
   ctkServiceRegistration* const q_ptr;
 
   /**
+   * Reference count for implicitly shared private implementation.
+   */
+  QAtomicInt ref;
+
+  /**
    * Service or ctkServiceFactory object.
    */
   QObject* service;

@@ -165,7 +165,7 @@ void ctkQtMobilityServiceRuntime::processPlugin(QSharedPointer<ctkPlugin> plugin
       }
 
       ctkQtMobilityServiceFactory* serviceObject = new ctkQtMobilityServiceFactory(descr, this, plugin);
-      ctkServiceRegistration* serviceReg = plugin->getPluginContext()->registerService(classes, serviceObject, props);
+      ctkServiceRegistration serviceReg = plugin->getPluginContext()->registerService(classes, serviceObject, props);
 
       if (serviceReg)
       {
@@ -189,16 +189,15 @@ void ctkQtMobilityServiceRuntime::removePlugin(QSharedPointer<ctkPlugin> plugin)
       << "Remove " << plugin->getSymbolicName() << " from QtMobSR";
 
   QList<ctkQtMobilityServiceFactory*> serviceFactories = mapPluginToServiceFactory.values(plugin);
-  QList<ctkServiceRegistration*> serviceRegs = mapPluginToServiceRegistration.values(plugin);
-  foreach(ctkServiceRegistration* serviceReg, serviceRegs)
+  QList<ctkServiceRegistration> serviceRegs = mapPluginToServiceRegistration.values(plugin);
+  foreach(ctkServiceRegistration serviceReg, serviceRegs)
   {
-    serviceReg->unregister();
+    serviceReg.unregister();
   }
 
   mapPluginToServiceRegistration.remove(plugin);
   mapPluginToServiceFactory.remove(plugin);
 
-  qDeleteAll(serviceRegs);
   qDeleteAll(serviceFactories);
 }
 

@@ -22,8 +22,7 @@
 #ifndef CTKSERVICEREGISTRATION_H
 #define CTKSERVICEREGISTRATION_H
 
-#include "ctkPluginContext.h"
-
+#include "ctkPluginFramework_global.h"
 #include "ctkServiceReference.h"
 
 #include "ctkPluginFrameworkExport.h"
@@ -52,6 +51,17 @@ class CTK_PLUGINFW_EXPORT ctkServiceRegistration {
 
 public:
 
+  /**
+   * Creates an invalid ctkServiceRegistration object. You can use
+   * this object in boolean expressions and it will evaluate to
+   * <code>false</code>.
+   */
+  ctkServiceRegistration();
+
+  ctkServiceRegistration(const ctkServiceRegistration& reg);
+
+  operator bool() const;
+
   ~ctkServiceRegistration();
 
   /**
@@ -63,7 +73,7 @@ public:
    *
    * @throws std::logic_error If this
    *         <code>ctkServiceRegistration</code> object has already been
-   *         unregistered.
+   *         unregistered or if it is invalid.
    * @return <code>ctkServiceReference</code> object.
    */
   ctkServiceReference getReference() const;
@@ -89,7 +99,7 @@ public:
    *        service's properties this method should be called again.
    *
    * @throws std::logic_error If this <code>ctkServiceRegistration</code>
-   *         object has already been unregistered.
+   *         object has already been unregistered or if it is invalid.
    * @throws std::invalid_argument If <code>properties</code> contains
    *         case variants of the same key name.
    */
@@ -122,28 +132,32 @@ public:
    *
    * @throws std::logic_error If this
    *         <code>ctkServiceRegistration</code> object has already been
-   *         unregistered.
-   * @see BundleContext#ungetService
+   *         unregistered or if it is invalid.
+   * @see ctkPluginContext#ungetService
    * @see ctkServiceFactory#ungetService
    */
   virtual void unregister();
 
   bool operator<(const ctkServiceRegistration& o) const;
 
+  bool operator==(const ctkServiceRegistration& registration) const;
+
+  ctkServiceRegistration& operator=(const ctkServiceRegistration& registration);
+
+
 protected:
 
   friend class ctkServices;
 
+  friend uint qHash(const ctkServiceRegistration&);
+
   ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
                          const ServiceProperties& props);
 
-  const QScopedPointer<ctkServiceRegistrationPrivate> d_ptr;
-
-private:
-
-  Q_DISABLE_COPY(ctkServiceRegistration)
+  ctkServiceRegistrationPrivate* d_ptr;
 
 };
 
+uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceRegistration& serviceRef);
 
 #endif // CTKSERVICEREGISTRATION_H

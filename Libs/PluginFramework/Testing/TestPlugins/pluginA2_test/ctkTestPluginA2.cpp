@@ -20,16 +20,21 @@
 =============================================================================*/
 
 
-#ifndef CTKTESTPLUGINASERVICE_H
-#define CTKTESTPLUGINASERVICE_H
+#include "ctkTestPluginA2_p.h"
 
-#include <qglobal.h>
+#include <ctkPluginContext.h>
 
-struct ctkTestPluginAService
+#include <QStringList>
+
+ctkTestPluginA2::ctkTestPluginA2(ctkPluginContext* pc)
 {
-  virtual ~ctkTestPluginAService() {}
-};
+  sr = pc->registerService<ctkTestPluginA2Service>(this);
+}
 
-Q_DECLARE_INTERFACE(ctkTestPluginAService, "org.commontk.pluginA2test.TestPluginAService")
-
-#endif // CTKTESTPLUGINASERVICE_H
+void ctkTestPluginA2::unregister()
+{
+  if (sr)
+  {
+    sr.unregister();
+  }
+}

@@ -3,14 +3,14 @@ PROJECT(pluginA2_test)
 SET(PLUGIN_export_directive "pluginA2_test_EXPORT")
 
 SET(PLUGIN_SRCS
-  ctkTestPluginA.cpp
-  ctkTestPluginAActivator.cpp
-  ctkTestPluginAService.h
+  ctkTestPluginA2.cpp
+  ctkTestPluginA2Activator.cpp
+  ctkTestPluginA2Service.h
 )
 
 SET(PLUGIN_MOC_SRCS
-  ctkTestPluginA_p.h
-  ctkTestPluginAActivator_p.h
+  ctkTestPluginA2_p.h
+  ctkTestPluginA2Activator_p.h
 )
 
 SET(PLUGIN_resources

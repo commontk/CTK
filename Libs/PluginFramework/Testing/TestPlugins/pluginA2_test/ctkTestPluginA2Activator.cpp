@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,30 +19,22 @@
 
 =============================================================================*/
 
-#ifndef CTKTESTPLUGINAACTIVATOR_P_H
-#define CTKTESTPLUGINAACTIVATOR_P_H
 
-#include <QScopedPointer>
+#include "ctkTestPluginA2Activator_p.h"
 
-#include <ctkPluginActivator.h>
+#include <ctkPluginContext.h>
 
-#include "ctkTestPluginA_p.h"
+#include <QtPlugin>
 
-class ctkTestPluginAActivator : public QObject,
-                                public ctkPluginActivator
+void ctkTestPluginA2Activator::start(ctkPluginContext* context)
 {
-  Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
+  s.reset(new ctkTestPluginA2(context));
+}
 
-public:
+void ctkTestPluginA2Activator::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context)
+  s->unregister();
+}
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
-
-private:
-
-  QScopedPointer<ctkTestPluginA> s;
-
-};
-
-#endif // CTKTESTPLUGINAACTIVATOR_P_H
+Q_EXPORT_PLUGIN2(pluginA2_test, ctkTestPluginA2Activator)

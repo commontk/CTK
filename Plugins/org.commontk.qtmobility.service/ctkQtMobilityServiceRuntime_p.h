@@ -28,9 +28,9 @@
 
 #include <ctkPluginEvent.h>
 #include <ctkPlugin.h>
+#include <ctkServiceRegistration.h>
 
 class ctkPluginContext;
-class ctkServiceRegistration;
 class ctkQtMobilityServiceFactory;
 
 using namespace QtMobility;
@@ -57,7 +57,7 @@ private:
   QtMobility::QServiceManager qServiceManager;
 
   QMultiHash<QSharedPointer<ctkPlugin>, ctkQtMobilityServiceFactory*> mapPluginToServiceFactory;
-  QMultiHash<QSharedPointer<ctkPlugin>, ctkServiceRegistration*> mapPluginToServiceRegistration;
+  QMultiHash<QSharedPointer<ctkPlugin>, ctkServiceRegistration> mapPluginToServiceRegistration;
   QSet<QSharedPointer<ctkPlugin> > lazy;
 
   ctkPluginContext* pc;

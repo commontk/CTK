@@ -33,6 +33,17 @@
 
 #include <stdexcept>
 
+ctkServiceRegistration::ctkServiceRegistration()
+  : d_ptr(0)
+{
+
+}
+
+ctkServiceRegistration::ctkServiceRegistration(const ctkServiceRegistration& reg)
+  : d_ptr(reg.d_ptr)
+{
+  d_func()->ref.ref();
+}
 
 ctkServiceRegistration::ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
                     const ServiceProperties& props)
@@ -41,15 +52,22 @@ ctkServiceRegistration::ctkServiceRegistration(ctkPluginPrivate* plugin, QObject
 
 }
 
+ctkServiceRegistration::operator bool() const
+{
+  return d_func();
+}
+
 ctkServiceRegistration::~ctkServiceRegistration()
 {
-
+  if (d_func() && !d_func()->ref.deref())
+    delete d_ptr;
 }
 
 ctkServiceReference ctkServiceRegistration::getReference() const
 {
   Q_D(const ctkServiceRegistration);
 
+  if (!d) throw std::logic_error("ctkServiceRegistration object invalid");
   if (!d->available) throw std::logic_error("Service is unregistered");
 
   return d->reference;
@@ -58,6 +76,8 @@ ctkServiceReference ctkServiceRegistration::getReference() const
 void ctkServiceRegistration::setProperties(const ServiceProperties& props)
 {
   Q_D(ctkServiceRegistration);
+  if (!d) throw std::logic_error("ctkServiceRegistration object invalid");
+
   QMutexLocker lock(&d->eventLock);
 
   QSet<ctkServiceSlotEntry> before;
@@ -77,7 +97,7 @@ void ctkServiceRegistration::setProperties(const ServiceProperties& props)
       int new_rank = d->properties.value(ctkPluginConstants::SERVICE_RANKING).toInt();
       if (old_rank != new_rank)
       {
-        d->plugin->fwCtx->services->updateServiceRegistrationOrder(this, classes);
+        d->plugin->fwCtx->services->updateServiceRegistrationOrder(*this, classes);
       }
     }
     else
@@ -97,6 +117,7 @@ void ctkServiceRegistration::setProperties(const ServiceProperties& props)
 void ctkServiceRegistration::unregister()
 {
   Q_D(ctkServiceRegistration);
+  if (!d) throw std::logic_error("ctkServiceRegistration object invalid");
 
   if (d->unregistering) return; // Silently ignore redundant unregistration.
   {
@@ -108,7 +129,7 @@ void ctkServiceRegistration::unregister()
     {
       if (d->plugin)
       {
-        d->plugin->fwCtx->services->removeServiceRegistration(this);
+        d->plugin->fwCtx->services->removeServiceRegistration(*this);
       }
     }
     else
@@ -161,5 +182,29 @@ void ctkServiceRegistration::unregister()
 bool ctkServiceRegistration::operator<(const ctkServiceRegistration& o) const
 {
   Q_D(const ctkServiceRegistration);
+  if (!d) return true;
   return d->reference <(o.d_func()->reference);
+}
+
+bool ctkServiceRegistration::operator==(const ctkServiceRegistration& registration) const
+{
+  Q_D(const ctkServiceRegistration);
+  return d == registration.d_func();
+}
+
+ctkServiceRegistration& ctkServiceRegistration::operator=(const ctkServiceRegistration& registration)
+{
+  ctkServiceRegistrationPrivate* curr_d = d_func();
+  d_ptr = registration.d_ptr;
+  d_ptr->ref.ref();
+
+  if (curr_d && !curr_d->ref.deref())
+    delete curr_d;
+
+  return *this;
+}
+
+uint qHash(const ctkServiceRegistration& serviceReg)
+{
+  return qHash(serviceReg.d_func());
 }

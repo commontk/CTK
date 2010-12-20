@@ -114,12 +114,13 @@ QList<QString> ctkPluginStorage::getStartOnLaunchPlugins()
 ctkPluginStorage::~ctkPluginStorage()
 {
   close();
+  // ctkPluginArchive pointers in archives list are deleted
+  // in ~ctkPluginPrivate()
 }
 
 void ctkPluginStorage::close()
 {
   pluginDatabase.close();
-  //qDeleteAll(archives);
 }
 
 bool ctkPluginStorage::removeArchive(ctkPluginArchive* pa)

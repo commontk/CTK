@@ -80,6 +80,11 @@ void ctkPluginFrameworkListeners::removeServiceSlot(ctkPlugin* plugin,
       if (slot) break;
     }
   }
+
+  if (plugin)
+  {
+    disconnect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(serviceListenerDestroyed(QObject*)));
+  }
 }
 
 void ctkPluginFrameworkListeners::serviceListenerDestroyed(QObject *listener)

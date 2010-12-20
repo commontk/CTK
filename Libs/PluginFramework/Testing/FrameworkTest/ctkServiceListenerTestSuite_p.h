@@ -87,7 +87,7 @@ private:
 
   friend class ctkServiceListenerTestSuite;
 
-  const bool checkUsingBundles;
+  const bool checkUsingPlugins;
   QList<ctkServiceEvent> events;
 
   bool teststatus;
@@ -96,7 +96,7 @@ private:
 
 public:
 
-  ctkServiceListener(ctkPluginContext* pc, bool checkUsingBundles = true);
+  ctkServiceListener(ctkPluginContext* pc, bool checkUsingPlugins = true);
 
   void clearEvents();
 

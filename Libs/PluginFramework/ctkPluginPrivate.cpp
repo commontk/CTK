@@ -274,6 +274,7 @@ void ctkPluginPrivate::stop0(bool wasStarted)
   state = ctkPlugin::STOPPING;
   deactivating = true;
   //6-13:
+  ctkPluginActivator* activator = 0;
   const std::exception* savedException = 0;
   try
   {
@@ -296,6 +297,7 @@ void ctkPluginPrivate::stop0(bool wasStarted)
       {
         throw std::logic_error("Plugin is uninstalled");
       }
+      activator = pluginActivator;
       pluginActivator = 0;
     }
 
@@ -316,11 +318,14 @@ void ctkPluginPrivate::stop0(bool wasStarted)
     savedException = exc;
   }
 
+  delete activator;
+
   if (state != ctkPlugin::UNINSTALLED)
   {
     state = ctkPlugin::RESOLVED;
     deactivating = false;
     //fwCtx.packages.notifyAll();
+    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, q_func()));
   }
 
   if (savedException)
@@ -400,13 +405,13 @@ void ctkPluginPrivate::removePluginResources()
   // automatic disconnect due to Qt signal slot
   //fwCtx->listeners.removeAllListeners(this);
 
-  QList<ctkServiceRegistration*> srs = fwCtx->services->getRegisteredByPlugin(this);
-  QListIterator<ctkServiceRegistration*> i(srs);
+  QList<ctkServiceRegistration> srs = fwCtx->services->getRegisteredByPlugin(this);
+  QMutableListIterator<ctkServiceRegistration> i(srs);
   while (i.hasNext())
   {
     try
     {
-      i.next()->unregister();
+      i.next().unregister();
     }
     catch (const std::logic_error& /*ignore*/)
     {
@@ -416,11 +421,11 @@ void ctkPluginPrivate::removePluginResources()
     }
   }
 
-  QList<ctkServiceRegistration*> s = fwCtx->services->getUsedByPlugin(q_func());
-  QListIterator<ctkServiceRegistration*> i2(s);
+  QList<ctkServiceRegistration> s = fwCtx->services->getUsedByPlugin(q_func());
+  QListIterator<ctkServiceRegistration> i2(s);
   while (i2.hasNext())
   {
-    i2.next()->getReference().d_func()->ungetService(q_func(), false);
+    i2.next().getReference().d_func()->ungetService(q_func(), false);
   }
 
 }

@@ -19,25 +19,30 @@
 
 =============================================================================*/
 
+#ifndef CTKTESTPLUGINA2ACTIVATOR_P_H
+#define CTKTESTPLUGINA2ACTIVATOR_P_H
 
-#include "ctkTestPluginA_p.h"
+#include <QScopedPointer>
 
-#include <ctkPluginContext.h>
-#include <ctkServiceRegistration.h>
+#include <ctkPluginActivator.h>
 
-#include <QStringList>
+#include "ctkTestPluginA2_p.h"
 
-ctkTestPluginA::ctkTestPluginA(ctkPluginContext* pc)
+class ctkTestPluginA2Activator : public QObject,
+                                public ctkPluginActivator
 {
-  sr = pc->registerService<ctkTestPluginAService>(this);
-}
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator)
 
-void ctkTestPluginA::unregister()
-{
-  if (sr)
-  {
-    sr->unregister();
-  }
-  delete sr;
-  sr = 0;
-}
+public:
+
+  void start(ctkPluginContext* context);
+  void stop(ctkPluginContext* context);
+
+private:
+
+  QScopedPointer<ctkTestPluginA2> s;
+
+};
+
+#endif // CTKTESTPLUGINA2ACTIVATOR_P_H
