@@ -77,7 +77,7 @@ public:
   /**
    * Link to registration object for this reference.
    */
-  ctkServiceRegistrationPrivate* registration;
+  ctkServiceRegistrationPrivate* const registration;
 };
 
 #endif // CTKSERVICEREFERENCEPRIVATE_H
