@@ -51,11 +51,14 @@ public:
 
     QList<ctkServiceReference> refs = context->getServiceReferences<ctkTestSuiteInterface>();
 
+    int result = 0;
     foreach(ctkServiceReference ref, refs)
     {
-      int result = QTest::qExec(context->getService(ref), argc, argv);
-      if (result > 0) QCoreApplication::exit(result);
+      result += QTest::qExec(context->getService(ref), argc, argv);
+      if (result > 0) break;
     }
+
+    if (result > 0) QCoreApplication::exit(result);
   }
 
 private:
