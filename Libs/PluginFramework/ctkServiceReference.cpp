@@ -131,7 +131,7 @@ ctkServiceReference& ctkServiceReference::operator=(const ctkServiceReference& r
 
 uint qHash(const ctkServiceReference& serviceRef)
 {
-  return qHash(serviceRef.getProperty(ctkPluginConstants::SERVICE_ID).toLongLong());
+  return qHash(serviceRef.d_func()->registration);
 }
 
 QDebug operator<<(QDebug dbg, const ctkServiceReference& serviceRef)

@@ -183,6 +183,8 @@ protected:
   template<class S, class T> friend class ctkServiceTrackerPrivate;
   template<class S, class R, class T> friend class ctkPluginAbstractTracked;
 
+  friend uint qHash(const ctkServiceReference&);
+
   ctkServiceReference(ctkServiceRegistrationPrivate* reg);
 
   ctkServiceReferencePrivate * d_ptr;
