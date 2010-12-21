@@ -82,6 +82,16 @@ SET(KIT_SRCS
   EventBus/ctkEvent.cpp
   EventBus/ctkEventBus.h
   EventBus/ctkEventConstants.cpp
+
+  # Services
+  service/cm/ctkConfiguration.cpp
+  service/cm/ctkConfigurationAdmin.cpp
+  service/cm/ctkConfigurationEvent.cpp
+  service/cm/ctkConfigurationException.cpp
+  service/cm/ctkConfigurationListener.h
+  service/cm/ctkConfigurationPlugin.cpp
+  service/cm/ctkManagedService.h
+  service/cm/ctkManagedServiceFactory.h
   )
 
 # Headers that should run through moc

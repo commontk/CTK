@@ -307,6 +307,7 @@ SET(CTK_LIBS
 SET(CTK_PLUGINS
   org.commontk.eventbus:OFF
   org.commontk.cli:OFF
+  org.commontk.configadmin:OFF
   org.commontk.dah.app:OFF
   org.commontk.dah.core:OFF
   org.commontk.dah.exampleapp:OFF
