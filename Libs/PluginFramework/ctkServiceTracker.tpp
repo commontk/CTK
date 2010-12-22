@@ -322,12 +322,12 @@ QList<T> ctkServiceTracker<S,T>::getServices() const
   QSharedPointer<TrackedService> t = d->tracked();
   if (t.isNull())
   { /* if ServiceTracker is not open */
-    return QList<QObject*>();
+    return QList<T>();
   }
   {
     QMutexLocker lockT(t.data());
     QList<ctkServiceReference> references = getServiceReferences();
-    QList<QObject*> objects;
+    QList<T> objects;
     foreach (ctkServiceReference ref, references)
     {
       objects << getService(ref);
