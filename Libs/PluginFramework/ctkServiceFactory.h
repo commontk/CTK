@@ -20,13 +20,8 @@
 =============================================================================*/
 
 
-#include <QObject>
+#include "ctkServiceRegistration.h"
 
-#include "ctkPlugin.h"
-
-#include "ctkPluginFrameworkExport.h"
-
-class ctkServiceRegistration;
 
 /**
  * Allows services to provide customized service objects in the plugin
@@ -56,12 +51,13 @@ class ctkServiceRegistration;
  * not made available to other plugins in the plugin environment. The Framework
  * may concurrently call a <code>ctkServiceFactory</code>.
  *
+ * @tparam S Type of Service
  * @see ctkPluginContext#getService
  * @threadsafe
  */
-class CTK_PLUGINFW_EXPORT ctkServiceFactory : public QObject
+template<class S>
+class ctkServiceFactory
 {
-  Q_OBJECT
 
 public:
 
@@ -94,7 +90,7 @@ public:
    *         the classes named when the service was registered.
    * @see ctkPluginContext#getService
    */
-  virtual QObject* getService(QSharedPointer<ctkPlugin> plugin, ctkServiceRegistration* registration) = 0;
+  virtual S getService(QSharedPointer<ctkPlugin> plugin, const ctkServiceRegistration& registration) = 0;
 
   /**
    * Releases a service object.
@@ -110,8 +106,8 @@ public:
    *        <code>ctkServiceFactory::getService</code> method.
    * @see ctkPluginContext#ungetService
    */
-  virtual void ungetService(QSharedPointer<ctkPlugin> plugin, ctkServiceRegistration* registration,
-      QObject* service) = 0;
+  virtual void ungetService(QSharedPointer<ctkPlugin> plugin, const ctkServiceRegistration registration,
+                            S service) = 0;
 };
 
-
+Q_DECLARE_INTERFACE(ctkServiceFactory, "org.commontk.services.ctkServiceFactory")
