@@ -159,8 +159,8 @@ void ctkServiceRegistration::unregister()
           {
             // NYI, don't call inside lock
             qobject_cast<ctkServiceFactory*>(d->service)->ungetService(i.key(),
-                                                       this,
-                                                       obj);
+                                                                       *this,
+                                                                       obj);
           }
           catch (const std::exception& ue)
           {

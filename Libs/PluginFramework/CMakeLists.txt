@@ -84,7 +84,6 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkPluginFrameworkListeners_p.h
-  ctkServiceFactory.h
   ctkTrackedPluginListener_p.h
   ctkTrackedServiceListener_p.h
 )

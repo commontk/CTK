@@ -39,7 +39,7 @@ ctkQtMobilityServiceFactory::ctkQtMobilityServiceFactory(
 }
 
 QObject* ctkQtMobilityServiceFactory::getService(
-  QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration* registration)
+  QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration registration)
 {
   Q_UNUSED(usingPlugin)
   Q_UNUSED(registration)
@@ -67,7 +67,7 @@ QObject* ctkQtMobilityServiceFactory::getService(
 }
 
 void ctkQtMobilityServiceFactory::ungetService(
-  QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration* registration, QObject* service)
+  QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration registration, QObject* service)
 {
   Q_UNUSED(usingPlugin)
   Q_UNUSED(registration)

@@ -56,7 +56,7 @@ QObject* ctkServiceReferencePrivate::getService(QSharedPointer<ctkPlugin> plugin
         {
           try
           {
-            s = serviceFactory->getService(plugin, registration->q_func());
+            s = serviceFactory->getService(plugin, *(registration->q_func()));
           }
           catch (const std::exception& pe)
           {
@@ -147,7 +147,7 @@ bool ctkServiceReferencePrivate::ungetService(QSharedPointer<ctkPlugin> plugin, 
       try
       {
         qobject_cast<ctkServiceFactory*>(registration->getService())->ungetService(plugin,
-                                                                                   registration->q_func(), sfi);
+                                                                                   *(registration->q_func()), sfi);
       }
       catch (const std::exception& e)
       {

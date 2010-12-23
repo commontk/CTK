@@ -31,16 +31,17 @@ class ctkQtMobilityServiceRuntime;
 
 using namespace QtMobility;
 
-class ctkQtMobilityServiceFactory : public ctkServiceFactory
+class ctkQtMobilityServiceFactory : public QObject, public ctkServiceFactory
 {
+  Q_OBJECT
 
 public:
 
   ctkQtMobilityServiceFactory(const QServiceInterfaceDescriptor& descr,
                               ctkQtMobilityServiceRuntime* sr, QSharedPointer<ctkPlugin> plugin);
 
-  QObject* getService(QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration* registration);
-  void ungetService(QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration* registration, QObject* service);
+  QObject* getService(QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration registration);
+  void ungetService(QSharedPointer<ctkPlugin> usingPlugin, ctkServiceRegistration registration, QObject* service);
 
 private:
 
