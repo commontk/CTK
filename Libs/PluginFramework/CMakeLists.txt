@@ -26,6 +26,7 @@ SET(KIT_SRCS
   ctkPluginEvent.cpp
   ctkPluginException.cpp
   ctkPluginFramework.cpp
+  ctkPluginFramework_global.h
   ctkPluginFrameworkFactory.cpp
   ctkPluginFrameworkContext.cpp
   ctkPluginFrameworkContext_p.h
