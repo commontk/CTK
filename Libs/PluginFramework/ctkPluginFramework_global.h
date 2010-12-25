@@ -26,8 +26,10 @@
 #include <QHash>
 #include <QStringList>
 
-typedef QHash<QString, QVariant> ServiceProperties;
-typedef QHash<QString, QVariant> ctkDictionary;
+#include "ctkCaseInsensitiveString.h"
+
+typedef QHash<ctkCaseInsensitiveString, QVariant> ServiceProperties;
+typedef QHash<ctkCaseInsensitiveString, QVariant> ctkDictionary;
 typedef QHash<QString, QVariant> ctkProperties;
 
 #if QT_VERSION < 0x040700

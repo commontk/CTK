@@ -9,6 +9,7 @@ SET(KIT_export_directive "CTK_PLUGINFW_EXPORT")
   
 # Source files
 SET(KIT_SRCS
+  ctkCaseInsensitiveString.cpp
   ctkLDAPExpr.cpp
   ctkLDAPExpr_p.h
   ctkLDAPSearchFilter.cpp

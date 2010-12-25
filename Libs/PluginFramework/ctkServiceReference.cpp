@@ -61,7 +61,12 @@ QStringList ctkServiceReference::getPropertyKeys() const
 
   QMutexLocker lock(&d->registration->propsLock);
 
-  return d->registration->properties.keys();
+  QStringList result;
+  foreach (ctkCaseInsensitiveString key, d->registration->properties.keys())
+  {
+    result << key;
+  }
+  return result;
 }
 
 QSharedPointer<ctkPlugin> ctkServiceReference::getPlugin() const

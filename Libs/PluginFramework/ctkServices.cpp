@@ -48,25 +48,7 @@ ServiceProperties ctkServices::createServiceProperties(const ServiceProperties& 
                                                        long sid)
 {
   static qlonglong nextServiceID = 1;
-  ServiceProperties props;
-
-  if (!in.isEmpty())
-  {
-    for (ServiceProperties::const_iterator it = in.begin(); it != in.end(); ++it)
-    {
-      const QString key = it.key();
-      const QString lcKey = it.key().toLower();
-      for (QListIterator<QString> i(props.keys()); i.hasNext(); )
-      {
-        if (lcKey == i.next())
-        {
-          throw std::invalid_argument(std::string("Several entries for property: ") + key.toStdString());
-        }
-      }
-
-      props.insert(lcKey, in.value(key));
-    }
-  }
+  ServiceProperties props = in;
 
   if (!classes.isEmpty())
   {

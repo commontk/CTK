@@ -112,7 +112,12 @@ QVariant ctkEvent::property(const QString& name) const
 
 QStringList ctkEvent::propertyNames() const
 {
-  return d->properties.keys();
+  QStringList result;
+  foreach (ctkCaseInsensitiveString key, d->properties.keys())
+  {
+    result << key;
+  }
+  return result;
 }
 
 const QString& ctkEvent::topic() const
