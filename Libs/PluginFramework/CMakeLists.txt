@@ -65,6 +65,7 @@ SET(KIT_SRCS
   ctkServiceSlotEntry_p.h
   ctkServiceTracker.h
   ctkServiceTracker.tpp
+  ctkServiceTrackerCustomizer.h
   ctkServiceTrackerPrivate.h
   ctkServiceTrackerPrivate.tpp
   ctkTrackedPlugin_p.h
