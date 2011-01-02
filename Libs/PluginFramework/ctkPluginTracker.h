@@ -104,7 +104,7 @@ public:
    *         with which this <code>ctkPluginTracker</code> was created is no
    *         longer valid.
    */
-  void open();
+  virtual void open();
 
   /**
    * Close this <code>ctkPluginTracker</code>.
@@ -117,7 +117,7 @@ public:
    * This implementation calls getPlugins() to get the list of
    * tracked plugins to remove.
    */
-  void close();
+  virtual void close();
 
   /**
    * Return a list of <code>ctkPlugin</code>s for all plugins being tracked by
@@ -125,7 +125,7 @@ public:
    *
    * @return A list of <code>ctkPlugin</code>s.
    */
-  QList<QSharedPointer<ctkPlugin> > getPlugins() const;
+  virtual QList<QSharedPointer<ctkPlugin> > getPlugins() const;
 
   /**
    * Returns the customized object for the specified <code>ctkPlugin</code> if
@@ -136,7 +136,7 @@ public:
    *         <code>null</code> if the specified <code>ctkPlugin</code> is not
    *         being tracked.
    */
-  T getObject(QSharedPointer<ctkPlugin> plugin) const;
+  virtual T getObject(QSharedPointer<ctkPlugin> plugin) const;
 
   /**
    * Remove a plugin from this <code>ctkPluginTracker</code>.
@@ -148,7 +148,7 @@ public:
    *
    * @param plugin The <code>ctkPlugin</code> to be removed.
    */
-  void remove(QSharedPointer<ctkPlugin> plugin);
+  virtual void remove(QSharedPointer<ctkPlugin> plugin);
 
   /**
    * Return the number of plugins being tracked by this
@@ -156,7 +156,7 @@ public:
    *
    * @return The number of plugins being tracked.
    */
-  int size() const;
+  virtual int size() const;
 
   /**
    * Returns the tracking count for this <code>ctkPluginTracker</code>.
@@ -177,7 +177,7 @@ public:
    * @return The tracking count for this <code>ctkPluginTracker</code> or -1 if
    *         this <code>ctkPluginTracker</code> is not open.
    */
-  int getTrackingCount() const;
+  virtual int getTrackingCount() const;
 
 protected:
 
