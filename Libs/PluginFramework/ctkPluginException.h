@@ -22,15 +22,22 @@
 #ifndef CTKPLUGINEXCEPTION_H
 #define CTKPLUGINEXCEPTION_H
 
-#include <stdexcept>
+#include "ctkRuntimeException.h"
 
-#include <QString>
-#include <QDebug>
-
-#include "ctkPluginFrameworkExport.h"
-
-
-class CTK_PLUGINFW_EXPORT ctkPluginException : public std::runtime_error
+/**
+ * A Plugin Framework exception used to indicate that a plugin lifecycle
+ * problem occurred.
+ *
+ * <p>
+ * A {@code ctkPluginException} object is created by the Framework to denote
+ * an exception condition in the lifecycle of a plugin.
+ * {@code ctkPluginException}s should not be created by plugin developers.
+ * An enum type is used to identify the exception type for future extendability.
+ *
+ * <p>
+ * This exception conforms to the general purpose exception chaining mechanism.
+ */
+class CTK_PLUGINFW_EXPORT ctkPluginException : public ctkRuntimeException
 {
 public:
 
@@ -71,28 +78,54 @@ public:
      * The install or update operation failed because another
      * already installed plugin has the same symbolic name and version.
      */
-    DUPLICATE_BUNDLE_ERROR
+    DUPLICATE_PLUGIN_ERROR,
+    /**
+     * The framework received an error while reading the input stream for a plugin.
+     */
+    READ_ERROR,
+    /**
+     * The start transient operation failed because the start level of the
+     * plugin is greater than the current framework start level
+     */
+    START_TRANSIENT_ERROR
   };
 
+  /**
+   * Creates a {@code ctkPluginException} with the specified message, type
+   * and exception cause.
+   *
+   * @param msg The associated message.
+   * @param type The type for this exception.
+   * @param cause The cause of this exception.
+   */
   ctkPluginException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception* cause = 0);
+
+  /**
+   * Creates a {@code ctkPluginException} with the specified message and
+   * exception cause.
+   *
+   * @param msg The associated message.
+   * @param cause The cause of this exception.
+   */
   ctkPluginException(const QString& msg, const std::exception* cause);
 
   ctkPluginException(const ctkPluginException& o);
   ctkPluginException& operator=(const ctkPluginException& o);
 
-  ~ctkPluginException() throw() {}
-
-  QString getCause() const;
-  void setCause(const QString&) throw(std::logic_error);
+  /**
+   * Returns the type for this exception or {@code UNSPECIFIED} if the
+   * type was unspecified or unknown.
+   *
+   * @return The type of this exception.
+   */
   Type getType() const;
-
-  const char* what() const throw();
-
 
 private:
 
+  /**
+   * Type of plugin exception.
+   */
   Type type;
-  QString cause;
 
 };
 

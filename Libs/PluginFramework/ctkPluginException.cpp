@@ -21,66 +21,39 @@
 
 #include "ctkPluginException.h"
 
+#include <QDebug>
+
 
 ctkPluginException::ctkPluginException(const QString& msg, const Type& type, const std::exception* cause)
-  : std::runtime_error(msg.toStdString()),
+  : ctkRuntimeException(msg, cause),
     type(type)
 {
-  if (cause)
-  {
-    this->cause = QString(cause->what());
-  }
+
 }
 
 ctkPluginException::ctkPluginException(const QString& msg, const std::exception* cause)
-  : std::runtime_error(msg.toStdString()),
+  : ctkRuntimeException(msg, cause),
     type(UNSPECIFIED)
 {
-  if (cause)
-  {
-    this->cause = QString(cause->what());
-  }
+
 }
 
 ctkPluginException::ctkPluginException(const ctkPluginException& o)
-  : std::runtime_error(o.what()), type(o.type), cause(o.cause)
+  : ctkRuntimeException(o), type(o.type)
 {
 
 }
 
 ctkPluginException& ctkPluginException::operator=(const ctkPluginException& o)
 {
-  std::runtime_error::operator=(o);
+  ctkRuntimeException::operator=(o);
   type = o.type;
-  cause = o.cause;
   return *this;
-}
-
-QString ctkPluginException::getCause() const
-{
-  return cause;
-}
-
-void ctkPluginException::setCause(const QString& cause) throw(std::logic_error)
-{
-  if (!this->cause.isEmpty()) throw std::logic_error("The cause for this ctkPluginException instance is already set");
-
-  this->cause = cause;
 }
 
 ctkPluginException::Type ctkPluginException::getType() const
 {
   return type;
-}
-
-const char* ctkPluginException::what() const throw()
-{
-  static std::string fullMsg;
-  fullMsg = std::string(std::runtime_error::what());
-  QString causeMsg = getCause();
-  if (!causeMsg.isEmpty()) fullMsg += std::string("\n  Caused by: ") + causeMsg.toStdString();
-
-  return fullMsg.c_str();
 }
 
 

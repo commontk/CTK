@@ -31,6 +31,7 @@
 #include <QSettings>
 #include <QDirIterator>
 #include <QInputDialog>
+#include <QDebug>
 
 int main(int argv, char** argc)
 {

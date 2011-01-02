@@ -35,6 +35,7 @@
 #include <QWidget>
 #include <QFileInfo>
 #include <QUrl>
+#include <QDebug>
 
 void print_usage()
 {

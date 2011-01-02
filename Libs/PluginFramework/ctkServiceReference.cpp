@@ -27,6 +27,7 @@
 
 #include <QStringList>
 #include <QMutexLocker>
+#include <QDebug>
 
 ctkServiceReference::ctkServiceReference()
   : d_ptr(new ctkServiceReferencePrivate(0))

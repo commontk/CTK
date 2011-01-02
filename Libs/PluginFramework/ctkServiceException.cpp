@@ -25,49 +25,30 @@
 
 
 ctkServiceException::ctkServiceException(const QString& msg, const Type& type, const std::exception* cause)
-  : std::runtime_error(msg.toStdString()),
+  : ctkRuntimeException(msg, cause),
     type(type)
 {
-  if (cause)
-  {
-    this->cause = QString(cause->what());
-  }
+
 }
 
 ctkServiceException::ctkServiceException(const QString& msg, const std::exception* cause)
-  : std::runtime_error(msg.toStdString()),
+  : ctkRuntimeException(msg, cause),
     type(UNSPECIFIED)
 {
-  if (cause)
-  {
-    this->cause = QString(cause->what());
-  }
+
 }
 
 ctkServiceException::ctkServiceException(const ctkServiceException& o)
-  : std::runtime_error(o.what()), type(o.type), cause(o.cause)
+  : ctkRuntimeException(o), type(o.type)
 {
 
 }
 
 ctkServiceException& ctkServiceException::operator=(const ctkServiceException& o)
 {
-  std::runtime_error::operator=(o);
+  ctkRuntimeException::operator=(o);
   type = o.type;
-  cause = o.cause;
   return *this;
-}
-
-QString ctkServiceException::getCause() const
-{
-  return cause;
-}
-
-void ctkServiceException::setCause(const QString& cause) throw(std::logic_error)
-{
-  if (!this->cause.isEmpty()) throw std::logic_error("The cause for this ctkServiceException instance is already set");
-
-  this->cause = cause;
 }
 
 ctkServiceException::Type ctkServiceException::getType() const
@@ -75,15 +56,6 @@ ctkServiceException::Type ctkServiceException::getType() const
   return type;
 }
 
-const char* ctkServiceException::what() const throw()
-{
-  static std::string fullMsg;
-  fullMsg = std::string(std::runtime_error::what());
-  QString causeMsg = getCause();
-  if (!causeMsg.isEmpty()) fullMsg += std::string("\n  Caused by: ") + causeMsg.toStdString();
-
-  return fullMsg.c_str();
-}
 
 QDebug operator<<(QDebug dbg, const ctkServiceException& exc)
 {

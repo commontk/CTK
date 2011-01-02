@@ -52,6 +52,7 @@ SET(KIT_SRCS
   ctkPluginTrackerPrivate.tpp
   ctkRequirePlugin.cpp
   ctkRequirePlugin_p.h
+  ctkRuntimeException.cpp
   ctkServiceEvent.cpp
   ctkServiceException.cpp
   ctkServiceFactory.h
