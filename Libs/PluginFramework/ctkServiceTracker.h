@@ -173,7 +173,7 @@ public:
    *         with which this <code>ctkServiceTracker</code> was created is no
    *         longer valid.
    */
-  void open();
+  virtual void open();
 
   /**
    * Close this <code>ctkServiceTracker</code>.
@@ -186,7 +186,7 @@ public:
    * This implementation calls getServiceReferences() to get the list
    * of tracked services to remove.
    */
-  void close();
+  virtual void close();
 
   /**
    * Wait for at least one service to be tracked by this
@@ -207,7 +207,7 @@ public:
    *        method will wait indefinitely.
    * @return Returns the result of getService().
    */
-  T waitForService(unsigned long timeout);
+  virtual T waitForService(unsigned long timeout);
 
   /**
    * Return a list of <code>ctkServiceReference</code>s for all services being
@@ -215,7 +215,7 @@ public:
    *
    * @return List of <code>ctkServiceReference</code>s.
    */
-  QList<ctkServiceReference> getServiceReferences() const;
+  virtual QList<ctkServiceReference> getServiceReferences() const;
 
   /**
    * Returns a <code>ctkServiceReference</code> for one of the services being
@@ -236,7 +236,7 @@ public:
    * @return A <code>ctkServiceReference</code> for a tracked service.
    * @throws ctkServiceException if no services are being tracked.
    */
-  ctkServiceReference getServiceReference() const;
+  virtual ctkServiceReference getServiceReference() const;
 
   /**
    * Returns the service object for the specified
@@ -248,7 +248,7 @@ public:
    *         by the specified <code>ctkServiceReference</code> is not being
    *         tracked.
    */
-  T getService(const ctkServiceReference& reference) const;
+  virtual T getService(const ctkServiceReference& reference) const;
 
   /**
    * Return a list of service objects for all services being tracked by this
@@ -263,7 +263,7 @@ public:
    * @return A list of service objects or an empty list if no services
    *         are being tracked.
    */
-  QList<T> getServices() const;
+  virtual QList<T> getServices() const;
 
   /**
    * Returns a service object for one of the services being tracked by this
@@ -276,7 +276,7 @@ public:
    * @return A service object or <code>null</code> if no services are being
    *         tracked.
    */
-  T getService() const;
+  virtual T getService() const;
 
   /**
    * Remove a service from this <code>ctkServiceTracker</code>.
@@ -288,7 +288,7 @@ public:
    *
    * @param reference The reference to the service to be removed.
    */
-  void remove(const ctkServiceReference& reference);
+  virtual void remove(const ctkServiceReference& reference);
 
   /**
    * Return the number of services being tracked by this
@@ -296,7 +296,7 @@ public:
    *
    * @return The number of services being tracked.
    */
-  int size() const;
+  virtual int size() const;
 
   /**
    * Returns the tracking count for this <code>ctkServiceTracker</code>.
@@ -317,7 +317,7 @@ public:
    * @return The tracking count for this <code>ctkServiceTracker</code> or -1 if
    *         this <code>ctkServiceTracker</code> is not open.
    */
-  int getTrackingCount() const;
+  virtual int getTrackingCount() const;
 
 protected:
 
