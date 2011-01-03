@@ -49,4 +49,7 @@ private:
 
 uint CTK_PLUGINFW_EXPORT qHash(const ctkCaseInsensitiveString& str);
 
+CTK_PLUGINFW_EXPORT QDataStream& operator<<(QDataStream &out, const ctkCaseInsensitiveString& str);
+CTK_PLUGINFW_EXPORT QDataStream& operator>>(QDataStream &in, ctkCaseInsensitiveString& str);
+
 #endif // CTKCASEINSENSITIVESTRING_P_H

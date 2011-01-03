@@ -63,3 +63,17 @@ uint qHash(const ctkCaseInsensitiveString& str)
 {
   return qHash(QString(str).toLower());
 }
+
+QDataStream& operator<<(QDataStream &out, const ctkCaseInsensitiveString& str)
+{
+  out << QString(str);
+  return out;
+}
+
+QDataStream& operator>>(QDataStream &in, ctkCaseInsensitiveString& str)
+{
+  QString inStr;
+  in >> inStr;
+  str = inStr;
+  return in;
+}
