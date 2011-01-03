@@ -97,14 +97,14 @@ ctkVTKChartView::~ctkVTKChartView()
 void ctkVTKChartView::setTitle(const QString& newTitle)
 {
   Q_D(ctkVTKChartView);
-  d->Chart->SetTitle(newTitle.toLatin1());
+  d->Chart->SetTitle(newTitle.toLatin1().data());
 }
 
 // ----------------------------------------------------------------------------
 QString ctkVTKChartView::title()const
 {
   Q_D(const ctkVTKChartView);
-  return d->Chart->GetTitle();
+  return QString(d->Chart->GetTitle());
 }
 
 // ----------------------------------------------------------------------------
