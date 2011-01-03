@@ -68,7 +68,22 @@ class CTK_PLUGINFW_EXPORT ctkServiceReference {
 
 public:
 
+  /**
+   * Creates an invalid ctkServiceReference object. You can use
+   * this object in boolean expressions and it will evaluate to
+   * <code>false</code>.
+   */
+  ctkServiceReference();
+
   ctkServiceReference(const ctkServiceReference& ref);
+
+  /**
+   * Converts this ctkServiceReference instance into a boolean
+   * expression. If this instance was default constructed or
+   * the service it references has been unregistered, the conversion
+   * returns <code>false</code>, otherwise it returns <code>true</code>.
+   */
+  operator bool() const;
 
   ~ctkServiceReference();
 

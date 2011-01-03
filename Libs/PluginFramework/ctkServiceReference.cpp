@@ -28,6 +28,12 @@
 #include <QStringList>
 #include <QMutexLocker>
 
+ctkServiceReference::ctkServiceReference()
+  : d_ptr(new ctkServiceReferencePrivate(0))
+{
+
+}
+
 ctkServiceReference::ctkServiceReference(const ctkServiceReference& ref)
   : d_ptr(ref.d_ptr)
 {
@@ -38,6 +44,11 @@ ctkServiceReference::ctkServiceReference(ctkServiceRegistrationPrivate* reg)
   : d_ptr(new ctkServiceReferencePrivate(reg))
 {
 
+}
+
+ctkServiceReference::operator bool() const
+{
+  return getPlugin();
 }
 
 ctkServiceReference::~ctkServiceReference()
