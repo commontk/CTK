@@ -33,6 +33,7 @@ class CTK_PLUGINFW_EXPORT ctkCaseInsensitiveString
 public:
 
   ctkCaseInsensitiveString();
+  ctkCaseInsensitiveString(const char* str);
   ctkCaseInsensitiveString(const QString& str);
   ctkCaseInsensitiveString(const ctkCaseInsensitiveString& str);
 

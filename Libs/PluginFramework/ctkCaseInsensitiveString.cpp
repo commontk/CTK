@@ -28,6 +28,11 @@ ctkCaseInsensitiveString::ctkCaseInsensitiveString()
 {
 }
 
+ctkCaseInsensitiveString::ctkCaseInsensitiveString(const char* str)
+  : str(str)
+{
+}
+
 ctkCaseInsensitiveString::ctkCaseInsensitiveString(const QString& str)
   : str(str)
 {
