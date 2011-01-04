@@ -23,12 +23,14 @@
 #ifndef CTKPLUGINFRAMEWORKTESTRUNNER_H
 #define CTKPLUGINFRAMEWORKTESTRUNNER_H
 
+#include "ctkPluginFrameworkTestUtilExport.h"
+
 #include <ctkPlugin.h>
 #include <ctkPluginFramework_global.h>
 
 class ctkPluginFrameworkTestRunnerPrivate;
 
-class ctkPluginFrameworkTestRunner
+class CTK_PLUGINFW_TESTUTIL_EXPORT ctkPluginFrameworkTestRunner
 {
 
 public:

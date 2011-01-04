@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,23 +20,15 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINFRAMEWORKTESTUTIL_H
-#define CTKPLUGINFRAMEWORKTESTUTIL_H
+#ifndef CTKPLUGINFRAMEWORKTESTUTILEXPORT_H
+#define CTKPLUGINFRAMEWORKTESTUTILEXPORT_H
 
-#include "ctkPluginFrameworkTestUtilExport.h"
+#include <QtCore/qglobal.h>
 
-#include <QString>
-#include <QSharedPointer>
+#if defined(CTKPluginFrameworkTestUtil_EXPORTS)
+ #define CTK_PLUGINFW_TESTUTIL_EXPORT Q_DECL_EXPORT
+#else
+ #define CTK_PLUGINFW_TESTUTIL_EXPORT Q_DECL_IMPORT
+#endif
 
-class ctkPlugin;
-class ctkPluginContext;
-
-class CTK_PLUGINFW_TESTUTIL_EXPORT ctkPluginFrameworkTestUtil
-{
-
-public:
-
-  static QSharedPointer<ctkPlugin> installPlugin(ctkPluginContext* pc, const QString& plugin);
-};
-
-#endif // CTKPLUGINFRAMEWORKTESTUTIL_H
+#endif // CTKPLUGINFRAMEWORKTESTUTILEXPORT_H
