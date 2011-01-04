@@ -129,7 +129,7 @@ QList<ctkServiceReference> ctkPluginContext::getServiceReferences(const QString&
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  return d->plugin->fwCtx->services->get(clazz, filter);
+  return d->plugin->fwCtx->services->get(clazz, filter, 0);
 }
 
 ctkServiceReference ctkPluginContext::getServiceReference(const QString& clazz)

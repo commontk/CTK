@@ -160,7 +160,7 @@ ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& cl
 {
   QMutexLocker lock(&mutex);
   try {
-    QList<ctkServiceReference> srs = get(clazz, QString());
+    QList<ctkServiceReference> srs = get(clazz, QString(), plugin);
     qDebug() << "get service ref" << clazz << "for plugin"
              << plugin->location << " = " << srs.size() << "refs";
 
@@ -175,7 +175,8 @@ ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& cl
 }
 
 
-QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString& filter) const
+QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString& filter,
+                                            ctkPluginPrivate* plugin) const
 {
   QMutexLocker lock(&mutex);
 

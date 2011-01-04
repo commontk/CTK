@@ -151,7 +151,8 @@ public:
    * @param plugin The plugin requesting reference.
    * @return A list of {@link ctkServiceReference} object.
    */
-  QList<ctkServiceReference> get(const QString& clazz, const QString& filter) const;
+  QList<ctkServiceReference> get(const QString& clazz, const QString& filter,
+                                 ctkPluginPrivate* plugin) const;
 
 
   /**
