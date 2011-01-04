@@ -143,6 +143,11 @@ QObject* ctkPluginContext::getService(ctkServiceReference reference)
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
+
+  if (!reference)
+  {
+    throw std::invalid_argument("Default constructed ctkServiceReference is not a valid input to getService()");
+  }
   return reference.d_func()->getService(d->plugin->q_func());
 }
 

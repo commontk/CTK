@@ -175,20 +175,20 @@ void ctkPluginFrameworkTestSuite::frame010a()
   qDebug() << "PCACTIVE:" << pstate;
 }
 
-//Test result of getServiceReference(). Should throw ctkServiceException
+//Test result of getService(ctkServiceReference()). Should throw std::invalid_argument
 void ctkPluginFrameworkTestSuite::frame018a()
 {
   try
   {
-    ctkServiceReference ref = pc->getServiceReference("illegalname");
-    qDebug() << "Got service reference =" << ref << ", excpected ctkServiceException";
-    QFAIL("Got service reference, excpected NullPointerException");
+    QObject* obj = pc->getService(ctkServiceReference());
+    qDebug() << "Got service object =" << obj->metaObject()->className() << ", excpected std::invalid_argument exception";
+    QFAIL("Got service object, excpected std::invalid_argument exception");
   }
-  catch (const ctkServiceException& )
+  catch (const std::invalid_argument& )
   {}
   catch (...)
   {
-       QFAIL("Got wrong exception, expected ctkServiceException");
+    QFAIL("Got wrong exception, expected std::invalid_argument");
   }
 }
 
@@ -214,15 +214,12 @@ void ctkPluginFrameworkTestSuite::frame020a()
   QCOMPARE(iter.value(), QString("pluginA.test"));
 
   // Check that no service reference exist yet.
-  try
+  ctkServiceReference sr1 = pc->getServiceReference("org.commontk.TestPluginAService");
+  if (sr1)
   {
-    pc->getServiceReference("org.commontk.TestPluginAService");
     QFAIL("framework test plugin, service from test plugin A unexpectedly found");
   }
-  catch (ctkServiceException& /*e*/)
-  {
 
-  }
 
   // check the listeners for events, expect only a plugin event,
   // of type installation
@@ -301,9 +298,6 @@ void ctkPluginFrameworkTestSuite::frame030b()
   {
     pA->stop();
     QVERIFY2(pA->getState() == ctkPlugin::RESOLVED, "pluginA should be RESOLVED");
-
-    QVERIFY(sr1.getPlugin().isNull());
-    QVERIFY(pc->getService(sr1) == 0);
   }
   catch (const std::logic_error& ise)
   {

@@ -431,7 +431,8 @@ public:
    *         longer valid.
    * @throws std::invalid_argument If the specified
    *         <code>ctkServiceReference</code> was not created by the same
-   *         framework instance as this <code>ctkPluginContext</code>.
+   *         framework instance as this <code>ctkPluginContext</code> or
+   *         if it is invalid (default constructed).
    * @see #ungetService(const ctkServiceReference&)
    * @see ctkServiceFactory
    */
@@ -454,7 +455,8 @@ public:
    *         longer valid.
    * @throws std::invalid_argument If the specified
    *         <code>ctkServiceReference</code> was not created by the same
-   *         framework instance as this <code>ctkPluginContext</code>.
+   *         framework instance as this <code>ctkPluginContext</code> or
+   *         if it is invalid (default constructed).
    * @see #getService(ctkServiceReference)
    * @see #ungetService(const ctkServiceReference&)
    * @see ctkServiceFactory

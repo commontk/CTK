@@ -136,8 +136,6 @@ public:
    * @param plugin The plugin requesting reference
    * @param clazz The class name of the requested service.
    * @return A {@link ctkServiceReference} object.
-   * @throws ctkServiceException if no service was registered under the given
-   *         clazz name.
    */
   ctkServiceReference get(ctkPluginPrivate* plugin, const QString& clazz) const;
 

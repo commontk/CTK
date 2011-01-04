@@ -171,7 +171,7 @@ ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& cl
   catch (const std::invalid_argument& )
   { }
 
-  throw ctkServiceException(QString("No service registered for: ") + clazz);
+  return ctkServiceReference();
 }
 
 
