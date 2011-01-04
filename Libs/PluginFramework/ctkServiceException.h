@@ -36,7 +36,7 @@
  * <p>
  * This exception conforms to the general purpose exception chaining mechanism.
  */
-class CTK_PLUGINFW_EXPORT ctkServiceException : public ctkRuntimeException
+class Q_DECL_EXPORT ctkServiceException : public ctkRuntimeException
 {
 public:
 

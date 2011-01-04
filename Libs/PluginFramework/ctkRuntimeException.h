@@ -29,7 +29,7 @@
 
 #include "ctkPluginFrameworkExport.h"
 
-class CTK_PLUGINFW_EXPORT ctkRuntimeException : public std::runtime_error
+class Q_DECL_EXPORT ctkRuntimeException : public std::runtime_error
 {
 public:
 
