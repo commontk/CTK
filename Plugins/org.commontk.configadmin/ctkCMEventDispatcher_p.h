@@ -28,7 +28,7 @@
 
 #include "ctkCMSerializedTaskQueue_p.h"
 
-class ctkConfigurationListener;
+struct ctkConfigurationListener;
 class ctkLogService;
 
 /**
