@@ -45,9 +45,15 @@ ctkServiceRegistration::ctkServiceRegistration(const ctkServiceRegistration& reg
   d_func()->ref.ref();
 }
 
+ctkServiceRegistration::ctkServiceRegistration(ctkServiceRegistrationPrivate* registrationPrivate)
+  : d_ptr(registrationPrivate)
+{
+  d_func()->ref.ref();
+}
+
 ctkServiceRegistration::ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
                     const ServiceProperties& props)
-  : d_ptr(new ctkServiceRegistrationPrivate(this, plugin, service, props))
+  : d_ptr(new ctkServiceRegistrationPrivate(plugin, service, props))
 {
 
 }

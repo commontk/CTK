@@ -38,7 +38,7 @@ class ctkServiceRegistrationPrivate
 
 protected:
 
-  ctkServiceRegistration* const q_ptr;
+  friend class ctkServiceRegistration;
 
   /**
    * Reference count for implicitly shared private implementation.
@@ -51,9 +51,6 @@ protected:
   QObject* service;
 
 public:
-
-  Q_DECLARE_PUBLIC(ctkServiceRegistration);
-
 
   /**
    * Plugin registering this service.
@@ -101,7 +98,7 @@ public:
 
   QMutex propsLock;
 
-  ctkServiceRegistrationPrivate(ctkServiceRegistration* sr, ctkPluginPrivate* plugin, QObject* service,
+  ctkServiceRegistrationPrivate(ctkPluginPrivate* plugin, QObject* service,
                                 const ServiceProperties& props);
 
   virtual ~ctkServiceRegistrationPrivate();

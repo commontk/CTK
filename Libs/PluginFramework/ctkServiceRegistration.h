@@ -148,8 +148,11 @@ public:
 protected:
 
   friend class ctkServices;
+  friend class ctkServiceReferencePrivate;
 
   friend uint qHash(const ctkServiceRegistration&);
+
+  ctkServiceRegistration(ctkServiceRegistrationPrivate* registrationPrivate);
 
   ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
                          const ServiceProperties& props);
