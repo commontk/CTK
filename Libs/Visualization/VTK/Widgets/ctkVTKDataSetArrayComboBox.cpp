@@ -58,7 +58,7 @@ ctkVTKDataSetArrayComboBoxPrivate::ctkVTKDataSetArrayComboBoxPrivate(ctkVTKDataS
 void ctkVTKDataSetArrayComboBoxPrivate::init()
 {
   Q_Q(ctkVTKDataSetArrayComboBox);
-  q->setModel(new ctkVTKDataSetModel);
+  q->setModel(new ctkVTKDataSetModel(q));
   QObject::connect(q, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onCurrentIndexChanged(int)));
 }
