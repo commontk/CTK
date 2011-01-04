@@ -95,7 +95,7 @@ class ctkPluginContextPrivate;
  */
 class CTK_PLUGINFW_EXPORT ctkPluginContext
 {
-	Q_DECLARE_PRIVATE(ctkPluginContext)
+  Q_DECLARE_PRIVATE(ctkPluginContext)
 
 public:
 
@@ -676,7 +676,7 @@ public:
    * @see ctkEventBus
    */
   void connectServiceListener(QObject* receiver, const char* slot,
-			      const QString& filter = QString());
+                              const QString& filter = QString());
 
   /**
    * Disconnects a slot which has been previously connected
