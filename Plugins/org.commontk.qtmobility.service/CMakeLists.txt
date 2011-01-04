@@ -11,6 +11,7 @@ SET(PLUGIN_SRCS
 
 SET(PLUGIN_MOC_SRCS
   ctkQtMobilityServiceActivator_p.h
+  ctkQtMobilityServiceFactory_p.h
   ctkQtMobilityServiceRuntime_p.h
 )
 
