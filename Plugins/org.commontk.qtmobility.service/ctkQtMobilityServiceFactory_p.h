@@ -34,6 +34,7 @@ using namespace QtMobility;
 class ctkQtMobilityServiceFactory : public QObject, public ctkServiceFactory
 {
   Q_OBJECT
+  Q_INTERFACES(ctkServiceFactory)
 
 public:
 
