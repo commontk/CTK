@@ -178,6 +178,8 @@ ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& cl
 QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString& filter,
                                             ctkPluginPrivate* plugin) const
 {
+  Q_UNUSED(plugin)
+
   QMutexLocker lock(&mutex);
 
   QListIterator<ctkServiceRegistration>* s = 0;
