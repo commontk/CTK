@@ -24,6 +24,7 @@
 #include <ctkPluginFrameworkTestUtil.h>
 #include <ctkPluginContext.h>
 #include <ctkPluginConstants.h>
+#include <ctkPluginException.h>
 #include <ctkServiceException.h>
 
 #include <QTest>

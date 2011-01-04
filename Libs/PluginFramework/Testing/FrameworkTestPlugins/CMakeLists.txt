@@ -1,3 +1,3 @@
-foreach(test_plugin ${test_plugins})
+foreach(test_plugin ${fwtest_plugins})
   ADD_SUBDIRECTORY(${test_plugin})
 endforeach()

@@ -20,21 +20,34 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINFRAMEWORKTESTUTIL_H
-#define CTKPLUGINFRAMEWORKTESTUTIL_H
+#ifndef CTKPLUGINFRAMEWORKTESTRUNNER_H
+#define CTKPLUGINFRAMEWORKTESTRUNNER_H
 
-#include <QString>
-#include <QSharedPointer>
+#include <ctkPlugin.h>
+#include <ctkPluginFramework_global.h>
 
-class ctkPlugin;
-class ctkPluginContext;
+class ctkPluginFrameworkTestRunnerPrivate;
 
-class ctkPluginFrameworkTestUtil
+class ctkPluginFrameworkTestRunner
 {
 
 public:
 
-  static QSharedPointer<ctkPlugin> installPlugin(ctkPluginContext* pc, const QString& plugin);
+  ctkPluginFrameworkTestRunner();
+  ~ctkPluginFrameworkTestRunner();
+
+  void addPluginPath(const QString& path, bool install = true);
+  void addPlugin(const QString& path, const QString& name);
+  void startPluginOnRun(const QString& name, ctkPlugin::StartOptions opts = ctkPlugin::START_ACTIVATION_POLICY);
+
+  void init(const ctkProperties& fwProps = ctkProperties());
+  int run(int argc, char** argv);
+
+private:
+
+  Q_DECLARE_PRIVATE(ctkPluginFrameworkTestRunner)
+
+  const QScopedPointer<ctkPluginFrameworkTestRunnerPrivate> d_ptr;
 };
 
-#endif // CTKPLUGINFRAMEWORKTESTUTIL_H
+#endif // CTKPLUGINFRAMEWORKTESTRUNNER_H
