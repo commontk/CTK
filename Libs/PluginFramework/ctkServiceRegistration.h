@@ -150,7 +150,7 @@ protected:
   friend class ctkServices;
   friend class ctkServiceReferencePrivate;
 
-  friend uint qHash(const ctkServiceRegistration&);
+  friend uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceRegistration&);
 
   ctkServiceRegistration(ctkServiceRegistrationPrivate* registrationPrivate);
 
