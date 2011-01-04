@@ -25,6 +25,7 @@
 
 #include <QHash>
 #include <QStringList>
+#include <QVariant>
 
 #include "ctkCaseInsensitiveString.h"
 
