@@ -308,7 +308,7 @@ void ctkPluginPrivate::stop0(bool wasStarted)
     if (pluginContext)
     {
       pluginContext->d_func()->invalidate();
-      //pluginContext = 0;
+      pluginContext.reset();
     }
     //8-10:
     removePluginResources();
