@@ -37,6 +37,11 @@
 #include <QThread>
 #include <QDebug>
 
+#ifdef _WIN32
+#include <windows.h>
+#include <stdlib.h>
+#endif _WIN32
+
 class TestRunner : public QThread
 {
 public:
@@ -186,6 +191,30 @@ void ctkPluginFrameworkTestRunner::addPluginPath(const QString& path, bool insta
 {
   Q_D(ctkPluginFrameworkTestRunner);
   d->pluginPaths.push_back(qMakePair(path, install));
+#ifdef _WIN32
+  if(_putenv_s("PATH", path.toLatin1().data()))
+  {
+    LPVOID lpMsgBuf;
+    DWORD dw = GetLastError(); 
+
+    FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_FROM_SYSTEM |
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        dw,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPTSTR) &lpMsgBuf,
+        0, NULL );
+
+    QString msg = QString("Adding '%1' to the PATH environment variable failed: %2")
+      .arg(path).arg(QString((LPCTSTR)lpMsgBuf));
+    
+    qWarning() << msg;
+
+    LocalFree(lpMsgBuf);
+  }
+#endif
 }
 
 void ctkPluginFrameworkTestRunner::addPlugin(const QString &path, const QString &name)
