@@ -27,20 +27,75 @@
 
 #include <ctkPluginFrameworkExport.h>
 
+/**
+ * ctkCaseInsensitiveString wraps a QString and can be
+ * used in Qt container classes as a key type representing
+ * case insensitive strings. However, case is preserved when
+ * retrieving the actual QString.
+ */
 class CTK_PLUGINFW_EXPORT ctkCaseInsensitiveString
 {
 
 public:
 
+  /**
+   * Wraps a null QString.
+   */
   ctkCaseInsensitiveString();
+
+  /**
+   * Wraps the given character sequence.
+   *
+   * @param str The characters to be wrapped by this ctkCaseInsensitiveString
+   */
   ctkCaseInsensitiveString(const char* str);
+
+  /**
+   * Wraps the given QString.
+   *
+   * @param str The QString to be wrapped by this ctkCaseInsensitiveString
+   */
   ctkCaseInsensitiveString(const QString& str);
+
+  /**
+   * Copy constructor.
+   *
+   * @param str The ctkCaseInsensitiveString instance to copy.
+   */
   ctkCaseInsensitiveString(const ctkCaseInsensitiveString& str);
 
+  /**
+   * Assignment operator.
+   *
+   * @param str The ctkCaseInsensitiveString instance which should be
+   *        assigned.
+   */
   ctkCaseInsensitiveString& operator=(const ctkCaseInsensitiveString& str);
+
+  /**
+   * String comparison ignoring case.
+   *
+   * @param str The string with which to compare this instance.
+   * @return <code>true</code> if both strings are equal after being
+   *         converted to lower case strings, <code>false</code> otherwise.
+   */
   bool operator==(const ctkCaseInsensitiveString& str) const;
+
+  /**
+   * Less than operator ignoring case.
+   *
+   * @param str The string with which to compare this instance.
+   * @return <code>true</code> if the lower case variant of the
+   *         current string is lexicographically less then
+   *         the lower case variant of <code>str</code>, <code>false</code>
+   *         otherwise.
+   */
   bool operator<(const ctkCaseInsensitiveString& str) const;
 
+  /**
+   * Converts this ctkCaseInsensitiveString instance to a QString,
+   * preserving the original case.
+   */
   operator QString() const;
 
 private:
@@ -48,6 +103,11 @@ private:
   QString str;
 };
 
+/**
+ * Returns a hash value for the lower case string.
+ *
+ * @param str The string to be hashed.
+ */
 uint CTK_PLUGINFW_EXPORT qHash(const ctkCaseInsensitiveString& str);
 
 CTK_PLUGINFW_EXPORT QDataStream& operator<<(QDataStream &out, const ctkCaseInsensitiveString& str);
