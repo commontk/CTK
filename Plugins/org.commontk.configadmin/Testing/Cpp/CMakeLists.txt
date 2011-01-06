@@ -16,7 +16,7 @@ TARGET_LINK_LIBRARIES(${test_executable}
   ${fwtestutil_lib}
 )
 
-ADD_DEPENDENCIES(${test_executable} ${PROJECT_NAME})
+ADD_DEPENDENCIES(${test_executable} ${PROJECT_NAME} ${configadmin_test})
 
 ADD_TEST(${PROJECT_NAME}Tests ${CPP_TEST_PATH}/${test_executable})
 SET_PROPERTY(TEST ${PROJECT_NAME}Tests PROPERTY LABELS ${PROJECT_NAME})

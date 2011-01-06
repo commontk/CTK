@@ -35,4 +35,4 @@ ctkMacroBuildPlugin(
   TEST_PLUGIN
 )
 
-#ADD_DEPENDENCIES(${PROJECT_NAME} ${test_plugins})
+SET(configadmin_test ${PROJECT_NAME} CACHE INTERNAL "Target name for the plugin containing unit tests for ConfigAdmin implementations")
