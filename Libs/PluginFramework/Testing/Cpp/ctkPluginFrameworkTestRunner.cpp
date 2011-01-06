@@ -266,6 +266,8 @@ int ctkPluginFrameworkTestRunner::run(int argc, char** argv)
     {
       qCritical() << "  -" << p.first;
     }
+
+    return EXIT_FAILURE;
   }
 
   TestRunner runner(d->context, d->startPlugins, argc, argv);
