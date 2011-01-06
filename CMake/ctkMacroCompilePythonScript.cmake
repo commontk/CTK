@@ -9,7 +9,7 @@ INCLUDE(${CTK_CMAKE_DIR}/ctkMacroParseArguments.cmake)
 
 MACRO(ctkMacroCompilePythonScript)
   ctkMacroParseArguments(MY
-    "TARGET_NAME;SCRIPTS;RESOURCES;DESTINATION_DIR;INSTALL_DIR"
+    "TARGET_NAME;SCRIPTS;RESOURCES;SOURCE_DIR;DESTINATION_DIR;INSTALL_DIR"
     ""
     ${ARGN}
     )
@@ -27,6 +27,10 @@ MACRO(ctkMacroCompilePythonScript)
     ENDIF()
   ENDFOREACH()
   
+  IF(NOT DEFINED MY_SOURCE_DIR)
+    SET(MY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+  ENDIF()
+  
   set(copied_files)
   set(copied_python_files)
   FOREACH(file ${MY_SCRIPTS})
@@ -36,7 +40,7 @@ MACRO(ctkMacroCompilePythonScript)
       SET(file "${file}.py")
     ENDIF()
 
-    SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
+    SET(src "${MY_SOURCE_DIR}/${file}")
     SET(tgt "${MY_DESTINATION_DIR}/${file}")
     IF(IS_ABSOLUTE ${file})
       SET(src ${file})
