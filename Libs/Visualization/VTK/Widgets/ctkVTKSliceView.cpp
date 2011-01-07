@@ -188,6 +188,13 @@ QString ctkVTKSliceView::cornerAnnotationText()const
 }
 
 //----------------------------------------------------------------------------
+vtkCornerAnnotation * ctkVTKSliceView::cornerAnnotation()const
+{
+  Q_D(const ctkVTKSliceView);
+  return d->LightBoxRendererManager->GetCornerAnnotation();
+}
+
+//----------------------------------------------------------------------------
 void ctkVTKSliceView::setCornerAnnotationText(const QString& text)
 {
   Q_D(ctkVTKSliceView);

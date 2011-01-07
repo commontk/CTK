@@ -82,6 +82,11 @@ public:
   /// \sa setCornerAnnotationText();
   QString cornerAnnotationText()const;
 
+  /// Get corner annotation actor
+  /// This is the corner annotation associated with all renderers managed
+  /// by the lightBoxManager
+  /// \sa vtkLightBoxRendererManager::GetCornerAnnotation()
+  vtkCornerAnnotation * cornerAnnotation()const;
   /// Get background color
   /// \sa setBackgroundColor();
   QColor backgroundColor()const;
