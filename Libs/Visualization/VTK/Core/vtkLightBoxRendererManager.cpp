@@ -709,6 +709,12 @@ const std::string vtkLightBoxRendererManager::GetCornerAnnotationText() const
 }
 
 // --------------------------------------------------------------------------
+vtkCornerAnnotation * vtkLightBoxRendererManager::GetCornerAnnotation() const
+{
+  return this->Internal->CornerAnnotation;
+}
+
+// --------------------------------------------------------------------------
 void vtkLightBoxRendererManager::SetBackgroundColor(const double newBackgroundColor[3])
 {
   if (!this->IsInitialized())
