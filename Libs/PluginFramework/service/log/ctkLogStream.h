@@ -23,14 +23,14 @@
 #ifndef CTKLOGSTREAM_H
 #define CTKLOGSTREAM_H
 
-#include <org_commontk_log_Export.h>
+#include <ctkPluginFrameworkExport.h>
 
 #include <ctkServiceReference.h>
 #include <QTextStream>
 
 class ctkLogService;
 
-class org_commontk_log_EXPORT ctkLogStream
+class CTK_PLUGINFW_EXPORT ctkLogStream
 {
 public:
 
@@ -68,7 +68,7 @@ protected:
   const int line;
 };
 
-class org_commontk_log_EXPORT ctkLogStreamWithServiceRef : public ctkLogStream
+class CTK_PLUGINFW_EXPORT ctkLogStreamWithServiceRef : public ctkLogStream
 {
 public:
 
@@ -84,7 +84,7 @@ protected:
   ctkServiceReference sr;
 };
 
-class org_commontk_log_EXPORT ctkNullLogStream : public ctkLogStream
+class CTK_PLUGINFW_EXPORT ctkNullLogStream : public ctkLogStream
 {
 public:
 

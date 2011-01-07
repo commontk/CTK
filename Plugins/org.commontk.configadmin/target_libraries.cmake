@@ -6,5 +6,4 @@
 
 SET(target_libraries
   CTKPluginFramework
-  Log4Qt
 )

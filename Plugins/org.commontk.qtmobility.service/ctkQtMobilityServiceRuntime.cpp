@@ -28,7 +28,7 @@
 
 #include <ctkPluginContext.h>
 #include <ctkPlugin.h>
-#include <ctkLogService.h>
+#include <service/log/ctkLogService.h>
 #include <ctkPluginConstants.h>
 #include <ctkServiceRegistration.h>
 

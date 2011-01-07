@@ -25,7 +25,8 @@
 #include "ctkQtMobilityServiceRuntime_p.h"
 #include "ctkQtMobilityServiceActivator_p.h"
 
-#include <ctkLogService.h>
+#include <service/log/ctkLogService.h>
+
 #include <ctkPluginException.h>
 #include <ctkPluginConstants.h>
 

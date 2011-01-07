@@ -11,7 +11,7 @@
 
 #include <ctkServiceTracker.h>
 #include <ctkServiceException.h>
-#include <ctkLogService.h>
+#include <service/log/ctkLogService.h>
 
 #include <QtPlugin>
 
