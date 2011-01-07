@@ -40,6 +40,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 #include <vtkImageMapper.h>
+#include <vtkCornerAnnotation.h>
 
 class vtkRenderWindowInteractor;
 
@@ -60,6 +61,8 @@ public:
   vtkSmartPointer<vtkLightBoxRendererManager>   LightBoxRendererManager;
   bool                                          RenderPending;
   bool                                          RenderEnabled;
+  vtkSmartPointer<vtkRenderer>                  OverlayRenderer;
+  vtkSmartPointer<vtkCornerAnnotation>          OverlayCornerAnnotation;
 
 };
 

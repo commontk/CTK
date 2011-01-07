@@ -37,6 +37,7 @@ class vtkRenderWindow;
 class vtkRenderer;
 class vtkCamera; 
 class vtkImageData;
+class vtkCornerAnnotation;
 
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceView : public QWidget
 {
@@ -71,6 +72,9 @@ public:
   /// Get lightBoxRendererManager
   vtkLightBoxRendererManager* lightBoxRendererManager() const;
 
+  /// Get overlay renderer
+  vtkRenderer* overlayRenderer() const;
+
   /// Set/Get window interactor
   vtkRenderWindowInteractor* interactor() const;
   void setInteractor(vtkRenderWindowInteractor* newInteractor);
@@ -87,6 +91,11 @@ public:
   /// by the lightBoxManager
   /// \sa vtkLightBoxRendererManager::GetCornerAnnotation()
   vtkCornerAnnotation * cornerAnnotation()const;
+
+  /// Get overlay corner annotation actor
+  /// This corresponds to the cornerAnnotation associated added in the single overlay renderer
+  vtkCornerAnnotation* overlayCornerAnnotation()const;
+
   /// Get background color
   /// \sa setBackgroundColor();
   QColor backgroundColor()const;
