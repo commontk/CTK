@@ -142,7 +142,7 @@ ctkConfigurationImplPtr ctkConfigurationStore::createFactoryConfiguration(
 {
   QMutexLocker lock(&mutex);
   //TODO Qt4.7 use QDateTime::currentMSecsSinceEpoch()
-  QString pid = factoryPid + "-" + QDateTime::currentDateTime().toString() + "-" + createdPidCount++;
+  QString pid = factoryPid + "-" + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmsszzz") + "-" + QString::number(createdPidCount++);
   ctkConfigurationImplPtr config(new ctkConfigurationImpl(configurationAdminFactory, this, factoryPid, pid, location));
   configurations.insert(pid, config);
   return config;
