@@ -180,6 +180,7 @@ public:
   int                                           RendererLayer;
   vtkWeakPointer<vtkRenderWindowInteractor>     CurrentInteractor;
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
+  std::string                                   CornerAnnotationText;
 
   vtkWeakPointer<vtkImageData>                  ImageData;
   double                                        ColorWindow;
@@ -242,12 +243,15 @@ void vtkLightBoxRendererManager::vtkInternal::SetupCornerAnnotation()
     if (!(*it)->Renderer->HasViewProp(this->CornerAnnotation))
       {
       (*it)->Renderer->AddViewProp(this->CornerAnnotation);
-      this->CornerAnnotation->SetMaximumLineHeight(0.07);
-      vtkTextProperty *tprop = this->CornerAnnotation->GetTextProperty();
-      tprop->ShadowOn();
       }
-    this->CornerAnnotation->ClearAllTexts();
     }
+
+  this->CornerAnnotation->SetMaximumLineHeight(0.07);
+  vtkTextProperty *tprop = this->CornerAnnotation->GetTextProperty();
+  tprop->ShadowOn();
+
+  this->CornerAnnotation->ClearAllTexts();
+  this->CornerAnnotation->SetText(2, this->CornerAnnotationText.c_str());
 }
 
 //---------------------------------------------------------------------------
@@ -718,13 +722,15 @@ void vtkLightBoxRendererManager::SetCornerAnnotationText(const std::string& text
                   "vtkLightBoxRendererManager is NOT initialized");
     return;
     }
-  if (text.compare(this->Internal->CornerAnnotation->GetText(2)) == 0)
+  if (text.compare(this->Internal->CornerAnnotationText) == 0)
     {
     return;
     }
 
   this->Internal->CornerAnnotation->ClearAllTexts();
   this->Internal->CornerAnnotation->SetText(2, text.c_str());
+
+  this->Internal->CornerAnnotationText = text;
 
   this->Modified();
 }
