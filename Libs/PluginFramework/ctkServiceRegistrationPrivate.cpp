@@ -26,7 +26,8 @@ ctkServiceRegistrationPrivate::ctkServiceRegistrationPrivate(
   ctkPluginPrivate* plugin, QObject* service,
   const ServiceProperties& props)
   : ref(1), service(service), plugin(plugin), reference(this),
-    properties(props), available(true), unregistering(false)
+    properties(props), available(true), unregistering(false),
+    propsLock(QMutex::Recursive)
 {
 
 }
