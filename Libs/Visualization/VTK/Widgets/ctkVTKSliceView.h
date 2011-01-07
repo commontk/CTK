@@ -95,9 +95,11 @@ public:
   RenderWindowLayoutType renderWindowLayoutType()const;
 
   /// Get color level
+  /// \sa setColorLevel();
   double colorLevel()const;
 
   /// Get color window
+  /// \sa setColorWindow();
   double colorWindow()const;
 
 public slots:
@@ -109,38 +111,48 @@ public slots:
   void forceRender();
 
   /// Reset cameras associated with all renderWindowItem
+  /// \sa vtkLightBoxRendererManager::ResetCamera
   void resetCamera();
 
   /// Set image data
+  /// \sa vtkLightBoxRendererManager::SetImageData
   void setImageData(vtkImageData* newImageData);
 
   /// Set corner annotation \a text
+  /// \sa vtkLightBoxRendererManager::SetCornerAnnotationText
   void setCornerAnnotationText(const QString& text);
 
   /// Set background color
+  /// \sa vtkLightBoxRendererManager::SetBackgroundColor
   void setBackgroundColor(const QColor& newBackgroundColor);
 
   /// Set highlightedBox color
+  /// \sa vtkLightBoxRendererManager::SetHighlightedBoxColor
   void setHighlightedBoxColor(const QColor& newHighlightedBoxColor);
 
   /// Enable/Disable rendering
   void setRenderEnabled(bool value);
 
   /// Set RenderWindow layout type
+  /// \sa vtkLightBoxRendererManager::SetRenderWindowLayoutType
   void setRenderWindowLayoutType(RenderWindowLayoutType layoutType);
 
   /// Set color level
+  /// \sa vtkLightBoxRendererManager::SetColorLevel
   void setColorLevel(double newColorLevel);
 
   /// Set color window
+  /// \sa vtkLightBoxRendererManager::SetColorWindow
   void setColorWindow(double newColorWindow);
 
   /// Change the number of row of the associated lightBox
   /// \sa lightBoxRendererManager()
+  /// \sa vtkLightBoxRendererManager::SetRenderWindowRowCount
   void setLightBoxRendererManagerRowCount(int newRowCount);
 
   /// Change the number of column of the associated lightBox
   /// \sa lightBoxRendererManager()
+  /// \sa vtkLightBoxRendererManager::SetRenderWindowColumnCount
   void setLightBoxRendererManagerColumnCount(int newColumnCount);
   
 signals:
