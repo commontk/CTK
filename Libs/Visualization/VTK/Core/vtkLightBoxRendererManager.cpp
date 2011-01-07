@@ -177,6 +177,7 @@ public:
   int                                           RenderWindowColumnCount;
   int                                           RenderWindowLayoutType;
   double                                        HighlightedBoxColor[3];
+  int                                           RendererLayer;
   vtkWeakPointer<vtkRenderWindowInteractor>     CurrentInteractor;
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
 
@@ -208,6 +209,7 @@ vtkLightBoxRendererManager::vtkInternal::vtkInternal(vtkLightBoxRendererManager*
   this->RenderWindowLayoutType = vtkLightBoxRendererManager::LeftRightTopBottom;
   this->ColorWindow = 255;
   this->ColorLevel = 127.5;
+  this->RendererLayer = 0;
   // Default background color: black
   this->RendererBackgroundColor[0] = 0.0;
   this->RendererBackgroundColor[1] = 0.0;
@@ -253,7 +255,13 @@ void vtkLightBoxRendererManager::vtkInternal::setupRendering()
 {
   assert(this->RenderWindow);
   
-  this->RenderWindow->GetRenderers()->RemoveAllItems();
+  // Remove only renderers managed by this light box
+  for(RenderWindowItemListIt it = this->RenderWindowItemList.begin();
+      it != this->RenderWindowItemList.end();
+      ++it)
+    {
+    this->RenderWindow->GetRenderers()->RemoveItem((*it)->Renderer);
+    }
 
   // Compute the width and height of each RenderWindowItem
   double viewportWidth  = 1.0 / static_cast<double>(this->RenderWindowColumnCount);
@@ -332,6 +340,25 @@ vtkLightBoxRendererManager::~vtkLightBoxRendererManager()
 void vtkLightBoxRendererManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
+}
+
+//----------------------------------------------------------------------------
+void vtkLightBoxRendererManager::SetRendererLayer(int newLayer)
+{
+  if (this->IsInitialized())
+    {
+    vtkErrorMacro(<< "SetRendererLayer failed - vtkLightBoxRendererManager is initialized");
+    return;
+    }
+
+  if (newLayer == this->Internal->RendererLayer)
+    {
+    return;
+    }
+
+  this->Internal->RendererLayer = newLayer;
+
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -538,6 +565,7 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
           new RenderWindowItem(this->Internal->RendererBackgroundColor,
                                this->Internal->HighlightedBoxColor,
                                this->Internal->ColorWindow, this->Internal->ColorLevel);
+      item->Renderer->SetLayer(this->Internal->RendererLayer);
       item->ImageMapper->SetInput(this->Internal->ImageData);
       this->Internal->RenderWindowItemList.push_back(item);
       --extraItem;

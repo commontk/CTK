@@ -9,6 +9,7 @@ class vtkRenderWindow;
 class vtkRenderer;
 class vtkImageData;
 class vtkCamera;
+class vtkCornerAnnotation;
 
 class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkObject
 {
@@ -19,6 +20,11 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
   void Initialize(vtkRenderWindow* renderWindow);
 
   bool IsInitialized();
+
+  /// Set the layer associated with the renderers
+  /// \note By default, the value is 0
+  /// \sa vtkRenderer::SetLayer
+  void SetRendererLayer(int newLayer);
 
   /// Get associated RenderWindow
   vtkRenderWindow* GetRenderWindow();
