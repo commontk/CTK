@@ -27,7 +27,7 @@
 
 #include <QTextStream>
 
-class ctkLogService;
+struct ctkLogService;
 
 class CTK_PLUGINFW_EXPORT ctkLogStream
 {

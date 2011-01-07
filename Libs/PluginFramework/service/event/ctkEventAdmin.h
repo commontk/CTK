@@ -69,7 +69,7 @@ struct ctkEventAdmin
    *        Qt::DirectConnection for synchronous delivery.
    */
   virtual void publishSignal(const QObject* publisher, const char* signal,
-                             const QString& signal_topic, Qt::ConnectionType type = Qt::QueuedConnection) = 0;
+                             Qt::ConnectionType type = Qt::QueuedConnection) = 0;
 
   /**
    * Subsribe for (observe) events. The slot is called whenever an event is sent
@@ -102,8 +102,20 @@ struct ctkEventAdmin
    * @param member The slot in normalized form.
    * @param properties A map containing topics and a filter expression.
    * @return Returns an id which can be used to update the properties.
+   *
+   * @see unsubscribeSlot(qlonglong)
    */
-  virtual QString subscribeSlot(const QObject* subscriber, const char* member, const ctkProperties& properties) = 0;
+  virtual qlonglong subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties) = 0;
+
+  /**
+   * Unsubscribe a previously subscribed slot. Use this method to allow the EventAdmin
+   * implementation to clean up resources.
+   *
+   * @param subscriptionId The id obtained from a previous call to subscribeSlot()
+   *
+   * @see subscribeSlot()
+   */
+  virtual void unsubscribeSlot(qlonglong subscriptionId) = 0;
 
   /**
    * Updates the properties of a previously registered slot. This can be used
@@ -112,8 +124,10 @@ struct ctkEventAdmin
    *
    * @param subscriptionId The slot id obtained by a call to subscribeSlot().
    * @param properties The properties which should be updated.
+   * @return <code>true</code> if a slot was registered under this subscriptionId and its
+   *         properties where changed, <code>false</code> otherwise.
    */
-  virtual void updateProperties(const QString& subsriptionId, const ctkProperties& properties) = 0;
+  virtual bool updateProperties(qlonglong subsriptionId, const ctkDictionary& properties) = 0;
 
 };
 

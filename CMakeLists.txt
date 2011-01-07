@@ -313,6 +313,7 @@ SET(CTK_PLUGINS
   org.commontk.dah.exampleapp:OFF
   org.commontk.dah.examplehost:OFF
   org.commontk.dah.host:OFF
+  org.commontk.eventadmin:OFF
   org.commontk.log:OFF
   org.commontk.log4qt:OFF
   org.commontk.plugingenerator.core:OFF
