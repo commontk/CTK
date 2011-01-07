@@ -43,8 +43,10 @@ ctkCMSerializedTaskQueue::~ctkCMSerializedTaskQueue()
 
 void ctkCMSerializedTaskQueue::put(QRunnable* newTask)
 {
-  QMutexLocker lock(&mutex);
-  tasks.push_back(newTask);
+  {
+    QMutexLocker lock(&mutex);
+    tasks.push_back(newTask);
+  }
   if (!thread.isRunning())
   {
     thread.start();
