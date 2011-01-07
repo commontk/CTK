@@ -120,74 +120,74 @@ void ctkManagedServiceFactoryTestSuite::testSamePidManagedServiceFactory()
   config->remove();
 }
 
-//void ctkManagedServiceFactoryTestSuite::testGeneralManagedServiceFactory()
-//{
-//  updateCount = 0;
-//  _ManagedServiceFactoryUpdateTest msf(this);
+void ctkManagedServiceFactoryTestSuite::testGeneralManagedServiceFactory()
+{
+  updateCount = 0;
+  _ManagedServiceFactoryUpdateTest msf(this);
 
-//  ctkDictionary dict;
-//  dict.insert(ctkPluginConstants::SERVICE_PID, "test");
+  ctkDictionary dict;
+  dict.insert(ctkPluginConstants::SERVICE_PID, "test");
 
-//  ctkServiceRegistration reg;
-//  {
-//    QMutexLocker l(&mutex);
-//    reg = context->registerService<ctkManagedServiceFactory>(&msf, dict);
-//    locked = true;
-//    lock.wait(&mutex, 100);
-//    QVERIFY(locked);
-//    QCOMPARE(0, updateCount);
-//    locked = false;
-//  }
+  ctkServiceRegistration reg;
+  {
+    QMutexLocker l(&mutex);
+    reg = context->registerService<ctkManagedServiceFactory>(&msf, dict);
+    locked = true;
+    lock.wait(&mutex, 100);
+    QVERIFY(locked);
+    QCOMPARE(0, updateCount);
+    locked = false;
+  }
 
-//  ctkConfigurationPtr config = cm->createFactoryConfiguration("test");
-//  QVERIFY(config->getProperties().isEmpty());
-//  ctkDictionary props;
-//  props.insert("testkey", "testvalue");
+  ctkConfigurationPtr config = cm->createFactoryConfiguration("test");
+  QVERIFY(config->getProperties().isEmpty());
+  ctkDictionary props;
+  props.insert("testkey", "testvalue");
 
-//  {
-//    QMutexLocker l(&mutex);
-//    config->update(props);
-//    locked = true;
-//    lock.wait(&mutex, 5000);
-//    if (locked)
-//      QFAIL("should have updated");
-//    QCOMPARE(1, updateCount);
-//  }
+  {
+    QMutexLocker l(&mutex);
+    config->update(props);
+    locked = true;
+    lock.wait(&mutex, 5000);
+    if (locked)
+      QFAIL("should have updated");
+    QCOMPARE(1, updateCount);
+  }
 
-//  dict.remove(ctkPluginConstants::SERVICE_PID);
-//  {
-//    QMutexLocker l(&mutex);
-//    reg.setProperties(dict);
-//    props.insert("testkey", "testvalue2");
-//    config->update(props);
-//    locked = true;
-//    lock.wait(&mutex, 100);
-//    QVERIFY(locked);
-//    QCOMPARE(1, updateCount);
-//    locked = false;
-//  }
+  dict.remove(ctkPluginConstants::SERVICE_PID);
+  {
+    QMutexLocker l(&mutex);
+    reg.setProperties(dict);
+    props.insert("testkey", "testvalue2");
+    config->update(props);
+    locked = true;
+    lock.wait(&mutex, 100);
+    QVERIFY(locked);
+    QCOMPARE(1, updateCount);
+    locked = false;
+  }
 
-//  config->remove();
-//  config = cm->createFactoryConfiguration("test2");
-//  dict.insert(ctkPluginConstants::SERVICE_PID, "test2");
-//  {
-//    QMutexLocker l(&mutex);
-//    reg.setProperties(dict);
-//    locked = true;
-//    lock.wait(&mutex, 5000);
-//    if (locked)
-//      QFAIL("should have updated");
-//    QCOMPARE(2, updateCount);
-//  }
+  config->remove();
+  config = cm->createFactoryConfiguration("test2");
+  dict.insert(ctkPluginConstants::SERVICE_PID, "test2");
+  {
+    QMutexLocker l(&mutex);
+    reg.setProperties(dict);
+    locked = true;
+    lock.wait(&mutex, 5000);
+    if (locked)
+      QFAIL("should have updated");
+    QCOMPARE(2, updateCount);
+  }
 
-//  {
-//    QMutexLocker l(&mutex);
-//    config->remove();
-//    locked = true;
-//    lock.wait(&mutex, 5000);
-//    if (locked)
-//      QFAIL("should have updated");
-//    QCOMPARE(3, updateCount);
-//  }
-//  reg.unregister();
-//}
+  {
+    QMutexLocker l(&mutex);
+    config->remove();
+    locked = true;
+    lock.wait(&mutex, 5000);
+    if (locked)
+      QFAIL("should have updated");
+    QCOMPARE(3, updateCount);
+  }
+  reg.unregister();
+}

@@ -74,7 +74,7 @@ void ctkConfigAdminTestActivator::start(ctkPluginContext* context)
   managedServiceFactoryTestSuite = new ctkManagedServiceFactoryTestSuite(context, cmPluginId);
   props.clear();
   props.insert(ctkPluginConstants::SERVICE_PID, managedServiceFactoryTestSuite->metaObject()->className());
-  //context->registerService<ctkTestSuiteInterface>(managedServiceFactoryTestSuite, props);
+  context->registerService<ctkTestSuiteInterface>(managedServiceFactoryTestSuite, props);
 
   configPluginTestSuite = new ctkConfigurationPluginTestSuite(context, cmPluginId);
   props.clear();
@@ -90,9 +90,6 @@ void ctkConfigAdminTestActivator::start(ctkPluginContext* context)
 void ctkConfigAdminTestActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context);
-
-  //delete frameworkTestSuite;
-  //delete serviceListenerTestSuite;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_configadmintest, ctkConfigAdminTestActivator)

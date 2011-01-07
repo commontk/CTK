@@ -69,7 +69,7 @@ private slots:
   void cleanup();
 
   void testSamePidManagedServiceFactory();
-  //void testGeneralManagedServiceFactory();
+  void testGeneralManagedServiceFactory();
 
 private:
 
