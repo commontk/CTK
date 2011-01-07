@@ -83,7 +83,7 @@ QList<ctkConfigurationPtr> ctkConfigurationAdminImpl::listConfigurations(const Q
   //catch (SecurityException e) {
   //  filterString = "(&(" + ConfigurationAdmin.SERVICE_BUNDLELOCATION + "=" + bundle.getLocation() + ")" + filterString + ")";
   //}
-  QList<ctkConfigurationImplPtr> configs; configurationStore->listConfigurations(ctkLDAPSearchFilter(filterString));
+  QList<ctkConfigurationImplPtr> configs = configurationStore->listConfigurations(ctkLDAPSearchFilter(filterString));
   QList<ctkConfigurationPtr> result;
   foreach(ctkConfigurationImplPtr config, configs)
   {
