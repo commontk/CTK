@@ -24,7 +24,7 @@
 #include "ctkConfigurationAdminFactory_p.h"
 
 #include <ctkPluginContext.h>
-#include <ctkLogService.h>
+#include <service/log/ctkLogService.h>
 
 #include <QDateTime>
 

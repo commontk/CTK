@@ -93,6 +93,12 @@ SET(KIT_SRCS
   service/cm/ctkConfigurationPlugin.cpp
   service/cm/ctkManagedService.h
   service/cm/ctkManagedServiceFactory.h
+
+  service/log/ctkLogEntry.h
+  service/log/ctkLogListener.h
+  service/log/ctkLogReaderService.h
+  service/log/ctkLogService.cpp
+  service/log/ctkLogStream.cpp
   )
 
 # Headers that should run through moc

@@ -23,7 +23,7 @@
 #include "ctkManagedServiceTracker_p.h"
 
 #include <service/cm/ctkConfigurationException.h>
-#include <ctkLogService.h>
+#include <service/log/ctkLogService.h>
 
 #include "ctkConfigurationImpl_p.h"
 #include "ctkConfigurationAdminFactory_p.h"

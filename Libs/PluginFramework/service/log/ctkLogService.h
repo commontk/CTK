@@ -48,10 +48,8 @@
  *
  * @ThreadSafe
  */
-class org_commontk_log_EXPORT ctkLogService
+struct CTK_PLUGINFW_EXPORT ctkLogService
 {
-
-public:
 
   virtual ~ctkLogService() {}
 
@@ -150,6 +148,6 @@ public:
 };
 
 
-Q_DECLARE_INTERFACE(ctkLogService, "org.commontk.log.ctkLogService")
+Q_DECLARE_INTERFACE(ctkLogService, "org.commontk.service.log.LogService")
 
 #endif // CTKLOGSERVICE_H

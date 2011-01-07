@@ -22,7 +22,7 @@
 
 #include "ctkCMEventDispatcher_p.h"
 
-#include <ctkLogService.h>
+#include <service/log/ctkLogService.h>
 #include <service/cm/ctkConfigurationListener.h>
 
 #include <QRunnable>

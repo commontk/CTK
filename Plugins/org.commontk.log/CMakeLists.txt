@@ -5,8 +5,6 @@ SET(PLUGIN_export_directive "org_commontk_log_EXPORT")
 SET(PLUGIN_SRCS
   ctkLogPlugin.cpp
   ctkLogQDebug.cpp
-  ctkLogService.cpp
-  ctkLogStream.cpp
 )
 
 # Files which should be processed by Qts moc

@@ -24,7 +24,7 @@
 #define CTKCMLOGTRACKER_P_H
 
 #include <ctkServiceTracker.h>
-#include <ctkLogService.h>
+#include <service/log/ctkLogService.h>
 
 /**
  * This class encapsulates the ctkLogService

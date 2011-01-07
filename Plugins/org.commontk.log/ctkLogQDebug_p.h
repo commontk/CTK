@@ -23,7 +23,7 @@
 #ifndef CTKLOGQDEBUG_P_H
 #define CTKLOGQDEBUG_P_H
 
-#include "ctkLogService.h"
+#include <service/log/ctkLogService.h>
 
 #include <QObject>
 

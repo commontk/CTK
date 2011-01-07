@@ -22,7 +22,7 @@
 
 #include "ctkConfigurationAdminFactory_p.h"
 
-#include <ctkLogService.h>
+#include <service/log/ctkLogService.h>
 
 #include "ctkConfigurationAdminImpl_p.h"
 #include "ctkConfigurationImpl_p.h"
