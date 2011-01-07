@@ -33,7 +33,7 @@ public:
     : ref(1), topic(topic), properties(properties)
   {
     validateTopicName(topic);
-    this->properties.insert(EventConstants::EVENT_TOPIC, topic);
+    this->properties.insert(ctkEventConstants::EVENT_TOPIC, topic);
   }
 
   static void validateTopicName(const QString& topic)
@@ -105,12 +105,21 @@ bool ctkEvent::operator==(const ctkEvent& other) const
   return false;
 }
 
-QVariant ctkEvent::property(const QString& name) const
+QVariant ctkEvent::getProperty(const QString& name) const
 {
   return d->properties[name];
 }
 
-QStringList ctkEvent::propertyNames() const
+bool ctkEvent::containsProperty(const QString& name) const
+{
+  if (ctkEventConstants::EVENT_TOPIC == name)
+  {
+   return true;
+  }
+  return d->properties.contains(name);
+}
+
+QStringList ctkEvent::getPropertyNames() const
 {
   QStringList result;
   foreach (ctkCaseInsensitiveString key, d->properties.keys())
@@ -120,7 +129,7 @@ QStringList ctkEvent::propertyNames() const
   return result;
 }
 
-const QString& ctkEvent::topic() const
+const QString& ctkEvent::getTopic() const
 {
   return d->topic;
 }

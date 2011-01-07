@@ -27,11 +27,12 @@
 #include "ctkPluginFrameworkExport.h"
 
 /**
- * Defines standard names for event properties
+ * Defines standard names for <code>ctkEventHandler</code> and Qt event slot properties.
  *
- * \see ctkEventBus::subscribeSlot()
+ * \see ctkEventHandler
+ * \see ctkEventAdmin::subscribeSlot()
  */
-struct CTK_PLUGINFW_EXPORT EventConstants {
+struct CTK_PLUGINFW_EXPORT ctkEventConstants {
 
   /**
    * Qt slot property (named <code>event.topics</code>)
@@ -76,28 +77,133 @@ struct CTK_PLUGINFW_EXPORT EventConstants {
   static const QString EVENT_FILTER; // = "event.filter"
 
   /**
+   * Service Registration property specifying the delivery qualities requested
+   * by an Event Handler service.
+   * <p>
+   * Event handlers MAY be registered with this property. Each value of this
+   * property is a string specifying a delivery quality for the Event handler.
+   *
+   * <p>
+   * The value of this property must be of type <code>QString</code> or
+   * <code>QStringList</code>.
+   *
+   * @see #DELIVERY_ASYNC_ORDERED
+   * @see #DELIVERY_ASYNC_UNORDERED
+   */
+  static const QString EVENT_DELIVERY; // = "event.delivery"
+
+  /**
+   * Event Handler delivery quality value specifying the Event Handler
+   * requires asynchronously delivered events be delivered in order. Ordered
+   * delivery is the default for asynchronously delivered events.
+   *
+   * <p>
+   * This delivery quality value is mutually exclusive with
+   * {@link #DELIVERY_ASYNC_UNORDERED}. However, if both this value and
+   * {@link #DELIVERY_ASYNC_UNORDERED} are specified for an event handler,
+   * this value takes precedence.
+   *
+   * @see #EVENT_DELIVERY
+   */
+  static const QString DELIVERY_ASYNC_ORDERED; // = "async.ordered"
+
+  /**
+   * Event Handler delivery quality value specifying the Event Handler does
+   * not require asynchronously delivered events be delivered in order. This
+   * may allow an Event Admin implementation to optimize asynchronous event
+   * delivery by relaxing ordering requirements.
+   *
+   * <p>
+   * This delivery quality value is mutually exclusive with
+   * {@link #DELIVERY_ASYNC_ORDERED}. However, if both this value and
+   * {@link #DELIVERY_ASYNC_ORDERED} are specified for an event handler,
+   * {@link #DELIVERY_ASYNC_ORDERED} takes precedence.
+   *
+   * @see #EVENT_DELIVERY
+   */
+  static const QString DELIVERY_ASYNC_UNORDERED; // = "async.unordered"
+
+  /**
    * The Plugin Symbolic Name of the plugin relevant to the event. The type of
    * the value for this event property is <code>QString</code>.
    */
-  static const QString PLUGIN_SYMBOLICNAME; // = "plugin.symbolicName";
+  static const QString PLUGIN_SYMBOLICNAME; // = "plugin.symbolicName"
 
   /**
    * The Plugin id of the plugin relevant to the event. The type of the value
    * for this event property is <code>long</code>.
    */
-  static const QString PLUGIN_ID; // = "plugin.id";
+  static const QString PLUGIN_ID; // = "plugin.id"
 
   /**
    * The ctkPlugin object of the plugin relevant to the event. The type of the
-   * value for this event property is {@link ctkPlugin}.
+   * value for this event property is <code>QSharedPointer<ctkPlugin></code>.
    */
-  static const QString PLUGIN; // = "plugin";
+  static const QString PLUGIN; // = "plugin"
 
   /**
    * The version of the plugin relevant to the event. The type of the value
    * for this event property is {@link ctkVersion}.
    */
-  static const QString PLUGIN_VERSION; // = "plugin.version";
+  static const QString PLUGIN_VERSION; // = "plugin.version"
+
+  /**
+   * An exception or error. The type of the value for this event property is
+   * <code>ctkRuntimeException</code>.
+   */
+  static const QString EXCEPTION; // = "exception"
+
+  /**
+   * The name of the exception type. Must be equal to the name of the class of
+   * the exception in the event property {@link #EXCEPTION}. The type of the
+   * value for this event property is <code>QString</code>.
+   */
+  static const QString EXCEPTION_CLASS; // = "exception.class"
+
+  /**
+   * The exception message. Must be equal to the result of calling
+   * <code>what()</code> on the exception in the event property
+   * {@link #EXCEPTION}. The type of the value for this event property is
+   * <code>QString</code>.
+   */
+  static const QString EXCEPTION_MESSAGE; // = "exception.message"
+
+  /**
+   * A human-readable message that is usually not localized. The type of the
+   * value for this event property is <code>QString</code>.
+   */
+  static const QString MESSAGE; // = "message"
+
+  /**
+   * A service reference. The type of the value for this event property is
+   * {@link ctkServiceReference}.
+   */
+  static const QString SERVICE; // = "service"
+
+  /**
+   * A service's id. The type of the value for this event property is
+   * <code>long</code>.
+   */
+  static const QString SERVICE_ID; // = ctkPluginConstants::SERVICE_ID
+
+  /**
+   * A service's objectClass. The type of the value for this event property is
+   * <code>QStringList</code>.
+   */
+  static const QString SERVICE_OBJECTCLASS; // = "service.objectClass"
+
+  /**
+   * A service's persistent identity. The type of the value for this event
+   * property is <code>QString</code>.
+   */
+  static const QString SERVICE_PID; // = ctkPluginConstants::SERVICE_PID
+
+  /**
+   * The time when the event occurred, as reported by
+   * <code>QDateTime::currentDateTime()</code>. The type of the value for this
+   * event property is <code>QDateTime</code>.
+   */
+  static const QString TIMESTAMP; // = "timestamp"
 
 };
 

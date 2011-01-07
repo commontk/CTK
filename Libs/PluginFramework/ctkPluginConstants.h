@@ -305,7 +305,8 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * previously assigned values since the Framework was started. These values
    * are NOT persistent across restarts of the Framework.
    */
-  static const QString SERVICE_ID; //	= "service.id"
+  // ATTENTION!!! If the value is changed, change also ctkEventConstants::SERVICE_ID
+  static const QString SERVICE_ID; // = "service.id"
 
   /**
    * Service property identifying a service's persistent identifier.
@@ -326,6 +327,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * a dot (.). A plugin may use this as the prefix of the persistent
    * identifiers for the services it registers.
    */
+  // ATTENTION!!! If the value is changed, change also ctkEventConstants::SERVICE_PID
   static const QString SERVICE_PID; // = "service.pid"
 
   /**

@@ -36,8 +36,8 @@ class ctkEventPrivate;
 /**
  * A CTK event.
  *
- * <code>ctkEvent</code> objects are delivered to Qt slots
- * which subscribe to the topic of the event.
+ * <code>ctkEvent</code> objects are delivered to <code>ctkEventHandler</code>
+ * or Qt slots which subscribe to the topic of the event.
  */
 class CTK_PLUGINFW_EXPORT ctkEvent {
 
@@ -68,26 +68,39 @@ public:
   bool operator==(const ctkEvent& other) const;
 
   /**
-   * Retrieves a property.
+   * Retrieve the value of an event property. The event topic may be retrieved
+   * with the property name &quot;event.topics&quot;.
    *
    * @param name the name of the property to retrieve
    * @return The value of the property, or an invalid QVariant if not found.
    */
-  QVariant property(const QString& name) const;
+  QVariant getProperty(const QString& name) const;
 
   /**
-   * Returns a list of this event's property names.
+   * Indicate the presence of an event property. The event topic is present
+   * using the property name &quot;event.topics&quot;.
+   *
+   * @param name The name of the property.
+   * @return <code>true</code> if a property with the specified name is in the
+   *         event. This property may have an invalid QVariant value.
+   *         <code>false</code> otherwise.
+   */
+  bool containsProperty(const QString& name) const;
+
+  /**
+   * Returns a list of this event's property names. The list will include the
+   * event topic property name &quot;event.topics&quot;.
    *
    * @return A non-empty list with one element per property.
    */
-  QStringList propertyNames() const;
+  QStringList getPropertyNames() const;
 
   /**
    * Returns the topic of this event.
    *
    * @return The topic of this event.
    */
-  const QString& topic() const;
+  const QString& getTopic() const;
 
   /**
    * Tests this event's properties against the given filter using a case

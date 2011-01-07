@@ -49,7 +49,12 @@ const QString ctkPluginConstants::RESOLUTION_OPTIONAL = "optional";
 
 
 const QString ctkPluginConstants::OBJECTCLASS = "objectclass";
+
+// ATTENTION!!! If the value is changed, change also ctkEventConstants::SERVICE_ID
 const QString ctkPluginConstants::SERVICE_ID = "service.id";
+
+// ATTENTION!!! If the value is changed, change also ctkEventConstants::SERVICE_PID
 const QString ctkPluginConstants::SERVICE_PID = "service.pid";
+
 const QString ctkPluginConstants::SERVICE_RANKING = "service.ranking";
 

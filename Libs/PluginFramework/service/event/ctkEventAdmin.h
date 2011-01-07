@@ -26,20 +26,19 @@
 
 
 /**
- * The Event Bus service. Plugins wishing to publish events can either
- * obtain the Event Bus service and call one of the event delivery methods
+ * The Event Admin service. Plugins wishing to publish events can either
+ * obtain the Event Admin service and call one of the event delivery methods
  * or publish a Qt signal for a specific event topic.
  *
  */
-class ctkEventBus {
-
-public:
-
+struct ctkEventBus
+{
   virtual ~ctkEventBus() {}
 
   /**
-   * Initiate asynchronous delivery of an event. This method returns to the
-   * caller before delivery of the event is completed.
+   * Initiate asynchronous, ordered delivery of an event. This method returns
+   * to the caller before delivery of the event is completed. Events are
+   * delivered in the order that they are received by this method.
    *
    * @param event The event to send to all listeners which subscribe to the
    *        topic of the event.
@@ -77,12 +76,12 @@ public:
    * which matches the topic string and LDAP search expression contained
    * in the properties.
    *
-   * Slots should be registered with a property EventConstants::EVENT_TOPIC.
+   * Slots should be registered with a property ctkEventConstants::EVENT_TOPIC.
    * The value being a QString or QStringList object that describes which
    * topics the slot is interested in. A wildcard (’*’ \u002A) may be used as
    * the last token of a topic name, for example com/action&#47*. This matches any
    * topic that shares the same first tokens. For example, com/action&#47* matches
-   * com/action/listen. Slot which have not been specified with the EVENT_TOPIC
+   * com/action/listen. Slots which have not been specified with the EVENT_TOPIC
    * property must not receive events.
    * The value of each entry in the EVENT_TOPIC property must conform to the
    * following grammar:
@@ -90,13 +89,13 @@ public:
    * topic-scope ::= ’*’ | ( topic ’&#47*’ ? )
    * \endverbatim
    *
-   * Slots can also be registered with a property named EventConstants::EVENT_FILTER.
+   * Slots can also be registered with a property named ctkEventConstants::EVENT_FILTER.
    * The value of this property must be a string containing a filter specification.
    * Any of the event's properties can be used in the filter expression.
    * Each slot is notified for any event which belongs to the topics the
    * slot has expressed an interest in. If the handler has defined a
    * EVENT_FILTER property then the event properties must also match the filter
-   * expression. If the filter is an error, then the Event Bus service
+   * expression. If the filter is an error, then the Event Admin service
    * should log a warning and further ignore the registered slot.
    *
    * @param subscriber The owner of the slot.
@@ -119,6 +118,6 @@ public:
 };
 
 
-Q_DECLARE_INTERFACE(ctkEventBus, "org.commontk.core.ctkEventBus")
+Q_DECLARE_INTERFACE(ctkEventBus, "org.commontk.service.event.EventAdmin")
 
 #endif // CTKEVENTBUS_H

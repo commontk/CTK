@@ -90,7 +90,7 @@ SET(KIT_SRCS
   service/cm/ctkManagedServiceFactory.h
 
   service/event/ctkEvent.cpp
-  service/event/ctkEventBus.h
+  service/event/ctkEventAdmin.h
   service/event/ctkEventConstants.cpp
 
   service/log/ctkLogEntry.h

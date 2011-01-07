@@ -22,11 +22,24 @@
 #include "ctkEventConstants.h"
 
 
-const QString EventConstants::EVENT_TOPIC = "event.topics";
-const QString EventConstants::EVENT_FILTER = "event.filter";
+const QString ctkEventConstants::EVENT_TOPIC = "event.topics";
+const QString ctkEventConstants::EVENT_FILTER = "event.filter";
 
-const QString EventConstants::PLUGIN_SYMBOLICNAME = "plugin.symbolicName";
-const QString EventConstants::PLUGIN_ID = "plugin.id";
-const QString EventConstants::PLUGIN = "plugin";
-const QString EventConstants::PLUGIN_VERSION = "plugin.version";
+const QString ctkEventConstants::EVENT_DELIVERY = "event.delivery";
+const QString ctkEventConstants::DELIVERY_ASYNC_ORDERED = "async.ordered";
+const QString ctkEventConstants::DELIVERY_ASYNC_UNORDERED = "async.unordered";
 
+const QString ctkEventConstants::PLUGIN_SYMBOLICNAME = "plugin.symbolicName";
+const QString ctkEventConstants::PLUGIN_ID = "plugin.id";
+const QString ctkEventConstants::PLUGIN = "plugin";
+const QString ctkEventConstants::PLUGIN_VERSION = "plugin.version";
+
+const QString ctkEventConstants::EXCEPTION = "exception";
+const QString ctkEventConstants::EXCEPTION_CLASS = "exception.class";
+const QString ctkEventConstants::EXCEPTION_MESSAGE = "exception.message";
+const QString ctkEventConstants::MESSAGE = "message";
+const QString ctkEventConstants::SERVICE = "service";
+const QString ctkEventConstants::SERVICE_ID = "service.id";
+const QString ctkEventConstants::SERVICE_OBJECTCLASS = "service.objectClass";
+const QString ctkEventConstants::SERVICE_PID = "service.pid";
+const QString ctkEventConstants::TIMESTAMP = "timestamp";
