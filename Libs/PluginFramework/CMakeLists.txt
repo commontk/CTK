@@ -79,11 +79,6 @@ SET(KIT_SRCS
   ctkVersionRange.cpp
   ctkVersionRange_p.h
 
-  # EventBus sources
-  EventBus/ctkEvent.cpp
-  EventBus/ctkEventBus.h
-  EventBus/ctkEventConstants.cpp
-
   # Services
   service/cm/ctkConfiguration.cpp
   service/cm/ctkConfigurationAdmin.cpp
@@ -93,6 +88,10 @@ SET(KIT_SRCS
   service/cm/ctkConfigurationPlugin.cpp
   service/cm/ctkManagedService.h
   service/cm/ctkManagedServiceFactory.h
+
+  service/event/ctkEvent.cpp
+  service/event/ctkEventBus.h
+  service/event/ctkEventConstants.cpp
 
   service/log/ctkLogEntry.h
   service/log/ctkLogListener.h
