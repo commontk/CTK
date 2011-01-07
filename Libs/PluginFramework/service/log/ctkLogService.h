@@ -48,10 +48,8 @@
  *
  * @ThreadSafe
  */
-class CTK_PLUGINFW_EXPORT ctkLogService
+struct CTK_PLUGINFW_EXPORT ctkLogService
 {
-
-public:
 
   virtual ~ctkLogService() {}
 
