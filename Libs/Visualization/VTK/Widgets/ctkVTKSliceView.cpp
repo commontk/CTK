@@ -68,8 +68,25 @@ void ctkVTKSliceViewPrivate::setupRendering()
   this->RenderWindow->SetAlphaBitPlanes(1);
   this->RenderWindow->SetMultiSamples(0);
   this->RenderWindow->StereoCapableWindowOn();
+  this->RenderWindow->SetNumberOfLayers(2);
 
+  // Initialize light box
   this->LightBoxRendererManager->Initialize(this->RenderWindow);
+
+  // Setup overlay renderer
+  this->OverlayRenderer = vtkSmartPointer<vtkRenderer>::New();
+  this->OverlayRenderer->SetLayer(1);
+  this->RenderWindow->AddRenderer(this->OverlayRenderer);
+
+  // Create cornerAnnotation and set its default property
+  this->OverlayCornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
+  this->OverlayCornerAnnotation->SetMaximumLineHeight(0.07);
+  vtkTextProperty *tprop = this->OverlayCornerAnnotation->GetTextProperty();
+  tprop->ShadowOn();
+  this->OverlayCornerAnnotation->ClearAllTexts();
+
+  // Add corner annotation to overlay renderer
+  this->OverlayRenderer->AddViewProp(this->OverlayCornerAnnotation);
 
   this->VTKWidget->SetRenderWindow(this->RenderWindow);
 }
@@ -133,8 +150,19 @@ void ctkVTKSliceView::forceRender()
 CTK_GET_CPP(ctkVTKSliceView, vtkRenderWindow*, renderWindow, RenderWindow);
 
 //----------------------------------------------------------------------------
+void ctkVTKSliceView::setActiveCamera(vtkCamera * newActiveCamera)
+{
+  Q_D(ctkVTKSliceView);
+  d->LightBoxRendererManager->SetActiveCamera(newActiveCamera);
+  d->OverlayRenderer->SetActiveCamera(newActiveCamera);
+}
+
+//----------------------------------------------------------------------------
 CTK_GET_CPP(ctkVTKSliceView, vtkLightBoxRendererManager*,
             lightBoxRendererManager, LightBoxRendererManager);
+
+//----------------------------------------------------------------------------
+CTK_GET_CPP(ctkVTKSliceView, vtkRenderer*, overlayRenderer, OverlayRenderer);
 
 //----------------------------------------------------------------------------
 CTK_SET_CPP(ctkVTKSliceView, bool, setRenderEnabled, RenderEnabled);
@@ -169,6 +197,7 @@ vtkInteractorObserver* ctkVTKSliceView::interactorStyle()const
 void ctkVTKSliceView::resetCamera()
 {
   Q_D(ctkVTKSliceView);
+  d->OverlayRenderer->ResetCamera();
   d->LightBoxRendererManager->ResetCamera();
 }
 
@@ -188,10 +217,24 @@ QString ctkVTKSliceView::cornerAnnotationText()const
 }
 
 //----------------------------------------------------------------------------
+vtkCornerAnnotation * ctkVTKSliceView::cornerAnnotation()const
+{
+  Q_D(const ctkVTKSliceView);
+  return d->LightBoxRendererManager->GetCornerAnnotation();
+}
+
+//----------------------------------------------------------------------------
 void ctkVTKSliceView::setCornerAnnotationText(const QString& text)
 {
   Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetCornerAnnotationText(text.toStdString());
+}
+
+//----------------------------------------------------------------------------
+vtkCornerAnnotation * ctkVTKSliceView::overlayCornerAnnotation()const
+{
+  Q_D(const ctkVTKSliceView);
+  return d->OverlayCornerAnnotation;
 }
 
 //----------------------------------------------------------------------------
