@@ -67,13 +67,20 @@ public:
     QList<ctkServiceReference> refs = context->getServiceReferences<ctkTestSuiteInterface>();
 
     int result = 0;
+    int count = 0;
     foreach(ctkServiceReference ref, refs)
     {
-      result += QTest::qExec(context->getService(ref), argc, argv);
+      result = QTest::qExec(context->getService(ref), argc, argv);
       if (result > 0) break;
+      ++count;
     }
 
-    if (result > 0) QCoreApplication::exit(result);
+    qDebug() << "#########" << count << "out of" << refs.size() << "test suites passed #########";
+    if (result > 0)
+    {
+      QCoreApplication::exit(result);
+      qApp->thread()->wait();
+    }
   }
 
 private:
