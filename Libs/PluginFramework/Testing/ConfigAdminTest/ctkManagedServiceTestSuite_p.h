@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) 2010 German Cancer Research Center,
+  Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,54 +20,37 @@
 =============================================================================*/
 
 
-#ifndef CTKCONFIGURATIONPLUGINTESTSUITE_P_H
-#define CTKCONFIGURATIONPLUGINTESTSUITE_P_H
+#ifndef CTKMANAGEDSERVICETESTSUITE_P_H
+#define CTKMANAGEDSERVICETESTSUITE_P_H
 
 #include <QObject>
 #include <QWaitCondition>
 #include <QMutex>
 
-#include <service/cm/ctkConfigurationPlugin.h>
 #include <service/cm/ctkManagedService.h>
+#include <ctkServiceReference.h>
 #include <ctkTestSuiteInterface.h>
 
-class ctkConfigurationPluginTestSuite;
+class ctkManagedServiceTestSuite;
 class ctkConfigurationAdmin;
 
-class _ConfigurationPluginTest : public QObject, public ctkConfigurationPlugin
-{
-  Q_OBJECT
-  Q_INTERFACES(ctkConfigurationPlugin)
-
-public:
-
-  _ConfigurationPluginTest(const QString& prop = "plugin1");
-
-  void modifyConfiguration(const ctkServiceReference& reference,
-                           ctkDictionary& properties);
-
-private:
-
-  const QString prop;
-};
-
-class _ManagedServiceCMPluginTest : public QObject, public ctkManagedService
+class _ManagedServiceUpdateTest : public QObject, public ctkManagedService
 {
   Q_OBJECT
   Q_INTERFACES(ctkManagedService)
 
 public:
 
-  _ManagedServiceCMPluginTest(ctkConfigurationPluginTestSuite* ts);
+  _ManagedServiceUpdateTest(ctkManagedServiceTestSuite* ts);
 
   void updated(const ctkDictionary& properties);
 
 private:
 
-  ctkConfigurationPluginTestSuite* const ts;
+  ctkManagedServiceTestSuite* const ts;
 };
 
-class ctkConfigurationPluginTestSuite : public QObject,
+class ctkManagedServiceTestSuite : public QObject,
     public ctkTestSuiteInterface
 {
   Q_OBJECT
@@ -75,18 +58,15 @@ class ctkConfigurationPluginTestSuite : public QObject,
 
 public:
 
-  ctkConfigurationPluginTestSuite(ctkPluginContext* pc, long cmPluginId);
-  ~ctkConfigurationPluginTestSuite();
+  ctkManagedServiceTestSuite(ctkPluginContext* pc, long cmPluginId);
 
 private slots:
 
   void init();
   void cleanup();
 
-  void testPlugin();
-  void testPidSpecificPlugin();
-  void testPidSpecificMissPlugin();
-  void testRankedPlugin();
+  void testSamePidManagedService();
+  void testGeneralManagedService();
 
 private:
 
@@ -94,12 +74,12 @@ private:
   long cmPluginId;
   ctkConfigurationAdmin* cm;
   ctkServiceReference reference;
+  int updateCount;
   bool locked;
   QMutex mutex;
   QWaitCondition lock;
-  bool success;
 
-  friend class _ManagedServiceCMPluginTest;
+  friend class _ManagedServiceUpdateTest;
 };
 
-#endif // CTKCONFIGURATIONPLUGINTESTSUITE_P_H
+#endif // CTKMANAGEDSERVICETESTSUITE_P_H

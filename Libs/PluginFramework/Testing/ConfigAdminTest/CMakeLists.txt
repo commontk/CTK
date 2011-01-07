@@ -4,14 +4,27 @@ SET(PLUGIN_export_directive "org_commontk_configadmintest_EXPORT")
 
 SET(PLUGIN_SRCS
   ctkConfigAdminTestActivator.cpp
+  ctkConfigurationAdminTestSuite.cpp
   ctkConfigurationListenerTestSuite.cpp
   ctkConfigurationPluginTestSuite.cpp
+  ctkManagedServiceFactoryTestSuite.cpp
+  ctkManagedServiceTestSuite.cpp
+
+  ctkConfigAdminTestActivator_p.h
+  ctkConfigurationAdminTestSuite_p.h
+  ctkConfigurationListenerTestSuite_p.h
+  ctkConfigurationPluginTestSuite_p.h
+  ctkManagedServiceFactoryTestSuite_p.h
+  ctkManagedServiceTestSuite_p.h
 )
 
 SET(PLUGIN_MOC_SRCS
   ctkConfigAdminTestActivator_p.h
+  ctkConfigurationAdminTestSuite_p.h
   ctkConfigurationListenerTestSuite_p.h
   ctkConfigurationPluginTestSuite_p.h
+  ctkManagedServiceFactoryTestSuite_p.h
+  ctkManagedServiceTestSuite_p.h
 )
 
 SET(PLUGIN_UI_FORMS

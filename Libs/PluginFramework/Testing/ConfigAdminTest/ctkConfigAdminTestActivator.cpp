@@ -27,6 +27,9 @@
 #include <QtPlugin>
 #include <QStringList>
 
+#include "ctkConfigurationAdminTestSuite_p.h"
+#include "ctkManagedServiceTestSuite_p.h"
+#include "ctkManagedServiceFactoryTestSuite_p.h"
 #include "ctkConfigurationPluginTestSuite_p.h"
 #include "ctkConfigurationListenerTestSuite_p.h"
 
@@ -57,6 +60,21 @@ void ctkConfigAdminTestActivator::start(ctkPluginContext* context)
   }
 
   ServiceProperties props;
+
+  configAdminTestSuite = new ctkConfigurationAdminTestSuite(context, cmPluginId);
+  props.clear();
+  props.insert(ctkPluginConstants::SERVICE_PID, configAdminTestSuite->metaObject()->className());
+  context->registerService<ctkTestSuiteInterface>(configAdminTestSuite, props);
+
+  managedServiceTestSuite = new ctkManagedServiceTestSuite(context, cmPluginId);
+  props.clear();
+  props.insert(ctkPluginConstants::SERVICE_PID, managedServiceTestSuite->metaObject()->className());
+  context->registerService<ctkTestSuiteInterface>(managedServiceTestSuite, props);
+
+  managedServiceFactoryTestSuite = new ctkManagedServiceFactoryTestSuite(context, cmPluginId);
+  props.clear();
+  props.insert(ctkPluginConstants::SERVICE_PID, managedServiceFactoryTestSuite->metaObject()->className());
+  //context->registerService<ctkTestSuiteInterface>(managedServiceFactoryTestSuite, props);
 
   configPluginTestSuite = new ctkConfigurationPluginTestSuite(context, cmPluginId);
   props.clear();

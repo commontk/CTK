@@ -72,7 +72,7 @@ ctkConfigurationPluginTestSuite::~ctkConfigurationPluginTestSuite()
 void ctkConfigurationPluginTestSuite::init()
 {
   context->getPlugin(cmPluginId)->start();
-      reference = context->getServiceReference<ctkConfigurationAdmin>();
+  reference = context->getServiceReference<ctkConfigurationAdmin>();
   cm = context->getService<ctkConfigurationAdmin>(reference);
 }
 

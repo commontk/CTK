@@ -39,6 +39,9 @@ public:
 
 private:
 
+  QObject* configAdminTestSuite;
+  QObject* managedServiceTestSuite;
+  QObject* managedServiceFactoryTestSuite;
   QObject* configPluginTestSuite;
   QObject* configListenerTestSuite;
 };
