@@ -69,6 +69,9 @@ public:
   /// Convenient method to get the underlying RenderWindow
   vtkRenderWindow* renderWindow() const;
 
+  /// Set active camera
+  void setActiveCamera(vtkCamera * newActiveCamera);
+
   /// Get lightBoxRendererManager
   vtkLightBoxRendererManager* lightBoxRendererManager() const;
 

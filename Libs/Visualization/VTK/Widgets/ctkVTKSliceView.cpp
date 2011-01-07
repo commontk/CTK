@@ -150,6 +150,14 @@ void ctkVTKSliceView::forceRender()
 CTK_GET_CPP(ctkVTKSliceView, vtkRenderWindow*, renderWindow, RenderWindow);
 
 //----------------------------------------------------------------------------
+void ctkVTKSliceView::setActiveCamera(vtkCamera * newActiveCamera)
+{
+  Q_D(ctkVTKSliceView);
+  d->LightBoxRendererManager->SetActiveCamera(newActiveCamera);
+  d->OverlayRenderer->SetActiveCamera(newActiveCamera);
+}
+
+//----------------------------------------------------------------------------
 CTK_GET_CPP(ctkVTKSliceView, vtkLightBoxRendererManager*,
             lightBoxRendererManager, LightBoxRendererManager);
 
@@ -189,6 +197,7 @@ vtkInteractorObserver* ctkVTKSliceView::interactorStyle()const
 void ctkVTKSliceView::resetCamera()
 {
   Q_D(ctkVTKSliceView);
+  d->OverlayRenderer->ResetCamera();
   d->LightBoxRendererManager->ResetCamera();
 }
 
