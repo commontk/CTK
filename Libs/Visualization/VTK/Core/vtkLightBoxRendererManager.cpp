@@ -68,7 +68,7 @@ RenderWindowItem::RenderWindowItem(const double rendererBackgroundColor[3],
                                    const double highlightedBoxColor[3],
                                    double colorWindow, double colorLevel)
 {
-  // Instanciate a renderer
+  // Instantiate a renderer
   this->Renderer = vtkSmartPointer<vtkRenderer>::New();
   this->Renderer->SetBackground(rendererBackgroundColor[0],
                                 rendererBackgroundColor[1],
@@ -92,7 +92,7 @@ void RenderWindowItem::SetupImageMapperActor(double colorWindow, double colorLev
   assert(this->Renderer);
   assert(!this->ImageMapper);
 
-  // Instanciate an image mapper
+  // Instantiate an image mapper
   this->ImageMapper = vtkSmartPointer<vtkImageMapper>::New();
   this->ImageMapper->SetColorWindow(colorWindow);
   this->ImageMapper->SetColorLevel(colorLevel);
