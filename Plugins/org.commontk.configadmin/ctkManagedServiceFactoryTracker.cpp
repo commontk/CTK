@@ -39,6 +39,7 @@ ctkManagedServiceFactoryTracker::ctkManagedServiceFactoryTracker(
   : ctkServiceTracker<ctkManagedServiceFactory*>(context),
     context(context),
     configurationAdminFactory(configurationAdminFactory),
+    configurationStoreMutex(QMutex::Recursive),
     configurationStore(configurationStore),
     queue("ctkManagedServiceFactory Update Queue")
 {
