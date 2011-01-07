@@ -24,6 +24,7 @@
 #define CTKMANAGEDSERVICE_H
 
 #include <QObject>
+#include <ctkPluginFramework_global.h>
 
 /**
  * A service that can receive configuration data from a Configuration Admin

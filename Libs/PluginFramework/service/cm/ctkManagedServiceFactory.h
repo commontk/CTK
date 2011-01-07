@@ -23,7 +23,8 @@
 #ifndef CTKMANAGEDSERVICEFACTORY_H
 #define CTKMANAGEDSERVICEFACTORY_H
 
-#include <QObject>
+#include <QString>
+#include <ctkPluginFramework_global.h>
 
 /**
  * Manage multiple service instances.
