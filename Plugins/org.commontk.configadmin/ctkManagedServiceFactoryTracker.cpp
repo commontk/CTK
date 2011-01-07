@@ -240,12 +240,12 @@ void ctkManagedServiceFactoryTracker::asynchDeleted(ctkManagedServiceFactory* se
   queue.put(new _AsynchDeleteRunnable(service, pid, configurationAdminFactory->getLogService()));
 }
 
-class _AsynchUpdateRunnable : public QRunnable
+class _AsynchFactoryUpdateRunnable : public QRunnable
 {
 public:
 
-  _AsynchUpdateRunnable(ctkManagedServiceFactory* service, const QString& pid,
-                        const ctkDictionary& properties, ctkLogService* log)
+  _AsynchFactoryUpdateRunnable(ctkManagedServiceFactory* service, const QString& pid,
+                               const ctkDictionary& properties, ctkLogService* log)
     : service(service), pid(pid), properties(properties), log(log)
   {
 
@@ -279,5 +279,5 @@ private:
 void ctkManagedServiceFactoryTracker::asynchUpdated(ctkManagedServiceFactory* service, const QString& pid,
                                                     const ctkDictionary& properties)
 {
-  queue.put(new _AsynchUpdateRunnable(service, pid, properties, configurationAdminFactory->getLogService()));
+  queue.put(new _AsynchFactoryUpdateRunnable(service, pid, properties, configurationAdminFactory->getLogService()));
 }
