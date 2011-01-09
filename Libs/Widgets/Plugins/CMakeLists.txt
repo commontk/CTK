@@ -49,6 +49,8 @@ SET(PLUGIN_SRCS
   ctkMatrixWidgetPlugin.h
   ctkMenuButtonPlugin.cpp
   ctkMenuButtonPlugin.h
+  ctkPathLineEditPlugin.cpp
+  ctkPathLineEditPlugin.h
   ctkRangeSliderPlugin.cpp
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.cpp
@@ -91,6 +93,7 @@ SET(PLUGIN_MOC_SRCS
   ctkMaterialPropertyPreviewLabelPlugin.h
   ctkMatrixWidgetPlugin.h
   ctkMenuButtonPlugin.h
+  ctkPathLineEditPlugin.h
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.h
   ctkTransferFunctionViewPlugin.h

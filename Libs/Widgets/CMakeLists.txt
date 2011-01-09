@@ -66,6 +66,8 @@ SET(KIT_SRCS
   ctkMatrixWidget.h
   ctkMenuButton.cpp
   ctkMenuButton.h
+  ctkPathLineEdit.cpp
+  ctkPathLineEdit.h
   ctkPixmapIconEngine.cpp
   ctkPixmapIconEngine.h
   ctkRangeSlider.cpp
@@ -149,6 +151,7 @@ SET(KIT_MOC_SRCS
   ctkMaterialPropertyWidget.h
   ctkMatrixWidget.h
   ctkMenuButton.h
+  ctkPathLineEdit.h
   ctkRangeSlider.h
   ctkRangeWidget.h
   ctkScreenshotDialog.h

@@ -31,6 +31,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkMatrixWidgetTest1.cpp
   ctkMatrixWidgetTest2.cpp
   ctkMenuButtonTest1.cpp
+  ctkPathLineEditTest1.cpp
   ctkRangeSliderTest1.cpp
   ctkRangeWidgetTest1.cpp
   ctkRangeWidgetTest2.cpp
@@ -97,12 +98,15 @@ SIMPLE_TEST( ctkComboBoxTest1 )
 SIMPLE_TEST( ctkConfirmExitDialogTest1 )
 SIMPLE_TEST( ctkConsoleWidgetTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
+SIMPLE_TEST( ctkDateRangeWidgetTest1 )
 SIMPLE_TEST( ctkDirectoryButtonTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest2 )
 SIMPLE_TEST( ctkDoubleSliderTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest2 )
+SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingDerivedSteps )
+SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots )
 SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkFontButtonTest1 )
@@ -111,17 +115,15 @@ SIMPLE_TEST( ctkMaterialPropertyWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest2 )
 SIMPLE_TEST( ctkMenuButtonTest1 )
+SIMPLE_TEST( ctkPathLineEditTest1 )
 SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest2 )
-SIMPLE_TEST( ctkDateRangeWidgetTest1 )
+SIMPLE_TEST( ctkSettingsDialogTest1 )
 SIMPLE_TEST( ctkSettingsPanelTest1 )
 SIMPLE_TEST( ctkSettingsTest1 )
-SIMPLE_TEST( ctkSettingsDialogTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkToolTipTrapperTest1 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )
 SIMPLE_TEST( ctkWorkflowWidgetTest1 )
 SIMPLE_TEST( ctkWorkflowWidgetTest2 )
-SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingDerivedSteps )
-SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots )
