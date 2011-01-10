@@ -44,7 +44,7 @@ public:
 };
 
 ctkLDAPSearchFilter::ctkLDAPSearchFilter()
-  : d(new ctkLDAPSearchFilterData())
+  : d(0)
 {
 }
 
@@ -60,6 +60,11 @@ ctkLDAPSearchFilter::ctkLDAPSearchFilter(const ctkLDAPSearchFilter& other)
 
 ctkLDAPSearchFilter::~ctkLDAPSearchFilter()
 {
+}
+
+ctkLDAPSearchFilter::operator bool() const
+{
+  return d;
 }
 
 bool ctkLDAPSearchFilter::match(const ctkServiceReference& reference) const

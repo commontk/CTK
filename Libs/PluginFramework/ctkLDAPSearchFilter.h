@@ -55,6 +55,14 @@ class CTK_PLUGINFW_EXPORT ctkLDAPSearchFilter {
 
 public:
 
+  /**
+   * Creates in invalid <code>ctkLDAPSearchFilter</code> object.
+   * Test the validity by using the boolean conversion operator.
+   *
+   * <p>
+   * Calling methods on an invalid <code>ctkLDAPSearchFilter</code>
+   * will result in undefined behavior.
+   */
   ctkLDAPSearchFilter();
 
   /**
@@ -77,6 +85,8 @@ public:
   ctkLDAPSearchFilter(const ctkLDAPSearchFilter& other);
 
   ~ctkLDAPSearchFilter();
+
+  operator bool() const;
 
   /**
    * Filter using a service's properties.
