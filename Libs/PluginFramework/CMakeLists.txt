@@ -92,6 +92,7 @@ SET(KIT_SRCS
   service/event/ctkEvent.cpp
   service/event/ctkEventAdmin.h
   service/event/ctkEventConstants.cpp
+  service/event/ctkEventHandler.h
 
   service/log/ctkLogEntry.h
   service/log/ctkLogListener.h

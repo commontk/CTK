@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) 2010 German Cancer Research Center,
+  Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,7 @@
  * For example:
  *
  * \code
- * QStringList topics("com/isv/*");
+ * QStringList topics("com/isv/&#42;");
  * ctkDictionary props;
  * props.insert(ctkEventConstants::EVENT_TOPIC, topics);
  * context->registerService<ctkEventHandler>(this, props);
