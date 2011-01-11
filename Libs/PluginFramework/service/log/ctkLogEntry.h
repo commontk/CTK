@@ -25,6 +25,7 @@
 
 #include <QSharedPointer>
 #include <QDateTime>
+#include <QMetaType>
 
 #include <ctkServiceReference.h>
 #include <ctkRuntimeException.h>
@@ -144,5 +145,7 @@ struct ctkLogEntry
 };
 
 typedef QSharedPointer<ctkLogEntry> ctkLogEntryPtr;
+
+Q_DECLARE_METATYPE(ctkLogEntryPtr)
 
 #endif // CTKLOGENTRY_H

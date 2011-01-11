@@ -23,6 +23,7 @@
 #define CTKSERVICEREFERENCE_H
 
 #include <QVariant>
+#include <QMetaType>
 
 #include "ctkPlugin.h"
 
@@ -208,6 +209,8 @@ protected:
 
 uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceReference& serviceRef);
 QDebug CTK_PLUGINFW_EXPORT operator<<(QDebug dbg, const ctkServiceReference& serviceRef);
+
+Q_DECLARE_METATYPE(ctkServiceReference)
 
 
 #endif // CTKSERVICEREFERENCE_H
