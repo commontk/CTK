@@ -148,6 +148,14 @@ struct CTK_PLUGINFW_EXPORT ctkEventConstants {
   static const QString PLUGIN_VERSION; // = "plugin.version"
 
   /**
+   * The forwarded event object. Used when rebroadcasting an event that was
+   * sent via some other event mechanism. The type of the value for this event
+   * property depends on the event topic (for org/commontk/PluginEvent/&0x42; the
+   * the type will be ctkPluginEvent).
+   */
+  static const QString EVENT; // = "event"
+
+  /**
    * An exception or error. The type of the value for this event property is
    * <code>ctkRuntimeException</code>.
    */

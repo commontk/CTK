@@ -34,6 +34,7 @@ const QString ctkEventConstants::PLUGIN_ID = "plugin.id";
 const QString ctkEventConstants::PLUGIN = "plugin";
 const QString ctkEventConstants::PLUGIN_VERSION = "plugin.version";
 
+const QString ctkEventConstants::EVENT = "event";
 const QString ctkEventConstants::EXCEPTION = "exception";
 const QString ctkEventConstants::EXCEPTION_CLASS = "exception.class";
 const QString ctkEventConstants::EXCEPTION_MESSAGE = "exception.message";
