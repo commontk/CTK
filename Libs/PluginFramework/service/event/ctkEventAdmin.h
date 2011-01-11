@@ -19,8 +19,8 @@
 
 =============================================================================*/
 
-#ifndef CTKEVENTBUS_H
-#define CTKEVENTBUS_H
+#ifndef CTKEVENTADMIN_H
+#define CTKEVENTADMIN_H
 
 #include "ctkEvent.h"
 
@@ -31,9 +31,9 @@
  * or publish a Qt signal for a specific event topic.
  *
  */
-struct ctkEventBus
+struct ctkEventAdmin
 {
-  virtual ~ctkEventBus() {}
+  virtual ~ctkEventAdmin() {}
 
   /**
    * Initiate asynchronous, ordered delivery of an event. This method returns
@@ -118,6 +118,6 @@ struct ctkEventBus
 };
 
 
-Q_DECLARE_INTERFACE(ctkEventBus, "org.commontk.service.event.EventAdmin")
+Q_DECLARE_INTERFACE(ctkEventAdmin, "org.commontk.service.event.EventAdmin")
 
-#endif // CTKEVENTBUS_H
+#endif // CTKEVENTADMIN_H
