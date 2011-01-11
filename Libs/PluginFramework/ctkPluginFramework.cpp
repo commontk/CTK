@@ -87,7 +87,7 @@ void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
   QStringListIterator i(pluginsToStart);
   while (i.hasNext())
   {
-    ctkPlugin* plugin = d->fwCtx->plugins->getPlugin(i.next());
+    QSharedPointer<ctkPlugin> plugin = d->fwCtx->plugins->getPlugin(i.next());
     try {
       const int autostartSetting = plugin->d_func()->archive->getAutostartSetting();
       // Launch must not change the autostart setting of a plugin
@@ -110,7 +110,7 @@ void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
     d->state = ACTIVE;
     d->activating = false;
     d->fwCtx->listeners.emitFrameworkEvent(
-        ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::STARTED, this));
+        ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::STARTED, this->d_func()->q_func()));
   }
 }
 

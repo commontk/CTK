@@ -23,6 +23,7 @@
 #define CTKPLUGINFRAMEWORKEVENT_H
 
 #include <QSharedDataPointer>
+#include <QSharedPointer>
 
 #include "ctkPluginFrameworkExport.h"
 
@@ -140,7 +141,7 @@ public:
    * @param plugin The event source.
    * @param fwException The related exception.
    */
-  ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin, const std::exception& fwException);
+  ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin, const std::exception& fwException);
 
   /**
    * Creates a Framework event regarding the specified plugin.
@@ -148,7 +149,7 @@ public:
    * @param type The event type.
    * @param plugin The event source.
    */
-  ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin);
+  ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin);
 
   ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other);
 
@@ -167,7 +168,7 @@ public:
    *
    * @return The plugin associated with the event.
    */
-  ctkPlugin* getPlugin() const;
+  QSharedPointer<ctkPlugin> getPlugin() const;
 
   /**
    * Returns the type of framework event.

@@ -167,7 +167,7 @@ QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(int id) const
   return QSharedPointer<ctkPlugin>();
 }
 
-ctkPlugin* ctkPlugins::getPlugin(const QString& location) const
+QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(const QString& location) const
 {
   if (!fwCtx)
   { // This plugins instance has been closed!
@@ -176,11 +176,11 @@ ctkPlugin* ctkPlugins::getPlugin(const QString& location) const
 
   QReadLocker lock(&pluginsLock);
   QHash<QString, QSharedPointer<ctkPlugin> >::const_iterator it = plugins.find(location);
-  if (it != plugins.end()) return it.value().data();
-  return 0;
+  if (it != plugins.end()) return it.value();
+  return QSharedPointer<ctkPlugin>(0);
 }
 
-ctkPlugin* ctkPlugins::getPlugin(const QString& name, const ctkVersion& version) const
+QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(const QString& name, const ctkVersion& version) const
 {
   if (!fwCtx)
   { // This ctkPlugins instance has been closed!
@@ -196,11 +196,11 @@ ctkPlugin* ctkPlugins::getPlugin(const QString& name, const ctkVersion& version)
       QSharedPointer<ctkPlugin> plugin = it.next().value();
       if ((name == plugin->getSymbolicName()) && (version == plugin->getVersion()))
       {
-        return plugin.data();
+        return plugin;
       }
     }
   }
-  return 0;
+  return QSharedPointer<ctkPlugin>(0);
 }
 
 QList<QSharedPointer<ctkPlugin> > ctkPlugins::getPlugins() const
@@ -345,7 +345,7 @@ void ctkPlugins::startPlugins(const QList<ctkPlugin*>& slist) const
       }
       catch (const ctkPluginException& pe)
       {
-        pp->fwCtx->listeners.frameworkError(plugin, pe);
+        pp->fwCtx->listeners.frameworkError(pp->q_func(), pe);
       }
     }
   }

@@ -33,7 +33,7 @@ class ctkServiceSlotEntryData : public QSharedData
 {
 public:
 
-  ctkServiceSlotEntryData(ctkPlugin* p, QObject* receiver,
+  ctkServiceSlotEntryData(QSharedPointer<ctkPlugin> p, QObject* receiver,
                           const char* slot)
     : plugin(p), receiver(receiver),
       slot(slot), removed(false)
@@ -63,7 +63,7 @@ public:
   ctkLDAPExpr::LocalCache local_cache;
 
   ctkLDAPExpr ldap;
-  ctkPlugin* plugin;
+  QSharedPointer<ctkPlugin> plugin;
   QObject* receiver;
   const char* slot;
   bool removed;
@@ -71,7 +71,7 @@ public:
 };
 
 ctkServiceSlotEntry::ctkServiceSlotEntry(
-    ctkPlugin* p, QObject* receiver, const char* slot, const QString& filter)
+    QSharedPointer<ctkPlugin> p, QObject* receiver, const char* slot, const QString& filter)
   : d(new ctkServiceSlotEntryData(p, receiver, slot))
 {
   if (!filter.isNull())
@@ -87,7 +87,7 @@ ctkServiceSlotEntry::ctkServiceSlotEntry(const ctkServiceSlotEntry& other)
 }
 
 ctkServiceSlotEntry::ctkServiceSlotEntry()
-  : d(new ctkServiceSlotEntryData(0, 0, 0))
+  : d(new ctkServiceSlotEntryData(QSharedPointer<ctkPlugin>(0), 0, 0))
 {
 
 }
@@ -134,7 +134,7 @@ bool ctkServiceSlotEntry::isRemoved() const
   return d->removed;
 }
 
-ctkPlugin* ctkServiceSlotEntry::getPlugin() const
+QSharedPointer<ctkPlugin> ctkServiceSlotEntry::getPlugin() const
 {
   return d->plugin;
 }

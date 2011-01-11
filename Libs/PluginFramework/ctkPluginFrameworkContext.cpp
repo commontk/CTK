@@ -91,7 +91,7 @@ void ctkPluginFrameworkContext::init()
   for (int i = 0; i < allPAs.size(); ++i)
   {
     ctkPluginArchive* pa = allPAs[i];
-    ctkPlugin* plugin = plugins->getPlugin(pa->getPluginLocation().toString());
+    QSharedPointer<ctkPlugin> plugin = plugins->getPlugin(pa->getPluginLocation().toString());
     log() << " #" << plugin->getPluginId() << " " << plugin->getSymbolicName() << ":"
         << plugin->getVersion() << " location:" << plugin->getLocation();
   }
@@ -154,7 +154,7 @@ void ctkPluginFrameworkContext::resolvePlugin(ctkPluginPrivate* plugin)
   if (tempResolved.size() > 0 && !tempResolved.contains(plugin))
   {
     ctkPluginException pe("resolve: InternalError1!", ctkPluginException::RESOLVE_ERROR);
-    listeners.frameworkError(plugin->q_func().data(), pe);
+    listeners.frameworkError(plugin->q_func(), pe);
     throw pe;
   }
 

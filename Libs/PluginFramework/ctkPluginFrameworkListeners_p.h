@@ -50,7 +50,7 @@ public:
    * @param listener Object to add.
    * @param filter LDAP String used for filtering event before calling listener.
    */
-  void addServiceSlot(ctkPlugin* plugin, QObject* receiver,
+  void addServiceSlot(QSharedPointer<ctkPlugin> plugin, QObject* receiver,
                       const char* slot, const QString& filter);
 
   /**
@@ -60,7 +60,7 @@ public:
    * @param receiver The receiver containing the slot.
    * @param slot The slot in the receiver.
    */
-  void removeServiceSlot(ctkPlugin* plugin, QObject* receiver,
+  void removeServiceSlot(QSharedPointer<ctkPlugin> plugin, QObject* receiver,
                          const char* slot);
 
   /**
@@ -77,7 +77,7 @@ public:
    * @param p Plugin which caused the error.
    * @param e The exception.
    */
-  void frameworkError(ctkPlugin* p, const std::exception& e);
+  void frameworkError(QSharedPointer<ctkPlugin> p, const std::exception& e);
 
   /**
    * Receive notification that a service has had a change occur in its lifecycle.

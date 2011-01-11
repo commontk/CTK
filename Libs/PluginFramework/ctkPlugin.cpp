@@ -206,7 +206,7 @@ void ctkPlugin::uninstall()
         catch (const std::exception& exception)
         {
           // NYI! not call inside lock
-          d->fwCtx->listeners.frameworkError(this, exception);
+          d->fwCtx->listeners.frameworkError(this->d_func()->q_func(), exception);
         }
       }
     }
@@ -214,7 +214,7 @@ void ctkPlugin::uninstall()
     {
       d->deactivating = false;
       //fwCtx.packages.notifyAll();
-      d->fwCtx->listeners.frameworkError(this, e);
+      d->fwCtx->listeners.frameworkError(this->d_func()->q_func(), e);
     }
     // Fall through
   case RESOLVED:

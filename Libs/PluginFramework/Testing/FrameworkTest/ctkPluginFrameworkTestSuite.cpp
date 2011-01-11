@@ -514,7 +514,7 @@ bool ctkPluginFrameworkTestSuite::checkListenerEvents(
   QList<ctkPluginEvent> pEvts;
   QList<ctkServiceEvent> seEvts;
 
-  if (fwexp) fwEvts << ctkPluginFrameworkEvent(fwtype, pluginX.data());
+  if (fwexp) fwEvts << ctkPluginFrameworkEvent(fwtype, pluginX);
   if (pexp) pEvts << ctkPluginEvent(ptype, pluginX);
   if (sexp) seEvts << ctkServiceEvent(stype, *servX);
 

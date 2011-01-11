@@ -45,7 +45,7 @@ ctkPluginFrameworkListeners::ctkPluginFrameworkListeners()
 }
 
 void ctkPluginFrameworkListeners::addServiceSlot(
-    ctkPlugin* plugin, QObject* receiver,
+    QSharedPointer<ctkPlugin> plugin, QObject* receiver,
     const char* slot, const QString& filter)
 {
   QMutexLocker lock(&mutex); Q_UNUSED(lock)
@@ -60,7 +60,7 @@ void ctkPluginFrameworkListeners::addServiceSlot(
   connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(serviceListenerDestroyed(QObject*)));
 }
 
-void ctkPluginFrameworkListeners::removeServiceSlot(ctkPlugin* plugin,
+void ctkPluginFrameworkListeners::removeServiceSlot(QSharedPointer<ctkPlugin> plugin,
                                                     QObject* receiver,
                                                     const char* slot)
 {
@@ -89,7 +89,7 @@ void ctkPluginFrameworkListeners::removeServiceSlot(ctkPlugin* plugin,
 
 void ctkPluginFrameworkListeners::serviceListenerDestroyed(QObject *listener)
 {
-  this->removeServiceSlot(0, listener, 0);
+  this->removeServiceSlot(QSharedPointer<ctkPlugin>(0), listener, 0);
 }
 
 QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
@@ -138,7 +138,7 @@ QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
   return set;
 }
 
-void ctkPluginFrameworkListeners::frameworkError(ctkPlugin* p, const std::exception& e)
+void ctkPluginFrameworkListeners::frameworkError(QSharedPointer<ctkPlugin> p, const std::exception& e)
 {
   emit frameworkEvent(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::ERROR, p, e));
 }

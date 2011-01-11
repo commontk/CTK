@@ -170,7 +170,7 @@ void ctkServiceRegistration::unregister()
           }
           catch (const std::exception& ue)
           {
-            ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::ERROR, d->plugin->q_func().data(), ue);
+            ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::ERROR, d->plugin->q_func(), ue);
             d->plugin->fwCtx->listeners
                 .emitFrameworkEvent(pfwEvent);
           }

@@ -30,7 +30,7 @@ class ctkPluginFrameworkEventData : public QSharedData
 {
 public:
 
-  ctkPluginFrameworkEventData(ctkPluginFrameworkEvent::Type type, ctkPlugin* plugin, const QString& exc)
+  ctkPluginFrameworkEventData(ctkPluginFrameworkEvent::Type type, QSharedPointer<ctkPlugin> plugin, const QString& exc)
     : plugin(plugin), errorString(exc), type(type)
   {
 
@@ -46,7 +46,7 @@ public:
   /**
    * Plugin related to the event.
    */
-  ctkPlugin* const	plugin;
+  const QSharedPointer<ctkPlugin>	plugin;
 
   /**
    * Exception related to the event.
@@ -76,13 +76,13 @@ bool ctkPluginFrameworkEvent::isNull() const
   return !d;
 }
 
-ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin, const std::exception& fwException)
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin, const std::exception& fwException)
   : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
 {
 
 }
 
-ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, ctkPlugin* plugin)
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin)
   : d(new ctkPluginFrameworkEventData(type, plugin, QString()))
 {
 
@@ -105,7 +105,7 @@ QString ctkPluginFrameworkEvent::getErrorString() const
   return d->errorString;
 }
 
-ctkPlugin* ctkPluginFrameworkEvent::getPlugin() const
+QSharedPointer<ctkPlugin> ctkPluginFrameworkEvent::getPlugin() const
 {
   return d->plugin;
 }
@@ -135,7 +135,7 @@ QDebug operator<<(QDebug dbg, const ctkPluginFrameworkEvent& event)
 {
   if (event.isNull()) return dbg << "NONE";
 
-  ctkPlugin* p = event.getPlugin();
+  ctkPlugin* p = event.getPlugin().data();
   QString err = event.getErrorString();
 
   dbg.nospace() << event.getType() << " #" << p->getPluginId() << " ("

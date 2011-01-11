@@ -104,7 +104,7 @@
      * @return ctkPlugin or null
      *         if the plugin was not found.
      */
-    ctkPlugin* getPlugin(const QString& location) const;
+    QSharedPointer<ctkPlugin> getPlugin(const QString& location) const;
 
 
     /**
@@ -114,7 +114,7 @@
      * @param version The plugin version of the plugin to get.
      * @return ctkPlugin or null.
      */
-    ctkPlugin* getPlugin(const QString& name, const ctkVersion& version) const;
+    QSharedPointer<ctkPlugin> getPlugin(const QString& name, const ctkVersion& version) const;
 
 
     /**

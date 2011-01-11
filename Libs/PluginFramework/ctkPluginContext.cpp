@@ -192,7 +192,7 @@ void ctkPluginContext::connectServiceListener(QObject* receiver, const char* slo
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  d->plugin->fwCtx->listeners.addServiceSlot(getPlugin().data(), receiver, slot, filter);
+  d->plugin->fwCtx->listeners.addServiceSlot(getPlugin(), receiver, slot, filter);
 }
 
 void ctkPluginContext::disconnectServiceListener(QObject* receiver,
@@ -200,5 +200,5 @@ void ctkPluginContext::disconnectServiceListener(QObject* receiver,
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  d->plugin->fwCtx->listeners.removeServiceSlot(getPlugin().data(), receiver, slot);
+  d->plugin->fwCtx->listeners.removeServiceSlot(getPlugin(), receiver, slot);
 }

@@ -48,7 +48,7 @@ class ctkServiceSlotEntry
 
 public:
 
-  ctkServiceSlotEntry(ctkPlugin* p, QObject* receiver, const char* slot,
+  ctkServiceSlotEntry(QSharedPointer<ctkPlugin> p, QObject* receiver, const char* slot,
                       const QString& filter = QString());
 
   ctkServiceSlotEntry(const ctkServiceSlotEntry& other);
@@ -68,7 +68,7 @@ public:
 
   bool isRemoved() const;
 
-  ctkPlugin* getPlugin() const;
+  QSharedPointer<ctkPlugin> getPlugin() const;
 
   ctkLDAPExpr getLDAPExpr() const;
 
