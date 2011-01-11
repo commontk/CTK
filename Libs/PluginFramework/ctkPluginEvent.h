@@ -24,6 +24,7 @@
 
 #include <QSharedDataPointer>
 #include <QSharedPointer>
+#include <QMetaType>
 
 #include "ctkPluginFrameworkExport.h"
 
@@ -200,6 +201,8 @@ public:
   Type getType() const;
 
 };
+
+Q_DECLARE_METATYPE(ctkPluginEvent)
 
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, ctkPluginEvent::Type eventType);
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, const ctkPluginEvent& event);
