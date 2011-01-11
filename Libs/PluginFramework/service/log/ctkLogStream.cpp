@@ -48,36 +48,3 @@ ctkLogStream::~ctkLogStream()
   }
 }
 
-
-ctkLogStreamWithServiceRef::ctkLogStreamWithServiceRef(ctkLogService* logService, const ctkServiceReference& sr,
-                                                       int level, const std::exception* exc, const char* file,
-                                                       const char* function, int line)
-  : ctkLogStream(logService, level, exc, file, function, line), sr(sr)
-{
-
-}
-
-ctkLogStreamWithServiceRef::ctkLogStreamWithServiceRef(const ctkLogStreamWithServiceRef &logStreamWithRef)
- : ctkLogStream(logStreamWithRef), sr(logStreamWithRef.sr)
-{
-
-}
-
-ctkLogStreamWithServiceRef::~ctkLogStreamWithServiceRef()
-{
-  if (!logged)
-  {
-    logService->log(sr, level, msg, exc, file, function, line);
-    logged = true;
-  }
-}
-
-
-ctkNullLogStream::ctkNullLogStream() : ctkLogStream(0, 0)
-{}
-
-ctkNullLogStream::~ctkNullLogStream()
-{
-  logged = true;
-}
-

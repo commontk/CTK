@@ -26,3 +26,35 @@ const int ctkLogService::LOG_ERROR = 1;
 const int ctkLogService::LOG_WARNING = 2;
 const int ctkLogService::LOG_INFO = 3;
 const int ctkLogService::LOG_DEBUG = 4;
+
+ctkLogStreamWithServiceRef::ctkLogStreamWithServiceRef(ctkLogService* logService, const ctkServiceReference& sr,
+                                                       int level, const std::exception* exc, const char* file,
+                                                       const char* function, int line)
+  : ctkLogStream(logService, level, exc, file, function, line), sr(sr)
+{
+
+}
+
+ctkLogStreamWithServiceRef::ctkLogStreamWithServiceRef(const ctkLogStreamWithServiceRef &logStreamWithRef)
+ : ctkLogStream(logStreamWithRef), sr(logStreamWithRef.sr)
+{
+
+}
+
+ctkLogStreamWithServiceRef::~ctkLogStreamWithServiceRef()
+{
+  if (!logged)
+  {
+    logService->log(sr, level, msg, exc, file, function, line);
+    logged = true;
+  }
+}
+
+
+ctkNullLogStream::ctkNullLogStream() : ctkLogStream(0, 0)
+{}
+
+ctkNullLogStream::~ctkNullLogStream()
+{
+  logged = true;
+}
