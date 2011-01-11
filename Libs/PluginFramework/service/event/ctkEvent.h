@@ -31,7 +31,7 @@
 #include <ctkLDAPSearchFilter.h>
 
 
-class ctkEventPrivate;
+class ctkEventData;
 
 /**
  * A CTK event.
@@ -39,9 +39,19 @@ class ctkEventPrivate;
  * <code>ctkEvent</code> objects are delivered to <code>ctkEventHandler</code>
  * or Qt slots which subscribe to the topic of the event.
  */
-class CTK_PLUGINFW_EXPORT ctkEvent {
+class CTK_PLUGINFW_EXPORT ctkEvent
+{
+
+  QSharedDataPointer<ctkEventData> d;
 
 public:
+
+  /**
+   * Default constructor for use with the Qt meta object system.
+   */
+  ctkEvent();
+
+  ~ctkEvent();
 
   /**
    * Constructs an event.
@@ -52,7 +62,8 @@ public:
    */
   ctkEvent(const QString& topic, const ctkDictionary& properties = ctkDictionary());
   ctkEvent(const ctkEvent& event);
-  ~ctkEvent();
+
+  ctkEvent& operator=(const ctkEvent& other);
 
   /**
    * Compares this <code>ctkEvent</code> object to another object.
@@ -112,9 +123,6 @@ public:
    */
   bool matches(const ctkLDAPSearchFilter& filter) const;
 
-protected:
-
-  ctkEventPrivate * const d;
 };
 
 

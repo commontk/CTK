@@ -25,12 +25,13 @@
 
 #include <stdexcept>
 
-class ctkEventPrivate {
+class ctkEventData : public QSharedData
+{
 
 public:
 
-  ctkEventPrivate(const QString& topic, const ctkDictionary& properties)
-    : ref(1), topic(topic), properties(properties)
+  ctkEventData(const QString& topic, const ctkDictionary& properties)
+    : topic(topic), properties(properties)
   {
     validateTopicName(topic);
     this->properties.insert(ctkEventConstants::EVENT_TOPIC, topic);
@@ -65,15 +66,19 @@ public:
     }
   }
 
-  QAtomicInt ref;
   const QString topic;
   ctkDictionary properties;
 
 };
 
+ctkEvent::ctkEvent()
+  : d(0)
+{
+
+}
 
 ctkEvent::ctkEvent(const QString& topic, const ctkDictionary& properties)
-  : d(new ctkEventPrivate(topic, properties))
+  : d(new ctkEventData(topic, properties))
 {
 
 }
@@ -89,8 +94,12 @@ ctkEvent::ctkEvent(const ctkEvent &event)
 
 ctkEvent::~ctkEvent()
 {
-  if (!d->ref.deref())
-    delete d;
+}
+
+ctkEvent& ctkEvent::operator=(const ctkEvent& other)
+{
+  d = other.d;
+  return *this;
 }
 
 bool ctkEvent::operator==(const ctkEvent& other) const
