@@ -366,3 +366,14 @@ QDebug operator<<(QDebug debug, ctkPlugin const * plugin)
 {
   return operator<<(debug, *plugin);
 }
+
+ctkLogStream& operator<<(ctkLogStream& stream, ctkPlugin const * plugin)
+{
+  stream << plugin->getSymbolicName();
+  return stream;
+}
+
+ctkLogStream& operator<<(ctkLogStream& stream, const QSharedPointer<ctkPlugin>& plugin)
+{
+  return operator<<(stream, plugin.data());
+}

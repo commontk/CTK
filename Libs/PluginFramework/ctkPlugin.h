@@ -27,6 +27,7 @@
 #include <QMetaType>
 
 #include "ctkVersion.h"
+#include "service/log/ctkLogStream.h"
 
 class ctkPluginContext;
 class ctkPluginArchive;
@@ -674,5 +675,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPlugin::StopOptions)
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, ctkPlugin::State state);
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, const ctkPlugin& plugin);
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, ctkPlugin const * plugin);
+
+CTK_PLUGINFW_EXPORT ctkLogStream& operator<<(ctkLogStream& stream, ctkPlugin const * plugin);
+CTK_PLUGINFW_EXPORT ctkLogStream& operator<<(ctkLogStream& stream, const QSharedPointer<ctkPlugin>& plugin);
 
 #endif // CTKPLUGIN_H
