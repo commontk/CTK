@@ -84,7 +84,7 @@ void ctkCMEventDispatcher::stop()
   tracker.close();
   {
     QMutexLocker lock(&mutex);
-    configAdminReference = ctkServiceReference();
+    configAdminReference = 0;
   }
 }
 
