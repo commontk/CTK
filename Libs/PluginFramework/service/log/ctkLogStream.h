@@ -52,6 +52,12 @@ public:
     return *this;
   }
 
+  ctkLogStream& operator <<(bool b)
+  {
+    ts << (b ? "true" : "false");
+    return *this;
+  }
+
 protected:
 
   QString msg;
