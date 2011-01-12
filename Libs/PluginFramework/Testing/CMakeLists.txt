@@ -18,3 +18,4 @@ ADD_SUBDIRECTORY(FrameworkTest)
 ADD_SUBDIRECTORY(FrameworkTestPlugins)
 
 ADD_SUBDIRECTORY(ConfigAdminTest)
+ADD_SUBDIRECTORY(EventAdminTest)
