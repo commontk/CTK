@@ -32,81 +32,7 @@
 
 // CTK includes
 #include "ctkPathLineEdit.h"
-
-//-----------------------------------------------------------------------------
-const char *qt_file_dialog_filter_reg_exp =
-"^(.*)\\(([a-zA-Z0-9_.*? +;#\\-\\[\\]@\\{\\}/!<>\\$%&=^~:\\|]*)\\)$";
-
-//-----------------------------------------------------------------------------
-QStringList filterNameExtensions(const QString& filterName)
-{
-  QRegExp regexp(QString::fromLatin1(qt_file_dialog_filter_reg_exp));
-  int i = regexp.indexIn(filterName);
-  if (i < 0)
-    {
-    return QStringList();
-    }
-  QString f = regexp.cap(2);
-  return f.split(QLatin1Char(' '), QString::SkipEmptyParts);
-}
-
-//-----------------------------------------------------------------------------
-QStringList filterNamesExtensions(const QStringList& filterNames)
-{
-  QStringList extensions;
-  foreach(const QString& filterName, filterNames)
-    {
-    extensions << filterNameExtensions(filterName);
-    }
-  return extensions;
-}
-
-//-----------------------------------------------------------------------------
-QString extensionToRegExp(const QString& extension)
-{
-  // typically *.jpg
-  QRegExp extensionExtractor("\\*\\.(\\w+)");
-  int pos = extensionExtractor.indexIn(extension);
-  if (pos < 0)
-    {
-    return QString();
-    }
-  return ".*\\." + extensionExtractor.cap(1) + "?$";
-}
-
-//-----------------------------------------------------------------------------
-QRegExp filterNamesToRegExpExtensions(const QStringList& filterNames)
-{
-  QString pattern;
-  foreach(QString filterName, filterNames)
-    {
-    foreach(QString extension, filterNameExtensions(filterName))
-      {
-      QString regExpExtension = extensionToRegExp(extension);
-      if (!regExpExtension.isEmpty())
-        {
-        if (pattern.isEmpty())
-          {
-          pattern = "(";
-          }
-        else
-          {
-          pattern += "|";
-          }
-        pattern +=regExpExtension;
-        }
-      }
-    }
-  if (pattern.isEmpty())
-    {
-    pattern = ".+";
-    }
-  else
-    {
-    pattern += ")";
-    }
-  return QRegExp(pattern);
-}
+#include "ctkUtils.h"
 
 //-----------------------------------------------------------------------------
 class ctkPathLineEditPrivate
@@ -172,7 +98,7 @@ void ctkPathLineEditPrivate::updateFilter()
   // help completion for the QComboBox::QLineEdit
   QCompleter *newCompleter = new QCompleter(q);
   newCompleter->setModel(new QDirModel(
-                           filterNamesExtensions(this->NameFilters),
+                           ctk::nameFiltersToExtensions(this->NameFilters),
                            this->Filters | QDir::NoDotAndDotDot | QDir::AllDirs,
                            QDir::Name|QDir::DirsLast, newCompleter));
   this->ComboBox->setCompleter(newCompleter);
@@ -230,7 +156,7 @@ void ctkPathLineEdit::setNameFilters(const QStringList &nameFilters)
   d->updateFilter();
   d->ComboBox->lineEdit()->setValidator(
     new QRegExpValidator(
-      filterNamesToRegExpExtensions(d->NameFilters), this));
+      ctk::nameFiltersToRegExp(d->NameFilters), this));
 }
 
 //-----------------------------------------------------------------------------

@@ -43,6 +43,28 @@ void CTK_CORE_EXPORT qListToSTLVector(const QStringList& list, std::vector<std::
 /// Convert a Vector of string to QStringList
 void CTK_CORE_EXPORT stlVectorToQList(const std::vector<std::string>& vector, QStringList& list);
 
+///
+/// Convert a nameFilter to a list of file extensions:
+/// "Images (*.png *.jpg *.tiff)" -> "*.png", "*.jpg", "*.tiff"
+/// \sa nameFiltersToExtensions
+QStringList CTK_CORE_EXPORT nameFilterToExtensions(const QString& nameFilter);
+
+///
+/// Convert a nameFilter to a list of file extensions:
+/// "Images (*.png *.jpg *.tiff)", "Text (*.txt)" -> "*.png", "*.jpg", "*.tiff", "*.txt"
+QStringList CTK_CORE_EXPORT nameFiltersToExtensions(const QStringList& nameFilters);
+
+///
+/// Convert a wildcar extension filter ("*.jpg") into a regular expression string
+/// "*.jpg" -> ".*\\.jpg?$"
+QString CTK_CORE_EXPORT extensionToRegExp(const QString& extension);
+
+///
+/// Convert a list of wildcar extension filters ("*.jpg")
+/// into a regular expression string
+/// "*.jpg", "*.txt" -> "(.*\\.jpg?$|.*\\.txt?$)"
+QRegExp CTK_CORE_EXPORT nameFiltersToRegExp(const QStringList& nameFilters);
+
 }
 
 #endif

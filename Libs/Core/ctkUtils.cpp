@@ -18,6 +18,11 @@
 
 =========================================================================*/
 
+// Qt includes
+#include <QRegExp>
+#include <QString>
+#include <QStringList>
+
 #include "ctkUtils.h"
 
 // STD includes
@@ -71,3 +76,77 @@ void ctk::stlVectorToQList(const std::vector<std::string>& vector,
   std::transform(vector.begin(),vector.end(),std::back_inserter(list),&QString::fromStdString);
 }
 
+//-----------------------------------------------------------------------------
+const char *ctkNameFilterRegExp =
+  "^(.*)\\(([a-zA-Z0-9_.*? +;#\\-\\[\\]@\\{\\}/!<>\\$%&=^~:\\|]*)\\)$";
+
+//-----------------------------------------------------------------------------
+QStringList ctk::nameFilterToExtensions(const QString& nameFilter)
+{
+  QRegExp regexp(QString::fromLatin1(ctkNameFilterRegExp));
+  int i = regexp.indexIn(nameFilter);
+  if (i < 0)
+    {
+    return QStringList();
+    }
+  QString f = regexp.cap(2);
+  return f.split(QLatin1Char(' '), QString::SkipEmptyParts);
+}
+
+//-----------------------------------------------------------------------------
+QStringList ctk::nameFiltersToExtensions(const QStringList& nameFilters)
+{
+  QStringList extensions;
+  foreach(const QString& nameFilter, nameFilters)
+    {
+    extensions << nameFilterToExtensions(nameFilter);
+    }
+  return extensions;
+}
+
+//-----------------------------------------------------------------------------
+QString ctk::extensionToRegExp(const QString& extension)
+{
+  // typically *.jpg
+  QRegExp extensionExtractor("\\*\\.(\\w+)");
+  int pos = extensionExtractor.indexIn(extension);
+  if (pos < 0)
+    {
+    return QString();
+    }
+  return ".*\\." + extensionExtractor.cap(1) + "?$";
+}
+
+//-----------------------------------------------------------------------------
+QRegExp ctk::nameFiltersToRegExp(const QStringList& nameFilters)
+{
+  QString pattern;
+  foreach(const QString& nameFilter, nameFilters)
+    {
+    foreach(const QString& extension, nameFilterToExtensions(nameFilter))
+      {
+      QString regExpExtension = extensionToRegExp(extension);
+      if (!regExpExtension.isEmpty())
+        {
+        if (pattern.isEmpty())
+          {
+          pattern = "(";
+          }
+        else
+          {
+          pattern += "|";
+          }
+        pattern +=regExpExtension;
+        }
+      }
+    }
+  if (pattern.isEmpty())
+    {
+    pattern = ".+";
+    }
+  else
+    {
+    pattern += ")";
+    }
+  return QRegExp(pattern);
+}
