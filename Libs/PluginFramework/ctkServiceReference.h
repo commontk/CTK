@@ -86,6 +86,12 @@ public:
    */
   operator bool() const;
 
+  /**
+   * Releases any resources held or locked by this
+   * <code>ctkServiceReference</code> and renders it invalid.
+   */
+  ctkServiceReference& operator=(int null);
+
   ~ctkServiceReference();
 
   /**

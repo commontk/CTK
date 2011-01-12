@@ -52,6 +52,17 @@ ctkServiceReference::operator bool() const
   return getPlugin();
 }
 
+ctkServiceReference& ctkServiceReference::operator=(int null)
+{
+  if (null == 0)
+  {
+    if (d_func() && !d_func()->ref.deref())
+      delete d_ptr;
+    d_ptr = new ctkServiceReferencePrivate(0);
+  }
+  return *this;
+}
+
 ctkServiceReference::~ctkServiceReference()
 {
   if (!d_func()->ref.deref())

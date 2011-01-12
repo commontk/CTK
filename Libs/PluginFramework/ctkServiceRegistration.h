@@ -62,6 +62,12 @@ public:
 
   operator bool() const;
 
+  /**
+   * Releases any resources held or locked by this
+   * <code>ctkServiceRegistration</code> and renders it invalid.
+   */
+  ctkServiceRegistration& operator=(int null);
+
   ~ctkServiceRegistration();
 
   /**

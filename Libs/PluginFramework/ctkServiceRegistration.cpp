@@ -63,6 +63,16 @@ ctkServiceRegistration::operator bool() const
   return d_func();
 }
 
+ctkServiceRegistration& ctkServiceRegistration::operator=(int null)
+{
+  if (null == 0)
+  {
+    if (d_func() && !d_func()->ref.deref())
+      delete d_ptr;
+  }
+  return *this;
+}
+
 ctkServiceRegistration::~ctkServiceRegistration()
 {
   if (d_func() && !d_func()->ref.deref())
