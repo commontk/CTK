@@ -96,6 +96,11 @@ ctkEvent::~ctkEvent()
 {
 }
 
+bool ctkEvent::isNull() const
+{
+  return !d;
+}
+
 ctkEvent& ctkEvent::operator=(const ctkEvent& other)
 {
   d = other.d;
