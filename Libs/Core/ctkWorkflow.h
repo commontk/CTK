@@ -38,6 +38,8 @@ class QAbstractState;
 class CTK_CORE_EXPORT ctkWorkflow : public QObject
 {
   Q_OBJECT
+  Q_ENUMS(TransitionDirectionality)
+  Q_PROPERTY(bool isRunning READ isRunning DESIGNABLE false)
 
 public:
 
@@ -82,10 +84,10 @@ public:
   /// To add a single step, \a destination can be set to 0.
   ///
   /// Returns true/false indicating whether the method was successful.
-  virtual bool addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
-                             const QString& branchId = QString(),
-                             const ctkWorkflow::TransitionDirectionality directionality
-                               = ctkWorkflow::Bidirectional);
+  Q_INVOKABLE virtual bool addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
+                                         const QString& branchId = QString(),
+                                         const ctkWorkflow::TransitionDirectionality directionality
+                                         = ctkWorkflow::Bidirectional);
 
   /// \brief Determine whether a transition has already been added
   /// <ul>
@@ -96,9 +98,10 @@ public:
   /// previously added with the same origin and branch id (for forward transitions) or
   /// with the same destination and branch id (for backward transitions)</li>
   /// </ul>
-  bool hasTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
-                     const QString& branchId = QString(),
-                     const ctkWorkflow::TransitionDirectionality directionality = ctkWorkflow::Bidirectional);
+  Q_INVOKABLE bool hasTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
+                                 const QString& branchId = QString(),
+                                 const ctkWorkflow::TransitionDirectionality directionality
+                                 = ctkWorkflow::Bidirectional);
 
   /// \brief Set/get the initial step.
   ///
@@ -114,7 +117,7 @@ public:
   ctkWorkflowStep* currentStep()const;
 
   /// Check to see if there is a step with a given id in the workflow.
-  bool hasStep(const QString& id)const;
+  Q_INVOKABLE bool hasStep(const QString& id)const;
 
   /// Returns whether or not we can go forward: i.e. there exists a step that directly follows the
   /// given step.
