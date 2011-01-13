@@ -68,7 +68,10 @@ ctkServiceRegistration& ctkServiceRegistration::operator=(int null)
   if (null == 0)
   {
     if (d_func() && !d_func()->ref.deref())
+    {
       delete d_ptr;
+    }
+    d_ptr = 0;
   }
   return *this;
 }
