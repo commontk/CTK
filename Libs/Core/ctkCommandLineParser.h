@@ -81,9 +81,16 @@ class QSettings;
  * }
  * \endcode
  */
-class CTK_CORE_EXPORT ctkCommandLineParser
+class CTK_CORE_EXPORT ctkCommandLineParser : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(QString errorString READ errorString)
+  Q_PROPERTY(QStringList unparsedArguments READ unparsedArguments)
+  Q_PROPERTY(bool settingsEnabled READ settingsEnabled)
+
 public:
+
+  typedef QObject Superclass;
 
   /**
    * Constructs a parser instance.
@@ -97,7 +104,8 @@ public:
    *
    * @param settings A QSettings instance which should be used.
    */
-  ctkCommandLineParser(QSettings* settings = 0);
+  ctkCommandLineParser(QObject* newParent = 0);
+  ctkCommandLineParser(QSettings* settings, QObject* newParent = 0);
 
   ~ctkCommandLineParser();
   
@@ -159,7 +167,7 @@ public:
    * @return <code>true</code> if the argument was added, <code>false</code>
    *         otherwise.
    */
-  bool argumentAdded(const QString& argument) const;
+  Q_INVOKABLE bool argumentAdded(const QString& argument) const;
 
   /**
    * Checks if the given argument has been parsed successfully by a previous
@@ -169,7 +177,7 @@ public:
    * @return <code>true</code> if the argument was parsed, <code>false</code>
    *         otherwise.
    */
-  bool argumentParsed(const QString& argument) const;
+  Q_INVOKABLE bool argumentParsed(const QString& argument) const;
 
   /**
    * Adds a command line argument. An argument can have a long name

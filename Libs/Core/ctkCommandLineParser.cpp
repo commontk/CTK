@@ -269,7 +269,14 @@ CommandLineParserArgumentDescription*
 // ctkCommandLineParser methods
 
 // --------------------------------------------------------------------------
-ctkCommandLineParser::ctkCommandLineParser(QSettings* settings)
+ctkCommandLineParser::ctkCommandLineParser(QObject* newParent) : Superclass(newParent)
+{
+  this->Internal = new ctkInternal(0);
+}
+
+// --------------------------------------------------------------------------
+ctkCommandLineParser::ctkCommandLineParser(QSettings* settings, QObject* newParent) :
+    Superclass(newParent)
 {
   this->Internal = new ctkInternal(settings);
 }
