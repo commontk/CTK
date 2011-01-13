@@ -61,6 +61,7 @@ ENDIF()
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkCommandLineParser.h
   ctkLogger.h 
   ctkHistogram.h
   ctkModelTester.h
@@ -68,7 +69,7 @@ SET(KIT_MOC_SRCS
   ctkTransferFunctionRepresentation.h
   ctkWorkflow.h
   ctkWorkflowStep_p.h
- ctkWorkflowTransitions.h
+  ctkWorkflowTransitions.h
   )
 
 # UI files
