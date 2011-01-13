@@ -79,6 +79,8 @@ void ctk::stlVectorToQList(const std::vector<std::string>& vector,
 //-----------------------------------------------------------------------------
 const char *ctkNameFilterRegExp =
   "^(.*)\\(([a-zA-Z0-9_.*? +;#\\-\\[\\]@\\{\\}/!<>\\$%&=^~:\\|]*)\\)$";
+const char *ctkValidWildCard =
+  "^[\\w\\s\\.\\*\\_\\~\\$\\[\\]]+$";
 
 //-----------------------------------------------------------------------------
 QStringList ctk::nameFilterToExtensions(const QString& nameFilter)
@@ -87,6 +89,11 @@ QStringList ctk::nameFilterToExtensions(const QString& nameFilter)
   int i = regexp.indexIn(nameFilter);
   if (i < 0)
     {
+    QRegExp isWildCard(QString::fromLatin1(ctkValidWildCard));
+    if (isWildCard.indexIn(nameFilter) >= 0)
+      {
+      return QStringList(nameFilter);
+      }
     return QStringList();
     }
   QString f = regexp.cap(2);

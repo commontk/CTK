@@ -24,6 +24,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkCommandLineParserTest1.cpp
   ctkModelTesterTest1.cpp
   ctkUtilsTest1.cpp
+  ctkUtilsTest2.cpp
   ctkDependencyGraphTest1.cpp
   ctkDependencyGraphTest2.cpp
   ctkPimplTest1.cpp
@@ -85,6 +86,7 @@ SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
 SIMPLE_TEST( ctkUtilsTest1 )
+SIMPLE_TEST( ctkUtilsTest2 )
 SIMPLE_TEST( ctkWorkflowTest1 )
 SIMPLE_TEST( ctkWorkflowTest2 )
 SIMPLE_TEST( ctkWorkflowTest3 )
