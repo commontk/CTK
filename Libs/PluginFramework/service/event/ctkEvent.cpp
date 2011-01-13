@@ -89,7 +89,7 @@ ctkEvent::ctkEvent(const QString& topic, const ctkDictionary& properties)
 ctkEvent::ctkEvent(const ctkEvent &event)
   : d(event.d)
 {
-  d->ref.ref();
+
 }
 
 ctkEvent::~ctkEvent()
