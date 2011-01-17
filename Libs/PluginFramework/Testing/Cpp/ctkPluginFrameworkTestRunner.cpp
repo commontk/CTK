@@ -199,7 +199,7 @@ void ctkPluginFrameworkTestRunner::addPluginPath(const QString& path, bool insta
   Q_D(ctkPluginFrameworkTestRunner);
   d->pluginPaths.push_back(qMakePair(path, install));
 #ifdef _WIN32
-  if(_putenv_s("PATH", path.toLatin1().data()))
+  if(_putenv(QString("PATH=%1").arg(path).toLatin1().data()))
   {
     LPVOID lpMsgBuf;
     DWORD dw = GetLastError(); 
