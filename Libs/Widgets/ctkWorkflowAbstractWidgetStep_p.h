@@ -49,8 +49,8 @@ protected:
   QList<ctkWorkflowStep*> finishStepsToHaveButtonsInStepArea;
 
   // int hasPopulateStepWidgetsListCommand;
-  int hasShowUserInterfaceCommand;
-  int hasCreateUserInterfaceCommand;
+  bool hasShowUserInterfaceCommand;
+  bool hasCreateUserInterfaceCommand;
 
   // names for the buttons
   QString backButtonText;

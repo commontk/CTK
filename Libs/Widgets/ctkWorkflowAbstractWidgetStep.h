@@ -103,14 +103,14 @@ public:
   /// Set/get whether a showUserInterfaceCommand has been provided in
   /// a separate QObject (see method 2 described for
   /// showUserInterface())
-  virtual int hasShowUserInterfaceCommand()const;
-  virtual void setHasShowUserInterfaceCommand(int flag);
+  virtual bool hasShowUserInterfaceCommand()const;
+  virtual void setHasShowUserInterfaceCommand(bool flag);
 
   /// Set/get whether a createUserInterfaceCommand has been provided in
   /// a separate QObject (see method 2 described for
   /// createUserInterface())
-  virtual int hasCreateUserInterfaceCommand()const;
-  virtual void setHasCreateUserInterfaceCommand(int flag);
+  virtual bool hasCreateUserInterfaceCommand()const;
+  virtual void setHasCreateUserInterfaceCommand(bool flag);
 
 protected:
 

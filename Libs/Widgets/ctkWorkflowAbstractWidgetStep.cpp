@@ -93,8 +93,8 @@ ctkWorkflowAbstractWidgetStep::ctkWorkflowAbstractWidgetStep(ctkWorkflow* newWor
   , d_ptr(new ctkWorkflowAbstractWidgetStepPrivate(*this))
 {
   Q_D(ctkWorkflowAbstractWidgetStep);
-  d->hasShowUserInterfaceCommand = 0;
-  d->hasCreateUserInterfaceCommand = 0;
+  d->hasShowUserInterfaceCommand = false;
+  d->hasCreateUserInterfaceCommand = false;
   d->ButtonBoxHints = ctkWorkflowAbstractWidgetStep::NoHints;
 }
 
@@ -104,10 +104,10 @@ ctkWorkflowAbstractWidgetStep::~ctkWorkflowAbstractWidgetStep()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, int, hasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
-CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, int, setHasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
-CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, int, hasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
-CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, int, setHasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
+CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, bool, hasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
+CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, bool, setHasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
+CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, bool, hasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
+CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, bool, setHasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
 CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, QString, backButtonText, backButtonText);
 CTK_SET_CPP(ctkWorkflowAbstractWidgetStep, const QString&, setBackButtonText, backButtonText);
 CTK_GET_CPP(ctkWorkflowAbstractWidgetStep, QString, nextButtonText, nextButtonText);
