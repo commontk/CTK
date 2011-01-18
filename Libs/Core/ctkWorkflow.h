@@ -177,12 +177,6 @@ public slots:
   /// If the validation is successful, then this slot begins the transition to the next step.
   virtual void evaluateValidationResults(bool validationSucceeded, const QString& branchId);
 
-  /// \brief Workflow processing executed after a step's onEntry function is run.
-  virtual void processingAfterOnEntry();
-
-  /// \brief Workflow processing executed after a step's onExit function is run.
-  virtual void processingAfterOnExit();
-
 protected:
 
   void goToNextStepAfterSuccessfulValidation(const QString& branchId);
@@ -197,9 +191,6 @@ protected:
  
   /// \brief Goes to the step from which the attempt to go to the 'goTo' step was initiated
   void goFromGoToStepToStartingStep();
-
-  /// \brief Performs required connections between the step and this workflow
-  virtual void connectStep(ctkWorkflowStep* step);
  
 protected slots:
 
