@@ -128,6 +128,7 @@ struct CTK_CORE_EXPORT ctkWorkflowInterstepTransitionEvent : public QEvent
 class CTK_CORE_EXPORT ctkWorkflowInterstepTransition : public QAbstractTransition
 {
   Q_OBJECT
+  Q_ENUMS(InterstepTransitionType)
 
 public:
 
