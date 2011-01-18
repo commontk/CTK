@@ -173,7 +173,6 @@ void ctkVTKObjectEventsObserver::printAdditionalInfo()
 QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj,
   unsigned long vtk_event, const QObject* qt_obj, const char* qt_slot, float priority)
 {
-  QString connectionId; 
   if (old_vtk_obj)
     {
     // Check that old_object and new_object are the same type
@@ -200,16 +199,12 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObj
       qDebug() << "Previous vtkObject (type:" << old_vtk_obj->GetClassName() << ") to disconnect"
                << "and new vtkObject (type:" << vtk_obj->GetClassName() << ") to connect"
                << "have a different type.";
-      return connectionId;
+      return QString();
       }
     // Disconnect old vtkObject
     this->removeConnection(old_vtk_obj, vtk_event, qt_obj, qt_slot);
     }
-  if (vtk_obj)
-    {
-    connectionId = this->addConnection(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
-    }
-  return connectionId;
+  return this->addConnection(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
 }
 
 //-----------------------------------------------------------------------------
@@ -217,13 +212,8 @@ QString ctkVTKObjectEventsObserver::reconnection(vtkObject* vtk_obj,
   unsigned long vtk_event, const QObject* qt_obj,
   const char* qt_slot, float priority)
 {
-  QString connectionId;
   this->removeConnection(0, vtk_event, qt_obj, qt_slot);
-  if (vtk_obj)
-    {
-    connectionId = this->addConnection(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
-    }
-  return connectionId;
+  return this->addConnection(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
 }
 
 //-----------------------------------------------------------------------------
@@ -231,6 +221,11 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
   const QObject* qt_obj, const char* qt_slot, float priority)
 {
   Q_D(ctkVTKObjectEventsObserver);
+  // If no vtk_obj is provided, there is no way we can create a connection.
+  if (!vtk_obj)
+    {
+    return QString();
+    }
   if (!ctkVTKConnection::isValid(vtk_obj, vtk_event, qt_obj, qt_slot))
     {
     qDebug() << "ctkVTKObjectEventsObserver::addConnection(...) - Invalid parameters - "

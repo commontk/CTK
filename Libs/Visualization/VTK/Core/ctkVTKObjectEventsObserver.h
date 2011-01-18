@@ -50,7 +50,9 @@ public:
   virtual void printAdditionalInfo();
 
   ///
-  /// Add a connection, an Id allowing to uniquely identify the connection is also returned
+  /// Add a connection, an Id allowing to uniquely identify the connection is
+  /// returned. It is a no-op if vtk_obj is NULL, the parameters are invalid or
+  /// if the connection already exist.
   /// Warning the slot must have its signature order:
   /// vtkObject*, vtkObject* : sender, callData
   /// or
