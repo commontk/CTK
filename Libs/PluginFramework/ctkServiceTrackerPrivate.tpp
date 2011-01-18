@@ -29,7 +29,7 @@
 #include <stdexcept>
 
 template<class S, class T>
-const bool ctkServiceTrackerPrivate<S,T>::DEBUG	= true;
+const bool ctkServiceTrackerPrivate<S,T>::DEBUG = false;
 
 template<class S, class T>
 ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
