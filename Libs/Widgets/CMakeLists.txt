@@ -121,6 +121,17 @@ SET(KIT_SRCS
   ctkDateRangeWidget.h
   )
 
+IF(CTK_WRAP_PYTHONQT_LIGHT)
+  LIST(APPEND KIT_SRCS
+    ctkWidgetsPythonQtDecorators.h
+    )
+  # Let's make sure the decorator are not wrapped !
+  SET_SOURCE_FILES_PROPERTIES(
+    ctkWidgetsPythonQtDecorators.h
+    WRAP_EXCLUDE
+    )
+ENDIF()
+
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkWorkflowAbstractWidgetStep_p.h
@@ -178,6 +189,13 @@ SET(KIT_MOC_SRCS
   ctkWorkflowWidgetStep.h
   ctkDateRangeWidget.h
   )
+
+
+IF(CTK_WRAP_PYTHONQT_LIGHT)
+  LIST(APPEND KIT_MOC_SRCS
+    ctkWidgetsPythonQtDecorators.h
+    )
+ENDIF()
 
 # UI files
 SET(KIT_UI_FORMS
