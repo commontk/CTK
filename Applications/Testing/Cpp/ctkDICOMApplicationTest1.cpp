@@ -9,13 +9,18 @@
 #include <cstdlib>
 
   /*
-/pieper/ctk/latest/CTK-superbuild/CMakeExternals/Install/bin/dcmqrscp -c /pieper/ctk/latest/CTK-superbuild/CTK-build/Testing/Temporary/dcmqrscp.cfg -d -v
+   * This test performs a full dicom store, query, and retrieve.
+   *
+   * To recreate the parts, from the CTK-superbuild directory, run:
+   *
 
-storescu -aec COMMONTK -aet CTK_AE localhost 11112 /data/pieper-face-2005-05-11/1.2.840.113619.2.135.3596.6358736.5118.1115807980.182.UID/000001.SER/000001.IMA
+./CMakeExternals/Install/bin/dcmqrscp -c ./CTK-build/Testing/Temporary/dcmqrscp.cfg -d -v
 
-findscu -aet CTK_AE -aec COMMONTK -P -k 0010,0010=\* localhost 11112 patqry.dcm
+./CMakeExternals/Install/bin/storescu -aec CTK_AE -aet CTK_AE localhost 11112 ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/*.IMA
 
-./CTK-build/bin/ctkDICOMQuery test.db CTK_AE COMMONTK localhost 11112
+./CMakeExternals/Install/bin/findscu -aet CTK_AE -aec COMMONTK -P -k 0010,0010=\* localhost 11112 patqry.dcm
+
+./CTK-build/bin/ctkDICOMQuery /tmp/test.db CTK_AE CTK_AE localhost 11112
 
 
 ./CTK-build/bin/ctkDICOMRetrieve 1.2.840.113619.2.135.3596.6358736.5118.1115807980.182  /tmp/hoot CTK_AE 11113 CTK_AE localhost 11112 CTK_CLIENT_AE
