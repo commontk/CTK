@@ -120,12 +120,12 @@ int ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots(int argc, char * argv [] )
   QObject::connect(testStep3->ctkWorkflowStepQObject(), SIGNAL(invokeOnExitCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)), qObject3, SLOT(onExit(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
 
   // use the qObjects for populating the stepWidgetsList
-  QObject::connect(testStep1->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject1, SLOT(createUserInterface()));
-  QObject::connect(qObject1, SIGNAL(createUserInterfaceComplete()), testStep1->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(showUserInterfaceComplete()));
-  QObject::connect(testStep2->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject2, SLOT(createUserInterface()));
-  QObject::connect(qObject2, SIGNAL(createUserInterfaceComplete()), testStep2->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(showUserInterfaceComplete()));
-  QObject::connect(testStep3->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject3, SLOT(createUserInterface()));
-  QObject::connect(qObject3, SIGNAL(createUserInterfaceComplete()), testStep3->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(showUserInterfaceComplete()));
+  QObject::connect(testStep1->ctkWorkflowStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject1, SLOT(createUserInterface()));
+  QObject::connect(qObject1, SIGNAL(createUserInterfaceComplete()), testStep1->ctkWorkflowStepQObject(), SIGNAL(showUserInterfaceComplete()));
+  QObject::connect(testStep2->ctkWorkflowStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject2, SLOT(createUserInterface()));
+  QObject::connect(qObject2, SIGNAL(createUserInterfaceComplete()), testStep2->ctkWorkflowStepQObject(), SIGNAL(showUserInterfaceComplete()));
+  QObject::connect(testStep3->ctkWorkflowStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject3, SLOT(createUserInterface()));
+  QObject::connect(qObject3, SIGNAL(createUserInterfaceComplete()), testStep3->ctkWorkflowStepQObject(), SIGNAL(showUserInterfaceComplete()));
 
   testStep1->setHasValidateCommand(1);
   testStep1->setHasOnEntryCommand(1);

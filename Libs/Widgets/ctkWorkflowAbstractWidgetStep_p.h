@@ -33,7 +33,7 @@ class QWidget;
 //class ctkWorkflowButtonBoxWidget;
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowAbstractWidgetStepPrivate : public QObject
+class ctkWorkflowAbstractWidgetStepPrivate : public ctkWorkflowStepPrivate
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(ctkWorkflowAbstractWidgetStep);
@@ -43,6 +43,7 @@ protected:
 public:
   ctkWorkflowAbstractWidgetStepPrivate(ctkWorkflowAbstractWidgetStep& object);
   ~ctkWorkflowAbstractWidgetStepPrivate(){}
+  typedef ctkWorkflowStepPrivate Superclass;
 
 protected:
 

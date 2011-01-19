@@ -115,8 +115,41 @@ void ctkWorkflowStepPrivate::invokeOnExitCommandInternal(const ctkWorkflowStep* 
 // ctkWorkflowStep methods
 
 // --------------------------------------------------------------------------
+ctkWorkflowStep::ctkWorkflowStep(): d_ptr(new ctkWorkflowStepPrivate(*this))
+{
+  Q_D(ctkWorkflowStep);
+
+  d->Id = d->metaObject()->className();
+}
+
+// --------------------------------------------------------------------------
 ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId)
   : d_ptr(new ctkWorkflowStepPrivate(*this))
+{
+  Q_D(ctkWorkflowStep);
+
+  if (newId.isEmpty())
+    {
+     d->Id = d->metaObject()->className();
+    }
+  else
+    {
+    d->Id = newId;
+    }
+
+  d->Workflow = newWorkflow;
+}
+
+// --------------------------------------------------------------------------
+ctkWorkflowStep::ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl):d_ptr(pimpl)
+{
+  Q_D(ctkWorkflowStep);
+  d->Id = d->metaObject()->className();
+}
+
+// --------------------------------------------------------------------------
+ctkWorkflowStep::ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl,
+                                 ctkWorkflow* newWorkflow, const QString& newId):d_ptr(pimpl)
 {
   Q_D(ctkWorkflowStep);
 

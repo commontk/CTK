@@ -619,10 +619,10 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
                    qObject2, SLOT(onExit(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
 
   // use the qObjects for populating the stepWidgetsList
-  QObject::connect(step1->ctkWorkflowAbstractWidgetStepQObject(),
+  QObject::connect(step1->ctkWorkflowStepQObject(),
                    SIGNAL(invokeCreateUserInterfaceCommand()),
                    qObject1, SLOT(createUserInterface()));
-  QObject::connect(step2->ctkWorkflowAbstractWidgetStepQObject(),
+  QObject::connect(step2->ctkWorkflowStepQObject(),
                    SIGNAL(invokeCreateUserInterfaceCommand()),
                    qObject2, SLOT(createUserInterface()));
 
@@ -693,8 +693,8 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
                    qObject3, SLOT(onExit(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
 
   // use the qObjects for populating the stepWidgetsList
-  QObject::connect(step3->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject3, SLOT(createUserInterface()));
-  QObject::connect(qObject3, SIGNAL(createUserInterfaceComplete()), step3->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(createUserInterfaceComplete()));
+  QObject::connect(step3->ctkWorkflowStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject3, SLOT(createUserInterface()));
+  QObject::connect(qObject3, SIGNAL(createUserInterfaceComplete()), step3->ctkWorkflowStepQObject(), SIGNAL(createUserInterfaceComplete()));
 
   step3->setHasValidateCommand(1);
   step3->setHasOnEntryCommand(1);

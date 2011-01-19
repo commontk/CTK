@@ -45,6 +45,7 @@ class CTK_CORE_EXPORT ctkWorkflowStep
 {
 
 public:
+  explicit ctkWorkflowStep();
   explicit ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId);
   virtual ~ctkWorkflowStep();
 
@@ -88,6 +89,10 @@ public:
   QObject* ctkWorkflowStepQObject();
 
 protected:
+
+  explicit ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl);
+  explicit ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl,
+                           ctkWorkflow* newWorkflow, const QString& newId);
 
   /// Set step Id
   void setId(const QString& newStepId);

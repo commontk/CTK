@@ -33,7 +33,7 @@ class QIcon;
 #include "ctkWidgetsExport.h"
 #include "ctkWorkflowStep.h"
 #include "ctkWorkflowTransitions.h"
-//class ctkWorkflowButtonBoxWidget;
+
 class ctkWorkflowGroupBox;
 
 class ctkWorkflowAbstractWidgetStepPrivate;
@@ -94,9 +94,6 @@ public:
   QIcon icon()const;
   void setIcon(const QIcon& newIcon);
 
-  /// Get the QObject associated with this step, to connect signals/slots
-  QObject* ctkWorkflowAbstractWidgetStepQObject();
-
   /// Returns the QWidget onto which this step's user interface elements are placed.
   virtual QWidget* stepArea() = 0;
 
@@ -139,9 +136,6 @@ protected:
   /// showUserInterface() method has completed.
   /// \sa showUserInterface()
   void showUserInterfaceComplete()const;
-
-protected:
-  QScopedPointer<ctkWorkflowAbstractWidgetStepPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(ctkWorkflowAbstractWidgetStep);

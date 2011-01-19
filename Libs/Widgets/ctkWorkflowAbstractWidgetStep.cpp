@@ -45,7 +45,7 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowAbstractWidgetStep
 
 //-----------------------------------------------------------------------------
 ctkWorkflowAbstractWidgetStepPrivate::ctkWorkflowAbstractWidgetStepPrivate(ctkWorkflowAbstractWidgetStep& object)
-  :q_ptr(&object)
+  :Superclass(object), q_ptr(&object)
 {
 //  this->buttonBoxWidget = 0;
 //  this->hasButtonBoxWidget = false;
@@ -89,8 +89,8 @@ void ctkWorkflowAbstractWidgetStepPrivate::createUserInterfaceCompleteInternal()
 // ctkWorkflowAbstractWidgetStep methods
 
 //-----------------------------------------------------------------------------
-ctkWorkflowAbstractWidgetStep::ctkWorkflowAbstractWidgetStep(ctkWorkflow* newWorkflow, const QString& newId) : Superclass(newWorkflow, newId)
-  , d_ptr(new ctkWorkflowAbstractWidgetStepPrivate(*this))
+ctkWorkflowAbstractWidgetStep::ctkWorkflowAbstractWidgetStep(ctkWorkflow* newWorkflow, const QString& newId) :
+  Superclass(new ctkWorkflowAbstractWidgetStepPrivate(*this), newWorkflow, newId)
 {
   Q_D(ctkWorkflowAbstractWidgetStep);
   d->hasShowUserInterfaceCommand = false;
@@ -185,13 +185,6 @@ void ctkWorkflowAbstractWidgetStep::showUserInterface()
     }
 
   emit showUserInterfaceComplete();
-}
-
-// --------------------------------------------------------------------------
-QObject* ctkWorkflowAbstractWidgetStep::ctkWorkflowAbstractWidgetStepQObject()
-{
-  Q_D(ctkWorkflowAbstractWidgetStep);
-  return d;
 }
 
 //-----------------------------------------------------------------------------
