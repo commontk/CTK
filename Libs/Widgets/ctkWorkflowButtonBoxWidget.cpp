@@ -30,7 +30,7 @@
 // CTK includes
 #include "ctkWorkflowButtonBoxWidget.h"
 #include "ctkWorkflowStep.h"
-#include "ctkWorkflowAbstractWidgetStep.h"
+#include "ctkWorkflowWidgetStep.h"
 #include "ctkWorkflow.h"
 
 // STD includes
@@ -118,7 +118,7 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateBackButton(ctkWorkflowStep* curren
   Q_ASSERT(q->layout());
 #endif
 
-  ctkWorkflowAbstractWidgetStep* step = dynamic_cast<ctkWorkflowAbstractWidgetStep*>(currentStep);
+  ctkWorkflowWidgetStep* step = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep);
 
   // Set the back button text
   QString backButtonText = this->BackButtonDefaultText;
@@ -138,9 +138,9 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateBackButton(ctkWorkflowStep* curren
     if (step)
       {
       this->BackButton->setDisabled(
-          step->buttonBoxHints() & ctkWorkflowAbstractWidgetStep::BackButtonDisabled);
+          step->buttonBoxHints() & ctkWorkflowWidgetStep::BackButtonDisabled);
       this->BackButton->setHidden(
-          step->buttonBoxHints() & ctkWorkflowAbstractWidgetStep::BackButtonHidden);
+          step->buttonBoxHints() & ctkWorkflowWidgetStep::BackButtonHidden);
       }
     }
   // Disable the back button if we can't go backward, and optionally hide it
@@ -162,7 +162,7 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateNextButton(ctkWorkflowStep* curren
   Q_ASSERT(q->layout());
 #endif
 
-  ctkWorkflowAbstractWidgetStep* step = dynamic_cast<ctkWorkflowAbstractWidgetStep*>(currentStep);
+  ctkWorkflowWidgetStep* step = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep);
 
   // Set the next button text
   QString nextButtonText = this->NextButtonDefaultText;
@@ -182,9 +182,9 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateNextButton(ctkWorkflowStep* curren
     if (step)
       {
       this->NextButton->setDisabled(
-          step->buttonBoxHints() & ctkWorkflowAbstractWidgetStep::NextButtonDisabled);
+          step->buttonBoxHints() & ctkWorkflowWidgetStep::NextButtonDisabled);
       this->NextButton->setHidden(
-          step->buttonBoxHints() & ctkWorkflowAbstractWidgetStep::NextButtonHidden);
+          step->buttonBoxHints() & ctkWorkflowWidgetStep::NextButtonHidden);
       }
     }
   // Disable the next button if we can't go forward, and optionally hide it
@@ -230,7 +230,7 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateGoToButtons(ctkWorkflowStep* curre
       QObject::connect(goToButton, SIGNAL(clicked()), q, SLOT(prepareGoToStep()));
       this->GoToButtonToStepMap[goToButton] = step;
       // if the goTo step has an icon associated with it, then add it to the button
-      if (ctkWorkflowAbstractWidgetStep* wwStep = dynamic_cast<ctkWorkflowAbstractWidgetStep*>(step))
+      if (ctkWorkflowWidgetStep* wwStep = dynamic_cast<ctkWorkflowWidgetStep*>(step))
         {
         goToButton->setIcon(wwStep->icon());
         }
@@ -393,9 +393,9 @@ void ctkWorkflowButtonBoxWidget::updateButtons(ctkWorkflowStep* currentStep)
   Q_D(ctkWorkflowButtonBoxWidget);
 
   // hide aspects of the button bar if specified by the current step
-  if(ctkWorkflowAbstractWidgetStep* currentWidgetStep = dynamic_cast<ctkWorkflowAbstractWidgetStep*>(currentStep))
+  if(ctkWorkflowWidgetStep* currentWidgetStep = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep))
     {
-    bool hideButtonBar = currentWidgetStep->buttonBoxHints() & ctkWorkflowAbstractWidgetStep::ButtonBoxHidden;
+    bool hideButtonBar = currentWidgetStep->buttonBoxHints() & ctkWorkflowWidgetStep::ButtonBoxHidden;
     this->setHidden(hideButtonBar);
     }
 

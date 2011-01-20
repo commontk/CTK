@@ -19,17 +19,14 @@
   =========================================================================*/
 
 // Qt includes
-#include <QObject>
-#include <QWidget>
 #include <QList>
 #include <QDebug>
-#include <QIcon>
 
 // CTK includes
 #include "ctkWorkflowWidgetStep.h"
+#include "ctkWorkflowWidgetStep_p.h"
 #include "ctkWorkflowWidget.h"
 #include "ctkWorkflow.h"
-#include "ctkWorkflowButtonBoxWidget.h"
 #include "ctkLogger.h"
 
 // STD includes
@@ -40,40 +37,75 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowWidgetStep");
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowWidgetStepPrivate
-{
-public:
-  ctkWorkflowWidgetStepPrivate();
-  ~ctkWorkflowWidgetStepPrivate(){};
-  ctkWorkflowWidgetStep::ButtonBoxHintForPlugin ButtonBoxHintsForPlugin;
-};
-
-//-----------------------------------------------------------------------------
 // ctkWorkflowWidgetStepPrivate methods
 
 //-----------------------------------------------------------------------------
-ctkWorkflowWidgetStepPrivate::ctkWorkflowWidgetStepPrivate()
+ctkWorkflowWidgetStepPrivate::ctkWorkflowWidgetStepPrivate(ctkWorkflowWidgetStep& object)
+  :Superclass(object), q_ptr(&object)
 {
+//  this->buttonBoxWidget = 0;
+//  this->hasButtonBoxWidget = false;
+
+  this->icon = QIcon();
+  this->created = false;
+}
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidgetStepPrivate::invokeShowUserInterfaceCommandInternal()const
+{
+  emit invokeShowUserInterfaceCommand();
+}
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidgetStepPrivate::showUserInterfaceCompleteInternal()const
+{
+  emit showUserInterfaceComplete();
+}
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidgetStepPrivate::showUserInterface()
+{
+  Q_Q(ctkWorkflowWidgetStep);
+  q->showUserInterface();
+}
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidgetStepPrivate::invokeCreateUserInterfaceCommandInternal()const
+{
+  emit invokeCreateUserInterfaceCommand();
+}
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidgetStepPrivate::createUserInterfaceCompleteInternal()const
+{
+  emit createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
 // ctkWorkflowWidgetStep methods
 
 //-----------------------------------------------------------------------------
-ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(ctkWorkflow* newWorkflow, 
-  const QString& newId, QWidget* newParent) : QWidget(newParent), ctkWorkflowAbstractWidgetStep(newWorkflow, newId)
-  , d_ptr(new ctkWorkflowWidgetStepPrivate)
+ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(QWidget* newParent) :
+  QWidget(newParent),
+  ctkWorkflowStep(new ctkWorkflowWidgetStepPrivate(*this), 0, QString())
 {
   Q_D(ctkWorkflowWidgetStep);
-  d->ButtonBoxHintsForPlugin = ctkWorkflowWidgetStep::qNoHints;
+  d->hasShowUserInterfaceCommand = false;
+  d->hasCreateUserInterfaceCommand = false;
+  d->ButtonBoxHints = ctkWorkflowWidgetStep::NoHints;
 }
 
 //-----------------------------------------------------------------------------
-ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(QWidget* newParent) : QWidget(newParent), ctkWorkflowAbstractWidgetStep(0, QString())
-  , d_ptr(new ctkWorkflowWidgetStepPrivate)
+ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(ctkWorkflow* newWorkflow,
+                                                             const QString& newId,
+                                                             QWidget* newParent) :
+  QWidget(newParent),
+  ctkWorkflowStep(new ctkWorkflowWidgetStepPrivate(*this), newWorkflow, newId)
 {
   Q_D(ctkWorkflowWidgetStep);
-  d->ButtonBoxHintsForPlugin = ctkWorkflowWidgetStep::qNoHints;
+  d->hasShowUserInterfaceCommand = false;
+  d->hasCreateUserInterfaceCommand = false;
+  d->ButtonBoxHints = ctkWorkflowWidgetStep::NoHints;
 }
 
 //-----------------------------------------------------------------------------
@@ -82,20 +114,119 @@ ctkWorkflowWidgetStep::~ctkWorkflowWidgetStep()
 }
 
 //-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkWorkflowWidgetStep, bool, hasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
+CTK_SET_CPP(ctkWorkflowWidgetStep, bool, setHasShowUserInterfaceCommand, hasShowUserInterfaceCommand);
+CTK_GET_CPP(ctkWorkflowWidgetStep, bool, hasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
+CTK_SET_CPP(ctkWorkflowWidgetStep, bool, setHasCreateUserInterfaceCommand, hasCreateUserInterfaceCommand);
+CTK_GET_CPP(ctkWorkflowWidgetStep, QString, backButtonText, backButtonText);
+CTK_SET_CPP(ctkWorkflowWidgetStep, const QString&, setBackButtonText, backButtonText);
+CTK_GET_CPP(ctkWorkflowWidgetStep, QString, nextButtonText, nextButtonText);
+CTK_SET_CPP(ctkWorkflowWidgetStep, const QString&, setNextButtonText, nextButtonText);
+// CTK_GET_CPP(ctkWorkflowWidgetStep, QList<QString>, finishButtonTexts, finishButtonTexts);
+// CTK_SET_CPP(ctkWorkflowWidgetStep, QList<QString>, setFinishButtonTexts, finishButtonTexts);
+//CTK_GET_CPP(ctkWorkflowWidgetStep, bool, hasButtonBoxWidget, hasButtonBoxWidget);
+//CTK_SET_CPP(ctkWorkflowWidgetStep, bool, setHasButtonBoxWidget, hasButtonBoxWidget);
+CTK_GET_CPP(ctkWorkflowWidgetStep, QIcon, icon, icon);
+CTK_SET_CPP(ctkWorkflowWidgetStep, const QIcon&, setIcon, icon);
+
+//-----------------------------------------------------------------------------
 QWidget* ctkWorkflowWidgetStep::stepArea()
 {
   return this;
 }
 
 //-----------------------------------------------------------------------------
-ctkWorkflowWidgetStep::ButtonBoxHintsForPlugin ctkWorkflowWidgetStep::buttonBoxHintsForPlugin() const
+CTK_GET_CPP(ctkWorkflowWidgetStep, ctkWorkflowWidgetStep::ButtonBoxHints,
+            buttonBoxHints, ButtonBoxHints);
+CTK_SET_CPP(ctkWorkflowWidgetStep, ctkWorkflowWidgetStep::ButtonBoxHints,
+            setButtonBoxHints, ButtonBoxHints);
+
+//-----------------------------------------------------------------------------
+// void ctkWorkflowWidgetStep::setFinishButtonText(const QString& name)
+// {
+//   QList<QString> names;
+//   names << name;
+//   this->setFinishButtonTexts(names);
+// }
+
+// //-----------------------------------------------------------------------------
+// ctkWorkflowButtonBoxWidget* ctkWorkflowWidgetStep::buttonBoxWidget()
+// {
+//   Q_D(ctkWorkflowWidgetStep);
+
+//   if (!d->hasButtonBoxWidget)
+//     {
+//     return 0;
+//     }
+
+//   if (!d->buttonBoxWidget)
+//     {
+//     if (!this->workflow())
+//       {
+//       logger.error("buttonBoxWidget - Cannot create buttonBoxWidget without a workflow");
+//       return 0;
+//       }
+//     d->buttonBoxWidget = new ctkWorkflowButtonBoxWidget(this->workflow());
+//     }
+//   return d->buttonBoxWidget;
+// }
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidgetStep::showUserInterface()
 {
-  return ctkWorkflowWidgetStep::ButtonBoxHintsForPlugin(QFlag(this->Superclass::buttonBoxHints()));
+  Q_D(ctkWorkflowWidgetStep);
+
+  // use the user's showUserInterfaceCommand if given
+  if (d->hasShowUserInterfaceCommand)
+    {
+    this->invokeShowUserInterfaceCommand();
+    return;
+    }
+
+  // otherwise we provide an implementation here
+  logger.debug(QString("showUserInterface - showing %1").arg(this->name()));
+
+  // create the user interface if this is the first time we're showing this step
+  if (!d->created)
+    {
+    if (d->hasCreateUserInterfaceCommand)
+      {
+      this->invokeCreateUserInterfaceCommand();
+      }
+    else
+      {
+      this->createUserInterface();
+      }
+    d->created = true;
+    }
+
+  emit showUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
-void ctkWorkflowWidgetStep::setButtonBoxHintsForPlugin(
-  ctkWorkflowWidgetStep::ButtonBoxHintsForPlugin newButtonBoxHints)
+void ctkWorkflowWidgetStep::invokeShowUserInterfaceCommand()const
 {
-  this->Superclass::setButtonBoxHints(QFlag(newButtonBoxHints));
+  Q_D(const ctkWorkflowWidgetStep);
+  d->invokeShowUserInterfaceCommandInternal();
+}
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidgetStep::showUserInterfaceComplete()const
+{
+  Q_D(const ctkWorkflowWidgetStep);
+  d->showUserInterfaceCompleteInternal();
+}
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidgetStep::invokeCreateUserInterfaceCommand()const
+{
+  Q_D(const ctkWorkflowWidgetStep);
+  d->invokeCreateUserInterfaceCommandInternal();
+}
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidgetStep::createUserInterfaceComplete()const
+{
+  Q_D(const ctkWorkflowWidgetStep);
+  d->createUserInterfaceCompleteInternal();
 }
