@@ -101,6 +101,7 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
   }
 
   DcmFileFormat fileformat;
+  DcmDataset *dataset;
 
   OFListIterator(OFString) iter = dcmtkFileNames.begin();
   OFListIterator(OFString) last = dcmtkFileNames.end();
@@ -142,6 +143,8 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
     OFCondition status = fileformat.loadFile(filename.c_str());
     ++iter;
 
+    dataset = fileformat.getDataset();
+
     if (!status.good())
     {
       MITK_ERROR << "Could not load " << filename << "\nDCMTK says: " << status.text();
@@ -165,58 +168,58 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
     int patientUID = -1;
 
     //If the following fields can not be evaluated, cancel evaluation of the DICOM file
-    if (!fileformat.getDataset()->findAndGetOFString(DCM_PatientsName, patientsName).good())
+    if (!dataset->findAndGetOFString(DCM_PatientsName, patientsName).good())
     {
       MITK_ERROR << "Could not read DCM_PatientsName from " << filename;
       continue;
     }
 
-    if (!fileformat.getDataset()->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID).good())
+    if (!dataset->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID).good())
     {
       MITK_ERROR << "Could not read DCM_StudyInstanceUID from " << filename;
       continue;
     }
 
-    if (!fileformat.getDataset()->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID).good())
+    if (!dataset->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID).good())
     {
       MITK_ERROR << "Could not read DCM_SeriesInstanceUID from " << filename;
       continue;
     }
-    if (!fileformat.getDataset()->findAndGetOFString(DCM_InstanceNumber, instanceNumber).good())
+    if (!dataset->findAndGetOFString(DCM_InstanceNumber, instanceNumber).good())
     {
       MITK_ERROR << "Could not read DCM_InstanceNumber from " << filename;
       continue;
     }
 
 
-    fileformat.getDataset()->findAndGetOFString(DCM_PatientID, patientID);
-    fileformat.getDataset()->findAndGetOFString(DCM_PatientsBirthDate, patientsBirthDate);
-    fileformat.getDataset()->findAndGetOFString(DCM_PatientsBirthTime, patientsBirthTime);
-    fileformat.getDataset()->findAndGetOFString(DCM_PatientsSex, patientsSex);
-    fileformat.getDataset()->findAndGetOFString(DCM_PatientsAge, patientsAge);
-    fileformat.getDataset()->findAndGetOFString(DCM_PatientComments, patientComments);
-    fileformat.getDataset()->findAndGetOFString(DCM_StudyID, studyID);
-    fileformat.getDataset()->findAndGetOFString(DCM_StudyDate, studyDate);
-    fileformat.getDataset()->findAndGetOFString(DCM_StudyTime, studyTime);
-    fileformat.getDataset()->findAndGetOFString(DCM_AccessionNumber, accessionNumber);
-    fileformat.getDataset()->findAndGetOFString(DCM_ModalitiesInStudy, modalitiesInStudy);
-    fileformat.getDataset()->findAndGetOFString(DCM_InstitutionName, institutionName);
-    fileformat.getDataset()->findAndGetOFString(DCM_PerformingPhysiciansName, performingPhysiciansName);
-    fileformat.getDataset()->findAndGetOFString(DCM_ReferringPhysiciansName, referringPhysician);
-    fileformat.getDataset()->findAndGetOFString(DCM_StudyDescription, studyDescription);
+    dataset->findAndGetOFString(DCM_PatientID, patientID);
+    dataset->findAndGetOFString(DCM_PatientsBirthDate, patientsBirthDate);
+    dataset->findAndGetOFString(DCM_PatientsBirthTime, patientsBirthTime);
+    dataset->findAndGetOFString(DCM_PatientsSex, patientsSex);
+    dataset->findAndGetOFString(DCM_PatientsAge, patientsAge);
+    dataset->findAndGetOFString(DCM_PatientComments, patientComments);
+    dataset->findAndGetOFString(DCM_StudyID, studyID);
+    dataset->findAndGetOFString(DCM_StudyDate, studyDate);
+    dataset->findAndGetOFString(DCM_StudyTime, studyTime);
+    dataset->findAndGetOFString(DCM_AccessionNumber, accessionNumber);
+    dataset->findAndGetOFString(DCM_ModalitiesInStudy, modalitiesInStudy);
+    dataset->findAndGetOFString(DCM_InstitutionName, institutionName);
+    dataset->findAndGetOFString(DCM_PerformingPhysiciansName, performingPhysiciansName);
+    dataset->findAndGetOFString(DCM_ReferringPhysiciansName, referringPhysician);
+    dataset->findAndGetOFString(DCM_StudyDescription, studyDescription);
 
-    fileformat.getDataset()->findAndGetOFString(DCM_SeriesDate, seriesDate);
-    fileformat.getDataset()->findAndGetOFString(DCM_SeriesTime, seriesTime);
-    fileformat.getDataset()->findAndGetOFString(DCM_SeriesDescription, seriesDescription);
-    fileformat.getDataset()->findAndGetOFString(DCM_BodyPartExamined, bodyPartExamined);
-    fileformat.getDataset()->findAndGetOFString(DCM_FrameOfReferenceUID, frameOfReferenceUID);
-    fileformat.getDataset()->findAndGetOFString(DCM_ContrastBolusAgent, contrastAgent);
-    fileformat.getDataset()->findAndGetOFString(DCM_ScanningSequence, scanningSequence);
+    dataset->findAndGetOFString(DCM_SeriesDate, seriesDate);
+    dataset->findAndGetOFString(DCM_SeriesTime, seriesTime);
+    dataset->findAndGetOFString(DCM_SeriesDescription, seriesDescription);
+    dataset->findAndGetOFString(DCM_BodyPartExamined, bodyPartExamined);
+    dataset->findAndGetOFString(DCM_FrameOfReferenceUID, frameOfReferenceUID);
+    dataset->findAndGetOFString(DCM_ContrastBolusAgent, contrastAgent);
+    dataset->findAndGetOFString(DCM_ScanningSequence, scanningSequence);
 
-    fileformat.getDataset()->findAndGetSint32(DCM_SeriesNumber, seriesNumber);
-    fileformat.getDataset()->findAndGetSint32(DCM_AcquisitionNumber, acquisitionNumber);
-    fileformat.getDataset()->findAndGetSint32(DCM_EchoNumbers, echoNumber);
-    fileformat.getDataset()->findAndGetSint32(DCM_TemporalPositionIdentifier, temporalPosition);
+    dataset->findAndGetSint32(DCM_SeriesNumber, seriesNumber);
+    dataset->findAndGetSint32(DCM_AcquisitionNumber, acquisitionNumber);
+    dataset->findAndGetSint32(DCM_EchoNumbers, echoNumber);
+    dataset->findAndGetSint32(DCM_TemporalPositionIdentifier, temporalPosition);
 
     MITK_INFO << "Adding new items to database:";
     MITK_INFO << "studyID: " << studyID;
