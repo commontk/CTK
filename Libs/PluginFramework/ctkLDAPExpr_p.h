@@ -23,7 +23,7 @@ limitations under the License.
 #define CTKLDAPEXPR_P_H
 
 #include "ctkPluginConstants.h"
-#include "ctkPluginFramework_global.h"
+#include "ctkDictionary.h"
 
 #include <QString>
 #include <QHash>

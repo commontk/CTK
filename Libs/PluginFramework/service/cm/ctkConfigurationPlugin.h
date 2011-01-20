@@ -23,10 +23,8 @@
 #ifndef CTKCONFIGURATIONPLUGIN_H
 #define CTKCONFIGURATIONPLUGIN_H
 
-#include <ctkPluginFrameworkExport.h>
-
 #include "ctkServiceReference.h"
-#include "ctkPluginFramework_global.h"
+#include "ctkDictionary.h"
 
 /**
  * A service interface for processing configuration dictionary before the

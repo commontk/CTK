@@ -24,7 +24,7 @@
 #define CTKCMPLUGINMANAGER_P_H
 
 #include <ctkServiceReference.h>
-#include <ctkPluginFramework_global.h>
+#include <ctkDictionary.h>
 
 class _PluginTracker;
 

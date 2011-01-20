@@ -32,7 +32,7 @@
 
 void ctkPluginFrameworkTestActivator::start(ctkPluginContext* context)
 {
-  ServiceProperties props;
+  ctkDictionary props;
 
   frameworkTestSuite = new ctkPluginFrameworkTestSuite(context);
   props.clear();

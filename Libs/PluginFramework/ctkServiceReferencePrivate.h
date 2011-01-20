@@ -26,7 +26,7 @@
 #include <QAtomicInt>
 #include <QSharedPointer>
 
-#include "ctkPluginFramework_global.h"
+#include "ctkDictionary.h"
 
 class QObject;
 
@@ -64,10 +64,10 @@ public:
   /**
    * Get all properties registered with this service.
    *
-   * @return A ServiceProperties object containing properties or being empty
+   * @return A ctkDictionary object containing properties or being empty
    *         if service has been removed.
    */
-  ServiceProperties getProperties() const;
+  ctkDictionary getProperties() const;
 
   /**
    * Reference count for implicitly shared private implementation.

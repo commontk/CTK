@@ -25,7 +25,7 @@
 
 #include <QSharedPointer>
 
-#include "ctkPluginFramework_global.h"
+#include "ctkDictionary.h"
 
 
 /**

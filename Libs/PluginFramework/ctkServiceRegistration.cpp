@@ -52,7 +52,7 @@ ctkServiceRegistration::ctkServiceRegistration(ctkServiceRegistrationPrivate* re
 }
 
 ctkServiceRegistration::ctkServiceRegistration(ctkPluginPrivate* plugin, QObject* service,
-                    const ServiceProperties& props)
+                    const ctkDictionary& props)
   : d_ptr(new ctkServiceRegistrationPrivate(plugin, service, props))
 {
 
@@ -92,7 +92,7 @@ ctkServiceReference ctkServiceRegistration::getReference() const
   return d->reference;
 }
 
-void ctkServiceRegistration::setProperties(const ServiceProperties& props)
+void ctkServiceRegistration::setProperties(const ctkDictionary& props)
 {
   Q_D(ctkServiceRegistration);
   if (!d) throw std::logic_error("ctkServiceRegistration object invalid");

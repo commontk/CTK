@@ -168,13 +168,13 @@ public:
    * <code>std::invalid_argument</code> is thrown if <code>service</code>
    * is not an instance of all the specified class names.
    * <li>The Framework adds the following service properties to the service
-   * properties from the specified <code>ServiceProperties</code> (which may be
+   * properties from the specified <code>ctkDictionary</code> (which may be
    * omitted): <br/>
    * A property named {@link ctkPluginConstants#SERVICE_ID} identifying the
    * registration number of the service <br/>
    * A property named {@link ctkPluginConstants#OBJECTCLASS} containing all the
    * specified classes. <br/>
-   * Properties with these names in the specified <code>ServiceProperties</code> will
+   * Properties with these names in the specified <code>ctkDictionary</code> will
    * be ignored.
    * <li>The service is added to the Framework service registry and may now be
    * used by other plugins.
@@ -211,7 +211,7 @@ public:
    * @see ctkServiceRegistration
    * @see ctkServiceFactory
    */
-  ctkServiceRegistration registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties = ServiceProperties());
+  ctkServiceRegistration registerService(const QStringList& clazzes, QObject* service, const ctkDictionary& properties = ctkDictionary());
 
   /**
    * Registers the specified service object with the specified properties
@@ -219,7 +219,7 @@ public:
    *
    * <p>
    * This method is otherwise identical to
-   * registerService(const QStringList&, QObject*, const ServiceProperties&) and is provided as
+   * registerService(const QStringList&, QObject*, const ctkDictionary&) and is provided as
    * a convenience when <code>service</code> will only be registered under a single
    * class name. Note that even in this case the value of the service's
    * ctkPluginConstants::OBJECTCLASS property will be a QStringList, rather
@@ -232,12 +232,12 @@ public:
    *         registering the service to update the service's properties or to
    *         unregister the service.
    * @throws std::logic_error If this ctkPluginContext is no longer valid.
-   * @see registerService(const QStringList&, QObject*, const ServiceProperties&)
+   * @see registerService(const QStringList&, QObject*, const ctkDictionary&)
    */
-  ctkServiceRegistration registerService(const char* clazz, QObject* service, const ServiceProperties& properties = ServiceProperties());
+  ctkServiceRegistration registerService(const char* clazz, QObject* service, const ctkDictionary& properties = ctkDictionary());
 
   template<class S>
-  ctkServiceRegistration registerService(QObject* service, const ServiceProperties& properties = ServiceProperties())
+  ctkServiceRegistration registerService(QObject* service, const ctkDictionary& properties = ctkDictionary())
   {
     const char* clazz = qobject_interface_iid<S*>();
     if (clazz == 0)

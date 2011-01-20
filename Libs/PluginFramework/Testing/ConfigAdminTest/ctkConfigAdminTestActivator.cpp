@@ -59,7 +59,7 @@ void ctkConfigAdminTestActivator::start(ctkPluginContext* context)
     throw std::logic_error(msg.toStdString());
   }
 
-  ServiceProperties props;
+  ctkDictionary props;
 
   configAdminTestSuite = new ctkConfigurationAdminTestSuite(context, cmPluginId);
   props.clear();

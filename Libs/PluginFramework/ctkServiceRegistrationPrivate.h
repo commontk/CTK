@@ -26,7 +26,7 @@
 #include <QHash>
 #include <QMutex>
 
-#include "ctkPluginFramework_global.h"
+#include "ctkDictionary.h"
 #include "ctkServiceReference.h"
 
 
@@ -65,7 +65,7 @@ public:
   /**
    * Service properties.
    */
-  ServiceProperties properties;
+  ctkDictionary properties;
 
   /**
    * Plugins dependent on this service. Integer is used as
@@ -99,7 +99,7 @@ public:
   QMutex propsLock;
 
   ctkServiceRegistrationPrivate(ctkPluginPrivate* plugin, QObject* service,
-                                const ServiceProperties& props);
+                                const ctkDictionary& props);
 
   virtual ~ctkServiceRegistrationPrivate();
 

@@ -137,7 +137,7 @@ void ctkQtMobilityServiceRuntime::processPlugin(QSharedPointer<ctkPlugin> plugin
       QServiceInterfaceDescriptor descr = it.next();
       CTK_DEBUG(ctkQtMobilityServiceActivator::getLogService()) << "Registering:" << descr.interfaceName();
       QStringList classes;
-      ServiceProperties props;
+      ctkDictionary props;
 
       QStringList customKeys = descr.customAttributes();
       QStringListIterator keyIt(customKeys);

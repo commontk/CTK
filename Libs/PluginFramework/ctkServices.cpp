@@ -43,12 +43,12 @@ struct ServiceRegistrationComparator
   }
 };
 
-ServiceProperties ctkServices::createServiceProperties(const ServiceProperties& in,
+ctkDictionary ctkServices::createServiceProperties(const ctkDictionary& in,
                                                        const QStringList& classes,
                                                        long sid)
 {
   static qlonglong nextServiceID = 1;
-  ServiceProperties props = in;
+  ctkDictionary props = in;
 
   if (!classes.isEmpty())
   {
@@ -81,7 +81,7 @@ void ctkServices::clear()
 ctkServiceRegistration ctkServices::registerService(ctkPluginPrivate* plugin,
                              const QStringList& classes,
                              QObject* service,
-                             const ServiceProperties& properties)
+                             const ctkDictionary& properties)
 {
   if (service == 0)
   {

@@ -43,15 +43,15 @@ public:
   mutable QMutex mutex;
 
   /**
-   * Creates a new ServiceProperties object containing <code>in</code>
+   * Creates a new ctkDictionary object containing <code>in</code>
    * with the keys converted to lower case.
    *
    * @param classes A list of class names which will be added to the
-   *        created ServiceProperties object under the key
+   *        created ctkDictionary object under the key
    *        PluginConstants::OBJECTCLASS.
    * @param sid A service id which will be used instead of a default one.
    */
-  static ServiceProperties createServiceProperties(const ServiceProperties& in,
+  static ctkDictionary createServiceProperties(const ctkDictionary& in,
                                  const QStringList& classes = QStringList(),
                                  long sid = -1);
 
@@ -96,7 +96,7 @@ public:
   ctkServiceRegistration registerService(ctkPluginPrivate* plugin,
                                const QStringList& classes,
                                QObject* service,
-                               const ServiceProperties& properties);
+                               const ctkDictionary& properties);
 
 
   /**

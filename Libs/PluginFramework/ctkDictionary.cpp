@@ -20,32 +20,32 @@
 =============================================================================*/
 
 
-#include "ctkPluginGeneratorUiPlugin_p.h"
+#include "ctkDictionary.h"
 
-#include "ctkPluginGeneratorMainExtension.h"
+#include <stdexcept>
 
-#include <ctkPluginConstants.h>
-
-#include <QtPlugin>
-#include <QDebug>
-
-void ctkPluginGeneratorUiPlugin::start(ctkPluginContext* context)
+ctkDictionary::ctkDictionary()
 {
-  mainExtension = new ctkPluginGeneratorMainExtension();
 
-  ctkDictionary props;
-  props.insert(ctkPluginConstants::SERVICE_RANKING, 0);
-  context->registerService(QStringList("ctkPluginGeneratorAbstractUiExtension"),
-                           mainExtension, props);
-
-  qDebug() << "Registered Main Extension";
 }
 
-void ctkPluginGeneratorUiPlugin::stop(ctkPluginContext* context)
+ctkDictionary::ctkDictionary(const ctkDictionary& other)
+  : Super(other)
 {
-  Q_UNUSED(context)
 
-  delete mainExtension;
 }
 
-Q_EXPORT_PLUGIN2(org_commontk_plugingenerator_ui, ctkPluginGeneratorUiPlugin)
+ctkDictionary::ctkDictionary(const ctkProperties& properties)
+{
+  ctkProperties::ConstIterator end = properties.end();
+  for (ctkProperties::ConstIterator it = properties.begin(); it != end; ++it)
+  {
+    if (this->contains(it.key()))
+    {
+      QString msg("ctkProperties object contains case variants of the key: ");
+      msg += it.key();
+      throw std::invalid_argument(qPrintable(msg));
+    }
+    this->insert(it.key(), it.value());
+  }
+}

@@ -24,7 +24,7 @@
 #define CTKMANAGEDSERVICE_H
 
 #include <QObject>
-#include <ctkPluginFramework_global.h>
+#include <ctkDictionary.h>
 
 /**
  * A service that can receive configuration data from a Configuration Admin
@@ -80,9 +80,9 @@
  *         this, getDefaults());
  *     }
  *
- *     ServiceProperties getDefaults()
+ *     ctkDictionary getDefaults()
  *     {
- *       ServiceProperties defaults;
+ *       ctkDictionary defaults;
  *       defaults.insert("port", id.getName());
  *       defaults.insert("product", "unknown");
  *       defaults.insert("baud", 9600);

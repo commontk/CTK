@@ -335,7 +335,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    *
    * <p>
    * This property may be supplied in the
-   * <code>ServiceProperties</code> object passed to the
+   * <code>ctkDictionary</code> object passed to the
    * <code>ctkPluginContext::registerService</code> method. The value of this
    * property must be of type <code>int</code>.
    *

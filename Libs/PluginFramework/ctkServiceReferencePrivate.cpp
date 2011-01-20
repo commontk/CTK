@@ -160,7 +160,7 @@ bool ctkServiceReferencePrivate::ungetService(QSharedPointer<ctkPlugin> plugin, 
   return hadReferences;
 }
 
-ServiceProperties ctkServiceReferencePrivate::getProperties() const
+ctkDictionary ctkServiceReferencePrivate::getProperties() const
 {
   return registration->properties;
 }

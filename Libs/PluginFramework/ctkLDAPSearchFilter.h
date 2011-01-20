@@ -25,7 +25,7 @@
 #include "ctkPluginFrameworkExport.h"
 
 #include "ctkServiceReference.h"
-#include "ctkPluginFramework_global.h"
+#include "ctkDictionary.h"
 
 #include <QSharedDataPointer>
 #include <QDebug>

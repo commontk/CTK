@@ -109,14 +109,14 @@ QFileInfo ctkPluginContext::getDataFile(const QString& filename)
   return QFileInfo(dataRoot, filename);
 }
 
-ctkServiceRegistration ctkPluginContext::registerService(const QStringList& clazzes, QObject* service, const ServiceProperties& properties)
+ctkServiceRegistration ctkPluginContext::registerService(const QStringList& clazzes, QObject* service, const ctkDictionary& properties)
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
   return d->plugin->fwCtx->services->registerService(d->plugin, clazzes, service, properties);
 }
 
-ctkServiceRegistration ctkPluginContext::registerService(const char* clazz, QObject* service, const ServiceProperties& properties)
+ctkServiceRegistration ctkPluginContext::registerService(const char* clazz, QObject* service, const ctkDictionary& properties)
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
