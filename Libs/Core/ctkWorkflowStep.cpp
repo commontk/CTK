@@ -115,20 +115,31 @@ void ctkWorkflowStepPrivate::invokeOnExitCommandInternal(const ctkWorkflowStep* 
 // ctkWorkflowStep methods
 
 // --------------------------------------------------------------------------
+ctkWorkflowStep::ctkWorkflowStep(): d_ptr(new ctkWorkflowStepPrivate(*this))
+{
+}
+
+// --------------------------------------------------------------------------
 ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId)
   : d_ptr(new ctkWorkflowStepPrivate(*this))
 {
   Q_D(ctkWorkflowStep);
 
-  if (newId.isEmpty())
-    {
-     d->Id = d->metaObject()->className();
-    }
-  else
-    {
-    d->Id = newId;
-    }
+  d->Id = newId;
+  d->Workflow = newWorkflow;
+}
 
+// --------------------------------------------------------------------------
+ctkWorkflowStep::ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl):d_ptr(pimpl)
+{
+}
+
+// --------------------------------------------------------------------------
+ctkWorkflowStep::ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl,
+                                 ctkWorkflow* newWorkflow, const QString& newId):d_ptr(pimpl)
+{
+  Q_D(ctkWorkflowStep);
+  d->Id = newId;
   d->Workflow = newWorkflow;
 }
 
@@ -143,7 +154,19 @@ CTK_SET_CPP(ctkWorkflowStep, ctkWorkflow*, setWorkflow, Workflow);
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowStep, QString, id, Id);
-CTK_SET_CPP(ctkWorkflowStep, const QString&, setId, Id);
+
+// --------------------------------------------------------------------------
+void ctkWorkflowStep::setId(const QString& newId)
+{
+  Q_D(ctkWorkflowStep);
+  if (d->Workflow && d->Workflow->hasStep(newId) && !this->id().isEmpty())
+    {
+    logger.error(QString("ctkWorkflowStep - Failed to change id from '%1' to '%2' - "
+                         "Step already added to a workflow !").arg(this->id()).arg(newId));
+    return;
+    }
+  d->Id = newId;
+}
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowStep, QString, name, Name);

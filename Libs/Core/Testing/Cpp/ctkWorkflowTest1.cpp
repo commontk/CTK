@@ -267,13 +267,31 @@ int ctkWorkflowTest1(int argc, char * argv [] )
     }
 
   // --------------------------------------------------------------------------
-  // workflow with three steps
+  // Step3
 
-  // add a third step manually
   ctkExampleDerivedWorkflowStep *step3 = new ctkExampleDerivedWorkflowStep(workflow, "Step 3");
   step3->setName("Step 3");
   step3->setDescription("Description for step 3");
 
+  // --------------------------------------------------------------------------
+  // Attempt to retrieve the forward or backward steps of step not yet added to the workflow
+
+  if (workflow->forwardSteps(step3).count() != 0)
+    {
+    std::cerr << "No forward steps should be associated with step3";
+    return EXIT_FAILURE;
+    }
+
+  if (workflow->backwardSteps(step3).count() != 0)
+    {
+    std::cerr << "No backward steps should be associated with step3";
+    return EXIT_FAILURE;
+    }
+
+  // --------------------------------------------------------------------------
+  // workflow with three steps
+
+  // add a third step manually
   if (!workflow->addTransition(step2, step3, "", ctkWorkflow::Forward))
     {
     std::cerr << "could not add step 3 with forward transition";

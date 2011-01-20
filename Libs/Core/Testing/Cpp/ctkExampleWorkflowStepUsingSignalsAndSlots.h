@@ -74,7 +74,8 @@ class ctkExampleWorkflowStepUsingSignalsAndSlots : public QObject
 
 public:
   typedef QObject Superclass;
-  explicit ctkExampleWorkflowStepUsingSignalsAndSlots(QObject* parent = 0);
+  explicit ctkExampleWorkflowStepUsingSignalsAndSlots(ctkWorkflowStep * newStep,
+                                                      QObject* newParent = 0);
   virtual ~ctkExampleWorkflowStepUsingSignalsAndSlots();
 
   /// Get the values for the counters of the number of times we have

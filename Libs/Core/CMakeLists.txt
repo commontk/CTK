@@ -46,6 +46,7 @@ SET(KIT_SRCS
   ctkUtils.h
   ctkWorkflow.h
   ctkWorkflow.cpp
+  ctkWorkflow_p.h
   ctkWorkflowStep.h
   ctkWorkflowStep.cpp
   ctkWorkflowStep_p.h
@@ -59,6 +60,17 @@ IF(CTK_HAVE_BFD)
     )
 ENDIF()
 
+IF(CTK_WRAP_PYTHONQT_LIGHT)
+  LIST(APPEND KIT_SRCS
+    ctkCorePythonQtDecorators.h
+    )
+  # Let's make sure the decorator are not wrapped !
+  SET_SOURCE_FILES_PROPERTIES(
+    ctkCorePythonQtDecorators.h
+    WRAP_EXCLUDE
+    )
+ENDIF()
+
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkCommandLineParser.h
@@ -68,9 +80,16 @@ SET(KIT_MOC_SRCS
   ctkTransferFunction.h
   ctkTransferFunctionRepresentation.h
   ctkWorkflow.h
+  ctkWorkflow_p.h
   ctkWorkflowStep_p.h
   ctkWorkflowTransitions.h
   )
+
+IF(CTK_WRAP_PYTHONQT_LIGHT)
+  LIST(APPEND KIT_MOC_SRCS
+    ctkCorePythonQtDecorators.h
+    )
+ENDIF()
 
 # UI files
 SET(KIT_UI_FORMS

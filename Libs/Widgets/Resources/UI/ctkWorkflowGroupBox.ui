@@ -188,6 +188,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="active">
+      <bool>true</bool>
+     </property>
      <property name="activate" stdset="0">
       <bool>true</bool>
      </property>
@@ -219,7 +222,7 @@
    <sender>CollapsibleButton</sender>
    <signal>toggled(bool)</signal>
    <receiver>DynamicSpacer</receiver>
-   <slot>activate(bool)</slot>
+   <slot>setActive(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>260</x>

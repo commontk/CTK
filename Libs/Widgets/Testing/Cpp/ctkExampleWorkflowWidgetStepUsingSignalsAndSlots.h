@@ -80,7 +80,8 @@ class ctkExampleWorkflowWidgetStepUsingSignalsAndSlots : public QObject
 public:
 
   typedef QObject Superclass;
-  explicit ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(QObject* parent = 0);
+  explicit ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(ctkWorkflowStep* newStep,
+                                                            QObject* newParent = 0);
   virtual ~ctkExampleWorkflowWidgetStepUsingSignalsAndSlots();
 
   // Set/get the widget onto which this step's user interface will be placed

@@ -38,6 +38,8 @@ class QAbstractState;
 class CTK_CORE_EXPORT ctkWorkflow : public QObject
 {
   Q_OBJECT
+  Q_ENUMS(TransitionDirectionality)
+  Q_PROPERTY(bool isRunning READ isRunning DESIGNABLE false)
 
 public:
 
@@ -48,14 +50,14 @@ public:
   /// \brief Start the workflow.
   /// The workflow will always start in the initial step, even if it is stopped and restarted).
   /// \note Calls onEntry() for the initial step.
-  virtual void start();
+  Q_INVOKABLE virtual void start();
 
   /// \brief Returns whether the workflow is currently running
   bool isRunning()const;
 
   /// \brief Stops the workflow.
   /// \note Calls onExit() for the current step.
-  virtual void stop();
+  Q_INVOKABLE virtual void stop();
 
   /// \brief Transition directionalities.
   ///
@@ -82,10 +84,10 @@ public:
   /// To add a single step, \a destination can be set to 0.
   ///
   /// Returns true/false indicating whether the method was successful.
-  virtual bool addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
-                             const QString& branchId = QString(),
-                             const ctkWorkflow::TransitionDirectionality directionality
-                               = ctkWorkflow::Bidirectional);
+  Q_INVOKABLE virtual bool addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
+                                         const QString& branchId = QString(),
+                                         const ctkWorkflow::TransitionDirectionality directionality
+                                         = ctkWorkflow::Bidirectional);
 
   /// \brief Determine whether a transition has already been added
   /// <ul>
@@ -96,37 +98,33 @@ public:
   /// previously added with the same origin and branch id (for forward transitions) or
   /// with the same destination and branch id (for backward transitions)</li>
   /// </ul>
-  bool hasTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
-                     const QString& branchId = QString(),
-                     const ctkWorkflow::TransitionDirectionality directionality = ctkWorkflow::Bidirectional);
+  Q_INVOKABLE bool hasTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
+                                 const QString& branchId = QString(),
+                                 const ctkWorkflow::TransitionDirectionality directionality
+                                 = ctkWorkflow::Bidirectional);
 
   /// \brief Set/get the initial step.
-  ///
-  /// Convenience method to set the QStateMachine's initialState to a specific step's
-  /// processing state.
-  ///
-  /// \note The initialStep() function *must* be called to set the state machine's initial state
-  /// correctly
-  ctkWorkflowStep* initialStep()const;
-  virtual void setInitialStep(ctkWorkflowStep* step);
+  /// \note In not specified, the first step added will be considered as the initialStep
+  Q_INVOKABLE ctkWorkflowStep* initialStep()const;
+  Q_INVOKABLE virtual void setInitialStep(ctkWorkflowStep* step);
 
   /// Get the current step of the state machine
-  ctkWorkflowStep* currentStep()const;
+  Q_INVOKABLE ctkWorkflowStep* currentStep()const;
 
   /// Check to see if there is a step with a given id in the workflow.
-  bool hasStep(const QString& id)const;
+  Q_INVOKABLE bool hasStep(const QString& id)const;
 
   /// Returns whether or not we can go forward: i.e. there exists a step that directly follows the
   /// given step.
   ///
   /// If no step is given, then the workflow's current step will be used.
-  bool canGoForward(ctkWorkflowStep* step=0)const;
+  Q_INVOKABLE bool canGoForward(ctkWorkflowStep* step=0)const;
 
   /// Returns whether or not we can go backward: i.e. there exists a step that directly preceeds the
   /// given step.
   ///
   /// If no step is given, then the workflow's current step will be used.
-  bool canGoBackward(ctkWorkflowStep* step=0)const;
+  Q_INVOKABLE bool canGoBackward(ctkWorkflowStep* step=0)const;
 
   /// Returns whether or not we can go to the goal step from the origin step: i.e. there is a path
   /// in the workflow from the current step to the given step.
@@ -134,7 +132,7 @@ public:
   /// If no step is designated as the 'origin', then the workflow's current step will be used
   /// Note: does not currently work in branching workflows if the origin and target steps are not on
   /// the same branch
-  bool canGoToStep(const QString& targetId, ctkWorkflowStep* step=0)const;
+  Q_INVOKABLE bool canGoToStep(const QString& targetId, ctkWorkflowStep* step=0)const;
 
   /// Get the steps that directly follow the given step.
   ///
@@ -143,7 +141,7 @@ public:
   /// to ctkWorkflow::Bidirectional or ctkWorkflow::Forward.
   ///
   /// If no step is given, then the workflow's current step will be used.
-  QList<ctkWorkflowStep*> forwardSteps(ctkWorkflowStep* step=0)const;
+  Q_INVOKABLE QList<ctkWorkflowStep*> forwardSteps(ctkWorkflowStep* step=0)const;
 
   /// Get the steps that directly preceed the given step.
   ///
@@ -152,10 +150,10 @@ public:
   /// set to ctkWorkflow::Bidirectional or ctkWorkflow::Backward.
   ///
   /// If no step is given, then the workflow's current step will be used.
-  QList<ctkWorkflowStep*> backwardSteps(ctkWorkflowStep* step=0)const;
+  Q_INVOKABLE QList<ctkWorkflowStep*> backwardSteps(ctkWorkflowStep* step=0)const;
 
   /// Get the steps that are 'finish' steps (i.e. have no step following them)
-  QList<ctkWorkflowStep*> finishSteps()const;
+  Q_INVOKABLE QList<ctkWorkflowStep*> finishSteps()const;
 
 public slots:
 
@@ -174,12 +172,6 @@ public slots:
   /// If the validation is successful, then this slot begins the transition to the next step.
   virtual void evaluateValidationResults(bool validationSucceeded, const QString& branchId);
 
-  /// \brief Workflow processing executed after a step's onEntry function is run.
-  virtual void processingAfterOnEntry();
-
-  /// \brief Workflow processing executed after a step's onExit function is run.
-  virtual void processingAfterOnExit();
-
 protected:
 
   void goToNextStepAfterSuccessfulValidation(const QString& branchId);
@@ -194,9 +186,6 @@ protected:
  
   /// \brief Goes to the step from which the attempt to go to the 'goTo' step was initiated
   void goFromGoToStepToStartingStep();
-
-  /// \brief Performs required connections between the step and this workflow
-  virtual void connectStep(ctkWorkflowStep* step);
  
 protected slots:
 

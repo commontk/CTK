@@ -18,45 +18,44 @@
 
   =========================================================================*/
 
-#ifndef __ctkWorkflowAbstractWidgetStep_p_h
-#define __ctkWorkflowAbstractWidgetStep_p_h
+#ifndef __ctkWorkflowWidgetStep_p_h
+#define __ctkWorkflowWidgetStep_p_h
 
 // Qt includes
 #include <QObject>
 #include <QList>
 #include <QIcon>
-class QWidget;
 
 // CTK includes
-#include "ctkWorkflowAbstractWidgetStep.h"
+#include "ctkWorkflowWidgetStep.h"
 #include "ctkWorkflowStep_p.h"
-//class ctkWorkflowButtonBoxWidget;
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowAbstractWidgetStepPrivate : public QObject
+class ctkWorkflowWidgetStepPrivate : public ctkWorkflowStepPrivate
 {
   Q_OBJECT
-  Q_DECLARE_PUBLIC(ctkWorkflowAbstractWidgetStep);
+  Q_DECLARE_PUBLIC(ctkWorkflowWidgetStep);
 protected:
-  ctkWorkflowAbstractWidgetStep* q_ptr;
+  ctkWorkflowWidgetStep* q_ptr;
   
 public:
-  ctkWorkflowAbstractWidgetStepPrivate(ctkWorkflowAbstractWidgetStep& object);
-  ~ctkWorkflowAbstractWidgetStepPrivate(){}
+  ctkWorkflowWidgetStepPrivate(ctkWorkflowWidgetStep& object);
+  ~ctkWorkflowWidgetStepPrivate(){}
+  typedef ctkWorkflowStepPrivate Superclass;
 
 protected:
 
   QList<ctkWorkflowStep*> finishStepsToHaveButtonsInStepArea;
 
   // int hasPopulateStepWidgetsListCommand;
-  int hasShowUserInterfaceCommand;
-  int hasCreateUserInterfaceCommand;
+  bool hasShowUserInterfaceCommand;
+  bool hasCreateUserInterfaceCommand;
 
   // names for the buttons
   QString backButtonText;
   QString nextButtonText;
 
-  ctkWorkflowAbstractWidgetStep::ButtonBoxHints  ButtonBoxHints;
+  ctkWorkflowWidgetStep::ButtonBoxHints  ButtonBoxHints;
 
   QIcon icon;
 

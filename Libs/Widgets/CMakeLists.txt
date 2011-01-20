@@ -9,9 +9,6 @@ SET(KIT_export_directive "CTK_WIDGETS_EXPORT")
 
 # Source files
 SET(KIT_SRCS
-  ctkWorkflowAbstractWidgetStep.cpp
-  ctkWorkflowAbstractWidgetStep.h
-  ctkWorkflowAbstractWidgetStep_p.h
   ctkActionsWidget.cpp
   ctkActionsWidget.h
   ctkAddRemoveComboBox.cpp
@@ -116,14 +113,26 @@ SET(KIT_SRCS
   ctkWorkflowWidget.cpp
   ctkWorkflowWidget.h
   ctkWorkflowWidgetStep.cpp
+  ctkWorkflowWidgetStep_p.h
   ctkWorkflowWidgetStep.h
   ctkDateRangeWidget.cpp
   ctkDateRangeWidget.h
   )
 
+IF(CTK_WRAP_PYTHONQT_LIGHT)
+  LIST(APPEND KIT_SRCS
+    ctkWidgetsPythonQtDecorators.h
+    )
+  # Let's make sure the decorator are not wrapped !
+  SET_SOURCE_FILES_PROPERTIES(
+    ctkWidgetsPythonQtDecorators.h
+    WRAP_EXCLUDE
+    )
+ENDIF()
+
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkWorkflowAbstractWidgetStep_p.h
+  ctkWorkflowAbstractPagedWidget.h
   ctkActionsWidget.h
   ctkAxesWidget.h
   ctkAddRemoveComboBox.h
@@ -176,8 +185,16 @@ SET(KIT_MOC_SRCS
   ctkWorkflowTabWidget.h
   ctkWorkflowWidget.h
   ctkWorkflowWidgetStep.h
+  ctkWorkflowWidgetStep_p.h
   ctkDateRangeWidget.h
   )
+
+
+IF(CTK_WRAP_PYTHONQT_LIGHT)
+  LIST(APPEND KIT_MOC_SRCS
+    ctkWidgetsPythonQtDecorators.h
+    )
+ENDIF()
 
 # UI files
 SET(KIT_UI_FORMS

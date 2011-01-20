@@ -43,7 +43,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-bool buttonClickTestSignalSlot(QApplication& app, int defaultTime, ctkWorkflowAbstractWidgetStep* currentStep, QWidget* shownStepArea, QLineEdit* shownLineEdit, QLabel* shownLabel, QWidget* hiddenStepArea, QLineEdit* hiddenLineEdit, QLabel* hiddenLabel, ctkWorkflow* workflow, ctkWorkflowWidget* workflowWidget, QPushButton* backButton, QPushButton* nextButton, QPushButton* finishButton1=0, QPushButton* finishButton2=0)
+bool buttonClickTestSignalSlot(QApplication& app, int defaultTime, ctkWorkflowWidgetStep* currentStep, QWidget* shownStepArea, QLineEdit* shownLineEdit, QLabel* shownLabel, QWidget* hiddenStepArea, QLineEdit* hiddenLineEdit, QLabel* hiddenLabel, ctkWorkflow* workflow, ctkWorkflowWidget* workflowWidget, QPushButton* backButton, QPushButton* nextButton, QPushButton* finishButton1=0, QPushButton* finishButton2=0)
 {
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
@@ -585,36 +585,46 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 
   // create the qObjects that implement the required functions, and
   // communicate with the workflow using signals and slots
-  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* qObject1 = new ctkExampleWorkflowWidgetStepUsingSignalsAndSlots;
-  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* qObject2 = new ctkExampleWorkflowWidgetStepUsingSignalsAndSlots;
+  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* qObject1 =
+      new ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(step1);
+  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* qObject2 =
+      new ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(step2);
 
   // set the widget for each qObject
   qObject1->setWidget(step1->stepArea());
   qObject2->setWidget(step2->stepArea());
 
   // use the qObjects for validation
-  QObject::connect(step1->ctkWorkflowStepQObject(), SIGNAL(invokeValidateCommand(const QString&)), qObject1, SLOT(validate(const QString&)));
-  QObject::connect(qObject1, SIGNAL(validationComplete(bool, const QString&)), workflow, SLOT(evaluateValidationResults(bool, const QString&)));
-  QObject::connect(step2->ctkWorkflowStepQObject(), SIGNAL(invokeValidateCommand(const QString&)), qObject2, SLOT(validate(const QString&)));
-  QObject::connect(qObject2, SIGNAL(validationComplete(bool, const QString&)), workflow, SLOT(evaluateValidationResults(bool, const QString&)));
+  QObject::connect(step1->ctkWorkflowStepQObject(),
+                   SIGNAL(invokeValidateCommand(const QString&)),
+                   qObject1, SLOT(validate(const QString&)));
+  QObject::connect(step2->ctkWorkflowStepQObject(),
+                   SIGNAL(invokeValidateCommand(const QString&)),
+                   qObject2, SLOT(validate(const QString&)));
 
   // use the qObjects for entry processing
-  QObject::connect(step1->ctkWorkflowStepQObject(), SIGNAL(invokeOnEntryCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)), qObject1, SLOT(onEntry(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
-  QObject::connect(qObject1, SIGNAL(onEntryComplete()), workflow, SLOT(processingAfterOnEntry()));
-  QObject::connect(step2->ctkWorkflowStepQObject(), SIGNAL(invokeOnEntryCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)), qObject2, SLOT(onEntry(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
-  QObject::connect(qObject2, SIGNAL(onEntryComplete()), workflow, SLOT(processingAfterOnEntry()));
+  QObject::connect(step1->ctkWorkflowStepQObject(),
+                   SIGNAL(invokeOnEntryCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)),
+                   qObject1, SLOT(onEntry(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
+  QObject::connect(step2->ctkWorkflowStepQObject(),
+                   SIGNAL(invokeOnEntryCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)),
+                   qObject2, SLOT(onEntry(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
 
   // use the qObjects for exit processing
-  QObject::connect(step1->ctkWorkflowStepQObject(), SIGNAL(invokeOnExitCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)), qObject1, SLOT(onExit(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
-  QObject::connect(qObject1, SIGNAL(onExitComplete()), workflow, SLOT(processingAfterOnExit()));
-  QObject::connect(step2->ctkWorkflowStepQObject(), SIGNAL(invokeOnExitCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)), qObject2, SLOT(onExit(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
-  QObject::connect(qObject2, SIGNAL(onExitComplete()), workflow, SLOT(processingAfterOnExit()));
+  QObject::connect(step1->ctkWorkflowStepQObject(),
+                   SIGNAL(invokeOnExitCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)),
+                   qObject1, SLOT(onExit(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
+  QObject::connect(step2->ctkWorkflowStepQObject(),
+                   SIGNAL(invokeOnExitCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)),
+                   qObject2, SLOT(onExit(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
 
   // use the qObjects for populating the stepWidgetsList
-  QObject::connect(step1->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject1, SLOT(createUserInterface()));
-  QObject::connect(qObject1, SIGNAL(createUserInterfaceComplete()), step1->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(showUserInterfaceComplete()));
-  QObject::connect(step2->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject2, SLOT(createUserInterface()));
-  QObject::connect(qObject2, SIGNAL(createUserInterfaceComplete()), step2->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(showUserInterfaceComplete()));
+  QObject::connect(step1->ctkWorkflowStepQObject(),
+                   SIGNAL(invokeCreateUserInterfaceCommand()),
+                   qObject1, SLOT(createUserInterface()));
+  QObject::connect(step2->ctkWorkflowStepQObject(),
+                   SIGNAL(invokeCreateUserInterfaceCommand()),
+                   qObject2, SLOT(createUserInterface()));
 
   step1->setHasValidateCommand(1);
   step2->setHasValidateCommand(1);
@@ -665,25 +675,26 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 
   // create the qObjects that implement the required functions, and
   // communicate with the workflow using signals and slots
-  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* qObject3 = new ctkExampleWorkflowWidgetStepUsingSignalsAndSlots;
+  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* qObject3 =
+      new ctkExampleWorkflowWidgetStepUsingSignalsAndSlots(step3);
 
   qObject3->setWidget(step3->stepArea());
 
   // use the qObjects for validation
-  QObject::connect(step3->ctkWorkflowStepQObject(), SIGNAL(invokeValidateCommand(const QString&)), qObject3, SLOT(validate(const QString&)));
-  QObject::connect(qObject3, SIGNAL(validationComplete(bool, const QString&)), workflow, SLOT(evaluateValidationResults(bool, const QString&)));
+  QObject::connect(step3->ctkWorkflowStepQObject(), SIGNAL(invokeValidateCommand(const QString&)),
+                   qObject3, SLOT(validate(const QString&)));
 
   // use the qObjects for entry processing
-  QObject::connect(step3->ctkWorkflowStepQObject(), SIGNAL(invokeOnEntryCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)), qObject3, SLOT(onEntry(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
-  QObject::connect(qObject3, SIGNAL(onEntryComplete()), workflow, SLOT(processingAfterOnEntry()));
+  QObject::connect(step3->ctkWorkflowStepQObject(), SIGNAL(invokeOnEntryCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)),
+                   qObject3, SLOT(onEntry(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
 
   // use the qObjects for exit processing
-  QObject::connect(step3->ctkWorkflowStepQObject(), SIGNAL(invokeOnExitCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)), qObject3, SLOT(onExit(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
-  QObject::connect(qObject3, SIGNAL(onExitComplete()), workflow, SLOT(processingAfterOnExit()));
+  QObject::connect(step3->ctkWorkflowStepQObject(), SIGNAL(invokeOnExitCommand(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)),
+                   qObject3, SLOT(onExit(const ctkWorkflowStep*, const ctkWorkflowInterstepTransition::InterstepTransitionType)));
 
   // use the qObjects for populating the stepWidgetsList
-  QObject::connect(step3->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject3, SLOT(createUserInterface()));
-  QObject::connect(qObject3, SIGNAL(createUserInterfaceComplete()), step3->ctkWorkflowAbstractWidgetStepQObject(), SIGNAL(createUserInterfaceComplete()));
+  QObject::connect(step3->ctkWorkflowStepQObject(), SIGNAL(invokeCreateUserInterfaceCommand()), qObject3, SLOT(createUserInterface()));
+  QObject::connect(qObject3, SIGNAL(createUserInterfaceComplete()), step3->ctkWorkflowStepQObject(), SIGNAL(createUserInterfaceComplete()));
 
   step3->setHasValidateCommand(1);
   step3->setHasOnEntryCommand(1);

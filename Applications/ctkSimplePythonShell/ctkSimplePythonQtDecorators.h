@@ -4,6 +4,9 @@
 
 // CTK includes
 #include <ctkAbstractPythonManager.h>
+#include <ctkCorePythonQtDecorators.h>
+#include <ctkWidgetsPythonQtDecorators.h>
+#include <PythonQt.h>
 
 // NOTE:
 //
@@ -21,11 +24,8 @@ public:
   ctkSimplePythonQtDecorators(ctkAbstractPythonManager* pythonManager)
     {
     Q_ASSERT(pythonManager);
-    //pythonManager->registerClassForPythonQt(&qSlicerCoreApplication::staticMetaObject);
-    //pythonManager->registerClassForPythonQt(&qSlicerModuleManager::staticMetaObject);
-    //pythonManager->registerClassForPythonQt(&qSlicerAbstractModule::staticMetaObject);
-    //pythonManager->registerClassForPythonQt(&qSlicerAbstractModuleWidget::staticMetaObject);
-    //pythonManager->registerCPPClassForPythonQt("qSlicerModuleFactoryManager");
+    pythonManager->registerPythonQtDecorator(new ctkCorePythonQtDecorators);
+    pythonManager->registerPythonQtDecorator(new ctkWidgetsPythonQtDecorators);
     }
 
 public slots:

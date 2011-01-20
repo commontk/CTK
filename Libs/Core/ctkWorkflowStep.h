@@ -27,8 +27,11 @@ class QState;
 
 // CTK includes
 #include "ctkPimpl.h"
-#include "ctkCoreExport.h"
+#include "ctkWorkflow_p.h"
 #include "ctkWorkflowTransitions.h"
+
+#include "ctkCoreExport.h"
+
 class ctkWorkflow;
 
 class ctkWorkflowStepPrivate;
@@ -42,6 +45,7 @@ class CTK_CORE_EXPORT ctkWorkflowStep
 {
 
 public:
+  explicit ctkWorkflowStep();
   explicit ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId);
   virtual ~ctkWorkflowStep();
 
@@ -50,6 +54,10 @@ public:
 
   /// Get id
   QString id()const;
+
+  /// Set step Id
+  /// \note Setting the Id after the step had been added to a workflow is a no-op
+  void setId(const QString& newStepId);
 
   /// Set/get \a name
   QString name()const;
@@ -86,8 +94,9 @@ public:
 
 protected:
 
-  /// Set step Id
-  void setId(const QString& newStepId);
+  explicit ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl);
+  explicit ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl,
+                           ctkWorkflow* newWorkflow, const QString& newId);
 
   /// Set workflow
   void setWorkflow(ctkWorkflow* newWorkflow);
@@ -172,8 +181,9 @@ protected:
   /// 1) Reimplement the validate(const QString&) method in a subclass of
   /// ctkWorkflowStep, following these instructions:
   /// <ul>
-  ///   <li>emit the signal ctkWorkflowStep::validateComplete(bool, const QString&) (true on successful validation,
-  /// false on failure; the QString is the desired branchId to use with branching workflows)</li>
+  ///   <li>invoke the superclass method ctkWorkflowStep::validateComplete(bool, const QString&)
+  /// (true on successful validation, false on failure; the QString is the desired branchId to use
+  /// with branching workflows)</li>
   /// </ul>
   //
   /// OR:
@@ -183,14 +193,10 @@ protected:
   ///  <li>Call setHasValidateCommand(1) on the step
   ///  <li>Create a slot foo() associated with any QObject*, following these instructions:</li>
   ///  <ul>
-  ///     <li>Emit a signal bar(int, const QString&) (true on successful validation, false on
-  /// failure)</li>
-  ///     <li>Set the following two connections:</li>
+  ///     <li>Set the following connection:</li>
   ///     <ul>
   ///       <li>QObject::connect(step, SIGNAL(invokeValidateCommand(const QString&)), object,
   /// SLOT(foo(const QString&)))</li>
-  ///       <li>QObject::connect(object, SIGNAl(bar(bool, const QString&)), workflow,
-  /// SLOT(evaluateValidationResults(bool, const QString&)))</li>
   ///      </ul>
   ///    </ul>
   ///  </ul>

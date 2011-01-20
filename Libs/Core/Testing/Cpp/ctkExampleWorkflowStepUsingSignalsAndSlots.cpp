@@ -37,6 +37,8 @@ public:
   // and onExit() functions
   int numberOfTimesRanOnEntry;
   int numberOfTimesRanOnExit;
+
+  ctkWorkflowStep * Step;
 };
 
 //-----------------------------------------------------------------------------
@@ -47,15 +49,19 @@ ctkExampleWorkflowStepUsingSignalsAndSlotsPrivate::ctkExampleWorkflowStepUsingSi
 {
   this->numberOfTimesRanOnEntry = 0;
   this->numberOfTimesRanOnExit = 0;
+  this->Step = 0;
 }
 
 //-----------------------------------------------------------------------------
 // ctkExampleWorkflowStepUsingSignalsAndSlots methods
 
 //-----------------------------------------------------------------------------
-ctkExampleWorkflowStepUsingSignalsAndSlots::ctkExampleWorkflowStepUsingSignalsAndSlots(QObject* _parent) : Superclass(_parent)
+ctkExampleWorkflowStepUsingSignalsAndSlots::ctkExampleWorkflowStepUsingSignalsAndSlots(
+    ctkWorkflowStep * newStep, QObject* newParent) : Superclass(newParent)
   , d_ptr(new ctkExampleWorkflowStepUsingSignalsAndSlotsPrivate)
 {
+  Q_D(ctkExampleWorkflowStepUsingSignalsAndSlots);
+  d->Step = newStep;
 }
 
 //-----------------------------------------------------------------------------
@@ -66,15 +72,23 @@ ctkExampleWorkflowStepUsingSignalsAndSlots::~ctkExampleWorkflowStepUsingSignalsA
 //-----------------------------------------------------------------------------
 void ctkExampleWorkflowStepUsingSignalsAndSlots::validate(const QString& desiredBranchId)const
 {
+  Q_D(const ctkExampleWorkflowStepUsingSignalsAndSlots);
   // Always returns true in this simple example
-  emit validationComplete(true, desiredBranchId);
+
+  QObject::staticMetaObject.invokeMethod(
+      d->Step->ctkWorkflowStepQObject(), "validationComplete",
+      Q_ARG(bool, true), Q_ARG(QString, desiredBranchId));
 }
 
 //-----------------------------------------------------------------------------
 void ctkExampleWorkflowStepUsingSignalsAndSlots::validateFails()const
 {
+  Q_D(const ctkExampleWorkflowStepUsingSignalsAndSlots);
+
   // Always returns false in this simple example
-  emit validationComplete(false);
+  QObject::staticMetaObject.invokeMethod(
+      d->Step->ctkWorkflowStepQObject(), "validationComplete",
+      Q_ARG(bool, false));
 }
 
 //-----------------------------------------------------------------------------
@@ -89,7 +103,8 @@ void ctkExampleWorkflowStepUsingSignalsAndSlots::onEntry(const ctkWorkflowStep* 
   d->numberOfTimesRanOnEntry++;
 
   // signals that we are finished
-  emit onEntryComplete();
+  QObject::staticMetaObject.invokeMethod(
+      d->Step->ctkWorkflowStepQObject(), "onEntryComplete");
 }
 
 //-----------------------------------------------------------------------------
@@ -104,7 +119,8 @@ void ctkExampleWorkflowStepUsingSignalsAndSlots::onExit(const ctkWorkflowStep* g
   d->numberOfTimesRanOnExit++;
 
   // signals that we are finished
-  emit onExitComplete();
+  QObject::staticMetaObject.invokeMethod(
+      d->Step->ctkWorkflowStepQObject(), "onExitComplete");
 }
 
 //-----------------------------------------------------------------------------

@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QObject>
+
 class QString;
 class QState;
 
@@ -31,10 +32,12 @@ class QState;
 #include "ctkWorkflow.h"
 #include "ctkWorkflowStep.h"
 #include "ctkWorkflowTransitions.h"
+#include "ctkCoreExport.h"
+
 class ctkWorkflow;
 
 //-----------------------------------------------------------------------------
-class ctkWorkflowStepPrivate: public QObject
+class CTK_CORE_EXPORT ctkWorkflowStepPrivate: public QObject
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(ctkWorkflowStep);

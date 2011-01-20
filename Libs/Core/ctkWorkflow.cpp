@@ -36,250 +36,6 @@
 static ctkLogger logger("org.commontk.libs.core.ctkWorkflow");
 //--------------------------------------------------------------------------
 
-namespace
-{
-//-----------------------------------------------------------------------------
-struct forwardAndBackwardSteps
-{
-  QList<ctkWorkflowStep*> forwardSteps()
-  {
-    return this->ForwardSteps;
-  }
-
-  QList<ctkWorkflowStep*> backwardSteps()
-  {
-    return this->BackwardSteps;
-  }
-
-  QList<QString> forwardBranchIds()
-  {
-    return this->ForwardBranchIds;
-  }
-
-  QList<QString> backwardBranchIds()
-  {
-    return this->BackwardBranchIds;
-  }
-
-  void appendForwardStep(ctkWorkflowStep* step, QString id)
-  {
-    this->ForwardSteps.append(step);
-    this->ForwardBranchIds.append(id);
-  }
-
-  void appendBackwardStep(ctkWorkflowStep* step, QString id)
-  {
-    this->BackwardSteps.append(step);
-    this->BackwardBranchIds.append(id);
-  }
-
-  QString firstForwardBranchId()
-  {
-    if (this->ForwardBranchIds.isEmpty())
-      {
-      return QString();
-      }
-    else
-      {
-    return this->ForwardBranchIds.first();
-      }
-  }
-
-  ctkWorkflowStep* forwardStep(QString branchId)
-  {
-    int index = this->ForwardBranchIds.indexOf(branchId);
-    if (index != -1)
-      {
-      return ForwardSteps.at(index);
-      }
-    else
-      {
-      return 0;
-      }
-  }
-
-  QString backwardBranchId(ctkWorkflowStep* step)
-  {
-    int index = this->BackwardSteps.indexOf(step);
-    if (index != -1)
-      {
-      return BackwardBranchIds.at(index);
-      }
-    else
-      {
-      return QString();
-      }
-  }
-
-  QString forwardBranchId(ctkWorkflowStep* step)
-  {
-    int index = this->ForwardSteps.indexOf(step);
-    if (index != -1)
-      {
-      return ForwardBranchIds.at(index);
-      }
-    else
-      {
-      return QString();
-      }
-  }
-
-private:
-  QList<ctkWorkflowStep*> ForwardSteps;
-  QList<ctkWorkflowStep*> BackwardSteps;
-
-  QList<QString> ForwardBranchIds;
-  QList<QString> BackwardBranchIds;
-
-};
-}
-
-//-----------------------------------------------------------------------------
-class ctkWorkflowPrivate
-{
-  Q_DECLARE_PUBLIC(ctkWorkflow);
-protected:
-  ctkWorkflow* const q_ptr;
-public:
-  ctkWorkflowPrivate(ctkWorkflow& object);
-  ~ctkWorkflowPrivate();
-
-  /// \brief Add a step to the workflow
-  ///
-  /// \note The step's components will be automatically be added to the state machine
-  /// (i.e. the processingState state, validationState state, validationTransition transition
-  /// and validationFailedtransition transition.
-  ///
-  /// \return True or False indicating whether the method was successful.
-  void addStep(ctkWorkflowStep* step);
-
-  /// \brief Returns whether a transition has been previously added with the same origin,
-  /// destination and directionality
-  bool hasDuplicateTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
-                              const ctkWorkflow::TransitionDirectionality directionality);
-
-  /// \brief Returns whether a transition has been previously added with the same origin and branch
-  /// id (for forward transitions) or with the same destination and branch id (for backward transitions
-  bool hasTransitionWithSameBranchId(ctkWorkflowStep* origin, ctkWorkflowStep* destination,
-                                     const QString& branchId,
-                                     const ctkWorkflow::TransitionDirectionality directionality);
-
-  /// \brief Creates a transition from the origin to the destinatio.
-  ///
-  /// More specifically, the transition is from the \a origin's validation state to the \a
-  /// destination's processing state, and is of type ctkWorkflowTransition::TransitionToNextStep
-  ///
-  /// The destination step should semantically be a next step, i.e. from a workflow perspective, the
-  /// \a destination step is meant to appear after the \a origin step.
-  ///
-  /// Returns true/false indicating whether the method was successful.
-  void createTransitionToNextStep(ctkWorkflowStep* origin,
-                                  ctkWorkflowStep* destination,
-                                  const QString& branchId = "");
-
-  /// \brief Creates a transition from the destination to the origin
-  ///
-  /// More specifically, the transition is from the \a destination's processing state to the \a
-  /// origin's processing state, and is of type ctkWorkflowTransition::TransitionToPreviousStep
-  ///
-  /// The destination step should semantically be a next step, i.e. from a workflow perspective, the
-  /// \a destination step is meant to appear after the \a origin step.
-  ///
-  /// Returns true/false indicating whether the method was successful.
-  void createTransitionToPreviousStep(ctkWorkflowStep* origin,
-                                      ctkWorkflowStep* destination,
-                                      const QString& branchId = "");
-
-  /// \brief Creates a transition from the goTo step to the step from which the attempt to go to the
-  /// goTo step was initiated.
-  ///
-  /// More specifically, the transition is from the \a goTo step's processing state to the \a
-  /// starting step's processing state, and is of type ctkWorkflowTransition::TransitionToPreviousStartingStep
-  ///
-  /// Returns true/false indicating whether the method was successful.
-  void createTransitionToPreviousStartingStep(ctkWorkflowStep* startingStep,
-                                              ctkWorkflowStep* currentStep);
-  ///
-  void validateInternal(ctkWorkflowStep* step);
-
-  /// \brief Performs computation required when entering this step.
-  ///
-  /// Does some sanity checks and then either calls onEntry() or emits the invokeOnEntryCommand(),
-  /// depending on whether the user indicates that there is an onEntryCommand.
-  void onEntryInternal(ctkWorkflowStep* step, ctkWorkflowStep* comingFrom,
-                       const ctkWorkflowInterstepTransition::InterstepTransitionType& transitionType);
-
-  /// \brief Performs computation required when exiting this step.
-  ///
-  /// Does some sanity checks and then either calls onExit() or emits the invokeOnExitCommand(),
-  /// depending on whether the user indicates that there is an onExitCommand.
-  void onExitInternal(ctkWorkflowStep* step, ctkWorkflowStep* goingTo,
-                      const ctkWorkflowInterstepTransition::InterstepTransitionType& transitionType);
-
-  /// Get the step in the workflow with a given id.
-  ctkWorkflowStep* stepFromId(const QString& id)const;
-
-  /// Get the step that a state belongs to (if any)
-  ctkWorkflowStep* stepFromState(const QAbstractState* state);
-
-  /// Get the number of forward steps from the given step
-  int numberOfForwardSteps(ctkWorkflowStep* step);
-
-  /// Get the number of backward steps from the given step
-  int numberOfBackwardSteps(ctkWorkflowStep* step);
-
-  /// Get the ids of the steps that directly follow the given step.
-  QList<QString> forwardBranchIds(ctkWorkflowStep* step)const;
-
-  /// Get the ids of the steps that directly preceed the given step.
-  QList<QString> backwardBranchIds(ctkWorkflowStep* step)const;
-
-  /// Determines whether there exists a path from the origin step (the current step by default) to
-  /// the step with the given goalId
-  bool pathExists(const QString& goalId, ctkWorkflowStep* origin = 0)const;
-
-  /// Determines whether there exists a path from the current step's next step (as given by the
-  /// branchId) to the step with the given goalId
-  bool pathExistsFromNextStep(const QString& goalId, const QString& branchId)const;
-
-  QStateMachine* StateMachine;
-
-  // Maintain a list of pointers to the steps in the workflow,
-  // along with their forward and backward transitions
-  QMap<ctkWorkflowStep*, forwardAndBackwardSteps*>         StepToForwardAndBackwardStepMap;
-
-  // ... and its associated convenient typedef
-  typedef QMap<ctkWorkflowStep*, forwardAndBackwardSteps*> StepToForwardAndBackwardStepMapType;
-  typedef QList<ctkWorkflowStep*>                          StepListType;
-
-  // Maintain a map of <state, step> key/value pairs, to find the step
-  // that a given state belongs to
-  typedef QMap<const QAbstractState*, ctkWorkflowStep*>           StateToStepMapType;
-  typedef QMap<const QAbstractState*, ctkWorkflowStep*>::iterator StateToStepMapIterator;
-  StateToStepMapType                                              StateToStepMap;
-
-  ctkWorkflowStep*                         InitialStep;
-  ctkWorkflowStep*                         CurrentStep;
-  QMap<ctkWorkflowStep*, ctkWorkflowStep*> StepToPreviousStepMap;
-
-  // Used when performing a transition
-  ctkWorkflowStep*                                        OriginStep;
-  ctkWorkflowStep*                                        DestinationStep;
-  ctkWorkflowInterstepTransition::InterstepTransitionType TransitionType;
-
-  QString          DesiredBranchId; // Desired branchId specified when invoking goForward
-
-  ctkWorkflowStep* GoToStep;   // Desired step when attempting to go to a finish step
-
-  ctkWorkflowStep* StartingStep; // Current step when we began the attempt to go to the desired finish step
-
-  // Temporary transition after successfully going to finish step, to get us back to the starting step
-  ctkWorkflowInterstepTransition* TransitionToPreviousStartingStep;
-
-  QString ARTIFICIAL_BRANCH_ID_PREFIX;
-
-};
-
 // --------------------------------------------------------------------------
 // ctkWorkflowPrivate methods
 
@@ -330,7 +86,17 @@ void ctkWorkflowPrivate::addStep(ctkWorkflowStep* step)
 
   // Setup the signal/slot that triggers the evaluation of the validation results
   // after validate(const QString&) is called
-  q->connectStep(step);
+  this->connect(
+      step->ctkWorkflowStepQObject(), SIGNAL(validationComplete(bool, const QString&)),
+      q, SLOT(evaluateValidationResults(bool, const QString&)));
+
+  this->connect(
+      step->ctkWorkflowStepQObject(), SIGNAL(onEntryComplete()),
+      SLOT(processingAfterOnEntry()));
+
+  this->connect(
+      step->ctkWorkflowStepQObject(), SIGNAL(onExitComplete()),
+      SLOT(processingAfterOnExit()));
 }
 
 // --------------------------------------------------------------------------
@@ -577,6 +343,62 @@ void ctkWorkflowPrivate::onEntryInternal(
 }
 
 // --------------------------------------------------------------------------
+void ctkWorkflowPrivate::processingAfterOnEntry()
+{
+  Q_Q(ctkWorkflow);
+
+  logger.debug("processingAfterOnEntry");
+
+  if (!this->DestinationStep)
+    {
+    logger.error("processingAfterOnEntry - Called processingAfterOnEntry without "
+                 "having set a destination step");
+    return;
+    }
+
+  // Update the currentStep and previous step
+  this->CurrentStep = this->DestinationStep;
+
+  // Reset the pointers used internally for performing a transition
+  this->OriginStep = 0;
+  this->DestinationStep = 0;
+
+  // // Reset the pointers used internally for performing a transition
+  // // back to the starting step
+  // if (d->TransitionToPreviousStartingStep)
+  //   {
+
+  //   std::cout << "TRANSITION TO PREVIOUS STARTING STEP EXISTS" << std::endl;
+  //   //d->TransitionToPreviousStartingStep->sourceState()->removeTransition(d->TransitionToPreviousStartingStep);
+  //   //std::cout << "removed" << std::endl;
+  //   // d->TransitionToPreviousStartingStep = 0;
+  //   //destination->processingState()->removeTransition(d->TransitionToPreviousStartingStep);
+  //   //delete d->TransitionToPreviousStartingStep;
+  //   // d->TransitionToPreviousStartingStep = 0;
+  //   std::cout << "here" << std::endl;
+  //   }
+
+  // If we are trying to get to the finish step, then check if we are
+  // finished.
+  if (this->GoToStep)
+    {
+    if (this->CurrentStep == this->GoToStep)
+      {
+      q->goToStepSucceeded();
+      }
+    // if we're not finished, continue transitioning to the next step
+    else
+      {
+      q->goForward();
+      }
+    }
+  else
+    {
+    emit q->currentStepChanged(this->CurrentStep);
+    }
+}
+
+// --------------------------------------------------------------------------
 void ctkWorkflowPrivate::onExitInternal(
     ctkWorkflowStep* step,
     ctkWorkflowStep* goingTo,
@@ -599,6 +421,25 @@ void ctkWorkflowPrivate::onExitInternal(
   else
     {
     step->onExit(goingTo, transitionType);
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowPrivate::processingAfterOnExit()
+{
+  // enter the destination step if we have one
+  if (this->DestinationStep)
+    {
+    this->onEntryInternal(this->DestinationStep, this->OriginStep, this->TransitionType);
+    }
+  // reset the pointers used internally for performing a transition if we're done
+  else
+    {
+    this->OriginStep = 0;
+    this->DestinationStep = 0;
+    // we've exited the CurrentStep and haven't gone into another step, so we no longer have a
+    // currentStep.
+    this->CurrentStep = 0;
     }
 }
 
@@ -709,6 +550,12 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
     return false;
     }
 
+  // Set origin id if empty
+  if (origin && origin->id().isEmpty())
+    {
+    origin->setId(QString("step%1").arg(d->StepToForwardAndBackwardStepMap.count()));
+    }
+
   // cannot currently create a transition between two steps of the same id, which is equivalent to
   // adding a transition from a step to itself
   if (origin && destination && (QString::compare(origin->id(), destination->id(), Qt::CaseInsensitive) == 0))
@@ -722,6 +569,12 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
   if (origin && !this->hasStep(origin->id()))
     {
     d->addStep(origin);
+    }
+
+  // Set destination id if empty
+  if (destination && destination->id().isEmpty())
+    {
+    destination->setId(QString("step%1").arg(d->StepToForwardAndBackwardStepMap.count()));
     }
 
   // add the destination step if it doesn't exist in the workflow yet
@@ -755,6 +608,12 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
       }
     }
 
+  // Set initialStep if needed
+  if (origin && d->StepToForwardAndBackwardStepMap.count() == 2 && !this->initialStep())
+    {
+    this->setInitialStep(origin);
+    }
+
   return true;
 }
 
@@ -786,36 +645,15 @@ bool ctkWorkflow::hasTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflow::connectStep(ctkWorkflowStep* step)
-{
-  Q_ASSERT(step);
-
-  if (!step->hasValidateCommand())
-    {
-    QObject::connect(step->ctkWorkflowStepQObject(), SIGNAL(validationComplete(bool, const QString&)), this, SLOT(evaluateValidationResults(bool, const QString&)));
-    }
-
-  if (!step->hasOnEntryCommand())
-    {
-    QObject::connect(step->ctkWorkflowStepQObject(), SIGNAL(onEntryComplete()), this, SLOT(processingAfterOnEntry()));
-    }
-
-  if (!step->hasOnExitCommand())
-    {
-    QObject::connect(step->ctkWorkflowStepQObject(), SIGNAL(onExitComplete()), this, SLOT(processingAfterOnExit()));
-    }
-}
-
-// --------------------------------------------------------------------------
 QList<ctkWorkflowStep*> ctkWorkflow::forwardSteps(ctkWorkflowStep* step)const
 {
   Q_D(const ctkWorkflow);
   // use the given step if provided, otherwise use the workflow's current step
-  if (step)
+  if (step && d->StepToForwardAndBackwardStepMap.contains(step))
     {
     return d->StepToForwardAndBackwardStepMap.value(step)->forwardSteps();
     }
-  else if (d->CurrentStep)
+  else if (d->CurrentStep && d->StepToForwardAndBackwardStepMap.contains(d->CurrentStep))
     {
     return d->StepToForwardAndBackwardStepMap.value(d->CurrentStep)->forwardSteps();
     }
@@ -830,11 +668,11 @@ QList<ctkWorkflowStep*> ctkWorkflow::backwardSteps(ctkWorkflowStep* step)const
 {
   Q_D(const ctkWorkflow);
   // use the current step if provided, otherwise use the workflow's current step
-  if (step)
+  if (step && d->StepToForwardAndBackwardStepMap.contains(step))
     {
     return d->StepToForwardAndBackwardStepMap.value(step)->backwardSteps();
     }
-  else if (d->CurrentStep)
+  else if (d->CurrentStep && d->StepToForwardAndBackwardStepMap.contains(d->CurrentStep))
     {
     return d->StepToForwardAndBackwardStepMap.value(d->CurrentStep)->backwardSteps();
     }
@@ -888,8 +726,12 @@ bool ctkWorkflow::hasStep(const QString& id)const
 }
 
 // --------------------------------------------------------------------------
+// Convenience method to set the QStateMachine's initialState to a
+// specific step's processing state.
 CTK_GET_CPP(ctkWorkflow, ctkWorkflowStep*, initialStep, InitialStep);
 CTK_SET_CPP(ctkWorkflow, ctkWorkflowStep*, setInitialStep, InitialStep);
+
+// --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflow, ctkWorkflowStep*, currentStep, CurrentStep);
 
 // --------------------------------------------------------------------------
@@ -1172,83 +1014,6 @@ void ctkWorkflow::performTransitionBetweenSteps()
  
   // exit the destination step
   d->onExitInternal(d->OriginStep, d->DestinationStep, d->TransitionType);
-}
-
-// --------------------------------------------------------------------------
-void ctkWorkflow::processingAfterOnExit()
-{
-  Q_D(ctkWorkflow);
-
-  // enter the destination step if we have one
-  if (d->DestinationStep)
-    {
-    d->onEntryInternal(d->DestinationStep, d->OriginStep, d->TransitionType);
-    }
-  // reset the pointers used internally for performing a transition if we're done
-  else
-    {
-    d->OriginStep = 0;
-    d->DestinationStep = 0;
-    // we've exited the CurrentStep and haven't gone into another step, so we no longer have a
-    // currentStep.
-    d->CurrentStep = 0;
-    }
-}
-
-// --------------------------------------------------------------------------
-void ctkWorkflow::processingAfterOnEntry()
-{
-  logger.debug("processingAfterOnEntry");
-
-  Q_D(ctkWorkflow);
-
-  if (!d->DestinationStep)
-    {
-    logger.error("processingAfterOnEntry - Called processingAfterOnEntry without "
-                 "having set a destination step");
-    return;
-    }
-
-  // Update the currentStep and previous step
-  d->CurrentStep = d->DestinationStep;
-
-  // Reset the pointers used internally for performing a transition
-  d->OriginStep = 0;
-  d->DestinationStep = 0;
-
-  // // Reset the pointers used internally for performing a transition
-  // // back to the starting step
-  // if (d->TransitionToPreviousStartingStep)
-  //   {
-
-  //   std::cout << "TRANSITION TO PREVIOUS STARTING STEP EXISTS" << std::endl;
-  //   //d->TransitionToPreviousStartingStep->sourceState()->removeTransition(d->TransitionToPreviousStartingStep);
-  //   //std::cout << "removed" << std::endl;
-  //   // d->TransitionToPreviousStartingStep = 0;
-  //   //destination->processingState()->removeTransition(d->TransitionToPreviousStartingStep);
-  //   //delete d->TransitionToPreviousStartingStep;
-  //   // d->TransitionToPreviousStartingStep = 0;
-  //   std::cout << "here" << std::endl;
-  //   }
-
-  // If we are trying to get to the finish step, then check if we are
-  // finished.
-  if (d->GoToStep)
-    {
-    if (d->CurrentStep == d->GoToStep)
-      {
-      this->goToStepSucceeded();
-      }
-    // if we're not finished, continue transitioning to the next step
-    else
-      {
-      this->goForward();
-      }
-    }
-  else
-    {
-    emit this->currentStepChanged(d->CurrentStep);
-    }
 }
 
 // --------------------------------------------------------------------------
