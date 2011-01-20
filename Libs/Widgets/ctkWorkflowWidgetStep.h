@@ -48,7 +48,7 @@ class CTK_WIDGETS_EXPORT ctkWorkflowWidgetStep : public QWidget,
                                                  public ctkWorkflowAbstractWidgetStep
 { 
   Q_OBJECT
-  Q_PROPERTY(QString id READ id WRITE setId)
+  Q_PROPERTY(QString stepid READ id WRITE setId)
   Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
   Q_PROPERTY(QString backButtonText READ backButtonText WRITE setBackButtonText)
   Q_PROPERTY(QString nextButtonText READ nextButtonText WRITE setNextButtonText)
