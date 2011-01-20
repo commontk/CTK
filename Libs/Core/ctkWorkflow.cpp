@@ -649,11 +649,11 @@ QList<ctkWorkflowStep*> ctkWorkflow::forwardSteps(ctkWorkflowStep* step)const
 {
   Q_D(const ctkWorkflow);
   // use the given step if provided, otherwise use the workflow's current step
-  if (step)
+  if (step && d->StepToForwardAndBackwardStepMap.contains(step))
     {
     return d->StepToForwardAndBackwardStepMap.value(step)->forwardSteps();
     }
-  else if (d->CurrentStep)
+  else if (d->CurrentStep && d->StepToForwardAndBackwardStepMap.contains(d->CurrentStep))
     {
     return d->StepToForwardAndBackwardStepMap.value(d->CurrentStep)->forwardSteps();
     }
@@ -668,11 +668,11 @@ QList<ctkWorkflowStep*> ctkWorkflow::backwardSteps(ctkWorkflowStep* step)const
 {
   Q_D(const ctkWorkflow);
   // use the current step if provided, otherwise use the workflow's current step
-  if (step)
+  if (step && d->StepToForwardAndBackwardStepMap.contains(step))
     {
     return d->StepToForwardAndBackwardStepMap.value(step)->backwardSteps();
     }
-  else if (d->CurrentStep)
+  else if (d->CurrentStep && d->StepToForwardAndBackwardStepMap.contains(d->CurrentStep))
     {
     return d->StepToForwardAndBackwardStepMap.value(d->CurrentStep)->backwardSteps();
     }
