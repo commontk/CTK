@@ -83,7 +83,7 @@ int main(int argc, char** argv)
   try { myCTK.openDatabase( databaseFileName ); }
   catch (std::exception e)
   {
-    std::cerr << "Database error:" << qPrintable(myCTK.GetLastError()) << "\n";
+    std::cerr << "Database error: " << qPrintable(myCTK.GetLastError()) << "\n";
     myCTK.closeDatabase();
     return EXIT_FAILURE;
   }
