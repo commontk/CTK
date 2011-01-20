@@ -104,12 +104,7 @@ public:
                                  = ctkWorkflow::Bidirectional);
 
   /// \brief Set/get the initial step.
-  ///
-  /// Convenience method to set the QStateMachine's initialState to a specific step's
-  /// processing state.
-  ///
-  /// \note The initialStep() function *must* be called to set the state machine's initial state
-  /// correctly
+  /// \note In not specified, the first step added will be considered as the initialStep
   Q_INVOKABLE ctkWorkflowStep* initialStep()const;
   Q_INVOKABLE virtual void setInitialStep(ctkWorkflowStep* step);
 

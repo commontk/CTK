@@ -596,6 +596,12 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
       }
     }
 
+  // Set initialStep if needed
+  if (origin && d->StepToForwardAndBackwardStepMap.count() == 2 && !this->initialStep())
+    {
+    this->setInitialStep(origin);
+    }
+
   return true;
 }
 
@@ -708,8 +714,12 @@ bool ctkWorkflow::hasStep(const QString& id)const
 }
 
 // --------------------------------------------------------------------------
+// Convenience method to set the QStateMachine's initialState to a
+// specific step's processing state.
 CTK_GET_CPP(ctkWorkflow, ctkWorkflowStep*, initialStep, InitialStep);
 CTK_SET_CPP(ctkWorkflow, ctkWorkflowStep*, setInitialStep, InitialStep);
+
+// --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflow, ctkWorkflowStep*, currentStep, CurrentStep);
 
 // --------------------------------------------------------------------------
