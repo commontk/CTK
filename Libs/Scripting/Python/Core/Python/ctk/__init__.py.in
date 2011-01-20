@@ -27,8 +27,9 @@ def add_methodclass_to_ctkWorkflowStep_or_ctkWorkflowWidgetStep(workflowstep_cla
     """Reimplement this function for step-specific processing when exiting a step."""
     self.ctkWorkflowStepQObject().onExitComplete()
     
-  def initialize(self):
+  def initialize(self, stepid):
     workflowstep_class.__init__(self)
+    self.setId(stepid)
     self.setHasValidateCommand(True)
     self.setHasOnEntryCommand(True)
     self.setHasOnExitCommand(True)

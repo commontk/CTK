@@ -55,6 +55,10 @@ public:
   /// Get id
   QString id()const;
 
+  /// Set step Id
+  /// \note Setting the Id after the step had been added to a workflow is a no-op
+  void setId(const QString& newStepId);
+
   /// Set/get \a name
   QString name()const;
   void setName(const QString& newName);
@@ -93,9 +97,6 @@ protected:
   explicit ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl);
   explicit ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl,
                            ctkWorkflow* newWorkflow, const QString& newId);
-
-  /// Set step Id
-  void setId(const QString& newStepId);
 
   /// Set workflow
   void setWorkflow(ctkWorkflow* newWorkflow);

@@ -550,6 +550,12 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
     return false;
     }
 
+  // Set origin id if empty
+  if (origin && origin->id().isEmpty())
+    {
+    origin->setId(QString("step%1").arg(d->StepToForwardAndBackwardStepMap.count()));
+    }
+
   // cannot currently create a transition between two steps of the same id, which is equivalent to
   // adding a transition from a step to itself
   if (origin && destination && (QString::compare(origin->id(), destination->id(), Qt::CaseInsensitive) == 0))
@@ -563,6 +569,12 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
   if (origin && !this->hasStep(origin->id()))
     {
     d->addStep(origin);
+    }
+
+  // Set destination id if empty
+  if (destination && destination->id().isEmpty())
+    {
+    destination->setId(QString("step%1").arg(d->StepToForwardAndBackwardStepMap.count()));
     }
 
   // add the destination step if it doesn't exist in the workflow yet

@@ -74,6 +74,11 @@ public slots:
     return step->id();
     }
 
+  void setId(ctkWorkflowStep* step, const QString& newId)const
+    {
+    step->setId(newId);
+    }
+
   QString name(ctkWorkflowStep* step)const
     {
     return step->name();
