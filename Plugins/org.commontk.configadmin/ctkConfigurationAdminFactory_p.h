@@ -35,7 +35,7 @@
 #include "ctkManagedServiceTracker_p.h"
 #include "ctkManagedServiceFactoryTracker_p.h"
 
-class ctkLogService;
+struct ctkLogService;
 class ctkConfigurationAdminImpl;
 class ctkConfigurationImpl;
 

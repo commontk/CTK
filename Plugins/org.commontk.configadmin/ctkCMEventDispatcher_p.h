@@ -29,7 +29,7 @@
 #include "ctkCMSerializedTaskQueue_p.h"
 
 struct ctkConfigurationListener;
-class ctkLogService;
+struct ctkLogService;
 
 /**
  * EventDispatcher is responsible for delivering Configuration Events to ConfigurationListeners.

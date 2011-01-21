@@ -430,7 +430,7 @@ void ctkPluginFrameworkTestSuite::frame045a()
   {
     pc->connectServiceListener(&sListen1, "serviceChanged", brokenFilter);
   }
-  catch (const std::invalid_argument& ia)
+  catch (const std::invalid_argument& /*ia*/)
   {
     //assertEquals("InvalidSyntaxException.getFilter should be same as input string", brokenFilter, ise.getFilter());
   }

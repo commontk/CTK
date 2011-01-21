@@ -29,7 +29,7 @@
 #include <ctkTestSuiteInterface.h>
 
 class ctkPluginContext;
-class ctkConfigurationAdmin;
+struct ctkConfigurationAdmin;
 
 class ctkConfigurationAdminTestSuite : public QObject,
     public ctkTestSuiteInterface

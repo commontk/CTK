@@ -5,7 +5,7 @@
 
 class QObject;
 
-class ctkLogService;
+struct ctkLogService;
 template<class S, class T> class ctkServiceTracker;
 class ctkQtMobilityServiceRuntime;
 
