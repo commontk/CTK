@@ -100,6 +100,24 @@ MACRO(ctkMacroBuildLib)
     ${MY_MOC_CPP}
     ${MY_UI_CPP}
     )
+
+  # Since the PythonQt decorator depends on PythonQt, Python and VTK, let's link against
+  # these ones to avoid complaints of MSVC
+  # Note: "LINK_DIRECTORIES" has to be invoked before "ADD_LIBRARY"
+  SET(my_EXTRA_PYTHON_LIBRARIES)
+  IF(CTK_WRAP_PYTHONQT_LIGHT AND NOT ${MY_DISABLE_WRAP_PYTHONQT})
+    # Does a header having the expected filename exists ?
+    STRING(REGEX REPLACE "^CTK" "ctk" lib_name_lc_ctk ${lib_name})
+    SET(decorator_header_filename ${lib_name_lc_ctk}PythonQtDecorator.h)
+    IF(EXISTS ${decorator_header_filename})
+      LIST(APPEND my_EXTRA_PYTHON_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
+      # Should we link against VTK
+      IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+        LINK_DIRECTORIES(${VTK_LIBRARY_DIRS})
+        LIST(APPEND my_EXTRA_PYTHON_LIBRARIES vtkCommon vtkPythonCore)
+      ENDIF()
+    ENDIF()
+  ENDIF()
   
   ADD_LIBRARY(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
@@ -127,12 +145,13 @@ MACRO(ctkMacroBuildLib)
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
     )
-	
+
   IF(MINGW)
     LIST(APPEND my_libs ssp) # add stack smash protection lib
   ENDIF(MINGW)
-  
-  TARGET_LINK_LIBRARIES(${lib_name} ${my_libs})
+
+  # See above for definition of my_EXTRA_PYTHON_LIBRARIES
+  TARGET_LINK_LIBRARIES(${lib_name} ${my_libs} ${my_EXTRA_PYTHON_LIBRARIES})
 
   # Update CTK_BASE_LIBRARIES
   SET(CTK_BASE_LIBRARIES ${my_libs} ${lib_name} CACHE INTERNAL "CTK base libraries" FORCE)
