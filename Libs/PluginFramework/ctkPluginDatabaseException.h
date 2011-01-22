@@ -22,14 +22,10 @@
 #ifndef CTKPLUGINDATABASEEXCEPTION_H
 #define CTKPLUGINDATABASEEXCEPTION_H
 
-#include "ctkPluginFrameworkExport.h"
-
-#include <stdexcept>
-
-#include <QString>
+#include "ctkRuntimeException.h"
 
 
-class CTK_PLUGINFW_EXPORT ctkPluginDatabaseException : public std::runtime_error
+class Q_DECL_EXPORT ctkPluginDatabaseException : public ctkRuntimeException
 {
 public:
 
@@ -44,23 +40,18 @@ public:
     DB_SQL_ERROR
   };
 
-  ctkPluginDatabaseException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception& cause = std::exception());
-  ctkPluginDatabaseException(const QString& msg, const std::exception& cause);
+  ctkPluginDatabaseException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception* cause = 0);
+  ctkPluginDatabaseException(const QString& msg, const std::exception* cause);
 
   ctkPluginDatabaseException(const ctkPluginDatabaseException& o);
   ctkPluginDatabaseException& operator=(const ctkPluginDatabaseException& o);
 
-  ~ctkPluginDatabaseException() throw() {}
-
-  std::exception getCause() const;
-  void setCause(const std::exception&) throw(std::logic_error);
   Type getType() const;
-
 
 private:
 
   Type type;
-  std::exception cause;
+
 };
 
 
