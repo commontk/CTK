@@ -101,6 +101,12 @@ SET(KIT_SRCS
   service/log/ctkLogReaderService.h
   service/log/ctkLogService.cpp
   service/log/ctkLogStream.cpp
+
+  service/metatype/ctkAttributeDefinition.cpp
+  service/metatype/ctkMetaTypeInformation.h
+  service/metatype/ctkMetaTypeProvider.cpp
+  service/metatype/ctkMetaTypeService.cpp
+  service/metatype/ctkObjectClassDefinition.h
   )
 
 # Headers that should run through moc
