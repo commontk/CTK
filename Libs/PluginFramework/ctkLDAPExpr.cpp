@@ -125,7 +125,7 @@ ctkLDAPExpr::ctkLDAPExpr()
 
 }
 
-ctkLDAPExpr::ctkLDAPExpr( const QString &filter ) throw (std::invalid_argument)
+ctkLDAPExpr::ctkLDAPExpr( const QString &filter )
 {
   ParseState ps(filter);
   try
@@ -242,7 +242,7 @@ bool ctkLDAPExpr::isNull() const
   return !d;
 }
 
-bool ctkLDAPExpr::query( const QString &filter, const ctkDictionary &pd ) throw (std::invalid_argument)
+bool ctkLDAPExpr::query( const QString &filter, const ctkDictionary &pd )
 {
   return ctkLDAPExpr(filter).evaluate(pd, false);
 }
@@ -407,7 +407,7 @@ bool ctkLDAPExpr::patSubstr( const QString &s, const QString &pat )
   return s.isNull() ? false : patSubstr(s,0,pat,0);
 }
 
-ctkLDAPExpr ctkLDAPExpr::parseExpr( ParseState &ps ) throw (std::invalid_argument)
+ctkLDAPExpr ctkLDAPExpr::parseExpr( ParseState &ps )
 {
   ps.skipWhite();
   if (!ps.prefix("("))
@@ -438,7 +438,7 @@ ctkLDAPExpr ctkLDAPExpr::parseExpr( ParseState &ps ) throw (std::invalid_argumen
   return ctkLDAPExpr(op, v);
 }
 
-ctkLDAPExpr ctkLDAPExpr::parseSimple( ParseState &ps ) throw (std::invalid_argument)
+ctkLDAPExpr ctkLDAPExpr::parseSimple( ParseState &ps )
 {
   QString attrName = ps.getAttributeName();
   if (attrName.isNull())
