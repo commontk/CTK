@@ -108,8 +108,8 @@ MACRO(ctkMacroBuildLib)
   IF(CTK_WRAP_PYTHONQT_LIGHT AND NOT ${MY_DISABLE_WRAP_PYTHONQT})
     # Does a header having the expected filename exists ?
     STRING(REGEX REPLACE "^CTK" "ctk" lib_name_lc_ctk ${lib_name})
-    SET(decorator_header_filename ${lib_name_lc_ctk}PythonQtDecorator.h)
-    IF(EXISTS ${decorator_header_filename})
+    SET(decorator_header_filename ${lib_name_lc_ctk}PythonQtDecorators.h)
+    IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${decorator_header_filename})
       LIST(APPEND my_EXTRA_PYTHON_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
       # Should we link against VTK
       IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
