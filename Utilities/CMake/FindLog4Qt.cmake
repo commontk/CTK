@@ -3,7 +3,7 @@
 #  Log4Qt_FOUND         - If false, don't try to use log4qt
 
 IF( NOT Log4Qt_FOUND )
-  SET( Log4Qt_DIR "/usr/include/log4qt/"
+  SET( Log4Qt_DIR "/usr/"
     CACHE PATH "Root of Log4Qt source tree (optional)." )
   MARK_AS_ADVANCED(Log4Qt_DIR)
 ENDIF()
