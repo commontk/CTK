@@ -74,16 +74,15 @@ class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonConsole : public QWidget
   Q_OBJECT
   
 public:
-  typedef QWidget Superclass; 
+  typedef QWidget Superclass;
   ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject = 0);
   ~ctkPythonConsole();
 
   /// Prints some text on the shell.
   void printMessage(const QString&);
 
-  /// Given a python variable name, lookup its attributes and return them in a
-  /// string list.
-  QStringList getPythonAttributes(const QString& pythonVariableName);
+  /// Given a python variable name, lookup its attributes and return them in a string list.
+  QStringList pythonAttributes(const QString& pythonVariableName) const;
 
 signals:
   void executing(bool);

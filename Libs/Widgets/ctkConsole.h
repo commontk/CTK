@@ -78,14 +78,14 @@ public:
   virtual ~ctkConsole();
 
   /// Returns the current formatting that will be used by printString
-  QTextCharFormat getFormat();
+  QTextCharFormat getFormat() const;
   
   /// Sets formatting that will be used by printString
   void setFormat(const QTextCharFormat& Format);
 
   /// Set a completer for this console widget
   void setCompleter(ctkConsoleCompleter* completer);
-  
+
 signals:
   /// Signal emitted whenever the user enters a command
   void executeCommand(const QString& Command);
@@ -111,8 +111,6 @@ public slots:
   /// the current word that the cursor is touching with the given text.
   /// Determines the word using QTextCursor::StartOfWord, EndOfWord.
   void insertCompletion(const QString& text);
-
-protected:
 
 protected:
   QScopedPointer<ctkConsolePrivate> d_ptr;

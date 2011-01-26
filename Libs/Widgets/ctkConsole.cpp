@@ -128,11 +128,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
         {
         this->copy();
         }
-        
+
       e->accept();
       return;
       }
-      
+
     // Allow cut only if the selection is limited to the interactive area ...
     if(e->key() == Qt::Key_X && e->modifiers() == Qt::ControlModifier)
       {
@@ -140,11 +140,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
         {
         this->cut();
         }
-        
+
       e->accept();
       return;
       }
-    
+
     // Allow paste only if the selection is in the interactive area ...
     if(e->key() == Qt::Key_V && e->modifiers() == Qt::ControlModifier)
       {
@@ -158,18 +158,18 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
           this->updateCommandBuffer();
           }
         }
-        
+
       e->accept();
       return;
       }
-    
+
     // Force the cursor back to the interactive area
     if(history_area && e->key() != Qt::Key_Control)
       {
       text_cursor.setPosition(this->documentEnd());
       this->setTextCursor(text_cursor);
       }
-    
+
     switch(e->key())
       {
       case Qt::Key_Up:
@@ -179,7 +179,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
           this->replaceCommandBuffer(this->CommandHistory[--this->CommandPosition]);
           }
         break;
-        
+
       case Qt::Key_Down:
         e->accept();
         if (this->CommandPosition < this->CommandHistory.size() - 2)
@@ -203,14 +203,13 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
           e->accept();
           }
         break;
-        
 
       case Qt::Key_Delete:
         e->accept();
         QTextEdit::keyPressEvent(e);
         this->updateCommandBuffer();
         break;
-        
+
       case Qt::Key_Backspace:
         e->accept();
         if(text_cursor.position() > this->InteractivePosition)
@@ -226,24 +225,22 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
         this->updateCompleter();
         this->selectCompletion();
         break;
-        
 
       case Qt::Key_Home:
         e->accept();
         text_cursor.setPosition(this->InteractivePosition);
         this->setTextCursor(text_cursor);
         break;
-        
+
       case Qt::Key_Return:
       case Qt::Key_Enter:
         e->accept();
-        
+
         text_cursor.setPosition(this->documentEnd());
         this->setTextCursor(text_cursor);
-        
         this->internalExecuteCommand();
         break;
-        
+
       default:
         e->accept();
         QTextEdit::keyPressEvent(e);
@@ -252,9 +249,9 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
         break;
       }
 }
-  
+
 //-----------------------------------------------------------------------------
-/*const*/ int ctkConsolePrivate::documentEnd()
+int ctkConsolePrivate::documentEnd() const
 {
   QTextCursor c(this->document());
   c.movePosition(QTextCursor::End);
@@ -324,13 +321,13 @@ void ctkConsolePrivate::updateCompleter()
       }
     }
 }
-  
+
 //-----------------------------------------------------------------------------c
 void ctkConsolePrivate::updateCommandBuffer()
 {
   this->commandBuffer() = this->toPlainText().mid(this->InteractivePosition);
 }
-  
+
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::replaceCommandBuffer(const QString& Text)
 {
@@ -342,13 +339,13 @@ void ctkConsolePrivate::replaceCommandBuffer(const QString& Text)
   c.removeSelectedText();
   c.insertText(Text);
 }
-  
+
 //-----------------------------------------------------------------------------
 QString& ctkConsolePrivate::commandBuffer()
 {
   return this->CommandHistory.back();
 }
-  
+
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::internalExecuteCommand()
 {
@@ -401,9 +398,9 @@ ctkConsole::ctkConsole(QWidget* parentObject) :
   d_ptr(new ctkConsolePrivate(*this))
 {
   Q_D(ctkConsole);
-  QVBoxLayout* const l = new QVBoxLayout(this);
-  l->setMargin(0);
-  l->addWidget(d);
+  QVBoxLayout* layout = new QVBoxLayout(this);
+  layout->setMargin(0);
+  layout->addWidget(d);
 }
 
 //-----------------------------------------------------------------------------
@@ -412,9 +409,9 @@ ctkConsole::~ctkConsole()
 }
 
 //-----------------------------------------------------------------------------
-QTextCharFormat ctkConsole::getFormat()
+QTextCharFormat ctkConsole::getFormat() const
 {
-  Q_D(ctkConsole);
+  Q_D(const ctkConsole);
   return d->currentCharFormat();
 }
 
@@ -478,7 +475,7 @@ void ctkConsole::prompt(const QString& text)
 
   QTextCursor text_cursor = d->textCursor();
 
-  // if the cursor is currently on a clean line, do nothing, otherwise we move
+  // If the cursor is currently on a clean line, do nothing, otherwise we move
   // the cursor to a new line before showing the prompt.
   text_cursor.movePosition(QTextCursor::StartOfLine);
   int startpos = text_cursor.position();
@@ -511,3 +508,4 @@ void ctkConsole::internalExecuteCommand(const QString& Command)
 {
   emit this->executeCommand(Command);
 }
+

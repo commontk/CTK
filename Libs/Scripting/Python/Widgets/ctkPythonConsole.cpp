@@ -127,7 +127,7 @@ public:
     QStringList attrs;
     if (!lookup.isEmpty() || !compareText.isEmpty())
       {
-      attrs = Parent.getPythonAttributes(lookup);
+      attrs = this->Parent.pythonAttributes(lookup);
       }
 
     // Initialize the completion model
@@ -261,7 +261,7 @@ void ctkPythonConsolePrivate::executeCommand(const QString& command)
 //    this->PythonManager->executeString(command);
 //    }
 }
-  
+
 //----------------------------------------------------------------------------
 void ctkPythonConsolePrivate::promptForInput(const QString& indent)
 {
@@ -307,7 +307,7 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
 
   ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*this);
   d->Console.setCompleter(completer);
-  
+
   QObject::connect(
     &d->Console, SIGNAL(executeCommand(const QString&)),
     this, SLOT(onExecuteCommand(const QString&)));
@@ -350,7 +350,7 @@ void ctkPythonConsole::executeScript(const QString& script)
 {
   Q_D(ctkPythonConsole);
   Q_UNUSED(script);
-  
+
   this->printStdout("\n");
   emit this->executing(true);
 //   d->Interpreter->RunSimpleString(
@@ -360,7 +360,7 @@ void ctkPythonConsole::executeScript(const QString& script)
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkPythonConsole::getPythonAttributes(const QString& pythonVariableName)
+QStringList ctkPythonConsole::pythonAttributes(const QString& pythonVariableName) const
 {
 //   this->makeCurrent();
 
@@ -429,9 +429,9 @@ void ctkPythonConsole::printStdout(const QString& text)
   QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(0, 150, 0));
   d->Console.setFormat(format);
-  
+
   d->Console.printString(text);
-  
+
   QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
@@ -443,7 +443,7 @@ void ctkPythonConsole::printMessage(const QString& text)
   QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(0, 0, 150));
   d->Console.setFormat(format);
-  
+
   d->Console.printString(text);
 }
 
@@ -455,9 +455,9 @@ void ctkPythonConsole::printStderr(const QString& text)
   QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(255, 0, 0));
   d->Console.setFormat(format);
-  
+
   d->Console.printString(text);
-  
+
   QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
@@ -491,7 +491,7 @@ void ctkPythonConsole::promptForInput()
 void ctkPythonConsole::internalExecuteCommand(const QString& command)
 {
   Q_D(ctkPythonConsole);
-  emit this->executing(true);  
+  emit this->executing(true);
   d->executeCommand(command);
   emit this->executing(false);
 }

@@ -40,7 +40,7 @@ public:
   void keyPressEvent(QKeyEvent* e);
   
   /// Returns the end of the document
-  /*const*/ int documentEnd();
+  int documentEnd() const;
 
   void focusOutEvent(QFocusEvent *e);
 
@@ -63,17 +63,19 @@ public:
   
   /// Implements command-execution
   void internalExecuteCommand();
-  
+
   void setCompleter(ctkConsoleCompleter* completer);
 
   /// A custom completer
   QPointer<ctkConsoleCompleter> Completer;
 
-  /** Stores the beginning of the area of interactive input, outside which
-  changes can't be made to the text edit contents */
+  /// Stores the beginning of the area of interactive input, outside which
+  /// changes can't be made to the text edit contents
   int InteractivePosition;
+
   /// Stores command-history, plus the current command buffer
   QStringList CommandHistory;
+
   /// Stores the current position in the command-history
   int CommandPosition;
 };
