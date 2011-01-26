@@ -27,9 +27,10 @@ FOREACH(_file ${_files})
 ENDFOREACH()
 
 SET(QTMOBILITY_QTSERVICEFW_INCLUDE_DIR "@qtmobility_win32_install_prefix@/include")
+
 SET(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG
-    "@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/QtServiceFrameworkd.lib")
+    "@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/@qtmobility_servicefw_libname_debug@")
 SET(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE
-    "@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/QtServiceFramework.lib")
+    "@CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY@/${_int_dir}/@qtmobility_servicefw_libname_release@")
     
 CONFIGURE_FILE("@qtmobility_config_in@" "@qtmobility_config_out@" @ONLY)
