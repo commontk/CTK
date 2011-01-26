@@ -84,8 +84,9 @@ public:
   void setCompleter(ctkConsoleCompleter* completer);
 
 signals:
-  /// Signal emitted whenever the user enters a command
-  void executeCommand(const QString& Command);
+
+  /// This signal emitted before and after a command is executed
+  void executing(bool);
 
 public slots:
   /// Writes the supplied text to the console
@@ -96,7 +97,7 @@ public slots:
   void printCommand(const QString& cmd);
 
   /// Clears the contents of the console
-  void clear();
+  virtual void clear();
 
   /// Puts out an input accepting prompt.
   /// It is recommended that one uses prompt instead of printString() to print
@@ -108,6 +109,11 @@ public slots:
   /// the current word that the cursor is touching with the given text.
   /// Determines the word using QTextCursor::StartOfWord, EndOfWord.
   void insertCompletion(const QString& text);
+
+protected:
+
+  /// Called whenever the user enters a command
+  virtual void executeCommand(const QString& Command);
 
 protected:
   ctkConsole(ctkConsolePrivate * pimpl, QWidget* parentObject);

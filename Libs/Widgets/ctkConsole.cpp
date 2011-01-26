@@ -59,6 +59,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QTextCursor>
 #include <QVBoxLayout>
 #include <QScrollBar>
+#include <QDebug>
 
 // CTK includes
 #include "ctkConsole.h"
@@ -372,7 +373,10 @@ void ctkConsolePrivate::internalExecuteCommand()
   c.insertText("\n");
 
   this->InteractivePosition = this->documentEnd();
-  emit q->executeCommand(command);
+
+  emit q->executing(true);
+  q->executeCommand(command);
+  emit q->executing(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -466,6 +470,13 @@ void ctkConsole::insertCompletion(const QString& completion)
     d->setTextCursor(tc);
     }
   d->updateCommandBuffer();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::executeCommand(const QString& command)
+{
+  qWarning() << "ctkConsole::executeCommand not implemented !";
+  qWarning() << "command:" << command;
 }
 
 //-----------------------------------------------------------------------------

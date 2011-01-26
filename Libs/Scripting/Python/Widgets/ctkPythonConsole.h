@@ -82,24 +82,20 @@ public:
   /// Given a python variable name, lookup its attributes and return them in a string list.
   QStringList pythonAttributes(const QString& pythonVariableName) const;
 
-signals:
-  void executing(bool);
-
 public slots:
-  void clear();
+  virtual void clear();
   void executeScript(const QString&);
+
+protected:
+  virtual void executeCommand(const QString& command);
 
 protected slots:
   void printStderr(const QString&);
   void printStdout(const QString&);
 
-  void onExecutePythonCommand(const QString&);
-
 private:
   Q_DECLARE_PRIVATE(ctkPythonConsole);
   Q_DISABLE_COPY(ctkPythonConsole);
-
-  void internalExecuteCommand(const QString&);
 };
 
 #endif

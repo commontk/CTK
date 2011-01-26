@@ -159,8 +159,6 @@ public:
 
   void resetBuffer();
 
-  void executeCommand(const QString& command);
-
   void promptForInput(const QString& indent = QString());
 
   ctkAbstractPythonManager* PythonManager;
@@ -246,17 +244,6 @@ void ctkPythonConsolePrivate::resetBuffer()
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonConsolePrivate::executeCommand(const QString& command)
-{
-  this->MultilineStatement = this->push(command);
-//  if (command.length())
-//    {
-//    Q_ASSERT(this->PythonManager);
-//    this->PythonManager->executeString(command);
-//    }
-}
-
-//----------------------------------------------------------------------------
 void ctkPythonConsolePrivate::promptForInput(const QString& indent)
 {
   Q_Q(ctkPythonConsole);
@@ -294,10 +281,6 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
 
   ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*this);
   this->setCompleter(completer);
-
-  QObject::connect(
-    this, SIGNAL(executeCommand(const QString&)),
-    this, SLOT(onExecutePythonCommand(const QString&)));
 
   // The call to mainContext() ensures that python has been initialized.
   Q_ASSERT(d->PythonManager);
@@ -442,29 +425,21 @@ void ctkPythonConsole::printStderr(const QString& text)
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonConsole::onExecutePythonCommand(const QString& Command)
+void ctkPythonConsole::executeCommand(const QString& command)
 {
   Q_D(ctkPythonConsole);
 
-  QString command = Command;
-  command.replace(QRegExp("\\s*$"), "");
-  this->internalExecuteCommand(command);
+  QString commandUpdated = command;
+  commandUpdated.replace(QRegExp("\\s*$"), "");
+
+  d->MultilineStatement = d->push(commandUpdated);
 
   // Find the indent for the command.
   QRegExp regExp("^(\\s+)");
   QString indent;
-  if (regExp.indexIn(command) != -1)
+  if (regExp.indexIn(commandUpdated) != -1)
     {
     indent = regExp.cap(1);
     }
   d->promptForInput(indent);
-}
-
-//----------------------------------------------------------------------------
-void ctkPythonConsole::internalExecuteCommand(const QString& command)
-{
-  Q_D(ctkPythonConsole);
-  emit this->executing(true);
-  d->executeCommand(command);
-  emit this->executing(false);
 }
