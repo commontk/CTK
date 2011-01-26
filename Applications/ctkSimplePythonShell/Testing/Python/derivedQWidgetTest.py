@@ -13,7 +13,7 @@ class ExampleWidget(QWidget):
     checkbox = QCheckBox('Shell Visibility', self)
     layout.addWidget(checkbox);
     checkbox.setChecked(True)
-    checkbox.connect('toggled(bool)', _ctkPythonShellInstance, 'setVisible(bool)')
+    checkbox.connect('toggled(bool)', _ctkPythonConsoleInstance, 'setVisible(bool)')
     
     self.button = QPushButton('Quit', self)
     layout.addWidget(self.button);
@@ -29,8 +29,8 @@ class ExampleWidget(QWidget):
 w = ExampleWidget()
 w.show()
 
-if not _ctkPythonShellInstance.isInteractive:
-  #QTimer().singleShot(0, app(), SLOT('quit()'))
+if not _ctkPythonConsoleInstance.isInteractive:
+  #QTimer().singleShot(250, app(), SLOT('quit()'))
   t = QTimer()
   t.setInterval(250)
   t.connect('timeout()', app(), 'quit()')

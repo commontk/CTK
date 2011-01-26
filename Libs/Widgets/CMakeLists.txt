@@ -33,8 +33,8 @@ SET(KIT_SRCS
   ctkColorDialog.h
   ctkColorPickerButton.cpp
   ctkColorPickerButton.h
-  ctkConsoleWidget.cpp
-  ctkConsoleWidget.h
+  ctkConsole.cpp
+  ctkConsole.h
   ctkConfirmExitDialog.cpp
   ctkConfirmExitDialog.h
   ctkCoordinatesWidget.cpp
@@ -146,7 +146,7 @@ SET(KIT_MOC_SRCS
   ctkColorDialog.h
   ctkColorPickerButton.h
   ctkConfirmExitDialog.h
-  ctkConsoleWidget.h
+  ctkConsole.h
   ctkCoordinatesWidget.h
   ctkDirectoryButton.h
   ctkDoubleRangeSlider.h

@@ -15,7 +15,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkColorPickerButtonTest1.cpp
   ctkComboBoxTest1.cpp
   ctkConfirmExitDialogTest1.cpp
-  ctkConsoleWidgetTest1.cpp
+  ctkConsoleTest1.cpp
   ctkCoordinatesWidgetTest1.cpp
   ctkDirectoryButtonTest1.cpp
   ctkDoubleRangeSliderTest1.cpp
@@ -96,7 +96,7 @@ SIMPLE_TEST( ctkColorDialogTest2 )
 SIMPLE_TEST( ctkColorPickerButtonTest1 )
 SIMPLE_TEST( ctkComboBoxTest1 )
 SIMPLE_TEST( ctkConfirmExitDialogTest1 )
-SIMPLE_TEST( ctkConsoleWidgetTest1 )
+SIMPLE_TEST( ctkConsoleTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
 SIMPLE_TEST( ctkDateRangeWidgetTest1 )
 SIMPLE_TEST( ctkDirectoryButtonTest1 )

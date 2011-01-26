@@ -1,7 +1,7 @@
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
-  ctkPythonShellTest1.cpp
+  ctkPythonConsoleTest1.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -24,4 +24,4 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
-SIMPLE_TEST( ctkPythonShellTest1 )
+SIMPLE_TEST( ctkPythonConsoleTest1 )

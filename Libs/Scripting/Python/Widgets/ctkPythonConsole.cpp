@@ -64,9 +64,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <PythonQtObjectPtr.h>
 
 // CTK includes
-#include <ctkConsoleWidget.h>
+#include <ctkConsole.h>
 #include <ctkAbstractPythonManager.h>
-#include "ctkPythonShell.h"
+#include "ctkPythonConsole.h"
 
 #ifdef __GNUC__
 // Disable warnings related to Python macros and functions
@@ -76,13 +76,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 //----------------------------------------------------------------------------
-// ctkPythonShellCompleter
+// ctkPythonConsoleCompleter
 
 //----------------------------------------------------------------------------
-class ctkPythonShellCompleter : public ctkConsoleWidgetCompleter
+class ctkPythonConsoleCompleter : public ctkConsoleCompleter
 {
 public:
-  ctkPythonShellCompleter(ctkPythonShell& p) : Parent(p)
+  ctkPythonConsoleCompleter(ctkPythonConsole& p) : Parent(p)
     {
     this->setParent(&p);
     }
@@ -140,28 +140,28 @@ public:
       this->popup()->setCurrentIndex(this->completionModel()->index(0, 0));
       }
     }
-  ctkPythonShell& Parent;
+  ctkPythonConsole& Parent;
 };
 
 
 //----------------------------------------------------------------------------
-// ctkPythonShellPrivate
+// ctkPythonConsolePrivate
 
 //----------------------------------------------------------------------------
-class ctkPythonShellPrivate
+class ctkPythonConsolePrivate
 {
-  Q_DECLARE_PUBLIC(ctkPythonShell);
+  Q_DECLARE_PUBLIC(ctkPythonConsole);
 protected:
-  ctkPythonShell* const q_ptr;
+  ctkPythonConsole* const q_ptr;
 public:
-  ctkPythonShellPrivate(ctkPythonShell& object, ctkAbstractPythonManager* pythonManager)
+  ctkPythonConsolePrivate(ctkPythonConsole& object, ctkAbstractPythonManager* pythonManager)
     : q_ptr(&object), Console(&object), PythonManager(pythonManager), MultilineStatement(false),
     InteractiveConsole(0)
   {
   }
 
 //----------------------------------------------------------------------------
-  ~ctkPythonShellPrivate()
+  ~ctkPythonConsolePrivate()
   {
   }
 
@@ -260,7 +260,7 @@ public:
 
   /// Provides a console for gathering user input and displaying 
   /// Python output
-  ctkConsoleWidget Console;
+  ctkConsole Console;
 
   ctkAbstractPythonManager* PythonManager;
 
@@ -271,25 +271,25 @@ public:
 };
 
 //----------------------------------------------------------------------------
-// ctkPythonShell methods
+// ctkPythonConsole methods
 
 //----------------------------------------------------------------------------
-ctkPythonShell::ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget* parentObject):
+ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject):
   Superclass(parentObject),
-  d_ptr(new ctkPythonShellPrivate(*this, pythonManager))
+  d_ptr(new ctkPythonConsolePrivate(*this, pythonManager))
 {
-  Q_D(ctkPythonShell);
+  Q_D(ctkPythonConsole);
 
   // Layout UI
   QVBoxLayout* const boxLayout = new QVBoxLayout(this);
   boxLayout->setMargin(0);
   boxLayout->addWidget(&d->Console);
 
-  this->setObjectName("pythonShell");
+  this->setObjectName("pythonConsole");
 
   this->setFocusProxy(&d->Console);
 
-  ctkPythonShellCompleter* completer = new ctkPythonShellCompleter(*this);
+  ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*this);
   d->Console.setCompleter(completer);
   
   QObject::connect(
@@ -317,22 +317,22 @@ ctkPythonShell::ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget*
 }
 
 //----------------------------------------------------------------------------
-ctkPythonShell::~ctkPythonShell()
+ctkPythonConsole::~ctkPythonConsole()
 {
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonShell::clear()
+void ctkPythonConsole::clear()
 {
-  Q_D(ctkPythonShell);
+  Q_D(ctkPythonConsole);
   d->Console.clear();
   d->promptForInput();
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonShell::executeScript(const QString& script)
+void ctkPythonConsole::executeScript(const QString& script)
 {
-  Q_D(ctkPythonShell);
+  Q_D(ctkPythonConsole);
   Q_UNUSED(script);
   
   this->printStdout("\n");
@@ -344,7 +344,7 @@ void ctkPythonShell::executeScript(const QString& script)
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkPythonShell::getPythonAttributes(const QString& pythonVariableName)
+QStringList ctkPythonConsole::getPythonAttributes(const QString& pythonVariableName)
 {
 //   this->makeCurrent();
 
@@ -406,9 +406,9 @@ QStringList ctkPythonShell::getPythonAttributes(const QString& pythonVariableNam
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonShell::printStdout(const QString& text)
+void ctkPythonConsole::printStdout(const QString& text)
 {
-  Q_D(ctkPythonShell);
+  Q_D(ctkPythonConsole);
 
   QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(0, 150, 0));
@@ -420,9 +420,9 @@ void ctkPythonShell::printStdout(const QString& text)
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonShell::printMessage(const QString& text)
+void ctkPythonConsole::printMessage(const QString& text)
 {
-  Q_D(ctkPythonShell);
+  Q_D(ctkPythonConsole);
 
   QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(0, 0, 150));
@@ -432,9 +432,9 @@ void ctkPythonShell::printMessage(const QString& text)
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonShell::printStderr(const QString& text)
+void ctkPythonConsole::printStderr(const QString& text)
 {
-  Q_D(ctkPythonShell);
+  Q_D(ctkPythonConsole);
 
   QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(255, 0, 0));
@@ -446,9 +446,9 @@ void ctkPythonShell::printStderr(const QString& text)
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonShell::onExecuteCommand(const QString& Command)
+void ctkPythonConsole::onExecuteCommand(const QString& Command)
 {
-  Q_D(ctkPythonShell);
+  Q_D(ctkPythonConsole);
 
   QString command = Command;
   command.replace(QRegExp("\\s*$"), "");
@@ -465,16 +465,16 @@ void ctkPythonShell::onExecuteCommand(const QString& Command)
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonShell::promptForInput()
+void ctkPythonConsole::promptForInput()
 {
-  Q_D(ctkPythonShell);
+  Q_D(ctkPythonConsole);
   d->promptForInput();
 }
 
 //----------------------------------------------------------------------------
-void ctkPythonShell::internalExecuteCommand(const QString& command)
+void ctkPythonConsole::internalExecuteCommand(const QString& command)
 {
-  Q_D(ctkPythonShell);
+  Q_D(ctkPythonConsole);
   emit this->executing(true);  
   d->executeCommand(command);
   emit this->executing(false);

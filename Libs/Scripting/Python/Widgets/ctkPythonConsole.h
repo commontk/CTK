@@ -49,8 +49,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#ifndef __ctkPythonShell_h
-#define __ctkPythonShell_h
+#ifndef __ctkPythonConsole_h
+#define __ctkPythonConsole_h
 
 // Qt includes
 #include <QWidget>
@@ -60,23 +60,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
   Qt widget that provides an interactive "shell" interface to an embedded Python interpreter.
-  You can put an instance of ctkPythonShell in a dialog or a window, and the user will be able
+  You can put an instance of ctkPythonConsole in a dialog or a window, and the user will be able
   to enter Python commands and see their output, while the UI is still responsive.
   
   \sa pqConsoleWidget, pqPythonDialog
 */  
 
-class ctkPythonShellPrivate;
+class ctkPythonConsolePrivate;
 class ctkAbstractPythonManager;
 
-class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonShell : public QWidget
+class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonConsole : public QWidget
 {
   Q_OBJECT
   
 public:
   typedef QWidget Superclass; 
-  ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget* parentObject = 0);
-  ~ctkPythonShell();
+  ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject = 0);
+  ~ctkPythonConsole();
 
   /// Prints some text on the shell.
   void printMessage(const QString&);
@@ -99,11 +99,11 @@ protected slots:
   void onExecuteCommand(const QString&);
 
 protected:
-  QScopedPointer<ctkPythonShellPrivate> d_ptr;
+  QScopedPointer<ctkPythonConsolePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkPythonShell);
-  Q_DISABLE_COPY(ctkPythonShell);
+  Q_DECLARE_PRIVATE(ctkPythonConsole);
+  Q_DISABLE_COPY(ctkPythonConsole);
 
   void promptForInput();
   void internalExecuteCommand(const QString&);

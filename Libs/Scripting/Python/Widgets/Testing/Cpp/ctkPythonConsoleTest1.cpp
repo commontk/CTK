@@ -24,23 +24,23 @@
 #include <QPushButton>
 
 // CTK includes
-#include "ctkPythonShell.h"
+#include "ctkPythonConsole.h"
 #include "ctkAbstractPythonManager.h"
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkPythonShellTest1(int argc, char * argv [] )
+int ctkPythonConsoleTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  QPushButton button("Show PythonShell");
+  QPushButton button("Show PythonConsole");
 
-  ctkPythonShell pythonShell(new ctkAbstractPythonManager);
+  ctkPythonConsole pythonConsole(new ctkAbstractPythonManager);
 
-  QObject::connect(&button, SIGNAL(clicked()), &pythonShell, SLOT(show()));
+  QObject::connect(&button, SIGNAL(clicked()), &pythonConsole, SLOT(show()));
 
   button.show();
 

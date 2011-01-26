@@ -16,13 +16,13 @@ SET(KIT_export_directive "CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT")
   
 # Source files
 SET(KIT_SRCS
-  ctkPythonShell.cpp
-  ctkPythonShell.h
+  ctkPythonConsole.cpp
+  ctkPythonConsole.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkPythonShell.h
+  ctkPythonConsole.h
   )
 
 # UI files

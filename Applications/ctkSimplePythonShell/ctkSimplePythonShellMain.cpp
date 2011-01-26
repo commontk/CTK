@@ -4,7 +4,7 @@
 #include <QTextStream>
 
 // CTK includes
-#include <ctkPythonShell.h>
+#include <ctkPythonConsole.h>
 #include <ctkCommandLineParser.h>
 
 #include "ctkSimplePythonManager.h"
@@ -54,14 +54,14 @@ int main(int argc, char** argv)
   
   ctkSimplePythonManager pythonManager;
   
-  ctkPythonShell shell(&pythonManager);
-  shell.setAttribute(Qt::WA_QuitOnClose, true);
-  shell.resize(600, 280);
-  shell.show();
+  ctkPythonConsole console(&pythonManager);
+  console.setAttribute(Qt::WA_QuitOnClose, true);
+  console.resize(600, 280);
+  console.show();
 
-  shell.setProperty("isInteractive", parsedArgs.contains("interactive"));
+  console.setProperty("isInteractive", parsedArgs.contains("interactive"));
 
-  pythonManager.addObjectToPythonMain("_ctkPythonShellInstance", &shell);
+  pythonManager.addObjectToPythonMain("_ctkPythonConsoleInstance", &console);
 
   ctkTestWrappedQProperty testWrappedQProperty;
   pythonManager.addObjectToPythonMain("_testWrappedQPropertyInstance", &testWrappedQProperty);

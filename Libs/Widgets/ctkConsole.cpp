@@ -62,19 +62,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QScrollBar>
 
 // CTK includes
-#include "ctkConsoleWidget.h"
+#include "ctkConsole.h"
 
 //-----------------------------------------------------------------------------
-// ctkConsoleWidgetPrivate
+// ctkConsolePrivate
 
 //-----------------------------------------------------------------------------
-class ctkConsoleWidgetPrivate : public QTextEdit
+class ctkConsolePrivate : public QTextEdit
 {
-  Q_DECLARE_PUBLIC(ctkConsoleWidget);
+  Q_DECLARE_PUBLIC(ctkConsole);
 protected:
-  ctkConsoleWidget* const q_ptr;
+  ctkConsole* const q_ptr;
 public:
-  ctkConsoleWidgetPrivate(ctkConsoleWidget& object) :
+  ctkConsolePrivate(ctkConsole& object) :
     QTextEdit(&object),
     q_ptr(&object),
     InteractivePosition(documentEnd())
@@ -288,7 +288,7 @@ public:
   /// else do nothing.
   void selectCompletion()
   {
-    Q_Q(ctkConsoleWidget);
+    Q_Q(ctkConsole);
     if (this->Completer && this->Completer->completionCount() == 1)
       {
       q->insertCompletion(this->Completer->currentCompletion());
@@ -356,7 +356,7 @@ public:
   /// Implements command-execution
   void internalExecuteCommand()
     {
-    Q_Q(ctkConsoleWidget);
+    Q_Q(ctkConsole);
 
     // First update the history cache. It's essential to update the
     // this->CommandPosition before calling internalExecuteCommand() since that
@@ -375,9 +375,9 @@ public:
     q->internalExecuteCommand(command);
     }
 
-  void setCompleter(ctkConsoleWidgetCompleter* completer)
+  void setCompleter(ctkConsoleCompleter* completer)
     {
-    Q_Q(ctkConsoleWidget);
+    Q_Q(ctkConsole);
 
     if (this->Completer)
       {
@@ -396,7 +396,7 @@ public:
     }
 
   /// A custom completer
-  QPointer<ctkConsoleWidgetCompleter> Completer;
+  QPointer<ctkConsoleCompleter> Completer;
 
   /** Stores the beginning of the area of interactive input, outside which
   changes can't be made to the text edit contents */
@@ -408,49 +408,49 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// ctkConsoleWidget methods
+// ctkConsole methods
 
 //-----------------------------------------------------------------------------
-ctkConsoleWidget::ctkConsoleWidget(QWidget* parentObject) :
+ctkConsole::ctkConsole(QWidget* parentObject) :
   QWidget(parentObject),
-  d_ptr(new ctkConsoleWidgetPrivate(*this))
+  d_ptr(new ctkConsolePrivate(*this))
 {
-  Q_D(ctkConsoleWidget);
+  Q_D(ctkConsole);
   QVBoxLayout* const l = new QVBoxLayout(this);
   l->setMargin(0);
   l->addWidget(d);
 }
 
 //-----------------------------------------------------------------------------
-ctkConsoleWidget::~ctkConsoleWidget()
+ctkConsole::~ctkConsole()
 {
 }
 
 //-----------------------------------------------------------------------------
-QTextCharFormat ctkConsoleWidget::getFormat()
+QTextCharFormat ctkConsole::getFormat()
 {
-  Q_D(ctkConsoleWidget);
+  Q_D(ctkConsole);
   return d->currentCharFormat();
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsoleWidget::setFormat(const QTextCharFormat& Format)
+void ctkConsole::setFormat(const QTextCharFormat& Format)
 {
-  Q_D(ctkConsoleWidget);
+  Q_D(ctkConsole);
   d->setCurrentCharFormat(Format);
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsoleWidget::setCompleter(ctkConsoleWidgetCompleter* completer)
+void ctkConsole::setCompleter(ctkConsoleCompleter* completer)
 {
-  Q_D(ctkConsoleWidget);
+  Q_D(ctkConsole);
   d->setCompleter(completer);
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsoleWidget::insertCompletion(const QString& completion)
+void ctkConsole::insertCompletion(const QString& completion)
 {
-  Q_D(ctkConsoleWidget);
+  Q_D(ctkConsole);
   QTextCursor tc = d->textCursor();
   tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
   if (tc.selectedText()==".")
@@ -469,9 +469,9 @@ void ctkConsoleWidget::insertCompletion(const QString& completion)
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsoleWidget::printString(const QString& Text)
+void ctkConsole::printString(const QString& Text)
 {
-  Q_D(ctkConsoleWidget);
+  Q_D(ctkConsole);
   d->textCursor().movePosition(QTextCursor::End);
   d->textCursor().insertText(Text);
   d->InteractivePosition = d->documentEnd();
@@ -479,17 +479,17 @@ void ctkConsoleWidget::printString(const QString& Text)
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsoleWidget::printCommand(const QString& cmd)
+void ctkConsole::printCommand(const QString& cmd)
 {
-  Q_D(ctkConsoleWidget);
+  Q_D(ctkConsole);
   d->textCursor().insertText(cmd);
   d->updateCommandBuffer();
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsoleWidget::prompt(const QString& text)
+void ctkConsole::prompt(const QString& text)
 {
-  Q_D(ctkConsoleWidget);
+  Q_D(ctkConsole);
 
   QTextCursor text_cursor = d->textCursor();
 
@@ -510,9 +510,9 @@ void ctkConsoleWidget::prompt(const QString& text)
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsoleWidget::clear()
+void ctkConsole::clear()
 {
-  Q_D(ctkConsoleWidget);
+  Q_D(ctkConsole);
 
   d->clear();
 
@@ -522,7 +522,7 @@ void ctkConsoleWidget::clear()
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsoleWidget::internalExecuteCommand(const QString& Command)
+void ctkConsole::internalExecuteCommand(const QString& Command)
 {
   emit this->executeCommand(Command);
 }

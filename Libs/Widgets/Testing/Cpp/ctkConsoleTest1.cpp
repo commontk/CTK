@@ -23,20 +23,20 @@
 #include <QTimer>
 
 // CTK includes
-#include "ctkConsoleWidget.h"
+#include "ctkConsole.h"
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkConsoleWidgetTest1(int argc, char * argv [] )
+int ctkConsoleTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkConsoleWidget widget;
+  ctkConsole console;
 
-  widget.show();
+  console.show();
 
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")

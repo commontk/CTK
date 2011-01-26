@@ -49,8 +49,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#ifndef __ctkConsoleWidget_h
-#define __ctkConsoleWidget_h
+#ifndef __ctkConsole_h
+#define __ctkConsole_h
 
 // Qt includes
 #include <QWidget>
@@ -60,8 +60,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // CTK includes
 #include "ctkWidgetsExport.h"
 
-class ctkConsoleWidgetPrivate;
-class ctkConsoleWidgetCompleter;
+class ctkConsolePrivate;
+class ctkConsoleCompleter;
 
 
 /// Qwidget that provides an interactive console - you can send text to the
@@ -69,13 +69,13 @@ class ctkConsoleWidgetCompleter;
 /// executeCommand() slot.
 ///  
 /// \sa pqPythonShell, pqOutputWindow
-class CTK_WIDGETS_EXPORT ctkConsoleWidget : public QWidget
+class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
 {
   Q_OBJECT
   
 public:
-  ctkConsoleWidget(QWidget* parentObject = 0);
-  virtual ~ctkConsoleWidget();
+  ctkConsole(QWidget* parentObject = 0);
+  virtual ~ctkConsole();
 
   /// Returns the current formatting that will be used by printString
   QTextCharFormat getFormat();
@@ -84,7 +84,7 @@ public:
   void setFormat(const QTextCharFormat& Format);
 
   /// Set a completer for this console widget
-  void setCompleter(ctkConsoleWidgetCompleter* completer);
+  void setCompleter(ctkConsoleCompleter* completer);
   
 signals:
   /// Signal emitted whenever the user enters a command
@@ -115,17 +115,17 @@ public slots:
 protected:
 
 protected:
-  QScopedPointer<ctkConsoleWidgetPrivate> d_ptr;
+  QScopedPointer<ctkConsolePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkConsoleWidget);
-  Q_DISABLE_COPY(ctkConsoleWidget);
+  Q_DECLARE_PRIVATE(ctkConsole);
+  Q_DISABLE_COPY(ctkConsole);
 
   void internalExecuteCommand(const QString& Command);
 };
 
 //-----------------------------------------------------------------------------
-class CTK_WIDGETS_EXPORT ctkConsoleWidgetCompleter : public QCompleter
+class CTK_WIDGETS_EXPORT ctkConsoleCompleter : public QCompleter
 {
 public:
 
@@ -136,4 +136,4 @@ public:
 };
 
 
-#endif // !__ctkConsoleWidget_h
+#endif
