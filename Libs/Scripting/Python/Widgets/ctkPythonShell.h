@@ -66,6 +66,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   \sa pqConsoleWidget, pqPythonDialog
 */  
 
+class ctkPythonShellPrivate;
 class ctkAbstractPythonManager;
 
 class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonShell : public QWidget
@@ -74,7 +75,7 @@ class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonShell : public QWidget
   
 public:
   typedef QWidget Superclass; 
-  ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget* _parent = 0);
+  ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget* parentObject = 0);
   ~ctkPythonShell();
 
   /// Prints some text on the shell.
@@ -97,15 +98,16 @@ protected slots:
 
   void onExecuteCommand(const QString&);
 
+protected:
+  QScopedPointer<ctkPythonShellPrivate> d_ptr;
+
 private:
-  ctkPythonShell(const ctkPythonShell&);
-  ctkPythonShell& operator=(const ctkPythonShell&);
+  Q_DECLARE_PRIVATE(ctkPythonShell);
+  Q_DISABLE_COPY(ctkPythonShell);
 
   void promptForInput();
   void internalExecuteCommand(const QString&);
-
-  struct pqImplementation;
-  pqImplementation* const Implementation;
 };
 
-#endif // !__ctkPythonShell_h
+#endif
+

@@ -76,6 +76,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 //----------------------------------------------------------------------------
+// ctkPythonShellCompleter
+
+//----------------------------------------------------------------------------
 class ctkPythonShellCompleter : public ctkConsoleWidgetCompleter
 {
 public:
@@ -141,67 +144,28 @@ public:
 };
 
 
-/////////////////////////////////////////////////////////////////////////
-// ctkPythonShell::pqImplementation
+//----------------------------------------------------------------------------
+// ctkPythonShellPrivate
 
-struct ctkPythonShell::pqImplementation
+//----------------------------------------------------------------------------
+class ctkPythonShellPrivate
 {
-  pqImplementation(QWidget* _parent, ctkAbstractPythonManager* pythonManager)
-    : Console(_parent), PythonManager(pythonManager), MultilineStatement(false),
+  Q_DECLARE_PUBLIC(ctkPythonShell);
+protected:
+  ctkPythonShell* const q_ptr;
+public:
+  ctkPythonShellPrivate(ctkPythonShell& object, ctkAbstractPythonManager* pythonManager)
+    : q_ptr(&object), Console(&object), PythonManager(pythonManager), MultilineStatement(false),
     InteractiveConsole(0)
   {
   }
 
 //----------------------------------------------------------------------------
-//   void initialize(int argc, char* argv[])
-//   {
-//     // Setup Python's interactive prompts
-//     PyObject* ps1 = PySys_GetObject(const_cast<char*>("ps1"));
-//     if(!ps1)
-//       {
-//       PySys_SetObject(const_cast<char*>("ps1"), ps1 = PyString_FromString(">>> "));
-//       Py_XDECREF(ps1);
-//       }
-// 
-//     PyObject* ps2 = PySys_GetObject(const_cast<char*>("ps2"));
-//     if(!ps2)
-//       {
-//       PySys_SetObject(const_cast<char*>("ps2"), ps2 = PyString_FromString("... "));
-//       Py_XDECREF(ps2);
-//       }
-//     this->MultilineStatement = false;
-//   }
-
-//----------------------------------------------------------------------------
-  ~pqImplementation()
+  ~ctkPythonShellPrivate()
   {
-//     this->destroyInterpretor();
   }
 
 //----------------------------------------------------------------------------
-//   void destroyInterpretor()
-//     {
-//     if (this->Interpreter)
-//       {
-//       QTextCharFormat format = this->Console.getFormat();
-//       format.setForeground(QColor(255, 0, 0));
-//       this->Console.setFormat(format);
-//       this->Console.printString("\n... restarting ...\n");
-//       format.setForeground(QColor(0, 0, 0));
-//       this->Console.setFormat(format);
-// 
-//       this->Interpreter->MakeCurrent();
-// 
-//       // Restore Python's original stdout and stderr
-//       PySys_SetObject(const_cast<char*>("stdout"), PySys_GetObject(const_cast<char*>("__stdout__")));
-//       PySys_SetObject(const_cast<char*>("stderr"), PySys_GetObject(const_cast<char*>("__stderr__")));
-//       this->Interpreter->ReleaseControl();
-//       this->Interpreter->Delete();
-//       }
-//     this->Interpreter = 0;
-//     }
-
-  //----------------------------------------------------------------------------
   void initializeInteractiveConsole()
   {
     // set up the code.InteractiveConsole instance that we'll use.
@@ -220,7 +184,6 @@ struct ctkPythonShell::pqImplementation
       qCritical("Failed to locate the InteractiveConsole object.");
       }
   }
-
 
 //----------------------------------------------------------------------------
   bool push(const QString& code)
@@ -247,8 +210,9 @@ struct ctkPythonShell::pqImplementation
       }
     return ret_value;
   }
+
 //----------------------------------------------------------------------------
-void resetBuffer()
+  void resetBuffer()
   {
   if (this->InteractiveConsole)
     {
@@ -306,39 +270,41 @@ void resetBuffer()
   PyObject* InteractiveConsole;
 };
 
-/////////////////////////////////////////////////////////////////////////
-// ctkPythonShell
+//----------------------------------------------------------------------------
+// ctkPythonShell methods
 
 //----------------------------------------------------------------------------
-ctkPythonShell::ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget* _parent):
-  Superclass(_parent),
-  Implementation(new pqImplementation(this, pythonManager))
+ctkPythonShell::ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget* parentObject):
+  Superclass(parentObject),
+  d_ptr(new ctkPythonShellPrivate(*this, pythonManager))
 {
+  Q_D(ctkPythonShell);
+
   // Layout UI
   QVBoxLayout* const boxLayout = new QVBoxLayout(this);
   boxLayout->setMargin(0);
-  boxLayout->addWidget(&this->Implementation->Console);
+  boxLayout->addWidget(&d->Console);
 
   this->setObjectName("pythonShell");
 
-  this->setFocusProxy(&this->Implementation->Console);
+  this->setFocusProxy(&d->Console);
 
   ctkPythonShellCompleter* completer = new ctkPythonShellCompleter(*this);
-  this->Implementation->Console.setCompleter(completer);
+  d->Console.setCompleter(completer);
   
   QObject::connect(
-    &this->Implementation->Console, SIGNAL(executeCommand(const QString&)), 
+    &d->Console, SIGNAL(executeCommand(const QString&)),
     this, SLOT(onExecuteCommand(const QString&)));
 
   // The call to mainContext() ensures that python has been initialized.
-  Q_ASSERT(this->Implementation->PythonManager);
-  this->Implementation->PythonManager->mainContext();
-  this->Implementation->initializeInteractiveConsole();
+  Q_ASSERT(d->PythonManager);
+  d->PythonManager->mainContext();
+  d->initializeInteractiveConsole();
 
-  QTextCharFormat format = this->Implementation->Console.getFormat();
+  QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(0, 0, 255));
-  this->Implementation->Console.setFormat(format);
-  this->Implementation->Console.printString(
+  d->Console.setFormat(format);
+  d->Console.printString(
     QString("Python %1 on %2\n").arg(Py_GetVersion()).arg(Py_GetPlatform()));
   this->promptForInput();
 
@@ -353,27 +319,28 @@ ctkPythonShell::ctkPythonShell(ctkAbstractPythonManager* pythonManager, QWidget*
 //----------------------------------------------------------------------------
 ctkPythonShell::~ctkPythonShell()
 {
-  delete this->Implementation;
 }
 
 //----------------------------------------------------------------------------
 void ctkPythonShell::clear()
 {
-  this->Implementation->Console.clear();
-  this->Implementation->promptForInput();
+  Q_D(ctkPythonShell);
+  d->Console.clear();
+  d->promptForInput();
 }
 
 //----------------------------------------------------------------------------
 void ctkPythonShell::executeScript(const QString& script)
 {
+  Q_D(ctkPythonShell);
   Q_UNUSED(script);
   
   this->printStdout("\n");
   emit this->executing(true);
-//   this->Implementation->Interpreter->RunSimpleString(
+//   d->Interpreter->RunSimpleString(
 //     script.toAscii().data());
   emit this->executing(false);
-  this->Implementation->promptForInput();
+  d->promptForInput();
 }
 
 //----------------------------------------------------------------------------
@@ -385,7 +352,6 @@ QStringList ctkPythonShell::getPythonAttributes(const QString& pythonVariableNam
   PyObject* dict = PyImport_GetModuleDict();
   PyObject* object = PyDict_GetItemString(dict, "__main__");
   Py_INCREF(object);
-
 
   if (!pythonVariableName.isEmpty())
     {
@@ -442,11 +408,13 @@ QStringList ctkPythonShell::getPythonAttributes(const QString& pythonVariableNam
 //----------------------------------------------------------------------------
 void ctkPythonShell::printStdout(const QString& text)
 {
-  QTextCharFormat format = this->Implementation->Console.getFormat();
+  Q_D(ctkPythonShell);
+
+  QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(0, 150, 0));
-  this->Implementation->Console.setFormat(format);
+  d->Console.setFormat(format);
   
-  this->Implementation->Console.printString(text);
+  d->Console.printString(text);
   
   QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
@@ -454,21 +422,25 @@ void ctkPythonShell::printStdout(const QString& text)
 //----------------------------------------------------------------------------
 void ctkPythonShell::printMessage(const QString& text)
 {
-  QTextCharFormat format = this->Implementation->Console.getFormat();
+  Q_D(ctkPythonShell);
+
+  QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(0, 0, 150));
-  this->Implementation->Console.setFormat(format);
+  d->Console.setFormat(format);
   
-  this->Implementation->Console.printString(text);
+  d->Console.printString(text);
 }
 
 //----------------------------------------------------------------------------
 void ctkPythonShell::printStderr(const QString& text)
 {
-  QTextCharFormat format = this->Implementation->Console.getFormat();
+  Q_D(ctkPythonShell);
+
+  QTextCharFormat format = d->Console.getFormat();
   format.setForeground(QColor(255, 0, 0));
-  this->Implementation->Console.setFormat(format);
+  d->Console.setFormat(format);
   
-  this->Implementation->Console.printString(text);
+  d->Console.printString(text);
   
   QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
@@ -476,6 +448,8 @@ void ctkPythonShell::printStderr(const QString& text)
 //----------------------------------------------------------------------------
 void ctkPythonShell::onExecuteCommand(const QString& Command)
 {
+  Q_D(ctkPythonShell);
+
   QString command = Command;
   command.replace(QRegExp("\\s*$"), "");
   this->internalExecuteCommand(command);
@@ -487,19 +461,21 @@ void ctkPythonShell::onExecuteCommand(const QString& Command)
     {
     indent = regExp.cap(1);
     }
-  this->Implementation->promptForInput(indent);
+  d->promptForInput(indent);
 }
 
 //----------------------------------------------------------------------------
 void ctkPythonShell::promptForInput()
 {
-  this->Implementation->promptForInput();
+  Q_D(ctkPythonShell);
+  d->promptForInput();
 }
 
 //----------------------------------------------------------------------------
 void ctkPythonShell::internalExecuteCommand(const QString& command)
 {
+  Q_D(ctkPythonShell);
   emit this->executing(true);  
-  this->Implementation->executeCommand(command);
+  d->executeCommand(command);
   emit this->executing(false);
 }
