@@ -60,6 +60,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // CTK includes
 #include "ctkWidgetsExport.h"
 
+class ctkConsoleWidgetPrivate;
 class ctkConsoleWidgetCompleter;
 
 
@@ -73,7 +74,7 @@ class CTK_WIDGETS_EXPORT ctkConsoleWidget : public QWidget
   Q_OBJECT
   
 public:
-  ctkConsoleWidget(QWidget* parent = 0);
+  ctkConsoleWidget(QWidget* parentObject = 0);
   virtual ~ctkConsoleWidget();
 
   /// Returns the current formatting that will be used by printString
@@ -111,15 +112,16 @@ public slots:
   /// Determines the word using QTextCursor::StartOfWord, EndOfWord.
   void insertCompletion(const QString& text);
 
+protected:
+
+protected:
+  QScopedPointer<ctkConsoleWidgetPrivate> d_ptr;
+
 private:
-  ctkConsoleWidget(const ctkConsoleWidget&);
-  ctkConsoleWidget& operator=(const ctkConsoleWidget&);
+  Q_DECLARE_PRIVATE(ctkConsoleWidget);
+  Q_DISABLE_COPY(ctkConsoleWidget);
 
   void internalExecuteCommand(const QString& Command);
-
-  class pqImplementation;
-  pqImplementation* const Implementation;
-  friend class pqImplementation;
 };
 
 //-----------------------------------------------------------------------------
