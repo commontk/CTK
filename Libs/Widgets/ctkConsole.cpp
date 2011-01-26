@@ -365,7 +365,7 @@ void ctkConsolePrivate::internalExecuteCommand()
   c.insertText("\n");
 
   this->InteractivePosition = this->documentEnd();
-  q->internalExecuteCommand(command);
+  emit q->executeCommand(command);
 }
 
 //-----------------------------------------------------------------------------
@@ -501,11 +501,5 @@ void ctkConsole::clear()
   // For some reason the QCompleter tries to set the focus policy to
   // NoFocus, set let's make sure we set it back to the default WheelFocus.
   d->setFocusPolicy(Qt::WheelFocus);
-}
-
-//-----------------------------------------------------------------------------
-void ctkConsole::internalExecuteCommand(const QString& Command)
-{
-  emit this->executeCommand(Command);
 }
 

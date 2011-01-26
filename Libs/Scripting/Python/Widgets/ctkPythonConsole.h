@@ -52,10 +52,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef __ctkPythonConsole_h
 #define __ctkPythonConsole_h
 
-// Qt includes
-#include <QWidget>
-
 // CTK includes
+#include <ctkConsole.h>
 #include "ctkScriptingPythonWidgetsExport.h"
 
 /**
@@ -69,12 +67,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkPythonConsolePrivate;
 class ctkAbstractPythonManager;
 
-class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonConsole : public QWidget
+class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonConsole : public ctkConsole
 {
   Q_OBJECT
   
 public:
-  typedef QWidget Superclass;
+  typedef ctkConsole Superclass;
   ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject = 0);
   ~ctkPythonConsole();
 
@@ -95,7 +93,7 @@ protected slots:
   void printStderr(const QString&);
   void printStdout(const QString&);
 
-  void onExecuteCommand(const QString&);
+  void onExecutePythonCommand(const QString&);
 
 protected:
   QScopedPointer<ctkPythonConsolePrivate> d_ptr;

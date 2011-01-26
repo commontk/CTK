@@ -118,8 +118,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkConsole);
   Q_DISABLE_COPY(ctkConsole);
-
-  void internalExecuteCommand(const QString& Command);
 };
 
 //-----------------------------------------------------------------------------
