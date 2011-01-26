@@ -199,7 +199,25 @@ void ctkPluginFrameworkTestRunner::addPluginPath(const QString& path, bool insta
   Q_D(ctkPluginFrameworkTestRunner);
   d->pluginPaths.push_back(qMakePair(path, install));
 #ifdef _WIN32
-  if(_putenv_s("PATH", path.toLatin1().data()))
+#ifdef __MINGW32__
+  QString pathVar("PATH");
+  QString oldPath(getenv("PATH"));
+  pathVar += "=" + oldPath + ";" + path;
+  if(_putenv(qPrintable(pathVar)))
+#else
+  std::size_t bufferLength;
+  getenv_s(&bufferLength, NULL, 0, "PATH");
+  QString newPath = path;
+  if (bufferLength > 0)
+  {
+    char* oldPath = new char[bufferLength];
+	getenv_s(&bufferLength, oldPath, bufferLength, "PATH");
+	newPath.append(";").append(oldPath);
+	delete[] oldPath;
+  }
+  qDebug() << "new PATH:" << newPath;
+  if(_putenv_s("PATH", qPrintable(newPath)))
+#endif
   {
     LPVOID lpMsgBuf;
     DWORD dw = GetLastError(); 
