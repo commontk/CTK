@@ -57,50 +57,44 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QKeyEvent>
 #include <QPointer>
 #include <QTextCursor>
-#include <QTextEdit>
 #include <QVBoxLayout>
 #include <QScrollBar>
 
 // CTK includes
 #include "ctkConsole.h"
+#include "ctkConsole_p.h"
 
 //-----------------------------------------------------------------------------
-// ctkConsolePrivate
+// ctkConsolePrivate methods
 
 //-----------------------------------------------------------------------------
-class ctkConsolePrivate : public QTextEdit
+ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
+  QTextEdit(&object),
+  q_ptr(&object),
+  InteractivePosition(documentEnd())
 {
-  Q_DECLARE_PUBLIC(ctkConsole);
-protected:
-  ctkConsole* const q_ptr;
-public:
-  ctkConsolePrivate(ctkConsole& object) :
-    QTextEdit(&object),
-    q_ptr(&object),
-    InteractivePosition(documentEnd())
-  {
-    this->setTabChangesFocus(false);
-    this->setAcceptDrops(false);
-    this->setAcceptRichText(false);
-    this->setUndoRedoEnabled(false);
-    
-    QFont f;
-    f.setFamily("Courier");
-    f.setStyleHint(QFont::TypeWriter);
-    f.setFixedPitch(true);
-    
-    QTextCharFormat format;
-    format.setFont(f);
-    format.setForeground(QColor(0, 0, 0));
-    this->setCurrentCharFormat(format);
-    
-    this->CommandHistory.append("");
-    this->CommandPosition = 0;
-  }
+  this->setTabChangesFocus(false);
+  this->setAcceptDrops(false);
+  this->setAcceptRichText(false);
+  this->setUndoRedoEnabled(false);
+  
+  QFont f;
+  f.setFamily("Courier");
+  f.setStyleHint(QFont::TypeWriter);
+  f.setFixedPitch(true);
+  
+  QTextCharFormat format;
+  format.setFont(f);
+  format.setForeground(QColor(0, 0, 0));
+  this->setCurrentCharFormat(format);
+  
+  this->CommandHistory.append("");
+  this->CommandPosition = 0;
+}
 
-  void keyPressEvent(QKeyEvent* e)
-  {
-
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
+{
   if (this->Completer && this->Completer->popup()->isVisible())
     {
     // The following keys are forwarded by the completer to the widget
@@ -210,7 +204,7 @@ public:
           }
         break;
         
-  
+
       case Qt::Key_Delete:
         e->accept();
         QTextEdit::keyPressEvent(e);
@@ -257,155 +251,146 @@ public:
         this->updateCompleterIfVisible();
         break;
       }
-  }
+}
   
-  /// Returns the end of the document
-  /*const*/ int documentEnd()
-  {
-    QTextCursor c(this->document());
-    c.movePosition(QTextCursor::End);
-    return c.position();
-  }
+//-----------------------------------------------------------------------------
+/*const*/ int ctkConsolePrivate::documentEnd()
+{
+  QTextCursor c(this->document());
+  c.movePosition(QTextCursor::End);
+  return c.position();
+}
 
-  void focusOutEvent(QFocusEvent *e)
-  {
-    QTextEdit::focusOutEvent(e);
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::focusOutEvent(QFocusEvent *e)
+{
+  QTextEdit::focusOutEvent(e);
 
-    // For some reason the QCompleter tries to set the focus policy to
-    // NoFocus, set let's make sure we set it back to the default WheelFocus.
-    this->setFocusPolicy(Qt::WheelFocus);
-  }
+  // For some reason the QCompleter tries to set the focus policy to
+  // NoFocus, set let's make sure we set it back to the default WheelFocus.
+  this->setFocusPolicy(Qt::WheelFocus);
+}
 
-  void updateCompleterIfVisible()
-  {
-    if (this->Completer && this->Completer->popup()->isVisible())
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::updateCompleterIfVisible()
+{
+  if (this->Completer && this->Completer->popup()->isVisible())
+    {
+    this->updateCompleter();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::selectCompletion()
+{
+  Q_Q(ctkConsole);
+  if (this->Completer && this->Completer->completionCount() == 1)
+    {
+    q->insertCompletion(this->Completer->currentCompletion());
+    this->Completer->popup()->hide();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::updateCompleter()
+{
+  if (this->Completer)
+    {
+    // Get the text between the current cursor position
+    // and the start of the line
+    QTextCursor text_cursor = this->textCursor();
+    text_cursor.setPosition(this->InteractivePosition, QTextCursor::KeepAnchor);
+    QString commandText = text_cursor.selectedText();
+
+    // Call the completer to update the completion model
+    this->Completer->updateCompletionModel(commandText);
+
+    // Place and show the completer if there are available completions
+    if (this->Completer->completionCount())
       {
-      this->updateCompleter();
+      // Get a QRect for the cursor at the start of the
+      // current word and then translate it down 8 pixels.
+      text_cursor = this->textCursor();
+      text_cursor.movePosition(QTextCursor::StartOfWord);
+      QRect cr = this->cursorRect(text_cursor);
+      cr.translate(0,8);
+      cr.setWidth(this->Completer->popup()->sizeHintForColumn(0)
+        + this->Completer->popup()->verticalScrollBar()->sizeHint().width());
+      this->Completer->complete(cr);
       }
-  }
-
-  /// If there is exactly 1 completion, insert it and hide the completer,
-  /// else do nothing.
-  void selectCompletion()
-  {
-    Q_Q(ctkConsole);
-    if (this->Completer && this->Completer->completionCount() == 1)
+    else
       {
-      q->insertCompletion(this->Completer->currentCompletion());
       this->Completer->popup()->hide();
       }
-  }
-
-  void updateCompleter()
-  {
-    if (this->Completer)
-      {
-      // Get the text between the current cursor position
-      // and the start of the line
-      QTextCursor text_cursor = this->textCursor();
-      text_cursor.setPosition(this->InteractivePosition, QTextCursor::KeepAnchor);
-      QString commandText = text_cursor.selectedText();
-
-      // Call the completer to update the completion model
-      this->Completer->updateCompletionModel(commandText);
-
-      // Place and show the completer if there are available completions
-      if (this->Completer->completionCount())
-        {
-        // Get a QRect for the cursor at the start of the
-        // current word and then translate it down 8 pixels.
-        text_cursor = this->textCursor();
-        text_cursor.movePosition(QTextCursor::StartOfWord);
-        QRect cr = this->cursorRect(text_cursor);
-        cr.translate(0,8);
-        cr.setWidth(this->Completer->popup()->sizeHintForColumn(0)
-          + this->Completer->popup()->verticalScrollBar()->sizeHint().width());
-        this->Completer->complete(cr);
-        }
-      else
-        {
-        this->Completer->popup()->hide();
-        }
-      }
-  }
-  
-  /// Update the contents of the command buffer from the contents of the widget
-  void updateCommandBuffer()
-  {
-    this->commandBuffer() = this->toPlainText().mid(this->InteractivePosition);
-  }
-  
-  /// Replace the contents of the command buffer, updating the display
-  void replaceCommandBuffer(const QString& Text)
-  {
-    this->commandBuffer() = Text;
-  
-    QTextCursor c(this->document());
-    c.setPosition(this->InteractivePosition);
-    c.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
-    c.removeSelectedText();
-    c.insertText(Text);
-  }
-  
-  /// References the buffer where the current un-executed command is stored
-  QString& commandBuffer()
-  {
-    return this->CommandHistory.back();
-  }
-  
-  /// Implements command-execution
-  void internalExecuteCommand()
-    {
-    Q_Q(ctkConsole);
-
-    // First update the history cache. It's essential to update the
-    // this->CommandPosition before calling internalExecuteCommand() since that
-    // can result in a clearing of the current command (BUG #8765).
-    QString command = this->commandBuffer();
-    if (!command.isEmpty()) // Don't store empty commands in the history
-      {
-      this->CommandHistory.push_back("");
-      this->CommandPosition = this->CommandHistory.size() - 1;
-      }
-    QTextCursor c(this->document());
-    c.movePosition(QTextCursor::End);
-    c.insertText("\n");
-
-    this->InteractivePosition = this->documentEnd();
-    q->internalExecuteCommand(command);
     }
+}
+  
+//-----------------------------------------------------------------------------c
+void ctkConsolePrivate::updateCommandBuffer()
+{
+  this->commandBuffer() = this->toPlainText().mid(this->InteractivePosition);
+}
+  
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::replaceCommandBuffer(const QString& Text)
+{
+  this->commandBuffer() = Text;
 
-  void setCompleter(ctkConsoleCompleter* completer)
+  QTextCursor c(this->document());
+  c.setPosition(this->InteractivePosition);
+  c.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+  c.removeSelectedText();
+  c.insertText(Text);
+}
+  
+//-----------------------------------------------------------------------------
+QString& ctkConsolePrivate::commandBuffer()
+{
+  return this->CommandHistory.back();
+}
+  
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::internalExecuteCommand()
+{
+  Q_Q(ctkConsole);
+
+  // First update the history cache. It's essential to update the
+  // this->CommandPosition before calling internalExecuteCommand() since that
+  // can result in a clearing of the current command (BUG #8765).
+  QString command = this->commandBuffer();
+  if (!command.isEmpty()) // Don't store empty commands in the history
     {
-    Q_Q(ctkConsole);
-
-    if (this->Completer)
-      {
-      this->Completer->setWidget(0);
-      QObject::disconnect(this->Completer, SIGNAL(activated(const QString&)),
-                          q, SLOT(insertCompletion(const QString&)));
-
-      }
-    this->Completer = completer;
-    if (this->Completer)
-      {
-      this->Completer->setWidget(this);
-      QObject::connect(this->Completer, SIGNAL(activated(const QString&)),
-                       q, SLOT(insertCompletion(const QString&)));
-      }
+    this->CommandHistory.push_back("");
+    this->CommandPosition = this->CommandHistory.size() - 1;
     }
+  QTextCursor c(this->document());
+  c.movePosition(QTextCursor::End);
+  c.insertText("\n");
 
-  /// A custom completer
-  QPointer<ctkConsoleCompleter> Completer;
+  this->InteractivePosition = this->documentEnd();
+  q->internalExecuteCommand(command);
+}
 
-  /** Stores the beginning of the area of interactive input, outside which
-  changes can't be made to the text edit contents */
-  int InteractivePosition;
-  /// Stores command-history, plus the current command buffer
-  QStringList CommandHistory;
-  /// Stores the current position in the command-history
-  int CommandPosition;
-};
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::setCompleter(ctkConsoleCompleter* completer)
+{
+  Q_Q(ctkConsole);
+
+  if (this->Completer)
+    {
+    this->Completer->setWidget(0);
+    QObject::disconnect(this->Completer, SIGNAL(activated(const QString&)),
+                        q, SLOT(insertCompletion(const QString&)));
+
+    }
+  this->Completer = completer;
+  if (this->Completer)
+    {
+    this->Completer->setWidget(this);
+    QObject::connect(this->Completer, SIGNAL(activated(const QString&)),
+                     q, SLOT(insertCompletion(const QString&)));
+    }
+}
 
 //-----------------------------------------------------------------------------
 // ctkConsole methods

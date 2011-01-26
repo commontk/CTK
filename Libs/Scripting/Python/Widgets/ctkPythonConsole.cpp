@@ -143,7 +143,6 @@ public:
   ctkPythonConsole& Parent;
 };
 
-
 //----------------------------------------------------------------------------
 // ctkPythonConsolePrivate
 
@@ -154,112 +153,20 @@ class ctkPythonConsolePrivate
 protected:
   ctkPythonConsole* const q_ptr;
 public:
-  ctkPythonConsolePrivate(ctkPythonConsole& object, ctkAbstractPythonManager* pythonManager)
-    : q_ptr(&object), Console(&object), PythonManager(pythonManager), MultilineStatement(false),
-    InteractiveConsole(0)
-  {
-  }
+  ctkPythonConsolePrivate(ctkPythonConsole& object, ctkAbstractPythonManager* pythonManager);
+  ~ctkPythonConsolePrivate();
 
-//----------------------------------------------------------------------------
-  ~ctkPythonConsolePrivate()
-  {
-  }
+  void initializeInteractiveConsole();
 
-//----------------------------------------------------------------------------
-  void initializeInteractiveConsole()
-  {
-    // set up the code.InteractiveConsole instance that we'll use.
-    const char* code =
-      "import code\n"
-      "__ctkConsole=code.InteractiveConsole(locals())\n";
-    PyRun_SimpleString(code);
+  bool push(const QString& code);
 
-    // Now get the reference to __ctkConsole and save the pointer.
-    PyObject* main_module = PyImport_AddModule("__main__");
-    PyObject* global_dict = PyModule_GetDict(main_module);
-    this->InteractiveConsole = PyDict_GetItemString(
-      global_dict, "__ctkConsole");
-    if (!this->InteractiveConsole)
-      {
-      qCritical("Failed to locate the InteractiveConsole object.");
-      }
-  }
+  void resetBuffer();
 
-//----------------------------------------------------------------------------
-  bool push(const QString& code)
-  {
-    bool ret_value = false;
+  void executeCommand(const QString& command);
 
-    QString buffer = code;
-    // The embedded python interpreter cannot handle DOS line-endings, see
-    // http://sourceforge.net/tracker/?group_id=5470&atid=105470&func=detail&aid=1167922
-    buffer.remove('\r');
+  void promptForInput(const QString& indent = QString());
 
-    PyObject *res = PyObject_CallMethod(this->InteractiveConsole,
-                                        const_cast<char*>("push"),
-                                        const_cast<char*>("z"),
-                                        buffer.toAscii().data());
-    if (res)
-      {
-      int status = 0;
-      if (PyArg_Parse(res, "i", &status))
-        {
-        ret_value = (status > 0);
-        }
-      Py_DECREF(res);
-      }
-    return ret_value;
-  }
-
-//----------------------------------------------------------------------------
-  void resetBuffer()
-  {
-  if (this->InteractiveConsole)
-    {
-    //this->MakeCurrent();
-    const char* code = "__ctkConsole.resetbuffer()\n";
-    PyRun_SimpleString(code);
-    //this->ReleaseControl();
-    }
-  }
-
-//----------------------------------------------------------------------------
-  void executeCommand(const QString& command)
-  {
-    this->MultilineStatement = this->push(command);
-//    if (command.length())
-//      {
-//      Q_ASSERT(this->PythonManager);
-//      this->PythonManager->executeString(command);
-//      }
-  }
-  
-//----------------------------------------------------------------------------
-  void promptForInput(const QString& indent=QString())
-  {
-    QTextCharFormat format = this->Console.getFormat();
-    format.setForeground(QColor(0, 0, 0));
-    this->Console.setFormat(format);
-
-//     this->Interpreter->MakeCurrent();
-    if(!this->MultilineStatement)
-      {
-      this->Console.prompt(">>> ");
-      //this->Console.prompt(
-      //  PyString_AsString(PySys_GetObject(const_cast<char*>("ps1"))));
-      }
-    else
-      {
-      this->Console.prompt("... ");
-      //this->Console.prompt(
-      //  PyString_AsString(PySys_GetObject(const_cast<char*>("ps2"))));
-      }
-    this->Console.printCommand(indent);
-//     this->Interpreter->ReleaseControl();
-  }
-
-  /// Provides a console for gathering user input and displaying 
-  /// Python output
+  /// Provides a console for gathering user input and displaying Python output
   ctkConsole Console;
 
   ctkAbstractPythonManager* PythonManager;
@@ -269,6 +176,115 @@ public:
 
   PyObject* InteractiveConsole;
 };
+
+//----------------------------------------------------------------------------
+// ctkPythonConsolePrivate methods
+
+//----------------------------------------------------------------------------
+ctkPythonConsolePrivate::ctkPythonConsolePrivate(
+  ctkPythonConsole& object, ctkAbstractPythonManager* pythonManager)
+  : q_ptr(&object), Console(&object), PythonManager(pythonManager), MultilineStatement(false),
+  InteractiveConsole(0)
+{
+}
+
+//----------------------------------------------------------------------------
+ctkPythonConsolePrivate::~ctkPythonConsolePrivate()
+{
+}
+
+//----------------------------------------------------------------------------
+void ctkPythonConsolePrivate::initializeInteractiveConsole()
+{
+  // set up the code.InteractiveConsole instance that we'll use.
+  const char* code =
+    "import code\n"
+    "__ctkConsole=code.InteractiveConsole(locals())\n";
+  PyRun_SimpleString(code);
+
+  // Now get the reference to __ctkConsole and save the pointer.
+  PyObject* main_module = PyImport_AddModule("__main__");
+  PyObject* global_dict = PyModule_GetDict(main_module);
+  this->InteractiveConsole = PyDict_GetItemString(
+    global_dict, "__ctkConsole");
+  if (!this->InteractiveConsole)
+    {
+    qCritical("Failed to locate the InteractiveConsole object.");
+    }
+}
+
+//----------------------------------------------------------------------------
+bool ctkPythonConsolePrivate::push(const QString& code)
+{
+  bool ret_value = false;
+
+  QString buffer = code;
+  // The embedded python interpreter cannot handle DOS line-endings, see
+  // http://sourceforge.net/tracker/?group_id=5470&atid=105470&func=detail&aid=1167922
+  buffer.remove('\r');
+
+  PyObject *res = PyObject_CallMethod(this->InteractiveConsole,
+                                      const_cast<char*>("push"),
+                                      const_cast<char*>("z"),
+                                      buffer.toAscii().data());
+  if (res)
+    {
+    int status = 0;
+    if (PyArg_Parse(res, "i", &status))
+      {
+      ret_value = (status > 0);
+      }
+    Py_DECREF(res);
+    }
+  return ret_value;
+}
+
+//----------------------------------------------------------------------------
+void ctkPythonConsolePrivate::resetBuffer()
+{
+  if (this->InteractiveConsole)
+  {
+    //this->MakeCurrent();
+    const char* code = "__ctkConsole.resetbuffer()\n";
+    PyRun_SimpleString(code);
+    //this->ReleaseControl();
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkPythonConsolePrivate::executeCommand(const QString& command)
+{
+  this->MultilineStatement = this->push(command);
+//  if (command.length())
+//    {
+//    Q_ASSERT(this->PythonManager);
+//    this->PythonManager->executeString(command);
+//    }
+}
+  
+//----------------------------------------------------------------------------
+void ctkPythonConsolePrivate::promptForInput(const QString& indent)
+{
+  QTextCharFormat format = this->Console.getFormat();
+  format.setForeground(QColor(0, 0, 0));
+  this->Console.setFormat(format);
+
+//     this->Interpreter->MakeCurrent();
+  if(!this->MultilineStatement)
+    {
+    this->Console.prompt(">>> ");
+    //this->Console.prompt(
+    //  PyString_AsString(PySys_GetObject(const_cast<char*>("ps1"))));
+    }
+  else
+    {
+    this->Console.prompt("... ");
+    //this->Console.prompt(
+    //  PyString_AsString(PySys_GetObject(const_cast<char*>("ps2"))));
+    }
+  this->Console.printCommand(indent);
+//     this->Interpreter->ReleaseControl();
+}
 
 //----------------------------------------------------------------------------
 // ctkPythonConsole methods

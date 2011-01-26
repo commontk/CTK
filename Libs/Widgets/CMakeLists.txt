@@ -35,6 +35,7 @@ SET(KIT_SRCS
   ctkColorPickerButton.h
   ctkConsole.cpp
   ctkConsole.h
+  ctkConsole_p.h
   ctkConfirmExitDialog.cpp
   ctkConfirmExitDialog.h
   ctkCoordinatesWidget.cpp
