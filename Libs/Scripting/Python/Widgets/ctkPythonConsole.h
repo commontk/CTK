@@ -56,13 +56,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctkConsole.h>
 #include "ctkScriptingPythonWidgetsExport.h"
 
-/**
-  Qt widget that provides an interactive "shell" interface to an embedded Python interpreter.
-  You can put an instance of ctkPythonConsole in a dialog or a window, and the user will be able
-  to enter Python commands and see their output, while the UI is still responsive.
-  
-  \sa pqConsoleWidget, pqPythonDialog
-*/  
+
+///
+///  Qt widget that provides an interactive "shell" interface to an embedded Python interpreter.
+///  You can put an instance of ctkPythonConsole in a dialog or a window, and the user will be able
+/// to enter Python commands and see their output, while the UI is still responsive.
+///
+/// \sa ctkConsole
 
 class ctkPythonConsolePrivate;
 class ctkAbstractPythonManager;
@@ -74,7 +74,7 @@ class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonConsole : public ctkConsole
 public:
   typedef ctkConsole Superclass;
   ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject = 0);
-  ~ctkPythonConsole();
+  virtual ~ctkPythonConsole();
 
   /// Prints some text on the shell.
   void printMessage(const QString&);
@@ -94,9 +94,6 @@ protected slots:
   void printStdout(const QString&);
 
   void onExecutePythonCommand(const QString&);
-
-protected:
-  QScopedPointer<ctkPythonConsolePrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(ctkPythonConsole);

@@ -49,8 +49,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-//#include <vtkPython.h> // python first
-
 // Qt includes
 #include <QCoreApplication>
 #include <QResizeEvent>
@@ -65,6 +63,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // CTK includes
 #include <ctkConsole.h>
+#include <ctkConsole_p.h>
 #include <ctkAbstractPythonManager.h>
 #include "ctkPythonConsole.h"
 
@@ -147,11 +146,9 @@ public:
 // ctkPythonConsolePrivate
 
 //----------------------------------------------------------------------------
-class ctkPythonConsolePrivate
+class ctkPythonConsolePrivate : public ctkConsolePrivate
 {
   Q_DECLARE_PUBLIC(ctkPythonConsole);
-protected:
-  ctkPythonConsole* const q_ptr;
 public:
   ctkPythonConsolePrivate(ctkPythonConsole& object, ctkAbstractPythonManager* pythonManager);
   ~ctkPythonConsolePrivate();
@@ -180,8 +177,8 @@ public:
 //----------------------------------------------------------------------------
 ctkPythonConsolePrivate::ctkPythonConsolePrivate(
   ctkPythonConsole& object, ctkAbstractPythonManager* pythonManager)
-  : q_ptr(&object), PythonManager(pythonManager), MultilineStatement(false),
-  InteractiveConsole(0)
+  : ctkConsolePrivate(object), PythonManager(pythonManager),
+    MultilineStatement(false), InteractiveConsole(0)
 {
 }
 
@@ -290,11 +287,9 @@ void ctkPythonConsolePrivate::promptForInput(const QString& indent)
 
 //----------------------------------------------------------------------------
 ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject):
-  Superclass(parentObject),
-  d_ptr(new ctkPythonConsolePrivate(*this, pythonManager))
+  Superclass(new ctkPythonConsolePrivate(*this, pythonManager), parentObject)/*, d_ptr(new ctkPythonConsolePrivate(*this, pythonManager))*/
 {
   Q_D(ctkPythonConsole);
-
   this->setObjectName("pythonConsole");
 
   ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*this);

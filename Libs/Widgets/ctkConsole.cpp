@@ -69,25 +69,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //-----------------------------------------------------------------------------
 ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
-  QTextEdit(&object),
+  QTextEdit(0),
   q_ptr(&object),
   InteractivePosition(documentEnd())
 {
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::init()
+{
+  Q_Q(ctkConsole);
+  this->setParent(q);
   this->setTabChangesFocus(false);
   this->setAcceptDrops(false);
   this->setAcceptRichText(false);
   this->setUndoRedoEnabled(false);
-  
+
   QFont f;
   f.setFamily("Courier");
   f.setStyleHint(QFont::TypeWriter);
   f.setFixedPitch(true);
-  
+
   QTextCharFormat format;
   format.setFont(f);
   format.setForeground(QColor(0, 0, 0));
   this->setCurrentCharFormat(format);
-  
+
   this->CommandHistory.append("");
   this->CommandPosition = 0;
 }
@@ -398,6 +405,17 @@ ctkConsole::ctkConsole(QWidget* parentObject) :
   d_ptr(new ctkConsolePrivate(*this))
 {
   Q_D(ctkConsole);
+  QVBoxLayout* layout = new QVBoxLayout(this);
+  layout->setMargin(0);
+  layout->addWidget(d);
+}
+
+//-----------------------------------------------------------------------------
+ctkConsole::ctkConsole(ctkConsolePrivate * pimpl, QWidget* parentObject) :
+  QWidget(parentObject), d_ptr(pimpl)
+{
+  Q_D(ctkConsole);
+  d->init();
   QVBoxLayout* layout = new QVBoxLayout(this);
   layout->setMargin(0);
   layout->addWidget(d);

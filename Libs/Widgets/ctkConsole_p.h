@@ -37,6 +37,8 @@ public:
 
   ctkConsolePrivate(ctkConsole& object);
 
+  void init();
+
   void keyPressEvent(QKeyEvent* e);
   
   /// Returns the end of the document

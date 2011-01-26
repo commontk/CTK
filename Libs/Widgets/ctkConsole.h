@@ -63,12 +63,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkConsolePrivate;
 class ctkConsoleCompleter;
 
-
-/// Qwidget that provides an interactive console - you can send text to the
+/// QWidget that provides an interactive console - you can send text to the
 /// console by calling printString() and receive user input by connecting to the
 /// executeCommand() slot.
-///  
-/// \sa pqPythonShell, pqOutputWindow
 class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
 {
   Q_OBJECT
@@ -113,6 +110,8 @@ public slots:
   void insertCompletion(const QString& text);
 
 protected:
+  ctkConsole(ctkConsolePrivate * pimpl, QWidget* parentObject);
+
   QScopedPointer<ctkConsolePrivate> d_ptr;
 
 private:
