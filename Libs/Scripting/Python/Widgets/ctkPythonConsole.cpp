@@ -322,7 +322,7 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   d->Console.setFormat(format);
   d->Console.printString(
     QString("Python %1 on %2\n").arg(Py_GetVersion()).arg(Py_GetPlatform()));
-  this->promptForInput();
+  d->promptForInput();
 
   Q_ASSERT(PythonQt::self());
 
@@ -478,13 +478,6 @@ void ctkPythonConsole::onExecuteCommand(const QString& Command)
     indent = regExp.cap(1);
     }
   d->promptForInput(indent);
-}
-
-//----------------------------------------------------------------------------
-void ctkPythonConsole::promptForInput()
-{
-  Q_D(ctkPythonConsole);
-  d->promptForInput();
 }
 
 //----------------------------------------------------------------------------

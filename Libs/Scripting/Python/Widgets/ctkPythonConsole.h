@@ -104,7 +104,6 @@ private:
   Q_DECLARE_PRIVATE(ctkPythonConsole);
   Q_DISABLE_COPY(ctkPythonConsole);
 
-  void promptForInput();
   void internalExecuteCommand(const QString&);
 };
 
