@@ -90,7 +90,7 @@ public:
 
 public slots:
   virtual void clear();
-  void executeScript(const QString&);
+//  void executeScript(const QString&);
 
 protected:
   virtual void executeCommand(const QString& command);

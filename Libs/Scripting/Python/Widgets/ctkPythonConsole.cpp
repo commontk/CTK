@@ -298,19 +298,19 @@ void ctkPythonConsole::clear()
   d->promptForInput();
 }
 
-//----------------------------------------------------------------------------
-void ctkPythonConsole::executeScript(const QString& script)
-{
-  Q_D(ctkPythonConsole);
-  Q_UNUSED(script);
+////----------------------------------------------------------------------------
+//void ctkPythonConsole::executeScript(const QString& script)
+//{
+//  Q_D(ctkPythonConsole);
+//  Q_UNUSED(script);
 
-  d->printOutputMessage("\n");
-  emit this->executing(true);
-//   d->Interpreter->RunSimpleString(
-//     script.toAscii().data());
-  emit this->executing(false);
-  d->promptForInput();
-}
+//  d->printOutputMessage("\n");
+//  emit this->executing(true);
+////   d->Interpreter->RunSimpleString(
+////     script.toAscii().data());
+//  emit this->executing(false);
+//  d->promptForInput();
+//}
 
 //----------------------------------------------------------------------------
 QString ctkPythonConsole::ps1() const
