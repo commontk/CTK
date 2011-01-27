@@ -74,6 +74,8 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_PROPERTY(QColor errorTextColor READ errorTextColor WRITE setErrorTextColor)
   Q_PROPERTY(QColor commandTextColor READ commandTextColor WRITE setCommandTextColor)
   Q_PROPERTY(QColor welcomeTextColor READ welcomeTextColor WRITE setWelcomeTextColor)
+  Q_PROPERTY(QString ps1 READ ps1 WRITE setPs1)
+  Q_PROPERTY(QString ps2 READ ps2 WRITE setPs2)
   
 public:
   ctkConsole(QWidget* parentObject = 0);
@@ -115,6 +117,18 @@ public:
 
   /// Prints text on the console
   void printMessage(const QString& message, const QColor& color);
+
+  /// Returns the string used as primary prompt
+  virtual QString ps1() const;
+
+  /// Set the string used as primary prompt
+  virtual void setPs1(const QString& newPs1);
+
+  /// Returns the string used as secondary prompt
+  virtual QString ps2() const;
+
+  /// Set the string used as secondary prompt
+  virtual void setPs2(const QString& newPs2);
 
 signals:
 

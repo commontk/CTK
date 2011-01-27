@@ -73,7 +73,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
   QTextEdit(0),
   q_ptr(&object),
-  InteractivePosition(documentEnd())
+  InteractivePosition(documentEnd()),
+  MultilineStatement(false), Ps1(">>> "), Ps2("... ")
 {
 }
 
@@ -438,6 +439,26 @@ void ctkConsolePrivate::printCommand(const QString& cmd)
   this->updateCommandBuffer();
 }
 
+//----------------------------------------------------------------------------
+void ctkConsolePrivate::promptForInput(const QString& indent)
+{
+  Q_Q(ctkConsole);
+
+  QTextCharFormat format = q->getFormat();
+  format.setForeground(q->promptColor());
+  q->setFormat(format);
+
+  if(!this->MultilineStatement)
+    {
+    this->prompt(q->ps1());
+    }
+  else
+    {
+    this->prompt(q->ps2());
+    }
+  this->printCommand(indent);
+}
+
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::prompt(const QString& text)
 {
@@ -549,6 +570,14 @@ CTK_SET_CPP(ctkConsole, const QColor&, setCommandTextColor, CommandTextColor);
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QColor, welcomeTextColor, WelcomeTextColor);
 CTK_SET_CPP(ctkConsole, const QColor&, setWelcomeTextColor, WelcomeTextColor);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, QString, ps1, Ps1);
+CTK_SET_CPP(ctkConsole, const QString&, setPs1, Ps1);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, QString, ps2, Ps2);
+CTK_SET_CPP(ctkConsole, const QString&, setPs2, Ps2);
 
 //-----------------------------------------------------------------------------
 void ctkConsole::executeCommand(const QString& command)

@@ -79,6 +79,18 @@ public:
   /// Given a python variable name, lookup its attributes and return them in a string list.
   QStringList pythonAttributes(const QString& pythonVariableName) const;
 
+  /// Returns the string used as primary prompt
+  virtual QString ps1() const;
+
+  /// Set the string used as primary prompt
+  virtual void setPs1(const QString& newPs1);
+
+  /// Returns the string used as secondary prompt
+  virtual QString ps2() const;
+
+  /// Set the string used as secondary prompt
+  virtual void setPs2(const QString& newPs2);
+
 public slots:
   virtual void clear();
   void executeScript(const QString&);

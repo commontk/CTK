@@ -77,8 +77,10 @@ public:
   /// Unlike printMessage(), this will affect the current command being typed.
   void printCommand(const QString& cmd);
 
+  void promptForInput(const QString& indent = QString());
+
   /// Puts out an input accepting prompt.
-  /// It is recommended that one uses prompt instead of printString() to print
+  /// It is recommended that one uses prompt instead of printMessage() to print
   /// an input prompt since this call ensures that the prompt is shown on a new
   /// line.
   void prompt(const QString& text);
@@ -103,6 +105,9 @@ public:
   /// changes can't be made to the text edit contents
   int InteractivePosition;
 
+  /// Indicates if the last statement processes was incomplete.
+  bool MultilineStatement;
+
   /// Stores command-history, plus the current command buffer
   QStringList CommandHistory;
 
@@ -123,6 +128,13 @@ public:
 
   /// Welcome text color
   QColor WelcomeTextColor;
+
+  /// Primary prompt
+  QString Ps1;
+
+  /// Secondary prompt
+  QString Ps2;
+
 };
 
 

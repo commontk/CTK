@@ -157,16 +157,14 @@ public:
 
   bool push(const QString& code);
 
-  void resetBuffer();
+  /// Reset the input buffer of the interactive console
+//  void resetInputBuffer();
 
-  void promptForInput(const QString& indent = QString());
+  void printWelcomeMessage();
 
   ctkAbstractPythonManager* PythonManager;
 
-  /// Indicates if the last statement processes was incomplete.
-  bool MultilineStatement;
-
-  PyObject* InteractiveConsole;
+  PyObject*                 InteractiveConsole;
 };
 
 //----------------------------------------------------------------------------
@@ -176,7 +174,7 @@ public:
 ctkPythonConsolePrivate::ctkPythonConsolePrivate(
   ctkPythonConsole& object, ctkAbstractPythonManager* pythonManager)
   : ctkConsolePrivate(object), PythonManager(pythonManager),
-    MultilineStatement(false), InteractiveConsole(0)
+    InteractiveConsole(0)
 {
 }
 
@@ -191,7 +189,7 @@ void ctkPythonConsolePrivate::initializeInteractiveConsole()
   // set up the code.InteractiveConsole instance that we'll use.
   const char* code =
     "import code\n"
-    "__ctkConsole=code.InteractiveConsole(locals())\n";
+    "__ctkConsole = code.InteractiveConsole(locals())\n";
   PyRun_SimpleString(code);
 
   // Now get the reference to __ctkConsole and save the pointer.
@@ -231,42 +229,26 @@ bool ctkPythonConsolePrivate::push(const QString& code)
   return ret_value;
 }
 
-//----------------------------------------------------------------------------
-void ctkPythonConsolePrivate::resetBuffer()
-{
-  if (this->InteractiveConsole)
-  {
-    //this->MakeCurrent();
-    const char* code = "__ctkConsole.resetbuffer()\n";
-    PyRun_SimpleString(code);
-    //this->ReleaseControl();
-  }
-}
+////----------------------------------------------------------------------------
+//void ctkPythonConsolePrivate::resetInputBuffer()
+//{
+//  if (this->InteractiveConsole)
+//    {
+//    //this->MakeCurrent();
+//    const char* code = "__ctkConsole.resetbuffer()\n";
+//    PyRun_SimpleString(code);
+//    //this->ReleaseControl();
+//    }
+//}
 
 //----------------------------------------------------------------------------
-void ctkPythonConsolePrivate::promptForInput(const QString& indent)
+void ctkPythonConsolePrivate::printWelcomeMessage()
 {
   Q_Q(ctkPythonConsole);
 
-  QTextCharFormat format = q->getFormat();
-  format.setForeground(q->promptColor());
-  q->setFormat(format);
-
-//  this->Interpreter->MakeCurrent();
-  if(!this->MultilineStatement)
-    {
-    this->prompt(">>> ");
-    //q->prompt(
-    //  PyString_AsString(PySys_GetObject(const_cast<char*>("ps1"))));
-    }
-  else
-    {
-    this->prompt("... ");
-    //q->prompt(
-    //  PyString_AsString(PySys_GetObject(const_cast<char*>("ps2"))));
-    }
-  this->printCommand(indent);
-//  this->Interpreter->ReleaseControl();
+  q->printMessage(
+    QString("Python %1 on %2\n").arg(Py_GetVersion()).arg(Py_GetPlatform()),
+    q->welcomeTextColor());
 }
 
 //----------------------------------------------------------------------------
@@ -287,10 +269,11 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   d->PythonManager->mainContext();
   d->initializeInteractiveConsole();
 
-  this->printMessage(
-        QString("Python %1 on %2\n").arg(Py_GetVersion()).arg(Py_GetPlatform()),
-        this->welcomeTextColor());
+  // Set primary and secondary prompt
+  this->setPs1(this->Superclass::ps1());
+  this->setPs2(this->Superclass::ps2());
 
+  d->printWelcomeMessage();
   d->promptForInput();
 
   Q_ASSERT(PythonQt::self()); // PythonQt should be initialized
@@ -388,6 +371,34 @@ QStringList ctkPythonConsole::pythonAttributes(const QString& pythonVariableName
 
 //   this->releaseControl();
   return results;
+}
+
+//----------------------------------------------------------------------------
+QString ctkPythonConsole::ps1() const
+{
+  PyObject * ps1 = PySys_GetObject(const_cast<char*>("ps1"));
+  const char * ps1_str = PyString_AsString(ps1);
+  return QLatin1String(ps1_str);
+}
+
+//----------------------------------------------------------------------------
+void ctkPythonConsole::setPs1(const QString& newPs1)
+{
+  PySys_SetObject(const_cast<char*>("ps1"), PyString_FromString(newPs1.toAscii().data()));
+}
+
+//----------------------------------------------------------------------------
+QString ctkPythonConsole::ps2() const
+{
+  PyObject * ps2 = PySys_GetObject(const_cast<char*>("ps2"));
+  const char * ps2_str = PyString_AsString(ps2);
+  return QLatin1String(ps2_str);
+}
+
+//----------------------------------------------------------------------------
+void ctkPythonConsole::setPs2(const QString& newPs2)
+{
+  PySys_SetObject(const_cast<char*>("ps2"), PyString_FromString(newPs2.toAscii().data()));
 }
 
 //----------------------------------------------------------------------------
