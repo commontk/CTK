@@ -76,9 +76,6 @@ public:
   ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject = 0);
   virtual ~ctkPythonConsole();
 
-  /// Given a python variable name, lookup its attributes and return them in a string list.
-  QStringList pythonAttributes(const QString& pythonVariableName) const;
-
   /// Returns the string used as primary prompt
   virtual QString ps1() const;
 

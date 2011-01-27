@@ -61,6 +61,10 @@ public:
   /// \sa preInitialization executeInitializationScripts
   void setInitializationFunction(void (*initFunction)());
 
+  /// Given a python variable name, lookup its attributes and return them in a string list.
+  /// \note The variable is looked up from __main__
+  QStringList pythonAttributes(const QString& pythonVariableName) const;
+
 signals:
 
   /// This signal is emitted after python is pre-initialized. Observers can listen

@@ -170,6 +170,63 @@ void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
   this->InitFunction = initFunction;
 }
 
+//----------------------------------------------------------------------------
+QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVariableName) const
+{
+  Q_ASSERT(PyThreadState_GET()->interp);
+  PyObject* dict = PyImport_GetModuleDict();
+  PyObject* object = PyDict_GetItemString(dict, "__main__");
+  Py_INCREF(object);
+
+  if (!pythonVariableName.isEmpty())
+    {
+    QStringList tmpNames = pythonVariableName.split('.');
+    for (int i = 0; i < tmpNames.size() && object; ++i)
+      {
+      QByteArray tmpName = tmpNames.at(i).toLatin1();
+      PyObject* prevObj = object;
+      if (PyDict_Check(object))
+        {
+        object = PyDict_GetItemString(object, tmpName.data());
+        Py_XINCREF(object);
+        }
+      else
+        {
+        object = PyObject_GetAttrString(object, tmpName.data());
+        }
+      Py_DECREF(prevObj);
+      }
+    PyErr_Clear();
+    }
+
+  QStringList results;
+  if (object)
+    {
+    PyObject* keys = PyObject_Dir(object);
+    if (keys)
+      {
+      PyObject* key;
+      PyObject* value;
+      int nKeys = PyList_Size(keys);
+      for (int i = 0; i < nKeys; ++i)
+        {
+        key = PyList_GetItem(keys, i);
+        value = PyObject_GetAttr(object, key);
+        if (!value)
+          {
+          continue;
+          }
+
+        results << PyString_AsString(key);
+        Py_DECREF(value);
+        }
+      Py_DECREF(keys);
+      }
+    Py_DECREF(object);
+    }
+  return results;
+}
+
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::addObjectToPythonMain(const QString& name, QObject* obj)
 {

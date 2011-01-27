@@ -81,9 +81,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkPythonConsoleCompleter : public ctkConsoleCompleter
 {
 public:
-  ctkPythonConsoleCompleter(ctkPythonConsole& p) : Parent(p)
+  ctkPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager)
+    : PythonManager(pythonManager)
     {
-    this->setParent(&p);
+    this->setParent(&pythonManager);
     }
 
   virtual void updateCompletionModel(const QString& completion)
@@ -126,7 +127,7 @@ public:
     QStringList attrs;
     if (!lookup.isEmpty() || !compareText.isEmpty())
       {
-      attrs = this->Parent.pythonAttributes(lookup);
+      attrs = this->PythonManager.pythonAttributes(lookup);
       }
 
     // Initialize the completion model
@@ -139,7 +140,7 @@ public:
       this->popup()->setCurrentIndex(this->completionModel()->index(0, 0));
       }
     }
-  ctkPythonConsole& Parent;
+  ctkAbstractPythonManager& PythonManager;
 };
 
 //----------------------------------------------------------------------------
@@ -261,13 +262,13 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   Q_D(ctkPythonConsole);
   this->setObjectName("pythonConsole");
 
-  ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*this);
-  this->setCompleter(completer);
-
   // The call to mainContext() ensures that python has been initialized.
   Q_ASSERT(d->PythonManager);
   d->PythonManager->mainContext();
   d->initializeInteractiveConsole();
+
+  ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*d->PythonManager);
+  this->setCompleter(completer);
 
   // Set primary and secondary prompt
   this->setPs1(this->Superclass::ps1());
@@ -309,68 +310,6 @@ void ctkPythonConsole::executeScript(const QString& script)
 //     script.toAscii().data());
   emit this->executing(false);
   d->promptForInput();
-}
-
-//----------------------------------------------------------------------------
-QStringList ctkPythonConsole::pythonAttributes(const QString& pythonVariableName) const
-{
-//   this->makeCurrent();
-
-  Q_ASSERT(PyThreadState_GET()->interp);
-  PyObject* dict = PyImport_GetModuleDict();
-  PyObject* object = PyDict_GetItemString(dict, "__main__");
-  Py_INCREF(object);
-
-  if (!pythonVariableName.isEmpty())
-    {
-    QStringList tmpNames = pythonVariableName.split('.');
-    for (int i = 0; i < tmpNames.size() && object; ++i)
-      {
-      QByteArray tmpName = tmpNames.at(i).toLatin1();
-      PyObject* prevObj = object;
-      if (PyDict_Check(object))
-        {
-        object = PyDict_GetItemString(object, tmpName.data());
-        Py_XINCREF(object);
-        }
-      else
-        {
-        object = PyObject_GetAttrString(object, tmpName.data());
-        }
-      Py_DECREF(prevObj);
-      }
-    PyErr_Clear();
-    }
-
-  QStringList results;
-  if (object)
-    {
-    PyObject* keys = PyObject_Dir(object);
-    if (keys)
-      {
-      PyObject* key;
-      PyObject* value;
-      QString keystr;
-      int nKeys = PyList_Size(keys);
-      for (int i = 0; i < nKeys; ++i)
-        {
-        key = PyList_GetItem(keys, i);
-        value = PyObject_GetAttr(object, key);
-        if (!value)
-          {
-          continue;
-          }
-
-        results << PyString_AsString(key);
-        Py_DECREF(value);
-        }
-      Py_DECREF(keys);
-      }
-    Py_DECREF(object);
-    }
-
-//   this->releaseControl();
-  return results;
 }
 
 //----------------------------------------------------------------------------
