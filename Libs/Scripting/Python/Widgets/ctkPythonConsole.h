@@ -92,6 +92,9 @@ public slots:
 
 //  void executeScript(const QString&);
 
+  /// Reset ps1 and ps2, clear the console and print the welcome message
+  virtual void reset();
+
 protected:
   virtual void executeCommand(const QString& command);
 

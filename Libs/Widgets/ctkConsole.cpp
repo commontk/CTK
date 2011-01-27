@@ -74,7 +74,7 @@ ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
   QTextEdit(0),
   q_ptr(&object),
   InteractivePosition(documentEnd()),
-  MultilineStatement(false), Ps1(">>> "), Ps2("... "), AutomaticIndentation(false)
+  MultilineStatement(false), Ps1("$ "), Ps2("> "),
   EditorHints(ctkConsole::AutomaticIndentation | ctkConsole::RemoveTrailingSpaces)
 {
 }
@@ -515,6 +515,16 @@ void ctkConsolePrivate::prompt(const QString& text)
   this->ensureCursorVisible();
 }
 
+//----------------------------------------------------------------------------
+void ctkConsolePrivate::printWelcomeMessage()
+{
+  Q_Q(ctkConsole);
+
+  q->printMessage(
+    QLatin1String("CTK Console"),
+    q->welcomeTextColor());
+}
+
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::insertCompletion(const QString& completion)
 {
@@ -647,6 +657,21 @@ void ctkConsole::clear()
   // NoFocus, set let's make sure we set it back to the default WheelFocus.
   d->setFocusPolicy(Qt::WheelFocus);
 
+  d->promptForInput();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::reset()
+{
+  Q_D(ctkConsole);
+
+  d->clear();
+
+  // For some reason the QCompleter tries to set the focus policy to
+  // NoFocus, set let's make sure we set it back to the default WheelFocus.
+  d->setFocusPolicy(Qt::WheelFocus);
+
+  d->printWelcomeMessage();
   d->promptForInput();
 }
 

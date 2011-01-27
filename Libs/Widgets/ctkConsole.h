@@ -153,6 +153,9 @@ public slots:
   /// Clears the contents of the console
   virtual void clear();
 
+  /// Clears the contents of the console and display welcome message
+  virtual void reset();
+
 protected:
 
   /// Called whenever the user enters a command

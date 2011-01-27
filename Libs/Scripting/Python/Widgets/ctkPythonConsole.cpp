@@ -267,22 +267,21 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   d->PythonManager->mainContext();
   d->initializeInteractiveConsole();
 
-  ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*d->PythonManager);
-  this->setCompleter(completer);
-
-  // Set primary and secondary prompt
-  this->setPs1(this->Superclass::ps1());
-  this->setPs2(this->Superclass::ps2());
-
-  d->printWelcomeMessage();
-  d->promptForInput();
-
   Q_ASSERT(PythonQt::self()); // PythonQt should be initialized
 
   this->connect(PythonQt::self(), SIGNAL(pythonStdOut(const QString&)),
                 d, SLOT(printOutputMessage(const QString&)));
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString&)),
                 d, SLOT(printErrorMessage(const QString&)));
+
+  ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*d->PythonManager);
+  this->setCompleter(completer);
+
+  // Set primary and secondary prompt
+  this->setPs1(">>> ");
+  this->setPs2("... ");
+
+  this->reset();
 }
 
 //----------------------------------------------------------------------------
@@ -338,3 +337,14 @@ void ctkPythonConsole::executeCommand(const QString& command)
   Q_D(ctkPythonConsole);
   d->MultilineStatement = d->push(command);
 }
+
+//----------------------------------------------------------------------------
+void ctkPythonConsole::reset()
+{
+  // Set primary and secondary prompt
+  this->setPs1(">>> ");
+  this->setPs2("... ");
+
+  this->Superclass::reset();
+}
+

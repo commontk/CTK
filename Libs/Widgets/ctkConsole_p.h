@@ -90,6 +90,9 @@ public:
   /// line.
   void prompt(const QString& text);
 
+  /// Print welcome message
+  virtual void printWelcomeMessage();
+
 public slots:
 
   /// Inserts the given completion string at the cursor.  This will replace
