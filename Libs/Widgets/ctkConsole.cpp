@@ -304,6 +304,25 @@ void ctkConsolePrivate::selectCompletion()
 }
 
 //-----------------------------------------------------------------------------
+void ctkConsolePrivate::setCompleter(ctkConsoleCompleter* completer)
+{
+  if (this->Completer)
+    {
+    this->Completer->setWidget(0);
+    disconnect(this->Completer, SIGNAL(activated(const QString&)),
+               this, SLOT(insertCompletion(const QString&)));
+
+    }
+  this->Completer = completer;
+  if (this->Completer)
+    {
+    this->Completer->setWidget(this);
+    connect(this->Completer, SIGNAL(activated(const QString&)),
+            this, SLOT(insertCompletion(const QString&)));
+    }
+}
+
+//-----------------------------------------------------------------------------
 void ctkConsolePrivate::updateCompleter()
 {
   if (this->Completer)
@@ -384,25 +403,6 @@ void ctkConsolePrivate::internalExecuteCommand()
   emit q->executing(true);
   q->executeCommand(command);
   emit q->executing(false);
-}
-
-//-----------------------------------------------------------------------------
-void ctkConsolePrivate::setCompleter(ctkConsoleCompleter* completer)
-{
-  if (this->Completer)
-    {
-    this->Completer->setWidget(0);
-    disconnect(this->Completer, SIGNAL(activated(const QString&)),
-               this, SLOT(insertCompletion(const QString&)));
-
-    }
-  this->Completer = completer;
-  if (this->Completer)
-    {
-    this->Completer->setWidget(this);
-    connect(this->Completer, SIGNAL(activated(const QString&)),
-            this, SLOT(insertCompletion(const QString&)));
-    }
 }
 
 //-----------------------------------------------------------------------------

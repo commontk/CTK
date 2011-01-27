@@ -54,6 +54,8 @@ public:
   /// else do nothing.
   void selectCompletion();
 
+  void setCompleter(ctkConsoleCompleter* completer);
+
   void updateCompleter();
   
   /// Update the contents of the command buffer from the contents of the widget
@@ -68,8 +70,6 @@ public:
   /// Implements command-execution
   void internalExecuteCommand();
 
-  void setCompleter(ctkConsoleCompleter* completer);
-
   /// Writes the supplied text to the console
   void printString(const QString& text);
 
@@ -77,6 +77,9 @@ public:
   /// Unlike printMessage(), this will affect the current command being typed.
   void printCommand(const QString& cmd);
 
+  /// Puts out an input accepting promp using either ps1 or ps2.
+  /// ps2 will be used if MultilineStatement is True
+  /// \sa ctkConsole::ps1(), ctkConsole::ps2()
   void promptForInput(const QString& indent = QString());
 
   /// Puts out an input accepting prompt.
@@ -92,8 +95,12 @@ public slots:
   /// Determines the word using QTextCursor::StartOfWord, EndOfWord.
   void insertCompletion(const QString& text);
 
+  /// Print a message
+  /// \sa ctkConsole::outputTextColor
   void printOutputMessage(const QString& text);
 
+  /// Print a message
+  /// \sa ctkConsole::errorTextColor
   void printErrorMessage(const QString& text);
 
 public:
