@@ -607,5 +607,7 @@ void ctkConsole::clear()
   // For some reason the QCompleter tries to set the focus policy to
   // NoFocus, set let's make sure we set it back to the default WheelFocus.
   d->setFocusPolicy(Qt::WheelFocus);
+
+  d->promptForInput();
 }
 

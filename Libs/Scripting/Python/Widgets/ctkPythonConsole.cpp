@@ -290,14 +290,6 @@ ctkPythonConsole::~ctkPythonConsole()
 {
 }
 
-//----------------------------------------------------------------------------
-void ctkPythonConsole::clear()
-{
-  Q_D(ctkPythonConsole);
-  this->Superclass::clear();
-  d->promptForInput();
-}
-
 ////----------------------------------------------------------------------------
 //void ctkPythonConsole::executeScript(const QString& script)
 //{

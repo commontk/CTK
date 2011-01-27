@@ -89,7 +89,7 @@ public:
   virtual void setPs2(const QString& newPs2);
 
 public slots:
-  virtual void clear();
+
 //  void executeScript(const QString&);
 
 protected:
