@@ -42,6 +42,8 @@ public:
   void init();
 
   void keyPressEvent(QKeyEvent* e);
+
+  void switchToUserInputTextColor();
   
   /// Returns the end of the document
   int documentEnd() const;
@@ -62,7 +64,7 @@ public:
   void updateCommandBuffer();
   
   /// Replace the contents of the command buffer, updating the display
-  void replaceCommandBuffer(const QString& Text);
+  void replaceCommandBuffer(const QString& text);
   
   /// References the buffer where the current un-executed command is stored
   QString& commandBuffer();

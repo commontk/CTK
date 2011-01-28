@@ -190,6 +190,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       {
       case Qt::Key_Up:
         e->accept();
+
         if (this->CommandPosition > 0)
           {
           this->replaceCommandBuffer(this->CommandHistory[--this->CommandPosition]);
@@ -198,6 +199,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
 
       case Qt::Key_Down:
         e->accept();
+
         if (this->CommandPosition < this->CommandHistory.size() - 2)
           {
           this->replaceCommandBuffer(this->CommandHistory[++this->CommandPosition]);
@@ -259,11 +261,21 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
 
       default:
         e->accept();
+        this->switchToUserInputTextColor();
+
         QTextEdit::keyPressEvent(e);
         this->updateCommandBuffer();
         this->updateCompleterIfVisible();
         break;
       }
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::switchToUserInputTextColor()
+{
+  QTextCharFormat format = this->currentCharFormat();
+  format.setForeground(this->CommandTextColor);
+  this->setCurrentCharFormat(format);
 }
 
 //-----------------------------------------------------------------------------
@@ -363,15 +375,17 @@ void ctkConsolePrivate::updateCommandBuffer()
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsolePrivate::replaceCommandBuffer(const QString& Text)
+void ctkConsolePrivate::replaceCommandBuffer(const QString& text)
 {
-  this->commandBuffer() = Text;
+  this->commandBuffer() = text;
 
   QTextCursor c(this->document());
   c.setPosition(this->InteractivePosition);
   c.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
   c.removeSelectedText();
-  c.insertText(Text);
+  this->switchToUserInputTextColor();
+  c.setCharFormat(this->currentCharFormat());
+  c.insertText(text);
 }
 
 //-----------------------------------------------------------------------------
@@ -394,6 +408,7 @@ void ctkConsolePrivate::internalExecuteCommand()
     this->CommandHistory.push_back("");
     this->CommandPosition = this->CommandHistory.size() - 1;
     }
+
   QTextCursor c(this->document());
   c.movePosition(QTextCursor::End);
   c.insertText("\n");

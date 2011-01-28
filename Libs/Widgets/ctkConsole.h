@@ -63,9 +63,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkConsolePrivate;
 class ctkConsoleCompleter;
 
-/// QWidget that provides an interactive console - you can send text to the
-/// console by calling printString() and receive user input by connecting to the
-/// executeCommand() slot.
+/// QWidget that provides an interactive console
 class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
 {
   Q_OBJECT
