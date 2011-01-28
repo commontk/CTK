@@ -64,6 +64,7 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
+  DISABLE_WRAP_PYTHONQT
   )
 
 # Plugins
