@@ -175,8 +175,26 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
         const QString text = clipboard->text();
         if(!text.isNull())
           {
-          text_cursor.insertText(text);
-          this->updateCommandBuffer();
+          if (this->EditorHints & ctkConsole::SplitCopiedTextByLine)
+            {
+            QStringList lines = text.split(QRegExp("(?:\r\n|\r|\n)"));
+            for(int i=0; i < lines.count(); ++i)
+              {
+              this->switchToUserInputTextColor(&text_cursor);
+              text_cursor.insertText(lines.at(i));
+              this->updateCommandBuffer();
+              if (i < lines.count() - 1)
+                {
+                this->internalExecuteCommand();
+                }
+              }
+            }
+          else
+            {
+            this->switchToUserInputTextColor(&text_cursor);
+            text_cursor.insertText(text);
+            this->updateCommandBuffer();
+            }
           }
         }
 
@@ -276,11 +294,18 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsolePrivate::switchToUserInputTextColor()
+void ctkConsolePrivate::switchToUserInputTextColor(QTextCursor* textCursorToUpdate)
 {
-  QTextCharFormat format = this->currentCharFormat();
-  format.setForeground(this->CommandTextColor);
-  this->setCurrentCharFormat(format);
+  QTextCharFormat currentFormat = this->currentCharFormat();
+  currentFormat.setForeground(this->CommandTextColor);
+  this->setCurrentCharFormat(currentFormat);
+
+  if (textCursorToUpdate)
+    {
+    QTextCharFormat textCursorFormat = textCursorToUpdate->charFormat();
+    textCursorFormat.setForeground(this->CommandTextColor);
+    textCursorToUpdate->setCharFormat(textCursorFormat);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -388,8 +413,7 @@ void ctkConsolePrivate::replaceCommandBuffer(const QString& text)
   c.setPosition(this->InteractivePosition);
   c.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
   c.removeSelectedText();
-  this->switchToUserInputTextColor();
-  c.setCharFormat(this->currentCharFormat());
+  this->switchToUserInputTextColor(&c);
   c.insertText(text);
 }
 

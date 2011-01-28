@@ -43,7 +43,7 @@ public:
 
   virtual void keyPressEvent(QKeyEvent* e);
 
-  void switchToUserInputTextColor();
+  void switchToUserInputTextColor(QTextCursor* textCursorToUpdate = 0);
   
   /// Returns the end of the document
   int documentEnd() const;

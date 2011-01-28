@@ -86,7 +86,8 @@ public:
   {
     NoHints = 0x00,
     AutomaticIndentation = 0x01, /*!< Align cursor based an indentation of the previous command */
-    RemoveTrailingSpaces = 0x02  /*!< Remove trailing spaces of the entered command */
+    RemoveTrailingSpaces = 0x02, /*!< Remove trailing spaces of the entered command */
+    SplitCopiedTextByLine = 0x4  /*!< Copied text is split by lines and each one is executed (expected the last one) */
   };
   Q_DECLARE_FLAGS(EditorHints, EditorHint)
 
