@@ -74,7 +74,7 @@ ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
   QTextEdit(0),
   q_ptr(&object),
   InteractivePosition(documentEnd()),
-  MultilineStatement(false), Ps1(">>> "), Ps2("... ")
+  MultilineStatement(false), Ps1(">>> "), Ps2("... "), AutomaticIndentation(false)
 {
 }
 
@@ -403,6 +403,18 @@ void ctkConsolePrivate::internalExecuteCommand()
   emit q->executing(true);
   q->executeCommand(command);
   emit q->executing(false);
+
+  // Find the indent for the command.
+  QString indent;
+  if (this->AutomaticIndentation)
+    {
+    QRegExp regExp("^(\\s+)");
+    if (regExp.indexIn(command) != -1)
+      {
+      indent = regExp.cap(1);
+      }
+    }
+  this->promptForInput(indent);
 }
 
 //-----------------------------------------------------------------------------
@@ -578,6 +590,10 @@ CTK_SET_CPP(ctkConsole, const QString&, setPs1, Ps1);
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QString, ps2, Ps2);
 CTK_SET_CPP(ctkConsole, const QString&, setPs2, Ps2);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, bool, automaticIndentation, AutomaticIndentation);
+CTK_SET_CPP(ctkConsole, bool, setAutomaticIndentation, AutomaticIndentation);
 
 //-----------------------------------------------------------------------------
 void ctkConsole::executeCommand(const QString& command)

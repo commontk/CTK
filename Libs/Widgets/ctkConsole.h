@@ -76,6 +76,7 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_PROPERTY(QColor welcomeTextColor READ welcomeTextColor WRITE setWelcomeTextColor)
   Q_PROPERTY(QString ps1 READ ps1 WRITE setPs1)
   Q_PROPERTY(QString ps2 READ ps2 WRITE setPs2)
+  Q_PROPERTY(bool automaticIndentation READ automaticIndentation WRITE setAutomaticIndentation)
   
 public:
   ctkConsole(QWidget* parentObject = 0);
@@ -115,6 +116,8 @@ public:
   /// \sa welcomeTextColor()
   void setWelcomeTextColor(const QColor& newColor);
 
+  bool automaticIndentation()const;
+
   /// Prints text on the console
   void printMessage(const QString& message, const QColor& color);
 
@@ -136,6 +139,9 @@ signals:
   void executing(bool);
 
 public slots:
+
+  /// \sa automaticIndentation()
+  void setAutomaticIndentation(bool value);
 
   /// Clears the contents of the console
   virtual void clear();

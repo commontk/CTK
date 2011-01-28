@@ -142,6 +142,8 @@ public:
   /// Secondary prompt
   QString Ps2;
 
+  bool AutomaticIndentation;
+
 };
 
 

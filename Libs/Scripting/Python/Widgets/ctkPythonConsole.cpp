@@ -338,16 +338,7 @@ void ctkPythonConsole::executeCommand(const QString& command)
   Q_D(ctkPythonConsole);
 
   QString commandUpdated = command;
-  commandUpdated.replace(QRegExp("\\s*$"), "");
+  commandUpdated.replace(QRegExp("\\s*$"), ""); // Remove trailing spaces
 
   d->MultilineStatement = d->push(commandUpdated);
-
-  // Find the indent for the command.
-  QRegExp regExp("^(\\s+)");
-  QString indent;
-  if (regExp.indexIn(commandUpdated) != -1)
-    {
-    indent = regExp.cap(1);
-    }
-  d->promptForInput(indent);
 }
