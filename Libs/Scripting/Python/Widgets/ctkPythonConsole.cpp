@@ -151,7 +151,7 @@ class ctkPythonConsolePrivate : public ctkConsolePrivate
 {
   Q_DECLARE_PUBLIC(ctkPythonConsole);
 public:
-  ctkPythonConsolePrivate(ctkPythonConsole& object, ctkAbstractPythonManager* pythonManager);
+  ctkPythonConsolePrivate(ctkPythonConsole& object);
   ~ctkPythonConsolePrivate();
 
   void initializeInteractiveConsole();
@@ -172,10 +172,8 @@ public:
 // ctkPythonConsolePrivate methods
 
 //----------------------------------------------------------------------------
-ctkPythonConsolePrivate::ctkPythonConsolePrivate(
-  ctkPythonConsole& object, ctkAbstractPythonManager* pythonManager)
-  : ctkConsolePrivate(object), PythonManager(pythonManager),
-    InteractiveConsole(0)
+ctkPythonConsolePrivate::ctkPythonConsolePrivate(ctkPythonConsole& object)
+  : ctkConsolePrivate(object), PythonManager(0), InteractiveConsole(0)
 {
 }
 
@@ -187,6 +185,8 @@ ctkPythonConsolePrivate::~ctkPythonConsolePrivate()
 //----------------------------------------------------------------------------
 void ctkPythonConsolePrivate::initializeInteractiveConsole()
 {
+  Q_ASSERT(this->PythonManager);
+
   // set up the code.InteractiveConsole instance that we'll use.
   const char* code =
     "import code\n"
@@ -207,6 +207,8 @@ void ctkPythonConsolePrivate::initializeInteractiveConsole()
 //----------------------------------------------------------------------------
 bool ctkPythonConsolePrivate::push(const QString& code)
 {
+  Q_ASSERT(this->PythonManager);
+
   bool ret_value = false;
 
   QString buffer = code;
@@ -256,10 +258,9 @@ void ctkPythonConsolePrivate::printWelcomeMessage()
 // ctkPythonConsole methods
 
 //----------------------------------------------------------------------------
-ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject):
-  Superclass(new ctkPythonConsolePrivate(*this, pythonManager), parentObject)/*, d_ptr(new ctkPythonConsolePrivate(*this, pythonManager))*/
+ctkPythonConsole::ctkPythonConsole(QWidget* parentObject):
+  Superclass(new ctkPythonConsolePrivate(*this), parentObject)
 {
-  Q_D(ctkPythonConsole);
   this->setObjectName("pythonConsole");
 
   // Disable RemoveTrailingSpaces and AutomaticIndentation
@@ -268,10 +269,34 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   // Enable SplitCopiedTextByLine
   this->setEditorHints(this->editorHints() | SplitCopiedTextByLine);
 
+  this->setDisabled(true);
+}
+
+//----------------------------------------------------------------------------
+ctkPythonConsole::~ctkPythonConsole()
+{
+}
+
+////----------------------------------------------------------------------------
+void ctkPythonConsole::initialize(ctkAbstractPythonManager* newPythonManager)
+{
+  Q_D(ctkPythonConsole);
+
+  if (d->PythonManager)
+    {
+    qWarning() << "ctkPythonConsole already initialized !";
+    return;
+    }
+
   // The call to mainContext() ensures that python has been initialized.
-  Q_ASSERT(d->PythonManager);
-  d->PythonManager->mainContext();
+  Q_ASSERT(newPythonManager);
+  newPythonManager->mainContext();
   Q_ASSERT(PythonQt::self()); // PythonQt should be initialized
+
+  ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*newPythonManager);
+  this->setCompleter(completer);
+
+  d->PythonManager = newPythonManager;
 
   d->initializeInteractiveConsole();
 
@@ -279,9 +304,6 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
                 d, SLOT(printOutputMessage(const QString&)));
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString&)),
                 d, SLOT(printErrorMessage(const QString&)));
-
-  ctkPythonConsoleCompleter* completer = new ctkPythonConsoleCompleter(*d->PythonManager);
-  this->setCompleter(completer);
 
   // Set primary and secondary prompt
   this->setPs1(">>> ");
@@ -295,11 +317,8 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   helpImportCode << "help = pydoc.help.help";
   helpImportCode << "del pydoc";
   d->PythonManager->executeString(helpImportCode.join("\n"));
-}
 
-//----------------------------------------------------------------------------
-ctkPythonConsole::~ctkPythonConsole()
-{
+  this->setDisabled(false);
 }
 
 ////----------------------------------------------------------------------------

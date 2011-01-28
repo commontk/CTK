@@ -54,7 +54,8 @@ int main(int argc, char** argv)
   
   ctkSimplePythonManager pythonManager;
   
-  ctkPythonConsole console(&pythonManager);
+  ctkPythonConsole console;
+  console.initialize(&pythonManager);
   console.setAttribute(Qt::WA_QuitOnClose, true);
   console.resize(600, 280);
   console.show();

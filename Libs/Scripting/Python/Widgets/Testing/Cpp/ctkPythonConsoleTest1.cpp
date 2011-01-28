@@ -38,7 +38,9 @@ int ctkPythonConsoleTest1(int argc, char * argv [] )
 
   QPushButton button("Show PythonConsole");
 
-  ctkPythonConsole pythonConsole(new ctkAbstractPythonManager);
+  ctkPythonConsole pythonConsole;
+  ctkAbstractPythonManager pythonManager;
+  pythonConsole.initialize(&pythonManager);
 
   QObject::connect(&button, SIGNAL(clicked()), &pythonConsole, SLOT(show()));
 

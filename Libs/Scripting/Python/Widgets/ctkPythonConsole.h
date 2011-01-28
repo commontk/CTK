@@ -73,8 +73,11 @@ class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonConsole : public ctkConsole
   
 public:
   typedef ctkConsole Superclass;
-  ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject = 0);
+  ctkPythonConsole(QWidget* parentObject = 0);
   virtual ~ctkPythonConsole();
+
+  /// Initialize
+  void initialize(ctkAbstractPythonManager* newPythonManager);
 
   /// Returns the string used as primary prompt
   virtual QString ps1() const;
