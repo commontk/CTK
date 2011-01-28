@@ -75,21 +75,18 @@ IF(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
   SET(CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION)
   SET(CTK_PYTHONQT_INITIALIZATION_METHOD_CALL)
 
-  FOREACH(lib ${CTK_LIBS})
-    ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
-    IF(${CTK_LIB_${lib_name}})
-      STRING(REPLACE "/" "" lib_name_no_slash ${lib_name})
+  FOREACH(lib_name ${CTK_WRAPPED_LIBRARIES_PYTHONQT})
 
-      LIST(APPEND KIT_target_libraries CTK${lib_name_no_slash}PythonQt)
+    LIST(APPEND KIT_target_libraries ${lib_name}PythonQt)
 
-      SET(CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION
-        "${CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION}
-void PythonQt_init_org_commontk_CTK${lib_name_no_slash}(PyObject*);")
+    SET(CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION
+      "${CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION}
+void PythonQt_init_org_commontk_${lib_name}(PyObject*);")
 
-      SET(CTK_PYTHONQT_INITIALIZATION_METHOD_CALL
-        "${CTK_PYTHONQT_INITIALIZATION_METHOD_CALL}
-PythonQt_init_org_commontk_CTK${lib_name_no_slash}(0);")
-    ENDIF()
+    SET(CTK_PYTHONQT_INITIALIZATION_METHOD_CALL
+      "${CTK_PYTHONQT_INITIALIZATION_METHOD_CALL}
+PythonQt_init_org_commontk_${lib_name}(0);")
+
   ENDFOREACH()
 ENDIF()
 
