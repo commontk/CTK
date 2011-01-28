@@ -75,6 +75,7 @@ ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
   q_ptr(&object),
   InteractivePosition(documentEnd()),
   MultilineStatement(false), Ps1(">>> "), Ps2("... "), AutomaticIndentation(false)
+  EditorHints(ctkConsole::AutomaticIndentation | ctkConsole::RemoveTrailingSpaces)
 {
 }
 
@@ -399,10 +400,17 @@ void ctkConsolePrivate::internalExecuteCommand()
 {
   Q_Q(ctkConsole);
 
+  QString command = this->commandBuffer();
+
+  if (this->EditorHints & ctkConsole::RemoveTrailingSpaces)
+    {
+    command.replace(QRegExp("\\s*$"), ""); // Remove trailing spaces
+    this->commandBuffer() = command; // Update buffer
+    }
+
   // First update the history cache. It's essential to update the
   // this->CommandPosition before calling internalExecuteCommand() since that
   // can result in a clearing of the current command (BUG #8765).
-  QString command = this->commandBuffer();
   if (!command.isEmpty()) // Don't store empty commands in the history
     {
     this->CommandHistory.push_back("");
@@ -421,7 +429,7 @@ void ctkConsolePrivate::internalExecuteCommand()
 
   // Find the indent for the command.
   QString indent;
-  if (this->AutomaticIndentation)
+  if (this->EditorHints & ctkConsole::AutomaticIndentation)
     {
     QRegExp regExp("^(\\s+)");
     if (regExp.indexIn(command) != -1)
@@ -607,8 +615,8 @@ CTK_GET_CPP(ctkConsole, QString, ps2, Ps2);
 CTK_SET_CPP(ctkConsole, const QString&, setPs2, Ps2);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CPP(ctkConsole, bool, automaticIndentation, AutomaticIndentation);
-CTK_SET_CPP(ctkConsole, bool, setAutomaticIndentation, AutomaticIndentation);
+CTK_GET_CPP(ctkConsole, ctkConsole::EditorHints, editorHints, EditorHints);
+CTK_SET_CPP(ctkConsole, const ctkConsole::EditorHints&, setEditorHints, EditorHints);
 
 //-----------------------------------------------------------------------------
 void ctkConsole::executeCommand(const QString& command)

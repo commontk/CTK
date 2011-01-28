@@ -74,9 +74,19 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_PROPERTY(QColor welcomeTextColor READ welcomeTextColor WRITE setWelcomeTextColor)
   Q_PROPERTY(QString ps1 READ ps1 WRITE setPs1)
   Q_PROPERTY(QString ps2 READ ps2 WRITE setPs2)
-  Q_PROPERTY(bool automaticIndentation READ automaticIndentation WRITE setAutomaticIndentation)
+  Q_FLAGS(EditorHint EditorHints)
+  Q_PROPERTY(EditorHints editorHints READ editorHints WRITE setEditorHints)
   
 public:
+
+  enum EditorHint
+  {
+    NoHints = 0x00,
+    AutomaticIndentation = 0x01, /*!< Align cursor based an indentation of the previous command */
+    RemoveTrailingSpaces = 0x02  /*!< Remove trailing spaces of the entered command */
+  };
+  Q_DECLARE_FLAGS(EditorHints, EditorHint)
+
   ctkConsole(QWidget* parentObject = 0);
   virtual ~ctkConsole();
 
@@ -114,8 +124,10 @@ public:
   /// \sa welcomeTextColor()
   void setWelcomeTextColor(const QColor& newColor);
 
-  bool automaticIndentation()const;
+  EditorHints editorHints()const;
 
+  /// \sa editorHints()
+  void setEditorHints(const EditorHints& newEditorHints);
   /// Prints text on the console
   void printMessage(const QString& message, const QColor& color);
 
@@ -137,9 +149,6 @@ signals:
   void executing(bool);
 
 public slots:
-
-  /// \sa automaticIndentation()
-  void setAutomaticIndentation(bool value);
 
   /// Clears the contents of the console
   virtual void clear();

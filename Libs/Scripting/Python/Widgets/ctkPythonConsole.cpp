@@ -336,9 +336,5 @@ void ctkPythonConsole::setPs2(const QString& newPs2)
 void ctkPythonConsole::executeCommand(const QString& command)
 {
   Q_D(ctkPythonConsole);
-
-  QString commandUpdated = command;
-  commandUpdated.replace(QRegExp("\\s*$"), ""); // Remove trailing spaces
-
-  d->MultilineStatement = d->push(commandUpdated);
+  d->MultilineStatement = d->push(command);
 }

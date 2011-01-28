@@ -144,7 +144,7 @@ public:
   /// Secondary prompt
   QString Ps2;
 
-  bool AutomaticIndentation;
+  ctkConsole::EditorHints EditorHints;
 
 };
 
