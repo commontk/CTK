@@ -4,13 +4,13 @@ its namespace."""
 __kits_to_load = [ @CTK_PYTHON_WRAPPED_LIBRARIES@ ]
 
 # Set to True when debugging
-CTK_VERBOSE_IMPORT = False
+_CTK_VERBOSE_IMPORT = False
 
 for kit in __kits_to_load:
   try:
     exec "from PythonQt.CTK%s import *" % (kit)
   except ImportError as detail:
-    if CTK_VERBOSE_IMPORT: 
+    if _CTK_VERBOSE_IMPORT: 
       print detail
 
 def add_methodclass_to_ctkWorkflowStep_or_ctkWorkflowWidgetStep(workflowstep_class):
@@ -99,6 +99,6 @@ if _lib == 'Widgets':
   decorates_ctkWorkflowWidgetStep_initialize_method()
 
 # Removing things the user shouldn't have to see.
-del __kits_to_load, _lib
+del __kits_to_load, _lib, _CTK_VERBOSE_IMPORT
 del add_methodclass_to_ctkWorkflowStep_or_ctkWorkflowWidgetStep
 del add_methodclass_to_ctkWorkflowWidgetStep, decorates_ctkWorkflowWidgetStep_initialize_method

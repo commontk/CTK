@@ -15,14 +15,14 @@ __kits_to_load = [
 ]
 
 # Set to True when debugging
-CTK_VERBOSE_IMPORT = False
+_CTK_VERBOSE_IMPORT = False
 
 for kit in __kits_to_load:
    try:
      exec "from PythonQt.Qt%s import *" % (kit)
    except ImportError as detail:
-     if CTK_VERBOSE_IMPORT:
+     if _CTK_VERBOSE_IMPORT:
        print detail
    
 # Removing things the user shouldn't have to see.
-del __kits_to_load
+del __kits_to_load, _CTK_VERBOSE_IMPORT
