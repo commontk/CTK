@@ -41,14 +41,14 @@ public:
 
   void init();
 
-  void keyPressEvent(QKeyEvent* e);
+  virtual void keyPressEvent(QKeyEvent* e);
 
   void switchToUserInputTextColor();
   
   /// Returns the end of the document
   int documentEnd() const;
 
-  void focusOutEvent(QFocusEvent *e);
+  virtual void focusOutEvent(QFocusEvent *e);
 
   void updateCompleterIfVisible();
 
