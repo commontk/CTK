@@ -89,6 +89,8 @@ void ctkAbstractPythonManager::initPythonQt()
   PythonQt_init_QtBindings();
   
   QStringList initCode;
+
+  // Update 'sys.path'
   initCode << "import sys";
   foreach (QString path, this->pythonPaths())
     {
@@ -149,7 +151,7 @@ QVariant ctkAbstractPythonManager::executeString(const QString& code)
   PythonQtObjectPtr main = ctkAbstractPythonManager::mainContext();
   if (main)
     {
-    ret = main.evalScript(code, Py_single_input);
+    ret = main.evalScript(code, Py_file_input);
     }
   return ret;
 }
