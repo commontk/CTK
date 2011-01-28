@@ -64,6 +64,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // CTK includes
 #include "ctkConsole.h"
 #include "ctkConsole_p.h"
+#include "ctkPimpl.h"
 
 //-----------------------------------------------------------------------------
 // ctkConsolePrivate methods
@@ -86,6 +87,12 @@ void ctkConsolePrivate::init()
   this->setAcceptRichText(false);
   this->setUndoRedoEnabled(false);
 
+  this->PromptColor = QColor(0, 0, 0);    // Black
+  this->OutputTextColor = QColor(0, 150, 0);  // Green
+  this->ErrorTextColor = QColor(255, 0, 0);   // Red
+  this->CommandTextColor = QColor(0, 0, 150); // Blue
+  this->WelcomeTextColor = QColor(0, 0, 255); // Dark Blue
+
   QFont f;
   f.setFamily("Courier");
   f.setStyleHint(QFont::TypeWriter);
@@ -93,7 +100,7 @@ void ctkConsolePrivate::init()
 
   QTextCharFormat format;
   format.setFont(f);
-  format.setForeground(QColor(0, 0, 0));
+  format.setForeground(this->OutputTextColor);
   this->setCurrentCharFormat(format);
 
   this->CommandHistory.append("");
@@ -288,10 +295,9 @@ void ctkConsolePrivate::updateCompleterIfVisible()
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::selectCompletion()
 {
-  Q_Q(ctkConsole);
   if (this->Completer && this->Completer->completionCount() == 1)
     {
-    q->insertCompletion(this->Completer->currentCompletion());
+    this->insertCompletion(this->Completer->currentCompletion());
     this->Completer->popup()->hide();
     }
 }
@@ -382,22 +388,95 @@ void ctkConsolePrivate::internalExecuteCommand()
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::setCompleter(ctkConsoleCompleter* completer)
 {
-  Q_Q(ctkConsole);
-
   if (this->Completer)
     {
     this->Completer->setWidget(0);
-    QObject::disconnect(this->Completer, SIGNAL(activated(const QString&)),
-                        q, SLOT(insertCompletion(const QString&)));
+    disconnect(this->Completer, SIGNAL(activated(const QString&)),
+               this, SLOT(insertCompletion(const QString&)));
 
     }
   this->Completer = completer;
   if (this->Completer)
     {
     this->Completer->setWidget(this);
-    QObject::connect(this->Completer, SIGNAL(activated(const QString&)),
-                     q, SLOT(insertCompletion(const QString&)));
+    connect(this->Completer, SIGNAL(activated(const QString&)),
+            this, SLOT(insertCompletion(const QString&)));
     }
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::printString(const QString& text)
+{
+  this->textCursor().movePosition(QTextCursor::End);
+  this->textCursor().insertText(text);
+  this->InteractivePosition = this->documentEnd();
+  this->ensureCursorVisible();
+}
+
+//----------------------------------------------------------------------------
+void ctkConsolePrivate::printOutputMessage(const QString& text)
+{
+  Q_Q(ctkConsole);
+
+  q->printMessage(text, q->outputTextColor());
+  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+//----------------------------------------------------------------------------
+void ctkConsolePrivate::printErrorMessage(const QString& text)
+{
+  Q_Q(ctkConsole);
+
+  q->printMessage(text, q->errorTextColor());
+  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::printCommand(const QString& cmd)
+{
+  this->textCursor().insertText(cmd);
+  this->updateCommandBuffer();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::prompt(const QString& text)
+{
+  QTextCursor text_cursor = this->textCursor();
+
+  // If the cursor is currently on a clean line, do nothing, otherwise we move
+  // the cursor to a new line before showing the prompt.
+  text_cursor.movePosition(QTextCursor::StartOfLine);
+  int startpos = text_cursor.position();
+  text_cursor.movePosition(QTextCursor::EndOfLine);
+  int endpos = text_cursor.position();
+  if (endpos != startpos)
+    {
+    this->textCursor().insertText("\n");
+    }
+
+  this->textCursor().insertText(text);
+  this->InteractivePosition = this->documentEnd();
+  this->ensureCursorVisible();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::insertCompletion(const QString& completion)
+{
+  QTextCursor tc = this->textCursor();
+  tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
+  if (tc.selectedText()==".")
+    {
+    tc.insertText(QString(".") + completion);
+    }
+  else
+    {
+    tc = this->textCursor();
+    tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
+    tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+    tc.insertText(completion);
+    this->setTextCursor(tc);
+    }
+  this->updateCommandBuffer();
 }
 
 //-----------------------------------------------------------------------------
@@ -452,25 +531,24 @@ void ctkConsole::setCompleter(ctkConsoleCompleter* completer)
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsole::insertCompletion(const QString& completion)
-{
-  Q_D(ctkConsole);
-  QTextCursor tc = d->textCursor();
-  tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
-  if (tc.selectedText()==".")
-    {
-    tc.insertText(QString(".") + completion);
-    }
-  else
-    {
-    tc = d->textCursor();
-    tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
-    tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
-    tc.insertText(completion);
-    d->setTextCursor(tc);
-    }
-  d->updateCommandBuffer();
-}
+CTK_GET_CPP(ctkConsole, QColor, promptColor, PromptColor);
+CTK_SET_CPP(ctkConsole, const QColor&, setPromptColor, PromptColor);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, QColor, outputTextColor, OutputTextColor);
+CTK_SET_CPP(ctkConsole, const QColor&, setOutputTextColor, OutputTextColor);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, QColor, errorTextColor, ErrorTextColor);
+CTK_SET_CPP(ctkConsole, const QColor&, setErrorTextColor, ErrorTextColor);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, QColor, commandTextColor, CommandTextColor);
+CTK_SET_CPP(ctkConsole, const QColor&, setCommandTextColor, CommandTextColor);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, QColor, welcomeTextColor, WelcomeTextColor);
+CTK_SET_CPP(ctkConsole, const QColor&, setWelcomeTextColor, WelcomeTextColor);
 
 //-----------------------------------------------------------------------------
 void ctkConsole::executeCommand(const QString& command)
@@ -479,45 +557,15 @@ void ctkConsole::executeCommand(const QString& command)
   qWarning() << "command:" << command;
 }
 
-//-----------------------------------------------------------------------------
-void ctkConsole::printString(const QString& Text)
-{
-  Q_D(ctkConsole);
-  d->textCursor().movePosition(QTextCursor::End);
-  d->textCursor().insertText(Text);
-  d->InteractivePosition = d->documentEnd();
-  d->ensureCursorVisible();
-}
-
-//-----------------------------------------------------------------------------
-void ctkConsole::printCommand(const QString& cmd)
-{
-  Q_D(ctkConsole);
-  d->textCursor().insertText(cmd);
-  d->updateCommandBuffer();
-}
-
-//-----------------------------------------------------------------------------
-void ctkConsole::prompt(const QString& text)
+//----------------------------------------------------------------------------
+void ctkConsole::printMessage(const QString& message, const QColor& color)
 {
   Q_D(ctkConsole);
 
-  QTextCursor text_cursor = d->textCursor();
-
-  // If the cursor is currently on a clean line, do nothing, otherwise we move
-  // the cursor to a new line before showing the prompt.
-  text_cursor.movePosition(QTextCursor::StartOfLine);
-  int startpos = text_cursor.position();
-  text_cursor.movePosition(QTextCursor::EndOfLine);
-  int endpos = text_cursor.position();
-  if (endpos != startpos)
-    {
-    d->textCursor().insertText("\n");
-    }
-
-  d->textCursor().insertText(text);
-  d->InteractivePosition = d->documentEnd();
-  d->ensureCursorVisible();
+  QTextCharFormat format = this->getFormat();
+  format.setForeground(color);
+  this->setFormat(format);
+  d->printString(message);
 }
 
 //-----------------------------------------------------------------------------

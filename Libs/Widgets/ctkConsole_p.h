@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QTextEdit>
+#include <QPointer>
 
 // CTK includes
 #include "ctkConsole.h"
@@ -30,6 +31,7 @@
 
 class CTK_WIDGETS_EXPORT ctkConsolePrivate : public QTextEdit
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(ctkConsole);
 protected:
   ctkConsole* const q_ptr;
@@ -68,6 +70,32 @@ public:
 
   void setCompleter(ctkConsoleCompleter* completer);
 
+  /// Writes the supplied text to the console
+  void printString(const QString& text);
+
+  /// Updates the current command.
+  /// Unlike printMessage(), this will affect the current command being typed.
+  void printCommand(const QString& cmd);
+
+  /// Puts out an input accepting prompt.
+  /// It is recommended that one uses prompt instead of printString() to print
+  /// an input prompt since this call ensures that the prompt is shown on a new
+  /// line.
+  void prompt(const QString& text);
+
+public slots:
+
+  /// Inserts the given completion string at the cursor.  This will replace
+  /// the current word that the cursor is touching with the given text.
+  /// Determines the word using QTextCursor::StartOfWord, EndOfWord.
+  void insertCompletion(const QString& text);
+
+  void printOutputMessage(const QString& text);
+
+  void printErrorMessage(const QString& text);
+
+public:
+
   /// A custom completer
   QPointer<ctkConsoleCompleter> Completer;
 
@@ -80,6 +108,21 @@ public:
 
   /// Stores the current position in the command-history
   int CommandPosition;
+
+  /// Prompt  color
+  QColor PromptColor;
+
+  /// Output text color
+  QColor OutputTextColor;
+
+  /// Error ext color
+  QColor ErrorTextColor;
+
+  /// Command text color
+  QColor CommandTextColor;
+
+  /// Welcome text color
+  QColor WelcomeTextColor;
 };
 
 

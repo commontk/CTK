@@ -76,9 +76,6 @@ public:
   ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWidget* parentObject = 0);
   virtual ~ctkPythonConsole();
 
-  /// Prints some text on the shell.
-  void printMessage(const QString&);
-
   /// Given a python variable name, lookup its attributes and return them in a string list.
   QStringList pythonAttributes(const QString& pythonVariableName) const;
 
@@ -88,10 +85,6 @@ public slots:
 
 protected:
   virtual void executeCommand(const QString& command);
-
-protected slots:
-  void printStderr(const QString&);
-  void printStdout(const QString&);
 
 private:
   Q_DECLARE_PRIVATE(ctkPythonConsole);

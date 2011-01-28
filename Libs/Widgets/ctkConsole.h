@@ -69,19 +69,52 @@ class ctkConsoleCompleter;
 class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QColor promptColor READ promptColor WRITE setPromptColor)
+  Q_PROPERTY(QColor outputTextColor READ outputTextColor WRITE setOutputTextColor)
+  Q_PROPERTY(QColor errorTextColor READ errorTextColor WRITE setErrorTextColor)
+  Q_PROPERTY(QColor commandTextColor READ commandTextColor WRITE setCommandTextColor)
+  Q_PROPERTY(QColor welcomeTextColor READ welcomeTextColor WRITE setWelcomeTextColor)
   
 public:
   ctkConsole(QWidget* parentObject = 0);
   virtual ~ctkConsole();
 
-  /// Returns the current formatting that will be used by printString
+  /// Returns the current formatting that will be used by printMessage()
   QTextCharFormat getFormat() const;
   
-  /// Sets formatting that will be used by printString
+  /// Sets formatting that will be used by printMessage()
   void setFormat(const QTextCharFormat& Format);
 
-  /// Set a completer for this console widget
+  /// Set a completer for this console
   void setCompleter(ctkConsoleCompleter* completer);
+
+  QColor promptColor()const;
+
+  /// \sa promptColor()
+  void setPromptColor(const QColor& newColor);
+
+  QColor outputTextColor()const;
+
+  /// \sa outputTextColor()
+  void setOutputTextColor(const QColor& newColor);
+
+  QColor errorTextColor()const;
+
+  /// \sa errorTextColor()
+  void setErrorTextColor(const QColor& newColor);
+
+  QColor commandTextColor()const;
+
+  /// \sa commandTextColor()
+  void setCommandTextColor(const QColor& newColor);
+
+  QColor welcomeTextColor()const;
+
+  /// \sa welcomeTextColor()
+  void setWelcomeTextColor(const QColor& newColor);
+
+  /// Prints text on the console
+  void printMessage(const QString& message, const QColor& color);
 
 signals:
 
@@ -89,26 +122,9 @@ signals:
   void executing(bool);
 
 public slots:
-  /// Writes the supplied text to the console
-  void printString(const QString& Text);
-
-  /// Updates the current command. Unlike printString, this will affect the
-  /// current command being typed.
-  void printCommand(const QString& cmd);
 
   /// Clears the contents of the console
   virtual void clear();
-
-  /// Puts out an input accepting prompt.
-  /// It is recommended that one uses prompt instead of printString() to print
-  /// an input prompt since this call ensures that the prompt is shown on a new
-  /// line.
-  void prompt(const QString& text);
-
-  /// Inserts the given completion string at the cursor.  This will replace
-  /// the current word that the cursor is touching with the given text.
-  /// Determines the word using QTextCursor::StartOfWord, EndOfWord.
-  void insertCompletion(const QString& text);
 
 protected:
 

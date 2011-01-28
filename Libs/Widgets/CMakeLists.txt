@@ -148,6 +148,7 @@ SET(KIT_MOC_SRCS
   ctkColorPickerButton.h
   ctkConfirmExitDialog.h
   ctkConsole.h
+  ctkConsole_p.h
   ctkCoordinatesWidget.h
   ctkDirectoryButton.h
   ctkDoubleRangeSlider.h

@@ -249,24 +249,24 @@ void ctkPythonConsolePrivate::promptForInput(const QString& indent)
   Q_Q(ctkPythonConsole);
 
   QTextCharFormat format = q->getFormat();
-  format.setForeground(QColor(0, 0, 0));
+  format.setForeground(q->promptColor());
   q->setFormat(format);
 
-//     this->Interpreter->MakeCurrent();
+//  this->Interpreter->MakeCurrent();
   if(!this->MultilineStatement)
     {
-    q->prompt(">>> ");
+    this->prompt(">>> ");
     //q->prompt(
     //  PyString_AsString(PySys_GetObject(const_cast<char*>("ps1"))));
     }
   else
     {
-    q->prompt("... ");
+    this->prompt("... ");
     //q->prompt(
     //  PyString_AsString(PySys_GetObject(const_cast<char*>("ps2"))));
     }
-  q->printCommand(indent);
-//     this->Interpreter->ReleaseControl();
+  this->printCommand(indent);
+//  this->Interpreter->ReleaseControl();
 }
 
 //----------------------------------------------------------------------------
@@ -287,19 +287,18 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   d->PythonManager->mainContext();
   d->initializeInteractiveConsole();
 
-  QTextCharFormat format = this->getFormat();
-  format.setForeground(QColor(0, 0, 255));
-  this->setFormat(format);
-  this->printString(
-    QString("Python %1 on %2\n").arg(Py_GetVersion()).arg(Py_GetPlatform()));
+  this->printMessage(
+        QString("Python %1 on %2\n").arg(Py_GetVersion()).arg(Py_GetPlatform()),
+        this->welcomeTextColor());
+
   d->promptForInput();
 
-  Q_ASSERT(PythonQt::self());
+  Q_ASSERT(PythonQt::self()); // PythonQt should be initialized
 
   this->connect(PythonQt::self(), SIGNAL(pythonStdOut(const QString&)),
-                SLOT(printStdout(const QString&)));
+                d, SLOT(printOutputMessage(const QString&)));
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString&)),
-                SLOT(printStderr(const QString&)));
+                d, SLOT(printErrorMessage(const QString&)));
 }
 
 //----------------------------------------------------------------------------
@@ -321,7 +320,7 @@ void ctkPythonConsole::executeScript(const QString& script)
   Q_D(ctkPythonConsole);
   Q_UNUSED(script);
 
-  this->printStdout("\n");
+  d->printOutputMessage("\n");
   emit this->executing(true);
 //   d->Interpreter->RunSimpleString(
 //     script.toAscii().data());
@@ -389,39 +388,6 @@ QStringList ctkPythonConsole::pythonAttributes(const QString& pythonVariableName
 
 //   this->releaseControl();
   return results;
-}
-
-//----------------------------------------------------------------------------
-void ctkPythonConsole::printStdout(const QString& text)
-{
-  QTextCharFormat format = this->getFormat();
-  format.setForeground(QColor(0, 150, 0));
-  this->setFormat(format);
-
-  this->printString(text);
-
-  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-//----------------------------------------------------------------------------
-void ctkPythonConsole::printMessage(const QString& text)
-{
-  QTextCharFormat format = this->getFormat();
-  format.setForeground(QColor(0, 0, 150));
-  this->setFormat(format);
-  this->printString(text);
-}
-
-//----------------------------------------------------------------------------
-void ctkPythonConsole::printStderr(const QString& text)
-{
-  QTextCharFormat format = this->getFormat();
-  format.setForeground(QColor(255, 0, 0));
-  this->setFormat(format);
-
-  this->printString(text);
-
-  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 //----------------------------------------------------------------------------
