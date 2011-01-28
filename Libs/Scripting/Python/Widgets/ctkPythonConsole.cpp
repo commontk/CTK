@@ -265,6 +265,9 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   // Disable RemoveTrailingSpaces and AutomaticIndentation
   this->setEditorHints(this->editorHints() ^ (RemoveTrailingSpaces | AutomaticIndentation));
 
+  // Enable SplitCopiedTextByLine
+  this->setEditorHints(this->editorHints() | SplitCopiedTextByLine);
+
   // The call to mainContext() ensures that python has been initialized.
   Q_ASSERT(d->PythonManager);
   d->PythonManager->mainContext();
