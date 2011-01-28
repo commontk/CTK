@@ -628,6 +628,20 @@ CTK_GET_CPP(ctkConsole, ctkConsole::EditorHints, editorHints, EditorHints);
 CTK_SET_CPP(ctkConsole, const ctkConsole::EditorHints&, setEditorHints, EditorHints);
 
 //-----------------------------------------------------------------------------
+Qt::ScrollBarPolicy ctkConsole::scrollBarPolicy()const
+{
+  Q_D(const ctkConsole);
+  return d->verticalScrollBarPolicy();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolicy)
+{
+  Q_D(ctkConsole);
+  d->setVerticalScrollBarPolicy(newScrollBarPolicy);
+}
+
+//-----------------------------------------------------------------------------
 void ctkConsole::executeCommand(const QString& command)
 {
   qWarning() << "ctkConsole::executeCommand not implemented !";

@@ -76,6 +76,8 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_PROPERTY(QString ps2 READ ps2 WRITE setPs2)
   Q_FLAGS(EditorHint EditorHints)
   Q_PROPERTY(EditorHints editorHints READ editorHints WRITE setEditorHints)
+  Q_ENUMS(Qt::ScrollBarPolicy)
+  Q_PROPERTY(Qt::ScrollBarPolicy scrollBarPolicy READ scrollBarPolicy WRITE setScrollBarPolicy)
   
 public:
 
@@ -128,6 +130,12 @@ public:
 
   /// \sa editorHints()
   void setEditorHints(const EditorHints& newEditorHints);
+
+  Qt::ScrollBarPolicy scrollBarPolicy()const;
+
+  /// \sa scrollBarPolicy()
+  void setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolicy);
+
   /// Prints text on the console
   void printMessage(const QString& message, const QColor& color);
 
