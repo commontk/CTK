@@ -184,6 +184,8 @@ private:
   Q_DISABLE_COPY(ctkConsole);
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkConsole::EditorHints);
+
 //-----------------------------------------------------------------------------
 class CTK_WIDGETS_EXPORT ctkConsoleCompleter : public QCompleter
 {

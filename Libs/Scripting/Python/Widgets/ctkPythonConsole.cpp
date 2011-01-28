@@ -262,6 +262,9 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   Q_D(ctkPythonConsole);
   this->setObjectName("pythonConsole");
 
+  // Disable RemoveTrailingSpaces and AutomaticIndentation
+  this->setEditorHints(this->editorHints() ^ (RemoveTrailingSpaces | AutomaticIndentation));
+
   // The call to mainContext() ensures that python has been initialized.
   Q_ASSERT(d->PythonManager);
   d->PythonManager->mainContext();
