@@ -265,9 +265,9 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   // The call to mainContext() ensures that python has been initialized.
   Q_ASSERT(d->PythonManager);
   d->PythonManager->mainContext();
-  d->initializeInteractiveConsole();
-
   Q_ASSERT(PythonQt::self()); // PythonQt should be initialized
+
+  d->initializeInteractiveConsole();
 
   this->connect(PythonQt::self(), SIGNAL(pythonStdOut(const QString&)),
                 d, SLOT(printOutputMessage(const QString&)));
@@ -282,6 +282,13 @@ ctkPythonConsole::ctkPythonConsole(ctkAbstractPythonManager* pythonManager, QWid
   this->setPs2("... ");
 
   this->reset();
+
+  // Expose help() function
+  QStringList helpImportCode;
+  helpImportCode << "import pydoc";
+  helpImportCode << "help = pydoc.help.help";
+  helpImportCode << "del pydoc";
+  d->PythonManager->executeString(helpImportCode.join("\n"));
 }
 
 //----------------------------------------------------------------------------
