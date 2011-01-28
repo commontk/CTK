@@ -49,7 +49,7 @@ ctkMacroBuildLib(
   )
 
 # Plugins
-#ADD_SUBDIRECTORY(Plugins)
+ADD_SUBDIRECTORY(Plugins)
 
 # Testing
 IF(BUILD_TESTING)
