@@ -107,6 +107,10 @@ void ctkConsolePrivate::init()
 
   this->CommandHistory.append("");
   this->CommandPosition = 0;
+
+  QVBoxLayout * layout = new QVBoxLayout(q);
+  layout->setMargin(0);
+  layout->addWidget(this);
 }
 
 //-----------------------------------------------------------------------------
@@ -554,9 +558,7 @@ ctkConsole::ctkConsole(QWidget* parentObject) :
   d_ptr(new ctkConsolePrivate(*this))
 {
   Q_D(ctkConsole);
-  QVBoxLayout* layout = new QVBoxLayout(this);
-  layout->setMargin(0);
-  layout->addWidget(d);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
@@ -565,9 +567,6 @@ ctkConsole::ctkConsole(ctkConsolePrivate * pimpl, QWidget* parentObject) :
 {
   Q_D(ctkConsole);
   d->init();
-  QVBoxLayout* layout = new QVBoxLayout(this);
-  layout->setMargin(0);
-  layout->addWidget(d);
 }
 
 //-----------------------------------------------------------------------------
