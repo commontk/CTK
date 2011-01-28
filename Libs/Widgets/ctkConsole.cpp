@@ -616,6 +616,20 @@ CTK_GET_CPP(ctkConsole, QColor, welcomeTextColor, WelcomeTextColor);
 CTK_SET_CPP(ctkConsole, const QColor&, setWelcomeTextColor, WelcomeTextColor);
 
 //-----------------------------------------------------------------------------
+QColor ctkConsole::textBackgroundColor()const
+{
+  Q_D(const ctkConsole);
+  return d->textBackgroundColor();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::setTextBackgroundColor(const QColor& newColor)
+{
+  Q_D(ctkConsole);
+  return d->setTextBackgroundColor(newColor);
+}
+
+//-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QString, ps1, Ps1);
 CTK_SET_CPP(ctkConsole, const QString&, setPs1, Ps1);
 

@@ -72,6 +72,7 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_PROPERTY(QColor errorTextColor READ errorTextColor WRITE setErrorTextColor)
   Q_PROPERTY(QColor commandTextColor READ commandTextColor WRITE setCommandTextColor)
   Q_PROPERTY(QColor welcomeTextColor READ welcomeTextColor WRITE setWelcomeTextColor)
+  Q_PROPERTY(QColor textBackgroundColor READ textBackgroundColor WRITE setTextBackgroundColor)
   Q_PROPERTY(QString ps1 READ ps1 WRITE setPs1)
   Q_PROPERTY(QString ps2 READ ps2 WRITE setPs2)
   Q_FLAGS(EditorHint EditorHints)
@@ -125,6 +126,10 @@ public:
 
   /// \sa welcomeTextColor()
   void setWelcomeTextColor(const QColor& newColor);
+
+  QColor textBackgroundColor()const;
+
+  void setTextBackgroundColor(const QColor& newColor);
 
   EditorHints editorHints()const;
 
