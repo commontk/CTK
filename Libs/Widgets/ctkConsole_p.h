@@ -38,6 +38,7 @@ protected:
 public:
 
   ctkConsolePrivate(ctkConsole& object);
+  typedef QTextEdit Superclass;
 
   void init();
 
@@ -49,6 +50,11 @@ public:
   int documentEnd() const;
 
   virtual void focusOutEvent(QFocusEvent *e);
+
+  virtual void resizeEvent(QResizeEvent * e);
+
+  /// Force the scrollbar to be all the way down
+  void scrollToBottom();
 
   void updateCompleterIfVisible();
 
@@ -108,6 +114,9 @@ public slots:
   /// \sa ctkConsole::errorTextColor
   void printErrorMessage(const QString& text);
 
+  /// Update the value of ScrollbarAtBottom given the current position of the scollbar
+  void onScrollBarValueChanged(int value);
+
 public:
 
   /// A custom completer
@@ -132,7 +141,7 @@ public:
   /// Output text color
   QColor OutputTextColor;
 
-  /// Error ext color
+  /// Error text color
   QColor ErrorTextColor;
 
   /// Command text color
@@ -148,6 +157,8 @@ public:
   QString Ps2;
 
   ctkConsole::EditorHints EditorHints;
+
+  bool ScrollbarAtBottom;
 
 };
 

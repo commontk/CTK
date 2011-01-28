@@ -92,6 +92,7 @@ public:
   Q_DECLARE_FLAGS(EditorHints, EditorHint)
 
   ctkConsole(QWidget* parentObject = 0);
+  typedef QWidget Superclass;
   virtual ~ctkConsole();
 
   /// Returns the current formatting that will be used by printMessage()

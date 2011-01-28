@@ -71,11 +71,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //-----------------------------------------------------------------------------
 ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
-  QTextEdit(0),
+  Superclass(0),
   q_ptr(&object),
   InteractivePosition(documentEnd()),
   MultilineStatement(false), Ps1("$ "), Ps2("> "),
-  EditorHints(ctkConsole::AutomaticIndentation | ctkConsole::RemoveTrailingSpaces)
+  EditorHints(ctkConsole::AutomaticIndentation | ctkConsole::RemoveTrailingSpaces),
+  ScrollbarAtBottom(false)
 {
 }
 
@@ -111,6 +112,9 @@ void ctkConsolePrivate::init()
   QVBoxLayout * layout = new QVBoxLayout(q);
   layout->setMargin(0);
   layout->addWidget(this);
+
+  connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)),
+          SLOT(onScrollBarValueChanged(int)));
 }
 
 //-----------------------------------------------------------------------------
@@ -237,7 +241,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       case Qt::Key_Left:
         if (text_cursor.position() > this->InteractivePosition)
           {
-          QTextEdit::keyPressEvent(e);
+          this->Superclass::keyPressEvent(e);
           }
         else
           {
@@ -247,7 +251,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
 
       case Qt::Key_Delete:
         e->accept();
-        QTextEdit::keyPressEvent(e);
+        this->Superclass::keyPressEvent(e);
         this->updateCommandBuffer();
         break;
 
@@ -255,7 +259,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
         e->accept();
         if(text_cursor.position() > this->InteractivePosition)
           {
-          QTextEdit::keyPressEvent(e);
+          this->Superclass::keyPressEvent(e);
           this->updateCommandBuffer();
           this->updateCompleterIfVisible();
           }
@@ -286,7 +290,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
         e->accept();
         this->switchToUserInputTextColor();
 
-        QTextEdit::keyPressEvent(e);
+        this->Superclass::keyPressEvent(e);
         this->updateCommandBuffer();
         this->updateCompleterIfVisible();
         break;
@@ -319,7 +323,7 @@ int ctkConsolePrivate::documentEnd() const
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::focusOutEvent(QFocusEvent *e)
 {
-  QTextEdit::focusOutEvent(e);
+  this->Superclass::focusOutEvent(e);
 
   // For some reason the QCompleter tries to set the focus policy to
   // NoFocus, set let's make sure we set it back to the default WheelFocus.
@@ -327,6 +331,23 @@ void ctkConsolePrivate::focusOutEvent(QFocusEvent *e)
 }
 
 //-----------------------------------------------------------------------------
+void ctkConsolePrivate::resizeEvent(QResizeEvent * e)
+{
+  this->Superclass::resizeEvent(e);
+
+  if (this->ScrollbarAtBottom)
+    {
+    this->moveCursor(QTextCursor::End);
+    this->scrollToBottom();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::scrollToBottom()
+{
+  this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
+}
+
 void ctkConsolePrivate::updateCompleterIfVisible()
 {
   if (this->Completer && this->Completer->popup()->isVisible())
@@ -398,7 +419,7 @@ void ctkConsolePrivate::updateCompleter()
     }
 }
 
-//-----------------------------------------------------------------------------c
+//-----------------------------------------------------------------------------
 void ctkConsolePrivate::updateCommandBuffer()
 {
   this->commandBuffer() = this->toPlainText().mid(this->InteractivePosition);
@@ -475,6 +496,7 @@ void ctkConsolePrivate::printString(const QString& text)
   this->textCursor().insertText(text);
   this->InteractivePosition = this->documentEnd();
   this->ensureCursorVisible();
+  this->scrollToBottom();
 }
 
 //----------------------------------------------------------------------------
@@ -541,6 +563,7 @@ void ctkConsolePrivate::prompt(const QString& text)
   this->textCursor().insertText(text);
   this->InteractivePosition = this->documentEnd();
   this->ensureCursorVisible();
+  this->scrollToBottom();
 }
 
 //----------------------------------------------------------------------------
@@ -574,11 +597,17 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
 }
 
 //-----------------------------------------------------------------------------
+void ctkConsolePrivate::onScrollBarValueChanged(int value)
+{
+  this->ScrollbarAtBottom = (this->verticalScrollBar()->maximum() == value);
+}
+
+//-----------------------------------------------------------------------------
 // ctkConsole methods
 
 //-----------------------------------------------------------------------------
 ctkConsole::ctkConsole(QWidget* parentObject) :
-  QWidget(parentObject),
+  Superclass(parentObject),
   d_ptr(new ctkConsolePrivate(*this))
 {
   Q_D(ctkConsole);
