@@ -361,9 +361,7 @@ void ctkPythonConsole::initialize(ctkAbstractPythonManager* newPythonManager)
 
   // Expose help() function
   QStringList helpImportCode;
-  helpImportCode << "import pydoc";
-  helpImportCode << "help = pydoc.help.help";
-  helpImportCode << "del pydoc";
+  helpImportCode << "from pydoc import help";
   d->PythonManager->executeString(helpImportCode.join("\n"));
 
   this->setDisabled(false);
