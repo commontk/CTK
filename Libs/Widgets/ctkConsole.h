@@ -70,6 +70,7 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_PROPERTY(QColor promptColor READ promptColor WRITE setPromptColor)
   Q_PROPERTY(QColor outputTextColor READ outputTextColor WRITE setOutputTextColor)
   Q_PROPERTY(QColor errorTextColor READ errorTextColor WRITE setErrorTextColor)
+  Q_PROPERTY(QColor stdinTextColor READ stdinTextColor WRITE setStdinTextColor)
   Q_PROPERTY(QColor commandTextColor READ commandTextColor WRITE setCommandTextColor)
   Q_PROPERTY(QColor welcomeTextColor READ welcomeTextColor WRITE setWelcomeTextColor)
   Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
@@ -122,6 +123,11 @@ public:
   /// \sa errorTextColor()
   void setErrorTextColor(const QColor& newColor);
 
+  QColor stdinTextColor()const;
+
+  /// \sa stdinTextColor()
+  void setStdinTextColor(const QColor& newColor);
+
   QColor commandTextColor()const;
 
   /// \sa commandTextColor()
@@ -161,6 +167,8 @@ public:
   /// Set the string used as secondary prompt
   virtual void setPs2(const QString& newPs2);
 
+  static QString stdInRedirectCallBack(void * callData);
+
 signals:
 
   /// This signal emitted before and after a command is executed
@@ -175,6 +183,9 @@ public slots:
   virtual void reset();
 
 protected:
+
+  /// Prompt the user for input
+  QString readInputLine();
 
   /// Called whenever the user enters a command
   virtual void executeCommand(const QString& Command);

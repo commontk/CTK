@@ -108,6 +108,7 @@ void ctkConsolePrivate::init()
   this->PromptColor = QColor(0, 0, 0);    // Black
   this->OutputTextColor = QColor(0, 150, 0);  // Green
   this->ErrorTextColor = QColor(255, 0, 0);   // Red
+  this->StdinTextColor = QColor(Qt::darkGray);
   this->CommandTextColor = QColor(0, 0, 150); // Blue
   this->WelcomeTextColor = QColor(0, 0, 255); // Dark Blue
 
@@ -226,6 +227,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       {
       text_cursor.setPosition(this->documentEnd());
       this->setTextCursor(text_cursor);
+
       }
 
     switch(e->key())
@@ -298,7 +300,15 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
 
         text_cursor.setPosition(this->documentEnd());
         this->setTextCursor(text_cursor);
-        this->internalExecuteCommand();
+
+        if (this->InputEventLoop.isNull())
+          {
+          this->internalExecuteCommand();
+          }
+        else
+          {
+          this->processInput();
+          }
         break;
 
       default:
@@ -315,14 +325,19 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::switchToUserInputTextColor(QTextCursor* textCursorToUpdate)
 {
+  QColor color = this->CommandTextColor;
+  if (!this->InputEventLoop.isNull())
+    {
+    color = this->StdinTextColor;
+    }
   QTextCharFormat currentFormat = this->currentCharFormat();
-  currentFormat.setForeground(this->CommandTextColor);
+  currentFormat.setForeground(color);
   this->setCurrentCharFormat(currentFormat);
 
   if (textCursorToUpdate)
     {
     QTextCharFormat textCursorFormat = textCursorToUpdate->charFormat();
-    textCursorFormat.setForeground(this->CommandTextColor);
+    textCursorFormat.setForeground(color);
     textCursorToUpdate->setCharFormat(textCursorFormat);
     }
 }
@@ -363,6 +378,7 @@ void ctkConsolePrivate::scrollToBottom()
   this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
 }
 
+//-----------------------------------------------------------------------------
 void ctkConsolePrivate::updateCompleterIfVisible()
 {
   if (this->Completer && this->Completer->popup()->isVisible())
@@ -502,6 +518,26 @@ void ctkConsolePrivate::internalExecuteCommand()
       }
     }
   this->promptForInput(indent);
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::processInput()
+{
+  QString command = this->commandBuffer();
+
+  if (this->EditorHints & ctkConsole::RemoveTrailingSpaces)
+    {
+    command.replace(QRegExp("\\s*$"), ""); // Remove trailing spaces
+    this->commandBuffer() = command; // Update buffer
+    }
+
+  QTextCursor c(this->document());
+  c.movePosition(QTextCursor::End);
+  c.insertText("\n");
+
+  this->InteractivePosition = this->documentEnd();
+
+  this->InputEventLoop->exit();
 }
 
 //-----------------------------------------------------------------------------
@@ -679,6 +715,10 @@ CTK_GET_CPP(ctkConsole, QColor, errorTextColor, ErrorTextColor);
 CTK_SET_CPP(ctkConsole, const QColor&, setErrorTextColor, ErrorTextColor);
 
 //-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, QColor, stdinTextColor, StdinTextColor);
+CTK_SET_CPP(ctkConsole, const QColor&, setStdinTextColor, StdinTextColor);
+
+//-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QColor, commandTextColor, CommandTextColor);
 CTK_SET_CPP(ctkConsole, const QColor&, setCommandTextColor, CommandTextColor);
 
@@ -778,5 +818,50 @@ void ctkConsole::reset()
 
   d->printWelcomeMessage();
   d->promptForInput();
+}
+
+//-----------------------------------------------------------------------------
+QString ctkConsole::stdInRedirectCallBack(void * callData)
+{
+  ctkConsole * self = reinterpret_cast<ctkConsole*>(callData);
+  Q_ASSERT(self);
+  if (!self)
+    {
+    return QLatin1String("");
+    }
+
+  return self->readInputLine();
+}
+
+namespace
+{
+class InputEventLoop : public QEventLoop
+{
+public:
+  InputEventLoop(QApplication * app, QObject * parentObject = 0) :
+    QEventLoop(parentObject), App(app){}
+  virtual bool processEvents(ProcessEventsFlags flags = AllEvents)
+    {
+    this->App->processEvents(flags);
+    return true;
+    }
+  QApplication * App;
+};
+
+}
+
+//-----------------------------------------------------------------------------
+QString ctkConsole::readInputLine()
+{
+  Q_D(ctkConsole);
+
+  d->moveCursor(QTextCursor::End);
+
+  QScopedPointer<InputEventLoop> eventLoop(new InputEventLoop(qApp));
+  d->InputEventLoop = QPointer<QEventLoop>(eventLoop.data());
+
+  eventLoop->exec();
+
+  return d->commandBuffer();
 }
 

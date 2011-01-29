@@ -24,6 +24,7 @@
 // Qt includes
 #include <QTextEdit>
 #include <QPointer>
+#include <QEventLoop>
 
 // CTK includes
 #include "ctkConsole.h"
@@ -77,6 +78,8 @@ public:
   
   /// Implements command-execution
   void internalExecuteCommand();
+
+  void processInput();
 
   /// Writes the supplied text to the console
   void printString(const QString& text);
@@ -144,6 +147,9 @@ public:
   /// Error text color
   QColor ErrorTextColor;
 
+  /// Standard input text color.
+  QColor StdinTextColor;
+
   /// Command text color
   QColor CommandTextColor;
 
@@ -160,6 +166,7 @@ public:
 
   bool ScrollbarAtBottom;
 
+  QPointer<QEventLoop> InputEventLoop;
 };
 
 
