@@ -154,6 +154,7 @@ void ctkSettingsPanel::updateProperties()
       {
       QVariant value = d->Settings->value(key);
       PropertyType& prop = d->Properties[key];
+      // Update object registered using registerProperty()
       bool res = prop.setValue(value);
       Q_ASSERT(res);
       Q_UNUSED(res);

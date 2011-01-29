@@ -66,6 +66,9 @@ ctkSettingsDialogPrivate::ctkSettingsDialogPrivate(ctkSettingsDialog& object)
 void ctkSettingsDialogPrivate::init()
 {
   Q_Q(ctkSettingsDialog);
+
+  this->Settings = new QSettings(q);
+
   this->setupUi(q);
 
   QObject::connect(this->SettingsTreeWidget,
@@ -277,8 +280,7 @@ void ctkSettingsDialog
 {
   Q_D(ctkSettingsDialog);
   Q_UNUSED(previousItem);
-  d->SettingsStackedWidget->setCurrentWidget(
-    d->panel(currentItem));
+  d->SettingsStackedWidget->setCurrentWidget(d->panel(currentItem));
 }
 
 // --------------------------------------------------------------------------
