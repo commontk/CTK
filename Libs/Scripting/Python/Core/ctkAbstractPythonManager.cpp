@@ -174,7 +174,8 @@ void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
 
 //----------------------------------------------------------------------------
 QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVariableName,
-                                                       const QString& module) const
+                                                       const QString& module,
+                                                       bool appendParenthesis) const
 {
   Q_ASSERT(PyThreadState_GET()->interp);
   PyObject* dict = PyImport_GetModuleDict();
@@ -245,8 +246,13 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
           {
           continue;
           }
-
-        results << PyString_AsString(key);
+        QString key_str(PyString_AsString(key));
+        // Append "()" if the associated object is a function
+        if (appendParenthesis && PyCallable_Check(value))
+          {
+          key_str.append("()");
+          }
+        results << key_str;
         Py_DECREF(value);
         }
       Py_DECREF(keys);

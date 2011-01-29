@@ -127,8 +127,10 @@ public:
     QStringList attrs;
     if (!lookup.isEmpty() || !compareText.isEmpty())
       {
-      attrs = this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__"));
-      attrs << this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__.__builtins__"));
+      bool appendParenthesis = true;
+      attrs = this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__"), appendParenthesis);
+      attrs << this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__.__builtins__"),
+                                                    appendParenthesis);
       attrs.removeDuplicates();
       }
 
