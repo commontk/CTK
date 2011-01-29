@@ -67,6 +67,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ctkPimpl.h"
 
 //-----------------------------------------------------------------------------
+// ctkConsoleCompleter methods
+
+//-----------------------------------------------------------------------------
+QStringList ctkConsoleCompleter::autocompletePreferenceList()
+{
+  return this->AutocompletePreferenceList;
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsoleCompleter::setAutocompletePreferenceList(const QStringList& list)
+{
+  this->AutocompletePreferenceList = list;
+}
+
+//-----------------------------------------------------------------------------
 // ctkConsolePrivate methods
 
 //-----------------------------------------------------------------------------
@@ -640,6 +655,9 @@ void ctkConsole::setFormat(const QTextCharFormat& Format)
   Q_D(ctkConsole);
   d->setCurrentCharFormat(Format);
 }
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, ctkConsoleCompleter*, completer, Completer);
 
 //-----------------------------------------------------------------------------
 void ctkConsole::setCompleter(ctkConsoleCompleter* completer)

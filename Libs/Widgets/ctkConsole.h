@@ -101,6 +101,9 @@ public:
   /// Sets formatting that will be used by printMessage()
   void setFormat(const QTextCharFormat& Format);
 
+  /// Return the completer of this console
+  ctkConsoleCompleter* completer() const;
+
   /// Set a completer for this console
   void setCompleter(ctkConsoleCompleter* completer);
 
@@ -197,6 +200,18 @@ public:
   /// is the current console text between the cursor and the start of
   /// the line.
   virtual void updateCompletionModel(const QString& str) = 0;
+
+  /// Returns the autocomplete preference list
+  QStringList autocompletePreferenceList();
+
+  /// Set autocomplete preference list
+  /// This list allows to specify options that could be
+  /// selected by default if multiple choices are proposed to the user.
+  void setAutocompletePreferenceList(const QStringList& list);
+
+protected:
+
+  QStringList AutocompletePreferenceList;
 };
 
 
