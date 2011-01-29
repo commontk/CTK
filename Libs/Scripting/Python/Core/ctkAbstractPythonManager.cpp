@@ -173,12 +173,39 @@ void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVariableName) const
+QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVariableName,
+                                                       const QString& module) const
 {
   Q_ASSERT(PyThreadState_GET()->interp);
   PyObject* dict = PyImport_GetModuleDict();
-  PyObject* object = PyDict_GetItemString(dict, "__main__");
-  Py_INCREF(object);
+
+  // Split module by '.' and retrieve the object associated if the last module
+  PyObject* object = 0;
+  PyObject* prevObject = 0;
+  QStringList moduleList = module.split(".", QString::SkipEmptyParts);
+  foreach(const QString& module, moduleList)
+    {
+    object = PyDict_GetItemString(dict, module.toAscii().data());
+    if (prevObject) { Py_DECREF(prevObject); }
+    if (!object)
+      {
+      break;
+      }
+    Py_INCREF(object);
+    dict = PyModule_GetDict(object);
+    prevObject = object;
+    }
+  if (!object)
+    {
+    return QStringList();
+    }
+
+//  PyObject* object = PyDict_GetItemString(dict, module.toAscii().data());
+//  if (!object)
+//    {
+//    return QStringList();
+//    }
+//  Py_INCREF(object);
 
   if (!pythonVariableName.isEmpty())
     {

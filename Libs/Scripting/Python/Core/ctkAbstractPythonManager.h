@@ -62,8 +62,9 @@ public:
   void setInitializationFunction(void (*initFunction)());
 
   /// Given a python variable name, lookup its attributes and return them in a string list.
-  /// \note The variable is looked up from __main__
-  QStringList pythonAttributes(const QString& pythonVariableName) const;
+  /// \note By default the attributes are looked up from __main__
+  QStringList pythonAttributes(const QString& pythonVariableName,
+                               const QString& module = QLatin1String("__main__")) const;
 
 signals:
 
