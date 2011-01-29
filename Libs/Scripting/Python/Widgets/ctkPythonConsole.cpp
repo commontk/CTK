@@ -127,7 +127,9 @@ public:
     QStringList attrs;
     if (!lookup.isEmpty() || !compareText.isEmpty())
       {
-      attrs = this->PythonManager.pythonAttributes(lookup);
+      attrs = this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__"));
+      attrs << this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__.__builtins__"));
+      attrs.removeDuplicates();
       }
 
     // Initialize the completion model
