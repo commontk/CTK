@@ -141,7 +141,48 @@ public:
       this->setModel(new QStringListModel(attrs, this));
       this->setCaseSensitivity(Qt::CaseInsensitive);
       this->setCompletionPrefix(compareText.toLower());
-      this->popup()->setCurrentIndex(this->completionModel()->index(0, 0));
+
+      // If a dot as been entered and if an item of possible
+      // choices matches one of the preference list, it will be selected.
+      QModelIndex preferredIndex = this->completionModel()->index(0, 0);
+      int dotCount = completion.count('.');
+      if (dotCount == 0 || completion.at(completion.count() - 1) == '.')
+        {
+        foreach(const QString& pref, this->AutocompletePreferenceList)
+          {
+          if (dotCount < pref.count('.'))
+            {
+            continue;
+            }
+          // Extract string before the last dot
+          int lastDot = pref.lastIndexOf('.');
+          QString prefBeforeLastDot;
+          if (lastDot != -1)
+            {
+            prefBeforeLastDot = pref.left(lastDot);
+            }
+          // qDebug() << "prefLookup" << prefBeforeLastDot;
+          if (!prefBeforeLastDot.isEmpty() && QString::compare(prefBeforeLastDot, lookup) != 0)
+            {
+            break;
+            }
+          QString prefAfterLastDot = pref;
+          if (lastDot != -1 )
+            {
+            prefAfterLastDot = pref.right(pref.size() - lastDot - 1);
+            }
+          // qDebug() << "prefAfterLastDot" << prefAfterLastDot;
+          QModelIndexList list = this->completionModel()->match(
+                this->completionModel()->index(0, 0), Qt::DisplayRole, QVariant(prefAfterLastDot));
+          if (list.count() > 0)
+            {
+            preferredIndex = list.first();
+            break;
+            }
+          }
+        }
+
+      this->popup()->setCurrentIndex(preferredIndex);
       }
     }
   ctkAbstractPythonManager& PythonManager;

@@ -62,6 +62,10 @@ int main(int argc, char** argv)
 
   console.setProperty("isInteractive", parsedArgs.contains("interactive"));
 
+  QStringList list;
+  list << "qt.QPushButton";
+  console.completer()->setAutocompletePreferenceList(list);
+
   pythonManager.addObjectToPythonMain("_ctkPythonConsoleInstance", &console);
 
   ctkTestWrappedQProperty testWrappedQProperty;
