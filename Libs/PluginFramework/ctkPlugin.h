@@ -27,6 +27,8 @@
 #include <QMetaType>
 
 #include "ctkVersion.h"
+#include "ctkPluginLocalization.h"
+#include "ctkPluginConstants.h"
 #include "service/log/ctkLogStream.h"
 
 class ctkPluginContext;
@@ -634,6 +636,28 @@ public:
    *         uninstalled.
    */
   virtual QByteArray getResource(const QString& path) const;
+
+  /**
+   * Returns a <code>ctkPluginLocalization</code> object for the
+   * specified <code>locale</code>. The translations are loaded from a
+   * .qm file starting with <code>base</code>.
+   *
+   * You can use the returned <code>ctkPluginLocalization</code>
+   * object to dynamically translate text without changing the current
+   * locale of the application. This can be used for example to
+   * provide localized messages to multiple users which use the application
+   * (maybe some kind of server) simultaneously but require different
+   * localizations.
+   *
+   * @param locale The locale to be used by the returned
+   *        <code>ctkPluginLocalization</code> object.
+   * @param base The base name of the .qm message file which contains
+   *        translated messages. Defaults to
+   *        <code>ctkPluginConstants::PLUGIN_LOCALIZATION_DEFAULT_BASENAME</code>.
+   * @return A locale specific <code>ctkPluginLocalization</code> instance.
+   */
+  ctkPluginLocalization getPluginLocalization(const QLocale& locale,
+                                              const QString& base = ctkPluginConstants::PLUGIN_LOCALIZATION_DEFAULT_BASENAME) const;
 
   /**
    * Returns the version of this plugin as specified by its

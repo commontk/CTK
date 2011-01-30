@@ -327,6 +327,53 @@ QByteArray ctkPlugin::getResource(const QString& path) const
   return d->archive->getPluginResource(path);
 }
 
+ctkPluginLocalization ctkPlugin::getPluginLocalization(
+  const QLocale& locale, const QString& base) const
+{
+  Q_D(const ctkPlugin);
+
+  // There are five searching candidates possible:
+  // base +
+  //    "_" + language1 + "_" + country1 + ".qm"
+  // or "_" + language1 + ".qm"
+  // or "_" + language2 + "_" + country2 + ".qm"
+  // or "_" + language2 + ".qm"
+  // or ""  + ".qm"
+  //
+  // Where language1[_country1[_variation1]] is the requested locale,
+  // and language2[_country2[_variation2]] is the default locale.
+
+  QChar localeSep('_');
+  QChar baseSep('_');
+
+  QStringList searchCandidates;
+
+  QStringList localeParts = locale.name().split(localeSep);
+  QStringList defaultParts = QLocale().name().split(localeSep);
+
+  searchCandidates << baseSep + localeParts[0] + localeSep + localeParts[1];
+  searchCandidates << baseSep + localeParts[0];
+  searchCandidates << baseSep + defaultParts[0] + localeSep + defaultParts[1];
+  searchCandidates << baseSep + defaultParts[0];
+  searchCandidates << "";
+
+  QString localizationPath = base.left(base.lastIndexOf('/'));
+  QStringList resourceList = this->getResourceList(localizationPath);
+
+  foreach(QString resource, resourceList)
+  {
+    foreach(QString candidate, searchCandidates)
+    {
+      if (resource.endsWith(candidate + ".qm"))
+      {
+        return ctkPluginLocalization(localizationPath + '/' + resource, locale, d->q_ptr);
+      }
+    }
+  }
+
+  return ctkPluginLocalization();
+}
+
 ctkVersion ctkPlugin::getVersion() const
 {
   Q_D(const ctkPlugin);

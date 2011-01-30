@@ -39,6 +39,7 @@ SET(KIT_SRCS
   ctkPluginFrameworkPrivate_p.h
   ctkPluginFrameworkUtil.cpp
   ctkPluginFrameworkUtil_p.h
+  ctkPluginLocalization.cpp
   ctkPluginManifest.cpp
   ctkPluginManifest_p.h
   ctkPluginPrivate.cpp
