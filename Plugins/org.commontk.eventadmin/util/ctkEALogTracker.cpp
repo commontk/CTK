@@ -75,20 +75,17 @@ void ctkEALogTracker::removedService(const ctkServiceReference& reference, ctkLo
 void ctkEALogTracker::log(int level, const QString& message, const std::exception* exception,
                           const char* file, const char* function, int line)
 {
-  logToAll(level, message, exception, file, function, line);
+  logToAll(ctkServiceReference(), level, message, exception, file, function, line);
 }
 
 void ctkEALogTracker::log(const ctkServiceReference& reference, int level, const QString& message,
                           const std::exception* exception, const char* file, const char* function, int line)
 {
-  if (!logToAll(level, message, exception, file, function, line))
-  {
-    noLogService(reference, level, message, exception, file, function, line);
-  }
+  logToAll(reference, level, message, exception, file, function, line);
 }
 
-bool ctkEALogTracker::logToAll(int level, const QString& message, const std::exception* exception,
-                               const char* file, const char* function, int line)
+void ctkEALogTracker::logToAll(const ctkServiceReference& reference, int level, const QString& message,
+                               const std::exception* exception, const char* file, const char* function, int line)
 {
   QList<ctkServiceReference> references = getServiceReferences();
 
@@ -101,7 +98,7 @@ bool ctkEALogTracker::logToAll(int level, const QString& message, const std::exc
       {
         try
         {
-          service->log(ref, level, message, exception, file, function, line);
+          service->log(reference, level, message, exception, file, function, line);
         }
         catch (...)
         {
@@ -109,10 +106,10 @@ bool ctkEALogTracker::logToAll(int level, const QString& message, const std::exc
         }
       }
     }
-   return true;
+    return;
   }
 
-  return false;
+  noLogService(reference, level, message, exception, file, function, line);
 }
 
 void ctkEALogTracker::noLogService(const ctkServiceReference& reference, int level, const QString& message,
@@ -148,10 +145,10 @@ void ctkEALogTracker::noLogService(const ctkServiceReference& reference, int lev
 
   out << ": " << message << '\n';
 
-//  if (reference.getPlugin())
-//  {
-//    out << reference. << '\n';
-//  }
+  if (reference)
+  {
+    out << reference << '\n';
+  }
 
   if (exc)
   {

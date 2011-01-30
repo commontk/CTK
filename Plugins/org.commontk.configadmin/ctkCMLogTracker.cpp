@@ -67,20 +67,17 @@ void ctkCMLogTracker::removedService(const ctkServiceReference& reference, ctkLo
 void ctkCMLogTracker::log(int level, const QString& message, const std::exception* exception,
                           const char* file, const char* function, int line)
 {
-  logToAll(level, message, exception, file, function, line);
+  logToAll(ctkServiceReference(), level, message, exception, file, function, line);
 }
 
 void ctkCMLogTracker::log(const ctkServiceReference& reference, int level, const QString& message,
                           const std::exception* exception, const char* file, const char* function, int line)
 {
-  if (!logToAll(level, message, exception, file, function, line))
-  {
-    noLogService(reference, level, message, exception, file, function, line);
-  }
+  logToAll(reference, level, message, exception, file, function, line);
 }
 
-bool ctkCMLogTracker::logToAll(int level, const QString& message, const std::exception* exception,
-                               const char* file, const char* function, int line)
+void ctkCMLogTracker::logToAll(const ctkServiceReference& reference, int level, const QString& message,
+                               const std::exception* exception, const char* file, const char* function, int line)
 {
   QMutexLocker lock(&mutex);
   QList<ctkServiceReference> references = getServiceReferences();
@@ -94,7 +91,7 @@ bool ctkCMLogTracker::logToAll(int level, const QString& message, const std::exc
       {
         try
         {
-          service->log(ref, level, message, exception, file, function, line);
+          service->log(reference, level, message, exception, file, function, line);
         }
         catch (...)
         {
@@ -102,10 +99,10 @@ bool ctkCMLogTracker::logToAll(int level, const QString& message, const std::exc
         }
       }
     }
-   return true;
+    return;
   }
 
-  return false;
+  noLogService(reference, level, message, exception, file, function, line);
 }
 
 void ctkCMLogTracker::noLogService(const ctkServiceReference& reference, int level, const QString& message,
@@ -140,10 +137,10 @@ void ctkCMLogTracker::noLogService(const ctkServiceReference& reference, int lev
 
   out << ": " << message << '\n';
 
-//  if (reference.getPlugin())
-//  {
-//    out << reference. << '\n';
-//  }
+  if (reference)
+  {
+    out << reference << '\n';
+  }
 
   if (exc)
   {

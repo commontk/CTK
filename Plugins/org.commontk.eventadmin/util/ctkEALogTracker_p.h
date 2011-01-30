@@ -66,8 +66,8 @@ protected:
 
 private:
 
-  bool logToAll(int level, const QString& message, const std::exception* exception,
-           const char* file, const char* function, int line);
+  void logToAll(const ctkServiceReference& reference, int level, const QString& message,
+                const std::exception* exception, const char* file, const char* function, int line);
 
   /**
    * The ctkLogService is not available so we write the message to a QTextStream.
