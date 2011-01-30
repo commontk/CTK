@@ -127,7 +127,7 @@ bool ctkServiceReference::operator<(const ctkServiceReference& reference) const
   if (r1 != r2)
   {
     // use ranking if ranking differs
-    return r1 < r2 ? false : true;
+    return r1 < r2;
   }
   else
   {
