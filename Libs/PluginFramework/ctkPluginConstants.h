@@ -357,6 +357,24 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    */
   static const QString SERVICE_RANKING; // = "service.ranking"
 
+  /**
+   * Service property identifying a service's vendor.
+   *
+   * <p>
+   * This property may be supplied in the properties <code>ctkDictionary</code> object
+   * passed to the <code>ctkPluginContext::registerService()</code> method.
+   */
+  static const QString SERVICE_VENDOR; // = "service.vendor"
+
+  /**
+   * Service property identifying a service's description.
+   *
+   * <p>
+   * This property may be supplied in the properties <code>ctkDictionary</code> object
+   * passed to the <code>ctkPluginContext::registerService()</code> method.
+   */
+  static const QString SERVICE_DESCRIPTION; // = "service.description"
+
 };
 
 
