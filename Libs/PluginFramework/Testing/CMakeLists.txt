@@ -14,8 +14,15 @@ SET(fwtest_plugins
   pluginSL4_test
 )
 
+SET(metatypetest_plugins
+  pluginAttrPwd_test
+)
+
 ADD_SUBDIRECTORY(FrameworkTest)
 ADD_SUBDIRECTORY(FrameworkTestPlugins)
 
 ADD_SUBDIRECTORY(ConfigAdminTest)
 ADD_SUBDIRECTORY(EventAdminTest)
+
+ADD_SUBDIRECTORY(MetaTypeTest)
+ADD_SUBDIRECTORY(MetaTypeTestPlugins)

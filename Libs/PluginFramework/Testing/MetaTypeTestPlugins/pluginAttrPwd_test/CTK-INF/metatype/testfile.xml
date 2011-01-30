@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md:MetaData 
+		xmlns:md="http://www.org.osgi/xmlns/metatype/v1.0.0/md" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.org.osgi/xmlns/metatype/v1.0.0/md metatype.xsd"
+  localization="CTK-INF/l10n/pluginAttrPwd_test"
+  context="ctkTestPluginMTAttrPwdActivator">
+ <OCD id="ocd1" name="Object" description="My object class definition">
+		<AD default="password" id="password1" type="Password"/>
+		<AD default="password" id="password2" type="Password">
+			<Option label="password" value="password"/>
+		</AD>
+		<AD default="password" id="password3" min="8" type="Password"/>
+		<AD default="password" id="password4" max="5" type="Password"/>
+		<AD default="password" id="password5" max="6" min="3" type="Password"/>
+	</OCD>
+	<Designate pid="org.commontk.metatype.tests.attrpwd">
+		<Object ocdref="ocd1"/>
+	</Designate>
+</md:MetaData>

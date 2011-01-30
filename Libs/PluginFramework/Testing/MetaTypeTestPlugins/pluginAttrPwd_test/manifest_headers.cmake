@@ -1,0 +1,6 @@
+set(Plugin-Name "Test MetaType Password Attribute")
+set(Plugin-Version "1.0.0")
+set(Plugin-Description "Test plugin for MetaType implementations")
+set(Plugin-Vendor "CommonTK")
+set(Plugin-ContactAddress "http://www.commontk.org")
+set(Plugin-Category "test")
