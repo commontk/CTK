@@ -33,14 +33,14 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * Location identifier of the CTK <i>system plugin</i>, which is defined
    * to be &quot;System Plugin&quot;.
    */
-  static const QString	SYSTEM_PLUGIN_LOCATION; // = "System Plugin"
+  static const QString SYSTEM_PLUGIN_LOCATION; // = "System Plugin"
 
   /**
    * Alias for the symbolic name of the CTK <i>system plugin</i>. It is
    * defined to be &quot;system.plugin&quot;.
    *
    */
-  static const QString	SYSTEM_PLUGIN_SYMBOLICNAME; // = "system.plugin"
+  static const QString SYSTEM_PLUGIN_SYMBOLICNAME; // = "system.plugin"
 
 
   /**
@@ -190,7 +190,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * The attribute value may be retrieved from the <code>QHash</code>
    * object returned by the <code>ctkPlugin::getHeaders()</code> method.
    */
-  static const QString	PLUGIN_VERSION; // = "Plugin-Version"
+  static const QString PLUGIN_VERSION; // = "Plugin-Version"
 
   /**
    * Manifest header identifying the plugin's activation policy.
@@ -200,7 +200,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    *
    * @see #ACTIVATION_EAGER
    */
-  static const QString	PLUGIN_ACTIVATIONPOLICY; // = "Plugin-ActivationPolicy"
+  static const QString PLUGIN_ACTIVATIONPOLICY; // = "Plugin-ActivationPolicy"
 
   /**
    * Plugin activation policy declaring the plugin must be activated when the
@@ -226,7 +226,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * @see ctkPlugin#start(int)
    * @see ctkPlugin#START_ACTIVATION_POLICY
    */
-  static const QString	ACTIVATION_EAGER; // = "eager"
+  static const QString ACTIVATION_EAGER; // = "eager"
 
   /**
    * Manifest header directive identifying the resolution type in the
