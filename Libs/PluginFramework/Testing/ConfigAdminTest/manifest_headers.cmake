@@ -1,7 +1,7 @@
 set(Plugin-ActivationPolicy "eager")
 set(Plugin-Name "ConfigAdmin TestSuite")
 set(Plugin-Version "0.9")
-set(Plugin-Description "Test bundle for the CTK Configuration Admin specs")
+set(Plugin-Description "Test plugin for the CTK Configuration Admin specs")
 set(Plugin-Vendor "CommonTK")
 set(Plugin-DocURL "http://www.commontk.org")
 set(Plugin-ContactAddress "http://www.commontk.org")
