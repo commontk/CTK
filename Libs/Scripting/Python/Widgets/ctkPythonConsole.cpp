@@ -141,7 +141,8 @@ public:
       this->setModel(new QStringListModel(attrs, this));
       this->setCaseSensitivity(Qt::CaseInsensitive);
       this->setCompletionPrefix(compareText.toLower());
-
+      
+      //qDebug() << "completion" << completion;
       // If a dot as been entered and if an item of possible
       // choices matches one of the preference list, it will be selected.
       QModelIndex preferredIndex = this->completionModel()->index(0, 0);
@@ -150,7 +151,11 @@ public:
         {
         foreach(const QString& pref, this->AutocompletePreferenceList)
           {
-          if (dotCount < pref.count('.'))
+          //qDebug() << "pref" << pref;
+          int dotPref = pref.count('.');
+          // Skip if there are dots in pref and if the completion has already more dots 
+          // than the pref
+          if ((dotPref != 0) && (dotCount > dotPref))
             {
             continue;
             }
@@ -161,17 +166,17 @@ public:
             {
             prefBeforeLastDot = pref.left(lastDot);
             }
-          // qDebug() << "prefLookup" << prefBeforeLastDot;
+          //qDebug() << "prefBeforeLastDot" << prefBeforeLastDot;
           if (!prefBeforeLastDot.isEmpty() && QString::compare(prefBeforeLastDot, lookup) != 0)
             {
-            break;
+            continue;
             }
           QString prefAfterLastDot = pref;
           if (lastDot != -1 )
             {
             prefAfterLastDot = pref.right(pref.size() - lastDot - 1);
             }
-          // qDebug() << "prefAfterLastDot" << prefAfterLastDot;
+          //qDebug() << "prefAfterLastDot" << prefAfterLastDot;
           QModelIndexList list = this->completionModel()->match(
                 this->completionModel()->index(0, 0), Qt::DisplayRole, QVariant(prefAfterLastDot));
           if (list.count() > 0)
