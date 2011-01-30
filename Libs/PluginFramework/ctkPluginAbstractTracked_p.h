@@ -115,6 +115,15 @@ public:
   int size() const;
 
   /**
+   * Returns if the tracker is empty.
+   *
+   * @return Whether the tracker is empty.
+   *
+   * @GuardedBy this
+   */
+  bool isEmpty() const;
+
+  /**
    * Return the customized object for the specified item
    *
    * @param item The item to lookup in the map
@@ -151,6 +160,17 @@ public:
    * @return The tracking count for this object.
    */
   int getTrackingCount() const;
+
+  /**
+   * Copy the tracked items and associated values into the specified map.
+   *
+   * @param map The map into which to copy the tracked items and associated
+   *        values. This map must not be a user provided map so that user code
+   *        is not executed while synchronized on this.
+   * @return The specified map.
+   * @GuardedBy this
+   */
+  QMap<S,T> copyEntries(QMap<S,T>& map) const;
 
   /**
    * Call the specific customizer adding method. This method must not be

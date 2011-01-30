@@ -235,6 +235,12 @@ int ctkPluginAbstractTracked<S,T,R>::size() const
 }
 
 template<class S, class T, class R>
+bool ctkPluginAbstractTracked<S,T,R>::isEmpty() const
+{
+  return tracked.isEmpty();
+}
+
+template<class S, class T, class R>
 T ctkPluginAbstractTracked<S,T,R>::getCustomizedObject(S item) const
 {
   return tracked.value(item);
@@ -256,6 +262,18 @@ template<class S, class T, class R>
 int ctkPluginAbstractTracked<S,T,R>::getTrackingCount() const
 {
   return trackingCount;
+}
+
+template<class S, class T, class R>
+QMap<S,T> ctkPluginAbstractTracked<S,T,R>::copyEntries(QMap<S,T>& map) const
+{
+  typename QHash<S,T>::ConstIterator end = tracked.end();
+  for (typename QHash<S,T>::ConstIterator it = tracked.begin();
+       it != end; ++it)
+  {
+    map.insert(it.key(), it.value());
+  }
+  return map;
 }
 
 template<class S, class T, class R>

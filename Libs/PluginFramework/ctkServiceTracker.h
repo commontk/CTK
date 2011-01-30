@@ -319,6 +319,28 @@ public:
    */
   virtual int getTrackingCount() const;
 
+  /**
+   * Return a sorted <code>QMap</code> of the <code>ctkServiceReference</code>s and
+   * service objects for all services being tracked by this
+   * <code>ctkServiceTracker</code>. The map is sorted in natural order
+   * of <code>ctkServiceReference</code>. That is, the last entry is the service
+   * with the highest ranking and the lowest service id.
+   *
+   * @return A <code>QMap</code> with the <code>ctkServiceReference</code>s
+   *         and service objects for all services being tracked by this
+   *         <code>ctkServiceTracker</code>. If no services are being tracked,
+   *         then the returned map is empty.
+   */
+  virtual QMap<ctkServiceReference, T> getTracked() const;
+
+  /**
+   * Return if this <code>ctkServiceTracker</code> is empty.
+   *
+   * @return <code>true</code> if this <code>ctkServiceTracker</code> is not tracking any
+   *         services.
+   */
+  virtual bool isEmpty() const;
+
 protected:
 
   /**

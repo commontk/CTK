@@ -413,6 +413,37 @@ int ctkServiceTracker<S,T>::getTrackingCount() const
 }
 
 template<class S, class T>
+QMap<ctkServiceReference, T> ctkServiceTracker<S,T>::getTracked() const
+{
+  QMap<ctkServiceReference, T> map;
+  Q_D(const ServiceTracker);
+  QSharedPointer<TrackedService> t = d->tracked();
+  if (t.isNull())
+  { /* if ServiceTracker is not open */
+    return map;
+  }
+  {
+    QMutexLocker lockT(t.data());
+    return t->copyEntries(map);
+  }
+}
+
+template<class S, class T>
+bool ctkServiceTracker<S,T>::isEmpty() const
+{
+  Q_D(const ServiceTracker);
+  QSharedPointer<TrackedService> t = d->tracked();
+  if (t.isNull())
+  { /* if ServiceTracker is not open */
+    return true;
+  }
+  {
+    QMutexLocker lockT(t.data());
+    return t->isEmpty();
+  }
+}
+
+template<class S, class T>
 T ctkServiceTracker<S,T>::addingService(const ctkServiceReference& reference)
 {
   Q_D(ServiceTracker);

@@ -179,6 +179,25 @@ public:
    */
   virtual int getTrackingCount() const;
 
+  /**
+   * Return a <code>QMap</code> with the <code>ctkPlugin</code>s and customized
+   * objects for all plugins being tracked by this <code>ctkPluginTracker</code>.
+   *
+   * @return A <code>QMap</code> with the <code>ctkPlugin</code>s and customized
+   *         objects for all services being tracked by this
+   *         <code>ctkPluginTracker</code>. If no plugins are being tracked, then
+   *         the returned map is empty.
+   */
+  virtual QMap<QSharedPointer<ctkPlugin>, T> getTracked() const;
+
+  /**
+   * Return if this <code>ctkPluginTracker</code> is empty.
+   *
+   * @return <code>true</code> if this <code>ctkPluginTracker</code> is not tracking any
+   *         plugins.
+   */
+  virtual bool isEmpty() const;
+
 protected:
 
   /**

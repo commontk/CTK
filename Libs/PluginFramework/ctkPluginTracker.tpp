@@ -190,6 +190,36 @@ int ctkPluginTracker<T>::getTrackingCount() const
   }
 }
 
+template<class T>
+QMap<QSharedPointer<ctkPlugin>, T> ctkPluginTracker<T>::getTracked() const
+{
+  QMap<QSharedPointer<ctkPlugin>, T> map;
+  Q_D(const PluginTracker);
+  QSharedPointer<TrackedPlugin> t = d->tracked();
+  if (t.isNull())
+  { /* if PluginTracker is not open */
+    return map;
+  }
+  {
+    QMutexLocker lock(t.data());
+    return t->copyEntries(map);
+  }
+}
+
+template<class T>
+bool ctkPluginTracker<T>::isEmpty() const
+{
+  QSharedPointer<TrackedPlugin> t = d->tracked();
+  if (t.isNull())
+  { /* if PluginTracker is not open */
+    return true;
+  }
+  {
+    QMutexLocker lock(t.data());
+    return t->isEmpty();
+  }
+}
+
 template<>
 inline QSharedPointer<ctkPlugin> ctkPluginTracker<QSharedPointer<ctkPlugin> >::addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event)
 {
