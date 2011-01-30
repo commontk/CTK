@@ -316,6 +316,7 @@ SET(CTK_PLUGINS
   org.commontk.eventadmin:OFF
   org.commontk.log:OFF
   org.commontk.log4qt:OFF
+  org.commontk.metatype:OFF
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
   org.commontk.qtmobility.service:OFF
