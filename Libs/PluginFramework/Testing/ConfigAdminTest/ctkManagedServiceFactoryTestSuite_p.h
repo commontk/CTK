@@ -31,7 +31,7 @@
 #include <ctkServiceReference.h>
 #include <ctkTestSuiteInterface.h>
 
-class ctkConfigurationAdmin;
+struct ctkConfigurationAdmin;
 class ctkManagedServiceFactoryTestSuite;
 
 class _ManagedServiceFactoryUpdateTest : public QObject,

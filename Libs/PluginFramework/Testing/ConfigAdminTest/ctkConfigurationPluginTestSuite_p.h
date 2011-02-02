@@ -32,7 +32,7 @@
 #include <ctkTestSuiteInterface.h>
 
 class ctkConfigurationPluginTestSuite;
-class ctkConfigurationAdmin;
+struct ctkConfigurationAdmin;
 
 class _ConfigurationPluginTest : public QObject, public ctkConfigurationPlugin
 {

@@ -32,7 +32,7 @@
 #include <ctkTestSuiteInterface.h>
 
 class ctkManagedServiceTestSuite;
-class ctkConfigurationAdmin;
+struct ctkConfigurationAdmin;
 
 class _ManagedServiceUpdateTest : public QObject, public ctkManagedService
 {

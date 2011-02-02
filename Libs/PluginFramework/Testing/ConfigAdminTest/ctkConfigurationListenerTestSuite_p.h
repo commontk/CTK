@@ -31,7 +31,7 @@
 #include <ctkTestSuiteInterface.h>
 
 class ctkPluginContext;
-class ctkConfigurationAdmin;
+struct ctkConfigurationAdmin;
 class ctkConfigurationListenerTestSuite;
 
 class _ConfigurationListenerTest : public QObject,
