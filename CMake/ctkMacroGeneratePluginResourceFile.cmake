@@ -6,7 +6,7 @@
 MACRO(ctkMacroGeneratePluginResourceFile QRC_SRCS)
 
   CtkMacroParseArguments(MY
-    "NAME;PREFIX;RESOURCES"
+    "NAME;PREFIX;RESOURCES;BINARY_RESOURCES"
     ""
     ${ARGN}
     )
@@ -18,11 +18,20 @@ MACRO(ctkMacroGeneratePluginResourceFile QRC_SRCS)
 <qresource prefix=\"/${MY_PREFIX}\">
 ")
 
-  FOREACH(_resource_file ${MY_RESOURCES})
-    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/${_resource_file}" "${CMAKE_CURRENT_BINARY_DIR}/${_resource_file}" COPYONLY)
-    SET(_qrc_content "${_qrc_content}<file>${_resource_file}</file>
+  IF(MY_RESOURCES)
+    FOREACH(_resource_file ${MY_RESOURCES})
+      CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/${_resource_file}" "${CMAKE_CURRENT_BINARY_DIR}/${_resource_file}" COPYONLY)
+      SET(_qrc_content "${_qrc_content}<file>${_resource_file}</file>
 ")
-  ENDFOREACH()
+    ENDFOREACH()
+  ENDIF()
+
+  IF(MY_BINARY_RESOURCES)
+    FOREACH(_resource_file ${MY_BINARY_RESOURCES})
+      SET(_qrc_content "${_qrc_content}<file>${_resource_file}</file>
+")
+    ENDFOREACH()
+  ENDIF()
 
   SET(_qrc_content "${_qrc_content}</qresource>
 </RCC>

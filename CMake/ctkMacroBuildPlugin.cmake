@@ -47,7 +47,7 @@
 #
 MACRO(ctkMacroBuildPlugin)
   CtkMacroParseArguments(MY
-    "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;LIBRARY_TYPE"
+    "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;TRANSLATIONS;LIBRARY_TYPE"
     "TEST_PLUGIN"
     ${ARGN}
     )
@@ -161,24 +161,44 @@ MACRO(ctkMacroBuildPlugin)
   ENDIF()
   LIST(APPEND MY_QRC_SRCS ${manifest_qrc_src})
 
+  # Create translation files (.ts and .qm)
+  SET(_plugin_qm_files )
+  SET(_plugin_relative_qm_files )
+  SET(_translations_dir "${CMAKE_CURRENT_BINARY_DIR}/CTK-INF/l10n")
+  IF(MY_TRANSLATIONS)
+    SET_SOURCE_FILES_PROPERTIES(${MY_TRANSLATIONS}
+                                PROPERTIES OUTPUT_LOCATION ${_translations_dir})
+    QT4_CREATE_TRANSLATION(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+  ENDIF()
+
+  IF(_plugin_qm_files)
+    FOREACH(_qm_file ${_plugin_qm_files})
+      FILE(RELATIVE_PATH _relative_qm_file ${CMAKE_CURRENT_BINARY_DIR} ${_qm_file})
+      LIST(APPEND _plugin_relative_qm_files ${_relative_qm_file})
+    ENDFOREACH()
+  ENDIF()
+
   # Add any other additional resource files
-  IF(MY_CACHED_RESOURCEFILES)
+  IF(MY_CACHED_RESOURCEFILES OR _plugin_relative_qm_files)
     STRING(REPLACE "." "_" _plugin_symbolicname ${Plugin-SymbolicName})
     ctkMacroGeneratePluginResourceFile(MY_QRC_SRCS
       NAME ${_plugin_symbolicname}_cached.qrc
       PREFIX ${Plugin-SymbolicName}
-      RESOURCES ${MY_CACHED_RESOURCEFILES})
+      RESOURCES ${MY_CACHED_RESOURCEFILES}
+      BINARY_RESOURCES ${_plugin_relative_qm_files})
   ENDIF()
 
   SOURCE_GROUP("Resources" FILES
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
+    ${MY_TRANSLATIONS}
     )
 
   SOURCE_GROUP("Generated" FILES
     ${MY_QRC_SRCS}
     ${MY_MOC_CPP}
     ${MY_UI_CPP}
+    ${_plugin_qm_files}
     )
   
   ADD_LIBRARY(${lib_name} ${MY_LIBRARY_TYPE}
@@ -186,6 +206,7 @@ MACRO(ctkMacroBuildPlugin)
     ${MY_MOC_CPP}
     ${MY_UI_CPP}
     ${MY_QRC_SRCS}
+    ${_plugin_qm_files}
     )
 
   # Set the output directory for the plugin
