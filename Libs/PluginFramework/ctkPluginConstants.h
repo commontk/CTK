@@ -134,14 +134,14 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    *
    * <p>
    * The attribute value may be retrieved from the <code>QHash</code>
-   * object returned by the <code>Plugin::getHeaders</code> method.
+   * object returned by the <code>ctkPlugin::getHeaders</code> method.
    *
    * @see #PLUGIN_LOCALIZATION_DEFAULT_BASENAME
    */
   static const QString PLUGIN_LOCALIZATION; // = "Plugin-Localization"
 
   /**
-   * Default value for the <code>ctkPlugin-Localization</code> manifest header.
+   * Default value for the <code>Plugin-Localization</code> manifest header.
    *
    * @see #PLUGIN_LOCALIZATION
    */
