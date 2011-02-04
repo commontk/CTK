@@ -23,8 +23,8 @@
 #ifndef CTKDICOMEXCHANGESERVICE_H
 #define CTKDICOMEXCHANGESERVICE_H
 
-#include <ctkDicomExchangeInterface.h>
-#include <QScopedPointer>
+#include "ctkDicomExchangeInterface.h"
+
 #include <org_commontk_dah_core_Export.h>
 
 class ctkDicomServicePrivate;

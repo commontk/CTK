@@ -25,12 +25,11 @@
 
 
 ctkAppSoapMessageProcessor::ctkAppSoapMessageProcessor(ctkDicomAppInterface* inter)
-: appInterface(inter)
+  : appInterface(inter)
 {}
 
 bool ctkAppSoapMessageProcessor::process(
-	const QtSoapMessage& message,
-	QtSoapMessage* reply ) const
+  const QtSoapMessage& message, QtSoapMessage* reply ) const
 {
   // TODO check for NULL appInterface?
   
@@ -59,9 +58,9 @@ bool ctkAppSoapMessageProcessor::process(
   
   return foundMethod;
 }
-		
+
 void ctkAppSoapMessageProcessor::processGetState(
-    const QtSoapMessage &message, QtSoapMessage *reply) const
+  const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   Q_UNUSED(message)
 
@@ -75,7 +74,7 @@ void ctkAppSoapMessageProcessor::processGetState(
 }
 
 void ctkAppSoapMessageProcessor::processSetState(
-    const QtSoapMessage &message, QtSoapMessage *reply) const
+  const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["newState"];
@@ -88,7 +87,7 @@ void ctkAppSoapMessageProcessor::processSetState(
 }
 
 void ctkAppSoapMessageProcessor::processBringToFront(
-    const QtSoapMessage &message, QtSoapMessage *reply) const
+  const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["requestedScreenArea"];

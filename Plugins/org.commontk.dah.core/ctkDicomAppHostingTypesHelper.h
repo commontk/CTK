@@ -20,8 +20,8 @@
 =============================================================================*/
 
 
-#ifndef CTKDICOM23TYPESHELPER_H
-#define CTKDICOM23TYPESHELPER_H
+#ifndef CTKDICOMAPPHOSTINGTYPESHELPER_H
+#define CTKDICOMAPPHOSTINGTYPESHELPER_H
 
 #include <QtSoapStruct>
 #include <QtSoapQName>
@@ -576,4 +576,4 @@ public:
 
 };
 
-#endif
+#endif // CTKDICOMAPPHOSTINGTYPESHELPER_H

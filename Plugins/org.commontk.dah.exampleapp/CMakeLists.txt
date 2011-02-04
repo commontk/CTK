@@ -3,6 +3,8 @@ PROJECT(org_commontk_dah_exampleapp)
 SET(PLUGIN_export_directive "org_commontk_example_dicomapp_EXPORT")
 
 SET(PLUGIN_SRCS
+  ctkExampleDicomAppLogic_p.h
+  ctkExampleDicomAppPlugin_p.h
   ctkExampleDicomAppLogic.cpp
   ctkExampleDicomAppPlugin.cpp
 )

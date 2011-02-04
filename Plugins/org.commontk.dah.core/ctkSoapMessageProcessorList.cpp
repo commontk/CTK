@@ -31,6 +31,12 @@ void ctkSoapMessageProcessorList::push_back( ctkSoapMessageProcessor* processor 
   processors.push_back( processor );
 }
 
+void ctkSoapMessageProcessorList::clear()
+{
+  qDeleteAll(processors);
+  processors.clear();
+}
+
 bool ctkSoapMessageProcessorList::process(
     const QtSoapMessage& message,
     QtSoapMessage* reply ) const

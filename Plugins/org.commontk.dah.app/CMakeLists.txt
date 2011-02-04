@@ -6,14 +6,18 @@ SET(PLUGIN_SRCS
   ctkAppSoapMessageProcessor.cpp
   ctkDicomAbstractApp.cpp
   ctkDicomAppPlugin.cpp
+  ctkDicomAppPlugin_p.h
   ctkDicomAppServer.cpp
+  ctkDicomAppServer_p.h
   ctkDicomHostService.cpp
+  ctkDicomHostService_p.h
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
   ctkDicomAppPlugin_p.h
   ctkDicomAppServer_p.h
+  ctkDicomHostService_p.h
 )
 
 # Qt Designer files which should be processed by Qts uic

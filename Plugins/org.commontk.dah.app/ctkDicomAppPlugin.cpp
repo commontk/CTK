@@ -29,10 +29,10 @@
 
 #include <stdexcept>
 
-ctkDicomAppPlugin* ctkDicomAppPlugin::instance = 0;
+ctkPluginContext* ctkDicomAppPlugin::context = 0;
 
 ctkDicomAppPlugin::ctkDicomAppPlugin()
-  : context(0), appServer(0), hostInterface(0)
+  : appServer(0), hostInterface(0)
 {
 
 }
@@ -44,7 +44,6 @@ ctkDicomAppPlugin::~ctkDicomAppPlugin()
 
 void ctkDicomAppPlugin::start(ctkPluginContext* context)
 {
-  instance = this;
   this->context = context;
 
 
@@ -65,7 +64,7 @@ void ctkDicomAppPlugin::start(ctkPluginContext* context)
 
   // register the host service, providing callbacks to the hosting application
   hostInterface = new ctkDicomHostService(QUrl(hostURL).port(), "/HostInterface");
-  context->registerService(QStringList("ctkDicomHostInterface"), hostInterface);
+  context->registerService<ctkDicomHostInterface>(hostInterface);
 
 }
 
@@ -75,14 +74,10 @@ void ctkDicomAppPlugin::stop(ctkPluginContext* context)
 
   delete appServer;
   delete hostInterface;
+  this->context = 0;
 }
 
-ctkDicomAppPlugin* ctkDicomAppPlugin::getInstance()
-{
-  return instance;
-}
-
-ctkPluginContext* ctkDicomAppPlugin::getPluginContext() const
+ctkPluginContext* ctkDicomAppPlugin::getPluginContext()
 {
   return context;
 }

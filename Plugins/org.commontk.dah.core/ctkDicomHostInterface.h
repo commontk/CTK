@@ -23,20 +23,10 @@
 #ifndef CTKDICOMHOSTINTERFACE_H
 #define CTKDICOMHOSTINTERFACE_H
 
-#include <QObject>
-#include <QRect>
-
-#include "ctkDicomAppHostingTypes.h"
 #include "ctkDicomExchangeInterface.h"
 
-#include <org_commontk_dah_core_Export.h>
-
-class org_commontk_dah_core_EXPORT ctkDicomHostInterface: public ctkDicomExchangeInterface
+struct ctkDicomHostInterface: public ctkDicomExchangeInterface
 {
-  Q_OBJECT
-
-public:
-
   // Host interface methods
   virtual QString generateUID() = 0;
   virtual QRect getAvailableScreen(const QRect& preferredScreen) = 0;
@@ -48,5 +38,7 @@ public:
   // inherited from ctkDicomExchangeInterface
 
 };
+
+Q_DECLARE_INTERFACE(ctkDicomHostInterface, "org.commontk.dah.core.HostInterface")
 
 #endif // CTKDICOMHOSTINTERFACE_H

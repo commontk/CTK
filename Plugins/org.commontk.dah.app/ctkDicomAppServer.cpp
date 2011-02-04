@@ -35,9 +35,12 @@
 #include <stdexcept>
 
 
-ctkDicomAppServer::ctkDicomAppServer(int port) :
-      port(port), appInterface(0)
+ctkDicomAppServer::ctkDicomAppServer(int port)
+  : appInterfaceRegistered(false), port(port),
+    appInterfaceTracker(ctkDicomAppPlugin::getPluginContext(), this)
 {
+  appInterfaceTracker.open();
+
   connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));
   connect(&server, SIGNAL(incomingWSDLMessage(QString,QString*)),
@@ -84,18 +87,41 @@ void ctkDicomAppServer::incomingSoapMessage(
   QtSoapMessage* reply)
 
 {
-  if(appInterface == NULL)
-  {
-    ctkPluginContext* context = ctkDicomAppPlugin::getInstance()->getPluginContext();
-    ctkServiceReference serviceRef = context->getServiceReference("ctkDicomAppInterface");
-    appInterface = qobject_cast<ctkDicomAppInterface*>(context->getService(serviceRef));
-    
-    ctkAppSoapMessageProcessor* appProcessor = new ctkAppSoapMessageProcessor( appInterface );
-    processors.push_back(appProcessor);
-    ctkExchangeSoapMessageProcessor* exchangeProcessor = new ctkExchangeSoapMessageProcessor( appInterface );
-    processors.push_back(exchangeProcessor);
-  }
-
+  QMutexLocker lock(&mutex);
   processors.process(message, reply);
+}
+
+ctkDicomAppInterface* ctkDicomAppServer::addingService(const ctkServiceReference& reference)
+{
+  QMutexLocker lock(&mutex);
+
+  if (appInterfaceRegistered)
+  {
+    //TODO maybe use ctkLogService
+    qWarning() << "A ctkDicomAppInterface service has already been added";
+    return 0;
+  }
+  appInterfaceRegistered = true;
+  ctkDicomAppInterface* appInterface = ctkDicomAppPlugin::getPluginContext()->getService<ctkDicomAppInterface>(reference);
+  processors.push_back(new ctkAppSoapMessageProcessor(appInterface));
+  processors.push_back(new ctkExchangeSoapMessageProcessor(appInterface));
+  return appInterface;
+}
+
+void ctkDicomAppServer::modifiedService(const ctkServiceReference& reference, ctkDicomAppInterface* service)
+{
+  Q_UNUSED(reference)
+  Q_UNUSED(service)
+  // do nothing
+}
+
+void ctkDicomAppServer::removedService(const ctkServiceReference& reference, ctkDicomAppInterface* service)
+{
+  Q_UNUSED(reference)
+  Q_UNUSED(service)
+
+  QMutexLocker lock(&mutex);
+  appInterfaceRegistered = false;
+  processors.clear();
 }
 

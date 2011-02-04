@@ -37,6 +37,8 @@ public:
 
   void push_back( ctkSoapMessageProcessor* processor );
 
+  void clear();
+
   bool process(const QtSoapMessage& message,
                QtSoapMessage* reply) const;
 

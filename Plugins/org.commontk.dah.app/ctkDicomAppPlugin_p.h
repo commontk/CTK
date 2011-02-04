@@ -26,7 +26,6 @@
 #include <ctkPluginActivator.h>
 
 class ctkDicomAppServer;
-class ctkDicomHostInterface;
 
 class ctkDicomAppPlugin :
   public QObject, public ctkPluginActivator
@@ -42,18 +41,15 @@ public:
   void start(ctkPluginContext* context);
   void stop(ctkPluginContext* context);
 
-  static ctkDicomAppPlugin* getInstance();
-
-  ctkPluginContext* getPluginContext() const;
+  static ctkPluginContext* getPluginContext();
 
 
 private:
 
-  static ctkDicomAppPlugin* instance;
-  ctkPluginContext* context;
+  static ctkPluginContext* context;
 
   ctkDicomAppServer* appServer;
-  ctkDicomHostInterface* hostInterface;
+  QObject* hostInterface;
 
 }; // ctkDicomAppPlugin
 

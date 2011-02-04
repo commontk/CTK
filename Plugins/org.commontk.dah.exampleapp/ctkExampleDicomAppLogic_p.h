@@ -23,41 +23,20 @@
 #ifndef CTKEXAMPLEDICOMAPPLOGIC_P_H
 #define CTKEXAMPLEDICOMAPPLOGIC_P_H
 
-#include <ctkPluginActivator.h>
-#include <ctkServiceReference.h>
 #include <ctkDicomAppInterface.h>
-#include <ctkDicomHostInterface.h>
-#include <stdexcept>
 
-template <class TServiceType>
-class ServiceAccessor {
-public:
-  ServiceAccessor(ctkPluginContext* context, const QString& clazz) : context(context), clazz(clazz)
-  {
-  }
-  TServiceType* operator->()
-  {
-    ctkServiceReference serviceRef = context->getServiceReference(clazz);
-    return qobject_cast<TServiceType*>(context->getService(serviceRef));
-  }
-  TServiceType* operator*()
-  {
-    return operator->();
-  }
-private:
-  ctkPluginContext* context;
-  const QString clazz;
-};
+#include <ctkServiceTracker.h>
 
+class ctkDicomHostInterface;
 
-class ctkExampleDicomAppLogic :
-  public ctkDicomAppInterface
+class ctkExampleDicomAppLogic : public QObject, public ctkDicomAppInterface
 {
   Q_OBJECT
+  Q_INTERFACES(ctkDicomAppInterface)
 
 public:
 
-  ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface> host);
+  ctkExampleDicomAppLogic();
   ~ctkExampleDicomAppLogic();
 
   // ctkDicomAppInterface
@@ -67,20 +46,30 @@ public:
 
   // ctkDicomExchangeInterface
   bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+
   QList<ctkDicomAppHosting::ObjectLocator> getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData);
+
   void releaseData(QList<QUuid> objectUUIDs);
 
   // some logic
   void do_something();
+
 signals:
+
   void stateChanged(int);
+
 protected slots:
+
   void changeState(int);
+
 private:
-  ServiceAccessor<ctkDicomHostInterface> host;
+
+  ctkDicomHostInterface* getHostInterface() const;
+
+  ctkServiceTracker<ctkDicomHostInterface*> hostTracker;
 
 }; // ctkExampleDicomAppLogic
 

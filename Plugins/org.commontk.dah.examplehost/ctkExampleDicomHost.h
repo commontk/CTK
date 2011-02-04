@@ -30,7 +30,7 @@
 #include <QUrl>
 #include <QProcess>
 
-class org_commontk_dah_examplehost_EXPORT ctkExampleDicomHost : public ctkDicomAbstractHost
+class org_commontk_dah_examplehost_EXPORT ctkExampleDicomHost : public QObject, public ctkDicomAbstractHost
 {
   Q_OBJECT
 

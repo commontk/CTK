@@ -23,17 +23,13 @@
 #ifndef ctkDicomExchangeInterface_H
 #define ctkDicomExchangeInterface_H
 
-#include <QObject>
 #include <QRect>
+#include <QObject>
 
 #include "ctkDicomAppHostingTypes.h"
-#include <org_commontk_dah_core_Export.h>
 
-class org_commontk_dah_core_EXPORT ctkDicomExchangeInterface : public QObject
+struct ctkDicomExchangeInterface
 {
-  Q_OBJECT
-
-public:
 
   // Data exchange interface methods
 
@@ -52,5 +48,7 @@ public:
 //    8.3.7 releaseModels(objectUUIDs : ArrayOfUUID): void
 
 };
+
+Q_DECLARE_INTERFACE(ctkDicomExchangeInterface, "org.commontk.dah.core.ExchangeInterface")
 
 #endif // ctkDicomExchangeInterface_H

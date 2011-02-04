@@ -26,8 +26,10 @@
 #include <ctkDicomHostInterface.h>
 #include <ctkDicomExchangeService.h>
 
-class ctkDicomHostService : public ctkDicomHostInterface
+class ctkDicomHostService : public QObject, public ctkDicomHostInterface
 {
+  Q_OBJECT
+  Q_INTERFACES(ctkDicomHostInterface)
 
 public:
   ctkDicomHostService(ushort port, QString path);

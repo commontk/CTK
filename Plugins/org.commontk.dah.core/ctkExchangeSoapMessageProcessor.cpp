@@ -28,8 +28,7 @@ ctkExchangeSoapMessageProcessor::ctkExchangeSoapMessageProcessor(ctkDicomExchang
 {}
 
 bool ctkExchangeSoapMessageProcessor::process(
-	const QtSoapMessage& message,
-	QtSoapMessage* reply ) const
+  const QtSoapMessage& message, QtSoapMessage* reply ) const
 {
   // TODO check for NULL exchangeInterface?
   
@@ -58,9 +57,9 @@ bool ctkExchangeSoapMessageProcessor::process(
   
   return foundMethod;
 }
-		
+
 void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
-    const QtSoapMessage &message, QtSoapMessage *reply) const
+  const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["data"];

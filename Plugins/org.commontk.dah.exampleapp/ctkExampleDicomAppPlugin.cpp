@@ -26,41 +26,34 @@
 #include <QStringList>
 #include <QString>
 
-ctkExampleDicomAppPlugin* ctkExampleDicomAppPlugin::instance = 0;
+ctkPluginContext* ctkExampleDicomAppPlugin::context = 0;
 
 ctkExampleDicomAppPlugin::ctkExampleDicomAppPlugin()
-  : appLogic(0), context(0)
+  : appLogic(0)
 {
 }
 
 ctkExampleDicomAppPlugin::~ctkExampleDicomAppPlugin()
 {
-  
+  delete appLogic;
 }
 
 void ctkExampleDicomAppPlugin::start(ctkPluginContext* context)
 {
-  instance = this;
   this->context = context;
-  context->registerService(QStringList("ctkDicomAppInterface"), 
-    appLogic = new ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface>(context,"ctkDicomHostInterface")));
 
-  //ctkServiceReference serviceRef = context->getServiceReference("ctkDicomHostInterface");
-  //ctkDicomHostInterface*
-  //  serviceBinding = qobject_cast<ctkDicomHostInterface*>(context->getService(serviceRef));
+  delete appLogic;
+  appLogic = new ctkExampleDicomAppLogic();
+  context->registerService<ctkDicomAppInterface>(appLogic);
 }
 
 void ctkExampleDicomAppPlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
+  this->context = 0;
 }
 
-ctkExampleDicomAppPlugin* ctkExampleDicomAppPlugin::getInstance()
-{
-  return instance;
-}
-
-ctkPluginContext* ctkExampleDicomAppPlugin::getPluginContext() const
+ctkPluginContext* ctkExampleDicomAppPlugin::getPluginContext()
 {
   return context;
 }

@@ -22,12 +22,12 @@
 #ifndef CTKDICOMSERVICEPRIVATE_H
 #define CTKDICOMSERVICEPRIVATE_H
 
-#include <ctkDicomAppHostingTypes.h>
+#include "ctkDicomAppHostingTypes.h"
 
 #include <QEventLoop>
 #include <QtSoapHttpTransport>
+
 #include <org_commontk_dah_core_Export.h>
-#include <ctkDicomExchangeInterface.h>
 
 class org_commontk_dah_core_EXPORT ctkDicomServicePrivate : public QObject
 {

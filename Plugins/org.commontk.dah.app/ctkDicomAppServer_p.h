@@ -26,12 +26,19 @@
 #include <QObject>
 #include <QtSoapMessage>
 
+#include <ctkServiceTracker.h>
+
+#include <ctkDicomAppInterface.h>
 #include <ctkSimpleSoapServer.h>
 #include <ctkSoapMessageProcessorList.h>
 
-class ctkDicomAppInterface;
-
-class ctkDicomAppServer : public QObject
+/**
+ * This class serves as a SOAP server for DICOM Hosted Application
+ * specific requests. It forwards the SOAP requests to a service
+ * object registered under the ctkDicomAppInterface interface from
+ * a specific application plugin.
+ */
+class ctkDicomAppServer : public QObject, ctkServiceTrackerCustomizer<ctkDicomAppInterface*>
 {
   Q_OBJECT
 
@@ -44,13 +51,22 @@ public slots:
                            QtSoapMessage* reply);
   void incomingWSDLMessage(const QString& message, QString* reply);
 
+protected:
+
+  ctkDicomAppInterface* addingService(const ctkServiceReference& reference);
+  void modifiedService(const ctkServiceReference& reference, ctkDicomAppInterface* service);
+  void removedService(const ctkServiceReference& reference, ctkDicomAppInterface* service);
+
 private:
+
+  QMutex mutex;
+  bool appInterfaceRegistered;
 
   ctkSoapMessageProcessorList processors;
   ctkSimpleSoapServer server;
   int port;
 
-  ctkDicomAppInterface* appInterface;
+  ctkServiceTracker<ctkDicomAppInterface*> appInterfaceTracker;
 };
 
 #endif // CTKDICOMAPPPSERVER_P_H

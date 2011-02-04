@@ -5,6 +5,7 @@ SET(PLUGIN_export_directive "org_commontk_dah_examplehost_EXPORT")
 SET(PLUGIN_SRCS
   ctkExampleDicomHost.cpp
   ctkExampleDicomHostPlugin.cpp
+  ctkExampleDicomHostPlugin_p.h
   ctkHostedAppPlaceholderWidget.cpp
 )
 

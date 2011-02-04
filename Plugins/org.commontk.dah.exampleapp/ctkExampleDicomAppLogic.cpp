@@ -21,14 +21,20 @@
 
 
 #include "ctkExampleDicomAppLogic_p.h"
+#include "ctkExampleDicomAppPlugin_p.h"
+
+#include <ctkDicomHostInterface.h>
+
 #include <QtPlugin>
 #include <QRect>
 #include <QDebug>
 #include <QPushButton>
 
-ctkExampleDicomAppLogic::ctkExampleDicomAppLogic(ServiceAccessor<ctkDicomHostInterface> host)
-  : host(host)
+ctkExampleDicomAppLogic::ctkExampleDicomAppLogic()
+  : hostTracker(ctkExampleDicomAppPlugin::getPluginContext())
 {
+  hostTracker.open();
+
   connect(this, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)), Qt::QueuedConnection);
   emit stateChanged(ctkDicomAppHosting::IDLE);
 }
@@ -59,9 +65,10 @@ void ctkExampleDicomAppLogic::do_something()
   QPushButton *button = new QPushButton("Button from App");
   try
   {
+
     QRect preferred(50,50,100,100);
     qDebug() << "  Asking:getAvailableScreen";
-    QRect rect = host->getAvailableScreen(preferred);
+    QRect rect = getHostInterface()->getAvailableScreen(preferred);
     qDebug() << "  got sth:" << rect.top();
     button->move(rect.topLeft());
     button->resize(rect.size());
@@ -69,6 +76,7 @@ void ctkExampleDicomAppLogic::do_something()
   catch (const std::runtime_error& e)
   {
     qCritical() << e.what();
+    return;
   }
   button->show();
 }
@@ -76,13 +84,15 @@ void ctkExampleDicomAppLogic::do_something()
 void ctkExampleDicomAppLogic::changeState(int anewstate)
 {
   ctkDicomAppHosting::State newstate = static_cast<ctkDicomAppHosting::State>(anewstate);
+
   try
   {
-    host->notifyStateChanged(newstate);
+    getHostInterface()->notifyStateChanged(newstate);
   }
   catch (const std::runtime_error& e)
   {
     qCritical() << e.what();
+    return;
   }
 
   if (newstate == ctkDicomAppHosting::INPROGRESS)
@@ -108,7 +118,15 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
   Q_UNUSED(includeBulkData)
   return QList<ctkDicomAppHosting::ObjectLocator>();
 }
+
 void ctkExampleDicomAppLogic::releaseData(QList<QUuid> objectUUIDs)
 {
   Q_UNUSED(objectUUIDs)
+}
+
+ctkDicomHostInterface* ctkExampleDicomAppLogic::getHostInterface() const
+{
+  ctkDicomHostInterface* host = hostTracker.getService();
+  if (!host) throw std::runtime_error("DICOM Host Interface not available");
+  return host;
 }

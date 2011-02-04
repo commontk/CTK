@@ -23,19 +23,10 @@
 #ifndef CTKDICOMAPPINTERFACE_H
 #define CTKDICOMAPPINTERFACE_H
 
-#include <QObject>
-#include <QRect>
-
-#include "ctkDicomAppHostingTypes.h"
 #include "ctkDicomExchangeInterface.h"
 
-#include <org_commontk_dah_core_Export.h>
-
-class org_commontk_dah_core_EXPORT ctkDicomAppInterface : public ctkDicomExchangeInterface
+struct ctkDicomAppInterface : public ctkDicomExchangeInterface
 {
-  Q_OBJECT
-
-public:
 
   // Application interface methods
   virtual ctkDicomAppHosting::State getState() = 0;
@@ -46,5 +37,7 @@ public:
   // inherited from ctkDicomExchangeInterface
 
 };
+
+Q_DECLARE_INTERFACE(ctkDicomAppInterface, "org.commontk.dah.core.AppInterface")
 
 #endif // CTKDICOMAPPINTERFACE_H
