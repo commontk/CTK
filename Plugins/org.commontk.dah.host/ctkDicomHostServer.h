@@ -25,10 +25,12 @@
 
 #include <QScopedPointer>
 
-class ctkDicomHostInterface;
+#include <org_commontk_dah_host_Export.h>
+
+struct ctkDicomHostInterface;
 class ctkDicomHostServerPrivate;
 
-class ctkDicomHostServer
+class org_commontk_dah_host_EXPORT ctkDicomHostServer
 {
 
 public:

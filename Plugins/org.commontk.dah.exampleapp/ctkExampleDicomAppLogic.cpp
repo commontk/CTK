@@ -23,8 +23,6 @@
 #include "ctkExampleDicomAppLogic_p.h"
 #include "ctkExampleDicomAppPlugin_p.h"
 
-#include <ctkDicomHostInterface.h>
-
 #include <QtPlugin>
 #include <QRect>
 #include <QDebug>

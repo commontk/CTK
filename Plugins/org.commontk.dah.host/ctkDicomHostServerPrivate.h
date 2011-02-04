@@ -28,7 +28,7 @@
 #include <ctkSimpleSoapServer.h>
 #include <ctkSoapMessageProcessorList.h>
 
-class ctkDicomHostInterface;
+struct ctkDicomHostInterface;
 
 class ctkDicomHostServerPrivate : public QObject
 {

@@ -24,10 +24,11 @@
 #define CTKEXAMPLEDICOMAPPLOGIC_P_H
 
 #include <ctkDicomAppInterface.h>
+#include <ctkDicomHostInterface.h>
 
 #include <ctkServiceTracker.h>
 
-class ctkDicomHostInterface;
+struct ctkDicomHostInterface;
 
 class ctkExampleDicomAppLogic : public QObject, public ctkDicomAppInterface
 {
