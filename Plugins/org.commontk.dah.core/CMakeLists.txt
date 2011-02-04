@@ -6,7 +6,7 @@ SET(PLUGIN_SRCS
   ctkDicomAppHostingCorePlugin.cpp
   ctkDicomAppHostingCorePlugin_p.h
   ctkDicomAppHostingTypes.h
-  ctkDicomAppHostingTypesHelper.h
+  ctkDicomAppHostingTypesHelper.cpp
   ctkDicomAppInterface.h
   ctkDicomExchangeInterface.h
   ctkDicomExchangeService.cpp
