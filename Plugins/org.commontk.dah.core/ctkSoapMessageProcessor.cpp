@@ -19,32 +19,27 @@
 
 =============================================================================*/
 
-#ifndef CTKSOAPMESSAGEPROCESSOR_H
-#define CTKSOAPMESSAGEPROCESSOR_H
+#include "ctkSoapMessageProcessor.h"
 
-#include <qtsoap.h>
-
-#include <org_commontk_dah_core_Export.h>
-
-class org_commontk_dah_core_EXPORT ctkSoapMessageProcessor
+ctkSoapMessageProcessor::~ctkSoapMessageProcessor()
 {
 
-public:
+}
 
-  virtual ~ctkSoapMessageProcessor();
+bool ctkSoapMessageProcessor::process(
+  const QtSoapMessage& message, QtSoapMessage* reply) const
+{
+  Q_UNUSED(message)
+  Q_UNUSED(reply)
+  // to implement
+  return false;
+}
 
-  /**
-   * Process a Soap Message and set the input reply.
-   *
-   * @param message The message to process.
-   * @param reply The reply to the input message.
-   * @return True if the message could be processed.
-   */
-  virtual bool process(const QtSoapMessage& message,
-                       QtSoapMessage* reply) const;
-
-  bool operator==(const ctkSoapMessageProcessor& rhs);
-
-};
-
-#endif // CTKSOAPMESSAGEPROCESSOR_H
+bool ctkSoapMessageProcessor::operator==(const ctkSoapMessageProcessor& rhs)
+{
+  if( this == &rhs )
+  {
+    return true;
+  }
+  return false;
+}

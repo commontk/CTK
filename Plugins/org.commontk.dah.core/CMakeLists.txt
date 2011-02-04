@@ -16,7 +16,7 @@ SET(PLUGIN_SRCS
   ctkSimpleSoapServer.cpp
   ctkSoapConnectionRunnable.cpp
   ctkSoapConnectionRunnable_p.h
-  ctkSoapMessageProcessor.h
+  ctkSoapMessageProcessor.cpp
   ctkSoapMessageProcessorList.cpp
 )
 
