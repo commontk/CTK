@@ -26,7 +26,7 @@
 #include <ctkDicomHostInterface.h>
 #include <ctkDicomExchangeService.h>
 
-class ctkDicomHostService : public QObject, public ctkDicomHostInterface
+class ctkDicomHostService : public ctkDicomExchangeService, public ctkDicomHostInterface
 {
   Q_OBJECT
   Q_INTERFACES(ctkDicomHostInterface)
@@ -41,18 +41,15 @@ public:
   void notifyStateChanged(ctkDicomAppHosting::State state);
   void notifyStatus(const ctkDicomAppHosting::Status& status);
 
-  // Exchange methods
+  // Exchange methods implemented in ctkDicomExchangeService
   bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+
   QList<ctkDicomAppHosting::ObjectLocator> getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData);
+
   void releaseData(QList<QUuid> objectUUIDs);
-
-private:
-  ctkDicomServicePrivate * d;
-
-  ctkDicomExchangeService service;
 
 };
 

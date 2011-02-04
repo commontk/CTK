@@ -19,35 +19,39 @@
 
 =============================================================================*/
 
-#ifndef CTKDICOMSERVICEPRIVATE_H
-#define CTKDICOMSERVICEPRIVATE_H
+#ifndef CTKSIMPLESOAPCLIENT_H
+#define CTKSIMPLESOAPCLIENT_H
 
-#include "ctkDicomAppHostingTypes.h"
+#include <QObject>
+#include <QScopedPointer>
 
-#include <QEventLoop>
-#include <QtSoapHttpTransport>
+#include <QtSoapType>
 
 #include <org_commontk_dah_core_Export.h>
 
-class org_commontk_dah_core_EXPORT ctkDicomServicePrivate : public QObject
+class ctkSimpleSoapClientPrivate;
+
+class org_commontk_dah_core_EXPORT ctkSimpleSoapClient : public QObject
 {
   Q_OBJECT
 
 public:
-  ctkDicomServicePrivate(int port, QString path);
+  ctkSimpleSoapClient(int port, QString path);
+  ~ctkSimpleSoapClient();
 
-  const QtSoapType & askHost(const QString& methodName, const QList<QtSoapType*>& soapTypes);
-  const QtSoapType & askHost(const QString& methodName, QtSoapType* soapType);
-    
-  QEventLoop blockingLoop;
-  QtSoapHttpTransport http;
-
-  int port;
-  QString path;
+  const QtSoapType & submitSoapRequest(const QString& methodName, const QList<QtSoapType*>& soapTypes);
+  const QtSoapType & submitSoapRequest(const QString& methodName, QtSoapType* soapType);
 
 private slots:
 
   void responseReady();
+
+private:
+
+  const QScopedPointer<ctkSimpleSoapClientPrivate> d_ptr;
+
+  Q_DECLARE_PRIVATE(ctkSimpleSoapClient);
+  Q_DISABLE_COPY(ctkSimpleSoapClient);
 };
 
-#endif // CTKDICOMSERVICEPRIVATE_H
+#endif // CTKSIMPLESOAPCLIENT_H

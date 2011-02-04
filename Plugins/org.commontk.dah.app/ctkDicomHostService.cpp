@@ -21,12 +21,10 @@
 
 #include "ctkDicomHostService_p.h"
 
-#include "ctkDicomServicePrivate.h"
+#include <ctkDicomAppHostingTypesHelper.h>
 
-#include "ctkDicomAppHostingTypesHelper.h"
-
-ctkDicomHostService::ctkDicomHostService(ushort port, QString path):
-    d(new ctkDicomServicePrivate(port, path)), service(port, path)
+ctkDicomHostService::ctkDicomHostService(ushort port, QString path)
+  : ctkDicomExchangeService(port, path)
 {
 }
 
@@ -36,30 +34,24 @@ ctkDicomHostService::~ctkDicomHostService()
 
 QString ctkDicomHostService::generateUID()
 {
-  //Q_D(ctkDicomService);
-
-  const QtSoapType& result = d->askHost("generateUID", NULL);
+  const QtSoapType& result = submitSoapRequest("generateUID", NULL);
   QString resultUID = ctkDicomSoapUID::getUID(result);
   return resultUID;
 }
 
 QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProtocols)
 {
-  //Q_D(ctkDicomHostService);
-
   QtSoapStruct* input = dynamic_cast<QtSoapStruct*>(
     new ctkDicomSoapArrayOfStringType("string","preferredProtocols", preferredProtocols));
-  const QtSoapType& result = d->askHost("getOutputLocation", input);
+  const QtSoapType& result = submitSoapRequest("getOutputLocation", input);
   QString resultString = result.value().toString();
   return resultString;
 }
 
 QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 {
-  //Q_D(ctkDicomService);
-
   QtSoapStruct* input = new ctkDicomSoapRectangle("preferredScreen", preferredScreen);
-  const QtSoapType& result = d->askHost("getAvailableScreen", input);
+  const QtSoapType& result = submitSoapRequest("getAvailableScreen", input);
   QRect resultRect = ctkDicomSoapRectangle::getQRect(result);
   qDebug() << "x:" << resultRect.x() << " y:" << resultRect.y();
   return resultRect;
@@ -67,24 +59,22 @@ QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 
 void ctkDicomHostService::notifyStateChanged(ctkDicomAppHosting::State state)
 {
-  //Q_D(ctkDicomService);
-
   QtSoapType* input = new ctkDicomSoapState("newState", state); // spec would be "state", java has "newState" FIX JAVA/STANDARD
-  d->askHost("notifyStateChanged", input);
+  submitSoapRequest("notifyStateChanged", input);
 }
 
 void ctkDicomHostService::notifyStatus(const ctkDicomAppHosting::Status& status)
 {
   //Q_D(ctkDicomService);
   QtSoapStruct* input = new ctkDicomSoapStatus("status", status);
-  d->askHost("notifyStatus", input);
+  submitSoapRequest("notifyStatus", input);
 }
 
 // Exchange methods
 
 bool ctkDicomHostService::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
 {
-  return service.notifyDataAvailable(data, lastData);
+  return ctkDicomExchangeService::notifyDataAvailable(data, lastData);
 }
 
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomHostService::getData(
@@ -92,10 +82,10 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomHostService::getData(
   QList<QString> acceptableTransferSyntaxUIDs, 
   bool includeBulkData)
 {
-  return service.getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
+  return ctkDicomExchangeService::getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
 }
 
 void ctkDicomHostService::releaseData(QList<QUuid> objectUUIDs)
 {
-  service.releaseData(objectUUIDs);
+  ctkDicomExchangeService::releaseData(objectUUIDs);
 }

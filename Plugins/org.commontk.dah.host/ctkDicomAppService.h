@@ -25,9 +25,8 @@
 
 #include <ctkDicomAppInterface.h>
 #include <ctkDicomExchangeService.h>
-#include <org_commontk_dah_host_Export.h>
 
-class org_commontk_dah_host_EXPORT ctkDicomAppService : public ctkDicomAppInterface
+class ctkDicomAppService : public ctkDicomExchangeService, public ctkDicomAppInterface
 {
 
 public:
@@ -38,18 +37,16 @@ public:
   bool setState(ctkDicomAppHosting::State newState);
   bool bringToFront(const QRect& requestedScreenArea);
 
-  // Exchange methods
+  // Exchange methods implemented in ctkDicomExchangeService
   bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+
   QList<ctkDicomAppHosting::ObjectLocator> getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData);
+
   void releaseData(QList<QUuid> objectUUIDs);
 
-private:
-  ctkDicomServicePrivate * d;
-
-  ctkDicomExchangeService service;
 };
 
 #endif // CTKDICOMAPPSERVICE_H

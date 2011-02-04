@@ -21,30 +21,28 @@
 
 #include "ctkDicomExchangeService.h"
 
-#include "ctkDicomServicePrivate.h"
+#include "ctkSimpleSoapClient.h"
 
 #include "ctkDicomAppHostingTypesHelper.h"
 
 ctkDicomExchangeService::ctkDicomExchangeService(ushort port, QString path)
-  : d(new ctkDicomServicePrivate(port, path))
+  : ctkSimpleSoapClient(port, path)
 {
 
 }
 
 ctkDicomExchangeService::~ctkDicomExchangeService()
 {
-  delete d;
-  d = NULL;
+
 }
 
 bool ctkDicomExchangeService::notifyDataAvailable(
     ctkDicomAppHosting::AvailableData data, bool lastData)
 {
-  //Q_D(ctkDicomService);
   QList<QtSoapType*> list;
   list << new ctkDicomSoapAvailableData("data", data);
   list << new ctkDicomSoapBool("lastData", lastData);
-  const QtSoapType & result = d->askHost("notifyDataAvailable",list);
+  const QtSoapType & result = submitSoapRequest("notifyDataAvailable",list);
   return ctkDicomSoapBool::getBool(result);
 }
 
@@ -58,7 +56,7 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
   list << new ctkDicomSoapArrayOfUUIDS("objectUUIDS",objectUUIDs);
   list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxUIDs", acceptableTransferSyntaxUIDs);
   list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
-  const QtSoapType & result = d->askHost("getData",list);
+  const QtSoapType & result = submitSoapRequest("getData",list);
   return ctkDicomSoapArrayOfObjectLocators::getArray(static_cast<const QtSoapArray &>(result));
 }
 

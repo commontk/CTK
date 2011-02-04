@@ -19,81 +19,103 @@
 
 =============================================================================*/
 
-#include "ctkDicomServicePrivate.h"
-#include "ctkDicomAppHostingTypesHelper.h"
+#include "ctkSimpleSoapClient.h"
+#include "ctkDicomAppHostingTypes.h"
 
 #include <QApplication>
 #include <QCursor>
 #include <QNetworkReply>
+#include <QtSoapHttpTransport>
 
-#include <stdexcept>
-
-
-#include <iostream>
-
-ctkDicomServicePrivate::ctkDicomServicePrivate(int port, QString path) : path(path)
+class ctkSimpleSoapClientPrivate
 {
-  connect(&http, SIGNAL(responseReady()), this, SLOT(responseReady()));
+public:
 
-  http.setHost("127.0.0.1", false, port);
+  QEventLoop blockingLoop;
+  QtSoapHttpTransport http;
+
+  int port;
+  QString path;
+};
+
+ctkSimpleSoapClient::ctkSimpleSoapClient(int port, QString path)
+  : d_ptr(new ctkSimpleSoapClientPrivate())
+{
+  Q_D(ctkSimpleSoapClient);
+
+  d->port = port;
+  d->path = path;
+
+  connect(&d->http, SIGNAL(responseReady()), this, SLOT(responseReady()));
+
+  d->http.setHost("127.0.0.1", false, port);
 }
 
-void ctkDicomServicePrivate::responseReady()
+ctkSimpleSoapClient::~ctkSimpleSoapClient()
 {
-  blockingLoop.exit();
+
 }
 
-const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
+void ctkSimpleSoapClient::responseReady()
+{
+  Q_D(ctkSimpleSoapClient);
+  d->blockingLoop.exit();
+}
+
+const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodName,
                                                    QtSoapType* soapType )
 {
   QList<QtSoapType*> list;
   list.append(soapType);
-  return askHost(methodName,list);
+  return submitSoapRequest(methodName,list);
 }
 
-const QtSoapType & ctkDicomServicePrivate::askHost(const QString& methodName,
+const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodName,
                                                    const QList<QtSoapType*>& soapTypes )
 {
+  Q_D(ctkSimpleSoapClient);
+
   QString action="\"";
   //action.append(methodName);
   action.append("\"");
-  http.setAction(action);
+  d->http.setAction(action);
 
-  std::cout << "Submitting action " << action.toStdString() << " method " << methodName.toStdString() << " to path " << path.toStdString();
+  qDebug() << "Submitting action " << action << " method " << methodName << " to path " << d->path;
 
   QtSoapMessage request;
   request.setMethod(QtSoapQName(methodName,"http://wg23.dicom.nema.org/"));
-  if( !soapTypes.isEmpty())
+  if(!soapTypes.isEmpty())
   {
     for (QList<QtSoapType*>::ConstIterator it = soapTypes.begin();
-    it < soapTypes.constEnd(); it++){
+         it < soapTypes.constEnd(); it++)
+    {
       request.addMethodArgument(*it);
       qDebug() << "  Argument type added " << (*it)->typeName() << ". Argument name is " << (*it)->name().name();;
     }
   }
   qDebug() << request.toXmlString();
 
-  http.submitRequest(request, path);;
+  d->http.submitRequest(request, d->path);;
 
   qDebug() << "Submitted request " << methodName ;
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-  blockingLoop.exec(QEventLoop::ExcludeUserInputEvents | QEventLoop::WaitForMoreEvents);
+  d->blockingLoop.exec(QEventLoop::ExcludeUserInputEvents | QEventLoop::WaitForMoreEvents);
 
   QApplication::restoreOverrideCursor();
 
   //qDebug() << "Reply error: " << reply->errorString();
   //qDebug() << reply->readAll();
-  const QtSoapMessage& response = http.getResponse();
+  const QtSoapMessage& response = d->http.getResponse();
 
   if (response.isFault())
   {
-    qCritical() << "ctkDicomServicePrivate: server error (response.IsFault())";
+    qCritical() << "ctkSimpleSoapClient: server error (response.IsFault())";
     qDebug() << response.faultString().toString().toLatin1().constData() << endl;
     qDebug() << response.toXmlString();
     return response.returnValue();
-    //    throw std::runtime_error("ctkDicomServicePrivate: server error (response.IsFault())");
+    //    throw std::runtime_error("ctkSimpleSoapClient: server error (response.IsFault())");
   }
 
   qDebug() << "Response: " << response.toXmlString();

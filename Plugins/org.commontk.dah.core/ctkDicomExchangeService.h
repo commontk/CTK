@@ -23,16 +23,17 @@
 #ifndef CTKDICOMEXCHANGESERVICE_H
 #define CTKDICOMEXCHANGESERVICE_H
 
+#include "ctkSimpleSoapClient.h"
 #include "ctkDicomExchangeInterface.h"
 
 #include <org_commontk_dah_core_Export.h>
 
-class ctkDicomServicePrivate;
-
-class org_commontk_dah_core_EXPORT ctkDicomExchangeService : public ctkDicomExchangeInterface
+class org_commontk_dah_core_EXPORT ctkDicomExchangeService :
+    public ctkSimpleSoapClient, public ctkDicomExchangeInterface
 {
 
 public:
+
   ctkDicomExchangeService(ushort port, QString path);
   ~ctkDicomExchangeService();
 
@@ -41,9 +42,6 @@ public:
                                              QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData);
   void releaseData(QList<QUuid> objectUUIDs);
 
-
-protected:
-  ctkDicomServicePrivate * d;
 };
 
 #endif // CTKDICOMEXCHANGESERVICE_H

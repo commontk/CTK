@@ -11,8 +11,8 @@ SET(PLUGIN_SRCS
   ctkDicomExchangeInterface.h
   ctkDicomExchangeService.cpp
   ctkDicomHostInterface.h
-  ctkDicomServicePrivate.cpp
   ctkExchangeSoapMessageProcessor.cpp
+  ctkSimpleSoapClient.cpp
   ctkSimpleSoapServer.cpp
   ctkSoapConnectionRunnable.cpp
   ctkSoapConnectionRunnable_p.h
@@ -23,7 +23,7 @@ SET(PLUGIN_SRCS
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
   ctkDicomAppHostingCorePlugin_p.h
-  ctkDicomServicePrivate.h
+  ctkSimpleSoapClient.h
   ctkSimpleSoapServer.h
   ctkSoapConnectionRunnable_p.h
 )
