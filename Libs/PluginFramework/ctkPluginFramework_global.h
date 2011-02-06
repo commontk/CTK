@@ -42,7 +42,7 @@ inline uint qHash(const QSharedPointer<T>& ptr)
 template<class A>
 QStringList getIIDs()
 {
-  return QString(qobject_interface_iid<A*>());
+  return QStringList(qobject_interface_iid<A*>());
 }
 
 template<class A, class B>
