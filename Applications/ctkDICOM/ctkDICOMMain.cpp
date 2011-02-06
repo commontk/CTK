@@ -51,11 +51,11 @@ int main(int argc, char** argv)
 
   // set up the database 
   if (argc > 1)
-    {
+  {
     QString directory(argv[1]);
     settings.setValue("DatabaseDirectory", directory);
     settings.sync();
-    }
+  }
 
   if ( settings.value("DatabaseDirectory", "") == "" )
   {
@@ -94,10 +94,10 @@ int main(int argc, char** argv)
   ctkDICOMQueryRetrieveWidget queryRetrieve;
   QTreeView *treeView = queryRetrieve.findChild<QTreeView *>("treeView");
   if (!treeView)
-    {
+  {
     std::cerr << "Could not access tree view from QueryRetrieve widget\n";
     return EXIT_FAILURE;
-    }
+  }
   treeView->setModel(&model);
 
   queryRetrieve.show();
