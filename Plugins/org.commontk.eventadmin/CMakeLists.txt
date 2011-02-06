@@ -5,6 +5,8 @@ SET(PLUGIN_export_directive "org_commontk_eventadmin_EXPORT")
 SET(PLUGIN_SRCS
   ctkEAConfiguration_p.h
   ctkEAConfiguration.cpp
+  ctkEAMetaTypeProvider_p.h
+  ctkEAMetaTypeProvider.cpp
   ctkEventAdminActivator.cpp
   ctkEventAdminActivator_p.h
   ctkEventAdminImpl_p.h
@@ -97,6 +99,7 @@ SET(PLUGIN_MOC_SRCS
   tasks/ctkEASyncThread_p.h
 
   ctkEAConfiguration_p.h
+  ctkEAMetaTypeProvider_p.h
   ctkEventAdminActivator_p.h
   ctkEventAdminService_p.h
 )

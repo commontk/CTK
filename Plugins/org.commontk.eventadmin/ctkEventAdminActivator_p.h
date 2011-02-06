@@ -79,7 +79,6 @@ private:
   static ctkEALogTracker* logTracker;
 
   ctkEAConfiguration* config;
-  ctkServiceRegistration managedServiceReg;
 };
 
 

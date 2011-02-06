@@ -23,6 +23,7 @@
 #include "ctkEAConfiguration_p.h"
 
 #include "ctkEventAdminService_p.h"
+#include "ctkEAMetaTypeProvider_p.h"
 #include "adapter/ctkEAFrameworkEventAdapter_p.h"
 #include "adapter/ctkEALogEventAdapter_p.h"
 #include "adapter/ctkEAPluginEventAdapter_p.h"
@@ -50,27 +51,30 @@ ctkEAConfiguration::ctkEAConfiguration(ctkPluginContext* pluginContext )
   configure(ctkDictionary());
   startOrUpdate();
 
-  // check for Configuration Admin configuration
-//  try
-//  {
-      //TODO MetaType Provider
-//      // add meta type provider if interfaces are available
-//      QObject* enhancedService = tryToCreateMetaTypeProvider(service);
-//      QStringList interfaceNames;
-//      if (enhancedService == 0)
-//      {
-//        interfaceNames.append(getIIDs<ctkManagedService>());
-//      }
-//      else
-//      {
-//        interfaceNames.append(getIIDs<ctkManagedService, ctkMetaTypeProvider>());
-//        service = enhancedService;
-//      }
-//  }
-//  catch (...)
-//  {
-//    // don't care
-//  }
+  try
+  {
+    QObject* service = this;
+
+    // add meta type provider
+    metaTypeService.reset(tryToCreateMetaTypeProvider(qobject_cast<ctkManagedService*>(service)));
+    QStringList interfaceNames;
+    if (metaTypeService.isNull())
+    {
+      interfaceNames.append(getIIDs<ctkManagedService>());
+    }
+    else
+    {
+      interfaceNames.append(getIIDs<ctkManagedService, ctkMetaTypeProvider>());
+      service = metaTypeService.data();
+    }
+    ctkDictionary props;
+    props.insert(ctkPluginConstants::SERVICE_PID, PID);
+    managedServiceReg = pluginContext->registerService(interfaceNames, service, props);
+  }
+  catch (...)
+  {
+    // don't care
+  }
 }
 
 void ctkEAConfiguration::updateFromConfigAdmin(const ctkDictionary& config)
@@ -286,18 +290,15 @@ void ctkEAConfiguration::adaptEvents(ctkEventAdmin* admin)
 
 QObject* ctkEAConfiguration::tryToCreateMetaTypeProvider(ctkManagedService* managedService)
 {
-  Q_UNUSED(managedService)
-  //TODO
-//  try
-//  {
-//    return new MetaTypeProviderImpl((ManagedService)managedService,
-//                                    m_cacheSize, m_threadPoolSize, m_timeout, m_requireTopic,
-//                                    m_ignoreTimeout);
-//  }
-//  catch (Throwable t)
-//  {
-//    // we simply ignore this
-//  }
+  try
+  {
+    return new ctkEAMetaTypeProvider(managedService, cacheSize, threadPoolSize,
+                                     timeout, requireTopic, ignoreTimeout);
+  }
+  catch (...)
+  {
+    // we simply ignore this
+  }
   return 0;
 }
 

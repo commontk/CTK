@@ -87,10 +87,8 @@ class ctkEAAbstractAdapter;
  * as the timout handling requires an additional thread to call the event handler.
  * However, the application should work without this configuration property. It is a
  * pure optimization!
- * The value is a list of string (separated by comma). If the string ends with a dot,
- * all handlers in exactly this package are ignored. If the string ends with a star,
- * all handlers in this package and all subpackages are ignored. If the string neither
- * ends with a dot nor with a start, this is assumed to define an exact class name.
+ * The value is a list of strings (separated by comma) which is assumed to define
+ * exact class names.
  *
  * These properties are read at startup and serve as a default configuration.
  * If a configuration admin is configured, the event admin can be configured
@@ -106,14 +104,14 @@ public:
   /** The PID for the event admin. */
   static const QString PID; // = "org.commontk.eventadmin.impl.EventAdmin"
 
-private:
-
   static const QString PROP_CACHE_SIZE; // = "org.commontk.eventadmin.CacheSize"
   static const QString PROP_THREAD_POOL_SIZE; // = "org.commontk.eventadmin.ThreadPoolSize"
   static const QString PROP_TIMEOUT; // = "org.commontk.eventadmin.Timeout"
   static const QString PROP_REQUIRE_TOPIC; // = "org.commontk.eventadmin.RequireTopic"
   static const QString PROP_IGNORE_TIMEOUT; // = "org.commontk.eventadmin.IgnoreTimeout"
   static const QString PROP_LOG_LEVEL; // = "org.commontk.eventadmin.LogLevel"
+
+private:
 
   QMutex mutex;
 
@@ -141,6 +139,8 @@ private:
   // added via a decorator in the start method (this is the wrapped object without
   // the wrapper).
   ctkEventAdminService* admin;
+
+  QScopedPointer<QObject> metaTypeService;
 
   // The registration of the security decorator factory (i.e., the service)
   ctkServiceRegistration registration;

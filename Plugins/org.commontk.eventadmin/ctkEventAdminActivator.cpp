@@ -49,11 +49,6 @@ void ctkEventAdminActivator::start(ctkPluginContext* context)
   if (config) delete config;
   // this creates the event admin and starts it
   config = new ctkEAConfiguration(context);
-
-  // register the ctkEAConfiguration object as a ctkManagedService
-  ctkDictionary props;
-  props.insert(ctkPluginConstants::SERVICE_PID, ctkEAConfiguration::PID);
-  managedServiceReg = context->registerService<ctkManagedService>(config, props);
 }
 
 void ctkEventAdminActivator::stop(ctkPluginContext* context)
@@ -62,8 +57,6 @@ void ctkEventAdminActivator::stop(ctkPluginContext* context)
 
   if (config)
   {
-    managedServiceReg.unregister();
-    managedServiceReg = 0;
     config->destroy();
   }
 
