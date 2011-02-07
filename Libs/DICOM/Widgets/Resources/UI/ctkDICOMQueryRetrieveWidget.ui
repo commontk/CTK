@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>977</width>
-    <height>769</height>
+    <width>843</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -136,33 +136,7 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkDICOMQueryResultsTabWidget" name="results">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <property name="tabsClosable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="tab">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <attribute name="title">
-       <string>Results</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QTreeView" name="treeView"/>
-       </item>
-      </layout>
-     </widget>
-    </widget>
+    <widget class="QTreeView" name="results"/>
    </item>
   </layout>
  </widget>
@@ -177,12 +151,6 @@
    <class>ctkDICOMServerNodeWidget</class>
    <extends>QWidget</extends>
    <header>ctkDICOMServerNodeWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDICOMQueryResultsTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header>ctkDICOMQueryResultsTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

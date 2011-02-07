@@ -23,6 +23,9 @@
 
 // Qt includes 
 #include <QWidget>
+#include <QString>
+#include <QList>
+#include <QMap>
 
 #include "ctkDICOMWidgetsExport.h"
 
@@ -37,9 +40,8 @@ public:
   explicit ctkDICOMServerNodeWidget(QWidget* parent=0);
   virtual ~ctkDICOMServerNodeWidget();
 
-
-  /// set properties of query based on current widget state
-  void populateQuery (/*ctkDICOMQuery &query*/);
+  QStringList nodes();
+  QMap<QString,QString> nodeParameters(QString &node);
 
 public slots:
   void addNode ();

@@ -37,9 +37,9 @@ public:
   virtual ~ctkDICOMQueryRetrieveWidget();
 
 public slots:
-    void onDatabaseDirectoryChanged(const QString& directory);
+    void setRetrieveDirectory(const QString& directory);
+    void setRetrieveDatabaseFileName(const QString& fileName);
     void processQuery();
-    void onTabCloseRequested(int index);
 
 protected:
   QScopedPointer<ctkDICOMQueryRetrieveWidgetPrivate> d_ptr;

@@ -199,11 +199,41 @@ void ctkDICOMServerNodeWidget::saveSettings()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget::populateQuery(/*ctkDICOMQuery &query*/)
+QStringList ctkDICOMServerNodeWidget::nodes()
 {
-  //Q_D(ctkDICOMServerNodeWidget);
+  Q_D(ctkDICOMServerNodeWidget);
 
-  std::cerr << "server node populate\n";
+  int count = d->nodeTable->rowCount();
+  QStringList nodes;
+  for (int row = 0; row < count; row++)
+  {
+    nodes << d->nodeTable->item(row,0)->text();
+  }
+  return nodes;
 }
 
+//----------------------------------------------------------------------------
+QMap<QString, QString> ctkDICOMServerNodeWidget::nodeParameters(QString &node)
+{
+  Q_D(ctkDICOMServerNodeWidget);
 
+  QMap<QString, QString> parameters;
+  int count = d->nodeTable->rowCount();
+  QStringList keys;
+  keys << "Name" << "AETitle" << "Address" << "Port";
+  for (int row = 0; row < count; row++)
+  {
+    if ( d->nodeTable->item(row,0)->text() == node )
+    {
+      for (int k = 0; k < keys.size(); ++k)
+      {
+        if ( d->nodeTable->item(row,k) )
+        {
+          parameters[keys.at(k)] = d->nodeTable->item(row,k)->text();
+        }
+        parameters["CheckState"] = d->nodeTable->item(row,0)->checkState();
+      }
+    }
+  }
+  return parameters;
+}
