@@ -153,7 +153,7 @@ int ctkDICOMQuery::port()
 //------------------------------------------------------------------------------
 void ctkDICOMQuery::query(QSqlDatabase database )
 {
-  ctkDICOMIndexerBase::setDatabase ( database );
+  ctkDICOMDatabase::setDatabase ( database );
   Q_D(ctkDICOMQuery);
   if ( this->database().isOpen() )
     {

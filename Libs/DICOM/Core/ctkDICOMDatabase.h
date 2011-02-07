@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMIndexerBase_h
-#define __ctkDICOMIndexerBase_h
+#ifndef __ctkDICOMDatabase_h
+#define __ctkDICOMDatabase_h
 
 // Qt includes 
 #include <QObject>
@@ -27,15 +27,15 @@
 
 #include "ctkDICOMCoreExport.h"
 
-class ctkDICOMIndexerBasePrivate;
+class ctkDICOMDatabasePrivate;
 class DcmDataset;
 
-class CTK_DICOM_CORE_EXPORT ctkDICOMIndexerBase : public QObject
+class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
   Q_OBJECT
 public:
-  explicit ctkDICOMIndexerBase();
-  virtual ~ctkDICOMIndexerBase();
+  explicit ctkDICOMDatabase();
+  virtual ~ctkDICOMDatabase();
   void setDatabase ( QSqlDatabase database );
   const QSqlDatabase& database() const;
 
@@ -49,11 +49,11 @@ public:
   void insert ( DcmDataset *dataset );
 
 protected:
-  QScopedPointer<ctkDICOMIndexerBasePrivate> d_ptr;
+  QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
   
 private:
-  Q_DECLARE_PRIVATE(ctkDICOMIndexerBase);
-  Q_DISABLE_COPY(ctkDICOMIndexerBase);
+  Q_DECLARE_PRIVATE(ctkDICOMDatabase);
+  Q_DISABLE_COPY(ctkDICOMDatabase);
 };
 
 #endif

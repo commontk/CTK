@@ -32,7 +32,7 @@
 #include <QDebug>
 
 // ctkDICOM includes
-#include "ctkDICOMIndexerBase.h"
+#include "ctkDICOMDatabase.h"
 
 #include "ctkLogger.h"
 
@@ -50,66 +50,66 @@
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
 
 //------------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.dicom.DICOMIndexerBase" );
+static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-class ctkDICOMIndexerBasePrivate
+class ctkDICOMDatabasePrivate
 {
 public:
-  ctkDICOMIndexerBasePrivate();
-  ~ctkDICOMIndexerBasePrivate();
+  ctkDICOMDatabasePrivate();
+  ~ctkDICOMDatabasePrivate();
   QSqlDatabase db;
 
 };
 
 //------------------------------------------------------------------------------
-// ctkDICOMIndexerBasePrivate methods
+// ctkDICOMDatabasePrivate methods
 
 //------------------------------------------------------------------------------
-ctkDICOMIndexerBasePrivate::ctkDICOMIndexerBasePrivate()
+ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate()
 {
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMIndexerBasePrivate::~ctkDICOMIndexerBasePrivate()
+ctkDICOMDatabasePrivate::~ctkDICOMDatabasePrivate()
 {
 }
 
 //------------------------------------------------------------------------------
-// ctkDICOMIndexerBase methods
+// ctkDICOMDatabase methods
 
 //------------------------------------------------------------------------------
-ctkDICOMIndexerBase::ctkDICOMIndexerBase()
-   : d_ptr(new ctkDICOMIndexerBasePrivate)
+ctkDICOMDatabase::ctkDICOMDatabase()
+   : d_ptr(new ctkDICOMDatabasePrivate)
 {
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMIndexerBase::~ctkDICOMIndexerBase()
+ctkDICOMDatabase::~ctkDICOMDatabase()
 {
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexerBase::setDatabase ( QSqlDatabase database ) {
-  Q_D(ctkDICOMIndexerBase);
+void ctkDICOMDatabase::setDatabase ( QSqlDatabase database ) {
+  Q_D(ctkDICOMDatabase);
   d->db = database;
 }
 
 //------------------------------------------------------------------------------
-const QSqlDatabase& ctkDICOMIndexerBase::database () const {
-  Q_D(const ctkDICOMIndexerBase);
+const QSqlDatabase& ctkDICOMDatabase::database () const {
+  Q_D(const ctkDICOMDatabase);
   return d->db;
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexerBase::insert ( DcmDataset *dataset ) {
+void ctkDICOMDatabase::insert ( DcmDataset *dataset ) {
   this->insert ( dataset, QString() );
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
-  Q_D(ctkDICOMIndexerBase);
+void ctkDICOMDatabase::insert ( DcmDataset *dataset, QString filename ) {
+  Q_D(ctkDICOMDatabase);
 
   // Check to see if the file has already been loaded
   QSqlQuery fileExists ( d->db );

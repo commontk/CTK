@@ -29,10 +29,10 @@
 #include <ctkPimpl.h>
 
 #include "ctkDICOMCoreExport.h"
-#include "ctkDICOMIndexerBase.h"
+#include "ctkDICOMDatabase.h"
 
 class ctkDICOMQueryPrivate;
-class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public ctkDICOMIndexerBase
+class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public ctkDICOMDatabase
 {
   Q_OBJECT
   Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);

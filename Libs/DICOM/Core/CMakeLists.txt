@@ -13,8 +13,8 @@ SET(KIT_SRCS
   ctkDICOM.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
-  ctkDICOMIndexerBase.cpp
-  ctkDICOMIndexerBase.h
+  ctkDICOMDatabase.cpp
+  ctkDICOMDatabase.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
   ctkDICOMQuery.cpp
@@ -26,7 +26,7 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkDICOM.h
-  ctkDICOMIndexerBase.h
+  ctkDICOMDatabase.h
   ctkDICOMModel.h
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h
