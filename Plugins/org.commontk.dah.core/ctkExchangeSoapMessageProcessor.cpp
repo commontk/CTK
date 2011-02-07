@@ -31,14 +31,14 @@ bool ctkExchangeSoapMessageProcessor::process(
   const QtSoapMessage& message, QtSoapMessage* reply ) const
 {
   // TODO check for NULL exchangeInterface?
-  
+
   const QtSoapType& method = message.method();
   QString methodName = method.name().name();
 
   qDebug() << "ExchangeMessageProcessor: Received soap method request: " << methodName;
 
   bool foundMethod = false;
-  
+
   if (methodName == "notifyDataAvailable")
   {
     processNotifyDataAvailable(message, reply);
@@ -54,7 +54,7 @@ bool ctkExchangeSoapMessageProcessor::process(
     processReleaseData(message, reply);
     foundMethod = true;
   }
-  
+
   return foundMethod;
 }
 
@@ -96,13 +96,12 @@ void ctkExchangeSoapMessageProcessor::processGetData(
 }
 
 void ctkExchangeSoapMessageProcessor::processReleaseData(
-    const QtSoapMessage &message, QtSoapMessage *reply) const
+    const QtSoapMessage &message, QtSoapMessage * /*reply*/) const
 {
-  Q_UNUSED(message)
-  Q_UNUSED(reply)
   // extract arguments from input message
-  //const QtSoapType& inputType = message.method()["objectUUIDs"];
-  const QList<QUuid> objectUUIDs;
+  const QtSoapType& inputType = message.method()["objectUUIDs"];
+  const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(
+    dynamic_cast<const QtSoapArray&>(inputType));
   // query interface
   exchangeInterface->releaseData(objectUUIDs);
   // set reply message: nothing to be done

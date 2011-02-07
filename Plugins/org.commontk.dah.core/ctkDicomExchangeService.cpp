@@ -62,7 +62,11 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
 
 void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs)
 {
-  Q_UNUSED(objectUUIDs)
+  QList<QtSoapType*> list;
+
+  list << new ctkDicomSoapArrayOfUUIDS("objectUUIDS",objectUUIDs);
+   submitSoapRequest("releaseData",list);
+  return;
 }
 
 
