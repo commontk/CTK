@@ -22,9 +22,9 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
-# Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
-ctkMacroGetTargetLibraries(KIT_target_libraries)
+ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 ADD_EXECUTABLE(${KIT}CppTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CppTests ${KIT_target_libraries})

@@ -58,9 +58,9 @@ SET(VTK_LIBRARIES
   vtkFiltering
   )
 
-# Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
-ctkMacroGetTargetLibraries(KIT_target_libraries)
+ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 # Configure file will be configured using CTK_WRAP_PYTHONQT_{LIGHT, FULL} variable
 CONFIGURE_FILE(

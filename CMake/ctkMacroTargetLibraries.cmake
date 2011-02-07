@@ -20,13 +20,15 @@
 
 #
 # This macro could be invoked using two different signatures:
-#   ctkMacroGetTargetLibraries(TARGET_LIBS)
+#   ctkFunctionGetTargetLibraries(TARGET_LIBS)
 # or 
-#   ctkMacroGetTargetLibraries(TARGET_LIBS "/path/to/ctk_target_dir")
+#   ctkFunctionGetTargetLibraries(TARGET_LIBS "/path/to/ctk_target_dir")
 #
 # Without specifying the second argument, the current folder will be used.
 #
-MACRO(ctkMacroGetTargetLibraries varname)
+FUNCTION(ctkFunctionGetTargetLibraries varname)
+
+  SET(expanded_target_library_list)
 
   SET(TARGET_DIRECTORY ${ARGV1})
   IF("${TARGET_DIRECTORY}" STREQUAL "")
@@ -61,9 +63,9 @@ MACRO(ctkMacroGetTargetLibraries varname)
     FOREACH(target_library ${target_libraries})
       IF(${target_library} MATCHES "^CTK[a-zA-Z0-9]+$" OR
          ${target_library} MATCHES "^org_commontk_[a-zA-Z0-9_]+$")
-        LIST(APPEND ${varname} ${target_library})
+        LIST(APPEND expanded_target_library_list ${target_library})
       ELSE()
-        LIST(APPEND ${varname} "${${target_library}}")
+        LIST(APPEND expanded_target_library_list "${${target_library}}")
       ENDIF()
     ENDFOREACH()
   ENDIF()
@@ -82,11 +84,14 @@ MACRO(ctkMacroGetTargetLibraries varname)
     # Loop over all plugin dependencies,
     FOREACH(plugin_symbolicname ${Require-Plugin})
       STRING(REPLACE "." "_" plugin_library ${plugin_symbolicname})
-      LIST(APPEND ${varname} ${plugin_library})
+      LIST(APPEND expanded_target_library_list ${plugin_library})
     ENDFOREACH()
   ENDIF()
+  
+  # Pass the list of target libraries to the caller
+  SET(${varname} ${expanded_target_library_list} PARENT_SCOPE)
 
-ENDMACRO()
+ENDFUNCTION()
 
 #
 #
