@@ -22,6 +22,7 @@
 
 #include "ctkConfigurationAdminActivator_p.h"
 #include "ctkConfigurationAdminFactory_p.h"
+#include "ctkConfigurationEventAdapter_p.h"
 
 #include <ctkServiceTracker.h>
 #include <service/cm/ctkConfigurationAdmin.h>
@@ -31,7 +32,7 @@
 
 
 ctkConfigurationAdminActivator::ctkConfigurationAdminActivator()
-  : logTracker(0), factory(0)
+  : logTracker(0), factory(0), eventAdapter(0)
 {
 }
 
@@ -46,10 +47,8 @@ void ctkConfigurationAdminActivator::start(ctkPluginContext* context)
   logFileFallback.open(stdout, QIODevice::WriteOnly);
   logTracker = new ctkCMLogTracker(context, &logFileFallback);
   logTracker->open();
-//  if (checkEventAdmin()) {
-//     eventAdapter = new ConfigurationEventAdapter(context);
-//     eventAdapter.start();
-//    }
+  eventAdapter = new ctkConfigurationEventAdapter(context);
+  eventAdapter->start();
   factory = new ctkConfigurationAdminFactory(context, logTracker);
   factory->start();
   context->connectPluginListener(factory, SLOT(pluginChanged(const ctkPluginEvent&)));
@@ -69,11 +68,9 @@ void ctkConfigurationAdminActivator::stop(ctkPluginContext* context)
   delete factory;
   factory = 0;
 
-//  if (eventAdapter != null)
-//  {
-//    eventAdapter.stop();
-//    eventAdapter = null;
-//  }
+  eventAdapter->stop();
+  delete eventAdapter;
+  eventAdapter = 0;
 
   logTracker->close();
   delete logTracker;

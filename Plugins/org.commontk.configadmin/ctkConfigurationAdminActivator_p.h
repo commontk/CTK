@@ -28,6 +28,7 @@
 #include "ctkCMLogTracker_p.h"
 
 class ctkConfigurationAdminFactory;
+class ctkConfigurationEventAdapter;
 
 /**
  * The ctkConfigurationAdminActivator starts the ctkConfigurationAdminFactory but also handles passing in the Service
@@ -56,6 +57,7 @@ private:
   ctkCMLogTracker* logTracker;
   ctkServiceRegistration registration;
   ctkConfigurationAdminFactory* factory;
+  ctkConfigurationEventAdapter* eventAdapter;
 
 }; // ctkConfigurationAdminActivator
 
