@@ -19,12 +19,22 @@
 ###########################################################################
 
 #
+# This macro could be invoked using two different signatures:
+#   ctkMacroGetTargetLibraries(TARGET_LIBS)
+# or 
+#   ctkMacroGetTargetLibraries(TARGET_LIBS "/path/to/ctk_target_dir")
 #
+# Without specifying the second argument, the current folder will be used.
 #
 MACRO(ctkMacroGetTargetLibraries varname)
 
-  SET(filepath ${CMAKE_CURRENT_SOURCE_DIR}/target_libraries.cmake)
-  SET(manifestpath ${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
+  SET(TARGET_DIRECTORY ${ARGV1})
+  IF("${TARGET_DIRECTORY}" STREQUAL "")
+    SET(TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  ENDIF()
+
+  SET(filepath ${TARGET_DIRECTORY}/target_libraries.cmake)
+  SET(manifestpath ${TARGET_DIRECTORY}/manifest_headers.cmake)
 
   # Check if "target_libraries.cmake" or "manifest_headers.cmake" file exists
   IF(NOT EXISTS ${filepath} AND NOT EXISTS ${manifestpath})
