@@ -21,6 +21,7 @@
 
 
 #include "ctkSoapConnectionRunnable_p.h"
+#include "ctkSoapLog.h"
 
 #include <QTcpSocket>
 
@@ -61,7 +62,7 @@ void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
   //qDebug() << socket->readAll();
   while (socket.canReadLine()) {
     QString line = socket.readLine();
-    qDebug() << line;
+    CTK_SOAP_LOG_LOWLEVEL( << line );
     if(line.contains("?wsdl HTTP"))
     {
       requestType = "?wsdl";
@@ -94,13 +95,13 @@ void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
         while(body.size() < contentLength)
         {
           QByteArray bodyPart = socket.read(contentLength);
-          qDebug() << bodyPart;
+          CTK_SOAP_LOG_LOWLEVEL( << bodyPart );
           bytesRead += bodyPart.size();
           body.append(bodyPart);
-          qDebug() << " Expected content-length: " << contentLength << ". Bytes read so far: " << body.size();
+          CTK_SOAP_LOG_LOWLEVEL( << " Expected content-length: " << contentLength << ". Bytes read so far: " << body.size() );
           if (body.size()<contentLength)
           {
-            qDebug() << " Message body too small. Trying to read more.";
+            qCritical() << " Message body too small. Trying to read more.";
             socket.waitForReadyRead(-1);
           }
         }
@@ -109,7 +110,7 @@ void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
           QtSoapMessage msg;
           if (!msg.setContent(body))
           {
-            qDebug() << "QtSoap import failed:" << msg.errorString();
+            qCritical() << "QtSoap import failed:" << msg.errorString();
             return;
           }
 
@@ -118,11 +119,11 @@ void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
 
           if (reply.isFault())
           {
-            qDebug() << "QtSoap reply faulty";
+            qCritical() << "QtSoap reply faulty";
             return;
           }
 
-          qDebug() << "SOAP reply:";
+          CTK_SOAP_LOG_LOWLEVEL( << "SOAP reply:" );
 
           content = reply.toXmlString();
         }
@@ -136,7 +137,7 @@ void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
 
       block.append(content);
 
-      qDebug() << block;
+      CTK_SOAP_LOG_LOWLEVEL( << block );
 
       socket.write(block);
 

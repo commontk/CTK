@@ -21,6 +21,7 @@
 
 #include "ctkSimpleSoapClient.h"
 #include "ctkDicomAppHostingTypes.h"
+#include "ctkSoapLog.h"
 
 #include <QApplication>
 #include <QCursor>
@@ -80,7 +81,9 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
   action.append("\"");
   d->http.setAction(action);
 
-  qDebug() << "Submitting action " << action << " method " << methodName << " to path " << d->path;
+  CTK_SOAP_LOG( << "Submitting action " << action
+                << " method " << methodName
+                << " to path " << d->path );
 
   QtSoapMessage request;
   request.setMethod(QtSoapQName(methodName,"http://wg23.dicom.nema.org/"));
@@ -90,14 +93,15 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
          it < soapTypes.constEnd(); it++)
     {
       request.addMethodArgument(*it);
-      qDebug() << "  Argument type added " << (*it)->typeName() << ". Argument name is " << (*it)->name().name();;
+      CTK_SOAP_LOG( << "  Argument type added " << (*it)->typeName() << ". "
+                    << " Argument name is " << (*it)->name().name() );
     }
   }
-  qDebug() << request.toXmlString();
+  CTK_SOAP_LOG_LOWLEVEL( << request.toXmlString());
 
   d->http.submitRequest(request, d->path);;
 
-  qDebug() << "Submitted request " << methodName ;
+  CTK_SOAP_LOG_LOWLEVEL( << "Submitted request " << methodName);
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
@@ -112,19 +116,19 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
   if (response.isFault())
   {
     qCritical() << "ctkSimpleSoapClient: server error (response.IsFault())";
-    qDebug() << response.faultString().toString().toLatin1().constData() << endl;
-    qDebug() << response.toXmlString();
+    CTK_SOAP_LOG_LOWLEVEL( << response.faultString().toString().toLatin1().constData() << endl );
+    CTK_SOAP_LOG_LOWLEVEL( << response.toXmlString() );
     return response.returnValue();
     //    throw std::runtime_error("ctkSimpleSoapClient: server error (response.IsFault())");
   }
 
-  qDebug() << "Response: " << response.toXmlString();
+  CTK_SOAP_LOG_LOWLEVEL( << "Response: " << response.toXmlString() );
 
   const QtSoapType &returnValue = response.returnValue();
 
-  qDebug() << " Is returnValue valid:" << returnValue.isValid();
-  qDebug() << " Name of returnValue:" << returnValue.name().name();
-  qDebug() << " Value of returnValue:" << returnValue.value().toString();
+  CTK_SOAP_LOG( << "  ReturnValue valid:" << returnValue.isValid() << "     "
+                << "Name: " << returnValue.name().name() << "     "
+                << "Value:" << returnValue.value().toString() );
 
   return returnValue;
 }
