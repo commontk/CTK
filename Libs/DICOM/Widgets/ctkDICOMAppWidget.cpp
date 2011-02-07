@@ -2,16 +2,16 @@
 #include <QTreeView>
 #include <QTabBar>
 #include <QSettings>
+#include <QAction>
 
 // ctkDICOMWidgets includes
 #include "ctkDICOM.h"
 #include "ctkDICOMModel.h"
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
-#include "Ui_ctkDICOMAppWidget.h"
+#include "ui_ctkDICOMAppWidget.h"
 #include "ctkDirectoryButton.h"
 #include "ctkDICOMQueryRetrieveWidget.h"
-#include "QAction.h"
 
 //logger
 #include <ctkLogger.h>
