@@ -27,6 +27,7 @@
 #include <QRect>
 #include <QDebug>
 #include <QPushButton>
+#include <QApplication>
 
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic()
   : hostTracker(ctkExampleDicomAppPlugin::getPluginContext())
@@ -96,6 +97,27 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
   if (newstate == ctkDicomAppHosting::INPROGRESS)
   {
     do_something();
+  }
+
+  if (newstate == ctkDicomAppHosting::CANCELED)
+  {
+    qDebug() << "  Received changeState(CANCELED) ... now releasing all resources and afterwards changing to state IDLE.";
+    qDebug() << "  Changing to state IDLE.";
+    try
+    {
+      getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
+    }
+    catch (const std::runtime_error& e)
+    {
+      qCritical() << e.what();
+      return;
+    }
+  }
+
+  if (newstate == ctkDicomAppHosting::EXIT)
+  {
+    qDebug() << "  Received changeState(EXIT) ... exiting.";
+    qApp->quit();
   }
 }
 
