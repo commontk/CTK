@@ -112,7 +112,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfigurationAdmin
    * Configuration property naming the Factory PID in the configuration
    * dictionary. The property's value is of type {@code QString}.
    */
-  static const QString	SERVICE_FACTORYPID; // = "service.factoryPid";
+  static const QString SERVICE_FACTORYPID; // = "service.factoryPid";
 
   /**
    * Configuration property naming the location of the plugin that is
@@ -120,7 +120,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfigurationAdmin
    * be searched for but must not appear in the configuration dictionary for
    * security reason. The property's value is of type {@code QString}.
    */
-  static const QString	SERVICE_PLUGINLOCATION; // = "service.pluginLocation";
+  static const QString SERVICE_PLUGINLOCATION; // = "service.pluginLocation";
 
   /**
    * Create a new factory {@code ctkConfiguration} object with a new PID.
