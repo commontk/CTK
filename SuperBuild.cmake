@@ -32,6 +32,7 @@ SET(external_projects
   ZMQ
   QtMobility
   QtSOAP
+  qxmlrpc
   OpenIGTLink
   XIP
   ITK
