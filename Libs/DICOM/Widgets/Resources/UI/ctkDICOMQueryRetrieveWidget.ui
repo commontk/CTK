@@ -30,48 +30,6 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QFrame" name="frame_2">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Local Database</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="ctkDirectoryButton" name="sqlDirectory" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>30</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Local directory where cached files and database index file are stored.</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="addToDatabase">
-              <property name="toolTip">
-               <string>Add more files to the local database by browsing the filesystem</string>
-              </property>
-              <property name="text">
-               <string>Add...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
           <widget class="QFrame" name="frame_3">
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -196,7 +154,7 @@
        </sizepolicy>
       </property>
       <attribute name="title">
-       <string>Local</string>
+       <string>Results</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
@@ -225,12 +183,6 @@
    <class>ctkDICOMQueryResultsTabWidget</class>
    <extends>QTabWidget</extends>
    <header>ctkDICOMQueryResultsTabWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDirectoryButton</class>
-   <extends>QWidget</extends>
-   <header>ctkDirectoryButton.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
