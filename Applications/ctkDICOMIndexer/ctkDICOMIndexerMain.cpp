@@ -25,7 +25,7 @@
 
 // CTK includes
 #include <ctkDICOMIndexer.h>
-#include <ctkDICOM.h>
+#include <ctkDICOMDatabase.h>
 
 // STD includes
 #include <cstdlib>
@@ -63,7 +63,7 @@ int main(int argc, char** argv)
   QTextStream out(stdout);
 
   ctkDICOMIndexer idx;
-  ctkDICOM myCTK;
+  ctkDICOMDatabase myCTK;
 
 
   try

@@ -35,9 +35,24 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_OBJECT
 public:
   explicit ctkDICOMDatabase();
+  explicit ctkDICOMDatabase(QString databaseFile);
   virtual ~ctkDICOMDatabase();
-  void setDatabase ( QSqlDatabase database );
+
   const QSqlDatabase& database() const;
+  const QString& GetLastError() const;
+
+  ///
+  /// open the SQLite database in @param file. If the file does not
+  /// exist, a new database is created and initialized with the
+  /// default schema
+  virtual void openDatabase(const QString file);
+
+  ///
+  /// close the database. It must not be used afterwards.
+  void closeDatabase();
+  ///
+  /// delete all data and reinitialize the database.
+  bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
 
   /**
    * Will create an entry in the appropriate tables for this dataset.
@@ -50,7 +65,9 @@ public:
 
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
-  
+
+
+
 private:
   Q_DECLARE_PRIVATE(ctkDICOMDatabase);
   Q_DISABLE_COPY(ctkDICOMDatabase);
