@@ -69,7 +69,7 @@ FUNCTION(ctkFunctionGenerateProjectXml dir name target_directories is_superbuild
       SET(dependencies )
 
       # get dependencies
-      ctkMacroCollectTargetLibraryNames(${target_dir} dependencies)
+      ctkFunctionCollectTargetLibraryNames(${target_dir} dependencies)
       
       # Make sure the variable is cleared
       SET(ctk_dependencies)
