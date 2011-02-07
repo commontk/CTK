@@ -332,6 +332,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMDemoSCU:OFF
   ctkDICOMQuery:OFF
   ctkDICOMRetrieve:OFF
+  ctkDICOMViewer:ON
   ctkExampleHost:OFF
   ctkExampleHostedApp:OFF
   ctkPluginBrowser:OFF
