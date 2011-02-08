@@ -75,22 +75,19 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
   QMap<QString, QVariant> node;
   if ( settings.value("ServerNodeCount").toInt() == 0 )
   {
-    node["Name"] = "Local Database";
-    node["CheckState"] = Qt::Checked;
-    node["AETitle"] = "N/A";
-    node["Address"] = "N/A";
-    node["Port"] = "N/A";
-    settings.setValue("ServerNodeCount", 2);
+    settings.setValue("ServerNodeCount", 1);
     settings.setValue("ServerNodes/0", QVariant(node));
     node["Name"] = "ExampleHost";
-    node["CheckState"] = Qt::Unchecked;
-    node["AETitle"] = "CTK_AE";
+    node["CheckState"] = Qt::Checked;
+    node["AETitle"] = "ANY-SCP";
     node["Address"] = "localhost";
     node["Port"] = "11112";
     settings.setValue("ServerNodes/1", QVariant(node));
+    settings.setValue("CallingAETitle", "FINDSCU");
     settings.sync();
   }
 
+  d->callingAETitle->setText(settings.value("CallingAETitle").toString());
   int count = settings.value("ServerNodeCount").toInt();
   d->nodeTable->setRowCount(count);
   for (int row = 0; row < count; row++)
@@ -108,22 +105,16 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
     d->nodeTable->setItem(row, 3, newItem);
   }
 
-  connect(d->addButton
-    ,SIGNAL(clicked()),
-    this,
-    SLOT(addNode()));
-  connect(d->removeButton
-    ,SIGNAL(clicked()),
-    this,
-    SLOT(removeNode()));
-  connect(d->nodeTable,
-    SIGNAL(cellChanged(int,int)),
-    this,
-    SLOT(onCellChanged(int,int)));
-  connect(d->nodeTable,
-    SIGNAL(currentItemChanged(QTableWidgetItem*, QTableWidgetItem*)),
-    this,
-    SLOT(onCurrentItemChanged(QTableWidgetItem*, QTableWidgetItem*)));
+  connect(d->callingAETitle, SIGNAL(textChanged(const QString&)),
+    this, SLOT(saveSettings()));
+  connect(d->addButton, SIGNAL(clicked()),
+    this, SLOT(addNode()));
+  connect(d->removeButton, SIGNAL(clicked()),
+    this, SLOT(removeNode()));
+  connect(d->nodeTable, SIGNAL(cellChanged(int,int)),
+    this, SLOT(onCellChanged(int,int)));
+  connect(d->nodeTable, SIGNAL(currentItemChanged(QTableWidgetItem*, QTableWidgetItem*)),
+    this, SLOT(onCurrentItemChanged(QTableWidgetItem*, QTableWidgetItem*)));
 }
 
 //----------------------------------------------------------------------------
@@ -195,7 +186,16 @@ void ctkDICOMServerNodeWidget::saveSettings()
     }
   }
   settings.setValue("ServerNodeCount", count);
+  settings.setValue("CallingAETitle", d->callingAETitle->text());
   settings.sync();
+}
+
+//----------------------------------------------------------------------------
+QString ctkDICOMServerNodeWidget::callingAETitle()
+{
+  Q_D(ctkDICOMServerNodeWidget);
+
+  return d->callingAETitle->text();
 }
 
 //----------------------------------------------------------------------------

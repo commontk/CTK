@@ -30,32 +30,13 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QFrame" name="frame_3">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+          <widget class="ctkDICOMServerNodeWidget" name="serverNodeWidget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>200</height>
+            </size>
            </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Query Targets</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="ctkDICOMServerNodeWidget" name="serverNodeWidget" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>300</width>
-                <height>200</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </widget>
          </item>
         </layout>

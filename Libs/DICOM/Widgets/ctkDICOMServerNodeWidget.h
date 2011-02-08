@@ -40,6 +40,7 @@ public:
   explicit ctkDICOMServerNodeWidget(QWidget* parent=0);
   virtual ~ctkDICOMServerNodeWidget();
 
+  QString callingAETitle();
   QStringList nodes();
   QMap<QString,QString> nodeParameters(QString &node);
 
