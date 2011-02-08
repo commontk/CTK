@@ -20,7 +20,9 @@ SET(KIT_SRCS
   ctkDICOMQuery.cpp
   ctkDICOMQuery.h
   ctkDICOMRetrieve.cpp
-  ctkDICOMRetrieve.h
+  ctkDICOMRetrieve.cpp
+  ctkDICOMDataset.h
+  ctkDICOMDataset.cpp
   )
 
 # Headers that should run through moc
