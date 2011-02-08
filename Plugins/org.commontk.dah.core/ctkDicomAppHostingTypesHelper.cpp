@@ -30,6 +30,7 @@ void DumpAll(const QtSoapType& type, int indent=0)
     QString s;
     s = "Dumping: " + type.typeName() + " " + type.name().name();
     qDebug() << s;
+    indent = 4;
   }
   for (int i = 0; i < type.count() ; i++)
   {
@@ -273,29 +274,12 @@ ctkDicomSoapArrayOfObjectDescriptors::ctkDicomSoapArrayOfObjectDescriptors(const
 ctkDicomAppHosting::ArrayOfObjectDescriptors ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(const QtSoapType& type)
 {
   ctkDicomAppHosting::ArrayOfObjectDescriptors list;
-  const QtSoapType& checkType = type;//["objectDescriptors"];
-  if(checkType.type() == QtSoapType::Array)
+  for (int i = 0; i < type.count() ; i++)
   {
-    const QtSoapArray& array = static_cast<const QtSoapArray&> (checkType);
-    for (int i = 0; i < array.count() ; i++)
-    {
-      const ctkDicomAppHosting::ObjectDescriptor od =
-          ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
-      list.append(od);
-    }
+    const ctkDicomAppHosting::ObjectDescriptor od =
+      ctkDicomSoapObjectDescriptor::getObjectDescriptor(type[i]);
+    list.append(od);
   }
-  else if(checkType.type() == QtSoapType::Struct)
-  {
-    const QtSoapStruct& array = static_cast<const QtSoapStruct&> (checkType);
-    for (int i = 0; i < type.count() ; i++)
-    {
-      const ctkDicomAppHosting::ObjectDescriptor od =
-          ctkDicomSoapObjectDescriptor::getObjectDescriptor(type[i]);
-      list.append(od);
-    }
-  }
-  else
-    qDebug() << "Type of availableData.objectDescriptors is: " << checkType.typeName() << "  " << checkType.name().name();
   return list;
 }
 
@@ -361,12 +345,11 @@ ctkDicomAppHosting::Study ctkDicomSoapStudy::getStudy(const QtSoapType& type)
   s.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
 
   QList<ctkDicomAppHosting::Series> listSeries;
-  const QtSoapStruct& array2 = static_cast<const QtSoapStruct&>(type["Series"]);
-  DumpQtSoapType(array2);
-  for (int i = 0; i < array2.count() ; i++)
+  const QtSoapType& seriesArray = type["Series"];
+  for (int i = 0; i < seriesArray.count() ; i++)
   {
     const ctkDicomAppHosting::Series series =
-        ctkDicomSoapSeries::getSeries(array2[i]);
+        ctkDicomSoapSeries::getSeries(seriesArray[i]);
     listSeries.append(series);
   }
   s.series = listSeries;
@@ -423,14 +406,13 @@ ctkDicomAppHosting::Patient ctkDicomSoapPatient::getPatient(const QtSoapType& ty
   p.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
 
   QList<ctkDicomAppHosting::Study> listPatient;
-  const QtSoapArray& array2 = static_cast<const QtSoapArray&>(type["Studies"]);
-  for (int i = 0; i < array2.count() ; i++)
+  const QtSoapType& studiesArray = type["Studies"];
+  for (int i = 0; i < studiesArray.count() ; i++)
   {
     const ctkDicomAppHosting::Study study =
-        ctkDicomSoapStudy::getStudy(array2[i]);
+        ctkDicomSoapStudy::getStudy(studiesArray[i]);
     listPatient.append(study);
   }
-
   p.studies = listPatient;
   return p;
 }
@@ -481,21 +463,16 @@ ctkDicomAppHosting::AvailableData ctkDicomSoapAvailableData::getAvailableData (c
 
   ad.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
 
-  const QtSoapType& checkTypePatients = type["patients"];
   QList<ctkDicomAppHosting::Patient> listPatients;
-  if(checkTypePatients.type() == QtSoapType::Struct)
+  const QtSoapType& patientsArray = type["patients"];
+  for (int i = 0; i < patientsArray.count() ; i++)
   {
-    const QtSoapStruct& patients = static_cast<const QtSoapStruct&>(type["patients"]);
-    for (int i = 0; i < patients.count() ; i++)
-    {
       const ctkDicomAppHosting::Patient patient =
-          ctkDicomSoapPatient::getPatient(patients[i]);
+          ctkDicomSoapPatient::getPatient(patientsArray[i]);
       listPatients.append(patient);
-    }
-    ad.patients = listPatients;
   }
-  else
-    qDebug() << "Type of availableData.patients is: " << checkTypePatients.typeName() << "  " << checkTypePatients.name().name();
+  ad.patients = listPatients;
+
   return ad;
 }
 
