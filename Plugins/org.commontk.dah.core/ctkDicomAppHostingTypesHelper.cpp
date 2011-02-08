@@ -23,6 +23,33 @@
 
 #include <stdexcept>
 
+void DumpAll(const QtSoapType& type, int indent=0)
+{
+  if(indent==0)
+  {
+    QString s;
+    s = "Dumping: " + type.typeName() + " " + type.name().name();
+    qDebug() << s;
+  }
+  for (int i = 0; i < type.count() ; i++)
+  {
+    QString s;
+    s = QString(indent, ' ') + type[i].typeName() + "  " + type[i].name().name();
+    qDebug() << s;
+    if(type[i].count()>0)
+      DumpAll(type[i], indent+4);
+  }
+}
+
+void DumpQtSoapType(const QtSoapType& sstruct)
+{
+  qDebug() << "Dumping: " << sstruct.typeName() << " " << sstruct.name().name();
+  for (int i = 0; i < sstruct.count() ; i++)
+  {
+    qDebug() << sstruct[i].typeName() << "  " << sstruct[i].name().name();
+  }
+}
+
 ctkDicomSoapRectangle::ctkDicomSoapRectangle(const QString& name,const QRect& rect)
   : QtSoapStruct(QtSoapQName(name))
 {
@@ -191,52 +218,94 @@ ctkDicomSoapObjectDescriptor::ctkDicomSoapObjectDescriptor(const QString& name,
                                                            const ctkDicomAppHosting::ObjectDescriptor& od)
   : QtSoapStruct(QtSoapQName(name))
 {
-  this->insert(new QtSoapSimpleType(QtSoapQName("DescriptorUUID"),
+  this->insert(new QtSoapSimpleType(QtSoapQName("uuid"),
                                     od.descriptorUUID) );
   this->insert(new QtSoapSimpleType(
-                 QtSoapQName("MimeType"),
+                 QtSoapQName("mimeType"),
                  od.mimeType) );
   this->insert(new QtSoapSimpleType(
-                 QtSoapQName("ClassUID"),
+                 QtSoapQName("classUID"),
                  od.classUID) );
   this->insert(new QtSoapSimpleType(
-                 QtSoapQName("TransferSyntaxUID"),
+                 QtSoapQName("transferSyntaxUID"),
                  od.transferSyntaxUID) );
   this->insert(new QtSoapSimpleType(
-                 QtSoapQName("Modality"),
+                 QtSoapQName("modality"),
                  od.modality) );
 }
 
 ctkDicomAppHosting::ObjectDescriptor ctkDicomSoapObjectDescriptor::getObjectDescriptor(const QtSoapType& type)
 {
   ctkDicomAppHosting::ObjectDescriptor od;
-
-  od.descriptorUUID = QUuid(type["DescriptorUUID"].value().toString());
+  od.descriptorUUID = QUuid(type["uuid"].value().toString());
   od.mimeType =
-      type["MimeType"].value().toString();
+      type["mimeType"].value().toString();
   od.classUID =
-      type["ClassUID"].value().toString();
+      type["classUID"].value().toString();
   od.transferSyntaxUID =
-      type["TransferSyntaxUID"].value().toString();
+      type["transferSyntaxUID"].value().toString();
   od.modality =
-      type["Modality"].value().toString();
+      type["modality"].value().toString();
   return od;
 }
 
+ctkDicomSoapArrayOfObjectDescriptors::ctkDicomSoapArrayOfObjectDescriptors(const QString& name,
+                                                           const ctkDicomAppHosting::ArrayOfObjectDescriptors& ods)
+  : QtSoapStruct(QtSoapQName(name))
+{
+  qCritical() << "ctkDicomSoapArrayOfObjectDescriptors not yet implemented";
+  //this->insert(new QtSoapSimpleType(QtSoapQName("uuid"),
+  //                                  od.descriptorUUID) );
+  //this->insert(new QtSoapSimpleType(
+  //               QtSoapQName("mimeType"),
+  //               od.mimeType) );
+  //this->insert(new QtSoapSimpleType(
+  //               QtSoapQName("classUID"),
+  //               od.classUID) );
+  //this->insert(new QtSoapSimpleType(
+  //               QtSoapQName("transferSyntaxUID"),
+  //               od.transferSyntaxUID) );
+  //this->insert(new QtSoapSimpleType(
+  //               QtSoapQName("modality"),
+  //               od.modality) );
+}
+
+ctkDicomAppHosting::ArrayOfObjectDescriptors ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(const QtSoapType& type)
+{
+  ctkDicomAppHosting::ArrayOfObjectDescriptors list;
+  const QtSoapType& checkType = type;//["objectDescriptors"];
+  if(checkType.type() == QtSoapType::Array)
+  {
+    const QtSoapArray& array = static_cast<const QtSoapArray&> (checkType);
+    for (int i = 0; i < array.count() ; i++)
+    {
+      const ctkDicomAppHosting::ObjectDescriptor od =
+          ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
+      list.append(od);
+    }
+  }
+  else if(checkType.type() == QtSoapType::Struct)
+  {
+    const QtSoapStruct& array = static_cast<const QtSoapStruct&> (checkType);
+  }
+  else
+    qDebug() << "Type of availableData.objectDescriptors is: " << checkType.typeName() << "  " << checkType.name().name();
+  return list;
+}
 
 ctkDicomSoapSeries::ctkDicomSoapSeries(const QString& name,
                                        const ctkDicomAppHosting::Series& s)
   : QtSoapStruct(QtSoapQName(name))
 {
-  this->insert(new QtSoapSimpleType(QtSoapQName("SeriesUID"),
+  this->insert(new QtSoapSimpleType(QtSoapQName("seriesUID"),
                                     s.seriesUID) );
-  QtSoapArray* odescriptors = new QtSoapArray(QtSoapQName("ObjectDescriptors"), QtSoapType::Other,
+  QtSoapArray* odescriptors = new QtSoapArray(QtSoapQName("objectDescriptors"), QtSoapType::Other,
                                               s.objectDescriptors.size());
 
-  for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator it = s.objectDescriptors.constBegin();
+  for (ctkDicomAppHosting::ArrayOfObjectDescriptors::ConstIterator it = s.objectDescriptors.constBegin();
        it < s.objectDescriptors.constEnd(); it++)
   {
-    odescriptors->append(new ctkDicomSoapObjectDescriptor("ObjectDescriptor",*it));
+    odescriptors->append(new ctkDicomSoapObjectDescriptor("objectDescriptor",*it));
   }
   this->insert(odescriptors);
 }
@@ -245,16 +314,8 @@ ctkDicomAppHosting::Series ctkDicomSoapSeries::getSeries(const QtSoapType& type)
 {
   ctkDicomAppHosting::Series s;
 
-  s.seriesUID = type["SeriesUID"].value().toString();
-  QList<ctkDicomAppHosting::ObjectDescriptor> list;
-  const QtSoapArray& array = static_cast<const QtSoapArray&>(type["ObjectDescriptors"]);
-  for (int i = 0; i < array.count(); i++)
-  {
-    const ctkDicomAppHosting::ObjectDescriptor od =
-        ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
-    list.append(od);
-  }
-  s.objectDescriptors = list;
+  s.seriesUID = type["seriesUID"].value().toString();
+  s.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
   return s;
 }
 
@@ -265,10 +326,10 @@ ctkDicomSoapStudy::ctkDicomSoapStudy(const QString& name,
 {
   this->insert(new QtSoapSimpleType(QtSoapQName("StudyUID"),
                                     s.studyUID) );
-  QtSoapArray* odescriptors = new QtSoapArray(QtSoapQName("ObjectDescriptors"), QtSoapType::Other,
+  QtSoapArray* odescriptors = new QtSoapArray(QtSoapQName("objectDescriptors"), QtSoapType::Other,
                                               s.objectDescriptors.size());
 
-  for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator it = s.objectDescriptors.constBegin();
+  for (ctkDicomAppHosting::ArrayOfObjectDescriptors::ConstIterator it = s.objectDescriptors.constBegin();
        it < s.objectDescriptors.constEnd(); it++)
   {
     odescriptors->append(new ctkDicomSoapObjectDescriptor("ObjectDescriptor", *it));
@@ -291,21 +352,15 @@ ctkDicomAppHosting::Study ctkDicomSoapStudy::getStudy(const QtSoapType& type)
   ctkDicomAppHosting::Study s;
 
   s.studyUID = type["StudyUID"].value().toString();
-  QList<ctkDicomAppHosting::ObjectDescriptor> list;
-  const QtSoapArray& array = static_cast<const QtSoapArray&>(type["ObjectDescriptors"]);
-  for (int i = 0; i < array.count() ; i++)
-  {
-    const ctkDicomAppHosting::ObjectDescriptor od =
-        ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
-    list.append(od);
-  }
-  s.objectDescriptors = list;
+  s.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
+
   QList<ctkDicomAppHosting::Series> listSeries;
-  const QtSoapArray& array2 = static_cast<const QtSoapArray&>(type["Series"]);
+  const QtSoapStruct& array2 = static_cast<const QtSoapStruct&>(type["Series"]);
+  DumpQtSoapType(array2);
   for (int i = 0; i < array2.count() ; i++)
   {
     const ctkDicomAppHosting::Series series =
-        ctkDicomSoapSeries::getSeries(array2.at(i));
+        ctkDicomSoapSeries::getSeries(array2[i]);
     listSeries.append(series);
   }
   s.series = listSeries;
@@ -328,10 +383,10 @@ ctkDicomSoapPatient::ctkDicomSoapPatient(const QString& name,
                                     p.sex) );
   this->insert(new QtSoapSimpleType(QtSoapQName("BirthDate"),
                                     p.birthDate) );
-  QtSoapArray* odescriptors = new QtSoapArray(QtSoapQName("ObjectDescriptors"), QtSoapType::Other,
+  QtSoapArray* odescriptors = new QtSoapArray(QtSoapQName("objectDescriptors"), QtSoapType::Other,
                                               p.objectDescriptors.size());
 
-  for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator it = p.objectDescriptors.constBegin();
+  for (ctkDicomAppHosting::ArrayOfObjectDescriptors::ConstIterator it = p.objectDescriptors.constBegin();
        it < p.objectDescriptors.constEnd(); it++)
   {
     odescriptors->append(new ctkDicomSoapObjectDescriptor("ObjectDescriptor",*it));
@@ -359,22 +414,14 @@ ctkDicomAppHosting::Patient ctkDicomSoapPatient::getPatient(const QtSoapType& ty
   p.sex = type["Sex"].value().toString();
   p.birthDate = type["Birthdate"].value().toString();
 
-  QList<ctkDicomAppHosting::ObjectDescriptor> list;
-  const QtSoapArray& array = static_cast<const QtSoapArray&> (type["ObjectDescriptors"]);
-  for (int i = 0; i < array.count() ; i++)
-  {
-    const ctkDicomAppHosting::ObjectDescriptor od =
-        ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
-    list.append(od);
-  }
+  p.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
 
-  p.objectDescriptors = list;
   QList<ctkDicomAppHosting::Study> listPatient;
   const QtSoapArray& array2 = static_cast<const QtSoapArray&>(type["Studies"]);
   for (int i = 0; i < array2.count() ; i++)
   {
     const ctkDicomAppHosting::Study study =
-        ctkDicomSoapStudy::getStudy(array2.at(i));
+        ctkDicomSoapStudy::getStudy(array2[i]);
     listPatient.append(study);
   }
 
@@ -387,22 +434,22 @@ ctkDicomSoapAvailableData::ctkDicomSoapAvailableData(const QString& name,
                                                      const ctkDicomAppHosting::AvailableData& ad)
   : QtSoapStruct(QtSoapQName(name))
 {
-  QtSoapArray* odescriptors = new QtSoapArray(QtSoapQName("ObjectDescriptors"), QtSoapType::Other,
+  QtSoapArray* odescriptors = new QtSoapArray(QtSoapQName("objectDescriptors"), QtSoapType::Other,
                                               ad.objectDescriptors.size());
 
-  for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator it = ad.objectDescriptors.constBegin();
+  for (ctkDicomAppHosting::ArrayOfObjectDescriptors::ConstIterator it = ad.objectDescriptors.constBegin();
        it < ad.objectDescriptors.constEnd(); it++)
   {
-    odescriptors->append(new ctkDicomSoapObjectDescriptor("ObjectDescriptor",*it));
+    odescriptors->append(new ctkDicomSoapObjectDescriptor("objectDescriptor",*it));
   }
   this->insert(odescriptors);
 
-  QtSoapArray* patient = new QtSoapArray(QtSoapQName("Patient") ,QtSoapType::Other,
+  QtSoapArray* patient = new QtSoapArray(QtSoapQName("patient") ,QtSoapType::Other,
                                          ad.patients.size());
 
   for (QList<ctkDicomAppHosting::Patient>::ConstIterator it = ad.patients.constBegin();
        it < ad.patients.constEnd(); it++){
-    patient->append(new ctkDicomSoapPatient("Patient",*it));
+    patient->append(new ctkDicomSoapPatient("patient",*it));
   }
   this->insert(patient);
 }
@@ -410,25 +457,39 @@ ctkDicomSoapAvailableData::ctkDicomSoapAvailableData(const QString& name,
 ctkDicomAppHosting::AvailableData ctkDicomSoapAvailableData::getAvailableData (const QtSoapType& type)
 {
   ctkDicomAppHosting::AvailableData ad;
+  
+  //const QtSoapStruct& avData = static_cast<const QtSoapStruct&> (type);
+  //for (int i = 0; i < avData.count() ; i++)
+  //{
+  //  qDebug() << avData[i].typeName() << "  " << avData[i].name().name();
+  //}
 
-  QList<ctkDicomAppHosting::ObjectDescriptor> list;
-  const QtSoapArray& array = static_cast<const QtSoapArray&> (type["ObjectDescriptors"]);
-  for (int i = 0; i < array.count() ; i++)
-  {
-    const ctkDicomAppHosting::ObjectDescriptor od =
-        ctkDicomSoapObjectDescriptor::getObjectDescriptor(array.at(i));
-    list.append(od);
-  }
-  ad.objectDescriptors = list;
+  ctkDicomAppHosting::ArrayOfObjectDescriptors list;
+
+  //const QtSoapType& inputType = type["objectDescriptors"];
+  //if(inputType.isValid()==false)
+  //{
+  //  qCritical() << "  NotifyDataAvailable: availableData not valid. " << inputType.errorString();
+  //}
+  //qDebug() << inputType.typeName() << "  " << inputType.name().name();
+
+  ad.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
+
+  const QtSoapType& checkTypePatients = type["patients"];
   QList<ctkDicomAppHosting::Patient> listPatients;
-  const QtSoapArray& array2 = static_cast<const QtSoapArray&>(type["Patients"]);
-  for (int i = 0; i < array2.count() ; i++)
+  if(checkTypePatients.type() == QtSoapType::Struct)
   {
-    const ctkDicomAppHosting::Patient patient =
-        ctkDicomSoapPatient::getPatient(array2.at(i));
-    listPatients.append(patient);
+    const QtSoapStruct& patients = static_cast<const QtSoapStruct&>(type["patients"]);
+    for (int i = 0; i < patients.count() ; i++)
+    {
+      const ctkDicomAppHosting::Patient patient =
+          ctkDicomSoapPatient::getPatient(patients[i]);
+      listPatients.append(patient);
+    }
+    ad.patients = listPatients;
   }
-  ad.patients = listPatients;
+  else
+    qDebug() << "Type of availableData.patients is: " << checkTypePatients.typeName() << "  " << checkTypePatients.name().name();
   return ad;
 }
 
