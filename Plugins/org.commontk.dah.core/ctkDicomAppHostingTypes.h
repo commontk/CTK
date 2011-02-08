@@ -72,14 +72,16 @@ namespace ctkDicomAppHosting {
     QString modality;
   };
 
+  typedef QList<ObjectDescriptor> ArrayOfObjectDescriptors;
+
   struct Series {
     QString seriesUID;
-    QList<ObjectDescriptor> objectDescriptors;
+    ArrayOfObjectDescriptors objectDescriptors;
   };
 
   struct Study {
     QString studyUID;
-    QList<ObjectDescriptor> objectDescriptors;
+    ArrayOfObjectDescriptors objectDescriptors;
     QList<Series> series;
   };
 
@@ -89,12 +91,12 @@ namespace ctkDicomAppHosting {
     QString assigningAuthority;
     QString sex;
     QString birthDate;
-    QList<ObjectDescriptor> objectDescriptors;
+    ArrayOfObjectDescriptors objectDescriptors;
     QList<Study> studies;
   };
 
   struct AvailableData {
-    QList<ObjectDescriptor> objectDescriptors;
+    ArrayOfObjectDescriptors objectDescriptors;
     QList<Patient> patients;
   };
 

@@ -93,6 +93,14 @@ struct org_commontk_dah_core_EXPORT ctkDicomSoapObjectDescriptor : public QtSoap
   static ctkDicomAppHosting::ObjectDescriptor getObjectDescriptor(const QtSoapType& type);
 };
 
+struct org_commontk_dah_core_EXPORT ctkDicomSoapArrayOfObjectDescriptors : public QtSoapStruct
+{
+  ctkDicomSoapArrayOfObjectDescriptors(const QString& name,
+                               const ctkDicomAppHosting::ArrayOfObjectDescriptors& ods);
+
+  static ctkDicomAppHosting::ArrayOfObjectDescriptors getArrayOfObjectDescriptors(const QtSoapType& type);
+};
+
 struct org_commontk_dah_core_EXPORT ctkDicomSoapSeries : public QtSoapStruct
 {
   ctkDicomSoapSeries (const QString& name,

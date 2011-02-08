@@ -20,6 +20,7 @@
 =============================================================================*/
 
 #include "ctkExchangeSoapMessageProcessor.h"
+#include "ctkSoapLog.h"
 
 #include <ctkDicomAppHostingTypesHelper.h>
 
@@ -57,15 +58,21 @@ bool ctkExchangeSoapMessageProcessor::process(
 
   return foundMethod;
 }
-
 void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
   const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
-  const QtSoapType& inputType = message.method()["data"];
+  const QtSoapType& inputType = message.method()["availableData"];
+  if(inputType.isValid()==false)
+  {
+    qCritical() << "  NotifyDataAvailable: availableData not valid. " << inputType.errorString();
+  }
+  CTK_SOAP_LOG( << inputType.toString());
   const ctkDicomAppHosting::AvailableData data = ctkDicomSoapAvailableData::getAvailableData(inputType);
   const QtSoapType& inputType2 = message.method()["lastData"];
   const bool lastData = ctkDicomSoapBool::getBool(inputType2);
+
+  CTK_SOAP_LOG_HIGHLEVEL( << "  NotifyDataAvailable: patients.count: " << data.patients.count());
   // query interface
   bool result = exchangeInterface->notifyDataAvailable(data, lastData);
   // set reply message

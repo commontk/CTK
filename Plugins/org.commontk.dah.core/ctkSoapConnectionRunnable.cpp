@@ -115,6 +115,7 @@ void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
           }
 
           QtSoapMessage reply;
+          CTK_SOAP_LOG(<< "###################" << msg.toXmlString());
           emit incomingSoapMessage(msg, &reply);
 
           if (reply.isFault())
