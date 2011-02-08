@@ -3,6 +3,9 @@
 #include <QTabBar>
 #include <QSettings>
 
+/// CTK includes
+#include <ctkCheckableHeaderView.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMModel.h"
@@ -25,6 +28,7 @@ public:
   ctkDICOMQueryRetrieveWidgetPrivate(){}
 
   QMap<QString, ctkDICOMQuery*> queries;
+  ctkDICOMModel model;
 };
 
 //----------------------------------------------------------------------------
@@ -70,50 +74,7 @@ void ctkDICOMQueryRetrieveWidget::setRetrieveDatabaseFileName(const QString& fil
 void ctkDICOMQueryRetrieveWidget::processQuery()
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
-
-  ctkDICOMQuery query;
-
-  // TODO: convert widget to query parameters
-  // TODO: add interface to ctkDICOMQuery for specifying query params
-  //d->queryWidget->populateQuery();
-
-  QStringList nodes = d->serverNodeWidget->nodes();
-  foreach (QString node, nodes)
-  {
-    d->queries[node] = new ctkDICOMQuery;
-    QMap<QString, QString> parameters = d->serverNodeWidget->nodeParameters(node);
-    d->queries[node]->setCallingAETitle(node);
-  }
-
-#if 0
-TODO: map the server node options to the query classes
-
-  query.setCallingAETitle ( QString ( argv[2] ) );
-  query.setCalledAETitle ( QString ( argv[3] ) );
-  query.setHost ( QString ( argv[4] ) );
-  int port;
-  bool ok;
-  port = QString ( argv[5] ).toInt ( &ok );
-  if ( !ok )
-    {
-    std::cerr << "Could not convert " << argv[5] << " to an integer" << std::endl;
-    print_usage();
-    return EXIT_FAILURE;
-    }
-  query.setPort ( port );
-
-  try
-    {
-    query.query ( myCTK.database() );
-    }
-  catch (std::exception e)
-  {
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-#endif
-
-  // TODO: create a map of server locations to query results in the private class
+  
   ctkDICOMDatabase queryResultDatabase;
 
   try { queryResultDatabase.openDatabase( ":memory:" ); }
@@ -124,7 +85,43 @@ TODO: map the server node options to the query classes
     return;
   }
 
-  ctkDICOMModel model;
-  model.setDatabase(queryResultDatabase.database());
-  d->results->setModel(&model);
+  QStringList serverNodes = d->serverNodeWidget->nodes();
+  foreach (QString server, serverNodes)
+  {
+    QMap<QString, QString> parameters = d->serverNodeWidget->nodeParameters(server);
+    if ( parameters["CheckState"] == QVariant(Qt::Checked).toString() )
+    {
+      d->queries[server] = new ctkDICOMQuery;
+      d->queries[server]->setCallingAETitle(d->serverNodeWidget->callingAETitle());
+      d->queries[server]->setCalledAETitle(parameters["AETitle"]);
+      d->queries[server]->setHost(parameters["Address"]);
+      d->queries[server]->setPort(parameters["Port"].toInt());
+      // TODO: add interface to ctkDICOMQuery for specifying query params
+      // for now, query for everything
+
+      try
+      {
+        // run the query against the selected server and put results in database
+        d->queries[server]->query ( queryResultDatabase );
+      }
+      catch (std::exception e)
+      {
+        logger.error ( "Query error: " + parameters["Name"] );
+      }
+    }
+  }
+
+  // checkable headers.
+  d->results->setModel(&d->model);
+  d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
+  QHeaderView* previousHeaderView = d->results->header();
+  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->results);
+  headerView->setClickable(previousHeaderView->isClickable());
+  headerView->setMovable(previousHeaderView->isMovable());
+  headerView->setHighlightSections(previousHeaderView->highlightSections());
+  headerView->setPropagateToItems(true);
+  d->results->setHeader(headerView);
+
+  d->model.setDatabase(queryResultDatabase.database());
+  d->results->setModel(&d->model);
 }

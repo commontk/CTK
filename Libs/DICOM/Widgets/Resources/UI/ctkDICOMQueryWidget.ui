@@ -33,19 +33,12 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="Any">
-        <attribute name="title">
-         <string>Any</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <item>
-          <widget class="QLineEdit" name="AnySearch"/>
-         </item>
-        </layout>
-       </widget>
        <widget class="QWidget" name="Name">
         <attribute name="title">
          <string>Name</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search by Person Name</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
@@ -53,13 +46,29 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="Tag">
+       <widget class="QWidget" name="Study">
         <attribute name="title">
-         <string>Tag</string>
+         <string>Study</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search in Study Description</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <widget class="QLineEdit" name="TagSearch"/>
+          <widget class="QLineEdit" name="StudySearch"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="Series">
+        <attribute name="title">
+         <string>Series</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search in Series Description</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <item>
+          <widget class="QLineEdit" name="SeriesSearch"/>
          </item>
         </layout>
        </widget>
@@ -67,19 +76,12 @@
         <attribute name="title">
          <string>ID</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_9">
-         <item>
-          <widget class="QLineEdit" name="IDSearch"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="Number">
-        <attribute name="title">
-         <string>Number</string>
+        <attribute name="toolTip">
+         <string>Search by Person ID</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_10">
          <item>
-          <widget class="QLineEdit" name="NumberSearch"/>
+          <widget class="QLineEdit" name="IDSearch"/>
          </item>
         </layout>
        </widget>

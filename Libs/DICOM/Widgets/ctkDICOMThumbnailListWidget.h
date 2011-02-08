@@ -18,45 +18,40 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMServerNodeWidget_h
-#define __ctkDICOMServerNodeWidget_h
+#ifndef __ctkDICOMThumbnailsListWidget_h
+#define __ctkDICOMThumbnailsListWidget_h
 
 // Qt includes 
 #include <QWidget>
-#include <QString>
-#include <QList>
-#include <QMap>
 
 #include "ctkDICOMWidgetsExport.h"
 
-class QTableWidgetItem;
-class ctkDICOMServerNodeWidgetPrivate;
+class ctkDICOMThumbnailListWidgetPrivate;
 
-class CTK_DICOM_WIDGETS_EXPORT ctkDICOMServerNodeWidget : public QWidget
+class ctkDICOMThumbnailWidget;
+
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailListWidget : public QWidget
 {
-Q_OBJECT;
 public:
   typedef QWidget Superclass;
-  explicit ctkDICOMServerNodeWidget(QWidget* parent=0);
-  virtual ~ctkDICOMServerNodeWidget();
+  explicit ctkDICOMThumbnailListWidget(QWidget* parent=0);
+  virtual ~ctkDICOMThumbnailListWidget();
 
-  QString callingAETitle();
-  QStringList nodes();
-  QMap<QString,QString> nodeParameters(QString &node);
+  void setThumbnailWidth(int width);
 
-public slots:
-  void addNode ();
-  void removeNode ();
-  void onCellChanged (int row, int column);
-  void onCurrentItemChanged(QTableWidgetItem* current, QTableWidgetItem *previous);
-  void saveSettings ();
-
+  void addTestThumbnail();
+  
 protected:
-  QScopedPointer<ctkDICOMServerNodeWidgetPrivate> d_ptr;
+  QScopedPointer<ctkDICOMThumbnailListWidgetPrivate> d_ptr;
 
+  void clearThumbnail();
+  void addThumbnail(ctkDICOMThumbnailWidget* widget);
+
+  virtual void resizeEvent(QResizeEvent * event);
+  
 private:
-  Q_DECLARE_PRIVATE(ctkDICOMServerNodeWidget);
-  Q_DISABLE_COPY(ctkDICOMServerNodeWidget);
+  Q_DECLARE_PRIVATE(ctkDICOMThumbnailListWidget);
+  Q_DISABLE_COPY(ctkDICOMThumbnailListWidget);
 };
 
 #endif

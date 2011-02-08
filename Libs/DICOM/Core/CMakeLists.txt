@@ -9,6 +9,8 @@ SET(KIT_export_directive "CTK_DICOM_CORE_EXPORT")
   
 # Source files
 SET(KIT_SRCS
+  ctkDICOMImage.cpp
+  ctkDICOMImage.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
   ctkDICOMDatabase.cpp
@@ -24,6 +26,7 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkDICOMDatabase.h
+  ctkDICOMImage.h
   ctkDICOMModel.h
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h
