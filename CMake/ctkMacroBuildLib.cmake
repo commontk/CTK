@@ -176,6 +176,8 @@ MACRO(ctkMacroBuildLib)
     IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
       SET_TARGET_PROPERTIES(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
     ENDIF()
+    # Set labels associated with the target.
+    SET_TARGET_PROPERTIES(${lib_name}PythonQt PROPERTIES LABELS ${lib_name})
 
     # Update list of libraries wrapped with PythonQt
     SET(CTK_WRAPPED_LIBRARIES_PYTHONQT
