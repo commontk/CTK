@@ -294,7 +294,7 @@ SET(CTK_LIBS
   Widgets:OFF
   DICOM/Core:OFF
   DICOM/Widgets:OFF
-  Messaging/Core:OFF
+  #Messaging/Core:OFF  # MessagingCore library need some love :) - Let's disable it for now :(
   Scripting/Python/Core:OFF
   Scripting/Python/Widgets:OFF
   Visualization/VTK/Core:OFF
@@ -307,7 +307,7 @@ SET(CTK_LIBS
 #
 SET(CTK_PLUGINS
   org.commontk.eventbus:OFF
-  org.commontk.cli:OFF
+  #org.commontk.cli:OFF # MessagingCore library need some love :) - Let's disable it for now :(
   org.commontk.configadmin:OFF
   org.commontk.dah.app:OFF
   org.commontk.dah.core:OFF
