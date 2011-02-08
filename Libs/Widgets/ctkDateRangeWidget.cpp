@@ -56,7 +56,7 @@ public:
 ctkDateRangeWidgetPrivate::ctkDateRangeWidgetPrivate(ctkDateRangeWidget& object)
   :q_ptr(&object)
 {
-  this->ForceSelectRange = true;
+  this->ForceSelectRange = false;
   this->DisplayTime = true;
 }
 // -------------------------------------------------------------------------
@@ -117,12 +117,21 @@ ctkDateRangeWidget::ctkDateRangeWidget(QWidget* _parent) : Superclass(_parent)
   this->setDisplayTime(false);
   this->setDateTimeRange(QDateTime(), QDateTime());
   
-  QObject::connect(d->AnyDateRadioButton, SIGNAL(clicked()),this, SLOT(setAnyDate()));
-  QObject::connect(d->TodayRadioButton, SIGNAL(clicked()),this, SLOT(setToday()));
-  QObject::connect(d->YesterdayRadioButton, SIGNAL(clicked()),this, SLOT(setYesterday()));
-  QObject::connect(d->LastWeekRadioButton, SIGNAL(clicked()),this, SLOT(setLastWeek()));
-  QObject::connect(d->LastMonthRadioButton, SIGNAL(clicked()),this, SLOT(setLastMonth()));
-  QObject::connect(d->SelectRangeRadioButton, SIGNAL(clicked()),this, SLOT(setSelectRange()));
+  // Note that we connect on the clicked() signal and not the toggled.
+  // The clicked() signal is fired only when the USER clicks the radio button
+  // and not when the button is checked programatically (except using click()).
+  QObject::connect(d->AnyDateRadioButton, SIGNAL(clicked()),
+                   this, SLOT(setAnyDate()));
+  QObject::connect(d->TodayRadioButton, SIGNAL(clicked()),
+                   this, SLOT(setToday()));
+  QObject::connect(d->YesterdayRadioButton, SIGNAL(clicked()),
+                   this, SLOT(setYesterday()));
+  QObject::connect(d->LastWeekRadioButton, SIGNAL(clicked()),
+                   this, SLOT(setLastWeek()));
+  QObject::connect(d->LastMonthRadioButton, SIGNAL(clicked()),
+                   this, SLOT(setLastMonth()));
+  QObject::connect(d->SelectRangeRadioButton, SIGNAL(clicked()),
+                   this, SLOT(setSelectRange()));
 
   QObject::connect(d->StartDate, SIGNAL(dateTimeChanged(const QDateTime&)),
                    this, SIGNAL(startDateTimeChanged(const QDateTime&)));

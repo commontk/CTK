@@ -94,9 +94,6 @@
       </property>
       <item>
        <widget class="QDateTimeEdit" name="StartDate">
-        <property name="displayFormat">
-         <string>MMM/dd/yyyy</string>
-        </property>
         <property name="calendarPopup">
          <bool>true</bool>
         </property>
@@ -104,9 +101,6 @@
       </item>
       <item>
        <widget class="QDateTimeEdit" name="EndDate">
-        <property name="displayFormat">
-         <string>MMM/dd/yyyy</string>
-        </property>
         <property name="calendarPopup">
          <bool>true</bool>
         </property>
