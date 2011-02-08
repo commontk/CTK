@@ -74,6 +74,7 @@ void ctkHostAppExampleWidget::runButtonClicked()
 void ctkHostAppExampleWidget::stopButtonClicked()
 {
   qDebug() << "stop button clicked";
+  host->getDicomAppService ()->setState (ctkDicomAppHosting::SUSPENDED);
 }
 
 void ctkHostAppExampleWidget::loadButtonClicked()
@@ -140,10 +141,24 @@ void ctkHostAppExampleWidget::placeholderResized()
 void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
 {
   ui->statusLabel->setText(ctkDicomSoapState::toStringValue(state));
-  if (state == ctkDicomAppHosting::INPROGRESS)
+
+  bool reply;
+  ctkDicomAppHosting::ObjectDescriptor ourObjectDescriptor;
+  QList<ctkDicomAppHosting::Study> studies;
+  ctkDicomAppHosting::AvailableData data;
+  ctkDicomAppHosting::Patient patient;
+
+  //TODO put the state changed routine back in notifyStateChanged for the state machine part.
+  switch (state)
   {
-    ctkDicomAppHosting::AvailableData data;
-    ctkDicomAppHosting::Patient patient;
+  case ctkDicomAppHosting::IDLE:
+    //if (host->appInprogress)
+    //{
+      host->getDicomAppService()->setState (ctkDicomAppHosting::EXIT);
+    //}
+    break;
+  case ctkDicomAppHosting::INPROGRESS:
+
     patient.name = "John Doe";
     patient.id = "0000";
     patient.assigningAuthority = "authority";
@@ -151,7 +166,8 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
     patient.birthDate = "today";
     patient.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
 
-    ctkDicomAppHosting::ObjectDescriptor ourObjectDescriptor;
+    patient.studies = studies;
+
     ourObjectDescriptor.descriptorUUID = QUuid("{11111111-1111-1111-1111-111111111111}");
     ourObjectDescriptor.mimeType = "text/plain";
     ourObjectDescriptor.classUID = "lovelyClass";
@@ -163,7 +179,15 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
     data.patients = QList<ctkDicomAppHosting::Patient>();
     data.patients.append (patient);
 
-    bool reply = host->getDicomAppService()->notifyDataAvailable (data,true);
+    reply = host->getDicomAppService()->notifyDataAvailable (data,true);
     qDebug() << "  notifyDataAvailable(1111) returned: " << reply;
+    break;
+  case ctkDicomAppHosting::COMPLETED:
+  case ctkDicomAppHosting::SUSPENDED:
+  case ctkDicomAppHosting::CANCELED:
+  case ctkDicomAppHosting::EXIT:
+  default:
+    //do nothing
+    break;
   }
 }

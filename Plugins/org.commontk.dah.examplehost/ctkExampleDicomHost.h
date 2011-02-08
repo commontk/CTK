@@ -47,8 +47,8 @@ public:
   // exchange methods
   virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-      QList<QUuid> objectUUIDs, 
-      QList<QString> acceptableTransferSyntaxUIDs, 
+      QList<QUuid> objectUUIDs,
+      QList<QString> acceptableTransferSyntaxUIDs,
       bool includeBulkData);
   virtual void releaseData(QList<QUuid> objectUUIDs);
 
@@ -66,6 +66,7 @@ protected:
   QProcess appProcess;
   ctkHostedAppPlaceholderWidget* placeholderWidget;
   ctkDicomAppHosting::State applicationState;
+
 
 protected slots:
 
