@@ -287,6 +287,12 @@ ctkDicomAppHosting::ArrayOfObjectDescriptors ctkDicomSoapArrayOfObjectDescriptor
   else if(checkType.type() == QtSoapType::Struct)
   {
     const QtSoapStruct& array = static_cast<const QtSoapStruct&> (checkType);
+    for (int i = 0; i < type.count() ; i++)
+    {
+      const ctkDicomAppHosting::ObjectDescriptor od =
+          ctkDicomSoapObjectDescriptor::getObjectDescriptor(type[i]);
+      list.append(od);
+    }
   }
   else
     qDebug() << "Type of availableData.objectDescriptors is: " << checkType.typeName() << "  " << checkType.name().name();
