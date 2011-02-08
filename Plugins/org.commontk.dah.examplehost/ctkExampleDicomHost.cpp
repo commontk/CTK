@@ -19,15 +19,19 @@
 
 =============================================================================*/
 
-#include "ctkExampleDicomHost.h"
-#include "ctkDicomAppHostingTypesHelper.h"
-
+// Qt includes
 #include <QProcess>
 #include <QtDebug>
 #include <QRect>
 
+// CTK includes
+#include "ctkExampleDicomHost.h"
+#include "ctkDicomAppHostingTypesHelper.h"
+
+// STD includes
 #include <iostream>
 
+//----------------------------------------------------------------------------
 ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
     placeholderWidget(placeholderWidget),
@@ -36,25 +40,27 @@ ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placehol
   //connect(&this->appProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomHost::StartApplication(QString AppPath)
 {
-  QStringList l;
-  l.append("--hostURL");
-  l.append(QString("http://localhost:") + QString::number(this->getHostPort()) + "/HostInterface" );
-  l.append("--applicationURL");
-  l.append(QString("http://localhost:") + QString::number(this->getAppPort()) + "/ApplicationInterface" );
+  QStringList arguments;
+  arguments.append("--hostURL");
+  arguments.append(QString("http://localhost:") + QString::number(this->getHostPort()) + "/HostInterface" );
+  arguments.append("--applicationURL");
+  arguments.append(QString("http://localhost:") + QString::number(this->getAppPort()) + "/ApplicationInterface" );
   //by default, the ctkExampleHostedApp uses the org.commontk.dah.exampleapp plugin
-  //l.append("dicomapp"); // the app plugin to use - has to be changed later
+  //arguments.append("dicomapp"); // the app plugin to use - has to be changed later
   //if (!QProcess::startDetached (
   //{
   //    qCritical() << "application failed to start!";
   //}
-  //qDebug() << "starting application: " << AppPath << " " << l;
-  qDebug() << "starting application: " << AppPath << " " << l;
+  //qDebug() << "starting application: " << AppPath << " " << arguments;
+  qDebug() << "starting application: " << AppPath << " " << arguments;
   this->appProcess.setProcessChannelMode(QProcess::MergedChannels);
-  this->appProcess.start(AppPath,l);
+  this->appProcess.start(AppPath, arguments);
 }
 
+//----------------------------------------------------------------------------
 QRect ctkExampleDicomHost::getAvailableScreen(const QRect& preferredScreen)
 {
   qDebug()<< "Application asked for this area:"<< preferredScreen;
@@ -65,7 +71,7 @@ QRect ctkExampleDicomHost::getAvailableScreen(const QRect& preferredScreen)
   return rect;
 }
 
-
+//----------------------------------------------------------------------------
 void ctkExampleDicomHost::notifyStateChanged(ctkDicomAppHosting::State state)
 {
   qDebug()<< "new state received:"<< static_cast<int>(state);
@@ -74,12 +80,14 @@ void ctkExampleDicomHost::notifyStateChanged(ctkDicomAppHosting::State state)
   emit stateChangedReceived(state);
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomHost::notifyStatus(const ctkDicomAppHosting::Status& status)
 {
   qDebug()<< "new status received:"<<status.codeMeaning;
   emit statusReceived(status);;
 }
 
+//----------------------------------------------------------------------------
 ctkExampleDicomHost::~ctkExampleDicomHost()
 {
   qDebug() << "Exiting host: trying to terminate app";
@@ -88,6 +96,7 @@ ctkExampleDicomHost::~ctkExampleDicomHost()
   this->appProcess.kill();
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomHost::forwardConsoleOutput()
 {
   while( this->appProcess.bytesAvailable() )
@@ -98,6 +107,7 @@ void ctkExampleDicomHost::forwardConsoleOutput()
   }
 }
 
+//----------------------------------------------------------------------------
 bool ctkExampleDicomHost::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
 {
   Q_UNUSED(data)
@@ -105,6 +115,7 @@ bool ctkExampleDicomHost::notifyDataAvailable(ctkDicomAppHosting::AvailableData 
   return false;
 }
 
+//----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
     QList<QUuid> objectUUIDs,
     QList<QString> acceptableTransferSyntaxUIDs,
@@ -138,6 +149,8 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
 
   return QList<ctkDicomAppHosting::ObjectLocator>();
 }
+
+//----------------------------------------------------------------------------
 void ctkExampleDicomHost::releaseData(QList<QUuid> objectUUIDs)
 {
   Q_UNUSED(objectUUIDs)
