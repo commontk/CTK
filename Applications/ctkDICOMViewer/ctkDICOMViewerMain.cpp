@@ -28,7 +28,7 @@
 #include <ctkDICOMAppWidget.h>
 
 // ctkDICOMCore includes
-#include "ctkDICOM.h"
+#include "ctkDICOMDatabase.h"
 #include "ctkDICOMModel.h"
 
 // Logger
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 
   QString databaseFileName = databaseDirectory + QString("/ctkDICOM.sql");
 
-  ctkDICOM myCTK;
+  ctkDICOMDatabase myCTK;
   try { myCTK.openDatabase( databaseFileName ); }
   catch (std::exception e)
   {

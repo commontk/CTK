@@ -5,7 +5,7 @@
 #include <QAction>
 
 // ctkDICOMWidgets includes
-#include "ctkDICOM.h"
+#include "ctkDICOMDatabase.h"
 #include "ctkDICOMModel.h"
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"

@@ -4,7 +4,7 @@
 #include <QSettings>
 
 // ctkDICOMCore includes
-#include "ctkDICOM.h"
+#include "ctkDICOMDatabase.h"
 #include "ctkDICOMModel.h"
 #include "ctkDICOMQuery.h"
 #include "ctkDICOMRetrieve.h"
@@ -114,7 +114,7 @@ TODO: map the server node options to the query classes
 #endif
 
   // TODO: create a map of server locations to query results in the private class
-  ctkDICOM queryResultDatabase;
+  ctkDICOMDatabase queryResultDatabase;
 
   try { queryResultDatabase.openDatabase( ":memory:" ); }
   catch (std::exception e)

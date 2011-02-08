@@ -27,7 +27,7 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMWidgetsExport.h"
-#include "ctkDICOM.h"
+#include "ctkDICOMDatabase.h"
 
 class ctkDICOMDirectoryListWidgetPrivate;
 
@@ -38,7 +38,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMDirectoryListWidget : public QWidget
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMDirectoryListWidget(QWidget* parent=0);
-  void setDICOM(ctkDICOM* dicom);
+  void setDICOMDatabase(ctkDICOMDatabase*);
   virtual ~ctkDICOMDirectoryListWidget();
 
 public slots:

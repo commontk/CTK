@@ -7,7 +7,7 @@
 #include <QSqlQuery>
 
 // ctkDICOMCore includes
-#include "ctkDICOM.h"
+#include "ctkDICOMDatabase.h"
 #include "ctkDICOMModel.h"
 #include "ctkModelTester.h"
 
@@ -30,21 +30,14 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   
-  ctkDICOM myCTK;
   try
   {
-    myCTK.openDatabase( argv[1] );
-  }
-  catch (std::exception e)
-  {
-    std::cerr << "Error when opening the data base file: " << argv[1] 
-              << " error: " << e.what();
-    return EXIT_FAILURE;
-  }
-  if (!myCTK.initializeDatabase(argv[2]))
+    ctkDICOMDatabase myCTK( argv[1] );
+
+    if (!myCTK.initializeDatabase(argv[2]))
     {
-    std::cerr << "Error when initializing the data base: " << argv[2] 
-              << " error: " << myCTK.GetLastError().toStdString();
+      std::cerr << "Error when initializing the data base: " << argv[2]
+          << " error: " << myCTK.GetLastError().toStdString();
     }
     /*
   QSqlQuery toto("SELECT PatientsName as 'Name tt' FROM Patients ORDER BY \"Name tt\" ASC", myCTK.database());
@@ -60,29 +53,36 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   qDebug() << "tutu: " << tutu.seek(0) << myCTK.GetLastError();
   */
 
-  ctkModelTester tester;
-  tester.setNestedInserts(true);
-  tester.setThrowOnError(false);
-  ctkDICOMModel model;
-  tester.setModel(&model);
+    ctkModelTester tester;
+    tester.setNestedInserts(true);
+    tester.setThrowOnError(false);
+    ctkDICOMModel model;
+    tester.setModel(&model);
 
-  model.setDatabase(myCTK.database());
-  
-  model.setDatabase(QSqlDatabase());
- 
-  model.setDatabase(myCTK.database());
+    model.setDatabase(myCTK.database());
 
-  QTreeView viewer;
-  viewer.setModel(&model);
-  viewer.setSortingEnabled(true);
+    model.setDatabase(QSqlDatabase());
 
-  model.rowCount();
-  qDebug() << model.rowCount() << model.columnCount();
-  qDebug() << model.index(0,0);
-  viewer.show();
-  if (argc > 3 && QString(argv[3]) == "-I")
+    model.setDatabase(myCTK.database());
+
+    QTreeView viewer;
+    viewer.setModel(&model);
+    viewer.setSortingEnabled(true);
+
+    model.rowCount();
+    qDebug() << model.rowCount() << model.columnCount();
+    qDebug() << model.index(0,0);
+    viewer.show();
+    if (argc > 3 && QString(argv[3]) == "-I")
     {
-    return app.exec();
+      return app.exec();
     }
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
+  }
+  catch (std::exception e)
+  {
+    std::cerr << "Error when opening the data base file: " << argv[1]
+        << " error: " << e.what();
+    return EXIT_FAILURE;
+  }
 }

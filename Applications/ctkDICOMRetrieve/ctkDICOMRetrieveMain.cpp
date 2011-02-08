@@ -24,7 +24,7 @@
 
 // CTK includes
 #include <ctkDICOMRetrieve.h>
-#include <ctkDICOM.h>
+#include <ctkDICOMDatabase.h>
 #include "ctkLogger.h"
 
 // STD includes

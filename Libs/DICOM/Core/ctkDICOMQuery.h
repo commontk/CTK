@@ -29,10 +29,10 @@
 #include <ctkPimpl.h>
 
 #include "ctkDICOMCoreExport.h"
-#include "ctkDICOMIndexerBase.h"
+#include "ctkDICOMDatabase.h"
 
 class ctkDICOMQueryPrivate;
-class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public ctkDICOMIndexerBase
+class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
@@ -53,7 +53,7 @@ public:
   int port();
   
   /// Query a remote DICOM Image Store SCP
-  void query(QSqlDatabase database);
+  void query(ctkDICOMDatabase& database);
 
   // Add a StudyInstanceUID to be queried
   void addStudyInstanceUID ( QString StudyInstanceUID );

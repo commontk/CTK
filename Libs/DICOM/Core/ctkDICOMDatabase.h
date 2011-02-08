@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMIndexerBase_h
-#define __ctkDICOMIndexerBase_h
+#ifndef __ctkDICOMDatabase_h
+#define __ctkDICOMDatabase_h
 
 // Qt includes 
 #include <QObject>
@@ -27,17 +27,32 @@
 
 #include "ctkDICOMCoreExport.h"
 
-class ctkDICOMIndexerBasePrivate;
+class ctkDICOMDatabasePrivate;
 class DcmDataset;
 
-class CTK_DICOM_CORE_EXPORT ctkDICOMIndexerBase : public QObject
+class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
   Q_OBJECT
 public:
-  explicit ctkDICOMIndexerBase();
-  virtual ~ctkDICOMIndexerBase();
-  void setDatabase ( QSqlDatabase database );
+  explicit ctkDICOMDatabase();
+  explicit ctkDICOMDatabase(QString databaseFile);
+  virtual ~ctkDICOMDatabase();
+
   const QSqlDatabase& database() const;
+  const QString& GetLastError() const;
+
+  ///
+  /// open the SQLite database in @param file. If the file does not
+  /// exist, a new database is created and initialized with the
+  /// default schema
+  virtual void openDatabase(const QString file);
+
+  ///
+  /// close the database. It must not be used afterwards.
+  void closeDatabase();
+  ///
+  /// delete all data and reinitialize the database.
+  bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
 
   /**
    * Will create an entry in the appropriate tables for this dataset.
@@ -49,11 +64,13 @@ public:
   void insert ( DcmDataset *dataset );
 
 protected:
-  QScopedPointer<ctkDICOMIndexerBasePrivate> d_ptr;
-  
+  QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
+
+
+
 private:
-  Q_DECLARE_PRIVATE(ctkDICOMIndexerBase);
-  Q_DISABLE_COPY(ctkDICOMIndexerBase);
+  Q_DECLARE_PRIVATE(ctkDICOMDatabase);
+  Q_DISABLE_COPY(ctkDICOMDatabase);
 };
 
 #endif

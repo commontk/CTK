@@ -151,11 +151,11 @@ int ctkDICOMQuery::port()
 
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::query(QSqlDatabase database )
+void ctkDICOMQuery::query(ctkDICOMDatabase& database )
 {
-  ctkDICOMIndexerBase::setDatabase ( database );
+  // ctkDICOMDatabase::setDatabase ( database );
   Q_D(ctkDICOMQuery);
-  if ( this->database().isOpen() )
+  if ( database.database().isOpen() )
     {
     logger.debug ( "DB open in Query" );
     }
@@ -254,7 +254,7 @@ void ctkDICOMQuery::query(QSqlDatabase database )
     DcmDataset *dataset = (*it)->m_dataset;
     if ( dataset != NULL )
       {
-      this->insert ( dataset );
+      database.insert ( dataset );
       OFString StudyInstanceUID;
       dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
       this->addStudyInstanceUID ( QString ( StudyInstanceUID.c_str() ) );
@@ -278,7 +278,7 @@ void ctkDICOMQuery::query(QSqlDatabase database )
         DcmDataset *dataset = (*it)->m_dataset;
         if ( dataset != NULL )
           {
-          this->insert ( dataset );
+          database.insert ( dataset );
           }
         }
       }
