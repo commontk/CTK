@@ -23,6 +23,7 @@
 #include <QTreeView>
 #include <QSettings>
 #include <QDir>
+#include <QResource>
 
 // CTK widget includes
 #include <ctkDICOMAppWidget.h>
@@ -45,6 +46,9 @@ int main(int argc, char** argv)
   app.setOrganizationName("commontk");
   app.setOrganizationDomain("commontk.org");
   app.setApplicationName("ctkDICOM");
+
+  // set up Qt resource files
+  QResource::registerResource("./Resources/ctkDICOMViewer.qrc");
 
   QSettings settings;
   QString databaseDirectory;

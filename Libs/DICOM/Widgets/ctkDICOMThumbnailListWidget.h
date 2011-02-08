@@ -26,12 +26,13 @@
 
 #include "ctkDICOMWidgetsExport.h"
 
+class QModelIndex;
 class ctkDICOMThumbnailListWidgetPrivate;
-
 class ctkDICOMThumbnailWidget;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailListWidget : public QWidget
 {
+  Q_OBJECT
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMThumbnailListWidget(QWidget* parent=0);
@@ -39,19 +40,19 @@ public:
 
   void setThumbnailWidth(int width);
 
-  void addTestThumbnail();
+  void addTestThumbnail(int count = 10);
+  void setModelIndex(const QModelIndex& index);
   
 protected:
   QScopedPointer<ctkDICOMThumbnailListWidgetPrivate> d_ptr;
 
-  void clearThumbnail();
-  void addThumbnail(ctkDICOMThumbnailWidget* widget);
-
-  virtual void resizeEvent(QResizeEvent * event);
-  
+  virtual void resizeEvent(QResizeEvent * event); 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMThumbnailListWidget);
   Q_DISABLE_COPY(ctkDICOMThumbnailListWidget);
+
+signals:
+  void selected(const ctkDICOMThumbnailWidget& widget);
 };
 
 #endif

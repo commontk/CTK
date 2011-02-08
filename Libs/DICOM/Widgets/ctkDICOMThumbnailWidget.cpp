@@ -35,3 +35,18 @@ ctkDICOMThumbnailWidget::~ctkDICOMThumbnailWidget()
 {
 }
 
+void ctkDICOMThumbnailWidget::setText(QString &text){
+  Q_D(ctkDICOMThumbnailWidget);
+
+  d->textLabel->setText(text);
+}
+
+void ctkDICOMThumbnailWidget::setPixmap(QPixmap &pixmap){
+  Q_D(ctkDICOMThumbnailWidget);
+
+  d->pixmapLabel->setPixmap(pixmap);
+}
+
+void ctkDICOMThumbnailWidget::mousePressEvent(QMouseEvent* event){
+  emit selected(*this);
+}

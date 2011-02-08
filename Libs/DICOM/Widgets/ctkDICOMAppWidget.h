@@ -26,7 +26,9 @@
 
 #include "ctkDICOMWidgetsExport.h"
 
+class QModelIndex;
 class ctkDICOMAppWidgetPrivate;
+class ctkDICOMThumbnailWidget;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QMainWindow
 {
@@ -39,6 +41,9 @@ public:
 public slots:
     void onDatabaseDirectoryChanged(const QString& directory);
     void onAddToDatabase();
+
+    void onDICOMModelSelected(const QModelIndex& index);
+    void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
 
     void onImport();
     void onExport();
