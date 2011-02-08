@@ -140,4 +140,30 @@ void ctkHostAppExampleWidget::placeholderResized()
 void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
 {
   ui->statusLabel->setText(ctkDicomSoapState::toStringValue(state));
+  if (state == ctkDicomAppHosting::IDLE)
+  {
+    ctkDicomAppHosting::AvailableData data;
+    ctkDicomAppHosting::Patient patient;
+    patient.name = "John Doe";
+    patient.id = "0000";
+    patient.assigningAuthority = "authority";
+    patient.sex = "male";
+    patient.birthDate = "today";
+    patient.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
+
+    ctkDicomAppHosting::ObjectDescriptor ourObjectDescriptor;
+    ourObjectDescriptor.descriptorUUID = QUuid("{11111111-1111-1111-1111-111111111111}");
+    ourObjectDescriptor.mimeType = "text/plain";
+    ourObjectDescriptor.classUID = "lovelyClass";
+    ourObjectDescriptor.transferSyntaxUID = "transSyntaxUId";
+    ourObjectDescriptor.modality = "modMod";
+
+    data.objectDescriptors =  QList<ctkDicomAppHosting::ObjectDescriptor>();
+    data.objectDescriptors.append (ourObjectDescriptor);
+    data.patients = QList<ctkDicomAppHosting::Patient>();
+    data.patients.append (patient);
+
+    bool reply = host->getDicomAppService()->notifyDataAvailable (data,true);
+    qDebug() << "  notifyDataAvailable(1111) returned: " << reply;
+  }
 }

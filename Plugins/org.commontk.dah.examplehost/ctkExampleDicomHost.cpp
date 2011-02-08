@@ -109,9 +109,32 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
     QList<QString> acceptableTransferSyntaxUIDs,
     bool includeBulkData)
 {
-  Q_UNUSED(objectUUIDs)
-  Q_UNUSED(acceptableTransferSyntaxUIDs)
   Q_UNUSED(includeBulkData)
+  Q_UNUSED(acceptableTransferSyntaxUIDs)
+
+  //stupid test: only works with one uuid
+  QList<ctkDicomAppHosting::ObjectLocator> locators;
+  QUuid uuid;
+  QUuid testUuid("{11111111-1111-1111-1111-111111111111}");
+  foreach(uuid, objectUUIDs)
+  {
+    //stupid test: only works with one uuid
+    if (uuid == testUuid)
+    {
+      ctkDicomAppHosting::ObjectLocator objectLocator;
+      objectLocator.locator = QUuid();
+      objectLocator.source = QUuid();
+      //need to filter transfert syntax with acceptable ones
+      objectLocator.transferSyntax = "transSyntaxUId";
+      objectLocator.length = 0;
+      objectLocator.offset = 0;
+      objectLocator.URI = "testFile.txt";
+      locators.append (objectLocator);
+    }
+
+    return locators;
+  }
+
   return QList<ctkDicomAppHosting::ObjectLocator>();
 }
 void ctkExampleDicomHost::releaseData(QList<QUuid> objectUUIDs)
