@@ -30,7 +30,7 @@
 #include <QApplication>
 
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic()
-  : hostTracker(ctkExampleDicomAppPlugin::getPluginContext())
+  : hostTracker(ctkExampleDicomAppPlugin::getPluginContext()), button(NULL)
 {
   hostTracker.open();
 
@@ -84,6 +84,11 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
 {
   ctkDicomAppHosting::State newstate = static_cast<ctkDicomAppHosting::State>(anewstate);
 
+  if (newstate == ctkDicomAppHosting::INPROGRESS)
+  {
+    do_something();
+  }
+
   try
   {
     getHostInterface()->notifyStateChanged(newstate);
@@ -92,11 +97,6 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
   {
     qCritical() << e.what();
     return;
-  }
-
-  if (newstate == ctkDicomAppHosting::INPROGRESS)
-  {
-    do_something();
   }
 
   if (newstate == ctkDicomAppHosting::CANCELED)
@@ -123,9 +123,13 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
 
 bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
 {
-  Q_UNUSED(data)
   Q_UNUSED(lastData)
   QString s;
+  if(button==NULL)
+  {
+    qCritical() << "Button is null!";
+    return false;
+  }
   s = "Received notifyDataAvailable with patients.count()= " + QString().setNum(data.patients.count());
   if(data.patients.count()>0)
   {

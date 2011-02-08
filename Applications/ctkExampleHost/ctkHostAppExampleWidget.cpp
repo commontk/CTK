@@ -140,7 +140,7 @@ void ctkHostAppExampleWidget::placeholderResized()
 void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
 {
   ui->statusLabel->setText(ctkDicomSoapState::toStringValue(state));
-  if (state == ctkDicomAppHosting::IDLE)
+  if (state == ctkDicomAppHosting::INPROGRESS)
   {
     ctkDicomAppHosting::AvailableData data;
     ctkDicomAppHosting::Patient patient;

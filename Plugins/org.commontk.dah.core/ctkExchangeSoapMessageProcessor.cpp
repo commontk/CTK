@@ -62,7 +62,7 @@ void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
   const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
-  const QtSoapType& inputType = message.method()["availableData"];
+  const QtSoapType& inputType = message.method()[0];//"availableData"];
   if(inputType.isValid()==false)
   {
     qCritical() << "  NotifyDataAvailable: availableData not valid. " << inputType.errorString();
