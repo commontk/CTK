@@ -19,15 +19,7 @@
 
 =============================================================================*/
 
-#include <ctkPluginFrameworkFactory.h>
-#include <ctkPluginFramework.h>
-#include <ctkPluginException.h>
-#include <ctkPluginContext.h>
-
-// for testing purposes use:
-// --hostURL http://localhost:8081/host --applicationURL http://localhost:8082/app dicomapp
-
-
+// Qt includes
 #include <QApplication>
 #include <QString>
 #include <QStringList>
@@ -36,6 +28,15 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDebug>
+
+// CTK includes
+#include <ctkPluginFrameworkFactory.h>
+#include <ctkPluginFramework.h>
+#include <ctkPluginException.h>
+#include <ctkPluginContext.h>
+
+// For testing purposes use:
+// --hostURL http://localhost:8081/host --applicationURL http://localhost:8082/app dicomapp
 
 void print_usage()
 {
