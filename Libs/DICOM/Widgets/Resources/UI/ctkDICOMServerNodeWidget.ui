@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>510</height>
+    <width>585</width>
+    <height>544</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,9 +15,19 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Calling AETitle</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="callingAETitle"/>
+   </item>
+   <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Sources</string>
+      <string>Servers</string>
      </property>
     </widget>
    </item>
@@ -31,8 +41,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>580</width>
-        <height>414</height>
+        <width>565</width>
+        <height>392</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
