@@ -34,7 +34,7 @@
  * An interface to describe an attribute.
  *
  * <p>
- * An {@code ctkAttributeDefinition} object defines a description of the data type
+ * An <code>ctkAttributeDefinition</code> object defines a description of the data type
  * of a property/attribute.
  */
 struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
@@ -44,11 +44,11 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
   static const int PASSWORD;
 
   /**
-   * The {@code Password} type.
+   * The <code>Password</code> type.
    *
-   * Attributes of this type must be stored as {@code QString}
-   * or {@code QStringList} objects depending on
-   * getCardinality(). A {@code Password} must be treated as a string but the type
+   * Attributes of this type must be stored as <code>QString</code>
+   * or <code>QStringList</code> objects depending on
+   * getCardinality(). A <code>Password</code> must be treated as a string but the type
    * can be used to disguise the information when displayed to a user to
    * prevent others from seeing it.
    */
@@ -71,7 +71,7 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
    * Unique identity for this attribute.
    *
    * Attributes share a global namespace in the registry. E.g. an attribute
-   * {@code cn} or {@code commonName} must always be a {@code QString} and the
+   * <code>cn</code> or <code>commonName</code> must always be a <code>QString</code> and the
    * semantics are always a name of some object. They share this aspect with
    * LDAP/X.500 attributes. In these standards the OSI Object Identifier (OID)
    * is used to uniquely identify an attribute. If such an OID exists, (which
@@ -139,12 +139,12 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
    *
    * <p>
    * Each value must be acceptable to validate() (return "") and must be a
-   * {@code QString} object that can be converted to the data type defined by
+   * <code>QString</code> object that can be converted to the data type defined by
    * getType() for this attribute.
    *
    * <p>
-   * This list must be in the same sequence as {@code getOptionLabels()}. I.e.
-   * for each index i in {@code getOptionValues}, i in {@code
+   * This list must be in the same sequence as <code>getOptionLabels()</code>. I.e.
+   * for each index i in <code>getOptionValues</code>, i in {@code
    * getOptionLabels()} should be the label.
    *
    * @return A list values
@@ -156,15 +156,15 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
    *
    * <p>
    * The purpose of this method is to allow menus with localized labels. It is
-   * associated with {@code getOptionValues}. The labels returned here are
+   * associated with <code>getOptionValues</code>. The labels returned here are
    * ordered in the same way as the values in that method.
    *
    * <p>
    * If the function returns an empty list, there are no option labels
    * available.
    * <p>
-   * This list must be in the same sequence as the {@code getOptionValues()}
-   * method. I.e. for each index i in {@code getOptionLabels}, i in {@code
+   * This list must be in the same sequence as the <code>getOptionValues()</code>
+   * method. I.e. for each index i in <code>getOptionLabels</code>, i in {@code
    * getOptionValues()} should be the associated value.
    *
    * @return A list values
@@ -172,7 +172,7 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
   virtual QStringList getOptionLabels() const = 0;
 
   /**
-   * Validate an attribute in {@code QString} form.
+   * Validate an attribute in <code>QString</code> form.
    *
    * An attribute might be further constrained in value. This method will
    * attempt to validate the attribute according to these constraints. It can
@@ -193,7 +193,7 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
    * Return a default for this attribute.
    *
    * The object must be of the appropriate type as defined by the cardinality
-   * and {@code getType()}. The return type is a QStringList
+   * and <code>getType()</code>. The return type is a QStringList
    * object whose entries can be converted to the appropriate type. The cardinality of
    * the return list must follow the absolute cardinality of this type. E.g.
    * if the cardinality = 0, the list must contain 1 element. If the
