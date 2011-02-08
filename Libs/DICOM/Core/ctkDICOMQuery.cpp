@@ -199,12 +199,8 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
   d->query->insertEmptyElement ( DCM_StudyInstanceUID );
   d->query->insertEmptyElement ( DCM_StudyDescription );
   d->query->insertEmptyElement ( DCM_StudyDate );
-  d->query->insertEmptyElement ( DCM_StudyID );
-  d->query->insertEmptyElement ( DCM_PatientID );
-  d->query->insertEmptyElement ( DCM_PatientsName );
   d->query->insertEmptyElement ( DCM_SeriesNumber );
   d->query->insertEmptyElement ( DCM_SeriesDescription );
-  d->query->insertEmptyElement ( DCM_StudyInstanceUID );
   d->query->insertEmptyElement ( DCM_SeriesInstanceUID );
   d->query->insertEmptyElement ( DCM_StudyTime );
   d->query->insertEmptyElement ( DCM_SeriesDate );
@@ -215,6 +211,7 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
   d->query->insertEmptyElement ( DCM_NumberOfSeriesRelatedInstances ); // Number of images in the series
   d->query->insertEmptyElement ( DCM_NumberOfStudyRelatedInstances ); // Number of images in the series
   d->query->insertEmptyElement ( DCM_NumberOfStudyRelatedSeries ); // Number of images in the series
+
   d->query->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
 
   FINDResponses *responses = new FINDResponses();
