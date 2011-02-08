@@ -103,7 +103,7 @@ int main(int argv, char** argc)
   catch (const ctkPluginException& exc)
   {
     qCritical() << "Failed to initialize the plug-in framework:" << exc;
-    exit(2);
+    return EXIT_FAILURE;
   }
 
 #ifdef CMAKE_INTDIR
@@ -155,7 +155,7 @@ int main(int argv, char** argc)
     qCritical() << "Could not find plugin.";
     qCritical() << "  Plugin name: " << pluginName;
     qCritical() << "  Plugin path: " << pluginPath;
-    exit(3);
+    return EXIT_FAILURE;
   }
 
   // start the plugin framework
