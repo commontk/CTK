@@ -231,7 +231,7 @@ QMap<QString, QString> ctkDICOMServerNodeWidget::nodeParameters(QString &node)
         {
           parameters[keys.at(k)] = d->nodeTable->item(row,k)->text();
         }
-        parameters["CheckState"] = d->nodeTable->item(row,0)->checkState();
+        parameters["CheckState"] = QVariant(d->nodeTable->item(row,0)->checkState()).toString();
       }
     }
   }

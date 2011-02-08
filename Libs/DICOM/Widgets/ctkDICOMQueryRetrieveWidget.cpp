@@ -3,6 +3,9 @@
 #include <QTabBar>
 #include <QSettings>
 
+/// CTK includes
+#include <ctkCheckableHeaderView.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMModel.h"
@@ -85,25 +88,39 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   QStringList serverNodes = d->serverNodeWidget->nodes();
   foreach (QString server, serverNodes)
   {
-    d->queries[server] = new ctkDICOMQuery;
     QMap<QString, QString> parameters = d->serverNodeWidget->nodeParameters(server);
-    d->queries[server]->setCallingAETitle(d->serverNodeWidget->callingAETitle());
-    d->queries[server]->setCalledAETitle(parameters["AETitle"]);
-    d->queries[server]->setHost(parameters["Address"]);
-    d->queries[server]->setPort(parameters["Port"].toInt());
-    // TODO: add interface to ctkDICOMQuery for specifying query params
-    // for now, query for everything
+    if ( parameters["CheckState"] == QVariant(Qt::Checked).toString() )
+    {
+      d->queries[server] = new ctkDICOMQuery;
+      d->queries[server]->setCallingAETitle(d->serverNodeWidget->callingAETitle());
+      d->queries[server]->setCalledAETitle(parameters["AETitle"]);
+      d->queries[server]->setHost(parameters["Address"]);
+      d->queries[server]->setPort(parameters["Port"].toInt());
+      // TODO: add interface to ctkDICOMQuery for specifying query params
+      // for now, query for everything
 
-    try
-    {
-      // run the query against the selected server and put results in database
-      d->queries[server]->query ( queryResultDatabase );
-    }
-    catch (std::exception e)
-    {
-      logger.error ( "Query error: " + parameters["Name"] );
+      try
+      {
+        // run the query against the selected server and put results in database
+        d->queries[server]->query ( queryResultDatabase );
+      }
+      catch (std::exception e)
+      {
+        logger.error ( "Query error: " + parameters["Name"] );
+      }
     }
   }
+
+  // checkable headers.
+  d->results->setModel(&d->model);
+  d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
+  QHeaderView* previousHeaderView = d->results->header();
+  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->results);
+  headerView->setClickable(previousHeaderView->isClickable());
+  headerView->setMovable(previousHeaderView->isMovable());
+  headerView->setHighlightSections(previousHeaderView->highlightSections());
+  headerView->setPropagateToItems(true);
+  d->results->setHeader(headerView);
 
   d->model.setDatabase(queryResultDatabase.database());
   d->results->setModel(&d->model);
