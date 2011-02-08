@@ -30,6 +30,7 @@
 #include <QDebug>
 
 // CTK includes
+#include <ctkCommandLineParser.h>
 #include <ctkPluginFrameworkFactory.h>
 #include <ctkPluginFramework.h>
 #include <ctkPluginException.h>
@@ -47,38 +48,46 @@ void print_usage()
 int main(int argv, char** argc)
 {
   QApplication app(argv, argc);
-  qDebug() << "################################################################";
 
   qApp->setOrganizationName("CTK");
   qApp->setOrganizationDomain("commontk.org");
   qApp->setApplicationName("ctkExampleHostedApp");
 
-  // parse the command line
-  qDebug() << "################################################################";
+  ctkCommandLineParser parser;
+  parser.setArgumentPrefix("--", "-"); // Use Unix-style argument names
 
-  if(qApp->arguments().size() < 5)
+  // Add command line argument names
+  parser.addArgument("hostURL", "", QVariant::String, "Hosting system URL");
+  parser.addArgument("applicationURL", "", QVariant::String, "Hosted Application URL");
+  parser.addArgument("help", "h", QVariant::Bool, "Show this help text");
+
+  bool ok = false;
+  QHash<QString, QVariant> parsedArgs = parser.parseArguments(QCoreApplication::arguments(), &ok);
+  if (!ok)
+    {
+    QTextStream(stderr, QIODevice::WriteOnly) << "Error parsing arguments: "
+                                              << parser.errorString() << "\n";
+    return EXIT_FAILURE;
+    }
+
+  // Show a help message
+   if (parsedArgs.contains("help"))
+     {
+     print_usage();
+     QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
+     return EXIT_SUCCESS;
+     }
+
+  if(parsedArgs.count() != 2)
   {
     qCritical() << "Wrong number of command line arguments.";
     print_usage();
-    exit(1);
+    QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
+    return EXIT_FAILURE;
   }
 
-  if(qApp->arguments().at(1) != "--hostURL")
-  {
-    qCritical() << "First argument must be --hostURL.";
-    print_usage();
-    exit(1);
-  }
-  QString hostURL = qApp->arguments().at(2);
-  qDebug() << "hostURL is: " << hostURL << " . Extracted port is: " << QUrl(hostURL).port();
-
-  if(qApp->arguments().at(3) != "--applicationURL")
-  {
-    qCritical() << "First argument must be --applicationURL.";
-    print_usage();
-    exit(1);
-  }
-  QString appURL = qApp->arguments().at(4);
+  QString hostURL = parsedArgs.value("hostURL").toString();
+  QString appURL = parsedArgs.value("applicationURL").toString();
   qDebug() << "appURL is: " << appURL << " . Extracted port is: " << QUrl(appURL).port();
 
   // setup the plugin framework
@@ -105,16 +114,12 @@ int main(int argv, char** argc)
 
   qApp->addLibraryPath(pluginPath);
 
-  // construct the name of the plugin with the business logic
+  // Construct the name of the plugin with the business logic
   // (thus the actual logic of the hosted app)
-  QString pluginName;
-  if(qApp->arguments().size()>5)
+  QString pluginName("org_commontk_dah_exampleapp");
+  if(parser.unparsedArguments().count() > 0)
   {
-    pluginName = qApp->arguments().at(5);
-  }
-  else
-  {
-    pluginName = "org_commontk_dah_exampleapp";
+    pluginName = parser.unparsedArguments().at(0);
   }
 
   // try to find the plugin and install all plugins available in 
