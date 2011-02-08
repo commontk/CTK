@@ -47,7 +47,7 @@ public:
    * registered by the specified plugin.
    * @param context The ctkPluginContext of the ctkMetaTypeService implementation
    * @param plugin The plugin to track all ctkMetaTypeProviders for.
-   * @param log The {@code ctkLogService} to use for logging messages.
+   * @param log The <code>ctkLogService</code> to use for logging messages.
    */
   ctkMTProviderTracker(const QSharedPointer<ctkPlugin>& plugin, ctkLogService* log, ctkServiceTracker<>* tracker);
 

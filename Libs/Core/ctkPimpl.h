@@ -1,5 +1,4 @@
 /**
-\class ctkPimpl ctkPimpl
 \brief Utility macros for handling private implementations. It is in addition
        to QtGlobal: Q_DECLARE_PRIVATE, Q_DECLARE_PUBLIC,
        Q_D and Q_Q.
@@ -53,7 +52,7 @@ macro.
 // Qt includes
 #include <QtGlobal>
 
-/*! \relates ctkPimpl
+/*!
  * Define a public class constructor with no argument
  *
  * Also make sure the Pimpl is initalized
@@ -63,7 +62,7 @@ macro.
     {                                    \
     }
 
-/*! \relates ctkPimpl
+/*!
  * Define a public class constructor with one argument
  *
  * Also make sure the Pimpl is initalized
@@ -75,7 +74,7 @@ macro.
     {                                           \
     }
     
-/*! \relates ctkPimpl
+/*!
  * Define the setter in the public class.
  *
  * This should be put in the .cxx file of the public class. The parameter are
@@ -89,7 +88,7 @@ macro.
     d->_VARNAME =  var;                             \
   }
 
-/*! \relates ctkPimpl
+/*!
  * Define the setter in the public class.
  *
  * This should be put in the .cxx file of the public class. The parameter are

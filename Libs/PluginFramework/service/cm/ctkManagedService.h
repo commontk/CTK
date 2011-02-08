@@ -33,28 +33,28 @@
  * <p>
  * A Managed Service is a service that needs configuration data. Such an object
  * should be registered with the Framework registry with the
- * {@code service.pid} property set to some unique identifier called a
+ * <code>service.pid</code> property set to some unique identifier called a
  * PID.
  *
  * <p>
- * If the Configuration Admin service has a {@code ctkConfiguration} object
- * corresponding to this PID, it will callback the {@code updated()}
- * method of the {@code ctkManagedService} object, passing the properties of
- * that {@code ctkConfiguration} object.
+ * If the Configuration Admin service has a <code>ctkConfiguration</code> object
+ * corresponding to this PID, it will callback the <code>updated()</code>
+ * method of the <code>ctkManagedService</code> object, passing the properties of
+ * that <code>ctkConfiguration</code> object.
  *
  * <p>
- * If it has no such {@code ctkConfiguration} object, then it calls back
+ * If it has no such <code>ctkConfiguration</code> object, then it calls back
  * with an empty properties argument. Registering a Managed Service
- * will always result in a callback to the {@code updated()} method
+ * will always result in a callback to the <code>updated()</code> method
  * provided the Configuration Admin service is, or becomes active. This callback
  * must always be done asynchronously.
  *
  * <p>
- * Else, every time that either of the {@code updated()} methods is
- * called on that {@code ctkConfiguration} object, the
- * {@code ctkManagedService#updated()} method with the new properties is
- * called. If the {@code remove()} method is called on that
- * {@code ctkConfiguration} object, {@code ctkManagedService#updated()}
+ * Else, every time that either of the <code>updated()</code> methods is
+ * called on that <code>ctkConfiguration</code> object, the
+ * <code>ctkManagedService#updated()</code> method with the new properties is
+ * called. If the <code>remove()</code> method is called on that
+ * <code>ctkConfiguration</code> object, <code>ctkManagedService#updated()</code>
  * is called with an empty map for the properties parameter. All these
  * callbacks must be done asynchronously.
  *
@@ -125,14 +125,14 @@ struct ctkManagedService
    * Update the configuration for a Managed Service.
    *
    * <p>
-   * When the implementation of {@code updated(const ctkDictionary&)} detects any
+   * When the implementation of <code>updated(const ctkDictionary&)</code> detects any
    * kind of error in the configuration properties, it should create a new
-   * {@code ctkConfigurationException} which describes the problem. This
+   * <code>ctkConfigurationException</code> which describes the problem. This
    * can allow a management system to provide useful information to a human
    * administrator.
    *
    * <p>
-   * If this method throws any other {@code exception}, the
+   * If this method throws any other <code>exception</code>, the
    * Configuration Admin service must catch it and should log it.
    * <p>
    * The Configuration Admin service must call this method asynchronously
@@ -143,7 +143,7 @@ struct ctkManagedService
    * @param properties A copy of the ctkConfiguration properties.
    *        This argument must not contain the
    *        "service.pluginLocation" property. The value of this property may
-   *        be obtained from the {@code ctkConfiguration#getPluginLocation()}
+   *        be obtained from the <code>ctkConfiguration#getPluginLocation()</code>
    *        method.
    * @throws ctkConfigurationException when the update fails
    */
