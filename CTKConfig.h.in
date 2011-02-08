@@ -1,0 +1,1 @@
+#define CTK_PLUGIN_DIR "@CTK_BINARY_DIR@/bin/plugins/"

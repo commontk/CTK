@@ -85,6 +85,15 @@ FOREACH(plugin ${CTK_PLUGIN_LIBRARIES})
 SET(${plugin}_INCLUDE_DIRS \"${${plugin}_INCLUDE_DIRS}\")")
 ENDFOREACH()
 
+# Write a set of variables containing library specific include directories
+SET(CTK_LIBRARY_INCLUDE_DIRS_CONFIG)
+FOREACH(lib ${CTK_LIBRARIES})
+  SET(${lib}_INCLUDE_DIRS ${${lib}_SOURCE_DIR} ${${lib}_BINARY_DIR})
+  ctkFunctionGetIncludeDirs(${lib}_INCLUDE_DIRS ${lib})
+  SET(CTK_LIBRARY_INCLUDE_DIRS_CONFIG "${CTK_LIBRARY_INCLUDE_DIRS_CONFIG}
+SET(${lib}_INCLUDE_DIRS \"${${lib}_INCLUDE_DIRS}\")")
+ENDFOREACH()
+
 # Determine the include directories needed.
 SET(CTK_INCLUDE_DIRS_CONFIG
   ${CTK_BASE_INCLUDE_DIRS}
@@ -127,6 +136,8 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTKConfig.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfig.cmake @ONLY IMMEDIATE)
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTKConfigVersion.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfigVersion.cmake @ONLY IMMEDIATE)
+CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTKConfig.h.in
+               ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfig.h @ONLY IMMEDIATE)
 
 #-----------------------------------------------------------------------------
 # Settings specific to the install tree.
