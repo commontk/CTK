@@ -18,11 +18,6 @@
 
 =========================================================================*/
 
-/**
-\class ctkSingleton ctkSingleton
-\brief Utility macros allowing to declare a singleton
-
-*/
 
 #ifndef __ctkSingleton_h
 #define __ctkSingleton_h
