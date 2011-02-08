@@ -37,7 +37,8 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMImage : public QObject
 public:
   explicit ctkDICOMImage(DicomImage* dicomImage, QObject* parent = 0);
   virtual ~ctkDICOMImage();
-  QPixmap getPixmap(int frame = 0);
+  DicomImage* getDicomImage() const;
+  QPixmap getPixmap(int frame = 0) const;
   unsigned long frameCount() const;
   Q_PROPERTY(unsigned long frameCount READ frameCount);
 
