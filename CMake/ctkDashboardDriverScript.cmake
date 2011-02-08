@@ -194,7 +194,10 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
     endforeach()
     
     if (WITH_DOCUMENTATION)
+      message("----------- [ Build Documentation ] -----------")
       # Build Documentation target
+      set_property(GLOBAL PROPERTY SubProject Documentation)
+      set_property(GLOBAL PROPERTY Label Documentation)
       set(CTEST_BUILD_TARGET "doc")
       ctest_build(BUILD "${ctk_build_dir}" APPEND)
       ctest_submit(PARTS Build)
