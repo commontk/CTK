@@ -93,7 +93,7 @@ QString ctkPluginGeneratorCMakeLists::generateContent()
   stream
     << ")\n\n"
     << "#Compute the plugin dependencies\n"
-    << "ctkMacroGetTargetLibraries(PLUGIN_target_libraries)\n\n"
+    << "ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)\n\n"
     << "ctkMacroBuildPlugin(\n"
     << "  NAME ${PROJECT_NAME}\n"
     << "  EXPORT_DIRECTIVE ${PLUGIN_export_directive}\n"

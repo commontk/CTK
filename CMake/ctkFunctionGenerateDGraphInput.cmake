@@ -74,7 +74,7 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories)
       SET(dependencies )
 
       # get dependencies
-      ctkMacroCollectTargetLibraryNames(${target_dir} dependencies)
+      ctkFunctionCollectTargetLibraryNames(${target_dir} dependencies)
 
       # Make sure the variable is cleared
       SET(ctk_dependencies)

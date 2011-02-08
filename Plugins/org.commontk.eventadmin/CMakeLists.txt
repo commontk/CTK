@@ -112,7 +112,7 @@ SET(PLUGIN_CACHED_RESOURCEFILES
   
 )
 
-ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
+ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
