@@ -61,7 +61,7 @@ bool ctkExampleDicomAppLogic::bringToFront(const QRect& /*requestedScreenArea*/)
 
 void ctkExampleDicomAppLogic::do_something()
 {
-  QPushButton *button = new QPushButton("Button from App");
+  button = new QPushButton("Button from App");
   try
   {
 
@@ -125,6 +125,13 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableD
 {
   Q_UNUSED(data)
   Q_UNUSED(lastData)
+  QString s;
+  s = "Received notifyDataAvailable with patients.count()= " + QString().setNum(data.patients.count());
+  if(data.patients.count()>0)
+  {
+    s=s+" name:"+data.patients.begin()->name+" studies.count(): "+QString().setNum(data.patients.begin()->studies.count());
+  }
+  button->setText(s);
   return false;
 }
 

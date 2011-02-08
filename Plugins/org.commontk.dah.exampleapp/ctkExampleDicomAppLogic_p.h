@@ -30,6 +30,8 @@
 
 struct ctkDicomHostInterface;
 
+class QPushButton;
+
 class ctkExampleDicomAppLogic : public QObject, public ctkDicomAppInterface
 {
   Q_OBJECT
@@ -71,6 +73,8 @@ private:
   ctkDicomHostInterface* getHostInterface() const;
 
   ctkServiceTracker<ctkDicomHostInterface*> hostTracker;
+
+  QPushButton *button;
 
 }; // ctkExampleDicomAppLogic
 
