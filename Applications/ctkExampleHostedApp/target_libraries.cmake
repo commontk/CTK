@@ -5,5 +5,6 @@
 # 
 
 SET(target_libraries
+  CTKCore
   org_commontk_dah_app
   )
