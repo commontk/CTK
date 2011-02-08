@@ -213,11 +213,11 @@ QStringList ctkDICOMServerNodeWidget::nodes()
 }
 
 //----------------------------------------------------------------------------
-QMap<QString, QString> ctkDICOMServerNodeWidget::nodeParameters(QString &node)
+QMap<QString, QVariant> ctkDICOMServerNodeWidget::nodeParameters(QString &node)
 {
   Q_D(ctkDICOMServerNodeWidget);
 
-  QMap<QString, QString> parameters;
+  QMap<QString, QVariant> parameters;
   int count = d->nodeTable->rowCount();
   QStringList keys;
   keys << "Name" << "AETitle" << "Address" << "Port";
@@ -231,7 +231,7 @@ QMap<QString, QString> ctkDICOMServerNodeWidget::nodeParameters(QString &node)
         {
           parameters[keys.at(k)] = d->nodeTable->item(row,k)->text();
         }
-        parameters["CheckState"] = QVariant(d->nodeTable->item(row,0)->checkState()).toString();
+        parameters["CheckState"] = d->nodeTable->item(row,0)->checkState();
       }
     }
   }

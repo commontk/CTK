@@ -88,13 +88,13 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   QStringList serverNodes = d->serverNodeWidget->nodes();
   foreach (QString server, serverNodes)
   {
-    QMap<QString, QString> parameters = d->serverNodeWidget->nodeParameters(server);
-    if ( parameters["CheckState"] == QVariant(Qt::Checked).toString() )
+    QMap<QString, QVariant> parameters = d->serverNodeWidget->nodeParameters(server);
+    if ( parameters["CheckState"] == Qt::Checked )
     {
       d->queries[server] = new ctkDICOMQuery;
       d->queries[server]->setCallingAETitle(d->serverNodeWidget->callingAETitle());
-      d->queries[server]->setCalledAETitle(parameters["AETitle"]);
-      d->queries[server]->setHost(parameters["Address"]);
+      d->queries[server]->setCalledAETitle(parameters["AETitle"].toString());
+      d->queries[server]->setHost(parameters["Address"].toString());
       d->queries[server]->setPort(parameters["Port"].toInt());
       // TODO: add interface to ctkDICOMQuery for specifying query params
       // for now, query for everything
@@ -106,7 +106,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
       }
       catch (std::exception e)
       {
-        logger.error ( "Query error: " + parameters["Name"] );
+        logger.error ( "Query error: " + parameters["Name"].toString() );
       }
     }
   }

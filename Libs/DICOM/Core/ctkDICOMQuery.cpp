@@ -64,6 +64,7 @@ public:
   QString CalledAETitle;
   QString Host;
   int Port;
+  QMap<QString,QVariant> Filters;
   DcmSCU SCU;
   DcmDataset* query;
   QStringList StudyInstanceUIDList;
@@ -147,7 +148,16 @@ int ctkDICOMQuery::port()
   Q_D(ctkDICOMQuery);
   return d->Port;
 }
-
+void ctkDICOMQuery::setFilters ( QMap<QString,QVariant> filters ) 
+{
+  Q_D(ctkDICOMQuery);
+  d->Filters = filters;
+}
+QMap<QString,QVariant> ctkDICOMQuery::filters()
+{
+  Q_D(ctkDICOMQuery);
+  return d->Filters;
+}
 
 
 //------------------------------------------------------------------------------
@@ -213,6 +223,34 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
   d->query->insertEmptyElement ( DCM_NumberOfStudyRelatedSeries ); // Number of images in the series
 
   d->query->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
+
+  foreach( QString key, d->Filters.keys() )
+  {
+    if ( key == QString("Name") )
+    {
+      // make the filter a wildcard in dicom style
+      d->query->putAndInsertString( DCM_PatientsName,
+        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+    }
+    if ( key == QString("Study") )
+    {
+      // make the filter a wildcard in dicom style
+      d->query->putAndInsertString( DCM_StudyDescription,
+        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+    }
+    if ( key == QString("Series") )
+    {
+      // make the filter a wildcard in dicom style
+      d->query->putAndInsertString( DCM_SeriesDescription,
+        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+    }
+    if ( key == QString("ID") )
+    {
+      // make the filter a wildcard in dicom style
+      d->query->putAndInsertString( DCM_PatientID,
+        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+    }
+  }
 
   FINDResponses *responses = new FINDResponses();
 
