@@ -39,12 +39,14 @@
 // For testing purposes use:
 // --hostURL http://localhost:8081/host --applicationURL http://localhost:8082/app dicomapp
 
+//----------------------------------------------------------------------------
 void print_usage()
 {
   qCritical() << "Usage:";
   qCritical() << "  " << QFileInfo(qApp->arguments().at(0)).fileName() << " --hostURL url1 --applicationURL url2 <plugin-name>";
 }
 
+//----------------------------------------------------------------------------
 int main(int argv, char** argc)
 {
   QApplication app(argv, argc);
@@ -79,12 +81,12 @@ int main(int argv, char** argc)
      }
 
   if(parsedArgs.count() != 2)
-  {
+    {
     qCritical() << "Wrong number of command line arguments.";
     print_usage();
     QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
     return EXIT_FAILURE;
-  }
+    }
 
   QString hostURL = parsedArgs.value("hostURL").toString();
   QString appURL = parsedArgs.value("applicationURL").toString();
@@ -97,14 +99,15 @@ int main(int argv, char** argc)
   ctkPluginFrameworkFactory fwFactory(fwProps);
   QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
 
-  try {
+  try
+    {
     framework->init();
-  }
+    }
   catch (const ctkPluginException& exc)
-  {
+    {
     qCritical() << "Failed to initialize the plug-in framework:" << exc;
     return EXIT_FAILURE;
-  }
+    }
 
 #ifdef CMAKE_INTDIR
   QString pluginPath = qApp->applicationDirPath() + "/../plugins/" CMAKE_INTDIR "/";
@@ -118,9 +121,9 @@ int main(int argv, char** argc)
   // (thus the actual logic of the hosted app)
   QString pluginName("org_commontk_dah_exampleapp");
   if(parser.unparsedArguments().count() > 0)
-  {
+    {
     pluginName = parser.unparsedArguments().at(0);
-  }
+    }
 
   // try to find the plugin and install all plugins available in 
   // pluginPath containing the string "org_commontk_dah" (but do not start them)
@@ -129,47 +132,47 @@ int main(int argv, char** argc)
   libFilter << "*.dll" << "*.so" << "*.dylib";
   QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
   while(dirIter.hasNext())
-  {
-    try
     {
+    try
+      {
       QString fileLocation = dirIter.next();
       if (fileLocation.contains("org_commontk_dah"))
-      {
+        {
         QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
         if (fileLocation.contains(pluginName))
-        {
+          {
           appPlugin = plugin;
-        }
+          }
         //plugin->start(ctkPlugin::START_TRANSIENT);
+        }
+      }
+    catch (const ctkPluginException& e)
+      {
+      qCritical() << e.what();
       }
     }
-    catch (const ctkPluginException& e)
-    {
-      qCritical() << e.what();
-    }
-  }
 
   // if we did not find the business logic: abort
   if(!appPlugin)
-  {
+    {
     qCritical() << "Could not find plugin.";
     qCritical() << "  Plugin name: " << pluginName;
     qCritical() << "  Plugin path: " << pluginPath;
     return EXIT_FAILURE;
-  }
+    }
 
   // start the plugin framework
   framework->start();
 
   // start the plugin with the business logic
   try
-  {
+    {
     appPlugin->start();
-  }
+    }
   catch (const ctkPluginException& e)
-  {
+    {
     qCritical() << e;
-  }
+    }
 
   return app.exec();
 }
