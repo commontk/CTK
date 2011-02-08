@@ -217,7 +217,8 @@ OPTION(WITH_COVERAGE "Enable/Disable coverage" OFF)
 OPTION(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
 MARK_AS_ADVANCED(DOCUMENTATION_TARGET_IN_ALL)
 
-OPTION(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY "Where documentation archives should be stored" ${CMAKE_CURRENT_BINARY_DIR})
+SET(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+ CACHE PATH "Where documentation archives should be stored")
 MARK_AS_ADVANCED(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
 
 #-----------------------------------------------------------------------------
