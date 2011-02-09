@@ -23,7 +23,7 @@
 #ifndef CTKEXAMPLEDICOMAPPLOGIC_P_H
 #define CTKEXAMPLEDICOMAPPLOGIC_P_H
 
-#include <ctkDicomAppInterface.h>
+#include <ctkDicomAbstractApp.h>
 #include <ctkDicomHostInterface.h>
 
 #include <ctkServiceTracker.h>
@@ -32,7 +32,7 @@ struct ctkDicomHostInterface;
 
 class QPushButton;
 
-class ctkExampleDicomAppLogic : public QObject, public ctkDicomAppInterface
+class ctkExampleDicomAppLogic : public QObject, public ctkDicomAbstractApp
 {
   Q_OBJECT
   Q_INTERFACES(ctkDicomAppInterface)

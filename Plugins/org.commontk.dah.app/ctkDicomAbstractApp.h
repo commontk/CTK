@@ -24,18 +24,19 @@
 
 #include <ctkDicomAppInterface.h>
 #include <QScopedPointer>
+#include <org_commontk_dah_app_Export.h>
 
 class ctkDicomAbstractAppPrivate;
 
 /**
-  * Provide a basic implementation for an application app.
+  * Provides a basic implementation for an application app.
   *
   * TODO: provide helper/convenience methods to ease application development
   *
   * The methods of the ctkDicomAppInterface have to be implemented for the business logic,
   *
   */
-class ctkDicomAbstractApp : public ctkDicomAppInterface
+class org_commontk_dah_app_EXPORT ctkDicomAbstractApp : public ctkDicomAppInterface
 {
 
 public:
@@ -46,7 +47,6 @@ public:
 private:
   Q_DECLARE_PRIVATE(ctkDicomAbstractApp)
   const QScopedPointer<ctkDicomAbstractAppPrivate> d_ptr;
-
 };
 
 #endif // CTKDICOMABSTRACTAPP_H

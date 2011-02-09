@@ -19,24 +19,38 @@
 
 =============================================================================*/
 
+// CTK includes
 #include "ctkDicomAbstractApp.h"
 
 class ctkDicomAbstractAppPrivate
 {
-
 public:
-
-  ctkDicomAbstractAppPrivate()
-  {
-
-  }
-
+  ctkDicomAbstractAppPrivate();
+  ~ctkDicomAbstractAppPrivate();
 };
 
+//----------------------------------------------------------------------------
+// ctkDicomAbstractAppPrivate methods
+
+//----------------------------------------------------------------------------
+ctkDicomAbstractAppPrivate::ctkDicomAbstractAppPrivate()
+{
+}
+
+//----------------------------------------------------------------------------
+ctkDicomAbstractAppPrivate::~ctkDicomAbstractAppPrivate()
+{
+}
+
+//----------------------------------------------------------------------------
+// ctkDicomAbstractApp methods
+
+//----------------------------------------------------------------------------
 ctkDicomAbstractApp::ctkDicomAbstractApp() : d_ptr(new ctkDicomAbstractAppPrivate())
 {
 }
 
+//----------------------------------------------------------------------------
 ctkDicomAbstractApp::~ctkDicomAbstractApp()
 {
 }

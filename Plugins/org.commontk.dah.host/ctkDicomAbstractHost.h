@@ -31,7 +31,7 @@
 class ctkDicomAbstractHostPrivate;
 
 /**
-  * Provide a basic implementation for an application host.
+  * Provides a basic implementation for an application host.
   *
   * It starts a http server and serves one hosted application. Multiple instances
   * can be used for hosting multiple applications.
@@ -45,7 +45,7 @@ class org_commontk_dah_host_EXPORT ctkDicomAbstractHost : public ctkDicomHostInt
 public:
 
   /**
-    * Start the soap sever on the specified port or choose port automatically.
+    * Starts the soap sever on the specified port or choose port automatically.
     */
   ctkDicomAbstractHost(int hostPort = 0, int appPort = 0);
   int getHostPort() const;
