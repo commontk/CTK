@@ -90,13 +90,13 @@ DicomImage* ctkDICOMImage::getDicomImage() const
   Q_D(const ctkDICOMImage);
   return d->DicomImage;
 }
-QPixmap ctkDICOMImage::getPixmap(int frame) const
+QImage ctkDICOMImage::getImage(int frame) const
 {
   Q_D(const ctkDICOMImage);
 
   // this way of converting the dicom image to a qpixmap was adopted from some code from
   // the DCMTK forum, posted by Joerg Riesmayer, see http://forum.dcmtk.org/viewtopic.php?t=120
-  QPixmap pixmap;
+  QImage image;
   if ((d->DicomImage != NULL) && (d->DicomImage->getStatus() == EIS_Normal))
   {
     /* get image extension */
@@ -114,11 +114,12 @@ QPixmap ctkDICOMImage::getPixmap(int frame) const
 
     if (d->DicomImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, frame))
     {
-      if (!pixmap.loadFromData(buffer, "PGM", Qt::AvoidDither))
+
+      if (!image.loadFromData( buffer ))
       {
-        logger.error("Pixmap couldn't created");
+        logger.error("QImage couldn't created");
       }
     }
   }
-  return pixmap;
+  return image;
 }

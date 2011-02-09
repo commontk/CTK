@@ -29,7 +29,10 @@ int ctkDICOMImageTest1( int argc, char * argv [] )
   ctkDICOMImage ctkImage(&dcmtkImage);
 
   QLabel qtImage;
-  qtImage.setPixmap(ctkImage.getPixmap(0));
+  QPixmap pixmap;
+  if ( pixmap.convertFromImage(ctkImage.getImage(0),Qt::AvoidDither) )
+  {
+  qtImage.setPixmap(pixmap);
   qtImage.show();
 
   if (argc > 2 && QString(argv[2]) == "-I")
@@ -37,4 +40,10 @@ int ctkDICOMImageTest1( int argc, char * argv [] )
       return app.exec();
     }
   return EXIT_SUCCESS;
+}
+  else
+  {
+    std::cerr << "Failed to convert QImage to QPixmap" ;
+    return EXIT_FAILURE;
+  }
 }
