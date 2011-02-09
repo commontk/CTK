@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>147</width>
-    <height>141</height>
+    <width>326</width>
+    <height>236</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QTabWidget" name="queryoptions">
+      <widget class="QTabWidget" name="QueryOptions">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -31,7 +31,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="Name">
         <attribute name="title">
@@ -42,7 +42,7 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
-          <widget class="QLineEdit" name="nameSearch"/>
+          <widget class="QLineEdit" name="NameSearch"/>
          </item>
         </layout>
        </widget>
@@ -55,7 +55,7 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <widget class="QLineEdit" name="studySearch"/>
+          <widget class="QLineEdit" name="StudySearch"/>
          </item>
         </layout>
        </widget>
@@ -68,7 +68,7 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <item>
-          <widget class="QLineEdit" name="seriesSearch"/>
+          <widget class="QLineEdit" name="SeriesSearch"/>
          </item>
         </layout>
        </widget>
@@ -81,7 +81,7 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_10">
          <item>
-          <widget class="QLineEdit" name="idSearch"/>
+          <widget class="QLineEdit" name="IdSearch"/>
          </item>
         </layout>
        </widget>

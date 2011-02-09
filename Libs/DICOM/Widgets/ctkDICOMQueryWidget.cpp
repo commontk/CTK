@@ -43,10 +43,10 @@ QMap<QString,QVariant> ctkDICOMQueryWidget::parameters()
 
   QMap<QString,QVariant> parameters;
 
-  parameters["Name"] = d->nameSearch->text();
-  parameters["Study"] = d->studySearch->text();
-  parameters["Series"] = d->seriesSearch->text();
-  parameters["ID"] = d->idSearch->text();
+  parameters["Name"] = d->NameSearch->text();
+  parameters["Study"] = d->StudySearch->text();
+  parameters["Series"] = d->SeriesSearch->text();
+  parameters["ID"] = d->IdSearch->text();
 
   return parameters;
 }
