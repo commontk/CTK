@@ -81,7 +81,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="ReteiveButton">
+       <widget class="QPushButton" name="RetrieveButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -102,16 +102,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="RefreshButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Refresh</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
