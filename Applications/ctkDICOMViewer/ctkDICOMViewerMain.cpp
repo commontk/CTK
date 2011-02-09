@@ -80,30 +80,9 @@ int main(int argc, char** argv)
     }
   }
 
-  QString databaseFileName = databaseDirectory + QString("/ctkDICOM.sql");
-
-  ctkDICOMDatabase myCTK;
-  try { myCTK.openDatabase( databaseFileName ); }
-  catch (std::exception e)
-  {
-    std::cerr << "Database error: " << qPrintable(myCTK.GetLastError()) << "\n";
-    myCTK.closeDatabase();
-    return EXIT_FAILURE;
-  }
-
-  ctkDICOMModel model;
-  model.setDatabase(myCTK.database());
-  
   ctkDICOMAppWidget DICOMApp;
 
-  QTreeView *treeView = DICOMApp.findChild<QTreeView *>("treeView");
-  if (!treeView)
-    {
-    std::cerr << "Could not access tree view from QueryRetrieve widget\n";
-    return EXIT_FAILURE;
-    }
-  treeView->setModel(&model);
-
+  DICOMApp.setDatabaseDirectory(databaseDirectory);
   DICOMApp.show();
   DICOMApp.raise();
 
