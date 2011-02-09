@@ -74,11 +74,11 @@ int main(int argc, char** argv)
         myCTK.openDatabase( argv[2] );
         if (argc > 4)
         {
-          idx.addDirectory(myCTK.database(),argv[3],argv[4]);
+          idx.addDirectory(myCTK,argv[3],argv[4]);
         }
         else
         {
-          idx.addDirectory(myCTK.database(),argv[3]);
+          idx.addDirectory(myCTK,argv[3]);
         }
       }
     }
