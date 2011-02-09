@@ -137,9 +137,15 @@ ctkDICOMDatabase::~ctkDICOMDatabase()
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-const QString& ctkDICOMDatabase::GetLastError() const {
+const QString ctkDICOMDatabase::GetLastError() const {
   Q_D(const ctkDICOMDatabase);
   return d->LastError;
+}
+
+//------------------------------------------------------------------------------
+const QString ctkDICOMDatabase::GetDatabaseFilename() const {
+  Q_D(const ctkDICOMDatabase);
+  return d->DatabaseFileName;
 }
 
 //------------------------------------------------------------------------------

@@ -74,6 +74,8 @@ void ctkDICOMQueryRetrieveWidget::setRetrieveDatabaseFileName(const QString& fil
 void ctkDICOMQueryRetrieveWidget::processQuery()
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
+
+  d->RetrieveButton->setEnabled(false);
   
   ctkDICOMDatabase queryResultDatabase;
 
@@ -128,4 +130,9 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
 
   d->model.setDatabase(queryResultDatabase.database());
   d->results->setModel(&d->model);
+
+  if ( d->model.rowCount() > 0 )
+  {
+    d->RetrieveButton->setEnabled(true);
+  }
 }
