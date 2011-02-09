@@ -160,7 +160,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
     OFString seriesInstanceUID, seriesDate, seriesTime,
       seriesDescription, bodyPartExamined, frameOfReferenceUID,
       contrastAgent, scanningSequence;
-    OFString instanceNumber;
+    OFString instanceNumber, sopInstanceUID ;
 
     Sint32 seriesNumber = 0, acquisitionNumber = 0, echoNumber = 0, temporalPosition = 0;
 
@@ -185,6 +185,13 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
       MITK_ERROR << "Could not read DCM_SeriesInstanceUID from " << filename;
       continue;
     }
+
+    if (!dataset->findAndGetOFString(DCM_SOPInstanceUID, sopInstanceUID).good())
+    {
+      MITK_ERROR << "Could not read DCM_SOPInstanceUID from " << filename;
+      continue;
+    }
+
     if (!dataset->findAndGetOFString(DCM_InstanceNumber, instanceNumber).good())
     {
       MITK_ERROR << "Could not read DCM_InstanceNumber from " << filename;
@@ -360,7 +367,6 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 
     lastSeriesInstanceUID = seriesInstanceUID;
 
-
     //----------------------------------
     //Move file to destination directory
     //----------------------------------
@@ -369,15 +375,15 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
       {
       QFile currentFile( qfilename );
       QDir destinationDir(destinationDirectoryName);
-
-      QString uniqueDirName = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
-      qDebug() << "MKPath: " << uniqueDirName;
-      destinationDir.mkpath(uniqueDirName);
-      QString destFileName = destinationDir.absolutePath().append("/").append(instanceNumber.c_str());
-      qDebug() << "Copy: " << qfilename << " -> " << destFileName;
+      QString destFileName = seriesInstanceUID.c_str();
+      if (createHierarchy)
+      {
+        QString uniqueDirName = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
+        destinationDir.mkpath(uniqueDirName);
+        destFileName.prepend( destinationDir.absolutePath() + "/"  + uniqueDirName + "/" );
+      }
       currentFile.copy(destFileName);
-      //for testing only: copy file instead of moving
-      //currentFile.copyTo(destDirectoryPath.str());
+      qfilename = destFileName;
     }
     // */
     //------------------------
@@ -387,7 +393,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 //    std::stringstream relativeFilePath;
 //    relativeFilePath << seriesInstanceUID.c_str() << "/" << currentFilePath.getFileName();
 
-    QSqlQuery check_exists_query(database);
+    QSqlQuery check_exists_query(database.database());
     std::stringstream check_exists_query_string;
 //    check_exists_query_string << "SELECT * FROM Images WHERE Filename = '" << relativeFilePath.str() << "'";
     check_exists_query_string << "SELECT * FROM Images WHERE Filename = '" << filename << "'";
@@ -399,7 +405,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 
       //To save absolute path: destDirectoryPath.str()
       query_string << "INSERT INTO Images VALUES('"
-        << /*relativeFilePath.str()*/ filename << "','" << seriesInstanceUID << "','" << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString() << "')";
+        << qfilename.toStdString() << "','" << seriesInstanceUID << "','" << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString() << "')";
 
       query.exec(query_string.str().c_str());
     }
