@@ -28,8 +28,9 @@
 
 //----------------------------------------------------------------------------
 ctkSoapConnectionRunnable::ctkSoapConnectionRunnable(int socketDescriptor)
-  : socketDescriptor(socketDescriptor)
+  : socketDescriptor(socketDescriptor), isAboutToQuit(0)
 {
+  connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(aboutToQuit()));
 }
 
 //----------------------------------------------------------------------------
@@ -48,14 +49,16 @@ void ctkSoapConnectionRunnable::run()
     return;
     }
 
-  while (tcpSocket.state() == QTcpSocket::ConnectedState)
+  const int timeout = 1 * 1000;
+  while (tcpSocket.state() == QTcpSocket::ConnectedState &&
+         isAboutToQuit.fetchAndAddOrdered(0) == 0)
     {
-    //const int timeout = 5 * 1000;
 
-    tcpSocket.waitForReadyRead(-1);
+    tcpSocket.waitForReadyRead(timeout);
 
     readClient(tcpSocket);
     }
+
 }
 
 //----------------------------------------------------------------------------
@@ -150,4 +153,9 @@ void ctkSoapConnectionRunnable::readClient(QTcpSocket& socket)
       contentLength = -1;
       }
     }
+}
+
+void ctkSoapConnectionRunnable::aboutToQuit()
+{
+  isAboutToQuit.testAndSetOrdered(0, 1);
 }
