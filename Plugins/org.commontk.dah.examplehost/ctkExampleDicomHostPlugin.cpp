@@ -56,6 +56,6 @@ ctkPluginContext* ctkExampleDicomHostPlugin::getPluginContext() const
   return context;
 }
 
-Q_EXPORT_PLUGIN2(org_commontk_dah_examplehost_Export_Export, ctkExampleDicomHostPlugin)
+Q_EXPORT_PLUGIN2(org_commontk_dah_examplehost, ctkExampleDicomHostPlugin)
 
 
