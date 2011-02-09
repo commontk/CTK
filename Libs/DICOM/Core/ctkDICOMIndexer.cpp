@@ -374,7 +374,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
     if (!destinationDirectoryName.isEmpty())
       {
       QFile currentFile( qfilename );
-      QDir destinationDir(destinationDirectoryName);
+      QDir destinationDir(destinationDirectoryName + "/dicom");
       QString destFileName = seriesInstanceUID.c_str();
       if (createHierarchy)
       {
