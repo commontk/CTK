@@ -34,7 +34,7 @@
 #include "ctkServiceRegistrationPrivate.h"
 #include "ctkLDAPExpr_p.h"
 
-
+//----------------------------------------------------------------------------
 struct ServiceRegistrationComparator
 {
   bool operator()(const ctkServiceRegistration& a, const ctkServiceRegistration& b) const
@@ -43,6 +43,7 @@ struct ServiceRegistrationComparator
   }
 };
 
+//----------------------------------------------------------------------------
 ctkDictionary ctkServices::createServiceProperties(const ctkDictionary& in,
                                                        const QStringList& classes,
                                                        long sid)
@@ -60,17 +61,20 @@ ctkDictionary ctkServices::createServiceProperties(const ctkDictionary& in,
   return props;
 }
 
+//----------------------------------------------------------------------------
 ctkServices::ctkServices(ctkPluginFrameworkContext* fwCtx)
   : mutex(QMutex::Recursive), framework(fwCtx)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkServices::~ctkServices()
 {
   clear();
 }
 
+//----------------------------------------------------------------------------
 void ctkServices::clear()
 {
   services.clear();
@@ -78,6 +82,7 @@ void ctkServices::clear()
   framework = 0;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceRegistration ctkServices::registerService(ctkPluginPrivate* plugin,
                              const QStringList& classes,
                              QObject* service,
@@ -130,7 +135,7 @@ ctkServiceRegistration ctkServices::registerService(ctkPluginPrivate* plugin,
   return res;
 }
 
-
+//----------------------------------------------------------------------------
 void ctkServices::updateServiceRegistrationOrder(const ctkServiceRegistration& sr,
                                               const QStringList& classes)
 {
@@ -143,19 +148,20 @@ void ctkServices::updateServiceRegistrationOrder(const ctkServiceRegistration& s
   }
 }
 
+//----------------------------------------------------------------------------
 bool ctkServices::checkServiceClass(QObject* service, const QString& cls) const
 {
   return service->inherits(cls.toAscii());
 }
 
-
+//----------------------------------------------------------------------------
 QList<ctkServiceRegistration> ctkServices::get(const QString& clazz) const
 {
   QMutexLocker lock(&mutex);
   return classServices.value(clazz);
 }
 
-
+//----------------------------------------------------------------------------
 ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& clazz) const
 {
   QMutexLocker lock(&mutex);
@@ -174,7 +180,7 @@ ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& cl
   return ctkServiceReference();
 }
 
-
+//----------------------------------------------------------------------------
 QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString& filter,
                                             ctkPluginPrivate* plugin) const
 {
@@ -252,7 +258,7 @@ QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString&
   return res;
 }
 
-
+//----------------------------------------------------------------------------
 void ctkServices::removeServiceRegistration(const ctkServiceRegistration& sr)
 {
   QMutexLocker lock(&mutex);
@@ -274,7 +280,7 @@ void ctkServices::removeServiceRegistration(const ctkServiceRegistration& sr)
   }
 }
 
-
+//----------------------------------------------------------------------------
 QList<ctkServiceRegistration> ctkServices::getRegisteredByPlugin(ctkPluginPrivate* p) const
 {
   QMutexLocker lock(&mutex);
@@ -291,7 +297,7 @@ QList<ctkServiceRegistration> ctkServices::getRegisteredByPlugin(ctkPluginPrivat
   return res;
 }
 
-
+//----------------------------------------------------------------------------
 QList<ctkServiceRegistration> ctkServices::getUsedByPlugin(QSharedPointer<ctkPlugin> p) const
 {
   QMutexLocker lock(&mutex);
@@ -307,5 +313,4 @@ QList<ctkServiceRegistration> ctkServices::getUsedByPlugin(QSharedPointer<ctkPlu
   }
   return res;
 }
-
 

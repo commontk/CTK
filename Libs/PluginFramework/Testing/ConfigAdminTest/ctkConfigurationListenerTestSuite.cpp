@@ -29,6 +29,7 @@
 
 #include <QTest>
 
+//----------------------------------------------------------------------------
 ctkConfigurationListenerTestSuite::ctkConfigurationListenerTestSuite(
   ctkPluginContext* pc, long cmPluginId)
   : context(pc), cm(0), locked(false), cmPluginId(cmPluginId)
@@ -36,6 +37,7 @@ ctkConfigurationListenerTestSuite::ctkConfigurationListenerTestSuite(
 
 }
 
+//----------------------------------------------------------------------------
 void ctkConfigurationListenerTestSuite::init()
 {
   context->getPlugin(cmPluginId)->start();
@@ -44,6 +46,7 @@ void ctkConfigurationListenerTestSuite::init()
   listener = new _ConfigurationListenerTest(this);
 }
 
+//----------------------------------------------------------------------------
 void ctkConfigurationListenerTestSuite::cleanup()
 {
   context->ungetService(reference);
@@ -51,6 +54,7 @@ void ctkConfigurationListenerTestSuite::cleanup()
   delete listener;
 }
 
+//----------------------------------------------------------------------------
 void ctkConfigurationListenerTestSuite::testListener()
 {
   ctkConfigurationPtr config = cm->getConfiguration("test");
@@ -72,12 +76,14 @@ void ctkConfigurationListenerTestSuite::testListener()
   config->remove();
 }
 
+//----------------------------------------------------------------------------
 _ConfigurationListenerTest::_ConfigurationListenerTest(
   ctkConfigurationListenerTestSuite* ts)
   : ts(ts)
 {
 }
 
+//----------------------------------------------------------------------------
 void _ConfigurationListenerTest::configurationEvent(
   const ctkConfigurationEvent& event)
 {

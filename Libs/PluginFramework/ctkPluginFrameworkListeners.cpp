@@ -32,6 +32,7 @@ const int ctkPluginFrameworkListeners::OBJECTCLASS_IX = 0;
 const int ctkPluginFrameworkListeners::SERVICE_ID_IX = 1;
 const int ctkPluginFrameworkListeners::SERVICE_PID_IX = 2;
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkListeners::ctkPluginFrameworkListeners()
 {
   hashedServiceKeys << ctkPluginConstants::OBJECTCLASS.toLower()
@@ -44,6 +45,7 @@ ctkPluginFrameworkListeners::ctkPluginFrameworkListeners()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::addServiceSlot(
     QSharedPointer<ctkPlugin> plugin, QObject* receiver,
     const char* slot, const QString& filter)
@@ -60,6 +62,7 @@ void ctkPluginFrameworkListeners::addServiceSlot(
   connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(serviceListenerDestroyed(QObject*)));
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::removeServiceSlot(QSharedPointer<ctkPlugin> plugin,
                                                     QObject* receiver,
                                                     const char* slot)
@@ -87,11 +90,13 @@ void ctkPluginFrameworkListeners::removeServiceSlot(QSharedPointer<ctkPlugin> pl
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::serviceListenerDestroyed(QObject *listener)
 {
   this->removeServiceSlot(QSharedPointer<ctkPlugin>(0), listener, 0);
 }
 
+//----------------------------------------------------------------------------
 QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
     const ctkServiceReference& sr)
 {
@@ -138,16 +143,19 @@ QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
   return set;
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::frameworkError(QSharedPointer<ctkPlugin> p, const std::exception& e)
 {
   emit frameworkEvent(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::ERROR, p, e));
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::emitFrameworkEvent(const ctkPluginFrameworkEvent& event)
 {
   emit frameworkEvent(event);
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::emitPluginChanged(const ctkPluginEvent& event)
 {
   emit pluginChangedDirect(event);
@@ -160,6 +168,7 @@ void ctkPluginFrameworkListeners::emitPluginChanged(const ctkPluginEvent& event)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::serviceChanged(
     const QSet<ctkServiceSlotEntry>& receivers,
     const ctkServiceEvent& evt)
@@ -168,6 +177,7 @@ void ctkPluginFrameworkListeners::serviceChanged(
   serviceChanged(receivers, evt, matchBefore);
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::serviceChanged(
     const QSet<ctkServiceSlotEntry>& receivers,
     const ctkServiceEvent& evt,
@@ -210,6 +220,7 @@ void ctkPluginFrameworkListeners::serviceChanged(
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::removeFromCache(const ctkServiceSlotEntry& sse)
 {
   if (!sse.getLocalCache().isEmpty())
@@ -237,6 +248,7 @@ void ctkPluginFrameworkListeners::removeFromCache(const ctkServiceSlotEntry& sse
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::checkSimple(const ctkServiceSlotEntry& sse)
 {
   if (sse.getLDAPExpr().isNull()) // || listeners.nocacheldap) {
@@ -271,6 +283,7 @@ void ctkPluginFrameworkListeners::checkSimple(const ctkServiceSlotEntry& sse)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::addToSet(QSet<ctkServiceSlotEntry>& set,
                                            int cache_ix, const QString& val)
 {

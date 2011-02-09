@@ -30,6 +30,7 @@
 #include <QtPlugin>
 #include <QStringList>
 
+//----------------------------------------------------------------------------
 void ctkMetaTypeTestActivator::start(ctkPluginContext* context)
 {
   QString symbolicName = context->getProperty("metatype.impl").toString();
@@ -69,6 +70,7 @@ void ctkMetaTypeTestActivator::start(ctkPluginContext* context)
   context->registerService<ctkTestSuiteInterface>(localeTestSuite, props);
 }
 
+//----------------------------------------------------------------------------
 void ctkMetaTypeTestActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context);

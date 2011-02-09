@@ -31,6 +31,7 @@
 #include <QTest>
 #include <QDebug>
 
+//----------------------------------------------------------------------------
 ctkEvent ctkEATopicWildcardTestHelper::clearLastEvent()
 {
   QWriteLocker l(&rwlock);
@@ -39,18 +40,21 @@ ctkEvent ctkEATopicWildcardTestHelper::clearLastEvent()
   return result;
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestHelper::handleEvent(const ctkEvent& event)
 {
   QWriteLocker l(&rwlock);
   last = event;
 }
 
+//----------------------------------------------------------------------------
 ctkEvent ctkEATopicWildcardTestHelper::lastEvent() const
 {
   QReadLocker l(&rwlock);
   return last;
 }
 
+//----------------------------------------------------------------------------
 ctkEATopicWildcardTestSuite::ctkEATopicWildcardTestSuite(
   ctkPluginContext* pc, long eventPluginId, bool useSignalSlot)
   : context(pc), eventPluginId(eventPluginId),
@@ -59,11 +63,13 @@ ctkEATopicWildcardTestSuite::ctkEATopicWildcardTestSuite(
 
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::initTestCase()
 {
   qDebug() << "Using" << (useSignalSlot ? "" : "no") << "Qt signal/slot mechanism";
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::init()
 {
   context->getPlugin(eventPluginId)->start();
@@ -76,12 +82,14 @@ void ctkEATopicWildcardTestSuite::init()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::cleanup()
 {
   context->ungetService(reference);
   context->getPlugin(eventPluginId)->stop();
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic1()
 {
   ctkDictionary properties;
@@ -105,6 +113,7 @@ void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic1()
   QVERIFY2(handler.lastEvent().isNull(), "Received event published to topic 'a/b/c' while listening to 'a/b/c/*'");
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic2()
 {
   ctkDictionary properties;
@@ -117,6 +126,7 @@ void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic2()
   handlerRegistration.unregister();
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic3()
 {
   ctkDictionary properties;
@@ -129,6 +139,7 @@ void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic3()
   handlerRegistration.unregister();
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic4()
 {
   ctkDictionary properties;
@@ -141,6 +152,7 @@ void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic4()
   handlerRegistration.unregister();
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic5()
 {
   ctkDictionary properties;
@@ -153,6 +165,7 @@ void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic5()
   handlerRegistration.unregister();
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic6()
 {
   ctkDictionary properties;
@@ -165,6 +178,7 @@ void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic6()
   handlerRegistration.unregister();
 }
 
+//----------------------------------------------------------------------------
 void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic7()
 {
   ctkDictionary properties;

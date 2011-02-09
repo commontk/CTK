@@ -23,7 +23,7 @@
 
 #include <QDebug>
 
-
+//----------------------------------------------------------------------------
 ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const Type& type, const std::exception* cause)
   : ctkRuntimeException(msg, cause),
     type(type)
@@ -31,6 +31,7 @@ ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const std::exception* cause)
   : ctkRuntimeException(msg, cause),
     type(UNSPECIFIED)
@@ -38,12 +39,14 @@ ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginDatabaseException::ctkPluginDatabaseException(const ctkPluginDatabaseException& o)
   : ctkRuntimeException(o), type(o.type)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginDatabaseException& ctkPluginDatabaseException::operator=(const ctkPluginDatabaseException& o)
 {
   ctkRuntimeException::operator=(o);
@@ -51,16 +54,16 @@ ctkPluginDatabaseException& ctkPluginDatabaseException::operator=(const ctkPlugi
   return *this;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginDatabaseException::Type ctkPluginDatabaseException::getType() const
 {
   return type;
 }
 
-
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkPluginDatabaseException& exc)
 {
   dbg << "ctkPluginDatabaseException:" << exc.what();
 
   return dbg.maybeSpace();
 }
-

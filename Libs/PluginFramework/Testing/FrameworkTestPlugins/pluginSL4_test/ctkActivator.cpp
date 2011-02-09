@@ -26,11 +26,13 @@
 #include <QDebug>
 #include <QStringList>
 
+//----------------------------------------------------------------------------
 void ctkActivator::foo()
 {
   qDebug() << "pluginSL4: Doing foo";
 }
 
+//----------------------------------------------------------------------------
 void ctkActivator::start(ctkPluginContext* context)
 {
   ctkServiceRegistration registration =
@@ -38,6 +40,7 @@ void ctkActivator::start(ctkPluginContext* context)
   qDebug() << "pluginSL4: Registered" << registration;
 }
 
+//----------------------------------------------------------------------------
 void ctkActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)

@@ -28,6 +28,7 @@
 
 #include <QTest>
 
+//----------------------------------------------------------------------------
 ctkEAScenario4EventConsumer::ctkEAScenario4EventConsumer(
   ctkPluginContext* pluginContext, const QStringList topics,
   int numSyncMsg, int numAsyncMsg, const QString& filter)
@@ -38,6 +39,7 @@ ctkEAScenario4EventConsumer::ctkEAScenario4EventConsumer(
 
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4EventConsumer::runTest()
 {
   asynchMessages = 0;
@@ -59,6 +61,7 @@ void ctkEAScenario4EventConsumer::runTest()
   QVERIFY2(serviceRegistration, "service registration should not be null");
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4EventConsumer::cleanup()
 {
   QMutexLocker l(&mutex);
@@ -77,6 +80,7 @@ void ctkEAScenario4EventConsumer::cleanup()
   QCOMPARE(asynchMessages, numAsyncMessages); // "Not all asynch messages recieved"
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4EventConsumer::handleEvent(const ctkEvent& event)
 {
   QMutexLocker l(&mutex);
@@ -121,6 +125,7 @@ void ctkEAScenario4EventConsumer::handleEvent(const ctkEvent& event)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4EventPublisher::sendEvents()
 {
   /* a Hash table to store message in */
@@ -138,6 +143,7 @@ void ctkEAScenario4EventPublisher::sendEvents()
   thread.quit();
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4EventPublisher::postEvents()
 {
   /* create the hash table */
@@ -155,6 +161,7 @@ void ctkEAScenario4EventPublisher::postEvents()
   thread.quit();
 }
 
+//----------------------------------------------------------------------------
 ctkEAScenario4EventPublisher::ctkEAScenario4EventPublisher(ctkPluginContext* context, const QString& name,
                                                            const QString& topic, const ctkDictionary& props,
                                                            int id, int numOfMessage)
@@ -164,6 +171,7 @@ ctkEAScenario4EventPublisher::ctkEAScenario4EventPublisher(ctkPluginContext* con
   moveToThread(&thread);
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4EventPublisher::runTest()
 {
   /* Claims the reference of the EventAdmin Service */
@@ -190,12 +198,14 @@ void ctkEAScenario4EventPublisher::runTest()
   QTest::qWait(1000); // allow for delivery
 }
 
+//----------------------------------------------------------------------------
 ctkEAScenario4TestSuite::ctkEAScenario4TestSuite(ctkPluginContext* context, long eventPluginId)
   : pluginContext(context), eventPluginId(eventPluginId)
 {
 
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4TestSuite::initTestCase()
 {
   pluginContext->getPlugin(eventPluginId)->start();
@@ -241,6 +251,7 @@ void ctkEAScenario4TestSuite::initTestCase()
                                                              "com/acme/timer", keysAndProps3, 4, 1));
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4TestSuite::cleanupTestCase()
 {
   foreach(ctkEAScenario4EventConsumer* eventConsumer, eventConsumers)
@@ -252,6 +263,7 @@ void ctkEAScenario4TestSuite::cleanupTestCase()
   pluginContext->getPlugin(eventPluginId)->stop();
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4TestSuite::testRegisterConsumer()
 {
   foreach(ctkEAScenario4EventConsumer* consumer, eventConsumers)
@@ -260,6 +272,7 @@ void ctkEAScenario4TestSuite::testRegisterConsumer()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario4TestSuite::testPublishEvents()
 {
   foreach(ctkEAScenario4EventPublisher* publisher, eventPublishers)

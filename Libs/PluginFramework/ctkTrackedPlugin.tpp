@@ -19,7 +19,7 @@
 
 =============================================================================*/
 
-
+//----------------------------------------------------------------------------
 template<class T>
 ctkTrackedPlugin<T>::ctkTrackedPlugin(ctkPluginTracker<T>* pluginTracker,
                  ctkPluginTrackerCustomizer<T>* customizer)
@@ -28,6 +28,7 @@ ctkTrackedPlugin<T>::ctkTrackedPlugin(ctkPluginTracker<T>* pluginTracker,
 
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 void ctkTrackedPlugin<T>::pluginChanged(const ctkPluginEvent& event)
 {
@@ -65,6 +66,7 @@ void ctkTrackedPlugin<T>::pluginChanged(const ctkPluginEvent& event)
   }
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 T ctkTrackedPlugin<T>::customizerAdding(QSharedPointer<ctkPlugin> item,
                                      const ctkPluginEvent& related)
@@ -72,6 +74,7 @@ T ctkTrackedPlugin<T>::customizerAdding(QSharedPointer<ctkPlugin> item,
   return customizer->addingPlugin(item, related);
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 void ctkTrackedPlugin<T>::customizerModified(QSharedPointer<ctkPlugin> item,
                                           const ctkPluginEvent& related,
@@ -80,6 +83,7 @@ void ctkTrackedPlugin<T>::customizerModified(QSharedPointer<ctkPlugin> item,
   customizer->modifiedPlugin(item, related, object);
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 void ctkTrackedPlugin<T>::customizerRemoved(QSharedPointer<ctkPlugin> item,
                                          const ctkPluginEvent& related,

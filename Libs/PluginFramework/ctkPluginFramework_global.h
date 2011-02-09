@@ -38,13 +38,14 @@ inline uint qHash(const QSharedPointer<T>& ptr)
 }
 #endif
 
-
+//----------------------------------------------------------------------------
 template<class A>
 QStringList getIIDs()
 {
   return QStringList(qobject_interface_iid<A*>());
 }
 
+//----------------------------------------------------------------------------
 template<class A, class B>
 QStringList getIIDs()
 {
@@ -54,6 +55,7 @@ QStringList getIIDs()
   return ids;
 }
 
+//----------------------------------------------------------------------------
 template<class A, class B, class C>
 QStringList getIIDs()
 {
@@ -64,6 +66,7 @@ QStringList getIIDs()
   return ids;
 }
 
+//----------------------------------------------------------------------------
 template<class A, class B, class C, class D>
 QStringList getIIDs()
 {

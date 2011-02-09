@@ -22,6 +22,7 @@
 
 #include "ctkRuntimeException.h"
 
+//----------------------------------------------------------------------------
 ctkRuntimeException::ctkRuntimeException(const QString& msg, const std::exception* cause)
   : std::runtime_error(msg.toStdString())
 {
@@ -31,12 +32,14 @@ ctkRuntimeException::ctkRuntimeException(const QString& msg, const std::exceptio
   }
 }
 
+//----------------------------------------------------------------------------
 ctkRuntimeException::ctkRuntimeException(const ctkRuntimeException& o)
   : std::runtime_error(o.what()), cause(o.cause)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkRuntimeException& ctkRuntimeException::operator=(const ctkRuntimeException& o)
 {
   std::runtime_error::operator=(o);
@@ -44,11 +47,13 @@ ctkRuntimeException& ctkRuntimeException::operator=(const ctkRuntimeException& o
   return *this;
 }
 
+//----------------------------------------------------------------------------
 QString ctkRuntimeException::getCause() const
 {
   return cause;
 }
 
+//----------------------------------------------------------------------------
 void ctkRuntimeException::setCause(const QString& cause) throw(std::logic_error)
 {
   if (!this->cause.isEmpty()) throw std::logic_error("The cause for this ctkServiceException instance is already set");
@@ -56,6 +61,7 @@ void ctkRuntimeException::setCause(const QString& cause) throw(std::logic_error)
   this->cause = cause;
 }
 
+//----------------------------------------------------------------------------
 const char* ctkRuntimeException::what() const throw()
 {
   static std::string fullMsg;

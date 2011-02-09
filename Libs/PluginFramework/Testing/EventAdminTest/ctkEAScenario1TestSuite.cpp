@@ -28,6 +28,7 @@
 
 #include <QTest>
 
+//----------------------------------------------------------------------------
 ctkEAScenario1EventConsumer::ctkEAScenario1EventConsumer(
   ctkPluginContext* pluginContext, const QStringList& topics,
   int messagesSent, bool useSignalSlot)
@@ -40,6 +41,7 @@ ctkEAScenario1EventConsumer::ctkEAScenario1EventConsumer(
 
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1EventConsumer::runTest()
 {
   numOfasynchMessages = 0;
@@ -77,6 +79,7 @@ void ctkEAScenario1EventConsumer::runTest()
 
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1EventConsumer::cleanup()
 {
   try
@@ -102,6 +105,7 @@ void ctkEAScenario1EventConsumer::cleanup()
   QCOMPARE(messagesSent, asynchMessageExpectedNumber); //"Not all asynch messages recieved"
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1EventConsumer::reset()
 {
   numOfasynchMessages = 0;
@@ -110,6 +114,7 @@ void ctkEAScenario1EventConsumer::reset()
   asynchMessageExpectedNumber = 0;
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1EventConsumer::handleEvent(const ctkEvent& event)
 {
   try
@@ -188,6 +193,7 @@ void ctkEAScenario1EventConsumer::handleEvent(const ctkEvent& event)
   }
 }
 
+//----------------------------------------------------------------------------
 ctkEAScenario1EventPublisher::ctkEAScenario1EventPublisher(
   ctkPluginContext* context, const QString& name,
   int id, int numOfMessage, bool useSignalSlot)
@@ -197,6 +203,7 @@ ctkEAScenario1EventPublisher::ctkEAScenario1EventPublisher(
   moveToThread(&thread);
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1EventPublisher::runTest()
 {
   /* Claims the reference of the EventAdmin Service */
@@ -242,6 +249,7 @@ void ctkEAScenario1EventPublisher::runTest()
   QTest::qWait(500); // allow for delivery
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1EventPublisher::sendEvents()
 {
   qDebug() << "Starting to send events";
@@ -266,6 +274,7 @@ void ctkEAScenario1EventPublisher::sendEvents()
   thread.quit();
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1EventPublisher::postEvents()
 {
   qDebug() << "Starting to post events";
@@ -289,6 +298,7 @@ void ctkEAScenario1EventPublisher::postEvents()
   thread.quit();
 }
 
+//----------------------------------------------------------------------------
 ctkEAScenario1TestSuite::ctkEAScenario1TestSuite(ctkPluginContext* context, long eventPluginId, bool useSignalSlot)
   : pluginContext(context), MESSAGES_SENT(10), eventPluginId(eventPluginId),
     eventConsumer(0), eventPublisher(0), useSignalSlot(useSignalSlot)
@@ -296,6 +306,7 @@ ctkEAScenario1TestSuite::ctkEAScenario1TestSuite(ctkPluginContext* context, long
 
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1TestSuite::initTestCase()
 {
   qDebug() << "Using" << (useSignalSlot ? "" : "no") << "Qt signal/slot mechanism";
@@ -315,6 +326,7 @@ void ctkEAScenario1TestSuite::initTestCase()
                                                     useSignalSlot);
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1TestSuite::cleanupTestCase()
 {
   eventConsumer->cleanup();
@@ -323,12 +335,14 @@ void ctkEAScenario1TestSuite::cleanupTestCase()
   pluginContext->getPlugin(eventPluginId)->stop();
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1TestSuite::testRegisterConsumer()
 {
   eventConsumer->reset();
   eventConsumer->runTest();
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario1TestSuite::testPublishEvents()
 {
   eventPublisher->runTest();

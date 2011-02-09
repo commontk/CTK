@@ -23,151 +23,158 @@
 
 #include <stdexcept>
 
+//----------------------------------------------------------------------------
+ctkVersionRange ctkVersionRange::defaultVersionRange()
+{
+  static ctkVersionRange defaultVR;
+  return defaultVR;
+}
 
-  ctkVersionRange ctkVersionRange::defaultVersionRange()
-  {
-    static ctkVersionRange defaultVR;
-    return defaultVR;
-  }
+//----------------------------------------------------------------------------
+ctkVersionRange::ctkVersionRange(const QString& vr)
+{
+  bool op = vr.startsWith("(");
+  bool ob = vr.startsWith("[");
 
+  if (op || ob) {
+    bool cp = vr.endsWith(")");
+    bool cb = vr.endsWith("]");
+    int comma = vr.indexOf(',');
 
-  ctkVersionRange::ctkVersionRange(const QString& vr)
-  {
-    bool op = vr.startsWith("(");
-    bool ob = vr.startsWith("[");
-
-    if (op || ob) {
-      bool cp = vr.endsWith(")");
-      bool cb = vr.endsWith("]");
-      int comma = vr.indexOf(',');
-
-      if (comma > 0 && (cp || cb))
-      {
-        low = ctkVersion(vr.mid(1, comma-1).trimmed());
-        high = ctkVersion(vr.mid(comma+1, vr.length()-comma-2).trimmed());
-        lowIncluded = ob;
-        highIncluded = cb;
-      }
-      else
-      {
-        throw std::invalid_argument("Illegal version range: " + vr.toStdString());
-      }
+    if (comma > 0 && (cp || cb))
+    {
+      low = ctkVersion(vr.mid(1, comma-1).trimmed());
+      high = ctkVersion(vr.mid(comma+1, vr.length()-comma-2).trimmed());
+      lowIncluded = ob;
+      highIncluded = cb;
     }
     else
     {
-      low = ctkVersion(vr);
-      high = ctkVersion();
-      lowIncluded = true;
-      highIncluded = false;
+      throw std::invalid_argument("Illegal version range: " + vr.toStdString());
     }
   }
-
-  ctkVersionRange::ctkVersionRange()
+  else
   {
-    low = ctkVersion(ctkVersion::emptyVersion());
+    low = ctkVersion(vr);
     high = ctkVersion();
     lowIncluded = true;
     highIncluded = false;
   }
+}
 
-  ctkVersionRange::~ctkVersionRange()
+//----------------------------------------------------------------------------
+ctkVersionRange::ctkVersionRange()
+{
+  low = ctkVersion(ctkVersion::emptyVersion());
+  high = ctkVersion();
+  lowIncluded = true;
+  highIncluded = false;
+}
+
+//----------------------------------------------------------------------------
+ctkVersionRange::~ctkVersionRange()
+{
+}
+
+//----------------------------------------------------------------------------
+bool ctkVersionRange::isSpecified() const
+{
+  return !(*this == defaultVersionRange());
+}
+
+//----------------------------------------------------------------------------
+bool ctkVersionRange::withinRange(const ctkVersion& ver) const
+{
+  if (*this == defaultVersionRange())
   {
+    return true;
   }
+  int c = low.compare(ver);
 
-  bool ctkVersionRange::isSpecified() const
+  if (c < 0 || (c == 0 && lowIncluded))
   {
-    return !(*this == defaultVersionRange());
-  }
-
-  bool ctkVersionRange::withinRange(const ctkVersion& ver) const
-  {
-    if (*this == defaultVersionRange())
+    if (high.isUndefined())
     {
       return true;
     }
-    int c = low.compare(ver);
-
-    if (c < 0 || (c == 0 && lowIncluded))
-    {
-      if (high.isUndefined())
-      {
-        return true;
-      }
-      c = high.compare(ver);
-      return c > 0 || (c == 0 && highIncluded);
-    }
-    return false;
+    c = high.compare(ver);
+    return c > 0 || (c == 0 && highIncluded);
   }
+  return false;
+}
 
-  bool ctkVersionRange::withinRange(const ctkVersionRange& range) const
+//----------------------------------------------------------------------------
+bool ctkVersionRange::withinRange(const ctkVersionRange& range) const
+{
+  if (*this == range) {
+    return true;
+  }
+  int c = low.compare(range.low);
+
+  if (c < 0 || (c == 0 && lowIncluded == range.lowIncluded))
   {
-    if (*this == range) {
+    if (high.isUndefined())
+    {
       return true;
     }
-    int c = low.compare(range.low);
-
-    if (c < 0 || (c == 0 && lowIncluded == range.lowIncluded))
-    {
-      if (high.isUndefined())
-      {
-        return true;
-      }
-      c = high.compare(range.high);
-      return c > 0 || (c == 0 && highIncluded == range.highIncluded);
-    }
-    return false;
+    c = high.compare(range.high);
+    return c > 0 || (c == 0 && highIncluded == range.highIncluded);
   }
+  return false;
+}
 
-  int ctkVersionRange::compare(const ctkVersionRange& obj) const
-  {
-    return low.compare(obj.low);
-  }
+//----------------------------------------------------------------------------
+int ctkVersionRange::compare(const ctkVersionRange& obj) const
+{
+  return low.compare(obj.low);
+}
 
-  QString ctkVersionRange::toString() const
+//----------------------------------------------------------------------------
+QString ctkVersionRange::toString() const
+{
+  if (!high.isUndefined())
   {
-    if (!high.isUndefined())
+    QString res;
+    if (lowIncluded)
     {
-      QString res;
-      if (lowIncluded)
-      {
-        res += '[';
-      }
-      else
-      {
-        res += '(';
-      }
-      res += low.toString() + "," + high.toString();
-      if (highIncluded)
-      {
-        res += ']';
-      }
-      else
-      {
-        res += ')';
-      }
-      return res;
+      res += '[';
     }
     else
     {
-      return low.toString();
+      res += '(';
+    }
+    res += low.toString() + "," + high.toString();
+    if (highIncluded)
+    {
+      res += ']';
+    }
+    else
+    {
+      res += ')';
+    }
+    return res;
+  }
+  else
+  {
+    return low.toString();
+  }
+}
+
+//----------------------------------------------------------------------------
+bool ctkVersionRange::operator==(const ctkVersionRange& r) const
+{
+  if (low == r.low)
+  {
+    if (!high.isUndefined())
+    {
+      return (high == r.high)  &&
+        (lowIncluded == r.lowIncluded) &&
+        (highIncluded == r.highIncluded);
+    }
+    else
+    {
+      return true;
     }
   }
-
-  bool ctkVersionRange::operator==(const ctkVersionRange& r) const
-  {
-    if (low == r.low)
-    {
-      if (!high.isUndefined())
-      {
-        return (high == r.high)  &&
-          (lowIncluded == r.lowIncluded) &&
-          (highIncluded == r.highIncluded);
-      }
-      else
-      {
-        return true;
-      }
-    }
-    return false;
-
+  return false;
 }

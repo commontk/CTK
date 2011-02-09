@@ -24,57 +24,68 @@
 
 #include <QHash>  // for qHash(const QString&)
 
+//----------------------------------------------------------------------------
 ctkCaseInsensitiveString::ctkCaseInsensitiveString()
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCaseInsensitiveString::ctkCaseInsensitiveString(const char* str)
   : str(str)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCaseInsensitiveString::ctkCaseInsensitiveString(const QString& str)
   : str(str)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCaseInsensitiveString::ctkCaseInsensitiveString(const ctkCaseInsensitiveString& str)
   : str(str.str)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCaseInsensitiveString& ctkCaseInsensitiveString::operator=(const ctkCaseInsensitiveString& str)
 {
   this->str = str.str;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCaseInsensitiveString::operator==(const ctkCaseInsensitiveString& str) const
 {
   return this->str.toLower() == str.str.toLower();
 }
 
+//----------------------------------------------------------------------------
 bool ctkCaseInsensitiveString::operator<(const ctkCaseInsensitiveString& str) const
 {
   return this->str.toLower() < str.str.toLower();
 }
 
+//----------------------------------------------------------------------------
 ctkCaseInsensitiveString::operator QString() const
 {
   return this->str;
 }
 
+//----------------------------------------------------------------------------
 uint qHash(const ctkCaseInsensitiveString& str)
 {
   return qHash(QString(str).toLower());
 }
 
+//----------------------------------------------------------------------------
 QDataStream& operator<<(QDataStream &out, const ctkCaseInsensitiveString& str)
 {
   out << QString(str);
   return out;
 }
 
+//----------------------------------------------------------------------------
 QDataStream& operator>>(QDataStream &in, ctkCaseInsensitiveString& str)
 {
   QString inStr;

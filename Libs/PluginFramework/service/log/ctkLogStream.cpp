@@ -23,6 +23,7 @@
 #include "ctkLogStream.h"
 #include "ctkLogService.h"
 
+//----------------------------------------------------------------------------
 ctkLogStream::ctkLogStream(ctkLogService* logService, int level, const std::exception* exc,
                            const char* file, const char* function, int line)
   : logged(false), logService(logService), level(level), exc(exc),
@@ -31,6 +32,7 @@ ctkLogStream::ctkLogStream(ctkLogService* logService, int level, const std::exce
   ts.setString(&msg);
 }
 
+//----------------------------------------------------------------------------
 ctkLogStream::ctkLogStream(const ctkLogStream& logStream)
  : msg(logStream.msg), logged(false),
    logService(logStream.logService), level(logStream.level),
@@ -40,6 +42,7 @@ ctkLogStream::ctkLogStream(const ctkLogStream& logStream)
   ts.setString(&msg);
 }
 
+//----------------------------------------------------------------------------
 ctkLogStream::~ctkLogStream()
 {
   if (!logged && logService)
