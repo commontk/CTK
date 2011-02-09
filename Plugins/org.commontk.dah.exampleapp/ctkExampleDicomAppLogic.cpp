@@ -23,11 +23,19 @@
 #include "ctkExampleDicomAppLogic_p.h"
 #include "ctkExampleDicomAppPlugin_p.h"
 
+// Qt includes
 #include <QtPlugin>
 #include <QRect>
 #include <QDebug>
 #include <QPushButton>
 #include <QApplication>
+#include <QLabel>
+
+// ctkDICOMCore includes
+#include "ctkDICOMImage.h"
+
+// DCMTK includes
+#include <dcmimage.h>
 
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic()
   : hostTracker(ctkExampleDicomAppPlugin::getPluginContext()), button(NULL)
@@ -198,6 +206,17 @@ void ctkExampleDicomAppLogic::buttonClicked()
   {
     s=s+" URI: "+locators.begin()->URI;
     qDebug() << "URI: " << locators.begin()->URI;
+    QString filename = locators.begin()->URI;
+    if(filename.startsWith("file:/",Qt::CaseInsensitive))
+      filename=filename.remove(0,6);
+    qDebug()<<filename;
+    DicomImage dcmtkImage(filename.toLatin1().data());
+    ctkDICOMImage ctkImage(&dcmtkImage);
+
+    QLabel* qtImage = new QLabel;
+    qtImage->setPixmap(ctkImage.getPixmap(0));
+    qtImage->show();
   }
   button->setText(s);
+
 }

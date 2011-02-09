@@ -9,8 +9,11 @@ SET(KIT_export_directive "CTK_DICOM_CORE_EXPORT")
   
 # Source files
 SET(KIT_SRCS
+
   ctkDICOM.cpp
   ctkDICOM.h
+  ctkDICOMImage.cpp
+  ctkDICOMImage.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
   ctkDICOMIndexerBase.cpp
@@ -27,6 +30,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   ctkDICOM.h
   ctkDICOMIndexerBase.h
+  ctkDICOMImage.h
   ctkDICOMModel.h
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h
