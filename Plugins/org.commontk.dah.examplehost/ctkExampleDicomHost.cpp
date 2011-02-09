@@ -33,7 +33,7 @@ ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placehol
     placeholderWidget(placeholderWidget),
     applicationState(ctkDicomAppHosting::IDLE)
 {
-  connect(&this->appProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
+  //connect(&this->appProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
 }
 
 void ctkExampleDicomHost::StartApplication(QString AppPath)
@@ -70,6 +70,7 @@ void ctkExampleDicomHost::notifyStateChanged(ctkDicomAppHosting::State state)
 {
   qDebug()<< "new state received:"<< static_cast<int>(state);
   qDebug()<< "new state received:"<< ctkDicomSoapState::toStringValue(state);
+
   emit stateChangedReceived(state);
 }
 

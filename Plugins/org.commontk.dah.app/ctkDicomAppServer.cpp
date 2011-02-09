@@ -51,6 +51,10 @@ ctkDicomAppServer::ctkDicomAppServer(int port)
     qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
   }
 }
+ctkDicomAppServer::~ctkDicomAppServer()
+{
+  server.close ();
+}
 
 void ctkDicomAppServer::incomingWSDLMessage(
   const QString& message, QString* reply)

@@ -55,7 +55,7 @@ public slots:
   void appStateChanged(ctkDicomAppHosting::State state);
 
   void placeholderResized();
-
+  void outputMessage();
 protected:
 
   ctkExampleDicomHost* host;

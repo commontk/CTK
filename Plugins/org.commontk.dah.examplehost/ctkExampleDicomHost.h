@@ -53,6 +53,11 @@ public:
   virtual void releaseData(QList<QUuid> objectUUIDs);
 
   const QProcess& getAppProcess() const { return appProcess; }
+  const ctkDicomAppHosting::State getApplicationState()const {return applicationState;}
+  void setApplicationState(ctkDicomAppHosting::State state){applicationState = state;}
+
+  QByteArray processReadAll(){return appProcess.readAllStandardOutput ();}
+
   ~ctkExampleDicomHost();
 
 signals:
@@ -66,7 +71,6 @@ protected:
   QProcess appProcess;
   ctkHostedAppPlaceholderWidget* placeholderWidget;
   ctkDicomAppHosting::State applicationState;
-
 
 protected slots:
 

@@ -58,6 +58,8 @@ void ctkHostAppExampleWidget::startButtonClicked()
   if (host)
   {
     host->StartApplication(appFileName);
+    //forward output to textedit
+    connect(&this->host->getAppProcess(),SIGNAL(readyReadStandardOutput()),this,SLOT(outputMessage()));
   }
 }
 
@@ -74,7 +76,7 @@ void ctkHostAppExampleWidget::runButtonClicked()
 void ctkHostAppExampleWidget::stopButtonClicked()
 {
   qDebug() << "stop button clicked";
-  host->getDicomAppService ()->setState (ctkDicomAppHosting::SUSPENDED);
+  host->getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
 }
 
 void ctkHostAppExampleWidget::loadButtonClicked()
@@ -152,10 +154,12 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
   switch (state)
   {
   case ctkDicomAppHosting::IDLE:
-    //if (host->appInprogress)
-    //{
+    if (host->getApplicationState()!=ctkDicomAppHosting::IDLE)
+    {
+      qDebug()<<"state was not IDLE before -> setState EXIT ";
       host->getDicomAppService()->setState (ctkDicomAppHosting::EXIT);
-    //}
+
+    }
     break;
   case ctkDicomAppHosting::INPROGRESS:
 
@@ -179,6 +183,7 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
     data.patients = QList<ctkDicomAppHosting::Patient>();
     data.patients.append (patient);
 
+    qDebug()<<"send dataDescriptors";
     reply = host->getDicomAppService()->notifyDataAvailable (data,true);
     qDebug() << "  notifyDataAvailable(1111) returned: " << reply;
     break;
@@ -186,8 +191,16 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
   case ctkDicomAppHosting::SUSPENDED:
   case ctkDicomAppHosting::CANCELED:
   case ctkDicomAppHosting::EXIT:
+    //shouldn't happen, when exiting the application just dies
   default:
     //do nothing
     break;
   }
+  host->setApplicationState(state);
+}
+
+
+void ctkHostAppExampleWidget::outputMessage ()
+{
+  ui->messageOutput->append (host->processReadAll ());
 }

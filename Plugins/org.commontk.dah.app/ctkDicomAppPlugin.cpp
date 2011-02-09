@@ -28,7 +28,7 @@
 #include <QStringList>
 
 #include <stdexcept>
-
+#include <iostream>
 ctkPluginContext* ctkDicomAppPlugin::context = 0;
 
 ctkDicomAppPlugin::ctkDicomAppPlugin()
@@ -39,7 +39,10 @@ ctkDicomAppPlugin::ctkDicomAppPlugin()
 
 ctkDicomAppPlugin::~ctkDicomAppPlugin()
 {
-  
+  std::cout<<"in the destructor of the plugin"<<std::endl;
+  delete appServer;
+  delete hostInterface;
+  this->context=0;
 }
 
 void ctkDicomAppPlugin::start(ctkPluginContext* context)

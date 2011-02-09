@@ -125,7 +125,7 @@ int main(int argv, char** argc)
     pluginName = parser.unparsedArguments().at(0);
     }
 
-  // try to find the plugin and install all plugins available in 
+  // try to find the plugin and install all plugins available in
   // pluginPath containing the string "org_commontk_dah" (but do not start them)
   QSharedPointer<ctkPlugin> appPlugin;
   QStringList libFilter;

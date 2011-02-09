@@ -40,6 +40,12 @@ ctkExampleDicomAppLogic::ctkExampleDicomAppLogic()
 
 ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
 {
+  ctkPluginContext* context = ctkExampleDicomAppPlugin::getPluginContext();
+  QList <QSharedPointer<ctkPlugin> > plugins = context->getPlugins();
+  for (int i = 0; i < plugins.size(); ++i)
+  {
+    qDebug() << plugins.at(i)->getSymbolicName ();
+  }
 }
 
 ctkDicomAppHosting::State ctkExampleDicomAppLogic::getState()
@@ -118,7 +124,8 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
   if (newstate == ctkDicomAppHosting::EXIT)
   {
     qDebug() << "  Received changeState(EXIT) ... exiting.";
-    qApp->quit();
+    getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
+    qApp->exit(0);
   }
 }
 
@@ -152,8 +159,8 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableD
 }
 
 QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
-  QList<QUuid> objectUUIDs, 
-  QList<QString> acceptableTransferSyntaxUIDs, 
+  QList<QUuid> objectUUIDs,
+  QList<QString> acceptableTransferSyntaxUIDs,
   bool includeBulkData)
 {
   Q_UNUSED(objectUUIDs)
