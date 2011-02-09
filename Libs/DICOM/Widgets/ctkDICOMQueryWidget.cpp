@@ -43,10 +43,17 @@ QMap<QString,QVariant> ctkDICOMQueryWidget::parameters()
 
   QMap<QString,QVariant> parameters;
 
-  parameters["Name"] = d->nameSearch->text();
-  parameters["Study"] = d->studySearch->text();
-  parameters["Series"] = d->seriesSearch->text();
-  parameters["ID"] = d->idSearch->text();
+  parameters["Name"] = d->NameSearch->text();
+  parameters["Study"] = d->StudySearch->text();
+  parameters["Series"] = d->SeriesSearch->text();
+  parameters["ID"] = d->IdSearch->text();
+
+  if ( !d->ModalityWidget->areAllModalitiesSelected() )
+  { // some PACS (conquest) don't seem to accept list of modalities,
+    // so don't include the list at all when all modalities are desired
+    // TODO: think about how to fix this for conquest at the query level
+    parameters["Modalities"] = d->ModalityWidget->selectedModalities();
+  }
 
   return parameters;
 }

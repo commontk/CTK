@@ -19,50 +19,50 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkAxesWidgetPlugin.h"
-#include "ctkAxesWidget.h"
+#include "ctkModalityWidgetPlugin.h"
+#include "ctkModalityWidget.h"
 
 //-----------------------------------------------------------------------------
-ctkAxesWidgetPlugin::ctkAxesWidgetPlugin(QObject* parentObject)
+ctkModalityWidgetPlugin::ctkModalityWidgetPlugin(QObject* parentObject)
   : QObject(parentObject)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget* ctkAxesWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* ctkModalityWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  ctkAxesWidget* newWidget = new ctkAxesWidget(parentWidget);
+  ctkModalityWidget* newWidget = new ctkModalityWidget(parentWidget);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkAxesWidgetPlugin::domXml() const
+QString ctkModalityWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkAxesWidget\" \
-          name=\"AxesWidget\">\n"
+  return "<widget class=\"ctkModalityWidget\" \
+          name=\"ModalityWidget\">\n"
           "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------
-QIcon ctkAxesWidgetPlugin::icon() const
+QIcon ctkModalityWidgetPlugin::icon() const
 {
   return QIcon(":/Icons/pushbutton.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkAxesWidgetPlugin::includeFile() const
+QString ctkModalityWidgetPlugin::includeFile() const
 {
-  return "ctkAxesWidget.h";
+  return "ctkModalityWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkAxesWidgetPlugin::isContainer() const
+bool ctkModalityWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkAxesWidgetPlugin::name() const
+QString ctkModalityWidgetPlugin::name() const
 {
-  return "ctkAxesWidget";
+  return "ctkModalityWidget";
 }

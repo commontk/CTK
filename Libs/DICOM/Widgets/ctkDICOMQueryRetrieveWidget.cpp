@@ -46,7 +46,7 @@ ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* _parent):Super
   
   d->setupUi(this);
 
-  connect(d->queryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
+  connect(d->QueryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
 }
 
 //----------------------------------------------------------------------------
@@ -74,9 +74,12 @@ void ctkDICOMQueryRetrieveWidget::setRetrieveDatabaseFileName(const QString& fil
 void ctkDICOMQueryRetrieveWidget::processQuery()
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
+
+  d->RetrieveButton->setEnabled(false);
   
   ctkDICOMDatabase queryResultDatabase;
 
+  // create a database in memory to hold query results
   try { queryResultDatabase.openDatabase( ":memory:" ); }
   catch (std::exception e)
   {
@@ -85,19 +88,22 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
     return;
   }
 
-  QStringList serverNodes = d->serverNodeWidget->nodes();
+  // for each of the selected server nodes, send the query
+  QStringList serverNodes = d->ServerNodeWidget->nodes();
   foreach (QString server, serverNodes)
   {
-    QMap<QString, QVariant> parameters = d->serverNodeWidget->nodeParameters(server);
+    QMap<QString, QVariant> parameters = d->ServerNodeWidget->nodeParameters(server);
     if ( parameters["CheckState"] == Qt::Checked )
     {
+      // create a query for the current server
       d->queries[server] = new ctkDICOMQuery;
-      d->queries[server]->setCallingAETitle(d->serverNodeWidget->callingAETitle());
+      d->queries[server]->setCallingAETitle(d->ServerNodeWidget->callingAETitle());
       d->queries[server]->setCalledAETitle(parameters["AETitle"].toString());
       d->queries[server]->setHost(parameters["Address"].toString());
       d->queries[server]->setPort(parameters["Port"].toInt());
-      // TODO: add interface to ctkDICOMQuery for specifying query params
-      // for now, query for everything
+
+      // populate the query with the current search options
+      d->queries[server]->setFilters( d->QueryWidget->parameters() );
 
       try
       {
@@ -111,7 +117,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
     }
   }
 
-  // checkable headers.
+  // checkable headers - allow user to select the patient/studies to retrieve
   d->results->setModel(&d->model);
   d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
   QHeaderView* previousHeaderView = d->results->header();
@@ -124,4 +130,9 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
 
   d->model.setDatabase(queryResultDatabase.database());
   d->results->setModel(&d->model);
+
+  if ( d->model.rowCount() > 0 )
+  {
+    d->RetrieveButton->setEnabled(true);
+  }
 }

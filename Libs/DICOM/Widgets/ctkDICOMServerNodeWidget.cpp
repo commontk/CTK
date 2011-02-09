@@ -58,16 +58,16 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
   d->setupUi(this);
 
   // checkable headers.
-  d->nodeTable->model()->setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
-  QHeaderView* previousHeaderView = d->nodeTable->horizontalHeader();
-  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->nodeTable);
+  d->NodeTable->model()->setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
+  QHeaderView* previousHeaderView = d->NodeTable->horizontalHeader();
+  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->NodeTable);
   headerView->setClickable(previousHeaderView->isClickable());
   headerView->setMovable(previousHeaderView->isMovable());
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   headerView->setPropagateToItems(true);
-  d->nodeTable->setHorizontalHeader(headerView);
+  d->NodeTable->setHorizontalHeader(headerView);
 
-  d->removeButton->setEnabled(false);
+  d->RemoveButton->setEnabled(false);
 
 
   QSettings settings;
@@ -87,33 +87,33 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
     settings.sync();
   }
 
-  d->callingAETitle->setText(settings.value("CallingAETitle").toString());
+  d->CallingAETitle->setText(settings.value("CallingAETitle").toString());
   int count = settings.value("ServerNodeCount").toInt();
-  d->nodeTable->setRowCount(count);
+  d->NodeTable->setRowCount(count);
   for (int row = 0; row < count; row++)
   {
     node = settings.value(QString("ServerNodes/%1").arg(row)).toMap();
     QTableWidgetItem *newItem;
     newItem = new QTableWidgetItem( node["Name"].toString() );
     newItem->setCheckState( Qt::CheckState(node["CheckState"].toInt()) );
-    d->nodeTable->setItem(row, 0, newItem);
+    d->NodeTable->setItem(row, 0, newItem);
     newItem = new QTableWidgetItem( node["AETitle"].toString() );
-    d->nodeTable->setItem(row, 1, newItem);
+    d->NodeTable->setItem(row, 1, newItem);
     newItem = new QTableWidgetItem( node["Address"].toString() );
-    d->nodeTable->setItem(row, 2, newItem);
+    d->NodeTable->setItem(row, 2, newItem);
     newItem = new QTableWidgetItem( node["Port"].toString() );
-    d->nodeTable->setItem(row, 3, newItem);
+    d->NodeTable->setItem(row, 3, newItem);
   }
 
-  connect(d->callingAETitle, SIGNAL(textChanged(const QString&)),
+  connect(d->CallingAETitle, SIGNAL(textChanged(const QString&)),
     this, SLOT(saveSettings()));
-  connect(d->addButton, SIGNAL(clicked()),
+  connect(d->AddButton, SIGNAL(clicked()),
     this, SLOT(addNode()));
-  connect(d->removeButton, SIGNAL(clicked()),
+  connect(d->RemoveButton, SIGNAL(clicked()),
     this, SLOT(removeNode()));
-  connect(d->nodeTable, SIGNAL(cellChanged(int,int)),
+  connect(d->NodeTable, SIGNAL(cellChanged(int,int)),
     this, SLOT(onCellChanged(int,int)));
-  connect(d->nodeTable, SIGNAL(currentItemChanged(QTableWidgetItem*, QTableWidgetItem*)),
+  connect(d->NodeTable, SIGNAL(currentItemChanged(QTableWidgetItem*, QTableWidgetItem*)),
     this, SLOT(onCurrentItemChanged(QTableWidgetItem*, QTableWidgetItem*)));
 }
 
@@ -128,7 +128,7 @@ void ctkDICOMServerNodeWidget::addNode()
 {
   Q_D(ctkDICOMServerNodeWidget);
 
-  d->nodeTable->setRowCount( d->nodeTable->rowCount() + 1 );
+  d->NodeTable->setRowCount( d->NodeTable->rowCount() + 1 );
 }
 
 //----------------------------------------------------------------------------
@@ -136,8 +136,8 @@ void ctkDICOMServerNodeWidget::removeNode()
 {
   Q_D(ctkDICOMServerNodeWidget);
 
-  d->nodeTable->removeRow( d->nodeTable->currentRow() );
-  d->removeButton->setEnabled(false);
+  d->NodeTable->removeRow( d->NodeTable->currentRow() );
+  d->RemoveButton->setEnabled(false);
   this->saveSettings();
 }
 
@@ -157,9 +157,9 @@ void ctkDICOMServerNodeWidget::onCurrentItemChanged(QTableWidgetItem* current, Q
   Q_UNUSED(previous);
 
   Q_D(ctkDICOMServerNodeWidget);
-  if (d->nodeTable->rowCount() > 1)
+  if (d->NodeTable->rowCount() > 1)
   {
-    d->removeButton->setEnabled(true);
+    d->RemoveButton->setEnabled(true);
   }
 }
 
@@ -170,23 +170,23 @@ void ctkDICOMServerNodeWidget::saveSettings()
 
   QSettings settings;
   QMap<QString, QVariant> node;
-  int count = d->nodeTable->rowCount();
+  int count = d->NodeTable->rowCount();
   QStringList keys;
   keys << "Name" << "AETitle" << "Address" << "Port";
   for (int row = 0; row < count; row++)
   {
     for (int k = 0; k < keys.size(); ++k)
     {
-      if ( d->nodeTable->item(row,k) )
+      if ( d->NodeTable->item(row,k) )
       {
-        node[keys.at(k)] = d->nodeTable->item(row,k)->text();
+        node[keys.at(k)] = d->NodeTable->item(row,k)->text();
       }
-      node["CheckState"] = d->nodeTable->item(row,0)->checkState();
+      node["CheckState"] = d->NodeTable->item(row,0)->checkState();
       settings.setValue(QString("ServerNodes/%1").arg(row), QVariant(node));
     }
   }
   settings.setValue("ServerNodeCount", count);
-  settings.setValue("CallingAETitle", d->callingAETitle->text());
+  settings.setValue("CallingAETitle", d->CallingAETitle->text());
   settings.sync();
 }
 
@@ -195,7 +195,7 @@ QString ctkDICOMServerNodeWidget::callingAETitle()
 {
   Q_D(ctkDICOMServerNodeWidget);
 
-  return d->callingAETitle->text();
+  return d->CallingAETitle->text();
 }
 
 //----------------------------------------------------------------------------
@@ -203,11 +203,11 @@ QStringList ctkDICOMServerNodeWidget::nodes()
 {
   Q_D(ctkDICOMServerNodeWidget);
 
-  int count = d->nodeTable->rowCount();
+  int count = d->NodeTable->rowCount();
   QStringList nodes;
   for (int row = 0; row < count; row++)
   {
-    nodes << d->nodeTable->item(row,0)->text();
+    nodes << d->NodeTable->item(row,0)->text();
   }
   return nodes;
 }
@@ -218,20 +218,20 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget::nodeParameters(QString &node)
   Q_D(ctkDICOMServerNodeWidget);
 
   QMap<QString, QVariant> parameters;
-  int count = d->nodeTable->rowCount();
+  int count = d->NodeTable->rowCount();
   QStringList keys;
   keys << "Name" << "AETitle" << "Address" << "Port";
   for (int row = 0; row < count; row++)
   {
-    if ( d->nodeTable->item(row,0)->text() == node )
+    if ( d->NodeTable->item(row,0)->text() == node )
     {
       for (int k = 0; k < keys.size(); ++k)
       {
-        if ( d->nodeTable->item(row,k) )
+        if ( d->NodeTable->item(row,k) )
         {
-          parameters[keys.at(k)] = d->nodeTable->item(row,k)->text();
+          parameters[keys.at(k)] = d->NodeTable->item(row,k)->text();
         }
-        parameters["CheckState"] = d->nodeTable->item(row,0)->checkState();
+        parameters["CheckState"] = d->NodeTable->item(row,0)->checkState();
       }
     }
   }

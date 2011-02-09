@@ -25,12 +25,14 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkDynamicSpacerTest2.cpp
   ctkFileDialogTest1.cpp
   ctkFittedTextBrowserTest1.cpp
+  ctkFlowLayoutTest1.cpp
   ctkFontButtonTest1.cpp
   ctkMaterialPropertyPreviewLabelTest1.cpp
   ctkMaterialPropertyWidgetTest1.cpp
   ctkMatrixWidgetTest1.cpp
   ctkMatrixWidgetTest2.cpp
   ctkMenuButtonTest1.cpp
+  ctkModalityWidgetTest1.cpp
   ctkPathLineEditTest1.cpp
   ctkRangeSliderTest1.cpp
   ctkRangeWidgetTest1.cpp
@@ -109,12 +111,14 @@ SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingDerivedSteps )
 SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots )
 SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
+SIMPLE_TEST( ctkFlowLayoutTest1 )
 SIMPLE_TEST( ctkFontButtonTest1 )
 SIMPLE_TEST( ctkMaterialPropertyPreviewLabelTest1 )
 SIMPLE_TEST( ctkMaterialPropertyWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest2 )
 SIMPLE_TEST( ctkMenuButtonTest1 )
+SIMPLE_TEST( ctkModalityWidgetTest1 )
 SIMPLE_TEST( ctkPathLineEditTest1 )
 SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )

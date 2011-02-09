@@ -18,32 +18,39 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMIndexer_h
-#define __ctkDICOMIndexer_h
+#ifndef __ctkDICOMImportWidget_h
+#define __ctkDICOMImportWidget_h
 
 // Qt includes 
-#include <QSqlDatabase>
+#include <QWidget>
 
-#include "ctkDICOMCoreExport.h"
-#include "ctkDICOMDatabase.h"
+#include "ctkDICOMWidgetsExport.h"
 
-class ctkDICOMIndexerPrivate;
-class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer
+class ctkDICOMImportWidgetPrivate;
+
+class ctkDICOMDatabase;
+
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMImportWidget : public QWidget
 {
+  Q_OBJECT
 public:
-  explicit ctkDICOMIndexer();
-  virtual ~ctkDICOMIndexer();
-  /// add directory to database and optionally copy files to destinationDirectory
-  void addDirectory(ctkDICOMDatabase& database, const QString& directoryName, const QString& destinationDirectoryName = "", bool createHierarchy = true);
-  void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
+  typedef QWidget Superclass;
+  explicit ctkDICOMImportWidget(QWidget* parent=0);
+  virtual ~ctkDICOMImportWidget();
+
+  void setDICOMDatabase(ctkDICOMDatabase* database);
 
 protected:
-  QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
-  
-private:
-  Q_DECLARE_PRIVATE(ctkDICOMIndexer);
-  Q_DISABLE_COPY(ctkDICOMIndexer);
+  QScopedPointer<ctkDICOMImportWidgetPrivate> d_ptr;
 
+private:
+  Q_DECLARE_PRIVATE(ctkDICOMImportWidget);
+  Q_DISABLE_COPY(ctkDICOMImportWidget);
+
+public slots:
+  void onOK();
+  void onCancel();
+  void onTopDirectoryChanged(const QString& path);
 };
 
 #endif

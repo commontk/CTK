@@ -250,6 +250,18 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
       d->query->putAndInsertString( DCM_PatientID,
         (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
     }
+    if ( key == QString("Modalities") )
+    {
+      // make the filter be an "OR" of modalities using backslash (dicom-style)
+      QString modalitySearch("");
+      foreach (QString modality, d->Filters[key].toStringList())
+      {
+        modalitySearch += modality + QString("\\");
+      }
+      modalitySearch.chop(1); // remove final backslash
+      logger.debug("modalitySearch " + modalitySearch);
+      d->query->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toAscii().data() );
+    }
   }
 
   FINDResponses *responses = new FINDResponses();

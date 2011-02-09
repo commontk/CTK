@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -62,7 +62,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="queryLayout">
+     <layout class="QHBoxLayout" name="queryLayout" stretch="1,0">
       <item>
        <widget class="QTreeView" name="treeView">
         <property name="alternatingRowColors">
@@ -73,20 +73,7 @@
       <item>
        <layout class="QVBoxLayout" name="searchOptionLayout">
         <item>
-         <widget class="ctkDICOMQueryWidget" name="searchOption" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>200</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>400</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
+         <widget class="ctkDICOMQueryWidget" name="searchOption" native="true"/>
         </item>
         <item>
          <spacer name="verticalSpacer">
@@ -137,7 +124,7 @@
      <x>0</x>
      <y>0</y>
      <width>739</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -164,6 +151,7 @@
    <addaction name="actionImport"/>
    <addaction name="actionExport"/>
    <addaction name="actionQuery"/>
+   <addaction name="actionSend"/>
   </widget>
   <action name="actionImport">
    <property name="text">
@@ -187,6 +175,14 @@
    </property>
    <property name="toolTip">
     <string>Query and Retrieve DICOM studies from a DICOM node</string>
+   </property>
+  </action>
+  <action name="actionSend">
+   <property name="text">
+    <string>Send</string>
+   </property>
+   <property name="toolTip">
+    <string>Send DIOCM studies to a DICOM node</string>
    </property>
   </action>
  </widget>

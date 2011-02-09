@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>100</width>
+    <width>167</width>
     <height>186</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>ctkSliderSpinBoxWidget</string>
+   <string>Date Range</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="margin">
@@ -27,9 +27,6 @@
     <widget class="QRadioButton" name="AnyDateRadioButton">
      <property name="text">
       <string>Any Date</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -66,6 +63,9 @@
      <property name="text">
       <string>Select Range</string>
      </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
@@ -86,17 +86,11 @@
       <property name="topMargin">
        <number>0</number>
       </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
       <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
        <widget class="QDateTimeEdit" name="StartDate">
-        <property name="displayFormat">
-         <string>MMM/dd/yyyy</string>
-        </property>
         <property name="calendarPopup">
          <bool>true</bool>
         </property>
@@ -104,9 +98,6 @@
       </item>
       <item>
        <widget class="QDateTimeEdit" name="EndDate">
-        <property name="displayFormat">
-         <string>MMM/dd/yyyy</string>
-        </property>
         <property name="calendarPopup">
          <bool>true</bool>
         </property>
@@ -120,14 +111,14 @@
  <resources/>
  <connections>
   <connection>
-   <sender>SelectRangeRadioButton</sender>
+   <sender>AnyDateRadioButton</sender>
    <signal>toggled(bool)</signal>
    <receiver>DateRangeWidget</receiver>
-   <slot>setVisible(bool)</slot>
+   <slot>setHidden(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>31</x>
-     <y>119</y>
+     <x>83</x>
+     <y>8</y>
     </hint>
     <hint type="destinationlabel">
      <x>43</x>
