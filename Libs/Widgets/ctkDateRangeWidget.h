@@ -106,6 +106,9 @@ signals:
   /// Fired when the end date is changed
   void endDateTimeChanged(const QDateTime& value);
 
+protected slots:
+  void onDateTimeChanged();
+
 protected:
   QScopedPointer<ctkDateRangeWidgetPrivate> d_ptr;
 
