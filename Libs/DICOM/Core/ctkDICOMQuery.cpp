@@ -158,6 +158,11 @@ QMap<QString,QVariant> ctkDICOMQuery::filters()
   Q_D(ctkDICOMQuery);
   return d->Filters;
 }
+QStringList ctkDICOMQuery::studyInstanceUIDQueried()
+{
+  Q_D(ctkDICOMQuery);
+  return d->StudyInstanceUIDList;
+}
 
 
 //------------------------------------------------------------------------------
