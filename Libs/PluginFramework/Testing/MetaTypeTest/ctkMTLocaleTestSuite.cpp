@@ -32,6 +32,7 @@
 #include <QTest>
 #include <QDebug>
 
+//----------------------------------------------------------------------------
 ctkMTLocaleTestSuite::ctkMTLocaleTestSuite(
   ctkPluginContext* pc, long mtPluginId)
   : context(pc), mtPluginId(mtPluginId), mts(0)
@@ -39,6 +40,7 @@ ctkMTLocaleTestSuite::ctkMTLocaleTestSuite(
 
 }
 
+//----------------------------------------------------------------------------
 void ctkMTLocaleTestSuite::initTestCase()
 {
   context->getPlugin(mtPluginId)->start();
@@ -48,12 +50,14 @@ void ctkMTLocaleTestSuite::initTestCase()
   plugin->start();
 }
 
+//----------------------------------------------------------------------------
 void ctkMTLocaleTestSuite::cleanupTestCase()
 {
   context->ungetService(reference);
   context->getPlugin(mtPluginId)->stop();
 }
 
+//----------------------------------------------------------------------------
 void ctkMTLocaleTestSuite::testLocaleList()
 {
   ctkMetaTypeInformationPtr mti = mts->getMetaTypeInformation(plugin);

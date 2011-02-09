@@ -29,29 +29,34 @@
 #include <QMutexLocker>
 #include <QDebug>
 
+//----------------------------------------------------------------------------
 ctkServiceReference::ctkServiceReference()
   : d_ptr(new ctkServiceReferencePrivate(0))
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceReference::ctkServiceReference(const ctkServiceReference& ref)
   : d_ptr(ref.d_ptr)
 {
   d_func()->ref.ref();
 }
 
+//----------------------------------------------------------------------------
 ctkServiceReference::ctkServiceReference(ctkServiceRegistrationPrivate* reg)
   : d_ptr(new ctkServiceReferencePrivate(reg))
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceReference::operator bool() const
 {
   return getPlugin();
 }
 
+//----------------------------------------------------------------------------
 ctkServiceReference& ctkServiceReference::operator=(int null)
 {
   if (null == 0)
@@ -63,12 +68,14 @@ ctkServiceReference& ctkServiceReference::operator=(int null)
   return *this;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceReference::~ctkServiceReference()
 {
   if (!d_func()->ref.deref())
     delete d_ptr;
 }
 
+//----------------------------------------------------------------------------
 QVariant ctkServiceReference::getProperty(const QString& key) const
 {
   Q_D(const ctkServiceReference);
@@ -78,6 +85,7 @@ QVariant ctkServiceReference::getProperty(const QString& key) const
   return d->registration->properties.value(key);
 }
 
+//----------------------------------------------------------------------------
 QStringList ctkServiceReference::getPropertyKeys() const
 {
   Q_D(const ctkServiceReference);
@@ -92,6 +100,7 @@ QStringList ctkServiceReference::getPropertyKeys() const
   return result;
 }
 
+//----------------------------------------------------------------------------
 QSharedPointer<ctkPlugin> ctkServiceReference::getPlugin() const
 {
   if (d_func()->registration == 0 || d_func()->registration->plugin == 0)
@@ -102,6 +111,7 @@ QSharedPointer<ctkPlugin> ctkServiceReference::getPlugin() const
   return d_func()->registration->plugin->q_func().toStrongRef();
 }
 
+//----------------------------------------------------------------------------
 QList<QSharedPointer<ctkPlugin> > ctkServiceReference::getUsingPlugins() const
 {
   Q_D(const ctkServiceReference);
@@ -111,6 +121,7 @@ QList<QSharedPointer<ctkPlugin> > ctkServiceReference::getUsingPlugins() const
   return d->registration->dependents.keys();
 }
 
+//----------------------------------------------------------------------------
 bool ctkServiceReference::operator<(const ctkServiceReference& reference) const
 {
   bool sameFw = d_func()->registration->plugin->fwCtx == reference.d_func()->registration->plugin->fwCtx;
@@ -140,11 +151,13 @@ bool ctkServiceReference::operator<(const ctkServiceReference& reference) const
   }
 }
 
+//----------------------------------------------------------------------------
 bool ctkServiceReference::operator==(const ctkServiceReference& reference) const
 {
   return d_func()->registration == reference.d_func()->registration;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceReference& ctkServiceReference::operator=(const ctkServiceReference& reference)
 {
   ctkServiceReferencePrivate* curr_d = d_func();
@@ -157,11 +170,13 @@ ctkServiceReference& ctkServiceReference::operator=(const ctkServiceReference& r
   return *this;
 }
 
+//----------------------------------------------------------------------------
 uint qHash(const ctkServiceReference& serviceRef)
 {
   return qHash(serviceRef.d_func()->registration);
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkServiceReference& serviceRef)
 {
   dbg.nospace() << "Reference for service object registered from "

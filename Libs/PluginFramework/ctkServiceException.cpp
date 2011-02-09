@@ -23,7 +23,7 @@
 
 #include <QDebug>
 
-
+//----------------------------------------------------------------------------
 ctkServiceException::ctkServiceException(const QString& msg, const Type& type, const std::exception* cause)
   : ctkRuntimeException(msg, cause),
     type(type)
@@ -31,6 +31,7 @@ ctkServiceException::ctkServiceException(const QString& msg, const Type& type, c
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceException::ctkServiceException(const QString& msg, const std::exception* cause)
   : ctkRuntimeException(msg, cause),
     type(UNSPECIFIED)
@@ -38,12 +39,14 @@ ctkServiceException::ctkServiceException(const QString& msg, const std::exceptio
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceException::ctkServiceException(const ctkServiceException& o)
   : ctkRuntimeException(o), type(o.type)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceException& ctkServiceException::operator=(const ctkServiceException& o)
 {
   ctkRuntimeException::operator=(o);
@@ -51,12 +54,13 @@ ctkServiceException& ctkServiceException::operator=(const ctkServiceException& o
   return *this;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceException::Type ctkServiceException::getType() const
 {
   return type;
 }
 
-
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkServiceException& exc)
 {
   dbg << "ctkServiceException:" << exc.what();

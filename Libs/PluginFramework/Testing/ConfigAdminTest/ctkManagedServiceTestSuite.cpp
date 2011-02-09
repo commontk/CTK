@@ -28,6 +28,7 @@
 
 #include <QTest>
 
+//----------------------------------------------------------------------------
 _ManagedServiceUpdateTest::_ManagedServiceUpdateTest(
   ctkManagedServiceTestSuite* ts)
   : ts(ts)
@@ -35,6 +36,7 @@ _ManagedServiceUpdateTest::_ManagedServiceUpdateTest(
 
 }
 
+//----------------------------------------------------------------------------
 void _ManagedServiceUpdateTest::updated(
   const ctkDictionary& properties)
 {
@@ -46,6 +48,7 @@ void _ManagedServiceUpdateTest::updated(
   ts->updateCount++;
 }
 
+//----------------------------------------------------------------------------
 ctkManagedServiceTestSuite::ctkManagedServiceTestSuite(
   ctkPluginContext* pc, long cmPluginId)
   : context(pc), cmPluginId(cmPluginId), cm(0), updateCount(0),
@@ -54,6 +57,7 @@ ctkManagedServiceTestSuite::ctkManagedServiceTestSuite(
 
 }
 
+//----------------------------------------------------------------------------
 void ctkManagedServiceTestSuite::init()
 {
   context->getPlugin(cmPluginId)->start();
@@ -61,12 +65,14 @@ void ctkManagedServiceTestSuite::init()
   cm = context->getService<ctkConfigurationAdmin>(reference);
 }
 
+//----------------------------------------------------------------------------
 void ctkManagedServiceTestSuite::cleanup()
 {
   context->ungetService(reference);
   context->getPlugin(cmPluginId)->stop();
 }
 
+//----------------------------------------------------------------------------
 void ctkManagedServiceTestSuite::testSamePidManagedService()
 {
   ctkConfigurationPtr config = cm->getConfiguration("test");
@@ -105,6 +111,7 @@ void ctkManagedServiceTestSuite::testSamePidManagedService()
   config->remove();
 }
 
+//----------------------------------------------------------------------------
 void ctkManagedServiceTestSuite::testGeneralManagedService()
 {
   updateCount = 0;

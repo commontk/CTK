@@ -42,6 +42,7 @@
 #include <stdlib.h>
 #endif // _WIN32
 
+//----------------------------------------------------------------------------
 class TestRunner : public QThread
 {
 public:
@@ -91,6 +92,7 @@ private:
   char** argv;
 };
 
+//----------------------------------------------------------------------------
 class ctkPluginFrameworkTestRunnerPrivate
 {
 public:
@@ -111,12 +113,14 @@ public:
 
   ctkPluginFrameworkFactory* fwFactory;
 
+  //----------------------------------------------------------------------------
   ctkPluginFrameworkTestRunnerPrivate()
     : context(0), fwFactory(0)
   {
     pluginLibFilter << "*.dll" << "*.so" << "*.dylib";
   }
 
+  //----------------------------------------------------------------------------
   void installPlugins(const QString& path)
   {
     QDirIterator dirIter(path, pluginLibFilter, QDir::Files);
@@ -145,6 +149,7 @@ public:
     }
   }
 
+  //----------------------------------------------------------------------------
   void installPlugin(const QString& path, const QString& name)
   {
     QDirIterator dirIter(path, pluginLibFilter, QDir::Files);
@@ -182,18 +187,21 @@ private:
   QStringList pluginLibFilter;
 };
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkTestRunner::ctkPluginFrameworkTestRunner()
   : d_ptr(new ctkPluginFrameworkTestRunnerPrivate())
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkTestRunner::~ctkPluginFrameworkTestRunner()
 {
   Q_D(ctkPluginFrameworkTestRunner);
   delete d->fwFactory;
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestRunner::addPluginPath(const QString& path, bool install)
 {
   Q_D(ctkPluginFrameworkTestRunner);
@@ -242,18 +250,21 @@ void ctkPluginFrameworkTestRunner::addPluginPath(const QString& path, bool insta
 #endif
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestRunner::addPlugin(const QString &path, const QString &name)
 {
   Q_D(ctkPluginFrameworkTestRunner);
   d->installCandidates.push_back(qMakePair(path, name));
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestRunner::startPluginOnRun(const QString& pluginId, ctkPlugin::StartOptions opts)
 {
   Q_D(ctkPluginFrameworkTestRunner);
   d->activatePlugins.push_back(qMakePair(pluginId, opts));
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestRunner::init(const ctkProperties& fwProps)
 {
   Q_D(ctkPluginFrameworkTestRunner);
@@ -278,6 +289,7 @@ void ctkPluginFrameworkTestRunner::init(const ctkProperties& fwProps)
   }
 }
 
+//----------------------------------------------------------------------------
 int ctkPluginFrameworkTestRunner::run(int argc, char** argv)
 {
   Q_D(ctkPluginFrameworkTestRunner);

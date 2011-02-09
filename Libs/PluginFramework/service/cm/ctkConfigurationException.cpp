@@ -24,7 +24,7 @@
 
 #include <QDebug>
 
-
+//----------------------------------------------------------------------------
 ctkConfigurationException::ctkConfigurationException(const QString& property, const QString& reason,
                           const std::exception* cause)
   : ctkRuntimeException(property + " : " + reason, cause),
@@ -33,12 +33,14 @@ ctkConfigurationException::ctkConfigurationException(const QString& property, co
 
 }
 
+//----------------------------------------------------------------------------
 ctkConfigurationException::ctkConfigurationException(const ctkConfigurationException& o)
   : ctkRuntimeException(o), property(o.property), reason(o.reason)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkConfigurationException& ctkConfigurationException::operator=(const ctkConfigurationException& o)
 {
   ctkRuntimeException::operator =(o);
@@ -47,16 +49,19 @@ ctkConfigurationException& ctkConfigurationException::operator=(const ctkConfigu
   return *this;
 }
 
+//----------------------------------------------------------------------------
 QString ctkConfigurationException::getProperty() const
 {
   return property;
 }
 
+//----------------------------------------------------------------------------
 QString ctkConfigurationException::getReason() const
 {
   return reason;
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkConfigurationException& exc)
 {
   dbg << "ctkConfigurationException:" << exc.what();

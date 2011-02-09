@@ -24,17 +24,20 @@
 
 #include <stdexcept>
 
+//----------------------------------------------------------------------------
 ctkDictionary::ctkDictionary()
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkDictionary::ctkDictionary(const ctkDictionary& other)
   : Super(other)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkDictionary::ctkDictionary(const ctkProperties& properties)
 {
   ctkProperties::ConstIterator end = properties.end();

@@ -27,115 +27,120 @@
 
 #include <stdexcept>
 
+//----------------------------------------------------------------------------
+ctkPluginManifest::ctkPluginManifest()
+{
 
-  ctkPluginManifest::ctkPluginManifest()
+}
+
+//----------------------------------------------------------------------------
+ctkPluginManifest::ctkPluginManifest(const QByteArray& in)
+{
+  read(in);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginManifest::read(const QByteArray& in)
+{
+  mainAttributes.clear();
+  sections.clear();
+
+  QString key;
+  QString value;
+  QString currSection;
+
+  QList<QByteArray> lines = in.split('\n');
+
+  foreach (const QString& line, lines)
   {
+    // skip empty lines and comments
+    if (line.trimmed().isEmpty() | line.startsWith('#')) continue;
 
-  }
-
-  ctkPluginManifest::ctkPluginManifest(const QByteArray& in)
-  {
-    read(in);
-  }
-
-  void ctkPluginManifest::read(const QByteArray& in)
-  {
-    mainAttributes.clear();
-    sections.clear();
-
-    QString key;
-    QString value;
-    QString currSection;
-
-    QList<QByteArray> lines = in.split('\n');
-
-    foreach (const QString& line, lines)
+    // a valid new key/value pair starts with no white-space and contains
+    // either a ':' or a '='
+    if (!(line.startsWith(' ') || line.startsWith('\t')) && (line.contains(':') || line.contains('=')))
     {
-      // skip empty lines and comments
-      if (line.trimmed().isEmpty() | line.startsWith('#')) continue;
 
-      // a valid new key/value pair starts with no white-space and contains
-      // either a ':' or a '='
-      if (!(line.startsWith(' ') || line.startsWith('\t')) && (line.contains(':') || line.contains('=')))
+      // see if we found a new section header
+      if (line.startsWith('['))
       {
-
-        // see if we found a new section header
-        if (line.startsWith('['))
+        currSection = line.mid(1, line.indexOf(']')-1);
+      }
+      else
+      {
+        // we found a new key/value pair, save the old one
+        if (!key.isEmpty())
         {
-          currSection = line.mid(1, line.indexOf(']')-1);
-        }
-        else
-        {
-          // we found a new key/value pair, save the old one
-          if (!key.isEmpty())
+          if (currSection.isEmpty())
           {
-            if (currSection.isEmpty())
-            {
-              mainAttributes.insert(key, value);
-            }
-            else
-            {
-              sections[currSection].insert(key, value);
-            }
+            mainAttributes.insert(key, value);
           }
-
-          int colonIndex = line.indexOf(':');
-          int equalIndex = line.indexOf('=');
-
-          int sepIndex = -1;
-          if (colonIndex < 0) sepIndex = equalIndex;
-          else if (equalIndex < 0) sepIndex = colonIndex;
-          else sepIndex = colonIndex < equalIndex ? colonIndex : equalIndex;
-
-          key = line.left(sepIndex);
-          value = line.right(line.size()-(sepIndex+1)).trimmed();
+          else
+          {
+            sections[currSection].insert(key, value);
+          }
         }
-      }
-      else
-      {
-        // add the line to the value
-        value += line;
+
+        int colonIndex = line.indexOf(':');
+        int equalIndex = line.indexOf('=');
+
+        int sepIndex = -1;
+        if (colonIndex < 0) sepIndex = equalIndex;
+        else if (equalIndex < 0) sepIndex = colonIndex;
+        else sepIndex = colonIndex < equalIndex ? colonIndex : equalIndex;
+
+        key = line.left(sepIndex);
+        value = line.right(line.size()-(sepIndex+1)).trimmed();
       }
     }
-
-    // save the last key/value pair
-    if (!key.isEmpty())
+    else
     {
-      if (currSection.isEmpty())
-      {
-        mainAttributes.insert(key, value);
-      }
-      else
-      {
-        sections[currSection].insert(key, value);
-      }
+      // add the line to the value
+      value += line;
     }
-
   }
 
-  ctkPluginManifest::Attributes ctkPluginManifest::getMainAttributes() const
+  // save the last key/value pair
+  if (!key.isEmpty())
   {
-    return mainAttributes;
-  }
-
-  QString ctkPluginManifest::getAttribute(const QString& key) const
-  {
-    if (!mainAttributes.contains(key)) return QString();
-    return mainAttributes[key];
-  }
-
-  ctkPluginManifest::Attributes ctkPluginManifest::getAttributes(const QString& section) const
-  {
-    if (!sections.contains(section))
+    if (currSection.isEmpty())
     {
-      throw std::invalid_argument(std::string("Manifest section invalid: ") + qPrintable(section));
+      mainAttributes.insert(key, value);
     }
-
-    return sections[section];
+    else
+    {
+      sections[currSection].insert(key, value);
+    }
   }
 
-  QStringList ctkPluginManifest::getSections() const
-  {
-    return sections.keys();
+}
 
+//----------------------------------------------------------------------------
+ctkPluginManifest::Attributes ctkPluginManifest::getMainAttributes() const
+{
+  return mainAttributes;
+}
+
+//----------------------------------------------------------------------------
+QString ctkPluginManifest::getAttribute(const QString& key) const
+{
+  if (!mainAttributes.contains(key)) return QString();
+  return mainAttributes[key];
+}
+
+//----------------------------------------------------------------------------
+ctkPluginManifest::Attributes ctkPluginManifest::getAttributes(const QString& section) const
+{
+  if (!sections.contains(section))
+  {
+    throw std::invalid_argument(std::string("Manifest section invalid: ") + qPrintable(section));
+  }
+
+  return sections[section];
+}
+
+//----------------------------------------------------------------------------
+QStringList ctkPluginManifest::getSections() const
+{
+  return sections.keys();
 }

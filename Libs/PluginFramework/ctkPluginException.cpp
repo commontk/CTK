@@ -23,7 +23,7 @@
 
 #include <QDebug>
 
-
+//----------------------------------------------------------------------------
 ctkPluginException::ctkPluginException(const QString& msg, const Type& type, const std::exception* cause)
   : ctkRuntimeException(msg, cause),
     type(type)
@@ -31,6 +31,7 @@ ctkPluginException::ctkPluginException(const QString& msg, const Type& type, con
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginException::ctkPluginException(const QString& msg, const std::exception* cause)
   : ctkRuntimeException(msg, cause),
     type(UNSPECIFIED)
@@ -38,12 +39,14 @@ ctkPluginException::ctkPluginException(const QString& msg, const std::exception*
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginException::ctkPluginException(const ctkPluginException& o)
   : ctkRuntimeException(o), type(o.type)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginException& ctkPluginException::operator=(const ctkPluginException& o)
 {
   ctkRuntimeException::operator=(o);
@@ -51,12 +54,13 @@ ctkPluginException& ctkPluginException::operator=(const ctkPluginException& o)
   return *this;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginException::Type ctkPluginException::getType() const
 {
   return type;
 }
 
-
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkPluginException& exc)
 {
   dbg << "ctkPluginException:" << exc.what();

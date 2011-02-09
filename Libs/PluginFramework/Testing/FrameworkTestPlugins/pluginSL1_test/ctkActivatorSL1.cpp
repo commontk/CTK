@@ -26,17 +26,20 @@
 #include <QtPlugin>
 #include <QStringList>
 
+//----------------------------------------------------------------------------
 ctkActivatorSL1::ctkActivatorSL1()
   : _serviceAdded(false), _serviceRemoved(false),
     context(0)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkActivatorSL1::~ctkActivatorSL1()
 {
   
 }
 
+//----------------------------------------------------------------------------
 void ctkActivatorSL1::start(ctkPluginContext* context)
 {
   this->context = context;
@@ -47,22 +50,26 @@ void ctkActivatorSL1::start(ctkPluginContext* context)
   tracker->open();
 }
 
+//----------------------------------------------------------------------------
 void ctkActivatorSL1::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
   tracker->close();
 }
 
+//----------------------------------------------------------------------------
 bool ctkActivatorSL1::serviceAdded() const
 {
   return _serviceAdded;
 }
 
+//----------------------------------------------------------------------------
 bool ctkActivatorSL1::serviceRemoved() const
 {
   return _serviceRemoved;
 }
 
+//----------------------------------------------------------------------------
 ctkFooService* ctkActivatorSL1::addingService(const ctkServiceReference& reference)
 {
   _serviceAdded = true;
@@ -73,12 +80,14 @@ ctkFooService* ctkActivatorSL1::addingService(const ctkServiceReference& referen
   return fooService;
 }
 
+//----------------------------------------------------------------------------
 void ctkActivatorSL1::modifiedService(const ctkServiceReference& reference, ctkFooService* service)
 {
   Q_UNUSED(reference)
   Q_UNUSED(service)
 }
 
+//----------------------------------------------------------------------------
 void ctkActivatorSL1::removedService(const ctkServiceReference& reference, ctkFooService* service)
 {
   Q_UNUSED(service)

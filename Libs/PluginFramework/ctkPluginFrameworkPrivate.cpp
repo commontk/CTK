@@ -27,7 +27,7 @@
 #include "ctkPluginContext_p.h"
 #include "ctkPluginFrameworkContext_p.h"
 
-
+//----------------------------------------------------------------------------
 ctkPluginFrameworkPrivate::ctkPluginFrameworkPrivate(QWeakPointer<ctkPlugin> qq, ctkPluginFrameworkContext* fw)
   : ctkPluginPrivate(qq, fw, 0, ctkPluginConstants::SYSTEM_PLUGIN_LOCATION,
                      ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME,
@@ -39,17 +39,20 @@ ctkPluginFrameworkPrivate::ctkPluginFrameworkPrivate(QWeakPointer<ctkPlugin> qq,
   systemHeaders.insert(ctkPluginConstants::PLUGIN_VERSION, version.toString());
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkPrivate::init()
 {
   this->state = ctkPlugin::STARTING;
   this->fwCtx->init();
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkPrivate::initSystemPlugin()
 {
   this->pluginContext.reset(new ctkPluginContext(this));
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkPrivate::uninitSystemPlugin()
 {
   this->pluginContext->d_func()->invalidate();

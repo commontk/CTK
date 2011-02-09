@@ -30,12 +30,14 @@
 
 #include <QTest>
 
+//----------------------------------------------------------------------------
 _ConfigurationPluginTest::_ConfigurationPluginTest(const QString& prop)
   : prop(prop)
 {
 
 }
 
+//----------------------------------------------------------------------------
 void _ConfigurationPluginTest::modifyConfiguration(const ctkServiceReference& reference,
                          ctkDictionary& properties)
 {
@@ -43,12 +45,14 @@ void _ConfigurationPluginTest::modifyConfiguration(const ctkServiceReference& re
   properties.insert("plugin", prop);
 }
 
+//----------------------------------------------------------------------------
 _ManagedServiceCMPluginTest::_ManagedServiceCMPluginTest(ctkConfigurationPluginTestSuite* ts)
   : ts(ts)
 {
 
 }
 
+//----------------------------------------------------------------------------
 void _ManagedServiceCMPluginTest::updated(const ctkDictionary& properties)
 {
   QMutexLocker l(&ts->mutex);
@@ -57,6 +61,7 @@ void _ManagedServiceCMPluginTest::updated(const ctkDictionary& properties)
   ts->success = properties.value("plugin").toString() == "plugin1";
 }
 
+//----------------------------------------------------------------------------
 ctkConfigurationPluginTestSuite::ctkConfigurationPluginTestSuite(
   ctkPluginContext* pc, long cmPluginId)
   : context(pc), cmPluginId(cmPluginId), cm(0), locked(false),
@@ -65,10 +70,12 @@ ctkConfigurationPluginTestSuite::ctkConfigurationPluginTestSuite(
 
 }
 
+//----------------------------------------------------------------------------
 ctkConfigurationPluginTestSuite::~ctkConfigurationPluginTestSuite()
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkConfigurationPluginTestSuite::init()
 {
   context->getPlugin(cmPluginId)->start();
@@ -76,12 +83,14 @@ void ctkConfigurationPluginTestSuite::init()
   cm = context->getService<ctkConfigurationAdmin>(reference);
 }
 
+//----------------------------------------------------------------------------
 void ctkConfigurationPluginTestSuite::cleanup()
 {
   context->ungetService(reference);
   context->getPlugin(cmPluginId)->stop();
 }
 
+//----------------------------------------------------------------------------
 void ctkConfigurationPluginTestSuite::testPlugin()
 {
   ctkConfigurationPtr config = cm->getConfiguration("test");
@@ -113,6 +122,7 @@ void ctkConfigurationPluginTestSuite::testPlugin()
   config->remove();
 }
 
+//----------------------------------------------------------------------------
 void ctkConfigurationPluginTestSuite::testPidSpecificPlugin()
 {
   ctkConfigurationPtr config = cm->getConfiguration("test");
@@ -146,6 +156,7 @@ void ctkConfigurationPluginTestSuite::testPidSpecificPlugin()
   config->remove();
 }
 
+//----------------------------------------------------------------------------
 void ctkConfigurationPluginTestSuite::testPidSpecificMissPlugin()
 {
   ctkConfigurationPtr config = cm->getConfiguration("test");
@@ -177,6 +188,7 @@ void ctkConfigurationPluginTestSuite::testPidSpecificMissPlugin()
   config->remove();
 }
 
+//----------------------------------------------------------------------------
 void ctkConfigurationPluginTestSuite::testRankedPlugin()
 {
   ctkConfigurationPtr config = cm->getConfiguration("test");

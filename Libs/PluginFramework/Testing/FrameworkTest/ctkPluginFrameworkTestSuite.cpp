@@ -34,12 +34,14 @@
 int ctkPluginFrameworkTestSuite::nRunCount = 0;
 
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkTestSuite::ctkPluginFrameworkTestSuite(ctkPluginContext* pc)
   : eventDelay(500), pc(pc), p(pc->getPlugin())
 {
 
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestSuite::initTestCase()
 {
   qDebug() << "### plugin framework test suite: SETUP start";
@@ -104,11 +106,13 @@ void ctkPluginFrameworkTestSuite::initTestCase()
   qDebug() << "### plugin framework test suite: SETUP:PASS";
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestSuite::cleanupTestCase()
 {
 
 }
 
+//----------------------------------------------------------------------------
 // Verify information from the getHeaders() method
 void ctkPluginFrameworkTestSuite::frame005a()
 {
@@ -144,6 +148,7 @@ void ctkPluginFrameworkTestSuite::frame005a()
   QCOMPARE(QString("http://www.apache.org/licenses/LICENSE-2.0.html"), headers.value(k));
 }
 
+//----------------------------------------------------------------------------
 // Extract all information from the getProperty in the ctkPluginContext class
 void ctkPluginFrameworkTestSuite::frame007a()
 {
@@ -162,6 +167,7 @@ void ctkPluginFrameworkTestSuite::frame007a()
   }
 }
 
+//----------------------------------------------------------------------------
 // Get context id, location and status of the plugin
 void ctkPluginFrameworkTestSuite::frame010a()
 {
@@ -175,6 +181,7 @@ void ctkPluginFrameworkTestSuite::frame010a()
   qDebug() << "PCACTIVE:" << pstate;
 }
 
+//----------------------------------------------------------------------------
 //Test result of getService(ctkServiceReference()). Should throw std::invalid_argument
 void ctkPluginFrameworkTestSuite::frame018a()
 {
@@ -192,6 +199,7 @@ void ctkPluginFrameworkTestSuite::frame018a()
   }
 }
 
+//----------------------------------------------------------------------------
 // Load pluginA_test and check that it exists and that its expected service does not exist,
 // also check that the expected events in the framework occur
 void ctkPluginFrameworkTestSuite::frame020a()
@@ -229,6 +237,7 @@ void ctkPluginFrameworkTestSuite::frame020a()
   QVERIFY(pA->getState() == ctkPlugin::INSTALLED && lStat == true);
 }
 
+//----------------------------------------------------------------------------
 // Start pluginA_test and check that it gets state ACTIVE,
 // and that the service it registers exist
 void ctkPluginFrameworkTestSuite::frame025b()
@@ -288,6 +297,7 @@ void ctkPluginFrameworkTestSuite::frame025b()
   }
 }
 
+//----------------------------------------------------------------------------
 // Stop pluginA_test and check that it gets state RESOLVED
 void ctkPluginFrameworkTestSuite::frame030b()
 {
@@ -325,6 +335,7 @@ void ctkPluginFrameworkTestSuite::frame030b()
   QVERIFY2(checkSyncListenerEvents(syncPEvts), "Unexpected events");
 }
 
+//----------------------------------------------------------------------------
 // Uninstall pluginA_test and check that it gets state UNINSTALLED
 void ctkPluginFrameworkTestSuite::frame035b()
 {
@@ -358,6 +369,7 @@ void ctkPluginFrameworkTestSuite::frame035b()
            "Unexpected sync events");
 }
 
+//----------------------------------------------------------------------------
 // Install pluginD_test, check that a ctkPluginException is thrown
 // as this plugin is not a Qt plugin
 void ctkPluginFrameworkTestSuite::frame040a()
@@ -395,6 +407,7 @@ void ctkPluginFrameworkTestSuite::frame040a()
   QVERIFY(teststatus == true && pD.isNull() && lStat == true);
 }
 
+//----------------------------------------------------------------------------
 // Install a non-existent plug-in
 void ctkPluginFrameworkTestSuite::frame042a()
 {
@@ -420,6 +433,7 @@ void ctkPluginFrameworkTestSuite::frame042a()
   QVERIFY(exception == true && lStat == true);
 }
 
+//----------------------------------------------------------------------------
 // Add a service listener with a broken LDAP filter to get an exception
 void ctkPluginFrameworkTestSuite::frame045a()
 {
@@ -440,18 +454,21 @@ void ctkPluginFrameworkTestSuite::frame045a()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestSuite::frameworkListener(const ctkPluginFrameworkEvent& fwEvent)
 {
   frameworkEvents.push_back(fwEvent);
   qDebug() << "FrameworkEvent:" << fwEvent;
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestSuite::pluginListener(const ctkPluginEvent& event)
 {
   pluginEvents.push_back(event);
   qDebug() << "PluginEvent:" << event;
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestSuite::syncPluginListener(const ctkPluginEvent& event)
 {
   if (event.getType() == ctkPluginEvent::STARTING ||
@@ -462,12 +479,14 @@ void ctkPluginFrameworkTestSuite::syncPluginListener(const ctkPluginEvent& event
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestSuite::serviceListener(const ctkServiceEvent& event)
 {
   serviceEvents.push_back(event);
   qDebug() << "ServiceEvent:" << event;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginEvent ctkPluginFrameworkTestSuite::getPluginEvent() const
 {
   if (pluginEvents.empty())
@@ -477,6 +496,7 @@ ctkPluginEvent ctkPluginFrameworkTestSuite::getPluginEvent() const
   return pluginEvents.last();
 }
 
+//----------------------------------------------------------------------------
 ctkPluginEvent ctkPluginFrameworkTestSuite::getSyncPluginEvent() const
 {
   if (syncPluginEvents.empty())
@@ -486,6 +506,7 @@ ctkPluginEvent ctkPluginFrameworkTestSuite::getSyncPluginEvent() const
   return syncPluginEvents.last();
 }
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkEvent ctkPluginFrameworkTestSuite::getFrameworkEvent() const
 {
   if (frameworkEvents.empty())
@@ -495,6 +516,7 @@ ctkPluginFrameworkEvent ctkPluginFrameworkTestSuite::getFrameworkEvent() const
   return frameworkEvents.last();
 }
 
+//----------------------------------------------------------------------------
 ctkServiceEvent ctkPluginFrameworkTestSuite::getServiceEvent() const
 {
   if (serviceEvents.empty())
@@ -504,6 +526,7 @@ ctkServiceEvent ctkPluginFrameworkTestSuite::getServiceEvent() const
   return serviceEvents.last();
 }
 
+//----------------------------------------------------------------------------
 bool ctkPluginFrameworkTestSuite::checkListenerEvents(
     bool fwexp, ctkPluginFrameworkEvent::Type fwtype,
     bool pexp, ctkPluginEvent::Type ptype,
@@ -521,6 +544,7 @@ bool ctkPluginFrameworkTestSuite::checkListenerEvents(
   return checkListenerEvents(fwEvts, pEvts, seEvts);
 }
 
+//----------------------------------------------------------------------------
 bool ctkPluginFrameworkTestSuite::checkListenerEvents(
     const QList<ctkPluginFrameworkEvent>& fwEvts,
     const QList<ctkPluginEvent>& pEvts,
@@ -631,6 +655,7 @@ bool ctkPluginFrameworkTestSuite::checkListenerEvents(
   return listenState;
 }
 
+//----------------------------------------------------------------------------
 // Check that the expected events have reached the listeners and
 // reset the events
 bool ctkPluginFrameworkTestSuite::checkSyncListenerEvents(
@@ -649,6 +674,7 @@ bool ctkPluginFrameworkTestSuite::checkSyncListenerEvents(
   return checkSyncListenerEvents(pEvts);
 }
 
+//----------------------------------------------------------------------------
 // Check that the expected events have reached the listeners and
 // reset the events
 bool ctkPluginFrameworkTestSuite::checkSyncListenerEvents(
@@ -692,20 +718,25 @@ bool ctkPluginFrameworkTestSuite::checkSyncListenerEvents(
   return listenState;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceEvent ctkServiceListenerPFW::getEvent() const
 {
   return events.size() ? events.last() : ctkServiceEvent();
 }
 
+//----------------------------------------------------------------------------
 QList<ctkServiceEvent> ctkServiceListenerPFW::getEvents() const
 {
   return events;
 }
+
+//----------------------------------------------------------------------------
 void ctkServiceListenerPFW::clearEvent()
 {
   events.clear();
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListenerPFW::serviceChanged(const ctkServiceEvent& evt)
 {
   events.push_back(evt);

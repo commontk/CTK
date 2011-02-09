@@ -22,9 +22,11 @@
 
 #include "ctkTrackedPlugin_p.h"
 
+//----------------------------------------------------------------------------
 template<class T>
 const bool ctkPluginTrackerPrivate<T>::DEBUG = true;
 
+//----------------------------------------------------------------------------
 template<class T>
 ctkPluginTrackerPrivate<T>::ctkPluginTrackerPrivate(
     ctkPluginTracker<T>* pt, ctkPluginContext* context,
@@ -34,6 +36,7 @@ ctkPluginTrackerPrivate<T>::ctkPluginTrackerPrivate(
   this->customizer = customizer ? customizer : q_func();
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 ctkPluginTrackerPrivate<T>::~ctkPluginTrackerPrivate()
 {
@@ -43,6 +46,7 @@ ctkPluginTrackerPrivate<T>::~ctkPluginTrackerPrivate()
   }
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 QSharedPointer<ctkTrackedPlugin<T> > ctkPluginTrackerPrivate<T>::tracked() const
 {

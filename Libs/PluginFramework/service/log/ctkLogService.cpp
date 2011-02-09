@@ -27,6 +27,7 @@ const int ctkLogService::LOG_WARNING = 2;
 const int ctkLogService::LOG_INFO = 3;
 const int ctkLogService::LOG_DEBUG = 4;
 
+//----------------------------------------------------------------------------
 ctkLogStreamWithServiceRef::ctkLogStreamWithServiceRef(ctkLogService* logService, const ctkServiceReference& sr,
                                                        int level, const std::exception* exc, const char* file,
                                                        const char* function, int line)
@@ -35,12 +36,14 @@ ctkLogStreamWithServiceRef::ctkLogStreamWithServiceRef(ctkLogService* logService
 
 }
 
+//----------------------------------------------------------------------------
 ctkLogStreamWithServiceRef::ctkLogStreamWithServiceRef(const ctkLogStreamWithServiceRef &logStreamWithRef)
  : ctkLogStream(logStreamWithRef), sr(logStreamWithRef.sr)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkLogStreamWithServiceRef::~ctkLogStreamWithServiceRef()
 {
   if (!logged)
@@ -50,10 +53,11 @@ ctkLogStreamWithServiceRef::~ctkLogStreamWithServiceRef()
   }
 }
 
-
+//----------------------------------------------------------------------------
 ctkNullLogStream::ctkNullLogStream() : ctkLogStream(0, 0)
 {}
 
+//----------------------------------------------------------------------------
 ctkNullLogStream::~ctkNullLogStream()
 {
   logged = true;
