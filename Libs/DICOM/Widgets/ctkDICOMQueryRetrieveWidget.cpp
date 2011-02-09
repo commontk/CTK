@@ -46,7 +46,7 @@ ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* _parent):Super
   
   d->setupUi(this);
 
-  connect(d->queryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
+  connect(d->QueryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
 }
 
 //----------------------------------------------------------------------------
@@ -77,6 +77,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   
   ctkDICOMDatabase queryResultDatabase;
 
+  // create a database in memory to hold query results
   try { queryResultDatabase.openDatabase( ":memory:" ); }
   catch (std::exception e)
   {
@@ -85,19 +86,22 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
     return;
   }
 
-  QStringList serverNodes = d->serverNodeWidget->nodes();
+  // for each of the selected server nodes, send the query
+  QStringList serverNodes = d->ServerNodeWidget->nodes();
   foreach (QString server, serverNodes)
   {
-    QMap<QString, QVariant> parameters = d->serverNodeWidget->nodeParameters(server);
+    QMap<QString, QVariant> parameters = d->ServerNodeWidget->nodeParameters(server);
     if ( parameters["CheckState"] == Qt::Checked )
     {
       d->queries[server] = new ctkDICOMQuery;
-      d->queries[server]->setCallingAETitle(d->serverNodeWidget->callingAETitle());
+      d->queries[server]->setCallingAETitle(d->ServerNodeWidget->callingAETitle());
       d->queries[server]->setCalledAETitle(parameters["AETitle"].toString());
       d->queries[server]->setHost(parameters["Address"].toString());
       d->queries[server]->setPort(parameters["Port"].toInt());
       // TODO: add interface to ctkDICOMQuery for specifying query params
       // for now, query for everything
+
+      //d->queries[server]->setFilters( d->
 
       try
       {

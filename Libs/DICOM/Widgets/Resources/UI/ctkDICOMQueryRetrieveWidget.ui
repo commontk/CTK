@@ -30,7 +30,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="ctkDICOMServerNodeWidget" name="serverNodeWidget" native="true">
+          <widget class="ctkDICOMServerNodeWidget" name="ServerNodeWidget" native="true">
            <property name="minimumSize">
             <size>
              <width>300</width>
@@ -49,7 +49,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="ctkDICOMQueryWidget" name="queryWidget" native="true"/>
+          <widget class="ctkDICOMQueryWidget" name="QueryWidget" native="true"/>
          </item>
         </layout>
        </widget>
@@ -74,14 +74,14 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="queryButton">
+       <widget class="QPushButton" name="QueryButton">
         <property name="text">
          <string>Query</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="reteiveButton">
+       <widget class="QPushButton" name="ReteiveButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -104,7 +104,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="refreshButton">
+       <widget class="QPushButton" name="RefreshButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
