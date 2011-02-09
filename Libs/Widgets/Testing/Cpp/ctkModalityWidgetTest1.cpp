@@ -47,6 +47,21 @@ int ctkModalityWidgetTest1(int argc, char * argv [] )
     }
   spy.clear();
 
+  modalityWidget.selectAll();
+  if (!modalityWidget.areAllModalitiesSelected())
+    {
+    std::cerr << "ctkModalityWidget::selectAll() failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  modalityWidget.selectModality("CR", false);
+  if (modalityWidget.areAllModalitiesSelected())
+    {
+    std::cerr << "ctkModalityWidget::selectModality() failed "
+              << " when unselect \"CR\"" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   modalityWidget.showAll();
 
   modalityWidget.show();

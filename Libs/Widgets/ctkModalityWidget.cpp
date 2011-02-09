@@ -108,11 +108,12 @@ void ctkModalityWidgetPrivate::init()
 // --------------------------------------------------------------------------
 void ctkModalityWidgetPrivate::updateAnyCheckBoxState()
 {
+  Q_Q(ctkModalityWidget);
   if (this->SelectedModalities.isEmpty())
     {
     this->AnyCheckBox->setCheckState(Qt::Unchecked);
     }
-  else if (this->SelectedModalities.count() == this->Modalities.count())
+  else if (q->areAllModalitiesSelected())
     {
     this->AnyCheckBox->setCheckState(Qt::Checked);
     }
@@ -201,7 +202,7 @@ void ctkModalityWidget::showModality(const QString& modality, bool show)
 void ctkModalityWidget::selectAll()
 {
   Q_D(ctkModalityWidget);
-  if (d->SelectedModalities.count() == d->Modalities.count())
+  if (this->areAllModalitiesSelected())
     {
     return;
     }
@@ -249,6 +250,27 @@ void ctkModalityWidget::hideAll()
     {
     this->showModality(modality, false);
     }
+}
+
+// --------------------------------------------------------------------------
+bool ctkModalityWidget::areAllModalitiesSelected()const
+{
+  Q_D(const ctkModalityWidget);
+  return d->SelectedModalities.count() == d->Modalities.count();
+}
+
+// --------------------------------------------------------------------------
+bool ctkModalityWidget::areAllModalitiesVisible()const
+{
+  Q_D(const ctkModalityWidget);
+  return d->VisibleModalities.count() == d->Modalities.count();
+}
+
+// --------------------------------------------------------------------------
+QStringList ctkModalityWidget::modalities()const
+{
+  Q_D(const ctkModalityWidget);
+  return d->Modalities.keys();
 }
 
 // --------------------------------------------------------------------------

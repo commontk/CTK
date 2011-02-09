@@ -29,7 +29,7 @@
 class ctkModalityWidgetPrivate;
 
 ///
-/// ctkModalityWidget allows the user to ...
+/// ctkModalityWidget allows the user to select DICOM modalities
 class CTK_WIDGETS_EXPORT ctkModalityWidget : public QWidget
 {
   Q_OBJECT
@@ -42,28 +42,63 @@ public:
   /// Constructor
   /// If \li parent is null, ctkModalityWidget will be a top-level widget
   /// \note The \li parent can be set later using QWidget::setParent()
+  /// By default, all the modalities are selected and only the following list 
+  /// of modalities is visible: ("CT", "MR", "US", "CR", "XA", "NM", "PT")
   explicit ctkModalityWidget(QWidget* parent = 0);
   
   /// Destructor
   virtual ~ctkModalityWidget();
 
+  /// Return the current list of selected modalities, e.g. ("CR", "CT", "NM")
   QStringList selectedModalities()const;
+
+  /// Select a list of modalities, e.g ("XA", "RX", "MG")
   void setSelectedModalities(const QStringList& modalities);
   
+  /// Return the current list of visible modalities
   QStringList visibleModalities()const;
+
+  /// Show a list of modalities
   void setVisibleModalities(const QStringList& modalities);
-  
+
+  /// Select a modality (visible or not). Does nothing if \a modality doesn't
+  /// exist.
   void selectModality(const QString& modality, bool select = true);
+  /// Select a modality. Does nothing if \a modality doesn't exist.
   void showModality(const QString& modality, bool show = true);
   
+  /// Show all the modalities
   void showAll();
+
+  /// Hide all the modalities
   void hideAll();
+
+  /// Return true if all the modalities (visible or not) are selected.
+  bool areAllModalitiesSelected() const;
+
+  /// Return true if all the modalities (checked or not) are visible.
+  bool areAllModalitiesVisible() const;
+
+  /// Return a list of all the modalities: visible or not, selected or not.
+  /// Please note the order of the modalities might be different than in
+  /// selectedModalities and visibleModalities.
+  QStringList modalities() const;
+
 public slots:
+  /// Select all the modalities (visible or not)
+  /// Note: only emit the signal selectedModalitiesChanged once.
   void selectAll();
+
+  /// Unselect all the modalities (visible or not)
+  /// Note: only emit the signal selectedModalitiesChanged once.
   void unselectAll();
 
 signals:
+  /// Fired anytime a modality is selected or unselected.
+  /// Note: When the user click on "Any", it only emits the signal
+  /// once (and not after each item is selected/unselected).
   void selectedModalitiesChanged(const QStringList modalities);
+
 protected slots:
   void onAnyChanged(int state);
   void onModalityChecked(bool);
