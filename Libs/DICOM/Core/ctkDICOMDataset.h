@@ -23,6 +23,8 @@
 
 #include "ctkDICOMCoreExport.h"
 
+#include "ctkDICOMPersonName.h"
+
 #ifndef WIN32
   #define HAVE_CONFIG_H
 #endif
@@ -32,42 +34,6 @@
 
 class DcmDataDictionary;
 
-class QPersonNamePrivate;
-/**
-  \brief A person's name as modelled in DICOM.
-*/
-class CTK_DICOM_CORE_EXPORT QPersonName
-{
-  public:
-
-    QPersonName(const QString& lastName = QString::null,
-                const QString& firstName = QString::null,
-                const QString& middleName = QString::null,
-                const QString& namePrefix = QString::null,
-                const QString& nameSuffix = QString::null);
-
-    /**
-      \brief "Lastname, FirstName MiddleName, Suffix" (useful for alphabetical sorting)
-    */
-    QString GetFormattedName() const;
-
-    QString GetLastName() const;
-    QString GetFirstName() const;
-    QString GetMiddleName() const;
-    QString GetNamePrefix() const;
-    QString GetNameSuffix() const;
- 
-    /// cast operator
-    operator QString() const;
-    std::string toStdString() const;
-
-  private:
-    QScopedPointer<QPersonNamePrivate> d_ptr;
-    Q_DECLARE_PRIVATE(QPersonName);
-};
-
-typedef QList<QPersonName> QPersonNameList;
-Q_DECLARE_METATYPE(QPersonName);
 
 class ctkDICOMDatasetPrivate;
 /**
