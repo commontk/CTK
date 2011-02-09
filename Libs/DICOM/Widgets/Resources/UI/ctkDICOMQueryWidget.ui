@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>566</width>
-    <height>294</height>
+    <width>147</width>
+    <height>141</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -108,7 +108,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="ctkDateRangeWidget" name="widget" native="true"/>
+          <widget class="ctkDateRangeWidget" name="DateRangeWidget" native="true"/>
          </item>
         </layout>
        </widget>
@@ -123,29 +123,12 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="QCheckBox" name="CT">
-           <property name="text">
-            <string>CT</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="MR">
-           <property name="text">
-            <string>MR</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_2">
-           <property name="text">
-            <string>Any</string>
+          <widget class="ctkModalityWidget" name="ModalityWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
          </item>
@@ -162,6 +145,12 @@
    <class>ctkDateRangeWidget</class>
    <extends>QWidget</extends>
    <header>ctkDateRangeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkModalityWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkModalityWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
