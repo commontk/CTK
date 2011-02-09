@@ -2,6 +2,7 @@
 #include <QTreeView>
 #include <QTabBar>
 #include <QSettings>
+#include <QHBoxLayout>
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
@@ -126,6 +127,8 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
 
   // checkable headers - allow user to select the patient/studies to retrieve
   d->results->setModel(&d->model);
+  d->model.setDatabase(d->queryResultDatabase.database());
+
   d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
   QHeaderView* previousHeaderView = d->results->header();
   ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->results);
@@ -134,14 +137,10 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   headerView->setPropagateToItems(true);
   d->results->setHeader(headerView);
+  // headerView is hidden because it was created with a visisble parent widget 
+  headerView->setHidden(false);
 
-  d->model.setDatabase(d->queryResultDatabase.database());
-  d->results->setModel(&d->model);
-
-  if ( d->model.rowCount() > 0 )
-  {
-    d->RetrieveButton->setEnabled(true);
-  }
+  d->RetrieveButton->setEnabled(d->model.rowCount());
 }
 
 //----------------------------------------------------------------------------
