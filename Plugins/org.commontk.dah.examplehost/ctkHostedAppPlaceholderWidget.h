@@ -22,8 +22,10 @@
 #ifndef CTKHOSTEDAPPPLACEHOLDERWIDGET_H
 #define CTKHOSTEDAPPPLACEHOLDERWIDGET_H
 
+// Qt includes
 #include <QFrame>
-#include <QDebug>
+
+// CTK includes
 #include <org_commontk_dah_examplehost_Export.h>
 
 class org_commontk_dah_examplehost_EXPORT ctkHostedAppPlaceholderWidget : public QFrame
@@ -33,19 +35,7 @@ class org_commontk_dah_examplehost_EXPORT ctkHostedAppPlaceholderWidget : public
 public:
 
   explicit ctkHostedAppPlaceholderWidget(QWidget *parent = 0);
-  QRect getAbsolutePosition()
-  {
-    QWidget* current = this;
-    int x = 0;
-    int y = 0;
-    do
-    {
-      x = x + current->x();
-      y = y + current->y();
-      current = dynamic_cast<QWidget*>(current->parent());
-    } while (current);
-    return QRect(x,y,width(),height());
-  }
+  QRect getAbsolutePosition();
 
 signals:
 
@@ -53,7 +43,7 @@ signals:
 
 protected:
 
-  void resizeEvent(QResizeEvent* /* event */) { emit resized(); }
+  virtual void resizeEvent(QResizeEvent* /* event */) { emit resized(); }
 };
 
 #endif // CTKHOSTEDAPPPLACEHOLDERWIDGET_H

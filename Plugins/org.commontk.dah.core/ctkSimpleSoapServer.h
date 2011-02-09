@@ -23,10 +23,13 @@
 #ifndef CTKSIMPLESOAPSERVER_H
 #define CTKSIMPLESOAPSERVER_H
 
+// Qt includes
 #include <QTcpServer>
 
+// QtSoap includes
 #include <qtsoap.h>
 
+// CTK includes
 #include <org_commontk_dah_core_Export.h>
 #include <ctkDicomAppHostingTypes.h>
 
@@ -47,7 +50,7 @@ public slots:
 
 protected:
 
-  void incomingConnection(int socketDescriptor);
+  virtual void incomingConnection(int socketDescriptor);
 
 };
 

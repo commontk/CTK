@@ -23,6 +23,7 @@
 #ifndef CTKDICOMHOSTSERVICE_P_H
 #define CTKDICOMHOSTSERVICE_P_H
 
+// CTK includes
 #include <ctkDicomHostInterface.h>
 #include <ctkDicomExchangeService.h>
 
@@ -35,21 +36,21 @@ public:
   ctkDicomHostService(ushort port, QString path);
   virtual ~ctkDicomHostService();
 
-  QString generateUID();
-  QRect getAvailableScreen(const QRect& preferredScreen);
-  QString getOutputLocation(const QStringList& preferredProtocols);
-  void notifyStateChanged(ctkDicomAppHosting::State state);
-  void notifyStatus(const ctkDicomAppHosting::Status& status);
+  virtual QString generateUID();
+  virtual QRect getAvailableScreen(const QRect& preferredScreen);
+  virtual QString getOutputLocation(const QStringList& preferredProtocols);
+  virtual void notifyStateChanged(ctkDicomAppHosting::State state);
+  virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
 
   // Exchange methods implemented in ctkDicomExchangeService
-  bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
 
-  QList<ctkDicomAppHosting::ObjectLocator> getData(
+  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData);
 
-  void releaseData(QList<QUuid> objectUUIDs);
+  virtual void releaseData(QList<QUuid> objectUUIDs);
 
 };
 

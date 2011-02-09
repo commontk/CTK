@@ -21,11 +21,13 @@
 
 #include "ctkSoapMessageProcessor.h"
 
+//----------------------------------------------------------------------------
 ctkSoapMessageProcessor::~ctkSoapMessageProcessor()
 {
 
 }
 
+//----------------------------------------------------------------------------
 bool ctkSoapMessageProcessor::process(
   const QtSoapMessage& message, QtSoapMessage* reply) const
 {
@@ -35,11 +37,12 @@ bool ctkSoapMessageProcessor::process(
   return false;
 }
 
+//----------------------------------------------------------------------------
 bool ctkSoapMessageProcessor::operator==(const ctkSoapMessageProcessor& rhs)
 {
   if( this == &rhs )
-  {
+    {
     return true;
-  }
+    }
   return false;
 }

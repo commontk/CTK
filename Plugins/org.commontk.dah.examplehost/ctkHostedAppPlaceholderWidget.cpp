@@ -19,9 +19,30 @@
 
 =============================================================================*/
 
+// Qt includes
+#include <QDebug>
+
+// CTK includes
 #include "ctkHostedAppPlaceholderWidget.h"
 
+//----------------------------------------------------------------------------
 ctkHostedAppPlaceholderWidget::ctkHostedAppPlaceholderWidget(QWidget *parent) :
     QFrame(parent)
 {
+}
+
+//----------------------------------------------------------------------------
+QRect ctkHostedAppPlaceholderWidget::getAbsolutePosition()
+{
+  QWidget* current = this;
+  int x = 0;
+  int y = 0;
+  do
+    {
+    x = x + current->x();
+    y = y + current->y();
+    current = dynamic_cast<QWidget*>(current->parent());
+    }
+  while (current);
+  return QRect(x,y,width(),height());
 }

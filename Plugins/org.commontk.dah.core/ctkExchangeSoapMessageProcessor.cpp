@@ -24,10 +24,12 @@
 
 #include <ctkDicomAppHostingTypesHelper.h>
 
+//----------------------------------------------------------------------------
 ctkExchangeSoapMessageProcessor::ctkExchangeSoapMessageProcessor(ctkDicomExchangeInterface* inter)
 : exchangeInterface(inter)
 {}
 
+//----------------------------------------------------------------------------
 bool ctkExchangeSoapMessageProcessor::process(
   const QtSoapMessage& message, QtSoapMessage* reply ) const
 {
@@ -41,32 +43,34 @@ bool ctkExchangeSoapMessageProcessor::process(
   bool foundMethod = false;
 
   if (methodName == "notifyDataAvailable")
-  {
+    {
     processNotifyDataAvailable(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "getData")
-  {
+    {
     processGetData(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "releaseData")
-  {
+    {
     processReleaseData(message, reply);
     foundMethod = true;
-  }
+    }
 
   return foundMethod;
 }
+
+//----------------------------------------------------------------------------
 void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
   const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()[0];//"availableData"];
   if(inputType.isValid()==false)
-  {
+    {
     qCritical() << "  NotifyDataAvailable: availableData not valid. " << inputType.errorString();
-  }
+    }
   CTK_SOAP_LOG( << inputType.toString());
   const ctkDicomAppHosting::AvailableData data = ctkDicomSoapAvailableData::getAvailableData(inputType);
   const QtSoapType& inputType2 = message.method()["lastData"];
@@ -81,6 +85,7 @@ void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
   reply->addMethodArgument(resultType);
 }
 
+//----------------------------------------------------------------------------
 void ctkExchangeSoapMessageProcessor::processGetData(
     const QtSoapMessage &message, QtSoapMessage *reply) const
 {
@@ -102,6 +107,7 @@ void ctkExchangeSoapMessageProcessor::processGetData(
   reply->addMethodArgument(resultType);
 }
 
+//----------------------------------------------------------------------------
 void ctkExchangeSoapMessageProcessor::processReleaseData(
     const QtSoapMessage &message, QtSoapMessage * /*reply*/) const
 {

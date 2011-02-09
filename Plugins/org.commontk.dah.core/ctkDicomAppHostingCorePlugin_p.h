@@ -36,8 +36,8 @@ public:
   ctkDicomAppHostingCorePlugin();
   virtual ~ctkDicomAppHostingCorePlugin();
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+  virtual void start(ctkPluginContext* context);
+  virtual void stop(ctkPluginContext* context);
 
   static ctkDicomAppHostingCorePlugin* getInstance();
 

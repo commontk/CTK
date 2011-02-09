@@ -58,8 +58,8 @@ public slots:
   void outputMessage();
 protected:
 
-  ctkExampleDicomHost* host;
-  QString appFileName;
+  ctkExampleDicomHost* Host;
+  QString AppFileName;
 
 private:
 

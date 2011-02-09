@@ -23,11 +23,14 @@
 
 #include "ctkDicomHostServerPrivate.h"
 
+//----------------------------------------------------------------------------
 ctkDicomHostServer::ctkDicomHostServer(ctkDicomHostInterface* hostInterface, int port)
   : d_ptr(new ctkDicomHostServerPrivate(hostInterface, port))
 {
 
 }
+
+//----------------------------------------------------------------------------
 ctkDicomHostServer::~ctkDicomHostServer()
 {
 }

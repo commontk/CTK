@@ -19,10 +19,6 @@
 
 =============================================================================*/
 
-
-#include "ctkExampleDicomAppLogic_p.h"
-#include "ctkExampleDicomAppPlugin_p.h"
-
 // Qt includes
 #include <QtPlugin>
 #include <QRect>
@@ -37,15 +33,21 @@
 // DCMTK includes
 #include <dcmimage.h>
 
+// CTK includes
+#include "ctkExampleDicomAppLogic_p.h"
+#include "ctkExampleDicomAppPlugin_p.h"
+
+//----------------------------------------------------------------------------
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic()
-  : hostTracker(ctkExampleDicomAppPlugin::getPluginContext()), button(NULL)
+  : HostTracker(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
 {
-  hostTracker.open();
+  this->HostTracker.open();
 
   connect(this, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)), Qt::QueuedConnection);
   emit stateChanged(ctkDicomAppHosting::IDLE);
 }
 
+//----------------------------------------------------------------------------
 ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
 {
   ctkPluginContext* context = ctkExampleDicomAppPlugin::getPluginContext();
@@ -56,11 +58,13 @@ ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
   }
 }
 
+//----------------------------------------------------------------------------
 ctkDicomAppHosting::State ctkExampleDicomAppLogic::getState()
 {
   return ctkDicomAppHosting::IDLE;
 }
 
+//----------------------------------------------------------------------------
 bool ctkExampleDicomAppLogic::setState(ctkDicomAppHosting::State newState)
 {
   qDebug() << "setState called";
@@ -68,87 +72,90 @@ bool ctkExampleDicomAppLogic::setState(ctkDicomAppHosting::State newState)
   return true;
 }
 
+//----------------------------------------------------------------------------
 bool ctkExampleDicomAppLogic::bringToFront(const QRect& /*requestedScreenArea*/)
 {
   return false;
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::do_something()
 {
-  button = new QPushButton("Button from App");
-  connect(button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
+  this->Button = new QPushButton("Button from App");
+  connect(this->Button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
   try
-  {
-
+    {
     QRect preferred(50,50,100,100);
     qDebug() << "  Asking:getAvailableScreen";
     QRect rect = getHostInterface()->getAvailableScreen(preferred);
     qDebug() << "  got sth:" << rect.top();
-    button->move(rect.topLeft());
-    button->resize(rect.size());
-  }
+    this->Button->move(rect.topLeft());
+    this->Button->resize(rect.size());
+    }
   catch (const std::runtime_error& e)
-  {
+    {
     qCritical() << e.what();
     return;
-  }
-  button->show();
+    }
+  this->Button->show();
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::changeState(int anewstate)
 {
   ctkDicomAppHosting::State newstate = static_cast<ctkDicomAppHosting::State>(anewstate);
 
   if (newstate == ctkDicomAppHosting::INPROGRESS)
-  {
+    {
     do_something();
-  }
+    }
 
   try
-  {
+    {
     getHostInterface()->notifyStateChanged(newstate);
-  }
+    }
   catch (const std::runtime_error& e)
-  {
+    {
     qCritical() << e.what();
     return;
-  }
+    }
 
   if (newstate == ctkDicomAppHosting::CANCELED)
-  {
+    {
     qDebug() << "  Received changeState(CANCELED) ... now releasing all resources and afterwards changing to state IDLE.";
     qDebug() << "  Changing to state IDLE.";
     try
-    {
+      {
       getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
-    }
+      }
     catch (const std::runtime_error& e)
-    {
+      {
       qCritical() << e.what();
       return;
+      }
     }
-  }
 
   if (newstate == ctkDicomAppHosting::EXIT)
-  {
+    {
     qDebug() << "  Received changeState(EXIT) ... exiting.";
-    getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
+    this->getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
     qApp->exit(0);
-  }
+    }
 }
 
+//----------------------------------------------------------------------------
 bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
 {
   Q_UNUSED(lastData)
   QString s;
-  if(button==NULL)
-  {
+  if(this->Button == 0)
+    {
     qCritical() << "Button is null!";
     return false;
-  }
+    }
   s = "Received notifyDataAvailable with patients.count()= " + QString().setNum(data.patients.count());
   if(data.patients.count()>0)
-  {
+    {
     s=s+" name:"+data.patients.begin()->name+" studies.count(): "+QString().setNum(data.patients.begin()->studies.count());
     if(data.patients.begin()->studies.count()>0)
     {
@@ -162,10 +169,11 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableD
       }
     }
   }
-  button->setText(s);
+  this->Button->setText(s);
   return false;
 }
 
+//----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
   QList<QUuid> objectUUIDs,
   QList<QString> acceptableTransferSyntaxUIDs,
@@ -177,6 +185,7 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
   return QList<ctkDicomAppHosting::ObjectLocator>();
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::releaseData(QList<QUuid> objectUUIDs)
 {
   Q_UNUSED(objectUUIDs)
@@ -184,7 +193,7 @@ void ctkExampleDicomAppLogic::releaseData(QList<QUuid> objectUUIDs)
 
 ctkDicomHostInterface* ctkExampleDicomAppLogic::getHostInterface() const
 {
-  ctkDicomHostInterface* host = hostTracker.getService();
+  ctkDicomHostInterface* host = this->HostTracker.getService();
   if (!host) throw std::runtime_error("DICOM Host Interface not available");
   return host;
 }
@@ -217,6 +226,5 @@ void ctkExampleDicomAppLogic::buttonClicked()
     qtImage->setPixmap(ctkImage.getPixmap(0));
     qtImage->show();
   }
-  button->setText(s);
-
+  this->Button->setText(s);
 }

@@ -19,16 +19,19 @@
 
 =============================================================================*/
 
+// Qt includes
+#include <QDebug>
+#include <QFileDialog>
+#include <QProcess>
+
+// CTK includes
 #include "ctkHostAppExampleWidget.h"
 #include "ui_ctkHostAppExampleWidget.h"
 #include "ctkExampleDicomHost.h"
 #include "ctkDicomAppService.h"
 #include <ctkDicomAppHostingTypesHelper.h>
 
-#include <QDebug>
-#include <QFileDialog>
-#include <QProcess>
-
+//----------------------------------------------------------------------------
 ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ctkHostAppExampleWidget)
@@ -37,109 +40,121 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
   ui->setupUi(this);
   ui->crashLabel->setVisible(false);
   ui->messageOutput->setVisible(false);
-  this->host = new ctkExampleDicomHost(ui->placeholderFrame);
+  this->Host = new ctkExampleDicomHost(ui->placeholderFrame);
 
-  connect(&this->host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
-  connect(&this->host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));
+  connect(&this->Host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
+  connect(&this->Host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));
   connect(ui->placeholderFrame,SIGNAL(resized()),SLOT(placeholderResized()));
-  connect(this->host,SIGNAL( stateChangedReceived(ctkDicomAppHosting::State)),SLOT(appStateChanged(ctkDicomAppHosting::State)));
+  connect(this->Host,SIGNAL( stateChangedReceived(ctkDicomAppHosting::State)),SLOT(appStateChanged(ctkDicomAppHosting::State)));
 
 }
 
+//----------------------------------------------------------------------------
 ctkHostAppExampleWidget::~ctkHostAppExampleWidget()
 {
-  delete host;
+  delete this->Host;
   delete ui;
 }
 
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::startButtonClicked()
 {
   qDebug() << "start button clicked";
-  if (host)
-  {
-    host->StartApplication(appFileName);
+  if (this->Host)
+    {
+    this->Host->StartApplication(this->AppFileName);
     //forward output to textedit
-    connect(&this->host->getAppProcess(),SIGNAL(readyReadStandardOutput()),this,SLOT(outputMessage()));
-  }
+    connect(&this->Host->getAppProcess(),SIGNAL(readyReadStandardOutput()),this,SLOT(outputMessage()));
+    }
 }
 
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::runButtonClicked()
 {
   qDebug() << "run button clicked";
-  if (host)
-  {
-    bool reply = host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
+  if (this->Host)
+    {
+    bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
     qDebug() << "  setState(INPROGRESS) returned: " << reply;
-  }
+    }
 }
 
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::stopButtonClicked()
 {
   qDebug() << "stop button clicked";
-  host->getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
+  this->Host->getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
 }
 
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::loadButtonClicked()
 {
   qDebug() << "load button clicked";
   this->setAppFileName(QFileDialog::getOpenFileName(this,"Choose hosted application",QApplication::applicationDirPath()));
 }
 
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::setAppFileName(QString name)
 {
-  this->appFileName = name;
-  if (QFile(this->appFileName).permissions() & QFile::ExeUser )
-  {
-    this->ui->applicationPathLabel->setText(this->appFileName);
-  }
+  this->AppFileName = name;
+  if (QFile(this->AppFileName).permissions() & QFile::ExeUser )
+    {
+    this->ui->applicationPathLabel->setText(this->AppFileName);
+    }
   else
-  {
-    this->ui->applicationPathLabel->setText(QString("<font color='red'>Not executable:</font>").append(this->appFileName));
-  }
+    {
+    this->ui->applicationPathLabel->setText(
+        QString("<font color='red'>Not executable:</font>").append(this->AppFileName));
+    }
 }
 
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::appProcessError(QProcess::ProcessError error)
 {
   if (error == QProcess::Crashed)
-  {
+    {
     qDebug() << "crash detected";
     ui->crashLabel->setVisible(true);
-  }
+    }
 }
 
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::appProcessStateChanged(QProcess::ProcessState state)
 {
   QString labelText;
-  switch (state){
-  case QProcess::Running:
-    ui->processStateLabel->setText("Running");
-    break;
-  case QProcess::NotRunning:
-    if (host->getAppProcess().exitStatus() == QProcess::CrashExit )
+  switch (state)
     {
-      labelText = "crashed";
+    case QProcess::Running:
+      ui->processStateLabel->setText("Running");
+      break;
+    case QProcess::NotRunning:
+      if (this->Host->getAppProcess().exitStatus() == QProcess::CrashExit )
+      {
+        labelText = "crashed";
+      }
+      else
+      {
+        labelText = "Not Running, last exit code ";
+        labelText.append(QString::number(this->Host->getAppProcess().exitCode()));
+      }
+      ui->processStateLabel->setText(labelText);
+      break;
+    case QProcess::Starting:
+      ui->processStateLabel->setText("Starting");
+      break;
+    default:
+      ;
     }
-    else
-    {
-      labelText = "Not Running, last exit code ";
-      labelText.append(QString::number(host->getAppProcess().exitCode()));
-    }
-    ui->processStateLabel->setText(labelText);
-    break;
-  case QProcess::Starting:
-    ui->processStateLabel->setText("Starting");
-    break;
-  default:
-    ;
-  }
 }
 
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::placeholderResized()
 {
   qDebug() << "resized";
   //ui->placeholderFrame->printPosition();
 }
 
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
 {
   ui->statusLabel->setText(ctkDicomSoapState::toStringValue(state));
@@ -154,15 +169,13 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
   switch (state)
   {
   case ctkDicomAppHosting::IDLE:
-    if (host->getApplicationState()!=ctkDicomAppHosting::IDLE)
+    if (this->Host->getApplicationState() != ctkDicomAppHosting::IDLE)
     {
       qDebug()<<"state was not IDLE before -> setState EXIT ";
-      host->getDicomAppService()->setState (ctkDicomAppHosting::EXIT);
-
+      this->Host->getDicomAppService()->setState(ctkDicomAppHosting::EXIT);
     }
     break;
   case ctkDicomAppHosting::INPROGRESS:
-
     patient.name = "John Doe";
     patient.id = "0000";
     patient.assigningAuthority = "authority";
@@ -184,7 +197,7 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
     data.patients.append (patient);
 
     qDebug()<<"send dataDescriptors";
-    reply = host->getDicomAppService()->notifyDataAvailable (data,true);
+    reply = this->Host->getDicomAppService()->notifyDataAvailable (data,true);
     qDebug() << "  notifyDataAvailable(1111) returned: " << reply;
     break;
   case ctkDicomAppHosting::COMPLETED:
@@ -196,11 +209,11 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
     //do nothing
     break;
   }
-  host->setApplicationState(state);
+  this->Host->setApplicationState(state);
 }
 
-
+//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::outputMessage ()
 {
-  ui->messageOutput->append (host->processReadAll ());
+  ui->messageOutput->append (this->Host->processReadAll ());
 }

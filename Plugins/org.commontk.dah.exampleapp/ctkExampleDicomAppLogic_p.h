@@ -43,19 +43,19 @@ public:
   virtual ~ctkExampleDicomAppLogic();
 
   // ctkDicomAppInterface
-  ctkDicomAppHosting::State getState();
-  bool setState(ctkDicomAppHosting::State newState);
-  bool bringToFront(const QRect& requestedScreenArea);
+  virtual ctkDicomAppHosting::State getState();
+  virtual bool setState(ctkDicomAppHosting::State newState);
+  virtual bool bringToFront(const QRect& requestedScreenArea);
 
   // ctkDicomExchangeInterface
-  bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
 
-  QList<ctkDicomAppHosting::ObjectLocator> getData(
+  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
     QList<QUuid> objectUUIDs, 
     QList<QString> acceptableTransferSyntaxUIDs, 
     bool includeBulkData);
 
-  void releaseData(QList<QUuid> objectUUIDs);
+  virtual void releaseData(QList<QUuid> objectUUIDs);
 
   // some logic
   void do_something();
@@ -74,9 +74,9 @@ private:
 
   ctkDicomHostInterface* getHostInterface() const;
 
-  ctkServiceTracker<ctkDicomHostInterface*> hostTracker;
+  ctkServiceTracker<ctkDicomHostInterface*> HostTracker;
 
-  QPushButton *button;
+  QPushButton * Button;
 
   QUuid uuid;
 

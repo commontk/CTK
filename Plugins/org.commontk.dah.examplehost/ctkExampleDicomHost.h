@@ -22,13 +22,15 @@
 #ifndef CTKEXAMPLEDICOMHOST_H
 #define CTKEXAMPLEDICOMHOST_H
 
+// Qt includes
+#include <QUrl>
+#include <QProcess>
+
+// CTK includes
 #include <ctkDicomAbstractHost.h>
 #include <ctkHostedAppPlaceholderWidget.h>
 
 #include <org_commontk_dah_examplehost_Export.h>
-
-#include <QUrl>
-#include <QProcess>
 
 class org_commontk_dah_examplehost_EXPORT ctkExampleDicomHost : public QObject, public ctkDicomAbstractHost
 {
@@ -37,6 +39,7 @@ class org_commontk_dah_examplehost_EXPORT ctkExampleDicomHost : public QObject, 
 public:
 
   ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort = 8080, int appPort = 8081);
+  virtual ~ctkExampleDicomHost();
 
   virtual void StartApplication(QString AppPath);
   virtual QString generateUID() { return ""; }
@@ -52,11 +55,11 @@ public:
       bool includeBulkData);
   virtual void releaseData(QList<QUuid> objectUUIDs);
 
-  const QProcess& getAppProcess() const { return appProcess; }
-  const ctkDicomAppHosting::State getApplicationState()const {return applicationState;}
-  void setApplicationState(ctkDicomAppHosting::State state){applicationState = state;}
+  const QProcess& getAppProcess() const { return this->AppProcess; }
+  ctkDicomAppHosting::State getApplicationState()const {return this->ApplicationState;}
+  void setApplicationState(ctkDicomAppHosting::State state){this->ApplicationState = state;}
 
-  QByteArray processReadAll(){return appProcess.readAllStandardOutput ();}
+  QByteArray processReadAll(){return this->AppProcess.readAllStandardOutput ();}
 
 signals:
 
@@ -66,9 +69,9 @@ signals:
 
 protected:
 
-  QProcess appProcess;
-  ctkHostedAppPlaceholderWidget* placeholderWidget;
-  ctkDicomAppHosting::State applicationState;
+  QProcess AppProcess;
+  ctkHostedAppPlaceholderWidget* PlaceholderWidget;
+  ctkDicomAppHosting::State ApplicationState;
 
 protected slots:
 

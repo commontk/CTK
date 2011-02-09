@@ -25,17 +25,20 @@
 
 #include "ctkDicomAppHostingTypesHelper.h"
 
+//----------------------------------------------------------------------------
 ctkDicomExchangeService::ctkDicomExchangeService(ushort port, QString path)
   : ctkSimpleSoapClient(port, path)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkDicomExchangeService::~ctkDicomExchangeService()
 {
 
 }
 
+//----------------------------------------------------------------------------
 bool ctkDicomExchangeService::notifyDataAvailable(
     ctkDicomAppHosting::AvailableData data, bool lastData)
 {
@@ -46,6 +49,7 @@ bool ctkDicomExchangeService::notifyDataAvailable(
   return ctkDicomSoapBool::getBool(result);
 }
 
+//----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
     QList<QUuid> objectUUIDs,
     QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData)
@@ -70,6 +74,7 @@ DumpAll(result); //xxx
   return ctkDicomSoapArrayOfObjectLocators::getArray(result);
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs)
 {
   QList<QtSoapType*> list;
@@ -78,5 +83,3 @@ void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs)
    submitSoapRequest("releaseData",list);
   return;
 }
-
-

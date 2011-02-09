@@ -19,70 +19,74 @@
 
 =============================================================================*/
 
-#include "ctkDicomHostServerPrivate.h"
-
-#include <ctkDicomHostInterface.h>
-
+// Qt includes
 #include <QHostAddress>
 
-#include <stdexcept>
+// CTK includes
+#include "ctkDicomHostServerPrivate.h"
+#include <ctkDicomHostInterface.h>
 #include <ctkDicomAppHostingTypesHelper.h>
 
 #include <ctkExchangeSoapMessageProcessor.h>
 #include "ctkHostSoapMessageProcessor_p.h"
 
+// STD includes
+#include <stdexcept>
 
+//----------------------------------------------------------------------------
 ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port) :
-    port(port), hostInterface(hostInterface)
+    Port(port), HostInterface(hostInterface)
 {
-  connect(&server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
+  connect(&this->Server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));
-  connect(&server, SIGNAL(incomingWSDLMessage(QString,QString*)),
+  connect(&this->Server, SIGNAL(incomingWSDLMessage(QString,QString*)),
           this, SLOT(incomingWSDLMessage(QString,QString*)));
 
-  if (!server.listen(QHostAddress::LocalHost, this->port))
-  {
-    qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
-  }
+  if (!this->Server.listen(QHostAddress::LocalHost, this->Port))
+    {
+    qCritical() << "Listening to 127.0.0.1:" << this->Port << " failed.";
+    }
 
   ctkHostSoapMessageProcessor* hostProcessor = new ctkHostSoapMessageProcessor( hostInterface );
-  processors.push_back(hostProcessor);
+  this->Processors.push_back(hostProcessor);
   ctkExchangeSoapMessageProcessor* exchangeProcessor = new ctkExchangeSoapMessageProcessor( hostInterface );
-  processors.push_back(exchangeProcessor);
+  this->Processors.push_back(exchangeProcessor);
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomHostServerPrivate::incomingWSDLMessage(
   const QString& message, QString* reply)
 {
   if (message == "?wsdl")
-  {
+    {
     QFile wsdlfile(":/dah/HostService.wsdl");
     wsdlfile.open(QFile::ReadOnly | QFile::Text);
     if(wsdlfile.isOpen())
-    {
+      {
       QTextStream textstream(&wsdlfile);
       *reply = textstream.readAll();
       QString actualURL="http://localhost:";
-      actualURL+=QString::number(port)+"/HostInterface"; // FIXME: has to be replaced by url provided by host
+      actualURL+=QString::number(this->Port)+"/HostInterface"; // FIXME: has to be replaced by url provided by host
       reply->replace("REPLACE_WITH_ACTUAL_URL",actualURL);
       reply->replace("HostService_schema1.xsd",actualURL+"?xsd=1");
       //reply->replace("<soap:body use=\"literal\"/>","<soap:body use=\"literal\"></soap:body>");
+      }
     }
-  }
   else if (message == "?xsd=1")
-  {
+    {
     QFile wsdlfile(":/dah/HostService_schema1.xsd");
     wsdlfile.open(QFile::ReadOnly | QFile::Text);
     if(wsdlfile.isOpen())
-    {
+      {
       QTextStream textstream(&wsdlfile);
       *reply = textstream.readAll();
+      }
     }
-  }
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomHostServerPrivate::incomingSoapMessage(
   const QtSoapMessage& message, QtSoapMessage* reply)
 {
-  processors.process(message, reply);
+  this->Processors.process(message, reply);
 }

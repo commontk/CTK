@@ -23,11 +23,12 @@
 
 #include <ctkDicomAppHostingTypesHelper.h>
 
-
+//----------------------------------------------------------------------------
 ctkAppSoapMessageProcessor::ctkAppSoapMessageProcessor(ctkDicomAppInterface* inter)
-  : appInterface(inter)
+  : AppInterface(inter)
 {}
 
+//----------------------------------------------------------------------------
 bool ctkAppSoapMessageProcessor::process(
   const QtSoapMessage& message, QtSoapMessage* reply ) const
 {
@@ -41,24 +42,25 @@ bool ctkAppSoapMessageProcessor::process(
   bool foundMethod = false;
   
   if (methodName == "getState")
-  {
+    {
     processGetState(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "setState")
-  {
+    {
     processSetState(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "bringToFront")
-  {
+    {
     processBringToFront(message, reply);
     foundMethod = true;
-  }
+    }
   
   return foundMethod;
 }
 
+//----------------------------------------------------------------------------
 void ctkAppSoapMessageProcessor::processGetState(
   const QtSoapMessage &message, QtSoapMessage *reply) const
 {
@@ -66,26 +68,28 @@ void ctkAppSoapMessageProcessor::processGetState(
 
   // extract arguments from input message: nothing to be done
   // query interface
-  const ctkDicomAppHosting::State result = appInterface->getState();
+  const ctkDicomAppHosting::State result = this->AppInterface->getState();
   // set reply message
   reply->setMethod("getState");
   QtSoapSimpleType* resultType = new ctkDicomSoapState("getStateResponse",result);
   reply->addMethodArgument(resultType);
 }
 
+//----------------------------------------------------------------------------
 void ctkAppSoapMessageProcessor::processSetState(
   const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["newState"];
   // query interface
-  bool result = appInterface->setState(ctkDicomSoapState::getState(inputType));
+  bool result = this->AppInterface->setState(ctkDicomSoapState::getState(inputType));
   // set reply message
   reply->setMethod("setState");
   QtSoapType* resultType = new ctkDicomSoapBool("setStateResponse",result);
   reply->addMethodArgument(resultType);
 }
 
+//----------------------------------------------------------------------------
 void ctkAppSoapMessageProcessor::processBringToFront(
   const QtSoapMessage &message, QtSoapMessage *reply) const
 {
@@ -93,7 +97,7 @@ void ctkAppSoapMessageProcessor::processBringToFront(
   const QtSoapType& inputType = message.method()["requestedScreenArea"];
   const QRect requestedScreenArea = ctkDicomSoapRectangle::getQRect(inputType);
   // query interface
-  bool result = appInterface->bringToFront(requestedScreenArea);
+  bool result = this->AppInterface->bringToFront(requestedScreenArea);
   // set reply message
   reply->setMethod("bringToFront");
   QtSoapType* resultType = new ctkDicomSoapBool("bringToFrontResponse",result);

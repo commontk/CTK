@@ -34,10 +34,10 @@
 //----------------------------------------------------------------------------
 ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
-    placeholderWidget(placeholderWidget),
-    applicationState(ctkDicomAppHosting::IDLE)
+    PlaceholderWidget(placeholderWidget),
+    ApplicationState(ctkDicomAppHosting::IDLE)
 {
-  //connect(&this->appProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
+  //connect(&this->AppProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
 }
 
 //----------------------------------------------------------------------------
@@ -56,8 +56,8 @@ void ctkExampleDicomHost::StartApplication(QString AppPath)
   //}
   //qDebug() << "starting application: " << AppPath << " " << arguments;
   qDebug() << "starting application: " << AppPath << " " << arguments;
-  this->appProcess.setProcessChannelMode(QProcess::MergedChannels);
-  this->appProcess.start(AppPath, arguments);
+  this->AppProcess.setProcessChannelMode(QProcess::MergedChannels);
+  this->AppProcess.start(AppPath, arguments);
 }
 
 //----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ QRect ctkExampleDicomHost::getAvailableScreen(const QRect& preferredScreen)
 {
   qDebug()<< "Application asked for this area:"<< preferredScreen;
 
-  QRect rect (this->placeholderWidget->getAbsolutePosition());
+  QRect rect (this->PlaceholderWidget->getAbsolutePosition());
 
   emit giveAvailableScreen(rect);
   return rect;
@@ -91,17 +91,17 @@ void ctkExampleDicomHost::notifyStatus(const ctkDicomAppHosting::Status& status)
 ctkExampleDicomHost::~ctkExampleDicomHost()
 {
   qDebug() << "Exiting host: trying to terminate app";
-  this->appProcess.terminate();
+  this->AppProcess.terminate();
   qDebug() << "Exiting host: trying to kill app";
-  this->appProcess.kill();
+  this->AppProcess.kill();
 }
 
 //----------------------------------------------------------------------------
 void ctkExampleDicomHost::forwardConsoleOutput()
 {
-  while( this->appProcess.bytesAvailable() )
+  while( this->AppProcess.bytesAvailable() )
   {
-    QString line( this->appProcess.readLine() );
+    QString line( this->AppProcess.readLine() );
     line.prepend(">>>> ");
     std::cout << line.toStdString();
   }
@@ -129,10 +129,10 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
   QUuid uuid;
   QUuid testUuid("{11111111-1111-1111-1111-111111111111}");
   foreach(uuid, objectUUIDs)
-  {
+    {
     //stupid test: only works with one uuid
     if (uuid == testUuid)
-    {
+      {
       ctkDicomAppHosting::ObjectLocator objectLocator;
       objectLocator.locator = QUuid();
       objectLocator.source = QUuid();
@@ -142,10 +142,9 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
       objectLocator.offset = 0;
       objectLocator.URI = "testFile.txt";
       locators.append (objectLocator);
-    }
-
+      }
     return locators;
-  }
+    }
 
   return QList<ctkDicomAppHosting::ObjectLocator>();
 }

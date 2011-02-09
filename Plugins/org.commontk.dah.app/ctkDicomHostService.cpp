@@ -23,15 +23,18 @@
 
 #include <ctkDicomAppHostingTypesHelper.h>
 
+//----------------------------------------------------------------------------
 ctkDicomHostService::ctkDicomHostService(ushort port, QString path)
   : ctkDicomExchangeService(port, path)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkDicomHostService::~ctkDicomHostService()
 {
 }
 
+//----------------------------------------------------------------------------
 QString ctkDicomHostService::generateUID()
 {
   const QtSoapType& result = submitSoapRequest("generateUID", NULL);
@@ -39,6 +42,7 @@ QString ctkDicomHostService::generateUID()
   return resultUID;
 }
 
+//----------------------------------------------------------------------------
 QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProtocols)
 {
   QtSoapStruct* input = dynamic_cast<QtSoapStruct*>(
@@ -48,6 +52,7 @@ QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProto
   return resultString;
 }
 
+//----------------------------------------------------------------------------
 QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 {
   QtSoapStruct* input = new ctkDicomSoapRectangle("preferredScreen", preferredScreen);
@@ -57,12 +62,14 @@ QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
   return resultRect;
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomHostService::notifyStateChanged(ctkDicomAppHosting::State state)
 {
   QtSoapType* input = new ctkDicomSoapState("newState", state); // spec would be "state", java has "newState" FIX JAVA/STANDARD
   submitSoapRequest("notifyStateChanged", input);
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomHostService::notifyStatus(const ctkDicomAppHosting::Status& status)
 {
   //Q_D(ctkDicomService);
@@ -70,13 +77,16 @@ void ctkDicomHostService::notifyStatus(const ctkDicomAppHosting::Status& status)
   submitSoapRequest("notifyStatus", input);
 }
 
+//----------------------------------------------------------------------------
 // Exchange methods
 
+//----------------------------------------------------------------------------
 bool ctkDicomHostService::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
 {
   return ctkDicomExchangeService::notifyDataAvailable(data, lastData);
 }
 
+//----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomHostService::getData(
   QList<QUuid> objectUUIDs, 
   QList<QString> acceptableTransferSyntaxUIDs, 
@@ -85,6 +95,7 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomHostService::getData(
   return ctkDicomExchangeService::getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomHostService::releaseData(QList<QUuid> objectUUIDs)
 {
   ctkDicomExchangeService::releaseData(objectUUIDs);

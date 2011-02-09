@@ -19,41 +19,49 @@
 
 =============================================================================*/
 
-
-#include "ctkDicomHostPlugin_p.h"
+// Qt includes
 #include <QtPlugin>
 
-ctkDicomHostPlugin* ctkDicomHostPlugin::instance = 0;
+// CTK includes
+#include "ctkDicomHostPlugin_p.h"
 
+ctkDicomHostPlugin* ctkDicomHostPlugin::Instance = 0;
+
+//----------------------------------------------------------------------------
 ctkDicomHostPlugin::ctkDicomHostPlugin()
-  : context(0)
+  : Context(0)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkDicomHostPlugin::~ctkDicomHostPlugin()
 {
   
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomHostPlugin::start(ctkPluginContext* context)
 {
-  instance = this;
-  this->context = context;
+  ctkDicomHostPlugin::Instance = this;
+  this->Context = context;
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomHostPlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
 }
 
+//----------------------------------------------------------------------------
 ctkDicomHostPlugin* ctkDicomHostPlugin::getInstance()
 {
-  return instance;
+  return ctkDicomHostPlugin::Instance;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginContext* ctkDicomHostPlugin::getPluginContext() const
 {
-  return context;
+  return this->Context;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_dah_host, ctkDicomHostPlugin)
