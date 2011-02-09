@@ -15,13 +15,20 @@
 class ctkDICOMThumbnailListWidgetPrivate: public Ui_ctkDICOMThumbnailListWidget
 {
 public:
-  ctkDICOMThumbnailListWidgetPrivate(){}
+  ctkDICOMThumbnailListWidgetPrivate(ctkDICOMThumbnailListWidget* parent): q_ptr(parent){
+    
+  }
 
+  void clearAllThumbnails();
+  void addThumbnail(ctkDICOMThumbnailWidget* widget);
   void rearrangeThumbnails();
 
   QList<ctkDICOMThumbnailWidget*> thumbnailList;
   int maxColumnNum;
   int thumbnailWidth;
+
+  ctkDICOMThumbnailListWidget* const q_ptr;
+  Q_DECLARE_PUBLIC(ctkDICOMThumbnailListWidget);
 };
 
 //----------------------------------------------------------------------------
@@ -39,7 +46,8 @@ void ctkDICOMThumbnailListWidgetPrivate::rearrangeThumbnails(){
   int row = 0;
   int column = 0;
   for(int i = 0; i < count; i++){
-    this->thumbnailLayout->addWidget(this->thumbnailList.at(i), row, column);
+    ctkDICOMThumbnailWidget* widget = this->thumbnailList.at(i);
+    this->thumbnailLayout->addWidget(widget, row, column);
     column++;
     if(column >= this->maxColumnNum){
       column = 0;
@@ -48,12 +56,35 @@ void ctkDICOMThumbnailListWidgetPrivate::rearrangeThumbnails(){
   }
 }
 
+void ctkDICOMThumbnailListWidgetPrivate::addThumbnail(ctkDICOMThumbnailWidget* widget){
+  Q_Q(ctkDICOMThumbnailListWidget);
+
+  if(widget == NULL)return;
+
+  this->thumbnailList.push_back(widget);
+
+  q->connect(widget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), q,  SIGNAL(selected(const ctkDICOMThumbnailWidget&)));
+}
+
+void ctkDICOMThumbnailListWidgetPrivate::clearAllThumbnails(){
+  int count = this->thumbnailList.count();
+
+  // clear all thumbnails from layout
+  for(int i = 0; i < count; i++){
+    QWidget* widget = this->thumbnailList.at(i);
+    this->thumbnailLayout->removeWidget(widget);
+    widget->deleteLater();
+  }
+
+  this->thumbnailList.clear();
+}
+
 //----------------------------------------------------------------------------
 // ctkDICOMThumbnailListWidget methods
 
 //----------------------------------------------------------------------------
 ctkDICOMThumbnailListWidget::ctkDICOMThumbnailListWidget(QWidget* _parent):Superclass(_parent), 
-  d_ptr(new ctkDICOMThumbnailListWidgetPrivate)
+									   d_ptr(new ctkDICOMThumbnailListWidgetPrivate(this))
 {
   Q_D(ctkDICOMThumbnailListWidget);
   
@@ -67,45 +98,19 @@ ctkDICOMThumbnailListWidget::~ctkDICOMThumbnailListWidget()
 {
 }
 
-void ctkDICOMThumbnailListWidget::clearThumbnail(){
+void ctkDICOMThumbnailListWidget::addTestThumbnail(int count){
   Q_D(ctkDICOMThumbnailListWidget);
-  
-  int count = d->thumbnailList.count();
-
-  // clear all thumbnails from layout
-  for(int i = 0; i < count; i++){
-    d->thumbnailLayout->removeWidget(d->thumbnailList.at(i));
-  }
-
-  d->thumbnailList.clear();
-}
-
-void ctkDICOMThumbnailListWidget::addThumbnail(ctkDICOMThumbnailWidget* widget){
-  Q_D(ctkDICOMThumbnailListWidget);
-  if(widget == NULL)return;
-
-  d->thumbnailList.push_back(widget);
-
-  int count = d->thumbnailList.count();
-
-  int lastRow = (count/d->maxColumnNum);
-  int lastColumn = (count%d->maxColumnNum);
-
-  int nextRow = (lastRow+((lastColumn+1)/d->maxColumnNum));
-  int nextColumn = (lastColumn+1)%d->maxColumnNum;
-
-  d->thumbnailLayout->addWidget(widget, nextRow, nextColumn);
-}
-
-void ctkDICOMThumbnailListWidget::addTestThumbnail(){
-  Q_D(ctkDICOMThumbnailListWidget);
-  for(int i = 0; i<11; i++){
+  for(int i = 0; i<count; i++){
     ctkDICOMThumbnailWidget* widget = new ctkDICOMThumbnailWidget(this);
+    QPixmap pixmap(64, 64);
+    pixmap.fill(Qt::blue);
     QString text("Thumbnail: ");
     widget->setMaximumWidth(d->thumbnailWidth);
     widget->setText(text);
-    this->addThumbnail(widget);
+    widget->setPixmap(pixmap);
+    d->addThumbnail(widget);
   }
+  d->rearrangeThumbnails();
 }
 
 void ctkDICOMThumbnailListWidget::setThumbnailWidth(int width){
@@ -124,3 +129,10 @@ void ctkDICOMThumbnailListWidget::resizeEvent ( QResizeEvent * event ){
   d->rearrangeThumbnails();
 }
 
+void ctkDICOMThumbnailListWidget::setModelIndex(const QModelIndex &index){
+  Q_D(ctkDICOMThumbnailListWidget);
+
+  d->clearAllThumbnails();
+  this->addTestThumbnail(index.model()->rowCount(index));
+  
+}

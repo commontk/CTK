@@ -37,19 +37,16 @@ ctkDICOMQueryWidget::~ctkDICOMQueryWidget()
 
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryWidget::populateQuery(/*ctkDICOMQuery &query*/)
+QMap<QString,QVariant> ctkDICOMQueryWidget::parameters()
 {
   Q_D(ctkDICOMQueryWidget);
-  if ( d->CT->isChecked() )
-  {
-    std::cerr << "CT\n";
-    //query.addModality( "CT" );
-  }
 
-  if ( d->MR->isChecked() )
-  {
-    std::cerr << "MR\n";
-    //query.addModality( "CT" );
-  }
+  QMap<QString,QVariant> parameters;
 
+  parameters["Name"] = d->nameSearch->text();
+  parameters["Study"] = d->studySearch->text();
+  parameters["Series"] = d->seriesSearch->text();
+  parameters["ID"] = d->idSearch->text();
+
+  return parameters;
 }

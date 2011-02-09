@@ -42,7 +42,7 @@ public:
 
   QString callingAETitle();
   QStringList nodes();
-  QMap<QString,QString> nodeParameters(QString &node);
+  QMap<QString,QVariant> nodeParameters(QString &node);
 
 public slots:
   void addNode ();

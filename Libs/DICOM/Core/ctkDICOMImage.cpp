@@ -67,6 +67,8 @@ ctkDICOMImage::ctkDICOMImage(DicomImage* dicomImage, QObject* parentValue): d_pt
   Q_UNUSED(parentValue);
   Q_D(ctkDICOMImage);
   d->DicomImage = dicomImage;
+  // select first window by default
+  d->DicomImage->setWindow(0);
 }
 
 //------------------------------------------------------------------------------
@@ -83,10 +85,14 @@ unsigned long ctkDICOMImage::frameCount() const
   }
   return 0;
 }
-
-QPixmap ctkDICOMImage::getPixmap(int frame)
+DicomImage* ctkDICOMImage::getDicomImage() const
 {
-  Q_D(ctkDICOMImage);
+  Q_D(const ctkDICOMImage);
+  return d->DicomImage;
+}
+QPixmap ctkDICOMImage::getPixmap(int frame) const
+{
+  Q_D(const ctkDICOMImage);
 
   // this way of converting the dicom image to a qpixmap was adopted from some code from
   // the DCMTK forum, posted by Joerg Riesmayer, see http://forum.dcmtk.org/viewtopic.php?t=120
@@ -105,7 +111,7 @@ QPixmap ctkDICOMImage::getPixmap(int frame)
     buffer.resize(length);
 
     /* copy PGM header to buffer */
-    d->DicomImage->setWindow(0);
+
     if (d->DicomImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, frame))
     {
       if (!pixmap.loadFromData(buffer, "PGM", Qt::AvoidDither))
