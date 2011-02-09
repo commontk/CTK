@@ -78,7 +78,7 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAppService::getData(
 }
 
 //----------------------------------------------------------------------------
-void ctkDicomAppService::releaseData(QList<QUuid> objectUUIDs)
+void ctkDicomAppService::releaseData(const QList<QUuid>& objectUUIDs)
 {
   ctkDicomExchangeService::releaseData(objectUUIDs);
 }

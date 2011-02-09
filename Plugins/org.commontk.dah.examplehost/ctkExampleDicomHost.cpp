@@ -150,7 +150,7 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomHost::releaseData(QList<QUuid> objectUUIDs)
+void ctkExampleDicomHost::releaseData(const QList<QUuid>& objectUUIDs)
 {
   Q_UNUSED(objectUUIDs)
 }

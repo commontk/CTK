@@ -55,7 +55,7 @@ public:
     const QList<QString>& acceptableTransferSyntaxUIDs,
     bool includeBulkData);
 
-  virtual void releaseData(QList<QUuid> objectUUIDs);
+  virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
   // some logic
   void do_something();

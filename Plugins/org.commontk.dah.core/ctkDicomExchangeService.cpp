@@ -75,7 +75,7 @@ DumpAll(result); //xxx
 }
 
 //----------------------------------------------------------------------------
-void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs)
+void ctkDicomExchangeService::releaseData(const QList<QUuid>& objectUUIDs)
 {
   QList<QtSoapType*> list;
 

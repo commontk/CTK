@@ -53,7 +53,7 @@ public:
       const QList<QUuid>& objectUUIDs,
       const QList<QString>& acceptableTransferSyntaxUIDs,
       bool includeBulkData);
-  virtual void releaseData(QList<QUuid> objectUUIDs);
+  virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
   const QProcess& getAppProcess() const { return this->AppProcess; }
   ctkDicomAppHosting::State getApplicationState()const {return this->ApplicationState;}

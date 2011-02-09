@@ -44,7 +44,7 @@ public:
     const QList<QString>& acceptableTransferSyntaxUIDs,
     bool includeBulkData);
 
-  void releaseData(QList<QUuid> objectUUIDs);
+  void releaseData(const QList<QUuid>& objectUUIDs);
 
 };
 
