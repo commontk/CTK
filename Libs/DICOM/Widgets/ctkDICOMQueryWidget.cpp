@@ -48,5 +48,7 @@ QMap<QString,QVariant> ctkDICOMQueryWidget::parameters()
   parameters["Series"] = d->SeriesSearch->text();
   parameters["ID"] = d->IdSearch->text();
 
+  parameters["Modalities"] = d->ModalityWidget->selectedModalities();
+
   return parameters;
 }

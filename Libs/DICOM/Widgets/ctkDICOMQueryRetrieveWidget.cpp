@@ -93,15 +93,15 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
     QMap<QString, QVariant> parameters = d->ServerNodeWidget->nodeParameters(server);
     if ( parameters["CheckState"] == Qt::Checked )
     {
+      // create a query for the current server
       d->queries[server] = new ctkDICOMQuery;
       d->queries[server]->setCallingAETitle(d->ServerNodeWidget->callingAETitle());
       d->queries[server]->setCalledAETitle(parameters["AETitle"].toString());
       d->queries[server]->setHost(parameters["Address"].toString());
       d->queries[server]->setPort(parameters["Port"].toInt());
-      // TODO: add interface to ctkDICOMQuery for specifying query params
-      // for now, query for everything
 
-      //d->queries[server]->setFilters( d->
+      // populate the query with the current search options
+      d->queries[server]->setFilters( d->QueryWidget->parameters() );
 
       try
       {
@@ -115,7 +115,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
     }
   }
 
-  // checkable headers.
+  // checkable headers - allow user to select the patient/studies to retrieve
   d->results->setModel(&d->model);
   d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
   QHeaderView* previousHeaderView = d->results->header();
