@@ -85,7 +85,7 @@ void ctkModalityWidgetPrivate::init()
 
   // reparent items into a flow layout
   QLayout* layout = q->layout();
-  ctkFlowLayout* flowLayout = new ctkFlowLayout(Qt::Horizontal);
+  ctkFlowLayout* flowLayout = new ctkFlowLayout(Qt::Vertical);
   flowLayout->setContentsMargins(layout->contentsMargins());
   flowLayout->setPreferredExpandingDirections(Qt::Vertical);
   QLayoutItem* item;
