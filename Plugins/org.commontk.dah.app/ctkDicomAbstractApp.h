@@ -41,7 +41,7 @@ class ctkDicomAbstractApp : public ctkDicomAppInterface
 public:
 
   ctkDicomAbstractApp();
-  ~ctkDicomAbstractApp();
+  virtual ~ctkDicomAbstractApp();
 
 private:
   Q_DECLARE_PRIVATE(ctkDicomAbstractApp)

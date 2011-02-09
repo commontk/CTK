@@ -36,7 +36,7 @@ class ctkSoapConnectionRunnable : public QObject, public QRunnable
 public:
 
   ctkSoapConnectionRunnable(int socketDescriptor);
-  ~ctkSoapConnectionRunnable();
+  virtual ~ctkSoapConnectionRunnable();
 
   void run();
 

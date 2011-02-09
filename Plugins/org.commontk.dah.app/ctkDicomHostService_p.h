@@ -33,7 +33,7 @@ class ctkDicomHostService : public ctkDicomExchangeService, public ctkDicomHostI
 
 public:
   ctkDicomHostService(ushort port, QString path);
-  ~ctkDicomHostService();
+  virtual ~ctkDicomHostService();
 
   QString generateUID();
   QRect getAvailableScreen(const QRect& preferredScreen);

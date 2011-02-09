@@ -50,7 +50,7 @@ public:
   ctkDicomAbstractHost(int hostPort = 0, int appPort = 0);
   int getHostPort() const;
   int getAppPort() const;
-  ~ctkDicomAbstractHost();
+  virtual ~ctkDicomAbstractHost();
 
   ctkDicomAppInterface* getDicomAppService() const;
 

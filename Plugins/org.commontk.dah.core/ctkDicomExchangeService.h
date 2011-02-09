@@ -35,7 +35,7 @@ class org_commontk_dah_core_EXPORT ctkDicomExchangeService :
 public:
 
   ctkDicomExchangeService(ushort port, QString path);
-  ~ctkDicomExchangeService();
+  virtual ~ctkDicomExchangeService();
 
   bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
   QList<ctkDicomAppHosting::ObjectLocator> getData(QList<QUuid> objectUUIDs,

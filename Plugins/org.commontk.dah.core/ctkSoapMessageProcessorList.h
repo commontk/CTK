@@ -33,7 +33,7 @@ class org_commontk_dah_core_EXPORT ctkSoapMessageProcessorList : public ctkSoapM
 
 public:
 
-  ~ctkSoapMessageProcessorList();
+  virtual ~ctkSoapMessageProcessorList();
 
   void push_back( ctkSoapMessageProcessor* processor );
 

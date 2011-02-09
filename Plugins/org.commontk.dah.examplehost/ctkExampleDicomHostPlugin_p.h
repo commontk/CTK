@@ -34,7 +34,7 @@ class ctkExampleDicomHostPlugin :
 public:
 
   ctkExampleDicomHostPlugin();
-  ~ctkExampleDicomHostPlugin();
+  virtual ~ctkExampleDicomHostPlugin();
 
   void start(ctkPluginContext* context);
   void stop(ctkPluginContext* context);

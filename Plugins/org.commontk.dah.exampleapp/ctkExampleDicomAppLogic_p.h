@@ -40,7 +40,7 @@ class ctkExampleDicomAppLogic : public QObject, public ctkDicomAppInterface
 public:
 
   ctkExampleDicomAppLogic();
-  ~ctkExampleDicomAppLogic();
+  virtual ~ctkExampleDicomAppLogic();
 
   // ctkDicomAppInterface
   ctkDicomAppHosting::State getState();

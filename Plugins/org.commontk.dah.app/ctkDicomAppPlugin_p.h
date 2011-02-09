@@ -36,7 +36,7 @@ class ctkDicomAppPlugin :
 public:
 
   ctkDicomAppPlugin();
-  ~ctkDicomAppPlugin();
+  virtual ~ctkDicomAppPlugin();
 
   void start(ctkPluginContext* context);
   void stop(ctkPluginContext* context);

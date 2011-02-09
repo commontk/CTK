@@ -34,7 +34,7 @@ class ctkDicomAppHostingCorePlugin :
 public:
 
   ctkDicomAppHostingCorePlugin();
-  ~ctkDicomAppHostingCorePlugin();
+  virtual ~ctkDicomAppHostingCorePlugin();
 
   void start(ctkPluginContext* context);
   void stop(ctkPluginContext* context);

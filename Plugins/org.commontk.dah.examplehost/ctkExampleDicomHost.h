@@ -58,8 +58,6 @@ public:
 
   QByteArray processReadAll(){return appProcess.readAllStandardOutput ();}
 
-  ~ctkExampleDicomHost();
-
 signals:
 
   void stateChangedReceived(ctkDicomAppHosting::State state);
