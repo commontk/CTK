@@ -27,15 +27,13 @@
 #include <QApplication>
 #include <QLabel>
 
-// ctkDICOMCore includes
+// CTK includes
 #include "ctkDICOMImage.h"
+#include "ctkExampleDicomAppLogic_p.h"
+#include "ctkExampleDicomAppPlugin_p.h"
 
 // DCMTK includes
 #include <dcmimage.h>
-
-// CTK includes
-#include "ctkExampleDicomAppLogic_p.h"
-#include "ctkExampleDicomAppPlugin_p.h"
 
 //----------------------------------------------------------------------------
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic()

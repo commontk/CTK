@@ -25,6 +25,13 @@
 #ifndef CTKDICOMAPPHOSTINGTYPES_H
 #define CTKDICOMAPPHOSTINGTYPES_H
 
+#ifdef ERROR
+#error Try to reorder include files (this one first)\
+ or write #undef ERROR before including this header.\
+ Cause of this problem may be dcmimage.h, which indirectly\
+ includes windows.h.
+#endif
+
 /**
   * \brief Typedefs and classes defined in the interfaces of DICOM Supplement 118.
   *

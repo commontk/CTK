@@ -274,6 +274,13 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(CTK_CXX_FLAGS "${cflags} -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
 ENDIF()
 
+IF(MSVC)
+  SET(msvc_suppressed_warnings
+    "/wd4290" # C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  )
+  SET(CTK_CXX_FLAGS "${CTK_CXX_FLAGS} ${msvc_suppressed_warnings}")
+ENDIF()
+
 #-----------------------------------------------------------------------------
 # QT
 #
