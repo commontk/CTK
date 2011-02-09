@@ -73,6 +73,10 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(
 
   connect(d->CallingAETitle, SIGNAL(textChanged(const QString&)),
     this, SLOT(saveSettings()));
+  connect(d->StorageAETitle, SIGNAL(textChanged(const QString&)),
+    this, SLOT(saveSettings()));
+  connect(d->StoragePort, SIGNAL(textChanged(const QString&)),
+    this, SLOT(saveSettings()));
   connect(d->AddButton, SIGNAL(clicked()),
     this, SLOT(addNode()));
   connect(d->RemoveButton, SIGNAL(clicked()),
@@ -156,6 +160,8 @@ void ctkDICOMServerNodeWidget::saveSettings()
     settings.setValue(QString("ServerNodes/%1").arg(row), QVariant(node));
     }
   settings.setValue("CallingAETitle", d->CallingAETitle->text());
+  settings.setValue("StorageAETitle", d->StorageAETitle->text());
+  settings.setValue("StoragePort", d->StoragePort->text());
   settings.sync();
 }
 
@@ -170,6 +176,8 @@ void ctkDICOMServerNodeWidget::readSettings()
   if (settings.status() == QSettings::AccessError ||
       settings.value("ServerNodeCount").toInt() == 0)
     {
+    d->StorageAETitle->setText("CTKSTORE");
+    d->StoragePort->setText("11112");
     d->CallingAETitle->setText("FINDSCU");
     d->NodeTable->setRowCount(1);
     d->NodeTable->setItem(0, NameColumn, new QTableWidgetItem("ExampleHost"));
@@ -180,6 +188,8 @@ void ctkDICOMServerNodeWidget::readSettings()
     return;
     }
 
+  d->StorageAETitle->setText(settings.value("StorageAETitle").toString());
+  d->StoragePort->setText(settings.value("StoragePort").toString());
   d->CallingAETitle->setText(settings.value("CallingAETitle").toString());
   const int count = settings.value("ServerNodeCount").toInt();
   d->NodeTable->setRowCount(count);
