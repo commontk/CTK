@@ -27,6 +27,9 @@
 #include "ctkFlowLayout.h"
 #include "ctkLogger.h"
 
+// STD includes
+#include <cmath>
+
 static ctkLogger logger("org.commontk.libs.widgets.ctkFlowLayout");
 
 //-----------------------------------------------------------------------------
@@ -42,7 +45,7 @@ public:
 
   int doLayout(const QRect &rect, bool testOnly) const;
   int smartSpacing(QStyle::PixelMetric pm) const;
-  QSize maxSizeHint()const;
+  QSize maxSizeHint(int* visibleItemsCount = 0)const;
 
   QList<QLayoutItem *> ItemList;
   Qt::Orientation Orientation;
@@ -82,8 +85,12 @@ void ctkFlowLayoutPrivate::deleteAll()
 }
 
 // --------------------------------------------------------------------------
-QSize ctkFlowLayoutPrivate::maxSizeHint()const
+QSize ctkFlowLayoutPrivate::maxSizeHint(int *visibleItemsCount)const
 {
+  if (visibleItemsCount)
+    {
+    *visibleItemsCount = 0;
+    }
   QSize maxItemSize;
   foreach (QLayoutItem* item, this->ItemList)
     {
@@ -94,6 +101,10 @@ QSize ctkFlowLayoutPrivate::maxSizeHint()const
       }
     maxItemSize.rwidth() = qMax(item->sizeHint().width(), maxItemSize.width());
     maxItemSize.rheight() = qMax(item->sizeHint().height(), maxItemSize.height());
+    if (visibleItemsCount)
+      {
+      ++*visibleItemsCount;
+      }
     }
   return maxItemSize;
 }
@@ -106,11 +117,10 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
   q->getContentsMargins(&left, &top, &right, &bottom);
   QRect effectiveRect = rect.adjusted(+left, +top, -right, -bottom);
   QPoint pos = QPoint(effectiveRect.x(), effectiveRect.y());
-  QPoint next = pos;
   int length = 0;
   int max = this->Orientation == Qt::Horizontal ?
     effectiveRect.right() + 1 : effectiveRect.bottom() + 1;
-
+  int maxY = top + bottom;
   QSize maxItemSize = this->AlignItems ? this->maxSizeHint() : QSize();
 
   int spaceX = q->horizontalSpacing();
@@ -123,7 +133,7 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
       {
       continue;
       }
-    next = pos;
+    QPoint next = pos;
     QSize itemSize = this->AlignItems ? maxItemSize : item->sizeHint();
     if (this->Orientation == Qt::Horizontal)
       {
@@ -153,11 +163,12 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
       item->setGeometry(QRect(pos, item->sizeHint()));
       }
 
+    maxY = qMax( maxY , pos.y() + item->sizeHint().height() + bottom);
     pos = next;
     length = qMax(length, this->Orientation == Qt::Horizontal ?
       itemSize.height() : itemSize.width());
     }
-  return pos.y() + length - rect.y() + bottom;
+  return maxY;
 }
 
 //-----------------------------------------------------------------------------
@@ -322,9 +333,23 @@ bool ctkFlowLayout::hasHeightForWidth() const
 int ctkFlowLayout::heightForWidth(int width) const
 {
   Q_D(const ctkFlowLayout);
+  QRect rect(0, 0, width, 0);
   /// here we see the limitations of the vertical layout, it should be
   /// widthForHeight in this case.
-  int height = d->doLayout(QRect(0, 0, width, 0), true);
+  if (d->AlignItems && d->Orientation == Qt::Vertical)
+    {
+    int itemCount;
+    QSize itemSize = d->maxSizeHint(&itemCount);
+    QMargins margins = this->contentsMargins();
+    int realWidth = width - margins.left() - margins.right();
+    int itemCountPerRow = (realWidth + this->horizontalSpacing())
+      / (itemSize.width() + this->horizontalSpacing());
+    int rowCount = std::ceil( static_cast<float>(itemCount) / itemCountPerRow);
+    rect.setHeight(rowCount * itemSize.height() +
+                   (rowCount -1) * this->verticalSpacing() +
+                   margins.top() + margins.bottom());
+    }
+  int height = d->doLayout(rect, true);
   return height;
 }
 

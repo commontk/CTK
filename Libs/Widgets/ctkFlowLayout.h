@@ -28,8 +28,10 @@
 #include "ctkWidgetsExport.h"
 class ctkFlowLayoutPrivate;
 
-/// Warning the Vertical orientation is NOT fully supported. You can obtain
-/// strange behavior
+/// Acts like a QBoxLayout but if the space is horizontally/vertically limited,
+/// it displays items ona a new row/column based on the orientation.
+/// Please note that using a Qt::Vertical orientation without the property
+/// alignItems set to true might result to weird layout behavior.
 class CTK_WIDGETS_EXPORT ctkFlowLayout : public QLayout
 {
   Q_OBJECT
@@ -45,21 +47,37 @@ public:
   explicit ctkFlowLayout();
   virtual ~ctkFlowLayout();
   
+  /// If orientation is Qt::Horizontal, items are layed out from left to right
+  /// then top to bottom. If orientation is Qt::Vertical, items are layed out
+  /// from top to bottom then left to right.
   void setOrientation(Qt::Orientation orientation);
   Qt::Orientation orientation()const;
-  
+
+  /// Indicates how the size hint of the layout should behave. The preferred
+  /// expanding direction can be different than the orientation of the layout.
+  /// It can be a combination of Qt::Horizontal and Qt::Vertical, in that case
+  /// the layout will try to expand in a square shape (evenly distribute the
+  /// number of rows and columns).
   void setPreferredExpandingDirections(Qt::Orientations directions);
   Qt::Orientations preferredExpandingDirections()const;
 
+  /// Horizontal space between items, if the spacing is <0, a default spacing
+  /// set on the parent/style will be used.
   int horizontalSpacing() const;
   void setHorizontalSpacing(int);
 
+  /// Vertical space between items, if the spacing is <0, a default spacing
+  /// set on the parent/style will be used. 
   int verticalSpacing() const;
   void setVerticalSpacing(int);
   
+  /// Force the items to be horizontally aligned based on the largest item
+  /// to display.
+  /// True by default.
   bool alignItems()const;
   void setAlignItems(bool);
 
+  /// Reimplemented for internal reasons
   virtual void addItem(QLayoutItem *item);
   virtual Qt::Orientations expandingDirections() const;
   virtual bool hasHeightForWidth() const;
