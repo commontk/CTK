@@ -63,7 +63,7 @@ bool ctkDicomAppService::bringToFront(const QRect& requestedScreenArea)
 // Exchange methods
 
 //----------------------------------------------------------------------------
-bool ctkDicomAppService::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
+bool ctkDicomAppService::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
   return ctkDicomExchangeService::notifyDataAvailable(data, lastData);
 }

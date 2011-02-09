@@ -48,7 +48,7 @@ public:
   virtual bool bringToFront(const QRect& requestedScreenArea);
 
   // ctkDicomExchangeInterface
-  virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
     const QList<QUuid>& objectUUIDs,

@@ -81,7 +81,7 @@ void ctkDicomHostService::notifyStatus(const ctkDicomAppHosting::Status& status)
 // Exchange methods
 
 //----------------------------------------------------------------------------
-bool ctkDicomHostService::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
+bool ctkDicomHostService::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
   return ctkDicomExchangeService::notifyDataAvailable(data, lastData);
 }

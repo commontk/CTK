@@ -34,7 +34,7 @@ struct ctkDicomExchangeInterface
 
   // Data exchange interface methods
 
-  virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData) = 0;
+  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData) = 0;
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
     const QList<QUuid>& objectUUIDs,

@@ -142,7 +142,7 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
 }
 
 //----------------------------------------------------------------------------
-bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
+bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
   Q_UNUSED(lastData)
   QString s;

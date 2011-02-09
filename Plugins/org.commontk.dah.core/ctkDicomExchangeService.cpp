@@ -40,7 +40,7 @@ ctkDicomExchangeService::~ctkDicomExchangeService()
 
 //----------------------------------------------------------------------------
 bool ctkDicomExchangeService::notifyDataAvailable(
-    ctkDicomAppHosting::AvailableData data, bool lastData)
+    const ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
   QList<QtSoapType*> list;
   list << new ctkDicomSoapAvailableData("data", data);

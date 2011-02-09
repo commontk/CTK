@@ -43,7 +43,7 @@ public:
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
 
   // Exchange methods implemented in ctkDicomExchangeService
-  virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
     const QList<QUuid>& objectUUIDs,

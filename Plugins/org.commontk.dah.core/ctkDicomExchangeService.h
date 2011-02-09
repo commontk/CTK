@@ -37,7 +37,7 @@ public:
   ctkDicomExchangeService(ushort port, QString path);
   virtual ~ctkDicomExchangeService();
 
-  bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
   QList<ctkDicomAppHosting::ObjectLocator> getData(
     const QList<QUuid>& objectUUIDs,
