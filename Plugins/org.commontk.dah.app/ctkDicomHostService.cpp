@@ -88,8 +88,8 @@ bool ctkDicomHostService::notifyDataAvailable(ctkDicomAppHosting::AvailableData 
 
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomHostService::getData(
-  QList<QUuid> objectUUIDs, 
-  QList<QString> acceptableTransferSyntaxUIDs, 
+  const QList<QUuid>& objectUUIDs,
+  const QList<QString>& acceptableTransferSyntaxUIDs,
   bool includeBulkData)
 {
   return ctkDicomExchangeService::getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);

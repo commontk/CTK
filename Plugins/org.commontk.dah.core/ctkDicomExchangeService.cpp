@@ -51,8 +51,8 @@ bool ctkDicomExchangeService::notifyDataAvailable(
 
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
-    QList<QUuid> objectUUIDs,
-    QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData)
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs, bool includeBulkData)
 {
   //Q_D(ctkDicomService);
   QList<QtSoapType*> list;

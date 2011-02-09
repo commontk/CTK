@@ -37,8 +37,8 @@ struct ctkDicomExchangeInterface
   virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData) = 0;
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-    QList<QUuid> objectUUIDs, 
-    QList<QString> acceptableTransferSyntaxUIDs, 
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
     bool includeBulkData) = 0;
 
   virtual void releaseData(QList<QUuid> objectUUIDs) = 0;

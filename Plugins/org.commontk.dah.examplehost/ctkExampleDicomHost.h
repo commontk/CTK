@@ -50,8 +50,8 @@ public:
   // exchange methods
   virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-      QList<QUuid> objectUUIDs,
-      QList<QString> acceptableTransferSyntaxUIDs,
+      const QList<QUuid>& objectUUIDs,
+      const QList<QString>& acceptableTransferSyntaxUIDs,
       bool includeBulkData);
   virtual void releaseData(QList<QUuid> objectUUIDs);
 

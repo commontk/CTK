@@ -38,8 +38,12 @@ public:
   virtual ~ctkDicomExchangeService();
 
   bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
-  QList<ctkDicomAppHosting::ObjectLocator> getData(QList<QUuid> objectUUIDs,
-                                             QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData);
+
+  QList<ctkDicomAppHosting::ObjectLocator> getData(
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
+    bool includeBulkData);
+
   void releaseData(QList<QUuid> objectUUIDs);
 
 };

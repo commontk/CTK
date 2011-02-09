@@ -173,8 +173,8 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableD
 
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
-  QList<QUuid> objectUUIDs,
-  QList<QString> acceptableTransferSyntaxUIDs,
+  const QList<QUuid>& objectUUIDs,
+  const QList<QString>& acceptableTransferSyntaxUIDs,
   bool includeBulkData)
 {
   Q_UNUSED(objectUUIDs)
