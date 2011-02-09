@@ -369,5 +369,3 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, QString filename ) {
       }
     }
 }
-
-
