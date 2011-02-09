@@ -43,6 +43,7 @@
 #include "ctkMaterialPropertyWidgetPlugin.h"
 #include "ctkMatrixWidgetPlugin.h"
 #include "ctkMenuButtonPlugin.h"
+#include "ctkModalityWidgetPlugin.h"
 #include "ctkPathLineEditPlugin.h"
 #include "ctkRangeSliderPlugin.h"
 #include "ctkRangeWidgetPlugin.h"
@@ -82,6 +83,7 @@ public:
             << new ctkMaterialPropertyWidgetPlugin
             << new ctkMatrixWidgetPlugin
             << new ctkMenuButtonPlugin
+            << new ctkModalityWidgetPlugin
             << new ctkPathLineEditPlugin
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
