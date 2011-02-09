@@ -143,6 +143,12 @@ const QString ctkDICOMDatabase::GetLastError() const {
 }
 
 //------------------------------------------------------------------------------
+const QString ctkDICOMDatabase::GetDatabaseFilename() const {
+  Q_D(const ctkDICOMDatabase);
+  return d->DatabaseFileName;
+}
+
+//------------------------------------------------------------------------------
 const QSqlDatabase& ctkDICOMDatabase::database() const {
   Q_D(const ctkDICOMDatabase);
   return d->Database;
