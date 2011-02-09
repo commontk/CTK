@@ -124,7 +124,7 @@
      <x>0</x>
      <y>0</y>
      <width>739</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -151,6 +151,7 @@
    <addaction name="actionImport"/>
    <addaction name="actionExport"/>
    <addaction name="actionQuery"/>
+   <addaction name="actionSend"/>
   </widget>
   <action name="actionImport">
    <property name="text">
@@ -174,6 +175,14 @@
    </property>
    <property name="toolTip">
     <string>Query and Retrieve DICOM studies from a DICOM node</string>
+   </property>
+  </action>
+  <action name="actionSend">
+   <property name="text">
+    <string>Send</string>
+   </property>
+   <property name="toolTip">
+    <string>Send DICOM Studies to a DICOM node</string>
    </property>
   </action>
  </widget>
