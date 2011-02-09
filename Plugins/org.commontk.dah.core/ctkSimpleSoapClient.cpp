@@ -113,6 +113,8 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
   //qDebug() << reply->readAll();
   const QtSoapMessage& response = d->http.getResponse();
 
+  CTK_SOAP_LOG( << "Got Response." );
+
   if (response.isFault())
   {
     qCritical() << "ctkSimpleSoapClient: server error (response.IsFault())";

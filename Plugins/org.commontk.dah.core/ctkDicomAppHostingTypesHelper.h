@@ -70,19 +70,26 @@ struct org_commontk_dah_core_EXPORT ctkDicomSoapBool : public QtSoapSimpleType
 };
 
 //Not easy to template, will see later for other types
-struct org_commontk_dah_core_EXPORT ctkDicomSoapArrayOfStringType : public QtSoapArray
+struct org_commontk_dah_core_EXPORT ctkDicomSoapArrayOfStringType : public QtSoapStruct
 {
   ctkDicomSoapArrayOfStringType(const QString& typeName,
                                 const QString& name, const QStringList& array);
 
-  static QStringList getArray(const QtSoapArray& array);
+  static QStringList getArray(const QtSoapType& array);
 };
 
-struct org_commontk_dah_core_EXPORT ctkDicomSoapArrayOfUUIDS : public QtSoapArray
+struct org_commontk_dah_core_EXPORT ctkDicomSoapUUID : public QtSoapStruct
+{
+  ctkDicomSoapUUID(const QString& name, const QUuid& uuid);
+
+  static QUuid getUuid(const QtSoapType& array);
+};
+
+struct org_commontk_dah_core_EXPORT ctkDicomSoapArrayOfUUIDS : public QtSoapStruct
 {
   ctkDicomSoapArrayOfUUIDS(const QString& name, const QList<QUuid>& array);
 
-  static QList<QUuid> getArray(const QtSoapArray& array);
+  static QList<QUuid> getArray(const QtSoapType& array);
 };
 
 struct org_commontk_dah_core_EXPORT ctkDicomSoapObjectDescriptor : public QtSoapStruct
@@ -147,7 +154,7 @@ struct org_commontk_dah_core_EXPORT ctkDicomSoapArrayOfObjectLocators : public Q
 {
   ctkDicomSoapArrayOfObjectLocators(const QString& name, const QList<ctkDicomAppHosting::ObjectLocator>& array);
 
-  static QList<ctkDicomAppHosting::ObjectLocator> getArray(const QtSoapArray& array);
+  static QList<ctkDicomAppHosting::ObjectLocator> getArray(const QtSoapType& array);
 };
 
 #endif // CTKDICOMAPPHOSTINGTYPESHELPER_H

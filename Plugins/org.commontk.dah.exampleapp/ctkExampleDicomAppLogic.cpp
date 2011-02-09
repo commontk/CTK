@@ -62,6 +62,7 @@ bool ctkExampleDicomAppLogic::bringToFront(const QRect& /*requestedScreenArea*/)
 void ctkExampleDicomAppLogic::do_something()
 {
   button = new QPushButton("Button from App");
+  connect(button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
   try
   {
 
@@ -134,6 +135,17 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableD
   if(data.patients.count()>0)
   {
     s=s+" name:"+data.patients.begin()->name+" studies.count(): "+QString().setNum(data.patients.begin()->studies.count());
+    if(data.patients.begin()->studies.count()>0)
+    {
+      s=s+" series.count():" + QString().setNum(data.patients.begin()->studies.begin()->series.count());
+      if(data.patients.begin()->studies.begin()->series.count()>0)
+      {
+        s=s+" uid:" + data.patients.begin()->studies.begin()->series.begin()->seriesUID;
+//        QUuid uuid("93097dc1-caf9-43a3-a814-51a57f8d861d");//data.patients.begin()->studies.begin()->series.begin()->seriesUID);
+        uuid = data.patients.begin()->studies.begin()->series.begin()->objectDescriptors.begin()->descriptorUUID;
+        s=s+" uuid:"+uuid.toString();
+      }
+    }
   }
   button->setText(s);
   return false;
@@ -160,4 +172,25 @@ ctkDicomHostInterface* ctkExampleDicomAppLogic::getHostInterface() const
   ctkDicomHostInterface* host = hostTracker.getService();
   if (!host) throw std::runtime_error("DICOM Host Interface not available");
   return host;
+}
+
+void ctkExampleDicomAppLogic::buttonClicked()
+{
+  QList<QUuid> uuidlist;
+  uuidlist.append(uuid);
+  QString transfersyntax("1.2.840.10008.1.2.1");
+  QList<QString> transfersyntaxlist;
+  transfersyntaxlist.append(transfersyntax);
+  QList<ctkDicomAppHosting::ObjectLocator> locators;
+  locators = getHostInterface()->getData(uuidlist, transfersyntaxlist, false);
+  qDebug() << "got locators! " << QString().setNum(locators.count());
+
+  QString s;
+  s=s+" loc.count:"+QString().setNum(locators.count());
+  if(locators.count()>0)
+  {
+    s=s+" URI: "+locators.begin()->URI;
+    qDebug() << "URI: " << locators.begin()->URI;
+  }
+  button->setText(s);
 }

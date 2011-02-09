@@ -25,6 +25,7 @@
 
 #include <QRect>
 #include <QObject>
+#include <QUuid>
 
 #include "ctkDicomAppHostingTypes.h"
 

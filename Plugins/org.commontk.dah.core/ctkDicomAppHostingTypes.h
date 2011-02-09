@@ -21,7 +21,6 @@
 
 #include <QString>
 #include <QList>
-#include <QUuid>
 
 #ifndef CTKDICOMAPPHOSTINGTYPES_H
 #define CTKDICOMAPPHOSTINGTYPES_H
@@ -56,8 +55,8 @@ namespace ctkDicomAppHosting {
   };
 
   struct ObjectLocator {
-    QUuid locator;
-    QUuid source;
+    QString locator;
+    QString source;
     QString transferSyntax;
     qint64 length;
     qint64 offset;
@@ -65,7 +64,7 @@ namespace ctkDicomAppHosting {
   };
 
   struct ObjectDescriptor {
-    QUuid descriptorUUID;
+    QString descriptorUUID;
     QString mimeType;
     QString classUID;
     QString transferSyntaxUID;

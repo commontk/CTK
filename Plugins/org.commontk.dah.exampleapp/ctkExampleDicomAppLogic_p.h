@@ -68,6 +68,8 @@ protected slots:
 
   void changeState(int);
 
+  void buttonClicked();
+
 private:
 
   ctkDicomHostInterface* getHostInterface() const;
@@ -75,6 +77,8 @@ private:
   ctkServiceTracker<ctkDicomHostInterface*> hostTracker;
 
   QPushButton *button;
+
+  QUuid uuid;
 
 }; // ctkExampleDicomAppLogic
 

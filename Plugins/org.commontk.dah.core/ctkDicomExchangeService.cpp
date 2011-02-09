@@ -53,11 +53,21 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
   //Q_D(ctkDicomService);
   QList<QtSoapType*> list;
 
-  list << new ctkDicomSoapArrayOfUUIDS("objectUUIDS",objectUUIDs);
-  list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxUIDs", acceptableTransferSyntaxUIDs);
-  list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
-  const QtSoapType & result = submitSoapRequest("getData",list);
-  return ctkDicomSoapArrayOfObjectLocators::getArray(static_cast<const QtSoapArray &>(result));
+  //list << new ctkDicomSoapArrayOfUUIDS("objectUUIDS",objectUUIDs);
+  //list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxUIDs", acceptableTransferSyntaxUIDs);
+  //list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
+  //const QtSoapType & result = submitSoapRequest("getData",list);
+  //const QtSoapType & result = submitSoapRequest("getData",list);
+QtSoapType *tt;
+  list << (tt=new ctkDicomSoapArrayOfUUIDS("uuids",objectUUIDs));
+extern void DumpAll(const QtSoapType& type, int indent=0);
+DumpAll(*tt);
+  list << (tt=new ctkDicomSoapBool("includeBulkData", includeBulkData));
+DumpAll(*tt);
+  const QtSoapType & result = submitSoapRequest("getDataAsFile",list);
+DumpAll(result); //xxx
+
+  return ctkDicomSoapArrayOfObjectLocators::getArray(result);
 }
 
 void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs)
