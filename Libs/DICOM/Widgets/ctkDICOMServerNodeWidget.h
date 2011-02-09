@@ -49,11 +49,18 @@ public slots:
   void removeNode ();
   void onCellChanged (int row, int column);
   void onCurrentItemChanged(QTableWidgetItem* current, QTableWidgetItem *previous);
-  void saveSettings ();
+
+  void readSettings();
+  void saveSettings();
 
 protected:
   QScopedPointer<ctkDICOMServerNodeWidgetPrivate> d_ptr;
-
+  enum ServerColumns{
+    NameColumn = 0,
+    AETitleColumn,
+    AddressColumn,
+    PortColumn
+  };
 private:
   Q_DECLARE_PRIVATE(ctkDICOMServerNodeWidget);
   Q_DISABLE_COPY(ctkDICOMServerNodeWidget);

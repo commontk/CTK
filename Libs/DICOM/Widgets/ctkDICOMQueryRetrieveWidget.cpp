@@ -2,6 +2,7 @@
 #include <QTreeView>
 #include <QTabBar>
 #include <QSettings>
+#include <QHBoxLayout>
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
@@ -27,7 +28,10 @@ class ctkDICOMQueryRetrieveWidgetPrivate: public Ui_ctkDICOMQueryRetrieveWidget
 public:
   ctkDICOMQueryRetrieveWidgetPrivate(){}
 
-  QMap<QString, ctkDICOMQuery*> queries;
+  QMap<QString, ctkDICOMQuery*> queriesByServer;
+  QMap<QString, ctkDICOMQuery*> queriesByStudyUID;
+  QMap<QString, ctkDICOMRetrieve*> retrievalsByStudyUID;
+  ctkDICOMDatabase queryResultDatabase;
   ctkDICOMModel model;
 };
 
@@ -47,6 +51,7 @@ ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* _parent):Super
   d->setupUi(this);
 
   connect(d->QueryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
+  connect(d->RetrieveButton, SIGNAL(clicked()), this, SLOT(processRetrieve()));
 }
 
 //----------------------------------------------------------------------------
@@ -77,14 +82,12 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
 
   d->RetrieveButton->setEnabled(false);
   
-  ctkDICOMDatabase queryResultDatabase;
-
   // create a database in memory to hold query results
-  try { queryResultDatabase.openDatabase( ":memory:" ); }
+  try { d->queryResultDatabase.openDatabase( ":memory:" ); }
   catch (std::exception e)
   {
-    logger.error ( "Database error: " + queryResultDatabase.GetLastError() );
-    queryResultDatabase.closeDatabase();
+    logger.error ( "Database error: " + d->queryResultDatabase.GetLastError() );
+    d->queryResultDatabase.closeDatabase();
     return;
   }
 
@@ -96,29 +99,36 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
     if ( parameters["CheckState"] == Qt::Checked )
     {
       // create a query for the current server
-      d->queries[server] = new ctkDICOMQuery;
-      d->queries[server]->setCallingAETitle(d->ServerNodeWidget->callingAETitle());
-      d->queries[server]->setCalledAETitle(parameters["AETitle"].toString());
-      d->queries[server]->setHost(parameters["Address"].toString());
-      d->queries[server]->setPort(parameters["Port"].toInt());
+      d->queriesByServer[server] = new ctkDICOMQuery;
+      d->queriesByServer[server]->setCallingAETitle(d->ServerNodeWidget->callingAETitle());
+      d->queriesByServer[server]->setCalledAETitle(parameters["AETitle"].toString());
+      d->queriesByServer[server]->setHost(parameters["Address"].toString());
+      d->queriesByServer[server]->setPort(parameters["Port"].toInt());
 
       // populate the query with the current search options
-      d->queries[server]->setFilters( d->QueryWidget->parameters() );
+      d->queriesByServer[server]->setFilters( d->QueryWidget->parameters() );
 
       try
       {
         // run the query against the selected server and put results in database
-        d->queries[server]->query ( queryResultDatabase );
+        d->queriesByServer[server]->query ( d->queryResultDatabase );
       }
       catch (std::exception e)
       {
         logger.error ( "Query error: " + parameters["Name"].toString() );
+      }
+
+      foreach( QString studyUID, d->queriesByServer[server]->studyInstanceUIDQueried() )
+      {
+        d->queriesByStudyUID[studyUID] = d->queriesByServer[server];
       }
     }
   }
 
   // checkable headers - allow user to select the patient/studies to retrieve
   d->results->setModel(&d->model);
+  d->model.setDatabase(d->queryResultDatabase.database());
+
   d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
   QHeaderView* previousHeaderView = d->results->header();
   ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->results);
@@ -127,12 +137,27 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   headerView->setPropagateToItems(true);
   d->results->setHeader(headerView);
+  // headerView is hidden because it was created with a visisble parent widget 
+  headerView->setHidden(false);
 
-  d->model.setDatabase(queryResultDatabase.database());
-  d->results->setModel(&d->model);
+  d->RetrieveButton->setEnabled(d->model.rowCount());
+}
 
-  if ( d->model.rowCount() > 0 )
+//----------------------------------------------------------------------------
+void ctkDICOMQueryRetrieveWidget::processRetrieve()
+{
+  Q_D(ctkDICOMQueryRetrieveWidget);
+
+  foreach( QString studyUID, d->queriesByStudyUID.keys() )
   {
-    d->RetrieveButton->setEnabled(true);
+    logger.debug("need to retrieve " + studyUID + " from " + d->queriesByStudyUID[studyUID]->host());
+    ctkDICOMQuery *query = d->queriesByStudyUID[studyUID];
+    ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
+    d->retrievalsByStudyUID[studyUID] = retrieve;
+    retrieve->setCallingAETitle( query->callingAETitle() );
+    retrieve->setCalledAETitle( query->calledAETitle() );
+    retrieve->setHost( query->host() );
+    //retrieve->setCallingPort( query->port() );
+    retrieve->setCalledPort( query->port() );
   }
 }

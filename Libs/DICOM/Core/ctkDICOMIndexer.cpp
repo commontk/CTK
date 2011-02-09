@@ -29,9 +29,13 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QDebug>
+#include <QPixmap>
+
 
 // ctkDICOM includes
 #include "ctkDICOMIndexer.h"
+#include "ctkDICOMImage.h"
+
 
 // DCMTK includes
 #ifndef WIN32
@@ -45,6 +49,7 @@
 #include <dcmtk/ofstd/ofstring.h>
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
+#include "dcmimage.h"
 
 #define MITK_ERROR std::cout
 #define MITK_INFO std::cout
@@ -85,7 +90,7 @@ ctkDICOMIndexer::~ctkDICOMIndexer()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& directoryName,const QString& destinationDirectoryName, bool createHierarchy)
+void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& directoryName,const QString& destinationDirectoryName, bool createHierarchy, bool createThumbnails)
 {
   QSqlDatabase db = database.database();
   const std::string src_directory(directoryName.toStdString());
@@ -366,6 +371,11 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
     }
 
     lastSeriesInstanceUID = seriesInstanceUID;
+    QString studySeriesDirectory;
+    if (createHierarchy || createThumbnails)
+    {
+      studySeriesDirectory = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
+    }
 
     //----------------------------------
     //Move file to destination directory
@@ -375,15 +385,35 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
       {
       QFile currentFile( qfilename );
       QDir destinationDir(destinationDirectoryName + "/dicom");
-      QString destFileName = seriesInstanceUID.c_str();
+      QString destFileName = sopInstanceUID.c_str();
       if (createHierarchy)
       {
-        QString uniqueDirName = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
-        destinationDir.mkpath(uniqueDirName);
-        destFileName.prepend( destinationDir.absolutePath() + "/"  + uniqueDirName + "/" );
+        destinationDir.mkpath(studySeriesDirectory);
+        destFileName.prepend( destinationDir.absolutePath() + "/"  + studySeriesDirectory + "/" );
       }
       currentFile.copy(destFileName);
       qfilename = destFileName;
+    }
+
+    if (createThumbnails)
+    {
+      QString databaseFile = database.GetDatabaseFilename();
+      if (!QFileInfo(databaseFile).isAbsolute())
+      {
+        databaseFile.prepend(QDir::currentPath() + "/");
+      }
+
+      QString thumbnailBaseDir = QFileInfo ( databaseFile ).absoluteDir().path() + "/thumbs/";
+      QString thumbnailFilename = thumbnailBaseDir + "/" + studySeriesDirectory + "/" + sopInstanceUID.c_str() + ".png";
+      QFileInfo thumbnailInfo(thumbnailFilename);
+      if ( ! ( thumbnailInfo.exists() && thumbnailInfo.lastModified() < QFileInfo(qfilename).lastModified() ) )
+      {
+        QDir(thumbnailBaseDir).mkpath(studySeriesDirectory);
+        DicomImage dcmtkImage(qfilename.toAscii());
+        ctkDICOMImage ctkImage(&dcmtkImage);
+        QImage image( ctkImage.getImage(0) );
+        image.scaled(128,128,Qt::KeepAspectRatio).save(thumbnailFilename,"PNG");
+      }
     }
     // */
     //------------------------

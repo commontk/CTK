@@ -182,7 +182,7 @@
     <string>Send</string>
    </property>
    <property name="toolTip">
-    <string>Send DIOCM studies to a DICOM node</string>
+    <string>Send DICOM Studies to a DICOM node</string>
    </property>
   </action>
  </widget>

@@ -39,7 +39,7 @@ public:
   virtual ~ctkDICOMAppWidget();
 
 public slots:
-    void onDatabaseDirectoryChanged(const QString& directory);
+    void setDatabaseDirectory(const QString& directory);
     void onAddToDatabase();
 
     void onDICOMModelSelected(const QModelIndex& index);

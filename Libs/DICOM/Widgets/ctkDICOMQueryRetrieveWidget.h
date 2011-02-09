@@ -40,6 +40,7 @@ public slots:
     void setRetrieveDirectory(const QString& directory);
     void setRetrieveDatabaseFileName(const QString& fileName);
     void processQuery();
+    void processRetrieve();
 
 protected:
   QScopedPointer<ctkDICOMQueryRetrieveWidgetPrivate> d_ptr;
