@@ -223,7 +223,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
    * Two Configuration objects are equal when their PIDs are equal.
    *
    * @param other <code>ctkConfiguration</code> object to compare against
-   * @return <code>true} if equal, {@code false</code> if the PID's differ.
+   * @return <code>true</code> if equal, <code>false</code> if the PID's differ.
    */
   bool operator==(const ctkConfiguration& other) const;
 

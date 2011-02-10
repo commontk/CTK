@@ -144,8 +144,8 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
    *
    * <p>
    * This list must be in the same sequence as <code>getOptionLabels()</code>. I.e.
-   * for each index i in <code>getOptionValues</code>, i in {@code
-   * getOptionLabels()} should be the label.
+   * for each index i in <code>getOptionValues</code>, i in <code>getOptionLabels()</code>
+   * should be the label.
    *
    * @return A list values
    */
@@ -164,8 +164,8 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
    * available.
    * <p>
    * This list must be in the same sequence as the <code>getOptionValues()</code>
-   * method. I.e. for each index i in <code>getOptionLabels</code>, i in {@code
-   * getOptionValues()} should be the associated value.
+   * method. I.e. for each index i in <code>getOptionLabels</code>, i in <code>
+   * getOptionValues()</code> should be the associated value.
    *
    * @return A list values
    */
