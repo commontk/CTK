@@ -168,7 +168,7 @@ void ctkDICOMDataset::Deserialize()
   {
     std::cerr << "** Condition code of Dataset::read() is " << condition.code() << std::endl;
     std::cerr << "** Buffer state: " << dcmbuffer.status().code() << " " <<  dcmbuffer.good() << " " << dcmbuffer.eos() << " tell " << dcmbuffer.tell() << " avail " << dcmbuffer.avail() << std::endl;
-    std::cerr << "** Dataset state: " << dataset.transferState() << std::endl;
+    std::cerr << "** Dataset state: " << (int)dataset.transferState() << std::endl;
     std::cerr << std::string("Could not DcmDataset::read(..): ") + condition.text() << std::endl;
     //throw std::invalid_argument( std::string("Could not DcmDataset::read(..): ") + condition.text() );
   }
