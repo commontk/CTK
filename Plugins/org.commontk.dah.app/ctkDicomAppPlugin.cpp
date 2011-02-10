@@ -44,7 +44,6 @@ ctkDicomAppPlugin::ctkDicomAppPlugin()
 //----------------------------------------------------------------------------
 ctkDicomAppPlugin::~ctkDicomAppPlugin()
 {
-  std::cout<<"in the destructor of the plugin"<<std::endl;
   delete this->AppServer;
   delete this->HostInterface;
   ctkDicomAppPlugin::Context = 0;
@@ -83,6 +82,8 @@ void ctkDicomAppPlugin::stop(ctkPluginContext* context)
 
   delete this->AppServer;
   delete this->HostInterface;
+  this->AppServer = 0;
+  this->HostInterface = 0;
   this->Context = 0;
 }
 
