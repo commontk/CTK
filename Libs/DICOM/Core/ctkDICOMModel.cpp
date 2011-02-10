@@ -398,7 +398,7 @@ bool ctkDICOMModel::canFetchMore ( const QModelIndex & parentValue ) const
 {
   Q_D(const ctkDICOMModel);
   Node* node = d->nodeFromIndex(parentValue);
-  return !node->AtEnd;
+  return node ? !node->AtEnd : false;
 }
 
 //------------------------------------------------------------------------------

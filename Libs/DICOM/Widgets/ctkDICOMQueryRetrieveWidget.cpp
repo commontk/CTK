@@ -38,13 +38,13 @@ public:
 //----------------------------------------------------------------------------
 // ctkDICOMQueryRetrieveWidgetPrivate methods
 
-
 //----------------------------------------------------------------------------
 // ctkDICOMQueryRetrieveWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* _parent):Superclass(_parent), 
-  d_ptr(new ctkDICOMQueryRetrieveWidgetPrivate)
+ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* parentWidget)
+  : Superclass(parentWidget) 
+  , d_ptr(new ctkDICOMQueryRetrieveWidgetPrivate)
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
   
@@ -52,6 +52,19 @@ ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* _parent):Super
 
   connect(d->QueryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
   connect(d->RetrieveButton, SIGNAL(clicked()), this, SLOT(processRetrieve()));
+
+  d->results->setModel(&d->model);
+  d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
+
+  QHeaderView* previousHeaderView = d->results->header();
+  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->results);
+  headerView->setClickable(previousHeaderView->isClickable());
+  headerView->setMovable(previousHeaderView->isMovable());
+  headerView->setHighlightSections(previousHeaderView->highlightSections());
+  headerView->setPropagateToItems(true);
+  d->results->setHeader(headerView);
+  // headerView is hidden because it was created with a visisble parent widget 
+  headerView->setHidden(false);
 }
 
 //----------------------------------------------------------------------------
@@ -126,19 +139,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   }
   
   // checkable headers - allow user to select the patient/studies to retrieve
-  d->results->setModel(&d->model);
   d->model.setDatabase(d->queryResultDatabase.database());
-
-  d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
-  QHeaderView* previousHeaderView = d->results->header();
-  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->results);
-  headerView->setClickable(previousHeaderView->isClickable());
-  headerView->setMovable(previousHeaderView->isMovable());
-  headerView->setHighlightSections(previousHeaderView->highlightSections());
-  headerView->setPropagateToItems(true);
-  d->results->setHeader(headerView);
-  // headerView is hidden because it was created with a visisble parent widget 
-  headerView->setHidden(false);
 
   d->RetrieveButton->setEnabled(d->model.rowCount());
 }
