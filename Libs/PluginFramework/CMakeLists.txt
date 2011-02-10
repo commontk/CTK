@@ -17,6 +17,7 @@ SET(KIT_SRCS
   ctkPlugin.cpp
   ctkPluginAbstractTracked_p.h
   ctkPluginAbstractTracked.tpp
+  ctkPluginActivator.h
   ctkPluginArchive.cpp
   ctkPluginArchive_p.h
   ctkPluginConstants.cpp
