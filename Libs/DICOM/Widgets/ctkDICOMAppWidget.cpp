@@ -180,5 +180,6 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
        targetDirectory = d->DICOMDatabase->databaseDirectory();
     }
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
+    d->DICOMModel.reset();
   }
 }
