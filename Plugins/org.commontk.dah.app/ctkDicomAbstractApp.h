@@ -40,13 +40,14 @@ class ctkPluginContext;
 class org_commontk_dah_app_EXPORT ctkDicomAbstractApp : public QObject, public ctkDicomAppInterface
 {
   Q_OBJECT
+  Q_INTERFACES(ctkDicomAppInterface)
 
 public:
 
   ctkDicomAbstractApp(ctkPluginContext* context);
   virtual ~ctkDicomAbstractApp();
   virtual bool setState(ctkDicomAppHosting::State newState);
-
+  virtual ctkDicomAppHosting::State getState();
 protected:
   virtual ctkDicomHostInterface* getHostInterface() const;
 
@@ -56,6 +57,7 @@ signals:
   void suspendProgress();
   void cancelProgress();
   void exitHostedApp();
+  void releaseResources();
 
 private:
   Q_DECLARE_PRIVATE(ctkDicomAbstractApp)

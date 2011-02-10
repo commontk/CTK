@@ -63,79 +63,66 @@ ctkDicomAbstractApp::~ctkDicomAbstractApp()
 {
 }
 
-/**
-  * Method triggered by the host. Changes the state of the hosted application.
-  *@return true if state received and not illegal in the transition diagram from the reference, false if illegal or not recognized.
-  */
+
+//----------------------------------------------------------------------------
 bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
 {
-  bool result = true;
+  bool result = false;
   //received a new state,
   switch (newState){
   case ctkDicomAppHosting::IDLE:
     if (d_ptr->currentState == ctkDicomAppHosting::COMPLETED)
     {
-
-    }
-    else
-    {
-      result = false;
+      emit releaseResources();
+      result = true;
     }
     break;
   case ctkDicomAppHosting::INPROGRESS:
     if (d_ptr->currentState == ctkDicomAppHosting::IDLE)
     {
       emit startProgress();
+      result = true;
     }
     else if(d_ptr->currentState == ctkDicomAppHosting::SUSPENDED)
     {
       emit resumeProgress();
-    }
-    else
-    {
-      result = false;
+      result = true;
     }
     break;
   case ctkDicomAppHosting::COMPLETED:
     qDebug() << "Hosting system shouldn't send completed";
-    result = false;
     break;
   case ctkDicomAppHosting::SUSPENDED:
     //suspend computation, release as much resource as possible with possible resuming of computation
     emit suspendProgress();
+    result = true;
     break;
   case ctkDicomAppHosting::CANCELED:
     //stop and release everything.
-    if (d_ptr->currentState != ctkDicomAppHosting::INPROGRESS
-        || d_ptr->currentState != ctkDicomAppHosting::SUSPENDED)
-    {
-      result = false;
-    }
-    else
+    if (d_ptr->currentState == ctkDicomAppHosting::INPROGRESS
+        || d_ptr->currentState == ctkDicomAppHosting::SUSPENDED)
     {
       //releasing resources
       emit cancelProgress();
       //special state, a transitional state, so we notify straight away the new state.
       getHostInterface()->notifyStateChanged(ctkDicomAppHosting::CANCELED);
       d_ptr->currentState = ctkDicomAppHosting::CANCELED;
+      result = true;
     }
     break;
   case ctkDicomAppHosting::EXIT:
     //check if current state is IDLE
-    if (d_ptr->currentState != ctkDicomAppHosting::IDLE)
+    if (d_ptr->currentState == ctkDicomAppHosting::IDLE)
     {
-      qDebug()<<"illegal transition to EXIT." <<
-                 "Current state is:" << d_ptr->currentState;
-      result = false;
+      //maybe not useful:
+      getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
+      emit exitHostedApp();
+      result = true;
     }
-    //maybe not useful:
-    getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
-    emit exitHostedApp();
     break;
   default:
     //should never happen
     qDebug() << "unexisting state Code, do nothing";
-    result = false;
   }
   if (!result)
   {
@@ -145,12 +132,18 @@ bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
   return result;
 }
 
-
+//----------------------------------------------------------------------------
 ctkDicomHostInterface* ctkDicomAbstractApp::getHostInterface() const
 {
   ctkDicomHostInterface* host = d_ptr->HostTracker.getService();
   if (!host) throw std::runtime_error("DICOM Host Interface not available");
   return host;
+}
+
+//----------------------------------------------------------------------------
+ctkDicomAppHosting::State ctkDicomAbstractApp::getState()
+{
+  return d_ptr->currentState;
 }
 
 

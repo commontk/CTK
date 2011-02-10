@@ -41,8 +41,14 @@ ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
 {
 
 
-  connect(this, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)), Qt::QueuedConnection);
-  emit stateChanged(ctkDicomAppHosting::IDLE);
+  connect(this, SIGNAL(startProgress()), this, SLOT(onStartProgress()), Qt::QueuedConnection);
+  connect(this, SIGNAL(resumeProgress()), this, SLOT(onResumeProgress()), Qt::QueuedConnection);
+  connect(this, SIGNAL(SuspendProgress()), this, SLOT(onSuspendProgress()), Qt::QueuedConnection);
+  connect(this, SIGNAL(cancelProgress()), this, SLOT(onCancelProgress()), Qt::QueuedConnection);
+  connect(this, SIGNAL(exitHostedApp()), this, SLOT(onExitHostedApp()), Qt::QueuedConnection);
+
+  //notify Host we are ready.
+  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
 }
 
 //----------------------------------------------------------------------------
@@ -56,19 +62,7 @@ ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
   }
 }
 
-//----------------------------------------------------------------------------
-ctkDicomAppHosting::State ctkExampleDicomAppLogic::getState()
-{
-  return ctkDicomAppHosting::IDLE;
-}
 
-//----------------------------------------------------------------------------
-bool ctkExampleDicomAppLogic::setState(ctkDicomAppHosting::State newState)
-{
-  qDebug() << "setState called";
-  emit stateChanged(newState);
-  return true;
-}
 
 //----------------------------------------------------------------------------
 bool ctkExampleDicomAppLogic::bringToFront(const QRect& /*requestedScreenArea*/)
@@ -99,47 +93,50 @@ void ctkExampleDicomAppLogic::do_something()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::changeState(int anewstate)
+void ctkExampleDicomAppLogic::onStartProgress()
 {
-  ctkDicomAppHosting::State newstate = static_cast<ctkDicomAppHosting::State>(anewstate);
-
-  if (newstate == ctkDicomAppHosting::INPROGRESS)
-    {
-    do_something();
-    }
-
-  try
-    {
-    getHostInterface()->notifyStateChanged(newstate);
-    }
-  catch (const std::runtime_error& e)
-    {
-    qCritical() << e.what();
-    return;
-    }
-
-  if (newstate == ctkDicomAppHosting::CANCELED)
-    {
-    qDebug() << "  Received changeState(CANCELED) ... now releasing all resources and afterwards changing to state IDLE.";
-    qDebug() << "  Changing to state IDLE.";
-    try
-      {
-      getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
-      }
-    catch (const std::runtime_error& e)
-      {
-      qCritical() << e.what();
-      return;
-      }
-    }
-
-  if (newstate == ctkDicomAppHosting::EXIT)
-    {
-    qDebug() << "  Received changeState(EXIT) ... exiting.";
-    this->getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
-    qApp->exit(0);
-    }
+  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
+  do_something();
 }
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomAppLogic::onResumeProgress()
+{
+  //reclame all resources.
+
+  //notify state changed
+  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
+  //we're rolling
+  //do something else normally, but this is an example
+  this->Button->setEnabled(true);
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomAppLogic::onSuspendProgress()
+{
+  //release resources it can reclame later to resume work
+  this->Button->setEnabled(false);
+  //notify state changed
+  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
+  //we're rolling
+  //do something else normally, but this is an example
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomAppLogic::onCancelProgress()
+{
+  //release all resources
+  onReleaseResources();
+  //update state
+  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomAppLogic::onExitHostedApp()
+{
+  qApp->exit(0);
+}
+
 
 //----------------------------------------------------------------------------
 bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
