@@ -37,10 +37,13 @@ public:
   virtual ~ctkDICOMQueryRetrieveWidget();
 
 public slots:
-    void setRetrieveDirectory(const QString& directory);
-    void setRetrieveDatabaseFileName(const QString& fileName);
-    void processQuery();
-    void processRetrieve();
+  void setRetrieveDirectory(const QString& directory);
+  void setRetrieveDatabaseFileName(const QString& fileName);
+  void processQuery();
+  void processRetrieve();
+
+protected slots:
+  void onQueryProgressChanged(int value);
 
 protected:
   QScopedPointer<ctkDICOMQueryRetrieveWidgetPrivate> d_ptr;

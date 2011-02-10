@@ -40,10 +40,12 @@ public:
   explicit ctkDICOMServerNodeWidget(QWidget* parent=0);
   virtual ~ctkDICOMServerNodeWidget();
 
-  QString callingAETitle();
+  QString                callingAETitle();
   QMap<QString,QVariant> parameters();
-  QStringList nodes();
-  QMap<QString,QVariant> nodeParameters(QString &node);
+
+  QStringList            nodes()const;
+  QStringList            checkedNodes()const;
+  QMap<QString,QVariant> nodeParameters(const QString &node)const ;
 
 public slots:
   void addNode ();
