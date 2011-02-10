@@ -10,8 +10,11 @@
 #include <QModelIndex>
 #include <QCheckBox>
 
-// ctkDICOMWidgets includes
+// ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
+#include "ctkDICOMIndexer.h"
+
+// ctkDICOMWidgets includes
 #include "ctkDICOMModel.h"
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
@@ -37,6 +40,8 @@ public:
 
   QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
   ctkDICOMModel DICOMModel;
+  QSharedPointer<ctkDICOMIndexer> DICOMIndexer;
+
 };
 
 //----------------------------------------------------------------------------
@@ -45,6 +50,7 @@ public:
 ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(){
   
   DICOMDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
+  DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
 }
 
 //----------------------------------------------------------------------------
@@ -72,6 +78,8 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->ImportDialog->setFileMode(QFileDialog::Directory);
   d->ImportDialog->setLabelText(QFileDialog::Accept,"Import");
   d->ImportDialog->setWindowTitle("Import DICOM files from directory ...");
+  d->ImportDialog->setWindowModality(Qt::ApplicationModal);
+
 
   //Set thumbnails width in thumbnail widget
   //d->thumbnailsWidget->setThumbnailWidth(128);
@@ -81,6 +89,8 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   //connect signal and slots
   connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onDICOMModelSelected(const QModelIndex &)));
   connect(d->thumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
+  connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
+
 }
 
 //----------------------------------------------------------------------------
@@ -157,4 +167,18 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index){
 
 void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widget){
   //TODO: update previewer
+}
+void ctkDICOMAppWidget::onImportDirectory(QString directory)
+{
+  Q_D(ctkDICOMAppWidget);
+  if (QDir(directory).exists())
+  {
+    QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
+    QString targetDirectory;
+    if (copyOnImport->isEnabled())
+    {
+       targetDirectory = d->DICOMDatabase->databaseDirectory();
+    }
+    d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
+  }
 }

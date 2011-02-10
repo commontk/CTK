@@ -50,7 +50,10 @@ public slots:
     void onQuery();
 
 protected:
-  QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;
+    QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;
+protected slots:
+    void onImportDirectory(QString directory);
+
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMAppWidget);
