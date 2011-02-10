@@ -615,6 +615,14 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db)
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMModel::reset()
+{
+  Q_D(ctkDICOMModel);
+  // this could probably be done in a more elegant way
+  this->setDatabase(d->DataBase);
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMModel::sort(int column, Qt::SortOrder order)
 {
   Q_D(ctkDICOMModel);
