@@ -192,7 +192,6 @@ void ctkDateRangeWidget::setDateTimeRange(QDateTime startDateTime, QDateTime end
 // --------------------------------------------------------------------------
 void ctkDateRangeWidget::setDateRange(QDate startDate, QDate endDate)
 {
-  Q_D(const ctkDateRangeWidget);
   this->setDateTimeRange(QDateTime(startDate), QDateTime(endDate));
 }
 
