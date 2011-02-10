@@ -98,6 +98,7 @@ ctkDICOMDatabasePrivate::~ctkDICOMDatabasePrivate()
 void ctkDICOMDatabase::openDatabase(const QString databaseFile)
 {
   Q_D(ctkDICOMDatabase);
+  d->DatabaseFileName = databaseFile;
   d->Database = QSqlDatabase::addDatabase("QSQLITE","DICOM-DB");
   d->Database.setDatabaseName(databaseFile);
   if ( ! (d->Database.open()) )
@@ -150,7 +151,6 @@ const QString ctkDICOMDatabase::databaseFilename() const {
 
 //------------------------------------------------------------------------------
 const QString ctkDICOMDatabase::databaseDirectory() const {
-  Q_D(const ctkDICOMDatabase);
   QString databaseFile = databaseFilename();
   if (!QFileInfo(databaseFile).isAbsolute())
   {
