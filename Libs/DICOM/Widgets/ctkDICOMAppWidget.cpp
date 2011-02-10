@@ -65,9 +65,9 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->ImportWidget = new ctkDICOMImportWidget();
 
   //Set thumbnails width in thumbnail widget
-  d->thumbnailsWidget->setThumbnailWidth(128);
+  //d->thumbnailsWidget->setThumbnailWidth(128);
   //Test add thumbnails
-  d->thumbnailsWidget->addTestThumbnail();
+  //d->thumbnailsWidget->addTestThumbnail();
 
   //connect signal and slots
   connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onDICOMModelSelected(const QModelIndex &)));

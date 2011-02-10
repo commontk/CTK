@@ -38,15 +38,11 @@ public:
   explicit ctkDICOMThumbnailListWidget(QWidget* parent=0);
   virtual ~ctkDICOMThumbnailListWidget();
 
-  void setThumbnailWidth(int width);
-
-  void addTestThumbnail(int count = 10);
   void setModelIndex(const QModelIndex& index);
   
 protected:
   QScopedPointer<ctkDICOMThumbnailListWidgetPrivate> d_ptr;
 
-  virtual void resizeEvent(QResizeEvent * event); 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMThumbnailListWidget);
   Q_DISABLE_COPY(ctkDICOMThumbnailListWidget);

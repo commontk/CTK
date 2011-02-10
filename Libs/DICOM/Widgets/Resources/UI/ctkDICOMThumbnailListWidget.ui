@@ -28,11 +28,6 @@
         <height>211</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <layout class="QGridLayout" name="thumbnailLayout"/>
-       </item>
-      </layout>
      </widget>
     </widget>
    </item>
