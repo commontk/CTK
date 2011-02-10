@@ -76,7 +76,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   d->RetrieveButton->setEnabled(false);
   
   // create a database in memory to hold query results
-  try { d->QueryResultDatabase.openDatabase( ":memory:" ); }
+  try { d->QueryResultDatabase.openDatabase( ":memory:", "QUERY-DB" ); }
   catch (std::exception e)
   {
     logger.error ( "Database error: " + d->QueryResultDatabase.lastError() );
