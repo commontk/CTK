@@ -108,6 +108,11 @@ ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCI
 #
 
 #-----------------------------------------------------------------------------
+# Attempt to discover Doxygen so that DOXYGEN_EXECUTABLE is set to an appropriate default value
+#
+FIND_PACKAGE(Doxygen QUIET)
+
+#-----------------------------------------------------------------------------
 # ExternalProjects - Project should be topologically ordered
 #
 SET(external_projects
@@ -231,6 +236,7 @@ ExternalProject_Add(${proj}
     ${ctk_superbuild_boolean_args}
     -DCTK_SUPERBUILD:BOOL=OFF
     -DDOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
+    -DDOXYGEN_EXECUTABLE:FILEPATH=${DOXYGEN_EXECUTABLE}
     -DCTK_SUPERBUILD_BINARY_DIR:PATH=${CTK_BINARY_DIR}
     -DCTK_CMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH=${CTK_CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
     -DCTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH=${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY}
