@@ -137,15 +137,26 @@ ctkDICOMDatabase::~ctkDICOMDatabase()
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-const QString ctkDICOMDatabase::GetLastError() const {
+const QString ctkDICOMDatabase::lastError() const {
   Q_D(const ctkDICOMDatabase);
   return d->LastError;
 }
 
 //------------------------------------------------------------------------------
-const QString ctkDICOMDatabase::GetDatabaseFilename() const {
+const QString ctkDICOMDatabase::databaseFilename() const {
   Q_D(const ctkDICOMDatabase);
   return d->DatabaseFileName;
+}
+
+//------------------------------------------------------------------------------
+const QString ctkDICOMDatabase::databaseDirectory() const {
+  Q_D(const ctkDICOMDatabase);
+  QString databaseFile = databaseFilename();
+  if (!QFileInfo(databaseFile).isAbsolute())
+  {
+    databaseFile.prepend(QDir::currentPath() + "/");
+  }
+  return QFileInfo ( databaseFile ).absoluteDir().path();
 }
 
 //------------------------------------------------------------------------------

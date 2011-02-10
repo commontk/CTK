@@ -28,10 +28,11 @@ class ctkDICOMQueryRetrieveWidgetPrivate: public Ui_ctkDICOMQueryRetrieveWidget
 public:
   ctkDICOMQueryRetrieveWidgetPrivate(){}
 
-  QMap<QString, ctkDICOMQuery*> queriesByServer;
-  QMap<QString, ctkDICOMQuery*> queriesByStudyUID;
-  QMap<QString, ctkDICOMRetrieve*> retrievalsByStudyUID;
-  ctkDICOMDatabase queryResultDatabase;
+  QMap<QString, ctkDICOMQuery*> QueriesByServer;
+  QMap<QString, ctkDICOMQuery*> QueriesByStudyUID;
+  QMap<QString, ctkDICOMRetrieve*> RetrievalsByStudyUID;
+  ctkDICOMDatabase QueryResultDatabase;
+  QSharedPointer<ctkDICOMDatabase> RetrieveDatabase;
   ctkDICOMModel model;
 };
 
@@ -60,19 +61,11 @@ ctkDICOMQueryRetrieveWidget::~ctkDICOMQueryRetrieveWidget()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryRetrieveWidget::setRetrieveDirectory(const QString& directory)
+void ctkDICOMQueryRetrieveWidget::setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase)
 {
-  QSettings settings;
-  settings.setValue("RetrieveDirectory", directory);
-  settings.sync();
-}
+  Q_D(ctkDICOMQueryRetrieveWidget);
 
-//----------------------------------------------------------------------------
-void ctkDICOMQueryRetrieveWidget::setRetrieveDatabaseFileName(const QString& fileName)
-{
-  QSettings settings;
-  settings.setValue("RetrieveDatabaseFileName", fileName);
-  settings.sync();
+  d->RetrieveDatabase = dicomDatabase;
 }
 
 //----------------------------------------------------------------------------
@@ -83,11 +76,11 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   d->RetrieveButton->setEnabled(false);
   
   // create a database in memory to hold query results
-  try { d->queryResultDatabase.openDatabase( ":memory:" ); }
+  try { d->QueryResultDatabase.openDatabase( ":memory:" ); }
   catch (std::exception e)
   {
-    logger.error ( "Database error: " + d->queryResultDatabase.GetLastError() );
-    d->queryResultDatabase.closeDatabase();
+    logger.error ( "Database error: " + d->QueryResultDatabase.lastError() );
+    d->QueryResultDatabase.closeDatabase();
     return;
   }
 
@@ -99,35 +92,35 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
     if ( parameters["CheckState"] == Qt::Checked )
     {
       // create a query for the current server
-      d->queriesByServer[server] = new ctkDICOMQuery;
-      d->queriesByServer[server]->setCallingAETitle(d->ServerNodeWidget->callingAETitle());
-      d->queriesByServer[server]->setCalledAETitle(parameters["AETitle"].toString());
-      d->queriesByServer[server]->setHost(parameters["Address"].toString());
-      d->queriesByServer[server]->setPort(parameters["Port"].toInt());
+      d->QueriesByServer[server] = new ctkDICOMQuery;
+      d->QueriesByServer[server]->setCallingAETitle(d->ServerNodeWidget->callingAETitle());
+      d->QueriesByServer[server]->setCalledAETitle(parameters["AETitle"].toString());
+      d->QueriesByServer[server]->setHost(parameters["Address"].toString());
+      d->QueriesByServer[server]->setPort(parameters["Port"].toInt());
 
       // populate the query with the current search options
-      d->queriesByServer[server]->setFilters( d->QueryWidget->parameters() );
+      d->QueriesByServer[server]->setFilters( d->QueryWidget->parameters() );
 
       try
       {
         // run the query against the selected server and put results in database
-        d->queriesByServer[server]->query ( d->queryResultDatabase );
+        d->QueriesByServer[server]->query ( d->QueryResultDatabase );
       }
       catch (std::exception e)
       {
         logger.error ( "Query error: " + parameters["Name"].toString() );
       }
 
-      foreach( QString studyUID, d->queriesByServer[server]->studyInstanceUIDQueried() )
+      foreach( QString studyUID, d->QueriesByServer[server]->studyInstanceUIDQueried() )
       {
-        d->queriesByStudyUID[studyUID] = d->queriesByServer[server];
+        d->QueriesByStudyUID[studyUID] = d->QueriesByServer[server];
       }
     }
   }
   
   // checkable headers - allow user to select the patient/studies to retrieve
   d->results->setModel(&d->model);
-  d->model.setDatabase(d->queryResultDatabase.database());
+  d->model.setDatabase(d->QueryResultDatabase.database());
 
   d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
   QHeaderView* previousHeaderView = d->results->header();
@@ -150,12 +143,13 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
 
   QMap<QString,QVariant> serverParameters = d->ServerNodeWidget->parameters();
 
-  foreach( QString studyUID, d->queriesByStudyUID.keys() )
+  foreach( QString studyUID, d->QueriesByStudyUID.keys() )
   {
-    logger.debug("need to retrieve " + studyUID + " from " + d->queriesByStudyUID[studyUID]->host());
-    ctkDICOMQuery *query = d->queriesByStudyUID[studyUID];
+    logger.debug("need to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
+    ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
     ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
-    d->retrievalsByStudyUID[studyUID] = retrieve;
+    retrieve->setDICOMDatabase( d->RetrieveDatabase );
+    d->RetrievalsByStudyUID[studyUID] = retrieve;
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );
     retrieve->setCalledPort( query->port() );
@@ -168,7 +162,7 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
     logger.info ( "Starting to retrieve" );
     try
       {
-      retrieve->retrieveStudy ( studyUID, QDir("/tmp/ctk") );
+      retrieve->retrieveStudy ( studyUID );
       }
     catch (std::exception e)
       {

@@ -39,8 +39,9 @@ public:
   virtual ~ctkDICOMDatabase();
 
   const QSqlDatabase& database() const;
-  const QString GetLastError() const;
-  const QString GetDatabaseFilename() const;
+  const QString lastError() const;
+  const QString databaseFilename() const;
+  const QString databaseDirectory() const;
 
   ///
   /// open the SQLite database in @param file. If the file does not

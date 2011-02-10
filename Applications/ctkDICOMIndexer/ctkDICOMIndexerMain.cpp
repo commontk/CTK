@@ -106,7 +106,7 @@ int main(int argc, char** argv)
   }
   catch (std::exception e)
   {
-    std::cerr << "Database error:" << qPrintable(myCTK.GetLastError());
+    std::cerr << "Database error:" << qPrintable(myCTK.lastError());
     myCTK.closeDatabase();
     return EXIT_FAILURE;
   }
