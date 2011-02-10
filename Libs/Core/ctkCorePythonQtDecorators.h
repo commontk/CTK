@@ -32,6 +32,7 @@
 // for non-static methods.
 //
 
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkCorePythonQtDecorators : public QObject
 {
   Q_OBJECT

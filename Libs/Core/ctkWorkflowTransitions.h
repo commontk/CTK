@@ -29,6 +29,7 @@
 // CTK includes
 #include "ctkCoreExport.h"
 
+/// \ingroup Core
 /// \brief Custom transitions for use with ctkWorkflow.
 ///
 /// ctkWorkflowIntrastepTransition: for transition between states of the same step.  The transition
@@ -60,6 +61,7 @@ struct CTK_CORE_EXPORT ctkWorkflowIntrastepTransitionEvent : public QEvent
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkWorkflowIntrastepTransition : public QAbstractTransition
 {
   Q_OBJECT
@@ -100,6 +102,7 @@ private:
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 struct CTK_CORE_EXPORT ctkWorkflowInterstepTransitionEvent : public QEvent
 {
 
@@ -125,6 +128,7 @@ struct CTK_CORE_EXPORT ctkWorkflowInterstepTransitionEvent : public QEvent
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkWorkflowInterstepTransition : public QAbstractTransition
 {
   Q_OBJECT

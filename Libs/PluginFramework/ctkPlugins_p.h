@@ -28,150 +28,152 @@
 #include <QSharedPointer>
 
 
-  // CTK class forward declarations
-  class ctkPlugin;
-  class ctkPluginFrameworkContext;
-  class ctkVersion;
-  class ctkVersionRange;
+// CTK class forward declarations
+class ctkPlugin;
+class ctkPluginFrameworkContext;
+class ctkVersion;
+class ctkVersionRange;
+
+/**
+ * \ingroup PluginFramework
+ *
+ * Here we handle all the plugins that are installed in the framework.
+ * Also handles load and save of bundle states to a database, so that we
+ * can restart the platform.
+ */
+class ctkPlugins {
+
+private:
 
   /**
-   * Here we handle all the plugins that are installed in the framework.
-   * Also handles load and save of bundle states to a database, so that we
-   * can restart the platform.
+   * Table of all installed plugins in this framework.
+   * Key is the plugin location.
    */
-  class ctkPlugins {
+  QHash<QString, QSharedPointer<ctkPlugin> > plugins;
 
-  private:
+  /**
+   * Link to framework object.
+   */
+  ctkPluginFrameworkContext* fwCtx;
 
-    /**
-     * Table of all installed plugins in this framework.
-     * Key is the plugin location.
-     */
-    QHash<QString, QSharedPointer<ctkPlugin> > plugins;
-
-    /**
-     * Link to framework object.
-     */
-    ctkPluginFrameworkContext* fwCtx;
-
-    /**
-     * Read write lock for protecting the plugins object
-     */
-    mutable QReadWriteLock pluginsLock;
+  /**
+   * Read write lock for protecting the plugins object
+   */
+  mutable QReadWriteLock pluginsLock;
 
 
-  public:
+public:
 
-    /**
-     * Create a container for all plugins in this framework.
-     */
-    ctkPlugins(ctkPluginFrameworkContext* fw);
-
-
-    void clear();
+  /**
+   * Create a container for all plugins in this framework.
+   */
+  ctkPlugins(ctkPluginFrameworkContext* fw);
 
 
-    /**
-     * Install a new plugin.
-     *
-     * @param location The location to be installed
-     */
-    QSharedPointer<ctkPlugin> install(const QUrl& location, QIODevice* in);
+  void clear();
 
 
-    /**
-     * Remove plugin registration.
-     *
-     * @param location The location to be removed
-     */
-    void remove(const QUrl& location);
+  /**
+   * Install a new plugin.
+   *
+   * @param location The location to be installed
+   */
+  QSharedPointer<ctkPlugin> install(const QUrl& location, QIODevice* in);
 
 
-    /**
-     * Get the plugin that has the specified plugin identifier.
-     *
-     * @param id The identifier of the plugin to get.
-     * @return ctkPlugin or null
-     *         if the plugin was not found.
-     */
-    QSharedPointer<ctkPlugin> getPlugin(int id) const;
+  /**
+   * Remove plugin registration.
+   *
+   * @param location The location to be removed
+   */
+  void remove(const QUrl& location);
 
 
-    /**
-     * Get the plugin that has specified plugin location.
-     *
-     * @param location The location of the plugin to get.
-     * @return ctkPlugin or null
-     *         if the plugin was not found.
-     */
-    QSharedPointer<ctkPlugin> getPlugin(const QString& location) const;
+  /**
+   * Get the plugin that has the specified plugin identifier.
+   *
+   * @param id The identifier of the plugin to get.
+   * @return ctkPlugin or null
+   *         if the plugin was not found.
+   */
+  QSharedPointer<ctkPlugin> getPlugin(int id) const;
 
 
-    /**
-     * Get the plugin that has specified plugin symbolic name and version.
-     *
-     * @param name The symbolic name of the plugin to get.
-     * @param version The plugin version of the plugin to get.
-     * @return ctkPlugin or null.
-     */
-    QSharedPointer<ctkPlugin> getPlugin(const QString& name, const ctkVersion& version) const;
+  /**
+   * Get the plugin that has specified plugin location.
+   *
+   * @param location The location of the plugin to get.
+   * @return ctkPlugin or null
+   *         if the plugin was not found.
+   */
+  QSharedPointer<ctkPlugin> getPlugin(const QString& location) const;
 
 
-    /**
-     * Get all installed plugins.
-     *
-     * @return A ctkPlugin list with plugins.
-     */
-    QList<QSharedPointer<ctkPlugin> > getPlugins() const;
+  /**
+   * Get the plugin that has specified plugin symbolic name and version.
+   *
+   * @param name The symbolic name of the plugin to get.
+   * @param version The plugin version of the plugin to get.
+   * @return ctkPlugin or null.
+   */
+  QSharedPointer<ctkPlugin> getPlugin(const QString& name, const ctkVersion& version) const;
 
 
-    /**
-     * Get all plugins that have specified plugin symbolic name.
-     *
-     * @param name The symbolic name of plugins to get.
-     * @return A list of ctkPlugins.
-     */
-    QList<ctkPlugin*> getPlugins(const QString& name) const;
+  /**
+   * Get all installed plugins.
+   *
+   * @return A ctkPlugin list with plugins.
+   */
+  QList<QSharedPointer<ctkPlugin> > getPlugins() const;
 
 
-    /**
-     * Get all plugins that have specified plugin symbolic name and
-     * version range. Result is sorted in decreasing version order.
-     *
-     * @param name The symbolic name of plugins to get.
-     * @param range ctkVersion range of plugins to get.
-     * @return A List of ctkPlugins.
-     */
-    QList<ctkPlugin*> getPlugins(const QString& name, const ctkVersionRange& range) const;
+  /**
+   * Get all plugins that have specified plugin symbolic name.
+   *
+   * @param name The symbolic name of plugins to get.
+   * @return A list of ctkPlugins.
+   */
+  QList<ctkPlugin*> getPlugins(const QString& name) const;
 
 
-    /**
-     * Get all plugins currently in plugin state ACTIVE.
-     *
-     * @return A List of ctkPlugins.
-     */
-    QList<ctkPlugin*> getActivePlugins() const;
+  /**
+   * Get all plugins that have specified plugin symbolic name and
+   * version range. Result is sorted in decreasing version order.
+   *
+   * @param name The symbolic name of plugins to get.
+   * @param range ctkVersion range of plugins to get.
+   * @return A List of ctkPlugins.
+   */
+  QList<ctkPlugin*> getPlugins(const QString& name, const ctkVersionRange& range) const;
 
 
-    /**
-     * Try to load any saved framework state.
-     * This is done by installing all saved plugins and restoring
-     * the saved state for each plugin. This is only
-     * intended to be executed during the start of the framework.
-     *
-     */
-    void load();
+  /**
+   * Get all plugins currently in plugin state ACTIVE.
+   *
+   * @return A List of ctkPlugins.
+   */
+  QList<ctkPlugin*> getActivePlugins() const;
 
 
-    /**
-     * Start a list of plugins in order
-     *
-     * @param slist ctkPlugins to start.
-     */
-    void startPlugins(const QList<ctkPlugin*>& slist) const;
+  /**
+   * Try to load any saved framework state.
+   * This is done by installing all saved plugins and restoring
+   * the saved state for each plugin. This is only
+   * intended to be executed during the start of the framework.
+   *
+   */
+  void load();
 
 
-  };
+  /**
+   * Start a list of plugins in order
+   *
+   * @param slist ctkPlugins to start.
+   */
+  void startPlugins(const QList<ctkPlugin*>& slist) const;
+
+
+};
 
 
 #endif // CTKPLUGINS_H

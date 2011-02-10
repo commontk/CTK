@@ -25,6 +25,8 @@
 #include "ctkRuntimeException.h"
 
 /**
+ * \ingroup PluginFramework
+ *
  * A Plugin Framework exception used to indicate that a plugin lifecycle
  * problem occurred.
  *
@@ -129,7 +131,9 @@ private:
 
 };
 
-
+/**
+ * \ingroup PluginFramework
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkPluginException& exc);
 
 #endif // CTKPLUGINEXCEPTION_H

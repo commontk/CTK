@@ -32,6 +32,8 @@
 
 
 /**
+ * \ingroup LogService
+ *
  * Provides methods to access the information contained in an individual Log
  * Service log entry.
  *
@@ -144,8 +146,15 @@ struct ctkLogEntry
   virtual QDateTime getTime() const = 0;
 };
 
+/**
+ * \ingroup LogService
+ * @{
+ */
+
 typedef QSharedPointer<ctkLogEntry> ctkLogEntryPtr;
 
 Q_DECLARE_METATYPE(ctkLogEntryPtr)
+
+/** @}*/
 
 #endif // CTKLOGENTRY_H

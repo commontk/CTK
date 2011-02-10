@@ -29,6 +29,8 @@
 #include "ctkCoreExport.h"
 
 class ctkLoggerPrivate;
+
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkLogger : public QObject
 {
   Q_OBJECT

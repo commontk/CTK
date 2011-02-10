@@ -32,6 +32,7 @@ class ctkWorkflowStep;
 class ctkWorkflowPrivate;
 class QAbstractState;
 
+/// \ingroup Core
 /// \brief ctkWorkflow is the basis for a workflow engine, i.e. a state
 /// machine with enhancements to support ctkWorkflowStep.
 

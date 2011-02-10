@@ -26,7 +26,9 @@
 
 #include "ctkPluginFrameworkExport.h"
 
-
+/**
+ * \ingroup PluginFramework
+ */
 struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
 
   /**

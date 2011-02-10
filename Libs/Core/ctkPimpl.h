@@ -1,4 +1,6 @@
 /**
+\page CorePimpl CTK Pimpl Macros
+
 \brief Utility macros for handling private implementations. It is in addition
        to QtGlobal: Q_DECLARE_PRIVATE, Q_DECLARE_PUBLIC,
        Q_D and Q_Q.
@@ -53,9 +55,15 @@ macro.
 #include <QtGlobal>
 
 /*!
+ * \ingroup Core
+ * @{
+ */
+
+/*!
  * Define a public class constructor with no argument
  *
  * Also make sure the Pimpl is initalized
+ * \see \ref CorePimpl
  */
 #define CTK_CONSTRUCTOR_NO_ARG_CPP(PUB)  \
   PUB::PUB(): d_ptr(new PUB##Private)    \
@@ -66,6 +74,7 @@ macro.
  * Define a public class constructor with one argument
  *
  * Also make sure the Pimpl is initalized
+ * \see \ref CorePimpl
  */
 #define CTK_CONSTRUCTOR_1_ARG_CPP(PUB, _ARG1)   \
   PUB::PUB(_ARG1 _parent)                       \
@@ -80,6 +89,7 @@ macro.
  * This should be put in the .cxx file of the public class. The parameter are
  * the name of the public class (PUB), the type of the argument to return (_TYPE),
  * the name of the getter(_NAME) and the name of the variable in the Private class(_VARNAME).
+ * \see \ref CorePimpl
  */
 #define CTK_SET_CPP(PUB, _TYPE, _NAME, _VARNAME)    \
   void PUB::_NAME(_TYPE var)                        \
@@ -94,6 +104,7 @@ macro.
  * This should be put in the .cxx file of the public class. The parameter are
  * the name of the public class (PUB), the type of the argument to return (_TYPE),
  * the name of the setter(_NAME) and the name of the variable in the Private class(_VARNAME).
+ * \see \ref CorePimpl
  */
 #define CTK_GET_CPP(PUB, _TYPE, _NAME, _VARNAME)   \
   _TYPE PUB::_NAME()const                          \
@@ -101,5 +112,7 @@ macro.
     Q_D(const PUB);                                \
     return d->_VARNAME;                            \
   }
+
+/**@}*/
 
 #endif

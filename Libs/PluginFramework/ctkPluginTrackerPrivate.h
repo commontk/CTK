@@ -28,7 +28,9 @@
 #include <QSharedPointer>
 #include <QMutex>
 
-
+/**
+ * \ingroup PluginFramework
+ */
 template<class T>
 class ctkPluginTrackerPrivate
 {

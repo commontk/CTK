@@ -45,6 +45,8 @@ class ctkPluginPrivate;
 class ctkPluginContextPrivate;
 
 /**
+ * \ingroup PluginFramework
+ *
  * A plugin's execution context within the Framework. The context is used to
  * grant access to other methods so that this plugin can interact with the
  * Framework.

@@ -36,6 +36,7 @@ limitations under the License.
 class ctkLDAPExprData;
 
 /**
+\ingroup PluginFramework
 \brief LDAP Expression
 \date 19 May 2010
 \author Xavi Planes

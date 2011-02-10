@@ -33,6 +33,9 @@
 class ctkPluginPrivate;
 class ctkServiceRegistration;
 
+/**
+ * \ingroup PluginFramework
+ */
 class ctkServiceRegistrationPrivate
 {
 

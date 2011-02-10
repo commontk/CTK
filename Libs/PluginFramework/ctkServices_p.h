@@ -33,8 +33,9 @@
 
 
 /**
- * Here we handle all the services that are registered in the framework.
+ * \ingroup PluginFramework
  *
+ * Here we handle all the services that are registered in the framework.
  */
 class ctkServices {
 

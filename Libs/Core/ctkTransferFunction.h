@@ -35,6 +35,7 @@ class ctkTransferFunctionPrivate;
 class ctkTransferFunctionRepresentation;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 struct CTK_CORE_EXPORT ctkPoint
 {
   ctkPoint(){}
@@ -48,6 +49,7 @@ struct CTK_CORE_EXPORT ctkPoint
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 /// assumes the mapping is linear by default, if not, then subclasses must be 
 /// used
 struct CTK_CORE_EXPORT ctkControlPoint
@@ -59,6 +61,7 @@ struct CTK_CORE_EXPORT ctkControlPoint
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 struct CTK_CORE_EXPORT ctkBezierControlPoint : public ctkControlPoint
 {
   virtual ~ctkBezierControlPoint();
@@ -67,6 +70,7 @@ struct CTK_CORE_EXPORT ctkBezierControlPoint : public ctkControlPoint
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 struct CTK_CORE_EXPORT ctkNonLinearControlPoint : public ctkControlPoint
 {
   virtual ~ctkNonLinearControlPoint();
@@ -74,6 +78,7 @@ struct CTK_CORE_EXPORT ctkNonLinearControlPoint : public ctkControlPoint
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkTransferFunction: public QObject
 {
   Q_OBJECT

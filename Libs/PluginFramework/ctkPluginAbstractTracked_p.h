@@ -30,6 +30,8 @@
 #include <QVariant>
 
 /**
+ * \ingroup PluginFramework
+ *
  * Abstract class to track items. If a Tracker is reused (closed then reopened),
  * then a new ctkPluginAbstractTracked object is used. This class acts as a map of tracked
  * item -> customized object. Subclasses of this class will act as the listener

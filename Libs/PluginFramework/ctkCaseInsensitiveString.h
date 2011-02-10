@@ -28,6 +28,8 @@
 #include <ctkPluginFrameworkExport.h>
 
 /**
+ * \ingroup PluginFramework
+ *
  * ctkCaseInsensitiveString wraps a QString and can be
  * used in Qt container classes as a key type representing
  * case insensitive strings. However, case is preserved when
@@ -104,6 +106,9 @@ private:
 };
 
 /**
+ * \ingroup PluginFramework
+ * @{
+ *
  * Returns a hash value for the lower case string.
  *
  * @param str The string to be hashed.
@@ -112,5 +117,7 @@ uint CTK_PLUGINFW_EXPORT qHash(const ctkCaseInsensitiveString& str);
 
 CTK_PLUGINFW_EXPORT QDataStream& operator<<(QDataStream &out, const ctkCaseInsensitiveString& str);
 CTK_PLUGINFW_EXPORT QDataStream& operator>>(QDataStream &in, ctkCaseInsensitiveString& str);
+
+/** @}*/
 
 #endif // CTKCASEINSENSITIVESTRING_P_H

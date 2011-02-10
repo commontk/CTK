@@ -33,6 +33,8 @@
 class ctkLDAPSearchFilterData;
 
 /**
+ * \ingroup PluginFramework
+ *
  * An <a href="http://www.ietf.org/rfc/rfc1960.txt">RFC 1960</a>-based Filter.
  *
  * <p>
@@ -157,6 +159,9 @@ protected:
 
 };
 
+/**
+ * \ingroup PluginFramework
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkLDAPSearchFilter& filter);
 
 #endif // CTKLDAPSEARCHFILTER_H

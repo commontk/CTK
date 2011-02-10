@@ -26,6 +26,8 @@
 #include "ctkEvent.h"
 
 /**
+ * \ingroup EventAdmin
+ *
  * Listener for Events.
  *
  * <p>

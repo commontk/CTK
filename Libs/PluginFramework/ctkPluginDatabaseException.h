@@ -24,7 +24,9 @@
 
 #include "ctkRuntimeException.h"
 
-
+/**
+ * \ingroup PluginFramework
+ */
 class Q_DECL_EXPORT ctkPluginDatabaseException : public ctkRuntimeException
 {
 public:
@@ -54,7 +56,9 @@ private:
 
 };
 
-
+/**
+ * \ingroup PluginFramework
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkPluginDatabaseException& exc);
 
 #endif // CTKPLUGINDATABASEEXCEPTION_H

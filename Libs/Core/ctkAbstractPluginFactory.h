@@ -29,6 +29,7 @@
 #include "ctkAbstractFileBasedFactory.h"
 
 //----------------------------------------------------------------------------
+/// \ingroup Core
 template<typename BaseClassType>
 class ctkFactoryPluginItem : public ctkAbstractFactoryFileBasedItem<BaseClassType>
 {
@@ -45,6 +46,7 @@ private:
 };
 
 //----------------------------------------------------------------------------
+/// \ingroup Core
 template<typename BaseClassType>
 class ctkAbstractPluginFactory : public ctkAbstractFileBasedFactory<BaseClassType>
 {

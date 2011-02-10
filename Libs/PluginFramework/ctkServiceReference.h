@@ -35,6 +35,8 @@ class ctkServiceReferencePrivate;
 class ctkServiceEvent;
 
 /**
+ * \ingroup PluginFramework
+ *
  * A reference to a service.
  *
  * <p>
@@ -213,8 +215,13 @@ protected:
 
 };
 
+/**
+ * \ingroup PluginFramework
+ * @{
+ */
 uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceReference& serviceRef);
 QDebug CTK_PLUGINFW_EXPORT operator<<(QDebug dbg, const ctkServiceReference& serviceRef);
+/** @}*/
 
 Q_DECLARE_METATYPE(ctkServiceReference)
 

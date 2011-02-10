@@ -26,7 +26,9 @@
 
 class QIODevice;
 
-
+/**
+ * \ingroup PluginFramework
+ */
 class ctkPluginManifest
 {
 

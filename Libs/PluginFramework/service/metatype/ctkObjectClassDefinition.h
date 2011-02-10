@@ -26,6 +26,8 @@
 #include "ctkAttributeDefinition.h"
 
 /**
+ * \ingroup Metatype
+ *
  * Description for the data type information of an objectclass.
  */
 struct ctkObjectClassDefinition
@@ -127,6 +129,9 @@ struct ctkObjectClassDefinition
   virtual QByteArray getIcon(int size) const = 0;
 };
 
+/**
+ * \ingroup Metatype
+ */
 typedef QSharedPointer<ctkObjectClassDefinition> ctkObjectClassDefinitionPtr;
 
 #endif // CTKOBJECTCLASSDEFINITION_H
