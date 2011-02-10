@@ -75,7 +75,7 @@ public:
   DcmSCU SCU;
   DcmDataset* parameters;
   QString MoveDestinationAETitle;
-  QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
+  QSharedPointer<ctkDICOMDatabase> RetrieveDatabase;
 
   // do the retrieve, handling both series and study retrieves
   enum RetrieveType { RetrieveSeries, RetrieveStudy };
@@ -89,6 +89,7 @@ public:
 ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate()
 {
   parameters = new DcmDataset();
+  RetrieveDatabase = QSharedPointer<ctkDICOMDatabase> (0);
 }
 
 //------------------------------------------------------------------------------
@@ -99,6 +100,12 @@ ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType ) {
+
+  if ( !RetrieveDatabase )
+    {
+    logger.error ( "Must have RetrieveDatabase for retrieve transaction" );
+    return;
+    }
 
   // Register the JPEG libraries in case we need them
   //   (registration only happens once, so it's okay to call repeatedly)
@@ -171,7 +178,7 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType )
     logger.debug ( "Find succeded" );
 
     logger.debug ( "Making Output Directory" );
-    QDir directory = QDir( DICOMDatabase->databaseDirectory() );
+    QDir directory = QDir( RetrieveDatabase->databaseDirectory() );
 
     if ( responses->begin() == responses->end() )
       {
@@ -211,6 +218,8 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType )
             {
             logger.error ( "Error saving file: " + fi.absoluteFilePath() + " Error is " + status.text() );
             }
+
+          RetrieveDatabase->insert( dataset, fi.absoluteFilePath() );
           
           delete fileformat;
           }
@@ -323,10 +332,10 @@ const QString& ctkDICOMRetrieve::moveDestinationAETitle()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMRetrieve::setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase)
+void ctkDICOMRetrieve::setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase)
 {
   Q_D(ctkDICOMRetrieve);
-  d->DICOMDatabase = dicomDatabase;
+  d->RetrieveDatabase = dicomDatabase;
 }
 
 //------------------------------------------------------------------------------

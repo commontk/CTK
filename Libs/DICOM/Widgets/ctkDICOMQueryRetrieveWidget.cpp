@@ -148,7 +148,7 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
     logger.debug("need to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
     ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
-    retrieve->setDICOMDatabase( d->RetrieveDatabase );
+    retrieve->setRetrieveDatabase( d->RetrieveDatabase );
     d->RetrievalsByStudyUID[studyUID] = retrieve;
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );

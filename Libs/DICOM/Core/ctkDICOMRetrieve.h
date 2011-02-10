@@ -55,7 +55,7 @@ public:
   const QString& moveDestinationAETitle();
   
   /// method for database
-  void setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
+  void setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
   // Could be a slot...
   void retrieveSeries ( QString seriesInstanceUID );
   void retrieveStudy ( QString studyInstanceUID );

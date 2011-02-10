@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 
   QSharedPointer<ctkDICOMDatabase> dicomDatabase =  QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
   dicomDatabase->openDatabase( OutputDirectory.absoluteFilePath(QString("ctkDICOM.sql")) );
-  retrieve.setDICOMDatabase( dicomDatabase );
+  retrieve.setRetrieveDatabase( dicomDatabase );
 
   logger.info ( "Starting to retrieve" );
   try
