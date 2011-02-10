@@ -78,6 +78,7 @@ ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* parentWidget)
   d->ProgressDialog = 0;
   connect(d->QueryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
   connect(d->RetrieveButton, SIGNAL(clicked()), this, SLOT(processRetrieve()));
+  connect(d->CancelButton, SIGNAL(clicked()),this,SLOT(hide()));
 
   d->results->setModel(&d->model);
   d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
