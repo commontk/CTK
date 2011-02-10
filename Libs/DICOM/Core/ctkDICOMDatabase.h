@@ -64,7 +64,8 @@ public:
    * Insert into the database if not already exsting.
    */
   void insert ( DcmDataset *dataset );
-
+signals:
+  void databaseChanged();
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
 

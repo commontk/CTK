@@ -32,6 +32,7 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QDebug>
+#include <QFileSystemWatcher>
 
 // ctkDICOM includes
 #include "ctkDICOMDatabase.h"
@@ -110,6 +111,11 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
     {
       initializeDatabase();
     }
+  if (databaseFile != ":memory")
+  {
+    QFileSystemWatcher* watcher = new QFileSystemWatcher(QStringList(databaseFile),this);
+    connect(watcher, SIGNAL( fileChanged(const QString&)),this, SIGNAL ( databaseChanged() ) );
+  }
 }
 
 
@@ -384,5 +390,9 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, QString filename ) {
       statement.bindValue ( 2, QDateTime::currentDateTime() );
       statement.exec();
       }
+    }
+  if (d->DatabaseFileName == ":memory:")
+    {
+      emit databaseChanged();
     }
 }
