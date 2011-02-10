@@ -149,6 +149,17 @@ const QString ctkDICOMDatabase::GetDatabaseFilename() const {
 }
 
 //------------------------------------------------------------------------------
+const QString ctkDICOMDatabase::GetDatabaseDirectory() const {
+  Q_D(const ctkDICOMDatabase);
+  QString databaseFile = GetDatabaseFilename();
+  if (!QFileInfo(databaseFile).isAbsolute())
+  {
+    databaseFile.prepend(QDir::currentPath() + "/");
+  }
+  return QFileInfo ( databaseFile ).absoluteDir().path();
+}
+
+//------------------------------------------------------------------------------
 const QSqlDatabase& ctkDICOMDatabase::database() const {
   Q_D(const ctkDICOMDatabase);
   return d->Database;
