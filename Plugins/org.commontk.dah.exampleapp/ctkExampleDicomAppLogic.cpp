@@ -211,7 +211,7 @@ void ctkExampleDicomAppLogic::buttonClicked()
   s=s+" loc.count:"+QString().setNum(locators.count());
   if(locators.count()>0)
   {
-    s=s+" URI: "+locators.begin()->URI;
+    s=s+" URI: "+locators.begin()->URI +" locatorUUID: "+locators.begin()->locator+" sourceUUID: "+locators.begin()->source;
     qDebug() << "URI: " << locators.begin()->URI;
     QString filename = locators.begin()->URI;
     if(filename.startsWith("file:/",Qt::CaseInsensitive))
