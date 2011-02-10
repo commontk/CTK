@@ -36,10 +36,10 @@
 #include <dcmimage.h>
 
 //----------------------------------------------------------------------------
-ctkExampleDicomAppLogic::ctkExampleDicomAppLogic()
-  : HostTracker(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
+ctkExampleDicomAppLogic::ctkExampleDicomAppLogic():
+ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
 {
-  this->HostTracker.open();
+
 
   connect(this, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)), Qt::QueuedConnection);
   emit stateChanged(ctkDicomAppHosting::IDLE);
@@ -189,12 +189,7 @@ void ctkExampleDicomAppLogic::releaseData(QList<QUuid> objectUUIDs)
   Q_UNUSED(objectUUIDs)
 }
 
-ctkDicomHostInterface* ctkExampleDicomAppLogic::getHostInterface() const
-{
-  ctkDicomHostInterface* host = this->HostTracker.getService();
-  if (!host) throw std::runtime_error("DICOM Host Interface not available");
-  return host;
-}
+
 
 void ctkExampleDicomAppLogic::buttonClicked()
 {

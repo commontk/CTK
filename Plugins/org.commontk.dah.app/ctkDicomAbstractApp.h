@@ -27,7 +27,8 @@
 #include <org_commontk_dah_app_Export.h>
 
 class ctkDicomAbstractAppPrivate;
-
+class ctkDicomHostInterface;
+class ctkPluginContext;
 /**
   * Provides a basic implementation for an application app.
   *
@@ -36,13 +37,25 @@ class ctkDicomAbstractAppPrivate;
   * The methods of the ctkDicomAppInterface have to be implemented for the business logic,
   *
   */
-class org_commontk_dah_app_EXPORT ctkDicomAbstractApp : public ctkDicomAppInterface
+class org_commontk_dah_app_EXPORT ctkDicomAbstractApp : public QObject, public ctkDicomAppInterface
 {
+  Q_OBJECT
 
 public:
 
-  ctkDicomAbstractApp();
+  ctkDicomAbstractApp(ctkPluginContext* context);
   virtual ~ctkDicomAbstractApp();
+  virtual bool setState(ctkDicomAppHosting::State newState);
+
+protected:
+  virtual ctkDicomHostInterface* getHostInterface() const;
+
+signals:
+  void startProgress();
+  void resumeProgress();
+  void suspendProgress();
+  void cancelProgress();
+  void exitHostedApp();
 
 private:
   Q_DECLARE_PRIVATE(ctkDicomAbstractApp)

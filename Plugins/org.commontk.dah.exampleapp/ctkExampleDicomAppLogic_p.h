@@ -32,7 +32,7 @@ struct ctkDicomHostInterface;
 
 class QPushButton;
 
-class ctkExampleDicomAppLogic : public QObject, public ctkDicomAbstractApp
+class ctkExampleDicomAppLogic : public ctkDicomAbstractApp
 {
   Q_OBJECT
   Q_INTERFACES(ctkDicomAppInterface)
@@ -51,8 +51,8 @@ public:
   virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-    QList<QUuid> objectUUIDs, 
-    QList<QString> acceptableTransferSyntaxUIDs, 
+    QList<QUuid> objectUUIDs,
+    QList<QString> acceptableTransferSyntaxUIDs,
     bool includeBulkData);
 
   virtual void releaseData(QList<QUuid> objectUUIDs);
@@ -69,13 +69,7 @@ protected slots:
   void changeState(int);
 
   void buttonClicked();
-
 private:
-
-  ctkDicomHostInterface* getHostInterface() const;
-
-  ctkServiceTracker<ctkDicomHostInterface*> HostTracker;
-
   QPushButton * Button;
 
   QUuid uuid;
