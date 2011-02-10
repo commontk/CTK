@@ -33,6 +33,8 @@ class ctkPlugin;
 struct ctkPluginLocalizationData;
 
 /**
+ * \ingroup PluginFramework
+ *
  * Translate text into different languages.
  *
  * Use this class to dynamically translate human-readable text

@@ -27,6 +27,9 @@
 
 #include "ctkServiceEvent.h"
 
+/**
+ * \ingroup PluginFramework
+ */
 class CTK_PLUGINFW_EXPORT ctkTrackedServiceListener : public QObject
 {
   Q_OBJECT

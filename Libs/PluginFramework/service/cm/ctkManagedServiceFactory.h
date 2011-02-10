@@ -26,6 +26,8 @@
 #include <ctkDictionary.h>
 
 /**
+ * \ingroup ConfigAdmin
+ *
  * Manage multiple service instances.
  *
  * Plugins registering this interface are giving the Configuration Admin service

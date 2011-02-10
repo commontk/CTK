@@ -29,6 +29,8 @@
 
 
 /**
+ * \ingroup PluginFramework
+ *
  * Version identifier for plug-ins and packages.
  *
  * <p>
@@ -46,7 +48,6 @@
  *
  * @Immutable
  */
-
 class CTK_PLUGINFW_EXPORT ctkVersion {
 
 private:
@@ -247,7 +248,9 @@ public:
 
 };
 
-
+/**
+ * \ingroup PluginFramework
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkVersion& v);
 
 #endif // CTKVERSION_H

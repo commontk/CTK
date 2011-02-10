@@ -24,6 +24,9 @@
 
 class ctkPluginPrivate;
 
+/**
+ * \ingroup PluginFramework
+ */
 class ctkPluginContextPrivate
 {
 

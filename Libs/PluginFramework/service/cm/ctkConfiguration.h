@@ -29,6 +29,7 @@
 
 
 /**
+ * \ingroup ConfigAdmin
  * The configuration information for a <code>ctkManagedService</code> or
  * <code>ctkManagedServiceFactory</code> object.
  *
@@ -223,11 +224,16 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
    * Two Configuration objects are equal when their PIDs are equal.
    *
    * @param other <code>ctkConfiguration</code> object to compare against
-   * @return <code>true} if equal, {@code false</code> if the PID's differ.
+   * @return <code>true</code> if equal, <code>false</code> if the PID's differ.
    */
   bool operator==(const ctkConfiguration& other) const;
 
 };
+
+/**
+ * \ingroup ConfigAdmin
+ * @{
+ */
 
 typedef QSharedPointer<ctkConfiguration> ctkConfigurationPtr;
 
@@ -243,5 +249,7 @@ typedef QSharedPointer<ctkConfiguration> ctkConfigurationPtr;
 uint CTK_PLUGINFW_EXPORT qHash(ctkConfigurationPtr configuration);
 
 bool CTK_PLUGINFW_EXPORT operator==(const ctkConfigurationPtr& c1, const ctkConfigurationPtr c2);
+
+/** @}*/
 
 #endif // CTKCONFIGURATION_H

@@ -26,6 +26,7 @@
 #include "ctkConfiguration.h"
 
 /**
+ * \ingroup ConfigAdmin
  * Service for administering configuration data.
  *
  * <p>

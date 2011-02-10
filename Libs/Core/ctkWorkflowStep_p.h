@@ -37,6 +37,9 @@ class QState;
 class ctkWorkflow;
 
 //-----------------------------------------------------------------------------
+/**
+ * \ingroup Core
+ */
 class CTK_CORE_EXPORT ctkWorkflowStepPrivate: public QObject
 {
   Q_OBJECT

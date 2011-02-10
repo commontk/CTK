@@ -33,6 +33,8 @@ class ctkPlugin;
 class ctkPluginEventData;
 
 /**
+ * \ingroup PluginFramework
+ *
  * An event from the Framework describing a plugin lifecycle change.
  * <p>
  * <code>ctkPluginEvent</code> objects are delivered to slots connected
@@ -204,7 +206,12 @@ public:
 
 Q_DECLARE_METATYPE(ctkPluginEvent)
 
+/**
+ * \ingroup PluginFramework
+ * @{
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, ctkPluginEvent::Type eventType);
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, const ctkPluginEvent& event);
+/** @}*/
 
 #endif // CTKPLUGINEVENT_H

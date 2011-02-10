@@ -30,6 +30,9 @@
 
 class ctkPluginFrameworkContext;
 
+/**
+ * \ingroup PluginFramework
+ */
 class ctkPluginFrameworkPrivate : public ctkPluginPrivate
 {
 public:

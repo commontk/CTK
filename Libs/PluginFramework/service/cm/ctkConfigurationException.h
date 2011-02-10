@@ -26,6 +26,8 @@
 #include "ctkRuntimeException.h"
 
 /**
+ * \ingroup ConfigAdmin
+ *
  * An exception class to inform the Configuration Admin service
  * of problems with configuration data.
  */
@@ -71,6 +73,12 @@ private:
   QString reason;
 };
 
+/**
+ * \ingroup ConfigAdmin
+ */
+
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkConfigurationException& exc);
+
+/** @}*/
 
 #endif // CTKCONFIGURATIONEXCEPTION_H

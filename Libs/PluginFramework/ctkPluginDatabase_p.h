@@ -29,6 +29,9 @@
 class ctkPluginStorage;
 class ctkPluginArchive;
 
+/**
+ * \ingroup PluginFramework
+ */
 class ctkPluginDatabase
 {
 

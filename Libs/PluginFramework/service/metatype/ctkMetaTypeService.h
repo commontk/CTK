@@ -26,6 +26,8 @@
 #include "ctkMetaTypeInformation.h"
 
 /**
+ * \ingroup Metatype
+ *
  * The MetaType Service can be used to obtain meta type information for a
  * plugin. The MetaType Service will examine the specified plugin for meta type
  * documents to create the returned <code>ctkMetaTypeInformation</code> object.

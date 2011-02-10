@@ -34,6 +34,8 @@
 class ctkEventData;
 
 /**
+ * \ingroup EventAdmin
+ *
  * A CTK event.
  *
  * <code>ctkEvent</code> objects are delivered to <code>ctkEventHandler</code>
@@ -133,6 +135,5 @@ public:
   bool matches(const ctkLDAPSearchFilter& filter) const;
 
 };
-
 
 #endif // CTKEVENT_H

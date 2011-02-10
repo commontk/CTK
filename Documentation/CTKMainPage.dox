@@ -1,0 +1,15 @@
+/**
+
+\mainpage
+
+\section intro_sec Introduction
+
+See the <a href="http://www.commontk.org">CTK Wiki</a> for more information.
+
+\defgroup Apps CTK Applications
+
+\defgroup Libs CTK Libraries
+
+\defgroup Plugins CTK Plugins
+
+*/

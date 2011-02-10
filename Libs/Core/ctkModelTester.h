@@ -34,7 +34,7 @@
 class QAbstractItemModel;
 class ctkModelTesterPrivate;
 
-///
+/// \ingroup Core
 /// ctkModelTester is a tool that tests any QAbstractItemModel
 /// Most of the signals fired by the model set (ctkModelTester::setModel())
 /// are connected to the tester that check their consistency with the 

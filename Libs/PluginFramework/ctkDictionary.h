@@ -29,6 +29,8 @@
 #include "ctkPluginFramework_global.h"
 
 /**
+ * \ingroup PluginFramework
+ *
  * A QHash based dictionary class with case-insensitive keys. This class
  * uses ctkCaseInsensitiveString as key type and QVariant as values. Due
  * to the conversion capabilities of ctkCaseInsensitiveString, QString objects

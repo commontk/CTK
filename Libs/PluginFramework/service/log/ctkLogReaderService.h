@@ -28,6 +28,8 @@
 #include "ctkLogEntry.h"
 
 /**
+ * \ingroup LogService
+ *
  * Provides methods to retrieve <code>ctkLogEntry</code> objects from the log.
  * <p>
  * There are three ways to retrieve <code>ctkLogEntry</code> objects:

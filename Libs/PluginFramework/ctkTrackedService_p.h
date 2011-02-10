@@ -27,7 +27,9 @@
 #include "ctkPluginAbstractTracked_p.h"
 #include "ctkServiceEvent.h"
 
-
+/**
+ * \ingroup PluginFramework
+ */
 template<class S, class T>
 class ctkTrackedService : public ctkTrackedServiceListener,
     public ctkPluginAbstractTracked<ctkServiceReference, T, ctkServiceEvent>

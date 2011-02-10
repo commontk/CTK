@@ -34,6 +34,7 @@
 #endif
 
 //----------------------------------------------------------------------------
+/// \ingroup Core
 /// ctkAbstractFactoryItem is the base class of factory items. They are
 /// uniquely defined by a key and are responsible for creating/holding an
 /// instance of a BaseClassType object.
@@ -63,6 +64,7 @@ private:
 };
 
 //----------------------------------------------------------------------------
+/// \ingroup Core
 /// \brief ctkAbstractFactory is the base class of all the factory where items need
 /// to be registered before being instantiated.
 /// \paragraph ctkAbstractFactory contains a collection of ctkAbstractFactoryItems that

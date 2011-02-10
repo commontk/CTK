@@ -26,6 +26,8 @@
 #include "ctkRuntimeException.h"
 
 /**
+ * \ingroup PluginFramework
+ *
  * A service exception used to indicate that a service problem occurred.
  *
  * <p>
@@ -109,7 +111,9 @@ private:
 
 };
 
-
+/**
+ * \ingroup PluginFramework
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkServiceException& exc);
 
 #endif // CTKSERVICEEXCEPTION_H

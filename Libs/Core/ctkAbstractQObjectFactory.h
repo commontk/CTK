@@ -28,6 +28,7 @@
 #include "ctkAbstractObjectFactory.h"
 
 //----------------------------------------------------------------------------
+/// \ingroup Core
 template<typename BaseClassType>
 class ctkAbstractQObjectFactory : public ctkAbstractObjectFactory<BaseClassType>
 {

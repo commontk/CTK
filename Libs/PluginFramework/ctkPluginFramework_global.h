@@ -27,6 +27,10 @@
 #include <QStringList>
 #include <QVariant>
 
+/**
+ * \ingroup PluginFramework
+ * @{
+ */
 typedef QHash<QString, QVariant> ctkProperties;
 
 #if QT_VERSION < 0x040700
@@ -37,7 +41,6 @@ inline uint qHash(const QSharedPointer<T>& ptr)
   return qHash<T>(ptr.data());
 }
 #endif
-
 
 template<class A>
 QStringList getIIDs()
@@ -74,5 +77,7 @@ QStringList getIIDs()
   ids << qobject_interface_iid<D*>();
   return ids;
 }
+
+/** @}*/
 
 #endif // CTKPLUGINFRAMEWORK_GLOBAL_H

@@ -36,6 +36,9 @@ class ctkPluginActivator;
 class ctkPluginArchive;
 class ctkPluginFrameworkContext;
 
+/**
+ * \ingroup PluginFramework
+ */
 class ctkPluginPrivate {
 
 protected:

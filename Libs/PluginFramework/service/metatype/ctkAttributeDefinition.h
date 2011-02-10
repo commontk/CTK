@@ -31,6 +31,8 @@
 #include <ctkPluginFrameworkExport.h>
 
 /**
+ * \ingroup Metatype
+ *
  * An interface to describe an attribute.
  *
  * <p>
@@ -206,8 +208,13 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
   virtual QStringList getDefaultValue() const = 0;
 };
 
+
+/**
+ * \ingroup Metatype
+ */
 typedef QSharedPointer<ctkAttributeDefinition> ctkAttributeDefinitionPtr;
 
 Q_DECLARE_METATYPE(ctkAttributeDefinition::Password)
+
 
 #endif // CTKATTRIBUTEDEFINITION_H
