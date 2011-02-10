@@ -71,7 +71,7 @@ public:
 
   Node*        RootNode;
   QSqlDatabase DataBase;
-  QStringList  Headers;
+  QList<QMap<int, QVariant> > Headers;
   QString      Sort;
 };
 
@@ -114,8 +114,25 @@ ctkDICOMModelPrivate::~ctkDICOMModelPrivate()
 //------------------------------------------------------------------------------
 void ctkDICOMModelPrivate::init()
 {
-  this->Headers = QStringList() << "Name" << "Age" << "Scan" << "Date" << "Subject ID"
-                  << "Number" << "Institution" << "Referrer" << "Performer";
+  QMap<int, QVariant> data;
+  data[Qt::DisplayRole] = QString("Name");
+  this->Headers << data;
+  data[Qt::DisplayRole] = QString("Age");
+  this->Headers << data;
+  data[Qt::DisplayRole] = QString("Scan");
+  this->Headers << data;
+  data[Qt::DisplayRole] = QString("Date");
+  this->Headers << data;
+  data[Qt::DisplayRole] = QString("Subject ID");
+  this->Headers << data;
+  data[Qt::DisplayRole] = QString("Number");
+  this->Headers << data;
+  data[Qt::DisplayRole] = QString("Institution");
+  this->Headers << data;
+  data[Qt::DisplayRole] = QString("Referrer");
+  this->Headers << data;
+  data[Qt::DisplayRole] = QString("Performer");
+  this->Headers << data;
 }
 
 //------------------------------------------------------------------------------
@@ -406,7 +423,8 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
     {      
     const_cast<ctkDICOMModelPrivate *>(d)->fetch(dataIndex, dataIndex.row());
     }
-  int field = parentNode->Query.record().indexOf(d->Headers[dataIndex.column()]);
+  QString columnName = d->Headers[dataIndex.column()][Qt::DisplayRole].toString();
+  int field = parentNode->Query.record().indexOf(columnName);
   if (field < 0)
     {
     // Not all the columns are in the record, it's ok to have no field here.
@@ -469,18 +487,19 @@ bool ctkDICOMModel::hasChildren ( const QModelIndex & parentIndex ) const
 QVariant ctkDICOMModel::headerData(int section, Qt::Orientation orientation, int role)const
 {
   Q_D(const ctkDICOMModel);
-  if (role != Qt::DisplayRole &&
-      role != Qt::EditRole)
+  if (orientation == Qt::Vertical)
+    {
+    if (role != Qt::DisplayRole)
+      {
+      return QVariant();
+      }
+    return section;
+    }
+  if (section < 0 || section >= d->Headers.size())
     {
     return QVariant();
     }
-  if (orientation == Qt::Vertical)
-    {
-    return section;
-    }
-  Q_ASSERT(orientation == Qt::Horizontal);
-  Q_ASSERT(section < d->Headers.size());
-  return d->Headers[section];
+  return d->Headers[section][role];
 }
 
 //------------------------------------------------------------------------------
@@ -618,7 +637,7 @@ void ctkDICOMModel::sort(int column, Qt::SortOrder order)
   delete d->RootNode;
   d->RootNode = 0;
   d->Sort = QString("\"%1\" %2")
-    .arg(d->Headers[column])
+    .arg(d->Headers[column][Qt::DisplayRole].toString())
     .arg(order == Qt::AscendingOrder ? "ASC" : "DESC");
   d->RootNode = d->createNode(-1, QModelIndex());
   
@@ -629,20 +648,16 @@ void ctkDICOMModel::sort(int column, Qt::SortOrder order)
 bool ctkDICOMModel::setHeaderData ( int section, Qt::Orientation orientation, const QVariant & value, int role)
 {
   Q_D(ctkDICOMModel);
-  if (role != Qt::DisplayRole &&
-      role != Qt::EditRole)
-    {
-    return false;
-    }
   if (orientation == Qt::Vertical)
     {
     return false;
     }
-  if (value.toString() == d->Headers[section])
+  if (section < 0 || section >= d->Headers.size() ||
+      d->Headers[section][role] == value)
     {
     return false;
     }
-  d->Headers[section] = value.toString();
+  d->Headers[section][role] = value;
   emit this->headerDataChanged(orientation, section, section);
   return true;
 }

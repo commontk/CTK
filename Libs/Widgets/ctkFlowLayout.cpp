@@ -69,7 +69,6 @@ ctkFlowLayoutPrivate::ctkFlowLayoutPrivate(ctkFlowLayout& object)
 // --------------------------------------------------------------------------
 void ctkFlowLayoutPrivate::init()
 {
-  Q_Q(ctkFlowLayout);
 }
 
 // --------------------------------------------------------------------------
@@ -318,8 +317,6 @@ void ctkFlowLayout::addItem(QLayoutItem *item)
 // --------------------------------------------------------------------------
 Qt::Orientations ctkFlowLayout::expandingDirections() const
 {
-  Q_D(const ctkFlowLayout);
-  //return d->Orientation;
   return Qt::Vertical | Qt::Horizontal;
 }
 
