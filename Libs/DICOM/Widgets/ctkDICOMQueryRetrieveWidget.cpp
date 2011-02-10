@@ -124,7 +124,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
       }
     }
   }
-
+  
   // checkable headers - allow user to select the patient/studies to retrieve
   d->results->setModel(&d->model);
   d->model.setDatabase(d->queryResultDatabase.database());
