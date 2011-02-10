@@ -40,7 +40,7 @@ ctkDicomExchangeService::~ctkDicomExchangeService()
 
 //----------------------------------------------------------------------------
 bool ctkDicomExchangeService::notifyDataAvailable(
-    ctkDicomAppHosting::AvailableData data, bool lastData)
+    const ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
   QList<QtSoapType*> list;
   list << new ctkDicomSoapAvailableData("data", data);
@@ -51,8 +51,8 @@ bool ctkDicomExchangeService::notifyDataAvailable(
 
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
-    QList<QUuid> objectUUIDs,
-    QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData)
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs, bool includeBulkData)
 {
   //Q_D(ctkDicomService);
   QList<QtSoapType*> list;
@@ -75,7 +75,7 @@ DumpAll(result); //xxx
 }
 
 //----------------------------------------------------------------------------
-void ctkDicomExchangeService::releaseData(QList<QUuid> objectUUIDs)
+void ctkDicomExchangeService::releaseData(const QList<QUuid>& objectUUIDs)
 {
   QList<QtSoapType*> list;
 
