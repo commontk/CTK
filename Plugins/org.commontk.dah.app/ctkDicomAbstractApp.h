@@ -40,7 +40,7 @@ class ctkPluginContext;
 class org_commontk_dah_app_EXPORT ctkDicomAbstractApp : public QObject, public ctkDicomAppInterface
 {
   Q_OBJECT
-
+  Q_INTERFACES(ctkDicomAppInterface);
 public:
 
   ctkDicomAbstractApp(ctkPluginContext* context);
