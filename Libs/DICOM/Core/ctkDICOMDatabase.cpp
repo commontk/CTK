@@ -95,11 +95,11 @@ ctkDICOMDatabasePrivate::~ctkDICOMDatabasePrivate()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::openDatabase(const QString databaseFile)
+void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& connectionName )
 {
   Q_D(ctkDICOMDatabase);
   d->DatabaseFileName = databaseFile;
-  d->Database = QSqlDatabase::addDatabase("QSQLITE","DICOM-DB");
+  d->Database = QSqlDatabase::addDatabase("QSQLITE",connectionName);
   d->Database.setDatabaseName(databaseFile);
   if ( ! (d->Database.open()) )
     {

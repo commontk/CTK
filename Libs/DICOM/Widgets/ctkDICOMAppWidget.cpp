@@ -129,7 +129,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
 
   //pass DICOM database instance to Import widget
   // d->ImportDialog->setDICOMDatabase(d->DICOMDatabase);
-  d->directoryButton->setDirectory(directory);
+  d->QueryRetrieveWidget->setRetrieveDatabase(d->DICOMDatabase);
 }
 
 void ctkDICOMAppWidget::onAddToDatabase()

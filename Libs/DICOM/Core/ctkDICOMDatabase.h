@@ -47,7 +47,7 @@ public:
   /// open the SQLite database in @param file. If the file does not
   /// exist, a new database is created and initialized with the
   /// default schema
-  virtual void openDatabase(const QString file);
+  virtual void openDatabase(const QString databaseFile, const QString& connectionName = "DICOM-DB" );
 
   ///
   /// close the database. It must not be used afterwards.

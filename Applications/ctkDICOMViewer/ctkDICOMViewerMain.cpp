@@ -55,11 +55,11 @@ int main(int argc, char** argv)
 
   // set up the database 
   if (argc > 1)
-    {
+  {
     QString directory(argv[1]);
     settings.setValue("DatabaseDirectory", directory);
     settings.sync();
-    }
+  }
 
   if ( settings.value("DatabaseDirectory", "") == "" )
   {

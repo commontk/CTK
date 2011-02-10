@@ -114,7 +114,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   d->RetrieveButton->setEnabled(false);
   
   // create a database in memory to hold query results
-  try { d->QueryResultDatabase.openDatabase( ":memory:" ); }
+  try { d->QueryResultDatabase.openDatabase( ":memory:", "QUERY-DB" ); }
   catch (std::exception e)
   {
     logger.error ( "Database error: " + d->QueryResultDatabase.lastError() );
@@ -201,7 +201,7 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
     logger.debug("need to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
     ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
-    retrieve->setDICOMDatabase( d->RetrieveDatabase );
+    retrieve->setRetrieveDatabase( d->RetrieveDatabase );
     d->RetrievalsByStudyUID[studyUID] = retrieve;
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );
