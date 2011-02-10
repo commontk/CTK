@@ -32,7 +32,7 @@ public:
   ctkDICOMImportWidget* ImportWidget;
   ctkDICOMQueryRetrieveWidget* QueryRetrieveWidget;
 
-  ctkDICOMDatabase DICOMDatabase;
+  QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
   ctkDICOMModel DICOMModel;
 };
 
@@ -40,7 +40,8 @@ public:
 // ctkDICOMAppWidgetPrivate methods
 
 ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(){
-
+  
+  DICOMDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
 }
 
 //----------------------------------------------------------------------------
@@ -93,23 +94,23 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   settings.sync();
 
   //close the active DICOM database
-  d->DICOMDatabase.closeDatabase();
+  d->DICOMDatabase->closeDatabase();
   
   //open DICOM database on the directory
   QString databaseFileName = directory + QString("/ctkDICOM.sql");
-  try { d->DICOMDatabase.openDatabase( databaseFileName ); }
+  try { d->DICOMDatabase->openDatabase( databaseFileName ); }
   catch (std::exception e)
   {
-    std::cerr << "Database error: " << qPrintable(d->DICOMDatabase.GetLastError()) << "\n";
-    d->DICOMDatabase.closeDatabase();
+    std::cerr << "Database error: " << qPrintable(d->DICOMDatabase->GetLastError()) << "\n";
+    d->DICOMDatabase->closeDatabase();
     return;
   }
   
-  d->DICOMModel.setDatabase(d->DICOMDatabase.database());
+  d->DICOMModel.setDatabase(d->DICOMDatabase->database());
   d->treeView->setModel(&d->DICOMModel);
 
   //pass DICOM database instance to Import widget
-  d->ImportWidget->setDICOMDatabase(&d->DICOMDatabase);
+  d->ImportWidget->setDICOMDatabase(d->DICOMDatabase);
 }
 
 void ctkDICOMAppWidget::onAddToDatabase()
