@@ -50,8 +50,9 @@ public:
 // ctkDICOMServerNodeWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* _parent):Superclass(_parent),
-  d_ptr(new ctkDICOMServerNodeWidgetPrivate)
+ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* parentWidget)
+  : Superclass(parentWidget)
+  , d_ptr(new ctkDICOMServerNodeWidgetPrivate)
 {
   Q_D(ctkDICOMServerNodeWidget);
  
@@ -232,23 +233,41 @@ QMap<QString,QVariant> ctkDICOMServerNodeWidget::parameters()
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkDICOMServerNodeWidget::nodes()
+QStringList ctkDICOMServerNodeWidget::nodes()const
 {
-  Q_D(ctkDICOMServerNodeWidget);
+  Q_D(const ctkDICOMServerNodeWidget);
 
-  int count = d->NodeTable->rowCount();
+  const int count = d->NodeTable->rowCount();
   QStringList nodes;
   for (int row = 0; row < count; row++)
-  {
-    nodes << d->NodeTable->item(row,0)->text();
-  }
+    {
+    nodes << d->NodeTable->item(row,NameColumn)->text();
+    }
   return nodes;
 }
 
 //----------------------------------------------------------------------------
-QMap<QString, QVariant> ctkDICOMServerNodeWidget::nodeParameters(QString &node)
+QStringList ctkDICOMServerNodeWidget::checkedNodes()const
 {
-  Q_D(ctkDICOMServerNodeWidget);
+  Q_D(const ctkDICOMServerNodeWidget);
+
+  const int count = d->NodeTable->rowCount();
+  QStringList nodes;
+  for (int row = 0; row < count; row++)
+    {
+    QTableWidgetItem* item = d->NodeTable->item(row,NameColumn);
+    if (item && item->checkState() == Qt::Checked)
+      {
+      nodes << item->text();
+      }
+    }
+  return nodes;
+}
+
+//----------------------------------------------------------------------------
+QMap<QString, QVariant> ctkDICOMServerNodeWidget::nodeParameters(const QString &node)const
+{
+  Q_D(const ctkDICOMServerNodeWidget);
 
   QMap<QString, QVariant> parameters;
 

@@ -41,9 +41,12 @@ public:
   virtual ~ctkDICOMQueryRetrieveWidget();
 
 public slots:
-    void setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> retrieveDatabase);
-    void processQuery();
-    void processRetrieve();
+  void setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> retrieveDatabase);
+  void processQuery();
+  void processRetrieve();
+
+protected slots:
+  void onQueryProgressChanged(int value);
 
 protected:
   QScopedPointer<ctkDICOMQueryRetrieveWidgetPrivate> d_ptr;

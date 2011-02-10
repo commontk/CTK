@@ -101,6 +101,7 @@ ctkDICOMQuery::~ctkDICOMQuery()
 {
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMQuery::addStudyInstanceUID ( QString s )
 {
   Q_D(ctkDICOMQuery);
@@ -108,62 +109,82 @@ void ctkDICOMQuery::addStudyInstanceUID ( QString s )
 }
 
 /// Set methods for connectivity
+//------------------------------------------------------------------------------
 void ctkDICOMQuery::setCallingAETitle ( QString callingAETitle )
 {
   Q_D(ctkDICOMQuery);
   d->CallingAETitle = callingAETitle;
 }
+
+//------------------------------------------------------------------------------
 const QString& ctkDICOMQuery::callingAETitle() 
 {
   Q_D(ctkDICOMQuery);
   return d->CallingAETitle;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMQuery::setCalledAETitle ( QString calledAETitle )
 {
   Q_D(ctkDICOMQuery);
   d->CalledAETitle = calledAETitle;
 }
+
+//------------------------------------------------------------------------------
 const QString& ctkDICOMQuery::calledAETitle()
 {
   Q_D(ctkDICOMQuery);
   return d->CalledAETitle;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMQuery::setHost ( QString host )
 {
   Q_D(ctkDICOMQuery);
   d->Host = host;
 }
+
+//------------------------------------------------------------------------------
 const QString& ctkDICOMQuery::host()
 {
   Q_D(ctkDICOMQuery);
   return d->Host;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMQuery::setPort ( int port ) 
 {
   Q_D(ctkDICOMQuery);
   d->Port = port;
 }
+
+//------------------------------------------------------------------------------
 int ctkDICOMQuery::port()
 {
   Q_D(ctkDICOMQuery);
   return d->Port;
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMQuery::setFilters ( QMap<QString,QVariant> filters ) 
 {
   Q_D(ctkDICOMQuery);
   d->Filters = filters;
 }
+
+//------------------------------------------------------------------------------
 QMap<QString,QVariant> ctkDICOMQuery::filters()
 {
   Q_D(ctkDICOMQuery);
   return d->Filters;
 }
+
+//------------------------------------------------------------------------------
 QStringList ctkDICOMQuery::studyInstanceUIDQueried()
 {
   Q_D(ctkDICOMQuery);
   return d->StudyInstanceUIDList;
 }
-
 
 //------------------------------------------------------------------------------
 void ctkDICOMQuery::query(ctkDICOMDatabase& database )
@@ -173,11 +194,15 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
   if ( database.database().isOpen() )
     {
     logger.debug ( "DB open in Query" );
+    emit progress("DB open in Query");
     }
   else
     {
     logger.debug ( "DB not open in Query" );
+    emit progress("DB not open in Query");
     }
+  emit progress(0);
+
   d->StudyInstanceUIDList.clear();
   d->SCU.setAETitle ( OFString(this->callingAETitle().toStdString().c_str()) );
   d->SCU.setPeerAETitle ( OFString(this->calledAETitle().toStdString().c_str()) );
@@ -185,6 +210,9 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
   d->SCU.setPeerPort ( this->port() );
 
   logger.error ( "Setting Transfer Syntaxes" );
+  emit progress("Setting Transfer Syntaxes");
+  emit progress(10);
+
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
@@ -194,10 +222,15 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
   // d->SCU.addPresentationContext ( UID_VerificationSOPClass, transferSyntaxes );
   if ( !d->SCU.initNetwork().good() ) 
     {
-    std::cerr << "Error initializing the network" << std::endl;
+    logger.error( "Error initializing the network" );
+    emit progress("Error initializing the network");
+    emit progress(100);
     return;
     }
   logger.debug ( "Negotiating Association" );
+  emit progress("Negatiating Association");
+  emit progress(20);
+
   d->SCU.negotiateAssociation();
 
   // Clear the query
@@ -269,6 +302,8 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
     }
   }
 
+  emit progress(30);
+
   FINDResponses *responses = new FINDResponses();
 
   Uint16 presentationContex = 0;
@@ -285,21 +320,27 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
   if ( presentationContex == 0 )
     {
     logger.error ( "Failed to find acceptable presentation context" );
+    emit progress("Failed to find acceptable presentation context");
     }
   else
     {
     logger.info ( "Found useful presentation context" );
+    emit progress("Found useful presentation context");
     }
+  emit progress(40);
 
   OFCondition status = d->SCU.sendFINDRequest ( presentationContex, d->query, responses );
   if ( status.good() )
     {
     logger.debug ( "Find succeded" );
+    emit progress("Find succeded");
     }
   else
     {
     logger.error ( "Find failed" );
+    emit progress("Find failed");
     }
+  emit progress(50);
 
   for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
     {
@@ -316,15 +357,19 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
 
   // Now search each Study
   d->query->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
+  float progressRatio = 25. / d->StudyInstanceUIDList.count();
+  int i = 0;
   foreach ( QString StudyInstanceUID, d->StudyInstanceUIDList )
     {
     logger.debug ( "Starting Series C-FIND for Series: " + StudyInstanceUID );
+    emit progress(QString("Starting Series C-FIND for Series: ") + StudyInstanceUID);
+    emit progress(50 + (progressRatio * i++));
+
     d->query->putAndInsertString ( DCM_StudyInstanceUID, StudyInstanceUID.toStdString().c_str() );
     responses = new FINDResponses();
     status = d->SCU.sendFINDRequest ( 0, d->query, responses );
     if ( status.good() )
       {
-      logger.debug ( "Find succeded for Series: " + StudyInstanceUID );
       for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
         {
         DcmDataset *dataset = (*it)->m_dataset;
@@ -333,13 +378,18 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
           database.insert ( dataset );
           }
         }
+      logger.debug ( "Find succeded for Series: " + StudyInstanceUID );
+      emit progress(QString("Find succeded for Series: ") + StudyInstanceUID);
       }
     else
       {
       logger.error ( "Find failed for Series: " + StudyInstanceUID );
+      emit progress(QString("Find failed for Series: ") + StudyInstanceUID);
       }
+    emit progress(50 + (progressRatio * i++));
     delete responses;
     }
   d->SCU.closeAssociation ( DUL_PEERREQUESTEDRELEASE );
+  emit progress(100);
 }
 
