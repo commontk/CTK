@@ -19,6 +19,8 @@ class ctkDICOMDatasetPrivate
     bool m_DICOMDataSetInitialized;
 
     static const QScopedPointer<const DcmDataDictionary> s_Dictionary;
+
+    DcmDataset* m_DcmDataset;
 };
 
 const QScopedPointer<const DcmDataDictionary> ctkDICOMDatasetPrivate::s_Dictionary(new DcmDataDictionary(OFTrue, OFTrue));
@@ -32,18 +34,32 @@ ctkDICOMDataset::ctkDICOMDataset()
 {
   Q_D(ctkDICOMDataset);
   d->m_DICOMDataSetInitialized = false;
+  d->m_DcmDataset = this;
 }
 
 ctkDICOMDataset::~ctkDICOMDataset() 
 {
+  Q_D(ctkDICOMDataset);
+  if(d->m_DcmDataset != this)
+  {
+    delete d->m_DcmDataset;
+  }
 }
 
 
 void ctkDICOMDataset::InitializeFromDataset(DcmDataset* dataset)
 {
   Q_D(ctkDICOMDataset);
+
+  if(d->m_DcmDataset != this)
+  {
+    delete d->m_DcmDataset;
+    d->m_DcmDataset = NULL;
+  }
+
   if (dataset)
   {
+    d->m_DcmDataset=dataset;
     if (!d->m_DICOMDataSetInitialized)
     {
       d->m_DICOMDataSetInitialized = true;
@@ -79,6 +95,27 @@ void ctkDICOMDataset::InitializeFromDataset(DcmDataset* dataset)
 }
 
 
+void ctkDICOMDataset::InitializeFromFile(const QString& filename,const E_TransferSyntax readXfer,
+                    const E_GrpLenEncoding groupLength,
+                    const Uint32 maxReadLength,
+                    const E_FileReadMode readMode)
+{
+  Q_D(ctkDICOMDataset);
+  DcmDataset *dataset;
+  
+  DcmFileFormat fileformat;
+  OFCondition status = fileformat.loadFile(filename.toAscii().data(), readXfer, groupLength, readMode);
+  dataset = fileformat.getAndRemoveDataset();
+
+  if (!status.good())
+  {
+    qDebug() << "Could not load " << filename << "\nDCMTK says: " << status.text();
+    delete dataset;
+    return;
+  }
+
+  InitializeFromDataset(dataset);
+}
 
 void ctkDICOMDataset::Serialize()
 {
@@ -174,17 +211,22 @@ void ctkDICOMDataset::Deserialize()
   }
 }
 
+DcmDataset& ctkDICOMDataset::GetDcmDataset() const
+{
+  const Q_D(ctkDICOMDataset);
+  return *d->m_DcmDataset;
+}
 
 OFCondition ctkDICOMDataset::findAndGetElement(const DcmTag& tag, DcmElement*& element, const OFBool searchIntoSub) const
 {
   // this one const_cast allows us to declare quite a lot of methods nicely with const
-  return ((DcmDataset&)(const_cast<ctkDICOMDataset&>(*this))).findAndGetElement(tag, element, searchIntoSub);
+  return GetDcmDataset().findAndGetElement(tag, element, searchIntoSub);
 }
 
 OFCondition ctkDICOMDataset::findAndGetOFString(const DcmTag& tag, OFString& value, const unsigned long pos, const OFBool searchIntoSub) const
 {
   // this second const_cast allows us to declare quite a lot of methods nicely with const
-  return ((DcmDataset&)(const_cast<ctkDICOMDataset&>(*this))).findAndGetOFString(tag, value, pos, searchIntoSub);
+  return GetDcmDataset().findAndGetOFString(tag, value, pos, searchIntoSub);
 }
 
 bool ctkDICOMDataset::CheckCondition(const OFCondition& condition)
