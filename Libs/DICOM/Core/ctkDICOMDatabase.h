@@ -2,7 +2,7 @@
 
   Library:   CTK
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) 2010
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOM_h
-#define __ctkDICOM_h
+#ifndef __ctkDICOMDatabase_h
+#define __ctkDICOMDatabase_h
 
 // Qt includes 
 #include <QObject>
@@ -27,38 +27,51 @@
 
 #include "ctkDICOMCoreExport.h"
 
-class ctkDICOMPrivate;
-class CTK_DICOM_CORE_EXPORT ctkDICOM : public QObject
+class ctkDICOMDatabasePrivate;
+class DcmDataset;
+
+class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
   Q_OBJECT
 public:
-  typedef QObject Superclass;
-  explicit ctkDICOM(QObject* parent = 0);
-  virtual ~ctkDICOM();
-  
+  explicit ctkDICOMDatabase();
+  explicit ctkDICOMDatabase(QString databaseFile);
+  virtual ~ctkDICOMDatabase();
+
+  const QSqlDatabase& database() const;
+  const QString GetLastError() const;
+  const QString GetDatabaseFilename() const;
+
   ///
   /// open the SQLite database in @param file. If the file does not
   /// exist, a new database is created and initialized with the
   /// default schema
-  virtual void openDatabase(const QString& file);
+  virtual void openDatabase(const QString file);
 
-  const QSqlDatabase& database() const;
-  const QString& GetLastError() const; 
-  
   ///
   /// close the database. It must not be used afterwards.
-  void closeDatabase();  
+  void closeDatabase();
   ///
   /// delete all data and reinitialize the database.
   bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
 
+  /**
+   * Will create an entry in the appropriate tables for this dataset.
+   */
+  void insert ( DcmDataset* dataset, QString filename );
+  /**
+   * Insert into the database if not already exsting.
+   */
+  void insert ( DcmDataset *dataset );
+
 protected:
-  QScopedPointer<ctkDICOMPrivate> d_ptr;
+  QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
+
+
 
 private:
-  Q_DECLARE_PRIVATE(ctkDICOM);
-  Q_DISABLE_COPY(ctkDICOM);
-
+  Q_DECLARE_PRIVATE(ctkDICOMDatabase);
+  Q_DISABLE_COPY(ctkDICOMDatabase);
 };
 
 #endif

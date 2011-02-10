@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>977</width>
-    <height>769</height>
+    <width>843</width>
+    <height>613</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
       <item>
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
@@ -30,32 +30,13 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QFrame" name="frame_3">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+          <widget class="ctkDICOMServerNodeWidget" name="ServerNodeWidget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>200</height>
+            </size>
            </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Query Targets</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="ctkDICOMServerNodeWidget" name="serverNodeWidget" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>300</width>
-                <height>200</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </widget>
          </item>
         </layout>
@@ -68,7 +49,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="ctkDICOMQueryWidget" name="queryWidget" native="true"/>
+          <widget class="ctkDICOMQueryWidget" name="QueryWidget" native="true"/>
          </item>
         </layout>
        </widget>
@@ -93,14 +74,14 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="queryButton">
+       <widget class="QPushButton" name="QueryButton">
         <property name="text">
          <string>Query</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="reteiveButton">
+       <widget class="QPushButton" name="RetrieveButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -122,47 +103,11 @@
         </property>
        </spacer>
       </item>
-      <item>
-       <widget class="QPushButton" name="refreshButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Refresh</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="ctkDICOMQueryResultsTabWidget" name="results">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <property name="tabsClosable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="tab">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <attribute name="title">
-       <string>Results</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QTreeView" name="treeView"/>
-       </item>
-      </layout>
-     </widget>
-    </widget>
+    <widget class="QTreeView" name="results"/>
    </item>
   </layout>
  </widget>
@@ -177,12 +122,6 @@
    <class>ctkDICOMServerNodeWidget</class>
    <extends>QWidget</extends>
    <header>ctkDICOMServerNodeWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDICOMQueryResultsTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header>ctkDICOMQueryResultsTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

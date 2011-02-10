@@ -18,6 +18,8 @@
 
 =========================================================================*/
 
+#include <stdexcept>
+
 // Qt includes
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -32,7 +34,7 @@
 #include <QDebug>
 
 // ctkDICOM includes
-#include "ctkDICOMIndexerBase.h"
+#include "ctkDICOMDatabase.h"
 
 #include "ctkLogger.h"
 
@@ -50,69 +52,168 @@
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
 
 //------------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.dicom.DICOMIndexerBase" );
+static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-class ctkDICOMIndexerBasePrivate
+class ctkDICOMDatabasePrivate
 {
-public:
-  ctkDICOMIndexerBasePrivate();
-  ~ctkDICOMIndexerBasePrivate();
-  QSqlDatabase db;
+  Q_DECLARE_PUBLIC(ctkDICOMDatabase);
+protected:
+  ctkDICOMDatabase* const q_ptr;
 
+public:
+  ctkDICOMDatabasePrivate(ctkDICOMDatabase&);
+  ~ctkDICOMDatabasePrivate();
+  void init(QString databaseFile);
+  bool executeScript(const QString script);
+
+  QString      DatabaseFileName;
+  QString      LastError;
+  QSqlDatabase Database;
 };
 
 //------------------------------------------------------------------------------
-// ctkDICOMIndexerBasePrivate methods
+// ctkDICOMDatabasePrivate methods
 
 //------------------------------------------------------------------------------
-ctkDICOMIndexerBasePrivate::ctkDICOMIndexerBasePrivate()
+ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
+{
+
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::init(QString databaseFilename)
+{
+  Q_Q(ctkDICOMDatabase);
+  q->openDatabase(databaseFilename);
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMDatabasePrivate::~ctkDICOMDatabasePrivate()
 {
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMIndexerBasePrivate::~ctkDICOMIndexerBasePrivate()
+void ctkDICOMDatabase::openDatabase(const QString databaseFile)
+{
+  Q_D(ctkDICOMDatabase);
+  d->Database = QSqlDatabase::addDatabase("QSQLITE","DICOM-DB");
+  d->Database.setDatabaseName(databaseFile);
+  if ( ! (d->Database.open()) )
+    {
+    d->LastError = d->Database.lastError().text();
+    throw std::runtime_error(qPrintable(d->LastError));
+    }
+  if ( d->Database.tables().empty() )
+    {
+      initializeDatabase();
+    }
+}
+
+
+
+//------------------------------------------------------------------------------
+// ctkDICOMDatabase methods
+
+//------------------------------------------------------------------------------
+ctkDICOMDatabase::ctkDICOMDatabase(QString databaseFile)
+   : d_ptr(new ctkDICOMDatabasePrivate(*this))
+{
+  Q_D(ctkDICOMDatabase);
+  d->init(databaseFile);
+}
+
+ctkDICOMDatabase::ctkDICOMDatabase()
+   : d_ptr(new ctkDICOMDatabasePrivate(*this))
 {
 }
 
 //------------------------------------------------------------------------------
-// ctkDICOMIndexerBase methods
-
-//------------------------------------------------------------------------------
-ctkDICOMIndexerBase::ctkDICOMIndexerBase()
-   : d_ptr(new ctkDICOMIndexerBasePrivate)
+ctkDICOMDatabase::~ctkDICOMDatabase()
 {
 }
 
+//----------------------------------------------------------------------------
+
 //------------------------------------------------------------------------------
-ctkDICOMIndexerBase::~ctkDICOMIndexerBase()
+const QString ctkDICOMDatabase::GetLastError() const {
+  Q_D(const ctkDICOMDatabase);
+  return d->LastError;
+}
+
+//------------------------------------------------------------------------------
+const QString ctkDICOMDatabase::GetDatabaseFilename() const {
+  Q_D(const ctkDICOMDatabase);
+  return d->DatabaseFileName;
+}
+
+//------------------------------------------------------------------------------
+const QSqlDatabase& ctkDICOMDatabase::database() const {
+  Q_D(const ctkDICOMDatabase);
+  return d->Database;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabasePrivate::executeScript(const QString script) {
+  QFile scriptFile(script);
+  scriptFile.open(QIODevice::ReadOnly);
+  if  ( !scriptFile.isOpen() )
+    {
+    qDebug() << "Script file " << script << " could not be opened!\n";
+    return false;
+    }
+
+  QString sqlCommands( QTextStream(&scriptFile).readAll() );
+  sqlCommands.replace( '\n', ' ' );
+  sqlCommands.replace("; ", ";\n");
+
+  QStringList sqlCommandsLines = sqlCommands.split('\n');
+
+  QSqlQuery query(Database);
+
+  for (QStringList::iterator it = sqlCommandsLines.begin(); it != sqlCommandsLines.end()-1; ++it)
+  {
+    if (! (*it).startsWith("--") )
+      {
+      qDebug() << *it << "\n";
+      query.exec(*it);
+      if (query.lastError().type())
+        {
+        qDebug() << "There was an error during execution of the statement: " << (*it);
+        qDebug() << "Error message: " << query.lastError().text();
+        return false;
+        }
+      }
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::initializeDatabase(const char* sqlFileName)
 {
+  Q_D(ctkDICOMDatabase);
+  return d->executeScript(sqlFileName);
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexerBase::setDatabase ( QSqlDatabase database ) {
-  Q_D(ctkDICOMIndexerBase);
-  d->db = database;
+void ctkDICOMDatabase::closeDatabase()
+{
+  Q_D(ctkDICOMDatabase);
+  d->Database.close();
 }
 
 //------------------------------------------------------------------------------
-const QSqlDatabase& ctkDICOMIndexerBase::database () const {
-  Q_D(const ctkDICOMIndexerBase);
-  return d->db;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMIndexerBase::insert ( DcmDataset *dataset ) {
+void ctkDICOMDatabase::insert ( DcmDataset *dataset ) {
   this->insert ( dataset, QString() );
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
-  Q_D(ctkDICOMIndexerBase);
+void ctkDICOMDatabase::insert ( DcmDataset *dataset, QString filename ) {
+  Q_D(ctkDICOMDatabase);
 
   // Check to see if the file has already been loaded
-  QSqlQuery fileExists ( d->db );
+  QSqlQuery fileExists ( d->Database );
   fileExists.prepare("SELECT InsertTimestamp FROM Images WHERE Filename == ?"); 
   fileExists.bindValue(0,filename);
   fileExists.exec();
@@ -169,7 +270,7 @@ void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
   dataset->findAndGetSint32(DCM_EchoNumbers, echoNumber);
   dataset->findAndGetSint32(DCM_TemporalPositionIdentifier, temporalPosition);
 
-  QSqlQuery check_exists_query(d->db);
+  QSqlQuery check_exists_query(d->Database);
   //The patient UID is a unique number within the database, generated by the sqlite autoincrement
   int patientUID = -1;
   if ( patientID != "" && patientsName != "" )
@@ -187,7 +288,7 @@ void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
     else
       {
       // Insert it
-      QSqlQuery statement ( d->db );
+      QSqlQuery statement ( d->Database );
       statement.prepare ( "INSERT INTO Patients ('UID', 'PatientsName', 'PatientID', 'PatientsBirthDate', 'PatientsBirthTime', 'PatientsSex', 'PatientsAge', 'PatientsComments' ) values ( NULL, ?, ?, ?, ?, ?, ?, ? )" );
       statement.bindValue ( 0, QString ( patientsName.c_str() ) );
       statement.bindValue ( 1, QString ( patientID.c_str() ) );
@@ -209,7 +310,7 @@ void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
     check_exists_query.exec();
     if(!check_exists_query.next())
       {
-      QSqlQuery statement ( d->db );
+      QSqlQuery statement ( d->Database );
       statement.prepare ( "INSERT INTO Studies ( 'StudyInstanceUID', 'PatientsUID', 'StudyID', 'StudyDate', 'StudyTime', 'AccessionNumber', 'ModalitiesInStudy', 'InstitutionName', 'ReferringPhysician', 'PerformingPhysiciansName', 'StudyDescription' ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
       statement.bindValue ( 0, QString ( studyInstanceUID.c_str() ) );
       statement.bindValue ( 1, patientUID );
@@ -237,7 +338,7 @@ void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
     check_exists_query.exec();
     if(!check_exists_query.next())
       {
-      QSqlQuery statement ( d->db );
+      QSqlQuery statement ( d->Database );
       statement.prepare ( "INSERT INTO Series ( 'SeriesInstanceUID', 'StudyInstanceUID', 'SeriesNumber', 'SeriesDate', 'SeriesTime', 'SeriesDescription', 'BodyPartExamined', 'FrameOfReferenceUID', 'AcquisitionNumber', 'ContrastAgent', 'ScanningSequence', 'EchoNumber', 'TemporalPosition' ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
       statement.bindValue ( 0, QString ( seriesInstanceUID.c_str() ) );
       statement.bindValue ( 1, QString ( studyInstanceUID.c_str() ) );
@@ -265,7 +366,7 @@ void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
     check_exists_query.exec();
     if(!check_exists_query.next())
       {
-      QSqlQuery statement ( d->db );
+      QSqlQuery statement ( d->Database );
       statement.prepare ( "INSERT INTO Images ( 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ? )" );
       statement.bindValue ( 0, filename );
       statement.bindValue ( 1, QString ( seriesInstanceUID.c_str() ) );
@@ -274,5 +375,3 @@ void ctkDICOMIndexerBase::insert ( DcmDataset *dataset, QString filename ) {
       }
     }
 }
-
-

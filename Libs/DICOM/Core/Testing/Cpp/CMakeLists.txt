@@ -1,6 +1,7 @@
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+  ctkDICOMImageTest1.cpp
   ctkDICOMModelTest1.cpp
   ctkDICOMTest1.cpp
   )
@@ -23,6 +24,9 @@ ENDMACRO( SIMPLE_TEST  )
 #
 # Add Tests
 #
+ADD_TEST( ctkDICOMImageTest1 ${KIT_TESTS}
+          ctkDICOMImageTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
+SET_PROPERTY(TEST ctkDICOMImageTest1 PROPERTY LABELS ${PROJECT_NAME})
 
 ADD_TEST( ctkDICOMModelTest1 ${KIT_TESTS}
           ctkDICOMModelTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db

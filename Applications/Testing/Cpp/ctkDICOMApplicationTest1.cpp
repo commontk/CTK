@@ -24,6 +24,19 @@
 
 
 ./CTK-build/bin/ctkDICOMRetrieve 1.2.840.113619.2.135.3596.6358736.5118.1115807980.182  /tmp/hoot CTK_AE 11113 CTK_AE localhost 11112 CTK_CLIENT_AE
+
+As invoked by ctest:
+
+% ./CTK-build/bin/CTKApplicationCppTests ctkDICOMApplicationTest1 \
+    ./CMakeExternals/Install/bin/dcmqrscp ./CTK-build/Testing/Temporary/dcmqrscp.cfg \
+        ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000055.IMA \
+        ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000056.IMA \
+    ./CMakeExternals/Install/bin/storescu \
+    ./CTK-build/bin/ctkDICOMQuery \
+    ./CTK-build/Testing/Temporary/ctkDICOMApplicationTest1.db \
+    ./CTK-build/bin/ctkDICOMRetrieve \
+    ./CTK-build/Testing/Temporary/ctkDICOMRetrieveStorage
+
 */
 
 int ctkDICOMApplicationTest1(int argc, char * argv []) {
@@ -73,7 +86,7 @@ int ctkDICOMApplicationTest1(int argc, char * argv []) {
 
 
   //
-  // now push some dicom data in using storescp
+  // now push some dicom data in using storescu
   //
 
   QProcess *storescu = new QProcess(0);

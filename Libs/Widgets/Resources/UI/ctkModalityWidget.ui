@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ctkModalityWidget</class>
+ <widget class="QWidget" name="ctkModalityWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>94</width>
+    <height>1098</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Modality</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QCheckBox" name="AnyCheckBox">
+     <property name="text">
+      <string>Any</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="CRCheckBox">
+     <property name="toolTip">
+      <string>Computed Radiography</string>
+     </property>
+     <property name="text">
+      <string>CR</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="CTCheckBox">
+     <property name="toolTip">
+      <string>Computed Tomography</string>
+     </property>
+     <property name="text">
+      <string>CT</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="MRCheckBox">
+     <property name="toolTip">
+      <string>Magnetic Resonance</string>
+     </property>
+     <property name="text">
+      <string>MR</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="NMCheckBox">
+     <property name="toolTip">
+      <string>Nuclear Medicine</string>
+     </property>
+     <property name="text">
+      <string>NM</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="USCheckBox">
+     <property name="toolTip">
+      <string>Ultrasound</string>
+     </property>
+     <property name="text">
+      <string>US</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="OTCheckBox">
+     <property name="toolTip">
+      <string>Other</string>
+     </property>
+     <property name="text">
+      <string>OT</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="BICheckBox">
+     <property name="toolTip">
+      <string>Biomagnetic imaging</string>
+     </property>
+     <property name="text">
+      <string>BI</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="CDCheckBox">
+     <property name="toolTip">
+      <string>Color flow Doppler</string>
+     </property>
+     <property name="text">
+      <string>CD</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="DDCheckBox">
+     <property name="toolTip">
+      <string>Duplex Doppler</string>
+     </property>
+     <property name="text">
+      <string>DD</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="DGCheckBox">
+     <property name="toolTip">
+      <string>Diaphanography</string>
+     </property>
+     <property name="text">
+      <string>DG</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="ESCheckBox">
+     <property name="toolTip">
+      <string>Endoscopy</string>
+     </property>
+     <property name="text">
+      <string>ES</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="LSCheckBox">
+     <property name="toolTip">
+      <string>Laser surface scan</string>
+     </property>
+     <property name="text">
+      <string>LS</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="PTCheckBox">
+     <property name="toolTip">
+      <string>Positron emission tomography (PET)</string>
+     </property>
+     <property name="text">
+      <string>PT</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="RGCheckBox">
+     <property name="toolTip">
+      <string>Radiographic imaging (conventional film/screen)</string>
+     </property>
+     <property name="text">
+      <string>RG</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="STCheckBox">
+     <property name="toolTip">
+      <string>Single-photon emission computed tomography (SPECT)</string>
+     </property>
+     <property name="text">
+      <string>ST</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="TGCheckBox">
+     <property name="toolTip">
+      <string>Thermography</string>
+     </property>
+     <property name="text">
+      <string>TG</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="XACheckBox">
+     <property name="toolTip">
+      <string>X-Ray Angiography</string>
+     </property>
+     <property name="text">
+      <string>XA</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="RFCheckBox">
+     <property name="toolTip">
+      <string>Radio Fluoroscopy</string>
+     </property>
+     <property name="text">
+      <string>RF</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="RTImageCheckBox">
+     <property name="toolTip">
+      <string>Radiotherapy Image</string>
+     </property>
+     <property name="text">
+      <string>RTIMAGE</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="RTDoseCheckBox">
+     <property name="toolTip">
+      <string>Radiotherapy Dose</string>
+     </property>
+     <property name="text">
+      <string>RTDOSE</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="RTStructCheckBox">
+     <property name="toolTip">
+      <string>Radiotherapy Structure Set</string>
+     </property>
+     <property name="text">
+      <string>RTSTRUCT</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="RTPlanCheckBox">
+     <property name="toolTip">
+      <string>Radiotherapy Plan</string>
+     </property>
+     <property name="text">
+      <string>RTPLAN</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="RTRectorCheckBox">
+     <property name="toolTip">
+      <string>RT Treatment Record</string>
+     </property>
+     <property name="text">
+      <string>RTRECTORD</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="HCCheckBox">
+     <property name="toolTip">
+      <string>Hard Copy</string>
+     </property>
+     <property name="text">
+      <string>HC</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="DXCheckBox">
+     <property name="toolTip">
+      <string>Digital Radiography</string>
+     </property>
+     <property name="text">
+      <string>DX</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="MGCheckBox">
+     <property name="toolTip">
+      <string>Mammography</string>
+     </property>
+     <property name="text">
+      <string>MG</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="IOCheckBox">
+     <property name="toolTip">
+      <string>Intra-oral Radiography</string>
+     </property>
+     <property name="text">
+      <string>IO</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="PXCheckBox">
+     <property name="toolTip">
+      <string>Panoramic X-Ray</string>
+     </property>
+     <property name="text">
+      <string>PX</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="GMCheckBox">
+     <property name="toolTip">
+      <string>General Microscopy</string>
+     </property>
+     <property name="text">
+      <string>GM</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="SMCheckBox">
+     <property name="toolTip">
+      <string>Slide Microscopy</string>
+     </property>
+     <property name="text">
+      <string>SM</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="XCCheckBox">
+     <property name="toolTip">
+      <string>External-camera Photography</string>
+     </property>
+     <property name="text">
+      <string>XC</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="PRCheckBox">
+     <property name="toolTip">
+      <string>Presentation State</string>
+     </property>
+     <property name="text">
+      <string>PR</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="AUCheckBox">
+     <property name="toolTip">
+      <string>Audio</string>
+     </property>
+     <property name="text">
+      <string>AU</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="ECGCheckBox">
+     <property name="toolTip">
+      <string>Electrocardiography</string>
+     </property>
+     <property name="text">
+      <string>ECG</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="EPSCheckBox">
+     <property name="toolTip">
+      <string>Cardiac Electrophysiology</string>
+     </property>
+     <property name="text">
+      <string>EPS</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="HDCheckBox">
+     <property name="toolTip">
+      <string>Hemodynamic Waveform</string>
+     </property>
+     <property name="text">
+      <string>HD</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="SRCheckBox">
+     <property name="toolTip">
+      <string>SR Document</string>
+     </property>
+     <property name="text">
+      <string>SR</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="IVUSCheckBox">
+     <property name="toolTip">
+      <string>Intravascular Ultrasound</string>
+     </property>
+     <property name="text">
+      <string>IVUS</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="OPCheckBox">
+     <property name="toolTip">
+      <string>Ophthalmic Photography</string>
+     </property>
+     <property name="text">
+      <string>OP</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="SMRCheckBox">
+     <property name="toolTip">
+      <string>Stereometric Relationship</string>
+     </property>
+     <property name="text">
+      <string>SMR</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="OCTCheckBox">
+     <property name="toolTip">
+      <string>Optical Coherence Tomography</string>
+     </property>
+     <property name="text">
+      <string>OCT</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="OPRCheckBox">
+     <property name="toolTip">
+      <string>Ophthalmic Refraction</string>
+     </property>
+     <property name="text">
+      <string>OPR</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="OPVCheckBox">
+     <property name="toolTip">
+      <string>Ophthalmic Visual Field</string>
+     </property>
+     <property name="text">
+      <string>OPV</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="OPMCheckBox">
+     <property name="toolTip">
+      <string>Ophthalmic Mapping</string>
+     </property>
+     <property name="text">
+      <string>OPM</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="KOCheckBox">
+     <property name="toolTip">
+      <string>Key Object Selection</string>
+     </property>
+     <property name="text">
+      <string>KO</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="SEGCheckBox">
+     <property name="toolTip">
+      <string>Segmentation</string>
+     </property>
+     <property name="text">
+      <string>SEG</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="REGCheckBox">
+     <property name="toolTip">
+      <string>Registration</string>
+     </property>
+     <property name="text">
+      <string>REG</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

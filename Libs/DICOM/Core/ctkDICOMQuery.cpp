@@ -64,6 +64,7 @@ public:
   QString CalledAETitle;
   QString Host;
   int Port;
+  QMap<QString,QVariant> Filters;
   DcmSCU SCU;
   DcmDataset* query;
   QStringList StudyInstanceUIDList;
@@ -147,15 +148,29 @@ int ctkDICOMQuery::port()
   Q_D(ctkDICOMQuery);
   return d->Port;
 }
-
+void ctkDICOMQuery::setFilters ( QMap<QString,QVariant> filters ) 
+{
+  Q_D(ctkDICOMQuery);
+  d->Filters = filters;
+}
+QMap<QString,QVariant> ctkDICOMQuery::filters()
+{
+  Q_D(ctkDICOMQuery);
+  return d->Filters;
+}
+QStringList ctkDICOMQuery::studyInstanceUIDQueried()
+{
+  Q_D(ctkDICOMQuery);
+  return d->StudyInstanceUIDList;
+}
 
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::query(QSqlDatabase database )
+void ctkDICOMQuery::query(ctkDICOMDatabase& database )
 {
-  ctkDICOMIndexerBase::setDatabase ( database );
+  // ctkDICOMDatabase::setDatabase ( database );
   Q_D(ctkDICOMQuery);
-  if ( this->database().isOpen() )
+  if ( database.database().isOpen() )
     {
     logger.debug ( "DB open in Query" );
     }
@@ -199,12 +214,8 @@ void ctkDICOMQuery::query(QSqlDatabase database )
   d->query->insertEmptyElement ( DCM_StudyInstanceUID );
   d->query->insertEmptyElement ( DCM_StudyDescription );
   d->query->insertEmptyElement ( DCM_StudyDate );
-  d->query->insertEmptyElement ( DCM_StudyID );
-  d->query->insertEmptyElement ( DCM_PatientID );
-  d->query->insertEmptyElement ( DCM_PatientsName );
   d->query->insertEmptyElement ( DCM_SeriesNumber );
   d->query->insertEmptyElement ( DCM_SeriesDescription );
-  d->query->insertEmptyElement ( DCM_StudyInstanceUID );
   d->query->insertEmptyElement ( DCM_SeriesInstanceUID );
   d->query->insertEmptyElement ( DCM_StudyTime );
   d->query->insertEmptyElement ( DCM_SeriesDate );
@@ -215,7 +226,48 @@ void ctkDICOMQuery::query(QSqlDatabase database )
   d->query->insertEmptyElement ( DCM_NumberOfSeriesRelatedInstances ); // Number of images in the series
   d->query->insertEmptyElement ( DCM_NumberOfStudyRelatedInstances ); // Number of images in the series
   d->query->insertEmptyElement ( DCM_NumberOfStudyRelatedSeries ); // Number of images in the series
+
   d->query->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
+
+  foreach( QString key, d->Filters.keys() )
+  {
+    if ( key == QString("Name") )
+    {
+      // make the filter a wildcard in dicom style
+      d->query->putAndInsertString( DCM_PatientsName,
+        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+    }
+    if ( key == QString("Study") )
+    {
+      // make the filter a wildcard in dicom style
+      d->query->putAndInsertString( DCM_StudyDescription,
+        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+    }
+    if ( key == QString("Series") )
+    {
+      // make the filter a wildcard in dicom style
+      d->query->putAndInsertString( DCM_SeriesDescription,
+        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+    }
+    if ( key == QString("ID") )
+    {
+      // make the filter a wildcard in dicom style
+      d->query->putAndInsertString( DCM_PatientID,
+        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+    }
+    if ( key == QString("Modalities") )
+    {
+      // make the filter be an "OR" of modalities using backslash (dicom-style)
+      QString modalitySearch("");
+      foreach (QString modality, d->Filters[key].toStringList())
+      {
+        modalitySearch += modality + QString("\\");
+      }
+      modalitySearch.chop(1); // remove final backslash
+      logger.debug("modalitySearch " + modalitySearch);
+      d->query->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toAscii().data() );
+    }
+  }
 
   FINDResponses *responses = new FINDResponses();
 
@@ -254,7 +306,7 @@ void ctkDICOMQuery::query(QSqlDatabase database )
     DcmDataset *dataset = (*it)->m_dataset;
     if ( dataset != NULL )
       {
-      this->insert ( dataset );
+      database.insert ( dataset );
       OFString StudyInstanceUID;
       dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
       this->addStudyInstanceUID ( QString ( StudyInstanceUID.c_str() ) );
@@ -278,7 +330,7 @@ void ctkDICOMQuery::query(QSqlDatabase database )
         DcmDataset *dataset = (*it)->m_dataset;
         if ( dataset != NULL )
           {
-          this->insert ( dataset );
+          database.insert ( dataset );
           }
         }
       }

@@ -21,6 +21,14 @@ SET(KIT_SRCS
   ctkDICOMQueryWidget.h
   ctkDICOMQueryResultsTabWidget.cpp
   ctkDICOMQueryResultsTabWidget.h
+  ctkDICOMAppWidget.cpp
+  ctkDICOMAppWidget.h
+  ctkDICOMThumbnailWidget.cpp
+  ctkDICOMThumbnailWidget.h
+  ctkDICOMThumbnailListWidget.cpp
+  ctkDICOMThumbnailListWidget.h
+  ctkDICOMImportWidget.cpp
+  ctkDICOMImportWidget.h
   )
 
 # Headers that should run through moc
@@ -28,6 +36,10 @@ SET(KIT_MOC_SRCS
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMDirectoryListWidget.h
   ctkDICOMServerNodeWidget.h
+  ctkDICOMAppWidget.h
+  ctkDICOMThumbnailWidget.h
+  ctkDICOMThumbnailListWidget.h
+  ctkDICOMImportWidget.h
   )
 
 # UI files - includes new widgets
@@ -37,6 +49,10 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget.ui
   Resources/UI/ctkDICOMQueryWidget.ui
+  Resources/UI/ctkDICOMAppWidget.ui
+  Resources/UI/ctkDICOMThumbnailWidget.ui
+  Resources/UI/ctkDICOMThumbnailListWidget.ui
+  Resources/UI/ctkDICOMImportWidget.ui
 )
 
 # Resources
@@ -63,5 +79,5 @@ ctkMacroBuildLib(
 
 # Testing
 IF(BUILD_TESTING)
-  #ADD_SUBDIRECTORY(Testing)
+  ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)

@@ -2,7 +2,8 @@
 
   Library:   CTK
 
-  Copyright (c) 2010
+  Copyright (c) German Cancer Research Center,
+    Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,42 +19,35 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMIndexerBase_h
-#define __ctkDICOMIndexerBase_h
+#ifndef __ctkDICOMImage_h
+#define __ctkDICOMImage_h
 
 // Qt includes 
 #include <QObject>
-#include <QSqlDatabase>
+#include <QPixmap>
 
 #include "ctkDICOMCoreExport.h"
 
-class ctkDICOMIndexerBasePrivate;
-class DcmDataset;
+class ctkDICOMImagePrivate;
+class DicomImage;
 
-class CTK_DICOM_CORE_EXPORT ctkDICOMIndexerBase : public QObject
+class CTK_DICOM_CORE_EXPORT ctkDICOMImage : public QObject
 {
   Q_OBJECT
 public:
-  explicit ctkDICOMIndexerBase();
-  virtual ~ctkDICOMIndexerBase();
-  void setDatabase ( QSqlDatabase database );
-  const QSqlDatabase& database() const;
-
-  /**
-   * Will create an entry in the appropriate tables for this dataset.
-   */
-  void insert ( DcmDataset* dataset, QString filename );
-  /**
-   * Insert into the database if not already exsting.
-   */
-  void insert ( DcmDataset *dataset );
+  explicit ctkDICOMImage(DicomImage* dicomImage, QObject* parent = 0);
+  virtual ~ctkDICOMImage();
+  DicomImage* getDicomImage() const;
+  QImage getImage(int frame = 0) const;
+  unsigned long frameCount() const;
+  Q_PROPERTY(unsigned long frameCount READ frameCount);
 
 protected:
-  QScopedPointer<ctkDICOMIndexerBasePrivate> d_ptr;
-  
+  QScopedPointer<ctkDICOMImagePrivate> d_ptr;
+
 private:
-  Q_DECLARE_PRIVATE(ctkDICOMIndexerBase);
-  Q_DISABLE_COPY(ctkDICOMIndexerBase);
+  Q_DECLARE_PRIVATE(ctkDICOMImage);
+  Q_DISABLE_COPY(ctkDICOMImage);
 };
 
 #endif

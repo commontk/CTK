@@ -35,8 +35,8 @@ public:
   explicit ctkDICOMQueryWidget(QWidget* parent=0);
   virtual ~ctkDICOMQueryWidget();
   
-  /// set properties of query based on current widget state
-  void populateQuery (/*ctkDICOMQuery &query*/);
+  /// return map of field names and values
+  QMap<QString,QVariant> parameters();
 
 protected:
   QScopedPointer<ctkDICOMQueryWidgetPrivate> d_ptr;

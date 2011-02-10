@@ -52,6 +52,8 @@ SET(KIT_SRCS
   ctkFileDialog.h
   ctkFittedTextBrowser.cpp
   ctkFittedTextBrowser.h
+  ctkFlowLayout.cpp
+  ctkFlowLayout.h
   ctkFontButton.cpp
   ctkFontButton.h
   ctkIconEnginePlugin.cpp
@@ -64,6 +66,8 @@ SET(KIT_SRCS
   ctkMatrixWidget.h
   ctkMenuButton.cpp
   ctkMenuButton.h
+  ctkModalityWidget.cpp
+  ctkModalityWidget.h
   ctkPathLineEdit.cpp
   ctkPathLineEdit.h
   ctkPixmapIconEngine.cpp
@@ -156,12 +160,14 @@ SET(KIT_MOC_SRCS
   ctkDynamicSpacer.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
+  ctkFlowLayout.h
   ctkFontButton.h
   ctkIconEnginePlugin.h
   ctkMaterialPropertyPreviewLabel.h
   ctkMaterialPropertyWidget.h
   ctkMatrixWidget.h
   ctkMenuButton.h
+  ctkModalityWidget.h
   ctkPathLineEdit.h
   ctkRangeSlider.h
   ctkRangeWidget.h
@@ -204,6 +210,7 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkRangeWidget.ui
   Resources/UI/ctkDateRangeWidget.ui
   Resources/UI/ctkMaterialPropertyWidget.ui
+  Resources/UI/ctkModalityWidget.ui
   Resources/UI/ctkScreenshotDialog.ui
   Resources/UI/ctkSettingsDialog.ui
   Resources/UI/ctkSliderWidget.ui

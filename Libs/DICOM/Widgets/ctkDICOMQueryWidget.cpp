@@ -37,19 +37,23 @@ ctkDICOMQueryWidget::~ctkDICOMQueryWidget()
 
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryWidget::populateQuery(/*ctkDICOMQuery &query*/)
+QMap<QString,QVariant> ctkDICOMQueryWidget::parameters()
 {
   Q_D(ctkDICOMQueryWidget);
-  if ( d->CT->isChecked() )
-  {
-    std::cerr << "CT\n";
-    //query.addModality( "CT" );
+
+  QMap<QString,QVariant> parameters;
+
+  parameters["Name"] = d->NameSearch->text();
+  parameters["Study"] = d->StudySearch->text();
+  parameters["Series"] = d->SeriesSearch->text();
+  parameters["ID"] = d->IdSearch->text();
+
+  if ( !d->ModalityWidget->areAllModalitiesSelected() )
+  { // some PACS (conquest) don't seem to accept list of modalities,
+    // so don't include the list at all when all modalities are desired
+    // TODO: think about how to fix this for conquest at the query level
+    parameters["Modalities"] = d->ModalityWidget->selectedModalities();
   }
 
-  if ( d->MR->isChecked() )
-  {
-    std::cerr << "MR\n";
-    //query.addModality( "CT" );
-  }
-
+  return parameters;
 }
