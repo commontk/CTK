@@ -32,6 +32,7 @@
 #include <QTest>
 #include <QDebug>
 
+//----------------------------------------------------------------------------
 ctkMTAttrPasswordTestSuite::ctkMTAttrPasswordTestSuite(
   ctkPluginContext* pc, long mtPluginId)
   : context(pc), mtPluginId(mtPluginId), mts(0)
@@ -39,6 +40,7 @@ ctkMTAttrPasswordTestSuite::ctkMTAttrPasswordTestSuite(
 
 }
 
+//----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::initTestCase()
 {
   context->getPlugin(mtPluginId)->start();
@@ -48,12 +50,14 @@ void ctkMTAttrPasswordTestSuite::initTestCase()
   plugin->start();
 }
 
+//----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::cleanupTestCase()
 {
   context->ungetService(reference);
   context->getPlugin(mtPluginId)->stop();
 }
 
+//----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::testAttributeTypePassword1()
 {
   ctkMetaTypeInformationPtr mti = mts->getMetaTypeInformation(plugin);
@@ -70,6 +74,7 @@ void ctkMTAttrPasswordTestSuite::testAttributeTypePassword1()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::testAttributeTypePassword2()
 {
   ctkMetaTypeInformationPtr mti = mts->getMetaTypeInformation(plugin);
@@ -85,6 +90,7 @@ void ctkMTAttrPasswordTestSuite::testAttributeTypePassword2()
   }
  }
 
+//----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::testAttributeTypePassword3()
 {
   ctkMetaTypeInformationPtr mti = mts->getMetaTypeInformation(plugin);
@@ -102,6 +108,7 @@ void ctkMTAttrPasswordTestSuite::testAttributeTypePassword3()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::testAttributeTypePassword4()
 {
   ctkMetaTypeInformationPtr mti = mts->getMetaTypeInformation(plugin);
@@ -118,6 +125,7 @@ void ctkMTAttrPasswordTestSuite::testAttributeTypePassword4()
   }
  }
 
+//----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::testAttributeTypePassword5()
 {
   ctkMetaTypeInformationPtr mti = mts->getMetaTypeInformation(plugin);
@@ -134,6 +142,7 @@ void ctkMTAttrPasswordTestSuite::testAttributeTypePassword5()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::testAttributeTypePassword6()
 {
   ctkMetaTypeInformationPtr mti = mts->getMetaTypeInformation(plugin);

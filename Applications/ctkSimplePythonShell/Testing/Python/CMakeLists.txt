@@ -2,14 +2,20 @@
 SET(KIT_TESTS ${CPP_TEST_PATH}/ctkSimplePythonShell)
 
 SET(SCRIPTS
-  derivedQWidgetTest.py
   wrappedQInvokableTest.py
   wrappedQPropertyTest.py
   wrappedSlotTest.py
   )
 
-IF(CTK_LIB_Widgets)
+# Since QTimer is part of QtCore and is used in both 'ctkWidgetsTest.py' and 'derivedQWidgetTest.py', 
+# these two tests should be included only if CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE is ON
+
+IF(CTK_LIB_Widgets AND CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE)
   LIST(APPEND SCRIPTS ctkWidgetsTest.py)
+ENDIF()
+
+IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE AND CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTGUI)
+  LIST(APPEND SCRIPTS derivedQWidgetTest.py)
 ENDIF()
 
 IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)

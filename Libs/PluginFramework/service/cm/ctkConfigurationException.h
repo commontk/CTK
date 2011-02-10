@@ -35,10 +35,10 @@ class Q_DECL_EXPORT ctkConfigurationException : public ctkRuntimeException
 public:
 
   /**
-   * Create a {@code ctkConfigurationException} object.
+   * Create a <code>ctkConfigurationException</code> object.
    *
    * @param property name of the property that caused the problem,
-   *        {@code null} if no specific property was the cause
+   *        <code>null</code> if no specific property was the cause
    * @param reason reason for failure
    * @param cause The cause of this exception.
    */

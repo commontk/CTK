@@ -25,6 +25,7 @@
 #include <QSqlDatabase>
 
 #include "ctkDICOMCoreExport.h"
+#include "ctkDICOMDatabase.h"
 
 class ctkDICOMIndexerPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer
@@ -33,9 +34,8 @@ public:
   explicit ctkDICOMIndexer();
   virtual ~ctkDICOMIndexer();
   /// add directory to database and optionally copy files to destinationDirectory
-  void addDirectory(QSqlDatabase database, const QString& directoryName, const QString& destinationDirectoryName = "");
-  void refreshDatabase(QSqlDatabase database, const QString& directoryName);
-
+  void addDirectory(ctkDICOMDatabase& database, const QString& directoryName, const QString& destinationDirectoryName = "", bool createHierarchy = true, bool createThumbnails = true);
+  void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 protected:
   QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
   

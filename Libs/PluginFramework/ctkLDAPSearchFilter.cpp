@@ -24,7 +24,7 @@
 #include "ctkLDAPExpr_p.h"
 #include "ctkServiceReferencePrivate.h"
 
-
+//----------------------------------------------------------------------------
 class ctkLDAPSearchFilterData : public QSharedData
 {
 public:
@@ -43,11 +43,13 @@ public:
   ctkLDAPExpr ldapExpr;
 };
 
+//----------------------------------------------------------------------------
 ctkLDAPSearchFilter::ctkLDAPSearchFilter()
   : d(0)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPSearchFilter::ctkLDAPSearchFilter(const QString& filter)
   : d(0)
 {
@@ -61,45 +63,54 @@ ctkLDAPSearchFilter::ctkLDAPSearchFilter(const QString& filter)
   }
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPSearchFilter::ctkLDAPSearchFilter(const ctkLDAPSearchFilter& other)
   : d(other.d)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPSearchFilter::~ctkLDAPSearchFilter()
 {
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPSearchFilter::operator bool() const
 {
   return d;
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPSearchFilter::match(const ctkServiceReference& reference) const
 {
   return d->ldapExpr.evaluate(reference.d_func()->getProperties(), true);
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPSearchFilter::match(const ctkDictionary& dictionary) const
 {
   return d->ldapExpr.evaluate(dictionary, false);
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPSearchFilter::matchCase(const ctkDictionary& dictionary) const
 {
   return d->ldapExpr.evaluate(dictionary, true);
 }
 
+//----------------------------------------------------------------------------
 QString ctkLDAPSearchFilter::toString() const
 {
   return d->ldapExpr.toString();
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPSearchFilter::operator==(const ctkLDAPSearchFilter& other) const
 {
   return d->ldapExpr.toString() == other.d->ldapExpr.toString();
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPSearchFilter& ctkLDAPSearchFilter::operator=(const ctkLDAPSearchFilter& filter)
 {
   d = filter.d;
@@ -107,6 +118,7 @@ ctkLDAPSearchFilter& ctkLDAPSearchFilter::operator=(const ctkLDAPSearchFilter& f
   return *this;
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkLDAPSearchFilter& filter)
 {
   dbg << filter.toString();

@@ -59,62 +59,72 @@ public:
   const ctkPluginFrameworkEvent::Type type;
 };
 
-
+//----------------------------------------------------------------------------
 ctkPluginFrameworkEvent::ctkPluginFrameworkEvent()
   : d(0)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkEvent::~ctkPluginFrameworkEvent()
 {
 
 }
 
+//----------------------------------------------------------------------------
 bool ctkPluginFrameworkEvent::isNull() const
 {
   return !d;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin, const std::exception& fwException)
   : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin)
   : d(new ctkPluginFrameworkEventData(type, plugin, QString()))
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(const ctkPluginFrameworkEvent& other)
   : d(other.d)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkEvent& ctkPluginFrameworkEvent::operator=(const ctkPluginFrameworkEvent& other)
 {
   d = other.d;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 QString ctkPluginFrameworkEvent::getErrorString() const
 {
   return d->errorString;
 }
 
+//----------------------------------------------------------------------------
 QSharedPointer<ctkPlugin> ctkPluginFrameworkEvent::getPlugin() const
 {
   return d->plugin;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginFrameworkEvent::Type ctkPluginFrameworkEvent::getType() const
 {
   return d->type;
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, ctkPluginFrameworkEvent::Type type)
 {
   switch (type)
@@ -131,6 +141,7 @@ QDebug operator<<(QDebug dbg, ctkPluginFrameworkEvent::Type type)
   }
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkPluginFrameworkEvent& event)
 {
   if (event.isNull()) return dbg << "NONE";

@@ -29,9 +29,13 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QDebug>
+#include <QPixmap>
+
 
 // ctkDICOM includes
 #include "ctkDICOMIndexer.h"
+#include "ctkDICOMImage.h"
+
 
 // DCMTK includes
 #ifndef WIN32
@@ -45,6 +49,7 @@
 #include <dcmtk/ofstd/ofstring.h>
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
+#include "dcmimage.h"
 
 #define MITK_ERROR std::cout
 #define MITK_INFO std::cout
@@ -85,9 +90,9 @@ ctkDICOMIndexer::~ctkDICOMIndexer()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directoryName,const QString& destinationDirectoryName)
+void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& directoryName,const QString& destinationDirectoryName, bool createHierarchy, bool createThumbnails)
 {
-  QSqlDatabase db = database;
+  QSqlDatabase db = database.database();
   const std::string src_directory(directoryName.toStdString());
 
   OFList<OFString> originalDcmtkFileNames;
@@ -108,7 +113,7 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
 
   if(iter == last) return;
 
-  QSqlQuery query(database);
+  QSqlQuery query(database.database());
 
 
   /// these are for optimizing the import of image sequences
@@ -126,7 +131,7 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
     std::string filename((*iter).c_str());
     QString qfilename(filename.c_str()); 
     /// first we check if the file is already in the database
-    QSqlQuery fileExists(database);
+    QSqlQuery fileExists(database.database());
     fileExists.prepare("SELECT InsertTimestamp FROM Images WHERE Filename == ?"); 
     fileExists.bindValue(0,qfilename);
     fileExists.exec();
@@ -160,7 +165,7 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
     OFString seriesInstanceUID, seriesDate, seriesTime,
       seriesDescription, bodyPartExamined, frameOfReferenceUID,
       contrastAgent, scanningSequence;
-    OFString instanceNumber;
+    OFString instanceNumber, sopInstanceUID ;
 
     Sint32 seriesNumber = 0, acquisitionNumber = 0, echoNumber = 0, temporalPosition = 0;
 
@@ -185,6 +190,13 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
       MITK_ERROR << "Could not read DCM_SeriesInstanceUID from " << filename;
       continue;
     }
+
+    if (!dataset->findAndGetOFString(DCM_SOPInstanceUID, sopInstanceUID).good())
+    {
+      MITK_ERROR << "Could not read DCM_SOPInstanceUID from " << filename;
+      continue;
+    }
+
     if (!dataset->findAndGetOFString(DCM_InstanceNumber, instanceNumber).good())
     {
       MITK_ERROR << "Could not read DCM_InstanceNumber from " << filename;
@@ -235,7 +247,7 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
     if(lastPatientID.compare(patientID) || lastPatientsBirthDate.compare(patientsBirthDate) || lastPatientsName.compare(patientsName))
     {
       //Check if patient is already present in the db
-      QSqlQuery check_exists_query(database);
+      QSqlQuery check_exists_query(database.database());
       std::stringstream check_exists_query_string;
       check_exists_query_string << "SELECT * FROM Patients WHERE PatientID = '" << patientID << "'";
       check_exists_query.exec(check_exists_query_string.str().c_str());
@@ -293,7 +305,7 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
 
     if(lastStudyInstanceUID.compare(studyInstanceUID))
     {
-      QSqlQuery check_exists_query(database);
+      QSqlQuery check_exists_query(database.database());
       std::stringstream check_exists_query_string;
       check_exists_query_string << "SELECT * FROM Studies WHERE StudyInstanceUID = '" << studyInstanceUID << "'";
       check_exists_query.exec(check_exists_query_string.str().c_str());
@@ -329,7 +341,7 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
     if(lastSeriesInstanceUID.compare(seriesInstanceUID))
     {
 
-      QSqlQuery check_exists_query(database);
+      QSqlQuery check_exists_query(database.database());
       std::stringstream check_exists_query_string;
       check_exists_query_string << "SELECT * FROM Series WHERE SeriesInstanceUID = '" << seriesInstanceUID << "'";
       check_exists_query.exec(check_exists_query_string.str().c_str());
@@ -359,7 +371,11 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
     }
 
     lastSeriesInstanceUID = seriesInstanceUID;
-
+    QString studySeriesDirectory;
+    if (createHierarchy || createThumbnails)
+    {
+      studySeriesDirectory = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
+    }
 
     //----------------------------------
     //Move file to destination directory
@@ -368,16 +384,36 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
     if (!destinationDirectoryName.isEmpty())
       {
       QFile currentFile( qfilename );
-      QDir destinationDir(destinationDirectoryName);
-
-      QString uniqueDirName = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
-      qDebug() << "MKPath: " << uniqueDirName;
-      destinationDir.mkpath(uniqueDirName);
-      QString destFileName = destinationDir.absolutePath().append("/").append(instanceNumber.c_str());
-      qDebug() << "Copy: " << qfilename << " -> " << destFileName;
+      QDir destinationDir(destinationDirectoryName + "/dicom");
+      QString destFileName = sopInstanceUID.c_str();
+      if (createHierarchy)
+      {
+        destinationDir.mkpath(studySeriesDirectory);
+        destFileName.prepend( destinationDir.absolutePath() + "/"  + studySeriesDirectory + "/" );
+      }
       currentFile.copy(destFileName);
-      //for testing only: copy file instead of moving
-      //currentFile.copyTo(destDirectoryPath.str());
+      qfilename = destFileName;
+    }
+
+    if (createThumbnails)
+    {
+      QString databaseFile = database.GetDatabaseFilename();
+      if (!QFileInfo(databaseFile).isAbsolute())
+      {
+        databaseFile.prepend(QDir::currentPath() + "/");
+      }
+
+      QString thumbnailBaseDir = QFileInfo ( databaseFile ).absoluteDir().path() + "/thumbs/";
+      QString thumbnailFilename = thumbnailBaseDir + "/" + studySeriesDirectory + "/" + sopInstanceUID.c_str() + ".png";
+      QFileInfo thumbnailInfo(thumbnailFilename);
+      if ( ! ( thumbnailInfo.exists() && thumbnailInfo.lastModified() < QFileInfo(qfilename).lastModified() ) )
+      {
+        QDir(thumbnailBaseDir).mkpath(studySeriesDirectory);
+        DicomImage dcmtkImage(qfilename.toAscii());
+        ctkDICOMImage ctkImage(&dcmtkImage);
+        QImage image( ctkImage.getImage(0) );
+        image.scaled(128,128,Qt::KeepAspectRatio).save(thumbnailFilename,"PNG");
+      }
     }
     // */
     //------------------------
@@ -387,7 +423,7 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
 //    std::stringstream relativeFilePath;
 //    relativeFilePath << seriesInstanceUID.c_str() << "/" << currentFilePath.getFileName();
 
-    QSqlQuery check_exists_query(database);
+    QSqlQuery check_exists_query(database.database());
     std::stringstream check_exists_query_string;
 //    check_exists_query_string << "SELECT * FROM Images WHERE Filename = '" << relativeFilePath.str() << "'";
     check_exists_query_string << "SELECT * FROM Images WHERE Filename = '" << filename << "'";
@@ -399,7 +435,7 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
 
       //To save absolute path: destDirectoryPath.str()
       query_string << "INSERT INTO Images VALUES('"
-        << /*relativeFilePath.str()*/ filename << "','" << seriesInstanceUID << "','" << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString() << "')";
+        << qfilename.toStdString() << "','" << seriesInstanceUID << "','" << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString() << "')";
 
       query.exec(query_string.str().c_str());
     }
@@ -411,10 +447,10 @@ void ctkDICOMIndexer::addDirectory(QSqlDatabase database, const QString& directo
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexer::refreshDatabase(QSqlDatabase database, const QString& directoryName)
+void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName)
 {
   /// get all filenames from the database
-  QSqlQuery allFilesQuery(database);
+  QSqlQuery allFilesQuery(database.database());
   QStringList databaseFileNames;
   QStringList filesToRemove;
   allFilesQuery.exec("SELECT Filename from Images;");

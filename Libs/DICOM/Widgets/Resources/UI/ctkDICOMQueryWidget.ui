@@ -6,86 +6,87 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>566</width>
-    <height>294</height>
+    <width>279</width>
+    <height>121</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QTabWidget" name="queryoptions">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="Any">
-        <attribute name="title">
-         <string>Any</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <item>
-          <widget class="QLineEdit" name="AnySearch"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="Name">
-        <attribute name="title">
-         <string>Name</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_7">
-         <item>
-          <widget class="QLineEdit" name="NameSearch"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="Tag">
-        <attribute name="title">
-         <string>Tag</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
-         <item>
-          <widget class="QLineEdit" name="TagSearch"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="ID">
-        <attribute name="title">
-         <string>ID</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_9">
-         <item>
-          <widget class="QLineEdit" name="IDSearch"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="Number">
-        <attribute name="title">
-         <string>Number</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_10">
-         <item>
-          <widget class="QLineEdit" name="NumberSearch"/>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QTabWidget" name="QueryOptions">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="Name">
+      <attribute name="title">
+       <string>Name</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Search by Person Name</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QLineEdit" name="NameSearch"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Study">
+      <attribute name="title">
+       <string>Study</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Search in Study Description</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="QLineEdit" name="StudySearch"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Series">
+      <attribute name="title">
+       <string>Series</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Search in Series Description</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_9">
+       <item>
+        <widget class="QLineEdit" name="SeriesSearch"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="ID">
+      <attribute name="title">
+       <string>ID</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Search by Person ID</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_10">
+       <item>
+        <widget class="QLineEdit" name="IdSearch"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <widget class="QFrame" name="frame">
@@ -104,9 +105,22 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="ctkDateRangeWidget" name="widget" native="true"/>
+          <widget class="ctkDateRangeWidget" name="DateRangeWidget" native="true"/>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -121,29 +135,12 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="QCheckBox" name="CT">
-           <property name="text">
-            <string>CT</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="MR">
-           <property name="text">
-            <string>MR</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_2">
-           <property name="text">
-            <string>Any</string>
+          <widget class="ctkModalityWidget" name="ModalityWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
          </item>
@@ -160,6 +157,12 @@
    <class>ctkDateRangeWidget</class>
    <extends>QWidget</extends>
    <header>ctkDateRangeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkModalityWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkModalityWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

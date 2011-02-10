@@ -21,7 +21,7 @@ class ctkDICOMDirectoryListWidgetPrivate: public Ui_ctkDICOMDirectoryListWidget
 {
 public:
   ctkDICOMDirectoryListWidgetPrivate(){}
-  ctkDICOM*       dicom;
+  ctkDICOMDatabase*       database;
   QSqlTableModel* directoryListModel;
 };
 
@@ -92,11 +92,11 @@ void ctkDICOMDirectoryListWidget::removeDirectoryClicked()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMDirectoryListWidget::setDICOM(ctkDICOM* dicom)
+void ctkDICOMDirectoryListWidget::setDICOMDatabase(ctkDICOMDatabase* dicomDatabase)
 {
   Q_D(ctkDICOMDirectoryListWidget);
-  d->dicom = dicom;
-  d->directoryListModel =  new QSqlTableModel(this,d->dicom->database());
+  d->database = dicomDatabase;
+  d->directoryListModel =  new QSqlTableModel(this,d->database->database());
   d->directoryListModel->setTable("Directories");
   d->directoryListModel->setEditStrategy(QSqlTableModel::OnFieldChange);
   d->directoryListModel->select();

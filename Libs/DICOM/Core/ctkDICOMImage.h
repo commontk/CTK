@@ -38,7 +38,7 @@ public:
   explicit ctkDICOMImage(DicomImage* dicomImage, QObject* parent = 0);
   virtual ~ctkDICOMImage();
   DicomImage* getDicomImage() const;
-  QPixmap getPixmap(int frame = 0) const;
+  QImage getImage(int frame = 0) const;
   unsigned long frameCount() const;
   Q_PROPERTY(unsigned long frameCount READ frameCount);
 

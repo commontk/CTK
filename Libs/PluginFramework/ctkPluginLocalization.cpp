@@ -26,6 +26,7 @@
 
 #include <QTranslator>
 
+//----------------------------------------------------------------------------
 struct ctkPluginLocalizationData : public QSharedData
 {
   ctkPluginLocalizationData(const QString& fileName, const QLocale& locale,
@@ -52,18 +53,21 @@ struct ctkPluginLocalizationData : public QSharedData
   const QByteArray translation;
 };
 
+//----------------------------------------------------------------------------
 ctkPluginLocalization::ctkPluginLocalization()
  : d(0)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginLocalization::ctkPluginLocalization(const ctkPluginLocalization &pl)
   : d(pl.d)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginLocalization::ctkPluginLocalization(const QString& msgFileName,
                                              const QLocale& locale, const QSharedPointer<ctkPlugin>& plugin)
   : d(new ctkPluginLocalizationData(msgFileName, locale, plugin))
@@ -71,17 +75,20 @@ ctkPluginLocalization::ctkPluginLocalization(const QString& msgFileName,
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginLocalization::~ctkPluginLocalization()
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginLocalization& ctkPluginLocalization::operator=(const ctkPluginLocalization& other)
 {
   d = other.d;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 QString ctkPluginLocalization::getLocalized(const QString& context, const QString& str) const
 {
   if (d)
@@ -91,6 +98,7 @@ QString ctkPluginLocalization::getLocalized(const QString& context, const QStrin
   return QString();
 }
 
+//----------------------------------------------------------------------------
 QLocale ctkPluginLocalization::getLocale() const
 {
   if (d) return d->locale;

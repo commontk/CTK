@@ -103,9 +103,9 @@ IF (${CTK_USE_CHARTS})
   ADD_DEFINITIONS(-DCTK_USE_CHARTS)
 ENDIF(${CTK_USE_CHARTS})
 
-# Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
-ctkMacroGetTargetLibraries(KIT_target_libraries)
+ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

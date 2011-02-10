@@ -32,7 +32,7 @@
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginDatabaseException.h"
 
-
+//----------------------------------------------------------------------------
 ctkPluginStorage::ctkPluginStorage(ctkPluginFrameworkContext* framework)
   : framework(framework), pluginDatabase(this)
 {
@@ -44,6 +44,7 @@ ctkPluginStorage::ctkPluginStorage(ctkPluginFrameworkContext* framework)
   archives << pluginDatabase.getPluginArchives();
 }
 
+//----------------------------------------------------------------------------
 ctkPluginArchive* ctkPluginStorage::insertPlugin(const QUrl& location, const QString& localPath)
 {
   ctkPluginArchive* pa = pluginDatabase.insertPlugin(location, localPath);
@@ -51,6 +52,7 @@ ctkPluginArchive* ctkPluginStorage::insertPlugin(const QUrl& location, const QSt
   return pa;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginArchive* ctkPluginStorage::updatePluginArchive(ctkPluginArchive* old, const QString& localPath)
 {
   Q_UNUSED(old)
@@ -60,6 +62,7 @@ ctkPluginArchive* ctkPluginStorage::updatePluginArchive(ctkPluginArchive* old, c
   return 0;
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginStorage::replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA)
 {
   Q_UNUSED(oldPA)
@@ -76,26 +79,31 @@ void ctkPluginStorage::replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginAr
   //    }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginStorage::setStartLevel(ctkPluginArchive* pa)
 {
   pluginDatabase.setStartLevel(pa->getPluginId(), pa->getStartLevel());
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginStorage::setLastModified(ctkPluginArchive* pa)
 {
   pluginDatabase.setLastModified(pa->getPluginId(), pa->getLastModified());
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginStorage::setAutostartSetting(ctkPluginArchive* pa)
 {
   pluginDatabase.setAutostartSetting(pa->getPluginId(), pa->getAutostartSetting());
 }
 
+//----------------------------------------------------------------------------
 QList<ctkPluginArchive*> ctkPluginStorage::getAllPluginArchives() const
 {
   return archives;
 }
 
+//----------------------------------------------------------------------------
 QList<QString> ctkPluginStorage::getStartOnLaunchPlugins()
 {
   QList<QString> res;
@@ -111,6 +119,7 @@ QList<QString> ctkPluginStorage::getStartOnLaunchPlugins()
   return res;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginStorage::~ctkPluginStorage()
 {
   close();
@@ -118,11 +127,13 @@ ctkPluginStorage::~ctkPluginStorage()
   // in ~ctkPluginPrivate()
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginStorage::close()
 {
   pluginDatabase.close();
 }
 
+//----------------------------------------------------------------------------
 bool ctkPluginStorage::removeArchive(ctkPluginArchive* pa)
 {
   QMutexLocker lock(&archivesLock);
@@ -142,6 +153,7 @@ bool ctkPluginStorage::removeArchive(ctkPluginArchive* pa)
   return removed;
 }
 
+//----------------------------------------------------------------------------
 QByteArray ctkPluginStorage::getPluginResource(long pluginId, const QString& res) const
 {
   try
@@ -155,6 +167,7 @@ QByteArray ctkPluginStorage::getPluginResource(long pluginId, const QString& res
   }
 }
 
+//----------------------------------------------------------------------------
 QStringList ctkPluginStorage::findResourcesPath(long pluginId, const QString& path) const
 {
   try

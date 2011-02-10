@@ -194,10 +194,15 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
     endforeach()
     
     if (WITH_DOCUMENTATION)
+      message("----------- [ Build Documentation ] -----------")
+      set(CTEST_USE_LAUNCHERS 0)
       # Build Documentation target
+      set_property(GLOBAL PROPERTY SubProject Documentation)
+      set_property(GLOBAL PROPERTY Label Documentation)
       set(CTEST_BUILD_TARGET "doc")
       ctest_build(BUILD "${ctk_build_dir}" APPEND)
       ctest_submit(PARTS Build)
+      set(CTEST_USE_LAUNCHERS 1)
     endif()
     
     # HACK Unfortunately ctest_coverage ignores the build argument, try to force it...

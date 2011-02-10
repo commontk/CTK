@@ -33,22 +33,23 @@ class ctkDateRangeWidgetPrivate;
 class QDateTime;
 
 ///
-/// ctkDateRangeWidget is a wrapper around a ctkDoubleRangeSlider and 2 QSpinBoxes
-/// \image html http://www.commontk.org/images/1/14/CtkDateRangeWidget.png
-/// \sa ctkSliderSpinBoxWidget, ctkDoubleRangeSlider, QSpinBox
+/// ctkDateRangeWidget allows the user to select a time range between two
+/// dates
 class CTK_WIDGETS_EXPORT ctkDateRangeWidget : public QWidget
 {
   Q_OBJECT
-    // placeholder - not yet used
-  Q_PROPERTY(bool includeTime READ includeTime WRITE setIncludeTime)
+  Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY startDateTimeChanged)
+  Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY endDateTimeChanged)
+  Q_PROPERTY(bool displayTime READ displayTime WRITE setDisplayTime)
 
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
 
   /// Constructor
-  /// If \li parent is null, ctkDateRangeWidget will be a top-leve widget
+  /// If \li parent is null, ctkDateRangeWidget will be a top-level widget
   /// \note The \li parent can be set later using QWidget::setParent()
+  /// By default, the range is "Any Date"
   explicit ctkDateRangeWidget(QWidget* parent = 0);
   
   /// Destructor
@@ -56,47 +57,57 @@ public:
 
   ///
   /// This property holds whether the date range includes time
-  /// If tracking is disabled (the default), the widget only shows dates
+  /// If includeTime is disabled (the default), the widget only shows dates
   /// If includeTime is enabled the date widgets display time as well as date
-  void setIncludeTime(bool includeTime);
-  bool includeTime()const;
+  void setDisplayTime(bool includeTime);
+  bool displayTime()const;
 
-  ///
-  /// Access the start and end date/times
+  /// Access the start date/times
+  /// The returned date is never NULL/empty, but set to
+  /// QDateTimeEdit::minimumDateTime
   QDateTime startDateTime() const;
+  
+  /// Access the start date/times
+  /// The returned date is never NULL/empty, but set to 
+  /// QDateTimeEdit::maximumDateTime
   QDateTime endDateTime() const;
+  
+  /// Utility function that returns true if the range correspond to any date
+  /// It can be useful if the time must be handled specially in that case.
+  /// Returns true if any of the start or end date is invalid.
+  bool isAnyDate()const;
 
 public slots:
-  ///
-  /// Reset the slider and spinbox to zero (value and position)
+  /// Set the start date.
+  /// If the date is null or invalid, it will be automatically converted into
+  /// a valid date (14 September 1752)
   void setStartDateTime(QDateTime start);
+  /// Set the end date.
+  /// If the date is null or invalid, it will be automatically converted into
+  /// a valid date (31 December, 7999 and a time of 23:59:59 and 999 milliseconds)
   void setEndDateTime(QDateTime end);
   ///
   /// Utility function that set the start and end values at once
   void setDateTimeRange(QDateTime start, QDateTime end);
+  void setDateRange(QDate start, QDate end);
 
   ///
   /// handle clicks on radio buttons
-  void onAnyDate();
-  void onToday();
-  void onYesterday();
-  void onLastWeek();
-  void onLastMonth();
-  void onSelectRange();
+  void setAnyDate();
+  void setToday();
+  void setYesterday();
+  void setLastWeek();
+  void setLastMonth();
+  void setSelectRange();
 
 signals:
-  /// 
-  /// signals
-  void startDateTimeChanged(QDateTime value);
-  void endDateTimeChanged(QDateTime value);
+  /// Fired when the start date is changed
+  void startDateTimeChanged(const QDateTime& value);
+  /// Fired when the end date is changed
+  void endDateTimeChanged(const QDateTime& value);
 
 protected slots:
-  ///
-  /// None
-
-protected:
-  ///
-  /// None
+  void onDateTimeChanged();
 
 protected:
   QScopedPointer<ctkDateRangeWidgetPrivate> d_ptr;

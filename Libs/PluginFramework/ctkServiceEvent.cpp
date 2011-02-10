@@ -26,6 +26,7 @@
 
 #include <QStringList>
 
+//----------------------------------------------------------------------------
 class ctkServiceEventData : public QSharedData
 {
 public:
@@ -46,51 +47,59 @@ public:
   const ctkServiceReference reference;
 };
 
-
+//----------------------------------------------------------------------------
 ctkServiceEvent::ctkServiceEvent()
   : d(0)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceEvent::~ctkServiceEvent()
 {
 
 }
 
+//----------------------------------------------------------------------------
 bool ctkServiceEvent::isNull() const
 {
   return !d;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceEvent::ctkServiceEvent(Type type, const ctkServiceReference& reference)
   : d(new ctkServiceEventData(type, reference))
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceEvent::ctkServiceEvent(const ctkServiceEvent& other)
   : d(other.d)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceEvent& ctkServiceEvent::operator=(const ctkServiceEvent& other)
 {
   d = other.d;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceReference ctkServiceEvent::getServiceReference() const
 {
   return d->reference;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceEvent::Type ctkServiceEvent::getType() const
 {
   return d->type;
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, ctkServiceEvent::Type type)
 {
   switch(type)
@@ -104,6 +113,7 @@ QDebug operator<<(QDebug dbg, ctkServiceEvent::Type type)
   }
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkServiceEvent& event)
 {
   if (event.isNull()) return dbg << "NONE";

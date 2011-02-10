@@ -27,7 +27,7 @@
 #include "ctkPluginConstants.h"
 #include "ctkPluginArchive_p.h"
 
-
+//----------------------------------------------------------------------------
 ctkPluginFramework::ctkPluginFramework()
   : ctkPlugin()
 {
@@ -35,6 +35,7 @@ ctkPluginFramework::ctkPluginFramework()
   qRegisterMetaType<ctkPluginEvent>("ctkPluginEvent");
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFramework::init()
 {
   Q_D(ctkPluginFramework);
@@ -55,6 +56,7 @@ void ctkPluginFramework::init()
   d->init();
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
 {
   Q_UNUSED(options);
@@ -114,6 +116,7 @@ void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
   }
 }
 
+//----------------------------------------------------------------------------
 QStringList ctkPluginFramework::getResourceList(const QString& path) const
 {
   QString resourcePath = QString(":/") + ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME;
@@ -138,6 +141,7 @@ QStringList ctkPluginFramework::getResourceList(const QString& path) const
   return paths;
 }
 
+//----------------------------------------------------------------------------
 QByteArray ctkPluginFramework::getResource(const QString& path) const
 {
   QString resourcePath = QString(":/") + ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME;
@@ -151,6 +155,7 @@ QByteArray ctkPluginFramework::getResource(const QString& path) const
   return resourceFile.readAll();
 }
 
+//----------------------------------------------------------------------------
 QHash<QString, QString> ctkPluginFramework::getHeaders()
 {
   //TODO security

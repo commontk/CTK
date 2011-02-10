@@ -19,12 +19,24 @@
 ###########################################################################
 
 #
+# This macro could be invoked using two different signatures:
+#   ctkFunctionGetTargetLibraries(TARGET_LIBS)
+# or 
+#   ctkFunctionGetTargetLibraries(TARGET_LIBS "/path/to/ctk_target_dir")
 #
+# Without specifying the second argument, the current folder will be used.
 #
-MACRO(ctkMacroGetTargetLibraries varname)
+FUNCTION(ctkFunctionGetTargetLibraries varname)
 
-  SET(filepath ${CMAKE_CURRENT_SOURCE_DIR}/target_libraries.cmake)
-  SET(manifestpath ${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
+  SET(expanded_target_library_list)
+
+  SET(TARGET_DIRECTORY ${ARGV1})
+  IF("${TARGET_DIRECTORY}" STREQUAL "")
+    SET(TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  ENDIF()
+
+  SET(filepath ${TARGET_DIRECTORY}/target_libraries.cmake)
+  SET(manifestpath ${TARGET_DIRECTORY}/manifest_headers.cmake)
 
   # Check if "target_libraries.cmake" or "manifest_headers.cmake" file exists
   IF(NOT EXISTS ${filepath} AND NOT EXISTS ${manifestpath})
@@ -51,9 +63,9 @@ MACRO(ctkMacroGetTargetLibraries varname)
     FOREACH(target_library ${target_libraries})
       IF(${target_library} MATCHES "^CTK[a-zA-Z0-9]+$" OR
          ${target_library} MATCHES "^org_commontk_[a-zA-Z0-9_]+$")
-        LIST(APPEND ${varname} ${target_library})
+        LIST(APPEND expanded_target_library_list ${target_library})
       ELSE()
-        LIST(APPEND ${varname} "${${target_library}}")
+        LIST(APPEND expanded_target_library_list "${${target_library}}")
       ENDIF()
     ENDFOREACH()
   ENDIF()
@@ -72,17 +84,21 @@ MACRO(ctkMacroGetTargetLibraries varname)
     # Loop over all plugin dependencies,
     FOREACH(plugin_symbolicname ${Require-Plugin})
       STRING(REPLACE "." "_" plugin_library ${plugin_symbolicname})
-      LIST(APPEND ${varname} ${plugin_library})
+      LIST(APPEND expanded_target_library_list ${plugin_library})
     ENDFOREACH()
   ENDIF()
+  
+  # Pass the list of target libraries to the caller
+  SET(${varname} ${expanded_target_library_list} PARENT_SCOPE)
 
-ENDMACRO()
+ENDFUNCTION()
 
 #
 #
 #
-MACRO(ctkMacroCollectTargetLibraryNames target_dir varname)
+FUNCTION(ctkFunctionCollectTargetLibraryNames target_dir varname)
 
+  SET(target_library_list)
   #MESSAGE(STATUS target:${target})
   SET(lib_targets)
 
@@ -109,7 +125,7 @@ MACRO(ctkMacroCollectTargetLibraryNames target_dir varname)
 
     INCLUDE(${filepath})
 
-    LIST(APPEND ${varname} ${target_libraries})
+    LIST(APPEND target_library_list ${target_libraries})
   ENDIF()
 
   IF(EXISTS ${manifestpath})
@@ -126,12 +142,15 @@ MACRO(ctkMacroCollectTargetLibraryNames target_dir varname)
     # Loop over all plugin dependencies
     FOREACH(plugin_symbolicname ${Require-Plugin})
       STRING(REPLACE "." "_" plugin_library ${plugin_symbolicname})
-      LIST(APPEND ${varname} ${plugin_library})
+      LIST(APPEND target_library_list ${plugin_library})
     ENDFOREACH()
   ENDIF()
 
-  LIST(REMOVE_DUPLICATES ${varname})
-ENDMACRO()
+  LIST(REMOVE_DUPLICATES target_library_list)
+  
+  # Pass the list of target libraries to the caller
+  SET(${varname} ${target_library_list} PARENT_SCOPE)
+ENDFUNCTION()
 
 #
 #
@@ -164,7 +183,7 @@ MACRO(ctkMacroCollectAllTargetLibraries targets subdir varname)
     
     # Collect target libraries only if option is ON
     IF(${option_name})
-      ctkMacroCollectTargetLibraryNames(${target_dir} target_libraries)
+      ctkFunctionCollectTargetLibraryNames(${target_dir} target_libraries)
     ENDIF()
 
     IF(target_libraries)

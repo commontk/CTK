@@ -28,9 +28,11 @@
 
 #include <stdexcept>
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 const bool ctkServiceTrackerPrivate<S,T>::DEBUG = false;
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
     ctkServiceTracker<S,T>* st, ctkPluginContext* context,
@@ -57,6 +59,7 @@ ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
     ctkServiceTracker<S,T>* st,
@@ -85,6 +88,7 @@ ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
     ctkServiceTracker<S,T>* st,
@@ -101,12 +105,14 @@ ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceTrackerPrivate<S,T>::~ctkServiceTrackerPrivate()
 {
 
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 QList<ctkServiceReference> ctkServiceTrackerPrivate<S,T>::getInitialReferences(const QString& className,
                                                 const QString& filterString)
@@ -114,12 +120,14 @@ QList<ctkServiceReference> ctkServiceTrackerPrivate<S,T>::getInitialReferences(c
   return context->getServiceReferences(className, filterString);
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 QSharedPointer<ctkTrackedService<S,T> > ctkServiceTrackerPrivate<S,T>::tracked() const
 {
   return trackedService;
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkServiceTrackerPrivate<S,T>::modified()
 {

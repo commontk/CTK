@@ -4,7 +4,7 @@
 #include <QApplication>
 
 // ctkDICOMCore includes
-#include "ctkDICOM.h"
+#include "ctkDICOMDatabase.h"
 
 // STD includes
 #include <iostream>
@@ -14,10 +14,9 @@ int ctkDICOMTest1(int argc, char * argv []) {
   
   QApplication app(argc, argv);
   QTextStream out(stdout);
-  ctkDICOM myCTK;
   try
   {
-    myCTK.openDatabase( argv[1]);
+    ctkDICOMDatabase myCTK( argv[1] );
     out << "open db success\n";
     /// make sure it is empty and properly initialized
     if (! myCTK.initializeDatabase() ) {

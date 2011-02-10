@@ -26,11 +26,13 @@
 
 #include <QtPlugin>
 
+//----------------------------------------------------------------------------
 void ctkTestPluginA2Activator::start(ctkPluginContext* context)
 {
   s.reset(new ctkTestPluginA2(context));
 }
 
+//----------------------------------------------------------------------------
 void ctkTestPluginA2Activator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)

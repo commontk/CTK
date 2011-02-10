@@ -20,7 +20,7 @@ SET(PLUGIN_cached_resourcefiles
   servicedescriptor.xml
 )
 
-ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
+ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}

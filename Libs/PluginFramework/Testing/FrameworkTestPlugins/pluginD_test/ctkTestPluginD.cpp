@@ -21,6 +21,7 @@
 
 #include <QDebug>
 
+//----------------------------------------------------------------------------
 class ctkTestPluginD 
 {
   ctkTestPluginD()

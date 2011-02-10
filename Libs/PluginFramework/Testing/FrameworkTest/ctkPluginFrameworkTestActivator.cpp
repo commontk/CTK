@@ -30,6 +30,7 @@
 #include <QtPlugin>
 #include <QStringList>
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestActivator::start(ctkPluginContext* context)
 {
   ctkDictionary props;
@@ -44,6 +45,7 @@ void ctkPluginFrameworkTestActivator::start(ctkPluginContext* context)
   context->registerService<ctkTestSuiteInterface>(serviceListenerTestSuite, props);
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context);

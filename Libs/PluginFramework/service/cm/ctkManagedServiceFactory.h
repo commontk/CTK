@@ -37,10 +37,10 @@
  * <p>
  * Each of these <i>service instances </i> is represented, in the persistent
  * storage of the Configuration Admin service, by a factory
- * {@code ctkConfiguration} object that has a PID. When such a
- * {@code ctkConfiguration} is updated, the Configuration Admin service
- * calls the {@code ctkManagedServiceFactory} updated method with the new
- * properties. When {@code updated} is called with a new PID, the Managed
+ * <code>ctkConfiguration</code> object that has a PID. When such a
+ * <code>ctkConfiguration</code> is updated, the Configuration Admin service
+ * calls the <code>ctkManagedServiceFactory</code> updated method with the new
+ * properties. When <code>updated</code> is called with a new PID, the Managed
  * Service Factory should create a new factory instance based on these
  * configuration properties. When called with a PID that it has seen before, it
  * should update that existing service instance with the new configuration
@@ -52,7 +52,7 @@
  * created. The semantics of a factory instance are defined by the Managed
  * Service Factory. However, if the factory instance is registered as a service
  * object with the service registry, its PID should match the PID of the
- * corresponding {@code ctkConfiguration} object (but it should <b>not</b>
+ * corresponding <code>ctkConfiguration</code> object (but it should <b>not</b>
  * be registered as a Managed Service!).
  *
  * <p>
@@ -119,19 +119,19 @@ struct ctkManagedServiceFactory
    * Create a new instance, or update the configuration of an existing
    * instance.
    *
-   * If the PID of the {@code ctkConfiguration} object is new for the
+   * If the PID of the <code>ctkConfiguration</code> object is new for the
    * Managed Service Factory, then create a new factory instance, using the
-   * configuration {@code properties} provided. Else, update the
-   * service instance with the provided {@code properties}.
+   * configuration <code>properties</code> provided. Else, update the
+   * service instance with the provided <code>properties</code>.
    *
    * <p>
    * If the factory instance is registered with the Framework, then the
-   * configuration {@code properties} should be copied to its registry
+   * configuration <code>properties</code> should be copied to its registry
    * properties. This is not mandatory and security sensitive properties
    * should obviously not be copied.
    *
    * <p>
-   * If this method throws any {@code exception}, the Configuration
+   * If this method throws any <code>exception</code>, the Configuration
    * Admin service must catch it and should log it.
    *
    * <p>
@@ -141,7 +141,7 @@ struct ctkManagedServiceFactory
    *
    * <p>
    * The Configuration Admin service must call this method asynchronously.
-   * This implies that implementors of the {@code ctkManagedServiceFactory}
+   * This implies that implementors of the <code>ctkManagedServiceFactory</code>
    * class can be assured that the callback will not take place during
    * registration when they execute the registration in a synchronized method.
    *
@@ -149,7 +149,7 @@ struct ctkManagedServiceFactory
    * @param properties A copy of the configuration properties. This argument
    *        must not contain the service.pluginLocation" property. The value
    *        of this property may be obtained from the
-   *        {@code ctkConfiguration#getPluginLocation} method.
+   *        <code>ctkConfiguration#getPluginLocation</code> method.
    * @throws ctkConfigurationException when the configuration properties are
    *         invalid.
    */
@@ -161,7 +161,7 @@ struct ctkManagedServiceFactory
    * Remove the factory instance associated with the PID. If the instance was
    * registered with the service registry, it should be unregistered.
    * <p>
-   * If this method throws any {@code exception}, the Configuration
+   * If this method throws any <code>exception</code>, the Configuration
    * Admin service must catch it and should log it.
    * <p>
    * The Configuration Admin service must call this method asynchronously.

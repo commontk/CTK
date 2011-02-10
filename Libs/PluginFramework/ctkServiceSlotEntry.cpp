@@ -70,6 +70,7 @@ public:
 
 };
 
+//----------------------------------------------------------------------------
 ctkServiceSlotEntry::ctkServiceSlotEntry(
     QSharedPointer<ctkPlugin> p, QObject* receiver, const char* slot, const QString& filter)
   : d(new ctkServiceSlotEntryData(p, receiver, slot))
@@ -80,29 +81,34 @@ ctkServiceSlotEntry::ctkServiceSlotEntry(
   }
 }
 
+//----------------------------------------------------------------------------
 ctkServiceSlotEntry::ctkServiceSlotEntry(const ctkServiceSlotEntry& other)
   : d(other.d)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceSlotEntry::ctkServiceSlotEntry()
   : d(new ctkServiceSlotEntryData(QSharedPointer<ctkPlugin>(0), 0, 0))
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkServiceSlotEntry& ctkServiceSlotEntry::operator=(const ctkServiceSlotEntry& other)
 {
   d = other.d;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceSlotEntry::~ctkServiceSlotEntry()
 {
 
 }
 
+//----------------------------------------------------------------------------
 bool ctkServiceSlotEntry::operator==(const ctkServiceSlotEntry& other) const
 {
   return ((d->plugin == 0 || other.d->plugin == 0) || d->plugin == other.d->plugin) &&
@@ -110,6 +116,7 @@ bool ctkServiceSlotEntry::operator==(const ctkServiceSlotEntry& other) const
          ((d->slot == 0 || other.d->slot == 0) || std::strcmp(d->slot, other.d->slot) == 0);
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceSlotEntry::invokeSlot(const ctkServiceEvent &event)
 {
   if (!QMetaObject::invokeMethod(d->receiver, d->slot,
@@ -124,36 +131,43 @@ void ctkServiceSlotEntry::invokeSlot(const ctkServiceEvent &event)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceSlotEntry::setRemoved(bool removed)
 {
   d->removed = removed;
 }
 
+//----------------------------------------------------------------------------
 bool ctkServiceSlotEntry::isRemoved() const
 {
   return d->removed;
 }
 
+//----------------------------------------------------------------------------
 QSharedPointer<ctkPlugin> ctkServiceSlotEntry::getPlugin() const
 {
   return d->plugin;
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr ctkServiceSlotEntry::getLDAPExpr() const
 {
   return d->ldap;
 }
 
+//----------------------------------------------------------------------------
 QString ctkServiceSlotEntry::getFilter() const
 {
   return d->ldap.isNull() ? QString() : d->ldap.toString();
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr::LocalCache& ctkServiceSlotEntry::getLocalCache() const
 {
   return d->local_cache;
 }
 
+//----------------------------------------------------------------------------
 uint qHash(const ctkServiceSlotEntry& serviceSlot)
 {
   return qHash(serviceSlot.getPlugin());

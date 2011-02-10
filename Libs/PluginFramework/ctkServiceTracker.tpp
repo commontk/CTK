@@ -32,12 +32,13 @@
 #include <stdexcept>
 #include <limits>
 
-
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceTracker<S,T>::~ctkServiceTracker()
 {
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext* context,
                                           const ctkServiceReference& reference,
@@ -46,6 +47,7 @@ ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext* context,
 {
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext* context, const QString& clazz,
                                           ServiceTrackerCustomizer* customizer)
@@ -53,6 +55,7 @@ ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext* context, const QStri
 {
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext* context, const ctkLDAPSearchFilter& filter,
                                           ServiceTrackerCustomizer* customizer)
@@ -60,6 +63,7 @@ ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext* context, const ctkLD
 {
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext *context, ctkServiceTrackerCustomizer<T> *customizer)
   : d_ptr(new ServiceTrackerPrivate(this, context, qobject_interface_iid<S>(), customizer))
@@ -68,6 +72,7 @@ ctkServiceTracker<S,T>::ctkServiceTracker(ctkPluginContext *context, ctkServiceT
   if (clazz == 0) throw ctkServiceException("The service interface class has no Q_DECLARE_INTERFACE macro");
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkServiceTracker<S,T>::open()
 {
@@ -123,6 +128,7 @@ void ctkServiceTracker<S,T>::open()
   t->trackInitial(); /* process the initial references */
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkServiceTracker<S,T>::close()
 {
@@ -173,6 +179,7 @@ void ctkServiceTracker<S,T>::close()
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 T ctkServiceTracker<S,T>::waitForService(unsigned long timeout)
 {
@@ -201,6 +208,7 @@ T ctkServiceTracker<S,T>::waitForService(unsigned long timeout)
   return object;
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 QList<ctkServiceReference> ctkServiceTracker<S,T>::getServiceReferences() const
 {
@@ -220,6 +228,7 @@ QList<ctkServiceReference> ctkServiceTracker<S,T>::getServiceReferences() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkServiceReference ctkServiceTracker<S,T>::getServiceReference() const
 {
@@ -300,6 +309,7 @@ ctkServiceReference ctkServiceTracker<S,T>::getServiceReference() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 T ctkServiceTracker<S,T>::getService(const ctkServiceReference& reference) const
 {
@@ -315,6 +325,7 @@ T ctkServiceTracker<S,T>::getService(const ctkServiceReference& reference) const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 QList<T> ctkServiceTracker<S,T>::getServices() const
 {
@@ -336,6 +347,7 @@ QList<T> ctkServiceTracker<S,T>::getServices() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 T ctkServiceTracker<S,T>::getService() const
 {
@@ -370,6 +382,7 @@ T ctkServiceTracker<S,T>::getService() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkServiceTracker<S,T>::remove(const ctkServiceReference& reference)
 {
@@ -382,6 +395,7 @@ void ctkServiceTracker<S,T>::remove(const ctkServiceReference& reference)
   t->untrack(reference, ctkServiceEvent());
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 int ctkServiceTracker<S,T>::size() const
 {
@@ -397,6 +411,7 @@ int ctkServiceTracker<S,T>::size() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 int ctkServiceTracker<S,T>::getTrackingCount() const
 {
@@ -412,6 +427,7 @@ int ctkServiceTracker<S,T>::getTrackingCount() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 QMap<ctkServiceReference, T> ctkServiceTracker<S,T>::getTracked() const
 {
@@ -428,6 +444,7 @@ QMap<ctkServiceReference, T> ctkServiceTracker<S,T>::getTracked() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 bool ctkServiceTracker<S,T>::isEmpty() const
 {
@@ -443,6 +460,7 @@ bool ctkServiceTracker<S,T>::isEmpty() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 T ctkServiceTracker<S,T>::addingService(const ctkServiceReference& reference)
 {
@@ -450,6 +468,7 @@ T ctkServiceTracker<S,T>::addingService(const ctkServiceReference& reference)
   return qobject_cast<T>(d->context->getService(reference));
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkServiceTracker<S,T>::modifiedService(const ctkServiceReference& reference, T service)
 {
@@ -458,6 +477,7 @@ void ctkServiceTracker<S,T>::modifiedService(const ctkServiceReference& referenc
   /* do nothing */
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkServiceTracker<S,T>::removedService(const ctkServiceReference& reference, T service)
 {

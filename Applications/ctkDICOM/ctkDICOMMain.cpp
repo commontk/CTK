@@ -27,10 +27,6 @@
 // CTK widget includes
 #include <ctkDICOMQueryRetrieveWidget.h>
 
-// ctkDICOMCore includes
-#include "ctkDICOM.h"
-#include "ctkDICOMModel.h"
-
 // Logger
 #include "ctkLogger.h"
 
@@ -79,26 +75,10 @@ int main(int argc, char** argv)
 
   QString databaseFileName = databaseDirectory + QString("/ctkDICOM.sql");
 
-  ctkDICOM myCTK;
-  try { myCTK.openDatabase( databaseFileName ); }
-  catch (std::exception e)
-  {
-    std::cerr << "Database error: " << qPrintable(myCTK.GetLastError()) << "\n";
-    myCTK.closeDatabase();
-    return EXIT_FAILURE;
-  }
-
-  ctkDICOMModel model;
-  model.setDatabase(myCTK.database());
-  
   ctkDICOMQueryRetrieveWidget queryRetrieve;
-  QTreeView *treeView = queryRetrieve.findChild<QTreeView *>("treeView");
-  if (!treeView)
-  {
-    std::cerr << "Could not access tree view from QueryRetrieve widget\n";
-    return EXIT_FAILURE;
-  }
-  treeView->setModel(&model);
+
+  queryRetrieve.setRetrieveDatabaseFileName(databaseFileName);
+  queryRetrieve.setRetrieveDirectory(databaseDirectory);
 
   queryRetrieve.show();
   queryRetrieve.raise();

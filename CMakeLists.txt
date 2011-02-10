@@ -217,7 +217,8 @@ OPTION(WITH_COVERAGE "Enable/Disable coverage" OFF)
 OPTION(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
 MARK_AS_ADVANCED(DOCUMENTATION_TARGET_IN_ALL)
 
-OPTION(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY "Where documentation archives should be stored" ${CMAKE_CURRENT_BINARY_DIR})
+SET(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+ CACHE PATH "Where documentation archives should be stored")
 MARK_AS_ADVANCED(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
 
 #-----------------------------------------------------------------------------
@@ -300,7 +301,7 @@ SET(CTK_LIBS
   Widgets:OFF
   DICOM/Core:OFF
   DICOM/Widgets:OFF
-  Messaging/Core:OFF
+  #Messaging/Core:OFF  # MessagingCore library need some love :) - Let's disable it for now :(
   Scripting/Python/Core:OFF
   Scripting/Python/Widgets:OFF
   Visualization/VTK/Core:OFF
@@ -313,7 +314,7 @@ SET(CTK_LIBS
 #
 SET(CTK_PLUGINS
   org.commontk.eventbus:OFF
-  org.commontk.cli:OFF
+  #org.commontk.cli:OFF # MessagingCore library need some love :) - Let's disable it for now :(
   org.commontk.configadmin:OFF
   org.commontk.dah.app:OFF
   org.commontk.dah.core:OFF
@@ -339,6 +340,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMDemoSCU:OFF
   ctkDICOMQuery:OFF
   ctkDICOMRetrieve:OFF
+  ctkDICOMViewer:OFF
   ctkExampleHost:OFF
   ctkExampleHostedApp:OFF
   ctkPluginBrowser:OFF

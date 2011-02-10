@@ -28,16 +28,16 @@
 /**
  * The MetaType Service can be used to obtain meta type information for a
  * plugin. The MetaType Service will examine the specified plugin for meta type
- * documents to create the returned {@code ctkMetaTypeInformation} object.
+ * documents to create the returned <code>ctkMetaTypeInformation</code> object.
  *
  * <p>
  * If the specified plugin does not contain any meta type documents, then a
- * {@code ctkMetaTypeInformation} object will be returned that wraps any
- * {@code ctkManagedService} or {@code ctkManagedServiceFactory}
+ * <code>ctkMetaTypeInformation</code> object will be returned that wraps any
+ * <code>ctkManagedService</code> or <code>ctkManagedServiceFactory</code>
  * services registered by the specified plugin that implement
- * {@code ctkMetaTypeProvider}. Thus the MetaType Service can be used to
+ * <code>ctkMetaTypeProvider</code>. Thus the MetaType Service can be used to
  * retrieve meta type information for plugins which contain meta type
- * documents or which provide their own {@code ctkMetaTypeProvider} objects.
+ * documents or which provide their own <code>ctkMetaTypeProvider</code> objects.
  */
 struct CTK_PLUGINFW_EXPORT ctkMetaTypeService
 {

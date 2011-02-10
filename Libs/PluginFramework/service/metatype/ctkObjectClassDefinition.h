@@ -33,23 +33,23 @@ struct ctkObjectClassDefinition
 
   enum Filter {
     /**
-     * Argument for {@code getAttributeDefinitions()}.
+     * Argument for <code>getAttributeDefinitions()</code>.
      * <p>
-     * {@code REQUIRED} indicates that only the required definitions are
+     * <code>REQUIRED</code> indicates that only the required definitions are
      * returned.
      */
     REQUIRED,
     /**
-     * Argument for {@code getAttributeDefinitions()}.
+     * Argument for <code>getAttributeDefinitions()</code>.
      * <p>
-     * {@code OPTIONAL} indicates that only the optional definitions are
+     * <code>OPTIONAL</code> indicates that only the optional definitions are
      * returned.
      */
     OPTIONAL,
     /**
-     * Argument for {@code getAttributeDefinitions()}.
+     * Argument for <code>getAttributeDefinitions()</code>.
      * <p>
-     * {@code ALL} indicates that all the definitions are returned.
+     * <code>ALL</code> indicates that all the definitions are returned.
      */
     ALL
   };
@@ -69,7 +69,7 @@ struct ctkObjectClassDefinition
   * Return the id of this object class.
   *
   * <p>
-  * {@code ctkObjectClassDefintion} objects share a global namespace in the
+  * <code>ctkObjectClassDefintion</code> objects share a global namespace in the
   * registry. They share this aspect with LDAP/X.500 attributes. In these
   * standards the OSI Object Identifier (OID) is used to uniquely identify
   * object classes. If such an OID exists, (which can be requested at several
@@ -99,10 +99,10 @@ struct ctkObjectClassDefinition
   *
   * <p>
   * Return a set of attributes. The filter parameter can distinguish between
-  * {@code ALL},{@code REQUIRED} or the {@code OPTIONAL}
+  * <code>ALL</code>,<code>REQUIRED</code> or the <code>OPTIONAL</code>
   * attributes.
   *
-  * @param filter {@code ALL},{@code REQUIRED},{@code OPTIONAL}
+  * @param filter <code>ALL</code>,<code>REQUIRED</code>,<code>OPTIONAL</code>
   * @return A list of attribute definitions, which is empty if no
   *         attributes are selected
   */

@@ -71,42 +71,47 @@ public:
 
 };
 
+//----------------------------------------------------------------------------
 ctkEvent::ctkEvent()
   : d(0)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkEvent::ctkEvent(const QString& topic, const ctkDictionary& properties)
   : d(new ctkEventData(topic, properties))
 {
 
 }
 
-/*
- * This is fast thanks to implicit sharing
- */
+//----------------------------------------------------------------------------
+// This is fast thanks to implicit sharing
 ctkEvent::ctkEvent(const ctkEvent &event)
   : d(event.d)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkEvent::~ctkEvent()
 {
 }
 
+//----------------------------------------------------------------------------
 bool ctkEvent::isNull() const
 {
   return !d;
 }
 
+//----------------------------------------------------------------------------
 ctkEvent& ctkEvent::operator=(const ctkEvent& other)
 {
   d = other.d;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 bool ctkEvent::operator==(const ctkEvent& other) const
 {
   if (d == other.d)
@@ -119,11 +124,13 @@ bool ctkEvent::operator==(const ctkEvent& other) const
   return false;
 }
 
+//----------------------------------------------------------------------------
 QVariant ctkEvent::getProperty(const QString& name) const
 {
   return d->properties[name];
 }
 
+//----------------------------------------------------------------------------
 bool ctkEvent::containsProperty(const QString& name) const
 {
   if (ctkEventConstants::EVENT_TOPIC == name)
@@ -133,6 +140,7 @@ bool ctkEvent::containsProperty(const QString& name) const
   return d->properties.contains(name);
 }
 
+//----------------------------------------------------------------------------
 QStringList ctkEvent::getPropertyNames() const
 {
   QStringList result;
@@ -143,11 +151,13 @@ QStringList ctkEvent::getPropertyNames() const
   return result;
 }
 
+//----------------------------------------------------------------------------
 const QString& ctkEvent::getTopic() const
 {
   return d->topic;
 }
 
+//----------------------------------------------------------------------------
 bool ctkEvent::matches(const ctkLDAPSearchFilter& filter) const
 {
   return filter.matchCase(d->properties);

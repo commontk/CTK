@@ -45,51 +45,59 @@ public:
   const QSharedPointer<ctkPlugin> plugin;
 };
 
-
+//----------------------------------------------------------------------------
 ctkPluginEvent::ctkPluginEvent()
   : d(0)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginEvent::~ctkPluginEvent()
 {
 
 }
 
+//----------------------------------------------------------------------------
 bool ctkPluginEvent::isNull() const
 {
   return !d;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginEvent::ctkPluginEvent(Type type, QSharedPointer<ctkPlugin> plugin)
   : d(new ctkPluginEventData(type, plugin))
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginEvent::ctkPluginEvent(const ctkPluginEvent& other)
   : d(other.d)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkPluginEvent& ctkPluginEvent::operator=(const ctkPluginEvent& other)
 {
   d = other.d;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 QSharedPointer<ctkPlugin> ctkPluginEvent::getPlugin() const
 {
   return d->plugin;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginEvent::Type ctkPluginEvent::getType() const
 {
   return d->type;
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug debug, ctkPluginEvent::Type eventType)
 {
   switch (eventType)
@@ -109,6 +117,7 @@ QDebug operator<<(QDebug debug, ctkPluginEvent::Type eventType)
   }
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug debug, const ctkPluginEvent& event)
 {
   if (event.isNull()) return debug << "NONE";

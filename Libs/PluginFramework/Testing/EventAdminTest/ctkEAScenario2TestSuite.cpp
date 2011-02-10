@@ -28,6 +28,7 @@
 
 #include <QTest>
 
+//----------------------------------------------------------------------------
 ctkEAScenario2EventConsumer::ctkEAScenario2EventConsumer(
   ctkPluginContext* pluginContext, const QStringList& topics,
   int numSyncMsg, int numAsyncMsg)
@@ -38,6 +39,7 @@ ctkEAScenario2EventConsumer::ctkEAScenario2EventConsumer(
 
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2EventConsumer::runTest()
 {
   asynchMessages = 0;
@@ -52,6 +54,7 @@ void ctkEAScenario2EventConsumer::runTest()
   QVERIFY2(serviceRegistration, "service registration should not be invalid");
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2EventConsumer::cleanup()
 {
   QMutexLocker l(&mutex);
@@ -71,6 +74,7 @@ void ctkEAScenario2EventConsumer::cleanup()
   QCOMPARE(asynchMessages, numAsyncMessages); // "Not all asynch messages recieved"
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2EventConsumer::handleEvent(const ctkEvent& event)
 {
   QMutexLocker l(&mutex);
@@ -123,6 +127,7 @@ void ctkEAScenario2EventConsumer::handleEvent(const ctkEvent& event)
   }
 }
 
+//----------------------------------------------------------------------------
 ctkEAScenario2EventPublisher::ctkEAScenario2EventPublisher(ctkPluginContext* context,
                              const QString& name, const QStringList topics,
                              int id, int numOfMessage)
@@ -133,6 +138,7 @@ ctkEAScenario2EventPublisher::ctkEAScenario2EventPublisher(ctkPluginContext* con
   moveToThread(&thread);
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2EventPublisher::runTest()
 {
   /* Claims the reference of the EventAdmin Service */
@@ -161,6 +167,7 @@ void ctkEAScenario2EventPublisher::runTest()
   QTest::qWait(1000); // allow for delivery
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2EventPublisher::sendEvents()
 {
   for (int i = 0; i < messageTosend; i++)
@@ -184,6 +191,7 @@ void ctkEAScenario2EventPublisher::sendEvents()
   thread.quit();
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2EventPublisher::postEvents()
 {
   for (int i = 0; i < messageTosend; i++)
@@ -207,12 +215,14 @@ void ctkEAScenario2EventPublisher::postEvents()
   thread.quit();
 }
 
+//----------------------------------------------------------------------------
 ctkEAScenario2TestSuite::ctkEAScenario2TestSuite(ctkPluginContext* context, long eventPluginId)
   : pluginContext(context), eventPluginId(eventPluginId)
 {
 
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2TestSuite::initTestCase()
 {
   pluginContext->getPlugin(eventPluginId)->start();
@@ -239,6 +249,7 @@ void ctkEAScenario2TestSuite::initTestCase()
         scenario2_topicsToPublish, 2, 4);
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2TestSuite::cleanupTestCase()
 {
   foreach (ctkEAScenario2EventConsumer* consumer, eventConsumers)
@@ -250,6 +261,7 @@ void ctkEAScenario2TestSuite::cleanupTestCase()
   pluginContext->getPlugin(eventPluginId)->stop();
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2TestSuite::testRegisterConsumer()
 {
   foreach(ctkEAScenario2EventConsumer* consumer, eventConsumers)
@@ -258,6 +270,7 @@ void ctkEAScenario2TestSuite::testRegisterConsumer()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkEAScenario2TestSuite::testPublishEvents()
 {
   eventPublisher->runTest();
