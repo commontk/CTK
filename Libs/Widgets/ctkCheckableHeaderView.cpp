@@ -74,12 +74,15 @@ public:
   ctkCheckableHeaderViewPrivate(ctkCheckableHeaderView& object);
   ~ctkCheckableHeaderViewPrivate();
   void init();
+  void setIndexCheckState(const QModelIndex& index, Qt::CheckState checkState,
+                          int depth);
 
   int Pressed;
   ctkCheckBoxPixmaps* CheckBoxPixmaps;
   bool HeaderIsUpdating;
   bool ItemsAreUpdating;
   bool PropagateToItems;
+  int  PropagateDepth;
 };
 
 //----------------------------------------------------------------------------
@@ -91,6 +94,7 @@ ctkCheckableHeaderViewPrivate::ctkCheckableHeaderViewPrivate(ctkCheckableHeaderV
   this->CheckBoxPixmaps = 0;
   this->Pressed = -1;
   this->PropagateToItems = true;
+  this->PropagateDepth = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -108,6 +112,29 @@ void ctkCheckableHeaderViewPrivate::init()
 {
   Q_Q(ctkCheckableHeaderView);
   this->CheckBoxPixmaps = new ctkCheckBoxPixmaps(q);
+}
+
+//----------------------------------------------------------------------------
+void ctkCheckableHeaderViewPrivate::setIndexCheckState(
+  const QModelIndex& index, Qt::CheckState checkState, int depth)
+{
+  Q_Q(ctkCheckableHeaderView);
+  if (depth > this->PropagateDepth && this->PropagateDepth != -1)
+    {
+    return;
+    }
+  q->model()->setData(index, checkState, Qt::CheckStateRole);
+  // there is no sense to go recursive if we are vertical
+  if (q->orientation() != Qt::Horizontal)
+    {
+    return;
+    } 
+  ++depth;
+  const int rowCount = q->model()->rowCount(index);
+  for (int row = 0; row < rowCount; ++row)
+    {
+    this->setIndexCheckState(index.child(row, 0), checkState, depth);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -246,6 +273,21 @@ bool ctkCheckableHeaderView::propagateToItems()const
 }
 
 //-----------------------------------------------------------------------------
+void ctkCheckableHeaderView::setPropagateDepth(int depth)
+{
+  Q_D(ctkCheckableHeaderView);
+  d->PropagateDepth = depth;
+  //TODO: rescan the model
+}
+
+//-----------------------------------------------------------------------------
+int ctkCheckableHeaderView::propagateDepth()const
+{
+  Q_D(const ctkCheckableHeaderView);
+  return d->PropagateDepth;
+}
+
+//-----------------------------------------------------------------------------
 void ctkCheckableHeaderView::toggleCheckState(int section)
 {
   // If the section is checkable, toggle the check state.
@@ -324,7 +366,7 @@ void ctkCheckableHeaderView::updateHeaders(int firstSection, int lastSection)
           QModelIndex index = this->orientation() == Qt::Horizontal ? 
             current->index(j, i,this->rootIndex()) :
             current->index(i, j,this->rootIndex()) ;
-          current->setData(index, checkState, Qt::CheckStateRole);
+          d->setIndexCheckState(index, checkState, 1);
           }
         }
       }

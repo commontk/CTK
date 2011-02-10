@@ -136,6 +136,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   headerView->setMovable(previousHeaderView->isMovable());
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   headerView->setPropagateToItems(true);
+  headerView->setPropagateDepth(2);
   d->results->setHeader(headerView);
   // headerView is hidden because it was created with a visisble parent widget 
   headerView->setHidden(false);
