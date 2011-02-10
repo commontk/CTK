@@ -79,6 +79,7 @@ int main(int argc, char** argv)
   QString databaseFileName = databaseDirectory + QString("/ctkDICOM.sql");
 
   QSharedPointer<ctkDICOMDatabase> dicomDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
+  dicomDatabase->openDatabase(databaseFileName);
 
   ctkDICOMQueryRetrieveWidget queryRetrieve;
 

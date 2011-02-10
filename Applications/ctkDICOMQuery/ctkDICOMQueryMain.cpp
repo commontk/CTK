@@ -76,7 +76,7 @@ int main(int argc, char** argv)
   ctkDICOMDatabase myCTK;
   logger.debug ( "Opening database " + QString ( argv[1] ) );
   myCTK.openDatabase ( argv[1] );
-  logger.debug ( "Last error: " + myCTK.GetLastError() );
+  logger.debug ( "Last error: " + myCTK.lastError() );
   if ( myCTK.database().isOpen() ) 
     {
     logger.debug ( "Database is open" );

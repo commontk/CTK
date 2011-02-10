@@ -79,7 +79,7 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
   try { d->QueryResultDatabase.openDatabase( ":memory:" ); }
   catch (std::exception e)
   {
-    logger.error ( "Database error: " + d->QueryResultDatabase.GetLastError() );
+    logger.error ( "Database error: " + d->QueryResultDatabase.lastError() );
     d->QueryResultDatabase.closeDatabase();
     return;
   }
@@ -148,6 +148,7 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
     logger.debug("need to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
     ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
+    retrieve->setDICOMDatabase( d->RetrieveDatabase );
     d->RetrievalsByStudyUID[studyUID] = retrieve;
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );
@@ -161,7 +162,7 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
     logger.info ( "Starting to retrieve" );
     try
       {
-      retrieve->retrieveStudy ( studyUID, QDir("/tmp/ctk") );
+      retrieve->retrieveStudy ( studyUID );
       }
     catch (std::exception e)
       {
