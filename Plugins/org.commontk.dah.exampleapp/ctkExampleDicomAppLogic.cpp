@@ -230,8 +230,16 @@ void ctkExampleDicomAppLogic::buttonClicked()
     ctkDICOMImage ctkImage(&dcmtkImage);
 
     QLabel* qtImage = new QLabel;
-    qtImage->setPixmap(ctkImage.getPixmap(0));
-    qtImage->show();
+    QPixmap pixmap = QPixmap::fromImage(ctkImage.getImage(0),Qt::AvoidDither);
+    if (pixmap.isNull())
+    {
+      qCritical() << "Failed to convert QImage to QPixmap" ;
+    }
+    else
+    {
+      qtImage->setPixmap(pixmap);
+      qtImage->show();
+    }
   }
   this->Button->setText(s);
 }
