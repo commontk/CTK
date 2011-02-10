@@ -75,10 +75,11 @@ public:
   DcmSCU SCU;
   DcmDataset* parameters;
   QString MoveDestinationAETitle;
+  QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
 
   // do the retrieve, handling both series and study retrieves
   enum RetrieveType { RetrieveSeries, RetrieveStudy };
-  void retrieve ( QString UID, QDir directory, RetrieveType retriveType );
+  void retrieve ( QString UID, RetrieveType retriveType );
 };
 
 //------------------------------------------------------------------------------
@@ -97,7 +98,7 @@ ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveType retriveType ) {
+void ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType ) {
 
   // Register the JPEG libraries in case we need them
   //   (registration only happens once, so it's okay to call repeatedly)
@@ -170,8 +171,7 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, QDir directory, RetrieveTy
     logger.debug ( "Find succeded" );
 
     logger.debug ( "Making Output Directory" );
-    // Try to create the directory
-    directory.mkpath ( directory.absolutePath() );
+    QDir directory = QDir( DICOMDatabase->databaseDirectory() );
 
     if ( responses->begin() == responses->end() )
       {
@@ -323,18 +323,25 @@ const QString& ctkDICOMRetrieve::moveDestinationAETitle()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMRetrieve::retrieveSeries ( QString seriesInstanceUID, QDir directory ) {
+void ctkDICOMRetrieve::setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->DICOMDatabase = dicomDatabase;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::retrieveSeries ( QString seriesInstanceUID ) {
   Q_D(ctkDICOMRetrieve);
   logger.info ( "Starting retrieveSeries" );
-  d->retrieve ( seriesInstanceUID, directory, ctkDICOMRetrievePrivate::RetrieveSeries );
+  d->retrieve ( seriesInstanceUID, ctkDICOMRetrievePrivate::RetrieveSeries );
   return;
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMRetrieve::retrieveStudy ( QString studyInstanceUID, QDir directory ) {
+void ctkDICOMRetrieve::retrieveStudy ( QString studyInstanceUID ) {
   Q_D(ctkDICOMRetrieve);
   logger.info ( "Starting retrieveStudy" );
-  d->retrieve ( studyInstanceUID, directory, ctkDICOMRetrievePrivate::RetrieveStudy );
+  d->retrieve ( studyInstanceUID, ctkDICOMRetrievePrivate::RetrieveStudy );
   return;
 }
 

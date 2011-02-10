@@ -38,7 +38,7 @@ public:
   explicit ctkDICOMImportWidget(QWidget* parent=0);
   virtual ~ctkDICOMImportWidget();
 
-  void setDICOMDatabase(ctkDICOMDatabase* database);
+  void setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> database);
 
 protected:
   QScopedPointer<ctkDICOMImportWidgetPrivate> d_ptr;

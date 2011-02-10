@@ -19,7 +19,7 @@ public:
 
   QFileSystemModel* FileSystemModel;
 
-  ctkDICOMDatabase* DICOMDatabase;
+  QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
 
 };
 
@@ -71,7 +71,7 @@ void ctkDICOMImportWidget::onTopDirectoryChanged(const QString& path){
   d->directoryList->setRootIndex(d->FileSystemModel->index(path));
 }
 
-void ctkDICOMImportWidget::setDICOMDatabase(ctkDICOMDatabase* database){
+void ctkDICOMImportWidget::setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> database){
   Q_D(ctkDICOMImportWidget);
 
   d->DICOMDatabase = database;

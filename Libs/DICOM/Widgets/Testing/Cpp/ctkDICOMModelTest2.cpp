@@ -40,7 +40,7 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
     if (!myCTK.initializeDatabase(argv[2]))
     {
       std::cerr << "Error when initializing the data base: " << argv[2]
-          << " error: " << myCTK.GetLastError().toStdString();
+          << " error: " << myCTK.lastError().toStdString();
     }
  
     ctkDICOMModel model;

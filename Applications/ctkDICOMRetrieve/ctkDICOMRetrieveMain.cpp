@@ -97,11 +97,14 @@ int main(int argc, char** argv)
                 + "Host: " + Host + "\n"
                 + "CalledPort: " + QString::number ( CalledPort ) + "\n" );
 
+  QSharedPointer<ctkDICOMDatabase> dicomDatabase =  QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
+  dicomDatabase->openDatabase( OutputDirectory.absoluteFilePath(QString("ctkDICOM.sql")) );
+  retrieve.setDICOMDatabase( dicomDatabase );
 
   logger.info ( "Starting to retrieve" );
   try
     {
-    retrieve.retrieveStudy ( StudyUID, OutputDirectory );
+    retrieve.retrieveStudy ( StudyUID );
     }
   catch (std::exception e)
     {

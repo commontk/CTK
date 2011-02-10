@@ -397,13 +397,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 
     if (createThumbnails)
     {
-      QString databaseFile = database.GetDatabaseFilename();
-      if (!QFileInfo(databaseFile).isAbsolute())
-      {
-        databaseFile.prepend(QDir::currentPath() + "/");
-      }
-
-      QString thumbnailBaseDir = QFileInfo ( databaseFile ).absoluteDir().path() + "/thumbs/";
+      QString thumbnailBaseDir =  database.databaseDirectory() + "/thumbs/";
       QString thumbnailFilename = thumbnailBaseDir + "/" + studySeriesDirectory + "/" + sopInstanceUID.c_str() + ".png";
       QFileInfo thumbnailInfo(thumbnailFilename);
       if ( ! ( thumbnailInfo.exists() && thumbnailInfo.lastModified() < QFileInfo(qfilename).lastModified() ) )

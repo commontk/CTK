@@ -98,6 +98,7 @@ ctkDICOMDatabasePrivate::~ctkDICOMDatabasePrivate()
 void ctkDICOMDatabase::openDatabase(const QString databaseFile)
 {
   Q_D(ctkDICOMDatabase);
+  d->DatabaseFileName = databaseFile;
   d->Database = QSqlDatabase::addDatabase("QSQLITE","DICOM-DB");
   d->Database.setDatabaseName(databaseFile);
   if ( ! (d->Database.open()) )
@@ -137,15 +138,25 @@ ctkDICOMDatabase::~ctkDICOMDatabase()
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-const QString ctkDICOMDatabase::GetLastError() const {
+const QString ctkDICOMDatabase::lastError() const {
   Q_D(const ctkDICOMDatabase);
   return d->LastError;
 }
 
 //------------------------------------------------------------------------------
-const QString ctkDICOMDatabase::GetDatabaseFilename() const {
+const QString ctkDICOMDatabase::databaseFilename() const {
   Q_D(const ctkDICOMDatabase);
   return d->DatabaseFileName;
+}
+
+//------------------------------------------------------------------------------
+const QString ctkDICOMDatabase::databaseDirectory() const {
+  QString databaseFile = databaseFilename();
+  if (!QFileInfo(databaseFile).isAbsolute())
+  {
+    databaseFile.prepend(QDir::currentPath() + "/");
+  }
+  return QFileInfo ( databaseFile ).absoluteDir().path();
 }
 
 //------------------------------------------------------------------------------

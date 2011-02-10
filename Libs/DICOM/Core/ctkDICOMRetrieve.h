@@ -25,8 +25,12 @@
 // Qt includes 
 #include <QObject>
 #include <QDir>
+#include <QSharedPointer>
 
 #include "ctkDICOMCoreExport.h"
+
+// CTK Core includes
+#include "ctkDICOMDatabase.h"
 
 class ctkDICOMRetrievePrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject
@@ -49,10 +53,12 @@ public:
   int calledPort();
   void setMoveDestinationAETitle ( QString moveDestinationAETitle );
   const QString& moveDestinationAETitle();
-
+  
+  /// method for database
+  void setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
   // Could be a slot...
-  void retrieveSeries ( QString seriesInstanceUID, QDir directory );
-  void retrieveStudy ( QString studyInstanceUID, QDir directory );
+  void retrieveSeries ( QString seriesInstanceUID );
+  void retrieveStudy ( QString studyInstanceUID );
 
 protected:
   QScopedPointer<ctkDICOMRetrievePrivate> d_ptr;
