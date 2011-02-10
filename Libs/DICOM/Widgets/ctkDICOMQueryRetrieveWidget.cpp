@@ -148,6 +148,8 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
 
+  QMap<QString,QVariant> serverParameters = d->ServerNodeWidget->parameters();
+
   foreach( QString studyUID, d->queriesByStudyUID.keys() )
   {
     logger.debug("need to retrieve " + studyUID + " from " + d->queriesByStudyUID[studyUID]->host());
@@ -156,8 +158,23 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
     d->retrievalsByStudyUID[studyUID] = retrieve;
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );
-    retrieve->setHost( query->host() );
-    //retrieve->setCallingPort( query->port() );
     retrieve->setCalledPort( query->port() );
+    retrieve->setHost( query->host() );
+
+    // pull from GUI
+    retrieve->setMoveDestinationAETitle( serverParameters["StorageAETitle"].toString() );
+    retrieve->setCallingPort( serverParameters["StoragePort"].toInt() );
+
+    logger.info ( "Starting to retrieve" );
+    try
+      {
+      retrieve->retrieveStudy ( studyUID, QDir("/tmp/ctk") );
+      }
+    catch (std::exception e)
+      {
+      logger.error ( "Retrieve failed" );
+      return;
+      }
+    logger.info ( "Retrieve success" );
   }
 }

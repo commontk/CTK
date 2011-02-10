@@ -218,6 +218,20 @@ QString ctkDICOMServerNodeWidget::callingAETitle()
 }
 
 //----------------------------------------------------------------------------
+QMap<QString,QVariant> ctkDICOMServerNodeWidget::parameters()
+{
+  Q_D(ctkDICOMServerNodeWidget);
+
+  QMap<QString, QVariant> parameters;
+
+  parameters["CallingAETitle"] = d->CallingAETitle->text();
+  parameters["StorageAETitle"] = d->StorageAETitle->text();
+  parameters["StoragePort"] = d->StoragePort->text();
+
+  return parameters;
+}
+
+//----------------------------------------------------------------------------
 QStringList ctkDICOMServerNodeWidget::nodes()
 {
   Q_D(ctkDICOMServerNodeWidget);
@@ -237,6 +251,7 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget::nodeParameters(QString &node)
   Q_D(ctkDICOMServerNodeWidget);
 
   QMap<QString, QVariant> parameters;
+
   int count = d->NodeTable->rowCount();
   QStringList keys;
   keys << "Name" << "AETitle" << "Address" << "Port";
@@ -254,5 +269,6 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget::nodeParameters(QString &node)
       }
     }
   }
+
   return parameters;
 }

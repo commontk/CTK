@@ -41,6 +41,7 @@ public:
   virtual ~ctkDICOMServerNodeWidget();
 
   QString callingAETitle();
+  QMap<QString,QVariant> parameters();
   QStringList nodes();
   QMap<QString,QVariant> nodeParameters(QString &node);
 
