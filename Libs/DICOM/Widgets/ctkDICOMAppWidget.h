@@ -30,11 +30,11 @@ class QModelIndex;
 class ctkDICOMAppWidgetPrivate;
 class ctkDICOMThumbnailWidget;
 
-class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QMainWindow
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
 {
 Q_OBJECT;
 public:
-  typedef QMainWindow Superclass;
+  typedef QWidget Superclass;
   explicit ctkDICOMAppWidget(QWidget* parent=0);
   virtual ~ctkDICOMAppWidget();
 
