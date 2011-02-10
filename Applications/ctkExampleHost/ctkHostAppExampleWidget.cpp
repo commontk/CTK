@@ -31,6 +31,70 @@
 #include "ctkDicomAppService.h"
 #include <ctkDicomAppHostingTypesHelper.h>
 
+#include <ctkDICOMDataset.h>
+// DCMTK includes
+#include <dcmtk/dcmdata/dcdeftag.h>
+
+void addToAvailableData(ctkDicomAppHosting::AvailableData& data, 
+                        QHash<QString, ctkDicomAppHosting::ObjectLocator>& locatorHash, 
+                        const ctkDICOMDataset& dataset, 
+                        long length, 
+                        long offset, 
+                        const QString& uri)
+{
+  ctkDicomAppHosting::ObjectDescriptor objectDescriptor;
+  ctkDicomAppHosting::Study study;
+  ctkDicomAppHosting::Series series;
+  ctkDicomAppHosting::Patient patient;
+  patient.name = dataset.GetElementAsString(DCM_PatientsName);
+qDebug()<<"Patient:  " << patient.name;
+  patient.id = dataset.GetElementAsString(DCM_PatientID);
+  patient.assigningAuthority = dataset.GetElementAsString(DCM_IssuerOfPatientID);
+  patient.sex = dataset.GetElementAsString(DCM_PatientsSex);
+  patient.birthDate = dataset.GetElementAsString(DCM_PatientsBirthDate);
+
+  study.studyUID = dataset.GetElementAsString(DCM_StudyInstanceUID);
+  series.seriesUID = dataset.GetElementAsString(DCM_SeriesInstanceUID);
+
+  QString uuid = QUuid::createUuid().toString();
+  objectDescriptor.descriptorUUID = uuid;
+  objectDescriptor.mimeType = "application/dicom";
+  objectDescriptor.classUID = dataset.GetElementAsString(DCM_SOPClassUID);
+  objectDescriptor.transferSyntaxUID = dataset.GetElementAsString(DCM_TransferSyntaxUID);
+  objectDescriptor.modality = dataset.GetElementAsString(DCM_Modality);
+  
+  series.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
+  series.objectDescriptors.append (objectDescriptor);
+
+  study.series.append( series);
+
+  patient.studies.append(study);
+
+  data.patients = QList<ctkDicomAppHosting::Patient>();
+  data.patients.append(patient);
+
+  ctkDicomAppHosting::ObjectLocator locator;
+  locator.locator = objectDescriptor.descriptorUUID;
+  locator.source = objectDescriptor.descriptorUUID;
+  locator.offset = offset;
+  locator.length = length;
+  locator.transferSyntax = objectDescriptor.transferSyntaxUID;
+  locator.URI = uri;
+}
+
+void addToAvailableData(ctkDicomAppHosting::AvailableData& data, QHash<QString, ctkDicomAppHosting::ObjectLocator>& locatorHash, const QString& filename)
+{
+  QFileInfo fileinfo(filename);
+  qDebug() << filename << " " << fileinfo.exists();
+
+  ctkDICOMDataset ctkdataset;
+  ctkdataset.InitializeFromFile(filename, EXS_Unknown, EGL_noChange, 400);
+
+  QString uri("file:/");
+  uri.append(fileinfo.absoluteFilePath());
+  addToAvailableData(data, locatorHash, ctkdataset, fileinfo.size(), 0, uri);
+}
+
 //----------------------------------------------------------------------------
 ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
     QWidget(parent),
@@ -164,6 +228,7 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
   QList<ctkDicomAppHosting::Study> studies;
   ctkDicomAppHosting::AvailableData data;
   ctkDicomAppHosting::Patient patient;
+  QHash<QString, ctkDicomAppHosting::ObjectLocator> uuidhash;
 
   //TODO put the state changed routine back in notifyStateChanged for the state machine part.
   switch (state)
@@ -176,25 +241,27 @@ void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
     }
     break;
   case ctkDicomAppHosting::INPROGRESS:
-    patient.name = "John Doe";
-    patient.id = "0000";
-    patient.assigningAuthority = "authority";
-    patient.sex = "male";
-    patient.birthDate = "today";
-    patient.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
 
-    patient.studies = studies;
+    addToAvailableData(data, uuidhash, "C:/XIP/XIPHost/dicom-dataset-demo/1.3.6.1.4.1.9328.50.1.10698.dcm");
+    //patient.name = "John Doe";
+    //patient.id = "0000";
+    //patient.assigningAuthority = "authority";
+    //patient.sex = "male";
+    //patient.birthDate = "today";
+    //patient.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
 
-    ourObjectDescriptor.descriptorUUID = QUuid("{11111111-1111-1111-1111-111111111111}");
-    ourObjectDescriptor.mimeType = "text/plain";
-    ourObjectDescriptor.classUID = "lovelyClass";
-    ourObjectDescriptor.transferSyntaxUID = "transSyntaxUId";
-    ourObjectDescriptor.modality = "modMod";
+    //patient.studies = studies;
 
-    data.objectDescriptors =  QList<ctkDicomAppHosting::ObjectDescriptor>();
-    data.objectDescriptors.append (ourObjectDescriptor);
-    data.patients = QList<ctkDicomAppHosting::Patient>();
-    data.patients.append (patient);
+    //ourObjectDescriptor.descriptorUUID = QUuid("{11111111-1111-1111-1111-111111111111}");
+    //ourObjectDescriptor.mimeType = "text/plain";
+    //ourObjectDescriptor.classUID = "lovelyClass";
+    //ourObjectDescriptor.transferSyntaxUID = "transSyntaxUId";
+    //ourObjectDescriptor.modality = "modMod";
+
+    //data.objectDescriptors =  QList<ctkDicomAppHosting::ObjectDescriptor>();
+    //data.objectDescriptors.append (ourObjectDescriptor);
+    //data.patients = QList<ctkDicomAppHosting::Patient>();
+    //data.patients.append (patient);
 
     qDebug()<<"send dataDescriptors";
     reply = this->Host->getDicomAppService()->notifyDataAvailable (data,true);
