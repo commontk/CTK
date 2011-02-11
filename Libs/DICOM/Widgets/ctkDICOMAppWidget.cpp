@@ -211,6 +211,7 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
   {
     DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
     ctkDICOMImage ctkImage( & dcmImage );
+    d->imagePreview->clearImages();
     d->imagePreview->addImage( ctkImage );
   }
   else
