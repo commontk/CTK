@@ -42,6 +42,7 @@ public:
   const QString lastError() const;
   const QString databaseFilename() const;
   const QString databaseDirectory() const;
+  bool isInMemory() const;
 
   ///
   /// open the SQLite database in @param file. If the file does not
@@ -59,11 +60,16 @@ public:
   /**
    * Will create an entry in the appropriate tables for this dataset.
    */
-  void insert ( DcmDataset* dataset, QString filename );
+  // void insert ( DcmDataset* dataset, QString filename );
   /**
    * Insert into the database if not already exsting.
    */
-  void insert ( DcmDataset *dataset );
+  void insert ( DcmDataset *dataset, bool storeFile = true, bool createThumbnail = true );
+  /***
+    * Helper method: get the path that should be used to store this  image.
+    */
+  QString pathForDataset( DcmDataset *dataset);
+
 signals:
   void databaseChanged();
 protected:

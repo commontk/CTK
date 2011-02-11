@@ -371,11 +371,8 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
     }
 
     lastSeriesInstanceUID = seriesInstanceUID;
-    QString studySeriesDirectory;
-    if (createHierarchy || createThumbnails)
-    {
-      studySeriesDirectory = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
-    }
+
+    QString studySeriesDirectory = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
 
     //----------------------------------
     //Move file to destination directory
@@ -398,7 +395,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
     if (createThumbnails)
     {
       QString thumbnailBaseDir =  database.databaseDirectory() + "/thumbs/";
-      QString thumbnailFilename = thumbnailBaseDir + "/" + studySeriesDirectory + "/" + sopInstanceUID.c_str() + ".png";
+      QString thumbnailFilename = thumbnailBaseDir + "/" + database.pathForDataset(dataset) + ".png";
       QFileInfo thumbnailInfo(thumbnailFilename);
       if ( ! ( thumbnailInfo.exists() && thumbnailInfo.lastModified() < QFileInfo(qfilename).lastModified() ) )
       {
