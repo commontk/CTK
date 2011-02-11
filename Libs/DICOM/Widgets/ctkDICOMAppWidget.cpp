@@ -92,6 +92,8 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   connect(d->thumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
+  connect(d->DICOMDatabase.data(), SIGNAL( databaseChanged() ), &(d->DICOMModel), SLOT( reset() ) );
+
 }
 
 //----------------------------------------------------------------------------
@@ -159,11 +161,27 @@ void ctkDICOMAppWidget::onQuery(){
   d->QueryRetrieveWidget->raise();
 }
 
-void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index){
+void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
+{
   Q_D(ctkDICOMAppWidget);
 
   //TODO: update thumbnails and previewer
   d->thumbnailsWidget->setModelIndex(index);
+
+  // TODO: this could check the type of the model entries
+  QString thumbnailPath = d->DICOMDatabase->databaseDirectory();
+  thumbnailPath.append("/thumbs/").append(d->DICOMModel.data(index.parent().parent() ,ctkDICOMModel::UIDRole).toString());
+  thumbnailPath.append("/").append(d->DICOMModel.data(index.parent() ,ctkDICOMModel::UIDRole).toString());
+  thumbnailPath.append("/").append(d->DICOMModel.data(index ,ctkDICOMModel::UIDRole).toString());
+  thumbnailPath.append(".png");
+  if (QFile(thumbnailPath).exists())
+  {
+    d->imagePreview->setPixmap(QPixmap(thumbnailPath));
+  }
+  else
+  {
+    d->imagePreview->setText("No preview");
+  }
 }
 
 void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widget){

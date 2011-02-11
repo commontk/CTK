@@ -249,7 +249,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, QString filename ) {
   OFString seriesInstanceUID, seriesDate, seriesTime,
     seriesDescription, bodyPartExamined, frameOfReferenceUID,
     contrastAgent, scanningSequence;
-  OFString instanceNumber;
+  OFString instanceNumber, sopInstanceUID ;
 
   Sint32 seriesNumber = 0, acquisitionNumber = 0, echoNumber = 0, temporalPosition = 0;
 
@@ -258,6 +258,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, QString filename ) {
   dataset->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID);
   dataset->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID);
   dataset->findAndGetOFString(DCM_PatientID, patientID);
+  dataset->findAndGetOFString(DCM_SOPInstanceUID, sopInstanceUID);
 
   dataset->findAndGetOFString(DCM_PatientsBirthDate, patientsBirthDate);
   dataset->findAndGetOFString(DCM_PatientsBirthTime, patientsBirthTime);
@@ -384,10 +385,11 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, QString filename ) {
     if(!check_exists_query.next())
       {
       QSqlQuery statement ( d->Database );
-      statement.prepare ( "INSERT INTO Images ( 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ? )" );
-      statement.bindValue ( 0, filename );
-      statement.bindValue ( 1, QString ( seriesInstanceUID.c_str() ) );
-      statement.bindValue ( 2, QDateTime::currentDateTime() );
+      statement.prepare ( "INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ? )" );
+      statement.bindValue ( 0, QString ( sopInstanceUID.c_str() ) );
+      statement.bindValue ( 1, filename );
+      statement.bindValue ( 2, QString ( seriesInstanceUID.c_str() ) );
+      statement.bindValue ( 3, QDateTime::currentDateTime() );
       statement.exec();
       }
     }

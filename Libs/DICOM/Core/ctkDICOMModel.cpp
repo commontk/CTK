@@ -316,7 +316,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
       break;
     case ctkDICOMModelPrivate::SeriesType:
       //query = QString("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'").arg(node->UID);
-      query = this->generateQuery("Filename as UID, Filename as Name, SeriesInstanceUID as Date", "Images", QString("SeriesInstanceUID='%1'").arg(node->UID));
+      query = this->generateQuery("SOPInstanceUID as UID, Filename as Name, SeriesInstanceUID as Date", "Images", QString("SeriesInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Series: query is: " + query );
       break;
     case ctkDICOMModelPrivate::ImageType:
@@ -413,6 +413,17 @@ int ctkDICOMModel::columnCount ( const QModelIndex & _parent ) const
 QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
 {
   Q_D(const ctkDICOMModel);
+  if ( role == UIDRole )
+    {
+    Node* node = d->nodeFromIndex(dataIndex);
+    return node ? node->UID : QString() ;
+    }
+  else if ( role == TypeRole )
+    {
+    Node* node = d->nodeFromIndex(dataIndex);
+    return node ? node->Type : 0;
+    }
+
   if (role != Qt::DisplayRole && role != Qt::EditRole)
     {
     return QVariant();

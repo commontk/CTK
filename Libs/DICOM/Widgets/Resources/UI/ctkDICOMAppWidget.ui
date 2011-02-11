@@ -123,13 +123,22 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="previewWidget" native="true">
+        <widget class="QFrame" name="previewFrame">
          <property name="minimumSize">
           <size>
            <width>256</width>
            <height>256</height>
           </size>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QLabel" name="imagePreview">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

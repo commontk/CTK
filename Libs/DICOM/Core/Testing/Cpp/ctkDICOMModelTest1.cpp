@@ -49,7 +49,7 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   qDebug() << "titi: " << titi.seek(0) << myCTK.lastError();
   QSqlQuery tata("SELECT SeriesInstanceUID as UID, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='1.2.826.0.1.3680043.2.1125.1.73379483469717886505187028001198162'", myCTK.database());
   qDebug() << "tata: " << tata.seek(0) << myCTK.lastError();
-  QSqlQuery tutu("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'", myCTK.database());
+  QSqlQuery tutu("SELECT SOPInstanceUID as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'", myCTK.database());
   qDebug() << "tutu: " << tutu.seek(0) << myCTK.lastError();
   */
 
