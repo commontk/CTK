@@ -117,7 +117,9 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
 ctkHostAppExampleWidget::~ctkHostAppExampleWidget()
 {
   delete this->Host;
-  delete ui;
+  this->Host = 0;
+  delete this->ui;
+  this->ui = 0;
 }
 
 //----------------------------------------------------------------------------

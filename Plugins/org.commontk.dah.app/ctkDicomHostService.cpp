@@ -81,22 +81,22 @@ void ctkDicomHostService::notifyStatus(const ctkDicomAppHosting::Status& status)
 // Exchange methods
 
 //----------------------------------------------------------------------------
-bool ctkDicomHostService::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
+bool ctkDicomHostService::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
   return ctkDicomExchangeService::notifyDataAvailable(data, lastData);
 }
 
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomHostService::getData(
-  QList<QUuid> objectUUIDs, 
-  QList<QString> acceptableTransferSyntaxUIDs, 
+  const QList<QUuid>& objectUUIDs,
+  const QList<QString>& acceptableTransferSyntaxUIDs,
   bool includeBulkData)
 {
   return ctkDicomExchangeService::getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
 }
 
 //----------------------------------------------------------------------------
-void ctkDicomHostService::releaseData(QList<QUuid> objectUUIDs)
+void ctkDicomHostService::releaseData(const QList<QUuid>& objectUUIDs)
 {
   ctkDicomExchangeService::releaseData(objectUUIDs);
 }

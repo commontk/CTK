@@ -108,7 +108,7 @@ void ctkExampleDicomHost::forwardConsoleOutput()
 }
 
 //----------------------------------------------------------------------------
-bool ctkExampleDicomHost::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
+bool ctkExampleDicomHost::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
   Q_UNUSED(data)
   Q_UNUSED(lastData)
@@ -117,8 +117,8 @@ bool ctkExampleDicomHost::notifyDataAvailable(ctkDicomAppHosting::AvailableData 
 
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
-    QList<QUuid> objectUUIDs,
-    QList<QString> acceptableTransferSyntaxUIDs,
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
     bool includeBulkData)
 {
   Q_UNUSED(includeBulkData)
@@ -150,7 +150,7 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomHost::releaseData(QList<QUuid> objectUUIDs)
+void ctkExampleDicomHost::releaseData(const QList<QUuid>& objectUUIDs)
 {
   Q_UNUSED(objectUUIDs)
 }

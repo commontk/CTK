@@ -62,7 +62,10 @@ ctkDicomAbstractHostPrivate::ctkDicomAbstractHostPrivate(
 ctkDicomAbstractHostPrivate::~ctkDicomAbstractHostPrivate()
 {
   delete this->Server;
-  delete this->AppService;
+  this->Server = 0;
+  //do not delete AppService, deleted somewhere else before?
+  //delete  this->AppService;
+  //this->AppService = 0;
 }
 
 //----------------------------------------------------------------------------

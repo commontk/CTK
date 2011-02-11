@@ -41,6 +41,7 @@ ctkExampleDicomAppPlugin::~ctkExampleDicomAppPlugin()
 {
   qDebug()<< "delete applogic";
   delete this->AppLogic;
+  this->AppLogic = 0;
 }
 
 //----------------------------------------------------------------------------

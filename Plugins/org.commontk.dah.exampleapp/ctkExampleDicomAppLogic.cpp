@@ -36,10 +36,10 @@
 #include <dcmimage.h>
 
 //----------------------------------------------------------------------------
-ctkExampleDicomAppLogic::ctkExampleDicomAppLogic()
-  : HostTracker(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
+ctkExampleDicomAppLogic::ctkExampleDicomAppLogic():
+ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
 {
-  this->HostTracker.open();
+
 
   connect(this, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)), Qt::QueuedConnection);
   emit stateChanged(ctkDicomAppHosting::IDLE);
@@ -142,7 +142,7 @@ void ctkExampleDicomAppLogic::changeState(int anewstate)
 }
 
 //----------------------------------------------------------------------------
-bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
+bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
   Q_UNUSED(lastData)
   QString s;
@@ -173,8 +173,8 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(ctkDicomAppHosting::AvailableD
 
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
-  QList<QUuid> objectUUIDs,
-  QList<QString> acceptableTransferSyntaxUIDs,
+  const QList<QUuid>& objectUUIDs,
+  const QList<QString>& acceptableTransferSyntaxUIDs,
   bool includeBulkData)
 {
   Q_UNUSED(objectUUIDs)
@@ -184,17 +184,12 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::releaseData(QList<QUuid> objectUUIDs)
+void ctkExampleDicomAppLogic::releaseData(const QList<QUuid>& objectUUIDs)
 {
   Q_UNUSED(objectUUIDs)
 }
 
-ctkDicomHostInterface* ctkExampleDicomAppLogic::getHostInterface() const
-{
-  ctkDicomHostInterface* host = this->HostTracker.getService();
-  if (!host) throw std::runtime_error("DICOM Host Interface not available");
-  return host;
-}
+
 
 void ctkExampleDicomAppLogic::buttonClicked()
 {
