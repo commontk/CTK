@@ -23,15 +23,16 @@
 #include "ctkAxesWidget.h"
 
 //-----------------------------------------------------------------------------
-ctkAxesWidgetPlugin::ctkAxesWidgetPlugin(QObject *_parent) : QObject(_parent)
+ctkAxesWidgetPlugin::ctkAxesWidgetPlugin(QObject* parentObject)
+  : QObject(parentObject)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkAxesWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* ctkAxesWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  ctkAxesWidget* _widget = new ctkAxesWidget(_parent);
-  return _widget;
+  ctkAxesWidget* newWidget = new ctkAxesWidget(parentWidget);
+  return newWidget;
 }
 
 //-----------------------------------------------------------------------------

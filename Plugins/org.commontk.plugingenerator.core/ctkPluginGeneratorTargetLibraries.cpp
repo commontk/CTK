@@ -37,7 +37,7 @@ QString ctkPluginGeneratorTargetLibraries::generateContent()
   QString content;
   QTextStream stream(&content);
 
-  stream << "# See CMake/ctkMacroGetTargetLibraries.cmake\n"
+  stream << "# See CMake/ctkFunctionGetTargetLibraries.cmake\n"
       << "#\n"
       << "# This file should list the libraries required to build the current CTK plugin.\n"
       << "# For specifying required plugins, see the manifest_headers.cmake file.\n"

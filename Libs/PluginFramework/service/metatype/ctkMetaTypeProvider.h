@@ -29,6 +29,8 @@
 #include <QLocale>
 
 /**
+ * \ingroup Metatype
+ *
  * Provides access to metatypes. This interface can be implemented on a Managed
  * Service or Managed Service Factory as well as registered as a service. When
  * registered as a service, it must be registered with a
@@ -42,14 +44,14 @@ struct CTK_PLUGINFW_EXPORT ctkMetaTypeProvider
   /**
    * Service property to signal that this service has
    * {@link ctkObjectClassDefinition} objects for the given PIDs. The type of
-   * this service property is {@code QString}.
+   * this service property is <code>QString</code>.
    */
   static const QString METATYPE_PID; // = "metatype.pid"
 
   /**
    * Service property to signal that this service has
    * {@link ctkObjectClassDefinition} objects for the given factory PIDs. The
-   * type of this service property is {@code QString}.
+   * type of this service property is <code>QString</code>.
    */
   static const QString METATYPE_FACTORY_PID; // = "metatype.factory.pid"
 
@@ -63,7 +65,7 @@ struct CTK_PLUGINFW_EXPORT ctkMetaTypeProvider
    * @param id The ID of the requested object class. This can be a pid or
    *        factory pid returned by getPids or getFactoryPids.
    * @param locale The locale of the definition
-   * @return A {@code ctkObjectClassDefinition} object.
+   * @return A <code>ctkObjectClassDefinition</code> object.
    */
   virtual ctkObjectClassDefinitionPtr getObjectClassDefinition(
     const QString& id, const QLocale& locale = QLocale()) = 0;

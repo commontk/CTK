@@ -4,14 +4,14 @@
 <context>
     <name>ctkTestPluginMTAttrPwdActivator</name>
     <message>
-        <location filename="ctkTestPluginMTAttrPwdActivator.cpp" line="29"/>
+        <location filename="ctkTestPluginMTAttrPwdActivator.cpp" line="30"/>
         <source>Object</source>
-        <translation>Objekt</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ctkTestPluginMTAttrPwdActivator.cpp" line="30"/>
+        <location filename="ctkTestPluginMTAttrPwdActivator.cpp" line="31"/>
         <source>My object class definition</source>
-        <translation>Meine Objektklassendefinition</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

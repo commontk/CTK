@@ -289,13 +289,12 @@ void ctkCheckableHeaderView::updateHeaderData(Qt::Orientation orient,
 void ctkCheckableHeaderView::updateHeaders(int firstSection, int lastSection)
 {
   Q_D(ctkCheckableHeaderView);
-  if(d->HeaderIsUpdating)
+  QAbstractItemModel *current = this->model();
+  if(d->HeaderIsUpdating || !current)
     {
     return;
     }
   d->HeaderIsUpdating = true;
-  QAbstractItemModel *current = this->model();
-  Q_ASSERT(current);
 
   firstSection = qBound(0, firstSection, this->count() -1);
   lastSection = qBound(0, lastSection, this->count() -1);

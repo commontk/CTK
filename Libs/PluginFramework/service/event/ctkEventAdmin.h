@@ -26,6 +26,8 @@
 
 
 /**
+ * \ingroup EventAdmin
+ *
  * The Event Admin service. Plugins wishing to publish events can either
  * obtain the Event Admin service and call one of the event delivery methods
  * or publish a Qt signal for a specific event topic.

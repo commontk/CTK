@@ -25,7 +25,7 @@
 
 // CTK includes
 #include <ctkDICOMIndexer.h>
-#include <ctkDICOM.h>
+#include <ctkDICOMDatabase.h>
 
 // STD includes
 #include <cstdlib>
@@ -63,7 +63,7 @@ int main(int argc, char** argv)
   QTextStream out(stdout);
 
   ctkDICOMIndexer idx;
-  ctkDICOM myCTK;
+  ctkDICOMDatabase myCTK;
 
 
   try
@@ -74,11 +74,11 @@ int main(int argc, char** argv)
         myCTK.openDatabase( argv[2] );
         if (argc > 4)
         {
-          idx.addDirectory(myCTK.database(),argv[3],argv[4]);
+          idx.addDirectory(myCTK,argv[3],argv[4]);
         }
         else
         {
-          idx.addDirectory(myCTK.database(),argv[3]);
+          idx.addDirectory(myCTK,argv[3]);
         }
       }
     }
@@ -106,7 +106,7 @@ int main(int argc, char** argv)
   }
   catch (std::exception e)
   {
-    std::cerr << "Database error:" << qPrintable(myCTK.GetLastError());
+    std::cerr << "Database error:" << qPrintable(myCTK.lastError());
     myCTK.closeDatabase();
     return EXIT_FAILURE;
   }

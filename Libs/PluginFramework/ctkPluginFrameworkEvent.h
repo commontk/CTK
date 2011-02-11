@@ -34,6 +34,8 @@ class ctkPlugin;
 class ctkPluginFrameworkEventData;
 
 /**
+ * \ingroup PluginFramework
+ *
  * A general event from the Framework.
  *
  * <p>
@@ -193,7 +195,12 @@ public:
 
 Q_DECLARE_METATYPE(ctkPluginFrameworkEvent);
 
+/**
+ * \ingroup PluginFramework
+ * @{
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, ctkPluginFrameworkEvent::Type type);
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkPluginFrameworkEvent& event);
+/** @} */
 
 #endif // CTKPLUGINFRAMEWORKEVENT_H

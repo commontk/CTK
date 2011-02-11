@@ -18,16 +18,13 @@
 
 =========================================================================*/
 
-/**
-\class ctkSingleton ctkSingleton
-\brief Utility macros allowing to declare a singleton
-
-*/
 
 #ifndef __ctkSingleton_h
 #define __ctkSingleton_h
 
 //
+/// \ingroup Core
+/// @{
 /// Singleton definition and declaration helpers
 //
 /// See http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.12
@@ -110,5 +107,6 @@ void NAME::classFinalize()                          \
                                                     \
 CTK_SINGLETON_DEFINE_INITIALIZER(NAME)
 
+///@}
 
 #endif //__ctkSingleton_h

@@ -25,6 +25,8 @@
 #include "ctkPluginContext.h"
 
 /**
+ * \ingroup PluginFramework
+ *
  * Customizes the starting and stopping of a plugin.
  * <p>
  * <code>%ctkPluginActivator</code> is an interface that must be implemented by
@@ -41,14 +43,14 @@
  *
  * <p>
  * \code
- * class MyPlugin : public QObject, public %ctkPluginActivator
+ * class MyPlugin : public QObject, public ctkPluginActivator
  * {
  *   Q_OBJECT
  *   Q_INTERFACES(ctkPluginActivator)
  *
  * public:
- *   void %start(%ctkPluginContext* context);
- *   void %stop(%ctkPluginContext* context);
+ *   void start(ctkPluginContext* context);
+ *   void stop(ctkPluginContext* context);
  * };
  * \endcode
  * And in your implementation file:

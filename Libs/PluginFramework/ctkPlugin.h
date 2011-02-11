@@ -37,6 +37,8 @@ class ctkPluginFrameworkContext;
 class ctkPluginPrivate;
 
 /**
+ * \ingroup PluginFramework
+ *
  * An installed plugin in the Framework.
  *
  * <p>
@@ -689,6 +691,11 @@ protected:
   void init(const QWeakPointer<ctkPlugin>& self, ctkPluginFrameworkContext* fw, ctkPluginArchive* ba);
 };
 
+/**
+ * \ingroup PluginFramework
+ * @{
+ */
+
 Q_DECLARE_METATYPE(ctkPlugin*)
 Q_DECLARE_METATYPE(QSharedPointer<ctkPlugin>)
 
@@ -702,5 +709,7 @@ CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug debug, ctkPlugin const * plugin);
 
 CTK_PLUGINFW_EXPORT ctkLogStream& operator<<(ctkLogStream& stream, ctkPlugin const * plugin);
 CTK_PLUGINFW_EXPORT ctkLogStream& operator<<(ctkLogStream& stream, const QSharedPointer<ctkPlugin>& plugin);
+
+/** @}*/
 
 #endif // CTKPLUGIN_H

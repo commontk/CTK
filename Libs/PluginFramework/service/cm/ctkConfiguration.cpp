@@ -22,20 +22,24 @@
 
 #include "ctkConfiguration.h"
 
+//----------------------------------------------------------------------------
 ctkConfiguration::~ctkConfiguration()
 {
 }
 
+//----------------------------------------------------------------------------
 bool ctkConfiguration::operator==(const ctkConfiguration& other) const
 {
   return this->getPid() == other.getPid();
 }
 
+//----------------------------------------------------------------------------
 uint qHash(ctkConfigurationPtr configuration)
 {
   return qHash(configuration->getPid());
 }
 
+//----------------------------------------------------------------------------
 bool operator==(const ctkConfigurationPtr& c1, const ctkConfigurationPtr c2)
 {
   return (*c1.data()) == (*c2.data());

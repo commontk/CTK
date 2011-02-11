@@ -25,13 +25,15 @@
 #include "ctkRuntimeException.h"
 
 /**
+ * \ingroup PluginFramework
+ *
  * A Plugin Framework exception used to indicate that a plugin lifecycle
  * problem occurred.
  *
  * <p>
- * A {@code ctkPluginException} object is created by the Framework to denote
+ * A <code>ctkPluginException</code> object is created by the Framework to denote
  * an exception condition in the lifecycle of a plugin.
- * {@code ctkPluginException}s should not be created by plugin developers.
+ * <code>ctkPluginException</code>s should not be created by plugin developers.
  * An enum type is used to identify the exception type for future extendability.
  *
  * <p>
@@ -91,7 +93,7 @@ public:
   };
 
   /**
-   * Creates a {@code ctkPluginException} with the specified message, type
+   * Creates a <code>ctkPluginException</code> with the specified message, type
    * and exception cause.
    *
    * @param msg The associated message.
@@ -101,7 +103,7 @@ public:
   ctkPluginException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception* cause = 0);
 
   /**
-   * Creates a {@code ctkPluginException} with the specified message and
+   * Creates a <code>ctkPluginException</code> with the specified message and
    * exception cause.
    *
    * @param msg The associated message.
@@ -113,7 +115,7 @@ public:
   ctkPluginException& operator=(const ctkPluginException& o);
 
   /**
-   * Returns the type for this exception or {@code UNSPECIFIED} if the
+   * Returns the type for this exception or <code>UNSPECIFIED</code> if the
    * type was unspecified or unknown.
    *
    * @return The type of this exception.
@@ -129,7 +131,9 @@ private:
 
 };
 
-
+/**
+ * \ingroup PluginFramework
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkPluginException& exc);
 
 #endif // CTKPLUGINEXCEPTION_H

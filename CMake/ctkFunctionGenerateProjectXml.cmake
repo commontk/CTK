@@ -33,6 +33,8 @@ FUNCTION(ctkFunctionGenerateProjectXml dir name target_directories is_superbuild
     SET(xml_subprojects ${xml_subprojects} "  <SubProject name=\"SuperBuild\">\n")
   ENDIF()
   
+  SET(subproject_list)
+  
   FOREACH(target_info ${target_directories})
 
     # extract target_dir and option_name
@@ -64,12 +66,13 @@ FUNCTION(ctkFunctionGenerateProjectXml dir name target_directories is_superbuild
       #MESSAGE(STATUS target_project_name:${target_project_name})
       
       SET(xml_subprojects ${xml_subprojects} "  <SubProject name=\"${target_project_name}\">\n")
-
+      LIST(APPEND subproject_list ${target_project_name})
+      
       # Make sure the variable is cleared
       SET(dependencies )
 
       # get dependencies
-      ctkMacroCollectTargetLibraryNames(${target_dir} dependencies)
+      ctkFunctionCollectTargetLibraryNames(${target_dir} dependencies)
       
       # Make sure the variable is cleared
       SET(ctk_dependencies)
@@ -89,6 +92,12 @@ FUNCTION(ctkFunctionGenerateProjectXml dir name target_directories is_superbuild
       SET(xml_subprojects ${xml_subprojects} "  </SubProject>\n")
     #ENDIF()
   ENDFOREACH()
+  
+  SET(xml_subprojects ${xml_subprojects} "  <SubProject name=\"Documentation\">\n")
+  FOREACH(subproject ${subproject_list})
+    SET(xml_subprojects ${xml_subprojects} "    <Dependency name=\"${subproject}\"/>\n")
+  ENDFOREACH()
+  SET(xml_subprojects ${xml_subprojects} "  </SubProject>\n")
    
   SET(xml_content "<Project name=\"${name}\">\n${xml_subprojects}</Project>")
   SET(filename "${dir}/Project.xml")

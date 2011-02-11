@@ -33,12 +33,14 @@
 #include "ctkCoreExport.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 struct CTK_CORE_EXPORT ctkHistogramBar : public ctkControlPoint
 {
   QColor Color;
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkHistogram: public ctkTransferFunction
 {
   Q_OBJECT

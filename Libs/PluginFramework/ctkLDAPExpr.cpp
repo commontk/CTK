@@ -120,11 +120,13 @@ public:
   QString m_attrValue;
 };
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr::ctkLDAPExpr()
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr::ctkLDAPExpr( const QString &filter )
 {
   ParseState ps(filter);
@@ -146,31 +148,37 @@ ctkLDAPExpr::ctkLDAPExpr( const QString &filter )
   }
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr::ctkLDAPExpr( int op, const QList<ctkLDAPExpr> &args )
   : d(new ctkLDAPExprData(op, args))
 {
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr::ctkLDAPExpr( int op, const QString &attrName, const QString &attrValue )
   : d(new ctkLDAPExprData(op, attrName, attrValue))
 {
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr::ctkLDAPExpr( const ctkLDAPExpr& other )
   : d(other.d)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr& ctkLDAPExpr::operator=(const ctkLDAPExpr& other)
 {
   d = other.d;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr::~ctkLDAPExpr()
 {
 }
 
+//----------------------------------------------------------------------------
 QSet<QString> ctkLDAPExpr::getMatchedObjectClasses() const
 {
   QSet<QString> objClasses;
@@ -210,6 +218,7 @@ QSet<QString> ctkLDAPExpr::getMatchedObjectClasses() const
   return objClasses;
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPExpr::isSimple( 
   const QStringList& keywords,
   LocalCache& cache,
@@ -237,16 +246,19 @@ bool ctkLDAPExpr::isSimple(
   return false;
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPExpr::isNull() const
 {
   return !d;
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPExpr::query( const QString &filter, const ctkDictionary &pd )
 {
   return ctkLDAPExpr(filter).evaluate(pd, false);
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPExpr::evaluate( const ctkDictionary &p, bool matchCase ) const
 {
   if ((d->m_operator & SIMPLE) != 0) {
@@ -274,6 +286,7 @@ bool ctkLDAPExpr::evaluate( const ctkDictionary &p, bool matchCase ) const
   }
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPExpr::compare( const QVariant &obj, int op, const QString &s ) const
 {
   if (obj.isNull())
@@ -346,6 +359,7 @@ bool ctkLDAPExpr::compare( const QVariant &obj, int op, const QString &s ) const
   return false;
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPExpr::compareString( const QString &s1, int op, const QString &s2 )
 {
   switch(op) {
@@ -362,6 +376,7 @@ bool ctkLDAPExpr::compareString( const QString &s1, int op, const QString &s2 )
   }
 }
 
+//----------------------------------------------------------------------------
 QString ctkLDAPExpr::fixupString( const QString &s )
 {
   QString sb;
@@ -377,7 +392,7 @@ QString ctkLDAPExpr::fixupString( const QString &s )
   return sb;
 }
 
-
+//----------------------------------------------------------------------------
 bool ctkLDAPExpr::patSubstr( const QString &s, int si, const QString &pat, int pi )
 {
   if (pat.size( )-pi == 0)
@@ -402,11 +417,13 @@ bool ctkLDAPExpr::patSubstr( const QString &s, int si, const QString &pat, int p
   }
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPExpr::patSubstr( const QString &s, const QString &pat )
 {
   return s.isNull() ? false : patSubstr(s,0,pat,0);
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr ctkLDAPExpr::parseExpr( ParseState &ps )
 {
   ps.skipWhite();
@@ -438,6 +455,7 @@ ctkLDAPExpr ctkLDAPExpr::parseExpr( ParseState &ps )
   return ctkLDAPExpr(op, v);
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr ctkLDAPExpr::parseSimple( ParseState &ps )
 {
   QString attrName = ps.getAttributeName();
@@ -462,6 +480,7 @@ ctkLDAPExpr ctkLDAPExpr::parseSimple( ParseState &ps )
   return ctkLDAPExpr(op, attrName, attrValue);
 }
 
+//----------------------------------------------------------------------------
 const QString ctkLDAPExpr::toString() const
 {
   QString res;
@@ -511,6 +530,7 @@ const QString ctkLDAPExpr::toString() const
   return res;
 }
 
+//----------------------------------------------------------------------------
 ctkLDAPExpr::ParseState::ParseState( const QString &str ) throw (std::invalid_argument)
 {
   if (str.isEmpty())
@@ -522,6 +542,7 @@ ctkLDAPExpr::ParseState::ParseState( const QString &str ) throw (std::invalid_ar
   m_pos = 0;
 }
 
+//----------------------------------------------------------------------------
 bool ctkLDAPExpr::ParseState::prefix( const QString &pre )
 {
   if (!m_str.startsWith(pre.mid(m_pos)))
@@ -530,6 +551,7 @@ bool ctkLDAPExpr::ParseState::prefix( const QString &pre )
   return true;
 }
 
+//----------------------------------------------------------------------------
 QChar ctkLDAPExpr::ParseState::peek()
 {
   if ( m_pos >= m_str.size() )
@@ -539,6 +561,7 @@ QChar ctkLDAPExpr::ParseState::peek()
   return m_str.at(m_pos);
 }
 
+//----------------------------------------------------------------------------
 void ctkLDAPExpr::ParseState::skip( int n )
 {
   m_pos += n;
@@ -549,6 +572,7 @@ QString ctkLDAPExpr::ParseState::rest() const
   return m_str.mid(m_pos);
 }
 
+//----------------------------------------------------------------------------
 void ctkLDAPExpr::ParseState::skipWhite()
 {
   while ( peek( ).isSpace( ) ) {
@@ -556,6 +580,7 @@ void ctkLDAPExpr::ParseState::skipWhite()
   }
 }
 
+//----------------------------------------------------------------------------
 QString ctkLDAPExpr::ParseState::getAttributeName()
 {
   int start = m_pos;
@@ -576,6 +601,7 @@ QString ctkLDAPExpr::ParseState::getAttributeName()
   return m_str.mid(start, n);
 }
 
+//----------------------------------------------------------------------------
 QString ctkLDAPExpr::ParseState::getAttributeValue()
 {
   QString sb;
@@ -605,6 +631,7 @@ QString ctkLDAPExpr::ParseState::getAttributeValue()
   return sb;
 }
 
+//----------------------------------------------------------------------------
 void ctkLDAPExpr::ParseState::error( const QString &m ) const throw (std::invalid_argument)
 {
   QString error = m + ": " + (m_str.isNull() ? "" : m_str.mid(m_pos) );

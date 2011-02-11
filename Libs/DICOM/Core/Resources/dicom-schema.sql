@@ -13,10 +13,11 @@ DROP TABLE IF EXISTS 'Studies' ;
 DROP TABLE IF EXISTS 'Directories' ;
 
 CREATE TABLE 'Images' (
+  'SOPInstanceUID' VARCHAR(64) NOT NULL,
   'Filename' VARCHAR(1024) NOT NULL ,
   'SeriesInstanceUID' VARCHAR(64) NOT NULL ,
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
-  PRIMARY KEY ('Filename') );
+  PRIMARY KEY ('SOPInstanceUID') );
 CREATE TABLE 'Patients' (
   'UID' INTEGER PRIMARY KEY AUTOINCREMENT,
   'PatientsName' VARCHAR(255) NULL ,

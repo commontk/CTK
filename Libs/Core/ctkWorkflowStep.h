@@ -36,6 +36,7 @@ class ctkWorkflow;
 
 class ctkWorkflowStepPrivate;
 
+/// \ingroup Core
 /// \brief ctkWorkflowStep is the basis for a workflow step.
 ///
 /// A workflow step is a placeholder for various states and transitions that are used in a

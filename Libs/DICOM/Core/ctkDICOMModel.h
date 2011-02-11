@@ -32,10 +32,17 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMModel : public QAbstractItemModel
 {
   Q_OBJECT
 public:
+
+  enum {
+    UIDRole = Qt::UserRole,
+    TypeRole
+  };
+
   explicit ctkDICOMModel(QObject* parent = 0);
   virtual ~ctkDICOMModel();
 
   void setDatabase(const QSqlDatabase& dataBase);
+
 
   virtual bool canFetchMore ( const QModelIndex & parent ) const;
   virtual int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
@@ -52,7 +59,8 @@ public:
   virtual bool setHeaderData ( int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole );
   // Sorting resets the model because fetched/unfetched items could disappear/appear respectively.
   virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
-
+public slots:
+  virtual void reset();
 protected:
   QScopedPointer<ctkDICOMModelPrivate> d_ptr;
 

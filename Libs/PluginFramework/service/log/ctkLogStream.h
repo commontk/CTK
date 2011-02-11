@@ -29,6 +29,9 @@
 
 struct ctkLogService;
 
+/**
+ * \ingroup LogService
+ */
 class CTK_PLUGINFW_EXPORT ctkLogStream
 {
 public:

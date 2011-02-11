@@ -26,24 +26,26 @@
 #include "ctkConfigurationEvent.h"
 
 /**
- * Listener for Configuration Events. When a {@code ctkConfigurationEvent}
+ * \ingroup ConfigAdmin
+ *
+ * Listener for Configuration Events. When a <code>ctkConfigurationEvent</code>
  * is fired, it is asynchronously delivered to a
- * {@code ctkConfigurationListener}.
+ * <code>ctkConfigurationListener</code>.
  *
  * <p>
- * {@code ctkConfigurationListener} objects are registered with the
+ * <code>ctkConfigurationListener</code> objects are registered with the
  * Framework service registry and are notified with a
- * {@code ctkConfigurationEvent} object when an event is fired.
+ * <code>ctkConfigurationEvent</code> object when an event is fired.
  * <p>
- * {@code ctkConfigurationListener} objects can inspect the received
- * {@code ctkConfigurationEvent} object to determine its type, the pid of
- * the {@code ctkConfiguration} object with which it is associated, and the
+ * <code>ctkConfigurationListener</code> objects can inspect the received
+ * <code>ctkConfigurationEvent</code> object to determine its type, the pid of
+ * the <code>ctkConfiguration</code> object with which it is associated, and the
  * Configuration Admin service that fired the event.
  *
  * <p>
  * Security Considerations. Plugins wishing to monitor configuration events will
- * require {@code ctkServicePermission[ctkConfigurationListener,REGISTER]} to
- * register a {@code ctkConfigurationListener} service.
+ * require <code>ctkServicePermission[ctkConfigurationListener,REGISTER]</code> to
+ * register a <code>ctkConfigurationListener</code> service.
  */
 struct ctkConfigurationListener
 {
@@ -52,7 +54,7 @@ struct ctkConfigurationListener
   /**
    * Receives notification of a ctkConfiguration that has changed.
    *
-   * @param event The {@code ctkConfigurationEvent}.
+   * @param event The <code>ctkConfigurationEvent</code>.
    */
   virtual void configurationEvent(const ctkConfigurationEvent& event) = 0;
 };

@@ -33,6 +33,7 @@
 #include "ctkEAScenario3TestSuite_p.h"
 #include "ctkEAScenario4TestSuite_p.h"
 
+//----------------------------------------------------------------------------
 ctkEventAdminTestActivator::ctkEventAdminTestActivator()
   : topicWildcardTestSuite(0), topicWildcardTestSuiteSS(0),
     scenario1TestSuite(0), scenario1TestSuiteSS(0), scenario2TestSuite(0)
@@ -40,6 +41,7 @@ ctkEventAdminTestActivator::ctkEventAdminTestActivator()
 
 }
 
+//----------------------------------------------------------------------------
 ctkEventAdminTestActivator::~ctkEventAdminTestActivator()
 {
   delete topicWildcardTestSuite;
@@ -49,6 +51,7 @@ ctkEventAdminTestActivator::~ctkEventAdminTestActivator()
   delete scenario2TestSuite;
 }
 
+//----------------------------------------------------------------------------
 void ctkEventAdminTestActivator::start(ctkPluginContext* context)
 {
   QString symbolicName = context->getProperty("event.impl").toString();
@@ -97,6 +100,7 @@ void ctkEventAdminTestActivator::start(ctkPluginContext* context)
   context->registerService<ctkTestSuiteInterface>(scenario4TestSuite);
 }
 
+//----------------------------------------------------------------------------
 void ctkEventAdminTestActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context);

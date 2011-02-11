@@ -26,12 +26,14 @@
 
 #include <QDebug>
 
+//----------------------------------------------------------------------------
 template<class T>
 ctkPluginTracker<T>::~ctkPluginTracker()
 {
 
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 ctkPluginTracker<T>::ctkPluginTracker(ctkPluginContext* context, ctkPlugin::States stateMask,
                                       PluginTrackerCustomizer* customizer)
@@ -40,6 +42,7 @@ ctkPluginTracker<T>::ctkPluginTracker(ctkPluginContext* context, ctkPlugin::Stat
 
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 void ctkPluginTracker<T>::open()
 {
@@ -82,6 +85,7 @@ void ctkPluginTracker<T>::open()
   t->trackInitial(); /* process the initial references */
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 void ctkPluginTracker<T>::close()
 {
@@ -114,6 +118,7 @@ void ctkPluginTracker<T>::close()
   }
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 QList<QSharedPointer<ctkPlugin> > ctkPluginTracker<T>::getPlugins() const
 {
@@ -130,6 +135,7 @@ QList<QSharedPointer<ctkPlugin> > ctkPluginTracker<T>::getPlugins() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 T ctkPluginTracker<T>::getObject(QSharedPointer<ctkPlugin> plugin) const
 {
@@ -146,6 +152,7 @@ T ctkPluginTracker<T>::getObject(QSharedPointer<ctkPlugin> plugin) const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 void ctkPluginTracker<T>::remove(QSharedPointer<ctkPlugin> plugin)
 {
@@ -158,6 +165,7 @@ void ctkPluginTracker<T>::remove(QSharedPointer<ctkPlugin> plugin)
   t->untrack(plugin, ctkPluginEvent());
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 int ctkPluginTracker<T>::size() const
 {
@@ -174,6 +182,7 @@ int ctkPluginTracker<T>::size() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 int ctkPluginTracker<T>::getTrackingCount() const
 {
@@ -190,6 +199,7 @@ int ctkPluginTracker<T>::getTrackingCount() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 QMap<QSharedPointer<ctkPlugin>, T> ctkPluginTracker<T>::getTracked() const
 {
@@ -206,6 +216,7 @@ QMap<QSharedPointer<ctkPlugin>, T> ctkPluginTracker<T>::getTracked() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 bool ctkPluginTracker<T>::isEmpty() const
 {
@@ -220,6 +231,7 @@ bool ctkPluginTracker<T>::isEmpty() const
   }
 }
 
+//----------------------------------------------------------------------------
 template<>
 inline QSharedPointer<ctkPlugin> ctkPluginTracker<QSharedPointer<ctkPlugin> >::addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event)
 {
@@ -228,6 +240,7 @@ inline QSharedPointer<ctkPlugin> ctkPluginTracker<QSharedPointer<ctkPlugin> >::a
   return plugin;
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 T ctkPluginTracker<T>::addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event)
 {
@@ -237,6 +250,7 @@ T ctkPluginTracker<T>::addingPlugin(QSharedPointer<ctkPlugin> plugin, const ctkP
   return 0;
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 void ctkPluginTracker<T>::modifiedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, T object)
 {
@@ -246,6 +260,7 @@ void ctkPluginTracker<T>::modifiedPlugin(QSharedPointer<ctkPlugin> plugin, const
   /* do nothing */
 }
 
+//----------------------------------------------------------------------------
 template<class T>
 void ctkPluginTracker<T>::removedPlugin(QSharedPointer<ctkPlugin> plugin, const ctkPluginEvent& event, T object)
 {

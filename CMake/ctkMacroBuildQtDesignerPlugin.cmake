@@ -99,11 +99,15 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
     ${MY_UI_CPP}
     ${MY_QRC_SRCS}
     )
-
+  
+  # Extract library name associated with the plugin and use it as label
+  STRING(REGEX REPLACE "(.*)Plugins" "\\1" label ${lib_name})
+  
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES
     COMPILE_FLAGS "-DQT_PLUGIN"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/designer"
+    LABELS ${label}
     )
   
   SET(my_libs

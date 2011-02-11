@@ -65,22 +65,26 @@ public:
   const ctkServiceReference reference;
 };
 
+//----------------------------------------------------------------------------
 ctkConfigurationEvent::ctkConfigurationEvent()
   : d(0)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkConfigurationEvent::~ctkConfigurationEvent()
 {
 
 }
 
+//----------------------------------------------------------------------------
 bool ctkConfigurationEvent::isNull() const
 {
   return !d;
 }
 
+//----------------------------------------------------------------------------
 ctkConfigurationEvent::ctkConfigurationEvent(const ctkServiceReference& reference,
                       Type type, const QString& factoryPid,
                       const QString& pid)
@@ -92,38 +96,45 @@ ctkConfigurationEvent::ctkConfigurationEvent(const ctkServiceReference& referenc
   }
 }
 
+//----------------------------------------------------------------------------
 ctkConfigurationEvent::ctkConfigurationEvent(const ctkConfigurationEvent& other)
   : d(other.d)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkConfigurationEvent& ctkConfigurationEvent::operator=(const ctkConfigurationEvent& other)
 {
   d = other.d;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 QString ctkConfigurationEvent::getFactoryPid() const
 {
   return d->factoryPid;
 }
 
+//----------------------------------------------------------------------------
 QString ctkConfigurationEvent::getPid() const
 {
   return d->pid;
 }
 
+//----------------------------------------------------------------------------
 int ctkConfigurationEvent::getType() const
 {
   return d->type;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceReference ctkConfigurationEvent::getReference() const
 {
   return d->reference;
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, ctkConfigurationEvent::Type type)
 {
   switch (type)
@@ -135,6 +146,7 @@ QDebug operator<<(QDebug dbg, ctkConfigurationEvent::Type type)
   }
 }
 
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkConfigurationEvent& event)
 {
   if (event.isNull()) return dbg << "NONE";

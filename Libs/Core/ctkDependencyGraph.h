@@ -35,6 +35,7 @@
 #endif
 class ctkDependencyGraphPrivate;
 
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkDependencyGraph
 {
 public:

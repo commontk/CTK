@@ -1,0 +1,20 @@
+/**
+\defgroup PluginFramework CTK Plugin Framework
+\ingroup Libs
+The CTK Plugin Framework is an OSGi like modularization framework for building cross-platform, dynamic, and modular applications. See <a href="http://www.commontk.org/index.php/Documentation/CTK_Plugin_Framework:_Introduction">Introduction to the CTK Plugin Framework</a> for an overview.
+
+\defgroup ConfigAdmin Configuration Admin
+\ingroup PluginFramework
+
+\defgroup EventAdmin Event Admin
+\ingroup PluginFramework
+
+\defgroup LogService Log Service
+\ingroup PluginFramework
+
+\defgroup Metatype Metatype
+\ingroup PluginFramework
+
+\defgroup 
+
+*/

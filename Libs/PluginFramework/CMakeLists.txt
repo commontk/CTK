@@ -17,6 +17,7 @@ SET(KIT_SRCS
   ctkPlugin.cpp
   ctkPluginAbstractTracked_p.h
   ctkPluginAbstractTracked.tpp
+  ctkPluginActivator.h
   ctkPluginArchive.cpp
   ctkPluginArchive_p.h
   ctkPluginConstants.cpp
@@ -131,9 +132,9 @@ ctkFunctionGeneratePluginManifest(KIT_SRCS
   VERSION "0.9.9"
   )
 
-# Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
-ctkMacroGetTargetLibraries(KIT_target_libraries)
+ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

@@ -35,7 +35,7 @@
 
 const ctkPlugin::States ctkPluginPrivate::RESOLVED_FLAGS = ctkPlugin::RESOLVED | ctkPlugin::STARTING | ctkPlugin::ACTIVE | ctkPlugin::STOPPING;
 
-
+//----------------------------------------------------------------------------
 ctkPluginPrivate::ctkPluginPrivate(
     QWeakPointer<ctkPlugin> qq,
     ctkPluginFrameworkContext* fw,
@@ -95,6 +95,7 @@ ctkPluginPrivate::ctkPluginPrivate(
   }
 }
 
+//----------------------------------------------------------------------------
 ctkPluginPrivate::ctkPluginPrivate(QWeakPointer<ctkPlugin> qq,
                                    ctkPluginFrameworkContext* fw,
                                    long id, const QString& loc, const QString& sym, const ctkVersion& ver)
@@ -106,12 +107,14 @@ ctkPluginPrivate::ctkPluginPrivate(QWeakPointer<ctkPlugin> qq,
   modified();
 }
 
+//----------------------------------------------------------------------------
 ctkPluginPrivate::~ctkPluginPrivate()
 {
   qDeleteAll(require);
   delete archive;
 }
 
+//----------------------------------------------------------------------------
 ctkPlugin::State ctkPluginPrivate::getUpdatedState()
 {
   if (state & ctkPlugin::INSTALLED)
@@ -136,11 +139,13 @@ ctkPlugin::State ctkPluginPrivate::getUpdatedState()
   return state;
 }
 
+//----------------------------------------------------------------------------
 QFileInfo ctkPluginPrivate::getDataRoot()
 {
   return pluginDir;
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::setAutostartSetting(const ctkPlugin::StartOptions& setting) {
   try
   {
@@ -155,6 +160,7 @@ void ctkPluginPrivate::setAutostartSetting(const ctkPlugin::StartOptions& settin
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::ignoreAutostartSetting()
 {
   try
@@ -170,6 +176,7 @@ void ctkPluginPrivate::ignoreAutostartSetting()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::modified()
 {
   lastModified = QDateTime::currentDateTime();
@@ -179,6 +186,7 @@ void ctkPluginPrivate::modified()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::checkManifestHeaders()
 {
   symbolicName = archive->getAttribute(ctkPluginConstants::PLUGIN_SYMBOLICNAME);
@@ -211,6 +219,7 @@ void ctkPluginPrivate::checkManifestHeaders()
 
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::finalizeActivation()
 {
   switch (getUpdatedState())
@@ -268,6 +277,7 @@ void ctkPluginPrivate::finalizeActivation()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::stop0(bool wasStarted)
 {
   //5:
@@ -334,6 +344,7 @@ void ctkPluginPrivate::stop0(bool wasStarted)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::startDependencies()
 {
   QListIterator<ctkRequirePlugin*> i(this->require);
@@ -362,6 +373,7 @@ void ctkPluginPrivate::startDependencies()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::start0()
 {
   fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STARTING, this->q_func()));
@@ -400,6 +412,7 @@ void ctkPluginPrivate::start0()
   fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STARTED, this->q_func()));
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::removePluginResources()
 {
   // automatic disconnect due to Qt signal slot

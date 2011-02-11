@@ -33,11 +33,13 @@
 
 #include <QTest>
 
+//----------------------------------------------------------------------------
 ctkServiceListenerTestSuite::ctkServiceListenerTestSuite(ctkPluginContext* pc)
   : pc(pc), p(pc->getPlugin())
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListenerTestSuite::initTestCase()
 {
   pA = ctkPluginFrameworkTestUtil::installPlugin(pc, "pluginA_test");
@@ -52,6 +54,7 @@ void ctkServiceListenerTestSuite::initTestCase()
   QVERIFY(pSL4);
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListenerTestSuite::cleanupTestCase()
 {
   pA->uninstall();
@@ -61,6 +64,7 @@ void ctkServiceListenerTestSuite::cleanupTestCase()
   pSL4->uninstall();
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListenerTestSuite::frameSL05a()
 {
   bool teststatus = true;
@@ -74,6 +78,7 @@ void ctkServiceListenerTestSuite::frameSL05a()
   QVERIFY(teststatus);
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListenerTestSuite::frameSL10a()
 {
   int cnt = 1;
@@ -84,6 +89,7 @@ void ctkServiceListenerTestSuite::frameSL10a()
   QVERIFY(runStartStopTest("FRAMEsl10A", cnt, pA2,events));
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListenerTestSuite::frameSL25a()
 {
   ctkServiceListener sListen(pc, false);
@@ -310,6 +316,7 @@ void ctkServiceListenerTestSuite::frameSL25a()
   }
 }
 
+//----------------------------------------------------------------------------
 bool ctkServiceListenerTestSuite::runStartStopTest(
   const QString& tcName, int cnt, QSharedPointer<ctkPlugin> targetPlugin,
   const QList<ctkServiceEvent::Type>& events)
@@ -393,17 +400,20 @@ bool ctkServiceListenerTestSuite::runStartStopTest(
   return teststatus;
 }
 
+//----------------------------------------------------------------------------
 ctkServiceListener::ctkServiceListener(ctkPluginContext* pc, bool checkUsingPlugins)
   : checkUsingPlugins(checkUsingPlugins), teststatus(true), pc(pc)
 {
 
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListener::clearEvents()
 {
   events.clear();
 }
 
+//----------------------------------------------------------------------------
 bool ctkServiceListener::checkEvents(const QList<ctkServiceEvent::Type>& eventTypes)
 {
   if (events.size() != eventTypes.size())
@@ -423,6 +433,7 @@ bool ctkServiceListener::checkEvents(const QList<ctkServiceEvent::Type>& eventTy
   return true;
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListener::serviceChanged(const ctkServiceEvent& evt)
 {
   events.push_back(evt);
@@ -516,6 +527,7 @@ void ctkServiceListener::serviceChanged(const ctkServiceEvent& evt)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListener::printUsingPlugins(const ctkServiceReference& sr,
                                            const QString& caption)
 {
@@ -528,6 +540,7 @@ void ctkServiceListener::printUsingPlugins(const ctkServiceReference& sr,
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkServiceListener::dumpEvents(const QList<ctkServiceEvent::Type>& eventTypes)
 {
   int max = events.size() > eventTypes.size() ? events.size() : eventTypes.size();

@@ -29,6 +29,7 @@
 #include <ctkPluginContext.h>
 #include <ctkPluginException.h>
 
+//----------------------------------------------------------------------------
 QSharedPointer<ctkPlugin> ctkPluginFrameworkTestUtil::installPlugin(
   ctkPluginContext* pc, const QString& plugin)
 {

@@ -39,7 +39,7 @@
 #define PLUGINS_TABLE "Plugins"
 #define PLUGIN_RESOURCES_TABLE "PluginResources"
 
-
+//----------------------------------------------------------------------------
 enum TBindIndexes
 {
   EBindIndex=0,
@@ -52,16 +52,19 @@ enum TBindIndexes
   EBindIndex7
 };
 
+//----------------------------------------------------------------------------
 ctkPluginDatabase::ctkPluginDatabase(ctkPluginStorage* storage)
 :m_isDatabaseOpen(false), m_inTransaction(false), m_PluginStorage(storage)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkPluginDatabase::~ctkPluginDatabase()
 {
-    close();
+  close();
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::open()
 {
   if (m_isDatabaseOpen)
@@ -167,6 +170,7 @@ void ctkPluginDatabase::open()
   updateDB();
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::removeUninstalledPlugins()
 {
   checkConnection();
@@ -190,6 +194,7 @@ void ctkPluginDatabase::removeUninstalledPlugins()
   commitTransaction(&query);
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::updateDB()
 {
   checkConnection();
@@ -256,7 +261,7 @@ void ctkPluginDatabase::updateDB()
   }
 }
 
-
+//----------------------------------------------------------------------------
 ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QString& localPath, bool createArchive)
 {
   checkConnection();
@@ -384,6 +389,7 @@ ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QS
 
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::setStartLevel(long pluginId, int startLevel)
 {
   QSqlDatabase database = QSqlDatabase::database(m_connectionName);
@@ -397,6 +403,7 @@ void ctkPluginDatabase::setStartLevel(long pluginId, int startLevel)
   executeQuery(&query, statement, bindValues);
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::setLastModified(long pluginId, const QDateTime& lastModified)
 {
   QSqlDatabase database = QSqlDatabase::database(m_connectionName);
@@ -410,6 +417,7 @@ void ctkPluginDatabase::setLastModified(long pluginId, const QDateTime& lastModi
   executeQuery(&query, statement, bindValues);
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::setAutostartSetting(long pluginId, int autostart)
 {
   QSqlDatabase database = QSqlDatabase::database(m_connectionName);
@@ -423,6 +431,7 @@ void ctkPluginDatabase::setAutostartSetting(long pluginId, int autostart)
   executeQuery(&query, statement, bindValues);
 }
 
+//----------------------------------------------------------------------------
 QStringList ctkPluginDatabase::findResourcesPath(long pluginId, const QString& path) const
 {
   checkConnection();
@@ -460,6 +469,7 @@ QStringList ctkPluginDatabase::findResourcesPath(long pluginId, const QString& p
   return paths;
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::removeArchive(const ctkPluginArchive *pa)
 {
   checkConnection();
@@ -475,6 +485,7 @@ void ctkPluginDatabase::removeArchive(const ctkPluginArchive *pa)
   executeQuery(&query, statement, bindValues);
 }
 
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::executeQuery(QSqlQuery *query, const QString &statement, const QList<QVariant> &bindValues) const
 {
   Q_ASSERT(query != 0);
@@ -534,7 +545,7 @@ void ctkPluginDatabase::executeQuery(QSqlQuery *query, const QString &statement,
   }
 }
 
-
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::close()
 {
   if (m_isDatabaseOpen)
@@ -556,13 +567,13 @@ void ctkPluginDatabase::close()
   }
 }
 
-
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::setDatabasePath(const QString &databasePath)
 {
     m_databasePath = QDir::toNativeSeparators(databasePath);
 }
 
-
+//----------------------------------------------------------------------------
 QString ctkPluginDatabase::getDatabasePath() const
 {
   QString path = m_databasePath;
@@ -577,7 +588,7 @@ QString ctkPluginDatabase::getDatabasePath() const
   return path;
 }
 
-
+//----------------------------------------------------------------------------
 QByteArray ctkPluginDatabase::getPluginResource(long pluginId, const QString& res) const
 {
   checkConnection();
@@ -602,7 +613,7 @@ QByteArray ctkPluginDatabase::getPluginResource(long pluginId, const QString& re
   return QByteArray();
 }
 
-
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::createTables()
 {
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
@@ -659,7 +670,7 @@ void ctkPluginDatabase::createTables()
 
 }
 
-
+//----------------------------------------------------------------------------
 bool ctkPluginDatabase::checkTables() const
 {
   bool bTables(false);
@@ -672,7 +683,7 @@ bool ctkPluginDatabase::checkTables() const
   return bTables;
 }
 
-
+//----------------------------------------------------------------------------
 bool ctkPluginDatabase::dropTables()
 {
   //Execute transaction for deleting the database tables
@@ -714,13 +725,13 @@ bool ctkPluginDatabase::dropTables()
   return true;
 }
 
-
+//----------------------------------------------------------------------------
 bool ctkPluginDatabase::isOpen() const
 {
   return m_isDatabaseOpen;
 }
 
-
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::checkConnection() const
 {
   if(!m_isDatabaseOpen)
@@ -735,7 +746,7 @@ void ctkPluginDatabase::checkConnection() const
   }
 }
 
-
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::beginTransaction(QSqlQuery *query, TransactionType type)
 {
   bool success;
@@ -763,7 +774,7 @@ void ctkPluginDatabase::beginTransaction(QSqlQuery *query, TransactionType type)
 
 }
 
-
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::commitTransaction(QSqlQuery *query)
 {
   Q_ASSERT(query != 0);
@@ -776,7 +787,7 @@ void ctkPluginDatabase::commitTransaction(QSqlQuery *query)
   }
 }
 
-
+//----------------------------------------------------------------------------
 void ctkPluginDatabase::rollbackTransaction(QSqlQuery *query)
 {
   Q_ASSERT(query !=0);
@@ -790,6 +801,7 @@ void ctkPluginDatabase::rollbackTransaction(QSqlQuery *query)
   }
 }
 
+//----------------------------------------------------------------------------
 QList<ctkPluginArchive*> ctkPluginDatabase::getPluginArchives() const
 {
   checkConnection();
@@ -828,11 +840,13 @@ QList<ctkPluginArchive*> ctkPluginDatabase::getPluginArchives() const
   return archives;
 }
 
+//----------------------------------------------------------------------------
 QString ctkPluginDatabase::getStringFromQDateTime(const QDateTime& dateTime) const
 {
   return dateTime.toString(Qt::ISODate);
 }
 
+//----------------------------------------------------------------------------
 QDateTime ctkPluginDatabase::getQDateTimeFromString(const QString& dateTimeString) const
 {
   return QDateTime::fromString(dateTimeString, Qt::ISODate);

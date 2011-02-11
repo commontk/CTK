@@ -27,6 +27,9 @@
 
 #include "ctkPluginEvent.h"
 
+/**
+ * \ingroup PluginFramework
+ */
 class CTK_PLUGINFW_EXPORT ctkTrackedPluginListener : public QObject
 {
   Q_OBJECT

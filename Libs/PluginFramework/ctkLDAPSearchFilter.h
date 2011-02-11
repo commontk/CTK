@@ -33,11 +33,13 @@
 class ctkLDAPSearchFilterData;
 
 /**
+ * \ingroup PluginFramework
+ *
  * An <a href="http://www.ietf.org/rfc/rfc1960.txt">RFC 1960</a>-based Filter.
  *
  * <p>
- * A {@code ctkLDAPSearchFilter} can be used numerous times to determine if the match
- * argument matches the filter string that was used to create the {@code ctkLDAPSearchFilter}.
+ * A <code>ctkLDAPSearchFilter</code> can be used numerous times to determine if the match
+ * argument matches the filter string that was used to create the <code>ctkLDAPSearchFilter</code>.
  * <p>
  * Some examples of LDAP filters are:
  *
@@ -91,7 +93,7 @@ public:
   /**
    * Filter using a service's properties.
    * <p>
-   * This {@code ctkLDAPSearchFilter} is executed using the keys and values of the
+   * This <code>ctkLDAPSearchFilter</code> is executed using the keys and values of the
    * referenced service's properties. The keys are looked up in a case
    * insensitive manner.
    *
@@ -157,6 +159,9 @@ protected:
 
 };
 
+/**
+ * \ingroup PluginFramework
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkLDAPSearchFilter& filter);
 
 #endif // CTKLDAPSEARCHFILTER_H

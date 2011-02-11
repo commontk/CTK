@@ -44,6 +44,7 @@ public:
 
   }
 
+  //----------------------------------------------------------------------------
   QString getWord()
   {
     skipWhite();
@@ -96,6 +97,7 @@ public:
     return val.left(end);
   }
 
+  //----------------------------------------------------------------------------
   QString getKey()
   {
     if (pos >= length) {
@@ -119,6 +121,7 @@ public:
     return QString();
   }
 
+  //----------------------------------------------------------------------------
   QString getParam()
   {
     if (pos == length || s.at(pos) != ';') {
@@ -137,6 +140,7 @@ public:
     return QString();
   }
 
+  //----------------------------------------------------------------------------
   bool isDirective()
   {
     if (pos + 1 < length && s.at(pos) == ':')
@@ -150,6 +154,7 @@ public:
     }
   }
 
+  //----------------------------------------------------------------------------
   QString getValue()
   {
     if (s.at(pos) != '=')
@@ -167,6 +172,7 @@ public:
     return val;
   }
 
+  //----------------------------------------------------------------------------
   bool getEntryEnd()
   {
     int save = pos;
@@ -182,6 +188,7 @@ public:
     }
   }
 
+  //----------------------------------------------------------------------------
   bool getEnd()
   {
     int save = pos;
@@ -194,6 +201,7 @@ public:
     }
   }
 
+  //----------------------------------------------------------------------------
   QString getRest()
   {
     QString res = s.mid(pos).trimmed();
@@ -202,6 +210,7 @@ public:
 
 private:
 
+  //----------------------------------------------------------------------------
   void skipWhite()
   {
     for (; pos < length; pos++) {
@@ -212,6 +221,7 @@ private:
   }
 };
 
+//----------------------------------------------------------------------------
 QList<QMap<QString, QStringList> > ctkPluginFrameworkUtil::parseEntries(const QString& a, const QString& s,
                                            bool single, bool unique, bool single_entry)
 {
@@ -302,6 +312,7 @@ QList<QMap<QString, QStringList> > ctkPluginFrameworkUtil::parseEntries(const QS
   return result;
 }
 
+//----------------------------------------------------------------------------
 QString ctkPluginFrameworkUtil::getFrameworkDir(ctkPluginFrameworkContext* ctx)
 {
   QString s = ctx->props[ctkPluginConstants::FRAMEWORK_STORAGE].toString();
@@ -328,6 +339,7 @@ QString ctkPluginFrameworkUtil::getFrameworkDir(ctkPluginFrameworkContext* ctx)
   return s;
 }
 
+//----------------------------------------------------------------------------
 QDir ctkPluginFrameworkUtil::getFileStorage(ctkPluginFrameworkContext* ctx,
                                             const QString& name)
 {
@@ -359,6 +371,7 @@ QDir ctkPluginFrameworkUtil::getFileStorage(ctkPluginFrameworkContext* ctx,
   return dir;
 }
 
+//----------------------------------------------------------------------------
 bool ctkPluginFrameworkUtil::removeDir(const QString& dirName)
 {
   bool result = true;

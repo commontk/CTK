@@ -31,11 +31,12 @@
 class ctkConfigurationEventData;
 
 /**
+ * \ingroup ConfigAdmin
  * A Configuration Event.
  *
  * <p>
- * {@code ctkConfigurationEvent} objects are delivered to all registered
- * {@code ctkConfigurationListener} service objects. ctkConfigurationEvents
+ * <code>ctkConfigurationEvent</code> objects are delivered to all registered
+ * <code>ctkConfigurationListener</code> service objects. ctkConfigurationEvents
  * must be asynchronously delivered in chronological order with respect to each
  * listener.
  *
@@ -49,11 +50,11 @@ class ctkConfigurationEventData;
  * Additional event types may be defined in the future.
  *
  * <p>
- * Security Considerations. {@code ctkConfigurationEvent} objects do not
- * provide {@code ctkConfiguration} objects, so no sensitive configuration
+ * Security Considerations. <code>ctkConfigurationEvent</code> objects do not
+ * provide <code>ctkConfiguration</code> objects, so no sensitive configuration
  * information is available from the event. If the listener wants to locate the
- * {@code ctkConfiguration} object for the specified pid, it must use
- * {@code ctkConfigurationAdmin}.
+ * <code>ctkConfiguration</code> object for the specified pid, it must use
+ * <code>ctkConfigurationAdmin</code>.
  *
  * @see ctkConfigurationListener
  */
@@ -67,32 +68,32 @@ public:
   enum Type {
 
     /**
-     * A {@code ctkConfiguration} has been updated.
+     * A <code>ctkConfiguration</code> has been updated.
      *
      * <p>
-     * This {@code ctkConfigurationEvent} type indicates that a
-      {@code ctkConfiguration} object has been updated with new properties.
+     * This <code>ctkConfigurationEvent</code> type indicates that a
+      <code>ctkConfiguration</code> object has been updated with new properties.
      *
      * An event is fired when a call to {@link ctkConfiguration#update(const ctkDictionary&)}
      * successfully changes a configuration.
      *
      * <p>
-     * The value of {@code CM_UPDATED} is 1.
+     * The value of <code>CM_UPDATED</code> is 1.
      */
     CM_UPDATED  = 0x00000001,
 
     /**
-     * A {@code ctkConfiguration} has been deleted.
+     * A <code>ctkConfiguration</code> has been deleted.
      *
      * <p>
-     * This {@code ctkConfigurationEvent} type indicates that a
-     * {@code ctkConfiguration} object has been deleted.
+     * This <code>ctkConfigurationEvent</code> type indicates that a
+     * <code>ctkConfiguration</code> object has been deleted.
      *
      * An event is fired when a call to {@link ctkConfiguration#remove()}
      * successfully deletes a configuration.
      *
      * <p>
-     * The value of {@code CM_DELETED} is 2.
+     * The value of <code>CM_DELETED</code> is 2.
      */
     CM_DELETED  = 0x00000002
 
@@ -115,15 +116,15 @@ public:
   bool isNull() const;
 
   /**
-   * Constructs a {@code ConfigurationEvent} object from the given
-   * {@code ServiceReference} object, event type, and pids.
+   * Constructs a <code>ConfigurationEvent</code> object from the given
+   * <code>ServiceReference</code> object, event type, and pids.
    *
-   * @param reference The {@code ServiceReference} object of the
+   * @param reference The <code>ServiceReference</code> object of the
    *        Configuration Admin service that created this event.
    * @param type The event type. See {@link #getType}.
    * @param factoryPid The factory pid of the associated configuration if the
    *        target of the configuration is a ManagedServiceFactory. Otherwise
-   *        {@code null} if the target of the configuration is a
+   *        <code>null</code> if the target of the configuration is a
    *        ManagedService.
    * @param pid The pid of the associated configuration.
    */
@@ -166,17 +167,22 @@ public:
   int getType() const;
 
   /**
-   * Return the {@code ctkServiceReference} object of the Configuration
+   * Return the <code>ctkServiceReference</code> object of the Configuration
    * Admin service that created this event.
    *
-   * @return The {@code ctkServiceReference} object for the Configuration
+   * @return The <code>ctkServiceReference</code> object for the Configuration
    *         Admin service that created this event.
    */
   ctkServiceReference getReference() const;
 };
 
+/**
+ * \ingroup ConfigAdmin
+ */
+
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, ctkConfigurationEvent::Type type);
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkConfigurationEvent& event);
 
+/** @}*/
 
 #endif // CTKCONFIGURATIONEVENT_H

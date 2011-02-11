@@ -31,19 +31,23 @@
 
 namespace ctk {
 ///
+/// \ingroup Core
 /// Convert a QStringList to Vector of char*
 /// Caller will be responsible to delete the content of the vector
 void CTK_CORE_EXPORT qListToSTLVector(const QStringList& list, std::vector<char*>& vector);
 
 ///
+/// \ingroup Core
 /// Convert a QStringList to a Vector of string
 void CTK_CORE_EXPORT qListToSTLVector(const QStringList& list, std::vector<std::string>& vector);
 
 ///
+/// \ingroup Core
 /// Convert a Vector of string to QStringList
 void CTK_CORE_EXPORT stlVectorToQList(const std::vector<std::string>& vector, QStringList& list);
 
 ///
+/// \ingroup Core
 /// Convert a nameFilter to a list of file extensions:
 /// "Images (*.png *.jpg *.tiff)" -> "*.png", "*.jpg", "*.tiff"
 /// Note: the nameFilter can be a simple wildcard "*.jpg" in that case, it
@@ -52,16 +56,19 @@ void CTK_CORE_EXPORT stlVectorToQList(const std::vector<std::string>& vector, QS
 QStringList CTK_CORE_EXPORT nameFilterToExtensions(const QString& nameFilter);
 
 ///
+/// \ingroup Core
 /// Convert a nameFilter to a list of file extensions:
 /// "Images (*.png *.jpg *.tiff)", "Text (*.txt)" -> "*.png", "*.jpg", "*.tiff", "*.txt"
 QStringList CTK_CORE_EXPORT nameFiltersToExtensions(const QStringList& nameFilters);
 
 ///
+/// \ingroup Core
 /// Convert a wildcar extension filter ("*.jpg") into a regular expression string
 /// "*.jpg" -> ".*\\.jpg?$"
 QString CTK_CORE_EXPORT extensionToRegExp(const QString& extension);
 
 ///
+/// \ingroup Core
 /// Convert a list of wildcar extension filters ("*.jpg")
 /// into a regular expression string
 /// "*.jpg", "*.txt" -> "(.*\\.jpg?$|.*\\.txt?$)"

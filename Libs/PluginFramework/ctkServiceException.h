@@ -26,10 +26,12 @@
 #include "ctkRuntimeException.h"
 
 /**
+ * \ingroup PluginFramework
+ *
  * A service exception used to indicate that a service problem occurred.
  *
  * <p>
- * A {@code ctkServiceException} object is created by the Framework or
+ * A <code>ctkServiceException</code> object is created by the Framework or
  * to denote an exception condition in the service. An enum
  * type is used to identify the exception type for future extendability.
  *
@@ -69,7 +71,7 @@ public:
   };
 
   /**
-   * Creates a {@code ctkServiceException} with the specified message,
+   * Creates a <code>ctkServiceException</code> with the specified message,
    * type and exception cause.
    *
    * @param msg The associated message.
@@ -79,7 +81,7 @@ public:
   ctkServiceException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception* cause = 0);
 
   /**
-   * Creates a {@code ctkServiceException} with the specified message and
+   * Creates a <code>ctkServiceException</code> with the specified message and
    * exception cause.
    *
    * @param msg The associated message.
@@ -93,7 +95,7 @@ public:
   ~ctkServiceException() throw() { }
 
   /**
-   * Returns the type for this exception or {@code UNSPECIFIED} if the
+   * Returns the type for this exception or <code>UNSPECIFIED</code> if the
    * type was unspecified or unknown.
    *
    * @return The type of this exception.
@@ -109,7 +111,9 @@ private:
 
 };
 
-
+/**
+ * \ingroup PluginFramework
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkServiceException& exc);
 
 #endif // CTKSERVICEEXCEPTION_H

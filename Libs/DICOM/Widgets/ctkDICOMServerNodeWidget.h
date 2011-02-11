@@ -23,6 +23,9 @@
 
 // Qt includes 
 #include <QWidget>
+#include <QString>
+#include <QList>
+#include <QMap>
 
 #include "ctkDICOMWidgetsExport.h"
 
@@ -37,20 +40,30 @@ public:
   explicit ctkDICOMServerNodeWidget(QWidget* parent=0);
   virtual ~ctkDICOMServerNodeWidget();
 
+  QString                callingAETitle();
+  QMap<QString,QVariant> parameters();
 
-  /// set properties of query based on current widget state
-  void populateQuery (/*ctkDICOMQuery &query*/);
+  QStringList            nodes()const;
+  QStringList            checkedNodes()const;
+  QMap<QString,QVariant> nodeParameters(const QString &node)const ;
 
 public slots:
   void addNode ();
   void removeNode ();
   void onCellChanged (int row, int column);
   void onCurrentItemChanged(QTableWidgetItem* current, QTableWidgetItem *previous);
-  void saveSettings ();
+
+  void readSettings();
+  void saveSettings();
 
 protected:
   QScopedPointer<ctkDICOMServerNodeWidgetPrivate> d_ptr;
-
+  enum ServerColumns{
+    NameColumn = 0,
+    AETitleColumn,
+    AddressColumn,
+    PortColumn
+  };
 private:
   Q_DECLARE_PRIVATE(ctkDICOMServerNodeWidget);
   Q_DISABLE_COPY(ctkDICOMServerNodeWidget);

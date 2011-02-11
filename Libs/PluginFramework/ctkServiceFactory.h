@@ -24,6 +24,8 @@
 
 
 /**
+ * \ingroup PluginFramework
+ *
  * Allows services to provide customized service objects in the plugin
  * environment.
  *

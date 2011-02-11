@@ -36,6 +36,8 @@ class QIODevice;
 class ctkPluginStorage;
 
 /**
+ * \ingroup PluginFramework
+ *
  * Class for managing plugin data.
  *
  */

@@ -19,7 +19,9 @@
 
 =============================================================================*/
 
+#include <QtGlobal>
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 ctkTrackedService<S,T>::ctkTrackedService(ctkServiceTracker<S,T>* serviceTracker,
                   ctkServiceTrackerCustomizer<T>* customizer)
@@ -28,6 +30,7 @@ ctkTrackedService<S,T>::ctkTrackedService(ctkServiceTracker<S,T>* serviceTracker
 
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkTrackedService<S,T>::serviceChanged(const ctkServiceEvent& event)
 {
@@ -92,6 +95,7 @@ void ctkTrackedService<S,T>::serviceChanged(const ctkServiceEvent& event)
   }
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkTrackedService<S,T>::modified()
 {
@@ -99,6 +103,7 @@ void ctkTrackedService<S,T>::modified()
   serviceTracker->d_func()->modified();
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 T ctkTrackedService<S,T>::customizerAdding(ctkServiceReference item,
                                            const ctkServiceEvent& related)
@@ -107,6 +112,7 @@ T ctkTrackedService<S,T>::customizerAdding(ctkServiceReference item,
   return customizer->addingService(item);
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkTrackedService<S,T>::customizerModified(ctkServiceReference item,
                                                 const ctkServiceEvent& related,
@@ -116,6 +122,7 @@ void ctkTrackedService<S,T>::customizerModified(ctkServiceReference item,
   customizer->modifiedService(item, object);
 }
 
+//----------------------------------------------------------------------------
 template<class S, class T>
 void ctkTrackedService<S,T>::customizerRemoved(ctkServiceReference item,
                                                const ctkServiceEvent& related,

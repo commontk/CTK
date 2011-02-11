@@ -30,12 +30,14 @@
 
 #include <QTest>
 
+//----------------------------------------------------------------------------
 _ManagedServiceFactoryUpdateTest::_ManagedServiceFactoryUpdateTest(ctkManagedServiceFactoryTestSuite* ts)
   : ts(ts)
 {
 
 }
 
+//----------------------------------------------------------------------------
 void _ManagedServiceFactoryUpdateTest::deleted(const QString& pid)
 {
   Q_UNUSED(pid)
@@ -46,11 +48,13 @@ void _ManagedServiceFactoryUpdateTest::deleted(const QString& pid)
   ts->updateCount++;
 }
 
+//----------------------------------------------------------------------------
 QString _ManagedServiceFactoryUpdateTest::getName()
 {
   return QString();
 }
 
+//----------------------------------------------------------------------------
 void _ManagedServiceFactoryUpdateTest::updated(const QString& pid, const ctkDictionary& properties)
 {
   Q_UNUSED(pid)
@@ -62,6 +66,7 @@ void _ManagedServiceFactoryUpdateTest::updated(const QString& pid, const ctkDict
   ts->updateCount++;
 }
 
+//----------------------------------------------------------------------------
 ctkManagedServiceFactoryTestSuite::ctkManagedServiceFactoryTestSuite(ctkPluginContext* pc, long cmPluginId)
   : context(pc), cmPluginId(cmPluginId), cm(0), updateCount(0),
     locked(false)
@@ -69,6 +74,7 @@ ctkManagedServiceFactoryTestSuite::ctkManagedServiceFactoryTestSuite(ctkPluginCo
 
 }
 
+//----------------------------------------------------------------------------
 void ctkManagedServiceFactoryTestSuite::init()
 {
   context->getPlugin(cmPluginId)->start();
@@ -76,12 +82,14 @@ void ctkManagedServiceFactoryTestSuite::init()
   cm = context->getService<ctkConfigurationAdmin>(reference);
 }
 
+//----------------------------------------------------------------------------
 void ctkManagedServiceFactoryTestSuite::cleanup()
 {
   context->ungetService(reference);
   context->getPlugin(cmPluginId)->stop();
 }
 
+//----------------------------------------------------------------------------
 void ctkManagedServiceFactoryTestSuite::testSamePidManagedServiceFactory()
 {
   ctkConfigurationPtr config = cm->createFactoryConfiguration("test");
@@ -120,6 +128,7 @@ void ctkManagedServiceFactoryTestSuite::testSamePidManagedServiceFactory()
   config->remove();
 }
 
+//----------------------------------------------------------------------------
 void ctkManagedServiceFactoryTestSuite::testGeneralManagedServiceFactory()
 {
   updateCount = 0;

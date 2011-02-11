@@ -19,7 +19,7 @@ SET(PLUGIN_resources
 
 )
 
-ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
+ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}

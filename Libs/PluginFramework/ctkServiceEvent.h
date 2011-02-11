@@ -40,6 +40,8 @@ class ctkServiceEventData;
 #endif
 
 /**
+ * \ingroup PluginFramework
+ *
  * An event from the Plugin Framework describing a service lifecycle change.
  * <p>
  * <code>ctkServiceEvent</code> objects are delivered to
@@ -166,7 +168,12 @@ public:
 
 Q_DECLARE_METATYPE(ctkServiceEvent)
 
+/**
+ * \ingroup PluginFramework
+ * @{
+ */
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, ctkServiceEvent::Type type);
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkServiceEvent& event);
+/** @}*/
 
 #endif // CTKSERVICEEVENT_H

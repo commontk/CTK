@@ -23,6 +23,7 @@
 #include "ctkTestPluginMTAttrPwdActivator_p.h"
 #include <QtPlugin>
 
+//----------------------------------------------------------------------------
 void ctkTestPluginMTAttrPwdActivator::start(ctkPluginContext* context)
 {
   Q_UNUSED(context)
@@ -30,6 +31,7 @@ void ctkTestPluginMTAttrPwdActivator::start(ctkPluginContext* context)
   Q_UNUSED(QT_TR_NOOP("My object class definition"));
 }
 
+//----------------------------------------------------------------------------
 void ctkTestPluginMTAttrPwdActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)

@@ -28,6 +28,9 @@
 
 class ctkPluginFrameworkContext;
 
+/**
+ * \ingroup PluginFramework
+ */
 class ctkPluginFrameworkUtil
 {
 public:

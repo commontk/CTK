@@ -37,6 +37,9 @@ class ctkWorkflowStep;
 //enum ctkWorkflow::TransitionDirectionality;
 
 //-----------------------------------------------------------------------------
+/**
+ * \ingroup Core
+ */
 struct forwardAndBackwardSteps
 {
   QList<ctkWorkflowStep*> forwardSteps()
@@ -132,6 +135,9 @@ private:
 };
 
 // --------------------------------------------------------------------------
+/**
+ * \ingroup Core
+ */
 class ctkWorkflowPrivate : public QObject
 {
   Q_OBJECT

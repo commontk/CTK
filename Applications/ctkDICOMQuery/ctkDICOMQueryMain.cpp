@@ -39,7 +39,7 @@
 
 // CTK includes
 #include <ctkDICOMQuery.h>
-#include <ctkDICOM.h>
+#include <ctkDICOMDatabase.h>
 #include "ctkLogger.h"
 
 // STD includes
@@ -73,10 +73,10 @@ int main(int argc, char** argv)
   QCoreApplication app(argc, argv);
   QTextStream out(stdout);
 
-  ctkDICOM myCTK;
+  ctkDICOMDatabase myCTK;
   logger.debug ( "Opening database " + QString ( argv[1] ) );
   myCTK.openDatabase ( argv[1] );
-  logger.debug ( "Last error: " + myCTK.GetLastError() );
+  logger.debug ( "Last error: " + myCTK.lastError() );
   if ( myCTK.database().isOpen() ) 
     {
     logger.debug ( "Database is open" );
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
 
   try
     {
-    query.query ( myCTK.database() );
+    query.query ( myCTK );
     }
   catch (std::exception e)
   {

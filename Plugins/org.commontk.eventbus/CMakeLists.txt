@@ -21,7 +21,7 @@ SET(PLUGIN_CACHED_RESOURCEFILES
   servicedescriptor.xml
 )
 
-ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
+ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}

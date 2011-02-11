@@ -33,12 +33,13 @@
 #include "ctkServiceRegistrationPrivate.h"
 #include "ctkPluginFrameworkContext_p.h"
 
-
+//----------------------------------------------------------------------------
 ctkServiceReferencePrivate::ctkServiceReferencePrivate(ctkServiceRegistrationPrivate* reg)
   : ref(1), registration(reg)
 {
 }
 
+//----------------------------------------------------------------------------
 QObject* ctkServiceReferencePrivate::getService(QSharedPointer<ctkPlugin> plugin)
 {
   QObject* s = 0;
@@ -110,6 +111,7 @@ QObject* ctkServiceReferencePrivate::getService(QSharedPointer<ctkPlugin> plugin
   return s;
 }
 
+//----------------------------------------------------------------------------
 bool ctkServiceReferencePrivate::ungetService(QSharedPointer<ctkPlugin> plugin, bool checkRefCounter)
 {
   QMutexLocker lock(&registration->propsLock);
@@ -160,6 +162,7 @@ bool ctkServiceReferencePrivate::ungetService(QSharedPointer<ctkPlugin> plugin, 
   return hadReferences;
 }
 
+//----------------------------------------------------------------------------
 ctkDictionary ctkServiceReferencePrivate::getProperties() const
 {
   return registration->properties;

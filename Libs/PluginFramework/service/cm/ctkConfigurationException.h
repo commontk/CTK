@@ -26,6 +26,8 @@
 #include "ctkRuntimeException.h"
 
 /**
+ * \ingroup ConfigAdmin
+ *
  * An exception class to inform the Configuration Admin service
  * of problems with configuration data.
  */
@@ -35,10 +37,10 @@ class Q_DECL_EXPORT ctkConfigurationException : public ctkRuntimeException
 public:
 
   /**
-   * Create a {@code ctkConfigurationException} object.
+   * Create a <code>ctkConfigurationException</code> object.
    *
    * @param property name of the property that caused the problem,
-   *        {@code null} if no specific property was the cause
+   *        <code>null</code> if no specific property was the cause
    * @param reason reason for failure
    * @param cause The cause of this exception.
    */
@@ -71,6 +73,12 @@ private:
   QString reason;
 };
 
+/**
+ * \ingroup ConfigAdmin
+ */
+
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkConfigurationException& exc);
+
+/** @}*/
 
 #endif // CTKCONFIGURATIONEXCEPTION_H

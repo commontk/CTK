@@ -31,6 +31,8 @@
 class ctkServiceRegistrationPrivate;
 
 /**
+ * \ingroup PluginFramework
+ *
  * A registered service.
  *
  * <p>
@@ -167,6 +169,9 @@ protected:
 
 };
 
+/**
+ * \ingroup PluginFramework
+ */
 uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceRegistration& serviceRef);
 
 #endif // CTKSERVICEREGISTRATION_H

@@ -32,6 +32,8 @@ class ctkPluginFrameworkContext;
 class ctkPluginFrameworkPrivate;
 
 /**
+ * \ingroup PluginFramework
+ *
  * A %ctkPluginFramework instance. A %ctkPluginFramework is also known as a System %Plugin.
  *
  * <p>

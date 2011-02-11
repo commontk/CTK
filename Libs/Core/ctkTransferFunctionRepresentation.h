@@ -36,6 +36,7 @@ class ctkTransferFunction;
 class ctkTransferFunctionRepresentationPrivate;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkTransferFunctionRepresentation: public QObject
 {
   Q_OBJECT

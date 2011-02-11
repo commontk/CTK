@@ -36,6 +36,9 @@ class ctkPlugin;
 class ctkPluginStorage;
 class ctkServices;
 
+/**
+ * \ingroup PluginFramework
+ */
 class ctkPluginFrameworkContext
 {
 

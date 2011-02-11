@@ -21,10 +21,14 @@
 #ifndef __ctkDICOMQueryRetrieveWidget_h
 #define __ctkDICOMQueryRetrieveWidget_h
 
+#include "ctkDICOMWidgetsExport.h"
+
 // Qt includes 
 #include <QWidget>
 
-#include "ctkDICOMWidgetsExport.h"
+
+// CTK includes
+#include <ctkDICOMDatabase.h>
 
 class ctkDICOMQueryRetrieveWidgetPrivate;
 
@@ -37,9 +41,12 @@ public:
   virtual ~ctkDICOMQueryRetrieveWidget();
 
 public slots:
-    void onDatabaseDirectoryChanged(const QString& directory);
-    void processQuery();
-    void onTabCloseRequested(int index);
+  void setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> retrieveDatabase);
+  void processQuery();
+  void processRetrieve();
+
+protected slots:
+  void onQueryProgressChanged(int value);
 
 protected:
   QScopedPointer<ctkDICOMQueryRetrieveWidgetPrivate> d_ptr;
