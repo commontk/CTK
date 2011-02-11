@@ -32,6 +32,13 @@
 
 class ctkServiceEventData;
 
+#ifdef REGISTERED
+#error Try to reorder include files (this one first)\
+ or write #undef REGISTERED before including this header.\
+ Cause of this problem may be dcmimage.h, which indirectly\
+ includes windows.h.
+#endif
+
 /**
  * \ingroup PluginFramework
  *

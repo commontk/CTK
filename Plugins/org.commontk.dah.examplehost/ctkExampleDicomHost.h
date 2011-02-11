@@ -22,54 +22,64 @@
 #ifndef CTKEXAMPLEDICOMHOST_H
 #define CTKEXAMPLEDICOMHOST_H
 
+// Qt includes
+#include <QUrl>
+#include <QProcess>
+
+// CTK includes
 #include <ctkDicomAbstractHost.h>
 #include <ctkHostedAppPlaceholderWidget.h>
 
 #include <org_commontk_dah_examplehost_Export.h>
 
-#include <QUrl>
-#include <QProcess>
 
-class org_commontk_dah_examplehost_EXPORT ctkExampleDicomHost : public QObject, public ctkDicomAbstractHost
+class org_commontk_dah_examplehost_EXPORT ctkExampleDicomHost :  public ctkDicomAbstractHost
 {
   Q_OBJECT
 
 public:
 
   ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort = 8080, int appPort = 8081);
+  virtual ~ctkExampleDicomHost();
+
+  ctkDicomAppHosting::State getApplicationState() const;
 
   virtual void StartApplication(QString AppPath);
   virtual QString generateUID() { return ""; }
   virtual QRect getAvailableScreen(const QRect& preferredScreen);
   virtual QString getOutputLocation(const QStringList& /*preferredProtocols*/) { return ""; }
-  virtual void notifyStateChanged(ctkDicomAppHosting::State state);
+
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
   // exchange methods
-  virtual bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
-  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-      QList<QUuid> objectUUIDs, 
-      QList<QString> acceptableTransferSyntaxUIDs, 
-      bool includeBulkData);
-  virtual void releaseData(QList<QUuid> objectUUIDs);
+  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
+  virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
-  const QProcess& getAppProcess() const { return appProcess; }
-  ~ctkExampleDicomHost();
+  const QProcess& getAppProcess() const { return this->AppProcess; }
+  void exitApplication();
+
+  QByteArray processReadAll(){return this->AppProcess.readAllStandardOutput ();}
+
+public slots:
+  void onAppReady();
+  void onReleaseAvailableResources();
+  void onStartProgress();
+  void onResumed();
+  void onCompleted();
+  void onSuspended();
+  void onCanceled();
+  void onExited();
 
 signals:
 
-  void stateChangedReceived(ctkDicomAppHosting::State state);
-  void statusReceived(const ctkDicomAppHosting::Status& status);
+
   void giveAvailableScreen(QRect rect);
 
 protected:
 
-  QProcess appProcess;
-  ctkHostedAppPlaceholderWidget* placeholderWidget;
-  ctkDicomAppHosting::State applicationState;
-
-protected slots:
-
-  void forwardConsoleOutput();
+  QProcess AppProcess;
+  ctkHostedAppPlaceholderWidget* PlaceholderWidget;
+private:
+  bool exitingApplication;
 };
 
 #endif // CTKEXAMPLEDICOMHOST_H

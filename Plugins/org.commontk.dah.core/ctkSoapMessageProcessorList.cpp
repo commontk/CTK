@@ -21,27 +21,34 @@
 
 #include "ctkSoapMessageProcessorList.h"
 
+//----------------------------------------------------------------------------
 ctkSoapMessageProcessorList::~ctkSoapMessageProcessorList()
 {
-  qDeleteAll(processors);
+  qDeleteAll(this->Processors);
 }
 
+//----------------------------------------------------------------------------
 void ctkSoapMessageProcessorList::push_back( ctkSoapMessageProcessor* processor )
 {
-  processors.push_back( processor );
+  this->Processors.push_back( processor );
 }
 
+//----------------------------------------------------------------------------
 void ctkSoapMessageProcessorList::clear()
 {
-  qDeleteAll(processors);
-  processors.clear();
+  qDeleteAll(this->Processors);
+  this->Processors.clear();
 }
 
+//----------------------------------------------------------------------------
 bool ctkSoapMessageProcessorList::process(
     const QtSoapMessage& message,
     QtSoapMessage* reply ) const
 {
-  foreach(ctkSoapMessageProcessor* processor, processors)
+  extern void DumpAll(const QtSoapType& type, int indent=0);
+  DumpAll(message.method());
+
+  foreach(ctkSoapMessageProcessor* processor, this->Processors)
   {
     if( processor->process( message, reply ) )
     {

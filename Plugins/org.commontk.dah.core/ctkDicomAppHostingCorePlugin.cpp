@@ -25,37 +25,41 @@
 
 ctkDicomAppHostingCorePlugin* ctkDicomAppHostingCorePlugin::instance = 0;
 
+//----------------------------------------------------------------------------
 ctkDicomAppHostingCorePlugin::ctkDicomAppHostingCorePlugin()
   : context(0)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkDicomAppHostingCorePlugin::~ctkDicomAppHostingCorePlugin()
 {
   
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomAppHostingCorePlugin::start(ctkPluginContext* context)
 {
   instance = this;
   this->context = context;
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomAppHostingCorePlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
 }
 
+//----------------------------------------------------------------------------
 ctkDicomAppHostingCorePlugin* ctkDicomAppHostingCorePlugin::getInstance()
 {
   return instance;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginContext* ctkDicomAppHostingCorePlugin::getPluginContext() const
 {
   return context;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_dah_core, ctkDicomAppHostingCorePlugin)
-
-

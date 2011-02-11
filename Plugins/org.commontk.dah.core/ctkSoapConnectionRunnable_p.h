@@ -36,7 +36,7 @@ class ctkSoapConnectionRunnable : public QObject, public QRunnable
 public:
 
   ctkSoapConnectionRunnable(int socketDescriptor);
-  ~ctkSoapConnectionRunnable();
+  virtual ~ctkSoapConnectionRunnable();
 
   void run();
 
@@ -45,11 +45,17 @@ signals:
   void incomingSoapMessage(const QtSoapMessage& message, QtSoapMessage* reply);
   void incomingWSDLMessage(const QString& message, QString* reply);
 
+protected slots:
+
+  void aboutToQuit();
+
 private:
 
   void readClient(QTcpSocket& socket);
 
   int socketDescriptor;
+
+  QAtomicInt isAboutToQuit;
 
 };
 

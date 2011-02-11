@@ -37,7 +37,7 @@ class org_commontk_dah_core_EXPORT ctkSimpleSoapClient : public QObject
 
 public:
   ctkSimpleSoapClient(int port, QString path);
-  ~ctkSimpleSoapClient();
+  virtual ~ctkSimpleSoapClient();
 
   const QtSoapType & submitSoapRequest(const QString& methodName, const QList<QtSoapType*>& soapTypes);
   const QtSoapType & submitSoapRequest(const QString& methodName, QtSoapType* soapType);

@@ -22,8 +22,10 @@
 #ifndef CTKSOAPMESSAGEPROCESSOR_H
 #define CTKSOAPMESSAGEPROCESSOR_H
 
+// QtSoap includes
 #include <qtsoap.h>
 
+// CTK includes
 #include <org_commontk_dah_core_Export.h>
 
 class org_commontk_dah_core_EXPORT ctkSoapMessageProcessor

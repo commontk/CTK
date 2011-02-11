@@ -23,6 +23,7 @@
 #ifndef CTKDICOMAPPPLUGIN_P_H
 #define CTKDICOMAPPPLUGIN_P_H
 
+// CTK includes
 #include <ctkPluginActivator.h>
 
 class ctkDicomAppServer;
@@ -36,20 +37,20 @@ class ctkDicomAppPlugin :
 public:
 
   ctkDicomAppPlugin();
-  ~ctkDicomAppPlugin();
+  virtual ~ctkDicomAppPlugin();
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+  virtual void start(ctkPluginContext* Context);
+  virtual void stop(ctkPluginContext* Context);
 
   static ctkPluginContext* getPluginContext();
 
 
 private:
 
-  static ctkPluginContext* context;
+  static ctkPluginContext* Context;
 
-  ctkDicomAppServer* appServer;
-  QObject* hostInterface;
+  ctkDicomAppServer* AppServer;
+  QObject* HostInterface;
 
 }; // ctkDicomAppPlugin
 

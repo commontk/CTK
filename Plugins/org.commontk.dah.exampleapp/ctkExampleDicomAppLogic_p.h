@@ -23,14 +23,20 @@
 #ifndef CTKEXAMPLEDICOMAPPLOGIC_P_H
 #define CTKEXAMPLEDICOMAPPLOGIC_P_H
 
-#include <ctkDicomAppInterface.h>
+// Qt includes
+#include <QUuid>
+
+// CTK includes
+#include <ctkDicomAbstractApp.h>
 #include <ctkDicomHostInterface.h>
 
 #include <ctkServiceTracker.h>
 
 struct ctkDicomHostInterface;
 
-class ctkExampleDicomAppLogic : public QObject, public ctkDicomAppInterface
+class QPushButton;
+
+class ctkExampleDicomAppLogic : public ctkDicomAbstractApp
 {
   Q_OBJECT
   Q_INTERFACES(ctkDicomAppInterface)
@@ -38,39 +44,39 @@ class ctkExampleDicomAppLogic : public QObject, public ctkDicomAppInterface
 public:
 
   ctkExampleDicomAppLogic();
-  ~ctkExampleDicomAppLogic();
+  virtual ~ctkExampleDicomAppLogic();
 
   // ctkDicomAppInterface
-  ctkDicomAppHosting::State getState();
-  bool setState(ctkDicomAppHosting::State newState);
-  bool bringToFront(const QRect& requestedScreenArea);
+  virtual bool bringToFront(const QRect& requestedScreenArea);
 
   // ctkDicomExchangeInterface
-  bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
-  QList<ctkDicomAppHosting::ObjectLocator> getData(
-    QList<QUuid> objectUUIDs, 
-    QList<QString> acceptableTransferSyntaxUIDs, 
+  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
     bool includeBulkData);
 
-  void releaseData(QList<QUuid> objectUUIDs);
+  virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
   // some logic
   void do_something();
 
-signals:
-
-  void stateChanged(int);
 
 protected slots:
 
-  void changeState(int);
+  void onStartProgress();
+  void onResumeProgress();
+  void onSuspendProgress();
+  void onCancelProgress();
+  void onExitHostedApp();
+  void onReleaseResources();
 
+  void buttonClicked();
 private:
+  QPushButton * Button;
 
-  ctkDicomHostInterface* getHostInterface() const;
-
-  ctkServiceTracker<ctkDicomHostInterface*> hostTracker;
+  QUuid uuid;
 
 }; // ctkExampleDicomAppLogic
 

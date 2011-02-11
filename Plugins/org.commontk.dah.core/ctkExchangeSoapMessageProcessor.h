@@ -33,7 +33,7 @@ public:
 
   ctkExchangeSoapMessageProcessor( ctkDicomExchangeInterface* inter );
 
-  bool process(
+  virtual bool process(
     const QtSoapMessage& message,
     QtSoapMessage* reply) const;
     

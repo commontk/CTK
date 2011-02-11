@@ -34,10 +34,10 @@ class ctkDicomHostPlugin :
 public:
 
   ctkDicomHostPlugin();
-  ~ctkDicomHostPlugin();
+  virtual ~ctkDicomHostPlugin();
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+  virtual void start(ctkPluginContext* context);
+  virtual void stop(ctkPluginContext* context);
 
   static ctkDicomHostPlugin* getInstance();
 
@@ -46,8 +46,8 @@ public:
 
 private:
 
-  static ctkDicomHostPlugin* instance;
-  ctkPluginContext* context;
+  static ctkDicomHostPlugin* Instance;
+  ctkPluginContext* Context;
 
 
 }; // ctkDicomHostPlugin

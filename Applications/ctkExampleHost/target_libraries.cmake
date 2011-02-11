@@ -6,5 +6,5 @@
 
 SET(target_libraries
   org_commontk_dah_examplehost
-
+  CTKDICOMCore
   )

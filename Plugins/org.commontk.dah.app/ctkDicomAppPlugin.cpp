@@ -19,69 +19,78 @@
 
 =============================================================================*/
 
+// Qt includes
+#include <QtPlugin>
+#include <QStringList>
 
+// CTK includes
 #include "ctkDicomAppPlugin_p.h"
 #include "ctkDicomAppServer_p.h"
 #include "ctkDicomHostService_p.h"
 
-#include <QtPlugin>
-#include <QStringList>
-
+// STD includes
 #include <stdexcept>
+#include <iostream>
 
-ctkPluginContext* ctkDicomAppPlugin::context = 0;
+ctkPluginContext* ctkDicomAppPlugin::Context = 0;
 
+//----------------------------------------------------------------------------
 ctkDicomAppPlugin::ctkDicomAppPlugin()
-  : appServer(0), hostInterface(0)
+  : AppServer(0), HostInterface(0)
 {
 
 }
 
+//----------------------------------------------------------------------------
 ctkDicomAppPlugin::~ctkDicomAppPlugin()
 {
-  
+  delete this->AppServer;
+  delete this->HostInterface;
+  ctkDicomAppPlugin::Context = 0;
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomAppPlugin::start(ctkPluginContext* context)
 {
-  this->context = context;
+  ctkDicomAppPlugin::Context = context;
 
 
   QUrl appURL(context->getProperty("dah.appURL").toString());
   if (!appURL.isValid())
-  {
+    {
     throw std::runtime_error("The plugin framework does not contain a valid \"dah.appURL\" property");
-  }
+    }
 
   QUrl hostURL(context->getProperty("dah.hostURL").toString());
   if (!hostURL.isValid())
-  {
+    {
     throw std::runtime_error("The plugin framework does not contain a valid \"dah.hostURL\" property");
-  }
+    }
 
   // start the application server
-  appServer = new ctkDicomAppServer(appURL.port());
+  this->AppServer = new ctkDicomAppServer(appURL.port());
 
   // register the host service, providing callbacks to the hosting application
-  hostInterface = new ctkDicomHostService(QUrl(hostURL).port(), "/HostInterface");
-  context->registerService<ctkDicomHostInterface>(hostInterface);
-
+  this->HostInterface = new ctkDicomHostService(QUrl(hostURL).port(), "/HostInterface");
+  context->registerService<ctkDicomHostInterface>(HostInterface);
 }
 
+//----------------------------------------------------------------------------
 void ctkDicomAppPlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
 
-  delete appServer;
-  delete hostInterface;
-  this->context = 0;
+  delete this->AppServer;
+  delete this->HostInterface;
+  this->AppServer = 0;
+  this->HostInterface = 0;
+  this->Context = 0;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginContext* ctkDicomAppPlugin::getPluginContext()
 {
-  return context;
+  return ctkDicomAppPlugin::Context;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_dah_app, ctkDicomAppPlugin)
-
-

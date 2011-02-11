@@ -18,6 +18,7 @@ SET(PLUGIN_MOC_SRCS
   ctkDicomAppPlugin_p.h
   ctkDicomAppServer_p.h
   ctkDicomHostService_p.h
+  ctkDicomAbstractApp.h
 )
 
 # Qt Designer files which should be processed by Qts uic

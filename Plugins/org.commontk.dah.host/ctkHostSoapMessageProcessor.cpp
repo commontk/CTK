@@ -23,14 +23,14 @@
 
 #include <ctkDicomAppHostingTypesHelper.h>
 
-
+//----------------------------------------------------------------------------
 ctkHostSoapMessageProcessor::ctkHostSoapMessageProcessor( ctkDicomHostInterface* inter )
-: hostInterface(inter)
+: HostInterface(inter)
 {}
 
+//----------------------------------------------------------------------------
 bool ctkHostSoapMessageProcessor::process(
-	const QtSoapMessage& message,
-	QtSoapMessage* reply ) const
+  const QtSoapMessage& message, QtSoapMessage* reply ) const
 {
   // TODO check for NULL hostInterface?
   
@@ -42,34 +42,35 @@ bool ctkHostSoapMessageProcessor::process(
   bool foundMethod = false;
   
   if (methodName == "getAvailableScreen")
-  {
+    {
     processGetAvailableScreen(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "notifyStateChanged")
-  {
+    {
     processNotifyStateChanged(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "notifyStatus")
-  {
+    {
     processNotifyStatus(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "generateUID")
-  {
+    {
     processGenerateUID(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "getOutputLocation")
-  {
+    {
     processGetOutputLocation(message, reply);
     foundMethod = true;
-  }
+    }
   
   return foundMethod;
 }
-		
+
+//----------------------------------------------------------------------------
 void ctkHostSoapMessageProcessor::processGetAvailableScreen(
     const QtSoapMessage &message, QtSoapMessage *reply) const
 {
@@ -77,46 +78,50 @@ void ctkHostSoapMessageProcessor::processGetAvailableScreen(
   const QtSoapType& inputType = message.method()["preferredScreen"];
   const QRect preferredScreen = ctkDicomSoapRectangle::getQRect(inputType);
   // query interface
-  const QRect result = hostInterface->getAvailableScreen(preferredScreen);
+  const QRect result = this->HostInterface->getAvailableScreen(preferredScreen);
   // set reply message
   reply->setMethod("getAvailableScreenResponse");
   QtSoapStruct* returnType = new ctkDicomSoapRectangle("availableScreen",result);
   reply->addMethodArgument(returnType);
 }
 
+//----------------------------------------------------------------------------
 void ctkHostSoapMessageProcessor::processNotifyStateChanged(
     const QtSoapMessage &message, QtSoapMessage * /* reply */) const
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()[0];//["state"]; java sends ["newState"]; FIX JAVA/STANDARD
   // query interface
-  hostInterface->notifyStateChanged(ctkDicomSoapState::getState(inputType));
+  this->HostInterface->notifyStateChanged(ctkDicomSoapState::getState(inputType));
   // set reply message: nothing to be done
 }
 
+//----------------------------------------------------------------------------
 void ctkHostSoapMessageProcessor::processNotifyStatus(
     const QtSoapMessage &message, QtSoapMessage * /* reply */) const
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["status"];
   // query interface
-  hostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(inputType));
+  this->HostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(inputType));
   // set reply message: nothing to be done
 }
 
+//----------------------------------------------------------------------------
 void ctkHostSoapMessageProcessor::processGenerateUID(
   const QtSoapMessage& message, QtSoapMessage* reply) const
 {
   Q_UNUSED(message)
   // extract arguments from input message: nothing to be done
   // query interface
-  const QString uid = hostInterface->generateUID();
+  const QString uid = this->HostInterface->generateUID();
   // set reply message
   reply->setMethod("generateUID");
   QtSoapType* resultType = new ctkDicomSoapUID("uid",uid);
   reply->addMethodArgument(resultType);
 }
 
+//----------------------------------------------------------------------------
 void ctkHostSoapMessageProcessor::processGetOutputLocation(
   const QtSoapMessage& message, QtSoapMessage* reply) const
 {
@@ -125,7 +130,7 @@ void ctkHostSoapMessageProcessor::processGetOutputLocation(
   const QStringList preferredProtocols = ctkDicomSoapArrayOfStringType::getArray(
     dynamic_cast<const QtSoapArray&>(inputType));
   // query interface
-  const QString result = hostInterface->getOutputLocation(preferredProtocols);
+  const QString result = this->HostInterface->getOutputLocation(preferredProtocols);
   // set reply message
   reply->setMethod("getOutputLocation");
   QtSoapType* resultType = new QtSoapSimpleType( QtSoapQName("preferredProtocols"), result );

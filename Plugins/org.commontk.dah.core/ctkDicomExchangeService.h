@@ -35,12 +35,16 @@ class org_commontk_dah_core_EXPORT ctkDicomExchangeService :
 public:
 
   ctkDicomExchangeService(ushort port, QString path);
-  ~ctkDicomExchangeService();
+  virtual ~ctkDicomExchangeService();
 
-  bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
-  QList<ctkDicomAppHosting::ObjectLocator> getData(QList<QUuid> objectUUIDs,
-                                             QList<QString> acceptableTransferSyntaxUIDs, bool includeBulkData);
-  void releaseData(QList<QUuid> objectUUIDs);
+  bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
+
+  QList<ctkDicomAppHosting::ObjectLocator> getData(
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
+    bool includeBulkData);
+
+  void releaseData(const QList<QUuid>& objectUUIDs);
 
 };
 

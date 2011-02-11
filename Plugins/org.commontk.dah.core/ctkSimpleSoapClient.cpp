@@ -28,41 +28,46 @@
 #include <QNetworkReply>
 #include <QtSoapHttpTransport>
 
+//----------------------------------------------------------------------------
 class ctkSimpleSoapClientPrivate
 {
 public:
 
-  QEventLoop blockingLoop;
-  QtSoapHttpTransport http;
+  QEventLoop BlockingLoop;
+  QtSoapHttpTransport Http;
 
-  int port;
-  QString path;
+  int Port;
+  QString Path;
 };
 
+//----------------------------------------------------------------------------
 ctkSimpleSoapClient::ctkSimpleSoapClient(int port, QString path)
   : d_ptr(new ctkSimpleSoapClientPrivate())
 {
   Q_D(ctkSimpleSoapClient);
 
-  d->port = port;
-  d->path = path;
+  d->Port = port;
+  d->Path = path;
 
-  connect(&d->http, SIGNAL(responseReady()), this, SLOT(responseReady()));
+  connect(&d->Http, SIGNAL(responseReady()), this, SLOT(responseReady()));
 
-  d->http.setHost("127.0.0.1", false, port);
+  d->Http.setHost("127.0.0.1", false, port);
 }
 
+//----------------------------------------------------------------------------
 ctkSimpleSoapClient::~ctkSimpleSoapClient()
 {
 
 }
 
+//----------------------------------------------------------------------------
 void ctkSimpleSoapClient::responseReady()
 {
   Q_D(ctkSimpleSoapClient);
-  d->blockingLoop.exit();
+  d->BlockingLoop.exit();
 }
 
+//----------------------------------------------------------------------------
 const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodName,
                                                    QtSoapType* soapType )
 {
@@ -71,6 +76,7 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
   return submitSoapRequest(methodName,list);
 }
 
+//----------------------------------------------------------------------------
 const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodName,
                                                    const QList<QtSoapType*>& soapTypes )
 {
@@ -79,48 +85,50 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
   QString action="\"";
   //action.append(methodName);
   action.append("\"");
-  d->http.setAction(action);
+  d->Http.setAction(action);
 
   CTK_SOAP_LOG( << "Submitting action " << action
                 << " method " << methodName
-                << " to path " << d->path );
+                << " to path " << d->Path );
 
   QtSoapMessage request;
   request.setMethod(QtSoapQName(methodName,"http://wg23.dicom.nema.org/"));
   if(!soapTypes.isEmpty())
-  {
+    {
     for (QList<QtSoapType*>::ConstIterator it = soapTypes.begin();
          it < soapTypes.constEnd(); it++)
-    {
+      {
       request.addMethodArgument(*it);
       CTK_SOAP_LOG( << "  Argument type added " << (*it)->typeName() << ". "
                     << " Argument name is " << (*it)->name().name() );
+      }
     }
-  }
   CTK_SOAP_LOG_LOWLEVEL( << request.toXmlString());
 
-  d->http.submitRequest(request, d->path);;
+  d->Http.submitRequest(request, d->Path);;
 
   CTK_SOAP_LOG_LOWLEVEL( << "Submitted request " << methodName);
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-  d->blockingLoop.exec(QEventLoop::ExcludeUserInputEvents | QEventLoop::WaitForMoreEvents);
+  d->BlockingLoop.exec(QEventLoop::ExcludeUserInputEvents | QEventLoop::WaitForMoreEvents);
 
   QApplication::restoreOverrideCursor();
 
   //qDebug() << "Reply error: " << reply->errorString();
   //qDebug() << reply->readAll();
-  const QtSoapMessage& response = d->http.getResponse();
+  const QtSoapMessage& response = d->Http.getResponse();
+
+  CTK_SOAP_LOG( << "Got Response." );
 
   if (response.isFault())
-  {
+    {
     qCritical() << "ctkSimpleSoapClient: server error (response.IsFault())";
     CTK_SOAP_LOG_LOWLEVEL( << response.faultString().toString().toLatin1().constData() << endl );
     CTK_SOAP_LOG_LOWLEVEL( << response.toXmlString() );
     return response.returnValue();
     //    throw std::runtime_error("ctkSimpleSoapClient: server error (response.IsFault())");
-  }
+    }
 
   CTK_SOAP_LOG_LOWLEVEL( << "Response: " << response.toXmlString() );
 

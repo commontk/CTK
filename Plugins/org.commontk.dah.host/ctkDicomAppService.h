@@ -31,21 +31,21 @@ class ctkDicomAppService : public ctkDicomExchangeService, public ctkDicomAppInt
 
 public:
   ctkDicomAppService(ushort port, QString path);
-  ~ctkDicomAppService();
+  virtual ~ctkDicomAppService();
 
-  ctkDicomAppHosting::State getState();
-  bool setState(ctkDicomAppHosting::State newState);
-  bool bringToFront(const QRect& requestedScreenArea);
+  virtual ctkDicomAppHosting::State getState();
+  virtual bool setState(ctkDicomAppHosting::State newState);
+  virtual bool bringToFront(const QRect& requestedScreenArea);
 
   // Exchange methods implemented in ctkDicomExchangeService
-  bool notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData);
+  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
-  QList<ctkDicomAppHosting::ObjectLocator> getData(
-    QList<QUuid> objectUUIDs, 
-    QList<QString> acceptableTransferSyntaxUIDs, 
+  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
     bool includeBulkData);
 
-  void releaseData(QList<QUuid> objectUUIDs);
+  virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
 };
 

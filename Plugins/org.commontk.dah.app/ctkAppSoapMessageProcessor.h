@@ -22,6 +22,7 @@
 #ifndef CTKAPPSOAPMESSAGEPROCESSOR_H
 #define CTKAPPSOAPMESSAGEPROCESSOR_H
 
+// CTK includes
 #include "ctkSoapMessageProcessor.h"
 #include "ctkDicomAppInterface.h"
 
@@ -32,7 +33,7 @@ public:
 
   ctkAppSoapMessageProcessor( ctkDicomAppInterface* inter );
 
-  bool process(
+  virtual bool process(
     const QtSoapMessage& message,
     QtSoapMessage* reply) const;
     
@@ -45,7 +46,7 @@ private:
   void processBringToFront(const QtSoapMessage& message,
                            QtSoapMessage* reply) const;
                
-  ctkDicomAppInterface* appInterface;
+  ctkDicomAppInterface* AppInterface;
 
 };
 

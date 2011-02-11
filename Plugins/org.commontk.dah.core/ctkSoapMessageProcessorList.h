@@ -22,8 +22,10 @@
 #ifndef CTKSOAPMESSAGEPROCESSORLIST_H
 #define CTKSOAPMESSAGEPROCESSORLIST_H
 
+// Qt includes
 #include <QList>
 
+// CTK includes
 #include "ctkSoapMessageProcessor.h"
 
 #include <org_commontk_dah_core_Export.h>
@@ -33,18 +35,18 @@ class org_commontk_dah_core_EXPORT ctkSoapMessageProcessorList : public ctkSoapM
 
 public:
 
-  ~ctkSoapMessageProcessorList();
+  virtual ~ctkSoapMessageProcessorList();
 
   void push_back( ctkSoapMessageProcessor* processor );
 
   void clear();
 
-  bool process(const QtSoapMessage& message,
+  virtual bool process(const QtSoapMessage& message,
                QtSoapMessage* reply) const;
 
 private:
 
-  QList<ctkSoapMessageProcessor*> processors;
+  QList<ctkSoapMessageProcessor*> Processors;
 
 };
 

@@ -19,12 +19,21 @@
 
 =============================================================================*/
 
-#include <QString>
-#include <QList>
-#include <QUuid>
-
 #ifndef CTKDICOMAPPHOSTINGTYPES_H
 #define CTKDICOMAPPHOSTINGTYPES_H
+
+// Qt includes
+#include <QString>
+#include <QList>
+
+#ifdef ERROR
+# error Try to reorder include files (this one first)       \
+ or write #undef ERROR before including this header.        \
+ Cause of this problem may be dcmimage.h, which indirectly  \
+ includes windows.h.
+#endif
+
+#include <org_commontk_dah_core_Export.h>
 
 /**
   * \brief Typedefs and classes defined in the interfaces of DICOM Supplement 118.
@@ -32,6 +41,7 @@
   */
 namespace ctkDicomAppHosting {
 
+  //----------------------------------------------------------------------------
   enum State {
     IDLE,
     INPROGRESS,
@@ -41,6 +51,7 @@ namespace ctkDicomAppHosting {
     EXIT
   };
 
+  //----------------------------------------------------------------------------
   enum StatusType {
     INFORMATION,
     WARNING,
@@ -48,56 +59,112 @@ namespace ctkDicomAppHosting {
     FATALERROR
   };
 
+  //----------------------------------------------------------------------------
   struct Status {
+    Status():statusType(INFORMATION){}
     StatusType statusType;
     QString codingSchemeDesignator;
     QString codeValue;
     QString codeMeaning;
   };
 
+  //----------------------------------------------------------------------------
   struct ObjectLocator {
-    QUuid locator;
-    QUuid source;
+    ObjectLocator():length(0), offset(0){}
+    QString locator;
+    QString source;
     QString transferSyntax;
     qint64 length;
     qint64 offset;
     QString URI;
   };
 
+  //----------------------------------------------------------------------------
   struct ObjectDescriptor {
-    QUuid descriptorUUID;
+    QString descriptorUUID;
     QString mimeType;
     QString classUID;
     QString transferSyntaxUID;
     QString modality;
   };
 
+  //----------------------------------------------------------------------------
+  typedef QList<ObjectDescriptor> ArrayOfObjectDescriptors;
+
+  //----------------------------------------------------------------------------
   struct Series {
     QString seriesUID;
-    QList<ObjectDescriptor> objectDescriptors;
+    ArrayOfObjectDescriptors objectDescriptors;
   };
 
+  //----------------------------------------------------------------------------
   struct Study {
     QString studyUID;
-    QList<ObjectDescriptor> objectDescriptors;
+    ArrayOfObjectDescriptors objectDescriptors;
     QList<Series> series;
   };
 
+  //----------------------------------------------------------------------------
   struct Patient {
     QString name;
     QString id;
     QString assigningAuthority;
     QString sex;
     QString birthDate;
-    QList<ObjectDescriptor> objectDescriptors;
+    ArrayOfObjectDescriptors objectDescriptors;
     QList<Study> studies;
   };
 
+  //----------------------------------------------------------------------------
   struct AvailableData {
-    QList<ObjectDescriptor> objectDescriptors;
+    ArrayOfObjectDescriptors objectDescriptors;
     QList<Patient> patients;
   };
-
 }
+
+//----------------------------------------------------------------------------
+// Comparison operators
+
+bool org_commontk_dah_core_EXPORT operator ==(const ctkDicomAppHosting::Status& left,
+                                              const ctkDicomAppHosting::Status& right);
+
+bool org_commontk_dah_core_EXPORT operator !=(const ctkDicomAppHosting::Status& left,
+                                              const ctkDicomAppHosting::Status& right);
+
+bool org_commontk_dah_core_EXPORT operator ==(const ctkDicomAppHosting::ObjectLocator& left,
+                                              const ctkDicomAppHosting::ObjectLocator& right);
+
+bool org_commontk_dah_core_EXPORT operator !=(const ctkDicomAppHosting::ObjectLocator& left,
+                                              const ctkDicomAppHosting::ObjectLocator& right);
+
+bool org_commontk_dah_core_EXPORT operator ==(const ctkDicomAppHosting::ObjectDescriptor& left,
+                                              const ctkDicomAppHosting::ObjectDescriptor& right);
+
+bool org_commontk_dah_core_EXPORT operator !=(const ctkDicomAppHosting::ObjectDescriptor& left,
+                                              const ctkDicomAppHosting::ObjectDescriptor& right);
+
+bool org_commontk_dah_core_EXPORT operator ==(const ctkDicomAppHosting::Series& left,
+                                              const ctkDicomAppHosting::Series& right);
+
+bool org_commontk_dah_core_EXPORT operator !=(const ctkDicomAppHosting::Series& left,
+                                              const ctkDicomAppHosting::Series& right);
+
+bool org_commontk_dah_core_EXPORT operator ==(const ctkDicomAppHosting::Study& left,
+                                              const ctkDicomAppHosting::Study& right);
+
+bool org_commontk_dah_core_EXPORT operator !=(const ctkDicomAppHosting::Study& left,
+                                              const ctkDicomAppHosting::Study& right);
+
+bool org_commontk_dah_core_EXPORT operator ==(const ctkDicomAppHosting::Patient& left,
+                                              const ctkDicomAppHosting::Patient& right);
+
+bool org_commontk_dah_core_EXPORT operator !=(const ctkDicomAppHosting::Patient& left,
+                                              const ctkDicomAppHosting::Patient& right);
+
+bool org_commontk_dah_core_EXPORT operator ==(const ctkDicomAppHosting::AvailableData& left,
+                                              const ctkDicomAppHosting::AvailableData& right);
+
+bool org_commontk_dah_core_EXPORT operator !=(const ctkDicomAppHosting::AvailableData& left,
+                                              const ctkDicomAppHosting::AvailableData& right);
 
 #endif // CTKDICOMAPPHOSTINGTYPES

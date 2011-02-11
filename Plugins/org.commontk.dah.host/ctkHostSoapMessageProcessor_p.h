@@ -32,7 +32,7 @@ public:
 
   ctkHostSoapMessageProcessor( ctkDicomHostInterface* inter );
 
-  bool process(
+  virtual bool process(
     const QtSoapMessage& message,
     QtSoapMessage* reply) const;
     
@@ -49,7 +49,7 @@ private:
   void processGetOutputLocation(const QtSoapMessage& message,
                                  QtSoapMessage* reply) const;
                
-  ctkDicomHostInterface* hostInterface;
+  ctkDicomHostInterface* HostInterface;
 
 };
 

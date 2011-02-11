@@ -19,15 +19,7 @@
 
 =============================================================================*/
 
-#include <ctkPluginFrameworkFactory.h>
-#include <ctkPluginFramework.h>
-#include <ctkPluginException.h>
-#include <ctkPluginContext.h>
-
-// for testing purposes use:
-// --hostURL http://localhost:8081/host --applicationURL http://localhost:8082/app dicomapp
-
-
+// Qt includes
 #include <QApplication>
 #include <QString>
 #include <QStringList>
@@ -37,47 +29,67 @@
 #include <QUrl>
 #include <QDebug>
 
+// CTK includes
+#include <ctkCommandLineParser.h>
+#include <ctkPluginFrameworkFactory.h>
+#include <ctkPluginFramework.h>
+#include <ctkPluginException.h>
+#include <ctkPluginContext.h>
+
+// For testing purposes use:
+// --hostURL http://localhost:8081/host --applicationURL http://localhost:8082/app dicomapp
+
+//----------------------------------------------------------------------------
 void print_usage()
 {
   qCritical() << "Usage:";
   qCritical() << "  " << QFileInfo(qApp->arguments().at(0)).fileName() << " --hostURL url1 --applicationURL url2 <plugin-name>";
 }
 
+//----------------------------------------------------------------------------
 int main(int argv, char** argc)
 {
   QApplication app(argv, argc);
-  qDebug() << "################################################################";
 
   qApp->setOrganizationName("CTK");
   qApp->setOrganizationDomain("commontk.org");
   qApp->setApplicationName("ctkExampleHostedApp");
 
-  // parse the command line
-  qDebug() << "################################################################";
+  ctkCommandLineParser parser;
+  parser.setArgumentPrefix("--", "-"); // Use Unix-style argument names
 
-  if(qApp->arguments().size() < 5)
-  {
+  // Add command line argument names
+  parser.addArgument("hostURL", "", QVariant::String, "Hosting system URL");
+  parser.addArgument("applicationURL", "", QVariant::String, "Hosted Application URL");
+  parser.addArgument("help", "h", QVariant::Bool, "Show this help text");
+
+  bool ok = false;
+  QHash<QString, QVariant> parsedArgs = parser.parseArguments(QCoreApplication::arguments(), &ok);
+  if (!ok)
+    {
+    QTextStream(stderr, QIODevice::WriteOnly) << "Error parsing arguments: "
+                                              << parser.errorString() << "\n";
+    return EXIT_FAILURE;
+    }
+
+  // Show a help message
+   if (parsedArgs.contains("help"))
+     {
+     print_usage();
+     QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
+     return EXIT_SUCCESS;
+     }
+
+  if(parsedArgs.count() != 2)
+    {
     qCritical() << "Wrong number of command line arguments.";
     print_usage();
-    exit(1);
-  }
+    QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
+    return EXIT_FAILURE;
+    }
 
-  if(qApp->arguments().at(1) != "--hostURL")
-  {
-    qCritical() << "First argument must be --hostURL.";
-    print_usage();
-    exit(1);
-  }
-  QString hostURL = qApp->arguments().at(2);
-  qDebug() << "hostURL is: " << hostURL << " . Extracted port is: " << QUrl(hostURL).port();
-
-  if(qApp->arguments().at(3) != "--applicationURL")
-  {
-    qCritical() << "First argument must be --applicationURL.";
-    print_usage();
-    exit(1);
-  }
-  QString appURL = qApp->arguments().at(4);
+  QString hostURL = parsedArgs.value("hostURL").toString();
+  QString appURL = parsedArgs.value("applicationURL").toString();
   qDebug() << "appURL is: " << appURL << " . Extracted port is: " << QUrl(appURL).port();
 
   // setup the plugin framework
@@ -87,14 +99,15 @@ int main(int argv, char** argc)
   ctkPluginFrameworkFactory fwFactory(fwProps);
   QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
 
-  try {
+  try
+    {
     framework->init();
-  }
+    }
   catch (const ctkPluginException& exc)
-  {
+    {
     qCritical() << "Failed to initialize the plug-in framework:" << exc;
-    exit(2);
-  }
+    return EXIT_FAILURE;
+    }
 
 #ifdef CMAKE_INTDIR
   QString pluginPath = qApp->applicationDirPath() + "/../plugins/" CMAKE_INTDIR "/";
@@ -104,66 +117,62 @@ int main(int argv, char** argc)
 
   qApp->addLibraryPath(pluginPath);
 
-  // construct the name of the plugin with the business logic
+  // Construct the name of the plugin with the business logic
   // (thus the actual logic of the hosted app)
-  QString pluginName;
-  if(qApp->arguments().size()>5)
-  {
-    pluginName = qApp->arguments().at(5);
-  }
-  else
-  {
-    pluginName = "org_commontk_dah_exampleapp";
-  }
+  QString pluginName("org_commontk_dah_exampleapp");
+  if(parser.unparsedArguments().count() > 0)
+    {
+    pluginName = parser.unparsedArguments().at(0);
+    }
 
-  // try to find the plugin and install all plugins available in 
+  // try to find the plugin and install all plugins available in
   // pluginPath containing the string "org_commontk_dah" (but do not start them)
   QSharedPointer<ctkPlugin> appPlugin;
   QStringList libFilter;
   libFilter << "*.dll" << "*.so" << "*.dylib";
   QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
   while(dirIter.hasNext())
-  {
-    try
     {
+    try
+      {
       QString fileLocation = dirIter.next();
       if (fileLocation.contains("org_commontk_dah"))
-      {
+        {
         QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
         if (fileLocation.contains(pluginName))
-        {
+          {
           appPlugin = plugin;
-        }
+          }
         //plugin->start(ctkPlugin::START_TRANSIENT);
+        }
+      }
+    catch (const ctkPluginException& e)
+      {
+      qCritical() << e.what();
       }
     }
-    catch (const ctkPluginException& e)
-    {
-      qCritical() << e.what();
-    }
-  }
 
   // if we did not find the business logic: abort
   if(!appPlugin)
-  {
+    {
     qCritical() << "Could not find plugin.";
     qCritical() << "  Plugin name: " << pluginName;
     qCritical() << "  Plugin path: " << pluginPath;
-    exit(3);
-  }
+    return EXIT_FAILURE;
+    }
 
   // start the plugin framework
   framework->start();
 
   // start the plugin with the business logic
   try
-  {
+    {
     appPlugin->start();
-  }
+    }
   catch (const ctkPluginException& e)
-  {
+    {
     qCritical() << e;
-  }
+    }
 
   return app.exec();
 }

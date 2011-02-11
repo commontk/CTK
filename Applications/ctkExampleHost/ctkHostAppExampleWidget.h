@@ -50,16 +50,18 @@ public slots:
   void startButtonClicked();
   void runButtonClicked();
   void stopButtonClicked();
+  void suspendButtonClicked();
+  void cancelButtonClicked();
   void appProcessError(QProcess::ProcessError error);
   void appProcessStateChanged(QProcess::ProcessState state);
   void appStateChanged(ctkDicomAppHosting::State state);
 
   void placeholderResized();
-
+  void outputMessage();
 protected:
 
-  ctkExampleDicomHost* host;
-  QString appFileName;
+  ctkExampleDicomHost* Host;
+  QString AppFileName;
 
 private:
 

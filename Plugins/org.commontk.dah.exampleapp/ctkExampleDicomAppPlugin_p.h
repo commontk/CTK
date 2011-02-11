@@ -36,18 +36,18 @@ class ctkExampleDicomAppPlugin :
 public:
 
   ctkExampleDicomAppPlugin();
-  ~ctkExampleDicomAppPlugin();
+  virtual ~ctkExampleDicomAppPlugin();
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+  virtual void start(ctkPluginContext* context);
+  virtual void stop(ctkPluginContext* context);
 
   static ctkPluginContext* getPluginContext();
 
 private:
 
-  static ctkPluginContext* context;
+  static ctkPluginContext* Context;
 
-  QObject* appLogic;
+  QObject* AppLogic;
 
 }; // ctkExampleDicomAppPlugin
 

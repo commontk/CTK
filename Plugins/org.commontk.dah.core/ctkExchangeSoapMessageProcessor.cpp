@@ -20,52 +20,63 @@
 =============================================================================*/
 
 #include "ctkExchangeSoapMessageProcessor.h"
+#include "ctkSoapLog.h"
 
 #include <ctkDicomAppHostingTypesHelper.h>
 
+//----------------------------------------------------------------------------
 ctkExchangeSoapMessageProcessor::ctkExchangeSoapMessageProcessor(ctkDicomExchangeInterface* inter)
 : exchangeInterface(inter)
 {}
 
+//----------------------------------------------------------------------------
 bool ctkExchangeSoapMessageProcessor::process(
   const QtSoapMessage& message, QtSoapMessage* reply ) const
 {
   // TODO check for NULL exchangeInterface?
-  
+
   const QtSoapType& method = message.method();
   QString methodName = method.name().name();
 
   qDebug() << "ExchangeMessageProcessor: Received soap method request: " << methodName;
 
   bool foundMethod = false;
-  
+
   if (methodName == "notifyDataAvailable")
-  {
+    {
     processNotifyDataAvailable(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "getData")
-  {
+    {
     processGetData(message, reply);
     foundMethod = true;
-  }
+    }
   else if (methodName == "releaseData")
-  {
+    {
     processReleaseData(message, reply);
     foundMethod = true;
-  }
-  
+    }
+
   return foundMethod;
 }
 
+//----------------------------------------------------------------------------
 void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
   const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
-  const QtSoapType& inputType = message.method()["data"];
+  const QtSoapType& inputType = message.method()[0];//"availableData"];
+  if(inputType.isValid()==false)
+    {
+    qCritical() << "  NotifyDataAvailable: availableData not valid. " << inputType.errorString();
+    }
+  CTK_SOAP_LOG( << inputType.toString());
   const ctkDicomAppHosting::AvailableData data = ctkDicomSoapAvailableData::getAvailableData(inputType);
   const QtSoapType& inputType2 = message.method()["lastData"];
   const bool lastData = ctkDicomSoapBool::getBool(inputType2);
+
+  CTK_SOAP_LOG_HIGHLEVEL( << "  NotifyDataAvailable: patients.count: " << data.patients.count());
   // query interface
   bool result = exchangeInterface->notifyDataAvailable(data, lastData);
   // set reply message
@@ -74,16 +85,15 @@ void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
   reply->addMethodArgument(resultType);
 }
 
+//----------------------------------------------------------------------------
 void ctkExchangeSoapMessageProcessor::processGetData(
     const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["objectUUIDs"];
-  const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(
-    dynamic_cast<const QtSoapArray&>(inputType));
+  const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(inputType);
   const QtSoapType& inputType2 = message.method()["acceptableTransferSyntaxUIDs"];
-  const QStringList acceptableTransferSyntaxUIDs = ctkDicomSoapArrayOfStringType::getArray(
-    dynamic_cast<const QtSoapArray&>(inputType2));
+  const QStringList acceptableTransferSyntaxUIDs = ctkDicomSoapArrayOfStringType::getArray(inputType2);
   const QtSoapType& inputType3 = message.method()["includeBulkData"];
   const bool includeBulkData = ctkDicomSoapBool::getBool(inputType3);
   // query interface
@@ -95,14 +105,14 @@ void ctkExchangeSoapMessageProcessor::processGetData(
   reply->addMethodArgument(resultType);
 }
 
+//----------------------------------------------------------------------------
 void ctkExchangeSoapMessageProcessor::processReleaseData(
-    const QtSoapMessage &message, QtSoapMessage *reply) const
+    const QtSoapMessage &message, QtSoapMessage * /*reply*/) const
 {
-  Q_UNUSED(message)
-  Q_UNUSED(reply)
   // extract arguments from input message
-  //const QtSoapType& inputType = message.method()["objectUUIDs"];
-  const QList<QUuid> objectUUIDs;
+  const QtSoapType& inputType = message.method()["objectUUIDs"];
+  const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(
+    dynamic_cast<const QtSoapArray&>(inputType));
   // query interface
   exchangeInterface->releaseData(objectUUIDs);
   // set reply message: nothing to be done

@@ -23,9 +23,11 @@
 #ifndef CTKDICOMAPPPSERVER_P_H
 #define CTKDICOMAPPPSERVER_P_H
 
+// Qt includes
 #include <QObject>
 #include <QtSoapMessage>
 
+// CTK includes
 #include <ctkServiceTracker.h>
 
 #include <ctkDicomAppInterface.h>
@@ -44,7 +46,7 @@ class ctkDicomAppServer : public QObject, ctkServiceTrackerCustomizer<ctkDicomAp
 
 public:
   ctkDicomAppServer(int port);
-
+  ~ctkDicomAppServer();
 public slots:
 
   void incomingSoapMessage(const QtSoapMessage& message,
@@ -53,20 +55,20 @@ public slots:
 
 protected:
 
-  ctkDicomAppInterface* addingService(const ctkServiceReference& reference);
-  void modifiedService(const ctkServiceReference& reference, ctkDicomAppInterface* service);
-  void removedService(const ctkServiceReference& reference, ctkDicomAppInterface* service);
+  virtual ctkDicomAppInterface* addingService(const ctkServiceReference& reference);
+  virtual void modifiedService(const ctkServiceReference& reference, ctkDicomAppInterface* service);
+  virtual void removedService(const ctkServiceReference& reference, ctkDicomAppInterface* service);
 
 private:
 
-  QMutex mutex;
-  bool appInterfaceRegistered;
+  QMutex Mutex;
+  bool AppInterfaceRegistered;
 
-  ctkSoapMessageProcessorList processors;
-  ctkSimpleSoapServer server;
-  int port;
+  ctkSoapMessageProcessorList Processors;
+  ctkSimpleSoapServer Server;
+  int Port;
 
-  ctkServiceTracker<ctkDicomAppInterface*> appInterfaceTracker;
+  ctkServiceTracker<ctkDicomAppInterface*> AppInterfaceTracker;
 };
 
 #endif // CTKDICOMAPPPSERVER_P_H

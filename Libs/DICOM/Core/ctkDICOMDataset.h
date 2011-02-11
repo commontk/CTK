@@ -80,6 +80,15 @@ public:
     virtual void InitializeFromDataset(DcmDataset* dataset);
 
     /**
+      \brief For initialization from file in a constructor / assignment.
+    */
+    virtual void InitializeFromFile(const QString& filename, 
+                    const E_TransferSyntax readXfer = EXS_Unknown,
+                    const E_GrpLenEncoding groupLength = EGL_noChange,
+                    const Uint32 maxReadLength = DCM_MaxReadLength,
+                    const E_FileReadMode readMode = ERM_autoDetect);
+
+    /**
      \brief Store a string representation of the object to a database field.
 
      The internal DcmDataset is serialized into a memory buffer using DcmDataset::write(..).
@@ -234,6 +243,8 @@ protected:
     virtual void SetStoredSerialization(QString serializedDataset);
 
   QScopedPointer<ctkDICOMDatasetPrivate> d_ptr;
+
+  DcmDataset& GetDcmDataset() const;
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMDataset);

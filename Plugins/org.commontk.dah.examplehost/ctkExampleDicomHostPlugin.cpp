@@ -19,43 +19,51 @@
 
 =============================================================================*/
 
-
-#include "ctkExampleDicomHostPlugin_p.h"
+// Qt includes
 #include <QtPlugin>
 
-ctkExampleDicomHostPlugin* ctkExampleDicomHostPlugin::instance = 0;
+// CTK includes
+#include "ctkExampleDicomHostPlugin_p.h"
 
+ctkExampleDicomHostPlugin* ctkExampleDicomHostPlugin::Instance = 0;
+
+//----------------------------------------------------------------------------
 ctkExampleDicomHostPlugin::ctkExampleDicomHostPlugin()
-  : context(0)
+  : Context(0)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkExampleDicomHostPlugin::~ctkExampleDicomHostPlugin()
 {
   
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomHostPlugin::start(ctkPluginContext* context)
 {
-  instance = this;
-  this->context = context;
+  ctkExampleDicomHostPlugin::Instance = this;
+  this->Context = context;
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomHostPlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
 }
 
+//----------------------------------------------------------------------------
 ctkExampleDicomHostPlugin* ctkExampleDicomHostPlugin::getInstance()
 {
-  return instance;
+  return ctkExampleDicomHostPlugin::Instance;
 }
 
+//----------------------------------------------------------------------------
 ctkPluginContext* ctkExampleDicomHostPlugin::getPluginContext() const
 {
-  return context;
+  return this->Context;
 }
 
-Q_EXPORT_PLUGIN2(org_commontk_dah_examplehost_Export_Export, ctkExampleDicomHostPlugin)
+Q_EXPORT_PLUGIN2(org_commontk_dah_examplehost, ctkExampleDicomHostPlugin)
 
 

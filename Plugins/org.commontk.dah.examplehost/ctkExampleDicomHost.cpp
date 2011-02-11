@@ -19,102 +19,167 @@
 
 =============================================================================*/
 
-#include "ctkExampleDicomHost.h"
-#include "ctkDicomAppHostingTypesHelper.h"
-
+// Qt includes
 #include <QProcess>
 #include <QtDebug>
 #include <QRect>
 
+// CTK includes
+#include "ctkExampleDicomHost.h"
+#include "ctkDicomAppHostingTypesHelper.h"
+#include "ctkDicomAvailableDataHelper.h"
+
+// STD includes
 #include <iostream>
 
+//----------------------------------------------------------------------------
 ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
-    placeholderWidget(placeholderWidget),
-    applicationState(ctkDicomAppHosting::IDLE)
+    PlaceholderWidget(placeholderWidget),
+    exitingApplication(false)
 {
-  connect(&this->appProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
+  connect(this,SIGNAL(appReady()),SLOT(onAppReady()));
+  connect(this,SIGNAL(startProgress()),this,SLOT(onStartProgress()));
+  connect(this,SIGNAL(releaseAvailableResources()),this,SLOT(onReleaseAvailableResources()));
+  connect(this,SIGNAL(resumed()),this,SLOT(onResumed()));
+  connect(this,SIGNAL(completed()),this,SLOT(onCompleted()));
+  connect(this,SIGNAL(suspended()),this,SLOT(onSuspended()));
+  connect(this,SIGNAL(canceled()),this,SLOT(onCanceled()));
+  connect(this,SIGNAL(exited()),this,SLOT(onExited()));
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomHost::StartApplication(QString AppPath)
 {
-  QStringList l;
-  l.append("--hostURL");
-  l.append(QString("http://localhost:") + QString::number(this->getHostPort()) + "/HostInterface" );
-  l.append("--applicationURL");
-  l.append(QString("http://localhost:") + QString::number(this->getAppPort()) + "/ApplicationInterface" );
+  QStringList arguments;
+  arguments.append("--hostURL");
+  arguments.append(QString("http://localhost:") + QString::number(this->getHostPort()) + "/HostInterface" );
+  arguments.append("--applicationURL");
+  arguments.append(QString("http://localhost:") + QString::number(this->getAppPort()) + "/ApplicationInterface" );
   //by default, the ctkExampleHostedApp uses the org.commontk.dah.exampleapp plugin
-  //l.append("dicomapp"); // the app plugin to use - has to be changed later
+  //arguments.append("dicomapp"); // the app plugin to use - has to be changed later
   //if (!QProcess::startDetached (
   //{
   //    qCritical() << "application failed to start!";
   //}
-  //qDebug() << "starting application: " << AppPath << " " << l;
-  qDebug() << "starting application: " << AppPath << " " << l;
-  this->appProcess.setProcessChannelMode(QProcess::MergedChannels);
-  this->appProcess.start(AppPath,l);
+  //qDebug() << "starting application: " << AppPath << " " << arguments;
+  qDebug() << "starting application: " << AppPath << " " << arguments;
+  this->AppProcess.setProcessChannelMode(QProcess::MergedChannels);
+  this->AppProcess.start(AppPath, arguments);
 }
 
+//----------------------------------------------------------------------------
 QRect ctkExampleDicomHost::getAvailableScreen(const QRect& preferredScreen)
 {
   qDebug()<< "Application asked for this area:"<< preferredScreen;
 
-  QRect rect (this->placeholderWidget->getAbsolutePosition());
+  QRect rect (this->PlaceholderWidget->getAbsolutePosition());
 
   emit giveAvailableScreen(rect);
   return rect;
 }
 
 
-void ctkExampleDicomHost::notifyStateChanged(ctkDicomAppHosting::State state)
-{
-  qDebug()<< "new state received:"<< static_cast<int>(state);
-  qDebug()<< "new state received:"<< ctkDicomSoapState::toStringValue(state);
-  emit stateChangedReceived(state);
-}
-
+//----------------------------------------------------------------------------
 void ctkExampleDicomHost::notifyStatus(const ctkDicomAppHosting::Status& status)
 {
   qDebug()<< "new status received:"<<status.codeMeaning;
   emit statusReceived(status);;
 }
 
+//----------------------------------------------------------------------------
 ctkExampleDicomHost::~ctkExampleDicomHost()
 {
   qDebug() << "Exiting host: trying to terminate app";
-  this->appProcess.terminate();
+  this->AppProcess.terminate();
   qDebug() << "Exiting host: trying to kill app";
-  this->appProcess.kill();
+  this->AppProcess.kill();
 }
 
-void ctkExampleDicomHost::forwardConsoleOutput()
-{
-  while( this->appProcess.bytesAvailable() )
-  {
-    QString line( this->appProcess.readLine() );
-    line.prepend(">>>> ");
-    std::cout << line.toStdString();
-  }
-}
 
-bool ctkExampleDicomHost::notifyDataAvailable(ctkDicomAppHosting::AvailableData data, bool lastData)
+//----------------------------------------------------------------------------
+bool ctkExampleDicomHost::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
   Q_UNUSED(data)
   Q_UNUSED(lastData)
   return false;
 }
 
-QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
-    QList<QUuid> objectUUIDs,
-    QList<QString> acceptableTransferSyntaxUIDs,
-    bool includeBulkData)
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onAppReady()
 {
-  Q_UNUSED(objectUUIDs)
-  Q_UNUSED(acceptableTransferSyntaxUIDs)
-  Q_UNUSED(includeBulkData)
-  return QList<ctkDicomAppHosting::ObjectLocator>();
+  //prepare some resources...
+  //tell app to start
+  //getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
+  qDebug() << "App ready to work";
+  if (this->exitingApplication)
+  {
+    this->exitingApplication = false;
+    getDicomAppService ()->setState (ctkDicomAppHosting::EXIT);
+  }
 }
-void ctkExampleDicomHost::releaseData(QList<QUuid> objectUUIDs)
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onStartProgress()
+{
+  ctkDicomAppHosting::AvailableData data;
+  ctkDicomAvailableDataHelper::addToAvailableData(data, 
+    this->objectLocatorCache(), 
+    "C:/XIP/XIPHost/dicom-dataset-demo/1.3.6.1.4.1.9328.50.1.10698.dcm");
+
+  qDebug()<<"send dataDescriptors";
+  bool success = this->publishData(data, true);
+  if(!success)
+  {
+    qCritical() << "Failed to publish data";
+  }
+  qDebug() << "  notifyDataAvailable(1111) returned: " << success;
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onResumed()
+{
+  qDebug() << "App resumed work";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onCompleted()
+{
+  qDebug() << "App finished processing";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onSuspended()
+{
+  qDebug() << "App paused";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onCanceled()
+{
+  qDebug() << "App canceled";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onExited()
+{
+  qDebug() << "App exited";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onReleaseAvailableResources()
+{
+  qDebug() << "Should release resources put at the disposition of the app";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::releaseData(const QList<QUuid>& objectUUIDs)
 {
   Q_UNUSED(objectUUIDs)
+}
+
+void ctkExampleDicomHost::exitApplication()
+{
+  this->exitingApplication=true;
+  getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
 }

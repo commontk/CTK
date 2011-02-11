@@ -19,65 +19,204 @@
 
 =============================================================================*/
 
+// CTK includes
+#include "ctkDicomAppService.h"
 #include "ctkDicomAbstractHost.h"
 #include "ctkDicomHostServer.h"
 #include "ctkDicomAppService.h"
+#include "ctkDicomAppHostingTypesHelper.h"
+#include <ctkDicomObjectLocatorCache.h>
 
 class ctkDicomAbstractHostPrivate
 {
 public:
 
-  ctkDicomAbstractHostPrivate(ctkDicomAbstractHost* hostInterface, int hostPort, int appPort) : hostPort(hostPort), appPort(appPort)
-  {
-    // start server
-    if (hostPort==0)
-    {
-      hostPort = 8080;
-    }
-    if (appPort==0)
-    {
-      appPort = 8081;
-    }
+  ctkDicomAbstractHostPrivate(ctkDicomAbstractHost* hostInterface, int HostPort, int AppPort);
+  ~ctkDicomAbstractHostPrivate();
 
-    server = new ctkDicomHostServer(hostInterface,hostPort);
-    appService = new ctkDicomAppService(appPort, "/ApplicationInterface");
-  }
-
-  ~ctkDicomAbstractHostPrivate()
-  {
-    delete server;
-    delete appService;
-  }
-
-  int hostPort;
-  int appPort;
-  ctkDicomHostServer* server;
-  ctkDicomAppInterface* appService;
+  int HostPort;
+  int AppPort;
+  ctkDicomHostServer* Server;
+  ctkDicomAppInterface* AppService;
+  ctkDicomAppHosting::State AppState;
+  ctkDicomObjectLocatorCache ObjectLocatorCache;
   // ctkDicomAppHosting::Status
+
 };
 
-ctkDicomAbstractHost::ctkDicomAbstractHost(int hostPort, int appPort) : d_ptr(new ctkDicomAbstractHostPrivate(this,hostPort,appPort))
+//----------------------------------------------------------------------------
+// ctkDicomAbstractHostPrivate methods
+
+//----------------------------------------------------------------------------
+ctkDicomAbstractHostPrivate::ctkDicomAbstractHostPrivate(
+  ctkDicomAbstractHost* hostInterface, int hostPort, int appPort) : HostPort(hostPort), AppPort(appPort),AppState(ctkDicomAppHosting::EXIT)
 {
+  // start server
+  if (this->HostPort == 0)
+    {
+    this->HostPort = 8080;
+    }
+  if (this->AppPort == 0)
+    {
+    this->AppPort = 8081;
+    }
+
+  this->Server = new ctkDicomHostServer(hostInterface,hostPort);
+  this->AppService = new ctkDicomAppService(appPort, "/ApplicationInterface");
 }
 
-int ctkDicomAbstractHost::getHostPort() const
+//----------------------------------------------------------------------------
+ctkDicomAbstractHostPrivate::~ctkDicomAbstractHostPrivate()
 {
-  Q_D(const ctkDicomAbstractHost);
-  return d->hostPort;
+  delete this->Server;
+  this->Server = 0;
+  //do not delete AppService, deleted somewhere else before?
+  //delete  this->AppService;
+  //this->AppService = 0;
 }
 
-int ctkDicomAbstractHost::getAppPort() const
+//----------------------------------------------------------------------------
+// ctkDicomAbstractHost methods
+
+//----------------------------------------------------------------------------
+ctkDicomAbstractHost::ctkDicomAbstractHost(int hostPort, int appPort) :
+  d_ptr(new ctkDicomAbstractHostPrivate(this, hostPort, appPort))
 {
-  Q_D(const ctkDicomAbstractHost);
-  return d->appPort;
+
 }
 
+//----------------------------------------------------------------------------
 ctkDicomAbstractHost::~ctkDicomAbstractHost()
 {
 }
 
+//----------------------------------------------------------------------------
+int ctkDicomAbstractHost::getHostPort() const
+{
+  Q_D(const ctkDicomAbstractHost);
+  return d->HostPort;
+}
+
+//----------------------------------------------------------------------------
+int ctkDicomAbstractHost::getAppPort() const
+{
+  Q_D(const ctkDicomAbstractHost);
+  return d->AppPort;
+}
+
+//----------------------------------------------------------------------------
 ctkDicomAppInterface* ctkDicomAbstractHost::getDicomAppService() const
 {
   Q_D(const ctkDicomAbstractHost);
-  return d->appService;
+  return d->AppService;
+}
+
+//----------------------------------------------------------------------------
+QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractHost::getData(
+  const QList<QUuid>& objectUUIDs,
+  const QList<QString>& acceptableTransferSyntaxUIDs,
+  bool includeBulkData)
+{
+  Q_UNUSED(acceptableTransferSyntaxUIDs);
+  Q_UNUSED(includeBulkData);
+  return this->objectLocatorCache()->getData(objectUUIDs);
+}
+
+//----------------------------------------------------------------------------
+ctkDicomObjectLocatorCache* ctkDicomAbstractHost::objectLocatorCache()const
+{
+  Q_D(const ctkDicomAbstractHost);
+  return const_cast<ctkDicomObjectLocatorCache*>(&d->ObjectLocatorCache);
+}
+
+//----------------------------------------------------------------------------
+bool ctkDicomAbstractHost::publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData)
+{
+  if (!this->objectLocatorCache()->isCached(availableData))
+    {
+    return false;
+    }
+  bool success = this->getDicomAppService()->notifyDataAvailable(availableData, lastData);
+  if(!success)
+    {
+    return false;
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+void ctkDicomAbstractHost::notifyStateChanged(ctkDicomAppHosting::State newState)
+{
+  qDebug()<< "new state notification received:"<< static_cast<int>(newState);
+  qDebug()<< "new state notification received:"<< ctkDicomSoapState::toStringValue(newState);
+
+
+  switch (newState){
+  case ctkDicomAppHosting::IDLE:
+    if (d_ptr->AppState == ctkDicomAppHosting::COMPLETED)
+    {
+      d_ptr->AppState = ctkDicomAppHosting::IDLE;
+      releaseAvailableResources();
+    }
+    else if(d_ptr->AppState == ctkDicomAppHosting::EXIT
+            || d_ptr->AppState == ctkDicomAppHosting::IDLE
+            || d_ptr->AppState == ctkDicomAppHosting::CANCELED)
+    {
+      d_ptr->AppState = ctkDicomAppHosting::IDLE;
+      emit appReady();
+    }
+    else{
+      qDebug() << "Wrong transition from" << static_cast<int> (d_ptr->AppState)
+                  << "to:" << static_cast<int>(newState);
+    }
+    break;
+
+  case ctkDicomAppHosting::INPROGRESS:
+    if (d_ptr->AppState == ctkDicomAppHosting::IDLE)
+    {
+      emit startProgress();
+    }
+    else if(d_ptr->AppState == ctkDicomAppHosting::SUSPENDED)
+    {
+      //shouldn't be necessary, but can be useful for feedback
+      emit resumed();
+    }
+    else
+    {
+      qDebug() << "Wrong transition from" << static_cast<int>(d_ptr->AppState)
+                  << "to:" << static_cast<int>(newState);
+    }
+    break;
+
+  case ctkDicomAppHosting::COMPLETED:
+    emit completed();
+    break;
+
+  case ctkDicomAppHosting::SUSPENDED:
+    //shouldn't be necessary, but can be useful for feedback
+    emit suspended();
+    break;
+  case ctkDicomAppHosting::CANCELED:
+    //the app is in the process of canceling.
+    //perhaps filtering for answers to a cancel commands and a cancel because of an error in the client
+    emit canceled();
+    break;
+
+  case ctkDicomAppHosting::EXIT:
+    //check if current state is IDLE
+    emit exited();
+    break;
+
+  default:
+    //should never happen
+    qDebug() << "unexisting state Code, do nothing";
+  }
+
+  d_ptr->AppState = newState;
+  emit stateChangedReceived(newState);
+}
+
+ctkDicomAppHosting::State ctkDicomAbstractHost::getApplicationState()const
+{
+  return d_ptr->AppState;
 }

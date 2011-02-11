@@ -24,12 +24,14 @@
 
 #include "ctkSoapConnectionRunnable_p.h"
 
+//----------------------------------------------------------------------------
 ctkSimpleSoapServer::ctkSimpleSoapServer(QObject *parent) :
     QTcpServer(parent)
 {
   qRegisterMetaType<QtSoapMessage>("QtSoapMessage");
 }
 
+//----------------------------------------------------------------------------
 void ctkSimpleSoapServer::incomingConnection(int socketDescriptor)
 {
   qDebug() << "New incoming connection";

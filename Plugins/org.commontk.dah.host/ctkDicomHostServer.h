@@ -36,7 +36,7 @@ class org_commontk_dah_host_EXPORT ctkDicomHostServer
 public:
 
   ctkDicomHostServer(ctkDicomHostInterface* hostInterface, int port);
-  ~ctkDicomHostServer();
+  virtual ~ctkDicomHostServer();
 
 private:
 
