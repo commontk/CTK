@@ -53,6 +53,7 @@ qDebug()<<"Patient:  " << patient.name;
   patient.sex = dataset.GetElementAsString(DCM_PatientsSex);
   patient.birthDate = dataset.GetElementAsString(DCM_PatientsBirthDate);
 
+
   study.studyUID = dataset.GetElementAsString(DCM_StudyInstanceUID);
   series.seriesUID = dataset.GetElementAsString(DCM_SeriesInstanceUID);
 
@@ -63,15 +64,40 @@ qDebug()<<"Patient:  " << patient.name;
   objectDescriptor.transferSyntaxUID = dataset.GetElementAsString(DCM_TransferSyntaxUID);
   objectDescriptor.modality = dataset.GetElementAsString(DCM_Modality);
   
-  series.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
-  series.objectDescriptors.append (objectDescriptor);
 
-  study.series.append( series);
 
-  patient.studies.append(study);
+  ctkDicomAppHosting::Patient* ppatient;
+  ctkDicomAppHosting::Study* pstudy;
+  ctkDicomAppHosting::Series* pseries;
+  
+  ctkDicomAvailableDataAccessor(data).find(patient, study.studyUID, series.seriesUID,
+    ppatient, pstudy, pseries);
 
-  data.patients = QList<ctkDicomAppHosting::Patient>();
-  data.patients.append(patient);
+  if(pseries==NULL)
+  {
+    series.objectDescriptors.append(objectDescriptor);
+    if(pstudy==NULL)
+    {
+      study.series.append(series);
+      if(ppatient==NULL)
+      {
+        patient.studies.append(study);
+        data.patients.append(patient);
+      }
+      else
+      {
+        ppatient->studies.append(study);
+      }
+    }
+    else
+    {
+      pstudy->series.append(series);
+    }
+  }
+  else
+  {
+    pseries->objectDescriptors.append(objectDescriptor);
+  }
 
   ctkDicomAppHosting::ObjectLocator locator;
   locator.locator = objectDescriptor.descriptorUUID;
