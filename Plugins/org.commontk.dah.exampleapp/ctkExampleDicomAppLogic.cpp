@@ -96,9 +96,13 @@ void ctkExampleDicomAppLogic::do_something()
 void ctkExampleDicomAppLogic::onStartProgress()
 {
   setInternalState(ctkDicomAppHosting::INPROGRESS);
-  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
 
-  do_something();
+  // we need to create the button before we receive data from
+  // the host, which happens immediately after calling
+  // getHostInterface()->notifyStateChanged
+  do_something(); 
+
+  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
 }
 
 //----------------------------------------------------------------------------
