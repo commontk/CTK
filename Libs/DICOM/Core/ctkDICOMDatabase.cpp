@@ -36,6 +36,7 @@
 
 // ctkDICOM includes
 #include "ctkDICOMDatabase.h"
+#include "ctkDICOMImage.h"
 
 #include "ctkLogger.h"
 
@@ -51,6 +52,7 @@
 #include <dcmtk/ofstd/ofstring.h>
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
+#include <dcmimage.h>
 
 //------------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
@@ -228,7 +230,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset ) {
 */
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile ) {
+void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool createThumbnail ) {
   Q_D(ctkDICOMDatabase);
 
   // Check to see if the file has already been loaded
@@ -416,6 +418,24 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile ) {
       statement.exec();
       }
     }
+
+  if (createThumbnail)
+  {
+    QString thumbnailBaseDir = databaseDirectory() + "/thumbs/";
+    QString thumbnailFilename = thumbnailBaseDir + "/" + pathForDataset(dataset) + ".png";
+    QFileInfo thumbnailInfo(thumbnailFilename);
+    if ( ! ( thumbnailInfo.exists() && thumbnailInfo.lastModified() < QFileInfo(filename).lastModified() ) )
+    {
+      QString studySeriesDirectory = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
+      QDir(thumbnailBaseDir).mkpath(studySeriesDirectory);
+      // TODO: reuse dataset
+      DicomImage dcmtkImage(filename.toAscii());
+      ctkDICOMImage ctkImage(&dcmtkImage);
+      QImage image( ctkImage.getImage(0) );
+      image.scaled(128,128,Qt::KeepAspectRatio).save(thumbnailFilename,"PNG");
+    }
+  }
+
   if (d->DatabaseFileName == ":memory:")
     {
       emit databaseChanged();

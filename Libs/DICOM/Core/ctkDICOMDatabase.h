@@ -64,7 +64,7 @@ public:
   /**
    * Insert into the database if not already exsting.
    */
-  void insert ( DcmDataset *dataset, bool storeFile = true );
+  void insert ( DcmDataset *dataset, bool storeFile = true, bool createThumbnail = true );
   /***
     * Helper method: get the path that should be used to store this  image.
     */
