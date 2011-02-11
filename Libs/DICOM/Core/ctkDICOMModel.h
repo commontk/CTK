@@ -32,6 +32,12 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMModel : public QAbstractItemModel
 {
   Q_OBJECT
 public:
+
+  enum {
+    UIDRole = Qt::UserRole,
+    TypeRole
+  };
+
   explicit ctkDICOMModel(QObject* parent = 0);
   virtual ~ctkDICOMModel();
 

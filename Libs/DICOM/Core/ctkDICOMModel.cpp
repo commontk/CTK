@@ -413,6 +413,17 @@ int ctkDICOMModel::columnCount ( const QModelIndex & _parent ) const
 QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
 {
   Q_D(const ctkDICOMModel);
+  if ( role == UIDRole )
+    {
+    Node* node = d->nodeFromIndex(dataIndex);
+    return node ? node->UID : QString() ;
+    }
+  else if ( role == TypeRole )
+    {
+    Node* node = d->nodeFromIndex(dataIndex);
+    return node ? node->Type : 0;
+    }
+
   if (role != Qt::DisplayRole && role != Qt::EditRole)
     {
     return QVariant();
