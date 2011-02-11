@@ -21,8 +21,8 @@
 #include <iostream>
 
 // CTK includes
-#include "ctkQImageViewerWidget.h"
-#include "ctkDICOMDatasetViewerWidget.h"
+#include "ctkQImageView.h"
+#include "ctkDICOMDatasetView.h"
 
 // Qt includes
 #include <QLabel>
@@ -34,34 +34,34 @@
 #include <QPainter>
 
 //--------------------------------------------------------------------------
-class ctkDICOMDatasetViewerWidgetPrivate 
+class ctkDICOMDatasetViewPrivate 
 {
 
-  Q_DECLARE_PUBLIC( ctkDICOMDatasetViewerWidget );
+  Q_DECLARE_PUBLIC( ctkDICOMDatasetView );
 
 protected:
 
-  ctkDICOMDatasetViewerWidget* const q_ptr;
+  ctkDICOMDatasetView* const q_ptr;
 
 public:
 
-  ctkDICOMDatasetViewerWidgetPrivate( ctkDICOMDatasetViewerWidget& object );
+  ctkDICOMDatasetViewPrivate( ctkDICOMDatasetView& object );
 
   void init();
 };
 
 //--------------------------------------------------------------------------
-ctkDICOMDatasetViewerWidgetPrivate::ctkDICOMDatasetViewerWidgetPrivate(
-  ctkDICOMDatasetViewerWidget& object )
+ctkDICOMDatasetViewPrivate::ctkDICOMDatasetViewPrivate(
+  ctkDICOMDatasetView& object )
   : q_ptr( & object )
 {
 }
 
 //--------------------------------------------------------------------------
-void ctkDICOMDatasetViewerWidgetPrivate::init()
+void ctkDICOMDatasetViewPrivate::init()
 {
   /*
-  Q_Q( ctkDICOMDatasetViewerWidget );
+  Q_Q( ctkDICOMDatasetView );
   this->Window->setParent(q);
   QHBoxLayout* layout = new QHBoxLayout(q);
   layout->addWidget(this->Window);
@@ -71,59 +71,41 @@ void ctkDICOMDatasetViewerWidgetPrivate::init()
 }
 
 // -------------------------------------------------------------------------
-ctkDICOMDatasetViewerWidget::ctkDICOMDatasetViewerWidget( QWidget* _parent )
+ctkDICOMDatasetView::ctkDICOMDatasetView( QWidget* _parent )
   : Superclass( _parent ),
-    d_ptr( new ctkDICOMDatasetViewerWidgetPrivate( *this ) )
+    d_ptr( new ctkDICOMDatasetViewPrivate( *this ) )
 {
-  Q_D( ctkDICOMDatasetViewerWidget );
+  Q_D( ctkDICOMDatasetView );
   d->init();
 }
 
 // -------------------------------------------------------------------------
-ctkDICOMDatasetViewerWidget::ctkDICOMDatasetViewerWidget(
-  ctkDICOMDatasetViewerWidgetPrivate& pvt,
+ctkDICOMDatasetView::ctkDICOMDatasetView(
+  ctkDICOMDatasetViewPrivate& pvt,
   QWidget* _parent)
   : Superclass(_parent), d_ptr(&pvt)
 {
-  Q_D(ctkDICOMDatasetViewerWidget);
+  Q_D(ctkDICOMDatasetView);
   d->init();
 }
 
 // -------------------------------------------------------------------------
-ctkDICOMDatasetViewerWidget::~ctkDICOMDatasetViewerWidget()
+ctkDICOMDatasetView::~ctkDICOMDatasetView()
 {
 }
 
 // -------------------------------------------------------------------------
-//void ctkDICOMDatasetViewerWidget::addImage( const QImage * image )
-//{
-  //Q_D( ctkQImageViewerWidget );
-  //d->ImageList.push_back( image );
-  //d->TmpXMin = 0;
-  //d->TmpXMax = image->width();
-  //d->TmpYMin = 0;
-  //d->TmpYMax = image->height();
-  //this->update( true, false );
-  //this->setCenter( image->width()/2.0, image->height()/2.0 );
-//}
-
-// -------------------------------------------------------------------------
-void ctkDICOMDatasetViewerWidget::mousePressEvent( QMouseEvent * event )
+void ctkDICOMDatasetView::addImage( const ctkDICOMImage & image )
 {
-  event->ignore();
+  for( unsigned int i=0; i<image.frameCount(); ++i )
+    {
+    Superclass::addImage( image.getImage( i ) );
+    }
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetViewerWidget::mouseMoveEvent( QMouseEvent * event )
-{
-  event->ignore();
-}
-
-// -------------------------------------------------------------------------
-void ctkDICOMDatasetViewerWidget::update( bool zoomChanged,
+void ctkDICOMDatasetView::update( bool zoomChanged,
   bool sizeChanged )
 {
-  std::cout << "DICOM Updating.." << std::endl;
-
   Superclass::update( zoomChanged, sizeChanged );
 }

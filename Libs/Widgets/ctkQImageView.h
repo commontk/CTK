@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkQImageViewerWidget_h
-#define __ctkQImageViewerWidget_h
+#ifndef __ctkQImageView_h
+#define __ctkQImageView_h
 
 /// Qt includes
 #include <QWidget>
@@ -29,11 +29,11 @@
 #include "ctkPimpl.h"
 #include "ctkWidgetsExport.h"
 
-class ctkQImageViewerWidgetPrivate;
+class ctkQImageViewPrivate;
 
 ///
-/// ctkQImageViewerWidget is the base class of image viewer widgets.
-class CTK_WIDGETS_EXPORT ctkQImageViewerWidget: public QWidget
+/// ctkQImageView is the base class of image viewer widgets.
+class CTK_WIDGETS_EXPORT ctkQImageView: public QWidget
 {
 
   Q_OBJECT
@@ -44,10 +44,10 @@ public:
   typedef QWidget Superclass;
 
   /// Constructor
-  ctkQImageViewerWidget( QWidget* parent = 0 );
+  ctkQImageView( QWidget* parent = 0 );
   
   /// Destructor
-  virtual ~ctkQImageViewerWidget( void );
+  virtual ~ctkQImageView( void );
 
   double xSpacing( void );
   double ySpacing( void );
@@ -75,7 +75,7 @@ public:
 
 public slots:
 
-  void addImage( const QImage * image );
+  void addImage( const QImage & image );
   void clearImages( void );
 
   void setSliceNumber( int slicenum );
@@ -131,16 +131,16 @@ protected:
   virtual void resizeEvent( QResizeEvent* event );
 
   /// protected constructor to derive private implementations
-  ctkQImageViewerWidget( ctkQImageViewerWidgetPrivate & pvt,
+  ctkQImageView( ctkQImageViewPrivate & pvt,
     QWidget* parent=0 );
 
 private:
 
-  QScopedPointer< ctkQImageViewerWidgetPrivate > d_ptr;
+  QScopedPointer< ctkQImageViewPrivate > d_ptr;
 
-  Q_DECLARE_PRIVATE( ctkQImageViewerWidget );
+  Q_DECLARE_PRIVATE( ctkQImageView );
 
-  Q_DISABLE_COPY( ctkQImageViewerWidget );
+  Q_DISABLE_COPY( ctkQImageView );
 
 };
 
