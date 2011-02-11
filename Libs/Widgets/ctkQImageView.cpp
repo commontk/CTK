@@ -311,7 +311,8 @@ double ctkQImageView::yCenter( void )
 void ctkQImageView::setSliceNumber( int slicenum )
 {
   Q_D( ctkQImageView );
-  if( slicenum < d->ImageList.size() && slicenum != d->SliceNumber )
+  if( slicenum >= 0 && slicenum < d->ImageList.size() 
+    && slicenum != d->SliceNumber )
     {
     d->SliceNumber = slicenum;
     emit this->sliceNumberChanged( slicenum );
