@@ -165,8 +165,6 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
 {
   Q_D(ctkDICOMAppWidget);
 
-  //TODO: update thumbnails and previewer
-  d->thumbnailsWidget->setModelIndex(index);
 
   // TODO: this could check the type of the model entries
   QString thumbnailPath = d->DICOMDatabase->databaseDirectory();
@@ -182,11 +180,16 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
   {
     d->imagePreview->setText("No preview");
   }
+
+  // update thumbnails 
+  QStringList files = QStringList(thumbnailPath);
+  d->thumbnailsWidget->setThumbnailFiles(files);
 }
 
 void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widget){
   //TODO: update previewer
 }
+
 void ctkDICOMAppWidget::onImportDirectory(QString directory)
 {
   Q_D(ctkDICOMAppWidget);
