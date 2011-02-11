@@ -75,7 +75,7 @@ public:
 
 public slots:
 
-  void addImage( const QImage * image );
+  void addImage( const QImage & image );
   void clearImages( void );
 
   void setSliceNumber( int slicenum );

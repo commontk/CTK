@@ -64,7 +64,7 @@ public:
   bool FlipYAxis;
   bool TransposeXY;
 
-  QList< const QImage * > ImageList;
+  QList< QImage > ImageList;
 
   QPixmap TmpImage;
   int     TmpXMin;
@@ -163,13 +163,13 @@ void ctkQImageViewPrivate::fitImageRectangle( double x0,
   if( this->SliceNumber >= 0 && this->SliceNumber < this->ImageList.size() )
     {
     this->TmpXMin = this->clamp( x0, 0,
-      this->ImageList[ this->SliceNumber ]->width() );
+      this->ImageList[ this->SliceNumber ].width() );
     this->TmpXMax = this->clamp( x1, this->TmpXMin,
-      this->ImageList[ this->SliceNumber ]->width() );
+      this->ImageList[ this->SliceNumber ].width() );
     this->TmpYMin = this->clamp( y0, 0,
-      this->ImageList[ this->SliceNumber ]->height() );
+      this->ImageList[ this->SliceNumber ].height() );
     this->TmpYMax = this->clamp( y1, this->TmpYMin,
-      this->ImageList[ this->SliceNumber ]->height() );
+      this->ImageList[ this->SliceNumber ].height() );
 
     this->CenterX = ( this->TmpXMax + this->TmpXMin ) / 2.0;
     this->CenterY = ( this->TmpYMax + this->TmpYMin ) / 2.0;
@@ -204,16 +204,16 @@ ctkQImageView::~ctkQImageView()
 }
 
 // -------------------------------------------------------------------------
-void ctkQImageView::addImage( const QImage * image )
+void ctkQImageView::addImage( const QImage & image )
 {
   Q_D( ctkQImageView );
   d->ImageList.push_back( image );
   d->TmpXMin = 0;
-  d->TmpXMax = image->width();
+  d->TmpXMax = image.width();
   d->TmpYMin = 0;
-  d->TmpYMax = image->height();
+  d->TmpYMax = image.height();
   this->update( true, false );
-  this->setCenter( image->width()/2.0, image->height()/2.0 );
+  this->setCenter( image.width()/2.0, image.height()/2.0 );
 }
 
 // -------------------------------------------------------------------------
@@ -230,7 +230,7 @@ double ctkQImageView::xSpacing( void )
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
     {
-    return( 1000.0 / d->ImageList[ d->SliceNumber ]->dotsPerMeterX() );
+    return( 1000.0 / d->ImageList[ d->SliceNumber ].dotsPerMeterX() );
     }
   else
     {
@@ -244,7 +244,7 @@ double ctkQImageView::ySpacing( void )
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
     {
-    return( 1000.0 / d->ImageList[ d->SliceNumber ]->dotsPerMeterY() );
+    return( 1000.0 / d->ImageList[ d->SliceNumber ].dotsPerMeterY() );
     }
   else
     {
@@ -285,7 +285,7 @@ double ctkQImageView::positionValue( void )
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
     {
-    QColor vc( d->ImageList[ d->SliceNumber ]->pixel( d->PositionX,
+    QColor vc( d->ImageList[ d->SliceNumber ].pixel( d->PositionX,
       d->PositionY ) );
     return vc.value();
     }
@@ -429,14 +429,14 @@ void ctkQImageView::setCenter( double x, double y )
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
     {
 	  int tmpXRange = d->TmpXMax - d->TmpXMin;
-    if( tmpXRange > d->ImageList[ d->SliceNumber ]->width() )
+    if( tmpXRange > d->ImageList[ d->SliceNumber ].width() )
       {
-      tmpXRange = d->ImageList[ d->SliceNumber ]->width();
+      tmpXRange = d->ImageList[ d->SliceNumber ].width();
       }
     int tmpYRange = d->TmpYMax - d->TmpYMin;
-    if( tmpYRange > d->ImageList[ d->SliceNumber ]->height() )
+    if( tmpYRange > d->ImageList[ d->SliceNumber ].height() )
       {
-      tmpYRange = d->ImageList[ d->SliceNumber ]->height();
+      tmpYRange = d->ImageList[ d->SliceNumber ].height();
       }
   
     int xMin2 = static_cast<int>(x) - tmpXRange/2.0;
@@ -445,9 +445,9 @@ void ctkQImageView::setCenter( double x, double y )
       xMin2 = 0;
       }
     int xMax2 = xMin2 + tmpXRange;
-    if( xMax2 > d->ImageList[ d->SliceNumber ]->width() )
+    if( xMax2 > d->ImageList[ d->SliceNumber ].width() )
       {
-      xMax2 = d->ImageList[ d->SliceNumber ]->width();
+      xMax2 = d->ImageList[ d->SliceNumber ].width();
       xMin2 = xMax2 - tmpXRange;
       }
     int yMin2 = static_cast<int>(y) - tmpYRange/2.0;
@@ -456,9 +456,9 @@ void ctkQImageView::setCenter( double x, double y )
       yMin2 = 0;
       }
     int yMax2 = yMin2 + tmpYRange;
-    if( yMax2 > d->ImageList[ d->SliceNumber ]->height() )
+    if( yMax2 > d->ImageList[ d->SliceNumber ].height() )
       {
-      yMax2 = d->ImageList[ d->SliceNumber ]->height();
+      yMax2 = d->ImageList[ d->SliceNumber ].height();
       yMin2 = yMax2 - tmpYRange;
       }
     d->fitImageRectangle( xMin2, xMax2, yMin2, yMax2 );
@@ -504,7 +504,7 @@ void ctkQImageView::setZoom( double factor )
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
     {
-    const QImage * img = d->ImageList[ d->SliceNumber ];
+    const QImage * img = & d->ImageList[ d->SliceNumber ];
     if( factor < 2.0 / img->width() )
       {
       factor = 2.0 / img->width();
@@ -528,9 +528,9 @@ void ctkQImageView::setZoom( double factor )
       xMin2 = 0;
       }
     int xMax2 = xMin2 + x2;
-    if( xMax2 > d->ImageList[ d->SliceNumber ]->width() )
+    if( xMax2 > d->ImageList[ d->SliceNumber ].width() )
       {
-      xMax2 = d->ImageList[ d->SliceNumber ]->width();
+      xMax2 = d->ImageList[ d->SliceNumber ].width();
       xMin2 = xMax2 - x2;
       }
     int yMin2 = static_cast<int>(cy) - y2 / 2.0;
@@ -539,9 +539,9 @@ void ctkQImageView::setZoom( double factor )
       yMin2 = 0;
       }
     int yMax2 = yMin2 + y2;
-    if( yMax2 > d->ImageList[ d->SliceNumber ]->height() )
+    if( yMax2 > d->ImageList[ d->SliceNumber ].height() )
       {
-      yMax2 = d->ImageList[ d->SliceNumber ]->height();
+      yMax2 = d->ImageList[ d->SliceNumber ].height();
       yMin2 = yMax2 - y2;
       }
     d->fitImageRectangle( xMin2, xMax2, yMin2, yMax2 );
@@ -555,10 +555,20 @@ void ctkQImageView::reset( )
 {
   Q_D( ctkQImageView );
 
+  if( d->ImageList.size() > 0 )
+    {
+    if( d->SliceNumber < 0 )
+      {
+      this->setSliceNumber( 0 );
+      }
+    }
+
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
     {
-    d->fitImageRectangle( 0, 0, d->ImageList[ d->SliceNumber ]->width(),
-      d->ImageList[ d->SliceNumber ]->height() );
+    d->fitImageRectangle( 0, 0, d->ImageList[ d->SliceNumber ].width(),
+      d->ImageList[ d->SliceNumber ].height() );
+
+	  this->update( true, true );
     }
 }
 
@@ -715,15 +725,12 @@ void ctkQImageView::resizeEvent( QResizeEvent* event )
 void ctkQImageView::update( bool zoomChanged,
   bool sizeChanged )
 {
-  std::cout << "Updating.." << std::endl;
-
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
     {
-    const QImage * img = d->ImageList[ d->SliceNumber ];
+    const QImage * img = & ( d->ImageList[ d->SliceNumber ] );
     if( zoomChanged || sizeChanged )
       {
-      std::cout << "Update: Changed" << std::endl;
       if( this->width() > 0 &&  this->height() > 0 
         && d->TmpXMax > d->TmpXMin && d->TmpYMax > d->TmpYMin)
         {

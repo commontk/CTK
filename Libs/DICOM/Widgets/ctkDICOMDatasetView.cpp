@@ -95,35 +95,17 @@ ctkDICOMDatasetView::~ctkDICOMDatasetView()
 }
 
 // -------------------------------------------------------------------------
-//void ctkDICOMDatasetView::addImage( const QImage * image )
-//{
-  //Q_D( ctkQImageView );
-  //d->ImageList.push_back( image );
-  //d->TmpXMin = 0;
-  //d->TmpXMax = image->width();
-  //d->TmpYMin = 0;
-  //d->TmpYMax = image->height();
-  //this->update( true, false );
-  //this->setCenter( image->width()/2.0, image->height()/2.0 );
-//}
-
-// -------------------------------------------------------------------------
-void ctkDICOMDatasetView::mousePressEvent( QMouseEvent * event )
+void ctkDICOMDatasetView::addImage( const ctkDICOMImage & image )
 {
-  event->ignore();
-}
-
-// -------------------------------------------------------------------------
-void ctkDICOMDatasetView::mouseMoveEvent( QMouseEvent * event )
-{
-  event->ignore();
+  for( unsigned int i=0; i<image.frameCount(); ++i )
+    {
+    Superclass::addImage( image.getImage( i ) );
+    }
 }
 
 // -------------------------------------------------------------------------
 void ctkDICOMDatasetView::update( bool zoomChanged,
   bool sizeChanged )
 {
-  std::cout << "DICOM Updating.." << std::endl;
-
   Superclass::update( zoomChanged, sizeChanged );
 }

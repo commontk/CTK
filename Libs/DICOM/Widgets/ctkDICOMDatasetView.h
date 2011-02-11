@@ -28,6 +28,7 @@
 /// CTK includes
 #include "ctkQImageView.h"
 #include "ctkPimpl.h"
+#include "ctkDICOMImage.h"
 #include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMDatasetViewPrivate;
@@ -53,10 +54,7 @@ public:
 
 public slots:
 
-  //void add( const QImage * image );
-
-  void mousePressEvent( QMouseEvent * event );
-  void mouseMoveEvent( QMouseEvent * event );
+  void addImage( const ctkDICOMImage & image );
 
   virtual void update( bool zoomChanged=false, bool sizeChanged=false );
 

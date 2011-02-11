@@ -25,6 +25,13 @@
 // CTK Widgets
 #include "ctkDICOMDatasetView.h"
 
+// CTK DICOM Core
+#include "ctkDICOMImage.h"
+
+// DCMTK includes
+#include <dcmimage.h>
+
+
 // Qt includes
 #include <QApplication>
 #include <QFileDialog>
@@ -47,15 +54,19 @@ int main(int argv, char** argc)
     {
     s = QFileDialog::getOpenFileName( 0,
      "Choose an image file", ".",
-     "JPG (*.jpg *.jpep);; PNG (*.png);; BMP (*.bmp);; TIFF (*.tif *.tiff)" 
+     "DCM (*.*)" 
      );
+    if( s.size() == 0 )
+      {
+      return EXIT_SUCCESS;
+      }
     }
 
-  QImage image( s );
-  std::cout << "Loading image _" << s.toStdString() << "_" << std::endl;
+  DicomImage dcmImage( s.toStdString().c_str() );
+  ctkDICOMImage ctkImage( & dcmImage );
 
   ctkDICOMDatasetView imageView;
-  imageView.addImage( & image );
+  imageView.addImage( ctkImage );
   imageView.show();
   imageView.raise();
 
