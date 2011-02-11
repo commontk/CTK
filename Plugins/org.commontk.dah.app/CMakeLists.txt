@@ -33,7 +33,6 @@ ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
-  INCLUDE_DIRECTORIES ${QTSOAP_INCLUDE_DIR}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
   MOC_SRCS ${PLUGIN_MOC_SRCS}
