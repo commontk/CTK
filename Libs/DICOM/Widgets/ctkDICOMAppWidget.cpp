@@ -176,6 +176,7 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
     QModelIndex studyIndex = index.parent();
     QModelIndex seriesIndex = index;
     int imageCount = d->DICOMModel.rowCount(index);
+    logger.debug(QString("Thumbs: %1").arg(imageCount));
     for (int i = 0 ; i < imageCount ; i++ )
     {
       QModelIndex imageIndex = index.child(i,0);
@@ -185,8 +186,12 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
       {
         thumbnails << thumbnail;
       }
-      d->thumbnailsWidget->setThumbnailFiles(thumbnails);
+      else
+      {
+      logger.error("No thumbnail file " + thumbnail);
+      }
     }
+    d->thumbnailsWidget->setThumbnailFiles(thumbnails);
 
     //  thumbnailPath.append("/thumbs/").append(d->DICOMModel.data( studyIndex,ctkDICOMModel::UIDRole).toString() );
     //  thumbnailPath.append(d->DICOMModel.data( seriesIndex,ctkDICOMModel::UIDRole).toString() );
