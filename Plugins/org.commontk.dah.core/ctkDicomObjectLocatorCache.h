@@ -46,14 +46,12 @@ public:
 
   bool find(const QString& objectUuid, ctkDicomAppHosting::ObjectLocator& objectLocator)const;
 
-  void insert(const QString& objectUuid, const ctkDicomAppHosting::ObjectLocator& objectLocator);
+  void insert(
+    const QString& objectUuid, const ctkDicomAppHosting::ObjectLocator& objectLocator, bool temporary = false);
 
   bool remove(const QString& objectUuid);
 
-  QList<ctkDicomAppHosting::ObjectLocator> getData(
-    const QList<QUuid>& objectUUIDs,
-    const QList<QString>& acceptableTransferSyntaxUIDs,
-    bool includeBulkData);
+  QList<ctkDicomAppHosting::ObjectLocator> getData(const QList<QUuid>& objectUUIDs);
 
 private:
   Q_DECLARE_PRIVATE(ctkDicomObjectLocatorCache)
