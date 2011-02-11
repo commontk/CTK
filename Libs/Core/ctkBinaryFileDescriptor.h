@@ -37,11 +37,12 @@
 
 #include "ctkWidgetsExport.h"
 
-/// Allows to resolve global symbols contained into an executable.
-/// Implementation valid only for unix-like systems (Linux, Mac, ...)
 
 class ctkBinaryFileDescriptorPrivate;
 
+/// \ingroup Core
+/// Allows to resolve global symbols contained into an executable.
+/// Implementation valid only for unix-like systems (Linux, Mac, ...)
 class CTK_WIDGETS_EXPORT ctkBinaryFileDescriptor
 {
 public:

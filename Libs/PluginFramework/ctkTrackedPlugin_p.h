@@ -30,7 +30,9 @@
 #include "ctkPluginEvent.h"
 #include "ctkPlugin.h"
 
-
+/**
+ * \ingroup PluginFramework
+ */
 template<class T>
 class ctkTrackedPlugin : public ctkTrackedPluginListener,
     public ctkPluginAbstractTracked<QSharedPointer<ctkPlugin>, T, ctkPluginEvent>

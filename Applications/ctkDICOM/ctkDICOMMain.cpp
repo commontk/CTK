@@ -24,6 +24,9 @@
 #include <QSettings>
 #include <QDir>
 
+// CTK Core
+#include <ctkDICOMDatabase.h>
+
 // CTK widget includes
 #include <ctkDICOMQueryRetrieveWidget.h>
 
@@ -75,10 +78,12 @@ int main(int argc, char** argv)
 
   QString databaseFileName = databaseDirectory + QString("/ctkDICOM.sql");
 
+  QSharedPointer<ctkDICOMDatabase> dicomDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
+  dicomDatabase->openDatabase(databaseFileName);
+
   ctkDICOMQueryRetrieveWidget queryRetrieve;
 
-  queryRetrieve.setRetrieveDatabaseFileName(databaseFileName);
-  queryRetrieve.setRetrieveDirectory(databaseDirectory);
+  queryRetrieve.setRetrieveDatabase(dicomDatabase);
 
   queryRetrieve.show();
   queryRetrieve.raise();

@@ -30,7 +30,9 @@
 #include "ctkLogStream.h"
 #include <ctkServiceReference.h>
 
+
 /**
+ * \ingroup LogService
  * Provides methods for plugins to write messages to the log.
  *
  * <p>
@@ -41,13 +43,13 @@
  * Plugins must log messages in the Plugin Framework with a severity level
  * according to the following hierarchy:
  * <ol>
- * <li>{@link #LOG_ERROR}
- * <li>{@link #LOG_WARNING}
- * <li>{@link #LOG_INFO}
- * <li>{@link #LOG_DEBUG}
+ * <li>#LOG_ERROR
+ * <li>#LOG_WARNING
+ * <li>#LOG_INFO
+ * <li>#LOG_DEBUG
  * </ol>
  *
- * @ThreadSafe
+ * \ThreadSafe
  */
 struct CTK_PLUGINFW_EXPORT ctkLogService
 {
@@ -97,15 +99,15 @@ struct CTK_PLUGINFW_EXPORT ctkLogService
    * The <code>ctkServiceReference</code> field and the <code>Exception</code> field
    * of the <code>ctkLogEntry</code> object will be set to <code>null</code>.
    *
-   * @param level The severity of the message. This should be one of the
+   * \param level The severity of the message. This should be one of the
    *        defined log levels but may be any integer that is interpreted in a
    *        user defined way.
-   * @param message Human readable string describing the condition.
-   * @param exception The exception that reflects the condition or <code>null</code>.
-   * @see #LOG_ERROR
-   * @see #LOG_WARNING
-   * @see #LOG_INFO
-   * @see #LOG_DEBUG
+   * \param message Human readable string describing the condition.
+   * \param exception The exception that reflects the condition or <code>null</code>.
+   * \see #LOG_ERROR
+   * \see #LOG_WARNING
+   * \see #LOG_INFO
+   * \see #LOG_DEBUG
    */
   virtual void log(int level, const QString& message, const std::exception* exception = 0,
                    const char* file = 0, const char* function = 0, int line = -1) = 0;
@@ -118,19 +120,19 @@ struct CTK_PLUGINFW_EXPORT ctkLogService
    * The <code>Exception</code> field of the <code>ctkLogEntry</code> will be set to
    * <code>null</code>.
    *
-   * @param sr The <code>ctkServiceReference</code> object of the service that this
+   * \param sr The <code>ctkServiceReference</code> object of the service that this
    *        message is associated with.
-   * @param level The severity of the message. This should be one of the
+   * \param level The severity of the message. This should be one of the
    *        defined log levels but may be any integer that is interpreted in a
    *        user defined way.
-   * @param message Human readable string describing the condition.
-   * @param exception The exception that reflects the condition or
+   * \param message Human readable string describing the condition.
+   * \param exception The exception that reflects the condition or
    *        <code>null</code>.
    *
-   * @see #LOG_ERROR
-   * @see #LOG_WARNING
-   * @see #LOG_INFO
-   * @see #LOG_DEBUG
+   * \see #LOG_ERROR
+   * \see #LOG_WARNING
+   * \see #LOG_INFO
+   * \see #LOG_DEBUG
    */
   virtual void log(const ctkServiceReference& sr, int level, const QString& message,
                    const std::exception* exception = 0,
@@ -142,7 +144,7 @@ struct CTK_PLUGINFW_EXPORT ctkLogService
    * log level is LOG_WARNING then the log service will discard all log entries with
    * level LOG_INFO and LOG_DEBUG.
    *
-   * @return The lowest severity level that is accepted into the log.
+   * \return The lowest severity level that is accepted into the log.
    */
   virtual int getLogLevel() const = 0;
 
@@ -150,6 +152,9 @@ struct CTK_PLUGINFW_EXPORT ctkLogService
 
 Q_DECLARE_INTERFACE(ctkLogService, "org.commontk.service.log.LogService")
 
+/**
+ * \ingroup LogService
+ */
 class CTK_PLUGINFW_EXPORT ctkLogStreamWithServiceRef : public ctkLogStream
 {
 public:
@@ -166,6 +171,9 @@ protected:
   ctkServiceReference sr;
 };
 
+/**
+ * \ingroup LogService
+ */
 class CTK_PLUGINFW_EXPORT ctkNullLogStream : public ctkLogStream
 {
 public:
@@ -175,26 +183,91 @@ public:
 
 };
 
+/**
+ * \ingroup LogService
+ * @{
+ */
 
-#define CTK_DEBUG(logService) ((logService && logService->getLogLevel() >= ctkLogService::LOG_DEBUG) ? ctkLogStream(logService, ctkLogService::LOG_DEBUG, 0, __FILE__, __FUNCTION__, __LINE__) : ctkNullLogStream())
-#define CTK_DEBUG_EXC(logService, exc) ((logService && logService->getLogLevel() >= ctkLogService::LOG_DEBUG) ? ctkLogStream(logService, ctkLogService::LOG_DEBUG, exc, __FILE__, __FUNCTION__, __LINE__) : ctkNullLogStream())
-#define CTK_DEBUG_SR(logService, serviceRef) ((logService && logService->getLogLevel() >= ctkLogService::LOG_DEBUG) ? static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_DEBUG, 0, __FILE__, __FUNCTION__, __LINE__)) : static_cast<ctkLogStream>(ctkNullLogStream()))
-#define CTK_DEBUG_SR_EXC(logService, serviceRef, exc) ((logService && logService->getLogLevel() >= ctkLogService::LOG_DEBUG) ? static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_DEBUG, exc, __FILE__, __FUNCTION__, __LINE__)) : static_cast<ctkLogStream>(ctkNullLogStream()))
+#define CTK_DEBUG(logService) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_DEBUG) ? \
+  ctkLogStream(logService, ctkLogService::LOG_DEBUG, 0, __FILE__, __FUNCTION__, __LINE__) : \
+  ctkNullLogStream())
 
-#define CTK_INFO(logService) ((logService && logService->getLogLevel() >= ctkLogService::LOG_INFO) ? ctkLogStream(logService, ctkLogService::LOG_INFO, 0, __FILE__, __FUNCTION__, __LINE__) : ctkNullLogStream())
-#define CTK_INFO_EXC(logService, exc) ((logService && logService->getLogLevel() >= ctkLogService::LOG_INFO) ? ctkLogStream(logService, ctkLogService::LOG_INFO, exc, __FILE__, __FUNCTION__, __LINE__) : ctkNullLogStream())
-#define CTK_INFO_SR(logService, serviceRef) ((logService && logService->getLogLevel() >= ctkLogService::LOG_INFO) ? static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_INFO, 0, __FILE__, __FUNCTION__, __LINE__)) : static_cast<ctkLogStream>(ctkNullLogStream()))
-#define CTK_INFO_SR_EXC(logService, serviceRef, exc) ((logService && logService->getLogLevel() >= ctkLogService::LOG_INFO) ? static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_INFO, exc, __FILE__, __FUNCTION__, __LINE__)) : static_cast<ctkLogStream>(ctkNullLogStream()))
+#define CTK_DEBUG_EXC(logService, exc) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_DEBUG) ? \
+  ctkLogStream(logService, ctkLogService::LOG_DEBUG, exc, __FILE__, __FUNCTION__, __LINE__) : \
+  ctkNullLogStream())
 
-#define CTK_WARN(logService) ((logService && logService->getLogLevel() >= ctkLogService::LOG_WARNING) ? ctkLogStream(logService, ctkLogService::LOG_WARNING, 0, __FILE__, __FUNCTION__, __LINE__) : ctkNullLogStream())
-#define CTK_WARN_EXC(logService, exc) ((logService && logService->getLogLevel() >= ctkLogService::LOG_WARNING) ? ctkLogStream(logService, ctkLogService::LOG_WARNING, exc, __FILE__, __FUNCTION__, __LINE__) : ctkNullLogStream())
-#define CTK_WARN_SR(logService, serviceRef) ((logService && logService->getLogLevel() >= ctkLogService::LOG_WARNING) ? static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_WARNING, 0, __FILE__, __FUNCTION__, __LINE__)) : static_cast<ctkLogStream>(ctkNullLogStream()))
-#define CTK_WARN_SR_EXC(logService, serviceRef, exc) ((logService && logService->getLogLevel() >= ctkLogService::LOG_WARNING) ? static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_WARNING, exc, __FILE__, __FUNCTION__, __LINE__)) : static_cast<ctkLogStream>(ctkNullLogStream()))
+#define CTK_DEBUG_SR(logService, serviceRef) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_DEBUG) ? \
+  static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_DEBUG, 0, __FILE__, __FUNCTION__, __LINE__)) : \
+  static_cast<ctkLogStream>(ctkNullLogStream()))
 
-#define CTK_ERROR(logService) ((logService && logService->getLogLevel() >= ctkLogService::LOG_ERROR) ? ctkLogStream(logService, ctkLogService::LOG_ERROR, 0, __FILE__, __FUNCTION__, __LINE__) : ctkNullLogStream())
-#define CTK_ERROR_EXC(logService, exc) ((logService && logService->getLogLevel() >= ctkLogService::LOG_ERROR) ? ctkLogStream(logService, ctkLogService::LOG_ERROR, exc, __FILE__, __FUNCTION__, __LINE__) : ctkNullLogStream())
-#define CTK_ERROR_SR(logService, serviceRef) ((logService && logService->getLogLevel() >= ctkLogService::LOG_ERRO) ? static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_ERROR, 0, __FILE__, __FUNCTION__, __LINE__)) : static_cast<ctkLogStream>(ctkNullLogStream()))
-#define CTK_ERROR_SR_EXC(logService, serviceRef, exc) ((logService && logService->getLogLevel() >= ctkLogService::LOG_ERROR) ? static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_ERROR, exc, __FILE__, __FUNCTION__, __LINE__)) : static_cast<ctkLogStream>(ctkNullLogStream()))
+#define CTK_DEBUG_SR_EXC(logService, serviceRef, exc) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_DEBUG) ? \
+  static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_DEBUG, exc, __FILE__, __FUNCTION__, __LINE__)) : \
+  static_cast<ctkLogStream>(ctkNullLogStream()))
 
+#define CTK_INFO(logService) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_INFO) ? \
+  ctkLogStream(logService, ctkLogService::LOG_INFO, 0, __FILE__, __FUNCTION__, __LINE__) : \
+  ctkNullLogStream())
+
+#define CTK_INFO_EXC(logService, exc) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_INFO) ? \
+  ctkLogStream(logService, ctkLogService::LOG_INFO, exc, __FILE__, __FUNCTION__, __LINE__) : \
+  ctkNullLogStream())
+
+#define CTK_INFO_SR(logService, serviceRef) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_INFO) ? \
+  static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_INFO, 0, __FILE__, __FUNCTION__, __LINE__)) : \
+  static_cast<ctkLogStream>(ctkNullLogStream()))
+
+#define CTK_INFO_SR_EXC(logService, serviceRef, exc) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_INFO) ? \
+  static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_INFO, exc, __FILE__, __FUNCTION__, __LINE__)) : \
+  static_cast<ctkLogStream>(ctkNullLogStream()))
+
+#define CTK_WARN(logService) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_WARNING) ? \
+  ctkLogStream(logService, ctkLogService::LOG_WARNING, 0, __FILE__, __FUNCTION__, __LINE__) : \
+  ctkNullLogStream())
+
+#define CTK_WARN_EXC(logService, exc) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_WARNING) ? \
+  ctkLogStream(logService, ctkLogService::LOG_WARNING, exc, __FILE__, __FUNCTION__, __LINE__) : \
+  ctkNullLogStream())
+
+#define CTK_WARN_SR(logService, serviceRef) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_WARNING) ? \
+  static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_WARNING, 0, __FILE__, __FUNCTION__, __LINE__)) : \
+  static_cast<ctkLogStream>(ctkNullLogStream()))
+
+#define CTK_WARN_SR_EXC(logService, serviceRef, exc) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_WARNING) ? \
+  static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_WARNING, exc, __FILE__, __FUNCTION__, __LINE__)) : \
+  static_cast<ctkLogStream>(ctkNullLogStream()))
+
+#define CTK_ERROR(logService) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_ERROR) ? \
+  ctkLogStream(logService, ctkLogService::LOG_ERROR, 0, __FILE__, __FUNCTION__, __LINE__) : \
+  ctkNullLogStream())
+
+#define CTK_ERROR_EXC(logService, exc) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_ERROR) ? \
+  ctkLogStream(logService, ctkLogService::LOG_ERROR, exc, __FILE__, __FUNCTION__, __LINE__) : \
+  ctkNullLogStream())
+
+#define CTK_ERROR_SR(logService, serviceRef) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_ERRO) ? \
+  static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_ERROR, 0, __FILE__, __FUNCTION__, __LINE__)) : \
+  static_cast<ctkLogStream>(ctkNullLogStream()))
+
+#define CTK_ERROR_SR_EXC(logService, serviceRef, exc) \
+  ((logService && logService->getLogLevel() >= ctkLogService::LOG_ERROR) ? \
+  static_cast<ctkLogStream>(ctkLogStreamWithServiceRef(logService, serviceRef, ctkLogService::LOG_ERROR, exc, __FILE__, __FUNCTION__, __LINE__)) : \
+  static_cast<ctkLogStream>(ctkNullLogStream()))
+
+/** @}*/
 
 #endif // CTKLOGSERVICE_H

@@ -40,6 +40,8 @@ class QObject;
 
 
 /**
+ * \ingroup PluginFramework
+ *
  * Data structure for saving information about slots registered for
  * receiving service lifecycle events.
  */
@@ -82,6 +84,9 @@ private:
 
 };
 
+/**
+ * \ingroup PluginFramework
+ */
 uint qHash(const ctkServiceSlotEntry& serviceSlot);
 
 #endif // CTKSERVICESLOTENTRY_P_H

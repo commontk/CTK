@@ -27,6 +27,8 @@
 #include "ctkPluginFrameworkExport.h"
 
 /**
+ * \ingroup EventAdmin
+ *
  * Defines standard names for <code>ctkEventHandler</code> and Qt event slot properties.
  *
  * \see ctkEventHandler
@@ -214,6 +216,5 @@ struct CTK_PLUGINFW_EXPORT ctkEventConstants {
   static const QString TIMESTAMP; // = "timestamp"
 
 };
-
 
 #endif // CTKEVENTCONSTANTS_H

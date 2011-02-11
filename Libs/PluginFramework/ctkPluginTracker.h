@@ -34,6 +34,8 @@ template<class T> class ctkTrackedPlugin;
 template<class T> class ctkPluginTrackerPrivate;
 
 /**
+ * \ingroup PluginFramework
+ *
  * The <code>ctkPluginTracker</code> class simplifies tracking plugins much like
  * the <code>ctkServiceTracker</code> simplifies tracking services.
  * <p>

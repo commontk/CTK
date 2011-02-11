@@ -31,6 +31,8 @@ class QObject;
 class ctkPlugin;
 
 /**
+ * \ingroup PluginFramework
+ *
  * The <code>ctkPluginTrackerCustomizer</code> interface allows a
  * <code>ctkPluginTracker</code> to customize the <code>ctkPlugin</code>s that are
  * tracked. A <code>ctkPluginTrackerCustomizer</code> is called when a plugin is

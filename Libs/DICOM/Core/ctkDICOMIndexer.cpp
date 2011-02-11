@@ -397,13 +397,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 
     if (createThumbnails)
     {
-      QString databaseFile = database.GetDatabaseFilename();
-      if (!QFileInfo(databaseFile).isAbsolute())
-      {
-        databaseFile.prepend(QDir::currentPath() + "/");
-      }
-
-      QString thumbnailBaseDir = QFileInfo ( databaseFile ).absoluteDir().path() + "/thumbs/";
+      QString thumbnailBaseDir =  database.databaseDirectory() + "/thumbs/";
       QString thumbnailFilename = thumbnailBaseDir + "/" + studySeriesDirectory + "/" + sopInstanceUID.c_str() + ".png";
       QFileInfo thumbnailInfo(thumbnailFilename);
       if ( ! ( thumbnailInfo.exists() && thumbnailInfo.lastModified() < QFileInfo(qfilename).lastModified() ) )
@@ -426,7 +420,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
     QSqlQuery check_exists_query(database.database());
     std::stringstream check_exists_query_string;
 //    check_exists_query_string << "SELECT * FROM Images WHERE Filename = '" << relativeFilePath.str() << "'";
-    check_exists_query_string << "SELECT * FROM Images WHERE Filename = '" << filename << "'";
+    check_exists_query_string << "SELECT * FROM Images WHERE SOPInstanceUID = '" << sopInstanceUID << "'";
     check_exists_query.exec(check_exists_query_string.str().c_str());
 
     if(!check_exists_query.next())
@@ -435,7 +429,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 
       //To save absolute path: destDirectoryPath.str()
       query_string << "INSERT INTO Images VALUES('"
-        << qfilename.toStdString() << "','" << seriesInstanceUID << "','" << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString() << "')";
+        << sopInstanceUID << "','" << qfilename.toStdString() << "','" << seriesInstanceUID << "','" << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString() << "')";
 
       query.exec(query_string.str().c_str());
     }

@@ -23,6 +23,10 @@
 #ifndef CTKEXAMPLEDICOMAPPLOGIC_P_H
 #define CTKEXAMPLEDICOMAPPLOGIC_P_H
 
+// Qt includes
+#include <QUuid>
+
+// CTK includes
 #include <ctkDicomAbstractApp.h>
 #include <ctkDicomHostInterface.h>
 
@@ -43,8 +47,6 @@ public:
   virtual ~ctkExampleDicomAppLogic();
 
   // ctkDicomAppInterface
-  virtual ctkDicomAppHosting::State getState();
-  virtual bool setState(ctkDicomAppHosting::State newState);
   virtual bool bringToFront(const QRect& requestedScreenArea);
 
   // ctkDicomExchangeInterface
@@ -60,13 +62,15 @@ public:
   // some logic
   void do_something();
 
-signals:
-
-  void stateChanged(int);
 
 protected slots:
 
-  void changeState(int);
+  void onStartProgress();
+  void onResumeProgress();
+  void onSuspendProgress();
+  void onCancelProgress();
+  void onExitHostedApp();
+  void onReleaseResources();
 
   void buttonClicked();
 private:

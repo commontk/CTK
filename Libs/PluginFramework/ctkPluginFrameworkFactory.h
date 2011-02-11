@@ -31,51 +31,52 @@
 
 #include "ctkPluginFramework_global.h"
 
-  class ctkPluginFramework;
-  class ctkPluginFrameworkContext;
+class ctkPluginFramework;
+class ctkPluginFrameworkContext;
+
+/**
+ * \ingroup PluginFramework
+ * A factory for creating ctkPluginFramework instances.
+ */
+class CTK_PLUGINFW_EXPORT ctkPluginFrameworkFactory
+{
+
+public:
 
   /**
-   * A factory for creating ctkPluginFramework instances.
+   * Create a new <code>%ctkPluginFrameworkFactory</code> instance.
+   *
+   * <p>
+   * The ctkProperties map is used to configure the ctkPluginFramework. The
+   * plugin framework instance created with #getFramework() must interpret
+   * the following properties:
+   *
+   * <p>
+   * <ul><li>ctkPluginConstants::FRAMEWORK_STORAGE</li>
+   * </ul>
+   *
+   * @param initProps The plugin framework configuration properties.
+   *        The ctkPluginFramework instance created with #getFramework()
+   *        must use some reasonable default configuration if certain
+   *        properties are not provided.
    */
-  class CTK_PLUGINFW_EXPORT ctkPluginFrameworkFactory
-  {
+  ctkPluginFrameworkFactory(const ctkProperties& initProps = ctkProperties());
 
-  public:
+  ~ctkPluginFrameworkFactory();
 
-    /**
-     * Create a new <code>%ctkPluginFrameworkFactory</code> instance.
-     *
-     * <p>
-     * The ctkProperties map is used to configure the ctkPluginFramework. The
-     * plugin framework instance created with #getFramework() must interpret
-     * the following properties:
-     *
-     * <p>
-     * <ul><li>ctkPluginConstants::FRAMEWORK_STORAGE</li>
-     * </ul>
-     *
-     * @param initProps The plugin framework configuration properties.
-     *        The ctkPluginFramework instance created with #getFramework()
-     *        must use some reasonable default configuration if certain
-     *        properties are not provided.
-     */
-    ctkPluginFrameworkFactory(const ctkProperties& initProps = ctkProperties());
+  /**
+   * Create a new ctkPluginFramework instance.
+   *
+   * @return A new, configured ctkPluginFramework instance. The plugin
+   *         framework instance must be in the ctkPlugin::INSTALLED state.
+   */
+  QSharedPointer<ctkPluginFramework> getFramework();
 
-    ~ctkPluginFrameworkFactory();
+private:
 
-    /**
-     * Create a new ctkPluginFramework instance.
-     *
-     * @return A new, configured ctkPluginFramework instance. The plugin
-     *         framework instance must be in the ctkPlugin::INSTALLED state.
-     */
-    QSharedPointer<ctkPluginFramework> getFramework();
+  ctkPluginFrameworkContext * const fwCtx;
 
-  private:
-
-    ctkPluginFrameworkContext * const fwCtx;
-
-  };
+};
 
 
 #endif // CTKPLUGINFRAMEWORKFACTORY_H

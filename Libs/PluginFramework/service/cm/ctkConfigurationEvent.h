@@ -31,6 +31,7 @@
 class ctkConfigurationEventData;
 
 /**
+ * \ingroup ConfigAdmin
  * A Configuration Event.
  *
  * <p>
@@ -175,8 +176,13 @@ public:
   ctkServiceReference getReference() const;
 };
 
+/**
+ * \ingroup ConfigAdmin
+ */
+
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, ctkConfigurationEvent::Type type);
 CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkConfigurationEvent& event);
 
+/** @}*/
 
 #endif // CTKCONFIGURATIONEVENT_H

@@ -39,14 +39,15 @@ public:
   virtual ~ctkDICOMDatabase();
 
   const QSqlDatabase& database() const;
-  const QString GetLastError() const;
-  const QString GetDatabaseFilename() const;
+  const QString lastError() const;
+  const QString databaseFilename() const;
+  const QString databaseDirectory() const;
 
   ///
   /// open the SQLite database in @param file. If the file does not
   /// exist, a new database is created and initialized with the
   /// default schema
-  virtual void openDatabase(const QString file);
+  virtual void openDatabase(const QString databaseFile, const QString& connectionName = "DICOM-DB" );
 
   ///
   /// close the database. It must not be used afterwards.
@@ -63,7 +64,8 @@ public:
    * Insert into the database if not already exsting.
    */
   void insert ( DcmDataset *dataset );
-
+signals:
+  void databaseChanged();
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
 

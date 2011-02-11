@@ -29,7 +29,7 @@
 
 //----------------------------------------------------------------------------
 namespace{
-  /// 
+  /// \ingroup Core
   /// Function in charge of instanciating an object of type: ClassType
   template<typename BaseClassType, typename ClassType>
     BaseClassType *instantiateObject()
@@ -39,6 +39,7 @@ namespace{
 }
 
 //----------------------------------------------------------------------------
+/// \ingroup Core
 template<typename BaseClassType, typename ClassType>
 class ctkFactoryObjectItem : public ctkAbstractFactoryItem<BaseClassType>
 {
@@ -53,6 +54,7 @@ private:
 };
 
 //----------------------------------------------------------------------------
+/// \ingroup Core
 template<typename BaseClassType>
 class ctkAbstractObjectFactory : public ctkAbstractFactory<BaseClassType>
 {

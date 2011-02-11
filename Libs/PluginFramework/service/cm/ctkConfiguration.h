@@ -29,6 +29,7 @@
 
 
 /**
+ * \ingroup ConfigAdmin
  * The configuration information for a <code>ctkManagedService</code> or
  * <code>ctkManagedServiceFactory</code> object.
  *
@@ -229,6 +230,11 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
 
 };
 
+/**
+ * \ingroup ConfigAdmin
+ * @{
+ */
+
 typedef QSharedPointer<ctkConfiguration> ctkConfigurationPtr;
 
 /**
@@ -243,5 +249,7 @@ typedef QSharedPointer<ctkConfiguration> ctkConfigurationPtr;
 uint CTK_PLUGINFW_EXPORT qHash(ctkConfigurationPtr configuration);
 
 bool CTK_PLUGINFW_EXPORT operator==(const ctkConfigurationPtr& c1, const ctkConfigurationPtr c2);
+
+/** @}*/
 
 #endif // CTKCONFIGURATION_H

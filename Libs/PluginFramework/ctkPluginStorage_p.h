@@ -36,6 +36,8 @@ class ctkPluginArchive;
 class ctkPluginFrameworkContext;
 
 /**
+ * \ingroup PluginFramework
+ *
  * Storage of all plugin meta-data and resources
  */
 class ctkPluginStorage

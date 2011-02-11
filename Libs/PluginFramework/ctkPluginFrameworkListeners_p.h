@@ -33,6 +33,9 @@
 #include "ctkServiceSlotEntry_p.h"
 #include "ctkServiceEvent.h"
 
+/**
+ * \ingroup PluginFramework
+ */
 class ctkPluginFrameworkListeners : public QObject
 {
 

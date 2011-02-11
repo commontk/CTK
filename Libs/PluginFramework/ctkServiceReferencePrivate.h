@@ -33,6 +33,9 @@ class QObject;
 class ctkServiceRegistrationPrivate;
 class ctkPlugin;
 
+/**
+ * \ingroup PluginFramework
+ */
 class ctkServiceReferencePrivate
 {
 public:

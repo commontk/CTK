@@ -30,6 +30,8 @@
 class ctkPlugin;
 
 /**
+ * \ingroup Metatype
+ *
  * A MetaType Information object is created by the ctkMetaTypeService to return
  * meta type information for a specific plugin.
  */
@@ -59,6 +61,9 @@ struct ctkMetaTypeInformation : public ctkMetaTypeProvider
   virtual QSharedPointer<ctkPlugin> getPlugin() const = 0;
 };
 
+/**
+ * \ingroup Metatype
+ */
 typedef QSharedPointer<ctkMetaTypeInformation> ctkMetaTypeInformationPtr;
 
 #endif // CTKMETATYPEINFORMATION_H

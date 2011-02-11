@@ -31,96 +31,6 @@
 #include "ctkDicomAppService.h"
 #include <ctkDicomAppHostingTypesHelper.h>
 
-#include <ctkDICOMDataset.h>
-// DCMTK includes
-#include <dcmtk/dcmdata/dcdeftag.h>
-
-void addToAvailableData(ctkDicomAppHosting::AvailableData& data, 
-                        QHash<QString, ctkDicomAppHosting::ObjectLocator>& locatorHash, 
-                        const ctkDICOMDataset& dataset, 
-                        long length, 
-                        long offset, 
-                        const QString& uri)
-{
-  ctkDicomAppHosting::ObjectDescriptor objectDescriptor;
-  ctkDicomAppHosting::Study study;
-  ctkDicomAppHosting::Series series;
-  ctkDicomAppHosting::Patient patient;
-  patient.name = dataset.GetElementAsString(DCM_PatientsName);
-qDebug()<<"Patient:  " << patient.name;
-  patient.id = dataset.GetElementAsString(DCM_PatientID);
-  patient.assigningAuthority = dataset.GetElementAsString(DCM_IssuerOfPatientID);
-  patient.sex = dataset.GetElementAsString(DCM_PatientsSex);
-  patient.birthDate = dataset.GetElementAsString(DCM_PatientsBirthDate);
-
-
-  study.studyUID = dataset.GetElementAsString(DCM_StudyInstanceUID);
-  series.seriesUID = dataset.GetElementAsString(DCM_SeriesInstanceUID);
-
-  QString uuid = QUuid::createUuid().toString();
-  objectDescriptor.descriptorUUID = uuid;
-  objectDescriptor.mimeType = "application/dicom";
-  objectDescriptor.classUID = dataset.GetElementAsString(DCM_SOPClassUID);
-  objectDescriptor.transferSyntaxUID = dataset.GetElementAsString(DCM_TransferSyntaxUID);
-  objectDescriptor.modality = dataset.GetElementAsString(DCM_Modality);
-  
-
-
-  ctkDicomAppHosting::Patient* ppatient;
-  ctkDicomAppHosting::Study* pstudy;
-  ctkDicomAppHosting::Series* pseries;
-  
-  ctkDicomAvailableDataAccessor(data).find(patient, study.studyUID, series.seriesUID,
-    ppatient, pstudy, pseries);
-
-  if(pseries==NULL)
-  {
-    series.objectDescriptors.append(objectDescriptor);
-    if(pstudy==NULL)
-    {
-      study.series.append(series);
-      if(ppatient==NULL)
-      {
-        patient.studies.append(study);
-        data.patients.append(patient);
-      }
-      else
-      {
-        ppatient->studies.append(study);
-      }
-    }
-    else
-    {
-      pstudy->series.append(series);
-    }
-  }
-  else
-  {
-    pseries->objectDescriptors.append(objectDescriptor);
-  }
-
-  ctkDicomAppHosting::ObjectLocator locator;
-  locator.locator = objectDescriptor.descriptorUUID;
-  locator.source = objectDescriptor.descriptorUUID;
-  locator.offset = offset;
-  locator.length = length;
-  locator.transferSyntax = objectDescriptor.transferSyntaxUID;
-  locator.URI = uri;
-}
-
-void addToAvailableData(ctkDicomAppHosting::AvailableData& data, QHash<QString, ctkDicomAppHosting::ObjectLocator>& locatorHash, const QString& filename)
-{
-  QFileInfo fileinfo(filename);
-  qDebug() << filename << " " << fileinfo.exists();
-
-  ctkDICOMDataset ctkdataset;
-  ctkdataset.InitializeFromFile(filename, EXS_Unknown, EGL_noChange, 400);
-
-  QString uri("file:/");
-  uri.append(fileinfo.absoluteFilePath());
-  addToAvailableData(data, locatorHash, ctkdataset, fileinfo.size(), 0, uri);
-}
-
 //----------------------------------------------------------------------------
 ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
     QWidget(parent),
@@ -175,7 +85,7 @@ void ctkHostAppExampleWidget::runButtonClicked()
 void ctkHostAppExampleWidget::stopButtonClicked()
 {
   qDebug() << "stop button clicked";
-  this->Host->getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
+  this->Host->exitApplication();
 }
 
 //----------------------------------------------------------------------------
@@ -246,69 +156,28 @@ void ctkHostAppExampleWidget::placeholderResized()
   //ui->placeholderFrame->printPosition();
 }
 
-//----------------------------------------------------------------------------
+
+
 void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
 {
   ui->statusLabel->setText(ctkDicomSoapState::toStringValue(state));
-
-  bool reply;
-  ctkDicomAppHosting::ObjectDescriptor ourObjectDescriptor;
-  QList<ctkDicomAppHosting::Study> studies;
-  ctkDicomAppHosting::AvailableData data;
-  ctkDicomAppHosting::Patient patient;
-  QHash<QString, ctkDicomAppHosting::ObjectLocator> uuidhash;
-
-  //TODO put the state changed routine back in notifyStateChanged for the state machine part.
-  switch (state)
-  {
-  case ctkDicomAppHosting::IDLE:
-    if (this->Host->getApplicationState() != ctkDicomAppHosting::IDLE)
-    {
-      qDebug()<<"state was not IDLE before -> setState EXIT ";
-      this->Host->getDicomAppService()->setState(ctkDicomAppHosting::EXIT);
-    }
-    break;
-  case ctkDicomAppHosting::INPROGRESS:
-
-    addToAvailableData(data, uuidhash, "C:/XIP/XIPHost/dicom-dataset-demo/1.3.6.1.4.1.9328.50.1.10698.dcm");
-    //patient.name = "John Doe";
-    //patient.id = "0000";
-    //patient.assigningAuthority = "authority";
-    //patient.sex = "male";
-    //patient.birthDate = "today";
-    //patient.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
-
-    //patient.studies = studies;
-
-    //ourObjectDescriptor.descriptorUUID = QUuid("{11111111-1111-1111-1111-111111111111}");
-    //ourObjectDescriptor.mimeType = "text/plain";
-    //ourObjectDescriptor.classUID = "lovelyClass";
-    //ourObjectDescriptor.transferSyntaxUID = "transSyntaxUId";
-    //ourObjectDescriptor.modality = "modMod";
-
-    //data.objectDescriptors =  QList<ctkDicomAppHosting::ObjectDescriptor>();
-    //data.objectDescriptors.append (ourObjectDescriptor);
-    //data.patients = QList<ctkDicomAppHosting::Patient>();
-    //data.patients.append (patient);
-
-    qDebug()<<"send dataDescriptors";
-    reply = this->Host->getDicomAppService()->notifyDataAvailable (data,true);
-    qDebug() << "  notifyDataAvailable(1111) returned: " << reply;
-    break;
-  case ctkDicomAppHosting::COMPLETED:
-  case ctkDicomAppHosting::SUSPENDED:
-  case ctkDicomAppHosting::CANCELED:
-  case ctkDicomAppHosting::EXIT:
-    //shouldn't happen, when exiting the application just dies
-  default:
-    //do nothing
-    break;
-  }
-  this->Host->setApplicationState(state);
 }
+
 
 //----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::outputMessage ()
 {
   ui->messageOutput->append (this->Host->processReadAll ());
 }
+
+//----------------------------------------------------------------------------
+void ctkHostAppExampleWidget::suspendButtonClicked()
+{
+  this->Host->getDicomAppService()->setState(ctkDicomAppHosting::SUSPENDED);
+}
+
+void ctkHostAppExampleWidget::cancelButtonClicked()
+{
+  this->Host->getDicomAppService()->setState(ctkDicomAppHosting::CANCELED);
+}
+

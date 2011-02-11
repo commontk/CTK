@@ -27,6 +27,8 @@
 #include "ctkDictionary.h"
 
 /**
+ * \ingroup ConfigAdmin
+ *
  * A service interface for processing configuration dictionary before the
  * update.
  *

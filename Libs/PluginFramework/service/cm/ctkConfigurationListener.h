@@ -26,6 +26,8 @@
 #include "ctkConfigurationEvent.h"
 
 /**
+ * \ingroup ConfigAdmin
+ *
  * Listener for Configuration Events. When a <code>ctkConfigurationEvent</code>
  * is fired, it is asynchronously delivered to a
  * <code>ctkConfigurationListener</code>.

@@ -27,6 +27,8 @@
 #include <ctkDictionary.h>
 
 /**
+ * \ingroup ConfigAdmin
+ *
  * A service that can receive configuration data from a Configuration Admin
  * service.
  *

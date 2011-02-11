@@ -29,6 +29,8 @@
 #include <org_commontk_dah_host_Export.h>
 
 class ctkDicomAbstractHostPrivate;
+class ctkDicomObjectLocatorCache;
+
 
 /**
   * Provides a basic implementation for an application host.
@@ -39,8 +41,10 @@ class ctkDicomAbstractHostPrivate;
   * The methods of the ctkDicomHostInterface have to be implemented for the business logic,
   *
   */
-class org_commontk_dah_host_EXPORT ctkDicomAbstractHost : public ctkDicomHostInterface
+class org_commontk_dah_host_EXPORT ctkDicomAbstractHost : public QObject, public ctkDicomHostInterface
 {
+ Q_OBJECT
+ Q_INTERFACES(ctkDicomHostInterface)
 
 public:
 
@@ -48,11 +52,35 @@ public:
     * Starts the soap sever on the specified port or choose port automatically.
     */
   ctkDicomAbstractHost(int hostPort = 0, int appPort = 0);
-  int getHostPort() const;
-  int getAppPort() const;
   virtual ~ctkDicomAbstractHost();
+  int getHostPort() const;
 
+  int getAppPort() const;
+
+  virtual void notifyStateChanged(ctkDicomAppHosting::State state);
+ctkDicomAppHosting::State getApplicationState()const;
   ctkDicomAppInterface* getDicomAppService() const;
+
+  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
+    bool includeBulkData);
+
+  ctkDicomObjectLocatorCache* objectLocatorCache()const;
+
+  bool publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData);
+
+signals:
+ void appReady();
+ void releaseAvailableResources();
+ void startProgress();
+ void resumed();
+ void completed();
+ void suspended();
+ void canceled();
+ void exited();
+ void stateChangedReceived(ctkDicomAppHosting::State state);
+ void statusReceived(const ctkDicomAppHosting::Status& status);
 
 private:
 

@@ -1,0 +1,6 @@
+/**
+\defgroup Core CTK Core
+\ingroup Libs
+The CTK Core library provides generally useful utility classes.
+
+*/

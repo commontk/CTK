@@ -26,6 +26,8 @@
 #include "ctkLogEntry.h"
 
 /**
+ * \ingroup LogService
+ *
  * Subscribes to <code>ctkLogEntry</code> objects from the <code>ctkLogReaderService</code>.
  *
  * <p>

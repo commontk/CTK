@@ -36,6 +36,8 @@ template<class S, class T> class ctkServiceTrackerPrivate;
 class ctkPluginContext;
 
 /**
+ * \ingroup PluginFramework
+ *
  * The <code>ctkServiceTracker</code> class simplifies using services from the
  * Framework's service registry.
  * <p>

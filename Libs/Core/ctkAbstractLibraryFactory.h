@@ -30,6 +30,7 @@
 #include "ctkAbstractFileBasedFactory.h"
 
 //----------------------------------------------------------------------------
+/// \ingroup Core
 template<typename BaseClassType>
 class ctkFactoryLibraryItem : public ctkAbstractFactoryFileBasedItem<BaseClassType>
 {
@@ -64,6 +65,7 @@ private:
 };
 
 //----------------------------------------------------------------------------
+/// \ingroup Core
 template<typename BaseClassType>
 class ctkAbstractLibraryFactory : public ctkAbstractFileBasedFactory<BaseClassType>
 {

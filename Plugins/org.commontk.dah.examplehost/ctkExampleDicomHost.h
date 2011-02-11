@@ -32,7 +32,8 @@
 
 #include <org_commontk_dah_examplehost_Export.h>
 
-class org_commontk_dah_examplehost_EXPORT ctkExampleDicomHost : public QObject, public ctkDicomAbstractHost
+
+class org_commontk_dah_examplehost_EXPORT ctkExampleDicomHost :  public ctkDicomAbstractHost
 {
   Q_OBJECT
 
@@ -41,11 +42,13 @@ public:
   ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort = 8080, int appPort = 8081);
   virtual ~ctkExampleDicomHost();
 
+  ctkDicomAppHosting::State getApplicationState() const;
+
   virtual void StartApplication(QString AppPath);
   virtual QString generateUID() { return ""; }
   virtual QRect getAvailableScreen(const QRect& preferredScreen);
   virtual QString getOutputLocation(const QStringList& /*preferredProtocols*/) { return ""; }
-  virtual void notifyStateChanged(ctkDicomAppHosting::State state);
+
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
   // exchange methods
   virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
@@ -56,26 +59,31 @@ public:
   virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
   const QProcess& getAppProcess() const { return this->AppProcess; }
-  ctkDicomAppHosting::State getApplicationState()const {return this->ApplicationState;}
-  void setApplicationState(ctkDicomAppHosting::State state){this->ApplicationState = state;}
+  void exitApplication();
 
   QByteArray processReadAll(){return this->AppProcess.readAllStandardOutput ();}
 
+public slots:
+  void onAppReady();
+  void onReleaseAvailableResources();
+  void onStartProgress();
+  void onResumed();
+  void onCompleted();
+  void onSuspended();
+  void onCanceled();
+  void onExited();
+
 signals:
 
-  void stateChangedReceived(ctkDicomAppHosting::State state);
-  void statusReceived(const ctkDicomAppHosting::Status& status);
+
   void giveAvailableScreen(QRect rect);
 
 protected:
 
   QProcess AppProcess;
   ctkHostedAppPlaceholderWidget* PlaceholderWidget;
-  ctkDicomAppHosting::State ApplicationState;
-
-protected slots:
-
-  void forwardConsoleOutput();
+private:
+  bool exitingApplication;
 };
 
 #endif // CTKEXAMPLEDICOMHOST_H

@@ -12,6 +12,8 @@ class QSettings;
 #include "ctkCoreExport.h"
 
 /**
+ * \ingroup Core
+ *
  * The CTK command line parser.
  *
  * Use this class to add information about the command line arguments

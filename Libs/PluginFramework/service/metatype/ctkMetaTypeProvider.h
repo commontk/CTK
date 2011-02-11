@@ -29,6 +29,8 @@
 #include <QLocale>
 
 /**
+ * \ingroup Metatype
+ *
  * Provides access to metatypes. This interface can be implemented on a Managed
  * Service or Managed Service Factory as well as registered as a service. When
  * registered as a service, it must be registered with a

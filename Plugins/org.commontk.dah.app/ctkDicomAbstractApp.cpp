@@ -22,17 +22,20 @@
 // CTK includes
 #include "ctkDicomAbstractApp.h"
 #include <ctkDicomHostInterface.h>
+#include <ctkDicomObjectLocatorCache.h>
 #include <ctkPluginContext.h>
 #include <ctkServiceTracker.h>
+#include <ctkDicomAppHostingTypesHelper.h>
 
 class ctkDicomAbstractAppPrivate
 {
 public:
   ctkDicomAbstractAppPrivate(ctkPluginContext* context);
-  ~ctkDicomAbstractAppPrivate();
 
   ctkServiceTracker<ctkDicomHostInterface*> HostTracker;
   ctkDicomAppHosting::State currentState;
+
+  ctkDicomObjectLocatorCache ObjectLocatorCache;
 };
 
 //----------------------------------------------------------------------------
@@ -42,11 +45,6 @@ public:
 ctkDicomAbstractAppPrivate::ctkDicomAbstractAppPrivate(ctkPluginContext * context):HostTracker(context),currentState(ctkDicomAppHosting::IDLE)
 {
   //perhaps notStarted or some dummy state instead of IDLE?
-}
-
-//----------------------------------------------------------------------------
-ctkDicomAbstractAppPrivate::~ctkDicomAbstractAppPrivate()
-{
 }
 
 //----------------------------------------------------------------------------
@@ -63,89 +61,80 @@ ctkDicomAbstractApp::~ctkDicomAbstractApp()
 {
 }
 
-/**
-  * Method triggered by the host. Changes the state of the hosted application.
-  *@return true if state received and not illegal in the transition diagram from the reference, false if illegal or not recognized.
-  */
+
+//----------------------------------------------------------------------------
 bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
 {
-  bool result = true;
+
+  qDebug()<<"treating new state: "<< ctkDicomSoapState::toStringValue(newState);
+  bool result = false;
   //received a new state,
   switch (newState){
   case ctkDicomAppHosting::IDLE:
     if (d_ptr->currentState == ctkDicomAppHosting::COMPLETED)
     {
-
-    }
-    else
-    {
-      result = false;
+      emit releaseResources();
+      result = true;
     }
     break;
   case ctkDicomAppHosting::INPROGRESS:
     if (d_ptr->currentState == ctkDicomAppHosting::IDLE)
     {
       emit startProgress();
+      result = true;
     }
     else if(d_ptr->currentState == ctkDicomAppHosting::SUSPENDED)
     {
       emit resumeProgress();
-    }
-    else
-    {
-      result = false;
+      result = true;
     }
     break;
   case ctkDicomAppHosting::COMPLETED:
     qDebug() << "Hosting system shouldn't send completed";
-    result = false;
     break;
   case ctkDicomAppHosting::SUSPENDED:
     //suspend computation, release as much resource as possible with possible resuming of computation
     emit suspendProgress();
+    result = true;
     break;
   case ctkDicomAppHosting::CANCELED:
     //stop and release everything.
-    if (d_ptr->currentState != ctkDicomAppHosting::INPROGRESS
-        || d_ptr->currentState != ctkDicomAppHosting::SUSPENDED)
+    if (d_ptr->currentState == ctkDicomAppHosting::INPROGRESS
+        || d_ptr->currentState == ctkDicomAppHosting::SUSPENDED)
     {
-      result = false;
-    }
-    else
-    {
-      //releasing resources
-      emit cancelProgress();
       //special state, a transitional state, so we notify straight away the new state.
       getHostInterface()->notifyStateChanged(ctkDicomAppHosting::CANCELED);
       d_ptr->currentState = ctkDicomAppHosting::CANCELED;
+      //releasing resources
+      emit cancelProgress();
+      result = true;
     }
     break;
   case ctkDicomAppHosting::EXIT:
     //check if current state is IDLE
-    if (d_ptr->currentState != ctkDicomAppHosting::IDLE)
+    if (d_ptr->currentState == ctkDicomAppHosting::IDLE)
     {
-      qDebug()<<"illegal transition to EXIT." <<
-                 "Current state is:" << d_ptr->currentState;
-      result = false;
+      //maybe not useful:
+      getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
+      emit exitHostedApp();
+      result = true;
     }
-    //maybe not useful:
-    getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
-    emit exitHostedApp();
     break;
   default:
     //should never happen
     qDebug() << "unexisting state Code, do nothing";
-    result = false;
   }
   if (!result)
   {
-    qDebug()<<"illegal transition to: "<< newState <<
-               "Current state is:" << d_ptr->currentState;
+    qDebug()<<"illegal transition to: "<< static_cast<int>(newState) <<
+               "Current state is:" << static_cast<int>(d_ptr->currentState);
+    qDebug()<<"illegal transition to: "<< ctkDicomSoapState::toStringValue(newState) <<
+               "Current state is:" << ctkDicomSoapState::toStringValue(d_ptr->currentState);
   }
   return result;
 }
 
-
+//----------------------------------------------------------------------------
 ctkDicomHostInterface* ctkDicomAbstractApp::getHostInterface() const
 {
   ctkDicomHostInterface* host = d_ptr->HostTracker.getService();
@@ -153,4 +142,44 @@ ctkDicomHostInterface* ctkDicomAbstractApp::getHostInterface() const
   return host;
 }
 
+//----------------------------------------------------------------------------
+ctkDicomAppHosting::State ctkDicomAbstractApp::getState()
+{
+  return d_ptr->currentState;
+}
 
+void ctkDicomAbstractApp::setInternalState(ctkDicomAppHosting::State state)
+{
+  d_ptr->currentState = state;
+}
+
+//----------------------------------------------------------------------------
+QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractApp::getData(
+  const QList<QUuid>& objectUUIDs,
+  const QList<QString>& acceptableTransferSyntaxUIDs,
+  bool includeBulkData)
+{
+  return this->objectLocatorCache()->getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
+}
+
+//----------------------------------------------------------------------------
+ctkDicomObjectLocatorCache* ctkDicomAbstractApp::objectLocatorCache()const
+{
+  Q_D(const ctkDicomAbstractApp);
+  return const_cast<ctkDicomObjectLocatorCache*>(&d->ObjectLocatorCache);
+}
+
+//----------------------------------------------------------------------------
+bool ctkDicomAbstractApp::publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData)
+{
+  if (!this->objectLocatorCache()->isCached(availableData))
+    {
+    return false;
+    }
+  bool success = this->getHostInterface()->notifyDataAvailable(availableData, lastData);
+  if(!success)
+    {
+    return false;
+    }
+  return true;
+}
