@@ -55,5 +55,13 @@ QMap<QString,QVariant> ctkDICOMQueryWidget::parameters()
     parameters["Modalities"] = d->ModalityWidget->selectedModalities();
   }
 
+  if ( !d->DateRangeWidget->isAnyDate() )
+  {
+    QDate startDate = d->DateRangeWidget->startDateTime().date();
+    QDate endDate = d->DateRangeWidget->endDateTime().date();
+    parameters["StartDate"] = startDate.toString("yyyyMMdd");
+    parameters["EndDate"] = endDate.toString("yyyyMMdd");
+  }
+
   return parameters;
 }

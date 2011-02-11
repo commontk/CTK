@@ -302,6 +302,15 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
     }
   }
 
+  if ( d->Filters.keys().contains("StartDate") && d->Filters.keys().contains("EndDate") )
+  {
+    QString dateRange = d->Filters["StartDate"].toString() + 
+                          QString("-") + 
+                              d->Filters["EndDate"].toString();
+    d->query->putAndInsertString ( DCM_StudyDate, dateRange.toAscii().data() );
+    logger.debug("Query on study time " + dateRange);
+  }
+
   emit progress(30);
 
   FINDResponses *responses = new FINDResponses();
