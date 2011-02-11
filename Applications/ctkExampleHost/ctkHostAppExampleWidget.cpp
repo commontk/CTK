@@ -39,7 +39,7 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
   qDebug() << "setup ui";
   ui->setupUi(this);
   ui->crashLabel->setVisible(false);
-  ui->messageOutput->setVisible(false);
+  ui->messageOutput->setVisible(true);
   this->Host = new ctkExampleDicomHost(ui->placeholderFrame);
 
   connect(&this->Host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
