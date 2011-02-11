@@ -60,10 +60,7 @@ ctkDicomAbstractApp::~ctkDicomAbstractApp()
 {
 }
 
-/**
-  * Method triggered by the host. Changes the state of the hosted application.
-  *@return true if state received and not illegal in the transition diagram from the reference, false if illegal or not recognized.
-  */
+//----------------------------------------------------------------------------
 bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
 {
   bool result = true;
@@ -180,5 +177,3 @@ bool ctkDicomAbstractApp::publishData(const ctkDicomAppHosting::AvailableData& a
     }
   return true;
 }
-
-

@@ -48,6 +48,10 @@ public:
   ctkDicomAbstractApp(ctkPluginContext* context);
   virtual ~ctkDicomAbstractApp();
 
+  /**
+    * Method triggered by the host. Changes the state of the hosted application.
+    * @return true if state received and not illegal in the transition diagram from the reference, false if illegal or not recognized.
+    */
   virtual bool setState(ctkDicomAppHosting::State newState);
   
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
