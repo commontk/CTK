@@ -337,6 +337,7 @@ SET(CTK_APPLICATIONS
   ctkExampleHostedApp:OFF
   ctkPluginBrowser:OFF
   ctkPluginGenerator:OFF
+  ctkDICOMObjectViewer:OFF
   ctkSimplePythonShell:OFF
   )
   
