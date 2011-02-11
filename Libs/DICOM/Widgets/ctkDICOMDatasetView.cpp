@@ -104,6 +104,12 @@ void ctkDICOMDatasetView::addImage( const ctkDICOMImage & image )
 }
 
 // -------------------------------------------------------------------------
+void ctkDICOMDatasetView::addImage( const QImage & image )
+{
+  Superclass::addImage( image );
+}
+
+// -------------------------------------------------------------------------
 void ctkDICOMDatasetView::update( bool zoomChanged,
   bool sizeChanged )
 {

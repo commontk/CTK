@@ -24,6 +24,7 @@
 #include "ctkQImageView.h"
 
 // Qt includes
+#include <QApplication>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QDebug>
@@ -712,6 +713,22 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
       this->setPosition( x, y );
       }
     }
+}
+
+// -------------------------------------------------------------------------
+void ctkQImageView::enterEvent( QEvent * )
+{
+  Q_D( ctkQImageView );
+  QApplication::setOverrideCursor( QCursor(Qt::CrossCursor) );
+  d->Window->grabKeyboard();
+}
+
+// -------------------------------------------------------------------------
+void ctkQImageView::leaveEvent( QEvent * )
+{
+  Q_D( ctkQImageView );
+  QApplication::restoreOverrideCursor();
+  d->Window->releaseKeyboard();
 }
 
 // -------------------------------------------------------------------------

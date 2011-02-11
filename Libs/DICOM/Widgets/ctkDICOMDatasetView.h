@@ -55,6 +55,7 @@ public:
 public slots:
 
   void addImage( const ctkDICOMImage & image );
+  void addImage( const QImage & image );
 
   virtual void update( bool zoomChanged=false, bool sizeChanged=false );
 

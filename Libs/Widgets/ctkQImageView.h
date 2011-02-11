@@ -90,6 +90,8 @@ public slots:
   virtual void mousePressEvent( QMouseEvent * event );
   virtual void mouseReleaseEvent( QMouseEvent * event );
   virtual void mouseMoveEvent( QMouseEvent * event );
+  virtual void enterEvent( QEvent * event );
+  virtual void leaveEvent( QEvent * event );
 
   void setCenter( double x, double y );
   void setPosition( double x, double y );
