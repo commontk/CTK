@@ -173,4 +173,32 @@ struct org_commontk_dah_core_EXPORT ctkDicomSoapArrayOfObjectLocators : public Q
   static QList<ctkDicomAppHosting::ObjectLocator> getArray(const QtSoapType& array);
 };
 
+//----------------------------------------------------------------------------
+class ctkDicomAvailableDataAccessorPrivate;
+class org_commontk_dah_core_EXPORT ctkDicomAvailableDataAccessor : public QObject
+{
+public:
+  ctkDicomAvailableDataAccessor(ctkDicomAppHosting::AvailableData& ad);
+  virtual ~ctkDicomAvailableDataAccessor();
+
+  ctkDicomAppHosting::Patient* ctkDicomAvailableDataAccessor::getPatient(const ctkDicomAppHosting::Patient& patient) const;
+
+  ctkDicomAppHosting::Study* getStudy(const QString& studyUID) const;
+
+  ctkDicomAppHosting::Series* getSeries(const QString& seriesUID) const;
+
+  void ctkDicomAvailableDataAccessor::find(const ctkDicomAppHosting::Patient& patient, 
+                                         const QString& studyUID, 
+                                         const QString& seriesUID,
+                                         ctkDicomAppHosting::Patient*& patientResult, 
+                                         ctkDicomAppHosting::Study*& studyResult, 
+                                         ctkDicomAppHosting::Series*& seriesResult) const;
+
+protected:
+  QScopedPointer<ctkDicomAvailableDataAccessorPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(ctkDicomAvailableDataAccessor);
+};
+
 #endif // CTKDICOMAPPHOSTINGTYPESHELPER_H
