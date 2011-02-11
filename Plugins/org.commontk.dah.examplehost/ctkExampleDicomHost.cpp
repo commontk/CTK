@@ -27,6 +27,7 @@
 // CTK includes
 #include "ctkExampleDicomHost.h"
 #include "ctkDicomAppHostingTypesHelper.h"
+#include "ctkDicomAvailableDataHelper.h"
 
 // STD includes
 #include <iostream>
@@ -121,34 +122,18 @@ void ctkExampleDicomHost::onAppReady()
 //----------------------------------------------------------------------------
 void ctkExampleDicomHost::onStartProgress()
 {
-  ctkDicomAppHosting::ObjectDescriptor ourObjectDescriptor;
-  QList<ctkDicomAppHosting::Study> studies;
   ctkDicomAppHosting::AvailableData data;
-  ctkDicomAppHosting::Patient patient;
-
-  patient.name = "John Doe";
-  patient.id = "0000";
-  patient.assigningAuthority = "authority";
-  patient.sex = "male";
-  patient.birthDate = "today";
-  patient.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
-
-  patient.studies = studies;
-
-  ourObjectDescriptor.descriptorUUID = QUuid("{11111111-1111-1111-1111-111111111111}");
-  ourObjectDescriptor.mimeType = "text/plain";
-  ourObjectDescriptor.classUID = "lovelyClass";
-  ourObjectDescriptor.transferSyntaxUID = "transSyntaxUId";
-  ourObjectDescriptor.modality = "modMod";
-
-  data.objectDescriptors =  QList<ctkDicomAppHosting::ObjectDescriptor>();
-  data.objectDescriptors.append (ourObjectDescriptor);
-  data.patients = QList<ctkDicomAppHosting::Patient>();
-  data.patients.append (patient);
+  ctkDicomAvailableDataHelper::addToAvailableData(data, 
+    this->objectLocatorCache(), 
+    "C:/XIP/XIPHost/dicom-dataset-demo/1.3.6.1.4.1.9328.50.1.10698.dcm");
 
   qDebug()<<"send dataDescriptors";
-  bool reply = getDicomAppService()->notifyDataAvailable (data,true);
-  qDebug() << "  notifyDataAvailable(1111) returned: " << reply;
+  bool success = this->publishData(data, true);
+  if(!success)
+  {
+    qCritical() << "Failed to publish data";
+  }
+  qDebug() << "  notifyDataAvailable(1111) returned: " << success;
 }
 
 //----------------------------------------------------------------------------
@@ -185,40 +170,6 @@ void ctkExampleDicomHost::onExited()
 void ctkExampleDicomHost::onReleaseAvailableResources()
 {
   qDebug() << "Should release resources put at the disposition of the app";
-}
-
-//----------------------------------------------------------------------------
-QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
-    const QList<QUuid>& objectUUIDs,
-    const QList<QString>& acceptableTransferSyntaxUIDs,
-    bool includeBulkData)
-{
-  Q_UNUSED(includeBulkData)
-  Q_UNUSED(acceptableTransferSyntaxUIDs)
-
-  //stupid test: only works with one uuid
-  QList<ctkDicomAppHosting::ObjectLocator> locators;
-  QUuid uuid;
-  QUuid testUuid("{11111111-1111-1111-1111-111111111111}");
-  foreach(uuid, objectUUIDs)
-    {
-    //stupid test: only works with one uuid
-    if (uuid == testUuid)
-      {
-      ctkDicomAppHosting::ObjectLocator objectLocator;
-      objectLocator.locator = QUuid();
-      objectLocator.source = QUuid();
-      //need to filter transfert syntax with acceptable ones
-      objectLocator.transferSyntax = "transSyntaxUId";
-      objectLocator.length = 0;
-      objectLocator.offset = 0;
-      objectLocator.URI = "testFile.txt";
-      locators.append (objectLocator);
-      }
-    return locators;
-    }
-
-  return QList<ctkDicomAppHosting::ObjectLocator>();
 }
 
 //----------------------------------------------------------------------------
