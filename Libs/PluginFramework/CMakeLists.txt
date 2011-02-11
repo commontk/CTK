@@ -34,6 +34,7 @@ SET(KIT_SRCS
   ctkPluginFrameworkContext.cpp
   ctkPluginFrameworkContext_p.h
   ctkPluginFrameworkEvent.cpp
+  ctkPluginFrameworkLauncher.cpp
   ctkPluginFrameworkListeners.cpp
   ctkPluginFrameworkListeners_p.h
   ctkPluginFrameworkPrivate.cpp
@@ -139,6 +140,7 @@ ctkFunctionGetTargetLibraries(KIT_target_libraries)
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
+  INCLUDE_DIRECTORIES ${CTK_SUPERBUILD_BINARY_DIR}
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}

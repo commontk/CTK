@@ -73,11 +73,14 @@ SET(CTK_WRAPPED_LIBRARIES_PYTHONQT @CTK_WRAPPED_LIBRARIES_PYTHONQT@)
 
 @CTK_CONFIG_INSTALL_ONLY@
 
+# Library specific include directories
+@CTK_LIBRARY_INCLUDE_DIRS_CONFIG@
+
 # Plugin specific include directories
 @CTK_PLUGIN_INCLUDE_DIRS_CONFIG@
 
 # The CTK include file directories.
-SET(CTK_INCLUDE_DIRS "@CTK_INCLUDE_DIRS_CONFIG@")
+SET(CTK_INCLUDE_DIRS "@CTK_BUILD_DIR@;@CTK_INCLUDE_DIRS_CONFIG@")
  
 # The CTK library directories. Note that if
 # CTK_CONFIGURATION_TYPES is set (see below) then these directories

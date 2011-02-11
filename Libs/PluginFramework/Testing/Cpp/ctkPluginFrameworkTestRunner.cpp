@@ -26,6 +26,7 @@
 
 #include <ctkPluginFrameworkFactory.h>
 #include <ctkPluginFramework.h>
+#include <ctkPluginFrameworkLauncher.h>
 #include <ctkPluginContext.h>
 #include <ctkPluginException.h>
 
@@ -37,10 +38,6 @@
 #include <QThread>
 #include <QDebug>
 
-#ifdef _WIN32
-#include <windows.h>
-#include <stdlib.h>
-#endif // _WIN32
 
 //----------------------------------------------------------------------------
 class TestRunner : public QThread
@@ -206,48 +203,7 @@ void ctkPluginFrameworkTestRunner::addPluginPath(const QString& path, bool insta
 {
   Q_D(ctkPluginFrameworkTestRunner);
   d->pluginPaths.push_back(qMakePair(path, install));
-#ifdef _WIN32
-#ifdef __MINGW32__
-  QString pathVar("PATH");
-  QString oldPath(getenv("PATH"));
-  pathVar += "=" + oldPath + ";" + path;
-  if(_putenv(qPrintable(pathVar)))
-#else
-  std::size_t bufferLength;
-  getenv_s(&bufferLength, NULL, 0, "PATH");
-  QString newPath = path;
-  if (bufferLength > 0)
-  {
-    char* oldPath = new char[bufferLength];
-	getenv_s(&bufferLength, oldPath, bufferLength, "PATH");
-	newPath.append(";").append(oldPath);
-	delete[] oldPath;
-  }
-  qDebug() << "new PATH:" << newPath;
-  if(_putenv_s("PATH", qPrintable(newPath)))
-#endif
-  {
-    LPVOID lpMsgBuf;
-    DWORD dw = GetLastError(); 
-
-    FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        dw,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        (LPTSTR) &lpMsgBuf,
-        0, NULL );
-
-    QString msg = QString("Adding '%1' to the PATH environment variable failed: %2")
-      .arg(path).arg(QString((LPCTSTR)lpMsgBuf));
-    
-    qWarning() << msg;
-
-    LocalFree(lpMsgBuf);
-  }
-#endif
+  ctkPluginFrameworkLauncher::appendPathEnv(path);
 }
 
 //----------------------------------------------------------------------------
