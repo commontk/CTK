@@ -69,10 +69,13 @@ class ctkCheckableHeaderViewPrivate;
 /// all items in the header row/column of the QAbstractItemModel if the 
 /// items are checkable.
 /// ctkCheckableHeaderView also supports row/column sorting.
+/// TBD: It should probably be a QSortFilterProxyModel that adds a checkability
+/// data on top of the indexes.
 class CTK_WIDGETS_EXPORT ctkCheckableHeaderView : public QHeaderView
 {
   Q_OBJECT;
   Q_PROPERTY(bool propagateToItems READ propagateToItems WRITE setPropagateToItems);
+  Q_PROPERTY(int propagateDepth READ propagateDepth WRITE setPropagateDepth);
 public:
   ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent=0);
   virtual ~ctkCheckableHeaderView();
@@ -117,6 +120,11 @@ public:
   /// True by default
   void setPropagateToItems(bool propagate);
   bool propagateToItems()const;
+
+  /// How deep in the model(tree) do you want the check state to be propagated
+  /// A value of -1 correspond to the deepest level of the model.
+  void setPropagateDepth(int depth);
+  int  propagateDepth()const;
 
 public slots:
   ///

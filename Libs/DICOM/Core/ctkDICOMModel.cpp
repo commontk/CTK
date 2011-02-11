@@ -77,6 +77,7 @@ public:
 
 //------------------------------------------------------------------------------
 // 1 node per row
+// TBD: should probably use the QStandardItems instead.
 struct Node
 {
   ~Node()
@@ -88,14 +89,15 @@ struct Node
     this->Children.clear();
     }
   ctkDICOMModelPrivate::IndexType Type;
-  Node*     Parent;
-  QVector<Node*> Children;
-  int       Row;
-  QSqlQuery Query;
-  QString   UID;
-  int       RowCount;
-  bool      AtEnd;
-  bool      Fetching;
+  Node*                           Parent;
+  QVector<Node*>                  Children;
+  int                             Row;
+  QSqlQuery                       Query;
+  QString                         UID;
+  int                             RowCount;
+  bool                            AtEnd;
+  bool                            Fetching;
+  QMap<int, QVariant>             Data;
 };
 
 //------------------------------------------------------------------------------
@@ -426,7 +428,16 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
 
   if (role != Qt::DisplayRole && role != Qt::EditRole)
     {
-    return QVariant();
+    if (dataIndex.column() != 0)
+      {
+      return QVariant();
+      }
+    Node* node = d->nodeFromIndex(dataIndex);
+    if (!node)
+      {
+      return QVariant();
+      }
+    return node->Data[role];
     }
   QModelIndex parentIndex = this->parent(dataIndex);
   Node* parentNode = d->nodeFromIndex(parentIndex);
@@ -457,8 +468,21 @@ void ctkDICOMModel::fetchMore ( const QModelIndex & parentValue )
 //------------------------------------------------------------------------------
 Qt::ItemFlags ctkDICOMModel::flags ( const QModelIndex & modelIndex ) const
 {
-  Q_UNUSED(modelIndex);
-  return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+  Q_D(const ctkDICOMModel);
+  Qt::ItemFlags indexFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+  if (modelIndex.column() != 0)
+    {
+    return indexFlags;
+    }
+  Node* node = d->nodeFromIndex(modelIndex);
+  if (!node)
+    {
+    return indexFlags;
+    }
+  bool checkable = false;
+  node->Data[Qt::CheckStateRole].toInt(&checkable);
+  indexFlags = indexFlags | (checkable ? Qt::ItemIsUserCheckable : Qt::NoItemFlags);
+  return indexFlags;
 }
 
 //------------------------------------------------------------------------------
@@ -588,6 +612,24 @@ int ctkDICOMModel::rowCount ( const QModelIndex & parentValue ) const
   Q_ASSERT(node);
   // Returns the amount of rows currently cached on the client.
   return node ? node->RowCount : 0;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+  Q_D(const ctkDICOMModel);
+  if (role != Qt::CheckStateRole)
+    {
+    return false;
+    }
+  Node* node = d->nodeFromIndex(index);
+  if (!node || node->Data[role] == value)
+    {
+    return false;
+    }
+  node->Data[role] = value;
+  emit dataChanged(index, index);
+  return true;
 }
 
 //------------------------------------------------------------------------------
