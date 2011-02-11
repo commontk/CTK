@@ -6,17 +6,14 @@ PROJECT(ctkDICOMObjectViewer)
 
 SET(KIT_SRCS
   ctkDICOMObjectViewerMain.cpp
-  ctkDICOMObjectViewer.cpp
 )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkDICOMObjectViewer.h
 )
 
 # UI files
 SET(KIT_UI_FORMS
-  ctkDICOMObjectViewerMainWindow.ui
 )
 
 # Resources

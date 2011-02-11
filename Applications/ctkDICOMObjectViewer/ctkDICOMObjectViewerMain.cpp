@@ -1,4 +1,4 @@
-/*=============================================================================
+/*==========================================================================
 
   Library: CTK
 
@@ -17,19 +17,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-=============================================================================*/
+==========================================================================*/
 
+// STD includes
 #include "iostream"
 
-#include "ctkDICOMObjectViewer.h"
-#include "ctkDICOMDatasetViewerWidget.h"
+// CTK Widgets
+#include "ctkDICOMDatasetView.h"
 
-#include <ui_ctkDICOMObjectViewerMainWindow.h>
-
+// Qt includes
 #include <QApplication>
-#include <QMainWindow>
-#include <QString>
 #include <QFileDialog>
+#include <QString>
 
 int main(int argv, char** argc)
 {
@@ -38,10 +37,6 @@ int main(int argv, char** argc)
   qApp->setOrganizationName("CTK");
   qApp->setOrganizationDomain("commontk.org");
   qApp->setApplicationName("ctkDICOMObjectViewer");
-
-  ctkDICOMObjectViewer mainWindow;
-
-  mainWindow.show();
 
   QString s;
   if( QApplication::argc() > 1 )
@@ -59,7 +54,10 @@ int main(int argv, char** argc)
   QImage image( s );
   std::cout << "Loading image _" << s.toStdString() << "_" << std::endl;
 
-  mainWindow.SetInputImage( & image );
+  ctkDICOMDatasetView imageView;
+  imageView.addImage( & image );
+  imageView.show();
+  imageView.raise();
 
   return app.exec();
 }
