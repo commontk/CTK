@@ -49,13 +49,7 @@ public:
   virtual ~ctkDICOMModelPrivate();
   void init();
 
-  enum IndexType{
-    RootType,
-    PatientType,
-    StudyType,
-    SeriesType,
-    ImageType
-  };
+
  
   void fetch(const QModelIndex& indexValue, int limit);
   Node* createNode(int row, const QModelIndex& parentValue)const;
@@ -88,7 +82,7 @@ struct Node
       }
     this->Children.clear();
     }
-  ctkDICOMModelPrivate::IndexType Type;
+  ctkDICOMModel::IndexType Type;
   Node*                           Parent;
   QVector<Node*>                  Children;
   int                             Row;
@@ -219,7 +213,7 @@ Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)c
   Node* nodeParent = 0;
   if (row == -1)
     {// root node
-    node->Type = ctkDICOMModelPrivate::RootType;
+    node->Type = ctkDICOMModel::RootType;
     node->Parent = 0;
     }
   else
@@ -227,10 +221,10 @@ Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)c
     nodeParent = this->nodeFromIndex(parentValue); 
     nodeParent->Children.push_back(node);
     node->Parent = nodeParent;
-    node->Type = ctkDICOMModelPrivate::IndexType(nodeParent->Type + 1);
+    node->Type = ctkDICOMModel::IndexType(nodeParent->Type + 1);
     }
   node->Row = row;
-  if (node->Type != ctkDICOMModelPrivate::RootType)
+  if (node->Type != ctkDICOMModel::RootType)
     {
     int field = 0;//nodeParent->Query.record().indexOf("UID");
     node->UID = this->value(parentValue, row, field).toString();
@@ -299,29 +293,29 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
   switch(node->Type)
     {
     default:
-      Q_ASSERT(node->Type == ctkDICOMModelPrivate::RootType);
+      Q_ASSERT(node->Type == ctkDICOMModel::RootType);
       break;
-    case ctkDICOMModelPrivate::RootType:
+    case ctkDICOMModel::RootType:
       //query = QString("SELECT  FROM ");
       query = this->generateQuery("UID as UID, PatientsName as Name, PatientsAge as Age, PatientsBirthDate as Date, PatientID as \"Subject ID\"","Patients");
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Root: query is: " + query );
       break;
-    case ctkDICOMModelPrivate::PatientType:
+    case ctkDICOMModel::PatientType:
       //query = QString("SELECT  FROM Studies WHERE PatientsUID='%1'").arg(node->UID);
       query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPhysiciansName as Performer", "Studies",QString("PatientsUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Patient: query is: " + query );
       break;
-    case ctkDICOMModelPrivate::StudyType:
+    case ctkDICOMModel::StudyType:
       //query = QString("SELECT SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='%1'").arg(node->UID);
       query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number","Series",QString("StudyInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Study: query is: " + query );
       break;
-    case ctkDICOMModelPrivate::SeriesType:
+    case ctkDICOMModel::SeriesType:
       //query = QString("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'").arg(node->UID);
       query = this->generateQuery("SOPInstanceUID as UID, Filename as Name, SeriesInstanceUID as Date", "Images", QString("SeriesInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Series: query is: " + query );
       break;
-    case ctkDICOMModelPrivate::ImageType:
+    case ctkDICOMModel::ImageType:
       break;
     }
   node->Query = QSqlQuery(query, this->DataBase);

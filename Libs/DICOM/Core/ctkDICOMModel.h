@@ -38,6 +38,14 @@ public:
     TypeRole
   };
 
+  enum IndexType{
+    RootType,
+    PatientType,
+    StudyType,
+    SeriesType,
+    ImageType
+  };
+
   explicit ctkDICOMModel(QObject* parent = 0);
   virtual ~ctkDICOMModel();
 
