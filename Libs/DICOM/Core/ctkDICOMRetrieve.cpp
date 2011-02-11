@@ -219,7 +219,7 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType )
             logger.error ( "Error saving file: " + fi.absoluteFilePath() + " Error is " + status.text() );
             }
 
-          RetrieveDatabase->insert( dataset, fi.absoluteFilePath() );
+          RetrieveDatabase->insert( dataset, true );
           
           delete fileformat;
           }
