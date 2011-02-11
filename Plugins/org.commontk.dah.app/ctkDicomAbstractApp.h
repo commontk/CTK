@@ -50,7 +50,7 @@ public:
   virtual ctkDicomAppHosting::State getState();
 protected:
   virtual ctkDicomHostInterface* getHostInterface() const;
-
+ void setInternalState(ctkDicomAppHosting::State state);
 signals:
   void startProgress();
   void resumeProgress();

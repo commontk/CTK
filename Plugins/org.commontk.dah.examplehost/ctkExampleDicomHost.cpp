@@ -35,9 +35,16 @@
 ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
     PlaceholderWidget(placeholderWidget),
-    ApplicationState(ctkDicomAppHosting::IDLE)
+    exitingApplication(false)
 {
-  //connect(&this->AppProcess,SIGNAL(readyReadStandardOutput()),SLOT(forwardConsoleOutput()));
+  connect(this,SIGNAL(appReady()),SLOT(onAppReady()));
+  connect(this,SIGNAL(startProgress()),this,SLOT(onStartProgress()));
+  connect(this,SIGNAL(releaseAvailableResources()),this,SLOT(onReleaseAvailableResources()));
+  connect(this,SIGNAL(resumed()),this,SLOT(onResumed()));
+  connect(this,SIGNAL(completed()),this,SLOT(onCompleted()));
+  connect(this,SIGNAL(suspended()),this,SLOT(onSuspended()));
+  connect(this,SIGNAL(canceled()),this,SLOT(onCanceled()));
+  connect(this,SIGNAL(exited()),this,SLOT(onExited()));
 }
 
 //----------------------------------------------------------------------------
@@ -71,14 +78,6 @@ QRect ctkExampleDicomHost::getAvailableScreen(const QRect& preferredScreen)
   return rect;
 }
 
-//----------------------------------------------------------------------------
-void ctkExampleDicomHost::notifyStateChanged(ctkDicomAppHosting::State state)
-{
-  qDebug()<< "new state received:"<< static_cast<int>(state);
-  qDebug()<< "new state received:"<< ctkDicomSoapState::toStringValue(state);
-
-  emit stateChangedReceived(state);
-}
 
 //----------------------------------------------------------------------------
 void ctkExampleDicomHost::notifyStatus(const ctkDicomAppHosting::Status& status)
@@ -96,16 +95,6 @@ ctkExampleDicomHost::~ctkExampleDicomHost()
   this->AppProcess.kill();
 }
 
-//----------------------------------------------------------------------------
-void ctkExampleDicomHost::forwardConsoleOutput()
-{
-  while( this->AppProcess.bytesAvailable() )
-  {
-    QString line( this->AppProcess.readLine() );
-    line.prepend(">>>> ");
-    std::cout << line.toStdString();
-  }
-}
 
 //----------------------------------------------------------------------------
 bool ctkExampleDicomHost::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
@@ -113,6 +102,89 @@ bool ctkExampleDicomHost::notifyDataAvailable(const ctkDicomAppHosting::Availabl
   Q_UNUSED(data)
   Q_UNUSED(lastData)
   return false;
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onAppReady()
+{
+  //prepare some resources...
+  //tell app to start
+  //getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
+  qDebug() << "App ready to work";
+  if (this->exitingApplication)
+  {
+    this->exitingApplication = false;
+    getDicomAppService ()->setState (ctkDicomAppHosting::EXIT);
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onStartProgress()
+{
+  ctkDicomAppHosting::ObjectDescriptor ourObjectDescriptor;
+  QList<ctkDicomAppHosting::Study> studies;
+  ctkDicomAppHosting::AvailableData data;
+  ctkDicomAppHosting::Patient patient;
+
+  patient.name = "John Doe";
+  patient.id = "0000";
+  patient.assigningAuthority = "authority";
+  patient.sex = "male";
+  patient.birthDate = "today";
+  patient.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
+
+  patient.studies = studies;
+
+  ourObjectDescriptor.descriptorUUID = QUuid("{11111111-1111-1111-1111-111111111111}");
+  ourObjectDescriptor.mimeType = "text/plain";
+  ourObjectDescriptor.classUID = "lovelyClass";
+  ourObjectDescriptor.transferSyntaxUID = "transSyntaxUId";
+  ourObjectDescriptor.modality = "modMod";
+
+  data.objectDescriptors =  QList<ctkDicomAppHosting::ObjectDescriptor>();
+  data.objectDescriptors.append (ourObjectDescriptor);
+  data.patients = QList<ctkDicomAppHosting::Patient>();
+  data.patients.append (patient);
+
+  qDebug()<<"send dataDescriptors";
+  bool reply = getDicomAppService()->notifyDataAvailable (data,true);
+  qDebug() << "  notifyDataAvailable(1111) returned: " << reply;
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onResumed()
+{
+  qDebug() << "App resumed work";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onCompleted()
+{
+  qDebug() << "App finished processing";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onSuspended()
+{
+  qDebug() << "App paused";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onCanceled()
+{
+  qDebug() << "App canceled";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onExited()
+{
+  qDebug() << "App exited";
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onReleaseAvailableResources()
+{
+  qDebug() << "Should release resources put at the disposition of the app";
 }
 
 //----------------------------------------------------------------------------
@@ -153,4 +225,10 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomHost::getData(
 void ctkExampleDicomHost::releaseData(const QList<QUuid>& objectUUIDs)
 {
   Q_UNUSED(objectUUIDs)
+}
+
+void ctkExampleDicomHost::exitApplication()
+{
+  this->exitingApplication=true;
+  getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
 }

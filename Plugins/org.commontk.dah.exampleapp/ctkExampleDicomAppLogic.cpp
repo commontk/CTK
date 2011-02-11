@@ -43,7 +43,7 @@ ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
 
   connect(this, SIGNAL(startProgress()), this, SLOT(onStartProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(resumeProgress()), this, SLOT(onResumeProgress()), Qt::QueuedConnection);
-  connect(this, SIGNAL(SuspendProgress()), this, SLOT(onSuspendProgress()), Qt::QueuedConnection);
+  connect(this, SIGNAL(suspendProgress()), this, SLOT(onSuspendProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(cancelProgress()), this, SLOT(onCancelProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(exitHostedApp()), this, SLOT(onExitHostedApp()), Qt::QueuedConnection);
 
@@ -95,7 +95,9 @@ void ctkExampleDicomAppLogic::do_something()
 //----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::onStartProgress()
 {
+  setInternalState(ctkDicomAppHosting::INPROGRESS);
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
+
   do_something();
 }
 
@@ -105,6 +107,7 @@ void ctkExampleDicomAppLogic::onResumeProgress()
   //reclame all resources.
 
   //notify state changed
+  setInternalState(ctkDicomAppHosting::INPROGRESS);
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
   //we're rolling
   //do something else normally, but this is an example
@@ -117,7 +120,8 @@ void ctkExampleDicomAppLogic::onSuspendProgress()
   //release resources it can reclame later to resume work
   this->Button->setEnabled(false);
   //notify state changed
-  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
+  setInternalState(ctkDicomAppHosting::SUSPENDED);
+  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::SUSPENDED);
   //we're rolling
   //do something else normally, but this is an example
 }
@@ -128,13 +132,26 @@ void ctkExampleDicomAppLogic::onCancelProgress()
   //release all resources
   onReleaseResources();
   //update state
+  setInternalState(ctkDicomAppHosting::IDLE);
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
 }
 
 //----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::onExitHostedApp()
 {
+  //useless move, but correct:
+  setInternalState(ctkDicomAppHosting::EXIT);
+  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
+  //die
   qApp->exit(0);
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomAppLogic::onReleaseResources()
+{
+  this->Button->hide();
+  delete (this->Button);
+  this->Button = 0 ;
 }
 
 

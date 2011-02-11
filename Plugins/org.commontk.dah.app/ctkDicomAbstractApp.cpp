@@ -24,6 +24,7 @@
 #include <ctkDicomHostInterface.h>
 #include <ctkPluginContext.h>
 #include <ctkServiceTracker.h>
+#include <ctkDicomAppHostingTypesHelper.h>
 
 class ctkDicomAbstractAppPrivate
 {
@@ -67,6 +68,8 @@ ctkDicomAbstractApp::~ctkDicomAbstractApp()
 //----------------------------------------------------------------------------
 bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
 {
+
+  qDebug()<<"treating new state: "<< ctkDicomSoapState::toStringValue(newState);
   bool result = false;
   //received a new state,
   switch (newState){
@@ -102,11 +105,11 @@ bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
     if (d_ptr->currentState == ctkDicomAppHosting::INPROGRESS
         || d_ptr->currentState == ctkDicomAppHosting::SUSPENDED)
     {
-      //releasing resources
-      emit cancelProgress();
       //special state, a transitional state, so we notify straight away the new state.
       getHostInterface()->notifyStateChanged(ctkDicomAppHosting::CANCELED);
       d_ptr->currentState = ctkDicomAppHosting::CANCELED;
+      //releasing resources
+      emit cancelProgress();
       result = true;
     }
     break;
@@ -126,8 +129,10 @@ bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
   }
   if (!result)
   {
-    qDebug()<<"illegal transition to: "<< newState <<
-               "Current state is:" << d_ptr->currentState;
+    qDebug()<<"illegal transition to: "<< static_cast<int>(newState) <<
+               "Current state is:" << static_cast<int>(d_ptr->currentState);
+    qDebug()<<"illegal transition to: "<< ctkDicomSoapState::toStringValue(newState) <<
+               "Current state is:" << ctkDicomSoapState::toStringValue(d_ptr->currentState);
   }
   return result;
 }
@@ -144,6 +149,11 @@ ctkDicomHostInterface* ctkDicomAbstractApp::getHostInterface() const
 ctkDicomAppHosting::State ctkDicomAbstractApp::getState()
 {
   return d_ptr->currentState;
+}
+
+void ctkDicomAbstractApp::setInternalState(ctkDicomAppHosting::State state)
+{
+  d_ptr->currentState = state;
 }
 
 

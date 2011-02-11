@@ -85,7 +85,7 @@ void ctkHostAppExampleWidget::runButtonClicked()
 void ctkHostAppExampleWidget::stopButtonClicked()
 {
   qDebug() << "stop button clicked";
-  this->Host->getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
+  this->Host->exitApplication();
 }
 
 //----------------------------------------------------------------------------
@@ -156,66 +156,28 @@ void ctkHostAppExampleWidget::placeholderResized()
   //ui->placeholderFrame->printPosition();
 }
 
-//----------------------------------------------------------------------------
+
+
 void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
 {
   ui->statusLabel->setText(ctkDicomSoapState::toStringValue(state));
-
-  bool reply;
-  ctkDicomAppHosting::ObjectDescriptor ourObjectDescriptor;
-  QList<ctkDicomAppHosting::Study> studies;
-  ctkDicomAppHosting::AvailableData data;
-  ctkDicomAppHosting::Patient patient;
-
-  //TODO put the state changed routine back in notifyStateChanged for the state machine part.
-  switch (state)
-  {
-  case ctkDicomAppHosting::IDLE:
-    if (this->Host->getApplicationState() != ctkDicomAppHosting::IDLE)
-    {
-      qDebug()<<"state was not IDLE before -> setState EXIT ";
-      this->Host->getDicomAppService()->setState(ctkDicomAppHosting::EXIT);
-    }
-    break;
-  case ctkDicomAppHosting::INPROGRESS:
-    patient.name = "John Doe";
-    patient.id = "0000";
-    patient.assigningAuthority = "authority";
-    patient.sex = "male";
-    patient.birthDate = "today";
-    patient.objectDescriptors = QList<ctkDicomAppHosting::ObjectDescriptor>();
-
-    patient.studies = studies;
-
-    ourObjectDescriptor.descriptorUUID = QUuid("{11111111-1111-1111-1111-111111111111}");
-    ourObjectDescriptor.mimeType = "text/plain";
-    ourObjectDescriptor.classUID = "lovelyClass";
-    ourObjectDescriptor.transferSyntaxUID = "transSyntaxUId";
-    ourObjectDescriptor.modality = "modMod";
-
-    data.objectDescriptors =  QList<ctkDicomAppHosting::ObjectDescriptor>();
-    data.objectDescriptors.append (ourObjectDescriptor);
-    data.patients = QList<ctkDicomAppHosting::Patient>();
-    data.patients.append (patient);
-
-    qDebug()<<"send dataDescriptors";
-    reply = this->Host->getDicomAppService()->notifyDataAvailable (data,true);
-    qDebug() << "  notifyDataAvailable(1111) returned: " << reply;
-    break;
-  case ctkDicomAppHosting::COMPLETED:
-  case ctkDicomAppHosting::SUSPENDED:
-  case ctkDicomAppHosting::CANCELED:
-  case ctkDicomAppHosting::EXIT:
-    //shouldn't happen, when exiting the application just dies
-  default:
-    //do nothing
-    break;
-  }
-  this->Host->setApplicationState(state);
 }
+
 
 //----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::outputMessage ()
 {
   ui->messageOutput->append (this->Host->processReadAll ());
 }
+
+//----------------------------------------------------------------------------
+void ctkHostAppExampleWidget::suspendButtonClicked()
+{
+  this->Host->getDicomAppService()->setState(ctkDicomAppHosting::SUSPENDED);
+}
+
+void ctkHostAppExampleWidget::cancelButtonClicked()
+{
+  this->Host->getDicomAppService()->setState(ctkDicomAppHosting::CANCELED);
+}
+
