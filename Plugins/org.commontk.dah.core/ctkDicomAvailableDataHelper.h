@@ -44,13 +44,13 @@ public:
   ctkDicomAvailableDataAccessor(ctkDicomAppHosting::AvailableData& ad);
   virtual ~ctkDicomAvailableDataAccessor();
 
-  ctkDicomAppHosting::Patient* ctkDicomAvailableDataAccessor::getPatient(const ctkDicomAppHosting::Patient& patient) const;
+  ctkDicomAppHosting::Patient* getPatient(const ctkDicomAppHosting::Patient& patient) const;
 
   ctkDicomAppHosting::Study* getStudy(const QString& studyUID) const;
 
   ctkDicomAppHosting::Series* getSeries(const QString& seriesUID) const;
 
-  void ctkDicomAvailableDataAccessor::find(const ctkDicomAppHosting::Patient& patient, 
+  void find(const ctkDicomAppHosting::Patient& patient, 
                                          const QString& studyUID, 
                                          const QString& seriesUID,
                                          ctkDicomAppHosting::Patient*& patientResult, 
