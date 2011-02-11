@@ -45,8 +45,8 @@ bool ctkSoapMessageProcessorList::process(
     const QtSoapMessage& message,
     QtSoapMessage* reply ) const
 {
-  //extern void DumpAll(const QtSoapType& type, int indent=0);
-  //DumpAll(message.method());
+  extern void DumpAll(const QtSoapType& type, int indent=0);
+  DumpAll(message.method());
 
   foreach(ctkSoapMessageProcessor* processor, this->Processors)
   {

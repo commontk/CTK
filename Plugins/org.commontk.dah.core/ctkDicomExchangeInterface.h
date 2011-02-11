@@ -27,7 +27,7 @@
 #include <QObject>
 #include "ctkDicomAppHostingTypes.h"
 
-class QUuid;
+struct QUuid;
 
 struct ctkDicomExchangeInterface
 {

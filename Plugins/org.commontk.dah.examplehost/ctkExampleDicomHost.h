@@ -52,10 +52,6 @@ public:
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
   // exchange methods
   virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
-  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-      const QList<QUuid>& objectUUIDs,
-      const QList<QString>& acceptableTransferSyntaxUIDs,
-      bool includeBulkData);
   virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
   const QProcess& getAppProcess() const { return this->AppProcess; }

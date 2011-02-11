@@ -8,6 +8,8 @@ SET(PLUGIN_SRCS
   ctkDicomAppHostingTypes.cpp
   ctkDicomAppHostingTypesHelper.cpp
   ctkDicomAppInterface.h
+  ctkDicomAvailableDataHelper.cpp
+  ctkDicomAvailableDataHelper.h
   ctkDicomExchangeInterface.h
   ctkDicomExchangeService.cpp
   ctkDicomHostInterface.h

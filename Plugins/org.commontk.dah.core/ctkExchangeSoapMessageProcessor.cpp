@@ -91,11 +91,9 @@ void ctkExchangeSoapMessageProcessor::processGetData(
 {
   // extract arguments from input message
   const QtSoapType& inputType = message.method()["objectUUIDs"];
-  const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(
-    dynamic_cast<const QtSoapArray&>(inputType));
+  const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(inputType);
   const QtSoapType& inputType2 = message.method()["acceptableTransferSyntaxUIDs"];
-  const QStringList acceptableTransferSyntaxUIDs = ctkDicomSoapArrayOfStringType::getArray(
-    dynamic_cast<const QtSoapArray&>(inputType2));
+  const QStringList acceptableTransferSyntaxUIDs = ctkDicomSoapArrayOfStringType::getArray(inputType2);
   const QtSoapType& inputType3 = message.method()["includeBulkData"];
   const bool includeBulkData = ctkDicomSoapBool::getBool(inputType3);
   // query interface

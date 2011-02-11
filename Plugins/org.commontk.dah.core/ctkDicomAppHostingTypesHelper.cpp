@@ -207,7 +207,6 @@ QStringList ctkDicomSoapArrayOfStringType::getArray(const QtSoapType& type)
 
 //----------------------------------------------------------------------------
 ctkDicomSoapUUID::ctkDicomSoapUUID(const QString& name, const QUuid& uuid)
-//  : QtSoapArray(QtSoapQName(name), QtSoapType::String, array.size())
   : QtSoapStruct(QtSoapQName(name))
 {
   QString uuidstring(uuid.toString());
@@ -246,7 +245,7 @@ QList<QUuid> ctkDicomSoapArrayOfUUIDS::getArray(const QtSoapType& type)
   QList<QUuid> list;
   for (int i = 0; i < type.count(); i++)
     {
-    list << QUuid(type[i].value().toString());
+    list << ctkDicomSoapUUID::getUuid(type[i]);
     }
   return list;
 }
@@ -590,4 +589,3 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomSoapArrayOfObjectLocators::getA
     }
   return list;
 }
-
