@@ -239,7 +239,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool create
 
   QSqlQuery fileExists ( d->Database );
   fileExists.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == ?");
-  fileExists.bindValue(0,QString::fromStdString(sopInstanceUID));
+  fileExists.bindValue(0,QString(sopInstanceUID.c_str()));
   fileExists.exec();
   if ( fileExists.next() && QFileInfo(fileExists.value(1).toString()).lastModified() < QDateTime::fromString(fileExists.value(0).toString(),Qt::ISODate) )
     {
