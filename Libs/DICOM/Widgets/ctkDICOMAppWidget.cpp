@@ -165,6 +165,36 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
 {
   Q_D(ctkDICOMAppWidget);
 
+
+  if ( d->DICOMModel.data(index,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType )
+  {
+    qDebug() << "Clicked on series";
+    QStringList thumbnails;
+    QString thumbnailPath = d->DICOMDatabase->databaseDirectory() +
+                            "/thumbs/" + d->DICOMModel.data(index.parent() ,ctkDICOMModel::UIDRole).toString() + "/" +
+                            d->DICOMModel.data(index ,ctkDICOMModel::UIDRole).toString() + "/";
+
+    QModelIndex studyIndex = index.parent();
+    QModelIndex seriesIndex = index;
+    int imageCount = d->DICOMModel.rowCount(index);
+    for (int i = 0 ; i < imageCount ; i++ )
+    {
+      QModelIndex imageIndex = index.child(i,0);
+      QString thumbnail = thumbnailPath + d->DICOMModel.data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
+      qDebug() << "Thumb: " << thumbnail;
+      if (QFile(thumbnail).exists())
+      {
+        thumbnails << thumbnail;
+      }
+    }
+    if ( ! thumbnails.empty() )
+    {
+      qDebug() << thumbnails;
+    }
+    //  thumbnailPath.append("/thumbs/").append(d->DICOMModel.data( studyIndex,ctkDICOMModel::UIDRole).toString() );
+    //  thumbnailPath.append(d->DICOMModel.data( seriesIndex,ctkDICOMModel::UIDRole).toString() );
+  }
+
   //TODO: update thumbnails and previewer
   d->thumbnailsWidget->setModelIndex(index);
 
