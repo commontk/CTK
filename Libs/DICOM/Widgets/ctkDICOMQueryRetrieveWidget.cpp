@@ -25,6 +25,7 @@
 #include <QSettings>
 #include <QTreeView>
 #include <QTabBar>
+#include <QMessageBox>
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
@@ -221,10 +222,13 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
     catch (std::exception e)
       {
       logger.error ( "Retrieve failed" );
+      QMessageBox::information ( this, tr("Query Retrieve"), tr("Retrieve failed.") );
       return;
       }
     logger.info ( "Retrieve success" );
   }
+  QMessageBox::information ( this, tr("Query Retrieve"), tr("Selected studies have been downloaded.") );
+  this->hide();
 }
 
 //----------------------------------------------------------------------------

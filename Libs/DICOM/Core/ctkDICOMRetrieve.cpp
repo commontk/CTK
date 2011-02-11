@@ -18,6 +18,8 @@
 
 =========================================================================*/
 
+#include <stdexcept>
+
 // Qt includes
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -142,13 +144,13 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType )
   if ( !scu.initNetwork().good() ) 
     {
     logger.error ( "Error initializing the network" );
-    return;
+    throw std::runtime_error( std::string("Error initializing the network") );
     }
   logger.debug ( "Negotiating Association" );
   if ( !scu.negotiateAssociation().good() )
     {
     logger.error ( "Error negotiating association" );
-    return;
+    throw std::runtime_error( std::string("Error negotiating association") );
     }
 
   logger.debug ( "Setting Parameters" );
@@ -183,6 +185,7 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType )
     if ( responses->begin() == responses->end() )
       {
       logger.error ( "No responses!" );
+      throw std::runtime_error( std::string("No responses!") );
       }
 
     // Write the responses out to disk
@@ -229,6 +232,7 @@ void ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType )
   else
     {
     logger.error ( "MOVE Request failed: " + QString ( status.text() ) );
+    throw std::runtime_error( std::string("Move Request Failed") );
     }
   delete responses;
 }
