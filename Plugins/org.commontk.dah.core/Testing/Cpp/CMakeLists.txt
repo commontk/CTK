@@ -2,6 +2,7 @@ SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkDicomAppHostingTypesTest1.cpp
+  ctkDicomObjectLocatorCacheTest1.cpp
   )
 
 SET (TestsToRun ${Tests})
@@ -24,3 +25,4 @@ ENDMACRO( SIMPLE_TEST )
 #
 
 SIMPLE_TEST( ctkDicomAppHostingTypesTest1 )
+SIMPLE_TEST( ctkDicomObjectLocatorCacheTest1 )
