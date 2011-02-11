@@ -5,7 +5,7 @@ SET(PLUGIN_export_directive "org_commontk_dah_core_EXPORT")
 SET(PLUGIN_SRCS
   ctkDicomAppHostingCorePlugin.cpp
   ctkDicomAppHostingCorePlugin_p.h
-  ctkDicomAppHostingTypes.h
+  ctkDicomAppHostingTypes.cpp
   ctkDicomAppHostingTypesHelper.cpp
   ctkDicomAppInterface.h
   ctkDicomExchangeInterface.h
@@ -50,3 +50,8 @@ ctkMacroBuildPlugin(
   RESOURCES ${PLUGIN_resources}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}
 )
+
+IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+ENDIF()
+
