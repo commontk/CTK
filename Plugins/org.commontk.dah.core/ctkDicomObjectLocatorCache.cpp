@@ -141,10 +141,7 @@ bool ctkDicomObjectLocatorCache::remove(const QString& objectUuid)
 }
 
 //----------------------------------------------------------------------------
-QList<ctkDicomAppHosting::ObjectLocator> ctkDicomObjectLocatorCache::getData(
-  const QList<QUuid>& objectUUIDs,
-  const QList<QString>& acceptableTransferSyntaxUIDs,
-  bool includeBulkData)
+QList<ctkDicomAppHosting::ObjectLocator> ctkDicomObjectLocatorCache::getData(const QList<QUuid>& objectUUIDs)
 {
   QList<ctkDicomAppHosting::ObjectLocator> objectLocators;
   foreach(const QUuid& uuid, objectUUIDs)
@@ -153,13 +150,8 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomObjectLocatorCache::getData(
     bool found = this->find(uuid, objectLocator);
     if (!found)
       {
-      // What to do .. ? Create an empty objectLocator ...
-      continue;
-      }
-    if (includeBulkData)
-      {
-      Q_UNUSED(acceptableTransferSyntaxUIDs);
-      // Not implemented
+      // Use the empty objectLocator
+      // TODO Source should be set to NULL
       }
     objectLocators << objectLocator;
     }

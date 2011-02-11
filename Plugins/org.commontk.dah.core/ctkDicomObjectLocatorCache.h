@@ -50,10 +50,7 @@ public:
 
   bool remove(const QString& objectUuid);
 
-  QList<ctkDicomAppHosting::ObjectLocator> getData(
-    const QList<QUuid>& objectUUIDs,
-    const QList<QString>& acceptableTransferSyntaxUIDs,
-    bool includeBulkData);
+  QList<ctkDicomAppHosting::ObjectLocator> getData(const QList<QUuid>& objectUUIDs);
 
 private:
   Q_DECLARE_PRIVATE(ctkDicomObjectLocatorCache)

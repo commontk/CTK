@@ -153,7 +153,9 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractApp::getData(
   const QList<QString>& acceptableTransferSyntaxUIDs,
   bool includeBulkData)
 {
-  return this->objectLocatorCache()->getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
+  Q_UNUSED(acceptableTransferSyntaxUIDs);
+  Q_UNUSED(includeBulkData);
+  return this->objectLocatorCache()->getData(objectUUIDs);
 }
 
 //----------------------------------------------------------------------------
