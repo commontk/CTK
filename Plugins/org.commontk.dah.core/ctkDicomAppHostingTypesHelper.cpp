@@ -194,12 +194,12 @@ ctkDicomSoapArrayOfStringType::ctkDicomSoapArrayOfStringType(const QString& type
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkDicomSoapArrayOfStringType::getArray(const QtSoapType& array)
+QStringList ctkDicomSoapArrayOfStringType::getArray(const QtSoapType& type)
 {
   QStringList list;
-  for (int i = 0; i < array.count() ; i++)
+  for (int i = 0; i < type.count() ; i++)
     {
-    const QString str = array[i].value().toString();
+    const QString str = type[i].value().toString();
     list << str;
     }
   return list;
@@ -241,12 +241,12 @@ ctkDicomSoapArrayOfUUIDS::ctkDicomSoapArrayOfUUIDS(const QString& name, const QL
 }
 
 //----------------------------------------------------------------------------
-QList<QUuid> ctkDicomSoapArrayOfUUIDS::getArray(const QtSoapType& array)
+QList<QUuid> ctkDicomSoapArrayOfUUIDS::getArray(const QtSoapType& type)
 {
   QList<QUuid> list;
-  for (int i = 0; i < array.count(); i++)
+  for (int i = 0; i < type.count(); i++)
     {
-    list << QUuid(array[i].value().toString());
+    list << QUuid(type[i].value().toString());
     }
   return list;
 }
@@ -346,14 +346,9 @@ ctkDicomSoapSeries::ctkDicomSoapSeries(const QString& name,
 ctkDicomAppHosting::Series ctkDicomSoapSeries::getSeries(const QtSoapType& type)
 {
   ctkDicomAppHosting::Series s;
-  const QtSoapType* ttype = &type;
-  if(type.name().name()=="item")
-    {
-    ttype = &(type["item"]);
-    }
 
-  s.seriesUID = (*ttype)["seriesUID"].value().toString();
-  s.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors((*ttype)["objectDescriptors"]);
+  s.seriesUID = type["seriesUID"].value().toString();
+  s.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
   return s;
 }
 
@@ -389,18 +384,12 @@ ctkDicomSoapStudy::ctkDicomSoapStudy(const QString& name,
 ctkDicomAppHosting::Study ctkDicomSoapStudy::getStudy(const QtSoapType& type)
 {
   ctkDicomAppHosting::Study s;
-
-  const QtSoapType* ttype = &type;
-  if(type.name().name() == "item")
-    {
-    ttype = &(type["item"]);
-    }
-
-  s.studyUID = (*ttype)["StudyUID"].value().toString();
-  s.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors((*ttype)["objectDescriptors"]);
+ 
+  s.studyUID = type["StudyUID"].value().toString();
+  s.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
 
   QList<ctkDicomAppHosting::Series> listSeries;
-  const QtSoapType& seriesArray = (*ttype)["Series"];
+  const QtSoapType& seriesArray = type["Series"];
   for (int i = 0; i < seriesArray.count() ; i++)
     {
     const ctkDicomAppHosting::Series series =
@@ -451,24 +440,18 @@ ctkDicomSoapPatient::ctkDicomSoapPatient(const QString& name,
 //----------------------------------------------------------------------------
 ctkDicomAppHosting::Patient ctkDicomSoapPatient::getPatient(const QtSoapType& type)
 {
-  const QtSoapType* ttype = &type;
-  if(type.name().name() == "item")
-    {
-    ttype = &(type["item"]);
-    }
-
   ctkDicomAppHosting::Patient p;
 
-  p.name = (*ttype)["Name"].value().toString();
-  p.id = (*ttype)["ID"].value().toString();
-  p.assigningAuthority = (*ttype)["AssigningAuthority"].value().toString();
-  p.sex = (*ttype)["Sex"].value().toString();
-  p.birthDate = (*ttype)["Birthdate"].value().toString();
+  p.name = type["Name"].value().toString();
+  p.id = type["ID"].value().toString();
+  p.assigningAuthority = type["AssigningAuthority"].value().toString();
+  p.sex = type["Sex"].value().toString();
+  p.birthDate = type["Birthdate"].value().toString();
 
-  p.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors((*ttype)["objectDescriptors"]);
+  p.objectDescriptors = ctkDicomSoapArrayOfObjectDescriptors::getArrayOfObjectDescriptors(type["objectDescriptors"]);
 
   QList<ctkDicomAppHosting::Study> listPatient;
-  const QtSoapType& studiesArray = (*ttype)["Studies"];
+  const QtSoapType& studiesArray = type["Studies"];
   for (int i = 0; i < studiesArray.count() ; i++)
     {
     const ctkDicomAppHosting::Study study =
@@ -595,14 +578,14 @@ ctkDicomSoapArrayOfObjectLocators::ctkDicomSoapArrayOfObjectLocators(
 }
 
 //----------------------------------------------------------------------------
-QList<ctkDicomAppHosting::ObjectLocator> ctkDicomSoapArrayOfObjectLocators::getArray(const QtSoapType& array)
+QList<ctkDicomAppHosting::ObjectLocator> ctkDicomSoapArrayOfObjectLocators::getArray(const QtSoapType& type)
 {
   QList<ctkDicomAppHosting::ObjectLocator> list;
 
-  for (int i = 0; i < array.count(); i++)
+  for (int i = 0; i < type.count(); i++)
     {
     const ctkDicomAppHosting::ObjectLocator ol =
-        ctkDicomSoapObjectLocator::getObjectLocator(array[i]);
+        ctkDicomSoapObjectLocator::getObjectLocator(type[i]);
     list << ol;
     }
   return list;

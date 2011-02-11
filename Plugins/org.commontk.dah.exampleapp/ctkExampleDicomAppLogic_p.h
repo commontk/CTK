@@ -23,6 +23,10 @@
 #ifndef CTKEXAMPLEDICOMAPPLOGIC_P_H
 #define CTKEXAMPLEDICOMAPPLOGIC_P_H
 
+// Qt includes
+#include <QUuid>
+
+// CTK includes
 #include <ctkDicomAbstractApp.h>
 #include <ctkDicomHostInterface.h>
 
