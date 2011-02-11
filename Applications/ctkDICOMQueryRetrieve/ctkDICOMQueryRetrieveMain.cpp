@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
   app.setOrganizationName("commontk");
   app.setOrganizationDomain("commontk.org");
-  app.setApplicationName("ctkDICOM");
+  app.setApplicationName("ctkDICOMQueryRetrieve");
 
   QSettings settings;
   QString databaseDirectory;

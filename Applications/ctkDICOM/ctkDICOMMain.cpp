@@ -48,7 +48,7 @@ int main(int argc, char** argv)
   app.setApplicationName("ctkDICOM");
 
   // set up Qt resource files
-  QResource::registerResource("./Resources/ctkDICOMViewer.qrc");
+  QResource::registerResource("./Resources/ctkDICOM.qrc");
 
   QSettings settings;
   QString databaseDirectory;
