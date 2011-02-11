@@ -29,6 +29,7 @@
 #include <org_commontk_dah_host_Export.h>
 
 class ctkDicomAbstractHostPrivate;
+class ctkDicomObjectLocatorCache;
 
 /**
   * Provides a basic implementation for an application host.
@@ -48,11 +49,21 @@ public:
     * Starts the soap sever on the specified port or choose port automatically.
     */
   ctkDicomAbstractHost(int hostPort = 0, int appPort = 0);
-  int getHostPort() const;
-  int getAppPort() const;
   virtual ~ctkDicomAbstractHost();
+  int getHostPort() const;
+
+  int getAppPort() const;
 
   ctkDicomAppInterface* getDicomAppService() const;
+
+  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
+    bool includeBulkData);
+
+  ctkDicomObjectLocatorCache* objectLocatorCache()const;
+
+  bool publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData);
 
 private:
 

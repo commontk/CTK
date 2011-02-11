@@ -29,6 +29,8 @@
 class ctkDicomAbstractAppPrivate;
 class ctkDicomHostInterface;
 class ctkPluginContext;
+class ctkDicomObjectLocatorCache;
+
 /**
   * Provides a basic implementation for an application app.
   *
@@ -45,7 +47,17 @@ public:
 
   ctkDicomAbstractApp(ctkPluginContext* context);
   virtual ~ctkDicomAbstractApp();
+
   virtual bool setState(ctkDicomAppHosting::State newState);
+  
+  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
+    const QList<QUuid>& objectUUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
+    bool includeBulkData);
+
+  ctkDicomObjectLocatorCache* objectLocatorCache()const;
+
+  bool publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData);
 
 protected:
   virtual ctkDicomHostInterface* getHostInterface() const;

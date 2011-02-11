@@ -22,6 +22,7 @@
 // CTK includes
 #include "ctkDicomAbstractApp.h"
 #include <ctkDicomHostInterface.h>
+#include <ctkDicomObjectLocatorCache.h>
 #include <ctkPluginContext.h>
 #include <ctkServiceTracker.h>
 
@@ -29,10 +30,11 @@ class ctkDicomAbstractAppPrivate
 {
 public:
   ctkDicomAbstractAppPrivate(ctkPluginContext* context);
-  ~ctkDicomAbstractAppPrivate();
 
   ctkServiceTracker<ctkDicomHostInterface*> HostTracker;
   ctkDicomAppHosting::State currentState;
+
+  ctkDicomObjectLocatorCache ObjectLocatorCache;
 };
 
 //----------------------------------------------------------------------------
@@ -42,11 +44,6 @@ public:
 ctkDicomAbstractAppPrivate::ctkDicomAbstractAppPrivate(ctkPluginContext * context):HostTracker(context),currentState(ctkDicomAppHosting::IDLE)
 {
   //perhaps notStarted or some dummy state instead of IDLE?
-}
-
-//----------------------------------------------------------------------------
-ctkDicomAbstractAppPrivate::~ctkDicomAbstractAppPrivate()
-{
 }
 
 //----------------------------------------------------------------------------
@@ -145,12 +142,43 @@ bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
   return result;
 }
 
-
+//----------------------------------------------------------------------------
 ctkDicomHostInterface* ctkDicomAbstractApp::getHostInterface() const
 {
   ctkDicomHostInterface* host = d_ptr->HostTracker.getService();
   if (!host) throw std::runtime_error("DICOM Host Interface not available");
   return host;
+}
+
+//----------------------------------------------------------------------------
+QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractApp::getData(
+  const QList<QUuid>& objectUUIDs,
+  const QList<QString>& acceptableTransferSyntaxUIDs,
+  bool includeBulkData)
+{
+  return this->objectLocatorCache()->getData(objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
+}
+
+//----------------------------------------------------------------------------
+ctkDicomObjectLocatorCache* ctkDicomAbstractApp::objectLocatorCache()const
+{
+  Q_D(const ctkDicomAbstractApp);
+  return const_cast<ctkDicomObjectLocatorCache*>(&d->ObjectLocatorCache);
+}
+
+//----------------------------------------------------------------------------
+bool ctkDicomAbstractApp::publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData)
+{
+  if (!this->objectLocatorCache()->isCached(availableData))
+    {
+    return false;
+    }
+  bool success = this->getHostInterface()->notifyDataAvailable(availableData, lastData);
+  if(!success)
+    {
+    return false;
+    }
+  return true;
 }
 
 

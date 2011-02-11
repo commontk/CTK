@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QHash>
+#include <QUuid>
 
 // CTK includes
 #include "ctkDicomAppHostingTypes.h"

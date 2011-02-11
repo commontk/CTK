@@ -29,6 +29,7 @@
 #include <org_commontk_dah_core_Export.h>
 
 class ctkDicomObjectLocatorCachePrivate;
+class QUuid;
 
 /**
   *
