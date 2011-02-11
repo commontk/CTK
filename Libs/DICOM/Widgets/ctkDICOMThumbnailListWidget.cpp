@@ -48,16 +48,6 @@ ctkDICOMThumbnailListWidget::ctkDICOMThumbnailListWidget(QWidget* _parent):Super
   ctkFlowLayout* flowLayout = new ctkFlowLayout();
   d->scrollAreaContentWidget->setLayout(flowLayout);
 
-  for(int i=0; i<326; i++){
-    ctkDICOMThumbnailWidget* widget = new ctkDICOMThumbnailWidget(d->scrollAreaContentWidget);
-
-    QString str("thumbnail");
-    widget->setText(str);
-    QPixmap pix(64, 64);
-    pix.fill(Qt::blue);
-    widget->setPixmap(pix);
-    flowLayout->addWidget(widget);
-  }
 }
 
 //----------------------------------------------------------------------------
@@ -66,7 +56,17 @@ ctkDICOMThumbnailListWidget::~ctkDICOMThumbnailListWidget()
   
 }
 
-void ctkDICOMThumbnailListWidget::setModelIndex(const QModelIndex &index){
+void ctkDICOMThumbnailListWidget::setThumbnailFiles(const QStringList thumbnailList)
+{
   Q_D(ctkDICOMThumbnailListWidget);
 
+  int index 0;
+  foreach (QString thumbnailFile, thumbnailList)
+  {
+    ctkDICOMThumbnailWidget* widget = new ctkDICOMThumbnailWidget(d->scrollAreaContentWidget);
+    widget->setText( QString("Image %1").arg(index++) );
+    QPixmap pix(thumbnailFile);
+    widget->setPixmap(pix);
+    flowLayout->addWidget(widget);
+  }
 }

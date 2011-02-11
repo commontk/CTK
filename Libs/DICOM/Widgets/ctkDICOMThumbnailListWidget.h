@@ -38,7 +38,7 @@ public:
   explicit ctkDICOMThumbnailListWidget(QWidget* parent=0);
   virtual ~ctkDICOMThumbnailListWidget();
 
-  void setModelIndex(const QModelIndex& index);
+  void setThumbnailFiles(const QStringList& thumbnailFiles);
   
 protected:
   QScopedPointer<ctkDICOMThumbnailListWidgetPrivate> d_ptr;
