@@ -11,6 +11,7 @@ SET(PLUGIN_SRCS
   ctkDicomExchangeInterface.h
   ctkDicomExchangeService.cpp
   ctkDicomHostInterface.h
+  ctkDicomObjectLocatorCache.cpp
   ctkExchangeSoapMessageProcessor.cpp
   ctkSimpleSoapClient.cpp
   ctkSimpleSoapServer.cpp
