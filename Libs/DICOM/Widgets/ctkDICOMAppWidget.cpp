@@ -1,6 +1,8 @@
 // std includes
 #include <iostream>
 
+#include <dcmimage.h>
+
 // Qt includes
 #include <QDebug>
 #include <QTreeView>
@@ -15,6 +17,7 @@
 #include "ctkDICOMIndexer.h"
 
 // ctkDICOMWidgets includes
+#include "ctkDICOMImage.h"
 #include "ctkDICOMModel.h"
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
@@ -200,17 +203,19 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
 
   // TODO: this could check the type of the model entries
   QString thumbnailPath = d->DICOMDatabase->databaseDirectory();
-  thumbnailPath.append("/thumbs/").append(d->DICOMModel.data(index.parent().parent() ,ctkDICOMModel::UIDRole).toString());
+  thumbnailPath.append("/dicom/").append(d->DICOMModel.data(index.parent().parent() ,ctkDICOMModel::UIDRole).toString());
   thumbnailPath.append("/").append(d->DICOMModel.data(index.parent() ,ctkDICOMModel::UIDRole).toString());
   thumbnailPath.append("/").append(d->DICOMModel.data(index ,ctkDICOMModel::UIDRole).toString());
-  thumbnailPath.append(".png");
+  //thumbnailPath.append(".png");
   if (QFile(thumbnailPath).exists())
   {
-    d->imagePreview->setPixmap(QPixmap(thumbnailPath));
+    DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
+    ctkDICOMImage ctkImage( & dcmImage );
+    d->imagePreview->addImage( ctkImage );
   }
   else
   {
-    d->imagePreview->setText("No preview");
+    d->imagePreview->clearImages();
   }
 
 

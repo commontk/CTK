@@ -132,11 +132,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QLabel" name="imagePreview">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
+           <widget class="ctkDICOMDatasetView" name="imagePreview" native="true"/>
           </item>
          </layout>
         </widget>
@@ -199,6 +195,12 @@
    <class>ctkDICOMThumbnailListWidget</class>
    <extends>QWidget</extends>
    <header>ctkDICOMThumbnailListWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDICOMDatasetView</class>
+   <extends>QWidget</extends>
+   <header location="global">ctkDICOMDatasetView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
