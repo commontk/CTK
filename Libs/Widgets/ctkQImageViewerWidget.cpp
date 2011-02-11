@@ -579,7 +579,7 @@ void ctkQImageViewerWidget::mousePressEvent( QMouseEvent * event )
         d->MouseLastIntensityWindowMax = this->intensityWindowMax();
         break;
         }
-      case Qt::MiddleButton:
+      case Qt::MidButton:
         {
         d->MouseMiddleDragging = true;
         d->MouseLastX = event->x();
