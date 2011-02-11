@@ -207,7 +207,6 @@ QStringList ctkDicomSoapArrayOfStringType::getArray(const QtSoapType& type)
 
 //----------------------------------------------------------------------------
 ctkDicomSoapUUID::ctkDicomSoapUUID(const QString& name, const QUuid& uuid)
-//  : QtSoapArray(QtSoapQName(name), QtSoapType::String, array.size())
   : QtSoapStruct(QtSoapQName(name))
 {
   QString uuidstring(uuid.toString());
@@ -246,7 +245,7 @@ QList<QUuid> ctkDicomSoapArrayOfUUIDS::getArray(const QtSoapType& type)
   QList<QUuid> list;
   for (int i = 0; i < type.count(); i++)
     {
-    list << QUuid(type[i].value().toString());
+    list << ctkDicomSoapUUID::getUuid(type[i]);
     }
   return list;
 }
@@ -589,121 +588,4 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomSoapArrayOfObjectLocators::getA
     list << ol;
     }
   return list;
-}
-
-//------------------------------------------------------------------------------
-class ctkDicomAvailableDataAccessorPrivate
-{
-//  Q_DECLARE_PUBLIC(ctkDicomAvailableDataAccessor);
-protected:
-  
-public:
-  ctkDicomAvailableDataAccessorPrivate(ctkDicomAppHosting::AvailableData& availableData) : 
-      m_AvailableData(availableData) { };
-
-  ctkDicomAppHosting::AvailableData& m_AvailableData;
-};
-
-//----------------------------------------------------------------------------
-ctkDicomAvailableDataAccessor::ctkDicomAvailableDataAccessor(ctkDicomAppHosting::AvailableData& ad)
-  : d_ptr(new ctkDicomAvailableDataAccessorPrivate(ad))
-{
-}
-
-ctkDicomAvailableDataAccessor::~ctkDicomAvailableDataAccessor() {};
-
-//----------------------------------------------------------------------------
-ctkDicomAppHosting::Patient* ctkDicomAvailableDataAccessor::getPatient(const ctkDicomAppHosting::Patient& patient) const
-{
-  const Q_D(ctkDicomAvailableDataAccessor);
-  ctkDicomAppHosting::AvailableData & ad(d->m_AvailableData);
-  for (QList<ctkDicomAppHosting::Patient>::Iterator pit = ad.patients.begin();
-    pit < ad.patients.end(); pit++)
-    {
-      if(pit->id==patient.id)
-        return &(*pit);
-    }
-  return NULL;
-}
-
-//----------------------------------------------------------------------------
-ctkDicomAppHosting::Study* ctkDicomAvailableDataAccessor::getStudy(const QString& studyUID) const
-{
-  const Q_D(ctkDicomAvailableDataAccessor);
-  ctkDicomAppHosting::AvailableData & ad(d->m_AvailableData);
-  for (QList<ctkDicomAppHosting::Patient>::Iterator pit = ad.patients.begin();
-    pit < ad.patients.end(); pit++)
-    {
-    for (QList<ctkDicomAppHosting::Study>::Iterator sit = pit->studies.begin();
-      sit < pit->studies.end(); sit++)
-      {
-          if(sit->studyUID==studyUID)
-            return &(*sit);
-      }
-    }
-  return NULL;
-}
-
-//----------------------------------------------------------------------------
-ctkDicomAppHosting::Series* ctkDicomAvailableDataAccessor::getSeries(const QString& seriesUID) const
-{
-  const Q_D(ctkDicomAvailableDataAccessor);
-  ctkDicomAppHosting::AvailableData & ad(d->m_AvailableData);
-  for (QList<ctkDicomAppHosting::Patient>::Iterator pit = ad.patients.begin();
-    pit < ad.patients.end(); pit++)
-    {
-    for (QList<ctkDicomAppHosting::Study>::Iterator sit = pit->studies.begin();
-      sit < pit->studies.end(); sit++)
-      {
-      for (QList<ctkDicomAppHosting::Series>::Iterator seit = sit->series.begin();
-        seit < sit->series.end(); seit++)
-        {
-          if(seit->seriesUID==seriesUID)
-            return &(*seit);
-        }
-      }
-    }
-  return NULL;
-}
-
-//----------------------------------------------------------------------------
-void ctkDicomAvailableDataAccessor::find(const ctkDicomAppHosting::Patient& patient, 
-                                         const QString& studyUID, 
-                                         const QString& seriesUID,
-                                         ctkDicomAppHosting::Patient*& patientResult, 
-                                         ctkDicomAppHosting::Study*& studyResult, 
-                                         ctkDicomAppHosting::Series*& seriesResult) const
-{
-  const Q_D(ctkDicomAvailableDataAccessor);
-  ctkDicomAppHosting::AvailableData & ad(d->m_AvailableData);
-  patientResult=NULL;
-  studyResult=NULL;
-  seriesResult=NULL;
-  for (QList<ctkDicomAppHosting::Patient>::Iterator pit = ad.patients.begin();
-    pit < ad.patients.end(); pit++)
-    {
-    if(pit->id==patient.id)
-      {
-      patientResult = &(*pit);
-      for (QList<ctkDicomAppHosting::Study>::Iterator sit = pit->studies.begin();
-        sit < pit->studies.end(); sit++)
-        {
-        if(sit->studyUID==studyUID)
-          {
-          studyResult = &(*sit);
-          for (QList<ctkDicomAppHosting::Series>::Iterator seit = sit->series.begin();
-            seit < sit->series.end(); seit++)
-            {
-            if(seit->seriesUID==seriesUID)
-              {
-              seriesResult=&(*seit);
-              return;
-              }
-            }
-            return;
-          }
-        }
-      return;
-      }
-    }
 }
