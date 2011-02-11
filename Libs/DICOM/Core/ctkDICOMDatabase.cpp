@@ -300,6 +300,12 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool create
   if ( storeFile && !this->isInMemory() )
   {
     DcmFileFormat* fileformat = new DcmFileFormat ( dataset );
+
+    QString destinationDirectoryName = databaseDirectory() + "/dicom/";
+    QDir destinationDir(destinationDirectoryName);
+    QString studySeriesDirectory = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
+    destinationDir.mkpath(studySeriesDirectory);
+
     filename = databaseDirectory() + "/dicom/" + pathForDataset(dataset);
     logger.debug ( "Saving file: " + filename );
     OFCondition status = fileformat->saveFile ( filename.toAscii() );
