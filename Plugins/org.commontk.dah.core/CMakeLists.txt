@@ -1,5 +1,7 @@
 PROJECT(org_commontk_dah_core)
 
+#message(QtSOAP_LIBRARY_DIRS:${QtSOAP_LIBRARY_DIRS})
+
 SET(PLUGIN_export_directive "org_commontk_dah_core_EXPORT")
 
 SET(PLUGIN_SRCS
