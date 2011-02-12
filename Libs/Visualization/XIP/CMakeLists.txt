@@ -1,15 +1,6 @@
 PROJECT(CTKVisualizationXIP)
 
 #
-# 3rd party dependencies
-#
-
-# FIND_PACKAGE(XIP)
-# IF(NOT XIP_FOUND)
-#   MESSAGE(FATAL_ERROR "error: XIP package is required to build ${PROJECT_NAME}")
-# ENDIF()
-
-#
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
