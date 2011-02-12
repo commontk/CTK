@@ -35,7 +35,7 @@ PROJECT_NUMBER         = @CTK_VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description for a project that appears at the top of each page and should give viewer a quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = The Common Toolkit is a community effort to provide support code for medical image analysis, surgical navigation, and related projects.
+PROJECT_BRIEF          = "The <a href=\"http://www.commontk.org\">Common Toolkit</a> is a community effort to provide support code for medical image analysis, surgical navigation, and related projects."
 
 # With the PROJECT_LOGO tag one can specify an logo or icon that is
 # included in the documentation. The maximum height of the logo should not
