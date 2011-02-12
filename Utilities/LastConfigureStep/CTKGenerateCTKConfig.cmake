@@ -76,22 +76,30 @@ ENDFOREACH()
 # as an external library
 EXPORT(TARGETS ${CTK_TARGETS_TO_EXPORT} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
 
-# Write a set of variables containing plugin specific include directories
+# Write a set of variables containing plugin specific include and library directories
 SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG)
 FOREACH(plugin ${CTK_PLUGIN_LIBRARIES})
   SET(${plugin}_INCLUDE_DIRS ${${plugin}_SOURCE_DIR} ${${plugin}_BINARY_DIR})
   ctkFunctionGetIncludeDirs(${plugin}_INCLUDE_DIRS ${plugin})
   SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG "${CTK_PLUGIN_INCLUDE_DIRS_CONFIG}
 SET(${plugin}_INCLUDE_DIRS \"${${plugin}_INCLUDE_DIRS}\")")
+  
+  ctkFunctionGetLibraryDirs(${plugin}_LIBRARY_DIRS ${plugin})
+  SET(CTK_PLUGIN_LIBRARY_DIRS_CONFIG "${CTK_PLUGIN_LIBRARY_DIRS_CONFIG}
+SET(${plugin}_LIBRARY_DIRS \"${${plugin}_LIBRARY_DIRS}\")")
 ENDFOREACH()
 
-# Write a set of variables containing library specific include directories
+# Write a set of variables containing library specific include and library directories
 SET(CTK_LIBRARY_INCLUDE_DIRS_CONFIG)
 FOREACH(lib ${CTK_LIBRARIES})
   SET(${lib}_INCLUDE_DIRS ${${lib}_SOURCE_DIR} ${${lib}_BINARY_DIR})
   ctkFunctionGetIncludeDirs(${lib}_INCLUDE_DIRS ${lib})
   SET(CTK_LIBRARY_INCLUDE_DIRS_CONFIG "${CTK_LIBRARY_INCLUDE_DIRS_CONFIG}
 SET(${lib}_INCLUDE_DIRS \"${${lib}_INCLUDE_DIRS}\")")
+  
+  ctkFunctionGetLibraryDirs(${lib}_LIBRARY_DIRS ${lib})
+  SET(CTK_LIBRARY_LIBRARY_DIRS_CONFIG "${CTK_LIBRARY_LIBRARY_DIRS_CONFIG}
+SET(${lib}_LIBRARY_DIRS \"${${lib}_LIBRARY_DIRS}\")")
 ENDFOREACH()
 
 # Determine the include directories needed.

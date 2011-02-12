@@ -64,6 +64,13 @@ MACRO(ctkMacroBuildLib)
   INCLUDE_DIRECTORIES(
     ${my_includes}
     )
+    
+  # Add the library directories from the external project
+  ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
+  
+  LINK_DIRECTORIES(
+    ${my_library_dirs}
+    )
 
 
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${MY_EXPORT_DIRECTIVE})

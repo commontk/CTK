@@ -55,6 +55,7 @@ INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGenerateDGraphInput.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGeneratePluginManifest.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroGeneratePluginResourceFile.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetIncludeDirs.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetLibraryDirs.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionSetupExternalPlugins.cmake")
 
 SET(CTK_EXPORT_HEADER_TEMPLATE "@CTK_EXPORT_HEADER_TEMPLATE@")
@@ -76,8 +77,14 @@ SET(CTK_WRAPPED_LIBRARIES_PYTHONQT @CTK_WRAPPED_LIBRARIES_PYTHONQT@)
 # Library specific include directories
 @CTK_LIBRARY_INCLUDE_DIRS_CONFIG@
 
+# Library specific library directories
+@CTK_LIBRARY_LIBRARY_DIRS_CONFIG@
+
 # Plugin specific include directories
 @CTK_PLUGIN_INCLUDE_DIRS_CONFIG@
+
+# Plugin specific library directories
+@CTK_PLUGIN_LIBRARY_DIRS_CONFIG@
 
 # The CTK include file directories.
 SET(CTK_INCLUDE_DIRS "@CTK_BUILD_DIR@;@CTK_INCLUDE_DIRS_CONFIG@")
