@@ -1,15 +1,6 @@
 PROJECT(ctkDICOMDemoSCU)
 
 #
-# 3rd party dependencies
-#
-
-FIND_PACKAGE(DCMTK)
-IF(NOT DCMTK_FOUND)
-  MESSAGE(FATAL_ERROR "error: DCMTK package is required to build ${PROJECT_NAME}")
-ENDIF()
-
-#
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
   
