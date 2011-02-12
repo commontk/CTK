@@ -1,26 +1,6 @@
 PROJECT(CTKMessagingCore)
 
 #
-# 3rd party dependencies
-#
-
-FIND_PACKAGE(ZMQ)
-# TODO In case ZMQ is passed directly using ZMQ_DIR, check expected options
-IF(NOT ZMQ_FOUND)
-  MESSAGE(FATAL_ERROR "error: ZMQ package is required to build ${PROJECT_NAME}")
-ENDIF()
-INCLUDE(${ZMQ_USE_FILE})
-
-
-#FIND_PACKAGE(OpenIGTLink)
-# TODO In case OpenIGTLink is passed directly using OpenIGTLink_DIR, check expected options
-#IF(NOT OpenIGTLink_FOUND)
-#  MESSAGE(FATAL_ERROR "error: OpenIGTLink package is required to build ${PROJECT_NAME}")
-#ENDIF()
-#INCLUDE(${OpenIGTLink_USE_FILE})
-
-
-#
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 

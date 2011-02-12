@@ -10,6 +10,8 @@ IF(${add_project})
     MESSAGE(FATAL_ERROR "OpenIGTLink_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
   
+  SET(OpenIGTLink_enabling_variable OpenIGTLink_LIBRARIES)
+  
   SET(proj OpenIGTLink)
   SET(proj_DEPENDENCIES)
   
@@ -32,4 +34,9 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+  
+  SET(${OpenIGTLink_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
+  SET(${OpenIGTLink_enabling_variable}_INCLUDE_DIRS OpenIGTLink_INCLUDE_DIRS)
+  SET(${OpenIGTLink_enabling_variable}_FIND_PACKAGE_CMD OpenIGTLink)
+  
 ENDIF()

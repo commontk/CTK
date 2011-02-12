@@ -38,6 +38,7 @@ IF(${add_project})
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
 
+  SET(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_LIBRARY_DIRS)
   SET(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
   SET(${ZMQ_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
 ENDIF()
