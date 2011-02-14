@@ -28,13 +28,25 @@
 #include "ctkDICOMDatabase.h"
 
 class ctkDICOMIndexerPrivate;
+/**
+    \brief Indexes DICOM images located in local directory into an Sql database
+*/
 class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer
 {
 public:
   explicit ctkDICOMIndexer();
   virtual ~ctkDICOMIndexer();
-  /// add directory to database and optionally copy files to destinationDirectory
-  void addDirectory(ctkDICOMDatabase& database, const QString& directoryName, const QString& destinationDirectoryName = "", bool createHierarchy = true, bool createThumbnails = true);
+  
+  /**
+      \brief Adds directory to database and optionally copies files to
+      destinationDirectory.
+      
+      Scan the directory using Dcmtk and populate the database with all the
+      DICOM images accordingly.
+  */
+  void addDirectory(ctkDICOMDatabase& database, const QString& directoryName,
+                    const QString& destinationDirectoryName = "",
+                    bool createHierarchy = true, bool createThumbnails = true);
   void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 protected:
   QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;

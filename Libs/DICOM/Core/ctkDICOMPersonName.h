@@ -1,5 +1,5 @@
-#ifndef CTKDICOMPERSONNAME_H
-#define CTKDICOMPERSONNAME_H
+#ifndef __ctkDICOMPersonName_h
+#define __ctkDICOMPersonName_h
 
 #include "ctkDICOMCoreExport.h"
 
@@ -9,46 +9,45 @@
 
 #include <string>
 
-class QPersonNameData;
+class ctkDICOMPersonNameData;
 /**
   \brief A person's name as modelled in DICOM.
 */
-class CTK_DICOM_CORE_EXPORT QPersonName
+class CTK_DICOM_CORE_EXPORT ctkDICOMPersonName
 {
+public:
 
-  public:
+  ctkDICOMPersonName(const QString& lastName = QString::null,
+              const QString& firstName = QString::null,
+              const QString& middleName = QString::null,
+              const QString& namePrefix = QString::null,
+              const QString& nameSuffix = QString::null);
 
-    QPersonName(const QString& lastName = QString::null,
-                const QString& firstName = QString::null,
-                const QString& middleName = QString::null,
-                const QString& namePrefix = QString::null,
-                const QString& nameSuffix = QString::null);
+  ctkDICOMPersonName(const ctkDICOMPersonName& other);
+  ctkDICOMPersonName& operator=(const ctkDICOMPersonName& other);
 
-    QPersonName(const QPersonName& other);
-    QPersonName& operator=(const QPersonName& other);
+  virtual ~ctkDICOMPersonName();
+  /**
+    \brief "Lastname, FirstName MiddleName, Suffix" (useful for alphabetical sorting)
+  */
+  QString formattedName() const;
 
-    virtual ~QPersonName();
-    /**
-      \brief "Lastname, FirstName MiddleName, Suffix" (useful for alphabetical sorting)
-    */
-    QString GetFormattedName() const;
+  QString lastName() const;
+  QString firstName() const;
+  QString middleName() const;
+  QString namePrefix() const;
+  QString nameSuffix() const;
 
-    QString GetLastName() const;
-    QString GetFirstName() const;
-    QString GetMiddleName() const;
-    QString GetNamePrefix() const;
-    QString GetNameSuffix() const;
+  /// cast operator
+  operator QString() const;
+  std::string toStdString() const;
 
-    /// cast operator
-    operator QString() const;
-    std::string toStdString() const;
-
-  private:
-    QSharedDataPointer<QPersonNameData> d;
+private:
+  QSharedDataPointer<ctkDICOMPersonNameData> d;
 };
 
-typedef QList<QPersonName> QPersonNameList;
-Q_DECLARE_METATYPE(QPersonName);
+typedef QList<ctkDICOMPersonName> ctkDICOMPersonNameList;
+Q_DECLARE_METATYPE(ctkDICOMPersonName);
 
 
-#endif // CTKDICOMPERSONNAME_H
+#endif // ctkDICOMPersonName_h

@@ -446,7 +446,7 @@ QStringList ctkDICOMDataset::GetElementAsStringList( const DcmTag& tag ) const
   return qsl;
 }
 
-QPersonName ctkDICOMDataset::GetElementAsPersonName( const DcmTag& tag, unsigned long pos ) const
+ctkDICOMPersonName ctkDICOMDataset::GetElementAsPersonName( const DcmTag& tag, unsigned long pos ) const
 {
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
@@ -454,7 +454,7 @@ QPersonName ctkDICOMDataset::GetElementAsPersonName( const DcmTag& tag, unsigned
 
   DcmPersonName* name = dynamic_cast<DcmPersonName*>(element);
 
-  if (!name) return QPersonName(); // invalid
+  if (!name) return ctkDICOMPersonName(); // invalid
 
   OFString lastName;
   OFString firstName;
@@ -463,7 +463,7 @@ QPersonName ctkDICOMDataset::GetElementAsPersonName( const DcmTag& tag, unsigned
   OFString nameSuffix;
   if (CheckCondition( name->getNameComponents(lastName, firstName, middleName, namePrefix, nameSuffix, pos) ) )
   {
-    return QPersonName(
+    return ctkDICOMPersonName(
       Decode(tag, lastName),
       Decode(tag, firstName),
       Decode(tag, middleName),
@@ -472,14 +472,14 @@ QPersonName ctkDICOMDataset::GetElementAsPersonName( const DcmTag& tag, unsigned
   }
   else
   {
-    return QPersonName();
+    return ctkDICOMPersonName();
   }
 }
 
-QPersonNameList ctkDICOMDataset::GetElementAsPersonNameList( const DcmTag& tag ) const
+ctkDICOMPersonNameList ctkDICOMDataset::GetElementAsPersonNameList( const DcmTag& tag ) const
 {
   this->EnsureDcmDataSetIsInitialized();
-  QPersonNameList qpnl;
+  ctkDICOMPersonNameList qpnl;
 
   DcmElement* element(NULL);
   findAndGetElement(tag, element);
@@ -639,17 +639,17 @@ bool ctkDICOMDataset::SetElementAsStringList( const DcmTag& /*tag*/, QStringList
   return false;
 }
 
-bool ctkDICOMDataset::SetElementAsPersonName( const DcmTag& tag, QPersonName personName )
+bool ctkDICOMDataset::SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonName personName )
 {
   this->EnsureDcmDataSetIsInitialized();
   DcmPersonName* dcmPersonName = new DcmPersonName( tag ); // TODO leak?
 
   if ( CheckCondition( dcmPersonName->putNameComponents(
-    Encode( tag, personName.GetLastName() ),
-    Encode( tag, personName.GetFirstName() ),
-    Encode( tag, personName.GetMiddleName() ),
-    Encode( tag, personName.GetNamePrefix() ),
-    Encode( tag, personName.GetNameSuffix() ) ) ) )
+    Encode( tag, personName.lastName() ),
+    Encode( tag, personName.firstName() ),
+    Encode( tag, personName.middleName() ),
+    Encode( tag, personName.namePrefix() ),
+    Encode( tag, personName.nameSuffix() ) ) ) )
   {
     return CheckCondition( insert( dcmPersonName ) );
   }
@@ -657,7 +657,7 @@ bool ctkDICOMDataset::SetElementAsPersonName( const DcmTag& tag, QPersonName per
   return false;
 }
 
-bool ctkDICOMDataset::SetElementAsPersonNameList( const DcmTag& tag, QPersonNameList personNameList )
+bool ctkDICOMDataset::SetElementAsPersonNameList( const DcmTag& tag, ctkDICOMPersonNameList personNameList )
 {
   this->EnsureDcmDataSetIsInitialized();
   // TODO: Find out how this can be implemented with DcmDataset methods; there is no method for
