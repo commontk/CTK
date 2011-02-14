@@ -272,7 +272,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   ENDIF()
   
   SET(CTK_C_FLAGS "${cflags} ${CTK_C_FLAGS}")
-  SET(CTK_CXX_FLAGS "${cflags} -Wl,-z,defs -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
+  SET(CTK_CXX_FLAGS "${cflags} -Wl,--no-undefined -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
 ENDIF()
 
 IF(MSVC)
