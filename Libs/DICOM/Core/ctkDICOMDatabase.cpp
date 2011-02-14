@@ -437,7 +437,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool create
       // TODO: reuse dataset
       DicomImage dcmtkImage(filename.toAscii());
       ctkDICOMImage ctkImage(&dcmtkImage);
-      QImage image( ctkImage.frame(0) );
+      QImage image( ctkImage.getImage(0) );
       image.scaled(128,128,Qt::KeepAspectRatio).save(thumbnailFilename,"PNG");
     }
   }
