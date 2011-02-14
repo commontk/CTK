@@ -169,8 +169,8 @@ public:
     QString          GetAllElementValuesAsString( const DcmTag& tag ) const;
     QString                   GetElementAsString( const DcmTag& tag, unsigned long pos = 0 ) const;
     QStringList           GetElementAsStringList( const DcmTag& tag ) const;
-    QPersonName           GetElementAsPersonName( const DcmTag& tag, unsigned long pos = 0 ) const;
-    QPersonNameList   GetElementAsPersonNameList( const DcmTag& tag ) const;
+    ctkDICOMPersonName           GetElementAsPersonName( const DcmTag& tag, unsigned long pos = 0 ) const;
+    ctkDICOMPersonNameList   GetElementAsPersonNameList( const DcmTag& tag ) const;
     QDate                       GetElementAsDate( const DcmTag& tag, unsigned long pos = 0 ) const;
     QTime                       GetElementAsTime( const DcmTag& tag, unsigned long pos = 0 ) const;
     double                    GetElementAsDouble( const DcmTag& tag, unsigned long pos = 0 ) const; // type DS
@@ -189,8 +189,8 @@ public:
     */
     bool SetElementAsString( const DcmTag& tag, QString string );
     bool SetElementAsStringList( const DcmTag& tag, QStringList stringList ); //> Currently not implemented
-    bool SetElementAsPersonName( const DcmTag& tag, QPersonName personName );
-    bool SetElementAsPersonNameList( const DcmTag& tag, QPersonNameList personNameList ); //> Currently not implemented
+    bool SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonName personName );
+    bool SetElementAsPersonNameList( const DcmTag& tag, ctkDICOMPersonNameList personNameList ); //> Currently not implemented
     bool SetElementAsDate( const DcmTag& tag, QDate date );
     bool SetElementAsTime( const DcmTag& tag, QTime time );
     bool SetElementAsDateTime( const DcmTag& tag, QDateTime dateTime );

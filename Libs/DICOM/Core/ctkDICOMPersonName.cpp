@@ -1,27 +1,27 @@
+// Qt include
 #include <QSharedData>
 
+// CTK DICOM Core
 #include "ctkDICOMPersonName.h"
 
-
-// ------------------------------------------- QPersonName -----------------------------------------------------------
-
-class QPersonNameData : public QSharedData
+//------------------------------------------------------------------------------
+class ctkDICOMPersonNameData : public QSharedData
 {
-  public:
-
-    QString m_LastName;
-    QString m_FirstName;
-    QString m_MiddleName;
-    QString m_NamePrefix;
-    QString m_NameSuffix;
+public:
+  QString m_LastName;
+  QString m_FirstName;
+  QString m_MiddleName;
+  QString m_NamePrefix;
+  QString m_NameSuffix;
 };
 
-QPersonName::QPersonName(const QString& lastName,
-                         const QString& firstName,
-                         const QString& middleName,
-                         const QString& namePrefix,
-                         const QString& nameSuffix)
-:d(new QPersonNameData)
+//------------------------------------------------------------------------------
+ctkDICOMPersonName::ctkDICOMPersonName(const QString& lastName,
+                             const QString& firstName,
+                             const QString& middleName,
+                             const QString& namePrefix,
+                             const QString& nameSuffix)
+  : d(new ctkDICOMPersonNameData)
 {
   d->m_LastName = lastName;
   d->m_FirstName = firstName;
@@ -30,22 +30,26 @@ QPersonName::QPersonName(const QString& lastName,
   d->m_NameSuffix = nameSuffix;
 }
 
-QPersonName::QPersonName(const QPersonName& other) : d(other.d)
+//------------------------------------------------------------------------------
+ctkDICOMPersonName::ctkDICOMPersonName(const ctkDICOMPersonName& other)
+  : d(other.d)
 {
 }
 
-QPersonName& QPersonName::operator=(const QPersonName& other)
+//------------------------------------------------------------------------------
+ctkDICOMPersonName& ctkDICOMPersonName::operator=(const ctkDICOMPersonName& other)
 {
-  d=other.d;
+  d = other.d;
   return *this;
 }
 
-QPersonName::~QPersonName()
+//------------------------------------------------------------------------------
+ctkDICOMPersonName::~ctkDICOMPersonName()
 {
 }
 
-
-QString QPersonName::GetFormattedName() const
+//------------------------------------------------------------------------------
+QString ctkDICOMPersonName::formattedName() const
 {
   QString result("");
 
@@ -65,42 +69,48 @@ QString QPersonName::GetFormattedName() const
   return result;
 }
 
-QString QPersonName::GetLastName()  const
+//------------------------------------------------------------------------------
+QString ctkDICOMPersonName::lastName() const
 {
   return d->m_LastName;
 }
 
-QString QPersonName::GetFirstName()  const
+//------------------------------------------------------------------------------
+QString ctkDICOMPersonName::firstName() const
 {
   return d->m_FirstName;
 }
 
-QString QPersonName::GetMiddleName()  const
+//------------------------------------------------------------------------------
+QString ctkDICOMPersonName::middleName() const
 {
   return d->m_MiddleName;
 }
 
-QString QPersonName::GetNamePrefix()  const
+//------------------------------------------------------------------------------
+QString ctkDICOMPersonName::namePrefix() const
 {
   return d->m_NamePrefix;
 }
 
-QString QPersonName::GetNameSuffix()  const
+//------------------------------------------------------------------------------
+QString ctkDICOMPersonName::nameSuffix() const
 {
   return d->m_NameSuffix;
 }
 
-QPersonName::operator QString() const
+//------------------------------------------------------------------------------
+ctkDICOMPersonName::operator QString() const
 {
-  return this->GetFormattedName();
+  return this->formattedName();
 }
 
-std::string QPersonName::toStdString() const
+//------------------------------------------------------------------------------
+std::string ctkDICOMPersonName::toStdString() const
 {
   // the complicated looking .toLocal8Bit().constData() is on purpose.
   // if we'd use .toStdString(), the string would be converted to ASCII
   // instead of the local 8bit character encoding.
   // changes for correctly looking output of the strings are higher with .toLocal8Bit()
-  return this->GetFormattedName().toLocal8Bit().constData();
+  return this->formattedName().toLocal8Bit().constData();
 }
-
