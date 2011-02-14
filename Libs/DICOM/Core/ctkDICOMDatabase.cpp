@@ -230,9 +230,14 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset ) {
 */
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool createThumbnail ) {
+void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool createThumbnail )
+{
   Q_D(ctkDICOMDatabase);
 
+  if (!dataset)
+    {
+    return;
+    }
   // Check to see if the file has already been loaded
   OFString sopInstanceUID ;
   dataset->findAndGetOFString(DCM_SOPInstanceUID, sopInstanceUID);
@@ -437,7 +442,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool create
       // TODO: reuse dataset
       DicomImage dcmtkImage(filename.toAscii());
       ctkDICOMImage ctkImage(&dcmtkImage);
-      QImage image( ctkImage.getImage(0) );
+      QImage image( ctkImage.frame(0) );
       image.scaled(128,128,Qt::KeepAspectRatio).save(thumbnailFilename,"PNG");
     }
   }
@@ -459,6 +464,10 @@ QString ctkDICOMDatabase::pathForDataset( DcmDataset *dataset)
 {
   Q_D(ctkDICOMDatabase);
 
+  if (!dataset)
+    {
+    return QString();
+    }
   OFString studyInstanceUID, seriesInstanceUID, sopInstanceUID;
   dataset->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID);
   dataset->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID);

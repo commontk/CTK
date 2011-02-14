@@ -72,6 +72,7 @@ public:
 
 signals:
   void databaseChanged();
+
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
 
