@@ -99,7 +99,7 @@ void ctkDICOMDatasetView::addImage( const ctkDICOMImage & image )
 {
   for( unsigned int i=0; i<image.frameCount(); ++i )
     {
-    Superclass::addImage( image.getImage( i ) );
+    Superclass::addImage( image.frame( i ) );
     }
 }
 

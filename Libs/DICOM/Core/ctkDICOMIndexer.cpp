@@ -402,7 +402,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
         QDir(thumbnailBaseDir).mkpath(studySeriesDirectory);
         DicomImage dcmtkImage(qfilename.toAscii());
         ctkDICOMImage ctkImage(&dcmtkImage);
-        QImage image( ctkImage.getImage(0) );
+        QImage image( ctkImage.frame(0) );
         image.scaled(128,128,Qt::KeepAspectRatio).save(thumbnailFilename,"PNG");
       }
     }

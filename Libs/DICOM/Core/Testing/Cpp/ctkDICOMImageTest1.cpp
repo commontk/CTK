@@ -29,7 +29,7 @@ int ctkDICOMImageTest1( int argc, char * argv [] )
   ctkDICOMImage ctkImage(&dcmtkImage);
 
   QLabel qtImage;
-  QPixmap pixmap = QPixmap::fromImage(ctkImage.getImage(0),Qt::AvoidDither);
+  QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
   if (pixmap.isNull())
     {
     std::cerr << "Failed to convert QImage to QPixmap" ;
