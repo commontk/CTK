@@ -86,6 +86,8 @@ FIND_LIBRARY( DCMTK_oflog_LIBRARY oflog
   NO_DEFAULT_PATH
 )
 
+
+
 FIND_PATH( DCMTK_dcmdata_INCLUDE_DIR dctypes.h
   PATHS
     ${DCMTK_DIR}/include/dcmdata
@@ -232,6 +234,15 @@ IF( DCMTK_config_INCLUDE_DIR
 #                           "On Ubuntu, you could install it using 'sudo apt-get libwrap0'")
 #     ENDIF()
 #   ENDIF()
+
+  SET(CMAKE_THREAD_LIBS_INIT)
+  IF(DCMTK_oflog_LIBRARY)
+    # Hack - Not having a DCMTKConfig.cmake file to read the settings from, we will attempt to 
+    # find the library in all cases.
+    # Ideally, pthread library should be discovered only if DCMTK_WITH_THREADS is enabled.
+    SET(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+    FIND_PACKAGE(Threads)
+  ENDIF()
   
   SET( DCMTK_FOUND "YES" )
   SET( DCMTK_INCLUDE_DIR
@@ -256,6 +267,7 @@ IF( DCMTK_config_INCLUDE_DIR
     ${DCMTK_oflog_LIBRARY}    
     ${DCMTK_ofstd_LIBRARY}
     ${DCMTK_config_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
   )
 
   IF(DCMTK_imagedb_LIBRARY)
