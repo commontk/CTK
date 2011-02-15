@@ -438,7 +438,7 @@ public:
    * @see #ungetService(const ctkServiceReference&)
    * @see ctkServiceFactory
    */
-  QObject* getService(ctkServiceReference reference);
+  QObject* getService(const ctkServiceReference& reference);
 
   /**
    * Returns the service object referenced by the specified
@@ -464,7 +464,7 @@ public:
    * @see ctkServiceFactory
    */
   template<class S>
-  S* getService(ctkServiceReference reference)
+  S* getService(const ctkServiceReference& reference)
   {
     return qobject_cast<S*>(getService(reference));
   }
