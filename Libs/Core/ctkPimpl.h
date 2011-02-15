@@ -46,6 +46,65 @@ Use the Q_D() macros from functions in
 the public class to access the private class. Similarly, functions in the
 private class can invoke functions in the public class by using the Q_Q()
 macro.
+\section example Example
+Header file (ctkFooObject.h):
+\code
+// Qt includes
+#include <QObject>
+
+// CTK includes
+#include "ctkCoreExport.h"
+class ctkFooObjectPrivate;
+
+class CTK_CORE_EXPORT ctkFooObject: public QObject
+{
+public:
+  ctkFooObject(QObject* parent = 0);
+  virtual ~ctkFooObject();
+
+  void setProperty(double property);
+  double property()const;
+
+protected:
+  QScopedPointer<ctkFooObjectPrivate> d_ptr;
+ 
+private:
+  Q_DECLARE_PRIVATE(ctkFooObject);
+  Q_DISABLE_COPY(ctkFooObject);
+};
+\endcode
+Implementation file (ctkFooObject.cpp):
+\code
+// CTK includes
+#include "ctkFooObject.h"
+
+class ctkFooObjectPrivate
+{
+public:
+  void processSomething();
+
+  double MyProperty;
+};
+
+ctkFooObject::ctkFooObject(QObject* parentObject)
+  : d_ptr(new ctkFooObjectPrivate)
+{
+  Q_D(ctkFooObject);
+  d->MyProperty = 10.;
+}
+
+void ctkFooObject::setProperty(double newProperty)
+{
+  Q_D(ctkFooObject);
+  d->MyProperty = newProperty;
+}
+
+double ctkFooObject::property()const
+{
+  Q_D(const ctkFooObject);
+  return d->MyProperty;
+}
+\endcode
 */
 
 #ifndef __ctkPimpl_h
