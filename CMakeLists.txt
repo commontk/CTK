@@ -259,7 +259,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
   
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
-  
+  ctkFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
+
   ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
   # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
   # is introduced. If gcc is smaller than 4.4.0 and the build type is Release let's not include the flag.
@@ -273,7 +274,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   ENDIF()
   
   SET(CTK_C_FLAGS "${cflags} ${CTK_C_FLAGS}")
-  SET(CTK_CXX_FLAGS "${cflags} -Wl,--no-undefined -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
+  SET(CTK_CXX_FLAGS "${cflags} -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
 ENDIF()
 
 IF(MSVC)
