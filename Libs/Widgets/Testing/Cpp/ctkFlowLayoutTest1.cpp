@@ -39,14 +39,19 @@ int ctkFlowLayoutTest1(int argc, char * argv [] )
   QWidget widget1(0);
   widget1.setWindowTitle("1) Horizontal");
   ctkFlowLayout* flowLayout1 = new ctkFlowLayout(&widget1);
-  QPushButton* button11 = new QPushButton("long long long text 1",&widget1);
-  QPushButton* button12 = new QPushButton("super super long long long text 2",&widget1);
-  QPushButton* button13 = new QPushButton("short text 3", &widget1);
+  flowLayout1->setAlignItems(false);
   
-  flowLayout1->addWidget(button11);
-  flowLayout1->addWidget(button12);
-  flowLayout1->addWidget(button13);
-  
+  flowLayout1->addWidget(new QPushButton("1 text text text text"));
+  flowLayout1->addWidget(new QPushButton("2 text text text text text text text text"));
+  flowLayout1->addWidget(new QPushButton("3 text"));
+  flowLayout1->addWidget(new QPushButton("4 text text text text text text"));
+  flowLayout1->addWidget(new QPushButton("5 text text"));
+  flowLayout1->addWidget(new QPushButton("6 text text text text"));
+  flowLayout1->addWidget(new QPushButton("7 text text text text text text text"));
+  flowLayout1->addWidget(new QPushButton("8 text text text"));
+  flowLayout1->addWidget(new QPushButton("9"));
+  flowLayout1->addWidget(new QPushButton("10 text text text text text text text text text"));
+ 
   widget1.setLayout(flowLayout1);
   widget1.show();
   
