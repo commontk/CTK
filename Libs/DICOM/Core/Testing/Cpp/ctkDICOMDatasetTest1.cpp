@@ -61,7 +61,8 @@ int ctkDICOMDatasetTest1( int argc, char * argv [] )
     std::cerr << "ctkDICOMDataset::findAndGetElement() failed" << std::endl;
     return EXIT_FAILURE;
     }
-  condition = dataset.findAndGetOFString(DcmTag(), OFString());
+  OFString string;
+  condition = dataset.findAndGetOFString(DcmTag(), string);
   if (ctkDICOMDataset::CheckCondition(condition))
     {
     std::cerr << "ctkDICOMDataset::findAndGetOFString() failed" << std::endl;
@@ -81,7 +82,19 @@ int ctkDICOMDatasetTest1( int argc, char * argv [] )
     int shortValue = dataset.GetElementAsSignedShort(DcmTag());
     int ushortValue = dataset.GetElementAsUnsignedShort(DcmTag());
     QDateTime dateTime = dataset.GetElementAsDateTime(DcmTag());
-    
+    Q_UNUSED(string);
+    Q_UNUSED(string2);
+    Q_UNUSED(list);
+    Q_UNUSED(name);
+    Q_UNUSED(nameList);
+    Q_UNUSED(date);
+    Q_UNUSED(time);
+    Q_UNUSED(doubleValue);
+    Q_UNUSED(integerValue);
+    Q_UNUSED(shortValue);
+    Q_UNUSED(ushortValue);
+    Q_UNUSED(dateTime);
+
     dataset.SetElementAsString( DcmTag(), QString());
     dataset.SetElementAsStringList( DcmTag(), QStringList() );
     dataset.SetElementAsPersonName( DcmTag(), ctkDICOMPersonName());
