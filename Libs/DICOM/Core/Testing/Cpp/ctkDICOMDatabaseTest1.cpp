@@ -9,6 +9,7 @@
 
 // STD includes
 #include <iostream>
+#include <cstdlib>
 
 
 int ctkDICOMDatabaseTest1( int argc, char * argv [] )
