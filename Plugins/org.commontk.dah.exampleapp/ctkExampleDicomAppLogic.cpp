@@ -234,7 +234,7 @@ void ctkExampleDicomAppLogic::buttonClicked()
     ctkDICOMImage ctkImage(&dcmtkImage);
 
     QLabel* qtImage = new QLabel;
-    QPixmap pixmap = QPixmap::fromImage(ctkImage.getImage(0),Qt::AvoidDither);
+    QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
     if (pixmap.isNull())
     {
       qCritical() << "Failed to convert QImage to QPixmap" ;
