@@ -66,7 +66,6 @@ struct ctkEventAdmin
    *
    * @param publisher The owner of the signal.
    * @param signal The signal in normalized form.
-   * @param signal_topic The topic string for the events this signal is emitting.
    * @param type Qt::QueuedConnection for asynchronous delivery and
    *        Qt::DirectConnection for synchronous delivery.
    */
@@ -80,7 +79,7 @@ struct ctkEventAdmin
    *
    * Slots should be registered with a property ctkEventConstants::EVENT_TOPIC.
    * The value being a QString or QStringList object that describes which
-   * topics the slot is interested in. A wildcard (’*’ \u002A) may be used as
+   * topics the slot is interested in. A wildcard (’*’ \\u002A) may be used as
    * the last token of a topic name, for example com/action&#47*. This matches any
    * topic that shares the same first tokens. For example, com/action&#47* matches
    * com/action/listen. Slots which have not been specified with the EVENT_TOPIC
@@ -129,7 +128,7 @@ struct ctkEventAdmin
    * @return <code>true</code> if a slot was registered under this subscriptionId and its
    *         properties where changed, <code>false</code> otherwise.
    */
-  virtual bool updateProperties(qlonglong subsriptionId, const ctkDictionary& properties) = 0;
+  virtual bool updateProperties(qlonglong subscriptionId, const ctkDictionary& properties) = 0;
 
 };
 

@@ -59,7 +59,7 @@ template<class T> class ctkPluginTrackerPrivate;
  * \tparam T The type of the tracked object. The type must be an assignable
  *         datatype, provide a boolean conversion function, and provide
  *         a constructor and an assignment operator which can handle 0 as an argument.
- * \threadsafe
+ * \remarks This class is thread safe.
  */
 template<class T = QSharedPointer<ctkPlugin> >
 class ctkPluginTracker : protected ctkPluginTrackerCustomizer<T>

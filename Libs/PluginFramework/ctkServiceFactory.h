@@ -54,7 +54,7 @@
  * may concurrently call a <code>ctkServiceFactory</code>.
  *
  * @see ctkPluginContext#getService
- * @threadsafe
+ * @remarks This class is thread safe.
  */
 class ctkServiceFactory
 {

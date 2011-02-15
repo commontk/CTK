@@ -51,7 +51,7 @@ class ctkLDAPSearchFilterData;
  * \endverbatim
  *
  * \see "CTK Wiki for a description of the filter string syntax." TODO!
- * \threadsafe
+ * \remarks This class is thread safe.
  */
 class CTK_PLUGINFW_EXPORT ctkLDAPSearchFilter {
 

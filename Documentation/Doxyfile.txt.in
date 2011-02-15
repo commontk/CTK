@@ -626,11 +626,7 @@ INPUT_ENCODING         = UTF-8
 # *.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py
 # *.f90 *.f *.for *.vhd *.vhdl
 
-FILE_PATTERNS          = *.c \
-                         *.cc \
-                         *.cxx \
-                         *.cpp \
-                         *.c++ \
+FILE_PATTERNS          = @CTK_ADDITIONAL_FILE_PATTERN@ \
                          *.d \
                          *.java \
                          *.ii \
@@ -640,10 +636,6 @@ FILE_PATTERNS          = *.c \
                          *.inl \
                          *.h \
                          *.hh \
-                         *.hxx \
-                         *.hpp \
-                         *.h++ \
-                         *.txx \
                          *.idl \
                          *.odl \
                          *.cs \
@@ -658,9 +650,6 @@ FILE_PATTERNS          = *.c \
                          *.f \
                          *.vhd \
                          *.vhdl \
-                         *.C \
-                         *.CC \
-                         *.C++ \
                          *.II \
                          *.I++ \
                          *.H \
@@ -676,12 +665,9 @@ FILE_PATTERNS          = *.c \
                          *.F \
                          *.VHD \
                          *.VHDL \
-                         *.C \
-                         *.H \
                          *.tlh \
                          *.diff \
                          *.patch \
-                         *.moc \
                          *.xpm \
                          *.dox
 

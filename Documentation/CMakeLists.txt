@@ -44,6 +44,8 @@ IF( DOXYGEN_FOUND )
     #
     SET( CTK_USER_DOCUMENTATION "YES" )
     SET( CTK_ADDITIONAL_EXCLUDE_PATTERN "" )
+    SET( CTK_ADDITIONAL_FILE_PATTERN "*.c \  *.cc \  *.cxx \  *.cpp \  *.c++ \  *.hxx \  *.hpp \  *.h++ \  *.txx \  *.C \  *.CC \  *.C++ \  *.moc" )
+
 
     CONFIGURE_FILE( Doxyfile.txt.in
       ${CMAKE_CURRENT_BINARY_DIR}/DevDoxyfile.txt

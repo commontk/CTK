@@ -132,10 +132,10 @@ public:
    * Creates a new service event object.
    *
    * @param type The event type.
-   * @param reference A <code>ServiceReference</code> object to the service
+   * @param reference A <code>ctkServiceReference</code> object to the service
    *        that had a lifecycle change.
    */
-  ctkServiceEvent(Type type, const ctkServiceReference& plugin);
+  ctkServiceEvent(Type type, const ctkServiceReference& reference);
 
   ctkServiceEvent(const ctkServiceEvent& other);
 

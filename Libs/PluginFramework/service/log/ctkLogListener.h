@@ -39,7 +39,7 @@
  * Qt slots can also be used to be notified about new <code>ctkLogEntry</code>
  * objects. See <code>ctkLogReaderService#connectLogListener()</code>.
  *
- * @ThreadSafe
+ * @remarks This class is thread safe.
  * @see ctkLogReaderService
  * @see ctkLogEntry
  * @see ctkLogReaderService#connectLogListener()

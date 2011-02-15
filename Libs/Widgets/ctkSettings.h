@@ -72,27 +72,27 @@ class CTK_WIDGETS_EXPORT ctkSettings : public QSettings
   Q_OBJECT
 
 public:
-  /// See \QSettings::QSettings(const QString& ,const QString& , QObject* )
+  /// \see QSettings::QSettings(const QString& ,const QString& , QObject* )
   ctkSettings(
     const QString& organization,
     const QString& application,
     QObject* parent = 0);
-  /// See \QSettings::QSettings(QSettings::Scope ,const QString& ,const QString& , QObject* )
+  /// \see QSettings::QSettings(QSettings::Scope ,const QString& ,const QString& , QObject* )
   ctkSettings(
     QSettings::Scope scope,
     const QString& organization,
     const QString& application = QString(),
     QObject* parent = 0);
-  /// See \QSettings::QSettings(QSettings::Format ,QSettings::Scope ,const QString& ,const QString& , QObject* )
+  /// \see QSettings::QSettings(QSettings::Format ,QSettings::Scope ,const QString& ,const QString& , QObject* )
   ctkSettings(
     QSettings::Format format,
     QSettings::Scope scope,
     const QString& organization,
     const QString& application = QString(),
     QObject* parent = 0);
-  /// See \QSettings::QSettings(const QString& , QSettings::Format , QObject* )
+  /// \see QSettings::QSettings(const QString& , QSettings::Format , QObject* )
   ctkSettings(const QString& fileName, QSettings::Format format, QObject* parent = 0);
-  /// See \QSettings::QSettings(QObject*)
+  /// \see QSettings::QSettings(QObject*)
   ctkSettings(QObject* parent = 0);
 
   /// Saves the position, size and layout of the QMainWindow

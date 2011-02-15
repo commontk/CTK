@@ -42,7 +42,7 @@
  * <code>ctkLogReaderService#getLog()</code> method or by registering a
  * <code>ctkLogListener</code> object.
  *
- * @ThreadSafe
+ * @remarks This class is thread safe.
  * @see ctkLogReaderService#getLog()
  * @see ctkLogListener
  */

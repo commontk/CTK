@@ -68,7 +68,7 @@ class ctkPluginContext;
  * \tparam T The type of the tracked object. The type must be an assignable
  *         datatype, provide a boolean conversion function, and provide
  *         a constructor and an assignment operator which can handle 0 as an argument.
- * \threadsafe
+ * \remarks This class is thread safe.
  */
 template<class S = QObject*, class T = S>
 class ctkServiceTracker : protected ctkServiceTrackerCustomizer<T>
@@ -362,7 +362,7 @@ protected:
    * This method can be overridden in a subclass to customize the service
    * object to be tracked for the service being added. In that case, take care
    * not to rely on the default implementation of
-   * \link removedService(const ctkServiceReference&, QObject*) removedService\endlink
+   * \link removedService(const ctkServiceReference&, T service) removedService\endlink
    * to unget the service.
    *
    * @param reference The reference to the service being added to this

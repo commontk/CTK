@@ -44,8 +44,9 @@
  * <li>To retrieve past <code>ctkLogEntry</code> objects, the <code>getLog()</code>
  * method can be called which will return a QList of all
  * <code>ctkLogEntry</code> objects in the log.
+ * </ul>
  *
- * @ThreadSafe
+ * @remarks This class is thread safe.
  * @see ctkLogEntry
  * @see ctkLogListener
  * @see ctkLogListener#logged(ctkLogEntryPtr)

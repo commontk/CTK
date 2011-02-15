@@ -45,8 +45,6 @@
  *
  * <p>
  * <code>ctkVersion</code> objects are immutable.
- *
- * @Immutable
  */
 class CTK_PLUGINFW_EXPORT ctkVersion {
 

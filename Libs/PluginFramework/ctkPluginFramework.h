@@ -41,7 +41,7 @@ class ctkPluginFrameworkPrivate;
  * of this class can be used to manage and control the created plugin framework
  * instance.
  *
- * @threadsafe
+ * @remarks This class is thread safe.
  */
 class CTK_PLUGINFW_EXPORT ctkPluginFramework : public ctkPlugin
 {

@@ -67,7 +67,7 @@ private:
 /// \ingroup Core
 /// \brief ctkAbstractFactory is the base class of all the factory where items need
 /// to be registered before being instantiated.
-/// \paragraph ctkAbstractFactory contains a collection of ctkAbstractFactoryItems that
+/// <p> ctkAbstractFactory contains a collection of ctkAbstractFactoryItems that
 /// are uniquely identifyed by a key. Subclasses of ctkAbstractFactory are
 /// responsible for populating the list of ctkAbstractFactoryItems.
 /// BaseClassType could be any type (most probably a QObject) 

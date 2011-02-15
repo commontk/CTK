@@ -83,7 +83,7 @@ public:
    * An event is considered to be <b>equal to</b> another event if the topic
    * is equal and the properties are equal.
    *
-   * @param object The <code>ctkEvent</code> object to be compared.
+   * @param other The <code>ctkEvent</code> object to be compared.
    * @return <code>true</code> if <code>other</code> is equal to
    *         this object; <code>false</code> otherwise.
    */

@@ -77,7 +77,7 @@ class ctkPluginPrivate;
  * <code>%ctkPlugin</code> objects, and these objects are only valid within the
  * Framework that created them.
  *
- * @threadsafe
+ * @remarks This class is thread safe.
  */
 class CTK_PLUGINFW_EXPORT ctkPlugin {
 
@@ -135,7 +135,7 @@ public:
      *
      * <p>
      * A plugin is in the <code>STARTING</code> state when its
-     * {@link #start(const Options&) start} method is active. A plugin must be in this
+     * {@link #start(const StartOptions&) start} method is active. A plugin must be in this
      * state when the plugin's {@link ctkPluginActivator::start} method is called. If the
      * <code>ctkPluginActivator::start</code> method completes without exception,
      * then the plugin has successfully started and must move to the
@@ -153,7 +153,7 @@ public:
      *
      * <p>
      * A plugin is in the <code>STOPPING</code> state when its
-     * {@link #stop(const Option&) stop} method is active. A plugin must be in this state
+     * {@link #stop(const StopOptions&) stop} method is active. A plugin must be in this state
      * when the plugin's {@link ctkPluginActivator::stop} method is called. When the
      * <code>ctkPluginActivator::stop</code> method completes the plugin is
      * stopped and must move to the <code>RESOLVED</code> state.
@@ -413,8 +413,8 @@ public:
    * <ul>
    * <li>Plugin autostart setting is modified unless the
    * {@link #STOP_TRANSIENT} option was set.
-   * <li><code>getState()</code> not in &#x007B; <code>ACTIVE</code>,
-   * <code>STOPPING</code> &#x007D;.
+   * <li><code>getState()</code> not in &#123; <code>ACTIVE</code>,
+   * <code>STOPPING</code> &#125;.
    * <li><code>ctkPluginActivator::stop</code> has been called and did not throw
    * an exception.
    * </ul>
@@ -469,19 +469,19 @@ public:
    *
    * <b>Preconditions </b>
    * <ul>
-   * <li><code>getState()</code> not in &#x007B; <code>UNINSTALLED</code>
-   * &#x007D;.
+   * <li><code>getState()</code> not in &#123; <code>UNINSTALLED</code>
+   * &#125;.
    * </ul>
    * <b>Postconditions, no exceptions thrown </b>
    * <ul>
-   * <li><code>getState()</code> in &#x007B; <code>UNINSTALLED</code>
-   * &#x007D;.
+   * <li><code>getState()</code> in &#123; <code>UNINSTALLED</code>
+   * &#125;.
    * <li>This plugin has been uninstalled.
    * </ul>
    * <b>Postconditions, when an exception is thrown </b>
    * <ul>
-   * <li><code>getState()</code> not in &#x007B; <code>UNINSTALLED</code>
-   * &#x007D;.
+   * <li><code>getState()</code> not in &#123; <code>UNINSTALLED</code>
+   * &#125;.
    * <li>This plugin has not been uninstalled.
    * </ul>
    *
@@ -664,7 +664,7 @@ public:
   /**
    * Returns the version of this plugin as specified by its
    * <code>Plugin-Version</code> manifest header. If this plugin does not have a
-   * specified version then {@link Version#emptyVersion} is returned.
+   * specified version then {@link ctkVersion#emptyVersion} is returned.
    *
    * <p>
    * This method must continue to return this plugin's version while

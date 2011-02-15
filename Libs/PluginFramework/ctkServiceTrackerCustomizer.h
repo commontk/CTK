@@ -55,7 +55,7 @@
  * thread-safe.
  *
  * \tparam T The type of the tracked object.
- * \threadsafe
+ * \remarks This class is thread safe.
  */
 template<class T = QObject*>
 struct ctkServiceTrackerCustomizer {

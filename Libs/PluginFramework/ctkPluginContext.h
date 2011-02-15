@@ -93,7 +93,7 @@ class ctkPluginContextPrivate;
  * The Framework is the only entity that can create <code>ctkPluginContext</code>
  * objects and they are only valid within the Framework that created them.
  *
- * @threadsafe
+ * @remarks This class is thread safe.
  */
 class CTK_PLUGINFW_EXPORT ctkPluginContext
 {
@@ -180,7 +180,7 @@ public:
    * be ignored.
    * <li>The service is added to the Framework service registry and may now be
    * used by other plugins.
-   * <li>A service event of type {@link ServiceEvent#REGISTERED} is fired.
+   * <li>A service event of type {@link ctkServiceEvent#REGISTERED} is fired.
    * <li>A <code>ctkServiceRegistration</code> object for this registration is
    * returned.
    * </ol>
@@ -264,11 +264,11 @@ public:
    * <p>
    * The specified <code>filter</code> expression is used to select the
    * registered services whose service properties contain keys and values
-   * which satisfy the filter expression. See {@link Filter} for a description
+   * which satisfy the filter expression. See {@link ctkLDAPSearchFilter} for a description
    * of the filter syntax. If the specified <code>filter</code> is
    * empty, all registered services are considered to match the
    * filter. If the specified <code>filter</code> expression cannot be parsed,
-   * an {@link std::invalid_argument} will be thrown with a human readable
+   * an <code>std::invalid_argument</code> will be thrown with a human readable
    * message where the filter became unparsable.
    *
    * <p>
@@ -279,7 +279,7 @@ public:
    * empty, the service must have been registered with the
    * specified class name. The complete list of class names with which a
    * service was registered is available from the service's
-   * {@link PlugincConstants::OBJECTCLASS objectClass} property.
+   * {@link ctkPluginConstants::OBJECTCLASS objectClass} property.
    * <li>If the specified <code>filter</code> is not empty, the
    * filter expression must match the service.
    * </ul>
@@ -386,9 +386,9 @@ public:
    * <p>
    * A plugin's use of a service is tracked by the plugin's use count of that
    * service. Each time a service's service object is returned by
-   * {@link #getService(ctkServiceReference*)} the context plugin's use count for
+   * {@link #getService(const ctkServiceReference&)} the context plugin's use count for
    * that service is incremented by one. Each time the service is released by
-   * {@link #ungetService(ctkServiceReference*)} the context plugin's use count
+   * {@link #ungetService(const ctkServiceReference&)} the context plugin's use count
    * for that service is decremented by one.
    * <p>
    * When a plugin's use count for a service drops to zero, the plugin should
@@ -407,7 +407,7 @@ public:
    * <li>If the context plugin's use count for the service is currently one
    * and the service was registered with an object implementing the
    * <code>ctkServiceFactory</code> interface, the
-   * {@link ctkServiceFactory::getService(ctkPlugin*, ctkServiceRegistration*)} method is
+   * {@link ctkServiceFactory::getService} method is
    * called to create a service object for the context plugin. This service
    * object is cached by the Framework. While the context plugin's use count
    * for the service is greater than zero, subsequent calls to get the
@@ -459,7 +459,7 @@ public:
    *         <code>ctkServiceReference</code> was not created by the same
    *         framework instance as this <code>ctkPluginContext</code> or
    *         if it is invalid (default constructed).
-   * @see #getService(ctkServiceReference)
+   * @see #getService(const ctkServiceReference&)
    * @see #ungetService(const ctkServiceReference&)
    * @see ctkServiceFactory
    */
@@ -491,7 +491,7 @@ public:
    * <li>If the context plugin's use count for the service is currently zero
    * and the service was registered with a <code>ctkServiceFactory</code> object,
    * the
-   * {@link ctkServiceFactory#ungetService(ctkPlugin*, ctkServiceRegistration*, QObject*)}
+   * {@link ctkServiceFactory#ungetService}
    * method is called to release the service object for the context plugin.
    * <li><code>true</code> is returned.
    * </ol>
@@ -572,8 +572,8 @@ public:
    *
    * <b>Postconditions, no exceptions thrown </b>
    * <ul>
-   * <li><code>getState()</code> in &#x007B; <code>INSTALLED</code>,
-   * <code>RESOLVED</code> &#x007D;.
+   * <li><code>getState()</code> in &#123; <code>INSTALLED</code>,
+   * <code>RESOLVED</code> &#125;.
    * <li>Plugin has a unique ID.
    * </ul>
    * <b>Postconditions, when an exception is thrown </b>
@@ -592,7 +592,7 @@ public:
    *         installation failed.
    * @throws std::logic_error If this ctkPluginContext is no longer valid.
    */
-  QSharedPointer<ctkPlugin> installPlugin(const QUrl& location, QIODevice* in = 0);
+  QSharedPointer<ctkPlugin> installPlugin(const QUrl& location, QIODevice* input = 0);
 
   /**
    * Connects the specified <code>slot</code> to the context

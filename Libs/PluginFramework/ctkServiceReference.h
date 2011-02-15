@@ -63,7 +63,7 @@ class ctkServiceEvent;
  * @see ctkPluginContext::getServiceReference
  * @see ctkPluginContext::getServiceReferences
  * @see ctkPluginContext::getService
- * @threadsafe
+ * @remarks This class is thread safe.
  */
 class CTK_PLUGINFW_EXPORT ctkServiceReference {
 

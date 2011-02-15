@@ -45,9 +45,12 @@ public:
   bool isInMemory() const;
 
   ///
-  /// open the SQLite database in @param file. If the file does not
+  /// open the SQLite database in @param databaseFile . If the file does not
   /// exist, a new database is created and initialized with the
   /// default schema
+  ///
+  /// @param databaseFile TODO
+  /// @param connectionName TODO
   virtual void openDatabase(const QString databaseFile, const QString& connectionName = "DICOM-DB" );
 
   ///

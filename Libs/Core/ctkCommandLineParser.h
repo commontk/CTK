@@ -98,6 +98,19 @@ public:
    * Constructs a parser instance.
    *
    * If QSettings support is enabled by a call to <code>enableSettings()</code>
+   * a default constructed QSettings instance will be used when parsing
+   * the command line arguments. Make sure to call <code>QCoreApplication::setOrganizationName()</code>
+   * and <code>QCoreApplication::setApplicationName()</code> before using default
+   * constructed QSettings objects.
+   *
+   * @param newParent The QObject parent.
+   */
+  ctkCommandLineParser(QObject* newParent = 0);
+
+  /**
+   * Constructs a parser instance.
+   *
+   * If QSettings support is enabled by a call to <code>enableSettings()</code>
    * the provided QSettings instance will be used. If the QSettings instance is
    * zero, a default constructed QSettings instance will be used when parsing
    * the command line arguments. Using a default constructed instance is usually
@@ -105,8 +118,10 @@ public:
    * and <code>QCoreApplication::setApplicationName()</code>.
    *
    * @param settings A QSettings instance which should be used.
+   * @param newParent The QObject parent.
+   *
+   *
    */
-  ctkCommandLineParser(QObject* newParent = 0);
   ctkCommandLineParser(QSettings* settings, QObject* newParent = 0);
 
   ~ctkCommandLineParser();

@@ -49,7 +49,7 @@
  * <li>#LOG_DEBUG
  * </ol>
  *
- * \ThreadSafe
+ * \remarks This class is thread safe.
  */
 struct CTK_PLUGINFW_EXPORT ctkLogService
 {
@@ -104,6 +104,10 @@ struct CTK_PLUGINFW_EXPORT ctkLogService
    *        user defined way.
    * \param message Human readable string describing the condition.
    * \param exception The exception that reflects the condition or <code>null</code>.
+   * \param file The current file name.
+   * \param function The current function name.
+   * \param line The current line number.
+   *
    * \see #LOG_ERROR
    * \see #LOG_WARNING
    * \see #LOG_INFO
@@ -128,6 +132,9 @@ struct CTK_PLUGINFW_EXPORT ctkLogService
    * \param message Human readable string describing the condition.
    * \param exception The exception that reflects the condition or
    *        <code>null</code>.
+   * \param file The current file name.
+   * \param function The current function name.
+   * \param line The current line number.
    *
    * \see #LOG_ERROR
    * \see #LOG_WARNING

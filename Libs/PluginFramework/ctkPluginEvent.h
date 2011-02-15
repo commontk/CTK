@@ -138,7 +138,7 @@ public:
     /**
      * The plugin will be lazily activated.
      * <p>
-     * The plugin has a \link ctkPluginConstant::ACTIVATION_LAZY lazy activation policy\endlink
+     * The plugin has a \link ctkPluginConstants::ACTIVATION_LAZY lazy activation policy\endlink
      * and is waiting to be activated. It is now in the
      * \link ctkPlugin::STARTING STARTING\endlink state and has a valid
      * <code>ctkPluginContext</code>. This

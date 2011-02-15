@@ -45,7 +45,7 @@ class ctkServiceRegistrationPrivate;
  * properties of the service or to unregister the service.
  *
  * @see ctkPluginContext#registerService()
- * @threadsafe
+ * @remarks This class is thread safe.
  */
 class CTK_PLUGINFW_EXPORT ctkServiceRegistration {
 
@@ -98,7 +98,7 @@ public:
    * The following steps are required to modify service properties:
    * <ol>
    * <li>The service's properties are replaced with the provided properties.
-   * <li>A service event of type {@link ServiceEvent#MODIFIED} is fired.
+   * <li>A service event of type {@link ctkServiceEvent#MODIFIED} is fired.
    * </ol>
    *
    * @param properties The properties for this service. See {@link ctkPluginConstants}
@@ -125,7 +125,7 @@ public:
    * <ol>
    * <li>The service is removed from the Framework service registry so that
    * it can no longer be obtained.
-   * <li>A service event of type {@link ServiceEvent#UNREGISTERING} is fired
+   * <li>A service event of type {@link ctkServiceEvent#UNREGISTERING} is fired
    * so that plugins using this service can release their use of the service.
    * Once delivery of the service event is complete, the
    * <code>ctkServiceReference</code> objects for the service may no longer be

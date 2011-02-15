@@ -32,7 +32,7 @@
  * <p>
  * The main purpose of this interface is to store plugin configuration data
  * persistently. This information is represented in <code>ctkConfiguration</code>
- * objects. The actual configuration data is a <code>Dictionary</code> of
+ * objects. The actual configuration data is a <code>ctkDictionary</code> of
  * properties inside a <code>ctkConfiguration</code> object.
  *
  * <p>
@@ -63,7 +63,7 @@
  * checks its persistent storage for a configuration object whose
  * <code>service.pid</code> property matches the PID service property (
  * <code>service.pid</code>) of the Managed Service. If found, it calls
- * {@link ctkManagedService#updated} method with the new properties. The
+ * ctkManagedService#updated method with the new properties. The
  * implementation of a Configuration Admin service must run these call-backs
  * asynchronously to allow proper synchronization.
  *
@@ -73,7 +73,7 @@
  * <code>service.factoryPid</code> property matches the PID service property of
  * the Managed Service Factory. For each such <code>ctkConfiguration</code>
  * objects, it calls the <code>ctkManagedServiceFactory#updated</code> method
- * asynchronously with the new properties. The calls to the <code>updated</code>
+ * asynchronously with the new properties. The calls to the <code>%updated</code>
  * method of a <code>ctkManagedServiceFactory</code> must be executed sequentially
  * and not overlap in time.
  *
@@ -151,7 +151,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfigurationAdmin
    *
    * The properties of the new <code>ctkConfiguration</code> object are
    * <code>null</code> until the first time that its
-   * {@link ctkConfiguration#update(Dictionary)} method is called.
+   * {@link ctkConfiguration#update(const ctkDictionary&)} method is called.
    *
    * <p>
    * It is not required that the <code>factoryPid</code> maps to a

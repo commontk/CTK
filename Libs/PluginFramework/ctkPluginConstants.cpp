@@ -21,8 +21,8 @@
 
 #include "ctkPluginConstants.h"
 
-const QString	ctkPluginConstants::SYSTEM_PLUGIN_LOCATION = "System Plugin";
-const QString	ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.plugin";
+const QString ctkPluginConstants::SYSTEM_PLUGIN_LOCATION = "System Plugin";
+const QString ctkPluginConstants::SYSTEM_PLUGIN_SYMBOLICNAME = "system.plugin";
 
 const QString ctkPluginConstants::FRAMEWORK_VERSION = "org.commontk.pluginfw.version";
 const QString ctkPluginConstants::FRAMEWORK_VENDOR = "org.commontk.pluginfw.vendor";
@@ -30,7 +30,7 @@ const QString ctkPluginConstants::FRAMEWORK_STORAGE = "org.commontk.pluginfw.sto
 const QString ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN = "org.commontk.pluginfw.storage.clean";
 const QString ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT = "onFirstInit";
 
-const QString	ctkPluginConstants::PLUGIN_SYMBOLICNAME = "Plugin-SymbolicName";
+const QString ctkPluginConstants::PLUGIN_SYMBOLICNAME = "Plugin-SymbolicName";
 const QString ctkPluginConstants::PLUGIN_COPYRIGHT = "Plugin-Copyright";
 const QString ctkPluginConstants::PLUGIN_DESCRIPTION = "Plugin-Description";
 const QString ctkPluginConstants::PLUGIN_NAME = "Plugin-Name";
@@ -38,10 +38,11 @@ const QString ctkPluginConstants::PLUGIN_LOCALIZATION = "Plugin-Localization";
 const QString ctkPluginConstants::PLUGIN_LOCALIZATION_DEFAULT_BASENAME = "CTK-INF/l10n/plugin";
 const QString ctkPluginConstants::REQUIRE_PLUGIN = "Require-Plugin";
 const QString ctkPluginConstants::PLUGIN_VERSION_ATTRIBUTE = "plugin-version";
-const QString	ctkPluginConstants::PLUGIN_VERSION = "Plugin-Version";
-const QString	ctkPluginConstants::PLUGIN_ACTIVATIONPOLICY = "Plugin-ActivationPolicy";
+const QString ctkPluginConstants::PLUGIN_VERSION = "Plugin-Version";
+const QString ctkPluginConstants::PLUGIN_ACTIVATIONPOLICY = "Plugin-ActivationPolicy";
 
-const QString	ctkPluginConstants::ACTIVATION_EAGER = "eager";
+const QString ctkPluginConstants::ACTIVATION_EAGER = "eager";
+const QString ctkPluginConstants::ACTIVATION_LAZY = "lazy";
 
 const QString ctkPluginConstants::RESOLUTION_DIRECTIVE = "resolution";
 const QString ctkPluginConstants::RESOLUTION_MANDATORY = "mandatory";

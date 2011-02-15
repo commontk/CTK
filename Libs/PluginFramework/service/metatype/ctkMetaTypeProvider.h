@@ -36,7 +36,7 @@
  * registered as a service, it must be registered with a
  * {@link #METATYPE_FACTORY_PID} or {@link #METATYPE_PID} service property (or
  * both). Any PID mentioned in either of these factories must be a valid argument
- * to the {@link #getObjectClassDefinition(const QString, const QString)} method.
+ * to the {@link #getObjectClassDefinition(const QString&, const QLocale&)} method.
  */
 struct CTK_PLUGINFW_EXPORT ctkMetaTypeProvider
 {

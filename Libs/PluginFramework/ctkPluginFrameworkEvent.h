@@ -182,7 +182,6 @@ public:
    * <li>{@link #ERROR}
    * <li>{@link #WARNING}
    * <li>{@link #INFO}
-   * <li>{@link #STARTLEVEL_CHANGED}
    * <li>{@link #STOPPED}
    * <li>{@link #STOPPED_UPDATE}
    * <li>{@link #WAIT_TIMEDOUT}

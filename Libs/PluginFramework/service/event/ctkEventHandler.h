@@ -66,8 +66,7 @@
  *
  * @see ctkEvent
  *
- * @ThreadSafe
- * @version $Id: 2b8202d10e77b774897c74714115059f46abc7e1 $
+ * @remarks This class is thread safe.
  */
 struct ctkEventHandler
 {

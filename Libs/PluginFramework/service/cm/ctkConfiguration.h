@@ -68,9 +68,6 @@
  * The same <code>ctkConfiguration</code> object is used for configuring both a
  * Managed Service Factory and a Managed Service. When it is important to
  * differentiate between these two the term "factory configuration" is used.
- *
- * @noimplement
- * @version
  */
 struct CTK_PLUGINFW_EXPORT ctkConfiguration
 {

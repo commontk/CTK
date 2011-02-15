@@ -205,13 +205,8 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
   static const QString PLUGIN_ACTIVATIONPOLICY; // = "Plugin-ActivationPolicy"
 
   /**
-   * Plugin activation policy declaring the plugin must be activated when the
-   * first object is instantiated from the plugin.
-   * <p>
-   * A plugin with the lazy (default) activation policy
-   * will wait in the ctkPlugin#STARTING state until the first
-   * class instantiation from the plugin occurs. The plugin will then be activated
-   * before the instance is returned to the requester.
+   * Plugin activation policy declaring the plugin must be activated immediately.
+   *
    * <p>
    * A plugin with the eager activation policy that is started with the
    * ctkPlugin#START_ACTIVATION_POLICY option will be activating immediately when
@@ -229,6 +224,24 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * @see ctkPlugin#START_ACTIVATION_POLICY
    */
   static const QString ACTIVATION_EAGER; // = "eager"
+
+  /**
+   * Plugin activation policy declaring the plugin must be activated when the
+   * first object is instantiated from the plugin.
+   * <p>
+   * A plugin with the lazy activation policy that is started with the
+   * {@link ctkPlugin#START_ACTIVATION_POLICY START_ACTIVATION_POLICY} option
+   * will wait in the ctkPlugin#STARTING state until the first
+   * class instantiation from the plugin occurs. The plugin will then be activated
+   * before the instance is returned to the requester.
+   * <p>
+   * The lazy activation policy is the default for every plugin.
+   *
+   * @see #PLUGIN_ACTIVATIONPOLICY
+   * @see ctkPlugin#start(int)
+   * @see ctkPlugin#START_ACTIVATION_POLICY
+   */
+  static const QString ACTIVATION_LAZY; // = "lazy"
 
   /**
    * Manifest header directive identifying the resolution type in the
@@ -325,7 +338,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    *
    * <p>
    * By convention, every plugin has its own unique namespace, starting with
-   * the plugin's identifier (see {@link ctkPlugin#getPluginId}) and followed by
+   * the plugin's identifier (see ctkPlugin::getPluginId) and followed by
    * a dot (.). A plugin may use this as the prefix of the persistent
    * identifiers for the services it registers.
    */
@@ -343,7 +356,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    *
    * <p>
    * The service ranking is used by the Framework to determine the <i>natural
-   * order</i> of services, see {@link ctkServiceReference::operator<(const ctkServiceReference&)},
+   * order</i> of services, see ctkServiceReference::operator<(const ctkServiceReference&),
    * and the <i>default</i> service to be returned from a call to the
    * {@link ctkPluginContext::getServiceReference} method.
    *
