@@ -19,7 +19,7 @@
 #
 ###########################################################################
 
-FUNCTION(ctkFunctionSetupExternalPlugins )
+MACRO(ctkMacroSetupExternalPlugins )
 
   ctkMacroParseArguments(MY "BUILD_OPTION_PREFIX" "" ${ARGN})
 
@@ -52,4 +52,4 @@ FUNCTION(ctkFunctionSetupExternalPlugins )
     ENDIF()
   ENDFOREACH()
 
-ENDFUNCTION()
+ENDMACRO()

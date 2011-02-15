@@ -56,7 +56,7 @@ INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGeneratePluginManifest.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroGeneratePluginResourceFile.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetIncludeDirs.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetLibraryDirs.cmake")
-INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionSetupExternalPlugins.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroSetupExternalPlugins.cmake")
 
 SET(CTK_EXPORT_HEADER_TEMPLATE "@CTK_EXPORT_HEADER_TEMPLATE@")
 
