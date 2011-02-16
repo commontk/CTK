@@ -34,9 +34,8 @@ IF(${add_project})
       )
     SET(QtSOAP_DIR "${ep_build_dir}/${proj}")
     
-    # Since the link directories associated with QtSOAP is used, it makes sens to 
-    # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory
-    LIST(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${QtSOAP_DIR}/bin)
+    # Since QtSOAP is statically build, there is not need to add its corresponding 
+    # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
