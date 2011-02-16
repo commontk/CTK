@@ -1,7 +1,7 @@
 
 // Qt includes
+#include <QCoreApplication>
 #include <QTextStream>
-#include <QApplication>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -12,7 +12,7 @@
 
 int ctkDICOMTest1(int argc, char * argv []) {
   
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   QTextStream out(stdout);
   try
   {
