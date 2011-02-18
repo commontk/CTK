@@ -64,7 +64,7 @@ public:
   
   /// Query a remote DICOM Image Store SCP
   /// You must at least set the host and port before calling query()
-  void query(ctkDICOMDatabase& database);
+  bool query(ctkDICOMDatabase& database);
 
   /// Access the list of study instance UIDs from the last query
   QStringList studyInstanceUIDQueried()const;

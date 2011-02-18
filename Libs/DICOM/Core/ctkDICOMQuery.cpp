@@ -190,7 +190,7 @@ QStringList ctkDICOMQuery::studyInstanceUIDQueried()const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::query(ctkDICOMDatabase& database )
+bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 {
   // ctkDICOMDatabase::setDatabase ( database );
   Q_D(ctkDICOMQuery);
@@ -231,7 +231,7 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
     logger.error( "Error initializing the network" );
     emit progress("Error initializing the network");
     emit progress(100);
-    return;
+    return false;
     }
   logger.debug ( "Negotiating Association" );
   emit progress("Negatiating Association");
@@ -345,16 +345,16 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
   emit progress(40);
 
   OFCondition status = d->SCU.sendFINDRequest ( presentationContex, d->Query, responses );
-  if ( status.good() )
-    {
-    logger.debug ( "Find succeded" );
-    emit progress("Find succeded");
-    }
-  else
+  if ( !status.good() )
     {
     logger.error ( "Find failed" );
     emit progress("Find failed");
+    d->SCU.closeAssociation ( DUL_PEERREQUESTEDRELEASE );
+    emit progress(100);
+    return false;
     }
+  logger.debug ( "Find succeded" );
+  emit progress("Find succeded");
   emit progress(50);
 
   for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
@@ -406,5 +406,6 @@ void ctkDICOMQuery::query(ctkDICOMDatabase& database )
     }
   d->SCU.closeAssociation ( DUL_PEERREQUESTEDRELEASE );
   emit progress(100);
+  return true;
 }
 
