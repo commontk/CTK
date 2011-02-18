@@ -6,8 +6,12 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkDICOMImageTest1.cpp
   ctkDICOMIndexerTest1.cpp
   ctkDICOMModelTest1.cpp
+  ctkDICOMQueryTest1.cpp
+  ctkDICOMQueryTest2.cpp
   ctkDICOMPersonNameTest1.cpp
   ctkDICOMTest1.cpp
+  ctkDICOMTesterTest1.cpp
+  ctkDICOMTesterTest2.cpp
   )
 
 SET (TestsToRun ${Tests})
@@ -43,7 +47,19 @@ ADD_TEST( ctkDICOMModelTest1 ${KIT_TESTS}
                              ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql)
 SET_PROPERTY(TEST ctkDICOMModelTest1 PROPERTY LABELS ${PROJECT_NAME})
 
+# ctkDICOMQuery
+SIMPLE_TEST( ctkDICOMQueryTest1)
+ADD_TEST( ctkDICOMQueryTest2 ${KIT_TESTS}
+          ctkDICOMQueryTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA)
+SET_PROPERTY(TEST ctkDICOMQueryTest2 PROPERTY LABELS ${PROJECT_NAME})
+
 ADD_TEST( ctkDICOMTest1 ${KIT_TESTS}
           ctkDICOMTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
                         ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql)
 SET_PROPERTY(TEST ctkDICOMTest1 PROPERTY LABELS ${PROJECT_NAME})
+
+# ctkDICOMTester
+SIMPLE_TEST(ctkDICOMTesterTest1)
+ADD_TEST( ctkDICOMTesterTest2 ${KIT_TESTS}
+          ctkDICOMTesterTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA)
+SET_PROPERTY(TEST ctkDICOMTesterTest2 PROPERTY LABELS ${PROJECT_NAME})
