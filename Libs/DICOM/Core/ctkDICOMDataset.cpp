@@ -95,12 +95,13 @@ void ctkDICOMDataset::InitializeFromDataset(DcmDataset* dataset)
 }
 
 
-void ctkDICOMDataset::InitializeFromFile(const QString& filename,const E_TransferSyntax readXfer,
-                    const E_GrpLenEncoding groupLength,
-                    const Uint32 maxReadLength,
-                    const E_FileReadMode readMode)
+void ctkDICOMDataset::InitializeFromFile(const QString& filename,
+                                         const E_TransferSyntax readXfer,
+                                         const E_GrpLenEncoding groupLength,
+                                         const Uint32 maxReadLength,
+                                         const E_FileReadMode readMode)
 {
-  Q_D(ctkDICOMDataset);
+  Q_UNUSED(maxReadLength);
   DcmDataset *dataset;
   
   DcmFileFormat fileformat;
@@ -203,10 +204,17 @@ void ctkDICOMDataset::Deserialize()
 
   if ( condition.bad() )
   {
-    std::cerr << "** Condition code of Dataset::read() is " << condition.code() << std::endl;
-    std::cerr << "** Buffer state: " << dcmbuffer.status().code() << " " <<  dcmbuffer.good() << " " << dcmbuffer.eos() << " tell " << dcmbuffer.tell() << " avail " << dcmbuffer.avail() << std::endl;
-    std::cerr << "** Dataset state: " << (int)dataset.transferState() << std::endl;
-    std::cerr << std::string("Could not DcmDataset::read(..): ") + condition.text() << std::endl;
+    std::cerr << "** Condition code of Dataset::read() is "
+              << condition.code() << std::endl;
+    std::cerr << "** Buffer state: " << dcmbuffer.status().code()
+              << " " <<  dcmbuffer.good()
+              << " " << dcmbuffer.eos()
+              << " tell " << dcmbuffer.tell()
+              << " avail " << dcmbuffer.avail() << std::endl;
+    std::cerr << "** Dataset state: "
+              << static_cast<int>(dataset.transferState()) << std::endl;
+    std::cerr << "Could not DcmDataset::read(..): "
+              << condition.text() << std::endl;
     //throw std::invalid_argument( std::string("Could not DcmDataset::read(..): ") + condition.text() );
   }
 }
@@ -385,7 +393,7 @@ QString ctkDICOMDataset::Decode( const DcmTag& tag, const OFString& raw ) const
 OFString ctkDICOMDataset::Encode( const DcmTag& tag, const QString& qstring ) const
 {
   // TODO: respect given character-set when encoding; see Decode()
-
+  Q_UNUSED(tag);
   return OFString( qstring.toLatin1().data() ); // Latin1 is ISO 8859, which is the default character set of DICOM (PS 3.5-2008, Page 18)
 }
     
@@ -659,6 +667,8 @@ bool ctkDICOMDataset::SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonN
 
 bool ctkDICOMDataset::SetElementAsPersonNameList( const DcmTag& tag, ctkDICOMPersonNameList personNameList )
 {
+  Q_UNUSED(tag);
+  Q_UNUSED(personNameList);
   this->EnsureDcmDataSetIsInitialized();
   // TODO: Find out how this can be implemented with DcmDataset methods; there is no method for
   // setting an element at a given position
@@ -888,6 +898,7 @@ QString ctkDICOMDataset::GetStoredSerialization()
 
 void ctkDICOMDataset::SetStoredSerialization(QString serializedDataset)
 {
+  Q_UNUSED(serializedDataset);
   throw std::runtime_error("No serialization implemented for this object!");
 }
 

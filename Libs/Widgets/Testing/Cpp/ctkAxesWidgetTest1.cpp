@@ -39,7 +39,7 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
   if (axes.currentAxis() != ctkAxesWidget::None)
     {
     std::cerr << "ctkAxesWidget default axis is wrong: "
-              << axes.currentAxis() << std::endl;
+              << static_cast<int>(axes.currentAxis()) << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -50,7 +50,7 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
       spy.count() != 1)
     {
     std::cerr << "ctkAxesWidget default axis is wrong: "
-              << axes.currentAxis() << " " << spy.count() << std::endl;
+              << static_cast<int>(axes.currentAxis()) << " " << spy.count() << std::endl;
     return EXIT_FAILURE;
     }
   if ( qvariant_cast<ctkAxesWidget::Axis>(spy.takeFirst().at(0)) != ctkAxesWidget::Anterior)
@@ -65,7 +65,7 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
       (axes.currentAxis() != ctkAxesWidget::None))
     {
     std::cerr << "ctkAxesWidget::setAutoReset failed: "
-              << axes.currentAxis() << std::endl;
+              << static_cast<int>(axes.currentAxis()) << std::endl;
     return EXIT_FAILURE;
     }
   spy.clear();
@@ -74,7 +74,7 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
       spy.count() != 2)
     {
     std::cerr << "ctkAxesWidget::setCurrentAxis() with autoReset ON failed: "
-              << axes.currentAxis() << " " << spy.count() << std::endl;
+              << static_cast<int>(axes.currentAxis()) << " " << spy.count() << std::endl;
     return EXIT_FAILURE;
     }
   if (qvariant_cast<ctkAxesWidget::Axis>(spy[0].at(0)) != ctkAxesWidget::Right ||

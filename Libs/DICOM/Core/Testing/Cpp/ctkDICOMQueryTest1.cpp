@@ -27,6 +27,7 @@
 #include "ctkDICOMQuery.h"
 
 // STD includes
+#include <cstdlib>
 #include <iostream>
 
 // Simple test that check the values are correctly set

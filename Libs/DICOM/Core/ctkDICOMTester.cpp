@@ -148,7 +148,6 @@ ctkDICOMTester::ctkDICOMTester(QObject* parentObject)
   : QObject(parentObject)
   , d_ptr(new ctkDICOMTesterPrivate(*this))
 {
-  Q_D(ctkDICOMTester);
 }
 
 //------------------------------------------------------------------------------
@@ -158,7 +157,6 @@ ctkDICOMTester::ctkDICOMTester(const QString& dcmqrscp,
   : QObject(parentObject)
   , d_ptr(new ctkDICOMTesterPrivate(*this))
 {
-  Q_D(ctkDICOMTester);
   this->setDCMQRSCPExecutable(dcmqrscp);
   this->setDCMQRSCPConfigFile(configFile);
 }

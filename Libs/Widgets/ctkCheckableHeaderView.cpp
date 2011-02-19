@@ -462,9 +462,6 @@ void ctkCheckableHeaderView::updateHeaders(int firstSection, int lastSection)
     {
     active = this->parentWidget()->hasFocus();
     }
-  int maxJ = this->orientation() == Qt::Horizontal ? 
-    current->rowCount() : current->columnCount();
-  
   for(int i = firstSection; i <= lastSection; i++)
     {
     QVariant decoration;
@@ -506,7 +503,7 @@ void ctkCheckableHeaderView::updateHeadersFromItems(const QModelIndex & topLeft,
     }
   bool checkable = false;
   QVariant topLeftCheckState = this->model()->data(topLeft, Qt::CheckStateRole);
-  int topLeftState = topLeftCheckState.toInt(&checkable);
+  topLeftCheckState.toInt(&checkable);
   if (!checkable)
     {
     return;

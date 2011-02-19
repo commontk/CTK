@@ -87,14 +87,14 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
   if (headerView->checkState(0) == Qt::Unchecked)
     {
     std::cerr << "ctkCheckableHeaderView::checkstate() failed: "
-              << headerView->checkState(0) << std::endl;
+              << static_cast<int>(headerView->checkState(0)) << std::endl;
     return EXIT_FAILURE;
     }
   Qt::CheckState checkstate;
   if (!headerView->checkState(0, checkstate))
     {
     std::cerr << "ctkCheckableHeaderView::checkstate() failed: "
-              << headerView->checkState(0, checkstate) << std::endl;
+              << static_cast<int>(headerView->checkState(0, checkstate)) << std::endl;
     return EXIT_FAILURE;
     }
   QFocusEvent focus(QEvent::FocusIn,Qt::TabFocusReason);
@@ -120,7 +120,7 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
   if (headerView->checkState(0) != Qt::Unchecked)
     {
     std::cerr << "ctkCheckableHeaderView::toggleCheckState() failed: "
-              << headerView->checkState(0) << std::endl;
+              << static_cast<int>(headerView->checkState(0)) << std::endl;
     return EXIT_FAILURE;
     }
     
@@ -130,9 +130,9 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
       row2[0]->checkState() != Qt::Checked)
     {
     std::cerr << "ctkCheckableHeaderView::toggleCheckState() failed: "
-              << row0[0]->checkState() << " "
-              << row1[0]->checkState() << " "
-              << row2[0]->checkState() << std::endl;
+              << static_cast<int>(row0[0]->checkState()) << " "
+              << static_cast<int>(row1[0]->checkState()) << " "
+              << static_cast<int>(row2[0]->checkState()) << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -144,10 +144,10 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
       row2[0]->checkState() != Qt::Checked)
     {
     std::cerr << "QStandardItem::setCheckState() failed: "
-              << headerView->checkState(0) << " "
-              << row0[0]->checkState() << " "
-              << row1[0]->checkState() << " "
-              << row2[0]->checkState() << std::endl;
+              << static_cast<int>(headerView->checkState(0)) << " "
+              << static_cast<int>(row0[0]->checkState()) << " "
+              << static_cast<int>(row1[0]->checkState()) << " "
+              << static_cast<int>(row2[0]->checkState()) << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -160,10 +160,10 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
       row2[0]->checkState() != Qt::Checked)
     {
     std::cerr << "ctkCheckableHeaderView::setPropagateToItems() failed: "
-              << headerView->checkState(0) << " "
-              << row0[0]->checkState() << " "
-              << row1[0]->checkState() << " "
-              << row2[0]->checkState() << std::endl;
+              << static_cast<int>(headerView->checkState(0)) << " "
+              << static_cast<int>(row0[0]->checkState()) << " "
+              << static_cast<int>(row1[0]->checkState()) << " "
+              << static_cast<int>(row2[0]->checkState()) << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -175,10 +175,10 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
       row2[0]->checkState() != Qt::Checked)
     {
     std::cerr << "QStandardItem::setCheckState() failed: "
-              << headerView->checkState(0) << " "
-              << row0[0]->checkState() << " "
-              << row1[0]->checkState() << " "
-              << row2[0]->checkState() << std::endl;
+              << static_cast<int>(headerView->checkState(0)) << " "
+              << static_cast<int>(row0[0]->checkState()) << " "
+              << static_cast<int>(row1[0]->checkState()) << " "
+              << static_cast<int>(row2[0]->checkState()) << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -191,10 +191,10 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
       row2[0]->checkState() != Qt::Checked)
     {
     std::cerr << "QStandardItem::setCheckState() failed: "
-              << headerView->checkState(0) << " "
-              << row0[0]->checkState() << " "
-              << row1[0]->checkState() << " "
-              << row2[0]->checkState() << std::endl;
+              << static_cast<int>(headerView->checkState(0)) << " "
+              << static_cast<int>(row0[0]->checkState()) << " "
+              << static_cast<int>(row1[0]->checkState()) << " "
+              << static_cast<int>(row2[0]->checkState()) << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -207,10 +207,10 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
       row2[0]->checkState() != Qt::Checked)
     {
     std::cerr << "QStandardItem::setCheckState() failed: "
-              << headerView->checkState(0) << " "
-              << row0[0]->checkState() << " "
-              << row1[0]->checkState() << " "
-              << row2[0]->checkState() << std::endl;
+              << static_cast<int>(headerView->checkState(0)) << " "
+              << static_cast<int>(row0[0]->checkState()) << " "
+              << static_cast<int>(row1[0]->checkState()) << " "
+              << static_cast<int>(row2[0]->checkState()) << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -224,10 +224,10 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
       row2[0]->checkState() != Qt::Unchecked)
     {
     std::cerr << "QStandardItem::setCheckState() failed: "
-              << headerView->checkState(0) << " "
-              << row0[0]->checkState() << " "
-              << row1[0]->checkState() << " "
-              << row2[0]->checkState() << std::endl;
+              << static_cast<int>(headerView->checkState(0)) << " "
+              << static_cast<int>(row0[0]->checkState()) << " "
+              << static_cast<int>(row1[0]->checkState()) << " "
+              << static_cast<int>(row2[0]->checkState()) << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -239,10 +239,10 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
       row2[0]->checkState() != Qt::Checked)
     {
     std::cerr << "ctkCheckableHeaderView::setCheckState() failed: "
-              << headerView->checkState(0) << " "
-              << row0[0]->checkState() << " "
-              << row1[0]->checkState() << " "
-              << row2[0]->checkState() << std::endl;
+              << static_cast<int>(headerView->checkState(0)) << " "
+              << static_cast<int>(row0[0]->checkState()) << " "
+              << static_cast<int>(row1[0]->checkState()) << " "
+              << static_cast<int>(row2[0]->checkState()) << std::endl;
     return EXIT_FAILURE;
     }
 
