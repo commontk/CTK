@@ -462,8 +462,6 @@ bool ctkDICOMDatabase::isInMemory() const
 
 QString ctkDICOMDatabase::pathForDataset( DcmDataset *dataset)
 {
-  Q_D(ctkDICOMDatabase);
-
   if (!dataset)
     {
     return QString();

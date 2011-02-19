@@ -26,6 +26,8 @@
 
 int ctkDICOMDatasetTest1( int argc, char * argv [] )
 {
+  Q_UNUSED(argc);
+  Q_UNUSED(argv);
   ctkDICOMDataset dataset;
   dataset.InitializeFromDataset(0);
   dataset.InitializeFromFile(QString());
