@@ -86,14 +86,6 @@ int ctkDICOMQueryTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  query.setCallingAETitle("CallingAETitle");
-  if (query.callingAETitle() != "CallingAETitle")
-    {
-    std::cerr << "ctkDICOMQuery::setCallingAETitle() failed: "
-              << qPrintable(query.callingAETitle()) << std::endl;
-    return EXIT_FAILURE;
-    }
-
   QMap<QString,QVariant> filters;
   filters["Name"] = QString("JohnDoe");
   filters["StartDate"] = QString("20090101");
