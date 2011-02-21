@@ -124,7 +124,7 @@ QString ctkDICOMTesterPrivate::findStoreSCUExecutable()const
 void ctkDICOMTesterPrivate::printProcessOutputs(const QString& program, QProcess* process)const
 {
   QTextStream out(stdout);
-  out << program << "finished.\n";
+  out << "Process " << program << " is finished.\n";
 
   QByteArray standardOutput = process->readAllStandardOutput();
   if (standardOutput.count())
@@ -229,7 +229,7 @@ QProcess* ctkDICOMTester::startDCMQRSCP()
   Q_D(ctkDICOMTester);
   if (d->DCMQRSCPProcess)
     {
-    return d->DCMQRSCPProcess;
+    return 0;
     }
   d->DCMQRSCPProcess = new QProcess(this);
 
@@ -241,16 +241,9 @@ QProcess* ctkDICOMTester::startDCMQRSCP()
   //dcmqrscp_args << "--debug" << "--verbose";
   dcmqrscpArgs << QString::number(d->DCMQRSCPPort);
 
-  try
-    {
-    d->DCMQRSCPProcess->start(d->DCMQRSCPExecutable, dcmqrscpArgs);
-    d->DCMQRSCPProcess->waitForStarted();
-    }
-  catch (std::exception e)
-    {
-    delete d->DCMQRSCPProcess;
-    d->DCMQRSCPProcess = 0;
-    }
+  d->DCMQRSCPProcess->start(d->DCMQRSCPExecutable, dcmqrscpArgs);
+  d->DCMQRSCPProcess->waitForStarted(-1);
+
   return d->DCMQRSCPProcess;
 }
 
@@ -264,8 +257,8 @@ bool ctkDICOMTester::stopDCMQRSCP()
     }
 
   d->DCMQRSCPProcess->kill();
-  bool res = d->DCMQRSCPProcess->waitForFinished();
-  
+  bool res = d->DCMQRSCPProcess->waitForFinished(-1);
+
   d->printProcessOutputs("DCMQRSCP", d->DCMQRSCPProcess);
 
   delete d->DCMQRSCPProcess;
@@ -299,7 +292,7 @@ bool ctkDICOMTester::storeData(const QStringList& data)
   storescuArgs << data;
   
   storeSCU.start(d->StoreSCUExecutable, storescuArgs);
-  bool res = storeSCU.waitForFinished();
+  bool res = storeSCU.waitForFinished(-1);
 
   d->printProcessOutputs("StoreSCU", &storeSCU);
   return res;
