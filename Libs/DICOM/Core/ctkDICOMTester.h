@@ -29,9 +29,18 @@ class QProcess;
 #include "ctkDICOMCoreExport.h"
 class ctkDICOMTesterPrivate;
 
+/** \brief Utility class to test DICOM network applications
+    A simple DICOM archive server can be run (startDCMQRSCP()), and images
+    can be stored into the server using storeData(). It internally uses
+    storeSCU.
+ */
 class CTK_DICOM_CORE_EXPORT ctkDICOMTester : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(QString dcmqrscpExecutable READ dcmqrscpExecutable WRITE setDCMQRSCPExecutable)
+  Q_PROPERTY(QString dcmqrscpConfigFile READ dcmqrscpConfigFile WRITE setDCMQRSCPConfigFile)
+  Q_PROPERTY(QString storeSCUExecutable READ storeSCUExecutable WRITE setStoreSCUExecutable)
+  Q_PROPERTY(int dcmqrscpPort READ dcmqrscpPort WRITE setDCMQRSCPPort)
 public:
   ctkDICOMTester(QObject* parent = 0);
   explicit ctkDICOMTester(const QString& dcmqrscp, const QString& configFile, QObject* parent = 0);
@@ -39,20 +48,39 @@ public:
 
   void setDCMQRSCPExecutable(const QString& dcmqrscp);
   QString dcmqrscpExecutable()const;
-  
+
   void setDCMQRSCPConfigFile(const QString& configFile);
   QString dcmqrscpConfigFile()const;
-  
+
   void setStoreSCUExecutable(const QString& storescu);
   QString storeSCUExecutable()const;
-  
+
+  /** Port number [0,65365] where the dcmqrscp and storescu communicate.
+      Changing the port won't change the port of any running process.
+      You must stop and restart any process you want to have its port changed
+  */
   void setDCMQRSCPPort(int port);
   int dcmqrscpPort()const;
-  
+
+  /** Starts a new DCMQRSCP as a separate process. The process is running until
+      stopDCMQRSCP is called or ctkDICOMTester is destroyed.
+      Only one process of DCMQRSCP can be running at a time.
+      Calling startDCMQRSCP() while a DCMQRSCP process is already running
+      results into a no-op. The return value is 0.
+      \sa QProcess::start(),
+   */
   QProcess* startDCMQRSCP();
+
+  /** Stop the running DCMQRSCP process. Returns it's exit status or false if
+      there is no running process.
+  */
   bool stopDCMQRSCP();
 
-  /// Pushes data using storeSCU
+  /** Pushes data (DCM images) using DCMTK storeSCU app. It creates a separate
+      process and waits for its termination.
+      To be working, dcmqrscp must be running
+      \sa startDCMQRSCP()
+   */
   bool storeData(const QStringList& data);
 
 protected:
