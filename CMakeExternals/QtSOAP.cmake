@@ -3,7 +3,7 @@
 #
 
 SET(QtSOAP_DEPENDS)
-ctkMacroShouldAddExternalProject(QTSOAP_LIBRARY add_project)
+ctkMacroShouldAddExternalProject(QtSOAP_LIBRARIES add_project)
 IF(${add_project})
   
   # Sanity checks
@@ -11,7 +11,7 @@ IF(${add_project})
     MESSAGE(FATAL_ERROR "QtSOAP_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
 
-  SET(QtSOAP_enabling_variable QTSOAP_LIBRARY)
+  SET(QtSOAP_enabling_variable QtSOAP_LIBRARIES)
 
   SET(proj QtSOAP)
   SET(proj_DEPENDENCIES)
@@ -19,42 +19,30 @@ IF(${add_project})
   SET(QtSOAP_DEPENDS ${proj})
 
   IF(NOT DEFINED QtSOAP_DIR)
-    IF(WIN32)
-      SET(_qtsoap_url "${CTK_SOURCE_DIR}/Utilities/QtSOAP/qtsoap-2.7_1-opensource-win32.tar.gz")
-      SET(_make_cmd nmake)
-      IF(MINGW)
-        SET(_make_cmd mingw32-make)
-      ENDIF()
-    ELSE()
-      SET(_qtsoap_url "http://get.qt.nokia.com/qt/solutions/lgpl/qtsoap-2.7_1-opensource.tar.gz")
-      SET(_make_cmd make)
-    ENDIF()
-
-    SET(_qtsoap_patch_script "${CTK_BINARY_DIR}/Utilities/QtSOAP/AcceptLicense.cmake")
-    CONFIGURE_FILE("${CTK_SOURCE_DIR}/Utilities/QtSOAP/AcceptLicense.cmake.in" ${_qtsoap_patch_script} @ONLY)
-
-    SET(_qtsoap_build_script "${CTK_BINARY_DIR}/Utilities/QtSOAP/BuildScript.cmake")
-    CONFIGURE_FILE("${CTK_SOURCE_DIR}/Utilities/QtSOAP/BuildScript.cmake.in" ${_qtsoap_build_script} @ONLY)
-
-    SET(_qtsoap_install_script "${CTK_BINARY_DIR}/Utilities/QtSOAP/InstallScript.cmake")
-    CONFIGURE_FILE("${CTK_SOURCE_DIR}/Utilities/QtSOAP/InstallScript.cmake.in" ${_qtsoap_install_script} @ONLY)
-
+  
+    #     MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
-      URL ${_qtsoap_url}
-      PATCH_COMMAND ${CMAKE_COMMAND} -P ${_qtsoap_patch_script}
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure -library
-      BUILD_IN_SOURCE 1
-      BUILD_COMMAND ${CMAKE_COMMAND} -P ${_qtsoap_build_script}
-      INSTALL_COMMAND ${CMAKE_COMMAND} -D INTERMEDIATE_DIRECTORY:STRING=$(IntDir) -P ${_qtsoap_install_script}
-    )
-
-    SET(QtSOAP_DIR "${CTK_BINARY_DIR}/Utilities/QtSOAP/")
+      GIT_REPOSITORY "${git_protocol}://github.com/commontk/QtSOAP.git"
+      GIT_TAG "origin/master"
+      CMAKE_GENERATOR ${gen}
+      INSTALL_COMMAND ""
+      CMAKE_ARGS
+        ${ep_common_args}
+        -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      DEPENDS
+        ${proj_DEPENDENCIES}
+      )
+    SET(QtSOAP_DIR "${ep_build_dir}/${proj}")
+    
+    # Since QtSOAP is statically build, there is not need to add its corresponding 
+    # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
 
-  SET(${QtSOAP_enabling_variable}_INCLUDE_DIRS QTSOAP_INCLUDE_DIR)
+  SET(${QtSOAP_enabling_variable}_LIBRARY_DIRS QtSOAP_LIBRARY_DIRS)
+  SET(${QtSOAP_enabling_variable}_INCLUDE_DIRS QtSOAP_INCLUDE_DIRS)
   SET(${QtSOAP_enabling_variable}_FIND_PACKAGE_CMD QtSOAP)
       
 ENDIF()

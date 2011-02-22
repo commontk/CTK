@@ -7,6 +7,6 @@
 SET(target_libraries
   CTKPluginFramework
   QT_LIBRARIES
-  QTSOAP_LIBRARY
+  QtSOAP_LIBRARIES
   CTKDICOMCore
 )
