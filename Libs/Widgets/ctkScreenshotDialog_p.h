@@ -44,10 +44,11 @@ public:
   void setupUi(QDialog * widget);
 
   void setWaitingForScreenshot(bool waiting);
+  bool isWaitingForScreenshot()const;
 
 public slots:
 
-  void onCaptureButtonClicked();
+  void saveScreenshot(int delayInSeconds);
 
   void updateFullNameLabel();
 
