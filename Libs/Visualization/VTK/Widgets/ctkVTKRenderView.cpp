@@ -267,6 +267,7 @@ void ctkVTKRenderView::forceRender()
 {
   Q_D(ctkVTKRenderView);
 
+  d->RenderPending = false;
   logger.trace(QString("forceRender - RenderEnabled: %1")
                .arg(d->RenderEnabled ? "true" : "false"));
 
@@ -275,7 +276,6 @@ void ctkVTKRenderView::forceRender()
     return;
     }
   d->RenderWindow->Render();
-  d->RenderPending = false;
 }
 
 //----------------------------------------------------------------------------

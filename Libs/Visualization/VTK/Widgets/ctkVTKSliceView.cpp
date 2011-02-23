@@ -137,13 +137,13 @@ void ctkVTKSliceView::scheduleRender()
 void ctkVTKSliceView::forceRender()
 {
   Q_D(ctkVTKSliceView);
+  d->RenderPending = false;
   if (!d->RenderEnabled  || !this->isVisible())
     {
     return;
     }
   logger.trace("forceRender");
   d->RenderWindow->Render();
-  d->RenderPending = false;
 }
 
 //----------------------------------------------------------------------------
