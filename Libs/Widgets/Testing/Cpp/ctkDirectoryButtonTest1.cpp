@@ -120,11 +120,14 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
-    QTimer::singleShot(200, &app, SLOT(quit()));
+    QTimer::singleShot(400, &app, SLOT(quit()));
     }
 
+  // If Qt uses the default native dialog, a nested event loop won't
+  // be created and app.quit() will have no effect (as it solely quits
+  // event loops).
+  button.setOptions(button.options() | ctkDirectoryButton::DontUseNativeDialog);
   QTimer::singleShot(100, &button, SLOT(browse()));
 
   return app.exec();
 }
-

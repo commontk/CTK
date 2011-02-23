@@ -33,19 +33,22 @@
 int ctkColorDialogTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
+  app.setQuitOnLastWindowClosed(true);
 
-  ctkColorPickerButton* extraPanel = new ctkColorPickerButton;
-  ctkColorDialog::addDefaultTab(extraPanel, "Extra", SIGNAL(colorChanged(QColor)));
+  ctkColorPickerButton extraPanel;
+  ctkColorDialog::addDefaultTab(&extraPanel, "Extra", SIGNAL(colorChanged(QColor)));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
-    // quit for the first event loop of the opened dialog
+    // quit the opened dialog, which doesn't quit the application
+    // as app.exec() is not executed yet
     QTimer::singleShot(200, &app, SLOT(quit()));
-    // quit the application
     QTimer::singleShot(300, &app, SLOT(quit()));
     }
 
-  QColor color = ctkColorDialog::getColor(Qt::black,0 , "", 0);
+  // The opened dialog blocks QTimers which prevents the test
+  // from being quit.
+  QColor color = ctkColorDialog::getColor(Qt::black,0 , "", QColorDialog::DontUseNativeDialog);
   
   return app.exec();
 }

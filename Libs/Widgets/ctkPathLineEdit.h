@@ -66,6 +66,16 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   Q_PROPERTY ( QStringList nameFilters READ nameFilters WRITE setNameFilters)
   Q_PROPERTY ( Filters filters READ filters WRITE setFilters)
   Q_PROPERTY ( QString currentPath READ currentPath WRITE setCurrentPath USER true )
+  /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
+  /// public API. We need to create a custom property that will be used when
+  /// instanciating a QFileDialog in ctkPathLineEdit::browse()
+#ifdef USE_QFILEDIALOG_OPTIONS
+  Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
+#else
+  Q_PROPERTY(Options options READ options WRITE setOptions)
+  Q_FLAGS(Option Options);
+#endif
+
 public:
   enum Filter { Dirs        = 0x001,
                 Files       = 0x002,
@@ -89,6 +99,21 @@ public:
                 NoFilter = -1
   };
   Q_DECLARE_FLAGS(Filters, Filter)
+
+#ifndef USE_QFILEDIALOG_OPTIONS
+  // Same options than QFileDialog::Options
+  enum Option
+  {
+    ShowDirsOnly          = 0x00000001,
+    DontResolveSymlinks   = 0x00000002,
+    DontConfirmOverwrite  = 0x00000004,
+    DontUseSheet          = 0x00000008,
+    DontUseNativeDialog   = 0x00000010,
+    ReadOnly              = 0x00000020,
+    HideNameFilterDetails = 0x00000040
+  };
+  Q_DECLARE_FLAGS(Options, Option)
+#endif
 
   /** Default constructor
   */
@@ -115,6 +140,16 @@ public:
 
   void setFilters(const Filters& filters);
   Filters filters()const;
+
+  /// Options of the file dialog pop up.
+  /// \sa QFileDialog::getExistingDirectory
+#ifdef USE_QFILEDIALOG_OPTIONS
+  void setOptions(const QFileDialog::Options& options);
+  const QFileDialog::Options& options()const;
+#else
+  void setOptions(const Options& options);
+  const Options& options()const;
+#endif
 
   /** Change the current extension of the edit line.
    *  If there is no extension yet, set it
@@ -160,5 +195,8 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPathLineEdit::Filters)
+#ifndef USE_QFILEDIALOG_OPTIONS
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPathLineEdit::Options);
+#endif
 
 #endif // __ctkPathLineEdit_h
