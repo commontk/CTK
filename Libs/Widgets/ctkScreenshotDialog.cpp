@@ -63,7 +63,7 @@ void ctkScreenshotDialogPrivate::setupUi(QDialog * widget)
   // Update OK button text
   okButton->setText("Capture");
 
-  connect(okButton, SIGNAL(clicked()), SLOT(onCaptureButtonClicked()));
+  connect(okButton, SIGNAL(clicked()), q, SLOT(saveScreenshot()));
   connect(this->ImageNameLineEdit, SIGNAL(textChanged(QString)), SLOT(updateFullNameLabel()));
   connect(this->ImageVersionNumberSpinBox, SIGNAL(valueChanged(int)), SLOT(updateFullNameLabel()));
   connect(this->DelaySpinBox, SIGNAL(valueChanged(int)), SLOT(resetCountDownValue()));
@@ -71,6 +71,7 @@ void ctkScreenshotDialogPrivate::setupUi(QDialog * widget)
 
   this->CaptureButton = okButton;
 
+  // Called to enable/disable buttons
   q->setWidgetToGrab(0);
 }
 
@@ -82,10 +83,14 @@ void ctkScreenshotDialogPrivate::setWaitingForScreenshot(bool waiting)
 }
 
 //-----------------------------------------------------------------------------
-void ctkScreenshotDialogPrivate::onCaptureButtonClicked()
+bool ctkScreenshotDialogPrivate::isWaitingForScreenshot()const
 {
-  Q_Q(ctkScreenshotDialog);
-  q->saveScreenshot(this->DelaySpinBox->value());
+  Q_Q(const ctkScreenshotDialog);
+  // Bad Qt const correctness, need to hack.
+  ctkScreenshotDialog* parent = const_cast<ctkScreenshotDialog*>(q);
+  Q_ASSERT(this->DelaySpinBox->isEnabledTo(parent) ==
+           this->ButtonBox->isEnabledTo(parent));
+  return this->ButtonBox->isEnabledTo(parent);
 }
 
 //-----------------------------------------------------------------------------
@@ -93,7 +98,8 @@ void ctkScreenshotDialogPrivate::updateFullNameLabel()
 {
   QString text("%1_%2.png");
   this->ImageFullNameLabel->setText(
-      text.arg(this->ImageNameLineEdit->text()).arg(this->ImageVersionNumberSpinBox->value()));
+      text.arg(this->ImageNameLineEdit->text())
+          .arg(this->ImageVersionNumberSpinBox->value()));
 }
 
 //-----------------------------------------------------------------------------
@@ -113,8 +119,29 @@ void ctkScreenshotDialogPrivate::resetCountDownValue()
 //-----------------------------------------------------------------------------
 void ctkScreenshotDialogPrivate::updateCountDown()
 {
-  this->CountDownValue--;
-  this->setCountDownLabel(this->CountDownValue);
+  this->setCountDownLabel(--this->CountDownValue);
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialogPrivate::saveScreenshot(int delayInSeconds)
+{
+  Q_Q(ctkScreenshotDialog);
+
+  if (this->WidgetToGrab.isNull())
+    {
+    return;
+    }
+
+  if (delayInSeconds <= 0)
+    {
+    q->instantScreenshot();
+    return;
+    }
+  this->setWaitingForScreenshot(true);
+  this->CountDownValue = delayInSeconds;
+  this->CountDownTimer.start(1000);
+  // Add 1ms to give time to set the countdown at 0. 
+  QTimer::singleShot(delayInSeconds * 1000 + 1, q, SLOT(instantScreenshot()));
 }
 
 //-----------------------------------------------------------------------------
@@ -153,35 +180,56 @@ QWidget* ctkScreenshotDialog::widgetToGrab() const
 }
 
 //-----------------------------------------------------------------------------
-void ctkScreenshotDialog::setImageName(const QString& newImageName)
+void ctkScreenshotDialog::setBaseFileName(const QString& newBaseName)
 {
   Q_D(ctkScreenshotDialog);
-  d->ImageNameLineEdit->setText(newImageName);
+  d->ImageNameLineEdit->setText(newBaseName);
 }
   
 //-----------------------------------------------------------------------------
-QString ctkScreenshotDialog::imageName() const
+QString ctkScreenshotDialog::baseFileName() const
 {
   Q_D(const ctkScreenshotDialog);
   return d->ImageNameLineEdit->text();
 }
 
 //-----------------------------------------------------------------------------
-void ctkScreenshotDialog::setImageDirectory(const QString& newDirectory)
+void ctkScreenshotDialog::setDirectory(const QString& newDirectory)
 {
   Q_D(ctkScreenshotDialog);
   d->DirectoryButton->setDirectory(newDirectory);
 }
 
 //-----------------------------------------------------------------------------
-QString ctkScreenshotDialog::imageDirectory()const
+QString ctkScreenshotDialog::directory()const
 {
   Q_D(const ctkScreenshotDialog);
   return d->DirectoryButton->directory();
 }
 
 //-----------------------------------------------------------------------------
-void ctkScreenshotDialog::saveScreenshot(int delayInSeconds)
+void ctkScreenshotDialog::setDelay(int seconds)
+{
+  Q_D(ctkScreenshotDialog);
+  d->DelaySpinBox->setValue(seconds);
+}
+
+//-----------------------------------------------------------------------------
+int ctkScreenshotDialog::delay()const
+{
+  Q_D(const ctkScreenshotDialog);
+  return d->DelaySpinBox->value();
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialog::saveScreenshot()
+{
+  Q_D(ctkScreenshotDialog);
+  d->saveScreenshot(this->delay());
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialog::instantScreenshot()
 {
   Q_D(ctkScreenshotDialog);
 
@@ -190,22 +238,14 @@ void ctkScreenshotDialog::saveScreenshot(int delayInSeconds)
     return;
     }
 
-  if (delayInSeconds > 0)
-    {
-    d->setWaitingForScreenshot(true);
-    d->CountDownTimer.start(1000);
-    QTimer::singleShot(delayInSeconds * 1000, this, SLOT(saveScreenshot()));
-    return;
-    }
-
   QPixmap viewportPixmap = QPixmap::grabWidget(d->WidgetToGrab.data());
 
-  if (d->DelaySpinBox->value() != 0)
+  if (d->isWaitingForScreenshot() && d->DelaySpinBox->value() != 0)
     {
-    d->setWaitingForScreenshot(false);
-    d->resetCountDownValue();
     qApp->beep();
     }
+  d->setWaitingForScreenshot(false);
+  d->resetCountDownValue();
 
   // Rescale
   QPixmap rescaledViewportPixmap = viewportPixmap.scaled(

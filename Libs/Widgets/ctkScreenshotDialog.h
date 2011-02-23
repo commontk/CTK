@@ -29,41 +29,62 @@
 
 class ctkScreenshotDialogPrivate;
 
-///
-/// ctkScreenshotDialog is simple dialog allowing to grab the content 
-/// of any widget and save it into a PNG file.
-/// \sa ctkScreenshotDialog::setWidgetToGrab, QDialog
+/** ctkScreenshotDialog is simple dialog allowing to grab the content 
+    of any widget and save it into a PNG file.
+    It can be used as a tool and can take screenshots without being opened nor
+    executed.
+    \code
+    ctkScreenshotDialog screenshot;
+    screenshot.setWidgetToGrab(myWidget);
+    screenshot.instantScreenshot();
+    \endcode
+ \sa ctkScreenshotDialog::setWidgetToGrab, QDialog
+*/
 class CTK_WIDGETS_EXPORT ctkScreenshotDialog : public QDialog
 {
   Q_OBJECT
+  Q_PROPERTY(QString baseFileName READ baseFileName WRITE setBaseFileName)
+  Q_PROPERTY(QString directory READ directory WRITE setDirectory)
+  Q_PROPERTY(int delay READ delay WRITE setDelay)
+
 public:
   typedef QDialog Superclass;
-  ctkScreenshotDialog(QWidget* newParent = 0);
+  ctkScreenshotDialog(QWidget* parent = 0);
   virtual ~ctkScreenshotDialog();
 
-  /// Get widget to grab content from
-  QWidget* widgetToGrab()const;
-
-  /// Set widget to grab content from
+  /// Get widget to grab content from. If no widget is set, no screenshot will
+  /// be taken.
+  /// 0 by default.
+  /// TODO: if widgetToGrab -> screenshot the entire application
   void setWidgetToGrab(QWidget* newWidgetToGrab);
+  QWidget* widgetToGrab()const;
   
-  /// Set image name 
-  void setImageName(const QString& newImageName);
-  
-  /// Get image name
-  QString imageName() const;
+  /// Set screenshot base name used to generate unique file names to save the
+  /// screenshot images. The base name doesn't contain the file extension
+  /// (automatically set to ".png")
+  /// "Untitled" by default
+  void setBaseFileName(const QString& newImageName);
+  QString baseFileName() const;
 
-  /// Set directory where image should be saved
-  void setImageDirectory(const QString& newDirectory);
+  /// Set directory where screenshot files are saved. If path is empty, the
+  /// program's working directory, ("."), is used.
+  /// Current working directory by default.
+  void setDirectory(const QString& path);
+  QString directory()const;
 
-  /// Get directory were images are saved
-  QString imageDirectory()const;
+  /// Set the delay in seconds before the screenshot is taken.
+  /// 0 seconds by default.
+  void setDelay(int seconds);
+  int delay()const;
 
 public slots:
+  /// Instantanely grabs the content of \a widgetToGrag. Generates a
+  /// png file into \a directory. It automatically increments the image name
+  /// index suffix.
+  void instantScreenshot();
 
-  /// Grab the content of specified widget after \a delayInSeconds
-  /// \sa setWidgetToGrab
-  void saveScreenshot(int delayInSeconds = 0);
+  /// Calls instantScreenshot() after a countdown of \a delay seconds
+  void saveScreenshot();
 
 protected:
   QScopedPointer<ctkScreenshotDialogPrivate> d_ptr;

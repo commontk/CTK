@@ -84,7 +84,9 @@ public:
   virtual ~ctkDirectoryButton();
 
   /// Set/get the current directory
-  void setDirectory(const QString& directory);
+  /// If path is empty, the program's working directory, ("."), is used.
+  /// By default, \a directory is the current working directory. 
+  void setDirectory(const QString& path);
   QString directory()const;
 
   ///
