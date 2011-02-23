@@ -156,10 +156,18 @@ void ctkCheckableHeaderViewPrivate
 ::updateCheckState(const QModelIndex& modelIndex)
 {
   Q_Q(ctkCheckableHeaderView);
-  
+  QVariant indexCheckState = modelIndex != q->rootIndex() ?
+    q->model()->data(modelIndex, Qt::CheckStateRole):
+    q->model()->headerData(0, q->orientation(), Qt::CheckStateRole);
+  bool checkable = false;
+  int oldCheckState = indexCheckState.toInt(&checkable);
+  if (!checkable)
+    {
+    return;
+    }
+
   Qt::CheckState newCheckState = Qt::PartiallyChecked;
   bool firstCheckableChild = true;
-  bool checkable = false;
   const int rowCount = q->orientation() == Qt::Horizontal ?
     q->model()->rowCount(modelIndex) : 1;
   const int columnCount = q->orientation() == Qt::Vertical ?
@@ -194,11 +202,6 @@ void ctkCheckableHeaderViewPrivate
       break;
       } 
     }
-  QVariant indexCheckState = modelIndex != q->rootIndex() ?
-    q->model()->data(modelIndex, Qt::CheckStateRole):
-    q->model()->headerData(0, q->orientation(), Qt::CheckStateRole);
-  int oldCheckState = indexCheckState.toInt(&checkable);
-  Q_ASSERT(checkable);
   if (oldCheckState == newCheckState)
     {
     return;
