@@ -339,14 +339,25 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
     }
 
   // Determine which sections are clickable and setup the icons.
-  this->updateHeaders();
+  if (d->PropagateToItems)
+    {
+    this->updateHeadersFromItems();
+    }
+  else
+    {
+    this->updateHeaders();
+    }
 }
 
 //-----------------------------------------------------------------------------
 void ctkCheckableHeaderView::setRootIndex(const QModelIndex &index)
 {
+  Q_D(ctkCheckableHeaderView);
   this->QHeaderView::setRootIndex(index);
-  this->updateHeaders();
+  if (d->PropagateToItems)
+    {
+    this->updateHeadersFromItems();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -416,19 +427,19 @@ void ctkCheckableHeaderView::toggleCheckState(int section)
 void ctkCheckableHeaderView::setCheckState(int section, Qt::CheckState checkState)
 {
   Q_D(ctkCheckableHeaderView);
-  // If the section is checkable, toggle the check state.
   QAbstractItemModel *current = this->model();
   if(current == 0)
     {    
     return;
     }
-  // If the state is unchecked or partially checked, the state
-  // should be changed to checked.
   current->setHeaderData(section, this->orientation(),
                          checkState, Qt::CheckStateRole);
-  d->ItemsAreUpdating = true;
-  d->propagateCheckStateToChildren(this->rootIndex());
-  d->ItemsAreUpdating = false;
+  if (d->PropagateToItems)
+    {
+    d->ItemsAreUpdating = true;
+    d->propagateCheckStateToChildren(this->rootIndex());
+    d->ItemsAreUpdating = false;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -479,16 +490,13 @@ void ctkCheckableHeaderView::updateHeaders(int firstSection, int lastSection)
 //-----------------------------------------------------------------------------
 void ctkCheckableHeaderView::updateHeadersFromItems()
 {
+  Q_D(ctkCheckableHeaderView);
   QAbstractItemModel *currentModel = this->model();
   if (!currentModel)
     {
     return;
     }
-  QModelIndex firstIndex = currentModel->index(0,0);
-  QModelIndex lastIndex =
-    currentModel->index(currentModel->rowCount() - 1,
-                        currentModel->columnCount() -1);
-  this->updateHeadersFromItems(firstIndex, lastIndex);
+  d->updateCheckState(QModelIndex());
 }
 
 //-----------------------------------------------------------------------------
