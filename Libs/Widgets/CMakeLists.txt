@@ -58,6 +58,8 @@ SET(KIT_SRCS
   ctkFontButton.h
   ctkIconEnginePlugin.cpp
   ctkIconEnginePlugin.h
+  ctkLayoutManager.cpp
+  ctkLayoutManager.h
   ctkMaterialPropertyPreviewLabel.cpp
   ctkMaterialPropertyPreviewLabel.h
   ctkMaterialPropertyWidget.cpp
@@ -85,6 +87,8 @@ SET(KIT_SRCS
   ctkSettingsDialog.h
   ctkSettingsPanel.cpp
   ctkSettingsPanel.h
+  ctkSimpleLayoutManager.cpp
+  ctkSimpleLayoutManager.h
   ctkQImageView.cpp
   ctkQImageView.h
   ctkSliderWidget.cpp
@@ -165,6 +169,7 @@ SET(KIT_MOC_SRCS
   ctkFlowLayout.h
   ctkFontButton.h
   ctkIconEnginePlugin.h
+  ctkLayoutManager.h
   ctkMaterialPropertyPreviewLabel.h
   ctkMaterialPropertyWidget.h
   ctkMatrixWidget.h
@@ -178,6 +183,7 @@ SET(KIT_MOC_SRCS
   ctkSettings.h
   ctkSettingsDialog.h
   ctkSettingsPanel.h
+  ctkSimpleLayoutManager.h
   ctkQImageView.h
   ctkSliderWidget.h
   ctkTestApplication.h
