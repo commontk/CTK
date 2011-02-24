@@ -81,7 +81,7 @@ void* ctkBinaryFileDescriptorPrivate::resolve(const char * symbol)
   
   // Get the symbol table
   long storageNeeded = bfd_get_symtab_upper_bound(this->BFD);
-  asymbol ** symbolTable = (asymbol **) malloc(storageNeeded);
+  asymbol ** symbolTable = reinterpret_cast<asymbol **>(malloc(storageNeeded));
   
   long numberOfSymbols = bfd_canonicalize_symtab(this->BFD, symbolTable);
     
@@ -109,7 +109,7 @@ void* ctkBinaryFileDescriptorPrivate::resolve(const char * symbol)
         // Get the contents of the section
         bfd_size_type sz = bfd_get_section_size (p);
         mem = malloc (sz);
-        if (bfd_get_section_contents(this->BFD, p, mem, (file_ptr) 0,sz))
+        if (bfd_get_section_contents(this->BFD, p, mem, static_cast<file_ptr>(0), sz))
           {
           this->Sections.push_back( MemorySectionType(p, mem) );
           }
@@ -127,7 +127,8 @@ void* ctkBinaryFileDescriptorPrivate::resolve(const char * symbol)
         }
             
       // determine the address of this section
-      addr = (char *)mem + (bfd_asymbol_value(symbolTable[i]) - bfd_asymbol_base(symbolTable[i]));
+      addr = reinterpret_cast<char *>(mem)
+          + (bfd_asymbol_value(symbolTable[i]) - bfd_asymbol_base(symbolTable[i]));
       break;
       }
     }
