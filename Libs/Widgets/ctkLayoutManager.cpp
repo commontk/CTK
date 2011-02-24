@@ -23,6 +23,7 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLayout>
+#include <QSplitter>
 #include <QTabWidget>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -159,6 +160,7 @@ void ctkLayoutManager::setupLayout()
   if (!layout)
     {
     QHBoxLayout* hboxLayout = new QHBoxLayout(0);
+    hboxLayout->setContentsMargins(0, 0, 0, 0);
     hboxLayout->addItem(layoutItem);
     layout = hboxLayout;
     }
@@ -279,12 +281,21 @@ QLayoutItem* ctkLayoutManager::layoutFromXML(QDomElement layoutElement)
 {
   Q_ASSERT(layoutElement.tagName() == "layout");
   QString type = layoutElement.attribute("type", "horizontal");
+  bool split = layoutElement.attribute("split", "false") == "true";
   if (type == "vertical")
     {
+    if (split)
+      {
+      return new QWidgetItem(new QSplitter(Qt::Vertical));
+      }
     return new QVBoxLayout();
     }
   else if (type == "horizontal")
     {
+    if (split)
+      {
+      return new QWidgetItem(new QSplitter(Qt::Horizontal));
+      }
     return new QHBoxLayout();
     }
   else if (type == "grid")
@@ -308,6 +319,7 @@ void ctkLayoutManager::processItemElement(QDomElement itemElement, QLayoutItem* 
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(layout);
   QLayout* genericLayout = qobject_cast<QLayout*>(layout);
   QTabWidget* tabWidget = qobject_cast<QTabWidget*>(layoutItem->widget());
+  QSplitter* splitter = qobject_cast<QSplitter*>(layoutItem->widget());
 
   if (gridLayout)
     {
@@ -321,7 +333,7 @@ void ctkLayoutManager::processItemElement(QDomElement itemElement, QLayoutItem* 
     {
     genericLayout->addItem(childItem);
     }
-  else if (tabWidget)
+  else if (tabWidget || splitter)
     {
     QWidget* childWidget = childItem->widget();
     if (!childWidget)
@@ -329,7 +341,14 @@ void ctkLayoutManager::processItemElement(QDomElement itemElement, QLayoutItem* 
       childWidget = new QWidget();
       childWidget->setLayout(childItem->layout());
       }
-    tabWidget->addTab(childWidget, itemElement.attribute("name"));
+    if (tabWidget)
+      {
+      tabWidget->addTab(childWidget, itemElement.attribute("name"));
+      }
+    else
+      {
+      splitter->addWidget(childWidget);
+      }
     }
 }
 
