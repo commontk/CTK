@@ -57,6 +57,12 @@ public:
   /// Get path associated with the library identified by \a key
   virtual QString path(const QString& key);
 
+protected:
+  void registerAllFileItems(const QStringList& directories);
+
+  virtual ctkAbstractFactoryItem<BaseClassType>* createFactoryFileBasedItem(const QFileInfo& file);
+  virtual QString fileNameToKey(const QString& objectName)const;
+
 private:
   ctkAbstractFileBasedFactory(const ctkAbstractFileBasedFactory &);  /// Not implemented
   void operator=(const ctkAbstractFileBasedFactory&); /// Not implemented
