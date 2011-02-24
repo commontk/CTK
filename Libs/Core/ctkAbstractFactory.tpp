@@ -100,6 +100,7 @@ template<typename BaseClassType>
 ctkAbstractFactory<BaseClassType>::ctkAbstractFactory()
 {
   this->Verbose = false;
+  this->RegisteredItemMap = QSharedPointer<HashType>(new HashType);
 }
 
 //----------------------------------------------------------------------------
@@ -142,7 +143,7 @@ QStringList ctkAbstractFactory<BaseClassType>::keys() const
 {
   // Since by construction, we checked if a name was already in the QHash,
   // there is no need to call 'uniqueKeys'
-  return this->RegisteredItemMap.keys();
+  return this->RegisteredItemMap->keys();
 }
 
 //----------------------------------------------------------------------------
@@ -177,7 +178,7 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
     }
   
   // Store its reference using a QSharedPointer
-  this->RegisteredItemMap[key] = _item;
+  this->RegisteredItemMap->insert(key, _item);
   return true;
 }
 
@@ -185,8 +186,8 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
 template<typename BaseClassType>
 ctkAbstractFactoryItem<BaseClassType> * ctkAbstractFactory<BaseClassType>::item(const QString& itemKey)const
 {
-  ConstIterator iter = this->RegisteredItemMap.find(itemKey);
-  if ( iter == this->RegisteredItemMap.constEnd())
+  ConstIterator iter = this->RegisteredItemMap->find(itemKey);
+  if ( iter == this->RegisteredItemMap->constEnd())
     {
     return 0;
     }
@@ -205,6 +206,21 @@ template<typename BaseClassType>
 bool ctkAbstractFactory<BaseClassType>::verbose()const
 {
   return this->Verbose;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactory<BaseClassType>::setRegisteredItems(const QSharedPointer<HashType>& items)
+{
+  this->RegisteredItemMap = items;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+QSharedPointer<typename ctkAbstractFactory<BaseClassType>::HashType>
+ctkAbstractFactory<BaseClassType>::registeredItems()
+{
+  return this->RegisteredItemMap;
 }
 
 #endif
