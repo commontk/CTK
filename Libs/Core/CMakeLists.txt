@@ -4,7 +4,7 @@ PROJECT(CTKCore)
 SET(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
 
 # CMake Macros
-INCLUDE(CMake/ctkMacroBFDCheck.cmake)
+INCLUDE(CMake/ctkMacroBFDCheck.cmake) # HAVE_BFD will be set to True if it applies
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
@@ -53,7 +53,7 @@ SET(KIT_SRCS
   ctkWorkflowTransitions.h
   )
 
-IF(CTK_HAVE_BFD)
+IF(HAVE_BFD)
   LIST(APPEND KIT_SRCS
     ctkBinaryFileDescriptor.cpp
     ctkBinaryFileDescriptor.h
