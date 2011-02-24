@@ -39,7 +39,7 @@ protected:
   typedef typename QHash<QString, void*>::iterator       Iterator;
 
 public:
-  explicit ctkFactoryLibraryItem(const QString& path);
+  //explicit ctkFactoryLibraryItem(const QString& path);
  
   virtual bool load();
   virtual QString loadErrorString()const;
@@ -67,33 +67,18 @@ private:
 //----------------------------------------------------------------------------
 /// \ingroup Core
 template<typename BaseClassType>
-class ctkAbstractLibraryFactory : public ctkAbstractFileBasedFactory<BaseClassType>
+class ctkAbstractLibraryFactory
+  : public ctkAbstractFileBasedFactory<BaseClassType>
 {
 public:
-  /// 
-  /// Constructor
-  explicit ctkAbstractLibraryFactory();
-  virtual ~ctkAbstractLibraryFactory();
-
   /// Set the list of symbols
   void setSymbols(const QStringList& symbols);
-  
-  /// \brief Register a plugin in the factory
-  /// The parameter \a key must be unique
-  bool registerLibrary(const QString& key, const QFileInfo& file);
-
-  /// \brief Utility function to register a QLibrary
-  /// The parameter \a key must be unique
-  bool registerQLibrary(const QString& key, const QFileInfo& file);
 
 protected:
-  virtual ctkFactoryLibraryItem<BaseClassType>* createFactoryLibraryItem(
-    const QFileInfo& library)const;
+  virtual bool isValidFile(const QFileInfo& file)const;
+  virtual void initItem(ctkAbstractFactoryItem<BaseClassType>* item);
 
 private:
-  ctkAbstractLibraryFactory(const ctkAbstractLibraryFactory &);  /// Not implemented
-  void operator=(const ctkAbstractLibraryFactory&); /// Not implemented
-
   QStringList Symbols;
 };
 

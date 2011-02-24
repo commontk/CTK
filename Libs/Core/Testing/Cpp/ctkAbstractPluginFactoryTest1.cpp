@@ -63,7 +63,7 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
   ctkAbstractPluginFactory< ctkDummyPlugin > pluginFactory;
   pluginFactory.setVerbose(true);
 
-  bool res = pluginFactory.registerLibrary("fail", QFileInfo("foo/bar.txt"));
+  bool res = pluginFactory.registerFileItem("fail", QFileInfo("foo/bar.txt"));
   if (res)
     {
     std::cerr << "ctkAbstractPluginFactory::registerLibrary() registered bad file"
@@ -71,7 +71,7 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
     return EXIT_FAILURE;
     }
   
-  res = pluginFactory.registerLibrary("lib", file);
+  res = pluginFactory.registerFileItem("lib", file);
   if (!res || pluginFactory.keys().count() != 1)
     {
     std::cerr << "ctkAbstractPluginFactory::registerLibrary() failed"
@@ -79,7 +79,7 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
     return EXIT_FAILURE;
     }
   // register twice must return false
-  res = pluginFactory.registerLibrary("lib", file);
+  res = pluginFactory.registerFileItem("lib", file);
   if (res || pluginFactory.keys().count() != 1)
     {
     std::cerr << "ctkAbstractPluginFactory::registerLibrary() failed"
@@ -106,7 +106,7 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
   ctkAbstractPluginFactory< QPushButton > buttonPluginFactory;
   buttonPluginFactory.setVerbose(true);
   // it should register but fail while instanciating
-  res = buttonPluginFactory.registerLibrary("foo", file);
+  res = buttonPluginFactory.registerFileItem("foo", file);
   if (!res || buttonPluginFactory.keys().count() != 1)
     {
     std::cerr << "ctkAbstractPluginFactory::registerLibrary() failed" << std::endl;

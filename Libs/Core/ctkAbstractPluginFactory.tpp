@@ -30,13 +30,14 @@
 
 //----------------------------------------------------------------------------
 // ctkFactoryPluginItem methods
-
+/*
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 ctkFactoryPluginItem<BaseClassType>::ctkFactoryPluginItem(const QString& _path)
   :ctkAbstractFactoryFileBasedItem<BaseClassType>(_path)
 {
 }
+*/
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
@@ -84,39 +85,21 @@ BaseClassType* ctkFactoryPluginItem<BaseClassType>::instanciator()
 //----------------------------------------------------------------------------
 // ctkAbstractPluginFactory methods
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 template<typename BaseClassType>
-ctkAbstractPluginFactory<BaseClassType>::ctkAbstractPluginFactory()
-:ctkAbstractFileBasedFactory<BaseClassType>()
+ctkAbstractFactoryItem<BaseClassType>* ctkAbstractPluginFactory<BaseClassType>
+::createFactoryFileBasedItem()
 {
+  return new ctkFactoryPluginItem<BaseClassType>();
 }
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractPluginFactory<BaseClassType>::registerLibrary(const QString& key, const QFileInfo& file)
+bool ctkAbstractPluginFactory<BaseClassType>
+::isValidFile(const QFileInfo& fileInfo)const
 {
-  // Check if already registered
-  if (this->item(key))
-    {
-    return false;
-    }
-  QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > _item =
-    QSharedPointer<ctkAbstractFactoryItem<BaseClassType> >(
-      this->createFactoryPluginItem(file));
-  if (_item.isNull())
-    {
-    return false;
-    }
-  
-  _item->setVerbose(this->verbose());
-  return this->registerItem(key, _item);
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-ctkAbstractFactoryItem<BaseClassType>* ctkAbstractPluginFactory<BaseClassType>::createFactoryPluginItem(const QFileInfo& file)
-{
-  return new ctkFactoryPluginItem<BaseClassType>(file.filePath());
+  return this->ctkAbstractFileBasedFactory<BaseClassType>::isValidFile(fileInfo) &&
+    QLibrary::isLibrary(fileInfo.fileName());
 }
 
 #endif

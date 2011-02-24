@@ -32,10 +32,9 @@
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-ctkAbstractFactoryFileBasedItem<BaseClassType>::ctkAbstractFactoryFileBasedItem(const QString& _path)
-  :ctkAbstractFactoryItem<BaseClassType>()
-  ,Path(_path)
+void ctkAbstractFactoryFileBasedItem<BaseClassType>::setPath(const QString& path)
 {
+  this->Path = path;
 }
 
 //----------------------------------------------------------------------------
@@ -47,19 +46,6 @@ QString ctkAbstractFactoryFileBasedItem<BaseClassType>::path()const
 
 //----------------------------------------------------------------------------
 // ctkAbstractFileBasedFactory methods
-
-//-----------------------------------------------------------------------------
-template<typename BaseClassType>
-ctkAbstractFileBasedFactory<BaseClassType>::ctkAbstractFileBasedFactory()
-  :ctkAbstractFactory<BaseClassType>()
-{
-}
-
-//-----------------------------------------------------------------------------
-template<typename BaseClassType>
-ctkAbstractFileBasedFactory<BaseClassType>::~ctkAbstractFileBasedFactory()
-{
-}
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
@@ -90,7 +76,7 @@ void ctkAbstractFileBasedFactory<BaseClassType>::registerAllFileItems(const QStr
         fileInfo = QFileInfo(fileInfo.symLinkTarget());
         }
       // Skip if item isn't a file
-      if (!fileInfo.isFile())
+      if (!this->isValidFile(fileInfo))
         {
         continue;
         }
@@ -100,34 +86,68 @@ void ctkAbstractFileBasedFactory<BaseClassType>::registerAllFileItems(const QStr
         qDebug() << "Attempt to register command line module:" << fileInfo.fileName();
         }
 
-      QString key = this->fileNameToKey(fileInfo.filePath());
-      QSharedPointer<ctkAbstractFactoryItem<BaseClassType> >
-        itemToRegister = QSharedPointer<ctkAbstractFactoryItem<BaseClassType> >(
-          this->createFactoryFileBasedItem(fileInfo));
-      if (itemToRegister.isNull())
-        {
-        continue;
-        }
-      itemToRegister->setVerbose(this->verbose());
-      if (!this->registerItem(key, itemToRegister))
-        {
-        if (this->verbose())
-          {
-          qWarning() << "Failed to register module: " << key;
-          }
-        continue;
-        }
+      this->registerFileItem(fileInfo);
       }
     }
 }
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType>
-ctkAbstractFactoryItem<BaseClassType>* ctkAbstractFileBasedFactory<BaseClassType>
-::createFactoryFileBasedItem(const QFileInfo& file)
+bool ctkAbstractFileBasedFactory<BaseClassType>
+::registerFileItem(const QFileInfo& fileInfo)
 {
-  Q_UNUSED(file);
+  QString key = this->fileNameToKey(fileInfo.filePath());
+  return this->registerFileItem(key, fileInfo);
+}
+
+//-----------------------------------------------------------------------------
+template<typename BaseClassType>
+bool ctkAbstractFileBasedFactory<BaseClassType>
+::registerFileItem(const QString& key, const QFileInfo& fileInfo)
+{
+  if (this->item(key))
+    {
+    return false;
+    }
+  QSharedPointer<ctkAbstractFactoryItem<BaseClassType> >
+    itemToRegister(this->createFactoryFileBasedItem());
+  if (itemToRegister.isNull())
+    {
+    return false;
+    }
+  dynamic_cast<ctkAbstractFactoryFileBasedItem<BaseClassType>*>(itemToRegister.data())
+    ->setPath(fileInfo.filePath());
+  this->initItem(itemToRegister.data());
+  bool res = this->registerItem(key, itemToRegister);
+  if (!res && this->verbose())
+    {
+    qWarning() << "Failed to register module: " << key;
+    }
+  return res;
+}
+
+//-----------------------------------------------------------------------------
+template<typename BaseClassType>
+bool ctkAbstractFileBasedFactory<BaseClassType>
+::isValidFile(const QFileInfo& file)const
+{
+  return file.isFile();
+}
+
+//-----------------------------------------------------------------------------
+template<typename BaseClassType>
+ctkAbstractFactoryItem<BaseClassType>* ctkAbstractFileBasedFactory<BaseClassType>
+::createFactoryFileBasedItem()
+{
   return 0;
+}
+
+//-----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFileBasedFactory<BaseClassType>::
+initItem(ctkAbstractFactoryItem<BaseClassType>* item)
+{
+  item->setVerbose(this->verbose());
 }
 
 //-----------------------------------------------------------------------------

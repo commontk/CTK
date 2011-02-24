@@ -47,11 +47,6 @@ public:
 //-----------------------------------------------------------------------------
 class ObjectFactoryItem : public ctkFactoryLibraryItem<Object>
 {
-public:
-  ObjectFactoryItem(const QString& path)
-    :ctkFactoryLibraryItem<Object>(path)
-  {
-  }
 protected:
   virtual Object* instanciator(){return new Object;}
 };
@@ -66,9 +61,9 @@ public:
   }
   
 protected:
-  virtual ctkFactoryLibraryItem<Object>* createFactoryLibraryItem(const QFileInfo& file)const
+  virtual ctkAbstractFactoryItem<Object>* createFactoryFileBasedItem()
   {
-    return new ObjectFactoryItem(file.filePath());
+    return new ObjectFactoryItem();
   }
 };
 

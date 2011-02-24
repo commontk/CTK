@@ -42,7 +42,8 @@ template<typename BaseClassType>
 class ctkAbstractFactoryItem
 {
 public:
-  explicit ctkAbstractFactoryItem();
+  //explicit ctkAbstractFactoryItem();
+  ctkAbstractFactoryItem();
   
   virtual QString loadErrorString()const;
   virtual bool load() = 0;
@@ -78,7 +79,7 @@ public:
   typedef QHash<QString, QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > > HashType;
 
   /// Constructor/Desctructor
-  explicit ctkAbstractFactory();
+  ctkAbstractFactory();
   virtual ~ctkAbstractFactory();
   virtual void printAdditionalInfo();
 
@@ -122,9 +123,10 @@ protected:
   typedef typename HashType::iterator       Iterator;
 
 private:
+  /*
   ctkAbstractFactory(const ctkAbstractFactory &); /// Not implemented
   void operator=(const ctkAbstractFactory&); /// Not implemented
-
+  */
   QSharedPointer<HashType> RegisteredItemMap;
 
   bool Verbose;
