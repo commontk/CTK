@@ -42,7 +42,7 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //-----------------------------------------------------------------------------
-int ctkVTKRenderViewTest1(int argc, char * argv [] )
+int ctkVTKRenderViewTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 

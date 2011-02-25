@@ -44,7 +44,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkVTKSliceViewTest1(int argc, char * argv [] )
+int ctkVTKSliceViewTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
