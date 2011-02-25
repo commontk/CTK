@@ -105,8 +105,8 @@ ctkVTKAbstractView::ctkVTKAbstractView(ctkVTKAbstractViewPrivate* pimpl, QWidget
   : Superclass(parentWidget)
   , d_ptr(pimpl)
 {
-  Q_D(ctkVTKAbstractView);
-  d->init();
+  // derived classes must call init manually. Calling init() here may results in
+  // actions on a derived public class not yet finished to be created
 }
 
 //----------------------------------------------------------------------------

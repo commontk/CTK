@@ -47,6 +47,7 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate(ctkVTKRenderView& object)
 {
   qRegisterMetaType<ctkAxesWidget::Axis>("ctkAxesWidget::Axis");
   this->Renderer = vtkSmartPointer<vtkRenderer>::New();
+  this->Axes = vtkSmartPointer<vtkAxesActor>::New();
   this->Orientation = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
   this->ZoomFactor = 0.05;
   this->PitchRollYawIncrement = 5;
@@ -60,6 +61,8 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate(ctkVTKRenderView& object)
   this->RockEnabled = false;
   this->RockIncrement = 0;
   this->RockLength = 200;
+
+  this->Orientation->SetOrientationMarker(this->Axes);
 }
 
 // --------------------------------------------------------------------------
@@ -76,9 +79,15 @@ void ctkVTKRenderViewPrivate::setupCornerAnnotation()
 //---------------------------------------------------------------------------
 void ctkVTKRenderViewPrivate::setupRendering()
 {
+  Q_Q(ctkVTKRenderView);
   // Add renderer
   this->RenderWindow->AddRenderer(this->Renderer);
   this->ctkVTKAbstractViewPrivate::setupRendering();
+  // The interactor in RenderWindow exists after the renderwindow is set to
+  // the QVTKWidet
+  this->Orientation->SetInteractor(this->RenderWindow->GetInteractor());
+  this->Orientation->SetEnabled(1);
+  this->Orientation->InteractiveOff();
 }
 
 //----------------------------------------------------------------------------
@@ -197,6 +206,8 @@ void ctkVTKRenderViewPrivate::doRock()
 ctkVTKRenderView::ctkVTKRenderView(QWidget* parentWidget)
   : Superclass(new ctkVTKRenderViewPrivate(*this), parentWidget)
 {
+  Q_D(ctkVTKRenderView);
+  d->init();
 }
 
 //----------------------------------------------------------------------------
@@ -207,13 +218,9 @@ ctkVTKRenderView::~ctkVTKRenderView()
 void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
 {
   Q_D(ctkVTKRenderView);
-
   logger.trace("setInteractor");
   this->Superclass::setInteractor(newInteractor);
-  d->Orientation->SetOrientationMarker(d->Axes);
   d->Orientation->SetInteractor(newInteractor);
-  d->Orientation->SetEnabled(1);
-  d->Orientation->InteractiveOff();
 }
 
 // --------------------------------------------------------------------------
