@@ -18,44 +18,45 @@
 
 =========================================================================*/
 
-#ifndef __ctkVTKSliceView_p_h
-#define __ctkVTKSliceView_p_h
+#ifndef __ctkVTKAbstractView_p_h
+#define __ctkVTKAbstractView_p_h
 
 // Qt includes
 #include <QObject>
-#include <QColor>
-#include <QList>
-#include <QSharedPointer>
 
 // CTK includes
-#include "ctkVTKSliceView.h"
-#include "ctkVTKAbstractView_p.h"
-#include <vtkLightBoxRendererManager.h>
+#include "ctkVTKAbstractView.h"
 
 // VTK includes
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
+#include <QVTKWidget.h>
 #include <vtkCornerAnnotation.h>
-
-class vtkRenderWindowInteractor;
+#include <vtkRenderWindow.h>
+#include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 //-----------------------------------------------------------------------------
-class ctkVTKSliceViewPrivate : public ctkVTKAbstractViewPrivate
+class ctkVTKAbstractViewPrivate : public QObject
 {
   Q_OBJECT
+  Q_DECLARE_PUBLIC(ctkVTKAbstractView);
+
+protected:
+  ctkVTKAbstractView* const q_ptr;
+
 public:
-  ctkVTKSliceViewPrivate(ctkVTKSliceView&);
+  ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object);
 
   /// Convenient setup methods
-  void setupCornerAnnotation();
-  void setupRendering();
+  virtual void init();
+  virtual void setupCornerAnnotation();
+  virtual void setupRendering();
 
-  vtkSmartPointer<vtkLightBoxRendererManager>   LightBoxRendererManager;
+  QVTKWidget*                                   VTKWidget;
+  vtkSmartPointer<vtkRenderWindow>              RenderWindow;
   bool                                          RenderPending;
   bool                                          RenderEnabled;
-  vtkSmartPointer<vtkRenderer>                  OverlayRenderer;
-  vtkSmartPointer<vtkCornerAnnotation>          OverlayCornerAnnotation;
 
+  vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
 };
 
 #endif

@@ -20,14 +20,14 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
 #include <QTimer>
+#include <QGroupBox>
+#include <QDebug>
 
 // VTK includes
-#include <vtkActor.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkRenderer.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkSphereSource.h>
 
 // CTK includes
@@ -49,11 +49,22 @@ int ctkVTKRenderViewTest1(int argc, char * argv [] )
   // Command line parser
   ctkCommandLineParser parser;
   parser.addArgument("", "-I", QVariant::Bool);
-  QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments());
+  parser.addArgument("", "-D", QVariant::String);
+  bool ok = false;
+  QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments(), &ok);
+  if (!ok)
+    {
+    std::cerr << qPrintable(parser.errorString()) << std::endl;
+    return EXIT_FAILURE;
+    }
+
   bool interactive = parsedArgs["-I"].toBool();
+  QString data_directory = parsedArgs["-D"].toString();
+  Q_UNUSED(data_directory);
 
   // Instanciate widget
   ctkVTKRenderView renderView;
+  renderView.resize(300, 300);
   renderView.setBackgroundColor(QColor(Qt::red));
   renderView.setCornerAnnotationText("CTK Rocks !");
   renderView.show();
@@ -81,7 +92,7 @@ int ctkVTKRenderViewTest1(int argc, char * argv [] )
 
   if (!interactive)
     {
-    QTimer::singleShot(200, &app, SLOT(quit()));
+    QTimer::singleShot(1000, &app, SLOT(quit()));
     }
   return app.exec();
 }

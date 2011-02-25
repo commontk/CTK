@@ -123,6 +123,7 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
   /// Get corner annotation actor
   /// The same annotation is associated with all renderers managed by the light box
   vtkCornerAnnotation * GetCornerAnnotation()const;
+  void SetCornerAnnotation(vtkCornerAnnotation* annotation);
 
   /// Set background color
   void SetBackgroundColor(const double newBackgroundColor[3]);

@@ -219,6 +219,10 @@ vtkLightBoxRendererManager::vtkInternal::vtkInternal(vtkLightBoxRendererManager*
   this->HighlightedBoxColor[0] = 0.0;
   this->HighlightedBoxColor[1] = 1.0;
   this->HighlightedBoxColor[2] = 0.0;
+
+  this->CornerAnnotation->SetMaximumLineHeight(0.07);
+  vtkTextProperty *tprop = this->CornerAnnotation->GetTextProperty();
+  tprop->ShadowOn();
 }
 
 // --------------------------------------------------------------------------
@@ -245,10 +249,6 @@ void vtkLightBoxRendererManager::vtkInternal::SetupCornerAnnotation()
       (*it)->Renderer->AddViewProp(this->CornerAnnotation);
       }
     }
-
-  this->CornerAnnotation->SetMaximumLineHeight(0.07);
-  vtkTextProperty *tprop = this->CornerAnnotation->GetTextProperty();
-  tprop->ShadowOn();
 
   this->CornerAnnotation->ClearAllTexts();
   this->CornerAnnotation->SetText(2, this->CornerAnnotationText.c_str());
@@ -746,6 +746,23 @@ const std::string vtkLightBoxRendererManager::GetCornerAnnotationText() const
 vtkCornerAnnotation * vtkLightBoxRendererManager::GetCornerAnnotation() const
 {
   return this->Internal->CornerAnnotation;
+}
+
+// --------------------------------------------------------------------------
+void vtkLightBoxRendererManager::SetCornerAnnotation(vtkCornerAnnotation* annotation)
+{
+  // Remove current corner annotation
+  vtkInternal::RenderWindowItemListIt it;
+  for(it = this->Internal->RenderWindowItemList.begin();
+      it != this->Internal->RenderWindowItemList.end();
+      ++it)
+    {
+    if (!(*it)->Renderer->HasViewProp(this->Internal->CornerAnnotation))
+      {
+      (*it)->Renderer->RemoveViewProp(this->Internal->CornerAnnotation);
+      }
+    }
+  this->Internal->CornerAnnotation = annotation;
 }
 
 // --------------------------------------------------------------------------

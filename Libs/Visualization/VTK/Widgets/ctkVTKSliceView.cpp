@@ -19,8 +19,6 @@
 =========================================================================*/
 
 // Qt includes
-#include <QTimer>
-#include <QVBoxLayout>
 #include <QDebug>
 #include <QResizeEvent>
 
@@ -53,28 +51,33 @@ static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKSliceView"
 // ctkVTKSliceViewPrivate methods
 
 // --------------------------------------------------------------------------
-ctkVTKSliceViewPrivate::ctkVTKSliceViewPrivate()
+ctkVTKSliceViewPrivate::ctkVTKSliceViewPrivate(ctkVTKSliceView& object)
+  : ctkVTKAbstractViewPrivate(object)
 {
-  this->RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
   this->LightBoxRendererManager = vtkSmartPointer<vtkLightBoxRendererManager>::New();
-  this->RenderPending = false;
-  this->RenderEnabled = false;
+  this->OverlayRenderer = vtkSmartPointer<vtkRenderer>::New();
+}
+
+// --------------------------------------------------------------------------
+void ctkVTKSliceViewPrivate::setupCornerAnnotation()
+{
+  logger.trace("setupCornerAnnotation");
+  // whatever is done in ctkVTKAbsrtactViewPrivate would be overriden anyway
+  this->ctkVTKAbstractViewPrivate::setupCornerAnnotation();
+  this->LightBoxRendererManager->SetCornerAnnotation(this->CornerAnnotation);
 }
 
 //---------------------------------------------------------------------------
 void ctkVTKSliceViewPrivate::setupRendering()
 {
   Q_ASSERT(this->RenderWindow);
-  this->RenderWindow->SetAlphaBitPlanes(1);
-  this->RenderWindow->SetMultiSamples(0);
-  this->RenderWindow->StereoCapableWindowOn();
   this->RenderWindow->SetNumberOfLayers(2);
 
   // Initialize light box
   this->LightBoxRendererManager->Initialize(this->RenderWindow);
+  this->LightBoxRendererManager->SetRenderWindowLayout(1, 1);
 
   // Setup overlay renderer
-  this->OverlayRenderer = vtkSmartPointer<vtkRenderer>::New();
   this->OverlayRenderer->SetLayer(1);
   this->RenderWindow->AddRenderer(this->OverlayRenderer);
 
@@ -88,66 +91,22 @@ void ctkVTKSliceViewPrivate::setupRendering()
   // Add corner annotation to overlay renderer
   this->OverlayRenderer->AddViewProp(this->OverlayCornerAnnotation);
 
-  this->VTKWidget->SetRenderWindow(this->RenderWindow);
+  this->ctkVTKAbstractViewPrivate::setupRendering();
 }
 
 //---------------------------------------------------------------------------
 // ctkVTKSliceView methods
 
 // --------------------------------------------------------------------------
-ctkVTKSliceView::ctkVTKSliceView(QWidget* _parent) : Superclass(_parent)
-  , d_ptr(new ctkVTKSliceViewPrivate)
+ctkVTKSliceView::ctkVTKSliceView(QWidget* parentWidget)
+  : Superclass(new ctkVTKSliceViewPrivate(*this), parentWidget)
 {
-  Q_D(ctkVTKSliceView);
-  
-  d->VTKWidget = new QVTKWidget(this);
-  this->setLayout(new QVBoxLayout);
-  this->layout()->setMargin(0);
-  this->layout()->setSpacing(0);
-  this->layout()->addWidget(d->VTKWidget);
-
-  d->setupRendering();
-
-  d->LightBoxRendererManager->SetRenderWindowLayout(1, 1);
 }
 
 // --------------------------------------------------------------------------
 ctkVTKSliceView::~ctkVTKSliceView()
 {
 }
-
-//----------------------------------------------------------------------------
-void ctkVTKSliceView::scheduleRender()
-{
-  Q_D(ctkVTKSliceView);
-
-  logger.trace("scheduleRender");
-  if (!d->RenderEnabled)
-    {
-    return;
-    }
-  if (!d->RenderPending)
-    {
-    d->RenderPending = true;
-    QTimer::singleShot(0, this, SLOT(forceRender()));
-    }
-}
-
-//----------------------------------------------------------------------------
-void ctkVTKSliceView::forceRender()
-{
-  Q_D(ctkVTKSliceView);
-  d->RenderPending = false;
-  if (!d->RenderEnabled  || !this->isVisible())
-    {
-    return;
-    }
-  logger.trace("forceRender");
-  d->RenderWindow->Render();
-}
-
-//----------------------------------------------------------------------------
-CTK_GET_CPP(ctkVTKSliceView, vtkRenderWindow*, renderWindow, RenderWindow);
 
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setActiveCamera(vtkCamera * newActiveCamera)
@@ -165,35 +124,6 @@ CTK_GET_CPP(ctkVTKSliceView, vtkLightBoxRendererManager*,
 CTK_GET_CPP(ctkVTKSliceView, vtkRenderer*, overlayRenderer, OverlayRenderer);
 
 //----------------------------------------------------------------------------
-CTK_SET_CPP(ctkVTKSliceView, bool, setRenderEnabled, RenderEnabled);
-CTK_GET_CPP(ctkVTKSliceView, bool, renderEnabled, RenderEnabled);
-
-//----------------------------------------------------------------------------
-vtkRenderWindowInteractor* ctkVTKSliceView::interactor() const
-{
-  Q_D(const ctkVTKSliceView);
-  return d->RenderWindow->GetInteractor();
-}
-
-//----------------------------------------------------------------------------
-void ctkVTKSliceView::setInteractor(vtkRenderWindowInteractor* newInteractor)
-{
-  Q_D(const ctkVTKSliceView);
-  d->RenderWindow->SetInteractor(newInteractor);
-}
-
-//----------------------------------------------------------------------------
-vtkInteractorObserver* ctkVTKSliceView::interactorStyle()const
-{
-  Q_D(const ctkVTKSliceView);
-  if (!d->RenderWindow->GetInteractor())
-    {
-    return 0;
-    }
-  return d->RenderWindow->GetInteractor()->GetInteractorStyle();
-}
-
-//----------------------------------------------------------------------------
 void ctkVTKSliceView::resetCamera()
 {
   Q_D(ctkVTKSliceView);
@@ -201,33 +131,11 @@ void ctkVTKSliceView::resetCamera()
   d->LightBoxRendererManager->ResetCamera();
 }
 
-
 //----------------------------------------------------------------------------
 void ctkVTKSliceView::setImageData(vtkImageData* newImageData)
 {
   Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetImageData(newImageData);
-}
-
-//----------------------------------------------------------------------------
-QString ctkVTKSliceView::cornerAnnotationText()const
-{
-  Q_D(const ctkVTKSliceView);
-  return QString::fromStdString(d->LightBoxRendererManager->GetCornerAnnotationText());
-}
-
-//----------------------------------------------------------------------------
-vtkCornerAnnotation * ctkVTKSliceView::cornerAnnotation()const
-{
-  Q_D(const ctkVTKSliceView);
-  return d->LightBoxRendererManager->GetCornerAnnotation();
-}
-
-//----------------------------------------------------------------------------
-void ctkVTKSliceView::setCornerAnnotationText(const QString& text)
-{
-  Q_D(ctkVTKSliceView);
-  d->LightBoxRendererManager->SetCornerAnnotationText(text.toStdString());
 }
 
 //----------------------------------------------------------------------------
@@ -326,7 +234,7 @@ void ctkVTKSliceView::setColorWindow(double newColorWindow)
 void ctkVTKSliceView::resizeEvent(QResizeEvent * event)
 {
   this->QWidget::resizeEvent(event);
-  emit this->resized(event->size(), event->oldSize());
+  emit this->resized(event->size());
 }
 
 //----------------------------------------------------------------------------
