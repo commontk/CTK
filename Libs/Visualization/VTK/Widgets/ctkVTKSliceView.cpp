@@ -101,6 +101,8 @@ void ctkVTKSliceViewPrivate::setupRendering()
 ctkVTKSliceView::ctkVTKSliceView(QWidget* parentWidget)
   : Superclass(new ctkVTKSliceViewPrivate(*this), parentWidget)
 {
+  Q_D(ctkVTKSliceView);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
