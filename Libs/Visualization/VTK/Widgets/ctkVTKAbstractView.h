@@ -83,6 +83,11 @@ public:
   /// Return if rendering is enabled
   bool renderEnabled() const;
 
+  virtual QSize minimumSizeHint()const;
+  virtual QSize sizeHint()const;
+  virtual bool hasHeightForWidth()const;
+  virtual int heightForWidth(int width)const;
+
 protected:
   QScopedPointer<ctkVTKAbstractViewPrivate> d_ptr;
   ctkVTKAbstractView(ctkVTKAbstractViewPrivate* pimpl, QWidget* parent);
