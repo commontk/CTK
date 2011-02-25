@@ -10,7 +10,9 @@ IF(NOT WIN32)
   INCLUDE(CheckIncludeFile)
   CHECK_INCLUDE_FILE(bfd.h HAVE_BFD_HEADER)
 
-  IF(HAVE_BFD_HEADER)
+  FIND_LIBRARY(BDF_LIBRARY bfd)
+
+  IF(HAVE_BFD_HEADER AND BDF_LIBRARY)
     # make sure we can build with libbfd
     #MESSAGE(STATUS "Checking libbfd")
     TRY_COMPILE(HAVE_BFD
@@ -24,8 +26,8 @@ IF(NOT WIN32)
     #MESSAGE(${OUTPUT})
 
     IF(HAVE_BFD)
-      SET(BFD_LIBRARIES bfd iberty)
-      MESSAGE(STATUS "CTKCore: libbfd is available")
+      SET(BFD_LIBRARIES ${BDF_LIBRARY})
+      MESSAGE(STATUS "CTKCore: libbfd is available [${BDF_LIBRARY}]")
     ELSE()
       MESSAGE(STATUS "CTKCore: libbfd is *NOT* available")
     ENDIF()

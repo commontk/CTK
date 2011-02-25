@@ -1,4 +1,4 @@
-# Dummy plugin
+# Dummy plugin used by ctkAbstractPluginFactoryTest1
 ADD_DEFINITIONS( -DCTKDummyPlugin)
 ctkMacroBuildLib(
   NAME "CTKDummyPlugin"
@@ -12,10 +12,14 @@ ctkMacroBuildLib(
 GET_TARGET_PROPERTY(ctkDummyPluginPATH "CTKDummyPlugin" LOCATION)
 REMOVE_DEFINITIONS(-DCTKDummyPlugin)
 
-#normal test
+
+
 SET(KIT ${PROJECT_NAME})
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+#
+# Test sources
+#
+SET(KITTests_SRCS
   ctkAbstractFactoryTest1.cpp
   ctkAbstractLibraryFactoryTest1.cpp
   ctkAbstractObjectFactoryTest1.cpp
@@ -32,6 +36,16 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkWorkflowTest1.cpp
   ctkWorkflowTest2.cpp
   ctkWorkflowTest3.cpp
+  )
+
+IF(HAVE_BFD)
+  LIST(APPEND KITTests_SRCS
+    ctkBinaryFileDescriptorTest1.cpp
+    )
+ENDIF()
+
+CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+  ${KITTests_SRCS}
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -40,7 +54,10 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
-SET(Tests_SRCS
+#
+# Tests Helpers sources
+#
+SET(Tests_Helpers_SRCS
   ctkBranchingWorkflowStep.h
   ctkExampleDerivedWorkflowStep.cpp
   ctkExampleDerivedWorkflowStep.h
@@ -50,15 +67,21 @@ SET(Tests_SRCS
   ctkSingletonTestHelper.h
   )
 
-SET(Tests_MOC_SRCS
+SET(Tests_Helpers_MOC_SRCS
   ctkExampleWorkflowStepUsingSignalsAndSlots.h
   )
 
-SET(Tests_MOC_CPP)
-QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
+SET(Tests_Helpers_MOC_CPP)
+QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
 
-# Test library
-ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP})
+IF(HAVE_BFD)
+  ADD_EXECUTABLE(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
+ENDIF()
+
+#
+# Test executable
+#
+ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
 TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
@@ -78,6 +101,10 @@ SIMPLE_TEST( ctkAbstractObjectFactoryTest1 )
 ADD_TEST( ctkAbstractPluginFactoryTest1 ${KIT_TESTS} ctkAbstractPluginFactoryTest1 ${ctkDummyPluginPATH})
 SET_PROPERTY(TEST ctkAbstractPluginFactoryTest1 PROPERTY LABELS ${PROJECT_NAME})
 SIMPLE_TEST( ctkAbstractQObjectFactoryTest1 )
+IF(HAVE_BFD)
+  ADD_TEST(NAME ctkBinaryFileDescriptorTest1 COMMAND ${KIT_TESTS} ctkBinaryFileDescriptorTest1 $<TARGET_FILE:ctkBinaryFileDescriptorTestHelper>)
+  SET_PROPERTY(TEST ctkBinaryFileDescriptorTest1 PROPERTY LABELS ${PROJECT_NAME})
+ENDIF()
 SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )

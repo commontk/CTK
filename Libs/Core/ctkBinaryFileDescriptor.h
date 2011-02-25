@@ -34,8 +34,9 @@
 
 // Qt includes
 #include <QString>
+#include <QScopedPointer>
 
-#include "ctkWidgetsExport.h"
+#include "ctkCoreExport.h"
 
 
 class ctkBinaryFileDescriptorPrivate;
@@ -43,7 +44,7 @@ class ctkBinaryFileDescriptorPrivate;
 /// \ingroup Core
 /// Allows to resolve global symbols contained into an executable.
 /// Implementation valid only for unix-like systems (Linux, Mac, ...)
-class CTK_WIDGETS_EXPORT ctkBinaryFileDescriptor
+class CTK_CORE_EXPORT ctkBinaryFileDescriptor
 {
 public:
   ctkBinaryFileDescriptor();
