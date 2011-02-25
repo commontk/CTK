@@ -96,7 +96,8 @@ ENDMACRO( SIMPLE_TEST  )
 #
 
 SIMPLE_TEST( ctkAbstractFactoryTest1 )
-SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 )
+ADD_TEST( ctkAbstractLibraryFactoryTest1 ${KIT_TESTS} ctkAbstractLibraryFactoryTest1 ${ctkDummyPluginPATH})
+SET_PROPERTY(TEST ctkAbstractLibraryFactoryTest1 PROPERTY LABELS ${PROJECT_NAME})
 SIMPLE_TEST( ctkAbstractObjectFactoryTest1 )
 ADD_TEST( ctkAbstractPluginFactoryTest1 ${KIT_TESTS} ctkAbstractPluginFactoryTest1 ${ctkDummyPluginPATH})
 SET_PROPERTY(TEST ctkAbstractPluginFactoryTest1 PROPERTY LABELS ${PROJECT_NAME})

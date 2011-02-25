@@ -20,50 +20,46 @@
 
 // Qt includes
 #include <QApplication>
+#include <QPushButton>
 
 // CTK includes
 #include "ctkAbstractLibraryFactory.h"
+#include "ctkDummyPlugin.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
-int ObjectConstructed = 0; 
-
-//-----------------------------------------------------------------------------
-class Object
+class ctkDummyLibrary
 {
-public:
-  Object()
+};
+
+class ctkDummyLibraryItem: public ctkFactoryLibraryItem<ctkDummyLibrary>
+{
+protected:
+  virtual ctkDummyLibrary* instanciator()
   {
-    ++ObjectConstructed;
-  }
-  ~Object()
-  {
-    --ObjectConstructed;
+    // Using a scoped pointer ensures the memory will be cleaned if instanciator
+    // fails before returning the module. See QScopedPointer::take()
+    QScopedPointer<ctkDummyLibrary> module(new ctkDummyLibrary());
+    foreach(QString symbol, this->Symbols)
+      {
+      void* res = this->symbolAddress(symbol);
+      if (!res)
+        {
+        }
+      }
+    return module.take();
   }
 };
 
-//-----------------------------------------------------------------------------
-class ObjectFactoryItem : public ctkFactoryLibraryItem<Object>
+class ctkDummyLibraryFactoryItem: public ctkAbstractLibraryFactory<ctkDummyLibrary>
 {
 protected:
-  virtual Object* instanciator(){return new Object;}
-};
-
-//-----------------------------------------------------------------------------
-class ObjectFactory : public ctkAbstractLibraryFactory<Object>
-{
-public:
-  virtual void registerItems()
+  //-----------------------------------------------------------------------------
+  ctkAbstractFactoryItem<ctkDummyLibrary>* createFactoryFileBasedItem()
   {
-    qDebug() << "Registering items";
-  }
-  
-protected:
-  virtual ctkAbstractFactoryItem<Object>* createFactoryFileBasedItem()
-  {
-    return new ObjectFactoryItem();
+    return new ctkDummyLibraryItem();
   }
 };
 
@@ -72,9 +68,72 @@ int ctkAbstractLibraryFactoryTest1(int argc, char * argv [])
 {
   QApplication app(argc, argv);
 
-  ObjectFactory factory;
-  factory.registerItems();
+  if (argc <= 1)
+    {
+    std::cerr << "Missing argument" << std::endl;
+    return EXIT_FAILURE;
+    }
+  QString filePath(argv[1]);
+  QFileInfo file(filePath);
+  while (filePath.contains("$(OutDir)"))
+    {
+    QString debugFilePath = filePath;
+    debugFilePath.replace("$(OutDir)","Debug");
+    if (QFile::exists(QString(debugFilePath)))
+      {
+      file = QFileInfo(debugFilePath);
+      break;
+      }
+    QString releaseFilePath = filePath;
+    releaseFilePath.replace("$(OutDir)","Release");
+    if (QFile::exists(QString(releaseFilePath)))
+      {
+      file = QFileInfo(releaseFilePath);
+      break;
+      }
+    return EXIT_FAILURE;
+    }
+  ctkDummyLibraryFactoryItem libraryFactory;
+  libraryFactory.setVerbose(true);
 
+  bool res = libraryFactory.registerFileItem("fail", QFileInfo("foo/bar.txt"));
+  if (res)
+    {
+    std::cerr << "ctkAbstractLibraryFactory::registerLibrary() registered bad file"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  
+  res = libraryFactory.registerFileItem("lib", file);
+  if (!res || libraryFactory.keys().count() != 1)
+    {
+    std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
+              << libraryFactory.keys().count() << std::endl;
+    return EXIT_FAILURE;
+    }
+  // register twice must return false
+  res = libraryFactory.registerFileItem("lib", file);
+  if (res || libraryFactory.keys().count() != 1)
+    {
+    std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
+              << libraryFactory.keys().count() << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (QFileInfo(libraryFactory.path("lib")) != file)
+    {
+    std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
+              << libraryFactory.path("lib").toStdString() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  ctkDummyLibrary* library = libraryFactory.instantiate("lib");
+  if (library == 0)
+    {
+    std::cerr << "ctkAbstractLibraryFactory::instantiate() failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  libraryFactory.uninstantiate("lib");
   return EXIT_SUCCESS;
 }
 

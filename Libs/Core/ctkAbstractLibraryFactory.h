@@ -58,7 +58,7 @@ public:
   /// Get symbol address
   void* symbolAddress(const QString& symbol)const;
 
-private:
+protected:
   QLibrary              Library;
   QHash<QString, void*> ResolvedSymbols;
   QStringList           Symbols;
