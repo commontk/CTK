@@ -203,3 +203,30 @@ vtkCornerAnnotation* ctkVTKAbstractView::cornerAnnotation() const
 //----------------------------------------------------------------------------
 CTK_SET_CPP(ctkVTKAbstractView, bool, setRenderEnabled, RenderEnabled);
 CTK_GET_CPP(ctkVTKAbstractView, bool, renderEnabled, RenderEnabled);
+
+//----------------------------------------------------------------------------
+QSize ctkVTKAbstractView::minimumSizeHint()const
+{
+  // Arbitrary size. 50x50 because smaller seems too small.
+  return QSize(50, 50);
+}
+
+//----------------------------------------------------------------------------
+QSize ctkVTKAbstractView::sizeHint()const
+{
+  // Arbitrary size. 300x300 is the default vtkRenderWindow size.
+  return QSize(300, 300);
+}
+
+//----------------------------------------------------------------------------
+bool ctkVTKAbstractView::hasHeightForWidth()const
+{
+  return true;
+}
+
+//----------------------------------------------------------------------------
+int ctkVTKAbstractView::heightForWidth(int width)const
+{
+  // typically VTK render window tend to be square...
+  return width;
+}

@@ -79,7 +79,6 @@ void ctkVTKRenderViewPrivate::setupCornerAnnotation()
 //---------------------------------------------------------------------------
 void ctkVTKRenderViewPrivate::setupRendering()
 {
-  Q_Q(ctkVTKRenderView);
   // Add renderer
   this->RenderWindow->AddRenderer(this->Renderer);
   this->ctkVTKAbstractViewPrivate::setupRendering();
