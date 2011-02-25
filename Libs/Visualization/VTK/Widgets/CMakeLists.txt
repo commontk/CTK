@@ -12,6 +12,9 @@ SET(KIT_SRCS
   ctkVTKAbstractMatrixWidget.cpp
   ctkVTKAbstractMatrixWidget.h
   ctkVTKAbstractMatrixWidget_p.h
+  ctkVTKAbstractView.cpp
+  ctkVTKAbstractView.h
+  ctkVTKAbstractView_p.h
   ctkVTKDataSetModel.cpp
   ctkVTKDataSetModel.h
   ctkVTKDataSetArrayComboBox.cpp
@@ -37,6 +40,8 @@ SET(KIT_SRCS
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkVTKAbstractMatrixWidget_p.h
+  ctkVTKAbstractView.h
+  ctkVTKAbstractView_p.h
   ctkVTKDataSetArrayComboBox.h
   ctkVTKDataSetModel.h
   ctkVTKMatrixWidget.h

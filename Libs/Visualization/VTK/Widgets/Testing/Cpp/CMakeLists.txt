@@ -34,8 +34,8 @@ ENDIF(CTK_USE_CHARTS)
 #
 IF(EXISTS "${CTKData_DIR}")
   LIST(APPEND TEST_SOURCES
-    ctkVTKSliceViewTest1.cpp
-    ctkVTKRenderViewTest1.cpp
+    ctkVTKSliceViewTest2.cpp
+    ctkVTKRenderViewTest2.cpp
     )
 ENDIF()
 
@@ -89,6 +89,7 @@ SIMPLE_TEST( ctkVTKThumbnailViewTest1 )
 #
 IF(EXISTS "${CTKData_DIR}")
   #
-  SIMPLE_TEST( ctkVTKSliceViewTest1 )
-  SIMPLE_TEST( ctkVTKRenderViewTest1 )
+  SIMPLE_TEST( ctkVTKSliceViewTest2 )
+  SIMPLE_TEST( ctkVTKRenderViewTest2 )
 ENDIF()
+

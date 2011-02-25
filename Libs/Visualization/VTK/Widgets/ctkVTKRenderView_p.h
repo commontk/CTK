@@ -26,6 +26,7 @@
 
 // CTK includes
 #include <ctkPimpl.h>
+#include "ctkVTKAbstractView_p.h"
 #include <ctkVTKObject.h>
 #include "ctkVTKRenderView.h"
 
@@ -42,21 +43,17 @@
 class vtkRenderWindowInteractor;
 
 //-----------------------------------------------------------------------------
-class ctkVTKRenderViewPrivate : public QObject
+class ctkVTKRenderViewPrivate : public ctkVTKAbstractViewPrivate
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(ctkVTKRenderView);
-
-protected:
-  ctkVTKRenderView* const q_ptr;
 
 public:
   ctkVTKRenderViewPrivate(ctkVTKRenderView& object);
 
   /// Convenient setup methods
-  void setupCornerAnnotation();
-  void setupRendering();
-  void setupDefaultInteractor();
+  virtual void setupCornerAnnotation();
+  virtual void setupRendering();
 
   void zoom(double zoomFactor);
 
@@ -72,13 +69,10 @@ public:
 
   QVTKWidget*                                   VTKWidget;
   vtkSmartPointer<vtkRenderer>                  Renderer;
-  vtkSmartPointer<vtkRenderWindow>              RenderWindow;
-  bool                                          RenderPending;
-  bool                                          RenderEnabled;
-  
+
   vtkSmartPointer<vtkAxesActor>                 Axes;
   vtkSmartPointer<vtkOrientationMarkerWidget>   Orientation;
-  vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
+
   double                                        ZoomFactor;
   int                                           PitchRollYawIncrement;
   ctkVTKRenderView::RotateDirection             PitchDirection;
@@ -91,9 +85,6 @@ public:
   bool                                          RockEnabled;
   int                                           RockIncrement;
   int                                           RockLength;
-
-  vtkWeakPointer<vtkRenderWindowInteractor>     CurrentInteractor;
-
 };
 
 #endif

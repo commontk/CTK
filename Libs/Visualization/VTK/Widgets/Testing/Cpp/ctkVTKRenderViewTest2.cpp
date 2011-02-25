@@ -60,6 +60,7 @@ int ctkVTKRenderViewTest1(int argc, char * argv [] )
 
   bool interactive = parsedArgs["-I"].toBool();
   QString data_directory = parsedArgs["-D"].toString();
+  Q_UNUSED(data_directory);
 
   // Instanciate widget
   ctkVTKRenderView renderView;

@@ -21,40 +21,28 @@
 #ifndef __ctkVTKSliceView_h
 #define __ctkVTKSliceView_h
 
-// Qt includes
-#include <QWidget>
-
 // CTK includes
-#include <ctkPimpl.h>
-
-#include "ctkVisualizationVTKWidgetsExport.h"
-
-class ctkVTKSliceViewPrivate;
+#include "ctkVTKAbstractView.h"
 class vtkLightBoxRendererManager;
-class vtkInteractorObserver;
-class vtkRenderWindowInteractor;
-class vtkRenderWindow;
-class vtkRenderer;
-class vtkCamera; 
-class vtkImageData;
-class vtkCornerAnnotation;
+class ctkVTKSliceViewPrivate;
 
-class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceView : public QWidget
+class vtkCamera;
+class vtkImageData;
+class vtkRenderer;
+
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceView : public ctkVTKAbstractView
 {
   Q_OBJECT
   Q_ENUMS(RenderWindowLayoutType)
   Q_PROPERTY(RenderWindowLayoutType renderWindowLayoutType
              READ renderWindowLayoutType WRITE setRenderWindowLayoutType)
-  Q_PROPERTY(QString cornerAnnotationText READ cornerAnnotationText WRITE setCornerAnnotationText)
-  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
   Q_PROPERTY(QColor highlightedBoxColor READ highlightedBoxColor WRITE setHighlightedBoxColor)
-  Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
   Q_PROPERTY(double colorLevel READ colorLevel WRITE setColorLevel)
   Q_PROPERTY(double colorWindow READ colorWindow WRITE setColorWindow)
 
 public:
   /// Constructors
-  typedef QWidget   Superclass;
+  typedef ctkVTKAbstractView Superclass;
   explicit ctkVTKSliceView(QWidget* parent = 0);
   virtual ~ctkVTKSliceView();
 
@@ -62,12 +50,6 @@ public:
   /// within the different render view items.
   /// \sa setRenderWindowLayout() renderWindowLayoutType()
   enum RenderWindowLayoutType{LeftRightTopBottom = 0, LeftRightBottomTop};
-
-  /// Return if rendering is enabled
-  bool renderEnabled() const;
-
-  /// Convenient method to get the underlying RenderWindow
-  vtkRenderWindow* renderWindow() const;
 
   /// Set active camera
   void setActiveCamera(vtkCamera * newActiveCamera);
@@ -78,30 +60,17 @@ public:
   /// Get overlay renderer
   vtkRenderer* overlayRenderer() const;
 
-  /// Set/Get window interactor
-  vtkRenderWindowInteractor* interactor() const;
-  void setInteractor(vtkRenderWindowInteractor* newInteractor);
-
-  /// Get current interactor style
-  vtkInteractorObserver* interactorStyle()const;
-
-  /// Get corner annotation text
-  /// \sa setCornerAnnotationText();
-  QString cornerAnnotationText()const;
-
-  /// Get corner annotation actor
-  /// This is the corner annotation associated with all renderers managed
-  /// by the lightBoxManager
-  /// \sa vtkLightBoxRendererManager::GetCornerAnnotation()
-  vtkCornerAnnotation * cornerAnnotation()const;
-
   /// Get overlay corner annotation actor
   /// This corresponds to the cornerAnnotation associated added in the single overlay renderer
   vtkCornerAnnotation* overlayCornerAnnotation()const;
 
+  /// Set background color
+  /// \sa vtkLightBoxRendererManager::SetBackgroundColor
+  virtual void setBackgroundColor(const QColor& newBackgroundColor);
+
   /// Get background color
   /// \sa setBackgroundColor();
-  QColor backgroundColor()const;
+  virtual QColor backgroundColor()const;
 
   /// Get highlightedBox color
   /// \sa setHighlightedBoxColor();
@@ -121,12 +90,6 @@ public:
 
 public slots:
 
-  /// If a render has already been scheduled, this called is a no-op
-  void scheduleRender();
-
-  /// Force a render even if a render is already ocurring
-  void forceRender();
-
   /// Reset cameras associated with all renderWindowItem
   /// \sa vtkLightBoxRendererManager::ResetCamera
   void resetCamera();
@@ -135,20 +98,9 @@ public slots:
   /// \sa vtkLightBoxRendererManager::SetImageData
   void setImageData(vtkImageData* newImageData);
 
-  /// Set corner annotation \a text
-  /// \sa vtkLightBoxRendererManager::SetCornerAnnotationText
-  void setCornerAnnotationText(const QString& text);
-
-  /// Set background color
-  /// \sa vtkLightBoxRendererManager::SetBackgroundColor
-  void setBackgroundColor(const QColor& newBackgroundColor);
-
   /// Set highlightedBox color
   /// \sa vtkLightBoxRendererManager::SetHighlightedBoxColor
   void setHighlightedBoxColor(const QColor& newHighlightedBoxColor);
-
-  /// Enable/Disable rendering
-  void setRenderEnabled(bool value);
 
   /// Set RenderWindow layout type
   /// \sa vtkLightBoxRendererManager::SetRenderWindowLayoutType
@@ -173,14 +125,11 @@ public slots:
   void setLightBoxRendererManagerColumnCount(int newColumnCount);
   
 signals:
-  void resized(const QSize& size, const QSize& oldSize);
+  void resized(const QSize& size);
 
 protected:
   virtual void resizeEvent(QResizeEvent * event);
 
-protected:
-  QScopedPointer<ctkVTKSliceViewPrivate> d_ptr;
-  
 private:
   Q_DECLARE_PRIVATE(ctkVTKSliceView);
   Q_DISABLE_COPY(ctkVTKSliceView);

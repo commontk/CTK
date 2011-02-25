@@ -21,28 +21,17 @@
 #ifndef __ctkVTKRenderView_h
 #define __ctkVTKRenderView_h
 
-// Qt includes
-#include <QWidget>
-
 // CTK includes
 #include <ctkAxesWidget.h>
-#include <ctkPimpl.h>
-
-#include "ctkVisualizationVTKWidgetsExport.h"
-
+#include "ctkVTKAbstractView.h"
 class ctkVTKRenderViewPrivate;
-class vtkInteractorObserver;
-class vtkRenderWindowInteractor;
-class vtkRenderWindow;
-class vtkRenderer;
-class vtkCamera; 
 
-class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public QWidget
+class vtkCamera;
+class vtkRenderer;
+
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public ctkVTKAbstractView
 {
   Q_OBJECT
-  Q_PROPERTY(QString cornerAnnotationText READ cornerAnnotationText WRITE setCornerAnnotationText)
-  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
-  Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
   Q_PROPERTY(bool orientationWidgetVisible READ orientationWidgetVisible
              WRITE setOrientationWidgetVisible)
   Q_PROPERTY(double zoomFactor READ zoomFactor WRITE setZoomFactor)
@@ -62,27 +51,11 @@ public:
 
   enum RotateDirection { PitchUp, PitchDown, RollLeft, RollRight, YawLeft, YawRight };
 
-  typedef QWidget Superclass;
+  typedef ctkVTKAbstractView Superclass;
   explicit ctkVTKRenderView(QWidget* parent = 0);
   virtual ~ctkVTKRenderView();
 
 public slots:
-
-  /// If a render has already been scheduled, this called is a no-op
-  void scheduleRender();
-
-  /// Force a render even if a render is already ocurring
-  void forceRender();
-
-  /// Set background color
-  void setBackgroundColor(const QColor& newBackgroundColor);
-
-  /// Enable/Disable rendering
-  void setRenderEnabled(bool value);
-
-  /// Set corner annotation \a text
-  void setCornerAnnotationText(const QString& text);
-
   /// Show/Hide Orientation widget
   void setOrientationWidgetVisible(bool visible);
 
@@ -142,29 +115,20 @@ public slots:
   /// \brief Reset focal point
   /// The visible scene bbox is computed, then the camera is recentered around its centroid.
   void resetFocalPoint();
-  
+
   /// \brief Change camera to look from a given axis to the focal point
   /// Translate/Rotate the camera to look from a given axis
-  /// The Field of View (fov) controls how far from the focal point the 
+  /// The Field of View (fov) controls how far from the focal point the
   /// camera must be (final_pos = focal_point + 3*fov).
   void lookFromAxis(const ctkAxesWidget::Axis& axis, double fov = 10.);
 
 public:
-  /// Get underlying RenderWindow
-  vtkRenderWindow* renderWindow()const;
-  
-  /// Set/Get window interactor
-  vtkRenderWindowInteractor* interactor()const;
-  void setInteractor(vtkRenderWindowInteractor* newInteractor);
 
-  /// Get current interactor style
-  vtkInteractorObserver* interactorStyle();
-
-  /// Get corner annotation \a text
-  QString cornerAnnotationText() const;
+  /// Set background color
+  virtual void setBackgroundColor(const QColor& newBackgroundColor);
 
   /// Get background color
-  QColor backgroundColor() const;
+  virtual QColor backgroundColor() const;
 
   /// Get Orientation widget visibility
   bool orientationWidgetVisible();
@@ -178,8 +142,9 @@ public:
   /// Get a reference to the associated vtkRenderer
   vtkRenderer* renderer()const;
 
-  /// Return if rendering is enabled
-  bool renderEnabled() const;
+  /// Set window interactor
+  /// Reimplemented to propagate interaction to Orientation widget
+  virtual void setInteractor(vtkRenderWindowInteractor* interactor);
 
   /// Return pitch, roll or yaw increment (in degree)
   int pitchRollYawIncrement()const;
@@ -218,13 +183,10 @@ public:
 
   /// Return zoom factor
   double zoomFactor()const;
-  
-protected:
-  QScopedPointer<ctkVTKRenderViewPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKRenderView);
   Q_DISABLE_COPY(ctkVTKRenderView);
-}; 
+};
 
 #endif
