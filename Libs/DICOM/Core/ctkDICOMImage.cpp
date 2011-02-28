@@ -28,7 +28,7 @@
 #include "ctkLogger.h"
 
 // DCMTK includes
-#include "dcmimage.h"
+#include <dcmimage.h>
 #include <ofbmanip.h>
 
 static ctkLogger logger ( "org.commontk.dicom.DICOMImage" );
@@ -68,8 +68,11 @@ ctkDICOMImage::ctkDICOMImage(DicomImage* dicomImage, QObject* parentValue)
   Q_UNUSED(parentValue);
   Q_D(ctkDICOMImage);
   d->DicomImage = dicomImage;
-  // select first window by default
-  d->DicomImage->setWindow(0);
+  if (d->DicomImage)
+    {
+    // select first window by default
+    d->DicomImage->setWindow(0);
+    }
 }
 
 //------------------------------------------------------------------------------

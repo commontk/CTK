@@ -2,6 +2,7 @@ SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkDICOMAppWidgetTest1.cpp
+  ctkDICOMDatasetViewTest1.cpp
   ctkDICOMModelTest2.cpp
   ctkDICOMQueryRetrieveWidgetTest1.cpp
   )
@@ -26,6 +27,10 @@ ENDMACRO( SIMPLE_TEST  )
 #
 
 SIMPLE_TEST(ctkDICOMAppWidgetTest1)
+ADD_TEST( ctkDICOMDatasetViewTest1  ${KIT_TESTS} 
+          ctkDICOMDatasetViewTest1  ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
+SET_PROPERTY(TEST ctkDICOMDatasetViewTest1 PROPERTY LABELS ${PROJECT_NAME})
+
 ADD_TEST( ctkDICOMModelTest2 ${KIT_TESTS}
           ctkDICOMModelTest2 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
                              ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql)
