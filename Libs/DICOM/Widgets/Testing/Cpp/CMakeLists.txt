@@ -1,6 +1,7 @@
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+  ctkDICOMAppWidgetTest1.cpp
   ctkDICOMModelTest2.cpp
   ctkDICOMQueryRetrieveWidgetTest1.cpp
   )
@@ -24,6 +25,7 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
+SIMPLE_TEST(ctkDICOMAppWidgetTest1)
 ADD_TEST( ctkDICOMModelTest2 ${KIT_TESTS}
           ctkDICOMModelTest2 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
                              ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql)

@@ -45,9 +45,9 @@ public slots:
     void onDICOMModelSelected(const QModelIndex& index);
     void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
 
-    void onImport();
-    void onExport();
-    void onQuery();
+    void openImportDialog();
+    void openExportDialog();
+    void openQueryDialog();
 
 protected:
     QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;

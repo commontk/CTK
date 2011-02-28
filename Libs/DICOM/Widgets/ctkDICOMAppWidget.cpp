@@ -146,24 +146,30 @@ void ctkDICOMAppWidget::onAddToDatabase()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onImport(){
+void ctkDICOMAppWidget::openImportDialog()
+{
   Q_D(ctkDICOMAppWidget);
   
   d->ImportDialog->show();
   d->ImportDialog->raise();
 }
 
-void ctkDICOMAppWidget::onExport(){
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::openExportDialog()
+{
 
 }
 
-void ctkDICOMAppWidget::onQuery(){
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::openQueryDialog()
+{
   Q_D(ctkDICOMAppWidget);
 
   d->QueryRetrieveWidget->show();
   d->QueryRetrieveWidget->raise();
 }
 
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
 {
   Q_D(ctkDICOMAppWidget);
@@ -222,10 +228,13 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
 
 }
 
-void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widget){
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widget)
+{
   //TODO: update previewer
 }
 
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onImportDirectory(QString directory)
 {
   Q_D(ctkDICOMAppWidget);

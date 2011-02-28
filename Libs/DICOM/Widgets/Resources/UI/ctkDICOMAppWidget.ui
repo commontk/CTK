@@ -210,7 +210,7 @@
    <sender>actionImport</sender>
    <signal>triggered(bool)</signal>
    <receiver>ctkDICOMAppWidget</receiver>
-   <slot>onImport()</slot>
+   <slot>openImportDialog()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -226,7 +226,7 @@
    <sender>actionExport</sender>
    <signal>triggered(bool)</signal>
    <receiver>ctkDICOMAppWidget</receiver>
-   <slot>onExport()</slot>
+   <slot>openExportDialog()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -242,7 +242,7 @@
    <sender>actionQuery</sender>
    <signal>triggered(bool)</signal>
    <receiver>ctkDICOMAppWidget</receiver>
-   <slot>onQuery()</slot>
+   <slot>openQueryDialog()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -257,9 +257,9 @@
  </connections>
  <slots>
   <signal>signal1()</signal>
-  <slot>onImport()</slot>
-  <slot>onExport()</slot>
-  <slot>onQuery()</slot>
+  <slot>openImportDialog()</slot>
+  <slot>openExportDialog()</slot>
+  <slot>openQueryDialog()</slot>
   <slot>onDatabaseDirectoryChaged(QString)</slot>
  </slots>
 </ui>
