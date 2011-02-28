@@ -51,6 +51,7 @@ public:
 
   double xSpacing( void );
   double ySpacing( void );
+  double sliceSpacing( void );
   double sliceThickness( void );
 
   double xPosition( void );
@@ -64,8 +65,10 @@ public:
   int sliceNumber( void ) const;
   int numberOfSlices( void ) const;
 
-  double intensityWindowMin( void ) const;
-  double intensityWindowMax( void ) const;
+  double intensityWindow( void ) const;
+  double intensityLevel( void ) const;
+
+  bool invertImage( void ) const;
 
   bool flipXAxis( void ) const;
   bool flipYAxis( void ) const;
@@ -80,8 +83,9 @@ public slots:
 
   void setSliceNumber( int slicenum );
 
-  void setIntensityWindow( double iwMin, double iwMax );
+  void setIntensityWindowLevel( double iwWindow, double iwLevel );
 
+  void setInvertImage( bool invert );
   void setFlipXAxis( bool flip );
   void setFlipYAxis( bool flip );
   void setTransposeXY( bool transpose );
@@ -121,12 +125,14 @@ signals:
 
   void numberOfSlicesChanged( int numberOfSlices );
 
+  void invertImageChanged( bool invert );
+
   void flipXAxisChanged( bool flipXAxis );
   void flipYAxisChanged( bool flipYAxis );
   void transposeXYChanged( bool transposeXY );
 
-  void intensityWindowMinChanged( double intensityWindowMin );
-  void intensityWindowMaxChanged( double intensityWindowMax );
+  void intensityWindowChanged( double intensityWindow );
+  void intensityLevelChanged( double intensityLevel );
 
 protected:
 
