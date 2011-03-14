@@ -21,6 +21,7 @@
 // Qt includes
 #include <QApplication>
 #include <QString>
+#include <QTimer>
 
 // CTK includes
 #include "ctkDoubleSlider.h"
@@ -185,7 +186,18 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
   //             << " pos: " << slider.sliderPosition() << std::endl;
   //   return EXIT_FAILURE;
   //   }
-
-  return EXIT_SUCCESS;
+  slider.setPageStep(1.);
+  if (slider.pageStep() != 1.)
+    {
+    std::cerr << "ctkDoubleSlider::setPageStep(1.) failed"
+              << " val: " << slider.pageStep() << std::endl;
+    return EXIT_FAILURE;
+    }
+  slider.show();
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(100, &app, SLOT(quit()));
+    }
+  return app.exec();
 }
 

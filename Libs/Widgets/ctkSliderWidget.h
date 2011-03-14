@@ -40,6 +40,7 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_OBJECT
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
+  Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double value READ value WRITE setValue)
@@ -98,6 +99,13 @@ public:
   /// user pressing an arrow key.
   double singleStep()const;
   void setSingleStep(double step);
+
+  /// 
+  /// This property holds the page step.
+  /// The larger of two natural steps that an abstract slider provides and
+  /// typically corresponds to the user pressing PageUp or PageDown.
+  double pageStep()const;
+  void setPageStep(double step);
 
   /// 
   /// This property holds the precision of the spin box, in decimals.

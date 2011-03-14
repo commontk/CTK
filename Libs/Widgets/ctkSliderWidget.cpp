@@ -321,6 +321,20 @@ void ctkSliderWidget::setSingleStep(double step)
 }
 
 // --------------------------------------------------------------------------
+double ctkSliderWidget::pageStep()const
+{
+  Q_D(const ctkSliderWidget);
+  return d->Slider->pageStep();
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidget::setPageStep(double step)
+{
+  Q_D(ctkSliderWidget);
+  d->Slider->setPageStep(step);
+}
+
+// --------------------------------------------------------------------------
 int ctkSliderWidget::decimals()const
 {
   Q_D(const ctkSliderWidget);

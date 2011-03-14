@@ -48,6 +48,7 @@ public:
   // we should have a Offset and SliderPositionOffset (and MinimumOffset?)
   double      Offset;
   double      SingleStep;
+  double      PageStep;
   double      Value;
 };
 
@@ -61,6 +62,7 @@ ctkDoubleSliderPrivate::ctkDoubleSliderPrivate(ctkDoubleSlider& object)
   this->SettingRange = false;
   this->Offset = 0.;
   this->SingleStep = 1.;
+  this->PageStep = 10.;
   this->Value = 0.;
 }
 
@@ -75,7 +77,9 @@ void ctkDoubleSliderPrivate::init()
   
   this->Minimum = this->Slider->minimum();
   this->Maximum = this->Slider->maximum();
+  // this->Slider->singleStep is always 1
   this->SingleStep = this->Slider->singleStep();
+  this->PageStep = this->Slider->pageStep();
   this->Value = this->Slider->value();
 
   q->connect(this->Slider, SIGNAL(valueChanged(int)), q, SLOT(onValueChanged(int)));
@@ -275,7 +279,23 @@ void ctkDoubleSlider::setSingleStep(double newStep)
   this->setRange(d->Minimum, d->Maximum);
   d->Slider->setValue(d->toInt(_value));
   d->Value = _value;
+  d->Slider->setPageStep(d->toInt(d->PageStep));
   this->blockSignals(oldBlockSignals);
+}
+
+// --------------------------------------------------------------------------
+double ctkDoubleSlider::pageStep()const
+{
+  Q_D(const ctkDoubleSlider);
+  return d->PageStep;
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleSlider::setPageStep(double newStep)
+{
+  Q_D(ctkDoubleSlider);
+  d->PageStep = newStep;
+  d->Slider->setPageStep(d->toInt(d->PageStep));
 }
 
 // --------------------------------------------------------------------------

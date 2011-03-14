@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QTimer>
 
 // CTK includes
 #include "ctkSliderWidget.h"
@@ -196,8 +197,19 @@ int ctkSliderWidgetTest1(int argc, char * argv [] )
               << sliderSpinBox.maximum() << std::endl;
     return EXIT_FAILURE;
     }
-
+  sliderSpinBox.setPageStep(1.);
+  if (sliderSpinBox.pageStep() != 1.)
+    {
+    std::cerr << "ctkSliderWidget::setPageStep(1.) failed"
+              << " val: " << sliderSpinBox.pageStep() << std::endl;
+    return EXIT_FAILURE;
+    }
   // FIXME check that the correct signals are sent.
-  return EXIT_SUCCESS;
+  sliderSpinBox.show();
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(100, &app, SLOT(quit()));
+    }
+  return app.exec();
 }
 

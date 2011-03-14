@@ -45,6 +45,7 @@ class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
   Q_PROPERTY(double value READ value WRITE setValue)
   Q_PROPERTY(double sliderPosition READ sliderPosition WRITE setSliderPosition)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
+  Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
@@ -96,8 +97,17 @@ public:
   /// This property holds the single step.
   /// The smaller of two natural steps that an abstract sliders provides and
   /// typically corresponds to the user pressing an arrow key
+  /// Default value is 1.
   void setSingleStep(double step);
   double singleStep()const;
+
+  /// 
+  /// This property holds the page step.
+  /// The larger of two natural steps that an abstract slider provides and
+  /// typically corresponds to the user pressing PageUp or PageDown.
+  /// Default value is 10.
+  void setPageStep(double step);
+  double pageStep()const;
 
   /// 
   /// This property holds the interval between tickmarks.
