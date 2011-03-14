@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QDomDocument>
 class QLayoutItem;
+class QWidgetItem;
 
 // CTK includes
 #include "ctkWidgetsExport.h"
@@ -67,9 +68,13 @@ protected:
   virtual QLayoutItem* processElement(QDomElement element);
   virtual QLayoutItem* processLayoutElement(QDomElement layoutElement);
   virtual QLayoutItem* layoutFromXML(QDomElement layoutElement);
-  virtual void         processItemElement(QDomElement layoutElement, QLayoutItem* layoutItem);
-  virtual QWidget*     processViewElement(QDomElement layoutElement);
+  void                 processItemElement(QDomElement layoutElement, QLayoutItem* layoutItem);
+  virtual void         addChildItemToLayout(QDomElement itemElement, QLayoutItem* childItem, QLayoutItem* layoutItem);
+  QWidgetItem*         widgetItemFromXML(QDomElement layoutElement);
+  virtual void         setupView(QDomElement layoutElement, QWidget* view);
+  QList<QLayoutItem*>  widgetItemsFromXML(QDomElement layoutElement);
   virtual QWidget*     viewFromXML(QDomElement layoutElement);
+  virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
 
 private:
   Q_DECLARE_PRIVATE(ctkLayoutManager);

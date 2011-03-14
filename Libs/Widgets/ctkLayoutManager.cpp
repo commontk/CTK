@@ -242,7 +242,7 @@ QLayoutItem* ctkLayoutManager::processElement(QDomElement element)
     }
   else if (element.tagName() == "view")
     {
-    return new QWidgetItem(this->processViewElement(element));
+    return this->widgetItemFromXML(element);
     }
   qDebug() << element.tagName() << element.text();
   Q_ASSERT(element.tagName() != "layout" && element.tagName() != "view");
@@ -314,13 +314,36 @@ void ctkLayoutManager::processItemElement(QDomElement itemElement, QLayoutItem* 
 {
   Q_ASSERT(itemElement.tagName() == "item");
   Q_ASSERT(itemElement.childNodes().count() == 1);
-  QLayoutItem* childItem = this->processElement(itemElement.firstChild().toElement());
+  bool multiple = itemElement.attribute("multiple", "false") == "true";
+  QList<QLayoutItem*> childrenItem;
+  if (multiple)
+    {
+    childrenItem = this->widgetItemsFromXML(itemElement.firstChild().toElement());
+    }
+  else
+    {
+    childrenItem << this->processElement(itemElement.firstChild().toElement());
+    }
+  foreach(QLayoutItem* item, childrenItem)
+    {
+    this->addChildItemToLayout(itemElement, item, layoutItem);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkLayoutManager::addChildItemToLayout(QDomElement itemElement, QLayoutItem* childItem, QLayoutItem* layoutItem)
+{
+  Q_ASSERT(childItem);
+  QString itemName = itemElement.attribute("name");
+  if (itemName.isEmpty() && childItem->widget())
+    {
+    itemName = childItem->widget()->windowTitle();
+    }
   QLayout* layout = layoutItem->layout();
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(layout);
   QLayout* genericLayout = qobject_cast<QLayout*>(layout);
   QTabWidget* tabWidget = qobject_cast<QTabWidget*>(layoutItem->widget());
   QSplitter* splitter = qobject_cast<QSplitter*>(layoutItem->widget());
-
   if (gridLayout)
     {
     int row = itemElement.attribute("row", QString::number(0)).toInt();
@@ -343,7 +366,7 @@ void ctkLayoutManager::processItemElement(QDomElement itemElement, QLayoutItem* 
       }
     if (tabWidget)
       {
-      tabWidget->addTab(childWidget, itemElement.attribute("name"));
+      tabWidget->addTab(childWidget, itemName);
       }
     else
       {
@@ -353,15 +376,37 @@ void ctkLayoutManager::processItemElement(QDomElement itemElement, QLayoutItem* 
 }
 
 //-----------------------------------------------------------------------------
-QWidget* ctkLayoutManager::processViewElement(QDomElement viewElement)
+QWidgetItem* ctkLayoutManager::widgetItemFromXML(QDomElement viewElement)
 {
-  Q_D(ctkLayoutManager);
   Q_ASSERT(viewElement.tagName() == "view");
   QWidget* view = this->viewFromXML(viewElement);
+  this->setupView(viewElement, view);
+  return new QWidgetItem(view);
+}
+
+//-----------------------------------------------------------------------------
+void ctkLayoutManager::setupView(QDomElement viewElement, QWidget* view)
+{
+  Q_UNUSED(viewElement);
+  Q_D(ctkLayoutManager);
   Q_ASSERT(view);
   view->setVisible(true);
   d->Views.insert(view);
-  return view;
+}
+
+//-----------------------------------------------------------------------------
+QList<QLayoutItem*> ctkLayoutManager::widgetItemsFromXML(QDomElement viewElement)
+{
+  Q_ASSERT(viewElement.tagName() == "view");
+  QList<QLayoutItem*> res;
+  QList<QWidget*> views = this->viewsFromXML(viewElement);
+  Q_ASSERT(views.count());
+  foreach(QWidget* view, views)
+    {
+    this->setupView(viewElement, view);
+    res << new QWidgetItem(view);
+    }
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -370,4 +415,12 @@ QWidget* ctkLayoutManager::viewFromXML(QDomElement viewElement)
   Q_UNUSED(viewElement);
   // default, for testing purpose. Must be reimplemented
   return new QWidget(0);
+}
+
+//-----------------------------------------------------------------------------
+QList<QWidget*> ctkLayoutManager::viewsFromXML(QDomElement viewElement)
+{
+  QList<QWidget*> res;
+  res << this->viewFromXML(viewElement);
+  return res;
 }
