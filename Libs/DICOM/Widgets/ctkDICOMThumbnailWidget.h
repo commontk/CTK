@@ -31,19 +31,24 @@ class ctkDICOMThumbnailWidgetPrivate;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString text READ text WRITE setText)
+  Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMThumbnailWidget(QWidget* parent=0);
   virtual ~ctkDICOMThumbnailWidget();
 
-  void setText(QString& text);
-  void setPixmap(QPixmap& pixmap);
-  
+  void setText(const QString& text);
+  QString text()const;
+
+  void setPixmap(const QPixmap& pixmap);
+  const QPixmap* pixmap()const;
+
 protected:
   QScopedPointer<ctkDICOMThumbnailWidgetPrivate> d_ptr;
 
   virtual void mousePressEvent(QMouseEvent* event);
-  
+
 private:
   Q_DECLARE_PRIVATE(ctkDICOMThumbnailWidget);
   Q_DISABLE_COPY(ctkDICOMThumbnailWidget);

@@ -20,21 +20,27 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
+#include <QDir>
 #include <QTimer>
 
 // ctkDICOMCore includes
-#include "ctkDICOMQueryRetrieveWidget.h"
+#include "ctkDICOMDatabase.h"
+
+// ctkDICOMWidget includes
+#include "ctkDICOMImportWidget.h"
 
 // STD includes
 #include <iostream>
 
-int ctkDICOMQueryRetrieveWidgetTest1( int argc, char * argv [] )
+int ctkDICOMImportWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
- 
-  ctkDICOMQueryRetrieveWidget widget;
-  widget.show();
+
+  ctkDICOMDatabase* database = new ctkDICOMDatabase;
+  ctkDICOMImportWidget importWidget;
+  importWidget.setDICOMDatabase(QSharedPointer<ctkDICOMDatabase>(database));
+  importWidget.setTopDirectory(QDir::tempPath());
+  importWidget.show();
 
   if (argc <= 1 || QString(argv[1]) != "-I")
     {

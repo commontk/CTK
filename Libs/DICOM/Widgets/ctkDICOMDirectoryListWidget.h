@@ -38,12 +38,16 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMDirectoryListWidget : public QWidget
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMDirectoryListWidget(QWidget* parent=0);
-  void setDICOMDatabase(ctkDICOMDatabase*);
   virtual ~ctkDICOMDirectoryListWidget();
 
+  void setDICOMDatabase(ctkDICOMDatabase*);
+
 public slots:
-  void addDirectoryClicked();
-  void removeDirectoryClicked();
+  void addDirectory();
+  void addDirectory(const QString&);
+  void removeDirectory();
+
+protected slots:
   void directorySelectionChanged( const QItemSelection  & selected, const QItemSelection  & deselected );
 
 protected:

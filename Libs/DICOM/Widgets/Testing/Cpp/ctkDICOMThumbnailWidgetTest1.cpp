@@ -20,20 +20,37 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
 #include <QTimer>
 
 // ctkDICOMCore includes
-#include "ctkDICOMQueryRetrieveWidget.h"
+#include "ctkDICOMThumbnailWidget.h"
 
 // STD includes
 #include <iostream>
 
-int ctkDICOMQueryRetrieveWidgetTest1( int argc, char * argv [] )
+int ctkDICOMThumbnailWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
- 
-  ctkDICOMQueryRetrieveWidget widget;
+
+  ctkDICOMThumbnailWidget widget;
+
+  widget.setText("Test");
+  if (widget.text() != "Test")
+    {
+    std::cerr << "ctkDICOMThumbnailWidget::setText failed."
+              << " text: " << qPrintable(widget.text())
+              << " expected: Test" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  widget.setPixmap(QPixmap());
+  if (widget.pixmap())
+    {
+    std::cerr << "ctkDICOMThumbnailWidget::setPixmap failed:"
+              << widget.pixmap() << std::endl;
+    return EXIT_FAILURE;
+    }
+
   widget.show();
 
   if (argc <= 1 || QString(argv[1]) != "-I")

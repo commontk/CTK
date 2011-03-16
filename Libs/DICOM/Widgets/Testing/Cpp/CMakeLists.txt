@@ -3,8 +3,13 @@ SET(KIT ${PROJECT_NAME})
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkDICOMAppWidgetTest1.cpp
   ctkDICOMDatasetViewTest1.cpp
+  ctkDICOMDirectoryListWidgetTest1.cpp
+  ctkDICOMImportWidgetTest1.cpp
+  ctkDICOMListenerWidgetTest1.cpp
   ctkDICOMModelTest2.cpp
   ctkDICOMQueryRetrieveWidgetTest1.cpp
+  ctkDICOMQueryResultsTabWidgetTest1.cpp
+  ctkDICOMThumbnailWidgetTest1.cpp
   )
 
 SET (TestsToRun ${Tests})
@@ -30,6 +35,9 @@ SIMPLE_TEST(ctkDICOMAppWidgetTest1)
 ADD_TEST( ctkDICOMDatasetViewTest1  ${KIT_TESTS} 
           ctkDICOMDatasetViewTest1  ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SET_PROPERTY(TEST ctkDICOMDatasetViewTest1 PROPERTY LABELS ${PROJECT_NAME})
+SIMPLE_TEST(ctkDICOMDirectoryListWidgetTest1)
+SIMPLE_TEST(ctkDICOMImportWidgetTest1)
+SIMPLE_TEST(ctkDICOMListenerWidgetTest1)
 
 ADD_TEST( ctkDICOMModelTest2 ${KIT_TESTS}
           ctkDICOMModelTest2 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
@@ -37,3 +45,5 @@ ADD_TEST( ctkDICOMModelTest2 ${KIT_TESTS}
 SET_PROPERTY(TEST ctkDICOMModelTest2 PROPERTY LABELS ${PROJECT_NAME})
 
 SIMPLE_TEST(ctkDICOMQueryRetrieveWidgetTest1)
+SIMPLE_TEST(ctkDICOMQueryResultsTabWidgetTest1)
+SIMPLE_TEST(ctkDICOMThumbnailWidgetTest1)
