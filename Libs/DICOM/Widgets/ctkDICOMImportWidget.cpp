@@ -1,3 +1,23 @@
+/*=========================================================================
+
+  Library:   CTK
+
+  Copyright (c) Kitware Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.commontk.org/LICENSE
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=========================================================================*/
+
 //ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
 
@@ -30,22 +50,24 @@ public:
 // ctkDICOMImportWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMImportWidget::ctkDICOMImportWidget(QWidget* _parent):Superclass(_parent), 
-  d_ptr(new ctkDICOMImportWidgetPrivate)
+ctkDICOMImportWidget::ctkDICOMImportWidget(QWidget* parentWidget)
+  : Superclass(parentWidget)
+  , d_ptr(new ctkDICOMImportWidgetPrivate)
 {
   Q_D(ctkDICOMImportWidget);
-  
+
   d->setupUi(this);
-  
+
   d->DirectoryWidget->setDirectory(QDir::homePath());
 
   d->FileSystemModel = new QFileSystemModel(this);
   d->FileSystemModel->setRootPath(QDir::homePath());
   d->directoryList->setModel(d->FileSystemModel);
-  d->directoryList->setRootIndex(d->FileSystemModel->index(QDir::homePath()));
 
   //connect signals and slots
-  connect(d->DirectoryWidget, SIGNAL(directoryChanged(const QString&)), this, SLOT(onTopDirectoryChanged(const QString&)));
+  connect(d->DirectoryWidget, SIGNAL(directoryChanged(const QString&)),
+          this, SLOT(onTopDirectoryChanged(const QString&)));
+  this->onTopDirectoryChanged(d->DirectoryWidget->directory());
 }
 
 //----------------------------------------------------------------------------
@@ -56,22 +78,24 @@ ctkDICOMImportWidget::~ctkDICOMImportWidget()
   d->FileSystemModel->deleteLater();
 }
 
-void ctkDICOMImportWidget::onOK(){
-  
-  this->close();
-}
-
-void ctkDICOMImportWidget::onCancel(){
-  this->close();
-}
-
-void ctkDICOMImportWidget::onTopDirectoryChanged(const QString& path){
+//----------------------------------------------------------------------------
+void ctkDICOMImportWidget::setTopDirectory(const QString& path)
+{
   Q_D(ctkDICOMImportWidget);
-  
+  d->DirectoryWidget->setDirectory(path);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMImportWidget::onTopDirectoryChanged(const QString& path)
+{
+  Q_D(ctkDICOMImportWidget);
   d->directoryList->setRootIndex(d->FileSystemModel->index(path));
 }
 
-void ctkDICOMImportWidget::setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> database){
+//----------------------------------------------------------------------------
+void ctkDICOMImportWidget
+::setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> database)
+{
   Q_D(ctkDICOMImportWidget);
 
   d->DICOMDatabase = database;

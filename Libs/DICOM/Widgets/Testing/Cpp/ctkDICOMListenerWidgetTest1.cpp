@@ -20,21 +20,20 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
 #include <QTimer>
 
 // ctkDICOMCore includes
-#include "ctkDICOMQueryRetrieveWidget.h"
+#include "ctkDICOMListenerWidget.h"
 
 // STD includes
 #include <iostream>
 
-int ctkDICOMQueryRetrieveWidgetTest1( int argc, char * argv [] )
+int ctkDICOMListenerWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
- 
-  ctkDICOMQueryRetrieveWidget widget;
-  widget.show();
+
+  ctkDICOMListenerWidget listenerWidget;
+  listenerWidget.show();
 
   if (argc <= 1 || QString(argv[1]) != "-I")
     {

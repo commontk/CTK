@@ -20,26 +20,36 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
+#include <QDir>
 #include <QTimer>
 
 // ctkDICOMCore includes
-#include "ctkDICOMQueryRetrieveWidget.h"
+#include "ctkDICOMDirectoryListWidget.h"
 
 // STD includes
 #include <iostream>
 
-int ctkDICOMQueryRetrieveWidgetTest1( int argc, char * argv [] )
+int ctkDICOMDirectoryListWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
- 
-  ctkDICOMQueryRetrieveWidget widget;
-  widget.show();
+
+  ctkDICOMDatabase database;
+  ctkDICOMDirectoryListWidget listWidget;
+  listWidget.setDICOMDatabase(0);
+  listWidget.setDICOMDatabase(&database);
+  listWidget.addDirectory(QDir::tempPath());
+  listWidget.removeDirectory();
+
+  listWidget.show();
 
   if (argc <= 1 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
+
+  // if Qt uses the native dialog, then there is no way to force
+  // the getExistingDirectory dialog to close. so we can't test it.
+  //listWidget.addDirectory();
 
   return app.exec();
 }

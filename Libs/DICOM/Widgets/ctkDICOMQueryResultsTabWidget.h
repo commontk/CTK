@@ -36,7 +36,7 @@ public:
   virtual ~ctkDICOMQueryResultsTabWidget();
 
   void disableCloseOnTab(int index);
-  
+
 private:
 };
 

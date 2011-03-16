@@ -20,20 +20,20 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
 #include <QTimer>
 
 // ctkDICOMCore includes
-#include "ctkDICOMQueryRetrieveWidget.h"
+#include "ctkDICOMQueryResultsTabWidget.h"
 
 // STD includes
 #include <iostream>
 
-int ctkDICOMQueryRetrieveWidgetTest1( int argc, char * argv [] )
+int ctkDICOMQueryResultsTabWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
- 
-  ctkDICOMQueryRetrieveWidget widget;
+
+  ctkDICOMQueryResultsTabWidget widget;
+  widget.disableCloseOnTab(0);
   widget.show();
 
   if (argc <= 1 || QString(argv[1]) != "-I")

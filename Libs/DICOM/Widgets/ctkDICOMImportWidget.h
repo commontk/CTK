@@ -40,6 +40,12 @@ public:
 
   void setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> database);
 
+public slots:
+  void setTopDirectory(const QString& path);
+
+protected slots:
+  void onTopDirectoryChanged(const QString& path);
+
 protected:
   QScopedPointer<ctkDICOMImportWidgetPrivate> d_ptr;
 
@@ -47,10 +53,6 @@ private:
   Q_DECLARE_PRIVATE(ctkDICOMImportWidget);
   Q_DISABLE_COPY(ctkDICOMImportWidget);
 
-public slots:
-  void onOK();
-  void onCancel();
-  void onTopDirectoryChanged(const QString& path);
 };
 
 #endif

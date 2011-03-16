@@ -56,7 +56,7 @@
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
    <receiver>ctkDICOMImportWidget</receiver>
-   <slot>onOK()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>199</x>
@@ -72,7 +72,7 @@
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>ctkDICOMImportWidget</receiver>
-   <slot>onCancel()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>199</x>
@@ -85,8 +85,4 @@
    </hints>
   </connection>
  </connections>
- <slots>
-  <slot>onOK()</slot>
-  <slot>onCancel()</slot>
- </slots>
 </ui>
