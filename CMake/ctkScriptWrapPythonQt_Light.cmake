@@ -107,7 +107,7 @@ ENDFOREACH()
 # Check for non-existing ${var}
 FOREACH(var QT_QMAKE_EXECUTABLE OUTPUT_DIR PYTHON_EXECUTABLE PYTHON_LIBRARY_PATH)
   IF(NOT EXISTS ${${var}})
-    MESSAGE(SEND_ERROR "Failed to find ${var} when calling ctkScriptWrapPythonQt")
+    MESSAGE(SEND_ERROR "Failed to find ${var}=\"${${var}}\" when calling ctkScriptWrapPythonQt")
   ENDIF()
 ENDFOREACH()
 
