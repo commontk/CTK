@@ -37,6 +37,8 @@ protected:
 public:
   ctkVTKScalarBarWidgetPrivate(ctkVTKScalarBarWidget& object);
   void init();
+  void updateFromScalarBarWidget();
+
   vtkScalarBarWidget* ScalarBarWidget;
 };
 
@@ -45,11 +47,6 @@ ctkVTKScalarBarWidgetPrivate::ctkVTKScalarBarWidgetPrivate(ctkVTKScalarBarWidget
   :q_ptr(&object)
 {
   this->ScalarBarWidget = 0;
-}
-
-//-----------------------------------------------------------------------------
-ctkVTKScalarBarWidget::~ctkVTKScalarBarWidget()
-{
 }
 
 //-----------------------------------------------------------------------------
@@ -68,6 +65,30 @@ void ctkVTKScalarBarWidgetPrivate::init()
                    q, SLOT(setTitle(const QString&)));
   QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(textChanged(const QString&)),
                    q, SLOT(setLabelsFormat(const QString&)));
+}
+
+//-----------------------------------------------------------------------------
+void ctkVTKScalarBarWidgetPrivate::updateFromScalarBarWidget()
+{
+  Q_Q(ctkVTKScalarBarWidget);
+
+  vtkScalarBarActor* actor =
+    this->ScalarBarWidget ? this->ScalarBarWidget->GetScalarBarActor() : 0;
+  q->setEnabled(actor != 0);
+  if (actor == 0)
+    {
+    return;
+    }
+  this->DisplayScalarBarCheckBox->setChecked(this->ScalarBarWidget->GetEnabled() != 0);
+  this->MaxNumberOfColorsSpinBox->setValue(actor->GetMaximumNumberOfColors());
+  this->NumberOfLabelsSpinBox->setValue(actor->GetNumberOfLabels());
+
+  this->TitleTextPropertyWidget->setTextProperty(
+    actor->GetTitleTextProperty());
+  this->LabelsTextPropertyWidget->setTextProperty(
+    actor->GetLabelTextProperty());
+  this->TitleTextPropertyWidget->setText(actor->GetTitle());
+  this->LabelsTextPropertyWidget->setText(actor->GetLabelFormat());
 }
 
 //-----------------------------------------------------------------------------
@@ -90,6 +111,11 @@ ctkVTKScalarBarWidget::ctkVTKScalarBarWidget(vtkScalarBarWidget* scalarBarWidget
 }
 
 //-----------------------------------------------------------------------------
+ctkVTKScalarBarWidget::~ctkVTKScalarBarWidget()
+{
+}
+
+//-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::setScalarBarWidget(vtkScalarBarWidget* scalarBarWidget)
 {
   Q_D(ctkVTKScalarBarWidget);
@@ -102,14 +128,13 @@ void ctkVTKScalarBarWidget::setScalarBarWidget(vtkScalarBarWidget* scalarBarWidg
   vtkScalarBarActor* newActor =
     scalarBarWidget ? scalarBarWidget->GetScalarBarActor() : 0;
   qvtkReconnect(d->ScalarBarWidget, scalarBarWidget, vtkCommand::EnableEvent, 
-                this, SLOT(updateFromScalarBarWidget()));
+                this, SLOT(onScalarBarModified()));
   qvtkReconnect(d->ScalarBarWidget, scalarBarWidget, vtkCommand::DisableEvent, 
-                this, SLOT(updateFromScalarBarWidget()));
+                this, SLOT(onScalarBarModified()));
   qvtkReconnect(oldActor, newActor, vtkCommand::ModifiedEvent,
-                this, SLOT(updateFromScalarBarWidget()));
+                this, SLOT(onScalarBarModified()));
   d->ScalarBarWidget = scalarBarWidget;
-  this->updateFromScalarBarWidget();
-  
+  this->onScalarBarModified();
 }
 
 //-----------------------------------------------------------------------------
@@ -120,28 +145,10 @@ vtkScalarBarWidget* ctkVTKScalarBarWidget::scalarBarWidget()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkVTKScalarBarWidget::updateFromScalarBarWidget()
+void ctkVTKScalarBarWidget::onScalarBarModified()
 {
-  Q_D(const ctkVTKScalarBarWidget);
-
-  vtkScalarBarActor* actor =
-    d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
-  this->setEnabled(actor != 0);
-  if (actor == 0)
-    {
-    return;
-    }
-  d->DisplayScalarBarCheckBox->setChecked(d->ScalarBarWidget->GetEnabled() != 0);
-  d->MaxNumberOfColorsSpinBox->setValue(actor->GetMaximumNumberOfColors());
-  d->NumberOfLabelsSpinBox->setValue(actor->GetNumberOfLabels());
-
-  d->TitleTextPropertyWidget->setTextProperty(
-    actor ? actor->GetTitleTextProperty() : 0);
-  d->LabelsTextPropertyWidget->setTextProperty(
-    actor ? actor->GetLabelTextProperty() : 0);
-  d->TitleTextPropertyWidget->setText(actor->GetTitle());
-  d->LabelsTextPropertyWidget->setText(actor->GetLabelFormat());
-  
+  Q_D(ctkVTKScalarBarWidget);
+  d->updateFromScalarBarWidget();
   emit modified();
 }
 
@@ -154,6 +161,15 @@ void ctkVTKScalarBarWidget::setDisplay(bool visible)
     return;
     }
   d->ScalarBarWidget->SetEnabled(visible);
+  // calling SetEnabled might fail, make sure the checkbox is up-to-date
+  d->DisplayScalarBarCheckBox->setChecked(d->ScalarBarWidget->GetEnabled());
+}
+
+//-----------------------------------------------------------------------------
+bool ctkVTKScalarBarWidget::display()const
+{
+  Q_D(const ctkVTKScalarBarWidget);
+  return d->DisplayScalarBarCheckBox->isChecked();
 }
 
 //-----------------------------------------------------------------------------
@@ -170,6 +186,13 @@ void ctkVTKScalarBarWidget::setMaxNumberOfColors(int colorCount)
 }
 
 //-----------------------------------------------------------------------------
+int ctkVTKScalarBarWidget::maxNumberOfColors()const
+{
+  Q_D(const ctkVTKScalarBarWidget);
+  return d->MaxNumberOfColorsSpinBox->value();
+}
+
+//-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::setNumberOfLabels(int labelCount)
 {
   Q_D(ctkVTKScalarBarWidget);
@@ -183,6 +206,13 @@ void ctkVTKScalarBarWidget::setNumberOfLabels(int labelCount)
 }
 
 //-----------------------------------------------------------------------------
+int ctkVTKScalarBarWidget::numberOfLabels()const
+{
+  Q_D(const ctkVTKScalarBarWidget);
+  return d->NumberOfLabelsSpinBox->value();
+}
+
+//-----------------------------------------------------------------------------
 void ctkVTKScalarBarWidget::setTitle(const QString& title)
 {
   Q_D(ctkVTKScalarBarWidget);
@@ -192,7 +222,14 @@ void ctkVTKScalarBarWidget::setTitle(const QString& title)
     {
     return;
     }
-  actor->SetTitle(title.toStdString().c_str());
+  actor->SetTitle(title.toLatin1());
+}
+
+//-----------------------------------------------------------------------------
+QString ctkVTKScalarBarWidget::title()const
+{
+  Q_D(const ctkVTKScalarBarWidget);
+  return d->TitleTextPropertyWidget->text();
 }
 
 //-----------------------------------------------------------------------------
@@ -205,5 +242,12 @@ void ctkVTKScalarBarWidget::setLabelsFormat(const QString& format)
     {
     return;
     }
-  actor->SetLabelFormat(format.toStdString().c_str());
+  actor->SetLabelFormat(format.toLatin1());
+}
+
+//-----------------------------------------------------------------------------
+QString ctkVTKScalarBarWidget::labelsFormat()const
+{
+  Q_D(const ctkVTKScalarBarWidget);
+  return d->LabelsTextPropertyWidget->text();
 }

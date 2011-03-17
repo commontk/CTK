@@ -7,6 +7,7 @@ SET(TEST_SOURCES
   ctkVTKDataSetArrayComboBoxTest1.cpp
   ctkVTKDataSetModelTest1.cpp
   ctkVTKMatrixWidgetTest1.cpp
+  ctkVTKScalarBarWidgetTest1.cpp
   ctkTransferFunctionBarsItemTest1.cpp
   ctkTransferFunctionViewTest1.cpp
   ctkTransferFunctionViewTest2.cpp
@@ -68,6 +69,7 @@ ENDMACRO( SIMPLE_TEST  )
 SIMPLE_TEST( ctkVTKDataSetArrayComboBoxTest1 )
 SIMPLE_TEST( ctkVTKDataSetModelTest1 )
 SIMPLE_TEST( ctkVTKMatrixWidgetTest1 )
+SIMPLE_TEST( ctkVTKScalarBarWidgetTest1 )
 SIMPLE_TEST( ctkTransferFunctionBarsItemTest1 )
 SIMPLE_TEST( ctkTransferFunctionViewTest1 )
 SIMPLE_TEST( ctkTransferFunctionViewTest2 )

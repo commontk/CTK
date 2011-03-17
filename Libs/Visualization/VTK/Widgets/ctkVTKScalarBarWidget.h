@@ -39,14 +39,22 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarBarWidget : public QWidge
 
 public:
   /// Constructors
-  ctkVTKScalarBarWidget(QWidget* parentWidget);
-  ctkVTKScalarBarWidget(vtkScalarBarWidget* scalarBar, QWidget* parentWidget);
+  ctkVTKScalarBarWidget(QWidget* parentWidget = 0);
+  ctkVTKScalarBarWidget(vtkScalarBarWidget* scalarBar, QWidget* parentWidget = 0);
   virtual ~ctkVTKScalarBarWidget();
 
   vtkScalarBarWidget* scalarBarWidget()const;
 
+  bool display()const;
+  /// Returns -1 if not scalarbar is set
+  int maxNumberOfColors()const;
+  int numberOfLabels()const;
+  QString title()const;
+  QString labelsFormat()const;
+
 public slots:
   void setScalarBarWidget(vtkScalarBarWidget* scalarBar);
+
   void setDisplay(bool visible);
   void setMaxNumberOfColors(int colorCount);
   void setNumberOfLabels(int labelCount);
@@ -57,7 +65,7 @@ signals:
   void modified();
 
 protected slots:
-  void updateFromScalarBarWidget();
+  void onScalarBarModified();
 
 protected:
   QScopedPointer<ctkVTKScalarBarWidgetPrivate> d_ptr;
