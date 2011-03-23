@@ -26,6 +26,9 @@
 #include "ctkRangeWidget.h"
 #include "ui_ctkRangeWidget.h"
 
+// STD includes
+#include <cmath>
+
 //-----------------------------------------------------------------------------
 class ctkRangeWidgetPrivate: public Ui_ctkRangeWidget
 {
@@ -39,7 +42,7 @@ public:
   void updateSpinBoxWidth();
   int synchronizedSpinBoxWidth()const;
   void synchronizeSiblingSpinBox(int newWidth);
-  static bool equal(double v1, double v2);
+  bool equal(double v1, double v2)const;
   void relayout();
 
   bool          Tracking;
@@ -52,9 +55,9 @@ public:
 };
 
 // --------------------------------------------------------------------------
-bool ctkRangeWidgetPrivate::equal(double v1, double v2)
+bool ctkRangeWidgetPrivate::equal(double v1, double v2)const
 {
-  return qAbs(v1 - v2) < 0.0001;
+  return qAbs(v1 - v2) < pow(10., -this->MinimumSpinBox->decimals());
 }
 
 // --------------------------------------------------------------------------
