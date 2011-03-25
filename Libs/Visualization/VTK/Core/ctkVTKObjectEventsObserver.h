@@ -88,7 +88,9 @@ public:
                        float priority = 0.0);
 
   ///
-  /// Remove a connection
+  /// Remove all the connections matching vtkobj, event, qtobj and slot using
+  /// wildcards or not.
+  /// Returns the number of connection removed.
   int removeConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
                        const QObject* qt_obj = 0, const char* qt_slot = 0);
 
