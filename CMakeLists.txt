@@ -303,6 +303,7 @@ SET(CTK_LIBS
   Widgets:OFF
   DICOM/Core:OFF
   DICOM/Widgets:OFF
+  ImageProcessing/ITK/Core:OFF
   #Messaging/Core:OFF  # MessagingCore library need some love :) - Let's disable it for now :(
   Scripting/Python/Core:OFF
   Scripting/Python/Widgets:OFF
