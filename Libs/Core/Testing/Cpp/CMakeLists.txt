@@ -26,6 +26,8 @@ SET(KITTests_SRCS
   ctkAbstractPluginFactoryTest1.cpp
   ctkAbstractQObjectFactoryTest1.cpp
   ctkCommandLineParserTest1.cpp
+  ctkErrorLogModelTest1.cpp
+  ctkErrorLogModelTest2.cpp
   ctkModelTesterTest1.cpp
   ctkUtilsTest1.cpp
   ctkUtilsTest2.cpp
@@ -108,6 +110,8 @@ ENDIF()
 SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
+SIMPLE_TEST( ctkErrorLogModelTest1 )
+SIMPLE_TEST( ctkErrorLogModelTest2 )
 SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
