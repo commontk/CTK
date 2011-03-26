@@ -48,6 +48,8 @@ SET(KIT_SRCS
   ctkDoubleSlider.h
   ctkDynamicSpacer.cpp
   ctkDynamicSpacer.h
+  ctkErrorLogStatusMessageHandler.cpp
+  ctkErrorLogStatusMessageHandler.h
   ctkErrorLogWidget.cpp
   ctkErrorLogWidget.h
   ctkFileDialog.cpp
@@ -167,6 +169,7 @@ SET(KIT_MOC_SRCS
   ctkDoubleSlider.h
   ctkDynamicSpacer.h
   ctkErrorLogWidget.h
+  ctkErrorLogStatusMessageHandler.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
   ctkFlowLayout.h
