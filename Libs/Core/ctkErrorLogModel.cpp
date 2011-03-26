@@ -259,7 +259,7 @@ void ctkErrorLogModel::addEntry(ctkErrorLogModel::LogLevel logLevel,
     QDateTime lastRowDateTime = QDateTime::fromString(lastRowTimeIndex.data().toString(), timeFormat);
 
     int groupingIntervalInMsecs = 1000;
-    bool withinGroupingInterval = lastRowDateTime.msecsTo(currentDateTime) <= groupingIntervalInMsecs;
+    bool withinGroupingInterval = lastRowDateTime.time().msecsTo(currentDateTime.time()) <= groupingIntervalInMsecs;
 
     groupEntry = logLevelMatched && originMatched && withinGroupingInterval;
     }
