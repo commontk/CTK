@@ -128,6 +128,7 @@ SET(external_projects
   QtSOAP
   OpenIGTLink
   XIP
+  ITK
   )
 
 # Include external projects
@@ -178,7 +179,8 @@ ExternalProject_Add(${proj}
     ${ZMQ_DEPENDS}
     ${OpenIGTLink_DEPENDS}
     ${VTK_DEPENDS}
-    ${XIP_DEPENDS}    
+    ${XIP_DEPENDS}
+    ${ITK_DEPENDS}
 )
 
 #-----------------------------------------------------------------------------
@@ -269,6 +271,7 @@ ExternalProject_Add(${proj}
     -DLog4Qt_DIR:PATH=${Log4Qt_DIR} # FindLog4Qt expects Log4Qt_DIR variable to be defined
     -DQtSOAP_DIR:PATH=${QtSOAP_DIR} # FindQtSOAP expects QtSOAP_DIR variable to be defined
     -DQtMobility_DIR:PATH=${QtMobility_DIR}
+    -DITK_DIR:PATH=${ITK_DIR} # FindITK expects ITK_DIR variable to be defined
     ${dependency_args}
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
