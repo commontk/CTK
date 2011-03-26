@@ -120,10 +120,16 @@ MACRO(ctkMacroBuildLib)
       LIST(APPEND my_EXTRA_PYTHON_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
       # Should we link against VTK
       IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-        LINK_DIRECTORIES(${VTK_LIBRARY_DIRS})
         LIST(APPEND my_EXTRA_PYTHON_LIBRARIES vtkCommon vtkPythonCore)
       ENDIF()
     ENDIF()
+  ENDIF()
+
+  # The current library might not be wrapped. Nevertheless, if one of its dependent library
+  # is linked using vtkCommon or vtkPythonCore, VTK_LIBRARY_DIRS should be added
+  # as a link directories.
+  IF(CTK_WRAP_PYTHONQT_LIGHT AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+    LINK_DIRECTORIES(${VTK_LIBRARY_DIRS})
   ENDIF()
   
   ADD_LIBRARY(${lib_name} ${MY_LIBRARY_TYPE}
