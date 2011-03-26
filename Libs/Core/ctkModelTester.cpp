@@ -34,6 +34,7 @@ public:
   bool ThrowOnError;
   bool NestedInserts;
   bool TestDataEnabled;
+  bool Verbose;
 
   struct Change
   {
@@ -61,6 +62,7 @@ ctkModelTesterPrivate::ctkModelTesterPrivate()
   this->ThrowOnError = true;
   this->NestedInserts = false;
   this->TestDataEnabled = true;
+  this->Verbose = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -164,10 +166,10 @@ bool ctkModelTester::nestedInserts()const
 
 
 //-----------------------------------------------------------------------------
-void ctkModelTester::setTestDataEnabled( bool enable )
+void ctkModelTester::setTestDataEnabled( bool testDataEnabledValue )
 {
   Q_D(ctkModelTester);
-  d->TestDataEnabled = enable;
+  d->TestDataEnabled = testDataEnabledValue;
 }
 
 //-----------------------------------------------------------------------------
@@ -178,13 +180,31 @@ bool ctkModelTester::testDataEnabled()const
 }
 
 //-----------------------------------------------------------------------------
+void ctkModelTester::setVerbose(bool verboseValue)
+{
+  Q_D(ctkModelTester);
+  d->Verbose = verboseValue;
+}
+
+//-----------------------------------------------------------------------------
+bool ctkModelTester::verbose()const
+{
+  Q_D(const ctkModelTester);
+  return d->Verbose;
+}
+
+//-----------------------------------------------------------------------------
 void  ctkModelTester::test(bool result, const QString& errorString)const
 {
+  Q_D(const ctkModelTester);
   if (result)
     {
     return;
     }
-  qDebug() << errorString;
+  if (d->Verbose)
+    {
+    qDebug() << errorString;
+    }
   if (this->throwOnError())
     {
     throw errorString;
@@ -425,28 +445,40 @@ void ctkModelTester::onModelReset()
 //-----------------------------------------------------------------------------
 void ctkModelTester::onRowsAboutToBeInserted(const QModelIndex &vparent, int start, int end)
 {
-  //qDebug() << "rowsAboutToBeInserted: " << vparent << start << end;
+//  if (d->Verbose)
+//    {
+//    qDebug() << "rowsAboutToBeInserted: " << vparent << start << end;
+//    }
   this->onItemsAboutToBeInserted(vparent, Qt::Vertical, start, end);
 }
 
 //-----------------------------------------------------------------------------
 void ctkModelTester::onRowsAboutToBeRemoved(const QModelIndex &vparent, int start, int end)
 {
-  //qDebug() << "rowsAboutToBeRemoved: " << vparent << start << end;
+//  if (d->Verbose)
+//    {
+//    qDebug() << "rowsAboutToBeRemoved: " << vparent << start << end;
+//    }
   this->onItemsAboutToBeRemoved(vparent, Qt::Vertical, start, end);
 }
 
 //-----------------------------------------------------------------------------
 void ctkModelTester::onRowsInserted(const QModelIndex & vparent, int start, int end)
 {
-  //qDebug() << "rowsInserted: " << vparent << start << end;
+//  if (d->Verbose)
+//    {
+//    qDebug() << "rowsInserted: " << vparent << start << end;
+//    }
   this->onItemsInserted(vparent, Qt::Vertical, start, end);
 }
 
 //-----------------------------------------------------------------------------
 void ctkModelTester::onRowsRemoved(const QModelIndex & vparent, int start, int end)
 {
-  //qDebug() << "rowsRemoved: " << vparent << start << end;
+//  if (d->Verbose)
+//    {
+//    qDebug() << "rowsRemoved: " << vparent << start << end;
+//    }
   this->onItemsRemoved(vparent, Qt::Vertical, start, end);
 }
 
@@ -512,7 +544,10 @@ void ctkModelTester::onItemsAboutToBeRemoved(const QModelIndex &vparent, Qt::Ori
   d->AboutToBeRemoved.push(change);
 
   this->testModel();
-  //qDebug() << "About to be removed: " << start << " " << end <<vparent << count << change.Items.count();
+//  if (d->Verbose)
+//    {
+//    qDebug() << "About to be removed: " << start << " " << end <<vparent << count << change.Items.count();
+//    }
 }
 
 //-----------------------------------------------------------------------------

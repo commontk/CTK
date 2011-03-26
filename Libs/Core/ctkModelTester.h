@@ -45,6 +45,9 @@ class CTK_CORE_EXPORT ctkModelTester: public QObject
 {
   Q_OBJECT
   Q_PROPERTY(bool nestedInserts READ nestedInserts WRITE setNestedInserts);
+  Q_PROPERTY(bool testDataEnabled READ testDataEnabled WRITE setTestDataEnabled);
+  Q_PROPERTY(bool throwOnError READ throwOnError WRITE setThrowOnError);
+  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose);
 public:
   ///
   /// Constructor
@@ -87,8 +90,12 @@ public:
   /// model index is valid too.
   /// You can disable the test if you are ok with temporary invalid display
   /// roles.
-  void setTestDataEnabled(bool enable);
+  void setTestDataEnabled(bool testDataEnabledValue);
   bool testDataEnabled()const;
+
+  /// When Verbose is enabled, message will be printed to standard or error output.
+  void setVerbose(bool enable);
+  bool verbose()const;
 
   ///
   /// Test the data consistency of a QModelIndex.
