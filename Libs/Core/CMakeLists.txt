@@ -30,6 +30,15 @@ SET(KIT_SRCS
   ctkCommandLineParser.h
   ctkDependencyGraph.cpp
   ctkDependencyGraph.h
+  ctkErrorLogModel.cpp
+  ctkErrorLogModel.h
+  ctkErrorLogFDMessageHandler.cpp
+  ctkErrorLogFDMessageHandler.h
+  ctkErrorLogFDMessageHandler_p.h
+  ctkErrorLogQtMessageHandler.cpp
+  ctkErrorLogQtMessageHandler.h
+  ctkErrorLogStreamMessageHandler.cpp
+  ctkErrorLogStreamMessageHandler.h
   ctkLogger.cpp
   ctkLogger.h
   ctkHistogram.cpp
@@ -74,7 +83,9 @@ ENDIF()
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkCommandLineParser.h
-  ctkLogger.h 
+  ctkErrorLogFDMessageHandler_p.h
+  ctkErrorLogModel.h
+  ctkLogger.h
   ctkHistogram.h
   ctkModelTester.h
   ctkTransferFunction.h

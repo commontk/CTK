@@ -4,9 +4,7 @@ SET(KIT ${PROJECT_NAME})
 # Tests
 #
 SET(TEST_SOURCES
-  ctkVTKConnectionTest1.cpp
-  ctkVTKErrorLogModelTest1.cpp
-  ctkVTKObjectTest1.cpp
+  ctkITKErrorLogModelTest1.cpp
   )
 
 #
@@ -14,7 +12,6 @@ SET(TEST_SOURCES
 #
 IF(EXISTS "${CTKData_DIR}")
   LIST(APPEND TEST_SOURCES
-    vtkLightBoxRendererManagerTest1.cpp
     )
 ENDIF()
 
@@ -31,11 +28,11 @@ INCLUDE_DIRECTORIES(
 # Test helpers
 #
 
-SET(KIT_HELPER_SRCS
-  ctkVTKObjectTestHelper.cpp
-  )
+#SET(KIT_HELPER_SRCS
+#  ctkVTKObjectTestHelper.cpp
+#  )
 
-QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
+#QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
 
 #
 # Tests
@@ -69,14 +66,12 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
-SIMPLE_TEST( ctkVTKConnectionTest1 )
-SIMPLE_TEST( ctkVTKErrorLogModelTest1 )
-SIMPLE_TEST( ctkVTKObjectTest1 )
+#SIMPLE_TEST( ctkVTKObjectTest1 )
 
 #
 # Add Tests expecting CTKData to be set
 #
 IF(EXISTS "${CTKData_DIR}")
-  SIMPLE_TEST( vtkLightBoxRendererManagerTest1 )
+  SIMPLE_TEST( ctkITKErrorLogModelTest1 )
 ENDIF()
 
