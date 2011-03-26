@@ -48,6 +48,8 @@ SET(KIT_SRCS
   ctkDoubleSlider.h
   ctkDynamicSpacer.cpp
   ctkDynamicSpacer.h
+  ctkErrorLogWidget.cpp
+  ctkErrorLogWidget.h
   ctkFileDialog.cpp
   ctkFileDialog.h
   ctkFittedTextBrowser.cpp
@@ -164,6 +166,7 @@ SET(KIT_MOC_SRCS
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
   ctkDynamicSpacer.h
+  ctkErrorLogWidget.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
   ctkFlowLayout.h
@@ -218,6 +221,7 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
   Resources/UI/ctkRangeWidget.ui
   Resources/UI/ctkDateRangeWidget.ui
+  Resources/UI/ctkErrorLogWidget.ui
   Resources/UI/ctkMaterialPropertyWidget.ui
   Resources/UI/ctkModalityWidget.ui
   Resources/UI/ctkScreenshotDialog.ui
