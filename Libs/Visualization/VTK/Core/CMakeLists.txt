@@ -20,6 +20,8 @@ SET(KIT_SRCS
   ctkVTKCompositeFunction.h
   ctkVTKConnection.cpp
   ctkVTKConnection.h
+  ctkVTKErrorLogMessageHandler.cpp
+  ctkVTKErrorLogMessageHandler.h
   ctkVTKHistogram.cpp
   ctkVTKHistogram.h
   ctkVTKLookupTable.cpp

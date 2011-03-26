@@ -5,6 +5,7 @@ SET(KIT ${PROJECT_NAME})
 #
 SET(TEST_SOURCES
   ctkVTKConnectionTest1.cpp
+  ctkVTKErrorLogModelTest1.cpp
   ctkVTKObjectTest1.cpp
   )
 
@@ -68,8 +69,9 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
-SIMPLE_TEST( ctkVTKObjectTest1 )
 SIMPLE_TEST( ctkVTKConnectionTest1 )
+SIMPLE_TEST( ctkVTKErrorLogModelTest1 )
+SIMPLE_TEST( ctkVTKObjectTest1 )
 
 #
 # Add Tests expecting CTKData to be set
