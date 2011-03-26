@@ -24,6 +24,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkDoubleSliderTest1.cpp
   ctkDynamicSpacerTest1.cpp
   ctkDynamicSpacerTest2.cpp
+  ctkErrorLogWidgetTest1.cpp
   ctkFileDialogTest1.cpp
   ctkFittedTextBrowserTest1.cpp
   ctkFlowLayoutTest1.cpp
@@ -111,6 +112,7 @@ SIMPLE_TEST( ctkDoubleRangeSliderTest2 )
 SIMPLE_TEST( ctkDoubleSliderTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest2 )
+SIMPLE_TEST( ctkErrorLogWidgetTest1 )
 SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingDerivedSteps )
 SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots )
 SIMPLE_TEST( ctkFileDialogTest1 )
