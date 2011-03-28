@@ -23,24 +23,23 @@
 #include "ctkSliderWidget.h"
 
 //-----------------------------------------------------------------------------
-ctkSliderWidgetPlugin::ctkSliderWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
+ctkSliderWidgetPlugin::ctkSliderWidgetPlugin(QObject* parentObject)
+  : QObject(parentObject)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkSliderWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *ctkSliderWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  ctkSliderWidget* _widget = new ctkSliderWidget(_parent);
-  return _widget;
+  ctkSliderWidget* newWidget = new ctkSliderWidget(parentWidget);
+  return newWidget;
 }
 
 //-----------------------------------------------------------------------------
 QString ctkSliderWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkSliderWidget\" \
-          name=\"SliderSpinBoxWidget\">\n"
+  return "<widget class=\"ctkSliderWidget\" name=\"SliderWidget\">\n"
           "</widget>\n";
 }
 

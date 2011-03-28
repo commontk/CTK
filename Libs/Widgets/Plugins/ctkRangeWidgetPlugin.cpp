@@ -23,24 +23,23 @@
 #include "ctkRangeWidget.h"
 
 //-----------------------------------------------------------------------------
-ctkRangeWidgetPlugin::ctkRangeWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
+ctkRangeWidgetPlugin::ctkRangeWidgetPlugin(QObject* parentObject)
+  : QObject(parentObject)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkRangeWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *ctkRangeWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  ctkRangeWidget* _widget = new ctkRangeWidget(_parent);
-  return _widget;
+  ctkRangeWidget* newWidget = new ctkRangeWidget(parentWidget);
+  return newWidget;
 }
 
 //-----------------------------------------------------------------------------
 QString ctkRangeWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkRangeWidget\" \
-          name=\"RangeWidget\">\n"
+  return "<widget class=\"ctkRangeWidget\" name=\"RangeWidget\">\n"
           "</widget>\n";
 }
 
