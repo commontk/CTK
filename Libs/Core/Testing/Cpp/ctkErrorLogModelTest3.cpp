@@ -26,6 +26,7 @@
 // CTK includes
 #include "ctkErrorLogModel.h"
 #include "ctkErrorLogQtMessageHandler.h"
+#include "ctkErrorLogStreamMessageHandler.h"
 #include "ctkModelTester.h"
 
 // STL includes
@@ -138,26 +139,35 @@ int ctkErrorLogModelTest3(int argc, char * argv [])
     {
     modelTester.setModel(&model);
 
-    // --------------------------------------------------------------------------
     // Monitor Qt messages
     model.registerMsgHandler(new ctkErrorLogQtMessageHandler);
     model.setMsgHandlerEnabled(ctkErrorLogQtMessageHandler::HandlerName, true);
 
-    QString qtMessage0("This is a qDebug message");
-    qDebug().nospace() << qPrintable(qtMessage0);
+    // Monitor Stream messages
+    model.registerMsgHandler(new ctkErrorLogStreamMessageHandler);
+    model.setMsgHandlerEnabled(ctkErrorLogStreamMessageHandler::HandlerName, true);
 
-    QString qtMessage1("This is a qWarning message");
-    qWarning().nospace() << qPrintable(qtMessage1);
+    QString message0("This is a qDebug message");
+    qDebug().nospace() << qPrintable(message0);
 
-    QString qtMessage2("This is a qCritical message");
-    qCritical().nospace() << qPrintable(qtMessage2);
+    QString message1("This is a std::cerr message");
+    std::cerr << qPrintable(message1) << std::endl;
 
-    QStringList expectedQtMessages;
-    expectedQtMessages << qtMessage0
-                       << qtMessage1
-                       << qtMessage2;
+    QString message2("This is a qWarning message");
+    qWarning().nospace() << qPrintable(message2);
 
-    errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedQtMessages.count());
+    QString message3("This is a std::cout message");
+    std::cout << qPrintable(message3) << std::endl;
+
+    QString message4("This is a qCritical message");
+    qCritical().nospace() << qPrintable(message4);
+
+    QStringList expectedMessages;
+    expectedMessages << message0 << message1
+                     << message2 << message3
+                     << message4;
+
+    errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedMessages.count());
     if (!errorMsg.isEmpty())
       {
       model.disableAllMsgHandler();
@@ -166,7 +176,7 @@ int ctkErrorLogModelTest3(int argc, char * argv [])
       return EXIT_FAILURE;
       }
 
-    errorMsg = checkTextMessages(__LINE__, model, expectedQtMessages);
+    errorMsg = checkTextMessages(__LINE__, model, expectedMessages);
     if (!errorMsg.isEmpty())
       {
       model.disableAllMsgHandler();

@@ -115,7 +115,7 @@ SIMPLE_TEST( ctkErrorLogModelTest1 )
 SIMPLE_TEST( ctkErrorLogModelTest2 )
 SIMPLE_TEST( ctkErrorLogModelTest3 )
 SET_TESTS_PROPERTIES(ctkErrorLogModelTest3 PROPERTIES PASS_REGULAR_EXPRESSION
-"This is a qDebug message\nThis is a qWarning message\nThis is a qCritical message\n")
+"This is a qDebug message\nThis is a std::cerr message\nThis is a qWarning message\nThis is a std::cout message\nThis is a qCritical message\n")
 SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
