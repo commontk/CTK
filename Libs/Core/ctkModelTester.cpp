@@ -166,10 +166,10 @@ bool ctkModelTester::nestedInserts()const
 
 
 //-----------------------------------------------------------------------------
-void ctkModelTester::setTestDataEnabled( bool testDataEnabledValue )
+void ctkModelTester::setTestDataEnabled( bool enable )
 {
   Q_D(ctkModelTester);
-  d->TestDataEnabled = testDataEnabledValue;
+  d->TestDataEnabled = enable;
 }
 
 //-----------------------------------------------------------------------------

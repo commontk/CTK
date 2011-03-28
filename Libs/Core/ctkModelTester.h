@@ -90,7 +90,7 @@ public:
   /// model index is valid too.
   /// You can disable the test if you are ok with temporary invalid display
   /// roles.
-  void setTestDataEnabled(bool testDataEnabledValue);
+  void setTestDataEnabled(bool enable);
   bool testDataEnabled()const;
 
   /// When Verbose is enabled, message will be printed to standard or error output.
