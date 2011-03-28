@@ -25,13 +25,15 @@
 #include <ctkErrorLogModel.h>
 #include "ctkWidgetsExport.h"
 
+class QMainWindow;
+
 //------------------------------------------------------------------------------
 class CTK_WIDGETS_EXPORT ctkErrorLogStatusMessageHandler :
     public QObject, public ctkErrorLogAbstractMessageHandler
 {
   Q_OBJECT
 public:
-  ctkErrorLogStatusMessageHandler();
+  ctkErrorLogStatusMessageHandler(QMainWindow * mainWindow);
 
   static QString HandlerName;
 
@@ -40,6 +42,9 @@ public:
 
 public slots:
   void statusBarMessageChanged(const QString& text);
+
+private:
+  QMainWindow* MainWindow;
 };
 
 #endif
