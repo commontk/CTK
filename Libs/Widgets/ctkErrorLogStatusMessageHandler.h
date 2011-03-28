@@ -44,7 +44,7 @@ public slots:
   void statusBarMessageChanged(const QString& text);
 
 private:
-  QMainWindow* MainWindow;
+  QPointer<QMainWindow> MainWindow;
 };
 
 #endif
