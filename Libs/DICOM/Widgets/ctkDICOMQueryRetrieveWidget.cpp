@@ -47,22 +47,75 @@ static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMQueryRetrieveWidget"
 //----------------------------------------------------------------------------
 class ctkDICOMQueryRetrieveWidgetPrivate: public Ui_ctkDICOMQueryRetrieveWidget
 {
-public:
-  ctkDICOMQueryRetrieveWidgetPrivate(){}
+  Q_DECLARE_PUBLIC( ctkDICOMQueryRetrieveWidget );
 
-  QMap<QString, ctkDICOMQuery*> QueriesByServer;
-  QMap<QString, ctkDICOMQuery*> QueriesByStudyUID;
-  QMap<QString, ctkDICOMRetrieve*> RetrievalsByStudyUID;
-  ctkDICOMDatabase QueryResultDatabase;
-  QSharedPointer<ctkDICOMDatabase> RetrieveDatabase;
-  ctkDICOMModel    model;
+protected:
+  ctkDICOMQueryRetrieveWidget* const q_ptr;
   
-  QProgressDialog* ProgressDialog;
-  QString          CurrentServer;
+public:
+  ctkDICOMQueryRetrieveWidgetPrivate(ctkDICOMQueryRetrieveWidget& obj);
+  ~ctkDICOMQueryRetrieveWidgetPrivate();
+  void init();
+
+  QMap<QString, ctkDICOMQuery*>     QueriesByServer;
+  QMap<QString, ctkDICOMQuery*>     QueriesByStudyUID;
+  QMap<QString, ctkDICOMRetrieve*>  RetrievalsByStudyUID;
+  ctkDICOMDatabase                  QueryResultDatabase;
+  QSharedPointer<ctkDICOMDatabase>  RetrieveDatabase;
+  ctkDICOMModel                     Model;
+  
+  QProgressDialog*                  ProgressDialog;
+  QString                           CurrentServer;
 };
 
 //----------------------------------------------------------------------------
 // ctkDICOMQueryRetrieveWidgetPrivate methods
+
+//----------------------------------------------------------------------------
+ctkDICOMQueryRetrieveWidgetPrivate::ctkDICOMQueryRetrieveWidgetPrivate(
+  ctkDICOMQueryRetrieveWidget& obj)
+  : q_ptr(&obj)
+{
+  this->ProgressDialog = 0;
+}
+
+//----------------------------------------------------------------------------
+ctkDICOMQueryRetrieveWidgetPrivate::~ctkDICOMQueryRetrieveWidgetPrivate()
+{
+  foreach(ctkDICOMQuery* query, this->QueriesByServer.values())
+    {
+    delete query;
+    }
+  foreach(ctkDICOMRetrieve* retrieval, this->RetrievalsByStudyUID.values())
+    {
+    delete retrieval;
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQueryRetrieveWidgetPrivate::init()
+{
+  Q_Q(ctkDICOMQueryRetrieveWidget);
+  this->setupUi(q);
+
+  QObject::connect(this->QueryButton, SIGNAL(clicked()), q, SLOT(query()));
+  QObject::connect(this->RetrieveButton, SIGNAL(clicked()), q, SLOT(retrieve()));
+  QObject::connect(this->CancelButton, SIGNAL(clicked()), q, SLOT(cancel()));
+
+  this->results->setModel(&this->Model);
+  this->Model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
+
+  QHeaderView* previousHeaderView = this->results->header();
+  ctkCheckableHeaderView* headerView =
+    new ctkCheckableHeaderView(Qt::Horizontal, this->results);
+  headerView->setClickable(previousHeaderView->isClickable());
+  headerView->setMovable(previousHeaderView->isMovable());
+  headerView->setHighlightSections(previousHeaderView->highlightSections());
+  headerView->setPropagateToItems(true);
+  this->results->setHeader(headerView);
+  // headerView is hidden because it was created with a visisble parent widget 
+  headerView->setHidden(false);
+}
 
 //----------------------------------------------------------------------------
 // ctkDICOMQueryRetrieveWidget methods
@@ -70,29 +123,10 @@ public:
 //----------------------------------------------------------------------------
 ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* parentWidget)
   : Superclass(parentWidget) 
-  , d_ptr(new ctkDICOMQueryRetrieveWidgetPrivate)
+  , d_ptr(new ctkDICOMQueryRetrieveWidgetPrivate(*this))
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
-  
-  d->setupUi(this);
-
-  d->ProgressDialog = 0;
-  connect(d->QueryButton, SIGNAL(clicked()), this, SLOT(processQuery()));
-  connect(d->RetrieveButton, SIGNAL(clicked()), this, SLOT(processRetrieve()));
-  connect(d->CancelButton, SIGNAL(clicked()),this,SLOT(hide()));
-
-  d->results->setModel(&d->model);
-  d->model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
-
-  QHeaderView* previousHeaderView = d->results->header();
-  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->results);
-  headerView->setClickable(previousHeaderView->isClickable());
-  headerView->setMovable(previousHeaderView->isMovable());
-  headerView->setHighlightSections(previousHeaderView->highlightSections());
-  headerView->setPropagateToItems(true);
-  d->results->setHeader(headerView);
-  // headerView is hidden because it was created with a visisble parent widget 
-  headerView->setHidden(false);
+  d->init();
 }
 
 //----------------------------------------------------------------------------
@@ -109,7 +143,14 @@ void ctkDICOMQueryRetrieveWidget::setRetrieveDatabase(QSharedPointer<ctkDICOMDat
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryRetrieveWidget::processQuery()
+QSharedPointer<ctkDICOMDatabase> ctkDICOMQueryRetrieveWidget::retrieveDatabase()const
+{
+  Q_D(const ctkDICOMQueryRetrieveWidget);
+  return d->RetrieveDatabase;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQueryRetrieveWidget::query()
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
 
@@ -146,7 +187,6 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
     Q_ASSERT(parameters["CheckState"] == Qt::Checked );
     // create a query for the current server
     ctkDICOMQuery* query = new ctkDICOMQuery;
-    d->QueriesByServer[d->CurrentServer] = query;
     query->setCallingAETitle(d->ServerNodeWidget->callingAETitle());
     query->setCalledAETitle(parameters["AETitle"].toString());
     query->setHost(parameters["Address"].toString());
@@ -175,8 +215,10 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
       {
       logger.error ( "Query error: " + parameters["Name"].toString() );
       progress.setLabelText("Query error: " + parameters["Name"].toString());
+      delete query;
       }
-
+    d->QueriesByServer[d->CurrentServer] = query;
+    
     foreach( QString studyUID, query->studyInstanceUIDQueried() )
       {
       d->QueriesByStudyUID[studyUID] = query;
@@ -184,27 +226,31 @@ void ctkDICOMQueryRetrieveWidget::processQuery()
     }
   
   // checkable headers - allow user to select the patient/studies to retrieve
-  d->model.setDatabase(d->QueryResultDatabase.database());
+  d->Model.setDatabase(d->QueryResultDatabase.database());
 
-  d->RetrieveButton->setEnabled(d->model.rowCount());
+  d->RetrieveButton->setEnabled(d->Model.rowCount());
   progress.setValue(progress.maximum());
   d->ProgressDialog = 0;
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryRetrieveWidget::processRetrieve()
+void ctkDICOMQueryRetrieveWidget::retrieve()
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
+
+  if (!d->RetrieveButton->isEnabledTo(this))
+    {
+    return;
+    }
 
   QMap<QString,QVariant> serverParameters = d->ServerNodeWidget->parameters();
 
   foreach( QString studyUID, d->QueriesByStudyUID.keys() )
-  {
-    logger.debug("need to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
+    {
+    logger.debug("About to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
     ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
     retrieve->setRetrieveDatabase( d->RetrieveDatabase );
-    d->RetrievalsByStudyUID[studyUID] = retrieve;
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );
     retrieve->setCalledPort( query->port() );
@@ -222,13 +268,22 @@ void ctkDICOMQueryRetrieveWidget::processRetrieve()
     catch (std::exception e)
       {
       logger.error ( "Retrieve failed" );
+      delete retrieve;
+      // TODO: ask the user if he wants to keep trying to retrieve other studies
       QMessageBox::information ( this, tr("Query Retrieve"), tr("Retrieve failed.") );
-      return;
+      continue;
       }
+    d->RetrievalsByStudyUID[studyUID] = retrieve;
     logger.info ( "Retrieve success" );
-  }
+    }
   QMessageBox::information ( this, tr("Query Retrieve"), tr("Selected studies have been downloaded.") );
-  this->hide();
+  emit studiesRetrieved(d->RetrievalsByStudyUID.keys());
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQueryRetrieveWidget::cancel()
+{
+  emit studiesRetrieved(QStringList());
 }
 
 //----------------------------------------------------------------------------

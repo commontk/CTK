@@ -40,10 +40,19 @@ public:
   explicit ctkDICOMQueryRetrieveWidget(QWidget* parent=0);
   virtual ~ctkDICOMQueryRetrieveWidget();
 
+  QSharedPointer<ctkDICOMDatabase> retrieveDatabase()const;
+
 public slots:
   void setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> retrieveDatabase);
-  void processQuery();
-  void processRetrieve();
+  void query();
+  void retrieve();
+  void cancel();
+
+signals:
+  /// Signal emit when studies have been retrieved (user clicked on the
+  /// "Retrieve" button) or when the widget is cancelled (user clicked on the
+  /// "Cancel" button).
+  void studiesRetrieved(QStringList);
 
 protected slots:
   void onQueryProgressChanged(int value);

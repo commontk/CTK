@@ -33,7 +33,17 @@ int ctkDICOMQueryRetrieveWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
  
+  QSharedPointer<ctkDICOMDatabase> dicomDatabase;
   ctkDICOMQueryRetrieveWidget widget;
+  widget.setRetrieveDatabase(dicomDatabase);
+  if (widget.retrieveDatabase() != dicomDatabase)
+    {
+    std::cerr << "ctkDICOMQueryRetrieveDatabase::setRetrieveDatabase failed."
+              << std::endl;
+    }
+
+  widget.query();
+  widget.retrieve();
   widget.show();
 
   if (argc <= 1 || QString(argv[1]) != "-I")
