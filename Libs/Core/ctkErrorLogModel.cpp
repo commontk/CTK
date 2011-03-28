@@ -212,12 +212,48 @@ void ctkErrorLogModel::setMsgHandlerEnabled(const QString& handlerName, bool ena
 }
 
 //------------------------------------------------------------------------------
+QStringList ctkErrorLogModel::msgHandlerEnabled() const
+{
+  Q_D(const ctkErrorLogModel);
+  QStringList msgHandlers;
+  foreach(const QString& handlerName, d->RegisteredHandlers.keys())
+    {
+    if (d->RegisteredHandlers.value(handlerName)->enabled())
+      {
+      msgHandlers << handlerName;
+      }
+    }
+  return msgHandlers;
+}
+
+//------------------------------------------------------------------------------
+void ctkErrorLogModel::setMsgHandlerEnabled(const QStringList& handlerNames)
+{
+  foreach(const QString& handlerName, handlerNames)
+    {
+    this->setMsgHandlerEnabled(handlerName, true);
+    }
+}
+
+//------------------------------------------------------------------------------
+void ctkErrorLogModel::enableAllMsgHandler()
+{
+  this->setAllMsgHandlerEnabled(true);
+}
+
+//------------------------------------------------------------------------------
 void ctkErrorLogModel::disableAllMsgHandler()
+{
+  this->setAllMsgHandlerEnabled(false);
+}
+
+//------------------------------------------------------------------------------
+void ctkErrorLogModel::setAllMsgHandlerEnabled(bool enabled)
 {
   Q_D(ctkErrorLogModel);
   foreach(const QString& msgHandlerName, d->RegisteredHandlers.keys())
     {
-    this->setMsgHandlerEnabled(msgHandlerName, false);
+    this->setMsgHandlerEnabled(msgHandlerName, enabled);
     }
 }
 

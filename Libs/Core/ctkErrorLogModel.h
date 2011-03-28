@@ -106,10 +106,17 @@ public:
   QStringList msgHandlerNames()const;
 
   bool msgHandlerEnabled(const QString& handlerName) const;
-
   void setMsgHandlerEnabled(const QString& handlerName, bool enabled);
 
+  /// Return names of the enabled message handlers
+  QStringList msgHandlerEnabled()const;
+
+  /// Enable handler identified by their names
+  void setMsgHandlerEnabled(const QStringList& handlerNames);
+
+  void enableAllMsgHandler();
   void disableAllMsgHandler();
+  void setAllMsgHandlerEnabled(bool enabled);
 
   QString logLevelAsString(LogLevel logLevel)const;
 

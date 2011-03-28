@@ -90,6 +90,18 @@ void printErrorMessage(const QString& errorMessage)
   fflush(stderr);
 }
 
+//-----------------------------------------------------------------------------
+QString checkInteger(int line, const char* valueName, int current, int expected)
+{
+  if (current != expected)
+    {
+    QString errorMsg("Line %1 - Expected %2: %3 - Current %4: %5\n");
+    return errorMsg.arg(line).arg(valueName).
+        arg(expected).arg(valueName).arg(current);
+    }
+  return QString();
+}
+
 } // end namespace
 
 //-----------------------------------------------------------------------------
@@ -101,6 +113,16 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
   ctkModelTester modelTester;
   modelTester.setVerbose(false);
   QString errorMsg;
+
+  QStringList enabledMessageHandlers = model.msgHandlerEnabled();
+  int currentEnabledMessageHandlersCount = enabledMessageHandlers.count();
+  errorMsg = checkInteger(__LINE__, "EnabledMessageHandlersCount", currentEnabledMessageHandlersCount, 0);
+  if (!errorMsg.isEmpty())
+    {
+    model.disableAllMsgHandler();
+    printErrorMessage(errorMsg);
+    return EXIT_FAILURE;
+    }
 
   try
     {
@@ -142,6 +164,17 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         }
 
       errorMsg = checkTextMessages(__LINE__, model, expectedQtMessages);
+      if (!errorMsg.isEmpty())
+        {
+        model.disableAllMsgHandler();
+        printErrorMessage(errorMsg);
+        return EXIT_FAILURE;
+        }
+
+      // Check if msgHandlerEnabled() works as expected
+      enabledMessageHandlers = model.msgHandlerEnabled();
+      currentEnabledMessageHandlersCount = enabledMessageHandlers.count();
+      errorMsg = checkInteger(__LINE__, "EnabledMessageHandlersCount", currentEnabledMessageHandlersCount, 1);
       if (!errorMsg.isEmpty())
         {
         model.disableAllMsgHandler();
