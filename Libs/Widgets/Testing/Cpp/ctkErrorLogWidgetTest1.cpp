@@ -112,7 +112,7 @@ int ctkErrorLogWidgetTest1(int argc, char * argv [])
   // --------------------------------------------------------------------------
   // Monitor application StatusBar messages
     {
-    model.registerMsgHandler(new ctkErrorLogStatusMessageHandler);
+    model.registerMsgHandler(new ctkErrorLogStatusMessageHandler(&mainWindow));
     model.setMsgHandlerEnabled(ctkErrorLogStatusMessageHandler::HandlerName, true);
 
     QString expectedStatusText1 = QLatin1String("This is a status message");

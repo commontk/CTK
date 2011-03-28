@@ -31,9 +31,10 @@
 QString ctkErrorLogStatusMessageHandler::HandlerName = QLatin1String("Status");
 
 // --------------------------------------------------------------------------
-ctkErrorLogStatusMessageHandler::ctkErrorLogStatusMessageHandler() :
+ctkErrorLogStatusMessageHandler::ctkErrorLogStatusMessageHandler(QMainWindow * mainWindow) :
   QObject(), ctkErrorLogAbstractMessageHandler()
 {
+  this->MainWindow = mainWindow;
 }
 
 // --------------------------------------------------------------------------
@@ -45,35 +46,27 @@ QString ctkErrorLogStatusMessageHandler::handlerName()const
 // --------------------------------------------------------------------------
 void ctkErrorLogStatusMessageHandler::setEnabledInternal(bool value)
 {
-  QMainWindow * mainWindow = 0;
-  foreach(QWidget* widget, qApp->topLevelWidgets())
-    {
-    mainWindow = qobject_cast<QMainWindow*>(widget);
-    if (mainWindow)
-      {
-      break;
-      }
-    }
-  if (!mainWindow)
+  if (!this->MainWindow)
     {
     qCritical() << "ctkErrorLogStatusMessageHandler - "
-                   " QMainWindow object should be instantiated before enabling ctkErrorLogStatusMessageHandler";
+                   " Failed to enable ctkErrorLogStatusMessageHandler - "
+                   "QMainWindow passed to the constructor is Null !";
     return;
     }
-  if (!mainWindow->statusBar())
+  if (!this->MainWindow->statusBar())
     {
     qCritical() << "ctkErrorLogStatusMessageHandler - Failed to enable the message handler: "
-                   "There is no StatusBar associated with QMainWindow" << mainWindow;
+                   "There is no StatusBar associated with QMainWindow" << this->MainWindow;
     return;
     }
   if (value)
     {
-    connect(mainWindow->statusBar(), SIGNAL(messageChanged(QString)),
+    connect(this->MainWindow->statusBar(), SIGNAL(messageChanged(QString)),
             this, SLOT(statusBarMessageChanged(QString)));
     }
   else
     {
-    disconnect(mainWindow->statusBar(), SIGNAL(messageChanged(QString)),
+    disconnect(this->MainWindow->statusBar(), SIGNAL(messageChanged(QString)),
                this, SLOT(statusBarMessageChanged(QString)));
     }
 }
