@@ -293,9 +293,9 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
       fdMessage0.append(fdMessage0b);
       fflush(stdout);
 
-      QString fdMessage1("This is a 2nd stdout message");
-      fprintf(stdout, "%s\n", qPrintable(fdMessage1));
-      fflush(stdout);
+//      QString fdMessage1("This is a 2nd stdout message");
+//      fprintf(stdout, "%s\n", qPrintable(fdMessage1));
+//      fflush(stdout);
 
       QString fdMessage2("This is a stderr");
       fprintf(stderr, "%s", qPrintable(fdMessage2));
@@ -304,12 +304,12 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
       fdMessage2.append(fdMessage2b);
       fflush(stderr);
 
-      QString fdMessage3("This is a 2nd stderr message");
-      fprintf(stderr, "%s\n", qPrintable(fdMessage3));
-      fflush(stderr);
+//      QString fdMessage3("This is a 2nd stderr message");
+//      fprintf(stderr, "%s\n", qPrintable(fdMessage3));
+//      fflush(stderr);
 
       QStringList expectedFDMessages;
-      expectedFDMessages << fdMessage0 << fdMessage1 << fdMessage2 << fdMessage3;
+      expectedFDMessages << fdMessage0 /*<< fdMessage1*/ << fdMessage2 /*<< fdMessage3*/;
 
       // Give enough time to the QFileSystemWatcher used internally by ctkErrorLogFDMessageHandler
       // to consider the updated files.
