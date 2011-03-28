@@ -38,8 +38,9 @@ class QStandardItemModel;
 class CTK_CORE_EXPORT ctkErrorLogAbstractMessageHandler
 {
 public:
-  ctkErrorLogAbstractMessageHandler():Enabled(false){}
-  virtual ~ctkErrorLogAbstractMessageHandler(){}
+  /// Disabled by default.
+  ctkErrorLogAbstractMessageHandler();
+  virtual ~ctkErrorLogAbstractMessageHandler();
 
   ctkErrorLogModel * errorLogModel()const;
   void setErrorLogModel(ctkErrorLogModel * newErrorLogModel);

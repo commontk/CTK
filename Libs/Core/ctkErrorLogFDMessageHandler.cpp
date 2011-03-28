@@ -59,6 +59,11 @@ ctkFDHandler::ctkFDHandler(ctkErrorLogFDMessageHandler* messageHandler,
 }
 
 // --------------------------------------------------------------------------
+ctkErrorLogFDMessageHandler::~ctkErrorLogFDMessageHandler()
+{
+}
+
+// --------------------------------------------------------------------------
 FILE* ctkFDHandler::fileDescriptorFromNumber(int fdNumber)
 {
   Q_ASSERT(fdNumber == 1 /* stdout*/ || fdNumber == 2 /*stderr*/);
@@ -125,7 +130,7 @@ void ctkFDHandler::setEnabled(bool value)
     this->OutputFileWatcher.removePath(this->OutputFile.fileName());
 
     // Close file and restore standard output to stdout or stderr - which should be the terminal
-#if Q_OS_WIN32
+#ifdef Q_OS_WIN32
     _dup2(this->SavedFDNumber, _fileno(Self::fileDescriptorFromNumber(this->FDNumber)));
     _close(this->SavedFDNumber);
 #else

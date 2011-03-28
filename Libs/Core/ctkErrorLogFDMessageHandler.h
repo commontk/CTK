@@ -34,6 +34,7 @@ public:
   typedef ctkErrorLogAbstractMessageHandler Superclass;
 
   ctkErrorLogFDMessageHandler();
+  virtual ~ctkErrorLogFDMessageHandler();
 
   static QString HandlerName;
 

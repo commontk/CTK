@@ -37,6 +37,17 @@
 // ctkErrorLogAbstractMessageHandler methods
 
 // --------------------------------------------------------------------------
+ctkErrorLogAbstractMessageHandler::ctkErrorLogAbstractMessageHandler()
+  : Enabled(false)
+{
+}
+
+// --------------------------------------------------------------------------
+ctkErrorLogAbstractMessageHandler::~ctkErrorLogAbstractMessageHandler()
+{
+}
+
+// --------------------------------------------------------------------------
 ctkErrorLogModel* ctkErrorLogAbstractMessageHandler::errorLogModel()const
 {
   return this->ErrorLogModel.data();

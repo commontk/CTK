@@ -186,6 +186,11 @@ ctkErrorLogStreamMessageHandler::ctkErrorLogStreamMessageHandler() :
 }
 
 // --------------------------------------------------------------------------
+ctkErrorLogStreamMessageHandler::~ctkErrorLogStreamMessageHandler()
+{
+}
+
+// --------------------------------------------------------------------------
 QString ctkErrorLogStreamMessageHandler::handlerName()const
 {
   return ctkErrorLogStreamMessageHandler::HandlerName;

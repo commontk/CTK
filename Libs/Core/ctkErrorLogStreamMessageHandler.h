@@ -28,12 +28,14 @@
 class ctkErrorLogStreamMessageHandlerPrivate;
 
 //------------------------------------------------------------------------------
-class CTK_CORE_EXPORT ctkErrorLogStreamMessageHandler : public ctkErrorLogAbstractMessageHandler
+class CTK_CORE_EXPORT ctkErrorLogStreamMessageHandler
+  : public ctkErrorLogAbstractMessageHandler
 {
 public:
   typedef ctkErrorLogAbstractMessageHandler Superclass;
 
   ctkErrorLogStreamMessageHandler();
+  virtual ~ctkErrorLogStreamMessageHandler();
 
   static QString HandlerName;
 
