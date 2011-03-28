@@ -108,6 +108,8 @@ public:
 
   bool LogEntryGrouping;
 
+  int TerminalOutputEnabled;
+
 };
 
 // --------------------------------------------------------------------------
@@ -117,6 +119,7 @@ public:
 ctkErrorLogModelPrivate::ctkErrorLogModelPrivate(ctkErrorLogModel& object)
   : q_ptr(&object)
 {
+  this->TerminalOutputEnabled = false;
 }
 
 // --------------------------------------------------------------------------
@@ -258,6 +261,20 @@ void ctkErrorLogModel::setAllMsgHandlerEnabled(bool enabled)
 }
 
 //------------------------------------------------------------------------------
+bool ctkErrorLogModel::terminalOutputEnabled()const
+{
+  Q_D(const ctkErrorLogModel);
+  return d->TerminalOutputEnabled;
+}
+
+//------------------------------------------------------------------------------
+void ctkErrorLogModel::setTerminalOutputEnabled(bool enabled)
+{
+  Q_D(ctkErrorLogModel);
+  d->TerminalOutputEnabled = enabled;
+}
+
+//------------------------------------------------------------------------------
 QString ctkErrorLogModel::logLevelAsString(LogLevel logLevel)const
 {
   QMetaEnum logLevelEnum = this->metaObject()->enumerator(0);
@@ -348,6 +365,21 @@ void ctkErrorLogModel::addEntry(ctkErrorLogModel::LogLevel logLevel,
       {
       d->StandardItemModel.setData(lastRowDescriptionIndex, displayText.append("..."), Qt::DisplayRole);
       }
+    }
+
+  if (d->TerminalOutputEnabled)
+    {
+    QStringList savedMsgHandlerEnabled = this->msgHandlerEnabled();
+    this->disableAllMsgHandler();
+    if (logLevel <= ctkErrorLogModel::Info)
+      {
+      std::cout << text << std::endl;
+      }
+    else
+      {
+      std::cerr << text << std::endl;
+      }
+    this->setMsgHandlerEnabled(savedMsgHandlerEnabled);
     }
 }
 
