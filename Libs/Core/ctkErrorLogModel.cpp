@@ -119,6 +119,8 @@ public:
 
   bool LogEntryGrouping;
 
+  bool AddingEntry;
+
   int TerminalOutputEnabled;
 
 };
@@ -130,6 +132,7 @@ public:
 ctkErrorLogModelPrivate::ctkErrorLogModelPrivate(ctkErrorLogModel& object)
   : q_ptr(&object)
 {
+  this->AddingEntry = false;
   this->TerminalOutputEnabled = false;
 }
 
@@ -299,6 +302,21 @@ void ctkErrorLogModel::addEntry(ctkErrorLogModel::LogLevel logLevel,
 {
   Q_D(ctkErrorLogModel);
 
+  if (d->AddingEntry)
+    {
+//    QFile f("/tmp/ctkErrorLogModel-AddingEntry-true.txt");
+//    f.open(QFile::Append);
+//    QTextStream s(&f);
+//    s << "text=>" << text << "\n";
+//    s << "\tlogLevel:" << qPrintable(this->logLevelAsString(logLevel)) << "\n";
+//    s << "\torigin:" << qPrintable(origin) << "\n";
+//    s << "\ttext:" << text << "\n";
+//    f.close();
+    return;
+    }
+
+  d->AddingEntry = true;
+
   QString timeFormat("dd.MM.yyyy hh:mm:ss");
   QDateTime currentDateTime = QDateTime::currentDateTime();
 
@@ -381,6 +399,7 @@ void ctkErrorLogModel::addEntry(ctkErrorLogModel::LogLevel logLevel,
   if (d->TerminalOutputEnabled)
     {
     QStringList savedMsgHandlerEnabled = this->msgHandlerEnabled();
+
     this->disableAllMsgHandler();
     if (logLevel <= ctkErrorLogModel::Info)
       {
@@ -392,6 +411,8 @@ void ctkErrorLogModel::addEntry(ctkErrorLogModel::LogLevel logLevel,
       }
     this->setMsgHandlerEnabled(savedMsgHandlerEnabled);
     }
+
+  d->AddingEntry = false;
 }
 
 //------------------------------------------------------------------------------
