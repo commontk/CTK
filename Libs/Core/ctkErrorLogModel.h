@@ -69,6 +69,7 @@ class CTK_CORE_EXPORT ctkErrorLogModel : public QSortFilterProxyModel
   Q_OBJECT
   Q_FLAGS(LogLevel)
   Q_PROPERTY(bool logEntryGrouping READ logEntryGrouping WRITE setLogEntryGrouping)
+  Q_PROPERTY(bool terminalOutputEnabled READ terminalOutputEnabled WRITE  setTerminalOutputEnabled)
 public:
   typedef QSortFilterProxyModel Superclass;
   typedef ctkErrorLogModel Self;
@@ -107,10 +108,22 @@ public:
   QStringList msgHandlerNames()const;
 
   bool msgHandlerEnabled(const QString& handlerName) const;
-
   void setMsgHandlerEnabled(const QString& handlerName, bool enabled);
 
+  /// Return names of the enabled message handlers
+  QStringList msgHandlerEnabled()const;
+
+  /// Enable handler identified by their names
+  void setMsgHandlerEnabled(const QStringList& handlerNames);
+
+  void enableAllMsgHandler();
   void disableAllMsgHandler();
+  void setAllMsgHandlerEnabled(bool enabled);
+
+  /// Return True messages are both printed into the terminal and added to ctkErrorLogModel.
+  bool terminalOutputEnabled()const;
+
+  void setTerminalOutputEnabled(bool enabled);
 
   QString logLevelAsString(LogLevel logLevel)const;
 

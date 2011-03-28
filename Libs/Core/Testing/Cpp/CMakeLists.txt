@@ -28,6 +28,7 @@ SET(KITTests_SRCS
   ctkCommandLineParserTest1.cpp
   ctkErrorLogModelTest1.cpp
   ctkErrorLogModelTest2.cpp
+  ctkErrorLogModelTest3.cpp
   ctkModelTesterTest1.cpp
   ctkUtilsTest1.cpp
   ctkUtilsTest2.cpp
@@ -113,6 +114,9 @@ SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkErrorLogModelTest1 )
 SIMPLE_TEST( ctkErrorLogModelTest2 )
+SIMPLE_TEST( ctkErrorLogModelTest3 )
+SET_TESTS_PROPERTIES(ctkErrorLogModelTest3 PROPERTIES PASS_REGULAR_EXPRESSION
+"This is a qDebug message\nThis is a qWarning message\nThis is a qCritical message\n")
 SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )

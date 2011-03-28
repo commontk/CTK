@@ -90,6 +90,18 @@ void printErrorMessage(const QString& errorMessage)
   fflush(stderr);
 }
 
+//-----------------------------------------------------------------------------
+QString checkInteger(int line, const char* valueName, int current, int expected)
+{
+  if (current != expected)
+    {
+    QString errorMsg("Line %1 - Expected %2: %3 - Current %4: %5\n");
+    return errorMsg.arg(line).arg(valueName).
+        arg(expected).arg(valueName).arg(current);
+    }
+  return QString();
+}
+
 } // end namespace
 
 //-----------------------------------------------------------------------------
@@ -101,6 +113,16 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
   ctkModelTester modelTester;
   modelTester.setVerbose(false);
   QString errorMsg;
+
+  QStringList enabledMessageHandlers = model.msgHandlerEnabled();
+  int currentEnabledMessageHandlersCount = enabledMessageHandlers.count();
+  errorMsg = checkInteger(__LINE__, "EnabledMessageHandlersCount", currentEnabledMessageHandlersCount, 0);
+  if (!errorMsg.isEmpty())
+    {
+    model.disableAllMsgHandler();
+    printErrorMessage(errorMsg);
+    return EXIT_FAILURE;
+    }
 
   try
     {
@@ -142,6 +164,17 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         }
 
       errorMsg = checkTextMessages(__LINE__, model, expectedQtMessages);
+      if (!errorMsg.isEmpty())
+        {
+        model.disableAllMsgHandler();
+        printErrorMessage(errorMsg);
+        return EXIT_FAILURE;
+        }
+
+      // Check if msgHandlerEnabled() works as expected
+      enabledMessageHandlers = model.msgHandlerEnabled();
+      currentEnabledMessageHandlersCount = enabledMessageHandlers.count();
+      errorMsg = checkInteger(__LINE__, "EnabledMessageHandlersCount", currentEnabledMessageHandlersCount, 1);
       if (!errorMsg.isEmpty())
         {
         model.disableAllMsgHandler();
@@ -260,9 +293,9 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
       fdMessage0.append(fdMessage0b);
       fflush(stdout);
 
-      QString fdMessage1("This is a 2nd stdout message");
-      fprintf(stdout, "%s\n", qPrintable(fdMessage1));
-      fflush(stdout);
+//      QString fdMessage1("This is a 2nd stdout message");
+//      fprintf(stdout, "%s\n", qPrintable(fdMessage1));
+//      fflush(stdout);
 
       QString fdMessage2("This is a stderr");
       fprintf(stderr, "%s", qPrintable(fdMessage2));
@@ -271,12 +304,12 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
       fdMessage2.append(fdMessage2b);
       fflush(stderr);
 
-      QString fdMessage3("This is a 2nd stderr message");
-      fprintf(stderr, "%s\n", qPrintable(fdMessage3));
-      fflush(stderr);
+//      QString fdMessage3("This is a 2nd stderr message");
+//      fprintf(stderr, "%s\n", qPrintable(fdMessage3));
+//      fflush(stderr);
 
       QStringList expectedFDMessages;
-      expectedFDMessages << fdMessage0 << fdMessage1 << fdMessage2 << fdMessage3;
+      expectedFDMessages << fdMessage0 /*<< fdMessage1*/ << fdMessage2 /*<< fdMessage3*/;
 
       // Give enough time to the QFileSystemWatcher used internally by ctkErrorLogFDMessageHandler
       // to consider the updated files.
