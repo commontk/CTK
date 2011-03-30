@@ -9,6 +9,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkDICOMModelTest2.cpp
   ctkDICOMQueryRetrieveWidgetTest1.cpp
   ctkDICOMQueryResultsTabWidgetTest1.cpp
+  ctkDICOMServerNodeWidgetTest1.cpp
   ctkDICOMThumbnailWidgetTest1.cpp
   )
 

@@ -78,14 +78,16 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* parentWidget)
     this, SLOT(saveSettings()));
   connect(d->StoragePort, SIGNAL(textChanged(const QString&)),
     this, SLOT(saveSettings()));
+
   connect(d->AddButton, SIGNAL(clicked()),
-    this, SLOT(addNode()));
+    this, SLOT(addServerNode()));
   connect(d->RemoveButton, SIGNAL(clicked()),
-    this, SLOT(removeNode()));
+    this, SLOT(removeCurrentServerNode()));
+
   connect(d->NodeTable, SIGNAL(cellChanged(int,int)),
-    this, SLOT(onCellChanged(int,int)));
+    this, SLOT(saveSettings()));
   connect(d->NodeTable, SIGNAL(currentItemChanged(QTableWidgetItem*, QTableWidgetItem*)),
-    this, SLOT(onCurrentItemChanged(QTableWidgetItem*, QTableWidgetItem*)));
+    this, SLOT(updateRemoveButtonEnableState()));
 }
 
 //----------------------------------------------------------------------------
@@ -93,45 +95,57 @@ ctkDICOMServerNodeWidget::~ctkDICOMServerNodeWidget()
 {
 }
 
-
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget::addNode()
+int ctkDICOMServerNodeWidget::addServerNode()
 {
   Q_D(ctkDICOMServerNodeWidget);
+  const int rowCount = d->NodeTable->rowCount();
+  d->NodeTable->setRowCount( rowCount + 1 );
 
-  d->NodeTable->setRowCount( d->NodeTable->rowCount() + 1 );
+  QTableWidgetItem* newItem = new QTableWidgetItem;
+  newItem->setCheckState( Qt::Unchecked );
+  d->NodeTable->setItem(rowCount, NameColumn, newItem);
+
+  d->NodeTable->setCurrentCell(rowCount, NameColumn);
+  // The old rowCount becomes the added row index
+  return rowCount;
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget::removeNode()
+int ctkDICOMServerNodeWidget::addServerNode(const QMap<QString, QVariant>& node)
+{
+  Q_D(ctkDICOMServerNodeWidget);
+  const int row = this->addServerNode();
+  
+  QTableWidgetItem *newItem;
+  newItem = new QTableWidgetItem( node["Name"].toString() );
+  newItem->setCheckState( Qt::CheckState(node["CheckState"].toInt()) );
+  d->NodeTable->setItem(row, NameColumn, newItem);
+  newItem = new QTableWidgetItem( node["AETitle"].toString() );
+  d->NodeTable->setItem(row, AETitleColumn, newItem);
+  newItem = new QTableWidgetItem( node["Address"].toString() );
+  d->NodeTable->setItem(row, AddressColumn, newItem);
+  newItem = new QTableWidgetItem( node["Port"].toString() );
+  d->NodeTable->setItem(row, PortColumn, newItem);
+  return row;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMServerNodeWidget::removeCurrentServerNode()
 {
   Q_D(ctkDICOMServerNodeWidget);
 
   d->NodeTable->removeRow( d->NodeTable->currentRow() );
-  d->RemoveButton->setEnabled(false);
+
   this->saveSettings();
+  this->updateRemoveButtonEnableState();
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget::onCellChanged(int row, int column)
+void ctkDICOMServerNodeWidget::updateRemoveButtonEnableState()
 {
-  Q_UNUSED(row);
-  Q_UNUSED(column);
-
-  this->saveSettings();
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget::onCurrentItemChanged(QTableWidgetItem* current, QTableWidgetItem *previous)
-{
-  Q_UNUSED(current);
-  Q_UNUSED(previous);
-
   Q_D(ctkDICOMServerNodeWidget);
-  if (d->NodeTable->rowCount() > 1)
-  {
-    d->RemoveButton->setEnabled(true);
-  }
+  d->RemoveButton->setEnabled(d->NodeTable->rowCount() > 0);
 }
 
 //----------------------------------------------------------------------------
@@ -146,23 +160,12 @@ void ctkDICOMServerNodeWidget::saveSettings()
   settings.setValue("ServerNodeCount", rowCount);
   for (int row = 0; row < rowCount; ++row)
     {
-    QMap<QString, QVariant> node;
-    for (int k = 0; k < columnCount; ++k)
-      {
-      if (!d->NodeTable->item(row,k))
-        {
-        continue;
-        }
-      QString label = d->NodeTable->horizontalHeaderItem(k)->text();
-      node[label] = d->NodeTable->item(row, k)->data(Qt::DisplayRole);
-      }
-    node["CheckState"] = d->NodeTable->item(row,0) ?
-      d->NodeTable->item(row,0)->checkState() : Qt::Unchecked;
+    QMap<QString, QVariant> node = this->serverNodeParameters(row);
     settings.setValue(QString("ServerNodes/%1").arg(row), QVariant(node));
     }
-  settings.setValue("CallingAETitle", d->CallingAETitle->text());
-  settings.setValue("StorageAETitle", d->StorageAETitle->text());
-  settings.setValue("StoragePort", d->StoragePort->text());
+  settings.setValue("CallingAETitle", this->callingAETitle());
+  settings.setValue("StorageAETitle", this->storageAETitle());
+  settings.setValue("StoragePort", this->storagePort());
   settings.sync();
 }
 
@@ -170,6 +173,8 @@ void ctkDICOMServerNodeWidget::saveSettings()
 void ctkDICOMServerNodeWidget::readSettings()
 {
   Q_D(ctkDICOMServerNodeWidget);
+
+  d->NodeTable->setRowCount(0);
 
   QSettings settings;
 
@@ -180,114 +185,147 @@ void ctkDICOMServerNodeWidget::readSettings()
     d->StorageAETitle->setText("CTKSTORE");
     d->StoragePort->setText("11112");
     d->CallingAETitle->setText("FINDSCU");
-    d->NodeTable->setRowCount(1);
-    d->NodeTable->setItem(0, NameColumn, new QTableWidgetItem("ExampleHost"));
-    d->NodeTable->item(0, NameColumn)->setCheckState( Qt::Checked );
-    d->NodeTable->setItem(0, AETitleColumn, new QTableWidgetItem("ANY-SCP"));
-    d->NodeTable->setItem(0, AddressColumn, new QTableWidgetItem("localhost"));
-    d->NodeTable->setItem(0, PortColumn, new QTableWidgetItem("11112"));
+
+    QMap<QString, QVariant> defaultServerNode;
+    defaultServerNode["Name"] = QString("ExampleHost");
+    defaultServerNode["CheckState"] = Qt::Checked;
+    defaultServerNode["AETitle"] = QString("ANY-SCP");
+    defaultServerNode["Address"] = QString("localhost");
+    defaultServerNode["Port"] = QString("11112");
+    this->addServerNode(defaultServerNode);
     return;
     }
 
   d->StorageAETitle->setText(settings.value("StorageAETitle").toString());
   d->StoragePort->setText(settings.value("StoragePort").toString());
   d->CallingAETitle->setText(settings.value("CallingAETitle").toString());
+
   const int count = settings.value("ServerNodeCount").toInt();
-  d->NodeTable->setRowCount(count);
-  for (int row = 0; row < count; row++)
+  for (int row = 0; row < count; ++row)
     {
     node = settings.value(QString("ServerNodes/%1").arg(row)).toMap();
-    QTableWidgetItem *newItem;
-    newItem = new QTableWidgetItem( node["Name"].toString() );
-    newItem->setCheckState( Qt::CheckState(node["CheckState"].toInt()) );
-    d->NodeTable->setItem(row, NameColumn, newItem);
-    newItem = new QTableWidgetItem( node["AETitle"].toString() );
-    d->NodeTable->setItem(row, AETitleColumn, newItem);
-    newItem = new QTableWidgetItem( node["Address"].toString() );
-    d->NodeTable->setItem(row, AddressColumn, newItem);
-    newItem = new QTableWidgetItem( node["Port"].toString() );
-    d->NodeTable->setItem(row, PortColumn, newItem);
+    this->addServerNode(node);
     }
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMServerNodeWidget::callingAETitle()
+QString ctkDICOMServerNodeWidget::callingAETitle()const
 {
-  Q_D(ctkDICOMServerNodeWidget);
-
+  Q_D(const ctkDICOMServerNodeWidget);
   return d->CallingAETitle->text();
 }
 
 //----------------------------------------------------------------------------
-QMap<QString,QVariant> ctkDICOMServerNodeWidget::parameters()
+QString ctkDICOMServerNodeWidget::storageAETitle()const
 {
-  Q_D(ctkDICOMServerNodeWidget);
+  Q_D(const ctkDICOMServerNodeWidget);
+  return d->StorageAETitle->text();
+}
+
+//----------------------------------------------------------------------------
+int ctkDICOMServerNodeWidget::storagePort()const
+{
+  Q_D(const ctkDICOMServerNodeWidget);
+  bool ok = false;
+  int port = d->StoragePort->text().toInt(&ok);
+  Q_ASSERT(ok);
+  return port;
+}
+
+//----------------------------------------------------------------------------
+QMap<QString,QVariant> ctkDICOMServerNodeWidget::parameters()const
+{
+  Q_D(const ctkDICOMServerNodeWidget);
 
   QMap<QString, QVariant> parameters;
 
-  parameters["CallingAETitle"] = d->CallingAETitle->text();
-  parameters["StorageAETitle"] = d->StorageAETitle->text();
-  parameters["StoragePort"] = d->StoragePort->text();
+  parameters["CallingAETitle"] = this->callingAETitle();
+  parameters["StorageAETitle"] = this->storageAETitle();
+  parameters["StoragePort"] = this->storagePort();
 
   return parameters;
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkDICOMServerNodeWidget::nodes()const
+QStringList ctkDICOMServerNodeWidget::serverNodes()const
 {
   Q_D(const ctkDICOMServerNodeWidget);
 
-  const int count = d->NodeTable->rowCount();
   QStringList nodes;
-  for (int row = 0; row < count; row++)
+  const int count = d->NodeTable->rowCount();
+  for (int row = 0; row < count; ++row)
     {
-    nodes << d->NodeTable->item(row,NameColumn)->text();
+    QTableWidgetItem* item = d->NodeTable->item(row,NameColumn);
+    nodes << (item ? item->text() : QString(""));
     }
+  // If there are duplicates, serverNodeParameters(QString) will behave
+  // strangely
+  Q_ASSERT(nodes.removeDuplicates() == 0);
   return nodes;
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkDICOMServerNodeWidget::checkedNodes()const
+QStringList ctkDICOMServerNodeWidget::selectedServerNodes()const
 {
   Q_D(const ctkDICOMServerNodeWidget);
 
-  const int count = d->NodeTable->rowCount();
   QStringList nodes;
-  for (int row = 0; row < count; row++)
+  const int count = d->NodeTable->rowCount();
+  for (int row = 0; row < count; ++row)
     {
-    QTableWidgetItem* item = d->NodeTable->item(row,NameColumn);
+    QTableWidgetItem* item = d->NodeTable->item(row, NameColumn);
     if (item && item->checkState() == Qt::Checked)
       {
       nodes << item->text();
       }
     }
+  // If there are duplicates, serverNodeParameters(QString) will behave
+  // strangely
+  Q_ASSERT(nodes.removeDuplicates() == 0);
   return nodes;
 }
 
 //----------------------------------------------------------------------------
-QMap<QString, QVariant> ctkDICOMServerNodeWidget::nodeParameters(const QString &node)const
+QMap<QString, QVariant> ctkDICOMServerNodeWidget::serverNodeParameters(const QString &node)const
 {
   Q_D(const ctkDICOMServerNodeWidget);
 
   QMap<QString, QVariant> parameters;
 
-  int count = d->NodeTable->rowCount();
-  QStringList keys;
-  keys << "Name" << "AETitle" << "Address" << "Port";
+  const int count = d->NodeTable->rowCount();
   for (int row = 0; row < count; row++)
-  {
-    if ( d->NodeTable->item(row,0)->text() == node )
     {
-      for (int k = 0; k < keys.size(); ++k)
+    if ( d->NodeTable->item(row,0)->text() == node )
       {
-        if ( d->NodeTable->item(row,k) )
-        {
-          parameters[keys.at(k)] = d->NodeTable->item(row,k)->text();
-        }
-        parameters["CheckState"] = d->NodeTable->item(row,0)->checkState();
+      // TBD: not sure what it means to merge parameters
+      parameters.unite(this->serverNodeParameters(row));
       }
     }
-  }
 
   return parameters;
+}
+
+//----------------------------------------------------------------------------
+QMap<QString, QVariant> ctkDICOMServerNodeWidget::serverNodeParameters(int row)const
+{
+  Q_D(const ctkDICOMServerNodeWidget);
+
+  QMap<QString, QVariant> node;
+  if (row < 0 || row >= d->NodeTable->rowCount())
+    {
+    return node;
+    }
+  const int columnCount = d->NodeTable->columnCount();
+  for (int column = 0; column < columnCount; ++column)
+    {
+    if (!d->NodeTable->item(row, column))
+      {
+      continue;
+      }
+    QString label = d->NodeTable->horizontalHeaderItem(column)->text();
+    node[label] = d->NodeTable->item(row, column)->data(Qt::DisplayRole);
+    }
+  node["CheckState"] = d->NodeTable->item(row, NameColumn) ?
+    d->NodeTable->item(row,0)->checkState() : Qt::Unchecked;
+  return node;
 }

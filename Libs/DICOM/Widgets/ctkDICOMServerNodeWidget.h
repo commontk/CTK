@@ -40,21 +40,40 @@ public:
   explicit ctkDICOMServerNodeWidget(QWidget* parent=0);
   virtual ~ctkDICOMServerNodeWidget();
 
-  QString                callingAETitle();
-  QMap<QString,QVariant> parameters();
+  /// "FINDSCU" by default
+  QString                callingAETitle()const;
+  /// "CTKSTORE" by default
+  QString                storageAETitle()const;
+  /// 11112 by default
+  int                    storagePort()const;
+  /// Utility function that returns the callingAETitle, storageAETitle and
+  /// storagePort in a map
+  QMap<QString,QVariant> parameters()const;
 
-  QStringList            nodes()const;
-  QStringList            checkedNodes()const;
-  QMap<QString,QVariant> nodeParameters(const QString &node)const ;
+  /// Return the list of server names
+  QStringList            serverNodes()const;
+  /// Return the list of selected(checked) server names 
+  QStringList            selectedServerNodes()const;
+  /// Return all the information associated to a server defined by its name
+  QMap<QString,QVariant> serverNodeParameters(const QString &serverNode)const;
+  QMap<QString,QVariant> serverNodeParameters(int row)const;
+  
+  /// Add a server node with the given parameters
+  /// Return the row index added into the table
+  int addServerNode(const QMap<QString, QVariant>& parameters);
 
 public slots:
-  void addNode ();
-  void removeNode ();
-  void onCellChanged (int row, int column);
-  void onCurrentItemChanged(QTableWidgetItem* current, QTableWidgetItem *previous);
+  /// Add an empty server node and make it current
+  /// Return the row index added into the table
+  int addServerNode();
+  /// Remove the current row (different from the checked rows)
+  void removeCurrentServerNode();
 
   void readSettings();
   void saveSettings();
+
+protected slots:
+  void updateRemoveButtonEnableState();
 
 protected:
   QScopedPointer<ctkDICOMServerNodeWidgetPrivate> d_ptr;

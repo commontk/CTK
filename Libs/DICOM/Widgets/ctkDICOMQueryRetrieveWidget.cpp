@@ -176,13 +176,14 @@ void ctkDICOMQueryRetrieveWidget::query()
   progress.setWindowModality(Qt::WindowModal);
   progress.setMinimumDuration(0);
   progress.setValue(0);
-  foreach (d->CurrentServer, d->ServerNodeWidget->checkedNodes())
+  foreach (d->CurrentServer, d->ServerNodeWidget->selectedServerNodes())
     {
     if (progress.wasCanceled())
       {
       break;
       }
-    QMap<QString, QVariant> parameters = d->ServerNodeWidget->nodeParameters(d->CurrentServer);
+    QMap<QString, QVariant> parameters =
+      d->ServerNodeWidget->serverNodeParameters(d->CurrentServer);
     // if we are here it's because the server node was checked
     Q_ASSERT(parameters["CheckState"] == Qt::Checked );
     // create a query for the current server
@@ -294,7 +295,7 @@ void ctkDICOMQueryRetrieveWidget::onQueryProgressChanged(int value)
     {
     return;
     }
-  QStringList servers = d->ServerNodeWidget->checkedNodes();
+  QStringList servers = d->ServerNodeWidget->selectedServerNodes();
   int serverIndex = servers.indexOf(d->CurrentServer);
   if (serverIndex < 0)
     {
