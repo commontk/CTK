@@ -34,12 +34,6 @@ MACRO(ctkMacroBuildApp)
   IF(NOT DEFINED MY_NAME)
     MESSAGE(SEND_ERROR "NAME is mandatory")
   ENDIF()
-#   IF(NOT DEFINED MY_EXPORT_DIRECTIVE)
-#     MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
-#   ENDIF()
-#   IF(NOT DEFINED MY_LIBRARY_TYPE)
-#     SET(MY_LIBRARY_TYPE "SHARED")
-#   ENDIF()
 
   # Make sure either the source or the binary directory associated with the application
   # contains a file named ${MY_NAME}Main.cpp
@@ -73,19 +67,6 @@ MACRO(ctkMacroBuildApp)
   LINK_DIRECTORIES(
     ${my_library_dirs}
     )
-  
-
-#   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${MY_EXPORT_DIRECTIVE})
-#   SET(MY_EXPORT_HEADER_PREFIX ${MY_NAME})
-#   STRING(REGEX REPLACE "^CTK" "ctk" MY_EXPORT_HEADER_PREFIX ${MY_EXPORT_HEADER_PREFIX})
-#   SET(MY_LIBNAME ${lib_name})
-  
-#   CONFIGURE_FILE(
-#     ${CTK_SOURCE_DIR}/Libs/ctkExport.h.in
-#     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
-#     )
-#   SET(dynamicHeaders
-#     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
   # Make sure variable are cleared
   SET(MY_UI_CPP)
@@ -117,31 +98,20 @@ MACRO(ctkMacroBuildApp)
     ${MY_UI_CPP}
     ${MY_QRC_SRCS}
     )
-#   ADD_LIBRARY(${lib_name} ${MY_LIBRARY_TYPE}
-#     ${MY_SRCS}
-#     ${MY_MOC_CPP}
-#     ${MY_UI_CPP}
-#     ${MY_QRC_SRCS}
-#     )
 
   # Set labels associated with the target.
   SET_TARGET_PROPERTIES(${proj_name} PROPERTIES LABELS ${proj_name})
   
   # Install rules
-  IF(CTK_BUILD_SHARED_LIBS)
-    INSTALL(TARGETS ${proj_name}
-      RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR} COMPONENT Runtime
-      LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Runtime
-      ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
-  ENDIF()
+  INSTALL(TARGETS ${proj_name}
+    RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR} COMPONENT Runtime
+    LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Runtime
+    ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
 
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
     )
   TARGET_LINK_LIBRARIES(${proj_name} ${my_libs})
-
-  # Update CTK_BASE_LIBRARIES
-#   SET(CTK_BASE_LIBRARIES ${my_libs} ${lib_name} CACHE INTERNAL "CTK base libraries" FORCE)
   
   # Install headers
   FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
