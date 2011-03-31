@@ -237,6 +237,11 @@ bool ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType )
 
 
   delete responses;
+  if ( !scu.dropNetwork().good() ) 
+    {
+    logger.error ( "Error dropping the network" );
+    return false;
+    }
   return true;
 }
 
