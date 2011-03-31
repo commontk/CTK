@@ -62,6 +62,7 @@ public:
     return q->findChildren<ctkVTKConnection*>();
   }
 
+  bool StrictTypeCheck;
   bool AllBlocked;
   bool ObserveDeletion;
 };
@@ -73,6 +74,7 @@ public:
 ctkVTKObjectEventsObserverPrivate::ctkVTKObjectEventsObserverPrivate(ctkVTKObjectEventsObserver& object)
   :q_ptr(&object)
 {
+  this->StrictTypeCheck = false;
   this->AllBlocked = false;
   // ObserveDeletion == false  hasn't been that well tested...
   this->ObserveDeletion = true;
@@ -170,9 +172,24 @@ void ctkVTKObjectEventsObserver::printAdditionalInfo()
 }
 
 //-----------------------------------------------------------------------------
+bool ctkVTKObjectEventsObserver::strictTypeCheck()const
+{
+  Q_D(const ctkVTKObjectEventsObserver);
+  return d->StrictTypeCheck;
+}
+
+//-----------------------------------------------------------------------------
+void ctkVTKObjectEventsObserver::setStrictTypeCheck(bool check)
+{
+  Q_D(ctkVTKObjectEventsObserver);
+  d->StrictTypeCheck = check;
+}
+
+//-----------------------------------------------------------------------------
 QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj,
   unsigned long vtk_event, const QObject* qt_obj, const char* qt_slot, float priority)
 {
+  Q_D(ctkVTKObjectEventsObserver);
   if (old_vtk_obj)
     {
     // Check that old_object and new_object are the same type
@@ -194,11 +211,14 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObj
     // vtkObject* obj2 = vtkObject::New();
     // this->addConnection(0, obj2, vtkCommand::Modified...)
     // ...
-    if (vtk_obj && !vtk_obj->IsA(old_vtk_obj->GetClassName()))
+    if (d->StrictTypeCheck && vtk_obj
+        && !vtk_obj->IsA(old_vtk_obj->GetClassName()))
       {
-      qDebug() << "Previous vtkObject (type:" << old_vtk_obj->GetClassName() << ") to disconnect"
-               << "and new vtkObject (type:" << vtk_obj->GetClassName() << ") to connect"
-               << "have a different type.";
+      qWarning() << "Previous vtkObject (type:" << old_vtk_obj->GetClassName()
+                 << ") to disconnect"
+                 << "and new vtkObject (type:" << vtk_obj->GetClassName()
+                 << ") to connect"
+                 << "have a different type.";
       return QString();
       }
     // Disconnect old vtkObject

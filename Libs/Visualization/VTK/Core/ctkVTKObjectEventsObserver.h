@@ -41,13 +41,27 @@ class ctkVTKObjectEventsObserverPrivate;
 class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKObjectEventsObserver : public QObject
 {
 Q_OBJECT
-
+  Q_PROPERTY(bool strictTypeCheck READ strictTypeCheck WRITE setStrictTypeCheck)
 public:
   typedef QObject Superclass;
   explicit ctkVTKObjectEventsObserver(QObject* parent = 0);
   virtual ~ctkVTKObjectEventsObserver();
 
   virtual void printAdditionalInfo();
+  
+  /// The property strictTypeCheck control wether or not you can replace a
+  /// connection by a connection from an object of a different VTK class tha
+  /// the first.
+  /// For example, if strictTypeCheck is on, the following will generate an error
+  /// <code>
+  /// vtkActor* actor = vtkActor::New();
+  /// objectEventsObserver->addConnection(actor, vtkCommand::ModifiedEvent, ...);
+  /// vtkMapper* mapper = vtkMapper::New();
+  /// objectEventsObserver->addConnection(actor, mapper, vtkCommand::ModifiedEvent, ...);
+  /// </code>
+  /// False by default.
+  bool strictTypeCheck()const;
+  void setStrictTypeCheck(bool check);
 
   ///
   /// Add a connection, an Id allowing to uniquely identify the connection is
