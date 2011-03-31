@@ -242,7 +242,7 @@ MACRO(ctkMacroBuildPlugin)
 
   # Note: The plugin may be installed in some other location ???
   # Install rules
-# IF(CTK_BUILD_SHARED_LIBS)
+# IF(MY_LIBRARY_TYPE STREQUAL "SHARED")
 # INSTALL(TARGETS ${lib_name}
 # RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR} COMPONENT Runtime
 # LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Runtime
