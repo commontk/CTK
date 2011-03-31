@@ -62,6 +62,13 @@ SET(VTK_LIBRARIES
   vtkHybrid
   )
 
+IF(Q_WS_X11)
+  # If the faster 'gold' linker is used, to avoid complaints about undefined symbol
+  # 'XGetWindowAttributes', 'XCreateWindow', ..., let's link against X11 libraries.
+  FIND_PACKAGE(X11)
+  LIST(APPEND VTK_LIBRARIES ${X11_LIBRARIES})
+ENDIF()
+
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
