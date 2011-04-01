@@ -556,7 +556,6 @@ void ctkConsolePrivate::printOutputMessage(const QString& text)
   Q_Q(ctkConsole);
 
   q->printMessage(text, q->outputTextColor());
-  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 //----------------------------------------------------------------------------
@@ -565,7 +564,6 @@ void ctkConsolePrivate::printErrorMessage(const QString& text)
   Q_Q(ctkConsole);
 
   q->printMessage(text, q->errorTextColor());
-  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 //-----------------------------------------------------------------------------
