@@ -49,7 +49,7 @@ ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclas
 //-----------------------------------------------------------------------------
 ctkAbstractPythonManager::~ctkAbstractPythonManager()
 {
-  if (PyEval_ThreadsInitialized())
+  if (Py_IsInitialized())
     {
     PyThreadState* state = PyThreadState_Get();
     Py_EndInterpreter(state);
