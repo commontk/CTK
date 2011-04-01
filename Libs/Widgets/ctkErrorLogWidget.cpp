@@ -222,7 +222,6 @@ void ctkErrorLogWidget::setInfoEntriesVisible(bool visibility)
 // --------------------------------------------------------------------------
 void ctkErrorLogWidget::setUnknownEntriesVisible(bool visibility)
 {
-  Q_D(ctkErrorLogWidget);
   if (!this->errorLogModel())
     {
     return;
