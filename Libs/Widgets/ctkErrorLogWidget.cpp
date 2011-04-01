@@ -183,7 +183,7 @@ void ctkErrorLogWidget::setAllEntriesVisible(bool visibility)
   this->setErrorEntriesVisible(visibility);
   this->setWarningEntriesVisible(visibility);
   this->setInfoEntriesVisible(visibility);
-  this->errorLogModel()->filterEntry(ctkErrorLogModel::Unknown, /* disableFilter= */ !visibility);
+  this->setUnknownEntriesVisible(visibility);
 }
 
 // --------------------------------------------------------------------------
@@ -217,6 +217,18 @@ void ctkErrorLogWidget::setInfoEntriesVisible(bool visibility)
     return;
     }
   this->errorLogModel()->filterEntry(d->InfoButtonFilter, /* disableFilter= */ !visibility);
+}
+
+// --------------------------------------------------------------------------
+void ctkErrorLogWidget::setUnknownEntriesVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  if (!this->errorLogModel())
+    {
+    return;
+    }
+  this->errorLogModel()->filterEntry(ctkErrorLogModel::Unknown,
+      /* disableFilter= */ !visibility);
 }
 
 // --------------------------------------------------------------------------

@@ -52,6 +52,8 @@ public slots:
   void setWarningEntriesVisible(bool visibility);
 
   void setInfoEntriesVisible(bool visibility);
+  
+  void setUnknownEntriesVisible(bool visibility);
 
 protected slots:
   void onRowsInserted(const QModelIndex &parent, int first, int last);

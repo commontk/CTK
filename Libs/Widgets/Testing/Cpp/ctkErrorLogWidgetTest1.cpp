@@ -213,6 +213,9 @@ int ctkErrorLogWidgetTest1(int argc, char * argv [])
   fflush(stdout);
 
   widget.setErrorLogModel(&model);
+  widget.setErrorLogModel(0);
+  widget.setErrorLogModel(&model);
+  widget.setErrorLogModel(&model);
   widget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
