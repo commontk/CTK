@@ -305,6 +305,7 @@ SET(CTK_LIBS
   DICOM/Widgets:OFF
   ImageProcessing/ITK/Core:OFF
   #Messaging/Core:OFF  # MessagingCore library need some love :) - Let's disable it for now :(
+  ModuleDescription:OFF
   Scripting/Python/Core:OFF
   Scripting/Python/Widgets:OFF
   Visualization/VTK/Core:OFF
@@ -331,6 +332,7 @@ SET(CTK_PLUGINS
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
   org.commontk.qtmobility.service:OFF
+  org.commontk.slicermodule:OFF
   )
 
 #-----------------------------------------------------------------------------
