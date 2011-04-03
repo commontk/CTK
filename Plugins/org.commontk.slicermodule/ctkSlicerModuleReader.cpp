@@ -19,11 +19,18 @@ limitations under the License.
 =============================================================================*/
 
 // Qt includes
+#include <QAbstractMessageHandler>
 #include <QDebug>
+#include <QXmlSchema>
+#include <QXmlSchemaValidator>
 #include <QVariant>
 
 // CTK includes
 #include "ctkSlicerModuleReader.h"
+
+// STD includes
+#include <stdexcept>
+
 class ctkDefaultMessageHandler : public QAbstractMessageHandler
 {
 public:
@@ -192,6 +199,8 @@ bool ctkSlicerModuleHandler::startExecutableElement(const QString& namespaceURI,
                                              const QString& name,
                                              const QXmlAttributes& atts)
 {
+  Q_UNUSED(namespaceURI);
+  Q_UNUSED(localName);
   ++this->State.InExecutable;
   ctkModuleParameterGroup group;
   if (name == "parameters")
@@ -211,6 +220,9 @@ bool ctkSlicerModuleHandler::startGroupElement(const QString& namespaceURI,
                                         const QString& name,
                                         const QXmlAttributes& atts)
 {
+  Q_UNUSED(namespaceURI);
+  Q_UNUSED(localName);
+
   ++this->State.InGroup;
   if (name == "label" || name == "description")
     {// not a parameter
@@ -364,14 +376,14 @@ bool ctkSlicerModuleHandler::startGroupElement(const QString& namespaceURI,
     param["Aggregate"] = aggregate ? "true" : "false";
     param["CPPType"] = (multiple && !aggregate) ? "std::vector<std::string>" : "std::string";
     param["ArgType"] = "std::string";
-    param["Type"] = (!atts.value("type").isEmpty())? atts.value("type").isEmpty() : "scalar";
+    param["Type"] = (!atts.value("type").isEmpty())? atts.value("type") : "scalar";
     }
   else if (name == "table")
     {
     param["Multiple"] = multiple ? "true" : "false";
     param["CPPType"] = multiple ? "std::vector<std::string>" : "std::string";
     param["ArgType"] = "std::string";
-    param["Type"] = (!atts.value("type").isEmpty())? atts.value("type").isEmpty() : "scalar";
+    param["Type"] = (!atts.value("type").isEmpty())? atts.value("type") : "scalar";
     if (!atts.value("reference").isEmpty())
       {
       param["Reference"] = atts.value("reference");
@@ -386,7 +398,7 @@ bool ctkSlicerModuleHandler::startGroupElement(const QString& namespaceURI,
     param["Multiple"] = multiple ? "true" : "false";
     param["CPPType"] = multiple ? "std::vector<std::string>" : "std::string";
     param["ArgType"] = "std::string";
-    param["Type"] = (!atts.value("type").isEmpty())? atts.value("type").isEmpty() : "scalar";
+    param["Type"] = (!atts.value("type").isEmpty())? atts.value("type") : "scalar";
     param["Hidden"] = hidden ? "true" : "false";
     if (!atts.value("reference").isEmpty())
       {
@@ -405,6 +417,9 @@ bool ctkSlicerModuleHandler::startGroupElement(const QString& namespaceURI,
 bool ctkSlicerModuleHandler::startParameterElement(const QString& namespaceURI, const QString& localName,
                                             const QString& name, const QXmlAttributes& atts)
 {
+  Q_UNUSED(namespaceURI);
+  Q_UNUSED(localName);
+
   ++this->State.InParameter;
   ctkModuleParameter& param = *this->State.CurrentParameter;
   if (name == "flag")
@@ -441,6 +456,9 @@ bool ctkSlicerModuleHandler::endExecutableElement(const QString& namespaceURI,
                                            const QString& localName,
                                            const QString& name)
 {
+  Q_UNUSED(namespaceURI);
+  Q_UNUSED(localName);
+
   --this->State.InExecutable;
   ctkModuleDescription& module= *this->ModuleDescription;
   if (name == "parameters")
@@ -497,6 +515,9 @@ bool ctkSlicerModuleHandler::endGroupElement(const QString& namespaceURI,
                                       const QString& localName,
                                       const QString& name)
 {
+  Q_UNUSED(namespaceURI);
+  Q_UNUSED(localName);
+
   --this->State.InGroup;
   Q_ASSERT(this->State.CurrentGroup);
   ctkModuleParameterGroup& group = *this->State.CurrentGroup;
@@ -520,6 +541,9 @@ bool ctkSlicerModuleHandler::endGroupElement(const QString& namespaceURI,
 bool ctkSlicerModuleHandler::endParameterElement(const QString& namespaceURI, const QString& localName,
                                           const QString& name)
 {
+  Q_UNUSED(namespaceURI);
+  Q_UNUSED(localName);
+
   --this->State.InParameter;
   bool res = true;
   ctkModuleParameter& parameter = *this->State.CurrentParameter;

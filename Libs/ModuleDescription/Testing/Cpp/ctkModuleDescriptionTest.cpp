@@ -18,10 +18,12 @@
  
 =========================================================================*/
 
+// Qt includes
+#include <QTextStream>
+
 // CTK includes
 #include "ctkModuleDescription.h"
 #include <iostream>
-
 
 //-----------------------------------------------------------------------------
 int ctkModuleDescriptionTest(int argc, char * argv [] )
@@ -83,7 +85,8 @@ int ctkModuleDescriptionTest(int argc, char * argv [] )
   group.addParameter( new ctkModuleParameter(param) );
   module.addParameterGroup( new ctkModuleParameterGroup(group) );
 
-  QTextStream(stdout)<< module;
+  QTextStream stream(stdout);
+  stream<< module;
 
   return EXIT_SUCCESS;
 }

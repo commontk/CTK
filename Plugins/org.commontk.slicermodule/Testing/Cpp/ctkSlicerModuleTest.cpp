@@ -112,15 +112,16 @@ ctkModuleDescription ReadModuleDescription(
   // Read file
   QFile file( xmlFileName );
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-  {
-    std::cout << "XML file " << xmlFileName.toStdString( ) << " could not be opened." << endl;
+    {
+    std::cout << "XML file " << xmlFileName.toStdString( ) << " could not be opened." << std::endl;
     exit(1);
-  }
+    }
 
   // Parse XML file
   reader->setInput( &file );
   reader->update();
-  QTextStream(stdout) << reader->moduleDescription( );
+  QTextStream stream(stdout);
+  stream << reader->moduleDescription( );
 
   return reader->moduleDescription( );
 }
@@ -139,6 +140,7 @@ void BuildCommandLine( ctkPluginContext* context, const ctkModuleDescription& mo
   converter->setModuleDescription( module );
   converter->update();
   commandLineString = converter->GetOutput().toStringList();
-  QTextStream(stdout) << commandLineString;
+  QTextStream stream(stdout);
+  stream << commandLineString;
 }
 
