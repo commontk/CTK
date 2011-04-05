@@ -66,7 +66,10 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   Q_D(ctkDICOMAppWidget);  
 
   d->setupUi(this);
-  
+
+  //Enable sorting in tree view
+  d->treeView->setSortingEnabled(true);
+
   //Set toolbar button style
   d->toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
@@ -174,21 +177,24 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
 {
   Q_D(ctkDICOMAppWidget);
 
-  if ( d->DICOMModel.data(index,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType )
+  QModelIndex index0 = index.sibling(index.row(), 0);
+
+  if ( d->DICOMModel.data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType )
   {
     qDebug() << "Clicked on series";
     QStringList thumbnails;
     QString thumbnailPath = d->DICOMDatabase->databaseDirectory() +
-                            "/thumbs/" + d->DICOMModel.data(index.parent() ,ctkDICOMModel::UIDRole).toString() + "/" +
-                            d->DICOMModel.data(index ,ctkDICOMModel::UIDRole).toString() + "/";
+                            "/thumbs/" + d->DICOMModel.data(index0.parent() ,ctkDICOMModel::UIDRole).toString() + "/" +
+                            d->DICOMModel.data(index0 ,ctkDICOMModel::UIDRole).toString() + "/";
 
-    QModelIndex studyIndex = index.parent();
-    QModelIndex seriesIndex = index;
-    int imageCount = d->DICOMModel.rowCount(index);
+    QModelIndex studyIndex = index0.parent();
+    QModelIndex seriesIndex = index0;
+    d->DICOMModel.fetchMore(index0);
+    int imageCount = d->DICOMModel.rowCount(index0);
     logger.debug(QString("Thumbs: %1").arg(imageCount));
     for (int i = 0 ; i < imageCount ; i++ )
     {
-      QModelIndex imageIndex = index.child(i,0);
+      QModelIndex imageIndex = index0.child(i,0);
       QString thumbnail = thumbnailPath + d->DICOMModel.data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
       qDebug() << "Thumb: " << thumbnail;
       if (QFile(thumbnail).exists())
@@ -209,9 +215,9 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
 
   // TODO: this could check the type of the model entries
   QString thumbnailPath = d->DICOMDatabase->databaseDirectory();
-  thumbnailPath.append("/dicom/").append(d->DICOMModel.data(index.parent().parent() ,ctkDICOMModel::UIDRole).toString());
-  thumbnailPath.append("/").append(d->DICOMModel.data(index.parent() ,ctkDICOMModel::UIDRole).toString());
-  thumbnailPath.append("/").append(d->DICOMModel.data(index ,ctkDICOMModel::UIDRole).toString());
+  thumbnailPath.append("/dicom/").append(d->DICOMModel.data(index0.parent().parent() ,ctkDICOMModel::UIDRole).toString());
+  thumbnailPath.append("/").append(d->DICOMModel.data(index0.parent() ,ctkDICOMModel::UIDRole).toString());
+  thumbnailPath.append("/").append(d->DICOMModel.data(index0 ,ctkDICOMModel::UIDRole).toString());
   //thumbnailPath.append(".png");
   if (QFile(thumbnailPath).exists())
   {
