@@ -22,13 +22,13 @@
 #define __ctkDICOMModel_h
 
 // Qt includes 
-#include <QAbstractItemModel>
+#include <QStandardItemModel>
 #include <QSqlDatabase>
 
 #include "ctkDICOMCoreExport.h"
 
 class ctkDICOMModelPrivate;
-class CTK_DICOM_CORE_EXPORT ctkDICOMModel : public QAbstractItemModel
+class CTK_DICOM_CORE_EXPORT ctkDICOMModel : public QStandardItemModel
 {
   Q_OBJECT
 public:

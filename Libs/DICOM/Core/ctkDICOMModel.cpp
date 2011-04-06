@@ -377,7 +377,7 @@ void ctkDICOMModelPrivate::fetch(const QModelIndex& indexValue, int limit)
 
 //------------------------------------------------------------------------------
 ctkDICOMModel::ctkDICOMModel(QObject* parentObject)
-  : QAbstractItemModel(parentObject)
+  : QStandardItemModel(parentObject)
   , d_ptr(new ctkDICOMModelPrivate(*this))
 {
   Q_D(ctkDICOMModel);
