@@ -18,16 +18,6 @@
 #
 ###########################################################################
 
-# 
-# CTK_KWSTYLE_EXECUTABLE
-# DCMTK_DIR
-# QT_QMAKE_EXECUTABLE
-# VTK_DIR
-# PYTHONQT_INSTALL_DIR
-# PYTHON_LIBRARY
-# PYTHON_INCLUDE_DIR
-#
-
 #-----------------------------------------------------------------------------
 # Declare CTK_EXTERNAL_LIBRARY_DIRS variable - This variable stores
 # the library output directory associated with the different external project
