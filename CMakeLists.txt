@@ -51,9 +51,15 @@ PROJECT(CTK)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Default to shared library
+# Library mode: SHARED (default) or STATIC
+#
 SET(CTK_LIBRARY_MODE "SHARED")
-SET(CTK_BUILD_SHARED_LIBS TRUE)
+
+OPTION(CTK_BUILD_SHARED_LIBS "Build CTK libraries as shared module." ON)
+MARK_AS_ADVANCED(CTK_BUILD_SHARED_LIBS)
+IF(NOT CTK_BUILD_SHARED_LIBS)
+  SET(CTK_LIBRARY_MODE "STATIC")
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
