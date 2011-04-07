@@ -254,7 +254,9 @@ ctkMacroBuildLib(
   )
 
 # Plugins
-ADD_SUBDIRECTORY(Plugins)
+IF(BUILD_QTDESIGNER_PLUGINS)
+  ADD_SUBDIRECTORY(Plugins)
+ENDIF()
 
 # Testing
 IF(BUILD_TESTING)
