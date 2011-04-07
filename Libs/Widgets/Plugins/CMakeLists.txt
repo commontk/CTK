@@ -110,7 +110,7 @@ SET(PLUGIN_MOC_SRCS
 
 # Resources
 SET(PLUGIN_resources
-  Resources/CTKWidgetsPlugins.qrc
+  Resources/ctkWidgetsPlugins.qrc
 )
 
 # Target libraries
