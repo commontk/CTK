@@ -26,7 +26,7 @@ SET(PLUGIN_MOC_SRCS
 
 # Resources
 SET(PLUGIN_resources
-  Resources/CTKScriptingPythonWidgetsPlugins.qrc
+  Resources/ctkScriptingPythonWidgetsPlugins.qrc
 )
 
 # Target libraries

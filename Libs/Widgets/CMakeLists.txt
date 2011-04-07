@@ -235,7 +235,7 @@ SET(KIT_UI_FORMS
 
 # Resources
 SET(KIT_resources
-  Resources/CTKWidgets.qrc
+  Resources/ctkWidgets.qrc
   )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
