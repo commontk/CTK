@@ -183,7 +183,7 @@ bool ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType )
     return false;
     }
 
-  logger.debug ( "Find succeded" );
+  logger.debug ( "Move Request succeded" );
 
   logger.debug ( "Making Output Directory" );
   QDir directory = QDir( RetrieveDatabase->databaseDirectory() );
