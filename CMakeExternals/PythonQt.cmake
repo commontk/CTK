@@ -63,6 +63,13 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+    
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS 
+    -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR}
+    -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}   # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
+    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}     # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
+    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}         # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+    )
 
   SET(${PythonQt_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR PYTHON_INCLUDE_DIRS)
   SET(${PythonQt_enabling_variable}_FIND_PACKAGE_CMD PythonQt)

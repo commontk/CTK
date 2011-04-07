@@ -131,6 +131,12 @@ SET(external_projects
   ITK
   )
 
+# This variable will contain the list of CMake variable specific to each external project 
+# that should passed to CTK.
+# The item of this list should have the following form: -D<EP>_DIR:PATH=${<EP>_DIR}
+# where '<EP>' is an external project name.
+SET(CTK_SUPERBUILD_EP_ARGS)
+
 # Include external projects
 SET(dependency_args )
 FOREACH(p ${external_projects})
@@ -257,22 +263,7 @@ ExternalProject_Add(${proj}
     -DCTK_C_FLAGS:STRING=${CTK_C_FLAGS}
     -DCTK_EXTERNAL_LIBRARY_DIRS:STRING=${CTK_EXTERNAL_LIBRARY_DIRS}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-    # External projects
-    -DCTKData_DIR:PATH=${CTKData_DIR}
-	  -DZMQ_DIR:PATH=${ZMQ_DIR}                     # FindVTK expects VTK_DIR variable to be defined
-	  -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR}     # FindOpenIGTLink expects OpenIGTLink_DIR variable to be defined
-    -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
-    -DDCMTK_DIR:PATH=${DCMTK_DIR} # FindDCMTK expects DCMTK_DIR variable to be defined
-    -DVTK_DIR:PATH=${VTK_DIR}     # FindVTK expects VTK_DIR variable to be defined
-    -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}   # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}     # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
-    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}         # FindPythonQt expects PYTHON_LIBRARY variable to be defined
-    -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR variable to be defined
-    -DPYTHONQTGENERATOR_EXECUTABLE:FILEPATH=${PYTHONQTGENERATOR_EXECUTABLE} #FindPythonQtGenerator expects PYTHONQTGENERATOR_EXECUTABLE to be defined
-    -DLog4Qt_DIR:PATH=${Log4Qt_DIR} # FindLog4Qt expects Log4Qt_DIR variable to be defined
-    -DQtSOAP_DIR:PATH=${QtSOAP_DIR} # FindQtSOAP expects QtSOAP_DIR variable to be defined
-    -DQtMobility_DIR:PATH=${QtMobility_DIR}
-    -DITK_DIR:PATH=${ITK_DIR} # FindITK expects ITK_DIR variable to be defined
+    ${CTK_SUPERBUILD_EP_ARGS}
     ${dependency_args}
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build

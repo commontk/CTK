@@ -47,6 +47,8 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+  
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DDCMTK_DIR:PATH=${DCMTK_DIR})
 
   SET(${DCMTK_enabling_variable}_INCLUDE_DIRS DCMTK_INCLUDE_DIR)
   SET(${DCMTK_enabling_variable}_FIND_PACKAGE_CMD DCMTK)

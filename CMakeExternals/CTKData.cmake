@@ -29,4 +29,6 @@ IF(BUILD_TESTING)
 	ELSE()
 	  ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+  
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DCTKData_DIR:PATH=${CTKData_DIR})
 ENDIF()

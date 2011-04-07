@@ -34,6 +34,8 @@ IF(${add_project})
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
   
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DXIP_DIR:PATH=${XIP_DIR})
+  
   SET(${XIP_enabling_variable}_INCLUDE_DIRS XIP_LIBRARY_DIRS)
   SET(${XIP_enabling_variable}_INCLUDE_DIRS XIP_INCLUDE_DIRS)
   SET(${XIP_enabling_variable}_FIND_PACKAGE_CMD XIP)

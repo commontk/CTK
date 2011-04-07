@@ -40,6 +40,8 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+  
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DQtSOAP_DIR:PATH=${QtSOAP_DIR})
 
   SET(${QtSOAP_enabling_variable}_LIBRARY_DIRS QtSOAP_LIBRARY_DIRS)
   SET(${QtSOAP_enabling_variable}_INCLUDE_DIRS QtSOAP_INCLUDE_DIRS)

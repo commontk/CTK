@@ -61,6 +61,8 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+  
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DVTK_DIR:PATH=${VTK_DIR})
 
   SET(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
   SET(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
