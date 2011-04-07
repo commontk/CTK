@@ -19,6 +19,30 @@
 ###########################################################################
 
 #-----------------------------------------------------------------------------
+# ExternalProjects - Project should be topologically ordered
+#-----------------------------------------------------------------------------
+SET(external_projects
+  CTKData
+  Log4Qt
+  KWStyle
+  VTK
+  PythonQt
+  PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
+  DCMTK
+  ZMQ
+  QtMobility
+  QtSOAP
+  OpenIGTLink
+  XIP
+  ITK
+  )
+  
+#-----------------------------------------------------------------------------
+# WARNING - No change should be required after this comment 
+#           when you are adding a new external project dependency.
+#-----------------------------------------------------------------------------
+  
+#-----------------------------------------------------------------------------
 # Declare CTK_EXTERNAL_LIBRARY_DIRS variable - This variable stores
 # the library output directory associated with the different external project
 # It's then used in Utilities/LastConfigureStep/CTKGenerateCTKConfig.cmake to 
@@ -103,23 +127,8 @@ ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCI
 FIND_PACKAGE(Doxygen QUIET)
 
 #-----------------------------------------------------------------------------
-# ExternalProjects - Project should be topologically ordered
+# Include external projects
 #
-SET(external_projects
-  CTKData
-  Log4Qt
-  KWStyle
-  VTK
-  PythonQt
-  PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
-  DCMTK
-  ZMQ
-  QtMobility
-  QtSOAP
-  OpenIGTLink
-  XIP
-  ITK
-  )
 
 # This variable will contain the list of CMake variable specific to each external project 
 # that should passed to CTK.
@@ -130,7 +139,6 @@ SET(CTK_SUPERBUILD_EP_ARGS)
 # This variable will contain the list of external project that CTK depends on.
 SET(CTK_DEPENDS)
 
-# Include external projects
 SET(dependency_args )
 FOREACH(p ${external_projects})
   INCLUDE(CMakeExternals/${p}.cmake)
