@@ -160,7 +160,6 @@ INCLUDE(CMake/ctkMacroListFilter.cmake)
 INCLUDE(CMake/ctkMacroBuildLib.cmake)
 INCLUDE(CMake/ctkMacroBuildPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildApp.cmake)
-INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
 INCLUDE(CMake/ctkMacroCompilePythonScript.cmake)
 INCLUDE(CMake/ctkMacroWrapPythonQt.cmake)
 INCLUDE(CMake/ctkMacroSetupQt.cmake)
@@ -176,6 +175,14 @@ INCLUDE(CMake/ctkFunctionCheckCompilerFlags.cmake)
 INCLUDE(CMake/ctkFunctionGetIncludeDirs.cmake)
 INCLUDE(CMake/ctkFunctionGetLibraryDirs.cmake)
 INCLUDE(CMake/ctkFunctionGetGccVersion.cmake)
+
+#-----------------------------------------------------------------------------
+# Qt Designer Plugins
+
+OPTION(BUILD_QTDESIGNER_PLUGINS "Build Qt Designer plugins" ON)
+IF(BUILD_QTDESIGNER_PLUGINS)
+  INCLUDE(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Testing
