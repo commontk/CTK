@@ -127,6 +127,9 @@ SET(external_projects
 # where '<EP>' is an external project name.
 SET(CTK_SUPERBUILD_EP_ARGS)
 
+# This variable will contain the list of external project that CTK depends on.
+SET(CTK_DEPENDS)
+
 # Include external projects
 SET(dependency_args )
 FOREACH(p ${external_projects})
@@ -148,36 +151,15 @@ FOREACH(p ${external_projects})
            -D${${p}_enabling_variable}_FIND_PACKAGE_CMD:STRING=${${${p}_enabling_variable}_FIND_PACKAGE_CMD})
     ENDIF()
   ENDIF()
+  LIST(APPEND CTK_DEPENDS ${${p}_DEPENDS})
 ENDFOREACH()
 
 #MESSAGE("Superbuild args: ${dependency_args}")
-   
-#-----------------------------------------------------------------------------
-# CTK Utilities
-#
-set(proj CTK-Utilities)
-ExternalProject_Add(${proj}
-  DOWNLOAD_COMMAND ""
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
-  DEPENDS
-    # Mandatory dependencies
-    ${Log4Qt_DEPENDS}
-    # Optionnal dependencies
-    ${CTKData_DEPENDS}
-    ${QtMobility_DEPENDS}
-    ${QtSOAP_DEPENDS}
-    ${kwstyle_DEPENDS}
-    ${DCMTK_DEPENDS}
-    ${PythonQt_DEPENDS}
-    ${PythonQtGenerator_DEPENDS}
-    ${ZMQ_DEPENDS}
-    ${OpenIGTLink_DEPENDS}
-    ${VTK_DEPENDS}
-    ${XIP_DEPENDS}
-    ${ITK_DEPENDS}
-)
+
+# MESSAGE("CTK_DEPENDS:")
+# FOREACH(dep ${CTK_DEPENDS})
+#   MESSAGE("  ${dep}")
+# ENDFOREACH()
 
 #-----------------------------------------------------------------------------
 # Generate cmake variable name corresponding to Libs, Plugins and Applications
@@ -260,7 +242,7 @@ ExternalProject_Add(${proj}
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
   DEPENDS
-    "CTK-Utilities"
+    ${CTK_DEPENDS}
   )
 
 
