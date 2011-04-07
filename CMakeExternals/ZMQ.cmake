@@ -37,6 +37,8 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+  
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DZMQ_DIR:PATH=${ZMQ_DIR})
 
   SET(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_LIBRARY_DIRS)
   SET(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)

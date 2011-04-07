@@ -98,6 +98,8 @@ IF(${add_project})
     
   # Since the full path of QtMobility library is used, there is not need to add 
   # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
+  
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DQtMobility_DIR:PATH=${QtMobility_DIR})
 
   SET(${QtMobility_enabling_variable}_INCLUDE_DIRS QtMobility_INCLUDE_DIRS)
   SET(${QtMobility_enabling_variable}_FIND_PACKAGE_CMD QtMobility)

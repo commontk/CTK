@@ -46,6 +46,8 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+  
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DITK_DIR:PATH=${ITK_DIR})
 
   SET(${ITK_enabling_variable}_LIBRARY_DIRS ITK_LIBRARY_DIRS)
   SET(${ITK_enabling_variable}_INCLUDE_DIRS ITK_INCLUDE_DIRS)

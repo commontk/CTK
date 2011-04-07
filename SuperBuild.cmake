@@ -18,16 +18,30 @@
 #
 ###########################################################################
 
-# 
-# CTK_KWSTYLE_EXECUTABLE
-# DCMTK_DIR
-# QT_QMAKE_EXECUTABLE
-# VTK_DIR
-# PYTHONQT_INSTALL_DIR
-# PYTHON_LIBRARY
-# PYTHON_INCLUDE_DIR
-#
-
+#-----------------------------------------------------------------------------
+# ExternalProjects - Project should be topologically ordered
+#-----------------------------------------------------------------------------
+SET(external_projects
+  CTKData
+  Log4Qt
+  KWStyle
+  VTK
+  PythonQt
+  PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
+  DCMTK
+  ZMQ
+  QtMobility
+  QtSOAP
+  OpenIGTLink
+  XIP
+  ITK
+  )
+  
+#-----------------------------------------------------------------------------
+# WARNING - No change should be required after this comment 
+#           when you are adding a new external project dependency.
+#-----------------------------------------------------------------------------
+  
 #-----------------------------------------------------------------------------
 # Declare CTK_EXTERNAL_LIBRARY_DIRS variable - This variable stores
 # the library output directory associated with the different external project
@@ -113,25 +127,18 @@ ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCI
 FIND_PACKAGE(Doxygen QUIET)
 
 #-----------------------------------------------------------------------------
-# ExternalProjects - Project should be topologically ordered
-#
-SET(external_projects
-  CTKData
-  Log4Qt
-  KWStyle
-  VTK
-  PythonQt
-  PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
-  DCMTK
-  ZMQ
-  QtMobility
-  QtSOAP
-  OpenIGTLink
-  XIP
-  ITK
-  )
-
 # Include external projects
+#
+
+# This variable will contain the list of CMake variable specific to each external project 
+# that should passed to CTK.
+# The item of this list should have the following form: -D<EP>_DIR:PATH=${<EP>_DIR}
+# where '<EP>' is an external project name.
+SET(CTK_SUPERBUILD_EP_ARGS)
+
+# This variable will contain the list of external project that CTK depends on.
+SET(CTK_DEPENDS)
+
 SET(dependency_args )
 FOREACH(p ${external_projects})
   INCLUDE(CMakeExternals/${p}.cmake)
@@ -152,36 +159,15 @@ FOREACH(p ${external_projects})
            -D${${p}_enabling_variable}_FIND_PACKAGE_CMD:STRING=${${${p}_enabling_variable}_FIND_PACKAGE_CMD})
     ENDIF()
   ENDIF()
+  LIST(APPEND CTK_DEPENDS ${${p}_DEPENDS})
 ENDFOREACH()
 
 #MESSAGE("Superbuild args: ${dependency_args}")
-   
-#-----------------------------------------------------------------------------
-# CTK Utilities
-#
-set(proj CTK-Utilities)
-ExternalProject_Add(${proj}
-  DOWNLOAD_COMMAND ""
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
-  DEPENDS
-    # Mandatory dependencies
-    ${Log4Qt_DEPENDS}
-    # Optionnal dependencies
-    ${CTKData_DEPENDS}
-    ${QtMobility_DEPENDS}
-    ${QtSOAP_DEPENDS}
-    ${kwstyle_DEPENDS}
-    ${DCMTK_DEPENDS}
-    ${PythonQt_DEPENDS}
-    ${PythonQtGenerator_DEPENDS}
-    ${ZMQ_DEPENDS}
-    ${OpenIGTLink_DEPENDS}
-    ${VTK_DEPENDS}
-    ${XIP_DEPENDS}
-    ${ITK_DEPENDS}
-)
+
+# MESSAGE("CTK_DEPENDS:")
+# FOREACH(dep ${CTK_DEPENDS})
+#   MESSAGE("  ${dep}")
+# ENDFOREACH()
 
 #-----------------------------------------------------------------------------
 # Generate cmake variable name corresponding to Libs, Plugins and Applications
@@ -257,29 +243,14 @@ ExternalProject_Add(${proj}
     -DCTK_C_FLAGS:STRING=${CTK_C_FLAGS}
     -DCTK_EXTERNAL_LIBRARY_DIRS:STRING=${CTK_EXTERNAL_LIBRARY_DIRS}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-    # External projects
-    -DCTKData_DIR:PATH=${CTKData_DIR}
-	  -DZMQ_DIR:PATH=${ZMQ_DIR}                     # FindVTK expects VTK_DIR variable to be defined
-	  -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR}     # FindOpenIGTLink expects OpenIGTLink_DIR variable to be defined
-    -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE}
-    -DDCMTK_DIR:PATH=${DCMTK_DIR} # FindDCMTK expects DCMTK_DIR variable to be defined
-    -DVTK_DIR:PATH=${VTK_DIR}     # FindVTK expects VTK_DIR variable to be defined
-    -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}   # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}     # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
-    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}         # FindPythonQt expects PYTHON_LIBRARY variable to be defined
-    -DPYTHONQT_INSTALL_DIR:PATH=${PYTHONQT_INSTALL_DIR} # FindPythonQt expects PYTHONQT_INSTALL_DIR variable to be defined
-    -DPYTHONQTGENERATOR_EXECUTABLE:FILEPATH=${PYTHONQTGENERATOR_EXECUTABLE} #FindPythonQtGenerator expects PYTHONQTGENERATOR_EXECUTABLE to be defined
-    -DLog4Qt_DIR:PATH=${Log4Qt_DIR} # FindLog4Qt expects Log4Qt_DIR variable to be defined
-    -DQtSOAP_DIR:PATH=${QtSOAP_DIR} # FindQtSOAP expects QtSOAP_DIR variable to be defined
-    -DQtMobility_DIR:PATH=${QtMobility_DIR}
-    -DITK_DIR:PATH=${ITK_DIR} # FindITK expects ITK_DIR variable to be defined
+    ${CTK_SUPERBUILD_EP_ARGS}
     ${dependency_args}
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
   DEPENDS
-    "CTK-Utilities"
+    ${CTK_DEPENDS}
   )
 
 

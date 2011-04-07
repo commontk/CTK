@@ -35,6 +35,8 @@ IF(${add_project})
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
   
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
+  
   SET(${OpenIGTLink_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
   SET(${OpenIGTLink_enabling_variable}_INCLUDE_DIRS OpenIGTLink_INCLUDE_DIRS)
   SET(${OpenIGTLink_enabling_variable}_FIND_PACKAGE_CMD OpenIGTLink)

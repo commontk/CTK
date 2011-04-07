@@ -38,6 +38,8 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
+  
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DLog4Qt_DIR:PATH=${Log4Qt_DIR})
 
   SET(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIR)
   SET(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
