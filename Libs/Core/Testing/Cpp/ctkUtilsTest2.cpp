@@ -26,7 +26,7 @@
 #include "ctkUtils.h"
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
