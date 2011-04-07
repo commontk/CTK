@@ -405,7 +405,9 @@ SET(ctk_lib_options_list) # This list will be updated in ctkFunctionExtractOptio
 FOREACH(lib ${CTK_LIBS})
   ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
   OPTION(CTK_LIB_${lib_name} "Enable ${lib_name} Library." ${lib_value})
-  ctkMacroAddCtkLibraryOptions(${lib_name})
+  IF(CTK_LIB_${lib_name})
+    ctkMacroAddCtkLibraryOptions(${lib_name})
+  ENDIF()
   LIST(APPEND CTK_LIBS_SUBDIRS "${lib_name}")
 ENDFOREACH()
 
