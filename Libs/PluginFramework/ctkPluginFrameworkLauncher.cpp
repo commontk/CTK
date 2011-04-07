@@ -32,7 +32,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#include <stdlib.h>
+#include <cstdlib>
 #endif // _WIN32
 
 #include <CTKConfig.h>

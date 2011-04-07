@@ -29,7 +29,7 @@
 #include "ctkModelTester.h"
 
 // STL includes
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
