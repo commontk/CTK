@@ -103,8 +103,11 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
   QObject::connect(this->CancelButton, SIGNAL(clicked()), q, SLOT(cancel()));
 
   this->results->setModel(&this->Model);
+  // TODO: use the checkable headerview when it becomes possible
+  // to select individual studies.  For now, assume that the 
+  // user will use the query terms to narrow down the transfer
+  /*
   this->Model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
-
   QHeaderView* previousHeaderView = this->results->header();
   ctkCheckableHeaderView* headerView =
     new ctkCheckableHeaderView(Qt::Horizontal, this->results);
@@ -115,6 +118,7 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
   this->results->setHeader(headerView);
   // headerView is hidden because it was created with a visisble parent widget 
   headerView->setHidden(false);
+  */
 }
 
 //----------------------------------------------------------------------------
@@ -248,6 +252,9 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
 
   foreach( QString studyUID, d->QueriesByStudyUID.keys() )
     {
+    // TODO: check the model item to see if it is checked
+    // for now, assume all studies will be retreived
+
     logger.debug("About to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
     ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
