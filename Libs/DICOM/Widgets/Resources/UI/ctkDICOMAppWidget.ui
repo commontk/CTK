@@ -151,11 +151,14 @@
    </property>
   </action>
   <action name="actionExport">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Export</string>
    </property>
    <property name="toolTip">
-    <string>Export selected study/series to a DICOM folder</string>
+    <string>Export selected study/series to a DICOM folder (not yet available)</string>
    </property>
   </action>
   <action name="actionQuery">
@@ -167,11 +170,14 @@
    </property>
   </action>
   <action name="actionSend">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Send</string>
    </property>
    <property name="toolTip">
-    <string>Send DICOM Studies to a DICOM node</string>
+    <string>Send DICOM Studies to a DICOM node (not yet available)</string>
    </property>
   </action>
  </widget>
