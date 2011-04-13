@@ -283,3 +283,22 @@ QSize ctkComboBox::sizeHint() const
   Q_D(const ctkComboBox);
   return d->recomputeSizeHint(d->SizeHint);
 }
+
+// -------------------------------------------------------------------------
+void ctkComboBox::changeEvent(QEvent *e)
+{
+  Q_D(const ctkComboBox);
+  switch (e->type())
+    {
+    case QEvent::StyleChange:
+    case QEvent::MacSizeChange:
+    case QEvent::FontChange:
+      d->SizeHint = QSize();
+      d->MinimumSizeHint = QSize();
+      break;
+    default:
+      break;
+    }
+
+  this->QComboBox::changeEvent(e);
+}

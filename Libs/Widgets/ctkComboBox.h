@@ -75,6 +75,7 @@ public:
 protected:
   /// Reimplemented for internal reasons
   virtual void paintEvent(QPaintEvent*);
+  virtual void changeEvent(QEvent *e);
 
 protected:
   QScopedPointer<ctkComboBoxPrivate> d_ptr;
