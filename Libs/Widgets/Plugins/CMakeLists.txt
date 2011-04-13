@@ -27,6 +27,8 @@ SET(PLUGIN_SRCS
   ctkComboBoxPlugin.h
   ctkCoordinatesWidgetPlugin.cpp
   ctkCoordinatesWidgetPlugin.h
+  ctkCursorPixmapWidgetPlugin.cpp
+  ctkCursorPixmapWidgetPlugin.h
   ctkDirectoryButtonPlugin.cpp
   ctkDirectoryButtonPlugin.h
   ctkDoubleRangeSliderPlugin.cpp
@@ -84,6 +86,7 @@ SET(PLUGIN_MOC_SRCS
   ctkColorPickerButtonPlugin.h
   ctkComboBoxPlugin.h
   ctkCoordinatesWidgetPlugin.h
+  ctkCursorPixmapWidgetPlugin.h
   ctkDirectoryButtonPlugin.h
   ctkDoubleRangeSliderPlugin.h
   ctkDoubleSliderPlugin.h

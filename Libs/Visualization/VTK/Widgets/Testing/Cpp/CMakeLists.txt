@@ -7,6 +7,7 @@ SET(TEST_SOURCES
   ctkVTKDataSetArrayComboBoxTest1.cpp
   ctkVTKDataSetModelTest1.cpp
   ctkVTKMatrixWidgetTest1.cpp
+  ctkVTKMagnifyWidgetTest1.cpp
   ctkVTKScalarBarWidgetTest1.cpp
   ctkTransferFunctionBarsItemTest1.cpp
   ctkTransferFunctionViewTest1.cpp
@@ -37,6 +38,7 @@ ENDIF(CTK_USE_CHARTS)
 #
 IF(EXISTS "${CTKData_DIR}")
   LIST(APPEND TEST_SOURCES
+    ctkVTKMagnifyWidgetTest2.cpp
     ctkVTKSliceViewTest2.cpp
     ctkVTKRenderViewTest2.cpp
     )
@@ -58,7 +60,10 @@ TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRAR
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
 
 MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} -D "${CTKData_DIR}/Data")
+  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME}
+            -D "${CTKData_DIR}/Data"
+            -V "${CTKData_DIR}/Baseline/Libs/Visualization/VTK/Widgets"
+            )
   SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
 ENDMACRO( SIMPLE_TEST  )
 
@@ -68,6 +73,7 @@ ENDMACRO( SIMPLE_TEST  )
 
 SIMPLE_TEST( ctkVTKDataSetArrayComboBoxTest1 )
 SIMPLE_TEST( ctkVTKDataSetModelTest1 )
+SIMPLE_TEST( ctkVTKMagnifyWidgetTest1 )
 SIMPLE_TEST( ctkVTKMatrixWidgetTest1 )
 SIMPLE_TEST( ctkVTKScalarBarWidgetTest1 )
 SIMPLE_TEST( ctkTransferFunctionBarsItemTest1 )
@@ -95,6 +101,7 @@ SIMPLE_TEST( ctkVTKThumbnailViewTest1 )
 #
 IF(EXISTS "${CTKData_DIR}")
   #
+  SIMPLE_TEST( ctkVTKMagnifyWidgetTest2 )
   SIMPLE_TEST( ctkVTKSliceViewTest2 )
   SIMPLE_TEST( ctkVTKRenderViewTest2 )
 ENDIF()

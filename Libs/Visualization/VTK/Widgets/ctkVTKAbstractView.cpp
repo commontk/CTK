@@ -201,6 +201,13 @@ vtkCornerAnnotation* ctkVTKAbstractView::cornerAnnotation() const
 }
 
 //----------------------------------------------------------------------------
+QVTKWidget * ctkVTKAbstractView::VTKWidget() const
+{
+  Q_D(const ctkVTKAbstractView);
+  return d->VTKWidget;
+}
+
+//----------------------------------------------------------------------------
 CTK_SET_CPP(ctkVTKAbstractView, bool, setRenderEnabled, RenderEnabled);
 CTK_GET_CPP(ctkVTKAbstractView, bool, renderEnabled, RenderEnabled);
 

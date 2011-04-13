@@ -33,6 +33,7 @@
 #include "ctkColorPickerButtonPlugin.h"
 #include "ctkComboBoxPlugin.h"
 #include "ctkCoordinatesWidgetPlugin.h"
+#include "ctkCursorPixmapWidgetPlugin.h"
 #include "ctkDirectoryButtonPlugin.h"
 #include "ctkDoubleRangeSliderPlugin.h"
 #include "ctkDoubleSliderPlugin.h"
@@ -73,6 +74,7 @@ public:
             << new ctkColorPickerButtonPlugin
             << new ctkComboBoxPlugin
             << new ctkCoordinatesWidgetPlugin
+            << new ctkCursorPixmapWidgetPlugin
             << new ctkDirectoryButtonPlugin
             << new ctkDoubleRangeSliderPlugin
             << new ctkDoubleSliderPlugin

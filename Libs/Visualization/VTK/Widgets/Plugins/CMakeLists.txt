@@ -15,6 +15,8 @@ SET(PLUGIN_SRCS
 
   ctkVTKDataSetArrayComboBoxPlugin.cpp
   ctkVTKDataSetArrayComboBoxPlugin.h
+  ctkVTKMagnifyWidgetPlugin.cpp
+  ctkVTKMagnifyWidgetPlugin.h
   ctkVTKRenderViewPlugin.cpp
   ctkVTKRenderViewPlugin.h
   ctkVTKScalarBarWidgetPlugin.cpp
@@ -32,6 +34,7 @@ SET(PLUGIN_MOC_SRCS
   ctkVTKWidgetsPlugins.h
 
   ctkVTKDataSetArrayComboBoxPlugin.h
+  ctkVTKMagnifyWidgetPlugin.h
   ctkVTKRenderViewPlugin.h
   ctkVTKScalarBarWidgetPlugin.h
   ctkVTKSliceViewPlugin.h

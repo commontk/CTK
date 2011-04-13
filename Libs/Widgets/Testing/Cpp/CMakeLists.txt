@@ -1,6 +1,6 @@
 SET(KIT ${PROJECT_NAME})
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
+SET(TEST_SOURCES
   ctkActionsWidgetTest1.cpp
   ctkAddRemoveComboBoxTest1.cpp
   ctkAxesWidgetTest1.cpp
@@ -19,6 +19,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkConfirmExitDialogTest1.cpp
   ctkConsoleTest1.cpp
   ctkCoordinatesWidgetTest1.cpp
+  ctkCursorPixmapWidgetTest1.cpp
   ctkDirectoryButtonTest1.cpp
   ctkDoubleRangeSliderTest1.cpp
   ctkDoubleRangeSliderTest2.cpp
@@ -55,6 +56,19 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
   ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots.cpp
   )
 
+#
+# Tests expecting CTKData to be set
+#
+IF(EXISTS "${CTKData_DIR}")
+  LIST(APPEND TEST_SOURCES
+    ctkCursorPixmapWidgetTest2.cpp
+    )
+ENDIF()
+
+CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cxx
+  ${TEST_SOURCES}
+  )
+
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CppTests.cxx)
 
@@ -81,7 +95,10 @@ TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME})
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
 
 MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
+  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME}
+            -D "${CTKData_DIR}/Data"
+            -V "${CTKData_DIR}/Baseline/Libs/Widgets"
+            )
   SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
 ENDMACRO( SIMPLE_TEST  )
 
@@ -107,6 +124,7 @@ SIMPLE_TEST( ctkComboBoxTest1 )
 SIMPLE_TEST( ctkConfirmExitDialogTest1 )
 SIMPLE_TEST( ctkConsoleTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
+SIMPLE_TEST( ctkCursorPixmapWidgetTest1 )
 SIMPLE_TEST( ctkDateRangeWidgetTest1 )
 SIMPLE_TEST( ctkDirectoryButtonTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest1 )
@@ -141,3 +159,10 @@ SIMPLE_TEST( ctkToolTipTrapperTest1 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )
 SIMPLE_TEST( ctkWorkflowWidgetTest1 )
 SIMPLE_TEST( ctkWorkflowWidgetTest2 )
+
+#
+# Add Tests expecting CTKData to be set
+#
+IF(EXISTS "${CTKData_DIR}")
+  SIMPLE_TEST( ctkCursorPixmapWidgetTest2 )
+ENDIF()
