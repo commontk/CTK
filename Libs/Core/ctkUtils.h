@@ -74,6 +74,11 @@ QString CTK_CORE_EXPORT extensionToRegExp(const QString& extension);
 /// "*.jpg", "*.txt" -> "(.*\\.jpg?$|.*\\.txt?$)"
 QRegExp CTK_CORE_EXPORT nameFiltersToRegExp(const QStringList& nameFilters);
 
+///
+/// \ingroup Core
+/// Return a "smart" number of decimals needed to display (in a gui) a floating
+/// number.
+int CTK_CORE_EXPORT significantDecimals(double value);
 }
 
 #endif

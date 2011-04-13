@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QRegExp>
 #include <QString>
 #include <QStringList>
@@ -156,4 +157,54 @@ QRegExp ctk::nameFiltersToRegExp(const QStringList& nameFilters)
     pattern += ")";
     }
   return QRegExp(pattern);
+}
+
+//-----------------------------------------------------------------------------
+int ctk::significantDecimals(double value)
+{
+  QString number = QString::number(value, 'f', 16);
+  QString fractional = number.section('.', 1, 1);
+  if (fractional.length() <= 2)
+    {
+    return fractional.length() - 1;
+    }
+  QChar previous;
+  int previousRepeat=0;
+  bool only0s = true;
+  for (int i = 0; i < fractional.length(); ++i)
+    {
+    QChar digit = fractional.at(i);
+    if (digit != '0')
+      {
+      only0s = false;
+      }
+    if (digit == previous && previousRepeat == 2 &&
+        !only0s)
+      {
+      if (digit == '0' || digit == '9')
+        {
+        return i - previousRepeat;
+        }
+      return i;
+      }
+    if (i == fractional.length() - 1)
+      {
+      if (previousRepeat > 2)
+        {
+        return i - previousRepeat;
+        }
+      return i;
+      }
+    // get ready for next
+    if (previous != digit)
+      {
+      previous = digit;
+      previousRepeat = 1;
+      }
+    else
+      {
+      ++previousRepeat;
+      }
+    }
+  return -1;
 }
