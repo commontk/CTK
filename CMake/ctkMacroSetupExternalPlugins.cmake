@@ -47,7 +47,7 @@ MACRO(ctkMacroSetupExternalPlugins )
   ctkMacroValidateBuildOptions("${CMAKE_CURRENT_BINARY_DIR}" "${CTK_DGRAPH_EXECUTABLE}" "${plugin_dirswithoption}")
 
   FOREACH(plugin ${plugin_subdirs})
-    IF(BUILD_${plugin})
+    IF(${MY_BUILD_OPTION_PREFIX}${plugin})
       ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/${plugin})
     ENDIF()
   ENDFOREACH()
