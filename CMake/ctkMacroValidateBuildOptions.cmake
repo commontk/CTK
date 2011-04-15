@@ -169,6 +169,15 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
 
       IF(ext_dep_path_list)
         LIST(APPEND EXTERNAL_TARGETS ${ext_dep_path_list})
+        # If this macro is called from inside CTK itself, we add the external
+        # targets to the list of known targets (for external projects calling
+        # this macro, targets external to the calling project should be listed
+        # in CTK_LIBRARIES or CTK_PLUGIN_LIBRARIES
+        IF(CTK_SOURCE_DIR)
+          IF(${CMAKE_SOURCE_DIR} STREQUAL ${CTK_SOURCE_DIR})
+            LIST(APPEND known_targets ${ext_dep_path_list})
+          ENDIF()
+        ENDIF()
       ENDIF()
 
       FOREACH(dep ${int_dep_path_list})
@@ -182,6 +191,14 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
           # Enable option
           MESSAGE(STATUS "Enabling option [${dep_option}] required by [${target_project_name}]")
           SET(${dep_option} ON CACHE BOOL "Enable ${target_project_name} library" FORCE)
+        ENDIF()
+      ENDFOREACH()
+
+      # Check if all external targets included in the dependency path are available
+      FOREACH(dep ${ext_dep_path_list})
+        LIST(FIND known_targets ${dep} dep_found)
+        IF(dep_found LESS 0)
+          MESSAGE(FATAL_ERROR "${target_project_name} depends on unknown external targets: ${dep}")
         ENDIF()
       ENDFOREACH()
     ENDIF()
