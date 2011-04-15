@@ -41,7 +41,10 @@
 
 
 # Import CTK targets
-INCLUDE("@CTK_SUPERBUILD_BINARY_DIR@/CTKExports.cmake")
+IF(NOT CTK_EXPORTS_INCLUDED)
+  INCLUDE("@CTK_SUPERBUILD_BINARY_DIR@/CTKExports.cmake")
+  SET(CTK_EXPORTS_INCLUDED 1)
+ENDIF()
 
 # Include CTK macros
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroParseArguments.cmake")
