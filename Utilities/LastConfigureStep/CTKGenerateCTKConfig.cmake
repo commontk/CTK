@@ -38,6 +38,8 @@
 # one for installation.  The file tells external projects how to use CTK.
 #
 
+INCLUDE(ctkFunctionGeneratePluginUseFile)
+
 # Construct version numbers for CTKConfigVersion.cmake.
 SET(_CTK_VERSION_MAJOR ${CTK_MAJOR_VERSION})
 SET(_CTK_VERSION_MINOR ${CTK_MINOR_VERSION})
@@ -76,18 +78,9 @@ ENDFOREACH()
 # as an external library
 EXPORT(TARGETS ${CTK_TARGETS_TO_EXPORT} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
 
-# Write a set of variables containing plugin specific include and library directories
-SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG)
-FOREACH(plugin ${CTK_PLUGIN_LIBRARIES})
-  SET(${plugin}_INCLUDE_DIRS ${${plugin}_SOURCE_DIR} ${${plugin}_BINARY_DIR})
-  ctkFunctionGetIncludeDirs(${plugin}_INCLUDE_DIRS ${plugin})
-  SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG "${CTK_PLUGIN_INCLUDE_DIRS_CONFIG}
-SET(${plugin}_INCLUDE_DIRS \"${${plugin}_INCLUDE_DIRS}\")")
-  
-  ctkFunctionGetLibraryDirs(${plugin}_LIBRARY_DIRS ${plugin})
-  SET(CTK_PLUGIN_LIBRARY_DIRS_CONFIG "${CTK_PLUGIN_LIBRARY_DIRS_CONFIG}
-SET(${plugin}_LIBRARY_DIRS \"${${plugin}_LIBRARY_DIRS}\")")
-ENDFOREACH()
+# Generate a file containing plugin specific variables
+SET(CTK_PLUGIN_USE_FILE "${CTK_SUPERBUILD_BINARY_DIR}/CTKPluginUseFile.cmake")
+ctkFunctionGeneratePluginUseFile(${CTK_PLUGIN_USE_FILE})
 
 # Write a set of variables containing library specific include and library directories
 SET(CTK_LIBRARY_INCLUDE_DIRS_CONFIG)

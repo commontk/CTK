@@ -1,0 +1,8 @@
+# List all plugins
+SET(CTK_PLUGIN_LIBRARIES @CTK_PLUGIN_LIBRARIES@)
+
+# Plugin specific include directories
+@CTK_PLUGIN_INCLUDE_DIRS_CONFIG@
+
+# Plugin specific library directories
+@CTK_PLUGIN_LIBRARY_DIRS_CONFIG@

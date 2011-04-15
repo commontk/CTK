@@ -41,7 +41,10 @@
 
 
 # Import CTK targets
-INCLUDE("@CTK_SUPERBUILD_BINARY_DIR@/CTKExports.cmake")
+IF(NOT CTK_EXPORTS_INCLUDED)
+  INCLUDE("@CTK_SUPERBUILD_BINARY_DIR@/CTKExports.cmake")
+  SET(CTK_EXPORTS_INCLUDED 1)
+ENDIF()
 
 # Include CTK macros
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroParseArguments.cmake")
@@ -53,10 +56,11 @@ INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionExtractOptionNameAndValue.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroValidateBuildOptions.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGenerateDGraphInput.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGeneratePluginManifest.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGeneratePluginUseFile.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroGeneratePluginResourceFile.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetIncludeDirs.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetLibraryDirs.cmake")
-INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionSetupExternalPlugins.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroSetupExternalPlugins.cmake")
 
 SET(CTK_EXPORT_HEADER_TEMPLATE "@CTK_EXPORT_HEADER_TEMPLATE@")
 
@@ -66,11 +70,11 @@ SET(CTK_DGRAPH_EXECUTABLE "@DGraph_EXECUTABLE@")
 # List all libraries
 SET(CTK_LIBRARIES @CTK_LIBRARIES@)
 
-# List all plugins
-SET(CTK_PLUGIN_LIBRARIES @CTK_PLUGIN_LIBRARIES@)
-
 # List all CTK libraries wrapped with PythonQt
 SET(CTK_WRAPPED_LIBRARIES_PYTHONQT @CTK_WRAPPED_LIBRARIES_PYTHONQT@)
+
+# Include CTK Plugin specific variables
+INCLUDE("@CTK_PLUGIN_USE_FILE@")
 
 @CTK_CONFIG_INSTALL_ONLY@
 
@@ -79,12 +83,6 @@ SET(CTK_WRAPPED_LIBRARIES_PYTHONQT @CTK_WRAPPED_LIBRARIES_PYTHONQT@)
 
 # Library specific library directories
 @CTK_LIBRARY_LIBRARY_DIRS_CONFIG@
-
-# Plugin specific include directories
-@CTK_PLUGIN_INCLUDE_DIRS_CONFIG@
-
-# Plugin specific library directories
-@CTK_PLUGIN_LIBRARY_DIRS_CONFIG@
 
 # The CTK include file directories.
 SET(CTK_INCLUDE_DIRS "@CTK_BUILD_DIR@;@CTK_INCLUDE_DIRS_CONFIG@")

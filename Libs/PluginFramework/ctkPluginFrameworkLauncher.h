@@ -59,13 +59,13 @@ public:
   static void setFrameworkProperties(const ctkProperties& props);
 
   /**
-   * Install the plugin with the given symbolic name in the Plugin
-   * Framework.
+   * Install the plugin with the given symbolic name using the provided
+   * <code>ctkPluginContext</code>.
    *
    * <p>
    * This method instantiates and initializes an instance of a
-   * ctkPluginFramework object, if there is no framework already
-   * initialized.
+   * ctkPluginFramework object, if no plugin context is provided and
+   * if there is no framework already initialized.
    *
    * <p>
    * The plugin is searched in the paths previously given by calls
@@ -73,33 +73,38 @@ public:
    * CTK plugin installation path.
    *
    * \param symbolicName The symbolic name of the plugin to install.
-   * \return <code>true</code> if the plugin was found and successfully
-   *         installed, <code>false</code> otherwise.
+   * \param context The plugin context used for installing the plugin.
+   * \return The plugin id if the plugin was found and successfully
+   *         installed, <code>-1</code> otherwise.
    */
-  static bool install(const QString& symbolicName);
+  static long install(const QString& symbolicName, ctkPluginContext* context = 0);
 
   /**
-   * Start the CTK Plugin Framework and/or the plugin with the given
-   * symbolic name.
-   *
-   * <p>
-   * This method creates and initializes the CTK Plugin Framework if it
-   * has not been previously initialized and starts it. It then optionally
-   * starts the plugin with the given symbolic name and start options.
+   * This method instantiates, initializes, and starts an instance of a
+   * ctkPluginFramework object, if no plugin context is provided and
+   * if there is no framework already running. It then installs and
+   * starts the plugin with the given symbolic name (if not empty).
    *
    * <p>
    * If a symbolic name is given, the plugin is searched in the paths previously given by calls
    * to #addSearchPath(const QString&, bool) and in the default
-   * CTK plugin installation path.
+   * CTK plugin installation path and is started using the given <code>options</code>.
+   *
+   * <p>
+   * If a plugin context is provided, this context is used to install the plugin,
+   * otherwise the Plugin Framework context is used.
    *
    * \param symbolicName The symbolic name of the plugin to install.
    * \param options The options used to start the plugin.
+   * \param context The plugin context to use for installing the plugin.
    * \return <code>true</code> if the plugin was found and successfully
    *         installed, <code>false</code> otherwise.
    *
    * \see ctkPlugin::StartOption
    */
-  static bool start(const QString& symbolicName = QString(), ctkPlugin::StartOptions options = ctkPlugin::START_ACTIVATION_POLICY);
+  static bool start(const QString& symbolicName = QString(),
+                    ctkPlugin::StartOptions options = ctkPlugin::START_ACTIVATION_POLICY,
+                    ctkPluginContext* context = 0);
 
   /**
    * Get the plugin context for the Plugin Framework.
@@ -118,11 +123,11 @@ public:
   static QSharedPointer<ctkPluginFramework> getPluginFramework();
 
   /**
-   * Append a path to the PATH environment variable.
+   * This is a utility method to append a path to the PATH environment variable
+   * on Windows platforms.
    *
    * <p>
-   * This method appends the given path to the PATH environment variable.
-   * It does nothing on non-Windows platforms.
+   * This method does nothing on non-Windows platforms.
    *
    * \param path The path to be appended to PATH
    */
@@ -155,6 +160,18 @@ public:
    *         or a null QString if the plugin was not found.
    */
   static QString getPluginPath(const QString& symbolicName);
+
+  /**
+   * Get a list of symbolic names for the plugins in <code>searchPath</code>.
+   *
+   * <p>
+   * The symbolic names are deduced from the shared libraries found in
+   * <code>searchPath</code>, which may not represent loadable CTK plugins.
+   *
+   * \param searchPath The path to look for plugins.
+   * \return A list of potential plugin symbolic names.
+   */
+  static QStringList getPluginSymbolicNames(const QString& searchPath);
 
 private:
 

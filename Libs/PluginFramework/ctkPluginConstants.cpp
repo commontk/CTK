@@ -34,6 +34,7 @@ const QString ctkPluginConstants::PLUGIN_SYMBOLICNAME = "Plugin-SymbolicName";
 const QString ctkPluginConstants::PLUGIN_COPYRIGHT = "Plugin-Copyright";
 const QString ctkPluginConstants::PLUGIN_DESCRIPTION = "Plugin-Description";
 const QString ctkPluginConstants::PLUGIN_NAME = "Plugin-Name";
+const QString ctkPluginConstants::PLUGIN_VENDOR = "Plugin-Vendor";
 const QString ctkPluginConstants::PLUGIN_LOCALIZATION = "Plugin-Localization";
 const QString ctkPluginConstants::PLUGIN_LOCALIZATION_DEFAULT_BASENAME = "CTK-INF/l10n/plugin";
 const QString ctkPluginConstants::REQUIRE_PLUGIN = "Require-Plugin";
