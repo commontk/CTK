@@ -129,6 +129,14 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    */
   static const QString PLUGIN_NAME; // = "Plugin-Name"
 
+  /**
+   * Manifest header identifying the plugin's vendor.
+   *
+   * <p>
+   * The header value may be retrieved from the <code>QHash</code> object
+   * returned by the <code>ctkPlugin::getHeaders</code> method.
+   */
+  static const QString PLUGIN_VENDOR; // = "Plugin-Vendor"
 
   /**
    * Manifest header identifying the base name of the plugin's Qt .qm
