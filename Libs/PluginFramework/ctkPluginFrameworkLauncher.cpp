@@ -73,46 +73,47 @@ void ctkPluginFrameworkLauncher::setFrameworkProperties(const ctkProperties& pro
 }
 
 //----------------------------------------------------------------------------
-bool ctkPluginFrameworkLauncher::install(const QString& symbolicName)
+long ctkPluginFrameworkLauncher::install(const QString& symbolicName, ctkPluginContext* context)
 {
   QString pluginPath = getPluginPath(symbolicName);
-  if (pluginPath.isEmpty()) return false;
+  if (pluginPath.isEmpty()) return -1;
 
-  if (d->fwFactory == 0) {
+  ctkPluginContext* pc = context;
+
+  if (pc == 0 && d->fwFactory == 0) {
     d->fwFactory = new ctkPluginFrameworkFactory(d->fwProps);
     try
     {
       d->fwFactory->getFramework()->init();
+      pc = getPluginContext();
     }
     catch (const ctkPluginException& exc)
     {
       qCritical() << "Failed to initialize the plug-in framework:" << exc;
       delete d->fwFactory;
       d->fwFactory = 0;
-      return false;
+      return -1;
     }
   }
 
   try
   {
-    getPluginContext()->installPlugin(QUrl::fromLocalFile(pluginPath));
+    return pc->installPlugin(QUrl::fromLocalFile(pluginPath))->getPluginId();
   }
   catch (const ctkPluginException& exc)
   {
     qWarning() << "Failed to install plugin:" << exc;
-    return false;
+    return -1;
   }
 
-  return true;
 }
 
 //----------------------------------------------------------------------------
-bool ctkPluginFrameworkLauncher::start(const QString& symbolicName, ctkPlugin::StartOptions options)
+bool ctkPluginFrameworkLauncher::start(const QString& symbolicName, ctkPlugin::StartOptions options,
+                                       ctkPluginContext* context)
 {
-  QString pluginPath = getPluginPath(symbolicName);
-  if (pluginPath.isEmpty()) return false;
-
-  if (d->fwFactory == 0) {
+  // instantiate and start the framework
+  if (context == 0 && d->fwFactory == 0) {
     d->fwFactory = new ctkPluginFrameworkFactory(d->fwProps);
     try
     {
@@ -126,7 +127,7 @@ bool ctkPluginFrameworkLauncher::start(const QString& symbolicName, ctkPlugin::S
       return false;
     }
   }
-  else if (d->fwFactory->getFramework()->getState() != ctkPlugin::ACTIVE)
+  else if (context == 0 && d->fwFactory->getFramework()->getState() != ctkPlugin::ACTIVE)
   {
     try
     {
@@ -141,14 +142,21 @@ bool ctkPluginFrameworkLauncher::start(const QString& symbolicName, ctkPlugin::S
     }
   }
 
-  try
+  if(!symbolicName.isEmpty())
   {
-    getPluginContext()->installPlugin(QUrl::fromLocalFile(pluginPath))->start(options);
-  }
-  catch (const ctkPluginException& exc)
-  {
-    qWarning() << "Failed to install plugin:" << exc;
-    return false;
+    QString pluginPath = getPluginPath(symbolicName);
+    if (pluginPath.isEmpty()) return false;
+
+    ctkPluginContext* pc = context ? context : getPluginContext();
+    try
+    {
+      pc->installPlugin(QUrl::fromLocalFile(pluginPath))->start(options);
+    }
+    catch (const ctkPluginException& exc)
+    {
+      qWarning() << "Failed to install plugin:" << exc;
+      return false;
+    }
   }
 
   return true;
@@ -248,5 +256,22 @@ QString ctkPluginFrameworkLauncher::getPluginPath(const QString& symbolicName)
   }
 
   return QString();
+}
+
+//----------------------------------------------------------------------------
+QStringList ctkPluginFrameworkLauncher::getPluginSymbolicNames(const QString& searchPath)
+{
+  QStringList result;
+  QDirIterator dirIter(searchPath, d->pluginLibFilter, QDir::Files);
+  while(dirIter.hasNext())
+  {
+    dirIter.next();
+    QFileInfo fileInfo = dirIter.fileInfo();
+    QString fileBaseName = fileInfo.baseName();
+    if (fileBaseName.startsWith("lib")) fileBaseName = fileBaseName.mid(3);
+    result << fileBaseName.replace("_", ".");
+  }
+
+  return result;
 }
 
