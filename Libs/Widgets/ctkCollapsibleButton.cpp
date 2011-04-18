@@ -109,9 +109,8 @@ void ctkCollapsibleButtonPrivate::init()
 //-----------------------------------------------------------------------------
 void ctkCollapsibleButtonPrivate::setChildVisibility(QWidget* childWidget)
 {
-  Q_Q(ctkCollapsibleButton);
   this->ForcingVisibility = true;
- 
+
   bool visible= !this->Collapsed &&
     (childWidget->property("visibilityToParent").isValid() ?
        childWidget->property("visibilityToParent").toBool() : true);

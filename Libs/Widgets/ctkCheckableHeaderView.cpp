@@ -162,7 +162,6 @@ void ctkCheckableHeaderViewPrivate::setCheckState(
 void ctkCheckableHeaderViewPrivate::setIndexCheckState(
   const QModelIndex& index, Qt::CheckState checkState)
 {
-  Q_Q(ctkCheckableHeaderView);
   bool checkable = false;
   this->checkState(index, &checkable);
   if (!checkable && !this->ForceCheckability)
@@ -462,10 +461,9 @@ void ctkCheckableHeaderView::toggleCheckState(int section)
 //-----------------------------------------------------------------------------
 void ctkCheckableHeaderView::setCheckState(int section, Qt::CheckState checkState)
 {
-  Q_D(ctkCheckableHeaderView);
   QAbstractItemModel *current = this->model();
   if(current == 0)
-    {    
+    {
     return;
     }
   current->setHeaderData(section, this->orientation(),
