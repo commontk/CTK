@@ -77,10 +77,10 @@ ctkMaterialPropertyWidget::ctkMaterialPropertyWidget(QWidget* _parent)
   connect(d->PresetsListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
           this, SLOT(selectPreset(QListWidgetItem*)));
   // default presets
-  this->addPreset(Qt::white,1.,1.,0.,0.,1.,"Full ambient eliminating all directional shading.");
-  this->addPreset(Qt::white,1.,0.2,1.,0.,1.,"Dull material properties (no specular lighting).");
-  this->addPreset(Qt::white,1.,0.1,0.9,0.2,10.,"Smooth material properties (moderate specular lighting).");
-  this->addPreset(Qt::white,1.,0.1,0.6,0.5,40.,"Shiny material properties (high specular lighting).");
+  this->addPreset(QColor(),1.,1.,0.,0.,1.,"Full ambient eliminating all directional shading.");
+  this->addPreset(QColor(),1.,0.2,1.,0.,1.,"Dull material properties (no specular lighting).");
+  this->addPreset(QColor(),1.,0.1,0.9,0.2,10.,"Smooth material properties (moderate specular lighting).");
+  this->addPreset(QColor(),1.,0.1,0.6,0.5,40.,"Shiny material properties (high specular lighting).");
   
   d->PresetsListWidget->viewport()->setAutoFillBackground( false);
   d->PresetsListWidget->setAutoFillBackground( false );
@@ -245,15 +245,23 @@ void ctkMaterialPropertyWidget::addPreset(
   d->PresetsListWidget->addItem("");
   QListWidgetItem* item = d->PresetsListWidget->item(d->PresetsListWidget->count()-1);
   item->setToolTip(label);
-  item->setData(Qt::UserRole, color);
+  if (color.isValid())
+    {
+    item->setData(Qt::UserRole, color);
+    }
   item->setData(Qt::UserRole + 1, opacity);
-  item->setData(Qt::UserRole + 2, ambient); 
+  item->setData(Qt::UserRole + 2, ambient);
   item->setData(Qt::UserRole + 3, diffuse);
   item->setData(Qt::UserRole + 4, specular);
   item->setData(Qt::UserRole + 5, power);
   ctkMaterialPropertyPreviewLabel* preset =
     new ctkMaterialPropertyPreviewLabel(color, opacity, ambient, diffuse, specular, power);
-  preset->setColor(d->MaterialPropertyPreviewLabel->color());
+  if (!color.isValid())
+    {
+    connect(this, SIGNAL(colorChanged(const QColor&)),
+            preset, SLOT(setColor(const QColor&)));
+    preset->setColor(this->color());
+    }
   preset->setGridOpacity(d->MaterialPropertyPreviewLabel->gridOpacity());
   item->setSizeHint(preset->sizeHint());
   d->PresetsListWidget->setItemWidget(item, preset);
@@ -263,7 +271,10 @@ void ctkMaterialPropertyWidget::addPreset(
 void ctkMaterialPropertyWidget::selectPreset(QListWidgetItem* preset)
 {
   Q_D(ctkMaterialPropertyWidget);
-  d->ColorPickerButton->setColor(preset->data(Qt::UserRole).value<QColor>());
+  if (preset->data(Qt::UserRole).isValid())
+    {
+    d->ColorPickerButton->setColor(preset->data(Qt::UserRole).value<QColor>());
+    }
   d->OpacitySliderSpinBox->setValue(preset->data(Qt::UserRole + 1).toDouble());
   d->AmbientSliderSpinBox->setValue(preset->data(Qt::UserRole + 2).toDouble());
   d->DiffuseSliderSpinBox->setValue(preset->data(Qt::UserRole + 3).toDouble());

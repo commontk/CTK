@@ -30,15 +30,36 @@
 class ctkMaterialPropertyWidgetPrivate;
 class QListWidgetItem;
 
+/// ctkMaterialPropertyWidget is a panel to control material properties
+/// such as color and lighting coefficients. It contains a preview icon
+/// and a list of presets.
+/// Anytime a property is modified, the preview icon is updated with the
+/// new lighting coefficient.
 class CTK_WIDGETS_EXPORT ctkMaterialPropertyWidget : public QWidget
 {
   Q_OBJECT
+  /// This property holds the color of the material.
   Q_PROPERTY(QColor color  READ color WRITE setColor);
+  /// Opacity component of the material property.
   Q_PROPERTY(double opacity READ opacity WRITE setOpacity);
+  /// This property holds the ambient lighting coefficient,
+  /// it is a nondirectional property.
+  /// Its range is [0,1], where 0 means no ambient light, and 1 means
+  /// full ambient light
+  /// Hint: A range of [0.1,0.5] is more realistic.
   Q_PROPERTY(double ambient READ ambient WRITE setAmbient);
+  /// This property holds the diffuse lighting coefficient.
+  /// Its range is [0,1], where 0 means no diffuse light, and 1 means
+  /// full diffuse light
   Q_PROPERTY(double diffuse READ diffuse WRITE setDiffuse);
+  /// This property holds the specular lighting coefficient.
+  /// Its range is [0,1], where 0 means no specular light, and 1 means
+  /// full specular light
   Q_PROPERTY(double specular READ specular WRITE setSpecular);
+  /// This property holds the power of specular lighting coefficient.
+  /// Its range is [1,50].
   Q_PROPERTY(double specularPower READ specularPower WRITE setSpecularPower);
+  /// This property controls weither backface culling should be enabled or not
   Q_PROPERTY(bool backfaceCulling READ backfaceCulling WRITE setBackfaceCulling);
 public:
   /// Superclass typedef
@@ -46,10 +67,10 @@ public:
 
   /// Constructor
   explicit ctkMaterialPropertyWidget(QWidget* parent = 0);
-  
+
   /// Destructor
   virtual ~ctkMaterialPropertyWidget();
-  
+
   QColor color()const;
   double opacity()const;
 
@@ -57,9 +78,15 @@ public:
   double diffuse()const;
   double specular()const;
   double specularPower()const;
-  
+
   bool backfaceCulling()const;
-  
+
+  /// Add a preset to the preset list. A preview icon will be generated and be
+  /// added on the bottom right corner list. If space is needed, a scrollbar
+  /// will appear. When the user clicks on the icon representing the preset,
+  /// all the preset properties will be applied.
+  /// If color is invalid, the preset color is synchronized with the current
+  /// color property.
   void addPreset(const QColor& color, double opacity,
                  double ambient, double diffuse,
                  double specular, double power,
@@ -94,7 +121,7 @@ protected slots:
   virtual void onDiffuseChanged(double newDiffuse);
   virtual void onSpecularChanged(double newSpecular);
   virtual void onSpecularPowerChanged(double newSpecularPower);
-  
+
   virtual void onBackfaceCullingChanged(bool newBackFaceCulling);
 
   void selectPreset(QListWidgetItem*);
