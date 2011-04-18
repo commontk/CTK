@@ -121,17 +121,17 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
   QFocusEvent focus(QEvent::FocusIn,Qt::TabFocusReason);
   headerView->eventFilter(headerView, &focus);
   
-  if (!headerView->propagateToItems())
+  if (headerView->propagateDepth() == 0)
     {
-    std::cerr << "ctkCheckableHeaderView::propagateToItems() failed: "
-              << headerView->propagateToItems() << std::endl;
+    std::cerr << "ctkCheckableHeaderView::propagateDepth() failed: "
+              << headerView->propagateDepth() << std::endl;
     return EXIT_FAILURE;
     }
-  headerView->setPropagateToItems(false);
-  if (headerView->propagateToItems())
+  headerView->setPropagateDepth(0);
+  if (headerView->propagateDepth() != 0)
     {
-    std::cerr << "ctkCheckableHeaderView::propagateToItems() failed: "
-              << headerView->propagateToItems() << std::endl;
+    std::cerr << "ctkCheckableHeaderView::propagateDepth() failed: "
+              << headerView->propagateDepth() << std::endl;
     return EXIT_FAILURE;
     }
   if (headerView->checkState(0) != Qt::Unchecked ||
@@ -180,9 +180,9 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
     }
 
   // The checkable header gets updated with the item check states
-  headerView->setPropagateToItems(true);
+  headerView->setPropagateDepth(-1);
 
-  if (!headerView->propagateToItems() ||
+  if (headerView->propagateDepth() == 0 ||
       headerView->checkState(0) != Qt::PartiallyChecked ||
       row0[0]->checkState() != Qt::Checked ||
       row1[0]->checkState() != Qt::Unchecked ||

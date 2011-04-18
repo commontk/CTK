@@ -65,7 +65,7 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* parentWidget)
   headerView->setClickable(previousHeaderView->isClickable());
   headerView->setMovable(previousHeaderView->isMovable());
   headerView->setHighlightSections(previousHeaderView->highlightSections());
-  headerView->setPropagateToItems(true);
+  headerView->setPropagateDepth(-1);
   d->NodeTable->setHorizontalHeader(headerView);
 
   d->RemoveButton->setEnabled(false);

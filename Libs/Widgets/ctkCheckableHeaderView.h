@@ -74,7 +74,7 @@ class ctkCheckableHeaderViewPrivate;
 class CTK_WIDGETS_EXPORT ctkCheckableHeaderView : public QHeaderView
 {
   Q_OBJECT;
-  Q_PROPERTY(bool propagateToItems READ propagateToItems WRITE setPropagateToItems);
+  Q_PROPERTY(bool forceCheckability READ forceCheckability WRITE setForceCheckability);
   Q_PROPERTY(int propagateDepth READ propagateDepth WRITE setPropagateDepth);
 public:
   ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent=0);
@@ -118,20 +118,14 @@ public:
   ///   True if the event should be filtered out.
   virtual bool eventFilter(QObject *object, QEvent *e);
 
-  ///
-  /// If true, the items check states in a row/column are synchronized 
-  /// with the check state of the corresponding header section.
-  /// When the property is set to true, the checkstate of the header is
-  /// automatically updated from the checkstate of the items
-  /// True by default
-  void setPropagateToItems(bool propagate);
-  bool propagateToItems()const;
-
   /// How deep in the model(tree) do you want the check state to be propagated
   /// A value of -1 correspond to the deepest level of the model.
   /// -1 by default
   void setPropagateDepth(int depth);
   int  propagateDepth()const;
+  
+  void setForceCheckability(bool force);
+  bool forceCheckability()const;
 
 public slots:
   ///
@@ -143,16 +137,16 @@ public slots:
   void setCheckState(int section, Qt::CheckState checkState);
 
 private slots:
-  void updateHeaderData(Qt::Orientation orient, int first, int last);
+  void onHeaderDataChanged(Qt::Orientation orient, int first, int last);
 
-  void insertHeaderSection(const QModelIndex &parent, int first, int last);
-  inline void updateHeaders();
+  void onHeaderSectionInserted(const QModelIndex &parent, int first, int last);
+  inline void updateHeaderPixmaps();
 
-  void updateHeadersFromItems(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+  void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
   void updateHeadersFromItems();
   
 protected:
-  virtual void updateHeaders(int first, int last);
+  virtual void updateHeaderPixmaps(int first, int last);
   virtual void initStyleSectionOption(QStyleOptionHeader *option, int section, QRect rect)const;
   virtual void mousePressEvent(QMouseEvent *e);
   virtual void mouseReleaseEvent(QMouseEvent *e);
@@ -167,9 +161,9 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-void ctkCheckableHeaderView::updateHeaders()
+void ctkCheckableHeaderView::updateHeaderPixmaps()
 {
-  this->updateHeaders(0, this->count()-1);
+  this->updateHeaderPixmaps(0, this->count()-1);
 }
 
 #endif

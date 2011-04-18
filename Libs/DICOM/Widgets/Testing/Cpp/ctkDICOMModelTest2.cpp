@@ -78,8 +78,10 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
     headerView->setClickable(previousHeaderView->isClickable());
     headerView->setMovable(previousHeaderView->isMovable());
     headerView->setHighlightSections(previousHeaderView->highlightSections());
-    headerView->setPropagateToItems(true);
+    headerView->setPropagateDepth(-1);
+    headerView->setForceCheckability(true);
     viewer.setHeader(headerView);
+    model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
     qDebug() << "new: " << headerView->isHidden();
     topLevel.show();
     if (argc <= 3 || QString(argv[3]) != "-I")

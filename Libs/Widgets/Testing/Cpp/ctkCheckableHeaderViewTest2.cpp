@@ -70,7 +70,8 @@ int ctkCheckableHeaderViewTest2(int argc, char * argv [] )
   headerView->setClickable(oldClickable);
   headerView->setMovable(previousHeaderView->isMovable());
   headerView->setHighlightSections(previousHeaderView->highlightSections());
-  headerView->setPropagateToItems(true);
+  headerView->setPropagateDepth(-1);
+  headerView->setForceCheckability(true);
 
   // sets the model to the headerview
   view.setHeader(headerView);
