@@ -93,7 +93,11 @@ endif()
 #message("empty_binary_directory:${empty_binary_directory}")
 #message("force_build:${force_build}")
 
-set(CTEST_USE_LAUNCHERS 1)
+# For more details, see http://www.kitware.com/blog/home/post/11
+set(CTEST_USE_LAUNCHERS 0)
+if (NOT ${CMAKE_GENERATOR} MATCHES "Visual Studio")
+  set(CTEST_USE_LAUNCHERS 1)
+endif()
 
 if(empty_binary_directory)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
