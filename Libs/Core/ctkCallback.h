@@ -40,7 +40,7 @@ public:
   void setCallback(void (*callback)());
   
 public slots:
-  void invoke();
+  virtual void invoke();
   
 private:
   void (*Callback)();
