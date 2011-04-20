@@ -33,7 +33,8 @@ class CTK_CORE_EXPORT ctkCallback : public QObject
   Q_OBJECT
 public:
 
-  ctkCallback(void (*callback)() = 0, QObject * parentObject = 0);
+  ctkCallback(QObject * parentObject = 0);
+  ctkCallback(void (*callback)(), QObject * parentObject = 0);
   virtual ~ctkCallback();
   
   void (*callback())()const;

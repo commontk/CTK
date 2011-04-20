@@ -25,6 +25,12 @@
 // ctkCallback methods
 
 // --------------------------------------------------------------------------
+ctkCallback::ctkCallback(QObject * parentObject) : QObject(parentObject)
+{
+  this->setCallback(0);
+}
+
+// --------------------------------------------------------------------------
 ctkCallback::ctkCallback(void (*callback)(), QObject * parentObject) : QObject(parentObject)
 {
   this->setCallback(callback);
