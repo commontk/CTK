@@ -49,15 +49,35 @@ void doSomething2()
 int ctkCallbackTest1(int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
+  
 
   Done1 = false;
   Done2 = false;
 
-  ctkCallback callback(doSomething1);
-  QTimer::singleShot(0, &callback, SLOT(invoke()));
+  ctkCallback callback1;
+  if (callback1.callback() != 0)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem vith ctkCallback constructor"
+              << " - ctkCallback::callback() should return 0" << std::endl;
+    return EXIT_FAILURE;
+    }
+    
+  callback1.setCallback(doSomething1);
+  if (callback1.callback() != doSomething1)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem vith ctkCallback::setCallback()" << std::endl;
+    return EXIT_FAILURE;
+    }
   
-  ctkCallback callback2;
-  callback2.setCallback(doSomething2);
+  QTimer::singleShot(0, &callback1, SLOT(invoke()));
+  
+  ctkCallback callback2(doSomething2);
+  if (callback2.callback() != doSomething2)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem vith ctkCallback constructor" << std::endl;
+    return EXIT_FAILURE;
+    }
+    
   QTimer::singleShot(0, &callback2, SLOT(invoke()));
 
   QTimer::singleShot(0, &app, SLOT(quit()));

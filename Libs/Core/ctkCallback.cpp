@@ -36,6 +36,12 @@ ctkCallback::~ctkCallback()
 }
 
 // --------------------------------------------------------------------------
+void (*ctkCallback::callback())()const
+{
+  return this->Callback;
+}
+  
+// --------------------------------------------------------------------------
 void ctkCallback::setCallback(void (*callback)())
 {
   this->Callback = callback;

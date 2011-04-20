@@ -36,6 +36,7 @@ public:
   ctkCallback(void (*callback)() = 0, QObject * parentObject = 0);
   virtual ~ctkCallback();
   
+  void (*callback())()const;
   void setCallback(void (*callback)());
   
 public slots:
