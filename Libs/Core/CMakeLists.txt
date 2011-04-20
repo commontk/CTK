@@ -26,6 +26,8 @@ SET(KIT_SRCS
   ctkAbstractQObjectFactory.tpp
   ctkAbstractLibraryFactory.h
   ctkAbstractLibraryFactory.tpp
+  ctkCallback.cpp
+  ctkCallback.h
   ctkCommandLineParser.cpp
   ctkCommandLineParser.h
   ctkDependencyGraph.cpp
@@ -82,6 +84,7 @@ ENDIF()
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkCallback.h
   ctkCommandLineParser.h
   ctkErrorLogFDMessageHandler_p.h
   ctkErrorLogModel.h
