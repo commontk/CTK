@@ -79,6 +79,10 @@ int ctkCallbackTest1(int argc, char * argv [] )
     }
     
   QTimer::singleShot(0, &callback2, SLOT(invoke()));
+  
+  ctkCallback callback3;
+  
+  QTimer::singleShot(0, &callback3, SLOT(invoke()));
 
   QTimer::singleShot(0, &app, SLOT(quit()));
 
