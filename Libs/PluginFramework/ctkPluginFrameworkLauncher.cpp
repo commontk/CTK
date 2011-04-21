@@ -35,7 +35,7 @@
 #include <cstdlib>
 #endif // _WIN32
 
-#include <CTKConfig.h>
+#include <ctkConfig.h>
 
 class ctkPluginFrameworkLauncherPrivate
 {
