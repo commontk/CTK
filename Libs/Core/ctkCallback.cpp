@@ -31,9 +31,9 @@ ctkCallback::ctkCallback(QObject * parentObject) : QObject(parentObject)
 }
 
 // --------------------------------------------------------------------------
-ctkCallback::ctkCallback(void (*callback)(), QObject * parentObject) : QObject(parentObject)
+ctkCallback::ctkCallback(void (*newCallback)(), QObject * parentObject) : QObject(parentObject)
 {
-  this->setCallback(callback);
+  this->setCallback(newCallback);
 }
 
 // --------------------------------------------------------------------------
@@ -42,15 +42,15 @@ ctkCallback::~ctkCallback()
 }
 
 // --------------------------------------------------------------------------
-void (*ctkCallback::callback())()const
+void (*ctkCallback::callback()const)()
 {
   return this->Callback;
 }
   
 // --------------------------------------------------------------------------
-void ctkCallback::setCallback(void (*callback)())
+void ctkCallback::setCallback(void (*newCallback)())
 {
-  this->Callback = callback;
+  this->Callback = newCallback;
 }
 
 // --------------------------------------------------------------------------

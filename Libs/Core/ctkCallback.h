@@ -27,7 +27,7 @@
 // CTK includes
 #include "ctkCoreExport.h"
 
-//------------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 class CTK_CORE_EXPORT ctkCallback : public QObject
 {
   Q_OBJECT
@@ -36,11 +36,14 @@ public:
   ctkCallback(QObject * parentObject = 0);
   ctkCallback(void (*callback)(), QObject * parentObject = 0);
   virtual ~ctkCallback();
-  
-  void (*callback())()const;
+
+  /// Returns the current pointer function
+  void (*callback()const)();
+  /// Sets a pointer function to call when invoke() is called.
   void setCallback(void (*callback)());
   
 public slots:
+  /// Internally calls the pointer function \a callback.
   virtual void invoke();
   
 private:
