@@ -318,7 +318,7 @@ SET(CTK_LIBS
   DICOM/Widgets:OFF
   ImageProcessing/ITK/Core:OFF
   #Messaging/Core:OFF  # MessagingCore library need some love :) - Let's disable it for now :(
-  ModuleDescription:OFF
+  #ModuleDescription:OFF # ModuleDescription library need some love :) - Let's disable it for now :(
   Scripting/Python/Core:OFF
   Scripting/Python/Widgets:OFF
   Visualization/VTK/Core:OFF
