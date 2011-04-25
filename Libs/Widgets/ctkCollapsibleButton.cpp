@@ -55,7 +55,16 @@ public:
   int      CollapsedHeight;
   bool     ExclusiveMouseOver;
   bool     LookOffWhenChecked;
+
+  /// We change the visibility of the chidren in setChildrenVisibility
+  /// and we track when the visibility is changed to force it back to possibly
+  /// force the child to be hidden. To prevent infinite loop we need to know
+  /// who is changing children's visibility.
   bool     ForcingVisibility;
+  /// Sometimes the creation of the widget is not done inside setVisible,
+  /// as we need to do special processing the first time the button is
+  /// setVisible, we track its created state with the variable
+  bool     IsStateCreated;
 
   int      MaximumHeight;  // use carefully
 
@@ -68,6 +77,8 @@ public:
 ctkCollapsibleButtonPrivate::ctkCollapsibleButtonPrivate(ctkCollapsibleButton& object)
   :q_ptr(&object)
 {
+  this->ForcingVisibility = false;
+  this->IsStateCreated = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -88,7 +99,6 @@ void ctkCollapsibleButtonPrivate::init()
   this->CollapsedHeight = 10;
   this->ExclusiveMouseOver = false;  
   this->LookOffWhenChecked = true; // set as a prop ?
-  this->ForcingVisibility = false;
   
   this->MaximumHeight = q->maximumHeight();
 
@@ -675,7 +685,6 @@ void ctkCollapsibleButton::childEvent(QChildEvent* c)
 void ctkCollapsibleButton::setVisible(bool show)
 {
   Q_D(ctkCollapsibleButton);
-  bool wasCreated = this->testAttribute(Qt::WA_WState_Created);
   // calling QWidget::setVisible() on ctkCollapsibleButton will eventually
   // call QWidget::showChildren() or hideChildren() which will generate
   // ShowToParent/HideToParent events but we want to ignore that case in
@@ -687,8 +696,9 @@ void ctkCollapsibleButton::setVisible(bool show)
   // is not yet created, now that it is created, ensure that the children
   // are correctly shown/hidden depending on their explicit visibility and
   // the collapsed property of the button.
-  if (!wasCreated && this->testAttribute(Qt::WA_WState_Created))
+  if (!d->IsStateCreated && this->testAttribute(Qt::WA_WState_Created))
     {
+    d->IsStateCreated = true;
     foreach(QObject* child, this->children())
       {
       QWidget* childWidget = qobject_cast<QWidget*>(child);
