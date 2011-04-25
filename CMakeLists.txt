@@ -331,7 +331,6 @@ SET(CTK_LIBS
 #
 SET(CTK_PLUGINS
   org.commontk.eventbus:OFF
-  #org.commontk.cli:OFF # MessagingCore library need some love :) - Let's disable it for now :(
   org.commontk.configadmin:OFF
   org.commontk.dah.app:OFF
   org.commontk.dah.core:OFF
