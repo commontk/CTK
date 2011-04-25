@@ -250,9 +250,13 @@ void ctkCollapsibleButton::collapse(bool collapsed)
     }
 
   // update the visibility of all the children
-  foreach(QWidget* child, this->findChildren<QWidget*>())
+  foreach(QObject* child, this->children())
     {
-    d->setChildVisibility(child);
+    QWidget* childWidget = qobject_cast<QWidget*>(child);
+    if (childWidget)
+      {
+      d->setChildVisibility(childWidget);
+      }
     }
 
   // this might be too many updates...
@@ -637,7 +641,7 @@ void ctkCollapsibleButton::childEvent(QChildEvent* c)
     QWidget *w = static_cast<QWidget*>(c->child());
     d->setChildVisibility(w);
     }
-  this->QWidget::childEvent(c);
+  this->QAbstractButton::childEvent(c);
 }
 
 //-----------------------------------------------------------------------------
