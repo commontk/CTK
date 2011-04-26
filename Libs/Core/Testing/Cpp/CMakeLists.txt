@@ -25,6 +25,7 @@ SET(KITTests_SRCS
   ctkAbstractObjectFactoryTest1.cpp
   ctkAbstractPluginFactoryTest1.cpp
   ctkAbstractQObjectFactoryTest1.cpp
+  ctkCallbackTest1.cpp
   ctkCommandLineParserTest1.cpp
   ctkErrorLogModelTest1.cpp
   ctkErrorLogModelTest2.cpp
@@ -110,6 +111,7 @@ IF(HAVE_BFD)
   ADD_TEST(NAME ctkBinaryFileDescriptorTest1 COMMAND ${KIT_TESTS} ctkBinaryFileDescriptorTest1 $<TARGET_FILE:ctkBinaryFileDescriptorTestHelper>)
   SET_PROPERTY(TEST ctkBinaryFileDescriptorTest1 PROPERTY LABELS ${PROJECT_NAME})
 ENDIF()
+SIMPLE_TEST( ctkCallbackTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )

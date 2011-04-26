@@ -55,7 +55,16 @@ public:
   int      CollapsedHeight;
   bool     ExclusiveMouseOver;
   bool     LookOffWhenChecked;
+
+  /// We change the visibility of the chidren in setChildrenVisibility
+  /// and we track when the visibility is changed to force it back to possibly
+  /// force the child to be hidden. To prevent infinite loop we need to know
+  /// who is changing children's visibility.
   bool     ForcingVisibility;
+  /// Sometimes the creation of the widget is not done inside setVisible,
+  /// as we need to do special processing the first time the button is
+  /// setVisible, we track its created state with the variable
+  bool     IsStateCreated;
 
   int      MaximumHeight;  // use carefully
 
@@ -68,6 +77,8 @@ public:
 ctkCollapsibleButtonPrivate::ctkCollapsibleButtonPrivate(ctkCollapsibleButton& object)
   :q_ptr(&object)
 {
+  this->ForcingVisibility = false;
+  this->IsStateCreated = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -109,17 +120,34 @@ void ctkCollapsibleButtonPrivate::init()
 //-----------------------------------------------------------------------------
 void ctkCollapsibleButtonPrivate::setChildVisibility(QWidget* childWidget)
 {
+  Q_Q(ctkCollapsibleButton);
+  // Don't hide children while the widget is not yet created (before show() is
+  // called). If we hide them (but don't set ExplicitShowHide), they would be
+  // shown anyway when they will be created (because ExplicitShowHide is not set).
+  // If we set ExplicitShowHide, then calling setVisible(false) on them would
+  // be a no (because they are already hidden and ExplicitShowHide is set).
+  // So we don't hide/show the children until the widget is created.
+  if (!q->testAttribute(Qt::WA_WState_Created))
+    {
+    return;
+    }
   this->ForcingVisibility = true;
 
-  bool visible= !this->Collapsed &&
-    (childWidget->property("visibilityToParent").isValid() ?
-       childWidget->property("visibilityToParent").toBool() : true);
+  bool visible= !this->Collapsed;
+  // if the widget has been explicity hidden, then hide it.
+  if (childWidget->property("visibilityToParent").isValid()
+      && !childWidget->property("visibilityToParent").toBool())
+    {
+    visible = false;
+    }
 
   childWidget->setVisible(visible);
 
-  // restore the flag as we don't want to make it like it is an explicit visible set.
-  if (!childWidget->property("visibilityToParent").isValid() ||
-      childWidget->property("visibilityToParent").toBool())
+  // setVisible() has set the ExplicitShowHide flag, restore it as we don't want
+  // to make it like it was an explicit visible set because we want
+  // to allow the children to be explicitly hidden by the user.
+  if ((!childWidget->property("visibilityToParent").isValid() ||
+      childWidget->property("visibilityToParent").toBool()))
     {
     childWidget->setAttribute(Qt::WA_WState_ExplicitShowHide, false);
     }
@@ -250,9 +278,13 @@ void ctkCollapsibleButton::collapse(bool collapsed)
     }
 
   // update the visibility of all the children
-  foreach(QWidget* child, this->findChildren<QWidget*>())
+  foreach(QObject* child, this->children())
     {
-    d->setChildVisibility(child);
+    QWidget* childWidget = qobject_cast<QWidget*>(child);
+    if (childWidget)
+      {
+      d->setChildVisibility(childWidget);
+      }
     }
 
   // this might be too many updates...
@@ -627,17 +659,26 @@ bool ctkCollapsibleButton::hitButton(const QPoint & _pos)const
 void ctkCollapsibleButton::childEvent(QChildEvent* c)
 {
   Q_D(ctkCollapsibleButton);
+  QObject* child = c->child();
   if (c && c->type() == QEvent::ChildAdded &&
-      c->child() && c->child()->isWidgetType())
+      child && child->isWidgetType())
     {
+    QWidget *childWidget = qobject_cast<QWidget*>(c->child());
+    // Handle the case where the child has already it's visibility set before
+    // being added to the widget
+    if (childWidget->testAttribute(Qt::WA_WState_ExplicitShowHide) &&
+        childWidget->testAttribute(Qt::WA_WState_Hidden))
+      {
+      // if the widget has explicitly set to hidden, then mark it as such
+      childWidget->setProperty("visibilityToParent", false);
+      }
     // We want to catch all the child's Show/Hide events.
-    c->child()->installEventFilter(this);
+    child->installEventFilter(this);
     // If the child is added while ctkCollapsibleButton is collapsed, then we
     // need to hide the child.
-    QWidget *w = static_cast<QWidget*>(c->child());
-    d->setChildVisibility(w);
+    d->setChildVisibility(childWidget);
     }
-  this->QWidget::childEvent(c);
+  this->QAbstractButton::childEvent(c);
 }
 
 //-----------------------------------------------------------------------------
@@ -651,6 +692,22 @@ void ctkCollapsibleButton::setVisible(bool show)
   d->ForcingVisibility = true;
   this->QWidget::setVisible(show);
   d->ForcingVisibility = false;
+  // We have been ignoring setChildVisibility() while the collapsible button
+  // is not yet created, now that it is created, ensure that the children
+  // are correctly shown/hidden depending on their explicit visibility and
+  // the collapsed property of the button.
+  if (!d->IsStateCreated && this->testAttribute(Qt::WA_WState_Created))
+    {
+    d->IsStateCreated = true;
+    foreach(QObject* child, this->children())
+      {
+      QWidget* childWidget = qobject_cast<QWidget*>(child);
+      if (childWidget)
+        {
+        d->setChildVisibility(childWidget);
+        }
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
