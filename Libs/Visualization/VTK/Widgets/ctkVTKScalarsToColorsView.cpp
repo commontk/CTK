@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QColorDialog>
 
 // CTK includes
 #include "ctkLogger.h"
@@ -27,8 +28,10 @@
 // VTK includes
 #include <vtkAxis.h>
 #include <vtkChartXY.h>
+#include <vtkColorTransferControlPointsItem.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkColorTransferFunctionItem.h>
+#include <vtkCompositeControlPointsItem.h>
 #include <vtkCompositeTransferFunctionItem.h>
 #include <vtkLookupTable.h>
 #include <vtkLookupTableItem.h>
@@ -97,6 +100,17 @@ ctkVTKScalarsToColorsView::~ctkVTKScalarsToColorsView()
 }
 
 // ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView::addPlot(vtkPlot* plot)
+{
+  if (vtkColorTransferControlPointsItem::SafeDownCast(plot))
+    {
+    this->qvtkConnect(plot, vtkControlPointsItem::CurrentPointEditEvent,
+                      this, SLOT(editPoint(vtkObject*, void*)));
+    }
+  this->Superclass::addPlot(plot);
+}
+
+// ----------------------------------------------------------------------------
 vtkPlot* ctkVTKScalarsToColorsView::addLookupTable(vtkLookupTable* lut)
 {
   Q_D(ctkVTKScalarsToColorsView);
@@ -114,6 +128,9 @@ vtkPlot* ctkVTKScalarsToColorsView::addColorTransferFunction(vtkColorTransferFun
   vtkSmartPointer<vtkColorTransferFunctionItem> item =
     vtkSmartPointer<vtkColorTransferFunctionItem>::New();
   item->SetColorTransferFunction(colorTF);
+  vtkSmartPointer<vtkColorTransferControlPointsItem> controlPointsItem =
+    vtkSmartPointer<vtkColorTransferControlPointsItem>::New();
+  controlPointsItem->SetColorTransferFunction(colorTF);
   this->addPlot(item);
   d->updateChart();
   return item;
@@ -139,7 +156,9 @@ vtkPlot* ctkVTKScalarsToColorsView::addOpacityFunction(vtkPiecewiseFunction* opa
 }
 
 // ----------------------------------------------------------------------------
-vtkPlot* ctkVTKScalarsToColorsView::addCompositeFunction(vtkColorTransferFunction* colorTF, vtkPiecewiseFunction* opacityTF)
+vtkPlot* ctkVTKScalarsToColorsView
+::addCompositeFunction(vtkColorTransferFunction* colorTF,
+                       vtkPiecewiseFunction* opacityTF)
 {
   Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkCompositeTransferFunctionItem> item =
@@ -148,11 +167,40 @@ vtkPlot* ctkVTKScalarsToColorsView::addCompositeFunction(vtkColorTransferFunctio
   item->SetOpacityFunction(opacityTF);
   item->SetMaskAboveCurve(true);
   this->addPlot(item);
-  vtkSmartPointer<vtkPiecewiseControlPointsItem> controlPointsItem =
-    vtkSmartPointer<vtkPiecewiseControlPointsItem>::New();
-  controlPointsItem->SetPiecewiseFunction(opacityTF);
+  vtkSmartPointer<vtkCompositeControlPointsItem> controlPointsItem =
+    vtkSmartPointer<vtkCompositeControlPointsItem>::New();
+  controlPointsItem->SetColorTransferFunction(colorTF);
+  controlPointsItem->SetOpacityFunction(opacityTF);
   this->addPlot(controlPointsItem);
 
   d->updateChart();
   return item;
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView::editPoint(vtkObject* caller, void* callData)
+{
+  vtkControlPointsItem* controlPoints = reinterpret_cast<vtkControlPointsItem*>(caller);
+  int pointToEdit = reinterpret_cast<unsigned long>(callData);
+  if (!controlPoints || pointToEdit < 0)
+    {
+    return;
+    }
+  vtkColorTransferControlPointsItem* colorTransferFunctionItem =
+    vtkColorTransferControlPointsItem::SafeDownCast(controlPoints);
+  if (colorTransferFunctionItem)
+    {
+    double xrgbms[6];
+    vtkColorTransferFunction* colorTF = colorTransferFunctionItem->GetColorTransferFunction();
+    colorTF->GetNodeValue(pointToEdit, xrgbms);
+    QColor oldColor = QColor::fromRgbF(xrgbms[0], xrgbms[1], xrgbms[2]);
+    QColor newColor = QColorDialog::getColor(oldColor, this);
+    if (newColor.isValid())
+      {
+      xrgbms[1] = newColor.redF();
+      xrgbms[2] = newColor.greenF();
+      xrgbms[3] = newColor.blueF();
+      colorTF->SetNodeValue(pointToEdit, xrgbms);
+      }
+    }
 }

@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QMouseEvent>
 
 // CTK includes
 #include "ctkLogger.h"
@@ -28,6 +29,7 @@
 #include <vtkAxis.h>
 #include <vtkChartXY.h>
 #include <vtkContext2D.h>
+#include <vtkContextMouseEvent.h>
 #include <vtkContextScene.h>
 #include <vtkContextView.h>
 #include <vtkOpenGLContextDevice2D.h>
@@ -73,6 +75,8 @@ void ctkVTKChartViewPrivate::init()
   //q->GetRenderWindow()->SetMultiSamples(0);
   //vtkOpenGLContextDevice2D::SafeDownCast(this->ContextView->GetContext()->GetDevice())
   //                                       ->SetStringRendererToQt();
+  this->Chart->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
+  this->Chart->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::RIGHT_BUTTON);
 }
 
 // ----------------------------------------------------------------------------
@@ -115,10 +119,18 @@ vtkChartXY* ctkVTKChartView::chart()const
 }
 
 // ----------------------------------------------------------------------------
+vtkContextScene* ctkVTKChartView::scene()const
+{
+  Q_D(const ctkVTKChartView);
+  return d->ContextView->GetScene();
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKChartView::addPlot(vtkPlot* plot)
 {
   Q_D(ctkVTKChartView);
   d->Chart->AddPlot(plot);
+  emit this->plotAdded(plot);
 }
 
 // ----------------------------------------------------------------------------
@@ -200,4 +212,14 @@ void ctkVTKChartView::fitAxesToBounds()
       chart->GetAxis(i)->SetBehavior(1);
       }
     }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::mouseDoubleClickEvent(QMouseEvent* event)
+{
+  if (event->button() == Qt::MidButton)
+    {
+    this->fitAxesToBounds();
+    }
+  this->QVTKWidget::mouseDoubleClickEvent(event);
 }

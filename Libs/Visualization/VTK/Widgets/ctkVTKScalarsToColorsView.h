@@ -22,8 +22,8 @@
 #define __ctkVTKScalarsToColorsView_h
 
 // CTK includes
-#include <ctkPimpl.h>
 #include "ctkVTKChartView.h"
+#include "ctkVTKObject.h"
 class ctkVTKScalarsToColorsViewPrivate;
 
 // VTK includes
@@ -33,18 +33,25 @@ class vtkColorTransferFunction;
 class vtkLookupTable;
 class vtkPiecewiseFunction;
 
-class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsView : public ctkVTKChartView
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsView
+  : public ctkVTKChartView
 {
   Q_OBJECT
-
+  QVTK_OBJECT
 public:
+  typedef ctkVTKChartView Superclass;
   ctkVTKScalarsToColorsView(QWidget* parent = 0);
   virtual ~ctkVTKScalarsToColorsView();
 
+  virtual void addPlot(vtkPlot* plot);
   vtkPlot* addLookupTable(vtkLookupTable* lut);
   vtkPlot* addColorTransferFunction(vtkColorTransferFunction* colorTF);
   vtkPlot* addOpacityFunction(vtkPiecewiseFunction* opacityTF);
-  vtkPlot* addCompositeFunction(vtkColorTransferFunction* colorTF, vtkPiecewiseFunction* opacityTF);
+  vtkPlot* addCompositeFunction(vtkColorTransferFunction* colorTF,
+                                vtkPiecewiseFunction* opacityTF);
+
+public slots:
+  void editPoint(vtkObject* plot, void * pointId);
 
 protected:
   QScopedPointer<ctkVTKScalarsToColorsViewPrivate> d_ptr;
