@@ -90,8 +90,8 @@ void ctkDoubleRangeSliderPrivate::init()
   this->MaxValue = this->Slider->maximumValue();
   this->SingleStep = this->Slider->singleStep();
 
-  q->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed,
-                               QSizePolicy::Slider));
+  q->setSizePolicy(this->Slider->sizePolicy());
+  q->setAttribute(Qt::WA_WState_OwnSizePolicy, false);
 
   this->connectSlider();
 }
@@ -498,6 +498,18 @@ void ctkDoubleRangeSlider::triggerAction( QAbstractSlider::SliderAction action)
 void ctkDoubleRangeSlider::setOrientation(Qt::Orientation newOrientation)
 {
   Q_D(ctkDoubleRangeSlider);
+  if (this->orientation() == newOrientation)
+    {
+    return;
+    }
+  if (!testAttribute(Qt::WA_WState_OwnSizePolicy))
+    {
+    QSizePolicy sp = this->sizePolicy();
+    sp.transpose();
+    this->setSizePolicy(sp);
+    this->setAttribute(Qt::WA_WState_OwnSizePolicy, false);
+    }
+  // d->Slider will take care of calling updateGeometry
   d->Slider->setOrientation(newOrientation);
 }
 
