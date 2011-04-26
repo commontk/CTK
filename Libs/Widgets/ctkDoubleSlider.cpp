@@ -89,8 +89,8 @@ void ctkDoubleSliderPrivate::init()
   q->connect(this->Slider, SIGNAL(rangeChanged(int, int)),
              q, SLOT(onRangeChanged(int, int)));
 
-  q->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed,
-                               QSizePolicy::Slider));
+  q->setSizePolicy(this->Slider->sizePolicy());
+  q->setAttribute(Qt::WA_WState_OwnSizePolicy, false);
 }
   
 // --------------------------------------------------------------------------
@@ -344,6 +344,18 @@ Qt::Orientation ctkDoubleSlider::orientation()const
 void ctkDoubleSlider::setOrientation(Qt::Orientation newOrientation)
 {
   Q_D(ctkDoubleSlider);
+  if (this->orientation() == newOrientation)
+    {
+    return;
+    }
+  if (!testAttribute(Qt::WA_WState_OwnSizePolicy))
+    {
+    QSizePolicy sp = this->sizePolicy();
+    sp.transpose();
+    this->setSizePolicy(sp);
+    this->setAttribute(Qt::WA_WState_OwnSizePolicy, false);
+    }
+  // d->Slider will take care of calling updateGeometry
   d->Slider->setOrientation(newOrientation);
 }
 
