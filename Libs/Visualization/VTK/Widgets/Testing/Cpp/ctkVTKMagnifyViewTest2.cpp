@@ -28,7 +28,7 @@
 #include <QTimer>
 
 // CTK includes
-#include "ctkVTKMagnifyWidget.h"
+#include "ctkVTKMagnifyView.h"
 #include "ctkCommandLineParser.h"
 #include "ctkVTKSliceView.h"
 
@@ -36,6 +36,7 @@
 #include <vtkImageReader2Factory.h>
 #include <vtkImageReader2.h>
 #include <vtkImageData.h>
+#include <vtkImageGaussianSmooth.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
@@ -43,7 +44,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-bool imageCompare(ctkVTKMagnifyWidget * magnify, QString baselineDirectory,
+bool imageCompare(ctkVTKMagnifyView * magnify, QString baselineDirectory,
                   QString baselineFilename)
   {
   QImage output = QPixmap::grabWidget(magnify).toImage();
@@ -53,7 +54,7 @@ bool imageCompare(ctkVTKMagnifyWidget * magnify, QString baselineDirectory,
 
 //-----------------------------------------------------------------------------
 // (Used to create baselines, not during testing).
-void imageSave(ctkVTKMagnifyWidget * magnify, QString baselineDirectory,
+void imageSave(ctkVTKMagnifyView * magnify, QString baselineDirectory,
                QString baselineFilename)
   {
   QImage output = QPixmap::grabWidget(magnify).toImage();
@@ -61,7 +62,7 @@ void imageSave(ctkVTKMagnifyWidget * magnify, QString baselineDirectory,
   }
 
 //-----------------------------------------------------------------------------
-bool runBaselineTest(int time, QApplication& app, ctkVTKMagnifyWidget * magnify,
+bool runBaselineTest(int time, QApplication& app, ctkVTKMagnifyView * magnify,
                      QWidget * underWidget, bool shouldBeUnder,
                      QString baselineDirectory, QString testName,
                      QString testNumber, QString errorMessage)
@@ -69,21 +70,21 @@ bool runBaselineTest(int time, QApplication& app, ctkVTKMagnifyWidget * magnify,
   QTimer::singleShot(time, &app, SLOT(quit()));
   if (app.exec() == EXIT_FAILURE)
     {
-    std::cerr << "ctkVTKMagnifyWidget exec failed when "
+    std::cerr << "ctkVTKMagnifyView exec failed when "
         << qPrintable(errorMessage) << std::endl;
     return false;
     }
   if (underWidget->underMouse() != shouldBeUnder)
     {
-    std::cerr << "ctkMagnifyWidget mouse position failed when "
+    std::cerr << "ctkMagnifyView mouse position failed when "
         << qPrintable(errorMessage) << std::endl;
     return false;
     }
   QString baselineFilename
-      = "ctkVTKMagnifyWidgetTest2" + testNumber + testName + ".png";
+      = "ctkVTKMagnifyViewTest2" + testNumber + testName + ".png";
   if (!imageCompare(magnify, baselineDirectory, baselineFilename))
     {
-    std::cerr << "ctkVTKMagnifyWidget baseline comparison failed when "
+    std::cerr << "ctkVTKMagnifyView baseline comparison failed when "
               << qPrintable(errorMessage) << "." << std::endl;
     return false;
     }
@@ -91,7 +92,7 @@ bool runBaselineTest(int time, QApplication& app, ctkVTKMagnifyWidget * magnify,
 }
 
 //-----------------------------------------------------------------------------
-int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
+int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
@@ -122,61 +123,76 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   QHBoxLayout layout(&parentWidget);
 
   // Magnify widget parameters (we want an odd widget size and odd bullsEye)
-  bool showCursor = true;
-  QPen cursorPen(QPen(Qt::yellow));
-  cursorPen.setJoinStyle(Qt::MiterJoin);
-  ctkCursorPixmapWidget::CursorType cursorType
-      = ctkCursorPixmapWidget::BullsEyeCursor;
+  bool showCrosshair = true;
+  QPen crosshairPen(QPen(Qt::yellow));
+  crosshairPen.setJoinStyle(Qt::MiterJoin);
+  ctkCrosshairLabel::CrosshairType crosshairType
+      = ctkCrosshairLabel::BullsEyeCrosshair;
   double bullsEyeWidth = magnification + 2;
   QColor marginColor = Qt::magenta;
+  bool observeRenderWindowEvents = false;
+  int updateInterval = 0;
 
   // Create the magnify widget
-  ctkVTKMagnifyWidget * magnify = new ctkVTKMagnifyWidget(&parentWidget);
+  ctkVTKMagnifyView * magnify = new ctkVTKMagnifyView(&parentWidget);
   magnify->setMinimumSize(size,size);
   magnify->setMaximumSize(size,size);
-  magnify->setShowCursor(showCursor);
-  magnify->setCursorPen(cursorPen);
-  magnify->setCursorType(cursorType);
+  magnify->setShowCrosshair(showCrosshair);
+  magnify->setCrosshairPen(crosshairPen);
+  magnify->setCrosshairType(crosshairType);
   magnify->setBullsEyeWidth(bullsEyeWidth);
   magnify->setMarginColor(marginColor);
   magnify->setMagnification(magnification);
+  magnify->setObserveRenderWindowEvents(observeRenderWindowEvents);
+  magnify->setUpdateInterval(updateInterval);
   layout.addWidget(magnify);
 
   // Test magnify widget parameters
-  if (magnify->showCursor() != showCursor)
+  if (magnify->showCrosshair() != showCrosshair)
     {
-    std::cerr << "ctkVTKMagnifyWidget:setShowCursor failed. "
-              << magnify->showCursor() << std::endl;
+    std::cerr << "ctkVTKMagnifyView:setShowCrosshair failed. "
+              << magnify->showCrosshair() << std::endl;
     return EXIT_FAILURE;
     }
-  if (magnify->cursorPen() != cursorPen)
+  if (magnify->crosshairPen() != crosshairPen)
     {
-    std::cerr << "ctkVTKMagnifyWidget:setCursorPen failed. "
-              << qPrintable(magnify->cursorPen().color().name()) << std::endl;
+    std::cerr << "ctkVTKMagnifyView:setCrosshairPen failed. "
+              << qPrintable(magnify->crosshairPen().color().name()) << std::endl;
     return EXIT_FAILURE;
     }
-  if (magnify->cursorType() != cursorType)
+  if (magnify->crosshairType() != crosshairType)
     {
-    std::cerr << "ctkVTKMagnifyWidget:setCursorType failed. "
-              << magnify->cursorType() << std::endl;
+    std::cerr << "ctkVTKMagnifyView:setCrosshairType failed. "
+              << magnify->crosshairType() << std::endl;
     return EXIT_FAILURE;
     }
   if (magnify->bullsEyeWidth() != bullsEyeWidth)
     {
-    std::cerr << "ctkVTKMagnifyWidget:setBullsEyeWidth failed. "
+    std::cerr << "ctkVTKMagnifyView:setBullsEyeWidth failed. "
               << magnify->bullsEyeWidth() << std::endl;
     return EXIT_FAILURE;
     }
   if (magnify->marginColor() != marginColor)
     {
-    std::cerr << "ctkVTKMagnifyWidget:setMarginColor failed. "
+    std::cerr << "ctkVTKMagnifyView:setMarginColor failed. "
               << qPrintable(magnify->marginColor().name()) << std::endl;
     return EXIT_FAILURE;
     }
   if (magnify->magnification() != magnification)
     {
-    std::cerr << "ctkVTKMagnifyWidget:setMagnification failed. "
+    std::cerr << "ctkVTKMagnifyView:setMagnification failed. "
               << magnify->magnification() << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (magnify->observeRenderWindowEvents() != observeRenderWindowEvents)
+    {
+    std::cerr << "ctkVTKMagnifyView:setObserveRenderWindowEvents failed. "
+              << magnify->observeRenderWindowEvents() << std::endl;
+    }
+  if (magnify->updateInterval() != updateInterval)
+    {
+    std::cerr << "ctkVTKMagnifyView:setUpdateInterval failed. "
+              << magnify->updateInterval() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -203,7 +219,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
       magnify->isObserved(allSliceViews[2]->VTKWidget()) ||
       magnify->numberObserved() != 2)
     {
-    std::cerr << "ctkVTKMagnifyWidget:observe(QVTKWidget*) failed. "
+    std::cerr << "ctkVTKMagnifyView:observe(QVTKWidget*) failed. "
               << "Number observed = " << magnify->numberObserved() << std::endl;
     return EXIT_FAILURE;
     }
@@ -241,13 +257,13 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
 
   int time = 200;
 
-  // Get cursor points of interest, used in the following tests
+  // Get crosshair points of interest, used in the following tests
   parentWidget.move(0,0);
   parentWidget.show();
   QTimer::singleShot(time, &app, SLOT(quit()));
   if (app.exec() == EXIT_FAILURE)
     {
-    std::cerr << "ctkVTKMagnifyWidget:show failed the first time." << std::endl;
+    std::cerr << "ctkVTKMagnifyView:show failed the first time." << std::endl;
     return EXIT_FAILURE;
     }
   QPoint insideSlice0 = allSliceViews[0]->mapToGlobal(
@@ -266,25 +282,25 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
         QPoint(0,0));
   parentWidget.hide();
 
-  // Make sure the magnify widget magnifies right away when shown with the cursor inside
+  // Make sure the magnify widget magnifies right away when shown with the crosshair inside
   // an observed QVTKWidget
   QCursor::setPos(insideSlice0);
   parentWidget.show();
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
                        baselineDirectory, testType, "a",
-                       "magnify widget first shown with cursor inside observed widget"))
+                       "magnify widget first shown with crosshair inside observed widget"))
     {
     return EXIT_FAILURE;
     }
   parentWidget.hide();
 
-  // Make sure the magnify widget shows blank right away when shown with the cursor
+  // Make sure the magnify widget shows blank right away when shown with the crosshair
   // outside the observed QVTKWidgets
   QCursor::setPos(outside);
   parentWidget.show();
   if (!runBaselineTest(time, app, magnify, &parentWidget, false,
                        baselineDirectory, testType, "b",
-                       "magnify widget first shown with cursor outside observed widget"))
+                       "magnify widget first shown with crosshair outside observed widget"))
     {
     return EXIT_FAILURE;
     }
@@ -293,7 +309,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   QCursor::setPos(insideSlice1);
   if (!runBaselineTest(time, app, magnify, allSliceViews[1], true,
                        baselineDirectory, testType, "c",
-                       "cursor moved inside 2nd observed widget the first time"))
+                       "crosshair moved inside 2nd observed widget the first time"))
     {
     return EXIT_FAILURE;
     }
@@ -302,7 +318,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   QCursor::setPos(insideSlice1edge);
   if (!runBaselineTest(time, app, magnify, allSliceViews[1], true,
                        baselineDirectory, testType, "d",
-                       "cursor moved inside 2nd observed widget the second time"))
+                       "crosshair moved inside 2nd observed widget the second time"))
     {
     return EXIT_FAILURE;
     }
@@ -311,7 +327,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   QCursor::setPos(insideSlice2);
   if (!runBaselineTest(time, app, magnify, allSliceViews[2], true,
                        baselineDirectory, testType, "e",
-                       "cursor moved inside unobserved widget"))
+                       "crosshair moved inside unobserved widget"))
     {
     return EXIT_FAILURE;
     }
@@ -321,7 +337,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   QCursor::setPos(insideSlice0bottomRightCorner);
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
                        baselineDirectory, testType, "f",
-                       "cursor moved to bottom-right corner of observed widget"))
+                       "crosshair moved to bottom-right corner of observed widget"))
     {
     return EXIT_FAILURE;
     }
@@ -331,10 +347,89 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   QCursor::setPos(insideSlice0topLeftCorner);
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
                        baselineDirectory, testType, "g",
-                       "cursor moved to top-left corner of observed widget"))
+                       "crosshair moved to top-left corner of observed widget"))
     {
     return EXIT_FAILURE;
     }
+
+  // Go back inside the widget
+  QCursor::setPos(insideSlice0);
+  if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
+                       baselineDirectory, testType, "a",
+                       "crosshair moved again inside observed widget"))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // Test enabling observing render window events (trigger a render window event by
+  // changing the image data)
+  observeRenderWindowEvents = true;
+  magnify->setObserveRenderWindowEvents(observeRenderWindowEvents);
+  if (magnify->observeRenderWindowEvents() != observeRenderWindowEvents)
+    {
+    std::cerr << "ctkVTKMagnifyView:setObserveRenderWindowEvents failed. "
+              << magnify->observeRenderWindowEvents() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkImageGaussianSmooth * gaussian = vtkImageGaussianSmooth::New();
+  gaussian->SetInput(image);
+  gaussian->SetRadiusFactors(5,5);
+  gaussian->Update();
+  allSliceViews[0]->setImageData(gaussian->GetOutput());
+  allSliceViews[0]->scheduleRender();
+  if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
+                       baselineDirectory, testType, "h",
+                       "after Gaussian blur when observing render window events"))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // Test disabling observing render window events (trigger a render window event by
+  // changing the image data)
+  observeRenderWindowEvents = false;
+  magnify->setObserveRenderWindowEvents(observeRenderWindowEvents);
+  if (magnify->observeRenderWindowEvents() != observeRenderWindowEvents)
+    {
+    std::cerr << "ctkVTKMagnifyView:setObserveRenderWindowEvents failed. "
+              << magnify->observeRenderWindowEvents() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  gaussian->SetInput(image);
+  gaussian->SetRadiusFactors(0,0);
+  gaussian->Update();
+  allSliceViews[0]->setImageData(gaussian->GetOutput());
+  allSliceViews[0]->scheduleRender();
+  if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
+                       baselineDirectory, testType, "h",
+                       "after Gaussian blur when not observing render window events"))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // Test changing the update interval
+  magnify->setUpdateInterval(time * 2);
+  magnify->setObserveRenderWindowEvents(true);
+  allSliceViews[0]->setImageData(image);
+  allSliceViews[0]->scheduleRender();
+  QCursor::setPos(insideSlice0bottomRightCorner);
+  // It should be waiting to update here
+  if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
+                       baselineDirectory, testType, "h",
+                       "after changing update interval: updated too quickly"))
+    {
+    return EXIT_FAILURE;
+    }
+  // It should have updated by now
+  if (!runBaselineTest(time + 50, app, magnify, allSliceViews[0], true,
+                       baselineDirectory, testType, "f",
+                       "after changing update interval: didn't update after waiting"))
+    {
+    return EXIT_FAILURE;
+    }
+
+  gaussian->Delete();
 
   return EXIT_SUCCESS;
 

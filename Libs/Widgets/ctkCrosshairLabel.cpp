@@ -26,94 +26,94 @@
 #include <QSize>
 
 // CTK includes
-#include "ctkCursorPixmapWidget.h"
+#include "ctkCrosshairLabel.h"
 #include "ctkLogger.h"
 
 // STD includes
 #include <math.h>
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkCursorPixmapWidget");
+static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkCrosshairLabel");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class ctkCursorPixmapWidgetPrivate
+class ctkCrosshairLabelPrivate
 {
-  Q_DECLARE_PUBLIC(ctkCursorPixmapWidget);
+  Q_DECLARE_PUBLIC(ctkCrosshairLabel);
 protected:
-  ctkCursorPixmapWidget* const q_ptr;
+  ctkCrosshairLabel* const q_ptr;
 public:
-  ctkCursorPixmapWidgetPrivate(ctkCursorPixmapWidget& object);
+  ctkCrosshairLabelPrivate(ctkCrosshairLabel& object);
 
   void init();
-  void drawCursor();
-  void drawCrossHairCursor(QPainter& painter);
-  void drawBullsEyeCursor(QPainter& painter);
+  void drawCrosshair();
+  void drawSimpleCrosshair(QPainter& painter);
+  void drawBullsEyeCrosshair(QPainter& painter);
 
-  bool      ShowCursor;
-  QPen      CursorPen;
-  ctkCursorPixmapWidget::CursorTypes CursorType;
+  bool      ShowCrosshair;
+  QPen      CrosshairPen;
+  ctkCrosshairLabel::CrosshairTypes CrosshairType;
   int       BullsEyeWidth;
 
   static const double BULLS_EYE_BLANK_FRACTION = 0.1;
 };
 
 // --------------------------------------------------------------------------
-// ctkCursorPixmapWidgetPrivate methods
+// ctkCrosshairLabelPrivate methods
 
 // --------------------------------------------------------------------------
-ctkCursorPixmapWidgetPrivate::ctkCursorPixmapWidgetPrivate(ctkCursorPixmapWidget& object)
+ctkCrosshairLabelPrivate::ctkCrosshairLabelPrivate(ctkCrosshairLabel& object)
   :q_ptr(&object)
 {
-  this->ShowCursor = true;
-  this->CursorType = ctkCursorPixmapWidget::CrossHairCursor;
+  this->ShowCrosshair = true;
+  this->CrosshairType = ctkCrosshairLabel::SimpleCrosshair;
   this->BullsEyeWidth = 15;
 }
 
 //---------------------------------------------------------------------------
-void ctkCursorPixmapWidgetPrivate::init()
+void ctkCrosshairLabelPrivate::init()
 {
-  Q_Q(ctkCursorPixmapWidget);
+  Q_Q(ctkCrosshairLabel);
   q->setAutoFillBackground(true);
   q->setAlignment(Qt::AlignCenter);
-  this->CursorPen.setColor(q->palette().color(QPalette::Highlight));
-  this->CursorPen.setWidth(0);
-  this->CursorPen.setJoinStyle(Qt::MiterJoin);
+  this->CrosshairPen.setColor(q->palette().color(QPalette::Highlight));
+  this->CrosshairPen.setWidth(0);
+  this->CrosshairPen.setJoinStyle(Qt::MiterJoin);
 }
 
 //---------------------------------------------------------------------------
-void ctkCursorPixmapWidgetPrivate::drawCursor()
+void ctkCrosshairLabelPrivate::drawCrosshair()
 {
-  // Abort if we are not to draw the cursor
-  if (!this->ShowCursor)
+  // Abort if we are not to draw the crosshair
+  if (!this->ShowCrosshair)
     {
     return;
     }
 
   // Setup the painter object to paint on the label
-  Q_Q(ctkCursorPixmapWidget);
+  Q_Q(ctkCrosshairLabel);
   QPainter painter(q);
-  painter.setPen(this->CursorPen);
+  painter.setPen(this->CrosshairPen);
 
-  // Draw cursor (based on current parameters) onto the label
-  switch (this->CursorType)
+  // Draw crosshair (based on current parameters) onto the label
+  switch (this->CrosshairType)
     {
-    case ctkCursorPixmapWidget::CrossHairCursor:
-      this->drawCrossHairCursor(painter);
+    case ctkCrosshairLabel::SimpleCrosshair:
+      this->drawSimpleCrosshair(painter);
       break;
-    case ctkCursorPixmapWidget::BullsEyeCursor:
-      this->drawBullsEyeCursor(painter);
+    case ctkCrosshairLabel::BullsEyeCrosshair:
+      this->drawBullsEyeCrosshair(painter);
       break;
     default:
-      qDebug() << "Unsupported cursor type" << this->CursorType;
+      qDebug() << "Unsupported crosshair type" << this->CrosshairType;
       break;
     }
 }
 
 //---------------------------------------------------------------------------
-void ctkCursorPixmapWidgetPrivate::drawCrossHairCursor(QPainter& painter)
+void ctkCrosshairLabelPrivate::drawSimpleCrosshair(QPainter& painter)
 {
-  Q_Q(ctkCursorPixmapWidget);
+  Q_Q(ctkCrosshairLabel);
   QSize size = q->size();
   double halfWidth = (size.width()-1.0) / 2.0;
   double halfHeight = (size.height()-1.0) / 2.0;
@@ -122,9 +122,9 @@ void ctkCursorPixmapWidgetPrivate::drawCrossHairCursor(QPainter& painter)
 }
 
 // --------------------------------------------------------------------------
-void ctkCursorPixmapWidgetPrivate::drawBullsEyeCursor(QPainter& painter)
+void ctkCrosshairLabelPrivate::drawBullsEyeCrosshair(QPainter& painter)
 {
-  Q_Q(ctkCursorPixmapWidget);
+  Q_Q(ctkCrosshairLabel);
   QSize size = q->size();
 
   // Draw rectangle
@@ -146,127 +146,131 @@ void ctkCursorPixmapWidgetPrivate::drawBullsEyeCursor(QPainter& painter)
   // Draw the lines
   double halfWidth = (size.width()-1.0) / 2.0;
   double halfHeight = (size.height()-1.0) / 2.0;
-  double blank = round(std::min(halfWidth, halfHeight) * this->BULLS_EYE_BLANK_FRACTION);
+  double blank = round(std::min(halfWidth, halfHeight)
+                       * this->BULLS_EYE_BLANK_FRACTION);
 
   painter.drawLine(QPointF(0, halfHeight), QPointF(x-blank-1.0, halfHeight));
-  painter.drawLine(QPointF(x+bullsEye+blank, halfHeight), QPointF(size.width(), halfHeight));
+  painter.drawLine(QPointF(x+bullsEye+blank, halfHeight),
+                   QPointF(size.width(), halfHeight));
   painter.drawLine(QPointF(halfWidth, 0), QPointF(halfWidth, y-blank-1.0));
-  painter.drawLine(QPointF(halfWidth, y+bullsEye+blank), QPointF(halfWidth, size.height()));
+  painter.drawLine(QPointF(halfWidth, y+bullsEye+blank),
+                   QPointF(halfWidth, size.height()));
 }
 
 //---------------------------------------------------------------------------
-// ctkCursorPixmapWidget methods
+// ctkCrosshairLabel methods
 
 // --------------------------------------------------------------------------
-ctkCursorPixmapWidget::ctkCursorPixmapWidget(QWidget* parent)
+ctkCrosshairLabel::ctkCrosshairLabel(QWidget* parent)
   : Superclass(parent)
-  , d_ptr(new ctkCursorPixmapWidgetPrivate(*this))
+  , d_ptr(new ctkCrosshairLabelPrivate(*this))
 {
-  Q_D(ctkCursorPixmapWidget);
+  Q_D(ctkCrosshairLabel);
   d->init();
 }
 
 // --------------------------------------------------------------------------
-ctkCursorPixmapWidget::~ctkCursorPixmapWidget()
+ctkCrosshairLabel::~ctkCrosshairLabel()
 {
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCursorPixmapWidget, bool, showCursor, ShowCursor);
+CTK_GET_CPP(ctkCrosshairLabel, bool, showCrosshair, ShowCrosshair);
 
 // --------------------------------------------------------------------------
-void ctkCursorPixmapWidget::setShowCursor(bool newShow)
+void ctkCrosshairLabel::setShowCrosshair(bool newShow)
 {
-  Q_D(ctkCursorPixmapWidget);
-  if (newShow == d->ShowCursor)
+  Q_D(ctkCrosshairLabel);
+  if (newShow == d->ShowCrosshair)
     {
     return;
     }
 
-  d->ShowCursor = newShow;
+  d->ShowCrosshair = newShow;
   this->update();
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCursorPixmapWidget, QPen, cursorPen, CursorPen);
+CTK_GET_CPP(ctkCrosshairLabel, QPen, crosshairPen, CrosshairPen);
 
 // --------------------------------------------------------------------------
-void ctkCursorPixmapWidget::setCursorPen(const QPen& newPen)
+void ctkCrosshairLabel::setCrosshairPen(const QPen& newPen)
 {
-  Q_D(ctkCursorPixmapWidget);
-  if (newPen == d->CursorPen)
+  Q_D(ctkCrosshairLabel);
+  if (newPen == d->CrosshairPen)
     {
     return;
     }
 
-  d->CursorPen = newPen;
+  d->CrosshairPen = newPen;
   this->update();
 }
 
 // --------------------------------------------------------------------------
-QColor ctkCursorPixmapWidget::cursorColor() const
+QColor ctkCrosshairLabel::crosshairColor() const
 {
-  Q_D(const ctkCursorPixmapWidget);
-  return d->CursorPen.color();
+  Q_D(const ctkCrosshairLabel);
+  return d->CrosshairPen.color();
 }
 
 // --------------------------------------------------------------------------
-void ctkCursorPixmapWidget::setCursorColor(const QColor& newColor)
+void ctkCrosshairLabel::setCrosshairColor(const QColor& newColor)
 {
-  Q_D(ctkCursorPixmapWidget);
-  if (d->CursorPen.color() == newColor)
+  Q_D(ctkCrosshairLabel);
+  if (d->CrosshairPen.color() == newColor)
     {
     return;
     }
 
-  d->CursorPen.setColor(newColor);
+  d->CrosshairPen.setColor(newColor);
   this->update();
 }
 
 // --------------------------------------------------------------------------
-int ctkCursorPixmapWidget::lineWidth() const
+int ctkCrosshairLabel::lineWidth() const
 {
-  Q_D(const ctkCursorPixmapWidget);
-  return d->CursorPen.width();
+  Q_D(const ctkCrosshairLabel);
+  return d->CrosshairPen.width();
 }
 
 // --------------------------------------------------------------------------
-void ctkCursorPixmapWidget::setLineWidth(int newWidth)
+void ctkCrosshairLabel::setLineWidth(int newWidth)
 {
-  Q_D(ctkCursorPixmapWidget);
-  if (d->CursorPen.width() == newWidth || newWidth < 0)
+  Q_D(ctkCrosshairLabel);
+  if (d->CrosshairPen.width() == newWidth || newWidth < 0)
     {
     return;
     }
 
-  d->CursorPen.setWidth(newWidth);
+  d->CrosshairPen.setWidth(newWidth);
   this->update();
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCursorPixmapWidget, ctkCursorPixmapWidget::CursorTypes, cursorType, CursorType);
+CTK_GET_CPP(ctkCrosshairLabel, ctkCrosshairLabel::CrosshairTypes,
+            crosshairType, CrosshairType);
 
 // --------------------------------------------------------------------------
-void ctkCursorPixmapWidget::setCursorType(const CursorTypes& newType)
+void ctkCrosshairLabel::setCrosshairType(const CrosshairTypes& newType)
 {
-  Q_D(ctkCursorPixmapWidget);
-  if (newType == d->CursorType)
+  Q_D(ctkCrosshairLabel);
+  if (newType == d->CrosshairType)
     {
     return;
     }
 
-  d->CursorType = newType;
+  d->CrosshairType = newType;
   this->update();
 }
 
 // --------------------------------------------------------------------------
-QColor ctkCursorPixmapWidget::marginColor() const
+QColor ctkCrosshairLabel::marginColor() const
   {
   return this->palette().color(QPalette::Window);
   }
 
 // --------------------------------------------------------------------------
-void ctkCursorPixmapWidget::setMarginColor(const QColor& newColor)
+void ctkCrosshairLabel::setMarginColor(const QColor& newColor)
 {
   if (!newColor.isValid())
     {
@@ -285,12 +289,12 @@ void ctkCursorPixmapWidget::setMarginColor(const QColor& newColor)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCursorPixmapWidget, int, bullsEyeWidth, BullsEyeWidth);
+CTK_GET_CPP(ctkCrosshairLabel, int, bullsEyeWidth, BullsEyeWidth);
 
 // --------------------------------------------------------------------------
-void ctkCursorPixmapWidget::setBullsEyeWidth(int newWidth)
+void ctkCrosshairLabel::setBullsEyeWidth(int newWidth)
 {
-  Q_D(ctkCursorPixmapWidget);
+  Q_D(ctkCrosshairLabel);
   if (newWidth == d->BullsEyeWidth || newWidth < 0)
     {
     return;
@@ -301,35 +305,35 @@ void ctkCursorPixmapWidget::setBullsEyeWidth(int newWidth)
 }
 
 // --------------------------------------------------------------------------
-void ctkCursorPixmapWidget::paintEvent(QPaintEvent * event)
+void ctkCrosshairLabel::paintEvent(QPaintEvent * event)
 {
   Superclass::paintEvent(event);
-  Q_D(ctkCursorPixmapWidget);
-  d->drawCursor();
+  Q_D(ctkCrosshairLabel);
+  d->drawCrosshair();
 }
 
 // --------------------------------------------------------------------------
-QSize ctkCursorPixmapWidget::minimumSizeHint()const
+QSize ctkCrosshairLabel::minimumSizeHint()const
 {
   // Pretty arbitrary size (matches ctkVTKAbstractView)
   return QSize(50, 50);
 }
 
 // --------------------------------------------------------------------------
-QSize ctkCursorPixmapWidget::sizeHint()const
+QSize ctkCrosshairLabel::sizeHint()const
 {
   // Pretty arbitrary size (matches ctkVTKAbstractView)
   return QSize(300, 300);
 }
 
 //----------------------------------------------------------------------------
-bool ctkCursorPixmapWidget::hasHeightForWidth()const
+bool ctkCrosshairLabel::hasHeightForWidth()const
 {
   return true;
 }
 
 //----------------------------------------------------------------------------
-int ctkCursorPixmapWidget::heightForWidth(int width)const
+int ctkCrosshairLabel::heightForWidth(int width)const
 {
   // Tends to be square
   return width;

@@ -19,28 +19,28 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkCursorPixmapWidgetPlugin.h"
-#include "ctkCursorPixmapWidget.h"
+#include "ctkCrosshairLabelPlugin.h"
+#include "ctkCrosshairLabel.h"
 
 //-----------------------------------------------------------------------------
-ctkCursorPixmapWidgetPlugin::ctkCursorPixmapWidgetPlugin(QObject *_parent)
+ctkCrosshairLabelPlugin::ctkCrosshairLabelPlugin(QObject *_parent)
         : QObject(_parent)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkCursorPixmapWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *ctkCrosshairLabelPlugin::createWidget(QWidget *_parent)
 {
-  ctkCursorPixmapWidget* _widget = new ctkCursorPixmapWidget(_parent);
+  ctkCrosshairLabel* _widget = new ctkCrosshairLabel(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkCursorPixmapWidgetPlugin::domXml() const
+QString ctkCrosshairLabelPlugin::domXml() const
 {
-  return "<widget class=\"ctkCursorPixmapWidget\" \
-          name=\"CursorPixmapWidget\">\n"
+  return "<widget class=\"ctkCrosshairLabel\" \
+          name=\"CrosshairLabel\">\n"
       " <property name=\"geometry\">\n"
       "  <rect>\n"
       "   <x>0</x>\n"
@@ -53,25 +53,25 @@ QString ctkCursorPixmapWidgetPlugin::domXml() const
 }
 
 // --------------------------------------------------------------------------
- QIcon ctkCursorPixmapWidgetPlugin::icon() const
+ QIcon ctkCrosshairLabelPlugin::icon() const
  {
    return QIcon();
  }
 
 //-----------------------------------------------------------------------------
-QString ctkCursorPixmapWidgetPlugin::includeFile() const
+QString ctkCrosshairLabelPlugin::includeFile() const
 {
-  return "ctkCursorPixmapWidget.h";
+  return "ctkCrosshairLabel.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkCursorPixmapWidgetPlugin::isContainer() const
+bool ctkCrosshairLabelPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkCursorPixmapWidgetPlugin::name() const
+QString ctkCrosshairLabelPlugin::name() const
 {
-  return "ctkCursorPixmapWidget";
+  return "ctkCrosshairLabel";
 }

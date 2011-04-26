@@ -19,25 +19,25 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkVTKMagnifyWidgetPlugin.h"
-#include "ctkVTKMagnifyWidget.h"
+#include "ctkVTKMagnifyViewPlugin.h"
+#include "ctkVTKMagnifyView.h"
 
 //-----------------------------------------------------------------------------
-ctkVTKMagnifyWidgetPlugin::ctkVTKMagnifyWidgetPlugin(QObject *_parent):QObject(_parent)
+ctkVTKMagnifyViewPlugin::ctkVTKMagnifyViewPlugin(QObject *_parent):QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkVTKMagnifyWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *ctkVTKMagnifyViewPlugin::createWidget(QWidget *_parent)
 {
-  ctkVTKMagnifyWidget* _widget = new ctkVTKMagnifyWidget(_parent);
+  ctkVTKMagnifyView* _widget = new ctkVTKMagnifyView(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKMagnifyWidgetPlugin::domXml() const
+QString ctkVTKMagnifyViewPlugin::domXml() const
 {
-  return "<widget class=\"ctkVTKMagnifyWidget\" \
+  return "<widget class=\"ctkVTKMagnifyView\" \
           name=\"VTKMagnify\">\n"
           " <property name=\"geometry\">\n"
           "  <rect>\n"
@@ -51,19 +51,19 @@ QString ctkVTKMagnifyWidgetPlugin::domXml() const
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKMagnifyWidgetPlugin::includeFile() const
+QString ctkVTKMagnifyViewPlugin::includeFile() const
 {
-  return "ctkVTKMagnifyWidget.h";
+  return "ctkVTKMagnifyView.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkVTKMagnifyWidgetPlugin::isContainer() const
+bool ctkVTKMagnifyViewPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKMagnifyWidgetPlugin::name() const
+QString ctkVTKMagnifyViewPlugin::name() const
 {
-  return "ctkVTKMagnifyWidget";
+  return "ctkVTKMagnifyView";
 }

@@ -18,20 +18,20 @@
 
 =========================================================================*/
 
-#ifndef __ctkCursorPixmapWidgetPlugin_h
-#define __ctkCursorPixmapWidgetPlugin_h
+#ifndef __ctkCrosshairLabelPlugin_h
+#define __ctkCrosshairLabelPlugin_h
 
 // CTK includes
 #include "ctkWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkCursorPixmapWidgetPlugin :
+class CTK_WIDGETS_PLUGINS_EXPORT ctkCrosshairLabelPlugin :
   public QObject,
   public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkCursorPixmapWidgetPlugin(QObject *_parent = 0);
+  ctkCrosshairLabelPlugin(QObject *_parent = 0);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

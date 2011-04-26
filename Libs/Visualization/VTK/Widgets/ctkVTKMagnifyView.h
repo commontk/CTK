@@ -18,42 +18,58 @@
 
 =========================================================================*/
 
-#ifndef __ctkVTKMagnifyWidget_h
-#define __ctkVTKMagnifyWidget_h
+#ifndef __ctkVTKMagnifyView_h
+#define __ctkVTKMagnifyView_h
 
 // QT includes
 #include <QList>
 
 // CTK includes
-#include "ctkCursorPixmapWidget.h"
+#include "ctkCrosshairLabel.h"
 #include "ctkVisualizationVTKWidgetsExport.h"
 
 // VTK includes
 class QVTKWidget;
 
-class ctkVTKMagnifyWidgetPrivate;
+class ctkVTKMagnifyViewPrivate;
 
 /// Gives a magnified view of a QVTKWidget around the mouse position, with
-/// overlaid cursor (ex. cross-hair).  You must specify the QVTKWidget(s) to be
+/// overlaid crosshair (ex. cross-hair).  You must specify the QVTKWidget(s) to be
 /// observed.
-/// \sa ctkCursorPixmapWidget
+/// \sa ctkCrosshairLabel
 
-class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKMagnifyWidget
-  : public ctkCursorPixmapWidget
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKMagnifyView
+  : public ctkCrosshairLabel
 {
   Q_OBJECT
   Q_PROPERTY(double magnification READ magnification WRITE setMagnification);
+  Q_PROPERTY(bool observeRenderWindowEvents
+             READ observeRenderWindowEvents WRITE setObserveRenderWindowEvents);
+  Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
 
 public:
   /// Constructors
-  typedef ctkCursorPixmapWidget Superclass;
-  explicit ctkVTKMagnifyWidget(QWidget* parent = 0);
-  virtual ~ctkVTKMagnifyWidget();
+  typedef ctkCrosshairLabel Superclass;
+  explicit ctkVTKMagnifyView(QWidget* parent = 0);
+  virtual ~ctkVTKMagnifyView();
 
   /// Set/get the magnification (zoom).  Looks best when the magnification and
   /// the widget size are both either even or odd.  Default 1.0.
   double magnification() const;
   void setMagnification(double newMagnification);
+
+  /// Set/get whether or not to observe EndEvents emitted by the observed
+  /// QVTKWidgets' vtkRenderWindows after they have rendered.  This triggers
+  /// updates to the magnify widget whenever the vtkRenderWindow does a render,
+  /// even if the mouse position does not move. Default true.
+  bool observeRenderWindowEvents() const;
+  void setObserveRenderWindowEvents(bool newObserve);
+
+  /// Set/get a fixed interval, in milliseconds, at which this widget will update
+  /// itself.  Default 20.  Specify an update interval of 0 to handle all events as
+  /// they occur.
+  int updateInterval() const;
+  void setUpdateInterval(int newInterval);
 
   /// Add a QVTKWidget to observe mouse events on.  You can call this function
   /// multiple times to observe multiple QVTKWidgets.
@@ -82,7 +98,7 @@ public:
   int numberObserved()const;
 
 protected:
-  QScopedPointer<ctkVTKMagnifyWidgetPrivate> d_ptr;
+  QScopedPointer<ctkVTKMagnifyViewPrivate> d_ptr;
 
   /// Handles mouse events on the observed QVTKWidgets (specifically,
   /// enterEvent, leaveEvent and mouseMoveEvent).
@@ -93,8 +109,8 @@ signals:
   void leftObservedWidget(QVTKWidget * widget);
 
 private:
-  Q_DECLARE_PRIVATE(ctkVTKMagnifyWidget);
-  Q_DISABLE_COPY(ctkVTKMagnifyWidget);
+  Q_DECLARE_PRIVATE(ctkVTKMagnifyView);
+  Q_DISABLE_COPY(ctkVTKMagnifyView);
 }; 
 
 #endif

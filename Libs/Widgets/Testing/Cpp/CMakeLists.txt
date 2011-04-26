@@ -19,7 +19,7 @@ SET(TEST_SOURCES
   ctkConfirmExitDialogTest1.cpp
   ctkConsoleTest1.cpp
   ctkCoordinatesWidgetTest1.cpp
-  ctkCursorPixmapWidgetTest1.cpp
+  ctkCrosshairLabelTest1.cpp
   ctkDirectoryButtonTest1.cpp
   ctkDoubleRangeSliderTest1.cpp
   ctkDoubleRangeSliderTest2.cpp
@@ -61,7 +61,7 @@ SET(TEST_SOURCES
 #
 IF(EXISTS "${CTKData_DIR}")
   LIST(APPEND TEST_SOURCES
-    ctkCursorPixmapWidgetTest2.cpp
+    ctkCrosshairLabelTest2.cpp
     )
 ENDIF()
 
@@ -124,7 +124,7 @@ SIMPLE_TEST( ctkComboBoxTest1 )
 SIMPLE_TEST( ctkConfirmExitDialogTest1 )
 SIMPLE_TEST( ctkConsoleTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
-SIMPLE_TEST( ctkCursorPixmapWidgetTest1 )
+SIMPLE_TEST( ctkCrosshairLabelTest1 )
 SIMPLE_TEST( ctkDateRangeWidgetTest1 )
 SIMPLE_TEST( ctkDirectoryButtonTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest1 )
@@ -164,5 +164,5 @@ SIMPLE_TEST( ctkWorkflowWidgetTest2 )
 # Add Tests expecting CTKData to be set
 #
 IF(EXISTS "${CTKData_DIR}")
-  SIMPLE_TEST( ctkCursorPixmapWidgetTest2 )
+  SIMPLE_TEST( ctkCrosshairLabelTest2 )
 ENDIF()

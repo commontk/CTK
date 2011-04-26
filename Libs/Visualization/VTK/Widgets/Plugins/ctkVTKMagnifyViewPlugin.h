@@ -18,20 +18,20 @@
 
 =========================================================================*/
 
-#ifndef __ctkVTKMagnifyWidgetPlugin_h
-#define __ctkVTKMagnifyWidgetPlugin_h
+#ifndef __ctkVTKMagnifyViewPlugin_h
+#define __ctkVTKMagnifyViewPlugin_h
 
 // CTK includes
 #include "ctkVTKWidgetsAbstractPlugin.h"
 
-class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKMagnifyWidgetPlugin :
+class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKMagnifyViewPlugin :
   public QObject,
   public ctkVTKWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkVTKMagnifyWidgetPlugin(QObject *_parent = 0);
+  ctkVTKMagnifyViewPlugin(QObject *_parent = 0);
   
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;
