@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QTimer>
 
 // CTK includes
 #include "ctkVTKMagnifyWidget.h"
@@ -40,7 +41,9 @@ int ctkVTKMagnifyWidgetTest1(int argc, char * argv [] )
 
   // check default values
   if (!magnify.showCursor() ||
-      magnify.cursorColor() != magnify.palette().color(QPalette::Highlight) ||
+      magnify.cursorPen().color() != magnify.palette().color(QPalette::Highlight) ||
+      magnify.cursorPen().width() != 0 ||
+      magnify.cursorPen().joinStyle() != Qt::MiterJoin ||
       magnify.cursorType() != ctkCursorPixmapWidget::CrossHairCursor ||
       magnify.marginColor() != magnify.palette().color(QPalette::Window) ||
       magnify.bullsEyeWidth() != 15 ||
@@ -49,7 +52,9 @@ int ctkVTKMagnifyWidgetTest1(int argc, char * argv [] )
     {
     std::cerr << "ctkVTKMagnifyWidget: Wrong default values. " << std::endl
               << " " << magnify.showCursor()
-              << " " << qPrintable(magnify.cursorColor().name())
+              << " " << qPrintable(magnify.cursorPen().color().name())
+              << " " << magnify.cursorPen().width()
+              << " " << static_cast<int>(magnify.cursorPen().joinStyle())
               << " " << magnify.cursorType()
               << " " << qPrintable(magnify.marginColor().name())
               << " " << magnify.bullsEyeWidth()
@@ -165,7 +170,13 @@ int ctkVTKMagnifyWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  return EXIT_SUCCESS;
+  magnify.show();
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
+
+  return app.exec();
 
 }
 

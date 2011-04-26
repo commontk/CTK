@@ -101,11 +101,14 @@ int ctkCursorPixmapWidgetTest2(int argc, char * argv [] )
 
   // Create the cursor widget
   ctkCursorPixmapWidget cursor;
-  cursor.setCursorColor(Qt::yellow);
+  QPen cursorPen(Qt::yellow);
+  cursorPen.setJoinStyle(Qt::MiterJoin);
+  cursor.setCursorPen(cursorPen);
   cursor.setMarginColor(Qt::blue);
 
   int time = 200;
   QPixmap pixmap(dataDirectory + "/" + "computerIcon.png");
+
   // Basesize is always odd
   QSize baseSize = pixmap.size();
   if (pixmap.width() % 2 == 0)
@@ -116,46 +119,108 @@ int ctkCursorPixmapWidgetTest2(int argc, char * argv [] )
     {
     baseSize.setHeight(baseSize.height()+1);
     }
+
+  // Odd widget size
   cursor.setMinimumSize(baseSize);
   cursor.setPixmap(pixmap.scaled(baseSize));
   cursor.show();
 
-  // Bullseye cursor
+  // Test bullsEyeWidth and line width with odd widget size
   cursor.setCursorType(ctkCursorPixmapWidget::BullsEyeCursor);
+
+  ///
   cursor.setBullsEyeWidth(15);
+  cursorPen.setWidth(1);
+  cursor.setCursorPen(cursorPen);
   if (!runBaselineTest(time, app, cursor, baselineDirectory,
                        "ctkCursorPixmapWidgetTest2a.png",
-                       "using bulls-eye cursor (odd size, odd bullsEye)"))
+                       "using bulls-eye cursor (odd size, bullsEye 15, width 1)"))
     {
     return EXIT_FAILURE;
     }
-  cursor.setBullsEyeWidth(14);
+
+  ///
+  cursorPen.setWidth(5);
+  cursor.setCursorPen(cursorPen);
   if (!runBaselineTest(time, app, cursor, baselineDirectory,
                        "ctkCursorPixmapWidgetTest2b.png",
-                       "using bulls-eye cursor (odd size, even bullsEye)"))
+                       "using bulls-eye cursor (odd size, bullsEye 15, width 5)"))
     {
     return EXIT_FAILURE;
     }
-  cursor.resize(baseSize.width()+1, baseSize.height()+1);
+
+  ///
+  cursor.setBullsEyeWidth(14);
+  cursorPen.setWidth(0); // equivalent to 1
+  cursor.setCursorPen(cursorPen);
   if (!runBaselineTest(time, app, cursor, baselineDirectory,
                        "ctkCursorPixmapWidgetTest2c.png",
-                       "using bulls-eye cursor (even size, even bullsEye)"))
+                       "using bulls-eye cursor (odd size, bullsEye 14, width 1)"))
     {
     return EXIT_FAILURE;
     }
-  cursor.setBullsEyeWidth(15);
+
+  ///
+  cursorPen.setWidth(4);
+  cursor.setCursorPen(cursorPen);
   if (!runBaselineTest(time, app, cursor, baselineDirectory,
                        "ctkCursorPixmapWidgetTest2d.png",
-                       "using bulls-eye cursor (even size, odd bullsEye)"))
+                       "using bulls-eye cursor (odd size, bullsEye 14, width 4)"))
     {
     return EXIT_FAILURE;
     }
-  cursor.resize(baseSize);
 
-  // Cursor not shown
-  cursor.setShowCursor(false);
+  // Test bullsEyeWidth and line width with even widget size
+  cursor.resize(baseSize.width()+1, baseSize.height()+1);
+
+  ///
+  cursor.setBullsEyeWidth(14);
+  cursorPen.setWidth(1);
+  cursor.setCursorPen(cursorPen);
   if (!runBaselineTest(time, app, cursor, baselineDirectory,
                        "ctkCursorPixmapWidgetTest2e.png",
+                       "using bulls-eye cursor (even size, bullsEye 14, width 1)"))
+    {
+    return EXIT_FAILURE;
+    }
+
+  ///
+  cursorPen.setWidth(4);
+  cursor.setCursorPen(cursorPen);
+  if (!runBaselineTest(time, app, cursor, baselineDirectory,
+                       "ctkCursorPixmapWidgetTest2f.png",
+                       "using bulls-eye cursor (even size, bullsEye 14, width 4)"))
+    {
+    return EXIT_FAILURE;
+    }
+
+  ///
+  cursor.setBullsEyeWidth(15);
+  cursorPen.setWidth(0);
+  cursor.setCursorPen(cursorPen);
+  if (!runBaselineTest(time, app, cursor, baselineDirectory,
+                       "ctkCursorPixmapWidgetTest2g.png",
+                       "using bulls-eye cursor (even size, bullsEye 15, width 1)"))
+    {
+    return EXIT_FAILURE;
+    }
+
+  ///
+  cursorPen.setWidth(5);
+  cursor.setCursorPen(cursorPen);
+  if (!runBaselineTest(time, app, cursor, baselineDirectory,
+                       "ctkCursorPixmapWidgetTest2h.png",
+                       "using bulls-eye cursor (even size, bullsEye 15, width 5)"))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // Cursor not shown
+  cursor.resize(baseSize);
+  cursor.setShowCursor(false);
+  cursor.setCursorPen(cursorPen);
+  if (!runBaselineTest(time, app, cursor, baselineDirectory,
+                       "ctkCursorPixmapWidgetTest2i.png",
                        "show cursor false"))
     {
     return EXIT_FAILURE;
@@ -164,15 +229,19 @@ int ctkCursorPixmapWidgetTest2(int argc, char * argv [] )
   // Crosshair cursor
   cursor.setShowCursor(true);
   cursor.setCursorType(ctkCursorPixmapWidget::CrossHairCursor);
+  cursorPen.setWidth(0);
+  cursor.setCursorPen(cursorPen);
   if (!runBaselineTest(time, app, cursor, baselineDirectory,
-                       "ctkCursorPixmapWidgetTest2f.png",
+                       "ctkCursorPixmapWidgetTest2j.png",
                        "using cross-hair cursor (odd size)"))
     {
     return EXIT_FAILURE;
     }
   cursor.resize(baseSize.width()+1, baseSize.height()+1);
+  cursorPen.setWidth(1);
+  cursor.setCursorPen(cursorPen);
   if (!runBaselineTest(time, app, cursor, baselineDirectory,
-                       "ctkCursorPixmapWidgetTest2g.png",
+                       "ctkCursorPixmapWidgetTest2k.png",
                        "using cross-hair cursor (even size)"))
     {
     return EXIT_FAILURE;

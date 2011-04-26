@@ -51,6 +51,7 @@ public:
   void drawBullsEyeCursor(QPainter& painter);
 
   bool      ShowCursor;
+  QPen      CursorPen;
   ctkCursorPixmapWidget::CursorTypes CursorType;
   int       BullsEyeWidth;
 
@@ -75,6 +76,9 @@ void ctkCursorPixmapWidgetPrivate::init()
   Q_Q(ctkCursorPixmapWidget);
   q->setAutoFillBackground(true);
   q->setAlignment(Qt::AlignCenter);
+  this->CursorPen.setColor(q->palette().color(QPalette::Highlight));
+  this->CursorPen.setWidth(0);
+  this->CursorPen.setJoinStyle(Qt::MiterJoin);
 }
 
 //---------------------------------------------------------------------------
@@ -89,7 +93,7 @@ void ctkCursorPixmapWidgetPrivate::drawCursor()
   // Setup the painter object to paint on the label
   Q_Q(ctkCursorPixmapWidget);
   QPainter painter(q);
-  painter.setPen(q->cursorColor());
+  painter.setPen(this->CursorPen);
 
   // Draw cursor (based on current parameters) onto the label
   switch (this->CursorType)
@@ -125,9 +129,19 @@ void ctkCursorPixmapWidgetPrivate::drawBullsEyeCursor(QPainter& painter)
 
   // Draw rectangle
   double bullsEye = this->BullsEyeWidth;
+  double lineWidth = painter.pen().width();
+  lineWidth = std::max(lineWidth, 1.0);
+  double halfLineWidth = (lineWidth-1.0) / 2.0;
   double x = (size.width()-bullsEye) / 2.0;
   double y = (size.height()-bullsEye) / 2.0;
-  painter.drawRect(QRectF(x, y, bullsEye-1.0, bullsEye-1.0));
+  double rectWidth = bullsEye;
+  if (bullsEye != 1)
+    {
+    rectWidth = rectWidth - lineWidth;
+    }
+  rectWidth = std::max(rectWidth, 0.0);
+  painter.drawRect(
+      QRectF(x+halfLineWidth, y+halfLineWidth, rectWidth, rectWidth));
 
   // Draw the lines
   double halfWidth = (size.width()-1.0) / 2.0;
@@ -174,25 +188,63 @@ void ctkCursorPixmapWidget::setShowCursor(bool newShow)
 }
 
 // --------------------------------------------------------------------------
+CTK_GET_CPP(ctkCursorPixmapWidget, QPen, cursorPen, CursorPen);
+
+// --------------------------------------------------------------------------
+void ctkCursorPixmapWidget::setCursorPen(const QPen& newPen)
+{
+  Q_D(ctkCursorPixmapWidget);
+  if (newPen == d->CursorPen)
+    {
+    return;
+    }
+
+  d->CursorPen = newPen;
+  this->update();
+}
+
+// --------------------------------------------------------------------------
 QColor ctkCursorPixmapWidget::cursorColor() const
-  {
-  return this->palette().color(QPalette::Highlight);
-  }
+{
+  Q_D(const ctkCursorPixmapWidget);
+  return d->CursorPen.color();
+}
 
 // --------------------------------------------------------------------------
 void ctkCursorPixmapWidget::setCursorColor(const QColor& newColor)
 {
-  if (newColor.isValid())
+  Q_D(ctkCursorPixmapWidget);
+  if (d->CursorPen.color() == newColor)
     {
-    QPalette palette(this->palette());
-    palette.setColor(QPalette::Highlight, newColor);
-    this->setPalette(palette);
-    this->update();
+    return;
     }
+
+  d->CursorPen.setColor(newColor);
+  this->update();
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCursorPixmapWidget, const ctkCursorPixmapWidget::CursorTypes&, cursorType, CursorType);
+int ctkCursorPixmapWidget::lineWidth() const
+{
+  Q_D(const ctkCursorPixmapWidget);
+  return d->CursorPen.width();
+}
+
+// --------------------------------------------------------------------------
+void ctkCursorPixmapWidget::setLineWidth(int newWidth)
+{
+  Q_D(ctkCursorPixmapWidget);
+  if (d->CursorPen.width() == newWidth || newWidth < 0)
+    {
+    return;
+    }
+
+  d->CursorPen.setWidth(newWidth);
+  this->update();
+}
+
+// --------------------------------------------------------------------------
+CTK_GET_CPP(ctkCursorPixmapWidget, ctkCursorPixmapWidget::CursorTypes, cursorType, CursorType);
 
 // --------------------------------------------------------------------------
 void ctkCursorPixmapWidget::setCursorType(const CursorTypes& newType)
@@ -216,10 +268,17 @@ QColor ctkCursorPixmapWidget::marginColor() const
 // --------------------------------------------------------------------------
 void ctkCursorPixmapWidget::setMarginColor(const QColor& newColor)
 {
-  if (newColor.isValid())
+  if (!newColor.isValid())
     {
-    QPalette palette(this->palette());
-    palette.setColor(QPalette::Window, newColor);
+    return;
+    }
+
+  QPalette palette(this->palette());
+  QColor solidColor(newColor.rgb());
+  if (solidColor != palette.color(QPalette::Window))
+    {
+    // Ignore alpha channel
+    palette.setColor(QPalette::Window, solidColor);
     this->setPalette(palette);
     this->update();
     }
@@ -231,12 +290,14 @@ CTK_GET_CPP(ctkCursorPixmapWidget, int, bullsEyeWidth, BullsEyeWidth);
 // --------------------------------------------------------------------------
 void ctkCursorPixmapWidget::setBullsEyeWidth(int newWidth)
 {
-  if (newWidth >= 0)
+  Q_D(ctkCursorPixmapWidget);
+  if (newWidth == d->BullsEyeWidth || newWidth < 0)
     {
-    Q_D(ctkCursorPixmapWidget);
-    d->BullsEyeWidth = newWidth;
-    this->update();
+    return;
     }
+
+  d->BullsEyeWidth = newWidth;
+  this->update();
 }
 
 // --------------------------------------------------------------------------

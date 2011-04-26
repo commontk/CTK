@@ -314,3 +314,31 @@ void ctkAxesWidget::mouseReleaseEvent(QMouseEvent *mouseEvent)
   Q_D(ctkAxesWidget);
   this->setCurrentAxis(d->axisAtPos(mouseEvent->pos()));
 }
+
+// --------------------------------------------------------------------------
+QSize ctkAxesWidget::minimumSizeHint()const
+{
+  // Pretty arbitrary size.
+  return QSize(100, 100);
+}
+
+// --------------------------------------------------------------------------
+QSize ctkAxesWidget::sizeHint()const
+{
+  // Pretty arbitrary size
+  return QSize(100, 100);
+}
+
+//----------------------------------------------------------------------------
+bool ctkAxesWidget::hasHeightForWidth()const
+{
+  return true;
+}
+
+//----------------------------------------------------------------------------
+int ctkAxesWidget::heightForWidth(int width)const
+{
+  // Tends to be square
+  return width;
+}
+

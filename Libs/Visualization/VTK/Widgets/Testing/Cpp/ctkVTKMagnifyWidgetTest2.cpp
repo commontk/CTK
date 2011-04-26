@@ -63,8 +63,8 @@ void imageSave(ctkVTKMagnifyWidget * magnify, QString baselineDirectory,
 //-----------------------------------------------------------------------------
 bool runBaselineTest(int time, QApplication& app, ctkVTKMagnifyWidget * magnify,
                      QWidget * underWidget, bool shouldBeUnder,
-                     QString baselineDirectory, QString baselineFilename,
-                     QString errorMessage)
+                     QString baselineDirectory, QString testName,
+                     QString testNumber, QString errorMessage)
 {
   QTimer::singleShot(time, &app, SLOT(quit()));
   if (app.exec() == EXIT_FAILURE)
@@ -79,11 +79,12 @@ bool runBaselineTest(int time, QApplication& app, ctkVTKMagnifyWidget * magnify,
         << qPrintable(errorMessage) << std::endl;
     return false;
     }
+  QString baselineFilename
+      = "ctkVTKMagnifyWidgetTest2" + testNumber + testName + ".png";
   if (!imageCompare(magnify, baselineDirectory, baselineFilename))
     {
     std::cerr << "ctkVTKMagnifyWidget baseline comparison failed when "
               << qPrintable(errorMessage) << "." << std::endl;
-
     return false;
     }
   return true;
@@ -99,6 +100,9 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   parser.addArgument("", "-D", QVariant::String);
   parser.addArgument("", "-V", QVariant::String);
   parser.addArgument("", "-I", QVariant::String);
+  parser.addArgument("", "-T", QVariant::String);
+  parser.addArgument("", "-S", QVariant::String);
+  parser.addArgument("", "-M", QVariant::String);
   bool ok = false;
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments(), &ok);
   if (!ok)
@@ -108,19 +112,22 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
     }
   QString dataDirectory = parsedArgs["-D"].toString();
   QString baselineDirectory = parsedArgs["-V"].toString();
+  QString testType = parsedArgs["-T"].toString();
   bool interactive = parsedArgs["-I"].toBool();
+  int size = parsedArgs["-S"].toInt();
+  double magnification = parsedArgs["-M"].toDouble();
 
   // Create the parent widget
   QWidget parentWidget;
   QHBoxLayout layout(&parentWidget);
 
   // Magnify widget parameters (we want an odd widget size and odd bullsEye)
-  int size = 341;
   bool showCursor = true;
-  QColor cursorColor = Qt::yellow;
+  QPen cursorPen(QPen(Qt::yellow));
+  cursorPen.setJoinStyle(Qt::MiterJoin);
   ctkCursorPixmapWidget::CursorType cursorType
       = ctkCursorPixmapWidget::BullsEyeCursor;
-  double magnification = 17;
+  double bullsEyeWidth = magnification + 2;
   QColor marginColor = Qt::magenta;
 
   // Create the magnify widget
@@ -128,9 +135,9 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   magnify->setMinimumSize(size,size);
   magnify->setMaximumSize(size,size);
   magnify->setShowCursor(showCursor);
-  magnify->setCursorColor(cursorColor);
+  magnify->setCursorPen(cursorPen);
   magnify->setCursorType(cursorType);
-  magnify->setBullsEyeWidth(magnification);
+  magnify->setBullsEyeWidth(bullsEyeWidth);
   magnify->setMarginColor(marginColor);
   magnify->setMagnification(magnification);
   layout.addWidget(magnify);
@@ -142,10 +149,10 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
               << magnify->showCursor() << std::endl;
     return EXIT_FAILURE;
     }
-  if (magnify->cursorColor() != cursorColor)
+  if (magnify->cursorPen() != cursorPen)
     {
-    std::cerr << "ctkVTKMagnifyWidget:setCursorColor failed. "
-              << qPrintable(magnify->cursorColor().name()) << std::endl;
+    std::cerr << "ctkVTKMagnifyWidget:setCursorPen failed. "
+              << qPrintable(magnify->cursorPen().color().name()) << std::endl;
     return EXIT_FAILURE;
     }
   if (magnify->cursorType() != cursorType)
@@ -154,7 +161,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
               << magnify->cursorType() << std::endl;
     return EXIT_FAILURE;
     }
-  if (magnify->bullsEyeWidth() != magnification)
+  if (magnify->bullsEyeWidth() != bullsEyeWidth)
     {
     std::cerr << "ctkVTKMagnifyWidget:setBullsEyeWidth failed. "
               << magnify->bullsEyeWidth() << std::endl;
@@ -264,7 +271,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   QCursor::setPos(insideSlice0);
   parentWidget.show();
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
-                       baselineDirectory, "ctkVTKMagnifyWidgetTest2a.png",
+                       baselineDirectory, testType, "a",
                        "magnify widget first shown with cursor inside observed widget"))
     {
     return EXIT_FAILURE;
@@ -276,7 +283,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   QCursor::setPos(outside);
   parentWidget.show();
   if (!runBaselineTest(time, app, magnify, &parentWidget, false,
-                       baselineDirectory, "ctkVTKMagnifyWidgetTest2b.png",
+                       baselineDirectory, testType, "b",
                        "magnify widget first shown with cursor outside observed widget"))
     {
     return EXIT_FAILURE;
@@ -285,7 +292,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   // Test magnification after move to allSliceViews[1]
   QCursor::setPos(insideSlice1);
   if (!runBaselineTest(time, app, magnify, allSliceViews[1], true,
-                       baselineDirectory, "ctkVTKMagnifyWidgetTest2c.png",
+                       baselineDirectory, testType, "c",
                        "cursor moved inside 2nd observed widget the first time"))
     {
     return EXIT_FAILURE;
@@ -294,7 +301,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   // Test magnification after move within allSliceViews[1] close to border
   QCursor::setPos(insideSlice1edge);
   if (!runBaselineTest(time, app, magnify, allSliceViews[1], true,
-                       baselineDirectory, "ctkVTKMagnifyWidgetTest2d.png",
+                       baselineDirectory, testType, "d",
                        "cursor moved inside 2nd observed widget the second time"))
     {
     return EXIT_FAILURE;
@@ -303,7 +310,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   // Test magnification after move outside an observed widget (should be blank)
   QCursor::setPos(insideSlice2);
   if (!runBaselineTest(time, app, magnify, allSliceViews[2], true,
-                       baselineDirectory, "ctkVTKMagnifyWidgetTest2e.png",
+                       baselineDirectory, testType, "e",
                        "cursor moved inside unobserved widget"))
     {
     return EXIT_FAILURE;
@@ -313,7 +320,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   // right corner)
   QCursor::setPos(insideSlice0bottomRightCorner);
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
-                       baselineDirectory, "ctkVTKMagnifyWidgetTest2f.png",
+                       baselineDirectory, testType, "f",
                        "cursor moved to bottom-right corner of observed widget"))
     {
     return EXIT_FAILURE;
@@ -323,7 +330,7 @@ int ctkVTKMagnifyWidgetTest2(int argc, char * argv [] )
   // corner)
   QCursor::setPos(insideSlice0topLeftCorner);
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
-                       baselineDirectory, "ctkVTKMagnifyWidgetTest2g.png",
+                       baselineDirectory, testType, "g",
                        "cursor moved to top-left corner of observed widget"))
     {
     return EXIT_FAILURE;

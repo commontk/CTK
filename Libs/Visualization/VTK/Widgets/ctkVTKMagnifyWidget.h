@@ -33,6 +33,11 @@ class QVTKWidget;
 
 class ctkVTKMagnifyWidgetPrivate;
 
+/// Gives a magnified view of a QVTKWidget around the mouse position, with
+/// overlaid cursor (ex. cross-hair).  You must specify the QVTKWidget(s) to be
+/// observed.
+/// \sa ctkCursorPixmapWidget
+
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKMagnifyWidget
   : public ctkCursorPixmapWidget
 {
@@ -45,7 +50,8 @@ public:
   explicit ctkVTKMagnifyWidget(QWidget* parent = 0);
   virtual ~ctkVTKMagnifyWidget();
 
-  /// Set/get the magnification (zoom).  Default 1.0.
+  /// Set/get the magnification (zoom).  Looks best when the magnification and
+  /// the widget size are both either even or odd.  Default 1.0.
   double magnification() const;
   void setMagnification(double newMagnification);
 

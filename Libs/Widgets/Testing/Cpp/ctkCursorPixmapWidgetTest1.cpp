@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QTimer>
 
 // CTK includes
 #include "ctkCursorPixmapWidget.h"
@@ -37,14 +38,18 @@ int ctkCursorPixmapWidgetTest1(int argc, char * argv [] )
 
   // check default values
   if (!cursor.showCursor() ||
-      cursor.cursorColor() != cursor.palette().color(QPalette::Highlight) ||
+      cursor.cursorPen().color() != cursor.palette().color(QPalette::Highlight) ||
+      cursor.cursorPen().width() != 0 ||
+      cursor.cursorPen().joinStyle() != Qt::MiterJoin ||
       cursor.cursorType() != ctkCursorPixmapWidget::CrossHairCursor ||
       cursor.marginColor() != cursor.palette().color(QPalette::Window) ||
       cursor.bullsEyeWidth() != 15)
     {
     std::cerr << "ctkCursorPixmapWidget: Wrong default values. " << std::endl
               << " " << cursor.showCursor()
-              << " " << qPrintable(cursor.cursorColor().name())
+              << " " << qPrintable(cursor.cursorPen().color().name())
+              << " " << cursor.cursorPen().width()
+              << " " << static_cast<int>(cursor.cursorPen().joinStyle())
               << " " << cursor.cursorType()
               << " " << qPrintable(cursor.marginColor().name())
               << " " << cursor.bullsEyeWidth() << std::endl;
@@ -61,14 +66,14 @@ int ctkCursorPixmapWidgetTest1(int argc, char * argv [] )
     }
   cursor.setShowCursor(true);
 
-  // Cursor color
-  QColor transparentBlue(Qt::blue);
-  transparentBlue.setAlphaF(0.25);
-  cursor.setCursorColor(transparentBlue);
-  if (cursor.cursorColor() != transparentBlue)
+  // Cursor pen
+  QPen cursorPen(Qt::yellow);
+  cursorPen.setJoinStyle(Qt::MiterJoin);
+  cursor.setCursorPen(cursorPen);
+  if (cursor.cursorPen() != cursorPen)
     {
-    std::cerr << "ctkCursorPixmapWidget:setCursorColor failed. "
-              << qPrintable(cursor.cursorColor().name()) << std::endl;
+    std::cerr << "ctkCursorPixmapWidget:setCursorPen failed. "
+              << qPrintable(cursor.cursorPen().color().name()) << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -82,6 +87,8 @@ int ctkCursorPixmapWidgetTest1(int argc, char * argv [] )
     }
 
   // Margin color - invalid input
+  QColor transparentBlue(Qt::blue);
+  transparentBlue.setAlphaF(0.25);
   QColor origColor = cursor.marginColor();
   cursor.setMarginColor(QColor());
   if (cursor.marginColor() != origColor)
@@ -91,9 +98,9 @@ int ctkCursorPixmapWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // Margin color - valid input
+  // Margin color - should ignore alpha channel
   cursor.setMarginColor(transparentBlue);
-  if (cursor.marginColor() != transparentBlue)
+  if (cursor.marginColor() != Qt::blue)
     {
       {
       std::cerr << "ctkCursorPixmapWidget:setMarginColor failed - valid input. "
@@ -111,6 +118,13 @@ int ctkCursorPixmapWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  return EXIT_SUCCESS;
+  cursor.show();
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
+
+  return app.exec();
+
 }
 

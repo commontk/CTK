@@ -32,6 +32,9 @@
 #include <vtkRenderWindow.h>
 #include <vtkUnsignedCharArray.h>
 
+// STD includes
+#include <math.h>
+
 // Convenient macro
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
@@ -143,53 +146,55 @@ void ctkVTKMagnifyWidgetPrivate::updatePixmap(QVTKWidget * widget, QPointF pos)
   // Given a magnification and the label's widget size, compute the number of
   // pixels we can show.  We should round to get a larger integer extent, since
   // we will later adjust the pixmap's location in paintEvent().
+  // Left-right and up-down are in the render window coordinate frame.
+  // (which is different in the y-direction compared to Qt coordinates).
   QSizeF sizeToMagnify = QSizeF(q->size()) / this->Magnification;
-  double dx0 = (mouseWindowPos.x() - ((sizeToMagnify.width()-1.0) / 2.0));
-  double dx1 = (mouseWindowPos.x() + ((sizeToMagnify.width()-1.0) / 2.0));
-  double dy0 = (mouseWindowPos.y() - ((sizeToMagnify.height()-1.0) / 2.0));
-  double dy1 = (mouseWindowPos.y() + ((sizeToMagnify.height()-1.0) / 2.0));
+  double posLeft = (mouseWindowPos.x() - ((sizeToMagnify.width()-1.0) / 2.0));
+  double posRight = (mouseWindowPos.x() + ((sizeToMagnify.width()-1.0) / 2.0));
+  double posBottom = (mouseWindowPos.y() - ((sizeToMagnify.height()-1.0) / 2.0));
+  double posTop = (mouseWindowPos.y() + ((sizeToMagnify.height()-1.0) / 2.0));
 
   // Round to ints, for indexing into the pixel array
-  int ix0 = floor(dx0);
-  int ix1 = ceil(dx1);
-  int iy0 = floor(dy0);
-  int iy1 = ceil(dy1);
+  int indexLeft = floor(posLeft);
+  int indexRight = ceil(posRight);
+  int indexBottom = floor(posBottom);
+  int indexTop = ceil(posTop);
 
   // Handle when mouse is near the border
-  int min_x0 = 0;
-  int max_x1 = windowSize[0]-1;
-  int min_y0 = 0;
-  int max_y1 = windowSize[1]-1;
+  int minLeft = 0;
+  int maxRight = windowSize[0]-1;
+  int minBottom = 0;
+  int maxTop = windowSize[1]-1;
 
-  bool overLeft = ix0 < min_x0;
-  bool overRight = ix1 > max_x1;
-  bool overBottom = iy0 < min_y0;
-  bool overTop = iy1 > max_y1;
+  bool overLeft = indexLeft < minLeft;
+  bool overRight = indexRight > maxRight;
+  bool overBottom = indexBottom < minBottom;
+  bool overTop = indexTop > maxTop;
 
   // Ensure we don't access nonexistant indices
   if (overLeft)
     {
-    ix0 = min_x0;
-    dx0 = min_x0;
+    indexLeft = minLeft;
+    posLeft = minLeft;
     }
   if (overRight)
     {
-    ix1 = max_x1;
-    dx1 = max_x1;
+    indexRight = maxRight;
+    posRight = maxRight;
     }
   if (overBottom)
     {
-    iy0 = min_y0;
-    dy0 = min_y0;
+    indexBottom = minBottom;
+    posBottom = minBottom;
     }
   if (overTop)
     {
-    iy1 = max_y1;
-    dy1 = max_y1;
+    indexTop = maxTop;
+    posTop = maxTop;
     }
 
   // Error case
-  if (ix0 > ix1 || iy0 > iy1)
+  if (indexLeft > indexRight || indexBottom > indexTop)
     {
     this->removePixmap();
     return;
@@ -223,13 +228,15 @@ void ctkVTKMagnifyWidgetPrivate::updatePixmap(QVTKWidget * widget, QPointF pos)
     }
   q->setAlignment(alignment);
 
-  // Retrieve the pixel data into a QImage
-  QSize actualSize(ix1-ix0+1, iy1-iy0+1);
+  // Retrieve the pixel data into a QImage (flip vertically to move from render
+  // window coordinates to Qt coordinates)
+  QSize actualSize(indexRight-indexLeft+1, indexTop-indexBottom+1);
   QImage image(actualSize.width(), actualSize.height(), QImage::Format_RGB32);
   vtkUnsignedCharArray * pixelData = vtkUnsignedCharArray::New();
   pixelData->SetArray(image.bits(), actualSize.width() * actualSize.height() * 4, 1);
   int front = renderWindow->GetDoubleBuffer();
-  int success = renderWindow->GetRGBACharPixelData(ix0, iy0, ix1, iy1, front, pixelData);
+  int success = renderWindow->GetRGBACharPixelData(
+      indexLeft, indexBottom, indexRight, indexTop, front, pixelData);
   if (!success)
     {
     this->removePixmap();
@@ -241,17 +248,65 @@ void ctkVTKMagnifyWidgetPrivate::updatePixmap(QVTKWidget * widget, QPointF pos)
 
   // Scale the image to zoom, using FastTransformation to prevent smoothing
   QSize imageSize = actualSize * this->Magnification;
-  image = image.scaled(imageSize, Qt::KeepAspectRatioByExpanding, Qt::FastTransformation);
+  image = image.scaled(imageSize, Qt::KeepAspectRatioByExpanding,
+                       Qt::FastTransformation);
 
   // Crop the magnified image to solve the problem of magnified partial pixels
-  int x0diff = round((dx0 - static_cast<double>(ix0)) * this->Magnification);
-  int x1diff = imageSize.width()
-      - round((static_cast<double>(ix1) - dx1) * this->Magnification);
-  int y0diff = round((dy0 - static_cast<double>(iy0)) * this->Magnification);
-  int y1diff = imageSize.height()
-      - round((static_cast<double>(iy1) - dy1) * this->Magnification);
-  QRect cropRect(QPoint(x0diff, y0diff), QPoint(x1diff, y1diff));
+  double errorLeft
+      = (posLeft - static_cast<double>(indexLeft)) * this->Magnification;
+  double errorRight
+      = (static_cast<double>(indexRight) - posRight) * this->Magnification;
+  double errorBottom
+      = (posBottom - static_cast<double>(indexBottom)) * this->Magnification;
+  double errorTop
+      = (static_cast<double>(indexTop) - posTop) * this->Magnification;
+
+  // When cropping the Qt image, the 'adjust' variables are in Qt coordinates,
+  // not render window coordinates (bottom and top switch).
+  int cropIndexLeft = round(errorLeft);
+  int cropIndexRight = imageSize.width() - round(errorRight) - 1;
+  int cropIndexTop = round(errorTop);
+  int cropIndexBottom = imageSize.height() - round(errorBottom) - 1;
+
+  // Handle case when label size and magnification are not both even or odd
+  // (errorLeft/errorRight/errorBottom/errorTop will have fractional component,
+  // so cropped image wouldn't be the correct size unless we adjust further).
+  int requiredWidth = round((posRight - posLeft + 1) * this->Magnification);
+  int requiredHeight = round((posTop - posBottom + 1) * this->Magnification);
+  int actualWidth = cropIndexRight - cropIndexLeft + 1;
+  int actualHeight = cropIndexBottom - cropIndexTop + 1;
+  int diffWidth = requiredWidth - actualWidth;
+  int diffHeight = requiredHeight - actualHeight;
+  // Too wide
+  if (diffWidth < 0 && cropIndexRight != imageSize.width()-1)
+    {
+    Q_ASSERT(actualWidth - requiredWidth <= 1);
+    cropIndexRight += diffWidth;
+    }
+  // Too narrow
+  else if (diffWidth > 0 && cropIndexLeft != 0)
+    {
+    Q_ASSERT(requiredWidth - actualWidth <= 1);
+    cropIndexLeft -= diffWidth;
+    }
+  // Too tall
+  if (diffHeight < 0 && cropIndexBottom != imageSize.height()-1)
+    {
+    Q_ASSERT(actualHeight - requiredHeight <= 1);
+    cropIndexBottom += diffHeight;
+    }
+  // Too short
+  else if (diffHeight > 0 && cropIndexTop != 0)
+    {
+    Q_ASSERT(requiredHeight - actualHeight <= 1);
+    cropIndexTop -= diffHeight;
+    }
+
+  // Finally crop the QImage for display
+  QRect cropRect(QPoint(cropIndexLeft, cropIndexTop),
+                 QPoint(cropIndexRight, cropIndexBottom));
   image = image.copy(cropRect);
+
 
   // Finally, set the pixelmap to the new one we have created
   q->setPixmap(QPixmap::fromImage(image));
@@ -280,11 +335,14 @@ CTK_GET_CPP(ctkVTKMagnifyWidget, double, magnification, Magnification);
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyWidget::setMagnification(double newMagnification)
 {
-  if (newMagnification > 0)
+  Q_D(ctkVTKMagnifyWidget);
+  if (newMagnification == d->Magnification || newMagnification <= 0)
     {
-    Q_D(ctkVTKMagnifyWidget);
-    d->Magnification = newMagnification;
+    return;
     }
+
+  d->Magnification = newMagnification;
+  this->update();
 }
 
 // --------------------------------------------------------------------------
