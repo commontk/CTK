@@ -76,6 +76,10 @@ public:
   void setDialogOptions(const ColorDialogOptions& options);
   const ColorDialogOptions& dialogOptions() const;
 
+  ///
+  /// Reimplemented to return a toolbutton sizehint when no text is displayed
+  /// in the button.
+  virtual QSize sizeHint()const;
 
 public slots:
   ///

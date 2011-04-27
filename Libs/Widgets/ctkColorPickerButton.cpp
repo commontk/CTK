@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QApplication>
 #include <QColorDialog>
 #include <QDebug>
 #include <QIcon>
@@ -46,6 +47,7 @@ public:
   QColor Color;
   bool   DisplayColorName;
   ctkColorPickerButton::ColorDialogOptions DialogOptions;
+  mutable QSize CachedSizeHint;
 };
 
 //-----------------------------------------------------------------------------
@@ -158,7 +160,9 @@ void ctkColorPickerButton::setDisplayColorName(bool displayColorName)
 {
   Q_D(ctkColorPickerButton);
   d->DisplayColorName = displayColorName;
+  d->CachedSizeHint = QSize();
   this->update();
+  this->updateGeometry();
 }
 
 //-----------------------------------------------------------------------------
@@ -211,11 +215,39 @@ void ctkColorPickerButton::paintEvent(QPaintEvent *)
   Q_D(ctkColorPickerButton);
   QStylePainter p(this);
   QStyleOptionButton option;
-  initStyleOption(&option);
+  this->initStyleOption(&option);
   if (d->DisplayColorName)
     {
     option.text = d->Color.name();
     }
   option.icon = d->Icon;
   p.drawControl(QStyle::CE_PushButton, option);
+}
+
+//-----------------------------------------------------------------------------
+QSize ctkColorPickerButton::sizeHint()const
+{
+  Q_D(const ctkColorPickerButton);
+  if (d->DisplayColorName || !this->text().isEmpty())
+    {
+    return this->QPushButton::sizeHint();
+    }
+  if (d->CachedSizeHint.isValid())
+    {
+    return d->CachedSizeHint;
+    }
+
+  QStyleOptionButton pushButtonOpt;
+  this->initStyleOption(&pushButtonOpt);
+  QStyleOptionToolButton opt;
+  (&opt)->QStyleOption::operator=(pushButtonOpt);
+  opt.arrowType = Qt::NoArrow;
+  opt.icon = d->Icon;
+  int iconSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
+  opt.iconSize = QSize(iconSize, iconSize);
+  opt.rect.setSize(opt.iconSize); // PM_MenuButtonIndicator depends on the height
+  d->CachedSizeHint = this->style()->sizeFromContents(
+    QStyle::CT_ToolButton, &opt, opt.iconSize, this).
+    expandedTo(QApplication::globalStrut());
+  return d->CachedSizeHint;
 }
