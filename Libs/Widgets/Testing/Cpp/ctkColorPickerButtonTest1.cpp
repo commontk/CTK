@@ -39,21 +39,30 @@ int ctkColorPickerButtonTest1(int argc, char * argv [] )
   ctkColorPickerButton colorPicker1;
   ctkColorPickerButton colorPicker2("Select a color");
   ctkColorPickerButton colorPicker3(Qt::red,"text");
+  ctkColorPickerButton colorPicker4(Qt::yellow,"");
   
+  QHBoxLayout* subLayout = new QHBoxLayout;
+  subLayout->addStretch(1);
+  subLayout->addWidget(&colorPicker4);
+  subLayout->addStretch(1);
+
   QVBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(&colorPicker1);
   layout->addWidget(&colorPicker2);
   layout->addWidget(&colorPicker3);
+  layout->addLayout(subLayout);
   topLevel.setLayout(layout);
 
   if (!colorPicker1.text().isEmpty() ||
        colorPicker2.text() != "Select a color" ||
-       colorPicker3.text() != "text")
+       colorPicker3.text() != "text" ||
+       colorPicker4.text() != "")
     {
     std::cerr << "ctkColorPickerButton::ctkColorPickerButton wrong default text"
               << colorPicker1.text().toStdString() << " "
               << colorPicker2.text().toStdString() << " "
-              << colorPicker3.text().toStdString() << std::endl;
+              << colorPicker3.text().toStdString() << " "
+              << colorPicker4.text().toStdString() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -67,6 +76,7 @@ int ctkColorPickerButtonTest1(int argc, char * argv [] )
     }
   
   colorPicker3.setDisplayColorName(false);
+  colorPicker4.setDisplayColorName(false);
   
   if (colorPicker3.displayColorName() ||
       colorPicker3.text() != "text")
