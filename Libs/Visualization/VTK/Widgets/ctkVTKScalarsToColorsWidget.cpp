@@ -226,6 +226,10 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   Q_ASSERT(d->CurrentControlPointsItem);
+  Q_ASSERT(d->PointIdSpinBox->value() == d->CurrentControlPointsItem->GetCurrentPoint());
+  d->PointIdSpinBox->setMaximum((d->CurrentControlPointsItem ?
+                                 d->CurrentControlPointsItem->GetNumberOfPoints() : 0) - 1);
+
   int pointId = d->PointIdSpinBox->value();
   if (pointId == -1)
     {
@@ -274,8 +278,7 @@ void ctkVTKScalarsToColorsWidget::onColorChanged(const QColor& color)
     point[1] = color.redF();
     point[2] = color.greenF();
     point[3] = color.blueF();
-    d->CurrentControlPointsItem->SetControlPoint(
-      d->PointIdSpinBox->value(), point);
+    colorTF->SetNodeValue(d->PointIdSpinBox->value(), point);
     }
 }
 

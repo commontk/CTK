@@ -30,6 +30,7 @@ IF(CTK_USE_CHARTS)
       ctkVTKScalarsToColorsViewTest4.cpp
       ctkVTKScalarsToColorsWidgetTest1.cpp
       ctkVTKScalarsToColorsWidgetTest2.cpp
+      ctkVTKScalarsToColorsWidgetTest3.cpp
       ${TEST_SOURCES})
 ENDIF(CTK_USE_CHARTS)
 
@@ -85,6 +86,7 @@ IF (CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest4 )
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest2 )
+  SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest3 )
 ENDIF(CTK_USE_CHARTS)
 SIMPLE_TEST( ctkVTKRenderViewTest1 )
 SIMPLE_TEST( ctkVTKSliceViewTest1 )

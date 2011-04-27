@@ -128,10 +128,11 @@ vtkPlot* ctkVTKScalarsToColorsView::addColorTransferFunction(vtkColorTransferFun
   vtkSmartPointer<vtkColorTransferFunctionItem> item =
     vtkSmartPointer<vtkColorTransferFunctionItem>::New();
   item->SetColorTransferFunction(colorTF);
+  this->addPlot(item);
   vtkSmartPointer<vtkColorTransferControlPointsItem> controlPointsItem =
     vtkSmartPointer<vtkColorTransferControlPointsItem>::New();
   controlPointsItem->SetColorTransferFunction(colorTF);
-  this->addPlot(item);
+  this->addPlot(controlPointsItem);
   d->updateChart();
   return item;
 }
