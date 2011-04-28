@@ -43,9 +43,12 @@ IF(CTK_USE_CHARTS)
   SET(PLUGIN_SRCS
       ctkVTKScalarsToColorsViewPlugin.cpp
       ctkVTKScalarsToColorsViewPlugin.h
+      ctkVTKScalarsToColorsWidgetPlugin.cpp
+      ctkVTKScalarsToColorsWidgetPlugin.h
       ${PLUGIN_SRCS})
   SET(PLUGIN_MOC_SRCS
       ctkVTKScalarsToColorsViewPlugin.h
+      ctkVTKScalarsToColorsWidgetPlugin.h
       ${PLUGIN_MOC_SRCS})
 ENDIF(CTK_USE_CHARTS)
 

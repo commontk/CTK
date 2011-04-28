@@ -19,46 +19,46 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkVTKScalarsToColorsView.h"
-#include "ctkVTKScalarsToColorsViewPlugin.h"
+#include "ctkVTKScalarsToColorsWidget.h"
+#include "ctkVTKScalarsToColorsWidgetPlugin.h"
 
 //-----------------------------------------------------------------------------
-ctkVTKScalarsToColorsViewPlugin
-::ctkVTKScalarsToColorsViewPlugin(QObject *parentObject)
+ctkVTKScalarsToColorsWidgetPlugin
+::ctkVTKScalarsToColorsWidgetPlugin(QObject *parentObject)
  : QObject(parentObject)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkVTKScalarsToColorsViewPlugin::createWidget(QWidget *parentWidget)
+QWidget *ctkVTKScalarsToColorsWidgetPlugin::createWidget(QWidget *parentWidget)
 {
-  ctkVTKScalarsToColorsView* newWidget
-    = new ctkVTKScalarsToColorsView(parentWidget);
+  ctkVTKScalarsToColorsWidget* newWidget =
+    new ctkVTKScalarsToColorsWidget(parentWidget);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKScalarsToColorsViewPlugin::domXml() const
+QString ctkVTKScalarsToColorsWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkVTKScalarsToColorsView\" \
-          name=\"ScalarsToColorsView\">\n"
+  return "<widget class=\"ctkVTKScalarsToColorsWidget\" \
+          name=\"ScalarsToColorsWidget\">\n"
           "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKScalarsToColorsViewPlugin::includeFile() const
+QString ctkVTKScalarsToColorsWidgetPlugin::includeFile() const
 {
-  return "ctkVTKScalarsToColorsView.h";
+  return "ctkVTKScalarsToColorsWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkVTKScalarsToColorsViewPlugin::isContainer() const
+bool ctkVTKScalarsToColorsWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKScalarsToColorsViewPlugin::name() const
+QString ctkVTKScalarsToColorsWidgetPlugin::name() const
 {
-  return "ctkVTKScalarsToColorsView";
+  return "ctkVTKScalarsToColorsWidget";
 }
