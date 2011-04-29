@@ -79,6 +79,8 @@ IF (${CTK_USE_CHARTS})
   SET(KIT_SRCS
       ctkVTKChartView.cpp
       ctkVTKChartView.h
+      ctkVTKVolumePropertyWidget.cpp
+      ctkVTKVolumePropertyWidget.h
       ctkVTKScalarsToColorsView.cpp
       ctkVTKScalarsToColorsView.h
       ctkVTKScalarsToColorsWidget.cpp
@@ -86,11 +88,13 @@ IF (${CTK_USE_CHARTS})
       ${KIT_SRCS})
   SET(KIT_MOC_SRCS 
       ctkVTKChartView.h
+      ctkVTKVolumePropertyWidget.h
       ctkVTKScalarsToColorsView.h
       ctkVTKScalarsToColorsWidget.h
       ${KIT_MOC_SRCS})
   SET(KIT_UI_FORMS
-      Resources/UI/ctkVTKScalarsToColorsWidget.ui 
+      Resources/UI/ctkVTKVolumePropertyWidget.ui
+      Resources/UI/ctkVTKScalarsToColorsWidget.ui
       ${KIT_UI_FORMS})
   SET(VTK_LIBRARIES
       vtkCharts

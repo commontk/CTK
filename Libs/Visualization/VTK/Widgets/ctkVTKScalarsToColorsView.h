@@ -28,6 +28,7 @@ class ctkVTKScalarsToColorsViewPrivate;
 
 // VTK includes
 #include <QVTKWidget.h>
+#include <vtkChartXY.h>
 
 class vtkColorTransferFunction;
 class vtkLookupTable;
@@ -45,10 +46,34 @@ public:
 
   virtual void addPlot(vtkPlot* plot);
   vtkPlot* addLookupTable(vtkLookupTable* lut);
-  vtkPlot* addColorTransferFunction(vtkColorTransferFunction* colorTF);
-  vtkPlot* addOpacityFunction(vtkPiecewiseFunction* opacityTF);
+  vtkPlot* addColorTransferFunction(vtkColorTransferFunction* colorTF, bool editable = true);
+  vtkPlot* addOpacityFunction(vtkPiecewiseFunction* opacityTF, bool editable = true);
   vtkPlot* addCompositeFunction(vtkColorTransferFunction* colorTF,
-                                vtkPiecewiseFunction* opacityTF);
+                                vtkPiecewiseFunction* opacityTF,
+                                bool colorTFEditable = true,
+                                bool opacityTFEditable = true);
+  vtkPlot* addPiecewiseFunction(vtkPiecewiseFunction* piecewiseTF, bool editable = true);
+
+  vtkPlot* addColorTransferFunctionControlPoints(vtkColorTransferFunction* colorTF);
+  vtkPlot* addOpacityFunctionControlPoints(vtkPiecewiseFunction* opacityTF);
+  vtkPlot* addCompositeFunctionControlPoints(vtkColorTransferFunction* colorTF,
+                                             vtkPiecewiseFunction* opacityTF);
+  vtkPlot* addPiecewiseFunctionControlPoints(vtkPiecewiseFunction* piecewiseTF);
+
+  QList<vtkPlot*> plots()const;
+  template<class T>
+  QList<T*> plots()const;
+  QList<vtkPlot*> lookupTablePlots()const;
+  QList<vtkPlot*> lookupTablePlots(vtkLookupTable* lut)const;
+  QList<vtkPlot*> colorTransferFunctionPlots()const;
+  QList<vtkPlot*> colorTransferFunctionPlots(vtkColorTransferFunction* colorTF)const;
+  QList<vtkPlot*> opacityFunctionPlots()const;
+  QList<vtkPlot*> opacityFunctionPlots(vtkPiecewiseFunction* opacityTF)const;
+
+  void setLookuptTableToPlots(vtkLookupTable* lut);
+  void setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF);
+  void setOpacityFunctionToPlots(vtkPiecewiseFunction* opacityTF);
+  void setPiecewiseFunctionToPlots(vtkPiecewiseFunction* piecewiseTF);
 
 public slots:
   void editPoint(vtkObject* plot, void * pointId);
@@ -60,5 +85,23 @@ private:
   Q_DECLARE_PRIVATE(ctkVTKScalarsToColorsView);
   Q_DISABLE_COPY(ctkVTKScalarsToColorsView);
 };
+
+// ----------------------------------------------------------------------------
+template<class T>
+QList<T*> ctkVTKScalarsToColorsView::plots()const
+{
+  QList<T*> res;
+  const vtkIdType count = this->chart()->GetNumberOfPlots();
+  for(vtkIdType i = 0; i < count; ++i)
+    {
+    vtkPlot* plot = this->chart()->GetPlot(i);
+    if (T::SafeDownCast(plot) != 0)
+      {
+      res << T::SafeDownCast(plot);
+      }
+    }
+  return res;
+}
+
 
 #endif

@@ -51,11 +51,10 @@ int ctkVTKScalarsToColorsViewTest1(int argc, char * argv [] )
   view.show();
 
   ctf->AddRGBPoint(0.6, 0.9686,0.0,0.6941);
-  QTimer autoExit;
+
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    QTimer::singleShot(200, &app, SLOT(quit()));
     }
   return app.exec();
 }

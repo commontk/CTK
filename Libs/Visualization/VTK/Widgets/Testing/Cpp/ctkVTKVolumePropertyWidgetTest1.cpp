@@ -20,51 +20,54 @@
 
 // Qt includes
 #include <QApplication>
-#include <QSharedPointer>
+#include <QDebug>
 #include <QTimer>
 
 // CTK includes
-#include "ctkVTKScalarsToColorsView.h"
-#include "ctkVTKScalarsToColorsWidget.h"
+#include "ctkVTKVolumePropertyWidget.h"
 
 // VTK includes
-#include <vtkChartXY.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkPiecewiseFunction.h>
-#include <vtkPlot.h>
 #include <vtkSmartPointer.h>
+#include <vtkVolumeProperty.h>
 
 // STD includes
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkVTKScalarsToColorsWidgetTest2(int argc, char * argv [] )
+int ctkVTKVolumePropertyWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  // Transfer Function
   vtkSmartPointer<vtkColorTransferFunction> ctf =
     vtkSmartPointer<vtkColorTransferFunction>::New();
-  //
-  ctf->AddRGBPoint(0. , 171./255., 113./255.,   38./255.);
-  ctf->AddRGBPoint(0.2,   38./255., 171./255., 113./255.);
-  ctf->AddRGBPoint(0.4,  113./255., 38./255., 171./255.);
-  ctf->AddRGBPoint(0.6,  171./255., 38./255.,  140./255.);
-  ctf->AddRGBPoint(0.8,  171./255., 46./255., 38./255.);
+  ctf->AddRGBPoint(0.2, 0.6941,0.76,0., 0.5, 0.);
+  ctf->AddRGBPoint(0.4, 0.,0.6941,0.96);
+  ctf->AddRGBPoint(0.8, 0.9686,0.76,0.);
 
-  // Opacity function
-  vtkSmartPointer<vtkPiecewiseFunction> opacityFunction =
+  vtkSmartPointer<vtkPiecewiseFunction> otf =
     vtkSmartPointer<vtkPiecewiseFunction>::New();
-  opacityFunction->AddPoint(0.,0.3);
-  opacityFunction->AddPoint(0.2, 0.55);
-  opacityFunction->AddPoint(0.4,0.87);
-  opacityFunction->AddPoint(0.6, 1.);
-  opacityFunction->AddPoint(0.8, 0.45);
+  otf->AddPoint(0.2, 0.6941);
+  otf->AddPoint(0.4, 0.641);
+  otf->AddPoint(0.8, 0.9686);
 
-  ctkVTKScalarsToColorsWidget widget(0);
-  // add transfer function item
-  widget.view()->addCompositeFunction(ctf, opacityFunction);
-  widget.view()->fitAxesToBounds();
+  vtkSmartPointer<vtkPiecewiseFunction> otf2 =
+    vtkSmartPointer<vtkPiecewiseFunction>::New();
+  otf2->AddPoint(0.0, 0.6941);
+  otf2->AddPoint(0.1, 0.641);
+  otf2->AddPoint(0.7, 0.9686);
+
+  vtkSmartPointer<vtkVolumeProperty> volumeProperty =
+    vtkSmartPointer<vtkVolumeProperty>::New();
+  volumeProperty->SetColor(ctf);
+  volumeProperty->SetScalarOpacity(otf);
+
+  ctkVTKVolumePropertyWidget widget;
+  widget.setVolumeProperty(volumeProperty);
+
+  volumeProperty->SetScalarOpacity(otf2);
+
   widget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")

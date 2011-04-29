@@ -124,36 +124,48 @@ vtkPlot* ctkVTKScalarsToColorsView::addLookupTable(vtkLookupTable* lut)
   return item;
 }
 // ----------------------------------------------------------------------------
-vtkPlot* ctkVTKScalarsToColorsView::addColorTransferFunction(vtkColorTransferFunction* colorTF)
+vtkPlot* ctkVTKScalarsToColorsView
+::addColorTransferFunction(vtkColorTransferFunction* colorTF,
+                           bool editable)
 {
   Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkColorTransferFunctionItem> item =
     vtkSmartPointer<vtkColorTransferFunctionItem>::New();
   item->SetColorTransferFunction(colorTF);
   this->addPlot(item);
-  vtkSmartPointer<vtkColorTransferControlPointsItem> controlPointsItem =
-    vtkSmartPointer<vtkColorTransferControlPointsItem>::New();
-  controlPointsItem->SetColorTransferFunction(colorTF);
-  this->addPlot(controlPointsItem);
+  if (editable)
+    {
+    this->addColorTransferFunctionControlPoints(colorTF);
+    }
   d->updateChart();
   return item;
 }
 
 // ----------------------------------------------------------------------------
-vtkPlot* ctkVTKScalarsToColorsView::addOpacityFunction(vtkPiecewiseFunction* opacityTF)
+vtkPlot* ctkVTKScalarsToColorsView
+::addOpacityFunction(vtkPiecewiseFunction* opacityTF,
+                     bool editable)
+{
+  return this->addPiecewiseFunction(opacityTF, editable);
+}
+
+// ----------------------------------------------------------------------------
+vtkPlot* ctkVTKScalarsToColorsView
+::addPiecewiseFunction(vtkPiecewiseFunction* piecewiseTF,
+                       bool editable)
 {
   Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkPiecewiseFunctionItem> item =
     vtkSmartPointer<vtkPiecewiseFunctionItem>::New();
-  item->SetPiecewiseFunction(opacityTF);
+  item->SetPiecewiseFunction(piecewiseTF);
   QColor defaultColor = this->palette().highlight().color();
   item->SetColor(defaultColor.redF(), defaultColor.greenF(), defaultColor.blueF());
   item->SetMaskAboveCurve(true);
   this->addPlot(item);
-  vtkSmartPointer<vtkPiecewiseControlPointsItem> controlPointsItem =
-    vtkSmartPointer<vtkPiecewiseControlPointsItem>::New();
-  controlPointsItem->SetPiecewiseFunction(opacityTF);
-  this->addPlot(controlPointsItem);
+  if (editable)
+    {
+    this->addPiecewiseFunctionControlPoints(piecewiseTF);
+    }
   d->updateChart();
   return item;
 }
@@ -161,7 +173,8 @@ vtkPlot* ctkVTKScalarsToColorsView::addOpacityFunction(vtkPiecewiseFunction* opa
 // ----------------------------------------------------------------------------
 vtkPlot* ctkVTKScalarsToColorsView
 ::addCompositeFunction(vtkColorTransferFunction* colorTF,
-                       vtkPiecewiseFunction* opacityTF)
+                       vtkPiecewiseFunction* opacityTF,
+                       bool colorTFEditable, bool opacityTFEditable)
 {
   Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkCompositeTransferFunctionItem> item =
@@ -170,14 +183,256 @@ vtkPlot* ctkVTKScalarsToColorsView
   item->SetOpacityFunction(opacityTF);
   item->SetMaskAboveCurve(true);
   this->addPlot(item);
+  if (colorTFEditable && opacityTFEditable)
+    {
+    this->addCompositeFunctionControlPoints(colorTF, opacityTF);
+    }
+  else if (colorTFEditable)
+    {
+    this->addColorTransferFunctionControlPoints(colorTF);
+    }
+  else if (opacityTFEditable)
+    {
+    this->addOpacityFunctionControlPoints(opacityTF);
+    }
+  d->updateChart();
+  return item;
+}
+
+// ----------------------------------------------------------------------------
+vtkPlot* ctkVTKScalarsToColorsView
+::addColorTransferFunctionControlPoints(vtkColorTransferFunction* colorTF)
+{
+  vtkSmartPointer<vtkColorTransferControlPointsItem> controlPointsItem =
+    vtkSmartPointer<vtkColorTransferControlPointsItem>::New();
+  controlPointsItem->SetColorTransferFunction(colorTF);
+  this->addPlot(controlPointsItem);
+  return controlPointsItem;
+}
+
+// ----------------------------------------------------------------------------
+vtkPlot* ctkVTKScalarsToColorsView
+::addOpacityFunctionControlPoints(vtkPiecewiseFunction* opacityTF)
+{
+  return this->addPiecewiseFunctionControlPoints(opacityTF);
+}
+
+// ----------------------------------------------------------------------------
+vtkPlot* ctkVTKScalarsToColorsView
+::addCompositeFunctionControlPoints(vtkColorTransferFunction* colorTF,
+                                    vtkPiecewiseFunction* opacityTF)
+{
   vtkSmartPointer<vtkCompositeControlPointsItem> controlPointsItem =
     vtkSmartPointer<vtkCompositeControlPointsItem>::New();
   controlPointsItem->SetColorTransferFunction(colorTF);
   controlPointsItem->SetOpacityFunction(opacityTF);
   this->addPlot(controlPointsItem);
+  return controlPointsItem;
+}
 
-  d->updateChart();
-  return item;
+// ----------------------------------------------------------------------------
+vtkPlot* ctkVTKScalarsToColorsView
+::addPiecewiseFunctionControlPoints(vtkPiecewiseFunction* piecewiseTF)
+{
+  vtkSmartPointer<vtkPiecewiseControlPointsItem> controlPointsItem =
+    vtkSmartPointer<vtkPiecewiseControlPointsItem>::New();
+  controlPointsItem->SetPiecewiseFunction(piecewiseTF);
+  this->addPlot(controlPointsItem);
+  return controlPointsItem;
+}
+
+// ----------------------------------------------------------------------------
+QList<vtkPlot*> ctkVTKScalarsToColorsView::plots()const
+{
+  QList<vtkPlot*> res;
+  const vtkIdType count = this->chart()->GetNumberOfPlots();
+  for(vtkIdType i = 0; i < count; ++i)
+    {
+    res << this->chart()->GetPlot(i);
+    }
+  return res;
+}
+
+// ----------------------------------------------------------------------------
+QList<vtkPlot*> ctkVTKScalarsToColorsView::lookupTablePlots()const
+{
+  QList<vtkPlot*> res;
+  foreach(vtkPlot* plot, this->plots())
+    {
+    if (vtkLookupTableItem::SafeDownCast(plot))
+      {
+      res << plot;
+      }
+    }
+  return res;
+}
+
+// ----------------------------------------------------------------------------
+QList<vtkPlot*> ctkVTKScalarsToColorsView::lookupTablePlots(vtkLookupTable* lut)const
+{
+  QList<vtkPlot*> res;
+  foreach(vtkPlot* plot, this->lookupTablePlots())
+    {
+    vtkLookupTableItem* item = vtkLookupTableItem::SafeDownCast(plot);
+    if (item->GetLookupTable() == lut)
+      {
+      res << plot;
+      }
+    }
+  return res;
+}
+
+// ----------------------------------------------------------------------------
+QList<vtkPlot*> ctkVTKScalarsToColorsView::colorTransferFunctionPlots()const
+{
+  QList<vtkPlot*> res;
+  foreach(vtkPlot* plot, this->plots())
+    {
+    if (vtkColorTransferFunctionItem::SafeDownCast(plot) ||
+        vtkColorTransferControlPointsItem::SafeDownCast(plot))
+      {
+      res << plot;
+      }
+    }
+  return res;
+}
+
+// ----------------------------------------------------------------------------
+QList<vtkPlot*> ctkVTKScalarsToColorsView
+::colorTransferFunctionPlots(vtkColorTransferFunction* colorTF)const
+{
+  QList<vtkPlot*> res;
+  foreach(vtkPlot* plot, this->colorTransferFunctionPlots())
+    {
+    vtkColorTransferFunctionItem* item =
+      vtkColorTransferFunctionItem::SafeDownCast(plot);
+    if (item
+        && item->GetColorTransferFunction() == colorTF)
+      {
+      res << plot;
+      }
+    vtkColorTransferControlPointsItem* controlPointsItem =
+      vtkColorTransferControlPointsItem::SafeDownCast(plot);
+    if (controlPointsItem
+        && controlPointsItem->GetColorTransferFunction() == colorTF)
+      {
+      res << plot;
+      }
+    }
+  return res;
+}
+
+// ----------------------------------------------------------------------------
+QList<vtkPlot*> ctkVTKScalarsToColorsView::opacityFunctionPlots()const
+{
+  QList<vtkPlot*> res;
+  foreach(vtkPlot* plot, this->plots())
+    {
+    if (vtkPiecewiseFunctionItem::SafeDownCast(plot) ||
+        vtkPiecewiseControlPointsItem::SafeDownCast(plot))
+      {
+      res << plot;
+      }
+    }
+  return res;
+}
+
+// ----------------------------------------------------------------------------
+QList<vtkPlot*> ctkVTKScalarsToColorsView
+::opacityFunctionPlots(vtkPiecewiseFunction* opacityTF)const
+{
+  QList<vtkPlot*> res;
+  foreach(vtkPlot* plot, this->opacityFunctionPlots())
+    {
+    vtkPiecewiseFunctionItem* item =
+      vtkPiecewiseFunctionItem::SafeDownCast(plot);
+    if (item
+        && item->GetPiecewiseFunction() == opacityTF)
+      {
+      res << plot;
+      }
+    vtkPiecewiseControlPointsItem* controlPointsItem =
+      vtkPiecewiseControlPointsItem::SafeDownCast(plot);
+    if (controlPointsItem
+        && controlPointsItem->GetPiecewiseFunction() == opacityTF)
+      {
+      res << plot;
+      }
+    vtkCompositeTransferFunctionItem* compositeItem =
+      vtkCompositeTransferFunctionItem::SafeDownCast(plot);
+    if (compositeItem
+        && compositeItem->GetOpacityFunction() == opacityTF)
+      {
+      res << plot;
+      }
+    vtkCompositeControlPointsItem* compositeControlPointsItem =
+      vtkCompositeControlPointsItem::SafeDownCast(plot);
+    if (compositeControlPointsItem
+        && compositeControlPointsItem->GetOpacityFunction() == opacityTF)
+      {
+      res << plot;
+      }
+    }
+  return res;
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView::setLookuptTableToPlots(vtkLookupTable* lut)
+{
+  foreach(vtkLookupTableItem* plot,
+          this->plots<vtkLookupTableItem>())
+    {
+    plot->SetLookupTable(lut);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView
+::setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF)
+{
+  foreach(vtkColorTransferFunctionItem* plot,
+          this->plots<vtkColorTransferFunctionItem>())
+    {
+    plot->SetColorTransferFunction(colorTF);
+    }
+  foreach(vtkColorTransferControlPointsItem* plot,
+          this->plots<vtkColorTransferControlPointsItem>())
+    {
+    plot->SetColorTransferFunction(colorTF);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView
+::setOpacityFunctionToPlots(vtkPiecewiseFunction* opacityTF)
+{
+  this->setPiecewiseFunctionToPlots(opacityTF);
+  foreach(vtkCompositeTransferFunctionItem* plot,
+          this->plots<vtkCompositeTransferFunctionItem>())
+    {
+    plot->SetOpacityFunction(opacityTF);
+    }
+  foreach(vtkCompositeControlPointsItem* plot,
+          this->plots<vtkCompositeControlPointsItem>())
+    {
+    plot->SetOpacityFunction(opacityTF);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView
+::setPiecewiseFunctionToPlots(vtkPiecewiseFunction* piecewiseTF)
+{
+  foreach(vtkPiecewiseFunctionItem* plot,
+          this->plots<vtkPiecewiseFunctionItem>())
+    {
+    plot->SetPiecewiseFunction(piecewiseTF);
+    }
+  foreach(vtkPiecewiseControlPointsItem* plot,
+          this->plots<vtkPiecewiseControlPointsItem>())
+    {
+    plot->SetPiecewiseFunction(piecewiseTF);
+    }
 }
 
 // ----------------------------------------------------------------------------

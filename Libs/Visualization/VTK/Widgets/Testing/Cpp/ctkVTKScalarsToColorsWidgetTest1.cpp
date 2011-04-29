@@ -58,11 +58,9 @@ int ctkVTKScalarsToColorsWidgetTest1(int argc, char * argv [] )
   widget.view()->fitAxesToBounds();
   widget.show();
 
-  QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    QTimer::singleShot(200, &app, SLOT(quit()));
     }
   return app.exec();
 }
