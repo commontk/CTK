@@ -127,6 +127,36 @@ ctkVTKScalarsToColorsView* ctkVTKScalarsToColorsWidget::view()const
 }
 
 // ----------------------------------------------------------------------------
+bool ctkVTKScalarsToColorsWidget::isHorizontalSliderVisible()const
+{
+  Q_D(const ctkVTKScalarsToColorsWidget);
+  return d->XRangeSlider->isVisibleTo(
+    const_cast<ctkVTKScalarsToColorsWidget*>(this));
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::setHorizontalSliderVisible(bool visible)
+{
+  Q_D(ctkVTKScalarsToColorsWidget);
+  d->XRangeSlider->setVisible(visible);
+}
+
+// ----------------------------------------------------------------------------
+bool ctkVTKScalarsToColorsWidget::isVerticalSliderVisible()const
+{
+  Q_D(const ctkVTKScalarsToColorsWidget);
+  return d->YRangeSlider->isVisibleTo(
+    const_cast<ctkVTKScalarsToColorsWidget*>(this));
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::setVerticalSliderVisible(bool visible)
+{
+  Q_D(ctkVTKScalarsToColorsWidget);
+  d->YRangeSlider->setVisible(visible);
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsWidget::onPlotAdded(vtkPlot* plot)
 {
   if (vtkControlPointsItem::SafeDownCast(plot))

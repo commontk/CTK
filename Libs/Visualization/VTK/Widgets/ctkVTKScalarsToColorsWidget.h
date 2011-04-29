@@ -38,13 +38,20 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsWidget : public 
 {
   Q_OBJECT
   QVTK_OBJECT
-
+  Q_PROPERTY(bool horizontalSliderVisible READ isHorizontalSliderVisible WRITE setHorizontalSliderVisible)
+  Q_PROPERTY(bool verticalSliderVisible READ isVerticalSliderVisible WRITE setVerticalSliderVisible)
 public:
   ctkVTKScalarsToColorsWidget(QWidget* parent = 0);
   virtual ~ctkVTKScalarsToColorsWidget();
 
   ctkVTKScalarsToColorsView* view()const;
   vtkControlPointsItem* currentControlPointsItem()const;
+
+  bool isHorizontalSliderVisible()const;
+  void setHorizontalSliderVisible(bool visible);
+
+  bool isVerticalSliderVisible()const;
+  void setVerticalSliderVisible(bool visible);
 
 public slots:
   void setCurrentControlPointsItem(vtkControlPointsItem* item);
