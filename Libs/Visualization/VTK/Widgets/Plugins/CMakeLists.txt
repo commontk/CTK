@@ -45,10 +45,13 @@ IF(CTK_USE_CHARTS)
       ctkVTKScalarsToColorsViewPlugin.h
       ctkVTKScalarsToColorsWidgetPlugin.cpp
       ctkVTKScalarsToColorsWidgetPlugin.h
+      ctkVTKVolumePropertyWidgetPlugin.cpp
+      ctkVTKVolumePropertyWidgetPlugin.h
       ${PLUGIN_SRCS})
   SET(PLUGIN_MOC_SRCS
       ctkVTKScalarsToColorsViewPlugin.h
       ctkVTKScalarsToColorsWidgetPlugin.h
+      ctkVTKVolumePropertyWidgetPlugin.h
       ${PLUGIN_MOC_SRCS})
 ENDIF(CTK_USE_CHARTS)
 
