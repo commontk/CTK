@@ -3,6 +3,10 @@ FIND_PACKAGE( Doxygen QUIET)
 IF( DOXYGEN_FOUND )
   IF( DOXYGEN_DOT_FOUND )
 
+    # Compile a doxygen input filter for processing CMake scripts
+    INCLUDE(ctkFunctionCMakeDoxygenFilterCompile)
+    ctkFunctionCMakeDoxygenFilterCompile(NAMESPACE "CMake")
+
     # Automatically generate documentation at build time
     SET(all_arg)
     IF (DOCUMENTATION_TARGET_IN_ALL)

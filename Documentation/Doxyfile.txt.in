@@ -669,7 +669,8 @@ FILE_PATTERNS          = @CTK_ADDITIONAL_FILE_PATTERN@ \
                          *.diff \
                          *.patch \
                          *.xpm \
-                         *.dox
+                         *.dox \
+                         */CMake/*.cmake
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
@@ -682,7 +683,6 @@ RECURSIVE              = YES
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
 EXCLUDE                = @CTK_BINARY_DIR@ \
-                         @CTK_SOURCE_DIR@/CMake \
                          @CTK_SOURCE_DIR@/Utilities
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
@@ -703,7 +703,6 @@ EXCLUDE_PATTERNS       = moc_*.cxx \
                          */Testing/* \
                          */Utilities/* \
                          */Widgets/Plugins/* \
-                         */CMake/* \
                          @CTK_ADDITIONAL_EXCLUDE_PATTERN@
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
@@ -760,7 +759,7 @@ INPUT_FILTER           =
 # info on how filters are used. If FILTER_PATTERNS is empty or if
 # non of the patterns match the file name, INPUT_FILTER is applied.
 
-FILTER_PATTERNS        =
+FILTER_PATTERNS        = *.cmake=@CMakeDoxygenFilter_EXECUTABLE@
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will be used to filter the input files when producing source
