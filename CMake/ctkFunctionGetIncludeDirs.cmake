@@ -19,6 +19,7 @@
 #
 ###########################################################################
 
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionGetIncludeDirs var_include_dirs)
 
   IF(NOT ARGN)

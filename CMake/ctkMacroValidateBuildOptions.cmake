@@ -18,9 +18,7 @@
 #
 ###########################################################################
 
-#
-#
-#
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroGetOptionName target_directories_with_target_name target_name option_name_var)
   
   FOREACH(target_info ${target_directories_with_target_name})
@@ -37,9 +35,7 @@ MACRO(ctkMacroGetOptionName target_directories_with_target_name target_name opti
   ENDFOREACH()
 ENDMACRO()
 
-#
-#
-#
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
   IF(NOT EXISTS ${dir})
     MESSAGE(FATAL_ERROR "Directory ${dir} doesn't exist!")

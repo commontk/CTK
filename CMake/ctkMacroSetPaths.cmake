@@ -18,11 +18,11 @@
 #
 ###########################################################################
 
-#
-# Depending on the platform, either PATH, LD_LIBRARY_PATH or DYLD_LIBRARY_PATH
-# will be updated using the paths specified using PATH_LIST
-#
-
+#!
+#! Depending on the platform, either PATH, LD_LIBRARY_PATH or DYLD_LIBRARY_PATH
+#! will be updated using the paths specified using PATH_LIST
+#!
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroSetPaths PATH_LIST)
   FOREACH(p ${PATH_LIST})
     IF(WIN32)

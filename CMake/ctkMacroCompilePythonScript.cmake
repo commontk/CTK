@@ -7,6 +7,7 @@
 
 INCLUDE(${CTK_CMAKE_DIR}/ctkMacroParseArguments.cmake)
 
+#! \ingroup CMakeAPI
 MACRO(ctkMacroCompilePythonScript)
   ctkMacroParseArguments(MY
     "TARGET_NAME;SCRIPTS;RESOURCES;SOURCE_DIR;DESTINATION_DIR;INSTALL_DIR"

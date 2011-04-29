@@ -22,6 +22,7 @@
 #
 #
 
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionGenerateProjectXml dir name target_directories is_superbuild)
   IF(NOT EXISTS ${dir})
     MESSAGE(FATAL_ERROR "Directory ${dir} doesn't exist!")

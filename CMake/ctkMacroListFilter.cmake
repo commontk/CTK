@@ -1,16 +1,22 @@
 
-# See http://www.cmake.org/Wiki/CMakeMacroListOperations#LIST_FILTER
-
-# LIST_FILTER(<list> <regexp_var> [<regexp_var> ...]
-#              [OUTPUT_VARIABLE <variable>])
-# Removes items from <list> which do not match any of the specified
-# regular expressions. An optional argument OUTPUT_VARIABLE
-# specifies a variable in which to store the matched items instead of
-# updating <list>
-# As regular expressions can not be given to macros (see bug #5389), we pass
-# variable names whose content is the regular expressions.
-# Note that this macro requires PARSE_ARGUMENTS macro, available here:
-# http://www.cmake.org/Wiki/CMakeMacroParseArguments
+#! See http://www.cmake.org/Wiki/CMakeMacroListOperations#LIST_FILTER
+#!
+#! Usage:
+#! \code
+#! LIST_FILTER(<list> <regexp_var> [<regexp_var> ...]
+#!              [OUTPUT_VARIABLE <variable>])
+#! \endcode
+#!
+#! Removes items from <list> which do not match any of the specified
+#! regular expressions. An optional argument OUTPUT_VARIABLE
+#! specifies a variable in which to store the matched items instead of
+#! updating <list>
+#! As regular expressions can not be given to macros (see bug #5389), we pass
+#! variable names whose content is the regular expressions.
+#! Note that this macro requires PARSE_ARGUMENTS macro, available here:
+#! http://www.cmake.org/Wiki/CMakeMacroParseArguments
+#!
+#! \ingroup CMakeUtilities
 MACRO(CtkMacroListFilter)
   ctkMacroParseArguments(LIST_FILTER "OUTPUT_VARIABLE" "" ${ARGV})
   # Check arguments.

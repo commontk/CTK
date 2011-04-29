@@ -18,9 +18,10 @@
 #
 ###########################################################################
 
-#
-# Generate a DGrapgh input file expected by DGraph executable.
-#
+#!
+#! Generate a DGrapgh input file expected by DGraph executable.
+#!
+#! \ingroup CMakeAPI
 FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories)
   IF(NOT EXISTS ${dir})
     MESSAGE(FATAL_ERROR "Directory ${dir} doesn't exist!")

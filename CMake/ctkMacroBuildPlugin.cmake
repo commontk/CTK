@@ -23,28 +23,29 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #  CTK/CMake/ctkMacroGeneratePluginManifest.cmake
 #
-# This macro takes the usual arguments for building
-# a shared library using Qt. Additionally, it generates
-# plugin meta-data by creating a MANIFEST.MF text file
-# which is embedded in the share library as a Qt resource.
-#
-# The following variables can be set in a file named
-# manifest_headers.cmake, which will then be read by
-# this macro:
-#
-# Plugin-ActivationPolicy
-# Plugin-Category
-# Plugin-ContactAddress
-# Plugin-Copyright
-# Plugin-Description
-# Plugin-DocURL
-# Plugin-Icon
-# Plugin-License
-# Plugin-Name
-# Require-Plugin
-# Plugin-Vendor
-# Plugin-Version
-#
+#! This macro takes the usual arguments for building
+#! a shared library using Qt. Additionally, it generates
+#! plugin meta-data by creating a MANIFEST.MF text file
+#! which is embedded in the share library as a Qt resource.
+#!
+#! The following variables can be set in a file named
+#! manifest_headers.cmake, which will then be read by
+#! this macro:
+#!
+#! - Plugin-ActivationPolicy
+#! - Plugin-Category
+#! - Plugin-ContactAddress
+#! - Plugin-Copyright
+#! - Plugin-Description
+#! - Plugin-DocURL
+#! - Plugin-Icon
+#! - Plugin-License
+#! - Plugin-Name
+#! - Require-Plugin
+#! - Plugin-Vendor
+#! - Plugin-Version
+#!
+#! \ingroup CMakeAPI
 MACRO(ctkMacroBuildPlugin)
   CtkMacroParseArguments(MY
     "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;TRANSLATIONS"

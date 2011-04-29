@@ -3,6 +3,7 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #
 
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroGeneratePluginResourceFile QRC_SRCS)
 
   CtkMacroParseArguments(MY

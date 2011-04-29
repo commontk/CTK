@@ -19,6 +19,7 @@
 #
 ###########################################################################
 
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionGetLibraryDirs var_library_dirs)
 
   IF(NOT ARGN)

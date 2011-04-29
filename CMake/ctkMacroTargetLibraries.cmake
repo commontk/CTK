@@ -18,14 +18,15 @@
 #
 ###########################################################################
 
-#
-# This macro could be invoked using two different signatures:
-#   ctkFunctionGetTargetLibraries(TARGET_LIBS)
-# or 
-#   ctkFunctionGetTargetLibraries(TARGET_LIBS "/path/to/ctk_target_dir")
-#
-# Without specifying the second argument, the current folder will be used.
-#
+#!
+#! This macro could be invoked using two different signatures:
+#!   ctkFunctionGetTargetLibraries(TARGET_LIBS)
+#! or
+#!   ctkFunctionGetTargetLibraries(TARGET_LIBS "/path/to/ctk_target_dir")
+#!
+#! Without specifying the second argument, the current folder will be used.
+#!
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionGetTargetLibraries varname)
 
   SET(expanded_target_library_list)
@@ -93,9 +94,7 @@ FUNCTION(ctkFunctionGetTargetLibraries varname)
 
 ENDFUNCTION()
 
-#
-#
-#
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionCollectTargetLibraryNames target_dir varname)
 
   SET(target_library_list)
@@ -152,9 +151,7 @@ FUNCTION(ctkFunctionCollectTargetLibraryNames target_dir varname)
   SET(${varname} ${target_library_list} PARENT_SCOPE)
 ENDFUNCTION()
 
-#
-#
-#
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroCollectAllTargetLibraries targets subdir varname)
 
   SET(option_prefix)
@@ -194,9 +191,10 @@ MACRO(ctkMacroCollectAllTargetLibraries targets subdir varname)
   
 ENDMACRO()
 
-#
-# Extract all library names starting with CTK uppercase or org_commontk_
-#
+#!
+#! Extract all library names starting with CTK uppercase or org_commontk_
+#!
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroGetAllCTKTargetLibraries all_target_libraries varname)
   SET(re_ctklib "^(c|C)(t|T)(k|K)[a-zA-Z0-9]+$")
   SET(re_ctkplugin "^org_commontk_[a-zA-Z0-9_]+$")
@@ -208,9 +206,10 @@ MACRO(ctkMacroGetAllCTKTargetLibraries all_target_libraries varname)
   #MESSAGE(STATUS varname:${varname}:${${varname}})
 ENDMACRO()
 
-#
-# Extract all library names *NOT* starting with CTK uppercase or org_commontk_
-#
+#!
+#! Extract all library names *NOT* starting with CTK uppercase or org_commontk_
+#!
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroGetAllNonCTKTargetLibraries all_target_libraries varname)
   ctkMacroGetAllCTKTargetLibraries("${all_target_libraries}" all_ctk_libraries)
   SET(_tmp_list ${all_target_libraries})
@@ -221,9 +220,7 @@ MACRO(ctkMacroGetAllNonCTKTargetLibraries all_target_libraries varname)
   #MESSAGE(STATUS varname:${varname}:${${varname}})
 ENDMACRO()
 
-#
-# 
-#
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroShouldAddExternalProject libraries_variable_name resultvar)
   IF(NOT DEFINED NON_CTK_DEPENDENCIES)
     MESSAGE(FATAL_ERROR "Variable NON_CTK_DEPENDENCIES is undefined !")

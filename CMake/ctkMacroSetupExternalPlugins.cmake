@@ -19,6 +19,7 @@
 #
 ###########################################################################
 
+#! \ingroup CMakeAPI
 MACRO(ctkMacroSetupExternalPlugins )
 
   ctkMacroParseArguments(MY "BUILD_OPTION_PREFIX" "" ${ARGN})

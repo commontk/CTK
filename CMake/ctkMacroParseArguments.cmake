@@ -1,7 +1,8 @@
 
-#
-# See http://www.cmake.org/Wiki/CMakeMacroParseArguments
-#
+#!
+#! See http://www.cmake.org/Wiki/CMakeMacroParseArguments
+#!
+#! \ingroup CMakeUtilities
 MACRO(CtkMacroParseArguments prefix arg_names option_names)
   SET(DEFAULT_ARGS)
   FOREACH(arg_name ${arg_names})

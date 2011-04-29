@@ -18,10 +18,7 @@
 #
 ###########################################################################
 
-#
-#
-#
-  
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroAddCtkLibraryOptions lib)
 
   SET(filepath ${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}/ctk_library_options.cmake)

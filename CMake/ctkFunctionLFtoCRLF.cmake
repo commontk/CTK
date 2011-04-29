@@ -18,9 +18,7 @@
 #
 ###########################################################################
 
-#
-#
-#
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionLFtoCRLF input_file output_file)
   # Make sure the file exists
   IF(NOT EXISTS ${input_file})

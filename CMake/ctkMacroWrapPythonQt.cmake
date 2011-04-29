@@ -22,40 +22,41 @@
 # ctkMacroWrapPythonQt
 #
 
-#
-# Depends on:
-#  PythonQt 
-#  PythonQtGenerator (Only if IS_WRAP_FULL is TRUE)
-#  PythonInterp (See function reSearchFile)
-#
+#!
+#! Depends on:
+#!  PythonQt
+#!  PythonQtGenerator (Only if IS_WRAP_FULL is TRUE)
+#!  PythonInterp (See function reSearchFile)
+#!
 
-#
-# The different parameters are:
-#
-#    WRAPPING_NAMESPACE: Namespace that should contain the library. For example: org.commontk
-#         
-#    TARGET ...........: Name of the wrapped library. For example: CTKWidget
-# 
-#    SRCS_LIST_NAME ...: Name of the variable that should contain the generated wrapper source.
-#                        For example: KIT_PYTHONQT_SRCS
-#
-#    SOURCES ..........: List of source files that should be wrapped.
-#
-#    IS_WRAP_FULL .....: Indicate if a Full wrapping if desired.
-#
+#!
+#! The different parameters are:
+#!
+#!    WRAPPING_NAMESPACE: Namespace that should contain the library. For example: org.commontk
+#!
+#!    TARGET ...........: Name of the wrapped library. For example: CTKWidget
+#!
+#!    SRCS_LIST_NAME ...: Name of the variable that should contain the generated wrapper source.
+#!                        For example: KIT_PYTHONQT_SRCS
+#!
+#!    SOURCES ..........: List of source files that should be wrapped.
+#!
+#!    IS_WRAP_FULL .....: Indicate if a Full wrapping if desired.
+#!
 
-#
-# LOG FILE:
-#   File ctkMacroWrapPythonQt_log.txt will be created in the current directory. 
-#   It will contain the list of file and the reason why a given class hasn't been wrapped.
-#
+#!
+#! LOG FILE:
+#!   File ctkMacroWrapPythonQt_log.txt will be created in the current directory.
+#!   It will contain the list of file and the reason why a given class hasn't been wrapped.
+#!
 
 set(verbose 0)
 
-#
-# Convenient function allowing to log the reason why a given class hasn't been wrapped
-# If verbose=1, it will also be displayed on the standard output
-#
+#!
+#! Convenient function allowing to log the reason why a given class hasn't been wrapped
+#! If verbose=1, it will also be displayed on the standard output
+#!
+#! \ingroup CMakeUtilities
 FUNCTION(ctkMacroWrapPythonQt_log msg)
   IF(verbose)
     MESSAGE(${msg})
@@ -65,10 +66,11 @@ ENDFUNCTION()
 
 INCLUDE(${CTK_CMAKE_DIR}/ctkMacroSetPaths.cmake)
 
-#
-# Convenient function allowing to invoke re.search(regex, string) using the given interpreter.
-# Note that is_matching will be set to True if there is a match
-#
+#!
+#! Convenient function allowing to invoke re.search(regex, string) using the given interpreter.
+#! Note that is_matching will be set to True if there is a match
+#!
+#! \ingroup CMakeUtilities
 FUNCTION(ctkMacroWrapPythonQt_reSearchFile python_exe python_library_path regex file is_matching)
 
   set(python_cmd "import re
@@ -94,6 +96,7 @@ else: print 'TRUE'
   SET(is_matching ${output} PARENT_SCOPE)
 ENDFUNCTION()
 
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_WRAP_FULL)
   
   # Sanity check

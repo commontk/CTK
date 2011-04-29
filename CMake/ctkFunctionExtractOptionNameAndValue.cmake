@@ -3,6 +3,7 @@
 #
 #
 
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionExtractOptionNameAndValue my_opt var_opt_name var_opt_value)
 
  # Make sure option is correctly formated

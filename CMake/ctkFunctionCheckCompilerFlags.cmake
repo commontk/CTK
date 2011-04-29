@@ -26,6 +26,7 @@
 
 INCLUDE(TestCXXAcceptsFlag)
 
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionCheckCompilerFlags CXX_FLAG_TO_TEST RESULT_VAR)
   
   IF(CXX_FLAG_TO_TEST STREQUAL "")

@@ -19,19 +19,22 @@
 ###########################################################################
 
 
-# 
-# Fetch data from a MIDAS server
-#
-# Usage:
-#  ctkFunctionDownloadData(
-#         MIDAS_SERVER_URL http://www.insight-journal.org/midas/item/download/
-#         ITEMID 2461
-#         OUTPUT_DIRECTORY /home/jchris/Projects/Data
-#         [FORCE_DOWNLOAD]
-#         )
-#
-# The downloaded file will have the from: midas_item_<ITEMID>.tar
-#
+#!
+#! Fetch data from a MIDAS server
+#!
+#! Usage:
+#! \code
+#!  ctkFunctionDownloadData(
+#!         MIDAS_SERVER_URL http://www.insight-journal.org/midas/item/download/
+#!         ITEMID 2461
+#!         OUTPUT_DIRECTORY /home/jchris/Projects/Data
+#!         [FORCE_DOWNLOAD]
+#!         )
+#! \endcode
+#!
+#! The downloaded file will have the from: midas_item_<ITEMID>.tar
+#!
+#! \ingroup CMakeUtilities
 FUNCTION( ctkFunctionDownloadData)
   ctkMacroParseArguments(MY
     "MIDAS_SERVER_URL;ITEMID;OUTPUT_DIRECTORY"

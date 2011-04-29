@@ -23,6 +23,7 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #
 
+#! \ingroup CMakeAPI
 MACRO(ctkMacroBuildQtDesignerPlugin)
   CtkMacroParseArguments(MY
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"

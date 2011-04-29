@@ -23,6 +23,7 @@
 #  CTK/CMake/ctkFunctionLFtoCRLF.cmake
 #
 
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionApplyPatches PATCH_EXE SRC_DIR PATCH_FILES)
   
   # Make sure patch executable exists

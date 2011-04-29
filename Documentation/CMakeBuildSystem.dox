@@ -1,0 +1,25 @@
+/*! \namespace CMake
+    \brief A pseudo-namespace used to group CMake macros and functions.
+
+    This is not a regular C++ namespace. It is juse used to group the CMake
+    macros and function of the CTK build system.
+*/
+
+/*! \page BuildSystem The CTK Build System
+
+  The CTK build system is based on CMake. A more detailed description of the
+  build system itself can be found on the corresponding
+  <a href="http://www.commontk.org/index.php/Documentation/BuildSystem_Description">wiki page</a>.
+
+  \defgroup CMakeMacrosAndFuncs CMake Macros & Functions
+  This module groups all CMake macros and functions available in the CTK build system.
+
+  \defgroup CMakeUtilities CMake Utilities
+  \ingroup CMakeMacrosAndFuncs
+  This module contains CMake utility macros and functions.
+  These macros and functions are usually not used directly by regular CTK developers.
+
+  \defgroup CMakeAPI CMake API
+  \ingroup CMakeMacrosAndFuncs
+  This module contains CMake macros and functions which can be used by CTK developers.
+*/

@@ -23,6 +23,7 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #
 
+#! \ingroup CMakeAPI
 MACRO(ctkMacroBuildApp)
   ctkMacroParseArguments(MY
     "NAME;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"

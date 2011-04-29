@@ -18,10 +18,7 @@
 #
 ###########################################################################
 
-#
-#
-#
-
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroSetupQt)
 
   SET(minimum_required_qt_version "4.6")

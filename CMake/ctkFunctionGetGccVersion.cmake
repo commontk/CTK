@@ -18,6 +18,7 @@
 #
 ###########################################################################
 
+#! \ingroup CMakeUtilities
 FUNCTION(ctkFunctionGetGccVersion path_to_gcc output_var)
   IF(CMAKE_COMPILER_IS_GNUCXX)
     EXECUTE_PROCESS(

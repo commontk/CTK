@@ -19,7 +19,8 @@
 #
 ###########################################################################
 
-# Write a set of variables containing CTK plugin specific include and library directories
+#! Write a set of variables containing CTK plugin specific include and library directories
+#! \ingroup CMakeAPI
 FUNCTION(ctkFunctionGeneratePluginUseFile filename)
   IF(COMMAND GetMyTargetLibraries)
     GetMyTargetLibraries("${CTK_PLUGIN_LIBRARIES}" my_ctk_plugin_libraries)
