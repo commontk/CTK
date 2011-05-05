@@ -323,9 +323,10 @@ void ctkVTKScalarsToColorsWidget::onXRangeChanged(double min, double max)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(0);
+    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
   xAxis->SetRange(min, max);
+  d->View->scene()->SetDirty(true);
 }
 
 // ----------------------------------------------------------------------------
@@ -333,21 +334,23 @@ void ctkVTKScalarsToColorsWidget::onYRangeChanged(double min, double max)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(1);
+    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
   yAxis->SetRange(min, max);
+  d->View->scene()->SetDirty(true);
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsWidget::onAxesModified()
 {
   Q_D(ctkVTKScalarsToColorsWidget);
+  bool modified = false;
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(0);
+    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
   d->XRangeSlider->setValues(xAxis->GetMinimum(), xAxis->GetMaximum());
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(1);
+    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
   d->YRangeSlider->setValues(yAxis->GetMinimum(), yAxis->GetMaximum());
 }

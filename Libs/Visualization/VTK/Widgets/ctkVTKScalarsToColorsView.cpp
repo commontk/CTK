@@ -70,10 +70,12 @@ void ctkVTKScalarsToColorsViewPrivate::init()
   vtkChartXY* chart = q->chart();
   chart->SetAutoAxes(false);
   chart->SetHiddenAxisBorder(0);
-  chart->GetAxis(0)->SetVisible(false);
-  chart->GetAxis(1)->SetVisible(false);
-  chart->GetAxis(2)->SetVisible(false);
-  chart->GetAxis(3)->SetVisible(false);
+  for (int i = 0; i < 4; ++i)
+    {
+    chart->GetAxis(i)->SetVisible(false);
+    chart->GetAxis(i)->SetMinimumLimit(0.);
+    chart->GetAxis(i)->SetMaximumLimit(1.);
+    }
 }
 
 // ----------------------------------------------------------------------------
