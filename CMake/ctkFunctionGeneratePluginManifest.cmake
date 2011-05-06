@@ -93,8 +93,8 @@ FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
 </RCC>
 ")
 
-  FILE(WRITE "${_manifest_filepath}" "${_manifest_content}")
-  FILE(WRITE "${_manifest_qrc_filepath}" "${_manifest_qrc_content}")
+  CONFIGURE_FILE("${CTK_SOURCE_DIR}/CMake/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
+  CONFIGURE_FILE("${CTK_SOURCE_DIR}/CMake/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
 
   QT4_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
 
