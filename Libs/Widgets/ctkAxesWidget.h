@@ -80,6 +80,12 @@ public slots :
   /// Set the autoReset property to None anytime the currentAxis is changed.
   void setAutoReset(bool reset);
 
+  /// Size hints
+  virtual QSize minimumSizeHint()const;
+  virtual QSize sizeHint()const;
+  virtual bool hasHeightForWidth()const;
+  virtual int heightForWidth(int width)const;
+
 protected: 
   void paintEvent(QPaintEvent *);
   void mousePressEvent(QMouseEvent *mouseEvent);

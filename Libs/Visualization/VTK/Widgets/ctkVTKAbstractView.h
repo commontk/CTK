@@ -24,6 +24,9 @@
 // Qt includes
 #include <QWidget>
 
+// VTK includes
+#include <QVTKWidget.h>
+
 // CTK includes
 #include "ctkVisualizationVTKWidgetsExport.h"
 class ctkVTKAbstractViewPrivate;
@@ -76,6 +79,9 @@ public:
   /// Get corner annotation \a text
   QString cornerAnnotationText() const;
   vtkCornerAnnotation* cornerAnnotation()const;
+
+  /// Get the underlying QVTKWidget
+  QVTKWidget * VTKWidget() const;
 
   /// Get background color
   virtual QColor backgroundColor() const = 0;

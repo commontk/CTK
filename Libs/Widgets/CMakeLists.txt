@@ -40,6 +40,8 @@ SET(KIT_SRCS
   ctkConfirmExitDialog.h
   ctkCoordinatesWidget.cpp
   ctkCoordinatesWidget.h
+  ctkCrosshairLabel.cpp
+  ctkCrosshairLabel.h
   ctkDirectoryButton.cpp
   ctkDirectoryButton.h
   ctkDoubleRangeSlider.cpp
@@ -164,6 +166,7 @@ SET(KIT_MOC_SRCS
   ctkConsole.h
   ctkConsole_p.h
   ctkCoordinatesWidget.h
+  ctkCrosshairLabel.h
   ctkDirectoryButton.h
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h

@@ -19,6 +19,9 @@ SET(KIT_SRCS
   ctkVTKDataSetModel.h
   ctkVTKDataSetArrayComboBox.cpp
   ctkVTKDataSetArrayComboBox.h
+  ctkVTKMagnifyView.cpp
+  ctkVTKMagnifyView.h
+  ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.cpp
@@ -44,6 +47,8 @@ SET(KIT_MOC_SRCS
   ctkVTKAbstractView_p.h
   ctkVTKDataSetArrayComboBox.h
   ctkVTKDataSetModel.h
+  ctkVTKMagnifyView.h
+  ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h

@@ -7,6 +7,7 @@ SET(TEST_SOURCES
   ctkVTKDataSetArrayComboBoxTest1.cpp
   ctkVTKDataSetModelTest1.cpp
   ctkVTKMatrixWidgetTest1.cpp
+  ctkVTKMagnifyViewTest1.cpp
   ctkVTKScalarBarWidgetTest1.cpp
   ctkTransferFunctionBarsItemTest1.cpp
   ctkTransferFunctionViewTest1.cpp
@@ -37,6 +38,7 @@ ENDIF(CTK_USE_CHARTS)
 #
 IF(EXISTS "${CTKData_DIR}")
   LIST(APPEND TEST_SOURCES
+    ctkVTKMagnifyViewTest2.cpp
     ctkVTKSliceViewTest2.cpp
     ctkVTKRenderViewTest2.cpp
     )
@@ -58,9 +60,23 @@ TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRAR
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
 
 MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} -D "${CTKData_DIR}/Data")
+  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME}
+            -D "${CTKData_DIR}/Data"
+            -V "${CTKData_DIR}/Baseline/Libs/Visualization/VTK/Widgets"
+            )
   SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
 ENDMACRO( SIMPLE_TEST  )
+
+MACRO( MAGNIFY_WIDGET_TEST  TESTNAME  TESTTYPE  SIZE  MAGNIFICATION)
+  ADD_TEST( ${TESTNAME}${TESTTYPE} ${KIT_TESTS} ${TESTNAME}
+            -D "${CTKData_DIR}/Data"
+            -V "${CTKData_DIR}/Baseline/Libs/Visualization/VTK/Widgets"
+            -T "${TESTTYPE}"
+            -S "${SIZE}"
+            -M "${MAGNIFICATION}"
+            )
+  SET_PROPERTY(TEST ${TESTNAME}${TESTTYPE} PROPERTY LABELS ${PROJECT_NAME})
+ENDMACRO( MAGNIFY_WIDGET_TEST  )
 
 #
 # Add Tests
@@ -68,6 +84,7 @@ ENDMACRO( SIMPLE_TEST  )
 
 SIMPLE_TEST( ctkVTKDataSetArrayComboBoxTest1 )
 SIMPLE_TEST( ctkVTKDataSetModelTest1 )
+SIMPLE_TEST( ctkVTKMagnifyViewTest1 )
 SIMPLE_TEST( ctkVTKMatrixWidgetTest1 )
 SIMPLE_TEST( ctkVTKScalarBarWidgetTest1 )
 SIMPLE_TEST( ctkTransferFunctionBarsItemTest1 )
@@ -95,6 +112,21 @@ SIMPLE_TEST( ctkVTKThumbnailViewTest1 )
 #
 IF(EXISTS "${CTKData_DIR}")
   #
+  # Dependencies required so that these tests won't run in parallel
+  #
+  MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 OddOdd 341 17 )
+  MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 EvenEven 340 18 )
+  SET_TESTS_PROPERTIES( ctkVTKMagnifyViewTest2EvenEven
+                        PROPERTIES DEPENDS
+                        ctkVTKMagnifyViewTest2OddOdd )
+  MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 OddEven 341 18 )
+  SET_TESTS_PROPERTIES( ctkVTKMagnifyViewTest2OddEven
+                        PROPERTIES DEPENDS
+                        ctkVTKMagnifyViewTest2EvenEven )
+  MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 EvenOdd 340 17 )
+  SET_TESTS_PROPERTIES( ctkVTKMagnifyViewTest2EvenOdd
+                        PROPERTIES DEPENDS
+                        ctkVTKMagnifyViewTest2OddEven )
   SIMPLE_TEST( ctkVTKSliceViewTest2 )
   SIMPLE_TEST( ctkVTKRenderViewTest2 )
 ENDIF()
