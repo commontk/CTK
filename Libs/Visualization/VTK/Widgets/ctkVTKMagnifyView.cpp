@@ -456,7 +456,7 @@ ctkVTKMagnifyView::~ctkVTKMagnifyView()
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkVTKMagnifyView, double, magnification, Magnification);
+CTK_GET_CPP(ctkVTKMagnifyView, double, magnification, Magnification)
 
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyView::setMagnification(double newMagnification)
@@ -473,7 +473,7 @@ void ctkVTKMagnifyView::setMagnification(double newMagnification)
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkVTKMagnifyView, bool,
-            observeRenderWindowEvents, ObserveRenderWindowEvents);
+            observeRenderWindowEvents, ObserveRenderWindowEvents)
 
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyView::setObserveRenderWindowEvents(bool newObserve)

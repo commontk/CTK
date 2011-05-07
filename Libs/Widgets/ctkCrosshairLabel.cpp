@@ -39,7 +39,7 @@ static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkCrosshairLabe
 //-----------------------------------------------------------------------------
 class ctkCrosshairLabelPrivate
 {
-  Q_DECLARE_PUBLIC(ctkCrosshairLabel);
+  Q_DECLARE_PUBLIC(ctkCrosshairLabel)
 protected:
   ctkCrosshairLabel* const q_ptr;
 public:
@@ -180,7 +180,7 @@ ctkCrosshairLabel::~ctkCrosshairLabel()
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCrosshairLabel, bool, showCrosshair, ShowCrosshair);
+CTK_GET_CPP(ctkCrosshairLabel, bool, showCrosshair, ShowCrosshair)
 
 // --------------------------------------------------------------------------
 void ctkCrosshairLabel::setShowCrosshair(bool newShow)
@@ -196,7 +196,7 @@ void ctkCrosshairLabel::setShowCrosshair(bool newShow)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCrosshairLabel, QPen, crosshairPen, CrosshairPen);
+CTK_GET_CPP(ctkCrosshairLabel, QPen, crosshairPen, CrosshairPen)
 
 // --------------------------------------------------------------------------
 void ctkCrosshairLabel::setCrosshairPen(const QPen& newPen)
@@ -253,7 +253,7 @@ void ctkCrosshairLabel::setLineWidth(int newWidth)
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkCrosshairLabel, ctkCrosshairLabel::CrosshairTypes,
-            crosshairType, CrosshairType);
+            crosshairType, CrosshairType)
 
 // --------------------------------------------------------------------------
 void ctkCrosshairLabel::setCrosshairType(const CrosshairTypes& newType)
@@ -294,7 +294,7 @@ void ctkCrosshairLabel::setMarginColor(const QColor& newColor)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCrosshairLabel, int, bullsEyeWidth, BullsEyeWidth);
+CTK_GET_CPP(ctkCrosshairLabel, int, bullsEyeWidth, BullsEyeWidth)
 
 // --------------------------------------------------------------------------
 void ctkCrosshairLabel::setBullsEyeWidth(int newWidth)

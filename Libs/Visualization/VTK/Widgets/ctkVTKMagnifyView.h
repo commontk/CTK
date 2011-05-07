@@ -42,9 +42,9 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKMagnifyView
   : public ctkCrosshairLabel
 {
   Q_OBJECT
-  Q_PROPERTY(double magnification READ magnification WRITE setMagnification);
+  Q_PROPERTY(double magnification READ magnification WRITE setMagnification)
   Q_PROPERTY(bool observeRenderWindowEvents
-             READ observeRenderWindowEvents WRITE setObserveRenderWindowEvents);
+             READ observeRenderWindowEvents WRITE setObserveRenderWindowEvents)
   Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
 
 public:
@@ -109,8 +109,8 @@ signals:
   void leftObservedWidget(QVTKWidget * widget);
 
 private:
-  Q_DECLARE_PRIVATE(ctkVTKMagnifyView);
-  Q_DISABLE_COPY(ctkVTKMagnifyView);
+  Q_DECLARE_PRIVATE(ctkVTKMagnifyView)
+  Q_DISABLE_COPY(ctkVTKMagnifyView)
 }; 
 
 #endif
