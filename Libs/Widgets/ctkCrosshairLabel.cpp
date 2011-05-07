@@ -50,6 +50,9 @@ public:
   void drawSimpleCrosshair(QPainter& painter);
   void drawBullsEyeCrosshair(QPainter& painter);
 
+  static int round(double f)
+    { return static_cast<int>( f + ( f >= 0 ? 0.5 : -0.5 ) ); }
+
   bool      ShowCrosshair;
   QPen      CrosshairPen;
   ctkCrosshairLabel::CrosshairTypes CrosshairType;
@@ -148,8 +151,8 @@ void ctkCrosshairLabelPrivate::drawBullsEyeCrosshair(QPainter& painter)
   // Draw the lines
   double halfWidth = (size.width()-1.0) / 2.0;
   double halfHeight = (size.height()-1.0) / 2.0;
-  double blank = round(std::min(halfWidth, halfHeight)
-                       * this->BULLS_EYE_BLANK_FRACTION);
+  double blank = ctkCrosshairLabelPrivate::round(
+        std::min(halfWidth, halfHeight) * this->BULLS_EYE_BLANK_FRACTION);
 
   painter.drawLine(QPointF(0, halfHeight), QPointF(x-blank-1.0, halfHeight));
   painter.drawLine(QPointF(x+bullsEye+blank, halfHeight),

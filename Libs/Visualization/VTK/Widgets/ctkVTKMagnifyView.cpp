@@ -31,6 +31,7 @@
 
 // VTK includes
 #include <QVTKWidget.h>
+#include <vtkMath.h>
 #include <vtkRenderWindow.h>
 #include <vtkUnsignedCharArray.h>
 
@@ -386,16 +387,16 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
 
   // When cropping the Qt image, the 'adjust' variables are in Qt coordinates,
   // not render window coordinates (bottom and top switch).
-  int cropIndexLeft = round(errorLeft);
-  int cropIndexRight = imageSize.width() - round(errorRight) - 1;
-  int cropIndexTop = round(errorTop);
-  int cropIndexBottom = imageSize.height() - round(errorBottom) - 1;
+  int cropIndexLeft = vtkMath::Round(errorLeft);
+  int cropIndexRight = imageSize.width() - vtkMath::Round(errorRight) - 1;
+  int cropIndexTop = vtkMath::Round(errorTop);
+  int cropIndexBottom = imageSize.height() - vtkMath::Round(errorBottom) - 1;
 
   // Handle case when label size and magnification are not both even or odd
   // (errorLeft/errorRight/errorBottom/errorTop will have fractional component,
   // so cropped image wouldn't be the correct size unless we adjust further).
-  int requiredWidth = round((posRight - posLeft + 1) * this->Magnification);
-  int requiredHeight = round((posTop - posBottom + 1) * this->Magnification);
+  int requiredWidth = vtkMath::Round((posRight - posLeft + 1) * this->Magnification);
+  int requiredHeight = vtkMath::Round((posTop - posBottom + 1) * this->Magnification);
   int actualWidth = cropIndexRight - cropIndexLeft + 1;
   int actualHeight = cropIndexBottom - cropIndexTop + 1;
   int diffWidth = requiredWidth - actualWidth;
