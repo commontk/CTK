@@ -55,8 +55,10 @@ public:
   ctkCrosshairLabel::CrosshairTypes CrosshairType;
   int       BullsEyeWidth;
 
-  static const double BULLS_EYE_BLANK_FRACTION = 0.1;
+  static const double BULLS_EYE_BLANK_FRACTION;
 };
+
+const double ctkCrosshairLabelPrivate::BULLS_EYE_BLANK_FRACTION = 0.1;
 
 // --------------------------------------------------------------------------
 // ctkCrosshairLabelPrivate methods
