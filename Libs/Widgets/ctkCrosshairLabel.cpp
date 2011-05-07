@@ -39,7 +39,7 @@ static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkCrosshairLabe
 //-----------------------------------------------------------------------------
 class ctkCrosshairLabelPrivate
 {
-  Q_DECLARE_PUBLIC(ctkCrosshairLabel);
+  Q_DECLARE_PUBLIC(ctkCrosshairLabel)
 protected:
   ctkCrosshairLabel* const q_ptr;
 public:
@@ -50,13 +50,18 @@ public:
   void drawSimpleCrosshair(QPainter& painter);
   void drawBullsEyeCrosshair(QPainter& painter);
 
+  static int round(double f)
+    { return static_cast<int>( f + ( f >= 0 ? 0.5 : -0.5 ) ); }
+
   bool      ShowCrosshair;
   QPen      CrosshairPen;
   ctkCrosshairLabel::CrosshairTypes CrosshairType;
   int       BullsEyeWidth;
 
-  static const double BULLS_EYE_BLANK_FRACTION = 0.1;
+  static const double BULLS_EYE_BLANK_FRACTION;
 };
+
+const double ctkCrosshairLabelPrivate::BULLS_EYE_BLANK_FRACTION = 0.1;
 
 // --------------------------------------------------------------------------
 // ctkCrosshairLabelPrivate methods
@@ -146,8 +151,8 @@ void ctkCrosshairLabelPrivate::drawBullsEyeCrosshair(QPainter& painter)
   // Draw the lines
   double halfWidth = (size.width()-1.0) / 2.0;
   double halfHeight = (size.height()-1.0) / 2.0;
-  double blank = round(std::min(halfWidth, halfHeight)
-                       * this->BULLS_EYE_BLANK_FRACTION);
+  double blank = ctkCrosshairLabelPrivate::round(
+        std::min(halfWidth, halfHeight) * this->BULLS_EYE_BLANK_FRACTION);
 
   painter.drawLine(QPointF(0, halfHeight), QPointF(x-blank-1.0, halfHeight));
   painter.drawLine(QPointF(x+bullsEye+blank, halfHeight),
@@ -175,7 +180,7 @@ ctkCrosshairLabel::~ctkCrosshairLabel()
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCrosshairLabel, bool, showCrosshair, ShowCrosshair);
+CTK_GET_CPP(ctkCrosshairLabel, bool, showCrosshair, ShowCrosshair)
 
 // --------------------------------------------------------------------------
 void ctkCrosshairLabel::setShowCrosshair(bool newShow)
@@ -191,7 +196,7 @@ void ctkCrosshairLabel::setShowCrosshair(bool newShow)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCrosshairLabel, QPen, crosshairPen, CrosshairPen);
+CTK_GET_CPP(ctkCrosshairLabel, QPen, crosshairPen, CrosshairPen)
 
 // --------------------------------------------------------------------------
 void ctkCrosshairLabel::setCrosshairPen(const QPen& newPen)
@@ -248,7 +253,7 @@ void ctkCrosshairLabel::setLineWidth(int newWidth)
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkCrosshairLabel, ctkCrosshairLabel::CrosshairTypes,
-            crosshairType, CrosshairType);
+            crosshairType, CrosshairType)
 
 // --------------------------------------------------------------------------
 void ctkCrosshairLabel::setCrosshairType(const CrosshairTypes& newType)
@@ -289,7 +294,7 @@ void ctkCrosshairLabel::setMarginColor(const QColor& newColor)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkCrosshairLabel, int, bullsEyeWidth, BullsEyeWidth);
+CTK_GET_CPP(ctkCrosshairLabel, int, bullsEyeWidth, BullsEyeWidth)
 
 // --------------------------------------------------------------------------
 void ctkCrosshairLabel::setBullsEyeWidth(int newWidth)

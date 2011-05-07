@@ -123,8 +123,8 @@ protected:
   virtual void paintEvent(QPaintEvent * event);
 
 private:
-  Q_DECLARE_PRIVATE(ctkCrosshairLabel);
-  Q_DISABLE_COPY(ctkCrosshairLabel);
+  Q_DECLARE_PRIVATE(ctkCrosshairLabel)
+  Q_DISABLE_COPY(ctkCrosshairLabel)
 }; 
 
 #endif
