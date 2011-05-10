@@ -51,7 +51,7 @@ protected:
 public:
   ctkVTKScalarsToColorsViewPrivate(ctkVTKScalarsToColorsView& object);
   void init();
-  void updateChart();
+  void updateBounds();
 };
 
 // ----------------------------------------------------------------------------
@@ -73,15 +73,8 @@ void ctkVTKScalarsToColorsViewPrivate::init()
   for (int i = 0; i < 4; ++i)
     {
     chart->GetAxis(i)->SetVisible(false);
-    chart->GetAxis(i)->SetMinimumLimit(0.);
-    chart->GetAxis(i)->SetMaximumLimit(1.);
     }
-}
-
-// ----------------------------------------------------------------------------
-void ctkVTKScalarsToColorsViewPrivate::updateChart()
-{
-
+  q->onChartUpdated();
 }
 
 // ----------------------------------------------------------------------------
@@ -113,14 +106,20 @@ void ctkVTKScalarsToColorsView::addPlot(vtkPlot* plot)
 }
 
 // ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView::onChartUpdated()
+{
+  this->Superclass::onChartUpdated();
+  this->boundAxesToChartBounds();
+  this->setAxesToChartBounds();
+}
+
+// ----------------------------------------------------------------------------
 vtkPlot* ctkVTKScalarsToColorsView::addLookupTable(vtkLookupTable* lut)
 {
-  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkLookupTableItem> item =
     vtkSmartPointer<vtkLookupTableItem>::New();
   item->SetLookupTable(lut);
   this->addPlot(item);
-  d->updateChart();
   return item;
 }
 // ----------------------------------------------------------------------------
@@ -128,7 +127,6 @@ vtkPlot* ctkVTKScalarsToColorsView
 ::addColorTransferFunction(vtkColorTransferFunction* colorTF,
                            bool editable)
 {
-  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkColorTransferFunctionItem> item =
     vtkSmartPointer<vtkColorTransferFunctionItem>::New();
   item->SetColorTransferFunction(colorTF);
@@ -137,7 +135,6 @@ vtkPlot* ctkVTKScalarsToColorsView
     {
     this->addColorTransferFunctionControlPoints(colorTF);
     }
-  d->updateChart();
   return item;
 }
 
@@ -154,7 +151,6 @@ vtkPlot* ctkVTKScalarsToColorsView
 ::addPiecewiseFunction(vtkPiecewiseFunction* piecewiseTF,
                        bool editable)
 {
-  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkPiecewiseFunctionItem> item =
     vtkSmartPointer<vtkPiecewiseFunctionItem>::New();
   item->SetPiecewiseFunction(piecewiseTF);
@@ -166,7 +162,6 @@ vtkPlot* ctkVTKScalarsToColorsView
     {
     this->addPiecewiseFunctionControlPoints(piecewiseTF);
     }
-  d->updateChart();
   return item;
 }
 
@@ -176,7 +171,6 @@ vtkPlot* ctkVTKScalarsToColorsView
                        vtkPiecewiseFunction* opacityTF,
                        bool colorTFEditable, bool opacityTFEditable)
 {
-  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkCompositeTransferFunctionItem> item =
     vtkSmartPointer<vtkCompositeTransferFunctionItem>::New();
   item->SetColorTransferFunction(colorTF);
@@ -195,7 +189,6 @@ vtkPlot* ctkVTKScalarsToColorsView
     {
     this->addOpacityFunctionControlPoints(opacityTF);
     }
-  d->updateChart();
   return item;
 }
 
@@ -384,6 +377,7 @@ void ctkVTKScalarsToColorsView::setLookuptTableToPlots(vtkLookupTable* lut)
     {
     plot->SetLookupTable(lut);
     }
+  this->onChartUpdated();
 }
 
 // ----------------------------------------------------------------------------
@@ -400,6 +394,7 @@ void ctkVTKScalarsToColorsView
     {
     plot->SetColorTransferFunction(colorTF);
     }
+  this->onChartUpdated();
 }
 
 // ----------------------------------------------------------------------------
@@ -417,6 +412,7 @@ void ctkVTKScalarsToColorsView
     {
     plot->SetOpacityFunction(opacityTF);
     }
+  this->onChartUpdated();
 }
 
 // ----------------------------------------------------------------------------
@@ -433,6 +429,7 @@ void ctkVTKScalarsToColorsView
     {
     plot->SetPiecewiseFunction(piecewiseTF);
     }
+  this->onChartUpdated();
 }
 
 // ----------------------------------------------------------------------------

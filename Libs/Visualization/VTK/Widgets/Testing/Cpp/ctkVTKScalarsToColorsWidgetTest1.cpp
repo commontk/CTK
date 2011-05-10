@@ -55,7 +55,7 @@ int ctkVTKScalarsToColorsWidgetTest1(int argc, char * argv [] )
   // add transfer function item
   vtkPlot* plot = widget.view()->addOpacityFunction(opacityFunction);
   plot->SetColor(0, 67,  247, 255);
-  widget.view()->fitAxesToBounds();
+  widget.view()->setAxesToChartBounds();
   widget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")

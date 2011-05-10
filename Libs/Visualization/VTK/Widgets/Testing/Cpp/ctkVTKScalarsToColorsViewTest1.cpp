@@ -47,7 +47,7 @@ int ctkVTKScalarsToColorsViewTest1(int argc, char * argv [] )
 
   ctkVTKScalarsToColorsView view(0);
   view.addColorTransferFunction(ctf);
-  view.fitAxesToBounds();
+  view.setAxesToChartBounds();
   view.show();
 
   ctf->AddRGBPoint(0.6, 0.9686,0.0,0.6941);

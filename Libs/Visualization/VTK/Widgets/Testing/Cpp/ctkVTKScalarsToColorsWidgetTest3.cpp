@@ -56,7 +56,7 @@ int ctkVTKScalarsToColorsWidgetTest3(int argc, char * argv [] )
   ctkVTKScalarsToColorsWidget widget(0);
   // add transfer function item
   widget.view()->addColorTransferFunction(ctf);
-  widget.view()->fitAxesToBounds();
+  widget.view()->setAxesToChartBounds();
   widget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")

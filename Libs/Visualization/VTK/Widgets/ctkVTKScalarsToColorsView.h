@@ -45,6 +45,7 @@ public:
   virtual ~ctkVTKScalarsToColorsView();
 
   virtual void addPlot(vtkPlot* plot);
+
   vtkPlot* addLookupTable(vtkLookupTable* lut);
   vtkPlot* addColorTransferFunction(vtkColorTransferFunction* colorTF, bool editable = true);
   vtkPlot* addOpacityFunction(vtkPiecewiseFunction* opacityTF, bool editable = true);
@@ -80,6 +81,8 @@ public slots:
 
 protected:
   QScopedPointer<ctkVTKScalarsToColorsViewPrivate> d_ptr;
+
+  virtual void onChartUpdated();
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKScalarsToColorsView);

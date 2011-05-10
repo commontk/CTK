@@ -59,6 +59,7 @@ public slots:
 
 protected slots:
   void onPlotAdded(vtkPlot*);
+  void onBoundsChanged();
   void setCurrentPoint(vtkObject* controlPointsItem, void* pointId);
   void updateCurrentPoint();
   void onCurrentPointChanged(int pointId);

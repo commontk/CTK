@@ -54,14 +54,19 @@ public:
   QString title()const;
   void setTitle(const QString& title);
 
-  void fitAxesToBounds();
+  /// Compute the bounds for the 4 chart axes
+  void chartBounds(double* bounds);
+  void setAxesToChartBounds();
+  void boundAxesToChartBounds();
 
 signals:
   void plotAdded(vtkPlot* plot);
+  void boundsChanged();
 
 protected:
   QScopedPointer<ctkVTKChartViewPrivate> d_ptr;
   virtual void mouseDoubleClickEvent(QMouseEvent* event);
+  virtual void onChartUpdated();
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKChartView);

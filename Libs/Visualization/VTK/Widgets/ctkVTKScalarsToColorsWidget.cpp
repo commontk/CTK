@@ -76,6 +76,9 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   this->Ui_ctkVTKScalarsToColorsWidget::setupUi(widget);
   QObject::connect(this->View, SIGNAL(plotAdded(vtkPlot*)),
                    q, SLOT(onPlotAdded(vtkPlot*)));
+  QObject::connect(this->View, SIGNAL(boundsChanged()),
+                   q, SLOT(onBoundsChanged()));
+
   this->PointIdSpinBox->setSpecialValueText("None");
   QObject::connect(this->PointIdSpinBox, SIGNAL(valueChanged(int)),
                    q, SLOT(onCurrentPointChanged(int)));
@@ -164,6 +167,18 @@ void ctkVTKScalarsToColorsWidget::onPlotAdded(vtkPlot* plot)
     this->qvtkConnect(plot, vtkControlPointsItem::CurrentPointChangedEvent,
                       this, SLOT(setCurrentPoint(vtkObject*, void*)));
     }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::onBoundsChanged()
+{
+  Q_D(ctkVTKScalarsToColorsWidget);
+  double bounds[8];
+  d->View->chartBounds(bounds);
+  d->XRangeSlider->setMinimum(bounds[vtkAxis::BOTTOM * 2]);
+  d->XRangeSlider->setMaximum(bounds[vtkAxis::BOTTOM * 2 + 1]);
+  d->YRangeSlider->setMinimum(bounds[vtkAxis::LEFT * 2]);
+  d->YRangeSlider->setMaximum(bounds[vtkAxis::LEFT * 2 + 1]);
 }
 
 // ----------------------------------------------------------------------------
@@ -374,7 +389,6 @@ void ctkVTKScalarsToColorsWidget::onYRangeChanged(double min, double max)
 void ctkVTKScalarsToColorsWidget::onAxesModified()
 {
   Q_D(ctkVTKScalarsToColorsWidget);
-  bool modified = false;
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);

@@ -110,7 +110,7 @@ int ctkVTKScalarsToColorsViewTest2(int argc, char * argv [] )
   // add histogram item
   view.addPlot(histogramPlot);
   view.chart()->SetBarWidthFraction(1.);
-  view.fitAxesToBounds();
+  view.setAxesToChartBounds();
   view.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")

@@ -63,7 +63,7 @@ int ctkVTKScalarsToColorsViewTest3(int argc, char * argv [] )
   ctkVTKScalarsToColorsView view(0);
   // add transfer function item
   view.addCompositeFunction(ctf, opacityFunction);
-  view.fitAxesToBounds();
+  view.setAxesToChartBounds();
   view.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
