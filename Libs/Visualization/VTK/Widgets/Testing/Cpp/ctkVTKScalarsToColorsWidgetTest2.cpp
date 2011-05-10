@@ -29,6 +29,7 @@
 
 // VTK includes
 #include <vtkChartXY.h>
+#include <vtkColorTransferFunction.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkPlot.h>
 #include <vtkSmartPointer.h>
@@ -37,24 +38,32 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkVTKScalarsToColorsWidgetTest1(int argc, char * argv [] )
+int ctkVTKScalarsToColorsWidgetTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
+
+  // Transfer Function
+  vtkSmartPointer<vtkColorTransferFunction> ctf =
+    vtkSmartPointer<vtkColorTransferFunction>::New();
+  //
+  ctf->AddRGBPoint(0. , 171./255., 113./255.,   38./255.);
+  ctf->AddRGBPoint(0.2,   38./255., 171./255., 113./255.);
+  ctf->AddRGBPoint(0.4,  113./255., 38./255., 171./255.);
+  ctf->AddRGBPoint(0.6,  171./255., 38./255.,  140./255.);
+  ctf->AddRGBPoint(0.8,  171./255., 46./255., 38./255.);
 
   // Opacity function
   vtkSmartPointer<vtkPiecewiseFunction> opacityFunction =
     vtkSmartPointer<vtkPiecewiseFunction>::New();
-  opacityFunction->AddPoint(0.,0.3, 0.5, 0.5);
-  opacityFunction->AddPoint(0.2, 0.1, 0.5, 0.5);
-  opacityFunction->AddPoint(0.4,0.87, 0.5, 0.5);
-  opacityFunction->AddPoint(0.6, 1., 0.5, 0.5);
-  opacityFunction->AddPoint(0.8, 0.5, 0.5, 0.5);
-  opacityFunction->AddPoint(1.,0.8, 0.5, 0.5);
+  opacityFunction->AddPoint(0.,0.3);
+  opacityFunction->AddPoint(0.2, 0.55);
+  opacityFunction->AddPoint(0.4,0.87);
+  opacityFunction->AddPoint(0.6, 1.);
+  opacityFunction->AddPoint(0.8, 0.45);
 
   ctkVTKScalarsToColorsWidget widget(0);
   // add transfer function item
-  vtkPlot* plot = widget.view()->addOpacityFunction(opacityFunction);
-  plot->SetColor(0, 67,  247, 255);
+  widget.view()->addCompositeFunction(ctf, opacityFunction);
   widget.view()->setAxesToChartBounds();
   widget.show();
 

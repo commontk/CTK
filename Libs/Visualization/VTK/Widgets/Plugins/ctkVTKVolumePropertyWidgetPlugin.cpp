@@ -19,46 +19,46 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkVTKScalarsToColorsView.h"
-#include "ctkVTKScalarsToColorsViewPlugin.h"
+#include "ctkVTKVolumePropertyWidget.h"
+#include "ctkVTKVolumePropertyWidgetPlugin.h"
 
 //-----------------------------------------------------------------------------
-ctkVTKScalarsToColorsViewPlugin
-::ctkVTKScalarsToColorsViewPlugin(QObject *parentObject)
+ctkVTKVolumePropertyWidgetPlugin
+::ctkVTKVolumePropertyWidgetPlugin(QObject *parentObject)
  : QObject(parentObject)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkVTKScalarsToColorsViewPlugin::createWidget(QWidget *parentWidget)
+QWidget *ctkVTKVolumePropertyWidgetPlugin::createWidget(QWidget *parentWidget)
 {
-  ctkVTKScalarsToColorsView* newWidget
-    = new ctkVTKScalarsToColorsView(parentWidget);
+  ctkVTKVolumePropertyWidget* newWidget =
+    new ctkVTKVolumePropertyWidget(parentWidget);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKScalarsToColorsViewPlugin::domXml() const
+QString ctkVTKVolumePropertyWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkVTKScalarsToColorsView\" \
-          name=\"ScalarsToColorsView\">\n"
+  return "<widget class=\"ctkVTKVolumePropertyWidget\" \
+          name=\"VolumeProperty\">\n"
           "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKScalarsToColorsViewPlugin::includeFile() const
+QString ctkVTKVolumePropertyWidgetPlugin::includeFile() const
 {
-  return "ctkVTKScalarsToColorsView.h";
+  return "ctkVTKVolumePropertyWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkVTKScalarsToColorsViewPlugin::isContainer() const
+bool ctkVTKVolumePropertyWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKScalarsToColorsViewPlugin::name() const
+QString ctkVTKVolumePropertyWidgetPlugin::name() const
 {
-  return "ctkVTKScalarsToColorsView";
+  return "ctkVTKVolumePropertyWidget";
 }

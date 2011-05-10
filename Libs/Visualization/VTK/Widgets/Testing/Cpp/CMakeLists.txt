@@ -25,11 +25,14 @@ SET(TEST_SOURCES
 IF(CTK_USE_CHARTS)
   SET(TEST_SOURCES
       ctkVTKChartViewTest1.cpp
+      ctkVTKVolumePropertyWidgetTest1.cpp
       ctkVTKScalarsToColorsViewTest1.cpp
       ctkVTKScalarsToColorsViewTest2.cpp
       ctkVTKScalarsToColorsViewTest3.cpp
       ctkVTKScalarsToColorsViewTest4.cpp
       ctkVTKScalarsToColorsWidgetTest1.cpp
+      ctkVTKScalarsToColorsWidgetTest2.cpp
+      ctkVTKScalarsToColorsWidgetTest3.cpp
       ${TEST_SOURCES})
 ENDIF(CTK_USE_CHARTS)
 
@@ -95,11 +98,14 @@ SIMPLE_TEST( ctkTransferFunctionViewTest4 )
 SIMPLE_TEST( ctkTransferFunctionViewTest5 )
 IF (CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKChartViewTest1 )
+  SIMPLE_TEST( ctkVTKVolumePropertyWidgetTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest2 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest3 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest4 )
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1 )
+  SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest2 )
+  SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest3 )
 ENDIF(CTK_USE_CHARTS)
 SIMPLE_TEST( ctkVTKRenderViewTest1 )
 SIMPLE_TEST( ctkVTKSliceViewTest1 )

@@ -30,6 +30,7 @@ class ctkVTKChartViewPrivate;
 #include <QVTKWidget.h>
 
 class vtkChartXY;
+class vtkContextScene;
 class vtkPlot;
 
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public QVTKWidget
@@ -42,20 +43,30 @@ public:
   virtual ~ctkVTKChartView();
 
   /// Generic function to add a custom plot. \a plot is added into the chart
-  void addPlot(vtkPlot* plot);
+  virtual void addPlot(vtkPlot* plot);
 
   /// Utility function that returns the view chart. It can be used for customizing
   /// the chart display options (axes, legend...)
   vtkChartXY* chart()const;
+  vtkContextScene* scene()const;
 
   /// Title that appears inside the view
   QString title()const;
   void setTitle(const QString& title);
 
-  void fitAxesToBounds();
+  /// Compute the bounds for the 4 chart axes
+  void chartBounds(double* bounds);
+  void setAxesToChartBounds();
+  void boundAxesToChartBounds();
+
+signals:
+  void plotAdded(vtkPlot* plot);
+  void boundsChanged();
 
 protected:
   QScopedPointer<ctkVTKChartViewPrivate> d_ptr;
+  virtual void mouseDoubleClickEvent(QMouseEvent* event);
+  virtual void onChartUpdated();
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKChartView);

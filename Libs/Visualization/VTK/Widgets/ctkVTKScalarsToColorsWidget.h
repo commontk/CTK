@@ -25,23 +25,51 @@
 #include <QWidget>
 
 // CTK includes
-#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 #include "ctkVisualizationVTKWidgetsExport.h"
 class ctkVTKScalarsToColorsView;
 class ctkVTKScalarsToColorsWidgetPrivate;
 
 // VTK includes
-#include <QVTKWidget.h>
+class vtkControlPointsItem;
+class vtkPlot;
 
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsWidget : public QWidget
 {
   Q_OBJECT
-
+  QVTK_OBJECT
+  Q_PROPERTY(bool horizontalSliderVisible READ isHorizontalSliderVisible WRITE setHorizontalSliderVisible)
+  Q_PROPERTY(bool verticalSliderVisible READ isVerticalSliderVisible WRITE setVerticalSliderVisible)
 public:
   ctkVTKScalarsToColorsWidget(QWidget* parent = 0);
   virtual ~ctkVTKScalarsToColorsWidget();
 
   ctkVTKScalarsToColorsView* view()const;
+  vtkControlPointsItem* currentControlPointsItem()const;
+
+  bool isHorizontalSliderVisible()const;
+  void setHorizontalSliderVisible(bool visible);
+
+  bool isVerticalSliderVisible()const;
+  void setVerticalSliderVisible(bool visible);
+
+public slots:
+  void setCurrentControlPointsItem(vtkControlPointsItem* item);
+  void setCurrentPoint(int pointId);
+
+protected slots:
+  void onPlotAdded(vtkPlot*);
+  void onBoundsChanged();
+  void setCurrentPoint(vtkObject* controlPointsItem, void* pointId);
+  void updateCurrentPoint();
+  void onCurrentPointChanged(int pointId);
+  void onColorChanged(const QColor& color);
+  void onOpacityChanged(double opacity);
+  void onMidPointChanged(double midPoint);
+  void onSharpnessChanged(double sharpness);
+  void onXRangeChanged(double min, double max);
+  void onYRangeChanged(double min, double max);
+  void onAxesModified();
 protected:
   QScopedPointer<ctkVTKScalarsToColorsWidgetPrivate> d_ptr;
 
