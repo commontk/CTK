@@ -67,21 +67,21 @@ public slots:
 
 public:
   /// Get underlying RenderWindow
-  vtkRenderWindow* renderWindow()const;
+  Q_INVOKABLE vtkRenderWindow* renderWindow()const;
 
   /// Set/Get window interactor
-  vtkRenderWindowInteractor* interactor()const;
+  Q_INVOKABLE vtkRenderWindowInteractor* interactor()const;
   virtual void setInteractor(vtkRenderWindowInteractor* interactor);
 
   /// Get current interactor style
-  vtkInteractorObserver* interactorStyle()const;
+  Q_INVOKABLE vtkInteractorObserver* interactorStyle()const;
 
   /// Get corner annotation \a text
   QString cornerAnnotationText() const;
-  vtkCornerAnnotation* cornerAnnotation()const;
+  Q_INVOKABLE vtkCornerAnnotation* cornerAnnotation()const;
 
   /// Get the underlying QVTKWidget
-  QVTKWidget * VTKWidget() const;
+  Q_INVOKABLE QVTKWidget * VTKWidget() const;
 
   /// Get background color
   virtual QColor backgroundColor() const = 0;
