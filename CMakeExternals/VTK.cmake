@@ -32,6 +32,9 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   IF(NOT DEFINED VTK_DIR)
 #     MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY ${git_protocol}://vtk.org/VTK.git
       GIT_TAG "origin/master"
       INSTALL_COMMAND ""
@@ -52,7 +55,7 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
       DEPENDS
         ${proj_DEPENDENCIES}
       )
-    SET(VTK_DIR ${ep_build_dir}/${proj})
+    SET(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
     
     # Since the link directories associated with VTK is used, it makes sens to 
     # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory

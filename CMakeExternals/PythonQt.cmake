@@ -42,6 +42,9 @@ IF(${add_project})
     ENDIF()
       
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/PythonQt.git"
       GIT_TAG "origin/patched"
       CMAKE_GENERATOR ${gen}

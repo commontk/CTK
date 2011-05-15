@@ -16,6 +16,9 @@ IF(CTK_USE_KWSTYLE)
   
   IF(NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       LIST_SEPARATOR ${sep}
       CVS_REPOSITORY ":pserver:anoncvs:@public.kitware.com:/cvsroot/KWStyle"
       CVS_MODULE "KWStyle"

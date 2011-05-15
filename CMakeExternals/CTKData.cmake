@@ -17,6 +17,9 @@ IF(BUILD_TESTING)
   IF(NOT DEFINED CTKData_DIR)
   #   MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY ${git_protocol}://github.com/commontk/CTKData.git
       GIT_TAG "origin/master"
       CONFIGURE_COMMAND ""
@@ -25,7 +28,7 @@ IF(BUILD_TESTING)
       DEPENDS
         ${proj_DEPENDENCIES}
       )
-	  SET(CTKData_DIR ${ep_source_dir}/${proj})
+	  SET(CTKData_DIR ${CMAKE_BINARY_DIR}/${proj})
 	ELSE()
 	  ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()

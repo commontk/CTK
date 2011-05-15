@@ -73,12 +73,11 @@ endif()
 INCLUDE(ExternalProject)
 INCLUDE(ctkMacroEmptyExternalProject)
 
-SET(ep_base "${CMAKE_BINARY_DIR}/CMakeExternals")
-SET_PROPERTY(DIRECTORY PROPERTY EP_BASE ${ep_base})
+#SET(ep_base "${CMAKE_BINARY_DIR}/CMakeExternals")
+#SET_PROPERTY(DIRECTORY PROPERTY EP_BASE ${ep_base})
 
-SET(ep_install_dir ${ep_base}/Install)
-SET(ep_build_dir ${ep_base}/Build)
-SET(ep_source_dir ${ep_base}/Source)
+SET(ep_install_dir ${CMAKE_BINARY_DIR}/CMakeExternals/Install)
+set(ep_suffix      "-cmake")
 #SET(ep_parallelism_level)
 SET(ep_build_shared_libs ON)
 SET(ep_build_testing OFF)
@@ -253,7 +252,6 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${CTK_DEPENDS}
   )
-
 
 #-----------------------------------------------------------------------------
 # CTK
