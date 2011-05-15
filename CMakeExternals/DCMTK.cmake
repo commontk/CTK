@@ -22,21 +22,24 @@ IF(${add_project})
 #     MESSAGE(STATUS "Adding project:${proj}")
 
     ExternalProject_Add(${proj}
-        GIT_REPOSITORY "${git_protocol}://github.com/commontk/DCMTK.git"
-        GIT_TAG "origin/patched"
-        CMAKE_GENERATOR ${gen}
-        BUILD_COMMAND ""
-        CMAKE_ARGS
-          ${ep_common_args}
-          -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
-        )
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
+      GIT_REPOSITORY "${git_protocol}://github.com/commontk/DCMTK.git"
+      GIT_TAG "origin/patched"
+      CMAKE_GENERATOR ${gen}
+      BUILD_COMMAND ""
+      CMAKE_ARGS
+        ${ep_common_args}
+        -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
+      )
     SET(DCMTK_DIR ${ep_install_dir})
 
     ExternalProject_Add_Step(${proj} force_rebuild
       COMMENT "Force ${proj} re-build"
       DEPENDERS build    # Steps that depend on this step
       ALWAYS 1
-      WORKING_DIRECTORY ${ep_build_dir}/${proj}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${proj}-build
       DEPENDS
         ${proj_DEPENDENCIES}
       )

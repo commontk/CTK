@@ -20,7 +20,7 @@ IF(${add_project})
     ENDIF()
     
     # Configure patch script
-    SET(qtmobility_src_dir ${ep_source_dir}/${proj})
+    SET(qtmobility_src_dir ${CMAKE_BINARY_DIR}/${proj})
     SET(qtmobility_patch_dir ${CTK_SOURCE_DIR}/Utilities/QtMobility/)
     SET(qtmobility_configured_patch_dir ${CTK_BINARY_DIR}/Utilities/QtMobility/)
     SET(qtmobility_patchscript
@@ -51,7 +51,7 @@ IF(${add_project})
       SET(qtmobility_install_cmd ${qtmobility_make_cmd} install)
       
       SET(QTMOBILITY_QTSERVICEFW_INCLUDE_DIR 
-          "${CTK_BINARY_DIR}/CMakeExternals/Source/QtMobility/install/include")
+          "${CTK_BINARY_DIR}/QtMobility/install/include")
       SET(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG
           "${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libQtServiceFrameworkd.so")
       SET(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE
@@ -68,7 +68,7 @@ IF(${add_project})
         SET(qtmobility_servicefw_libname_release libQtServiceFramework.a)
       ENDIF()
 
-      SET(qtmobility_win32_install_prefix "${ep_source_dir}/${proj}/install/")
+      SET(qtmobility_win32_install_prefix "${CTK_BINARY_DIR}/${proj}/install/")
       STRING(REPLACE "/" "\\" qtmobility_win32_native_install_prefix ${qtmobility_win32_install_prefix})
 
       SET(qtmobility_config_args -${qtmobility_build_type} -qt ${QT_BINARY_DIR} -prefix ${qtmobility_win32_native_install_prefix} -no-docs -modules ${qtmobility_modules})
@@ -82,6 +82,8 @@ IF(${add_project})
     ENDIF()
     
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      PREFIX ${proj}${ep_suffix}
       URL ${CTK_SOURCE_DIR}/Utilities/QtMobility/qt-mobility-servicefw-opensource-src-1.0.0.tar.gz
       PATCH_COMMAND ${CMAKE_COMMAND} -P ${qtmobility_patchscript}
       CONFIGURE_COMMAND <SOURCE_DIR>/configure ${qtmobility_config_args}

@@ -30,13 +30,16 @@ IF(CTK_WRAP_PYTHONQT_FULL)
     # on the same repository, we will assume that if the directory PythonQt 
     # exists, the generator code will also be available.
     #
-    IF(EXISTS ${ep_source_dir}/PythonQt)
+    IF(EXISTS ${CMAKE_BINARY_DIR}/PythonQt)
       #MESSAGE(STATUS "ExternalProject/PythonQtGenerator: PythonQt already added as ExternalProject")
       ExternalProject_Add(${proj}
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+        BINARY_DIR ${proj}-build
+        PREFIX ${proj}${ep_suffix}
         DOWNLOAD_COMMAND ""
         CMAKE_GENERATOR ${gen}
         INSTALL_COMMAND ""
-        SOURCE_DIR ${ep_source_dir}/PythonQt/generator
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/PythonQt/generator
         CMAKE_ARGS
           ${ep_common_args}
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
@@ -46,18 +49,21 @@ IF(CTK_WRAP_PYTHONQT_FULL)
     ELSE()
       #MESSAGE(STATUS "ExternalProject/PythonQtGenerator: PythonQt is NOT an ExternalProject")
       ExternalProject_Add(${proj}
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+        BINARY_DIR ${proj}-build
+        PREFIX ${proj}${ep_suffix}
         GIT_REPOSITORY "${git_protocol}://github.com/commontk/PythonQt.git"
         GIT_TAG "patched"
         CMAKE_GENERATOR ${gen}
         INSTALL_COMMAND ""
-        SOURCE_DIR ${ep_source_dir}/${proj}/generator
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}/generator
         CMAKE_ARGS
           ${ep_common_args}
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         )
     ENDIF()
     
-    SET(PYTHONQTGENERATOR_EXECUTABLE ${ep_build_dir}/PythonQtGenerator/PythonQtGenerator)
+    SET(PYTHONQTGENERATOR_EXECUTABLE ${CMAKE_BINARY_DIR}/PythonQtGenerator/PythonQtGenerator)
     
     # Since PythonQtGenerator is an executable, there is no need to add its corresponding 
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS

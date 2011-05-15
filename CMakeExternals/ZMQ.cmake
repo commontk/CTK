@@ -20,6 +20,9 @@ IF(${add_project})
   IF(NOT DEFINED ZMQ_DIR)
   #   MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY ${git_protocol}://github.com/PatrickCheng/zeromq2.git
       GIT_TAG "origin/master"
       INSTALL_COMMAND ""
@@ -32,7 +35,7 @@ IF(${add_project})
 		  DEPENDS
 		    ${proj_DEPENDENCIES}
       )
-    SET(ZMQ_DIR ${ep_build_dir}/${proj})
+    SET(ZMQ_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 	
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")

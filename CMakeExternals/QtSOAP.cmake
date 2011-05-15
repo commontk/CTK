@@ -22,6 +22,9 @@ IF(${add_project})
   
     #     MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/QtSOAP.git"
       GIT_TAG "origin/master"
       CMAKE_GENERATOR ${gen}
@@ -32,7 +35,7 @@ IF(${add_project})
       DEPENDS
         ${proj_DEPENDENCIES}
       )
-    SET(QtSOAP_DIR "${ep_build_dir}/${proj}")
+    SET(QtSOAP_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
     
     # Since QtSOAP is statically build, there is not need to add its corresponding 
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS

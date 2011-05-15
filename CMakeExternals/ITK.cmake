@@ -19,6 +19,9 @@ IF(${add_project})
   IF(NOT DEFINED ITK_DIR)
 #     MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "${git_protocol}://itk.org/ITK.git"
       GIT_TAG "origin/master"
       INSTALL_COMMAND ""
@@ -37,7 +40,7 @@ IF(${add_project})
       DEPENDS
         ${proj_DEPENDENCIES}
       )
-    SET(ITK_DIR ${ep_build_dir}/${proj})
+    SET(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
     
     # Since the link directories associated with ITK is used, it makes sens to 
     # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory

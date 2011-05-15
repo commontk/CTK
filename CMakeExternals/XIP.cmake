@@ -19,6 +19,9 @@ IF(${add_project})
   IF(NOT DEFINED XIP_DIR)
     #   MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       SVN_REPOSITORY "https://collab01a.scr.siemens.com/svn/xip/releases/latest"
       SVN_USERNAME "anonymous"
       INSTALL_COMMAND ""
@@ -28,7 +31,7 @@ IF(${add_project})
         -DHAS_VTK:BOOL=OFF
         -DHAS_ITK:BOOL=OFF
       )
-    SET(XIP_DIR ${ep_build_dir}/${proj})
+    SET(XIP_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
     
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")

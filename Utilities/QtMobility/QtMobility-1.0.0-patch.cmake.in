@@ -1,17 +1,17 @@
 # the patch step is run before the update step
 # so we need to checkout the 1.0 branch here
 
-set(work_dir @ep_source_dir@)
+set(work_dir "@CMAKE_BINARY_DIR@")
 set(proj_dir ${work_dir}/@proj@)
 
-INCLUDE(@CTK_SOURCE_DIR@/CMake/ctkFunctionLFtoCRLF.cmake)
-INCLUDE(@CTK_SOURCE_DIR@/CMake/ctkFunctionApplyPatches.cmake)
+INCLUDE("@CTK_SOURCE_DIR@/CMake/ctkFunctionLFtoCRLF.cmake")
+INCLUDE("@CTK_SOURCE_DIR@/CMake/ctkFunctionApplyPatches.cmake")
 
-SET(patch_dir @qtmobility_patch_dir@)
-SET(configured_patch_dir @qtmobility_configured_patch_dir@)
+SET(patch_dir "@qtmobility_patch_dir@")
+SET(configured_patch_dir "@qtmobility_configured_patch_dir@")
 
 # Variable required to properly configured the patch files
-SET(QT_BINARY_DIR @QT_BINARY_DIR@)
+SET(QT_BINARY_DIR "@QT_BINARY_DIR@")
 
 SET(patch_files
 

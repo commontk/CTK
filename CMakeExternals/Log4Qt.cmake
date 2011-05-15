@@ -20,6 +20,9 @@ IF(${add_project})
   IF(NOT DEFINED Log4Qt_DIR)
 #     MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/Log4Qt.git"
       GIT_TAG "origin/patched"
       CMAKE_GENERATOR ${gen}

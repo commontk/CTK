@@ -21,6 +21,9 @@ IF(${add_project})
     
   #   MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      PREFIX ${proj}${ep_suffix}
       SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
       INSTALL_COMMAND ""
       CMAKE_GENERATOR ${gen}
@@ -29,7 +32,7 @@ IF(${add_project})
       DEPENDS
         ${proj_DEPENDENCIES}
       )
-    SET(OpenIGTLink_DIR ${ep_build_dir}/${proj})
+    SET(OpenIGTLink_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
