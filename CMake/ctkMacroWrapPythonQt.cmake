@@ -91,7 +91,7 @@ else: print 'TRUE'
     )
   
   IF(result)
-    MESSAGE(SEND_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}")
+    MESSAGE(FATAL_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}")
   ENDIF()
   SET(is_matching ${output} PARENT_SCOPE)
 ENDFUNCTION()
@@ -101,7 +101,7 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   
   # Sanity check
   IF(IS_WRAP_FULL AND NOT EXISTS "${PYTHONQTGENERATOR_EXECUTABLE}")
-    MESSAGE(SEND_ERROR "PYTHONQTGENERATOR_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
+    MESSAGE(FATAL_ERROR "PYTHONQTGENERATOR_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
   ENDIF()
   
   # TODO: this find package seems not to work when called form a superbuild, but the call is needed
@@ -109,7 +109,7 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   # package so this is a no-op.  Other uses of this file may need to have this call so it is still enabled.
   find_package(PythonInterp)
   IF(NOT PYTHONINTERP_FOUND)
-    MESSAGE(SEND_ERROR "PYTHON_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
+    MESSAGE(FATAL_ERROR "PYTHON_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
   ENDIF()
 
   # Extract python lib path

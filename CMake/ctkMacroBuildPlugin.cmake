@@ -55,7 +55,7 @@ MACRO(ctkMacroBuildPlugin)
 
   # Sanity checks
   IF(NOT DEFINED MY_EXPORT_DIRECTIVE)
-    MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
+    MESSAGE(FATAL_ERROR "EXPORT_DIRECTIVE is mandatory")
   ENDIF()
  
   # Plugin are expected to be shared library

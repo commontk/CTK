@@ -37,14 +37,14 @@
 # Check for non-defined var
 FOREACH(var WRAPPING_NAMESPACE TARGET MOC_FLAGS WRAPPER_MASTER_MOC_FILE WRAP_INT_DIR)
   IF(NOT DEFINED ${var})
-    MESSAGE(SEND_ERROR "${var} not specified when calling ctkScriptMocPythonQtWrapper")
+    MESSAGE(FATAL_ERROR "${var} not specified when calling ctkScriptMocPythonQtWrapper")
   ENDIF()
 ENDFOREACH()
 
 # Check for non-existing ${var}
 FOREACH(var OUTPUT_DIR QT_MOC_EXECUTABLE)
   IF(NOT EXISTS ${${var}})
-    MESSAGE(SEND_ERROR "Failed to find ${var} when calling ctkScriptWrapPythonQt")
+    MESSAGE(FATAL_ERROR "Failed to find ${var} when calling ctkScriptWrapPythonQt")
   ENDIF()
 ENDFOREACH()
 
@@ -54,7 +54,7 @@ STRING(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
 # Read moc flags from file
 IF(WIN32)
   IF(NOT EXISTS ${MOC_FLAGS})
-    MESSAGE(SEND_ERROR "On Windows, MOC_FLAGS should be the name of the file containing the moc flags !")
+    MESSAGE(FATAL_ERROR "On Windows, MOC_FLAGS should be the name of the file containing the moc flags !")
   ENDIF()
   FILE(READ ${MOC_FLAGS} MOC_FLAGS)
 ENDIF()
@@ -71,7 +71,7 @@ set(glob_expression ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE
 FILE(GLOB wrapper_headers RELATIVE ${OUTPUT_DIR}/${WRAP_INT_DIR} ${glob_expression})
 
 IF(NOT wrapper_headers)
-  MESSAGE(SEND_ERROR "ctkScriptMocPythonQtWrapper - Failed to glob wrapper headers using expression:[${glob_expression}]")
+  MESSAGE(FATAL_ERROR "ctkScriptMocPythonQtWrapper - Failed to glob wrapper headers using expression:[${glob_expression}]")
 ENDIF()
 
 # Moc'ified each one of them

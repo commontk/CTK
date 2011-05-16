@@ -14,7 +14,7 @@ FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
 
   # Sanity checks
   IF(NOT DEFINED MY_SYMBOLIC_NAME)
-    MESSAGE(SEND_ERROR "SYMBOLIC_NAME is mandatory")
+    MESSAGE(FATAL_ERROR "SYMBOLIC_NAME is mandatory")
   ENDIF()
 
   SET(_manifest_content "Plugin-SymbolicName: ${MY_SYMBOLIC_NAME}")
@@ -24,7 +24,7 @@ FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
     IF(_activation_policy STREQUAL "eager")
       SET(_manifest_content "${_manifest_content}\nPlugin-ActivationPolicy: eager")
     ELSE()
-      MESSAGE(SEND_ERROR "ACTIVATIONPOLICY is set to '${MY_ACTIVATIONPOLICY}', which is not supported")
+      MESSAGE(FATAL_ERROR "ACTIVATIONPOLICY is set to '${MY_ACTIVATIONPOLICY}', which is not supported")
     ENDIF()
   ENDIF()
 

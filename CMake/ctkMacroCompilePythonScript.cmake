@@ -24,7 +24,7 @@ MACRO(ctkMacroCompilePythonScript)
   # Sanity checks
   FOREACH(varname TARGET_NAME SCRIPTS DESTINATION_DIR INSTALL_DIR)
     IF(NOT DEFINED MY_${varname})
-      MESSAGE(SEND_ERROR "${varname} is mandatory")
+      MESSAGE(FATAL_ERROR "${varname} is mandatory")
     ENDIF()
   ENDFOREACH()
   

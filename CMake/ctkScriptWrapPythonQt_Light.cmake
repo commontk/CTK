@@ -89,7 +89,7 @@ else: print \"TRUE\"
     )
   
   IF(result)
-    MESSAGE(SEND_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}")
+    MESSAGE(FATAL_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}")
   ENDIF()
   #message(${output})
   SET(is_matching ${output} PARENT_SCOPE)
@@ -100,14 +100,14 @@ ENDFUNCTION()
 # Check for non-defined var
 FOREACH(var WRAPPING_NAMESPACE TARGET SOURCES INCLUDE_DIRS WRAP_INT_DIR)
   IF(NOT DEFINED ${var})
-    MESSAGE(SEND_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
+    MESSAGE(FATAL_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
   ENDIF()
 ENDFOREACH()
 
 # Check for non-existing ${var}
 FOREACH(var QT_QMAKE_EXECUTABLE OUTPUT_DIR PYTHON_EXECUTABLE PYTHON_LIBRARY_PATH)
   IF(NOT EXISTS ${${var}})
-    MESSAGE(SEND_ERROR "Failed to find ${var}=\"${${var}}\" when calling ctkScriptWrapPythonQt")
+    MESSAGE(FATAL_ERROR "Failed to find ${var}=\"${${var}}\" when calling ctkScriptWrapPythonQt")
   ENDIF()
 ENDFOREACH()
 

@@ -33,7 +33,7 @@ MACRO(ctkMacroBuildApp)
 
   # Sanity checks
   IF(NOT DEFINED MY_NAME)
-    MESSAGE(SEND_ERROR "NAME is mandatory")
+    MESSAGE(FATAL_ERROR "NAME is mandatory")
   ENDIF()
 
   # Make sure either the source or the binary directory associated with the application
