@@ -26,14 +26,14 @@ IF(${add_project})
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/Log4Qt.git"
       GIT_TAG "origin/patched"
       CMAKE_GENERATOR ${gen}
-      BUILD_COMMAND ""
+      INSTALL_COMMAND ""
       CMAKE_ARGS
         ${ep_common_args}
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       DEPENDS
         ${proj_DEPENDENCIES}
       )
-    SET(Log4Qt_DIR ${ep_install_dir})
+    SET(Log4Qt_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
     
     # Since Log4Qt is statically build, there is not need to add its corresponding 
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
