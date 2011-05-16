@@ -1,5 +1,10 @@
 PROJECT(CTKCore)
 
+#
+# 3rd party dependencies
+#
+INCLUDE(${Log4Qt_USE_FILE})
+
 # CMake modules
 SET(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
 
