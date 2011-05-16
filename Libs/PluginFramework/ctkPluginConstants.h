@@ -102,7 +102,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * The attribute value may be retrieved from the <code>QHash</code>
    * object returned by the <code>Plugin::getHeaders()</code> method.
    */
-  static const QString	PLUGIN_SYMBOLICNAME; // = "Plugin-SymbolicName"
+  static const QString PLUGIN_SYMBOLICNAME; // = "Plugin-SymbolicName"
 
   /**
    * Manifest header identifying the plugin's copyright information.
