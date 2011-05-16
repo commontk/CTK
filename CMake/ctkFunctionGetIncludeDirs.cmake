@@ -39,10 +39,18 @@ FUNCTION(ctkFunctionGetIncludeDirs var_include_dirs)
     ctkMacroGetAllNonProjectTargetLibraries("${${_target}_DEPENDENCIES}" ext_deps)
 
     FOREACH(dep ${ctk_deps})
-      LIST(APPEND _include_dirs
-           ${${dep}_SOURCE_DIR}
-           ${${dep}_BINARY_DIR}
-           )
+
+      IF(${dep}_INCLUDE_SUFFIXES)
+        FOREACH(_suffix ${${dep}_INCLUDE_SUFFIXES})
+          LIST(APPEND _include_dirs ${${dep}_SOURCE_DIR}/${_suffix})
+        ENDFOREACH()
+        LIST(APPEND _include_dirs ${${dep}_BINARY_DIR})
+      ELSE()
+        LIST(APPEND _include_dirs
+             ${${dep}_SOURCE_DIR}
+             ${${dep}_BINARY_DIR}
+             )
+      ENDIF()
 
       # For external projects, CTKConfig.cmake contains variables
       # listening the include dirs for CTK libraries and plugins
@@ -60,7 +68,12 @@ FUNCTION(ctkFunctionGetIncludeDirs var_include_dirs)
 
       # This is for resolving include dependencies between
       # libraries / plugins from external projects using CTK
-      IF(${dep}_SOURCE_DIR)
+      IF(${dep}_SOURCE_DIR AND ${dep}_INCLUDE_SUFFIXES)
+        FOREACH(_suffix ${${dep}_INCLUDE_SUFFIXES})
+          LIST(APPEND _include_dirs ${${dep}_SOURCE_DIR}/${_suffix})
+        ENDFOREACH()
+        LIST(APPEND _include_dirs ${${dep}_BINARY_DIR})
+      ELSEIF(${dep}_SOURCE_DIR)
         LIST(APPEND _include_dirs ${${dep}_SOURCE_DIR})
       ENDIF()
 

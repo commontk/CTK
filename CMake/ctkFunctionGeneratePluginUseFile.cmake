@@ -29,8 +29,23 @@ FUNCTION(ctkFunctionGeneratePluginUseFile filename)
 
   SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG)
   FOREACH(plugin ${my_ctk_plugin_libraries})
-    SET(${plugin}_INCLUDE_DIRS ${${plugin}_SOURCE_DIR} ${${plugin}_BINARY_DIR})
+    SET(${plugin}_INCLUDE_DIRS )
+
+    # The call to ctkFunctionGetIncludeDirs returns all include dirs
+    # the plugin itself needs. This does not include the plugin's
+    # source dir, so we add it explicitly.
+    IF(${plugin}_INCLUDE_SUFFIXES)
+      FOREACH(_suffix ${${plugin}_INCLUDE_SUFFIXES})
+        LIST(APPEND ${plugin}_INCLUDE_DIRS ${${plugin}_SOURCE_DIR}/${_suffix})
+      ENDFOREACH()
+    ELSE()
+      LIST(APPEND ${plugin}_INCLUDE_DIRS ${${plugin}_SOURCE_DIR})
+    ENDIF()
+
+    LIST(APPEND ${plugin}_INCLUDE_DIRS ${${plugin}_BINARY_DIR})
+
     ctkFunctionGetIncludeDirs(${plugin}_INCLUDE_DIRS ${plugin})
+
     SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG "${CTK_PLUGIN_INCLUDE_DIRS_CONFIG}
 SET(${plugin}_INCLUDE_DIRS \"${${plugin}_INCLUDE_DIRS}\")")
 

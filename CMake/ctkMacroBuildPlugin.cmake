@@ -47,7 +47,7 @@
 #
 MACRO(ctkMacroBuildPlugin)
   CtkMacroParseArguments(MY
-    "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;TRANSLATIONS;LIBRARY_TYPE"
+    "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;EXPORTED_INCLUDE_SUFFIXES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;TRANSLATIONS;LIBRARY_TYPE;OUTPUT_DIR"
     "TEST_PLUGIN"
     ${ARGN}
     )
@@ -99,11 +99,29 @@ MACRO(ctkMacroBuildPlugin)
 
   # --------------------------------------------------------------------------
   # Include dirs
-  SET(my_includes
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${MY_INCLUDE_DIRECTORIES}
-    )
+  IF(MY_EXPORTED_INCLUDE_SUFFIXES)
+    SET(${lib_name}_INCLUDE_SUFFIXES ${MY_EXPORTED_INCLUDE_SUFFIXES}
+        CACHE INTERNAL "List of exported plugin include dirs")
+
+    SET(my_includes )
+    FOREACH(_suffix ${MY_EXPORTED_INCLUDE_SUFFIXES})
+      LIST(APPEND my_includes ${CMAKE_CURRENT_SOURCE_DIR}/${_suffix})
+    ENDFOREACH()
+
+    LIST(APPEND my_includes
+         ${CMAKE_CURRENT_BINARY_DIR}
+         ${MY_INCLUDE_DIRECTORIES}
+         )
+  ELSE()
+    SET(${lib_name}_INCLUDE_SUFFIXES ${MY_EXPORTED_INCLUDE_SUFFIXES}  ""
+        CACHE INTERNAL "List of exported plugin include dirs")
+
+    SET(my_includes
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${MY_INCLUDE_DIRECTORIES}
+        )
+  ENDIF()
 
   # Add the include directories from the plugin dependencies
   # and external dependencies
