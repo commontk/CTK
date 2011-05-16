@@ -42,14 +42,14 @@
 # Check for non-defined var
 FOREACH(var SOURCES TARGET INCLUDE_DIRS WRAP_INT_DIR WRAPPING_NAMESPACE)
   IF(NOT DEFINED ${var})
-    MESSAGE(SEND_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
+    MESSAGE(FATAL_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
   ENDIF()
 ENDFOREACH()
 
 # Check for non-existing ${var}
 FOREACH(var PYTHONQTGENERATOR_EXECUTABLE QT_QMAKE_EXECUTABLE OUTPUT_DIR)
   IF(NOT EXISTS ${${var}})
-    MESSAGE(SEND_ERROR "Failed to find ${var} when calling ctkScriptWrapPythonQt")
+    MESSAGE(FATAL_ERROR "Failed to find ${var} when calling ctkScriptWrapPythonQt")
   ENDIF()
 ENDFOREACH()
 
@@ -108,7 +108,7 @@ FILE(WRITE ${OUTPUT_DIR}/${WRAP_INT_DIR}build_${TARGET}.txt "
 # Read include dirs from file
 IF(WIN32)
   IF(NOT EXISTS ${INCLUDE_DIRS})
-    MESSAGE(SEND_ERROR "On Windows, INCLUDE_DIRS should be the name of the file containing the include directories !")
+    MESSAGE(FATAL_ERROR "On Windows, INCLUDE_DIRS should be the name of the file containing the include directories !")
   ENDIF()
   FILE(READ ${INCLUDE_DIRS} INCLUDE_DIRS)
 ENDIF()

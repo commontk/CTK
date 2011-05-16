@@ -45,7 +45,7 @@ FUNCTION( ctkFunctionDownloadData)
   # Sanity checks
   FOREACH(arg MIDAS_SERVER_URL ITEMID OUTPUT_DIRECTORY)
     IF(NOT DEFINED MY_${arg})
-      MESSAGE(SEND_ERROR "${arg} is mandatory")
+      MESSAGE(FATAL_ERROR "${arg} is mandatory")
     ENDIF()
   ENDFOREACH()
     
