@@ -235,10 +235,16 @@ MACRO(ctkMacroBuildPlugin)
     )
 
   # Set the output directory for the plugin
-  SET(output_dir_suffix "plugins")
-  IF(MY_TEST_PLUGIN)
-    SET(output_dir_suffix "test_plugins")
+  IF(MY_OUTPUT_DIR)
+    SET(output_dir_suffix ${MY_OUTPUT_DIR})
+  ELSE()
+    SET(output_dir_suffix "plugins")
   ENDIF()
+
+  IF(MY_TEST_PLUGIN)
+    SET(output_dir_suffix "test_${output_dir_suffix}")
+  ENDIF()
+
   IF(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     SET(runtime_output_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${output_dir_suffix}")
   ELSE()
