@@ -21,7 +21,7 @@
 
 MACRO(ctkMacroSetupExternalPlugins )
 
-  ctkMacroParseArguments(MY "BUILD_OPTION_PREFIX" "" ${ARGN})
+  ctkMacroParseArguments(MY "BUILD_OPTION_PREFIX;BUILD_ALL" "COMPACT_OPTIONS" ${ARGN})
 
   IF(NOT MY_DEFAULT_ARGS)
     MESSAGE(FATAL_ERROR "Empty plugin list")
@@ -33,12 +33,38 @@ MACRO(ctkMacroSetupExternalPlugins )
     SET(MY_BUILD_OPTION_PREFIX "BUILD_")
   ENDIF()
 
+  IF(NOT MY_BUILD_ALL)
+    SET(MY_BUILD_ALL 0)
+  ENDIF()
+
+  # Set up Qt, if not already done
+  IF(NOT QT4_FOUND)
+    SET(minimum_required_qt_version "4.6")
+    FIND_PACKAGE(Qt4 REQUIRED)
+
+    IF("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "${minimum_required_qt_version}")
+      MESSAGE(FATAL_ERROR "error: CTK requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
+    ENDIF()
+  ENDIF()
+
   SET(plugin_dirswithoption )
   SET(plugin_subdirs )
   FOREACH(plugin ${plugin_list})
     ctkFunctionExtractOptionNameAndValue(${plugin} plugin_name plugin_value)
-    SET(option_name ${MY_BUILD_OPTION_PREFIX}${plugin_name})
+    IF(MY_COMPACT_OPTIONS)
+      STRING(REPLACE "/" ";" _tokens ${plugin_name})
+      LIST(GET _tokens -1 option_name)
+      SET(option_name ${MY_BUILD_OPTION_PREFIX}${option_name})
+    ELSE()
+      SET(option_name ${MY_BUILD_OPTION_PREFIX}${plugin_name})
+    ENDIF()
+    SET(${plugin_name}_option_name ${option_name})
+
     OPTION(${option_name} "Build ${plugin_name} Plugin." ${plugin_value})
+    IF(MY_BUILD_ALL)
+      SET(${option_name} 1)
+    ENDIF()
+
     LIST(APPEND plugin_subdirs "${plugin_name}")
     LIST(APPEND plugin_dirswithoption "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_name}^^${option_name}")
   ENDFOREACH()
@@ -47,7 +73,7 @@ MACRO(ctkMacroSetupExternalPlugins )
   ctkMacroValidateBuildOptions("${CMAKE_CURRENT_BINARY_DIR}" "${CTK_DGRAPH_EXECUTABLE}" "${plugin_dirswithoption}")
 
   FOREACH(plugin ${plugin_subdirs})
-    IF(${MY_BUILD_OPTION_PREFIX}${plugin})
+    IF(${${plugin}_option_name})
       ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/${plugin})
     ENDIF()
   ENDFOREACH()

@@ -130,6 +130,9 @@ MACRO(ctkMacroBuildPlugin)
   INCLUDE_DIRECTORIES(
     ${my_includes}
     )
+
+  # Add Qt include dirs and defines
+  INCLUDE(${QT_USE_FILE})
     
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
