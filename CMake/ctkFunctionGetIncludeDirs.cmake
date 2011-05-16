@@ -35,8 +35,8 @@ FUNCTION(ctkFunctionGetIncludeDirs var_include_dirs)
     SET(ctk_deps )
     SET(ext_deps )
 
-    ctkMacroGetAllCTKTargetLibraries("${${_target}_DEPENDENCIES}" ctk_deps)
-    ctkMacroGetAllNonCTKTargetLibraries("${${_target}_DEPENDENCIES}" ext_deps)
+    ctkMacroGetAllProjectTargetLibraries("${${_target}_DEPENDENCIES}" ctk_deps)
+    ctkMacroGetAllNonProjectTargetLibraries("${${_target}_DEPENDENCIES}" ext_deps)
 
     FOREACH(dep ${ctk_deps})
       LIST(APPEND _include_dirs

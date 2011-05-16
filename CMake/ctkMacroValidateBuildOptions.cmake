@@ -157,12 +157,7 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
       # Check if all internal CTK targets included in the dependency path are enabled
       SET(int_dep_path_list )
       SET(ext_dep_path_list ${dep_path_list})
-      # Allow external projects to override the set of internal targets
-      IF(COMMAND GetMyTargetLibraries)
-        GetMyTargetLibraries("${dep_path_list}" int_dep_path_list)
-      ELSE()
-        ctkMacroGetAllCTKTargetLibraries("${dep_path_list}" int_dep_path_list)
-      ENDIF()
+      ctkMacroGetAllProjectTargetLibraries("${dep_path_list}" int_dep_path_list)
       IF(int_dep_path_list)
         LIST(REMOVE_ITEM ext_dep_path_list ${int_dep_path_list})
       ENDIF()

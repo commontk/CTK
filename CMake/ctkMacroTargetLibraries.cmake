@@ -195,27 +195,32 @@ MACRO(ctkMacroCollectAllTargetLibraries targets subdir varname)
 ENDMACRO()
 
 #
-# Extract all library names starting with CTK uppercase or org_commontk_
+# Extract all library names which are build within this project
 #
-MACRO(ctkMacroGetAllCTKTargetLibraries all_target_libraries varname)
-  SET(re_ctklib "^(c|C)(t|T)(k|K)[a-zA-Z0-9]+$")
-  SET(re_ctkplugin "^org_commontk_[a-zA-Z0-9_]+$")
-  SET(_tmp_list)
-  LIST(APPEND _tmp_list ${all_target_libraries})
-  #MESSAGE("calling ctkMacroListFilter with varname:${varname}")
-  ctkMacroListFilter(_tmp_list re_ctklib re_ctkplugin OUTPUT_VARIABLE ${varname})
-  #MESSAGE(STATUS "getallctklibs from ${all_target_libraries}")
-  #MESSAGE(STATUS varname:${varname}:${${varname}})
+MACRO(ctkMacroGetAllProjectTargetLibraries all_target_libraries varname)
+  # Allow external projects to override the set of internal targets
+  IF(COMMAND GetMyTargetLibraries)
+    GetMyTargetLibraries("${all_target_libraries}" ${varname})
+  ELSE()
+    SET(re_ctklib "^(c|C)(t|T)(k|K)[a-zA-Z0-9]+$")
+    SET(re_ctkplugin "^org_commontk_[a-zA-Z0-9_]+$")
+    SET(_tmp_list)
+    LIST(APPEND _tmp_list ${all_target_libraries})
+    #MESSAGE("calling ctkMacroListFilter with varname:${varname}")
+    ctkMacroListFilter(_tmp_list re_ctklib re_ctkplugin OUTPUT_VARIABLE ${varname})
+    #MESSAGE(STATUS "getallctklibs from ${all_target_libraries}")
+    #MESSAGE(STATUS varname:${varname}:${${varname}})
+  ENDIF()
 ENDMACRO()
 
 #
-# Extract all library names *NOT* starting with CTK uppercase or org_commontk_
+# Extract all library names *NOT* being build within this project
 #
-MACRO(ctkMacroGetAllNonCTKTargetLibraries all_target_libraries varname)
-  ctkMacroGetAllCTKTargetLibraries("${all_target_libraries}" all_ctk_libraries)
+MACRO(ctkMacroGetAllNonProjectTargetLibraries all_target_libraries varname)
+  ctkMacroGetAllProjectTargetLibraries("${all_target_libraries}" all_project_libraries)
   SET(_tmp_list ${all_target_libraries})
-  IF(all_ctk_libraries)
-    LIST(REMOVE_ITEM _tmp_list ${all_ctk_libraries})
+  IF(all_project_libraries)
+    LIST(REMOVE_ITEM _tmp_list ${all_project_libraries})
   ENDIF()
   SET(${varname} ${_tmp_list})
   #MESSAGE(STATUS varname:${varname}:${${varname}})

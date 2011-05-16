@@ -34,7 +34,7 @@ FUNCTION(ctkFunctionGetLibraryDirs var_library_dirs)
 
     SET(ext_deps )
 
-    ctkMacroGetAllNonCTKTargetLibraries("${${_target}_DEPENDENCIES}" ext_deps)
+    ctkMacroGetAllNonProjectTargetLibraries("${${_target}_DEPENDENCIES}" ext_deps)
     
     FOREACH(dep ${ext_deps})
 
