@@ -44,7 +44,7 @@ IF(${add_project})
   
   LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DLog4Qt_DIR:PATH=${Log4Qt_DIR})
 
-  SET(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIR)
+  SET(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
   SET(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
 
 ENDIF()
