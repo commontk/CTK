@@ -93,7 +93,13 @@ MACRO(ctkMacroBuildApp)
   SET(MY_QRC_SRCS)
 
   # Wrap
-  QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
+  IF(MY_MOC_SRCS)
+    # this is a workaround for Visual Studio. The relative include paths in the generated
+    # moc files can get very long and can't be resolved by the MSVC compiler.
+    FOREACH(moc_src ${MY_MOC_SRCS})
+      QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+    ENDFOREACH()
+  ENDIF()
   QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
   IF(DEFINED MY_RESOURCES)
     QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
