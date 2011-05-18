@@ -46,6 +46,13 @@ MACRO(ctkMacroSetupExternalPlugins )
       MESSAGE(FATAL_ERROR "error: CTK requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
     ENDIF()
   ENDIF()
+  
+  # Set variable QT_INSTALLED_LIBRARY_DIR that will contains
+  # Qt shared library
+  SET(QT_INSTALLED_LIBRARY_DIR ${QT_LIBRARY_DIR})
+  IF(WIN32)
+    GET_FILENAME_COMPONENT(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
+  ENDIF()
 
   SET(plugin_dirswithoption )
   SET(plugin_subdirs )
