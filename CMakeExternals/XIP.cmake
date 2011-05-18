@@ -28,6 +28,7 @@ IF(${add_project})
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${ep_common_args}
+        -DBUILD_TESTING:BOOL=OFF
         -DHAS_VTK:BOOL=OFF
         -DHAS_ITK:BOOL=OFF
       )

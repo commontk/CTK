@@ -31,6 +31,7 @@ IF(${add_project})
       BUILD_COMMAND ""
       CMAKE_ARGS
         ${ep_common_args}
+        -DBUILD_TESTING:BOOL=OFF
         -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
       )
     SET(DCMTK_DIR ${ep_install_dir})

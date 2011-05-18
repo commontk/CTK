@@ -85,7 +85,6 @@ SET(ep_build_testing OFF)
 SET(ep_common_args
   -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
   -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-  -DBUILD_TESTING:BOOL=${ep_build_testing}
   )
 
 # Compute -G arg for configuring external projects with the same CMake generator:

@@ -25,6 +25,7 @@ IF(CTK_USE_KWSTYLE)
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${ep_common_args}
+        -DBUILD_TESTING:BOOL=OFF
       DEPENDS
         ${proj_DEPENDENCIES}
       )

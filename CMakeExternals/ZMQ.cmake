@@ -29,14 +29,15 @@ IF(${add_project})
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${ep_common_args}
-		    -DBUILD_SHARED_LIBS:BOOL=ON 
-		    -DZMQ_BUILD_DEVICES:BOOL=ON
-		    -DZMQ_BUILD_PERFORMANCE_TESTS:BOOL=ON
-		  DEPENDS
-		    ${proj_DEPENDENCIES}
+        -DBUILD_TESTING:BOOL=OFF
+        -DBUILD_SHARED_LIBS:BOOL=ON 
+        -DZMQ_BUILD_DEVICES:BOOL=ON
+        -DZMQ_BUILD_PERFORMANCE_TESTS:BOOL=ON
+       DEPENDS
+        ${proj_DEPENDENCIES}
       )
     SET(ZMQ_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-	
+
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
