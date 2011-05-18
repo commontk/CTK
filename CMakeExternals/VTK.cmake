@@ -41,6 +41,7 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${ep_common_args}
+        -DBUILD_TESTING:BOOL=OFF
         ${additional_vtk_cmakevars}
         -DVTK_WRAP_TCL:BOOL=OFF
         -DVTK_USE_TK:BOOL=OFF

@@ -28,6 +28,7 @@ IF(${add_project})
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${ep_common_args}
+        -DBUILD_TESTING:BOOL=OFF
         -DBUILD_EXAMPLES:BOOL=OFF
         -DBUILD_SHARED_LIBS:BOOL=ON
         -DITK_USE_REVIEW:BOOL=ON
