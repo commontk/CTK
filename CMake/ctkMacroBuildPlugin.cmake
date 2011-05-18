@@ -107,21 +107,18 @@ MACRO(ctkMacroBuildPlugin)
     FOREACH(_suffix ${MY_EXPORTED_INCLUDE_SUFFIXES})
       LIST(APPEND my_includes ${CMAKE_CURRENT_SOURCE_DIR}/${_suffix})
     ENDFOREACH()
-
-    LIST(APPEND my_includes
-         ${CMAKE_CURRENT_BINARY_DIR}
-         ${MY_INCLUDE_DIRECTORIES}
-         )
   ELSE()
-    SET(${lib_name}_INCLUDE_SUFFIXES ${MY_EXPORTED_INCLUDE_SUFFIXES}  ""
+    SET(${lib_name}_INCLUDE_SUFFIXES ""
         CACHE INTERNAL "List of exported plugin include dirs")
 
-    SET(my_includes
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${MY_INCLUDE_DIRECTORIES}
-        )
+    SET(my_includes )
   ENDIF()
+  
+  LIST(APPEND my_includes
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${MY_INCLUDE_DIRECTORIES}
+      )
 
   # Add the include directories from the plugin dependencies
   # and external dependencies
