@@ -29,6 +29,18 @@ SET(KIT_SRCS
   ctkDICOMTester.h
 )
 
+IF(CTK_WRAP_PYTHONQT_LIGHT)
+  LIST(APPEND KIT_SRCS
+    ctkDICOMCorePythonQtDecorators.h
+    )
+  # Let's make sure the decorator are not wrapped !
+  SET_SOURCE_FILES_PROPERTIES(
+    ctkDICOMCorePythonQtDecorators.h
+    WRAP_EXCLUDE
+    )
+ENDIF()
+
+
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkDICOMDatabase.h
@@ -38,6 +50,12 @@ SET(KIT_MOC_SRCS
   ctkDICOMRetrieve.h
   ctkDICOMTester.h
   )
+
+IF(CTK_WRAP_PYTHONQT_LIGHT)
+  LIST(APPEND KIT_MOC_SRCS
+    ctkDICOMCorePythonQtDecorators.h
+    )
+ENDIF()
 
 # UI files
 SET(KIT_UI_FORMS
