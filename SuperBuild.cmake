@@ -112,7 +112,7 @@ ctkMacroCollectAllTargetLibraries("${CTK_APPLICATIONS_SUBDIRS}" "Applications" A
 # Using the variable ALL_TARGET_LIBRARIES initialized above with the help
 # of the macro ctkMacroCollectAllTargetLibraries, let's get the list of all Non-CTK dependencies.
 # NON_CTK_DEPENDENCIES is expected by the macro ctkMacroShouldAddExternalProject
-ctkMacroGetAllNonCTKTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCIES)
+ctkMacroGetAllNonProjectTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCIES)
 #MESSAGE(STATUS NON_CTK_DEPENDENCIES:${NON_CTK_DEPENDENCIES})
 
 #-----------------------------------------------------------------------------

@@ -48,7 +48,7 @@
 #! \ingroup CMakeAPI
 MACRO(ctkMacroBuildPlugin)
   CtkMacroParseArguments(MY
-    "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;TRANSLATIONS"
+    "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;EXPORTED_INCLUDE_SUFFIXES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;TRANSLATIONS;OUTPUT_DIR"
     "TEST_PLUGIN"
     ${ARGN}
     )
@@ -100,11 +100,26 @@ MACRO(ctkMacroBuildPlugin)
 
   # --------------------------------------------------------------------------
   # Include dirs
-  SET(my_includes
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${MY_INCLUDE_DIRECTORIES}
-    )
+  IF(MY_EXPORTED_INCLUDE_SUFFIXES)
+    SET(${lib_name}_INCLUDE_SUFFIXES ${MY_EXPORTED_INCLUDE_SUFFIXES}
+        CACHE INTERNAL "List of exported plugin include dirs")
+
+    SET(my_includes )
+    FOREACH(_suffix ${MY_EXPORTED_INCLUDE_SUFFIXES})
+      LIST(APPEND my_includes ${CMAKE_CURRENT_SOURCE_DIR}/${_suffix})
+    ENDFOREACH()
+  ELSE()
+    SET(${lib_name}_INCLUDE_SUFFIXES ""
+        CACHE INTERNAL "List of exported plugin include dirs")
+
+    SET(my_includes )
+  ENDIF()
+  
+  LIST(APPEND my_includes
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${MY_INCLUDE_DIRECTORIES}
+      )
 
   # Add the include directories from the plugin dependencies
   # and external dependencies
@@ -113,6 +128,9 @@ MACRO(ctkMacroBuildPlugin)
   INCLUDE_DIRECTORIES(
     ${my_includes}
     )
+
+  # Add Qt include dirs and defines
+  INCLUDE(${QT_USE_FILE})
     
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
@@ -138,7 +156,13 @@ MACRO(ctkMacroBuildPlugin)
   SET(MY_QRC_SRCS)
 
   # Wrap
-  QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
+  IF(MY_MOC_SRCS)
+    # this is a workaround for Visual Studio. The relative include paths in the generated
+    # moc files can get very long and can't be resolved by the MSVC compiler.
+    FOREACH(moc_src ${MY_MOC_SRCS})
+      QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+    ENDFOREACH()
+  ENDIF()
   QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
   IF(DEFINED MY_RESOURCES)
     QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
@@ -171,7 +195,7 @@ MACRO(ctkMacroBuildPlugin)
 
   # Create translation files (.ts and .qm)
   SET(_plugin_qm_files )
-  SET(_plugin_relative_qm_files )
+  SET(_plugin_cached_resources_in_binary_tree )
   SET(_translations_dir "${CMAKE_CURRENT_BINARY_DIR}/CTK-INF/l10n")
   IF(MY_TRANSLATIONS)
     SET_SOURCE_FILES_PROPERTIES(${MY_TRANSLATIONS}
@@ -182,18 +206,31 @@ MACRO(ctkMacroBuildPlugin)
   IF(_plugin_qm_files)
     FOREACH(_qm_file ${_plugin_qm_files})
       FILE(RELATIVE_PATH _relative_qm_file ${CMAKE_CURRENT_BINARY_DIR} ${_qm_file})
-      LIST(APPEND _plugin_relative_qm_files ${_relative_qm_file})
+      LIST(APPEND _plugin_cached_resources_in_binary_tree ${_relative_qm_file})
+    ENDFOREACH()
+  ENDIF()
+
+  SET(_plugin_cached_resources_in_source_tree )
+  IF(MY_CACHED_RESOURCEFILES)
+    FOREACH(_cached_resource ${MY_CACHED_RESOURCEFILES})
+      IF(IS_ABSOLUTE "${_cached_resource}")
+        # create a path relative to the current binary dir
+        FILE(RELATIVE_PATH _relative_cached_resource ${CMAKE_CURRENT_BINARY_DIR} ${_cached_resource})
+        LIST(APPEND _plugin_cached_resources_in_binary_tree ${_relative_cached_resource})
+      ELSE()
+        LIST(APPEND _plugin_cached_resources_in_source_tree ${_cached_resource})
+      ENDIF()
     ENDFOREACH()
   ENDIF()
 
   # Add any other additional resource files
-  IF(MY_CACHED_RESOURCEFILES OR _plugin_relative_qm_files)
+  IF(_plugin_cached_resources_in_source_tree OR _plugin_cached_resources_in_binary_tree)
     STRING(REPLACE "." "_" _plugin_symbolicname ${Plugin-SymbolicName})
     ctkMacroGeneratePluginResourceFile(MY_QRC_SRCS
       NAME ${_plugin_symbolicname}_cached.qrc
       PREFIX ${Plugin-SymbolicName}
-      RESOURCES ${MY_CACHED_RESOURCEFILES}
-      BINARY_RESOURCES ${_plugin_relative_qm_files})
+      RESOURCES ${_plugin_cached_resources_in_source_tree}
+      BINARY_RESOURCES ${_plugin_cached_resources_in_binary_tree})
   ENDIF()
 
   SOURCE_GROUP("Resources" FILES
@@ -218,10 +255,16 @@ MACRO(ctkMacroBuildPlugin)
     )
 
   # Set the output directory for the plugin
-  SET(output_dir_suffix "plugins")
-  IF(MY_TEST_PLUGIN)
-    SET(output_dir_suffix "test_plugins")
+  IF(MY_OUTPUT_DIR)
+    SET(output_dir_suffix ${MY_OUTPUT_DIR})
+  ELSE()
+    SET(output_dir_suffix "plugins")
   ENDIF()
+
+  IF(MY_TEST_PLUGIN)
+    SET(output_dir_suffix "test_${output_dir_suffix}")
+  ENDIF()
+
   IF(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     SET(runtime_output_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${output_dir_suffix}")
   ELSE()

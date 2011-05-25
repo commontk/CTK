@@ -84,7 +84,7 @@ FUNCTION(ctkFunctionGenerateDGraphInput dir target_directories)
         SET(ctk_dependencies ${dependencies})
       ELSE()
         # filter dependencies starting with CTK org org_commontk_
-        ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
+        ctkMacroGetAllProjectTargetLibraries("${dependencies}" ctk_dependencies)
       ENDIF()
 
       IF(ctk_dependencies)

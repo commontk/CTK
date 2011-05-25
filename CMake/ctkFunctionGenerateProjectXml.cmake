@@ -79,7 +79,7 @@ FUNCTION(ctkFunctionGenerateProjectXml dir name target_directories is_superbuild
       SET(ctk_dependencies)
 
       # filter dependencies starting with CTK
-      ctkMacroGetAllCTKTargetLibraries("${dependencies}" ctk_dependencies)
+      ctkMacroGetAllProjectTargetLibraries("${dependencies}" ctk_dependencies)
 
       IF(${is_superbuild})
         SET(xml_subprojects ${xml_subprojects} "    <Dependency name=\"SuperBuild\"/>\n")
