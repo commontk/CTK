@@ -194,7 +194,7 @@ MACRO(ctkMacroBuildPlugin)
 
   # Create translation files (.ts and .qm)
   SET(_plugin_qm_files )
-  SET(_plugin_relative_qm_files )
+  SET(_plugin_cached_resources_in_binary_tree )
   SET(_translations_dir "${CMAKE_CURRENT_BINARY_DIR}/CTK-INF/l10n")
   IF(MY_TRANSLATIONS)
     SET_SOURCE_FILES_PROPERTIES(${MY_TRANSLATIONS}
@@ -205,18 +205,31 @@ MACRO(ctkMacroBuildPlugin)
   IF(_plugin_qm_files)
     FOREACH(_qm_file ${_plugin_qm_files})
       FILE(RELATIVE_PATH _relative_qm_file ${CMAKE_CURRENT_BINARY_DIR} ${_qm_file})
-      LIST(APPEND _plugin_relative_qm_files ${_relative_qm_file})
+      LIST(APPEND _plugin_cached_resources_in_binary_tree ${_relative_qm_file})
+    ENDFOREACH()
+  ENDIF()
+
+  SET(_plugin_cached_resources_in_source_tree )
+  IF(MY_CACHED_RESOURCEFILES)
+    FOREACH(_cached_resource ${MY_CACHED_RESOURCEFILES})
+      IF(IS_ABSOLUTE "${_cached_resource}")
+        # create a path relative to the current binary dir
+        FILE(RELATIVE_PATH _relative_cached_resource ${CMAKE_CURRENT_BINARY_DIR} ${_cached_resource})
+        LIST(APPEND _plugin_cached_resources_in_binary_tree ${_relative_cached_resource})
+      ELSE()
+        LIST(APPEND _plugin_cached_resources_in_source_tree ${_cached_resource})
+      ENDIF()
     ENDFOREACH()
   ENDIF()
 
   # Add any other additional resource files
-  IF(MY_CACHED_RESOURCEFILES OR _plugin_relative_qm_files)
+  IF(_plugin_cached_resources_in_source_tree OR _plugin_cached_resources_in_binary_tree)
     STRING(REPLACE "." "_" _plugin_symbolicname ${Plugin-SymbolicName})
     ctkMacroGeneratePluginResourceFile(MY_QRC_SRCS
       NAME ${_plugin_symbolicname}_cached.qrc
       PREFIX ${Plugin-SymbolicName}
-      RESOURCES ${MY_CACHED_RESOURCEFILES}
-      BINARY_RESOURCES ${_plugin_relative_qm_files})
+      RESOURCES ${_plugin_cached_resources_in_source_tree}
+      BINARY_RESOURCES ${_plugin_cached_resources_in_binary_tree})
   ENDIF()
 
   SOURCE_GROUP("Resources" FILES
