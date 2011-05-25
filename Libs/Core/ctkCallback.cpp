@@ -27,12 +27,14 @@
 // --------------------------------------------------------------------------
 ctkCallback::ctkCallback(QObject * parentObject) : QObject(parentObject)
 {
+  this->CallbackData = this;
   this->setCallback(0);
 }
 
 // --------------------------------------------------------------------------
-ctkCallback::ctkCallback(void (*newCallback)(), QObject * parentObject) : QObject(parentObject)
+ctkCallback::ctkCallback(void (*newCallback)(void * data), QObject * parentObject) : QObject(parentObject)
 {
+  this->CallbackData = this;
   this->setCallback(newCallback);
 }
 
@@ -42,15 +44,27 @@ ctkCallback::~ctkCallback()
 }
 
 // --------------------------------------------------------------------------
-void (*ctkCallback::callback()const)()
+void (*ctkCallback::callback()const)(void*)
 {
   return this->Callback;
 }
   
 // --------------------------------------------------------------------------
-void ctkCallback::setCallback(void (*newCallback)())
+void ctkCallback::setCallback(void (*newCallback)(void * data))
 {
   this->Callback = newCallback;
+}
+
+// --------------------------------------------------------------------------
+void * ctkCallback::callbackData()const
+{
+  return this->CallbackData;
+}
+
+// --------------------------------------------------------------------------
+void ctkCallback::setCallbackData(void * data)
+{
+  this->CallbackData = data;
 }
 
 // --------------------------------------------------------------------------
@@ -60,7 +74,7 @@ void ctkCallback::invoke()
     {
     return;
     }
-  (*this->Callback)();
+  (*this->Callback)(this->CallbackData);
 }
 
 
