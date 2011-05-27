@@ -32,6 +32,7 @@ MACRO(ctkMacroCompilePythonScript)
     SET(MY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
   ENDIF()
   
+  SET(input_files)
   SET(copied_files)
   SET(copied_python_files)
   FOREACH(file ${MY_SCRIPTS})
@@ -48,7 +49,8 @@ MACRO(ctkMacroCompilePythonScript)
       file(RELATIVE_PATH tgt_file ${CMAKE_CURRENT_BINARY_DIR} ${file})
       SET(tgt "${MY_DESTINATION_DIR}/${tgt_file}")
     ENDIF()
-
+    
+    LIST(APPEND input_files ${src})
     ADD_CUSTOM_COMMAND(DEPENDS ${src}
                         COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
                         OUTPUT ${tgt}
@@ -62,6 +64,7 @@ MACRO(ctkMacroCompilePythonScript)
       SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
       SET(tgt "${MY_DESTINATION_DIR}/${file}")
       
+      LIST(APPEND input_files ${src})
       ADD_CUSTOM_COMMAND(DEPENDS ${src}
                           COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
                           OUTPUT ${tgt}
@@ -70,11 +73,9 @@ MACRO(ctkMacroCompilePythonScript)
     ENDFOREACH()
   ENDIF()
            
-  IF(copied_files)
-    ADD_CUSTOM_TARGET(Copy${MY_TARGET_NAME}PythonFiles
-                      ALL
-                      DEPENDS ${copied_files})
-  ENDIF()  
+  IF(input_files)
+    ADD_CUSTOM_TARGET(Copy${MY_TARGET_NAME}PythonFiles DEPENDS ${input_files} ${copied_files})
+  ENDIF()
   
   # Byte compile the Python files.
   SET(compile_all_script "${CMAKE_CURRENT_BINARY_DIR}/compile_${MY_TARGET_NAME}_python_scripts.py")
