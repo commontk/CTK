@@ -76,6 +76,9 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   //Initialize Q/R widget
   d->QueryRetrieveWidget = new ctkDICOMQueryRetrieveWidget();
   d->QueryRetrieveWidget->setWindowModality ( Qt::ApplicationModal );
+
+  //initialize default directory, then listen for changes
+  this->setDatabaseDirectory(d->directoryButton->directory());
   connect(d->directoryButton, SIGNAL(directoryChanged(const QString&)), this, SLOT(setDatabaseDirectory(const QString&)));
 
   //Initialize import widget
