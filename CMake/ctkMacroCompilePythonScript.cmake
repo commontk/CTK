@@ -53,8 +53,8 @@ MACRO(ctkMacroCompilePythonScript)
                         COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
                         OUTPUT ${tgt}
                         COMMENT "Copying python script: ${file}")
-    SET(copied_python_files ${copied_python_files} ${tgt})
-    SET(copied_files ${copied_files} ${tgt})
+    LIST(APPEND copied_python_files ${tgt})
+    LIST(APPEND copied_files ${tgt})
   ENDFOREACH()
 
   IF(DEFINED MY_RESOURCES)
@@ -66,7 +66,7 @@ MACRO(ctkMacroCompilePythonScript)
                           COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
                           OUTPUT ${tgt}
                           COMMENT "Copying python resource: ${file}")
-      SET(copied_files ${copied_files} ${tgt})
+      LIST(APPEND copied_files ${tgt})
     ENDFOREACH()
   ENDIF()
            
