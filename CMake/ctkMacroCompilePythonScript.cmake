@@ -32,8 +32,8 @@ MACRO(ctkMacroCompilePythonScript)
     SET(MY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
   ENDIF()
   
-  set(copied_files)
-  set(copied_python_files)
+  SET(copied_files)
+  SET(copied_python_files)
   FOREACH(file ${MY_SCRIPTS})
     # Append "py" extension if needed
     get_filename_component(file_ext ${file} EXT)
@@ -49,23 +49,24 @@ MACRO(ctkMacroCompilePythonScript)
       SET(tgt "${MY_DESTINATION_DIR}/${tgt_file}")
     ENDIF()
 
-    SET(copied_python_files ${copied_python_files} ${tgt})
-    SET(copied_files ${copied_files} ${tgt})
     ADD_CUSTOM_COMMAND(DEPENDS ${src}
                         COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
                         OUTPUT ${tgt}
                         COMMENT "Copying python script: ${file}")
+    SET(copied_python_files ${copied_python_files} ${tgt})
+    SET(copied_files ${copied_files} ${tgt})
   ENDFOREACH()
 
   IF(DEFINED MY_RESOURCES)
     FOREACH(file ${MY_RESOURCES})
       SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
       SET(tgt "${MY_DESTINATION_DIR}/${file}")
-      SET(copied_files ${copied_files} ${tgt})
+      
       ADD_CUSTOM_COMMAND(DEPENDS ${src}
                           COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
                           OUTPUT ${tgt}
                           COMMENT "Copying python resource: ${file}")
+      SET(copied_files ${copied_files} ${tgt})
     ENDFOREACH()
   ENDIF()
            
