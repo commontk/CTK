@@ -345,6 +345,34 @@ void ctkPluginPrivate::stop0(bool wasStarted)
 }
 
 //----------------------------------------------------------------------------
+QStringList ctkPluginPrivate::findResourceEntries(const QString& path,
+                                                  const QString& pattern, bool recurse) const
+{
+  QStringList result;
+  QStringList resources = archive->findResourcesPath(path);
+  foreach(QString fp, resources)
+  {
+    QString lastComponentOfPath = fp.section('/', -1);
+    bool isDirectory = fp.endsWith("/");
+
+    if (!isDirectory &&
+        (pattern.isNull() || ctkPluginFrameworkUtil::filterMatch(pattern, lastComponentOfPath)))
+    {
+      result << (path + fp);
+    }
+    if (isDirectory && recurse)
+    {
+      QStringList subResources = findResourceEntries(fp, pattern, recurse);
+      foreach (QString subResource, subResources)
+      {
+        result << (path + subResource);
+      }
+    }
+  }
+  return result;
+}
+
+//----------------------------------------------------------------------------
 void ctkPluginPrivate::startDependencies()
 {
   QListIterator<ctkRequirePlugin*> i(this->require);

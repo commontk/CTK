@@ -622,6 +622,47 @@ public:
   virtual QStringList getResourceList(const QString& path) const;
 
   /**
+   * Returns a list of resources in this plugin.
+   *
+   * <p>
+   * This method is intended to be used to obtain configuration, setup,
+   * localization and other information from this plugin. This method can
+   * either return only entries in the specified path or recurse into
+   * subdirectories returning entries in the directory tree beginning at the
+   * specified path.
+   *
+   * <p>
+   * Examples:
+   *
+   * \code
+   * // List all XML files in the OSGI-INF directory and below
+   * QStringList r = b->findResources(&quot;OSGI-INF&quot;, &quot;*.xml&quot;, true);
+   *
+   * // Find a specific localization file
+   * QStringList r = b->findResources(&quot;OSGI-INF/l10n&quot;, &quot;plugin_nl_DU.tm&quot;, false);
+   * \endcode
+   *
+   * @param path The path name in which to look. The path is always relative
+   *        to the root of this plugin and may begin with &quot;/&quot;. A
+   *        path value of &quot;/&quot; indicates the root of this plugin.
+   * @param filePattern The file name pattern for selecting entries in the
+   *        specified path. The pattern is only matched against the last
+   *        element of the entry path. Substring matching is supported, as
+   *        specified in the Filter specification, using the wildcard
+   *        character (&quot;*&quot;). If a null QString is specified, this
+   *        is equivalent to &quot;*&quot; and matches all files.
+   * @param recurse If <code>true</code>, recurse into subdirectories.
+   *        Otherwise only return entries from the specified path.
+   * @return A list of QString objects for each matching entry, or
+   *         an empty list if an entry could not be found or if the caller
+   *         does not have the appropriate
+   *         <code>AdminPermission[this,RESOURCE]</code>, and the Plugin
+   *         Framework supports permissions.
+   * @throws std::logic_error If this plugin has been uninstalled.
+   */
+  virtual QStringList findResources(const QString& path, const QString& filePattern, bool recurse) const;
+
+  /**
    * Returns a QByteArray containing a Qt resource located at the
    * specified path in this plugin.
    * <p>

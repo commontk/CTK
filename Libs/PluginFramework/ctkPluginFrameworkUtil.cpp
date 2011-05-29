@@ -397,3 +397,41 @@ bool ctkPluginFrameworkUtil::removeDir(const QString& dirName)
 
   return result;
 }
+
+//----------------------------------------------------------------------------
+bool ctkPluginFrameworkUtil::filterMatch(const QString& filter, const QString& s)
+{
+  return patSubstr(s, 0, filter, 0);
+}
+
+bool ctkPluginFrameworkUtil::patSubstr(const QString& s, int si, const QString& pat, int pi)
+{
+  if (pat.length() - pi == 0)
+  {
+    return s.length() - si == 0;
+  }
+  if (pat[pi] == '*')
+  {
+    pi++;
+    for (;;)
+    {
+      if (patSubstr(s, si, pat, pi))
+        return true;
+      if (s.length() - si == 0)
+        return false;
+      si++;
+    }
+  }
+  else
+  {
+    if (s.length() - si==0)
+    {
+      return false;
+    }
+    if(s[si] != pat[pi])
+    {
+      return false;
+    }
+    return patSubstr(s, ++si, pat, ++pi);
+  }
+}

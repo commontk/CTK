@@ -74,6 +74,18 @@ public:
    * @returns <code>true</code> on success, <code>false</code> otherwise.
    */
   static bool removeDir(const QString& dirName);
+
+  /**
+   * Check wildcard filter matches the string
+   */
+  static bool filterMatch(const QString& filter, const QString& s);
+
+private:
+
+  /**
+   *
+   */
+  static bool patSubstr(const QString& s, int si, const QString& pat, int pi);
 };
 
 #endif // CTKPLUGINFRAMEWORKUTIL_P_H

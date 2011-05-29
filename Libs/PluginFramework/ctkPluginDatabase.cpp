@@ -360,7 +360,7 @@ ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QS
   try
   {
     ctkPluginArchive* archive = new ctkPluginArchive(m_PluginStorage, location, localPath,
-                                               pluginId);;
+                                                     pluginId);
 
     statement = "UPDATE Plugins SET SymbolicName=?,Version=? WHERE ID=?";
     QString versionString = archive->getAttribute(ctkPluginConstants::PLUGIN_VERSION);
@@ -453,20 +453,22 @@ QStringList ctkPluginDatabase::findResourcesPath(long pluginId, const QString& p
 
   executeQuery(&query, statement, bindValues);
 
-  QStringList paths;
+  QSet<QString> paths;
   while (query.next())
   {
     QString currPath = query.value(EBindIndex).toString();
-    int slashIndex = currPath.indexOf('/');
-    if (slashIndex > 0)
+    QStringList components = currPath.split('/', QString::SkipEmptyParts);
+    if (components.size() == 1)
     {
-      currPath = currPath.left(slashIndex+1);
+      paths << components.front();
     }
-
-    paths << currPath;
+    else if (components.size() == 2)
+    {
+      paths << components.front() + "/";
+    }
   }
 
-  return paths;
+  return paths.toList();
 }
 
 //----------------------------------------------------------------------------

@@ -335,6 +335,14 @@ QStringList ctkPlugin::getResourceList(const QString& path) const
 }
 
 //----------------------------------------------------------------------------
+QStringList ctkPlugin::findResources(const QString& path,
+                                     const QString& pattern, bool recurse) const
+{
+  Q_D(const ctkPlugin);
+  return d->findResourceEntries(path, pattern, recurse);
+}
+
+//----------------------------------------------------------------------------
 QByteArray ctkPlugin::getResource(const QString& path) const
 {
   Q_D(const ctkPlugin);

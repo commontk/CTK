@@ -115,6 +115,12 @@ public:
   void stop0(bool wasStarted);
 
   /**
+   *
+   */
+  QStringList findResourceEntries(const QString& path,
+                                  const QString& pattern, bool recurse) const;
+
+  /**
    * Union of flags allowing plugin class access
    */
   static const ctkPlugin::States RESOLVED_FLAGS;
