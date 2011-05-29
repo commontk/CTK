@@ -35,10 +35,11 @@ const QString ctkPluginArchive::AUTOSTART_SETTING_ACTIVATION_POLICY("activation_
 //----------------------------------------------------------------------------
 ctkPluginArchive::ctkPluginArchive(ctkPluginStorage* pluginStorage,
                                    const QUrl& pluginLocation, const QString& localPluginPath,
-                                   int pluginId)
-                                     : autostartSetting(-1), id(pluginId), startLevel(-1),
-                                     location(pluginLocation), localPluginPath(localPluginPath),
-                                     storage(pluginStorage)
+                                   int pluginId, int startLevel, const QDateTime& lastModified,
+                                   int autostartSetting)
+  : autostartSetting(autostartSetting), id(pluginId), startLevel(startLevel),
+    lastModified(lastModified), location(pluginLocation),
+    localPluginPath(localPluginPath), storage(pluginStorage)
 {
   QByteArray manifestResource = this->getPluginResource("META-INF/MANIFEST.MF");
   if (manifestResource.isEmpty())

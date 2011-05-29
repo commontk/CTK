@@ -809,7 +809,7 @@ QList<ctkPluginArchive*> ctkPluginDatabase::getPluginArchives() const
   checkConnection();
 
   QSqlQuery query(QSqlDatabase::database(m_connectionName));
-  QString statement("SELECT ID, Location, LocalPath FROM Plugins WHERE State != ?");
+  QString statement("SELECT ID, Location, LocalPath, StartLevel, LastModified, AutoStart FROM Plugins WHERE State != ?");
   QList<QVariant> bindValues;
   bindValues.append(ctkPlugin::UNINSTALLED);
 
@@ -828,9 +828,14 @@ QList<ctkPluginArchive*> ctkPluginDatabase::getPluginArchives() const
                                     ctkPluginDatabaseException::DB_FILE_INVALID);
     }
 
+    const int startLevel = query.value(EBindIndex3).toInt();
+    const QDateTime lastModified = query.value(EBindIndex4).toDateTime();
+    const int autoStart = query.value(EBindIndex5).toInt();
+
     try
     {
-      ctkPluginArchive* pa = new ctkPluginArchive(m_PluginStorage, location, localPath, id);
+      ctkPluginArchive* pa = new ctkPluginArchive(m_PluginStorage, location, localPath, id,
+                                                  startLevel, lastModified, autoStart);
       archives.append(pa);
     }
     catch (const ctkPluginException& exc)

@@ -82,7 +82,9 @@ public:
    *
    */
   ctkPluginArchive(ctkPluginStorage* pluginStorage, const QUrl& pluginLocation,
-                   const QString& localPluginPath, int pluginId);
+                   const QString& localPluginPath, int pluginId,
+                   int startLevel = -1, const QDateTime& lastModified = QDateTime(),
+                   int autostartSetting = -1);
 
   /**
    * Get an attribute from the manifest of a plugin.
