@@ -397,8 +397,9 @@ void ctkPluginPrivate::startDependencies()
     }
 
     // We take the first plugin in the list (highest version number)
-    // Immediately start the dependencies (no lazy activation)
-    pl.front()->start(0);
+    // Immediately start the dependencies (no lazy activation) but do not
+    // change the autostart setting of the plugin.
+    pl.front()->start(ctkPlugin::START_TRANSIENT);
   }
 }
 
