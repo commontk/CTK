@@ -37,7 +37,7 @@ MACRO(ctkMacroGeneratePluginResourceFile QRC_SRCS)
   SET(_qrc_content "${_qrc_content}</qresource>
 </RCC>
 ")
-  FILE(WRITE "${_qrc_filepath}" "${_qrc_content}")
+  CONFIGURE_FILE("${CTK_CMAKE_DIR}/plugin_resources_cached.qrc.in" "${_qrc_filepath}" @ONLY)
 
   QT4_ADD_RESOURCES(${QRC_SRCS} ${_qrc_filepath})
 
