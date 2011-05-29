@@ -106,7 +106,7 @@ QFileInfo ctkPluginContext::getDataFile(const QString& filename)
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  QDir dataRoot(d->plugin->getDataRoot().absolutePath());
+  QDir dataRoot(d->plugin->getDataRoot().absoluteFilePath());
   if (!dataRoot.exists())
   {
     if (!dataRoot.mkpath(dataRoot.absolutePath()))
