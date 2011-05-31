@@ -32,8 +32,7 @@ MACRO(ctkMacroCompilePythonScript)
     SET(MY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
   ENDIF()
   
-  SET(input_files)
-  SET(copied_files)
+  SET(input_python_files)
   SET(copied_python_files)
   FOREACH(file ${MY_SCRIPTS})
     # Append "py" extension if needed
@@ -50,32 +49,15 @@ MACRO(ctkMacroCompilePythonScript)
       SET(tgt "${MY_DESTINATION_DIR}/${tgt_file}")
     ENDIF()
     
-    LIST(APPEND input_files ${src})
+    LIST(APPEND input_python_files ${src})
     ADD_CUSTOM_COMMAND(DEPENDS ${src}
                         COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
                         OUTPUT ${tgt}
                         COMMENT "Copying python script: ${file}")
     LIST(APPEND copied_python_files ${tgt})
-    LIST(APPEND copied_files ${tgt})
   ENDFOREACH()
-
-  IF(DEFINED MY_RESOURCES)
-    FOREACH(file ${MY_RESOURCES})
-      SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
-      SET(tgt "${MY_DESTINATION_DIR}/${file}")
-      
-      LIST(APPEND input_files ${src})
-      ADD_CUSTOM_COMMAND(DEPENDS ${src}
-                          COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
-                          OUTPUT ${tgt}
-                          COMMENT "Copying python resource: ${file}")
-      LIST(APPEND copied_files ${tgt})
-    ENDFOREACH()
-  ENDIF()
-           
-  IF(input_files)
-    ADD_CUSTOM_TARGET(Copy${MY_TARGET_NAME}PythonFiles DEPENDS ${input_files} ${copied_files})
-  ENDIF()
+  
+  ADD_CUSTOM_TARGET(Copy${MY_TARGET_NAME}PythonFiles DEPENDS ${input_python_files} ${copied_python_files})
   
   # Byte compile the Python files.
   SET(compile_all_script "${CMAKE_CURRENT_BINARY_DIR}/compile_${MY_TARGET_NAME}_python_scripts.py")
@@ -126,9 +108,30 @@ EXECUTE_PROCESS(
     DEPENDS 
       ${CMAKE_CURRENT_BINARY_DIR}/python_compile_${MY_TARGET_NAME}_complete
       ${compile_all_script}
-      )   
-  
-  # Install python module directory
+      )
+      
+  IF(DEFINED MY_RESOURCES)
+    SET(resource_input_files)
+    SET(copied_resource_files)
+    FOREACH(file ${MY_RESOURCES})
+      SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
+      SET(tgt "${MY_DESTINATION_DIR}/${file}")
+      
+      LIST(APPEND resource_input_files ${src})
+      ADD_CUSTOM_COMMAND(DEPENDS ${src}
+                          COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
+                          OUTPUT ${tgt}
+                          COMMENT "Copying python resource: ${file}")
+      LIST(APPEND copied_resource_files ${tgt})
+    ENDFOREACH()
+    ADD_CUSTOM_TARGET(Copy${MY_TARGET_NAME}PythonResourceFiles ALL
+      DEPENDS
+        ${resource_input_files} 
+        ${copied_resource_files}
+        )
+  ENDIF()
+
+  # Install python module / resources directory
   INSTALL(DIRECTORY "${MY_DESTINATION_DIR}"
     DESTINATION "${MY_INSTALL_DIR}" COMPONENT Runtime
     USE_SOURCE_PERMISSIONS)
