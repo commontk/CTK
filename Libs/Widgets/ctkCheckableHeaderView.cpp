@@ -236,7 +236,6 @@ void ctkCheckableHeaderView::onHeaderDataChanged(Qt::Orientation orient,
                                               int firstSection,
                                               int lastSection)
 {
-  Q_D(ctkCheckableHeaderView);
   if(orient != this->orientation())
     {
     return;

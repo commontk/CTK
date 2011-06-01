@@ -90,7 +90,6 @@ ctkCheckableModelHelperPrivate::~ctkCheckableModelHelperPrivate()
 //----------------------------------------------------------------------------
 void ctkCheckableModelHelperPrivate::init()
 {
-  Q_Q(ctkCheckableModelHelper);
 }
 
 //----------------------------------------------------------------------------
@@ -123,7 +122,6 @@ void ctkCheckableModelHelperPrivate::setCheckState(
 void ctkCheckableModelHelperPrivate::setIndexCheckState(
   const QModelIndex& index, Qt::CheckState checkState)
 {
-  Q_Q(ctkCheckableModelHelper);
   bool checkable = false;
   this->checkState(index, &checkable);
   if (!checkable && !this->ForceCheckability)
@@ -443,7 +441,6 @@ Qt::CheckState ctkCheckableModelHelper::defaultCheckState()const
 //-----------------------------------------------------------------------------
 void ctkCheckableModelHelper::setHeaderCheckState(int section, Qt::CheckState checkState)
 {
-  Q_D(ctkCheckableModelHelper);
   QAbstractItemModel *current = this->model();
   if(current == 0)
     {    
@@ -456,7 +453,6 @@ void ctkCheckableModelHelper::setHeaderCheckState(int section, Qt::CheckState ch
 //-----------------------------------------------------------------------------
 void ctkCheckableModelHelper::setCheckState(const QModelIndex& index, Qt::CheckState checkState)
 {
-  Q_D(ctkCheckableModelHelper);
   QAbstractItemModel *current = this->model();
   if(current == 0)
     {    
@@ -467,7 +463,6 @@ void ctkCheckableModelHelper::setCheckState(const QModelIndex& index, Qt::CheckS
 //-----------------------------------------------------------------------------
 void ctkCheckableModelHelper::toggleCheckState(const QModelIndex& modelIndex)
 {
-  Q_D(ctkCheckableModelHelper);
   // If the section is checkable, toggle the check state.
   if(!this->isCheckable(modelIndex))
     {
@@ -482,7 +477,6 @@ void ctkCheckableModelHelper::toggleCheckState(const QModelIndex& modelIndex)
 //-----------------------------------------------------------------------------
 void ctkCheckableModelHelper::toggleHeaderCheckState(int section)
 {
-  Q_D(ctkCheckableModelHelper);
   // If the section is checkable, toggle the check state.
   if(!this->isHeaderCheckable(section))
     {
@@ -500,6 +494,8 @@ void ctkCheckableModelHelper::onHeaderDataChanged(Qt::Orientation orient,
                                               int lastSection)
 {
   Q_D(ctkCheckableModelHelper);
+  Q_UNUSED(firstSection);
+  Q_UNUSED(lastSection);
   if(orient != this->orientation())
     {
     return;

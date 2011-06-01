@@ -160,7 +160,6 @@ void ctkCheckableComboBox::setCheckableModel(QAbstractItemModel* newModel)
 //-----------------------------------------------------------------------------
 QAbstractItemModel* ctkCheckableComboBox::checkableModel()const
 {
-  Q_D(const ctkCheckableComboBox);
   return this->model();
 }
 
@@ -197,7 +196,6 @@ void ctkCheckableComboBox::onDataChanged(const QModelIndex& start, const QModelI
 //-----------------------------------------------------------------------------
 void ctkCheckableComboBox::paintEvent(QPaintEvent *)
 {
-  Q_D(ctkCheckableComboBox);
   QStylePainter painter(this);
   painter.setPen(palette().color(QPalette::Text));
 
