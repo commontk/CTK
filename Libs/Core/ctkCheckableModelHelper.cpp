@@ -427,10 +427,10 @@ bool ctkCheckableModelHelper::forceCheckability()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkCheckableModelHelper::setDefaultCheckState(Qt::CheckState default)
+void ctkCheckableModelHelper::setDefaultCheckState(Qt::CheckState defaultCheckState)
 {
   Q_D(ctkCheckableModelHelper);
-  d->DefaultCheckState = default;
+  d->DefaultCheckState = defaultCheckState;
 }
 
 //-----------------------------------------------------------------------------
