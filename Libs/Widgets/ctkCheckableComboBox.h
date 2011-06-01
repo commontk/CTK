@@ -44,12 +44,23 @@ public:
   QAbstractItemModel* checkableModel()const;
   void setCheckableModel(QAbstractItemModel *model);
   
-  ctkCheckableModelHelper* checkableModelHelper()const;
-  
+  /// Returns an up-to-date list of all the checked indexes.
   QModelIndexList checkedIndexes()const;
+  /// Returns true if all the indexes are checked, false otherwise 
   bool allChecked()const;
+  /// Returns true if none of the indexes is checked, false otherwise
   bool noneChecked()const;
 
+  /// Utility function to conveniently check the state of an index
+  void setCheckState(const QModelIndex& index, Qt::CheckState check);
+  /// Utility function to return the check state of a model index
+  Qt::CheckState checkState(const QModelIndex& index)const;
+
+  /// Returns a pointer to the checkable model helper to give a direct access
+  /// to the check manager.
+  ctkCheckableModelHelper* checkableModelHelper()const;
+  
+  /// Reimplemented for internal reasons
   bool eventFilter(QObject *o, QEvent *e);
   
 signals:
