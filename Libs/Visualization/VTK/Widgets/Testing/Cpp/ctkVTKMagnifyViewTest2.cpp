@@ -124,7 +124,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
 
   // Magnify widget parameters (we want an odd widget size and odd bullsEye)
   bool showCrosshair = true;
-  QPen crosshairPen(QPen(Qt::yellow));
+  QPen crosshairPen(Qt::yellow);
   crosshairPen.setJoinStyle(Qt::MiterJoin);
   ctkCrosshairLabel::CrosshairType crosshairType
       = ctkCrosshairLabel::BullsEyeCrosshair;
