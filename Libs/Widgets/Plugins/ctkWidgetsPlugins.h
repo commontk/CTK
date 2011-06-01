@@ -28,6 +28,7 @@
 #include "ctkWidgetsPluginsExport.h"
 #include "ctkActionsWidgetPlugin.h"
 #include "ctkAxesWidgetPlugin.h"
+#include "ctkCheckableComboBoxPlugin.h"
 #include "ctkCollapsibleButtonPlugin.h"
 #include "ctkCollapsibleGroupBoxPlugin.h"
 #include "ctkColorPickerButtonPlugin.h"
@@ -69,6 +70,7 @@ public:
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkActionsWidgetPlugin
             << new ctkAxesWidgetPlugin
+            << new ctkCheckableComboBoxPlugin
             << new ctkCollapsibleButtonPlugin
             << new ctkCollapsibleGroupBoxPlugin
             << new ctkColorPickerButtonPlugin

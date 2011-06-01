@@ -19,51 +19,51 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkTreeComboBoxPlugin.h"
-#include "ctkTreeComboBox.h"
+#include "ctkCheckableComboBoxPlugin.h"
+#include "ctkCheckableComboBox.h"
 
 //-----------------------------------------------------------------------------
-ctkTreeComboBoxPlugin::ctkTreeComboBoxPlugin(QObject* pluginParent)
+ctkCheckableComboBoxPlugin::ctkCheckableComboBoxPlugin(QObject* pluginParent)
   : QObject(pluginParent)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkTreeComboBoxPlugin::createWidget(QWidget *parentForWidget)
+QWidget *ctkCheckableComboBoxPlugin::createWidget(QWidget* parentForWidget)
 {
-  ctkTreeComboBox* newWidget = new ctkTreeComboBox(parentForWidget);
+  ctkCheckableComboBox* newWidget = new ctkCheckableComboBox(parentForWidget);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkTreeComboBoxPlugin::domXml() const
+QString ctkCheckableComboBoxPlugin::domXml() const
 {
-  return "<widget class=\"ctkTreeComboBox\" \
-          name=\"TreeComboBox\">\n"
+  return "<widget class=\"ctkCheckableComboBox\" \
+          name=\"CheckableComboBox\">\n"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkTreeComboBoxPlugin::icon() const
+QIcon ctkCheckableComboBoxPlugin::icon() const
 {
   return QIcon(":/Icons/combobox.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkTreeComboBoxPlugin::includeFile() const
+QString ctkCheckableComboBoxPlugin::includeFile() const
 {
-  return "ctkTreeComboBox.h";
+  return "ctkCheckableComboBox.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkTreeComboBoxPlugin::isContainer() const
+bool ctkCheckableComboBoxPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkTreeComboBoxPlugin::name() const
+QString ctkCheckableComboBoxPlugin::name() const
 {
-  return "ctkTreeComboBox";
+  return "ctkCheckableComboBox";
 }

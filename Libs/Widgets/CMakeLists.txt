@@ -17,6 +17,8 @@ SET(KIT_SRCS
   ctkAxesWidget.h
   ctkButtonGroup.cpp
   ctkButtonGroup.h
+  ctkCheckableComboBox.cpp
+  ctkCheckableComboBox.h
   ctkCheckableHeaderView.cpp
   ctkCheckableHeaderView.h
   ctkCheckBoxPixmaps.cpp
@@ -154,6 +156,7 @@ SET(KIT_MOC_SRCS
   ctkAxesWidget.h
   ctkAddRemoveComboBox.h
   ctkButtonGroup.h
+  ctkCheckableComboBox.h
   ctkCheckableHeaderView.h
   ctkCheckablePushButton.h
   ctkCheckBoxPixmaps.h
