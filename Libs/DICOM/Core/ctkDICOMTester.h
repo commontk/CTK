@@ -69,19 +69,19 @@ public:
       results into a no-op. The return value is 0.
       \sa QProcess::start(),
    */
-  QProcess* startDCMQRSCP();
+  Q_INVOKABLE QProcess* startDCMQRSCP();
 
   /** Stop the running DCMQRSCP process. Returns it's exit status or false if
       there is no running process.
   */
-  bool stopDCMQRSCP();
+  Q_INVOKABLE bool stopDCMQRSCP();
 
-  /** Pushes data (DCM images) using DCMTK storeSCU app. It creates a separate
-      process and waits for its termination.
+  /** Pushes data (DCM images referred to by file name in data list) using DCMTK 
+      storeSCU app. It creates a separate process and waits for its termination.
       To be working, dcmqrscp must be running
       \sa startDCMQRSCP()
    */
-  bool storeData(const QStringList& data);
+  Q_INVOKABLE bool storeData(const QStringList& data);
 
 protected:
   QScopedPointer<ctkDICOMTesterPrivate> d_ptr;
