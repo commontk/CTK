@@ -95,9 +95,9 @@ endif()
 
 # For more details, see http://www.kitware.com/blog/home/post/11
 set(CTEST_USE_LAUNCHERS 0)
-if (NOT ${CMAKE_GENERATOR} MATCHES "Visual Studio")
-  set(CTEST_USE_LAUNCHERS 1)
-endif()
+#if (NOT ${CTEST_CMAKE_GENERATOR} MATCHES "Visual Studio")
+#  set(CTEST_USE_LAUNCHERS 1)
+#endif()
 
 if(empty_binary_directory)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
@@ -199,14 +199,12 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
     
     if (WITH_DOCUMENTATION)
       message("----------- [ Build Documentation ] -----------")
-      set(CTEST_USE_LAUNCHERS 0)
       # Build Documentation target
       set_property(GLOBAL PROPERTY SubProject Documentation)
       set_property(GLOBAL PROPERTY Label Documentation)
       set(CTEST_BUILD_TARGET "doc")
       ctest_build(BUILD "${ctk_build_dir}" APPEND)
       ctest_submit(PARTS Build)
-      set(CTEST_USE_LAUNCHERS 1)
     endif()
     
     # HACK Unfortunately ctest_coverage ignores the build argument, try to force it...
