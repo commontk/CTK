@@ -33,6 +33,7 @@
 
 // CTK includes
 #include "ctkCheckableHeaderView.h"
+#include <ctkCheckableModelHelper.h>
 
 // STD includes
 #include <iostream>
@@ -78,8 +79,8 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
     headerView->setClickable(previousHeaderView->isClickable());
     headerView->setMovable(previousHeaderView->isMovable());
     headerView->setHighlightSections(previousHeaderView->highlightSections());
-    headerView->setPropagateDepth(-1);
-    headerView->setForceCheckability(true);
+    headerView->checkableModelHelper()->setPropagateDepth(-1);
+    headerView->checkableModelHelper()->setForceCheckability(true);
     viewer.setHeader(headerView);
     model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
     qDebug() << "new: " << headerView->isHidden();

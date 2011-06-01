@@ -29,6 +29,7 @@
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
+#include <ctkCheckableModelHelper.h>
 #include <ctkLogger.h>
 
 // ctkDICOMCore includes
@@ -114,7 +115,7 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
   headerView->setClickable(previousHeaderView->isClickable());
   headerView->setMovable(previousHeaderView->isMovable());
   headerView->setHighlightSections(previousHeaderView->highlightSections());
-  headerView->setPropagateDepth(-1);
+  headerView->checkableModelHelper()->setPropagateDepth(-1);
   this->results->setHeader(headerView);
   // headerView is hidden because it was created with a visisble parent widget 
   headerView->setHidden(false);

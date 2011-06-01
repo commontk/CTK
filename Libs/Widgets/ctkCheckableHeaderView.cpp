@@ -62,6 +62,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // CTK includes
 #include "ctkCheckableHeaderView.h"
+#include <ctkCheckableModelHelper.h>
 #include "ctkCheckBoxPixmaps.h"
 
 //-----------------------------------------------------------------------------
@@ -75,44 +76,21 @@ public:
   ~ctkCheckableHeaderViewPrivate();
 
   void init();
-  /// Set index checkstate and call propagate
-  void setIndexCheckState(const QModelIndex& index, Qt::CheckState checkState);
-  /// Return the depth in the model tree of the index.
-  /// -1 if the index is the root element a header or a header, 0 if the index
-  /// is a toplevel index, 1 if its parent is toplevel, 2 if its grandparent is
-  /// toplevel, etc.
-  int indexDepth(const QModelIndex& modelIndex)const;
-  /// Set the checkstate of the index based on its children and grand children
-  void updateCheckState(const QModelIndex& modelIndex);
-  /// Set the check state of the index to all its children and grand children
-  void propagateCheckStateToChildren(const QModelIndex& modelIndex);
 
-  Qt::CheckState checkState(const QModelIndex& index, bool *checkable)const;
-  void setCheckState(const QModelIndex& index, Qt::CheckState newCheckState);
-
+  ctkCheckableModelHelper* CheckableModelHelper;
   int                 Pressed;
   ctkCheckBoxPixmaps* CheckBoxPixmaps;
   bool                HeaderIsUpdating;
-  bool                ItemsAreUpdating;
-  bool                ForceCheckability;
-  /// 0 means no propagation
-  /// -1 means unlimited propagation
-  /// 1 means propagate to top-level indexes
-  /// 2 means propagate to top-level and their children
-  /// ...
-  int                 PropagateDepth;
 };
 
 //----------------------------------------------------------------------------
 ctkCheckableHeaderViewPrivate::ctkCheckableHeaderViewPrivate(ctkCheckableHeaderView& object)
   :q_ptr(&object)
 {
-  this->HeaderIsUpdating = false;
-  this->ItemsAreUpdating = false;
-  this->CheckBoxPixmaps = 0;
+  this->CheckableModelHelper = 0;
   this->Pressed = -1;
-  this->ForceCheckability = false;
-  this->PropagateDepth = -1;
+  this->CheckBoxPixmaps = 0;
+  this->HeaderIsUpdating = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -123,6 +101,11 @@ ctkCheckableHeaderViewPrivate::~ctkCheckableHeaderViewPrivate()
     delete this->CheckBoxPixmaps;
     this->CheckBoxPixmaps = 0;
     }
+  if (this->CheckableModelHelper)
+    {
+    delete this->CheckableModelHelper;
+    this->CheckableModelHelper = 0;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -130,157 +113,7 @@ void ctkCheckableHeaderViewPrivate::init()
 {
   Q_Q(ctkCheckableHeaderView);
   this->CheckBoxPixmaps = new ctkCheckBoxPixmaps(q);
-}
-
-//----------------------------------------------------------------------------
-Qt::CheckState ctkCheckableHeaderViewPrivate::checkState(
-  const QModelIndex& index, bool *checkable)const
-{
-  Q_Q(const ctkCheckableHeaderView);
-  QVariant indexCheckState = index != q->rootIndex() ?
-    q->model()->data(index, Qt::CheckStateRole):
-    q->model()->headerData(0, q->orientation(), Qt::CheckStateRole);
-  return static_cast<Qt::CheckState>(indexCheckState.toInt(checkable));
-}
-
-//----------------------------------------------------------------------------
-void ctkCheckableHeaderViewPrivate::setCheckState(
-  const QModelIndex& modelIndex, Qt::CheckState newCheckState)
-{
-  Q_Q(ctkCheckableHeaderView);
-  if (modelIndex != q->rootIndex())
-    {
-    q->model()->setData(modelIndex, newCheckState, Qt::CheckStateRole);
-    }
-  else
-    {
-    q->model()->setHeaderData(0, q->orientation(), newCheckState, Qt::CheckStateRole);
-    }
-}
-
-//----------------------------------------------------------------------------
-void ctkCheckableHeaderViewPrivate::setIndexCheckState(
-  const QModelIndex& index, Qt::CheckState checkState)
-{
-  bool checkable = false;
-  this->checkState(index, &checkable);
-  if (!checkable && !this->ForceCheckability)
-    {
-    // The index is not checkable and we don't want to force checkability
-    return;
-    }
-  this->setCheckState(index, checkState);
-  this->propagateCheckStateToChildren(index);
-}
-
-//-----------------------------------------------------------------------------
-int ctkCheckableHeaderViewPrivate::indexDepth(const QModelIndex& modelIndex)const
-{
-  int depth = -1;
-  QModelIndex parentIndex = modelIndex;
-  while (parentIndex.isValid())
-    {
-    ++depth;
-    parentIndex = parentIndex.parent();
-    }
-  return depth;
-}
-
-//-----------------------------------------------------------------------------
-void ctkCheckableHeaderViewPrivate
-::updateCheckState(const QModelIndex& modelIndex)
-{
-  Q_Q(ctkCheckableHeaderView);
-  bool checkable = false;
-  int oldCheckState = this->checkState(modelIndex, &checkable);
-  if (!checkable)
-    {
-    return;
-    }
-
-  Qt::CheckState newCheckState = Qt::PartiallyChecked;
-  bool firstCheckableChild = true;
-  const int rowCount = q->orientation() == Qt::Horizontal ?
-    q->model()->rowCount(modelIndex) : 1;
-  const int columnCount = q->orientation() == Qt::Vertical ?
-    q->model()->columnCount(modelIndex) : 1;
-  for (int r = 0; r < rowCount; ++r)
-    {
-    for (int c = 0; c < columnCount; ++c)
-      {
-      QModelIndex child = q->model()->index(r, c, modelIndex);
-      QVariant childCheckState = q->model()->data(child, Qt::CheckStateRole);
-      int childState = childCheckState.toInt(&checkable);
-      if (!checkable)
-        {
-        continue;
-        }
-      if (firstCheckableChild)
-        {
-        newCheckState = static_cast<Qt::CheckState>(childState);
-        firstCheckableChild = false;
-        }
-      if (newCheckState != childState)
-        {
-        newCheckState = Qt::PartiallyChecked;
-        }
-      if (newCheckState == Qt::PartiallyChecked)
-        {
-        break;
-        }
-      }
-    if (!firstCheckableChild && newCheckState == Qt::PartiallyChecked)
-      {
-      break;
-      }
-    }
-  if (oldCheckState == newCheckState)
-    {
-    return;
-    }
-  this->setCheckState(modelIndex, newCheckState);
-  if (modelIndex != q->rootIndex())
-    {
-    this->updateCheckState(modelIndex.parent());
-    }
-}
-
-//-----------------------------------------------------------------------------
-void ctkCheckableHeaderViewPrivate
-::propagateCheckStateToChildren(const QModelIndex& modelIndex)
-{
-  Q_Q(ctkCheckableHeaderView);
-  int indexDepth = this->indexDepth(modelIndex);
-  if (this->PropagateDepth == 0 ||
-      !(indexDepth < this->PropagateDepth || this->PropagateDepth == -1))
-    {
-    return;
-    }
-
-  bool checkable = false;
-  Qt::CheckState checkState = this->checkState(modelIndex, &checkable);
-  if (!checkable || checkState == Qt::PartiallyChecked)
-    {
-    return;
-    }
-
-  while (this->ForceCheckability && q->model()->canFetchMore(modelIndex))
-    {
-    q->model()->fetchMore(modelIndex);
-    }
-  
-  const int rowCount = q->orientation() == Qt::Horizontal ?
-    q->model()->rowCount(modelIndex) : 1;
-  const int columnCount = q->orientation() == Qt::Vertical ?
-    q->model()->columnCount(modelIndex) : 1;
-  for (int r = 0; r < rowCount; ++r)
-    {
-    for (int c = 0; c < columnCount; ++c)
-      {
-      QModelIndex child = q->model()->index(r, c, modelIndex);
-      this->setIndexCheckState(child, checkState);
-      }
-    }
+  this->CheckableModelHelper = new ctkCheckableModelHelper(q->orientation(), q);
 }
 
 //----------------------------------------------------------------------------
@@ -305,6 +138,34 @@ ctkCheckableHeaderView::~ctkCheckableHeaderView()
 }
 
 //-----------------------------------------------------------------------------
+Qt::CheckState ctkCheckableHeaderView::checkState(int section)const
+{
+  Q_D(const ctkCheckableHeaderView);
+  return d->CheckableModelHelper->headerCheckState(section);
+}
+
+//-----------------------------------------------------------------------------
+bool ctkCheckableHeaderView::checkState(int section, Qt::CheckState& checkState)const
+{
+  Q_D(const ctkCheckableHeaderView);
+  return d->CheckableModelHelper->headerCheckState(section, checkState);
+}
+
+//-----------------------------------------------------------------------------
+void ctkCheckableHeaderView::setCheckState(int section, Qt::CheckState checkState)
+{
+  Q_D(ctkCheckableHeaderView);
+  d->CheckableModelHelper->setHeaderCheckState(section, checkState);
+}
+
+//-----------------------------------------------------------------------------
+ctkCheckableModelHelper* ctkCheckableHeaderView::checkableModelHelper()const
+{
+  Q_D(const ctkCheckableHeaderView);
+  return d->CheckableModelHelper;
+}
+
+//-----------------------------------------------------------------------------
 bool ctkCheckableHeaderView::eventFilter(QObject *, QEvent *e)
 {
   if(e->type() != QEvent::FocusIn && 
@@ -321,11 +182,7 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
 {
   Q_D(ctkCheckableHeaderView);
   QAbstractItemModel *current = this->model();
-  if (current == newModel)
-    {
-    return;
-    }
-  if(current)
+  if (current)
     {
     this->disconnect(
       current, SIGNAL(headerDataChanged(Qt::Orientation, int, int)),
@@ -334,17 +191,14 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
       current, SIGNAL(modelReset()),
       this, SLOT(updateHeaderPixmaps()));
     this->disconnect(
-      current, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
-    this->disconnect(
       current, SIGNAL(columnsInserted(const QModelIndex &, int, int)), 
-      this, SLOT(onHeaderSectionInserted(const QModelIndex &, int, int)));
+      this, SLOT(onHeaderSectionInserted()));
     this->disconnect(
       current, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
-      this, SLOT(onHeaderSectionInserted(const QModelIndex &, int, int)));
+      this, SLOT(onHeaderSectionInserted()));
     }
-
   this->QHeaderView::setModel(newModel);
+  d->CheckableModelHelper->setModel(newModel);
   if(newModel)
     {
     this->connect(
@@ -353,27 +207,19 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
     this->connect(
       newModel, SIGNAL(modelReset()),
       this, SLOT(updateHeaderPixmaps()));
-    if (d->PropagateDepth != 0)
-      {
-      this->connect(
-        newModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-        this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
-      this->updateHeadersFromItems();
-      }
     if(this->orientation() == Qt::Horizontal)
       {
       this->connect(
         newModel, SIGNAL(columnsInserted(const QModelIndex &, int, int)),
-        this, SLOT(onHeaderSectionInserted(const QModelIndex &, int, int)));
+        this, SLOT(onHeaderSectionInserted()));
       }
     else
       {
       this->connect(
         newModel, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
-        this, SLOT(onHeaderSectionInserted(const QModelIndex &, int, int)));
+        this, SLOT(onHeaderSectionInserted()));
       }
     }
-
   this->updateHeaderPixmaps();
 }
 
@@ -382,92 +228,7 @@ void ctkCheckableHeaderView::setRootIndex(const QModelIndex &index)
 {
   Q_D(ctkCheckableHeaderView);
   this->QHeaderView::setRootIndex(index);
-  if (d->PropagateDepth != 0)
-    {
-    this->updateHeadersFromItems();
-    }
-}
-
-//-----------------------------------------------------------------------------
-void ctkCheckableHeaderView::setPropagateDepth(int depth)
-{
-  Q_D(ctkCheckableHeaderView);
-  if (d->PropagateDepth == depth)
-    {
-    return;
-    }
-  d->PropagateDepth = depth;
-  if (!this->model())
-    {
-    return;
-    }
-  if (depth != 0)
-    {
-    this->connect(
-      this->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)), Qt::UniqueConnection);
-    this->updateHeadersFromItems();
-    }
-  else
-    {
-    this->disconnect(
-      this->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
-    }
-}
-
-//-----------------------------------------------------------------------------
-int ctkCheckableHeaderView::propagateDepth()const
-{
-  Q_D(const ctkCheckableHeaderView);
-  return d->PropagateDepth;
-}
-
-//-----------------------------------------------------------------------------
-void ctkCheckableHeaderView::setForceCheckability(bool force)
-{
-  Q_D(ctkCheckableHeaderView);
-  if (d->ForceCheckability == force)
-    {
-    return;
-    }
-  d->ForceCheckability = force;
-  if (this->model())
-    {
-    d->propagateCheckStateToChildren(this->rootIndex());
-    }
-}
-
-//-----------------------------------------------------------------------------
-bool ctkCheckableHeaderView::forceCheckability()const
-{
-  Q_D(const ctkCheckableHeaderView);
-  return d->ForceCheckability;
-}
-
-//-----------------------------------------------------------------------------
-void ctkCheckableHeaderView::toggleCheckState(int section)
-{
-  // If the section is checkable, toggle the check state.
-  if(!this->isCheckable(section))
-    {
-    return;
-    }
-  // I've no strong feeling to turn the state checked or unchecked when the 
-  // state is PartiallyChecked.
-  this->setCheckState(section, this->checkState(section) == Qt::Checked ? Qt::Unchecked : Qt::Checked);
-}
-
-//-----------------------------------------------------------------------------
-void ctkCheckableHeaderView::setCheckState(int section, Qt::CheckState checkState)
-{
-  QAbstractItemModel *current = this->model();
-  if(current == 0)
-    {
-    return;
-    }
-  current->setHeaderData(section, this->orientation(),
-                         checkState, Qt::CheckStateRole);
+  d->CheckableModelHelper->setRootIndex(index);
 }
 
 //-----------------------------------------------------------------------------
@@ -480,15 +241,8 @@ void ctkCheckableHeaderView::onHeaderDataChanged(Qt::Orientation orient,
     {
     return;
     }
-  bool oldItemsAreUpdating = d->ItemsAreUpdating;
-  if (!d->ItemsAreUpdating)
-    {
-    d->ItemsAreUpdating = true;
-    d->propagateCheckStateToChildren(this->rootIndex());
-    }
   // update pixmap
   this->updateHeaderPixmaps(firstSection, lastSection);
-  d->ItemsAreUpdating = oldItemsAreUpdating;
 }
 
 //-----------------------------------------------------------------------------
@@ -514,7 +268,7 @@ void ctkCheckableHeaderView::updateHeaderPixmaps(int firstSection, int lastSecti
     {
     QVariant decoration;
     Qt::CheckState checkState;
-    if (this->checkState(i, checkState))
+    if (d->CheckableModelHelper->headerCheckState(i, checkState))
       {
       decoration = d->CheckBoxPixmaps->pixmap(checkState, active);
       }
@@ -525,73 +279,9 @@ void ctkCheckableHeaderView::updateHeaderPixmaps(int firstSection, int lastSecti
 }
 
 //-----------------------------------------------------------------------------
-void ctkCheckableHeaderView::updateHeadersFromItems()
+void ctkCheckableHeaderView::onHeaderSectionInserted()
 {
-  Q_D(ctkCheckableHeaderView);
-  QAbstractItemModel *currentModel = this->model();
-  if (!currentModel)
-    {
-    return;
-    }
-  d->updateCheckState(QModelIndex());
-}
-
-//-----------------------------------------------------------------------------
-void ctkCheckableHeaderView::onDataChanged(const QModelIndex & topLeft,
-                                           const QModelIndex & bottomRight)
-{
-  Q_UNUSED(bottomRight);
-  Q_D(ctkCheckableHeaderView);
-  if(d->ItemsAreUpdating || d->PropagateDepth == 0)
-    {
-    return;
-    }
-  bool checkable = false;
-  d->checkState(topLeft, &checkable);
-  if (!checkable)
-    {
-    return;
-    }
-  d->ItemsAreUpdating = true;
-  // TODO: handle topLeft "TO bottomRight"
-  d->propagateCheckStateToChildren(topLeft);
-  d->updateCheckState(topLeft.parent());
-
-  d->ItemsAreUpdating = false;
-}
-
-//-----------------------------------------------------------------------------
-void ctkCheckableHeaderView::onHeaderSectionInserted(const QModelIndex &parentIndex,
-  int first, int last)
-{
-  // only handle toplevel columns.
-  if (this->rootIndex() != parentIndex)
-    {
-    return;
-    }
-  this->updateHeaderPixmaps(first, last);
-}
-
-//-----------------------------------------------------------------------------
-bool ctkCheckableHeaderView::isCheckable(int section)const
-{
-  return !this->model()->headerData(section, this->orientation(), Qt::CheckStateRole).isNull();
-}
-
-//-----------------------------------------------------------------------------
-Qt::CheckState ctkCheckableHeaderView::checkState(int section)const
-{
-  return static_cast<Qt::CheckState>(
-    this->model()->headerData(section, this->orientation(), Qt::CheckStateRole).toInt());
-}
-
-//-----------------------------------------------------------------------------
-bool ctkCheckableHeaderView::checkState(int section, Qt::CheckState& checkState)const
-{
-  bool checkable = false;
-  checkState = static_cast<Qt::CheckState>(
-    this->model()->headerData(section, this->orientation(), Qt::CheckStateRole).toInt(&checkable));
-  return checkable;
+  this->updateHeaderPixmaps();
 }
 
 //-----------------------------------------------------------------------------
@@ -609,7 +299,7 @@ void ctkCheckableHeaderView::mousePressEvent(QMouseEvent *e)
   //check if the check box is pressed
   int pos = this->orientation() == Qt::Horizontal ? e->x() : e->y();
   int section = this->logicalIndexAt(pos);
-  if (this->isCheckable(section) &&
+  if (d->CheckableModelHelper->isHeaderCheckable(section) &&
       this->isPointInCheckBox(section, e->pos()))
     {
     d->Pressed = section;
@@ -638,7 +328,7 @@ void ctkCheckableHeaderView::mouseReleaseEvent(QMouseEvent *e)
       this->isPointInCheckBox(section, e->pos()))
     {
     d->Pressed = -1;
-    this->toggleCheckState(section);
+    d->CheckableModelHelper->toggleHeaderCheckState(section);
     }
   this->QHeaderView::mousePressEvent(e);
 }

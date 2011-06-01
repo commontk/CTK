@@ -28,6 +28,7 @@
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
+#include <ctkCheckableModelHelper.h>
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMServerNodeWidget.h"
@@ -65,7 +66,7 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* parentWidget)
   headerView->setClickable(previousHeaderView->isClickable());
   headerView->setMovable(previousHeaderView->isMovable());
   headerView->setHighlightSections(previousHeaderView->highlightSections());
-  headerView->setPropagateDepth(-1);
+  headerView->checkableModelHelper()->setPropagateDepth(-1);
   d->NodeTable->setHorizontalHeader(headerView);
 
   d->RemoveButton->setEnabled(false);

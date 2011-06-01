@@ -8,6 +8,7 @@ SET(TEST_SOURCES
   ctkCheckBoxPixmapsTest1.cpp
   ctkCheckableHeaderViewTest1.cpp
   ctkCheckableHeaderViewTest2.cpp
+  ctkCheckableModelHelperTest2.cpp
   ctkCheckablePushButtonTest1.cpp
   ctkCollapsibleButtonTest1.cpp
   ctkCollapsibleButtonTest2.cpp
@@ -113,6 +114,7 @@ SIMPLE_TEST( ctkButtonGroupTest1 )
 SIMPLE_TEST( ctkCheckBoxPixmapsTest1 )
 SIMPLE_TEST( ctkCheckableHeaderViewTest1 )
 SIMPLE_TEST( ctkCheckableHeaderViewTest2 )
+SIMPLE_TEST( ctkCheckableModelHelperTest2 )
 SIMPLE_TEST( ctkCheckablePushButtonTest1 )
 SIMPLE_TEST( ctkCollapsibleButtonTest1 )
 SIMPLE_TEST( ctkCollapsibleButtonTest2 )

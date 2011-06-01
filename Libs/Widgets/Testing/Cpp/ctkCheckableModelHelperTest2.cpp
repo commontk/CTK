@@ -28,15 +28,14 @@
 #include <QTimer>
 
 // CTK includes
-#include "ctkCheckableHeaderView.h"
-#include <ctkCheckableModelHelper.h>
+#include "ctkCheckableModelHelper.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkCheckableHeaderViewTest2(int argc, char * argv [] )
+int ctkCheckableModelHelperTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
@@ -46,7 +45,7 @@ int ctkCheckableHeaderViewTest2(int argc, char * argv [] )
   model.setHorizontalHeaderLabels(headers);
   QList<QStandardItem*> row0;
   row0 << new QStandardItem << new QStandardItem << new QStandardItem;
-  row0[0]->setText("not user checkable");
+  row0[0]->setText("forced checkability");
   model.appendRow(row0);
   QList<QStandardItem*> row1;
   row1 << new QStandardItem << new QStandardItem << new QStandardItem;
@@ -64,18 +63,19 @@ int ctkCheckableHeaderViewTest2(int argc, char * argv [] )
 
   model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
 
-  QHeaderView* previousHeaderView = view.header();
-  bool oldClickable = previousHeaderView->isClickable();
+  ctkCheckableModelHelper headerView(Qt::Horizontal);
+  headerView.setPropagateDepth(-1);
+  headerView.setForceCheckability(true);
+  headerView.setDefaultCheckState(Qt::Checked);
+  headerView.setModel(&model);
 
-  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, &view);  
-  headerView->setClickable(oldClickable);
-  headerView->setMovable(previousHeaderView->isMovable());
-  headerView->setHighlightSections(previousHeaderView->highlightSections());
-  headerView->checkableModelHelper()->setPropagateDepth(-1);
-  headerView->checkableModelHelper()->setForceCheckability(true);
-
-  // sets the model to the headerview
-  view.setHeader(headerView);
+  
+  QList<QStandardItem*> subRow2;
+  subRow2 << new QStandardItem << new QStandardItem << new QStandardItem;
+//  subRow2[0]->setCheckable(true);
+  subRow2[0]->setText("checkable");
+  row2[0]->insertRow(0, subRow2);
+  
   headers << "4";
   model.setHorizontalHeaderLabels(headers);
   view.show();

@@ -33,6 +33,8 @@ SET(KIT_SRCS
   ctkAbstractLibraryFactory.tpp
   ctkCallback.cpp
   ctkCallback.h
+  ctkCheckableModelHelper.cpp
+  ctkCheckableModelHelper.h
   ctkCommandLineParser.cpp
   ctkCommandLineParser.h
   ctkDependencyGraph.cpp
@@ -90,6 +92,7 @@ ENDIF()
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkCallback.h
+  ctkCheckableModelHelper.h
   ctkCommandLineParser.h
   ctkErrorLogFDMessageHandler_p.h
   ctkErrorLogModel.h

@@ -26,6 +26,7 @@ SET(KITTests_SRCS
   ctkAbstractPluginFactoryTest1.cpp
   ctkAbstractQObjectFactoryTest1.cpp
   ctkCallbackTest1.cpp
+  ctkCheckableModelHelperTest1.cpp
   ctkCommandLineParserTest1.cpp
   ctkErrorLogModelTest1.cpp
   ctkErrorLogModelTest2.cpp
@@ -112,6 +113,7 @@ IF(HAVE_BFD)
   SET_PROPERTY(TEST ctkBinaryFileDescriptorTest1 PROPERTY LABELS ${PROJECT_NAME})
 ENDIF()
 SIMPLE_TEST( ctkCallbackTest1 )
+SIMPLE_TEST( ctkCheckableModelHelperTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
