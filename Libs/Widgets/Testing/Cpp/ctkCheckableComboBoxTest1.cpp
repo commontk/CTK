@@ -21,7 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QApplication>
-#include <QCleanLooksStyle>
+#include <QCleanlooksStyle>
 #include <QTimer>
 
 // CTK includes
