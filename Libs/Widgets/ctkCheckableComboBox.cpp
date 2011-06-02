@@ -119,6 +119,7 @@ public:
   
   ctkCheckableModelHelper* CheckableModelHelper;
   QModelIndexList          CheckedList;
+  bool                     MouseButtonPressed;
 };
 
 //-----------------------------------------------------------------------------
@@ -126,6 +127,7 @@ ctkCheckableComboBoxPrivate::ctkCheckableComboBoxPrivate(ctkCheckableComboBox& o
   : q_ptr(&object)
 {
   this->CheckableModelHelper = 0;
+  this->MouseButtonPressed = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -184,6 +186,14 @@ bool ctkCheckableComboBox::eventFilter(QObject *o, QEvent *e)
   Q_D(ctkCheckableComboBox);
   switch (e->type())
     {
+    case QEvent::MouseButtonPress:
+      {
+      if (this->view()->isVisible())
+        {
+        d->MouseButtonPressed = true;
+        }
+      break;
+      }
     case QEvent::MouseButtonRelease:
       {
       QMouseEvent *m = static_cast<QMouseEvent *>(e);
@@ -194,12 +204,21 @@ bool ctkCheckableComboBox::eventFilter(QObject *o, QEvent *e)
           && (this->view()->currentIndex().flags() & Qt::ItemIsEnabled)
           && (this->view()->currentIndex().flags() & Qt::ItemIsSelectable))
         {
-        // make the item current, it will then call QComboBox::update (and
-        // repaint) when the current index data is changed (checkstate toggled).
-        this->setCurrentIndex(this->view()->currentIndex().row());
-        d->CheckableModelHelper->toggleCheckState(this->view()->currentIndex());
+        // The signal to open the menu is fired when the mouse button is
+        // pressed, we don't want to toggle the item under the mouse cursor
+        // when the button used to open the popup is released.
+        if (d->MouseButtonPressed)
+          {
+          // make the item current, it will then call QComboBox::update (and
+          // repaint) when the current index data is changed (checkstate
+          // toggled fires dataChanged signal which is observed).
+          this->setCurrentIndex(this->view()->currentIndex().row());
+          d->CheckableModelHelper->toggleCheckState(this->view()->currentIndex());
+          }
+        d->MouseButtonPressed = false;
         return true;
         }
+      d->MouseButtonPressed = false;
       break;
       } 
     default:
