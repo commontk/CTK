@@ -253,6 +253,8 @@ void ctkCheckableModelHelperPrivate
     return;
     }
   this->setCheckState(modelIndex, this->DefaultCheckState);
+  // Apparently (not sure) some views require the User-checkable
+  // flag to be set to be able to show the checkboxes
   if (qobject_cast<QStandardItemModel*>(q->model()))
     {
     QStandardItem* item = modelIndex != q->rootIndex() ?

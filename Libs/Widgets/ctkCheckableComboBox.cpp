@@ -24,12 +24,14 @@
 #include <QCleanlooksStyle>
 #include <QDebug>
 #include <QDesktopWidget>
+#include <QItemDelegate>
 #include <QLayout>
 #include <QMouseEvent>
 #include <QMenu>
 #include <QPainter>
 #include <QPointer>
 #include <QPushButton>
+#include <QStandardItemModel>
 #include <QStyle>
 #include <QStyleOptionButton>
 #include <QStylePainter>
@@ -38,6 +40,69 @@
 // CTK includes
 #include "ctkCheckableComboBox.h"
 #include <ctkCheckableModelHelper.h>
+
+// Similar to QComboBoxDelegate
+class ctkComboBoxDelegate : public QItemDelegate
+{
+public:
+    ctkComboBoxDelegate(QObject *parent, QComboBox *cmb)
+      : QItemDelegate(parent), ComboBox(cmb)
+    {}
+
+    static bool isSeparator(const QModelIndex &index)
+    {
+      return index.data(Qt::AccessibleDescriptionRole).toString() == QLatin1String("separator");
+    }
+    static void setSeparator(QAbstractItemModel *model, const QModelIndex &index)
+    {
+      model->setData(index, QString::fromLatin1("separator"), Qt::AccessibleDescriptionRole);
+      if (QStandardItemModel *m = qobject_cast<QStandardItemModel*>(model))
+        {
+        if (QStandardItem *item = m->itemFromIndex(index))
+          {
+          item->setFlags(item->flags() & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled));
+          }
+        }
+    }
+
+protected:
+    void paint(QPainter *painter,
+               const QStyleOptionViewItem &option,
+               const QModelIndex &index) const
+    {
+      if (isSeparator(index))
+        {
+        QRect rect = option.rect;
+        if (const QStyleOptionViewItemV3 *v3 = qstyleoption_cast<const QStyleOptionViewItemV3*>(&option))
+          {
+          if (const QAbstractItemView *view = qobject_cast<const QAbstractItemView*>(v3->widget))
+            {
+            rect.setWidth(view->viewport()->width());
+            }
+          }
+        QStyleOption opt;
+        opt.rect = rect;
+        this->ComboBox->style()->drawPrimitive(QStyle::PE_IndicatorToolBarSeparator, &opt, painter, this->ComboBox);
+        }
+      else
+        {
+        QItemDelegate::paint(painter, option, index);
+        }
+    }
+
+    QSize sizeHint(const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const
+    {
+      if (isSeparator(index))
+        {
+        int pm = this->ComboBox->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, 0, this->ComboBox);
+        return QSize(pm, pm);
+        }
+      return this->QItemDelegate::sizeHint(option, index);
+    }
+private:
+    QComboBox* ComboBox;
+};
 
 //-----------------------------------------------------------------------------
 class ctkCheckableComboBoxPrivate
@@ -73,6 +138,9 @@ void ctkCheckableComboBoxPrivate::init()
   q->setCheckableModel(q->model());
   q->view()->installEventFilter(q);
   q->view()->viewport()->installEventFilter(q);
+  // QCleanLooksStyle uses a delegate that doesn't show the checkboxes in the
+  // popup list.
+  q->setItemDelegate(new ctkComboBoxDelegate(q->view(), q));
 }
 
 //-----------------------------------------------------------------------------
@@ -85,7 +153,6 @@ void ctkCheckableComboBoxPrivate::updateCheckedList()
     return;
     }
   this->CheckedList = newCheckedList;
-  qDebug() << "change";
   emit q->checkedIndexesChanged();
 }
 

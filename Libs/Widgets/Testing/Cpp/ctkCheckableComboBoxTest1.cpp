@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QApplication>
+#include <QCleanLooksStyle>
 #include <QTimer>
 
 // CTK includes
@@ -33,6 +34,9 @@
 //-----------------------------------------------------------------------------
 int ctkCheckableComboBoxTest1(int argc, char * argv [] )
 {
+  // QCleanlooksStyle is the only style that doesn't show the checkboxes by
+  // default. Test it with it
+  QApplication::setStyle(new QCleanlooksStyle);
   QApplication app(argc, argv);
 
   ctkCheckableComboBox comboBox;
