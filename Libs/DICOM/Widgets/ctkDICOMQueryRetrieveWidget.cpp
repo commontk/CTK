@@ -293,6 +293,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
 void ctkDICOMQueryRetrieveWidget::cancel()
 {
   emit studiesRetrieved(QStringList());
+  emit canceled();
 }
 
 //----------------------------------------------------------------------------

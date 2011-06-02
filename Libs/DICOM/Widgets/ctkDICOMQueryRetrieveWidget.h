@@ -53,6 +53,8 @@ signals:
   /// "Retrieve" button) or when the widget is cancelled (user clicked on the
   /// "Cancel" button).
   void studiesRetrieved(QStringList);
+  /// Signal to emit when cancel button pressed (after studiesRetrieved is emitted)
+  void canceled();
 
 protected slots:
   void onQueryProgressChanged(int value);
