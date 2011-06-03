@@ -470,7 +470,6 @@ void ctkRangeWidget::changeMinimumValue(double newValue)
     }
   if (!d->Changing)
     {
-    emit this->valuesChanged(newValue, this->maximumValue());
     emit this->minimumValueChanged(newValue);
 	}
 }
@@ -485,7 +484,6 @@ void ctkRangeWidget::changeMaximumValue(double newValue)
     }
   if (!d->Changing)
     {
-    emit this->valuesChanged(this->minimumValue(), newValue);
     emit this->maximumValueChanged(newValue);
     }
 }
@@ -496,6 +494,10 @@ void ctkRangeWidget::changeValues(double newMinValue, double newMaxValue)
   Q_D(ctkRangeWidget);
   d->MinimumSpinBox->setValue(newMinValue);
   d->MaximumSpinBox->setValue(newMaxValue);
+  if (!d->Changing)
+    {
+    emit this->valuesChanged(newMinValue, newMaxValue);
+    }
 }
 
 // --------------------------------------------------------------------------
