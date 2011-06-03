@@ -145,6 +145,13 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   d->QueryRetrieveWidget->setRetrieveDatabase(d->DICOMDatabase);
 }
 
+//----------------------------------------------------------------------------
+QString ctkDICOMAppWidget::databaseDirectory() const
+{
+  QSettings settings;
+  return settings.value("DatabaseDirectory").toString();
+}
+
 void ctkDICOMAppWidget::onAddToDatabase()
 {
   //Q_D(ctkDICOMAppWidget);
