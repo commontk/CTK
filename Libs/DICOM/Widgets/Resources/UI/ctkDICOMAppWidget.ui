@@ -35,9 +35,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QStatusBar" name="statusbar"/>
-   </item>
-   <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QHBoxLayout" name="topLayout">
@@ -109,6 +106,16 @@
         </layout>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QFrame" name="userFrame">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" name="viewerLayout">

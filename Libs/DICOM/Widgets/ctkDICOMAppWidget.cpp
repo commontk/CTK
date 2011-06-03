@@ -77,8 +77,18 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->QueryRetrieveWidget = new ctkDICOMQueryRetrieveWidget();
   d->QueryRetrieveWidget->setWindowModality ( Qt::ApplicationModal );
 
-  //initialize default directory, then listen for changes
-  this->setDatabaseDirectory(d->directoryButton->directory());
+  //initialize directory from settings, then listen for changes
+  QSettings settings;
+  if ( settings.value("DatabaseDirectory", "") == "" )
+    {
+    QString directory = QString("./ctkDICOM-Database");
+    settings.setValue("DatabaseDirectory", directory);
+    settings.sync();
+    }
+  QString databaseDirectory = settings.value("DatabaseDirectory").toString();
+  this->setDatabaseDirectory(databaseDirectory);
+  d->directoryButton->setDirectory(databaseDirectory);
+
   connect(d->directoryButton, SIGNAL(directoryChanged(const QString&)), this, SLOT(setDatabaseDirectory(const QString&)));
 
   //Initialize import widget
@@ -102,6 +112,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
   connect(d->DICOMDatabase.data(), SIGNAL( databaseChanged() ), &(d->DICOMModel), SLOT( reset() ) );
+  connect(d->QueryRetrieveWidget, SIGNAL( canceled() ), d->QueryRetrieveWidget, SLOT( hide() ) );
 
 }
 
@@ -142,6 +153,17 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   //pass DICOM database instance to Import widget
   // d->ImportDialog->setDICOMDatabase(d->DICOMDatabase);
   d->QueryRetrieveWidget->setRetrieveDatabase(d->DICOMDatabase);
+
+  // update the button and let any connected slots know about the change
+  d->directoryButton->setDirectory(directory);
+  emit databaseDirectoryChanged(directory);
+}
+
+//----------------------------------------------------------------------------
+QString ctkDICOMAppWidget::databaseDirectory() const
+{
+  QSettings settings;
+  return settings.value("DatabaseDirectory").toString();
 }
 
 void ctkDICOMAppWidget::onAddToDatabase()
@@ -173,6 +195,7 @@ void ctkDICOMAppWidget::openQueryDialog()
 
   d->QueryRetrieveWidget->show();
   d->QueryRetrieveWidget->raise();
+
 }
 
 //----------------------------------------------------------------------------

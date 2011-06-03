@@ -111,6 +111,7 @@ class ctkCheckableComboBoxPrivate
 protected:
   ctkCheckableComboBox* const q_ptr;
   QModelIndexList checkedIndexes()const;
+  QModelIndexList uncheckedIndexes()const;
 public:
   ctkCheckableComboBoxPrivate(ctkCheckableComboBox& object);
   void init();
@@ -163,9 +164,17 @@ QModelIndexList ctkCheckableComboBoxPrivate::checkedIndexes()const
 {
   Q_Q(const ctkCheckableComboBox);
   return q->model()->match(
-      q->model()->index(0,0), Qt::CheckStateRole, Qt::Checked, -1, Qt::MatchRecursive);
+    q->rootModelIndex().child(0,0), Qt::CheckStateRole, Qt::Checked, -1, Qt::MatchRecursive);
 }
- 
+
+//-----------------------------------------------------------------------------
+QModelIndexList ctkCheckableComboBoxPrivate::uncheckedIndexes()const
+{
+  Q_Q(const ctkCheckableComboBox);
+  return q->model()->match(
+    q->rootModelIndex().child(0,0), Qt::CheckStateRole, Qt::Unchecked, -1, Qt::MatchRecursive);
+}
+
 //-----------------------------------------------------------------------------
 ctkCheckableComboBox::ctkCheckableComboBox(QWidget* parentWidget)
   : QComboBox(parentWidget)
@@ -260,14 +269,14 @@ QModelIndexList ctkCheckableComboBox::checkedIndexes()const
 bool ctkCheckableComboBox::allChecked()const
 {
   Q_D(const ctkCheckableComboBox);
-  return d->CheckableModelHelper->headerCheckState(0) == Qt::Checked;
+  return d->uncheckedIndexes().count() == 0;
 }
 
 //-----------------------------------------------------------------------------
 bool ctkCheckableComboBox::noneChecked()const
 {
   Q_D(const ctkCheckableComboBox);
-  return d->CheckableModelHelper->headerCheckState(0) == Qt::Unchecked;
+  return d->CheckedList.count() == 0;
 }
 
 //-----------------------------------------------------------------------------

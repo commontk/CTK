@@ -184,7 +184,7 @@ void ctkDICOMServerNodeWidget::readSettings()
       settings.value("ServerNodeCount").toInt() == 0)
     {
     d->StorageAETitle->setText("CTKSTORE");
-    d->StoragePort->setText("11112");
+    d->StoragePort->setText("11113");
     d->CallingAETitle->setText("FINDSCU");
 
     QMap<QString, QVariant> defaultServerNode;

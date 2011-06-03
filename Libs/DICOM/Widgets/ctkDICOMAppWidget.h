@@ -32,22 +32,30 @@ class ctkDICOMThumbnailWidget;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
 {
-Q_OBJECT;
+  Q_OBJECT
+  Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
+
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMAppWidget(QWidget* parent=0);
   virtual ~ctkDICOMAppWidget();
 
+  QString databaseDirectory() const;
+
 public slots:
-    void setDatabaseDirectory(const QString& directory);
-    void onAddToDatabase();
+  void setDatabaseDirectory(const QString& directory);
+  void onAddToDatabase();
 
-    void onDICOMModelSelected(const QModelIndex& index);
-    void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
+  void onDICOMModelSelected(const QModelIndex& index);
+  void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
 
-    void openImportDialog();
-    void openExportDialog();
-    void openQueryDialog();
+  void openImportDialog();
+  void openExportDialog();
+  void openQueryDialog();
+
+signals:
+  /// Emited when directory is changed
+  void databaseDirectoryChanged(const QString&);
 
 protected:
     QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;
