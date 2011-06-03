@@ -153,6 +153,10 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   //pass DICOM database instance to Import widget
   // d->ImportDialog->setDICOMDatabase(d->DICOMDatabase);
   d->QueryRetrieveWidget->setRetrieveDatabase(d->DICOMDatabase);
+
+  // update the button and let any connected slots know about the change
+  d->directoryButton->setDirectory(directory);
+  emit databaseDirectoryChanged(directory);
 }
 
 //----------------------------------------------------------------------------

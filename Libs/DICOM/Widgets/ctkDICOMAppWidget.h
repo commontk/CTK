@@ -53,6 +53,10 @@ public slots:
   void openExportDialog();
   void openQueryDialog();
 
+signals:
+  /// Emited when directory is changed
+  void databaseDirectoryChanged(const QString&);
+
 protected:
     QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;
 protected slots:
