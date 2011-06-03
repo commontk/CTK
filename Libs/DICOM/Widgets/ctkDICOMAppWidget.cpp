@@ -77,8 +77,18 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->QueryRetrieveWidget = new ctkDICOMQueryRetrieveWidget();
   d->QueryRetrieveWidget->setWindowModality ( Qt::ApplicationModal );
 
-  //initialize default directory, then listen for changes
-  this->setDatabaseDirectory(d->directoryButton->directory());
+  //initialize directory from settings, then listen for changes
+  QSettings settings;
+  if ( settings.value("DatabaseDirectory", "") == "" )
+    {
+    QString directory = QString("./ctkDICOM-Database");
+    settings.setValue("DatabaseDirectory", directory);
+    settings.sync();
+    }
+  QString databaseDirectory = settings.value("DatabaseDirectory").toString();
+  this->setDatabaseDirectory(databaseDirectory);
+  d->directoryButton->setDirectory(databaseDirectory);
+
   connect(d->directoryButton, SIGNAL(directoryChanged(const QString&)), this, SLOT(setDatabaseDirectory(const QString&)));
 
   //Initialize import widget
