@@ -493,6 +493,27 @@ int ctkWorkflowTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }  
 
+  // try to go automatically to step 4 and stay there by setting the property goBackToOriginStepUponSuccess to false
+  workflow->setGoBackToOriginStepUponSuccess(false);
+  workflow->goToStep("Step 4");
+  if (!transitionTest(workflow, defaultTime, app, step4, step1, 10, 10, step2, 8, 8, step3, 9, 9, step4, 5, 4))
+    {
+    std::cerr << "error staying at step 4 if property goBackToOriginStepUponSuccess is false";
+    return EXIT_FAILURE;
+    }
+
+  // after, going backwards to step 3,
+  // try to go automatically to step 4 with the property goBackToOriginStepUponSuccess set to true
+  workflow->setGoBackToOriginStepUponSuccess(true);
+  workflow->goBackward(); // now at step3
+  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
+  app.exec();
+  workflow->goToStep("Step 4");
+  if (!transitionTest(workflow, defaultTime, app, step3, step1, 10, 10, step2, 8, 8, step3, 11, 10, step4, 6, 6))
+    {
+    std::cerr << "error while coming back to step 3 if property goBackToOriginStepUponSuccess is true";
+    return EXIT_FAILURE;
+    }
 
   // handles deletions of the workflow, steps, states and transitions
   delete workflow;

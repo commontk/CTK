@@ -53,6 +53,9 @@ ctkWorkflowPrivate::ctkWorkflowPrivate(ctkWorkflow& object)
   this->StartingStep = 0;
   this->TransitionToPreviousStartingStep = 0;
 
+  // By default, go back to the origin step upon success of the goToStep(targetId) attempt.
+  this->GoBackToOriginStepUponSuccess = true;
+
   this->ARTIFICIAL_BRANCH_ID_PREFIX = "ctkWorkflowArtificialBranchId_";
 }
 
@@ -841,6 +844,10 @@ void ctkWorkflow::goBackward(const QString& desiredBranchId)
 }
 
 // --------------------------------------------------------------------------
+CTK_GET_CPP(ctkWorkflow, bool, goBackToOriginStepUponSuccess, GoBackToOriginStepUponSuccess);
+CTK_SET_CPP(ctkWorkflow, bool, setGoBackToOriginStepUponSuccess, GoBackToOriginStepUponSuccess);
+
+// --------------------------------------------------------------------------
 void ctkWorkflow::goToStep(const QString& targetId)
 {
   Q_D(ctkWorkflow);
@@ -1025,14 +1032,21 @@ void ctkWorkflow::goToStepSucceeded()
 
   // after success, go back to the step at which we begin looking for
   // the finish step (will exit the current step and enter the starting step)
+  // only if the property goBackToOriginStepUponSuccess is true.
 
-  d->createTransitionToPreviousStartingStep(d->StartingStep, d->CurrentStep);
+  if (this->goBackToOriginStepUponSuccess())
+    {
+    d->createTransitionToPreviousStartingStep(d->StartingStep, d->CurrentStep);
+    }
 
   d->GoToStep = 0;
   d->StartingStep->setStatusText("Attempt to go to the finish step succeeded");
   d->StartingStep = 0;
 
-  this->goFromGoToStepToStartingStep();
+  if (this->goBackToOriginStepUponSuccess())
+    {
+    this->goFromGoToStepToStartingStep();
+    }
 }
 
 // --------------------------------------------------------------------------

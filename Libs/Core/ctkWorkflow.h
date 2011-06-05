@@ -41,6 +41,7 @@ class CTK_CORE_EXPORT ctkWorkflow : public QObject
   Q_OBJECT
   Q_ENUMS(TransitionDirectionality)
   Q_PROPERTY(bool isRunning READ isRunning DESIGNABLE false)
+  Q_PROPERTY(bool goBackToOriginStepUponSuccess READ goBackToOriginStepUponSuccess WRITE setGoBackToOriginStepUponSuccess)
 
 public:
 
@@ -155,6 +156,15 @@ public:
 
   /// Get the steps that are 'finish' steps (i.e. have no step following them)
   Q_INVOKABLE QList<ctkWorkflowStep*> finishSteps()const;
+
+  /// Configures the behavior of goToStep(targetId).
+  ///
+  /// If set to true, goToStep(targetId) goes back to the origin step after
+  /// the attempt of going to the target step succeeded.
+  /// If set to false, goToStep(targetId) stays at the target step when the attempt
+  /// succeeded.
+  bool goBackToOriginStepUponSuccess()const;
+  void setGoBackToOriginStepUponSuccess(bool flag);
 
 public slots:
 

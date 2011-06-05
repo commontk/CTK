@@ -290,6 +290,8 @@ public:
   // Temporary transition after successfully going to finish step, to get us back to the starting step
   ctkWorkflowInterstepTransition* TransitionToPreviousStartingStep;
 
+  bool GoBackToOriginStepUponSuccess;
+
   QString ARTIFICIAL_BRANCH_ID_PREFIX;
 
 };
