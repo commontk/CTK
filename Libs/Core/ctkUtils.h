@@ -79,6 +79,12 @@ QRegExp CTK_CORE_EXPORT nameFiltersToRegExp(const QStringList& nameFilters);
 /// Return a "smart" number of decimals needed to display (in a gui) a floating
 /// number.
 int CTK_CORE_EXPORT significantDecimals(double value);
+
+///
+/// \ingroup Core
+/// Return the order of magnitude of a number.
+int CTK_CORE_EXPORT orderOfMagnitude(double value);
+
 }
 
 #endif

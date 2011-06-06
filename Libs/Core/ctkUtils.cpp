@@ -28,6 +28,7 @@
 
 // STD includes
 #include <algorithm>
+#include <limits>
 
 #ifdef _MSC_VER
   #pragma warning(disable: 4996)
@@ -207,4 +208,34 @@ int ctk::significantDecimals(double value)
       }
     }
   return -1;
+}
+
+int ctk::orderOfMagnitude(double value)
+{
+  value = qAbs(value);
+  if (value == 0.)
+    {
+    return std::numeric_limits<int>::min();
+    }
+  double magnitude = 1.00000000000000001;
+  int magnitudeOrder = 0;
+
+  int magnitudeStep = 1;
+  double magnitudeFactor = 10;
+
+  if (value < 1.)
+    {
+    magnitudeOrder = -1;
+    magnitudeStep = -1;
+    magnitudeFactor = 0.1;
+    }
+
+  while ( (magnitudeStep > 0 && value >= magnitude) ||
+          (magnitudeStep < 0 && value < magnitude - std::numeric_limits<double>::epsilon()))
+    {
+    magnitude *= magnitudeFactor;
+    magnitudeOrder += magnitudeStep;
+    }
+  // we went 1 order too far, so decrement it
+  return magnitudeOrder - magnitudeStep;
 }
