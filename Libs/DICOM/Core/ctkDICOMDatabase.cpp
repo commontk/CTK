@@ -133,7 +133,7 @@ ctkDICOMDatabase::ctkDICOMDatabase(QString databaseFile)
   d->init(databaseFile);
 }
 
-ctkDICOMDatabase::ctkDICOMDatabase()
+ctkDICOMDatabase::ctkDICOMDatabase(QObject* parent)
    : d_ptr(new ctkDICOMDatabasePrivate(*this))
 {
 }

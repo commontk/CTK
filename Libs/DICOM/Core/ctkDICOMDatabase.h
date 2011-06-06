@@ -34,7 +34,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
   Q_OBJECT
 public:
-  explicit ctkDICOMDatabase();
+  explicit ctkDICOMDatabase(QObject *parent = 0);
   explicit ctkDICOMDatabase(QString databaseFile);
   virtual ~ctkDICOMDatabase();
 
