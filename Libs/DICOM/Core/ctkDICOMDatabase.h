@@ -67,6 +67,11 @@ public:
   Q_INVOKABLE QStringList seriesForStudy (QString studyUID);
   Q_INVOKABLE QStringList filesForSeries (QString seriesUID);
 
+  ///
+  /// \brief load the header from a file and allow access to elements
+  Q_INVOKABLE void loadHeader (QString sopInstanceUID);
+  Q_INVOKABLE QStringList headerKeys ();
+  Q_INVOKABLE QString headerValue (QString key);
 
   /**
    * Will create an entry in the appropriate tables for this dataset.
