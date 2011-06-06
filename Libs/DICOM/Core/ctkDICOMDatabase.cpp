@@ -223,6 +223,54 @@ void ctkDICOMDatabase::closeDatabase()
 }
 
 //------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::studiesForPatient(QString patientUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT StudyInstanceUID FROM Studies WHERE PatientsUID = ?" );
+  query.bindValue ( 0, patientUID );
+  query.exec();
+  QStringList result;
+  while (query.next()) 
+    {
+    result << query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT SeriesInstanceUID FROM Series WHERE StudyInstanceUID=?");
+  query.bindValue ( 0, studyUID );
+  query.exec();
+  QStringList result;
+  while (query.next()) 
+    {
+    result << query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT Filename FROM Images WHERE SeriesInstanceUID=?");
+  query.bindValue ( 0, seriesUID );
+  query.exec();
+  QStringList result;
+  while (query.next()) 
+    {
+    result << query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
 /*
 void ctkDICOMDatabase::insert ( DcmDataset *dataset ) {
   this->insert ( dataset, QString() );

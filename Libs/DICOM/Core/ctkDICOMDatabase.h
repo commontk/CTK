@@ -23,6 +23,7 @@
 
 // Qt includes 
 #include <QObject>
+#include <QStringList>
 #include <QSqlDatabase>
 
 #include "ctkDICOMCoreExport.h"
@@ -51,14 +52,21 @@ public:
   ///
   /// @param databaseFile TODO
   /// @param connectionName TODO
-  virtual void openDatabase(const QString databaseFile, const QString& connectionName = "DICOM-DB" );
+  Q_INVOKABLE virtual void openDatabase(const QString databaseFile, const QString& connectionName = "DICOM-DB" );
 
   ///
   /// close the database. It must not be used afterwards.
-  void closeDatabase();
+  Q_INVOKABLE void closeDatabase();
   ///
   /// delete all data and reinitialize the database.
-  bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
+  Q_INVOKABLE bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
+
+  ///
+  /// \brief database accessors
+  Q_INVOKABLE QStringList studiesForPatient (QString patientUID);
+  Q_INVOKABLE QStringList seriesForStudy (QString studyUID);
+  Q_INVOKABLE QStringList filesForSeries (QString seriesUID);
+
 
   /**
    * Will create an entry in the appropriate tables for this dataset.
