@@ -74,6 +74,7 @@ public:
   QString      DatabaseFileName;
   QString      LastError;
   QSqlDatabase Database;
+  QMap<QString, QString> LoadedHeader;
 };
 
 //------------------------------------------------------------------------------
@@ -133,7 +134,7 @@ ctkDICOMDatabase::ctkDICOMDatabase(QString databaseFile)
   d->init(databaseFile);
 }
 
-ctkDICOMDatabase::ctkDICOMDatabase()
+ctkDICOMDatabase::ctkDICOMDatabase(QObject* parent)
    : d_ptr(new ctkDICOMDatabasePrivate(*this))
 {
 }
@@ -220,6 +221,112 @@ void ctkDICOMDatabase::closeDatabase()
 {
   Q_D(ctkDICOMDatabase);
   d->Database.close();
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::studiesForPatient(QString patientUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT StudyInstanceUID FROM Studies WHERE PatientsUID = ?" );
+  query.bindValue ( 0, patientUID );
+  query.exec();
+  QStringList result;
+  while (query.next()) 
+    {
+    result << query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT SeriesInstanceUID FROM Series WHERE StudyInstanceUID=?");
+  query.bindValue ( 0, studyUID );
+  query.exec();
+  QStringList result;
+  while (query.next()) 
+    {
+    result << query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT Filename FROM Images WHERE SeriesInstanceUID=?");
+  query.bindValue ( 0, seriesUID );
+  query.exec();
+  QStringList result;
+  while (query.next()) 
+    {
+    result << query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabase::loadInstanceHeader (QString sopInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT Filename FROM Images WHERE SOPInstanceUID=?");
+  query.bindValue ( 0, sopInstanceUID );
+  query.exec();
+  d->LoadedHeader.clear();
+  if (query.next())
+    {
+    QString fileName = query.value(0).toString();
+    this->loadFileHeader(fileName);
+    }
+  return;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabase::loadFileHeader (QString fileName)
+{
+  Q_D(ctkDICOMDatabase);
+  DcmFileFormat fileFormat;
+  OFCondition status = fileFormat.loadFile(fileName.toLatin1().data());
+  if (status.good())
+    {
+    DcmDataset *dataset = fileFormat.getDataset();
+    DcmStack stack;
+    while (dataset->nextObject(stack, true) == EC_Normal)
+      {
+      DcmObject *dO = stack.top();
+      if (dO->isaString())
+        {
+        QString tag = QString("%1,%2").arg(
+            dO->getGTag(),4,16,QLatin1Char('0')).arg(
+            dO->getETag(),4,16,QLatin1Char('0'));
+        std::ostringstream s;
+        dO->print(s);
+        d->LoadedHeader[tag] = QString(s.str().c_str());
+        }
+      }
+    }
+  return;
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::headerKeys ()
+{
+  Q_D(ctkDICOMDatabase);
+  return (d->LoadedHeader.keys());
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::headerValue (QString key)
+{
+  Q_D(ctkDICOMDatabase);
+  return (d->LoadedHeader[key]);
 }
 
 //------------------------------------------------------------------------------
