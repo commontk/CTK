@@ -69,7 +69,8 @@ public:
 
   ///
   /// \brief load the header from a file and allow access to elements
-  Q_INVOKABLE void loadHeader (QString sopInstanceUID);
+  Q_INVOKABLE void loadInstanceHeader (QString sopInstanceUID);
+  Q_INVOKABLE void loadFileHeader (QString fileName);
   Q_INVOKABLE QStringList headerKeys ();
   Q_INVOKABLE QString headerValue (QString key);
 

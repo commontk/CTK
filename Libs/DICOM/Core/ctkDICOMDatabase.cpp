@@ -272,7 +272,7 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::loadHeader (QString sopInstanceUID)
+void ctkDICOMDatabase::loadInstanceHeader (QString sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
@@ -283,24 +283,32 @@ void ctkDICOMDatabase::loadHeader (QString sopInstanceUID)
   if (query.next())
     {
     QString fileName = query.value(0).toString();
-    DcmFileFormat fileFormat;
-    OFCondition status = fileFormat.loadFile(fileName.toLatin1().data());
-    if (status.good())
+    this->loadFileHeader(fileName);
+    }
+  return;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabase::loadFileHeader (QString fileName)
+{
+  Q_D(ctkDICOMDatabase);
+  DcmFileFormat fileFormat;
+  OFCondition status = fileFormat.loadFile(fileName.toLatin1().data());
+  if (status.good())
+    {
+    DcmDataset *dataset = fileFormat.getDataset();
+    DcmStack stack;
+    while (dataset->nextObject(stack, true) == EC_Normal)
       {
-      DcmDataset *dataset = fileFormat.getDataset();
-      DcmStack stack;
-      while (dataset->nextObject(stack, true) == EC_Normal)
+      DcmObject *dO = stack.top();
+      if (dO->isaString())
         {
-        DcmObject *dO = stack.top();
-        if (dO->isaString())
-          {
-          QString tag = QString("%1,%2").arg(
-              dO->getGTag(),4,16,QLatin1Char('0')).arg(
-              dO->getETag(),4,16,QLatin1Char('0'));
-          std::ostringstream s;
-          dO->print(s);
-          d->LoadedHeader[tag] = QString(s.str().c_str());
-          }
+        QString tag = QString("%1,%2").arg(
+            dO->getGTag(),4,16,QLatin1Char('0')).arg(
+            dO->getETag(),4,16,QLatin1Char('0'));
+        std::ostringstream s;
+        dO->print(s);
+        d->LoadedHeader[tag] = QString(s.str().c_str());
         }
       }
     }
