@@ -231,8 +231,6 @@ public slots:
   void setValues(double minVal, double maxVal);
 
 protected slots:
-  void onMinValueChanged(int value);
-  void onMaxValueChanged(int value);
   void onValuesChanged(int min, int max);
 
   void onMinPosChanged(int value);

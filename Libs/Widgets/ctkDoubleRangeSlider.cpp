@@ -100,10 +100,6 @@ void ctkDoubleRangeSliderPrivate::init()
 void ctkDoubleRangeSliderPrivate::connectSlider()
 {
   Q_Q(ctkDoubleRangeSlider);
-  q->connect(this->Slider, SIGNAL(minimumValueChanged(int)),
-             q, SLOT(onMinValueChanged(int)));
-  q->connect(this->Slider, SIGNAL(maximumValueChanged(int)),
-             q, SLOT(onMaxValueChanged(int)));
   q->connect(this->Slider, SIGNAL(valuesChanged(int,int)),
              q, SLOT(onValuesChanged(int,int)));
 
@@ -532,34 +528,6 @@ void ctkDoubleRangeSlider::setSymmetricMoves(bool symmetry)
 {
   Q_D(ctkDoubleRangeSlider);
   d->Slider->setSymmetricMoves(symmetry);
-}
-
-// --------------------------------------------------------------------------
-void ctkDoubleRangeSlider::onMinValueChanged(int newValue)
-{
-  Q_D(ctkDoubleRangeSlider);
-  double doubleNewValue = d->minFromInt(newValue);
-  if (d->MinValue == doubleNewValue)
-    {
-    return;
-    }
-  d->MinValue = doubleNewValue;
-  emit this->valuesChanged(d->MinValue, d->MaxValue);
-  emit this->minimumValueChanged(d->MinValue);
-}
-
-// --------------------------------------------------------------------------
-void ctkDoubleRangeSlider::onMaxValueChanged(int newValue)
-{
-  Q_D(ctkDoubleRangeSlider);
-  double doubleNewValue = d->maxFromInt(newValue);
-  if (d->MaxValue == doubleNewValue)
-    {
-    return;
-    }
-  d->MaxValue = doubleNewValue;
-  emit this->valuesChanged(d->MinValue, d->MaxValue);
-  emit this->maximumValueChanged(d->MaxValue);
 }
 
 // --------------------------------------------------------------------------
