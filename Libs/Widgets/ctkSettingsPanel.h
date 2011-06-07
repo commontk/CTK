@@ -46,18 +46,39 @@ public:
   QSettings* settings()const;
   void setSettings(QSettings* settings);
 
+  /// Add an entrie into the settings uniquely defined by the key name and the
+  /// current value of the property.
+  /// The property is then synchronized with the settings by observing the signal
+  /// notification. Anytime the property is modified (the signal \a signal is
+  /// fired), its value associated to \a key is updated in the settings.
+  /// \a signal is typically the value under NOTIFY in Q_PROPERTY.
+  /// The current value of the property is later used when
+  /// restoreDefaultSettings() is called.
+  /// \sa Q_PROPERTY()
   void registerProperty(const QString& key,
                         QObject* object,
                         const QString& property,
                         const char* signal);
+  /// Set the setting to the property defined by the key.
+  /// The old value can be restored using resetSettings()
   void setSetting(const QString& key, const QVariant& newVal);
 
 public slots:
+  /// Forget the old property values so next time resetSettings is called it
+  /// will set the properties with the same values when applySettings() is
+  /// called.
   void applySettings();
+
+  /// Restore all the properties with their values when applySettings() was
+  /// called last (or their original values if applySettings was never called).
   void resetSettings();
+
+  /// Restore all the properties with their original values; the current values
+  /// of the properties when they were registered using registerProperty().
   void restoreDefaultSettings();
 
 signals:
+  /// Fired anytime a property is modified.
   void settingChanged(const QString& key, const QVariant& value);
 
 protected slots:
