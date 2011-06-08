@@ -189,3 +189,4 @@ QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module)
     }
   return os;
 }
+
