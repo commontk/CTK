@@ -302,3 +302,51 @@ void ctkMaterialPropertyWidget::resizeEvent(QResizeEvent* resize)
       d->PresetsListWidget->horizontalScrollBar()->sizeHint().height() : 0)
     + d->PresetsListWidget->frameWidth() ); // bottom frame height
 }
+
+// --------------------------------------------------------------------------
+bool ctkMaterialPropertyWidget::isColorVisible()const
+{
+  Q_D(const ctkMaterialPropertyWidget);
+  return d->ColorPickerButton->isVisibleTo(
+    const_cast<ctkMaterialPropertyWidget*>(this));
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::setColorVisible(bool show)
+{
+  Q_D(ctkMaterialPropertyWidget);
+  d->ColorLabel->setVisible(show);
+  d->ColorPickerButton->setVisible(show);
+}
+
+// --------------------------------------------------------------------------
+bool ctkMaterialPropertyWidget::isOpacityVisible()const
+{
+  Q_D(const ctkMaterialPropertyWidget);
+  return d->OpacitySliderSpinBox->isVisibleTo(
+    const_cast<ctkMaterialPropertyWidget*>(this));
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::setOpacityVisible(bool show)
+{
+  Q_D(ctkMaterialPropertyWidget);
+  d->OpacityLabel->setVisible(show);
+  d->OpacitySliderSpinBox->setVisible(show);
+}
+
+// --------------------------------------------------------------------------
+bool ctkMaterialPropertyWidget::isBackfaceCullingVisible()const
+{
+  Q_D(const ctkMaterialPropertyWidget);
+  return d->BackfaceCullingCheckBox->isVisibleTo(
+    const_cast<ctkMaterialPropertyWidget*>(this));
+}
+
+// --------------------------------------------------------------------------
+void ctkMaterialPropertyWidget::setBackfaceCullingVisible(bool show)
+{
+  Q_D(ctkMaterialPropertyWidget);
+  d->BackfaceCullingLabel->setVisible(show);
+  d->BackfaceCullingCheckBox->setVisible(show);
+}

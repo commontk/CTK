@@ -36,6 +36,7 @@ SET(TEST_SOURCES
   ctkLayoutManagerTest1.cpp
   ctkMaterialPropertyPreviewLabelTest1.cpp
   ctkMaterialPropertyWidgetTest1.cpp
+  ctkMaterialPropertyWidgetTest2.cpp
   ctkMatrixWidgetTest1.cpp
   ctkMatrixWidgetTest2.cpp
   ctkMenuButtonTest1.cpp
@@ -146,6 +147,7 @@ SIMPLE_TEST( ctkFontButtonTest1 )
 SIMPLE_TEST( ctkLayoutManagerTest1 )
 SIMPLE_TEST( ctkMaterialPropertyPreviewLabelTest1 )
 SIMPLE_TEST( ctkMaterialPropertyWidgetTest1 )
+SIMPLE_TEST( ctkMaterialPropertyWidgetTest2 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest2 )
 SIMPLE_TEST( ctkMenuButtonTest1 )

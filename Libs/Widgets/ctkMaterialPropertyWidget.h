@@ -61,6 +61,13 @@ class CTK_WIDGETS_EXPORT ctkMaterialPropertyWidget : public QWidget
   Q_PROPERTY(double specularPower READ specularPower WRITE setSpecularPower);
   /// This property controls weither backface culling should be enabled or not
   Q_PROPERTY(bool backfaceCulling READ backfaceCulling WRITE setBackfaceCulling);
+  /// Control weither the color is shown to the user. Visible by default
+  Q_PROPERTY(bool colorVisible READ isColorVisible WRITE setColorVisible);
+  /// Control weither the opacity is shown to the user. Visible by default
+  Q_PROPERTY(bool opacityVisible READ isOpacityVisible WRITE setOpacityVisible);
+  /// Control weither the backface culling is shown to the user. Visible by default
+  Q_PROPERTY(bool backfaceCullingVisible READ isBackfaceCullingVisible WRITE setBackfaceCullingVisible);
+  
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -91,6 +98,13 @@ public:
                  double ambient, double diffuse,
                  double specular, double power,
                  const QString& label);
+
+  bool isColorVisible()const;
+  void setColorVisible(bool show);
+  bool isOpacityVisible()const;
+  void setOpacityVisible(bool show);
+  bool isBackfaceCullingVisible()const;
+  void setBackfaceCullingVisible(bool show);
 
 public slots:
   void setColor(const QColor& newColor);
