@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>576</height>
+    <width>391</width>
+    <height>699</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -111,16 +111,32 @@
        </widget>
       </item>
       <item row="1" column="0">
+       <widget class="QLabel" name="ShadeLabel">
+        <property name="text">
+         <string>Shade:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="ShadeCheckBox"/>
+      </item>
+      <item row="2" column="0">
        <widget class="QLabel" name="MaterialLabel">
         <property name="text">
          <string>Material:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="ctkMaterialPropertyPreviewLabel" name="MaterialPropertyLabel">
-        <property name="gridOpacity">
-         <double>0.000000000000000</double>
+      <item row="2" column="1">
+       <widget class="ctkMaterialPropertyWidget" name="MaterialPropertyWidget">
+        <property name="colorVisible">
+         <bool>false</bool>
+        </property>
+        <property name="opacityVisible">
+         <bool>false</bool>
+        </property>
+        <property name="backfaceCullingVisible">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -142,9 +158,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkMaterialPropertyPreviewLabel</class>
-   <extends>QFrame</extends>
-   <header>ctkMaterialPropertyPreviewLabel.h</header>
+   <class>ctkMaterialPropertyWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkMaterialPropertyWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

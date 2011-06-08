@@ -56,6 +56,7 @@ public:
   void setupUi(QWidget* widget);
 
   vtkVolumeProperty* VolumeProperty;
+  int                CurrentComponent;
 };
 
 // ----------------------------------------------------------------------------
@@ -67,12 +68,14 @@ ctkVTKVolumePropertyWidgetPrivate::ctkVTKVolumePropertyWidgetPrivate(
   : q_ptr(&object)
 {
   this->VolumeProperty = 0;
+  this->CurrentComponent = 0;
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
 {
-  //Q_Q(ctkVTKVolumePropertyWidget);
+  Q_Q(ctkVTKVolumePropertyWidget);
+  Q_ASSERT(q == widget);
   this->Ui_ctkVTKVolumePropertyWidget::setupUi(widget);
 
   this->ScalarOpacityWidget->view()->addCompositeFunction(0, 0, false, true);
@@ -81,6 +84,19 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
 
   this->GradientGroupBox->setCollapsed(true);
   this->AdvancedGroupBox->setCollapsed(true);
+  
+  QObject::connect(this->InterpolationComboBox, SIGNAL(currentIndexChanged(int)),
+                   q, SLOT(setInterpolationMode(int)));
+  QObject::connect(this->ShadeCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setShade(bool)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(ambientChanged(double)),
+                   q, SLOT(setAmbient(double)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(diffuseChanged(double)),
+                   q, SLOT(setDiffuse(double)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(specularChanged(double)),
+                   q, SLOT(setSpecular(double)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(specularPowerChanged(double)),
+                   q, SLOT(setSpecularPower(double)));
 }
 
 // ----------------------------------------------------------------------------
@@ -145,12 +161,85 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
 
   if (d->VolumeProperty)
     {
-    d->MaterialPropertyLabel->setAmbient(d->VolumeProperty->GetAmbient());
-    d->MaterialPropertyLabel->setDiffuse(d->VolumeProperty->GetDiffuse());
-    d->MaterialPropertyLabel->setSpecular(d->VolumeProperty->GetSpecular());
-    d->MaterialPropertyLabel->setSpecularPower(d->VolumeProperty->GetSpecularPower());
     d->InterpolationComboBox->setCurrentIndex(
       d->VolumeProperty->GetInterpolationType() == VTK_NEAREST_INTERPOLATION ? 0 : 1);
+    d->ShadeCheckBox->setChecked(
+      d->VolumeProperty->GetShade(d->CurrentComponent));
+    d->MaterialPropertyWidget->setAmbient(
+      d->VolumeProperty->GetAmbient(d->CurrentComponent));
+    d->MaterialPropertyWidget->setDiffuse(
+      d->VolumeProperty->GetDiffuse(d->CurrentComponent));
+    d->MaterialPropertyWidget->setSpecular(
+      d->VolumeProperty->GetSpecular(d->CurrentComponent));
+    d->MaterialPropertyWidget->setSpecularPower(
+      d->VolumeProperty->GetSpecularPower(d->CurrentComponent));
     }
 }
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setInterpolationMode(int mode)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  if (!d->VolumeProperty)
+    {
+    return;
+    }
+  d->VolumeProperty->SetInterpolationType(mode);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setShade(bool enable)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  if (!d->VolumeProperty)
+    {
+    return;
+    }
+  d->VolumeProperty->SetShade(d->CurrentComponent, enable);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setAmbient(double value)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  if (!d->VolumeProperty)
+    {
+    return;
+    }
+  d->VolumeProperty->SetAmbient(d->CurrentComponent, value);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setDiffuse(double value)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  if (!d->VolumeProperty)
+    {
+    return;
+    }
+  d->VolumeProperty->SetDiffuse(d->CurrentComponent, value);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setSpecular(double value)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  if (!d->VolumeProperty)
+    {
+    return;
+    }
+  d->VolumeProperty->SetSpecular(d->CurrentComponent, value);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setSpecularPower(double value)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  if (!d->VolumeProperty)
+    {
+    return;
+    }
+  d->VolumeProperty->SetSpecularPower(d->CurrentComponent, value);
+}
+
 

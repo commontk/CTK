@@ -49,6 +49,14 @@ public slots:
 
 protected slots:
   void updateFromVolumeProperty();
+
+  void setInterpolationMode(int mode);
+  void setShade(bool);
+  void setAmbient(double value);
+  void setDiffuse(double value);
+  void setSpecular(double value);
+  void setSpecularPower(double value);
+
 protected:
   QScopedPointer<ctkVTKVolumePropertyWidgetPrivate> d_ptr;
 
