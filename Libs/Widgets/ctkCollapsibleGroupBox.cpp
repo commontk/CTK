@@ -44,7 +44,7 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
       const QGroupBox* groupBox= qobject_cast<const QGroupBox*>(widget);
       if (groupBox)
         {
-        this->QProxyStyle::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowUp : QStyle::PE_IndicatorArrowDown, opt, p, widget);
+        this->QProxyStyle::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowDown : QStyle::PE_IndicatorArrowRight, opt, p, widget);
         return;
         }
       }
