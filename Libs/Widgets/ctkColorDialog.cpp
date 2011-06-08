@@ -179,4 +179,4 @@ void ctkColorDialog::setColor(const QColor& color)
 {
   this->QColorDialog::setCurrentColor(color);
 }
-  
+

@@ -101,3 +101,4 @@ private :
 Q_DECLARE_METATYPE(ctkAxesWidget::Axis)
 
 #endif
+
