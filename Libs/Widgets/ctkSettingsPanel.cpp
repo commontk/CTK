@@ -227,6 +227,12 @@ void ctkSettingsPanel::registerProperty(const QString& key,
 }
 
 // --------------------------------------------------------------------------
+void ctkSettingsPanel::acceptSettings()
+{
+  this->applySettings();
+}
+
+// --------------------------------------------------------------------------
 void ctkSettingsPanel::applySettings()
 {
   Q_D(ctkSettingsPanel);

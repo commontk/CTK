@@ -64,6 +64,10 @@ public:
   void setSetting(const QString& key, const QVariant& newVal);
 
 public slots:
+
+  /// By default, it calls applySettings()
+  virtual void acceptSettings();
+
   /// Forget the old property values so next time resetSettings is called it
   /// will set the properties with the same values when applySettings() is
   /// called.
