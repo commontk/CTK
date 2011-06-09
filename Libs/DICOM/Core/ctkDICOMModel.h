@@ -28,9 +28,12 @@
 #include "ctkDICOMCoreExport.h"
 
 class ctkDICOMModelPrivate;
-class CTK_DICOM_CORE_EXPORT ctkDICOMModel : public QStandardItemModel
+class CTK_DICOM_CORE_EXPORT ctkDICOMModel
+//  : public QStandardItemModel
+  : public QAbstractItemModel
 {
   Q_OBJECT
+  typedef QAbstractItemModel Superclass;
 public:
 
   enum {
