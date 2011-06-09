@@ -55,6 +55,9 @@ protected:
 public:
   ctkVTKScalarsToColorsWidgetPrivate(ctkVTKScalarsToColorsWidget& object);
   void setupUi(QWidget* widget);
+
+  bool blockSignals(bool);
+
   vtkControlPointsItem* CurrentControlPointsItem;
 };
 
@@ -103,6 +106,15 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   q->qvtkConnect(this->View->chart()->GetAxis(1),vtkCommand::ModifiedEvent,
                     q, SLOT(onAxesModified()));
 
+}
+
+// ----------------------------------------------------------------------------
+bool ctkVTKScalarsToColorsWidget::blockSignals(bool block)
+{
+  d->ColorPickerButton->blockSignals(block);
+  d->OpacitySpinBox->blockSignals(block);
+  d->MidPointSpinBox->blockSignals(block);
+  return d->SharpnessSpinBox->blockSignals(block);
 }
 
 // ----------------------------------------------------------------------------
@@ -283,6 +295,8 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
 
   double point[4];
   d->CurrentControlPointsItem->GetControlPoint(pointId, point);
+
+  bool oldBlock = d->blockSignals(true);
   d->OpacitySpinBox->setValue(point[1]);
   d->MidPointSpinBox->setValue(point[2]);
   d->SharpnessSpinBox->setValue(point[3]);
@@ -298,6 +312,7 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
     QColor color = QColor::fromRgbF(xrgbms[1], xrgbms[2], xrgbms[3]);
     d->ColorPickerButton->setColor(color);
     }
+  d->blockSignals(oldBlock);
 }
 
 // ----------------------------------------------------------------------------
