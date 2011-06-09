@@ -19,8 +19,8 @@
 =========================================================================*/
 
 // Qt includes
-#include <QApplication>
-#include <QPushButton>
+#include <QCoreApplication>
+#include <QTimer>
 
 // CTK includes
 #include "ctkAbstractPluginFactory.h"
@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
   if (argc <= 1)
     {
@@ -103,7 +103,7 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
   pluginFactory.uninstantiate("lib");
   
   // ctkDummyPlugin is not a QPushButton, it should fail then.
-  ctkAbstractPluginFactory< QPushButton > buttonPluginFactory;
+  ctkAbstractPluginFactory< QTimer > buttonPluginFactory;
   buttonPluginFactory.setVerbose(true);
   // it should register but fail while instanciating
   res = buttonPluginFactory.registerFileItem("foo", file);
@@ -112,8 +112,8 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
     std::cerr << "ctkAbstractPluginFactory::registerLibrary() failed" << std::endl;
     return EXIT_FAILURE;
     }
-  QPushButton* button = buttonPluginFactory.instantiate("foo");
-  if (button != 0)
+  QTimer* timer = buttonPluginFactory.instantiate("foo");
+  if (timer != 0)
     {
     std::cerr << "ctkAbstractPluginFactory::instantiate() failed" << std::endl;
     return EXIT_FAILURE;

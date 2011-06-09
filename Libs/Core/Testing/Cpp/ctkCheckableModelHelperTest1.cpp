@@ -19,10 +19,9 @@
 =========================================================================*/
 
 // Qt includes
+#include <QCoreApplication>
 #include <QDebug>
-#include <QApplication>
 #include <QFocusEvent>
-#include <QTableView>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QTimer>
@@ -37,7 +36,7 @@
 //-----------------------------------------------------------------------------
 int ctkCheckableModelHelperTest1(int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
   QStandardItemModel model;
   QList<QStandardItem*> row0;

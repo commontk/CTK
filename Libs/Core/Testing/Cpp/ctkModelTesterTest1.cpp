@@ -20,10 +20,11 @@
 
 // Qt includes
 #include <QAbstractItemModel>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QList>
 #include <QModelIndex>
-#include <QTreeWidget>
+#include <QStandardItem>
+#include <QStandardItemModel>
 
 // CTK includes
 #include "ctkModelTester.h"
@@ -46,7 +47,7 @@ public:
 //-----------------------------------------------------------------------------
 int ctkModelTesterTest1(int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
   QAbstractItemModelHelper * item = new QAbstractItemModelHelper;
   QObject * object = new QObject; 
@@ -57,30 +58,35 @@ int ctkModelTesterTest1(int argc, char * argv [] )
 
   try
     {
-    // as we can infer that QTreeWidget is correct, ctkModelTester shall not fail
-    // for any of the actions on QTreeWidget.
-    QTreeWidget treeWidget(0);
-    ctkModelTester treeModelTester(treeWidget.model());
-    treeWidget.setColumnCount(1);
-    QList<QTreeWidgetItem *> items;
+    // as we can infer that QStandardItemModel is correct,
+    // ctkModelTester shall not fail for any of the actions on the model.
+    // Please note here that takeRow() doesn't delete the items so we end up
+    // with mem leaks.
+    QStandardItemModel model;
+    ctkModelTester treeModelTester(&model);
+    QList<QStandardItem*> items;
+    items << new QStandardItem("col1") << new QStandardItem("col2");
+    model.appendRow(items);
+    QList<QStandardItem*> items2  = model.takeRow(0);
+    if (items2 != items)
+      {
+      std::cerr << "Error" << std::endl;
+      return EXIT_FAILURE;
+      }
+    items2.clear();
+    model.appendRow(items);
     for (int i = 0; i < 10; ++i)
       {
-      items.append(new QTreeWidgetItem(
-          reinterpret_cast<QTreeWidget*>(0), QStringList(QString("item: %1").arg(i))));
+      model.appendRow(QList<QStandardItem*>() << new QStandardItem("col1") << new QStandardItem("col2"));
       }
-    treeWidget.addTopLevelItems(items);
-    treeWidget.takeTopLevelItem(0);
-    treeWidget.takeTopLevelItem(treeWidget.topLevelItemCount() / 2 );
-    treeWidget.takeTopLevelItem(treeWidget.topLevelItemCount() - 1);
-    treeWidget.insertTopLevelItem(0, new QTreeWidgetItem(&treeWidget, QStringList("new item 0")));
-    treeWidget.insertTopLevelItem(treeWidget.topLevelItemCount() / 2, new QTreeWidgetItem(
-        reinterpret_cast<QTreeWidget*>(0), QStringList("new item 1")));
-    treeWidget.insertTopLevelItem(treeWidget.topLevelItemCount(), new QTreeWidgetItem(
-        reinterpret_cast<QTreeWidget*>(0), QStringList("new item 2")));
-    new QTreeWidgetItem(treeWidget.topLevelItem(0), QStringList("new item 3"));
-    QAbstractItemModel* model = treeWidget.model();
-    model->setData(model->index(0,0),QString("foo"));
-    treeWidget.sortItems(0, Qt::DescendingOrder);
+    model.takeRow(0);
+    model.takeRow(model.rowCount() / 2 );
+    model.takeRow(model.rowCount() - 1);
+    items2 << new QStandardItem("col1") << new QStandardItem("col2");
+    items2[0]->appendRow(QList<QStandardItem*>() << new QStandardItem("subcol1") << new QStandardItem("subcol2"));
+    items2[0]->appendRow(QList<QStandardItem*>() << new QStandardItem("subcol1") << new QStandardItem("subcol2"));
+    model.setData(model.index(0,0), QString("foo"));
+    model.sort(0);
     }
   catch (const char* error)
     {

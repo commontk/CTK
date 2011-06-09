@@ -19,8 +19,7 @@
 =========================================================================*/
 
 // Qt includes
-#include <QApplication>
-#include <QPushButton>
+#include <QCoreApplication>
 
 // CTK includes
 #include "ctkAbstractLibraryFactory.h"
@@ -66,7 +65,7 @@ protected:
 //-----------------------------------------------------------------------------
 int ctkAbstractLibraryFactoryTest1(int argc, char * argv [])
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
   if (argc <= 1)
     {

@@ -19,7 +19,7 @@
 =========================================================================*/
 
 // Qt includes
-#include <QApplication>
+#include <QCoreApplication>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -38,7 +38,7 @@ public:
 //-----------------------------------------------------------------------------
 int ctkPimplTest1(int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
 
   return EXIT_SUCCESS;

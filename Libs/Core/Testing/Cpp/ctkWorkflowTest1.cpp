@@ -19,7 +19,7 @@
   =========================================================================*/
 
 // QT includes
-#include <QApplication>
+#include <QCoreApplication>
 #include <QTimer>
 
 // CTK includes
@@ -82,19 +82,19 @@ int currentStepAndNumberOfTimesEntryExitTest(ctkWorkflow* workflow, ctkExampleDe
 }
 
 //-----------------------------------------------------------------------------
-int transitionTest(ctkWorkflow* workflow, int defaultTime, QApplication& app, ctkExampleDerivedWorkflowStep* expectedStep, ctkExampleDerivedWorkflowStep* step1, int step1Entry, int step1Exit, ctkExampleDerivedWorkflowStep* step2, int step2Entry, int step2Exit, ctkExampleDerivedWorkflowStep* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleDerivedWorkflowStep* step4=0, int step4Entry=0, int step4Exit=0)
+int transitionTest(ctkWorkflow* workflow, int defaultTime, ctkExampleDerivedWorkflowStep* expectedStep, ctkExampleDerivedWorkflowStep* step1, int step1Entry, int step1Exit, ctkExampleDerivedWorkflowStep* step2, int step2Entry, int step2Exit, ctkExampleDerivedWorkflowStep* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleDerivedWorkflowStep* step4=0, int step4Entry=0, int step4Exit=0)
 {
-  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
-  app.exec();
+  QTimer::singleShot(defaultTime, qApp, SLOT(quit()));
+  qApp->exec();
   return currentStepAndNumberOfTimesEntryExitTest(workflow, expectedStep, step1, step1Entry, step1Exit, step2, step2Entry, step2Exit, step3, step3Entry, step3Exit, step4, step4Entry, step4Exit);
 }
 
 //-----------------------------------------------------------------------------
-int testStartWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app, bool shouldRun, ctkExampleDerivedWorkflowStep* expectedStep=0, ctkExampleDerivedWorkflowStep* step1=0, int step1Entry=0, int step1Exit=0, ctkExampleDerivedWorkflowStep* step2=0, int step2Entry=0, int step2Exit=0, ctkExampleDerivedWorkflowStep* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleDerivedWorkflowStep* step4=0, int step4Entry=0, int step4Exit=0)
+int testStartWorkflow(ctkWorkflow* workflow, int defaultTime, bool shouldRun, ctkExampleDerivedWorkflowStep* expectedStep=0, ctkExampleDerivedWorkflowStep* step1=0, int step1Entry=0, int step1Exit=0, ctkExampleDerivedWorkflowStep* step2=0, int step2Entry=0, int step2Exit=0, ctkExampleDerivedWorkflowStep* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleDerivedWorkflowStep* step4=0, int step4Entry=0, int step4Exit=0)
 {
   workflow->start();
-  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
-  app.exec();
+  QTimer::singleShot(defaultTime, qApp, SLOT(quit()));
+  qApp->exec();
   if (workflow->isRunning() != shouldRun)
     {
     return 0;
@@ -103,11 +103,11 @@ int testStartWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app,
 }
 
 //-----------------------------------------------------------------------------
-int testStopWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app, ctkExampleDerivedWorkflowStep* step1, int step1Entry, int step1Exit, ctkExampleDerivedWorkflowStep* step2, int step2Entry, int step2Exit, ctkExampleDerivedWorkflowStep* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleDerivedWorkflowStep* step4=0, int step4Entry=0, int step4Exit=0)
+int testStopWorkflow(ctkWorkflow* workflow, int defaultTime, ctkExampleDerivedWorkflowStep* step1, int step1Entry, int step1Exit, ctkExampleDerivedWorkflowStep* step2, int step2Entry, int step2Exit, ctkExampleDerivedWorkflowStep* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleDerivedWorkflowStep* step4=0, int step4Entry=0, int step4Exit=0)
 {
   workflow->stop();
-  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
-  app.exec();
+  QTimer::singleShot(defaultTime, qApp, SLOT(quit()));
+  qApp->exec();
   if (workflow->isRunning())
     {
     return 0;
@@ -118,7 +118,7 @@ int testStopWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app, 
 //-----------------------------------------------------------------------------
 int ctkWorkflowTest1(int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   int defaultTime = 100;
 
   // create two steps and the workflow
@@ -150,7 +150,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   // workflow with no steps
   // try erroneously starting with no steps
 
-  if (!testStartWorkflow(workflow, defaultTime, app, false))
+  if (!testStartWorkflow(workflow, defaultTime, false))
     {
     std::cerr << "empty workflow is running after start()";
     return EXIT_FAILURE;
@@ -164,7 +164,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
     }
 
   // try erroneously starting with no initial step
-  if (!testStartWorkflow(workflow, defaultTime, app, false))
+  if (!testStartWorkflow(workflow, defaultTime, false))
     {
     std::cerr << "workflow is running after start() with no initial step";
     return EXIT_FAILURE;
@@ -177,7 +177,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   workflow->setInitialStep(step1);
 
   // try starting with one step
-  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 1, 0, step2, 0, 0))
+  if (!testStartWorkflow(workflow, defaultTime, true, step1, step1, 1, 0, step2, 0, 0))
     {
     std::cerr << "workflow is not running after start() with a single step";
     return EXIT_FAILURE;
@@ -186,7 +186,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   // triggering ValidationTransition and TransitionToPreviousStep
   // should keep us in the same step, when there is only one step
   workflow->goForward();
-  if (!transitionTest(workflow, defaultTime, app, step1, step1, 1, 0, step2, 0, 0))
+  if (!transitionTest(workflow, defaultTime, step1, step1, 1, 0, step2, 0, 0))
     {
     std::cerr << "error in validation transition in a workflow with a single step";
     return EXIT_FAILURE;
@@ -194,14 +194,14 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // transition to the previous step
   workflow->goBackward();
-  if (!transitionTest(workflow, defaultTime, app, step1, step1, 1, 0, step2, 0, 0))
+  if (!transitionTest(workflow, defaultTime, step1, step1, 1, 0, step2, 0, 0))
     {
     std::cerr << "error after transition to previous step in a workflow with a single step";
     return EXIT_FAILURE;
     }
 
   // stop the workflow
-  if (!testStopWorkflow(workflow, defaultTime, app, step1, 1, 1, step2, 0, 0))
+  if (!testStopWorkflow(workflow, defaultTime, step1, 1, 1, step2, 0, 0))
     {
     std::cerr << "workflow with one step still running after stop";
     return EXIT_FAILURE;
@@ -218,7 +218,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
     }
 
   // start the workflow
-  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 2, 1, step2, 0, 0))
+  if (!testStartWorkflow(workflow, defaultTime, true, step1, step1, 2, 1, step2, 0, 0))
     {
     std::cerr << "workflow is not running after start() with two steps";
     return EXIT_FAILURE;
@@ -245,7 +245,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // Test that the workflow transitions from processing to validation state
   workflow->goForward();
-  if (!transitionTest(workflow, defaultTime, app, step2, step1, 2, 2, step2, 1, 0))
+  if (!transitionTest(workflow, defaultTime, step2, step1, 2, 2, step2, 1, 0))
     {
     std::cerr << "error transitioning to next step in workflow with two steps";
     return EXIT_FAILURE;
@@ -253,14 +253,14 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // Test that the workflow transitions back to the previous step
   workflow->goBackward();
-  if (!transitionTest(workflow, defaultTime, app, step1, step1, 3, 2, step2, 1, 1))
+  if (!transitionTest(workflow, defaultTime, step1, step1, 3, 2, step2, 1, 1))
     {
     std::cerr << "error transitioning to previous step in workflow with step steps";
     return EXIT_FAILURE;
     }
 
   // make sure the workflow stops properly
-  if (!testStopWorkflow(workflow, defaultTime, app, step1, 3, 3, step2, 1, 1))
+  if (!testStopWorkflow(workflow, defaultTime, step1, 3, 3, step2, 1, 1))
     {
     std::cerr << "workflow with two steps is running after stop()";
     return EXIT_FAILURE;
@@ -337,7 +337,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // now that we've stopped and restarted the state machine, we should
   // be back in the initial step (step 1)
-  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 4, 3, step2, 1, 1, step3, 0, 0))
+  if (!testStartWorkflow(workflow, defaultTime, true, step1, step1, 4, 3, step2, 1, 1, step3, 0, 0))
     {
     std::cerr << "workflow is not running after start() with three steps";
     return EXIT_FAILURE;
@@ -360,7 +360,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   workflow->goForward();
-  if (!transitionTest(workflow, defaultTime, app, step3, step1, 4, 4, step2, 2, 2, step3, 1, 0))
+  if (!transitionTest(workflow, defaultTime, step3, step1, 4, 4, step2, 2, 2, step3, 1, 0))
     {
     std::cerr << "error transitioning to step3 in workflow with three steps";
     return EXIT_FAILURE;
@@ -368,14 +368,14 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // Test that the workflow transitions back to the previous step
   workflow->goBackward();
-  if (!transitionTest(workflow, defaultTime, app, step2, step1, 4, 4, step2, 3, 2, step3, 1, 1))
+  if (!transitionTest(workflow, defaultTime, step2, step1, 4, 4, step2, 3, 2, step3, 1, 1))
     {
     std::cerr << "error transitioning to previous step in workflow with three steps";
     return EXIT_FAILURE;
     }
 
   // make sure the workflow stops properly
-  if (!testStopWorkflow(workflow, defaultTime, app, step1, 4, 4, step2, 3, 3, step3, 1, 1))
+  if (!testStopWorkflow(workflow, defaultTime, step1, 4, 4, step2, 3, 3, step3, 1, 1))
     {
     std::cerr << "error stopping workflow with three steps";
     return EXIT_FAILURE;
@@ -385,7 +385,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   // workflow with a finish step (step 3)
 
   // restart the workflow
-  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 5, 4, step2, 3, 3, step3, 1, 1))
+  if (!testStartWorkflow(workflow, defaultTime, true, step1, step1, 5, 4, step2, 3, 3, step3, 1, 1))
     {
     std::cerr << "workflow with finish step is not running after start()";
     return EXIT_FAILURE;
@@ -393,7 +393,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // try to go automatically to step 3
   workflow->goToStep("Step 3");
-  if (!transitionTest(workflow, defaultTime, app, step1, step1, 6, 5, step2, 4, 4, step3, 2, 2))
+  if (!transitionTest(workflow, defaultTime, step1, step1, 6, 5, step2, 4, 4, step3, 2, 2))
     {
     std::cerr << "error after going to finish step";
     return EXIT_FAILURE;
@@ -401,14 +401,14 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // try to go automatically to step 3 again
   workflow->goToStep("Step 3");
-  if (!transitionTest(workflow, defaultTime, app, step1, step1, 7, 6, step2, 5, 5, step3, 3, 3))
+  if (!transitionTest(workflow, defaultTime, step1, step1, 7, 6, step2, 5, 5, step3, 3, 3))
     {
     std::cerr << "error after going to finish step the second time";
     return EXIT_FAILURE;
     }
 
   // stop workflow
-  if (!testStopWorkflow(workflow, defaultTime, app, step1, 7, 7, step2, 5, 5, step3, 3, 3))
+  if (!testStopWorkflow(workflow, defaultTime, step1, 7, 7, step2, 5, 5, step3, 3, 3))
     {
     std::cerr << "error stopping workflow with finish step";
     return EXIT_FAILURE;
@@ -422,7 +422,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   workflow->addTransition(step3, step4);
 
   // restart the workflow
-  if (!testStartWorkflow(workflow, defaultTime, app, true, step1, step1, 8, 7, step2, 5, 5, step3, 3, 3, step4, 0, 0))
+  if (!testStartWorkflow(workflow, defaultTime, true, step1, step1, 8, 7, step2, 5, 5, step3, 3, 3, step4, 0, 0))
     {
     std::cerr << "workflow with two finish steps is not running after start()";
     return EXIT_FAILURE;
@@ -430,7 +430,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // try to go automatically to step 3
   workflow->goToStep("Step 3");
-  if (!transitionTest(workflow, defaultTime, app, step1, step1, 9, 8, step2, 6, 6, step3, 4, 4, step4, 0, 0))
+  if (!transitionTest(workflow, defaultTime, step1, step1, 9, 8, step2, 6, 6, step3, 4, 4, step4, 0, 0))
     {
     std::cerr << "error going to the first finish step of two";
     return EXIT_FAILURE;
@@ -438,7 +438,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // try to go automatically to step 4
   workflow->goToStep("Step 4");
-  if (!transitionTest(workflow, defaultTime, app, step1, step1, 10, 9, step2, 7, 7, step3, 5, 5, step4, 1, 1))
+  if (!transitionTest(workflow, defaultTime, step1, step1, 10, 9, step2, 7, 7, step3, 5, 5, step4, 1, 1))
     {
     std::cerr << "error going to the second finish step of two";
     return EXIT_FAILURE;
@@ -449,7 +449,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   workflow->goForward();
-  if (!transitionTest(workflow, defaultTime, app, step3, step1, 10, 10, step2, 8, 8, step3, 6, 5, step4, 1, 1))
+  if (!transitionTest(workflow, defaultTime, step3, step1, 10, 10, step2, 8, 8, step3, 6, 5, step4, 1, 1))
     {
     std::cerr << "error going from step1 to step3";
     return EXIT_FAILURE;
@@ -457,7 +457,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // try to go automatically to step 4 (another goTo step)
   workflow->goToStep("Step 4");
-  if (!transitionTest(workflow, defaultTime, app, step3, step1, 10, 10, step2, 8, 8, step3, 7, 6, step4, 2, 2))
+  if (!transitionTest(workflow, defaultTime, step3, step1, 10, 10, step2, 8, 8, step3, 7, 6, step4, 2, 2))
     {
     std::cerr << "error going from the first finish step to the second finish step";
     return EXIT_FAILURE;
@@ -468,7 +468,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   workflow->goForward();
-  if (!transitionTest(workflow, defaultTime, app, step4, step1, 10, 10, step2, 8, 8, step3, 7, 7, step4, 3, 2))
+  if (!transitionTest(workflow, defaultTime, step4, step1, 10, 10, step2, 8, 8, step3, 7, 7, step4, 3, 2))
     {
     std::cerr << "error going forward past last step - shouldn't let you";
     return EXIT_FAILURE;
@@ -476,7 +476,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // now try to go from step 4 to step 4 (should loop)
   workflow->goToStep("Step 4");
-  if (!transitionTest(workflow, defaultTime, app, step4, step1, 10, 10, step2, 8, 8, step3, 7, 7, step4, 4, 3))
+  if (!transitionTest(workflow, defaultTime, step4, step1, 10, 10, step2, 8, 8, step3, 7, 7, step4, 4, 3))
     {
     std::cerr << "error looping from step 4 to step 4";
     return EXIT_FAILURE;
@@ -487,7 +487,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   workflow->goToStep("Step 3");
-  if (!transitionTest(workflow, defaultTime, app, step3, step1, 10, 10, step2, 8, 8, step3, 9, 8, step4, 4, 4))
+  if (!transitionTest(workflow, defaultTime, step3, step1, 10, 10, step2, 8, 8, step3, 9, 8, step4, 4, 4))
     {
     std::cerr << "error looping from step 3 to step 3";
     return EXIT_FAILURE;

@@ -19,7 +19,7 @@
   =========================================================================*/
 
 // QT includes
-#include <QApplication>
+#include <QCoreApplication>
 #include <QTimer>
 
 // CTK includes
@@ -42,7 +42,7 @@
 //-----------------------------------------------------------------------------
 int ctkWorkflowTest3(int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   int defaultTime = 100;
 
   // create two steps and the workflow

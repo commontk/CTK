@@ -19,7 +19,7 @@
 =========================================================================*/
 
 // Qt includes
-#include <QApplication>
+#include <QCoreApplication>
 
 // CTK includes
 #include "ctkAbstractQObjectFactory.h"
@@ -32,7 +32,7 @@
 //-----------------------------------------------------------------------------
 int ctkAbstractQObjectFactoryTest1(int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
   ctkAbstractQObjectFactory< ctkModelTester > ctkObject;
 

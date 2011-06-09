@@ -19,10 +19,9 @@
 =========================================================================*/
 
 // Qt includes
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QFileInfo>
-#include <QTreeView>
 #include <QSqlQuery>
 
 // ctkDICOMCore includes
@@ -36,11 +35,11 @@
 
 /* Test from build directory:
  ./CTK-build/bin/CTKDICOMCoreCxxTests ctkDICOMModelTest1 test.db ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
+ If you want a test with a GUI, look at ctkDICOMTest2 in DICOM/Widgets
 */
-
 int ctkDICOMModelTest1( int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   
   if (argc <= 2)
     {
@@ -84,18 +83,11 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
 
     model.setDatabase(myCTK.database());
 
-    QTreeView viewer;
-    viewer.setModel(&model);
-    viewer.setSortingEnabled(true);
-
     model.rowCount();
+
     qDebug() << model.rowCount() << model.columnCount();
     qDebug() << model.index(0,0);
-    viewer.show();
-    if (argc > 3 && QString(argv[3]) == "-I")
-    {
-      return app.exec();
-    }
+
     return EXIT_SUCCESS;
   }
   catch (std::exception e)

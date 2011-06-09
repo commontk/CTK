@@ -19,7 +19,7 @@
 =========================================================================*/
 
 // QT includes
-#include <QApplication>
+#include <QCoreApplication>
 #include <QTimer>
 
 // CTK includes
@@ -83,19 +83,19 @@ int currentStepAndNumberOfTimesEntryExitTest(ctkWorkflow* workflow, ctkWorkflowS
 }
 
 //-----------------------------------------------------------------------------
-int transitionTest(ctkWorkflow* workflow, int defaultTime, QApplication& app, ctkWorkflowStep* expectedStep, ctkExampleWorkflowStepUsingSignalsAndSlots* step1, int step1Entry, int step1Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step2, int step2Entry, int step2Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step4=0, int step4Entry=0, int step4Exit=0)
+int transitionTest(ctkWorkflow* workflow, int defaultTime, ctkWorkflowStep* expectedStep, ctkExampleWorkflowStepUsingSignalsAndSlots* step1, int step1Entry, int step1Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step2, int step2Entry, int step2Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step4=0, int step4Entry=0, int step4Exit=0)
 {
-  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
-  app.exec();
+  QTimer::singleShot(defaultTime, qApp, SLOT(quit()));
+  qApp->exec();
   return currentStepAndNumberOfTimesEntryExitTest(workflow, expectedStep, step1, step1Entry, step1Exit, step2, step2Entry, step2Exit, step3, step3Entry, step3Exit, step4, step4Entry, step4Exit);
 }
 
 //-----------------------------------------------------------------------------
-int testStartWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app, bool shouldRun, ctkWorkflowStep* expectedStep=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step1=0, int step1Entry=0, int step1Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step2=0, int step2Entry=0, int step2Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step4=0, int step4Entry=0, int step4Exit=0)
+int testStartWorkflow(ctkWorkflow* workflow, int defaultTime, bool shouldRun, ctkWorkflowStep* expectedStep=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step1=0, int step1Entry=0, int step1Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step2=0, int step2Entry=0, int step2Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step4=0, int step4Entry=0, int step4Exit=0)
 {
   workflow->start();
-  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
-  app.exec();
+  QTimer::singleShot(defaultTime, qApp, SLOT(quit()));
+  qApp->exec();
   if (workflow->isRunning() != shouldRun)
     {
     return 0;
@@ -104,11 +104,11 @@ int testStartWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app,
 }
 
 //-----------------------------------------------------------------------------
-int testStopWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app, ctkExampleWorkflowStepUsingSignalsAndSlots* step1, int step1Entry, int step1Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step2, int step2Entry, int step2Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step4=0, int step4Entry=0, int step4Exit=0)
+int testStopWorkflow(ctkWorkflow* workflow, int defaultTime, ctkExampleWorkflowStepUsingSignalsAndSlots* step1, int step1Entry, int step1Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step2, int step2Entry, int step2Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step4=0, int step4Entry=0, int step4Exit=0)
 {
   workflow->stop();
-  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
-  app.exec();
+  QTimer::singleShot(defaultTime, qApp, SLOT(quit()));
+  qApp->exec();
   if (workflow->isRunning())
     {
     return 0;
@@ -119,7 +119,7 @@ int testStopWorkflow(ctkWorkflow* workflow, int defaultTime, QApplication& app, 
 //-----------------------------------------------------------------------------
 int ctkWorkflowTest2(int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   int defaultTime = 100;
 
   // create the steps and the workflow
@@ -225,7 +225,7 @@ int ctkWorkflowTest2(int argc, char * argv [] )
     }
 
   // start the workflow
-  if (!testStartWorkflow(workflow, defaultTime, app, 1, step1, qObject1, true, 0, qObject2, 0, 0, qObject3, 0, 0, qObject4, 0, 0))
+  if (!testStartWorkflow(workflow, defaultTime, 1, step1, qObject1, true, 0, qObject2, 0, 0, qObject3, 0, 0, qObject4, 0, 0))
     {
     std::cerr << "error starting workflow";
     return EXIT_FAILURE;
@@ -233,7 +233,7 @@ int ctkWorkflowTest2(int argc, char * argv [] )
 
   // trigger transition to the next step
   workflow->goForward();
-  if (!transitionTest(workflow, defaultTime, app, step2, qObject1, 1, 1, qObject2, 1, 0, qObject3, 0, 0, qObject4, 0, 0))
+  if (!transitionTest(workflow, defaultTime, step2, qObject1, 1, 1, qObject2, 1, 0, qObject3, 0, 0, qObject4, 0, 0))
     {
     std::cerr << "error transitioning to step 2";
     return EXIT_FAILURE;
@@ -241,7 +241,7 @@ int ctkWorkflowTest2(int argc, char * argv [] )
 
   // trigger transition to the next step
   workflow->goForward();
-  if (!transitionTest(workflow, defaultTime, app, step3, qObject1, 1, 1, qObject2, 1, 1, qObject3, 1, 0, qObject4, 0, 0))
+  if (!transitionTest(workflow, defaultTime, step3, qObject1, 1, 1, qObject2, 1, 1, qObject3, 1, 0, qObject4, 0, 0))
     {
     std::cerr << "error transitioning to step 3";
     return EXIT_FAILURE;
@@ -249,14 +249,14 @@ int ctkWorkflowTest2(int argc, char * argv [] )
 
   // trigger transition to the next state (this should fail!)
   workflow->goForward();
-  if (!transitionTest(workflow, defaultTime, app, step3, qObject1, 1, 1, qObject2, 1, 1, qObject3, 1, 0, qObject4, 0, 0))
+  if (!transitionTest(workflow, defaultTime, step3, qObject1, 1, 1, qObject2, 1, 1, qObject3, 1, 0, qObject4, 0, 0))
     {
     std::cerr << "error after transition failure at step 3";
     return EXIT_FAILURE;
     }
 
   // make sure the workflow stops properly
-  if (!testStopWorkflow(workflow, defaultTime, app, qObject1, 1, 1, qObject2, 1, 1, qObject3, 1, 1, qObject4, 0, 0))
+  if (!testStopWorkflow(workflow, defaultTime, qObject1, 1, 1, qObject2, 1, 1, qObject3, 1, 1, qObject4, 0, 0))
     {
     std::cerr << "error after stopping workflow";
     return EXIT_FAILURE;
