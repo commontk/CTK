@@ -109,12 +109,12 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
 }
 
 // ----------------------------------------------------------------------------
-bool ctkVTKScalarsToColorsWidget::blockSignals(bool block)
+bool ctkVTKScalarsToColorsWidgetPrivate::blockSignals(bool block)
 {
-  d->ColorPickerButton->blockSignals(block);
-  d->OpacitySpinBox->blockSignals(block);
-  d->MidPointSpinBox->blockSignals(block);
-  return d->SharpnessSpinBox->blockSignals(block);
+  this->ColorPickerButton->blockSignals(block);
+  this->OpacitySpinBox->blockSignals(block);
+  this->MidPointSpinBox->blockSignals(block);
+  return this->SharpnessSpinBox->blockSignals(block);
 }
 
 // ----------------------------------------------------------------------------
