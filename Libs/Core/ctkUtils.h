@@ -78,12 +78,30 @@ QRegExp CTK_CORE_EXPORT nameFiltersToRegExp(const QStringList& nameFilters);
 /// \ingroup Core
 /// Return a "smart" number of decimals needed to display (in a gui) a floating
 /// number.
+/// e.g. significantDecimals(120.01) returns 2
 int CTK_CORE_EXPORT significantDecimals(double value);
 
 ///
 /// \ingroup Core
 /// Return the order of magnitude of a number.
+/// e.g.: orderOfMagnitude(1) returns 0
+///       orderOfMagnitude(10) returns 1
+///       orderOfMagnitude(99) returns 1
+///       orderOfMagnitude(101) returns 2
+///       orderOfMagnitude(0.1) returns -1
+///       orderOfMagnitude(0.15) returns -1
+///       orderOfMagnitude(0.) returns NaN
 int CTK_CORE_EXPORT orderOfMagnitude(double value);
+
+///
+/// \ingroup Core
+/// Return the order of magnitude of a number.
+/// e.g.: closestPowerOfTen(11) returns 10
+///       closestPowerOfTen(-40) returns -10
+///       closestPowerOfTen(99) returns 100
+///       closestPowerOfTen(0.012) returns 0.010
+///       orderOfMagnitude(0.)  returns 0
+double CTK_CORE_EXPORT closestPowerOfTen(double value);
 
 }
 

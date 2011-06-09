@@ -210,6 +210,7 @@ int ctk::significantDecimals(double value)
   return -1;
 }
 
+//-----------------------------------------------------------------------------
 int ctk::orderOfMagnitude(double value)
 {
   value = qAbs(value);
@@ -238,4 +239,38 @@ int ctk::orderOfMagnitude(double value)
     }
   // we went 1 order too far, so decrement it
   return magnitudeOrder - magnitudeStep;
+}
+
+//-----------------------------------------------------------------------------
+double ctk::closestPowerOfTen(double value)
+{
+  double sign = value >= 0. ? 1 : -1;
+  value = qAbs(value);
+  if (value == 0.)
+    {
+    return 0.;
+    }
+
+  double magnitude = 1.;
+  double nextMagnitude = magnitude;
+
+  if (value >= 1.)
+    {
+    do
+      {
+      magnitude = nextMagnitude;
+      nextMagnitude *= 10.;
+      }
+    while ( (value - magnitude)  > (nextMagnitude - value) );
+    }
+  else
+    {
+    do
+      {
+      magnitude = nextMagnitude;
+      nextMagnitude /= 10.;
+      }
+    while ( (value - magnitude)  < (nextMagnitude - value) );
+    }
+  return magnitude * sign;
 }
