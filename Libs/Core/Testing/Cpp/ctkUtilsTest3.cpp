@@ -37,9 +37,9 @@ bool testSignificantDecimals(double value, int expected)
   if (decimals != expected)
     {
     std::cerr << std::fixed << value << " decimals: " << decimals << " -> " << expected << std::endl;
-    return false;
+    return true;
     }
-  return true;
+  return false;
 }
 
 //-----------------------------------------------------------------------------
