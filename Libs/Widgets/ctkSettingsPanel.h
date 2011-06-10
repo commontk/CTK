@@ -46,7 +46,7 @@ public:
   QSettings* settings()const;
   void setSettings(QSettings* settings);
 
-  /// Add an entrie into the settings uniquely defined by the key name and the
+  /// Add an entry into the settings uniquely defined by the \a key name and the
   /// current value of the property.
   /// The property is then synchronized with the settings by observing the signal
   /// notification. Anytime the property is modified (the signal \a signal is
@@ -81,6 +81,19 @@ public slots:
 signals:
   /// Fired anytime a property is modified.
   void settingChanged(const QString& key, const QVariant& value);
+
+protected:
+  /// Return the default value of a property identified by its settings \a key
+  /// \sa registerProperty();
+  QVariant defaultPropertyValue(const QString& key) const;
+
+  /// Return the previous value of a property identified by its settings \a key
+  /// \sa registerProperty();
+  QVariant previousPropertyValue(const QString& key) const;
+
+  /// Return the value of a property identified by its settings \a key
+  /// \sa registerProperty();
+  QVariant propertyValue(const QString& key) const;
 
 protected slots:
   void updateSetting(const QString& key);
