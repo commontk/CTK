@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QMetaProperty>
 #include <QSettings>
 #include <QSignalMapper>
 
@@ -29,6 +30,10 @@
 
 static ctkLogger logger("org.commontk.libs.widgets.ctkSettingsPanel");
 
+namespace
+{
+
+// --------------------------------------------------------------------------
 struct PropertyType
 {
   PropertyType();
@@ -39,6 +44,8 @@ struct PropertyType
 
   QVariant value()const;
   bool setValue(const QVariant& value);
+
+  QMetaProperty metaProperty();
 };
 
 // --------------------------------------------------------------------------
@@ -66,10 +73,34 @@ bool PropertyType::setValue(const QVariant& val)
     Q_ASSERT(this->Object && !this->Property.isEmpty());
     return false;
     }
-  // the following returns true if the property has been added using Q_PROPERTY
-  // false otherwise (and the property is then a dynamic property)
-  return this->Object->setProperty(this->Property.toLatin1(), val);
+  QVariant value(val);
+  // HACK - See http://bugreports.qt.nokia.com/browse/QTBUG-19823
+  if (qstrcmp(this->metaProperty().typeName(), "QStringList") == 0 && !value.isValid())
+    {
+    value = QVariant(QStringList());
+    }
+  bool success = this->Object->setProperty(this->Property.toLatin1(), value);
+  Q_ASSERT(success);
+  return success;
 }
+
+// --------------------------------------------------------------------------
+QMetaProperty PropertyType::metaProperty()
+{
+  Q_ASSERT(this->Object);
+  for(int i=0; i < this->Object->metaObject()->propertyCount(); ++i)
+    {
+    this->Object->metaObject()->property(i);
+    if (this->Object->metaObject()->property(i).name() == this->Property)
+      {
+      return this->Object->metaObject()->property(i);
+      }
+    }
+  return QMetaProperty();
+}
+
+} // end of anonymous namespace
+
 //-----------------------------------------------------------------------------
 class ctkSettingsPanelPrivate
 {
@@ -155,9 +186,7 @@ void ctkSettingsPanel::updateProperties()
       QVariant value = d->Settings->value(key);
       PropertyType& prop = d->Properties[key];
       // Update object registered using registerProperty()
-      bool res = prop.setValue(value);
-      Q_ASSERT(res);
-      Q_UNUSED(res);
+      prop.setValue(value);
       prop.PreviousValue = value;
       }
     else

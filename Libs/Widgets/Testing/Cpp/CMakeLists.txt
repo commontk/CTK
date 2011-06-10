@@ -48,6 +48,7 @@ SET(TEST_SOURCES
   ctkDateRangeWidgetTest1.cpp
   ctkScreenshotDialogTest1.cpp
   ctkSettingsPanelTest1.cpp
+  ctkSettingsPanelTest2.cpp
   ctkSettingsTest1.cpp
   ctkSettingsDialogTest1.cpp
   ctkSliderWidgetTest1.cpp
@@ -82,11 +83,14 @@ SET(Tests_SRCS
   ctkExampleDerivedWorkflowWidgetStep.h
   ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.cpp
   ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.h
+  ctkSettingsPanelTest2Helper.cpp
+  ctkSettingsPanelTest2Helper.h
   )
 
 SET(Tests_MOC_SRCS
   ctkExampleDerivedWorkflowWidgetStep.h
   ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.h
+  ctkSettingsPanelTest2Helper.h
   )
 
 SET(Tests_MOC_CPP)
@@ -159,6 +163,7 @@ SIMPLE_TEST( ctkRangeWidgetTest2 )
 SIMPLE_TEST( ctkScreenshotDialogTest1 )
 SIMPLE_TEST( ctkSettingsDialogTest1 )
 SIMPLE_TEST( ctkSettingsPanelTest1 )
+SIMPLE_TEST( ctkSettingsPanelTest2 )
 SIMPLE_TEST( ctkSettingsTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkToolTipTrapperTest1 )
