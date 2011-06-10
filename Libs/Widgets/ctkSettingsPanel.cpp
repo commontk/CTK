@@ -227,6 +227,39 @@ void ctkSettingsPanel::registerProperty(const QString& key,
 }
 
 // --------------------------------------------------------------------------
+QVariant ctkSettingsPanel::defaultPropertyValue(const QString& key) const
+{
+  Q_D(const ctkSettingsPanel);
+  if (!d->Properties.contains(key))
+    {
+    return QVariant();
+    }
+  return d->Properties.value(key).DefaultValue;
+}
+
+// --------------------------------------------------------------------------
+QVariant ctkSettingsPanel::previousPropertyValue(const QString& key) const
+{
+  Q_D(const ctkSettingsPanel);
+  if (!d->Properties.contains(key))
+    {
+    return QVariant();
+    }
+  return d->Properties.value(key).PreviousValue;
+}
+
+// --------------------------------------------------------------------------
+QVariant ctkSettingsPanel::propertyValue(const QString& key) const
+{
+  Q_D(const ctkSettingsPanel);
+  if (!d->Properties.contains(key))
+    {
+    return QVariant();
+    }
+  return d->Properties.value(key).value();
+}
+
+// --------------------------------------------------------------------------
 void ctkSettingsPanel::applySettings()
 {
   Q_D(ctkSettingsPanel);
