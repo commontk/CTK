@@ -65,13 +65,10 @@ public:
 
 public slots:
 
-  /// By default, it calls applySettings()
-  virtual void acceptSettings();
-
   /// Forget the old property values so next time resetSettings is called it
   /// will set the properties with the same values when applySettings() is
   /// called.
-  void applySettings();
+  virtual void applySettings();
 
   /// Restore all the properties with their values when applySettings() was
   /// called last (or their original values if applySettings was never called).

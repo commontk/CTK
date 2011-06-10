@@ -62,7 +62,6 @@ public slots:
   void setCurrentPanel(ctkSettingsPanel* panel);
   void setCurrentPanel(const QString& label);
 
-  void acceptSettings();
   void applySettings();
   void resetSettings();
   void restoreDefaultSettings();

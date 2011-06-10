@@ -215,7 +215,7 @@ ctkSettingsPanel* ctkSettingsDialog::panel(const QString& label)const
 // --------------------------------------------------------------------------
 void ctkSettingsDialog::accept()
 {
-  this->acceptSettings();
+  this->applySettings();
   this->Superclass::accept();
 }
 
@@ -224,17 +224,6 @@ void ctkSettingsDialog::reject()
 {
   this->resetSettings();
   this->Superclass::accept();
-}
-
-// --------------------------------------------------------------------------
-void ctkSettingsDialog::acceptSettings()
-{
-  Q_D(ctkSettingsDialog);
-  foreach(ctkSettingsPanel* panel, d->Panels.values())
-    {
-    panel->acceptSettings();
-    }
-  d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(false);
 }
 
 // --------------------------------------------------------------------------
