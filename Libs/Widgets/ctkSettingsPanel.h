@@ -75,11 +75,11 @@ public slots:
 
   /// Restore all the properties with their values when applySettings() was
   /// called last (or their original values if applySettings was never called).
-  void resetSettings();
+  virtual void resetSettings();
 
   /// Restore all the properties with their original values; the current values
   /// of the properties when they were registered using registerProperty().
-  void restoreDefaultSettings();
+  virtual void restoreDefaultSettings();
 
 signals:
   /// Fired anytime a property is modified.
