@@ -71,6 +71,8 @@ void ctkSettingsDialogPrivate::init()
 
   this->setupUi(q);
 
+  this->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(false);
+
   QObject::connect(this->SettingsTreeWidget,
     SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     q, SLOT(onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
@@ -129,6 +131,8 @@ QSettings* ctkSettingsDialog::settings()const
 void ctkSettingsDialog::setSettings(QSettings* settings)
 {
   Q_D(ctkSettingsDialog);
+
+  d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(false);
 
   d->Settings = settings;
   foreach(ctkSettingsPanel* panel, d->Panels.values())
@@ -215,7 +219,7 @@ ctkSettingsPanel* ctkSettingsDialog::panel(const QString& label)const
 // --------------------------------------------------------------------------
 void ctkSettingsDialog::accept()
 {
-  this->acceptSettings();
+  this->applySettings();
   this->Superclass::accept();
 }
 
@@ -224,17 +228,6 @@ void ctkSettingsDialog::reject()
 {
   this->resetSettings();
   this->Superclass::accept();
-}
-
-// --------------------------------------------------------------------------
-void ctkSettingsDialog::acceptSettings()
-{
-  Q_D(ctkSettingsDialog);
-  foreach(ctkSettingsPanel* panel, d->Panels.values())
-    {
-    panel->acceptSettings();
-    }
-  d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(false);
 }
 
 // --------------------------------------------------------------------------
