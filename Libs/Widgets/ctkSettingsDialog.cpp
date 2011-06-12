@@ -67,11 +67,9 @@ void ctkSettingsDialogPrivate::init()
 {
   Q_Q(ctkSettingsDialog);
 
-  this->Settings = new QSettings(q);
-
   this->setupUi(q);
 
-  this->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(false);
+  q->setSettings(new QSettings(q));
 
   QObject::connect(this->SettingsTreeWidget,
     SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
