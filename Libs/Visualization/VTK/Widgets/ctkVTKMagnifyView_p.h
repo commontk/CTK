@@ -66,7 +66,7 @@ protected:
   struct EventHandlerStruct
     {
     PendingEventType EventType;
-    QVTKWidget * Widget;
+    QWeakPointer<QVTKWidget> Widget;
     QPointF Position;
     int UpdateInterval;
     int TimerId;

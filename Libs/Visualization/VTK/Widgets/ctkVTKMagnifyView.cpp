@@ -58,7 +58,6 @@ ctkVTKMagnifyViewPrivate::ctkVTKMagnifyViewPrivate(ctkVTKMagnifyView& object)
   this->ObserveRenderWindowEvents = true;
 
   this->EventHandler.EventType = NoEvent;
-  this->EventHandler.Widget = 0;
   this->EventHandler.Position = QPointF(0,0);
 
   this->EventHandler.UpdateInterval = 20;
@@ -133,16 +132,21 @@ void ctkVTKMagnifyViewPrivate::timerEvent(QTimerEvent * event)
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyViewPrivate::pushUpdatePixmapEvent()
 {
-  Q_ASSERT(this->EventHandler.Widget);
+  if (this->EventHandler.Widget.isNull())
+    {
+    return;
+    }
   this->pushUpdatePixmapEvent(
-        this->EventHandler.Widget->mapFromGlobal(QCursor::pos()));
+        this->EventHandler.Widget.data()->mapFromGlobal(QCursor::pos()));
 }
 
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyViewPrivate::pushUpdatePixmapEvent(QPointF pos)
 {
-  Q_ASSERT(this->EventHandler.Widget);
-
+  if (this->EventHandler.Widget.isNull())
+    {
+    return;
+    }
   // Add this event to the queue
   this->EventHandler.EventType = UpdatePixmapEvent;
   this->EventHandler.Position = pos;
@@ -248,11 +252,11 @@ void ctkVTKMagnifyViewPrivate::removePixmap()
 void ctkVTKMagnifyViewPrivate::updatePixmap()
 {
   Q_ASSERT(this->EventHandler.EventType == UpdatePixmapEvent);
-  Q_ASSERT(this->EventHandler.Widget);
+  Q_ASSERT(!this->EventHandler.Widget.isNull());
   Q_Q(ctkVTKMagnifyView);
 
   // Retrieve buffer of given QVTKWidget from its render window
-  vtkRenderWindow * renderWindow = this->EventHandler.Widget->GetRenderWindow();
+  vtkRenderWindow * renderWindow = this->EventHandler.Widget.data()->GetRenderWindow();
   if (!renderWindow)
     {
     return;
@@ -588,7 +592,7 @@ bool ctkVTKMagnifyView::eventFilter(QObject * obj, QEvent * event)
   Q_ASSERT(widget);
   Q_D(ctkVTKMagnifyView);
   Q_ASSERT(d->ObservedQVTKWidgets.contains(widget));
-  d->EventHandler.Widget = widget;
+  d->EventHandler.Widget = QWeakPointer<QVTKWidget>(widget);
 
   QEvent::Type eventType = event->type();
 
