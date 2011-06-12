@@ -48,6 +48,10 @@ ctkPluginPrivate::ctkPluginPrivate(
   //TODO
   //checkCertificates(pa);
 
+  // Older gcc versions need to be told to make external symbols and RTTI information
+  // available to other libraries when loading a library with dlopen
+  pluginLoader.setLoadHints(QLibrary::ExportExternalSymbolsHint);
+
   checkManifestHeaders();
 
   pluginDir = fwCtx->getDataStorage(id);
