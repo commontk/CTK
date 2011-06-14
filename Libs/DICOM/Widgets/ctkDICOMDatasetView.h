@@ -24,6 +24,7 @@
 /// Qt includes
 #include <QWidget>
 #include <QImage>
+#include <QModelIndex>
 
 /// CTK includes
 #include "ctkQImageView.h"
@@ -52,10 +53,14 @@ public:
   /// Destructor
   virtual ~ctkDICOMDatasetView( void );
 
+  void setDatabaseDirectory(const QString& directory);
+
 public slots:
 
   void addImage( const ctkDICOMImage & image );
   void addImage( const QImage & image );
+
+  void onModelSelected(const QModelIndex& index);
 
   virtual void update( bool zoomChanged=false, bool sizeChanged=false );
 

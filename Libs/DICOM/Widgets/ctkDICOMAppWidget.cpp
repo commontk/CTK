@@ -102,8 +102,8 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->ImportDialog->setWindowModality(Qt::ApplicationModal);
 
   //connect signal and slots
-  //connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onDICOMModelSelected(const QModelIndex &)));
   connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), d->thumbnailsWidget, SLOT(onModelSelected(const QModelIndex &)));
+  connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), d->imagePreview, SLOT(onModelSelected(const QModelIndex &)));
 
   connect(d->thumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
@@ -154,6 +154,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   // update the button and let any connected slots know about the change
   d->directoryButton->setDirectory(directory);
   d->thumbnailsWidget->setDatabaseDirectory(directory);
+  d->imagePreview->setDatabaseDirectory(directory);
   emit databaseDirectoryChanged(directory);
 }
 
@@ -194,29 +195,6 @@ void ctkDICOMAppWidget::openQueryDialog()
   d->QueryRetrieveWidget->show();
   d->QueryRetrieveWidget->raise();
 
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
-{
-  Q_D(ctkDICOMAppWidget);
-
-  QModelIndex index0 = index.sibling(index.row(), 0);
-
-  // TODO: this could check the type of the model entries for image previewer
-  QString thumbnailPath = d->DICOMDatabase->databaseDirectory();
-  thumbnailPath.append("/dicom/").append(d->DICOMModel.data(index0.parent().parent() ,ctkDICOMModel::UIDRole).toString());
-  thumbnailPath.append("/").append(d->DICOMModel.data(index0.parent() ,ctkDICOMModel::UIDRole).toString());
-  thumbnailPath.append("/").append(d->DICOMModel.data(index0 ,ctkDICOMModel::UIDRole).toString());
-  if (QFile(thumbnailPath).exists())
-  {
-    DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
-    ctkDICOMImage ctkImage( & dcmImage );
-    d->imagePreview->clearImages();
-    d->imagePreview->addImage( ctkImage );
-  }else{
-    d->imagePreview->clearImages();
-  }
 }
 
 //----------------------------------------------------------------------------

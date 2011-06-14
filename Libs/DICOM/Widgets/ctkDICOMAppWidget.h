@@ -46,7 +46,6 @@ public slots:
   void setDatabaseDirectory(const QString& directory);
   void onAddToDatabase();
 
-  void onDICOMModelSelected(const QModelIndex& index);
   void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
 
   void openImportDialog();
