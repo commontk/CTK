@@ -25,15 +25,38 @@
 // STD includes
 #include <iostream>
 
+// Qt includes
+#include <QColor>
+
 //----------------------------------------------------------------------------
 class ctkDICOMThumbnailWidgetPrivate: public Ui_ctkDICOMThumbnailWidget
 {
 public:
+    ctkDICOMThumbnailWidget* const q_ptr;
+    Q_DECLARE_PUBLIC(ctkDICOMThumbnailWidget);
+
+    // Constructor
+    ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnailWidget* parent);
+
+    bool selectedFlag;
+
+    QColor backgroundColor;
 };
 
 //----------------------------------------------------------------------------
 // ctkDICOMThumbnailWidgetPrivate methods
 
+ctkDICOMThumbnailWidgetPrivate::ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnailWidget* parent): q_ptr(parent){
+    Q_Q(ctkDICOMThumbnailWidget);
+
+    this->selectedFlag = false;
+    this->backgroundColor = Qt::blue;
+
+    QPalette p(q->palette());
+    p.setColor(QPalette::Window, this->backgroundColor);
+    q->setPalette(p);
+    q->setBackgroundRole(QPalette::Window);
+}
 
 //----------------------------------------------------------------------------
 // ctkDICOMThumbnailWidget methods
@@ -41,7 +64,7 @@ public:
 //----------------------------------------------------------------------------
 ctkDICOMThumbnailWidget::ctkDICOMThumbnailWidget(QWidget* parentWidget)
   : Superclass(parentWidget)
-  , d_ptr(new ctkDICOMThumbnailWidgetPrivate)
+  , d_ptr(new ctkDICOMThumbnailWidgetPrivate(this))
 {
   Q_D(ctkDICOMThumbnailWidget);
 
@@ -84,8 +107,33 @@ const QPixmap* ctkDICOMThumbnailWidget::pixmap()const
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMThumbnailWidget::setSelected(bool selected){
+    Q_D(ctkDICOMThumbnailWidget);
+
+    if(selected == d->selectedFlag)return;
+
+    if(selected){
+        QPalette p(this->palette());
+        p.setColor(QPalette::Window, d->backgroundColor);
+        this->setPalette(p);
+        this->setAutoFillBackground(true);
+    }else{
+        this->setAutoFillBackground(false);
+    }
+
+    d->selectedFlag = selected;
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMThumbnailWidget::isSelected(){
+    Q_D(ctkDICOMThumbnailWidget);
+    return d->selectedFlag;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMThumbnailWidget::mousePressEvent(QMouseEvent* event)
 {
-  Q_UNUSED(event);
-  emit selected(*this);
+    Q_UNUSED(event);
+    this->setSelected(true);
+    emit selected(*this);
 }

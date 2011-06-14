@@ -44,6 +44,9 @@ public:
   void setPixmap(const QPixmap& pixmap);
   const QPixmap* pixmap()const;
 
+  void setSelected(bool selected);
+  bool isSelected();
+
 protected:
   QScopedPointer<ctkDICOMThumbnailWidgetPrivate> d_ptr;
 

@@ -52,6 +52,7 @@ signals:
 
 public slots:
   void onModelSelected(const QModelIndex& index);
+  void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
 };
 
 #endif
