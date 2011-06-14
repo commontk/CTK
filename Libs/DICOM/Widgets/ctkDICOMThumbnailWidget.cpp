@@ -100,7 +100,8 @@ void ctkDICOMThumbnailWidget::setPixmap(const QPixmap &pixmap)
 const QPixmap* ctkDICOMThumbnailWidget::pixmap()const
 {
   Q_D(const ctkDICOMThumbnailWidget);
-  return d->textLabel->pixmap();
+
+  return d->pixmapLabel->pixmap();
 }
 
 //----------------------------------------------------------------------------
