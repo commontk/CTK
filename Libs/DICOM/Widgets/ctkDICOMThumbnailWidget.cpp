@@ -41,6 +41,8 @@ public:
     bool selectedFlag;
 
     QColor backgroundColor;
+
+    QModelIndex sourceIndex;
 };
 
 //----------------------------------------------------------------------------
@@ -51,11 +53,6 @@ ctkDICOMThumbnailWidgetPrivate::ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnail
 
     this->selectedFlag = false;
     this->backgroundColor = Qt::blue;
-
-    QPalette p(q->palette());
-    p.setColor(QPalette::Window, this->backgroundColor);
-    q->setPalette(p);
-    q->setBackgroundRole(QPalette::Window);
 }
 
 //----------------------------------------------------------------------------
@@ -104,6 +101,20 @@ const QPixmap* ctkDICOMThumbnailWidget::pixmap()const
 {
   Q_D(const ctkDICOMThumbnailWidget);
   return d->textLabel->pixmap();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMThumbnailWidget::setSourceIndex(QModelIndex index){
+    Q_D(ctkDICOMThumbnailWidget);
+
+    d->sourceIndex = index;
+}
+
+//----------------------------------------------------------------------------
+QModelIndex ctkDICOMThumbnailWidget::sourceIndex() const{
+    Q_D(const ctkDICOMThumbnailWidget);
+
+    return d->sourceIndex;
 }
 
 //----------------------------------------------------------------------------

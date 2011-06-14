@@ -76,8 +76,10 @@ void ctkDICOMThumbnailListWidgetPrivate::onPatientModelSelected(const QModelInde
                 QPixmap pix(thumbnail);
                 logger.debug("Setting pixmap to " + thumbnail);
                 widget->setPixmap(pix);
+                widget->setSourceIndex(studyIndex);
                 this->scrollAreaContentWidget->layout()->addWidget(widget);
                 q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkDICOMThumbnailWidget)));
+                q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SIGNAL(selected(ctkDICOMThumbnailWidget)));
             }else{
                 logger.error("No thumbnail file " + thumbnail);
             }
@@ -111,8 +113,10 @@ void ctkDICOMThumbnailListWidgetPrivate::onStudyModelSelected(const QModelIndex 
                 QPixmap pix(thumbnail);
                 logger.debug("Setting pixmap to " + thumbnail);
                 widget->setPixmap(pix);
+                widget->setSourceIndex(seriesIndex);
                 this->scrollAreaContentWidget->layout()->addWidget(widget);
                 q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkDICOMThumbnailWidget)));
+                q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SIGNAL(selected(ctkDICOMThumbnailWidget)));
             }else{
                 logger.error("No thumbnail file " + thumbnail);
             }
@@ -149,8 +153,10 @@ void ctkDICOMThumbnailListWidgetPrivate::onSeriesModelSelected(const QModelIndex
                 QPixmap pix(thumbnail);
                 logger.debug("Setting pixmap to " + thumbnail);
                 widget->setPixmap(pix);
+                widget->setSourceIndex(imageIndex);
                 this->scrollAreaContentWidget->layout()->addWidget(widget);
                 q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkDICOMThumbnailWidget)));
+                q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SIGNAL(selected(ctkDICOMThumbnailWidget)));
             }
             else
             {
@@ -169,6 +175,7 @@ void ctkDICOMThumbnailListWidgetPrivate::clearAllThumbnails(){
         ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(item->widget());
         if(thumbnailWidget){
             q->disconnect(thumbnailWidget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkDICOMThumbnailWidget)));
+            q->disconnect(thumbnailWidget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SIGNAL(selected(ctkDICOMThumbnailWidget)));
         }
         item->widget()->deleteLater();
     }

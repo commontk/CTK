@@ -23,6 +23,7 @@
 
 // Qt includes 
 #include <QWidget>
+#include <QModelIndex>
 
 #include "ctkDICOMWidgetsExport.h"
 
@@ -46,6 +47,9 @@ public:
 
   void setSelected(bool selected);
   bool isSelected();
+
+  void setSourceIndex(QModelIndex index);
+  QModelIndex sourceIndex() const;
 
 protected:
   QScopedPointer<ctkDICOMThumbnailWidgetPrivate> d_ptr;

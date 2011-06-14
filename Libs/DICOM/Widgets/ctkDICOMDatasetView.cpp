@@ -24,6 +24,7 @@
 #include <dcmimage.h>
 
 // CTK includes
+#include "ctkLogger.h"
 #include "ctkQImageView.h"
 #include "ctkDICOMImage.h"
 #include "ctkDICOMModel.h"
@@ -38,6 +39,8 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QFile>
+
+static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMDatasetView");
 
 //--------------------------------------------------------------------------
 class ctkDICOMDatasetViewPrivate 
@@ -60,6 +63,7 @@ public:
   void onPatientModelSelected(const QModelIndex& index);
   void onStudyModelSelected(const QModelIndex& index);
   void onSeriesModelSelected(const QModelIndex& index);
+  void onImageModelSelected(const QModelIndex& index);
 };
 
 //--------------------------------------------------------------------------
@@ -82,6 +86,7 @@ void ctkDICOMDatasetViewPrivate::init()
   */
 }
 
+// -------------------------------------------------------------------------
 void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
@@ -112,6 +117,7 @@ void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index
     }
 }
 
+// -------------------------------------------------------------------------
 void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
@@ -141,6 +147,7 @@ void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
     }
 }
 
+// -------------------------------------------------------------------------
 void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
@@ -150,6 +157,36 @@ void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index)
         QModelIndex seriesIndex = index;
         QModelIndex studyIndex = seriesIndex.parent();
         QModelIndex imageIndex = seriesIndex.child(0,0);
+
+        QString thumbnailPath = this->databaseDirectory;
+        thumbnailPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
+        thumbnailPath.append("/").append(model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString());
+        thumbnailPath.append("/").append(model->data(imageIndex ,ctkDICOMModel::UIDRole).toString());
+
+        if (QFile(thumbnailPath).exists())
+        {
+          DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
+          ctkDICOMImage ctkImage( & dcmImage );
+          q->clearImages();
+          q->addImage( ctkImage );
+        }else{
+          q->clearImages();
+        }
+    }else{
+        q->clearImages();
+    }
+}
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
+    Q_Q(ctkDICOMDatasetView);
+
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+
+    if(model){
+        QModelIndex imageIndex = index;
+        QModelIndex seriesIndex = imageIndex.parent();
+        QModelIndex studyIndex = seriesIndex.parent();
 
         QString thumbnailPath = this->databaseDirectory;
         thumbnailPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
@@ -232,11 +269,17 @@ void ctkDICOMDatasetView::onModelSelected(const QModelIndex &index){
         QModelIndex index0 = index.sibling(index.row(), 0);
 
         if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::PatientType ){
+            logger.debug("PatientType");
             d->onPatientModelSelected(index0);
         }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::StudyType ){
+            logger.debug("StudyType");
             d->onStudyModelSelected(index0);
         }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType ){
+            logger.debug("SeriesType");
             d->onSeriesModelSelected(index0);
+        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::ImageType ){
+            logger.debug("ImageType");
+            d->onImageModelSelected(index0);
         }
     }
 }

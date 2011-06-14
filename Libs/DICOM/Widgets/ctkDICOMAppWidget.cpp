@@ -27,6 +27,7 @@
 
 #include "ctkDICOMQueryRetrieveWidget.h"
 #include "ctkDICOMImportWidget.h"
+#include "ctkDICOMThumbnailWidget.h"
 
 //logger
 #include <ctkLogger.h>
@@ -200,7 +201,10 @@ void ctkDICOMAppWidget::openQueryDialog()
 //----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widget)
 {
-  //TODO: update previewer
+    Q_D(ctkDICOMAppWidget);
+
+    logger.debug("Thumbnail selected");
+    d->imagePreview->onModelSelected(widget.sourceIndex());
 }
 
 //----------------------------------------------------------------------------
