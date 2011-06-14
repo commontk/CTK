@@ -54,6 +54,11 @@
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
 #include <dcmimage.h>
 
+#include <dcmtk/dcmjpeg/djdecode.h>  /* for dcmjpeg decoders */
+#include <dcmtk/dcmjpeg/djencode.h>  /* for dcmjpeg encoders */
+#include <dcmtk/dcmdata/dcrledrg.h>  /* for DcmRLEDecoderRegistration */
+#include <dcmtk/dcmdata/dcrleerg.h>  /* for DcmRLEEncoderRegistration */
+
 //------------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
 //------------------------------------------------------------------------------
@@ -69,6 +74,7 @@ public:
   ctkDICOMDatabasePrivate(ctkDICOMDatabase&);
   ~ctkDICOMDatabasePrivate();
   void init(QString databaseFile);
+  void registerCompressionLibraries();
   bool executeScript(const QString script);
 
   QString      DatabaseFileName;
@@ -90,7 +96,23 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
 void ctkDICOMDatabasePrivate::init(QString databaseFilename)
 {
   Q_Q(ctkDICOMDatabase);
+
   q->openDatabase(databaseFilename);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::registerCompressionLibraries(){
+    logger.debug("Register compression libraries");
+    // Register the JPEG libraries in case we need them
+    //   (registration only happens once, so it's okay to call repeatedly)
+    // register global JPEG decompression codecs
+    DJDecoderRegistration::registerCodecs();
+    // register global JPEG compression codecs
+    DJEncoderRegistration::registerCodecs();
+    // register RLE compression codec
+    DcmRLEEncoderRegistration::registerCodecs();
+    // register RLE decompression codec
+    DcmRLEDecoderRegistration::registerCodecs();
 }
 
 //------------------------------------------------------------------------------
@@ -131,12 +153,15 @@ ctkDICOMDatabase::ctkDICOMDatabase(QString databaseFile)
    : d_ptr(new ctkDICOMDatabasePrivate(*this))
 {
   Q_D(ctkDICOMDatabase);
+  d->registerCompressionLibraries();
   d->init(databaseFile);
 }
 
 ctkDICOMDatabase::ctkDICOMDatabase(QObject* parent)
    : d_ptr(new ctkDICOMDatabasePrivate(*this))
 {
+    Q_D(ctkDICOMDatabase);
+    d->registerCompressionLibraries();
 }
 
 //------------------------------------------------------------------------------
