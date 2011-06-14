@@ -38,8 +38,8 @@ public:
   explicit ctkDICOMThumbnailListWidget(QWidget* parent=0);
   virtual ~ctkDICOMThumbnailListWidget();
 
-  void setThumbnailFiles(const QStringList& thumbnailFiles);
-  
+  void setDatabaseDirectory(const QString& directory);
+
 protected:
   QScopedPointer<ctkDICOMThumbnailListWidgetPrivate> d_ptr;
 
@@ -49,6 +49,9 @@ private:
 
 signals:
   void selected(const ctkDICOMThumbnailWidget& widget);
+
+public slots:
+  void onModelSelected(const QModelIndex& index);
 };
 
 #endif

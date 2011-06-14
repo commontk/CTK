@@ -69,6 +69,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   //Enable sorting in tree view
   d->treeView->setSortingEnabled(true);
+  d->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
   //Set toolbar button style
   d->toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -100,14 +101,10 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->ImportDialog->setWindowTitle("Import DICOM files from directory ...");
   d->ImportDialog->setWindowModality(Qt::ApplicationModal);
 
-
-  //Set thumbnails width in thumbnail widget
-  //d->thumbnailsWidget->setThumbnailWidth(128);
-  //Test add thumbnails
-  //d->thumbnailsWidget->addTestThumbnail();
-
   //connect signal and slots
-  connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onDICOMModelSelected(const QModelIndex &)));
+  //connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onDICOMModelSelected(const QModelIndex &)));
+  connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), d->thumbnailsWidget, SLOT(onModelSelected(const QModelIndex &)));
+
   connect(d->thumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
@@ -156,6 +153,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
 
   // update the button and let any connected slots know about the change
   d->directoryButton->setDirectory(directory);
+  d->thumbnailsWidget->setDatabaseDirectory(directory);
   emit databaseDirectoryChanged(directory);
 }
 
@@ -205,59 +203,20 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
 
   QModelIndex index0 = index.sibling(index.row(), 0);
 
-  if ( d->DICOMModel.data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType )
-  {
-    qDebug() << "Clicked on series";
-    QStringList thumbnails;
-    QString thumbnailPath = d->DICOMDatabase->databaseDirectory() +
-                            "/thumbs/" + d->DICOMModel.data(index0.parent() ,ctkDICOMModel::UIDRole).toString() + "/" +
-                            d->DICOMModel.data(index0 ,ctkDICOMModel::UIDRole).toString() + "/";
-
-    QModelIndex studyIndex = index0.parent();
-    QModelIndex seriesIndex = index0;
-    d->DICOMModel.fetchMore(index0);
-    int imageCount = d->DICOMModel.rowCount(index0);
-    logger.debug(QString("Thumbs: %1").arg(imageCount));
-    for (int i = 0 ; i < imageCount ; i++ )
-    {
-      QModelIndex imageIndex = index0.child(i,0);
-      QString thumbnail = thumbnailPath + d->DICOMModel.data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
-      qDebug() << "Thumb: " << thumbnail;
-      if (QFile(thumbnail).exists())
-      {
-        thumbnails << thumbnail;
-      }
-      else
-      {
-      logger.error("No thumbnail file " + thumbnail);
-      }
-    }
-    d->thumbnailsWidget->setThumbnailFiles(thumbnails);
-
-    //  thumbnailPath.append("/thumbs/").append(d->DICOMModel.data( studyIndex,ctkDICOMModel::UIDRole).toString() );
-    //  thumbnailPath.append(d->DICOMModel.data( seriesIndex,ctkDICOMModel::UIDRole).toString() );
-  }
-
-
-  // TODO: this could check the type of the model entries
+  // TODO: this could check the type of the model entries for image previewer
   QString thumbnailPath = d->DICOMDatabase->databaseDirectory();
   thumbnailPath.append("/dicom/").append(d->DICOMModel.data(index0.parent().parent() ,ctkDICOMModel::UIDRole).toString());
   thumbnailPath.append("/").append(d->DICOMModel.data(index0.parent() ,ctkDICOMModel::UIDRole).toString());
   thumbnailPath.append("/").append(d->DICOMModel.data(index0 ,ctkDICOMModel::UIDRole).toString());
-  //thumbnailPath.append(".png");
   if (QFile(thumbnailPath).exists())
   {
     DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
     ctkDICOMImage ctkImage( & dcmImage );
     d->imagePreview->clearImages();
     d->imagePreview->addImage( ctkImage );
-  }
-  else
-  {
+  }else{
     d->imagePreview->clearImages();
   }
-
-
 }
 
 //----------------------------------------------------------------------------
