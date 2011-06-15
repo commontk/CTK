@@ -250,7 +250,7 @@ void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
         }
     }
 
-    this->selectThumbnail(1);
+    this->selectThumbnail(0);
 }
 
 //----------------------------------------------------------------------------
