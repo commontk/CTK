@@ -39,6 +39,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QFile>
+#include <QMouseEvent>
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMDatasetView");
 
@@ -59,6 +60,8 @@ public:
   QString databaseDirectory;
 
   QModelIndex currentImageIndex;
+
+  QPoint oldMousePos;
 
   void init();
 
@@ -277,6 +280,33 @@ void ctkDICOMDatasetView::update( bool zoomChanged,
   bool sizeChanged )
 {
   Superclass::update( zoomChanged, sizeChanged );
+}
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetView::mousePressEvent(QMouseEvent* event){
+    Q_D(ctkDICOMDatasetView);
+
+    event->accept();
+
+    d->oldMousePos = event->pos();
+}
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
+    Q_D(ctkDICOMDatasetView);
+
+    if(event->buttons() == Qt::LeftButton){
+        Q_D(ctkDICOMDatasetView);
+        event->accept();
+        QPoint nowPos = event->pos();
+        if(nowPos.y() > d->oldMousePos.y()){
+            emit requestNextImage();
+            d->oldMousePos = event->pos();
+        }else if(nowPos.y() < d->oldMousePos.y()){
+            emit requestPreviousImage();
+            d->oldMousePos = event->pos();
+        }
+    }
 }
 
 // -------------------------------------------------------------------------

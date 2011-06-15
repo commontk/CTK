@@ -123,6 +123,9 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   connect(d->DICOMDatabase.data(), SIGNAL( databaseChanged() ), &(d->DICOMModel), SLOT( reset() ) );
   connect(d->QueryRetrieveWidget, SIGNAL( canceled() ), d->QueryRetrieveWidget, SLOT( hide() ) );
 
+  connect(d->imagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
+  connect(d->imagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
+
 }
 
 //----------------------------------------------------------------------------

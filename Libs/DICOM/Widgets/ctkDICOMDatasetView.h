@@ -57,6 +57,11 @@ public:
 
   QModelIndex currentImageIndex();
 
+signals:
+
+  void requestNextImage();
+  void requestPreviousImage();
+
 public slots:
 
   void addImage( const ctkDICOMImage & image );
@@ -71,6 +76,10 @@ protected:
   /// protected constructor to derive private implementations
   ctkDICOMDatasetView( ctkDICOMDatasetViewPrivate & pvt,
     QWidget* parent=0 );
+
+  /// re-implemented QWidget event functions
+  virtual void mousePressEvent( QMouseEvent * event );
+  virtual void	mouseMoveEvent( QMouseEvent * event );
 
 private:
 
