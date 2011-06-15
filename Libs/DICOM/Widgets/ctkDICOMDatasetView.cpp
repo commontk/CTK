@@ -58,6 +58,8 @@ public:
 
   QString databaseDirectory;
 
+  QModelIndex currentImageIndex;
+
   void init();
 
   void onPatientModelSelected(const QModelIndex& index);
@@ -109,6 +111,7 @@ void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index
           ctkDICOMImage ctkImage( & dcmImage );
           q->clearImages();
           q->addImage( ctkImage );
+          this->currentImageIndex = imageIndex;
         }else{
           q->clearImages();
         }
@@ -139,6 +142,7 @@ void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
           ctkDICOMImage ctkImage( & dcmImage );
           q->clearImages();
           q->addImage( ctkImage );
+          this->currentImageIndex = imageIndex;
         }else{
           q->clearImages();
         }
@@ -169,6 +173,7 @@ void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index)
           ctkDICOMImage ctkImage( & dcmImage );
           q->clearImages();
           q->addImage( ctkImage );
+          this->currentImageIndex = imageIndex;
         }else{
           q->clearImages();
         }
@@ -199,6 +204,7 @@ void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
           ctkDICOMImage ctkImage( & dcmImage );
           q->clearImages();
           q->addImage( ctkImage );
+          this->currentImageIndex = imageIndex;
         }else{
           q->clearImages();
         }
@@ -239,6 +245,13 @@ void ctkDICOMDatasetView::setDatabaseDirectory(const QString &directory){
 }
 
 // -------------------------------------------------------------------------
+QModelIndex ctkDICOMDatasetView::currentImageIndex(){
+    Q_D(ctkDICOMDatasetView);
+
+    return d->currentImageIndex;
+}
+
+// -------------------------------------------------------------------------
 void ctkDICOMDatasetView::addImage( const ctkDICOMImage & image )
 {
   for( unsigned int i=0; i<image.frameCount(); ++i )
@@ -260,6 +273,7 @@ void ctkDICOMDatasetView::update( bool zoomChanged,
   Superclass::update( zoomChanged, sizeChanged );
 }
 
+// -------------------------------------------------------------------------
 void ctkDICOMDatasetView::onModelSelected(const QModelIndex &index){
     Q_D(ctkDICOMDatasetView);
 
@@ -268,17 +282,14 @@ void ctkDICOMDatasetView::onModelSelected(const QModelIndex &index){
     if(model){
         QModelIndex index0 = index.sibling(index.row(), 0);
 
+
         if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::PatientType ){
-            logger.debug("PatientType");
             d->onPatientModelSelected(index0);
         }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::StudyType ){
-            logger.debug("StudyType");
             d->onStudyModelSelected(index0);
         }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType ){
-            logger.debug("SeriesType");
             d->onSeriesModelSelected(index0);
         }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::ImageType ){
-            logger.debug("ImageType");
             d->onImageModelSelected(index0);
         }
     }

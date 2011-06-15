@@ -55,6 +55,8 @@ public:
 
   void setDatabaseDirectory(const QString& directory);
 
+  QModelIndex currentImageIndex();
+
 public slots:
 
   void addImage( const ctkDICOMImage & image );
