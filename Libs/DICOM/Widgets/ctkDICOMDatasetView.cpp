@@ -81,8 +81,11 @@ ctkDICOMDatasetViewPrivate::ctkDICOMDatasetViewPrivate(
 //--------------------------------------------------------------------------
 void ctkDICOMDatasetViewPrivate::init()
 {
-  /*
   Q_Q( ctkDICOMDatasetView );
+
+  q->setMouseTracking(true);
+
+  /*
   this->Window->setParent(q);
   QHBoxLayout* layout = new QHBoxLayout(q);
   layout->addWidget(this->Window);
@@ -287,7 +290,6 @@ void ctkDICOMDatasetView::mousePressEvent(QMouseEvent* event){
     Q_D(ctkDICOMDatasetView);
 
     event->accept();
-
     d->oldMousePos = event->pos();
 }
 
@@ -295,8 +297,7 @@ void ctkDICOMDatasetView::mousePressEvent(QMouseEvent* event){
 void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
     Q_D(ctkDICOMDatasetView);
 
-    if(event->buttons() == Qt::LeftButton){
-        Q_D(ctkDICOMDatasetView);
+    if(event->buttons() == Qt::RightButton){
         event->accept();
         QPoint nowPos = event->pos();
         if(nowPos.y() > d->oldMousePos.y()){
@@ -306,7 +307,27 @@ void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
             emit requestPreviousImage();
             d->oldMousePos = event->pos();
         }
+    }else if(event->buttons() == Qt::MidButton){
+        event->accept();
+        QPoint nowPos = event->pos();
+
+        this->setZoom(this->zoom() - (nowPos.y()-d->oldMousePos.y())/100.0);
+
+        d->oldMousePos = event->pos();
+    }else if(event->buttons() == Qt::LeftButton){
+        event->accept();
+        QPoint nowPos = event->pos();
+
+        double iW = this->intensityWindow();
+        double iL = this->intensityLevel();
+
+        this->setIntensityWindowLevel(iW + (nowPos.x()-d->oldMousePos.x()),
+                                      iL - (nowPos.y()-d->oldMousePos.y()));
+
+        d->oldMousePos = event->pos();
     }
+
+    Superclass::mouseMoveEvent(event);
 }
 
 // -------------------------------------------------------------------------
