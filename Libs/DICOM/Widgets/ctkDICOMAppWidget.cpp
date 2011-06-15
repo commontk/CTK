@@ -52,7 +52,6 @@ public:
 // ctkDICOMAppWidgetPrivate methods
 
 ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(){
-  
   DICOMDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
   DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
 }
@@ -79,6 +78,9 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   //Enable sorting in tree view
   d->treeView->setSortingEnabled(true);
   d->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  connect(d->treeView, SIGNAL(collapsed(QModelIndex)), this, SLOT(onTreeCollapsed(QModelIndex)));
+  connect(d->treeView, SIGNAL(expanded(QModelIndex)), this, SLOT(onTreeExpanded(QModelIndex)));
 
   //Set toolbar button style
   d->toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -156,6 +158,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   
   d->DICOMModel.setDatabase(d->DICOMDatabase->database());
   d->treeView->setModel(&d->DICOMModel);
+  d->treeView->resizeColumnToContents(0);
 
   //pass DICOM database instance to Import widget
   // d->ImportDialog->setDICOMDatabase(d->DICOMDatabase);
@@ -431,4 +434,16 @@ void ctkDICOMAppWidget::onPreviousStudy(){
             d->imagePreview->onModelSelected(nextIndex);
         }
     }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onTreeCollapsed(const QModelIndex &index){
+    Q_D(ctkDICOMAppWidget);
+    d->treeView->resizeColumnToContents(0);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onTreeExpanded(const QModelIndex &index){
+    Q_D(ctkDICOMAppWidget);
+    d->treeView->resizeColumnToContents(0);
 }

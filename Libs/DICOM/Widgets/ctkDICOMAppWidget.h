@@ -70,6 +70,9 @@ protected slots:
     void onNextStudy();
     void onPreviousStudy();
 
+    void onTreeCollapsed(const QModelIndex& index);
+    void onTreeExpanded(const QModelIndex& index);
+
 private:
   Q_DECLARE_PRIVATE(ctkDICOMAppWidget);
   Q_DISABLE_COPY(ctkDICOMAppWidget);
