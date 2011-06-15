@@ -98,7 +98,9 @@ void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index
         QModelIndex patientIndex = index;
         QModelIndex studyIndex = patientIndex.child(0,0);
         QModelIndex seriesIndex = studyIndex.child(0,0);
-        QModelIndex imageIndex = seriesIndex.child(0,0);
+        model->fetchMore(seriesIndex);
+        int imageCount = model->rowCount(seriesIndex);
+        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
 
         QString thumbnailPath = this->databaseDirectory;
         thumbnailPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
@@ -129,7 +131,9 @@ void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
     if(model){
         QModelIndex studyIndex = index;
         QModelIndex seriesIndex = studyIndex.child(0,0);
-        QModelIndex imageIndex = seriesIndex.child(0,0);
+        model->fetchMore(seriesIndex);
+        int imageCount = model->rowCount(seriesIndex);
+        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
 
         QString thumbnailPath = this->databaseDirectory;
         thumbnailPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
@@ -160,7 +164,9 @@ void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index)
     if(model){
         QModelIndex seriesIndex = index;
         QModelIndex studyIndex = seriesIndex.parent();
-        QModelIndex imageIndex = seriesIndex.child(0,0);
+        model->fetchMore(seriesIndex);
+        int imageCount = model->rowCount(seriesIndex);
+        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
 
         QString thumbnailPath = this->databaseDirectory;
         thumbnailPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
