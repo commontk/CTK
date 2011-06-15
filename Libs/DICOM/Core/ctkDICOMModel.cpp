@@ -67,6 +67,8 @@ public:
   QSqlDatabase DataBase;
   QList<QMap<int, QVariant> > Headers;
   QString      Sort;
+
+  ctkDICOMModel::IndexType displayLevel;
 };
 
 //------------------------------------------------------------------------------
@@ -98,6 +100,7 @@ struct Node
 ctkDICOMModelPrivate::ctkDICOMModelPrivate(ctkDICOMModel& o):q_ptr(&o)
 {
   this->RootNode     = 0;
+  this->displayLevel = ctkDICOMModel::ImageType;
 }
 
 //------------------------------------------------------------------------------
@@ -494,6 +497,10 @@ bool ctkDICOMModel::hasChildren ( const QModelIndex & parentIndex ) const
     {
     return false;
     }
+
+  // We want to show only until displayLevel
+  if(node->Type >= d->displayLevel)return false;
+
   // It's not because we don't have row that we don't have children, maybe it
   // just means that the children haven't been fetched yet
   if (node->RowCount == 0 && !node->AtEnd)
@@ -659,6 +666,12 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db)
     endInsertRows();
     }
   d->fetch(QModelIndex(), 256);
+}
+
+void ctkDICOMModel::setDisplayLevel(ctkDICOMModel::IndexType level){
+    Q_D(ctkDICOMModel);
+
+    d->displayLevel = level;
 }
 
 //------------------------------------------------------------------------------

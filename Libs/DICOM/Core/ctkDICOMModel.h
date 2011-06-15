@@ -53,7 +53,7 @@ public:
   virtual ~ctkDICOMModel();
 
   void setDatabase(const QSqlDatabase& dataBase);
-
+  void setDisplayLevel(ctkDICOMModel::IndexType level);
 
   virtual bool canFetchMore ( const QModelIndex & parent ) const;
   virtual int columnCount ( const QModelIndex & parent = QModelIndex() ) const;

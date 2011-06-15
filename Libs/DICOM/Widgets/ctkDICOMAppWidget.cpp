@@ -160,6 +160,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   }
   
   d->DICOMModel.setDatabase(d->DICOMDatabase->database());
+  d->DICOMModel.setDisplayLevel(ctkDICOMModel::SeriesType);
   d->treeView->setModel(&d->DICOMModel);
   d->treeView->resizeColumnToContents(0);
 
