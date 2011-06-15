@@ -211,6 +211,26 @@ void ctkDICOMThumbnailListWidget::setDatabaseDirectory(const QString &directory)
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMThumbnailListWidget::selectThumbnail(int index){
+    Q_D(ctkDICOMThumbnailListWidget);
+
+    int count = d->scrollAreaContentWidget->layout()->count();
+
+    logger.debug("Select thumbnail " + QVariant(index).toString() + " of " + QVariant(count).toString());
+
+    if(index >= count)return;
+
+    for(int i=0; i<count; i++){
+        ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->scrollAreaContentWidget->layout()->itemAt(i)->widget());
+        if(i == index){
+            thumbnailWidget->setSelected(true);
+        }else{
+            thumbnailWidget->setSelected(false);
+        }
+    }
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
     Q_D(ctkDICOMThumbnailListWidget);
 
@@ -229,6 +249,8 @@ void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
             d->onSeriesModelSelected(index0);
         }
     }
+
+    this->selectThumbnail(1);
 }
 
 //----------------------------------------------------------------------------

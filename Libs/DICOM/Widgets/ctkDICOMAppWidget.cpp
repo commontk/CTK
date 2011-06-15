@@ -68,6 +68,14 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   d->setupUi(this);
 
+  //Hide image previewer buttons
+  d->nextImageButton->hide();
+  d->prevImageButton->hide();
+  d->nextSeriesButton->hide();
+  d->prevSeriesButton->hide();
+  d->nextStudyButton->hide();
+  d->prevStudyButton->hide();
+
   //Enable sorting in tree view
   d->treeView->setSortingEnabled(true);
   d->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -105,6 +113,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   //connect signal and slots
   connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), d->thumbnailsWidget, SLOT(onModelSelected(const QModelIndex &)));
   connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), d->imagePreview, SLOT(onModelSelected(const QModelIndex &)));
+  connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onModelSelected(const QModelIndex &)));
 
   connect(d->thumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
@@ -222,4 +231,82 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
     d->DICOMModel.reset();
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onModelSelected(const QModelIndex &index){
+     Q_D(ctkDICOMAppWidget);
+
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+
+    if(model){
+        QModelIndex index0 = index.sibling(index.row(), 0);
+
+        if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::PatientType ){
+            d->nextImageButton->show();
+            d->prevImageButton->show();
+            d->nextSeriesButton->show();
+            d->prevSeriesButton->show();
+            d->nextStudyButton->show();
+            d->prevStudyButton->show();
+        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::StudyType ){
+            d->nextImageButton->show();
+            d->prevImageButton->show();
+            d->nextSeriesButton->show();
+            d->prevSeriesButton->show();
+            d->nextStudyButton->hide();
+            d->prevStudyButton->hide();
+        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType ){
+            d->nextImageButton->show();
+            d->prevImageButton->show();
+            d->nextSeriesButton->hide();
+            d->prevSeriesButton->hide();
+            d->nextStudyButton->hide();
+            d->prevStudyButton->hide();
+        }else{
+            d->nextImageButton->hide();
+            d->prevImageButton->hide();
+            d->nextSeriesButton->hide();
+            d->prevSeriesButton->hide();
+            d->nextStudyButton->hide();
+            d->prevStudyButton->hide();
+        }
+    }else{
+        d->nextImageButton->hide();
+        d->prevImageButton->hide();
+        d->nextSeriesButton->hide();
+        d->prevSeriesButton->hide();
+        d->nextStudyButton->hide();
+        d->prevStudyButton->hide();
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onNextImage(){
+
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onPreviousImage(){
+
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onNextSeries(){
+
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onPreviousSeries(){
+
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onNextStudy(){
+
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onPreviousStudy(){
+
 }

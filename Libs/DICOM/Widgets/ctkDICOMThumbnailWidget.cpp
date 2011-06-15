@@ -28,6 +28,10 @@
 // Qt includes
 #include <QColor>
 
+// logger includes
+#include "ctkLogger.h"
+static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMThumbnailListWidget");
+
 //----------------------------------------------------------------------------
 class ctkDICOMThumbnailWidgetPrivate: public Ui_ctkDICOMThumbnailWidget
 {
@@ -119,12 +123,10 @@ QModelIndex ctkDICOMThumbnailWidget::sourceIndex() const{
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailWidget::setSelected(bool selected){
+void ctkDICOMThumbnailWidget::setSelected(bool flag){
     Q_D(ctkDICOMThumbnailWidget);
 
-    if(selected == d->selectedFlag)return;
-
-    if(selected){
+    if(flag){
         QPalette p(this->palette());
         p.setColor(QPalette::Window, d->backgroundColor);
         this->setPalette(p);
@@ -133,7 +135,7 @@ void ctkDICOMThumbnailWidget::setSelected(bool selected){
         this->setAutoFillBackground(false);
     }
 
-    d->selectedFlag = selected;
+    d->selectedFlag = flag;
 }
 
 //----------------------------------------------------------------------------

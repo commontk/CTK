@@ -121,6 +121,12 @@
       <layout class="QHBoxLayout" name="viewerLayout">
        <item>
         <widget class="ctkDICOMThumbnailListWidget" name="thumbnailsWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -139,7 +145,150 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="ctkDICOMDatasetView" name="imagePreview" native="true"/>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QPushButton" name="prevStudyButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>32</horstretch>
+                <verstretch>32</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Previous study</string>
+              </property>
+              <property name="text">
+               <string>&lt;&lt;&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="prevSeriesButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>32</horstretch>
+                <verstretch>32</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Previous series</string>
+              </property>
+              <property name="text">
+               <string>&lt;&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="prevImageButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>32</horstretch>
+                <verstretch>32</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Previous image</string>
+              </property>
+              <property name="text">
+               <string>&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="nextImageButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>32</horstretch>
+                <verstretch>32</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Next image</string>
+              </property>
+              <property name="text">
+               <string>&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="nextSeriesButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>32</horstretch>
+                <verstretch>32</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Next series</string>
+              </property>
+              <property name="text">
+               <string>&gt;&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="nextStudyButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>32</horstretch>
+                <verstretch>32</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Next study</string>
+              </property>
+              <property name="text">
+               <string>&gt;&gt;&gt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="ctkDICOMDatasetView" name="imagePreview" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -267,6 +416,102 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>nextImageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMAppWidget</receiver>
+   <slot>onNextImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>608</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>prevImageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMAppWidget</receiver>
+   <slot>onPreviousImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>566</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nextSeriesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMAppWidget</receiver>
+   <slot>onNextSeries()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>650</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>prevSeriesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMAppWidget</receiver>
+   <slot>onPreviousSeries()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>524</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nextStudyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMAppWidget</receiver>
+   <slot>onNextStudy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>692</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>prevStudyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMAppWidget</receiver>
+   <slot>onPreviousStudy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>signal1()</signal>
@@ -274,5 +519,11 @@
   <slot>openExportDialog()</slot>
   <slot>openQueryDialog()</slot>
   <slot>onDatabaseDirectoryChaged(QString)</slot>
+  <slot>onNextImage()</slot>
+  <slot>onPreviousImage()</slot>
+  <slot>onNextSeries()</slot>
+  <slot>onPreviousSeries()</slot>
+  <slot>onNextStudy()</slot>
+  <slot>onPreviousStudy()</slot>
  </slots>
 </ui>

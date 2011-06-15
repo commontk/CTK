@@ -61,6 +61,14 @@ protected:
 protected slots:
     void onImportDirectory(QString directory);
 
+    void onModelSelected(const QModelIndex& index);
+
+    void onNextImage();
+    void onPreviousImage();
+    void onNextSeries();
+    void onPreviousSeries();
+    void onNextStudy();
+    void onPreviousStudy();
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMAppWidget);
