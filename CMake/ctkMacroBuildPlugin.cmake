@@ -276,9 +276,15 @@ MACRO(ctkMacroBuildPlugin)
     SET(library_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${output_dir_suffix}")
   ENDIF()
 
+  SET(plugin_compile_flags "-DQT_PLUGIN")
+  # MinGW does not export all symbols automatically, so no need to set flags
+  IF(CMAKE_COMPILER_IS_GNUCXX AND NOT MINGW)
+    SET(plugin_compile_flags "${plugin_compile_flags} -fvisibility=hidden -fvisibility-inlines-hidden")
+  ENDIF()
+
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-    COMPILE_FLAGS "-DQT_PLUGIN"
+    COMPILE_FLAGS "${plugin_compile_flags}"
     RUNTIME_OUTPUT_DIRECTORY ${runtime_output_dir}
     LIBRARY_OUTPUT_DIRECTORY ${library_output_dir}
     PREFIX "lib"
