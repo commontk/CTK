@@ -29,6 +29,7 @@ const QString ctkPluginConstants::FRAMEWORK_VENDOR = "org.commontk.pluginfw.vend
 const QString ctkPluginConstants::FRAMEWORK_STORAGE = "org.commontk.pluginfw.storage";
 const QString ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN = "org.commontk.pluginfw.storage.clean";
 const QString ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT = "onFirstInit";
+const QString ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS = "org.commontk.pluginfw.loadhints";
 
 const QString ctkPluginConstants::PLUGIN_SYMBOLICNAME = "Plugin-SymbolicName";
 const QString ctkPluginConstants::PLUGIN_COPYRIGHT = "Plugin-Copyright";

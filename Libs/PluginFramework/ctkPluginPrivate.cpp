@@ -48,6 +48,17 @@ ctkPluginPrivate::ctkPluginPrivate(
   //TODO
   //checkCertificates(pa);
 
+  // Get library load hints
+  if (fw->props.contains(ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS))
+  {
+    QVariant loadHintsVariant = fw->props[ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS];
+    if (loadHintsVariant.isValid())
+    {
+      QLibrary::LoadHints loadHints = loadHintsVariant.value<QLibrary::LoadHints>();
+      pluginLoader.setLoadHints(loadHints);
+    }
+  }
+
   checkManifestHeaders();
 
   pluginDir = fwCtx->getDataStorage(id);

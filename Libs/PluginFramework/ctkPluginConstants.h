@@ -96,6 +96,17 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
   static const QString FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT; // = "onFirstInit";
 
   /**
+   * Specifies the hints on how symbols in dynamic shared objects (plug-ins) are
+   * resolved. The value of this property must be of type
+   * <a href="http://doc.trolltech.com/4.7/qlibrary.html#LoadHint-enum">QLibrary::LoadHints</a>.
+   *
+   * Setting this property to QLibrary::ExportExternalSymbolsHint may
+   * be necessary on some platforms (e.g. ELF platforms with gcc < 4.5) to get
+   * RTTI working across DSO boundaries.
+   */
+  static const QString FRAMEWORK_PLUGIN_LOAD_HINTS; // = "org.commontk.pluginfw.loadhints"
+
+  /**
    * Manifest header identifying the plugin's symbolic name.
    *
    * <p>
@@ -399,6 +410,10 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
   static const QString SERVICE_DESCRIPTION; // = "service.description"
 
 };
+
+#include <QLibrary>
+#include <QMetaType>
+Q_DECLARE_METATYPE(QLibrary::LoadHints)
 
 
 #endif // CTKPLUGINCONSTANTS_H
