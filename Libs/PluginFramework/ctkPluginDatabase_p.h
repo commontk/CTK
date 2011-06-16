@@ -156,6 +156,11 @@ public:
 private:
 
   enum TransactionType{Read, Write};
+  
+  /**
+   * Get load hints from the framework for plugins.
+   */
+  QLibrary::LoadHints getPluginLoadHints() const;
 
   /**
    *  Helper method that creates the database tables:
