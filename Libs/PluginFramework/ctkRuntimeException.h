@@ -32,7 +32,7 @@
 /**
  * \ingroup PluginFramework
  */
-class Q_DECL_EXPORT ctkRuntimeException : public std::runtime_error
+class CTK_PLUGINFW_EXPORT ctkRuntimeException : public std::runtime_error
 {
 public:
 

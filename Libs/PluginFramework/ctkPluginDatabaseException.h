@@ -27,7 +27,7 @@
 /**
  * \ingroup PluginFramework
  */
-class Q_DECL_EXPORT ctkPluginDatabaseException : public ctkRuntimeException
+class CTK_PLUGINFW_EXPORT ctkPluginDatabaseException : public ctkRuntimeException
 {
 public:
 
