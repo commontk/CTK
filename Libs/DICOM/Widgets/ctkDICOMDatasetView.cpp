@@ -26,7 +26,6 @@
 // CTK includes
 #include "ctkLogger.h"
 #include "ctkQImageView.h"
-#include "ctkDICOMImage.h"
 #include "ctkDICOMModel.h"
 #include "ctkDICOMDatasetView.h"
 
@@ -111,13 +110,12 @@ void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex){
         thumbnailPath.append("/").append(model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString());
         thumbnailPath.append("/").append(model->data(imageIndex ,ctkDICOMModel::UIDRole).toString());
 
-        if (QFile(thumbnailPath).exists())
-        {
-          DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
-          ctkDICOMImage ctkImage( & dcmImage );
-          q->clearImages();
-          q->addImage( ctkImage );
-          this->currentImageIndex = imageIndex;
+        if (QFile(thumbnailPath).exists()){
+            DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
+
+            q->clearImages();
+            q->addImage( dcmImage );
+            this->currentImageIndex = imageIndex;
         }else{
           q->clearImages();
         }
@@ -238,18 +236,37 @@ QModelIndex ctkDICOMDatasetView::currentImageIndex(){
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::addImage( const ctkDICOMImage & image )
-{
-  for( unsigned int i=0; i<image.frameCount(); ++i )
-    {
-    Superclass::addImage( image.frame( i ) );
-    }
-}
-
-// -------------------------------------------------------------------------
 void ctkDICOMDatasetView::addImage( const QImage & image )
 {
   Superclass::addImage( image );
+}
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetView::addImage( DicomImage & dcmImage )
+{
+    QImage image;
+    if ((dcmImage.getStatus() == EIS_Normal)){
+        dcmImage.setWindow(0);
+        /* get image extension */
+        const unsigned long width = dcmImage.getWidth();
+        const unsigned long height = dcmImage.getHeight();
+        QString header = QString("P5 %1 %2 255\n").arg(width).arg(height);
+        const unsigned long offset = header.length();
+        const unsigned long length = width * height + offset;
+        /* create output buffer for DicomImage class */
+        QByteArray buffer;
+        buffer.append(header);
+        buffer.resize(length);
+
+        /* copy PGM header to buffer */
+
+        if (dcmImage.getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0)){
+            if (!image.loadFromData( buffer )){
+                logger.error("QImage couldn't created");
+            }
+        }
+    }
+    this->addImage(image);
 }
 
 // -------------------------------------------------------------------------

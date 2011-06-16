@@ -25,9 +25,6 @@
 // CTK Widgets
 #include "ctkDICOMDatasetView.h"
 
-// CTK DICOM Core
-#include "ctkDICOMImage.h"
-
 // DCMTK includes
 #include <dcmimage.h>
 
@@ -63,10 +60,9 @@ int main(int argv, char** argc)
     }
 
   DicomImage dcmImage( s.toStdString().c_str() );
-  ctkDICOMImage ctkImage( & dcmImage );
 
   ctkDICOMDatasetView imageView;
-  imageView.addImage( ctkImage );
+  imageView.addImage( dcmImage );
   imageView.show();
   imageView.raise();
 

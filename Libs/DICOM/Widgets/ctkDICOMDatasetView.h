@@ -29,10 +29,10 @@
 /// CTK includes
 #include "ctkQImageView.h"
 #include "ctkPimpl.h"
-#include "ctkDICOMImage.h"
 #include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMDatasetViewPrivate;
+class DicomImage;
 
 ///
 /// ctkDICOMDatasetView is the base class of image viewer widgets.
@@ -64,8 +64,10 @@ signals:
 
 public slots:
 
-  void addImage( const ctkDICOMImage & image );
   void addImage( const QImage & image );
+
+  // TEST
+  void addImage( DicomImage & dcmImage );
 
   void onModelSelected(const QModelIndex& index);
 

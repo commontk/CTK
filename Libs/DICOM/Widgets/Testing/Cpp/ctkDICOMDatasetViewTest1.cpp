@@ -25,7 +25,6 @@
 #include <QTimer>
 
 // ctkDICOMCore includes
-#include "ctkDICOMImage.h"
 #include "ctkDICOMDatasetView.h"
 
 // DCMTK includes
@@ -48,14 +47,11 @@ int ctkDICOMDatasetViewTest1( int argc, char * argv [] )
     }
   
   DicomImage    img(argv[1]);
-  ctkDICOMImage dicomImage(&img);
-  ctkDICOMImage dicomImage2(0);
   QImage image;
   QImage image2(200, 200, QImage::Format_RGB32);
   
   ctkDICOMDatasetView datasetView;
-  datasetView.addImage(dicomImage);
-  datasetView.addImage(dicomImage2);
+  datasetView.addImage(img);
   datasetView.addImage(image);
   datasetView.addImage(image2);
   datasetView.update( false, false );

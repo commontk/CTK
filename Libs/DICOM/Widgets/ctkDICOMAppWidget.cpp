@@ -17,7 +17,6 @@
 #include "ctkDICOMIndexer.h"
 
 // ctkDICOMWidgets includes
-#include "ctkDICOMImage.h"
 #include "ctkDICOMModel.h"
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
