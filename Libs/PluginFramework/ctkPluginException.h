@@ -39,7 +39,7 @@
  * <p>
  * This exception conforms to the general purpose exception chaining mechanism.
  */
-class Q_DECL_EXPORT ctkPluginException : public ctkRuntimeException
+class CTK_PLUGINFW_EXPORT ctkPluginException : public ctkRuntimeException
 {
 public:
 

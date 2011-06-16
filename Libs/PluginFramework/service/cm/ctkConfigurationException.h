@@ -31,7 +31,7 @@
  * An exception class to inform the Configuration Admin service
  * of problems with configuration data.
  */
-class Q_DECL_EXPORT ctkConfigurationException : public ctkRuntimeException
+class CTK_PLUGINFW_EXPORT ctkConfigurationException : public ctkRuntimeException
 {
 
 public:
