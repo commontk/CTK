@@ -307,6 +307,7 @@ void ctkDICOMAppWidget::onNextImage(){
             QModelIndex nextIndex = currentIndex.sibling(imageID, 0);
 
             d->imagePreview->onModelSelected(nextIndex);
+            d->thumbnailsWidget->selectThumbnail(nextIndex);
         }
     }
 }
@@ -332,6 +333,7 @@ void ctkDICOMAppWidget::onPreviousImage(){
             QModelIndex prevIndex = currentIndex.sibling(imageID, 0);
 
             d->imagePreview->onModelSelected(prevIndex);
+            d->thumbnailsWidget->selectThumbnail(prevIndex);
         }
     }
 }
@@ -357,6 +359,7 @@ void ctkDICOMAppWidget::onNextSeries(){
             QModelIndex nextIndex = seriesIndex.sibling(seriesID, 0);
 
             d->imagePreview->onModelSelected(nextIndex);
+            d->thumbnailsWidget->selectThumbnail(nextIndex);
         }
     }
 }
@@ -380,9 +383,10 @@ void ctkDICOMAppWidget::onPreviousSeries(){
             seriesID--;
             if(seriesID < 0) seriesID += seriesCount;
 
-            QModelIndex nextIndex = seriesIndex.sibling(seriesID, 0);
+            QModelIndex prevIndex = seriesIndex.sibling(seriesID, 0);
 
-            d->imagePreview->onModelSelected(nextIndex);
+            d->imagePreview->onModelSelected(prevIndex);
+            d->thumbnailsWidget->selectThumbnail(prevIndex);
         }
     }
 }
@@ -409,6 +413,7 @@ void ctkDICOMAppWidget::onNextStudy(){
             QModelIndex nextIndex = studyIndex.sibling(studyID, 0);
 
             d->imagePreview->onModelSelected(nextIndex);
+            d->thumbnailsWidget->selectThumbnail(nextIndex);
         }
     }
 }
@@ -433,9 +438,10 @@ void ctkDICOMAppWidget::onPreviousStudy(){
             studyID--;
             if(studyID < 0) studyID += studyCount;
 
-            QModelIndex nextIndex = studyIndex.sibling(studyID, 0);
+            QModelIndex prevIndex = studyIndex.sibling(studyID, 0);
 
-            d->imagePreview->onModelSelected(nextIndex);
+            d->imagePreview->onModelSelected(prevIndex);
+            d->thumbnailsWidget->selectThumbnail(prevIndex);
         }
     }
 }

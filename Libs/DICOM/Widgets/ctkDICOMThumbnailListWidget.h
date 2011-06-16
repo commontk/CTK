@@ -41,6 +41,7 @@ public:
   void setDatabaseDirectory(const QString& directory);
 
   void selectThumbnail(int index);
+  void selectThumbnail(const QModelIndex& index);
 
 protected:
   QScopedPointer<ctkDICOMThumbnailListWidgetPrivate> d_ptr;

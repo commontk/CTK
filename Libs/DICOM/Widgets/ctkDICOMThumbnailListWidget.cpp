@@ -36,6 +36,8 @@ public:
 
   QString databaseDirectory;
 
+  QModelIndex currentSelectedModel;
+
   void clearAllThumbnails();
 
   void onPatientModelSelected(const QModelIndex &index);
@@ -231,6 +233,35 @@ void ctkDICOMThumbnailListWidget::selectThumbnail(int index){
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMThumbnailListWidget::selectThumbnail(const QModelIndex &index){
+    Q_D(ctkDICOMThumbnailListWidget);
+
+    logger.debug("select thumbnail from model index");
+
+    if(!d->currentSelectedModel.isValid())return;
+    if(index.parent() != d->currentSelectedModel)return;
+
+    logger.debug("select thumbnail from model index");
+
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+
+    if(model){
+        int count = d->scrollAreaContentWidget->layout()->count();
+
+        for(int i=0; i<count; i++){
+            ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->scrollAreaContentWidget->layout()->itemAt(i)->widget());
+            if(thumbnailWidget->sourceIndex() == index){
+                thumbnailWidget->setSelected(true);
+                logger.debug("set selected true");
+            }else{
+                thumbnailWidget->setSelected(false);
+                logger.debug("set selected false");
+            }
+        }
+    }
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
     Q_D(ctkDICOMThumbnailListWidget);
 
@@ -240,6 +271,8 @@ void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
 
     if(model){
         QModelIndex index0 = index.sibling(index.row(), 0);
+
+        d->currentSelectedModel = index0;
 
         if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::PatientType ){
             d->onPatientModelSelected(index0);
