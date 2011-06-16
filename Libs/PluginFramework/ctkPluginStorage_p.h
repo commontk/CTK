@@ -71,6 +71,10 @@ public:
    */
   ctkPluginStorage(ctkPluginFrameworkContext* framework);
 
+  /**
+   * Return the framework context.
+   */
+  ctkPluginFrameworkContext* getFrameworkContext() const;
 
   /**
    * Insert a plugin (shared library) into the persistent storage

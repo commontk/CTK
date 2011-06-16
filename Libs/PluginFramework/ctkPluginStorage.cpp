@@ -45,6 +45,12 @@ ctkPluginStorage::ctkPluginStorage(ctkPluginFrameworkContext* framework)
 }
 
 //----------------------------------------------------------------------------
+ctkPluginFrameworkContext* ctkPluginStorage::getFrameworkContext() const
+{
+  return framework;
+}
+
+//----------------------------------------------------------------------------
 ctkPluginArchive* ctkPluginStorage::insertPlugin(const QUrl& location, const QString& localPath)
 {
   ctkPluginArchive* pa = pluginDatabase.insertPlugin(location, localPath);

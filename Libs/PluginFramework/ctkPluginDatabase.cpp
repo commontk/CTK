@@ -27,6 +27,7 @@
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginStorage_p.h"
 #include "ctkPluginFrameworkUtil_p.h"
+#include "ctkPluginFrameworkContext_p.h"
 #include "ctkServiceException.h"
 
 #include <QApplication>
@@ -262,6 +263,20 @@ void ctkPluginDatabase::updateDB()
 }
 
 //----------------------------------------------------------------------------
+QLibrary::LoadHints ctkPluginDatabase::getPluginLoadHints() const
+{
+  if (m_PluginStorage->getFrameworkContext()->props.contains(ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS))
+  {
+    QVariant loadHintsVariant = m_PluginStorage->getFrameworkContext()->props[ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS]; 
+    if (loadHintsVariant.isValid())
+    {
+      return loadHintsVariant.value<QLibrary::LoadHints>();
+    }
+  }
+  return QLibrary::LoadHints(0);
+}
+
+//----------------------------------------------------------------------------
 ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QString& localPath, bool createArchive)
 {
   checkConnection();
@@ -318,6 +333,7 @@ ctkPluginArchive* ctkPluginDatabase::insertPlugin(const QUrl& location, const QS
 
   // Load the plugin and cache the resources
   QPluginLoader pluginLoader;
+  pluginLoader.setLoadHints(getPluginLoadHints());
   pluginLoader.setFileName(localPath);
   if (!pluginLoader.load())
   {
