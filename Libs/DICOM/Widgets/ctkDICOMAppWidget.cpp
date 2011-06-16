@@ -228,9 +228,17 @@ void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& 
 {
     Q_D(ctkDICOMAppWidget);
 
-    d->treeView->setCurrentIndex(widget.sourceIndex());
-    d->thumbnailsWidget->onModelSelected(widget.sourceIndex());
-    d->imagePreview->onModelSelected(widget.sourceIndex());
+    QModelIndex index = widget.sourceIndex();
+
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    QModelIndex index0 = index.sibling(index.row(), 0);
+
+    if(model && (model->data(index0,ctkDICOMModel::TypeRole) != ctkDICOMModel::ImageType)){
+
+        d->treeView->setCurrentIndex(index0);
+        d->thumbnailsWidget->onModelSelected(index0);
+        d->imagePreview->onModelSelected(index0);
+    }
 }
 
 //----------------------------------------------------------------------------
