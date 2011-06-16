@@ -65,6 +65,8 @@ public:
 
   void init();
 
+  void setImage(const QModelIndex& imageIndex);
+
   void onPatientModelSelected(const QModelIndex& index);
   void onStudyModelSelected(const QModelIndex& index);
   void onSeriesModelSelected(const QModelIndex& index);
@@ -95,113 +97,12 @@ void ctkDICOMDatasetViewPrivate::init()
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index){
+void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
 
     if(model){
-        QModelIndex patientIndex = index;
-        QModelIndex studyIndex = patientIndex.child(0,0);
-        QModelIndex seriesIndex = studyIndex.child(0,0);
-        model->fetchMore(seriesIndex);
-        int imageCount = model->rowCount(seriesIndex);
-        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
-
-        QString thumbnailPath = this->databaseDirectory;
-        thumbnailPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
-        thumbnailPath.append("/").append(model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString());
-        thumbnailPath.append("/").append(model->data(imageIndex ,ctkDICOMModel::UIDRole).toString());
-
-        if (QFile(thumbnailPath).exists())
-        {
-          DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
-          ctkDICOMImage ctkImage( & dcmImage );
-          q->clearImages();
-          q->addImage( ctkImage );
-          this->currentImageIndex = imageIndex;
-        }else{
-          q->clearImages();
-        }
-    }else{
-        q->clearImages();
-    }
-}
-
-// -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMDatasetView);
-
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
-
-    if(model){
-        QModelIndex studyIndex = index;
-        QModelIndex seriesIndex = studyIndex.child(0,0);
-        model->fetchMore(seriesIndex);
-        int imageCount = model->rowCount(seriesIndex);
-        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
-
-        QString thumbnailPath = this->databaseDirectory;
-        thumbnailPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
-        thumbnailPath.append("/").append(model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString());
-        thumbnailPath.append("/").append(model->data(imageIndex ,ctkDICOMModel::UIDRole).toString());
-
-        if (QFile(thumbnailPath).exists())
-        {
-          DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
-          ctkDICOMImage ctkImage( & dcmImage );
-          q->clearImages();
-          q->addImage( ctkImage );
-          this->currentImageIndex = imageIndex;
-        }else{
-          q->clearImages();
-        }
-    }else{
-        q->clearImages();
-    }
-}
-
-// -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMDatasetView);
-
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
-
-    if(model){
-        QModelIndex seriesIndex = index;
-        QModelIndex studyIndex = seriesIndex.parent();
-        model->fetchMore(seriesIndex);
-        int imageCount = model->rowCount(seriesIndex);
-        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
-
-        QString thumbnailPath = this->databaseDirectory;
-        thumbnailPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
-        thumbnailPath.append("/").append(model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString());
-        thumbnailPath.append("/").append(model->data(imageIndex ,ctkDICOMModel::UIDRole).toString());
-
-        if (QFile(thumbnailPath).exists())
-        {
-          DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
-          ctkDICOMImage ctkImage( & dcmImage );
-          q->clearImages();
-          q->addImage( ctkImage );
-          this->currentImageIndex = imageIndex;
-        }else{
-          q->clearImages();
-        }
-    }else{
-        q->clearImages();
-    }
-}
-
-// -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMDatasetView);
-
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
-
-    if(model){
-        QModelIndex imageIndex = index;
         QModelIndex seriesIndex = imageIndex.parent();
         QModelIndex studyIndex = seriesIndex.parent();
 
@@ -220,6 +121,79 @@ void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
         }else{
           q->clearImages();
         }
+    }
+}
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index){
+    Q_Q(ctkDICOMDatasetView);
+
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+
+    if(model){
+        QModelIndex patientIndex = index;
+        model->fetchMore(patientIndex);
+        QModelIndex studyIndex = patientIndex.child(0,0);
+        model->fetchMore(studyIndex);
+        QModelIndex seriesIndex = studyIndex.child(0,0);
+        model->fetchMore(seriesIndex);
+        int imageCount = model->rowCount(seriesIndex);
+        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
+
+        this->setImage(imageIndex);
+    }else{
+        q->clearImages();
+    }
+}
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
+    Q_Q(ctkDICOMDatasetView);
+
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+
+    if(model){
+        QModelIndex studyIndex = index;
+        model->fetchMore(studyIndex);
+        QModelIndex seriesIndex = studyIndex.child(0,0);
+        model->fetchMore(seriesIndex);
+        int imageCount = model->rowCount(seriesIndex);
+        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
+
+        this->setImage(imageIndex);
+    }else{
+        q->clearImages();
+    }
+}
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index){
+    Q_Q(ctkDICOMDatasetView);
+
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+
+    if(model){
+        QModelIndex seriesIndex = index;
+        model->fetchMore(seriesIndex);
+        int imageCount = model->rowCount(seriesIndex);
+        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
+
+        this->setImage(imageIndex);
+    }else{
+        q->clearImages();
+    }
+}
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
+    Q_Q(ctkDICOMDatasetView);
+
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+
+    if(model){
+        QModelIndex imageIndex = index;
+
+        this->setImage(imageIndex);
     }else{
         q->clearImages();
     }
