@@ -25,10 +25,20 @@
 
 #include <QtCore/qglobal.h>
 
-#if defined(CTKPluginFrameworkTestUtil_EXPORTS)
- #define CTK_PLUGINFW_TESTUTIL_EXPORT Q_DECL_EXPORT
-#else
- #define CTK_PLUGINFW_TESTUTIL_EXPORT Q_DECL_IMPORT
+#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
+#  if defined(CTKPluginFrameworkTestUtil_EXPORTS)
+#    define CTK_PLUGINFW_TESTUTIL_EXPORT Q_DECL_EXPORT
+#  else
+#    define CTK_PLUGINFW_TESTUTIL_EXPORT Q_DECL_IMPORT
+#  endif
+#endif
+
+#if !defined(CTK_PLUGINFW_TESTUTIL_EXPORT)
+//#  if defined(CTK_SHARED)
+#    define CTK_PLUGINFW_TESTUTIL_EXPORT Q_DECL_EXPORT
+//#  else
+//#    define @MY_LIBRARY_EXPORT_DIRECTIVE@
+//#  endif
 #endif
 
 #endif // CTKPLUGINFRAMEWORKTESTUTILEXPORT_H
