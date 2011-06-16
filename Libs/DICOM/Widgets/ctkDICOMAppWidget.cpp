@@ -234,7 +234,7 @@ void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& 
     QModelIndex index0 = index.sibling(index.row(), 0);
 
     if(model && (model->data(index0,ctkDICOMModel::TypeRole) != ctkDICOMModel::ImageType)){
-
+        this->onModelSelected(index0);
         d->treeView->setCurrentIndex(index0);
         d->thumbnailsWidget->onModelSelected(index0);
         d->imagePreview->onModelSelected(index0);
