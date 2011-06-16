@@ -46,9 +46,6 @@ public slots:
   void setDatabaseDirectory(const QString& directory);
   void onAddToDatabase();
 
-  void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
-  void onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& widget);
-
   void openImportDialog();
   void openExportDialog();
   void openQueryDialog();
@@ -61,9 +58,15 @@ protected:
     QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;
 protected slots:
     void onImportDirectory(QString directory);
-
     void onModelSelected(const QModelIndex& index);
 
+    /// To be called when a thumbnail in thumbnail list widget is selected
+    void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
+
+    /// To be called when a thumbnail in thumbnail list widget is double-clicked
+    void onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& widget);
+
+    /// To be called when previous and next buttons are clicked
     void onNextImage();
     void onPreviousImage();
     void onNextSeries();
@@ -71,7 +74,10 @@ protected slots:
     void onNextStudy();
     void onPreviousStudy();
 
+    /// To be called when an entry of the tree list is collapsed
     void onTreeCollapsed(const QModelIndex& index);
+
+    /// To be called when an entry of the tree list is expanded
     void onTreeExpanded(const QModelIndex& index);
 
 private:
