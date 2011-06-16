@@ -226,6 +226,7 @@ void ctkDICOMThumbnailListWidget::selectThumbnail(int index){
         ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->scrollAreaContentWidget->layout()->itemAt(i)->widget());
         if(i == index){
             thumbnailWidget->setSelected(true);
+            d->scrollArea->ensureWidgetVisible(thumbnailWidget);
         }else{
             thumbnailWidget->setSelected(false);
         }
@@ -248,6 +249,7 @@ void ctkDICOMThumbnailListWidget::selectThumbnail(const QModelIndex &index){
             ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->scrollAreaContentWidget->layout()->itemAt(i)->widget());
             if(thumbnailWidget->sourceIndex() == index){
                 thumbnailWidget->setSelected(true);
+                d->scrollArea->ensureWidgetVisible(thumbnailWidget);
             }else{
                 thumbnailWidget->setSelected(false);
             }
