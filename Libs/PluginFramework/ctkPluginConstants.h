@@ -93,7 +93,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * updates of the framework will not result in cleaning the framework
    * storage area.
    */
-  static const QString FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT; //	= "onFirstInit";
+  static const QString FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT; // = "onFirstInit";
 
   /**
    * Manifest header identifying the plugin's symbolic name.
