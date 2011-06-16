@@ -47,6 +47,7 @@ public slots:
   void onAddToDatabase();
 
   void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
+  void onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& widget);
 
   void openImportDialog();
   void openExportDialog();

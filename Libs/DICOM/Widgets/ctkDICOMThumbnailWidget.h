@@ -55,6 +55,7 @@ protected:
   QScopedPointer<ctkDICOMThumbnailWidgetPrivate> d_ptr;
 
   virtual void mousePressEvent(QMouseEvent* event);
+  virtual void mouseDoubleClickEvent(QMouseEvent* event);
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMThumbnailWidget);
@@ -62,6 +63,7 @@ private:
 
 signals:
   void selected(const ctkDICOMThumbnailWidget& widget);
+  void doubleClicked(const ctkDICOMThumbnailWidget& widget);
 };
 
 #endif

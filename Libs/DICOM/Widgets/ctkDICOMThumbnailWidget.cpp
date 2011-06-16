@@ -151,3 +151,9 @@ void ctkDICOMThumbnailWidget::mousePressEvent(QMouseEvent* event)
     this->setSelected(true);
     emit selected(*this);
 }
+
+//----------------------------------------------------------------------------
+void ctkDICOMThumbnailWidget::mouseDoubleClickEvent(QMouseEvent *event){
+    Q_UNUSED(event);
+    emit doubleClicked(*this);
+}

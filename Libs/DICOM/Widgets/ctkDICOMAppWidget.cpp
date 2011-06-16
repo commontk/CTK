@@ -118,6 +118,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onModelSelected(const QModelIndex &)));
 
   connect(d->thumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
+  connect(d->thumbnailsWidget, SIGNAL(doubleClicked(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget&)));
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
   connect(d->DICOMDatabase.data(), SIGNAL( databaseChanged() ), &(d->DICOMModel), SLOT( reset() ) );
@@ -219,6 +220,16 @@ void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widge
 {
     Q_D(ctkDICOMAppWidget);
 
+    d->imagePreview->onModelSelected(widget.sourceIndex());
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& widget)
+{
+    Q_D(ctkDICOMAppWidget);
+
+    d->treeView->setCurrentIndex(widget.sourceIndex());
+    d->thumbnailsWidget->onModelSelected(widget.sourceIndex());
     d->imagePreview->onModelSelected(widget.sourceIndex());
 }
 

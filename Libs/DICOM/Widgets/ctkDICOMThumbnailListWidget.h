@@ -52,6 +52,7 @@ private:
 
 signals:
   void selected(const ctkDICOMThumbnailWidget& widget);
+  void doubleClicked(const ctkDICOMThumbnailWidget& widget);
 
 public slots:
   void onModelSelected(const QModelIndex& index);
