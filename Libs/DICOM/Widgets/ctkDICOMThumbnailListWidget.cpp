@@ -44,7 +44,6 @@ public:
 
   QModelIndex currentSelectedModel;
 
-  QString loadImageThumbnail(const QModelIndex &imageIndex);
   void clearAllThumbnails();
   void addThumbnailWidget(const QModelIndex &imageIndex, const QModelIndex& sourceIndex, const QString& text);
 
@@ -75,9 +74,12 @@ void ctkDICOMThumbnailListWidgetPrivate::onPatientModelSelected(const QModelInde
             QModelIndex seriesIndex = studyIndex.child(0, 0);
             QModelIndex imageIndex = seriesIndex.child(0, 0);
 
-            QString thumbnailPath = this->loadImageThumbnail(imageIndex);
+            QString thumbnailPath = this->databaseDirectory +
+                                    "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
+                                    model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
+                                    model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-            if(thumbnailPath != QString("") && QFile(thumbnailPath).exists()){
+            if(QFile(thumbnailPath).exists()){
                 this->addThumbnailWidget(imageIndex, studyIndex, model->data(studyIndex, Qt::DisplayRole).toString());
             }
         }
@@ -99,9 +101,12 @@ void ctkDICOMThumbnailListWidgetPrivate::onStudyModelSelected(const QModelIndex 
             QModelIndex seriesIndex = studyIndex.child(i, 0);
             QModelIndex imageIndex = seriesIndex.child(0, 0);
 
-            QString thumbnailPath = this->loadImageThumbnail(imageIndex);
+            QString thumbnailPath = this->databaseDirectory +
+                                    "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
+                                    model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
+                                    model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-            if (thumbnailPath != QString("") && QFile(thumbnailPath).exists()){
+            if (QFile(thumbnailPath).exists()){
                 this->addThumbnailWidget(imageIndex, seriesIndex, model->data(seriesIndex, Qt::DisplayRole).toString());
             }
         }
@@ -125,9 +130,12 @@ void ctkDICOMThumbnailListWidgetPrivate::onSeriesModelSelected(const QModelIndex
         {
             QModelIndex imageIndex = seriesIndex.child(i,0);
 
-            QString thumbnailPath = this->loadImageThumbnail(imageIndex);
+            QString thumbnailPath = this->databaseDirectory +
+                                    "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
+                                    model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
+                                    model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-            if(thumbnailPath != QString("") && QFile(thumbnailPath).exists()){
+            if(QFile(thumbnailPath).exists()){
                 this->addThumbnailWidget(imageIndex, imageIndex, QString("Image %1").arg(i));
             }
         }
@@ -148,68 +156,6 @@ void ctkDICOMThumbnailListWidgetPrivate::clearAllThumbnails(){
         }
         item->widget()->deleteLater();
     }
-}
-
-QString ctkDICOMThumbnailListWidgetPrivate::loadImageThumbnail(const QModelIndex &imageIndex){
-    Q_Q(ctkDICOMThumbnailListWidget);
-
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
-
-    if(model){
-        QModelIndex seriesIndex = imageIndex.parent();
-        QModelIndex studyIndex = seriesIndex.parent();
-        QModelIndex patientIndex = studyIndex.parent();
-
-        QString thumbnailPath = this->databaseDirectory +
-                                "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
-                                model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
-                                model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
-
-        QString dicomPath = this->databaseDirectory +
-                            "/dicom/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
-                            model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
-                            model->data(imageIndex ,ctkDICOMModel::UIDRole).toString();
-
-        QFileInfo thumbnailInfo(thumbnailPath);
-        QFileInfo dicomInfo(dicomPath);
-
-        if(!(QFile(thumbnailPath).exists() && (thumbnailInfo.lastModified() > dicomInfo.lastModified()))){
-            QString studySeriesDirectory = model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" + model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString();
-
-            //Create thumbnail here
-            QDir(this->databaseDirectory + "/thumbs/").mkpath(studySeriesDirectory);
-            // TODO: reuse dataset
-            DicomImage dcmImage(dicomPath.toAscii());
-            QImage image;
-            if ((dcmImage.getStatus() == EIS_Normal)){
-                dcmImage.setWindow(0);
-                /* get image extension */
-                const unsigned long width = dcmImage.getWidth();
-                const unsigned long height = dcmImage.getHeight();
-                QString header = QString("P5 %1 %2 255\n").arg(width).arg(height);
-                const unsigned long offset = header.length();
-                const unsigned long length = width * height + offset;
-                /* create output buffer for DicomImage class */
-                QByteArray buffer;
-                buffer.append(header);
-                buffer.resize(length);
-
-                /* copy PGM header to buffer */
-
-                if (dcmImage.getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0)){
-                    if (!image.loadFromData( buffer )){
-                        logger.error("QImage couldn't created");
-                        return QString("");
-                    }
-                }
-            }
-            image.scaled(128,128,Qt::KeepAspectRatio).save(thumbnailPath,"PNG");
-        }
-
-        return thumbnailPath;
-    }
-
-    return QString("");
 }
 
 void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& imageIndex, const QModelIndex& sourceIndex, const QString &text){
