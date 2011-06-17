@@ -26,14 +26,8 @@
 #include "ctkSliderWidget.h"
 #include "ui_ctkSliderWidget.h"
 
-//-----------------------------------------------------------------------------
-namespace
-{
-bool equal(double v1, double v2)
-{
-  return qAbs(v1 - v2) < 0.0001;
-}
-}
+// STD includes 
+#include <cmath>
 
 //-----------------------------------------------------------------------------
 class ctkSliderWidgetPrivate: public Ui_ctkSliderWidget
@@ -47,6 +41,10 @@ public:
   void updateSpinBoxWidth();
   int synchronizedSpinBoxWidth()const;
   void synchronizeSiblingSpinBox(int newWidth);
+  bool equal(double spinBoxValue, double sliderValue)const
+  {
+    return qAbs(sliderValue - spinBoxValue) < std::pow(10., -this->SpinBox->decimals());
+  }
 
   bool   Tracking;
   bool   Changing;
@@ -123,7 +121,6 @@ ctkSliderWidget::ctkSliderWidget(QWidget* _parent) : Superclass(_parent)
   d->Slider->setMaximum(d->SpinBox->maximum());
   d->Slider->setMinimum(d->SpinBox->minimum());
 
-  this->connect(d->Slider, SIGNAL(valueChanged(double)), d->SpinBox, SLOT(setValue(double)));
   this->connect(d->SpinBox, SIGNAL(valueChanged(double)), d->Slider, SLOT(setValue(double)));
 
   //this->connect(d->Slider, SIGNAL(valueChanged(double)), SIGNAL(valueChanged(double)));
@@ -142,7 +139,7 @@ ctkSliderWidget::~ctkSliderWidget()
 double ctkSliderWidget::minimum()const
 {
   Q_D(const ctkSliderWidget);
-  Q_ASSERT(equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
   return d->Slider->minimum();
 }
 
@@ -150,7 +147,7 @@ double ctkSliderWidget::minimum()const
 double ctkSliderWidget::maximum()const
 {
   Q_D(const ctkSliderWidget);
-  Q_ASSERT(equal(d->SpinBox->maximum(),d->Slider->maximum()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
   return d->Slider->maximum();
 }
 
@@ -162,7 +159,7 @@ void ctkSliderWidget::setMinimum(double min)
   // SpinBox can truncate min (depending on decimals).
   // use Spinbox's min to set Slider's min
   d->Slider->setMinimum(d->SpinBox->minimum());
-  Q_ASSERT(equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
   d->updateSpinBoxWidth();
 }
 
@@ -174,7 +171,7 @@ void ctkSliderWidget::setMaximum(double max)
   // SpinBox can truncate max (depending on decimals).
   // use Spinbox's max to set Slider's max
   d->Slider->setMaximum(d->SpinBox->maximum());
-  Q_ASSERT(equal(d->SpinBox->maximum(), d->Slider->maximum()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(), d->Slider->maximum()));
   d->updateSpinBoxWidth();
 }
 
@@ -187,8 +184,8 @@ void ctkSliderWidget::setRange(double min, double max)
   // SpinBox can truncate the range (depending on decimals).
   // use Spinbox's range to set Slider's range
   d->Slider->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
-  Q_ASSERT(equal(d->SpinBox->minimum(), d->Slider->minimum()));
-  Q_ASSERT(equal(d->SpinBox->maximum(), d->Slider->maximum()));
+  Q_ASSERT(d->equal(d->SpinBox->minimum(), d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(), d->Slider->maximum()));
   d->updateSpinBoxWidth();
 }
 /*
@@ -216,7 +213,7 @@ double ctkSliderWidget::previousSliderPosition()
 double ctkSliderWidget::value()const
 {
   Q_D(const ctkSliderWidget);
-  Q_ASSERT(equal(d->Slider->value(), d->SpinBox->value()));
+  Q_ASSERT(d->equal(d->SpinBox->value(), d->Slider->value()));
   return d->Changing ? d->ValueBeforeChange : d->Slider->value();
 }
 
@@ -231,7 +228,8 @@ void ctkSliderWidget::setValue(double _value)
   d->SpinBox->setValue(_value);
   // Why do we need to set the value to the slider ?
   //d->Slider->setValue(d->SpinBox->value());
-  Q_ASSERT(equal(d->Slider->value(), d->SpinBox->value()));
+  double spinBoxValue = d->SpinBox->value();
+  Q_ASSERT(d->equal(d->SpinBox->value(), d->Slider->value()));
   // restore the prop
   d->Changing = isChanging;
 }
@@ -267,6 +265,11 @@ void ctkSliderWidget::stopChanging()
 void ctkSliderWidget::changeValue(double newValue)
 {
   Q_D(ctkSliderWidget);
+  
+  bool wasBlocked = d->SpinBox->blockSignals(true);
+  d->SpinBox->setValue(newValue);
+  d->SpinBox->blockSignals(wasBlocked);
+  
   if (!d->Tracking)
     {
     emit this->valueIsChanging(newValue);
@@ -307,7 +310,7 @@ bool ctkSliderWidget::eventFilter(QObject *obj, QEvent *event)
 double ctkSliderWidget::singleStep()const
 {
   Q_D(const ctkSliderWidget);
-  Q_ASSERT(equal(d->Slider->singleStep(), d->SpinBox->singleStep()));
+  Q_ASSERT(d->equal(d->SpinBox->singleStep(), d->Slider->singleStep()));
   return d->Slider->singleStep();
 }
 
@@ -317,7 +320,7 @@ void ctkSliderWidget::setSingleStep(double step)
   Q_D(ctkSliderWidget);
   d->SpinBox->setSingleStep(step);
   d->Slider->setSingleStep(d->SpinBox->singleStep());
-  Q_ASSERT(equal(d->Slider->singleStep(), d->SpinBox->singleStep()));
+  Q_ASSERT(d->equal(d->SpinBox->singleStep(), d->Slider->singleStep()));
 }
 
 // --------------------------------------------------------------------------
