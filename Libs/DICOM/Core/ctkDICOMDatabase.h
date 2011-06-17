@@ -30,6 +30,7 @@
 
 class ctkDICOMDatabasePrivate;
 class DcmDataset;
+class ctkDICOMAbstractThumbnailGenerator;
 
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
@@ -44,6 +45,13 @@ public:
   const QString databaseFilename() const;
   const QString databaseDirectory() const;
   bool isInMemory() const;
+
+  ///
+  /// set thumbnail generator object
+  void setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator* generator);
+  ///
+  /// get thumbnail genrator object
+  ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator();
 
   ///
   /// open the SQLite database in @param databaseFile . If the file does not
@@ -81,7 +89,7 @@ public:
   /**
    * Insert into the database if not already exsting.
    */
-  void insert ( DcmDataset *dataset, bool storeFile = true);
+  void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
   /***
     * Helper method: get the path that should be used to store this  image.
     */

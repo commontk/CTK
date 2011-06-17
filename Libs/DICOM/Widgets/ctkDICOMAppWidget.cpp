@@ -27,6 +27,7 @@
 #include "ctkDICOMQueryRetrieveWidget.h"
 #include "ctkDICOMImportWidget.h"
 #include "ctkDICOMThumbnailWidget.h"
+#include "ctkDICOMThumbnailGenerator.h"
 
 //logger
 #include <ctkLogger.h>
@@ -42,6 +43,7 @@ public:
   ctkDICOMQueryRetrieveWidget* QueryRetrieveWidget;
 
   QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
+  QSharedPointer<ctkDICOMThumbnailGenerator> thumbnailGenerator;
   ctkDICOMModel DICOMModel;
   QSharedPointer<ctkDICOMIndexer> DICOMIndexer;
 
@@ -52,6 +54,8 @@ public:
 
 ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(){
   DICOMDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
+  thumbnailGenerator = QSharedPointer <ctkDICOMThumbnailGenerator> (new ctkDICOMThumbnailGenerator);
+  DICOMDatabase->setThumbnailGenerator(thumbnailGenerator.data());
   DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
 }
 

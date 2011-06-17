@@ -36,6 +36,7 @@
 
 // ctkDICOM includes
 #include "ctkDICOMDatabase.h"
+#include "ctkDICOMAbstractThumbnailGenerator.h"
 
 #include "ctkLogger.h"
 
@@ -80,6 +81,8 @@ public:
   QString      LastError;
   QSqlDatabase Database;
   QMap<QString, QString> LoadedHeader;
+
+  ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator;
 };
 
 //------------------------------------------------------------------------------
@@ -88,7 +91,7 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
 {
-
+    this->thumbnailGenerator = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -196,6 +199,16 @@ const QString ctkDICOMDatabase::databaseDirectory() const {
 const QSqlDatabase& ctkDICOMDatabase::database() const {
   Q_D(const ctkDICOMDatabase);
   return d->Database;
+}
+
+void ctkDICOMDatabase::setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator *generator){
+    Q_D(ctkDICOMDatabase);
+    d->thumbnailGenerator = generator;
+}
+
+ctkDICOMAbstractThumbnailGenerator* ctkDICOMDatabase::thumbnailGenerator(){
+    Q_D(const ctkDICOMDatabase);
+    return d->thumbnailGenerator;
 }
 
 //------------------------------------------------------------------------------
@@ -361,7 +374,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset ) {
 */
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile)
+void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool generateThumbnail)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -560,6 +573,20 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile)
       statement.exec();
       }
     }
+
+  if(generateThumbnail){
+      if(d->thumbnailGenerator){
+        DicomImage dcmImage(filename.toAscii());
+        QString studySeriesDirectory = QString(studyInstanceUID.c_str()) + "/" + QString(seriesInstanceUID.c_str());
+        //Create thumbnail here
+        QDir(databaseDirectory() + "/thumbs/").mkpath(studySeriesDirectory);
+        QString thumbnailPath = databaseDirectory() +
+                                "/thumbs/" + QString(studyInstanceUID.c_str()) + "/" +
+                                QString(seriesInstanceUID.c_str()) + "/" +
+                                QString(sopInstanceUID.c_str()) + ".png";
+        d->thumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
+      }
+  }
 
   if (d->DatabaseFileName == ":memory:")
     {

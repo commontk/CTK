@@ -27,6 +27,8 @@ SET(KIT_SRCS
   ctkDICOMRetrieve.h
   ctkDICOMTester.cpp
   ctkDICOMTester.h
+  ctkDICOMAbstractThumbnailGenerator.cpp
+  ctkDICOMAbstractThumbnailGenerator.h
 )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)
@@ -49,6 +51,7 @@ SET(KIT_MOC_SRCS
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h
   ctkDICOMTester.h
+  ctkDICOMAbstractThumbnailGenerator.h
   )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)

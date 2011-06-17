@@ -31,6 +31,8 @@ SET(KIT_SRCS
   ctkDICOMThumbnailListWidget.h
   ctkDICOMImportWidget.cpp
   ctkDICOMImportWidget.h
+  ctkDICOMThumbnailGenerator.cpp
+  ctkDICOMThumbnailGenerator.h
   )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)
@@ -54,6 +56,7 @@ SET(KIT_MOC_SRCS
   ctkDICOMThumbnailListWidget.h
   ctkDICOMImportWidget.h
   ctkDICOMQueryRetrieveWidget.h
+  ctkDICOMThumbnailGenerator.h
   )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)

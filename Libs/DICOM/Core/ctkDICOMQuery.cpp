@@ -362,7 +362,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     DcmDataset *dataset = (*it)->m_dataset;
     if ( dataset != NULL )
       {
-      database.insert ( dataset, false);
+      database.insert ( dataset, false, false);
       OFString StudyInstanceUID;
       dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
       d->addStudyInstanceUID ( QString ( StudyInstanceUID.c_str() ) );
@@ -390,7 +390,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
         DcmDataset *dataset = (*it)->m_dataset;
         if ( dataset != NULL )
           {
-          database.insert ( dataset, false);
+          database.insert ( dataset, false, false);
           }
         }
       logger.debug ( "Find succeded for Series: " + StudyInstanceUID );
