@@ -34,8 +34,7 @@
 
 // ctkDICOM includes
 #include "ctkDICOMIndexer.h"
-#include "ctkDICOMImage.h"
-
+#include "ctkDICOMAbstractThumbnailGenerator.h"
 
 // DCMTK includes
 #ifndef WIN32
@@ -61,6 +60,7 @@ public:
   ctkDICOMIndexerPrivate();
   ~ctkDICOMIndexerPrivate();
 
+  ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator;
 };
 
 //------------------------------------------------------------------------------
@@ -69,12 +69,15 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate()
 {
+    this->thumbnailGenerator = NULL;
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMIndexerPrivate::~ctkDICOMIndexerPrivate()
 {
 }
+
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // ctkDICOMIndexer methods
@@ -92,6 +95,8 @@ ctkDICOMIndexer::~ctkDICOMIndexer()
 //------------------------------------------------------------------------------
 void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& directoryName,const QString& destinationDirectoryName, bool createHierarchy, bool createThumbnails)
 {
+  Q_D(ctkDICOMIndexer);
+
   QSqlDatabase db = database.database();
   const std::string src_directory(directoryName.toStdString());
 
@@ -394,17 +399,17 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 
     if (createThumbnails)
     {
-      QString thumbnailBaseDir =  database.databaseDirectory() + "/thumbs/";
-      QString thumbnailFilename = thumbnailBaseDir + "/" + database.pathForDataset(dataset) + ".png";
-      QFileInfo thumbnailInfo(thumbnailFilename);
-      if ( ! ( thumbnailInfo.exists() && thumbnailInfo.lastModified() < QFileInfo(qfilename).lastModified() ) )
-      {
-        QDir(thumbnailBaseDir).mkpath(studySeriesDirectory);
-        DicomImage dcmtkImage(qfilename.toAscii());
-        ctkDICOMImage ctkImage(&dcmtkImage);
-        QImage image( ctkImage.frame(0) );
-        image.scaled(128,128,Qt::KeepAspectRatio).save(thumbnailFilename,"PNG");
-      }
+        if(d->thumbnailGenerator){
+          QString thumbnailBaseDir =  database.databaseDirectory() + "/thumbs/";
+          QString thumbnailFilename = thumbnailBaseDir + "/" + database.pathForDataset(dataset) + ".png";
+          QFileInfo thumbnailInfo(thumbnailFilename);
+          if ( ! ( thumbnailInfo.exists() && thumbnailInfo.lastModified() < QFileInfo(qfilename).lastModified() ) )
+          {
+            QDir(thumbnailBaseDir).mkpath(studySeriesDirectory);
+            DicomImage dcmtkImage(qfilename.toAscii());
+            d->thumbnailGenerator->generateThumbnail(&dcmtkImage, thumbnailFilename);
+          }
+        }
     }
     // */
     //------------------------
@@ -463,3 +468,16 @@ void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& database, const QString&
     filesytemFiles.insert(dirIt.next());
     }
 }
+
+//------------------------------------------------------------------------------
+void ctkDICOMIndexer::setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator *generator){
+    Q_D(ctkDICOMIndexer);
+    d->thumbnailGenerator = generator;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMAbstractThumbnailGenerator* ctkDICOMIndexer::thumbnailGenerator(){
+    Q_D(ctkDICOMIndexer);
+    return d->thumbnailGenerator;
+}
+

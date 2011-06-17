@@ -576,15 +576,19 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool genera
 
   if(generateThumbnail){
       if(d->thumbnailGenerator){
-        DicomImage dcmImage(filename.toAscii());
         QString studySeriesDirectory = QString(studyInstanceUID.c_str()) + "/" + QString(seriesInstanceUID.c_str());
         //Create thumbnail here
-        QDir(databaseDirectory() + "/thumbs/").mkpath(studySeriesDirectory);
         QString thumbnailPath = databaseDirectory() +
-                                "/thumbs/" + QString(studyInstanceUID.c_str()) + "/" +
-                                QString(seriesInstanceUID.c_str()) + "/" +
-                                QString(sopInstanceUID.c_str()) + ".png";
-        d->thumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
+                            "/thumbs/" + this->pathForDataset(dataset) + ".png";
+                            //QString(studyInstanceUID.c_str()) + "/" +
+                            //QString(seriesInstanceUID.c_str()) + "/" +
+                            //QString(sopInstanceUID.c_str()) + ".png";
+        QFileInfo thumbnailInfo(thumbnailPath);
+        if(!(thumbnailInfo.exists() && (thumbnailInfo.lastModified() > QFileInfo(filename).lastModified()))){
+            QDir(databaseDirectory() + "/thumbs/").mkpath(studySeriesDirectory);
+            DicomImage dcmImage(filename.toAscii());
+            d->thumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
+        }
       }
   }
 

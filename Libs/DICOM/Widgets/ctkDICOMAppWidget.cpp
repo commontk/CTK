@@ -57,6 +57,7 @@ ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(){
   thumbnailGenerator = QSharedPointer <ctkDICOMThumbnailGenerator> (new ctkDICOMThumbnailGenerator);
   DICOMDatabase->setThumbnailGenerator(thumbnailGenerator.data());
   DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
+  DICOMIndexer->setThumbnailGenerator(thumbnailGenerator.data());
 }
 
 //----------------------------------------------------------------------------
