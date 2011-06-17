@@ -72,7 +72,9 @@ void ctkDICOMThumbnailListWidgetPrivate::onPatientModelSelected(const QModelInde
         for(int i=0; i<studyCount; i++){
             QModelIndex studyIndex = patientIndex.child(i, 0);
             QModelIndex seriesIndex = studyIndex.child(0, 0);
-            QModelIndex imageIndex = seriesIndex.child(0, 0);
+            model->fetchMore(seriesIndex);
+            int imageCount = model->rowCount(seriesIndex);
+            QModelIndex imageIndex = seriesIndex.child(imageCount/2, 0);
 
             QString thumbnailPath = this->databaseDirectory +
                                     "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
@@ -99,7 +101,9 @@ void ctkDICOMThumbnailListWidgetPrivate::onStudyModelSelected(const QModelIndex 
 
         for(int i=0; i<seriesCount; i++){
             QModelIndex seriesIndex = studyIndex.child(i, 0);
-            QModelIndex imageIndex = seriesIndex.child(0, 0);
+            model->fetchMore(seriesIndex);
+            int imageCount = model->rowCount(seriesIndex);
+            QModelIndex imageIndex = seriesIndex.child(imageCount/2, 0);
 
             QString thumbnailPath = this->databaseDirectory +
                                     "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
