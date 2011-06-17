@@ -227,6 +227,7 @@ void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& 
 {
     Q_D(ctkDICOMAppWidget);
 
+    logger.debug("double clicked");
     QModelIndex index = widget.sourceIndex();
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));

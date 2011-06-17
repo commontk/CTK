@@ -105,19 +105,19 @@ void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex){
         QModelIndex seriesIndex = imageIndex.parent();
         QModelIndex studyIndex = seriesIndex.parent();
 
-        QString thumbnailPath = this->databaseDirectory;
-        thumbnailPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
-        thumbnailPath.append("/").append(model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString());
-        thumbnailPath.append("/").append(model->data(imageIndex ,ctkDICOMModel::UIDRole).toString());
+        QString dicomPath = this->databaseDirectory;
+        dicomPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
+        dicomPath.append("/").append(model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString());
+        dicomPath.append("/").append(model->data(imageIndex ,ctkDICOMModel::UIDRole).toString());
 
-        if (QFile(thumbnailPath).exists()){
-            DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
+        if (QFile(dicomPath).exists()){
+            DicomImage dcmImage( dicomPath.toStdString().c_str() );
 
             q->clearImages();
             q->addImage( dcmImage );
             this->currentImageIndex = imageIndex;
         }else{
-          q->clearImages();
+            q->clearImages();
         }
     }
 }

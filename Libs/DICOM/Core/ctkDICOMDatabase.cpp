@@ -36,7 +36,6 @@
 
 // ctkDICOM includes
 #include "ctkDICOMDatabase.h"
-#include "ctkDICOMImage.h"
 
 #include "ctkLogger.h"
 
@@ -362,7 +361,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset ) {
 */
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool createThumbnail )
+void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -561,23 +560,6 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool create
       statement.exec();
       }
     }
-
-  if (createThumbnail)
-  {
-    QString thumbnailBaseDir = databaseDirectory() + "/thumbs/";
-    QString thumbnailFilename = thumbnailBaseDir + "/" + pathForDataset(dataset) + ".png";
-    QFileInfo thumbnailInfo(thumbnailFilename);
-    if ( ! ( thumbnailInfo.exists() && thumbnailInfo.lastModified() < QFileInfo(filename).lastModified() ) )
-    {
-      QString studySeriesDirectory = QString(studyInstanceUID.c_str()) + "/" + seriesInstanceUID.c_str();
-      QDir(thumbnailBaseDir).mkpath(studySeriesDirectory);
-      // TODO: reuse dataset
-      DicomImage dcmtkImage(filename.toAscii());
-      ctkDICOMImage ctkImage(&dcmtkImage);
-      QImage image( ctkImage.frame(0) );
-      image.scaled(128,128,Qt::KeepAspectRatio).save(thumbnailFilename,"PNG");
-    }
-  }
 
   if (d->DatabaseFileName == ":memory:")
     {
