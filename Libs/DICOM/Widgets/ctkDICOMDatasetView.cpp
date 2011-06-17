@@ -199,7 +199,11 @@ void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
     if(model){
         QModelIndex imageIndex = index;
 
-        this->setImage(imageIndex);
+        if(index.parent() == this->currentImageIndex.parent()){
+            this->setImage(imageIndex, false);
+        }else{
+            this->setImage(imageIndex, true);
+        }
     }else{
         q->clearImages();
     }
