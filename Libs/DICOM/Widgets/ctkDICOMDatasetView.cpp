@@ -62,9 +62,13 @@ public:
 
   QPoint oldMousePos;
 
+  double dicomIntensityLevel;
+
+  double dicomIntensityWindow;
+
   void init();
 
-  void setImage(const QModelIndex& imageIndex);
+  void setImage(const QModelIndex& imageIndex, bool defaultIntensity = true);
 
   void onPatientModelSelected(const QModelIndex& index);
   void onStudyModelSelected(const QModelIndex& index);
@@ -86,6 +90,10 @@ void ctkDICOMDatasetViewPrivate::init()
 
   q->setMouseTracking(true);
 
+  this->dicomIntensityLevel = 0;
+
+  this->dicomIntensityWindow = 0;
+
   /*
   this->Window->setParent(q);
   QHBoxLayout* layout = new QHBoxLayout(q);
@@ -96,7 +104,7 @@ void ctkDICOMDatasetViewPrivate::init()
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex){
+void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool defaultIntensity){
     Q_Q(ctkDICOMDatasetView);
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
@@ -114,7 +122,7 @@ void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex){
             DicomImage dcmImage( dicomPath.toStdString().c_str() );
 
             q->clearImages();
-            q->addImage( dcmImage );
+            q->addImage(dcmImage, defaultIntensity);
             this->currentImageIndex = imageIndex;
         }else{
             q->clearImages();
@@ -242,11 +250,17 @@ void ctkDICOMDatasetView::addImage( const QImage & image )
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::addImage( DicomImage & dcmImage )
+void ctkDICOMDatasetView::addImage( DicomImage & dcmImage, bool defaultIntensity )
 {
+    Q_D(ctkDICOMDatasetView);
     QImage image;
     if ((dcmImage.getStatus() == EIS_Normal)){
-        dcmImage.setWindow(0);
+        if(defaultIntensity){
+            dcmImage.setWindow(0);
+            dcmImage.getWindow(d->dicomIntensityLevel, d->dicomIntensityWindow);
+        }else{
+            dcmImage.setWindow(d->dicomIntensityLevel, d->dicomIntensityWindow);
+        }
         /* get image extension */
         const unsigned long width = dcmImage.getWidth();
         const unsigned long height = dcmImage.getHeight();
@@ -309,11 +323,10 @@ void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
         event->accept();
         QPoint nowPos = event->pos();
 
-        double iW = this->intensityWindow();
-        double iL = this->intensityLevel();
+        d->dicomIntensityWindow += (5*(nowPos.x()-d->oldMousePos.x()));
+        d->dicomIntensityLevel -= (5*(nowPos.y()-d->oldMousePos.y()));
 
-        this->setIntensityWindowLevel(iW + (nowPos.x()-d->oldMousePos.x()),
-                                      iL - (nowPos.y()-d->oldMousePos.y()));
+        d->setImage(d->currentImageIndex, false);
 
         d->oldMousePos = event->pos();
     }

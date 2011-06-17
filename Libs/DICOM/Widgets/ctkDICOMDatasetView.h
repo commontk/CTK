@@ -67,7 +67,7 @@ public slots:
   void addImage( const QImage & image );
 
   // TEST
-  void addImage( DicomImage & dcmImage );
+  void addImage( DicomImage & dcmImage, bool defaultIntensity = true);
 
   void onModelSelected(const QModelIndex& index);
 
