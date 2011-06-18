@@ -228,7 +228,7 @@ void ctkSliderWidget::setValue(double _value)
   d->SpinBox->setValue(_value);
   // Why do we need to set the value to the slider ?
   //d->Slider->setValue(d->SpinBox->value());
-  double spinBoxValue = d->SpinBox->value();
+  //double spinBoxValue = d->SpinBox->value();
   Q_ASSERT(d->equal(d->SpinBox->value(), d->Slider->value()));
   // restore the prop
   d->Changing = isChanging;
