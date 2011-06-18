@@ -258,9 +258,11 @@ ExternalProject_Add(${proj}
 #MESSAGE(STATUS SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:${SUPERBUILD_EXCLUDE_CTKBUILD_TARGET})
 IF(NOT DEFINED SUPERBUILD_EXCLUDE_CTKBUILD_TARGET OR NOT SUPERBUILD_EXCLUDE_CTKBUILD_TARGET)
   SET(proj CTK-build)
+  # Note: Let's add a dummy configure step so that BUILD_COMMAND is properly setup.
+  #       See _ep_get_configure_command_id and _ep_get_build_command in ExternalProject.cmake
   ExternalProject_Add(${proj}
     DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ""
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo_append
     CMAKE_GENERATOR ${gen}
     SOURCE_DIR ${CTK_SOURCE_DIR}
     BINARY_DIR CTK-build
