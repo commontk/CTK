@@ -258,12 +258,15 @@ ExternalProject_Add(${proj}
 #MESSAGE(STATUS SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:${SUPERBUILD_EXCLUDE_CTKBUILD_TARGET})
 IF(NOT DEFINED SUPERBUILD_EXCLUDE_CTKBUILD_TARGET OR NOT SUPERBUILD_EXCLUDE_CTKBUILD_TARGET)
   SET(proj CTK-build)
-  # Note: Let's add a dummy configure step so that BUILD_COMMAND is properly setup.
+  # Note: Setting CONFIGURE_COMMAND to an empty command is not enough to skip configuration step, 
+  #       the BUILD_COMMAND should also be specified explicitly otherwise it will in-conditionally
+  #       default to 'make' on all platform.
   #       See _ep_get_configure_command_id and _ep_get_build_command in ExternalProject.cmake
   ExternalProject_Add(${proj}
     DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo_append
+    CONFIGURE_COMMAND ""
     CMAKE_GENERATOR ${gen}
+    BUILD_COMMAND ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR}
     SOURCE_DIR ${CTK_SOURCE_DIR}
     BINARY_DIR CTK-build
     INSTALL_COMMAND ""
