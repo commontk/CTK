@@ -30,6 +30,7 @@ class ctkDICOMQueryWidgetPrivate;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryWidget : public QWidget
 {
+    Q_OBJECT
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMQueryWidget(QWidget* parent=0);
@@ -44,6 +45,12 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkDICOMQueryWidget);
   Q_DISABLE_COPY(ctkDICOMQueryWidget);
+
+signals:
+  void nameSearchTextChanged(const QString& text);
+  void studySearchTextChanged(const QString& text);
+  void seriesSearchTextChanged(const QString& text);
+  void idSearchTextChanged(const QString& text);
 };
 
 #endif

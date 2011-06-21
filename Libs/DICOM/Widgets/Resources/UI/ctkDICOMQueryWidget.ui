@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>279</width>
-    <height>121</height>
+    <height>159</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
-        <widget class="QLineEdit" name="NameSearch"/>
+        <widget class="QLineEdit" name="nameSearch"/>
        </item>
       </layout>
      </widget>
@@ -56,7 +56,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <widget class="QLineEdit" name="StudySearch"/>
+        <widget class="QLineEdit" name="studySearch"/>
        </item>
       </layout>
      </widget>
@@ -69,7 +69,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
-        <widget class="QLineEdit" name="SeriesSearch"/>
+        <widget class="QLineEdit" name="seriesSearch"/>
        </item>
       </layout>
      </widget>
@@ -82,7 +82,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
-        <widget class="QLineEdit" name="IdSearch"/>
+        <widget class="QLineEdit" name="idSearch"/>
        </item>
       </layout>
      </widget>
@@ -107,7 +107,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="ctkDateRangeWidget" name="DateRangeWidget" native="true"/>
+          <widget class="ctkDateRangeWidget" name="dateRangeWidget" native="true"/>
          </item>
          <item>
           <spacer name="verticalSpacer">
@@ -135,7 +135,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="ctkModalityWidget" name="ModalityWidget" native="true">
+          <widget class="ctkModalityWidget" name="modalityWidget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
              <horstretch>0</horstretch>

@@ -46,6 +46,7 @@
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
 #include "ctkDICOMQueryRetrieveWidget.h"
+#include "ctkDICOMQueryWidget.h"
 #include "ctkDICOMImportWidget.h"
 #include "ctkDICOMThumbnailWidget.h"
 #include "ctkDICOMThumbnailGenerator.h"
@@ -156,6 +157,11 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   connect(d->imagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
   connect(d->imagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
+
+  connect(d->searchOption, SIGNAL(nameSearchTextChanged(QString)), &(d->dicomProxyModel), SLOT(setNameSearchText(QString)));
+  connect(d->searchOption, SIGNAL(studySearchTextChanged(QString)), &(d->dicomProxyModel), SLOT(setStudySearchText(QString)));
+  connect(d->searchOption, SIGNAL(seriesSearchTextChanged(QString)), &(d->dicomProxyModel), SLOT(setSeriesSearchText(QString)));
+  connect(d->searchOption, SIGNAL(idSearchTextChanged(QString)), &(d->dicomProxyModel), SLOT(setIdSearchText(QString)));
 
 }
 

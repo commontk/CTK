@@ -55,6 +55,7 @@ SET(KIT_MOC_SRCS
   ctkDICOMThumbnailWidget.h
   ctkDICOMThumbnailListWidget.h
   ctkDICOMImportWidget.h
+  ctkDICOMQueryWidget.h
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMThumbnailGenerator.h
   )

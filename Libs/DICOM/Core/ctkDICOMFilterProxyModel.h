@@ -36,12 +36,20 @@ public:
     explicit ctkDICOMFilterProxyModel(QObject* parent = 0);
     virtual ~ctkDICOMFilterProxyModel();
 
+    virtual bool filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const;
+
 protected:
     QScopedPointer<ctkDICOMFilterProxyModelPrivate> d_ptr;
 
 private:
     Q_DECLARE_PRIVATE(ctkDICOMFilterProxyModel);
     Q_DISABLE_COPY(ctkDICOMFilterProxyModel);
+
+public slots:
+    void setNameSearchText(const QString& text);
+    void setStudySearchText(const QString& text);
+    void setSeriesSearchText(const QString& text);
+    void setIdSearchText(const QString& text);
 };
 
 #endif
