@@ -18,6 +18,7 @@
 //ctkDICOMCore includes
 #include "ctkDICOMModel.h"
 #include "ctkDICOMDatabase.h"
+#include "ctkDICOMFilterProxyModel.h"
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMThumbnailListWidget.h"
@@ -63,7 +64,7 @@ void ctkDICOMThumbnailListWidgetPrivate::onPatientModelSelected(const QModelInde
 
     QModelIndex patientIndex = index;
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         model->fetchMore(patientIndex);
@@ -93,7 +94,7 @@ void ctkDICOMThumbnailListWidgetPrivate::onStudyModelSelected(const QModelIndex 
 
     QModelIndex studyIndex = index;
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         model->fetchMore(studyIndex);
@@ -123,7 +124,7 @@ void ctkDICOMThumbnailListWidgetPrivate::onSeriesModelSelected(const QModelIndex
     QModelIndex studyIndex = index.parent();
     QModelIndex seriesIndex = index;
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         model->fetchMore(seriesIndex);
@@ -165,7 +166,7 @@ void ctkDICOMThumbnailListWidgetPrivate::clearAllThumbnails(){
 void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& imageIndex, const QModelIndex& sourceIndex, const QString &text){
     Q_Q(ctkDICOMThumbnailListWidget);
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(imageIndex.model()));
 
     if(model){
         QModelIndex seriesIndex = imageIndex.parent();
@@ -247,7 +248,7 @@ void ctkDICOMThumbnailListWidget::selectThumbnail(const QModelIndex &index){
     if(!d->currentSelectedModel.isValid())return;
     if(index.parent() != d->currentSelectedModel)return;
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         int count = d->scrollAreaContentWidget->layout()->count();
@@ -270,7 +271,7 @@ void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
 
     d->clearAllThumbnails();
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         QModelIndex index0 = index.sibling(index.row(), 0);

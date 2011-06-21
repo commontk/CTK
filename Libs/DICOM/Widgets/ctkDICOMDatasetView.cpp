@@ -27,6 +27,7 @@
 #include "ctkLogger.h"
 #include "ctkQImageView.h"
 #include "ctkDICOMModel.h"
+#include "ctkDICOMFilterProxyModel.h"
 #include "ctkDICOMDatasetView.h"
 
 // Qt includes
@@ -107,7 +108,7 @@ void ctkDICOMDatasetViewPrivate::init()
 void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool defaultIntensity){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(imageIndex.model()));
 
     if(model){
         QModelIndex seriesIndex = imageIndex.parent();
@@ -134,7 +135,7 @@ void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool de
 void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         QModelIndex patientIndex = index;
@@ -156,7 +157,7 @@ void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index
 void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         QModelIndex studyIndex = index;
@@ -176,7 +177,7 @@ void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
 void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         QModelIndex seriesIndex = index;
@@ -194,7 +195,7 @@ void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index)
 void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         QModelIndex imageIndex = index;
@@ -342,7 +343,7 @@ void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
 void ctkDICOMDatasetView::onModelSelected(const QModelIndex &index){
     Q_D(ctkDICOMDatasetView);
 
-    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
+    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
 
     if(model){
         QModelIndex index0 = index.sibling(index.row(), 0);

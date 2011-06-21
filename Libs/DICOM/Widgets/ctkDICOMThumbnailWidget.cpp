@@ -56,7 +56,7 @@ ctkDICOMThumbnailWidgetPrivate::ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnail
     Q_Q(ctkDICOMThumbnailWidget);
 
     this->selectedFlag = false;
-    this->backgroundColor = Qt::blue;
+    this->backgroundColor = q->palette().color(QPalette::Highlight);
 }
 
 //----------------------------------------------------------------------------

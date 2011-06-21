@@ -22,7 +22,7 @@
 #define __ctkDICOMAppWidget_h
 
 // Qt includes 
-#include <QMainWindow>
+#include <QWidget>
 
 #include "ctkDICOMWidgetsExport.h"
 
