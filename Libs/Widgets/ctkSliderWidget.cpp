@@ -155,7 +155,10 @@ double ctkSliderWidget::maximum()const
 void ctkSliderWidget::setMinimum(double min)
 {
   Q_D(ctkSliderWidget);
+  bool wasBlocked = d->SpinBox->blockSignals(true);
   d->SpinBox->setMinimum(min);
+  d->SpinBox->blockSignals(wasBlocked);
+
   // SpinBox can truncate min (depending on decimals).
   // use Spinbox's min to set Slider's min
   d->Slider->setMinimum(d->SpinBox->minimum());
@@ -167,7 +170,10 @@ void ctkSliderWidget::setMinimum(double min)
 void ctkSliderWidget::setMaximum(double max)
 {
   Q_D(ctkSliderWidget);
+  bool wasBlocked = d->SpinBox->blockSignals(true);
   d->SpinBox->setMaximum(max);
+  d->SpinBox->blockSignals(wasBlocked);
+
   // SpinBox can truncate max (depending on decimals).
   // use Spinbox's max to set Slider's max
   d->Slider->setMaximum(d->SpinBox->maximum());
@@ -180,7 +186,10 @@ void ctkSliderWidget::setRange(double min, double max)
 {
   Q_D(ctkSliderWidget);
   
+  bool wasBlocked = d->SpinBox->blockSignals(true);
   d->SpinBox->setRange(min, max);
+  d->SpinBox->blockSignals(wasBlocked);
+  
   // SpinBox can truncate the range (depending on decimals).
   // use Spinbox's range to set Slider's range
   d->Slider->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
