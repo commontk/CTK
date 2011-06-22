@@ -31,6 +31,7 @@
 #include <QAction>
 #include <QModelIndex>
 #include <QCheckBox>
+#include <QTimer>
 
 // ctkWidgets includes
 #include "ctkDirectoryButton.h"
@@ -61,7 +62,10 @@ static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMAppWidget");
 class ctkDICOMAppWidgetPrivate: public Ui_ctkDICOMAppWidget
 {
 public:
-  ctkDICOMAppWidgetPrivate();
+  ctkDICOMAppWidget* const q_ptr;
+  Q_DECLARE_PUBLIC(ctkDICOMAppWidget);
+
+  ctkDICOMAppWidgetPrivate(ctkDICOMAppWidget* );
 
   ctkFileDialog* importDIalog;
   ctkDICOMQueryRetrieveWidget* QueryRetrieveWidget;
@@ -72,17 +76,20 @@ public:
   ctkDICOMFilterProxyModel dicomProxyModel;
   QSharedPointer<ctkDICOMIndexer> dicomIndexer;
 
+  bool isAutoPlay;
+  QTimer* autoPlayTimer;
 };
 
 //----------------------------------------------------------------------------
 // ctkDICOMAppWidgetPrivate methods
 
-ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(){
+ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(ctkDICOMAppWidget* parent): q_ptr(parent){
   dicomDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
   thumbnailGenerator = QSharedPointer <ctkDICOMThumbnailGenerator> (new ctkDICOMThumbnailGenerator);
   dicomDatabase->setThumbnailGenerator(thumbnailGenerator.data());
   dicomIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
   dicomIndexer->setThumbnailGenerator(thumbnailGenerator.data());
+  this->isAutoPlay = false;
 }
 
 //----------------------------------------------------------------------------
@@ -90,7 +97,7 @@ ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(){
 
 //----------------------------------------------------------------------------
 ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent), 
-  d_ptr(new ctkDICOMAppWidgetPrivate)
+    d_ptr(new ctkDICOMAppWidgetPrivate(this))
 {
   Q_D(ctkDICOMAppWidget);  
 
@@ -511,4 +518,22 @@ void ctkDICOMAppWidget::onTreeCollapsed(const QModelIndex &index){
 void ctkDICOMAppWidget::onTreeExpanded(const QModelIndex &index){
     Q_D(ctkDICOMAppWidget);
     d->treeView->resizeColumnToContents(0);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onAutoPlayCheckboxStateChanged(int state){
+    Q_D(ctkDICOMAppWidget);
+
+    if(state == 0){ //OFF
+        disconnect(d->autoPlayTimer, SIGNAL(timeout()), this, SLOT(onAutoPlayTimer()));
+        d->autoPlayTimer->deleteLater();
+    }else if(state == 2){ //ON
+        d->autoPlayTimer = new QTimer(this);
+        connect(d->autoPlayTimer, SIGNAL(timeout()), this, SLOT(onAutoPlayTimer()));
+        d->autoPlayTimer->start(50);
+    }
+}
+
+void ctkDICOMAppWidget::onAutoPlayTimer(){
+    this->onNextImage();
 }

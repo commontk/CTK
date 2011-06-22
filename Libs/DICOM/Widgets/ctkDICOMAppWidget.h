@@ -80,6 +80,12 @@ protected slots:
     /// To be called when an entry of the tree list is expanded
     void onTreeExpanded(const QModelIndex& index);
 
+    /// To be called when auto-play checkbox state changed
+    void onAutoPlayCheckboxStateChanged(int state);
+
+
+    void onAutoPlayTimer();
+
 private:
   Q_DECLARE_PRIVATE(ctkDICOMAppWidget);
   Q_DISABLE_COPY(ctkDICOMAppWidget);

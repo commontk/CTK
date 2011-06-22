@@ -290,6 +290,30 @@
             </property>
            </widget>
           </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QCheckBox" name="autoPlayCheckbox">
+              <property name="text">
+               <string>auto-play</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="playSlider">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>
@@ -512,6 +536,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>autoPlayCheckbox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ctkDICOMAppWidget</receiver>
+   <slot>onAutoPlayCheckboxStateChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>430</x>
+     <y>596</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>signal1()</signal>
@@ -525,5 +565,6 @@
   <slot>onPreviousSeries()</slot>
   <slot>onNextStudy()</slot>
   <slot>onPreviousStudy()</slot>
+  <slot>onAutoPlayCheckboxStateChanged(int)</slot>
  </slots>
 </ui>
