@@ -56,6 +56,12 @@ IF(${add_project})
           "${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libQtServiceFrameworkd.so")
       SET(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE
           "${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libQtServiceFramework.so")
+      
+      IF(APPLE)
+        CONFIGURE_FILE(${qtmobility_patch_dir}/QtMobility-1.0.0-make-apple.cmake.in
+                     ${qtmobility_configured_patch_dir}/QtMobility-1.0.0-make-apple.cmake @ONLY)
+        SET(qtmobility_make_cmd ${CMAKE_COMMAND} -P ${qtmobility_configured_patch_dir}/QtMobility-1.0.0-make-apple.cmake)
+      ENDIF()
           
       CONFIGURE_FILE("${qtmobility_config_in}" "${qtmobility_config_out}" @ONLY)
     ELSEIF(WIN32)

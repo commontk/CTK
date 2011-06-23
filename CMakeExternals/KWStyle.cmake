@@ -15,6 +15,15 @@ IF(CTK_USE_KWSTYLE)
   SET(kwstyle_DEPENDS ${proj})
   
   IF(NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
+    # Set CMake OSX variable to pass down the external project
+    set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+    if(APPLE)
+      list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+        -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+        -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+    endif()
+
     ExternalProject_Add(${proj}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       BINARY_DIR ${proj}-build
@@ -25,6 +34,7 @@ IF(CTK_USE_KWSTYLE)
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${ep_common_args}
+        ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DBUILD_TESTING:BOOL=OFF
       DEPENDS
         ${proj_DEPENDENCIES}

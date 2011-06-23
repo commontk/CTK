@@ -11,7 +11,15 @@ IF(CTK_WRAP_PYTHONQT_FULL)
   ENDIF()
   
   IF(NOT DEFINED PYTHONQTGENERATOR_EXECUTABLE)
-    
+    # Set CMake OSX variable to pass down the external project
+    set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+    if(APPLE)
+      list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+        -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+        -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+    endif()
+
     #
     # PythonQtGenerator is the tool allowing to generate the PythonQt decorators using 
     # typesystem xml files. If called without any option, it will generate the bindings for Qt.
@@ -42,6 +50,7 @@ IF(CTK_WRAP_PYTHONQT_FULL)
         SOURCE_DIR ${CMAKE_BINARY_DIR}/PythonQt/generator
         CMAKE_ARGS
           ${ep_common_args}
+          ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         DEPENDS
           "PythonQt" # To make sure the generator code is checked out, let's depent on PythonQt
@@ -59,6 +68,7 @@ IF(CTK_WRAP_PYTHONQT_FULL)
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}/generator
         CMAKE_ARGS
           ${ep_common_args}
+          ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         )
     ENDIF()
