@@ -136,6 +136,14 @@ public:
   bool containsConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
                           const QObject* qt_obj =0, const char* qt_slot =0)const;
 
+  //-----------------------------------------------------------------------------
+  class ctkVTKConnectionFactory
+  {
+  public:
+    virtual ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const;
+  };
+  static ctkVTKConnectionFactory* connectionFactory;
+
 protected:
   QScopedPointer<ctkVTKObjectEventsObserverPrivate> d_ptr;
 

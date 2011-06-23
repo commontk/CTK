@@ -34,6 +34,17 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
+ctkVTKConnection* ctkVTKObjectEventsObserver::ctkVTKConnectionFactory::createConnection(
+  ctkVTKObjectEventsObserver* parent)const
+{
+  return new ctkVTKConnection(parent);
+}
+
+//-----------------------------------------------------------------------------
+ctkVTKObjectEventsObserver::ctkVTKConnectionFactory* ctkVTKObjectEventsObserver::connectionFactory
+  = new ctkVTKConnectionFactory;
+
+//-----------------------------------------------------------------------------
 class ctkVTKObjectEventsObserverPrivate
 {
   Q_DECLARE_PUBLIC(ctkVTKObjectEventsObserver);
@@ -267,7 +278,8 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
     }
 
   // Instantiate a new connection, set its parameters and add it to the list
-  ctkVTKConnection * connection = new ctkVTKConnection(this);
+  ctkVTKConnection * connection =
+    ctkVTKObjectEventsObserver::connectionFactory->createConnection(this);//new ctkVTKConnection(this);
   connection->observeDeletion(d->ObserveDeletion);
   connection->setup(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
 

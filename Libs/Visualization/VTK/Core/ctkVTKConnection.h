@@ -32,6 +32,7 @@
 
 class vtkObject;
 class ctkVTKConnectionPrivate;
+class vtkCallbackCommand;
 
 /// Warning the slot must have its signature order:
 /// vtkObject*, vtkObject* : sender, callData
@@ -112,6 +113,10 @@ protected slots:
 
 protected:
   QScopedPointer<ctkVTKConnectionPrivate> d_ptr;
+
+  void disconnect();
+  virtual void addObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback, float priority=0.0f);
+  virtual void removeObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback);
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKConnection);
