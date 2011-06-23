@@ -33,6 +33,12 @@ SET(KIT_SRCS
   ctkDICOMFilterProxyModel.h
 )
 
+# Abstract class should not be wrapped !
+SET_SOURCE_FILES_PROPERTIES(
+  ctkDICOMAbstractThumbnailGenerator.h
+  WRAP_EXCLUDE
+  )
+
 IF(CTK_WRAP_PYTHONQT_LIGHT)
   LIST(APPEND KIT_SRCS
     ctkDICOMCorePythonQtDecorators.h
