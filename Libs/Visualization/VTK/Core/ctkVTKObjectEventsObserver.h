@@ -137,7 +137,7 @@ public:
                           const QObject* qt_obj =0, const char* qt_slot =0)const;
 
   //-----------------------------------------------------------------------------
-  class ctkVTKConnectionFactory
+  class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKConnectionFactory
   {
   public:
     virtual ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const;
