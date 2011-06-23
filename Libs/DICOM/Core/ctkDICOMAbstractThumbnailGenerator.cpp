@@ -41,7 +41,7 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMAbstractThumbnailGeneratorPrivate::ctkDICOMAbstractThumbnailGeneratorPrivate(ctkDICOMAbstractThumbnailGenerator& o):q_ptr(&o)
 {
-
+    Q_UNUSED(o);
 }
 
 //------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ ctkDICOMAbstractThumbnailGeneratorPrivate::~ctkDICOMAbstractThumbnailGeneratorPr
 ctkDICOMAbstractThumbnailGenerator::ctkDICOMAbstractThumbnailGenerator(QObject* parentValue)
   : d_ptr(new ctkDICOMAbstractThumbnailGeneratorPrivate(*this))
 {
-
+    Q_UNUSED(parentValue);
 }
 
 //------------------------------------------------------------------------------

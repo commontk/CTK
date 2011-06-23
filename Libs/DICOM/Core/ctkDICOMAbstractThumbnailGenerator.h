@@ -42,7 +42,7 @@ public:
   explicit ctkDICOMAbstractThumbnailGenerator(QObject* parent = 0);
   virtual ~ctkDICOMAbstractThumbnailGenerator();
 
-  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path ){return false;}
+  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path ) = 0;
 
 protected:
   QScopedPointer<ctkDICOMAbstractThumbnailGeneratorPrivate> d_ptr;

@@ -162,6 +162,7 @@ ctkDICOMDatabase::ctkDICOMDatabase(QString databaseFile)
 ctkDICOMDatabase::ctkDICOMDatabase(QObject* parent)
    : d_ptr(new ctkDICOMDatabasePrivate(*this))
 {
+    Q_UNUSED(parent);
     Q_D(ctkDICOMDatabase);
     d->registerCompressionLibraries();
 }
