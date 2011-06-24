@@ -40,7 +40,16 @@ IF(${add_project})
     IF(NOT PYTHONLIBS_FOUND)
       MESSAGE(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
     ENDIF()
-      
+
+    # Set CMake OSX variable to pass down the external project
+    set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+    if(APPLE)
+      list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+        -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+        -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+    endif()
+
     ExternalProject_Add(${proj}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       BINARY_DIR ${proj}-build
@@ -51,6 +60,7 @@ IF(${add_project})
       BUILD_COMMAND ""
       CMAKE_ARGS
         ${ep_common_args}
+        ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
         -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}

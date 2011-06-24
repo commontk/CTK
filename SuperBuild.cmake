@@ -215,6 +215,16 @@ ENDFOREACH()
 # ENDFOREACH()
 
 #-----------------------------------------------------------------------------
+# Set CMake OSX variable to pass down the external project
+set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+if(APPLE)
+  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+endif()
+    
+#-----------------------------------------------------------------------------
 # CTK Configure
 #
 SET(proj CTK-Configure)
@@ -224,6 +234,7 @@ ExternalProject_Add(${proj}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ctk_superbuild_boolean_args}
+    ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
     -DCTK_SUPERBUILD:BOOL=OFF
     -DDOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
     -DDOXYGEN_EXECUTABLE:FILEPATH=${DOXYGEN_EXECUTABLE}

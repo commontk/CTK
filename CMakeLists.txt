@@ -47,6 +47,13 @@ FOREACH(policy ${project_policies})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
+if(APPLE)
+  # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
+  #       we ensure that the bitness will be properly detected.
+  include(${CMAKE_SOURCE_DIR}/CMake/ctkBlockSetCMakeOSXVariables.cmake)
+endif()
+
+#-----------------------------------------------------------------------------
 PROJECT(CTK)
 #-----------------------------------------------------------------------------
 

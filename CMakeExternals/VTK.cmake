@@ -30,6 +30,15 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   SET(VTK_DEPENDS ${proj})
   
   IF(NOT DEFINED VTK_DIR)
+    # Set CMake OSX variable to pass down the external project
+    set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+    if(APPLE)
+      list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+        -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+        -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+    endif()
+
 #     MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -41,6 +50,7 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${ep_common_args}
+        ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DBUILD_TESTING:BOOL=OFF
         ${additional_vtk_cmakevars}
         -DVTK_WRAP_TCL:BOOL=OFF
