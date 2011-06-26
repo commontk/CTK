@@ -43,7 +43,7 @@ bool testSignificantDecimals(double value, int expected)
 }
 
 //-----------------------------------------------------------------------------
-int ctkUtilsTest3(int , char *  [] )
+int ctkUtilsSignificantDecimalsTest1(int , char *  [] )
 {
   std::cout.precision(16);
   if (testSignificantDecimals(123456., 0))

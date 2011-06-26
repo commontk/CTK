@@ -79,6 +79,9 @@ QRegExp CTK_CORE_EXPORT nameFiltersToRegExp(const QStringList& nameFilters);
 /// Return a "smart" number of decimals needed to display (in a gui) a floating
 /// number.
 /// e.g. significantDecimals(120.01) returns 2
+///      significantDecimals(123456.1333333) returns 3
+///      significantDecimals(123456.26999999999999996) returns 2
+/// See more cases in the test ctkUtilsSignificantDecimalsTest1
 int CTK_CORE_EXPORT significantDecimals(double value);
 
 ///
@@ -91,6 +94,7 @@ int CTK_CORE_EXPORT significantDecimals(double value);
 ///       orderOfMagnitude(0.1) returns -1
 ///       orderOfMagnitude(0.15) returns -1
 ///       orderOfMagnitude(0.) returns NaN
+/// See more cases in the test ctkUtilsOrderOfMagnitudeTest1
 int CTK_CORE_EXPORT orderOfMagnitude(double value);
 
 ///
@@ -100,7 +104,8 @@ int CTK_CORE_EXPORT orderOfMagnitude(double value);
 ///       closestPowerOfTen(-40) returns -10
 ///       closestPowerOfTen(99) returns 100
 ///       closestPowerOfTen(0.012) returns 0.010
-///       orderOfMagnitude(0.)  returns 0
+///       closestPowerOfTen(0.)  returns 0
+/// See more cases in the test ctkUtilsClosestPowerOfTenTest1
 double CTK_CORE_EXPORT closestPowerOfTen(double value);
 
 }

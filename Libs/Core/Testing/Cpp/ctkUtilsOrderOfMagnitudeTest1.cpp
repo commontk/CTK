@@ -43,7 +43,7 @@ bool test(double value, int expected)
 }
 
 //-----------------------------------------------------------------------------
-int ctkUtilsTest4(int , char *  [] )
+int ctkUtilsOrderOfMagnitudeTest1(int , char *  [] )
 {
   std::cout.precision(16);
 

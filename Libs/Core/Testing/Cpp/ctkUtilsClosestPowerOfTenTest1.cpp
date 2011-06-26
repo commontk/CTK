@@ -33,7 +33,7 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-int ctkUtilsTest5(int , char *  [] )
+int ctkUtilsClosestPowerOfTenTest1(int , char *  [] )
 {
   std::cout.precision(16);
 

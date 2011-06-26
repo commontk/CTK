@@ -32,11 +32,11 @@ SET(KITTests_SRCS
   ctkErrorLogModelTest2.cpp
   ctkErrorLogModelTest3.cpp
   ctkModelTesterTest1.cpp
+  ctkUtilsClosestPowerOfTenTest1.cpp
+  ctkUtilsOrderOfMagnitudeTest1.cpp
+  ctkUtilsSignificantDecimalsTest1.cpp
   ctkUtilsTest1.cpp
   ctkUtilsTest2.cpp
-  ctkUtilsTest3.cpp
-  ctkUtilsTest4.cpp
-  ctkUtilsTest5.cpp
   ctkDependencyGraphTest1.cpp
   ctkDependencyGraphTest2.cpp
   ctkPimplTest1.cpp
@@ -127,11 +127,11 @@ SET_TESTS_PROPERTIES(ctkErrorLogModelTest3 PROPERTIES PASS_REGULAR_EXPRESSION
 SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
+SIMPLE_TEST( ctkUtilsClosestPowerOfTenTest1 )
+SIMPLE_TEST( ctkUtilsOrderOfMagnitudeTest1 )
+SIMPLE_TEST( ctkUtilsSignificantDecimalsTest1 )
 SIMPLE_TEST( ctkUtilsTest1 )
 SIMPLE_TEST( ctkUtilsTest2 )
-SIMPLE_TEST( ctkUtilsTest3 )
-SIMPLE_TEST( ctkUtilsTest4 )
-SIMPLE_TEST( ctkUtilsTest5 )
 SIMPLE_TEST( ctkWorkflowTest1 )
 SIMPLE_TEST( ctkWorkflowTest2 )
 SIMPLE_TEST( ctkWorkflowTest3 )
