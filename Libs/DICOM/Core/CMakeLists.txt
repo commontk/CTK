@@ -13,8 +13,6 @@ SET(KIT_SRCS
   ctkDICOMDatabase.h
   ctkDICOMDataset.cpp
   ctkDICOMDataset.h
-  ctkDICOMImage.cpp
-  ctkDICOMImage.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
   ctkDICOMModel.cpp
@@ -54,7 +52,6 @@ ENDIF()
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkDICOMDatabase.h
-  ctkDICOMImage.h
   ctkDICOMModel.h
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h

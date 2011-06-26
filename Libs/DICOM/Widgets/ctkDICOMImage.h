@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QImage>
 
-#include "ctkDICOMCoreExport.h"
+#include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMImagePrivate;
 class DicomImage;
@@ -36,7 +36,7 @@ class DicomImage;
 
   This class wraps a DicomImage object and exposes it as a Qt class.
 */
-class CTK_DICOM_CORE_EXPORT ctkDICOMImage : public QObject
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMImage : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(unsigned long frameCount READ frameCount);

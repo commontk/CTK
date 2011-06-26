@@ -4,6 +4,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkDICOMAppWidgetTest1.cpp
   ctkDICOMDatasetViewTest1.cpp
   ctkDICOMDirectoryListWidgetTest1.cpp
+  ctkDICOMImageTest1.cpp
   ctkDICOMImportWidgetTest1.cpp
   ctkDICOMListenerWidgetTest1.cpp
   ctkDICOMModelTest2.cpp
@@ -37,6 +38,11 @@ ADD_TEST( ctkDICOMDatasetViewTest1  ${KIT_TESTS}
           ctkDICOMDatasetViewTest1  ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SET_PROPERTY(TEST ctkDICOMDatasetViewTest1 PROPERTY LABELS ${PROJECT_NAME})
 SIMPLE_TEST(ctkDICOMDirectoryListWidgetTest1)
+
+ADD_TEST( ctkDICOMImageTest1 ${KIT_TESTS}
+          ctkDICOMImageTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
+SET_PROPERTY(TEST ctkDICOMImageTest1 PROPERTY LABELS ${PROJECT_NAME})
+
 SIMPLE_TEST(ctkDICOMImportWidgetTest1)
 SIMPLE_TEST(ctkDICOMListenerWidgetTest1)
 

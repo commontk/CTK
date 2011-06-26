@@ -13,6 +13,8 @@ SET(KIT_SRCS
   ctkDICOMDatasetView.h
   ctkDICOMDirectoryListWidget.cpp
   ctkDICOMDirectoryListWidget.h
+  ctkDICOMImage.cpp
+  ctkDICOMImage.h
   ctkDICOMListenerWidget.cpp
   ctkDICOMListenerWidget.h
   ctkDICOMQueryRetrieveWidget.cpp
@@ -50,6 +52,7 @@ ENDIF()
 SET(KIT_MOC_SRCS
   ctkDICOMDatasetView.h
   ctkDICOMDirectoryListWidget.h
+  ctkDICOMImage.h
   ctkDICOMServerNodeWidget.h
   ctkDICOMAppWidget.h
   ctkDICOMThumbnailWidget.h
