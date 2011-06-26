@@ -1,6 +1,6 @@
 
 // Qt includes
-#include <QApplication>
+#include <QCoreApplication>
 
 // CTKVTK includes
 #include "ctkVTKObjectTestHelper.h"
@@ -11,7 +11,7 @@
 
 int ctkVTKObjectTest1( int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
   ctkVTKObjectTest objectTest;
   if (!objectTest.test())

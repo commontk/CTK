@@ -1,6 +1,6 @@
 
 // Qt includes
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QList>
 #include <QTimer>
@@ -30,7 +30,7 @@ void doit(vtkObject* vtkNotUsed(obj), unsigned long vtkNotUsed(event),
 //-----------------------------------------------------------------------------
 int ctkVTKConnectionTest1( int argc, char * argv [] )
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
   int objects = 1000;
   int events = 100;
