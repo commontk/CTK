@@ -29,6 +29,8 @@ SET(KIT_SRCS
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.cpp
   ctkVTKScalarBarWidget.h
+  ctkVTKScalarsToColorsUtils.cpp
+  ctkVTKScalarsToColorsUtils.h
   ctkVTKSliceView.cpp
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h

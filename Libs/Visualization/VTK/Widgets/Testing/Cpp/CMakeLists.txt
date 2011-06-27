@@ -16,6 +16,7 @@ SET(TEST_SOURCES
   ctkTransferFunctionViewTest4.cpp
   ctkTransferFunctionViewTest5.cpp
   ctkVTKRenderViewTest1.cpp
+  ctkVTKScalarsToColorsUtilsTest1.cpp
   ctkVTKSliceViewTest1.cpp
   ctkVTKSurfaceMaterialPropertyWidgetTest1.cpp
   ctkVTKTextPropertyWidgetTest1.cpp
@@ -90,6 +91,7 @@ SIMPLE_TEST( ctkVTKDataSetModelTest1 )
 SIMPLE_TEST( ctkVTKMagnifyViewTest1 )
 SIMPLE_TEST( ctkVTKMatrixWidgetTest1 )
 SIMPLE_TEST( ctkVTKScalarBarWidgetTest1 )
+SIMPLE_TEST( ctkVTKScalarsToColorsUtilsTest1 )
 SIMPLE_TEST( ctkTransferFunctionBarsItemTest1 )
 SIMPLE_TEST( ctkTransferFunctionViewTest1 )
 SIMPLE_TEST( ctkTransferFunctionViewTest2 )
