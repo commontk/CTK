@@ -110,7 +110,7 @@ void ctkCrosshairLabelPrivate::drawCrosshair()
       this->drawBullsEyeCrosshair(painter);
       break;
     default:
-      qDebug() << "Unsupported crosshair type" << this->CrosshairType;
+      qCritical() << "Unsupported crosshair type" << static_cast<int>(this->CrosshairType);
       break;
     }
 }
