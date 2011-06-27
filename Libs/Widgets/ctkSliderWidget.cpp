@@ -278,6 +278,7 @@ void ctkSliderWidget::changeValue(double newValue)
   bool wasBlocked = d->SpinBox->blockSignals(true);
   d->SpinBox->setValue(newValue);
   d->SpinBox->blockSignals(wasBlocked);
+  Q_ASSERT(d->equal(d->SpinBox->value(), d->Slider->value()));
   
   if (!d->Tracking)
     {

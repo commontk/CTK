@@ -36,8 +36,9 @@ protected:
   ctkDoubleSlider* const q_ptr;
 public:
   ctkDoubleSliderPrivate(ctkDoubleSlider& object);
-  int toInt(double _value)const;
-  double fromInt(int _value)const;
+  int toInt(double value)const;
+  double fromInt(int value)const;
+  double safeFromInt(int value)const;
   void init();
   void updateOffset(double value);
 
@@ -117,6 +118,12 @@ double ctkDoubleSliderPrivate::fromInt(int intValue)const
   double doubleValue = this->SingleStep * (this->Offset + intValue) ;
   //qDebug() << __FUNCTION__ << intValue << doubleValue;
   return doubleValue;
+}
+
+// --------------------------------------------------------------------------
+double ctkDoubleSliderPrivate::safeFromInt(int intValue)const
+{
+  return qBound(this->Minimum, this->fromInt(intValue), this->Maximum);
 }
 
 // --------------------------------------------------------------------------
@@ -217,7 +224,7 @@ double ctkDoubleSlider::maximum()const
 double ctkDoubleSlider::sliderPosition()const
 {
   Q_D(const ctkDoubleSlider);
-  return d->fromInt(d->Slider->sliderPosition());
+  return d->safeFromInt(d->Slider->sliderPosition());
 }
 
 // --------------------------------------------------------------------------
@@ -302,7 +309,8 @@ void ctkDoubleSlider::setPageStep(double newStep)
 double ctkDoubleSlider::tickInterval()const
 {
   Q_D(const ctkDoubleSlider);
-  return d->fromInt(d->Slider->tickInterval());
+  // No need to apply Offset
+  return d->SingleStep * d->Slider->tickInterval();
 }
 
 // --------------------------------------------------------------------------
@@ -363,7 +371,7 @@ void ctkDoubleSlider::setOrientation(Qt::Orientation newOrientation)
 void ctkDoubleSlider::onValueChanged(int newValue)
 {
   Q_D(ctkDoubleSlider);
-  double doubleNewValue = d->fromInt(newValue);
+  double doubleNewValue = d->safeFromInt(newValue);
 /*
   qDebug() << "onValueChanged: " << newValue << "->"<< d->fromInt(newValue+d->Offset) 
            << " old: " << d->Value << "->" << d->toInt(d->Value) 
@@ -381,7 +389,7 @@ void ctkDoubleSlider::onValueChanged(int newValue)
 void ctkDoubleSlider::onSliderMoved(int newPosition)
 {
   Q_D(const ctkDoubleSlider);
-  emit this->sliderMoved(d->fromInt(newPosition));
+  emit this->sliderMoved(d->safeFromInt(newPosition));
 }
 
 // --------------------------------------------------------------------------

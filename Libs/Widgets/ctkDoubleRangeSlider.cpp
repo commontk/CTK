@@ -39,6 +39,9 @@ public:
   int toInt(double _value)const;
   double minFromInt(int _value)const;
   double maxFromInt(int _value)const;
+  double safeMinFromInt(int _value)const;
+  double safeMaxFromInt(int _value)const;
+  
   void init();
   void connectSlider();
   void updateMinOffset(double value);
@@ -138,6 +141,18 @@ double ctkDoubleRangeSliderPrivate::maxFromInt(int intValue)const
 {
   double doubleValue = this->SingleStep * (this->MaxOffset + intValue) ;
   return doubleValue;
+}
+
+// --------------------------------------------------------------------------
+double ctkDoubleRangeSliderPrivate::safeMinFromInt(int intValue)const
+{
+  return qBound(this->Minimum, this->minFromInt(intValue), this->Maximum);
+}
+
+// --------------------------------------------------------------------------
+double ctkDoubleRangeSliderPrivate::safeMaxFromInt(int intValue)const
+{
+  return qBound(this->Minimum, this->maxFromInt(intValue), this->Maximum);
 }
 
 // --------------------------------------------------------------------------
@@ -272,7 +287,7 @@ void ctkDoubleRangeSlider::setRange(double min, double max)
 double ctkDoubleRangeSlider::minimumPosition()const
 {
   Q_D(const ctkDoubleRangeSlider);
-  return d->minFromInt(d->Slider->minimumPosition());
+  return d->safeMinFromInt(d->Slider->minimumPosition());
 }
 
 // --------------------------------------------------------------------------
@@ -286,7 +301,7 @@ void ctkDoubleRangeSlider::setMinimumPosition(double minPos)
 double ctkDoubleRangeSlider::maximumPosition()const
 {
   Q_D(const ctkDoubleRangeSlider);
-  return d->maxFromInt(d->Slider->maximumPosition());
+  return d->safeMaxFromInt(d->Slider->maximumPosition());
 }
 
 // --------------------------------------------------------------------------
@@ -459,7 +474,7 @@ void ctkDoubleRangeSlider::setSingleStep(double newStep)
 double ctkDoubleRangeSlider::tickInterval()const
 {
   Q_D(const ctkDoubleRangeSlider);
-  return d->minFromInt(d->Slider->tickInterval());
+  return d->SingleStep * d->Slider->tickInterval();
 }
 
 // --------------------------------------------------------------------------
@@ -534,8 +549,8 @@ void ctkDoubleRangeSlider::setSymmetricMoves(bool symmetry)
 void ctkDoubleRangeSlider::onValuesChanged(int newMinValue, int newMaxValue)
 {
   Q_D(ctkDoubleRangeSlider);
-  double doubleNewMinValue = d->minFromInt(newMinValue);
-  double doubleNewMaxValue = d->maxFromInt(newMaxValue);
+  double doubleNewMinValue = d->safeMinFromInt(newMinValue);
+  double doubleNewMaxValue = d->safeMaxFromInt(newMaxValue);
 
   bool emitMinValueChanged = (d->MinValue != doubleNewMinValue);
   bool emitMaxValueChanged = (d->MaxValue != doubleNewMaxValue);
@@ -561,21 +576,21 @@ void ctkDoubleRangeSlider::onValuesChanged(int newMinValue, int newMaxValue)
 void ctkDoubleRangeSlider::onMinPosChanged(int newPosition)
 {
   Q_D(const ctkDoubleRangeSlider);
-  emit this->minimumPositionChanged(d->minFromInt(newPosition));
+  emit this->minimumPositionChanged(d->safeMinFromInt(newPosition));
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleRangeSlider::onMaxPosChanged(int newPosition)
 {
   Q_D(const ctkDoubleRangeSlider);
-  emit this->maximumPositionChanged(d->maxFromInt(newPosition));
+  emit this->maximumPositionChanged(d->safeMaxFromInt(newPosition));
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleRangeSlider::onPositionsChanged(int min, int max)
 {
   Q_D(const ctkDoubleRangeSlider);
-  emit this->positionsChanged(d->minFromInt(min), d->maxFromInt(max));
+  emit this->positionsChanged(d->safeMinFromInt(min), d->safeMaxFromInt(max));
 }
 
 // --------------------------------------------------------------------------
