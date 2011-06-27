@@ -22,7 +22,7 @@
 #define __ctkDICOMModel_h
 
 // Qt includes 
-#include <QStandardItemModel>
+#include <QAbstractItemModel>
 #include <QSqlDatabase>
 
 #include "ctkDICOMCoreExport.h"

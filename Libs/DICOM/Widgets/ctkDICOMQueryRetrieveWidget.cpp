@@ -190,7 +190,7 @@ void ctkDICOMQueryRetrieveWidget::query()
     QMap<QString, QVariant> parameters =
       d->ServerNodeWidget->serverNodeParameters(d->CurrentServer);
     // if we are here it's because the server node was checked
-    Q_ASSERT(parameters["CheckState"] == Qt::Checked );
+    Q_ASSERT(parameters["CheckState"] == static_cast<int>(Qt::Checked) );
     // create a query for the current server
     ctkDICOMQuery* query = new ctkDICOMQuery;
     query->setCallingAETitle(d->ServerNodeWidget->callingAETitle());

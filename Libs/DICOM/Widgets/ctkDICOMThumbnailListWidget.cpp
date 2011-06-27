@@ -1,13 +1,32 @@
+/*=========================================================================
+
+  Library:   CTK
+
+  Copyright (c) Kitware Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.commontk.org/LICENSE
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=========================================================================*/
 
 // Qt include
-#include <QGridLayout>
-#include <QResizeEvent>
-#include <QPushButton>
-#include <QPixmap>
+#include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QDateTime>
+#include <QGridLayout>
+#include <QPixmap>
+#include <QPushButton>
+#include <QResizeEvent>
 
 // ctk includes
 #include "ctkLogger.h"
@@ -16,14 +35,14 @@
 #include "ctkFlowLayout.h"
 
 //ctkDICOMCore includes
-#include "ctkDICOMModel.h"
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMFilterProxyModel.h"
+#include "ctkDICOMModel.h"
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMThumbnailListWidget.h"
-#include "ui_ctkDICOMThumbnailListWidget.h"
 #include "ctkDICOMThumbnailWidget.h"
+#include "ui_ctkDICOMThumbnailListWidget.h"
 
 // STD includes
 #include <iostream>
@@ -41,9 +60,8 @@ public:
     
   }
 
-  QString databaseDirectory;
-
-  QModelIndex currentSelectedModel;
+  QString DatabaseDirectory;
+  QModelIndex CurrentSelectedModel;
 
   void clearAllThumbnails();
   void addThumbnailWidget(const QModelIndex &imageIndex, const QModelIndex& sourceIndex, const QString& text);
@@ -60,29 +78,30 @@ public:
 // ctkDICOMThumbnailListWidgetPrivate methods
 
 void ctkDICOMThumbnailListWidgetPrivate::onPatientModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMThumbnailListWidget);
-
     QModelIndex patientIndex = index;
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
-    if(model){
+    if(model)
+    {
         model->fetchMore(patientIndex);
         int studyCount = model->rowCount(patientIndex);
 
-        for(int i=0; i<studyCount; i++){
+        for(int i=0; i<studyCount; i++)
+        {
             QModelIndex studyIndex = patientIndex.child(i, 0);
             QModelIndex seriesIndex = studyIndex.child(0, 0);
             model->fetchMore(seriesIndex);
             int imageCount = model->rowCount(seriesIndex);
             QModelIndex imageIndex = seriesIndex.child(imageCount/2, 0);
 
-            QString thumbnailPath = this->databaseDirectory +
+            QString thumbnailPath = this->DatabaseDirectory +
                                     "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                     model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                     model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-            if(QFile(thumbnailPath).exists()){
+            if(QFile(thumbnailPath).exists())
+            {
                 this->addThumbnailWidget(imageIndex, studyIndex, model->data(studyIndex, Qt::DisplayRole).toString());
             }
         }
@@ -90,28 +109,29 @@ void ctkDICOMThumbnailListWidgetPrivate::onPatientModelSelected(const QModelInde
 }
 
 void ctkDICOMThumbnailListWidgetPrivate::onStudyModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMThumbnailListWidget);
-
     QModelIndex studyIndex = index;
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
-    if(model){
+    if(model)
+    {
         model->fetchMore(studyIndex);
         int seriesCount = model->rowCount(studyIndex);
 
-        for(int i=0; i<seriesCount; i++){
+        for(int i=0; i<seriesCount; i++)
+        {
             QModelIndex seriesIndex = studyIndex.child(i, 0);
             model->fetchMore(seriesIndex);
             int imageCount = model->rowCount(seriesIndex);
             QModelIndex imageIndex = seriesIndex.child(imageCount/2, 0);
 
-            QString thumbnailPath = this->databaseDirectory +
+            QString thumbnailPath = this->DatabaseDirectory +
                                     "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                     model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                     model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-            if (QFile(thumbnailPath).exists()){
+            if (QFile(thumbnailPath).exists())
+            {
                 this->addThumbnailWidget(imageIndex, seriesIndex, model->data(seriesIndex, Qt::DisplayRole).toString());
             }
         }
@@ -119,14 +139,13 @@ void ctkDICOMThumbnailListWidgetPrivate::onStudyModelSelected(const QModelIndex 
 }
 
 void ctkDICOMThumbnailListWidgetPrivate::onSeriesModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMThumbnailListWidget);
-
     QModelIndex studyIndex = index.parent();
     QModelIndex seriesIndex = index;
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
-    if(model){
+    if(model)
+    {
         model->fetchMore(seriesIndex);
 
         int imageCount = model->rowCount(seriesIndex);
@@ -135,12 +154,13 @@ void ctkDICOMThumbnailListWidgetPrivate::onSeriesModelSelected(const QModelIndex
         {
             QModelIndex imageIndex = seriesIndex.child(i,0);
 
-            QString thumbnailPath = this->databaseDirectory +
+            QString thumbnailPath = this->DatabaseDirectory +
                                     "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                     model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                     model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-            if(QFile(thumbnailPath).exists()){
+            if(QFile(thumbnailPath).exists())
+            {
                 this->addThumbnailWidget(imageIndex, imageIndex, QString("Image %1").arg(i));
             }
         }
@@ -152,9 +172,11 @@ void ctkDICOMThumbnailListWidgetPrivate::clearAllThumbnails(){
 
     // Remove previous displayed thumbnails
     QLayoutItem* item;
-    while(item = this->scrollAreaContentWidget->layout()->takeAt(0)){
+    while((item = this->ScrollAreaContentWidget->layout()->takeAt(0)))
+    {
         ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(item->widget());
-        if(thumbnailWidget){
+        if(thumbnailWidget)
+        {
             q->disconnect(thumbnailWidget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkDICOMThumbnailWidget)));
             q->disconnect(thumbnailWidget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SIGNAL(selected(ctkDICOMThumbnailWidget)));
             q->disconnect(thumbnailWidget, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)), q, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)));
@@ -166,25 +188,26 @@ void ctkDICOMThumbnailListWidgetPrivate::clearAllThumbnails(){
 void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& imageIndex, const QModelIndex& sourceIndex, const QString &text){
     Q_Q(ctkDICOMThumbnailListWidget);
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(imageIndex.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
 
-    if(model){
+    if(model)
+    {
         QModelIndex seriesIndex = imageIndex.parent();
         QModelIndex studyIndex = seriesIndex.parent();
 
-        QString thumbnailPath = this->databaseDirectory +
+        QString thumbnailPath = this->DatabaseDirectory +
                                 "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                 model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                 model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-        ctkDICOMThumbnailWidget* widget = new ctkDICOMThumbnailWidget(this->scrollAreaContentWidget);
+        ctkDICOMThumbnailWidget* widget = new ctkDICOMThumbnailWidget(this->ScrollAreaContentWidget);
         QString widgetLabel = text;
         widget->setText( widgetLabel );
         QPixmap pix(thumbnailPath);
         logger.debug("Setting pixmap to " + thumbnailPath);
         widget->setPixmap(pix);
         widget->setSourceIndex(sourceIndex);
-        this->scrollAreaContentWidget->layout()->addWidget(widget);
+        this->ScrollAreaContentWidget->layout()->addWidget(widget);
         q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkDICOMThumbnailWidget)));
         q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SIGNAL(selected(ctkDICOMThumbnailWidget)));
         q->connect(widget, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)), q, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)));
@@ -202,7 +225,7 @@ ctkDICOMThumbnailListWidget::ctkDICOMThumbnailListWidget(QWidget* _parent):Super
 
     d->setupUi(this);
 
-    d->scrollAreaContentWidget->setLayout(new ctkFlowLayout);
+    d->ScrollAreaContentWidget->setLayout(new ctkFlowLayout);
 }
 
 //----------------------------------------------------------------------------
@@ -217,25 +240,29 @@ ctkDICOMThumbnailListWidget::~ctkDICOMThumbnailListWidget()
 void ctkDICOMThumbnailListWidget::setDatabaseDirectory(const QString &directory){
     Q_D(ctkDICOMThumbnailListWidget);
 
-    d->databaseDirectory = directory;
+    d->DatabaseDirectory = directory;
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMThumbnailListWidget::selectThumbnail(int index){
     Q_D(ctkDICOMThumbnailListWidget);
 
-    int count = d->scrollAreaContentWidget->layout()->count();
+    int count = d->ScrollAreaContentWidget->layout()->count();
 
     logger.debug("Select thumbnail " + QVariant(index).toString() + " of " + QVariant(count).toString());
 
     if(index >= count)return;
 
-    for(int i=0; i<count; i++){
-        ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->scrollAreaContentWidget->layout()->itemAt(i)->widget());
-        if(i == index){
+    for(int i=0; i<count; i++)
+    {
+        ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+        if(i == index)
+        {
             thumbnailWidget->setSelected(true);
-            d->scrollArea->ensureWidgetVisible(thumbnailWidget);
-        }else{
+            d->ScrollArea->ensureWidgetVisible(thumbnailWidget);
+        }
+        else
+        {
             thumbnailWidget->setSelected(false);
         }
     }
@@ -245,20 +272,24 @@ void ctkDICOMThumbnailListWidget::selectThumbnail(int index){
 void ctkDICOMThumbnailListWidget::selectThumbnail(const QModelIndex &index){
     Q_D(ctkDICOMThumbnailListWidget);
 
-    if(!d->currentSelectedModel.isValid())return;
-    if(index.parent() != d->currentSelectedModel)return;
+    if(!d->CurrentSelectedModel.isValid())return;
+    if(index.parent() != d->CurrentSelectedModel)return;
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
-    if(model){
-        int count = d->scrollAreaContentWidget->layout()->count();
+    if(model)
+    {
+        int count = d->ScrollAreaContentWidget->layout()->count();
 
-        for(int i=0; i<count; i++){
-            ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->scrollAreaContentWidget->layout()->itemAt(i)->widget());
+        for(int i=0; i<count; i++)
+        {
+            ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
             if(thumbnailWidget->sourceIndex() == index){
                 thumbnailWidget->setSelected(true);
-                d->scrollArea->ensureWidgetVisible(thumbnailWidget);
-            }else{
+                d->ScrollArea->ensureWidgetVisible(thumbnailWidget);
+            }
+            else
+            {
                 thumbnailWidget->setSelected(false);
             }
         }
@@ -271,18 +302,24 @@ void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
 
     d->clearAllThumbnails();
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
-    if(model){
+    if(model)
+    {
         QModelIndex index0 = index.sibling(index.row(), 0);
 
-        d->currentSelectedModel = index0;
+        d->CurrentSelectedModel = index0;
 
-        if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::PatientType ){
+        if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType) )
+        {
             d->onPatientModelSelected(index0);
-        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::StudyType ){
+        }
+        else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType) )
+        {
             d->onStudyModelSelected(index0);
-        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType ){
+        }
+        else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType) )
+        {
             d->onSeriesModelSelected(index0);
         }
     }
@@ -293,11 +330,12 @@ void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
 //----------------------------------------------------------------------------
 void ctkDICOMThumbnailListWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget &widget){
     Q_D(ctkDICOMThumbnailListWidget);
-    for(int i=0; i<d->scrollAreaContentWidget->layout()->count(); i++){
-        ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->scrollAreaContentWidget->layout()->itemAt(i)->widget());
-        if(thumbnailWidget && (&widget != thumbnailWidget)){
+    for(int i=0; i<d->ScrollAreaContentWidget->layout()->count(); i++)
+    {
+        ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+        if(thumbnailWidget && (&widget != thumbnailWidget))
+        {
             thumbnailWidget->setSelected(false);
         }
     }
 }
-

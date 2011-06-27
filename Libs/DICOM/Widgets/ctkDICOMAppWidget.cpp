@@ -24,14 +24,14 @@
 #include <dcmimage.h>
 
 // Qt includes
-#include <QDebug>
-#include <QTreeView>
-#include <QTabBar>
-#include <QSettings>
 #include <QAction>
-#include <QModelIndex>
 #include <QCheckBox>
+#include <QDebug>
+#include <QModelIndex>
+#include <QSettings>
+#include <QTabBar>
 #include <QTimer>
+#include <QTreeView>
 
 // ctkWidgets includes
 #include "ctkDirectoryButton.h"
@@ -39,18 +39,18 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
+#include "ctkDICOMFilterProxyModel.h"
 #include "ctkDICOMIndexer.h"
 #include "ctkDICOMModel.h"
-#include "ctkDICOMFilterProxyModel.h"
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMAppWidget.h"
+#include "ctkDICOMImportWidget.h"
+#include "ctkDICOMThumbnailGenerator.h"
+#include "ctkDICOMThumbnailWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
 #include "ctkDICOMQueryRetrieveWidget.h"
 #include "ctkDICOMQueryWidget.h"
-#include "ctkDICOMImportWidget.h"
-#include "ctkDICOMThumbnailWidget.h"
-#include "ctkDICOMThumbnailGenerator.h"
 
 #include "ui_ctkDICOMAppWidget.h"
 
@@ -67,29 +67,27 @@ public:
 
   ctkDICOMAppWidgetPrivate(ctkDICOMAppWidget* );
 
-  ctkFileDialog* importDIalog;
+  ctkFileDialog* ImportDialog;
   ctkDICOMQueryRetrieveWidget* QueryRetrieveWidget;
 
-  QSharedPointer<ctkDICOMDatabase> dicomDatabase;
-  QSharedPointer<ctkDICOMThumbnailGenerator> thumbnailGenerator;
-  ctkDICOMModel dicomModel;
-  ctkDICOMFilterProxyModel dicomProxyModel;
-  QSharedPointer<ctkDICOMIndexer> dicomIndexer;
+  QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
+  QSharedPointer<ctkDICOMThumbnailGenerator> ThumbnailGenerator;
+  ctkDICOMModel DICOMModel;
+  ctkDICOMFilterProxyModel DICOMProxyModel;
+  QSharedPointer<ctkDICOMIndexer> DICOMIndexer;
 
-  bool isAutoPlay;
-  QTimer* autoPlayTimer;
+  QTimer* AutoPlayTimer;
 };
 
 //----------------------------------------------------------------------------
 // ctkDICOMAppWidgetPrivate methods
 
 ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(ctkDICOMAppWidget* parent): q_ptr(parent){
-  dicomDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
-  thumbnailGenerator = QSharedPointer <ctkDICOMThumbnailGenerator> (new ctkDICOMThumbnailGenerator);
-  dicomDatabase->setThumbnailGenerator(thumbnailGenerator.data());
-  dicomIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
-  dicomIndexer->setThumbnailGenerator(thumbnailGenerator.data());
-  this->isAutoPlay = false;
+  DICOMDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
+  ThumbnailGenerator = QSharedPointer <ctkDICOMThumbnailGenerator> (new ctkDICOMThumbnailGenerator);
+  DICOMDatabase->setThumbnailGenerator(ThumbnailGenerator.data());
+  DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
+  DICOMIndexer->setThumbnailGenerator(ThumbnailGenerator.data());
 }
 
 //----------------------------------------------------------------------------
@@ -104,24 +102,24 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->setupUi(this);
 
   //Hide image previewer buttons
-  d->nextImageButton->hide();
-  d->prevImageButton->hide();
-  d->nextSeriesButton->hide();
-  d->prevSeriesButton->hide();
-  d->nextStudyButton->hide();
-  d->prevStudyButton->hide();
+  d->NextImageButton->hide();
+  d->PrevImageButton->hide();
+  d->NextSeriesButton->hide();
+  d->PrevSeriesButton->hide();
+  d->NextStudyButton->hide();
+  d->PrevStudyButton->hide();
 
   //Enable sorting in tree view
-  d->treeView->setSortingEnabled(true);
-  d->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
-  d->dicomProxyModel.setSourceModel(&d->dicomModel);
-  d->treeView->setModel(&d->dicomProxyModel);
+  d->TreeView->setSortingEnabled(true);
+  d->TreeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+  d->DICOMProxyModel.setSourceModel(&d->DICOMModel);
+  d->TreeView->setModel(&d->DICOMModel);
 
-  connect(d->treeView, SIGNAL(collapsed(QModelIndex)), this, SLOT(onTreeCollapsed(QModelIndex)));
-  connect(d->treeView, SIGNAL(expanded(QModelIndex)), this, SLOT(onTreeExpanded(QModelIndex)));
+  connect(d->TreeView, SIGNAL(collapsed(QModelIndex)), this, SLOT(onTreeCollapsed(QModelIndex)));
+  connect(d->TreeView, SIGNAL(expanded(QModelIndex)), this, SLOT(onTreeExpanded(QModelIndex)));
 
-  //Set toolbar button style
-  d->toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+  //Set ToolBar button style
+  d->ToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
   //Initialize Q/R widget
   d->QueryRetrieveWidget = new ctkDICOMQueryRetrieveWidget();
@@ -137,38 +135,38 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
     }
   QString databaseDirectory = settings.value("DatabaseDirectory").toString();
   this->setDatabaseDirectory(databaseDirectory);
-  d->directoryButton->setDirectory(databaseDirectory);
+  d->DirectoryButton->setDirectory(databaseDirectory);
 
-  connect(d->directoryButton, SIGNAL(directoryChanged(const QString&)), this, SLOT(setDatabaseDirectory(const QString&)));
+  connect(d->DirectoryButton, SIGNAL(directoryChanged(const QString&)), this, SLOT(setDatabaseDirectory(const QString&)));
 
   //Initialize import widget
-  d->importDIalog = new ctkFileDialog();
-  QCheckBox* importCheckbox = new QCheckBox("Copy on import", d->importDIalog);
-  d->importDIalog->setBottomWidget(importCheckbox);
-  d->importDIalog->setFileMode(QFileDialog::Directory);
-  d->importDIalog->setLabelText(QFileDialog::Accept,"Import");
-  d->importDIalog->setWindowTitle("Import DICOM files from directory ...");
-  d->importDIalog->setWindowModality(Qt::ApplicationModal);
+  d->ImportDialog = new ctkFileDialog();
+  QCheckBox* importCheckbox = new QCheckBox("Copy on import", d->ImportDialog);
+  d->ImportDialog->setBottomWidget(importCheckbox);
+  d->ImportDialog->setFileMode(QFileDialog::Directory);
+  d->ImportDialog->setLabelText(QFileDialog::Accept,"Import");
+  d->ImportDialog->setWindowTitle("Import DICOM files from directory ...");
+  d->ImportDialog->setWindowModality(Qt::ApplicationModal);
 
   //connect signal and slots
-  connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), d->thumbnailsWidget, SLOT(onModelSelected(const QModelIndex &)));
-  connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), d->imagePreview, SLOT(onModelSelected(const QModelIndex &)));
-  connect(d->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onModelSelected(const QModelIndex &)));
+  connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), d->ThumbnailsWidget, SLOT(onModelSelected(const QModelIndex &)));
+  connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), d->imagePreview, SLOT(onModelSelected(const QModelIndex &)));
+  connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onModelSelected(const QModelIndex &)));
 
-  connect(d->thumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
-  connect(d->thumbnailsWidget, SIGNAL(doubleClicked(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget&)));
-  connect(d->importDIalog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
+  connect(d->ThumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
+  connect(d->ThumbnailsWidget, SIGNAL(doubleClicked(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget&)));
+  connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
-  connect(d->dicomDatabase.data(), SIGNAL( databaseChanged() ), &(d->dicomModel), SLOT( reset() ) );
+  connect(d->DICOMDatabase.data(), SIGNAL( databaseChanged() ), &(d->DICOMModel), SLOT( reset() ) );
   connect(d->QueryRetrieveWidget, SIGNAL( canceled() ), d->QueryRetrieveWidget, SLOT( hide() ) );
 
   connect(d->imagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
   connect(d->imagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
 
-  connect(d->searchOption, SIGNAL(nameSearchTextChanged(QString)), &(d->dicomProxyModel), SLOT(setNameSearchText(QString)));
-  connect(d->searchOption, SIGNAL(studySearchTextChanged(QString)), &(d->dicomProxyModel), SLOT(setStudySearchText(QString)));
-  connect(d->searchOption, SIGNAL(seriesSearchTextChanged(QString)), &(d->dicomProxyModel), SLOT(setSeriesSearchText(QString)));
-  connect(d->searchOption, SIGNAL(idSearchTextChanged(QString)), &(d->dicomProxyModel), SLOT(setIdSearchText(QString)));
+  connect(d->SearchOption, SIGNAL(nameSearchTextChanged(QString)), &(d->DICOMProxyModel), SLOT(setNameSearchText(QString)));
+  connect(d->SearchOption, SIGNAL(studySearchTextChanged(QString)), &(d->DICOMProxyModel), SLOT(setStudySearchText(QString)));
+  connect(d->SearchOption, SIGNAL(seriesSearchTextChanged(QString)), &(d->DICOMProxyModel), SLOT(setSeriesSearchText(QString)));
+  connect(d->SearchOption, SIGNAL(idSearchTextChanged(QString)), &(d->DICOMProxyModel), SLOT(setIdSearchText(QString)));
 
 }
 
@@ -178,7 +176,7 @@ ctkDICOMAppWidget::~ctkDICOMAppWidget()
   Q_D(ctkDICOMAppWidget);  
 
   d->QueryRetrieveWidget->deleteLater();
-  d->importDIalog->deleteLater();
+  d->ImportDialog->deleteLater();
 }
 
 //----------------------------------------------------------------------------
@@ -191,29 +189,29 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   settings.sync();
 
   //close the active DICOM database
-  d->dicomDatabase->closeDatabase();
+  d->DICOMDatabase->closeDatabase();
   
   //open DICOM database on the directory
   QString databaseFileName = directory + QString("/ctkDICOM.sql");
-  try { d->dicomDatabase->openDatabase( databaseFileName ); }
+  try { d->DICOMDatabase->openDatabase( databaseFileName ); }
   catch (std::exception e)
   {
-    std::cerr << "Database error: " << qPrintable(d->dicomDatabase->lastError()) << "\n";
-    d->dicomDatabase->closeDatabase();
+    std::cerr << "Database error: " << qPrintable(d->DICOMDatabase->lastError()) << "\n";
+    d->DICOMDatabase->closeDatabase();
     return;
   }
   
-  d->dicomModel.setDatabase(d->dicomDatabase->database());
-  d->dicomModel.setDisplayLevel(ctkDICOMModel::SeriesType);
-  d->treeView->resizeColumnToContents(0);
+  d->DICOMModel.setDatabase(d->DICOMDatabase->database());
+  d->DICOMModel.setDisplayLevel(ctkDICOMModel::SeriesType);
+  d->TreeView->resizeColumnToContents(0);
 
   //pass DICOM database instance to Import widget
-  // d->importDIalog->setdicomDatabase(d->dicomDatabase);
-  d->QueryRetrieveWidget->setRetrieveDatabase(d->dicomDatabase);
+  // d->ImportDialog->setDICOMDatabase(d->DICOMDatabase);
+  d->QueryRetrieveWidget->setRetrieveDatabase(d->DICOMDatabase);
 
   // update the button and let any connected slots know about the change
-  d->directoryButton->setDirectory(directory);
-  d->thumbnailsWidget->setDatabaseDirectory(directory);
+  d->DirectoryButton->setDirectory(directory);
+  d->ThumbnailsWidget->setDatabaseDirectory(directory);
   d->imagePreview->setDatabaseDirectory(directory);
   emit databaseDirectoryChanged(directory);
 }
@@ -237,8 +235,8 @@ void ctkDICOMAppWidget::openImportDialog()
 {
   Q_D(ctkDICOMAppWidget);
   
-  d->importDIalog->show();
-  d->importDIalog->raise();
+  d->ImportDialog->show();
+  d->ImportDialog->raise();
 }
 
 //----------------------------------------------------------------------------
@@ -273,13 +271,13 @@ void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& 
     logger.debug("double clicked");
     QModelIndex index = widget.sourceIndex();
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
     QModelIndex index0 = index.sibling(index.row(), 0);
 
-    if(model && (model->data(index0,ctkDICOMModel::TypeRole) != ctkDICOMModel::ImageType)){
+    if(model && (model->data(index0,ctkDICOMModel::TypeRole) != static_cast<int>(ctkDICOMModel::ImageType))){
         this->onModelSelected(index0);
-        d->treeView->setCurrentIndex(index0);
-        d->thumbnailsWidget->onModelSelected(index0);
+        d->TreeView->setCurrentIndex(index0);
+        d->ThumbnailsWidget->onModelSelected(index0);
         d->imagePreview->onModelSelected(index0);
     }
 }
@@ -290,14 +288,14 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
   Q_D(ctkDICOMAppWidget);
   if (QDir(directory).exists())
   {
-    QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->importDIalog->bottomWidget());
+    QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
     QString targetDirectory;
     if (copyOnImport->isEnabled())
     {
-       targetDirectory = d->dicomDatabase->databaseDirectory();
+       targetDirectory = d->DICOMDatabase->databaseDirectory();
     }
-    d->dicomIndexer->addDirectory(*d->dicomDatabase,directory,targetDirectory);
-    d->dicomModel.reset();
+    d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
+    d->DICOMModel.reset();
   }
 }
 
@@ -305,47 +303,47 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
 void ctkDICOMAppWidget::onModelSelected(const QModelIndex &index){
     Q_D(ctkDICOMAppWidget);
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
     if(model){
         QModelIndex index0 = index.sibling(index.row(), 0);
 
-        if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::PatientType ){
-            d->nextImageButton->show();
-            d->prevImageButton->show();
-            d->nextSeriesButton->show();
-            d->prevSeriesButton->show();
-            d->nextStudyButton->show();
-            d->prevStudyButton->show();
-        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::StudyType ){
-            d->nextImageButton->show();
-            d->prevImageButton->show();
-            d->nextSeriesButton->show();
-            d->prevSeriesButton->show();
-            d->nextStudyButton->hide();
-            d->prevStudyButton->hide();
-        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType ){
-            d->nextImageButton->show();
-            d->prevImageButton->show();
-            d->nextSeriesButton->hide();
-            d->prevSeriesButton->hide();
-            d->nextStudyButton->hide();
-            d->prevStudyButton->hide();
+        if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType) ){
+            d->NextImageButton->show();
+            d->PrevImageButton->show();
+            d->NextSeriesButton->show();
+            d->PrevSeriesButton->show();
+            d->NextStudyButton->show();
+            d->PrevStudyButton->show();
+        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType) ){
+            d->NextImageButton->show();
+            d->PrevImageButton->show();
+            d->NextSeriesButton->show();
+            d->PrevSeriesButton->show();
+            d->NextStudyButton->hide();
+            d->PrevStudyButton->hide();
+        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType) ){
+            d->NextImageButton->show();
+            d->PrevImageButton->show();
+            d->NextSeriesButton->hide();
+            d->PrevSeriesButton->hide();
+            d->NextStudyButton->hide();
+            d->PrevStudyButton->hide();
         }else{
-            d->nextImageButton->hide();
-            d->prevImageButton->hide();
-            d->nextSeriesButton->hide();
-            d->prevSeriesButton->hide();
-            d->nextStudyButton->hide();
-            d->prevStudyButton->hide();
+            d->NextImageButton->hide();
+            d->PrevImageButton->hide();
+            d->NextSeriesButton->hide();
+            d->PrevSeriesButton->hide();
+            d->NextStudyButton->hide();
+            d->PrevStudyButton->hide();
         }
     }else{
-        d->nextImageButton->hide();
-        d->prevImageButton->hide();
-        d->nextSeriesButton->hide();
-        d->prevSeriesButton->hide();
-        d->nextStudyButton->hide();
-        d->prevStudyButton->hide();
+        d->NextImageButton->hide();
+        d->PrevImageButton->hide();
+        d->NextSeriesButton->hide();
+        d->PrevSeriesButton->hide();
+        d->NextStudyButton->hide();
+        d->PrevStudyButton->hide();
     }
 }
 
@@ -356,7 +354,7 @@ void ctkDICOMAppWidget::onNextImage(){
     QModelIndex currentIndex = d->imagePreview->currentImageIndex();
 
     if(currentIndex.isValid()){
-        ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(currentIndex.model()));
+        ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(currentIndex.model()));
 
         if(model){
             QModelIndex seriesIndex = currentIndex.parent();
@@ -369,7 +367,7 @@ void ctkDICOMAppWidget::onNextImage(){
             QModelIndex nextIndex = currentIndex.sibling(imageID, 0);
 
             d->imagePreview->onModelSelected(nextIndex);
-            d->thumbnailsWidget->selectThumbnail(nextIndex);
+            d->ThumbnailsWidget->selectThumbnail(nextIndex);
         }
     }
 }
@@ -381,7 +379,7 @@ void ctkDICOMAppWidget::onPreviousImage(){
     QModelIndex currentIndex = d->imagePreview->currentImageIndex();
 
     if(currentIndex.isValid()){
-        ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(currentIndex.model()));
+        ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(currentIndex.model()));
 
         if(model){
             QModelIndex seriesIndex = currentIndex.parent();
@@ -395,7 +393,7 @@ void ctkDICOMAppWidget::onPreviousImage(){
             QModelIndex prevIndex = currentIndex.sibling(imageID, 0);
 
             d->imagePreview->onModelSelected(prevIndex);
-            d->thumbnailsWidget->selectThumbnail(prevIndex);
+            d->ThumbnailsWidget->selectThumbnail(prevIndex);
         }
     }
 }
@@ -407,7 +405,7 @@ void ctkDICOMAppWidget::onNextSeries(){
     QModelIndex currentIndex = d->imagePreview->currentImageIndex();
 
     if(currentIndex.isValid()){
-        ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(currentIndex.model()));
+        ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(currentIndex.model()));
 
         if(model){
             QModelIndex seriesIndex = currentIndex.parent();
@@ -421,7 +419,7 @@ void ctkDICOMAppWidget::onNextSeries(){
             QModelIndex nextIndex = seriesIndex.sibling(seriesID, 0);
 
             d->imagePreview->onModelSelected(nextIndex);
-            d->thumbnailsWidget->selectThumbnail(nextIndex);
+            d->ThumbnailsWidget->selectThumbnail(nextIndex);
         }
     }
 }
@@ -433,7 +431,7 @@ void ctkDICOMAppWidget::onPreviousSeries(){
     QModelIndex currentIndex = d->imagePreview->currentImageIndex();
 
     if(currentIndex.isValid()){
-        ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(currentIndex.model()));
+        ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(currentIndex.model()));
 
         if(model){
             QModelIndex seriesIndex = currentIndex.parent();
@@ -448,7 +446,7 @@ void ctkDICOMAppWidget::onPreviousSeries(){
             QModelIndex prevIndex = seriesIndex.sibling(seriesID, 0);
 
             d->imagePreview->onModelSelected(prevIndex);
-            d->thumbnailsWidget->selectThumbnail(prevIndex);
+            d->ThumbnailsWidget->selectThumbnail(prevIndex);
         }
     }
 }
@@ -460,7 +458,7 @@ void ctkDICOMAppWidget::onNextStudy(){
     QModelIndex currentIndex = d->imagePreview->currentImageIndex();
 
     if(currentIndex.isValid()){
-        ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(currentIndex.model()));
+        ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(currentIndex.model()));
 
         if(model){
             QModelIndex seriesIndex = currentIndex.parent();
@@ -475,7 +473,7 @@ void ctkDICOMAppWidget::onNextStudy(){
             QModelIndex nextIndex = studyIndex.sibling(studyID, 0);
 
             d->imagePreview->onModelSelected(nextIndex);
-            d->thumbnailsWidget->selectThumbnail(nextIndex);
+            d->ThumbnailsWidget->selectThumbnail(nextIndex);
         }
     }
 }
@@ -487,7 +485,7 @@ void ctkDICOMAppWidget::onPreviousStudy(){
     QModelIndex currentIndex = d->imagePreview->currentImageIndex();
 
     if(currentIndex.isValid()){
-        ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(currentIndex.model()));
+        ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(currentIndex.model()));
 
         if(model){
             QModelIndex seriesIndex = currentIndex.parent();
@@ -503,21 +501,23 @@ void ctkDICOMAppWidget::onPreviousStudy(){
             QModelIndex prevIndex = studyIndex.sibling(studyID, 0);
 
             d->imagePreview->onModelSelected(prevIndex);
-            d->thumbnailsWidget->selectThumbnail(prevIndex);
+            d->ThumbnailsWidget->selectThumbnail(prevIndex);
         }
     }
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onTreeCollapsed(const QModelIndex &index){
+    Q_UNUSED(index);
     Q_D(ctkDICOMAppWidget);
-    d->treeView->resizeColumnToContents(0);
+    d->TreeView->resizeColumnToContents(0);
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onTreeExpanded(const QModelIndex &index){
+    Q_UNUSED(index);
     Q_D(ctkDICOMAppWidget);
-    d->treeView->resizeColumnToContents(0);
+    d->TreeView->resizeColumnToContents(0);
 }
 
 //----------------------------------------------------------------------------
@@ -525,12 +525,12 @@ void ctkDICOMAppWidget::onAutoPlayCheckboxStateChanged(int state){
     Q_D(ctkDICOMAppWidget);
 
     if(state == 0){ //OFF
-        disconnect(d->autoPlayTimer, SIGNAL(timeout()), this, SLOT(onAutoPlayTimer()));
-        d->autoPlayTimer->deleteLater();
+        disconnect(d->AutoPlayTimer, SIGNAL(timeout()), this, SLOT(onAutoPlayTimer()));
+        d->AutoPlayTimer->deleteLater();
     }else if(state == 2){ //ON
-        d->autoPlayTimer = new QTimer(this);
-        connect(d->autoPlayTimer, SIGNAL(timeout()), this, SLOT(onAutoPlayTimer()));
-        d->autoPlayTimer->start(50);
+        d->AutoPlayTimer = new QTimer(this);
+        connect(d->AutoPlayTimer, SIGNAL(timeout()), this, SLOT(onAutoPlayTimer()));
+        d->AutoPlayTimer->start(50);
     }
 }
 

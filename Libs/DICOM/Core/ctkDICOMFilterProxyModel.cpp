@@ -95,21 +95,21 @@ bool ctkDICOMFilterProxyModel::filterAcceptsRow(int source_row, const QModelInde
 
     if(model){
         QModelIndex index = model->index(source_row, 0, source_parent);
-        if(model->data(index, ctkDICOMModel::TypeRole) == ctkDICOMModel::PatientType){
+        if(model->data(index, ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType)){
             QRegExp regExp = QRegExp(d->searchTextName);
             if(model->data(index, Qt::DisplayRole).toString().contains(regExp)){
                 return true;
             }else{
                 return false;
             }
-        }else if(model->data(index, ctkDICOMModel::TypeRole) == ctkDICOMModel::StudyType){
+        }else if(model->data(index, ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType)){
             QRegExp regExp = QRegExp(d->searchTextStudy);
             if(model->data(index, Qt::DisplayRole).toString().contains(regExp)){
                 return true;
             }else{
                 return false;
             }
-        }else if(model->data(index, ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType){
+        }else if(model->data(index, ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType)){
             QRegExp regExp = QRegExp(d->searchTextSeries);
             if(model->data(index, Qt::DisplayRole).toString().contains(regExp)){
                 return true;

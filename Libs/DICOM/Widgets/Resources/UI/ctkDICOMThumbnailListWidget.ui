@@ -15,11 +15,11 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QScrollArea" name="scrollArea">
+    <widget class="QScrollArea" name="ScrollArea">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="scrollAreaContentWidget">
+     <widget class="QWidget" name="ScrollAreaContentWidget">
       <property name="geometry">
        <rect>
         <x>0</x>

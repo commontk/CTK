@@ -18,7 +18,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QLabel" name="textLabel">
+    <widget class="QLabel" name="TextLabel">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -37,7 +37,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="pixmapLabel">
+    <widget class="QLabel" name="PixmapLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>128</horstretch>

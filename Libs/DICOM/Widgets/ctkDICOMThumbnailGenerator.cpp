@@ -69,9 +69,11 @@ ctkDICOMThumbnailGenerator::~ctkDICOMThumbnailGenerator()
 {
 }
 
+//------------------------------------------------------------------------------
 bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &path){
     QImage image;
-    if ((dcmImage->getStatus() == EIS_Normal)){
+    if ((dcmImage->getStatus() == EIS_Normal))
+    {
         dcmImage->setWindow(0);
         /* get image extension */
         const unsigned long width = dcmImage->getWidth();
@@ -86,8 +88,10 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const Q
 
         /* copy PGM header to buffer */
 
-        if (dcmImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0)){
-            if (!image.loadFromData( buffer )){
+        if (dcmImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
+        {
+            if (!image.loadFromData( buffer ))
+            {
                 logger.error("QImage couldn't created");
                 return false;
             }

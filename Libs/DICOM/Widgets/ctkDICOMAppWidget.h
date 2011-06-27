@@ -26,9 +26,9 @@
 
 #include "ctkDICOMWidgetsExport.h"
 
-class QModelIndex;
 class ctkDICOMAppWidgetPrivate;
 class ctkDICOMThumbnailWidget;
+class QModelIndex;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
 {

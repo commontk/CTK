@@ -21,25 +21,28 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QToolBar" name="toolBar">
+    <layout class="QHBoxLayout" name="HorizontalLayout_3"/>
+   </item>
+   <item>
+    <widget class="QToolBar" name="ToolBar">
      <property name="windowTitle">
       <string>toolBar</string>
      </property>
      <property name="floatable">
       <bool>true</bool>
      </property>
-     <addaction name="actionImport"/>
-     <addaction name="actionExport"/>
-     <addaction name="actionQuery"/>
-     <addaction name="actionSend"/>
+     <addaction name="ActionImport"/>
+     <addaction name="ActionExport"/>
+     <addaction name="ActionQuery"/>
+     <addaction name="ActionSend"/>
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="VerticalLayout">
      <item>
-      <layout class="QHBoxLayout" name="topLayout">
+      <layout class="QHBoxLayout" name="TopLayout">
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="DatabaseNameLabel">
          <property name="maximumSize">
           <size>
            <width>100</width>
@@ -52,7 +55,7 @@
         </widget>
        </item>
        <item>
-        <widget class="ctkDirectoryButton" name="directoryButton" native="true">
+        <widget class="ctkDirectoryButton" name="DirectoryButton" native="true">
          <property name="minimumSize">
           <size>
            <width>200</width>
@@ -62,7 +65,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="HorizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -77,9 +80,9 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="queryLayout" stretch="1,0">
+      <layout class="QHBoxLayout" name="QueryLayout" stretch="1,0">
        <item>
-        <widget class="QTreeView" name="treeView">
+        <widget class="QTreeView" name="TreeView">
          <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
@@ -88,10 +91,10 @@
        <item>
         <layout class="QVBoxLayout" name="searchOptionLayout">
          <item>
-          <widget class="ctkDICOMQueryWidget" name="searchOption" native="true"/>
+          <widget class="ctkDICOMQueryWidget" name="SearchOption" native="true"/>
          </item>
          <item>
-          <spacer name="verticalSpacer">
+          <spacer name="VerticalSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -108,7 +111,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QFrame" name="userFrame">
+      <widget class="QFrame" name="UserFrame">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -118,9 +121,9 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="viewerLayout">
+      <layout class="QHBoxLayout" name="ViewerLayout">
        <item>
-        <widget class="ctkDICOMThumbnailListWidget" name="thumbnailsWidget" native="true">
+        <widget class="ctkDICOMThumbnailListWidget" name="ThumbnailsWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -136,7 +139,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="previewFrame">
+        <widget class="QFrame" name="PreviewFrame">
          <property name="minimumSize">
           <size>
            <width>256</width>
@@ -145,9 +148,9 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="HorizontalLayout">
             <item>
-             <widget class="QPushButton" name="prevStudyButton">
+             <widget class="QPushButton" name="PrevStudyButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>32</horstretch>
@@ -169,7 +172,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="prevSeriesButton">
+             <widget class="QPushButton" name="PrevSeriesButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>32</horstretch>
@@ -191,7 +194,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="prevImageButton">
+             <widget class="QPushButton" name="PrevImageButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>32</horstretch>
@@ -213,7 +216,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="nextImageButton">
+             <widget class="QPushButton" name="NextImageButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>32</horstretch>
@@ -235,7 +238,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="nextSeriesButton">
+             <widget class="QPushButton" name="NextSeriesButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>32</horstretch>
@@ -257,7 +260,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="nextStudyButton">
+             <widget class="QPushButton" name="NextStudyButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>32</horstretch>
@@ -293,14 +296,14 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QCheckBox" name="autoPlayCheckbox">
+             <widget class="QCheckBox" name="AutoPlayCheckbox">
               <property name="text">
                <string>auto-play</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSlider" name="playSlider">
+             <widget class="QSlider" name="PlaySlider">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -322,7 +325,7 @@
     </layout>
    </item>
   </layout>
-  <action name="actionImport">
+  <action name="ActionImport">
    <property name="text">
     <string>Import</string>
    </property>
@@ -330,7 +333,7 @@
     <string>Import a DICOM file or folder</string>
    </property>
   </action>
-  <action name="actionExport">
+  <action name="ActionExport">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -341,7 +344,7 @@
     <string>Export selected study/series to a DICOM folder (not yet available)</string>
    </property>
   </action>
-  <action name="actionQuery">
+  <action name="ActionQuery">
    <property name="text">
     <string>Query</string>
    </property>
@@ -349,7 +352,7 @@
     <string>Query and Retrieve DICOM studies from a DICOM node</string>
    </property>
   </action>
-  <action name="actionSend">
+  <action name="ActionSend">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -393,7 +396,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>actionImport</sender>
+   <sender>ActionImport</sender>
    <signal>triggered(bool)</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>openImportDialog()</slot>
@@ -409,7 +412,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionExport</sender>
+   <sender>ActionExport</sender>
    <signal>triggered(bool)</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>openExportDialog()</slot>
@@ -425,7 +428,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionQuery</sender>
+   <sender>ActionQuery</sender>
    <signal>triggered(bool)</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>openQueryDialog()</slot>
@@ -441,7 +444,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>nextImageButton</sender>
+   <sender>NextImageButton</sender>
    <signal>clicked()</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>onNextImage()</slot>
@@ -457,7 +460,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>prevImageButton</sender>
+   <sender>PrevImageButton</sender>
    <signal>clicked()</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>onPreviousImage()</slot>
@@ -473,7 +476,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>nextSeriesButton</sender>
+   <sender>NextSeriesButton</sender>
    <signal>clicked()</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>onNextSeries()</slot>
@@ -489,7 +492,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>prevSeriesButton</sender>
+   <sender>PrevSeriesButton</sender>
    <signal>clicked()</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>onPreviousSeries()</slot>
@@ -505,7 +508,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>nextStudyButton</sender>
+   <sender>NextStudyButton</sender>
    <signal>clicked()</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>onNextStudy()</slot>
@@ -521,7 +524,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>prevStudyButton</sender>
+   <sender>PrevStudyButton</sender>
    <signal>clicked()</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>onPreviousStudy()</slot>
@@ -537,7 +540,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>autoPlayCheckbox</sender>
+   <sender>AutoPlayCheckbox</sender>
    <signal>stateChanged(int)</signal>
    <receiver>ctkDICOMAppWidget</receiver>
    <slot>onAutoPlayCheckboxStateChanged(int)</slot>

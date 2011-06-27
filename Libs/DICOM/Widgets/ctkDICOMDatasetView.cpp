@@ -26,20 +26,23 @@
 // CTK includes
 #include "ctkLogger.h"
 #include "ctkQImageView.h"
-#include "ctkDICOMModel.h"
+
+// ctkDICOMCore includes
 #include "ctkDICOMFilterProxyModel.h"
+#include "ctkDICOMModel.h"
+
+// ctkDICOMWidgets includex
 #include "ctkDICOMDatasetView.h"
 
 // Qt includes
-#include <QLabel>
-#include <QHBoxLayout>
 #include <QDebug>
-#include <QResizeEvent>
-#include <QMouseEvent>
-#include <QKeyEvent>
-#include <QPainter>
 #include <QFile>
+#include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QLabel>
 #include <QMouseEvent>
+#include <QPainter>
+#include <QResizeEvent>
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMDatasetView");
 
@@ -108,7 +111,7 @@ void ctkDICOMDatasetViewPrivate::init()
 void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool defaultIntensity){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(imageIndex.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
 
     if(model){
         QModelIndex seriesIndex = imageIndex.parent();
@@ -135,7 +138,7 @@ void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool de
 void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
     if(model){
         QModelIndex patientIndex = index;
@@ -157,7 +160,7 @@ void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index
 void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
     if(model){
         QModelIndex studyIndex = index;
@@ -177,7 +180,7 @@ void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
 void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
     if(model){
         QModelIndex seriesIndex = index;
@@ -195,7 +198,7 @@ void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index)
 void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
     Q_Q(ctkDICOMDatasetView);
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
     if(model){
         QModelIndex imageIndex = index;
@@ -343,19 +346,19 @@ void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
 void ctkDICOMDatasetView::onModelSelected(const QModelIndex &index){
     Q_D(ctkDICOMDatasetView);
 
-    ctkDICOMFilterProxyModel* model = const_cast<ctkDICOMFilterProxyModel*>(qobject_cast<const ctkDICOMFilterProxyModel*>(index.model()));
+    ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
     if(model){
         QModelIndex index0 = index.sibling(index.row(), 0);
 
 
-        if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::PatientType ){
+        if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType) ){
             d->onPatientModelSelected(index0);
-        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::StudyType ){
+        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType) ){
             d->onStudyModelSelected(index0);
-        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType ){
+        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType) ){
             d->onSeriesModelSelected(index0);
-        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == ctkDICOMModel::ImageType ){
+        }else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::ImageType) ){
             d->onImageModelSelected(index0);
         }
     }

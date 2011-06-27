@@ -42,11 +42,11 @@ public:
     // Constructor
     ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnailWidget* parent);
 
-    bool selectedFlag;
+    bool SelectedFlag;
 
-    QColor backgroundColor;
+    QColor BackgroundColor;
 
-    QModelIndex sourceIndex;
+    QModelIndex SourceIndex;
 };
 
 //----------------------------------------------------------------------------
@@ -55,8 +55,8 @@ public:
 ctkDICOMThumbnailWidgetPrivate::ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnailWidget* parent): q_ptr(parent){
     Q_Q(ctkDICOMThumbnailWidget);
 
-    this->selectedFlag = false;
-    this->backgroundColor = q->palette().color(QPalette::Highlight);
+    this->SelectedFlag = false;
+    this->BackgroundColor = q->palette().color(QPalette::Highlight);
 }
 
 //----------------------------------------------------------------------------
@@ -82,14 +82,14 @@ void ctkDICOMThumbnailWidget::setText(const QString &text)
 {
   Q_D(ctkDICOMThumbnailWidget);
 
-  d->textLabel->setText(text);
+  d->TextLabel->setText(text);
 }
 
 //----------------------------------------------------------------------------
 QString ctkDICOMThumbnailWidget::text()const
 {
   Q_D(const ctkDICOMThumbnailWidget);
-  return d->textLabel->text();
+  return d->TextLabel->text();
 }
 
 //----------------------------------------------------------------------------
@@ -97,7 +97,7 @@ void ctkDICOMThumbnailWidget::setPixmap(const QPixmap &pixmap)
 {
   Q_D(ctkDICOMThumbnailWidget);
 
-  d->pixmapLabel->setPixmap(pixmap);
+  d->PixmapLabel->setPixmap(pixmap);
 }
 
 //----------------------------------------------------------------------------
@@ -105,43 +105,46 @@ const QPixmap* ctkDICOMThumbnailWidget::pixmap()const
 {
   Q_D(const ctkDICOMThumbnailWidget);
 
-  return d->pixmapLabel->pixmap();
+  return d->PixmapLabel->pixmap();
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMThumbnailWidget::setSourceIndex(QModelIndex index){
     Q_D(ctkDICOMThumbnailWidget);
 
-    d->sourceIndex = index;
+    d->SourceIndex = index;
 }
 
 //----------------------------------------------------------------------------
 QModelIndex ctkDICOMThumbnailWidget::sourceIndex() const{
     Q_D(const ctkDICOMThumbnailWidget);
 
-    return d->sourceIndex;
+    return d->SourceIndex;
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMThumbnailWidget::setSelected(bool flag){
     Q_D(ctkDICOMThumbnailWidget);
 
-    if(flag){
+    if(flag)
+    {
         QPalette p(this->palette());
-        p.setColor(QPalette::Window, d->backgroundColor);
+        p.setColor(QPalette::Window, d->BackgroundColor);
         this->setPalette(p);
         this->setAutoFillBackground(true);
-    }else{
+    }
+    else
+    {
         this->setAutoFillBackground(false);
     }
 
-    d->selectedFlag = flag;
+    d->SelectedFlag = flag;
 }
 
 //----------------------------------------------------------------------------
 bool ctkDICOMThumbnailWidget::isSelected(){
     Q_D(ctkDICOMThumbnailWidget);
-    return d->selectedFlag;
+    return d->SelectedFlag;
 }
 
 //----------------------------------------------------------------------------
