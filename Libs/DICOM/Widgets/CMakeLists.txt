@@ -9,32 +9,32 @@ SET(KIT_export_directive "CTK_DICOM_WIDGETS_EXPORT")
   
 # Source files
 SET(KIT_SRCS
+  ctkDICOMAppWidget.cpp
+  ctkDICOMAppWidget.h
   ctkDICOMDatasetView.cpp
   ctkDICOMDatasetView.h
   ctkDICOMDirectoryListWidget.cpp
   ctkDICOMDirectoryListWidget.h
   ctkDICOMImage.cpp
   ctkDICOMImage.h
-  ctkDICOMListenerWidget.cpp
-  ctkDICOMListenerWidget.h
-  ctkDICOMQueryRetrieveWidget.cpp
-  ctkDICOMQueryRetrieveWidget.h
-  ctkDICOMServerNodeWidget.cpp
-  ctkDICOMServerNodeWidget.h
-  ctkDICOMQueryWidget.cpp
-  ctkDICOMQueryWidget.h
-  ctkDICOMQueryResultsTabWidget.cpp
-  ctkDICOMQueryResultsTabWidget.h
-  ctkDICOMAppWidget.cpp
-  ctkDICOMAppWidget.h
-  ctkDICOMThumbnailWidget.cpp
-  ctkDICOMThumbnailWidget.h
-  ctkDICOMThumbnailListWidget.cpp
-  ctkDICOMThumbnailListWidget.h
   ctkDICOMImportWidget.cpp
   ctkDICOMImportWidget.h
+  ctkDICOMListenerWidget.cpp
+  ctkDICOMListenerWidget.h
+  ctkDICOMQueryResultsTabWidget.cpp
+  ctkDICOMQueryResultsTabWidget.h
+  ctkDICOMQueryRetrieveWidget.cpp
+  ctkDICOMQueryRetrieveWidget.h
+  ctkDICOMQueryWidget.cpp
+  ctkDICOMQueryWidget.h
+  ctkDICOMServerNodeWidget.cpp
+  ctkDICOMServerNodeWidget.h
   ctkDICOMThumbnailGenerator.cpp
   ctkDICOMThumbnailGenerator.h
+  ctkDICOMThumbnailListWidget.cpp
+  ctkDICOMThumbnailListWidget.h
+  ctkDICOMThumbnailWidget.cpp
+  ctkDICOMThumbnailWidget.h
   )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)
@@ -50,17 +50,17 @@ ENDIF()
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkDICOMAppWidget.h
   ctkDICOMDatasetView.h
   ctkDICOMDirectoryListWidget.h
   ctkDICOMImage.h
-  ctkDICOMServerNodeWidget.h
-  ctkDICOMAppWidget.h
-  ctkDICOMThumbnailWidget.h
-  ctkDICOMThumbnailListWidget.h
   ctkDICOMImportWidget.h
-  ctkDICOMQueryWidget.h
   ctkDICOMQueryRetrieveWidget.h
+  ctkDICOMQueryWidget.h
+  ctkDICOMServerNodeWidget.h
   ctkDICOMThumbnailGenerator.h
+  ctkDICOMThumbnailListWidget.h
+  ctkDICOMThumbnailWidget.h
   )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)
@@ -71,15 +71,15 @@ ENDIF()
 
 # UI files - includes new widgets
 SET(KIT_UI_FORMS
+  Resources/UI/ctkDICOMAppWidget.ui
   Resources/UI/ctkDICOMDirectoryListWidget.ui
+  Resources/UI/ctkDICOMImportWidget.ui
   Resources/UI/ctkDICOMListenerWidget.ui
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
-  Resources/UI/ctkDICOMServerNodeWidget.ui
   Resources/UI/ctkDICOMQueryWidget.ui
-  Resources/UI/ctkDICOMAppWidget.ui
-  Resources/UI/ctkDICOMThumbnailWidget.ui
+  Resources/UI/ctkDICOMServerNodeWidget.ui
   Resources/UI/ctkDICOMThumbnailListWidget.ui
-  Resources/UI/ctkDICOMImportWidget.ui
+  Resources/UI/ctkDICOMThumbnailWidget.ui
 )
 
 # Resources

@@ -9,10 +9,14 @@ SET(KIT_export_directive "CTK_DICOM_CORE_EXPORT")
   
 # Source files
 SET(KIT_SRCS
+  ctkDICOMAbstractThumbnailGenerator.cpp
+  ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDatabase.cpp
   ctkDICOMDatabase.h
   ctkDICOMDataset.cpp
   ctkDICOMDataset.h
+  ctkDICOMFilterProxyModel.cpp
+  ctkDICOMFilterProxyModel.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
   ctkDICOMModel.cpp
@@ -25,10 +29,6 @@ SET(KIT_SRCS
   ctkDICOMRetrieve.h
   ctkDICOMTester.cpp
   ctkDICOMTester.h
-  ctkDICOMAbstractThumbnailGenerator.cpp
-  ctkDICOMAbstractThumbnailGenerator.h
-  ctkDICOMFilterProxyModel.cpp
-  ctkDICOMFilterProxyModel.h
 )
 
 # Abstract class should not be wrapped !
@@ -51,13 +51,13 @@ ENDIF()
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDatabase.h
+  ctkDICOMFilterProxyModel.h
   ctkDICOMModel.h
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h
   ctkDICOMTester.h
-  ctkDICOMAbstractThumbnailGenerator.h
-  ctkDICOMFilterProxyModel.h
   )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)

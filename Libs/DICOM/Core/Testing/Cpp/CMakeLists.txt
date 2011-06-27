@@ -5,9 +5,9 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkDICOMDatasetTest1.cpp
   ctkDICOMIndexerTest1.cpp
   ctkDICOMModelTest1.cpp
+  ctkDICOMPersonNameTest1.cpp
   ctkDICOMQueryTest1.cpp
   ctkDICOMQueryTest2.cpp
-  ctkDICOMPersonNameTest1.cpp
   ctkDICOMRetrieveTest1.cpp
   ctkDICOMRetrieveTest2.cpp
   ctkDICOMTest1.cpp
@@ -35,13 +35,13 @@ ENDMACRO( SIMPLE_TEST  )
 #
 SIMPLE_TEST(ctkDICOMDatabaseTest1)
 SIMPLE_TEST(ctkDICOMDatasetTest1)
-SIMPLE_TEST( ctkDICOMIndexerTest1 )
-SIMPLE_TEST( ctkDICOMPersonNameTest1)
+SIMPLE_TEST(ctkDICOMIndexerTest1 )
 
 ADD_TEST( ctkDICOMModelTest1 ${KIT_TESTS}
           ctkDICOMModelTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
                              ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql)
 SET_PROPERTY(TEST ctkDICOMModelTest1 PROPERTY LABELS ${PROJECT_NAME})
+SIMPLE_TEST(ctkDICOMPersonNameTest1)
 
 # ctkDICOMQuery
 SIMPLE_TEST( ctkDICOMQueryTest1)
