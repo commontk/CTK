@@ -18,22 +18,20 @@
 
 =========================================================================*/
 
-#ifndef __ctkVTKScalarsToColorsUtils_h
-#define __ctkVTKScalarsToColorsUtils_h
+// Qt includes
+#include <QBuffer>
+#include <QImage>
 
-// CTK includes
-#include "ctkVisualizationVTKWidgetsExport.h"
+// ctkWidgets includes
+#include "ctkWidgetsUtils.h"
 
-// VTK includes
-class vtkScalarsToColors;
-
-namespace ctk {
-///
-/// \ingroup vtkWidgets
-/// Convert a vtkScalarsToColors into a QImage
-/// If size is empty, it will use the large icon size of the application style
-QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT scalarsToColorsImage(vtkScalarsToColors* scalarsToColors, const QSize& size = QSize());
-
+//----------------------------------------------------------------------------
+QString ctk::base64HTMLImageTagSrc(const QImage& image)
+{
+  QByteArray byteArray;
+  QBuffer buffer(&byteArray);
+  buffer.open(QIODevice::WriteOnly);
+  image.save(&buffer, "PNG");
+  return QString("data:image/png;base64,%1")
+    .arg(QString(buffer.data().toBase64()));
 }
-
-#endif

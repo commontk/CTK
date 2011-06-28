@@ -25,6 +25,7 @@
 #include <QTimer>
 
 // CTK includes
+#include "ctkWidgetsUtils.h"
 #include "ctkVTKScalarsToColorsUtils.h"
 
 // VTK includes

@@ -79,14 +79,3 @@ QImage ctk::scalarsToColorsImage(vtkScalarsToColors* scalarsToColors, const QSiz
 
   return transferFunctionImage;
 }
-
-//----------------------------------------------------------------------------
-QString ctk::base64HTMLImageTagSrc(const QImage& image)
-{
-  QByteArray byteArray;
-  QBuffer buffer(&byteArray);
-  buffer.open(QIODevice::WriteOnly);
-  image.save(&buffer, "PNG");
-  return QString("data:image/png;base64,%1")
-    .arg(QString(buffer.data().toBase64()));
-}
