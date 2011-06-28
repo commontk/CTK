@@ -21,11 +21,11 @@
 //Qt includes
 #include <QDebug>
 #include <QLabel>
+#include <QMessageBox>
 #include <QProgressDialog>
 #include <QSettings>
 #include <QTreeView>
 #include <QTabBar>
-#include <QMessageBox>
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>

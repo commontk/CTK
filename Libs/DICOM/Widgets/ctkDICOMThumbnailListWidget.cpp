@@ -56,12 +56,12 @@ static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMThumbnailListWidget"
 class ctkDICOMThumbnailListWidgetPrivate: public Ui_ctkDICOMThumbnailListWidget
 {
 public:
-  ctkDICOMThumbnailListWidgetPrivate(ctkDICOMThumbnailListWidget* parent): q_ptr(parent){
-    
-  }
+  ctkDICOMThumbnailListWidgetPrivate(ctkDICOMThumbnailListWidget* parent);
 
   QString DatabaseDirectory;
   QModelIndex CurrentSelectedModel;
+
+  int ThumbnailWidth;
 
   void clearAllThumbnails();
   void addThumbnailWidget(const QModelIndex &imageIndex, const QModelIndex& sourceIndex, const QString& text);
@@ -77,6 +77,12 @@ public:
 //----------------------------------------------------------------------------
 // ctkDICOMThumbnailListWidgetPrivate methods
 
+//----------------------------------------------------------------------------
+ctkDICOMThumbnailListWidgetPrivate::ctkDICOMThumbnailListWidgetPrivate(ctkDICOMThumbnailListWidget* parent): q_ptr(parent){
+  this->ThumbnailWidth = -1;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMThumbnailListWidgetPrivate::onPatientModelSelected(const QModelIndex &index){
     QModelIndex patientIndex = index;
 
@@ -205,9 +211,14 @@ void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& i
         widget->setText( widgetLabel );
         QPixmap pix(thumbnailPath);
         logger.debug("Setting pixmap to " + thumbnailPath);
+        if(this->ThumbnailWidth > 0){
+          widget->setMaximumWidth(this->ThumbnailWidth);
+          widget->setMinimumWidth(this->ThumbnailWidth);
+        }
         widget->setPixmap(pix);
         widget->setSourceIndex(sourceIndex);
         this->ScrollAreaContentWidget->layout()->addWidget(widget);
+
         q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkDICOMThumbnailWidget)));
         q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SIGNAL(selected(ctkDICOMThumbnailWidget)));
         q->connect(widget, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)), q, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)));
@@ -226,6 +237,7 @@ ctkDICOMThumbnailListWidget::ctkDICOMThumbnailListWidget(QWidget* _parent):Super
     d->setupUi(this);
 
     d->ScrollAreaContentWidget->setLayout(new ctkFlowLayout);
+    qobject_cast<ctkFlowLayout*>(d->ScrollAreaContentWidget->layout())->setHorizontalSpacing(4);
 }
 
 //----------------------------------------------------------------------------
@@ -338,4 +350,22 @@ void ctkDICOMThumbnailListWidget::onThumbnailSelected(const ctkDICOMThumbnailWid
             thumbnailWidget->setSelected(false);
         }
     }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMThumbnailListWidget::setThumbnailWidth(int width){
+  Q_D(ctkDICOMThumbnailListWidget);
+  for(int i=0; i<d->ScrollAreaContentWidget->layout()->count(); i++)
+    {
+    ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+    if(thumbnailWidget)
+      {
+        if(width > 0){
+          thumbnailWidget->setMaximumWidth(width);
+          thumbnailWidget->setMinimumWidth(width);
+        }
+      }
+    }
+
+  d->ThumbnailWidth = width;
 }

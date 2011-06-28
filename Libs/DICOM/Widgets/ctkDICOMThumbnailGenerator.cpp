@@ -61,7 +61,7 @@ ctkDICOMThumbnailGeneratorPrivate::~ctkDICOMThumbnailGeneratorPrivate()
 ctkDICOMThumbnailGenerator::ctkDICOMThumbnailGenerator(QObject* parentValue)
   : d_ptr(new ctkDICOMThumbnailGeneratorPrivate(*this))
 {
-
+  Q_UNUSED(parentValue);
 }
 
 //------------------------------------------------------------------------------

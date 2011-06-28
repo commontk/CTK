@@ -57,6 +57,8 @@ protected:
   virtual void mousePressEvent(QMouseEvent* event);
   virtual void mouseDoubleClickEvent(QMouseEvent* event);
 
+  virtual void resizeEvent(QResizeEvent* event);
+
 private:
   Q_DECLARE_PRIVATE(ctkDICOMThumbnailWidget);
   Q_DISABLE_COPY(ctkDICOMThumbnailWidget);

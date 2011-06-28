@@ -43,20 +43,28 @@ public:
     ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnailWidget* parent);
 
     bool SelectedFlag;
-
     QColor BackgroundColor;
-
     QModelIndex SourceIndex;
+    QPixmap OriginalThumbnail;
+
+    // Redraw thumbnail
+    void updateThumbnail();
 };
 
 //----------------------------------------------------------------------------
 // ctkDICOMThumbnailWidgetPrivate methods
 
+//----------------------------------------------------------------------------
 ctkDICOMThumbnailWidgetPrivate::ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnailWidget* parent): q_ptr(parent){
     Q_Q(ctkDICOMThumbnailWidget);
 
     this->SelectedFlag = false;
     this->BackgroundColor = q->palette().color(QPalette::Highlight);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMThumbnailWidgetPrivate::updateThumbnail(){
+    this->PixmapLabel->setPixmap(this->OriginalThumbnail.scaledToWidth(this->PixmapLabel->width()));
 }
 
 //----------------------------------------------------------------------------
@@ -97,7 +105,8 @@ void ctkDICOMThumbnailWidget::setPixmap(const QPixmap &pixmap)
 {
   Q_D(ctkDICOMThumbnailWidget);
 
-  d->PixmapLabel->setPixmap(pixmap);
+  d->OriginalThumbnail = pixmap;
+  d->updateThumbnail();
 }
 
 //----------------------------------------------------------------------------
@@ -105,7 +114,7 @@ const QPixmap* ctkDICOMThumbnailWidget::pixmap()const
 {
   Q_D(const ctkDICOMThumbnailWidget);
 
-  return d->PixmapLabel->pixmap();
+  return &(d->OriginalThumbnail);
 }
 
 //----------------------------------------------------------------------------
@@ -159,4 +168,12 @@ void ctkDICOMThumbnailWidget::mousePressEvent(QMouseEvent* event)
 void ctkDICOMThumbnailWidget::mouseDoubleClickEvent(QMouseEvent *event){
     Q_UNUSED(event);
     emit doubleClicked(*this);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMThumbnailWidget::resizeEvent(QResizeEvent *event){
+  Q_D(ctkDICOMThumbnailWidget);
+  Q_UNUSED(event);
+
+  d->updateThumbnail();
 }

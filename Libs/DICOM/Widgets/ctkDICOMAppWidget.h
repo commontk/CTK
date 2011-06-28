@@ -83,8 +83,11 @@ protected slots:
     /// To be called when auto-play checkbox state changed
     void onAutoPlayCheckboxStateChanged(int state);
 
-
+    /// Called by timer for auto-play functionality
     void onAutoPlayTimer();
+
+    /// To be called when the value of thumbnail size slider bar is changed
+    void onThumbnailWidthSliderValueChanged(int val);
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMAppWidget);

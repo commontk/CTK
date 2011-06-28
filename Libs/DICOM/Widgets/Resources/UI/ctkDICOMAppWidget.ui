@@ -111,6 +111,9 @@
       </layout>
      </item>
      <item>
+      <layout class="QHBoxLayout" name="horizontalLayout"/>
+     </item>
+     <item>
       <widget class="QFrame" name="UserFrame">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
@@ -123,20 +126,76 @@
      <item>
       <layout class="QHBoxLayout" name="ViewerLayout">
        <item>
-        <widget class="ctkDICOMThumbnailListWidget" name="ThumbnailsWidget" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>200</height>
-          </size>
-         </property>
-        </widget>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="ctkDICOMThumbnailListWidget" name="ThumbnailsWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>200</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QSlider" name="ThumbnailWidthSlider">
+             <property name="maximumSize">
+              <size>
+               <width>200</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="minimum">
+              <number>64</number>
+             </property>
+             <property name="maximum">
+              <number>256</number>
+             </property>
+             <property name="value">
+              <number>128</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QFrame" name="PreviewFrame">
@@ -555,6 +614,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>ThumbnailWidthSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ctkDICOMAppWidget</receiver>
+   <slot>onThumbnailWidthSliderValueChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>610</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>signal1()</signal>
@@ -569,5 +644,6 @@
   <slot>onNextStudy()</slot>
   <slot>onPreviousStudy()</slot>
   <slot>onAutoPlayCheckboxStateChanged(int)</slot>
+  <slot>onThumbnailWidthSliderValueChanged(int)</slot>
  </slots>
 </ui>

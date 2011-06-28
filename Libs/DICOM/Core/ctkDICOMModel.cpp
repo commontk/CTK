@@ -476,7 +476,7 @@ Qt::ItemFlags ctkDICOMModel::flags ( const QModelIndex & modelIndex ) const
     {
     return indexFlags;
     }
-  bool checkable = false;
+  bool checkable = true;
   node->Data[Qt::CheckStateRole].toInt(&checkable);
   indexFlags = indexFlags | (checkable ? Qt::ItemIsUserCheckable : Qt::NoItemFlags);
   return indexFlags;
