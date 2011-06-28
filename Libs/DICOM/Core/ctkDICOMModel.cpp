@@ -67,6 +67,7 @@ public:
   QSqlDatabase DataBase;
   QList<QMap<int, QVariant> > Headers;
   QString      Sort;
+  QMap<QString, QVariant> SearchParameters;
 
   ctkDICOMModel::IndexType displayLevel;
 };
@@ -293,6 +294,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
 {
   // are you kidding me, it should be virtualized here :-)
   QString query;
+  QString condition;
   switch(node->Type)
     {
     default:
@@ -300,22 +302,34 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
       break;
     case ctkDICOMModel::RootType:
       //query = QString("SELECT  FROM ");
-      query = this->generateQuery("UID as UID, PatientsName as Name, PatientsAge as Age, PatientsBirthDate as Date, PatientID as \"Subject ID\"","Patients");
+      if(this->SearchParameters["Name"].toString() != ""){
+        condition.append("PatientsName LIKE \"%" + this->SearchParameters["Name"].toString() + "%\"");
+      }
+      query = this->generateQuery("UID as UID, PatientsName as Name, PatientsAge as Age, PatientsBirthDate as Date, PatientID as \"Subject ID\"","Patients", condition);
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Root: query is: " + query );
       break;
     case ctkDICOMModel::PatientType:
       //query = QString("SELECT  FROM Studies WHERE PatientsUID='%1'").arg(node->UID);
-      query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPhysiciansName as Performer", "Studies",QString("PatientsUID='%1'").arg(node->UID));
+      if(this->SearchParameters["Study"].toString() != ""){
+        condition.append("StudyDescription LIKE \"%" + this->SearchParameters["Study"].toString() + "%\"" + " AND ");
+      }
+      query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPhysiciansName as Performer", "Studies", condition + QString("PatientsUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Patient: query is: " + query );
       break;
     case ctkDICOMModel::StudyType:
+      if(this->SearchParameters["Series"].toString() != ""){
+        condition.append("SeriesDescription LIKE \"%" + this->SearchParameters["Series"].toString() + "%\"" + " AND ");
+      }
       //query = QString("SELECT SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='%1'").arg(node->UID);
-      query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number","Series",QString("StudyInstanceUID='%1'").arg(node->UID));
+      query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number","Series",condition + QString("StudyInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Study: query is: " + query );
       break;
     case ctkDICOMModel::SeriesType:
+      if(this->SearchParameters["ID"].toString() != ""){
+        condition.append("SOPInstanceUID LIKE \"%" + this->SearchParameters["ID"].toString() + "%\"" + " AND ");
+      }
       //query = QString("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'").arg(node->UID);
-      query = this->generateQuery("SOPInstanceUID as UID, Filename as Name, SeriesInstanceUID as Date", "Images", QString("SeriesInstanceUID='%1'").arg(node->UID));
+      query = this->generateQuery("SOPInstanceUID as UID, Filename as Name, SeriesInstanceUID as Date", "Images", condition + QString("SeriesInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Series: query is: " + query );
       break;
     case ctkDICOMModel::ImageType:
@@ -658,6 +672,42 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db)
   // TODO, use hasQuerySize everywhere, not only in setDataBase()
   bool hasQuerySize = d->RootNode->Query.driver()->hasFeature(QSqlDriver::QuerySize);
   if (hasQuerySize && d->RootNode->Query.size() > 0) 
+    {
+    int newRowCount= d->RootNode->Query.size();
+    beginInsertRows(QModelIndex(), 0, qMax(0, newRowCount - 1));
+    d->RootNode->RowCount = newRowCount;
+    d->RootNode->AtEnd = true;
+    endInsertRows();
+    }
+  d->fetch(QModelIndex(), 256);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMModel::setDatabase(const QSqlDatabase &db,const QMap<QString, QVariant>& parameters)
+{
+  Q_D(ctkDICOMModel);
+
+  this->beginResetModel();
+  d->DataBase = db;
+  d->SearchParameters = parameters;
+
+  delete d->RootNode;
+  d->RootNode = 0;
+
+  if (d->DataBase.tables().empty())
+    {
+    //Q_ASSERT(d->DataBase.isOpen());
+    this->endResetModel();
+    return;
+    }
+
+  d->RootNode = d->createNode(-1, QModelIndex());
+
+  this->endResetModel();
+
+  // TODO, use hasQuerySize everywhere, not only in setDataBase()
+  bool hasQuerySize = d->RootNode->Query.driver()->hasFeature(QSqlDriver::QuerySize);
+  if (hasQuerySize && d->RootNode->Query.size() > 0)
     {
     int newRowCount= d->RootNode->Query.size();
     beginInsertRows(QModelIndex(), 0, qMax(0, newRowCount - 1));

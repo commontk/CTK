@@ -160,17 +160,12 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   connect(d->ThumbnailsWidget, SIGNAL(doubleClicked(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget&)));
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
-  //connect(d->DICOMDatabase.data(), SIGNAL( databaseChanged() ), &(d->DICOMModel), SLOT( reset() ) );
   connect(d->QueryRetrieveWidget, SIGNAL( canceled() ), d->QueryRetrieveWidget, SLOT( hide() ) );
 
   connect(d->imagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
   connect(d->imagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
 
-  connect(d->SearchOption, SIGNAL(nameSearchTextChanged(QString)), &(d->DICOMProxyModel), SLOT(setNameSearchText(QString)));
-  connect(d->SearchOption, SIGNAL(studySearchTextChanged(QString)), &(d->DICOMProxyModel), SLOT(setStudySearchText(QString)));
-  connect(d->SearchOption, SIGNAL(seriesSearchTextChanged(QString)), &(d->DICOMProxyModel), SLOT(setSeriesSearchText(QString)));
-  connect(d->SearchOption, SIGNAL(idSearchTextChanged(QString)), &(d->DICOMProxyModel), SLOT(setIdSearchText(QString)));
-
+  connect(d->SearchOption, SIGNAL(parameterChanged()), this, SLOT(onSearchParameterChanged()));
 }
 
 //----------------------------------------------------------------------------
@@ -574,4 +569,10 @@ void ctkDICOMAppWidget::onAutoPlayTimer(){
 void ctkDICOMAppWidget::onThumbnailWidthSliderValueChanged(int val){
   Q_D(ctkDICOMAppWidget);
   d->ThumbnailsWidget->setThumbnailWidth(val);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onSearchParameterChanged(){
+  Q_D(ctkDICOMAppWidget);
+  d->DICOMModel.setDatabase(d->DICOMDatabase->database(), d->SearchOption->parameters());
 }

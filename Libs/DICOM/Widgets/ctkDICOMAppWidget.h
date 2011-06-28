@@ -89,6 +89,9 @@ protected slots:
     /// To be called when the value of thumbnail size slider bar is changed
     void onThumbnailWidthSliderValueChanged(int val);
 
+    /// To be called when search parameters in query widget changed
+    void onSearchParameterChanged();
+
 private:
   Q_DECLARE_PRIVATE(ctkDICOMAppWidget);
   Q_DISABLE_COPY(ctkDICOMAppWidget);
