@@ -7,6 +7,8 @@
 // STD includes
 #include <iostream>
 
+// Qt includes
+#include <QTimer>
 
 //logger
 #include <ctkLogger.h>
@@ -17,12 +19,30 @@ static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMQueryWidget");
 class ctkDICOMQueryWidgetPrivate: public Ui_ctkDICOMQueryWidget
 {
 public:
-  ctkDICOMQueryWidgetPrivate(){}
+  ctkDICOMQueryWidgetPrivate();
+  ~ctkDICOMQueryWidgetPrivate();
+
+  QTimer* SearchTimer;
+  int SearchIdleTime;
 };
 
 //----------------------------------------------------------------------------
 // ctkDICOMQueryWidgetPrivate methods
 
+//----------------------------------------------------------------------------
+ctkDICOMQueryWidgetPrivate::ctkDICOMQueryWidgetPrivate(){
+  // set default of search idle time to 500 ms
+  this->SearchIdleTime = 500;
+
+  // Initialize search timer
+  this->SearchTimer = new QTimer();
+  this->SearchTimer->setSingleShot(true);
+}
+
+//----------------------------------------------------------------------------
+ctkDICOMQueryWidgetPrivate::~ctkDICOMQueryWidgetPrivate(){
+  this->SearchTimer->deleteLater();
+}
 
 //----------------------------------------------------------------------------
 // ctkDICOMQueryWidget methods
@@ -35,21 +55,31 @@ ctkDICOMQueryWidget::ctkDICOMQueryWidget(QWidget* _parent):Superclass(_parent),
   
   d->setupUi(this);
 
-  connect(d->nameSearch, SIGNAL(textChanged(QString)), this, SIGNAL(nameSearchTextChanged(QString)));
-  connect(d->studySearch, SIGNAL(textChanged(QString)), this, SIGNAL(studySearchTextChanged(QString)));
-  connect(d->seriesSearch, SIGNAL(textChanged(QString)), this, SIGNAL(seriesSearchTextChanged(QString)));
-  connect(d->idSearch, SIGNAL(textChanged(QString)), this, SIGNAL(idSearchTextChanged(QString)));
+  connect(d->NameSearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
+  connect(d->StudySearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
+  connect(d->SeriesSearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
+  connect(d->IdSearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
+  connect(d->DateRangeWidget, SIGNAL(endDateTimeChanged(QDateTime)), this, SLOT(startTimer()));
+  connect(d->DateRangeWidget, SIGNAL(startDateTimeChanged(QDateTime)), this, SLOT(startTimer()));
+  connect(d->ModalityWidget, SIGNAL(selectedModalitiesChanged(QStringList)), this, SLOT(startTimer()));
+
+  connect(d->SearchTimer, SIGNAL(timeout()), this, SIGNAL(parameterChanged()));
 }
 
 //----------------------------------------------------------------------------
 ctkDICOMQueryWidget::~ctkDICOMQueryWidget()
 {
-    Q_D(ctkDICOMQueryWidget);
+  Q_D(ctkDICOMQueryWidget);
 
-    disconnect(d->nameSearch, SIGNAL(textChanged(QString)), this, SIGNAL(nameSearchTextChanged(QString)));
-    disconnect(d->studySearch, SIGNAL(textChanged(QString)), this, SIGNAL(studySearchTextChanged(QString)));
-    disconnect(d->seriesSearch, SIGNAL(textChanged(QString)), this, SIGNAL(seriesSearchTextChanged(QString)));
-    disconnect(d->idSearch, SIGNAL(textChanged(QString)), this, SIGNAL(idSearchTextChanged(QString)));
+  disconnect(d->NameSearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
+  disconnect(d->StudySearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
+  disconnect(d->SeriesSearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
+  disconnect(d->IdSearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
+  disconnect(d->DateRangeWidget, SIGNAL(endDateTimeChanged(QDateTime)), this, SLOT(startTimer()));
+  disconnect(d->DateRangeWidget, SIGNAL(startDateTimeChanged(QDateTime)), this, SLOT(startTimer()));
+  disconnect(d->ModalityWidget, SIGNAL(selectedModalitiesChanged(QStringList)), this, SLOT(startTimer()));
+
+  disconnect(d->SearchTimer, SIGNAL(timeout()), this, SIGNAL(parameterChanged()));
 }
 
 
@@ -60,25 +90,33 @@ QMap<QString,QVariant> ctkDICOMQueryWidget::parameters()
 
   QMap<QString,QVariant> parameters;
 
-  parameters["Name"] = d->nameSearch->text();
-  parameters["Study"] = d->studySearch->text();
-  parameters["Series"] = d->seriesSearch->text();
-  parameters["ID"] = d->idSearch->text();
+  parameters["Name"] = d->NameSearch->text();
+  parameters["Study"] = d->StudySearch->text();
+  parameters["Series"] = d->SeriesSearch->text();
+  parameters["ID"] = d->IdSearch->text();
 
-  if ( !d->modalityWidget->areAllModalitiesSelected() )
+  if ( !d->ModalityWidget->areAllModalitiesSelected() )
   { // some PACS (conquest) don't seem to accept list of modalities,
     // so don't include the list at all when all modalities are desired
     // TODO: think about how to fix this for conquest at the query level
-    parameters["Modalities"] = d->modalityWidget->selectedModalities();
+    parameters["Modalities"] = d->ModalityWidget->selectedModalities();
   }
 
-  if ( !d->dateRangeWidget->isAnyDate() )
+  if ( !d->DateRangeWidget->isAnyDate() )
   {
-    QDate startDate = d->dateRangeWidget->startDateTime().date();
-    QDate endDate = d->dateRangeWidget->endDateTime().date();
+    QDate startDate = d->DateRangeWidget->startDateTime().date();
+    QDate endDate = d->DateRangeWidget->endDateTime().date();
     parameters["StartDate"] = startDate.toString("yyyyMMdd");
     parameters["EndDate"] = endDate.toString("yyyyMMdd");
   }
 
   return parameters;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQueryWidget::startTimer(){
+  Q_D(ctkDICOMQueryWidget);
+
+  d->SearchTimer->stop();
+  d->SearchTimer->start(d->SearchIdleTime);
 }

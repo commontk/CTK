@@ -47,10 +47,11 @@ private:
   Q_DISABLE_COPY(ctkDICOMQueryWidget);
 
 signals:
-  void nameSearchTextChanged(const QString& text);
-  void studySearchTextChanged(const QString& text);
-  void seriesSearchTextChanged(const QString& text);
-  void idSearchTextChanged(const QString& text);
+  /// This signal is emitted when any of the search parameters changed.
+  void parameterChanged();
+
+protected slots:
+  void startTimer();
 };
 
 #endif
