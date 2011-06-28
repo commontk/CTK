@@ -165,10 +165,7 @@ int ctk::significantDecimals(double value)
 {
   QString number = QString::number(value, 'f', 16);
   QString fractional = number.section('.', 1, 1);
-  if (fractional.length() <= 2)
-    {
-    return fractional.length() - 1;
-    }
+  Q_ASSERT(fractional.length() == 16);
   QChar previous;
   int previousRepeat=0;
   bool only0s = true;
@@ -179,6 +176,7 @@ int ctk::significantDecimals(double value)
       {
       only0s = false;
       }
+    // Has the digit been repeated too many times ?
     if (digit == previous && previousRepeat == 2 &&
         !only0s)
       {
@@ -188,13 +186,14 @@ int ctk::significantDecimals(double value)
         }
       return i;
       }
+    // Last digit
     if (i == fractional.length() - 1)
       {
       if (previousRepeat > 2)
         {
         return i - previousRepeat;
         }
-      return i;
+      return fractional.length();
       }
     // get ready for next
     if (previous != digit)
@@ -207,7 +206,8 @@ int ctk::significantDecimals(double value)
       ++previousRepeat;
       }
     }
-  return -1;
+  Q_ASSERT(false);
+  return fractional.length();
 }
 
 //-----------------------------------------------------------------------------

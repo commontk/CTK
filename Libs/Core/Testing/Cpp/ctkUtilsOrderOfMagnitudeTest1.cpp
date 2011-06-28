@@ -26,8 +26,9 @@
 #include "ctkUtils.h"
 
 // STD includes
-#include <stdlib.h>
 #include <iostream>
+#include <limits>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 
@@ -142,6 +143,13 @@ int ctkUtilsOrderOfMagnitudeTest1(int , char *  [] )
     return EXIT_FAILURE;
     }
 
+  if (ctk::orderOfMagnitude(0) != std::numeric_limits<int>::min())
+    {
+    std::cerr << "order of magnitude failed for number:"
+              << 0 << ". Found " << ctk::orderOfMagnitude(0)
+              << " instead of " << std::numeric_limits<int>::min() << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }

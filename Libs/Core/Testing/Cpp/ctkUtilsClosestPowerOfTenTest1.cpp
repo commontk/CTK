@@ -121,5 +121,14 @@ int ctkUtilsClosestPowerOfTenTest1(int , char *  [] )
     return EXIT_FAILURE;
     }
 
+  closest = ctk::closestPowerOfTen(0.);
+  if (closest != 0)
+    {
+    std::cerr << "closest power of 10 failed for number:"
+              << 0. << ". Found " << closest
+              << " instead of 0" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   return EXIT_SUCCESS;
 }

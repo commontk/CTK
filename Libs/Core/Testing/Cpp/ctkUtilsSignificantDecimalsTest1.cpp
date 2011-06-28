@@ -132,5 +132,21 @@ int ctkUtilsSignificantDecimalsTest1(int , char *  [] )
     {
     return EXIT_FAILURE;
     }
+  if (testSignificantDecimals(0.5, 1))
+    {
+    return EXIT_FAILURE;
+    }
+  if (testSignificantDecimals(0.25, 2))
+    {
+    return EXIT_FAILURE;
+    }
+  if (testSignificantDecimals(0.125, 3))
+    {
+    return EXIT_FAILURE;
+    }
+  if (testSignificantDecimals(0.1234567891013151, 16))
+    {
+    return EXIT_FAILURE;
+    }
   return EXIT_SUCCESS;
 }
