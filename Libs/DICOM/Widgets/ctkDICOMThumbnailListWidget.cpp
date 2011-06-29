@@ -369,3 +369,10 @@ void ctkDICOMThumbnailListWidget::setThumbnailWidth(int width){
 
   d->ThumbnailWidth = width;
 }
+
+//----------------------------------------------------------------------------
+void ctkDICOMThumbnailListWidget::reset(){
+  Q_D(ctkDICOMThumbnailListWidget);
+
+  d->clearAllThumbnails();
+}

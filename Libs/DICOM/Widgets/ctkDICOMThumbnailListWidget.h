@@ -43,6 +43,8 @@ public:
   void selectThumbnail(int index);
   void selectThumbnail(const QModelIndex& index);
 
+  void reset();
+
 protected:
   QScopedPointer<ctkDICOMThumbnailListWidgetPrivate> d_ptr;
 

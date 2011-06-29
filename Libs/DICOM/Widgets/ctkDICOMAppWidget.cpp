@@ -575,4 +575,10 @@ void ctkDICOMAppWidget::onThumbnailWidthSliderValueChanged(int val){
 void ctkDICOMAppWidget::onSearchParameterChanged(){
   Q_D(ctkDICOMAppWidget);
   d->DICOMModel.setDatabase(d->DICOMDatabase->database(), d->SearchOption->parameters());
+
+  this->onModelSelected(d->DICOMModel.index(0,0));
+  d->ThumbnailsWidget->reset();
+  d->ThumbnailsWidget->onModelSelected(d->DICOMModel.index(0,0));
+  d->imagePreview->clearImages();
+  d->imagePreview->onModelSelected(d->DICOMModel.index(0,0));
 }
