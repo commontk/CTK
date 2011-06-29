@@ -60,15 +60,11 @@ public:
 
   ctkDICOMDatasetViewPrivate( ctkDICOMDatasetView& object );
 
-  QString databaseDirectory;
-
-  QModelIndex currentImageIndex;
-
-  QPoint oldMousePos;
-
-  double dicomIntensityLevel;
-
-  double dicomIntensityWindow;
+  QString DatabaseDirectory;
+  QModelIndex CurrentImageIndex;
+  QPoint OldMousePos;
+  double DicomIntensityLevel;
+  double DicomIntensityWindow;
 
   void init();
 
@@ -94,9 +90,9 @@ void ctkDICOMDatasetViewPrivate::init()
 
   q->setMouseTracking(true);
 
-  this->dicomIntensityLevel = 0;
+  this->DicomIntensityLevel = 0;
 
-  this->dicomIntensityWindow = 0;
+  this->DicomIntensityWindow = 0;
 
   /*
   this->Window->setParent(q);
@@ -117,7 +113,7 @@ void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool de
         QModelIndex seriesIndex = imageIndex.parent();
         QModelIndex studyIndex = seriesIndex.parent();
 
-        QString dicomPath = this->databaseDirectory;
+        QString dicomPath = this->DatabaseDirectory;
         dicomPath.append("/dicom/").append(model->data(studyIndex ,ctkDICOMModel::UIDRole).toString());
         dicomPath.append("/").append(model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString());
         dicomPath.append("/").append(model->data(imageIndex ,ctkDICOMModel::UIDRole).toString());
@@ -127,7 +123,9 @@ void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool de
 
             q->clearImages();
             q->addImage(dcmImage, defaultIntensity);
-            this->currentImageIndex = imageIndex;
+            this->CurrentImageIndex = imageIndex;
+
+            q->emitImageDisplayedSignal(imageIndex.row(), model->rowCount(seriesIndex));
         }else{
             q->clearImages();
         }
@@ -203,7 +201,7 @@ void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
     if(model){
         QModelIndex imageIndex = index;
 
-        if(index.parent() == this->currentImageIndex.parent()){
+        if(index.parent() == this->CurrentImageIndex.parent()){
             this->setImage(imageIndex, false);
         }else{
             this->setImage(imageIndex, true);
@@ -241,14 +239,14 @@ ctkDICOMDatasetView::~ctkDICOMDatasetView()
 void ctkDICOMDatasetView::setDatabaseDirectory(const QString &directory){
     Q_D(ctkDICOMDatasetView);
 
-    d->databaseDirectory = directory;
+    d->DatabaseDirectory = directory;
 }
 
 // -------------------------------------------------------------------------
 QModelIndex ctkDICOMDatasetView::currentImageIndex(){
     Q_D(ctkDICOMDatasetView);
 
-    return d->currentImageIndex;
+    return d->CurrentImageIndex;
 }
 
 // -------------------------------------------------------------------------
@@ -265,9 +263,9 @@ void ctkDICOMDatasetView::addImage( DicomImage & dcmImage, bool defaultIntensity
     if ((dcmImage.getStatus() == EIS_Normal)){
         if(defaultIntensity){
             dcmImage.setWindow(0);
-            dcmImage.getWindow(d->dicomIntensityLevel, d->dicomIntensityWindow);
+            dcmImage.getWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
         }else{
-            dcmImage.setWindow(d->dicomIntensityLevel, d->dicomIntensityWindow);
+            dcmImage.setWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
         }
         /* get image extension */
         const unsigned long width = dcmImage.getWidth();
@@ -303,7 +301,7 @@ void ctkDICOMDatasetView::mousePressEvent(QMouseEvent* event){
     Q_D(ctkDICOMDatasetView);
 
     event->accept();
-    d->oldMousePos = event->pos();
+    d->OldMousePos = event->pos();
 }
 
 // -------------------------------------------------------------------------
@@ -313,30 +311,30 @@ void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
     if(event->buttons() == Qt::RightButton){
         event->accept();
         QPoint nowPos = event->pos();
-        if(nowPos.y() > d->oldMousePos.y()){
+        if(nowPos.y() > d->OldMousePos.y()){
             emit requestNextImage();
-            d->oldMousePos = event->pos();
-        }else if(nowPos.y() < d->oldMousePos.y()){
+            d->OldMousePos = event->pos();
+        }else if(nowPos.y() < d->OldMousePos.y()){
             emit requestPreviousImage();
-            d->oldMousePos = event->pos();
+            d->OldMousePos = event->pos();
         }
     }else if(event->buttons() == Qt::MidButton){
         event->accept();
         QPoint nowPos = event->pos();
 
-        this->setZoom(this->zoom() - (nowPos.y()-d->oldMousePos.y())/100.0);
+        this->setZoom(this->zoom() - (nowPos.y()-d->OldMousePos.y())/100.0);
 
-        d->oldMousePos = event->pos();
+        d->OldMousePos = event->pos();
     }else if(event->buttons() == Qt::LeftButton){
         event->accept();
         QPoint nowPos = event->pos();
 
-        d->dicomIntensityWindow += (5*(nowPos.x()-d->oldMousePos.x()));
-        d->dicomIntensityLevel -= (5*(nowPos.y()-d->oldMousePos.y()));
+        d->DicomIntensityWindow += (5*(nowPos.x()-d->OldMousePos.x()));
+        d->DicomIntensityLevel -= (5*(nowPos.y()-d->OldMousePos.y()));
 
-        d->setImage(d->currentImageIndex, false);
+        d->setImage(d->CurrentImageIndex, false);
 
-        d->oldMousePos = event->pos();
+        d->OldMousePos = event->pos();
     }
 
     Superclass::mouseMoveEvent(event);
@@ -351,7 +349,6 @@ void ctkDICOMDatasetView::onModelSelected(const QModelIndex &index){
     if(model){
         QModelIndex index0 = index.sibling(index.row(), 0);
 
-
         if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType) ){
             d->onPatientModelSelected(index0);
         }else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType) ){
@@ -363,3 +360,32 @@ void ctkDICOMDatasetView::onModelSelected(const QModelIndex &index){
         }
     }
 }
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetView::displayImage(int imageIndex){
+  Q_D(ctkDICOMDatasetView);
+
+  if(d->CurrentImageIndex.isValid())
+    {
+      QModelIndex seriesIndex = d->CurrentImageIndex.parent();
+      ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(seriesIndex.model()));
+
+      if(model)
+        {
+          if(imageIndex >= 0 && imageIndex < model->rowCount(seriesIndex))
+            {
+            this->onModelSelected(model->index(imageIndex, 0, seriesIndex));
+            }
+          else
+            {
+            logger.debug("out of index");
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------
+void ctkDICOMDatasetView::emitImageDisplayedSignal(int imageID, int count){
+  emit imageDisplayed(imageID, count);
+}
+

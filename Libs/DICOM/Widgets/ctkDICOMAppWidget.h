@@ -92,6 +92,9 @@ protected slots:
     /// To be called when search parameters in query widget changed
     void onSearchParameterChanged();
 
+    /// To be called after image preview displayed an image
+    void onImagePreviewDisplayed(int imageID, int count);
+
 private:
   Q_DECLARE_PRIVATE(ctkDICOMAppWidget);
   Q_DISABLE_COPY(ctkDICOMAppWidget);

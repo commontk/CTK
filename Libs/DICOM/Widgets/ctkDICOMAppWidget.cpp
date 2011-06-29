@@ -164,8 +164,11 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   connect(d->ImagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
   connect(d->ImagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
+  connect(d->ImagePreview, SIGNAL(imageDisplayed(int, int)), this, SLOT(onImagePreviewDisplayed(int,int)));
 
   connect(d->SearchOption, SIGNAL(parameterChanged()), this, SLOT(onSearchParameterChanged()));
+
+  connect(d->PlaySlider, SIGNAL(valueChanged(int)), d->ImagePreview, SLOT(displayImage(int)));
 }
 
 //----------------------------------------------------------------------------
@@ -377,6 +380,12 @@ void ctkDICOMAppWidget::onNextImage(){
 
         imageID = (imageID+1)%imageCount;
 
+        int max = d->PlaySlider->maximum();
+        if(imageID > 0 && imageID < max)
+          {
+            d->PlaySlider->setValue(imageID);
+          }
+
         QModelIndex nextIndex = currentIndex.sibling(imageID, 0);
 
         d->ImagePreview->onModelSelected(nextIndex);
@@ -404,6 +413,12 @@ void ctkDICOMAppWidget::onPreviousImage(){
 
         imageID--;
         if(imageID < 0) imageID += imageCount;
+
+        int max = d->PlaySlider->maximum();
+        if(imageID > 0 && imageID < max)
+          {
+            d->PlaySlider->setValue(imageID);
+          }
 
         QModelIndex prevIndex = currentIndex.sibling(imageID, 0);
 
@@ -581,4 +596,13 @@ void ctkDICOMAppWidget::onSearchParameterChanged(){
   d->ThumbnailsWidget->onModelSelected(d->DICOMModel.index(0,0));
   d->ImagePreview->clearImages();
   d->ImagePreview->onModelSelected(d->DICOMModel.index(0,0));
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onImagePreviewDisplayed(int imageID, int count){
+  Q_D(ctkDICOMAppWidget);
+
+  d->PlaySlider->setMinimum(0);
+  d->PlaySlider->setMaximum(count-1);
+  d->PlaySlider->setValue(imageID);
 }

@@ -266,26 +266,32 @@ void ctkDICOMThumbnailListWidget::selectThumbnail(int index){
     if(index >= count)return;
 
     for(int i=0; i<count; i++)
-    {
-        ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
-        if(i == index)
+      {
+      ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+      if(i == index)
         {
-            thumbnailWidget->setSelected(true);
-            d->ScrollArea->ensureWidgetVisible(thumbnailWidget);
+        thumbnailWidget->setSelected(true);
+        d->ScrollArea->ensureWidgetVisible(thumbnailWidget);
         }
-        else
+      else
         {
-            thumbnailWidget->setSelected(false);
+        thumbnailWidget->setSelected(false);
         }
-    }
+      }
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMThumbnailListWidget::selectThumbnail(const QModelIndex &index){
     Q_D(ctkDICOMThumbnailListWidget);
 
-    if(!d->CurrentSelectedModel.isValid())return;
-    if(index.parent() != d->CurrentSelectedModel)return;
+    if(!d->CurrentSelectedModel.isValid())
+      {
+      return;
+      }
+    if(index.parent() != d->CurrentSelectedModel)
+      {
+      return;
+      }
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 

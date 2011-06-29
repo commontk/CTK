@@ -62,14 +62,17 @@ signals:
   void requestNextImage();
   void requestPreviousImage();
 
+  void imageDisplayed(int imageID, int count);
+
 public slots:
 
   void addImage( const QImage & image );
 
-  // TEST
   void addImage( DicomImage & dcmImage, bool defaultIntensity = true);
 
   void onModelSelected(const QModelIndex& index);
+
+  void displayImage(int imageIndex);
 
   virtual void update( bool zoomChanged=false, bool sizeChanged=false );
 
@@ -90,6 +93,8 @@ private:
   Q_DECLARE_PRIVATE( ctkDICOMDatasetView );
 
   Q_DISABLE_COPY( ctkDICOMDatasetView );
+
+  void emitImageDisplayedSignal(int imageID, int count);
 
 };
 

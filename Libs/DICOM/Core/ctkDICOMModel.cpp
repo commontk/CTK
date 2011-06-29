@@ -480,7 +480,7 @@ void ctkDICOMModel::fetchMore ( const QModelIndex & parentValue )
 Qt::ItemFlags ctkDICOMModel::flags ( const QModelIndex & modelIndex ) const
 {
   Q_D(const ctkDICOMModel);
-  Qt::ItemFlags indexFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+  Qt::ItemFlags indexFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
   if (modelIndex.column() != 0)
     {
     return indexFlags;
