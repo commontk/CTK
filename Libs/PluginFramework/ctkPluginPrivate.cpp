@@ -222,6 +222,14 @@ void ctkPluginPrivate::checkManifestHeaders()
     }
   }
 
+  QSharedPointer<ctkPlugin> snp = fwCtx->plugins->getPlugin(symbolicName, version);
+  // TBD! Should we allow update to same version?
+  if (!snp.isNull() && snp->d_func() != this)
+  {
+    throw std::invalid_argument(std::string("Plugin with same symbolic name and version is already installed (")
+                                + symbolicName.toStdString() + ", " + version.toString().toStdString() + ")");
+  }
+
   QString ap = archive->getAttribute(ctkPluginConstants::PLUGIN_ACTIVATIONPOLICY);
   if (ctkPluginConstants::ACTIVATION_EAGER == ap)
   {
