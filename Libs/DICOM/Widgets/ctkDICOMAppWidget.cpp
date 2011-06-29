@@ -153,7 +153,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   //connect signal and slots
   connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), d->ThumbnailsWidget, SLOT(onModelSelected(const QModelIndex &)));
-  connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), d->imagePreview, SLOT(onModelSelected(const QModelIndex &)));
+  connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), d->ImagePreview, SLOT(onModelSelected(const QModelIndex &)));
   connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onModelSelected(const QModelIndex &)));
 
   connect(d->ThumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
@@ -162,8 +162,8 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   connect(d->QueryRetrieveWidget, SIGNAL( canceled() ), d->QueryRetrieveWidget, SLOT( hide() ) );
 
-  connect(d->imagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
-  connect(d->imagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
+  connect(d->ImagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
+  connect(d->ImagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
 
   connect(d->SearchOption, SIGNAL(parameterChanged()), this, SLOT(onSearchParameterChanged()));
 }
@@ -213,7 +213,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   // update the button and let any connected slots know about the change
   d->DirectoryButton->setDirectory(directory);
   d->ThumbnailsWidget->setDatabaseDirectory(directory);
-  d->imagePreview->setDatabaseDirectory(directory);
+  d->ImagePreview->setDatabaseDirectory(directory);
   emit databaseDirectoryChanged(directory);
 }
 
@@ -261,7 +261,7 @@ void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widge
 {
     Q_D(ctkDICOMAppWidget);
 
-    d->imagePreview->onModelSelected(widget.sourceIndex());
+    d->ImagePreview->onModelSelected(widget.sourceIndex());
 }
 
 //----------------------------------------------------------------------------
@@ -279,7 +279,7 @@ void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& 
         this->onModelSelected(index0);
         d->TreeView->setCurrentIndex(index0);
         d->ThumbnailsWidget->onModelSelected(index0);
-        d->imagePreview->onModelSelected(index0);
+        d->ImagePreview->onModelSelected(index0);
       }
 }
 
@@ -362,7 +362,7 @@ Q_D(ctkDICOMAppWidget);
 void ctkDICOMAppWidget::onNextImage(){
     Q_D(ctkDICOMAppWidget);
 
-    QModelIndex currentIndex = d->imagePreview->currentImageIndex();
+    QModelIndex currentIndex = d->ImagePreview->currentImageIndex();
 
     if(currentIndex.isValid())
       {
@@ -379,7 +379,7 @@ void ctkDICOMAppWidget::onNextImage(){
 
         QModelIndex nextIndex = currentIndex.sibling(imageID, 0);
 
-        d->imagePreview->onModelSelected(nextIndex);
+        d->ImagePreview->onModelSelected(nextIndex);
         d->ThumbnailsWidget->selectThumbnail(nextIndex);
         }
       }
@@ -389,7 +389,7 @@ void ctkDICOMAppWidget::onNextImage(){
 void ctkDICOMAppWidget::onPreviousImage(){
     Q_D(ctkDICOMAppWidget);
 
-    QModelIndex currentIndex = d->imagePreview->currentImageIndex();
+    QModelIndex currentIndex = d->ImagePreview->currentImageIndex();
 
     if(currentIndex.isValid())
       {
@@ -407,7 +407,7 @@ void ctkDICOMAppWidget::onPreviousImage(){
 
         QModelIndex prevIndex = currentIndex.sibling(imageID, 0);
 
-        d->imagePreview->onModelSelected(prevIndex);
+        d->ImagePreview->onModelSelected(prevIndex);
         d->ThumbnailsWidget->selectThumbnail(prevIndex);
         }
       }
@@ -417,7 +417,7 @@ void ctkDICOMAppWidget::onPreviousImage(){
 void ctkDICOMAppWidget::onNextSeries(){
     Q_D(ctkDICOMAppWidget);
 
-    QModelIndex currentIndex = d->imagePreview->currentImageIndex();
+    QModelIndex currentIndex = d->ImagePreview->currentImageIndex();
 
     if(currentIndex.isValid())
       {
@@ -435,7 +435,7 @@ void ctkDICOMAppWidget::onNextSeries(){
 
         QModelIndex nextIndex = seriesIndex.sibling(seriesID, 0);
 
-        d->imagePreview->onModelSelected(nextIndex);
+        d->ImagePreview->onModelSelected(nextIndex);
         d->ThumbnailsWidget->selectThumbnail(nextIndex);
         }
       }
@@ -445,7 +445,7 @@ void ctkDICOMAppWidget::onNextSeries(){
 void ctkDICOMAppWidget::onPreviousSeries(){
     Q_D(ctkDICOMAppWidget);
 
-    QModelIndex currentIndex = d->imagePreview->currentImageIndex();
+    QModelIndex currentIndex = d->ImagePreview->currentImageIndex();
 
     if(currentIndex.isValid())
       {
@@ -464,7 +464,7 @@ void ctkDICOMAppWidget::onPreviousSeries(){
 
         QModelIndex prevIndex = seriesIndex.sibling(seriesID, 0);
 
-        d->imagePreview->onModelSelected(prevIndex);
+        d->ImagePreview->onModelSelected(prevIndex);
         d->ThumbnailsWidget->selectThumbnail(prevIndex);
         }
       }
@@ -474,7 +474,7 @@ void ctkDICOMAppWidget::onPreviousSeries(){
 void ctkDICOMAppWidget::onNextStudy(){
     Q_D(ctkDICOMAppWidget);
 
-    QModelIndex currentIndex = d->imagePreview->currentImageIndex();
+    QModelIndex currentIndex = d->ImagePreview->currentImageIndex();
 
     if(currentIndex.isValid())
       {
@@ -493,7 +493,7 @@ void ctkDICOMAppWidget::onNextStudy(){
 
         QModelIndex nextIndex = studyIndex.sibling(studyID, 0);
 
-        d->imagePreview->onModelSelected(nextIndex);
+        d->ImagePreview->onModelSelected(nextIndex);
         d->ThumbnailsWidget->selectThumbnail(nextIndex);
         }
       }
@@ -503,7 +503,7 @@ void ctkDICOMAppWidget::onNextStudy(){
 void ctkDICOMAppWidget::onPreviousStudy(){
     Q_D(ctkDICOMAppWidget);
 
-    QModelIndex currentIndex = d->imagePreview->currentImageIndex();
+    QModelIndex currentIndex = d->ImagePreview->currentImageIndex();
 
     if(currentIndex.isValid())
       {
@@ -523,7 +523,7 @@ void ctkDICOMAppWidget::onPreviousStudy(){
 
         QModelIndex prevIndex = studyIndex.sibling(studyID, 0);
 
-        d->imagePreview->onModelSelected(prevIndex);
+        d->ImagePreview->onModelSelected(prevIndex);
         d->ThumbnailsWidget->selectThumbnail(prevIndex);
         }
       }
@@ -579,6 +579,6 @@ void ctkDICOMAppWidget::onSearchParameterChanged(){
   this->onModelSelected(d->DICOMModel.index(0,0));
   d->ThumbnailsWidget->reset();
   d->ThumbnailsWidget->onModelSelected(d->DICOMModel.index(0,0));
-  d->imagePreview->clearImages();
-  d->imagePreview->onModelSelected(d->DICOMModel.index(0,0));
+  d->ImagePreview->clearImages();
+  d->ImagePreview->onModelSelected(d->DICOMModel.index(0,0));
 }

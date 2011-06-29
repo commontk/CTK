@@ -80,7 +80,10 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="QueryLayout" stretch="1,0">
+      <layout class="QHBoxLayout" name="QueryLayout" stretch="0,1,0">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4"/>
+       </item>
        <item>
         <widget class="QTreeView" name="TreeView">
          <property name="alternatingRowColors">
@@ -343,7 +346,7 @@
            </layout>
           </item>
           <item>
-           <widget class="ctkDICOMDatasetView" name="imagePreview" native="true">
+           <widget class="ctkDICOMDatasetView" name="ImagePreview" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
               <horstretch>0</horstretch>
