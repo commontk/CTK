@@ -132,7 +132,7 @@ int ctkPluginFrameworkContext::getId() const
 //----------------------------------------------------------------------------
 QFileInfo ctkPluginFrameworkContext::getDataStorage(long id)
 {
-  return QFileInfo(dataStorage, QString::number(id));
+  return QFileInfo(dataStorage.absolutePath() + '/' + QString::number(id) + '/');
 }
 
 //----------------------------------------------------------------------------

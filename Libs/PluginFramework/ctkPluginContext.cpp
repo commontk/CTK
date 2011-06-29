@@ -106,7 +106,7 @@ QFileInfo ctkPluginContext::getDataFile(const QString& filename)
 {
   Q_D(ctkPluginContext);
   d->isPluginContextValid();
-  QDir dataRoot(d->plugin->getDataRoot().absoluteFilePath());
+  QDir dataRoot(d->plugin->getDataRoot().absolutePath());
   if (!dataRoot.exists())
   {
     if (!dataRoot.mkpath(dataRoot.absolutePath()))
@@ -114,8 +114,7 @@ QFileInfo ctkPluginContext::getDataFile(const QString& filename)
       qWarning() << "Could not create persistent storage area:" << dataRoot.absolutePath();
     }
   }
-
-  return QFileInfo(dataRoot, filename);
+  return QFileInfo(dataRoot.absolutePath() + '/' + filename);
 }
 
 //----------------------------------------------------------------------------
