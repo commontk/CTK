@@ -55,8 +55,9 @@ QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* i
     throw std::logic_error("ctkPlugins::install(location, inputStream) called on closed plugins object.");
   }
 
+  QSharedPointer<ctkPlugin> res;
   {
-    QWriteLocker lock(&pluginsLock);
+    QMutexLocker lock(&objectLock);
 
     QHash<QString, QSharedPointer<ctkPlugin> >::const_iterator it = plugins.find(location.toString());
     if (it != plugins.end())
@@ -113,13 +114,9 @@ QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* i
 
       pa = fwCtx->storage->insertPlugin(location, localPluginPath);
 
-      QSharedPointer<ctkPlugin> res(new ctkPlugin());
+      res = QSharedPointer<ctkPlugin>(new ctkPlugin());
       res->init(res, fwCtx, pa);
       plugins.insert(location.toString(), res);
-
-      fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::INSTALLED, res));
-
-      return res;
     }
     catch (const std::exception& e)
     {
@@ -138,6 +135,8 @@ QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* i
     }
   }
 
+  fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::INSTALLED, res));
+  return res;
 }
 
 //----------------------------------------------------------------------------
@@ -306,7 +305,7 @@ void ctkPlugins::load()
   QListIterator<ctkPluginArchive*> it(pas);
 
   {
-    QWriteLocker lock(&pluginsLock);
+    QMutexLocker lock(&objectLock);
     while (it.hasNext())
     {
       ctkPluginArchive* pa = it.next();
@@ -325,7 +324,7 @@ void ctkPlugins::load()
             << pa->getPluginId()
             << " ("  << qPrintable(pa->getPluginLocation().toString())  << ")"
             << " uninstalled it!\n";
-        std::cerr << e.what();
+        std::cerr << e.what() << std::endl;
       }
     }
   }

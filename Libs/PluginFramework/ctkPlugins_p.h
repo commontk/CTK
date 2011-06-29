@@ -25,6 +25,7 @@
 #include <QUrl>
 #include <QHash>
 #include <QReadWriteLock>
+#include <QMutex>
 #include <QSharedPointer>
 
 
@@ -61,6 +62,10 @@ private:
    */
   mutable QReadWriteLock pluginsLock;
 
+  /**
+   * Lock for protecting this object.
+   */
+  QMutex objectLock;
 
 public:
 
