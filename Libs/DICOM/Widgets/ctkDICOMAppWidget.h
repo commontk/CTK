@@ -42,6 +42,11 @@ public:
 
   QString databaseDirectory() const;
 
+  /// Setting search widget pop-up mode
+  /// Default value is false. Setting it to true will make
+  /// search widget to be displayed as pop-up widget
+  void setSearchWidgetPopUpMode(bool flag);
+
 public slots:
   void setDatabaseDirectory(const QString& directory);
   void onAddToDatabase();
@@ -94,6 +99,12 @@ protected slots:
 
     /// To be called after image preview displayed an image
     void onImagePreviewDisplayed(int imageID, int count);
+
+private slots:
+
+    void onSearchPopUpButtonClicked();
+
+    void onSearchWidgetTopLevelChanged(bool topLevel);
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMAppWidget);

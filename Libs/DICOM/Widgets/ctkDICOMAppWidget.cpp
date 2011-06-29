@@ -78,6 +78,8 @@ public:
   QSharedPointer<ctkDICOMIndexer> DICOMIndexer;
 
   QTimer* AutoPlayTimer;
+
+  bool IsSearchWidgetPopUpMode;
 };
 
 //----------------------------------------------------------------------------
@@ -101,6 +103,8 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   Q_D(ctkDICOMAppWidget);  
 
   d->setupUi(this);
+
+  this->setSearchWidgetPopUpMode(true);
 
   //Hide image previewer buttons
   d->NextImageButton->hide();
@@ -227,6 +231,33 @@ QString ctkDICOMAppWidget::databaseDirectory() const
   return settings.value("DatabaseDirectory").toString();
 }
 
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::setSearchWidgetPopUpMode(bool flag){
+  Q_D(ctkDICOMAppWidget);
+
+  if(flag)
+    {
+    d->SearchDockWidget->setTitleBarWidget(0);
+    d->SearchPopUpButton->show();
+    d->SearchDockWidget->hide();
+    d->SearchDockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+    connect(d->SearchDockWidget, SIGNAL(topLevelChanged(bool)), this, SLOT(onSearchWidgetTopLevelChanged(bool)));
+    connect(d->SearchPopUpButton, SIGNAL(clicked()), this, SLOT(onSearchPopUpButtonClicked()));
+    }
+  else
+    {
+    d->SearchDockWidget->setTitleBarWidget(new QWidget());
+    d->SearchPopUpButton->hide();
+    d->SearchDockWidget->show();
+    d->SearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    disconnect(d->SearchDockWidget, SIGNAL(topLevelChanged(bool)), this, SLOT(onSearchWidgetTopLevelChanged(bool)));
+    disconnect(d->SearchPopUpButton, SIGNAL(clicked()), this, SLOT(onSearchPopUpButtonClicked()));
+    }
+
+  d->IsSearchWidgetPopUpMode = flag;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onAddToDatabase()
 {
   //Q_D(ctkDICOMAppWidget);
@@ -605,4 +636,35 @@ void ctkDICOMAppWidget::onImagePreviewDisplayed(int imageID, int count){
   d->PlaySlider->setMinimum(0);
   d->PlaySlider->setMaximum(count-1);
   d->PlaySlider->setValue(imageID);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onSearchPopUpButtonClicked(){
+  Q_D(ctkDICOMAppWidget);
+
+  if(d->SearchDockWidget->isFloating())
+    {
+    d->SearchDockWidget->hide();
+    d->SearchDockWidget->setFloating(false);
+    }
+  else
+    {
+    d->SearchDockWidget->setFloating(true);
+    d->SearchDockWidget->adjustSize();
+    d->SearchDockWidget->show();
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onSearchWidgetTopLevelChanged(bool topLevel){
+  Q_D(ctkDICOMAppWidget);
+
+  if(topLevel)
+    {
+    d->SearchDockWidget->show();
+    }
+  else
+    {
+    d->SearchDockWidget->hide();
+    }
 }
