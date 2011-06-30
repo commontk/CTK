@@ -210,6 +210,7 @@ int ctkDICOMModelPrivate::childrenCount(Node* node)const
   return count;
 }
 */
+
 //------------------------------------------------------------------------------
 Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)const
 {
@@ -312,24 +313,37 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
       break;
     case ctkDICOMModel::PatientType:
       //query = QString("SELECT  FROM Studies WHERE PatientsUID='%1'").arg(node->UID);
-      if(this->SearchParameters["Study"].toString() != ""){
+      if(this->SearchParameters["Study"].toString() != "")
+        {
         condition.append("StudyDescription LIKE \"%" + this->SearchParameters["Study"].toString() + "%\"" + " AND ");
-      }
+        }
+      if(this->SearchParameters["Modalities"].value<QStringList>().count() > 0)
+        {
+        condition.append("ModalitiesInStudy IN (\"" + this->SearchParameters["Modalities"].value<QStringList>().join("\",\"") + "\") AND ");
+        }
+      if(this->SearchParameters["StartDate"].toString() != "" &&
+         this->SearchParameters["EndDate"].toString() != "")
+        {
+          condition.append(" ( StudyDate BETWEEN \'" + QDate::fromString(this->SearchParameters["StartDate"].toString(), "yyyyMMdd").toString("yyyy-MM-dd")
+                           + "\' AND \'" + QDate::fromString(this->SearchParameters["EndDate"].toString(), "yyyyMMdd").toString("yyyy-MM-dd") + "\' ) AND ");
+        }
       query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPhysiciansName as Performer", "Studies", condition + QString("PatientsUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Patient: query is: " + query );
       break;
     case ctkDICOMModel::StudyType:
-      if(this->SearchParameters["Series"].toString() != ""){
-        condition.append("SeriesDescription LIKE \"%" + this->SearchParameters["Series"].toString() + "%\"" + " AND ");
-      }
       //query = QString("SELECT SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='%1'").arg(node->UID);
+      if(this->SearchParameters["Series"].toString() != "")
+        {
+        condition.append("SeriesDescription LIKE \"%" + this->SearchParameters["Series"].toString() + "%\"" + " AND ");
+        }
       query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number","Series",condition + QString("StudyInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Study: query is: " + query );
       break;
     case ctkDICOMModel::SeriesType:
-      if(this->SearchParameters["ID"].toString() != ""){
+      if(this->SearchParameters["ID"].toString() != "")
+        {
         condition.append("SOPInstanceUID LIKE \"%" + this->SearchParameters["ID"].toString() + "%\"" + " AND ");
-      }
+        }
       //query = QString("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'").arg(node->UID);
       query = this->generateQuery("SOPInstanceUID as UID, Filename as Name, SeriesInstanceUID as Date", "Images", condition + QString("SeriesInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Series: query is: " + query );
@@ -394,91 +408,7 @@ void ctkDICOMModelPrivate::fetch(const QModelIndex& indexValue, int limit)
     }
 }
 
-//------------------------------------------------------------------------------
-bool ctkDICOMModel::setChildData(const QModelIndex &index, const QVariant &value, int role)
-{
-  Q_D(const ctkDICOMModel);
-  if (role != Qt::CheckStateRole)
-    {
-    return false;
-    }
-  Node* node = d->nodeFromIndex(index);
-  if (!node || node->Data[role] == value)
-    {
-    return false;
-    }
-  node->Data[role] = value;
-  emit dataChanged(index, index);
 
-  for(int i=0; i<node->Children.count(); i++)
-    {
-      this->setData(index.child(i,0), value, role);
-    }
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &value, int role)
-{
-  Q_D(const ctkDICOMModel);
-
-  if(!index.isValid()){
-    return false;
-  }
-
-  if (role != Qt::CheckStateRole)
-    {
-    return false;
-    }
-  else
-    {
-    Node* node = d->nodeFromIndex(index);
-
-    bool checkedExist = false;
-    bool partiallyCheckedExist = false;
-    bool uncheckedExist = false;
-
-    for(int i=0; i<index.model()->rowCount(index); i++)
-      {
-      Node* childNode = d->nodeFromIndex(index.child(i,0));
-      if(childNode->Data[Qt::CheckStateRole] ==  Qt::Checked)
-        {
-        checkedExist = true;
-        }
-      else if(childNode->Data[Qt::CheckStateRole] ==  Qt::PartiallyChecked)
-        {
-        partiallyCheckedExist = true;
-        }
-      else if(childNode->Data[Qt::CheckStateRole] ==  Qt::Unchecked)
-        {
-        uncheckedExist = true;
-        }
-      }
-
-    if(partiallyCheckedExist || (checkedExist && uncheckedExist))
-      {
-      node->Data[Qt::CheckStateRole] = Qt::PartiallyChecked;
-      }
-    else if(checkedExist)
-      {
-      node->Data[Qt::CheckStateRole] = Qt::Checked;
-      }
-    else if(uncheckedExist)
-      {
-      node->Data[Qt::CheckStateRole] = Qt::Unchecked;
-      }
-    else
-      {
-      node->Data[Qt::CheckStateRole] = Qt::Unchecked;
-      }
-
-    emit dataChanged(index, index);
-
-    this->setParentData(index.parent(), value, role);
-    }
-  return true;
-}
 
 //------------------------------------------------------------------------------
 ctkDICOMModel::ctkDICOMModel(QObject* parentObject)
@@ -749,6 +679,92 @@ bool ctkDICOMModel::setData(const QModelIndex &index, const QVariant &value, int
     this->setParentData(index.parent(), value, role);
     }
 
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMModel::setChildData(const QModelIndex &index, const QVariant &value, int role)
+{
+  Q_D(const ctkDICOMModel);
+  if (role != Qt::CheckStateRole)
+    {
+    return false;
+    }
+  Node* node = d->nodeFromIndex(index);
+  if (!node || node->Data[role] == value)
+    {
+    return false;
+    }
+  node->Data[role] = value;
+  emit dataChanged(index, index);
+
+  for(int i=0; i<node->Children.count(); i++)
+    {
+      this->setData(index.child(i,0), value, role);
+    }
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &value, int role)
+{
+  Q_D(const ctkDICOMModel);
+
+  if(!index.isValid()){
+    return false;
+  }
+
+  if (role != Qt::CheckStateRole)
+    {
+    return false;
+    }
+  else
+    {
+    Node* node = d->nodeFromIndex(index);
+
+    bool checkedExist = false;
+    bool partiallyCheckedExist = false;
+    bool uncheckedExist = false;
+
+    for(int i=0; i<index.model()->rowCount(index); i++)
+      {
+      Node* childNode = d->nodeFromIndex(index.child(i,0));
+      if(childNode->Data[Qt::CheckStateRole] ==  Qt::Checked)
+        {
+        checkedExist = true;
+        }
+      else if(childNode->Data[Qt::CheckStateRole] ==  Qt::PartiallyChecked)
+        {
+        partiallyCheckedExist = true;
+        }
+      else if(childNode->Data[Qt::CheckStateRole] ==  Qt::Unchecked)
+        {
+        uncheckedExist = true;
+        }
+      }
+
+    if(partiallyCheckedExist || (checkedExist && uncheckedExist))
+      {
+      node->Data[Qt::CheckStateRole] = Qt::PartiallyChecked;
+      }
+    else if(checkedExist)
+      {
+      node->Data[Qt::CheckStateRole] = Qt::Checked;
+      }
+    else if(uncheckedExist)
+      {
+      node->Data[Qt::CheckStateRole] = Qt::Unchecked;
+      }
+    else
+      {
+      node->Data[Qt::CheckStateRole] = Qt::Unchecked;
+      }
+
+    emit dataChanged(index, index);
+
+    this->setParentData(index.parent(), value, role);
+    }
   return true;
 }
 

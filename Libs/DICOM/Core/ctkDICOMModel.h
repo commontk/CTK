@@ -24,6 +24,7 @@
 // Qt includes 
 #include <QAbstractItemModel>
 #include <QSqlDatabase>
+#include <QStringList>
 
 #include "ctkDICOMCoreExport.h"
 
@@ -86,5 +87,6 @@ private:
 };
 
 Q_DECLARE_METATYPE(Qt::CheckState);
+Q_DECLARE_METATYPE(QStringList);
 
 #endif
