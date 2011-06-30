@@ -104,7 +104,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   d->setupUi(this);
 
-  this->setSearchWidgetPopUpMode(true);
+  this->setSearchWidgetPopUpMode(false);
 
   //Hide image previewer buttons
   d->NextImageButton->hide();

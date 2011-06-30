@@ -77,9 +77,13 @@ public slots:
 protected:
   QScopedPointer<ctkDICOMModelPrivate> d_ptr;
 
+  bool setChildData(const QModelIndex &index, const QVariant &value, int role);
+
 private:
   Q_DECLARE_PRIVATE(ctkDICOMModel);
   Q_DISABLE_COPY(ctkDICOMModel);
 };
+
+Q_DECLARE_METATYPE(Qt::CheckState);
 
 #endif
