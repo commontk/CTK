@@ -78,6 +78,7 @@ protected:
   QScopedPointer<ctkDICOMModelPrivate> d_ptr;
 
   bool setChildData(const QModelIndex &index, const QVariant &value, int role);
+  bool setParentData(const QModelIndex &index, const QVariant &value, int role);
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMModel);

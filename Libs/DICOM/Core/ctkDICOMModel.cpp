@@ -419,6 +419,68 @@ bool ctkDICOMModel::setChildData(const QModelIndex &index, const QVariant &value
 }
 
 //------------------------------------------------------------------------------
+bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &value, int role)
+{
+  Q_D(const ctkDICOMModel);
+
+  if(!index.isValid()){
+    return false;
+  }
+
+  if (role != Qt::CheckStateRole)
+    {
+    return false;
+    }
+  else
+    {
+    Node* node = d->nodeFromIndex(index);
+
+    bool checkedExist = false;
+    bool partiallyCheckedExist = false;
+    bool uncheckedExist = false;
+
+    for(int i=0; i<index.model()->rowCount(index); i++)
+      {
+      Node* childNode = d->nodeFromIndex(index.child(i,0));
+      if(childNode->Data[Qt::CheckStateRole] ==  Qt::Checked)
+        {
+        checkedExist = true;
+        }
+      else if(childNode->Data[Qt::CheckStateRole] ==  Qt::PartiallyChecked)
+        {
+        partiallyCheckedExist = true;
+        }
+      else if(childNode->Data[Qt::CheckStateRole] ==  Qt::Unchecked)
+        {
+        uncheckedExist = true;
+        }
+      }
+
+    if(partiallyCheckedExist || (checkedExist && uncheckedExist))
+      {
+      node->Data[Qt::CheckStateRole] = Qt::PartiallyChecked;
+      }
+    else if(checkedExist)
+      {
+      node->Data[Qt::CheckStateRole] = Qt::Checked;
+      }
+    else if(uncheckedExist)
+      {
+      node->Data[Qt::CheckStateRole] = Qt::Unchecked;
+      }
+    else
+      {
+      node->Data[Qt::CheckStateRole] = Qt::Unchecked;
+      }
+
+    emit dataChanged(index, index);
+
+    this->setParentData(index.parent(), value, role);
+    }
+  return true;
+}
+
+//------------------------------------------------------------------------------
 ctkDICOMModel::ctkDICOMModel(QObject* parentObject)
   : Superclass(parentObject)
   , d_ptr(new ctkDICOMModelPrivate(*this))
@@ -462,10 +524,12 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
     Node* node = d->nodeFromIndex(dataIndex);
     return node ? node->Type : 0;
     }
-  else if ( dataIndex.column() == 0 && role == Qt::CheckStateRole){
+  else if ( dataIndex.column() == 0 && role == Qt::CheckStateRole)
+    {
     Node* node = d->nodeFromIndex(dataIndex);
     return node ? node->Data[Qt::CheckStateRole] : 0;
     }
+
 
   if (role != Qt::DisplayRole && role != Qt::EditRole)
     {
@@ -679,23 +743,12 @@ bool ctkDICOMModel::setData(const QModelIndex &index, const QVariant &value, int
     {
       this->setChildData(index.child(i,0), value, role);
     }
-/*
-  int count = index.model()->rowCount(index.parent());
-  if(count > 0)
-    {
-    Qt::CheckState state = node->Parent->Children[0]->Data[role].value<Qt::CheckState>();
 
-    for(int i=1; i<count; i++)
-      {
-      if(node->Parent->Children[i]->Data[role] != node->Parent->Children[0]->Data[role])
-        {
-          state = Qt::PartiallyChecked;
-          break;
-        }
-      }
-    node->Parent->Data[role] = state;
+  if(index.parent().isValid())
+    {
+    this->setParentData(index.parent(), value, role);
     }
-*/
+
   return true;
 }
 
