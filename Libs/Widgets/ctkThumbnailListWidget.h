@@ -30,6 +30,8 @@ class QModelIndex;
 class ctkThumbnailListWidgetPrivate;
 class ctkThumbnailWidget;
 
+class Ui_ctkThumbnailListWidget;
+
 class CTK_WIDGETS_EXPORT ctkThumbnailListWidget : public QWidget
 {
   Q_OBJECT
@@ -51,7 +53,10 @@ public:
   int thumbnailWidth();
 
 protected:
+  Ui_ctkThumbnailListWidget* ui;
   QScopedPointer<ctkThumbnailListWidgetPrivate> d_ptr;
+
+  int ThumbnailWidth;
 
 private:
   Q_DECLARE_PRIVATE(ctkThumbnailListWidget);

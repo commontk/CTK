@@ -420,7 +420,7 @@ void ctkDICOMAppWidget::onNextImage(){
         QModelIndex nextIndex = currentIndex.sibling(imageID, 0);
 
         d->ImagePreview->onModelSelected(nextIndex);
-        d->ThumbnailsWidget->selectThumbnail(nextIndex);
+        d->ThumbnailsWidget->selectThumbnailFromIndex(nextIndex);
         }
       }
 }
@@ -454,7 +454,7 @@ void ctkDICOMAppWidget::onPreviousImage(){
         QModelIndex prevIndex = currentIndex.sibling(imageID, 0);
 
         d->ImagePreview->onModelSelected(prevIndex);
-        d->ThumbnailsWidget->selectThumbnail(prevIndex);
+        d->ThumbnailsWidget->selectThumbnailFromIndex(prevIndex);
         }
       }
 }
@@ -482,7 +482,7 @@ void ctkDICOMAppWidget::onNextSeries(){
         QModelIndex nextIndex = seriesIndex.sibling(seriesID, 0);
 
         d->ImagePreview->onModelSelected(nextIndex);
-        d->ThumbnailsWidget->selectThumbnail(nextIndex);
+        d->ThumbnailsWidget->selectThumbnailFromIndex(nextIndex);
         }
       }
 }
@@ -511,7 +511,7 @@ void ctkDICOMAppWidget::onPreviousSeries(){
         QModelIndex prevIndex = seriesIndex.sibling(seriesID, 0);
 
         d->ImagePreview->onModelSelected(prevIndex);
-        d->ThumbnailsWidget->selectThumbnail(prevIndex);
+        d->ThumbnailsWidget->selectThumbnailFromIndex(prevIndex);
         }
       }
 }
@@ -540,7 +540,7 @@ void ctkDICOMAppWidget::onNextStudy(){
         QModelIndex nextIndex = studyIndex.sibling(studyID, 0);
 
         d->ImagePreview->onModelSelected(nextIndex);
-        d->ThumbnailsWidget->selectThumbnail(nextIndex);
+        d->ThumbnailsWidget->selectThumbnailFromIndex(nextIndex);
         }
       }
 }
@@ -570,7 +570,7 @@ void ctkDICOMAppWidget::onPreviousStudy(){
         QModelIndex prevIndex = studyIndex.sibling(studyID, 0);
 
         d->ImagePreview->onModelSelected(prevIndex);
-        d->ThumbnailsWidget->selectThumbnail(prevIndex);
+        d->ThumbnailsWidget->selectThumbnailFromIndex(prevIndex);
         }
       }
 }

@@ -103,6 +103,8 @@ SET(KIT_SRCS
   ctkSliderWidget.h
   ctkTestApplication.cpp
   ctkTestApplication.h
+  ctkThumbnailListWidget.cpp
+  ctkThumbnailListWidget.h
   ctkThumbnailWidget.cpp
   ctkThumbnailWidget.h
   ctkToolTipTrapper.cpp
@@ -203,6 +205,7 @@ SET(KIT_MOC_SRCS
   ctkQImageView.h
   ctkSliderWidget.h
   ctkTestApplication.h
+  ctkThumbnailListWidget.h
   ctkThumbnailWidget.h
   ctkToolTipTrapper.h
   ctkTransferFunctionBarsItem.h
@@ -241,6 +244,7 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkScreenshotDialog.ui
   Resources/UI/ctkSettingsDialog.ui
   Resources/UI/ctkSliderWidget.ui
+  Resources/UI/ctkThumbnailListWidget.ui
   Resources/UI/ctkThumbnailWidget.ui
   Resources/UI/ctkWorkflowGroupBox.ui
   )

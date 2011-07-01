@@ -18,32 +18,27 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMThumbnailsListWidget_h
-#define __ctkDICOMThumbnailsListWidget_h
-
-// Qt includes 
-#include <QWidget>
+#ifndef __ctkDICOMThumbnailListWidget_h
+#define __ctkDICOMThumbnailListWidget_h
 
 #include "ctkDICOMWidgetsExport.h"
+#include "ctkThumbnailListWidget.h"
 
 class QModelIndex;
 class ctkDICOMThumbnailListWidgetPrivate;
 class ctkThumbnailWidget;
 
-class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailListWidget : public QWidget
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailListWidget : public ctkThumbnailListWidget
 {
   Q_OBJECT
 public:
-  typedef QWidget Superclass;
+  typedef ctkThumbnailListWidget Superclass;
   explicit ctkDICOMThumbnailListWidget(QWidget* parent=0);
   virtual ~ctkDICOMThumbnailListWidget();
 
   void setDatabaseDirectory(const QString& directory);
 
-  void selectThumbnail(int index);
-  void selectThumbnail(const QModelIndex& index);
-
-  void reset();
+  void selectThumbnailFromIndex(const QModelIndex& index);
 
 protected:
   QScopedPointer<ctkDICOMThumbnailListWidgetPrivate> d_ptr;
@@ -52,15 +47,8 @@ private:
   Q_DECLARE_PRIVATE(ctkDICOMThumbnailListWidget);
   Q_DISABLE_COPY(ctkDICOMThumbnailListWidget);
 
-signals:
-  void selected(const ctkThumbnailWidget& widget);
-  void doubleClicked(const ctkThumbnailWidget& widget);
-
 public slots:
   void onModelSelected(const QModelIndex& index);
-  void onThumbnailSelected(const ctkThumbnailWidget& widget);
-
-  void setThumbnailWidth(int width);
 };
 
 #endif

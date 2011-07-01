@@ -75,7 +75,6 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMQueryWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget.ui
-  Resources/UI/ctkDICOMThumbnailListWidget.ui
 )
 
 # Resources
