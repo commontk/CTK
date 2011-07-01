@@ -38,6 +38,7 @@
 #include "ctkVTKSliceViewPlugin.h"
 #include "ctkVTKSurfaceMaterialPropertyWidgetPlugin.h"
 #include "ctkVTKTextPropertyWidgetPlugin.h"
+#include "ctkVTKThresholdWidgetPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKWidgetsPlugins :
@@ -63,6 +64,7 @@ public:
     plugins << new ctkVTKSliceViewPlugin;
     plugins << new ctkVTKSurfaceMaterialPropertyWidgetPlugin;
     plugins << new ctkVTKTextPropertyWidgetPlugin;
+    plugins << new ctkVTKThresholdWidgetPlugin;
     return plugins;
     }
 };

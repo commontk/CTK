@@ -37,12 +37,19 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKVolumePropertyWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+  ///
+  /// Control wether a range slider widget is used to edit the opacity
+  /// function instead of a chart editor. False by default
+  Q_PROPERTY(bool useThresholdSlider READ useThresholdSlider WRITE setUseThresholdSlider)
 
 public:
   ctkVTKVolumePropertyWidget(QWidget* parent = 0);
   virtual ~ctkVTKVolumePropertyWidget();
 
   vtkVolumeProperty* volumeProperty()const;
+
+  bool useThresholdSlider()const;
+  void setUseThresholdSlider(bool enable);
 
 public slots:
   void setVolumeProperty(vtkVolumeProperty* volumeProperty);

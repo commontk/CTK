@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ctkVTKThresholdWidget</class>
+ <widget class="QWidget" name="ctkVTKThresholdWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>251</width>
+    <height>46</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Threshold</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="ThresholdLabel">
+     <property name="text">
+      <string>Threshold:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="ctkRangeWidget" name="ThresholdSliderWidget"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="OpacityLabel">
+     <property name="text">
+      <string>Opacity:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="ctkSliderWidget" name="OpacitySliderWidget">
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkRangeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

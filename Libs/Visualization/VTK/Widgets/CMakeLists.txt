@@ -38,6 +38,8 @@ SET(KIT_SRCS
   ctkVTKSurfaceMaterialPropertyWidget.h
   ctkVTKTextPropertyWidget.cpp
   ctkVTKTextPropertyWidget.h
+  ctkVTKThresholdWidget.cpp
+  ctkVTKThresholdWidget.h
   ctkVTKThumbnailView.cpp
   ctkVTKThumbnailView.h
   )
@@ -59,6 +61,7 @@ SET(KIT_MOC_SRCS
   ctkVTKSliceView_p.h
   ctkVTKSurfaceMaterialPropertyWidget.h
   ctkVTKTextPropertyWidget.h
+  ctkVTKThresholdWidget.h
   ctkVTKThumbnailView.h
   )
 
@@ -66,6 +69,7 @@ SET(KIT_MOC_SRCS
 SET(KIT_UI_FORMS
   Resources/UI/ctkVTKScalarBarWidget.ui
   Resources/UI/ctkVTKTextPropertyWidget.ui
+  Resources/UI/ctkVTKThresholdWidget.ui
 )
 
 # Resources

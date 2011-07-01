@@ -25,6 +25,7 @@
 #include "ctkLogger.h"
 #include "ctkVTKScalarsToColorsView.h"
 #include "ctkVTKVolumePropertyWidget.h"
+#include "ctkUtils.h"
 #include "ui_ctkVTKVolumePropertyWidget.h"
 
 // VTK includes
@@ -54,7 +55,9 @@ protected:
 public:
   ctkVTKVolumePropertyWidgetPrivate(ctkVTKVolumePropertyWidget& object);
   void setupUi(QWidget* widget);
-
+  void updateThresholdSlider(vtkPiecewiseFunction* opacityFunction);
+  void setThreshold(double min, double max, double opacity);
+  
   vtkVolumeProperty* VolumeProperty;
   int                CurrentComponent;
 };
@@ -81,6 +84,7 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
   this->ScalarOpacityWidget->view()->addCompositeFunction(0, 0, false, true);
   this->ScalarColorWidget->view()->addColorTransferFunction(0);
   this->GradientWidget->view()->addPiecewiseFunction(0);
+  this->ScalarOpacityThresholdWidget->setVisible(false);
 
   this->GradientGroupBox->setCollapsed(true);
   this->AdvancedGroupBox->setCollapsed(true);
@@ -154,6 +158,8 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
       d->VolumeProperty->GetGradientOpacity() : 0;
     }
 
+  d->ScalarOpacityThresholdWidget->setPiecewiseFunction(this->useThresholdSlider() ? opacityFunction : 0);
+  
   d->ScalarOpacityWidget->view()->setOpacityFunctionToPlots(opacityFunction);
   d->ScalarOpacityWidget->view()->setColorTransferFunctionToPlots(colorTransferFunction);
   d->ScalarColorWidget->view()->setColorTransferFunctionToPlots(colorTransferFunction);
@@ -242,4 +248,19 @@ void ctkVTKVolumePropertyWidget::setSpecularPower(double value)
   d->VolumeProperty->SetSpecularPower(d->CurrentComponent, value);
 }
 
+// ----------------------------------------------------------------------------
+bool ctkVTKVolumePropertyWidget::useThresholdSlider()const
+{
+  Q_D(const ctkVTKVolumePropertyWidget);
+  return d->ScalarOpacityThresholdWidget->isVisibleTo(
+    const_cast<ctkVTKVolumePropertyWidget*>(this));
+}
 
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setUseThresholdSlider(bool enable)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  d->ScalarOpacityThresholdWidget->setVisible(enable);
+  d->ScalarOpacityWidget->setVisible(!enable);
+  this->updateFromVolumeProperty();
+}

@@ -86,6 +86,9 @@ public:
   /// Description
   /// Utility function that set the min/max in once
   void setRange(double min, double max);
+  /// Description
+  /// Return the range of the slider
+  void range(double* range)const;
 
   ///
   /// This property holds the slider and spinbox minimum value.

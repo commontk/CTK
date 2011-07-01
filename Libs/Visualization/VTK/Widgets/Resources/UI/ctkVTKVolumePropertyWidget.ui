@@ -26,7 +26,10 @@
       <property name="margin">
        <number>0</number>
       </property>
-      <item>
+       <item>
+        <widget class="ctkVTKThresholdWidget" name="ScalarOpacityThresholdWidget"/>
+       </item>
+       <item>
        <widget class="ctkVTKScalarsToColorsWidget" name="ScalarOpacityWidget">
         <property name="minimumSize">
          <size>
@@ -146,6 +149,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkVTKThresholdWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkVTKThresholdWidget.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkVTKScalarsToColorsWidget</class>
    <extends>QWidget</extends>

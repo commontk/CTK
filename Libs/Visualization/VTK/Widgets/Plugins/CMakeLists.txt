@@ -27,6 +27,8 @@ SET(PLUGIN_SRCS
   ctkVTKSurfaceMaterialPropertyWidgetPlugin.h
   ctkVTKTextPropertyWidgetPlugin.cpp
   ctkVTKTextPropertyWidgetPlugin.h
+  ctkVTKThresholdWidgetPlugin.cpp
+  ctkVTKThresholdWidgetPlugin.h
   )
 
 # Headers that should run through moc
@@ -40,6 +42,7 @@ SET(PLUGIN_MOC_SRCS
   ctkVTKSliceViewPlugin.h
   ctkVTKSurfaceMaterialPropertyWidgetPlugin.h
   ctkVTKTextPropertyWidgetPlugin.h
+  ctkVTKThresholdWidgetPlugin.h
   )
   
 IF(CTK_USE_CHARTS)

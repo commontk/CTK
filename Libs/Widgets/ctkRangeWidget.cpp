@@ -236,6 +236,16 @@ double ctkRangeWidget::maximum()const
 }
 
 // --------------------------------------------------------------------------
+void ctkRangeWidget::range(double* range)const
+{
+  Q_D(const ctkRangeWidget);
+  Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
+  range[0] = d->Slider->minimum();
+  range[1] = d->Slider->maximum();
+}
+
+// --------------------------------------------------------------------------
 void ctkRangeWidget::setMinimum(double min)
 {
   Q_D(ctkRangeWidget);

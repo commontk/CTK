@@ -64,6 +64,7 @@ int ctkVTKVolumePropertyWidgetTest1(int argc, char * argv [] )
   volumeProperty->SetScalarOpacity(otf);
 
   ctkVTKVolumePropertyWidget widget;
+  //widget.setUseThresholdSlider(true);
   widget.setVolumeProperty(volumeProperty);
 
   volumeProperty->SetScalarOpacity(otf2);
