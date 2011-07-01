@@ -53,6 +53,7 @@ SET(TEST_SOURCES
   ctkSettingsDialogTest1.cpp
   ctkSliderWidgetTest1.cpp
   ctkSliderWidgetTest2.cpp
+  ctkThumbnailWidgetTest1.cpp
   ctkToolTipTrapperTest1.cpp
   ctkTreeComboBoxTest1.cpp
   ctkWorkflowWidgetTest1.cpp
@@ -168,6 +169,7 @@ SIMPLE_TEST( ctkSettingsPanelTest2 )
 SIMPLE_TEST( ctkSettingsTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest2 )
+SIMPLE_TEST( ctkThumbnailWidgetTest1 )
 SIMPLE_TEST( ctkToolTipTrapperTest1 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )
 SIMPLE_TEST( ctkWorkflowWidgetTest1 )

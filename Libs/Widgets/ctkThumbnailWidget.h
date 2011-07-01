@@ -18,26 +18,26 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMThumbnailWidget_h
-#define __ctkDICOMThumbnailWidget_h
+#ifndef __ctkThumbnailWidget_h
+#define __ctkThumbnailWidget_h
 
 // Qt includes 
 #include <QWidget>
 #include <QModelIndex>
 
-#include "ctkDICOMWidgetsExport.h"
+#include "ctkWidgetsExport.h"
 
-class ctkDICOMThumbnailWidgetPrivate;
+class ctkThumbnailWidgetPrivate;
 
-class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailWidget : public QWidget
+class CTK_WIDGETS_EXPORT ctkThumbnailWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString text READ text WRITE setText)
   Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
 public:
   typedef QWidget Superclass;
-  explicit ctkDICOMThumbnailWidget(QWidget* parent=0);
-  virtual ~ctkDICOMThumbnailWidget();
+  explicit ctkThumbnailWidget(QWidget* parent=0);
+  virtual ~ctkThumbnailWidget();
 
   void setText(const QString& text);
   QString text()const;
@@ -52,7 +52,7 @@ public:
   QModelIndex sourceIndex() const;
 
 protected:
-  QScopedPointer<ctkDICOMThumbnailWidgetPrivate> d_ptr;
+  QScopedPointer<ctkThumbnailWidgetPrivate> d_ptr;
 
   virtual void mousePressEvent(QMouseEvent* event);
   virtual void mouseDoubleClickEvent(QMouseEvent* event);
@@ -60,12 +60,12 @@ protected:
   virtual void resizeEvent(QResizeEvent* event);
 
 private:
-  Q_DECLARE_PRIVATE(ctkDICOMThumbnailWidget);
-  Q_DISABLE_COPY(ctkDICOMThumbnailWidget);
+  Q_DECLARE_PRIVATE(ctkThumbnailWidget);
+  Q_DISABLE_COPY(ctkThumbnailWidget);
 
 signals:
-  void selected(const ctkDICOMThumbnailWidget& widget);
-  void doubleClicked(const ctkDICOMThumbnailWidget& widget);
+  void selected(const ctkThumbnailWidget& widget);
+  void doubleClicked(const ctkThumbnailWidget& widget);
 };
 
 #endif

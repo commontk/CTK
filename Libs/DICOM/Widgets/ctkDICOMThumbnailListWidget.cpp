@@ -41,7 +41,7 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMThumbnailListWidget.h"
-#include "ctkDICOMThumbnailWidget.h"
+#include "ctkThumbnailWidget.h"
 #include "ui_ctkDICOMThumbnailListWidget.h"
 
 // STD includes
@@ -180,12 +180,12 @@ void ctkDICOMThumbnailListWidgetPrivate::clearAllThumbnails(){
     QLayoutItem* item;
     while((item = this->ScrollAreaContentWidget->layout()->takeAt(0)))
     {
-        ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(item->widget());
+        ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(item->widget());
         if(thumbnailWidget)
         {
-            q->disconnect(thumbnailWidget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkDICOMThumbnailWidget)));
-            q->disconnect(thumbnailWidget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SIGNAL(selected(ctkDICOMThumbnailWidget)));
-            q->disconnect(thumbnailWidget, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)), q, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)));
+            q->disconnect(thumbnailWidget, SIGNAL(selected(ctkThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkThumbnailWidget)));
+            q->disconnect(thumbnailWidget, SIGNAL(selected(ctkThumbnailWidget)), q, SIGNAL(selected(ctkThumbnailWidget)));
+            q->disconnect(thumbnailWidget, SIGNAL(doubleClicked(ctkThumbnailWidget)), q, SIGNAL(doubleClicked(ctkThumbnailWidget)));
         }
         item->widget()->deleteLater();
     }
@@ -206,7 +206,7 @@ void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& i
                                 model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                 model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-        ctkDICOMThumbnailWidget* widget = new ctkDICOMThumbnailWidget(this->ScrollAreaContentWidget);
+        ctkThumbnailWidget* widget = new ctkThumbnailWidget(this->ScrollAreaContentWidget);
         QString widgetLabel = text;
         widget->setText( widgetLabel );
         QPixmap pix(thumbnailPath);
@@ -219,9 +219,9 @@ void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& i
         widget->setSourceIndex(sourceIndex);
         this->ScrollAreaContentWidget->layout()->addWidget(widget);
 
-        q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkDICOMThumbnailWidget)));
-        q->connect(widget, SIGNAL(selected(ctkDICOMThumbnailWidget)), q, SIGNAL(selected(ctkDICOMThumbnailWidget)));
-        q->connect(widget, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)), q, SIGNAL(doubleClicked(ctkDICOMThumbnailWidget)));
+        q->connect(widget, SIGNAL(selected(ctkThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkThumbnailWidget)));
+        q->connect(widget, SIGNAL(selected(ctkThumbnailWidget)), q, SIGNAL(selected(ctkThumbnailWidget)));
+        q->connect(widget, SIGNAL(doubleClicked(ctkThumbnailWidget)), q, SIGNAL(doubleClicked(ctkThumbnailWidget)));
     }
 }
 
@@ -267,7 +267,7 @@ void ctkDICOMThumbnailListWidget::selectThumbnail(int index){
 
     for(int i=0; i<count; i++)
       {
-      ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+      ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
       if(i == index)
         {
         thumbnailWidget->setSelected(true);
@@ -301,7 +301,7 @@ void ctkDICOMThumbnailListWidget::selectThumbnail(const QModelIndex &index){
 
         for(int i=0; i<count; i++)
         {
-            ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+            ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
             if(thumbnailWidget->sourceIndex() == index){
                 thumbnailWidget->setSelected(true);
                 d->ScrollArea->ensureWidgetVisible(thumbnailWidget);
@@ -346,11 +346,11 @@ void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailListWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget &widget){
+void ctkDICOMThumbnailListWidget::onThumbnailSelected(const ctkThumbnailWidget &widget){
     Q_D(ctkDICOMThumbnailListWidget);
     for(int i=0; i<d->ScrollAreaContentWidget->layout()->count(); i++)
     {
-        ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+        ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
         if(thumbnailWidget && (&widget != thumbnailWidget))
         {
             thumbnailWidget->setSelected(false);
@@ -363,7 +363,7 @@ void ctkDICOMThumbnailListWidget::setThumbnailWidth(int width){
   Q_D(ctkDICOMThumbnailListWidget);
   for(int i=0; i<d->ScrollAreaContentWidget->layout()->count(); i++)
     {
-    ctkDICOMThumbnailWidget* thumbnailWidget = qobject_cast<ctkDICOMThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+    ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
     if(thumbnailWidget)
       {
         if(width > 0){

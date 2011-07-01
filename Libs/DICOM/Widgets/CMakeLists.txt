@@ -33,8 +33,6 @@ SET(KIT_SRCS
   ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.cpp
   ctkDICOMThumbnailListWidget.h
-  ctkDICOMThumbnailWidget.cpp
-  ctkDICOMThumbnailWidget.h
   )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)
@@ -60,7 +58,6 @@ SET(KIT_MOC_SRCS
   ctkDICOMServerNodeWidget.h
   ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.h
-  ctkDICOMThumbnailWidget.h
   )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)
@@ -79,7 +76,6 @@ SET(KIT_UI_FORMS
   Resources/UI/ctkDICOMQueryWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget.ui
   Resources/UI/ctkDICOMThumbnailListWidget.ui
-  Resources/UI/ctkDICOMThumbnailWidget.ui
 )
 
 # Resources

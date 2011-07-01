@@ -28,7 +28,7 @@
 
 class QModelIndex;
 class ctkDICOMThumbnailListWidgetPrivate;
-class ctkDICOMThumbnailWidget;
+class ctkThumbnailWidget;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailListWidget : public QWidget
 {
@@ -53,12 +53,12 @@ private:
   Q_DISABLE_COPY(ctkDICOMThumbnailListWidget);
 
 signals:
-  void selected(const ctkDICOMThumbnailWidget& widget);
-  void doubleClicked(const ctkDICOMThumbnailWidget& widget);
+  void selected(const ctkThumbnailWidget& widget);
+  void doubleClicked(const ctkThumbnailWidget& widget);
 
 public slots:
   void onModelSelected(const QModelIndex& index);
-  void onThumbnailSelected(const ctkDICOMThumbnailWidget& widget);
+  void onThumbnailSelected(const ctkThumbnailWidget& widget);
 
   void setThumbnailWidth(int width);
 };

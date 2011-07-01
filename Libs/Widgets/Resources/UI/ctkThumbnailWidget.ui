@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ctkDICOMThumbnailWidget</class>
- <widget class="QWidget" name="ctkDICOMThumbnailWidget">
+ <class>ctkThumbnailWidget</class>
+ <widget class="QWidget" name="ctkThumbnailWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

@@ -19,8 +19,8 @@
 =========================================================================*/
 
 // ctkDICOMWidgets includes
-#include "ctkDICOMThumbnailWidget.h"
-#include "ui_ctkDICOMThumbnailWidget.h"
+#include "ctkThumbnailWidget.h"
+#include "ui_ctkThumbnailWidget.h"
 
 // STD includes
 #include <iostream>
@@ -30,17 +30,17 @@
 
 // logger includes
 #include "ctkLogger.h"
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMThumbnailListWidget");
+static ctkLogger logger("org.commontk.Widgets.ctkDICOMThumbnailListWidget");
 
 //----------------------------------------------------------------------------
-class ctkDICOMThumbnailWidgetPrivate: public Ui_ctkDICOMThumbnailWidget
+class ctkThumbnailWidgetPrivate: public Ui_ctkThumbnailWidget
 {
 public:
-    ctkDICOMThumbnailWidget* const q_ptr;
-    Q_DECLARE_PUBLIC(ctkDICOMThumbnailWidget);
+    ctkThumbnailWidget* const q_ptr;
+    Q_DECLARE_PUBLIC(ctkThumbnailWidget);
 
     // Constructor
-    ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnailWidget* parent);
+    ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent);
 
     bool SelectedFlag;
     QColor BackgroundColor;
@@ -52,88 +52,88 @@ public:
 };
 
 //----------------------------------------------------------------------------
-// ctkDICOMThumbnailWidgetPrivate methods
+// ctkThumbnailWidgetPrivate methods
 
 //----------------------------------------------------------------------------
-ctkDICOMThumbnailWidgetPrivate::ctkDICOMThumbnailWidgetPrivate(ctkDICOMThumbnailWidget* parent): q_ptr(parent){
-    Q_Q(ctkDICOMThumbnailWidget);
+ctkThumbnailWidgetPrivate::ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent): q_ptr(parent){
+    Q_Q(ctkThumbnailWidget);
 
     this->SelectedFlag = false;
     this->BackgroundColor = q->palette().color(QPalette::Highlight);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailWidgetPrivate::updateThumbnail(){
+void ctkThumbnailWidgetPrivate::updateThumbnail(){
     this->PixmapLabel->setPixmap(this->OriginalThumbnail.scaledToWidth(this->PixmapLabel->width()));
 }
 
 //----------------------------------------------------------------------------
-// ctkDICOMThumbnailWidget methods
+// ctkThumbnailWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMThumbnailWidget::ctkDICOMThumbnailWidget(QWidget* parentWidget)
+ctkThumbnailWidget::ctkThumbnailWidget(QWidget* parentWidget)
   : Superclass(parentWidget)
-  , d_ptr(new ctkDICOMThumbnailWidgetPrivate(this))
+  , d_ptr(new ctkThumbnailWidgetPrivate(this))
 {
-  Q_D(ctkDICOMThumbnailWidget);
+  Q_D(ctkThumbnailWidget);
 
   d->setupUi(this);
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMThumbnailWidget::~ctkDICOMThumbnailWidget()
+ctkThumbnailWidget::~ctkThumbnailWidget()
 {
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailWidget::setText(const QString &text)
+void ctkThumbnailWidget::setText(const QString &text)
 {
-  Q_D(ctkDICOMThumbnailWidget);
+  Q_D(ctkThumbnailWidget);
 
   d->TextLabel->setText(text);
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMThumbnailWidget::text()const
+QString ctkThumbnailWidget::text()const
 {
-  Q_D(const ctkDICOMThumbnailWidget);
+  Q_D(const ctkThumbnailWidget);
   return d->TextLabel->text();
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailWidget::setPixmap(const QPixmap &pixmap)
+void ctkThumbnailWidget::setPixmap(const QPixmap &pixmap)
 {
-  Q_D(ctkDICOMThumbnailWidget);
+  Q_D(ctkThumbnailWidget);
 
   d->OriginalThumbnail = pixmap;
   d->updateThumbnail();
 }
 
 //----------------------------------------------------------------------------
-const QPixmap* ctkDICOMThumbnailWidget::pixmap()const
+const QPixmap* ctkThumbnailWidget::pixmap()const
 {
-  Q_D(const ctkDICOMThumbnailWidget);
+  Q_D(const ctkThumbnailWidget);
 
   return &(d->OriginalThumbnail);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailWidget::setSourceIndex(QModelIndex index){
-    Q_D(ctkDICOMThumbnailWidget);
+void ctkThumbnailWidget::setSourceIndex(QModelIndex index){
+    Q_D(ctkThumbnailWidget);
 
     d->SourceIndex = index;
 }
 
 //----------------------------------------------------------------------------
-QModelIndex ctkDICOMThumbnailWidget::sourceIndex() const{
-    Q_D(const ctkDICOMThumbnailWidget);
+QModelIndex ctkThumbnailWidget::sourceIndex() const{
+    Q_D(const ctkThumbnailWidget);
 
     return d->SourceIndex;
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailWidget::setSelected(bool flag){
-    Q_D(ctkDICOMThumbnailWidget);
+void ctkThumbnailWidget::setSelected(bool flag){
+    Q_D(ctkThumbnailWidget);
 
     if(flag)
     {
@@ -151,13 +151,13 @@ void ctkDICOMThumbnailWidget::setSelected(bool flag){
 }
 
 //----------------------------------------------------------------------------
-bool ctkDICOMThumbnailWidget::isSelected(){
-    Q_D(ctkDICOMThumbnailWidget);
+bool ctkThumbnailWidget::isSelected(){
+    Q_D(ctkThumbnailWidget);
     return d->SelectedFlag;
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailWidget::mousePressEvent(QMouseEvent* event)
+void ctkThumbnailWidget::mousePressEvent(QMouseEvent* event)
 {
     Q_UNUSED(event);
     this->setSelected(true);
@@ -165,14 +165,14 @@ void ctkDICOMThumbnailWidget::mousePressEvent(QMouseEvent* event)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailWidget::mouseDoubleClickEvent(QMouseEvent *event){
+void ctkThumbnailWidget::mouseDoubleClickEvent(QMouseEvent *event){
     Q_UNUSED(event);
     emit doubleClicked(*this);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMThumbnailWidget::resizeEvent(QResizeEvent *event){
-  Q_D(ctkDICOMThumbnailWidget);
+void ctkThumbnailWidget::resizeEvent(QResizeEvent *event){
+  Q_D(ctkThumbnailWidget);
   Q_UNUSED(event);
 
   d->updateThumbnail();

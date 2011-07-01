@@ -11,7 +11,6 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
   ctkDICOMQueryResultsTabWidgetTest1.cpp
   ctkDICOMQueryRetrieveWidgetTest1.cpp
   ctkDICOMServerNodeWidgetTest1.cpp
-  ctkDICOMThumbnailWidgetTest1.cpp
   )
 
 SET (TestsToRun ${Tests})
@@ -53,4 +52,3 @@ SET_PROPERTY(TEST ctkDICOMModelTest2 PROPERTY LABELS ${PROJECT_NAME})
 
 SIMPLE_TEST(ctkDICOMQueryRetrieveWidgetTest1)
 SIMPLE_TEST(ctkDICOMQueryResultsTabWidgetTest1)
-SIMPLE_TEST(ctkDICOMThumbnailWidgetTest1)

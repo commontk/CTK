@@ -48,7 +48,7 @@
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMImportWidget.h"
 #include "ctkDICOMThumbnailGenerator.h"
-#include "ctkDICOMThumbnailWidget.h"
+#include "ctkThumbnailWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
 #include "ctkDICOMQueryRetrieveWidget.h"
 #include "ctkDICOMQueryWidget.h"
@@ -160,8 +160,8 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), d->ImagePreview, SLOT(onModelSelected(const QModelIndex &)));
   connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onModelSelected(const QModelIndex &)));
 
-  connect(d->ThumbnailsWidget, SIGNAL(selected(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkDICOMThumbnailWidget&)));
-  connect(d->ThumbnailsWidget, SIGNAL(doubleClicked(const ctkDICOMThumbnailWidget&)), this, SLOT(onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget&)));
+  connect(d->ThumbnailsWidget, SIGNAL(selected(const ctkThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkThumbnailWidget&)));
+  connect(d->ThumbnailsWidget, SIGNAL(doubleClicked(const ctkThumbnailWidget&)), this, SLOT(onThumbnailDoubleClicked(const ctkThumbnailWidget&)));
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
   connect(d->QueryRetrieveWidget, SIGNAL( canceled() ), d->QueryRetrieveWidget, SLOT( hide() ) );
@@ -291,7 +291,7 @@ void ctkDICOMAppWidget::openQueryDialog()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widget)
+void ctkDICOMAppWidget::onThumbnailSelected(const ctkThumbnailWidget& widget)
 {
     Q_D(ctkDICOMAppWidget);
 
@@ -299,7 +299,7 @@ void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widge
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkDICOMThumbnailWidget& widget)
+void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkThumbnailWidget& widget)
 {
     Q_D(ctkDICOMAppWidget);
 

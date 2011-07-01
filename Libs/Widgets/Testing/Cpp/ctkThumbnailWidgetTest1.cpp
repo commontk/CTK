@@ -23,21 +23,21 @@
 #include <QTimer>
 
 // ctkDICOMCore includes
-#include "ctkDICOMThumbnailWidget.h"
+#include "ctkThumbnailWidget.h"
 
 // STD includes
 #include <iostream>
 
-int ctkDICOMThumbnailWidgetTest1( int argc, char * argv [] )
+int ctkThumbnailWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkDICOMThumbnailWidget widget;
+  ctkThumbnailWidget widget;
 
   widget.setText("Test");
   if (widget.text() != "Test")
     {
-    std::cerr << "ctkDICOMThumbnailWidget::setText failed."
+    std::cerr << "ctkThumbnailWidget::setText failed."
               << " text: " << qPrintable(widget.text())
               << " expected: Test" << std::endl;
     return EXIT_FAILURE;
@@ -46,7 +46,7 @@ int ctkDICOMThumbnailWidgetTest1( int argc, char * argv [] )
   widget.setPixmap(QPixmap());
   if (widget.pixmap())
     {
-    std::cerr << "ctkDICOMThumbnailWidget::setPixmap failed:"
+    std::cerr << "ctkThumbnailWidget::setPixmap failed:"
               << widget.pixmap() << std::endl;
     return EXIT_FAILURE;
     }

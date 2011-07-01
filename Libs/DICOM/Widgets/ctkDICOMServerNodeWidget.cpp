@@ -156,7 +156,6 @@ void ctkDICOMServerNodeWidget::saveSettings()
 
   QSettings settings;
   const int rowCount = d->NodeTable->rowCount();
-  const int columnCount = d->NodeTable->columnCount();
   
   settings.setValue("ServerNodeCount", rowCount);
   for (int row = 0; row < rowCount; ++row)
