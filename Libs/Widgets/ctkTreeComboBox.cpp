@@ -50,6 +50,7 @@ public:
   bool RootSet;
   bool SendCurrentItem;
   QPersistentModelIndex Root;
+  int VisibleModelColumn;
 };
 
 // -------------------------------------------------------------------------
@@ -59,6 +60,7 @@ ctkTreeComboBoxPrivate::ctkTreeComboBoxPrivate(ctkTreeComboBox& object)
   this->SkipNextHide = false;
   this->RootSet = false;
   this->SendCurrentItem = false;
+  this->VisibleModelColumn = -1; // all visible by default
 }
 
 // -------------------------------------------------------------------------
@@ -87,6 +89,20 @@ ctkTreeComboBox::ctkTreeComboBox(QWidget* _parent):Superclass(_parent)
 // -------------------------------------------------------------------------
 ctkTreeComboBox::~ctkTreeComboBox()
 {
+}
+
+// -------------------------------------------------------------------------
+int ctkTreeComboBox::visibleModelColumn()const
+{
+  Q_D(const ctkTreeComboBox);
+  return d->VisibleModelColumn;
+}
+
+// -------------------------------------------------------------------------
+void ctkTreeComboBox::setVisibleModelColumn(int index)
+{
+  Q_D(ctkTreeComboBox);
+  d->VisibleModelColumn = index;
 }
 
 // -------------------------------------------------------------------------
@@ -147,6 +163,19 @@ bool ctkTreeComboBox::eventFilter(QObject* object, QEvent* _event)
       break;
     }
   return res;
+}
+
+// -------------------------------------------------------------------------
+void ctkTreeComboBox::showPopup()
+{
+  Q_D(ctkTreeComboBox);
+  QHeaderView* header = qobject_cast<QTreeView*>(this->view())->header();
+  for (int i = 0; i < header->count(); ++i)
+    {
+    header->setSectionHidden(i, d->VisibleModelColumn != -1 &&
+                                i != d->VisibleModelColumn);
+    }
+  this->QComboBox::showPopup();
 }
 
 // -------------------------------------------------------------------------

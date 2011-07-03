@@ -49,12 +49,19 @@ class QTreeView;
 class CTK_WIDGETS_EXPORT ctkTreeComboBox : public QComboBox
 {
   Q_OBJECT
+  /// Column index visible in the view. If \sa visibleModelColumn is -1
+  /// (default) then all columns are visible.
+  Q_PROPERTY(int visibleModelColumn READ visibleModelColumn WRITE setVisibleModelColumn)
 public:
   typedef QComboBox Superclass;
   explicit ctkTreeComboBox(QWidget* parent = 0);
   virtual ~ctkTreeComboBox();
 
+  int visibleModelColumn()const;
+  void setVisibleModelColumn(int index);
+
   virtual bool eventFilter(QObject* object, QEvent* event);
+  virtual void showPopup();
   virtual void hidePopup();
   
   /// ctkTreeComboBox uses a QTreeView for its model view. treeView() is a
