@@ -50,7 +50,7 @@ public:
   int currentThumbnail();
 
   /// Clear all the thumbnails
-  void reset();
+  void clearThumbnails();
 
   /// Get thumbnail width
   int thumbnailWidth();

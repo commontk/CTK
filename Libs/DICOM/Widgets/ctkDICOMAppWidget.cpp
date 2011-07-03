@@ -636,7 +636,7 @@ void ctkDICOMAppWidget::onSearchParameterChanged(){
   d->DICOMModel.setDatabase(d->DICOMDatabase->database(), d->SearchOption->parameters());
 
   this->onModelSelected(d->DICOMModel.index(0,0));
-  d->ThumbnailsWidget->reset();
+  d->ThumbnailsWidget->clearThumbnails();
   d->ThumbnailsWidget->onModelSelected(d->DICOMModel.index(0,0));
   d->ImagePreview->clearImages();
   d->ImagePreview->onModelSelected(d->DICOMModel.index(0,0));

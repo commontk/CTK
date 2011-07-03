@@ -208,7 +208,7 @@ int ctkThumbnailListWidget::thumbnailWidth(){
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailListWidget::reset(){
+void ctkThumbnailListWidget::clearThumbnails(){
   Q_D(ctkThumbnailListWidget);
 
   d->clearAllThumbnails();

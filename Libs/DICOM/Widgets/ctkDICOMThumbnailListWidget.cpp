@@ -278,7 +278,7 @@ void ctkDICOMThumbnailListWidget::selectThumbnailFromIndex(const QModelIndex &in
 void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
     Q_D(ctkDICOMThumbnailListWidget);
 
-    this->reset();
+    this->clearThumbnails();
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
