@@ -66,6 +66,12 @@ void ctkColorDialogPrivate::init()
   this->LeftTabWidget = new QTabWidget(q);
   topLay->insertWidget(0, this->LeftTabWidget);
   this->LeftTabWidget->addTab(this->BasicTab, QObject::tr("Basic"));
+  
+  // If you use a ctkColorDialog, it's probably because you have tabs to add
+  // into. Which means that you are likely to want to resize the dialog as
+  // well.
+  q->setSizeGripEnabled(true);
+  q->layout()->setSizeConstraint(QLayout::SetDefaultConstraint);
 }
 
 //------------------------------------------------------------------------------
