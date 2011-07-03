@@ -118,20 +118,6 @@ const QPixmap* ctkThumbnailWidget::pixmap()const
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::setSourceIndex(QModelIndex index){
-    Q_D(ctkThumbnailWidget);
-
-    d->SourceIndex = index;
-}
-
-//----------------------------------------------------------------------------
-QModelIndex ctkThumbnailWidget::sourceIndex() const{
-    Q_D(const ctkThumbnailWidget);
-
-    return d->SourceIndex;
-}
-
-//----------------------------------------------------------------------------
 void ctkThumbnailWidget::setSelected(bool flag){
     Q_D(ctkThumbnailWidget);
 

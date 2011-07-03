@@ -86,7 +86,4 @@ private:
   Q_DISABLE_COPY(ctkDICOMModel);
 };
 
-Q_DECLARE_METATYPE(Qt::CheckState);
-Q_DECLARE_METATYPE(QStringList);
-
 #endif

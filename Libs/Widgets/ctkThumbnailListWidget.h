@@ -30,11 +30,11 @@ class QModelIndex;
 class ctkThumbnailListWidgetPrivate;
 class ctkThumbnailWidget;
 
-class Ui_ctkThumbnailListWidget;
-
 class CTK_WIDGETS_EXPORT ctkThumbnailListWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(int currentThumbnail READ currentThumbnail WRITE setCurrentThumbnail)
+  Q_PROPERTY(int thumbnailWidth READ thumbnailWidth WRITE setThumbnailWidth)
 public:
   typedef QWidget Superclass;
   explicit ctkThumbnailListWidget(QWidget* parent=0);
@@ -43,24 +43,17 @@ public:
   /// Add multiple thumbnails to the widget
   void addThumbnails(QList<QPixmap> thumbnails);
 
-  /// Select a thumbnail
-  void selectThumbnail(int index);
+  /// Set current thumbnail
+  void setCurrentThumbnail(int index);
+
+  /// Get current thumbnail
+  int currentThumbnail();
 
   /// Clear all the thumbnails
   void reset();
 
-  /// Get thumbnails width
+  /// Get thumbnail width
   int thumbnailWidth();
-
-protected:
-  Ui_ctkThumbnailListWidget* ui;
-  QScopedPointer<ctkThumbnailListWidgetPrivate> d_ptr;
-
-  int ThumbnailWidth;
-
-private:
-  Q_DECLARE_PRIVATE(ctkThumbnailListWidget);
-  Q_DISABLE_COPY(ctkThumbnailListWidget);
 
 signals:
   void selected(const ctkThumbnailWidget& widget);
@@ -69,8 +62,17 @@ signals:
 public slots:
   void onThumbnailSelected(const ctkThumbnailWidget& widget);
 
-  /// Set thumbnails width
+  /// Set thumbnail width
   void setThumbnailWidth(int width);
+
+protected:
+  explicit ctkThumbnailListWidget(ctkThumbnailListWidgetPrivate* ptr, QWidget* parent=0);
+  ctkThumbnailListWidgetPrivate* d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(ctkThumbnailListWidget);
+  Q_DISABLE_COPY(ctkThumbnailListWidget);
+
 };
 
 #endif

@@ -105,6 +105,7 @@ SET(KIT_SRCS
   ctkTestApplication.h
   ctkThumbnailListWidget.cpp
   ctkThumbnailListWidget.h
+  ctkThumbnailListWidget_p.h
   ctkThumbnailWidget.cpp
   ctkThumbnailWidget.h
   ctkToolTipTrapper.cpp

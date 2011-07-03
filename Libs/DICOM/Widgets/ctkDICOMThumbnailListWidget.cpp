@@ -24,6 +24,8 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QGridLayout>
+#include <QMetaType>
+#include <QPersistentModelIndex>
 #include <QPixmap>
 #include <QPushButton>
 #include <QResizeEvent>
@@ -33,6 +35,7 @@
 
 // ctkWidgets includes
 #include "ctkFlowLayout.h"
+#include "ctkThumbnailListWidget_p.h"
 #include "ui_ctkThumbnailListWidget.h"
 
 //ctkDICOMCore includes
@@ -52,10 +55,14 @@
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMThumbnailListWidget");
 
+Q_DECLARE_METATYPE(QPersistentModelIndex);
+
 //----------------------------------------------------------------------------
-class ctkDICOMThumbnailListWidgetPrivate
+class ctkDICOMThumbnailListWidgetPrivate : ctkThumbnailListWidgetPrivate
 {
 public:
+  typedef ctkThumbnailListWidgetPrivate Superclass;
+
   ctkDICOMThumbnailListWidgetPrivate(ctkDICOMThumbnailListWidget* parent);
 
   QString DatabaseDirectory;
@@ -67,7 +74,6 @@ public:
   void onStudyModelSelected(const QModelIndex &index);
   void onSeriesModelSelected(const QModelIndex &index);
 
-  ctkDICOMThumbnailListWidget* const q_ptr;
   Q_DECLARE_PUBLIC(ctkDICOMThumbnailListWidget);
 };
 
@@ -75,7 +81,9 @@ public:
 // ctkDICOMThumbnailListWidgetPrivate methods
 
 //----------------------------------------------------------------------------
-ctkDICOMThumbnailListWidgetPrivate::ctkDICOMThumbnailListWidgetPrivate(ctkDICOMThumbnailListWidget* parent): q_ptr(parent){
+ctkDICOMThumbnailListWidgetPrivate::ctkDICOMThumbnailListWidgetPrivate(ctkDICOMThumbnailListWidget* parent):
+  Superclass(parent)
+{
 
 }
 
@@ -185,22 +193,27 @@ void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& i
                                 model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                 model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-        ctkThumbnailWidget* widget = new ctkThumbnailWidget(q->ui->ScrollAreaContentWidget);
+        ctkThumbnailWidget* widget = new ctkThumbnailWidget(this->ScrollAreaContentWidget);
+
         QString widgetLabel = text;
         widget->setText( widgetLabel );
         QPixmap pix(thumbnailPath);
         logger.debug("Setting pixmap to " + thumbnailPath);
-        if(q->ThumbnailWidth > 0){
-          widget->setMaximumWidth(q->ThumbnailWidth);
-          widget->setMinimumWidth(q->ThumbnailWidth);
+        if(this->ThumbnailWidth > 0){
+          widget->setMaximumWidth(this->ThumbnailWidth);
+          widget->setMinimumWidth(this->ThumbnailWidth);
         }
         widget->setPixmap(pix);
-        widget->setSourceIndex(sourceIndex);
-        q->ui->ScrollAreaContentWidget->layout()->addWidget(widget);
+
+        QVariant var;
+        var.setValue(QPersistentModelIndex(sourceIndex));
+        widget->setProperty("sourceIndex", var);
+        this->ScrollAreaContentWidget->layout()->addWidget(widget);
 
         q->connect(widget, SIGNAL(selected(ctkThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkThumbnailWidget)));
         q->connect(widget, SIGNAL(selected(ctkThumbnailWidget)), q, SIGNAL(selected(ctkThumbnailWidget)));
         q->connect(widget, SIGNAL(doubleClicked(ctkThumbnailWidget)), q, SIGNAL(doubleClicked(ctkThumbnailWidget)));
+
     }
 }
 
@@ -208,13 +221,10 @@ void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& i
 // ctkDICOMThumbnailListWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMThumbnailListWidget::ctkDICOMThumbnailListWidget(QWidget* _parent):Superclass(_parent), 
-									   d_ptr(new ctkDICOMThumbnailListWidgetPrivate(this))
+ctkDICOMThumbnailListWidget::ctkDICOMThumbnailListWidget(QWidget* _parent):
+  Superclass(new ctkDICOMThumbnailListWidgetPrivate(this), _parent)
 {
-    Q_D(ctkDICOMThumbnailListWidget);
 
-    ui->ScrollAreaContentWidget->setLayout(new ctkFlowLayout);
-    qobject_cast<ctkFlowLayout*>(ui->ScrollAreaContentWidget->layout())->setHorizontalSpacing(4);
 }
 
 //----------------------------------------------------------------------------
@@ -247,14 +257,14 @@ void ctkDICOMThumbnailListWidget::selectThumbnailFromIndex(const QModelIndex &in
 
     if(model)
     {
-        int count = ui->ScrollAreaContentWidget->layout()->count();
+        int count = d->ScrollAreaContentWidget->layout()->count();
 
         for(int i=0; i<count; i++)
         {
-            ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(ui->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
-            if(thumbnailWidget->sourceIndex() == index){
+            ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+            if(thumbnailWidget->property("sourceIndex").value<QPersistentModelIndex>() == index){
                 thumbnailWidget->setSelected(true);
-                ui->ScrollArea->ensureWidgetVisible(thumbnailWidget);
+                d->ScrollArea->ensureWidgetVisible(thumbnailWidget);
             }
             else
             {
@@ -292,5 +302,5 @@ void ctkDICOMThumbnailListWidget::onModelSelected(const QModelIndex &index){
         }
     }
 
-    this->selectThumbnail(0);
+    this->setCurrentThumbnail(0);
 }

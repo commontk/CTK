@@ -34,6 +34,7 @@ class CTK_WIDGETS_EXPORT ctkThumbnailWidget : public QWidget
   Q_OBJECT
   Q_PROPERTY(QString text READ text WRITE setText)
   Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
+  Q_PROPERTY(bool selected READ isSelected WRITE setSelected)
 public:
   typedef QWidget Superclass;
   explicit ctkThumbnailWidget(QWidget* parent=0);
@@ -47,9 +48,6 @@ public:
 
   void setSelected(bool selected);
   bool isSelected();
-
-  void setSourceIndex(QModelIndex index);
-  QModelIndex sourceIndex() const;
 
 protected:
   QScopedPointer<ctkThumbnailWidgetPrivate> d_ptr;

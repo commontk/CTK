@@ -27,7 +27,9 @@
 #include <QAction>
 #include <QCheckBox>
 #include <QDebug>
+#include <QMetaType>
 #include <QModelIndex>
+#include <QPersistentModelIndex>
 #include <QSettings>
 #include <QSlider>
 #include <QTabBar>
@@ -58,6 +60,8 @@
 //logger
 #include <ctkLogger.h>
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMAppWidget");
+
+Q_DECLARE_METATYPE(QPersistentModelIndex);
 
 //----------------------------------------------------------------------------
 class ctkDICOMAppWidgetPrivate: public Ui_ctkDICOMAppWidget
@@ -295,7 +299,11 @@ void ctkDICOMAppWidget::onThumbnailSelected(const ctkThumbnailWidget& widget)
 {
     Q_D(ctkDICOMAppWidget);
 
-    d->ImagePreview->onModelSelected(widget.sourceIndex());
+  QModelIndex index = widget.property("sourceIndex").value<QPersistentModelIndex>();
+  if(index.isValid())
+    {
+    d->ImagePreview->onModelSelected(index);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -303,7 +311,12 @@ void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkThumbnailWidget& widge
 {
     Q_D(ctkDICOMAppWidget);
 
-    QModelIndex index = widget.sourceIndex();
+    QModelIndex index = widget.property("sourceIndex").value<QPersistentModelIndex>();
+
+    if(!index.isValid())
+      {
+      return;
+      }
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
     QModelIndex index0 = index.sibling(index.row(), 0);

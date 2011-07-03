@@ -37,6 +37,9 @@
 static ctkLogger logger ( "org.commontk.dicom.DICOMModel" );
 struct Node;
 
+Q_DECLARE_METATYPE(Qt::CheckState);
+Q_DECLARE_METATYPE(QStringList);
+
 //------------------------------------------------------------------------------
 class ctkDICOMModelPrivate
 {

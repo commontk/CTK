@@ -36,8 +36,8 @@
 
 // ctkDICOMWidgets includes
 #include "ctkThumbnailListWidget.h"
+#include "ctkThumbnailListWidget_p.h"
 #include "ctkThumbnailWidget.h"
-#include "ui_ctkThumbnailListWidget.h"
 
 // STD includes
 #include <iostream>
@@ -45,31 +45,32 @@
 static ctkLogger logger("org.commontk.Widgets.ctkThumbnailListWidget");
 
 //----------------------------------------------------------------------------
-class ctkThumbnailListWidgetPrivate
-{
-public:
-  ctkThumbnailListWidgetPrivate(ctkThumbnailListWidget* parent);
-
-  void clearAllThumbnails();
- 
-  ctkThumbnailListWidget* const q_ptr;
-  Q_DECLARE_PUBLIC(ctkThumbnailListWidget);
-};
-
-//----------------------------------------------------------------------------
 // ctkThumbnailListWidgetPrivate methods
 
 //----------------------------------------------------------------------------
 ctkThumbnailListWidgetPrivate::ctkThumbnailListWidgetPrivate(ctkThumbnailListWidget* parent): q_ptr(parent){
-  
+
 }
 
+//----------------------------------------------------------------------------
+void ctkThumbnailListWidgetPrivate::init(){
+  Q_Q(ctkThumbnailListWidget);
+
+  this->setupUi(q);
+  this->ScrollAreaContentWidget->setLayout(new ctkFlowLayout);
+  qobject_cast<ctkFlowLayout*>(this->ScrollAreaContentWidget->layout())->setHorizontalSpacing(4);
+
+  this->ThumbnailWidth = -1;
+  this->CurrentThumbnail = -1;
+}
+
+//----------------------------------------------------------------------------
 void ctkThumbnailListWidgetPrivate::clearAllThumbnails(){
     Q_Q(ctkThumbnailListWidget);
 
     // Remove previous displayed thumbnails
     QLayoutItem* item;
-    while((item = q->ui->ScrollAreaContentWidget->layout()->takeAt(0)))
+    while((item = this->ScrollAreaContentWidget->layout()->takeAt(0)))
     {
         ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(item->widget());
         if(thumbnailWidget)
@@ -82,22 +83,28 @@ void ctkThumbnailListWidgetPrivate::clearAllThumbnails(){
     }
 }
 
+
+
 //----------------------------------------------------------------------------
 // ctkThumbnailListWidget methods
 
 //----------------------------------------------------------------------------
-ctkThumbnailListWidget::ctkThumbnailListWidget(QWidget* _parent):Superclass(_parent), 
-								 d_ptr(new ctkThumbnailListWidgetPrivate(this)),
-								       ui(new Ui_ctkThumbnailListWidget)
+ctkThumbnailListWidget::ctkThumbnailListWidget(QWidget* _parent):
+  Superclass(_parent),
+  d_ptr(new ctkThumbnailListWidgetPrivate(this))
 {
-    Q_D(ctkThumbnailListWidget);
+  Q_D(ctkThumbnailListWidget);
 
-    ui->setupUi(this);
+  d->init();
+}
 
-    ui->ScrollAreaContentWidget->setLayout(new ctkFlowLayout);
-    qobject_cast<ctkFlowLayout*>(ui->ScrollAreaContentWidget->layout())->setHorizontalSpacing(4);
+ctkThumbnailListWidget::ctkThumbnailListWidget(ctkThumbnailListWidgetPrivate *_ptr, QWidget *_parent):
+  Superclass(_parent),
+  d_ptr(_ptr)
+{
+  Q_D(ctkThumbnailListWidget);
 
-    this->ThumbnailWidth = -1;
+  d->init();
 }
 
 //----------------------------------------------------------------------------
@@ -112,17 +119,16 @@ ctkThumbnailListWidget::~ctkThumbnailListWidget()
 void ctkThumbnailListWidget::addThumbnails(QList<QPixmap> thumbnails)
 {
   Q_D(ctkThumbnailListWidget);
-
   for(int i=0; i<thumbnails.count(); i++)
     {
-      ctkThumbnailWidget* widget = new ctkThumbnailWidget(ui->ScrollAreaContentWidget);
+      ctkThumbnailWidget* widget = new ctkThumbnailWidget(d->ScrollAreaContentWidget);
       widget->setText("");
-      if(this->ThumbnailWidth > 0){
-	widget->setMaximumWidth(this->ThumbnailWidth);
-	widget->setMinimumWidth(this->ThumbnailWidth);
+      if(d->ThumbnailWidth > 0){
+        widget->setMaximumWidth(d->ThumbnailWidth);
+        widget->setMinimumWidth(d->ThumbnailWidth);
       }
       widget->setPixmap(thumbnails[i]);
-      ui->ScrollAreaContentWidget->layout()->addWidget(widget);
+      d->ScrollAreaContentWidget->layout()->addWidget(widget);
 
       this->connect(widget, SIGNAL(selected(ctkThumbnailWidget)), this, SLOT(onThumbnailSelected(ctkThumbnailWidget)));
       this->connect(widget, SIGNAL(selected(ctkThumbnailWidget)), this, SIGNAL(selected(ctkThumbnailWidget)));
@@ -131,49 +137,58 @@ void ctkThumbnailListWidget::addThumbnails(QList<QPixmap> thumbnails)
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailListWidget::selectThumbnail(int index){
-    Q_D(ctkThumbnailListWidget);
+void ctkThumbnailListWidget::setCurrentThumbnail(int index){
+  Q_D(ctkThumbnailListWidget);
 
-    int count = ui->ScrollAreaContentWidget->layout()->count();
+  int count = d->ScrollAreaContentWidget->layout()->count();
 
-    logger.debug("Select thumbnail " + QVariant(index).toString() + " of " + QVariant(count).toString());
+  logger.debug("Select thumbnail " + QVariant(index).toString() + " of " + QVariant(count).toString());
 
-    if(index >= count)return;
+  if(index >= count)return;
 
-    for(int i=0; i<count; i++)
+  for(int i=0; i<count; i++)
+    {
+    ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+    if(i == index)
       {
-      ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(ui->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
-      if(i == index)
-        {
-        thumbnailWidget->setSelected(true);
-        ui->ScrollArea->ensureWidgetVisible(thumbnailWidget);
-        }
-      else
-        {
-        thumbnailWidget->setSelected(false);
-        }
+      thumbnailWidget->setSelected(true);
+      d->ScrollArea->ensureWidgetVisible(thumbnailWidget);
       }
+    else
+      {
+      thumbnailWidget->setSelected(false);
+      }
+    }
+
+  d->CurrentThumbnail = index;
+}
+
+//----------------------------------------------------------------------------
+int ctkThumbnailListWidget::currentThumbnail(){
+  Q_D(ctkThumbnailListWidget);
+
+  return d->CurrentThumbnail;
 }
 
 //----------------------------------------------------------------------------
 void ctkThumbnailListWidget::onThumbnailSelected(const ctkThumbnailWidget &widget){
-    Q_D(ctkThumbnailListWidget);
-    for(int i=0; i<ui->ScrollAreaContentWidget->layout()->count(); i++)
+  Q_D(ctkThumbnailListWidget);
+  for(int i=0; i<d->ScrollAreaContentWidget->layout()->count(); i++)
     {
-        ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(ui->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
-        if(thumbnailWidget && (&widget != thumbnailWidget))
-        {
-            thumbnailWidget->setSelected(false);
-        }
+    ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+    if(thumbnailWidget && (&widget != thumbnailWidget))
+      {
+      thumbnailWidget->setSelected(false);
+      }
     }
 }
 
 //----------------------------------------------------------------------------
 void ctkThumbnailListWidget::setThumbnailWidth(int width){
   Q_D(ctkThumbnailListWidget);
-  for(int i=0; i<ui->ScrollAreaContentWidget->layout()->count(); i++)
+  for(int i=0; i<d->ScrollAreaContentWidget->layout()->count(); i++)
     {
-    ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(ui->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+    ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
     if(thumbnailWidget)
       {
         if(width > 0){
@@ -183,12 +198,13 @@ void ctkThumbnailListWidget::setThumbnailWidth(int width){
       }
     }
 
-  this->ThumbnailWidth = width;
+  d->ThumbnailWidth = width;
 }
 
 //----------------------------------------------------------------------------
 int ctkThumbnailListWidget::thumbnailWidth(){
-  return this->ThumbnailWidth;
+  Q_D(ctkThumbnailListWidget);
+  return d->ThumbnailWidth;
 }
 
 //----------------------------------------------------------------------------

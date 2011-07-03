@@ -40,9 +40,6 @@ public:
 
   void selectThumbnailFromIndex(const QModelIndex& index);
 
-protected:
-  QScopedPointer<ctkDICOMThumbnailListWidgetPrivate> d_ptr;
-
 private:
   Q_DECLARE_PRIVATE(ctkDICOMThumbnailListWidget);
   Q_DISABLE_COPY(ctkDICOMThumbnailListWidget);
