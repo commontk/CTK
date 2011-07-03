@@ -23,11 +23,13 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QTabWidget>
+#include <QVariant>
 
 // CTK includes
 #include "ctkColorDialog.h"
 
 QList<QWidget*> ctkColorDialog::DefaultTabs;
+int ctkColorDialog::DefaultTab = -1;
 
 //------------------------------------------------------------------------------
 class ctkColorDialogPrivate
@@ -90,40 +92,38 @@ ctkColorDialog::~ctkColorDialog()
 }
 
 //------------------------------------------------------------------------------
-void ctkColorDialog::addTab(QWidget* widget, const QString& label)
+void ctkColorDialog::insertTab(int tabIndex, QWidget* widget, const QString& label)
 {
   Q_D(ctkColorDialog);
-  d->LeftTabWidget->addTab(widget, label);
+  d->LeftTabWidget->insertTab(tabIndex, widget, label);
+}
+
+//------------------------------------------------------------------------------
+void ctkColorDialog::setCurrentTab(int index)
+{
+  Q_D(ctkColorDialog);
+  d->LeftTabWidget->setCurrentIndex(index);
 }
 
 //------------------------------------------------------------------------------
 void ctkColorDialog::removeTab(int index)
 {
   Q_D(ctkColorDialog);
-  if (index < 0)
-    {
-    return;
-    }
-  d->LeftTabWidget->removeTab(index + 1);
+  d->LeftTabWidget->removeTab(index);
 }
 
 //------------------------------------------------------------------------------
 int ctkColorDialog::indexOf(QWidget* widget)const
 {
   Q_D(const ctkColorDialog);
-  int index = d->LeftTabWidget->indexOf(widget);
-  return index >= 0 ? index - 1 : -1;
+  return d->LeftTabWidget->indexOf(widget);
 }
 
 //------------------------------------------------------------------------------
 QWidget* ctkColorDialog::widget(int index)const
 {
   Q_D(const ctkColorDialog);
-  if (index < 0)
-    {
-    return 0;
-    }
-  return d->LeftTabWidget->widget(index+1);
+  return d->LeftTabWidget->widget(index);
 }
 
 //------------------------------------------------------------------------------
@@ -139,20 +139,21 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
   dlg.setCurrentColor(initial);
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
     {
-    dlg.addTab(tab, tab->windowTitle());
-    if (!tab->accessibleDescription().isEmpty())
+    dlg.insertTab(tab->property("tabIndex").toInt(), tab, tab->windowTitle());
+    if (!tab->property("signal").isValid())
       {
-      QObject::connect(tab, tab->accessibleDescription().toLatin1(),
+      QObject::connect(tab, tab->property("signal").toString().toLatin1(),
                        &dlg, SLOT(setColor(QColor)));
       }
     }
+  dlg.setCurrentTab(ctkColorDialog::DefaultTab);
   dlg.exec();
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
     {
     dlg.removeTab(dlg.indexOf(tab));
-    if (!tab->accessibleDescription().isEmpty())
+    if (tab->property("signal").isValid())
       {
-      QObject::disconnect(tab, tab->accessibleDescription().toLatin1(),
+      QObject::disconnect(tab, tab->property("signal").toString().toLatin1(),
                           &dlg, SLOT(setColor(QColor)));
       }
     tab->setParent(0);
@@ -163,15 +164,20 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
 }
 
 //------------------------------------------------------------------------------
-void ctkColorDialog::addDefaultTab(QWidget* widget, const QString& label, const char* signal)
+void ctkColorDialog::insertDefaultTab(int tabIndex, QWidget* widget, const QString& label, const char* signal)
 {
-  // I'm a bit lazy here and the label+ signal should probably be stored in a
-  // separate structure
   widget->setWindowTitle(label);
-  widget->setAccessibleDescription(signal);
+  widget->setProperty("signal", signal);
+  widget->setProperty("tabIndex", tabIndex);
 
   ctkColorDialog::DefaultTabs << widget;
   widget->setParent(0);
+}
+
+//------------------------------------------------------------------------------
+void ctkColorDialog::setDefaultTab(int index)
+{
+  ctkColorDialog::DefaultTab = index;
 }
 
 //------------------------------------------------------------------------------
@@ -179,4 +185,5 @@ void ctkColorDialog::setColor(const QColor& color)
 {
   this->QColorDialog::setCurrentColor(color);
 }
+
 

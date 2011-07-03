@@ -49,16 +49,22 @@ public:
   /// The ownership of the widget is taken.
   /// You must manually connect the color changed signal of the widget 
   /// to ctkColorDialog::setColor(QColor)
-  void addTab(QWidget* widget, const QString& label);
+  inline void addTab(QWidget* widget, const QString& label);
+  /// Same as addTab(), in addition, \a tabIndex control the tab index of the widget.
+  /// If index is -1, the tab is appended (same as addDefaultTab). The last
+  /// tab added with an index of 0 will be the first tab open
+  void insertTab(int tabIndex, QWidget* widget, const QString& label);
 
   /// The ownership of widget remains the same. The widget is not deleted, 
   /// but simply removed from the widget's stacked layout, causing it to be
   /// hidden.
-  /// It is not possible to remove the "Basic Colors" tab
   void removeTab(int index);
 
+  /// Set the current tab index. 0 ("Basic" tab) by default.
+  void setCurrentTab(int index);
+
   /// Return the extra widget if any
-  /// It is not possible to retrieave the "Basic colors" tab
+  /// Be careful with the "Basic" tab.
   QWidget* widget(int index)const;
   
   /// Returns the index position of the page occupied by the widget w,
@@ -78,7 +84,14 @@ public:
   /// ctkColorDialog::getColor. \a label is title of the tab and \a signal is the signal fired by 
   /// the widget whenever a QColor is changed, typically: SIGNAL(currentColorChanged(QColor)). It
   /// is internally connected to set the current color of the dialog
-  static void addDefaultTab(QWidget* widget, const QString& label, const char* signal = 0);
+  static inline void addDefaultTab(QWidget* widget, const QString& label, const char* signal = 0);
+  /// Same as addDefaultTab, in addition, \a tabIndex control the tab index of the widget.
+  /// If index is -1, the tab is appended (same as addDefaultTab). The last
+  /// tab added with an index of 0 will be the first tab open
+  static void insertDefaultTab(int tabIndex, QWidget* widget, const QString& label, const char* signal = 0);
+  /// Index of the tab to make default (active when getColor is called).
+  /// -1 for the "Basic Colors", it's the default behavior
+  static void setDefaultTab(int index);
 
 public slots:
   /// Slotify QColorDialog::setCurrentColor(QColor)
@@ -88,9 +101,22 @@ protected:
   QScopedPointer<ctkColorDialogPrivate> d_ptr;
 
   static QList<QWidget*> DefaultTabs;
+  static int DefaultTab;
 private:
   Q_DECLARE_PRIVATE(ctkColorDialog);
   Q_DISABLE_COPY(ctkColorDialog);
 };
+
+//------------------------------------------------------------------------------
+void ctkColorDialog::addTab(QWidget* widget, const QString& label)
+{
+  this->insertTab(-1, widget, label);
+}
+
+//------------------------------------------------------------------------------
+void ctkColorDialog::addDefaultTab(QWidget* widget, const QString& label, const char* signal)
+{
+  ctkColorDialog::insertDefaultTab(-1, widget, label, signal);
+}
 
 #endif
