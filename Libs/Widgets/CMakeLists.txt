@@ -82,6 +82,8 @@ SET(KIT_SRCS
   ctkPathLineEdit.h
   ctkPixmapIconEngine.cpp
   ctkPixmapIconEngine.h
+  ctkPopupWidget.cpp
+  ctkPopupWidget.h
   ctkRangeSlider.cpp
   ctkRangeSlider.h
   ctkRangeWidget.cpp
@@ -195,6 +197,7 @@ SET(KIT_MOC_SRCS
   ctkMenuButton.h
   ctkModalityWidget.h
   ctkPathLineEdit.h
+  ctkPopupWidget.h
   ctkRangeSlider.h
   ctkRangeWidget.h
   ctkScreenshotDialog.h
