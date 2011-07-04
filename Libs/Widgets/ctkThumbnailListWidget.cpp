@@ -124,8 +124,7 @@ void ctkThumbnailListWidget::addThumbnails(QList<QPixmap> thumbnails)
       ctkThumbnailWidget* widget = new ctkThumbnailWidget(d->ScrollAreaContentWidget);
       widget->setText("");
       if(d->ThumbnailWidth > 0){
-        widget->setMaximumWidth(d->ThumbnailWidth);
-        widget->setMinimumWidth(d->ThumbnailWidth);
+        widget->setFixedWidth(d->ThumbnailWidth);
       }
       widget->setPixmap(thumbnails[i]);
       d->ScrollAreaContentWidget->layout()->addWidget(widget);
@@ -192,8 +191,7 @@ void ctkThumbnailListWidget::setThumbnailWidth(int width){
     if(thumbnailWidget)
       {
         if(width > 0){
-          thumbnailWidget->setMaximumWidth(width);
-          thumbnailWidget->setMinimumWidth(width);
+          thumbnailWidget->setFixedWidth(width);
         }
       }
     }
