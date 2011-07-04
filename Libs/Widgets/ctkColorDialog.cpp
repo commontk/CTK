@@ -146,7 +146,7 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
     {
     dlg.insertTab(tab->property("tabIndex").toInt(), tab, tab->windowTitle());
-    if (!tab->property("signal").isValid())
+    if (tab->property("signal").isValid())
       {
       QObject::connect(tab, tab->property("signal").toString().toLatin1(),
                        &dlg, SLOT(setColor(QColor)));
