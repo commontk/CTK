@@ -63,6 +63,43 @@ public:
   bool AutoHide;
 };
 
+QGradient* duplicateGradient(const QGradient* gradient)
+{
+  QGradient* newGradient = 0;
+  switch (gradient->type())
+    {
+    case QGradient::LinearGradient:
+      {
+      const QLinearGradient* linearGradient = static_cast<const QLinearGradient*>(gradient);
+      newGradient = new QLinearGradient(linearGradient->start(), linearGradient->finalStop());
+      break;
+      }
+    case QGradient::RadialGradient:
+      {
+      const QRadialGradient* radialGradient = static_cast<const QRadialGradient*>(gradient);
+      newGradient = new QRadialGradient(radialGradient->center(), radialGradient->radius());
+      break;
+      }
+    case QGradient::ConicalGradient:
+      {
+      const QConicalGradient* conicalGradient = static_cast<const QConicalGradient*>(gradient);
+      newGradient = new QConicalGradient(conicalGradient->center(), conicalGradient->angle());
+      break;
+      }
+    default:
+      break;
+    }
+  if (!newGradient)
+    {
+    Q_ASSERT(gradient->type() != QGradient::NoGradient);
+    return newGradient;
+    }
+  newGradient->setCoordinateMode(gradient->coordinateMode());
+  newGradient->setSpread(gradient->spread());
+  newGradient->setStops(gradient->stops());
+  return newGradient;
+}
+
 // -------------------------------------------------------------------------
 ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
   :q_ptr(&object)
@@ -170,9 +207,31 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
   Q_UNUSED(event);
 
   QPainter painter(this);
-  QColor semiTransparentColor = this->palette().window().color();
-  semiTransparentColor.setAlpha(d->CurrentAlpha);
-  painter.fillRect(this->rect(), semiTransparentColor);
+  QBrush brush = this->palette().window();
+  if (brush.style() == Qt::LinearGradientPattern ||
+      brush.style() == Qt::ConicalGradientPattern ||
+      brush.style() == Qt::RadialGradientPattern)
+    {
+    QGradient* newGradient = duplicateGradient(brush.gradient());
+    QGradientStops stops;
+    foreach(QGradientStop stop, newGradient->stops())
+      {
+      stop.second.setAlpha(d->CurrentAlpha);
+      stops.push_back(stop);
+      }
+    newGradient->setStops(stops);
+    brush = QBrush(*newGradient);
+    delete newGradient;
+    }
+  else
+    {
+    QColor color = brush.color();
+    color.setAlpha(d->CurrentAlpha);
+    brush.setColor(color);
+    }
+  //QColor semiTransparentColor = this->palette().window().color();
+  //semiTransparentColor.setAlpha(d->CurrentAlpha);
+  painter.fillRect(this->rect(), brush);
   this->Superclass::paintEvent(event);
 
   if (d->OpenState == ctkPopupWidgetPrivate::Opening &&  d->CurrentAlpha < d->Alpha)
