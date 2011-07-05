@@ -128,7 +128,7 @@ void ctkPopupWidgetPrivate::init()
   //q->setAttribute(Qt::WA_ContentsPropagated);
   this->Alpha = q->style()->styleHint(QStyle::SH_ToolTipLabel_Opacity);
   this->Timer = new QTimer(q);
-  QObject::connect(this->Timer, SIGNAL(timeout()), q, SLOT(update()));
+  QObject::connect(this->Timer, SIGNAL(timeout()), q, SLOT(animatePopup()));
 }
 
 // -------------------------------------------------------------------------
@@ -183,6 +183,8 @@ void ctkPopupWidget::setOpacity(int alpha)
 {
   Q_D(ctkPopupWidget);
   d->Alpha = alpha;
+  d->CurrentAlpha = d->Alpha;
+  this->update();
 }
 
 // -------------------------------------------------------------------------
@@ -198,6 +200,37 @@ void ctkPopupWidget::setAutoHide(bool mode)
   Q_D(ctkPopupWidget);
   d->AutoHide = mode;
   QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::animatePopup()
+{
+  Q_D(ctkPopupWidget);
+  this->repaint();
+  if (d->OpenState == ctkPopupWidgetPrivate::Opening &&  d->CurrentAlpha < d->Alpha)
+    {
+    d->CurrentAlpha += d->Alpha * d->Timer->interval() / d->Duration;
+    }
+  else if (d->OpenState ==  ctkPopupWidgetPrivate::Closing &&  d->CurrentAlpha > 0)
+    {
+    d->CurrentAlpha -= d->Alpha * d->Timer->interval() / d->Duration;
+    }
+
+  if (d->CurrentAlpha >= d->Alpha)
+    {
+    d->CurrentAlpha = d->Alpha;
+    d->OpenState = ctkPopupWidgetPrivate::Open;
+    }
+
+  if (d->CurrentAlpha <= 0)
+    {
+    d->CurrentAlpha = 0;
+    d->OpenState = ctkPopupWidgetPrivate::Closed;
+    if (d->Alpha > 0)
+      {
+      this->hide();
+      }
+    }
 }
 
 // -------------------------------------------------------------------------
@@ -232,28 +265,8 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
   //QColor semiTransparentColor = this->palette().window().color();
   //semiTransparentColor.setAlpha(d->CurrentAlpha);
   painter.fillRect(this->rect(), brush);
+  // Let the QFrame draw itself if needed
   this->Superclass::paintEvent(event);
-
-  if (d->OpenState == ctkPopupWidgetPrivate::Opening &&  d->CurrentAlpha < d->Alpha)
-    {
-    d->CurrentAlpha += d->Alpha * d->Timer->interval() / d->Duration;
-    }
-  else if (d->OpenState ==  ctkPopupWidgetPrivate::Closing &&  d->CurrentAlpha > 0)
-    {
-    d->CurrentAlpha -= d->Alpha * d->Timer->interval() / d->Duration;
-    }
-  if (d->CurrentAlpha >= d->Alpha)
-    {
-    d->CurrentAlpha = d->Alpha;
-    d->OpenState = ctkPopupWidgetPrivate::Open;
-    }
-    
-  if (d->CurrentAlpha <= 0)
-    {
-    d->CurrentAlpha = 0;
-    this->hide();
-    d->OpenState = ctkPopupWidgetPrivate::Closed;
-    }
 }
 
 // --------------------------------------------------------------------------
@@ -304,30 +317,7 @@ void ctkPopupWidget::updatePopup()
     this->hidePopup();
     }
 }
-/*
-// --------------------------------------------------------------------------
-void ctkPopupWidget::hidePopup()
-{
-  Q_D(ctkPopupWidget);
-  if (this->underMouse() || d->BaseWidget->underMouse())
-    {
-    return;
-    }
-  d->hidePopup();
-}
 
-// --------------------------------------------------------------------------
-void ctkPopupWidget::showPopup()
-{
-  Q_D(ctkPopupWidget);
-  if ((!this->underMouse() && !d->BaseWidget->underMouse()) ||
-      (this->isVisible() && d->CurrentAlpha == d->Alpha))
-    {
-    return;
-    }
-  d->showPopup();
-}
-*/
 // --------------------------------------------------------------------------
 void ctkPopupWidget::showPopup()
 {
@@ -342,9 +332,9 @@ void ctkPopupWidget::showPopup()
     QPoint pos = d->BaseWidget->parentWidget() ? d->BaseWidget->parentWidget()->mapToGlobal(bottomLeft) : bottomLeft;
     this->move(pos);
     /// TODO: need some refinement
-    if ((this->sizePolicy().horizontalPolicy() | QSizePolicy::GrowFlag &&
+    if ((this->sizePolicy().horizontalPolicy() & QSizePolicy::GrowFlag &&
          this->width() < d->BaseWidget->width()) ||
-        (this->sizePolicy().horizontalPolicy() | QSizePolicy::ShrinkFlag &&
+        (this->sizePolicy().horizontalPolicy() & QSizePolicy::ShrinkFlag &&
              this->width() > d->BaseWidget->width()))
       {
       // Fit to BaseWidget size

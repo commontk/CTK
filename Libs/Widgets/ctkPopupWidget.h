@@ -36,6 +36,9 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public QFrame
   /// Final transparency of the widget (after opacity fading)
   /// QStyle::SH_ToolTipLabel_Opacity by default.
   Q_PROPERTY( int opacity READ opacity WRITE setOpacity)
+  /// Control wether the popup automatically opens when the mouse
+  /// is over the baseWidget and automatically closes when it leaves
+  /// the widget.
   Q_PROPERTY( bool autoHide READ autoHide WRITE setAutoHide)
 
 public:
@@ -43,6 +46,9 @@ public:
   explicit ctkPopupWidget(QWidget* parent = 0);
   virtual ~ctkPopupWidget();
 
+  /// Widget the popup is attached to. It opens right under \a baseWidget
+  /// and if the ctkPopupWidget sizepolicy contains the growFlag/shrinkFlag,
+  /// it tries to resize itself to fit the same width of \a baseWidget.
   QWidget* baseWidget()const;
   void setBaseWidget(QWidget* baseWidget);
   
@@ -53,9 +59,19 @@ public:
   void setAutoHide(bool);
 
 public slots:
+  /// Hide the popup if open or opening. It takes around 300ms 
+  /// for the fading effect to hide the popup.
   void hidePopup();
+  /// Open the popup if closed or closing. It takes around 300ms 
+  /// for the fading effect to open the popup.
   void showPopup();
+  /// Show/hide the popup. It can be conveniently linked to a QPushButton
+  /// signal.
+  inline void showPopup(bool show);
+
+protected slots:
   void updatePopup();
+  void animatePopup();
 
 protected:
   QScopedPointer<ctkPopupWidgetPrivate> d_ptr;
@@ -69,5 +85,17 @@ private:
   Q_DECLARE_PRIVATE(ctkPopupWidget);
   Q_DISABLE_COPY(ctkPopupWidget);
 };
+
+void ctkPopupWidget::showPopup(bool show)
+{
+  if (show)
+    {
+    this->showPopup();
+    }
+  else
+    {
+    this->hidePopup();
+    }
+}
 
 #endif
