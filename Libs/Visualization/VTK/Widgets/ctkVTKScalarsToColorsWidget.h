@@ -56,10 +56,18 @@ public:
   
   bool editColors()const;
   void setEditColors(bool edit);
+  
+  void xRange(double* range)const;
+  void yRange(double* range)const;
 
 public slots:
   void setCurrentControlPointsItem(vtkControlPointsItem* item);
   void setCurrentPoint(int pointId);
+  void setXRange(double min, double max);
+  void setYRange(double min, double max);
+
+signals:
+  void axesModified();
 
 protected slots:
   void onPlotAdded(vtkPlot*);
@@ -71,8 +79,6 @@ protected slots:
   void onOpacityChanged(double opacity);
   void onMidPointChanged(double midPoint);
   void onSharpnessChanged(double sharpness);
-  void onXRangeChanged(double min, double max);
-  void onYRangeChanged(double min, double max);
   void onAxesModified();
 protected:
   QScopedPointer<ctkVTKScalarsToColorsWidgetPrivate> d_ptr;

@@ -100,9 +100,14 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   this->OpacityLabel->setVisible(false);
   this->OpacitySpinBox->setVisible(false);
   QObject::connect(this->XRangeSlider, SIGNAL(valuesChanged(double, double)),
-                   q, SLOT(onXRangeChanged(double, double)));
+                   q, SLOT(setXRange(double, double)));
   QObject::connect(this->YRangeSlider, SIGNAL(valuesChanged(double, double)),
-                   q, SLOT(onYRangeChanged(double, double)));
+                   q, SLOT(setYRange(double, double)));
+  QObject::connect(this->XRangeSlider, SIGNAL(valuesChanged(double, double)),
+                   q, SIGNAL(axesModified()));
+  QObject::connect(this->YRangeSlider, SIGNAL(valuesChanged(double, double)),
+                   q, SIGNAL(axesModified()));
+
   q->qvtkConnect(this->View->chart()->GetAxis(0),vtkCommand::ModifiedEvent,
                     q, SLOT(onAxesModified()));
   q->qvtkConnect(this->View->chart()->GetAxis(1),vtkCommand::ModifiedEvent,
@@ -395,26 +400,49 @@ void ctkVTKScalarsToColorsWidget::onSharpnessChanged(double sharpness)
   d->CurrentControlPointsItem->SetControlPoint(d->PointIdSpinBox->value(), point);
 }
 
+
 // ----------------------------------------------------------------------------
-void ctkVTKScalarsToColorsWidget::onXRangeChanged(double min, double max)
+void ctkVTKScalarsToColorsWidget::xRange(double* range)const
+{
+  Q_D(const ctkVTKScalarsToColorsWidget);
+  vtkAxis* xAxis = d->CurrentControlPointsItem ?
+    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
+  Q_ASSERT(xAxis);
+  range[0] = xAxis->GetMinimum();
+  range[1] = xAxis->GetMaximum();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::setXRange(double min, double max)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
-  xAxis->SetRange(min, max);
   d->View->scene()->SetDirty(true);
+  xAxis->SetRange(min, max);
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKScalarsToColorsWidget::onYRangeChanged(double min, double max)
+void ctkVTKScalarsToColorsWidget::yRange(double* range)const
+{
+  Q_D(const ctkVTKScalarsToColorsWidget);
+  vtkAxis* yAxis = d->CurrentControlPointsItem ?
+    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
+  Q_ASSERT(yAxis);
+  range[0] = yAxis->GetMinimum();
+  range[1] = yAxis->GetMaximum();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::setYRange(double min, double max)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
-  yAxis->SetRange(min, max);
   d->View->scene()->SetDirty(true);
+  yAxis->SetRange(min, max);
 }
 
 // ----------------------------------------------------------------------------
@@ -429,4 +457,6 @@ void ctkVTKScalarsToColorsWidget::onAxesModified()
     d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
   d->YRangeSlider->setValues(yAxis->GetMinimum(), yAxis->GetMaximum());
+    d->View->scene()->SetDirty(true);
+  //emit this->axesModified();
 }

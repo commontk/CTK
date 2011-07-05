@@ -89,6 +89,13 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
   this->GradientWidget->view()->addPiecewiseFunction(0);
   this->ScalarOpacityThresholdWidget->setVisible(false);
 
+  QObject::connect(this->ScalarOpacityWidget, SIGNAL(axesModified()),
+                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
+  QObject::connect(this->ScalarColorWidget, SIGNAL(axesModified()),
+                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
+  QObject::connect(this->GradientWidget, SIGNAL(axesModified()),
+                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
+
   this->GradientGroupBox->setCollapsed(true);
   this->AdvancedGroupBox->setCollapsed(true);
   
@@ -316,4 +323,34 @@ void ctkVTKVolumePropertyWidget::setUseThresholdSlider(bool enable)
   d->ScalarOpacityThresholdWidget->setVisible(enable);
   d->ScalarOpacityWidget->setVisible(!enable);
   this->updateFromVolumeProperty();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::onAxesModified()
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  //return;
+  ctkVTKScalarsToColorsWidget* senderWidget =
+    qobject_cast<ctkVTKScalarsToColorsWidget*>(this->sender());
+  
+  double xRange[2] = {0.,0.};
+  senderWidget->xRange(xRange);
+  if (senderWidget != d->ScalarOpacityWidget)
+    {
+    bool wasBlocking = d->ScalarOpacityWidget->blockSignals(true);
+    d->ScalarOpacityWidget->setXRange(xRange[0], xRange[1]);
+    d->ScalarOpacityWidget->blockSignals(wasBlocking);
+    }
+  if (senderWidget != d->ScalarColorWidget)
+    {
+    bool wasBlocking = d->ScalarColorWidget->blockSignals(true);
+    d->ScalarColorWidget->setXRange(xRange[0], xRange[1]);
+    d->ScalarColorWidget->blockSignals(wasBlocking);
+    }
+  if (senderWidget != d->GradientWidget)
+    {
+    bool wasBlocking = d->GradientWidget->blockSignals(true);
+    d->GradientWidget->setXRange(xRange[0], xRange[1]);
+    d->GradientWidget->blockSignals(wasBlocking);
+    }
 }

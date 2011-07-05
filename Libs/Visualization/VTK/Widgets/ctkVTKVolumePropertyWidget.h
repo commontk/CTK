@@ -63,6 +63,10 @@ protected slots:
   void setDiffuse(double value);
   void setSpecular(double value);
   void setSpecularPower(double value);
+  
+  /// Called whenever a view (opacity, colors or gradient) has one of its axis
+  /// modified. It synchronize all the views to see the same.
+  void onAxesModified();
 
 protected:
   QScopedPointer<ctkVTKVolumePropertyWidgetPrivate> d_ptr;
