@@ -59,6 +59,7 @@ public:
   bool blockSignals(bool);
 
   vtkControlPointsItem* CurrentControlPointsItem;
+  bool EditColors;
 };
 
 // ----------------------------------------------------------------------------
@@ -70,6 +71,7 @@ ctkVTKScalarsToColorsWidgetPrivate::ctkVTKScalarsToColorsWidgetPrivate(
   : q_ptr(&object)
 {
   this->CurrentControlPointsItem = 0;
+  this->EditColors = true;
 }
 
 // ----------------------------------------------------------------------------
@@ -172,6 +174,20 @@ void ctkVTKScalarsToColorsWidget::setVerticalSliderVisible(bool visible)
 }
 
 // ----------------------------------------------------------------------------
+bool ctkVTKScalarsToColorsWidget::editColors()const
+{
+  Q_D(const ctkVTKScalarsToColorsWidget);
+  return d->EditColors;
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::setEditColors(bool edit)
+{
+  Q_D(ctkVTKScalarsToColorsWidget);
+  d->EditColors = edit;
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsWidget::onPlotAdded(vtkPlot* plot)
 {
   if (vtkControlPointsItem::SafeDownCast(plot))
@@ -211,6 +227,7 @@ void ctkVTKScalarsToColorsWidget::setCurrentPoint(int newPoint)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   d->PointIdSpinBox->setValue(newPoint);
+  Q_ASSERT( newPoint == d->PointIdSpinBox->value());
 }
 
 // ----------------------------------------------------------------------------
@@ -236,9 +253,9 @@ void ctkVTKScalarsToColorsWidget::setCurrentControlPointsItem(vtkControlPointsIt
   d->CurrentControlPointsItem = item;
   if (item)
     {
-    d->ColorPickerButton->setVisible(
-      vtkColorTransferControlPointsItem::SafeDownCast(item) != 0 ||
-      vtkCompositeControlPointsItem::SafeDownCast(item) != 0);
+    d->ColorPickerButton->setVisible( d->EditColors &&
+      (vtkColorTransferControlPointsItem::SafeDownCast(item) != 0 ||
+       vtkCompositeControlPointsItem::SafeDownCast(item) != 0));
     d->OpacityLabel->setVisible(vtkPiecewiseControlPointsItem::SafeDownCast(item) != 0 ||
                                 vtkCompositeControlPointsItem::SafeDownCast(item) != 0);
     d->OpacitySpinBox->setVisible(vtkPiecewiseControlPointsItem::SafeDownCast(item) != 0 ||

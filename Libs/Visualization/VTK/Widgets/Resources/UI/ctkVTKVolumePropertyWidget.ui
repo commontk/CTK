@@ -37,6 +37,9 @@
           <height>120</height>
          </size>
         </property>
+        <property name="editColors">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
      </layout>

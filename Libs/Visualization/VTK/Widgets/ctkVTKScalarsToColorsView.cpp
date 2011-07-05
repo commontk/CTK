@@ -322,7 +322,9 @@ QList<vtkPlot*> ctkVTKScalarsToColorsView::opacityFunctionPlots()const
   foreach(vtkPlot* plot, this->plots())
     {
     if (vtkPiecewiseFunctionItem::SafeDownCast(plot) ||
-        vtkPiecewiseControlPointsItem::SafeDownCast(plot))
+        vtkPiecewiseControlPointsItem::SafeDownCast(plot) ||
+        vtkCompositeTransferFunctionItem::SafeDownCast(plot) ||
+        vtkCompositeControlPointsItem::SafeDownCast(plot))
       {
       res << plot;
       }
