@@ -54,9 +54,16 @@ public:
   QString title()const;
   void setTitle(const QString& title);
 
-  /// Compute the bounds for the 4 chart axes
-  void chartBounds(double* bounds);
-  void setAxesToChartBounds();
+  /// Return the chart bounds for the 4 chart axes.
+  /// bounds must be an array of 8 doubles.
+  /// If no bounds is provided by the user, compute the bounds for the 4 chart
+  /// axes from the vtkPlots bounds.
+  void chartBounds(double* bounds)const;
+  void setChartUserBounds(double* bounds);
+  void chartUserBounds(double* bounds)const;
+
+  /// 
+  virtual void setAxesToChartBounds();
   void boundAxesToChartBounds();
 
 signals:

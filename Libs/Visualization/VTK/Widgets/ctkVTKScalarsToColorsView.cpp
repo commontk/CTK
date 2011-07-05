@@ -433,6 +433,22 @@ void ctkVTKScalarsToColorsView
 }
 
 // ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView
+::setUserBoundsToPlots(double* bounds)
+{
+  foreach(vtkScalarsToColorsItem* plot,
+          this->plots<vtkScalarsToColorsItem>())
+    {
+    plot->SetUserBounds(bounds);
+    }
+  foreach(vtkControlPointsItem* plot,
+          this->plots<vtkControlPointsItem>())
+    {
+    plot->SetUserBounds(bounds);
+    }
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsView::editPoint(vtkObject* caller, void* callData)
 {
   vtkControlPointsItem* controlPoints = reinterpret_cast<vtkControlPointsItem*>(caller);
@@ -457,5 +473,17 @@ void ctkVTKScalarsToColorsView::editPoint(vtkObject* caller, void* callData)
       xrgbms[3] = newColor.blueF();
       colorTF->SetNodeValue(pointToEdit, xrgbms);
       }
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView::setAxesToChartBounds()
+{
+  vtkChartXY* chart = this->chart();
+  double userBounds[8];
+  this->chartUserBounds(userBounds);
+  if (userBounds[0] < userBounds[1])
+    {
+    this->setUserBoundsToPlots(userBounds);
     }
 }

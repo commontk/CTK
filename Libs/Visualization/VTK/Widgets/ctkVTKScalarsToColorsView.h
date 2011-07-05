@@ -75,7 +75,11 @@ public:
   void setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF);
   void setOpacityFunctionToPlots(vtkPiecewiseFunction* opacityTF);
   void setPiecewiseFunctionToPlots(vtkPiecewiseFunction* piecewiseTF);
+  
+  void setUserBoundsToPlots(double* bounds);
 
+  /// Reimplemented to set the bounds to the plots as well
+  virtual void setAxesToChartBounds();
 public slots:
   void editPoint(vtkObject* plot, void * pointId);
 
