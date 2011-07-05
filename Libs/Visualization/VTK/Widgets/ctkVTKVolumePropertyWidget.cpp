@@ -25,6 +25,7 @@
 #include "ctkLogger.h"
 #include "ctkVTKScalarsToColorsView.h"
 #include "ctkVTKVolumePropertyWidget.h"
+#include "ctkUtils.h"
 #include "ui_ctkVTKVolumePropertyWidget.h"
 
 // VTK includes
@@ -54,7 +55,10 @@ protected:
 public:
   ctkVTKVolumePropertyWidgetPrivate(ctkVTKVolumePropertyWidget& object);
   void setupUi(QWidget* widget);
-
+  void computeRange(double* range);
+  void updateThresholdSlider(vtkPiecewiseFunction* opacityFunction);
+  void setThreshold(double min, double max, double opacity);
+  
   vtkVolumeProperty* VolumeProperty;
   int                CurrentComponent;
 };
@@ -78,9 +82,19 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
   Q_ASSERT(q == widget);
   this->Ui_ctkVTKVolumePropertyWidget::setupUi(widget);
 
-  this->ScalarOpacityWidget->view()->addCompositeFunction(0, 0, false, true);
+  this->ScalarOpacityWidget->view()->addCompositeFunction(0, 0, true, true);
+  vtkCompositeControlPointsItem::SafeDownCast(
+    this->ScalarOpacityWidget->view()->opacityFunctionPlots()[1])->SetColorFill(true);
   this->ScalarColorWidget->view()->addColorTransferFunction(0);
   this->GradientWidget->view()->addPiecewiseFunction(0);
+  this->ScalarOpacityThresholdWidget->setVisible(false);
+
+  QObject::connect(this->ScalarOpacityWidget, SIGNAL(axesModified()),
+                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
+  QObject::connect(this->ScalarColorWidget, SIGNAL(axesModified()),
+                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
+  QObject::connect(this->GradientWidget, SIGNAL(axesModified()),
+                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
 
   this->GradientGroupBox->setCollapsed(true);
   this->AdvancedGroupBox->setCollapsed(true);
@@ -97,6 +111,36 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
                    q, SLOT(setSpecular(double)));
   QObject::connect(this->MaterialPropertyWidget, SIGNAL(specularPowerChanged(double)),
                    q, SLOT(setSpecularPower(double)));
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidgetPrivate::computeRange(double* range)
+{
+  range[0] = 0.;
+  range[1] = 1.;
+
+  if (!this->VolumeProperty)
+    {
+    return;
+    }
+  Q_ASSERT(this->VolumeProperty->GetRGBTransferFunction(this->CurrentComponent));
+  Q_ASSERT(this->VolumeProperty->GetScalarOpacity(this->CurrentComponent));
+  Q_ASSERT(this->VolumeProperty->GetGradientOpacity(this->CurrentComponent));
+  
+  double colorRange[2] = {0., 1.};
+  this->VolumeProperty->GetRGBTransferFunction(this->CurrentComponent)->GetRange(colorRange);
+  range[0] = qMin(range[0], colorRange[0]);
+  range[1] = qMax(range[1], colorRange[1]);
+
+  double opacityRange[2] = {0., 1.};
+  this->VolumeProperty->GetScalarOpacity(this->CurrentComponent)->GetRange(opacityRange);
+  range[0] = qMin(range[0], opacityRange[0]);
+  range[1] = qMax(range[1], opacityRange[1]);
+  
+  double gradientRange[2] = {0., 1.};
+  this->VolumeProperty->GetGradientOpacity(this->CurrentComponent)->GetRange(gradientRange);
+  range[0] = qMin(range[0], gradientRange[0]);
+  range[1] = qMax(range[1], gradientRange[1]);
 }
 
 // ----------------------------------------------------------------------------
@@ -131,7 +175,27 @@ void ctkVTKVolumePropertyWidget
   this->qvtkReconnect(d->VolumeProperty, newVolumeProperty, vtkCommand::ModifiedEvent,
                       this, SLOT(updateFromVolumeProperty()));
   d->VolumeProperty = newVolumeProperty;
+
   this->updateFromVolumeProperty();
+
+  double range[2];
+  d->computeRange(range);
+  d->ScalarOpacityThresholdWidget->setRange(range[0], range[1]);
+
+  double chartBounds[8];
+  d->ScalarOpacityWidget->view()->chartBounds(chartBounds);
+  chartBounds[2] = range[0];
+  chartBounds[3] = range[1];
+  d->ScalarOpacityWidget->view()->setChartUserBounds(chartBounds);
+  
+  d->ScalarColorWidget->view()->chartBounds(chartBounds);
+  chartBounds[2] = range[0];
+  chartBounds[3] = range[1];
+  d->ScalarColorWidget->view()->setChartUserBounds(chartBounds);
+  d->GradientWidget->view()->chartBounds(chartBounds);
+  chartBounds[2] = range[0];
+  chartBounds[3] = range[1];
+  d->GradientWidget->view()->setChartUserBounds(chartBounds);
 }
 
 // ----------------------------------------------------------------------------
@@ -154,6 +218,8 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
       d->VolumeProperty->GetGradientOpacity() : 0;
     }
 
+  d->ScalarOpacityThresholdWidget->setPiecewiseFunction(this->useThresholdSlider() ? opacityFunction : 0);
+  
   d->ScalarOpacityWidget->view()->setOpacityFunctionToPlots(opacityFunction);
   d->ScalarOpacityWidget->view()->setColorTransferFunctionToPlots(colorTransferFunction);
   d->ScalarColorWidget->view()->setColorTransferFunctionToPlots(colorTransferFunction);
@@ -242,4 +308,49 @@ void ctkVTKVolumePropertyWidget::setSpecularPower(double value)
   d->VolumeProperty->SetSpecularPower(d->CurrentComponent, value);
 }
 
+// ----------------------------------------------------------------------------
+bool ctkVTKVolumePropertyWidget::useThresholdSlider()const
+{
+  Q_D(const ctkVTKVolumePropertyWidget);
+  return d->ScalarOpacityThresholdWidget->isVisibleTo(
+    const_cast<ctkVTKVolumePropertyWidget*>(this));
+}
 
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setUseThresholdSlider(bool enable)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  d->ScalarOpacityThresholdWidget->setVisible(enable);
+  d->ScalarOpacityWidget->setVisible(!enable);
+  this->updateFromVolumeProperty();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::onAxesModified()
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  //return;
+  ctkVTKScalarsToColorsWidget* senderWidget =
+    qobject_cast<ctkVTKScalarsToColorsWidget*>(this->sender());
+  
+  double xRange[2] = {0.,0.};
+  senderWidget->xRange(xRange);
+  if (senderWidget != d->ScalarOpacityWidget)
+    {
+    bool wasBlocking = d->ScalarOpacityWidget->blockSignals(true);
+    d->ScalarOpacityWidget->setXRange(xRange[0], xRange[1]);
+    d->ScalarOpacityWidget->blockSignals(wasBlocking);
+    }
+  if (senderWidget != d->ScalarColorWidget)
+    {
+    bool wasBlocking = d->ScalarColorWidget->blockSignals(true);
+    d->ScalarColorWidget->setXRange(xRange[0], xRange[1]);
+    d->ScalarColorWidget->blockSignals(wasBlocking);
+    }
+  if (senderWidget != d->GradientWidget)
+    {
+    bool wasBlocking = d->GradientWidget->blockSignals(true);
+    d->GradientWidget->setXRange(xRange[0], xRange[1]);
+    d->GradientWidget->blockSignals(wasBlocking);
+    }
+}

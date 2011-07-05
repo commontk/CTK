@@ -49,9 +49,11 @@ protected:
 public:
   ctkVTKChartViewPrivate(ctkVTKChartView& object);
   void init();
+  void chartBounds(double* bounds)const;
 
   vtkSmartPointer<vtkContextView> ContextView;
   vtkSmartPointer<vtkChartXY> Chart;
+  double UserBounds[8];
 };
 
 // ----------------------------------------------------------------------------
@@ -64,6 +66,8 @@ ctkVTKChartViewPrivate::ctkVTKChartViewPrivate(ctkVTKChartView& object)
   this->ContextView = vtkSmartPointer<vtkContextView>::New();
   this->Chart = vtkSmartPointer<vtkChartXY>::New();
   this->ContextView->GetScene()->AddItem(this->Chart);
+  this->UserBounds[0] = this->UserBounds[2] = this->UserBounds[4] = this->UserBounds[6] = 0.;
+  this->UserBounds[1] = this->UserBounds[3] = this->UserBounds[5] = this->UserBounds[7] = -1.;
 }
 
 // ----------------------------------------------------------------------------
@@ -81,71 +85,12 @@ void ctkVTKChartViewPrivate::init()
 }
 
 // ----------------------------------------------------------------------------
-// ctkVTKChartView methods
-
-// ----------------------------------------------------------------------------
-ctkVTKChartView::ctkVTKChartView(QWidget* parentWidget)
-  :QVTKWidget(parentWidget)
-  , d_ptr(new ctkVTKChartViewPrivate(*this))
+void ctkVTKChartViewPrivate::chartBounds(double* bounds)const
 {
-  Q_D(ctkVTKChartView);
-  d->init();
-  this->setAutomaticImageCacheEnabled(true);
-}
-
-// ----------------------------------------------------------------------------
-ctkVTKChartView::~ctkVTKChartView()
-{
-}
-
-// ----------------------------------------------------------------------------
-void ctkVTKChartView::setTitle(const QString& newTitle)
-{
-  Q_D(ctkVTKChartView);
-  d->Chart->SetTitle(newTitle.toLatin1().data());
-}
-
-// ----------------------------------------------------------------------------
-QString ctkVTKChartView::title()const
-{
-  Q_D(const ctkVTKChartView);
-  return QString(d->Chart->GetTitle());
-}
-
-// ----------------------------------------------------------------------------
-vtkChartXY* ctkVTKChartView::chart()const
-{
-  Q_D(const ctkVTKChartView);
-  return d->Chart;
-}
-
-// ----------------------------------------------------------------------------
-vtkContextScene* ctkVTKChartView::scene()const
-{
-  Q_D(const ctkVTKChartView);
-  return d->ContextView->GetScene();
-}
-
-// ----------------------------------------------------------------------------
-void ctkVTKChartView::addPlot(vtkPlot* plot)
-{
-  Q_D(ctkVTKChartView);
-  d->Chart->AddPlot(plot);
-  emit this->plotAdded(plot);
-  this->onChartUpdated();
-}
-
-// ----------------------------------------------------------------------------
-void ctkVTKChartView::onChartUpdated()
-{
-}
-
-// ----------------------------------------------------------------------------
-void ctkVTKChartView::chartBounds(double* bounds)
-{
+  Q_Q(const ctkVTKChartView);
   bounds[0] = bounds[2] = bounds[4] = bounds[6] = VTK_DOUBLE_MAX;
   bounds[1] = bounds[3] = bounds[5] = bounds[7] = VTK_DOUBLE_MIN;
-  vtkChartXY* chart = this->chart();
+  vtkChartXY* chart = q->chart();
   const vtkIdType plotCount = chart->GetNumberOfPlots();
   for (vtkIdType i = 0; i < plotCount; ++i)
     {
@@ -209,6 +154,99 @@ void ctkVTKChartView::chartBounds(double* bounds)
           plotBounds[3] : bounds[1];
         break;
       }
+    }
+}
+
+// ----------------------------------------------------------------------------
+// ctkVTKChartView methods
+
+// ----------------------------------------------------------------------------
+ctkVTKChartView::ctkVTKChartView(QWidget* parentWidget)
+  :QVTKWidget(parentWidget)
+  , d_ptr(new ctkVTKChartViewPrivate(*this))
+{
+  Q_D(ctkVTKChartView);
+  d->init();
+  this->setAutomaticImageCacheEnabled(true);
+}
+
+// ----------------------------------------------------------------------------
+ctkVTKChartView::~ctkVTKChartView()
+{
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::setTitle(const QString& newTitle)
+{
+  Q_D(ctkVTKChartView);
+  d->Chart->SetTitle(newTitle.toLatin1().data());
+}
+
+// ----------------------------------------------------------------------------
+QString ctkVTKChartView::title()const
+{
+  Q_D(const ctkVTKChartView);
+  return QString(d->Chart->GetTitle());
+}
+
+// ----------------------------------------------------------------------------
+vtkChartXY* ctkVTKChartView::chart()const
+{
+  Q_D(const ctkVTKChartView);
+  return d->Chart;
+}
+
+// ----------------------------------------------------------------------------
+vtkContextScene* ctkVTKChartView::scene()const
+{
+  Q_D(const ctkVTKChartView);
+  return d->ContextView->GetScene();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::addPlot(vtkPlot* plot)
+{
+  Q_D(ctkVTKChartView);
+  d->Chart->AddPlot(plot);
+  emit this->plotAdded(plot);
+  this->onChartUpdated();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::onChartUpdated()
+{
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::chartBounds(double* bounds)const
+{
+  Q_D(const ctkVTKChartView);
+  if (d->UserBounds[1] < d->UserBounds[0])
+    {
+    d->chartBounds(bounds);
+    return;
+    }
+  this->chartUserBounds(bounds);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::setChartUserBounds(double* userBounds)
+{
+  Q_D(ctkVTKChartView);
+  for (int i= 0; i < 8; ++i)
+    {
+    d->UserBounds[i] = userBounds[i];
+    }
+  emit boundsChanged();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::chartUserBounds(double* bounds)const
+{
+  Q_D(const ctkVTKChartView);
+  for (int i= 0; i < 8; ++i)
+    {
+    bounds[i] = d->UserBounds[i];
     }
 }
 

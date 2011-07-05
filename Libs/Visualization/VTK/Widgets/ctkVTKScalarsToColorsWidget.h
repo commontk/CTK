@@ -40,6 +40,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsWidget : public 
   QVTK_OBJECT
   Q_PROPERTY(bool horizontalSliderVisible READ isHorizontalSliderVisible WRITE setHorizontalSliderVisible)
   Q_PROPERTY(bool verticalSliderVisible READ isVerticalSliderVisible WRITE setVerticalSliderVisible)
+  Q_PROPERTY(bool editColors READ editColors WRITE setEditColors)
 public:
   ctkVTKScalarsToColorsWidget(QWidget* parent = 0);
   virtual ~ctkVTKScalarsToColorsWidget();
@@ -52,10 +53,21 @@ public:
 
   bool isVerticalSliderVisible()const;
   void setVerticalSliderVisible(bool visible);
+  
+  bool editColors()const;
+  void setEditColors(bool edit);
+  
+  void xRange(double* range)const;
+  void yRange(double* range)const;
 
 public slots:
   void setCurrentControlPointsItem(vtkControlPointsItem* item);
   void setCurrentPoint(int pointId);
+  void setXRange(double min, double max);
+  void setYRange(double min, double max);
+
+signals:
+  void axesModified();
 
 protected slots:
   void onPlotAdded(vtkPlot*);
@@ -67,8 +79,6 @@ protected slots:
   void onOpacityChanged(double opacity);
   void onMidPointChanged(double midPoint);
   void onSharpnessChanged(double sharpness);
-  void onXRangeChanged(double min, double max);
-  void onYRangeChanged(double min, double max);
   void onAxesModified();
 protected:
   QScopedPointer<ctkVTKScalarsToColorsWidgetPrivate> d_ptr;
