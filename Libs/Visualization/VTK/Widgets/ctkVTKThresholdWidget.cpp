@@ -43,10 +43,13 @@ protected:
 public:
   ctkVTKThresholdWidgetPrivate(ctkVTKThresholdWidget& object);
   void setupUi(QWidget* widget);
+
   void setThreshold(double min, double max, double opacity);
+  void setRange(double min, double max);
   void guessThreshold(double& min, double& max, double& opacity);
   
   vtkPiecewiseFunction* PiecewiseFunction;
+  bool UserRange;
 };
 
 // ----------------------------------------------------------------------------
@@ -58,6 +61,7 @@ ctkVTKThresholdWidgetPrivate::ctkVTKThresholdWidgetPrivate(
   : q_ptr(&object)
 {
   this->PiecewiseFunction = 0;
+  this->UserRange = false;
 }
 
 // ----------------------------------------------------------------------------
@@ -120,6 +124,17 @@ void ctkVTKThresholdWidgetPrivate::guessThreshold(double& min, double& max, doub
     {
     opacity /= maxIndex - minIndex;
     }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKThresholdWidgetPrivate::setRange(double min, double max)
+{
+  bool wasBlocking = this->ThresholdSliderWidget->blockSignals(true);
+  int decimals = qMax(0, -ctk::orderOfMagnitude(max - min) + 2);
+  this->ThresholdSliderWidget->setDecimals(decimals);
+  this->ThresholdSliderWidget->setSingleStep(pow(10., -decimals));
+  this->ThresholdSliderWidget->setRange(min, max);
+  this->ThresholdSliderWidget->blockSignals(wasBlocking);
 }
 
 // ----------------------------------------------------------------------------
@@ -212,16 +227,23 @@ void ctkVTKThresholdWidget
 ::setPiecewiseFunction(vtkPiecewiseFunction* newFunction)
 {
   Q_D(ctkVTKThresholdWidget);
+  if (d->PiecewiseFunction == newFunction)
+    {
+    return;
+    }
   this->qvtkReconnect(d->PiecewiseFunction, newFunction, vtkCommand::ModifiedEvent,
                       this, SLOT(updateFromPiecewiseFunction()));
   d->PiecewiseFunction = newFunction;
   
-  double range[2] = {0., 1.};
-  if (d->PiecewiseFunction)
+  if (!d->UserRange)
     {
-    d->PiecewiseFunction->GetRange(range);
+    double range[2] = {0., 1.};
+    if (d->PiecewiseFunction)
+      {
+      d->PiecewiseFunction->GetRange(range);
+      }
+    d->setRange(range[0], range[1]);
     }
-  this->setRange(range[0], range[1]);
   if (d->PiecewiseFunction)
     {
     double min, max, value;
@@ -290,10 +312,6 @@ void ctkVTKThresholdWidget::range(double* range)const
 void ctkVTKThresholdWidget::setRange(double min, double max)
 {
   Q_D(ctkVTKThresholdWidget);
-  bool wasBlocking = d->ThresholdSliderWidget->blockSignals(true);
-  int decimals = qMax(0, -ctk::orderOfMagnitude(max - min) + 2);
-  d->ThresholdSliderWidget->setDecimals(decimals);
-  d->ThresholdSliderWidget->setSingleStep(pow(10., -decimals));
-  d->ThresholdSliderWidget->setRange(min, max);
-  d->ThresholdSliderWidget->blockSignals(wasBlocking);
+  d->UserRange = true;
+  d->setRange(min, max);
 }
