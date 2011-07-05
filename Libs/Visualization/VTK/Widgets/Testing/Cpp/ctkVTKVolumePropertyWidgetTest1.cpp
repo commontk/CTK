@@ -62,6 +62,8 @@ int ctkVTKVolumePropertyWidgetTest1(int argc, char * argv [] )
     vtkSmartPointer<vtkVolumeProperty>::New();
   volumeProperty->SetColor(ctf);
   volumeProperty->SetScalarOpacity(otf);
+  double range[2] = {0., 1.};
+  volumeProperty->GetGradientOpacity()->AdjustRange(range);
 
   ctkVTKVolumePropertyWidget widget;
   //widget.setUseThresholdSlider(true);
