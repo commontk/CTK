@@ -28,6 +28,24 @@
 #include "ctkCoreExport.h"
 
 //---------------------------------------------------------------------------
+/// The following example prints debug statement everytime the current value
+/// of the slider is changed:
+/// void print() { qDebug() << "signal called"; }
+/// ...
+///  QSlider slider(Qt::Horizontal);
+///  ctkCallback callback(print);
+///  QObject::connect(&slider, SIGNAL(valueChanged(int)),
+///                   &callback, SLOT(invoke()));
+/// ...
+/// The following example prints the new value of the slider
+/// void print(void* data){
+///   qDebug() << reinterpret_cast<QSlider*>(data)->value();
+/// }
+///  QSlider slider(Qt::Horizontal);
+///  ctkCallback callback(print);
+///  callback.setData(&slider);
+///  QObject::connect(&slider, SIGNAL(valueChanged(int)),
+///                   &callback, SLOT(invoke()));
 class CTK_CORE_EXPORT ctkCallback : public QObject
 {
   Q_OBJECT
@@ -43,7 +61,7 @@ public:
   void setCallback(void (*callback)(void * data));
   
   /// Returns the current callback data.
-  /// \note By default ctkCallback itself will be passed has callback data
+  /// \note By default ctkCallback itself will be passed as callback data
   /// \sa setCallbackData
   void * callbackData()const;
   /// Set callback data
