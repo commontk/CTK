@@ -67,6 +67,8 @@ public slots:
   void setYRange(double min, double max);
 
 signals:
+  /// Be carefull, axesModified() can be fired inside the Render() function
+  /// of the view. You might want to connect the slot using Qt::QueuedConnection
   void axesModified();
 
 protected slots:

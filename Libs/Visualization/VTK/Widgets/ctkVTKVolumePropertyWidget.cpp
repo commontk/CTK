@@ -93,11 +93,11 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
   this->ScalarOpacityThresholdWidget->setVisible(false);
 
   QObject::connect(this->ScalarOpacityWidget, SIGNAL(axesModified()),
-                   q, SLOT(onAxesModified()));//, Qt::QueuedConnection);
+                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
   QObject::connect(this->ScalarColorWidget, SIGNAL(axesModified()),
-                   q, SLOT(onAxesModified()));//, Qt::QueuedConnection);
+                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
   QObject::connect(this->GradientWidget, SIGNAL(axesModified()),
-                   q, SLOT(onAxesModified()));//, Qt::QueuedConnection);
+                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
 
   this->GradientGroupBox->setCollapsed(true);
   this->AdvancedGroupBox->setCollapsed(true);
