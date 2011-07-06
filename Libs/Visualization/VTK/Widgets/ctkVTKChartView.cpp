@@ -215,6 +215,7 @@ void ctkVTKChartView::addPlot(vtkPlot* plot)
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::onChartUpdated()
 {
+  emit boundsChanged();
 }
 
 // ----------------------------------------------------------------------------
@@ -223,6 +224,7 @@ void ctkVTKChartView::chartBounds(double* bounds)const
   Q_D(const ctkVTKChartView);
   if (d->UserBounds[1] < d->UserBounds[0])
     {
+    // Invalid user bounds, return the real chart bounds
     d->chartBounds(bounds);
     return;
     }
@@ -237,7 +239,7 @@ void ctkVTKChartView::setChartUserBounds(double* userBounds)
     {
     d->UserBounds[i] = userBounds[i];
     }
-  emit boundsChanged();
+  this->onChartUpdated();
 }
 
 // ----------------------------------------------------------------------------
@@ -280,7 +282,15 @@ void ctkVTKChartView::boundAxesToChartBounds()
       chart->GetAxis(i)->SetMaximumLimit(bounds[2*i + 1]);
       }
     }
-  emit boundsChanged();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::chartBoundsToPlotBounds(double bounds[8], double plotBounds[4])const
+{
+  plotBounds[0] = bounds[vtkAxis::BOTTOM*2];
+  plotBounds[1] = bounds[vtkAxis::BOTTOM*2 + 1];
+  plotBounds[2] = bounds[vtkAxis::LEFT*2];
+  plotBounds[3] = bounds[vtkAxis::LEFT*2+1];
 }
 
 // ----------------------------------------------------------------------------

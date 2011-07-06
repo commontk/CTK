@@ -108,9 +108,9 @@ void ctkVTKScalarsToColorsView::addPlot(vtkPlot* plot)
 // ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsView::onChartUpdated()
 {
-  this->Superclass::onChartUpdated();
   this->boundAxesToChartBounds();
   this->setAxesToChartBounds();
+  this->Superclass::onChartUpdated();
 }
 
 // ----------------------------------------------------------------------------
@@ -436,17 +436,19 @@ void ctkVTKScalarsToColorsView
 
 // ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsView
-::setUserBoundsToPlots(double* bounds)
+::setPlotsUserBounds(double* bounds)
 {
+  double plotBounds[4];
+  this->chartBoundsToPlotBounds(bounds, plotBounds);
   foreach(vtkScalarsToColorsItem* plot,
           this->plots<vtkScalarsToColorsItem>())
     {
-    plot->SetUserBounds(bounds);
+    plot->SetUserBounds(plotBounds);
     }
   foreach(vtkControlPointsItem* plot,
           this->plots<vtkControlPointsItem>())
     {
-    plot->SetUserBounds(bounds);
+    plot->SetUserBounds(plotBounds);
     }
 }
 
@@ -484,13 +486,14 @@ void ctkVTKScalarsToColorsView::editPoint(vtkObject* caller, void* callData)
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKScalarsToColorsView::setAxesToChartBounds()
+void ctkVTKScalarsToColorsView::boundAxesToChartBounds()
 {
-  vtkChartXY* chart = this->chart();
+  this->Superclass::boundAxesToChartBounds();
+  /// We only set the plot user bounds if the chart is using User bounds.
   double userBounds[8];
   this->chartUserBounds(userBounds);
   if (userBounds[0] < userBounds[1])
     {
-    this->setUserBoundsToPlots(userBounds);
+    this->setPlotsUserBounds(userBounds);
     }
 }
