@@ -325,7 +325,12 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
 
   vtkColorTransferControlPointsItem* colorControlPoints =
     vtkColorTransferControlPointsItem::SafeDownCast(d->CurrentControlPointsItem);
-  if (colorControlPoints)
+  vtkCompositeControlPointsItem* compositeControlPoints =
+    vtkCompositeControlPointsItem::SafeDownCast(d->CurrentControlPointsItem);
+  if (colorControlPoints &&
+      (!compositeControlPoints ||
+        compositeControlPoints->GetPointsFunction() == vtkCompositeControlPointsItem::ColorPointsFunction ||
+        compositeControlPoints->GetPointsFunction() == vtkCompositeControlPointsItem::ColorAndOpacityPointsFunction))
     {
     vtkColorTransferFunction* colorTF =
       colorControlPoints->GetColorTransferFunction();
@@ -465,6 +470,6 @@ void ctkVTKScalarsToColorsWidget::onAxesModified()
     d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
   d->YRangeSlider->setValues(yAxis->GetMinimum(), yAxis->GetMaximum());
-    d->View->scene()->SetDirty(true);
+  //  d->View->scene()->SetDirty(true);
   //emit this->axesModified();
 }
