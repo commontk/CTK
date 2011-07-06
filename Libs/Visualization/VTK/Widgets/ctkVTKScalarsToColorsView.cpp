@@ -461,12 +461,17 @@ void ctkVTKScalarsToColorsView::editPoint(vtkObject* caller, void* callData)
     }
   vtkColorTransferControlPointsItem* colorTransferFunctionItem =
     vtkColorTransferControlPointsItem::SafeDownCast(controlPoints);
-  if (colorTransferFunctionItem)
+  vtkCompositeControlPointsItem* compositeControlPoints =
+    vtkCompositeControlPointsItem::SafeDownCast(controlPoints);
+  if (colorTransferFunctionItem &&
+      (!compositeControlPoints ||
+        compositeControlPoints->GetPointsFunction() == vtkCompositeControlPointsItem::ColorPointsFunction ||
+        compositeControlPoints->GetPointsFunction() == vtkCompositeControlPointsItem::ColorAndOpacityPointsFunction))
     {
     double xrgbms[6];
     vtkColorTransferFunction* colorTF = colorTransferFunctionItem->GetColorTransferFunction();
     colorTF->GetNodeValue(pointToEdit, xrgbms);
-    QColor oldColor = QColor::fromRgbF(xrgbms[0], xrgbms[1], xrgbms[2]);
+    QColor oldColor = QColor::fromRgbF(xrgbms[1], xrgbms[2], xrgbms[3]);
     QColor newColor = QColorDialog::getColor(oldColor, this);
     if (newColor.isValid())
       {
