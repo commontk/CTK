@@ -74,6 +74,7 @@ void ctkVTKScalarsToColorsViewPrivate::init()
     {
     chart->GetAxis(i)->SetVisible(false);
     }
+  QObject::connect(q, SIGNAL(boundsChanged()), q, SLOT(onBoundsChanged()));
   q->onChartUpdated();
 }
 
@@ -106,11 +107,10 @@ void ctkVTKScalarsToColorsView::addPlot(vtkPlot* plot)
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKScalarsToColorsView::onChartUpdated()
+void ctkVTKScalarsToColorsView::onBoundsChanged()
 {
   this->boundAxesToChartBounds();
   this->setAxesToChartBounds();
-  this->Superclass::onChartUpdated();
 }
 
 // ----------------------------------------------------------------------------

@@ -83,10 +83,11 @@ public:
 public slots:
   void editPoint(vtkObject* plot, void * pointId);
 
+protected slots:
+  void onBoundsChanged();
+
 protected:
   QScopedPointer<ctkVTKScalarsToColorsViewPrivate> d_ptr;
-
-  virtual void onChartUpdated();
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKScalarsToColorsView);

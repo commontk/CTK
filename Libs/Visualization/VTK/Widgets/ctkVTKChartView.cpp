@@ -54,6 +54,7 @@ public:
   vtkSmartPointer<vtkContextView> ContextView;
   vtkSmartPointer<vtkChartXY> Chart;
   double UserBounds[8];
+  mutable double OldBounds[8];
 };
 
 // ----------------------------------------------------------------------------
@@ -68,6 +69,8 @@ ctkVTKChartViewPrivate::ctkVTKChartViewPrivate(ctkVTKChartView& object)
   this->ContextView->GetScene()->AddItem(this->Chart);
   this->UserBounds[0] = this->UserBounds[2] = this->UserBounds[4] = this->UserBounds[6] = 0.;
   this->UserBounds[1] = this->UserBounds[3] = this->UserBounds[5] = this->UserBounds[7] = -1.;
+  this->OldBounds[0] = this->OldBounds[2] = this->OldBounds[4] = this->OldBounds[6] = 0.;
+  this->OldBounds[1] = this->OldBounds[3] = this->OldBounds[5] = this->OldBounds[7] = -1.;
 }
 
 // ----------------------------------------------------------------------------
@@ -215,7 +218,22 @@ void ctkVTKChartView::addPlot(vtkPlot* plot)
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::onChartUpdated()
 {
-  emit boundsChanged();
+  Q_D(ctkVTKChartView);
+  double oldBounds[8];
+  memcpy(oldBounds, d->OldBounds, 8 * sizeof(double));
+  double newBounds[8];
+  this->chartBounds(newBounds);
+  if (oldBounds[0] != newBounds[0] ||
+      oldBounds[1] != newBounds[1] ||
+      oldBounds[2] != newBounds[2] ||
+      oldBounds[3] != newBounds[3] ||
+      oldBounds[4] != newBounds[4] ||
+      oldBounds[5] != newBounds[5] ||
+      oldBounds[6] != newBounds[6] ||
+      oldBounds[7] != newBounds[7])
+    {
+    emit boundsChanged();
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -226,9 +244,12 @@ void ctkVTKChartView::chartBounds(double* bounds)const
     {
     // Invalid user bounds, return the real chart bounds
     d->chartBounds(bounds);
-    return;
     }
-  this->chartUserBounds(bounds);
+  else
+    {
+    this->chartUserBounds(bounds);
+    }
+  memcpy(d->OldBounds, bounds, 8 * sizeof(double));
 }
 
 // ----------------------------------------------------------------------------
