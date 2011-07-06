@@ -64,7 +64,7 @@ public:
 
   /// 
   virtual void setAxesToChartBounds();
-  void boundAxesToChartBounds();
+  virtual void boundAxesToChartBounds();
 
 signals:
   void plotAdded(vtkPlot* plot);
@@ -72,8 +72,10 @@ signals:
 
 protected:
   QScopedPointer<ctkVTKChartViewPrivate> d_ptr;
+
   virtual void mouseDoubleClickEvent(QMouseEvent* event);
   virtual void onChartUpdated();
+  void chartBoundsToPlotBounds(double bounds[8], double plotBounds[4])const;
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKChartView);

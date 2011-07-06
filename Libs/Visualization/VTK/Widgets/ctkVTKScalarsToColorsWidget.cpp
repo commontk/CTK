@@ -208,10 +208,11 @@ void ctkVTKScalarsToColorsWidget::onBoundsChanged()
   Q_D(ctkVTKScalarsToColorsWidget);
   double bounds[8];
   d->View->chartBounds(bounds);
-  d->XRangeSlider->setMinimum(bounds[vtkAxis::BOTTOM * 2]);
-  d->XRangeSlider->setMaximum(bounds[vtkAxis::BOTTOM * 2 + 1]);
-  d->YRangeSlider->setMinimum(bounds[vtkAxis::LEFT * 2]);
-  d->YRangeSlider->setMaximum(bounds[vtkAxis::LEFT * 2 + 1]);
+  /// The bounds have already been set to the axes in ctkVTKChartView::boundAxesToChartBounds()
+  d->XRangeSlider->setRange(bounds[vtkAxis::BOTTOM * 2],
+                            bounds[vtkAxis::BOTTOM * 2 + 1]);
+  d->YRangeSlider->setRange(bounds[vtkAxis::LEFT * 2],
+                            bounds[vtkAxis::LEFT * 2 + 1]);
 }
 
 // ----------------------------------------------------------------------------
