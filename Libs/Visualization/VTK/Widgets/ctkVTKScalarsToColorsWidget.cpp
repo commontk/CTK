@@ -419,8 +419,12 @@ void ctkVTKScalarsToColorsWidget::setXRange(double min, double max)
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
-  d->View->scene()->SetDirty(true);
-  xAxis->SetRange(min, max);
+  if (xAxis->GetMinimum() != min || xAxis->GetMaximum() != max)
+    {
+    xAxis->SetRange(min, max);
+    // Repaint the scene
+    d->View->scene()->SetDirty(true);
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -441,8 +445,12 @@ void ctkVTKScalarsToColorsWidget::setYRange(double min, double max)
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
-  d->View->scene()->SetDirty(true);
-  yAxis->SetRange(min, max);
+  if (yAxis->GetMinimum() != min || yAxis->GetMaximum() != max)
+    {
+    yAxis->SetRange(min, max);
+    // Repaint the scene
+    d->View->scene()->SetDirty(true);
+    }
 }
 
 // ----------------------------------------------------------------------------
