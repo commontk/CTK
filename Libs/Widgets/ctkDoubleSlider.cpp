@@ -159,30 +159,14 @@ ctkDoubleSlider::~ctkDoubleSlider()
 void ctkDoubleSlider::setMinimum(double min)
 {
   Q_D(ctkDoubleSlider);
-  d->Minimum = min;
-  if (d->Minimum >= d->Value)
-    {
-    d->updateOffset(d->Minimum);
-    }
-  d->SettingRange = true;
-  d->Slider->setMinimum(d->toInt(min));
-  d->SettingRange = false;
-  emit this->rangeChanged(d->Minimum, d->Maximum);
+  this->setRange(min, qMax(min, d->Maximum));
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setMaximum(double max)
 {
   Q_D(ctkDoubleSlider);
-  d->Maximum = max;
-  if (d->Maximum <= d->Value)
-    {
-    d->updateOffset(d->Maximum);
-    }
-  d->SettingRange = true;
-  d->Slider->setMaximum(d->toInt(max));
-  d->SettingRange = false;
-  emit this->rangeChanged(d->Minimum, d->Maximum);
+  this->setRange(qMin(d->Minimum, max), max);
 }
 
 // --------------------------------------------------------------------------
@@ -204,6 +188,9 @@ void ctkDoubleSlider::setRange(double min, double max)
   d->Slider->setRange(d->toInt(min), d->toInt(max));
   d->SettingRange = false;
   emit this->rangeChanged(d->Minimum, d->Maximum);
+  /// In case QSlider::setRange(...) didn't notify the value
+  /// has changed.
+  this->setValue(d->Value);
 }
 
 // --------------------------------------------------------------------------
@@ -279,15 +266,14 @@ void ctkDoubleSlider::setSingleStep(double newStep)
 {
   Q_D(ctkDoubleSlider);
   d->SingleStep = newStep;
+  d->updateOffset(d->Value);
   // update the new values of the QSlider
-  double _value = d->Value;
-  d->updateOffset(_value);
-  bool oldBlockSignals = this->blockSignals(true);
-  this->setRange(d->Minimum, d->Maximum);
-  d->Slider->setValue(d->toInt(_value));
-  d->Value = _value;
+  bool oldBlockSignals = d->Slider->blockSignals(true);
+  d->Slider->setRange(d->toInt(d->Minimum), d->toInt(d->Maximum));
+  d->Slider->setValue(d->toInt(d->Value));
   d->Slider->setPageStep(d->toInt(d->PageStep));
-  this->blockSignals(oldBlockSignals);
+  d->Slider->blockSignals(oldBlockSignals);
+  Q_ASSERT(d->Value == d->safeFromInt(d->Slider->value()));
 }
 
 // --------------------------------------------------------------------------

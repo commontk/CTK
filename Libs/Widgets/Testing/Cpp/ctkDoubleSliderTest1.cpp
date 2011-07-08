@@ -46,7 +46,8 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
   std::cout << "Test setMinimum(5.21)" << std::endl;
   slider.setMinimum(5.21);
   if (!qFuzzyCompare(slider.minimum(), 5.21) ||
-      !qFuzzyCompare(slider.value(),18.54))
+      !qFuzzyCompare(slider.value(),18.54) ||
+      !qFuzzyCompare(slider.sliderPosition(), 18.54))
     {
     std::cerr << "ctkDoubleSlider::setMinimum failed." << slider.value() << std::endl;
     return EXIT_FAILURE;
@@ -54,7 +55,8 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
   std::cout << "Test setMaximum(1340.2)" << std::endl;
   slider.setMaximum(1340.2);
   if (!qFuzzyCompare(slider.maximum(), 1340.2) ||
-      !qFuzzyCompare(slider.value(), 18.54))
+      !qFuzzyCompare(slider.value(), 18.54) ||
+      !qFuzzyCompare(slider.sliderPosition(), 18.54))
     {
     std::cerr << "ctkDoubleSlider::setMinimum failed." << slider.value() << std::endl;
     return EXIT_FAILURE;
