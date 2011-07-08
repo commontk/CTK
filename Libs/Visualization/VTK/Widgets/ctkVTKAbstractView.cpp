@@ -147,6 +147,7 @@ void ctkVTKAbstractView::forceRender()
     {
     return;
     }
+  this->preRender();
   d->RenderWindow->Render();
 }
 

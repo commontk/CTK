@@ -129,7 +129,7 @@ signals:
 
 protected:
   virtual void resizeEvent(QResizeEvent * event);
-
+  virtual void preRender();
 private:
   Q_DECLARE_PRIVATE(ctkVTKSliceView);
   Q_DISABLE_COPY(ctkVTKSliceView);

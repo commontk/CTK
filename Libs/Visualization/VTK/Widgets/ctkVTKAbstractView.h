@@ -54,7 +54,7 @@ public slots:
   void scheduleRender();
 
   /// Force a render even if a render is already ocurring
-  void forceRender();
+  virtual void forceRender();
 
   /// Set background color
   virtual void setBackgroundColor(const QColor& newBackgroundColor) = 0;
@@ -97,7 +97,7 @@ public:
 protected:
   QScopedPointer<ctkVTKAbstractViewPrivate> d_ptr;
   ctkVTKAbstractView(ctkVTKAbstractViewPrivate* pimpl, QWidget* parent);
-
+  virtual void preRender(){};
 private:
   Q_DECLARE_PRIVATE(ctkVTKAbstractView);
   Q_DISABLE_COPY(ctkVTKAbstractView);
