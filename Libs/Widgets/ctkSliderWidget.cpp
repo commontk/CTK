@@ -163,6 +163,8 @@ void ctkSliderWidget::setMinimum(double min)
   // use Spinbox's min to set Slider's min
   d->Slider->setMinimum(d->SpinBox->minimum());
   Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
   d->updateSpinBoxWidth();
 }
 
@@ -177,7 +179,9 @@ void ctkSliderWidget::setMaximum(double max)
   // SpinBox can truncate max (depending on decimals).
   // use Spinbox's max to set Slider's max
   d->Slider->setMaximum(d->SpinBox->maximum());
-  Q_ASSERT(d->equal(d->SpinBox->maximum(), d->Slider->maximum()));
+  Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
   d->updateSpinBoxWidth();
 }
 
@@ -193,8 +197,9 @@ void ctkSliderWidget::setRange(double min, double max)
   // SpinBox can truncate the range (depending on decimals).
   // use Spinbox's range to set Slider's range
   d->Slider->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
-  Q_ASSERT(d->equal(d->SpinBox->minimum(), d->Slider->minimum()));
-  Q_ASSERT(d->equal(d->SpinBox->maximum(), d->Slider->maximum()));
+  Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
   d->updateSpinBoxWidth();
 }
 /*
@@ -238,7 +243,9 @@ void ctkSliderWidget::setValue(double _value)
   // Why do we need to set the value to the slider ?
   //d->Slider->setValue(d->SpinBox->value());
   //double spinBoxValue = d->SpinBox->value();
-  Q_ASSERT(d->equal(d->SpinBox->value(), d->Slider->value()));
+  Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
   // restore the prop
   d->Changing = isChanging;
 }
@@ -330,7 +337,9 @@ void ctkSliderWidget::setSingleStep(double step)
   Q_D(ctkSliderWidget);
   d->SpinBox->setSingleStep(step);
   d->Slider->setSingleStep(d->SpinBox->singleStep());
-  Q_ASSERT(d->equal(d->SpinBox->singleStep(), d->Slider->singleStep()));
+  Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
 }
 
 // --------------------------------------------------------------------------
@@ -363,8 +372,10 @@ void ctkSliderWidget::setDecimals(int newDecimals)
   // i.e. 50.55 with 2 decimals -> 51 with 0 decimals
   // As the SpinBox range change doesn't fire signals, 
   // we have to do the synchronization manually here
-  d->Slider->setMinimum(d->SpinBox->minimum());
-  d->Slider->setMaximum(d->SpinBox->maximum());
+  d->Slider->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
+  Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
 }
 
 // --------------------------------------------------------------------------
