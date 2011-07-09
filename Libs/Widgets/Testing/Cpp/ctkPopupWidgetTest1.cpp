@@ -57,6 +57,18 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
   //QObject::connect(&base, SIGNAL(clicked()), &popup, SLOT(showPopup()));
   base.show();
 
+  QPushButton hiddenButton("Hidden button");
+  
+  ctkPopupWidget hiddenPopup;
+  QPushButton hiddenPopupContent("Hidden popup");
+  QVBoxLayout* hiddenLayout = new QVBoxLayout;
+  hiddenLayout->addWidget(&hiddenPopupContent);
+  hiddenPopup.setLayout(hiddenLayout);
+  hiddenPopup.setBaseWidget(&hiddenButton);
+  hiddenPopup.setAutoHide(false);
+  
+  QTimer::singleShot(100, &hiddenPopup, SLOT(showPopup()));
+
   QWidget topLevel;
   QPushButton focusButton("Focus popup");
   QPushButton openButton("Open popup");

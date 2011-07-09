@@ -121,11 +121,6 @@ void ctkPopupWidgetPrivate::init()
   q->setAttribute(Qt::WA_NoSystemBackground);
   q->setAttribute(Qt::WA_OpaquePaintEvent, false);
   q->setAttribute(Qt::WA_TranslucentBackground);
-  //q->setAttribute(Qt::WA_PaintOnScreen);
-  // Already by default
-  //q->setAutoFillBackground(false);
-  // Obsolete
-  //q->setAttribute(Qt::WA_ContentsPropagated);
   this->Alpha = q->style()->styleHint(QStyle::SH_ToolTipLabel_Opacity);
   this->Timer = new QTimer(q);
   QObject::connect(this->Timer, SIGNAL(timeout()), q, SLOT(animatePopup()));
@@ -322,7 +317,9 @@ void ctkPopupWidget::updatePopup()
 void ctkPopupWidget::showPopup()
 {
   Q_D(ctkPopupWidget);
-  if (this->isVisible() && d->OpenState == ctkPopupWidgetPrivate::Open)
+  if ((this->isVisible() &&
+       d->OpenState == ctkPopupWidgetPrivate::Open) ||
+      (d->BaseWidget && !d->BaseWidget->isVisible()))
     {
     return;
     }
