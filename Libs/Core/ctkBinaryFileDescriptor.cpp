@@ -17,17 +17,16 @@
   limitations under the License.
 
 =========================================================================*/
-/*=auto=========================================================================
+/*=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright Brigham and Women's Hospital (BWH) 
  All Rights Reserved.
 
- See Doc/copyright/copyright.txt
- or http://www.slicer.org/copyright/copyright.txt for details.
+ See http://www.slicer.org/copyright/copyright.txt for details.
 
  Program:   Module Description Parser
 
-=========================================================================auto=*/
+=========================================================================*/
 
 // CTK includes
 #include "ctkBinaryFileDescriptor.h"
