@@ -273,7 +273,7 @@ void ctkDoubleSlider::setSingleStep(double newStep)
   d->Slider->setValue(d->toInt(d->Value));
   d->Slider->setPageStep(d->toInt(d->PageStep));
   d->Slider->blockSignals(oldBlockSignals);
-  Q_ASSERT(d->Value == d->safeFromInt(d->Slider->value()));
+  Q_ASSERT(qFuzzyCompare(d->Value,d->safeFromInt(d->Slider->value())));
 }
 
 // --------------------------------------------------------------------------
