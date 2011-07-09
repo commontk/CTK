@@ -115,31 +115,31 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   // Create a highlight actor (2D box around viewport)
   VTK_CREATE(vtkPolyData, poly);
   VTK_CREATE(vtkPoints, points);
-  /// Normalized Viewport means :
-  /// 0. -> 0;
-  /// 1. -> width - 1 ;
-  /// For a line of a width of 1, from (0.f,0.f) to (10.f,0.f), the line is on
-  /// 2 pixels. What pixel to draw the line on ?
-  ///
-  ///     |       |       |       |       |       |       |
-  ///  1  |       |       |       |       |       |       |
-  ///     |       |       |       |       |       |       |
-  ///     +-------+-------+-------+-------+-------+-------+
-  ///     |       |       |       |       |       |       |
-  ///  0  | What pixel    |================================
-  ///     | line shall    |
-  ///     +--be drawn---(0,0)
-  ///     |  above or     |
-  /// -1  |   below?      |================================
-  ///     |       |       |       |       |       |       |
-  ///  ^  +-------+-------+-------+-------+-------+-------+
-  ///     |       |       |       |       |       |       |
-  /// 1px |       |       |       |       |       |       |
-  ///     |       |       |       |       |       |       |
-  ///  V  +-------+-------+-------+-------+-------+-------+
-  ///     <  1px  >  -1       0       1       2       3
-  /// It seems that it's the bottom pixel line that is drawn.
-  /// We will then shift the actor to have the correct behavior.
+  // Normalized Viewport means :
+  // 0. -> 0;
+  // 1. -> width - 1 ;
+  // For a line of a width of 1, from (0.f,0.f) to (10.f,0.f), the line is on
+  // 2 pixels. What pixel to draw the line on ?
+  //
+  //     |       |       |       |       |       |       |
+  //  1  |       |       |       |       |       |       |
+  //     |       |       |       |       |       |       |
+  //     +-------+-------+-------+-------+-------+-------+
+  //     |       |       |       |       |       |       |
+  //  0  | What pixel    |================================
+  //     | line shall    |
+  //     +--be drawn---(0,0)
+  //     |  above or     |
+  // -1  |   below?      |================================
+  //     |       |       |       |       |       |       |
+  //  ^  +-------+-------+-------+-------+-------+-------+
+  //     |       |       |       |       |       |       |
+  // 1px |       |       |       |       |       |       |
+  //     |       |       |       |       |       |       |
+  //  V  +-------+-------+-------+-------+-------+-------+
+  //     <  1px  >  -1       0       1       2       3
+  // It seems that it's the bottom pixel line that is drawn.
+  // We will then shift the actor to have the correct behavior.
   points->InsertNextPoint(0., 0., 0); // bottom-left
   points->InsertNextPoint(1., 0., 0); // bottom-right
   points->InsertNextPoint(1., 1., 0); // top-right
@@ -165,13 +165,14 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   polyDataMapper->SetTransformCoordinate(coordinate);
 
   this->HighlightedBoxActor = vtkSmartPointer<vtkActor2D>::New();
-  /// Shift the box for the reason explained earlier
+  // Shift the box for the reason explained earlier
   this->HighlightedBoxActor->SetPosition(1.,1.);
   this->HighlightedBoxActor->SetMapper(polyDataMapper);
   this->HighlightedBoxActor->GetProperty()->SetColor(
       highlightedBoxColor[0], highlightedBoxColor[1], highlightedBoxColor[2]); // Default to green
   this->HighlightedBoxActor->GetProperty()->SetDisplayLocationToForeground();
-  this->HighlightedBoxActor->GetProperty()->SetLineWidth(1.0f);
+  // Border of 2 pixels
+  this->HighlightedBoxActor->GetProperty()->SetLineWidth(3.0f);
   this->HighlightedBoxActor->SetVisibility(visible);
 
   this->Renderer->AddActor2D(this->HighlightedBoxActor);
