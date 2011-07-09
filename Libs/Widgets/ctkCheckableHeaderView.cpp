@@ -20,7 +20,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    $RCSfile: pqCheckableHeaderView.cxx,v $
+   Module:  pqCheckableHeaderView.cxx
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.

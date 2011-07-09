@@ -20,7 +20,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    $RCSfile: pqSettings.h,v $
+   Module:  pqSettings.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.

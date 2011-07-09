@@ -20,7 +20,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    $RCSfile: pqCheckBoxPixMaps.h,v $
+   Module:  pqCheckBoxPixMaps.h
 
    Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.

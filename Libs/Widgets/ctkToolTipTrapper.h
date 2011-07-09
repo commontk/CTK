@@ -20,7 +20,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqToolTipTrapper.h
+   Module:  pqToolTipTrapper.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
