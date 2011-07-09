@@ -451,12 +451,6 @@ void vtkLightBoxRendererManager::SetImageData(vtkImageData* newImageData)
 }
 
 //----------------------------------------------------------------------------
-vtkImageData* vtkLightBoxRendererManager::GetImageData()const
-{
-  return this->Internal->ImageData;
-}
-
-//----------------------------------------------------------------------------
 vtkCamera* vtkLightBoxRendererManager::GetActiveCamera()
 {
   if (this->Internal->RenderWindowItemList.size() == 0)

@@ -134,19 +134,6 @@ void ctkVTKSliceView::resetCamera()
 }
 
 //----------------------------------------------------------------------------
-void ctkVTKSliceView::preRender()
-{
-  Q_D(ctkVTKSliceView);
-  vtkImageData* imageData = d->LightBoxRendererManager->GetImageData();
-  if (imageData)
-    {
-    /// FIXME: Shouldn't be needed to update the pipeline here. During the
-    /// rendering, the actors should update the pipeline via the mappers.
-    imageData->Update();
-    }
-}
-
-//----------------------------------------------------------------------------
 void ctkVTKSliceView::setImageData(vtkImageData* newImageData)
 {
   Q_D(ctkVTKSliceView);
