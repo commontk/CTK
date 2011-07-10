@@ -26,16 +26,16 @@
 #include <QLayout>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPropertyAnimation>
 #include <QStyle>
 #include <QTimer>
 
 // CTK includes
 #include "ctkPopupWidget.h"
 
-#define LEAVE_CLOSING_DELAY 66
-#define ENTER_OPENING_DELAY 66
+#define LEAVE_CLOSING_DELAY 0
+#define ENTER_OPENING_DELAY 0
 #define DEFAULT_FADING_DURATION 333 // fast enough
-#define FADING_FPS 33 // 30 fps
 
 // -------------------------------------------------------------------------
 class ctkPopupWidgetPrivate
@@ -47,19 +47,11 @@ public:
   ctkPopupWidgetPrivate(ctkPopupWidget& object);
   void init();
 
-  enum OpenStateType{
-    Closed =0,
-    Closing,
-    Opening,
-    Open
-  };
-  
   QWidget* BaseWidget;
-  QTimer* Timer;
   int Alpha;
-  int CurrentAlpha;
-  int Duration;
-  OpenStateType OpenState;
+  int WindowAlpha;
+
+  QPropertyAnimation* AlphaAnimation;
   bool AutoHide;
 };
 
@@ -105,12 +97,9 @@ ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
   :q_ptr(&object)
 {
   this->BaseWidget = 0;
-  this->Timer = 0;
   this->Alpha = 255;
-  this->CurrentAlpha = 0;
-  this->Duration = DEFAULT_FADING_DURATION;
-
-  this->OpenState = Closed;
+  this->WindowAlpha = 0;
+  this->AlphaAnimation = 0;
   this->AutoHide = true;
 }
 
@@ -122,8 +111,14 @@ void ctkPopupWidgetPrivate::init()
   q->setAttribute(Qt::WA_OpaquePaintEvent, false);
   q->setAttribute(Qt::WA_TranslucentBackground);
   this->Alpha = q->style()->styleHint(QStyle::SH_ToolTipLabel_Opacity);
-  this->Timer = new QTimer(q);
-  QObject::connect(this->Timer, SIGNAL(timeout()), q, SLOT(animatePopup()));
+
+  this->AlphaAnimation = new QPropertyAnimation(q, "windowAlpha", q);
+  this->AlphaAnimation->setDuration(DEFAULT_FADING_DURATION);
+  this->AlphaAnimation->setStartValue(0);
+  this->AlphaAnimation->setEndValue(this->Alpha);
+  this->AlphaAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+  QObject::connect(this->AlphaAnimation, SIGNAL(finished()),
+                   q, SLOT(onEffectFinished()));
 }
 
 // -------------------------------------------------------------------------
@@ -178,7 +173,10 @@ void ctkPopupWidget::setOpacity(int alpha)
 {
   Q_D(ctkPopupWidget);
   d->Alpha = alpha;
-  d->CurrentAlpha = d->Alpha;
+  if (d->AlphaAnimation->state() == QAbstractAnimation::Stopped)
+    {
+    d->WindowAlpha = d->Alpha;
+    }
   this->update();
 }
 
@@ -198,33 +196,16 @@ void ctkPopupWidget::setAutoHide(bool mode)
 }
 
 // -------------------------------------------------------------------------
-void ctkPopupWidget::animatePopup()
+void ctkPopupWidget::onEffectFinished()
 {
   Q_D(ctkPopupWidget);
-  this->repaint();
-  if (d->OpenState == ctkPopupWidgetPrivate::Opening &&  d->CurrentAlpha < d->Alpha)
+  if (qobject_cast<QAbstractAnimation*>(this->sender())->direction() == QAbstractAnimation::Backward)
     {
-    d->CurrentAlpha += d->Alpha * d->Timer->interval() / d->Duration;
+    this->hide();
     }
-  else if (d->OpenState ==  ctkPopupWidgetPrivate::Closing &&  d->CurrentAlpha > 0)
+  else
     {
-    d->CurrentAlpha -= d->Alpha * d->Timer->interval() / d->Duration;
-    }
-
-  if (d->CurrentAlpha >= d->Alpha)
-    {
-    d->CurrentAlpha = d->Alpha;
-    d->OpenState = ctkPopupWidgetPrivate::Open;
-    }
-
-  if (d->CurrentAlpha <= 0)
-    {
-    d->CurrentAlpha = 0;
-    d->OpenState = ctkPopupWidgetPrivate::Closed;
-    if (d->Alpha > 0)
-      {
-      this->hide();
-      }
+    this->show();
     }
 }
 
@@ -234,32 +215,35 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
   Q_D(ctkPopupWidget);
   Q_UNUSED(event);
 
-  QPainter painter(this);
-  QBrush brush = this->palette().window();
-  if (brush.style() == Qt::LinearGradientPattern ||
-      brush.style() == Qt::ConicalGradientPattern ||
-      brush.style() == Qt::RadialGradientPattern)
+  if (d->AlphaAnimation->state() != QAbstractAnimation::Stopped)
     {
-    QGradient* newGradient = duplicateGradient(brush.gradient());
-    QGradientStops stops;
-    foreach(QGradientStop stop, newGradient->stops())
+    QPainter painter(this);
+    QBrush brush = this->palette().window();
+    if (brush.style() == Qt::LinearGradientPattern ||
+        brush.style() == Qt::ConicalGradientPattern ||
+        brush.style() == Qt::RadialGradientPattern)
       {
-      stop.second.setAlpha(d->CurrentAlpha);
-      stops.push_back(stop);
+      QGradient* newGradient = duplicateGradient(brush.gradient());
+      QGradientStops stops;
+      foreach(QGradientStop stop, newGradient->stops())
+        {
+        stop.second.setAlpha(d->WindowAlpha);
+        stops.push_back(stop);
+        }
+      newGradient->setStops(stops);
+      brush = QBrush(*newGradient);
+      delete newGradient;
       }
-    newGradient->setStops(stops);
-    brush = QBrush(*newGradient);
-    delete newGradient;
+    else
+      {
+      QColor color = brush.color();
+      color.setAlpha(d->WindowAlpha);
+      brush.setColor(color);
+      }
+    //QColor semiTransparentColor = this->palette().window().color();
+    //semiTransparentColor.setAlpha(d->CurrentAlpha);
+    painter.fillRect(this->rect(), brush);
     }
-  else
-    {
-    QColor color = brush.color();
-    color.setAlpha(d->CurrentAlpha);
-    brush.setColor(color);
-    }
-  //QColor semiTransparentColor = this->palette().window().color();
-  //semiTransparentColor.setAlpha(d->CurrentAlpha);
-  painter.fillRect(this->rect(), brush);
   // Let the QFrame draw itself if needed
   this->Superclass::paintEvent(event);
 }
@@ -318,7 +302,7 @@ void ctkPopupWidget::showPopup()
 {
   Q_D(ctkPopupWidget);
   if ((this->isVisible() &&
-       d->OpenState == ctkPopupWidgetPrivate::Open) ||
+       d->AlphaAnimation->state() == QAbstractAnimation::Stopped) ||
       (d->BaseWidget && !d->BaseWidget->isVisible()))
     {
     return;
@@ -338,8 +322,20 @@ void ctkPopupWidget::showPopup()
       this->resize(d->BaseWidget->width(), this->sizeHint().height());
       }
     }
-  d->OpenState = ctkPopupWidgetPrivate::Opening;
-  d->Timer->start(FADING_FPS);
+  d->AlphaAnimation->setDirection(QAbstractAnimation::Forward);
+  switch(d->AlphaAnimation->state())
+    {
+    case QAbstractAnimation::Stopped:
+      d->AlphaAnimation->start();
+      break;
+    case QAbstractAnimation::Paused:
+      d->AlphaAnimation->resume();
+      break;
+    default:
+    case QAbstractAnimation::Running:
+      break;
+    }
+  // just in case it wasn't visible, usually it's a no op
   this->show();
 }
 
@@ -348,12 +344,37 @@ void ctkPopupWidget::hidePopup()
 {
   Q_D(ctkPopupWidget);
 
-  if (!this->isVisible() || d->OpenState == ctkPopupWidgetPrivate::Closed)
+  if (!this->isVisible() &&
+      d->AlphaAnimation->state() == QAbstractAnimation::Stopped)
     {
     return;
     }
+  d->AlphaAnimation->setDirection(QAbstractAnimation::Backward);
+  switch(d->AlphaAnimation->state())
+    {
+    case QAbstractAnimation::Stopped:
+      d->AlphaAnimation->start();
+      break;
+    case QAbstractAnimation::Paused:
+      d->AlphaAnimation->resume();
+      break;
+    default:
+    case QAbstractAnimation::Running:
+      break;
+    }
+}
 
-  d->OpenState = ctkPopupWidgetPrivate::Closing;
-  d->Timer->start(FADING_FPS);
-  this->update();
+// --------------------------------------------------------------------------
+int ctkPopupWidget::windowAlpha()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->WindowAlpha;
+}
+
+// --------------------------------------------------------------------------
+void ctkPopupWidget::setWindowAlpha(int alpha)
+{
+  Q_D(ctkPopupWidget);
+  d->WindowAlpha = alpha;
+  this->repaint();
 }
