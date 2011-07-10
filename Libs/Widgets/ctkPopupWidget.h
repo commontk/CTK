@@ -40,7 +40,6 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public QFrame
   /// is over the baseWidget and automatically closes when it leaves
   /// the widget.
   Q_PROPERTY( bool autoHide READ autoHide WRITE setAutoHide)
-
 public:
   typedef QFrame Superclass;
   explicit ctkPopupWidget(QWidget* parent = 0);
@@ -71,16 +70,20 @@ public slots:
 
 protected slots:
   void updatePopup();
-  void animatePopup();
+  //void animatePopup();
+  void onEffectFinished();
+  void setWindowAlpha(int alpha);
 
 protected:
   QScopedPointer<ctkPopupWidgetPrivate> d_ptr;
+  Q_PROPERTY(int windowAlpha READ windowAlpha WRITE setWindowAlpha DESIGNABLE false)
 
   virtual void paintEvent(QPaintEvent*);
   virtual void leaveEvent(QEvent* event);
   virtual void enterEvent(QEvent* event);
   virtual bool eventFilter(QObject* obj, QEvent* event);
 
+  int windowAlpha()const;
 private:
   Q_DECLARE_PRIVATE(ctkPopupWidget);
   Q_DISABLE_COPY(ctkPopupWidget);
