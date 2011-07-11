@@ -34,10 +34,67 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-void changeOpacity(void* callData)
+QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
 {
-  ctkPopupWidget* popup = reinterpret_cast<ctkPopupWidget*>(callData);
-  popup->setOpacity(qobject_cast<QSlider*>(popup->baseWidget())->value());
+  QWidget* topLevel = new QWidget(0);
+  topLevel->setWindowTitle(title);
+  
+  QPushButton* focusButton = new QPushButton("Focus popup");
+  QPushButton* openButton = new QPushButton("Open popup");
+  QPushButton* toggleButton = new QPushButton("Toggle popup");
+  toggleButton->setCheckable(true);
+
+  QVBoxLayout* vlayout = new QVBoxLayout;
+  vlayout->addWidget(focusButton);
+  vlayout->addWidget(openButton);
+  vlayout->addWidget(toggleButton);
+  topLevel->setLayout(vlayout);
+
+  ctkPopupWidget* focusPopup = new ctkPopupWidget;
+  focusPopup->setAutoHide(true);
+  QPushButton* focusPopupContent = new QPushButton("button");
+  QVBoxLayout* focusLayout = new QVBoxLayout;
+  focusLayout->addWidget(focusPopupContent);
+  focusPopup->setLayout(focusLayout);
+  focusPopup->setBaseWidget(focusButton);
+
+  QPalette palette = focusPopup->palette();
+  QLinearGradient linearGradient(QPointF(0.f, 0.f), QPointF(0.f, 0.666f));
+  linearGradient.setSpread(QGradient::PadSpread);
+  linearGradient.setCoordinateMode(QGradient::StretchToDeviceMode);
+  linearGradient.setColorAt(0, palette.color(QPalette::Window));
+  linearGradient.setColorAt(1, palette.color(QPalette::Dark));
+  palette.setBrush(QPalette::Window, linearGradient);
+  focusPopup->setPalette(palette);
+
+  ctkPopupWidget* openPopup = new ctkPopupWidget;
+  openPopup->setFrameStyle(QFrame::Box);
+  openPopup->setLineWidth(1);
+  openPopup->setAutoHide(false);
+  openPopup->setWindowOpacity(0.7);
+  QPushButton* openPopupContent = new QPushButton("Close popup");
+  QVBoxLayout* openLayout = new QVBoxLayout;
+  openLayout->addWidget(openPopupContent);
+  openPopup->setLayout(openLayout);
+  openPopup->setBaseWidget(openButton);
+  QObject::connect(openButton, SIGNAL(clicked()),
+                   openPopup, SLOT(showPopup()));
+  QObject::connect(openPopupContent, SIGNAL(clicked()),
+                   openPopup, SLOT(hidePopup()));
+                   
+  ctkPopupWidget* togglePopup = new ctkPopupWidget;
+  togglePopup->setAutoHide(false);
+  QPushButton* togglePopupContent = new QPushButton("useless button");
+  QVBoxLayout* toggleLayout = new QVBoxLayout;
+  toggleLayout->addWidget(togglePopupContent);
+  togglePopup->setLayout(toggleLayout);
+  togglePopup->setBaseWidget(toggleButton);
+  QObject::connect(toggleButton, SIGNAL(toggled(bool)),
+                   togglePopup, SLOT(showPopup(bool)));
+  togglePopup->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  
+  popups << focusPopup << openPopup << togglePopup;
+  return topLevel;
 }
 
 //-----------------------------------------------------------------------------
@@ -54,92 +111,27 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
   popup.setLayout(layout);
 
   popup.setBaseWidget(&base);
-  //QObject::connect(&base, SIGNAL(clicked()), &popup, SLOT(showPopup()));
   base.show();
-
-  QPushButton hiddenButton("Hidden button");
   
-  ctkPopupWidget hiddenPopup;
-  QPushButton hiddenPopupContent("Hidden popup");
-  QVBoxLayout* hiddenLayout = new QVBoxLayout;
-  hiddenLayout->addWidget(&hiddenPopupContent);
-  hiddenPopup.setLayout(hiddenLayout);
-  hiddenPopup.setBaseWidget(&hiddenButton);
-  hiddenPopup.setAutoHide(false);
-  
-  QTimer::singleShot(100, &hiddenPopup, SLOT(showPopup()));
+  QList<ctkPopupWidget*> popups;
+  QWidget* hiddenPanel = createPanel("Hidden", popups);
+  QWidget* scrollPanel = createPanel("Scroll", popups);
+  foreach(ctkPopupWidget* popup, popups)
+    {
+    popup->setVerticalDirection(ctkPopupWidget::TopToBottom);
+    popup->setHorizontalDirection(Qt::LeftToRight);
+    popup->setAlignment( Qt::AlignBottom | Qt::AlignLeft);
+    popup->setEasingCurve(QEasingCurve::OutElastic);
+    }
+  popups.clear();
+  QWidget* fadePanel = createPanel("Window opacity", popups);
+  foreach(ctkPopupWidget* popup, popups)
+    {
+    popup->setAnimationEffect(ctkPopupWidget::WindowOpacityFadeEffect);
+    }
 
-  QWidget topLevel;
-  QPushButton focusButton("Focus popup");
-  QPushButton openButton("Open popup");
-  QPushButton toggleButton("Toggle popup");
-  toggleButton.setCheckable(true);
-  QSlider opacitySlider(Qt::Horizontal);
-  opacitySlider.setRange(0, 255);
-  QVBoxLayout* vlayout = new QVBoxLayout;
-  vlayout->addWidget(&focusButton);
-  vlayout->addWidget(&openButton);
-  vlayout->addWidget(&toggleButton);
-  vlayout->addWidget(&opacitySlider);
-  topLevel.setLayout(vlayout);
-
-  ctkPopupWidget focusPopup;
-  focusPopup.setFrameStyle(QFrame::Box);
-  focusPopup.setLineWidth(1);
-  focusPopup.setAutoHide(true);
-  QPushButton focusPopupContent("button");
-  QVBoxLayout* focusLayout = new QVBoxLayout;
-  focusLayout->addWidget(&focusPopupContent);
-  focusPopup.setLayout(focusLayout);
-  focusPopup.setBaseWidget(&focusButton);
-
-  ctkPopupWidget openPopup;
-  openPopup.setAutoHide(false);
-  QPushButton openPopupContent("Close popup");
-  QVBoxLayout* openLayout = new QVBoxLayout;
-  openLayout->addWidget(&openPopupContent);
-  openPopup.setLayout(openLayout);
-  openPopup.setBaseWidget(&openButton);
-  QObject::connect(&openButton, SIGNAL(clicked()),
-                   &openPopup, SLOT(showPopup()));
-  QObject::connect(&openPopupContent, SIGNAL(clicked()),
-                   &openPopup, SLOT(hidePopup()));
-                   
-  ctkPopupWidget togglePopup;
-  togglePopup.setAutoHide(false);
-  QPushButton togglePopupContent("button");
-  QVBoxLayout* toggleLayout = new QVBoxLayout;
-  toggleLayout->addWidget(&togglePopupContent);
-  togglePopup.setLayout(toggleLayout);
-  togglePopup.setBaseWidget(&toggleButton);
-  QObject::connect(&toggleButton, SIGNAL(toggled(bool)),
-                   &togglePopup, SLOT(showPopup(bool)));
-  togglePopup.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  
-  ctkPopupWidget sliderPopup;
-  sliderPopup.setAutoHide(false);
-  sliderPopup.setOpacity(255);
-  QPalette palette = sliderPopup.palette();
-  QLinearGradient linearGradient(QPointF(0.f, 0.f), QPointF(0.f, 0.666f));
-  linearGradient.setSpread(QGradient::PadSpread);
-  linearGradient.setCoordinateMode(QGradient::StretchToDeviceMode);
-  linearGradient.setColorAt(0, palette.color(QPalette::Window));
-  linearGradient.setColorAt(1, palette.color(QPalette::Dark));
-  palette.setBrush(QPalette::Window, linearGradient);
-  sliderPopup.setPalette(palette);
-  QWidget sliderPopupContent;
-  QVBoxLayout* sliderLayout = new QVBoxLayout;
-  sliderLayout->addWidget(&sliderPopupContent);
-  sliderPopup.setLayout(sliderLayout);
-  sliderPopup.setBaseWidget(&opacitySlider);
-  ctkCallback callback(changeOpacity);
-  callback.setCallbackData(&sliderPopup);
-  opacitySlider.setValue(255);
-  QObject::connect(&opacitySlider, SIGNAL(valueChanged(int)),
-                   &callback, SLOT(invoke()));
-
-  topLevel.show();
-  sliderPopup.showPopup();
+  scrollPanel->show();
+  fadePanel->show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {

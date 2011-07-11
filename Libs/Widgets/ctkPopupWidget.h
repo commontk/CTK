@@ -22,6 +22,7 @@
 #define __ctkPopupWidget_h
 
 // Qt includes
+#include <QEasingCurve>
 #include <QFrame>
 
 // CTK includes
@@ -40,6 +41,26 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public QFrame
   /// is over the baseWidget and automatically closes when it leaves
   /// the widget.
   Q_PROPERTY( bool autoHide READ autoHide WRITE setAutoHide)
+  
+  /// ScrollEffect by default
+  Q_PROPERTY( AnimationEffect animationEffect READ animationEffect WRITE setAnimationEffect)
+  
+  /// QEasingCurve::InOutQuad by default
+  Q_PROPERTY( QEasingCurve::Type easingCurve READ easingCurve WRITE setEasingCurve);
+  
+  /// To vertically justify, use Qt::AlignTop | Qt::AlignBottom
+  /// Qt::AlignJustify | Qt::AlignBottom by default
+  Q_PROPERTY( Qt::Alignment alignment READ alignment WRITE setAlignment);
+  
+  /// Vertical by default
+  Q_PROPERTY( Qt::Orientation orientation READ orientation WRITE setOrientation);
+  
+  /// TopToBottom by default
+  Q_PROPERTY( ctkPopupWidget::VerticalDirection verticalDirection READ verticalDirection WRITE setVerticalDirection);
+
+  /// LeftToRight by default
+  Q_PROPERTY( Qt::LayoutDirection horizontalDirection READ horizontalDirection WRITE setHorizontalDirection);
+
 public:
   typedef QFrame Superclass;
   explicit ctkPopupWidget(QWidget* parent = 0);
@@ -56,6 +77,36 @@ public:
   
   bool autoHide()const;
   void setAutoHide(bool);
+  
+  enum AnimationEffect
+  {
+    WindowOpacityFadeEffect = 0,
+    ScrollEffect,
+    FadeEffect
+  };
+  
+  AnimationEffect animationEffect()const;
+  void setAnimationEffect(AnimationEffect effect);
+  
+  QEasingCurve::Type easingCurve()const;
+  void setEasingCurve(QEasingCurve::Type easingCurve);
+  
+  Qt::Alignment alignment()const;
+  void setAlignment(Qt::Alignment alignment);
+  
+  Qt::Orientation orientation()const;
+  void setOrientation(Qt::Orientation orientation);
+  
+  enum VerticalDirection{
+    TopToBottom = 1,
+    BottomToTop = 2
+  };
+  
+  VerticalDirection verticalDirection()const;
+  void setVerticalDirection(VerticalDirection direction);
+  
+  Qt::LayoutDirection horizontalDirection()const;
+  void setHorizontalDirection(Qt::LayoutDirection direction);
 
 public slots:
   /// Hide the popup if open or opening. It takes around 300ms 
@@ -73,10 +124,12 @@ protected slots:
   //void animatePopup();
   void onEffectFinished();
   void setWindowAlpha(int alpha);
+  void setWindowGeometry(QRect geometry);
 
 protected:
   QScopedPointer<ctkPopupWidgetPrivate> d_ptr;
   Q_PROPERTY(int windowAlpha READ windowAlpha WRITE setWindowAlpha DESIGNABLE false)
+  Q_PROPERTY(QRect windowGeometry READ windowGeometry WRITE setWindowGeometry DESIGNABLE false)
 
   virtual void paintEvent(QPaintEvent*);
   virtual void leaveEvent(QEvent* event);
@@ -84,6 +137,7 @@ protected:
   virtual bool eventFilter(QObject* obj, QEvent* event);
 
   int windowAlpha()const;
+  QRect windowGeometry()const;
 private:
   Q_DECLARE_PRIVATE(ctkPopupWidget);
   Q_DISABLE_COPY(ctkPopupWidget);

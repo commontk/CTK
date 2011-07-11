@@ -22,7 +22,9 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopWidget>
+#include <QDir>
 #include <QEvent>
+#include <QLabel>
 #include <QLayout>
 #include <QMouseEvent>
 #include <QPainter>
@@ -33,28 +35,11 @@
 // CTK includes
 #include "ctkPopupWidget.h"
 
-#define LEAVE_CLOSING_DELAY 0
-#define ENTER_OPENING_DELAY 0
+#define LEAVE_CLOSING_DELAY 10
+#define ENTER_OPENING_DELAY 10
 #define DEFAULT_FADING_DURATION 333 // fast enough
 
 // -------------------------------------------------------------------------
-class ctkPopupWidgetPrivate
-{
-  Q_DECLARE_PUBLIC(ctkPopupWidget);
-protected:
-  ctkPopupWidget* const q_ptr;
-public:
-  ctkPopupWidgetPrivate(ctkPopupWidget& object);
-  void init();
-
-  QWidget* BaseWidget;
-  int Alpha;
-  int WindowAlpha;
-
-  QPropertyAnimation* AlphaAnimation;
-  bool AutoHide;
-};
-
 QGradient* duplicateGradient(const QGradient* gradient)
 {
   QGradient* newGradient = 0;
@@ -93,32 +78,259 @@ QGradient* duplicateGradient(const QGradient* gradient)
 }
 
 // -------------------------------------------------------------------------
+class ctkPopupWidgetPrivate
+{
+  Q_DECLARE_PUBLIC(ctkPopupWidget);
+protected:
+  ctkPopupWidget* const q_ptr;
+public:
+  ctkPopupWidgetPrivate(ctkPopupWidget& object);
+  ~ctkPopupWidgetPrivate();
+  void init();
+  bool fitBaseWidgetSize()const;
+  Qt::Alignment pixmapAlignment()const;
+  
+  QRect closedGeometry()const;
+  QRect openGeometry()const;
+  
+  QPropertyAnimation* currentAnimation()const;
+
+  QWidget* BaseWidget;
+  bool AutoHide;
+
+  int Alpha;
+  ctkPopupWidget::AnimationEffect Effect;
+  QPropertyAnimation* AlphaAnimation;
+  int WindowAlpha;
+  QPropertyAnimation* ScrollAnimation;
+  QLabel*             PopupPixmapWidget;
+  
+  // Geometry attributes
+  Qt::Alignment   Alignment;
+  Qt::Orientation Orientation;
+  
+  ctkPopupWidget::VerticalDirection VerticalDirection;
+  Qt::LayoutDirection HorizontalDirection;
+};
+
+
+// -------------------------------------------------------------------------
 ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
   :q_ptr(&object)
 {
   this->BaseWidget = 0;
+  this->AutoHide = true;
   this->Alpha = 255;
+  this->Effect = ctkPopupWidget::ScrollEffect;
   this->WindowAlpha = 0;
   this->AlphaAnimation = 0;
-  this->AutoHide = true;
+  this->ScrollAnimation = 0;
+  this->PopupPixmapWidget = 0;
+  // Geometry attributes
+  this->Alignment = Qt::AlignJustify | Qt::AlignBottom;
+  this->Orientation = Qt::Vertical;
+  this->VerticalDirection = ctkPopupWidget::TopToBottom;
+  this->HorizontalDirection = Qt::LeftToRight;
+}
+
+// -------------------------------------------------------------------------
+ctkPopupWidgetPrivate::~ctkPopupWidgetPrivate()
+{
+  delete this->PopupPixmapWidget;
 }
 
 // -------------------------------------------------------------------------
 void ctkPopupWidgetPrivate::init()
 {
   Q_Q(ctkPopupWidget);
-  q->setAttribute(Qt::WA_NoSystemBackground);
-  q->setAttribute(Qt::WA_OpaquePaintEvent, false);
-  q->setAttribute(Qt::WA_TranslucentBackground);
+  q->setAnimationEffect(this->Effect);
   this->Alpha = q->style()->styleHint(QStyle::SH_ToolTipLabel_Opacity);
 
   this->AlphaAnimation = new QPropertyAnimation(q, "windowAlpha", q);
   this->AlphaAnimation->setDuration(DEFAULT_FADING_DURATION);
   this->AlphaAnimation->setStartValue(0);
   this->AlphaAnimation->setEndValue(this->Alpha);
-  this->AlphaAnimation->setEasingCurve(QEasingCurve::InOutQuad);
   QObject::connect(this->AlphaAnimation, SIGNAL(finished()),
                    q, SLOT(onEffectFinished()));
+
+  this->PopupPixmapWidget = new QLabel(0, Qt::ToolTip | Qt::FramelessWindowHint);
+  this->ScrollAnimation = new QPropertyAnimation(q, "windowGeometry", q);
+  this->ScrollAnimation->setDuration(DEFAULT_FADING_DURATION);
+  QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
+                   q, SLOT(onEffectFinished()));
+  QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
+                   this->PopupPixmapWidget, SLOT(hide()));
+
+  q->setEasingCurve(QEasingCurve::OutCubic);
+}
+
+// -------------------------------------------------------------------------
+QPropertyAnimation* ctkPopupWidgetPrivate::currentAnimation()const
+{
+  return this->Effect == ctkPopupWidget::ScrollEffect ?
+    this->ScrollAnimation : this->AlphaAnimation;
+}
+
+// -------------------------------------------------------------------------
+Qt::Alignment ctkPopupWidgetPrivate::pixmapAlignment()const
+{
+  Q_Q(const ctkPopupWidget);
+  Qt::Alignment alignment;
+  if (this->VerticalDirection == ctkPopupWidget::TopToBottom)
+    {
+    alignment |= Qt::AlignBottom;
+    }
+  else// if (this->VerticalDirection == ctkPopupWidget::BottomToTop)
+    {
+    alignment |= Qt::AlignTop;
+    }
+
+  if (this->HorizontalDirection == Qt::LeftToRight)
+    {
+    alignment |= Qt::AlignRight;
+    }
+  else// if (this->VerticalDirection == ctkPopupWidget::BottomToTop)
+    {
+    alignment |= Qt::AlignLeft;
+    }
+  return alignment;
+}
+
+// -------------------------------------------------------------------------
+QRect ctkPopupWidgetPrivate::closedGeometry()const
+{
+  Q_Q(const ctkPopupWidget);
+  /// TODO: it really doesn't handle many cases.
+  /// It's a lot of parameters to think about.
+  QRect openGeom = this->openGeometry();
+  if (this->Orientation & Qt::Vertical)
+    {
+    if (this->VerticalDirection == ctkPopupWidget::BottomToTop)
+      {
+      openGeom.moveTop(openGeom.bottom());
+      }
+    openGeom.setHeight(0);
+    }
+  if (this->Orientation & Qt::Horizontal) 
+    {
+    if (this->HorizontalDirection == Qt::LeftToRight)
+      {
+      openGeom.moveLeft(openGeom.right());
+      }
+    openGeom.setWidth(0);
+    }
+  return openGeom;
+}
+
+// -------------------------------------------------------------------------
+QRect ctkPopupWidgetPrivate::openGeometry()const
+{
+  Q_Q(const ctkPopupWidget);
+  QSize size = q->size();
+  if (!q->testAttribute(Qt::WA_WState_Created))
+    {
+    size = q->sizeHint();
+    }
+  
+  if (!this->BaseWidget)
+    {
+    return QRect(q->pos(), size);
+    }
+
+  QRect geometry;
+  if (this->Alignment & Qt::AlignJustify)
+    {
+    if (this->Orientation & Qt::Vertical)
+      {
+      size.setWidth(this->BaseWidget->width());
+      }
+    }
+  if (this->Alignment & Qt::AlignTop &&
+      this->Alignment & Qt::AlignBottom)
+    {
+    size.setHeight(this->BaseWidget->height());
+    }
+
+  geometry.setSize(size);
+
+  QPoint topLeft = QPoint(this->BaseWidget->geometry().left(), this->BaseWidget->geometry().top());
+  QPoint bottomRight = QPoint(this->BaseWidget->geometry().right(), this->BaseWidget->geometry().bottom());
+  
+  topLeft = this->BaseWidget->parentWidget() ? this->BaseWidget->parentWidget()->mapToGlobal(topLeft) : topLeft;
+  bottomRight = this->BaseWidget->parentWidget() ? this->BaseWidget->parentWidget()->mapToGlobal(bottomRight) : bottomRight;
+
+  if (this->Alignment & Qt::AlignLeft)
+    {
+    if (this->HorizontalDirection == Qt::LeftToRight)
+      {
+      geometry.moveLeft(topLeft.x());
+      }
+    else
+      {
+      geometry.moveRight(topLeft.x());
+      }
+    }
+  else if (this->Alignment & Qt::AlignRight)
+    {
+    if (this->HorizontalDirection == Qt::LeftToRight)
+      {
+      geometry.moveLeft(bottomRight.x());
+      }
+    else
+      {
+      geometry.moveRight(bottomRight.x());
+      }
+    }
+  else if (this->Alignment & Qt::AlignHCenter)
+    {
+    if (this->HorizontalDirection == Qt::LeftToRight)
+      {
+      geometry.moveLeft((topLeft.x() + bottomRight.x()) / 2 - size.width() / 2);
+      }
+    else
+      {
+      geometry.moveRight((topLeft.x() + bottomRight.x()) / 2 + size.width() / 2);
+      }
+    }
+  else if (this->Alignment & Qt::AlignJustify)
+    {
+    geometry.moveLeft(topLeft.x());
+    }
+
+  if (this->Alignment & Qt::AlignTop)
+    {
+    if (this->VerticalDirection == ctkPopupWidget::TopToBottom)
+      {
+      geometry.moveTop(topLeft.y());
+      }
+    else
+      {
+      geometry.moveBottom(topLeft.y());
+      }
+    }
+  else if (this->Alignment & Qt::AlignBottom)
+    {
+    if (this->VerticalDirection == ctkPopupWidget::TopToBottom)
+      {
+      geometry.moveTop(bottomRight.y());
+      }
+    else
+      {
+      geometry.moveBottom(bottomRight.y());
+      }
+    }
+  else if (this->Alignment & Qt::AlignVCenter)
+    {
+    if (this->VerticalDirection == ctkPopupWidget::TopToBottom)
+      {
+      geometry.moveTop((topLeft.y() + bottomRight.y()) / 2 + size.height() / 2);
+      }
+    else
+      {
+      geometry.moveBottom((topLeft.y() + bottomRight.y()) / 2 - size.height() / 2);
+      }
+    }
+  return geometry;
 }
 
 // -------------------------------------------------------------------------
@@ -196,6 +408,96 @@ void ctkPopupWidget::setAutoHide(bool mode)
 }
 
 // -------------------------------------------------------------------------
+ctkPopupWidget::AnimationEffect ctkPopupWidget::animationEffect()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->Effect;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setAnimationEffect(ctkPopupWidget::AnimationEffect effect)
+{
+  Q_D(ctkPopupWidget);
+  /// TODO: handle the case where there is an animation running
+  d->Effect = effect;
+  bool transparent = (d->Effect == ctkPopupWidget::WindowOpacityFadeEffect);
+  this->setAttribute(Qt::WA_NoSystemBackground, transparent);
+  //this->setAttribute(Qt::WA_OpaquePaintEvent, !transparent);
+  this->setAttribute(Qt::WA_TranslucentBackground, transparent);
+}
+
+// -------------------------------------------------------------------------
+QEasingCurve::Type ctkPopupWidget::easingCurve()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->AlphaAnimation->easingCurve().type();
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setEasingCurve(QEasingCurve::Type easingCurve)
+{
+  Q_D(ctkPopupWidget);
+  d->AlphaAnimation->setEasingCurve(easingCurve);
+  d->ScrollAnimation->setEasingCurve(easingCurve);
+}
+
+// -------------------------------------------------------------------------
+Qt::Alignment ctkPopupWidget::alignment()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->Alignment;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setAlignment(Qt::Alignment alignment)
+{
+  Q_D(ctkPopupWidget);
+  d->Alignment = alignment;
+}
+
+// -------------------------------------------------------------------------
+Qt::Orientation ctkPopupWidget::orientation()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->Orientation;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setOrientation(Qt::Orientation orientation)
+{
+  Q_D(ctkPopupWidget);
+  d->Orientation = orientation;
+}
+
+// -------------------------------------------------------------------------
+ctkPopupWidget::VerticalDirection ctkPopupWidget::verticalDirection()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->VerticalDirection;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setVerticalDirection(ctkPopupWidget::VerticalDirection verticalDirection)
+{
+  Q_D(ctkPopupWidget);
+  d->VerticalDirection = verticalDirection;
+}
+
+// -------------------------------------------------------------------------
+Qt::LayoutDirection ctkPopupWidget::horizontalDirection()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->HorizontalDirection;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setHorizontalDirection(Qt::LayoutDirection horizontalDirection)
+{
+  Q_D(ctkPopupWidget);
+  d->HorizontalDirection = horizontalDirection;
+}
+
+// -------------------------------------------------------------------------
 void ctkPopupWidget::onEffectFinished()
 {
   Q_D(ctkPopupWidget);
@@ -215,8 +517,13 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
   Q_D(ctkPopupWidget);
   Q_UNUSED(event);
 
-  if (d->AlphaAnimation->state() != QAbstractAnimation::Stopped)
+  if (d->Effect == WindowOpacityFadeEffect)
     {
+    int opacity = d->Alpha;
+    if (d->AlphaAnimation->state() != QAbstractAnimation::Stopped)
+      {
+      opacity = d->WindowAlpha;
+      }
     QPainter painter(this);
     QBrush brush = this->palette().window();
     if (brush.style() == Qt::LinearGradientPattern ||
@@ -227,7 +534,7 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
       QGradientStops stops;
       foreach(QGradientStop stop, newGradient->stops())
         {
-        stop.second.setAlpha(d->WindowAlpha);
+        stop.second.setAlpha(opacity);
         stops.push_back(stop);
         }
       newGradient->setStops(stops);
@@ -237,7 +544,7 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
     else
       {
       QColor color = brush.color();
-      color.setAlpha(d->WindowAlpha);
+      color.setAlpha(opacity);
       brush.setColor(color);
       }
     //QColor semiTransparentColor = this->palette().window().color();
@@ -287,7 +594,9 @@ void ctkPopupWidget::updatePopup()
     {
     return;
     }
-  if (this->underMouse() || (d->BaseWidget && d->BaseWidget->underMouse()))
+  if (this->underMouse() ||
+      (d->BaseWidget && d->BaseWidget->underMouse()) ||
+      (d->PopupPixmapWidget && d->PopupPixmapWidget->underMouse()))
     {
     this->showPopup();
     }
@@ -302,41 +611,78 @@ void ctkPopupWidget::showPopup()
 {
   Q_D(ctkPopupWidget);
   if ((this->isVisible() &&
-       d->AlphaAnimation->state() == QAbstractAnimation::Stopped) ||
+       d->currentAnimation()->state() == QAbstractAnimation::Stopped) ||
       (d->BaseWidget && !d->BaseWidget->isVisible()))
     {
     return;
     }
   if (d->BaseWidget)
     {
+    /*
     QPoint bottomLeft = QPoint(d->BaseWidget->geometry().x(), d->BaseWidget->geometry().bottom());
     QPoint pos = d->BaseWidget->parentWidget() ? d->BaseWidget->parentWidget()->mapToGlobal(bottomLeft) : bottomLeft;
     this->move(pos);
     /// TODO: need some refinement
     if ((this->sizePolicy().horizontalPolicy() & QSizePolicy::GrowFlag &&
-         this->width() < d->BaseWidget->width()) ||
+          this->width() < d->BaseWidget->width()) ||
         (this->sizePolicy().horizontalPolicy() & QSizePolicy::ShrinkFlag &&
-             this->width() > d->BaseWidget->width()))
+          this->width() > d->BaseWidget->width()))
       {
       // Fit to BaseWidget size
       this->resize(d->BaseWidget->width(), this->sizeHint().height());
       }
+    */
     }
-  d->AlphaAnimation->setDirection(QAbstractAnimation::Forward);
-  switch(d->AlphaAnimation->state())
+  this->setGeometry(d->openGeometry());
+  d->currentAnimation()->setDirection(QAbstractAnimation::Forward);
+  
+  switch(d->Effect)
+    {
+    case WindowOpacityFadeEffect:
+      // just in case it wasn't visible, usually it's a no op
+      this->show();
+      break;
+    case ScrollEffect:
+      {
+      /*
+      QRect endGeometry = this->geometry();
+      if (!this->testAttribute(Qt::WA_WState_Created) &&
+          !d->fitBaseWidgetSize())
+        {
+        endGeometry.setSize(this->sizeHint());
+        }
+      QRect startGeometry = endGeometry;
+      startGeometry.setHeight(0);
+      d->PopupPixmapWidget->setGeometry(startGeometry);
+      d->ScrollAnimation->setStartValue(startGeometry);
+      d->ScrollAnimation->setEndValue(endGeometry);
+      */
+      d->PopupPixmapWidget->setGeometry(d->closedGeometry());
+      d->ScrollAnimation->setStartValue(d->closedGeometry());
+      d->ScrollAnimation->setEndValue(d->openGeometry());
+      d->PopupPixmapWidget->setAlignment(d->pixmapAlignment());
+      QPixmap pixmap = QPixmap::grabWidget(this, QRect(QPoint(0,0), d->openGeometry().size()));
+      d->PopupPixmapWidget->setPixmap(pixmap);
+      d->PopupPixmapWidget->setWindowOpacity(this->windowOpacity());
+      d->PopupPixmapWidget->show();
+      break;
+      }
+    default:
+      break;
+    }
+  switch(d->currentAnimation()->state())
     {
     case QAbstractAnimation::Stopped:
-      d->AlphaAnimation->start();
+      d->WindowAlpha = 0;
+      d->currentAnimation()->start();
       break;
     case QAbstractAnimation::Paused:
-      d->AlphaAnimation->resume();
+      d->currentAnimation()->resume();
       break;
     default:
     case QAbstractAnimation::Running:
       break;
     }
-  // just in case it wasn't visible, usually it's a no op
-  this->show();
 }
 
 // --------------------------------------------------------------------------
@@ -345,18 +691,33 @@ void ctkPopupWidget::hidePopup()
   Q_D(ctkPopupWidget);
 
   if (!this->isVisible() &&
-      d->AlphaAnimation->state() == QAbstractAnimation::Stopped)
+      d->currentAnimation()->state() == QAbstractAnimation::Stopped)
     {
     return;
     }
-  d->AlphaAnimation->setDirection(QAbstractAnimation::Backward);
-  switch(d->AlphaAnimation->state())
+  d->currentAnimation()->setDirection(QAbstractAnimation::Backward);
+  switch(d->Effect)
+    {
+    case ScrollEffect:
+      {
+      d->PopupPixmapWidget->setAlignment(d->pixmapAlignment());
+      QPixmap pixmap = QPixmap::grabWidget(this, QRect(QPoint(0,0), this->size()));
+      d->PopupPixmapWidget->setPixmap(pixmap);
+      d->PopupPixmapWidget->setWindowOpacity(this->windowOpacity());
+      d->PopupPixmapWidget->show();
+      this->hide();
+      break;
+      }
+    default:
+      break;
+    }
+  switch(d->currentAnimation()->state())
     {
     case QAbstractAnimation::Stopped:
-      d->AlphaAnimation->start();
+      d->currentAnimation()->start();
       break;
     case QAbstractAnimation::Paused:
-      d->AlphaAnimation->resume();
+      d->currentAnimation()->resume();
       break;
     default:
     case QAbstractAnimation::Running:
@@ -377,4 +738,19 @@ void ctkPopupWidget::setWindowAlpha(int alpha)
   Q_D(ctkPopupWidget);
   d->WindowAlpha = alpha;
   this->repaint();
+}
+
+// --------------------------------------------------------------------------
+QRect ctkPopupWidget::windowGeometry()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->PopupPixmapWidget->geometry();
+}
+
+// --------------------------------------------------------------------------
+void ctkPopupWidget::setWindowGeometry(QRect newGeometry)
+{
+  Q_D(ctkPopupWidget);
+  d->PopupPixmapWidget->setGeometry(newGeometry);
+  d->PopupPixmapWidget->repaint();
 }
