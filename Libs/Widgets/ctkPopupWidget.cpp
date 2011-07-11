@@ -35,9 +35,9 @@
 // CTK includes
 #include "ctkPopupWidget.h"
 
-#define LEAVE_CLOSING_DELAY 10
-#define ENTER_OPENING_DELAY 10
-#define DEFAULT_FADING_DURATION 333 // fast enough
+#define LEAVE_CLOSING_DELAY 100 // we don't want to be too fast to close
+#define ENTER_OPENING_DELAY 20 // we want to be responsive but allow "errors"
+#define DEFAULT_FADING_DURATION 333 // fast enough without being too slow
 
 // -------------------------------------------------------------------------
 QGradient* duplicateGradient(const QGradient* gradient)
@@ -90,13 +90,26 @@ public:
   bool fitBaseWidgetSize()const;
   Qt::Alignment pixmapAlignment()const;
   void setupPopupPixmapWidget();
-  
+
+  QList<const QWidget*> focusWidgets(bool onlyVisible = false)const;
+
+  // Return true if the mouse cursor is above any of the focus widgets or their
+  // children.
+  // If the cursor is above a child widget, install the event filter to listen
+  // when the cursor leaves the widget.
+  bool mouseOver();
+
+  // Same as QWidget::isAncestorOf() but don't restrain to the same window
+  // and apply it to all the focusWidgets
+  bool isAncestorOf(const QWidget* ancestor, const QWidget* child)const;
+
   QRect closedGeometry()const;
   QRect openGeometry()const;
   
   QPropertyAnimation* currentAnimation()const;
 
   QWidget* BaseWidget;
+  bool AutoShow;
   bool AutoHide;
 
   double WindowAlpha;
@@ -121,6 +134,7 @@ ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
   :q_ptr(&object)
 {
   this->BaseWidget = 0;
+  this->AutoShow = true;
   this->AutoHide = true;
   this->Effect = ctkPopupWidget::ScrollEffect;
   this->WindowAlpha = 1.;
@@ -170,6 +184,63 @@ QPropertyAnimation* ctkPopupWidgetPrivate::currentAnimation()const
 {
   return this->Effect == ctkPopupWidget::ScrollEffect ?
     this->ScrollAnimation : this->AlphaAnimation;
+}
+
+// -------------------------------------------------------------------------
+QList<const QWidget*> ctkPopupWidgetPrivate::focusWidgets(bool onlyVisible)const
+{
+  Q_Q(const ctkPopupWidget);
+  QList<const QWidget*> res;
+  if (!onlyVisible || q->isVisible())
+    {
+    res << q;
+    }
+  if (this->BaseWidget && (!onlyVisible || this->BaseWidget->isVisible()))
+    {
+    res << this->BaseWidget;
+    }
+  if (this->PopupPixmapWidget && (!onlyVisible || this->PopupPixmapWidget->isVisible()))
+    {
+    res << this->PopupPixmapWidget;
+    }
+  return res;
+}
+
+// -------------------------------------------------------------------------
+bool ctkPopupWidgetPrivate::mouseOver()
+{
+  Q_Q(ctkPopupWidget);
+  QList<const QWidget*> widgets = this->focusWidgets(true);
+  foreach(const QWidget* widget, widgets)
+    {
+    if (widget->underMouse())
+      {
+      return true;
+      }
+    }
+  // Warning QApplication::widgetAt(QCursor::pos()) can be a bit slow...
+  QWidget* widgetUnderCursor = qApp->widgetAt(QCursor::pos());
+  foreach(const QWidget* focusWidget, widgets)
+    {
+    if (this->isAncestorOf(focusWidget, widgetUnderCursor))
+      {
+      widgetUnderCursor->installEventFilter(q);
+      return true;
+      }
+    }
+  return false;
+}
+
+// -------------------------------------------------------------------------
+bool ctkPopupWidgetPrivate::isAncestorOf(const QWidget* ancestor, const QWidget* child)const
+{
+  while (child)
+    {
+    if (child == ancestor)
+        return true;
+    child = child->parentWidget();
+    }
+  return false;
 }
 
 // -------------------------------------------------------------------------
@@ -399,6 +470,21 @@ void ctkPopupWidget::setBaseWidget(QWidget* widget)
 }
 
 // -------------------------------------------------------------------------
+bool ctkPopupWidget::autoShow()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->AutoShow;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setAutoShow(bool mode)
+{
+  Q_D(ctkPopupWidget);
+  d->AutoShow = mode;
+  QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+}
+
+// -------------------------------------------------------------------------
 bool ctkPopupWidget::autoHide()const
 {
   Q_D(const ctkPopupWidget);
@@ -410,7 +496,7 @@ void ctkPopupWidget::setAutoHide(bool mode)
 {
   Q_D(ctkPopupWidget);
   d->AutoHide = mode;
-  QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+  QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
 }
 
 // -------------------------------------------------------------------------
@@ -572,15 +658,28 @@ void ctkPopupWidget::enterEvent(QEvent* event)
 bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
 {
   Q_D(ctkPopupWidget);
-  if (obj == d->BaseWidget &&
-      event->type() == QEvent::Enter)
+  if (event->type() == QEvent::Enter)
     {
-    QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+    if ( d->currentAnimation()->state() == QAbstractAnimation::Stopped )
+      {
+      // Maybe the user moved the mouse on the widget by mistake, don't open
+      // the popup instantly...
+      QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+      }
+    else 
+      {
+      // ... except if the popup is closing, we want to reopen it as sooon as
+      // possible.
+      this->updatePopup();
+      }
     }
-  else if (obj == d->BaseWidget &&
-      event->type() == QEvent::Leave)
+  else if (event->type() == QEvent::Leave)
     {
     QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+    if (obj != d->BaseWidget)
+      {
+      obj->removeEventFilter(this);
+      }
     }
   return this->QObject::eventFilter(obj, event);
 }
@@ -589,17 +688,15 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
 void ctkPopupWidget::updatePopup()
 {
   Q_D(ctkPopupWidget);
-  if (!d->AutoHide)
-    {
-    return;
-    }
-  if (this->underMouse() ||
-      (d->BaseWidget && d->BaseWidget->underMouse()) ||
-      (d->PopupPixmapWidget && d->PopupPixmapWidget->underMouse()))
+
+  // Querying mouseOver can be slow, don't do it if not needed.
+  bool mouseOver = (d->AutoShow || d->AutoHide) && d->mouseOver();
+    
+  if (d->AutoShow && mouseOver)
     {
     this->showPopup();
     }
-  else
+  else if (d->AutoHide && !mouseOver)
     {
     this->hidePopup();
     }
@@ -615,23 +712,7 @@ void ctkPopupWidget::showPopup()
     {
     return;
     }
-  if (d->BaseWidget)
-    {
-    /*
-    QPoint bottomLeft = QPoint(d->BaseWidget->geometry().x(), d->BaseWidget->geometry().bottom());
-    QPoint pos = d->BaseWidget->parentWidget() ? d->BaseWidget->parentWidget()->mapToGlobal(bottomLeft) : bottomLeft;
-    this->move(pos);
-    /// TODO: need some refinement
-    if ((this->sizePolicy().horizontalPolicy() & QSizePolicy::GrowFlag &&
-          this->width() < d->BaseWidget->width()) ||
-        (this->sizePolicy().horizontalPolicy() & QSizePolicy::ShrinkFlag &&
-          this->width() > d->BaseWidget->width()))
-      {
-      // Fit to BaseWidget size
-      this->resize(d->BaseWidget->width(), this->sizeHint().height());
-      }
-    */
-    }
+
   this->setGeometry(d->openGeometry());
   d->currentAnimation()->setDirection(QAbstractAnimation::Forward);
   

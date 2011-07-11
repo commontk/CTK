@@ -35,26 +35,35 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public QFrame
 {
   Q_OBJECT
   /// Control wether the popup automatically opens when the mouse
-  /// is over the baseWidget and automatically closes when it leaves
-  /// the widget.
+  /// enter the widget. True by default
+  Q_PROPERTY( bool autoShow READ autoShow WRITE setAutoShow)
+
+  /// Control wether the popup automatically closes when the mouse
+  /// leaves the widget. True by default
   Q_PROPERTY( bool autoHide READ autoHide WRITE setAutoHide)
-  
+
   /// ScrollEffect by default
   Q_PROPERTY( AnimationEffect animationEffect READ animationEffect WRITE setAnimationEffect)
   
+  /// Opening/Closing curve
   /// QEasingCurve::InOutQuad by default
   Q_PROPERTY( QEasingCurve::Type easingCurve READ easingCurve WRITE setEasingCurve);
   
+  /// Where is the popup in relation to the BaseWidget
   /// To vertically justify, use Qt::AlignTop | Qt::AlignBottom
   /// Qt::AlignJustify | Qt::AlignBottom by default
   Q_PROPERTY( Qt::Alignment alignment READ alignment WRITE setAlignment);
   
+  /// Direction of the scrolling effect, can be Qt::Vertical, Qt::Horizontal or
+  /// both Qt::Vertical|Qt::Horizontal.
   /// Vertical by default
   Q_PROPERTY( Qt::Orientation orientation READ orientation WRITE setOrientation);
   
+  /// Control where the popup opens vertically.
   /// TopToBottom by default
   Q_PROPERTY( ctkPopupWidget::VerticalDirection verticalDirection READ verticalDirection WRITE setVerticalDirection);
 
+  /// Control where the popup opens horizontally.
   /// LeftToRight by default
   Q_PROPERTY( Qt::LayoutDirection horizontalDirection READ horizontalDirection WRITE setHorizontalDirection);
 
@@ -68,7 +77,10 @@ public:
   /// it tries to resize itself to fit the same width of \a baseWidget.
   QWidget* baseWidget()const;
   void setBaseWidget(QWidget* baseWidget);
-  
+
+  bool autoShow()const;
+  void setAutoShow(bool);
+
   bool autoHide()const;
   void setAutoHide(bool);
   
