@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QComboBox>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QSlider>
@@ -39,24 +40,29 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   QWidget* topLevel = new QWidget(0);
   topLevel->setWindowTitle(title);
   
-  QPushButton* focusButton = new QPushButton("Focus popup");
+  QComboBox* focusComboBox = new QComboBox;
+  focusComboBox->addItem("Focus popup");
+  focusComboBox->addItem("Focus popup");
+  focusComboBox->addItem("Focus popup");
+  focusComboBox->addItem("Focus popup");
   QPushButton* openButton = new QPushButton("Open popup");
   QPushButton* toggleButton = new QPushButton("Toggle popup");
   toggleButton->setCheckable(true);
 
   QVBoxLayout* vlayout = new QVBoxLayout;
-  vlayout->addWidget(focusButton);
+  vlayout->addWidget(focusComboBox);
   vlayout->addWidget(openButton);
   vlayout->addWidget(toggleButton);
   topLevel->setLayout(vlayout);
 
   ctkPopupWidget* focusPopup = new ctkPopupWidget;
+  focusPopup->setAutoShow(true);
   focusPopup->setAutoHide(true);
   QPushButton* focusPopupContent = new QPushButton("button");
   QVBoxLayout* focusLayout = new QVBoxLayout;
   focusLayout->addWidget(focusPopupContent);
   focusPopup->setLayout(focusLayout);
-  focusPopup->setBaseWidget(focusButton);
+  focusPopup->setBaseWidget(focusComboBox);
 
   QPalette palette = focusPopup->palette();
   QLinearGradient linearGradient(QPointF(0.f, 0.f), QPointF(0.f, 0.666f));
@@ -70,6 +76,7 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   ctkPopupWidget* openPopup = new ctkPopupWidget;
   openPopup->setFrameStyle(QFrame::Box);
   openPopup->setLineWidth(1);
+  openPopup->setAutoShow(false);
   openPopup->setAutoHide(false);
   openPopup->setWindowOpacity(0.7);
   QPushButton* openPopupContent = new QPushButton("Close popup");
@@ -83,6 +90,7 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
                    openPopup, SLOT(hidePopup()));
                    
   ctkPopupWidget* togglePopup = new ctkPopupWidget;
+  togglePopup->setAutoShow(false);
   togglePopup->setAutoHide(false);
   QPushButton* togglePopupContent = new QPushButton("useless button");
   QVBoxLayout* toggleLayout = new QVBoxLayout;
