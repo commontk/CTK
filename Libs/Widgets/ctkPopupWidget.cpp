@@ -610,40 +610,22 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
   Q_D(ctkPopupWidget);
   Q_UNUSED(event);
 
-  if (d->Effect == WindowOpacityFadeEffect)
+  QPainter painter(this);
+  QBrush brush = this->palette().window();
+  if (brush.style() == Qt::LinearGradientPattern ||
+      brush.style() == Qt::ConicalGradientPattern ||
+      brush.style() == Qt::RadialGradientPattern)
     {
-    int opacity = d->Alpha;
-    if (d->AlphaAnimation->state() != QAbstractAnimation::Stopped)
+    QGradient* newGradient = duplicateGradient(brush.gradient());
+    QGradientStops stops;
+    foreach(QGradientStop stop, newGradient->stops())
       {
       stop.second.setAlpha(stop.second.alpha() * d->WindowAlpha);
       stops.push_back(stop);
       }
-    QPainter painter(this);
-    QBrush brush = this->palette().window();
-    if (brush.style() == Qt::LinearGradientPattern ||
-        brush.style() == Qt::ConicalGradientPattern ||
-        brush.style() == Qt::RadialGradientPattern)
-      {
-      QGradient* newGradient = duplicateGradient(brush.gradient());
-      QGradientStops stops;
-      foreach(QGradientStop stop, newGradient->stops())
-        {
-        stop.second.setAlpha(opacity);
-        stops.push_back(stop);
-        }
-      newGradient->setStops(stops);
-      brush = QBrush(*newGradient);
-      delete newGradient;
-      }
-    else
-      {
-      QColor color = brush.color();
-      color.setAlpha(opacity);
-      brush.setColor(color);
-      }
-    //QColor semiTransparentColor = this->palette().window().color();
-    //semiTransparentColor.setAlpha(d->CurrentAlpha);
-    painter.fillRect(this->rect(), brush);
+    newGradient->setStops(stops);
+    brush = QBrush(*newGradient);
+    delete newGradient;
     }
   else
     {
