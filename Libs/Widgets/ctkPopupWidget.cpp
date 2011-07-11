@@ -89,6 +89,7 @@ public:
   void init();
   bool fitBaseWidgetSize()const;
   Qt::Alignment pixmapAlignment()const;
+  void setupPopupPixmapWidget();
   
   QRect closedGeometry()const;
   QRect openGeometry()const;
@@ -98,10 +99,11 @@ public:
   QWidget* BaseWidget;
   bool AutoHide;
 
-  int Alpha;
+  double WindowAlpha;
+
   ctkPopupWidget::AnimationEffect Effect;
   QPropertyAnimation* AlphaAnimation;
-  int WindowAlpha;
+  bool                ForcedTranslucent;
   QPropertyAnimation* ScrollAnimation;
   QLabel*             PopupPixmapWidget;
   
@@ -120,10 +122,10 @@ ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
 {
   this->BaseWidget = 0;
   this->AutoHide = true;
-  this->Alpha = 255;
   this->Effect = ctkPopupWidget::ScrollEffect;
-  this->WindowAlpha = 0;
+  this->WindowAlpha = 1.;
   this->AlphaAnimation = 0;
+  this->ForcedTranslucent = false;
   this->ScrollAnimation = 0;
   this->PopupPixmapWidget = 0;
   // Geometry attributes
@@ -143,13 +145,11 @@ ctkPopupWidgetPrivate::~ctkPopupWidgetPrivate()
 void ctkPopupWidgetPrivate::init()
 {
   Q_Q(ctkPopupWidget);
-  q->setAnimationEffect(this->Effect);
-  this->Alpha = q->style()->styleHint(QStyle::SH_ToolTipLabel_Opacity);
 
   this->AlphaAnimation = new QPropertyAnimation(q, "windowAlpha", q);
   this->AlphaAnimation->setDuration(DEFAULT_FADING_DURATION);
-  this->AlphaAnimation->setStartValue(0);
-  this->AlphaAnimation->setEndValue(this->Alpha);
+  this->AlphaAnimation->setStartValue(0.);
+  this->AlphaAnimation->setEndValue(1.);
   QObject::connect(this->AlphaAnimation, SIGNAL(finished()),
                    q, SLOT(onEffectFinished()));
 
@@ -161,6 +161,7 @@ void ctkPopupWidgetPrivate::init()
   QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
                    this->PopupPixmapWidget, SLOT(hide()));
 
+  q->setAnimationEffect(this->Effect);
   q->setEasingCurve(QEasingCurve::OutCubic);
 }
 
@@ -169,6 +170,30 @@ QPropertyAnimation* ctkPopupWidgetPrivate::currentAnimation()const
 {
   return this->Effect == ctkPopupWidget::ScrollEffect ?
     this->ScrollAnimation : this->AlphaAnimation;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidgetPrivate::setupPopupPixmapWidget()
+{
+  Q_Q(ctkPopupWidget);
+  QPixmap pixmap;
+  if (q->testAttribute(Qt::WA_TranslucentBackground))
+    {
+    this->PopupPixmapWidget->setAlignment(this->pixmapAlignment());  
+    // only QImage handle transparency correctly
+    QImage image(this->openGeometry().size(), QImage::Format_ARGB32);
+    image.fill(0);
+    q->render(&image);
+    pixmap = QPixmap::fromImage(image);
+    }
+  else
+    {
+    pixmap = QPixmap::grabWidget(q, QRect(QPoint(0,0), this->openGeometry().size()));
+    }
+  this->PopupPixmapWidget->setPixmap(pixmap);
+  this->PopupPixmapWidget->setAttribute(
+    Qt::WA_TranslucentBackground, q->testAttribute(Qt::WA_TranslucentBackground));
+  this->PopupPixmapWidget->setWindowOpacity(q->windowOpacity());
 }
 
 // -------------------------------------------------------------------------
@@ -374,25 +399,6 @@ void ctkPopupWidget::setBaseWidget(QWidget* widget)
 }
 
 // -------------------------------------------------------------------------
-int ctkPopupWidget::opacity()const
-{
-  Q_D(const ctkPopupWidget);
-  return d->Alpha;
-}
-
-// -------------------------------------------------------------------------
-void ctkPopupWidget::setOpacity(int alpha)
-{
-  Q_D(ctkPopupWidget);
-  d->Alpha = alpha;
-  if (d->AlphaAnimation->state() == QAbstractAnimation::Stopped)
-    {
-    d->WindowAlpha = d->Alpha;
-    }
-  this->update();
-}
-
-// -------------------------------------------------------------------------
 bool ctkPopupWidget::autoHide()const
 {
   Q_D(const ctkPopupWidget);
@@ -420,10 +426,6 @@ void ctkPopupWidget::setAnimationEffect(ctkPopupWidget::AnimationEffect effect)
   Q_D(ctkPopupWidget);
   /// TODO: handle the case where there is an animation running
   d->Effect = effect;
-  bool transparent = (d->Effect == ctkPopupWidget::WindowOpacityFadeEffect);
-  this->setAttribute(Qt::WA_NoSystemBackground, transparent);
-  //this->setAttribute(Qt::WA_OpaquePaintEvent, !transparent);
-  this->setAttribute(Qt::WA_TranslucentBackground, transparent);
 }
 
 // -------------------------------------------------------------------------
@@ -501,6 +503,11 @@ void ctkPopupWidget::setHorizontalDirection(Qt::LayoutDirection horizontalDirect
 void ctkPopupWidget::onEffectFinished()
 {
   Q_D(ctkPopupWidget);
+  if (d->ForcedTranslucent)
+    {
+    d->ForcedTranslucent = false;
+    this->setAttribute(Qt::WA_TranslucentBackground, false);
+    }
   if (qobject_cast<QAbstractAnimation*>(this->sender())->direction() == QAbstractAnimation::Backward)
     {
     this->hide();
@@ -517,40 +524,32 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
   Q_D(ctkPopupWidget);
   Q_UNUSED(event);
 
-  if (d->Effect == WindowOpacityFadeEffect)
+  QPainter painter(this);
+  QBrush brush = this->palette().window();
+  if (brush.style() == Qt::LinearGradientPattern ||
+      brush.style() == Qt::ConicalGradientPattern ||
+      brush.style() == Qt::RadialGradientPattern)
     {
-    int opacity = d->Alpha;
-    if (d->AlphaAnimation->state() != QAbstractAnimation::Stopped)
+    QGradient* newGradient = duplicateGradient(brush.gradient());
+    QGradientStops stops;
+    foreach(QGradientStop stop, newGradient->stops())
       {
-      opacity = d->WindowAlpha;
+      stop.second.setAlpha(stop.second.alpha() * d->WindowAlpha);
+      stops.push_back(stop);
       }
-    QPainter painter(this);
-    QBrush brush = this->palette().window();
-    if (brush.style() == Qt::LinearGradientPattern ||
-        brush.style() == Qt::ConicalGradientPattern ||
-        brush.style() == Qt::RadialGradientPattern)
-      {
-      QGradient* newGradient = duplicateGradient(brush.gradient());
-      QGradientStops stops;
-      foreach(QGradientStop stop, newGradient->stops())
-        {
-        stop.second.setAlpha(opacity);
-        stops.push_back(stop);
-        }
-      newGradient->setStops(stops);
-      brush = QBrush(*newGradient);
-      delete newGradient;
-      }
-    else
-      {
-      QColor color = brush.color();
-      color.setAlpha(opacity);
-      brush.setColor(color);
-      }
-    //QColor semiTransparentColor = this->palette().window().color();
-    //semiTransparentColor.setAlpha(d->CurrentAlpha);
-    painter.fillRect(this->rect(), brush);
+    newGradient->setStops(stops);
+    brush = QBrush(*newGradient);
+    delete newGradient;
     }
+  else
+    {
+    QColor color = brush.color();
+    color.setAlpha(color.alpha() * d->WindowAlpha);
+    brush.setColor(color);
+    }
+  //QColor semiTransparentColor = this->palette().window().color();
+  //semiTransparentColor.setAlpha(d->CurrentAlpha);
+  painter.fillRect(this->rect(), brush);
   // Let the QFrame draw itself if needed
   this->Superclass::paintEvent(event);
 }
@@ -639,31 +638,21 @@ void ctkPopupWidget::showPopup()
   switch(d->Effect)
     {
     case WindowOpacityFadeEffect:
-      // just in case it wasn't visible, usually it's a no op
+      if (!this->testAttribute(Qt::WA_TranslucentBackground))
+        {
+        d->ForcedTranslucent = true;
+        this->setAttribute(Qt::WA_TranslucentBackground, true);
+        }
       this->show();
       break;
     case ScrollEffect:
       {
-      /*
-      QRect endGeometry = this->geometry();
-      if (!this->testAttribute(Qt::WA_WState_Created) &&
-          !d->fitBaseWidgetSize())
-        {
-        endGeometry.setSize(this->sizeHint());
-        }
-      QRect startGeometry = endGeometry;
-      startGeometry.setHeight(0);
-      d->PopupPixmapWidget->setGeometry(startGeometry);
-      d->ScrollAnimation->setStartValue(startGeometry);
-      d->ScrollAnimation->setEndValue(endGeometry);
-      */
-      d->PopupPixmapWidget->setGeometry(d->closedGeometry());
-      d->ScrollAnimation->setStartValue(d->closedGeometry());
-      d->ScrollAnimation->setEndValue(d->openGeometry());
-      d->PopupPixmapWidget->setAlignment(d->pixmapAlignment());
-      QPixmap pixmap = QPixmap::grabWidget(this, QRect(QPoint(0,0), d->openGeometry().size()));
-      d->PopupPixmapWidget->setPixmap(pixmap);
-      d->PopupPixmapWidget->setWindowOpacity(this->windowOpacity());
+      QRect closedGeometry = d->closedGeometry();
+      QRect openGeometry = d->openGeometry();
+      d->PopupPixmapWidget->setGeometry(closedGeometry);
+      d->ScrollAnimation->setStartValue(closedGeometry);
+      d->ScrollAnimation->setEndValue(openGeometry);
+      d->setupPopupPixmapWidget();
       d->PopupPixmapWidget->show();
       break;
       }
@@ -673,7 +662,6 @@ void ctkPopupWidget::showPopup()
   switch(d->currentAnimation()->state())
     {
     case QAbstractAnimation::Stopped:
-      d->WindowAlpha = 0;
       d->currentAnimation()->start();
       break;
     case QAbstractAnimation::Paused:
@@ -698,12 +686,16 @@ void ctkPopupWidget::hidePopup()
   d->currentAnimation()->setDirection(QAbstractAnimation::Backward);
   switch(d->Effect)
     {
+    case WindowOpacityFadeEffect:
+      if (!this->testAttribute(Qt::WA_TranslucentBackground))
+        {
+        d->ForcedTranslucent = true;
+        this->setAttribute(Qt::WA_TranslucentBackground, true);
+        }
+      break;
     case ScrollEffect:
       {
-      d->PopupPixmapWidget->setAlignment(d->pixmapAlignment());
-      QPixmap pixmap = QPixmap::grabWidget(this, QRect(QPoint(0,0), this->size()));
-      d->PopupPixmapWidget->setPixmap(pixmap);
-      d->PopupPixmapWidget->setWindowOpacity(this->windowOpacity());
+      d->setupPopupPixmapWidget();
       d->PopupPixmapWidget->show();
       this->hide();
       break;
@@ -726,14 +718,14 @@ void ctkPopupWidget::hidePopup()
 }
 
 // --------------------------------------------------------------------------
-int ctkPopupWidget::windowAlpha()const
+double ctkPopupWidget::windowAlpha()const
 {
   Q_D(const ctkPopupWidget);
   return d->WindowAlpha;
 }
 
 // --------------------------------------------------------------------------
-void ctkPopupWidget::setWindowAlpha(int alpha)
+void ctkPopupWidget::setWindowAlpha(double alpha)
 {
   Q_D(ctkPopupWidget);
   d->WindowAlpha = alpha;
