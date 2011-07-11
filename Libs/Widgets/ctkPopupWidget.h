@@ -34,9 +34,6 @@ class ctkPopupWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkPopupWidget : public QFrame
 {
   Q_OBJECT
-  /// Final transparency of the widget (after opacity fading)
-  /// QStyle::SH_ToolTipLabel_Opacity by default.
-  Q_PROPERTY( int opacity READ opacity WRITE setOpacity)
   /// Control wether the popup automatically opens when the mouse
   /// is over the baseWidget and automatically closes when it leaves
   /// the widget.
@@ -71,9 +68,6 @@ public:
   /// it tries to resize itself to fit the same width of \a baseWidget.
   QWidget* baseWidget()const;
   void setBaseWidget(QWidget* baseWidget);
-  
-  int opacity()const;
-  void setOpacity(int alpha);
   
   bool autoHide()const;
   void setAutoHide(bool);
@@ -123,12 +117,12 @@ protected slots:
   void updatePopup();
   //void animatePopup();
   void onEffectFinished();
-  void setWindowAlpha(int alpha);
+  void setWindowAlpha(double alpha);
   void setWindowGeometry(QRect geometry);
 
 protected:
   QScopedPointer<ctkPopupWidgetPrivate> d_ptr;
-  Q_PROPERTY(int windowAlpha READ windowAlpha WRITE setWindowAlpha DESIGNABLE false)
+  Q_PROPERTY(double windowAlpha READ windowAlpha WRITE setWindowAlpha DESIGNABLE false)
   Q_PROPERTY(QRect windowGeometry READ windowGeometry WRITE setWindowGeometry DESIGNABLE false)
 
   virtual void paintEvent(QPaintEvent*);
@@ -136,7 +130,7 @@ protected:
   virtual void enterEvent(QEvent* event);
   virtual bool eventFilter(QObject* obj, QEvent* event);
 
-  int windowAlpha()const;
+  double windowAlpha()const;
   QRect windowGeometry()const;
 private:
   Q_DECLARE_PRIVATE(ctkPopupWidget);

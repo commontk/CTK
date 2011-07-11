@@ -122,6 +122,10 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
     popup->setHorizontalDirection(Qt::LeftToRight);
     popup->setAlignment( Qt::AlignBottom | Qt::AlignLeft);
     popup->setEasingCurve(QEasingCurve::OutElastic);
+    QPalette p = popup->palette();
+    p.setColor(QPalette::Window, QColor(255, 0, 0, 128));
+    popup->setPalette(p);
+    popup->setAttribute(Qt::WA_TranslucentBackground);
     }
   popups.clear();
   QWidget* fadePanel = createPanel("Window opacity", popups);
