@@ -87,7 +87,6 @@ public:
   void setAutoShow(bool);
 
   bool autoHide()const;
-  void setAutoHide(bool);
   
   enum AnimationEffect
   {
@@ -129,6 +128,13 @@ public slots:
   /// Show/hide the popup. It can be conveniently linked to a QPushButton
   /// signal.
   inline void showPopup(bool show);
+  
+  /// Don't automatically close the popup when leaving the widget.
+  /// It's a slot so you can easily connect a checkable PushPin button checked
+  /// signal with it.
+  /// Calling setAutoHide automatically updates the state (open/closed)
+  /// of the popup.
+  void setAutoHide(bool autoHide);
 
 protected slots:
   void updatePopup();
