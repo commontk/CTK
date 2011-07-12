@@ -47,6 +47,7 @@
 #include "ctkMenuButtonPlugin.h"
 #include "ctkModalityWidgetPlugin.h"
 #include "ctkPathLineEditPlugin.h"
+#include "ctkPopupWidgetPlugin.h"
 #include "ctkRangeSliderPlugin.h"
 #include "ctkRangeWidgetPlugin.h"
 #include "ctkSettingsPanelPlugin.h"
@@ -89,6 +90,7 @@ public:
             << new ctkMenuButtonPlugin
             << new ctkModalityWidgetPlugin
             << new ctkPathLineEditPlugin
+            << new ctkPopupWidgetPlugin
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
             << new ctkSettingsPanelPlugin

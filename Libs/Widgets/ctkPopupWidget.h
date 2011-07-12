@@ -24,6 +24,7 @@
 // Qt includes
 #include <QEasingCurve>
 #include <QFrame>
+#include <QMetaType>
 
 // CTK includes
 #include "ctkWidgetsExport.h"
@@ -34,6 +35,10 @@ class ctkPopupWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkPopupWidget : public QFrame
 {
   Q_OBJECT
+  
+  Q_ENUMS(AnimationEffect)
+  Q_ENUMS(VerticalDirection)
+
   /// Control wether the popup automatically opens when the mouse
   /// enter the widget. True by default
   Q_PROPERTY( bool autoShow READ autoShow WRITE setAutoShow)
@@ -149,6 +154,10 @@ private:
   Q_DISABLE_COPY(ctkPopupWidget);
 };
 
+Q_DECLARE_METATYPE(ctkPopupWidget::AnimationEffect)
+Q_DECLARE_METATYPE(ctkPopupWidget::VerticalDirection)
+
+// -------------------------------------------------------------------------
 void ctkPopupWidget::showPopup(bool show)
 {
   if (show)
