@@ -140,24 +140,25 @@ public slots:
   /// It is typically connected with a checkable button to anchor the popup.
   void pinPopup(bool pin);
 
-protected slots:
-  void updatePopup();
-  void onEffectFinished();
-  void setWindowAlpha(double alpha);
-  void setWindowGeometry(QRect geometry);
-
 protected:
   QScopedPointer<ctkPopupWidgetPrivate> d_ptr;
-  Q_PROPERTY(double windowAlpha READ windowAlpha WRITE setWindowAlpha DESIGNABLE false)
-  Q_PROPERTY(QRect windowGeometry READ windowGeometry WRITE setWindowGeometry DESIGNABLE false)
+  Q_PROPERTY(double effectAlpha READ effectAlpha WRITE setEffectAlpha DESIGNABLE false)
+  Q_PROPERTY(QRect effectGeometry READ effectGeometry WRITE setEffectGeometry DESIGNABLE false)
+
+  double effectAlpha()const;
+  QRect effectGeometry()const;
 
   virtual void paintEvent(QPaintEvent*);
   virtual void leaveEvent(QEvent* event);
   virtual void enterEvent(QEvent* event);
   virtual bool eventFilter(QObject* obj, QEvent* event);
 
-  double windowAlpha()const;
-  QRect windowGeometry()const;
+protected slots:
+  void updatePopup();
+  void onEffectFinished();
+  void setEffectAlpha(double alpha);
+  void setEffectGeometry(QRect geometry);
+
 private:
   Q_DECLARE_PRIVATE(ctkPopupWidget);
   Q_DISABLE_COPY(ctkPopupWidget);

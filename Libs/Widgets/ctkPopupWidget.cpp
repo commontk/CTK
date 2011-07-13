@@ -119,7 +119,7 @@ public:
   bool AutoShow;
   bool AutoHide;
 
-  double WindowAlpha;
+  double EffectAlpha;
 
   ctkPopupWidget::AnimationEffect Effect;
   QPropertyAnimation* AlphaAnimation;
@@ -144,7 +144,7 @@ ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
   this->AutoShow = true;
   this->AutoHide = true;
   this->Effect = ctkPopupWidget::ScrollEffect;
-  this->WindowAlpha = 1.;
+  this->EffectAlpha = 1.;
   this->AlphaAnimation = 0;
   this->ForcedTranslucent = false;
   this->ScrollAnimation = 0;
@@ -167,7 +167,7 @@ void ctkPopupWidgetPrivate::init()
 {
   Q_Q(ctkPopupWidget);
 
-  this->AlphaAnimation = new QPropertyAnimation(q, "windowAlpha", q);
+  this->AlphaAnimation = new QPropertyAnimation(q, "effectAlpha", q);
   this->AlphaAnimation->setDuration(DEFAULT_FADING_DURATION);
   this->AlphaAnimation->setStartValue(0.);
   this->AlphaAnimation->setEndValue(1.);
@@ -175,7 +175,7 @@ void ctkPopupWidgetPrivate::init()
                    q, SLOT(onEffectFinished()));
 
   this->PopupPixmapWidget = new QLabel(0, Qt::ToolTip | Qt::FramelessWindowHint);
-  this->ScrollAnimation = new QPropertyAnimation(q, "windowGeometry", q);
+  this->ScrollAnimation = new QPropertyAnimation(q, "effectGeometry", q);
   this->ScrollAnimation->setDuration(DEFAULT_FADING_DURATION);
   QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
                    q, SLOT(onEffectFinished()));
@@ -629,7 +629,7 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
     QGradientStops stops;
     foreach(QGradientStop stop, newGradient->stops())
       {
-      stop.second.setAlpha(stop.second.alpha() * d->WindowAlpha);
+      stop.second.setAlpha(stop.second.alpha() * d->EffectAlpha);
       stops.push_back(stop);
       }
     newGradient->setStops(stops);
@@ -639,7 +639,7 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
   else
     {
     QColor color = brush.color();
-    color.setAlpha(color.alpha() * d->WindowAlpha);
+    color.setAlpha(color.alpha() * d->EffectAlpha);
     brush.setColor(color);
     }
   //QColor semiTransparentColor = this->palette().window().color();
@@ -831,29 +831,29 @@ void ctkPopupWidget::pinPopup(bool pin)
 }
 
 // --------------------------------------------------------------------------
-double ctkPopupWidget::windowAlpha()const
+double ctkPopupWidget::effectAlpha()const
 {
   Q_D(const ctkPopupWidget);
-  return d->WindowAlpha;
+  return d->EffectAlpha;
 }
 
 // --------------------------------------------------------------------------
-void ctkPopupWidget::setWindowAlpha(double alpha)
+void ctkPopupWidget::setEffectAlpha(double alpha)
 {
   Q_D(ctkPopupWidget);
-  d->WindowAlpha = alpha;
+  d->EffectAlpha = alpha;
   this->repaint();
 }
 
 // --------------------------------------------------------------------------
-QRect ctkPopupWidget::windowGeometry()const
+QRect ctkPopupWidget::effectGeometry()const
 {
   Q_D(const ctkPopupWidget);
   return d->PopupPixmapWidget->geometry();
 }
 
 // --------------------------------------------------------------------------
-void ctkPopupWidget::setWindowGeometry(QRect newGeometry)
+void ctkPopupWidget::setEffectGeometry(QRect newGeometry)
 {
   Q_D(ctkPopupWidget);
   d->PopupPixmapWidget->setGeometry(newGeometry);
