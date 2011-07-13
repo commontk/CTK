@@ -84,10 +84,16 @@ public:
   void setBaseWidget(QWidget* baseWidget);
 
   bool autoShow()const;
+  /// Calling setAutoShow automatically updates opens the popup if the cursor
+  /// is above the popup or the base widget.
   void setAutoShow(bool);
 
   bool autoHide()const;
-  
+  /// Don't automatically close the popup when leaving the widget.
+  /// Calling setAutoHide automatically updates the state close the popup
+  /// if the mouse is not over the popup nor the base widget.
+  void setAutoHide(bool autoHide);
+
   enum AnimationEffect
   {
     WindowOpacityFadeEffect = 0,
@@ -129,32 +135,30 @@ public slots:
   /// signal.
   inline void showPopup(bool show);
   
-  /// Don't automatically close the popup when leaving the widget.
-  /// It's a slot so you can easily connect a checkable PushPin button checked
-  /// signal with it.
-  /// Calling setAutoHide automatically updates the state (open/closed)
-  /// of the popup.
-  void setAutoHide(bool autoHide);
-
-protected slots:
-  void updatePopup();
-  //void animatePopup();
-  void onEffectFinished();
-  void setWindowAlpha(double alpha);
-  void setWindowGeometry(QRect geometry);
+  /// Convenient function that calls setAutoHide(!pin) and opens the popup
+  /// if pin is true regardless of the value of \a AutoShow.
+  /// It is typically connected with a checkable button to anchor the popup.
+  void pinPopup(bool pin);
 
 protected:
   QScopedPointer<ctkPopupWidgetPrivate> d_ptr;
-  Q_PROPERTY(double windowAlpha READ windowAlpha WRITE setWindowAlpha DESIGNABLE false)
-  Q_PROPERTY(QRect windowGeometry READ windowGeometry WRITE setWindowGeometry DESIGNABLE false)
+  Q_PROPERTY(double effectAlpha READ effectAlpha WRITE setEffectAlpha DESIGNABLE false)
+  Q_PROPERTY(QRect effectGeometry READ effectGeometry WRITE setEffectGeometry DESIGNABLE false)
+
+  double effectAlpha()const;
+  QRect effectGeometry()const;
 
   virtual void paintEvent(QPaintEvent*);
   virtual void leaveEvent(QEvent* event);
   virtual void enterEvent(QEvent* event);
   virtual bool eventFilter(QObject* obj, QEvent* event);
 
-  double windowAlpha()const;
-  QRect windowGeometry()const;
+protected slots:
+  void updatePopup();
+  void onEffectFinished();
+  void setEffectAlpha(double alpha);
+  void setEffectGeometry(QRect geometry);
+
 private:
   Q_DECLARE_PRIVATE(ctkPopupWidget);
   Q_DISABLE_COPY(ctkPopupWidget);

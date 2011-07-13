@@ -103,8 +103,15 @@ public:
   // and apply it to all the focusWidgets
   bool isAncestorOf(const QWidget* ancestor, const QWidget* child)const;
 
+
+  /// Return the closed geometry for the popup based on the current geometry
   QRect closedGeometry()const;
-  QRect openGeometry()const;
+  /// Return the closed geometry for a given open geometry 
+  QRect closedGeometry(QRect openGeom)const;
+  
+  /// Return the desired geometry, maybe it won't happen if the size is too
+  /// small for the popup.
+  QRect desiredOpenGeometry()const;
   
   QPropertyAnimation* currentAnimation()const;
 
@@ -112,7 +119,7 @@ public:
   bool AutoShow;
   bool AutoHide;
 
-  double WindowAlpha;
+  double EffectAlpha;
 
   ctkPopupWidget::AnimationEffect Effect;
   QPropertyAnimation* AlphaAnimation;
@@ -137,7 +144,7 @@ ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
   this->AutoShow = true;
   this->AutoHide = true;
   this->Effect = ctkPopupWidget::ScrollEffect;
-  this->WindowAlpha = 1.;
+  this->EffectAlpha = 1.;
   this->AlphaAnimation = 0;
   this->ForcedTranslucent = false;
   this->ScrollAnimation = 0;
@@ -160,7 +167,7 @@ void ctkPopupWidgetPrivate::init()
 {
   Q_Q(ctkPopupWidget);
 
-  this->AlphaAnimation = new QPropertyAnimation(q, "windowAlpha", q);
+  this->AlphaAnimation = new QPropertyAnimation(q, "effectAlpha", q);
   this->AlphaAnimation->setDuration(DEFAULT_FADING_DURATION);
   this->AlphaAnimation->setStartValue(0.);
   this->AlphaAnimation->setEndValue(1.);
@@ -168,7 +175,7 @@ void ctkPopupWidgetPrivate::init()
                    q, SLOT(onEffectFinished()));
 
   this->PopupPixmapWidget = new QLabel(0, Qt::ToolTip | Qt::FramelessWindowHint);
-  this->ScrollAnimation = new QPropertyAnimation(q, "windowGeometry", q);
+  this->ScrollAnimation = new QPropertyAnimation(q, "effectGeometry", q);
   this->ScrollAnimation->setDuration(DEFAULT_FADING_DURATION);
   QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
                    q, SLOT(onEffectFinished()));
@@ -247,19 +254,19 @@ bool ctkPopupWidgetPrivate::isAncestorOf(const QWidget* ancestor, const QWidget*
 void ctkPopupWidgetPrivate::setupPopupPixmapWidget()
 {
   Q_Q(ctkPopupWidget);
+  this->PopupPixmapWidget->setAlignment(this->pixmapAlignment());  
   QPixmap pixmap;
   if (q->testAttribute(Qt::WA_TranslucentBackground))
     {
-    this->PopupPixmapWidget->setAlignment(this->pixmapAlignment());  
     // only QImage handle transparency correctly
-    QImage image(this->openGeometry().size(), QImage::Format_ARGB32);
+    QImage image(q->geometry().size(), QImage::Format_ARGB32);
     image.fill(0);
     q->render(&image);
     pixmap = QPixmap::fromImage(image);
     }
   else
     {
-    pixmap = QPixmap::grabWidget(q, QRect(QPoint(0,0), this->openGeometry().size()));
+    pixmap = QPixmap::grabWidget(q, QRect(QPoint(0,0), q->geometry().size()));
     }
   this->PopupPixmapWidget->setPixmap(pixmap);
   this->PopupPixmapWidget->setAttribute(
@@ -270,7 +277,6 @@ void ctkPopupWidgetPrivate::setupPopupPixmapWidget()
 // -------------------------------------------------------------------------
 Qt::Alignment ctkPopupWidgetPrivate::pixmapAlignment()const
 {
-  Q_Q(const ctkPopupWidget);
   Qt::Alignment alignment;
   if (this->VerticalDirection == ctkPopupWidget::TopToBottom)
     {
@@ -296,9 +302,12 @@ Qt::Alignment ctkPopupWidgetPrivate::pixmapAlignment()const
 QRect ctkPopupWidgetPrivate::closedGeometry()const
 {
   Q_Q(const ctkPopupWidget);
-  /// TODO: it really doesn't handle many cases.
-  /// It's a lot of parameters to think about.
-  QRect openGeom = this->openGeometry();
+  return this->closedGeometry(q->geometry());
+}
+
+// -------------------------------------------------------------------------
+QRect ctkPopupWidgetPrivate::closedGeometry(QRect openGeom)const
+{
   if (this->Orientation & Qt::Vertical)
     {
     if (this->VerticalDirection == ctkPopupWidget::BottomToTop)
@@ -319,7 +328,7 @@ QRect ctkPopupWidgetPrivate::closedGeometry()const
 }
 
 // -------------------------------------------------------------------------
-QRect ctkPopupWidgetPrivate::openGeometry()const
+QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
 {
   Q_Q(const ctkPopupWidget);
   QSize size = q->size();
@@ -620,7 +629,7 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
     QGradientStops stops;
     foreach(QGradientStop stop, newGradient->stops())
       {
-      stop.second.setAlpha(stop.second.alpha() * d->WindowAlpha);
+      stop.second.setAlpha(stop.second.alpha() * d->EffectAlpha);
       stops.push_back(stop);
       }
     newGradient->setStops(stops);
@@ -630,7 +639,7 @@ void ctkPopupWidget::paintEvent(QPaintEvent* event)
   else
     {
     QColor color = brush.color();
-    color.setAlpha(color.alpha() * d->WindowAlpha);
+    color.setAlpha(color.alpha() * d->EffectAlpha);
     brush.setColor(color);
     }
   //QColor semiTransparentColor = this->palette().window().color();
@@ -713,7 +722,18 @@ void ctkPopupWidget::showPopup()
     return;
     }
 
-  this->setGeometry(d->openGeometry());
+  // If the layout has never been activated, the widget doesn't know its
+  // minSize/maxSize and we then wouldn't know what's its true geometry.
+  if (this->layout() && !this->testAttribute(Qt::WA_WState_Created))
+    {
+    this->layout()->activate();
+    }
+  this->setGeometry(d->desiredOpenGeometry());
+  /// Maybe the popup doesn't allow the desiredOpenGeometry if the widget
+  /// minimum size is larger than the desired size.
+  QRect openGeometry = this->geometry();
+  QRect closedGeometry = d->closedGeometry();
+
   d->currentAnimation()->setDirection(QAbstractAnimation::Forward);
   
   switch(d->Effect)
@@ -728,8 +748,6 @@ void ctkPopupWidget::showPopup()
       break;
     case ScrollEffect:
       {
-      QRect closedGeometry = d->closedGeometry();
-      QRect openGeometry = d->openGeometry();
       d->PopupPixmapWidget->setGeometry(closedGeometry);
       d->ScrollAnimation->setStartValue(closedGeometry);
       d->ScrollAnimation->setEndValue(openGeometry);
@@ -765,6 +783,10 @@ void ctkPopupWidget::hidePopup()
     return;
     }
   d->currentAnimation()->setDirection(QAbstractAnimation::Backward);
+
+  QRect openGeometry = this->geometry();
+  QRect closedGeometry = d->closedGeometry();
+
   switch(d->Effect)
     {
     case WindowOpacityFadeEffect:
@@ -799,29 +821,39 @@ void ctkPopupWidget::hidePopup()
 }
 
 // --------------------------------------------------------------------------
-double ctkPopupWidget::windowAlpha()const
+void ctkPopupWidget::pinPopup(bool pin)
 {
-  Q_D(const ctkPopupWidget);
-  return d->WindowAlpha;
+  this->setAutoHide(!pin);
+  if (pin)
+    {
+    this->showPopup();
+    }
 }
 
 // --------------------------------------------------------------------------
-void ctkPopupWidget::setWindowAlpha(double alpha)
+double ctkPopupWidget::effectAlpha()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->EffectAlpha;
+}
+
+// --------------------------------------------------------------------------
+void ctkPopupWidget::setEffectAlpha(double alpha)
 {
   Q_D(ctkPopupWidget);
-  d->WindowAlpha = alpha;
+  d->EffectAlpha = alpha;
   this->repaint();
 }
 
 // --------------------------------------------------------------------------
-QRect ctkPopupWidget::windowGeometry()const
+QRect ctkPopupWidget::effectGeometry()const
 {
   Q_D(const ctkPopupWidget);
   return d->PopupPixmapWidget->geometry();
 }
 
 // --------------------------------------------------------------------------
-void ctkPopupWidget::setWindowGeometry(QRect newGeometry)
+void ctkPopupWidget::setEffectGeometry(QRect newGeometry)
 {
   Q_D(ctkPopupWidget);
   d->PopupPixmapWidget->setGeometry(newGeometry);
