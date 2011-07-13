@@ -828,6 +828,10 @@ void ctkPopupWidget::pinPopup(bool pin)
     {
     this->showPopup();
     }
+  else
+    {
+    this->hidePopup();
+    }
 }
 
 // --------------------------------------------------------------------------
