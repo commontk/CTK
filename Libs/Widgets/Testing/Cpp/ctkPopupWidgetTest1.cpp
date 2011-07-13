@@ -128,7 +128,7 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
     {
     popup->setVerticalDirection(ctkPopupWidget::TopToBottom);
     popup->setHorizontalDirection(Qt::LeftToRight);
-    popup->setAlignment( Qt::AlignBottom | Qt::AlignLeft);
+    popup->setAlignment( Qt::AlignBottom | Qt::AlignJustify);
     popup->setEasingCurve(QEasingCurve::OutElastic);
     QPalette p = popup->palette();
     p.setColor(QPalette::Window, QColor(255, 0, 0, 128));

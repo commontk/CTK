@@ -103,8 +103,15 @@ public:
   // and apply it to all the focusWidgets
   bool isAncestorOf(const QWidget* ancestor, const QWidget* child)const;
 
+
+  /// Return the closed geometry for the popup based on the current geometry
   QRect closedGeometry()const;
-  QRect openGeometry()const;
+  /// Return the closed geometry for a given open geometry 
+  QRect closedGeometry(QRect openGeom)const;
+  
+  /// Return the desired geometry, maybe it won't happen if the size is too
+  /// small for the popup.
+  QRect desiredOpenGeometry()const;
   
   QPropertyAnimation* currentAnimation()const;
 
@@ -247,19 +254,19 @@ bool ctkPopupWidgetPrivate::isAncestorOf(const QWidget* ancestor, const QWidget*
 void ctkPopupWidgetPrivate::setupPopupPixmapWidget()
 {
   Q_Q(ctkPopupWidget);
+  this->PopupPixmapWidget->setAlignment(this->pixmapAlignment());  
   QPixmap pixmap;
   if (q->testAttribute(Qt::WA_TranslucentBackground))
     {
-    this->PopupPixmapWidget->setAlignment(this->pixmapAlignment());  
     // only QImage handle transparency correctly
-    QImage image(this->openGeometry().size(), QImage::Format_ARGB32);
+    QImage image(q->geometry().size(), QImage::Format_ARGB32);
     image.fill(0);
     q->render(&image);
     pixmap = QPixmap::fromImage(image);
     }
   else
     {
-    pixmap = QPixmap::grabWidget(q, QRect(QPoint(0,0), this->openGeometry().size()));
+    pixmap = QPixmap::grabWidget(q, QRect(QPoint(0,0), q->geometry().size()));
     }
   this->PopupPixmapWidget->setPixmap(pixmap);
   this->PopupPixmapWidget->setAttribute(
@@ -270,7 +277,6 @@ void ctkPopupWidgetPrivate::setupPopupPixmapWidget()
 // -------------------------------------------------------------------------
 Qt::Alignment ctkPopupWidgetPrivate::pixmapAlignment()const
 {
-  Q_Q(const ctkPopupWidget);
   Qt::Alignment alignment;
   if (this->VerticalDirection == ctkPopupWidget::TopToBottom)
     {
@@ -296,9 +302,12 @@ Qt::Alignment ctkPopupWidgetPrivate::pixmapAlignment()const
 QRect ctkPopupWidgetPrivate::closedGeometry()const
 {
   Q_Q(const ctkPopupWidget);
-  /// TODO: it really doesn't handle many cases.
-  /// It's a lot of parameters to think about.
-  QRect openGeom = this->openGeometry();
+  return this->closedGeometry(q->geometry());
+}
+
+// -------------------------------------------------------------------------
+QRect ctkPopupWidgetPrivate::closedGeometry(QRect openGeom)const
+{
   if (this->Orientation & Qt::Vertical)
     {
     if (this->VerticalDirection == ctkPopupWidget::BottomToTop)
@@ -319,7 +328,7 @@ QRect ctkPopupWidgetPrivate::closedGeometry()const
 }
 
 // -------------------------------------------------------------------------
-QRect ctkPopupWidgetPrivate::openGeometry()const
+QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
 {
   Q_Q(const ctkPopupWidget);
   QSize size = q->size();
@@ -713,7 +722,18 @@ void ctkPopupWidget::showPopup()
     return;
     }
 
-  this->setGeometry(d->openGeometry());
+  // If the layout has never been activated, the widget doesn't know its
+  // minSize/maxSize and we then wouldn't know what's its true geometry.
+  if (this->layout() && !this->testAttribute(Qt::WA_WState_Created))
+    {
+    this->layout()->activate();
+    }
+  this->setGeometry(d->desiredOpenGeometry());
+  /// Maybe the popup doesn't allow the desiredOpenGeometry if the widget
+  /// minimum size is larger than the desired size.
+  QRect openGeometry = this->geometry();
+  QRect closedGeometry = d->closedGeometry();
+
   d->currentAnimation()->setDirection(QAbstractAnimation::Forward);
   
   switch(d->Effect)
@@ -728,8 +748,6 @@ void ctkPopupWidget::showPopup()
       break;
     case ScrollEffect:
       {
-      QRect closedGeometry = d->closedGeometry();
-      QRect openGeometry = d->openGeometry();
       d->PopupPixmapWidget->setGeometry(closedGeometry);
       d->ScrollAnimation->setStartValue(closedGeometry);
       d->ScrollAnimation->setEndValue(openGeometry);
@@ -765,6 +783,10 @@ void ctkPopupWidget::hidePopup()
     return;
     }
   d->currentAnimation()->setDirection(QAbstractAnimation::Backward);
+
+  QRect openGeometry = this->geometry();
+  QRect closedGeometry = d->closedGeometry();
+
   switch(d->Effect)
     {
     case WindowOpacityFadeEffect:
