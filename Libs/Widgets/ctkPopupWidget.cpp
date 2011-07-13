@@ -27,6 +27,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QMouseEvent>
+#include <QMoveEvent>
 #include <QPainter>
 #include <QPropertyAnimation>
 #include <QStyle>
@@ -87,6 +88,10 @@ public:
   ctkPopupWidgetPrivate(ctkPopupWidget& object);
   ~ctkPopupWidgetPrivate();
   void init();
+
+  bool isOpening()const;
+  bool isClosing()const;
+
   bool fitBaseWidgetSize()const;
   Qt::Alignment pixmapAlignment()const;
   void setupPopupPixmapWidget();
@@ -182,6 +187,8 @@ void ctkPopupWidgetPrivate::init()
   QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
                    this->PopupPixmapWidget, SLOT(hide()));
 
+  qApp->installEventFilter(q);
+
   q->setAnimationEffect(this->Effect);
   q->setEasingCurve(QEasingCurve::OutCubic);
 }
@@ -191,6 +198,20 @@ QPropertyAnimation* ctkPopupWidgetPrivate::currentAnimation()const
 {
   return this->Effect == ctkPopupWidget::ScrollEffect ?
     this->ScrollAnimation : this->AlphaAnimation;
+}
+
+// -------------------------------------------------------------------------
+bool ctkPopupWidgetPrivate::isOpening()const
+{
+  return this->currentAnimation()->state() == QAbstractAnimation::Running &&
+    this->currentAnimation()->direction() == QAbstractAnimation::Forward;
+}
+
+// -------------------------------------------------------------------------
+bool ctkPopupWidgetPrivate::isClosing()const
+{
+  return this->currentAnimation()->state() == QAbstractAnimation::Running &&
+    this->currentAnimation()->direction() == QAbstractAnimation::Backward;
 }
 
 // -------------------------------------------------------------------------
@@ -443,7 +464,8 @@ QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
 // Qt::Toolip is preferred to Qt::Popup as it would close itself at the first
 // click outside the widget (typically a click in the BaseWidget)
 ctkPopupWidget::ctkPopupWidget(QWidget* parentWidget)
-  : Superclass(parentWidget, Qt::ToolTip | Qt::FramelessWindowHint)
+  : Superclass(QApplication::desktop()->screen(QApplication::desktop()->screenNumber(parentWidget)),
+               Qt::ToolTip | Qt::FramelessWindowHint)
   , d_ptr(new ctkPopupWidgetPrivate(*this))
 {
   Q_D(ctkPopupWidget);
@@ -669,28 +691,91 @@ void ctkPopupWidget::enterEvent(QEvent* event)
 bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
 {
   Q_D(ctkPopupWidget);
-  if (event->type() == QEvent::Enter)
+  if (event->type() != QEvent::DynamicPropertyChange &&
+      event->type() != QEvent::Paint &&
+      event->type() != QEvent::HoverMove)
     {
-    if ( d->currentAnimation()->state() == QAbstractAnimation::Stopped )
-      {
-      // Maybe the user moved the mouse on the widget by mistake, don't open
-      // the popup instantly...
-      QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
-      }
-    else 
-      {
-      // ... except if the popup is closing, we want to reopen it as sooon as
-      // possible.
-      this->updatePopup();
-      }
+    //qDebug() << event->type() << obj;
     }
-  else if (event->type() == QEvent::Leave)
+  switch(event->type())
     {
-    QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
-    if (obj != d->BaseWidget)
+    case QEvent::Move:
       {
-      obj->removeEventFilter(this);
-      }
+	    if (obj != d->BaseWidget)
+	      {
+	      break;
+	      }
+	    QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
+	    this->move(this->geometry().topLeft() + moveEvent->pos() - moveEvent->oldPos());
+	    this->update();
+	    break;
+	    }	    
+    case QEvent::Hide:
+    case QEvent::Close:
+      if (obj != d->BaseWidget)
+        {
+	      break;
+	      }
+    case QEvent::ApplicationDeactivate:
+      if (!d->AutoHide && (this->isVisible() || d->isOpening()))
+        {
+        this->setProperty("forcedClosed", d->isOpening() ? 2 : 1);
+        }
+	    d->currentAnimation()->stop();
+      this->hide();
+	    break;
+    case QEvent::Show:
+      if (obj != d->BaseWidget)
+        {
+	      break;
+	      }
+    case QEvent::ApplicationActivate:
+	    if (this->property("forcedClosed").toInt() > 0)
+	      {
+	      this->show();
+        if (this->property("forcedClosed").toInt() == 2)
+          {
+          emit popupOpened(true);
+          }
+        this->setProperty("forcedClosed", 0);
+        }
+      else
+        {
+        this->updatePopup();
+        }
+	    break;
+	  case QEvent::Resize:
+	    if (obj != d->BaseWidget ||
+	        !(d->Alignment & Qt::AlignJustify ||
+	         (d->Alignment & Qt::AlignTop && d->Alignment & Qt::AlignBottom)) ||
+	         !(d->isOpening() || this->isVisible()))
+	      {
+	      break;
+	      }
+	    // TODO: bug when the effect is WindowOpacityFadeEffect
+	    this->setGeometry(d->desiredOpenGeometry());
+	    break;
+    case QEvent::Enter:
+      if ( d->currentAnimation()->state() == QAbstractAnimation::Stopped )
+        {
+        // Maybe the user moved the mouse on the widget by mistake, don't open
+        // the popup instantly...
+        QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+        }
+      else 
+        {
+        // ... except if the popup is closing, we want to reopen it as sooon as
+        // possible.
+        this->updatePopup();
+        }
+      break;
+    case QEvent::Leave:
+      QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+      if (obj != d->BaseWidget)
+        {
+        obj->removeEventFilter(this);
+        }
+      break;
     }
   return this->QObject::eventFilter(obj, event);
 }
@@ -717,6 +802,7 @@ void ctkPopupWidget::updatePopup()
 void ctkPopupWidget::showPopup()
 {
   Q_D(ctkPopupWidget);
+  
   if ((this->isVisible() &&
        d->currentAnimation()->state() == QAbstractAnimation::Stopped) ||
       (d->BaseWidget && !d->BaseWidget->isVisible()))
@@ -800,6 +886,8 @@ void ctkPopupWidget::hidePopup()
       break;
     case ScrollEffect:
       {
+      d->ScrollAnimation->setStartValue(closedGeometry);
+      d->ScrollAnimation->setEndValue(openGeometry);
       d->setupPopupPixmapWidget();
       d->PopupPixmapWidget->show();
       this->hide();
