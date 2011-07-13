@@ -84,10 +84,16 @@ public:
   void setBaseWidget(QWidget* baseWidget);
 
   bool autoShow()const;
+  /// Calling setAutoShow automatically updates opens the popup if the cursor
+  /// is above the popup or the base widget.
   void setAutoShow(bool);
 
   bool autoHide()const;
-  
+  /// Don't automatically close the popup when leaving the widget.
+  /// Calling setAutoHide automatically updates the state close the popup
+  /// if the mouse is not over the popup nor the base widget.
+  void setAutoHide(bool autoHide);
+
   enum AnimationEffect
   {
     WindowOpacityFadeEffect = 0,
@@ -129,16 +135,13 @@ public slots:
   /// signal.
   inline void showPopup(bool show);
   
-  /// Don't automatically close the popup when leaving the widget.
-  /// It's a slot so you can easily connect a checkable PushPin button checked
-  /// signal with it.
-  /// Calling setAutoHide automatically updates the state (open/closed)
-  /// of the popup.
-  void setAutoHide(bool autoHide);
+  /// Convenient function that calls setAutoHide(!pin) and opens the popup
+  /// if pin is true regardless of the value of \a AutoShow.
+  /// It is typically connected with a checkable button to anchor the popup.
+  void pinPopup(bool pin);
 
 protected slots:
   void updatePopup();
-  //void animatePopup();
   void onEffectFinished();
   void setWindowAlpha(double alpha);
   void setWindowGeometry(QRect geometry);

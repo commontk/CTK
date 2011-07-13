@@ -799,6 +799,16 @@ void ctkPopupWidget::hidePopup()
 }
 
 // --------------------------------------------------------------------------
+void ctkPopupWidget::pinPopup(bool pin)
+{
+  this->setAutoHide(!pin);
+  if (pin)
+    {
+    this->showPopup();
+    }
+}
+
+// --------------------------------------------------------------------------
 double ctkPopupWidget::windowAlpha()const
 {
   Q_D(const ctkPopupWidget);
