@@ -606,10 +606,12 @@ void ctkPopupWidget::onEffectFinished()
   if (qobject_cast<QAbstractAnimation*>(this->sender())->direction() == QAbstractAnimation::Backward)
     {
     this->hide();
+    emit this->popupOpened(false);
     }
   else
     {
     this->show();
+    emit this->popupOpened(true);
     }
 }
 

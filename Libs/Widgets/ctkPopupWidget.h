@@ -140,6 +140,9 @@ public slots:
   /// It is typically connected with a checkable button to anchor the popup.
   void pinPopup(bool pin);
 
+signals:
+  void popupOpened(bool open);
+
 protected:
   QScopedPointer<ctkPopupWidgetPrivate> d_ptr;
   Q_PROPERTY(double effectAlpha READ effectAlpha WRITE setEffectAlpha DESIGNABLE false)
