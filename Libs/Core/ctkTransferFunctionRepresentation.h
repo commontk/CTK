@@ -43,7 +43,9 @@ class CTK_CORE_EXPORT ctkTransferFunctionRepresentation: public QObject
   Q_PROPERTY(QColor verticalGradientColor READ verticalGradientColor WRITE setVerticalGradientColor)
 
 public:
+  /// Construct a representation with no transfer function.
   ctkTransferFunctionRepresentation(QObject* parent = 0);
+  /// Construct a representation with transfer function.
   ctkTransferFunctionRepresentation(ctkTransferFunction* transferFunction, QObject* parent = 0);
   virtual ~ctkTransferFunctionRepresentation();
 

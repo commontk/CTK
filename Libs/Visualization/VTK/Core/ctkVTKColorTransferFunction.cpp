@@ -24,10 +24,15 @@
 
 /// CTK includes
 #include "ctkVTKColorTransferFunction.h"
+#include "ctkLogger.h"
 
 /// VTK includes
 #include <vtkColorTransferFunction.h>
 #include <vtkSmartPointer.h>
+
+//--------------------------------------------------------------------------
+static ctkLogger logger("org.commontk.libs.visualization.core.ctkVTKColorTransferFunction");
+//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class ctkVTKColorTransferFunctionPrivate
@@ -86,7 +91,8 @@ void ctkVTKColorTransferFunction::range(qreal& minRange, qreal& maxRange)const
   Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
-    Q_ASSERT(d->ColorTransferFunction.GetPointer());
+    //Q_ASSERT(d->ColorTransferFunction.GetPointer());
+    logger.warn("no ColorTransferFunction");
     minRange = 1.;
     maxRange = 0.;
     return;
@@ -103,7 +109,8 @@ QVariant ctkVTKColorTransferFunction::minValue()const
   Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
-    Q_ASSERT(d->ColorTransferFunction.GetPointer());
+    //Q_ASSERT(d->ColorTransferFunction.GetPointer());
+    logger.warn("no ColorTransferFunction");
     return -1;
     }
   double rgb[3];
@@ -130,7 +137,8 @@ QVariant ctkVTKColorTransferFunction::maxValue()const
   Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
     {
-    Q_ASSERT(d->ColorTransferFunction.GetPointer());
+    //Q_ASSERT(d->ColorTransferFunction.GetPointer());
+    logger.warn("no ColorTransferFunction");
     return -1;
     }
   double rgb[3];

@@ -38,11 +38,15 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKColorTransferFunction: public ctkT
   Q_OBJECT;
   QVTK_OBJECT;
 public:
+  /// Please note that ctkVTKColorTransferFunction methods only work only if
+  /// colorTransferFunction is set.
   ctkVTKColorTransferFunction(QObject* parent = 0);
   ctkVTKColorTransferFunction(vtkColorTransferFunction* colorTransferFunction, 
                               QObject* parent = 0);
   virtual ~ctkVTKColorTransferFunction();
   
+  /// Please note that controlPoint methods only works if you have at least one
+  /// ControlPoint.
   virtual ctkControlPoint* controlPoint(int index)const;
   virtual QVariant value(qreal pos)const;
   virtual int count()const;

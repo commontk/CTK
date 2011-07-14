@@ -38,7 +38,10 @@ class ctkTransferFunctionRepresentation;
 /// \ingroup Core
 struct CTK_CORE_EXPORT ctkPoint
 {
-  ctkPoint(){}
+  ctkPoint()
+    :X(0),Value(0)
+  {
+  }
   ctkPoint(qreal x, const QVariant& v)
     :X(x),Value(v)
   {  
