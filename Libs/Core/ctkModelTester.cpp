@@ -112,6 +112,8 @@ void ctkModelTester::setModel(QAbstractItemModel *_model)
             this, SLOT(onColumnsRemoved(const QModelIndex& , int, int)));
     connect(_model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
             this, SLOT(onDataChanged(const QModelIndex& , const QModelIndex &)));
+    connect(_model, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
+            this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
     connect(_model, SIGNAL(layoutAboutToBeChanged()), this, SLOT(onLayoutAboutToBeChanged()));
     connect(_model, SIGNAL(layoutChanged()), this, SLOT(onLayoutChanged()));
     connect(_model, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
@@ -218,10 +220,9 @@ void ctkModelTester::testModelIndex(const QModelIndex& index)const
   if (!index.isValid())
     {// invalid index
     this->test(index.model() == 0, "An invalid index can't have a valid model.");
-    this->test(index.model() != d->Model, "An invalid index can't have a valid model.");
     this->test(index.column() == -1, "An invalid index can't have a valid column.");
     this->test(index.row() == -1, "An invalid index can't have a valid row.");
-    this->test(index.parent().isValid() == false, "An invalid index can't have a valid row.");
+    this->test(index.parent().isValid() == false, "An invalid index can't have a valid parent.");
     this->test(index.row() == -1, "An invalid index can't have a valid row.");
     for(int i = 0; i < 100; ++i)
       {
@@ -265,6 +266,10 @@ void ctkModelTester::testData(const QModelIndex& index)const
 void ctkModelTester::testParent(const QModelIndex& vparent)const
 {
   Q_D(const ctkModelTester);
+  if (!d->Model)
+    {
+    return;
+    }
   if (!d->Model->hasChildren(vparent))
     {
     // it's asking a lot :-)
@@ -362,7 +367,7 @@ void ctkModelTester::onDataChanged(const QModelIndex & topLeft, const QModelInde
   this->test(bottomRight.column() >= topLeft.column(), "topLeft can't have a column lower than bottomRight");
   for (int i = topLeft.row(); i <= bottomRight.row(); ++i)
     {
-    for (int j = topLeft.column(); j < bottomRight.column(); ++j)
+    for (int j = topLeft.column(); j <= bottomRight.column(); ++j)
       {
       this->test(topLeft.sibling(i,j).isValid(), "Changed data must be valid");
       // do the test on the indexes here, it's easier to debug than in testModel();
@@ -384,9 +389,6 @@ void ctkModelTester::onHeaderDataChanged(Qt::Orientation orientation, int first,
       break;
     case Qt::Vertical:
       this->test(d->Model->rowCount() > last, "There is no more vertical headers than rows.");
-      break;
-    default:
-      this->test(orientation == Qt::Horizontal || orientation == Qt::Vertical, "Wrong orientation.");
       break;
     }
   this->testModel();

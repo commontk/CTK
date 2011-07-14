@@ -58,6 +58,10 @@ public:
   ///
   /// Constructor that set the model to test.
   /// A new model can later be set using setModel(...)
+  /// by default, throwOnError is true,
+  ///             nestedInsert is false,
+  ///             testDataEnabled is true,
+  ///             verbose is true.
   ctkModelTester(QAbstractItemModel *model, QObject *parent = 0);
 
   ///
