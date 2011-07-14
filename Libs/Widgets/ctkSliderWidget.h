@@ -50,6 +50,7 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
+  Q_PROPERTY(bool spinBoxVisible READ isSpinBoxVisible WRITE setSpinBoxVisible);
 
 public:
   /// Superclass typedef
@@ -159,11 +160,17 @@ public:
   bool isAutoSpinBoxWidth()const;
   void setAutoSpinBoxWidth(bool autoWidth);
 
+  ///
+  /// The Spinbox visibility can be controlled using setSpinBoxVisible() and
+  /// isSpinBoxVisible().
+  bool isSpinBoxVisible()const;
+
 public slots:
   /// 
   /// Reset the slider and spinbox to zero (value and position)
   void reset();
   void setValue(double value);
+  void setSpinBoxVisible(bool);
 
 signals:
   /// When tracking is on (default), valueChanged is emitted when the

@@ -480,3 +480,17 @@ void ctkSliderWidget::setAutoSpinBoxWidth(bool autoWidth)
   d->AutoSpinBoxWidth = autoWidth;
   d->updateSpinBoxWidth();
 }
+
+// -------------------------------------------------------------------------
+bool ctkSliderWidget::isSpinBoxVisible()const
+{
+  Q_D(const ctkSliderWidget);
+  return d->SpinBox->isVisibleTo(const_cast<ctkSliderWidget*>(this));
+}
+
+// -------------------------------------------------------------------------
+void ctkSliderWidget::setSpinBoxVisible(bool visible)
+{
+  Q_D(ctkSliderWidget);
+  d->SpinBox->setVisible(visible);
+}
