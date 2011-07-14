@@ -8,7 +8,7 @@
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-      http://www.commontk.org/LICENSE
+      http://www.apache.org/licenses/LICENSE-2.0.txt
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    $RCSfile: pqCheckableHeaderView.cxx,v $
+   Module:  pqCheckableHeaderView.cxx
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -28,7 +28,7 @@
    ParaView is a free software; you can redistribute it and/or modify it
    under the terms of the ParaView license version 1.2. 
 
-   See License_v1.2.txt for the full ParaView license.
+   See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
    Kitware Inc.
    28 Corporate Drive
