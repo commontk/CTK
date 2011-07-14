@@ -24,6 +24,7 @@
 
 /// CTK includes
 #include "ctkVTKHistogram.h"
+#include "ctkLogger.h"
 
 /// VTK includes
 #include <vtkDataArray.h>
@@ -33,6 +34,10 @@
 
 /// STL include
 #include <limits>
+
+//--------------------------------------------------------------------------
+static ctkLogger logger("org.commontk.libs.visualization.core.ctkVTKHistogram");
+//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class ctkVTKHistogramPrivate
@@ -84,17 +89,17 @@ int ctkVTKHistogramPrivate::computeNumberOfBins()const
       {
       this->Range[1] += 0.01;
       }
-    else
-      {
-      this->Range[1] += 1;
-      }
+    //else
+    //  {
+    //  this->Range[1] += 1;
+    //  }
     }
   if (this->UserNumberOfBins > 0)
     {
     return this->UserNumberOfBins;
     }
 
-  return static_cast<int>(this->Range[1] - this->Range[0]);
+  return static_cast<int>(this->Range[1] - this->Range[0]) + 1;
 }
 
 //-----------------------------------------------------------------------------
@@ -131,7 +136,8 @@ void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
   Q_D(const ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
     {
-    Q_ASSERT(d->DataArray.GetPointer());
+    //Q_ASSERT(d->DataArray.GetPointer());
+    logger.warn("no dataArray");
     minRange = 1.; // set incorrect values
     maxRange = 0.;
     return;
@@ -324,7 +330,8 @@ void ctkVTKHistogram::build()
     return;
     }
 
-  if (static_cast<double>(binCount) != (d->Range[1] - d->Range[0]))
+  // What is the type of the array, discrete or reals
+  if (static_cast<double>(binCount) != (d->Range[1] - d->Range[0] + 1))
     {
     switch(d->DataArray->GetDataType())
       {
