@@ -4,8 +4,13 @@ SET(KIT ${PROJECT_NAME})
 # Tests
 #
 SET(TEST_SOURCES
+  ctkVTKColorTransferFunctionTest1.cpp
   ctkVTKConnectionTest1.cpp
   ctkVTKErrorLogModelTest1.cpp
+  ctkVTKHistogramTest1.cpp
+  ctkVTKHistogramTest2.cpp
+  ctkVTKHistogramTest3.cpp
+  ctkVTKHistogramTest4.cpp
   ctkVTKObjectTest1.cpp
   )
 
@@ -69,8 +74,13 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
+SIMPLE_TEST( ctkVTKColorTransferFunctionTest1 )
 SIMPLE_TEST( ctkVTKConnectionTest1 )
 SIMPLE_TEST( ctkVTKErrorLogModelTest1 )
+SIMPLE_TEST( ctkVTKHistogramTest1 )
+SIMPLE_TEST( ctkVTKHistogramTest2 )
+SIMPLE_TEST( ctkVTKHistogramTest3 )
+SIMPLE_TEST( ctkVTKHistogramTest4 )
 SIMPLE_TEST( ctkVTKObjectTest1 )
 
 #

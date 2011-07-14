@@ -31,16 +31,22 @@ SET(KITTests_SRCS
   ctkErrorLogModelTest1.cpp
   ctkErrorLogModelTest2.cpp
   ctkErrorLogModelTest3.cpp
+  ctkHistogramTest1.cpp
+  ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
+  ctkModelTesterTest2.cpp
   ctkUtilsClosestPowerOfTenTest1.cpp
   ctkUtilsOrderOfMagnitudeTest1.cpp
   ctkUtilsSignificantDecimalsTest1.cpp
   ctkUtilsTest1.cpp
   ctkUtilsTest2.cpp
+  ctkUtilsTest3.cpp
   ctkDependencyGraphTest1.cpp
   ctkDependencyGraphTest2.cpp
   ctkPimplTest1.cpp
   ctkSingletonTest1.cpp
+  ctkTransferFunctionTest1.cpp
+  ctkTransferFunctionRepresentationTest1.cpp
   ctkWorkflowTest1.cpp
   ctkWorkflowTest2.cpp
   ctkWorkflowTest3.cpp
@@ -122,16 +128,22 @@ SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkErrorLogModelTest1 )
 SIMPLE_TEST( ctkErrorLogModelTest2 )
 SIMPLE_TEST( ctkErrorLogModelTest3 )
+SIMPLE_TEST( ctkHistogramTest1 )
+SIMPLE_TEST( ctkLoggerTest1 )
 SET_TESTS_PROPERTIES(ctkErrorLogModelTest3 PROPERTIES PASS_REGULAR_EXPRESSION
 "This is a qDebug message\nThis is a std::cerr message\nThis is a qWarning message\nThis is a std::cout message\nThis is a qCritical message\n")
 SIMPLE_TEST( ctkModelTesterTest1 )
+SIMPLE_TEST( ctkModelTesterTest2 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
+SIMPLE_TEST( ctkTransferFunctionTest1 )
+SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
 SIMPLE_TEST( ctkUtilsClosestPowerOfTenTest1 )
 SIMPLE_TEST( ctkUtilsOrderOfMagnitudeTest1 )
 SIMPLE_TEST( ctkUtilsSignificantDecimalsTest1 )
 SIMPLE_TEST( ctkUtilsTest1 )
 SIMPLE_TEST( ctkUtilsTest2 )
+SIMPLE_TEST( ctkUtilsTest3 )
 SIMPLE_TEST( ctkWorkflowTest1 )
 SIMPLE_TEST( ctkWorkflowTest2 )
 SIMPLE_TEST( ctkWorkflowTest3 )
