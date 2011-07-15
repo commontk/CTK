@@ -62,7 +62,7 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public QFrame
   /// Direction of the scrolling effect, can be Qt::Vertical, Qt::Horizontal or
   /// both Qt::Vertical|Qt::Horizontal.
   /// Vertical by default
-  Q_PROPERTY( Qt::Orientation orientation READ orientation WRITE setOrientation);
+  Q_PROPERTY( Qt::Orientations orientation READ orientation WRITE setOrientation);
   
   /// Control where the popup opens vertically.
   /// TopToBottom by default
@@ -110,8 +110,8 @@ public:
   Qt::Alignment alignment()const;
   void setAlignment(Qt::Alignment alignment);
   
-  Qt::Orientation orientation()const;
-  void setOrientation(Qt::Orientation orientation);
+  Qt::Orientations orientation()const;
+  void setOrientation(Qt::Orientations orientation);
   
   enum VerticalDirection{
     TopToBottom = 1,
@@ -139,6 +139,9 @@ public slots:
   /// if pin is true regardless of the value of \a AutoShow.
   /// It is typically connected with a checkable button to anchor the popup.
   void pinPopup(bool pin);
+
+signals:
+  void popupOpened(bool open);
 
 protected:
   QScopedPointer<ctkPopupWidgetPrivate> d_ptr;

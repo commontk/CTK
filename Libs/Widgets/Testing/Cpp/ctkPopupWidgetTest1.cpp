@@ -119,6 +119,9 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
   popup.setLayout(layout);
 
   popup.setBaseWidget(&base);
+  popup.setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+  popup.setHorizontalDirection(Qt::RightToLeft);
+  popup.setOrientation(Qt::Horizontal);
   base.show();
   
   QList<ctkPopupWidget*> popups;
@@ -144,6 +147,18 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
 
   scrollPanel->show();
   fadePanel->show();
+
+  ctkPopupWidget screenPopup;
+  screenPopup.setAutoHide(false);
+  screenPopup.setOrientation(Qt::Horizontal | Qt::Vertical);
+
+  QFrame screenPopupContents;
+  screenPopupContents.setFixedSize(200, 200);
+  QVBoxLayout* screenLayout = new QVBoxLayout;
+  screenLayout->addWidget(&screenPopupContents);
+  screenPopup.setLayout(screenLayout);
+  screenPopup.move(0,0);
+  QTimer::singleShot(200, &screenPopup, SLOT(showPopup()));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
