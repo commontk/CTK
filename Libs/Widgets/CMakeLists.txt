@@ -198,6 +198,7 @@ SET(KIT_MOC_SRCS
   ctkModalityWidget.h
   ctkPathLineEdit.h
   ctkPopupWidget.h
+  ctkPopupWidget_p.h
   ctkRangeSlider.h
   ctkRangeWidget.h
   ctkScreenshotDialog.h

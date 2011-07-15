@@ -34,7 +34,7 @@
 #include <QTimer>
 
 // CTK includes
-#include "ctkPopupWidget.h"
+#include "ctkPopupWidget_p.h"
 
 #define LEAVE_CLOSING_DELAY 100 // we don't want to be too fast to close
 #define ENTER_OPENING_DELAY 20 // we want to be responsive but allow "errors"
@@ -77,69 +77,6 @@ QGradient* duplicateGradient(const QGradient* gradient)
   newGradient->setStops(gradient->stops());
   return newGradient;
 }
-
-// -------------------------------------------------------------------------
-class ctkPopupWidgetPrivate
-{
-  Q_DECLARE_PUBLIC(ctkPopupWidget);
-protected:
-  ctkPopupWidget* const q_ptr;
-public:
-  ctkPopupWidgetPrivate(ctkPopupWidget& object);
-  ~ctkPopupWidgetPrivate();
-  void init();
-
-  bool isOpening()const;
-  bool isClosing()const;
-
-  bool fitBaseWidgetSize()const;
-  Qt::Alignment pixmapAlignment()const;
-  void setupPopupPixmapWidget();
-
-  QList<const QWidget*> focusWidgets(bool onlyVisible = false)const;
-
-  // Return true if the mouse cursor is above any of the focus widgets or their
-  // children.
-  // If the cursor is above a child widget, install the event filter to listen
-  // when the cursor leaves the widget.
-  bool mouseOver();
-
-  // Same as QWidget::isAncestorOf() but don't restrain to the same window
-  // and apply it to all the focusWidgets
-  bool isAncestorOf(const QWidget* ancestor, const QWidget* child)const;
-
-
-  /// Return the closed geometry for the popup based on the current geometry
-  QRect closedGeometry()const;
-  /// Return the closed geometry for a given open geometry 
-  QRect closedGeometry(QRect openGeom)const;
-  
-  /// Return the desired geometry, maybe it won't happen if the size is too
-  /// small for the popup.
-  QRect desiredOpenGeometry()const;
-  
-  QPropertyAnimation* currentAnimation()const;
-
-  QWidget* BaseWidget;
-  bool AutoShow;
-  bool AutoHide;
-
-  double EffectAlpha;
-
-  ctkPopupWidget::AnimationEffect Effect;
-  QPropertyAnimation* AlphaAnimation;
-  bool                ForcedTranslucent;
-  QPropertyAnimation* ScrollAnimation;
-  QLabel*             PopupPixmapWidget;
-  
-  // Geometry attributes
-  Qt::Alignment   Alignment;
-  Qt::Orientation Orientation;
-  
-  ctkPopupWidget::VerticalDirection VerticalDirection;
-  Qt::LayoutDirection HorizontalDirection;
-};
-
 
 // -------------------------------------------------------------------------
 ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
@@ -187,7 +124,7 @@ void ctkPopupWidgetPrivate::init()
   QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
                    this->PopupPixmapWidget, SLOT(hide()));
 
-  qApp->installEventFilter(q);
+  qApp->installEventFilter(this);
 
   q->setAnimationEffect(this->Effect);
   q->setEasingCurve(QEasingCurve::OutCubic);
@@ -250,7 +187,11 @@ bool ctkPopupWidgetPrivate::mouseOver()
   QWidget* widgetUnderCursor = qApp->widgetAt(QCursor::pos());
   foreach(const QWidget* focusWidget, widgets)
     {
-    if (this->isAncestorOf(focusWidget, widgetUnderCursor))
+    if (this->isAncestorOf(focusWidget, widgetUnderCursor) &&
+        // Ignore when cursor is above a title bar of a focusWidget, underMouse
+        // wouldn't have return false, but QApplication::widgetAt would return
+        // the widget
+        focusWidget != widgetUnderCursor)
       {
       widgetUnderCursor->installEventFilter(q);
       return true;
@@ -444,15 +385,160 @@ QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
     }
   return geometry;
 }
+
+// -------------------------------------------------------------------------
+bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
+{
+  Q_Q(ctkPopupWidget);
+  QWidget* widget = qobject_cast<QWidget*>(obj);
+  // Here are the application events, it's a lot of events, so we need to be
+  // careful to be fast.
+  if (event->type() == QEvent::ApplicationDeactivate)
+    {
+    // We wait to see if there is no other window being active
+    QTimer::singleShot(0, this, SLOT(onApplicationDeactivate()));
+    }
+  else if (event->type() == QEvent::ApplicationActivate)
+    {
+    QTimer::singleShot(0, this, SLOT(updateVisibility()));
+    }
+  if (!this->BaseWidget)
+    {
+    return false;
+    }
+  if (event->type() == QEvent::Move && widget != this->BaseWidget)
+    {
+    if (widget->isAncestorOf(this->BaseWidget))
       {
-      geometry.moveTop((topLeft.y() + bottomRight.y()) / 2 + size.height() / 2);
+      QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
+      q->move(q->pos() + moveEvent->pos() - moveEvent->oldPos());
       }
-    else
+    else if (widget->isWindow() &&
+             widget->windowType() != Qt::ToolTip &&
+             widget->windowType() != Qt::Popup)
       {
-      geometry.moveBottom((topLeft.y() + bottomRight.y()) / 2 - size.height() / 2);
+      QTimer::singleShot(0, this, SLOT(updateVisibility()));
       }
     }
-  return geometry;
+  else if (event->type() == QEvent::Resize)
+    {
+    if (widget->isWindow() &&
+        widget != this->BaseWidget->window() &&
+        widget->windowType() != Qt::ToolTip &&
+        widget->windowType() != Qt::Popup)
+      {
+      QTimer::singleShot(0, this, SLOT(updateVisibility()));
+      }
+    }
+  else if (event->type() == QEvent::WindowStateChange &&
+           widget != this->BaseWidget->window() &&
+           widget->windowType() != Qt::ToolTip &&
+           widget->windowType() != Qt::Popup)
+    {
+    QTimer::singleShot(0, this, SLOT(updateVisibility()));
+    }
+  else if ((event->type() == QEvent::WindowActivate ||
+            event->type() == QEvent::WindowDeactivate) &&
+           widget == this->BaseWidget->window())
+    {
+    QTimer::singleShot(0, this, SLOT(updateVisibility()));
+    }
+  return false;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidgetPrivate::onApplicationDeactivate()
+{
+  // Still no active window, that means the user now is controlling another
+  // application, we have no control over when the other app moves over the
+  // popup, so we hide the popup as it would show on top of the other app.
+  if (!qApp->activeWindow())
+    {
+    this->temporarilyHiddenOn();
+    }
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidgetPrivate::updateVisibility()
+{
+  Q_Q(ctkPopupWidget);
+  // If the BaseWidget window is active, then there is no reason to cover the
+  // popup.
+  if (!this->BaseWidget  || !this->BaseWidget->window()->isActiveWindow())
+    {
+    foreach(QWidget* topLevelWidget, qApp->topLevelWidgets())
+      {
+      // If there is at least 1 window (active or not) that covers the popup,
+      // then we ensure the popup is hidden.
+      // Of course, tooltips and popups don't count as covering windows.
+      if (topLevelWidget->isVisible() &&
+          !(topLevelWidget->windowState() & Qt::WindowMinimized) &&
+          topLevelWidget->windowType() != Qt::ToolTip &&
+          topLevelWidget->windowType() != Qt::Popup &&
+          topLevelWidget != (this->BaseWidget ? this->BaseWidget->window() : 0) &&
+          topLevelWidget->frameGeometry().intersects(q->geometry()))
+        {
+        this->temporarilyHiddenOn();
+        return;
+        }
+      }
+    }
+  // If the base widget is hidden or minimized, we don't want to restore the
+  // popup.
+  if (this->BaseWidget &&
+      (!this->BaseWidget->isVisible() ||
+        this->BaseWidget->window()->windowState() & Qt::WindowMinimized))
+    {
+    return;
+    }
+  // Restore the visibility of the popup if it was hidden
+  this->temporarilyHiddenOff();
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidgetPrivate::onBaseWidgetDestroyed()
+{
+  Q_Q(ctkPopupWidget);
+  q->hide();
+  q->setBaseWidget(0);
+  // could be a property.
+  q->deleteLater();
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidgetPrivate::temporarilyHiddenOn()
+{
+  Q_Q(ctkPopupWidget);
+  if (!this->AutoHide &&
+      (q->isVisible() || this->isOpening()) &&
+      !(q->isHidden() || this->isClosing()))
+    {
+    this->setProperty("forcedClosed", this->isOpening() ? 2 : 1);
+    }
+  this->currentAnimation()->stop();
+  this->PopupPixmapWidget->hide();
+  q->hide();
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidgetPrivate::temporarilyHiddenOff()
+{
+  Q_Q(ctkPopupWidget);
+
+  int forcedClosed = this->property("forcedClosed").toInt();
+  if (forcedClosed > 0)
+    {
+    q->show();
+    if (forcedClosed == 2)
+      {
+      emit q->popupOpened(true);
+      }
+    this->setProperty("forcedClosed", 0);
+    }
+  else
+    {
+    q->updatePopup();
+    }
 }
 
 // -------------------------------------------------------------------------
@@ -487,11 +573,15 @@ void ctkPopupWidget::setBaseWidget(QWidget* widget)
   if (d->BaseWidget)
     {
     d->BaseWidget->removeEventFilter(this);
+    disconnect(d->BaseWidget, SIGNAL(destroyed(QObject*)),
+               d, SLOT(onBaseWidgetDestroyed()));
     }
   d->BaseWidget = widget;
   if (d->BaseWidget)
     {
     d->BaseWidget->installEventFilter(this);
+    connect(d->BaseWidget, SIGNAL(destroyed(QObject*)),
+            d, SLOT(onBaseWidgetDestroyed()));
     }
   QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
 }
@@ -623,6 +713,13 @@ void ctkPopupWidget::onEffectFinished()
     }
   if (qobject_cast<QAbstractAnimation*>(this->sender())->direction() == QAbstractAnimation::Backward)
     {
+    // Before hiding, transfer the active window flag to its parent, this will
+    // prevent the application to send a ApplicationDeactivate signal that doesn't
+    // need to be done.
+    if (this->isActiveWindow())
+      {
+      qApp->setActiveWindow(d->BaseWidget ? d->BaseWidget->window() : 0);
+      }
     this->hide();
     emit this->popupOpened(false);
     }
@@ -687,12 +784,6 @@ void ctkPopupWidget::enterEvent(QEvent* event)
 bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
 {
   Q_D(ctkPopupWidget);
-  if (event->type() != QEvent::DynamicPropertyChange &&
-      event->type() != QEvent::Paint &&
-      event->type() != QEvent::HoverMove)
-    {
-    //qDebug() << event->type() << obj;
-    }
   switch(event->type())
     {
     case QEvent::Move:
@@ -702,7 +793,7 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
 	      break;
 	      }
 	    QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
-	    this->move(this->geometry().topLeft() + moveEvent->pos() - moveEvent->oldPos());
+	    this->move(this->pos() + moveEvent->pos() - moveEvent->oldPos());
 	    this->update();
 	    break;
 	    }	    
@@ -712,33 +803,14 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
         {
 	      break;
 	      }
-    case QEvent::ApplicationDeactivate:
-      if (!d->AutoHide && (this->isVisible() || d->isOpening()))
-        {
-        this->setProperty("forcedClosed", d->isOpening() ? 2 : 1);
-        }
-	    d->currentAnimation()->stop();
-      this->hide();
+      d->temporarilyHiddenOn();
 	    break;
     case QEvent::Show:
       if (obj != d->BaseWidget)
         {
 	      break;
 	      }
-    case QEvent::ApplicationActivate:
-	    if (this->property("forcedClosed").toInt() > 0)
-	      {
-	      this->show();
-        if (this->property("forcedClosed").toInt() == 2)
-          {
-          emit popupOpened(true);
-          }
-        this->setProperty("forcedClosed", 0);
-        }
-      else
-        {
-        this->updatePopup();
-        }
+	    d->temporarilyHiddenOff();
 	    break;
 	  case QEvent::Resize:
 	    if (obj != d->BaseWidget ||
@@ -783,7 +855,6 @@ void ctkPopupWidget::updatePopup()
 
   // Querying mouseOver can be slow, don't do it if not needed.
   bool mouseOver = (d->AutoShow || d->AutoHide) && d->mouseOver();
-    
   if (d->AutoShow && mouseOver)
     {
     this->showPopup();
@@ -861,6 +932,9 @@ void ctkPopupWidget::hidePopup()
 {
   Q_D(ctkPopupWidget);
 
+  // just in case it was set.
+  this->setProperty("forcedClosed", 0);
+
   if (!this->isVisible() &&
       d->currentAnimation()->state() == QAbstractAnimation::Stopped)
     {
@@ -885,7 +959,12 @@ void ctkPopupWidget::hidePopup()
       d->ScrollAnimation->setStartValue(closedGeometry);
       d->ScrollAnimation->setEndValue(openGeometry);
       d->setupPopupPixmapWidget();
+      d->PopupPixmapWidget->setGeometry(this->geometry());
       d->PopupPixmapWidget->show();
+      if (this->isActiveWindow())
+        {
+        qApp->setActiveWindow(d->BaseWidget ? d->BaseWidget->window() : 0);
+        }
       this->hide();
       break;
       }
