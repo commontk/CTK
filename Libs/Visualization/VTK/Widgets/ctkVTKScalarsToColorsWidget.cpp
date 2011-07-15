@@ -205,14 +205,7 @@ void ctkVTKScalarsToColorsWidget::onPlotAdded(vtkPlot* plot)
 // ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsWidget::onBoundsChanged()
 {
-  Q_D(ctkVTKScalarsToColorsWidget);
-  double bounds[8];
-  d->View->chartBounds(bounds);
-  /// The bounds have already been set to the axes in ctkVTKChartView::boundAxesToChartBounds()
-  d->XRangeSlider->setRange(bounds[vtkAxis::BOTTOM * 2],
-                            bounds[vtkAxis::BOTTOM * 2 + 1]);
-  d->YRangeSlider->setRange(bounds[vtkAxis::LEFT * 2],
-                            bounds[vtkAxis::LEFT * 2 + 1]);
+  this->onAxesModified();
 }
 
 // ----------------------------------------------------------------------------
@@ -466,11 +459,18 @@ void ctkVTKScalarsToColorsWidget::onAxesModified()
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
+
+  bool wasBlocking = d->XRangeSlider->blockSignals(true);
+  d->XRangeSlider->setRange(xAxis->GetMinimumLimit(), xAxis->GetMaximumLimit());
   d->XRangeSlider->setValues(xAxis->GetMinimum(), xAxis->GetMaximum());
+  d->XRangeSlider->blockSignals(wasBlocking);
+
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
+
+  wasBlocking = d->YRangeSlider->blockSignals(true);
+  d->YRangeSlider->setRange(yAxis->GetMinimumLimit(), yAxis->GetMaximumLimit());
   d->YRangeSlider->setValues(yAxis->GetMinimum(), yAxis->GetMaximum());
-  //  d->View->scene()->SetDirty(true);
-  //emit this->axesModified();
+  d->YRangeSlider->blockSignals(wasBlocking);
 }
