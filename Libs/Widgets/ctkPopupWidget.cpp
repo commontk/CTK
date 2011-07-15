@@ -156,7 +156,7 @@ ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
   this->PopupPixmapWidget = 0;
   // Geometry attributes
   this->Alignment = Qt::AlignJustify | Qt::AlignBottom;
-  this->Orientation = Qt::Vertical;
+  this->Orientations = Qt::Vertical;
   this->VerticalDirection = ctkPopupWidget::TopToBottom;
   this->HorizontalDirection = Qt::LeftToRight;
 }
@@ -329,7 +329,7 @@ QRect ctkPopupWidgetPrivate::closedGeometry()const
 // -------------------------------------------------------------------------
 QRect ctkPopupWidgetPrivate::closedGeometry(QRect openGeom)const
 {
-  if (this->Orientation & Qt::Vertical)
+  if (this->Orientations & Qt::Vertical)
     {
     if (this->VerticalDirection == ctkPopupWidget::BottomToTop)
       {
@@ -337,9 +337,9 @@ QRect ctkPopupWidgetPrivate::closedGeometry(QRect openGeom)const
       }
     openGeom.setHeight(0);
     }
-  if (this->Orientation & Qt::Horizontal) 
+  if (this->Orientations & Qt::Horizontal)
     {
-    if (this->HorizontalDirection == Qt::LeftToRight)
+    if (this->HorizontalDirection == Qt::RightToLeft)
       {
       openGeom.moveLeft(openGeom.right());
       }
@@ -366,7 +366,7 @@ QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
   QRect geometry;
   if (this->Alignment & Qt::AlignJustify)
     {
-    if (this->Orientation & Qt::Vertical)
+    if (this->Orientations & Qt::Vertical)
       {
       size.setWidth(this->BaseWidget->width());
       }
@@ -409,14 +409,7 @@ QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
     }
   else if (this->Alignment & Qt::AlignHCenter)
     {
-    if (this->HorizontalDirection == Qt::LeftToRight)
-      {
-      geometry.moveLeft((topLeft.x() + bottomRight.x()) / 2 - size.width() / 2);
-      }
-    else
-      {
-      geometry.moveRight((topLeft.x() + bottomRight.x()) / 2 + size.width() / 2);
-      }
+    geometry.moveLeft((topLeft.x() + bottomRight.x()) / 2 - size.width() / 2);
     }
   else if (this->Alignment & Qt::AlignJustify)
     {
@@ -447,7 +440,10 @@ QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
     }
   else if (this->Alignment & Qt::AlignVCenter)
     {
-    if (this->VerticalDirection == ctkPopupWidget::TopToBottom)
+    geometry.moveTop((topLeft.y() + bottomRight.y()) / 2 - size.height() / 2);
+    }
+  return geometry;
+}
       {
       geometry.moveTop((topLeft.y() + bottomRight.y()) / 2 + size.height() / 2);
       }
@@ -575,17 +571,17 @@ void ctkPopupWidget::setAlignment(Qt::Alignment alignment)
 }
 
 // -------------------------------------------------------------------------
-Qt::Orientation ctkPopupWidget::orientation()const
+Qt::Orientations ctkPopupWidget::orientation()const
 {
   Q_D(const ctkPopupWidget);
-  return d->Orientation;
+  return d->Orientations;
 }
 
 // -------------------------------------------------------------------------
-void ctkPopupWidget::setOrientation(Qt::Orientation orientation)
+void ctkPopupWidget::setOrientation(Qt::Orientations orientations)
 {
   Q_D(ctkPopupWidget);
-  d->Orientation = orientation;
+  d->Orientations = orientations;
 }
 
 // -------------------------------------------------------------------------
