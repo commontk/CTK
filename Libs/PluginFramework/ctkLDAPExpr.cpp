@@ -545,7 +545,7 @@ ctkLDAPExpr::ParseState::ParseState( const QString &str ) throw (std::invalid_ar
 //----------------------------------------------------------------------------
 bool ctkLDAPExpr::ParseState::prefix( const QString &pre )
 {
-  if (!m_str.startsWith(pre.mid(m_pos)))
+  if (!m_str.mid(m_pos).startsWith(pre))
     return false;
   m_pos += pre.length();
   return true;
