@@ -235,8 +235,6 @@ int ctkDICOMServerNodeWidget::storagePort()const
 //----------------------------------------------------------------------------
 QMap<QString,QVariant> ctkDICOMServerNodeWidget::parameters()const
 {
-  Q_D(const ctkDICOMServerNodeWidget);
-
   QMap<QString, QVariant> parameters;
 
   parameters["CallingAETitle"] = this->callingAETitle();
