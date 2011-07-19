@@ -28,6 +28,7 @@
 
 // CTK includes
 #include "ctkCallback.h"
+#include "ctkCollapsibleButton.h"
 #include "ctkPopupWidget.h"
 
 // STD includes
@@ -39,6 +40,7 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
 {
   QWidget* topLevel = new QWidget(0);
   topLevel->setWindowTitle(title);
+  ctkCollapsibleButton* button = new ctkCollapsibleButton;
   
   QComboBox* focusComboBox = new QComboBox;
   focusComboBox->addItem("Focus popup");
@@ -49,8 +51,12 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   QPushButton* toggleButton = new QPushButton("Toggle popup");
   toggleButton->setCheckable(true);
 
+  QVBoxLayout* collapsibleLayout = new QVBoxLayout;
+  collapsibleLayout->addWidget(focusComboBox);
+  button->setLayout(collapsibleLayout);
+
   QVBoxLayout* vlayout = new QVBoxLayout;
-  vlayout->addWidget(focusComboBox);
+  vlayout->addWidget(button);
   vlayout->addWidget(openButton);
   vlayout->addWidget(toggleButton);
   topLevel->setLayout(vlayout);
