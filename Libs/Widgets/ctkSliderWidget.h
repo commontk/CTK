@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QSlider>
+class QDoubleSpinBox;
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -164,6 +165,13 @@ public:
   /// The Spinbox visibility can be controlled using setSpinBoxVisible() and
   /// isSpinBoxVisible().
   bool isSpinBoxVisible()const;
+
+  ///
+  /// Sometimes it can be useful to have a direct control to the spinbox
+  /// To place it somewhere else that ctkDoubleSlider can't. Be careful
+  /// with what you do with the spinbox as ctkDoubleSlider might change
+  /// properties automatically.
+  QDoubleSpinBox* spinBox();
 
 public slots:
   /// 
