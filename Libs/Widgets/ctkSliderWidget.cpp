@@ -494,3 +494,10 @@ void ctkSliderWidget::setSpinBoxVisible(bool visible)
   Q_D(ctkSliderWidget);
   d->SpinBox->setVisible(visible);
 }
+
+// --------------------------------------------------------------------------
+QDoubleSpinBox* ctkSliderWidget::spinBox()
+{
+  Q_D(ctkSliderWidget);
+  return d->SpinBox;
+}
