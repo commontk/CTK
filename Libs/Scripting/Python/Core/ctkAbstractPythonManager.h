@@ -69,6 +69,10 @@ public:
                                const QString& module = QLatin1String("__main__"),
                                bool appendParenthesis = false) const;
 
+  /// Returns True if python is initialized
+  /// \sa pythonInitialized
+  bool isPythonInitialized();
+
 signals:
 
   /// This signal is emitted after python is pre-initialized. Observers can listen
