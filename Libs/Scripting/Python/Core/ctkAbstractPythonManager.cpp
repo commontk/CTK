@@ -114,6 +114,12 @@ void ctkAbstractPythonManager::initPythonQt()
 }
 
 //-----------------------------------------------------------------------------
+bool ctkAbstractPythonManager::isPythonInitialized()
+{
+  return PythonQt::self() != 0;
+}
+
+//-----------------------------------------------------------------------------
 QStringList ctkAbstractPythonManager::pythonPaths()
 {
   return QStringList();
