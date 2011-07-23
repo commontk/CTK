@@ -107,6 +107,8 @@ public:
   /// "LowDef", "HighDef"
   void setSizeDirectories(const QStringList& sizeDirectories);
   QStringList sizeDirectories()const;
+
+  virtual QString key()const;
  
 protected:
   QScopedPointer<ctkIconEnginePrivate> d_ptr;

@@ -59,6 +59,9 @@ QIconEngineV2* ctkIconEnginePlugin::create(const QString& fileName)
 QStringList ctkIconEnginePlugin::keys()const
 {
   QStringList supportedKeys;
+  // While ctkIconEngine supports all the image formats, it is uniquely defined
+  // with "ctkIconEngine".
+  supportedKeys << "ctkIconEngine";
   foreach(QByteArray byteArray, QImageReader::supportedImageFormats())
     {
     supportedKeys << QString(byteArray);
@@ -153,4 +156,10 @@ QStringList ctkIconEngine::sizeDirectories()const
 {
   Q_D(const ctkIconEngine);
   return d->SizeDirectories;
+}
+
+//------------------------------------------------------------------------------
+QString ctkIconEngine::key() const
+{
+  return QLatin1String("ctkIconEngine");
 }
