@@ -879,6 +879,8 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
         obj->removeEventFilter(this);
         }
       break;
+    default:
+      break;
     }
   return this->QObject::eventFilter(obj, event);
 }
