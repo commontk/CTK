@@ -236,6 +236,12 @@ QString ctkDICOMAppWidget::databaseDirectory() const
 }
 
 //----------------------------------------------------------------------------
+bool ctkDICOMAppWidget::searchWidgetPopUpMode(){
+  Q_D(ctkDICOMAppWidget);
+  return d->IsSearchWidgetPopUpMode;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::setSearchWidgetPopUpMode(bool flag){
   Q_D(ctkDICOMAppWidget);
 

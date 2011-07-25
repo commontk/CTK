@@ -34,6 +34,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
+  Q_PROPERTY(bool searchWidgetPopUpMode READ searchWidgetPopUpMode WRITE setSearchWidgetPopUpMode)
 
 public:
   typedef QWidget Superclass;
@@ -46,6 +47,7 @@ public:
   /// Default value is false. Setting it to true will make
   /// search widget to be displayed as pop-up widget
   void setSearchWidgetPopUpMode(bool flag);
+  bool searchWidgetPopUpMode();
 
 public slots:
   void setDatabaseDirectory(const QString& directory);
