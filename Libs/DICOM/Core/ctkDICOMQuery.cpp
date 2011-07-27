@@ -36,7 +36,7 @@
 
 // DCMTK includes
 #ifndef WIN32
-  #define HAVE_CONFIG_H
+  #define HAVE_CONFIG_H 
 #endif
 #include "dcmtk/dcmnet/dimse.h"
 #include "dcmtk/dcmnet/diutil.h"
@@ -248,7 +248,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 
   // Clear the query
   d->Query->clear();
-
+ 
   // Insert all keys that we like to receive values for
   d->Query->insertEmptyElement ( DCM_PatientID );
   d->Query->insertEmptyElement ( DCM_PatientName );
@@ -257,13 +257,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   d->Query->insertEmptyElement ( DCM_StudyInstanceUID );
   d->Query->insertEmptyElement ( DCM_StudyDescription );
   d->Query->insertEmptyElement ( DCM_StudyDate );
-  d->Query->insertEmptyElement ( DCM_SeriesNumber );
-  d->Query->insertEmptyElement ( DCM_SeriesDescription );
-  d->Query->insertEmptyElement ( DCM_SeriesInstanceUID );
   d->Query->insertEmptyElement ( DCM_StudyTime );
-  d->Query->insertEmptyElement ( DCM_SeriesDate );
-  d->Query->insertEmptyElement ( DCM_SeriesTime );
-  d->Query->insertEmptyElement ( DCM_Modality );
   d->Query->insertEmptyElement ( DCM_ModalitiesInStudy );
   d->Query->insertEmptyElement ( DCM_AccessionNumber );
   d->Query->insertEmptyElement ( DCM_NumberOfSeriesRelatedInstances ); // Number of images in the series
@@ -275,7 +269,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 
   d->Query->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
 
-  /* Now, for all keys that the user provided for filtering on STUDY level,
+  /* Now, for all keys that the user provided for filtering on STUDY level, 
    * overwrite empty keys with value. For now, only Patient's Name, Patient ID,
    * Study Description, Modalities in Study, and Study Date are used.
    */
@@ -326,8 +320,8 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 
   if ( d->Filters.keys().contains("StartDate") && d->Filters.keys().contains("EndDate") )
     {
-    QString dateRange = d->Filters["StartDate"].toString() +
-                        QString("-") +
+    QString dateRange = d->Filters["StartDate"].toString() + 
+                        QString("-") + 
                         d->Filters["EndDate"].toString();
     d->Query->putAndInsertString ( DCM_StudyDate, dateRange.toAscii().data() );
     logger.debug("Query on study date " + dateRange);
@@ -370,7 +364,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     DcmDataset *dataset = (*it)->m_dataset;
     if ( dataset != NULL ) // the last response is always empty
       {
-      database.insert ( dataset, false, false);
+      database.insert ( dataset, false /* do not store to disk*/, false /* no thumbnail*/);
       OFString StudyInstanceUID;
       dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
       d->addStudyInstanceUID ( StudyInstanceUID.c_str() );
@@ -410,7 +404,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
         DcmDataset *dataset = (*it)->m_dataset;
         if ( dataset != NULL )
           {
-          database.insert ( dataset, false, false);
+          database.insert ( dataset, false /* do not store */, false /* no thumbnail */ );
           }
         }
       logger.debug ( "Find succeded on Series level for Study: " + StudyInstanceUID );
