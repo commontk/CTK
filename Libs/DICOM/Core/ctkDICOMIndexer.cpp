@@ -38,7 +38,7 @@
 
 // DCMTK includes
 #ifndef WIN32
-  #define HAVE_CONFIG_H 
+  #define HAVE_CONFIG_H
 #endif
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcfilefo.h>
@@ -93,7 +93,9 @@ ctkDICOMIndexer::~ctkDICOMIndexer()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& directoryName,const QString& destinationDirectoryName, bool createHierarchy, bool createThumbnails)
+void ctkDICOMIndexer::addDirectory(const QString& directoryName,
+                                   bool createHierarchy,
+                                   bool createThumbnails)
 {
   Q_D(ctkDICOMIndexer);
 
@@ -102,7 +104,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 
   OFList<OFString> originalDcmtkFileNames;
   OFList<OFString> dcmtkFileNames;
-  OFStandard::searchDirectoryRecursively( src_directory.c_str(), originalDcmtkFileNames, "", "");
+  OFStandard::searchDirectoryRecursively( QDir::toNativeSeparators(src_directory.c_str()).toAscii().data(), originalDcmtkFileNames, "", "");
 
   // hack to reverse list of filenames (not neccessary when image loading works correctly)
   for ( OFListIterator(OFString) iter = originalDcmtkFileNames.begin(); iter != originalDcmtkFileNames.end(); ++iter )
@@ -134,15 +136,15 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
   while (iter != last)
   {
     std::string filename((*iter).c_str());
-    QString qfilename(filename.c_str()); 
+    QString qfilename(filename.c_str());
     /// first we check if the file is already in the database
     QSqlQuery fileExists(database.database());
-    fileExists.prepare("SELECT InsertTimestamp FROM Images WHERE Filename == ?"); 
+    fileExists.prepare("SELECT InsertTimestamp FROM Images WHERE Filename == ?");
     fileExists.bindValue(0,qfilename);
     fileExists.exec();
     if (
-      fileExists.next() && 
-      QFileInfo(qfilename).lastModified() < QDateTime::fromString(fileExists.value(0).toString(),Qt::ISODate)      
+      fileExists.next() &&
+      QFileInfo(qfilename).lastModified() < QDateTime::fromString(fileExists.value(0).toString(),Qt::ISODate)
       )
       {
       MITK_INFO << "File " << filename << " already added.";
@@ -278,13 +280,13 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 
         std::stringstream query_string;
 
-        query_string << "INSERT INTO Patients VALUES( NULL,'" 
-        << patientsName << "','" 
-        << patientID << "','" 
+        query_string << "INSERT INTO Patients VALUES( NULL,'"
+        << patientsName << "','"
+        << patientID << "','"
         << patientsBirthDate << "','"
-        << patientsBirthTime << "','" 
-        << patientsSex << "','" 
-        << patientsAge << "','" 
+        << patientsBirthTime << "','"
+        << patientsSex << "','"
+        << patientsAge << "','"
         << patientComments << "')";
 
         query.exec(query_string.str().c_str());
@@ -293,11 +295,11 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
         MITK_INFO << "New patient inserted: " << patientUID << "\n";
       }
     }
-    else 
+    else
       {
       patientUID = lastPatientUID;
-      }     
-    
+      }
+
     /// keep this for the next image
     lastPatientUID = patientUID;
     lastPatientID = patientID;
@@ -321,16 +323,16 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
         std::stringstream query_string;
 
         query_string << "INSERT INTO Studies VALUES('"
-          << studyInstanceUID << "','" 
-          << patientUID << "','" 
+          << studyInstanceUID << "','"
+          << patientUID << "','"
           << studyID << "','"
           << QDate::fromString(studyDate.c_str(), "yyyyMMdd").toString("yyyy-MM-dd").toStdString() << "','"
-          << studyTime << "','" 
-          << accessionNumber << "','" 
-          << modalitiesInStudy << "','" 
-          << institutionName << "','" 
-          << referringPhysician << "','" 
-          << performingPhysiciansName << "','" 
+          << studyTime << "','"
+          << accessionNumber << "','"
+          << modalitiesInStudy << "','"
+          << institutionName << "','"
+          << referringPhysician << "','"
+          << performingPhysiciansName << "','"
           << studyDescription << "')";
 
         query.exec(query_string.str().c_str());
@@ -411,7 +413,6 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
           }
         }
     }
-    // */
     //------------------------
     //Add Filename to Database
     //------------------------
@@ -455,7 +456,7 @@ void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& database, const QString&
     {
     QString fileName = allFilesQuery.value(0).toString();
     databaseFileNames.append(fileName);
-    if (! QFile::exists(fileName) ) 
+    if (! QFile::exists(fileName) )
       {
       filesToRemove.append(fileName);
       }
@@ -463,7 +464,7 @@ void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& database, const QString&
 
   QSet<QString> filesytemFiles;
   QDirIterator dirIt(directoryName);
-  while (dirIt.hasNext()) 
+  while (dirIt.hasNext())
     {
     filesytemFiles.insert(dirIt.next());
     }
