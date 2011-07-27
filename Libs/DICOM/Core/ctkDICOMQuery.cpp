@@ -36,7 +36,7 @@
 
 // DCMTK includes
 #ifndef WIN32
-  #define HAVE_CONFIG_H 
+  #define HAVE_CONFIG_H
 #endif
 #include "dcmtk/dcmnet/dimse.h"
 #include "dcmtk/dcmnet/diutil.h"
@@ -155,7 +155,7 @@ QString ctkDICOMQuery::host() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::setPort ( int port ) 
+void ctkDICOMQuery::setPort ( int port )
 {
   Q_D(ctkDICOMQuery);
   d->Port = port;
@@ -169,7 +169,7 @@ int ctkDICOMQuery::port()const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::setFilters( const QMap<QString,QVariant>& filters ) 
+void ctkDICOMQuery::setFilters( const QMap<QString,QVariant>& filters )
 {
   Q_D(ctkDICOMQuery);
   d->Filters = filters;
@@ -226,7 +226,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 
   d->SCU.addPresentationContext ( UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes );
   // d->SCU.addPresentationContext ( UID_VerificationSOPClass, transferSyntaxes );
-  if ( !d->SCU.initNetwork().good() ) 
+  if ( !d->SCU.initNetwork().good() )
     {
     logger.error( "Error initializing the network" );
     emit progress("Error initializing the network");
@@ -237,18 +237,22 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   emit progress("Negatiating Association");
   emit progress(20);
 
-  d->SCU.negotiateAssociation();
+  OFCondition result = d->SCU.negotiateAssociation();
+  if (result.bad())
+    {
+    logger.error( "Error negotiating the association: " + QString(result.text()) );
+    emit progress("Error negotiating the association");
+    emit progress(100);
+    return false;
+    }
 
   // Clear the query
-  unsigned long elements = d->Query->card();
-  // Clean it out
-  for ( unsigned long i = 0; i < elements; i++ ) 
-    {
-    d->Query->remove ( 0ul );
-    }
+  d->Query->clear();
+
+  // Insert all keys that we like to receive values for
   d->Query->insertEmptyElement ( DCM_PatientID );
-  d->Query->insertEmptyElement ( DCM_PatientsName );
-  d->Query->insertEmptyElement ( DCM_PatientsBirthDate );
+  d->Query->insertEmptyElement ( DCM_PatientName );
+  d->Query->insertEmptyElement ( DCM_PatientBirthDate );
   d->Query->insertEmptyElement ( DCM_StudyID );
   d->Query->insertEmptyElement ( DCM_StudyInstanceUID );
   d->Query->insertEmptyElement ( DCM_StudyDescription );
@@ -266,73 +270,76 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   d->Query->insertEmptyElement ( DCM_NumberOfStudyRelatedInstances ); // Number of images in the series
   d->Query->insertEmptyElement ( DCM_NumberOfStudyRelatedSeries ); // Number of images in the series
 
+  // Make clear we define our search values in ISO Latin 1 (default would be ASCII)
+  d->Query->putAndInsertOFStringArray(DCM_SpecificCharacterSet, "ISO_IR 100");
+
   d->Query->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
 
+  /* Now, for all keys that the user provided for filtering on STUDY level,
+   * overwrite empty keys with value. For now, only Patient's Name, Patient ID,
+   * Study Description, Modalities in Study, and Study Date are used.
+   */
+  QString seriesDescription;
   foreach( QString key, d->Filters.keys() )
     {
     if ( key == QString("Name") )
       {
       // make the filter a wildcard in dicom style
-      d->Query->putAndInsertString( DCM_PatientsName,
+      d->Query->putAndInsertString( DCM_PatientName,
         (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
       }
-    if ( key == QString("Study") )
+    else if ( key == QString("Study") )
       {
       // make the filter a wildcard in dicom style
       d->Query->putAndInsertString( DCM_StudyDescription,
         (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
       }
-    if ( key == QString("Series") )
-      {
-      // make the filter a wildcard in dicom style
-      d->Query->putAndInsertString( DCM_SeriesDescription,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
-      }
-    if ( key == QString("ID") )
+    else if ( key == QString("ID") )
       {
       // make the filter a wildcard in dicom style
       d->Query->putAndInsertString( DCM_PatientID,
         (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
       }
-    if ( key == QString("Modalities") )
+    else if ( key == QString("Modalities") )
       {
       // make the filter be an "OR" of modalities using backslash (dicom-style)
       QString modalitySearch("");
       foreach (const QString& modality, d->Filters[key].toStringList())
-        {
+      {
         modalitySearch += modality + QString("\\");
-        }
+      }
       modalitySearch.chop(1); // remove final backslash
-      logger.debug("modalitySearch " + modalitySearch);
+      logger.debug("modalityInStudySearch " + modalitySearch);
       d->Query->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toAscii().data() );
+      }
+    // Rememer Series Description for later series query if we go through the keys now
+    else if ( key == QString("Series") )
+      {
+      // make the filter a wildcard in dicom style
+      seriesDescription = "*" + d->Filters[key].toString() + "*";
+      }
+    else
+      {
+      logger.debug("Ignoring unknown search key: " + key);
       }
     }
 
   if ( d->Filters.keys().contains("StartDate") && d->Filters.keys().contains("EndDate") )
     {
-    QString dateRange = d->Filters["StartDate"].toString() + 
-                          QString("-") + 
-                              d->Filters["EndDate"].toString();
+    QString dateRange = d->Filters["StartDate"].toString() +
+                        QString("-") +
+                        d->Filters["EndDate"].toString();
     d->Query->putAndInsertString ( DCM_StudyDate, dateRange.toAscii().data() );
-    logger.debug("Query on study time " + dateRange);
+    logger.debug("Query on study date " + dateRange);
     }
-
   emit progress(30);
 
   FINDResponses *responses = new FINDResponses();
 
-  Uint16 presentationContex = 0;
-  presentationContex = d->SCU.findPresentationContextID ( UID_FINDStudyRootQueryRetrieveInformationModel, UID_LittleEndianExplicitTransferSyntax );
-  if ( presentationContex == 0 )
-    {
-    presentationContex = d->SCU.findPresentationContextID ( UID_FINDStudyRootQueryRetrieveInformationModel, UID_BigEndianExplicitTransferSyntax );
-    }
-  if ( presentationContex == 0 )
-    {
-    presentationContex = d->SCU.findPresentationContextID ( UID_FINDStudyRootQueryRetrieveInformationModel, UID_LittleEndianImplicitTransferSyntax );
-    }
-
-  if ( presentationContex == 0 )
+  Uint16 presentationContext = 0;
+  // Check for any accepted presentation context for FIND in study root (dont care about transfer syntax)
+  presentationContext = d->SCU.findPresentationContextID ( UID_FINDStudyRootQueryRetrieveInformationModel, "");
+  if ( presentationContext == 0 )
     {
     logger.error ( "Failed to find acceptable presentation context" );
     emit progress("Failed to find acceptable presentation context");
@@ -344,45 +351,58 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     }
   emit progress(40);
 
-  OFCondition status = d->SCU.sendFINDRequest ( presentationContex, d->Query, responses );
+  OFCondition status = d->SCU.sendFINDRequest ( presentationContext, d->Query, responses );
   if ( !status.good() )
     {
     logger.error ( "Find failed" );
     emit progress("Find failed");
-    d->SCU.closeAssociation ( DUL_PEERREQUESTEDRELEASE );
+    d->SCU.closeAssociation ( DCMSCU_RELEASE_ASSOCIATION );
     emit progress(100);
+    delete responses;
     return false;
     }
-  logger.debug ( "Find succeded" );
+  logger.debug ( "Find succeded");
   emit progress("Find succeded");
   emit progress(50);
 
   for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
     {
     DcmDataset *dataset = (*it)->m_dataset;
-    if ( dataset != NULL )
+    if ( dataset != NULL ) // the last response is always empty
       {
       database.insert ( dataset, false, false);
       OFString StudyInstanceUID;
       dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
-      d->addStudyInstanceUID ( QString ( StudyInstanceUID.c_str() ) );
+      d->addStudyInstanceUID ( StudyInstanceUID.c_str() );
       }
     }
   delete responses;
 
-  // Now search each Study
+  /* Only ask for series attributes now. This requires kicking out the rest of former query. */
+  d->Query->clear();
+  d->Query->insertEmptyElement ( DCM_SeriesNumber );
+  d->Query->insertEmptyElement ( DCM_SeriesDescription );
+  d->Query->insertEmptyElement ( DCM_SeriesInstanceUID );
+  d->Query->insertEmptyElement ( DCM_SeriesDate );
+  d->Query->insertEmptyElement ( DCM_SeriesTime );
+  d->Query->insertEmptyElement ( DCM_Modality );
+
+  /* Add user-defined filters */
+  d->Query->putAndInsertOFStringArray(DCM_SeriesDescription, seriesDescription.toLatin1().data());
+
+  // Now search each within each Study that was identified
   d->Query->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
   float progressRatio = 25. / d->StudyInstanceUIDList.count();
   int i = 0;
   foreach ( QString StudyInstanceUID, d->StudyInstanceUIDList )
     {
-    logger.debug ( "Starting Series C-FIND for Series: " + StudyInstanceUID );
-    emit progress(QString("Starting Series C-FIND for Series: ") + StudyInstanceUID);
+    logger.debug ( "Starting Series C-FIND for Study: " + StudyInstanceUID );
+    emit progress(QString("Starting Series C-FIND for Study: ") + StudyInstanceUID);
     emit progress(50 + (progressRatio * i++));
 
     d->Query->putAndInsertString ( DCM_StudyInstanceUID, StudyInstanceUID.toStdString().c_str() );
     responses = new FINDResponses();
-    status = d->SCU.sendFINDRequest ( 0, d->Query, responses );
+    status = d->SCU.sendFINDRequest ( presentationContext, d->Query, responses );
     if ( status.good() )
       {
       for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
@@ -393,19 +413,18 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
           database.insert ( dataset, false, false);
           }
         }
-      logger.debug ( "Find succeded for Series: " + StudyInstanceUID );
-      emit progress(QString("Find succeded for Series: ") + StudyInstanceUID);
+      logger.debug ( "Find succeded on Series level for Study: " + StudyInstanceUID );
+      emit progress(QString("Find succeded on Series level for Study: ") + StudyInstanceUID);
       }
     else
       {
-      logger.error ( "Find failed for Series: " + StudyInstanceUID );
-      emit progress(QString("Find failed for Series: ") + StudyInstanceUID);
+      logger.error ( "Find on Series level failed for Study: " + StudyInstanceUID );
+      emit progress(QString("Find on Series level failed for Study: ") + StudyInstanceUID);
       }
     emit progress(50 + (progressRatio * i++));
     delete responses;
     }
-  d->SCU.closeAssociation ( DUL_PEERREQUESTEDRELEASE );
+  d->SCU.closeAssociation ( DCMSCU_RELEASE_ASSOCIATION );
   emit progress(100);
   return true;
 }
-
