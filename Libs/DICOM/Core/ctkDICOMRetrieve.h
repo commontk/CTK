@@ -22,7 +22,7 @@
 #define __ctkDICOMRetrieve_h
 
 
-// Qt includes 
+// Qt includes
 #include <QObject>
 #include <QDir>
 #include <QSharedPointer>
@@ -72,7 +72,9 @@ public:
   QSharedPointer<ctkDICOMDatabase> retrieveDatabase()const;
 
   // Could be a slot...
-  bool retrieveSeries( const QString& seriesInstanceUID );
+  bool retrieveSeries( const QString& studyInstanceUID,
+                       const QString& seriesInstanceUID );
+
   bool retrieveStudy( const QString& studyInstanceUID );
 
 protected:

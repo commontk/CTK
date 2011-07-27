@@ -38,7 +38,7 @@
 
 // DCMTK includes
 #ifndef WIN32
-  #define HAVE_CONFIG_H 
+  #define HAVE_CONFIG_H
 #endif
 #include "dcmtk/dcmnet/dimse.h"
 #include "dcmtk/dcmnet/diutil.h"
@@ -72,7 +72,7 @@ public:
   QString       CallingAETitle;
   QString       CalledAETitle;
   QString       Host;
-  int           CallingPort;
+  int           CallingPort; // TODO: Not used yet since C-STORE receiver must be run separately so far
   int           CalledPort;
   DcmSCU        SCU; // TODO: not used yet.
   DcmDataset*   parameters;
@@ -81,7 +81,9 @@ public:
 
   // do the retrieve, handling both series and study retrieves
   enum RetrieveType { RetrieveSeries, RetrieveStudy };
-  bool retrieve ( QString UID, RetrieveType retriveType );
+  bool retrieve ( const QString& studyInstanceUID,
+                  const QString& seriesInstanceUID,
+                  const RetrieveType rType );
 };
 
 //------------------------------------------------------------------------------
@@ -103,16 +105,19 @@ ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType ) {
+bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
+                                         const QString& seriesInstanceUID,
+                                         const RetrieveType rType )
+{
 
   if ( !this->RetrieveDatabase )
     {
-    logger.error ( "Must have RetrieveDatabase for retrieve transaction" );
+    logger.error ( "No RetrieveDatabase for retrieve transaction" );
     return false;
     }
 
   // Register the JPEG libraries in case we need them
-  //   (registration only happens once, so it's okay to call repeatedly)
+  // (registration only happens once, so it's okay to call repeatedly)
   // register global JPEG decompression codecs
   DJDecoderRegistration::registerCodecs();
   // register global JPEG compression codecs
@@ -123,125 +128,166 @@ bool ctkDICOMRetrievePrivate::retrieve ( QString UID, RetrieveType retriveType )
   DcmRLEDecoderRegistration::registerCodecs();
 
   // Set the DCMTK log level
-  log4cplus::Logger rootLogger = log4cplus::Logger::getRoot();
-  rootLogger.setLogLevel(log4cplus::DEBUG_LOG_LEVEL);
+  dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
+  rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);
 
-  // TODO: use this->SCU instead ?
+  // TODO: use this->SCU instead?
   DcmSCU scu;
   scu.setAETitle ( OFString(this->CallingAETitle.toStdString().c_str()) );
-  scu.setPort ( this->CallingPort );
   scu.setPeerAETitle ( OFString(this->CalledAETitle.toStdString().c_str()) );
   scu.setPeerHostName ( OFString(this->Host.toStdString().c_str()) );
   scu.setPeerPort ( this->CalledPort );
-  scu.setMoveDestinationAETitle ( OFString(this->MoveDestinationAETitle.toStdString().c_str()) );
 
   logger.info ( "Setting Transfer Syntaxes" );
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
-  scu.addPresentationContext ( UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes );
   scu.addPresentationContext ( UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
 
-  if ( !scu.initNetwork().good() ) 
+  // Check and initialize networking parameters in DCMTK
+  if ( !scu.initNetwork().good() )
     {
     logger.error ( "Error initializing the network" );
     return false;
     }
+
+  // Negotiate (i.e. start the) association
   logger.debug ( "Negotiating Association" );
+
   if ( !scu.negotiateAssociation().good() )
     {
     logger.error ( "Error negotiating association" );
     return false;;
     }
 
+  // Setup query what to be received from the PACS
   logger.debug ( "Setting Parameters" );
   // Clear the query
-  unsigned long elements = this->parameters->card();
-  // Clean it out
-  for ( unsigned long i = 0; i < elements; i++ ) 
-    {
-    this->parameters->remove ( 0ul );
-    }
-  if ( retriveType == RetrieveSeries )
+  parameters->clear();
+  if ( rType == RetrieveSeries )
     {
     this->parameters->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
-    this->parameters->putAndInsertString ( DCM_SeriesInstanceUID, UID.toStdString().c_str() );
-    } 
+    this->parameters->putAndInsertString ( DCM_SeriesInstanceUID, seriesInstanceUID.toStdString().c_str() );
+    // Always required to send all highler level unique keys, so add study here (we are in Study Root)
+    this->parameters->putAndInsertString ( DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str() );  //TODO
+    }
   else
     {
     this->parameters->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
-    this->parameters->putAndInsertString ( DCM_StudyInstanceUID, UID.toStdString().c_str() );  
+    this->parameters->putAndInsertString ( DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str() );
     }
 
+  // Issue request
   logger.debug ( "Sending Move Request" );
-  MOVEResponses *responses = new MOVEResponses();
-  OFCondition status = scu.sendMOVERequest ( 0, this->parameters, responses );
-  if (!status.good())
+  MOVEResponses responses;
+  T_ASC_PresentationContextID presID = scu.findPresentationContextID(UID_MOVEStudyRootQueryRetrieveInformationModel, "" /* don't care about transfer syntax */ );
+  if (presID == 0)
     {
-    logger.error ( "MOVE Request failed: " + QString ( status.text() ) );
+    logger.error ( "MOVE Request failed: No valid Study Root MOVE Presentation Context available" );
+    scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
     return false;
     }
+  OFCondition status = scu.sendMOVERequest ( presID, this->MoveDestinationAETitle.toStdString().c_str(), this->parameters, &responses );
+  // Close association, no need to keep it open
+  scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
 
-  logger.debug ( "Move Request succeded" );
-
-  logger.debug ( "Making Output Directory" );
-  QDir directory = QDir( RetrieveDatabase->databaseDirectory() );
-
-  if ( responses->begin() == responses->end() )
+  // If we do not receive a single response, something is fishy
+  if ( responses.begin() == responses.end() )
     {
-    logger.error ( "No responses!" );
-    throw std::runtime_error( std::string("No responses!") );
+    logger.error ( "No responses received at all! (at least one empty response always expected)" );
+    throw std::runtime_error( std::string("No responses received from server!") );
     }
 
-  // Write the responses out to disk
-  for ( OFListIterator(FINDResponse*) it = responses->begin(); it != responses->end(); it++ )
+  /* The server is permitted to acknowledge every image that was received, or
+   * to send a single move response.
+   * If there is only a single response, this can mean the following:
+   * 1) No images to transfer (Status Success and Number of Completed Subops = 0)
+   * 2) All images transferred (Status Success and Number of Completed Subops > 0)
+   * 3) Error code, i.e. no images transferred
+   * 4) Warning (one or more failures, i.e. some images transferred)
+   */
+  if ( responses.numResults() == 1 )
     {
-    DcmDataset *dataset = (*it)->m_dataset;
-    if ( dataset != NULL )
+    MOVEResponse* rsp = *responses.begin();
+    logger.debug ( "MOVE response receveid with status: " + QString(DU_cmoveStatusString(rsp->m_status)) );
+    if ((rsp->m_status == STATUS_Success) || (rsp->m_status == STATUS_MOVE_Warning_SubOperationsCompleteOneOrMoreFailures))
       {
-      logger.debug ( "Got a valid dataset" );
-      // Save in correct directory
-      E_TransferSyntax output_transfersyntax = dataset->getOriginalXfer();
-      dataset->chooseRepresentation( output_transfersyntax, NULL );
-        
-      if ( !dataset->canWriteXfer( output_transfersyntax ) )
+      if (rsp->m_numberOfCompletedSubops == 0)
         {
-        // Pick EXS_LittleEndianExplicit as our default
-        output_transfersyntax = EXS_LittleEndianExplicit;
-        }
-        
-      DcmXfer opt_oxferSyn( output_transfersyntax );
-      if ( !dataset->chooseRepresentation( opt_oxferSyn.getXfer(), NULL ).bad() )
-        {
-        DcmFileFormat* fileformat = new DcmFileFormat ( dataset );
-          
-        // Follow dcmdjpeg example
-        fileformat->loadAllDataIntoMemory();
-        OFString SOPInstanceUID;
-        dataset->findAndGetOFString ( DCM_SOPInstanceUID, SOPInstanceUID );
-        QFileInfo fi ( directory, QString ( SOPInstanceUID.c_str() ) );
-        logger.debug ( "Saving file: " + fi.absoluteFilePath() );
-        status = fileformat->saveFile ( fi.absoluteFilePath().toStdString().c_str(), opt_oxferSyn.getXfer() );
-        if ( !status.good() )
-          {
-          logger.error ( "Error saving file: " + fi.absoluteFilePath() + " Error is " + status.text() );
-          }
-
-        RetrieveDatabase->insert( dataset, true );
-          
-        delete fileformat;
+        logger.error ( "No images transferred by PACS!" );
+        throw std::runtime_error( std::string("No images transferred by PACS!") );
         }
       }
+    else
+      {
+      logger.error("MOVE request failed, server does report error");
+      QString statusDetail("No details");
+      if (rsp->m_statusDetail != NULL)
+        {
+         std::ostringstream out;
+        rsp->m_statusDetail->print(out);
+        statusDetail = "Status Detail: " + statusDetail.fromStdString(out.str());
+        }
+      statusDetail.prepend("MOVE request failed: ");
+      logger.error(statusDetail);
+      throw std::runtime_error( statusDetail.toStdString() );
+      }
     }
-
-
-  delete responses;
-  if ( !scu.dropNetwork().good() ) 
+  // Select the last MOVE response to output meaningful status information
+  OFListIterator(MOVEResponse*) it = responses.begin();
+  Uint32 numResults = responses.numResults();
+  for (Uint32 i = 1; i < numResults; i++)
     {
-    logger.error ( "Error dropping the network" );
-    return false;
+    it++;
     }
+  logger.debug ( "MOVE responses report for study: " + studyInstanceUID +"\n"
+    + QString::number((*it)->m_numberOfCompletedSubops) + " images transferred, and\n"
+    + QString::number((*it)->m_numberOfWarningSubops)   + " images transferred with warning, and\n"
+    + QString::number((*it)->m_numberOfFailedSubops)    + " images transfers failed");
+
+  /* Comment from Michael: The code below does not make sense. Using MOVE you never
+   * receive the image here but only status information; thus, rsp->m_dataset is _not_
+   * an image. I leave it inside since it might be moved to a location which makes more
+   * sense.
+   */
+
+ // for ( OFListIterator(MOVEResponse*) it = responses.begin(); it != responses.end(); it++ )
+ // {
+ //    DcmDataset *dataset = (*it)->m_dataset;
+ //   if ( dataset != NULL )
+ //   {
+ //     logger.debug ( "Got a valid dataset" );
+ //     // Save in correct directory
+ //     E_TransferSyntax output_transfersyntax = dataset->getOriginalXfer();
+ //     dataset->chooseRepresentation( output_transfersyntax, NULL );
+ //
+ //     if ( !dataset->canWriteXfer( output_transfersyntax ) )
+ //     {
+ //       // Pick EXS_LittleEndianExplicit as our default
+ //       output_transfersyntax = EXS_LittleEndianExplicit;
+ //     }
+ //
+ //     DcmXfer opt_oxferSyn( output_transfersyntax );
+ //     if ( !dataset->chooseRepresentation( opt_oxferSyn.getXfer(), NULL ).bad() )
+ //     {
+ //       DcmFileFormat fileformat( dataset );
+ //
+ //       // Follow dcmdjpeg example
+ //       OFString SOPInstanceUID;
+ //       dataset->findAndGetOFString ( DCM_SOPInstanceUID, SOPInstanceUID );
+ //       QFileInfo fi ( directory, QString ( SOPInstanceUID.c_str() ) );
+ //       logger.debug ( "Saving file: " + fi.absoluteFilePath() );
+ //       status = fileformat.saveFile ( fi.absoluteFilePath().toStdString().c_str(), opt_oxferSyn.getXfer() );
+ //       if ( !status.good() )
+ //       {
+ //         logger.error ( "Error saving file: " + fi.absoluteFilePath() + " Error is " + status.text() );
+ //       }
+ //      // Insert into our local database
+ //       RetrieveDatabase->insert( dataset, true );
+ //     }
+ //   }
+ // }
   return true;
 }
 
@@ -358,17 +404,28 @@ QSharedPointer<ctkDICOMDatabase> ctkDICOMRetrieve::retrieveDatabase()const
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrieve::retrieveSeries( const QString& seriesInstanceUID )
+bool ctkDICOMRetrieve::retrieveSeries(const QString& studyInstanceUID,
+                                      const QString& seriesInstanceUID )
 {
+  if (studyInstanceUID.isEmpty() || seriesInstanceUID.isEmpty())
+    {
+    logger.error("Cannot receive series: Either Study or Series Instance UID empty.");
+    return false;
+    }
   Q_D(ctkDICOMRetrieve);
   logger.info ( "Starting retrieveSeries" );
-  return d->retrieve ( seriesInstanceUID, ctkDICOMRetrievePrivate::RetrieveSeries );
+  return d->retrieve ( studyInstanceUID, seriesInstanceUID, ctkDICOMRetrievePrivate::RetrieveSeries );
 }
 
 //------------------------------------------------------------------------------
 bool ctkDICOMRetrieve::retrieveStudy( const QString& studyInstanceUID )
 {
+  if (studyInstanceUID.isEmpty())
+    {
+    logger.error("Cannot receive series: Either Study or Series Instance UID empty.");
+    return false;
+    }
   Q_D(ctkDICOMRetrieve);
   logger.info ( "Starting retrieveStudy" );
-  return d->retrieve ( studyInstanceUID, ctkDICOMRetrievePrivate::RetrieveStudy );
+  return d->retrieve ( studyInstanceUID, "", ctkDICOMRetrievePrivate::RetrieveStudy );
 }
