@@ -78,7 +78,7 @@ public:
   /// StartDate and EndDate
   /// Key         DICOM Tag                Type        Example
   /// -----------------------------------------------------------
-  /// Name        DCM_PatientsName         QString     JOHNDOE
+  /// Name        DCM_PatientName         QString     JOHNDOE
   /// Study       DCM_StudyDescription     QString     
   /// Series      DCM_SeriesDescription    QString
   /// ID          DCM_PatientID            QString

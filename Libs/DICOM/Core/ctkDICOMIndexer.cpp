@@ -178,9 +178,9 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
     int patientUID = -1;
 
     //If the following fields can not be evaluated, cancel evaluation of the DICOM file
-    if (!dataset->findAndGetOFString(DCM_PatientsName, patientsName).good())
+    if (!dataset->findAndGetOFString(DCM_PatientName, patientsName).good())
     {
-      MITK_ERROR << "Could not read DCM_PatientsName from " << filename;
+      MITK_ERROR << "Could not read DCM_PatientName from " << filename;
       continue;
     }
 
@@ -210,10 +210,10 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
 
 
     dataset->findAndGetOFString(DCM_PatientID, patientID);
-    dataset->findAndGetOFString(DCM_PatientsBirthDate, patientsBirthDate);
-    dataset->findAndGetOFString(DCM_PatientsBirthTime, patientsBirthTime);
-    dataset->findAndGetOFString(DCM_PatientsSex, patientsSex);
-    dataset->findAndGetOFString(DCM_PatientsAge, patientsAge);
+    dataset->findAndGetOFString(DCM_PatientBirthDate, patientsBirthDate);
+    dataset->findAndGetOFString(DCM_PatientBirthTime, patientsBirthTime);
+    dataset->findAndGetOFString(DCM_PatientSex, patientsSex);
+    dataset->findAndGetOFString(DCM_PatientAge, patientsAge);
     dataset->findAndGetOFString(DCM_PatientComments, patientComments);
     dataset->findAndGetOFString(DCM_StudyID, studyID);
     dataset->findAndGetOFString(DCM_StudyDate, studyDate);
@@ -221,8 +221,8 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, const QString& di
     dataset->findAndGetOFString(DCM_AccessionNumber, accessionNumber);
     dataset->findAndGetOFString(DCM_ModalitiesInStudy, modalitiesInStudy);
     dataset->findAndGetOFString(DCM_InstitutionName, institutionName);
-    dataset->findAndGetOFString(DCM_PerformingPhysiciansName, performingPhysiciansName);
-    dataset->findAndGetOFString(DCM_ReferringPhysiciansName, referringPhysician);
+    dataset->findAndGetOFString(DCM_PerformingPhysicianName, performingPhysiciansName);
+    dataset->findAndGetOFString(DCM_ReferringPhysicianName, referringPhysician);
     dataset->findAndGetOFString(DCM_StudyDescription, studyDescription);
 
     dataset->findAndGetOFString(DCM_SeriesDate, seriesDate);
