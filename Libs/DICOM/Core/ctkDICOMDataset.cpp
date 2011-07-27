@@ -38,18 +38,11 @@ class ctkDICOMDatasetPrivate
 
     bool m_DICOMDataSetInitialized;
 
-    static const QScopedPointer<const DcmDataDictionary> s_Dictionary;
-
     DcmDataset* m_DcmDataset;
 };
 
-const QScopedPointer<const DcmDataDictionary> ctkDICOMDatasetPrivate::s_Dictionary(new DcmDataDictionary(OFTrue, OFTrue));
-// = QScopedPointer<const DcmDataDictionary>(new DcmDataDictionary(OFTrue, OFTrue));
 
-
-
-
-ctkDICOMDataset::ctkDICOMDataset() 
+ctkDICOMDataset::ctkDICOMDataset()
 :d_ptr(new ctkDICOMDatasetPrivate)
 {
   Q_D(ctkDICOMDataset);
@@ -57,7 +50,7 @@ ctkDICOMDataset::ctkDICOMDataset()
   d->m_DcmDataset = this;
 }
 
-ctkDICOMDataset::~ctkDICOMDataset() 
+ctkDICOMDataset::~ctkDICOMDataset()
 {
   Q_D(ctkDICOMDataset);
   if(d->m_DcmDataset != this)
@@ -123,7 +116,7 @@ void ctkDICOMDataset::InitializeFromFile(const QString& filename,
 {
   Q_UNUSED(maxReadLength);
   DcmDataset *dataset;
-  
+
   DcmFileFormat fileformat;
   OFCondition status = fileformat.loadFile(filename.toAscii().data(), readXfer, groupLength, readMode);
   dataset = fileformat.getAndRemoveDataset();
@@ -416,7 +409,7 @@ OFString ctkDICOMDataset::Encode( const DcmTag& tag, const QString& qstring ) co
   Q_UNUSED(tag);
   return OFString( qstring.toLatin1().data() ); // Latin1 is ISO 8859, which is the default character set of DICOM (PS 3.5-2008, Page 18)
 }
-    
+
 QString ctkDICOMDataset::GetAllElementValuesAsString( const DcmTag& tag ) const
 {
   this->EnsureDcmDataSetIsInitialized();
@@ -883,30 +876,31 @@ QString ctkDICOMDataset::TagKey( const DcmTag& tag )
 
 QString ctkDICOMDataset::TagDescription( const DcmTag& tag )
 {
-  if (!ctkDICOMDatasetPrivate::s_Dictionary->isDictionaryLoaded()) return QString("<no DICOM dictionary loaded. application broken>");
-  const DcmDictEntry* entry = ctkDICOMDatasetPrivate::s_Dictionary->findEntry(tag, NULL);
+  if (!dcmDataDict.isDictionaryLoaded())
+    return QString("<no DICOM dictionary loaded. application broken>");
+  const DcmDataDictionary& globalDict = dcmDataDict.rdlock();
+  const DcmDictEntry* entry = globalDict.findEntry(tag, NULL);
+  QString returnName("Unknown");
   if (entry)
   {
-    return QString(entry->getTagName());
+    returnName = entry->getTagName();
   }
-  else
-  {
-    return QString("<unknown>");
-  }
+  dcmDataDict.unlock();
+  return returnName;
 }
 
 QString ctkDICOMDataset::TagVR( const DcmTag& tag )
 {
-  if (!ctkDICOMDatasetPrivate::s_Dictionary->isDictionaryLoaded()) return QString("<no DICOM dictionary loaded. application broken>");
-  const DcmDictEntry* entry = ctkDICOMDatasetPrivate::s_Dictionary->findEntry(tag, NULL);
+  if (!dcmDataDict.isDictionaryLoaded()) return QString("<no DICOM dictionary loaded. application broken>");
+  const DcmDataDictionary& globalDataDict = dcmDataDict.rdlock();
+  const DcmDictEntry* entry = globalDataDict.findEntry(tag, NULL);
+  QString returnVR("UN");
   if (entry)
   {
-    return QString(entry->getVR().getVRName());
+    returnVR = entry->getVR().getVRName();
   }
-  else
-  {
-    return QString("UN"); // unknown
-  }
+  dcmDataDict.unlock();
+  return returnVR;
 }
 
 QString ctkDICOMDataset::GetStoredSerialization()
