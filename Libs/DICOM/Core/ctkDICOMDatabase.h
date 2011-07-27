@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMDatabase_h
 #define __ctkDICOMDatabase_h
 
-// Qt includes 
+// Qt includes
 #include <QObject>
 #include <QStringList>
 #include <QSqlDatabase>
@@ -32,6 +32,20 @@ class ctkDICOMDatabasePrivate;
 class DcmDataset;
 class ctkDICOMAbstractThumbnailGenerator;
 
+
+/// Class handling a database of DICOM objects. So far, an underlying
+/// SQLITE database is used for that. Usually, added DICOM objects are also
+/// stored within the file system.
+/// The SQLITE database file can be specified by the user. SQLITE (and this
+/// class) also support a special in memory mode, where no database file is created
+/// but the database is completely kept in memory (and after exiting the program,
+/// vanishes). If in "memory mode", the objects are not written to disk,
+/// otherwise they are stored in a subdirectory of the SQLITE database file
+/// directory called "dicom". Inside, a folder structure created which contains
+/// a directoy for each study, containing a directory for each series, containing
+/// a file for each object. The corresponding UIDs are used as filenames.
+/// Thumbnais for each image can be created; if so, they are stored in a directory
+/// parallel to "dicom" directory called "thumbs".
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
   Q_OBJECT
@@ -43,7 +57,18 @@ public:
   const QSqlDatabase& database() const;
   const QString lastError() const;
   const QString databaseFilename() const;
+
+  ///
+  /// Returns the absolute path of the database directory
+  /// (where the database file resides in) in OS-prefered path format.
+  /// @return Absolute path to database directory
   const QString databaseDirectory() const;
+
+  ///
+  /// Returns whether the database only resides in memory, i.e. the
+  /// SQLITE DB is not written to stored to disk and DICOM objects are not
+  /// stored to the file system.
+  /// @return True if in memory mode, false otherwise.
   bool isInMemory() const;
 
   ///
@@ -58,9 +83,13 @@ public:
   /// exist, a new database is created and initialized with the
   /// default schema
   ///
-  /// @param databaseFile TODO
-  /// @param connectionName TODO
-  Q_INVOKABLE virtual void openDatabase(const QString databaseFile, const QString& connectionName = "DICOM-DB" );
+  /// @param databaseFile The file to store the SQLITE database should be
+  ///        stored to. If specified with ":memory:", the database is not
+  ///        written to disk at all but instead only kept in memory (and
+  ///        thus expires after destruction of this object).
+  /// @param connectionName The database connection name.
+  Q_INVOKABLE virtual void openDatabase(const QString databaseFile,
+                                        const QString& connectionName = "DICOM-DB" );
 
   ///
   /// close the database. It must not be used afterwards.
@@ -82,16 +111,24 @@ public:
   Q_INVOKABLE QStringList headerKeys ();
   Q_INVOKABLE QString headerValue (QString key);
 
-  /**
-   * Will create an entry in the appropriate tables for this dataset.
-   */
-  // void insert ( DcmDataset* dataset, QString filename );
-  /**
-   * Insert into the database if not already exsting.
-   */
+  /** Insert into the database if not already exsting.
+    *  @param dataset The dataset to store into the database. Usually, this is
+    *                 is a complete DICOM object, like a complete image. However
+    *                 the database also inserts partial objects, like studyl
+    *                 information to the database, even if no image data is
+    *                 contained. This can be helpful to store results from
+    *                 querying the PACS for patient/study/series or image
+    *                 information, where a full hierarchy is only constructed
+    *                 after some queries.
+    *  @param storeFile If store file is set (default), then the dataset will
+    *                   be stored to disk. Note that in case of a memory-only
+    *                   database, this flag is ignored. Usually, this flag
+    *                   does only make sense if a full object is received.
+    *  @param @generateThumbnail If true, a thumbnail is generated.
+    */
   void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
   /***
-    * Helper method: get the path that should be used to store this  image.
+    * Helper method: get the path that should be used to store this image.
     */
   QString pathForDataset( DcmDataset *dataset);
 
@@ -109,3 +146,4 @@ private:
 };
 
 #endif
+

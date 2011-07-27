@@ -77,6 +77,7 @@ public:
   void registerCompressionLibraries();
   bool executeScript(const QString script);
 
+  /// Name of the database file (i.e. for SQLITE the sqlite file)
   QString      DatabaseFileName;
   QString      LastError;
   QSqlDatabase Database;
@@ -127,7 +128,7 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
 {
   Q_D(ctkDICOMDatabase);
   d->DatabaseFileName = databaseFile;
-  d->Database = QSqlDatabase::addDatabase("QSQLITE",connectionName);
+  d->Database = QSqlDatabase::addDatabase("QSQLITE", connectionName);
   d->Database.setDatabaseName(databaseFile);
   if ( ! (d->Database.open()) )
     {
@@ -136,9 +137,12 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
     }
   if ( d->Database.tables().empty() )
     {
-      initializeDatabase();
+      if (!initializeDatabase())
+        {
+        throw std::runtime_error("Unable to initialize DICOM database!");
+        }
     }
-  if (databaseFile != ":memory")
+  if (!isInMemory())
   {
     QFileSystemWatcher* watcher = new QFileSystemWatcher(QStringList(databaseFile),this);
     connect(watcher, SIGNAL( fileChanged(const QString&)),this, SIGNAL ( databaseChanged() ) );
@@ -190,9 +194,9 @@ const QString ctkDICOMDatabase::databaseFilename() const {
 const QString ctkDICOMDatabase::databaseDirectory() const {
   QString databaseFile = databaseFilename();
   if (!QFileInfo(databaseFile).isAbsolute())
-  {
+    {
     databaseFile.prepend(QDir::currentPath() + "/");
-  }
+    }
   return QFileInfo ( databaseFile ).absoluteDir().path();
 }
 
@@ -494,7 +498,8 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool genera
       statement.bindValue ( 2, QString ( patientsBirthDate.c_str() ) );
       statement.bindValue ( 3, QString ( patientsBirthTime.c_str() ) );
       statement.bindValue ( 4, QString ( patientsSex.c_str() ) );
-      statement.bindValue ( 5, QString ( patientsAge.c_str() ) );
+      // TODO: shift patient's age to study, since this is not a patient level attribute in images
+      // statement.bindValue ( 5, QString ( patientsAge.c_str() ) );
       statement.bindValue ( 6, QString ( patientComments.c_str() ) );
       statement.exec ();
       patientUID = statement.lastInsertId().toInt();
@@ -593,7 +598,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool genera
       }
   }
 
-  if (d->DatabaseFileName == ":memory:")
+  if (isInMemory())
     {
       emit databaseChanged();
     }
