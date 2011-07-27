@@ -57,6 +57,8 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   QPushButton* toggleButton = new QPushButton("Toggle popup");
   toggleButton->setObjectName("toggleButton");
   toggleButton->setCheckable(true);
+  QToolButton* pinButton = new QToolButton(0);
+  pinButton->setCheckable(true);
 
   QVBoxLayout* collapsibleLayout = new QVBoxLayout;
   collapsibleLayout->addWidget(focusComboBox);
@@ -66,6 +68,7 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   vlayout->addWidget(button);
   vlayout->addWidget(openButton);
   vlayout->addWidget(toggleButton);
+  vlayout->addWidget(pinButton);
   topLevel->setLayout(vlayout);
 
   ctkPopupWidget* focusPopup = new ctkPopupWidget;
@@ -133,7 +136,23 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
                    togglePopup, SLOT(showPopup(bool)));
   togglePopup->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   
-  popups << focusPopup << openPopup << togglePopup;
+  ctkPopupWidget* pinPopup = new ctkPopupWidget;
+  pinPopup->setObjectName("pinPopup");
+  pinPopup->setBaseWidget(pinButton);
+  QPushButton* pinPopupContent = new QPushButton("pin button");
+  pinPopupContent->setCheckable(true);
+  QObject::connect(pinPopupContent, SIGNAL(toggled(bool)),
+                   pinButton, SLOT(setChecked(bool)));
+  QObject::connect(pinButton, SIGNAL(toggled(bool)),
+                   pinPopupContent, SLOT(setChecked(bool)));
+  pinPopupContent->setObjectName("pinPopupContent");
+  QVBoxLayout* pinLayout = new QVBoxLayout;
+  pinLayout->addWidget(pinPopupContent);
+  pinPopup->setLayout(pinLayout);
+  QObject::connect(pinButton, SIGNAL(toggled(bool)),
+                   pinPopup, SLOT(pinPopup(bool)));
+  
+  popups << focusPopup << openPopup << togglePopup << pinPopup;
   return topLevel;
 }
 

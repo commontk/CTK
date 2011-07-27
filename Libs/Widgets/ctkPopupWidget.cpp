@@ -744,6 +744,12 @@ void ctkPopupWidget::onEffectFinished()
     {
     d->hideAll();
     emit this->popupOpened(false);
+    /// restore the AutoShow if needed.
+    if (!this->property("AutoShowOnClose").isNull())
+      {
+      d->AutoShow = this->property("AutoShowOnClose").toBool();
+      this->setProperty("AutoShowOnClose", QVariant());
+      }
     }
   else
     {
@@ -1025,6 +1031,7 @@ void ctkPopupWidget::hidePopup()
 // --------------------------------------------------------------------------
 void ctkPopupWidget::pinPopup(bool pin)
 {
+  Q_D(ctkPopupWidget);
   this->setAutoHide(!pin);
   if (pin)
     {
@@ -1032,6 +1039,9 @@ void ctkPopupWidget::pinPopup(bool pin)
     }
   else
     {
+    // When closing, we don't want to inadvertently re-open the menu.
+    this->setProperty("AutoShowOnClose", this->autoShow());
+    d->AutoShow = false;
     this->hidePopup();
     }
 }
