@@ -93,7 +93,9 @@ ctkDICOMIndexer::~ctkDICOMIndexer()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexer::addDirectory(const QString& directoryName,
+void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& database, 
+                                   const QString& directoryName,
+                                   const QString& destinationDirectoryName,
                                    bool createHierarchy,
                                    bool createThumbnails)
 {
