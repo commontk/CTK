@@ -72,29 +72,60 @@ ctkDICOMThumbnailGenerator::~ctkDICOMThumbnailGenerator()
 //------------------------------------------------------------------------------
 bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &path){
     QImage image;
-    if ((dcmImage->getStatus() == EIS_Normal))
+    // Check whether we have a valid image
+    EI_Status result = dcmImage->getStatus();
+    if (result != EIS_Normal)
     {
-        dcmImage->setWindow(0);
-        /* get image extension */
-        const unsigned long width = dcmImage->getWidth();
-        const unsigned long height = dcmImage->getHeight();
-        QString header = QString("P5 %1 %2 255\n").arg(width).arg(height);
-        const unsigned long offset = header.length();
-        const unsigned long length = width * height + offset;
-        /* create output buffer for DicomImage class */
-        QByteArray buffer;
-        buffer.append(header);
-        buffer.resize(length);
-
-        /* copy PGM header to buffer */
-
-        if (dcmImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
+      logger.error(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
+      return false;
+    }
+    // Select first window defined in image. If none, compute min/max window as best guess.
+    // Only relevant for monochrome.
+    if (dcmImage->isMonochrome())
+    {
+        if (dcmImage->getWindowCount() > 0)
         {
-            if (!image.loadFromData( buffer ))
-            {
-                logger.error("QImage couldn't created");
-                return false;
-            }
+          dcmImage->setWindow(0);
+        }
+        else
+        {
+          dcmImage->setMinMaxWindow(OFTrue /* ignore extreme values */);
+        }
+    }
+    /* get image extension and prepare image header */
+    const unsigned long width = dcmImage->getWidth();
+    const unsigned long height = dcmImage->getHeight();
+    unsigned long offset = 0;
+    unsigned long length = 0;
+    QString header;
+
+    if (dcmImage->isMonochrome())
+    {
+      // write PGM header (binary monochrome image format)
+      header = QString("P5 %1 %2 255\n").arg(width).arg(height);
+      offset = header.length();
+      length = width * height + offset;
+    }
+    else
+    {
+      // write PPM header (binary color image format)
+      header = QString("P6 %1 %2 255\n").arg(width).arg(height);
+      offset = header.length();
+      length = width * height * 3 /* RGB */ + offset;
+    }
+    /* create output buffer for DicomImage class */
+    QByteArray buffer;
+    /* copy header to output buffer and resize it for pixel data */
+    buffer.append(header);
+    buffer.resize(length);
+
+    /* render pixel data to buffer */
+    if (dcmImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
+    {  
+      if (!image.loadFromData( buffer ))
+        {
+            logger.error("QImage couldn't created");
+            return false;
         }
     }
     image.scaled(128,128,Qt::KeepAspectRatio).save(path,"PNG");
