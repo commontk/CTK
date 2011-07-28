@@ -27,6 +27,9 @@
 #include <ctkDICOMDatabase.h>
 #include "ctkLogger.h"
 
+// DCMTK includes
+#include "dcmtk/oflog/oflog.h"
+
 // STD includes
 #include <cstdlib>
 #include <iostream>
@@ -35,7 +38,7 @@
 void print_usage()
 {
   std::cerr << "Usage:\n";
-  std::cerr << "  ctkDICOMRetrieve StudyUID OutputDirectory callingAETitle callingPort calledAETitle host calledPort moveDestinationAETitle\n";
+  std::cerr << "  ctkDICOMRetrieve StudyUID OutputDirectory callingAETitle calledAETitle host calledPort moveDestinationAETitle\n";
   return;
 }
 
@@ -48,6 +51,9 @@ int main(int argc, char** argv)
   ctkLogger::configure();
   ctkLogger logger ( "org.commontk.dicom.DICOMRetieveApp" );
   logger.setDebug();
+  // Set the DCMTK log level to debug
+  dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
+  rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);
 
   if (argc < 9)
   {
@@ -62,17 +68,9 @@ int main(int argc, char** argv)
   QDir OutputDirectory ( argv[2] );
   QString CallingAETitle ( argv[3] ); 
   bool ok;
-  int CallingPort = QString ( argv[4] ).toInt ( &ok );
-  if ( !ok )
-    {
-    std::cerr << "Could not convert " << argv[4] << " to an integer for the callingPort" << std::endl;
-    print_usage();
-    return EXIT_FAILURE;
-    }
-
-  QString CalledAETitle ( argv[5] ); 
-  QString Host ( argv[6] ); 
-  int CalledPort = QString ( argv[7] ).toInt ( &ok );
+  QString CalledAETitle ( argv[4] ); 
+  QString Host ( argv[5] ); 
+  int CalledPort = QString ( argv[6] ).toInt ( &ok );
   if ( !ok )
     {
     std::cerr << "Could not convert " << argv[7] << " to an integer for the calledPoint" << std::endl;
@@ -83,7 +81,6 @@ int main(int argc, char** argv)
 
   ctkDICOMRetrieve retrieve;
   retrieve.setCallingAETitle ( CallingAETitle );
-  retrieve.setCallingPort ( CallingPort );
   retrieve.setCalledAETitle ( CalledAETitle );
   retrieve.setCalledPort ( CalledPort );
   retrieve.setHost ( Host );
@@ -92,7 +89,6 @@ int main(int argc, char** argv)
   logger.info ( "StudyUID: " + StudyUID + "\n" 
                 + "OutputDirectory: " + OutputDirectory.absolutePath() + "\n"
                 + "CallingAETitle: " + CallingAETitle + "\n"
-                + "CallingPort: " + QString::number ( CallingPort ) + "\n"
                 + "CalledAEtitle: " + CalledAETitle + "\n"
                 + "Host: " + Host + "\n"
                 + "CalledPort: " + QString::number ( CalledPort ) + "\n" );
