@@ -41,7 +41,6 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
   if (!retrieve.callingAETitle().isEmpty() ||
       !retrieve.calledAETitle().isEmpty() ||
       !retrieve.host().isEmpty() ||
-      retrieve.callingPort() != 0 ||
       retrieve.calledPort() != 0 ||
       !retrieve.moveDestinationAETitle().isEmpty())
     {
@@ -49,7 +48,6 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
               << qPrintable(retrieve.callingAETitle()) << " "
               << qPrintable(retrieve.calledAETitle()) << " "
               << qPrintable(retrieve.host()) << " "
-              << retrieve.callingPort() << " "
               << retrieve.calledPort() << " "
               << qPrintable(retrieve.moveDestinationAETitle()) << std::endl;
     return EXIT_FAILURE;
@@ -79,14 +77,6 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  retrieve.setCallingPort(80);
-  if (retrieve.callingPort() != 80)
-    {
-    std::cerr << "ctkDICOMRetrieve::setCallingPort() failed: "
-              << retrieve.callingPort() << std::endl;
-    return EXIT_FAILURE;
-    }
-
   retrieve.setCalledPort(80);
   if (retrieve.calledPort() != 80)
     {
@@ -105,7 +95,7 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  bool res = retrieve.retrieveSeries(QString());
+  bool res = retrieve.retrieveSeries(QString(), QString());
   if (res)
     {
     std::cerr << __LINE__ << ": ctkDICOMRetrieve::retrieveSeries() should fail."
