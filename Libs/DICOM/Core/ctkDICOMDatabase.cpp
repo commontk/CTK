@@ -592,7 +592,7 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool genera
         QFileInfo thumbnailInfo(thumbnailPath);
         if(!(thumbnailInfo.exists() && (thumbnailInfo.lastModified() > QFileInfo(filename).lastModified()))){
             QDir(databaseDirectory() + "/thumbs/").mkpath(studySeriesDirectory);
-            DicomImage dcmImage(filename.toAscii());
+            DicomImage dcmImage(QDir::toNativeSeparators(filename).toAscii());
             d->thumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
         }
       }
