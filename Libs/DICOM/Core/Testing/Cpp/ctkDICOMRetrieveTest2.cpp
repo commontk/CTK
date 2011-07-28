@@ -82,7 +82,6 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
 
   ctkDICOMRetrieve retrieve;
   retrieve.setCallingAETitle("CTK_AE");
-  retrieve.setCallingPort(11113);
   retrieve.setCalledAETitle("CTK_AE");
   retrieve.setCalledPort(tester.dcmqrscpPort());
   retrieve.setHost("localhost");
