@@ -32,6 +32,7 @@
 
 // Logger
 #include "ctkLogger.h"
+#include "dcmtk/oflog/oflog.h"
 
 // STD includes
 #include <iostream>
@@ -39,6 +40,10 @@
 int main(int argc, char** argv)
 {
   ctkLogger::configure();
+  // Set the DCMTK log level to debug
+  dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
+  rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);
+
   QApplication app(argc, argv);
 
   app.setOrganizationName("commontk");
