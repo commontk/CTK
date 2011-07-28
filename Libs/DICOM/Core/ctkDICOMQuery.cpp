@@ -260,9 +260,8 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   d->Query->insertEmptyElement ( DCM_StudyTime );
   d->Query->insertEmptyElement ( DCM_ModalitiesInStudy );
   d->Query->insertEmptyElement ( DCM_AccessionNumber );
-  d->Query->insertEmptyElement ( DCM_NumberOfSeriesRelatedInstances ); // Number of images in the series
   d->Query->insertEmptyElement ( DCM_NumberOfStudyRelatedInstances ); // Number of images in the series
-  d->Query->insertEmptyElement ( DCM_NumberOfStudyRelatedSeries ); // Number of images in the series
+  d->Query->insertEmptyElement ( DCM_NumberOfStudyRelatedSeries ); // Number of series in the study
 
   // Make clear we define our search values in ISO Latin 1 (default would be ASCII)
   d->Query->putAndInsertOFStringArray(DCM_SpecificCharacterSet, "ISO_IR 100");
@@ -276,25 +275,25 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   QString seriesDescription;
   foreach( QString key, d->Filters.keys() )
     {
-    if ( key == QString("Name") )
+    if ( key == QString("Name") && !d->Filters[key].toString().isEmpty())
       {
       // make the filter a wildcard in dicom style
       d->Query->putAndInsertString( DCM_PatientName,
         (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
       }
-    else if ( key == QString("Study") )
+    else if ( key == QString("Study") && !d->Filters[key].toString().isEmpty())
       {
       // make the filter a wildcard in dicom style
       d->Query->putAndInsertString( DCM_StudyDescription,
         (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
       }
-    else if ( key == QString("ID") )
+    else if ( key == QString("ID") && !d->Filters[key].toString().isEmpty())
       {
       // make the filter a wildcard in dicom style
       d->Query->putAndInsertString( DCM_PatientID,
         (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
       }
-    else if ( key == QString("Modalities") )
+    else if ( key == QString("Modalities") && !d->Filters[key].toString().isEmpty())
       {
       // make the filter be an "OR" of modalities using backslash (dicom-style)
       QString modalitySearch("");
@@ -307,7 +306,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
       d->Query->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toAscii().data() );
       }
     // Rememer Series Description for later series query if we go through the keys now
-    else if ( key == QString("Series") )
+    else if ( key == QString("Series") && !d->Filters[key].toString().isEmpty())
       {
       // make the filter a wildcard in dicom style
       seriesDescription = "*" + d->Filters[key].toString() + "*";
@@ -380,6 +379,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   d->Query->insertEmptyElement ( DCM_SeriesDate );
   d->Query->insertEmptyElement ( DCM_SeriesTime );
   d->Query->insertEmptyElement ( DCM_Modality );
+  d->Query->insertEmptyElement ( DCM_NumberOfSeriesRelatedInstances ); // Number of images in the series
 
   /* Add user-defined filters */
   d->Query->putAndInsertOFStringArray(DCM_SeriesDescription, seriesDescription.toLatin1().data());
