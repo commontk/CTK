@@ -250,25 +250,23 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     }
 
   QMap<QString,QVariant> serverParameters = d->ServerNodeWidget->parameters();
-
+  ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
+  // only start new association if connection parameters change
+  retrieve->setKeepAssociationOpen(true);
+  // pull from GUI
+  retrieve->setMoveDestinationAETitle( serverParameters["StorageAETitle"].toString() );
   foreach( QString studyUID, d->QueriesByStudyUID.keys() )
     {
-    // TODO: check the model item to see if it is checked
-    // for now, assume all studies will be retreived
-
-    logger.debug("About to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
+    // Get information which server we want to get the study from and prepare request accordingly
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
-    ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
     retrieve->setRetrieveDatabase( d->RetrieveDatabase );
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );
     retrieve->setCalledPort( query->port() );
     retrieve->setHost( query->host() );
-
-    // pull from GUI
-    retrieve->setMoveDestinationAETitle( serverParameters["StorageAETitle"].toString() );
-    retrieve->setCallingPort( serverParameters["StoragePort"].toInt() );
-
+    // TODO: check the model item to see if it is checked
+    // for now, assume all studies queried and shown to the user will be retrieved
+    logger.debug("About to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
     logger.info ( "Starting to retrieve" );
     try
       {
@@ -277,14 +275,20 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     catch (std::exception e)
       {
       logger.error ( "Retrieve failed" );
-      delete retrieve;
       // TODO: ask the user if he wants to keep trying to retrieve other studies
       QMessageBox::information ( this, tr("Query Retrieve"), tr("Retrieve failed.") );
       continue;
       }
-    d->RetrievalsByStudyUID[studyUID] = retrieve;
+    // Store retrieve structure for later use.
+    // Comment MO: I do not think that makes much sense; you store per study one fat
+    // structure including an SCU. Also, I switched the code to re-use the retrieve
+    // SCU in order to not start/stop the association for every study. In general,
+    // it would make most sense in my opinion to have one SCU for each server you
+    // like to retrieve from. There is no good reason to have one for each study.
+    // d->RetrievalsByStudyUID[studyUID] = retrieve;
     logger.info ( "Retrieve success" );
     }
+  delete retrieve;
   QMessageBox::information ( this, tr("Query Retrieve"), tr("Selected studies have been downloaded.") );
   emit studiesRetrieved(d->RetrievalsByStudyUID.keys());
 }
