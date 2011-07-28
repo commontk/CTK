@@ -21,7 +21,8 @@
 #include <iostream>
 
 // DCMTK includes
-#include <dcmimage.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
+#include <dcmtk/dcmimage/diregist.h> /* Include color image support */
 
 // CTK includes
 #include "ctkLogger.h"
@@ -36,6 +37,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDir>
 #include <QFile>
 #include <QHBoxLayout>
 #include <QKeyEvent>
@@ -119,7 +121,7 @@ void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool de
         dicomPath.append("/").append(model->data(imageIndex ,ctkDICOMModel::UIDRole).toString());
 
         if (QFile(dicomPath).exists()){
-            DicomImage dcmImage( dicomPath.toStdString().c_str() );
+          DicomImage dcmImage(  QDir::toNativeSeparators(dicomPath).toStdString().c_str() );
 
             q->clearImages();
             q->addImage(dcmImage, defaultIntensity);
@@ -260,30 +262,60 @@ void ctkDICOMDatasetView::addImage( DicomImage & dcmImage, bool defaultIntensity
 {
     Q_D(ctkDICOMDatasetView);
     QImage image;
-    if ((dcmImage.getStatus() == EIS_Normal)){
-        if(defaultIntensity){
-            dcmImage.setWindow(0);
-            dcmImage.getWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
-        }else{
-            dcmImage.setWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
+    // Check whether we have a valid image
+    EI_Status result = dcmImage.getStatus();
+    if (result != EIS_Normal)
+    {
+      logger.error(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
+      return;
+    }
+    // Select first window defined in image. If none, compute min/max window as best guess.
+    // Only relevant for monochrome
+    // TODO: Re-Use code from ctkDICOMThumbnailGenerator by re-factoring it to a function?
+    if (dcmImage.isMonochrome())
+    {
+        if (defaultIntensity && dcmImage.getWindowCount() > 0)
+        {
+          dcmImage.setWindow(0);
         }
-        /* get image extension */
-        const unsigned long width = dcmImage.getWidth();
-        const unsigned long height = dcmImage.getHeight();
-        QString header = QString("P5 %1 %2 255\n").arg(width).arg(height);
-        const unsigned long offset = header.length();
-        const unsigned long length = width * height + offset;
-        /* create output buffer for DicomImage class */
-        QByteArray buffer;
-        buffer.append(header);
-        buffer.resize(length);
+        else
+        {
+          dcmImage.setWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
+        }
+    }
+    /* get image extension and prepare image header */
+    const unsigned long width = dcmImage.getWidth();
+    const unsigned long height = dcmImage.getHeight();
+    unsigned long offset = 0;
+    unsigned long length = 0;
+    QString header;
 
-        /* copy PGM header to buffer */
+    if (dcmImage.isMonochrome())
+    {
+      // write PGM header (binary monochrome image format)
+      header = QString("P5 %1 %2 255\n").arg(width).arg(height);
+      offset = header.length();
+      length = width * height + offset;
+    }
+    else
+    {
+      // write PPM header (binary color image format)
+      header = QString("P6 %1 %2 255\n").arg(width).arg(height);
+      offset = header.length();
+      length = width * height * 3 /* RGB */ + offset;
+    }
+    /* create output buffer for DicomImage class */
+    QByteArray buffer;
+    /* copy header to output buffer and resize it for pixel data */
+    buffer.append(header);
+    buffer.resize(length);
 
-        if (dcmImage.getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0)){
-            if (!image.loadFromData( buffer )){
-                logger.error("QImage couldn't created");
-            }
+    /* render pixel data to buffer */
+    if (dcmImage.getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
+    {  
+      if (!image.loadFromData( buffer ))
+        {
+            logger.error("QImage couldn't created");
         }
     }
     this->addImage(image);
