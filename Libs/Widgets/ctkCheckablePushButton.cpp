@@ -241,9 +241,12 @@ void ctkCheckablePushButton::paintEvent(QPaintEvent * _event)
   QStyleOptionButton opt;
   this->initStyleOption(&opt);
 
+  // Checkbox size
   QSize indicatorSize = QSize(style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this),
                               style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this));
+  // Replace the icon size by the checkbox size
   opt.iconSize = indicatorSize;
+  // Draw the panel of the button (no text, no icon)
   style()->drawControl(QStyle::CE_PushButtonBevel, &opt, &p, this);
   // TBD is PE_PanelButtonCommand better ?
   //style()->drawPrimitive(QStyle::PE_PanelButtonCommand, &opt, &p, this);
@@ -258,6 +261,7 @@ void ctkCheckablePushButton::paintEvent(QPaintEvent * _event)
     tf |= Qt::TextHideMnemonic;
     }
   int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, opt.text).width();
+  // Spacing betweent the text and the checkbox
   int indicatorSpacing = this->style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, this);
   int buttonMargin = this->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, this);
   // Draw Indicator

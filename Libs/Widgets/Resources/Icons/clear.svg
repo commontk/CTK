@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="159.60748"
+   height="159.60748"
+   id="svg2046"
+   sodipodi:version="0.32"
+   inkscape:version="0.44"
+   version="1.0"
+   sodipodi:docbase="C:\Documents and Settings\Molumen\Desktop"
+   sodipodi:docname="round_error_warning_icon.svg">
+  <defs
+     id="defs2048">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5190">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0"
+         id="stop5192" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1"
+         offset="1"
+         id="stop5194" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5190"
+       id="linearGradient2109"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.312273,0,0,0.320491,127.55,434.3769)"
+       x1="264.582"
+       y1="296.37491"
+       x2="380.6846"
+       y2="553.74487" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5197">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0"
+         id="stop5199" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1"
+         offset="1"
+         id="stop5201" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5197"
+       id="linearGradient2107"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.301633,8.082223e-2,-8.294933e-2,-0.30957,402.8575,730.1118)"
+       x1="249.48328"
+       y1="262.87494"
+       x2="272.02597"
+       y2="427.54285" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="85.853793"
+     inkscape:cy="82.99359"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="853"
+     inkscape:window-height="569"
+     inkscape:window-x="606"
+     inkscape:window-y="124" />
+  <metadata
+     id="metadata2051">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>round error warning button</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Lumen Design Studio</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:contributor>
+          <cc:Agent>
+            <dc:title>Lumen Design Studio</dc:title>
+          </cc:Agent>
+        </dc:contributor>
+        <dc:description>error warning icon</dc:description>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>error</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>button</rdf:li>
+            <rdf:li>red</rdf:li>
+            <rdf:li>stop</rdf:li>
+            <rdf:li>no</rdf:li>
+            <rdf:li>warning</rdf:li>
+            <rdf:li>negative</rdf:li>
+            <rdf:li>delete</rdf:li>
+            <rdf:li>cancel</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-311.6248,-429.7013)">
+    <g
+       id="g2100"
+       transform="matrix(0.9,0,0,0.9,170.4421,-31.11303)">
+      <path
+         sodipodi:type="arc"
+         style="fill:red;fill-opacity:1;fill-rule:evenodd;stroke:#cb0000;stroke-width:20.127882;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="path2174"
+         sodipodi:cx="384.28571"
+         sodipodi:cy="559.50507"
+         sodipodi:rx="250"
+         sodipodi:ry="250"
+         d="M 634.28571 559.50507 A 250 250 0 1 1  134.28571,559.50507 A 250 250 0 1 1  634.28571 559.50507 z"
+         transform="matrix(0.306862,0,0,0.306862,127.6178,428.9959)" />
+      <path
+         style="fill:url(#linearGradient2107);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         d="M 264.19015,668.93136 C 283.23679,663.82784 298.36338,651.27316 307.41885,635.10742 C 322.12654,600.28933 267.25204,681.80733 221.92757,666.99805 C 235.1036,671.83026 249.74086,672.80304 264.19015,668.93136 z "
+         id="path2540"
+         sodipodi:nodetypes="cccc" />
+      <path
+         sodipodi:nodetypes="ccccc"
+         id="path2197"
+         d="M 245.65747,529.36222 C 206.22043,529.36222 174.21527,562.20957 174.21527,602.68438 C 174.21527,608.15829 174.82272,613.48618 175.93277,618.61875 C 215.13788,543.15095 257.37836,590.65582 311.83982,575.07214 C 301.20439,548.27438 275.57549,529.36222 245.65747,529.36222 z "
+         style="fill:url(#linearGradient2109);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="ccccccccccccc"
+         id="text2705"
+         d="M 267.42338,640.03739 L 245.74431,618.35831 L 223.86132,640.24129 L 205.98576,622.36573 L 227.86874,600.48275 L 206.18966,578.80367 L 223.58945,561.40388 L 245.26853,583.08296 L 267.21948,561.13201 L 285.09504,579.00757 L 263.14409,600.95853 L 284.82317,622.6376 L 267.42338,640.03739"
+         style="font-size:660.22442627px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:start;opacity:0.73529412;fill:white;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial" />
+      <path
+         id="text2713"
+         d="M 267.29788,637.00578 L 245.71038,615.41828 L 223.95289,637.17577 L 209.05128,622.27415 L 230.80877,600.51667 L 209.22127,578.92917 L 223.72626,564.42418 L 245.31376,586.01168 L 267.1279,564.19754 L 282.02951,579.09915 L 260.21537,600.91329 L 281.80287,622.50079 L 267.29788,637.00578"
+         style="font-size:550.38305664px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:white;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial" />
+    </g>
+  </g>
+</svg>

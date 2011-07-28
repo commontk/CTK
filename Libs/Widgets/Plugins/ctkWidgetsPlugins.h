@@ -50,6 +50,7 @@
 #include "ctkPopupWidgetPlugin.h"
 #include "ctkRangeSliderPlugin.h"
 #include "ctkRangeWidgetPlugin.h"
+#include "ctkSearchBoxPlugin.h"
 #include "ctkSettingsPanelPlugin.h"
 #include "ctkSettingsDialogPlugin.h"
 #include "ctkSliderWidgetPlugin.h"
@@ -93,6 +94,7 @@ public:
             << new ctkPopupWidgetPlugin
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
+            << new ctkSearchBoxPlugin
             << new ctkSettingsPanelPlugin
             << new ctkSettingsDialogPlugin
             << new ctkSliderWidgetPlugin

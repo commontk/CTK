@@ -49,6 +49,8 @@ SET(TEST_SOURCES
   ctkRangeWidgetTest2.cpp
   ctkDateRangeWidgetTest1.cpp
   ctkScreenshotDialogTest1.cpp
+  ctkSearchBoxTest1.cpp
+  ctkSearchBoxTest2.cpp
   ctkSettingsPanelTest1.cpp
   ctkSettingsPanelTest2.cpp
   ctkSettingsTest1.cpp
@@ -168,6 +170,8 @@ SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest2 )
 SIMPLE_TEST( ctkScreenshotDialogTest1 )
+SIMPLE_TEST( ctkSearchBoxTest1 )
+SIMPLE_TEST( ctkSearchBoxTest2 )
 SIMPLE_TEST( ctkSettingsDialogTest1 )
 SIMPLE_TEST( ctkSettingsPanelTest1 )
 SIMPLE_TEST( ctkSettingsPanelTest2 )
