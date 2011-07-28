@@ -39,7 +39,6 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject
   Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
   Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCallingAETitle);
   Q_PROPERTY(QString host READ host WRITE setHost);
-  Q_PROPERTY(int callingPort READ callingPort WRITE setCallingPort);
   Q_PROPERTY(int calledPort READ calledPort WRITE setCalledPort);
   Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle)
 
@@ -57,15 +56,15 @@ public:
   /// localhost
   void setHost( const QString& host );
   QString host() const;
-  /// [0, 65365] 11113
-  void setCallingPort( int port );
-  int callingPort() const;
   /// [0, 65365] 11112
   void setCalledPort( int port );
   int calledPort() const;
   /// Typically CTK_CLIENT_AE
   void setMoveDestinationAETitle( const QString& moveDestinationAETitle );
   QString moveDestinationAETitle() const;
+
+  void setKeepAssociationOpen(const bool keepOpen);
+  bool keepAssociationOpen();
 
   /// method for database
   void setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);

@@ -69,16 +69,11 @@ class ctkDICOMRetrievePrivate
 public:
   ctkDICOMRetrievePrivate();
   ~ctkDICOMRetrievePrivate();
-  QString       CallingAETitle;
-  QString       CalledAETitle;
-  QString       Host;
-  int           CallingPort; // TODO: Not used yet since C-STORE receiver must be run separately so far
-  int           CalledPort;
-  DcmSCU        SCU; // TODO: not used yet.
-  DcmDataset*   parameters;
-  QString       MoveDestinationAETitle;
+  bool          KeepAssociationOpen;
+  bool          ConnectionParamsChanged;
   QSharedPointer<ctkDICOMDatabase> RetrieveDatabase;
-
+  DcmSCU        scu;
+  QString MoveDestinationAETitle;
   // do the retrieve, handling both series and study retrieves
   enum RetrieveType { RetrieveSeries, RetrieveStudy };
   bool retrieve ( const QString& studyInstanceUID,
@@ -92,16 +87,22 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate()
 {
-  this->parameters = new DcmDataset();
   this->RetrieveDatabase = QSharedPointer<ctkDICOMDatabase> (0);
-  this->CallingPort = 0;
-  this->CalledPort = 0;
+  KeepAssociationOpen = true;
+  ConnectionParamsChanged = false;
+  logger.info ( "Setting Transfer Syntaxes" );
+  OFList<OFString> transferSyntaxes;
+  transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
+  scu.addPresentationContext ( UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
 {
-  delete this->parameters;
+  // At least now be kind to the server and release association
+  scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
 }
 
 //------------------------------------------------------------------------------
@@ -127,55 +128,44 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
   // register RLE decompression codec
   DcmRLEDecoderRegistration::registerCodecs();
 
-  // Set the DCMTK log level
-  dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
-  rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);
-
-  // TODO: use this->SCU instead?
-  DcmSCU scu;
-  scu.setAETitle ( OFString(this->CallingAETitle.toStdString().c_str()) );
-  scu.setPeerAETitle ( OFString(this->CalledAETitle.toStdString().c_str()) );
-  scu.setPeerHostName ( OFString(this->Host.toStdString().c_str()) );
-  scu.setPeerPort ( this->CalledPort );
-
-  logger.info ( "Setting Transfer Syntaxes" );
-  OFList<OFString> transferSyntaxes;
-  transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
-  transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
-  transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
-  scu.addPresentationContext ( UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
-
-  // Check and initialize networking parameters in DCMTK
-  if ( !scu.initNetwork().good() )
+  // If we like to query another server than before, be sure to disconnect first
+  if (scu.isConnected() && ConnectionParamsChanged)
+  {
+    scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+  }
+  // Connect to server if not already connected
+  if (!scu.isConnected())
     {
-    logger.error ( "Error initializing the network" );
-    return false;
+    // Check and initialize networking parameters in DCMTK
+    if ( !scu.initNetwork().good() )
+      {
+      logger.error ( "Error initializing the network" );
+      return false;
+      }
+    // Negotiate (i.e. start the) association
+    logger.debug ( "Negotiating Association" );
+
+    if ( !scu.negotiateAssociation().good() )
+      {
+      logger.error ( "Error negotiating association" );
+      return false;;
+      }
     }
-
-  // Negotiate (i.e. start the) association
-  logger.debug ( "Negotiating Association" );
-
-  if ( !scu.negotiateAssociation().good() )
-    {
-    logger.error ( "Error negotiating association" );
-    return false;;
-    }
-
-  // Setup query what to be received from the PACS
-  logger.debug ( "Setting Parameters" );
-  // Clear the query
-  parameters->clear();
+  ConnectionParamsChanged = false;
+  // Setup query about what to be received from the PACS
+  logger.debug ( "Setting Retrieve Parameters" );
+  DcmDataset *retrieveParameters = new DcmDataset();
   if ( rType == RetrieveSeries )
     {
-    this->parameters->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
-    this->parameters->putAndInsertString ( DCM_SeriesInstanceUID, seriesInstanceUID.toStdString().c_str() );
+    retrieveParameters->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
+    retrieveParameters->putAndInsertString ( DCM_SeriesInstanceUID, seriesInstanceUID.toStdString().c_str() );
     // Always required to send all highler level unique keys, so add study here (we are in Study Root)
-    this->parameters->putAndInsertString ( DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str() );  //TODO
+    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str() );  //TODO
     }
   else
     {
-    this->parameters->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
-    this->parameters->putAndInsertString ( DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str() );
+    retrieveParameters->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
+    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str() );
     }
 
   // Issue request
@@ -185,12 +175,20 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
   if (presID == 0)
     {
     logger.error ( "MOVE Request failed: No valid Study Root MOVE Presentation Context available" );
-    scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    if (!KeepAssociationOpen)
+      {
+      scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+      }
     return false;
     }
-  OFCondition status = scu.sendMOVERequest ( presID, this->MoveDestinationAETitle.toStdString().c_str(), this->parameters, &responses );
-  // Close association, no need to keep it open
-  scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+  OFCondition status = scu.sendMOVERequest ( presID, this->MoveDestinationAETitle.toStdString().c_str(), retrieveParameters, &responses );
+  // Close association if we do not want to explicitly keep it open
+  if (!KeepAssociationOpen)
+    {
+    scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    }
+  // Free some (little) memory
+  delete retrieveParameters;
 
   // If we do not receive a single response, something is fishy
   if ( responses.begin() == responses.end() )
@@ -310,77 +308,83 @@ ctkDICOMRetrieve::~ctkDICOMRetrieve()
 void ctkDICOMRetrieve::setCallingAETitle( const QString& callingAETitle )
 {
   Q_D(ctkDICOMRetrieve);
-  d->CallingAETitle = callingAETitle;
+  if (strcmp(callingAETitle.toStdString().c_str(), d->scu.getAETitle().c_str()))
+  {
+    d->scu.setAETitle(callingAETitle.toStdString().c_str());
+    d->ConnectionParamsChanged = true;
+  }
 }
 
 //------------------------------------------------------------------------------
 QString ctkDICOMRetrieve::callingAETitle() const
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->CallingAETitle;
+  return d->scu.getAETitle().c_str();
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCalledAETitle( const QString& calledAETitle )
 {
   Q_D(ctkDICOMRetrieve);
-  d->CalledAETitle = calledAETitle;
+  if (strcmp(calledAETitle.toStdString().c_str(),d->scu.getPeerAETitle().c_str()))
+  {
+    d->scu.setPeerAETitle(calledAETitle.toStdString().c_str());
+    d->ConnectionParamsChanged = true;
+  }
 }
 
 //------------------------------------------------------------------------------
 QString ctkDICOMRetrieve::calledAETitle()const
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->CalledAETitle;
+  return d->scu.getPeerAETitle().c_str();
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setHost( const QString& host )
 {
   Q_D(ctkDICOMRetrieve);
-  d->Host = host;
+  if (strcmp(host.toStdString().c_str(), d->scu.getPeerHostName().c_str()))
+  {
+    d->scu.setPeerHostName(host.toStdString().c_str());
+    d->ConnectionParamsChanged = true;
+  }
 }
 
 //------------------------------------------------------------------------------
 QString ctkDICOMRetrieve::host()const
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->Host;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMRetrieve::setCallingPort( int port )
-{
-  Q_D(ctkDICOMRetrieve);
-  d->CallingPort = port;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMRetrieve::callingPort()const
-{
-  Q_D(const ctkDICOMRetrieve);
-  return d->CallingPort;
+  return d->scu.getPeerHostName().c_str();
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCalledPort( int port )
 {
   Q_D(ctkDICOMRetrieve);
-  d->CalledPort = port;
+  if (d->scu.getPeerPort() != port)
+  {
+    d->scu.setPeerPort(port);
+    d->ConnectionParamsChanged = true;
+  }
 }
 
 //------------------------------------------------------------------------------
 int ctkDICOMRetrieve::calledPort()const
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->CalledPort;
+  return d->scu.getPeerPort();
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setMoveDestinationAETitle( const QString& moveDestinationAETitle )
 {
   Q_D(ctkDICOMRetrieve);
-  d->MoveDestinationAETitle = moveDestinationAETitle;
+  if (moveDestinationAETitle != d->MoveDestinationAETitle)
+  {
+    d->MoveDestinationAETitle = moveDestinationAETitle;
+    d->ConnectionParamsChanged = true;
+  }
 }
 //------------------------------------------------------------------------------
 QString ctkDICOMRetrieve::moveDestinationAETitle()const
@@ -394,6 +398,7 @@ void ctkDICOMRetrieve::setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> dico
 {
   Q_D(ctkDICOMRetrieve);
   d->RetrieveDatabase = dicomDatabase;
+  // (server parameters do not have to be changed)
 }
 
 //------------------------------------------------------------------------------
@@ -404,8 +409,22 @@ QSharedPointer<ctkDICOMDatabase> ctkDICOMRetrieve::retrieveDatabase()const
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMRetrieve::setKeepAssociationOpen(const bool keepOpen)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->KeepAssociationOpen = keepOpen;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrieve::keepAssociationOpen()
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->KeepAssociationOpen;
+}
+
+//------------------------------------------------------------------------------
 bool ctkDICOMRetrieve::retrieveSeries(const QString& studyInstanceUID,
-                                      const QString& seriesInstanceUID )
+                                      const QString& seriesInstanceUID)
 {
   if (studyInstanceUID.isEmpty() || seriesInstanceUID.isEmpty())
     {
