@@ -46,9 +46,20 @@ public:
   void registerClassForPythonQt(const QMetaObject* metaobject);
   void registerCPPClassForPythonQt(const char* name);
 
+  /// This enum maps to Py_eval_input, Py_file_input and Py_single_input
+  /// \see http://docs.python.org/c-api/veryhigh.html#Py_eval_input
+  /// \see http://docs.python.org/c-api/veryhigh.html#Py_file_input
+  /// \see http://docs.python.org/c-api/veryhigh.html#Py_single_input
+  enum ExecuteStringMode
+    {
+    EvalInput = 0,
+    FileInput,
+    SingleInput
+    };
+
   /// Execute a python of python code (can be multiple lines separated with newline)
   /// and return the result as a QVariant.
-  QVariant executeString(const QString& code);
+  QVariant executeString(const QString& code, ExecuteStringMode mode = FileInput);
 
   /// Gets the value of the variable looking in the __main__ module.
   /// If the variable is not found returns a default initialized QVariant.
@@ -71,7 +82,7 @@ public:
 
   /// Returns True if python is initialized
   /// \sa pythonInitialized
-  bool isPythonInitialized();
+  bool isPythonInitialized()const;
 
 signals:
 

@@ -114,7 +114,7 @@ void ctkAbstractPythonManager::initPythonQt()
 }
 
 //-----------------------------------------------------------------------------
-bool ctkAbstractPythonManager::isPythonInitialized()
+bool ctkAbstractPythonManager::isPythonInitialized()const
 {
   return PythonQt::self() != 0;
 }
@@ -154,13 +154,23 @@ void ctkAbstractPythonManager::registerCPPClassForPythonQt(const char* name)
 }
 
 //-----------------------------------------------------------------------------
-QVariant ctkAbstractPythonManager::executeString(const QString& code)
+QVariant ctkAbstractPythonManager::executeString(const QString& code,
+                                                 ctkAbstractPythonManager::ExecuteStringMode mode)
 {
+  int start = -1;
+  switch(mode)
+    {
+    case ctkAbstractPythonManager::FileInput: start = Py_file_input; break;
+    case ctkAbstractPythonManager::SingleInput: start = Py_single_input; break;
+    case ctkAbstractPythonManager::EvalInput:
+    default: start = Py_eval_input; break;
+    }
+
   QVariant ret;
   PythonQtObjectPtr main = ctkAbstractPythonManager::mainContext();
   if (main)
     {
-    ret = main.evalScript(code, Py_file_input);
+    ret = main.evalScript(code, start);
     }
   return ret;
 }
