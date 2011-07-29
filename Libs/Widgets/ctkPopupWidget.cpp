@@ -122,8 +122,6 @@ void ctkPopupWidgetPrivate::init()
   this->ScrollAnimation->setDuration(DEFAULT_FADING_DURATION);
   QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
                    q, SLOT(onEffectFinished()));
-  QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
-                   this->PopupPixmapWidget, SLOT(hide()));
 
   qApp->installEventFilter(this);
 
@@ -754,6 +752,18 @@ void ctkPopupWidget::onEffectFinished()
   else
     {
     this->show();
+#ifdef Q_WS_X11
+    // If the OS applies effects on window appearance, it
+    // can take time for the popup to be displayed, we don't want to
+    // hide the pixmap too early otherwise to would makes it "flicker"
+    // It has the disadvantage of 'opaquing' if the popup is
+    // semi transparent because the pixmap and the popup opacities
+    // get summed up until the pixmap is hidden.
+    // Alternatively, you could remove effects on windows with Compiz.
+    QTimer::singleShot(100, d->PopupPixmapWidget, SLOT(hide()));
+#else
+    d->PopupPixmapWidget->hide();
+#endif
     emit this->popupOpened(true);
     }
 }
