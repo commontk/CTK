@@ -76,6 +76,8 @@ public:
   void temporarilyHiddenOn();
   void temporarilyHiddenOff();
 
+  void hideAll();
+
 public slots:
   void updateVisibility();
   void onBaseWidgetDestroyed();

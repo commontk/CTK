@@ -29,6 +29,7 @@
 #include <QMouseEvent>
 #include <QMoveEvent>
 #include <QPainter>
+#include <QPointer>
 #include <QPropertyAnimation>
 #include <QStyle>
 #include <QTimer>
@@ -184,14 +185,17 @@ bool ctkPopupWidgetPrivate::mouseOver()
       }
     }
   // Warning QApplication::widgetAt(QCursor::pos()) can be a bit slow...
-  QWidget* widgetUnderCursor = qApp->widgetAt(QCursor::pos());
+  const QPoint pos = QCursor::pos();
+  QWidget* widgetUnderCursor = qApp->widgetAt(pos);
   foreach(const QWidget* focusWidget, widgets)
     {
     if (this->isAncestorOf(focusWidget, widgetUnderCursor) &&
         // Ignore when cursor is above a title bar of a focusWidget, underMouse
         // wouldn't have return false, but QApplication::widgetAt would return
         // the widget
-        focusWidget != widgetUnderCursor)
+        (focusWidget != widgetUnderCursor ||
+         QRect(QPoint(0,0), focusWidget->size()).contains(
+          focusWidget->mapFromGlobal(pos))))
       {
       widgetUnderCursor->installEventFilter(q);
       return true;
@@ -478,6 +482,8 @@ void ctkPopupWidgetPrivate::updateVisibility()
           topLevelWidget != (this->BaseWidget ? this->BaseWidget->window() : 0) &&
           topLevelWidget->frameGeometry().intersects(q->geometry()))
         {
+        //qDebug() << "hide" << q << "because of: " << topLevelWidget
+        //         << " with windowType: " << topLevelWidget->windowType();
         this->temporarilyHiddenOn();
         return;
         }
@@ -499,7 +505,7 @@ void ctkPopupWidgetPrivate::updateVisibility()
 void ctkPopupWidgetPrivate::onBaseWidgetDestroyed()
 {
   Q_Q(ctkPopupWidget);
-  q->hide();
+  this->hideAll();
   q->setBaseWidget(0);
   // could be a property.
   q->deleteLater();
@@ -516,8 +522,7 @@ void ctkPopupWidgetPrivate::temporarilyHiddenOn()
     this->setProperty("forcedClosed", this->isOpening() ? 2 : 1);
     }
   this->currentAnimation()->stop();
-  this->PopupPixmapWidget->hide();
-  q->hide();
+  this->hideAll();
 }
 
 // -------------------------------------------------------------------------
@@ -538,6 +543,30 @@ void ctkPopupWidgetPrivate::temporarilyHiddenOff()
   else
     {
     q->updatePopup();
+    }
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidgetPrivate::hideAll()
+{
+  Q_Q(ctkPopupWidget);
+  // Before hiding, transfer the active window flag to its parent, this will
+  // prevent the application to send a ApplicationDeactivate signal that
+  // doesn't need to be done.
+  if (q->isActiveWindow() && this->BaseWidget)
+    {
+    qApp->setActiveWindow(this->BaseWidget->window());
+    }
+
+  q->hide();
+  this->PopupPixmapWidget->hide();
+
+  // If there is a popup open in the ctkPopupWidget children, then hide it
+  // as well so we don't have a popup open while the ctkPopupWidget is hidden.
+  QPointer<QWidget> activePopupWidget = qApp->activePopupWidget();
+  if (activePopupWidget && this->isAncestorOf(q, activePopupWidget))
+    {
+    activePopupWidget->close();
     }
 }
 
@@ -713,15 +742,14 @@ void ctkPopupWidget::onEffectFinished()
     }
   if (qobject_cast<QAbstractAnimation*>(this->sender())->direction() == QAbstractAnimation::Backward)
     {
-    // Before hiding, transfer the active window flag to its parent, this will
-    // prevent the application to send a ApplicationDeactivate signal that doesn't
-    // need to be done.
-    if (this->isActiveWindow())
-      {
-      qApp->setActiveWindow(d->BaseWidget ? d->BaseWidget->window() : 0);
-      }
-    this->hide();
+    d->hideAll();
     emit this->popupOpened(false);
+    /// restore the AutoShow if needed.
+    if (!this->property("AutoShowOnClose").isNull())
+      {
+      d->AutoShow = this->property("AutoShowOnClose").toBool();
+      this->setProperty("AutoShowOnClose", QVariant());
+      }
     }
   else
     {
@@ -799,10 +827,15 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
 	    }	    
     case QEvent::Hide:
     case QEvent::Close:
-      if (obj != d->BaseWidget)
+      // if the mouse was in a base widget child popup, then when we leave
+      // the popup we want to check if it needs to be closed.
+      if (obj != d->BaseWidget  &&
+          qobject_cast<QWidget*>(obj)->windowType() == Qt::Popup)
         {
-	      break;
-	      }
+        QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+        obj->removeEventFilter(this);
+        break;
+        }
       d->temporarilyHiddenOn();
 	    break;
     case QEvent::Show:
@@ -838,11 +871,21 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
         }
       break;
     case QEvent::Leave:
+      // Don't listen to base widget children that are popups as what
+      // matters here is their close event instead
+      if (obj != d->BaseWidget &&
+          qobject_cast<QWidget*>(obj)->windowType() == Qt::Popup)
+        {
+        break;
+        }
+      // The mouse might have left the area that keeps the popup open
       QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
       if (obj != d->BaseWidget)
         {
         obj->removeEventFilter(this);
         }
+      break;
+    default:
       break;
     }
   return this->QObject::eventFilter(obj, event);
@@ -988,6 +1031,7 @@ void ctkPopupWidget::hidePopup()
 // --------------------------------------------------------------------------
 void ctkPopupWidget::pinPopup(bool pin)
 {
+  Q_D(ctkPopupWidget);
   this->setAutoHide(!pin);
   if (pin)
     {
@@ -995,6 +1039,9 @@ void ctkPopupWidget::pinPopup(bool pin)
     }
   else
     {
+    // When closing, we don't want to inadvertently re-open the menu.
+    this->setProperty("AutoShowOnClose", this->autoShow());
+    d->AutoShow = false;
     this->hidePopup();
     }
 }
