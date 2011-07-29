@@ -114,7 +114,7 @@ void ctkAbstractPythonManager::initPythonQt()
 }
 
 //-----------------------------------------------------------------------------
-bool ctkAbstractPythonManager::isPythonInitialized()
+bool ctkAbstractPythonManager::isPythonInitialized()const
 {
   return PythonQt::self() != 0;
 }

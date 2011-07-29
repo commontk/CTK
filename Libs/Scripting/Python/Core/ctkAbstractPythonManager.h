@@ -71,7 +71,7 @@ public:
 
   /// Returns True if python is initialized
   /// \sa pythonInitialized
-  bool isPythonInitialized();
+  bool isPythonInitialized()const;
 
 signals:
 
