@@ -41,9 +41,6 @@
 #include "ctkLogger.h"
 
 // DCMTK includes
-#ifndef WIN32
-#define HAVE_CONFIG_H 
-#endif
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcdeftag.h>

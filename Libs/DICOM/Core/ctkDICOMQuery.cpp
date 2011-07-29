@@ -35,9 +35,6 @@
 #include "ctkLogger.h"
 
 // DCMTK includes
-#ifndef WIN32
-  #define HAVE_CONFIG_H 
-#endif
 #include "dcmtk/dcmnet/dimse.h"
 #include "dcmtk/dcmnet/diutil.h"
 
