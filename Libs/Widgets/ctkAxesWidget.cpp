@@ -265,7 +265,7 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
         {
         pen.setWidth(3);
         //pen.setColor(QColor(64, 64, 72)); // Payne's grey
-        pen.setColor(this->palette().color(QPalette::Highlight));
+        pen.setColor(this->palette().color(QPalette::Active, QPalette::Highlight));
         }
       painter.setPen(pen);
       }
@@ -280,11 +280,11 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
   if (//d->HighlightAxes &&
       d->HighlightAxis == ctkAxesWidget::None)
     {
-    rg.setColorAt(0., this->palette().color(QPalette::Highlight));
+    rg.setColorAt(0., this->palette().color(QPalette::Active, QPalette::Highlight));
     }
   else
     {
-    rg.setColorAt(0., this->palette().color(QPalette::Light));
+    rg.setColorAt(0., this->palette().color(QPalette::Active, QPalette::Light));
     }
   rg.setColorAt(1., QColor(64, 64, 72));
   painter.setBrush(QBrush(rg));

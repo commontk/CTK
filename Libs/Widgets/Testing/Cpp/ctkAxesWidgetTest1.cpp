@@ -86,7 +86,12 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
     }
   axes.setAutoReset(false);
   axes.setAutoReset(true);
+  axes.setWindowTitle("AutoReset=On");
   axes.show();
+
+  ctkAxesWidget axes2;
+  axes2.setWindowTitle("AutoReset=Off");
+  axes2.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
