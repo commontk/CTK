@@ -109,6 +109,10 @@ ctkPopupWidgetPrivate::~ctkPopupWidgetPrivate()
 void ctkPopupWidgetPrivate::init()
 {
   Q_Q(ctkPopupWidget);
+  // By default, Tooltips are shown only on active windows. In a popup widget
+  // case, we sometimes aren't the active window but we still would like to
+  // show the children tooltips.
+  q->setAttribute(Qt::WA_AlwaysShowToolTips, true);
 
   this->AlphaAnimation = new QPropertyAnimation(q, "effectAlpha", q);
   this->AlphaAnimation->setDuration(DEFAULT_FADING_DURATION);
