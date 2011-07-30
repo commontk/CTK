@@ -118,7 +118,7 @@ public:
   /// change
   virtual bool event(QEvent* event);
 
-  /// Reimplmented for internal reasons
+  /// Reimplemented for internal reasons
   /// Catch when a child widget's visibility is externally changed
   virtual bool eventFilter(QObject* child, QEvent* e);
   

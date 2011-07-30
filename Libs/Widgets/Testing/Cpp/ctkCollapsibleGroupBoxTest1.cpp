@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QCheckBox>
 #include <QRadioButton>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -41,6 +42,8 @@ int ctkCollapsibleGroupBoxTest1(int argc, char * argv [] )
   QRadioButton *radio1 = new QRadioButton(QObject::tr("&Radio button 1"));
   QRadioButton *radio2 = new QRadioButton(QObject::tr("R&adio button 2"));
   QRadioButton *radio3 = new QRadioButton(QObject::tr("Ra&dio button 3"));
+  ctkCollapsibleGroupBox* hiddenGroupBox = new ctkCollapsibleGroupBox;
+  hiddenGroupBox->setTitle("Advanced...");
 
   radio1->setChecked(true);
 
@@ -48,8 +51,18 @@ int ctkCollapsibleGroupBoxTest1(int argc, char * argv [] )
   vbox->addWidget(radio1);
   vbox->addWidget(radio2);
   vbox->addWidget(radio3);
+  vbox->addWidget(hiddenGroupBox);
   vbox->addStretch(1);
   groupBox->setLayout(vbox);
+
+
+  QCheckBox* checkBox = new QCheckBox("Check box");
+  QVBoxLayout *vbox2 = new QVBoxLayout;
+  vbox2->addWidget(checkBox);
+  hiddenGroupBox->setLayout(vbox2);
+  hiddenGroupBox->setCollapsed(true);
+
+  hiddenGroupBox->setVisible(false);
 
   QVBoxLayout* topLevelVBox = new QVBoxLayout;
   topLevelVBox->addWidget(groupBox);
@@ -70,11 +83,19 @@ int ctkCollapsibleGroupBoxTest1(int argc, char * argv [] )
     std::cerr<< "ctkCollapsibleGroupBox::setCollapsed failed." << std::endl;
     return EXIT_FAILURE;
     }
-    
+
   if (radio1->isVisible())
     {
     std::cerr << "ctkCollapsibleGroupBox::setChecked failed. "
               << "Children are visible" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  hiddenGroupBox->setVisible(true);
+  if (hiddenGroupBox->isVisible())
+    {
+    std::cerr << "Nested widget in ctkCollapsibleGroupBox failed. "
+              << "Child is visible" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -83,6 +104,13 @@ int ctkCollapsibleGroupBoxTest1(int argc, char * argv [] )
   if (groupBox->collapsed() != false)
     {
     std::cerr<< "ctkCollapsibleGroupBox::setChecked failed." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (!hiddenGroupBox->isVisible())
+    {
+    std::cerr << "Nested widget in ctkCollapsibleGroupBox failed. "
+              << "Child is not visible" << std::endl;
     return EXIT_FAILURE;
     }
 

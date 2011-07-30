@@ -277,7 +277,8 @@ void ctkCollapsibleButton::collapse(bool collapsed)
     this->updateGeometry();
     }
 
-  // update the visibility of all the children
+  // Update the visibility of all the children
+  // We can't use findChildren as it would return the grandchildren
   foreach(QObject* child, this->children())
     {
     QWidget* childWidget = qobject_cast<QWidget*>(child);

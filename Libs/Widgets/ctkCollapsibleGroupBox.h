@@ -26,6 +26,7 @@
 
 // CTK includes
 #include "ctkWidgetsExport.h"
+class ctkCollapsibleGroupBoxPrivate;
 
 /// A QGroupBox with an arrow indicator that shows/hides the groupbox contents
 /// when clicked. It responds to the slot QGroupBox::setChecked(bool) or
@@ -50,19 +51,19 @@ public:
   /// true if the groupbox is collapsed (closed), false if it is expanded(open)
   inline bool collapsed()const;
 
-  /// Reimplemtented for internal reasons
-  virtual int heightForWidth(int w) const;
-  /// Reimplemtented for internal reasons
-  virtual QSize minimumSizeHint()const;
-  /// Reimplemtented for internal reasons
-  virtual QSize sizeHint()const;
+  /// Reimplemented for internal reasons
+  /// Catch when a child widget's visibility is externally changed
+  virtual bool eventFilter(QObject* child, QEvent* e);
 
+  /// Reimplemented for internal reasons
+  virtual void setVisible(bool show);
 protected slots:
   /// called when the arrow indicator is clicked
   /// users can call it programatically by calling setChecked(bool)
   virtual void expand(bool expand);
 
 protected:
+  QScopedPointer<ctkCollapsibleGroupBoxPrivate> d_ptr;
   /// reimplemented for internal reasons
   virtual void childEvent(QChildEvent*);
 
@@ -71,13 +72,10 @@ protected:
   virtual void mousePressEvent(QMouseEvent*);
   virtual void mouseReleaseEvent(QMouseEvent*);
 #endif
-  virtual void resizeEvent(QResizeEvent*);
+
 private:
-  void init();
-  /// Size of the widget for collapsing
-  QSize OldSize;
-  /// Maximum allowed height
-  int   MaxHeight;
+  Q_DECLARE_PRIVATE(ctkCollapsibleGroupBox);
+  Q_DISABLE_COPY(ctkCollapsibleGroupBox);
 };
 
 //----------------------------------------------------------------------------
