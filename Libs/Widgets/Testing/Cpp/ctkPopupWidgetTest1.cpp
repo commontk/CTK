@@ -126,8 +126,9 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   togglePopup->setObjectName("togglePopup");
   togglePopup->setAutoShow(false);
   togglePopup->setAutoHide(false);
-  QPushButton* togglePopupContent = new QPushButton("useless button");
+  QPushButton* togglePopupContent = new QPushButton("tooltip button");
   togglePopupContent->setObjectName("togglePopupContent");
+  togglePopupContent->setToolTip("tooltip");
   QVBoxLayout* toggleLayout = new QVBoxLayout;
   toggleLayout->addWidget(togglePopupContent);
   togglePopup->setLayout(toggleLayout);
