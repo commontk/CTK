@@ -12,7 +12,6 @@ SET(PLUGIN_SRCS
   ctkWidgetsPlugins.h
   ctkWidgetsAbstractPlugin.cpp
   ctkWidgetsAbstractPlugin.h
-
   ctkActionsWidgetPlugin.cpp
   ctkActionsWidgetPlugin.h
   ctkAxesWidgetPlugin.cpp
@@ -67,6 +66,8 @@ SET(PLUGIN_SRCS
   ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.cpp
   ctkTreeComboBoxPlugin.h
+  ctkSearchBoxPlugin.cpp
+  ctkSearchBoxPlugin.h
   ctkSettingsPanelPlugin.cpp
   ctkSettingsPanelPlugin.h
   ctkSettingsDialogPlugin.cpp
@@ -110,6 +111,7 @@ SET(PLUGIN_MOC_SRCS
   ctkRangeWidgetPlugin.h
   ctkTransferFunctionViewPlugin.h
   ctkTreeComboBoxPlugin.h
+  ctkSearchBoxPlugin.h
   ctkSettingsPanelPlugin.h
   ctkSettingsDialogPlugin.h
   ctkSliderWidgetPlugin.h

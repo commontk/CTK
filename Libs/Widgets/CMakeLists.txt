@@ -88,6 +88,8 @@ SET(KIT_SRCS
   ctkRangeSlider.h
   ctkRangeWidget.cpp
   ctkRangeWidget.h
+  ctkSearchBox.cpp
+  ctkSearchBox.h
   ctkScreenshotDialog.cpp
   ctkScreenshotDialog.h
   ctkScreenshotDialog_p.h
@@ -203,6 +205,7 @@ SET(KIT_MOC_SRCS
   ctkRangeWidget.h
   ctkScreenshotDialog.h
   ctkScreenshotDialog_p.h
+  ctkSearchBox.h
   ctkSettings.h
   ctkSettingsDialog.h
   ctkSettingsPanel.h
