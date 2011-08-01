@@ -34,7 +34,7 @@ IF(${add_project})
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "http://git.dcmtk.org/dcmtk.git"
-      GIT_TAG "origin/master"
+      GIT_TAG "09db15ff595da6c35330fd7f63669aeb9952e015"
       CMAKE_GENERATOR ${gen}
       BUILD_COMMAND ""
       CMAKE_ARGS
@@ -42,6 +42,7 @@ IF(${add_project})
         -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
         -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
         -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
+        -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DBUILD_TESTING:BOOL=OFF
         -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
