@@ -38,7 +38,10 @@ IF(${add_project})
       CMAKE_GENERATOR ${gen}
       BUILD_COMMAND ""
       CMAKE_ARGS
-        ${ep_common_args}
+        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+        -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+        -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+        -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DBUILD_TESTING:BOOL=OFF
         -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
