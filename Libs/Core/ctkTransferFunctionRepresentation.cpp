@@ -60,6 +60,10 @@ ctkTransferFunctionRepresentationPrivate::ctkTransferFunctionRepresentationPriva
 {
   this->TransferFunction = 0;
   this->VerticalGradientColor = QColor::fromRgbF(1., 0., 0., 1. );
+  this->RangeXDiff = 0.;
+  this->RangeXOffSet = 0.;
+  this->RangeYDiff = 0.;
+  this->RangeYOffSet = 0.;
 }
 
 //-----------------------------------------------------------------------------

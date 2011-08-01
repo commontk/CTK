@@ -151,8 +151,8 @@ void ctkLogger::setFatal()
 //-----------------------------------------------------------------------------
 bool ctkLogger::isOffEnabled()
 {
-  Q_D(ctkLogger);
-  return !d->Logger->isEnabledFor(Log4Qt::Level(Log4Qt::Level::OFF_INT));
+  Q_D(ctkLogger); //Not sure
+  return d->Logger->isEnabledFor(Log4Qt::Level(Log4Qt::Level::OFF_INT));
 }
 
 //-----------------------------------------------------------------------------

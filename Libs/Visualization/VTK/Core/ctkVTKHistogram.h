@@ -44,8 +44,10 @@ public:
   
   virtual ctkControlPoint* controlPoint(int index)const;
   virtual QVariant value(qreal pos)const;
+  /// Returns the number of bins. Returns 0 until build() is called.
   virtual int count()const;
 
+  /// Please note that range only works if you have at least set an array.
   virtual void range(qreal& minRange, qreal& maxRange)const;
   virtual QVariant minValue()const;
   virtual QVariant maxValue()const;

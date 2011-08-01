@@ -64,29 +64,73 @@ int ctkModelTesterTest1(int argc, char * argv [] )
     // with mem leaks.
     QStandardItemModel model;
     ctkModelTester treeModelTester(&model);
+
+    //------ Test on row--------
     QList<QStandardItem*> items;
     items << new QStandardItem("col1") << new QStandardItem("col2");
     model.appendRow(items);
     QList<QStandardItem*> items2  = model.takeRow(0);
     if (items2 != items)
       {
-      std::cerr << "Error" << std::endl;
+      std::cerr << "Line : " << __LINE__ << "Error" << std::endl;
       return EXIT_FAILURE;
       }
-    items2.clear();
     model.appendRow(items);
     for (int i = 0; i < 10; ++i)
       {
       model.appendRow(QList<QStandardItem*>() << new QStandardItem("col1") << new QStandardItem("col2"));
       }
     model.takeRow(0);
+    model.setHeaderData(0, Qt::Vertical, QString("ID"));
     model.takeRow(model.rowCount() / 2 );
     model.takeRow(model.rowCount() - 1);
+    items2.clear();
     items2 << new QStandardItem("col1") << new QStandardItem("col2");
     items2[0]->appendRow(QList<QStandardItem*>() << new QStandardItem("subcol1") << new QStandardItem("subcol2"));
     items2[0]->appendRow(QList<QStandardItem*>() << new QStandardItem("subcol1") << new QStandardItem("subcol2"));
-    model.setData(model.index(0,0), QString("foo"));
+
+    model.appendRow(items2);
+    items2[0]->child(0,0)->setText("foo");
     model.sort(0);
+
+    //------ Test on Column-----
+    QStandardItemModel model2;
+    ctkModelTester treeModelTester2(&model2);
+
+    QList<QStandardItem*> itemsCol;
+    itemsCol << new QStandardItem("row1") << new QStandardItem("row2");
+    model2.appendColumn(itemsCol);
+    QList<QStandardItem*> itemsCol2  = model2.takeColumn(0);
+    if (itemsCol2 != itemsCol)
+      {
+      std::cerr << "Line : " << __LINE__ << "Error" << std::endl;
+      return EXIT_FAILURE;
+      }
+    model2.appendColumn(itemsCol);
+    for (int i = 0; i < 10; ++i)
+      {
+      model2.appendColumn(QList<QStandardItem*>() << new QStandardItem("row1") << new QStandardItem("row2"));
+      }
+    model2.takeColumn(0);
+    model2.takeColumn(model2.columnCount() / 2 );
+    model2.takeColumn(model2.columnCount() - 1);
+    itemsCol2 << new QStandardItem("row1") << new QStandardItem("row2");
+    itemsCol2[0]->appendColumn(QList<QStandardItem*>() << new QStandardItem("subrow1") << new QStandardItem("subrow2"));
+    itemsCol2[0]->appendColumn(QList<QStandardItem*>() << new QStandardItem("subrow1") << new QStandardItem("subrow2"));
+
+    model2.setData(model2.index(0,0), QString("foo"));
+    model2.sort(0);
+    model2.clear();
+
+    //------ Test setDataHeader ----------
+    for (int i = 0; i < 10; ++i)
+      {
+      QList<QStandardItem*> columns;
+      columns << new QStandardItem("row1") << new QStandardItem("row2");
+      model2.appendColumn(columns);
+      model2.setHorizontalHeaderItem(i,new QStandardItem(QString("Column %1").arg(i)));
+      }
+    model2.setHeaderData(0, Qt::Horizontal, QString("ID"));
     }
   catch (const char* error)
     {

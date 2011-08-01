@@ -36,6 +36,7 @@ class CTK_CORE_EXPORT ctkLogger : public QObject
   Q_OBJECT
 public:
   typedef QObject Superclass;
+  /// Default mode is Off
   explicit ctkLogger(QString name, QObject* parent = 0);
   virtual ~ctkLogger ();
 
