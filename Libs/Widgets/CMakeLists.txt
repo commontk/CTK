@@ -99,6 +99,8 @@ SET(KIT_SRCS
   ctkSettingsDialog.h
   ctkSettingsPanel.cpp
   ctkSettingsPanel.h
+  ctkSignalMapper.cpp
+  ctkSignalMapper.h
   ctkSimpleLayoutManager.cpp
   ctkSimpleLayoutManager.h
   ctkQImageView.cpp
@@ -209,6 +211,7 @@ SET(KIT_MOC_SRCS
   ctkSettings.h
   ctkSettingsDialog.h
   ctkSettingsPanel.h
+  ctkSignalMapper.h
   ctkSimpleLayoutManager.h
   ctkQImageView.h
   ctkSliderWidget.h
