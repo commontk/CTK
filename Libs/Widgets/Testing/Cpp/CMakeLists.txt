@@ -55,6 +55,7 @@ SET(TEST_SOURCES
   ctkSettingsPanelTest2.cpp
   ctkSettingsTest1.cpp
   ctkSettingsDialogTest1.cpp
+  ctkSignalMapperTest1.cpp
   ctkSliderWidgetTest1.cpp
   ctkSliderWidgetTest2.cpp
   ctkThumbnailListWidgetTest1.cpp
@@ -176,6 +177,7 @@ SIMPLE_TEST( ctkSettingsDialogTest1 )
 SIMPLE_TEST( ctkSettingsPanelTest1 )
 SIMPLE_TEST( ctkSettingsPanelTest2 )
 SIMPLE_TEST( ctkSettingsTest1 )
+SIMPLE_TEST( ctkSignalMapperTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest2 )
 SIMPLE_TEST( ctkThumbnailListWidgetTest1 )
