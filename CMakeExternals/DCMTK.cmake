@@ -28,35 +28,21 @@ IF(${add_project})
         -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
         -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
     endif()
-    
-    #-----------------------------------------------------------------------------
-    # HACK Waiting upstream DCMTK is fixed, specify -fPIC here.
-    #      See http://public.kitware.com/pipermail/ctk-developers/2011-August/000725.html
-    #-----------------------------------------------------------------------------
-    set(dcmtk_cxx_flags ${ep_common_cxx_flags})
-    set(dcmtk_c_flags ${ep_common_c_flags})
-    # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be
-    # used when making a shared object; recompile with -fPIC
-    # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
-    #
-    IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-      set(dcmtk_cxx_flags "${ep_common_cxx_flags} -fPIC")
-      set(dcmtk_c_flags "${ep_common_c_flags} -fPIC")
-    ENDIF()
 
     ExternalProject_Add(${proj}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "http://git.dcmtk.org/dcmtk.git"
-      GIT_TAG "origin/master"
+      GIT_TAG "09db15ff595da6c35330fd7f63669aeb9952e015"
       CMAKE_GENERATOR ${gen}
       BUILD_COMMAND ""
       CMAKE_ARGS
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-        -DCMAKE_CXX_FLAGS:STRING=${dcmtk_cxx_flags}
-        -DCMAKE_C_FLAGS:STRING=${dcmtk_c_flags}
+        -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+        -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
         -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
+        -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DBUILD_TESTING:BOOL=OFF
         -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
