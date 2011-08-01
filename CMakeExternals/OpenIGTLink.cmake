@@ -36,7 +36,10 @@ IF(${add_project})
       INSTALL_COMMAND ""
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
-        ${ep_common_args}
+        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+        -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+        -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+        -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       DEPENDS
         ${proj_DEPENDENCIES}
