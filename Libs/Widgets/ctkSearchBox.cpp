@@ -121,12 +121,13 @@ ctkSearchBox::~ctkSearchBox()
 void ctkSearchBox::paintEvent(QPaintEvent * event)
 {
   Q_D(ctkSearchBox);
-  QPainter p(this);
 
   // Draw the line edit with text.
   // Text has already been shifted to the right (in resizeEvent()) to leave
   // space for the search icon.
   this->Superclass::paintEvent(event);
+
+  QPainter p(this);
 
   // Draw clearIcon
   QRect cRect = d->clearRect();
