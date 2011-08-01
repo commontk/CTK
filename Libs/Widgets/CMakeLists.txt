@@ -44,6 +44,8 @@ SET(KIT_SRCS
   ctkCoordinatesWidget.h
   ctkCrosshairLabel.cpp
   ctkCrosshairLabel.h
+  ctkDateRangeWidget.cpp
+  ctkDateRangeWidget.h
   ctkDirectoryButton.cpp
   ctkDirectoryButton.h
   ctkDoubleRangeSlider.cpp
@@ -84,15 +86,17 @@ SET(KIT_SRCS
   ctkPixmapIconEngine.h
   ctkPopupWidget.cpp
   ctkPopupWidget.h
+  ctkQImageView.cpp
+  ctkQImageView.h
   ctkRangeSlider.cpp
   ctkRangeSlider.h
   ctkRangeWidget.cpp
   ctkRangeWidget.h
-  ctkSearchBox.cpp
-  ctkSearchBox.h
   ctkScreenshotDialog.cpp
   ctkScreenshotDialog.h
   ctkScreenshotDialog_p.h
+  ctkSearchBox.cpp
+  ctkSearchBox.h
   ctkSettings.cpp
   ctkSettings.h
   ctkSettingsDialog.cpp
@@ -103,8 +107,6 @@ SET(KIT_SRCS
   ctkSignalMapper.h
   ctkSimpleLayoutManager.cpp
   ctkSimpleLayoutManager.h
-  ctkQImageView.cpp
-  ctkQImageView.h
   ctkSliderWidget.cpp
   ctkSliderWidget.h
   ctkTestApplication.cpp
@@ -147,8 +149,6 @@ SET(KIT_SRCS
   ctkWorkflowWidgetStep.cpp
   ctkWorkflowWidgetStep_p.h
   ctkWorkflowWidgetStep.h
-  ctkDateRangeWidget.cpp
-  ctkDateRangeWidget.h
   )
 
 IF(CTK_WRAP_PYTHONQT_LIGHT)
@@ -164,7 +164,6 @@ ENDIF()
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
-  ctkWorkflowAbstractPagedWidget.h
   ctkActionsWidget.h
   ctkAxesWidget.h
   ctkAddRemoveComboBox.h
@@ -183,6 +182,7 @@ SET(KIT_MOC_SRCS
   ctkConsole_p.h
   ctkCoordinatesWidget.h
   ctkCrosshairLabel.h
+  ctkDateRangeWidget.h
   ctkDirectoryButton.h
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
@@ -203,6 +203,7 @@ SET(KIT_MOC_SRCS
   ctkPathLineEdit.h
   ctkPopupWidget.h
   ctkPopupWidget_p.h
+  ctkQImageView.h
   ctkRangeSlider.h
   ctkRangeWidget.h
   ctkScreenshotDialog.h
@@ -213,7 +214,6 @@ SET(KIT_MOC_SRCS
   ctkSettingsPanel.h
   ctkSignalMapper.h
   ctkSimpleLayoutManager.h
-  ctkQImageView.h
   ctkSliderWidget.h
   ctkTestApplication.h
   ctkThumbnailListWidget.h
@@ -234,7 +234,6 @@ SET(KIT_MOC_SRCS
   ctkWorkflowWidget.h
   ctkWorkflowWidgetStep.h
   ctkWorkflowWidgetStep_p.h
-  ctkDateRangeWidget.h
   )
 
 
