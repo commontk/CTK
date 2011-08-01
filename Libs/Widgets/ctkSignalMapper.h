@@ -39,8 +39,26 @@ public:
 public slots:
   /// ctkSignalMapper exposes the map(QAction*) slot to be conveniently
   /// connected with signals that have a QAction* as their first argument.
-  /// ctkActionSignalMapper reveals to be useful when connecting a
-  /// QActionGroup::triggered(QAction*).
+  /// ctkSignalMapper reveals to be useful when connecting a
+  /// QMenu::triggered(QAction*) or QActionGroup::triggered(QAction*).
+  /// Example:
+  /// <code>
+  /// QMenu menu;
+  /// QAction* action1 = menu.addAction("item1");
+  /// QAction* action2 = menu.addAction("item2");
+  /// QAction* action3 = menu.addAction("item3");
+  /// ctkSignalMapper signalMapper;
+  /// signalMapper.setMapping(action1, 1);
+  /// signalMapper.setMapping(action2, 2);
+  /// signalMapper.setMapping(action3, 3);
+  /// QObject::connect(&menu, SIGNAL(triggered(QAction*)),
+  ///                  &signalMapper, SLOT(map(QAction*)));
+  /// //Connect the signal mapper mapped(int) signal with a listener
+  /// QObject::connect(&signalMapper, SIGNAL(mapped(int)),
+  ///                  &myObj, SLOT(actionTriggered(int)));
+  /// // myObj::actionTriggered(2) will be called when the 2nd menu item will
+  /// // be chosen in the menu.
+  /// </code>
   void map(QAction* sender);
 
 protected:
