@@ -42,7 +42,7 @@ IF(${add_project})
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DBUILD_TESTING:BOOL=OFF
         -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
-      )
+        -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF)
     SET(DCMTK_DIR ${ep_install_dir})
 
 # This was used during heavy development on DCMTK itself.
