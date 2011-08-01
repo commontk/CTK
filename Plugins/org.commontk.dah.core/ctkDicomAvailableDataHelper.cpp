@@ -161,12 +161,12 @@ bool addToAvailableData(ctkDicomAppHosting::AvailableData& data,
   ctkDicomAppHosting::Study study;
   ctkDicomAppHosting::Series series;
   ctkDicomAppHosting::Patient patient;
-  patient.name = dataset.GetElementAsString(DCM_PatientsName);
+  patient.name = dataset.GetElementAsString(DCM_PatientName);
 qDebug()<<"Patient:  " << patient.name;
   patient.id = dataset.GetElementAsString(DCM_PatientID);
   patient.assigningAuthority = dataset.GetElementAsString(DCM_IssuerOfPatientID);
-  patient.sex = dataset.GetElementAsString(DCM_PatientsSex);
-  patient.birthDate = dataset.GetElementAsString(DCM_PatientsBirthDate);
+  patient.sex = dataset.GetElementAsString(DCM_PatientSex);
+  patient.birthDate = dataset.GetElementAsString(DCM_PatientBirthDate);
 
 
   study.studyUID = dataset.GetElementAsString(DCM_StudyInstanceUID);
