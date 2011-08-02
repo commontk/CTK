@@ -45,6 +45,11 @@ class ctkSearchBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkSearchBox : public QLineEdit
 {
   Q_OBJECT
+#if QT_VERSION < 0x040700
+  /// Qt < 4.7 don't have a placeholderText property, as we need it, we define it
+  /// manually.
+  Q_PROPERTY(QString placeholderText READ placeholderText WRITE setPlaceholderText)
+#endif
 
 public:
   /// Superclass typedef
@@ -52,6 +57,11 @@ public:
 
   ctkSearchBox(QWidget *parent = 0);
   virtual ~ctkSearchBox();
+
+#if QT_VERSION < 0x040700
+  QString placeholderText()const;
+  void setPlaceholderText(const QString& defaultText);
+#endif
 
 protected slots:
   /// Change the clear icon's state to enabled or disabled.
