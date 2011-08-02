@@ -42,6 +42,7 @@ IF(${add_project})
         -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
         -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
         -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
+        -DDCMTK_WITH_ZLIB:BOOL=OFF # see github issue #25
         -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DBUILD_TESTING:BOOL=OFF
