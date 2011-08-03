@@ -348,17 +348,22 @@ SET(CTK_LIBS
 # CTK Plugins - Use ON or OFF to indicate if the plugin should be built by default
 #
 SET(CTK_PLUGINS
+  # Optional plug-ins implementings interfaces in PluginFramework/service/
   org.commontk.eventbus:OFF
   org.commontk.configadmin:OFF
-  org.commontk.dah.app:OFF
-  org.commontk.dah.core:OFF
-  org.commontk.dah.exampleapp:OFF
-  org.commontk.dah.examplehost:OFF
-  org.commontk.dah.host:OFF
   org.commontk.eventadmin:OFF
   org.commontk.log:OFF
   org.commontk.log4qt:OFF
   org.commontk.metatype:OFF
+
+  # Plug-ins related to DICOM WG23 (Application Hosting)
+  org.commontk.dah.core:OFF
+  org.commontk.dah.app:OFF
+  org.commontk.dah.host:OFF
+  org.commontk.dah.exampleapp:OFF
+  org.commontk.dah.examplehost:OFF
+
+  # Misc
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
   org.commontk.qtmobility.service:OFF
