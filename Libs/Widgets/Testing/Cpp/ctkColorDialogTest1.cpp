@@ -43,29 +43,32 @@ int ctkColorDialogTest1(int argc, char * argv [] )
                    &colorDialog, SLOT(setColor(QColor)));
   colorDialog.addTab(extraPanel, "Extra");
   int index = colorDialog.indexOf(extraPanel);
-  if (index != 0 ||
+  if (index != 1 ||
       extraPanel != colorDialog.widget(index) ||
       colorDialog.widget(-1) != 0)
     {
-    std::cerr << "ctkColorDialog::addTab failed" << std::endl;
+    std::cerr << "ctkColorDialog::addTab failed:" << index << std::endl;
     return EXIT_FAILURE;
     }
 
   // fake removeTab
   colorDialog.removeTab(-1);
   index = colorDialog.indexOf(extraPanel);
-  if (index != 0 ||
-      colorDialog.widget(0) != extraPanel)
+  if (index != 1 ||
+      colorDialog.widget(1) != extraPanel)
     {
-    std::cerr << "ctkColorDialog::removeTab failed" << std::endl;
+    std::cerr << "ctkColorDialog::removeTab failed:" << index << std::endl;
     return EXIT_FAILURE;
     }
 
-  // true removeTab  
+  // true removeTab
   colorDialog.removeTab(index);
   index = colorDialog.indexOf(extraPanel);
   if (index != -1 ||
-      colorDialog.widget(0) != 0)
+      // still the default tab
+      colorDialog.widget(0) == 0 ||
+      // extra panel doesn't exist anymore
+      colorDialog.widget(1) != 0)
     {
     std::cerr << "ctkColorDialog::removeTab failed" << std::endl;
     return EXIT_FAILURE;
