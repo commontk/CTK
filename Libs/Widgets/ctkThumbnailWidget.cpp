@@ -64,7 +64,9 @@ ctkThumbnailWidgetPrivate::ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent)
 
 //----------------------------------------------------------------------------
 void ctkThumbnailWidgetPrivate::updateThumbnail(){
-    this->PixmapLabel->setPixmap(this->OriginalThumbnail.scaledToWidth(this->PixmapLabel->width()));
+    this->PixmapLabel->setPixmap(
+        this->OriginalThumbnail.isNull() ? QPixmap() :
+            this->OriginalThumbnail.scaledToWidth(this->PixmapLabel->width()));
 }
 
 //----------------------------------------------------------------------------
@@ -114,7 +116,7 @@ const QPixmap* ctkThumbnailWidget::pixmap()const
 {
   Q_D(const ctkThumbnailWidget);
 
-  return &(d->OriginalThumbnail);
+  return d->OriginalThumbnail.isNull() ? 0 : &(d->OriginalThumbnail);
 }
 
 //----------------------------------------------------------------------------

@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QStyle>
 #include <QTimer>
 
 // ctkDICOMCore includes
@@ -44,7 +45,17 @@ int ctkThumbnailWidgetTest1( int argc, char * argv [] )
     }
 
   widget.setPixmap(QPixmap());
-  if (widget.pixmap())
+  if (widget.pixmap() != 0)
+    {
+    std::cerr << "ctkThumbnailWidget::setPixmap failed:"
+              << widget.pixmap() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QPixmap standardPixmap = widget.style()->standardPixmap(QStyle::SP_DriveNetIcon);
+  
+  widget.setPixmap(standardPixmap);
+  if (widget.pixmap() == 0)
     {
     std::cerr << "ctkThumbnailWidget::setPixmap failed:"
               << widget.pixmap() << std::endl;
