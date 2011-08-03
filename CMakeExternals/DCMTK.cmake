@@ -43,7 +43,11 @@ IF(${add_project})
         -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
         -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
         -DDCMTK_WITH_ZLIB:BOOL=OFF # see github issue #25
-        -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
+        -DDCMTK_WITH_OPENSSL:BOOL=OFF # see github issue #25
+        -DDCMTK_WITH_PNG:BOOL=OFF # see github issue #25
+        -DDCMTK_WITH_TIFF:BOOL=OFF  # see github issue #25
+        -DDCMTK_WITH_XML:BOOL=OFF  # see github issue #25
+        -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON 
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DBUILD_TESTING:BOOL=OFF
         -DDCMTK_BUILD_APPS:BOOL=ON # Build also dmctk tools (movescu, storescp, ...)
