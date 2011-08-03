@@ -613,6 +613,10 @@ QModelIndex ctkDICOMModel::index ( int row, int column, const QModelIndex & pare
 QModelIndex ctkDICOMModel::parent ( const QModelIndex & indexValue ) const
 {
   Q_D(const ctkDICOMModel);
+  if (!indexValue.isValid())
+    {
+    return QModelIndex();
+    }
   Node* node = d->nodeFromIndex(indexValue);
   Q_ASSERT(node);
   Node* parentNode = node->Parent;
