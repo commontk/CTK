@@ -54,16 +54,6 @@ public:
     return 0;
   }
 
-  virtual bool isDiscrete()const
-  {
-    return true;
-  }
-
-  virtual bool isEditable()const
-  {
-    return false;
-  }
-
   virtual void range(qreal& minRange, qreal& maxRange)const
   {
     Q_UNUSED(minRange);
@@ -82,39 +72,9 @@ public:
     return 0;
   }
 
-  ///
-  virtual int insertControlPoint(const ctkControlPoint& cp)
-  {
-    Q_UNUSED(cp);
-    return -1;
-  }
-
-  virtual int insertControlPoint(qreal pos)
-  {
-    Q_UNUSED(pos);
-    return -1;
-  }
-
   virtual void removeControlPoint( qreal pos )
   {
     Q_UNUSED(pos);
-  }
-  ///
-  /// be careful with it, as changing the value might require
-  /// more changes to ctkControlPoint.
-  virtual void setControlPointPos(int index, qreal pos)
-  {
-    Q_UNUSED(pos);
-    Q_UNUSED(index);
-  }
-
-  ///
-  /// be careful with it, as changing the value might require
-  /// more changes to ctkControlPoint.
-  virtual void setControlPointValue(int index, const QVariant& value)
-  {
-    Q_UNUSED(index);
-    Q_UNUSED(value);
   }
 
   virtual void build()

@@ -89,6 +89,24 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
   return EXIT_FAILURE;
   }
 
+  ctkControlPoint cp;
+  if (representation.posX(&cp) != cp.x())
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Problem with ctkTransfertFunctionRepresentation::posX"
+              << representation.posX(&cp);
+    return EXIT_FAILURE;
+    }
+
+  ctkPoint point;
+  if (representation.posX(point) != point.X)
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Problem with ctkTransfertFunctionRepresentation::posX"
+              << representation.posX(point);
+    return EXIT_FAILURE;
+    }
+
   //---------Test PosY--------------------------
   QVariant variant = 2.;
   if (representation.posY(variant) != 2.)  
@@ -105,10 +123,24 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
     {
     std::cerr << "Line " << __LINE__
               << " - Problem with ctkTransfertFunctionRepresentation::posY"
-              << " - for the color: " << representation.posY(variant) 
-              << " - " << defaultColor.alphaF() << std::endl;
+              << " - for the color: " << representation.posY(variant);
     return EXIT_FAILURE;
     } 
+
+  if (representation.posY(&cp) != cp.value())
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Problem with ctkTransfertFunctionRepresentation::posY"
+              << representation.posY(&cp);
+    return EXIT_FAILURE;
+    }
+  if (representation.posY(point) != point.Value)
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Problem with ctkTransfertFunctionRepresentation::posY"
+              << representation.posX(point);
+    return EXIT_FAILURE;
+    }
  
   //--------Test Color--------------------------
   QColor expectedColor = QColor::fromRgbF(1., 1., 1.);
@@ -128,6 +160,18 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << " - Problem with ctkTransfertFunctionRepresentation::color"
               << " when QVariant is a not a color"
               << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (representation.color(&cp) != representation.color(cp.value()))
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Problem with ctkTransfertFunctionRepresentation::color";
+    return EXIT_FAILURE;
+    }
+  if (representation.color(point) != representation.color(point.Value))
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Problem with ctkTransfertFunctionRepresentation::color";
     return EXIT_FAILURE;
     }
 

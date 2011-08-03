@@ -12,6 +12,7 @@ SET(TEST_SOURCES
   ctkVTKHistogramTest3.cpp
   ctkVTKHistogramTest4.cpp
   ctkVTKObjectTest1.cpp
+  ctkVTKTransferFunctionRepresentationTest1.cpp
   )
 
 #
@@ -82,6 +83,7 @@ SIMPLE_TEST( ctkVTKHistogramTest2 )
 SIMPLE_TEST( ctkVTKHistogramTest3 )
 SIMPLE_TEST( ctkVTKHistogramTest4 )
 SIMPLE_TEST( ctkVTKObjectTest1 )
+SIMPLE_TEST( ctkVTKTransferFunctionRepresentationTest1 )
 
 #
 # Add Tests expecting CTKData to be set

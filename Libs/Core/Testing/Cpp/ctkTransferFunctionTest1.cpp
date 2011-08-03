@@ -149,6 +149,13 @@ int ctkTransferFunctionTest1(int argc, char * argv [])
               <<std::endl;
     return EXIT_FAILURE;
     }
+  if (dummy.value(0) != 0)
+    {
+    std::cerr << "Line : " << __LINE__
+              << " - Problem with ctkHistogram::value"
+              <<std::endl;
+    return EXIT_FAILURE;
+    }
   if (dummy.minValue() != 0)
     {
     std::cerr << "Line : " << __LINE__
@@ -184,6 +191,7 @@ int ctkTransferFunctionTest1(int argc, char * argv [])
   dummy.removeControlPoint(defaultPos);
   dummy.setControlPointPos(defaultIndex,defaultPos);
   dummy.setControlPointValue(defaultIndex,defaultValue);
+  dummy.representation();
 
   return EXIT_SUCCESS;
 }
