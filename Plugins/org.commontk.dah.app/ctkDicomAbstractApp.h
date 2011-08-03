@@ -27,7 +27,7 @@
 #include <org_commontk_dah_app_Export.h>
 
 class ctkDicomAbstractAppPrivate;
-class ctkDicomHostInterface;
+struct ctkDicomHostInterface;
 class ctkPluginContext;
 class ctkDicomObjectLocatorCache;
 
