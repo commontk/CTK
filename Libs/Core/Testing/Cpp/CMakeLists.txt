@@ -92,6 +92,10 @@ IF(HAVE_BFD)
   ADD_EXECUTABLE(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
 ENDIF()
 
+IF(WIN32)
+  ADD_DEFINITIONS( /D _CRT_SECURE_NO_WARNINGS)
+ENDIF()
+
 #
 # Test executable
 #
