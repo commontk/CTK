@@ -17,6 +17,12 @@ IF(${add_project})
   SET(ITK_DEPENDS ${proj})
   
   IF(NOT DEFINED ITK_DIR)
+  
+    SET(revision_tag "v3.20.0")
+    IF(${proj}_REVISION_TAG)
+      SET(revision_tag ${${proj}_REVISION_TAG})
+    ENDIF()
+  
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
     if(APPLE)
@@ -32,7 +38,8 @@ IF(${add_project})
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "${git_protocol}://itk.org/ITK.git"
-      GIT_TAG "origin/master"
+      GIT_TAG ${revision_tag}
+      UPDATE_COMMAND ""
       INSTALL_COMMAND ""
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS

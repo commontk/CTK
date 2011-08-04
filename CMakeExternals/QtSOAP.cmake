@@ -19,6 +19,12 @@ IF(${add_project})
   SET(QtSOAP_DEPENDS ${proj})
 
   IF(NOT DEFINED QtSOAP_DIR)
+  
+    SET(revision_tag 42ce9d3dcbc66dd551a8)
+    IF(${proj}_REVISION_TAG)
+      SET(revision_tag ${${proj}_REVISION_TAG})
+    ENDIF()
+  
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
     if(APPLE)
@@ -34,8 +40,9 @@ IF(${add_project})
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/QtSOAP.git"
-      GIT_TAG "origin/master"
+      GIT_TAG ${revision_tag}
       CMAKE_GENERATOR ${gen}
+      UPDATE_COMMAND ""
       INSTALL_COMMAND ""
       CMAKE_ARGS
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}

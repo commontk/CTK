@@ -15,22 +15,29 @@ IF(BUILD_TESTING)
   SET(CTKData_DEPENDS ${proj})
   
   IF(NOT DEFINED CTKData_DIR)
-  #   MESSAGE(STATUS "Adding project:${proj}")
+  
+    SET(revision_tag cc07f1ff391b7828459c)
+    IF(${proj}_REVISION_TAG)
+      SET(revision_tag ${${proj}_REVISION_TAG})
+    ENDIF()
+  
+#    MESSAGE(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY ${git_protocol}://github.com/commontk/CTKData.git
-      GIT_TAG "origin/master"
+      GIT_TAG ${revision_tag}
+      UPDATE_COMMAND ""
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
       DEPENDS
         ${proj_DEPENDENCIES}
       )
-	  SET(CTKData_DIR ${CMAKE_BINARY_DIR}/${proj})
-	ELSE()
-	  ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
+    SET(CTKData_DIR ${CMAKE_BINARY_DIR}/${proj})
+  ELSE()
+    ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
   
   LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DCTKData_DIR:PATH=${CTKData_DIR})

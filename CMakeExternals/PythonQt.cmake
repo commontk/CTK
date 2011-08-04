@@ -49,14 +49,20 @@ IF(${add_project})
         -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
         -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
     endif()
+    
+    SET(revision_tag 3171a94e16ba9bfee137)
+    IF(${proj}_REVISION_TAG)
+      SET(revision_tag ${${proj}_REVISION_TAG})
+    ENDIF()
 
     ExternalProject_Add(${proj}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/PythonQt.git"
-      GIT_TAG "origin/patched"
+      GIT_TAG ${revision_tag}
       CMAKE_GENERATOR ${gen}
+      UPDATE_COMMAND ""
       BUILD_COMMAND ""
       CMAKE_ARGS
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}

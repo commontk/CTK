@@ -59,14 +59,21 @@ IF(CTK_WRAP_PYTHONQT_FULL)
           "PythonQt" # To make sure the generator code is checked out, let's depent on PythonQt
         )
     ELSE()
+    
+      SET(revision_tag 3171a94e16ba9bfee137)
+      IF(${proj}_REVISION_TAG)
+        SET(revision_tag ${${proj}_REVISION_TAG})
+      ENDIF()
+    
       #MESSAGE(STATUS "ExternalProject/PythonQtGenerator: PythonQt is NOT an ExternalProject")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
         PREFIX ${proj}${ep_suffix}
         GIT_REPOSITORY "${git_protocol}://github.com/commontk/PythonQt.git"
-        GIT_TAG "patched"
+        GIT_TAG 3171a94e16ba9bfee137
         CMAKE_GENERATOR ${gen}
+        UPDATE_COMMAND ""
         INSTALL_COMMAND ""
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}/generator
         CMAKE_ARGS

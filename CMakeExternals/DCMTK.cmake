@@ -19,6 +19,12 @@ IF(${add_project})
   SET(DCMTK_DEPENDS ${proj})
   
   IF(NOT DEFINED DCMTK_DIR)
+  
+    SET(revision_tag 09db15ff595da6c353)
+    IF(${proj}_REVISION_TAG)
+      SET(revision_tag ${${proj}_REVISION_TAG})
+    ENDIF()
+  
 #     MESSAGE(STATUS "Adding project:${proj}")
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -34,8 +40,9 @@ IF(${add_project})
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "http://git.dcmtk.org/dcmtk.git"
-      GIT_TAG "09db15ff595da6c35330fd7f63669aeb9952e015"
+      GIT_TAG ${revision_tag}
       CMAKE_GENERATOR ${gen}
+      UPDATE_COMMAND ""
       BUILD_COMMAND ""
       CMAKE_ARGS
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}

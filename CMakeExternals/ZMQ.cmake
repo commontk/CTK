@@ -18,6 +18,12 @@ IF(${add_project})
   SET(ZMQ_DEPENDS ${proj})
   
   IF(NOT DEFINED ZMQ_DIR)
+  
+    SET(revision_tag d2c2f96b49ed3835a47e)
+    IF(${proj}_REVISION_TAG)
+      SET(revision_tag ${${proj}_REVISION_TAG})
+    ENDIF()
+  
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
     if(APPLE)
@@ -33,7 +39,8 @@ IF(${add_project})
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY ${git_protocol}://github.com/PatrickCheng/zeromq2.git
-      GIT_TAG "origin/master"
+      GIT_TAG ${revision_tag}
+      UPDATE_COMMAND ""
       INSTALL_COMMAND ""
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS

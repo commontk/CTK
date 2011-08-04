@@ -18,6 +18,12 @@ IF(${add_project})
   SET(Log4Qt_DEPENDS ${proj})
   
   IF(NOT DEFINED Log4Qt_DIR)
+  
+    SET(revision_tag 8d3558b0f636cbf8ff83)
+    IF(${proj}_REVISION_TAG)
+      SET(revision_tag ${${proj}_REVISION_TAG})
+    ENDIF()
+  
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
     if(APPLE)
@@ -33,9 +39,10 @@ IF(${add_project})
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/Log4Qt.git"
-      GIT_TAG "origin/patched"
+      GIT_TAG ${revision_tag}
       CMAKE_GENERATOR ${gen}
       INSTALL_COMMAND ""
+      UPDATE_COMMAND ""
       CMAKE_ARGS
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
         -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
