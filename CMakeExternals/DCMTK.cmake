@@ -19,12 +19,11 @@ IF(${add_project})
   SET(DCMTK_DEPENDS ${proj})
   
   IF(NOT DEFINED DCMTK_DIR)
-  
-    SET(revision_tag 09db15ff595da6c353)
+    SET(revision_tag 085525e643cab5ac82)
     IF(${proj}_REVISION_TAG)
       SET(revision_tag ${${proj}_REVISION_TAG})
     ENDIF()
-  
+
 #     MESSAGE(STATUS "Adding project:${proj}")
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -34,7 +33,6 @@ IF(${add_project})
         -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
         -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
     endif()
-
     ExternalProject_Add(${proj}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       BINARY_DIR ${proj}-build
