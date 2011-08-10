@@ -62,7 +62,8 @@ public:
   /// Of course the slot can contain less parameters, but always the same order
   /// though.
   void setup(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, QString qt_slot, float priority = 0.f);
+    const QObject* qt_obj, QString qt_slot, float priority = 0.f,
+    Qt::ConnectionType connectionType = Qt::AutoConnection);
 
   /// 
   /// Check the validity of the parameters. Parameters must be valid to add 

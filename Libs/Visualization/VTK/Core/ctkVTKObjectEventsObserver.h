@@ -74,7 +74,8 @@ public:
   /// Of course the slot can contain less parameters, but always the same order
   /// though.
   QString addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
+    const QObject* qt_obj, const char* qt_slot, float priority = 0.0,
+    Qt::ConnectionType connectionType = Qt::AutoConnection);
 
   ///
   /// Utility function that remove a connection on old_vtk_obj and add a connection
@@ -86,7 +87,8 @@ public:
   /// Of course the slot can contain less parameters, but always the same order
   /// though.
   QString addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, const char* qt_slot, float priority = 0.0);
+    const QObject* qt_obj, const char* qt_slot, float priority = 0.0,
+    Qt::ConnectionType connectionType = Qt::AutoConnection);
 
   ///
   /// Utility function that remove a connection on old_vtk_obj and add a connection
@@ -99,7 +101,8 @@ public:
   /// though.
   QString reconnection(vtkObject* vtk_obj, unsigned long vtk_event,
                        const QObject* qt_obj, const char* qt_slot,
-                       float priority = 0.0);
+                       float priority = 0.0,
+                       Qt::ConnectionType connectionType = Qt::AutoConnection);
 
   ///
   /// Remove all the connections matching vtkobj, event, qtobj and slot using

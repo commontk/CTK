@@ -69,6 +69,7 @@ public:
   unsigned long                       VTKEvent;
   QString                             QtSlot;
   float                               Priority;
+  Qt::ConnectionType                  ConnectionType;
   int                                 SlotType;
   bool                                Connected;
   bool                                Blocked;

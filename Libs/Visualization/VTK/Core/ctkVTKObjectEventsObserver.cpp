@@ -198,7 +198,8 @@ void ctkVTKObjectEventsObserver::setStrictTypeCheck(bool check)
 
 //-----------------------------------------------------------------------------
 QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj,
-  unsigned long vtk_event, const QObject* qt_obj, const char* qt_slot, float priority)
+  unsigned long vtk_event, const QObject* qt_obj, const char* qt_slot, float priority,
+  Qt::ConnectionType connectionType)
 {
   Q_D(ctkVTKObjectEventsObserver);
   if (old_vtk_obj)
@@ -235,21 +236,23 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObj
     // Disconnect old vtkObject
     this->removeConnection(old_vtk_obj, vtk_event, qt_obj, qt_slot);
     }
-  return this->addConnection(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
+  return this->addConnection(
+    vtk_obj, vtk_event, qt_obj, qt_slot, priority, connectionType);
 }
 
 //-----------------------------------------------------------------------------
 QString ctkVTKObjectEventsObserver::reconnection(vtkObject* vtk_obj,
   unsigned long vtk_event, const QObject* qt_obj,
-  const char* qt_slot, float priority)
+  const char* qt_slot, float priority, Qt::ConnectionType connectionType)
 {
   this->removeConnection(0, vtk_event, qt_obj, qt_slot);
-  return this->addConnection(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
+  return this->addConnection(
+    vtk_obj, vtk_event, qt_obj, qt_slot, priority, connectionType);
 }
 
 //-----------------------------------------------------------------------------
 QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
-  const QObject* qt_obj, const char* qt_slot, float priority)
+  const QObject* qt_obj, const char* qt_slot, float priority, Qt::ConnectionType connectionType)
 {
   Q_D(ctkVTKObjectEventsObserver);
   // If no vtk_obj is provided, there is no way we can create a connection.
@@ -281,7 +284,7 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
   ctkVTKConnection * connection =
     ctkVTKObjectEventsObserver::connectionFactory->createConnection(this);//new ctkVTKConnection(this);
   connection->observeDeletion(d->ObserveDeletion);
-  connection->setup(vtk_obj, vtk_event, qt_obj, qt_slot, priority);
+  connection->setup(vtk_obj, vtk_event, qt_obj, qt_slot, priority, connectionType);
 
   // If required, establish connection
   connection->setBlocked(d->AllBlocked);

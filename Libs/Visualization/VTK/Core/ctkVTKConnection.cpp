@@ -56,6 +56,7 @@ ctkVTKConnectionPrivate::ctkVTKConnectionPrivate(ctkVTKConnection& object)
   this->QtObject    = 0;
   this->VTKEvent    = vtkCommand::NoEvent;
   this->Priority    = 0.0;
+  this->ConnectionType = Qt::AutoConnection;
   this->SlotType    = ARG_UNKNOWN;
   this->Connected   = false;
   this->Blocked     = false;
@@ -84,11 +85,11 @@ void ctkVTKConnectionPrivate::connect()
     {
     case ctkVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
       QObject::connect(q, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
-        this->QtObject, this->QtSlot.toLatin1(), Qt::AutoConnection);
+        this->QtObject, this->QtSlot.toLatin1(), this->ConnectionType);
       break;
     case ctkVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
       QObject::connect(q, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
-                       this->QtObject, this->QtSlot.toLatin1(), Qt::AutoConnection);
+                       this->QtObject, this->QtSlot.toLatin1(), this->ConnectionType);
       break;
     default:
       Q_ASSERT(false);
@@ -259,7 +260,8 @@ bool ctkVTKConnection::isValid(vtkObject* vtk_obj, unsigned long vtk_event,
 //-----------------------------------------------------------------------------
 void ctkVTKConnection::setup(vtkObject* vtk_obj, unsigned long vtk_event,
                              const QObject* qt_obj, QString qt_slot, 
-                             float priority)
+                             float priority,
+                             Qt::ConnectionType connectionType)
 {
   Q_D(ctkVTKConnection);
   
@@ -273,6 +275,7 @@ void ctkVTKConnection::setup(vtkObject* vtk_obj, unsigned long vtk_event,
   d->VTKEvent = vtk_event;
   d->QtSlot = qt_slot;
   d->Priority = priority;
+  d->ConnectionType = connectionType;
 
   if (qt_slot.contains(QRegExp(QString("\\( ?vtkObject ?\\* ?, ?vtkObject ?\\* ?\\)"))))
     {
