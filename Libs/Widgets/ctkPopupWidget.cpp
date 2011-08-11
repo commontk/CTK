@@ -472,12 +472,18 @@ void ctkPopupWidgetPrivate::updateVisibility()
   Q_Q(ctkPopupWidget);
   // If the BaseWidget window is active, then there is no reason to cover the
   // popup.
-  if (!this->BaseWidget  || !this->BaseWidget->window()->isActiveWindow())
+  if (!this->BaseWidget  ||
+      (!this->BaseWidget->window()->isActiveWindow() &&
+       !qApp->activeWindow() ||
+       (qApp->activeWindow()->windowType() != Qt::ToolTip &&
+        qApp->activeWindow()->windowType() != Qt::Popup)))
     {
     foreach(QWidget* topLevelWidget, qApp->topLevelWidgets())
       {
       // If there is at least 1 window (active or not) that covers the popup,
       // then we ensure the popup is hidden.
+      // We have no way of knowing which toplevel is over (z-order) which one,
+      // it is an OS specific information.
       // Of course, tooltips and popups don't count as covering windows.
       if (topLevelWidget->isVisible() &&
           !(topLevelWidget->windowState() & Qt::WindowMinimized) &&
@@ -487,7 +493,10 @@ void ctkPopupWidgetPrivate::updateVisibility()
           topLevelWidget->frameGeometry().intersects(q->geometry()))
         {
         //qDebug() << "hide" << q << "because of: " << topLevelWidget
-        //         << " with windowType: " << topLevelWidget->windowType();
+        //         << " with windowType: " << topLevelWidget->windowType()
+        //         << topLevelWidget->isVisible()
+        //         << (this->BaseWidget ? this->BaseWidget->window() : 0)
+        //         << topLevelWidget->frameGeometry();
         this->temporarilyHiddenOn();
         return;
         }
