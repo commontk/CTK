@@ -177,7 +177,7 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
   base.show();
   
   QList<ctkPopupWidget*> popups;
-  QWidget* hiddenPanel = createPanel("Hidden", popups);
+  createPanel("Hidden", popups); //create a panel that is hidden (never shown)
   QWidget* scrollPanel = createPanel("Scroll", popups);
   foreach(ctkPopupWidget* popup, popups)
     {

@@ -471,10 +471,13 @@ void ctkPopupWidgetPrivate::updateVisibility()
   // If the BaseWidget window is active, then there is no reason to cover the
   // popup.
   if (!this->BaseWidget  ||
+      // the popupwidget active window is not active
       (!this->BaseWidget->window()->isActiveWindow() &&
-       !qApp->activeWindow() ||
-       (qApp->activeWindow()->windowType() != Qt::ToolTip &&
-        qApp->activeWindow()->windowType() != Qt::Popup)))
+      // and no other active window
+       (!qApp->activeWindow() ||
+      // or the active window is a popup/tooltip
+        (qApp->activeWindow()->windowType() != Qt::ToolTip &&
+         qApp->activeWindow()->windowType() != Qt::Popup))))
     {
     foreach(QWidget* topLevelWidget, qApp->topLevelWidgets())
       {
