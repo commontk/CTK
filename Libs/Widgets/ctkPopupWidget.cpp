@@ -122,6 +122,7 @@ void ctkPopupWidgetPrivate::init()
                    q, SLOT(onEffectFinished()));
 
   this->PopupPixmapWidget = new QLabel(0, Qt::ToolTip | Qt::FramelessWindowHint);
+  this->PopupPixmapWidget->installEventFilter(q);
   this->ScrollAnimation = new QPropertyAnimation(q, "effectGeometry", q);
   this->ScrollAnimation->setDuration(DEFAULT_FADING_DURATION);
   QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
@@ -869,6 +870,8 @@ void ctkPopupWidget::enterEvent(QEvent* event)
 bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
 {
   Q_D(ctkPopupWidget);
+  // Here we listen to PopupPixmapWidget, BaseWidget and ctkPopupWidget
+  // children popups that were under the mouse
   switch(event->type())
     {
     case QEvent::Move:
@@ -890,11 +893,14 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
     case QEvent::Close:
       // if the mouse was in a base widget child popup, then when we leave
       // the popup we want to check if it needs to be closed.
-      if (obj != d->BaseWidget  &&
-          qobject_cast<QWidget*>(obj)->windowType() == Qt::Popup)
+      if (obj != d->BaseWidget)
         {
-        QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
-        obj->removeEventFilter(this);
+        if (obj != d->PopupPixmapWidget &&
+            qobject_cast<QWidget*>(obj)->windowType() == Qt::Popup)
+          {
+          obj->removeEventFilter(this);
+          QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+          }
         break;
         }
       d->temporarilyHiddenOn();
@@ -936,13 +942,15 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
       // Don't listen to base widget children that are popups as what
       // matters here is their close event instead
       if (obj != d->BaseWidget &&
+          obj != d->PopupPixmapWidget &&
           qobject_cast<QWidget*>(obj)->windowType() == Qt::Popup)
         {
         break;
         }
       // The mouse might have left the area that keeps the popup open
       QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
-      if (obj != d->BaseWidget)
+      if (obj != d->BaseWidget &&
+          obj != d->PopupPixmapWidget)
         {
         obj->removeEventFilter(this);
         }
