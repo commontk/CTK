@@ -904,6 +904,7 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
         {
 	      break;
 	      }
+	    this->setGeometry(d->desiredOpenGeometry());
 	    d->temporarilyHiddenOff();
 	    break;
 	  case QEvent::Resize:
