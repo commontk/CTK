@@ -296,7 +296,35 @@ QRect ctkPopupWidgetPrivate::closedGeometry(QRect openGeom)const
 }
 
 // -------------------------------------------------------------------------
+QRect ctkPopupWidgetPrivate::baseGeometry()const
+{
+  if (!this->BaseWidget)
+    {
+    return QRect();
+    }
+  return QRect(this->mapToGlobal(this->BaseWidget->geometry().topLeft()),
+               this->BaseWidget->size());
+}
+
+// -------------------------------------------------------------------------
+QPoint ctkPopupWidgetPrivate::mapToGlobal(const QPoint& baseWidgetPoint)const
+{
+  QPoint mappedPoint = baseWidgetPoint;
+  if (this->BaseWidget && this->BaseWidget->parentWidget())
+    {
+    mappedPoint = this->BaseWidget->parentWidget()->mapToGlobal(mappedPoint);
+    }
+  return mappedPoint;
+}
+
+// -------------------------------------------------------------------------
 QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
+{
+  return this->desiredOpenGeometry(this->baseGeometry());
+}
+
+// -------------------------------------------------------------------------
+QRect ctkPopupWidgetPrivate::desiredOpenGeometry(QRect baseGeometry)const
 {
   Q_Q(const ctkPopupWidget);
   QSize size = q->size();
@@ -305,7 +333,7 @@ QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
     size = q->sizeHint();
     }
   
-  if (!this->BaseWidget)
+  if (baseGeometry.isNull())
     {
     return QRect(q->pos(), size);
     }
@@ -315,22 +343,19 @@ QRect ctkPopupWidgetPrivate::desiredOpenGeometry()const
     {
     if (this->Orientations & Qt::Vertical)
       {
-      size.setWidth(this->BaseWidget->width());
+      size.setWidth(baseGeometry.width());
       }
     }
   if (this->Alignment & Qt::AlignTop &&
       this->Alignment & Qt::AlignBottom)
     {
-    size.setHeight(this->BaseWidget->height());
+    size.setHeight(baseGeometry.height());
     }
 
   geometry.setSize(size);
 
-  QPoint topLeft = QPoint(this->BaseWidget->geometry().left(), this->BaseWidget->geometry().top());
-  QPoint bottomRight = QPoint(this->BaseWidget->geometry().right(), this->BaseWidget->geometry().bottom());
-  
-  topLeft = this->BaseWidget->parentWidget() ? this->BaseWidget->parentWidget()->mapToGlobal(topLeft) : topLeft;
-  bottomRight = this->BaseWidget->parentWidget() ? this->BaseWidget->parentWidget()->mapToGlobal(bottomRight) : bottomRight;
+  QPoint topLeft = baseGeometry.topLeft();
+  QPoint bottomRight = baseGeometry.bottomRight();
 
   if (this->Alignment & Qt::AlignLeft)
     {
@@ -417,7 +442,13 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
     if (widget->isAncestorOf(this->BaseWidget))
       {
       QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
-      q->move(q->pos() + moveEvent->pos() - moveEvent->oldPos());
+      QPoint topLeft = widget->parentWidget() ? widget->parentWidget()->mapToGlobal(moveEvent->pos()) : moveEvent->pos();
+      topLeft += this->BaseWidget->mapTo(widget, QPoint(0,0));
+      //q->move(q->pos() + moveEvent->pos() - moveEvent->oldPos());
+      QRect newBaseGeometry = this->baseGeometry();
+	    newBaseGeometry.moveTopLeft(topLeft);
+	    QRect desiredGeometry = this->desiredOpenGeometry(newBaseGeometry);
+	    q->move(desiredGeometry.topLeft());
       }
     else if (widget->isWindow() &&
              widget->windowType() != Qt::ToolTip &&
@@ -847,7 +878,11 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
 	      break;
 	      }
 	    QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
-	    this->move(this->pos() + moveEvent->pos() - moveEvent->oldPos());
+	    QRect newBaseGeometry = d->baseGeometry();
+	    newBaseGeometry.moveTopLeft(d->mapToGlobal(moveEvent->pos()));
+	    QRect desiredGeometry = d->desiredOpenGeometry(newBaseGeometry);
+	    this->move(desiredGeometry.topLeft());
+	    //this->move(this->pos() + moveEvent->pos() - moveEvent->oldPos());
 	    this->update();
 	    break;
 	    }	    

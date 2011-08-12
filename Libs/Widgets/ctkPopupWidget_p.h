@@ -68,6 +68,9 @@ public:
   /// Return the desired geometry, maybe it won't happen if the size is too
   /// small for the popup.
   QRect desiredOpenGeometry()const;
+  QRect desiredOpenGeometry(QRect baseGeometry)const;
+  QRect baseGeometry()const;
+  QPoint mapToGlobal(const QPoint& baseWidgetPoint)const;
   
   QPropertyAnimation* currentAnimation()const;
   
