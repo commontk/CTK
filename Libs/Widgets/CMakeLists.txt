@@ -15,6 +15,9 @@ SET(KIT_SRCS
   ctkAddRemoveComboBox.h
   ctkAxesWidget.cpp
   ctkAxesWidget.h
+  ctkBasePopupWidget.cpp
+  ctkBasePopupWidget.h
+  ctkBasePopupWidget_p.h
   ctkButtonGroup.cpp
   ctkButtonGroup.h
   ctkCheckableComboBox.cpp
@@ -89,6 +92,7 @@ SET(KIT_SRCS
   ctkPixmapIconEngine.h
   ctkPopupWidget.cpp
   ctkPopupWidget.h
+  ctkPopupWidget_p.h
   ctkQImageView.cpp
   ctkQImageView.h
   ctkRangeSlider.cpp
@@ -170,6 +174,8 @@ SET(KIT_MOC_SRCS
   ctkActionsWidget.h
   ctkAxesWidget.h
   ctkAddRemoveComboBox.h
+  ctkBasePopupWidget.h
+  ctkBasePopupWidget_p.h
   ctkButtonGroup.h
   ctkCheckableComboBox.h
   ctkCheckableHeaderView.h
