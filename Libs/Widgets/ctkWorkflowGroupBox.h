@@ -43,6 +43,7 @@ class CTK_WIDGETS_EXPORT ctkWorkflowGroupBox : public QWidget
   Q_PROPERTY(QString preText READ preText WRITE setPreText)
   Q_PROPERTY(QString postText READ postText WRITE setPostText)
   Q_PROPERTY(bool hideWidgetsOfNonCurrentSteps READ hideWidgetsOfNonCurrentSteps WRITE setHideWidgetsOfNonCurrentSteps)
+  Q_PROPERTY(bool errorTextEnabled READ errorTextEnabled WRITE setErrorTextEnabled)
 
 public:
 
@@ -90,6 +91,15 @@ public:
   /// (Default OFF).
   bool hideWidgetsOfNonCurrentSteps()const;
   void setHideWidgetsOfNonCurrentSteps(bool newHideWidgetsOfNonCurrentSteps);
+
+  ///
+  /// If errorTextEnabled is turned on, then a possible error text
+  /// will be shown just underneath the client area.
+  /// If it is turned off, then a possible error text will never
+  /// be shown.
+  /// (Default ON).
+  bool errorTextEnabled()const;
+  void setErrorTextEnabled(bool newErrorTextEnabled);
 
 public slots:
 
