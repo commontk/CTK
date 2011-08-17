@@ -412,7 +412,24 @@ void ctkMatrixWidget::setValue(int i, int j, double _value)
 }
 
 // --------------------------------------------------------------------------
-void ctkMatrixWidget::setVector(const QVector<double> & vector)
+QVector<double> ctkMatrixWidget::values()const
+{
+  Q_D(const ctkMatrixWidget);
+  QVector<double> values;
+
+  for (int i=0; i < this->rowCount(); i++)
+    {
+    for (int j=0; j < this->columnCount(); j++)
+      {
+      values.push_back(this->value(i,j));
+      }
+    }
+
+  return values;
+}
+
+// --------------------------------------------------------------------------
+void ctkMatrixWidget::setValues(const QVector<double> & vector)
 {
   Q_D(ctkMatrixWidget);
   bool blocked = this->blockSignals(true);

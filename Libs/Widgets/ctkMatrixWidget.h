@@ -22,6 +22,7 @@
 #define __ctkMatrixWidget_h
 
 /// Qt includes
+#include <QVector>
 #include <QWidget>
 
 /// CTK includes
@@ -42,6 +43,7 @@ class CTK_WIDGETS_EXPORT ctkMatrixWidget: public QWidget
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
+  Q_PROPERTY(QVector<double> values READ values WRITE setValues)
 
 public:
   /// Superclass typedef
@@ -72,7 +74,8 @@ public:
   /// that is less than the minimum or greater than the maximum.
   double value(int i, int j)const;
   void setValue(int i, int j, double value);
-  void setVector(const QVector<double> & vector);
+  QVector<double> values()const;
+  void setValues(const QVector<double> & vector);
 
   ///
   /// This property determines whether the user can edit values by
