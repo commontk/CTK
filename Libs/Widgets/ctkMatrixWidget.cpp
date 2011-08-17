@@ -401,33 +401,51 @@ double ctkMatrixWidget::value(int i, int j)const
 }
 
 // --------------------------------------------------------------------------
-void ctkMatrixWidget::setValue(int i, int j, double _value)
+void ctkMatrixWidget::setValue(int i, int j, double newValue)
 {
   Q_D(ctkMatrixWidget);
   Q_ASSERT( i>=0 && i<this->rowCount() &&
             j>=0 && j<this->columnCount());
 
-  d->Table->item(i, j)->setData(Qt::DisplayRole,
-                                QVariant(qBound(d->Minimum, _value, d->Maximum)));
+  newValue = qBound(d->Minimum, newValue, d->Maximum);
+  d->Table->item(i, j)->setData(Qt::DisplayRole, QVariant(newValue));
 }
 
 // --------------------------------------------------------------------------
-void ctkMatrixWidget::setVector(const QVector<double> & vector)
+QVector<double> ctkMatrixWidget::values()const
 {
-  Q_D(ctkMatrixWidget);
-  bool blocked = this->blockSignals(true);
-  bool modified = false;
+  Q_D(const ctkMatrixWidget);
+  QVector<double> values;
+
   for (int i=0; i < this->rowCount(); i++)
     {
     for (int j=0; j < this->columnCount(); j++)
       {
-      double value = qBound(d->Minimum,
-                            vector.at(i * this->columnCount() + j),
-                            d->Maximum);
-      double oldValue = d->Table->item(i,j)->data(Qt::DisplayRole).toDouble();
-      d->Table->item(i,j)->setData(Qt::DisplayRole, QVariant(value));
-      if (oldValue != value)
+      values.push_back(this->value(i,j));
+      }
+    }
+
+  return values;
+}
+
+// --------------------------------------------------------------------------
+void ctkMatrixWidget::setValues(const QVector<double> & vector)
+{
+  Q_D(ctkMatrixWidget);
+  Q_ASSERT(vector.size() == this->rowCount() * this->columnCount());
+  // As we are potentially making a lot of changes, just fire a unique
+  // signal at the end if at least one matrix value has been changed.
+  bool blocked = this->blockSignals(true);
+  bool modified = false;
+  for (int row=0; row < this->rowCount(); ++row)
+    {
+    for (int column=0; column < this->columnCount(); ++column)
+      {
+      double newValue = vector.at(row * this->columnCount() + column);
+      newValue = qBound(d->Minimum, newValue, d->Maximum);
+      if (newValue != this->value(row, column))
         {
+        this->setValue(row, column, newValue);
         modified = true;
         }
       }

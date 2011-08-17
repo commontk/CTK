@@ -165,11 +165,11 @@ int ctkMatrixWidgetTest2(int argc, char * argv [] )
   items.push_back(206.);
   items.push_back(207.);
   items.push_back(208.);
-  matrixWidget.setVector(items);
+  matrixWidget.setValues(items);
 
   if (matrixWidget.value(2,1) != 207.)
     {
-    std::cerr << "ctkMatrixWidget::setVector() failed:"
+    std::cerr << "ctkMatrixWidget::setValues() failed:"
               << matrixWidget.value(2,1) << std::endl;
     return EXIT_FAILURE;
     }
