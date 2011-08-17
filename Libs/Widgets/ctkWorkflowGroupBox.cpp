@@ -44,6 +44,7 @@ public:
   ~ctkWorkflowGroupBoxPrivate();
 
   bool HideWidgetsOfNonCurrentSteps;
+  bool ErrorTextEnabled;
 
   ctkWorkflowStep* StepShownPreviously;
   ctkWorkflowStep* StepShownCurrently;
@@ -58,6 +59,8 @@ public:
 ctkWorkflowGroupBoxPrivate::ctkWorkflowGroupBoxPrivate()
 {
   this->HideWidgetsOfNonCurrentSteps = false;
+
+  this->ErrorTextEnabled = true;
 
   this->StepShownPreviously = 0;
   this->StepShownCurrently = 0;
@@ -93,6 +96,8 @@ ctkWorkflowGroupBox::~ctkWorkflowGroupBox()
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowGroupBox, bool, hideWidgetsOfNonCurrentSteps, HideWidgetsOfNonCurrentSteps);
 CTK_SET_CPP(ctkWorkflowGroupBox, bool, setHideWidgetsOfNonCurrentSteps, HideWidgetsOfNonCurrentSteps);
+CTK_GET_CPP(ctkWorkflowGroupBox, bool, errorTextEnabled, ErrorTextEnabled);
+CTK_SET_CPP(ctkWorkflowGroupBox, bool, setErrorTextEnabled, ErrorTextEnabled);
 CTK_GET_CPP(ctkWorkflowGroupBox, QLayout*, clientAreaLayout, ClientAreaLayout);
 
 // --------------------------------------------------------------------------
@@ -113,7 +118,7 @@ void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
     d->SubTitleTextBrowser->setVisible(!this->subTitle().isEmpty());
     d->PreTextBrowser->setVisible(!this->preText().isEmpty());
     d->PostTextBrowser->setVisible(!this->postText().isEmpty());
-    d->ErrorTextBrowser->setVisible(!this->errorText().isEmpty());
+    d->ErrorTextBrowser->setVisible(!this->errorText().isEmpty() && d->ErrorTextEnabled);
     }
 
   // disable/hide the previously shown step
