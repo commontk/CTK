@@ -47,6 +47,9 @@ public:
 
   QIcon clearIcon;
   QIcon searchIcon;
+  bool showSearchIcon;
+  bool alwaysShowClearIcon;
+  bool hideClearIcon;
 
   QIcon::Mode clearIconMode;
 #if QT_VERSION < 0x040700
@@ -61,6 +64,9 @@ ctkSearchBoxPrivate::ctkSearchBoxPrivate(ctkSearchBox &object)
   this->clearIcon = QIcon(":Icons/clear.svg");
   this->searchIcon = QIcon(":Icons/search.svg");
   this->clearIconMode = QIcon::Disabled;
+  this->showSearchIcon = false;
+  this->alwaysShowClearIcon = false;
+  this->hideClearIcon = true;
 }
 
 // --------------------------------------------------
@@ -141,6 +147,40 @@ void ctkSearchBox::setPlaceholderText(const QString &defaultText)
 #endif
 
 // --------------------------------------------------
+void ctkSearchBox::setShowSearchIcon(bool show)
+{
+  Q_D(ctkSearchBox);
+  d->showSearchIcon = show;
+  this->update();
+}
+
+// --------------------------------------------------
+bool ctkSearchBox::showSearchIcon()const
+{
+  Q_D(const ctkSearchBox);
+  return d->showSearchIcon;
+}
+
+// --------------------------------------------------
+void ctkSearchBox::setAlwaysShowClearIcon(bool show)
+{
+  Q_D(ctkSearchBox);
+  d->alwaysShowClearIcon = show;
+  if (show == true)
+    {
+    d->hideClearIcon = false;
+    }
+  this->update();
+}
+
+// --------------------------------------------------
+bool ctkSearchBox::alwaysShowClearIcon()const
+{
+  Q_D(const ctkSearchBox);
+  return d->alwaysShowClearIcon;
+}
+
+// --------------------------------------------------
 void ctkSearchBox::paintEvent(QPaintEvent * event)
 {
   Q_D(ctkSearchBox);
@@ -153,7 +193,7 @@ void ctkSearchBox::paintEvent(QPaintEvent * event)
   QPainter p(this);
 
   QRect cRect = d->clearRect();
-  QRect sRect = d->searchRect();
+  QRect sRect = d->showSearchIcon ? d->searchRect() : QRect();
 
 #if QT_VERSION >= 0x040700
   QRect r = rect();
@@ -209,13 +249,18 @@ void ctkSearchBox::paintEvent(QPaintEvent * event)
 #endif
 
   // Draw clearIcon
-  QPixmap closePixmap = d->clearIcon.pixmap(cRect.size(),d->clearIconMode);
-  this->style()->drawItemPixmap(&p, cRect, Qt::AlignCenter, closePixmap);
+  if (!d->hideClearIcon)
+    {
+    QPixmap closePixmap = d->clearIcon.pixmap(cRect.size(),d->clearIconMode);
+    this->style()->drawItemPixmap(&p, cRect, Qt::AlignCenter, closePixmap);
+    }
 
-  //Draw searchIcon
-  QPixmap searchPixmap = d->searchIcon.pixmap(sRect.size());
-  this->style()->drawItemPixmap(&p, sRect, Qt::AlignCenter, searchPixmap);
-
+  // Draw searchIcon
+  if (d->showSearchIcon)
+    {
+    QPixmap searchPixmap = d->searchIcon.pixmap(sRect.size());
+    this->style()->drawItemPixmap(&p, sRect, Qt::AlignCenter, searchPixmap);
+    }
 }
 
 // --------------------------------------------------
@@ -229,7 +274,7 @@ void ctkSearchBox::mousePressEvent(QMouseEvent *e)
     return;
     }
 
-  if(d->searchRect().contains(e->pos()))
+  if(d->showSearchIcon && d->searchRect().contains(e->pos()))
     {
     this->selectAll();
     return;
@@ -243,7 +288,8 @@ void ctkSearchBox::mouseMoveEvent(QMouseEvent *e)
 {
   Q_D(ctkSearchBox);
 
-  if(d->clearRect().contains(e->pos()) || d->searchRect().contains(e->pos()))
+  if(d->clearRect().contains(e->pos()) ||
+     (d->showSearchIcon && d->searchRect().contains(e->pos())))
     {
     this->setCursor(Qt::ArrowCursor);
     }
@@ -258,9 +304,9 @@ void ctkSearchBox::mouseMoveEvent(QMouseEvent *e)
 void ctkSearchBox::resizeEvent(QResizeEvent * event)
 {
   Q_D(ctkSearchBox);
-  static int iconSpacing = 4; // hardcoded, same way as pushbutton icon spacing
+  static int iconSpacing = 0; // hardcoded,
   QRect cRect = d->clearRect();
-  QRect sRect = d->searchRect();
+  QRect sRect = d->showSearchIcon ? d->searchRect() : QRect();
   // Set 2 margins each sides of the QLineEdit, according to the icons
   this->setTextMargins( sRect.right() + iconSpacing, 0,
                         event->size().width() - cRect.left() - iconSpacing,0);
@@ -270,6 +316,9 @@ void ctkSearchBox::resizeEvent(QResizeEvent * event)
 void ctkSearchBox::updateClearButtonState()
 {
   Q_D(ctkSearchBox);
-  d->clearIconMode = this->text().isEmpty() ? QIcon::Disabled : QIcon::Normal;
+  if (!d->alwaysShowClearIcon)
+    {
+    d->hideClearIcon = this->text().isEmpty() ? true : false;
+    }
 }
 
