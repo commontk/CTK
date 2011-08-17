@@ -56,7 +56,7 @@ public:
 
   /// Get the widget constaining the title, subtitle, pre-text, post-text, error-text and client area
   /// layout.
-  virtual ctkWorkflowGroupBox* workflowGroupBox()const;
+  Q_INVOKABLE virtual ctkWorkflowGroupBox* workflowGroupBox()const;
 
   /// Set/get whether or not to associate a buttonBoxWidget with this step (default true)
   bool showButtonBoxWidget()const;
