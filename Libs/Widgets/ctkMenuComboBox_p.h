@@ -38,6 +38,7 @@ public:
   virtual ~ctkMenuComboBoxInternal();
   virtual void showPopup();
 
+  virtual QSize minimumSizeHint()const;
   QWeakPointer<QMenu>  Menu;
 };
 

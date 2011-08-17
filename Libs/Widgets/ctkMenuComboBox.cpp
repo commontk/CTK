@@ -56,6 +56,14 @@ void ctkMenuComboBoxInternal::showPopup()
 }
 
 // -------------------------------------------------------------------------
+QSize ctkMenuComboBoxInternal::minimumSizeHint()const
+{
+  // Cached QComboBox::minimumSizeHint is not recomputed when the current
+  // index change, however QComboBox::sizeHint is. Use it instead.
+  return this->sizeHint();
+}
+
+// -------------------------------------------------------------------------
 ctkMenuComboBoxPrivate::ctkMenuComboBoxPrivate(ctkMenuComboBox& object)
   :q_ptr(&object)
 {
@@ -84,8 +92,11 @@ void ctkMenuComboBoxPrivate::init()
   this->SearchCompleter = new QCompleter(QStringList(), q);
   this->SearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
 
-  //q->setSizePolicy(this->MenuComboBox->sizePolicy());
-  q->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+  // Automatically set the minimumSizeHint of the layout to the widget
+  layout->setSizeConstraint(QLayout::SetMinimumSize);
+  // Behave like a QComboBox
+  q->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed,
+                               QSizePolicy::ComboBox));
   q->setDefaultText(ctkMenuComboBox::tr("Search..."));
 }
 
