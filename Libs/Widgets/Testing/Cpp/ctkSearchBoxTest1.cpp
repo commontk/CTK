@@ -17,6 +17,7 @@ int ctkSearchBoxTest1(int argc, char* argv[])
   QApplication app(argc, argv);
 
   ctkSearchBox search;
+  search.setShowSearchIcon(true);
   search.show();
 
   QWidget topLevel;

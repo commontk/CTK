@@ -50,6 +50,7 @@ class CTK_WIDGETS_EXPORT ctkSearchBox : public QLineEdit
   /// manually.
   Q_PROPERTY(QString placeholderText READ placeholderText WRITE setPlaceholderText)
 #endif
+  Q_PROPERTY(bool showSearchIcon READ showSearchIcon WRITE setShowSearchIcon)
 
 public:
   /// Superclass typedef
@@ -62,6 +63,12 @@ public:
   QString placeholderText()const;
   void setPlaceholderText(const QString& defaultText);
 #endif
+  /// False by default
+  void setShowSearchIcon(bool);
+  bool showSearchIcon()const;
+
+  void setAlwaysShowClearIcon(bool);
+  bool alwaysShowClearIcon()const;
 
 protected slots:
   /// Change the clear icon's state to enabled or disabled.

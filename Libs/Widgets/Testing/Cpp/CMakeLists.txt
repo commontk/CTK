@@ -41,6 +41,9 @@ SET(TEST_SOURCES
   ctkMatrixWidgetTest1.cpp
   ctkMatrixWidgetTest2.cpp
   ctkMenuButtonTest1.cpp
+  ctkMenuComboBoxTest1.cpp
+  ctkMenuComboBoxTest2.cpp
+  ctkMenuComboBoxTest3.cpp
   ctkModalityWidgetTest1.cpp
   ctkPathLineEditTest1.cpp
   ctkPopupWidgetTest1.cpp
@@ -164,6 +167,9 @@ SIMPLE_TEST( ctkMaterialPropertyWidgetTest2 )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest2 )
 SIMPLE_TEST( ctkMenuButtonTest1 )
+SIMPLE_TEST( ctkMenuComboBoxTest1 )
+SIMPLE_TEST( ctkMenuComboBoxTest2 )
+SIMPLE_TEST( ctkMenuComboBoxTest3 )
 SIMPLE_TEST( ctkModalityWidgetTest1 )
 SIMPLE_TEST( ctkPathLineEditTest1 )
 SIMPLE_TEST( ctkPopupWidgetTest1 )
