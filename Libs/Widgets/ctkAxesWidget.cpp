@@ -68,7 +68,7 @@ ctkAxesWidgetPrivate::ctkAxesWidgetPrivate(ctkAxesWidget& object)
   this->AutoReset = false;
 
   this->AxesLabels << "R" << "L" << "S" << "I" << "A" << "P";
-  this->AxesAngles << 0 <<  3.14159265 << 1.57079633 <<  4.71238898 << 5.49778714 << 2.35619449;
+  this->AxesAngles << 3.14159265 << 0 << 1.57079633 <<  4.71238898 << 5.49778714 << 2.35619449;
 }
 
 //-----------------------------------------------------------------------------
