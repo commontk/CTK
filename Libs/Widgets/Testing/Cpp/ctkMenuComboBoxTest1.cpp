@@ -65,6 +65,7 @@ int ctkMenuComboBoxTest1(int argc, char * argv [] )
   Menu2->setAutoFillBackground(true);
   Menu2->setMinimumContentsLength(25);
   Menu2->setEditableBehavior(ctkMenuComboBox::EditableOnFocus);
+  Menu2->setEditableBehavior(ctkMenuComboBox::EditableOnDoubleClick);
   //Menu2->show();
 
 /*

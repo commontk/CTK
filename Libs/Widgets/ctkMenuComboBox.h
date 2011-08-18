@@ -32,18 +32,19 @@
 class ctkMenuComboBoxPrivate;
 
 /// QComboBox linked with a QMenu. See ctkMenuComboBox::setMenu()
-/// ctkMenuComboBox can be editable, editable on focus or disable.
+/// ctkMenuComboBox can be editable, disable,
+/// editable on focus or editable on double click.
 ///   if it is editable :
 /// the comboBox is always editable, you can filter the Menu or show it.
-///   if it is editable on focus:
+///   if it is editable on focus - on double click:
 /// the combobox become editable when it has the focus in.
 /// So ctkMenuComboBox's purpose is to filter a menu, if you edit the current text
 /// or show the menu, if you click on the arrow.
 ///   if it is disabled :
 /// the ctkMenuComboBox has the same behavior as a QPushButton. You can't filter the menu.
 
-/// By default ctkMenuComboBox is editable on focus.
-/// See ctkmenuComboBox::editableType() to change the default behavior.
+/// By default ctkMenuComboBox is editable on double click.
+/// See ctkmenuComboBox::setEditableType() to change the default behavior.
 
 class CTK_WIDGETS_EXPORT ctkMenuComboBox : public QWidget
 {
@@ -57,7 +58,8 @@ public:
   enum EditableBehavior{
     NotEditable = 0,
     Editable,
-    EditableOnFocus
+    EditableOnFocus,
+    EditableOnDoubleClick
   };
 
   /// Superclass typedef
