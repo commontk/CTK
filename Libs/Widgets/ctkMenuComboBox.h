@@ -59,7 +59,7 @@ public:
     NotEditable = 0,
     Editable,
     EditableOnFocus,
-    EditableOnDoubleClick
+    EditableOnPopup
   };
 
   /// Superclass typedef

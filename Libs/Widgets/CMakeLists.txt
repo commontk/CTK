@@ -80,6 +80,7 @@ SET(KIT_SRCS
   ctkMenuButton.h
   ctkMenuComboBox.cpp
   ctkMenuComboBox.h
+  ctkMenuComboBox_p.h
   ctkModalityWidget.cpp
   ctkModalityWidget.h
   ctkPathLineEdit.cpp
@@ -202,6 +203,7 @@ SET(KIT_MOC_SRCS
   ctkMatrixWidget.h
   ctkMenuButton.h
   ctkMenuComboBox.h
+  ctkMenuComboBox_p.h
   ctkModalityWidget.h
   ctkPathLineEdit.h
   ctkPopupWidget.h
