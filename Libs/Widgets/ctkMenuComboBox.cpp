@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QActionEvent>
-#include <QComboBox>
 #include <QCompleter>
 #include <QDebug>
 #include <QEvent>
@@ -53,6 +52,7 @@ void ctkMenuComboBoxInternal::showPopup()
   menu->popup(this->mapToGlobal(this->rect().bottomLeft()));
   static int minWidth = menu->sizeHint().width();
   menu->setFixedWidth(qMax(this->width(), minWidth));
+  emit popupShown();
 }
 
 // -------------------------------------------------------------------------
@@ -69,7 +69,7 @@ ctkMenuComboBoxPrivate::ctkMenuComboBoxPrivate(ctkMenuComboBox& object)
 {
   this->MenuComboBox = 0;
   this->SearchCompleter = 0;
-  this->EditBehavior = ctkMenuComboBox::EditableOnDoubleClick;
+  this->EditBehavior = ctkMenuComboBox::EditableOnPopup;
   this->IsDefaultTextCurrent = true;
   this->IsDefaultIconCurrent = true;
 }
@@ -78,6 +78,8 @@ ctkMenuComboBoxPrivate::ctkMenuComboBoxPrivate(ctkMenuComboBox& object)
 void ctkMenuComboBoxPrivate::init()
 {
   Q_Q(ctkMenuComboBox);
+  this->setParent(q);
+
   QHBoxLayout* layout = new QHBoxLayout(q);
   layout->setContentsMargins(0,0,0,0);
   layout->setSizeConstraint(QLayout::SetMinimumSize);
@@ -351,6 +353,8 @@ void ctkMenuComboBox::setEditableBehavior(ctkMenuComboBox::EditableBehavior edit
 {
   Q_D(ctkMenuComboBox);
   d->EditBehavior = edit;
+      this->disconnect(d->MenuComboBox, SIGNAL(popupShown()),
+                    d, SLOT(setComboBoxEditable()));
   switch (edit)
   {
     case ctkMenuComboBox::Editable:
@@ -369,8 +373,10 @@ void ctkMenuComboBox::setEditableBehavior(ctkMenuComboBox::EditableBehavior edit
       // which call a popup, because the focus is losted.
       d->MenuComboBox->setContextMenuPolicy(Qt::NoContextMenu);
       break;
-    case ctkMenuComboBox::EditableOnDoubleClick:
+    case ctkMenuComboBox::EditableOnPopup:
       d->setComboBoxEditable(false);
+      this->connect(d->MenuComboBox, SIGNAL(popupShown()),
+                    d, SLOT(setComboBoxEditable()));
       // Same reason.
       d->MenuComboBox->setContextMenuPolicy(Qt::NoContextMenu);
       break;
@@ -445,27 +451,20 @@ bool ctkMenuComboBox::eventFilter(QObject* target, QEvent* event)
 
   if (target == d->MenuComboBox)
     {
-    if (event->type() == QEvent::MouseButtonDblClick &&
-        d->EditBehavior == ctkMenuComboBox::EditableOnDoubleClick)
-      {
-      d->setComboBoxEditable(true);
-      }
     if (event->type() == QEvent::Resize)
       {
       this->layout()->invalidate();
       }
-    if(d->EditBehavior == ctkMenuComboBox::EditableOnFocus ||
-       d->EditBehavior == ctkMenuComboBox::EditableOnDoubleClick)
+    if (event->type() == QEvent::FocusIn &&
+        d->EditBehavior == ctkMenuComboBox::EditableOnFocus)
       {
-      if (event->type() == QEvent::FocusIn &&
-          d->EditBehavior == ctkMenuComboBox::EditableOnFocus)
-        {
-        d->setComboBoxEditable(true);
-        }
-      if (event->type() == QEvent::FocusOut)
-        {
-        d->setComboBoxEditable(false);
-        }
+      d->setComboBoxEditable(true);
+      }
+    if (event->type() == QEvent::FocusOut &&
+        (d->EditBehavior == ctkMenuComboBox::EditableOnFocus ||
+         d->EditBehavior == ctkMenuComboBox::EditableOnPopup))
+      {
+      d->setComboBoxEditable(false);
       }
     }
   else if (event->type() == QEvent::ActionAdded)
@@ -480,4 +479,3 @@ bool ctkMenuComboBox::eventFilter(QObject* target, QEvent* event)
     }
   return this->Superclass::eventFilter(target, event);
 }
-

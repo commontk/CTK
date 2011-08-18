@@ -22,6 +22,7 @@
 #define __ctkMenuComboBox_p_h
 
 // Qt includes
+#include <QComboBox>
 #include <QWeakPointer>
 
 // CTK includes
@@ -30,6 +31,7 @@
 
 class ctkMenuComboBoxInternal: public QComboBox
 {
+  Q_OBJECT
 public:
   /// Superclass typedef
   typedef QComboBox Superclass;
@@ -39,14 +41,17 @@ public:
   virtual void showPopup();
 
   virtual QSize minimumSizeHint()const;
+signals:
+  void popupShown();
+public:
   QWeakPointer<QMenu>  Menu;
 };
 
 // -------------------------------------------------------------------------
-class ctkMenuComboBoxPrivate
+class ctkMenuComboBoxPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(ctkMenuComboBox);
-
 protected:
   ctkMenuComboBox* const q_ptr;
 public:
@@ -59,14 +64,16 @@ public:
   void setCurrentIcon(const QIcon& newCurrentIcon);
   QIcon currentIcon()const;
 
-  void setComboBoxEditable(bool);
-
   void addAction(QAction* action);
   void addMenuToCompleter(QMenu* menu);
   void addActionToCompleter(QAction* action);
 
   void removeActionToCompleter(QAction* action);
 
+public slots:
+  void setComboBoxEditable(bool editable = true);
+
+protected:
   QIcon         DefaultIcon;
   QString       DefaultText;
   bool          IsDefaultTextCurrent;
