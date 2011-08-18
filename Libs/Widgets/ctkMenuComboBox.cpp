@@ -69,7 +69,7 @@ ctkMenuComboBoxPrivate::ctkMenuComboBoxPrivate(ctkMenuComboBox& object)
 {
   this->MenuComboBox = 0;
   this->SearchCompleter = 0;
-  this->EditBehavior = ctkMenuComboBox::EditableOnFocus;
+  this->EditBehavior = ctkMenuComboBox::EditableOnDoubleClick;
   this->IsDefaultTextCurrent = true;
   this->IsDefaultIconCurrent = true;
 }
@@ -97,6 +97,7 @@ void ctkMenuComboBoxPrivate::init()
   // Behave like a QComboBox
   q->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed,
                                QSizePolicy::ComboBox));
+
   q->setDefaultText(ctkMenuComboBox::tr("Search..."));
 }
 
@@ -105,11 +106,11 @@ QAction* ctkMenuComboBoxPrivate::actionByTitle(const QString& text, const QMenu*
 {
   if (parentMenu->title() == text)
     {
-    return parentMenu->menuAction();
+    return 0;
     }
   foreach(QAction* action, parentMenu->actions())
     {
-    if (action->text().toLower() == text.toLower())
+    if (!action->menu() && action->text().toLower() == text.toLower())
       {
       return action;
       }
@@ -353,13 +354,26 @@ void ctkMenuComboBox::setEditableBehavior(ctkMenuComboBox::EditableBehavior edit
   switch (edit)
   {
     case ctkMenuComboBox::Editable:
+      d->MenuComboBox->setContextMenuPolicy(Qt::DefaultContextMenu);
       d->setComboBoxEditable(true);
       break;
     case ctkMenuComboBox::NotEditable:
+      d->MenuComboBox->setContextMenuPolicy(Qt::DefaultContextMenu);
       d->setComboBoxEditable(false);
       break;
     case ctkMenuComboBox::EditableOnFocus:
       d->setComboBoxEditable(this->hasFocus());
+      // Here we set the context menu policy to fix a crash on the right click.
+      // When the line edit lost the focus, the comboBox become not editable,
+      // and the line edit is deleted. that cause a crash when we have the right click,
+      // which call a popup, because the focus is losted.
+      d->MenuComboBox->setContextMenuPolicy(Qt::NoContextMenu);
+      break;
+    case ctkMenuComboBox::EditableOnDoubleClick:
+      d->setComboBoxEditable(false);
+      // Same reason.
+      d->MenuComboBox->setContextMenuPolicy(Qt::NoContextMenu);
+      break;
   }
 }
 
@@ -403,7 +417,6 @@ void ctkMenuComboBox::onActionSelected(QAction* action)
 
   d->MenuComboBox->clearFocus();
 
-  qDebug() << action->text();
   emit ctkMenuComboBox::actionChanged(action);
 }
 
@@ -429,15 +442,23 @@ void ctkMenuComboBox::onReturnPressed()
 bool ctkMenuComboBox::eventFilter(QObject* target, QEvent* event)
 {
   Q_D(ctkMenuComboBox);
+
   if (target == d->MenuComboBox)
     {
+    if (event->type() == QEvent::MouseButtonDblClick &&
+        d->EditBehavior == ctkMenuComboBox::EditableOnDoubleClick)
+      {
+      d->setComboBoxEditable(true);
+      }
     if (event->type() == QEvent::Resize)
       {
       this->layout()->invalidate();
       }
-    if(d->EditBehavior == ctkMenuComboBox::EditableOnFocus)
+    if(d->EditBehavior == ctkMenuComboBox::EditableOnFocus ||
+       d->EditBehavior == ctkMenuComboBox::EditableOnDoubleClick)
       {
-      if (event->type() == QEvent::FocusIn)
+      if (event->type() == QEvent::FocusIn &&
+          d->EditBehavior == ctkMenuComboBox::EditableOnFocus)
         {
         d->setComboBoxEditable(true);
         }
