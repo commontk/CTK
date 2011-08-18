@@ -87,7 +87,7 @@ void ctkVTKAbstractMatrixWidgetPrivate::updateMatrix()
       vector.append(this->Matrix->GetElement(i,j));
       }
     }
-  q->setVector( vector );
+  q->setValues( vector );
 }
 
 // --------------------------------------------------------------------------
