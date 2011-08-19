@@ -72,8 +72,12 @@ public:
   /// valid range
   /// \warning The value of a matrix element will not be changed on an attempt to set it to a value
   /// that is less than the minimum or greater than the maximum.
-  double value(int i, int j)const;
-  void setValue(int i, int j, double value);
+  Q_INVOKABLE double value(int i, int j)const;
+  Q_INVOKABLE void setValue(int i, int j, double value);
+
+  ///
+  /// Utility function to set/get all the values of the matrix at once.
+  /// Only one signal matrixChanged() is fired at the end.
   QVector<double> values()const;
   void setValues(const QVector<double> & vector);
 
