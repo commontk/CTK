@@ -52,16 +52,6 @@
       <number>12</number>
      </property>
      <item>
-      <widget class="QFrame" name="UserFrame">
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
       <layout class="QHBoxLayout" name="TopLayout">
        <property name="leftMargin">
         <number>12</number>
@@ -143,7 +133,7 @@
      <item>
       <layout class="QVBoxLayout" name="searchOptionLayout">
        <property name="spacing">
-        <number>-1</number>
+        <number>6</number>
        </property>
        <item>
         <widget class="QDockWidget" name="SearchDockWidget">
@@ -188,6 +178,16 @@
       </layout>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="UserFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="ViewerLayout">
