@@ -93,6 +93,8 @@ void ctkMenuComboBoxPrivate::init()
 
   this->SearchCompleter = new QCompleter(QStringList(), q);
   this->SearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+  q->connect(this->SearchCompleter, SIGNAL(activated(const QString&)),
+             q, SLOT(onEditingFinished()));
 
   // Automatically set the minimumSizeHint of the layout to the widget
   layout->setSizeConstraint(QLayout::SetMinimumSize);
@@ -170,8 +172,8 @@ void ctkMenuComboBoxPrivate::setComboBoxEditable(bool edit)
       {
       ctkSearchBox* line = new ctkSearchBox();
       this->MenuComboBox->setLineEdit(line);
-      q->connect(line, SIGNAL(returnPressed()),
-                 q,SLOT(onReturnPressed()));
+      q->connect(line, SIGNAL(editingFinished()),
+                 q,SLOT(onEditingFinished()));
       }
     this->MenuComboBox->setCompleter(this->SearchCompleter);
     }
@@ -433,9 +435,13 @@ void ctkMenuComboBox::clearActiveAction()
 }
 
 // -------------------------------------------------------------------------
-void ctkMenuComboBox::onReturnPressed()
+void ctkMenuComboBox::onEditingFinished()
 {
   Q_D(ctkMenuComboBox);
+  if (!d->MenuComboBox->lineEdit())
+    {
+    return;
+    }
   QAction* action = d->actionByTitle(d->MenuComboBox->lineEdit()->text(), d->Menu.data());
   if (!action)
     {
