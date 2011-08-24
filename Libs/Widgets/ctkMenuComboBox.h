@@ -104,7 +104,7 @@ protected slots:
   /// action selected from the menu.
   void onActionSelected(QAction* action);
   /// action selected from the line edit or the completer.
-  void onReturnPressed();
+  void onEditingFinished();
 
 protected:
   QScopedPointer<ctkMenuComboBoxPrivate> d_ptr;
