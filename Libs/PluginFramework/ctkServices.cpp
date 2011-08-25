@@ -196,8 +196,8 @@ QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString&
     if (!filter.isEmpty())
     {
       ldap = ctkLDAPExpr(filter);
-      QSet<QString> matched = ldap.getMatchedObjectClasses();
-      if (!matched.isEmpty())
+      QSet<QString> matched;
+      if (ldap.getMatchedObjectClasses(matched))
       {
         v.clear();
         foreach (QString className, matched)

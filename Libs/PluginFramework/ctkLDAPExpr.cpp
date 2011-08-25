@@ -179,43 +179,59 @@ ctkLDAPExpr::~ctkLDAPExpr()
 }
 
 //----------------------------------------------------------------------------
-QSet<QString> ctkLDAPExpr::getMatchedObjectClasses() const
+bool ctkLDAPExpr::getMatchedObjectClasses(QSet<QString>& objClasses) const
 {
-  QSet<QString> objClasses;
-  if (d->m_operator == EQ) 
+  if (d->m_operator == EQ)
   {
     if (d->m_attrName.compare(ctkPluginConstants::OBJECTCLASS, Qt::CaseInsensitive) &&
       d->m_attrValue.indexOf(WILDCARD) < 0) 
     {
       objClasses.insert( d->m_attrValue );
+      return true;
     }
+    return false;
   }
   else if (d->m_operator == AND) 
   {
-    for (int i = 0; i < d->m_args.size( ); i++) {
-      QSet<QString> r = d->m_args[i].getMatchedObjectClasses();
-      if ( !r.empty() ) {
-        if (objClasses.empty()) {
+    bool result = false;
+    for (int i = 0; i < d->m_args.size( ); i++)
+    {
+      QSet<QString> r;
+      if(d->m_args[i].getMatchedObjectClasses(r))
+      {
+        result = true;
+        if (objClasses.empty())
+        {
           objClasses = r;
-        } else {
+        }
+        else
+        {
           // if AND op and classes in several operands,
           // then only the intersection is possible.
-          objClasses = r;
+          objClasses.intersect(r);
         }
       }
     }
-  } else if (d->m_operator == OR) {
-    for (int i = 0; i < d->m_args.length( ); i++) {
-      QSet<QString> r = d->m_args[i].getMatchedObjectClasses();
-      if ( !r.empty() ) {
+    return result;
+  }
+  else if (d->m_operator == OR)
+  {
+    for (int i = 0; i < d->m_args.length( ); i++)
+    {
+      QSet<QString> r;
+      if (d->m_args[i].getMatchedObjectClasses(r))
+      {
         objClasses += r;
-      } else {
+      }
+      else
+      {
         objClasses.clear();
-        break;
+        return false;
       }
     }
+    return true;
   }
-  return objClasses;
+  return false;
 }
 
 //----------------------------------------------------------------------------

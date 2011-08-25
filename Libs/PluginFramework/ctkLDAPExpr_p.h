@@ -78,11 +78,13 @@ public:
 
   /**
    * Get object class set matched by this LDAP expression. This will not work
-   * with wildcards and NOT expressions. If a set can not be determined return null.
+   * with wildcards and NOT expressions. If a set can not be determined return <code>fasle</code>.
    *
-   * @return A set of classes matched, otherwise an empty set.
+   * \param objClasses The set of matched classes will be added to objClasses.
+   * \return If the set cannot be determined, <code>false</code> is returned,
+   *         <code>true</code> otherwise.
    */
-  QSet<QString> getMatchedObjectClasses() const;
+  bool getMatchedObjectClasses(QSet<QString>& objClasses) const;
 
   /**
    * Checks if this LDAP expression is "simple". The definition of
