@@ -31,6 +31,15 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public ctkBasePopupWidget
 {
   Q_OBJECT
 
+  /// Control wether the popup listens to the application and baseWidget
+  /// events and decides if it needs to be permanently or temporarily hidden.
+  /// You might want to setActive(false) when embedding the popup
+  /// into a static layout intead of having it top-level (no parent).
+  /// Consider also removing its windowFlags (Qt::ToolTip |
+  /// Qt::FramelessWindowHint) and removing the baseWidget.
+  /// True by default
+  Q_PROPERTY( bool active READ isActive WRITE setActive)
+
   /// Control wether the popup automatically opens when the mouse
   /// enter the widget. True by default
   Q_PROPERTY( bool autoShow READ autoShow WRITE setAutoShow)
@@ -48,6 +57,9 @@ public:
   /// and if the ctkPopupWidget sizepolicy contains the growFlag/shrinkFlag,
   /// it tries to resize itself to fit the same width of \a baseWidget.
   virtual void setBaseWidget(QWidget* baseWidget);
+
+  bool isActive()const;
+  void setActive(bool);
 
   bool autoShow()const;
   /// Calling setAutoShow automatically updates opens the popup if the cursor

@@ -425,6 +425,15 @@ QRect ctkBasePopupWidgetPrivate::desiredOpenGeometry(QRect baseGeometry)const
 void ctkBasePopupWidgetPrivate::hideAll()
 {
   Q_Q(ctkBasePopupWidget);
+
+  // It is possible to have the popup widget not being a popup but inside
+  // a layout: maybe the popup has been pin-down in a way that it gets parented
+  // In that case, there is no reason to hide the popup.
+  if (q->parentWidget() != 0)
+    {
+    return;
+    }
+
   // Before hiding, transfer the active window flag to its parent, this will
   // prevent the application to send a ApplicationDeactivate signal that
   // doesn't need to be done.

@@ -45,6 +45,7 @@
 ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
   :Superclass(object)
 {
+  this->Active = false;
   this->AutoShow = true;
   this->AutoHide = true;
 }
@@ -60,8 +61,7 @@ void ctkPopupWidgetPrivate::init()
   Q_Q(ctkPopupWidget);
   this->setParent(q);
   this->Superclass::init();
-  this->PopupPixmapWidget->installEventFilter(q);
-  qApp->installEventFilter(this);
+  q->setActive(true);
 }
 
 // -------------------------------------------------------------------------
@@ -258,6 +258,42 @@ ctkPopupWidget::~ctkPopupWidget()
 }
 
 // -------------------------------------------------------------------------
+bool ctkPopupWidget::isActive()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->Active;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setActive(bool active)
+{
+  Q_D(ctkPopupWidget);
+  if (active == d->Active)
+    {
+    return;
+    }
+  d->Active = active;
+  if (d->Active)
+    {
+    if (d->BaseWidget)
+      {
+      d->BaseWidget->installEventFilter(this);
+      }
+    d->PopupPixmapWidget->installEventFilter(this);
+    qApp->installEventFilter(d);
+    }
+  else // not active
+    {
+    if (d->BaseWidget)
+      {
+      d->BaseWidget->removeEventFilter(this);
+      }
+    d->PopupPixmapWidget->removeEventFilter(this);
+    qApp->removeEventFilter(d);
+    }
+}
+
+// -------------------------------------------------------------------------
 void ctkPopupWidget::setBaseWidget(QWidget* widget)
 {
   Q_D(ctkPopupWidget);
@@ -266,7 +302,7 @@ void ctkPopupWidget::setBaseWidget(QWidget* widget)
     d->BaseWidget->removeEventFilter(this);
     }
   this->Superclass::setBaseWidget(widget);
-  if (d->BaseWidget)
+  if (d->BaseWidget && d->Active)
     {
     d->BaseWidget->installEventFilter(this);
     }

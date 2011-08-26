@@ -54,6 +54,7 @@ public slots:
   void onApplicationDeactivate();
 
 protected:
+  bool Active;
   bool AutoShow;
   bool AutoHide;
 };
