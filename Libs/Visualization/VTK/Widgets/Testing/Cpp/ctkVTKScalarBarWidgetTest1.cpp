@@ -57,7 +57,7 @@ int ctkVTKScalarBarWidgetTest1(int argc, char * argv [] )
     }
   // it will fail as there is no interactor set to the widget
   scalarBar->SetEnabled(true);
-  if (widget.display() != (scalarBar->GetEnabled() == 1))
+  if (widget.display() != static_cast<bool>(scalarBar->GetEnabled()))
     {
     std::cerr << "ctkVTKScalarBarWidget::setDisplay() failed"
               << std::endl;

@@ -370,16 +370,18 @@ void ctkMenuComboBox::setEditableBehavior(ctkMenuComboBox::EditableBehavior edit
     case ctkMenuComboBox::EditableOnFocus:
       d->setComboBoxEditable(this->hasFocus());
       // Here we set the context menu policy to fix a crash on the right click.
-      // When the line edit lost the focus, the comboBox become not editable,
-      // and the line edit is deleted. that cause a crash when we have the right click,
-      // which call a popup, because the focus is losted.
+      // Opening the context menu removes the focus on the line edit,
+      // the comboBox becomes not editable, and the line edit is deleted.
+      // The opening of the context menu is done in the line edit and lead to
+      // a crash because it infers that the line edit is valid. Another fix
+      // could be to delete the line edit later (deleteLater()).
       d->MenuComboBox->setContextMenuPolicy(Qt::NoContextMenu);
       break;
     case ctkMenuComboBox::EditableOnPopup:
       d->setComboBoxEditable(false);
       this->connect(d->MenuComboBox, SIGNAL(popupShown()),
                     d, SLOT(setComboBoxEditable()));
-      // Same reason.
+      // Same reason as in ctkMenuComboBox::EditableOnFocus.
       d->MenuComboBox->setContextMenuPolicy(Qt::NoContextMenu);
       break;
   }

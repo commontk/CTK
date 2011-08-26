@@ -31,7 +31,7 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public ctkBasePopupWidget
 {
   Q_OBJECT
 
-  /// Control wether the popup listens to the application and baseWidget
+  /// Control whether the popup listens to the application and baseWidget
   /// events and decides if it needs to be permanently or temporarily hidden.
   /// You might want to setActive(false) when embedding the popup
   /// into a static layout intead of having it top-level (no parent).
