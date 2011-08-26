@@ -645,6 +645,7 @@ void ctkBasePopupWidget::paintEvent(QPaintEvent* event)
   //QColor semiTransparentColor = this->palette().window().color();
   //semiTransparentColor.setAlpha(d->CurrentAlpha);
   painter.fillRect(this->rect(), brush);
+  painter.end();
   // Let the QFrame draw itself if needed
   this->Superclass::paintEvent(event);
 }
