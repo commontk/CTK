@@ -144,7 +144,9 @@ void ctkFileDialog::setAcceptButtonEnable(bool enable)
 {
   Q_D(ctkFileDialog);
   d->AcceptButtonEnable = enable;
+  d->IgnoreEvent = true;
   d->acceptButton()->setEnabled(d->AcceptButtonEnable && d->AcceptButtonState);
+  d->IgnoreEvent = false;
 }
 
 //------------------------------------------------------------------------------
