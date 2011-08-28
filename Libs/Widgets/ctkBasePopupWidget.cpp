@@ -182,7 +182,6 @@ QWidgetList ctkBasePopupWidgetPrivate::focusWidgets(bool onlyVisible)const
 // -------------------------------------------------------------------------
 QWidget* ctkBasePopupWidgetPrivate::mouseOver()
 {
-  Q_Q(ctkBasePopupWidget);
   QList<QWidget*> widgets = this->focusWidgets(true);
   foreach(QWidget* widget, widgets)
     {

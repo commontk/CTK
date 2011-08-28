@@ -414,7 +414,6 @@ void ctkMatrixWidget::setValue(int i, int j, double newValue)
 // --------------------------------------------------------------------------
 QVector<double> ctkMatrixWidget::values()const
 {
-  Q_D(const ctkMatrixWidget);
   QVector<double> values;
 
   for (int i=0; i < this->rowCount(); i++)

@@ -220,11 +220,10 @@ void ctkMenuComboBoxPrivate::addMenuToCompleter(QMenu* menu)
 // -------------------------------------------------------------------------
 void ctkMenuComboBoxPrivate::addActionToCompleter(QAction *action)
 {
-  QStringListModel* model = qobject_cast<QStringListModel* >(this->SearchCompleter->model());
-  Q_ASSERT(model);
+  Q_ASSERT(qobject_cast<QStringListModel* >(this->SearchCompleter->model()));
   QModelIndex start = this->SearchCompleter->model()->index(0,0);
   QModelIndexList indexList = this->SearchCompleter->model()->match(
-      start, 0, action->text());
+    start, 0, action->text());
   if (indexList.count())
     {
     return;

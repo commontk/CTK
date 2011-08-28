@@ -185,6 +185,5 @@ bool ctkFileDialog::eventFilter(QObject *obj, QEvent *event)
 //------------------------------------------------------------------------------
 void ctkFileDialog::onSelectionChanged()
 {
-  Q_D(ctkFileDialog);
   emit this->fileSelectionChanged(this->selectedFiles());
 }

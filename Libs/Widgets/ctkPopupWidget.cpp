@@ -486,8 +486,6 @@ void ctkPopupWidget::updatePopup()
 // --------------------------------------------------------------------------
 void ctkPopupWidget::hidePopup()
 {
-  Q_D(ctkPopupWidget);
-
   // just in case it was set.
   this->setProperty("forcedClosed", 0);
 
