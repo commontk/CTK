@@ -24,6 +24,7 @@
 #include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
+#include <QListView>
 #include <QPushButton>
 
 // CTK includes
@@ -38,7 +39,10 @@ protected:
 public:
   ctkFileDialogPrivate(ctkFileDialog& object);
   void init();
+
   QPushButton* acceptButton()const;
+  QListView* listView()const;
+
   bool AcceptButtonEnable;
   bool AcceptButtonState;
   bool IgnoreEvent;
@@ -65,6 +69,10 @@ void ctkFileDialogPrivate::init()
   // double click on the file, the dialog will be accepted, that event should
   // be intercepted as well
   button->installEventFilter(q);
+
+  QObject::connect(this->listView()->selectionModel(),
+                   SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+                   q, SLOT(onSelectionChanged()));
 }
 
 //------------------------------------------------------------------------------
@@ -76,6 +84,15 @@ QPushButton* ctkFileDialogPrivate::acceptButton()const
   QDialogButtonBox::StandardButton button =
     (q->acceptMode() == QFileDialog::AcceptOpen ? QDialogButtonBox::Open : QDialogButtonBox::Save);
   return buttonBox->button(button);
+}
+
+//------------------------------------------------------------------------------
+QListView* ctkFileDialogPrivate::listView()const
+{
+  Q_Q(const ctkFileDialog);
+  QListView* listView= q->findChild<QListView*>("listView");
+  Q_ASSERT(listView);
+  return listView;
 }
 
 //------------------------------------------------------------------------------
@@ -163,4 +180,11 @@ bool ctkFileDialog::eventFilter(QObject *obj, QEvent *event)
     d->IgnoreEvent = false;
     }
   return QFileDialog::eventFilter(obj, event);
+}
+
+//------------------------------------------------------------------------------
+void ctkFileDialog::onSelectionChanged()
+{
+  Q_D(ctkFileDialog);
+  emit this->fileSelectionChanged(this->selectedFiles());
 }

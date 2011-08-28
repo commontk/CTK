@@ -66,6 +66,15 @@ public slots:
   /// dialog if a value is not set in the extra bottom widget.
   void setAcceptButtonEnable(bool enable);
 
+signals:
+  /// Signals QFileDialog::file[s]Selected() are fired only when the Ok button
+  /// is pressed, fileSelectionChanged(QStringList) is emitted when the
+  /// selection is changed, not just when the dialog is accepted.
+  void fileSelectionChanged(const QStringList& selected);
+
+protected slots:
+  void onSelectionChanged();
+
 protected:
   QScopedPointer<ctkFileDialogPrivate> d_ptr;
 
