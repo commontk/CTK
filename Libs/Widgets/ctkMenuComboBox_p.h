@@ -27,7 +27,7 @@
 
 // CTK includes
 #include "ctkMenuComboBox.h"
-#include "ctkSearchBox.h"
+class ctkCompleter;
 
 class ctkMenuComboBoxInternal: public QComboBox
 {
@@ -82,7 +82,7 @@ protected:
   ctkMenuComboBox::EditableBehavior EditBehavior;
 
   ctkMenuComboBoxInternal*    MenuComboBox;
-  QCompleter*                 SearchCompleter;
+  ctkCompleter*               SearchCompleter;
   QWeakPointer<QMenu>         Menu;
 };
 

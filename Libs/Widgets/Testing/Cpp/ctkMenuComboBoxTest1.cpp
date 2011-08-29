@@ -87,7 +87,7 @@ int ctkMenuComboBoxTest1(int argc, char * argv [] )
 
   file->addAction(plus, "Add ...");
   file->addAction("Saveeeeeeeeeeeeeeeeeeeeeee ...");
-  wizards->addAction("tutu");
+  wizards->addAction("tutu toto tata tonton");
   wizards->addMenu(informatics);
   informatics->addAction("ddd");
 
