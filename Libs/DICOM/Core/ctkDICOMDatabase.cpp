@@ -130,20 +130,21 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
   if ( ! (d->Database.open()) )
     {
     d->LastError = d->Database.lastError().text();
-    throw std::runtime_error(qPrintable(d->LastError));
+    return;
     }
   if ( d->Database.tables().empty() )
     {
-      if (!initializeDatabase())
-        {
-        throw std::runtime_error("Unable to initialize DICOM database!");
-        }
+    if (!initializeDatabase())
+      {
+      d->LastError = QString("Unable to initialize DICOM database!");
+      return;
+      }
     }
   if (!isInMemory())
-  {
+    {
     QFileSystemWatcher* watcher = new QFileSystemWatcher(QStringList(databaseFile),this);
     connect(watcher, SIGNAL( fileChanged(const QString&)),this, SIGNAL ( databaseChanged() ) );
-  }
+    }
 }
 
 
@@ -599,6 +600,12 @@ void ctkDICOMDatabase::insert ( DcmDataset *dataset, bool storeFile, bool genera
     {
       emit databaseChanged();
     }
+}
+
+bool ctkDICOMDatabase::isOpen() const
+{
+  Q_D(const ctkDICOMDatabase);
+  return d->Database.isOpen();
 }
 
 bool ctkDICOMDatabase::isInMemory() const

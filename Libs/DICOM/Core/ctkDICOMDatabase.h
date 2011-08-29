@@ -49,6 +49,10 @@ class ctkDICOMAbstractThumbnailGenerator;
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(bool isOpen READ isOpen)
+  Q_PROPERTY(QString lastError READ lastError)
+  Q_PROPERTY(QString databaseFilename READ databaseFilename)
+
 public:
   explicit ctkDICOMDatabase(QObject *parent = 0);
   explicit ctkDICOMDatabase(QString databaseFile);
@@ -63,6 +67,11 @@ public:
   /// (where the database file resides in) in OS-prefered path format.
   /// @return Absolute path to database directory
   const QString databaseDirectory() const;
+
+  ///
+  /// Should be checked after trying to open the database
+  /// @Returns true if database is open
+  bool isOpen() const;
 
   ///
   /// Returns whether the database only resides in memory, i.e. the
