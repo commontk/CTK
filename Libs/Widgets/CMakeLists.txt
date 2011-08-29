@@ -30,6 +30,8 @@ SET(KIT_SRCS
   ctkCheckablePushButton.h
   ctkComboBox.cpp
   ctkComboBox.h
+  ctkCompleter.cpp
+  ctkCompleter.h
   ctkCollapsibleButton.cpp
   ctkCollapsibleButton.h
   ctkCollapsibleGroupBox.cpp
@@ -182,6 +184,7 @@ SET(KIT_MOC_SRCS
   ctkCheckablePushButton.h
   ctkCheckBoxPixmaps.h
   ctkComboBox.h
+  ctkCompleter.h
   ctkCollapsibleButton.h
   ctkCollapsibleGroupBox.h
   ctkColorDialog.h
