@@ -29,6 +29,7 @@
 #include <QStringListModel>
 
 // CTK includes
+#include "ctkCompleter.h"
 #include "ctkSearchBox.h"
 #include "ctkMenuComboBox_p.h"
 
@@ -91,8 +92,9 @@ void ctkMenuComboBoxPrivate::init()
   this->MenuComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
   this->MenuComboBox->addItem(this->DefaultIcon, this->DefaultText);
 
-  this->SearchCompleter = new QCompleter(QStringList(), q);
+  this->SearchCompleter = new ctkCompleter(QStringList(), q);
   this->SearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+  this->SearchCompleter->setModelFiltering(ctkCompleter::FilterWordStartsWith);
   q->connect(this->SearchCompleter, SIGNAL(activated(const QString&)),
              q, SLOT(onEditingFinished()));
 
@@ -220,25 +222,27 @@ void ctkMenuComboBoxPrivate::addMenuToCompleter(QMenu* menu)
 // -------------------------------------------------------------------------
 void ctkMenuComboBoxPrivate::addActionToCompleter(QAction *action)
 {
-  Q_ASSERT(qobject_cast<QStringListModel* >(this->SearchCompleter->model()));
-  QModelIndex start = this->SearchCompleter->model()->index(0,0);
-  QModelIndexList indexList = this->SearchCompleter->model()->match(
-    start, 0, action->text());
+  QStringListModel* model = qobject_cast<QStringListModel* >(
+    this->SearchCompleter->sourceModel());
+  Q_ASSERT(model);
+  QModelIndex start = model->index(0,0);
+  QModelIndexList indexList = model->match(start, 0, action->text());
   if (indexList.count())
     {
     return;
     }
 
-  int actionCount = this->SearchCompleter->model()->rowCount();
-  this->SearchCompleter->model()->insertRow(actionCount);
-  QModelIndex index = this->SearchCompleter->model()->index(actionCount, 0);
-  this->SearchCompleter->model()->setData(index, action->text());
+  int actionCount = model->rowCount();
+  model->insertRow(actionCount);
+  QModelIndex index = model->index(actionCount, 0);
+  model->setData(index, action->text());
 }
 
 //  ------------------------------------------------------------------------
 void ctkMenuComboBoxPrivate::removeActionToCompleter(QAction *action)
 {
-  QStringListModel* model = qobject_cast<QStringListModel* >(this->SearchCompleter->model());
+  QStringListModel* model = qobject_cast<QStringListModel* >(
+    this->SearchCompleter->sourceModel());
   Q_ASSERT(model);
   if (!model->stringList().contains(action->text()) )
     {
@@ -253,14 +257,13 @@ void ctkMenuComboBoxPrivate::removeActionToCompleter(QAction *action)
     return;
     }
 
-  QModelIndex start = this->SearchCompleter->model()->index(0,0);
-  QModelIndexList indexList = this->SearchCompleter->model()->match(
-      start, 0, action->text());
+  QModelIndex start = model->index(0,0);
+  QModelIndexList indexList = model->match(start, 0, action->text());
   Q_ASSERT(indexList.count() == 1);
   foreach (QModelIndex index, indexList)
     {
     // Search completer model is a flat list
-    this->SearchCompleter->model()->removeRow(index.row());
+    model->removeRow(index.row());
     }
 }
 
