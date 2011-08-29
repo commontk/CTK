@@ -22,6 +22,7 @@
 #define __ctkDICOMIndexer_h
 
 // Qt includes 
+#include <QObject>
 #include <QSqlDatabase>
 
 #include "ctkDICOMCoreExport.h"
@@ -33,10 +34,11 @@ class ctkDICOMAbstractThumbnailGenerator;
 /**
     \brief Indexes DICOM images located in local directory into an Sql database
 */
-class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer
+class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer : public QObject
 {
+  Q_OBJECT
 public:
-  explicit ctkDICOMIndexer();
+  explicit ctkDICOMIndexer(QObject *parent = 0);
   virtual ~ctkDICOMIndexer();
   
   /**
@@ -46,10 +48,10 @@ public:
       Scan the directory using Dcmtk and populate the database with all the
       DICOM images accordingly.
   */
-  void addDirectory(ctkDICOMDatabase& database, const QString& directoryName,
+  Q_INVOKABLE void addDirectory(ctkDICOMDatabase& database, const QString& directoryName,
                     const QString& destinationDirectoryName = "",
                     bool createHierarchy = true, bool createThumbnails = true);
-  void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
+  Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 
   ///
   /// set thumbnail generator object

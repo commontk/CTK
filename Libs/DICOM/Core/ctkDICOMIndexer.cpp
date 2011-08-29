@@ -82,8 +82,9 @@ ctkDICOMIndexerPrivate::~ctkDICOMIndexerPrivate()
 // ctkDICOMIndexer methods
 
 //------------------------------------------------------------------------------
-ctkDICOMIndexer::ctkDICOMIndexer():d_ptr(new ctkDICOMIndexerPrivate)
+ctkDICOMIndexer::ctkDICOMIndexer(QObject *parent):d_ptr(new ctkDICOMIndexerPrivate)
 {
+  Q_UNUSED(parent);
 }
 
 //------------------------------------------------------------------------------
