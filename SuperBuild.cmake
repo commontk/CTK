@@ -263,32 +263,16 @@ ExternalProject_Add(${proj}
 #
 #MESSAGE(STATUS SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:${SUPERBUILD_EXCLUDE_CTKBUILD_TARGET})
 IF(NOT DEFINED SUPERBUILD_EXCLUDE_CTKBUILD_TARGET OR NOT SUPERBUILD_EXCLUDE_CTKBUILD_TARGET)
-  SET(proj CTK-build)
-  # Note: Setting CONFIGURE_COMMAND to an empty command is not enough to skip configuration step, 
-  #       the BUILD_COMMAND should also be specified explicitly otherwise it will in-conditionally
-  #       default to 'make' on all platform.
-  #       See _ep_get_configure_command_id and _ep_get_build_command in ExternalProject.cmake
-  ExternalProject_Add(${proj}
-    DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ""
-    CMAKE_GENERATOR ${gen}
-    BUILD_COMMAND ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR}
-    SOURCE_DIR ${CTK_SOURCE_DIR}
-    BINARY_DIR CTK-build
-    INSTALL_COMMAND ""
-    DEPENDS
-      "CTK-Configure"
-    )
-  # This custom external project step forces the build and later
-  # steps to run whenever a top level build is done...
-  ExternalProject_Add_Step(${proj} forcebuild
-    COMMAND ${CMAKE_COMMAND} -E echo_append ""
-    COMMENT "Forcing build step for '${proj}'"
-    DEPENDEES configure
-    DEPENDERS build
-    ALWAYS 1
-    )
+  SET(CTKBUILD_TARGET_ALL_OPTION "ALL")
+ELSE()
+  SET(CTKBUILD_TARGET_ALL_OPTION "")
 ENDIF()
+
+ADD_CUSTOM_TARGET(CTK-build ${CTKBUILD_TARGET_ALL_OPTION}
+  COMMAND ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR}
+  WORKING_DIRECTORY ${CTK_BINARY_DIR}/CTK-build
+  DEPENDS CTK-Configure
+  )
 
 #-----------------------------------------------------------------------------
 # Custom target allowing to drive the build of CTK project itself
