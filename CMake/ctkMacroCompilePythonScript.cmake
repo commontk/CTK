@@ -11,10 +11,10 @@ INCLUDE(${CTK_CMAKE_DIR}/ctkMacroParseArguments.cmake)
 MACRO(ctkMacroCompilePythonScript)
   ctkMacroParseArguments(MY
     "TARGET_NAME;SCRIPTS;RESOURCES;SOURCE_DIR;DESTINATION_DIR;INSTALL_DIR"
-    ""
+    "NO_INSTALL_SUBDIR"
     ${ARGN}
     )
-  
+
   FIND_PACKAGE(PythonInterp REQUIRED)
   FIND_PACKAGE(PythonLibs REQUIRED)
 
@@ -27,11 +27,17 @@ MACRO(ctkMacroCompilePythonScript)
       MESSAGE(FATAL_ERROR "${varname} is mandatory")
     ENDIF()
   ENDFOREACH()
-  
+
   IF(NOT DEFINED MY_SOURCE_DIR)
     SET(MY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
   ENDIF()
-  
+
+  # Since 'add_custom_command' doesn't play nicely with path having multiple
+  # consecutive slashes. Let's make sure there are no trailing slashes.
+  get_filename_component(MY_SOURCE_DIR ${MY_SOURCE_DIR} REALPATH)
+  get_filename_component(MY_DESTINATION_DIR ${MY_DESTINATION_DIR} REALPATH)
+  get_filename_component(MY_INSTALL_DIR ${MY_INSTALL_DIR} REALPATH)
+
   SET(input_python_files)
   SET(copied_python_files)
   FOREACH(file ${MY_SCRIPTS})
@@ -48,7 +54,7 @@ MACRO(ctkMacroCompilePythonScript)
       file(RELATIVE_PATH tgt_file ${CMAKE_CURRENT_BINARY_DIR} ${file})
       SET(tgt "${MY_DESTINATION_DIR}/${tgt_file}")
     ENDIF()
-    
+
     LIST(APPEND input_python_files ${src})
     ADD_CUSTOM_COMMAND(DEPENDS ${src}
                         COMMAND ${CMAKE_COMMAND} -E copy ${src} ${tgt}
@@ -131,8 +137,13 @@ EXECUTE_PROCESS(
         )
   ENDIF()
 
+  set(MY_DIRECTORY_TO_INSTALL ${MY_DESTINATION_DIR})
+  if(MY_NO_INSTALL_SUBDIR)
+    set(MY_DIRECTORY_TO_INSTALL ${MY_DESTINATION_DIR}/)
+  endif()
+
   # Install python module / resources directory
-  INSTALL(DIRECTORY "${MY_DESTINATION_DIR}"
+  INSTALL(DIRECTORY "${MY_DIRECTORY_TO_INSTALL}"
     DESTINATION "${MY_INSTALL_DIR}" COMPONENT Runtime
     USE_SOURCE_PERMISSIONS)
        
