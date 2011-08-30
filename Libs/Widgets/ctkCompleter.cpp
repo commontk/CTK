@@ -43,6 +43,8 @@ public:
 
   ctkCompleter::ModelFiltering Filtering;
   QSortFilterProxyModel* SortFilterProxyModel;
+protected:
+  Q_DISABLE_COPY(ctkCompleterPrivate);
 };
 
 // -------------------------------------------------------------------------
@@ -63,7 +65,6 @@ ctkCompleterPrivate::~ctkCompleterPrivate()
 // -------------------------------------------------------------------------
 void ctkCompleterPrivate::init()
 {
-  Q_Q(ctkCompleter);
   this->SortFilterProxyModel = new QSortFilterProxyModel(0);
 }
 
@@ -92,7 +93,6 @@ QStringList ctkCompleterPrivate::splitPath(const QString& s)
       break;
       }
     }
-  return q->QCompleter::splitPath(s);
 }
 
 // -------------------------------------------------------------------------
