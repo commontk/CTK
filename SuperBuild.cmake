@@ -279,6 +279,13 @@ IF(NOT DEFINED SUPERBUILD_EXCLUDE_CTKBUILD_TARGET OR NOT SUPERBUILD_EXCLUDE_CTKB
     DEPENDS
       "CTK-Configure"
     )
+  # This custom external project step forces the build and later
+  # steps to run whenever a top level build is done...
+  ExternalProject_Add_Step(${proj} forcebuild
+    DEPENDEES configure
+    DEPENDERS build
+    ALWAYS 1
+    )
 ENDIF()
 
 #-----------------------------------------------------------------------------
