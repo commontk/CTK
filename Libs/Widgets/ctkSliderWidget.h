@@ -30,6 +30,7 @@ class QDoubleSpinBox;
 
 #include "ctkWidgetsExport.h"
 
+class ctkPopupWidget;
 class ctkSliderWidgetPrivate;
 
 ///
@@ -52,6 +53,7 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(bool spinBoxVisible READ isSpinBoxVisible WRITE setSpinBoxVisible);
+  Q_PROPERTY(bool popupSlider READ hasPopupSlider WRITE setPopupSlider);
 
 public:
   /// Superclass typedef
@@ -165,6 +167,19 @@ public:
   /// The Spinbox visibility can be controlled using setSpinBoxVisible() and
   /// isSpinBoxVisible().
   bool isSpinBoxVisible()const;
+
+  ///
+  /// The slider can be handled as a popup for the spinbox. The location where
+  /// the popup appears is controlled by \sa alignement.
+  /// False by default.
+  bool hasPopupSlider()const;
+  void setPopupSlider(bool popup);
+
+  ///
+  /// Return the popup if ctkSliderWidget hasPopupSlider() is true, 0 otherwise.
+  /// It can be useful to control where the popup shows up relative to the
+  /// spinbox the popup \sa ctkPopupWidget::baseWidget.
+  ctkPopupWidget* popup()const;
 
   ///
   /// Sometimes it can be useful to have a direct control to the spinbox

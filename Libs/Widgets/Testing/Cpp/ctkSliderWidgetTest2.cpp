@@ -58,6 +58,9 @@ int ctkSliderWidgetTest2(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  sliderSpinBox.setPopupSlider(true);
+  sliderSpinBox.setPopupSlider(false);
+
   sliderSpinBox.show();
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
