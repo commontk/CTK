@@ -271,8 +271,8 @@ ENDIF()
 ADD_CUSTOM_TARGET(CTK-build ${CTKBUILD_TARGET_ALL_OPTION}
   COMMAND ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR}
   WORKING_DIRECTORY ${CTK_BINARY_DIR}/CTK-build
-  DEPENDS CTK-Configure
   )
+ADD_DEPENDENCIES(CTK-build CTK-Configure)
 
 #-----------------------------------------------------------------------------
 # Custom target allowing to drive the build of CTK project itself
