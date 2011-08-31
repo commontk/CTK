@@ -23,6 +23,7 @@
 #include <QMouseEvent>
 
 // CTK includes
+#include "ctkPopupWidget.h"
 #include "ctkSliderWidget.h"
 #include "ui_ctkSliderWidget.h"
 
@@ -38,6 +39,8 @@ protected:
 
 public:
   ctkSliderWidgetPrivate(ctkSliderWidget& object);
+  virtual ~ctkSliderWidgetPrivate();
+
   void updateSpinBoxWidth();
   int synchronizedSpinBoxWidth()const;
   void synchronizeSiblingSpinBox(int newWidth);
@@ -50,6 +53,7 @@ public:
   bool   Changing;
   double ValueBeforeChange;
   bool   AutoSpinBoxWidth;
+  ctkPopupWidget* SliderPopup;
 };
 
 // --------------------------------------------------------------------------
@@ -60,6 +64,15 @@ ctkSliderWidgetPrivate::ctkSliderWidgetPrivate(ctkSliderWidget& object)
   this->Changing = false;
   this->ValueBeforeChange = 0.;
   this->AutoSpinBoxWidth = true;
+  this->SliderPopup = 0;
+}
+
+
+// --------------------------------------------------------------------------
+ctkSliderWidgetPrivate::~ctkSliderWidgetPrivate()
+{
+  delete this->SliderPopup;
+  this->SliderPopup = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -493,6 +506,43 @@ void ctkSliderWidget::setSpinBoxVisible(bool visible)
 {
   Q_D(ctkSliderWidget);
   d->SpinBox->setVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+bool ctkSliderWidget::hasPopupSlider()const
+{
+  Q_D(const ctkSliderWidget);
+  return d->SliderPopup != 0;
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidget::setPopupSlider(bool popup)
+{
+  Q_D(ctkSliderWidget);
+  if (this->hasPopupSlider() == popup)
+    {
+    return;
+    }
+  if (popup)
+    {
+    d->SliderPopup = new ctkPopupWidget(0);
+    //d->SliderPopup->setParent(this);
+
+    QHBoxLayout* layout = new QHBoxLayout(d->SliderPopup);
+    layout->setContentsMargins(0,0,0,0);
+    layout->addWidget(d->Slider);
+
+    d->SliderPopup->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    d->SliderPopup->setOrientation(Qt::Horizontal);
+    d->SliderPopup->setHorizontalDirection(Qt::RightToLeft);
+    d->SliderPopup->setBaseWidget(d->SpinBox);
+    }
+  else
+    {
+    qobject_cast<QHBoxLayout*>(this->layout())->insertWidget(0,d->Slider);
+    d->SliderPopup->deleteLater();
+    d->SliderPopup = 0;
+    }
 }
 
 // --------------------------------------------------------------------------
