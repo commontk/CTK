@@ -472,7 +472,8 @@ void ctkPopupWidget::updatePopup()
 
   // Querying mouseOver can be slow, don't do it if not needed.
   QWidget* mouseOver = (d->AutoShow || d->AutoHide) ? d->mouseOver() : 0;
-  if (d->AutoShow && mouseOver)
+  if (d->AutoShow && mouseOver &&
+      (!d->BaseWidget || d->BaseWidget->isEnabled()))
     {
     this->showPopup();
     }
