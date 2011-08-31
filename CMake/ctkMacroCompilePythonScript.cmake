@@ -36,7 +36,6 @@ MACRO(ctkMacroCompilePythonScript)
   # consecutive slashes. Let's make sure there are no trailing slashes.
   get_filename_component(MY_SOURCE_DIR ${MY_SOURCE_DIR} REALPATH)
   get_filename_component(MY_DESTINATION_DIR ${MY_DESTINATION_DIR} REALPATH)
-  get_filename_component(MY_INSTALL_DIR ${MY_INSTALL_DIR} REALPATH)
 
   SET(input_python_files)
   SET(copied_python_files)
