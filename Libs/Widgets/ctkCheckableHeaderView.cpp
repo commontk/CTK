@@ -185,16 +185,16 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
   if (current)
     {
     this->disconnect(
-      current, SIGNAL(headerDataChanged(Qt::Orientation, int, int)),
-      this, SLOT(onHeaderDataChanged(Qt::Orientation, int, int)));
+      current, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
+      this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
     this->disconnect(
       current, SIGNAL(modelReset()),
       this, SLOT(updateHeaderPixmaps()));
     this->disconnect(
-      current, SIGNAL(columnsInserted(const QModelIndex &, int, int)), 
+      current, SIGNAL(columnsInserted(QModelIndex,int,int)), 
       this, SLOT(onHeaderSectionInserted()));
     this->disconnect(
-      current, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
+      current, SIGNAL(rowsInserted(QModelIndex,int,int)),
       this, SLOT(onHeaderSectionInserted()));
     }
   this->QHeaderView::setModel(newModel);
@@ -202,21 +202,21 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
   if(newModel)
     {
     this->connect(
-      newModel, SIGNAL(headerDataChanged(Qt::Orientation, int, int)),
-      this, SLOT(onHeaderDataChanged(Qt::Orientation, int, int)));
+      newModel, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
+      this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
     this->connect(
       newModel, SIGNAL(modelReset()),
       this, SLOT(updateHeaderPixmaps()));
     if(this->orientation() == Qt::Horizontal)
       {
       this->connect(
-        newModel, SIGNAL(columnsInserted(const QModelIndex &, int, int)),
+        newModel, SIGNAL(columnsInserted(QModelIndex,int,int)),
         this, SLOT(onHeaderSectionInserted()));
       }
     else
       {
       this->connect(
-        newModel, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
+        newModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
         this, SLOT(onHeaderSectionInserted()));
       }
     }

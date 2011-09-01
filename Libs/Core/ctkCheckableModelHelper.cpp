@@ -308,36 +308,36 @@ void ctkCheckableModelHelper::setModel(QAbstractItemModel *newModel)
   if(current)
     {
     this->disconnect(
-      current, SIGNAL(headerDataChanged(Qt::Orientation, int, int)),
-      this, SLOT(onHeaderDataChanged(Qt::Orientation, int, int)));
+      current, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
+      this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
     this->disconnect(
-      current, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
+      current, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+      this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
     this->disconnect(
-      current, SIGNAL(columnsInserted(const QModelIndex &, int, int)), 
-      this, SLOT(onColumnsInserted(const QModelIndex &, int, int)));
+      current, SIGNAL(columnsInserted(QModelIndex,int,int)), 
+      this, SLOT(onColumnsInserted(QModelIndex,int,int)));
     this->disconnect(
-      current, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
-      this, SLOT(onRowsInserted(const QModelIndex &, int, int)));
+      current, SIGNAL(rowsInserted(QModelIndex,int,int)),
+      this, SLOT(onRowsInserted(QModelIndex,int,int)));
     }
   d->Model = newModel;
   if(newModel)
     {
     this->connect(
-      newModel, SIGNAL(headerDataChanged(Qt::Orientation, int, int)),
-      this, SLOT(onHeaderDataChanged(Qt::Orientation, int, int)));
+      newModel, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
+      this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
     if (d->PropagateDepth != 0)
       {
       this->connect(
-        newModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-        this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
+        newModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+        this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
       }
     this->connect(
-      newModel, SIGNAL(columnsInserted(const QModelIndex &, int, int)),
-      this, SLOT(onColumnsInserted(const QModelIndex &, int, int)));
+      newModel, SIGNAL(columnsInserted(QModelIndex,int,int)),
+      this, SLOT(onColumnsInserted(QModelIndex,int,int)));
     this->connect(
-      newModel, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
-      this, SLOT(onRowsInserted(const QModelIndex &, int, int)));
+      newModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
+      this, SLOT(onRowsInserted(QModelIndex,int,int)));
 
     if (d->ForceCheckability)
       {
@@ -385,15 +385,15 @@ void ctkCheckableModelHelper::setPropagateDepth(int depth)
   if (depth != 0)
     {
     this->connect(
-      this->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)), Qt::UniqueConnection);
+      this->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+      this, SLOT(onDataChanged(QModelIndex,QModelIndex)), Qt::UniqueConnection);
     this->updateHeadersFromItems();
     }
   else
     {
     this->disconnect(
-      this->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
+      this->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+      this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
     }
 }
 

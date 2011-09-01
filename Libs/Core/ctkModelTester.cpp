@@ -102,30 +102,30 @@ void ctkModelTester::setModel(QAbstractItemModel *_model)
     }
   if (_model)
     {
-    connect(_model, SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)),
-            this, SLOT(onColumnsAboutToBeInserted(const QModelIndex& , int, int)));
-    connect(_model, SIGNAL(columnsAboutToBeRemoved(const QModelIndex &, int, int)),
-            this, SLOT(onColumnsAboutToBeRemoved(const QModelIndex& , int, int)));
-    connect(_model, SIGNAL(columnsInserted(const QModelIndex &, int, int)),
-            this, SLOT(onColumnsInserted(const QModelIndex& , int, int)));
-    connect(_model, SIGNAL(columnsRemoved(const QModelIndex &, int, int)),
-            this, SLOT(onColumnsRemoved(const QModelIndex& , int, int)));
-    connect(_model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
-            this, SLOT(onDataChanged(const QModelIndex& , const QModelIndex &)));
+    connect(_model, SIGNAL(columnsAboutToBeInserted(QModelIndex,int,int)),
+            this, SLOT(onColumnsAboutToBeInserted(QModelIndex,int,int)));
+    connect(_model, SIGNAL(columnsAboutToBeRemoved(QModelIndex,int,int)),
+            this, SLOT(onColumnsAboutToBeRemoved(QModelIndex,int,int)));
+    connect(_model, SIGNAL(columnsInserted(QModelIndex,int,int)),
+            this, SLOT(onColumnsInserted(QModelIndex,int,int)));
+    connect(_model, SIGNAL(columnsRemoved(QModelIndex,int,int)),
+            this, SLOT(onColumnsRemoved(QModelIndex,int,int)));
+    connect(_model, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+            this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
     connect(_model, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
             this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
     connect(_model, SIGNAL(layoutAboutToBeChanged()), this, SLOT(onLayoutAboutToBeChanged()));
     connect(_model, SIGNAL(layoutChanged()), this, SLOT(onLayoutChanged()));
     connect(_model, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
     connect(_model, SIGNAL(modelReset()), this, SLOT(onModelReset()));
-    connect(_model, SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)),
-            this, SLOT(onRowsAboutToBeInserted(const QModelIndex& , int, int)));
-    connect(_model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
-            this, SLOT(onRowsAboutToBeRemoved(const QModelIndex& , int, int)));
-    connect(_model, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
-            this, SLOT(onRowsInserted(const QModelIndex& , int, int)));
-    connect(_model, SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
-            this, SLOT(onRowsRemoved(const QModelIndex& , int, int)));
+    connect(_model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)),
+            this, SLOT(onRowsAboutToBeInserted(QModelIndex,int,int)));
+    connect(_model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
+            this, SLOT(onRowsAboutToBeRemoved(QModelIndex,int,int)));
+    connect(_model, SIGNAL(rowsInserted(QModelIndex,int,int)),
+            this, SLOT(onRowsInserted(QModelIndex,int,int)));
+    connect(_model, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+            this, SLOT(onRowsRemoved(QModelIndex,int,int)));
     }
   d->Model = _model;
   this->testModel();

@@ -87,8 +87,8 @@ void ctkDoubleSliderPrivate::init()
   q->connect(this->Slider, SIGNAL(sliderMoved(int)), q, SLOT(onSliderMoved(int)));
   q->connect(this->Slider, SIGNAL(sliderPressed()), q, SIGNAL(sliderPressed()));
   q->connect(this->Slider, SIGNAL(sliderReleased()), q, SIGNAL(sliderReleased()));
-  q->connect(this->Slider, SIGNAL(rangeChanged(int, int)),
-             q, SLOT(onRangeChanged(int, int)));
+  q->connect(this->Slider, SIGNAL(rangeChanged(int,int)),
+             q, SLOT(onRangeChanged(int,int)));
 
   q->setSizePolicy(this->Slider->sizePolicy());
   q->setAttribute(Qt::WA_WState_OwnSizePolicy, false);

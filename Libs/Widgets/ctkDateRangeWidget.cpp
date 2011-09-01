@@ -133,13 +133,13 @@ ctkDateRangeWidget::ctkDateRangeWidget(QWidget* _parent) : Superclass(_parent)
   QObject::connect(d->SelectRangeRadioButton, SIGNAL(clicked()),
                    this, SLOT(setSelectRange()));
 
-  QObject::connect(d->StartDate, SIGNAL(dateTimeChanged(const QDateTime&)),
-                   this, SIGNAL(startDateTimeChanged(const QDateTime&)));
-  QObject::connect(d->EndDate, SIGNAL(dateTimeChanged(const QDateTime&)),
-                   this, SIGNAL(endDateTimeChanged(const QDateTime&)));
-  QObject::connect(d->StartDate, SIGNAL(dateTimeChanged(const QDateTime&)),
+  QObject::connect(d->StartDate, SIGNAL(dateTimeChanged(QDateTime)),
+                   this, SIGNAL(startDateTimeChanged(QDateTime)));
+  QObject::connect(d->EndDate, SIGNAL(dateTimeChanged(QDateTime)),
+                   this, SIGNAL(endDateTimeChanged(QDateTime)));
+  QObject::connect(d->StartDate, SIGNAL(dateTimeChanged(QDateTime)),
                    this, SLOT(onDateTimeChanged()));
-  QObject::connect(d->EndDate, SIGNAL(dateTimeChanged(const QDateTime&)),
+  QObject::connect(d->EndDate, SIGNAL(dateTimeChanged(QDateTime)),
                    this, SLOT(onDateTimeChanged()));
 }
 

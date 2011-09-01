@@ -65,8 +65,8 @@ ctkDICOMImportWidget::ctkDICOMImportWidget(QWidget* parentWidget)
   d->directoryList->setModel(d->FileSystemModel);
 
   //connect signals and slots
-  connect(d->DirectoryWidget, SIGNAL(directoryChanged(const QString&)),
-          this, SLOT(onTopDirectoryChanged(const QString&)));
+  connect(d->DirectoryWidget, SIGNAL(directoryChanged(QString)),
+          this, SLOT(onTopDirectoryChanged(QString)));
   this->onTopDirectoryChanged(d->DirectoryWidget->directory());
 }
 

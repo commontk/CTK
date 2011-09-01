@@ -84,11 +84,11 @@ void ctkVTKConnectionPrivate::connect()
   switch (this->SlotType)
     {
     case ctkVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
-      QObject::connect(q, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
+      QObject::connect(q, SIGNAL(emitExecute(vtkObject*,vtkObject*)),
         this->QtObject, this->QtSlot.toLatin1(), this->ConnectionType);
       break;
     case ctkVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
-      QObject::connect(q, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
+      QObject::connect(q, SIGNAL(emitExecute(vtkObject*,void*,ulong,void*)),
                        this->QtObject, this->QtSlot.toLatin1(), this->ConnectionType);
       break;
     default:
@@ -133,11 +133,11 @@ void ctkVTKConnectionPrivate::disconnect()
     switch (this->SlotType)
       {
       case ctkVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT:
-        QObject::disconnect(q, SIGNAL(emitExecute(vtkObject*, vtkObject*)),
+        QObject::disconnect(q, SIGNAL(emitExecute(vtkObject*,vtkObject*)),
                             this->QtObject,this->QtSlot.toLatin1().data());
         break;
       case ctkVTKConnectionPrivate::ARG_VTKOBJECT_VOID_ULONG_VOID:
-        QObject::disconnect(q, SIGNAL(emitExecute(vtkObject*, void*, unsigned long, void*)),
+        QObject::disconnect(q, SIGNAL(emitExecute(vtkObject*,void*,ulong,void*)),
                             this->QtObject, this->QtSlot.toLatin1().data());
         break;
       default:

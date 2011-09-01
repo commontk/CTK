@@ -71,7 +71,7 @@ void ctkFileDialogPrivate::init()
   button->installEventFilter(q);
 
   QObject::connect(this->listView()->selectionModel(),
-                   SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+                   SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                    q, SLOT(onSelectionChanged()));
 }
 

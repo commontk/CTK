@@ -90,9 +90,9 @@ void ctkPathLineEditPrivate::init()
                      QSizePolicy::Expanding, QSizePolicy::Fixed,
                      QSizePolicy::LineEdit));
 
-  QObject::connect(this->ComboBox,SIGNAL(editTextChanged(const QString&)),
-                   q, SLOT(setCurrentDirectory(const QString&)));
-  QObject::connect(this->ComboBox,SIGNAL(editTextChanged(const QString&)),
+  QObject::connect(this->ComboBox,SIGNAL(editTextChanged(QString)),
+                   q, SLOT(setCurrentDirectory(QString)));
+  QObject::connect(this->ComboBox,SIGNAL(editTextChanged(QString)),
                    q, SLOT(updateHasValidInput()));
 }
 

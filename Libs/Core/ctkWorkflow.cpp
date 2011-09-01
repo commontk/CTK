@@ -90,8 +90,8 @@ void ctkWorkflowPrivate::addStep(ctkWorkflowStep* step)
   // Setup the signal/slot that triggers the evaluation of the validation results
   // after validate(const QString&) is called
   this->connect(
-      step->ctkWorkflowStepQObject(), SIGNAL(validationComplete(bool, const QString&)),
-      q, SLOT(evaluateValidationResults(bool, const QString&)));
+      step->ctkWorkflowStepQObject(), SIGNAL(validationComplete(bool,QString)),
+      q, SLOT(evaluateValidationResults(bool,QString)));
 
   this->connect(
       step->ctkWorkflowStepQObject(), SIGNAL(onEntryComplete()),

@@ -133,8 +133,8 @@ void ctkSettingsPanelPrivate::init()
   Q_Q(ctkSettingsPanel);
   
   this->SignalMapper = new QSignalMapper(q);
-  QObject::connect(this->SignalMapper, SIGNAL(mapped(const QString&)),
-                   q, SLOT(updateSetting(const QString&)));
+  QObject::connect(this->SignalMapper, SIGNAL(mapped(QString)),
+                   q, SLOT(updateSetting(QString)));
 }
 
 // --------------------------------------------------------------------------

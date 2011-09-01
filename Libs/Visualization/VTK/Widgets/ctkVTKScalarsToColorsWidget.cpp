@@ -88,8 +88,8 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   QObject::connect(this->PointIdSpinBox, SIGNAL(valueChanged(int)),
                    q, SLOT(onCurrentPointChanged(int)));
   this->PointIdSpinBox->setValue(-1);
-  QObject::connect(this->ColorPickerButton, SIGNAL(colorChanged(const QColor&)),
-                   q, SLOT(onColorChanged(const QColor&)));
+  QObject::connect(this->ColorPickerButton, SIGNAL(colorChanged(QColor)),
+                   q, SLOT(onColorChanged(QColor)));
   QObject::connect(this->OpacitySpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(onOpacityChanged(double)));
   QObject::connect(this->MidPointSpinBox, SIGNAL(valueChanged(double)),
@@ -99,13 +99,13 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   this->ColorPickerButton->setVisible(false);
   this->OpacityLabel->setVisible(false);
   this->OpacitySpinBox->setVisible(false);
-  QObject::connect(this->XRangeSlider, SIGNAL(valuesChanged(double, double)),
-                   q, SLOT(setXRange(double, double)));
-  QObject::connect(this->YRangeSlider, SIGNAL(valuesChanged(double, double)),
-                   q, SLOT(setYRange(double, double)));
-  QObject::connect(this->XRangeSlider, SIGNAL(valuesChanged(double, double)),
+  QObject::connect(this->XRangeSlider, SIGNAL(valuesChanged(double,double)),
+                   q, SLOT(setXRange(double,double)));
+  QObject::connect(this->YRangeSlider, SIGNAL(valuesChanged(double,double)),
+                   q, SLOT(setYRange(double,double)));
+  QObject::connect(this->XRangeSlider, SIGNAL(valuesChanged(double,double)),
                    q, SIGNAL(axesModified()));
-  QObject::connect(this->YRangeSlider, SIGNAL(valuesChanged(double, double)),
+  QObject::connect(this->YRangeSlider, SIGNAL(valuesChanged(double,double)),
                    q, SIGNAL(axesModified()));
 
   q->qvtkConnect(this->View->chart()->GetAxis(0),vtkCommand::ModifiedEvent,
@@ -198,7 +198,7 @@ void ctkVTKScalarsToColorsWidget::onPlotAdded(vtkPlot* plot)
   if (vtkControlPointsItem::SafeDownCast(plot))
     {
     this->qvtkConnect(plot, vtkControlPointsItem::CurrentPointChangedEvent,
-                      this, SLOT(setCurrentPoint(vtkObject*, void*)));
+                      this, SLOT(setCurrentPoint(vtkObject*,void*)));
     }
 }
 

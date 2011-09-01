@@ -101,7 +101,7 @@ void ctkVTKScalarsToColorsView::addPlot(vtkPlot* plot)
   if (vtkColorTransferControlPointsItem::SafeDownCast(plot))
     {
     this->qvtkConnect(plot, vtkControlPointsItem::CurrentPointEditEvent,
-                      this, SLOT(editPoint(vtkObject*, void*)));
+                      this, SLOT(editPoint(vtkObject*,void*)));
     }
   this->Superclass::addPlot(plot);
 }

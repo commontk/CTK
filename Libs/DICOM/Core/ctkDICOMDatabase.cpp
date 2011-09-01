@@ -143,7 +143,7 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
   if (!isInMemory())
     {
     QFileSystemWatcher* watcher = new QFileSystemWatcher(QStringList(databaseFile),this);
-    connect(watcher, SIGNAL( fileChanged(const QString&)),this, SIGNAL ( databaseChanged() ) );
+    connect(watcher, SIGNAL(fileChanged(QString)),this, SIGNAL (databaseChanged()) );
     }
 }
 

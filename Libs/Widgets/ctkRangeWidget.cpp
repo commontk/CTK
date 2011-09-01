@@ -77,7 +77,7 @@ ctkRangeWidgetPrivate::ctkRangeWidgetPrivate(ctkRangeWidget& object)
 void ctkRangeWidgetPrivate::connectSlider()
 {
   Q_Q(ctkRangeWidget);
-  QObject::connect(this->Slider, SIGNAL(valuesChanged(double, double)),
+  QObject::connect(this->Slider, SIGNAL(valuesChanged(double,double)),
                    q, SLOT(changeValues(double,double)));
   QObject::connect(this->Slider, SIGNAL(minimumValueChanged(double)),
                    q, SLOT(changeMinimumValue(double)));
@@ -97,8 +97,8 @@ void ctkRangeWidgetPrivate::connectSlider()
                    q, SLOT(startChanging()));
   QObject::connect(this->Slider, SIGNAL(sliderReleased()),
                    q, SLOT(stopChanging()));
-  QObject::connect(this->Slider, SIGNAL(rangeChanged(double, double)),
-                   q, SLOT(onSliderRangeChanged(double, double)));
+  QObject::connect(this->Slider, SIGNAL(rangeChanged(double,double)),
+                   q, SLOT(onSliderRangeChanged(double,double)));
 }
 
 // --------------------------------------------------------------------------

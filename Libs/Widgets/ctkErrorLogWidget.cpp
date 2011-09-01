@@ -128,14 +128,14 @@ void ctkErrorLogWidget::setErrorLogModel(ctkErrorLogModel * newErrorLogModel)
 
   if (this->errorLogModel())
     {
-    disconnect(this->errorLogModel(), SIGNAL(rowsInserted(const QModelIndex&, int, int)),
-               this, SLOT(onRowsInserted(const QModelIndex&, int, int)));
+    disconnect(this->errorLogModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+               this, SLOT(onRowsInserted(QModelIndex,int,int)));
 
     disconnect(this->errorLogModel(), SIGNAL(logLevelFilterChanged()),
                this, SLOT(onLogLevelFilterChanged()));
 
-    disconnect(d->SelectionModel.data(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-               this, SLOT(onSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    disconnect(d->SelectionModel.data(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+               this, SLOT(onSelectionChanged(QItemSelection,QItemSelection)));
 
     d->SelectionModel.clear();
     }
@@ -144,8 +144,8 @@ void ctkErrorLogWidget::setErrorLogModel(ctkErrorLogModel * newErrorLogModel)
 
   if (newErrorLogModel)
     {
-    connect(this->errorLogModel(), SIGNAL(rowsInserted(const QModelIndex&, int, int)),
-            this, SLOT(onRowsInserted(const QModelIndex&, int, int)));
+    connect(this->errorLogModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+            this, SLOT(onRowsInserted(QModelIndex,int,int)));
 
     connect(this->errorLogModel(), SIGNAL(logLevelFilterChanged()),
             this, SLOT(onLogLevelFilterChanged()));
@@ -160,8 +160,8 @@ void ctkErrorLogWidget::setErrorLogModel(ctkErrorLogModel * newErrorLogModel)
     d->SelectionModel = QSharedPointer<QItemSelectionModel>(new QItemSelectionModel(this->errorLogModel()));
     d->SelectionModel->reset();
 
-    connect(d->SelectionModel.data(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-            this, SLOT(onSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(d->SelectionModel.data(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            this, SLOT(onSelectionChanged(QItemSelection,QItemSelection)));
 
     d->ErrorLogTableView->setSelectionModel(d->SelectionModel.data());
 

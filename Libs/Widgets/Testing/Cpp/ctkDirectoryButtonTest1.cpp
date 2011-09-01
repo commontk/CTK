@@ -91,8 +91,8 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  QSignalSpy spyDirectoryChanged(&button, SIGNAL(directoryChanged(const QString&)));
-  QSignalSpy spyDirectorySelected(&button, SIGNAL(directorySelected(const QString&)));
+  QSignalSpy spyDirectoryChanged(&button, SIGNAL(directoryChanged(QString)));
+  QSignalSpy spyDirectorySelected(&button, SIGNAL(directorySelected(QString)));
 
   button.setDirectory(QDir::home().absolutePath());
   if ( QDir(button.directory()) != QDir::home() ||

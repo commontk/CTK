@@ -240,14 +240,14 @@ bool ctkCheckableComboBox::eventFilter(QObject *o, QEvent *e)
 void ctkCheckableComboBox::setCheckableModel(QAbstractItemModel* newModel)
 {
   Q_D(ctkCheckableComboBox);
-  this->disconnect(this->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-                   this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
+  this->disconnect(this->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+                   this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
   if (newModel != this->model())
     {
     this->setModel(newModel);
     }
-  this->connect(this->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-                this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
+  this->connect(this->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+                this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
   d->CheckableModelHelper->setModel(newModel);
   d->updateCheckedList();
 }

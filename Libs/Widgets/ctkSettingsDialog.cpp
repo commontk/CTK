@@ -72,8 +72,8 @@ void ctkSettingsDialogPrivate::init()
   q->setSettings(new QSettings(q));
 
   QObject::connect(this->SettingsTreeWidget,
-    SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-    q, SLOT(onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+    SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+    q, SLOT(onCurrentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
   QObject::connect(this->SettingsButtonBox, SIGNAL(clicked(QAbstractButton*)),
                    q, SLOT(onDialogButtonClicked(QAbstractButton*)));
 }
@@ -153,8 +153,8 @@ void ctkSettingsDialog
   parentItem->addChild(newPanelItem);
   d->SettingsStackedWidget->addWidget(panel);
 
-  connect(panel, SIGNAL(settingChanged(const QString&, const QVariant&)),
-          this, SLOT(onSettingChanged(const QString&, const QVariant&)));
+  connect(panel, SIGNAL(settingChanged(QString,QVariant)),
+          this, SLOT(onSettingChanged(QString,QVariant)));
   panel->setSettings(this->settings());
 }
 

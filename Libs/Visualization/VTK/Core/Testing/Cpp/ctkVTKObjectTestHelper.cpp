@@ -145,7 +145,7 @@ bool ctkVTKObjectTest::test()
   
   // Set a new connection (protected)
   connection = this->qvtkConnect(object, vtkCommand::ModifiedEvent, 
-                                 this, SLOT( onVTKObjectModifiedProtected ( ) ));
+                                 this, SLOT(onVTKObjectModifiedProtected()));
   if (connection.isEmpty())
     {
     qDebug() << __LINE__ << "ctkVTKObject::qvtkConnect() failed: "<< connection;
@@ -202,11 +202,11 @@ bool ctkVTKObjectTest::test()
 
   // Set new connections
   this->qvtkConnect(object, vtkCommand::ModifiedEvent, 
-                    this, SLOT(onVTKObjectModifiedPublic ()));
+                    this, SLOT(onVTKObjectModifiedPublic()));
   this->qvtkConnect(object, vtkCommand::WarningEvent, 
-                    this, SLOT(onVTKObjectModifiedPublic( )));
+                    this, SLOT(onVTKObjectModifiedPublic()));
   int disconnected = this->qvtkDisconnect(object, vtkCommand::NoEvent, 
-                                          this, SLOT(onVTKObjectModifiedPublic() ));
+                                          this, SLOT(onVTKObjectModifiedPublic()));
   if (disconnected != 2)
     {
     qDebug() << __LINE__ << "qvtkDisconnect failed" << disconnected;
