@@ -372,38 +372,12 @@ QDir ctkPluginFrameworkUtil::getFileStorage(ctkPluginFrameworkContext* ctx,
 }
 
 //----------------------------------------------------------------------------
-bool ctkPluginFrameworkUtil::removeDir(const QString& dirName)
-{
-  bool result = true;
-  QDir dir(dirName);
-
-  if (dir.exists(dirName))
-  {
-    foreach (QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst))
-    {
-      if (info.isDir()) {
-        result = removeDir(info.absoluteFilePath());
-      }
-      else {
-        result = QFile::remove(info.absoluteFilePath());
-      }
-
-      if (!result) {
-        return result;
-      }
-    }
-    result = dir.rmdir(dirName);
-  }
-
-  return result;
-}
-
-//----------------------------------------------------------------------------
 bool ctkPluginFrameworkUtil::filterMatch(const QString& filter, const QString& s)
 {
   return patSubstr(s, 0, filter, 0);
 }
 
+//----------------------------------------------------------------------------
 bool ctkPluginFrameworkUtil::patSubstr(const QString& s, int si, const QString& pat, int pi)
 {
   if (pat.length() - pi == 0)
@@ -435,3 +409,4 @@ bool ctkPluginFrameworkUtil::patSubstr(const QString& s, int si, const QString& 
     return patSubstr(s, ++si, pat, ++pi);
   }
 }
+

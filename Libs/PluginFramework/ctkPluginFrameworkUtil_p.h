@@ -68,14 +68,6 @@ public:
   static QDir getFileStorage(ctkPluginFrameworkContext* ctx, const QString& name);
 
   /**
-   * Remove a non-empty directory.
-   *
-   * @param dirName The directory to remove
-   * @returns <code>true</code> on success, <code>false</code> otherwise.
-   */
-  static bool removeDir(const QString& dirName);
-
-  /**
    * Check wildcard filter matches the string
    */
   static bool filterMatch(const QString& filter, const QString& s);
