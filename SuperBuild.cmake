@@ -257,6 +257,12 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${CTK_DEPENDS}
   )
+  
+IF(CMAKE_GENERATOR MATCHES ".*Makefiles.*")
+  SET(ctk_build_cmd "$(MAKE)")
+ELSE()
+  SET(ctk_build_cmd ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR})
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # CTK
@@ -269,7 +275,7 @@ ELSE()
 ENDIF()
 
 ADD_CUSTOM_TARGET(CTK-build ${CTKBUILD_TARGET_ALL_OPTION}
-  COMMAND ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR}
+  COMMAND ${ctk_build_cmd}
   WORKING_DIRECTORY ${CTK_BINARY_DIR}/CTK-build
   )
 ADD_DEPENDENCIES(CTK-build CTK-Configure)
@@ -278,6 +284,6 @@ ADD_DEPENDENCIES(CTK-build CTK-Configure)
 # Custom target allowing to drive the build of CTK project itself
 #
 ADD_CUSTOM_TARGET(CTK
-  COMMAND ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR}
+  COMMAND ${ctk_build_cmd}
   WORKING_DIRECTORY ${CTK_BINARY_DIR}/CTK-build
   )
