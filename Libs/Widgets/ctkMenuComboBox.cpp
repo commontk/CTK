@@ -95,7 +95,7 @@ void ctkMenuComboBoxPrivate::init()
   this->SearchCompleter = new ctkCompleter(QStringList(), q);
   this->SearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
   this->SearchCompleter->setModelFiltering(ctkCompleter::FilterWordStartsWith);
-  q->connect(this->SearchCompleter, SIGNAL(activated(const QString&)),
+  q->connect(this->SearchCompleter, SIGNAL(activated(QString)),
              q, SLOT(onEditingFinished()));
 
   // Automatically set the minimumSizeHint of the layout to the widget

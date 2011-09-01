@@ -58,14 +58,14 @@ void ctkVTKTextPropertyWidgetPrivate::init()
   Q_Q(ctkVTKTextPropertyWidget);
   this->setupUi(q);
   q->updateFromTextProperty();
-  QObject::connect(this->TextLineEdit, SIGNAL(textChanged(const QString&)),
-                   q, SIGNAL(textChanged(const QString&)));
+  QObject::connect(this->TextLineEdit, SIGNAL(textChanged(QString)),
+                   q, SIGNAL(textChanged(QString)));
   QObject::connect(this->ColorPickerButton, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(setColor(const QColor&)));
+                   q, SLOT(setColor(QColor)));
   QObject::connect(this->OpacitySlider, SIGNAL(valueChanged(double)),
                    q, SLOT(setOpacity(double)));
-  QObject::connect(this->FontComboBox, SIGNAL(currentIndexChanged(const QString&)),
-                   q, SLOT(setFont(const QString&)));
+  QObject::connect(this->FontComboBox, SIGNAL(currentIndexChanged(QString)),
+                   q, SLOT(setFont(QString)));
   QObject::connect(this->BoldCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setBold(bool)));
   QObject::connect(this->ItalicCheckBox, SIGNAL(toggled(bool)),

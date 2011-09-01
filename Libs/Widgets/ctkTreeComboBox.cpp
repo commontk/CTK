@@ -80,9 +80,9 @@ ctkTreeComboBox::ctkTreeComboBox(QWidget* _parent):Superclass(_parent)
   // we install the filter AFTER the QComboBox installed it.
   // so that our eventFilter will be called first
   this->view()->viewport()->installEventFilter(this);
-  connect(treeView, SIGNAL(collapsed(const QModelIndex&)),
+  connect(treeView, SIGNAL(collapsed(QModelIndex)),
           this, SLOT(resizePopup()));
-  connect(treeView, SIGNAL(expanded(const QModelIndex&)),
+  connect(treeView, SIGNAL(expanded(QModelIndex)),
           this, SLOT(resizePopup()));
 }
 

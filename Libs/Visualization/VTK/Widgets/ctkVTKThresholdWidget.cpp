@@ -71,8 +71,8 @@ void ctkVTKThresholdWidgetPrivate::setupUi(QWidget* widget)
   Q_ASSERT(q == widget);
   this->Ui_ctkVTKThresholdWidget::setupUi(widget);
 
-  QObject::connect(this->ThresholdSliderWidget, SIGNAL(valuesChanged(double, double)),
-                   q, SLOT(setThresholdValues(double, double)));
+  QObject::connect(this->ThresholdSliderWidget, SIGNAL(valuesChanged(double,double)),
+                   q, SLOT(setThresholdValues(double,double)));
   QObject::connect(this->OpacitySliderWidget, SIGNAL(valueChanged(double)),
                    q, SLOT(setOpacity(double)));
 }

@@ -156,8 +156,8 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  QSignalSpy startSpy(&dateRange, SIGNAL(startDateTimeChanged(const QDateTime&)));
-  QSignalSpy endSpy(&dateRange, SIGNAL(endDateTimeChanged(const QDateTime&)));
+  QSignalSpy startSpy(&dateRange, SIGNAL(startDateTimeChanged(QDateTime)));
+  QSignalSpy endSpy(&dateRange, SIGNAL(endDateTimeChanged(QDateTime)));
 
   dateRange.setLastWeek();  
   if (startSpy.count() != 1 || endSpy.count() != 1)

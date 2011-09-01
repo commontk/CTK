@@ -51,7 +51,7 @@ void ctkConfigurationAdminActivator::start(ctkPluginContext* context)
   eventAdapter->start();
   factory = new ctkConfigurationAdminFactory(context, logTracker);
   factory->start();
-  context->connectPluginListener(factory, SLOT(pluginChanged(const ctkPluginEvent&)));
+  context->connectPluginListener(factory, SLOT(pluginChanged(ctkPluginEvent)));
   registration = context->registerService<ctkConfigurationAdmin>(factory);
 }
 

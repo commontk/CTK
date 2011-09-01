@@ -45,7 +45,7 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
   connect(&this->Host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
   connect(&this->Host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));
   connect(ui->placeholderFrame,SIGNAL(resized()),SLOT(placeholderResized()));
-  connect(this->Host,SIGNAL( stateChangedReceived(ctkDicomAppHosting::State)),SLOT(appStateChanged(ctkDicomAppHosting::State)));
+  connect(this->Host,SIGNAL(stateChangedReceived(ctkDicomAppHosting::State)),SLOT(appStateChanged(ctkDicomAppHosting::State)));
 
 }
 

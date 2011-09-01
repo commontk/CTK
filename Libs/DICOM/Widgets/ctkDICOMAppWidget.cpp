@@ -148,7 +148,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   this->setDatabaseDirectory(databaseDirectory);
   d->DirectoryButton->setDirectory(databaseDirectory);
 
-  connect(d->DirectoryButton, SIGNAL(directoryChanged(const QString&)), this, SLOT(setDatabaseDirectory(const QString&)));
+  connect(d->DirectoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(setDatabaseDirectory(QString)));
 
   //Initialize import widget
   d->ImportDialog = new ctkFileDialog();
@@ -160,19 +160,19 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->ImportDialog->setWindowModality(Qt::ApplicationModal);
 
   //connect signal and slots
-  connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), d->ThumbnailsWidget, SLOT(onModelSelected(const QModelIndex &)));
-  connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), d->ImagePreview, SLOT(onModelSelected(const QModelIndex &)));
-  connect(d->TreeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onModelSelected(const QModelIndex &)));
+  connect(d->TreeView, SIGNAL(clicked(QModelIndex)), d->ThumbnailsWidget, SLOT(onModelSelected(QModelIndex)));
+  connect(d->TreeView, SIGNAL(clicked(QModelIndex)), d->ImagePreview, SLOT(onModelSelected(QModelIndex)));
+  connect(d->TreeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onModelSelected(QModelIndex)));
 
-  connect(d->ThumbnailsWidget, SIGNAL(selected(const ctkThumbnailWidget&)), this, SLOT(onThumbnailSelected(const ctkThumbnailWidget&)));
-  connect(d->ThumbnailsWidget, SIGNAL(doubleClicked(const ctkThumbnailWidget&)), this, SLOT(onThumbnailDoubleClicked(const ctkThumbnailWidget&)));
+  connect(d->ThumbnailsWidget, SIGNAL(selected(ctkThumbnailWidget)), this, SLOT(onThumbnailSelected(ctkThumbnailWidget)));
+  connect(d->ThumbnailsWidget, SIGNAL(doubleClicked(ctkThumbnailWidget)), this, SLOT(onThumbnailDoubleClicked(ctkThumbnailWidget)));
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
-  connect(d->QueryRetrieveWidget, SIGNAL( canceled() ), d->QueryRetrieveWidget, SLOT( hide() ) );
+  connect(d->QueryRetrieveWidget, SIGNAL(canceled()), d->QueryRetrieveWidget, SLOT(hide()) );
 
   connect(d->ImagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
   connect(d->ImagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
-  connect(d->ImagePreview, SIGNAL(imageDisplayed(int, int)), this, SLOT(onImagePreviewDisplayed(int,int)));
+  connect(d->ImagePreview, SIGNAL(imageDisplayed(int,int)), this, SLOT(onImagePreviewDisplayed(int,int)));
 
   connect(d->SearchOption, SIGNAL(parameterChanged()), this, SLOT(onSearchParameterChanged()));
 

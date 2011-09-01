@@ -73,11 +73,11 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* parentWidget)
 
   this->readSettings();
 
-  connect(d->CallingAETitle, SIGNAL(textChanged(const QString&)),
+  connect(d->CallingAETitle, SIGNAL(textChanged(QString)),
     this, SLOT(saveSettings()));
-  connect(d->StorageAETitle, SIGNAL(textChanged(const QString&)),
+  connect(d->StorageAETitle, SIGNAL(textChanged(QString)),
     this, SLOT(saveSettings()));
-  connect(d->StoragePort, SIGNAL(textChanged(const QString&)),
+  connect(d->StoragePort, SIGNAL(textChanged(QString)),
     this, SLOT(saveSettings()));
 
   connect(d->AddButton, SIGNAL(clicked()),
@@ -87,7 +87,7 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* parentWidget)
 
   connect(d->NodeTable, SIGNAL(cellChanged(int,int)),
     this, SLOT(saveSettings()));
-  connect(d->NodeTable, SIGNAL(currentItemChanged(QTableWidgetItem*, QTableWidgetItem*)),
+  connect(d->NodeTable, SIGNAL(currentItemChanged(QTableWidgetItem*,QTableWidgetItem*)),
     this, SLOT(updateRemoveButtonEnableState()));
 }
 

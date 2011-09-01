@@ -38,7 +38,7 @@ int ctkDoubleRangeSliderTest2(int argc, char * argv [] )
 
   ctkDoubleRangeSlider slider(Qt::Horizontal);
 
-  QSignalSpy spyRange(&slider, SIGNAL(rangeChanged(double, double)));
+  QSignalSpy spyRange(&slider, SIGNAL(rangeChanged(double,double)));
 
   slider.setRange(200., 499.01);
   

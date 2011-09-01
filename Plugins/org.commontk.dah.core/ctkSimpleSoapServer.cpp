@@ -38,11 +38,11 @@ void ctkSimpleSoapServer::incomingConnection(int socketDescriptor)
   ctkSoapConnectionRunnable* runnable = new ctkSoapConnectionRunnable(socketDescriptor);
 
   connect(runnable, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
-          this, SIGNAL(incomingSoapMessage(QtSoapMessage, QtSoapMessage*)),
+          this, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           Qt::BlockingQueuedConnection);
 
   connect(runnable, SIGNAL(incomingWSDLMessage(QString,QString*)),
-          this, SIGNAL(incomingWSDLMessage(QString, QString*)),
+          this, SIGNAL(incomingWSDLMessage(QString,QString*)),
           Qt::BlockingQueuedConnection);
 
   QThreadPool::globalInstance()->start(runnable);

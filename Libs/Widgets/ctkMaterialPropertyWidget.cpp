@@ -258,8 +258,8 @@ void ctkMaterialPropertyWidget::addPreset(
     new ctkMaterialPropertyPreviewLabel(color, opacity, ambient, diffuse, specular, power);
   if (!color.isValid())
     {
-    connect(this, SIGNAL(colorChanged(const QColor&)),
-            preset, SLOT(setColor(const QColor&)));
+    connect(this, SIGNAL(colorChanged(QColor)),
+            preset, SLOT(setColor(QColor)));
     preset->setColor(this->color());
     }
   preset->setGridOpacity(d->MaterialPropertyPreviewLabel->gridOpacity());

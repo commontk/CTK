@@ -117,7 +117,7 @@ void ctkRangeSliderPrivate::init()
   this->m_MaximumValue = q->maximum();
   this->m_MinimumPosition = q->minimum();
   this->m_MaximumPosition = q->maximum();
-  q->connect(q, SIGNAL(rangeChanged(int, int)), q, SLOT(onRangeChanged(int, int)));
+  q->connect(q, SIGNAL(rangeChanged(int,int)), q, SLOT(onRangeChanged(int,int)));
 }
 
 // --------------------------------------------------------------------------

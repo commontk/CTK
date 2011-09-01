@@ -402,16 +402,16 @@ void ctkConsolePrivate::setCompleter(ctkConsoleCompleter* completer)
   if (this->Completer)
     {
     this->Completer->setWidget(0);
-    disconnect(this->Completer, SIGNAL(activated(const QString&)),
-               this, SLOT(insertCompletion(const QString&)));
+    disconnect(this->Completer, SIGNAL(activated(QString)),
+               this, SLOT(insertCompletion(QString)));
 
     }
   this->Completer = completer;
   if (this->Completer)
     {
     this->Completer->setWidget(this);
-    connect(this->Completer, SIGNAL(activated(const QString&)),
-            this, SLOT(insertCompletion(const QString&)));
+    connect(this->Completer, SIGNAL(activated(QString)),
+            this, SLOT(insertCompletion(QString)));
     }
 }
 

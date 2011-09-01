@@ -142,7 +142,7 @@ void ctkMatrixWidgetPrivate::init()
   // The table takes ownership of the prototype.
   this->Table->setItemPrototype(_item);
 
-  QObject::connect(this->Table, SIGNAL(cellChanged(int, int)),
+  QObject::connect(this->Table, SIGNAL(cellChanged(int,int)),
                    q, SIGNAL(matrixChanged()));
   /// \todo Wrap model signals to emit signals when the matrix is changed.
 /// Right now you can connect to the signal:

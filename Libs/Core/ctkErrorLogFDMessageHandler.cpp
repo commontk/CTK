@@ -54,8 +54,8 @@ ctkFDHandler::ctkFDHandler(ctkErrorLogFDMessageHandler* messageHandler,
     + QDir::separator () + "ctkFDHandler-%1.XXXXXX.txt";
   this->OutputFile.setFileTemplate(outputFileTemplateName.arg(this->FDNumber));
 
-  connect(&this->OutputFileWatcher, SIGNAL(fileChanged(const QString&)),
-          SLOT(outputFileChanged(const QString&)));
+  connect(&this->OutputFileWatcher, SIGNAL(fileChanged(QString)),
+          SLOT(outputFileChanged(QString)));
 }
 
 // --------------------------------------------------------------------------

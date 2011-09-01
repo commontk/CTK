@@ -117,8 +117,8 @@ void ctkDoubleRangeSliderPrivate::connectSlider()
              q, SIGNAL(sliderPressed()));
   q->connect(this->Slider, SIGNAL(sliderReleased()),
              q, SIGNAL(sliderReleased()));
-  q->connect(this->Slider, SIGNAL(rangeChanged(int, int)),
-             q, SLOT(onRangeChanged(int, int)));
+  q->connect(this->Slider, SIGNAL(rangeChanged(int,int)),
+             q, SLOT(onRangeChanged(int,int)));
 }
 
 // --------------------------------------------------------------------------

@@ -36,7 +36,7 @@ int ctkModalityWidgetTest1(int argc, char * argv [] )
 
   ctkModalityWidget modalityWidget;
   
-  QSignalSpy spy(&modalityWidget, SIGNAL(selectedModalitiesChanged(const QStringList&)));
+  QSignalSpy spy(&modalityWidget, SIGNAL(selectedModalitiesChanged(QStringList)));
   modalityWidget.unselectAll();
 
   if (spy.count() != 1)

@@ -61,10 +61,10 @@ void ctkVTKScalarBarWidgetPrivate::init()
                    q, SLOT(setMaxNumberOfColors(int)));
   QObject::connect(this->NumberOfLabelsSpinBox, SIGNAL(valueChanged(int)),
                    q, SLOT(setNumberOfLabels(int)));
-  QObject::connect(this->TitleTextPropertyWidget, SIGNAL(textChanged(const QString&)),
-                   q, SLOT(setTitle(const QString&)));
-  QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(textChanged(const QString&)),
-                   q, SLOT(setLabelsFormat(const QString&)));
+  QObject::connect(this->TitleTextPropertyWidget, SIGNAL(textChanged(QString)),
+                   q, SLOT(setTitle(QString)));
+  QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(textChanged(QString)),
+                   q, SLOT(setLabelsFormat(QString)));
 }
 
 //-----------------------------------------------------------------------------

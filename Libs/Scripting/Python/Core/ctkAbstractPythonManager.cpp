@@ -84,10 +84,10 @@ void ctkAbstractPythonManager::initPythonQt()
 
   PythonQtObjectPtr _mainContext = PythonQt::self()->getMainModule();
 
-  this->connect(PythonQt::self(), SIGNAL(pythonStdOut(const QString&)),
-                SLOT(printStdout(const QString&)));
-  this->connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString&)),
-                SLOT(printStderr(const QString&)));
+  this->connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)),
+                SLOT(printStdout(QString)));
+  this->connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
+                SLOT(printStderr(QString)));
   
   PythonQt_init_QtBindings();
   

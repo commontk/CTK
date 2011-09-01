@@ -54,7 +54,7 @@ int ctkFontButtonTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  QSignalSpy spyFontChanged(&button, SIGNAL(currentFontChanged(const QFont&)));
+  QSignalSpy spyFontChanged(&button, SIGNAL(currentFontChanged(QFont)));
 
   button.setCurrentFont(customFont2);
   if ( button.currentFont() != customFont2 ||

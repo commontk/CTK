@@ -105,19 +105,19 @@ void ctkAddRemoveComboBoxPrivate::connectComboBox(QComboBox* comboBox)
                 q, SIGNAL(currentIndexChanged(int)));
   /*
   this->connect(d->ComboBox->model(),
-  SIGNAL(rowsAboutToBeInserted(const QModelIndex & _parent, int start, int end )),
-  SLOT(onRowsAboutToBeInserted(const QModelIndex & _parent, int start, int end )));
+  SIGNAL(rowsAboutToBeInserted(QModelIndex&_parent,int start,int end)),
+  SLOT(onRowsAboutToBeInserted(QModelIndex&_parent,int start,int end)));
   */
   QObject::connect(comboBox->model(),
-                SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
-                q, SLOT(onRowsAboutToBeRemoved(const QModelIndex & , int , int  )));
+                SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
+                q, SLOT(onRowsAboutToBeRemoved(QModelIndex,int,int)));
 
   QObject::connect(comboBox->model(),
-                SIGNAL(rowsInserted(const QModelIndex &, int, int )),
-                q, SLOT(onRowsInserted(const QModelIndex &, int, int)));
+                SIGNAL(rowsInserted(QModelIndex,int,int)),
+                q, SLOT(onRowsInserted(QModelIndex,int,int)));
   QObject::connect(comboBox->model(),
-                SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
-                q, SLOT(onRowsRemoved(const QModelIndex &, int, int )));
+                SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                q, SLOT(onRowsRemoved(QModelIndex,int,int)));
 }
 
 // --------------------------------------------------------------------------

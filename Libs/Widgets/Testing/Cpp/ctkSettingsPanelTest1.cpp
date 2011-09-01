@@ -112,7 +112,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
 
   QLineEdit* lineEdit = new QLineEdit("default", &settingsPanel);
   settingsPanel.registerProperty("key 2", lineEdit, "text",
-                                  SIGNAL(textChanged(const QString&)));
+                                  SIGNAL(textChanged(QString)));
 
   // Check value after a property is registered
   QVariant lineEditVal = settings.value("key 2");
