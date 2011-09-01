@@ -248,7 +248,7 @@
             <number>256</number>
            </property>
            <property name="value">
-            <number>128</number>
+            <number>64</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
