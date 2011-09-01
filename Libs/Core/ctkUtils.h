@@ -108,6 +108,14 @@ int CTK_CORE_EXPORT orderOfMagnitude(double value);
 /// See more cases in the test ctkUtilsClosestPowerOfTenTest1
 double CTK_CORE_EXPORT closestPowerOfTen(double value);
 
+///
+/// \ingroup Core
+/// Remove a directory recursively.
+/// \param dirName The directory to remove
+/// \return <code>true</code> on success, <code>false</code> otherwise.
+/// \sa QDir::rmdir
+bool CTK_CORE_EXPORT rmdir(const QString & dirName);
+
 }
 
 #endif

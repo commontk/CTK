@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDir>
 #include <QRegExp>
 #include <QString>
 #include <QStringList>
@@ -273,4 +274,34 @@ double ctk::closestPowerOfTen(double value)
     while ( (value - magnitude)  < (nextMagnitude - value) );
     }
   return magnitude * sign;
+}
+
+//-----------------------------------------------------------------------------
+bool ctk::rmdir(const QString & dirName)
+{
+  bool result = false;
+  QDir dir(dirName);
+
+  if (dir.exists(dirName))
+    {
+    foreach (QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst))
+      {
+      if (info.isDir())
+        {
+        result = ctk::rmdir(info.absoluteFilePath());
+        }
+      else
+        {
+        result = QFile::remove(info.absoluteFilePath());
+        }
+
+      if (!result)
+        {
+        return result;
+        }
+      }
+    result = dir.rmdir(dirName);
+    }
+
+  return result;
 }
