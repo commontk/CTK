@@ -67,6 +67,7 @@ public:
   QPoint OldMousePos;
   double DicomIntensityLevel;
   double DicomIntensityWindow;
+  bool AutoWindowLevel;
 
   void init();
 
@@ -95,6 +96,8 @@ void ctkDICOMDatasetViewPrivate::init()
   this->DicomIntensityLevel = 0;
 
   this->DicomIntensityWindow = 0;
+
+  this->AutoWindowLevel = true;
 
   /*
   this->Window->setParent(q);
@@ -271,17 +274,24 @@ void ctkDICOMDatasetView::addImage( DicomImage & dcmImage, bool defaultIntensity
     }
     // Select first window defined in image. If none, compute min/max window as best guess.
     // Only relevant for monochrome
-    // TODO: Re-Use code from ctkDICOMThumbnailGenerator by re-factoring it to a function?
-    if (dcmImage.isMonochrome())
+    if (d->AutoWindowLevel)
     {
-        if (defaultIntensity && dcmImage.getWindowCount() > 0)
-        {
-          dcmImage.setWindow(0);
-        }
-        else
-        {
-          dcmImage.setWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
-        }
+      if (dcmImage.isMonochrome())
+      {
+          if (defaultIntensity && dcmImage.getWindowCount() > 0)
+          {
+            dcmImage.setWindow(0);
+          }
+          else
+          {
+            dcmImage.setMinMaxWindow(OFTrue /* ignore extreme values */);
+            dcmImage.getWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
+          }
+      }
+    } 
+    else 
+    {
+      dcmImage.setWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
     }
     /* get image extension and prepare image header */
     const unsigned long width = dcmImage.getWidth();
@@ -363,6 +373,7 @@ void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
 
         d->DicomIntensityWindow += (5*(nowPos.x()-d->OldMousePos.x()));
         d->DicomIntensityLevel -= (5*(nowPos.y()-d->OldMousePos.y()));
+        d->AutoWindowLevel = false;
 
         d->setImage(d->CurrentImageIndex, false);
 
