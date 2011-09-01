@@ -41,6 +41,7 @@ SET(KITTests_SRCS
   ctkUtilsTest1.cpp
   ctkUtilsTest2.cpp
   ctkUtilsTest3.cpp
+  ctkUtilsTest4.cpp
   ctkDependencyGraphTest1.cpp
   ctkDependencyGraphTest2.cpp
   ctkPimplTest1.cpp
@@ -148,6 +149,7 @@ SIMPLE_TEST( ctkUtilsSignificantDecimalsTest1 )
 SIMPLE_TEST( ctkUtilsTest1 )
 SIMPLE_TEST( ctkUtilsTest2 )
 SIMPLE_TEST( ctkUtilsTest3 )
+SIMPLE_TEST( ctkUtilsTest4 )
 SIMPLE_TEST( ctkWorkflowTest1 )
 SIMPLE_TEST( ctkWorkflowTest2 )
 SIMPLE_TEST( ctkWorkflowTest3 )
