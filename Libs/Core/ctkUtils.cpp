@@ -277,7 +277,7 @@ double ctk::closestPowerOfTen(double value)
 }
 
 //-----------------------------------------------------------------------------
-bool ctk::rmdir(const QString & dirName)
+bool ctk::removeDirRecursively(const QString & dirName)
 {
   bool result = false;
   QDir dir(dirName);
@@ -288,7 +288,7 @@ bool ctk::rmdir(const QString & dirName)
       {
       if (info.isDir())
         {
-        result = ctk::rmdir(info.absoluteFilePath());
+        result = ctk::removeDirRecursively(info.absoluteFilePath());
         }
       else
         {

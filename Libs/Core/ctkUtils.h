@@ -114,7 +114,7 @@ double CTK_CORE_EXPORT closestPowerOfTen(double value);
 /// \param dirName The directory to remove
 /// \return <code>true</code> on success, <code>false</code> otherwise.
 /// \sa QDir::rmdir
-bool CTK_CORE_EXPORT rmdir(const QString & dirName);
+bool CTK_CORE_EXPORT removeDirRecursively(const QString & dirName);
 
 }
 

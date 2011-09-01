@@ -65,7 +65,7 @@ int ctkUtilsTest4(int argc, char * argv [] )
   Q_UNUSED(argv);
 
   // --------------------------------------------------------------------------
-  // Test rmdir(const QString & dirName);
+  // Test removeDirRecursively(const QString & dirName);
   // --------------------------------------------------------------------------
   
   QDir tmp = QDir::temp();
@@ -74,9 +74,9 @@ int ctkUtilsTest4(int argc, char * argv [] )
 
   // Attempt to delete nonexistent relative directory
   QString nonexistentRelativeDirPath = temporaryDirName;
-  if (ctk::rmdir(nonexistentRelativeDirPath))
+  if (ctk::removeDirRecursively(nonexistentRelativeDirPath))
     {
-    std::cerr << "Line " << __LINE__ << " - Problem with ctk::rmdir() !"
+    std::cerr << "Line " << __LINE__ << " - Problem with ctk::removeDirRecursively() !"
               << " - It should fail to delete nonexistent directory: " <<
               qPrintable(nonexistentRelativeDirPath)<< std::endl;
     return EXIT_FAILURE;
@@ -84,9 +84,9 @@ int ctkUtilsTest4(int argc, char * argv [] )
 
   // Attempt to delete nonexistent absolute directory
   QString nonexistentAbsoluteDirPath = QFileInfo(tmp, temporaryDirName).dir().absolutePath();
-  if (ctk::rmdir(nonexistentAbsoluteDirPath))
+  if (ctk::removeDirRecursively(nonexistentAbsoluteDirPath))
     {
-    std::cerr << "Line " << __LINE__ << " - Problem with ctk::rmdir() !"
+    std::cerr << "Line " << __LINE__ << " - Problem with ctk::removeDirRecursively() !"
               << " - It should fail to delete nonexistent directory: " <<
               qPrintable(nonexistentAbsoluteDirPath)<< std::endl;
     return EXIT_FAILURE;
@@ -108,9 +108,9 @@ int ctkUtilsTest4(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if (!ctk::rmdir(tmp.absolutePath()))
+  if (!ctk::removeDirRecursively(tmp.absolutePath()))
     {
-    std::cerr << "Line " << __LINE__ << " - Problem with ctk::rmdir()"
+    std::cerr << "Line " << __LINE__ << " - Problem with ctk::removeDirRecursively()"
               << " - Failed to delete directory:" << qPrintable(tmp.absolutePath()) << std::endl;
     return EXIT_FAILURE;
     }
