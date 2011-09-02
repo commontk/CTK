@@ -72,16 +72,17 @@ void ctkCompleterPrivate::init()
 QStringList ctkCompleterPrivate::splitPath(const QString& s)
 {
   Q_Q(ctkCompleter);
+  QStringList paths;
   switch(q->modelFiltering())
     {
     default:
     case ctkCompleter::FilterStartsWith:
-      return q->QCompleter::splitPath(s);
+      paths = q->QCompleter::splitPath(s);
       break;
     case ctkCompleter::FilterContains:
       this->updateSortFilterProxyModel();
       this->SortFilterProxyModel->setFilterWildcard(s);
-      return QStringList();
+      paths = QStringList();
       break;
     case ctkCompleter::FilterWordStartsWith:
       {
@@ -89,10 +90,11 @@ QStringList ctkCompleterPrivate::splitPath(const QString& s)
       QRegExp regexp = QRegExp(QRegExp::escape(s));
       regexp.setCaseSensitivity(q->caseSensitivity());
       this->SortFilterProxyModel->setFilterRegExp(regexp);
-      return QStringList();
+      paths = QStringList();
       break;
       }
     }
+  return paths;
 }
 
 // -------------------------------------------------------------------------
