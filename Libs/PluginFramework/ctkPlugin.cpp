@@ -27,6 +27,7 @@
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkServices_p.h"
+#include "ctkUtils.h"
 
 #include <QStringList>
 
@@ -233,7 +234,7 @@ void ctkPlugin::uninstall()
 
     if (d->pluginDir.exists())
     {
-      if (!ctkPluginFrameworkUtil::removeDir(d->pluginDir.absolutePath()))
+      if (!ctk::removeDirRecursively(d->pluginDir.absolutePath()))
       {
         // Plugin dir is not deleted completely, make sure we mark
         // it as uninstalled for next framework restart

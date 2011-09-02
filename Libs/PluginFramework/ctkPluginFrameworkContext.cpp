@@ -26,6 +26,7 @@
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginConstants.h"
 #include "ctkServices_p.h"
+#include "ctkUtils.h"
 
 //----------------------------------------------------------------------------
 QMutex ctkPluginFrameworkContext::globalFwLock;
@@ -231,7 +232,7 @@ void ctkPluginFrameworkContext::deleteFWDir()
     if(fwDirInfo.isDir())
     {
       log() << "deleting old framework directory.";
-      bool bOK = ctkPluginFrameworkUtil::removeDir(fwDirInfo.absoluteFilePath());
+      bool bOK = ctk::removeDirRecursively(fwDirInfo.absoluteFilePath());
       if(!bOK)
       {
         qDebug() << "Failed to remove existing fwdir" << fwDirInfo.absoluteFilePath();

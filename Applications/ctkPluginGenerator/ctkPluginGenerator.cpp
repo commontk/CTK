@@ -29,6 +29,7 @@
 #include <ctkPluginGeneratorCodeModel.h>
 #include <ctkPluginGeneratorConstants.h>
 #include <ctkPluginGeneratorOptionsDialog_p.h>
+#include <ctkUtils.h>
 
 #include <QDebug>
 #include <QListWidgetItem>
@@ -65,32 +66,6 @@ public:
     tmp.cd(tmpPath);
 
     return tmp.canonicalPath();
-  }
-
-  static bool removeDir(const QString& dirName)
-  {
-    bool result = true;
-    QDir dir(dirName);
-
-    if (dir.exists(dirName))
-    {
-      foreach (QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst))
-      {
-        if (info.isDir()) {
-          result = removeDir(info.absoluteFilePath());
-        }
-        else {
-          result = QFile::remove(info.absoluteFilePath());
-        }
-
-        if (!result) {
-          return result;
-        }
-      }
-      result = dir.rmdir(dirName);
-    }
-
-    return result;
   }
 };
 
@@ -164,7 +139,7 @@ ctkPluginGenerator::~ctkPluginGenerator()
   delete ui;
   if (!previewDir.isEmpty())
   {
-    ctkTemporaryDir::removeDir(previewDir);
+    ctk::removeDirRecursively(previewDir);
   }
 }
 
@@ -219,7 +194,7 @@ void ctkPluginGenerator::previewClicked()
     ui->previewButton->setText(tr("Preview >>"));
     mode = EDIT;
 
-    ctkTemporaryDir::removeDir(previewDir);
+    ctk::removeDirRecursively(previewDir);
     previewDir.clear();
   }
 }
