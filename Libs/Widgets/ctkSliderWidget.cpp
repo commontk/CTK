@@ -526,10 +526,11 @@ void ctkSliderWidget::setPopupSlider(bool popup)
   if (popup)
     {
     d->SliderPopup = new ctkPopupWidget(0);
-    //d->SliderPopup->setParent(this);
 
     QHBoxLayout* layout = new QHBoxLayout(d->SliderPopup);
     layout->setContentsMargins(0,0,0,0);
+    /// If the Slider has already been created, it will try to keep its
+    /// size.
     layout->addWidget(d->Slider);
 
     d->SliderPopup->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -543,6 +544,13 @@ void ctkSliderWidget::setPopupSlider(bool popup)
     d->SliderPopup->deleteLater();
     d->SliderPopup = 0;
     }
+}
+
+// --------------------------------------------------------------------------
+ctkPopupWidget* ctkSliderWidget::popup()const
+{
+  Q_D(const ctkSliderWidget);
+  return d->SliderPopup;
 }
 
 // --------------------------------------------------------------------------
