@@ -155,7 +155,7 @@ template<typename BaseClassType>
 QString ctkAbstractFileBasedFactory<BaseClassType>
 ::fileNameToKey(const QString& fileName)const
 {
-  return QFileInfo(fileName).baseName().toLower();
+  return QFileInfo(fileName).baseName();
 }
 
 #endif
