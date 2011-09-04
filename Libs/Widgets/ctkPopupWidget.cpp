@@ -479,7 +479,13 @@ void ctkPopupWidget::updatePopup()
 
   // Querying mouseOver can be slow, don't do it if not needed.
   QWidget* mouseOver = (d->AutoShow || d->AutoHide) ? d->mouseOver() : 0;
-  if (d->AutoShow && mouseOver &&
+  if ((d->AutoShow ||
+     // Even if there is no AutoShow, we might still want to reopen the popup
+     // when closing it inadvertently
+       d->AutoHide && d->isClosing()) &&
+     // to be automatically open, the mouse has to be over a child widget
+      mouseOver &&
+     // disable opening the popup when the popup is disabled
       (!d->BaseWidget || d->BaseWidget->isEnabled()))
     {
     this->showPopup();
