@@ -36,8 +36,8 @@ class ctkScopedCurrentDirPrivate;
 /// This is particulary useful in case a plugin and its dependent libraries should be loaded from
 /// a known directory.
 /// Indeed, changing the application PATH, LD_LIBRARY_PATH or DYLD_LIBRARY_PATH within the current
-/// process won't have the desired effect. The loader check for these variable once when the process
-/// starts.
+/// process won't have the desired effect. The loader checks for these variables only once when
+/// the process starts.
 /// \sa http://stackoverflow.com/questions/856116/changing-ld-library-path-at-runtime-for-ctypes
 /// \sa http://stackoverflow.com/questions/1178094/change-current-process-environment
 ///
