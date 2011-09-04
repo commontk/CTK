@@ -60,8 +60,8 @@ void ctkPopupWidgetPrivate::init()
 {
   Q_Q(ctkPopupWidget);
   this->setParent(q);
-  this->Superclass::init();
   q->setActive(true);
+  this->Superclass::init();
 }
 
 // -------------------------------------------------------------------------
@@ -279,7 +279,10 @@ void ctkPopupWidget::setActive(bool active)
       {
       d->BaseWidget->installEventFilter(this);
       }
-    d->PopupPixmapWidget->installEventFilter(this);
+    if (d->PopupPixmapWidget)
+      {
+      d->PopupPixmapWidget->installEventFilter(this);
+      }
     qApp->installEventFilter(d);
     }
   else // not active
@@ -288,7 +291,10 @@ void ctkPopupWidget::setActive(bool active)
       {
       d->BaseWidget->removeEventFilter(this);
       }
-    d->PopupPixmapWidget->removeEventFilter(this);
+    if (d->PopupPixmapWidget)
+      {
+      d->PopupPixmapWidget->removeEventFilter(this);
+      }
     qApp->removeEventFilter(d);
     }
 }
@@ -359,7 +365,8 @@ void ctkPopupWidget::onEffectFinished()
 // --------------------------------------------------------------------------
 void ctkPopupWidget::leaveEvent(QEvent* event)
 {
-  QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+  //QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+  this->updatePopup();
   this->Superclass::leaveEvent(event);
 }
 
@@ -472,7 +479,13 @@ void ctkPopupWidget::updatePopup()
 
   // Querying mouseOver can be slow, don't do it if not needed.
   QWidget* mouseOver = (d->AutoShow || d->AutoHide) ? d->mouseOver() : 0;
-  if (d->AutoShow && mouseOver &&
+  if ((d->AutoShow ||
+     // Even if there is no AutoShow, we might still want to reopen the popup
+     // when closing it inadvertently
+       d->AutoHide && d->isClosing()) &&
+     // to be automatically open, the mouse has to be over a child widget
+      mouseOver &&
+     // disable opening the popup when the popup is disabled
       (!d->BaseWidget || d->BaseWidget->isEnabled()))
     {
     this->showPopup();

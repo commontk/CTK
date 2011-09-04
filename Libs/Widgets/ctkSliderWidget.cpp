@@ -71,8 +71,6 @@ ctkSliderWidgetPrivate::ctkSliderWidgetPrivate(ctkSliderWidget& object)
 // --------------------------------------------------------------------------
 ctkSliderWidgetPrivate::~ctkSliderWidgetPrivate()
 {
-  delete this->SliderPopup;
-  this->SliderPopup = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -525,7 +523,7 @@ void ctkSliderWidget::setPopupSlider(bool popup)
     }
   if (popup)
     {
-    d->SliderPopup = new ctkPopupWidget(0);
+    d->SliderPopup = new ctkPopupWidget(this);
 
     QHBoxLayout* layout = new QHBoxLayout(d->SliderPopup);
     layout->setContentsMargins(0,0,0,0);
@@ -536,7 +534,6 @@ void ctkSliderWidget::setPopupSlider(bool popup)
     d->SliderPopup->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     d->SliderPopup->setOrientation(Qt::Horizontal);
     d->SliderPopup->setHorizontalDirection(Qt::RightToLeft);
-    d->SliderPopup->setBaseWidget(d->SpinBox);
     }
   else
     {
