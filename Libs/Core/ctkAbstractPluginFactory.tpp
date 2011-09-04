@@ -23,6 +23,7 @@
 
 // CTK includes
 #include "ctkAbstractPluginFactory.h"
+#include "ctkScopedCurrentDir.h"
 
 // QT includes
 #include <QPluginLoader>
@@ -43,6 +44,7 @@ ctkFactoryPluginItem<BaseClassType>::ctkFactoryPluginItem(const QString& _path)
 template<typename BaseClassType>
 bool ctkFactoryPluginItem<BaseClassType>::load()
 {
+  ctkScopedCurrentDir scopedCurrentDir(QFileInfo(this->path()).path());
   this->Loader.setFileName(this->path());
   return this->Loader.load();
 }
