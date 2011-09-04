@@ -45,6 +45,7 @@ SET(KITTests_SRCS
   ctkDependencyGraphTest1.cpp
   ctkDependencyGraphTest2.cpp
   ctkPimplTest1.cpp
+  ctkScopedCurrentDirTest1.cpp
   ctkSingletonTest1.cpp
   ctkTransferFunctionTest1.cpp
   ctkTransferFunctionRepresentationTest1.cpp
@@ -140,6 +141,7 @@ SET_TESTS_PROPERTIES(ctkErrorLogModelTest3 PROPERTIES PASS_REGULAR_EXPRESSION
 SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkModelTesterTest2 )
 SIMPLE_TEST( ctkPimplTest1 )
+SIMPLE_TEST( ctkScopedCurrentDirTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
 SIMPLE_TEST( ctkTransferFunctionTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
