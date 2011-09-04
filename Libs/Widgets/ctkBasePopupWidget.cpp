@@ -98,7 +98,6 @@ ctkBasePopupWidgetPrivate::ctkBasePopupWidgetPrivate(ctkBasePopupWidget& object)
 // -------------------------------------------------------------------------
 ctkBasePopupWidgetPrivate::~ctkBasePopupWidgetPrivate()
 {
-  delete this->PopupPixmapWidget;
 }
 
 // -------------------------------------------------------------------------
@@ -117,7 +116,7 @@ void ctkBasePopupWidgetPrivate::init()
   QObject::connect(this->AlphaAnimation, SIGNAL(finished()),
                    q, SLOT(onEffectFinished()));
 
-  this->PopupPixmapWidget = new QLabel(0, Qt::ToolTip | Qt::FramelessWindowHint);
+  this->PopupPixmapWidget = new QLabel(q, Qt::ToolTip | Qt::FramelessWindowHint);
 
   this->ScrollAnimation = new QPropertyAnimation(q, "effectGeometry", q);
   this->ScrollAnimation->setDuration(DEFAULT_FADING_DURATION);
@@ -128,6 +127,7 @@ void ctkBasePopupWidgetPrivate::init()
 
   q->setAnimationEffect(this->Effect);
   q->setEasingCurve(QEasingCurve::OutCubic);
+  q->setBaseWidget(q->parentWidget());
 }
 
 // -------------------------------------------------------------------------
@@ -215,7 +215,9 @@ bool ctkBasePopupWidgetPrivate::isAncestorOf(const QWidget* ancestor, const QWid
   while (child)
     {
     if (child == ancestor)
-        return true;
+      {
+      return true;
+      }
     child = child->parentWidget();
     }
   return false;
@@ -428,7 +430,7 @@ void ctkBasePopupWidgetPrivate::hideAll()
   // It is possible to have the popup widget not being a popup but inside
   // a layout: maybe the popup has been pin-down in a way that it gets parented
   // In that case, there is no reason to hide the popup.
-  if (q->parentWidget() != 0)
+  if (!(q->windowFlags() & Qt::ToolTip))
     {
     return;
     }
@@ -458,7 +460,8 @@ void ctkBasePopupWidgetPrivate::hideAll()
 // Qt::Toolip is preferred to Qt::Popup as it would close itself at the first
 // click outside the widget (typically a click in the BaseWidget)
 ctkBasePopupWidget::ctkBasePopupWidget(QWidget* parentWidget)
-  : Superclass(QApplication::desktop()->screen(QApplication::desktop()->screenNumber(parentWidget)),
+  //: Superclass(QApplication::desktop()->screen(QApplication::desktop()->screenNumber(parentWidget)),
+  : Superclass(parentWidget,
                Qt::ToolTip | Qt::FramelessWindowHint)
   , d_ptr(new ctkBasePopupWidgetPrivate(*this))
 {
@@ -468,7 +471,8 @@ ctkBasePopupWidget::ctkBasePopupWidget(QWidget* parentWidget)
 
 // -------------------------------------------------------------------------
 ctkBasePopupWidget::ctkBasePopupWidget(ctkBasePopupWidgetPrivate* pimpl, QWidget* parentWidget)
-  : Superclass(QApplication::desktop()->screen(QApplication::desktop()->screenNumber(parentWidget)),
+  //: //Superclass(QApplication::desktop()->screen(QApplication::desktop()->screenNumber(parentWidget)),
+  : Superclass(parentWidget,
                Qt::ToolTip | Qt::FramelessWindowHint)
   , d_ptr(pimpl)
 {
@@ -493,14 +497,14 @@ void ctkBasePopupWidget::setBaseWidget(QWidget* widget)
   Q_D(ctkBasePopupWidget);
   if (d->BaseWidget)
     {
-    disconnect(d->BaseWidget, SIGNAL(destroyed(QObject*)),
-               this, SLOT(onBaseWidgetDestroyed()));
+    //disconnect(d->BaseWidget, SIGNAL(destroyed(QObject*)),
+    //           this, SLOT(onBaseWidgetDestroyed()));
     }
   d->BaseWidget = widget;
   if (d->BaseWidget)
     {
-    connect(d->BaseWidget, SIGNAL(destroyed(QObject*)),
-            this, SLOT(onBaseWidgetDestroyed()));
+    //connect(d->BaseWidget, SIGNAL(destroyed(QObject*)),
+    //        this, SLOT(onBaseWidgetDestroyed()));
     }
 }
 
@@ -619,6 +623,19 @@ void ctkBasePopupWidget::onEffectFinished()
     this->show();
     emit this->popupOpened(true);
     }
+}
+
+// -------------------------------------------------------------------------
+bool ctkBasePopupWidget::event(QEvent* event)
+{
+  Q_D(ctkBasePopupWidget);
+  switch(event->type())
+    {
+    case QEvent::ParentChange:
+      this->setBaseWidget(this->parentWidget());
+      break;
+    }
+  return this->Superclass::event(event);
 }
 
 // -------------------------------------------------------------------------

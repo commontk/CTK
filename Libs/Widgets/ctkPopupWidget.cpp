@@ -60,8 +60,8 @@ void ctkPopupWidgetPrivate::init()
 {
   Q_Q(ctkPopupWidget);
   this->setParent(q);
-  this->Superclass::init();
   q->setActive(true);
+  this->Superclass::init();
 }
 
 // -------------------------------------------------------------------------
@@ -279,7 +279,10 @@ void ctkPopupWidget::setActive(bool active)
       {
       d->BaseWidget->installEventFilter(this);
       }
-    d->PopupPixmapWidget->installEventFilter(this);
+    if (d->PopupPixmapWidget)
+      {
+      d->PopupPixmapWidget->installEventFilter(this);
+      }
     qApp->installEventFilter(d);
     }
   else // not active
@@ -288,7 +291,10 @@ void ctkPopupWidget::setActive(bool active)
       {
       d->BaseWidget->removeEventFilter(this);
       }
-    d->PopupPixmapWidget->removeEventFilter(this);
+    if (d->PopupPixmapWidget)
+      {
+      d->PopupPixmapWidget->removeEventFilter(this);
+      }
     qApp->removeEventFilter(d);
     }
 }
@@ -359,7 +365,8 @@ void ctkPopupWidget::onEffectFinished()
 // --------------------------------------------------------------------------
 void ctkPopupWidget::leaveEvent(QEvent* event)
 {
-  QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+  //QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+  this->updatePopup();
   this->Superclass::leaveEvent(event);
 }
 

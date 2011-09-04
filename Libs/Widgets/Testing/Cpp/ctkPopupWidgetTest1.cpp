@@ -71,7 +71,7 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   vlayout->addWidget(pinButton);
   topLevel->setLayout(vlayout);
 
-  ctkPopupWidget* focusPopup = new ctkPopupWidget;
+  ctkPopupWidget* focusPopup = new ctkPopupWidget(focusComboBox);
   focusPopup->setObjectName("focusPopup");
   focusPopup->setAutoShow(true);
   focusPopup->setAutoHide(true);
@@ -92,7 +92,6 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   focusLayout->addWidget(focusPopupContent);
   focusLayout->addWidget(popupToolButton);
   focusPopup->setLayout(focusLayout);
-  focusPopup->setBaseWidget(focusComboBox);
   focusLayout->setContentsMargins(0,0,0,0);
 
   QPalette palette = focusPopup->palette();
@@ -104,7 +103,7 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   palette.setBrush(QPalette::Window, linearGradient);
   focusPopup->setPalette(palette);
 
-  ctkPopupWidget* openPopup = new ctkPopupWidget;
+  ctkPopupWidget* openPopup = new ctkPopupWidget(openButton);
   openPopup->setObjectName("openPopup");
   openPopup->setFrameStyle(QFrame::Box);
   openPopup->setLineWidth(1);
@@ -116,13 +115,12 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   QVBoxLayout* openLayout = new QVBoxLayout;
   openLayout->addWidget(openPopupContent);
   openPopup->setLayout(openLayout);
-  openPopup->setBaseWidget(openButton);
   QObject::connect(openButton, SIGNAL(clicked()),
                    openPopup, SLOT(showPopup()));
   QObject::connect(openPopupContent, SIGNAL(clicked()),
                    openPopup, SLOT(hidePopup()));
                    
-  ctkPopupWidget* togglePopup = new ctkPopupWidget;
+  ctkPopupWidget* togglePopup = new ctkPopupWidget(toggleButton);
   togglePopup->setObjectName("togglePopup");
   togglePopup->setAutoShow(false);
   togglePopup->setAutoHide(false);
@@ -132,14 +130,12 @@ QWidget* createPanel(const QString& title, QList<ctkPopupWidget*>& popups)
   QVBoxLayout* toggleLayout = new QVBoxLayout;
   toggleLayout->addWidget(togglePopupContent);
   togglePopup->setLayout(toggleLayout);
-  togglePopup->setBaseWidget(toggleButton);
   QObject::connect(toggleButton, SIGNAL(toggled(bool)),
                    togglePopup, SLOT(showPopup(bool)));
   togglePopup->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   
-  ctkPopupWidget* pinPopup = new ctkPopupWidget;
+  ctkPopupWidget* pinPopup = new ctkPopupWidget(pinButton);
   pinPopup->setObjectName("pinPopup");
-  pinPopup->setBaseWidget(pinButton);
   QPushButton* pinPopupContent = new QPushButton("pin button");
   pinPopupContent->setCheckable(true);
   QObject::connect(pinPopupContent, SIGNAL(toggled(bool)),
@@ -164,13 +160,12 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
 
   QPushButton base("Top level push button");
   
-  ctkPopupWidget popup;
+  ctkPopupWidget popup(&base);
   QPushButton popupContent("popup");
   QVBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(&popupContent);
   popup.setLayout(layout);
 
-  popup.setBaseWidget(&base);
   popup.setAlignment(Qt::AlignVCenter | Qt::AlignRight);
   popup.setHorizontalDirection(Qt::RightToLeft);
   popup.setOrientation(Qt::Horizontal);

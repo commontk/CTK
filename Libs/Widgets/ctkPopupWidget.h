@@ -53,11 +53,6 @@ public:
   explicit ctkPopupWidget(QWidget* parent = 0);
   virtual ~ctkPopupWidget();
 
-  /// Widget the popup is attached to. It opens right under \a baseWidget
-  /// and if the ctkPopupWidget sizepolicy contains the growFlag/shrinkFlag,
-  /// it tries to resize itself to fit the same width of \a baseWidget.
-  virtual void setBaseWidget(QWidget* baseWidget);
-
   bool isActive()const;
   void setActive(bool);
 
@@ -86,6 +81,11 @@ protected:
   virtual void leaveEvent(QEvent* event);
   virtual void enterEvent(QEvent* event);
   virtual bool eventFilter(QObject* obj, QEvent* event);
+
+  /// Widget the popup is attached to. It opens right under \a baseWidget
+  /// and if the ctkPopupWidget sizepolicy contains the growFlag/shrinkFlag,
+  /// it tries to resize itself to fit the same width of \a baseWidget.
+  virtual void setBaseWidget(QWidget* baseWidget);
 
 protected slots:
   void updatePopup();

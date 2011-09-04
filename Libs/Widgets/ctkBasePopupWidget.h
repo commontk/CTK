@@ -66,14 +66,21 @@ class CTK_WIDGETS_EXPORT ctkBasePopupWidget : public QFrame
 
 public:
   typedef QFrame Superclass;
+  /// Although a popup widget is a top-level widget, if a parent is
+  /// passed the popup widget will be deleted when that parent is
+  /// destroyed (as with any other QObject).
+  /// ctkBasePopupWidget is a top-level widget (Qt::ToolTip), so
+  /// even if a parent is passed, the popup will display outside the possible
+  /// parent layout.
+  /// \sa baseWidget().
   explicit ctkBasePopupWidget(QWidget* parent = 0);
   virtual ~ctkBasePopupWidget();
 
   /// Widget the popup is attached to. It opens right under \a baseWidget
   /// and if the ctkBasePopupWidget sizepolicy contains the growFlag/shrinkFlag,
   /// it tries to resize itself to fit the same width of \a baseWidget.
+  /// By default, baseWidget is the parent widget.
   QWidget* baseWidget()const;
-  virtual void setBaseWidget(QWidget* baseWidget);
 
   enum AnimationEffect
   {
@@ -128,6 +135,9 @@ protected:
   double effectAlpha()const;
   QRect effectGeometry()const;
 
+  virtual void setBaseWidget(QWidget* baseWidget);
+
+  virtual bool event(QEvent* event);
   virtual void paintEvent(QPaintEvent*);
 
 protected slots:
