@@ -55,6 +55,8 @@ SET(KIT_SRCS
   ctkModelTester.cpp
   ctkModelTester.h
   ctkPimpl.h
+  ctkScopedCurrentDir.cpp
+  ctkScopedCurrentDir.h
   ctkSingleton.h
   ctkTransferFunction.cpp
   ctkTransferFunction.h
