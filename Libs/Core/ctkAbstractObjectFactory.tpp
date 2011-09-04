@@ -60,6 +60,10 @@ template<typename BaseClassType>
 template<typename ClassType>
 bool ctkAbstractObjectFactory<BaseClassType>::registerObject(const QString& key)
 {
+  if (this->verbose())
+    {
+    qDebug() << "Attempt to register:" << key;
+    }
   // Check if already registered
   if (this->item(key))
     {

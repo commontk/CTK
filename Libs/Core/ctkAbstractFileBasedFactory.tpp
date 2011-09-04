@@ -80,12 +80,6 @@ void ctkAbstractFileBasedFactory<BaseClassType>::registerAllFileItems(const QStr
         {
         continue;
         }
-
-      if (this->verbose())
-        {
-        qDebug() << "Attempt to register command line module:" << fileInfo.fileName();
-        }
-
       this->registerFileItem(fileInfo);
       }
     }
@@ -105,6 +99,10 @@ template<typename BaseClassType>
 bool ctkAbstractFileBasedFactory<BaseClassType>
 ::registerFileItem(const QString& key, const QFileInfo& fileInfo)
 {
+  if (this->verbose())
+    {
+    qDebug() << "Attempt to register:" << fileInfo.fileName();
+    }
   if (this->item(key))
     {
     return false;
