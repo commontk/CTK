@@ -46,7 +46,7 @@ public:
   /// Collapse(close) the group box if collapse is true, expand(open)
   /// it otherwise.
   /// \sa QGroupBox::setChecked(bool)
-  Q_INVOKABLE inline void setCollapsed(bool collapse);
+  inline void setCollapsed(bool collapse);
 
   /// Return the collapse state of the groupbox
   /// true if the groupbox is collapsed (closed), false if it is expanded(open)
