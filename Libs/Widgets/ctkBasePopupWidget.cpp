@@ -632,7 +632,10 @@ bool ctkBasePopupWidget::event(QEvent* event)
   switch(event->type())
     {
     case QEvent::ParentChange:
+      // For now the base widget is the parent widget
       this->setBaseWidget(this->parentWidget());
+      break;
+    default:
       break;
     }
   return this->Superclass::event(event);
