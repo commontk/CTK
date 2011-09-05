@@ -57,10 +57,10 @@ QImage ctk::kwIconToQImage(const unsigned char *data, int width, int height, int
       static_cast<unsigned char>(imageData[0]) == 0x78 &&
       static_cast<unsigned char>(imageData[1]) == 0xDA)
     {
-    imageData.prepend((char)((expectedLength >> 0) & 0xFF));
-    imageData.prepend((char)((expectedLength >> 8) & 0xFF));
-    imageData.prepend((char)((expectedLength >> 16) & 0xFF));
-    imageData.prepend((char)((expectedLength >> 24) & 0xFF));
+    imageData.prepend(static_cast<char>((expectedLength >> 0) & 0xFF));
+    imageData.prepend(static_cast<char>((expectedLength >> 8) & 0xFF));
+    imageData.prepend(static_cast<char>((expectedLength >> 16) & 0xFF));
+    imageData.prepend(static_cast<char>((expectedLength >> 24) & 0xFF));
     imageData = qUncompress(imageData);
     }
   QImage image(reinterpret_cast<unsigned char*>(imageData.data()),
