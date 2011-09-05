@@ -628,7 +628,6 @@ void ctkBasePopupWidget::onEffectFinished()
 // -------------------------------------------------------------------------
 bool ctkBasePopupWidget::event(QEvent* event)
 {
-  Q_D(ctkBasePopupWidget);
   switch(event->type())
     {
     case QEvent::ParentChange:
