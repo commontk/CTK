@@ -482,7 +482,7 @@ void ctkPopupWidget::updatePopup()
   if ((d->AutoShow ||
      // Even if there is no AutoShow, we might still want to reopen the popup
      // when closing it inadvertently
-       d->AutoHide && d->isClosing()) &&
+       (d->AutoHide && d->isClosing())) &&
      // to be automatically open, the mouse has to be over a child widget
       mouseOver &&
      // disable opening the popup when the popup is disabled
