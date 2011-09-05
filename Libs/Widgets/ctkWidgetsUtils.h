@@ -34,6 +34,12 @@ namespace ctk {
 /// QString("<img src=\"%1\">").arg(base64HTMLImageTagSrc(myImage);
 QString CTK_WIDGETS_EXPORT base64HTMLImageTagSrc(const QImage& image);
 
+///
+/// \ingroup Widgets
+/// Convert an KWidget encoded image into a QImage
+/// The data can be base64 encoded and/or zlib compressed.
+QImage CTK_WIDGETS_EXPORT kwIconToQImage(const unsigned char *data, int width, int height, int pixelSize, unsigned int bufferLength, int options = 0);
+
 }
 
 #endif
