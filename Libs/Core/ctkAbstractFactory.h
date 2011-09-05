@@ -44,14 +44,14 @@ class ctkAbstractFactoryItem
 public:
   //explicit ctkAbstractFactoryItem();
   ctkAbstractFactoryItem();
-  
+
   virtual QString loadErrorString()const;
   virtual bool load() = 0;
-  
+
   BaseClassType* instantiate();
   bool instantiated()const;
   virtual void uninstantiate();
-  
+
   void setVerbose(bool value);
   bool verbose()const;
 
@@ -76,6 +76,7 @@ template<typename BaseClassType>
 class ctkAbstractFactory
 {
 public:
+
   typedef QHash<QString, QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > > HashType;
 
   /// Constructor/Desctructor
@@ -95,8 +96,11 @@ public:
   /// Should be overloaded in subclasse
   virtual QString path(const QString& itemKey){ Q_UNUSED(itemKey); return QString(); }
 
+  void setSharedItems(const QSharedPointer<HashType>& items);
+  QSharedPointer<HashType> sharedItems();
+
   /// Get list of all registered item keys.
-  QStringList keys() const;
+  QStringList itemKeys() const;
 
   /// \brief Register items with the factory
   /// Method provided for convenience - Should be overloaded in subclasse
@@ -107,10 +111,10 @@ public:
   void setVerbose(bool value);
   bool verbose()const;
 
-  void setRegisteredItems(const QSharedPointer<HashType>& items);
-  QSharedPointer<HashType> registeredItems();
-
 protected:
+
+  void displayRegistrationStatus(QtMsgType type, const QString& description,
+                                 const QString& status, bool display);
 
   /// \brief Call the load method associated with the item.
   /// If succesfully loaded, add it to the internal map.
@@ -118,6 +122,8 @@ protected:
 
   /// Get a Factory item given its itemKey. Return 0 if any.
   ctkAbstractFactoryItem<BaseClassType> * item(const QString& itemKey)const;
+
+  ctkAbstractFactoryItem<BaseClassType> * sharedItem(const QString& itemKey)const;
 
   typedef typename HashType::const_iterator ConstIterator;
   typedef typename HashType::iterator       Iterator;
@@ -127,7 +133,9 @@ private:
   ctkAbstractFactory(const ctkAbstractFactory &); /// Not implemented
   void operator=(const ctkAbstractFactory&); /// Not implemented
   */
-  QSharedPointer<HashType> RegisteredItemMap;
+  HashType RegisteredItemMap;
+  QSharedPointer<HashType> SharedRegisteredItemMap;
+
 
   bool Verbose;
 };

@@ -99,27 +99,32 @@ template<typename BaseClassType>
 bool ctkAbstractFileBasedFactory<BaseClassType>
 ::registerFileItem(const QString& key, const QFileInfo& fileInfo)
 {
-  if (this->verbose())
+  QString description = QString("Attempt to register \"%1\"").arg(key);
+  if(this->sharedItem(key) || this->item(key))
     {
-    qDebug() << "Attempt to register:" << fileInfo.fileName();
-    }
-  if (this->item(key))
-    {
+    this->displayRegistrationStatus(QtDebugMsg, description,
+                                    "Already registered", this->verbose());
     return false;
     }
   QSharedPointer<ctkAbstractFactoryItem<BaseClassType> >
     itemToRegister(this->createFactoryFileBasedItem());
   if (itemToRegister.isNull())
     {
+    this->displayRegistrationStatus(QtWarningMsg, description,
+                                    "Failed to create FileBasedItem", this->verbose());
     return false;
     }
   dynamic_cast<ctkAbstractFactoryFileBasedItem<BaseClassType>*>(itemToRegister.data())
     ->setPath(fileInfo.filePath());
   this->initItem(itemToRegister.data());
   bool res = this->registerItem(key, itemToRegister);
-  if (!res && this->verbose())
+  if(res)
     {
-    qWarning() << "Failed to register module: " << key;
+    this->displayRegistrationStatus(QtDebugMsg, description, "OK", this->verbose());
+    }
+  else
+    {
+    this->displayRegistrationStatus(QtWarningMsg, description, "Failed", this->verbose());
     }
   return res;
 }

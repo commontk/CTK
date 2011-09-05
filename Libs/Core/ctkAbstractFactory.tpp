@@ -100,7 +100,7 @@ template<typename BaseClassType>
 ctkAbstractFactory<BaseClassType>::ctkAbstractFactory()
 {
   this->Verbose = false;
-  this->RegisteredItemMap = QSharedPointer<HashType>(new HashType);
+  this->SharedRegisteredItemMap = QSharedPointer<HashType>(new HashType);
 }
 
 //----------------------------------------------------------------------------
@@ -139,11 +139,52 @@ void ctkAbstractFactory<BaseClassType>::uninstantiate(const QString& itemKey)
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-QStringList ctkAbstractFactory<BaseClassType>::keys() const
+void ctkAbstractFactory<BaseClassType>::setSharedItems(const QSharedPointer<HashType>& items)
+{
+  this->SharedRegisteredItemMap = items;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+QSharedPointer<typename ctkAbstractFactory<BaseClassType>::HashType>
+ctkAbstractFactory<BaseClassType>::sharedItems()
+{
+  return this->SharedRegisteredItemMap;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+QStringList ctkAbstractFactory<BaseClassType>::itemKeys() const
 {
   // Since by construction, we checked if a name was already in the QHash,
   // there is no need to call 'uniqueKeys'
-  return this->RegisteredItemMap->keys();
+  return this->RegisteredItemMap.keys();
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactory<BaseClassType>::displayRegistrationStatus(
+    QtMsgType type, const QString& description, const QString& status, bool display)
+{
+  QString msg = QString("%1 [%2]").arg(description + " ", -70, QChar('.')).arg(status);
+  if (display)
+    {
+    switch(type)
+      {
+      case QtFatalMsg:
+        qFatal("%s", qPrintable(msg));
+        break;
+      case QtCriticalMsg:
+        qCritical("%s", qPrintable(msg));
+        break;
+      case QtWarningMsg:
+        qWarning("%s", qPrintable(msg));
+        break;
+      case QtDebugMsg:
+        qDebug("%s", qPrintable(msg));
+        break;
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -158,6 +199,15 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
       {
       qDebug() << __FUNCTION__ << "key is empty or already exists:"
                << key << "; item: " << _item;
+      }
+    return false;
+    }
+
+  if (this->sharedItem(key))
+    {
+    if (this->verbose())
+      {
+      qDebug() << "Item" << key << "has already been registered";
       }
     return false;
     }
@@ -177,8 +227,10 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
     return false;
     }
   
-  // Store its reference using a QSharedPointer
-  this->RegisteredItemMap->insert(key, _item);
+  // Store item reference using a QSharedPointer
+  this->RegisteredItemMap.insert(key, _item);
+  this->SharedRegisteredItemMap.data()->insert(key, _item);
+
   return true;
 }
 
@@ -186,8 +238,24 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
 template<typename BaseClassType>
 ctkAbstractFactoryItem<BaseClassType> * ctkAbstractFactory<BaseClassType>::item(const QString& itemKey)const
 {
-  ConstIterator iter = this->RegisteredItemMap->find(itemKey);
-  if ( iter == this->RegisteredItemMap->constEnd())
+  ConstIterator iter = this->RegisteredItemMap.find(itemKey);
+  if ( iter == this->RegisteredItemMap.constEnd())
+    {
+    return 0;
+    }
+  return iter.value().data();
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+ctkAbstractFactoryItem<BaseClassType> * ctkAbstractFactory<BaseClassType>::sharedItem(const QString& itemKey)const
+{
+  if(this->SharedRegisteredItemMap.isNull())
+    {
+    return 0;
+    }
+  ConstIterator iter = this->SharedRegisteredItemMap.data()->find(itemKey);
+  if ( iter == this->SharedRegisteredItemMap.data()->constEnd())
     {
     return 0;
     }
@@ -206,21 +274,6 @@ template<typename BaseClassType>
 bool ctkAbstractFactory<BaseClassType>::verbose()const
 {
   return this->Verbose;
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-void ctkAbstractFactory<BaseClassType>::setRegisteredItems(const QSharedPointer<HashType>& items)
-{
-  this->RegisteredItemMap = items;
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-QSharedPointer<typename ctkAbstractFactory<BaseClassType>::HashType>
-ctkAbstractFactory<BaseClassType>::registeredItems()
-{
-  return this->RegisteredItemMap;
 }
 
 #endif
