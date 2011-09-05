@@ -35,3 +35,40 @@ QString ctk::base64HTMLImageTagSrc(const QImage& image)
   return QString("data:image/png;base64,%1")
     .arg(QString(buffer.data().toBase64()));
 }
+
+//----------------------------------------------------------------------------
+QImage ctk::kwIconToQImage(const unsigned char *data, int width, int height, int pixelSize, unsigned int bufferLength, int options)
+{
+  Q_UNUSED(options); // not yet supported
+
+  QByteArray imageData = QByteArray::fromRawData(
+    reinterpret_cast<const char *>(data), bufferLength);
+  unsigned int expectedLength = width * height * pixelSize;
+  // Start with a zlib header ? If not, then it must be base64 encoded
+  if (bufferLength != expectedLength &&
+      static_cast<unsigned char>(imageData[0]) != 0x78 &&
+      static_cast<unsigned char>(imageData[1]) != 0xDA)
+    {
+    imageData = QByteArray::fromBase64(imageData);
+    bufferLength = imageData.size();
+    }
+
+  if (bufferLength != expectedLength &&
+      static_cast<unsigned char>(imageData[0]) == 0x78 &&
+      static_cast<unsigned char>(imageData[1]) == 0xDA)
+    {
+    imageData.prepend((char)((expectedLength >> 0) & 0xFF));
+    imageData.prepend((char)((expectedLength >> 8) & 0xFF));
+    imageData.prepend((char)((expectedLength >> 16) & 0xFF));
+    imageData.prepend((char)((expectedLength >> 24) & 0xFF));
+    imageData = qUncompress(imageData);
+    }
+  QImage image(reinterpret_cast<unsigned char*>(imageData.data()),
+               width, height, width * pixelSize,
+               pixelSize == 4 ? QImage::Format_ARGB32 : QImage::Format_RGB888);
+  if (pixelSize == 4)
+    {
+    return image.rgbSwapped();
+    }
+  return image.copy();
+}
