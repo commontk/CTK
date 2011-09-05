@@ -36,6 +36,7 @@ class ctkCollapsibleGroupBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkCollapsibleGroupBox : public QGroupBox
 {
   Q_OBJECT
+  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed)
 public:
   ctkCollapsibleGroupBox(QWidget* parent = 0);
   ctkCollapsibleGroupBox(const QString& title, QWidget* parent = 0);
@@ -45,7 +46,7 @@ public:
   /// Collapse(close) the group box if collapse is true, expand(open)
   /// it otherwise.
   /// \sa QGroupBox::setChecked(bool)
-  inline void setCollapsed(bool collapse);
+  Q_INVOKABLE inline void setCollapsed(bool collapse);
 
   /// Return the collapse state of the groupbox
   /// true if the groupbox is collapsed (closed), false if it is expanded(open)
