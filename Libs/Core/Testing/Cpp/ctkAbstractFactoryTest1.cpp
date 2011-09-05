@@ -80,7 +80,7 @@ int ctkAbstractFactoryTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   abstractFactory.registerItems();
-  if (abstractFactory.keys().count() != 0)
+  if (abstractFactory.itemKeys().count() != 0)
     {
     std::cerr<< "ctkAbstractFactory::keys() failed" << std::endl;
     return EXIT_FAILURE;
@@ -108,9 +108,9 @@ int ctkAbstractFactoryTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   factory.registerItems();
-  if (factory.keys().count() != 2 ||
-      factory.keys()[0] != "item1" || 
-      factory.keys()[1] != "item2")
+  if (factory.itemKeys().count() != 2 ||
+      factory.itemKeys()[0] != "item1" ||
+      factory.itemKeys()[1] != "item2")
     {
     std::cerr<< "ctkAbstractFactory::keys() failed" << std::endl;
     return EXIT_FAILURE;

@@ -104,18 +104,18 @@ int ctkAbstractLibraryFactoryTest1(int argc, char * argv [])
     }
   
   res = libraryFactory.registerFileItem("lib", file);
-  if (!res || libraryFactory.keys().count() != 1)
+  if (!res || libraryFactory.itemKeys().count() != 1)
     {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
-              << libraryFactory.keys().count() << std::endl;
+              << libraryFactory.itemKeys().count() << std::endl;
     return EXIT_FAILURE;
     }
   // register twice must return false
   res = libraryFactory.registerFileItem("lib", file);
-  if (res || libraryFactory.keys().count() != 1)
+  if (res || libraryFactory.itemKeys().count() != 1)
     {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
-              << libraryFactory.keys().count() << std::endl;
+              << libraryFactory.itemKeys().count() << std::endl;
     return EXIT_FAILURE;
     }
   if (QFileInfo(libraryFactory.path("lib")) != file)

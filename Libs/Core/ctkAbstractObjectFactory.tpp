@@ -60,20 +60,27 @@ template<typename BaseClassType>
 template<typename ClassType>
 bool ctkAbstractObjectFactory<BaseClassType>::registerObject(const QString& key)
 {
-  if (this->verbose())
+  QString description = QString("Attempt to register \"%1\"").arg(key);
+  if(this->sharedItem(key) || this->item(key))
     {
-    qDebug() << "Attempt to register:" << key;
-    }
-  // Check if already registered
-  if (this->item(key))
-    {
+    this->displayRegistrationStatus(QtDebugMsg, description,
+                                    "Already registered", this->verbose());
     return false;
     }
   QSharedPointer<ctkFactoryObjectItem<BaseClassType, ClassType> > objectItem =
     QSharedPointer<ctkFactoryObjectItem<BaseClassType, ClassType> >(
       new ctkFactoryObjectItem<BaseClassType, ClassType>() );
   objectItem->setVerbose(this->verbose());
-  return this->registerItem(key, objectItem);
+  bool res = this->registerItem(key, objectItem);
+  if(res)
+    {
+    this->displayRegistrationStatus(QtDebugMsg, description, "OK", this->verbose());
+    }
+  else
+    {
+    this->displayRegistrationStatus(QtWarningMsg, description, "Failed", this->verbose());
+    }
+  return res;
 }
 
 #endif
