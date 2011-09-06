@@ -38,12 +38,6 @@ public:
   explicit ctkAbstractQObjectFactory();
   virtual ~ctkAbstractQObjectFactory();
 
-  /// Create an instance of the object identified by \a itemKey
-  virtual BaseClassType * instantiate(const QString& itemKey);
-
-  /// Uninstanciate the object identified by \a itemKey
-  virtual void uninstantiate(const QString& itemKey);
-
   /// \brief Return a name allowing to uniquely identify the QObject
   /// By default, it return \a objectName obtained using staticMetaObject.className()
   virtual QString objectNameToKey(const QString& objectName);

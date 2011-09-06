@@ -44,20 +44,6 @@ ctkAbstractQObjectFactory<BaseClassType>::~ctkAbstractQObjectFactory()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-BaseClassType* ctkAbstractQObjectFactory<BaseClassType>::instantiate(const QString& itemKey)
-{
-  return this->ctkAbstractObjectFactory<BaseClassType>::instantiate(itemKey);
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-void ctkAbstractQObjectFactory<BaseClassType>::uninstantiate(const QString& itemKey)
-{
-  this->ctkAbstractObjectFactory<BaseClassType>::uninstantiate(itemKey);
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
 QString ctkAbstractQObjectFactory<BaseClassType>::objectNameToKey(const QString& objectName)
 {
   return objectName; 
