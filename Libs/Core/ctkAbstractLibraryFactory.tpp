@@ -44,18 +44,16 @@ bool ctkFactoryLibraryItem<BaseClassType>::load()
     {
     if (!this->resolve())
       {
+      this->appendLoadErrorString(this->Library.errorString());
       return false;
       }
     return true;
     }
+  else
+    {
+    this->appendLoadErrorString(this->Library.errorString());
+    }
   return false;
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-QString ctkFactoryLibraryItem<BaseClassType>::loadErrorString()const
-{
-  return this->Library.errorString();
 }
 
 //----------------------------------------------------------------------------
