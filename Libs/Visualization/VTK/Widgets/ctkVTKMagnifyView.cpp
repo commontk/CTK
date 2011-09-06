@@ -560,10 +560,26 @@ bool ctkVTKMagnifyView::isObserved(QVTKWidget * widget) const
 
 // --------------------------------------------------------------------------
 int ctkVTKMagnifyView::numberObserved() const
-  {
+{
   Q_D(const ctkVTKMagnifyView);
   return d->ObservedQVTKWidgets.length();
-  }
+}
+
+// --------------------------------------------------------------------------
+bool ctkVTKMagnifyView::hasCursorInObservedWidget()const
+{
+  Q_D(const ctkVTKMagnifyView);
+  // checking underMouse is faster than 
+  // QApplication::widgetAt(QCursor::pos())
+  foreach(const QVTKWidget* widget, d->ObservedQVTKWidgets)
+    {
+    if (widget->underMouse())
+      {
+      return true;
+      }
+    }
+  return false;
+}
 
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyView::remove(QVTKWidget * widget)
@@ -616,11 +632,5 @@ bool ctkVTKMagnifyView::eventFilter(QObject * obj, QEvent * event)
     d->pushRemovePixmapEvent();
     emit leftObservedWidget(widget);
     }
-  // For other event types, use standard event processing
-  else
-    {
-    return QObject::eventFilter(obj, event);
-    }
-
-  return false;
+  return this->Superclass::eventFilter(obj, event);
 }

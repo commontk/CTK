@@ -97,6 +97,9 @@ public:
   /// Returns the number of observed QVTKWidgets
   int numberObserved()const;
 
+  /// Returns true if the mouse cursor is over an observed widget,
+  /// false otherwise.
+  bool hasCursorInObservedWidget()const;
 protected:
   QScopedPointer<ctkVTKMagnifyViewPrivate> d_ptr;
 
