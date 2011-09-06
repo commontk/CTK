@@ -71,23 +71,22 @@ bool ctkFactoryLibraryItem<BaseClassType>::resolve()
     {
     // Sanity checks
     if (symbol.isEmpty()) 
-      { 
-      continue; 
+      {
+      this->appendLoadErrorString(QLatin1String("Failed to resolve empty symbol !"));
+      continue;
       }
-      
-    // Make sure the symbols haven't been registered
+
+    // Skip if the symbols has already been resolved
     if (this->ResolvedSymbols.contains(symbol))
       {
-      if (this->verbose())
-        {
-        qWarning() << "Symbol '" << symbol << "' already resolved - Path:" << this->path();
-        }
+      this->appendLoadWarningString(QString("Symbol '%1' already resolved").arg(symbol));
       continue;
       }
 
     void * resolvedSymbol = this->Library.resolve(symbol.toLatin1());
     if (!resolvedSymbol)
       {
+      this->appendLoadErrorString(QString("Failed to resolve mandatory symbol '%1'").arg(symbol));
       return false;
       }
     this->ResolvedSymbols[symbol] = resolvedSymbol;
