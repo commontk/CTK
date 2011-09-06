@@ -100,33 +100,29 @@ bool ctkAbstractFileBasedFactory<BaseClassType>
 ::registerFileItem(const QString& key, const QFileInfo& fileInfo)
 {
   QString description = QString("Attempt to register \"%1\"").arg(key);
-  if(this->sharedItem(key) || this->item(key))
+  if (this->item(key))
     {
-    this->displayRegistrationStatus(QtDebugMsg, description,
-                                    "Already registered", this->verbose());
+    this->displayStatusMessage(QtWarningMsg, description, "Already registered", this->verbose());
+    return false;
+    }
+  if (this->sharedItem(key))
+    {
+    this->displayStatusMessage(QtDebugMsg, description,
+                               "Already registered in other factory", this->verbose());
     return false;
     }
   QSharedPointer<ctkAbstractFactoryItem<BaseClassType> >
     itemToRegister(this->createFactoryFileBasedItem());
   if (itemToRegister.isNull())
     {
-    this->displayRegistrationStatus(QtWarningMsg, description,
-                                    "Failed to create FileBasedItem", this->verbose());
+    this->displayStatusMessage(QtWarningMsg, description,
+                               "Failed to create FileBasedItem", this->verbose());
     return false;
     }
   dynamic_cast<ctkAbstractFactoryFileBasedItem<BaseClassType>*>(itemToRegister.data())
     ->setPath(fileInfo.filePath());
   this->initItem(itemToRegister.data());
-  bool res = this->registerItem(key, itemToRegister);
-  if(res)
-    {
-    this->displayRegistrationStatus(QtDebugMsg, description, "OK", this->verbose());
-    }
-  else
-    {
-    this->displayRegistrationStatus(QtWarningMsg, description, "Failed", this->verbose());
-    }
-  return res;
+  return this->registerItem(key, itemToRegister);
 }
 
 //-----------------------------------------------------------------------------

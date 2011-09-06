@@ -46,9 +46,53 @@ QString ctkAbstractFactoryItem<BaseClassType>::loadErrorString()const
 }
 
 //----------------------------------------------------------------------------
+template<typename BaseClassType>
+QStringList ctkAbstractFactoryItem<BaseClassType>::instantiateErrorStrings()const
+{
+  return this->InstantiateErrorStrings;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactoryItem<BaseClassType>::appendInstantiateErrorString(const QString& errorString)
+{
+  this->InstantiateErrorStrings << errorString;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactoryItem<BaseClassType>::clearInstantiateErrorStrings()
+{
+  this->InstantiateErrorStrings.clear();
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+QStringList ctkAbstractFactoryItem<BaseClassType>::instantiateWarningStrings()const
+{
+  return this->InstantiateWarningStrings;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactoryItem<BaseClassType>::appendInstantiateWarningString(const QString& msg)
+{
+  this->InstantiateWarningStrings << msg;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactoryItem<BaseClassType>::clearInstantiateWarningStrings()
+{
+  this->InstantiateWarningStrings.clear();
+}
+
+//----------------------------------------------------------------------------
 template<typename BaseClassType>  
 BaseClassType* ctkAbstractFactoryItem<BaseClassType>::instantiate()
 {
+  this->clearInstantiateErrorStrings();
+  this->clearInstantiateWarningStrings();
   if (this->Instance)
     {
     return this->Instance;
@@ -122,7 +166,37 @@ template<typename BaseClassType>
 BaseClassType* ctkAbstractFactory<BaseClassType>::instantiate(const QString& itemKey)
 {
   ctkAbstractFactoryItem<BaseClassType>* _item = this->item(itemKey);
-  return (_item ? _item->instantiate() : 0);
+  BaseClassType* instance = 0;
+  bool wasInstantiated = false;
+  if (_item)
+    {
+    wasInstantiated = _item->instantiated();
+    instance = _item->instantiate();
+    }
+  if (!wasInstantiated)
+    {
+    this->displayStatusMessage(instance ? QtDebugMsg : QtCriticalMsg,
+                               QString("Attempt to instantiate \"%1\"").arg(itemKey),
+                               instance ? "OK" : "Failed", this->verbose());
+    if (_item)
+      {
+      if(!_item->instantiateErrorStrings().isEmpty())
+        {
+        qCritical().nospace() << qPrintable(QString(" ").repeated(2) + QLatin1String("Error(s):\n"))
+                              << qPrintable(QString(" ").repeated(4) +
+                                            _item->instantiateErrorStrings().join(
+                                              QString("\n") + QString(" ").repeated(4)));
+        }
+      if(!_item->instantiateWarningStrings().isEmpty())
+        {
+        qWarning().nospace() << qPrintable(QString(" ").repeated(2) + QLatin1String("Warning(s):\n"))
+                             << qPrintable(QString(" ").repeated(4) +
+                                           _item->instantiateWarningStrings().join(
+                                             QString("\n") + QString(" ").repeated(4)));
+        }
+      }
+    }
+  return instance;
 }
 
 //----------------------------------------------------------------------------
@@ -163,8 +237,8 @@ QStringList ctkAbstractFactory<BaseClassType>::itemKeys() const
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-void ctkAbstractFactory<BaseClassType>::displayRegistrationStatus(
-    QtMsgType type, const QString& description, const QString& status, bool display)
+void ctkAbstractFactory<BaseClassType>::displayStatusMessage(
+    const QtMsgType& type, const QString& description, const QString& status, bool display)
 {
   QString msg = QString("%1 [%2]").arg(description + " ", -70, QChar('.')).arg(status);
   if (display)
@@ -193,36 +267,38 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
   const QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > & _item)
 {
   // Sanity checks
-  if (!_item || key.isEmpty() || this->item(key))
+  if (!_item)
     {
     if (this->verbose())
       {
-      qDebug() << __FUNCTION__ << "key is empty or already exists:"
-               << key << "; item: " << _item;
+      qDebug() << __FUNCTION__ << "key is empty - item: " << _item;
       }
+    return false;
+    }
+
+  QString description = QString("Attempt to register \"%1\"").arg(key);
+
+  if (this->item(key))
+    {
+    this->displayStatusMessage(QtWarningMsg, description, "Already registered", this->verbose());
     return false;
     }
 
   if (this->sharedItem(key))
     {
-    if (this->verbose())
-      {
-      qDebug() << "Item" << key << "has already been registered";
-      }
+    this->displayStatusMessage(QtDebugMsg, description,
+                               "Already registered in other factory", this->verbose());
     return false;
     }
   
   // Attempt to load it
   if (!_item->load())
     {
-    QString errorStr;
-    if (!_item->loadErrorString().isEmpty())
+    this->displayStatusMessage(QtCriticalMsg, description, "Failed", this->verbose());
+    if (this->verbose() && !_item->loadErrorString().isEmpty())
       {
-      errorStr = " - " + _item->loadErrorString();
-      }
-    if (this->verbose())
-      {
-      qCritical() << "Failed to load object:" << key << errorStr ;
+      qCritical().nospace() << qPrintable(QString(" ").repeated(2) + QLatin1String("Error(s):\n"))
+                            << qPrintable(QString(" ").repeated(4) + _item->loadErrorString());
       }
     return false;
     }
@@ -231,6 +307,7 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
   this->RegisteredItemMap.insert(key, _item);
   this->SharedRegisteredItemMap.data()->insert(key, _item);
 
+  this->displayStatusMessage(QtDebugMsg, description, "OK", this->verbose());
   return true;
 }
 

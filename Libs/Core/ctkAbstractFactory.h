@@ -48,6 +48,9 @@ public:
   virtual QString loadErrorString()const;
   virtual bool load() = 0;
 
+  QStringList instantiateErrorStrings()const;
+  QStringList instantiateWarningStrings()const;
+
   BaseClassType* instantiate();
   bool instantiated()const;
   virtual void uninstantiate();
@@ -56,11 +59,20 @@ public:
   bool verbose()const;
 
 protected:
+
+  void appendInstantiateErrorString(const QString& msg);
+  void clearInstantiateErrorStrings();
+
+  void appendInstantiateWarningString(const QString& msg);
+  void clearInstantiateWarningStrings();
+
   /// Must be reimplemented in subclasses to instanciate a BaseClassType*
   virtual BaseClassType* instanciator() = 0;
   BaseClassType* Instance;
 
 private:
+  QStringList InstantiateErrorStrings;
+  QStringList InstantiateWarningStrings;
   bool Verbose;
 };
 
@@ -113,8 +125,8 @@ public:
 
 protected:
 
-  void displayRegistrationStatus(QtMsgType type, const QString& description,
-                                 const QString& status, bool display);
+  void displayStatusMessage(const QtMsgType& type, const QString& description,
+                            const QString& status, bool display);
 
   /// \brief Call the load method associated with the item.
   /// If succesfully loaded, add it to the internal map.
@@ -135,7 +147,6 @@ private:
   */
   HashType RegisteredItemMap;
   QSharedPointer<HashType> SharedRegisteredItemMap;
-
 
   bool Verbose;
 };
