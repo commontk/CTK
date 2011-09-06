@@ -99,11 +99,9 @@ template<typename BaseClassType>
 void* ctkFactoryLibraryItem<BaseClassType>::symbolAddress(const QString& symbol)const
 {
   ConstIterator iter = this->ResolvedSymbols.find(symbol);
-  
-  Q_ASSERT(iter != this->ResolvedSymbols.constEnd());
   if ( iter == this->ResolvedSymbols.constEnd())
     {
-    return 0;
+    return this->Library.resolve(symbol.toLatin1());
     }
   return iter.value();
 }
