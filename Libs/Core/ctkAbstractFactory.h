@@ -45,11 +45,13 @@ public:
   //explicit ctkAbstractFactoryItem();
   ctkAbstractFactoryItem();
 
-  virtual QString loadErrorString()const;
   virtual bool load() = 0;
 
   QStringList instantiateErrorStrings()const;
   QStringList instantiateWarningStrings()const;
+
+  QStringList loadErrorStrings()const;
+  QStringList loadWarningStrings()const;
 
   BaseClassType* instantiate();
   bool instantiated()const;
@@ -66,6 +68,12 @@ protected:
   void appendInstantiateWarningString(const QString& msg);
   void clearInstantiateWarningStrings();
 
+  void appendLoadErrorString(const QString& msg);
+  void clearLoadErrorStrings();
+
+  void appendLoadWarningString(const QString& msg);
+  void clearLoadWarningStrings();
+
   /// Must be reimplemented in subclasses to instanciate a BaseClassType*
   virtual BaseClassType* instanciator() = 0;
   BaseClassType* Instance;
@@ -73,6 +81,8 @@ protected:
 private:
   QStringList InstantiateErrorStrings;
   QStringList InstantiateWarningStrings;
+  QStringList LoadErrorStrings;
+  QStringList LoadWarningStrings;
   bool Verbose;
 };
 

@@ -42,7 +42,6 @@ public:
   //explicit ctkFactoryLibraryItem(const QString& path);
  
   virtual bool load();
-  virtual QString loadErrorString()const;
 
   ///
   /// Set list of required symbols
@@ -59,7 +58,7 @@ public:
   void* symbolAddress(const QString& symbol)const;
 
 protected:
-  QLibrary              Library;
+  mutable QLibrary      Library;
   QHash<QString, void*> ResolvedSymbols;
   QStringList           Symbols;
 };

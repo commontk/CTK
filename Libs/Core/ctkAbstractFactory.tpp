@@ -40,13 +40,6 @@ ctkAbstractFactoryItem<BaseClassType>::ctkAbstractFactoryItem()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-QString ctkAbstractFactoryItem<BaseClassType>::loadErrorString()const
-{ 
-  return QString(); 
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
 QStringList ctkAbstractFactoryItem<BaseClassType>::instantiateErrorStrings()const
 {
   return this->InstantiateErrorStrings;
@@ -85,6 +78,48 @@ template<typename BaseClassType>
 void ctkAbstractFactoryItem<BaseClassType>::clearInstantiateWarningStrings()
 {
   this->InstantiateWarningStrings.clear();
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+QStringList ctkAbstractFactoryItem<BaseClassType>::loadErrorStrings()const
+{
+  return this->LoadErrorStrings;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactoryItem<BaseClassType>::appendLoadErrorString(const QString& errorString)
+{
+  this->LoadErrorStrings << errorString;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactoryItem<BaseClassType>::clearLoadErrorStrings()
+{
+  this->LoadErrorStrings.clear();
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+QStringList ctkAbstractFactoryItem<BaseClassType>::loadWarningStrings()const
+{
+  return this->LoadWarningStrings;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactoryItem<BaseClassType>::appendLoadWarningString(const QString& msg)
+{
+  this->LoadWarningStrings << msg;
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkAbstractFactoryItem<BaseClassType>::clearLoadWarningStrings()
+{
+  this->LoadWarningStrings.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -295,10 +330,19 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
   if (!_item->load())
     {
     this->displayStatusMessage(QtCriticalMsg, description, "Failed", this->verbose());
-    if (this->verbose() && !_item->loadErrorString().isEmpty())
+    if(!_item->loadErrorStrings().isEmpty())
       {
       qCritical().nospace() << qPrintable(QString(" ").repeated(2) + QLatin1String("Error(s):\n"))
-                            << qPrintable(QString(" ").repeated(4) + _item->loadErrorString());
+                            << qPrintable(QString(" ").repeated(4) +
+                                          _item->loadErrorStrings().join(
+                                            QString("\n") + QString(" ").repeated(4)));
+      }
+    if(!_item->loadWarningStrings().isEmpty())
+      {
+      qWarning().nospace() << qPrintable(QString(" ").repeated(2) + QLatin1String("Warning(s):\n"))
+                           << qPrintable(QString(" ").repeated(4) +
+                                         _item->loadWarningStrings().join(
+                                           QString("\n") + QString(" ").repeated(4)));
       }
     return false;
     }

@@ -44,18 +44,16 @@ bool ctkFactoryLibraryItem<BaseClassType>::load()
     {
     if (!this->resolve())
       {
+      this->appendLoadErrorString(this->Library.errorString());
       return false;
       }
     return true;
     }
+  else
+    {
+    this->appendLoadErrorString(this->Library.errorString());
+    }
   return false;
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
-QString ctkFactoryLibraryItem<BaseClassType>::loadErrorString()const
-{
-  return this->Library.errorString();
 }
 
 //----------------------------------------------------------------------------
@@ -69,38 +67,31 @@ void ctkFactoryLibraryItem<BaseClassType>::setSymbols(const QStringList& symbols
 template<typename BaseClassType>
 bool ctkFactoryLibraryItem<BaseClassType>::resolve()
 {
-  bool res = true;
   foreach(const QString& symbol, this->Symbols)
     {
     // Sanity checks
     if (symbol.isEmpty()) 
-      { 
-      continue; 
+      {
+      this->appendLoadErrorString(QLatin1String("Failed to resolve empty symbol !"));
+      continue;
       }
-      
-    // Make sure the symbols haven't been registered
+
+    // Skip if the symbols has already been resolved
     if (this->ResolvedSymbols.contains(symbol))
       {
-      if (this->verbose())
-        {
-        qWarning() << "Symbol '" << symbol << "' already resolved - Path:" << this->path();
-        }
+      this->appendLoadWarningString(QString("Symbol '%1' already resolved").arg(symbol));
       continue;
       }
 
     void * resolvedSymbol = this->Library.resolve(symbol.toLatin1());
     if (!resolvedSymbol)
       {
-      if (this->verbose())
-        {
-        qWarning() << "Symbol '" << symbol << "' can't be found.";
-        }
-      res = false;
-      continue;
+      this->appendLoadErrorString(QString("Failed to resolve mandatory symbol '%1'").arg(symbol));
+      return false;
       }
     this->ResolvedSymbols[symbol] = resolvedSymbol;
     }
-  return res;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -108,11 +99,9 @@ template<typename BaseClassType>
 void* ctkFactoryLibraryItem<BaseClassType>::symbolAddress(const QString& symbol)const
 {
   ConstIterator iter = this->ResolvedSymbols.find(symbol);
-  
-  Q_ASSERT(iter != this->ResolvedSymbols.constEnd());
   if ( iter == this->ResolvedSymbols.constEnd())
     {
-    return 0;
+    return this->Library.resolve(symbol.toLatin1());
     }
   return iter.value();
 }
