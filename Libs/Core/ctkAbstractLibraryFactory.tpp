@@ -69,7 +69,6 @@ void ctkFactoryLibraryItem<BaseClassType>::setSymbols(const QStringList& symbols
 template<typename BaseClassType>
 bool ctkFactoryLibraryItem<BaseClassType>::resolve()
 {
-  bool res = true;
   foreach(const QString& symbol, this->Symbols)
     {
     // Sanity checks
@@ -91,16 +90,11 @@ bool ctkFactoryLibraryItem<BaseClassType>::resolve()
     void * resolvedSymbol = this->Library.resolve(symbol.toLatin1());
     if (!resolvedSymbol)
       {
-      if (this->verbose())
-        {
-        qWarning() << "Symbol '" << symbol << "' can't be found.";
-        }
-      res = false;
-      continue;
+      return false;
       }
     this->ResolvedSymbols[symbol] = resolvedSymbol;
     }
-  return res;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
