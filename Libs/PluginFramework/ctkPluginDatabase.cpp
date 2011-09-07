@@ -219,7 +219,10 @@ void ctkPluginDatabase::updateDB()
     while (query.next())
     {
       QFileInfo pluginInfo(query.value(EBindIndex2).toString());
-      if (pluginInfo.lastModified() > getQDateTimeFromString(query.value(EBindIndex3).toString()))
+      QDateTime pluginLastModified = pluginInfo.lastModified();
+      // Make sure the QDateTime has the same accuracy as the one in the database
+      pluginLastModified = getQDateTimeFromString(getStringFromQDateTime(pluginLastModified));      
+      if (pluginLastModified > getQDateTimeFromString(query.value(EBindIndex3).toString()))
       {
         outdatedIds.append(query.value(EBindIndex).toLongLong());
         outdatedPlugins.append(qMakePair(query.value(EBindIndex1).toString(), query.value(EBindIndex2).toString()));
