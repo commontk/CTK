@@ -12,7 +12,7 @@
 .kdev*
 
 # Exclude QtCreator files ...
-CMakeLists.txt.user
+CMakeLists.txt.user*
 
 # ignore ctags file
 tags
