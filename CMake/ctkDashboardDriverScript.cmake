@@ -169,6 +169,9 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
     set(kit_suffixes
       CppTests
       #PythonTests
+      )
+
+    set(kit_widgets_suffixes
       Plugins
       )
     
@@ -194,7 +197,16 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
        ctest_build(BUILD "${ctk_build_dir}" APPEND)
        ctest_submit(PARTS Build)
      endforeach()
-     
+
+     if ("${subproject}" MATCHES "Widgets$")
+       # Loop over kit suffixes and try to build the corresponding target
+       foreach(kit_widgets_suffixe ${kit_widgets_suffixes})
+         message("----------- [ Build ${subproject}${kit_widgets_suffixe} ] -----------")
+         set(CTEST_BUILD_TARGET "${subproject}${kit_widgets_suffixe}")
+         ctest_build(BUILD "${ctk_build_dir}" APPEND)
+         ctest_submit(PARTS Build)
+       endforeach()
+     endif()
     endforeach()
     
     if (WITH_DOCUMENTATION)
