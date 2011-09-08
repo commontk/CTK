@@ -21,6 +21,7 @@
 
 #include "ctkPluginFrameworkListeners_p.h"
 
+#include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginConstants.h"
 #include "ctkLDAPExpr_p.h"
 #include "ctkServiceReferencePrivate.h"
@@ -33,7 +34,8 @@ const int ctkPluginFrameworkListeners::SERVICE_ID_IX = 1;
 const int ctkPluginFrameworkListeners::SERVICE_PID_IX = 2;
 
 //----------------------------------------------------------------------------
-ctkPluginFrameworkListeners::ctkPluginFrameworkListeners()
+ctkPluginFrameworkListeners::ctkPluginFrameworkListeners(ctkPluginFrameworkContext* pluginFw)
+  : pluginFw(pluginFw)
 {
   hashedServiceKeys << ctkPluginConstants::OBJECTCLASS.toLower()
       << ctkPluginConstants::SERVICE_ID.toLower()
@@ -114,7 +116,7 @@ QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
     }
   }
 
-  //if (listeners.framework.debug.ldap)
+  if (pluginFw->debug.ldap)
   {
     qDebug() << "Added" << set.size() << "out of" << n
       << "listeners with complicated filters";
@@ -214,7 +216,7 @@ void ctkPluginFrameworkListeners::serviceChanged(
     //}
   }
 
-  //if (framework.debug.ldap)
+  if (pluginFw->debug.ldap)
   {
     qDebug() << "Notified" << n << " listeners";
   }
@@ -274,7 +276,7 @@ void ctkPluginFrameworkListeners::checkSimple(const ctkServiceSlotEntry& sse)
     }
     else
     {
-      //if (listeners.framework.debug.ldap)
+      if (pluginFw->debug.ldap)
       {
         qDebug() << "## DEBUG: Too complicated filter:" << sse.getFilter();
       }
@@ -290,7 +292,7 @@ void ctkPluginFrameworkListeners::addToSet(QSet<ctkServiceSlotEntry>& set,
   QList<ctkServiceSlotEntry>& l = cache[cache_ix][val];
   if (!l.isEmpty())
   {
-    //if (listeners.framework.debug.ldap)
+    if (pluginFw->debug.ldap)
     {
       qDebug() << hashedServiceKeys[cache_ix] << "matches" << l.size();
     }
@@ -301,7 +303,7 @@ void ctkPluginFrameworkListeners::addToSet(QSet<ctkServiceSlotEntry>& set,
   }
   else
   {
-    //if (listeners.framework.debug.ldap)
+    if (pluginFw->debug.ldap)
     {
       qDebug() << hashedServiceKeys[cache_ix] << "matches none";
     }

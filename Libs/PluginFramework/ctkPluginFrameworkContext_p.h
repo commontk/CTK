@@ -30,6 +30,7 @@
 #include "ctkPluginStorage_p.h"
 #include "ctkPlugins_p.h"
 #include "ctkPluginFrameworkListeners_p.h"
+#include "ctkPluginFrameworkDebug_p.h"
 
 
 class ctkPlugin;
@@ -95,6 +96,11 @@ public:
   static int globalId;
 
   ctkProperties props;
+
+  /**
+   * Debug handle.
+   */
+  ctkPluginFrameworkDebug debug;
 
   /**
    * Contruct a framework context

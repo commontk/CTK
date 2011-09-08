@@ -103,7 +103,6 @@ QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* i
         }
         else
         {
-          qDebug() << QString("Trying to install file:") << location.path();
           localPluginPath = location.toLocalFile();
         }
       }

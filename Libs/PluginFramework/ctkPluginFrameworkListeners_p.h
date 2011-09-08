@@ -43,7 +43,7 @@ class ctkPluginFrameworkListeners : public QObject
 
 public:
 
-  ctkPluginFrameworkListeners();
+  ctkPluginFrameworkListeners(ctkPluginFrameworkContext* pluginFw);
 
   /**
    * Add a slot receiving service envents with filter to the current framework.
@@ -123,6 +123,8 @@ private:
   QList<QHash<QString, QList<ctkServiceSlotEntry> > > cache;
 
   QSet<ctkServiceSlotEntry> serviceSet;
+
+  ctkPluginFrameworkContext* pluginFw;
 
   /**
    * Remove all references to a service slot from the service listener

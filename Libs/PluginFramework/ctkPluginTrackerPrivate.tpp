@@ -24,7 +24,7 @@
 
 //----------------------------------------------------------------------------
 template<class T>
-const bool ctkPluginTrackerPrivate<T>::DEBUG = true;
+const bool ctkPluginTrackerPrivate<T>::DEBUG = false;
 
 //----------------------------------------------------------------------------
 template<class T>

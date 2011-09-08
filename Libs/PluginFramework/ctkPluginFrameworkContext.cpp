@@ -35,9 +35,11 @@ int ctkPluginFrameworkContext::globalId = 1;
 //----------------------------------------------------------------------------
 ctkPluginFrameworkContext::ctkPluginFrameworkContext(
     const ctkProperties& initProps)
-      : plugins(0), services(0), systemPlugin(new ctkPluginFramework()),
-      storage(0), firstInit(true), props(initProps), initialized(false)
+  : plugins(0), listeners(this), services(0), systemPlugin(new ctkPluginFramework()),
+    storage(0), firstInit(true), props(initProps), debug(props),
+    initialized(false)
 {
+
   {
     QMutexLocker lock(&globalFwLock);
     id = globalId++;
@@ -149,15 +151,21 @@ void ctkPluginFrameworkContext::checkOurPlugin(ctkPlugin* plugin) const
 //----------------------------------------------------------------------------
 QDebug ctkPluginFrameworkContext::log() const
 {
-  QDebug dbg(qDebug());
-  dbg << "Framework instance " << getId() << ": ";
-  return dbg;
+  static QString nirvana;
+  nirvana.clear();
+  if (debug.framework)
+    return qDebug() << "Framework instance " << getId() << ": ";
+  else
+    return QDebug(&nirvana);
 }
 
 //----------------------------------------------------------------------------
 void ctkPluginFrameworkContext::resolvePlugin(ctkPluginPrivate* plugin)
 {
-  qDebug() << "resolve:" << plugin->symbolicName << "[" << plugin->id << "]";
+  if (debug.resolve)
+  {
+    qDebug() << "resolve:" << plugin->symbolicName << "[" << plugin->id << "]";
+  }
 
   // If we enter with tempResolved set, it means that we already have
   // resolved plugins. Check that it is true!
@@ -175,7 +183,10 @@ void ctkPluginFrameworkContext::resolvePlugin(ctkPluginPrivate* plugin)
 
   tempResolved.clear();
 
-  qDebug() << "resolve: Done for" << plugin->symbolicName << "[" << plugin->id << "]";
+  if (debug.resolve)
+  {
+    qDebug() << "resolve: Done for" << plugin->symbolicName << "[" << plugin->id << "]";
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -183,7 +194,10 @@ void ctkPluginFrameworkContext::checkRequirePlugin(ctkPluginPrivate *plugin)
 {
   if (!plugin->require.isEmpty())
   {
-    qDebug() << "checkRequirePlugin: check requiring plugin" << plugin->id;
+    if (debug.resolve)
+    {
+      qDebug() << "checkRequirePlugin: check requiring plugin" << plugin->id;
+    }
 
     QListIterator<ctkRequirePlugin*> i(plugin->require);
     while (i.hasNext())
@@ -214,7 +228,10 @@ void ctkPluginFrameworkContext::checkRequirePlugin(ctkPluginPrivate *plugin)
       if (!ok && pr->resolution == ctkPluginConstants::RESOLUTION_MANDATORY)
       {
         tempResolved.clear();
-        qDebug() << "checkRequirePlugin: failed to satisfy:" << pr->name;
+        if (debug.resolve)
+        {
+          qDebug() << "checkRequirePlugin: failed to satisfy:" << pr->name;
+        }
         throw ctkPluginException(QString("Failed to resolve required plugin: %1").arg(pr->name));
       }
     }

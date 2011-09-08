@@ -33,6 +33,8 @@ SET(KIT_SRCS
   ctkPluginFrameworkFactory.cpp
   ctkPluginFrameworkContext.cpp
   ctkPluginFrameworkContext_p.h
+  ctkPluginFrameworkDebug.cpp
+  ctkPluginFrameworkDebug_p.h
   ctkPluginFrameworkEvent.cpp
   ctkPluginFrameworkLauncher.cpp
   ctkPluginFrameworkListeners.cpp

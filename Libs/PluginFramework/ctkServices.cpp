@@ -167,9 +167,11 @@ ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& cl
   QMutexLocker lock(&mutex);
   try {
     QList<ctkServiceReference> srs = get(clazz, QString(), plugin);
-    qDebug() << "get service ref" << clazz << "for plugin"
-             << plugin->location << " = " << srs.size() << "refs";
-
+    if (framework->debug.service_reference)
+    {
+      qDebug() << "get service ref" << clazz << "for plugin"
+               << plugin->location << " = " << srs.size() << "refs";
+    }
     if (!srs.isEmpty()) {
       return srs.front();
     }

@@ -254,7 +254,10 @@ void ctkPluginPrivate::finalizeActivation()
     //6:
     state = ctkPlugin::STARTING;
     activating = true;
-    qDebug() << "activating #" << this->id;
+    if (fwCtx->debug.lazy_activation)
+    {
+      qDebug() << "activating #" << this->id;
+    }
     //7:
     if (!pluginContext)
     {
@@ -455,7 +458,10 @@ void ctkPluginPrivate::start0()
     throw ctkPluginException("ctkPlugin start failed", ctkPluginException::ACTIVATOR_ERROR, &e);
   }
 
-  qDebug() << "activating #" << id << "completed.";
+  if (fwCtx->debug.lazy_activation)
+  {
+    qDebug() << "activating #" << id << "completed.";
+  }
 
   //10:
   fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STARTED, this->q_func()));
