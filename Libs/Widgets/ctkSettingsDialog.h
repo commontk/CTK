@@ -58,6 +58,8 @@ public:
   void addPanel(const QString& label, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
   void addPanel(const QString& label, const QIcon& icon, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
 
+  void adjustTreeWidgetToContents();
+
 public slots:
   void setCurrentPanel(ctkSettingsPanel* panel);
   void setCurrentPanel(const QString& label);
@@ -76,6 +78,9 @@ protected slots:
   void onSettingChanged(const QString& key, const QVariant& newVal);
   void onCurrentItemChanged(QTreeWidgetItem* currentItem, QTreeWidgetItem* previous);
   void onDialogButtonClicked(QAbstractButton* button);
+
+protected:
+  virtual bool event(QEvent *);
 
 protected:
   QScopedPointer<ctkSettingsDialogPrivate> d_ptr;
