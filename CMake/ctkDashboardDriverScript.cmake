@@ -22,6 +22,10 @@
 # Included from a dashboard script, this cmake file will drive the configure and build
 # steps of the different CTK sub-project (library, application or plugins)
 #
+# ctkDashboardDriverScript.cmake is automatically downloaded by the dashboard script
+# from the url http://commontk.org/ctkDashboardDriverScript.cmake
+# \note Any change to the file should also be backported on http://commontk.org/
+#
 
 #-----------------------------------------------------------------------------
 # The following variable are expected to be define in the top-level script:
