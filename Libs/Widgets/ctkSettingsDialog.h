@@ -58,6 +58,10 @@ public:
   void addPanel(const QString& label, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
   void addPanel(const QString& label, const QIcon& icon, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
 
+  void adjustTreeViewToContents();
+
+  virtual bool eventFilter(QObject* target, QEvent* event);
+
 public slots:
   void setCurrentPanel(ctkSettingsPanel* panel);
   void setCurrentPanel(const QString& label);

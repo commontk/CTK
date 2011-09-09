@@ -71,6 +71,8 @@ void ctkSettingsDialogPrivate::init()
 
   q->setSettings(new QSettings(q));
 
+  this->SettingsTreeWidget->installEventFilter(q);
+
   QObject::connect(this->SettingsTreeWidget,
     SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     q, SLOT(onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
@@ -152,6 +154,8 @@ void ctkSettingsDialog
   QTreeWidgetItem* parentItem = d->item(parentPanel);
   parentItem->addChild(newPanelItem);
   d->SettingsStackedWidget->addWidget(panel);
+
+  this->adjustTreeViewToContents();
 
   connect(panel, SIGNAL(settingChanged(const QString&, const QVariant&)),
           this, SLOT(onSettingChanged(const QString&, const QVariant&)));
@@ -300,4 +304,33 @@ void ctkSettingsDialog::onDialogButtonClicked(QAbstractButton* button)
     default:
       break;
     }
+}
+
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialog::adjustTreeViewToContents()
+{
+  Q_D(const ctkSettingsDialog);
+
+  d->SettingsTreeWidget->resizeColumnToContents(0);
+
+  d->SettingsTreeWidget->setFixedWidth(
+      d->SettingsTreeWidget->QAbstractItemView::sizeHintForColumn(0) +
+      2 * d->SettingsTreeWidget->indentation() +
+      2 * d->SettingsTreeWidget->frameWidth());
+}
+
+// -------------------------------------------------------------------------
+bool ctkSettingsDialog::eventFilter(QObject* target, QEvent* event)
+{
+  Q_D(ctkSettingsDialog);
+  if(target == d->SettingsTreeWidget)
+    {
+    if (event->type() == QEvent::FontChange ||
+        event->type() == QEvent::StyleChange)
+      {
+      this->adjustTreeViewToContents();
+      }
+    }
+  return this->Superclass::eventFilter(target,event);
 }
