@@ -155,8 +155,8 @@ void ctkSettingsDialog
 
   this->adjustTreeWidgetToContents();
 
-  connect(panel, SIGNAL(settingChanged(QString, QVariant)),
-          this, SLOT(onSettingChanged(QString, QVariant)));
+  connect(panel, SIGNAL(settingChanged(QString,QVariant)),
+          this, SLOT(onSettingChanged(QString,QVariant)));
   panel->setSettings(this->settings());
 }
 
