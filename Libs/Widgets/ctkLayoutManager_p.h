@@ -50,6 +50,7 @@ public:
   QWidget*       Viewport;
   QDomDocument   Layout;
   QSet<QWidget*> Views;
+  int            Spacing;
 };
 
 #endif

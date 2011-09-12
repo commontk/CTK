@@ -35,7 +35,8 @@ class ctkLayoutManagerPrivate;
 class CTK_WIDGETS_EXPORT ctkLayoutManager: public QObject
 {
   Q_OBJECT
-
+  /// Spacing between the widgets in a layout
+  Q_PROPERTY(int spacing READ spacing WRITE setSpacing)
 public:
   /// Constructor
   ctkLayoutManager(QObject* parent = 0);
@@ -46,6 +47,9 @@ public:
 
   void setViewport(QWidget* widget);
   QWidget* viewport()const;
+
+  int spacing()const;
+  void setSpacing(int spacing);
 
   void refresh();
 

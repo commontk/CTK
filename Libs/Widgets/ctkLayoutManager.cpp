@@ -37,6 +37,7 @@ ctkLayoutManagerPrivate::ctkLayoutManagerPrivate(ctkLayoutManager& object)
   :q_ptr(&object)
 {
   this->Viewport = 0;
+  this->Spacing = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -112,6 +113,21 @@ ctkLayoutManager::ctkLayoutManager(ctkLayoutManagerPrivate* ptr,
 ctkLayoutManager::~ctkLayoutManager()
 {
 
+}
+
+//-----------------------------------------------------------------------------
+int ctkLayoutManager::spacing()const
+{
+  Q_D(const ctkLayoutManager);
+  return d->Spacing;
+}
+
+//-----------------------------------------------------------------------------
+void ctkLayoutManager::setSpacing(int spacing)
+{
+  Q_D(ctkLayoutManager);
+  d->Spacing = spacing;
+  this->refresh();
 }
 
 //-----------------------------------------------------------------------------
@@ -244,7 +260,6 @@ QLayoutItem* ctkLayoutManager::processElement(QDomElement element)
     {
     return this->widgetItemFromXML(element);
     }
-  qDebug() << element.tagName() << element.text();
   Q_ASSERT(element.tagName() != "layout" && element.tagName() != "view");
   return 0;
 }
@@ -252,6 +267,7 @@ QLayoutItem* ctkLayoutManager::processElement(QDomElement element)
 //-----------------------------------------------------------------------------
 QLayoutItem* ctkLayoutManager::processLayoutElement(QDomElement layoutElement)
 {
+  Q_D(ctkLayoutManager);
   Q_ASSERT(layoutElement.tagName() == "layout");
 
   QLayoutItem* layoutItem = this->layoutFromXML(layoutElement);
@@ -260,7 +276,7 @@ QLayoutItem* ctkLayoutManager::processLayoutElement(QDomElement layoutElement)
   if (layout)
     {
     layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(0);
+    layout->setSpacing(d->Spacing);
     }
   for(QDomNode child = layoutElement.firstChild();
       !child.isNull();
