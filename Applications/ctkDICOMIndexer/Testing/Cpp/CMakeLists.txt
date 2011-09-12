@@ -1,15 +1,18 @@
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+  ctkDICOMIndexerTest1.cpp
   )
 
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
+# The following macro will read the target libraries from the file 'target_libraries.cmake'
+ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 ADD_EXECUTABLE(${KIT}CppTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME})
+TARGET_LINK_LIBRARIES(${KIT}CppTests ${KIT_target_libraries})
 
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
 IF(WIN32)
@@ -24,4 +27,4 @@ ENDMACRO( SIMPLE_TEST  )
 #
 # Add Tests
 #
-
+SIMPLE_TEST(ctkDICOMIndexerTest1)

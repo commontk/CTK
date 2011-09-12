@@ -1,7 +1,7 @@
 SET(KIT ${PROJECT_NAME})
 
 CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
-  ctkDICOMTest1.cpp
+  ctkDICOMDemoSCUTest1.cpp
   )
 
 SET (TestsToRun ${Tests})
@@ -27,4 +27,4 @@ ENDMACRO( SIMPLE_TEST  )
 #
 # Add Tests
 #
-SIMPLE_TEST(ctkDICOMTest1)
+SIMPLE_TEST(ctkDICOMDemoSCUTest1)
