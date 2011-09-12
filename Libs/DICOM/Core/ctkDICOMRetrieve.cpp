@@ -237,9 +237,9 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
     it++;
     }
   logger.debug ( "MOVE responses report for study: " + studyInstanceUID +"\n"
-    + QString::number((*it)->m_numberOfCompletedSubops) + " images transferred, and\n"
-    + QString::number((*it)->m_numberOfWarningSubops)   + " images transferred with warning, and\n"
-    + QString::number((*it)->m_numberOfFailedSubops)    + " images transfers failed");
+    + QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)) + " images transferred, and\n"
+    + QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops))   + " images transferred with warning, and\n"
+    + QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))    + " images transfers failed");
 
   /* Comment from Michael: The code below does not make sense. Using MOVE you never
    * receive the image here but only status information; thus, rsp->m_dataset is _not_
