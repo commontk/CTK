@@ -190,8 +190,8 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   this->HighlightedBoxActor->GetProperty()->SetColor(
       highlightedBoxColor[0], highlightedBoxColor[1], highlightedBoxColor[2]); // Default to green
   this->HighlightedBoxActor->GetProperty()->SetDisplayLocationToForeground();
-  // Border of 2 pixels
-  this->HighlightedBoxActor->GetProperty()->SetLineWidth(3.0f);
+  // Border of 1 pixels (increments go 2 by 2)
+  this->HighlightedBoxActor->GetProperty()->SetLineWidth(1.0f);
   this->HighlightedBoxActor->SetVisibility(visible);
 
   this->Renderer->AddActor2D(this->HighlightedBoxActor);
