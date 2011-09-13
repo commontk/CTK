@@ -23,6 +23,7 @@
 #include <QProcess>
 
 // STD includes
+#include <cstdlib>
 #include <iostream>
 
 int ctkDICOMIndexerTest1(int argc, char * argv [])

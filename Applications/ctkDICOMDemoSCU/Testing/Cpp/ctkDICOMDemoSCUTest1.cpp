@@ -23,6 +23,7 @@
 #include <QProcess>
 
 // STD includes
+#include <cstdlib>
 #include <iostream>
 
 int ctkDICOMDemoSCUTest1(int argc, char * argv [])
