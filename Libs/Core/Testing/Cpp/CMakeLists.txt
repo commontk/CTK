@@ -12,8 +12,6 @@ ctkMacroBuildLib(
 GET_TARGET_PROPERTY(ctkDummyPluginPATH "CTKDummyPlugin" LOCATION)
 REMOVE_DEFINITIONS(-DCTKDummyPlugin)
 
-
-
 SET(KIT ${PROJECT_NAME})
 
 #
@@ -31,6 +29,7 @@ SET(KITTests_SRCS
   ctkErrorLogModelTest1.cpp
   ctkErrorLogModelTest2.cpp
   ctkErrorLogModelTest3.cpp
+  ctkErrorLogModelTest4.cpp
   ctkHistogramTest1.cpp
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
@@ -49,6 +48,7 @@ SET(KITTests_SRCS
   ctkSingletonTest1.cpp
   ctkTransferFunctionTest1.cpp
   ctkTransferFunctionRepresentationTest1.cpp
+  ctkTransferFunctionRepresentationTest2.cpp
   ctkWorkflowTest1.cpp
   ctkWorkflowTest2.cpp
   ctkWorkflowTest3.cpp
@@ -134,6 +134,7 @@ SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkErrorLogModelTest1 )
 SIMPLE_TEST( ctkErrorLogModelTest2 )
 SIMPLE_TEST( ctkErrorLogModelTest3 )
+SIMPLE_TEST( ctkErrorLogModelTest4 )
 SIMPLE_TEST( ctkHistogramTest1 )
 SIMPLE_TEST( ctkLoggerTest1 )
 SET_TESTS_PROPERTIES(ctkErrorLogModelTest3 PROPERTIES PASS_REGULAR_EXPRESSION
@@ -145,6 +146,7 @@ SIMPLE_TEST( ctkScopedCurrentDirTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
 SIMPLE_TEST( ctkTransferFunctionTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
+SIMPLE_TEST( ctkTransferFunctionRepresentationTest2 )
 SIMPLE_TEST( ctkUtilsClosestPowerOfTenTest1 )
 SIMPLE_TEST( ctkUtilsOrderOfMagnitudeTest1 )
 SIMPLE_TEST( ctkUtilsSignificantDecimalsTest1 )

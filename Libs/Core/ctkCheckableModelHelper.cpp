@@ -97,6 +97,11 @@ Qt::CheckState ctkCheckableModelHelperPrivate::checkState(
   const QModelIndex& index, bool *checkable)const
 {
   Q_Q(const ctkCheckableModelHelper);
+  if (!q->model())
+    {
+    qWarning() << "Model has not been set.";
+    return q->defaultCheckState();
+    }
   QVariant indexCheckState = index != q->rootIndex() ?
     q->model()->data(index, Qt::CheckStateRole):
     q->model()->headerData(0, q->orientation(), Qt::CheckStateRole);
@@ -108,7 +113,12 @@ void ctkCheckableModelHelperPrivate::setCheckState(
   const QModelIndex& modelIndex, Qt::CheckState newCheckState)
 {
   Q_Q(ctkCheckableModelHelper);
-  if (modelIndex != q->rootIndex())
+  if (!q->model())
+    {
+    qWarning() << "Model has not been set.";
+    return;
+    }
+  else if (modelIndex != q->rootIndex())
     {
     q->model()->setData(modelIndex, newCheckState, Qt::CheckStateRole);
     }
@@ -604,18 +614,33 @@ void ctkCheckableModelHelper::onRowsInserted(const QModelIndex &parentIndex,
 //-----------------------------------------------------------------------------
 bool ctkCheckableModelHelper::isHeaderCheckable(int section)const
 {
+  if (!this->model())
+    {
+    qWarning() << "ctkCheckableModelHelper::isHeaderCheckable : Model has not been set";
+    return (this->forceCheckability() && section == 0);
+    }
   return !this->model()->headerData(section, this->orientation(), Qt::CheckStateRole).isNull();
 }
 
 //-----------------------------------------------------------------------------
 bool ctkCheckableModelHelper::isCheckable(const QModelIndex& index)const
 {
+  if (!this->model())
+    {
+    qWarning() << "ctkCheckableModelHelper::isCheckable : Model has not been set";
+    return (this->forceCheckability() && index.column() == 0);
+    }
   return !this->model()->data(index, Qt::CheckStateRole).isNull();
 }
 
 //-----------------------------------------------------------------------------
 Qt::CheckState ctkCheckableModelHelper::headerCheckState(int section)const
 {
+  if (!this->model())
+    {
+    qWarning() << "ctkCheckableModelHelper::headerCheckState : Model has not been set";
+    return this->defaultCheckState();
+    }
   return static_cast<Qt::CheckState>(
     this->model()->headerData(section, this->orientation(), Qt::CheckStateRole).toInt());
 }
@@ -623,6 +648,11 @@ Qt::CheckState ctkCheckableModelHelper::headerCheckState(int section)const
 //-----------------------------------------------------------------------------
 Qt::CheckState ctkCheckableModelHelper::checkState(const QModelIndex& index)const
 {
+  if (!this->model())
+    {
+    qWarning() << "ctkCheckableModelHelper::checkState : Model has not been set";
+    return this->defaultCheckState();
+    }
   return static_cast<Qt::CheckState>(
     this->model()->data(index, Qt::CheckStateRole).toInt());
 }
@@ -631,6 +661,11 @@ Qt::CheckState ctkCheckableModelHelper::checkState(const QModelIndex& index)cons
 bool ctkCheckableModelHelper::headerCheckState(int section, Qt::CheckState& checkState)const
 {
   bool checkable = false;
+  if (!this->model())
+    {
+    qWarning() << "ctkCheckableModelHelper::headerCheckState : Model has not been set";
+    return (this->forceCheckability() && section == 0);
+    }
   checkState = static_cast<Qt::CheckState>(
     this->model()->headerData(section, this->orientation(), Qt::CheckStateRole).toInt(&checkable));
   return checkable;
@@ -640,6 +675,11 @@ bool ctkCheckableModelHelper::headerCheckState(int section, Qt::CheckState& chec
 bool ctkCheckableModelHelper::checkState(const QModelIndex& index, Qt::CheckState& checkState)const
 {
   bool checkable = false;
+  if (!this->model())
+    {
+    qWarning() << "ctkCheckableModelHelper::checkState : Model has not been set";
+    return (this->forceCheckability() && index.column() == 0);
+    }
   checkState = static_cast<Qt::CheckState>(
     this->model()->data(index, Qt::CheckStateRole).toInt(&checkable));
   return checkable;
