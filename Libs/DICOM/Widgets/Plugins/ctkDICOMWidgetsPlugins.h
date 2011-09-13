@@ -26,7 +26,7 @@
 
 // CTK includes
 #include "ctkDICOMWidgetsPluginsExport.h"
-#include "ctkQueryRetrieveWidgetPlugin.h"
+#include "ctkDICOMQueryRetrieveWidgetPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMWidgetsPlugins
@@ -40,7 +40,7 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new ctkQueryRetrieveWidgetPlugin
+    plugins << new ctkDICOMQueryRetrieveWidgetPlugin;
     return plugins;
     }
 };

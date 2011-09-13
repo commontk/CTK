@@ -22,16 +22,16 @@
 #define __ctkDICOMQueryRetrievePlugin_h
 
 // CTK includes
-#include "ctkWidgetsAbstractPlugin.h"
+#include "ctkDICOMWidgetsAbstractPlugin.h"
 
-class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMQueryRetrievePlugin
+class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMQueryRetrieveWidgetPlugin
   : public QObject
-  , public ctkWidgetsAbstractPlugin
+  , public ctkDICOMWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkDICOMQueryRetrievePlugin(QObject *_parent = 0);
+  ctkDICOMQueryRetrieveWidgetPlugin(QObject *_parent = 0);
   
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const; 

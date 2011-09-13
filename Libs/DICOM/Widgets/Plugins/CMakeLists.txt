@@ -12,15 +12,16 @@ SET(PLUGIN_SRCS
   ctkDICOMWidgetsPlugins.h
   ctkDICOMWidgetsAbstractPlugin.cpp
   ctkDICOMWidgetsAbstractPlugin.h
-  ctkQueryRetrieveWidgetPlugin.cpp
-  ctkQueryRetrieveWidgetPlugin.h
+
+  ctkDICOMQueryRetrieveWidgetPlugin.cpp
+  ctkDICOMQueryRetrieveWidgetPlugin.h
   )
 
 # Headers that should run through moc
 SET(PLUGIN_MOC_SRCS
   ctkDICOMWidgetsPlugins.h
 
-  ctkQueryRetrieveWidgetPlugin.h
+  ctkDICOMQueryRetrieveWidgetPlugin.h
   )
 
 # Resources

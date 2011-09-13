@@ -19,24 +19,24 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkDICOMQueryRetrievePlugin.h"
-#include "ctkDICOMQueryRetrieve.h"
+#include "ctkDICOMQueryRetrieveWidgetPlugin.h"
+#include "ctkDICOMQueryRetrieveWidget.h"
 
 //-----------------------------------------------------------------------------
-ctkDICOMQueryRetrievePlugin::ctkDICOMQueryRetrievePlugin(QObject* pluginParent)
+ctkDICOMQueryRetrieveWidgetPlugin::ctkDICOMQueryRetrieveWidgetPlugin(QObject* pluginParent)
   : QObject(pluginParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkDICOMQueryRetrievePlugin::createWidget(QWidget *parentForWidget)
+QWidget *ctkDICOMQueryRetrieveWidgetPlugin::createWidget(QWidget *parentForWidget)
 {
-  ctkDICOMQueryRetrieve* newWidget = new ctkDICOMQueryRetrieve(parentForWidget);
+  ctkDICOMQueryRetrieveWidget* newWidget = new ctkDICOMQueryRetrieveWidget(parentForWidget);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkDICOMQueryRetrievePlugin::domXml() const
+QString ctkDICOMQueryRetrieveWidgetPlugin::domXml() const
 {
   return "<widget class=\"ctkDICOMQueryRetrieve\" \
           name=\"QueryRetrieve\">\n"
@@ -44,25 +44,25 @@ QString ctkDICOMQueryRetrievePlugin::domXml() const
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkDICOMQueryRetrievePlugin::icon() const
+QIcon ctkDICOMQueryRetrieveWidgetPlugin::icon() const
 {
   return QIcon(":/Icons/listview.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkDICOMQueryRetrievePlugin::includeFile() const
+QString ctkDICOMQueryRetrieveWidgetPlugin::includeFile() const
 {
   return "ctkDICOMQueryRetrieve.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkDICOMQueryRetrievePlugin::isContainer() const
+bool ctkDICOMQueryRetrieveWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkDICOMQueryRetrievePlugin::name() const
+QString ctkDICOMQueryRetrieveWidgetPlugin::name() const
 {
   return "ctkDICOMQueryRetrieve";
 }
