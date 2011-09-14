@@ -52,6 +52,7 @@ public:
   ctkVTKScalarsToColorsViewPrivate(ctkVTKScalarsToColorsView& object);
   void init();
   void updateBounds();
+  void showBorders(bool);
 };
 
 // ----------------------------------------------------------------------------
@@ -70,12 +71,32 @@ void ctkVTKScalarsToColorsViewPrivate::init()
   vtkChartXY* chart = q->chart();
   chart->SetAutoAxes(false);
   chart->SetHiddenAxisBorder(0);
-  for (int i = 0; i < 4; ++i)
-    {
-    chart->GetAxis(i)->SetVisible(false);
-    }
+  this->showBorders(false);
   QObject::connect(q, SIGNAL(boundsChanged()), q, SLOT(onBoundsChanged()));
   q->onChartUpdated();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsViewPrivate::showBorders(bool visible)
+{
+  Q_Q(ctkVTKScalarsToColorsView);
+  vtkChartXY* chart = q->chart();
+  for (int i = 0; i < 4; ++i)
+    {
+    chart->GetAxis(i)->SetVisible(visible);
+    chart->GetAxis(i)->SetTitle("");
+    chart->GetAxis(i)->SetNumberOfTicks(0);
+    chart->GetAxis(i)->SetLabelsVisible(false);
+    chart->GetAxis(i)->SetMargins(7.,7.);
+    if (visible)
+      {
+      chart->GetAxis(i)->SetBehavior(2);
+      }
+    else
+      {
+      chart->GetAxis(i)->SetBehavior(1);
+      }
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -433,6 +454,22 @@ void ctkVTKScalarsToColorsView
     plot->SetPiecewiseFunction(piecewiseTF);
     }
   this->onChartUpdated();
+}
+
+// ----------------------------------------------------------------------------
+bool ctkVTKScalarsToColorsView
+::areBordersVisible()const
+{
+  Q_D(const ctkVTKScalarsToColorsView);
+  return this->chart()->GetAxis(0)->GetVisible();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView
+::setBordersVisible(bool show)
+{
+  Q_D(ctkVTKScalarsToColorsView);
+  d->showBorders(show);
 }
 
 // ----------------------------------------------------------------------------
