@@ -157,21 +157,24 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   //     |       |       |       |       |       |       |
   //  V  +-------+-------+-------+-------+-------+-------+
   //     <  1px  >  -1       0       1       2       3
-  // It seems that it's the bottom pixel line that is drawn.
-  // We will then shift the actor to have the correct behavior.
-  points->InsertNextPoint(0., 0., 0); // bottom-left
-  points->InsertNextPoint(1., 0., 0); // bottom-right
-  points->InsertNextPoint(1., 1., 0); // top-right
-  points->InsertNextPoint(0., 1., 0); // top-left
-  points->InsertNextPoint(0., -0.1, 0); // bottom-left to fill the 0,0 pixel.
+  // It depends of the graphic card, this is why we need to add an offset.
+  // 0.0002 seems to work for most of the window sizes.
+  double shift = 0.0002;
+  points->InsertNextPoint(0. + shift, 0. + shift, 0); // bottom-left
+  points->InsertNextPoint(1. + shift, 0. + shift, 0); // bottom-right
+  points->InsertNextPoint(1. + shift, 1. + shift + 0.1, 0); // top-right to fill the 1,1 pixel
+  points->InsertNextPoint(1. + shift, 1. + shift, 0); // top-right
+  points->InsertNextPoint(0. + shift, 1. + shift, 0); // top-left
+  points->InsertNextPoint(0. + shift, 0. + shift - 0.1, 0); // bottom-left to fill the 0,0 pixel.
   
   VTK_CREATE(vtkCellArray, cells);
-  cells->InsertNextCell(5);
+  cells->InsertNextCell(6);
   cells->InsertCellPoint(0);
   cells->InsertCellPoint(1);
   cells->InsertCellPoint(2);
   cells->InsertCellPoint(3);
   cells->InsertCellPoint(4);
+  cells->InsertCellPoint(5);
   poly->SetPoints(points);
   poly->SetLines(cells);
 
@@ -182,15 +185,14 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   VTK_CREATE(vtkPolyDataMapper2D, polyDataMapper);
   polyDataMapper->SetInput(poly);
   polyDataMapper->SetTransformCoordinate(coordinate);
+  polyDataMapper->SetTransformCoordinateUseDouble(true);
 
   this->HighlightedBoxActor = vtkSmartPointer<vtkActor2D>::New();
-  // Shift the box for the reason explained earlier
-  this->HighlightedBoxActor->SetPosition(1.,1.);
   this->HighlightedBoxActor->SetMapper(polyDataMapper);
-  this->HighlightedBoxActor->GetProperty()->SetColor(
-      highlightedBoxColor[0], highlightedBoxColor[1], highlightedBoxColor[2]); // Default to green
+  this->HighlightedBoxActor->GetProperty()->SetColor(highlightedBoxColor[0],
+                                                     highlightedBoxColor[1],
+                                                     highlightedBoxColor[2]);
   this->HighlightedBoxActor->GetProperty()->SetDisplayLocationToForeground();
-  // Border of 1 pixels (increments go 2 by 2)
   this->HighlightedBoxActor->GetProperty()->SetLineWidth(1.0f);
   this->HighlightedBoxActor->SetVisibility(visible);
 
