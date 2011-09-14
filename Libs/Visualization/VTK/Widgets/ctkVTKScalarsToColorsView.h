@@ -39,6 +39,9 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsView
 {
   Q_OBJECT
   QVTK_OBJECT
+  /// Add an empty space around the view to give space to the corner control
+  /// points. False by default
+  Q_PROPERTY(bool bordersVisible READ areBordersVisible WRITE setBordersVisible)
 public:
   typedef ctkVTKChartView Superclass;
   ctkVTKScalarsToColorsView(QWidget* parent = 0);
@@ -75,6 +78,9 @@ public:
   void setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF);
   void setOpacityFunctionToPlots(vtkPiecewiseFunction* opacityTF);
   void setPiecewiseFunctionToPlots(vtkPiecewiseFunction* piecewiseTF);
+
+  bool areBordersVisible()const;
+  void setBordersVisible(bool show);
 
   void setPlotsUserBounds(double* bounds);
 
