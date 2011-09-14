@@ -71,7 +71,7 @@ void ctkVTKScalarsToColorsViewPrivate::init()
   vtkChartXY* chart = q->chart();
   chart->SetAutoAxes(false);
   chart->SetHiddenAxisBorder(0);
-  this->showBorders(false);
+  this->showBorders(true);
   QObject::connect(q, SIGNAL(boundsChanged()), q, SLOT(onBoundsChanged()));
   q->onChartUpdated();
 }
