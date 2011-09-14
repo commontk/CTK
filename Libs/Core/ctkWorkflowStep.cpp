@@ -127,6 +127,7 @@ ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId)
 
   d->Id = newId;
   d->Workflow = newWorkflow;
+  newWorkflow->registerWorkflowStep(this);
 }
 
 // --------------------------------------------------------------------------
@@ -141,6 +142,7 @@ ctkWorkflowStep::ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl,
   Q_D(ctkWorkflowStep);
   d->Id = newId;
   d->Workflow = newWorkflow;
+  newWorkflow->registerWorkflowStep(this);
 }
 
 // --------------------------------------------------------------------------
@@ -150,7 +152,6 @@ ctkWorkflowStep::~ctkWorkflowStep()
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowStep, ctkWorkflow*, workflow, Workflow);
-CTK_SET_CPP(ctkWorkflowStep, ctkWorkflow*, setWorkflow, Workflow);
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowStep, QString, id, Id);

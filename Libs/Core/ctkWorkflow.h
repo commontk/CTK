@@ -110,6 +110,9 @@ public:
   Q_INVOKABLE ctkWorkflowStep* initialStep()const;
   Q_INVOKABLE virtual void setInitialStep(ctkWorkflowStep* step);
 
+  /// \brief Register standard steps for cleaning purpose
+  Q_INVOKABLE virtual void registerWorkflowStep(ctkWorkflowStep* step);
+
   /// Get the current step of the state machine
   Q_INVOKABLE ctkWorkflowStep* currentStep()const;
 

@@ -266,6 +266,9 @@ public:
   typedef QMap<ctkWorkflowStep*, forwardAndBackwardSteps*> StepToForwardAndBackwardStepMapType;
   typedef QList<ctkWorkflowStep*>                          StepListType;
 
+  // Register a list of pointers to the steps in the worflow for cleaning purpose
+  StepListType registeredSteps;
+
   // Maintain a map of <state, step> key/value pairs, to find the step
   // that a given state belongs to
   typedef QMap<const QAbstractState*, ctkWorkflowStep*>           StateToStepMapType;

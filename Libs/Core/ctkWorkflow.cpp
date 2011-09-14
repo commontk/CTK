@@ -538,6 +538,10 @@ ctkWorkflow::~ctkWorkflow()
     {
     d->StateMachine->stop();
     }
+
+  // Clean registered step
+  while (!d->registeredSteps.isEmpty())
+      delete d->registeredSteps.takeFirst();
 }
 
 // --------------------------------------------------------------------------
@@ -618,6 +622,12 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
     }
 
   return true;
+}
+
+void ctkWorkflow::registerWorkflowStep(ctkWorkflowStep* step)
+{
+  Q_D(ctkWorkflow);
+  d->registeredSteps.append(step);
 }
 
 // --------------------------------------------------------------------------

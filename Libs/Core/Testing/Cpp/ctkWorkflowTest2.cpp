@@ -126,6 +126,7 @@ int ctkWorkflowTest2(int argc, char * argv [] )
   ctkWorkflow *workflow = new ctkWorkflow();
   ctkWorkflowStep *step1 = new ctkWorkflowStep(workflow, "Step 1");
   step1->setName("Step 1");
+  step1->setId("FirstStep");
   step1->setDescription("Description for step 1");
   ctkWorkflowStep *step2 = new ctkWorkflowStep(workflow, "Step 2");
   step2->setName("Step 2");
