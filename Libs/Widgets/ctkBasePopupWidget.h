@@ -35,17 +35,21 @@ class ctkBasePopupWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkBasePopupWidget : public QFrame
 {
   Q_OBJECT
-  
+
   Q_ENUMS(AnimationEffect)
   Q_ENUMS(VerticalDirection)
 
   /// ScrollEffect by default
   Q_PROPERTY( AnimationEffect animationEffect READ animationEffect WRITE setAnimationEffect)
-  
+
+  /// Effect duration in ms
+  /// Default to 333ms
+  Q_PROPERTY( int effectDuration READ effectDuration WRITE setEffectDuration);
+
   /// Opening/Closing curve
   /// QEasingCurve::InOutQuad by default
   Q_PROPERTY( QEasingCurve::Type easingCurve READ easingCurve WRITE setEasingCurve);
-  
+
   /// Where is the popup in relation to the BaseWidget
   /// To vertically justify, use Qt::AlignTop | Qt::AlignBottom
   /// Qt::AlignJustify | Qt::AlignBottom by default
@@ -88,13 +92,16 @@ public:
     ScrollEffect,
     FadeEffect
   };
-  
+
   AnimationEffect animationEffect()const;
   void setAnimationEffect(AnimationEffect effect);
-  
+
+  int effectDuration()const;
+  void setEffectDuration(int duration);
+
   QEasingCurve::Type easingCurve()const;
   void setEasingCurve(QEasingCurve::Type easingCurve);
-  
+
   Qt::Alignment alignment()const;
   void setAlignment(Qt::Alignment alignment);
   

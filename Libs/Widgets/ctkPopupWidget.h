@@ -44,9 +44,17 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public ctkBasePopupWidget
   /// enter the widget. True by default
   Q_PROPERTY( bool autoShow READ autoShow WRITE setAutoShow)
 
+  /// Time in ms to wait before opening the popup if autoShow is set.
+  /// 20ms by default
+  Q_PROPERTY( int showDelay READ showDelay WRITE setShowDelay)
+
   /// Control wether the popup automatically closes when the mouse
   /// leaves the widget. True by default
   Q_PROPERTY( bool autoHide READ autoHide WRITE setAutoHide)
+
+  /// Time in ms to wait before closing the popup if autoHide is set.
+  /// 200ms by default
+  Q_PROPERTY( int hideDelay READ hideDelay WRITE setHideDelay)
 
 public:
   typedef ctkBasePopupWidget Superclass;
@@ -61,11 +69,17 @@ public:
   /// is above the popup or the base widget.
   void setAutoShow(bool);
 
+  int showDelay()const;
+  void setShowDelay(int delay);
+
   bool autoHide()const;
   /// Don't automatically close the popup when leaving the widget.
   /// Calling setAutoHide automatically updates the state close the popup
   /// if the mouse is not over the popup nor the base widget.
   void setAutoHide(bool autoHide);
+
+  int hideDelay()const;
+  void setHideDelay(int delay);
 
 public slots:
   /// Convenient function that calls setAutoHide(!pin) and opens the popup

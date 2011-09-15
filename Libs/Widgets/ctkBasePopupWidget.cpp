@@ -37,8 +37,6 @@
 // CTK includes
 #include "ctkBasePopupWidget_p.h"
 
-#define DEFAULT_FADING_DURATION 333 // fast enough without being too slow
-
 // -------------------------------------------------------------------------
 QGradient* duplicateGradient(const QGradient* gradient)
 {
@@ -83,6 +81,7 @@ ctkBasePopupWidgetPrivate::ctkBasePopupWidgetPrivate(ctkBasePopupWidget& object)
 {
   this->BaseWidget = 0;
   this->Effect = ctkBasePopupWidget::ScrollEffect;
+  this->EffectDuration = 333; // in ms
   this->EffectAlpha = 1.;
   this->AlphaAnimation = 0;
   this->ForcedTranslucent = false;
@@ -110,7 +109,7 @@ void ctkBasePopupWidgetPrivate::init()
   q->setAttribute(Qt::WA_AlwaysShowToolTips, true);
 
   this->AlphaAnimation = new QPropertyAnimation(q, "effectAlpha", q);
-  this->AlphaAnimation->setDuration(DEFAULT_FADING_DURATION);
+  this->AlphaAnimation->setDuration(this->EffectDuration);
   this->AlphaAnimation->setStartValue(0.);
   this->AlphaAnimation->setEndValue(1.);
   QObject::connect(this->AlphaAnimation, SIGNAL(finished()),
@@ -119,7 +118,7 @@ void ctkBasePopupWidgetPrivate::init()
   this->PopupPixmapWidget = new QLabel(q, Qt::ToolTip | Qt::FramelessWindowHint);
 
   this->ScrollAnimation = new QPropertyAnimation(q, "effectGeometry", q);
-  this->ScrollAnimation->setDuration(DEFAULT_FADING_DURATION);
+  this->ScrollAnimation->setDuration(this->EffectDuration);
   QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
                    q, SLOT(onEffectFinished()));
   QObject::connect(this->ScrollAnimation, SIGNAL(finished()),
@@ -478,7 +477,6 @@ ctkBasePopupWidget::ctkBasePopupWidget(ctkBasePopupWidgetPrivate* pimpl, QWidget
 {
 }
 
-
 // -------------------------------------------------------------------------
 ctkBasePopupWidget::~ctkBasePopupWidget()
 {
@@ -531,6 +529,22 @@ void ctkBasePopupWidget::setAnimationEffect(ctkBasePopupWidget::AnimationEffect 
   Q_D(ctkBasePopupWidget);
   /// TODO: handle the case where there is an animation running
   d->Effect = effect;
+}
+
+// -------------------------------------------------------------------------
+int ctkBasePopupWidget::effectDuration()const
+{
+  Q_D(const ctkBasePopupWidget);
+  return d->EffectDuration;
+}
+
+// -------------------------------------------------------------------------
+void ctkBasePopupWidget::setEffectDuration(int duration)
+{
+  Q_D(ctkBasePopupWidget);
+  d->EffectDuration = duration;
+  d->AlphaAnimation->setDuration(d->EffectDuration);
+  d->ScrollAnimation->setDuration(d->EffectDuration);
 }
 
 // -------------------------------------------------------------------------

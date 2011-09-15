@@ -37,17 +37,15 @@
 // CTK includes
 #include "ctkPopupWidget_p.h"
 
-#define LEAVE_CLOSING_DELAY 100 // we don't want to be too fast to close
-#define ENTER_OPENING_DELAY 20 // we want to be responsive but allow "errors"
-#define DEFAULT_FADING_DURATION 333 // fast enough without being too slow
-
 // -------------------------------------------------------------------------
 ctkPopupWidgetPrivate::ctkPopupWidgetPrivate(ctkPopupWidget& object)
   :Superclass(object)
 {
   this->Active = false;
   this->AutoShow = true;
+  this->ShowDelay = 20;
   this->AutoHide = true;
+  this->HideDelay = 200;
 }
 
 // -------------------------------------------------------------------------
@@ -312,7 +310,7 @@ void ctkPopupWidget::setBaseWidget(QWidget* widget)
     {
     d->BaseWidget->installEventFilter(this);
     }
-  QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+  QTimer::singleShot(d->ShowDelay, this, SLOT(updatePopup()));
 }
 
 // -------------------------------------------------------------------------
@@ -327,7 +325,21 @@ void ctkPopupWidget::setAutoShow(bool mode)
 {
   Q_D(ctkPopupWidget);
   d->AutoShow = mode;
-  QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+  QTimer::singleShot(d->ShowDelay, this, SLOT(updatePopup()));
+}
+
+// -------------------------------------------------------------------------
+int ctkPopupWidget::showDelay()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->ShowDelay;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setShowDelay(int delay)
+{
+  Q_D(ctkPopupWidget);
+  d->ShowDelay = delay;
 }
 
 // -------------------------------------------------------------------------
@@ -342,7 +354,21 @@ void ctkPopupWidget::setAutoHide(bool mode)
 {
   Q_D(ctkPopupWidget);
   d->AutoHide = mode;
-  QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+  QTimer::singleShot(d->HideDelay, this, SLOT(updatePopup()));
+}
+
+// -------------------------------------------------------------------------
+int ctkPopupWidget::hideDelay()const
+{
+  Q_D(const ctkPopupWidget);
+  return d->HideDelay;
+}
+
+// -------------------------------------------------------------------------
+void ctkPopupWidget::setHideDelay(int delay)
+{
+  Q_D(ctkPopupWidget);
+  d->HideDelay = delay;
 }
 
 // -------------------------------------------------------------------------
@@ -365,15 +391,16 @@ void ctkPopupWidget::onEffectFinished()
 // --------------------------------------------------------------------------
 void ctkPopupWidget::leaveEvent(QEvent* event)
 {
-  //QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
-  this->updatePopup();
+  Q_D(ctkPopupWidget);
+  QTimer::singleShot(d->HideDelay, this, SLOT(updatePopup()));
   this->Superclass::leaveEvent(event);
 }
 
 // --------------------------------------------------------------------------
 void ctkPopupWidget::enterEvent(QEvent* event)
 {
-  QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+  Q_D(ctkPopupWidget);
+  QTimer::singleShot(d->ShowDelay, this, SLOT(updatePopup()));
   this->Superclass::enterEvent(event);
 }
 
@@ -387,19 +414,19 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
     {
     case QEvent::Move:
       {
-	    if (obj != d->BaseWidget)
-	      {
-	      break;
-	      }
-	    QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
-	    QRect newBaseGeometry = d->baseGeometry();
-	    newBaseGeometry.moveTopLeft(d->mapToGlobal(moveEvent->pos()));
-	    QRect desiredGeometry = d->desiredOpenGeometry(newBaseGeometry);
-	    this->move(desiredGeometry.topLeft());
-	    //this->move(this->pos() + moveEvent->pos() - moveEvent->oldPos());
-	    this->update();
-	    break;
-	    }	    
+      if (obj != d->BaseWidget)
+        {
+        break;
+        }
+      QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
+      QRect newBaseGeometry = d->baseGeometry();
+      newBaseGeometry.moveTopLeft(d->mapToGlobal(moveEvent->pos()));
+      QRect desiredGeometry = d->desiredOpenGeometry(newBaseGeometry);
+      this->move(desiredGeometry.topLeft());
+      //this->move(this->pos() + moveEvent->pos() - moveEvent->oldPos());
+      this->update();
+      break;
+      }
     case QEvent::Hide:
     case QEvent::Close:
       // if the mouse was in a base widget child popup, then when we leave
@@ -410,12 +437,12 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
             qobject_cast<QWidget*>(obj)->windowType() == Qt::Popup)
           {
           obj->removeEventFilter(this);
-          QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+          QTimer::singleShot(d->HideDelay, this, SLOT(updatePopup()));
           }
         break;
         }
       d->temporarilyHiddenOn();
-	    break;
+      break;
     case QEvent::Show:
       if (obj != d->BaseWidget)
         {
@@ -440,7 +467,7 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
         {
         // Maybe the user moved the mouse on the widget by mistake, don't open
         // the popup instantly...
-        QTimer::singleShot(ENTER_OPENING_DELAY, this, SLOT(updatePopup()));
+        QTimer::singleShot(d->ShowDelay, this, SLOT(updatePopup()));
         }
       else 
         {
@@ -459,7 +486,7 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
         break;
         }
       // The mouse might have left the area that keeps the popup open
-      QTimer::singleShot(LEAVE_CLOSING_DELAY, this, SLOT(updatePopup()));
+      QTimer::singleShot(d->HideDelay, this, SLOT(updatePopup()));
       if (obj != d->BaseWidget &&
           obj != d->PopupPixmapWidget)
         {
