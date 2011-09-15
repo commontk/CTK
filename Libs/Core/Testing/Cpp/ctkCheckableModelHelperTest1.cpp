@@ -22,6 +22,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFocusEvent>
+#include <QScopedPointer>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QTimer>
@@ -37,6 +38,7 @@
 int ctkCheckableModelHelperTest1(int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
+  Q_UNUSED(app);
 
   QStandardItemModel model;
   QList<QStandardItem*> row0;
@@ -70,273 +72,278 @@ int ctkCheckableModelHelperTest1(int argc, char * argv [] )
   QStandardItemModel modelForce;
   modelForce.appendRow(row0);
 
-  QModelIndex modelIndex;
-  ctkCheckableModelHelper* modelHelperCF =
-    new ctkCheckableModelHelper(Qt::Horizontal);
+  {
+    QModelIndex modelIndex;
+    QScopedPointer<ctkCheckableModelHelper> modelHelperCF(new ctkCheckableModelHelper(Qt::Horizontal));
 
-  modelHelperCF->setForceCheckability(true);
-  if (!modelHelperCF->forceCheckability())
-    {
-    std::cerr << "ctkCheckableModelHelper::setForceCheckability() failed: "
-              << static_cast<int>(modelHelperCF->forceCheckability()) << std::endl;
-    return EXIT_FAILURE;
-    }
+    modelHelperCF->setForceCheckability(true);
+    if (!modelHelperCF->forceCheckability())
+      {
+      std::cerr << "Line " << __LINE__
+                << " - ctkCheckableModelHelper::setForceCheckability() failed: "
+                << static_cast<int>(modelHelperCF->forceCheckability()) << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  modelHelperCF->isCheckable(modelIndex);
-  modelHelperCF->toggleCheckState(modelIndex);
+    modelHelperCF->isCheckable(modelIndex);
+    modelHelperCF->toggleCheckState(modelIndex);
 
-  modelHelperCF->setForceCheckability(false);
-  if (modelHelperCF->forceCheckability())
-    {
-    std::cerr << "ctkCheckableModelHelper::setForceCheckability() failed: "
-              << static_cast<int>(modelHelperCF->forceCheckability()) << std::endl;
-    return EXIT_FAILURE;
-    }
+    modelHelperCF->setForceCheckability(false);
+    if (modelHelperCF->forceCheckability())
+      {
+      std::cerr << "Line " << __LINE__
+                << " - ctkCheckableModelHelper::setForceCheckability() failed: "
+                << static_cast<int>(modelHelperCF->forceCheckability()) << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  modelHelperCF->setCheckState(modelIndex, Qt::Unchecked);
+    modelHelperCF->setCheckState(modelIndex, Qt::Unchecked);
 
-  modelHelperCF->setDefaultCheckState(Qt::Checked);
-  if (modelHelperCF->defaultCheckState() != Qt::Checked)
-    {
-    std::cerr << "ctkCheckableModelHelper::setDefaultCheckState() failed: "
-              << static_cast<int>(modelHelperCF->defaultCheckState()) << std::endl;
-    return EXIT_FAILURE;
-    }
+    modelHelperCF->setDefaultCheckState(Qt::Checked);
+    if (modelHelperCF->defaultCheckState() != Qt::Checked)
+      {
+      std::cerr << "Line " << __LINE__
+                << " - ctkCheckableModelHelper::setDefaultCheckState() failed: "
+                << static_cast<int>(modelHelperCF->defaultCheckState()) << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  modelHelperCF->setRootIndex(modelIndex);
-  modelHelperCF->setForceCheckability(true);
-  modelHelperCF->setCheckState(modelIndex, Qt::Checked);
-  Qt::CheckState statutCheck = Qt::Checked;
-  if (modelHelperCF->checkState(modelIndex, statutCheck))
-    {
-    std::cerr << "ctkCheckableModelHelper::setCheckState() failed: "
-            << static_cast<int>(modelHelperCF->checkState(modelIndex, statutCheck)) << std::endl;
-    return EXIT_FAILURE;
-    }
+    modelHelperCF->setRootIndex(modelIndex);
+    modelHelperCF->setForceCheckability(true);
+    modelHelperCF->setCheckState(modelIndex, Qt::Checked);
+    Qt::CheckState statutCheck = Qt::Checked;
+    if (modelHelperCF->checkState(modelIndex, statutCheck))
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::setCheckState() failed: "
+                << static_cast<int>(modelHelperCF->checkState(modelIndex, statutCheck))
+                << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  modelHelperCF->checkState(modelIndex);
+    modelHelperCF->checkState(modelIndex);
 
-  modelHelperCF->setModel(&modelForce);
-  if (!modelHelperCF->model())
-    {
-    std::cerr << "ctkCheckableModelHelper::setModel() failed: "
-              << "is null" << std::endl;
-    return EXIT_FAILURE;
-    }
+    modelHelperCF->setModel(&modelForce);
+    if (!modelHelperCF->model())
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::setModel() failed: "
+                << "is null" << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  modelHelperCF->setCheckState(modelIndex, Qt::Checked);
-  if (modelHelperCF->checkState(modelIndex, statutCheck))
-    {
-    std::cerr << "ctkCheckableModelHelper::setCheckState() failed: "
-            << static_cast<int>(modelHelperCF->checkState(modelIndex, statutCheck)) << std::endl;
-    return EXIT_FAILURE;
-    }
+    modelHelperCF->setCheckState(modelIndex, Qt::Checked);
+    if (modelHelperCF->checkState(modelIndex, statutCheck))
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::setCheckState() failed: "
+                << static_cast<int>(modelHelperCF->checkState(modelIndex, statutCheck))
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+  } // end of local scope
 
+  {
     // Row & Column dummy insert
-  QList<QStandardItem*> col0;
-  col0 << new QStandardItem << new QStandardItem << new QStandardItem;
-  col0[0]->setText("not user checkable");
-  modelForce.appendColumn(col0);
-  modelForce.appendRow(row1);
+    QList<QStandardItem*> col0;
+    col0 << new QStandardItem << new QStandardItem << new QStandardItem;
+    col0[0]->setText("not user checkable");
+    modelForce.appendColumn(col0);
+    modelForce.appendRow(row1);
 
-  delete modelHelperCF;
+    QScopedPointer<ctkCheckableModelHelper> modelHelperRC(new ctkCheckableModelHelper(Qt::Vertical));
+    modelHelperRC->setForceCheckability(true);
+    modelHelperRC->setModel(&modelForce);
+    modelForce.appendColumn(col0);
+    modelForce.appendRow(row1);
 
-  ctkCheckableModelHelper* modelHelperRC =
-    new ctkCheckableModelHelper(Qt::Vertical);
-  modelHelperRC->setForceCheckability(true);
-  modelHelperRC->setModel(&modelForce);
-  modelForce.appendColumn(col0);
-  modelForce.appendRow(row1);
+  } // end of local scope
 
-  //Header is checked by default
-  model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+  {
+    // Header is checked by default
+    model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
 
-  ctkCheckableModelHelper* modelHelper =
-    new ctkCheckableModelHelper(Qt::Horizontal);
-  modelHelper->setModel(&model);
+    QScopedPointer<ctkCheckableModelHelper> modelHelper(new ctkCheckableModelHelper(Qt::Horizontal));
+    modelHelper->setModel(&model);
 
-  // propagatetoitems is true by default
-  //modelHelper->setPropagateToItems(true);
-  modelHelper->toggleHeaderCheckState(-1);
+    // propagatetoitems is true by default
+    //modelHelper->setPropagateToItems(true);
+    modelHelper->toggleHeaderCheckState(-1);
 
-  // As propagateToItems is true, once the model is set to the modelHelper,
-  // the checkable header is updated from the check state of all the items
-  // all the items are unchecked by default, so the header becomes unchecked
-  if (modelHelper->headerCheckState(0) != Qt::Unchecked ||
-      row0[0]->checkState() != Qt::Unchecked ||
-      row1[0]->checkState() != Qt::Unchecked ||
-      row2[0]->checkState() != Qt::Unchecked)
-    {
-    std::cerr << "ctkCheckableModelHelper::checkstate() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0)) << " "
-              << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
-  // Retrieve checkstate of the header
-  Qt::CheckState checkstate;
-  if (!modelHelper->headerCheckState(0, checkstate))
-    {
-    std::cerr << "ctkCheckableModelHelper::checkstate() failed: "
-              << static_cast<int>(checkstate) << std::endl;
-    return EXIT_FAILURE;
-    }
+    // As propagateToItems is true, once the model is set to the modelHelper,
+    // the checkable header is updated from the check state of all the items
+    // all the items are unchecked by default, so the header becomes unchecked
+    if (modelHelper->headerCheckState(0) != Qt::Unchecked ||
+        row0[0]->checkState() != Qt::Unchecked ||
+        row1[0]->checkState() != Qt::Unchecked ||
+        row2[0]->checkState() != Qt::Unchecked)
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::checkstate() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0)) << " "
+                << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
+    // Retrieve checkstate of the header
+    Qt::CheckState checkstate;
+    if (!modelHelper->headerCheckState(0, checkstate))
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::checkstate() failed: "
+                << static_cast<int>(checkstate) << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  if (modelHelper->propagateDepth() == 0)
-    {
-    std::cerr << "ctkCheckableModelHelper::propagateDepth() failed: "
-              << modelHelper->propagateDepth() << std::endl;
-    return EXIT_FAILURE;
-    }
-  modelHelper->setPropagateDepth(0);
-  if (modelHelper->propagateDepth() != 0)
-    {
-    std::cerr << "ctkCheckableModelHelper::propagateDepth() failed: "
-              << modelHelper->propagateDepth() << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (modelHelper->headerCheckState(0) != Qt::Unchecked ||
-      row0[0]->checkState() != Qt::Unchecked ||
-      row1[0]->checkState() != Qt::Unchecked ||
-      row2[0]->checkState() != Qt::Unchecked)
-    {
-    std::cerr << "ctkCheckableModelHelper::propagateToItems() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0)) << " "
-              << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
+    if (modelHelper->propagateDepth() == 0)
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::propagateDepth() failed: "
+                << modelHelper->propagateDepth() << std::endl;
+      return EXIT_FAILURE;
+      }
+    modelHelper->setPropagateDepth(0);
+    if (modelHelper->propagateDepth() != 0)
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::propagateDepth() failed: "
+                << modelHelper->propagateDepth() << std::endl;
+      return EXIT_FAILURE;
+      }
+    if (modelHelper->headerCheckState(0) != Qt::Unchecked ||
+        row0[0]->checkState() != Qt::Unchecked ||
+        row1[0]->checkState() != Qt::Unchecked ||
+        row2[0]->checkState() != Qt::Unchecked)
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::propagateToItems() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0)) << " "
+                << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  // check the header
-  modelHelper->setHeaderCheckState(0, Qt::Checked);
-  
-  // make sure it didn't uncheck the checkable items
-  if (modelHelper->headerCheckState(0) != Qt::Checked ||
-      row0[0]->checkState() != Qt::Unchecked ||
-      row1[0]->checkState() != Qt::Unchecked ||
-      row2[0]->checkState() != Qt::Unchecked)
-    {
-    std::cerr << __LINE__ << " ctkCheckableModelHelper::toggleCheckState() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0))
-              << " "        << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
+    // check the header
+    modelHelper->setHeaderCheckState(0, Qt::Checked);
 
-  row0[0]->setCheckState(Qt::Checked);
-  // make sure it didn't uncheck the checkable items
-  if (modelHelper->headerCheckState(0) != Qt::Checked ||
-      row0[0]->checkState() != Qt::Checked ||
-      row1[0]->checkState() != Qt::Unchecked ||
-      row2[0]->checkState() != Qt::Unchecked)
-    {
-    std::cerr << "QStandardItem::setCheckState() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0)) << " "
-              << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  // The checkable header gets updated with the item check states
-  modelHelper->setPropagateDepth(-1);
-
-  if (modelHelper->propagateDepth() == 0 ||
-      modelHelper->headerCheckState(0) != Qt::PartiallyChecked ||
-      row0[0]->checkState() != Qt::Checked ||
-      row1[0]->checkState() != Qt::Unchecked ||
-      row2[0]->checkState() != Qt::Unchecked)
-    {
-    std::cerr << "ctkCheckableModelHelper::setPropagateToItems() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0)) << " "
-              << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  row0[0]->setCheckState(Qt::Unchecked);
-  
-  if (modelHelper->headerCheckState(0) != Qt::Unchecked ||
-      row0[0]->checkState() != Qt::Unchecked ||
-      row1[0]->checkState() != Qt::Unchecked ||
-      row2[0]->checkState() != Qt::Unchecked)
-    {
-    std::cerr << "QStandardItem::setCheckState() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0)) << " "
-              << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  row1[0]->setCheckState(Qt::Checked);
-  
     // make sure it didn't uncheck the checkable items
-  if (modelHelper->headerCheckState(0) != Qt::PartiallyChecked ||
-      row0[0]->checkState() != Qt::Unchecked ||
-      row1[0]->checkState() != Qt::Checked ||
-      row2[0]->checkState() != Qt::Unchecked)
-    {
-    std::cerr << "QStandardItem::setCheckState() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0)) << " "
-              << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
+    if (modelHelper->headerCheckState(0) != Qt::Checked ||
+        row0[0]->checkState() != Qt::Unchecked ||
+        row1[0]->checkState() != Qt::Unchecked ||
+        row2[0]->checkState() != Qt::Unchecked)
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::toggleCheckState() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0))
+                << " "        << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  row1[0]->setCheckState(Qt::Checked);
-  
-  // make sure it didn't check the checkable items
-  if (modelHelper->headerCheckState(0) != Qt::PartiallyChecked ||
-      row0[0]->checkState() != Qt::Unchecked ||
-      row1[0]->checkState() != Qt::Checked ||
-      row2[0]->checkState() != Qt::Unchecked)
-    {
-    std::cerr << "QStandardItem::setCheckState() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0)) << " "
-              << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
+    row0[0]->setCheckState(Qt::Checked);
+    // make sure it didn't uncheck the checkable items
+    if (modelHelper->headerCheckState(0) != Qt::Checked ||
+        row0[0]->checkState() != Qt::Checked ||
+        row1[0]->checkState() != Qt::Unchecked ||
+        row2[0]->checkState() != Qt::Unchecked)
+      {
+      std::cerr << "Line " << __LINE__ << " - QStandardItem::setCheckState() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0)) << " "
+                << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  row0[0]->setCheckState(Qt::Checked);
-  row2[0]->setCheckState(Qt::Checked);
+    // The checkable header gets updated with the item check states
+    modelHelper->setPropagateDepth(-1);
 
-  // make sure the header is now checked
-  if (modelHelper->headerCheckState(0) != Qt::Checked ||
-      row0[0]->checkState() != Qt::Checked ||
-      row1[0]->checkState() != Qt::Checked ||
-      row2[0]->checkState() != Qt::Checked)
-    {
-    std::cerr << "QStandardItem::setCheckState() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0)) << " "
-              << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
+    if (modelHelper->propagateDepth() == 0 ||
+        modelHelper->headerCheckState(0) != Qt::PartiallyChecked ||
+        row0[0]->checkState() != Qt::Checked ||
+        row1[0]->checkState() != Qt::Unchecked ||
+        row2[0]->checkState() != Qt::Unchecked)
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::setPropagateToItems() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0)) << " "
+                << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
 
-  modelHelper->setHeaderCheckState(0, Qt::Unchecked);
-    
-  if (modelHelper->headerCheckState(0) != Qt::Unchecked ||
-      row0[0]->checkState() != Qt::Unchecked ||
-      row1[0]->checkState() != Qt::Unchecked ||
-      row2[0]->checkState() != Qt::Unchecked)
-    {
-    std::cerr << "ctkCheckableModelHelper::setCheckState() failed: "
-              << static_cast<int>(modelHelper->headerCheckState(0)) << " "
-              << static_cast<int>(row0[0]->checkState()) << " "
-              << static_cast<int>(row1[0]->checkState()) << " "
-              << static_cast<int>(row2[0]->checkState()) << std::endl;
-    return EXIT_FAILURE;
-    }
+    row0[0]->setCheckState(Qt::Unchecked);
 
-  delete modelHelper;
+    if (modelHelper->headerCheckState(0) != Qt::Unchecked ||
+        row0[0]->checkState() != Qt::Unchecked ||
+        row1[0]->checkState() != Qt::Unchecked ||
+        row2[0]->checkState() != Qt::Unchecked)
+      {
+      std::cerr << "Line " << __LINE__ << " - QStandardItem::setCheckState() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0)) << " "
+                << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    row1[0]->setCheckState(Qt::Checked);
+
+      // make sure it didn't uncheck the checkable items
+    if (modelHelper->headerCheckState(0) != Qt::PartiallyChecked ||
+        row0[0]->checkState() != Qt::Unchecked ||
+        row1[0]->checkState() != Qt::Checked ||
+        row2[0]->checkState() != Qt::Unchecked)
+      {
+      std::cerr << "Line " << __LINE__ << " - QStandardItem::setCheckState() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0)) << " "
+                << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    row1[0]->setCheckState(Qt::Checked);
+
+    // make sure it didn't check the checkable items
+    if (modelHelper->headerCheckState(0) != Qt::PartiallyChecked ||
+        row0[0]->checkState() != Qt::Unchecked ||
+        row1[0]->checkState() != Qt::Checked ||
+        row2[0]->checkState() != Qt::Unchecked)
+      {
+      std::cerr << "Line " << __LINE__ << " - QStandardItem::setCheckState() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0)) << " "
+                << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    row0[0]->setCheckState(Qt::Checked);
+    row2[0]->setCheckState(Qt::Checked);
+
+    // make sure the header is now checked
+    if (modelHelper->headerCheckState(0) != Qt::Checked ||
+        row0[0]->checkState() != Qt::Checked ||
+        row1[0]->checkState() != Qt::Checked ||
+        row2[0]->checkState() != Qt::Checked)
+      {
+      std::cerr << "Line " << __LINE__ << " - QStandardItem::setCheckState() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0)) << " "
+                << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    modelHelper->setHeaderCheckState(0, Qt::Unchecked);
+
+    if (modelHelper->headerCheckState(0) != Qt::Unchecked ||
+        row0[0]->checkState() != Qt::Unchecked ||
+        row1[0]->checkState() != Qt::Unchecked ||
+        row2[0]->checkState() != Qt::Unchecked)
+      {
+      std::cerr << "Line " << __LINE__ << " - ctkCheckableModelHelper::setCheckState() failed: "
+                << static_cast<int>(modelHelper->headerCheckState(0)) << " "
+                << static_cast<int>(row0[0]->checkState()) << " "
+                << static_cast<int>(row1[0]->checkState()) << " "
+                << static_cast<int>(row2[0]->checkState()) << std::endl;
+      return EXIT_FAILURE;
+      }
+  } // end of local scope
   return EXIT_SUCCESS;
 }
