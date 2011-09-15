@@ -21,6 +21,7 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QColor>
+#include <QScopedPointer>
 
 // CTK includes
 #include "ctkTransferFunction.h"
@@ -33,12 +34,19 @@
 class ctkForcedTransferFunction: public ctkTransferFunction
 {
 public:
-  ctkForcedTransferFunction(QObject* parent = 0):ctkTransferFunction(parent), _discrete(true) {}
+  typedef ctkTransferFunction Superclass;
+  ctkForcedTransferFunction(QObject* parent = 0) : Superclass(parent)
+  {
+    this->Discrete = true;
+  }
+
+  // --------------------------------------------------------------------------
   virtual ~ctkForcedTransferFunction(){}
 
   // attributes test
-  bool _discrete;
+  bool Discrete;
 
+  // --------------------------------------------------------------------------
   virtual ctkControlPoint* controlPoint(int index)const
   {
     QColor rgb = QColor::fromRgbF(55, 56, 57);
@@ -47,84 +55,53 @@ public:
     cp->P.Value = rgb;
     return cp;
   }
+
+  // --------------------------------------------------------------------------
   virtual QVariant value(qreal pos)const
   {
     QColor rgb = QColor::fromRgbF(55, static_cast<int>(pos), 57);
     return rgb;
   }
 
-  virtual int count()const
-  {
-    return 2;
-  }
-  virtual bool isDiscrete()const
-  {
-    return _discrete;
-  }
-  virtual bool isEditable()const
-  {
-    return false;
-  }
+  // --------------------------------------------------------------------------
+  virtual int count()const { return 2; }
+  virtual bool isDiscrete()const { return Discrete; }
+  virtual bool isEditable()const { return false; }
 
+  // --------------------------------------------------------------------------
   virtual void range(qreal& minRange, qreal& maxRange)const
   {
     minRange = 0.;
     maxRange = 1.;
   }
-  virtual QVariant minValue()const
-  {
-    return 0.;
-  }
-  virtual QVariant maxValue()const
-  {
-    return 0.;
-  }
-  virtual int insertControlPoint(const ctkControlPoint& cp)
-  {
-    Q_UNUSED(cp);
-    return -1;
-  }
 
-  virtual int insertControlPoint(qreal pos)
-  {
-    Q_UNUSED(pos);
-    return -1;
-  }
-
-  virtual void removeControlPoint( qreal pos )
-  {
-    Q_UNUSED(pos);
-  }
-
-  virtual void setControlPointPos(int index, qreal pos)
-  {
-    Q_UNUSED(pos);
-    Q_UNUSED(index);
-  }
-  virtual void setControlPointValue(int index, const QVariant& value)
-  {
-    Q_UNUSED(index);
-    Q_UNUSED(value);
-  }
+  // --------------------------------------------------------------------------
+  virtual QVariant minValue()const { return 0.; }
+  virtual QVariant maxValue()const { return 0.; }
+  virtual int insertControlPoint(const ctkControlPoint& /*cp*/) { return -1; }
+  virtual int insertControlPoint(qreal /*pos*/){ return -1; }
+  virtual void removeControlPoint(qreal /*pos*/) {}
+  virtual void setControlPointPos(int /*index*/, qreal /*pos*/) {}
+  virtual void setControlPointValue(int /*index*/, const QVariant& /*value*/){}
 };
 
+// --------------------------------------------------------------------------
 int ctkTransferFunctionRepresentationTest2( int argc, char * argv [])
 {
   Q_UNUSED(argc);
   Q_UNUSED(argv);
 
-  ctkForcedTransferFunction* dummy = new ctkForcedTransferFunction();
+  QScopedPointer<ctkForcedTransferFunction> dummy(new ctkForcedTransferFunction());
   ctkTransferFunctionRepresentation representation;
 
-  representation.setTransferFunction(dummy);
+  representation.setTransferFunction(dummy.data());
   representation.computeCurve();
   representation.computeGradient();
 
-  dummy->_discrete = false;
-  representation.setTransferFunction(dummy);
+  dummy->Discrete = false;
+  representation.setTransferFunction(dummy.data());
   representation.computeCurve();
   representation.computeGradient();
 
-  delete dummy;
   return EXIT_SUCCESS;
 }
