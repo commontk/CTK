@@ -88,7 +88,7 @@ void ctkExampleWorkflowStepUsingSignalsAndSlots::validateFails()const
   // Always returns false in this simple example
   QObject::staticMetaObject.invokeMethod(
       d->Step->ctkWorkflowStepQObject(), "validationComplete",
-      Q_ARG(bool, false));
+        Q_ARG(bool, false), Q_ARG(QString, ""));
 }
 
 //-----------------------------------------------------------------------------

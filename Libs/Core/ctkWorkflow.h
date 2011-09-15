@@ -110,6 +110,15 @@ public:
   Q_INVOKABLE ctkWorkflowStep* initialStep()const;
   Q_INVOKABLE virtual void setInitialStep(ctkWorkflowStep* step);
 
+  /// \brief Register ctkWorkflowStep so that ctkWorkflow keeps track of the associated steps
+  /// and clean the memory when appropriate.
+  /// \note This function is declared public for convenience and shouldn't be directly used.
+  /// The step will register itself when instantiated.
+  /// \note Since ctkWorkflowStep are neither QObject nor QWidget, they will be registered. On
+  /// on the othen hand, ctkWorkflowWidgetStep will be managed by their parent QWidget and
+  /// won't be registered.
+  void registerWorkflowStep(ctkWorkflowStep* step);
+
   /// Get the current step of the state machine
   Q_INVOKABLE ctkWorkflowStep* currentStep()const;
 
