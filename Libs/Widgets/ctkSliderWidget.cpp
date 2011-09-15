@@ -556,3 +556,10 @@ QDoubleSpinBox* ctkSliderWidget::spinBox()
   Q_D(ctkSliderWidget);
   return d->SpinBox;
 }
+
+// --------------------------------------------------------------------------
+ctkDoubleSlider* ctkSliderWidget::slider()
+{
+  Q_D(ctkSliderWidget);
+  return d->Slider;
+}

@@ -30,6 +30,7 @@ class QDoubleSpinBox;
 
 #include "ctkWidgetsExport.h"
 
+class ctkDoubleSlider;
 class ctkPopupWidget;
 class ctkSliderWidgetPrivate;
 
@@ -185,12 +186,16 @@ public:
   ctkPopupWidget* popup()const;
 
   ///
-  /// Sometimes it can be useful to have a direct control to the spinbox
-  /// To place it somewhere else that ctkDoubleSlider can't. Be careful
-  /// with what you do with the spinbox as ctkDoubleSlider might change
+  /// Returns the spinbox synchronized with the slider. Be careful
+  /// with what you do with the spinbox as the slider might change
   /// properties automatically.
   QDoubleSpinBox* spinBox();
 
+  ///
+  /// Returns the slider synchronized with the spinbox. Be careful
+  /// with what you do with the slider as the spinbox might change
+  /// properties automatically.
+  ctkDoubleSlider* slider();
 public slots:
   /// 
   /// Reset the slider and spinbox to zero (value and position)
