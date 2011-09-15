@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QStateMachine>
 #include <QState>
 
@@ -541,7 +542,9 @@ ctkWorkflow::~ctkWorkflow()
 
   // Clean registered step
   while (!d->registeredSteps.isEmpty())
-      delete d->registeredSteps.takeFirst();
+    {
+    delete d->registeredSteps.takeFirst();
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -624,10 +627,16 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
   return true;
 }
 
+// --------------------------------------------------------------------------
 void ctkWorkflow::registerWorkflowStep(ctkWorkflowStep* step)
 {
   Q_D(ctkWorkflow);
-  d->registeredSteps.append(step);
+  if (!step)
+    {
+    qCritical() << "ctkWorkflow::registerWorkflowStep - Failed to register Null step !";
+    return;
+    }
+  d->registeredSteps << step;
 }
 
 // --------------------------------------------------------------------------

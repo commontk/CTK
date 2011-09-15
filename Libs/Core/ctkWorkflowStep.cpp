@@ -117,6 +117,8 @@ void ctkWorkflowStepPrivate::invokeOnExitCommandInternal(const ctkWorkflowStep* 
 // --------------------------------------------------------------------------
 ctkWorkflowStep::ctkWorkflowStep(): d_ptr(new ctkWorkflowStepPrivate(*this))
 {
+  Q_D(ctkWorkflowStep);
+  d->Workflow->registerWorkflowStep(this);
 }
 
 // --------------------------------------------------------------------------
@@ -127,7 +129,8 @@ ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId)
 
   d->Id = newId;
   d->Workflow = newWorkflow;
-  newWorkflow->registerWorkflowStep(this);
+
+  d->Workflow->registerWorkflowStep(this);
 }
 
 // --------------------------------------------------------------------------
@@ -142,7 +145,6 @@ ctkWorkflowStep::ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl,
   Q_D(ctkWorkflowStep);
   d->Id = newId;
   d->Workflow = newWorkflow;
-  newWorkflow->registerWorkflowStep(this);
 }
 
 // --------------------------------------------------------------------------
