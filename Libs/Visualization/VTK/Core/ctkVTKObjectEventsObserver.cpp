@@ -31,18 +31,39 @@
 
 // VTK includes
 #include <vtkObject.h>
-#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-ctkVTKConnection* ctkVTKObjectEventsObserver::ctkVTKConnectionFactory::createConnection(
-  ctkVTKObjectEventsObserver* parent)const
+CTK_SINGLETON_DEFINE(ctkVTKConnectionFactory)
+
+//-----------------------------------------------------------------------------
+// ctkVTKConnectionFactory
+
+//-----------------------------------------------------------------------------
+ctkVTKConnectionFactory* ctkVTKConnectionFactory::instance()
+{
+  return Self::Instance;
+}
+
+//-----------------------------------------------------------------------------
+void ctkVTKConnectionFactory::setInstance(ctkVTKConnectionFactory* newInstance)
+{
+  if (!newInstance)
+    {
+    qCritical() << "ctkVTKConnectionFactory::setInstance - Failed to set a null instance !";
+    return;
+    }
+  delete Self::Instance;
+  Self::Instance = newInstance;
+}
+
+//-----------------------------------------------------------------------------
+ctkVTKConnection* ctkVTKConnectionFactory::createConnection(ctkVTKObjectEventsObserver* parent)const
 {
   return new ctkVTKConnection(parent);
 }
 
 //-----------------------------------------------------------------------------
-ctkVTKObjectEventsObserver::ctkVTKConnectionFactory* ctkVTKObjectEventsObserver::connectionFactory
-  = new ctkVTKConnectionFactory;
+// ctkVTKObjectEventsObserverPrivate
 
 //-----------------------------------------------------------------------------
 class ctkVTKObjectEventsObserverPrivate
@@ -281,8 +302,7 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
     }
 
   // Instantiate a new connection, set its parameters and add it to the list
-  ctkVTKConnection * connection =
-    ctkVTKObjectEventsObserver::connectionFactory->createConnection(this);//new ctkVTKConnection(this);
+  ctkVTKConnection * connection = ctkVTKConnectionFactory::instance()->createConnection(this);
   connection->observeDeletion(d->ObserveDeletion);
   connection->setup(vtk_obj, vtk_event, qt_obj, qt_slot, priority, connectionType);
 

@@ -22,7 +22,7 @@
 #define __ctkVTKObjectEventsObserver_h
 
 /// CTK includes
-#include <ctkPimpl.h>
+#include <ctkSingleton.h>
 
 /// Qt includes
 #include <QObject>
@@ -36,8 +36,28 @@
 
 class ctkVTKConnection;
 class vtkObject;
+class ctkVTKObjectEventsObserver;
 class ctkVTKObjectEventsObserverPrivate;
 
+//-----------------------------------------------------------------------------
+class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKConnectionFactory
+{
+public:
+  static ctkVTKConnectionFactory* instance();
+
+  /// The singleton takes ownerchip of the new factory instance and will take care
+  /// of cleaning the memory.
+  /// \note If \a newInstance is not null, the current factory instance will be
+  /// deleted. Note also that setting a null \a newInstance is a no-op.
+  static void setInstance(ctkVTKConnectionFactory* newInstance);
+
+  virtual ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const;
+protected:
+  CTK_SINGLETON_DECLARE(ctkVTKConnectionFactory)
+};
+CTK_SINGLETON_DECLARE_INITIALIZER(CTK_VISUALIZATION_VTK_CORE_EXPORT, ctkVTKConnectionFactory)
+
+//-----------------------------------------------------------------------------
 class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKObjectEventsObserver : public QObject
 {
 Q_OBJECT
@@ -138,14 +158,6 @@ public:
   /// Return true if there is at least 1 connection that match the parameter
   bool containsConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
                           const QObject* qt_obj =0, const char* qt_slot =0)const;
-
-  //-----------------------------------------------------------------------------
-  class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKConnectionFactory
-  {
-  public:
-    virtual ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const;
-  };
-  static ctkVTKConnectionFactory* connectionFactory;
 
 protected:
   QScopedPointer<ctkVTKObjectEventsObserverPrivate> d_ptr;
