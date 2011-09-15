@@ -56,7 +56,9 @@ public slots:
 protected:
   bool Active;
   bool AutoShow;
+  int  ShowDelay;
   bool AutoHide;
+  int  HideDelay;
 };
 
 #endif

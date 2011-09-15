@@ -88,6 +88,7 @@ protected:
   double EffectAlpha;
 
   ctkBasePopupWidget::AnimationEffect Effect;
+  int                 EffectDuration;
   QPropertyAnimation* AlphaAnimation;
   bool                ForcedTranslucent;
   QPropertyAnimation* ScrollAnimation;
@@ -96,7 +97,7 @@ protected:
   // Geometry attributes
   Qt::Alignment    Alignment;
   Qt::Orientations Orientations;
-  
+
   ctkBasePopupWidget::VerticalDirection VerticalDirection;
   Qt::LayoutDirection HorizontalDirection;
 };
