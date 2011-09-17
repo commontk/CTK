@@ -21,6 +21,9 @@
 // Qt includes
 #include <QBuffer>
 #include <QImage>
+#include <QGLWidget>
+#include <QPainter>
+#include <QWidget>
 
 // ctkWidgets includes
 #include "ctkWidgetsUtils.h"
@@ -34,6 +37,35 @@ QString ctk::base64HTMLImageTagSrc(const QImage& image)
   image.save(&buffer, "PNG");
   return QString("data:image/png;base64,%1")
     .arg(QString(buffer.data().toBase64()));
+}
+
+//----------------------------------------------------------------------------
+QImage ctk::grabWidget(QWidget* widget, QRect rectangle)
+{
+  if (!widget)
+    {
+    return QImage();
+    }
+  if (!rectangle.isValid())
+    {
+    rectangle = QRect(0,0,widget->width(),widget->height());
+    }
+  QPixmap widgetPixmap = QPixmap::grabWidget(widget, rectangle);
+  QImage widgetImage = widgetPixmap.toImage();
+  QPainter painter;
+  painter.begin(&widgetImage);
+  foreach(QGLWidget* glWidget, widget->findChildren<QGLWidget*>())
+    {
+    QRect subWidgetRect = QRect(glWidget->mapTo(widget, QPoint(0,0)), glWidget->size());
+    if (!rectangle.intersects(subWidgetRect))
+      {
+      continue;
+      }
+    QImage subImage = glWidget->grabFrameBuffer();
+    painter.drawImage(subWidgetRect, subImage);
+    }
+  painter.end();
+  return widgetImage;
 }
 
 //----------------------------------------------------------------------------

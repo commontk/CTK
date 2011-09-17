@@ -18,34 +18,33 @@
 
 =========================================================================*/
 
-#ifndef __ctkWidgetsUtils_h
-#define __ctkWidgetsUtils_h
+#ifndef __ctkVTKWidgetsUtils_h
+#define __ctkVTKWidgetsUtils_h
 
 // Qt includes
-#include <QString>
+#include <QRect>
 class QImage;
+class QWidget;
 
-#include "ctkWidgetsExport.h"
+// CTKVTKWidgets includes
+#include "ctkVisualizationVTKWidgetsExport.h"
+
+// VTK includes
+class vtkImageData;
 
 namespace ctk {
-///
-/// \ingroup Widgets
-/// Create a base 64 image tag. Can be used that way:
-/// QString("<img src=\"%1\">").arg(base64HTMLImageTagSrc(myImage);
-QString CTK_WIDGETS_EXPORT base64HTMLImageTagSrc(const QImage& image);
 
 ///
-/// \ingroup Widgets
+/// \ingroup VTKWidgets
 /// Grab the contents of a QWidget and all its children.
-/// Handle correctly the case of QGLWidgets.
-/// \sa QWidget::grabWidget
-QImage CTK_WIDGETS_EXPORT grabWidget(QWidget* widget, QRect rectangle = QRect());
+/// Handle correctly the case of QVTKWidget.
+/// \sa ctk::grabWidget QWidget::grabWidget
+QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT grabVTKWidget(QWidget* widget, QRect rectangle = QRect());
 
 ///
-/// \ingroup Widgets
-/// Convert an KWidget encoded image into a QImage
-/// The data can be base64 encoded and/or zlib compressed.
-QImage CTK_WIDGETS_EXPORT kwIconToQImage(const unsigned char *data, int width, int height, int pixelSize, unsigned int bufferLength, int options = 0);
+/// \ingroup VTKWidgets
+/// Convert a vtkImageData into a QImage
+QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT vtkImageDataToQImage(vtkImageData* imageData);
 
 }
 

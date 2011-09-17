@@ -21,6 +21,7 @@ SET(TEST_SOURCES
   ctkVTKSurfaceMaterialPropertyWidgetTest1.cpp
   ctkVTKTextPropertyWidgetTest1.cpp
   ctkVTKThumbnailViewTest1.cpp
+  ctkVTKWidgetsUtilsTestGrabWidget.cpp
   )
 
 IF(CTK_USE_CHARTS)
@@ -114,6 +115,7 @@ SIMPLE_TEST( ctkVTKSliceViewTest1 )
 SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetTest1 )
 SIMPLE_TEST( ctkVTKTextPropertyWidgetTest1 )
 SIMPLE_TEST( ctkVTKThumbnailViewTest1 )
+SIMPLE_TEST( ctkVTKWidgetsUtilsTestGrabWidget )
 
 #
 # Add Tests expecting CTKData to be set
