@@ -57,6 +57,8 @@ public slots:
   void openExportDialog();
   void openQueryDialog();
 
+  void resetModel();
+
 signals:
   /// Emited when directory is changed
   void databaseDirectoryChanged(const QString&);

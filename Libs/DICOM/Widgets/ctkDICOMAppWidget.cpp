@@ -301,6 +301,14 @@ void ctkDICOMAppWidget::openQueryDialog()
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMAppWidget::resetModel()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  d->DICOMModel.reset();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onThumbnailSelected(const ctkThumbnailWidget& widget)
 {
     Q_D(ctkDICOMAppWidget);
