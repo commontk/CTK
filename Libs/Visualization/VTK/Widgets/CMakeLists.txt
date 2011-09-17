@@ -42,6 +42,8 @@ SET(KIT_SRCS
   ctkVTKThresholdWidget.h
   ctkVTKThumbnailView.cpp
   ctkVTKThumbnailView.h
+  ctkVTKWidgetsUtils.cpp
+  ctkVTKWidgetsUtils.h
   )
 
 # Headers that should run through moc

@@ -67,6 +67,7 @@ SET(TEST_SOURCES
   ctkToolTipTrapperTest1.cpp
   ctkTreeComboBoxTest1.cpp
   ctkWidgetsUtilsTest1.cpp
+  ctkWidgetsUtilsTestGrabWidget.cpp
   ctkWorkflowWidgetTest1.cpp
   ctkWorkflowWidgetTest2.cpp
   ctkExampleUseOfWorkflowWidgetUsingDerivedSteps.cpp
@@ -194,6 +195,7 @@ SIMPLE_TEST( ctkThumbnailWidgetTest1 )
 SIMPLE_TEST( ctkToolTipTrapperTest1 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )
 SIMPLE_TEST( ctkWidgetsUtilsTest1 )
+SIMPLE_TEST( ctkWidgetsUtilsTestGrabWidget )
 SIMPLE_TEST( ctkWorkflowWidgetTest1 )
 SIMPLE_TEST( ctkWorkflowWidgetTest2 )
 
