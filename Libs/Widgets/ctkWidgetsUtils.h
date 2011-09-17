@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QString>
+#include <QRect>
 class QImage;
 
 #include "ctkWidgetsExport.h"
