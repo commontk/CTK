@@ -51,6 +51,18 @@ public:
   Q_INVOKABLE void addDirectory(ctkDICOMDatabase& database, const QString& directoryName,
                     const QString& destinationDirectoryName = "",
                     bool createHierarchy = true, bool createThumbnails = true);
+
+  /**
+      \brief Adds a file to database and optionally copies the file to
+      destinationDirectory.
+ 
+      Scan the file using Dcmtk and populate the database with all the
+      DICOM fields accordingly.
+  */
+  Q_INVOKABLE void addFile(ctkDICOMDatabase& database, const QString& filePath,
+                    const QString& destinationDirectoryName = "",
+                    bool createHierarchy = true, bool createThumbnails = true);
+
   Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 
   ///
@@ -59,6 +71,12 @@ public:
   ///
   /// get thumbnail genrator object
   ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator();
+
+signals:
+  void foundFilesToIndex(int);
+  void indexingFileNumber(int);
+  void indexingFilePath(QString);
+
 protected:
   QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
   
