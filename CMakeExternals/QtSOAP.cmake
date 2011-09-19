@@ -20,7 +20,7 @@ IF(${add_project})
 
   IF(NOT DEFINED QtSOAP_DIR)
   
-    SET(revision_tag 42ce9d3dcbc66dd551a8)
+    SET(revision_tag 6bf1b8c8)
     IF(${proj}_REVISION_TAG)
       SET(revision_tag ${${proj}_REVISION_TAG})
     ENDIF()
@@ -48,6 +48,7 @@ IF(${add_project})
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
         -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
         -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+        -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:STRING=${CTK_CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
@@ -56,7 +57,7 @@ IF(${add_project})
       )
     SET(QtSOAP_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
     
-    # Since QtSOAP is statically build, there is not need to add its corresponding 
+    # Since the QtSOAP dll is created directly in CTK-build/bin, there is not need to add a 
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 
   ELSE()
