@@ -42,8 +42,9 @@ public:
     // Constructor
     ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent);
 
+    Qt::Alignment TextPosition;
     bool SelectedFlag;
-    QColor BackgroundColor;
+    QColor SelectedColor;
     QModelIndex SourceIndex;
     QPixmap OriginalThumbnail;
 
@@ -55,18 +56,22 @@ public:
 // ctkThumbnailWidgetPrivate methods
 
 //----------------------------------------------------------------------------
-ctkThumbnailWidgetPrivate::ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent): q_ptr(parent){
-    Q_Q(ctkThumbnailWidget);
+ctkThumbnailWidgetPrivate::ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent)
+  : q_ptr(parent)
+{
+  Q_Q(ctkThumbnailWidget);
 
-    this->SelectedFlag = false;
-    this->BackgroundColor = q->palette().color(QPalette::Highlight);
+  this->SelectedFlag = false;
+  this->SelectedColor = q->palette().color(QPalette::Highlight);
+  this->TextPosition = Qt::AlignTop | Qt::AlignHCenter;
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidgetPrivate::updateThumbnail(){
-    this->PixmapLabel->setPixmap(
-        this->OriginalThumbnail.isNull() ? QPixmap() :
-            this->OriginalThumbnail.scaledToWidth(this->PixmapLabel->width()));
+void ctkThumbnailWidgetPrivate::updateThumbnail()
+{
+  this->PixmapLabel->setPixmap(
+    this->OriginalThumbnail.isNull() ? QPixmap() :
+      this->OriginalThumbnail.scaledToWidth(this->PixmapLabel->width()));
 }
 
 //----------------------------------------------------------------------------
@@ -80,6 +85,7 @@ ctkThumbnailWidget::ctkThumbnailWidget(QWidget* parentWidget)
   Q_D(ctkThumbnailWidget);
 
   d->setupUi(this);
+  this->setTextPosition(Qt::AlignTop | Qt::AlignHCenter);
 }
 
 //----------------------------------------------------------------------------
@@ -103,6 +109,67 @@ QString ctkThumbnailWidget::text()const
 }
 
 //----------------------------------------------------------------------------
+void ctkThumbnailWidget::setTextPosition(const Qt::Alignment& position)
+{
+  Q_D(ctkThumbnailWidget);
+  d->TextPosition = position;
+  int textIndex = -1;
+  for (textIndex = 0; textIndex < this->layout()->count(); ++textIndex)
+    {
+    if (this->layout()->itemAt(textIndex)->widget() == d->TextLabel)
+      {
+      break;
+      }
+    }
+  if (textIndex > -1 && textIndex < this->layout()->count())
+    {
+    this->layout()->takeAt(textIndex);
+    }
+  int row = 1;
+  int col = 1;
+  QGridLayout* gridLayout = qobject_cast<QGridLayout*>(this->layout());
+  if (position & Qt::AlignTop)
+    {
+    row = 0;
+    }
+  else if (position &Qt::AlignBottom)
+    {
+    row = 2;
+    }
+  else
+    {
+    row = 1;
+    }
+  if (position & Qt::AlignLeft)
+    {
+    col = 0;
+    }
+  else if (position & Qt::AlignRight)
+    {
+    col = 2;
+    }
+  else
+    {
+    col = 1;
+    }
+  if (row == 1 && col == 1)
+    {
+    d->TextLabel->setVisible(false);
+    }
+  else
+    {
+    gridLayout->addWidget(d->TextLabel,row, col);
+    }
+}
+
+//----------------------------------------------------------------------------
+Qt::Alignment ctkThumbnailWidget::textPosition()const
+{
+  Q_D(const ctkThumbnailWidget);
+  return d->TextPosition;
+}
+
+//----------------------------------------------------------------------------
 void ctkThumbnailWidget::setPixmap(const QPixmap &pixmap)
 {
   Q_D(ctkThumbnailWidget);
@@ -120,28 +187,46 @@ const QPixmap* ctkThumbnailWidget::pixmap()const
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::setSelected(bool flag){
-    Q_D(ctkThumbnailWidget);
+void ctkThumbnailWidget::setSelected(bool flag)
+{
+  Q_D(ctkThumbnailWidget);
 
-    if(flag)
+  if(flag && d->SelectedColor.isValid())
     {
-        QPalette p(this->palette());
-        p.setColor(QPalette::Window, d->BackgroundColor);
-        this->setPalette(p);
-        this->setAutoFillBackground(true);
+    QPalette p(this->palette());
+    p.setColor(QPalette::Window, d->SelectedColor);
+    this->setPalette(p);
+    this->setAutoFillBackground(true);
     }
-    else
+  else
     {
-        this->setAutoFillBackground(false);
+    this->setAutoFillBackground(false);
     }
 
-    d->SelectedFlag = flag;
+  d->SelectedFlag = flag;
 }
 
 //----------------------------------------------------------------------------
-bool ctkThumbnailWidget::isSelected(){
-    Q_D(ctkThumbnailWidget);
-    return d->SelectedFlag;
+bool ctkThumbnailWidget::isSelected()const
+{
+  Q_D(const ctkThumbnailWidget);
+  return d->SelectedFlag;
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailWidget::setSelectedColor(const QColor& color)
+{
+  Q_D(ctkThumbnailWidget);
+  d->SelectedColor = color;
+  // repaint if the color has changed.
+  this->setSelected(this->isSelected());
+}
+
+//----------------------------------------------------------------------------
+QColor ctkThumbnailWidget::selectedColor()const
+{
+  Q_D(const ctkThumbnailWidget);
+  return d->SelectedColor;
 }
 
 //----------------------------------------------------------------------------

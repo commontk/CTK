@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>128</width>
-    <height>158</height>
+    <width>141</width>
+    <height>133</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,34 +16,22 @@
   <property name="styleSheet">
    <string notr="true">background-color:white</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
-   <property name="spacing">
-    <number>0</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout" rowstretch="0,1" columnstretch="0,1">
    <property name="margin">
     <number>4</number>
    </property>
-   <item>
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="1">
     <widget class="QLabel" name="TextLabel">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>24</height>
-      </size>
-     </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="1" column="1">
     <widget class="QLabel" name="PixmapLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>

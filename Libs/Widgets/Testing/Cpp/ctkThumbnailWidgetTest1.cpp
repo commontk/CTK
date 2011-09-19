@@ -61,6 +61,8 @@ int ctkThumbnailWidgetTest1( int argc, char * argv [] )
               << widget.pixmap() << std::endl;
     return EXIT_FAILURE;
     }
+  widget.setTextPosition(Qt::AlignRight);
+  widget.setTextPosition(Qt::AlignBottom);
 
   widget.show();
 

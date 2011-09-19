@@ -33,8 +33,12 @@ class CTK_WIDGETS_EXPORT ctkThumbnailWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString text READ text WRITE setText)
+  /// Position of the text relative to the pixmap.
+  /// Qt::AlignTop | Qt::AlignHCenter by default.
+  Q_PROPERTY(Qt::Alignment textPosition READ textPosition WRITE setTextPosition)
   Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
   Q_PROPERTY(bool selected READ isSelected WRITE setSelected)
+  Q_PROPERTY(QColor selectedColor READ selectedColor WRITE setSelectedColor)
 public:
   typedef QWidget Superclass;
   explicit ctkThumbnailWidget(QWidget* parent=0);
@@ -43,11 +47,17 @@ public:
   void setText(const QString& text);
   QString text()const;
 
+  void setTextPosition(const Qt::Alignment& alignment);
+  Qt::Alignment textPosition()const;
+
   void setPixmap(const QPixmap& pixmap);
   const QPixmap* pixmap()const;
 
   void setSelected(bool selected);
-  bool isSelected();
+  bool isSelected()const;
+
+  void setSelectedColor(const QColor& color);
+  QColor selectedColor()const;
 
 protected:
   QScopedPointer<ctkThumbnailWidgetPrivate> d_ptr;
