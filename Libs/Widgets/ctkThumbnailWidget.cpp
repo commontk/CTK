@@ -47,6 +47,7 @@ public:
     QColor SelectedColor;
     QModelIndex SourceIndex;
     QPixmap OriginalThumbnail;
+    Qt::TransformationMode TransformationMode;
 
     // Redraw thumbnail
     void updateThumbnail();
@@ -64,6 +65,7 @@ ctkThumbnailWidgetPrivate::ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent)
   this->SelectedFlag = false;
   this->SelectedColor = q->palette().color(QPalette::Highlight);
   this->TextPosition = Qt::AlignTop | Qt::AlignHCenter;
+  this->TransformationMode = Qt::FastTransformation;
 }
 
 //----------------------------------------------------------------------------
@@ -71,7 +73,9 @@ void ctkThumbnailWidgetPrivate::updateThumbnail()
 {
   this->PixmapLabel->setPixmap(
     this->OriginalThumbnail.isNull() ? QPixmap() :
-      this->OriginalThumbnail.scaledToWidth(this->PixmapLabel->width()));
+      this->OriginalThumbnail.scaled(this->PixmapLabel->size(),
+                                     Qt::KeepAspectRatio,
+                                     this->TransformationMode));
 }
 
 //----------------------------------------------------------------------------
@@ -187,6 +191,21 @@ const QPixmap* ctkThumbnailWidget::pixmap()const
 }
 
 //----------------------------------------------------------------------------
+Qt::TransformationMode ctkThumbnailWidget::transformationMode()const
+{
+  Q_D(const ctkThumbnailWidget);
+  return d->TransformationMode;
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailWidget::setTransformationMode(Qt::TransformationMode mode)
+{
+  Q_D(ctkThumbnailWidget);
+  d->TransformationMode = mode;
+  d->updateThumbnail();
+}
+
+//----------------------------------------------------------------------------
 void ctkThumbnailWidget::setSelected(bool flag)
 {
   Q_D(ctkThumbnailWidget);
@@ -232,21 +251,22 @@ QColor ctkThumbnailWidget::selectedColor()const
 //----------------------------------------------------------------------------
 void ctkThumbnailWidget::mousePressEvent(QMouseEvent* event)
 {
-    Q_UNUSED(event);
-    this->setSelected(true);
-    emit selected(*this);
+  this->Superclass::mousePressEvent(event);
+  this->setSelected(true);
+  emit selected(*this);
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::mouseDoubleClickEvent(QMouseEvent *event){
-    Q_UNUSED(event);
-    emit doubleClicked(*this);
+void ctkThumbnailWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+  this->Superclass::mouseDoubleClickEvent(event);
+  emit doubleClicked(*this);
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::resizeEvent(QResizeEvent *event){
+void ctkThumbnailWidget::resizeEvent(QResizeEvent *event)
+{
   Q_D(ctkThumbnailWidget);
-  Q_UNUSED(event);
-
+  this->Superclass::resizeEvent(event);
   d->updateThumbnail();
 }
