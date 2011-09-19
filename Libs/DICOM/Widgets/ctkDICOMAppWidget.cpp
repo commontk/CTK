@@ -81,6 +81,9 @@ public:
   ctkDICOMFilterProxyModel DICOMProxyModel;
   QSharedPointer<ctkDICOMIndexer> DICOMIndexer;
 
+  // used when suspending the ctkDICOMModel
+  QSqlDatabase EmptyDatabase;
+
   QTimer* AutoPlayTimer;
 
   bool IsSearchWidgetPopUpMode;
@@ -298,6 +301,22 @@ void ctkDICOMAppWidget::openQueryDialog()
   d->QueryRetrieveWidget->show();
   d->QueryRetrieveWidget->raise();
 
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::suspendModel()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  d->DICOMModel.setDatabase(d->EmptyDatabase);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::resumeModel()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  d->DICOMModel.setDatabase(d->DICOMDatabase->database());
 }
 
 //----------------------------------------------------------------------------

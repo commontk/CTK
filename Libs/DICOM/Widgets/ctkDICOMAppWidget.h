@@ -57,6 +57,8 @@ public slots:
   void openExportDialog();
   void openQueryDialog();
 
+  void suspendModel();
+  void resumeModel();
   void resetModel();
 
 signals:
