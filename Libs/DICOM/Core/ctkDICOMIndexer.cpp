@@ -124,25 +124,25 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
   DcmFileFormat fileformat;
   DcmDataset *dataset;
 
-  QSqlQuery query(ctkDICOMDatabase.database());
 
   std::string filename = filePath.toStdString();
 
   emit indexingFilePath(filePath);
 
   /// first we check if the file is already in the database
-  QSqlQuery fileExists(ctkDICOMDatabase.database());
-  fileExists.prepare("SELECT InsertTimestamp FROM Images WHERE Filename == ?");
-  fileExists.bindValue(0,filePath);
-  fileExists.exec();
+  QSqlQuery check_filename_query(ctkDICOMDatabase.database());
+  check_filename_query.prepare("SELECT InsertTimestamp FROM Images WHERE Filename == ?");
+  check_filename_query.bindValue(0,filePath);
+  check_filename_query.exec();
   if (
-    fileExists.next() &&
-    QFileInfo(filePath).lastModified() < QDateTime::fromString(fileExists.value(0).toString(),Qt::ISODate)
+    check_filename_query.next() &&
+    QFileInfo(filePath).lastModified() < QDateTime::fromString(check_filename_query.value(0).toString(),Qt::ISODate)
     )
     {
     logger.debug( "File " + filePath + " already added.");
     return;
     }
+  check_filename_query.finish();
 
   logger.debug( "Processing " + filePath ); 
   OFCondition status = fileformat.loadFile(filename.c_str());
@@ -268,9 +268,12 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
         break;
       }
     }
+    check_exists_query.finish();
 
     if(!patientExists)
     {
+
+      QSqlQuery insert_patient_query(ctkDICOMDatabase.database());
 
       std::stringstream query_string;
 
@@ -283,9 +286,10 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
       << patientsAge << "','"
       << patientComments << "')";
 
-      query.exec(query_string.str().c_str());
+      insert_patient_query.exec(query_string.str().c_str());
 
-      patientUID = query.lastInsertId().toInt();
+      patientUID = insert_patient_query.lastInsertId().toInt();
+      insert_patient_query.finish();
       QString patientUIDQString;
       patientUIDQString.setNum(patientUID);
       logger.debug( "New patient inserted: " + patientUIDQString );
@@ -316,6 +320,7 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
     if(!check_exists_query.next())
     {
 
+      QSqlQuery insert_query(ctkDICOMDatabase.database());
       std::stringstream query_string;
 
       query_string << "INSERT INTO Studies VALUES('"
@@ -331,7 +336,7 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
         << performingPhysiciansName << "','"
         << studyDescription << "')";
 
-      query.exec(query_string.str().c_str());
+      insert_query.exec(query_string.str().c_str());
     }
   }
 
@@ -352,6 +357,7 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
     if(!check_exists_query.next())
     {
 
+      QSqlQuery insert_query(ctkDICOMDatabase.database());
       std::stringstream query_string;
 
       query_string << "INSERT INTO Series VALUES('"
@@ -369,7 +375,7 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
         << static_cast<int>(echoNumber) << "','"
         << static_cast<int>(temporalPosition) << "')";
 
-      query.exec(query_string.str().c_str());
+      insert_query.exec(query_string.str().c_str());
     }
   }
 
@@ -426,13 +432,14 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
 
   if(!check_exists_query.next())
   {
+    QSqlQuery insert_query(ctkDICOMDatabase.database());
     std::stringstream query_string;
 
     //To save absolute path: destDirectoryPath.str()
     query_string << "INSERT INTO Images VALUES('"
       << sopInstanceUID << "','" << finalFilePath.toStdString() << "','" << seriesInstanceUID << "','" << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString() << "')";
 
-    query.exec(query_string.str().c_str());
+    insert_query.exec(query_string.str().c_str());
   }
 
 }
