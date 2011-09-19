@@ -54,6 +54,7 @@
 #include "ctkSettingsPanelPlugin.h"
 #include "ctkSettingsDialogPlugin.h"
 #include "ctkSliderWidgetPlugin.h"
+#include "ctkThumbnailWidgetPlugin.h"
 #include "ctkTransferFunctionViewPlugin.h"
 #include "ctkTreeComboBoxPlugin.h"
 #include "ctkWorkflowButtonBoxWidgetPlugin.h"
@@ -98,6 +99,7 @@ public:
             << new ctkSettingsPanelPlugin
             << new ctkSettingsDialogPlugin
             << new ctkSliderWidgetPlugin
+            << new ctkThumbnailWidgetPlugin
             << new ctkTransferFunctionViewPlugin
             << new ctkTreeComboBoxPlugin
             << new ctkWorkflowButtonBoxWidgetPlugin
