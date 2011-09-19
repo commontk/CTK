@@ -23,7 +23,6 @@
 #include <QSqlDriver>
 #include <QSqlError>
 #include <QSqlQuery>
-#include <QSqlQueryModel>
 #include <QSqlRecord>
 #include <QSqlResult>
 
