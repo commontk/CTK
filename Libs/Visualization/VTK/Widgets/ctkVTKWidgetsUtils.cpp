@@ -73,13 +73,20 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
   int width = imageData->GetDimensions()[0];
   int height = imageData->GetDimensions()[1];
   QImage image(width, height, QImage::Format_RGB32);
-  QRgb* rgbPtr = reinterpret_cast<QRgb*>(image.bits());
+  QRgb* rgbPtr = reinterpret_cast<QRgb*>(image.bits()) +
+    width * (height-1);
   unsigned char* colorsPtr = reinterpret_cast<unsigned char*>(
     imageData->GetScalarPointer());
-  for(int i = 0; i < width * height; ++i)
+  // mirror vertically
+  for(int row = 0; row < height; ++row)
     {
-    *(rgbPtr++) = QColor(colorsPtr[0], colorsPtr[1], colorsPtr[2]).rgb();
-    colorsPtr +=  3;
+    for (int col = 0; col < width; ++col)
+      {
+      // Swap rgb
+      *(rgbPtr++) = QColor(colorsPtr[0], colorsPtr[1], colorsPtr[2]).rgb();
+      colorsPtr +=  3;
+      }
+    rgbPtr -= width * 2;
     }
   return image;
 }

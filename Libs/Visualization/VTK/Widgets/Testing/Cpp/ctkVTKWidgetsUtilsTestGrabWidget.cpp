@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QDialog>
 #include <QFrame>
+#include <QLabel>
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -65,6 +66,10 @@ int ctkVTKWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
               << screenshot.pixel(100, 100) << " " << QColor(Qt::black).rgb() << std::endl;
     return EXIT_FAILURE;
     }
+
+  QLabel screenshotLabel;
+  screenshotLabel.setPixmap(QPixmap::fromImage(screenshot));
+  screenshotLabel.show();
 
   if (argc < 2 && QString(argv[1]) != "-I")
     {
