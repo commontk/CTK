@@ -53,7 +53,7 @@ int ctkThumbnailWidgetTest1( int argc, char * argv [] )
     }
 
   QPixmap standardPixmap = widget.style()->standardPixmap(QStyle::SP_DriveNetIcon);
-  
+
   widget.setPixmap(standardPixmap);
   if (widget.pixmap() == 0)
     {
@@ -63,6 +63,8 @@ int ctkThumbnailWidgetTest1( int argc, char * argv [] )
     }
   widget.setTextPosition(Qt::AlignRight);
   widget.setTextPosition(Qt::AlignBottom);
+
+  widget.setTransformationMode(Qt::SmoothTransformation);
 
   widget.show();
 

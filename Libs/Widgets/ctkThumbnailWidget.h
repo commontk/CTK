@@ -37,7 +37,11 @@ class CTK_WIDGETS_EXPORT ctkThumbnailWidget : public QWidget
   /// Qt::AlignTop | Qt::AlignHCenter by default.
   Q_PROPERTY(Qt::Alignment textPosition READ textPosition WRITE setTextPosition)
   Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
+  /// Qt::FastTransformation by default
+  Q_PROPERTY(Qt::TransformationMode transformationMode READ transformationMode WRITE setTransformationMode)
+  /// Not selected by default
   Q_PROPERTY(bool selected READ isSelected WRITE setSelected)
+  /// Palette highlight color by default
   Q_PROPERTY(QColor selectedColor READ selectedColor WRITE setSelectedColor)
 public:
   typedef QWidget Superclass;
@@ -52,6 +56,9 @@ public:
 
   void setPixmap(const QPixmap& pixmap);
   const QPixmap* pixmap()const;
+
+  Qt::TransformationMode transformationMode()const;
+  void setTransformationMode(Qt::TransformationMode mode);
 
   void setSelected(bool selected);
   bool isSelected()const;
