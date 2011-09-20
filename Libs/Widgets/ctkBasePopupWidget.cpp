@@ -369,14 +369,14 @@ QRect ctkBasePopupWidgetPrivate::desiredOpenGeometry(QRect baseGeometry)const
       }
     else
       {
-      geometry.moveRight(topLeft.x());
+      geometry.moveRight(topLeft.x() - 1);
       }
     }
   else if (this->Alignment & Qt::AlignRight)
     {
     if (this->HorizontalDirection == Qt::LeftToRight)
       {
-      geometry.moveLeft(bottomRight.x());
+      geometry.moveLeft(bottomRight.x() + 1);
       }
     else
       {
@@ -400,14 +400,14 @@ QRect ctkBasePopupWidgetPrivate::desiredOpenGeometry(QRect baseGeometry)const
       }
     else
       {
-      geometry.moveBottom(topLeft.y());
+      geometry.moveBottom(topLeft.y() - 1);
       }
     }
   else if (this->Alignment & Qt::AlignBottom)
     {
     if (this->VerticalDirection == ctkBasePopupWidget::TopToBottom)
       {
-      geometry.moveTop(bottomRight.y());
+      geometry.moveTop(bottomRight.y() + 1);
       }
     else
       {
