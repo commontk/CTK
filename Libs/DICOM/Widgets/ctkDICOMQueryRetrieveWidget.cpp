@@ -275,9 +275,16 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     catch (std::exception e)
       {
       logger.error ( "Retrieve failed" );
-      // TODO: ask the user if he wants to keep trying to retrieve other studies
-      QMessageBox::information ( this, tr("Query Retrieve"), tr("Retrieve failed.") );
-      continue;
+      if ( QMessageBox::question ( this, 
+            tr("Query Retrieve"), tr("Retrieve failed.  Keep trying?"),
+            QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+        {
+        continue;
+        }
+      else
+        {
+        break;
+        }
       }
     // Store retrieve structure for later use.
     // Comment MO: I do not think that makes much sense; you store per study one fat
