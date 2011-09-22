@@ -124,12 +124,6 @@ public slots:
 
 public:
 
-  /// Set background color
-  virtual void setBackgroundColor(const QColor& newBackgroundColor);
-
-  /// Get background color
-  virtual QColor backgroundColor() const;
-
   /// Get Orientation widget visibility
   bool orientationWidgetVisible();
 

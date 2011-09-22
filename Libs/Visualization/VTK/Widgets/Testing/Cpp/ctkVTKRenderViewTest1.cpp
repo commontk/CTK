@@ -55,6 +55,8 @@ int ctkVTKRenderViewTest1(int argc, char * argv [] )
   // Instanciate widget
   ctkVTKRenderView renderView;
   renderView.setBackgroundColor(QColor(Qt::red));
+  renderView.setBackgroundColor2(QColor(Qt::yellow));
+  renderView.setGradientBackground(true);
   renderView.setCornerAnnotationText("CTK Rocks !");
   renderView.show();
 

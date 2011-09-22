@@ -261,3 +261,71 @@ int ctkVTKAbstractView::heightForWidth(int width)const
   // typically VTK render window tend to be square...
   return width;
 }
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::setBackgroundColor(const QColor& newBackgroundColor)
+{
+  Q_D(ctkVTKAbstractView);
+  double color[3];
+  color[0] = newBackgroundColor.redF();
+  color[1] = newBackgroundColor.greenF();
+  color[2] = newBackgroundColor.blueF();
+  foreach(vtkRenderer* renderer, d->renderers())
+    {
+    renderer->SetBackground(color);
+    }
+}
+
+//----------------------------------------------------------------------------
+QColor ctkVTKAbstractView::backgroundColor()const
+{
+  Q_D(const ctkVTKAbstractView);
+  vtkRenderer* firstRenderer = d->firstRenderer();
+  return firstRenderer ? QColor::fromRgbF(firstRenderer->GetBackground()[0],
+                                          firstRenderer->GetBackground()[1],
+                                          firstRenderer->GetBackground()[2])
+                       : QColor();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::setBackgroundColor2(const QColor& newBackgroundColor)
+{
+  Q_D(ctkVTKAbstractView);
+  double color[3];
+  color[0] = newBackgroundColor.redF();
+  color[1] = newBackgroundColor.greenF();
+  color[2] = newBackgroundColor.blueF();
+  foreach(vtkRenderer* renderer, d->renderers())
+    {
+    renderer->SetBackground2(color);
+    }
+}
+
+//----------------------------------------------------------------------------
+QColor ctkVTKAbstractView::backgroundColor2()const
+{
+  Q_D(const ctkVTKAbstractView);
+  vtkRenderer* firstRenderer = d->firstRenderer();
+  return firstRenderer ? QColor::fromRgbF(firstRenderer->GetBackground2()[0],
+                                          firstRenderer->GetBackground2()[1],
+                                          firstRenderer->GetBackground2()[2])
+                       : QColor();
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::setGradientBackground(bool enable)
+{
+  Q_D(ctkVTKAbstractView);
+  foreach(vtkRenderer* renderer, d->renderers())
+    {
+    renderer->SetGradientBackground(enable);
+    }
+}
+
+//----------------------------------------------------------------------------
+bool ctkVTKAbstractView::gradientBackground()const
+{
+  Q_D(const ctkVTKAbstractView);
+  vtkRenderer* firstRenderer = d->firstRenderer();
+  return firstRenderer ? firstRenderer->GetGradientBackground() : false;
+}

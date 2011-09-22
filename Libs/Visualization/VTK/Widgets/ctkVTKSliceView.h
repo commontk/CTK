@@ -30,6 +30,8 @@ class vtkCamera;
 class vtkImageData;
 class vtkRenderer;
 
+/// Specific implementation for a 2D view that supports lightbox display.
+/// \note There is no support for gradient background yet.
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceView : public ctkVTKAbstractView
 {
   Q_OBJECT

@@ -41,6 +41,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKAbstractView : public QWidget
   Q_OBJECT
   Q_PROPERTY(QString cornerAnnotationText READ cornerAnnotationText WRITE setCornerAnnotationText)
   Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
+  Q_PROPERTY(QColor backgroundColor2 READ backgroundColor2 WRITE setBackgroundColor)
+  Q_PROPERTY(bool gradientBackground READ gradientBackground WRITE setGradientBackground)
   Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
 public:
 
@@ -56,8 +58,16 @@ public slots:
   /// Force a render even if a render is already ocurring
   void forceRender();
 
-  /// Set background color
-  virtual void setBackgroundColor(const QColor& newBackgroundColor) = 0;
+  /// Set the background color of the rendering screen.
+  virtual void setBackgroundColor(const QColor& newBackgroundColor);
+
+  /// Set the second background color of the rendering screen for gradient
+  /// backgrounds.
+  virtual void setBackgroundColor2(const QColor& newBackgroundColor);
+
+  /// Set/Get whether this view should have a gradient background using the
+  /// Background (top) and Background2 (bottom) colors. Default is off.
+  virtual void setGradientBackground(bool enable);
 
   /// Enable/Disable rendering
   void setRenderEnabled(bool value);
@@ -84,7 +94,13 @@ public:
   Q_INVOKABLE QVTKWidget * VTKWidget() const;
 
   /// Get background color
-  virtual QColor backgroundColor() const = 0;
+  virtual QColor backgroundColor() const;
+
+  /// Get the second background color
+  virtual QColor backgroundColor2() const;
+
+  /// Is the background a gradient
+  virtual bool gradientBackground() const;
 
   /// Return if rendering is enabled
   bool renderEnabled() const;

@@ -222,27 +222,6 @@ void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
   d->Orientation->SetInteractor(newInteractor);
 }
 
-// --------------------------------------------------------------------------
-void ctkVTKRenderView::setBackgroundColor(const QColor& newBackgroundColor)
-{
-  Q_D(ctkVTKRenderView);
-
-  logger.trace(QString("setBackgroundColor: %1").arg(newBackgroundColor.name()));
-
-  d->Renderer->SetBackground(newBackgroundColor.redF(),
-                             newBackgroundColor.greenF(),
-                             newBackgroundColor.blueF());
-}
-
-//----------------------------------------------------------------------------
-QColor ctkVTKRenderView::backgroundColor() const
-{
-  Q_D(const ctkVTKRenderView);
-  double color[3] = {0, 0, 0};
-  d->Renderer->GetBackground(color);
-  return QColor::fromRgbF(color[0], color[1], color[2]);
-}
-
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setOrientationWidgetVisible(bool visible)
 {
