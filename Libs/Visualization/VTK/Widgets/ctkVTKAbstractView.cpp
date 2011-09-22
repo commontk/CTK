@@ -29,6 +29,7 @@
 #include "ctkLogger.h"
 
 // VTK includes
+#include <vtkRendererCollection.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkTextProperty.h>
 
@@ -86,6 +87,29 @@ void ctkVTKAbstractViewPrivate::setupRendering()
   this->RenderWindow->StereoCapableWindowOn();
 
   this->VTKWidget->SetRenderWindow(this->RenderWindow);
+}
+
+//---------------------------------------------------------------------------
+QList<vtkRenderer*> ctkVTKAbstractViewPrivate::renderers()const
+{
+  QList<vtkRenderer*> rendererList;
+
+  vtkRendererCollection* rendererCollection = this->RenderWindow->GetRenderers();
+  vtkCollectionSimpleIterator rendererIterator;
+  rendererCollection->InitTraversal(rendererIterator);
+  vtkRenderer *renderer;
+  while ( (renderer= rendererCollection->GetNextRenderer(rendererIterator)) )
+    {
+    rendererList << renderer;
+    }
+  return rendererList;
+}
+
+//---------------------------------------------------------------------------
+vtkRenderer* ctkVTKAbstractViewPrivate::firstRenderer()const
+{
+  return static_cast<vtkRenderer*>(this->RenderWindow->GetRenderers()
+    ->GetItemAsObject(0));
 }
 
 //---------------------------------------------------------------------------

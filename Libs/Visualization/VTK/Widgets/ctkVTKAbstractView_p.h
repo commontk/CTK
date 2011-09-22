@@ -51,6 +51,9 @@ public:
   virtual void setupCornerAnnotation();
   virtual void setupRendering();
 
+  QList<vtkRenderer*> renderers()const;
+  vtkRenderer* firstRenderer()const;
+
   QVTKWidget*                                   VTKWidget;
   vtkSmartPointer<vtkRenderWindow>              RenderWindow;
   bool                                          RenderPending;
