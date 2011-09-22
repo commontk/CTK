@@ -69,9 +69,18 @@ ctkDICOMImage::ctkDICOMImage(DicomImage* dicomImage, QObject* parentValue)
   Q_D(ctkDICOMImage);
   d->DicomImage = dicomImage;
   if (d->DicomImage)
+    // Select first window defined in image. If none, compute min/max window as best guess.
+    // Only relevant for monochrome.
+    if (d->DicomImage->isMonochrome())
     {
-    // select first window by default
-    d->DicomImage->setWindow(0);
+        if (d->DicomImage->getWindowCount() > 0)
+        {
+          d->DicomImage->setWindow(0);
+        }
+        else
+        {
+          d->DicomImage->setMinMaxWindow(OFTrue /* ignore extreme values */);
+        }
     }
 }
 
