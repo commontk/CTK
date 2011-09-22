@@ -67,7 +67,6 @@ public slots:
 
 public:
 
-  QVTKWidget*                                   VTKWidget;
   vtkSmartPointer<vtkRenderer>                  Renderer;
 
   vtkSmartPointer<vtkAxesActor>                 Axes;
