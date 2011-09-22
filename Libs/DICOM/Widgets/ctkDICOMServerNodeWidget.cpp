@@ -183,16 +183,27 @@ void ctkDICOMServerNodeWidget::readSettings()
       settings.value("ServerNodeCount").toInt() == 0)
     {
     d->StorageAETitle->setText("CTKSTORE");
-    d->StoragePort->setText("11113");
-    d->CallingAETitle->setText("FINDSCU");
+    d->StoragePort->setText("11112");
+    d->CallingAETitle->setText("CTKSTORE");
 
+    // a dummy example
     QMap<QString, QVariant> defaultServerNode;
     defaultServerNode["Name"] = QString("ExampleHost");
-    defaultServerNode["CheckState"] = Qt::Checked;
-    defaultServerNode["AETitle"] = QString("ANY-SCP");
-    defaultServerNode["Address"] = QString("localhost");
+    defaultServerNode["CheckState"] = Qt::Unchecked;
+    defaultServerNode["AETitle"] = QString("AETITLE");
+    defaultServerNode["Address"] = QString("dicom.example.com");
     defaultServerNode["Port"] = QString("11112");
     this->addServerNode(defaultServerNode);
+
+    // the uk example - see http://www.dicomserver.co.uk/ 
+    // and http://www.medicalconnections.co.uk/
+    defaultServerNode["Name"] = QString("MedicalConnections");
+    defaultServerNode["CheckState"] = Qt::Unchecked;
+    defaultServerNode["AETitle"] = QString("ANYAE");
+    defaultServerNode["Address"] = QString("dicomserver.co.uk");
+    defaultServerNode["Port"] = QString("11112");
+    this->addServerNode(defaultServerNode);
+
     return;
     }
 
