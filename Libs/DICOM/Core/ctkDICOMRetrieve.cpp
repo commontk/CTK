@@ -148,6 +148,7 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
       return false;;
       }
     }
+
   ConnectionParamsChanged = false;
   // Setup query about what to be received from the PACS
   logger.debug ( "Setting Retrieve Parameters" );

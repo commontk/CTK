@@ -58,6 +58,7 @@ signals:
 
 protected slots:
   void onQueryProgressChanged(int value);
+  void updateQueryProgress(float value);
 
 protected:
   QScopedPointer<ctkDICOMQueryRetrieveWidgetPrivate> d_ptr;
