@@ -271,7 +271,9 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
   // pull from GUI
   retrieve->setMoveDestinationAETitle( serverParameters["StorageAETitle"].toString() );
   int step = 0;
-  int stepSize = 100. / d->QueriesByStudyUID.keys().size();
+  progress.setMaximum(d->QueriesByStudyUID.keys().size());
+  progress.open();
+  progress.setValue(1);
   foreach( QString studyUID, d->QueriesByStudyUID.keys() )
     {
     if (progress.wasCanceled())
@@ -280,7 +282,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
       }
 
     progressLabel->setText(QString(tr("Retrieving:\n%1")).arg(studyUID));
-    this->updateQueryProgress( step * stepSize );
+    this->updateRetrieveProgress( step );
     ++step;
 
     // Get information which server we want to get the study from and prepare request accordingly
@@ -324,10 +326,9 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     logger.info ( "Retrieve success" );
     }
   progressLabel->setText(tr("Retrieving Finished"));
-  this->updateQueryProgress(100.);
+  this->updateRetrieveProgress(progress.maximum());
 
   delete retrieve;
-  progress.setValue(progress.maximum());
   d->ProgressDialog = 0;
   QMessageBox::information ( this, tr("Query Retrieve"), tr("Retrieve Process Finished.") );
   emit studiesRetrieved(d->RetrievalsByStudyUID.keys());
@@ -367,7 +368,7 @@ void ctkDICOMQueryRetrieveWidget::onQueryProgressChanged(int value)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryRetrieveWidget::updateQueryProgress(float value)
+void ctkDICOMQueryRetrieveWidget::updateRetrieveProgress(int value)
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
   if (d->ProgressDialog == 0)
@@ -383,4 +384,5 @@ void ctkDICOMQueryRetrieveWidget::updateQueryProgress(float value)
     d->ProgressDialog->resize(500, d->ProgressDialog->height());
     }
   d->ProgressDialog->setValue( value );
+  logger.error(QString("setting value to %1").arg(value) );
 }
