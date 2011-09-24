@@ -35,6 +35,7 @@
 #include <vtkCompositeTransferFunctionItem.h>
 #include <vtkLookupTable.h>
 #include <vtkLookupTableItem.h>
+#include <vtkPen.h>
 #include <vtkPiecewiseControlPointsItem.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkPiecewiseFunctionItem.h>
@@ -83,7 +84,8 @@ void ctkVTKScalarsToColorsViewPrivate::showBorders(bool visible)
   vtkChartXY* chart = q->chart();
   for (int i = 0; i < 4; ++i)
     {
-    chart->GetAxis(i)->SetVisible(visible);
+    chart->GetAxis(i)->SetVisible(true);
+    chart->GetAxis(i)->GetPen()->SetOpacityF(0.3);
     chart->GetAxis(i)->SetTitle("");
     chart->GetAxis(i)->SetNumberOfTicks(0);
     chart->GetAxis(i)->SetLabelsVisible(false);

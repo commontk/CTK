@@ -78,10 +78,12 @@ protected slots:
   void updateCurrentPoint();
   void onCurrentPointChanged(int pointId);
   void onColorChanged(const QColor& color);
+  void onXChanged(double x);
   void onOpacityChanged(double opacity);
   void onMidPointChanged(double midPoint);
   void onSharpnessChanged(double sharpness);
   void onAxesModified();
+  void restorePalette();
 protected:
   QScopedPointer<ctkVTKScalarsToColorsWidgetPrivate> d_ptr;
 

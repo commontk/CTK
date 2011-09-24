@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>ScalarsToColorsWidget</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="1,0,0">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="1,0">
    <property name="margin">
     <number>0</number>
    </property>
@@ -74,6 +74,26 @@
        </property>
        <property name="dialogOptions">
         <set>ctkColorPickerButton::UseCTKColorDialog</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="XLabel">
+       <property name="toolTip">
+        <string>X coordinate of the current point</string>
+       </property>
+       <property name="text">
+        <string>X:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="XSpinBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>X coordinate of the current point</string>
        </property>
       </widget>
      </item>

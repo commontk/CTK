@@ -20,9 +20,11 @@
 
 // Qt includes
 #include <QDebug>
+#include <QTimer>
 
 // CTK includes
 #include "ctkLogger.h"
+#include "ctkUtils.h"
 #include "ctkVTKScalarsToColorsView.h"
 #include "ctkVTKScalarsToColorsWidget.h"
 #include "ui_ctkVTKScalarsToColorsWidget.h"
@@ -57,6 +59,7 @@ public:
   void setupUi(QWidget* widget);
 
   bool blockSignals(bool);
+  bool checkXRange(double x, int pointId);
 
   vtkControlPointsItem* CurrentControlPointsItem;
   bool EditColors;
@@ -90,6 +93,8 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   this->PointIdSpinBox->setValue(-1);
   QObject::connect(this->ColorPickerButton, SIGNAL(colorChanged(QColor)),
                    q, SLOT(onColorChanged(QColor)));
+  QObject::connect(this->XSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(onXChanged(double)));
   QObject::connect(this->OpacitySpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(onOpacityChanged(double)));
   QObject::connect(this->MidPointSpinBox, SIGNAL(valueChanged(double)),
@@ -97,6 +102,8 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   QObject::connect(this->SharpnessSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(onSharpnessChanged(double)));
   this->ColorPickerButton->setVisible(false);
+  this->XLabel->setVisible(false);
+  this->XSpinBox->setVisible(false);
   this->OpacityLabel->setVisible(false);
   this->OpacitySpinBox->setVisible(false);
   QObject::connect(this->XRangeSlider, SIGNAL(valuesChanged(double,double)),
@@ -119,9 +126,45 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
 bool ctkVTKScalarsToColorsWidgetPrivate::blockSignals(bool block)
 {
   this->ColorPickerButton->blockSignals(block);
+  this->XSpinBox->blockSignals(block);
   this->OpacitySpinBox->blockSignals(block);
   this->MidPointSpinBox->blockSignals(block);
   return this->SharpnessSpinBox->blockSignals(block);
+}
+
+// ----------------------------------------------------------------------------
+bool ctkVTKScalarsToColorsWidgetPrivate::checkXRange(double x, int pointId)
+{
+  Q_Q(ctkVTKScalarsToColorsWidget);
+  QPalette wrongPalette = q->palette();
+  wrongPalette.setColor(QPalette::Highlight, Qt::red);
+  if (pointId > 0)
+    {
+    double previous[4];
+    this->CurrentControlPointsItem->GetControlPoint(pointId - 1, previous);
+    if (x < previous[0])
+      {
+      this->XSpinBox->setPalette(wrongPalette);
+      this->XSpinBox->selectAll();
+      QTimer::singleShot(2000, q, SLOT(restorePalette()));
+      this->XSpinBox->setValue(previous[0]);
+      return false;
+      }
+    }
+  if (pointId < this->PointIdSpinBox->maximum() - 1)
+    {
+    double next[4];
+    this->CurrentControlPointsItem->GetControlPoint(pointId + 1, next);
+    if (x > next[0])
+      {
+      this->XSpinBox->setPalette(wrongPalette);
+      this->XSpinBox->selectAll();
+      QTimer::singleShot(2000, q, SLOT(restorePalette()));
+      this->XSpinBox->setValue(next[0]);
+      return false;
+      }
+    }
+  return true;
 }
 
 // ----------------------------------------------------------------------------
@@ -255,6 +298,8 @@ void ctkVTKScalarsToColorsWidget::setCurrentControlPointsItem(vtkControlPointsIt
     d->ColorPickerButton->setVisible( d->EditColors &&
       (vtkColorTransferControlPointsItem::SafeDownCast(item) != 0 ||
        vtkCompositeControlPointsItem::SafeDownCast(item) != 0));
+    d->XLabel->setVisible(true);
+    d->XSpinBox->setVisible(true);
     d->OpacityLabel->setVisible(vtkPiecewiseControlPointsItem::SafeDownCast(item) != 0 ||
                                 vtkCompositeControlPointsItem::SafeDownCast(item) != 0);
     d->OpacitySpinBox->setVisible(vtkPiecewiseControlPointsItem::SafeDownCast(item) != 0 ||
@@ -284,6 +329,7 @@ void ctkVTKScalarsToColorsWidget::onCurrentPointChanged(int currentPoint)
     }
 
   d->ColorPickerButton->setEnabled(currentPoint != -1);
+  d->XSpinBox->setEnabled(currentPoint != -1);
   d->OpacitySpinBox->setEnabled(currentPoint != -1);
   d->MidPointSpinBox->setEnabled(currentPoint != -1);
   d->SharpnessSpinBox->setEnabled(currentPoint != -1);
@@ -313,6 +359,7 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
   d->CurrentControlPointsItem->GetControlPoint(pointId, point);
 
   bool oldBlock = d->blockSignals(true);
+  d->XSpinBox->setValue(point[0]);
   d->OpacitySpinBox->setValue(point[1]);
   d->MidPointSpinBox->setValue(point[2]);
   d->SharpnessSpinBox->setValue(point[3]);
@@ -361,6 +408,23 @@ void ctkVTKScalarsToColorsWidget::onColorChanged(const QColor& color)
     point[3] = color.blueF();
     colorTF->SetNodeValue(d->PointIdSpinBox->value(), point);
     }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::onXChanged(double x)
+{
+  Q_D(ctkVTKScalarsToColorsWidget);
+  Q_ASSERT(d->CurrentControlPointsItem);
+
+  bool validRange = d->checkXRange(x, d->PointIdSpinBox->value());
+  if (!validRange)
+    {
+    return;
+    }
+  double point[4];
+  d->CurrentControlPointsItem->GetControlPoint(d->PointIdSpinBox->value(), point);
+  point[0] = x;
+  d->CurrentControlPointsItem->SetControlPoint(d->PointIdSpinBox->value(), point);
 }
 
 // ----------------------------------------------------------------------------
@@ -463,6 +527,9 @@ void ctkVTKScalarsToColorsWidget::onAxesModified()
   bool wasBlocking = d->XRangeSlider->blockSignals(true);
   d->XRangeSlider->setRange(xAxis->GetMinimumLimit(), xAxis->GetMaximumLimit());
   d->XRangeSlider->setValues(xAxis->GetMinimum(), xAxis->GetMaximum());
+  d->XSpinBox->setRange(xAxis->GetMinimumLimit(), xAxis->GetMaximumLimit());
+  d->XSpinBox->setSingleStep(
+    ctk::closestPowerOfTen(xAxis->GetMaximumLimit() - xAxis->GetMinimumLimit()) / 100);
   d->XRangeSlider->blockSignals(wasBlocking);
 
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
@@ -473,4 +540,11 @@ void ctkVTKScalarsToColorsWidget::onAxesModified()
   d->YRangeSlider->setRange(yAxis->GetMinimumLimit(), yAxis->GetMaximumLimit());
   d->YRangeSlider->setValues(yAxis->GetMinimum(), yAxis->GetMaximum());
   d->YRangeSlider->blockSignals(wasBlocking);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::restorePalette()
+{
+  Q_D(ctkVTKScalarsToColorsWidget);
+  d->XSpinBox->setPalette(this->palette());
 }
