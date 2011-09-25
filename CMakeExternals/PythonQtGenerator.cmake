@@ -41,13 +41,12 @@ IF(CTK_WRAP_PYTHONQT_FULL)
     IF(EXISTS ${CMAKE_BINARY_DIR}/PythonQt)
       #MESSAGE(STATUS "ExternalProject/PythonQtGenerator: PythonQt already added as ExternalProject")
       ExternalProject_Add(${proj}
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/PythonQt/generator
         BINARY_DIR ${proj}-build
         PREFIX ${proj}${ep_suffix}
         DOWNLOAD_COMMAND ""
         CMAKE_GENERATOR ${gen}
         INSTALL_COMMAND ""
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/PythonQt/generator
         CMAKE_ARGS
           -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
           -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
@@ -56,7 +55,7 @@ IF(CTK_WRAP_PYTHONQT_FULL)
           ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         DEPENDS
-          "PythonQt" # To make sure the generator code is checked out, let's depent on PythonQt
+          "PythonQt" # To make sure the generator code is checked out, let's depend on PythonQt
         )
     ELSE()
     
@@ -75,7 +74,6 @@ IF(CTK_WRAP_PYTHONQT_FULL)
         CMAKE_GENERATOR ${gen}
         UPDATE_COMMAND ""
         INSTALL_COMMAND ""
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}/generator
         CMAKE_ARGS
           -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
           -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
@@ -86,7 +84,7 @@ IF(CTK_WRAP_PYTHONQT_FULL)
         )
     ENDIF()
     
-    SET(PYTHONQTGENERATOR_EXECUTABLE ${CMAKE_BINARY_DIR}/PythonQtGenerator/PythonQtGenerator)
+    SET(PYTHONQTGENERATOR_EXECUTABLE ${CMAKE_BINARY_DIR}/PythonQtGenerator-build/PythonQtGenerator)
     
     # Since PythonQtGenerator is an executable, there is no need to add its corresponding 
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
