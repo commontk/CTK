@@ -260,12 +260,22 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   
   set(wrapper_init_cpp_filename ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp)
   set(wrapper_init_cpp_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_init_cpp_filename})
-  
+
+  set(wrapper_module_init_cpp_filename ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_module_init.cpp)
+  set(wrapper_module_init_cpp_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_module_init_cpp_filename})
+
   # Custom command allow to generate ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp and 
   # associated wrappers ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}{0-N}.cpp
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${wrap_int_dir}${wrapper_init_cpp_filename} ${extra_files}
-    DEPENDS ${pythonqtgenerator_executable_depends} ${SOURCES_TO_WRAP} ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_${wrap_type}.cmake
+    OUTPUT
+      ${wrap_int_dir}${wrapper_init_cpp_filename}
+      ${wrap_int_dir}${wrapper_module_init_cpp_filename}
+      ${extra_files}
+    DEPENDS
+      ${pythonqtgenerator_executable_depends}
+      ${SOURCES_TO_WRAP}
+      ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_${wrap_type}.cmake
+      ${CTK_CMAKE_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
     COMMAND ${CMAKE_COMMAND}
       -DPYTHONQTGENERATOR_EXECUTABLE:FILEPATH=${PYTHONQTGENERATOR_EXECUTABLE}
       -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
@@ -311,7 +321,10 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   # Custom command allowing to call moc to process the wrapper headers
   ADD_CUSTOM_COMMAND(
     OUTPUT ${wrap_int_dir}${wrapper_master_moc_filename}
-    DEPENDS ${wrap_int_dir}${wrapper_init_cpp_filename} ${extra_files} ${CTK_CMAKE_DIR}/ctkScriptMocPythonQtWrapper.cmake
+    DEPENDS
+      ${wrap_int_dir}${wrapper_init_cpp_filename}
+      ${wrap_int_dir}${wrapper_module_init_cpp_filename}
+      ${extra_files} ${CTK_CMAKE_DIR}/ctkScriptMocPythonQtWrapper.cmake
     COMMAND ${CMAKE_COMMAND}
       -DWRAPPING_NAMESPACE:STRING=${WRAPPING_NAMESPACE}
       -DTARGET:STRING=${TARGET}
@@ -328,6 +341,7 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   #The following files are generated
   SET_SOURCE_FILES_PROPERTIES(
     ${wrap_int_dir}${wrapper_init_cpp_filename}
+    ${wrap_int_dir}${wrapper_module_init_cpp_filename}
     ${wrap_int_dir}${wrapper_master_moc_filename}
     PROPERTIES GENERATED TRUE)
     
@@ -335,6 +349,7 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   SET(${SRCS_LIST_NAME} 
     ${${SRCS_LIST_NAME}}
     ${wrap_int_dir}${wrapper_init_cpp_filename}
+    ${wrap_int_dir}${wrapper_module_init_cpp_filename}
     ${wrap_int_dir}${wrapper_master_moc_filename})
   
   #

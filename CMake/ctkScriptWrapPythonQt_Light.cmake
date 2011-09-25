@@ -96,6 +96,12 @@ else: print \"TRUE\"
   
 ENDFUNCTION()
 
+IF(NOT DEFINED CMAKE_CURRENT_LIST_DIR)
+  GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+ENDIF()
+IF(NOT DEFINED CMAKE_CURRENT_LIST_FILENAME)
+  GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME)
+ENDIF()
 
 # Check for non-defined var
 FOREACH(var WRAPPING_NAMESPACE TARGET SOURCES INCLUDE_DIRS WRAP_INT_DIR)
@@ -211,7 +217,7 @@ public slots:
   # Generate code allowing to register the class metaobject and its associated "light" wrapper
   SET(registerclasses "${registerclasses}
   PythonQt::self()->registerClass(
-    &${className}::staticMetaObject, \"${TARGET}\",   
+    &${className}::staticMetaObject, \"${TARGET}\",
     PythonQtCreateObject<PythonQtWrapper_${className}>);\n")
 
 ENDFOREACH()
@@ -244,6 +250,13 @@ void PythonQt_init_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}(PyObject* module)
   ${registerclasses}
 }
 ")
+
+# Configure 'ctkMacroWrapPythonQtModuleInit.cpp.in' replacing TARGET and
+# WRAPPING_NAMESPACE_UNDERSCORE.
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_LIST_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
+  ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_module_init.cpp
+  )
 
 # Since FILE(WRITE ) doesn't update the timestamp - Let's touch the files
 EXECUTE_PROCESS(

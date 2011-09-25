@@ -39,6 +39,13 @@
 #          -P ctkScriptWrapPythonQt_Full.cmake
 #
 
+IF(NOT DEFINED CMAKE_CURRENT_LIST_DIR)
+  GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+ENDIF()
+IF(NOT DEFINED CMAKE_CURRENT_LIST_FILENAME)
+  GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME)
+ENDIF()
+
 # Check for non-defined var
 FOREACH(var SOURCES TARGET INCLUDE_DIRS WRAP_INT_DIR WRAPPING_NAMESPACE)
   IF(NOT DEFINED ${var})
@@ -130,10 +137,16 @@ IF(result)
   MESSAGE(FATAL_ERROR "Failed to generate ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp\n${error}")
 ENDIF()
 
+# Configure 'ctkMacroWrapPythonQtModuleInit.cpp.in' replacing TARGET and
+# WRAPPING_NAMESPACE_UNDERSCORE.
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_LIST_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
+  ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_module_init.cpp
+  )
+
 # Since PythonQtGenerator or FILE(WRITE ) doesn't 'update the timestamp - Let's touch the files
 EXECUTE_PROCESS(
   COMMAND ${CMAKE_COMMAND} -E touch 
     ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp
     ${OUTPUT_DIR}/${WRAP_INT_DIR}ctkPythonQt_${TARGET}_masterinclude.h
   )
-
