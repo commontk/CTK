@@ -226,6 +226,7 @@ bool ctkDICOMDatabasePrivate::executeScript(const QString script) {
 
   QString sqlCommands( QTextStream(&scriptFile).readAll() );
   sqlCommands.replace( '\n', ' ' );
+  sqlCommands.remove( '\r' );
   sqlCommands.replace("; ", ";\n");
 
   QStringList sqlCommandsLines = sqlCommands.split('\n');
