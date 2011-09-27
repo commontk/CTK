@@ -106,6 +106,10 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   this->XSpinBox->setVisible(false);
   this->OpacityLabel->setVisible(false);
   this->OpacitySpinBox->setVisible(false);
+  this->SharpnessLabel->setVisible(false);
+  this->SharpnessSpinBox->setVisible(false);
+  this->MidPointLabel->setVisible(false);
+  this->MidPointSpinBox->setVisible(false);
   QObject::connect(this->XRangeSlider, SIGNAL(valuesChanged(double,double)),
                    q, SLOT(setXRange(double,double)));
   QObject::connect(this->YRangeSlider, SIGNAL(valuesChanged(double,double)),
@@ -120,6 +124,8 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   q->qvtkConnect(this->View->chart()->GetAxis(1),vtkCommand::ModifiedEvent,
                     q, SLOT(onAxesModified()));
 
+  QObject::connect(this->HideShowButton, SIGNAL(clicked(bool)),
+                   q, SLOT(onHideShowButton(bool)));
 }
 
 // ----------------------------------------------------------------------------
@@ -547,4 +553,25 @@ void ctkVTKScalarsToColorsWidget::restorePalette()
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   d->XSpinBox->setPalette(this->palette());
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::onHideShowButton(bool state)
+{
+  Q_D(ctkVTKScalarsToColorsWidget);
+  if (state)
+    {
+    d->MidPointLabel->show();
+    d->MidPointSpinBox->show();
+    d->SharpnessLabel->show();
+    d->SharpnessSpinBox->show();
+    }
+  else
+    {
+    d->MidPointLabel->hide();
+    d->MidPointSpinBox->hide();
+    d->SharpnessLabel->hide();
+    d->SharpnessSpinBox->hide();
+    }
+
 }

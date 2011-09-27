@@ -84,6 +84,7 @@ protected slots:
   void onSharpnessChanged(double sharpness);
   void onAxesModified();
   void restorePalette();
+  void onHideShowButton(bool state);
 protected:
   QScopedPointer<ctkVTKScalarsToColorsWidgetPrivate> d_ptr;
 
