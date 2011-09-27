@@ -18,6 +18,8 @@ SET(KIT_SRCS
   ctkBasePopupWidget.cpp
   ctkBasePopupWidget.h
   ctkBasePopupWidget_p.h
+  ctkButton.cpp
+  ctkButton.h
   ctkButtonGroup.cpp
   ctkButtonGroup.h
   ctkCheckableComboBox.cpp
@@ -178,6 +180,7 @@ SET(KIT_MOC_SRCS
   ctkAddRemoveComboBox.h
   ctkBasePopupWidget.h
   ctkBasePopupWidget_p.h
+  ctkButton.h
   ctkButtonGroup.h
   ctkCheckableComboBox.h
   ctkCheckableHeaderView.h
