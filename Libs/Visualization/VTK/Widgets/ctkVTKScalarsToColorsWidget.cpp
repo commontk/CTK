@@ -559,19 +559,8 @@ void ctkVTKScalarsToColorsWidget::restorePalette()
 void ctkVTKScalarsToColorsWidget::onHideShowButton(bool state)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
-  if (state)
-    {
-    d->MidPointLabel->show();
-    d->MidPointSpinBox->show();
-    d->SharpnessLabel->show();
-    d->SharpnessSpinBox->show();
-    }
-  else
-    {
-    d->MidPointLabel->hide();
-    d->MidPointSpinBox->hide();
-    d->SharpnessLabel->hide();
-    d->SharpnessSpinBox->hide();
-    }
-
+  d->MidPointLabel->setVisible(state);;
+  d->MidPointSpinBox->setVisible(state);
+  d->SharpnessLabel->setVisible(state);
+  d->SharpnessSpinBox->setVisible(state);
 }
