@@ -19,51 +19,51 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkButtonPlugin.h"
-#include "ctkButton.h"
+#include "ctkMoreButtonPlugin.h"
+#include "ctkMoreButton.h"
 
 //-----------------------------------------------------------------------------
-ctkButtonPlugin::ctkButtonPlugin(QObject *_parent)
+ctkMoreButtonPlugin::ctkMoreButtonPlugin(QObject *_parent)
         : QObject(_parent)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkButtonPlugin::createWidget(QWidget *_parent)
+QWidget *ctkMoreButtonPlugin::createWidget(QWidget *_parent)
 {
-  ctkButton* _widget = new ctkButton(_parent);
+  ctkMoreButton* _widget = new ctkMoreButton(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkButtonPlugin::domXml() const
+QString ctkMoreButtonPlugin::domXml() const
 {
-  return "<widget class=\"ctkButton\" \
+  return "<widget class=\"ctkMoreButton\" \
           name=\"Button\">\n"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkButtonPlugin::icon() const
+QIcon ctkMoreButtonPlugin::icon() const
 {
   return QIcon(":/Icons/left.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkButtonPlugin::includeFile() const
+QString ctkMoreButtonPlugin::includeFile() const
 {
-  return "ctkButton.h";
+  return "ctkMoreButton.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkButtonPlugin::isContainer() const
+bool ctkMoreButtonPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkButtonPlugin::name() const
+QString ctkMoreButtonPlugin::name() const
 {
-  return "ctkButton";
+  return "ctkMoreButton";
 }

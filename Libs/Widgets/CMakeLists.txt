@@ -18,8 +18,6 @@ SET(KIT_SRCS
   ctkBasePopupWidget.cpp
   ctkBasePopupWidget.h
   ctkBasePopupWidget_p.h
-  ctkButton.cpp
-  ctkButton.h
   ctkButtonGroup.cpp
   ctkButtonGroup.h
   ctkCheckableComboBox.cpp
@@ -90,6 +88,8 @@ SET(KIT_SRCS
   ctkMenuComboBox_p.h
   ctkModalityWidget.cpp
   ctkModalityWidget.h
+  ctkMoreButton.cpp
+  ctkMoreButton.h
   ctkPathLineEdit.cpp
   ctkPathLineEdit.h
   ctkPixmapIconEngine.cpp
@@ -180,7 +180,6 @@ SET(KIT_MOC_SRCS
   ctkAddRemoveComboBox.h
   ctkBasePopupWidget.h
   ctkBasePopupWidget_p.h
-  ctkButton.h
   ctkButtonGroup.h
   ctkCheckableComboBox.h
   ctkCheckableHeaderView.h
@@ -217,6 +216,7 @@ SET(KIT_MOC_SRCS
   ctkMenuComboBox.h
   ctkMenuComboBox_p.h
   ctkModalityWidget.h
+  ctkMoreButton.h
   ctkPathLineEdit.h
   ctkPopupWidget.h
   ctkPopupWidget_p.h

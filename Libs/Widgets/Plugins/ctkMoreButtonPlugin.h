@@ -18,20 +18,20 @@
 
 =========================================================================*/
 
-#ifndef __ctkButtonPlugin_h
-#define __ctkButtonPlugin_h
+#ifndef __ctkMoreButtonPlugin_h
+#define __ctkMoreButtonPlugin_h
 
 // CTK includes
 #include "ctkWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkButtonPlugin :
+class CTK_WIDGETS_PLUGINS_EXPORT ctkMoreButtonPlugin :
     public QObject,
     public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkButtonPlugin(QObject *_parent = 0);
+  ctkMoreButtonPlugin(QObject *_parent = 0);
 
   QWidget *createWidget(QWidget *parent);
   QString  domXml() const;

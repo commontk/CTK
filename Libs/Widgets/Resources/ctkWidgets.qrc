@@ -7,6 +7,7 @@
     <file>Icons/expand-up.png</file>
     <file>Icons/search.svg</file>
     <file>Icons/clear.svg</file>
-    <file>Icons/left.png</file>
+    <file>Icons/more-left.png</file>
+    <file>Icons/more-right.png</file>
   </qresource>
 </RCC>

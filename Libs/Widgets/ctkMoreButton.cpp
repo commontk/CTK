@@ -22,54 +22,61 @@
 #include <QDebug>
 #include <QEvent>
 #include <QIcon>
+#include <QStyle>
 
 // CTK includes
-#include "ctkButton.h"
+#include "ctkMoreButton.h"
 
-class ctkButtonPrivate
+class ctkMoreButtonPrivate
 {
-  Q_DECLARE_PUBLIC(ctkButton);
+  Q_DECLARE_PUBLIC(ctkMoreButton);
 protected:
-  ctkButton* const q_ptr;
+  ctkMoreButton* const q_ptr;
 public:
-  ctkButtonPrivate(ctkButton& object);
+  ctkMoreButtonPrivate(ctkMoreButton& object);
   void init();
 
 };
 
-ctkButtonPrivate::ctkButtonPrivate(ctkButton &object)
+//-----------------------------------------------------------------------------
+ctkMoreButtonPrivate::ctkMoreButtonPrivate(ctkMoreButton &object)
   : q_ptr(&object)
 {
 }
 
-void ctkButtonPrivate::init()
+//-----------------------------------------------------------------------------
+void ctkMoreButtonPrivate::init()
 {
-  Q_Q(ctkButton);
-  q->setIcon(QIcon(":/Icons/left.png"));
+  Q_Q(ctkMoreButton);
+  q->setIcon(QIcon(":/Icons/more-right.png"));
+  q->setIconSize(
+      QSize(q->style()->pixelMetric(QStyle::PM_ToolBarExtensionExtent),
+            q->style()->pixelMetric(QStyle::PM_ToolBarExtensionExtent)));
   q->setFlat(true);
   q->setCheckable(true);
-  q->setFixedWidth(10);
+  q->setFixedWidth(q->style()->pixelMetric(QStyle::PM_ToolBarExtensionExtent));
   q->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Minimum);
 }
 
 //-----------------------------------------------------------------------------
-// ctkButton methods
+// ctkMoreButton methods
 
 //-----------------------------------------------------------------------------
-ctkButton::ctkButton(QWidget *_parent)
+ctkMoreButton::ctkMoreButton(QWidget *_parent)
   :Superclass(_parent)
-  , d_ptr(new ctkButtonPrivate(*this))
+  , d_ptr(new ctkMoreButtonPrivate(*this))
 {
-  Q_D(ctkButton);
+  Q_D(ctkMoreButton);
   d->init();
 }
 
 //-----------------------------------------------------------------------------
-ctkButton::~ctkButton()
+ctkMoreButton::~ctkMoreButton()
 {
 }
 
-bool ctkButton::event(QEvent *e)
+//-----------------------------------------------------------------------------
+bool ctkMoreButton::event(QEvent *e)
 {
   if (e->type() == QEvent::Leave)
     {

@@ -20,28 +20,39 @@
 
 // Qt includes
 #include <QApplication>
+#include <QComboBox>
 #include <QHBoxLayout>
 #include <QTimer>
-#include <QToolBar>
-#include <QToolButton>
 #include <QWidget>
 
 // CTK includes
-#include "ctkButton.h"
+#include "ctkMoreButton.h"
 
 // STD includes
 
 //-----------------------------------------------------------------------------
-int ctkButtonTest1(int argc, char* argv[])
+int ctkMoreButtonTest1(int argc, char* argv[])
 {
   QApplication app(argc, argv);
 
   QWidget widget(0);
   widget.show();
+
   QHBoxLayout* layout = new QHBoxLayout(&widget);
-  ctkButton* button = new ctkButton(&widget);
+  ctkMoreButton* button = new ctkMoreButton(&widget);
   layout->addWidget(button);
 
+  QPushButton* pushButton = new QPushButton("test");
+  layout->addWidget(pushButton);
+  pushButton->setVisible(false);
+  QPushButton* pushButton2 = new QPushButton("foo");
+  layout->addWidget(pushButton2);
+  pushButton2->setVisible(false);
+
+  QObject::connect(button, SIGNAL(clicked(bool)),
+                   pushButton, SLOT(setVisible(bool)));
+  QObject::connect(button, SIGNAL(clicked(bool)),
+                   pushButton2, SLOT(setVisible(bool)));
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(500, &app, SLOT(quit()));

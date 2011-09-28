@@ -5,7 +5,6 @@ SET(TEST_SOURCES
   ctkAddRemoveComboBoxTest1.cpp
   ctkAxesWidgetTest1.cpp
   ctkButtonGroupTest1.cpp
-  ctkButtonTest1.cpp
   ctkCheckBoxPixmapsTest1.cpp
   ctkCheckableComboBoxTest1.cpp
   ctkCheckableHeaderViewTest1.cpp
@@ -47,6 +46,7 @@ SET(TEST_SOURCES
   ctkMenuComboBoxTest2.cpp
   ctkMenuComboBoxTest3.cpp
   ctkModalityWidgetTest1.cpp
+  ctkMoreButtonTest1.cpp
   ctkPathLineEditTest1.cpp
   ctkPopupWidgetTest1.cpp
   ctkRangeSliderTest1.cpp
@@ -132,7 +132,6 @@ SIMPLE_TEST( ctkActionsWidgetTest1 )
 SIMPLE_TEST( ctkAddRemoveComboBoxTest1 )
 SIMPLE_TEST( ctkAxesWidgetTest1 )
 SIMPLE_TEST( ctkButtonGroupTest1 )
-SIMPLE_TEST( ctkButtonTest1 )
 SIMPLE_TEST( ctkCheckBoxPixmapsTest1 )
 SIMPLE_TEST( ctkCheckableComboBoxTest1 )
 SIMPLE_TEST( ctkCheckableHeaderViewTest1 )
@@ -177,6 +176,7 @@ SIMPLE_TEST( ctkMenuComboBoxTest1 )
 SIMPLE_TEST( ctkMenuComboBoxTest2 )
 SIMPLE_TEST( ctkMenuComboBoxTest3 )
 SIMPLE_TEST( ctkModalityWidgetTest1 )
+SIMPLE_TEST( ctkMoreButtonTest1 )
 SIMPLE_TEST( ctkPathLineEditTest1 )
 SIMPLE_TEST( ctkPopupWidgetTest1 )
 SIMPLE_TEST( ctkRangeSliderTest1 )

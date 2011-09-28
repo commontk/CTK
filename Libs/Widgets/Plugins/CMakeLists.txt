@@ -16,8 +16,6 @@ SET(PLUGIN_SRCS
   ctkActionsWidgetPlugin.h
   ctkAxesWidgetPlugin.cpp
   ctkAxesWidgetPlugin.h
-  ctkButtonPlugin.cpp
-  ctkButtonPlugin.h
   ctkCheckableComboBoxPlugin.cpp
   ctkCheckableComboBoxPlugin.h
   ctkCollapsibleButtonPlugin.cpp
@@ -56,6 +54,8 @@ SET(PLUGIN_SRCS
   ctkMenuButtonPlugin.h
   ctkModalityWidgetPlugin.cpp
   ctkModalityWidgetPlugin.h
+  ctkMoreButtonPlugin.cpp
+  ctkMoreButtonPlugin.h
   ctkPathLineEditPlugin.cpp
   ctkPathLineEditPlugin.h
   ctkPopupWidgetPlugin.cpp
@@ -90,7 +90,6 @@ SET(PLUGIN_MOC_SRCS
 
   ctkActionsWidgetPlugin.h
   ctkAxesWidgetPlugin.h
-  ctkButtonPlugin.h
   ctkCheckableComboBoxPlugin.h
   ctkCollapsibleButtonPlugin.h
   ctkCollapsibleGroupBoxPlugin.h
@@ -110,6 +109,7 @@ SET(PLUGIN_MOC_SRCS
   ctkMatrixWidgetPlugin.h
   ctkMenuButtonPlugin.h
   ctkModalityWidgetPlugin.h
+  ctkMoreButtonPlugin.h
   ctkPathLineEditPlugin.h
   ctkPopupWidgetPlugin.h
   ctkRangeSliderPlugin.h

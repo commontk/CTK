@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkButton_h
-#define __ctkButtoo_h
+#ifndef __ctkMoreButton_h
+#define __ctkMoreButton_h
 
 // QT includes
 #include <QPushButton>
@@ -29,7 +29,7 @@
 
 #include "ctkWidgetsExport.h"
 
-class ctkButtonPrivate;
+class ctkMoreButtonPrivate;
 
 /// QPushButton with a default QIcon "<<"
 /// This button has the same behavior as the extension
@@ -38,25 +38,25 @@ class ctkButtonPrivate;
 /// or hide, some others widgets.
 
 
-class CTK_WIDGETS_EXPORT  ctkButton : public QPushButton
+class CTK_WIDGETS_EXPORT  ctkMoreButton : public QPushButton
 {
   Q_OBJECT
 public:
   /// Superclass typedef
   typedef QPushButton Superclass;
 
-  explicit ctkButton(QWidget *_parent = 0);
-  virtual ~ctkButton();
+  explicit ctkMoreButton(QWidget *_parent = 0);
+  virtual ~ctkMoreButton();
 
 protected:
   virtual bool event(QEvent *e);
 
 protected:
-  QScopedPointer<ctkButtonPrivate> d_ptr;
+  QScopedPointer<ctkMoreButtonPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkButton);
-  Q_DISABLE_COPY(ctkButton);
+  Q_DECLARE_PRIVATE(ctkMoreButton);
+  Q_DISABLE_COPY(ctkMoreButton);
 };
 
 #endif

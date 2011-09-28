@@ -176,7 +176,7 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkButton" name="HideShowButton">
+      <widget class="ctkMoreButton" name="HideShowButton">
        <property name="contextMenuPolicy">
         <enum>Qt::DefaultContextMenu</enum>
        </property>
@@ -235,9 +235,9 @@
    <header>ctkDoubleRangeSlider.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkButton</class>
+   <class>ctkMoreButton</class>
    <extends>QPushButton</extends>
-   <header location="global">ctkButton.h</header>
+   <header location="global">ctkMoreButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
