@@ -49,6 +49,8 @@ int ctkMoreButtonTest1(int argc, char* argv[])
   layout->addWidget(pushButton2);
   pushButton2->setVisible(false);
 
+  button->setCustomBehavior(true);
+
   QObject::connect(button, SIGNAL(clicked(bool)),
                    pushButton, SLOT(setVisible(bool)));
   QObject::connect(button, SIGNAL(clicked(bool)),

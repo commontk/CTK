@@ -124,6 +124,7 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   q->qvtkConnect(this->View->chart()->GetAxis(1),vtkCommand::ModifiedEvent,
                     q, SLOT(onAxesModified()));
 
+  this->HideShowButton->setCustomBehavior(true);
   QObject::connect(this->HideShowButton, SIGNAL(clicked(bool)),
                    q, SLOT(onHideShowButton(bool)));
 }

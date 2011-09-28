@@ -48,6 +48,9 @@ public:
   explicit ctkMoreButton(QWidget *_parent = 0);
   virtual ~ctkMoreButton();
 
+  void setCustomBehavior(bool state);
+  bool customBehavior() const;
+
 protected:
   virtual bool event(QEvent *e);
 

@@ -35,13 +35,14 @@ protected:
 public:
   ctkMoreButtonPrivate(ctkMoreButton& object);
   void init();
-
+  bool customBehavior;
 };
 
 //-----------------------------------------------------------------------------
 ctkMoreButtonPrivate::ctkMoreButtonPrivate(ctkMoreButton &object)
   : q_ptr(&object)
 {
+  this->customBehavior = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -76,8 +77,23 @@ ctkMoreButton::~ctkMoreButton()
 }
 
 //-----------------------------------------------------------------------------
+void ctkMoreButton::setCustomBehavior(bool newState)
+{
+  Q_D(ctkMoreButton);
+  d->customBehavior = newState;
+}
+
+//-----------------------------------------------------------------------------
+bool ctkMoreButton::customBehavior() const
+{
+  Q_D(const ctkMoreButton);
+  return d->customBehavior;
+}
+
+//-----------------------------------------------------------------------------
 bool ctkMoreButton::event(QEvent *e)
 {
+  Q_D(ctkMoreButton);
   if (e->type() == QEvent::Leave)
     {
     this->setFlat(true);
@@ -85,6 +101,16 @@ bool ctkMoreButton::event(QEvent *e)
   if (e->type() == QEvent::Enter)
     {
     this->setFlat(false);
+    }
+  if (d->customBehavior &&
+      e->type() == QEvent::MouseButtonPress)
+    {
+    QIcon icon = this->isChecked() ? QIcon(":/Icons/more-right.png") :
+                 QIcon(":/Icons/more-left.png");
+    this->setIcon(icon);
+    this->setIconSize(
+        QSize(this->style()->pixelMetric(QStyle::PM_ToolBarExtensionExtent),
+              this->style()->pixelMetric(QStyle::PM_ToolBarExtensionExtent)));
     }
 
   return this->Superclass::event(e);
