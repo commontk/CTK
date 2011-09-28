@@ -127,7 +127,8 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->DICOMProxyModel.setSourceModel(&d->DICOMModel);
   d->TreeView->setModel(&d->DICOMModel);
 
-  d->ThumbnailsWidget->setThumbnailWidth(d->ThumbnailWidthSlider->value());
+  d->ThumbnailsWidget->setThumbnailSize(
+    QSize(d->ThumbnailWidthSlider->value(), d->ThumbnailWidthSlider->value()));
 
   connect(d->TreeView, SIGNAL(collapsed(QModelIndex)), this, SLOT(onTreeCollapsed(QModelIndex)));
   connect(d->TreeView, SIGNAL(expanded(QModelIndex)), this, SLOT(onTreeExpanded(QModelIndex)));
@@ -660,7 +661,7 @@ void ctkDICOMAppWidget::onAutoPlayTimer(){
 //----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onThumbnailWidthSliderValueChanged(int val){
   Q_D(ctkDICOMAppWidget);
-  d->ThumbnailsWidget->setThumbnailWidth(val);
+  d->ThumbnailsWidget->setThumbnailSize(QSize(val, val));
 }
 
 //----------------------------------------------------------------------------

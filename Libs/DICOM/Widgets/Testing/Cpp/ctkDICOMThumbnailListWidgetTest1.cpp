@@ -20,53 +20,21 @@
 
 // Qt includes
 #include <QApplication>
-#include <QList>
-#include <QPixmap>
+#include <QDir>
 #include <QTimer>
-#include <QVariant>
 
 // ctkDICOMCore includes
-#include "ctkThumbnailListWidget.h"
+#include "ctkDICOMThumbnailListWidget.h"
 
 // STD includes
 #include <iostream>
 
-int ctkThumbnailListWidgetTest1( int argc, char * argv [] )
+int ctkDICOMThumbnailListWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkThumbnailListWidget widget;
-
-  QPixmap pix1(QSize(128, 128));;
-  QPixmap pix2(QSize(64, 64));
-  QPixmap pix3(QSize(256, 256));
-  QPixmap pix4(QSize(256, 128));
-
-
-  pix1.fill(Qt::green);
-  pix2.fill(Qt::yellow);
-  pix3.fill(Qt::blue);
-  pix4.fill(Qt::red);
-
-  QList<QPixmap> pixList;
-
-  widget.setThumbnailSize(QSize(128, 128));
-  if(widget.thumbnailSize() != QSize(128, 128))
-    {
-      std::cerr << "ctkThumbnailListWidget::setThumbnailWidth failed."
-        << " size: " << widget.thumbnailSize().width()
-        << "," << widget.thumbnailSize().height()
-        << " expected: 128" << std::endl;
-      return EXIT_FAILURE;
-    }
-
-  pixList.append(pix1);
-  pixList.append(pix2);
-  pixList.append(pix3);
-  pixList.append(pix4);
-
-  widget.addThumbnails(pixList);
-
+  ctkDICOMThumbnailListWidget widget;
+  widget.setDatabaseDirectory(QDir::currentPath());
   widget.show();
 
   if (argc <= 1 || QString(argv[1]) != "-I")

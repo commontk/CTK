@@ -199,9 +199,8 @@ void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& i
         widget->setText( widgetLabel );
         QPixmap pix(thumbnailPath);
         logger.debug("Setting pixmap to " + thumbnailPath);
-        if(this->ThumbnailWidth > 0){
-          widget->setMaximumWidth(this->ThumbnailWidth);
-          widget->setMinimumWidth(this->ThumbnailWidth);
+        if(this->ThumbnailSize.isValid()){
+          widget->setFixedSize(this->ThumbnailSize);
         }
         widget->setPixmap(pix);
 

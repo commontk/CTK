@@ -34,7 +34,7 @@ class CTK_WIDGETS_EXPORT ctkThumbnailListWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(int currentThumbnail READ currentThumbnail WRITE setCurrentThumbnail)
-  Q_PROPERTY(int thumbnailWidth READ thumbnailWidth WRITE setThumbnailWidth)
+  Q_PROPERTY(QSize thumbnailSize READ thumbnailSize WRITE setThumbnailSize)
 public:
   typedef QWidget Superclass;
   explicit ctkThumbnailListWidget(QWidget* parent=0);
@@ -53,17 +53,18 @@ public:
   void clearThumbnails();
 
   /// Get thumbnail width
-  int thumbnailWidth();
+  QSize thumbnailSize()const;
+
+public slots:
+  /// Set thumbnail width
+  void setThumbnailSize(QSize size);
 
 signals:
   void selected(const ctkThumbnailWidget& widget);
   void doubleClicked(const ctkThumbnailWidget& widget);
 
-public slots:
+protected slots:
   void onThumbnailSelected(const ctkThumbnailWidget& widget);
-
-  /// Set thumbnail width
-  void setThumbnailWidth(int width);
 
 protected:
   explicit ctkThumbnailListWidget(ctkThumbnailListWidgetPrivate* ptr, QWidget* parent=0);
