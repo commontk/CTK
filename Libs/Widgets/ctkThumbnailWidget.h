@@ -32,9 +32,12 @@ class ctkThumbnailWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkThumbnailWidget : public QWidget
 {
   Q_OBJECT
+  /// If the text is empty, the space allocated for the text is hidden
+  /// Empty by default
   Q_PROPERTY(QString text READ text WRITE setText)
   /// Position of the text relative to the pixmap.
   /// Qt::AlignTop | Qt::AlignHCenter by default.
+  /// For now, if the alignment is HCenter|VCenter, no text is shown.
   Q_PROPERTY(Qt::Alignment textPosition READ textPosition WRITE setTextPosition)
   Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
   /// Qt::FastTransformation by default
@@ -66,9 +69,14 @@ public:
   void setSelectedColor(const QColor& color);
   QColor selectedColor()const;
 
+  virtual QSize minimumSizeHint()const;
+  virtual QSize sizeHint()const;
+  virtual int heightForWidth(int width)const;
+
 protected:
   QScopedPointer<ctkThumbnailWidgetPrivate> d_ptr;
 
+  virtual void paintEvent(QPaintEvent* event);
   virtual void mousePressEvent(QMouseEvent* event);
   virtual void mouseDoubleClickEvent(QMouseEvent* event);
 

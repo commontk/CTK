@@ -18,39 +18,45 @@
 
 =========================================================================*/
 
-// ctkDICOMWidgets includes
+// Qt includes
+#include <QApplication>
+#include <QColor>
+#include <QPainter>
+
+// ctkCore includes
+#include "ctkLogger.h"
+static ctkLogger logger("org.commontk.Widgets.ctkThumbnailWidget");
+
+// ctkWidgets includes
 #include "ctkThumbnailWidget.h"
 #include "ui_ctkThumbnailWidget.h"
 
 // STD includes
 #include <iostream>
 
-// Qt includes
-#include <QColor>
-
-// logger includes
-#include "ctkLogger.h"
-static ctkLogger logger("org.commontk.Widgets.ctkDICOMThumbnailListWidget");
-
 //----------------------------------------------------------------------------
 class ctkThumbnailWidgetPrivate: public Ui_ctkThumbnailWidget
 {
+  Q_DECLARE_PUBLIC(ctkThumbnailWidget);
+protected:
+  ctkThumbnailWidget* const q_ptr;
 public:
-    ctkThumbnailWidget* const q_ptr;
-    Q_DECLARE_PUBLIC(ctkThumbnailWidget);
+  typedef Ui_ctkThumbnailWidget Superclass;
 
-    // Constructor
-    ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent);
+  // Constructor
+  ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent);
 
-    Qt::Alignment TextPosition;
-    bool SelectedFlag;
-    QColor SelectedColor;
-    QModelIndex SourceIndex;
-    QPixmap OriginalThumbnail;
-    Qt::TransformationMode TransformationMode;
+  virtual void setupUi(QWidget* widget);
 
-    // Redraw thumbnail
-    void updateThumbnail();
+  Qt::Alignment TextPosition;
+  bool SelectedFlag;
+  QColor SelectedColor;
+  QModelIndex SourceIndex;
+  QPixmap OriginalThumbnail;
+  Qt::TransformationMode TransformationMode;
+
+  // Redraw thumbnail
+  void updateThumbnail();
 };
 
 //----------------------------------------------------------------------------
@@ -66,6 +72,16 @@ ctkThumbnailWidgetPrivate::ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent)
   this->SelectedColor = q->palette().color(QPalette::Highlight);
   this->TextPosition = Qt::AlignTop | Qt::AlignHCenter;
   this->TransformationMode = Qt::FastTransformation;
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailWidgetPrivate::setupUi(QWidget* widget)
+{
+  Q_Q(ctkThumbnailWidget);
+  this->Superclass::setupUi(widget);
+  q->layout()->setSizeConstraint(QLayout::SetNoConstraint);
+  // no text by default
+  q->setText(QString());
 }
 
 //----------------------------------------------------------------------------
@@ -89,7 +105,6 @@ ctkThumbnailWidget::ctkThumbnailWidget(QWidget* parentWidget)
   Q_D(ctkThumbnailWidget);
 
   d->setupUi(this);
-  this->setTextPosition(Qt::AlignTop | Qt::AlignHCenter);
 }
 
 //----------------------------------------------------------------------------
@@ -103,6 +118,9 @@ void ctkThumbnailWidget::setText(const QString &text)
   Q_D(ctkThumbnailWidget);
 
   d->TextLabel->setText(text);
+  d->TextLabel->setVisible(!text.isEmpty() &&
+    ! (d->TextPosition & Qt::AlignHCenter &&
+       d->TextPosition & Qt::AlignVCenter) );
 }
 
 //----------------------------------------------------------------------------
@@ -206,23 +224,26 @@ void ctkThumbnailWidget::setTransformationMode(Qt::TransformationMode mode)
 }
 
 //----------------------------------------------------------------------------
+void ctkThumbnailWidget::paintEvent(QPaintEvent* event)
+{
+  Q_D(ctkThumbnailWidget);
+  this->Superclass::paintEvent(event);
+  if (d->SelectedFlag && d->SelectedColor.isValid())
+    {
+    QPainter p(this);
+    QPen pen(d->SelectedColor);
+    pen.setWidth(7);
+    p.setPen(pen);
+    p.drawRect(QRect(0,0, this->width() -1, this->height() -1));
+    }
+}
+
+//----------------------------------------------------------------------------
 void ctkThumbnailWidget::setSelected(bool flag)
 {
   Q_D(ctkThumbnailWidget);
-
-  if(flag && d->SelectedColor.isValid())
-    {
-    QPalette p(this->palette());
-    p.setColor(QPalette::Window, d->SelectedColor);
-    this->setPalette(p);
-    this->setAutoFillBackground(true);
-    }
-  else
-    {
-    this->setAutoFillBackground(false);
-    }
-
   d->SelectedFlag = flag;
+  this->update();
 }
 
 //----------------------------------------------------------------------------
@@ -237,8 +258,7 @@ void ctkThumbnailWidget::setSelectedColor(const QColor& color)
 {
   Q_D(ctkThumbnailWidget);
   d->SelectedColor = color;
-  // repaint if the color has changed.
-  this->setSelected(this->isSelected());
+  this->update();
 }
 
 //----------------------------------------------------------------------------
@@ -246,6 +266,41 @@ QColor ctkThumbnailWidget::selectedColor()const
 {
   Q_D(const ctkThumbnailWidget);
   return d->SelectedColor;
+}
+
+//----------------------------------------------------------------------------
+QSize ctkThumbnailWidget::minimumSizeHint()const
+{
+  Q_D(const ctkThumbnailWidget);
+  if (d->TextLabel->isVisibleTo(const_cast<ctkThumbnailWidget*>(this)) &&
+      !d->TextLabel->text().isEmpty())
+    {
+    return d->TextLabel->minimumSizeHint();
+    }
+  return QSize();
+}
+
+//----------------------------------------------------------------------------
+QSize ctkThumbnailWidget::sizeHint()const
+{
+  Q_D(const ctkThumbnailWidget);
+  return d->OriginalThumbnail.isNull() ?
+    this->Superclass::sizeHint() :
+    d->OriginalThumbnail.size().expandedTo(QApplication::globalStrut());
+}
+
+//----------------------------------------------------------------------------
+int ctkThumbnailWidget::heightForWidth(int width)const
+{
+  Q_D(const ctkThumbnailWidget);
+  if (d->OriginalThumbnail.isNull() ||
+      d->OriginalThumbnail.width() == 0)
+    {
+    return this->Superclass::heightForWidth(width);
+    }
+  double ratio = static_cast<double>(d->OriginalThumbnail.height()) /
+    static_cast<double>(d->OriginalThumbnail.width());
+  return static_cast<int>(ratio * width + 0.5);
 }
 
 //----------------------------------------------------------------------------
