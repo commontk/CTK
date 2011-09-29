@@ -13,7 +13,7 @@ ENDIF()
 
 SET(KIT_export_directive "CTK_SCRIPTING_PYTHON_CORE_EXPORT")
 
-  
+
 # Source files
 SET(KIT_SRCS
   ctkAbstractPythonManager.cpp
@@ -64,7 +64,6 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
-  DISABLE_WRAP_PYTHONQT
   )
 
 # Plugins

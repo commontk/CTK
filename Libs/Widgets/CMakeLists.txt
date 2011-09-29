@@ -160,17 +160,6 @@ SET(KIT_SRCS
   ctkWorkflowWidgetStep.h
   )
 
-IF(CTK_WRAP_PYTHONQT_LIGHT)
-  LIST(APPEND KIT_SRCS
-    ctkWidgetsPythonQtDecorators.h
-    )
-  # Let's make sure the decorator are not wrapped !
-  SET_SOURCE_FILES_PROPERTIES(
-    ctkWidgetsPythonQtDecorators.h
-    WRAP_EXCLUDE
-    )
-ENDIF()
-
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkActionsWidget.h
@@ -250,13 +239,6 @@ SET(KIT_MOC_SRCS
   ctkWorkflowWidgetStep_p.h
   )
 
-
-IF(CTK_WRAP_PYTHONQT_LIGHT)
-  LIST(APPEND KIT_MOC_SRCS
-    ctkWidgetsPythonQtDecorators.h
-    )
-ENDIF()
-
 # UI files
 SET(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
@@ -291,6 +273,12 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
+  )
+
+ctkMacroBuildLibWrapper(
+  TARGET ${PROJECT_NAME}
+  SRCS ${KIT_SRCS}
+  WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
 # Plugins

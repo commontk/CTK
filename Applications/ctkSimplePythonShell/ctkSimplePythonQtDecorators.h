@@ -21,16 +21,11 @@
 #ifndef __ctkSimplePythonQtDecorators_h
 #define __ctkSimplePythonQtDecorators_h
 
-// CTK includes
-#include "ctkSimplePythonShellConfigure.h" // For CTK_WRAP_PYTHONQT_LIGHT
-#include <ctkAbstractPythonManager.h>
-#ifdef CTK_WRAP_PYTHONQT_LIGHT
-# include <ctkCorePythonQtDecorators.h>
-# include <ctkWidgetsPythonQtDecorators.h>
-#endif
-
 // PythonQt includes
 #include <PythonQt.h>
+
+// CTK includes
+#include <ctkAbstractPythonManager.h>
 
 // NOTE:
 //
@@ -47,19 +42,11 @@ public:
 
   ctkSimplePythonQtDecorators(ctkAbstractPythonManager* pythonManager)
     {
-    Q_ASSERT(pythonManager);
-#ifdef CTK_WRAP_PYTHONQT_LIGHT
-    pythonManager->registerPythonQtDecorator(new ctkCorePythonQtDecorators);
-    pythonManager->registerPythonQtDecorator(new ctkWidgetsPythonQtDecorators);
-#else
     Q_UNUSED(pythonManager);
-#endif
     }
 
 public slots:
 
-  
-  
 };
 
 #endif

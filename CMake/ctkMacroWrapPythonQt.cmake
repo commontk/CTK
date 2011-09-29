@@ -43,6 +43,8 @@
 #!
 #!    IS_WRAP_FULL .....: Indicate if a Full wrapping if desired.
 #!
+#!    HAS_DECORATOR ....: Indicate if a custom PythonQt decorator header is expected.
+#!
 
 #!
 #! LOG FILE:
@@ -89,7 +91,7 @@ else: print 'TRUE'
     ERROR_VARIABLE error
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-  
+
   IF(result)
     MESSAGE(FATAL_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}")
   ENDIF()
@@ -97,13 +99,13 @@ else: print 'TRUE'
 ENDFUNCTION()
 
 #! \ingroup CMakeUtilities
-MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_WRAP_FULL)
-  
+MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_WRAP_FULL HAS_DECORATOR)
+
   # Sanity check
   IF(IS_WRAP_FULL AND NOT EXISTS "${PYTHONQTGENERATOR_EXECUTABLE}")
     MESSAGE(FATAL_ERROR "PYTHONQTGENERATOR_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
   ENDIF()
-  
+
   # TODO: this find package seems not to work when called form a superbuild, but the call is needed
   # in general to find the python interpreter.  In CTK, the toplevel CMakeLists.txt does the find
   # package so this is a no-op.  Other uses of this file may need to have this call so it is still enabled.
@@ -118,19 +120,19 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   IF(WIN32)
     set(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH})
   ENDIF(WIN32)
-  
+
   # Clear log file
   FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "")
-  
+
   # Convert wrapping namespace to subdir
   STRING(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
-  
+
   SET(SOURCES_TO_WRAP)
   # For each class
   FOREACH(FILE ${SOURCES})
-  
+
     SET(skip_wrapping FALSE)
-    
+
     IF(NOT skip_wrapping)
       # Skip wrapping if file is NOT regular header
       IF(NOT ${FILE} MATCHES "^.*\\.[hH]$")
@@ -138,7 +140,7 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
         ctkMacroWrapPythonQt_log("${FILE}: skipping - Not a regular header")
       ENDIF()
     ENDIF()
-    
+
     IF(NOT skip_wrapping)
       # Skip wrapping if file is a pimpl header
       IF(${FILE} MATCHES "^.*_[pP]\\.[hH]$")
@@ -146,7 +148,7 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
         ctkMacroWrapPythonQt_log("${FILE}: skipping - Pimpl header (*._p.h)")
       ENDIF()
     ENDIF()
-    
+
     IF(NOT skip_wrapping)
       # Skip wrapping if file should excluded
       SET(skip_wrapping TRUE)
@@ -158,13 +160,13 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
         ctkMacroWrapPythonQt_log("${FILE}: skipping - WRAP_EXCLUDE")
       ENDIF()
     ENDIF()
-    
+
     # what is the filename without the extension
     GET_FILENAME_COMPONENT(TMP_FILENAME ${FILE} NAME_WE)
-    
+
     # Extract classname - NOTE: We assume the filename matches the associated class
     SET(className ${TMP_FILENAME})
-    
+
     IF(NOT skip_wrapping)
       # Skip wrapping if IS_WRAP_FULL=FALSE and if file do NOT contain Q_OBJECT
       IF(NOT IS_WRAP_FULL)
@@ -175,7 +177,7 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
         ENDIF()
       ENDIF()
     ENDIF()
-    
+
     IF(NOT skip_wrapping)
       # Skip wrapping if IS_WRAP_FULL=FALSE and if constructor doesn't match:
       #    my_class()
@@ -192,9 +194,9 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
         ENDIF()
       ENDIF()
     ENDIF()
-    
+
     IF(NOT skip_wrapping)
-      # Skip wrapping if object has a virtual pure method 
+      # Skip wrapping if object has a virtual pure method
       # "x3b" is the unicode for semicolon
       SET(regex "virtual[\\w\\n\\s\\*\\(\\)]+\\=[\\s\\n]*(0|NULL)[\\s\\n]*\\x3b")
       ctkMacroWrapPythonQt_reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH}
@@ -204,37 +206,37 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
         ctkMacroWrapPythonQt_log("${FILE}: skipping - Contains a virtual pure method")
       ENDIF()
     ENDIF()
-    
+
     # if we should wrap it
     IF (NOT skip_wrapping)
-      
+
       # the input file might be full path so handle that
       GET_FILENAME_COMPONENT(TMP_FILEPATH ${FILE} PATH)
-      
+
       # compute the input filename
       IF (TMP_FILEPATH)
-        SET(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.h) 
+        SET(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.h)
       ELSE (TMP_FILEPATH)
         SET(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TMP_FILENAME}.h)
       ENDIF (TMP_FILEPATH)
-        
+
       LIST(APPEND SOURCES_TO_WRAP ${TMP_INPUT})
-        
+
     ENDIF()
   ENDFOREACH()
-  
+
   # PythonQtGenerator expects a colon ':' separated list
   SET(INCLUDE_DIRS_TO_WRAP)
   FOREACH(include ${CTK_BASE_INCLUDE_DIRS})
     SET(INCLUDE_DIRS_TO_WRAP "${INCLUDE_DIRS_TO_WRAP}:${include}")
   ENDFOREACH()
-  
+
   # Prepare custom_command argument
   SET(SOURCES_TO_WRAP_ARG)
   FOREACH(source ${SOURCES_TO_WRAP})
     SET(SOURCES_TO_WRAP_ARG "${SOURCES_TO_WRAP_ARG}^^${source}")
   ENDFOREACH()
-  
+
   # Define wrap type and wrap intermediate directory
   SET(wrap_type "Light")
   SET(wrap_int_dir generated_cpp/${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}/)
@@ -244,10 +246,10 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     SET(extra_files ${wrap_int_dir}ctkPythonQt_${TARGET}_masterinclude.h)
   ENDIF()
   #message("wrap_type:${wrap_type} - wrap_int_dir:${wrap_int_dir}")
-  
+
   # Create intermediate output directory
   EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir})
-  
+
   # On Windows, to avoid "too long input" error, dump INCLUDE_DIRS_TO_WRAP into a file
   IF(WIN32)
     # File containing the moc flags
@@ -257,14 +259,14 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     # The arg passed to the custom command will be the file containing the list of include dirs to wrap
     SET(INCLUDE_DIRS_TO_WRAP ${include_dirs_to_wrap_file})
   ENDIF()
-  
+
   set(wrapper_init_cpp_filename ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp)
   set(wrapper_init_cpp_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_init_cpp_filename})
 
   set(wrapper_module_init_cpp_filename ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_module_init.cpp)
   set(wrapper_module_init_cpp_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_module_init_cpp_filename})
 
-  # Custom command allow to generate ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp and 
+  # Custom command allow to generate ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp and
   # associated wrappers ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}{0-N}.cpp
   ADD_CUSTOM_COMMAND(
     OUTPUT
@@ -287,17 +289,18 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       -DOUTPUT_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}
       -DWRAP_INT_DIR:STRING=${wrap_int_dir}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      -DHAS_DECORATOR:BOOL=${HAS_DECORATOR}
       -P ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_${wrap_type}.cmake
     COMMENT "PythonQt ${wrap_type} Wrapping - Generating ${wrapper_init_cpp_filename}"
     VERBATIM
     )
-  
+
   # Clear variable
   SET(moc_flags)
-  
+
   # Grab moc flags
   QT4_GET_MOC_FLAGS(moc_flags)
-  
+
   # Prepare custom_command argument
   SET(moc_flags_arg)
   FOREACH(flag ${moc_flags})
@@ -313,11 +316,11 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     # The arg passed to the custom command will be the file containing the list of moc flags
     SET(moc_flags_arg ${wrapper_master_moc_flags_file})
   ENDIF()
-  
+
   # File to run through moc
   SET(wrapper_master_moc_filename moc_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_all.cpp)
   SET(wrapper_master_moc_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_master_moc_filename})
-  
+
   # Custom command allowing to call moc to process the wrapper headers
   ADD_CUSTOM_COMMAND(
     OUTPUT ${wrap_int_dir}${wrapper_master_moc_filename}
@@ -337,21 +340,22 @@ MACRO(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     COMMENT "PythonQt ${wrap_type} Wrapping - Moc'ing ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET} wrapper headers"
     VERBATIM
     )
-  
-  #The following files are generated
+
+  # The following files are generated
   SET_SOURCE_FILES_PROPERTIES(
     ${wrap_int_dir}${wrapper_init_cpp_filename}
     ${wrap_int_dir}${wrapper_module_init_cpp_filename}
     ${wrap_int_dir}${wrapper_master_moc_filename}
     PROPERTIES GENERATED TRUE)
-    
+
   # Create the Init File
-  SET(${SRCS_LIST_NAME} 
+  SET(${SRCS_LIST_NAME}
     ${${SRCS_LIST_NAME}}
     ${wrap_int_dir}${wrapper_init_cpp_filename}
     ${wrap_int_dir}${wrapper_module_init_cpp_filename}
-    ${wrap_int_dir}${wrapper_master_moc_filename})
-  
+    ${wrap_int_dir}${wrapper_master_moc_filename}
+    )
+
   #
   # Let's include the headers associated with PythonQt
   #

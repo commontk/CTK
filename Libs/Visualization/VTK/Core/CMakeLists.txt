@@ -11,7 +11,7 @@ INCLUDE(${VTK_USE_FILE})
 
 SET(KIT_export_directive "CTK_VISUALIZATION_VTK_CORE_EXPORT")
 
-  
+
 # Source files
 SET(KIT_SRCS
   ctkVTKColorTransferFunction.cpp
@@ -82,6 +82,12 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
+  )
+
+ctkMacroBuildLibWrapper(
+  TARGET ${PROJECT_NAME}
+  SRCS ${KIT_SRCS}
+  WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
 # Plugins

@@ -28,21 +28,22 @@
 #
 
 #
-# This script should be invoked either as a CUSTOM_COMMAND 
+# This script should be invoked either as a CUSTOM_COMMAND
 # or from the command line using the following syntax:
 #
-#    cmake -DWRAPPING_NAMESPACE:STRING=org.commontk -DTARGET:STRING=MyLib 
+#    cmake -DWRAPPING_NAMESPACE:STRING=org.commontk -DTARGET:STRING=MyLib
 #          -DSOURCES:STRING="file1^^file2" -DINCLUDE_DIRS:STRING=/path1:/path2
 #          -DWRAP_INT_DIR:STRING=subir/subir/
 #          -DOUTPUT_DIR:PATH=/path  -DQT_QMAKE_EXECUTABLE:PATH=/path/to/qt/qmake
 #          -DPYTHON_EXECUTABLE:FILEPATH=/path/to/python
 #          -DPYTHON_LIBRARY_PATH:PATH=/path/to/pythonlib
+#          -DHAS_DECORATOR:BOOL=True
 #          -P ctkScriptWrapPythonQt_Light.cmake
 #
 
 #
 # LOG FILE:
-#   File ctkScriptWrapPythonQt_Light_log.txt will be created in the current directory. 
+#   File ctkScriptWrapPythonQt_Light_log.txt will be created in the current directory.
 #   It will contain the list of class and the constructor signature that will be wrapped.
 #
 
@@ -67,11 +68,11 @@ FUNCTION(reSearchFile python_exe python_library_path regex file is_matching)
 
   set(python_cmd "import re\; f = open('${file}', 'r')\;
 res = re.search\(\"${regex}\", f.read(), re.MULTILINE\)\;
-if res == None: print \"FALSE\" 
+if res == None: print \"FALSE\"
 else: print \"TRUE\"
 ")
   #message("python_cmd: ${python_cmd}")
-  
+
   IF(WIN32)
     SET(ENV{PATH} ${python_library_path};$ENV{PATH})
   ELSEIF(APPLE)
@@ -87,13 +88,13 @@ else: print \"TRUE\"
     ERROR_VARIABLE error
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-  
+
   IF(result)
     MESSAGE(FATAL_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}")
   ENDIF()
   #message(${output})
   SET(is_matching ${output} PARENT_SCOPE)
-  
+
 ENDFUNCTION()
 
 IF(NOT DEFINED CMAKE_CURRENT_LIST_DIR)
@@ -104,7 +105,7 @@ IF(NOT DEFINED CMAKE_CURRENT_LIST_FILENAME)
 ENDIF()
 
 # Check for non-defined var
-FOREACH(var WRAPPING_NAMESPACE TARGET SOURCES INCLUDE_DIRS WRAP_INT_DIR)
+FOREACH(var WRAPPING_NAMESPACE TARGET SOURCES INCLUDE_DIRS WRAP_INT_DIR HAS_DECORATOR)
   IF(NOT DEFINED ${var})
     MESSAGE(FATAL_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
   ENDIF()
@@ -119,7 +120,7 @@ ENDFOREACH()
 
 # Clear log file
 FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkScriptWrapPythonQt_Light_log.txt" "")
-  
+
 # Convert wrapping namespace to subdir
 STRING(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
 
@@ -130,17 +131,17 @@ FOREACH(FILE ${SOURCES})
 
   # what is the filename without the extension
   GET_FILENAME_COMPONENT(TMP_FILENAME ${FILE} NAME_WE)
-      
-  SET(includes 
+
+  SET(includes
     "${includes}\n#include \"${TMP_FILENAME}.h\"")
-        
+
   # Extract classname - NOTE: We assume the filename matches the associated class
   set(className ${TMP_FILENAME})
   #message(STATUS "FILE:${FILE}, className:${className}")
-  
+
   # Extract parent classname
   SET(parentClassName)
-  
+
   IF("${parentClassName}" STREQUAL "")
     # Does constructor signature is of the form: myclass()
     SET(regex "[^~]${className}[\\s\\n]*\\([\\s\\n]*\\)")
@@ -150,7 +151,7 @@ FOREACH(FILE ${SOURCES})
       log("${TMP_FILENAME} - constructor of the form: ${className}\(\)")
     ENDIF()
   ENDIF()
-  
+
   IF("${parentClassName}" STREQUAL "")
     # Does constructor signature is of the form: myclass(QObject * parent ...)
     SET(regex "${className}[\\s\\n]*\\([\\s\\n]*QObject[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\))")
@@ -160,7 +161,7 @@ FOREACH(FILE ${SOURCES})
       log("${TMP_FILENAME} - constructor of the form: ${className}\(QObject * parent ... \)")
     ENDIF()
   ENDIF()
-  
+
   IF("${parentClassName}" STREQUAL "")
     # Does constructor signature is of the form: myclass(QWidget * parent ...)
     SET(regex "${className}[\\s\\n]*\\([\\s\\n]*QWidget[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\))")
@@ -170,11 +171,11 @@ FOREACH(FILE ${SOURCES})
       log("${TMP_FILENAME} - constructor of the form: ${className}\(QWidget * parent ... \)")
     ENDIF()
   ENDIF()
- 
+
   # Generate PythonQtWrapper class
   IF("${parentClassName}" STREQUAL "QObject" OR "${parentClassName}" STREQUAL "QWidget")
-  
-    SET(pythonqtWrappers 
+
+    SET(pythonqtWrappers
       "${pythonqtWrappers}
 //-----------------------------------------------------------------------------
 class PythonQtWrapper_${className} : public QObject
@@ -191,11 +192,11 @@ public slots:
 ")
 
   ELSEIF("${parentClassName}" STREQUAL "No")
-  
-    SET(pythonqtWrappers 
+
+    SET(pythonqtWrappers
       "${pythonqtWrappers}
 //-----------------------------------------------------------------------------
-class PythonQtWrapper_${className} : public QObject
+class Q_DECL_EXPORT PythonQtWrapper_${className} : public QObject
 {
 Q_OBJECT
 public:
@@ -209,9 +210,9 @@ public slots:
 ")
 
   ELSE() # Case parentClassName is empty
-  
+
     MESSAGE(WARNING "ctkScriptWrapPythonQt_Light - Problem wrapping ${FILE}")
-    
+
   ENDIF()
 
   # Generate code allowing to register the class metaobject and its associated "light" wrapper
@@ -260,7 +261,7 @@ CONFIGURE_FILE(
 
 # Since FILE(WRITE ) doesn't update the timestamp - Let's touch the files
 EXECUTE_PROCESS(
-  COMMAND ${CMAKE_COMMAND} -E touch 
+  COMMAND ${CMAKE_COMMAND} -E touch
     ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp
   )
 

@@ -6,7 +6,7 @@ PROJECT(CTKDICOMWidgets)
 
 SET(KIT_export_directive "CTK_DICOM_WIDGETS_EXPORT")
 
-  
+
 # Source files
 SET(KIT_SRCS
   ctkDICOMAppWidget.cpp
@@ -35,17 +35,6 @@ SET(KIT_SRCS
   ctkDICOMThumbnailListWidget.h
   )
 
-IF(CTK_WRAP_PYTHONQT_LIGHT)
-  LIST(APPEND KIT_SRCS
-    ctkDICOMWidgetsPythonQtDecorators.h
-    )
-  # Let's make sure the decorator are not wrapped !
-  SET_SOURCE_FILES_PROPERTIES(
-    ctkDICOMWidgetsPythonQtDecorators.h
-    WRAP_EXCLUDE
-    )
-ENDIF()
-
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   ctkDICOMAppWidget.h
@@ -59,12 +48,6 @@ SET(KIT_MOC_SRCS
   ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.h
   )
-
-IF(CTK_WRAP_PYTHONQT_LIGHT)
-  LIST(APPEND KIT_MOC_SRCS
-    ctkDICOMWidgetsPythonQtDecorators.h
-    )
-ENDIF()
 
 # UI files - includes new widgets
 SET(KIT_UI_FORMS
@@ -94,6 +77,12 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
+  )
+
+ctkMacroBuildLibWrapper(
+  TARGET ${PROJECT_NAME}
+  SRCS ${KIT_SRCS}
+  WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
 # Plugins

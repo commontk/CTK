@@ -6,6 +6,7 @@
 /// Here is where system computed values get stored
 ///
 
+#cmakedefine CTK_BUILD_SHARED_LIBS
 #cmakedefine CTK_WRAP_PYTHONQT_LIGHT
 #cmakedefine CTK_WRAP_PYTHONQT_FULL
 

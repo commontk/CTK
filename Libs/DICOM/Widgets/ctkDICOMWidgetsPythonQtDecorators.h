@@ -21,9 +21,6 @@
 #ifndef __ctkDICOMWidgetsPythonQtDecorators_h
 #define __ctkDICOMWidgetsPythonQtDecorators_h
 
-// Qt includes
-#include <QObject>
-
 // PythonQt includes
 #include <PythonQt.h>
 
@@ -57,5 +54,11 @@ public slots:
   //
 
 };
+
+//-----------------------------------------------------------------------------
+void initCTKDICOMWidgetsPythonQtDecorators()
+{
+  PythonQt::self()->addDecorators(new ctkDICOMWidgetsPythonQtDecorators);
+}
 
 #endif

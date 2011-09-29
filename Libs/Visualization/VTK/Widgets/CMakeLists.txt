@@ -6,7 +6,7 @@ PROJECT(CTKVisualizationVTKWidgets)
 
 SET(KIT_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_EXPORT")
 
-  
+
 # Source files
 SET(KIT_SRCS
   ctkVTKAbstractMatrixWidget.cpp
@@ -99,7 +99,7 @@ IF (${CTK_USE_CHARTS})
       ctkVTKScalarsToColorsWidget.cpp
       ctkVTKScalarsToColorsWidget.h
       ${KIT_SRCS})
-  SET(KIT_MOC_SRCS 
+  SET(KIT_MOC_SRCS
       ctkVTKChartView.h
       ctkVTKVolumePropertyWidget.h
       ctkVTKScalarsToColorsView.h
@@ -128,6 +128,12 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
+  )
+
+ctkMacroBuildLibWrapper(
+  TARGET ${PROJECT_NAME}
+  SRCS ${KIT_SRCS}
+  WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
 # Plugins

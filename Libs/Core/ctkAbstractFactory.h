@@ -93,7 +93,7 @@ private:
 /// <p> ctkAbstractFactory contains a collection of ctkAbstractFactoryItems that
 /// are uniquely identifyed by a key. Subclasses of ctkAbstractFactory are
 /// responsible for populating the list of ctkAbstractFactoryItems.
-/// BaseClassType could be any type (most probably a QObject) 
+/// BaseClassType could be any type (most probably a QObject)
 template<typename BaseClassType>
 class ctkAbstractFactory
 {
