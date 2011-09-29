@@ -27,6 +27,7 @@
 #include <QLineEdit>
 #include <QStringList>
 #include <QStringListModel>
+#include <QToolButton>
 
 // CTK includes
 #include "ctkCompleter.h"
@@ -70,7 +71,7 @@ ctkMenuComboBoxPrivate::ctkMenuComboBoxPrivate(ctkMenuComboBox& object)
 {
   this->MenuComboBox = 0;
   this->SearchCompleter = 0;
-  this->EditBehavior = ctkMenuComboBox::EditableOnPopup;
+  this->EditBehavior = ctkMenuComboBox::NotEditable;
   this->IsDefaultTextCurrent = true;
   this->IsDefaultIconCurrent = true;
 }
@@ -84,7 +85,19 @@ void ctkMenuComboBoxPrivate::init()
   QHBoxLayout* layout = new QHBoxLayout(q);
   layout->setContentsMargins(0,0,0,0);
   layout->setSizeConstraint(QLayout::SetMinimumSize);
+  layout->setSpacing(0);
 
+  // SearchButton
+  this->SearchButton = new QToolButton();
+  this->SearchButton->setIcon(QIcon(":/Icons/search.svg"));
+  this->SearchButton->setCheckable(true);
+  this->SearchButton->setAutoRaise(true);
+  this->SearchButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Ignored);
+  layout->addWidget(this->SearchButton);
+  q->connect(this->SearchButton, SIGNAL(toggled(bool)),
+             this, SLOT(setComboBoxEditable(bool)));
+
+  // MenuComboBox
   this->MenuComboBox = new ctkMenuComboBoxInternal();
   this->MenuComboBox->setMinimumContentsLength(12);
   layout->addWidget(this->MenuComboBox);
@@ -174,6 +187,11 @@ void ctkMenuComboBoxPrivate::setComboBoxEditable(bool edit)
       {
       ctkSearchBox* line = new ctkSearchBox();
       this->MenuComboBox->setLineEdit(line);
+      if (q->isSearchIconVisible())
+        {
+        this->MenuComboBox->lineEdit()->selectAll();
+        this->MenuComboBox->setFocus();
+        }
       q->connect(line, SIGNAL(editingFinished()),
                  q,SLOT(onEditingFinished()));
       }
@@ -397,6 +415,20 @@ ctkMenuComboBox::EditableBehavior ctkMenuComboBox::editableBehavior()const
 }
 
 // -------------------------------------------------------------------------
+void ctkMenuComboBox::setSearchIconVisible(bool state)
+{
+  Q_D(ctkMenuComboBox);
+  d->SearchButton->setVisible(state);
+}
+
+// -------------------------------------------------------------------------
+bool ctkMenuComboBox::isSearchIconVisible() const
+{
+  Q_D(const ctkMenuComboBox);
+  return d->SearchButton->isVisibleTo(const_cast<ctkMenuComboBox*>(this));
+}
+
+// -------------------------------------------------------------------------
 void ctkMenuComboBox::setMinimumContentsLength(int characters)
 {
   Q_D(ctkMenuComboBox);
@@ -451,6 +483,11 @@ void ctkMenuComboBox::onEditingFinished()
     {
     return;
     }
+  if (this->isSearchIconVisible())
+    {
+    d->SearchButton->setChecked(false);
+    }
+
   action->trigger();
 }
 
@@ -488,4 +525,15 @@ bool ctkMenuComboBox::eventFilter(QObject* target, QEvent* event)
     d->removeActionToCompleter(actionEvent->action());
     }
   return this->Superclass::eventFilter(target, event);
+}
+
+// -------------------------------------------------------------------------
+void ctkMenuComboBox::resizeEvent(QResizeEvent *event)
+{
+  Q_D(ctkMenuComboBox);
+  this->Superclass::resizeEvent(event);
+  if (this->isSearchIconVisible())
+    {
+    d->SearchButton->setFixedWidth(d->MenuComboBox->size().height());
+    }
 }

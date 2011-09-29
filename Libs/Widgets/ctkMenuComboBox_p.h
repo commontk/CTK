@@ -28,6 +28,7 @@
 // CTK includes
 #include "ctkMenuComboBox.h"
 class ctkCompleter;
+class QToolButton;
 
 class ctkMenuComboBoxInternal: public QComboBox
 {
@@ -84,6 +85,7 @@ protected:
   ctkMenuComboBoxInternal*    MenuComboBox;
   ctkCompleter*               SearchCompleter;
   QWeakPointer<QMenu>         Menu;
+  QToolButton*                SearchButton;
 };
 
 #endif
