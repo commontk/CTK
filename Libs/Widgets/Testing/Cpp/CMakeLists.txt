@@ -31,6 +31,7 @@ SET(TEST_SOURCES
   ctkDynamicSpacerTest1.cpp
   ctkDynamicSpacerTest2.cpp
   ctkErrorLogWidgetTest1.cpp
+  ctkExpandButtonTest1.cpp
   ctkFileDialogTest1.cpp
   ctkFittedTextBrowserTest1.cpp
   ctkFlowLayoutTest1.cpp
@@ -160,6 +161,7 @@ SIMPLE_TEST( ctkDynamicSpacerTest2 )
 SIMPLE_TEST( ctkErrorLogWidgetTest1 )
 SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingDerivedSteps )
 SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots )
+SIMPLE_TEST( ctkExpandButtonTest1 )
 SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkFlowLayoutTest1 )
