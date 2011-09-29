@@ -64,7 +64,9 @@ int ctkMenuComboBoxTest1(int argc, char * argv [] )
   Menu2->setDefaultText("Search");
   Menu2->setAutoFillBackground(true);
   Menu2->setMinimumContentsLength(25);
-  Menu2->setEditableBehavior(ctkMenuComboBox::EditableOnFocus);
+  Menu2->setSearchIconVisible(false);
+  Menu2->setSearchIconVisible(true);
+  //Menu2->setEditableBehavior(ctkMenuComboBox::EditableOnFocus);
   Menu2->setEditableBehavior(ctkMenuComboBox::EditableOnPopup);
   //Menu2->show();
 
