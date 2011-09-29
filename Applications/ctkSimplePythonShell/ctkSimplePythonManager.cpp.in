@@ -11,11 +11,13 @@
 #include "ctkSimplePythonManager.h"
 #include "ctkSimplePythonQtDecorators.h"
 
-#include "ctkSimplePythonShellConfigure.h" // For CTK_WRAP_PYTHONQT_{LIGHT, FULL}
+#include "ctkSimplePythonShellConfigure.h" // For CTK_WRAP_PYTHONQT_{LIGHT, FULL} and CTK_BUILD_SHARED_LIBS
 
 #if defined(CTK_WRAP_PYTHONQT_LIGHT) || defined(CTK_WRAP_PYTHONQT_FULL)
-// PythonQt wrapper initialization methods
-@CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION@
+# ifndef CTK_BUILD_SHARED_LIBS
+  // PythonQt wrapper initialization methods
+  @CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION@
+# endif
 #endif
 
 #ifdef CTK_WRAP_PYTHONQT_USE_VTK
@@ -38,7 +40,7 @@ ctkSimplePythonManager::~ctkSimplePythonManager()
 
 //-----------------------------------------------------------------------------
 QStringList ctkSimplePythonManager::pythonPaths()
-{  
+{
   QStringList paths;
   paths << Superclass::pythonPaths();
 
@@ -50,6 +52,11 @@ QStringList ctkSimplePythonManager::pythonPaths()
   #endif
   ctk_python_dir.append("/Python");
   paths << QFileInfo(ctk_python_dir).absoluteFilePath();
+
+#ifdef CTK_BUILD_SHARED_LIBS
+  // Path containing python module
+  paths << self_dir;
+#endif
 
 #ifdef CTK_WRAP_PYTHONQT_USE_VTK
 
@@ -79,7 +86,7 @@ QStringList ctkSimplePythonManager::pythonPaths()
     // TODO Handle case when the application is started from an installed tree
     }
 #endif
-  
+
   return paths;
 }
 
@@ -89,13 +96,15 @@ void ctkSimplePythonManager::preInitialization()
   Superclass::preInitialization();
 
 #if defined(CTK_WRAP_PYTHONQT_LIGHT) || defined(CTK_WRAP_PYTHONQT_FULL)
+# ifndef CTK_BUILD_SHARED_LIBS
   // Initialize wrappers
   @CTK_PYTHONQT_INITIALIZATION_METHOD_CALL@
+# endif
 #endif
 
   // Register decorators
-  this->registerPythonQtDecorator(new ctkSimplePythonQtDecorators(this));  
-  
+  this->registerPythonQtDecorator(new ctkSimplePythonQtDecorators(this));
+
   // Add object to python interpreter context
   this->addObjectToPythonMain("_ctkSimplePythonShellInstance", qApp);
 }

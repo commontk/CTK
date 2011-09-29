@@ -26,7 +26,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -70,13 +70,13 @@ class CTK_CORE_EXPORT ctkCheckableModelHelper : public QObject
   Q_PROPERTY(bool forceCheckability READ forceCheckability WRITE setForceCheckability);
   Q_PROPERTY(int propagateDepth READ propagateDepth WRITE setPropagateDepth);
   Q_PROPERTY(Qt::CheckState defaultCheckState READ defaultCheckState WRITE setDefaultCheckState);
-  
+
 public:
   ctkCheckableModelHelper(Qt::Orientation orientation, QObject *parent=0);
   virtual ~ctkCheckableModelHelper();
 
   Qt::Orientation orientation()const;
-  
+
 
   ///
   /// When setting the model, if PropagateToItems is true (by default), the check
@@ -92,22 +92,22 @@ public:
   QModelIndex rootIndex()const;
   virtual void setRootIndex(const QModelIndex &index);
 
-  /// 
-  /// A section is checkable if its CheckStateRole data is non null. 
+  ///
+  /// A section is checkable if its CheckStateRole data is non null.
   /// One can access the same value through the model:
   /// model->headerData(orientation, section, Qt::CheckStateRole).isEmpty()
   bool isHeaderCheckable(int section)const;
   bool isCheckable(const QModelIndex& index)const;
 
   ///
-  /// Utility function that returns the checkState of the section. 
+  /// Utility function that returns the checkState of the section.
   /// One can access the same value through the model:
   /// model->headerData(orientation, section, Qt::CheckStateRole)
   Qt::CheckState headerCheckState(int section)const;
   Qt::CheckState checkState(const QModelIndex&)const;
 
   ///
-  /// Utility function that returns the checkState of the section. 
+  /// Utility function that returns the checkState of the section.
   /// One can access the same value through the model:
   /// model->headerData(orientation, section, Qt::CheckStateRole)
   bool headerCheckState(int section, Qt::CheckState& checkState )const;
@@ -118,8 +118,8 @@ public:
   /// -1 by default
   void setPropagateDepth(int depth);
   int  propagateDepth()const;
-  
-  /// When true, the new items are automatically set to checkable 
+
+  /// When true, the new items are automatically set to checkable
   void setForceCheckability(bool force);
   bool forceCheckability()const;
 
@@ -129,14 +129,14 @@ public:
 public slots:
   void setCheckState(const QModelIndex& modelIndex, Qt::CheckState checkState);
   ///
-  /// Warning, setting the check state automatically set the 
+  /// Warning, setting the check state automatically set the
   /// header section checkable
   void setHeaderCheckState(int section, Qt::CheckState checkState);
 
   /// Utility function to toggle the checkstate of an index
   void toggleCheckState(const QModelIndex& modelIndex);
   void toggleHeaderCheckState(int section);
-  
+
 private slots:
   void onHeaderDataChanged(Qt::Orientation orient, int first, int last);
 

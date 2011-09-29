@@ -28,19 +28,27 @@
 #
 
 #
-# This script should be invoked either as a CUSTOM_COMMAND 
+# This script should be invoked either as a CUSTOM_COMMAND
 # or from the command line using the following syntax:
 #
-#    cmake -DWRAPPING_NAMESPACE:STRING=org.commontk -DTARGET:STRING=MyLib 
+#    cmake -DWRAPPING_NAMESPACE:STRING=org.commontk -DTARGET:STRING=MyLib
 #          -DSOURCES:STRING="file1^^file2" -DINCLUDE_DIRS:STRING=/path1:/path2
 #          -DWRAP_INT_DIR:STRING=subir/subir/
 #          -DPYTHONQTGENERATOR_EXECUTABLE:FILEPATH=/path/to/exec
 #          -DOUTPUT_DIR:PATH=/path  -DQT_QMAKE_EXECUTABLE:PATH=/path/to/qt/qmake
+#          -DHAS_DECORATOR:BOOL=True
 #          -P ctkScriptWrapPythonQt_Full.cmake
 #
 
+IF(NOT DEFINED CMAKE_CURRENT_LIST_DIR)
+  GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+ENDIF()
+IF(NOT DEFINED CMAKE_CURRENT_LIST_FILENAME)
+  GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME)
+ENDIF()
+
 # Check for non-defined var
-FOREACH(var SOURCES TARGET INCLUDE_DIRS WRAP_INT_DIR WRAPPING_NAMESPACE)
+FOREACH(var SOURCES TARGET INCLUDE_DIRS WRAP_INT_DIR WRAPPING_NAMESPACE HAS_DECORATOR)
   IF(NOT DEFINED ${var})
     MESSAGE(FATAL_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
   ENDIF()
@@ -63,10 +71,10 @@ FOREACH(FILE ${SOURCES})
 
   # what is the filename without the extension
   GET_FILENAME_COMPONENT(TMP_FILENAME ${FILE} NAME_WE)
-    
-  SET(includes 
+
+  SET(includes
     "${includes}\n#include \"${TMP_FILENAME}.h\"")
-        
+
   # Extract classname - NOTE: We assume the filename matches the associated class
   set(className ${TMP_FILENAME})
   #message(STATUS "FILE:${FILE}, className:${className}")
@@ -90,7 +98,7 @@ FILE(WRITE ${OUTPUT_DIR}/${WRAP_INT_DIR}typesystem_${TARGET}.xml "
 </typesystem>
 ")
 
-# Extract PYTHONQTGENERATOR_DIR 
+# Extract PYTHONQTGENERATOR_DIR
 GET_FILENAME_COMPONENT(PYTHONQTGENERATOR_DIR ${PYTHONQTGENERATOR_EXECUTABLE} PATH)
 #message(PYTHONQTGENERATOR_DIR:${PYTHONQTGENERATOR_DIR})
 
@@ -130,10 +138,16 @@ IF(result)
   MESSAGE(FATAL_ERROR "Failed to generate ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp\n${error}")
 ENDIF()
 
+# Configure 'ctkMacroWrapPythonQtModuleInit.cpp.in' replacing TARGET and
+# WRAPPING_NAMESPACE_UNDERSCORE.
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_LIST_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
+  ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_module_init.cpp
+  )
+
 # Since PythonQtGenerator or FILE(WRITE ) doesn't 'update the timestamp - Let's touch the files
 EXECUTE_PROCESS(
-  COMMAND ${CMAKE_COMMAND} -E touch 
+  COMMAND ${CMAKE_COMMAND} -E touch
     ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp
     ${OUTPUT_DIR}/${WRAP_INT_DIR}ctkPythonQt_${TARGET}_masterinclude.h
   )
-

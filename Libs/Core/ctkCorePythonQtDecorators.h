@@ -21,9 +21,6 @@
 #ifndef __ctkCorePythonQtDecorators_h
 #define __ctkCorePythonQtDecorators_h
 
-// Qt includes
-#include <QObject>
-
 // PythonQt includes
 #include <PythonQt.h>
 
@@ -72,7 +69,7 @@ public slots:
     {
     delete step;
     }
-    
+
   ctkWorkflow* workflow(ctkWorkflowStep* step)const
     {
     return step->workflow();
@@ -92,7 +89,7 @@ public slots:
     {
     return step->name();
     }
-    
+
   void setName(ctkWorkflowStep* step, const QString& newName)
     {
     step->setName(newName);
@@ -102,7 +99,7 @@ public slots:
     {
     return step->description();
     }
-    
+
   void setDescription(ctkWorkflowStep* step, const QString& newDescription)
     {
     step->setDescription(newDescription);
@@ -117,7 +114,7 @@ public slots:
     {
     return step->hasValidateCommand();
     }
-    
+
   void setHasValidateCommand(ctkWorkflowStep* step, bool newHasValidateCommand)
     {
     step->setHasValidateCommand(newHasValidateCommand);
@@ -127,7 +124,7 @@ public slots:
     {
     return step->hasOnEntryCommand();
     }
-    
+
   void setHasOnEntryCommand(ctkWorkflowStep* step, bool newHasOnEntryCommand)
     {
     step->setHasOnEntryCommand(newHasOnEntryCommand);
@@ -137,12 +134,12 @@ public slots:
     {
     return step->hasOnExitCommand();
     }
-    
+
   void setHasOnExitCommand(ctkWorkflowStep* step, bool newHasOnExitCommand)
     {
     step->setHasOnExitCommand(newHasOnExitCommand);
     }
-  
+
   QObject* ctkWorkflowStepQObject(ctkWorkflowStep* step)
     {
     return step->ctkWorkflowStepQObject();
@@ -155,16 +152,22 @@ public slots:
     {
     return new ctkWorkflowInterstepTransition(newTransitionType);
     }
-  
+
   ctkWorkflowInterstepTransition* new_ctkWorkflowInterstepTransition(ctkWorkflowInterstepTransition::InterstepTransitionType newTransitionType, const QString& newId)
     {
     return new ctkWorkflowInterstepTransition(newTransitionType, newId);
     }
-    
+
   void delete_ctkWorkflowInterstepTransition(ctkWorkflowInterstepTransition * transition)
     {
     delete transition;
     }
 };
+
+//-----------------------------------------------------------------------------
+void initCTKCorePythonQtDecorators()
+{
+  PythonQt::self()->addDecorators(new ctkCorePythonQtDecorators);
+}
 
 #endif

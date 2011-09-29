@@ -21,9 +21,6 @@
 #ifndef __ctkWidgetsPythonQtDecorators_h
 #define __ctkWidgetsPythonQtDecorators_h
 
-// Qt includes
-#include <QObject>
-
 // PythonQt includes
 #include <PythonQt.h>
 
@@ -74,5 +71,11 @@ public slots:
     step->setHasShowUserInterfaceCommand(newHasShowUserInterfaceCommand);
     }
 };
+
+//-----------------------------------------------------------------------------
+void initCTKWidgetsPythonQtDecorators()
+{
+  PythonQt::self()->addDecorators(new ctkWidgetsPythonQtDecorators);
+}
 
 #endif

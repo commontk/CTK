@@ -94,7 +94,7 @@ FOREACH(type LIBRARY RUNTIME ARCHIVE)
      AND NOT EXISTS ${CTK_CMAKE_${type}_OUTPUT_DIRECTORY})
     MESSAGE(FATAL_ERROR "CTK_CMAKE_${type}_OUTPUT_DIRECTORY is set to a non-existing directory [${CTK_CMAKE_${type}_OUTPUT_DIRECTORY}]")
   ENDIF()
-  
+
   IF(CTK_SUPERBUILD)
     SET(output_dir ${CTK_BINARY_DIR}/bin)
     IF(NOT DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
@@ -176,6 +176,7 @@ INCLUDE(CMake/ctkMacroParseArguments.cmake)
 INCLUDE(CMake/ctkMacroSetPaths.cmake)
 INCLUDE(CMake/ctkMacroListFilter.cmake)
 INCLUDE(CMake/ctkMacroBuildLib.cmake)
+INCLUDE(CMake/ctkMacroBuildLibWrapper.cmake)
 INCLUDE(CMake/ctkMacroBuildPlugin.cmake)
 INCLUDE(CMake/ctkMacroBuildApp.cmake)
 INCLUDE(CMake/ctkMacroCompilePythonScript.cmake)
@@ -211,7 +212,7 @@ IF(BUILD_TESTING)
   INCLUDE(CTest)
   SET(CPP_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   MARK_AS_ADVANCED(TCL_TCLSH DART_ROOT)
-    
+
   # Setup file for setting custom ctest vars
   CONFIGURE_FILE(
     CMake/CTestCustom.cmake.in
@@ -288,7 +289,7 @@ SET(CTK_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${VISIBILITY_CXX_FLAGS} ${COVERAGE_CX
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
-  
+
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
   ctkFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
 
@@ -303,7 +304,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     # suppress warnings about auto imported symbols
     SET(CTK_CXX_FLAGS "-Wl,--enable-auto-import ${CTK_CXX_FLAGS}")
   ENDIF()
-  
+
   SET(CTK_C_FLAGS "${cflags} ${CTK_C_FLAGS}")
   SET(CTK_CXX_FLAGS "${cflags} -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
 ENDIF()
@@ -388,7 +389,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMObjectViewer:OFF
   ctkSimplePythonShell:OFF
   )
-  
+
 #-----------------------------------------------------------------------------
 # To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
 # before the SuperBuild script is included
@@ -415,7 +416,7 @@ SET(CTK_APPLICATIONS_SUBDIRS )
 # The following FOREACH loops are used to:
 #   1) Add build options associated with either libraries, plugins and applications
 #   2) Update either CTK_LIBS_SUBDIRS, CTK_PLUGINS_SUBDIRS or CTK_APPS_SUBDIRS variables
-# 
+#
 # For CTK libraries, if the file Libs/<DIR>/<LIBNAME>/ctk_library_options.cmake exists,
 # in addition to 'CTK_LIB_<DIR>/<LIBNAME>' option, the following ones
 # will also be available in CMake configure menu:
@@ -547,7 +548,7 @@ EXECUTE_PROCESS(
   OUTPUT_VARIABLE CTEST_PROJECT_SUBPROJECTS_OUTPUT
   ERROR_VARIABLE error
   OUTPUT_STRIP_TRAILING_WHITESPACE
-  )      
+  )
 IF(RESULT_VAR)
   MESSAGE(FATAL_ERROR "Failed to obtain list of target ordered topologically.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
 ENDIF()
@@ -651,7 +652,7 @@ ENDIF()
 
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/UseCTK.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake COPYONLY IMMEDIATE)
-               
+
 #-----------------------------------------------------------------------------
 # Set C/CXX Flags
 #
