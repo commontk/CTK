@@ -43,8 +43,9 @@ class ctkMenuComboBoxPrivate;
 ///   if it is disabled :
 /// the ctkMenuComboBox has the same behavior as a QPushButton. You can't filter the menu.
 
-/// By default ctkMenuComboBox is editable on double click.
+/// By default ctkMenuComboBox is not editable with the search icon visible.
 /// See ctkmenuComboBox::setEditableType() to change the default behavior.
+/// and setIconSearchVisible() to show/hide the icon.
 
 class CTK_WIDGETS_EXPORT ctkMenuComboBox : public QWidget
 {
@@ -53,6 +54,7 @@ class CTK_WIDGETS_EXPORT ctkMenuComboBox : public QWidget
   Q_PROPERTY(QString defaultText READ defaultText WRITE setDefaultText)
   Q_PROPERTY(QIcon defaultIcon READ defaultIcon WRITE setDefaultIcon)
   Q_PROPERTY(EditableBehavior editBehavior READ editableBehavior WRITE setEditableBehavior)
+  Q_PROPERTY(bool searchIconVisible READ isSearchIconVisible WRITE setSearchIconVisible)
 
 public:
   enum EditableBehavior{
@@ -87,10 +89,16 @@ public:
   void setEditableBehavior(EditableBehavior editBehavior);
   EditableBehavior editableBehavior()const;
 
+  /// set the icon search visible
+  void setSearchIconVisible(bool state);
+  bool isSearchIconVisible() const;
+
   /// See QComboBox::setMinimumContentsLength()
   void setMinimumContentsLength(int characters);
 
+protected:
   virtual bool eventFilter(QObject* target, QEvent* event);
+  virtual void resizeEvent(QResizeEvent *event);
 
 public slots:
   void clearActiveAction();
