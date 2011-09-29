@@ -63,6 +63,8 @@ SET(KIT_SRCS
   ctkErrorLogStatusMessageHandler.h
   ctkErrorLogWidget.cpp
   ctkErrorLogWidget.h
+  ctkExpandButton.cpp
+  ctkExpandButton.h
   ctkFileDialog.cpp
   ctkFileDialog.h
   ctkFittedTextBrowser.cpp
@@ -201,6 +203,7 @@ SET(KIT_MOC_SRCS
   ctkDynamicSpacer.h
   ctkErrorLogWidget.h
   ctkErrorLogStatusMessageHandler.h
+  ctkExpandButton.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
   ctkFlowLayout.h
