@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>442</width>
+    <width>508</width>
     <height>144</height>
    </rect>
   </property>
@@ -175,6 +175,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="ctkExpandButton" name="ExpandButton">
+       <property name="contextMenuPolicy">
+        <enum>Qt::DefaultContextMenu</enum>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="1" column="0">
@@ -226,6 +233,11 @@
    <class>ctkDoubleRangeSlider</class>
    <extends>QWidget</extends>
    <header>ctkDoubleRangeSlider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkExpandButton</class>
+   <extends>QToolButton</extends>
+   <header location="global">ctkExpandButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
