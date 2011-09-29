@@ -46,6 +46,7 @@ SET(TEST_SOURCES
   ctkMenuComboBoxTest2.cpp
   ctkMenuComboBoxTest3.cpp
   ctkModalityWidgetTest1.cpp
+  ctkMoreButtonTest1.cpp
   ctkPathLineEditTest1.cpp
   ctkPopupWidgetTest1.cpp
   ctkRangeSliderTest1.cpp
@@ -175,6 +176,7 @@ SIMPLE_TEST( ctkMenuComboBoxTest1 )
 SIMPLE_TEST( ctkMenuComboBoxTest2 )
 SIMPLE_TEST( ctkMenuComboBoxTest3 )
 SIMPLE_TEST( ctkModalityWidgetTest1 )
+SIMPLE_TEST( ctkMoreButtonTest1 )
 SIMPLE_TEST( ctkPathLineEditTest1 )
 SIMPLE_TEST( ctkPopupWidgetTest1 )
 SIMPLE_TEST( ctkRangeSliderTest1 )

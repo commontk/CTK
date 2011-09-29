@@ -54,6 +54,8 @@ SET(PLUGIN_SRCS
   ctkMenuButtonPlugin.h
   ctkModalityWidgetPlugin.cpp
   ctkModalityWidgetPlugin.h
+  ctkMoreButtonPlugin.cpp
+  ctkMoreButtonPlugin.h
   ctkPathLineEditPlugin.cpp
   ctkPathLineEditPlugin.h
   ctkPopupWidgetPlugin.cpp
@@ -107,6 +109,7 @@ SET(PLUGIN_MOC_SRCS
   ctkMatrixWidgetPlugin.h
   ctkMenuButtonPlugin.h
   ctkModalityWidgetPlugin.h
+  ctkMoreButtonPlugin.h
   ctkPathLineEditPlugin.h
   ctkPopupWidgetPlugin.h
   ctkRangeSliderPlugin.h
