@@ -45,6 +45,12 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   ctkCheckablePushButton button5(QObject::tr("Button5"));
   ctkCheckablePushButton button6(QObject::tr("Button6"));
   ctkCheckablePushButton button7(QObject::tr("Checkable PushButton"));
+  ctkCheckablePushButton button8(QObject::tr("Checkbox Not User Checkable (On)"));
+  ctkCheckablePushButton button9(QObject::tr("CheckBox Not User Checkable (Off)"));
+  ctkCheckablePushButton button10(QObject::tr("User Checkable Bi-state"));
+  ctkCheckablePushButton button11(QObject::tr("User Checkable Tri-state"));
+  ctkCheckablePushButton button12(QObject::tr("Checkbox Not User Checkable\nButton Checkable"));
+  ctkCheckablePushButton button13(QObject::tr("Checkbox and Buttun User Checkable"));
 
   QVBoxLayout *layout= new QVBoxLayout;
   layout->addWidget(&button1);
@@ -54,6 +60,12 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   layout->addWidget(&button5);
   layout->addWidget(&button6);
   layout->addWidget(&button7);
+  layout->addWidget(&button8);
+  layout->addWidget(&button9);
+  layout->addWidget(&button10);
+  layout->addWidget(&button11);
+  layout->addWidget(&button12);
+  layout->addWidget(&button13);
   topLevel.setLayout(layout);
 
   topLevel.show();
@@ -89,6 +101,18 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button7.setButtonTextAlignment(Qt::AlignCenter);
   button7.setIndicatorAlignment(Qt::AlignLeft);
   
+  button8.setCheckBoxFlags(Qt::ItemIsEnabled);
+  button8.setCheckState(Qt::Checked);
+  button9.setCheckBoxFlags(Qt::ItemIsEnabled);
+  button9.setCheckState(Qt::Unchecked);
+  button10.setCheckBoxFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+  button11.setCheckBoxFlags(Qt::ItemIsEnabled |
+      Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
+  button12.setCheckBoxFlags(Qt::ItemIsEnabled);
+  button12.setCheckable(true);
+  button13.setCheckBoxFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+  button13.setCheckable(true);
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
