@@ -27,8 +27,6 @@
 // CTK includes
 #include <ctkWorkflowWidgetStep.h>
 
-#include "ctkWidgetsExport.h"
-
 // NOTE:
 //
 // For decorators it is assumed that the methods will never be called
@@ -36,7 +34,7 @@
 // for non-static methods.
 //
 
-class CTK_WIDGETS_EXPORT ctkWidgetsPythonQtDecorators : public QObject
+class ctkWidgetsPythonQtDecorators : public QObject
 {
   Q_OBJECT
 public:
