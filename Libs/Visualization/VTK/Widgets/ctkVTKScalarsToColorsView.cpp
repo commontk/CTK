@@ -33,12 +33,14 @@
 #include <vtkColorTransferFunctionItem.h>
 #include <vtkCompositeControlPointsItem.h>
 #include <vtkCompositeTransferFunctionItem.h>
+#include <vtkIdTypeArray.h>
 #include <vtkLookupTable.h>
 #include <vtkLookupTableItem.h>
 #include <vtkPen.h>
 #include <vtkPiecewiseControlPointsItem.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkPiecewiseFunctionItem.h>
+#include <vtkSmartPointer.h>
 
 //----------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKScalarsToColorsView");
@@ -266,6 +268,23 @@ QList<vtkPlot*> ctkVTKScalarsToColorsView::plots()const
   for(vtkIdType i = 0; i < count; ++i)
     {
     res << this->chart()->GetPlot(i);
+    }
+  return res;
+}
+
+// ----------------------------------------------------------------------------
+QList<vtkControlPointsItem*> ctkVTKScalarsToColorsView
+::controlPointsItems()const
+{
+  QList<vtkControlPointsItem*> res;
+  foreach(vtkPlot* plot, this->plots())
+    {
+    vtkControlPointsItem* controlPointsItem =
+      vtkControlPointsItem::SafeDownCast(plot);
+    if (controlPointsItem)
+      {
+      res << controlPointsItem;
+      }
     }
   return res;
 }
@@ -535,5 +554,28 @@ void ctkVTKScalarsToColorsView::boundAxesToChartBounds()
   if (userBounds[0] < userBounds[1])
     {
     this->setPlotsUserBounds(userBounds);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView::moveAllPoints(double xOffset, double yOffset)
+{
+  vtkVector2f offset(xOffset, yOffset);
+  foreach(vtkControlPointsItem* controlPointsItem, this->controlPointsItems())
+    {
+    vtkSmartPointer<vtkIdTypeArray> ids;
+    ids.TakeReference(controlPointsItem->GetControlPointsIds());
+    controlPointsItem->MovePoints(offset, ids.GetPointer());
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView::spreadAllPoints(double factor)
+{
+  foreach(vtkControlPointsItem* controlPointsItem, this->controlPointsItems())
+    {
+    vtkSmartPointer<vtkIdTypeArray> ids;
+    ids.TakeReference(controlPointsItem->GetControlPointsIds());\
+    controlPointsItem->SpreadPoints(factor, ids.GetPointer());
     }
 }

@@ -71,6 +71,9 @@ int ctkVTKVolumePropertyWidgetTest1(int argc, char * argv [] )
 
   volumeProperty->SetScalarOpacity(otf2);
 
+  widget.moveAllPoints(0.1, -0.1);
+  widget.moveAllPoints(-0.1, 0.1);
+
   widget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")

@@ -54,6 +54,18 @@ public:
 public slots:
   void setVolumeProperty(vtkVolumeProperty* volumeProperty);
 
+  /// Move all the control points of the opacity, colors and gradient
+  /// of a give offset.
+  /// \sa vtkControlPoints::movePoints()
+  void moveAllPoints(double xOffset, double yOffset = 0.);
+
+  /// Spread all the control points of the opacity, colors and gradient
+  /// by a given offset.
+  /// A value >0 will space the control points, a value <0. will contract
+  /// them.
+  /// \sa vtkControlPoints::spreadPoints()
+  void spreadAllPoints(double factor = 1.);
+
 protected slots:
   void updateFromVolumeProperty();
 

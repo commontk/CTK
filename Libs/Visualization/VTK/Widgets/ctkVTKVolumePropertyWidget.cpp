@@ -357,3 +357,21 @@ void ctkVTKVolumePropertyWidget::onAxesModified()
     d->GradientWidget->blockSignals(wasBlocking);
     }
 }
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::moveAllPoints(double xOffset, double yOffset)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  d->ScalarOpacityWidget->view()->moveAllPoints(xOffset, yOffset);
+  d->ScalarColorWidget->view()->moveAllPoints(xOffset, yOffset);
+  d->GradientWidget->view()->moveAllPoints(xOffset, yOffset);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::spreadAllPoints(double factor)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  d->ScalarOpacityWidget->view()->spreadAllPoints(factor);
+  d->ScalarColorWidget->view()->spreadAllPoints(factor);
+  d->GradientWidget->view()->spreadAllPoints(factor);
+}

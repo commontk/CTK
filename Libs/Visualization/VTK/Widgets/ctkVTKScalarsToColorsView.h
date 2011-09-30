@@ -31,6 +31,7 @@ class ctkVTKScalarsToColorsViewPrivate;
 #include <vtkChartXY.h>
 
 class vtkColorTransferFunction;
+class vtkControlPointsItem;
 class vtkLookupTable;
 class vtkPiecewiseFunction;
 
@@ -67,6 +68,7 @@ public:
   QList<vtkPlot*> plots()const;
   template<class T>
   QList<T*> plots()const;
+  QList<vtkControlPointsItem*> controlPointsItems()const;
   QList<vtkPlot*> lookupTablePlots()const;
   QList<vtkPlot*> lookupTablePlots(vtkLookupTable* lut)const;
   QList<vtkPlot*> colorTransferFunctionPlots()const;
@@ -86,8 +88,19 @@ public:
 
   /// Reimplemented to set the bounds to the plots as well
   virtual void boundAxesToChartBounds();
+
 public slots:
   void editPoint(vtkObject* plot, void * pointId);
+
+  /// Move all the control points by a given offset.
+  /// \sa vtkControlPoints::movePoints()
+  void moveAllPoints(double xOffset, double yOffset = 0.);
+
+  /// Spread all the control points by a given offset.
+  /// A value >0 will space the control points, a value <0. will contract
+  /// them.
+  /// \sa vtkControlPoints::spreadPoints()
+  void spreadAllPoints(double factor = 1.);
 
 protected slots:
   void onBoundsChanged();

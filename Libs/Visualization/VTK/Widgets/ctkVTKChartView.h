@@ -39,6 +39,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public QVTKWidget
   Q_PROPERTY(QString title READ title WRITE setTitle)
 
 public:
+  typedef QVTKWidget Superclass;
   ctkVTKChartView(QWidget* parent = 0);
   virtual ~ctkVTKChartView();
 

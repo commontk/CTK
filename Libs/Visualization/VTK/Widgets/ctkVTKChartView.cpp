@@ -168,7 +168,7 @@ void ctkVTKChartViewPrivate::chartBounds(double* bounds)const
 
 // ----------------------------------------------------------------------------
 ctkVTKChartView::ctkVTKChartView(QWidget* parentWidget)
-  :QVTKWidget(parentWidget)
+  :Superclass(parentWidget)
   , d_ptr(new ctkVTKChartViewPrivate(*this))
 {
   Q_D(ctkVTKChartView);
@@ -324,5 +324,5 @@ void ctkVTKChartView::mouseDoubleClickEvent(QMouseEvent* event)
     {
     this->setAxesToChartBounds();
     }
-  this->QVTKWidget::mouseDoubleClickEvent(event);
+  this->Superclass::mouseDoubleClickEvent(event);
 }
