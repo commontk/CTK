@@ -30,7 +30,7 @@
 #! On the other hand, when CTK is built statically, it creates a
 #! static library providing a initialization function that will allow to load
 #! both (1) and (2).
-  
+
 #! \ingroup CMakeAPI
 MACRO(ctkMacroBuildLibWrapper)
   ctkMacroParseArguments(MY
@@ -120,6 +120,13 @@ MACRO(ctkMacroBuildLibWrapper)
   IF(MY_WRAPPER_LIBRARY_TYPE STREQUAL "MODULE")
     # Make sure that no prefix is set on the library
     set_target_properties(${lib_name}PythonQt PROPERTIES PREFIX "")
+    # Python extension modules on Windows must have the extension ".pyd"
+    # instead of ".dll" as of Python 2.5.  Older python versions do support
+    # this suffix.
+    # See http://docs.python.org/faq/windows.html#is-a-pyd-file-the-same-as-a-dll
+    IF(WIN32 AND NOT CYGWIN)
+      set_target_properties(${lib_name}PythonQt PROPERTIES SUFFIX ".pyd")
+    ENDIF()
   ENDIF()
   set_target_properties(${lib_name}PythonQt PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${MY_RUNTIME_OUTPUT_DIRECTORY}"
