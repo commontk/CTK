@@ -28,8 +28,6 @@
 #include <ctkWorkflowStep.h>
 #include <ctkWorkflowTransitions.h>
 
-#include "ctkCoreExport.h"
-
 // NOTE:
 //
 // For decorators it is assumed that the methods will never be called
@@ -38,7 +36,7 @@
 //
 
 /// \ingroup Core
-class CTK_CORE_EXPORT ctkCorePythonQtDecorators : public QObject
+class ctkCorePythonQtDecorators : public QObject
 {
   Q_OBJECT
 public:

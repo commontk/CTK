@@ -25,10 +25,6 @@
 #include <PythonQt.h>
 
 // CTK includes
-#include <ctkWorkflowStep.h>
-#include <ctkWorkflowTransitions.h>
-
-#include "ctkDICOMWidgetsExport.h"
 
 // NOTE:
 //
@@ -38,7 +34,7 @@
 //
 
 /// \ingroup DICOMWidgets
-class CTK_DICOM_WIDGETS_EXPORT ctkDICOMWidgetsPythonQtDecorators : public QObject
+class ctkDICOMWidgetsPythonQtDecorators : public QObject
 {
   Q_OBJECT
 public:
