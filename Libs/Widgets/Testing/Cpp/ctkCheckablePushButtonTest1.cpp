@@ -101,16 +101,20 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button7.setButtonTextAlignment(Qt::AlignCenter);
   button7.setIndicatorAlignment(Qt::AlignLeft);
   
-  button8.setCheckBoxFlags(Qt::ItemIsEnabled);
+  button8.setCheckBoxFlags(button8.checkBoxFlags() | Qt::ItemIsEnabled);
+  button8.setCheckBoxFlags(button8.checkBoxFlags() & ~Qt::ItemIsUserCheckable);
   button8.setCheckState(Qt::Checked);
-  button9.setCheckBoxFlags(Qt::ItemIsEnabled);
+  button9.setCheckBoxFlags(button9.checkBoxFlags() | Qt::ItemIsEnabled);
+  button9.setCheckBoxFlags(button9.checkBoxFlags() & ~Qt::ItemIsUserCheckable);
   button9.setCheckState(Qt::Unchecked);
-  button10.setCheckBoxFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
-  button11.setCheckBoxFlags(Qt::ItemIsEnabled |
-      Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
-  button12.setCheckBoxFlags(Qt::ItemIsEnabled);
+  button10.setCheckBoxFlags(button10.checkBoxFlags() | Qt::ItemIsEnabled);
+  button11.setCheckBoxFlags(button11.checkBoxFlags() | Qt::ItemIsEnabled);
+  button11.setCheckBoxFlags(button11.checkBoxFlags() | Qt::ItemIsTristate);
+  button11.setCheckState(Qt::PartiallyChecked);
+  button12.setCheckBoxFlags(button12.checkBoxFlags() | Qt::ItemIsEnabled);
+  button12.setCheckBoxFlags(button12.checkBoxFlags() & ~Qt::ItemIsUserCheckable);
   button12.setCheckable(true);
-  button13.setCheckBoxFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+  button13.setCheckBoxFlags(button13.checkBoxFlags() | Qt::ItemIsEnabled);
   button13.setCheckable(true);
 
   if (argc < 2 || QString(argv[1]) != "-I" )

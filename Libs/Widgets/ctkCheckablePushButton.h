@@ -40,14 +40,13 @@ class ctkCheckablePushButtonPrivate;
 /// independently from the containing button. (It will not control the checkable
 /// property of the button.) The following flags are supported:
 /// Qt::ItemIsEnabled, Qt::ItemIsUserCheckable, Qt::ItemIsTriState.
-/// In default, no flags are set (Qt::NoItemFlags) that means the original behavior.
 class CTK_WIDGETS_EXPORT ctkCheckablePushButton : public QPushButton
 {
   Q_OBJECT
   Q_PROPERTY(Qt::Alignment buttonTextAlignment READ buttonTextAlignment WRITE setButtonTextAlignment)
   Q_PROPERTY(Qt::Alignment indicatorAlignment READ indicatorAlignment WRITE setIndicatorAlignment)
   Q_PROPERTY(Qt::ItemFlags checkBoxFlags READ checkBoxFlags WRITE setCheckBoxFlags)
-  Q_PROPERTY(Qt::CheckState checkState READ checkState WRITE setCheckState)
+  Q_PROPERTY(Qt::CheckState checkState READ checkState WRITE setCheckState NOTIFY checkStateChanged)
 
 public:
   ctkCheckablePushButton(QWidget *parent = 0);
@@ -69,11 +68,14 @@ public:
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
 
-  virtual Qt::ItemFlags checkBoxFlags()const;
-  virtual void setCheckBoxFlags(Qt::ItemFlags checkBoxFlags);
+  virtual const Qt::ItemFlags& checkBoxFlags()const;
+  virtual void setCheckBoxFlags(const Qt::ItemFlags& checkBoxFlags);
 
   virtual Qt::CheckState checkState()const;
   virtual void setCheckState(Qt::CheckState checkState);
+
+signals:
+  void checkStateChanged(Qt::CheckState newCheckState);
 
 protected:
   /// Reimplemented for internal reasons
