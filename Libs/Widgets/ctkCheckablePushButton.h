@@ -32,21 +32,20 @@
 class ctkCheckablePushButtonPrivate;
 
 /// Description
-/// ctkCheckablePushButton is a QPushButton with a checkbox that controls the
-/// checkable property of the button.
-/// You can change this behavior by assigning flags to the checkbox by the
-/// setCheckBoxFlags function. The Qt::ItemIsEnabled flag causes that the
-/// checkbox can be used
-/// independently from the containing button. (It will not control the checkable
-/// property of the button.) The following flags are supported:
-/// Qt::ItemIsEnabled, Qt::ItemIsUserCheckable, Qt::ItemIsTriState.
+/// ctkCheckablePushButton is a QPushButton with a checkbox. By default
+/// the checkbox is connected to the checkable property of the push button.
+/// You can change this behaviour by clearing the "checkBoxControlsButton"
+/// property.
+/// The checkBoxUserCheckable property determines if the state of the
+/// checkbox can be changed interactively.
 class CTK_WIDGETS_EXPORT ctkCheckablePushButton : public QPushButton
 {
   Q_OBJECT
   Q_PROPERTY(Qt::Alignment buttonTextAlignment READ buttonTextAlignment WRITE setButtonTextAlignment)
   Q_PROPERTY(Qt::Alignment indicatorAlignment READ indicatorAlignment WRITE setIndicatorAlignment)
-  Q_PROPERTY(Qt::ItemFlags checkBoxFlags READ checkBoxFlags WRITE setCheckBoxFlags)
   Q_PROPERTY(Qt::CheckState checkState READ checkState WRITE setCheckState NOTIFY checkStateChanged)
+  Q_PROPERTY(bool checkBoxControlsButton READ checkBoxControlsButton WRITE setCheckBoxControlsButton)
+  Q_PROPERTY(bool checkBoxUserCheckable READ isCheckBoxUserCheckable WRITE setCheckBoxUserCheckable)
 
 public:
   ctkCheckablePushButton(QWidget *parent = 0);
@@ -68,11 +67,14 @@ public:
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
 
-  virtual const Qt::ItemFlags& checkBoxFlags()const;
-  virtual void setCheckBoxFlags(const Qt::ItemFlags& checkBoxFlags);
-
   virtual Qt::CheckState checkState()const;
   virtual void setCheckState(Qt::CheckState checkState);
+
+  virtual bool checkBoxControlsButton()const;
+  virtual void setCheckBoxControlsButton(bool b);
+
+  virtual bool isCheckBoxUserCheckable()const;
+  virtual void setCheckBoxUserCheckable(bool b);
 
 signals:
   void checkStateChanged(Qt::CheckState newCheckState);

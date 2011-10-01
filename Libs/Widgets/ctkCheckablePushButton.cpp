@@ -63,7 +63,7 @@ ctkCheckablePushButtonPrivate::ctkCheckablePushButtonPrivate(ctkCheckablePushBut
 {
   this->TextAlignment = Qt::AlignLeft | Qt::AlignVCenter;
   this->IndicatorAlignment = Qt::AlignLeft | Qt::AlignVCenter;
-  this->CheckBoxFlags = Qt::ItemIsUserCheckable;
+  this->CheckBoxFlags = Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
   this->CheckState = Qt::Unchecked;
 }
 
@@ -226,11 +226,13 @@ void ctkCheckablePushButton::setCheckState(Qt::CheckState checkState)
 {
   Q_D(ctkCheckablePushButton);
   Qt::CheckState oldCheckState = d->CheckState;
-  if (checkState != oldCheckState &&
-      (checkState != Qt::PartiallyChecked ||
-       (d->CheckBoxFlags & Qt::ItemIsTristate)))
+  if (checkState != oldCheckState)
     {
     d->CheckState = checkState;
+    if (d->CheckBoxFlags & Qt::ItemIsEnabled)
+      {
+      setCheckable(checkState == Qt::Checked);
+      }
     this->update();
     emit checkStateChanged(checkState);
     }
@@ -244,18 +246,47 @@ Qt::CheckState ctkCheckablePushButton::checkState()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkCheckablePushButton::setCheckBoxFlags(const Qt::ItemFlags& checkBoxFlags)
+void ctkCheckablePushButton::setCheckBoxControlsButton(bool b)
 {
   Q_D(ctkCheckablePushButton);
-  d->CheckBoxFlags = checkBoxFlags;
+  if (b)
+    {
+    d->CheckBoxFlags |= Qt::ItemIsEnabled;
+    }
+  else
+    {
+    d->CheckBoxFlags &= ~Qt::ItemIsEnabled;
+    }
   this->update();
 }
 
 //-----------------------------------------------------------------------------
-const Qt::ItemFlags& ctkCheckablePushButton::checkBoxFlags()const
+bool ctkCheckablePushButton::checkBoxControlsButton()const
 {
   Q_D(const ctkCheckablePushButton);
-  return d->CheckBoxFlags;
+  return d->CheckBoxFlags & Qt::ItemIsEnabled;
+}
+
+//-----------------------------------------------------------------------------
+void ctkCheckablePushButton::setCheckBoxUserCheckable(bool b)
+{
+  Q_D(ctkCheckablePushButton);
+  if (b)
+    {
+    d->CheckBoxFlags |= Qt::ItemIsUserCheckable;
+    }
+  else
+    {
+    d->CheckBoxFlags &= ~Qt::ItemIsUserCheckable;
+    }
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+bool ctkCheckablePushButton::isCheckBoxUserCheckable()const
+{
+  Q_D(const ctkCheckablePushButton);
+  return d->CheckBoxFlags & Qt::ItemIsUserCheckable;
 }
 
 //-----------------------------------------------------------------------------
@@ -302,13 +333,17 @@ void ctkCheckablePushButton::paintEvent(QPaintEvent * _event)
     tf |= Qt::TextHideMnemonic;
     }
   int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, opt.text).width();
-  // Spacing betweent the text and the checkbox
+  // Spacing between the text and the checkbox
   int indicatorSpacing = this->style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, this);
   int buttonMargin = this->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, this);
   // Draw Indicator
   QStyleOption indicatorOpt;
   indicatorOpt.init(this);
-  if (!(d->CheckBoxFlags & Qt::ItemIsEnabled))
+  if (!(d->CheckBoxFlags & Qt::ItemIsUserCheckable))
+    {
+    indicatorOpt.state &= ~QStyle::State_Enabled;
+    }
+  if (d->CheckBoxFlags & Qt::ItemIsEnabled)
     {
     if (this->isCheckable())
       {
@@ -321,10 +356,6 @@ void ctkCheckablePushButton::paintEvent(QPaintEvent * _event)
     }
   else
     {
-    if (!(d->CheckBoxFlags & Qt::ItemIsUserCheckable))
-      {
-      indicatorOpt.state &= ~QStyle::State_Enabled;
-      }
     if (d->CheckState == Qt::Checked)
       {
       indicatorOpt.state |= QStyle::State_On;
@@ -411,15 +442,15 @@ void ctkCheckablePushButton::mousePressEvent(QMouseEvent *e)
     {
     return;
     }
-  if (d->checkboxRect().contains(e->pos()))
+  if (d->checkboxRect().contains(e->pos()) &&
+      (d->CheckBoxFlags & Qt::ItemIsUserCheckable))
     {
-    Qt::ItemFlags cbf = d->CheckBoxFlags;
-    if (!(cbf & Qt::ItemIsEnabled))
+    if (d->CheckBoxFlags & Qt::ItemIsEnabled)
       {
       //check the checkbox
       this->setCheckable(!this->isCheckable());
       }
-    else if (d->CheckBoxFlags & Qt::ItemIsUserCheckable)
+    else
       {
       switch (d->CheckState)
         {
