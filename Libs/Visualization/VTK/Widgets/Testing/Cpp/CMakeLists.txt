@@ -9,6 +9,7 @@ SET(TEST_SOURCES
   ctkVTKMatrixWidgetTest1.cpp
   ctkVTKMagnifyViewTest1.cpp
   ctkVTKScalarBarWidgetTest1.cpp
+  ctkVTKThresholdWidgetTest1.cpp
   ctkTransferFunctionBarsItemTest1.cpp
   ctkTransferFunctionViewTest1.cpp
   ctkTransferFunctionViewTest2.cpp
@@ -93,6 +94,7 @@ SIMPLE_TEST( ctkVTKMagnifyViewTest1 )
 SIMPLE_TEST( ctkVTKMatrixWidgetTest1 )
 SIMPLE_TEST( ctkVTKScalarBarWidgetTest1 )
 SIMPLE_TEST( ctkVTKScalarsToColorsUtilsTest1 )
+SIMPLE_TEST( ctkVTKThresholdWidgetTest1 )
 SIMPLE_TEST( ctkTransferFunctionBarsItemTest1 )
 SIMPLE_TEST( ctkTransferFunctionViewTest1 )
 SIMPLE_TEST( ctkTransferFunctionViewTest2 )
