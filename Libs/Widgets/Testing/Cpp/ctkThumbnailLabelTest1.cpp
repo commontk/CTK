@@ -24,21 +24,21 @@
 #include <QTimer>
 
 // ctkDICOMCore includes
-#include "ctkThumbnailWidget.h"
+#include "ctkThumbnailLabel.h"
 
 // STD includes
 #include <iostream>
 
-int ctkThumbnailWidgetTest1( int argc, char * argv [] )
+int ctkThumbnailLabelTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkThumbnailWidget widget;
+  ctkThumbnailLabel widget;
 
   widget.setText("Test");
   if (widget.text() != "Test")
     {
-    std::cerr << "ctkThumbnailWidget::setText failed."
+    std::cerr << "ctkThumbnailLabel::setText failed."
               << " text: " << qPrintable(widget.text())
               << " expected: Test" << std::endl;
     return EXIT_FAILURE;
@@ -47,7 +47,7 @@ int ctkThumbnailWidgetTest1( int argc, char * argv [] )
   widget.setPixmap(QPixmap());
   if (widget.pixmap() != 0)
     {
-    std::cerr << "ctkThumbnailWidget::setPixmap failed:"
+    std::cerr << "ctkThumbnailLabel::setPixmap failed:"
               << widget.pixmap() << std::endl;
     return EXIT_FAILURE;
     }
@@ -57,7 +57,7 @@ int ctkThumbnailWidgetTest1( int argc, char * argv [] )
   widget.setPixmap(standardPixmap);
   if (widget.pixmap() == 0)
     {
-    std::cerr << "ctkThumbnailWidget::setPixmap failed:"
+    std::cerr << "ctkThumbnailLabel::setPixmap failed:"
               << widget.pixmap() << std::endl;
     return EXIT_FAILURE;
     }

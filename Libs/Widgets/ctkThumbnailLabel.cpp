@@ -25,26 +25,26 @@
 
 // ctkCore includes
 #include "ctkLogger.h"
-static ctkLogger logger("org.commontk.Widgets.ctkThumbnailWidget");
+static ctkLogger logger("org.commontk.Widgets.ctkThumbnailLabel");
 
 // ctkWidgets includes
-#include "ctkThumbnailWidget.h"
-#include "ui_ctkThumbnailWidget.h"
+#include "ctkThumbnailLabel.h"
+#include "ui_ctkThumbnailLabel.h"
 
 // STD includes
 #include <iostream>
 
 //----------------------------------------------------------------------------
-class ctkThumbnailWidgetPrivate: public Ui_ctkThumbnailWidget
+class ctkThumbnailLabelPrivate: public Ui_ctkThumbnailLabel
 {
-  Q_DECLARE_PUBLIC(ctkThumbnailWidget);
+  Q_DECLARE_PUBLIC(ctkThumbnailLabel);
 protected:
-  ctkThumbnailWidget* const q_ptr;
+  ctkThumbnailLabel* const q_ptr;
 public:
-  typedef Ui_ctkThumbnailWidget Superclass;
+  typedef Ui_ctkThumbnailLabel Superclass;
 
   // Constructor
-  ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent);
+  ctkThumbnailLabelPrivate(ctkThumbnailLabel* parent);
 
   virtual void setupUi(QWidget* widget);
 
@@ -60,13 +60,13 @@ public:
 };
 
 //----------------------------------------------------------------------------
-// ctkThumbnailWidgetPrivate methods
+// ctkThumbnailLabelPrivate methods
 
 //----------------------------------------------------------------------------
-ctkThumbnailWidgetPrivate::ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent)
+ctkThumbnailLabelPrivate::ctkThumbnailLabelPrivate(ctkThumbnailLabel* parent)
   : q_ptr(parent)
 {
-  Q_Q(ctkThumbnailWidget);
+  Q_Q(ctkThumbnailLabel);
 
   this->SelectedFlag = false;
   this->SelectedColor = q->palette().color(QPalette::Highlight);
@@ -75,9 +75,9 @@ ctkThumbnailWidgetPrivate::ctkThumbnailWidgetPrivate(ctkThumbnailWidget* parent)
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidgetPrivate::setupUi(QWidget* widget)
+void ctkThumbnailLabelPrivate::setupUi(QWidget* widget)
 {
-  Q_Q(ctkThumbnailWidget);
+  Q_Q(ctkThumbnailLabel);
   this->Superclass::setupUi(widget);
   q->layout()->setSizeConstraint(QLayout::SetNoConstraint);
   // no text by default
@@ -85,7 +85,7 @@ void ctkThumbnailWidgetPrivate::setupUi(QWidget* widget)
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidgetPrivate::updateThumbnail()
+void ctkThumbnailLabelPrivate::updateThumbnail()
 {
   this->PixmapLabel->setPixmap(
     this->OriginalThumbnail.isNull() ? QPixmap() :
@@ -95,27 +95,27 @@ void ctkThumbnailWidgetPrivate::updateThumbnail()
 }
 
 //----------------------------------------------------------------------------
-// ctkThumbnailWidget methods
+// ctkThumbnailLabel methods
 
 //----------------------------------------------------------------------------
-ctkThumbnailWidget::ctkThumbnailWidget(QWidget* parentWidget)
+ctkThumbnailLabel::ctkThumbnailLabel(QWidget* parentWidget)
   : Superclass(parentWidget)
-  , d_ptr(new ctkThumbnailWidgetPrivate(this))
+  , d_ptr(new ctkThumbnailLabelPrivate(this))
 {
-  Q_D(ctkThumbnailWidget);
+  Q_D(ctkThumbnailLabel);
 
   d->setupUi(this);
 }
 
 //----------------------------------------------------------------------------
-ctkThumbnailWidget::~ctkThumbnailWidget()
+ctkThumbnailLabel::~ctkThumbnailLabel()
 {
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::setText(const QString &text)
+void ctkThumbnailLabel::setText(const QString &text)
 {
-  Q_D(ctkThumbnailWidget);
+  Q_D(ctkThumbnailLabel);
 
   d->TextLabel->setText(text);
   d->TextLabel->setVisible(!text.isEmpty() &&
@@ -124,16 +124,16 @@ void ctkThumbnailWidget::setText(const QString &text)
 }
 
 //----------------------------------------------------------------------------
-QString ctkThumbnailWidget::text()const
+QString ctkThumbnailLabel::text()const
 {
-  Q_D(const ctkThumbnailWidget);
+  Q_D(const ctkThumbnailLabel);
   return d->TextLabel->text();
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::setTextPosition(const Qt::Alignment& position)
+void ctkThumbnailLabel::setTextPosition(const Qt::Alignment& position)
 {
-  Q_D(ctkThumbnailWidget);
+  Q_D(ctkThumbnailLabel);
   d->TextPosition = position;
   int textIndex = -1;
   for (textIndex = 0; textIndex < this->layout()->count(); ++textIndex)
@@ -185,48 +185,48 @@ void ctkThumbnailWidget::setTextPosition(const Qt::Alignment& position)
 }
 
 //----------------------------------------------------------------------------
-Qt::Alignment ctkThumbnailWidget::textPosition()const
+Qt::Alignment ctkThumbnailLabel::textPosition()const
 {
-  Q_D(const ctkThumbnailWidget);
+  Q_D(const ctkThumbnailLabel);
   return d->TextPosition;
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::setPixmap(const QPixmap &pixmap)
+void ctkThumbnailLabel::setPixmap(const QPixmap &pixmap)
 {
-  Q_D(ctkThumbnailWidget);
+  Q_D(ctkThumbnailLabel);
 
   d->OriginalThumbnail = pixmap;
   d->updateThumbnail();
 }
 
 //----------------------------------------------------------------------------
-const QPixmap* ctkThumbnailWidget::pixmap()const
+const QPixmap* ctkThumbnailLabel::pixmap()const
 {
-  Q_D(const ctkThumbnailWidget);
+  Q_D(const ctkThumbnailLabel);
 
   return d->OriginalThumbnail.isNull() ? 0 : &(d->OriginalThumbnail);
 }
 
 //----------------------------------------------------------------------------
-Qt::TransformationMode ctkThumbnailWidget::transformationMode()const
+Qt::TransformationMode ctkThumbnailLabel::transformationMode()const
 {
-  Q_D(const ctkThumbnailWidget);
+  Q_D(const ctkThumbnailLabel);
   return d->TransformationMode;
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::setTransformationMode(Qt::TransformationMode mode)
+void ctkThumbnailLabel::setTransformationMode(Qt::TransformationMode mode)
 {
-  Q_D(ctkThumbnailWidget);
+  Q_D(ctkThumbnailLabel);
   d->TransformationMode = mode;
   d->updateThumbnail();
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::paintEvent(QPaintEvent* event)
+void ctkThumbnailLabel::paintEvent(QPaintEvent* event)
 {
-  Q_D(ctkThumbnailWidget);
+  Q_D(ctkThumbnailLabel);
   this->Superclass::paintEvent(event);
   if (d->SelectedFlag && d->SelectedColor.isValid())
     {
@@ -239,40 +239,40 @@ void ctkThumbnailWidget::paintEvent(QPaintEvent* event)
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::setSelected(bool flag)
+void ctkThumbnailLabel::setSelected(bool flag)
 {
-  Q_D(ctkThumbnailWidget);
+  Q_D(ctkThumbnailLabel);
   d->SelectedFlag = flag;
   this->update();
 }
 
 //----------------------------------------------------------------------------
-bool ctkThumbnailWidget::isSelected()const
+bool ctkThumbnailLabel::isSelected()const
 {
-  Q_D(const ctkThumbnailWidget);
+  Q_D(const ctkThumbnailLabel);
   return d->SelectedFlag;
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::setSelectedColor(const QColor& color)
+void ctkThumbnailLabel::setSelectedColor(const QColor& color)
 {
-  Q_D(ctkThumbnailWidget);
+  Q_D(ctkThumbnailLabel);
   d->SelectedColor = color;
   this->update();
 }
 
 //----------------------------------------------------------------------------
-QColor ctkThumbnailWidget::selectedColor()const
+QColor ctkThumbnailLabel::selectedColor()const
 {
-  Q_D(const ctkThumbnailWidget);
+  Q_D(const ctkThumbnailLabel);
   return d->SelectedColor;
 }
 
 //----------------------------------------------------------------------------
-QSize ctkThumbnailWidget::minimumSizeHint()const
+QSize ctkThumbnailLabel::minimumSizeHint()const
 {
-  Q_D(const ctkThumbnailWidget);
-  if (d->TextLabel->isVisibleTo(const_cast<ctkThumbnailWidget*>(this)) &&
+  Q_D(const ctkThumbnailLabel);
+  if (d->TextLabel->isVisibleTo(const_cast<ctkThumbnailLabel*>(this)) &&
       !d->TextLabel->text().isEmpty())
     {
     return d->TextLabel->minimumSizeHint();
@@ -281,18 +281,18 @@ QSize ctkThumbnailWidget::minimumSizeHint()const
 }
 
 //----------------------------------------------------------------------------
-QSize ctkThumbnailWidget::sizeHint()const
+QSize ctkThumbnailLabel::sizeHint()const
 {
-  Q_D(const ctkThumbnailWidget);
+  Q_D(const ctkThumbnailLabel);
   return d->OriginalThumbnail.isNull() ?
     this->Superclass::sizeHint() :
     d->OriginalThumbnail.size().expandedTo(QApplication::globalStrut());
 }
 
 //----------------------------------------------------------------------------
-int ctkThumbnailWidget::heightForWidth(int width)const
+int ctkThumbnailLabel::heightForWidth(int width)const
 {
-  Q_D(const ctkThumbnailWidget);
+  Q_D(const ctkThumbnailLabel);
   if (d->OriginalThumbnail.isNull() ||
       d->OriginalThumbnail.width() == 0)
     {
@@ -304,7 +304,7 @@ int ctkThumbnailWidget::heightForWidth(int width)const
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::mousePressEvent(QMouseEvent* event)
+void ctkThumbnailLabel::mousePressEvent(QMouseEvent* event)
 {
   this->Superclass::mousePressEvent(event);
   this->setSelected(true);
@@ -312,16 +312,16 @@ void ctkThumbnailWidget::mousePressEvent(QMouseEvent* event)
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::mouseDoubleClickEvent(QMouseEvent *event)
+void ctkThumbnailLabel::mouseDoubleClickEvent(QMouseEvent *event)
 {
   this->Superclass::mouseDoubleClickEvent(event);
   emit doubleClicked(*this);
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailWidget::resizeEvent(QResizeEvent *event)
+void ctkThumbnailLabel::resizeEvent(QResizeEvent *event)
 {
-  Q_D(ctkThumbnailWidget);
+  Q_D(ctkThumbnailLabel);
   this->Superclass::resizeEvent(event);
   d->updateThumbnail();
 }

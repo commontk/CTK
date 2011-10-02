@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ctkThumbnailWidget</class>
- <widget class="QWidget" name="ctkThumbnailWidget">
+ <class>ctkThumbnailLabel</class>
+ <widget class="QWidget" name="ctkThumbnailLabel">
   <property name="geometry">
    <rect>
     <x>0</x>

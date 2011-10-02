@@ -27,7 +27,7 @@
 #include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMAppWidgetPrivate;
-class ctkThumbnailWidget;
+class ctkThumbnailLabel;
 class QModelIndex;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
@@ -72,10 +72,10 @@ protected slots:
     void onModelSelected(const QModelIndex& index);
 
     /// To be called when a thumbnail in thumbnail list widget is selected
-    void onThumbnailSelected(const ctkThumbnailWidget& widget);
+    void onThumbnailSelected(const ctkThumbnailLabel& widget);
 
     /// To be called when a thumbnail in thumbnail list widget is double-clicked
-    void onThumbnailDoubleClicked(const ctkThumbnailWidget& widget);
+    void onThumbnailDoubleClicked(const ctkThumbnailLabel& widget);
 
     /// To be called when previous and next buttons are clicked
     void onNextImage();

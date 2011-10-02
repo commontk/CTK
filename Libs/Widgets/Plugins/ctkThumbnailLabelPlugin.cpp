@@ -19,49 +19,49 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkThumbnailWidgetPlugin.h"
-#include "ctkThumbnailWidget.h"
+#include "ctkThumbnailLabelPlugin.h"
+#include "ctkThumbnailLabel.h"
 
 //-----------------------------------------------------------------------------
-ctkThumbnailWidgetPlugin::ctkThumbnailWidgetPlugin(QObject* parentObject)
+ctkThumbnailLabelPlugin::ctkThumbnailLabelPlugin(QObject* parentObject)
   : QObject(parentObject)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkThumbnailWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget *ctkThumbnailLabelPlugin::createWidget(QWidget* parentWidget)
 {
-  ctkThumbnailWidget* newWidget = new ctkThumbnailWidget(parentWidget);
+  ctkThumbnailLabel* newWidget = new ctkThumbnailLabel(parentWidget);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkThumbnailWidgetPlugin::domXml() const
+QString ctkThumbnailLabelPlugin::domXml() const
 {
-  return "<widget class=\"ctkThumbnailWidget\" name=\"ThumbnailWidget\">\n"
+  return "<widget class=\"ctkThumbnailLabel\" name=\"Thumbnail\">\n"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkThumbnailWidgetPlugin::icon() const
+QIcon ctkThumbnailLabelPlugin::icon() const
 {
   return QIcon(":/Icons/widget.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkThumbnailWidgetPlugin::includeFile() const
+QString ctkThumbnailLabelPlugin::includeFile() const
 {
-  return "ctkThumbnailWidget.h";
+  return "ctkThumbnailLabel.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkThumbnailWidgetPlugin::isContainer() const
+bool ctkThumbnailLabelPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkThumbnailWidgetPlugin::name() const
+QString ctkThumbnailLabelPlugin::name() const
 {
-  return "ctkThumbnailWidget";
+  return "ctkThumbnailLabel";
 }

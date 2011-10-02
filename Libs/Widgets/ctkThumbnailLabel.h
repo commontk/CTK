@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkThumbnailWidget_h
-#define __ctkThumbnailWidget_h
+#ifndef __ctkThumbnailLabel_h
+#define __ctkThumbnailLabel_h
 
 // Qt includes 
 #include <QWidget>
@@ -27,9 +27,14 @@
 
 #include "ctkWidgetsExport.h"
 
-class ctkThumbnailWidgetPrivate;
+class ctkThumbnailLabelPrivate;
 
-class CTK_WIDGETS_EXPORT ctkThumbnailWidget : public QWidget
+/// ctkThumbnailLabel is an advanced label that gives control over
+/// the pixmap size and text location.
+/// If a pixmap is set, it is resized to fit the available space but its
+/// original width/height ratio is always respected.
+/// The widget can be selected or not (a rectangle is drawn around)
+class CTK_WIDGETS_EXPORT ctkThumbnailLabel : public QWidget
 {
   Q_OBJECT
   /// If the text is empty, the space allocated for the text is hidden
@@ -37,19 +42,26 @@ class CTK_WIDGETS_EXPORT ctkThumbnailWidget : public QWidget
   Q_PROPERTY(QString text READ text WRITE setText)
   /// Position of the text relative to the pixmap.
   /// Qt::AlignTop | Qt::AlignHCenter by default.
-  /// For now, if the alignment is HCenter|VCenter, no text is shown.
+  /// For now, if the alignment is HCenter|VCenter (same location than the
+  /// pixmap), no text is shown.
   Q_PROPERTY(Qt::Alignment textPosition READ textPosition WRITE setTextPosition)
+  /// Optional pixmap for the label.
+  /// No pixmap by default
   Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
+  /// Controls the quality of the resizing of the pixmap.
   /// Qt::FastTransformation by default
   Q_PROPERTY(Qt::TransformationMode transformationMode READ transformationMode WRITE setTransformationMode)
+  /// Control whether or not the label is selected. When selected, a rectangle
+  /// is drawn around the widget with the \a selectedColor color.
   /// Not selected by default
   Q_PROPERTY(bool selected READ isSelected WRITE setSelected)
+  /// Color of the selected rectangle.
   /// Palette highlight color by default
   Q_PROPERTY(QColor selectedColor READ selectedColor WRITE setSelectedColor)
 public:
   typedef QWidget Superclass;
-  explicit ctkThumbnailWidget(QWidget* parent=0);
-  virtual ~ctkThumbnailWidget();
+  explicit ctkThumbnailLabel(QWidget* parent=0);
+  virtual ~ctkThumbnailLabel();
 
   void setText(const QString& text);
   QString text()const;
@@ -74,7 +86,7 @@ public:
   virtual int heightForWidth(int width)const;
 
 protected:
-  QScopedPointer<ctkThumbnailWidgetPrivate> d_ptr;
+  QScopedPointer<ctkThumbnailLabelPrivate> d_ptr;
 
   virtual void paintEvent(QPaintEvent* event);
   virtual void mousePressEvent(QMouseEvent* event);
@@ -83,12 +95,12 @@ protected:
   virtual void resizeEvent(QResizeEvent* event);
 
 private:
-  Q_DECLARE_PRIVATE(ctkThumbnailWidget);
-  Q_DISABLE_COPY(ctkThumbnailWidget);
+  Q_DECLARE_PRIVATE(ctkThumbnailLabel);
+  Q_DISABLE_COPY(ctkThumbnailLabel);
 
 signals:
-  void selected(const ctkThumbnailWidget& widget);
-  void doubleClicked(const ctkThumbnailWidget& widget);
+  void selected(const ctkThumbnailLabel& widget);
+  void doubleClicked(const ctkThumbnailLabel& widget);
 };
 
 #endif

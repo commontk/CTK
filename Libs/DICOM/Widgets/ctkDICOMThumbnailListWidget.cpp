@@ -45,7 +45,7 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMThumbnailListWidget.h"
-#include "ctkThumbnailWidget.h"
+#include "ctkThumbnailLabel.h"
 
 // STD includes
 #include <iostream>
@@ -193,7 +193,7 @@ void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& i
                                 model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                                 model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
 
-        ctkThumbnailWidget* widget = new ctkThumbnailWidget(this->ScrollAreaContentWidget);
+        ctkThumbnailLabel* widget = new ctkThumbnailLabel(this->ScrollAreaContentWidget);
 
         QString widgetLabel = text;
         widget->setText( widgetLabel );
@@ -209,9 +209,9 @@ void ctkDICOMThumbnailListWidgetPrivate::addThumbnailWidget(const QModelIndex& i
         widget->setProperty("sourceIndex", var);
         this->ScrollAreaContentWidget->layout()->addWidget(widget);
 
-        q->connect(widget, SIGNAL(selected(ctkThumbnailWidget)), q, SLOT(onThumbnailSelected(ctkThumbnailWidget)));
-        q->connect(widget, SIGNAL(selected(ctkThumbnailWidget)), q, SIGNAL(selected(ctkThumbnailWidget)));
-        q->connect(widget, SIGNAL(doubleClicked(ctkThumbnailWidget)), q, SIGNAL(doubleClicked(ctkThumbnailWidget)));
+        q->connect(widget, SIGNAL(selected(ctkThumbnailLabel)), q, SLOT(onThumbnailSelected(ctkThumbnailLabel)));
+        q->connect(widget, SIGNAL(selected(ctkThumbnailLabel)), q, SIGNAL(selected(ctkThumbnailLabel)));
+        q->connect(widget, SIGNAL(doubleClicked(ctkThumbnailLabel)), q, SIGNAL(doubleClicked(ctkThumbnailLabel)));
 
     }
 }
@@ -260,7 +260,7 @@ void ctkDICOMThumbnailListWidget::selectThumbnailFromIndex(const QModelIndex &in
 
         for(int i=0; i<count; i++)
         {
-            ctkThumbnailWidget* thumbnailWidget = qobject_cast<ctkThumbnailWidget*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
+            ctkThumbnailLabel* thumbnailWidget = qobject_cast<ctkThumbnailLabel*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
             if(thumbnailWidget->property("sourceIndex").value<QPersistentModelIndex>() == index){
                 thumbnailWidget->setSelected(true);
                 d->ScrollArea->ensureWidgetVisible(thumbnailWidget);

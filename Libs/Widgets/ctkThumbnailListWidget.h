@@ -28,7 +28,7 @@
 
 class QModelIndex;
 class ctkThumbnailListWidgetPrivate;
-class ctkThumbnailWidget;
+class ctkThumbnailLabel;
 
 class CTK_WIDGETS_EXPORT ctkThumbnailListWidget : public QWidget
 {
@@ -60,11 +60,11 @@ public slots:
   void setThumbnailSize(QSize size);
 
 signals:
-  void selected(const ctkThumbnailWidget& widget);
-  void doubleClicked(const ctkThumbnailWidget& widget);
+  void selected(const ctkThumbnailLabel& widget);
+  void doubleClicked(const ctkThumbnailLabel& widget);
 
 protected slots:
-  void onThumbnailSelected(const ctkThumbnailWidget& widget);
+  void onThumbnailSelected(const ctkThumbnailLabel& widget);
 
 protected:
   explicit ctkThumbnailListWidget(ctkThumbnailListWidgetPrivate* ptr, QWidget* parent=0);

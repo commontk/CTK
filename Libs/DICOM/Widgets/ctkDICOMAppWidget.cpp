@@ -50,7 +50,7 @@
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMImportWidget.h"
 #include "ctkDICOMThumbnailGenerator.h"
-#include "ctkThumbnailWidget.h"
+#include "ctkThumbnailLabel.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
 #include "ctkDICOMQueryRetrieveWidget.h"
 #include "ctkDICOMQueryWidget.h"
@@ -168,8 +168,8 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   connect(d->TreeView, SIGNAL(clicked(QModelIndex)), d->ImagePreview, SLOT(onModelSelected(QModelIndex)));
   connect(d->TreeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onModelSelected(QModelIndex)));
 
-  connect(d->ThumbnailsWidget, SIGNAL(selected(ctkThumbnailWidget)), this, SLOT(onThumbnailSelected(ctkThumbnailWidget)));
-  connect(d->ThumbnailsWidget, SIGNAL(doubleClicked(ctkThumbnailWidget)), this, SLOT(onThumbnailDoubleClicked(ctkThumbnailWidget)));
+  connect(d->ThumbnailsWidget, SIGNAL(selected(ctkThumbnailLabel)), this, SLOT(onThumbnailSelected(ctkThumbnailLabel)));
+  connect(d->ThumbnailsWidget, SIGNAL(doubleClicked(ctkThumbnailLabel)), this, SLOT(onThumbnailDoubleClicked(ctkThumbnailLabel)));
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
   connect(d->QueryRetrieveWidget, SIGNAL(canceled()), d->QueryRetrieveWidget, SLOT(hide()) );
@@ -329,7 +329,7 @@ void ctkDICOMAppWidget::resetModel()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onThumbnailSelected(const ctkThumbnailWidget& widget)
+void ctkDICOMAppWidget::onThumbnailSelected(const ctkThumbnailLabel& widget)
 {
     Q_D(ctkDICOMAppWidget);
 
@@ -341,7 +341,7 @@ void ctkDICOMAppWidget::onThumbnailSelected(const ctkThumbnailWidget& widget)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkThumbnailWidget& widget)
+void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkThumbnailLabel& widget)
 {
     Q_D(ctkDICOMAppWidget);
 
