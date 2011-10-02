@@ -45,6 +45,12 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   ctkCheckablePushButton button5(QObject::tr("Button5"));
   ctkCheckablePushButton button6(QObject::tr("Button6"));
   ctkCheckablePushButton button7(QObject::tr("Checkable PushButton"));
+  ctkCheckablePushButton button8(QObject::tr("Connected, Not User Checkable"));
+  ctkCheckablePushButton button9(QObject::tr("Connected, Not User Checkable"));
+  ctkCheckablePushButton button10(QObject::tr("Not Connected, User Checkable"));
+  ctkCheckablePushButton button11(QObject::tr("Not Connected, User Checkable"));
+  ctkCheckablePushButton button12(QObject::tr("Checkbox Not User Checkable\nButton Checkable"));
+  ctkCheckablePushButton button13(QObject::tr("Checkbox and Button User Checkable"));
 
   QVBoxLayout *layout= new QVBoxLayout;
   layout->addWidget(&button1);
@@ -54,6 +60,12 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   layout->addWidget(&button5);
   layout->addWidget(&button6);
   layout->addWidget(&button7);
+  layout->addWidget(&button8);
+  layout->addWidget(&button9);
+  layout->addWidget(&button10);
+  layout->addWidget(&button11);
+  layout->addWidget(&button12);
+  layout->addWidget(&button13);
   topLevel.setLayout(layout);
 
   topLevel.show();
@@ -89,6 +101,25 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button7.setButtonTextAlignment(Qt::AlignCenter);
   button7.setIndicatorAlignment(Qt::AlignLeft);
   
+  // Connected to button, not user checkable:
+  button8.setCheckBoxUserCheckable(false);
+  button8.setCheckState(Qt::Checked);
+  button9.setCheckBoxUserCheckable(false);
+  button9.setCheckState(Qt::Unchecked);
+
+  // Not connected to button, user checkable:
+  button10.setCheckBoxControlsButton(false);
+  button10.setCheckState(Qt::Checked);
+  button11.setCheckBoxControlsButton(false);
+  button11.setCheckState(Qt::PartiallyChecked);
+
+  button12.setCheckBoxControlsButton(false);
+  button12.setCheckBoxUserCheckable(false);
+  button12.setCheckable(true);
+  button13.setCheckBoxControlsButton(false);
+  button13.setCheckBoxUserCheckable(true);
+  button13.setCheckable(true);
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
