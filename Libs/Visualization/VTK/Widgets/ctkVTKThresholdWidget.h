@@ -37,22 +37,27 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKThresholdWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-
+  /// Setting the opacity property has no effect when no piecewise function is
+  /// set.
+  Q_PROPERTY(double opacity READ opacity WRITE setOpacity DESIGNABLE false)
 public:
   ctkVTKThresholdWidget(QWidget* parent = 0);
   virtual ~ctkVTKThresholdWidget();
 
   vtkPiecewiseFunction* piecewiseFunction()const;
+
   void range(double* range)const;
+  void thresholdValues(double* values)const;
+  double opacity()const;
 
 public slots:
   void setPiecewiseFunction(vtkPiecewiseFunction* function);
   void setRange(double min, double max);
+  void setThresholdValues(double min, double max);
+  void setOpacity(double opacity);
 
 protected slots:
   void updateFromPiecewiseFunction();
-  void setThresholdValues(double min, double max);
-  void setOpacity(double opacity);
 
 protected:
   QScopedPointer<ctkVTKThresholdWidgetPrivate> d_ptr;

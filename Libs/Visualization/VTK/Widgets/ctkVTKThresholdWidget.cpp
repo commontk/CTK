@@ -46,10 +46,13 @@ public:
 
   void setThreshold(double min, double max, double opacity);
   void setRange(double min, double max);
-  void guessThreshold(double& min, double& max, double& opacity);
+  void guessThreshold(double& min, double& max, double& opacity)const;
   
   vtkPiecewiseFunction* PiecewiseFunction;
   bool UserRange;
+protected:
+  void setNodes(double nodeValues[4][4]);
+  void setNodeValue(int index, double* nodeValue);
 };
 
 // ----------------------------------------------------------------------------
@@ -78,7 +81,7 @@ void ctkVTKThresholdWidgetPrivate::setupUi(QWidget* widget)
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKThresholdWidgetPrivate::guessThreshold(double& min, double& max, double& opacity)
+void ctkVTKThresholdWidgetPrivate::guessThreshold(double& min, double& max, double& opacity)const
 {
   min = this->ThresholdSliderWidget->minimum();
   max = this->ThresholdSliderWidget->maximum();
@@ -140,62 +143,99 @@ void ctkVTKThresholdWidgetPrivate::setRange(double min, double max)
 // ----------------------------------------------------------------------------
 void ctkVTKThresholdWidgetPrivate::setThreshold(double min, double max, double opacity)
 {
+  Q_Q(ctkVTKThresholdWidget);
   if (!this->PiecewiseFunction)
     {
     return;
     }
+
   double range[2];
   this->ThresholdSliderWidget->range(range);
- 
-  double node[4];
-  node[0] = range[0];
-  node[1] = 0.;
-  node[2] = 0.5;
-  node[3] = 0.;
-  if (this->PiecewiseFunction->GetSize() < 1)
-    {
-    this->PiecewiseFunction->AddPoint(node[0], node[1], node[2], node[3]);
-    }
-  else
-    {
-    this->PiecewiseFunction->SetNodeValue(0, node);
-    }
 
-  node[0] = min;
-  node[1] = 0.;
-  node[2] = 0.;
-  node[3] = 1.;
-  if (this->PiecewiseFunction->GetSize() < 2)
-    {
-    this->PiecewiseFunction->AddPoint(node[0], node[1], node[2], node[3]);
-    }
-  else
-    {
-    this->PiecewiseFunction->SetNodeValue(1, node);
-    }
-  node[0] = max;
-  node[1] = opacity;
-  if (this->PiecewiseFunction->GetSize() < 3)
-    {
-    this->PiecewiseFunction->AddPoint(node[0], node[1], node[2], node[3]);
-    }
-  else
-    {
-    this->PiecewiseFunction->SetNodeValue(2, node);
-    }
-  node[0] = (max == range[1]) ? range[1] + 0.00000000000001 : range[1];
-  node[1] = 0.;
-  node[2] = 0.5;
-  node[3] = 0.;
-  if (this->PiecewiseFunction->GetSize() < 4)
-    {
-    this->PiecewiseFunction->AddPoint(node[0], node[1], node[2], node[3]);
-    }
-  else
-    {
-    this->PiecewiseFunction->SetNodeValue(3, node);
-    }
+  // Start of the curve, always y=0
+  double nodes[4][4];
+  nodes[0][0] = range[0];
+  nodes[0][1] = 0.;
+  nodes[0][2] = 0.5; // midpoint
+  nodes[0][3] = 0.; // sharpness
 
+  // Starting threshold point with a sharp slope that jumps to the opacity
+  // which is set by the next point
+  nodes[1][0] = min  +
+    ((min == nodes[0][0] && !this->PiecewiseFunction->GetAllowDuplicateScalars()) ?
+      0.00000000000001 : 0.);
+  nodes[1][1] = 0.;
+  nodes[1][2] = 0.; // jumps directly
+  nodes[1][3] = 1.; // sharp
+
+  // Ending threshold point with a sharp slope that jumps back to a 0 opacity
+  nodes[2][0] = max +
+    ((max == nodes[1][0] && !this->PiecewiseFunction->GetAllowDuplicateScalars()) ?
+      0.00000000000001 : 0.);
+  nodes[2][1] = opacity;
+  nodes[2][2] = 0.;
+  nodes[2][3] = 1.;
+
+  // End of the curve, always y = 0
+  nodes[3][0] = range[1] +
+   ((range[1] == nodes[2][0] && !this->PiecewiseFunction->GetAllowDuplicateScalars()) ?
+      0.00000000000001 : 0.);
+  nodes[3][1] = 0.;
+  nodes[3][2] = 0.5;
+  nodes[3][3] = 0.;
+
+  q->qvtkBlock(this->PiecewiseFunction, vtkCommand::ModifiedEvent, q);
+  this->setNodes(nodes);
+  q->qvtkUnblock(this->PiecewiseFunction, vtkCommand::ModifiedEvent, q);
+  q->updateFromPiecewiseFunction();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKThresholdWidgetPrivate::setNodes(double nodeValues[4][4])
+{
+  double lastX = VTK_DOUBLE_MIN;
+  double minX = nodeValues[0][0];
+  for(int i = 0; i < 4; ++i)
+    {
+    int index = this->PiecewiseFunction->GetSize();
+    bool alreadyEqual = false;
+    // search the node index to modify
+    for (int j = 0; j < this->PiecewiseFunction->GetSize(); ++j)
+      {
+      double node[4];
+      this->PiecewiseFunction->GetNodeValue(j, node);
+      if (node[0] < minX || node[0] > lastX)
+        {
+        index = j;
+        break;
+        }
+      else if (node[0] == lastX)
+        {
+        if (alreadyEqual)
+          {
+          index = j;
+          break;
+          }
+        alreadyEqual = true;
+        }
+      }
+    this->setNodeValue(index, nodeValues[i]);
+    lastX = nodeValues[i][0];
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKThresholdWidgetPrivate::setNodeValue(int index, double* nodeValues)
+{
+  if (this->PiecewiseFunction->GetSize() <= index)
+    {
+    this->PiecewiseFunction->AddPoint(
+      nodeValues[0], nodeValues[1], nodeValues[2], nodeValues[3]);
+    }
+  else
+    {
+    this->PiecewiseFunction->SetNodeValue(index, nodeValues);
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -265,7 +305,7 @@ void ctkVTKThresholdWidget::updateFromPiecewiseFunction()
   d->ThresholdSliderWidget->range(range);
   double minThreshold = range[0];
   double maxThreshold = range[1];
-  double opacity = 1.;
+  double opacity = d->OpacitySliderWidget->value();
   double node[4];
   if (d->PiecewiseFunction->GetSize() > 1)
     {
@@ -277,6 +317,10 @@ void ctkVTKThresholdWidget::updateFromPiecewiseFunction()
     d->PiecewiseFunction->GetNodeValue(2, node);
     maxThreshold = node[0];
     opacity = node[1];
+    }
+  if (d->PiecewiseFunction->GetSize() > 3)
+    {
+    d->PiecewiseFunction->GetNodeValue(3, node);
     }
   bool wasBlocking = d->ThresholdSliderWidget->blockSignals(true);
   d->ThresholdSliderWidget->setValues(minThreshold, maxThreshold);
@@ -294,11 +338,26 @@ void ctkVTKThresholdWidget::setThresholdValues(double min, double max)
 }
 
 // ----------------------------------------------------------------------------
+void ctkVTKThresholdWidget::thresholdValues(double* values)const
+{
+  Q_D(const ctkVTKThresholdWidget);
+  values[0] = d->ThresholdSliderWidget->minimumValue();
+  values[1] = d->ThresholdSliderWidget->maximumValue();
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKThresholdWidget::setOpacity(double opacity)
 {
   Q_D(ctkVTKThresholdWidget);
   d->setThreshold(d->ThresholdSliderWidget->minimumValue(),
                   d->ThresholdSliderWidget->maximumValue(), opacity);
+}
+
+// ----------------------------------------------------------------------------
+double ctkVTKThresholdWidget::opacity()const
+{
+  Q_D(const ctkVTKThresholdWidget);
+  return d->OpacitySliderWidget->value();
 }
 
 // ----------------------------------------------------------------------------
