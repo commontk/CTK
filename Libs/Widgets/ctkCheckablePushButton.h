@@ -37,7 +37,11 @@ class ctkCheckablePushButtonPrivate;
 /// You can change this behaviour by clearing the "checkBoxControlsButton"
 /// property.
 /// The checkBoxUserCheckable property determines if the state of the
-/// checkbox can be changed interactively.
+/// checkbox can be changed interactively by the user by clicking on the
+/// checkbox.
+/// \note In checkBoxControlsButton mode, calling setCheckable instead of
+/// setCheckState may not refresh the button automatically. Use setCheckState
+/// instead.
 class CTK_WIDGETS_EXPORT ctkCheckablePushButton : public QPushButton
 {
   Q_OBJECT

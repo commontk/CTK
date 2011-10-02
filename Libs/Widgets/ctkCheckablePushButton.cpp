@@ -252,6 +252,9 @@ void ctkCheckablePushButton::setCheckBoxControlsButton(bool b)
   if (b)
     {
     d->CheckBoxFlags |= Qt::ItemIsEnabled;
+    // synchronize checkstate with the checkable property.
+    this->setCheckState(
+      this->isCheckable() ? Qt::Checked : Qt::Unchecked);
     }
   else
     {
@@ -343,31 +346,25 @@ void ctkCheckablePushButton::paintEvent(QPaintEvent * _event)
     {
     indicatorOpt.state &= ~QStyle::State_Enabled;
     }
-  if (d->CheckBoxFlags & Qt::ItemIsEnabled)
+  if (this->checkBoxControlsButton())
     {
-    if (this->isCheckable())
-      {
-      indicatorOpt.state |= QStyle::State_On;
-      }
-    else
-      {
-      indicatorOpt.state |= QStyle::State_Off;
-      }
+    // Hack: calling setCheckable() instead of setCheckState while being in a
+    // control button mode leads to an inconsistent state, we need to make
+    // synchronize the 2 properties.
+    this->setCheckState(this->isCheckable() ? Qt::Checked : Qt::Unchecked);
     }
-  else
+  switch (d->CheckState)
     {
-    if (d->CheckState == Qt::Checked)
-      {
+    case Qt::Checked:
       indicatorOpt.state |= QStyle::State_On;
-      }
-    else if (d->CheckState == Qt::PartiallyChecked)
-      {
+      break;
+    case Qt::PartiallyChecked:
       indicatorOpt.state |= QStyle::State_NoChange;
-      }
-    else
-      {
+      break;
+    default:
+    case Qt::Unchecked:
       indicatorOpt.state |= QStyle::State_Off;
-      }
+      break;
     }
   indicatorOpt.rect = d->checkboxRect();
   this->style()->drawPrimitive(QStyle::PE_IndicatorCheckBox, &indicatorOpt, &p, 0);
@@ -445,25 +442,19 @@ void ctkCheckablePushButton::mousePressEvent(QMouseEvent *e)
   if (d->checkboxRect().contains(e->pos()) &&
       (d->CheckBoxFlags & Qt::ItemIsUserCheckable))
     {
-    if (d->CheckBoxFlags & Qt::ItemIsEnabled)
+    Qt::CheckState newCheckState;
+    switch (d->CheckState)
       {
-      //check the checkbox
-      this->setCheckable(!this->isCheckable());
+      case Qt::Unchecked:
+      case Qt::PartiallyChecked:
+        newCheckState = Qt::Checked;
+        break;
+      default:
+      case Qt::Checked:
+        newCheckState = Qt::Unchecked;
+        break;
       }
-    else
-      {
-      switch (d->CheckState)
-        {
-        case Qt::Unchecked:
-        case Qt::PartiallyChecked:
-          d->CheckState = Qt::Checked;
-          break;
-        case Qt::Checked:
-          d->CheckState = Qt::Unchecked;
-          break;
-        }
-      }
-    this->update();
+    this->setCheckState(newCheckState);
     e->accept();
     }
 }
