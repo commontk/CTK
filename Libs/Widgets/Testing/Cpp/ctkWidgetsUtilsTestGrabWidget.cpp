@@ -65,7 +65,7 @@ int ctkWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if (argc < 2 && QString(argv[1]) != "-I")
+  if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(100, &app, SLOT(quit()));
     }

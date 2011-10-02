@@ -44,9 +44,9 @@ int ctkWidgetsUtilsTest1(int argc, char * argv [] )
   label.setPixmap(QPixmap::fromImage(image));
   label.show();
 
-  if (argc < 2 && QString(argv[1]) != "-I")
+  if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QTimer::singleShot(100, &app, SLOT(quit()));
+    QTimer::singleShot(200, &app, SLOT(quit()));
     }
   return app.exec();
 }

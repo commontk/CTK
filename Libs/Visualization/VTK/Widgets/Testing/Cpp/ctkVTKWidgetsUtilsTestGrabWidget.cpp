@@ -71,7 +71,7 @@ int ctkVTKWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
   screenshotLabel.setPixmap(QPixmap::fromImage(screenshot));
   screenshotLabel.show();
 
-  if (argc < 2 && QString(argv[1]) != "-I")
+  if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(100, &app, SLOT(quit()));
     }
