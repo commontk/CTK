@@ -160,14 +160,14 @@ void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
 QString ctkWorkflowGroupBox::title()const
 {
   Q_D(const ctkWorkflowGroupBox);
-  return d->CollapsibleButton->text();
+  return d->GroupBox->title();
 }
 
 // --------------------------------------------------------------------------
 void ctkWorkflowGroupBox::setTitle(const QString& newTitleText)
 {
   Q_D(ctkWorkflowGroupBox);
-  d->CollapsibleButton->setText(newTitleText);
+  d->GroupBox->setTitle(newTitleText);
 }
 
 // --------------------------------------------------------------------------
