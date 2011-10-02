@@ -24,21 +24,12 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ctkCollapsibleButton" name="CollapsibleButton">
+    <widget class="QGroupBox" name="GroupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Step title</string>
-     </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="contentsMidLineWidth">
-      <number>0</number>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
@@ -60,8 +51,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>519</width>
-           <height>489</height>
+           <width>511</width>
+           <height>499</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -181,14 +172,14 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
-     <property name="inactiveSizePolicy">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+     <property name="inactiveSizePolicy" stdset="0">
       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="active">
+     <property name="active" stdset="0">
       <bool>true</bool>
      </property>
      <property name="activate" stdset="0">
@@ -199,12 +190,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>ctkDynamicSpacer</class>
    <extends>QWidget</extends>
@@ -217,22 +202,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>CollapsibleButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>DynamicSpacer</receiver>
-   <slot>setActive(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>260</x>
-     <y>259</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>260</x>
-     <y>524</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
