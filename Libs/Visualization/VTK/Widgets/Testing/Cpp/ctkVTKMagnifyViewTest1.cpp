@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QSharedPointer>
 #include <QTimer>
 
 // CTK includes
@@ -27,6 +28,10 @@
 
 // VTK includes
 #include <QVTKWidget.h>
+#include <vtkNew.h>
+#include <vtkRenderer.h>
+#include <vtkRendererCollection.h>
+#include <vtkRenderWindow.h>
 
 // STD includes
 #include <cstdlib>
@@ -95,11 +100,23 @@ int ctkVTKMagnifyViewTest1(int argc, char * argv [] )
     }
 
   // Adding / removing observed QVTKWidgets
-  QList<QVTKWidget *> allVTKWidgets;
+  QObject widgetParent;
+  QList<QVTKWidget* > allVTKWidgets;
+  QList<QSharedPointer<QVTKWidget> > widgetsToDelete;
   int numVTKWidgets = 3;
   for (int i = 0; i < numVTKWidgets; i++)
     {
-    allVTKWidgets.append(new QVTKWidget());
+    QVTKWidget* widget = new QVTKWidget();
+    allVTKWidgets.append(widget);
+    widgetsToDelete.append(QSharedPointer<QVTKWidget>(widget));
+
+    vtkNew<vtkRenderer> renderer;
+    widget->GetRenderWindow()->AddRenderer(renderer.GetPointer());
+    double gray = static_cast<double>(i) / (numVTKWidgets-1);
+    renderer->SetBackground( gray, gray, gray);
+    renderer->SetBackground2( 0., 0., 1.);
+    renderer->SetGradientBackground(true);
+    widget->show();
     }
 
   // Observe one widget
