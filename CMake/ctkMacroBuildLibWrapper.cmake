@@ -25,7 +25,7 @@
 
 
 #! When CTK is built as shared library, the following macro builds a python module
-#! associated the PythonQt wrapper. When loaded, this python module will
+#! associated with the generated PythonQt wrappers. When loaded, it will
 #! dynamically loads both the (1) generated decorators and the (2) hand written one.
 #! On the other hand, when CTK is built statically, it creates a
 #! static library providing a initialization function that will allow to load
@@ -34,7 +34,7 @@
 #! \ingroup CMakeAPI
 MACRO(ctkMacroBuildLibWrapper)
   ctkMacroParseArguments(MY
-    "NAMESPACE;TARGET;SRCS;WRAPPER_LIBRARY_TYPE;ARCHIVE_OUTPUT_DIRECTORY;LIBRARY_OUTPUT_DIRECTORY;RUNTIME_OUTPUT_DIRECTORYINSTALL_BIN_DIR;INSTALL_LIB_DIR"
+    "NAMESPACE;TARGET;SRCS;WRAPPER_LIBRARY_TYPE;ARCHIVE_OUTPUT_DIRECTORY;LIBRARY_OUTPUT_DIRECTORY;RUNTIME_OUTPUT_DIRECTORY;INSTALL_BIN_DIR;INSTALL_LIB_DIR"
     "NO_INSTALL"
     ${ARGN}
     )
@@ -144,11 +144,12 @@ MACRO(ctkMacroBuildLibWrapper)
 
   # Install rules
   IF(NOT MY_NO_INSTALL AND MY_WRAPPER_LIBRARY_TYPE STREQUAL "MODULE")
-    INSTALL(TARGETS ${lib_name}
+    INSTALL(TARGETS ${lib_name}PythonQt
       RUNTIME DESTINATION ${MY_INSTALL_BIN_DIR} COMPONENT Runtime
       LIBRARY DESTINATION ${MY_INSTALL_LIB_DIR} COMPONENT Runtime
       ARCHIVE DESTINATION ${MY_INSTALL_LIB_DIR} COMPONENT Development)
   ENDIF()
 
 ENDMACRO()
+
 
