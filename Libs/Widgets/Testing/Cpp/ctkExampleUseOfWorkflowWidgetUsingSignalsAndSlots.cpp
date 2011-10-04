@@ -65,21 +65,21 @@ int ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots(int argc, char * argv [] )
   groupBox->setHideWidgetsOfNonCurrentSteps(hideWidgets);
 
   // create and add the first workflow step
-  ctkWorkflowWidgetStep* testStep1 = new ctkWorkflowWidgetStep(workflow, "Step 1");
+  ctkWorkflowWidgetStep* testStep1 = new ctkWorkflowWidgetStep("Step 1");
   testStep1->setName("Step 1");
   testStep1->setDescription("I am in step 1");
   // can specify the name of the tab
   workflowWidget->associateStepWithLabel(testStep1, "name 1");
 
   // create and add the second workflow step
-  ctkWorkflowWidgetStep* testStep2 = new ctkWorkflowWidgetStep(workflow, "Step 2");
+  ctkWorkflowWidgetStep* testStep2 = new ctkWorkflowWidgetStep("Step 2");
   testStep2->setName("Step 2");
   testStep2->setDescription("I am in step 2");
   // a new tab is automatically created
   workflowWidget->associateStepWithLabel(testStep2, "name 2");
 
   // create and add a third workflow step
-  ctkWorkflowWidgetStep* testStep3 = new ctkWorkflowWidgetStep(workflow, "Step 3");
+  ctkWorkflowWidgetStep* testStep3 = new ctkWorkflowWidgetStep("Step 3");
   testStep3->setName("Step 3");
   testStep3->setDescription("I am in step 3");
   // can place a step on a tab that was previously created by
@@ -158,7 +158,7 @@ int ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots(int argc, char * argv [] )
   // 2) change step 2's value to something invalid (ex. 0)
   // 3) "Back" to step 1
   // 4) "finish" - attempts to go to step 3, but leaves you in step 2
-  
+
   // start the workflow
   workflow->start();
   workflowWidget->show();
@@ -171,7 +171,7 @@ int ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots(int argc, char * argv [] )
   workflow->stop();
   QTimer::singleShot(100, &app, SLOT(quit()));
   app.exec();
-  
+
   // handles deletion of the workflowWidget, workflow, steps, states
   // and transitions
   delete workflowWidget;

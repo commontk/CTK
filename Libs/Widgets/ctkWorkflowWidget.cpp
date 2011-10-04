@@ -79,7 +79,7 @@ ctkWorkflowWidgetPrivate::~ctkWorkflowWidgetPrivate()
 ctkWorkflowWidget::ctkWorkflowWidget(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new ctkWorkflowWidgetPrivate)
 {
-  Q_D(ctkWorkflowWidget); 
+  Q_D(ctkWorkflowWidget);
   d->WorkflowGroupBox = new ctkWorkflowGroupBox(this);
   d->ButtonBoxWidget = new ctkWorkflowButtonBoxWidget();
 }
@@ -110,11 +110,21 @@ void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)
   if (d->Workflow)
     {
     QObject::disconnect(d->Workflow, SIGNAL(currentStepChanged(ctkWorkflowStep*)), this, SLOT(onCurrentStepChanged(ctkWorkflowStep)));
+    QObject::disconnect(d->Workflow, SIGNAL(stepRegistered(ctkWorkflowStep*)), this, SLOT(onStepRegistered(ctkWorkflowStep)));
     }
 
   d->Workflow = newWorkflow;
 
+  if (d->Workflow)
+    {
+    foreach(ctkWorkflowStep* step, d->Workflow->steps())
+      {
+      this->onStepRegistered(step);
+      }
+    }
+
   QObject::connect(newWorkflow, SIGNAL(currentStepChanged(ctkWorkflowStep*)), this, SLOT(onCurrentStepChanged(ctkWorkflowStep*)));
+  QObject::connect(newWorkflow, SIGNAL(stepRegistered(ctkWorkflowStep*)), this, SLOT(onStepRegistered(ctkWorkflowStep*)));
 
   d->ButtonBoxWidget->setWorkflow(newWorkflow);
 }
@@ -126,6 +136,18 @@ void ctkWorkflowWidget::onCurrentStepChanged(ctkWorkflowStep* currentStep)
     {
     this->updateStepUI(currentStep);
     this->updateButtonBoxUI(currentStep);
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowWidget::onStepRegistered(ctkWorkflowStep* step)
+{
+  if (step->isWidgetType())
+    {
+    QWidget * widget = dynamic_cast<QWidget*>(step);
+    Q_ASSERT(widget);
+    widget->setParent(this);
+    widget->setVisible(false);
     }
 }
 
@@ -147,7 +169,7 @@ void ctkWorkflowWidget::updateStepUI(ctkWorkflowStep* currentStep)
       {
       layout->addWidget(d->ButtonBoxWidget);
       }
-      
+
     layout->setContentsMargins(0,0,0,0);
     }
 
@@ -159,7 +181,7 @@ void ctkWorkflowWidget::updateButtonBoxUI(ctkWorkflowStep* currentStep)
 {
   Q_D(ctkWorkflowWidget);
   Q_ASSERT(currentStep);
-  
+
   // Update the button box widget if we want to show it
   if (d->ShowButtonBoxWidget)
     {

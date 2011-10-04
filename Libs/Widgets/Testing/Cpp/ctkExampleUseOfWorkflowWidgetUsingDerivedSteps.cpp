@@ -62,21 +62,21 @@ int ctkExampleUseOfWorkflowWidgetUsingDerivedSteps ( int argc, char * argv [] )
   groupBox->setHideWidgetsOfNonCurrentSteps(hideWidgets);
 
   // create and add the first workflow step
-  ctkExampleDerivedWorkflowWidgetStep* testStep1 = new ctkExampleDerivedWorkflowWidgetStep(workflow, "Step 1");
+  ctkExampleDerivedWorkflowWidgetStep* testStep1 = new ctkExampleDerivedWorkflowWidgetStep("Step 1");
   testStep1->setName("Step 1");
   testStep1->setDescription("I am in step 1");
   // can specify the name of the tab
   workflowWidget->associateStepWithLabel(testStep1, "name 1");
 
   // create and add the second workflow step
-  ctkExampleDerivedWorkflowWidgetStep* testStep2 = new ctkExampleDerivedWorkflowWidgetStep(workflow, "Step 2");
+  ctkExampleDerivedWorkflowWidgetStep* testStep2 = new ctkExampleDerivedWorkflowWidgetStep("Step 2");
   testStep2->setName("Step 2");
   testStep2->setDescription("I am in step 2");
   // a new tab is automatically created
   workflowWidget->associateStepWithLabel(testStep2, "name 2");
 
   // create and add a third workflow step
-  ctkExampleDerivedWorkflowWidgetStep* testStep3 = new ctkExampleDerivedWorkflowWidgetStep(workflow, "Step 3");
+  ctkExampleDerivedWorkflowWidgetStep* testStep3 = new ctkExampleDerivedWorkflowWidgetStep("Step 3");
   testStep3->setName("Step 3");
   testStep3->setDescription("I am in step 3");
   // can place a step on a tab that was previously created by
@@ -116,7 +116,7 @@ int ctkExampleUseOfWorkflowWidgetUsingDerivedSteps ( int argc, char * argv [] )
   workflow->stop();
   QTimer::singleShot(100, &app, SLOT(quit()));
   app.exec();
-  
+
   // handles deletion of the workflowWidget, workflow, steps, states
   // and transitions
   delete workflowWidget;

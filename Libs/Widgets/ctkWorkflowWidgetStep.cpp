@@ -43,11 +43,17 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowWidgetStep");
 ctkWorkflowWidgetStepPrivate::ctkWorkflowWidgetStepPrivate(ctkWorkflowWidgetStep& object)
   :Superclass(object), q_ptr(&object)
 {
+  this->WidgetType = true;
 //  this->buttonBoxWidget = 0;
 //  this->hasButtonBoxWidget = false;
 
   this->icon = QIcon();
   this->created = false;
+}
+
+//-----------------------------------------------------------------------------
+ctkWorkflowWidgetStepPrivate::~ctkWorkflowWidgetStepPrivate()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -87,7 +93,7 @@ void ctkWorkflowWidgetStepPrivate::createUserInterfaceCompleteInternal()const
 //-----------------------------------------------------------------------------
 ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(QWidget* newParent) :
   QWidget(newParent),
-  ctkWorkflowStep(new ctkWorkflowWidgetStepPrivate(*this), 0, QString())
+  ctkWorkflowStep(new ctkWorkflowWidgetStepPrivate(*this), QString())
 {
   Q_D(ctkWorkflowWidgetStep);
   d->hasShowUserInterfaceCommand = false;
@@ -96,11 +102,9 @@ ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(QWidget* newParent) :
 }
 
 //-----------------------------------------------------------------------------
-ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(ctkWorkflow* newWorkflow,
-                                                             const QString& newId,
-                                                             QWidget* newParent) :
+ctkWorkflowWidgetStep::ctkWorkflowWidgetStep(const QString& newId, QWidget* newParent) :
   QWidget(newParent),
-  ctkWorkflowStep(new ctkWorkflowWidgetStepPrivate(*this), newWorkflow, newId)
+  ctkWorkflowStep(new ctkWorkflowWidgetStepPrivate(*this), newId)
 {
   Q_D(ctkWorkflowWidgetStep);
   d->hasShowUserInterfaceCommand = false;

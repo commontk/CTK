@@ -39,7 +39,7 @@ class ctkExampleDerivedWorkflowStep : public ctkWorkflowStep
 public:
 
   typedef ctkWorkflowStep Superclass;
-  explicit ctkExampleDerivedWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId);
+  explicit ctkExampleDerivedWorkflowStep(const QString& newId);
   virtual ~ctkExampleDerivedWorkflowStep();
 
   /// Get the values for the counters of the number of times we have

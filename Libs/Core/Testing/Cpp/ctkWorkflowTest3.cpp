@@ -47,15 +47,15 @@ int ctkWorkflowTest3(int argc, char * argv [] )
 
   // create two steps and the workflow
   ctkWorkflow *workflow = new ctkWorkflow();
-  ctkExampleDerivedWorkflowStep* s0 = new ctkExampleDerivedWorkflowStep(workflow, "Step 0");
-  ctkExampleDerivedWorkflowStep* s1 = new ctkExampleDerivedWorkflowStep(workflow, "Step 1");
-  ctkBranchingWorkflowStep* s2 = new ctkBranchingWorkflowStep(workflow, "Step 2");
-  ctkExampleDerivedWorkflowStep* s3 = new ctkExampleDerivedWorkflowStep(workflow, "Step 3");
-  ctkExampleDerivedWorkflowStep* s4 = new ctkExampleDerivedWorkflowStep(workflow, "Step 4");
-  ctkExampleDerivedWorkflowStep* s5 = new ctkExampleDerivedWorkflowStep(workflow, "Step 5");
-  ctkExampleDerivedWorkflowStep* s6 = new ctkExampleDerivedWorkflowStep(workflow, "Step 6");
-  ctkExampleDerivedWorkflowStep* s7 = new ctkExampleDerivedWorkflowStep(workflow, "Step 7");
-  ctkExampleDerivedWorkflowStep* s8 = new ctkExampleDerivedWorkflowStep(workflow, "Step 8");
+  ctkExampleDerivedWorkflowStep* s0 = new ctkExampleDerivedWorkflowStep("Step 0");
+  ctkExampleDerivedWorkflowStep* s1 = new ctkExampleDerivedWorkflowStep("Step 1");
+  ctkBranchingWorkflowStep* s2 = new ctkBranchingWorkflowStep("Step 2");
+  ctkExampleDerivedWorkflowStep* s3 = new ctkExampleDerivedWorkflowStep("Step 3");
+  ctkExampleDerivedWorkflowStep* s4 = new ctkExampleDerivedWorkflowStep("Step 4");
+  ctkExampleDerivedWorkflowStep* s5 = new ctkExampleDerivedWorkflowStep("Step 5");
+  ctkExampleDerivedWorkflowStep* s6 = new ctkExampleDerivedWorkflowStep("Step 6");
+  ctkExampleDerivedWorkflowStep* s7 = new ctkExampleDerivedWorkflowStep("Step 7");
+  ctkExampleDerivedWorkflowStep* s8 = new ctkExampleDerivedWorkflowStep("Step 8");
 
   workflow->addTransition(s0, s1);
   workflow->addTransition(s1, s2);
@@ -192,7 +192,7 @@ int ctkWorkflowTest3(int argc, char * argv [] )
     std::cerr << "error transitioning s3->s2" << std::endl;
     return EXIT_FAILURE;
     }
- 
+
   // transition to s5
   s2->setBranchId("advanced");
   workflow->goForward();

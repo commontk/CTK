@@ -78,8 +78,7 @@ public:
   Q_DECLARE_FLAGS(ButtonBoxHints, ButtonBoxHint)
 
   explicit ctkWorkflowWidgetStep(QWidget* newParent = 0);
-  explicit ctkWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId,
-                                 QWidget* newParent = 0);
+  explicit ctkWorkflowWidgetStep(const QString& newId, QWidget* newParent = 0);
   virtual ~ctkWorkflowWidgetStep();
 
   /// \brief Override the back button text of any ctkWorkflowButtonBox when this step

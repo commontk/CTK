@@ -63,7 +63,7 @@ int numberOfTimesEntryExitTest(ctkExampleWorkflowStepUsingSignalsAndSlots* step1
     if (step4->numberOfTimesRanOnEntry() != step4Entry || step4->numberOfTimesRanOnExit() != step4Exit)
       {
       return 0;
-      }    
+      }
     }
 
   return 1;
@@ -124,17 +124,17 @@ int ctkWorkflowTest2(int argc, char * argv [] )
 
   // create the steps and the workflow
   ctkWorkflow *workflow = new ctkWorkflow();
-  ctkWorkflowStep *step1 = new ctkWorkflowStep(workflow, "Step 1");
+  ctkWorkflowStep *step1 = new ctkWorkflowStep("Step 1");
   step1->setName("Step 1");
   step1->setId("FirstStep");
   step1->setDescription("Description for step 1");
-  ctkWorkflowStep *step2 = new ctkWorkflowStep(workflow, "Step 2");
+  ctkWorkflowStep *step2 = new ctkWorkflowStep("Step 2");
   step2->setName("Step 2");
   step2->setDescription("Description for step 2");
-  ctkWorkflowStep *step3 = new ctkWorkflowStep(workflow, "Step 3");
+  ctkWorkflowStep *step3 = new ctkWorkflowStep("Step 3");
   step3->setName("Step 3");
   step3->setDescription("Description for step 3");
-  ctkWorkflowStep *step4 = new ctkWorkflowStep(workflow, "Step 4");
+  ctkWorkflowStep *step4 = new ctkWorkflowStep("Step 4");
   step4->setName("Step 4");
   step4->setDescription("Description for step 4");
 
@@ -200,10 +200,10 @@ int ctkWorkflowTest2(int argc, char * argv [] )
   step2->setHasOnExitCommand(1);
   step3->setHasOnExitCommand(1);
   step4->setHasOnExitCommand(1);
-  
+
   // set the initial step (which sets the initial state)
   workflow->setInitialStep(step1);
-  
+
   // add the first and second steps
   if (!workflow->addTransition(step1, step2))
     {

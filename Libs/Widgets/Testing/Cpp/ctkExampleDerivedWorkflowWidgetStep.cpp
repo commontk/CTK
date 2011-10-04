@@ -68,8 +68,8 @@ ctkExampleDerivedWorkflowWidgetStepPrivate::ctkExampleDerivedWorkflowWidgetStepP
 // ctkExampleDerivedWorkflowWidgetStep methods
 
 //-----------------------------------------------------------------------------
-ctkExampleDerivedWorkflowWidgetStep::ctkExampleDerivedWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId) :
-  Superclass(newWorkflow, newId)
+ctkExampleDerivedWorkflowWidgetStep::ctkExampleDerivedWorkflowWidgetStep(const QString& newId) :
+  Superclass(newId)
   , d_ptr(new ctkExampleDerivedWorkflowWidgetStepPrivate)
 {
 }
@@ -183,7 +183,7 @@ void ctkExampleDerivedWorkflowWidgetStep::validate(const QString& desiredBranchI
     this->setStatusText("");
     retVal = true;
     }
- 
+
   // return the validation results
   this->validationComplete(retVal, desiredBranchId);
 }

@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QObject>
+#include <QPointer>
 
 class QString;
 class QState;
@@ -53,13 +54,15 @@ public:
 protected:
   ctkWorkflow* Workflow;
 
+  bool WidgetType;
+
   QString      Id;
   QString      Name;
   QString      Description;
   QString      StatusText;
 
-  QState* ProcessingState;
-  QState* ValidationState;
+  QPointer<QState> ProcessingState;
+  QPointer<QState> ValidationState;
 
   ctkWorkflowIntrastepTransition* ValidationTransition;
   ctkWorkflowIntrastepTransition* ValidationFailedTransition;

@@ -32,7 +32,7 @@ class ctkBranchingWorkflowStep : public ctkWorkflowStep
 public:
 
   typedef ctkWorkflowStep Superclass;
-  explicit ctkBranchingWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId) : Superclass(newWorkflow, newId){};
+  explicit ctkBranchingWorkflowStep(const QString& newId) : Superclass(newId){};
 
   void setBranchId(const QString& newId)
   {

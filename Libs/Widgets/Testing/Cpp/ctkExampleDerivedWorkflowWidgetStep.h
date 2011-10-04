@@ -42,9 +42,9 @@ class ctkExampleDerivedWorkflowWidgetStep : public ctkWorkflowWidgetStep
   Q_OBJECT
 public:
   typedef ctkWorkflowWidgetStep Superclass;
-  explicit ctkExampleDerivedWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId);
+  explicit ctkExampleDerivedWorkflowWidgetStep(const QString& newId);
   virtual ~ctkExampleDerivedWorkflowWidgetStep();
- 
+
   ///
   /// Set/get the label on this step's user interface
   QLabel* label()const;
