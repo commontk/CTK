@@ -37,10 +37,10 @@ class ctkWorkflowWidgetStepPrivate : public ctkWorkflowStepPrivate
   Q_DECLARE_PUBLIC(ctkWorkflowWidgetStep);
 protected:
   ctkWorkflowWidgetStep* q_ptr;
-  
+
 public:
   ctkWorkflowWidgetStepPrivate(ctkWorkflowWidgetStep& object);
-  ~ctkWorkflowWidgetStepPrivate(){}
+  ~ctkWorkflowWidgetStepPrivate();
   typedef ctkWorkflowStepPrivate Superclass;
 
 protected:

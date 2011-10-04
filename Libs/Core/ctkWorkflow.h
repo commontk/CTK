@@ -17,7 +17,7 @@
   limitations under the License.
 
 =========================================================================*/
- 
+
 #ifndef __ctkWorkflow_h
 #define __ctkWorkflow_h
 
@@ -110,15 +110,6 @@ public:
   Q_INVOKABLE ctkWorkflowStep* initialStep()const;
   Q_INVOKABLE virtual void setInitialStep(ctkWorkflowStep* step);
 
-  /// \brief Register ctkWorkflowStep so that ctkWorkflow keeps track of the associated steps
-  /// and clean the memory when appropriate.
-  /// \note This function is declared public for convenience and shouldn't be directly used.
-  /// The step will register itself when instantiated.
-  /// \note Since ctkWorkflowStep are neither QObject nor QWidget, they will be registered. On
-  /// on the othen hand, ctkWorkflowWidgetStep will be managed by their parent QWidget and
-  /// won't be registered.
-  void registerWorkflowStep(ctkWorkflowStep* step);
-
   /// Get the current step of the state machine
   Q_INVOKABLE ctkWorkflowStep* currentStep()const;
 
@@ -166,6 +157,9 @@ public:
   /// Get the steps that are 'finish' steps (i.e. have no step following them)
   Q_INVOKABLE QList<ctkWorkflowStep*> finishSteps()const;
 
+  /// Returns list of steps managed by the workflow
+  Q_INVOKABLE QList<ctkWorkflowStep*> steps()const;
+
   /// Configures the behavior of goToStep(targetId).
   ///
   /// If set to true, goToStep(targetId) goes back to the origin step after
@@ -203,10 +197,10 @@ protected:
 
   /// \brief Processing that occurs after the attempt to go to a 'goTo' step fails
   virtual void goToStepFailed();
- 
+
   /// \brief Goes to the step from which the attempt to go to the 'goTo' step was initiated
   void goFromGoToStepToStartingStep();
- 
+
 protected slots:
 
   /// On an attempt to go to the next step, calls the current step's
@@ -224,6 +218,10 @@ signals:
   /// Emitted when the current step has changed, after the step's onEntry() has completed.
   /// \note This signal is not emitted in the process of going to a goToStep
   void currentStepChanged(ctkWorkflowStep* currentStep);
+
+  /// Emitted when a step is registered with this workflow
+  /// \sa addTransition
+  void stepRegistered(ctkWorkflowStep* step);
 
 protected:
   QScopedPointer<ctkWorkflowPrivate> d_ptr;

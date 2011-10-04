@@ -47,7 +47,7 @@ class CTK_CORE_EXPORT ctkWorkflowStep
 
 public:
   explicit ctkWorkflowStep();
-  explicit ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId);
+  explicit ctkWorkflowStep(const QString& newId);
   virtual ~ctkWorkflowStep();
 
   /// Get the \a workflow associated with this step
@@ -90,14 +90,15 @@ public:
   bool hasOnExitCommand()const;
   void setHasOnExitCommand(bool newHasOnExitCommand);
 
+  /// Returns true if the object is a widget; otherwise returns false
+  bool isWidgetType()const;
+
   /// Get QObject associated with this step, to connect signals/slots
   QObject* ctkWorkflowStepQObject();
 
 protected:
 
-  explicit ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl);
-  explicit ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl,
-                           ctkWorkflow* newWorkflow, const QString& newId);
+  explicit ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl, const QString& newId);
 
   /// Set workflow
   void setWorkflow(ctkWorkflow* newWorkflow);

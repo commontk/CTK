@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QWidget>
-class QPushButton; 
+class QPushButton;
 class QGroupBox;
 #include <QBoxLayout>
 
@@ -70,6 +70,9 @@ public slots:
   /// step has changed.
   virtual void onCurrentStepChanged(ctkWorkflowStep* currentStep);
 
+protected slots:
+  void onStepRegistered(ctkWorkflowStep* step);
+
 protected:
 
   // Triggers updates of the workflowGroupBox when the current workflow step has changed.
@@ -77,7 +80,7 @@ protected:
 
   // Triggers updates of the buttonBoxWidget when the current workflow step has changed.
   void updateButtonBoxUI(ctkWorkflowStep* currentStep);
- 
+
 protected:
   QScopedPointer<ctkWorkflowWidgetPrivate> d_ptr;
 

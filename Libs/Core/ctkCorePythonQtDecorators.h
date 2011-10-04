@@ -58,9 +58,9 @@ public slots:
     return new ctkWorkflowStep();
     }
 
-  ctkWorkflowStep* new_ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId = QString())
+  ctkWorkflowStep* new_ctkWorkflowStep(const QString& newId)
     {
-    return new ctkWorkflowStep(newWorkflow, newId);
+    return new ctkWorkflowStep(newId);
     }
 
   void delete_ctkWorkflowStep(ctkWorkflowStep * step)

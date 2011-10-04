@@ -62,7 +62,7 @@ int numberOfTimesEntryExitTest(ctkExampleDerivedWorkflowStep* step1=0, int step1
     if (step4->numberOfTimesRanOnEntry() != step4Entry || step4->numberOfTimesRanOnExit() != step4Exit)
       {
       return 0;
-      }    
+      }
     }
 
   return 1;
@@ -123,16 +123,16 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // create two steps and the workflow
   ctkWorkflow *workflow = new ctkWorkflow();
-  ctkExampleDerivedWorkflowStep *step1 = new ctkExampleDerivedWorkflowStep(workflow, "Step 1");
+  ctkExampleDerivedWorkflowStep *step1 = new ctkExampleDerivedWorkflowStep("Step 1");
   step1->setName("Step 1");
   step1->setDescription("Description for step 1");
-  ctkExampleDerivedWorkflowStep *step2 = new ctkExampleDerivedWorkflowStep(workflow, "Step 2");
+  ctkExampleDerivedWorkflowStep *step2 = new ctkExampleDerivedWorkflowStep("Step 2");
   step2->setName("Step 2");
   step2->setDescription("Description for step 2");
 
   // --------------------------------------------------------------------------
   // try to add a transition for a step with the same id
-  ctkExampleDerivedWorkflowStep *step1Duplicated = new ctkExampleDerivedWorkflowStep(workflow, "Step 1");
+  ctkExampleDerivedWorkflowStep *step1Duplicated = new ctkExampleDerivedWorkflowStep("Step 1");
   if (workflow->addTransition(step1, step1Duplicated))
     {
     std::cerr << "workflow connected two steps with the same id";
@@ -172,7 +172,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // --------------------------------------------------------------------------
   // workflow with one step
-  
+
   // set the initial step (which sets the initial state)
   workflow->setInitialStep(step1);
 
@@ -236,7 +236,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
     std::cerr << "Step2 not added to workflow";
     return EXIT_FAILURE;
     }
-  
+
   // if (workflow->numberOfSteps() != 2)
   //   {
   //   std::cerr << "workflow has " << workflow->numberOfSteps() << " steps, not 2";
@@ -269,7 +269,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   // --------------------------------------------------------------------------
   // Step3
 
-  ctkExampleDerivedWorkflowStep *step3 = new ctkExampleDerivedWorkflowStep(workflow, "Step 3");
+  ctkExampleDerivedWorkflowStep *step3 = new ctkExampleDerivedWorkflowStep("Step 3");
   step3->setName("Step 3");
   step3->setDescription("Description for step 3");
 
@@ -416,7 +416,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   // --------------------------------------------------------------------------
   // workflow with two finishing steps (step3 and step4)
-  ctkExampleDerivedWorkflowStep *step4 = new ctkExampleDerivedWorkflowStep(workflow, "Step 4");
+  ctkExampleDerivedWorkflowStep *step4 = new ctkExampleDerivedWorkflowStep("Step 4");
   step4->setName("Step 4");
   step4->setDescription("Description for step 4");
   workflow->addTransition(step3, step4);
@@ -480,7 +480,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
     {
     std::cerr << "error looping from step 4 to step 4";
     return EXIT_FAILURE;
-    }  
+    }
 
   // go back to step 3, and then go from step 3 to step 3 (should loop without hitting step4)
   workflow->goBackward();
@@ -491,7 +491,7 @@ int ctkWorkflowTest1(int argc, char * argv [] )
     {
     std::cerr << "error looping from step 3 to step 3";
     return EXIT_FAILURE;
-    }  
+    }
 
   // try to go automatically to step 4 and stay there by setting the property goBackToOriginStepUponSuccess to false
   workflow->setGoBackToOriginStepUponSuccess(false);

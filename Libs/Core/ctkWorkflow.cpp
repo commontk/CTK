@@ -62,17 +62,34 @@ ctkWorkflowPrivate::ctkWorkflowPrivate(ctkWorkflow& object)
 
 // --------------------------------------------------------------------------
 ctkWorkflowPrivate::~ctkWorkflowPrivate()
-{ 
+{
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowPrivate::addStep(ctkWorkflowStep* step)
+bool ctkWorkflowPrivate::addStep(ctkWorkflowStep* step)
 {
   Q_Q(ctkWorkflow);
 
   Q_ASSERT(step);
   Q_ASSERT(!q->hasStep(step->id()));
   Q_ASSERT(!this->StateMachine->isRunning());
+
+  if (!step->workflow())
+    {
+    step->setWorkflow(q);
+    }
+  if (step->workflow() != q)
+    {
+    // Check if steps are not already associated with a different workflow
+    QString msg("addStep - step [%1] already associated with a different workfow !");
+    logger.error(msg.arg(step->id()));
+    return false;
+    }
+  if (!this->RegisteredSteps.contains(step))
+    {
+    this->RegisteredSteps << step;
+    emit q->stepRegistered(step);
+    }
 
   // Add the states, creating them if necessary
   this->StateMachine->addState(step->processingState());
@@ -101,6 +118,8 @@ void ctkWorkflowPrivate::addStep(ctkWorkflowStep* step)
   this->connect(
       step->ctkWorkflowStepQObject(), SIGNAL(onExitComplete()),
       SLOT(processingAfterOnExit()));
+
+  return true;
 }
 
 // --------------------------------------------------------------------------
@@ -259,7 +278,7 @@ void ctkWorkflowPrivate::createTransitionToPreviousStartingStep(ctkWorkflowStep*
 
     this->TransitionToPreviousStartingStep = transition;
     }
-  
+
   QState* currentState;
   // looping on the finish step
   if (startingStep == currentStep)
@@ -541,9 +560,14 @@ ctkWorkflow::~ctkWorkflow()
     }
 
   // Clean registered step
-  while (!d->registeredSteps.isEmpty())
+  while (!d->RegisteredSteps.isEmpty())
     {
-    delete d->registeredSteps.takeFirst();
+    ctkWorkflowStep * step = d->RegisteredSteps.takeFirst();
+    if (!step->isWidgetType())
+      {
+      delete step;
+      }
+
     }
 }
 
@@ -578,7 +602,11 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
   // add the origin step if it doesn't exist in the workflow yet
   if (origin && !this->hasStep(origin->id()))
     {
-    d->addStep(origin);
+    bool ok = d->addStep(origin);
+    if (!ok)
+      {
+      return false;
+      }
     }
 
   // Set destination id if empty
@@ -590,7 +618,11 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
   // add the destination step if it doesn't exist in the workflow yet
   if (destination && !this->hasStep(destination->id()))
     {
-    d->addStep(destination);
+    bool ok = d->addStep(destination);
+    if (!ok)
+      {
+      return false;
+      }
     }
 
   if (origin && destination)
@@ -599,7 +631,7 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
     if (this->hasTransition(origin, destination, branchId, directionality))
       {
       logger.warn("addTransition - Cannot create a transition that matches a "
-                  "previously created transtiion");
+                  "previously created transition");
       return false;
       }
 
@@ -607,6 +639,7 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
     if (directionality == ctkWorkflow::Forward
         || directionality == ctkWorkflow::Bidirectional)
       {
+      //qDebug() << "addTransition" << origin->id() << "->" << destination->id();
       d->createTransitionToNextStep(origin, destination, branchId);
       }
 
@@ -614,6 +647,7 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
     if (directionality == ctkWorkflow::Backward
         || directionality == ctkWorkflow::Bidirectional)
       {
+      //qDebug() << "addTransition" << origin->id() << "<-" << destination->id();
       d->createTransitionToPreviousStep(origin, destination, branchId);
       }
     }
@@ -625,18 +659,6 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
     }
 
   return true;
-}
-
-// --------------------------------------------------------------------------
-void ctkWorkflow::registerWorkflowStep(ctkWorkflowStep* step)
-{
-  Q_D(ctkWorkflow);
-  if (!step)
-    {
-    qCritical() << "ctkWorkflow::registerWorkflowStep - Failed to register Null step !";
-    return;
-    }
-  d->registeredSteps << step;
 }
 
 // --------------------------------------------------------------------------
@@ -722,6 +744,13 @@ QList<ctkWorkflowStep*> ctkWorkflow::finishSteps()const
 }
 
 // --------------------------------------------------------------------------
+QList<ctkWorkflowStep*> ctkWorkflow::steps()const
+{
+  Q_D(const ctkWorkflow);
+  return d->RegisteredSteps;
+}
+
+// --------------------------------------------------------------------------
 bool ctkWorkflow::canGoForward(ctkWorkflowStep* step)const
 {
   return (!this->forwardSteps(step).isEmpty());
@@ -765,7 +794,7 @@ void ctkWorkflow::start()
     logger.warn("start - Cannot start workflow without an initial step");
     return;
     }
-  
+
   // Setup to do the entry processing for the initial setp
   d->StateMachine->setInitialState(d->InitialStep->processingState());
   d->OriginStep = 0;
@@ -856,7 +885,7 @@ void ctkWorkflow::goBackward(const QString& desiredBranchId)
   Q_ASSERT(!branchId.isEmpty());
 
   d->DesiredBranchId = desiredBranchId;
-  
+
   logger.info("goBackward - posting TransitionToPreviousStep");
   d->StateMachine->postEvent(
                              new ctkWorkflowInterstepTransitionEvent(ctkWorkflowInterstepTransition::TransitionToPreviousStep, branchId));
@@ -906,7 +935,7 @@ void ctkWorkflow::goToStep(const QString& targetId)
 void ctkWorkflow::attemptToGoToNextStep()
 {
   logger.info("attemptToGoToNextStep - Attempting to go to the next step ");
- 
+
   Q_D(ctkWorkflow);
   Q_ASSERT(d->CurrentStep);
   //Q_ASSERT(this->canGoForward(d->CurrentStep));
@@ -1024,7 +1053,7 @@ void ctkWorkflow::performTransitionBetweenSteps()
 
   ctkWorkflowInterstepTransition* transition = qobject_cast<ctkWorkflowInterstepTransition*>(QObject::sender());
   Q_ASSERT(transition);
-    
+
   d->OriginStep = d->stepFromState(transition->sourceState());
   d->DestinationStep = d->stepFromState(transition->targetState());
   d->TransitionType = transition->transitionType();
@@ -1035,9 +1064,9 @@ void ctkWorkflow::performTransitionBetweenSteps()
   // update the map from the step to the previous step if we are going forward
   if (d->TransitionType == ctkWorkflowInterstepTransition::TransitionToNextStep)
     {
-    d->StepToPreviousStepMap.insert(d->DestinationStep, d->OriginStep);        
+    d->StepToPreviousStepMap.insert(d->DestinationStep, d->OriginStep);
     }
- 
+
   // exit the destination step
   d->onExitInternal(d->OriginStep, d->DestinationStep, d->TransitionType);
 }
@@ -1081,7 +1110,7 @@ void ctkWorkflow::goToStepFailed()
 {
   // Abort attempt to get to the finish step
   Q_D(ctkWorkflow);
- 
+
   d->GoToStep = 0;
   d->StartingStep = 0;
 

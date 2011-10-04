@@ -67,12 +67,12 @@ bool buttonClickTestSignalSlot(QApplication& app, int defaultTime, ctkWorkflowWi
     std::cerr << "Incorrect widget visibility - the current step's widgets are invisible" << std::endl;
     return false;
     }
- 
+
   // ensure that buttons are appropriately enabled
   // TODO finish buttons
   if ((workflow->canGoBackward() != backButton->isEnabled()) || (workflow->canGoForward() != nextButton->isEnabled()) || (shownLineEdit && !shownLineEdit->isEnabled()))
     {
-    std::cerr << "Incorrect widget visibility - the buttons are incorrectly enabled" << std::endl;    
+    std::cerr << "Incorrect widget visibility - the buttons are incorrectly enabled" << std::endl;
     return false;
     }
 
@@ -442,7 +442,7 @@ int userInteractionSimulator2(QApplication& app, ctkWorkflowWidgetStep* step1, c
 //     return EXIT_FAILURE;
 //     }
 
-//   // we should be in the first step     
+//   // we should be in the first step
 //   if (!buttonClickTestSignalSlot(app, defaultTime, step1, qObject1, step2, qObject2, workflow, workflowWidget, step1BackButton, step1NextButton, step2BackButton, step2NextButton, step1FinishButton1, step2FinishButton1, step1FinishButton2, step2FinishButton2)) {return EXIT_FAILURE;}
 
 //   // tests with good input, so that we can get all of the buttons
@@ -475,7 +475,7 @@ int userInteractionSimulator2(QApplication& app, ctkWorkflowWidgetStep* step1, c
 //     return EXIT_FAILURE;
 //     }
 //   if (!buttonClickTestSignalSlot(app, defaultTime, step2, qObject2, step1, qObject1, workflow, workflowWidget, step2BackButton, step2NextButton, step1BackButton, step1NextButton, step2FinishButton1, step1FinishButton1, step2FinishButton2, step1FinishButton2)) {return EXIT_FAILURE;}
-  
+
 //   step2NextButton->click();
 //   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
 //   app.exec();
@@ -534,7 +534,7 @@ int userInteractionSimulator2(QApplication& app, ctkWorkflowWidgetStep* step1, c
 
 //   step1FinishButton2->click();
 //   if (!buttonClickTestSignalSlot(app, defaultTime, step1, qObject1, step2, qObject2, workflow, workflowWidget, step1BackButton, step1NextButton, step2BackButton, step2BackButton, step1FinishButton1, step2FinishButton1, step1FinishButton2, step2FinishButton2)) {return EXIT_FAILURE;}
-  
+
 //   step1NextButton->click();
 //   if (!buttonClickTestSignalSlot(app, defaultTime, step2, qObject2, step1, qObject1, workflow, workflowWidget, step2BackButton, step2NextButton, step1BackButton, step1BackButton, step2FinishButton1, step1FinishButton1, step2FinishButton2, step1FinishButton2)) {return EXIT_FAILURE;}
 
@@ -559,20 +559,20 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 
   // create and add the first workflow step (depends on workflowWidget
   // type)
-  ctkWorkflowWidgetStep* step1 = new ctkWorkflowWidgetStep(workflow, "Step 1");
+  ctkWorkflowWidgetStep* step1 = new ctkWorkflowWidgetStep("Step 1");
   step1->setName("Step 1");
   step1->setDescription("I am in step 1");
   if (ctkWorkflowTabWidget* tabWidget = qobject_cast<ctkWorkflowTabWidget*>(workflowWidget))
     {
     tabWidget->associateStepWithLabel(step1, "tab1");
     }
-  
+
   // step1 is the initial step
   workflow->setInitialStep(step1);
 
   // create and add the second workflow step (depends on
   // workflowWidget type)
-  ctkWorkflowWidgetStep* step2 = new ctkWorkflowWidgetStep(workflow, "Step 2");
+  ctkWorkflowWidgetStep* step2 = new ctkWorkflowWidgetStep("Step 2");
   step2->setName("Step 2");
   step2->setDescription("I am in step 2");
   if (ctkWorkflowTabWidget* tabWidget = qobject_cast<ctkWorkflowTabWidget*>(workflowWidget))
@@ -655,7 +655,7 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 
   // create and add a third workflow step (depends on workflowWidget
   // type)
-  ctkWorkflowWidgetStep* step3 = new ctkWorkflowWidgetStep(workflow, "Step 3");
+  ctkWorkflowWidgetStep* step3 = new ctkWorkflowWidgetStep("Step 3");
   step3->setName("Step 3");
   step3->setDescription("I am in step 3");
   if (ctkWorkflowStackedWidget* stackedWidget = qobject_cast<ctkWorkflowStackedWidget*>(workflowWidget))
@@ -722,7 +722,7 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 //   step2->setFinishStepsToHaveButtonsInStepArea(finishSteps);
 //   step3->setFinishStepsToHaveButtonsInStepArea(finishSteps);
 // //  workflow->addFinishStep(step2);
-  
+
   // // restart the workflow
   // workflow->start();
   // QTimer::singleShot(defaultTime, &app, SLOT(quit()));
@@ -738,7 +738,7 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
   // workflow->stop();
   // QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   // app.exec();
-  
+
   // handles deletion of the workflowWidget, workflow, steps, states
   // and transitions
   delete workflowWidget;

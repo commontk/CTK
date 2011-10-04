@@ -20,14 +20,15 @@
 
 // QT includes
 #include <QApplication>
-#include <QTimer>
-#include <QPushButton>
+#include <QDebug>
+#include <QIcon>
 #include <QLabel>
 #include <QLineEdit>
 #include <QList>
-#include <QIcon>
+#include <QPushButton>
+#include <QSignalSpy>
 #include <QStyle>
-#include <QDebug>
+#include <QTimer>
 
 // CTK includes
 #include "ctkWorkflow.h"
@@ -72,7 +73,7 @@ bool buttonClickTest(QApplication& app, int defaultTime, ctkWorkflowWidgetStep* 
   // TODO finish buttons
   if ((workflow->canGoBackward() != backButton->isEnabled()) || (workflow->canGoForward() != nextButton->isEnabled()) || (shownLineEdit && !shownLineEdit->isEnabled()))
     {
-    std::cerr << "Incorrect widget visibility - the buttons are incorrectly enabled" << std::endl;    
+    std::cerr << "Incorrect widget visibility - the buttons are incorrectly enabled" << std::endl;
     return false;
     }
 
@@ -226,7 +227,7 @@ int userInteractionSimulator1(QApplication& app, ctkExampleDerivedWorkflowWidget
   // step2        back         *             step1
   // step1        next         * (empty)     step1
   // step1        next                       step2
-  
+
   tests << new derivedTestData(nextButton, step1, step2, step1, "1")
         << new derivedTestData(nextButton, step2, step1, step1, "100")
         << new derivedTestData(backButton, step1, step2)
@@ -421,7 +422,7 @@ int userInteractionSimulator2(QApplication& app, ctkExampleDerivedWorkflowWidget
 //   //   return EXIT_FAILURE;
 //   //   }
 
-//   // we should be in the first step     
+//   // we should be in the first step
 //   if (!buttonClickTest(app, defaultTime, step1, step2, workflow, workflowWidget, backButton, nextButton, finishButton1, finishButton2)) {return EXIT_FAILURE;}
 
 //   // tests with good input, so that we can get all of the buttons
@@ -458,7 +459,7 @@ int userInteractionSimulator2(QApplication& app, ctkExampleDerivedWorkflowWidget
 //   //   return EXIT_FAILURE;
 //   //   }
 //   if (!buttonClickTest(app, defaultTime, step2, step1, workflow, workflowWidget, backButton, nextButton, finishButton1, finishButton2)) {return EXIT_FAILURE;}
-  
+
 //   nextButton->click();
 //   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
 //   app.exec();
@@ -520,7 +521,7 @@ int userInteractionSimulator2(QApplication& app, ctkExampleDerivedWorkflowWidget
 
 //   finishButton2->click();
 //   if (!buttonClickTest(app, defaultTime, step1, step2, workflow, workflowWidget, backButton, nextButton, finishButton1, finishButton2)) {return EXIT_FAILURE;}
-  
+
 //   nextButton->click();
 //   if (!buttonClickTest(app, defaultTime, step2, step1, workflow, workflowWidget, backButton, nextButton, finishButton1, finishButton2)) {return EXIT_FAILURE;}
 
@@ -540,7 +541,7 @@ int runWorkflowWidgetTest(ctkWorkflowWidget* workflowWidget, QApplication& app, 
 
   // create and add the first workflow step (depends on workflowWidget
   // type)
-  ctkExampleDerivedWorkflowWidgetStep* step1 = new ctkExampleDerivedWorkflowWidgetStep(workflow, "Step 1");
+  ctkExampleDerivedWorkflowWidgetStep* step1 = new ctkExampleDerivedWorkflowWidgetStep("Step 1");
   step1->setName("Step 1");
   step1->setDescription("I am in step 1");
   if (ctkWorkflowTabWidget* tabWidget = qobject_cast<ctkWorkflowTabWidget*>(workflowWidget))
@@ -553,7 +554,7 @@ int runWorkflowWidgetTest(ctkWorkflowWidget* workflowWidget, QApplication& app, 
 
   // create and add the second workflow step (depends on
   // workflowWidget type)
-  ctkExampleDerivedWorkflowWidgetStep* step2 = new ctkExampleDerivedWorkflowWidgetStep(workflow, "Step 2");
+  ctkExampleDerivedWorkflowWidgetStep* step2 = new ctkExampleDerivedWorkflowWidgetStep("Step 2");
   step2->setName("Step 2");
   step2->setDescription("I am in step 2");
   if (ctkWorkflowTabWidget* tabWidget = qobject_cast<ctkWorkflowTabWidget*>(workflowWidget))
@@ -561,12 +562,58 @@ int runWorkflowWidgetTest(ctkWorkflowWidget* workflowWidget, QApplication& app, 
     tabWidget->associateStepWithLabel(step2, "tab2");
     }
 
+  int expectedStepCount = 0;
+  int currentStepCount = workflow->steps().count();
+  if (currentStepCount != expectedStepCount)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with steps()\n"
+              << "\tcurrentStepCount: " << currentStepCount << "\n"
+              << "\texpectedStepCount:" << expectedStepCount << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QSignalSpy signalSpyStepRegistered(workflow, SIGNAL(stepRegistered(ctkWorkflowStep*)));
+
   // add the steps to the workflow
   workflow->addTransition(step1, step2);
+
+  expectedStepCount = 2;
+  currentStepCount = workflow->steps().count();
+  if (currentStepCount != expectedStepCount)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with steps()\n"
+              << "\tcurrentStepCount: " << currentStepCount << "\n"
+              << "\texpectedStepCount:" << expectedStepCount << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  int expectedSignalStepRegisteredCount = 2;
+  int currentSignalStepRegisteredCount = signalSpyStepRegistered.count();
+  if (currentSignalStepRegisteredCount != expectedSignalStepRegisteredCount)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with 'stepRegistered' signal\n"
+              << "\tcurrentSignalStepRegisteredCount: " << currentSignalStepRegisteredCount << "\n"
+              << "\texpectedSignalStepRegisteredCount:" << expectedSignalStepRegisteredCount << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // start the workflow
   workflow->start();
   workflowWidget->show();
+
+  // Attempt to add step to a different workflow
+  ctkWorkflow* workflow2 = new ctkWorkflow;
+  workflow2->addTransition(step1, step2);
+
+  expectedStepCount = 0;
+  currentStepCount = workflow2->steps().count();
+  if (currentStepCount != expectedStepCount)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with steps()\n"
+              << "\tcurrentStepCount: " << currentStepCount << "\n"
+              << "\texpectedStepCount:" << expectedStepCount << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // first user interaction test
   if (userInteractionSimulator1(app, step1, step2, workflow, workflowWidget, defaultTime) == EXIT_FAILURE)
@@ -581,7 +628,7 @@ int runWorkflowWidgetTest(ctkWorkflowWidget* workflowWidget, QApplication& app, 
 
   // create and add a third workflow step (depends on workflowWidget
   // type)
-  ctkExampleDerivedWorkflowWidgetStep* step3 = new ctkExampleDerivedWorkflowWidgetStep(workflow, "Step 3");
+  ctkExampleDerivedWorkflowWidgetStep* step3 = new ctkExampleDerivedWorkflowWidgetStep("Step 3");
   step3->setName("Step 3");
   step3->setDescription("I am in step 3");
   if (ctkWorkflowStackedWidget* stackedWidget = qobject_cast<ctkWorkflowStackedWidget*>(workflowWidget))
@@ -597,7 +644,7 @@ int runWorkflowWidgetTest(ctkWorkflowWidget* workflowWidget, QApplication& app, 
   step3->setIcon(step3->stepArea()->style()->standardIcon(QStyle::SP_ArrowUp));
 
   workflow->addTransition(step2, step3);
-  
+
   // restart the workflow
   workflow->start();
 
@@ -620,7 +667,7 @@ int runWorkflowWidgetTest(ctkWorkflowWidget* workflowWidget, QApplication& app, 
 //   step2->setFinishStepsToHaveButtonsInStepArea(finishSteps);
 //   step3->setFinishStepsToHaveButtonsInStepArea(finishSteps);
 // //  workflow->addFinishStep(step2);
-  
+
   // // restart the workflow
   // workflow->start();
   // QTimer::singleShot(defaultTime, &app, SLOT(quit()));
@@ -658,7 +705,7 @@ int ctkWorkflowWidgetTest1(int argc, char * argv [] )
   if (runWorkflowWidgetTest(new ctkWorkflowStackedWidget, app, hideWidgets, defaultTime) == EXIT_FAILURE)
     {
     return EXIT_FAILURE;
-    }                                                                   
+    }
   if (runWorkflowWidgetTest(new ctkWorkflowTabWidget, app, hideWidgets, defaultTime) == EXIT_FAILURE)
     {
     return EXIT_FAILURE;
@@ -672,7 +719,7 @@ int ctkWorkflowWidgetTest1(int argc, char * argv [] )
   if (runWorkflowWidgetTest(new ctkWorkflowStackedWidget, app, hideWidgets, defaultTime) == EXIT_FAILURE)
     {
     return EXIT_FAILURE;
-    }                                                                   
+    }
   if (runWorkflowWidgetTest(new ctkWorkflowTabWidget, app, hideWidgets, defaultTime) == EXIT_FAILURE)
     {
     return EXIT_FAILURE;

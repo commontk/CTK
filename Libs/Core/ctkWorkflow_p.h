@@ -17,7 +17,7 @@
   limitations under the License.
 
 =========================================================================*/
- 
+
 #ifndef __ctkWorkflow_p_h
 #define __ctkWorkflow_p_h
 
@@ -155,7 +155,7 @@ public:
   /// and validationFailedtransition transition.
   ///
   /// \return True or False indicating whether the method was successful.
-  void addStep(ctkWorkflowStep* step);
+  bool addStep(ctkWorkflowStep* step);
 
   /// \brief Returns whether a transition has been previously added with the same origin,
   /// destination and directionality
@@ -250,7 +250,7 @@ public slots:
 
   /// \brief Workflow processing executed after a step's onEntry function is run.
   void processingAfterOnEntry();
-  
+
   /// \brief Workflow processing executed after a step's onExit function is run.
   void processingAfterOnExit();
 
@@ -267,7 +267,7 @@ public:
   typedef QList<ctkWorkflowStep*>                          StepListType;
 
   // Register a list of pointers to the steps in the worflow for cleaning purpose
-  StepListType registeredSteps;
+  StepListType RegisteredSteps;
 
   // Maintain a map of <state, step> key/value pairs, to find the step
   // that a given state belongs to

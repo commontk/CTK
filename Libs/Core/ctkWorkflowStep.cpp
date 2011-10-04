@@ -19,6 +19,8 @@
   =========================================================================*/
 
 // Qt includes
+#include <QDebug>
+#include <QMetaType>
 #include <QObject>
 #include <QState>
 
@@ -42,7 +44,10 @@ static ctkLogger logger("org.commontk.core.ctkWorkflowStep");
 ctkWorkflowStepPrivate::ctkWorkflowStepPrivate(ctkWorkflowStep& object)
   :q_ptr(&object)
 {
+  qRegisterMetaType<ctkWorkflowStep*>("ctkWorkflowStep*");
   this->Workflow = 0;
+
+  this->WidgetType = false;
 
   this->HasValidateCommand = false;
   this->HasOnEntryCommand = false;
@@ -69,8 +74,14 @@ ctkWorkflowStepPrivate::ctkWorkflowStepPrivate(ctkWorkflowStep& object)
 // --------------------------------------------------------------------------
 ctkWorkflowStepPrivate::~ctkWorkflowStepPrivate()
 {
-  delete this->ValidationState;
-  delete this->ProcessingState;
+  if (!this->ValidationState.isNull())
+    {
+    delete this->ValidationState;
+    }
+  if (!this->ProcessingState.isNull())
+    {
+    delete this->ProcessingState;
+    }
 
   // If we delete the states, then Qt will handle deleting the transitions
 }
@@ -95,7 +106,7 @@ void ctkWorkflowStepPrivate::onExitCompleteInternal()const
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStepPrivate::invokeValidateCommandInternal(const QString& desiredBranchId)const
-{  
+{
   emit invokeValidateCommand(desiredBranchId);
 }
 
@@ -117,34 +128,22 @@ void ctkWorkflowStepPrivate::invokeOnExitCommandInternal(const ctkWorkflowStep* 
 // --------------------------------------------------------------------------
 ctkWorkflowStep::ctkWorkflowStep(): d_ptr(new ctkWorkflowStepPrivate(*this))
 {
-  Q_D(ctkWorkflowStep);
-  d->Workflow->registerWorkflowStep(this);
 }
 
 // --------------------------------------------------------------------------
-ctkWorkflowStep::ctkWorkflowStep(ctkWorkflow* newWorkflow, const QString& newId)
+ctkWorkflowStep::ctkWorkflowStep(const QString& newId)
   : d_ptr(new ctkWorkflowStepPrivate(*this))
 {
   Q_D(ctkWorkflowStep);
-
   d->Id = newId;
-  d->Workflow = newWorkflow;
-
-  d->Workflow->registerWorkflowStep(this);
-}
-
-// --------------------------------------------------------------------------
-ctkWorkflowStep::ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl):d_ptr(pimpl)
-{
 }
 
 // --------------------------------------------------------------------------
 ctkWorkflowStep::ctkWorkflowStep(ctkWorkflowStepPrivate * pimpl,
-                                 ctkWorkflow* newWorkflow, const QString& newId):d_ptr(pimpl)
+                                 const QString& newId):d_ptr(pimpl)
 {
   Q_D(ctkWorkflowStep);
   d->Id = newId;
-  d->Workflow = newWorkflow;
 }
 
 // --------------------------------------------------------------------------
@@ -154,6 +153,7 @@ ctkWorkflowStep::~ctkWorkflowStep()
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowStep, ctkWorkflow*, workflow, Workflow);
+CTK_SET_CPP(ctkWorkflowStep, ctkWorkflow*, setWorkflow, Workflow);
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowStep, QString, id, Id);
@@ -205,6 +205,9 @@ CTK_GET_CPP(ctkWorkflowStep, ctkWorkflowIntrastepTransition*,
             validationFailedTransition, ValidationFailedTransition);
 
 // --------------------------------------------------------------------------
+CTK_GET_CPP(ctkWorkflowStep, bool, isWidgetType, WidgetType);
+
+// --------------------------------------------------------------------------
 QObject* ctkWorkflowStep::ctkWorkflowStepQObject()
 {
   Q_D(ctkWorkflowStep);
@@ -234,7 +237,7 @@ void ctkWorkflowStep::onExitComplete()const
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStep::invokeValidateCommand(const QString& desiredBranchId)const
-{  
+{
   Q_D(const ctkWorkflowStep);
   d->invokeValidateCommandInternal(desiredBranchId);
 }
