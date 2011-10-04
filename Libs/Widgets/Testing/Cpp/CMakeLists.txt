@@ -6,6 +6,7 @@ SET(TEST_SOURCES
   ctkAxesWidgetTest1.cpp
   ctkButtonGroupTest1.cpp
   ctkCheckBoxPixmapsTest1.cpp
+  ctkCheckBoxTest1.cpp
   ctkCheckableComboBoxTest1.cpp
   ctkCheckableHeaderViewTest1.cpp
   ctkCheckableHeaderViewTest2.cpp
@@ -133,6 +134,7 @@ SIMPLE_TEST( ctkAddRemoveComboBoxTest1 )
 SIMPLE_TEST( ctkAxesWidgetTest1 )
 SIMPLE_TEST( ctkButtonGroupTest1 )
 SIMPLE_TEST( ctkCheckBoxPixmapsTest1 )
+SIMPLE_TEST( ctkCheckBoxTest1 )
 SIMPLE_TEST( ctkCheckableComboBoxTest1 )
 SIMPLE_TEST( ctkCheckableHeaderViewTest1 )
 SIMPLE_TEST( ctkCheckableHeaderViewTest2 )
