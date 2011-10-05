@@ -80,6 +80,10 @@ MACRO(ctkMacroSetupExternalPlugins )
   ctkFunctionGenerateDGraphInput(${CMAKE_CURRENT_BINARY_DIR} "${plugin_dirswithoption}" WITH_EXTERNALS)
   ctkMacroValidateBuildOptions("${CMAKE_CURRENT_BINARY_DIR}" "${CTK_DGRAPH_EXECUTABLE}" "${plugin_dirswithoption}")
 
+  # Get the gcc version (GCC_VERSION will be empty if the compiler is not gcc).
+  # This will be used in the ctkMacroBuildPlugin macro to conditionally set compiler flags.
+  ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
+
   FOREACH(plugin ${plugin_subdirs})
     IF(${${plugin}_option_name})
       ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/${plugin})

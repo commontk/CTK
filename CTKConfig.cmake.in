@@ -47,6 +47,7 @@ IF(NOT CTK_EXPORTS_INCLUDED)
 ENDIF()
 
 # Include CTK macros
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionGetGccVersion.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroParseArguments.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroSetPaths.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroListFilter.cmake")

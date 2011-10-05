@@ -265,8 +265,20 @@ MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
 #-----------------------------------------------------------------------------
 # Set symbol visibility Flags
 #
-# MinGW does not export all symbols automatically, so no need to set flags
-IF(CMAKE_COMPILER_IS_GNUCXX AND NOT MINGW)
+
+ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
+
+# MinGW does not export all symbols automatically, so no need to set flags.
+#
+# With gcc < 4.5, RTTI symbols from classes declared in third-party libraries
+# which are not "gcc visibility aware" are marked with hidden visibility in
+# DSOs which include the class declaration and which are compiled with
+# hidden visibility. This leads to dynamic_cast and exception handling problems.
+# While this problem could be worked around by sandwiching the include
+# directives for the third-party headers between "#pragma visibility push/pop"
+# statements, it is generally safer to just use default visibility with
+# gcc < 4.5.
+IF(CMAKE_COMPILER_IS_GNUCXX AND ${GCC_VERSION} VERSION_GREATER "4.4.0" AND NOT MINGW)
   SET(VISIBILITY_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
 ENDIF()
 
@@ -293,7 +305,6 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
   ctkFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
 
-  ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
   # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
   # is introduced. If gcc is smaller than 4.4.0 and the build type is Release let's not include the flag.
   # Doing so should allow to build package made for distribution using older linux distro.
