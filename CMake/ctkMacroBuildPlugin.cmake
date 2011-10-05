@@ -288,7 +288,7 @@ MACRO(ctkMacroBuildPlugin)
   # directives for the third-party headers between "#pragma visibility push/pop"
   # statements, it is generally safer to just use default visibility with
   # gcc < 4.5.
-  IF(CMAKE_COMPILER_IS_GNUCXX AND ${GCC_VERSION} VERSION_GREATER "4.4.0" AND NOT MINGW)
+  IF(CMAKE_COMPILER_IS_GNUCXX AND NOT ${GCC_VERSION} VERSION_LESS "4.5" AND NOT MINGW)
     SET(plugin_compile_flags "${plugin_compile_flags} -fvisibility=hidden -fvisibility-inlines-hidden")
   ENDIF()
 
