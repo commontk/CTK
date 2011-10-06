@@ -5,7 +5,7 @@
 SET(QtSOAP_DEPENDS)
 ctkMacroShouldAddExternalProject(QtSOAP_LIBRARIES add_project)
 IF(${add_project})
-  
+
   # Sanity checks
   IF(DEFINED QtSOAP_DIR AND NOT EXISTS ${QtSOAP_DIR})
     MESSAGE(FATAL_ERROR "QtSOAP_DIR variable is defined but corresponds to non-existing directory")
@@ -19,12 +19,12 @@ IF(${add_project})
   SET(QtSOAP_DEPENDS ${proj})
 
   IF(NOT DEFINED QtSOAP_DIR)
-  
+
     SET(revision_tag 6bf1b8c8)
     IF(${proj}_REVISION_TAG)
       SET(revision_tag ${${proj}_REVISION_TAG})
     ENDIF()
-  
+
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
     if(APPLE)
@@ -56,18 +56,18 @@ IF(${add_project})
         ${proj_DEPENDENCIES}
       )
     SET(QtSOAP_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
-    
-    # Since the QtSOAP dll is created directly in CTK-build/bin, there is not need to add a 
+
+    # Since the QtSOAP dll is created directly in CTK-build/bin, there is not need to add a
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
-  
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DQtSOAP_DIR:PATH=${QtSOAP_DIR})
+
+  LIST(APPEND CTK_SUPERBUILD_EP_VARS QtSOAP_DIR:PATH)
 
   SET(${QtSOAP_enabling_variable}_LIBRARY_DIRS QtSOAP_LIBRARY_DIRS)
   SET(${QtSOAP_enabling_variable}_INCLUDE_DIRS QtSOAP_INCLUDE_DIRS)
   SET(${QtSOAP_enabling_variable}_FIND_PACKAGE_CMD QtSOAP)
-      
+
 ENDIF()

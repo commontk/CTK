@@ -10,19 +10,19 @@ IF(${add_project})
   ENDIF()
 
   SET(ITK_enabling_variable ITK_LIBRARIES)
-  
+
   SET(proj ITK)
   SET(proj_DEPENDENCIES)
-  
+
   SET(ITK_DEPENDS ${proj})
-  
+
   IF(NOT DEFINED ITK_DIR)
-  
+
     SET(revision_tag "v3.20.0")
     IF(${proj}_REVISION_TAG)
       SET(revision_tag ${${proj}_REVISION_TAG})
     ENDIF()
-  
+
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
     if(APPLE)
@@ -62,16 +62,16 @@ IF(${add_project})
         ${proj_DEPENDENCIES}
       )
     SET(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-    
-    # Since the link directories associated with ITK is used, it makes sens to 
+
+    # Since the link directories associated with ITK is used, it makes sens to
     # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory
     LIST(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${ITK_DIR}/bin)
-    
+
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
-  
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DITK_DIR:PATH=${ITK_DIR})
+
+  LIST(APPEND CTK_SUPERBUILD_EP_VARS ITK_DIR:PATH)
 
   SET(${ITK_enabling_variable}_LIBRARY_DIRS ITK_LIBRARY_DIRS)
   SET(${ITK_enabling_variable}_INCLUDE_DIRS ITK_INCLUDE_DIRS)

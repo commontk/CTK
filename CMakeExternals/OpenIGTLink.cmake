@@ -4,19 +4,19 @@
 SET (OpenIGTLink_DEPENDS)
 ctkMacroShouldAddExternalProject(OpenIGTLink_LIBRARIES add_project)
 IF(${add_project})
-  
+
   # Sanity checks
   IF(DEFINED OpenIGTLink_DIR AND NOT EXISTS ${OpenIGTLink_DIR})
     MESSAGE(FATAL_ERROR "OpenIGTLink_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
-  
+
   SET(OpenIGTLink_enabling_variable OpenIGTLink_LIBRARIES)
-  
+
   SET(proj OpenIGTLink)
   SET(proj_DEPENDENCIES)
-  
+
   SET(OpenIGTLink_DEPENDS ${proj})
-  
+
   IF(NOT DEFINED OpenIGTLink_DIR)
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -45,15 +45,15 @@ IF(${add_project})
         ${proj_DEPENDENCIES}
       )
     SET(OpenIGTLink_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  
+
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
-  
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
-  
+
+  LIST(APPEND CTK_SUPERBUILD_EP_VARS OpenIGTLink_DIR:PATH)
+
   SET(${OpenIGTLink_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
   SET(${OpenIGTLink_enabling_variable}_INCLUDE_DIRS OpenIGTLink_INCLUDE_DIRS)
   SET(${OpenIGTLink_enabling_variable}_FIND_PACKAGE_CMD OpenIGTLink)
-  
+
 ENDIF()

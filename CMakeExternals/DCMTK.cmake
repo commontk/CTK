@@ -5,19 +5,19 @@
 SET(DCMTK_DEPENDS)
 ctkMacroShouldAddExternalProject(DCMTK_LIBRARIES add_project)
 IF(${add_project})
-  
+
   # Sanity checks
   IF(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
     MESSAGE(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
 
   SET(DCMTK_enabling_variable DCMTK_LIBRARIES)
-  
+
   SET(proj DCMTK)
   SET(proj_DEPENDENCIES)
-  
+
   SET(DCMTK_DEPENDS ${proj})
-  
+
   IF(NOT DEFINED DCMTK_DIR)
     SET(revision_tag 085525e643cab5ac82)
     IF(${proj}_REVISION_TAG)
@@ -52,7 +52,7 @@ IF(${add_project})
         -DDCMTK_WITH_PNG:BOOL=OFF # see github issue #25
         -DDCMTK_WITH_TIFF:BOOL=OFF  # see github issue #25
         -DDCMTK_WITH_XML:BOOL=OFF  # see github issue #25
-        -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON 
+        -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         #-DBUILD_TESTING:BOOL=OFF # Not used
         -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
@@ -71,15 +71,15 @@ IF(${add_project})
 #      DEPENDS
 #        ${proj_DEPENDENCIES}
 #      )
-      
-    # Since DCMTK is statically build, there is not need to add its corresponding 
+
+    # Since DCMTK is statically build, there is not need to add its corresponding
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-  
+
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
-  
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DDCMTK_DIR:PATH=${DCMTK_DIR})
+
+  LIST(APPEND CTK_SUPERBUILD_EP_VARS DCMTK_DIR:PATH)
 
   SET(${DCMTK_enabling_variable}_INCLUDE_DIRS DCMTK_INCLUDE_DIR)
   SET(${DCMTK_enabling_variable}_FIND_PACKAGE_CMD DCMTK)

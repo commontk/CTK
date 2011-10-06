@@ -11,19 +11,19 @@ IF(${add_project})
   ENDIF()
 
   SET(ZMQ_enabling_variable ZMQ_LIBRARIES)
-  
+
   SET(proj ZMQ)
   SET(proj_DEPENDENCIES)
-  
+
   SET(ZMQ_DEPENDS ${proj})
-  
+
   IF(NOT DEFINED ZMQ_DIR)
-  
+
     SET(revision_tag d2c2f96b49ed3835a47e)
     IF(${proj}_REVISION_TAG)
       SET(revision_tag ${${proj}_REVISION_TAG})
     ENDIF()
-  
+
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
     if(APPLE)
@@ -50,7 +50,7 @@ IF(${add_project})
         -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
         -DBUILD_TESTING:BOOL=OFF
-        -DBUILD_SHARED_LIBS:BOOL=ON 
+        -DBUILD_SHARED_LIBS:BOOL=ON
         -DZMQ_BUILD_DEVICES:BOOL=ON
         -DZMQ_BUILD_PERFORMANCE_TESTS:BOOL=ON
        DEPENDS
@@ -61,8 +61,8 @@ IF(${add_project})
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
-  
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DZMQ_DIR:PATH=${ZMQ_DIR})
+
+  LIST(APPEND CTK_SUPERBUILD_EP_VARS ZMQ_DIR:PATH)
 
   SET(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_LIBRARY_DIRS)
   SET(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
