@@ -87,7 +87,7 @@ public:
   /**
    * Report plug-in resolve progress
    */
-  static QString RESOLVE_PROP; // = "org.commontk.pluginfw.debug.url";
+  static QString RESOLVE_PROP; // = "org.commontk.pluginfw.debug.resolve";
   bool resolve;
 
 private:

@@ -30,7 +30,7 @@ QString ctkPluginFrameworkDebug::LDAP_PROP = "org.commontk.pluginfw.debug.ldap";
 QString ctkPluginFrameworkDebug::SERVICE_REFERENCE_PROP = "org.commontk.pluginfw.debug.service_reference";
 QString ctkPluginFrameworkDebug::STARTLEVEL_PROP = "org.commontk.pluginfw.debug.startlevel";
 QString ctkPluginFrameworkDebug::URL_PROP = "org.commontk.pluginfw.debug.url";
-QString ctkPluginFrameworkDebug::RESOLVE_PROP = "org.commontk.pluginfw.debug.url";
+QString ctkPluginFrameworkDebug::RESOLVE_PROP = "org.commontk.pluginfw.debug.resolve";
 
 //----------------------------------------------------------------------------
 ctkPluginFrameworkDebug::ctkPluginFrameworkDebug(ctkProperties& props)
@@ -43,6 +43,7 @@ ctkPluginFrameworkDebug::ctkPluginFrameworkDebug(ctkProperties& props)
   setPropertyIfNotSet(props, SERVICE_REFERENCE_PROP, false);
   setPropertyIfNotSet(props, STARTLEVEL_PROP, false);
   setPropertyIfNotSet(props, URL_PROP, false);
+  setPropertyIfNotSet(props, RESOLVE_PROP, false);
   errors = props.value(ERRORS_PROP).toBool();
   framework = props.value(FRAMEWORK_PROP).toBool();
   hooks = props.value(HOOKS_PROP).toBool();
@@ -51,6 +52,7 @@ ctkPluginFrameworkDebug::ctkPluginFrameworkDebug(ctkProperties& props)
   service_reference = props.value(SERVICE_REFERENCE_PROP).toBool();
   startlevel = props.value(STARTLEVEL_PROP).toBool();
   url = props.value(URL_PROP).toBool();
+  resolve = props.value(RESOLVE_PROP).toBool();
 }
 
 //----------------------------------------------------------------------------
