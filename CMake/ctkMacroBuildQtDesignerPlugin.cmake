@@ -57,12 +57,12 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
   INCLUDE_DIRECTORIES(
     ${my_includes}
     )
- 
+
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${MY_EXPORT_DIRECTIVE})
   SET(MY_EXPORT_HEADER_PREFIX ${MY_NAME})
   STRING(REGEX REPLACE "^CTK" "ctk" MY_EXPORT_HEADER_PREFIX ${MY_EXPORT_HEADER_PREFIX})
   SET(MY_LIBNAME ${lib_name})
-  
+
   CONFIGURE_FILE(
     ${CTK_SOURCE_DIR}/Libs/ctkExport.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
@@ -100,17 +100,17 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
     ${MY_UI_CPP}
     ${MY_QRC_SRCS}
     )
-  
+
   # Extract library name associated with the plugin and use it as label
   STRING(REGEX REPLACE "(.*)Plugins" "\\1" label ${lib_name})
-  
+
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES
     COMPILE_FLAGS "-DQT_PLUGIN"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/designer"
     LABELS ${label}
     )
-  
+
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
     ${QT_QTDESIGNER_LIBRARY}
@@ -119,25 +119,25 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
 
   # Install the library
   INSTALL(TARGETS ${lib_name}
-    RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR}/designer COMPONENT Runtime
-    LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT Runtime
-    ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT Development)
+    LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT RuntimePlugins
+    ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT Development
+    )
 
   # Install headers - Are headers required ?
   #FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  #INSTALL(FILES 
+  #INSTALL(FILES
   #  ${headers}
   #  DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
   #  )
 
-  
+
   # Since QtDesigner expects plugin to be directly located under the
-  # directory 'designer', let's copy them. 
+  # directory 'designer', let's copy them.
 
   IF(NOT CMAKE_CFG_INTDIR STREQUAL ".")
     GET_TARGET_PROPERTY(FILE_PATH ${lib_name} LOCATION)
     GET_TARGET_PROPERTY(DIR_PATH ${lib_name} LIBRARY_OUTPUT_DIRECTORY)
-  
+
     ADD_CUSTOM_COMMAND(
       TARGET ${lib_name}
       POST_BUILD

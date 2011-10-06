@@ -55,16 +55,16 @@ MACRO(ctkMacroBuildApp)
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MY_INCLUDE_DIRECTORIES}
-    )  
+    )
 
   # Add the include directories from the library dependencies
   ctkFunctionGetIncludeDirs(my_includes ${proj_name})
 
   INCLUDE_DIRECTORIES(${my_includes})
-  
+
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${proj_name})
-  
+
   LINK_DIRECTORIES(
     ${my_library_dirs}
     )
@@ -108,18 +108,17 @@ MACRO(ctkMacroBuildApp)
 
   # Set labels associated with the target.
   SET_TARGET_PROPERTIES(${proj_name} PROPERTIES LABELS ${proj_name})
-  
+
   # Install rules
   INSTALL(TARGETS ${proj_name}
-    RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR} COMPONENT Runtime
-    LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Runtime
-    ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
+    RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR} COMPONENT RuntimeApplications
+    )
 
   SET(my_libs
     ${MY_TARGET_LIBRARIES}
     )
   TARGET_LINK_LIBRARIES(${proj_name} ${my_libs})
-  
+
   # Install headers
   FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
   INSTALL(FILES
