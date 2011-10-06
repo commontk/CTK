@@ -10,12 +10,12 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   ENDIF()
 
   SET(VTK_enabling_variable VTK_LIBRARIES)
-  
+
   SET(additional_vtk_cmakevars )
   IF(MINGW)
     LIST(APPEND additional_vtk_cmakevars -DCMAKE_USE_PTHREADS:BOOL=OFF)
   ENDIF()
-  
+
   IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
     LIST(APPEND additional_vtk_cmakevars
       -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
@@ -26,16 +26,16 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
 
   SET(proj VTK)
   SET(proj_DEPENDENCIES)
-  
+
   SET(VTK_DEPENDS ${proj})
-  
+
   IF(NOT DEFINED VTK_DIR)
-  
+
     SET(revision_tag 0e6c2a52501efab53e1c4d74910bcb1155245e1b)
     IF(${proj}_REVISION_TAG)
       SET(revision_tag ${${proj}_REVISION_TAG})
     ENDIF()
-  
+
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
     if(APPLE)
@@ -67,7 +67,7 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
         -DVTK_USE_TK:BOOL=OFF
         -DVTK_WRAP_PYTHON:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK}
         -DVTK_WRAP_JAVA:BOOL=OFF
-        -DBUILD_SHARED_LIBS:BOOL=ON 
+        -DBUILD_SHARED_LIBS:BOOL=ON
         -DDESIRED_QT_VERSION:STRING=4
         -DVTK_USE_GUISUPPORT:BOOL=ON
         -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
@@ -77,16 +77,16 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
         ${proj_DEPENDENCIES}
       )
     SET(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-    
-    # Since the link directories associated with VTK is used, it makes sens to 
+
+    # Since the link directories associated with VTK is used, it makes sens to
     # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory
     LIST(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${VTK_DIR}/bin)
-    
+
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
-  
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DVTK_DIR:PATH=${VTK_DIR})
+
+  LIST(APPEND CTK_SUPERBUILD_EP_VARS VTK_DIR:PATH)
 
   SET(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
   SET(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)

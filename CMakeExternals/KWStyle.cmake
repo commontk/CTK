@@ -3,17 +3,17 @@
 #
 SET(kwstyle_DEPENDS)
 IF(CTK_USE_KWSTYLE)
-  
+
   # Sanity checks
   IF(DEFINED CTK_KWSTYLE_EXECUTABLE AND NOT EXISTS ${CTK_KWSTYLE_EXECUTABLE})
     MESSAGE(FATAL_ERROR "CTK_KWSTYLE_EXECUTABLE variable is defined but corresponds to non-existing executable")
   ENDIF()
-  
+
   SET(proj KWStyle-CVSHEAD)
   SET(proj_DEPENDENCIES)
-  
+
   SET(kwstyle_DEPENDS ${proj})
-  
+
   IF(NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -42,14 +42,14 @@ IF(CTK_USE_KWSTYLE)
       DEPENDS
         ${proj_DEPENDENCIES}
       )
-    SET(CTK_KWSTYLE_EXECUTABLE ${ep_install_dir}/bin/KWStyle)
-    
-    # Since KWStyle is an executable, there is not need to add its corresponding 
+    SET(KWSTYLE_EXECUTABLE ${ep_install_dir}/bin/KWStyle)
+
+    # Since KWStyle is an executable, there is not need to add its corresponding
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
-  
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DCTK_KWSTYLE_EXECUTABLE:FILEPATH=${CTK_KWSTYLE_EXECUTABLE})
-  
+
+  LIST(APPEND CTK_SUPERBUILD_EP_VARS KWSTYLE_EXECUTABLE:PATH)
+
 ENDIF()

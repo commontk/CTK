@@ -36,16 +36,16 @@ SET(external_projects
   XIP
   ITK
   )
-  
+
 #-----------------------------------------------------------------------------
-# WARNING - No change should be required after this comment 
+# WARNING - No change should be required after this comment
 #           when you are adding a new external project dependency.
 #-----------------------------------------------------------------------------
-  
+
 #-----------------------------------------------------------------------------
 # Declare CTK_EXTERNAL_LIBRARY_DIRS variable - This variable stores
 # the library output directory associated with the different external project
-# It's then used in Utilities/LastConfigureStep/CTKGenerateCTKConfig.cmake to 
+# It's then used in Utilities/LastConfigureStep/CTKGenerateCTKConfig.cmake to
 # configure CTKConfig.cmake.in
 # This variable would then be exposed to project building against CTK
 SET(CTK_EXTERNAL_LIBRARY_DIRS)
@@ -123,11 +123,15 @@ FIND_PACKAGE(Doxygen QUIET)
 # Include external projects
 #
 
-# This variable will contain the list of CMake variable specific to each external project 
-# that should passed to CTK.
-# The item of this list should have the following form: -D<EP>_DIR:PATH=${<EP>_DIR}
-# where '<EP>' is an external project name.
 SET(CTK_SUPERBUILD_EP_ARGS)
+
+# This variable will contain the list of CMake variable specific to each external project
+# that should passed to CTK.
+# The item of this list should have the following form: <EP_VAR>:<TYPE>
+# where '<EP_VAR>' is an external project variable and TYPE is either BOOL, PATH or FILEPATH.
+# Variable appended to this list will be automatically exported in CTKConfig.cmake, prefix 'CTK_'
+# will be prepended if it applied.
+SET(CTK_SUPERBUILD_EP_VARS)
 
 # This variable will contain the list of external project that CTK depends on.
 SET(CTK_DEPENDS)
@@ -137,15 +141,15 @@ FOREACH(p ${external_projects})
   INCLUDE(CMakeExternals/${p}.cmake)
   IF(${p}_enabling_variable)
     # Provides the include and library directories either directly or provides the variable name
-    # used by the corresponding Find<package>.cmake files. 
+    # used by the corresponding Find<package>.cmake files.
     # The top-level CMakeLists.txt file will expand the variable names if not in
-    # superbuild mode. The include and library dirs are then used in 
+    # superbuild mode. The include and library dirs are then used in
     # ctkMacroBuildApp, ctkMacroBuildLib, and ctkMacroBuildPlugin
     STRING(REPLACE ";" "^" _include_dirs "${${${p}_enabling_variable}_INCLUDE_DIRS}")
-    LIST(APPEND dependency_args 
+    LIST(APPEND dependency_args
          -D${${p}_enabling_variable}_INCLUDE_DIRS:STRING=${_include_dirs})
     STRING(REPLACE ";" "^" _library_dirs "${${${p}_enabling_variable}_LIBRARY_DIRS}")
-    LIST(APPEND dependency_args 
+    LIST(APPEND dependency_args
          -D${${p}_enabling_variable}_LIBRARY_DIRS:STRING=${_library_dirs})
     IF(${${p}_enabling_variable}_FIND_PACKAGE_CMD)
       LIST(APPEND dependency_args
@@ -204,8 +208,27 @@ FOREACH(ctk_cmake_arg ${ctk_cmake_boolean_args})
   LIST(APPEND ctk_superbuild_boolean_args -D${ctk_cmake_arg}:BOOL=${${ctk_cmake_arg}})
 ENDFOREACH()
 
-# MESSAGE("CMake args:")
+# MESSAGE("CMake boolean args:")
 # FOREACH(arg ${ctk_superbuild_boolean_args})
+#   MESSAGE("  ${arg}")
+# ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# Expand superbuild external project args
+#
+SET(CTK_SUPERBUILD_EP_VARNAMES)
+FOREACH(arg ${CTK_SUPERBUILD_EP_VARS})
+  STRING(REPLACE ":" ";" varname_and_vartype ${arg})
+  SET(target_info_list ${target_info_list})
+  LIST(GET varname_and_vartype 0 _varname)
+  LIST(GET varname_and_vartype 1 _vartype)
+  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -D${_varname}:${_vartype}=${${_varname}})
+  LIST(APPEND CTK_SUPERBUILD_EP_VARNAMES ${_varname})
+ENDFOREACH()
+STRING(REPLACE ";" "^" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
+
+# MESSAGE("CMake external project args:")
+# FOREACH(arg ${CTK_SUPERBUILD_EP_ARGS})
 #   MESSAGE("  ${arg}")
 # ENDFOREACH()
 
@@ -218,7 +241,7 @@ if(APPLE)
     -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
     -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
 endif()
-    
+
 #-----------------------------------------------------------------------------
 # CTK Configure
 #
@@ -249,6 +272,7 @@ ExternalProject_Add(${proj}
     -DCTK_EXTERNAL_LIBRARY_DIRS:STRING=${CTK_EXTERNAL_LIBRARY_DIRS}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     ${CTK_SUPERBUILD_EP_ARGS}
+    -DCTK_SUPERBUILD_EP_VARNAMES:STRING=${CTK_SUPERBUILD_EP_VARNAMES}
     ${dependency_args}
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
@@ -257,7 +281,7 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${CTK_DEPENDS}
   )
-  
+
 IF(CMAKE_GENERATOR MATCHES ".*Makefiles.*")
   SET(ctk_build_cmd "$(MAKE)")
 ELSE()

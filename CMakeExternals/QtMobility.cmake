@@ -18,7 +18,7 @@ IF(${add_project})
     IF(NOT CTK_PATCH_EXECUTABLE)
       MESSAGE(FATAL_ERROR "error: Patch is required to build ${proj}. Set CTK_PATCH_EXECUTABLE. If running Windows, you can download it here: http://gnuwin32.sourceforge.net/packages/patch.htm")
     ENDIF()
-    
+
     # Configure patch script
     SET(qtmobility_src_dir ${CMAKE_BINARY_DIR}/${proj})
     SET(qtmobility_patch_dir ${CTK_SOURCE_DIR}/Utilities/QtMobility/)
@@ -39,30 +39,30 @@ IF(${add_project})
     ELSEIF(NOT ${CMAKE_CFG_INTDIR} STREQUAL "Release")
       SET(qtmobility_build_type "debug")
     ENDIf()
-    
+
     SET(qtmobility_make_cmd)
     SET(qtmobility_install_cmd)
     SET(qtmobility_config_in "${qtmobility_patch_dir}/QtMobilityConfig.cmake.in")
     SET(qtmobility_config_out "${qtmobility_configured_patch_dir}/QtMobilityConfig.cmake")
-    
+
     IF(UNIX)
       SET(qtmobility_make_cmd make)
       SET(qtmobility_config_args -${qtmobility_build_type} -libdir ${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY} -no-docs -modules ${qtmobility_modules})
       SET(qtmobility_install_cmd ${qtmobility_make_cmd} install)
-      
-      SET(QTMOBILITY_QTSERVICEFW_INCLUDE_DIR 
+
+      SET(QTMOBILITY_QTSERVICEFW_INCLUDE_DIR
           "${CTK_BINARY_DIR}/QtMobility/install/include")
       SET(QTMOBILITY_QTSERVICEFW_LIBRARY_DEBUG
           "${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libQtServiceFrameworkd.so")
       SET(QTMOBILITY_QTSERVICEFW_LIBRARY_RELEASE
           "${CTK_CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libQtServiceFramework.so")
-      
+
       IF(APPLE)
         CONFIGURE_FILE(${qtmobility_patch_dir}/QtMobility-1.0.0-make-apple.cmake.in
                      ${qtmobility_configured_patch_dir}/QtMobility-1.0.0-make-apple.cmake @ONLY)
         SET(qtmobility_make_cmd ${CMAKE_COMMAND} -P ${qtmobility_configured_patch_dir}/QtMobility-1.0.0-make-apple.cmake)
       ENDIF()
-          
+
       CONFIGURE_FILE("${qtmobility_config_in}" "${qtmobility_config_out}" @ONLY)
     ELSEIF(WIN32)
       SET(qtmobility_make_cmd nmake)
@@ -81,12 +81,12 @@ IF(${add_project})
 
       CONFIGURE_FILE(${qtmobility_patch_dir}/QtMobility-1.0.0-install-win32.cmake.in
                      ${qtmobility_configured_patch_dir}/QtMobility-1.0.0-install-win32.cmake @ONLY)
-				     
+
       SET(qtmobility_install_cmd ${CMAKE_COMMAND} -D INTERMEDIATE_DIRECTORY:STRING=$(IntDir) -P ${qtmobility_configured_patch_dir}/QtMobility-1.0.0-install-win32.cmake)
-      
+
       # On Windows, the QtMobilityConfig.cmake file is written in the install script above
     ENDIF()
-    
+
     ExternalProject_Add(${proj}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       PREFIX ${proj}${ep_suffix}
@@ -97,19 +97,19 @@ IF(${add_project})
       INSTALL_COMMAND ${qtmobility_install_cmd}
       BUILD_IN_SOURCE 1
       )
-      
+
     SET(QtMobility_DIR ${qtmobility_configured_patch_dir})
-      
+
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
-    
-  # Since the full path of QtMobility library is used, there is not need to add 
+
+  # Since the full path of QtMobility library is used, there is not need to add
   # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-  
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DQtMobility_DIR:PATH=${QtMobility_DIR})
+
+  LIST(APPEND CTK_SUPERBUILD_EP_VARS QtMobility_DIR:PATH)
 
   SET(${QtMobility_enabling_variable}_INCLUDE_DIRS QtMobility_INCLUDE_DIRS)
   SET(${QtMobility_enabling_variable}_FIND_PACKAGE_CMD QtMobility)
-	
+
 ENDIF()

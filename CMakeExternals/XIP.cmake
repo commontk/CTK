@@ -8,14 +8,14 @@ IF(${add_project})
   IF(DEFINED XIP_DIR AND NOT EXISTS ${XIP_DIR})
     MESSAGE(FATAL_ERROR "XIP_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
-  
+
   SET(XIP_enabling_variable XIP_LIBRARIES)
-  
+
   SET(proj XIP)
   SET(proj_DEPENDENCIES)
-  
+
   SET(XIP_DEPENDS ${proj})
-  
+
   IF(NOT DEFINED XIP_DIR)
     # Set CMake OSX variable to pass down the external project
     set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -46,15 +46,15 @@ IF(${add_project})
         -DHAS_ITK:BOOL=OFF
       )
     SET(XIP_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-    
+
   ELSE()
     ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
   ENDIF()
-  
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -DXIP_DIR:PATH=${XIP_DIR})
-  
+
+  LIST(APPEND CTK_SUPERBUILD_EP_VARS XIP_DIR:PATH)
+
   SET(${XIP_enabling_variable}_INCLUDE_DIRS XIP_LIBRARY_DIRS)
   SET(${XIP_enabling_variable}_INCLUDE_DIRS XIP_INCLUDE_DIRS)
   SET(${XIP_enabling_variable}_FIND_PACKAGE_CMD XIP)
-  
+
 ENDIF()
