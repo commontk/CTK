@@ -56,6 +56,8 @@ public:
   void init();
   void updateBounds();
   void showBorders(bool);
+
+  double ValidBounds[4];
 };
 
 // ----------------------------------------------------------------------------
@@ -65,6 +67,8 @@ public:
 ctkVTKScalarsToColorsViewPrivate::ctkVTKScalarsToColorsViewPrivate(ctkVTKScalarsToColorsView& object)
   :q_ptr(&object)
 {
+  this->ValidBounds[0] = this->ValidBounds[2] = 0.;
+  this->ValidBounds[1] = this->ValidBounds[3] = -1.;
 }
 
 // ----------------------------------------------------------------------------
@@ -222,9 +226,11 @@ vtkPlot* ctkVTKScalarsToColorsView
 vtkPlot* ctkVTKScalarsToColorsView
 ::addColorTransferFunctionControlPoints(vtkColorTransferFunction* colorTF)
 {
+  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkColorTransferControlPointsItem> controlPointsItem =
     vtkSmartPointer<vtkColorTransferControlPointsItem>::New();
   controlPointsItem->SetColorTransferFunction(colorTF);
+  controlPointsItem->SetValidBounds(d->ValidBounds);
   this->addPlot(controlPointsItem);
   return controlPointsItem;
 }
@@ -241,10 +247,12 @@ vtkPlot* ctkVTKScalarsToColorsView
 ::addCompositeFunctionControlPoints(vtkColorTransferFunction* colorTF,
                                     vtkPiecewiseFunction* opacityTF)
 {
+  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkCompositeControlPointsItem> controlPointsItem =
     vtkSmartPointer<vtkCompositeControlPointsItem>::New();
   controlPointsItem->SetColorTransferFunction(colorTF);
   controlPointsItem->SetOpacityFunction(opacityTF);
+  controlPointsItem->SetValidBounds(d->ValidBounds);
   this->addPlot(controlPointsItem);
   return controlPointsItem;
 }
@@ -253,9 +261,11 @@ vtkPlot* ctkVTKScalarsToColorsView
 vtkPlot* ctkVTKScalarsToColorsView
 ::addPiecewiseFunctionControlPoints(vtkPiecewiseFunction* piecewiseTF)
 {
+  Q_D(ctkVTKScalarsToColorsView);
   vtkSmartPointer<vtkPiecewiseControlPointsItem> controlPointsItem =
     vtkSmartPointer<vtkPiecewiseControlPointsItem>::New();
   controlPointsItem->SetPiecewiseFunction(piecewiseTF);
+  controlPointsItem->SetValidBounds(d->ValidBounds);
   this->addPlot(controlPointsItem);
   return controlPointsItem;
 }
@@ -495,6 +505,26 @@ void ctkVTKScalarsToColorsView
 
 // ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsView
+::validBounds(double* bounds)const
+{
+  Q_D(const ctkVTKScalarsToColorsView);
+  memcpy(bounds, d->ValidBounds, 4 * sizeof(double));
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView
+::setValidBounds(double* bounds)
+{
+  Q_D(ctkVTKScalarsToColorsView);
+  foreach(vtkControlPointsItem* plot, this->controlPointsItems())
+    {
+    plot->SetValidBounds(bounds);
+    }
+  memcpy(d->ValidBounds, bounds, 4 * sizeof(double));
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsView
 ::setPlotsUserBounds(double* bounds)
 {
   double plotBounds[4];
@@ -504,8 +534,7 @@ void ctkVTKScalarsToColorsView
     {
     plot->SetUserBounds(plotBounds);
     }
-  foreach(vtkControlPointsItem* plot,
-          this->plots<vtkControlPointsItem>())
+  foreach(vtkControlPointsItem* plot, this->controlPointsItems())
     {
     plot->SetUserBounds(plotBounds);
     }

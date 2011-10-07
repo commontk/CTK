@@ -82,6 +82,11 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
   Q_ASSERT(q == widget);
   this->Ui_ctkVTKVolumePropertyWidget::setupUi(widget);
 
+  double validBounds[4] = {VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, 0., 1.};
+  this->ScalarOpacityWidget->view()->setValidBounds(validBounds);
+  this->ScalarColorWidget->view()->setValidBounds(validBounds);
+  this->GradientWidget->view()->setValidBounds(validBounds);
+
   this->ScalarOpacityWidget->view()->addCompositeFunction(0, 0, true, true);
   vtkCompositeControlPointsItem* composite = 
   vtkCompositeControlPointsItem::SafeDownCast(
