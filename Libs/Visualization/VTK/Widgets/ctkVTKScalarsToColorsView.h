@@ -43,6 +43,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsView
   /// Add an empty space around the view to give space to the corner control
   /// points. False by default
   Q_PROPERTY(bool bordersVisible READ areBordersVisible WRITE setBordersVisible)
+
 public:
   typedef ctkVTKChartView Superclass;
   ctkVTKScalarsToColorsView(QWidget* parent = 0);
@@ -83,6 +84,9 @@ public:
 
   bool areBordersVisible()const;
   void setBordersVisible(bool show);
+
+  void validBounds(double bounds[4])const;
+  void setValidBounds(double bounds[4]);
 
   void setPlotsUserBounds(double* bounds);
 
