@@ -54,6 +54,7 @@ class CTK_WIDGETS_EXPORT ctkRangeSlider : public QSlider
   Q_PROPERTY(int minimumPosition READ minimumPosition WRITE setMinimumPosition)
   Q_PROPERTY(int maximumPosition READ maximumPosition WRITE setMaximumPosition)
   Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves)
+  Q_PROPERTY(QString handleToolTip READ handleToolTip WRITE setHandleToolTip)
 
 public:
   // Superclass typedef
@@ -101,7 +102,15 @@ public:
   /// symmetrically, otherwise the handles are independent. False by default
   bool symmetricMoves()const; 
   void setSymmetricMoves(bool symmetry);
-  
+
+  ///
+  /// Controls the text to display for the handle tooltip. It is in addition
+  /// to the widget tooltip.
+  /// "%1" is replaced by the current value of the slider.
+  /// Empty string (by default) means no tooltip.
+  QString handleToolTip()const;
+  void setHandleToolTip(const QString& toolTip);
+
 signals:
   ///
   /// This signal is emitted when the slider minimum value has changed, 
@@ -181,6 +190,10 @@ protected:
   virtual void paintEvent(QPaintEvent* ev);
   virtual void initMinimumSliderStyleOption(QStyleOptionSlider* option) const;
   virtual void initMaximumSliderStyleOption(QStyleOptionSlider* option) const;
+
+  // Description:
+  // Reimplemented for the tooltips
+  virtual bool event(QEvent* event);
 
 protected:
   QScopedPointer<ctkRangeSliderPrivate> d_ptr;
