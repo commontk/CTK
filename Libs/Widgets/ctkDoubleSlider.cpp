@@ -21,12 +21,29 @@
 // QT includes
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QHelpEvent>
+#include <QStyle>
+#include <QStyleOptionSlider>
+#include <QToolTip>
 
 // CTK includes
 #include "ctkDoubleSlider.h"
 
 // STD includes
 #include <limits>
+
+//-----------------------------------------------------------------------------
+class ctkSlider: public QSlider
+{
+public:
+  ctkSlider(QWidget* parent);
+  using QSlider::initStyleOption;
+};
+
+//-----------------------------------------------------------------------------
+ctkSlider::ctkSlider(QWidget* parent): QSlider(parent)
+{
+}
 
 //-----------------------------------------------------------------------------
 class ctkDoubleSliderPrivate
@@ -42,7 +59,8 @@ public:
   void init();
   void updateOffset(double value);
 
-  QSlider*    Slider;
+  ctkSlider*    Slider;
+  QString       HandleToolTip;
   double      Minimum;
   double      Maximum;
   bool        SettingRange;
@@ -71,7 +89,8 @@ ctkDoubleSliderPrivate::ctkDoubleSliderPrivate(ctkDoubleSlider& object)
 void ctkDoubleSliderPrivate::init()
 {
   Q_Q(ctkDoubleSlider);
-  this->Slider = new QSlider(q);
+  this->Slider = new ctkSlider(q);
+  this->Slider->installEventFilter(q);
   QHBoxLayout* l = new QHBoxLayout(q);
   l->addWidget(this->Slider);
   l->setContentsMargins(0,0,0,0);
@@ -354,6 +373,20 @@ void ctkDoubleSlider::setOrientation(Qt::Orientation newOrientation)
 }
 
 // --------------------------------------------------------------------------
+QString ctkDoubleSlider::handleToolTip()const
+{
+  Q_D(const ctkDoubleSlider);
+  return d->HandleToolTip;
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleSlider::setHandleToolTip(const QString& toolTip)
+{
+  Q_D(ctkDoubleSlider);
+  d->HandleToolTip = toolTip;
+}
+
+// --------------------------------------------------------------------------
 void ctkDoubleSlider::onValueChanged(int newValue)
 {
   Q_D(ctkDoubleSlider);
@@ -386,6 +419,35 @@ void ctkDoubleSlider::onRangeChanged(int min, int max)
     {
     this->setRange(d->fromInt(min), d->fromInt(max));
     }
+}
+
+// --------------------------------------------------------------------------
+bool ctkDoubleSlider::eventFilter(QObject* watched, QEvent* event)
+{
+  Q_D(ctkDoubleSlider);
+  if (watched == d->Slider)
+    {
+    switch(event->type())
+      {
+      case QEvent::ToolTip:
+        {
+        QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
+        QStyleOptionSlider opt;
+        d->Slider->initStyleOption(&opt);
+        QStyle::SubControl hoveredControl =
+          d->Slider->style()->hitTestComplexControl(
+            QStyle::CC_Slider, &opt, helpEvent->pos(), this);
+        if (!d->HandleToolTip.isEmpty() &&
+            hoveredControl == QStyle::SC_SliderHandle)
+          {
+          QToolTip::showText(helpEvent->globalPos(), d->HandleToolTip.arg(this->value()));
+          event->accept();
+          return true;
+          }
+        }
+      }
+    }
+  return this->Superclass::eventFilter(watched, event);
 }
 
 
