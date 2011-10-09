@@ -445,9 +445,10 @@ bool ctkDoubleSlider::eventFilter(QObject* watched, QEvent* event)
           return true;
           }
         }
+      default:
+        break;
       }
     }
   return this->Superclass::eventFilter(watched, event);
 }
-
 
