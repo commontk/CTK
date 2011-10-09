@@ -367,16 +367,26 @@ void ctkVTKVolumePropertyWidget::onAxesModified()
 void ctkVTKVolumePropertyWidget::moveAllPoints(double xOffset, double yOffset)
 {
   Q_D(ctkVTKVolumePropertyWidget);
+  if (d->VolumeProperty)
+    {
+    d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
+    }
   d->ScalarOpacityWidget->view()->moveAllPoints(xOffset, yOffset);
   d->ScalarColorWidget->view()->moveAllPoints(xOffset, yOffset);
   d->GradientWidget->view()->moveAllPoints(xOffset, yOffset);
+  if (d->VolumeProperty)
+    {
+    d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
+    }
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKVolumePropertyWidget::spreadAllPoints(double factor)
 {
   Q_D(ctkVTKVolumePropertyWidget);
+  d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
   d->ScalarOpacityWidget->view()->spreadAllPoints(factor);
   d->ScalarColorWidget->view()->spreadAllPoints(factor);
   d->GradientWidget->view()->spreadAllPoints(factor);
+  d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
 }
