@@ -51,6 +51,7 @@ class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
+  Q_PROPERTY(QString handleToolTip READ handleToolTip WRITE setHandleToolTip)
 
 public:
   /// Superclass typedef
@@ -142,6 +143,17 @@ public:
   /// This property holds the orientation of the slider.
   /// The orientation must be Qt::Vertical (the default) or Qt::Horizontal.
   Qt::Orientation orientation()const;
+
+  ///
+  /// Controls the text to display for the handle tooltip. It is in addition
+  /// to the widget tooltip.
+  /// "%1" is replaced by the current value of the slider.
+  /// Empty string (by default) means no tooltip.
+  QString handleToolTip()const;
+  void setHandleToolTip(const QString& toolTip);
+
+  /// Reimplemented for internal reasons (handle tooltip).
+  virtual bool eventFilter(QObject*, QEvent*);
 
 public slots:
   /// 
