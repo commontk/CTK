@@ -24,6 +24,8 @@ SET(KIT_SRCS
   ctkCheckableComboBox.h
   ctkCheckableHeaderView.cpp
   ctkCheckableHeaderView.h
+  ctkCheckBox.cpp
+  ctkCheckBox.h
   ctkCheckBoxPixmaps.cpp
   ctkCheckBoxPixmaps.h
   ctkCheckablePushButton.cpp
@@ -182,6 +184,7 @@ SET(KIT_MOC_SRCS
   ctkCheckableComboBox.h
   ctkCheckableHeaderView.h
   ctkCheckablePushButton.h
+  ctkCheckBox.h
   ctkCheckBoxPixmaps.h
   ctkComboBox.h
   ctkCompleter.h
