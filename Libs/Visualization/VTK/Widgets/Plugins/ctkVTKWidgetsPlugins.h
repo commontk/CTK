@@ -31,6 +31,7 @@
 #include "ctkVTKRenderViewPlugin.h"
 #include "ctkVTKScalarBarWidgetPlugin.h"
 #ifdef CTK_USE_CHARTS
+#include "ctkVTKChartViewPlugin.h"
 #include "ctkVTKScalarsToColorsViewPlugin.h"
 #include "ctkVTKScalarsToColorsWidgetPlugin.h"
 #include "ctkVTKVolumePropertyWidgetPlugin.h"
@@ -57,6 +58,7 @@ public:
     plugins << new ctkVTKRenderViewPlugin;
     plugins << new ctkVTKScalarBarWidgetPlugin;
 #ifdef CTK_USE_CHARTS
+    plugins << new ctkVTKChartViewPlugin;
     plugins << new ctkVTKScalarsToColorsViewPlugin;
     plugins << new ctkVTKScalarsToColorsWidgetPlugin;
     plugins << new ctkVTKVolumePropertyWidgetPlugin;
