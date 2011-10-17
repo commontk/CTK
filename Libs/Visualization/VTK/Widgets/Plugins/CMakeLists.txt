@@ -47,6 +47,8 @@ SET(PLUGIN_MOC_SRCS
   
 IF(CTK_USE_CHARTS)
   SET(PLUGIN_SRCS
+      ctkVTKChartViewPlugin.cpp
+      ctkVTKChartViewPlugin.h
       ctkVTKScalarsToColorsViewPlugin.cpp
       ctkVTKScalarsToColorsViewPlugin.h
       ctkVTKScalarsToColorsWidgetPlugin.cpp
