@@ -117,6 +117,7 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
 
   # Install the library
   INSTALL(TARGETS ${lib_name}
+    RUNTIME DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT RuntimePlugins
     LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT RuntimePlugins
     ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT Development
     )
