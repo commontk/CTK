@@ -57,6 +57,7 @@ IF(CTK_USE_CHARTS)
       ctkVTKVolumePropertyWidgetPlugin.h
       ${PLUGIN_SRCS})
   SET(PLUGIN_MOC_SRCS
+      ctkVTKChartViewPlugin.h
       ctkVTKScalarsToColorsViewPlugin.h
       ctkVTKScalarsToColorsWidgetPlugin.h
       ctkVTKVolumePropertyWidgetPlugin.h
