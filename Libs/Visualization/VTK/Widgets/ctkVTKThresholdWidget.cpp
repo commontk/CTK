@@ -90,42 +90,36 @@ void ctkVTKThresholdWidgetPrivate::guessThreshold(double& min, double& max, doub
     {
     return;
     }
-  int minIndex; 
+  int minIndex;
+  // The min index is the point before the opacity is >0
   for (minIndex=0; minIndex < this->PiecewiseFunction->GetSize(); ++minIndex)
     {
     double node[4];
     this->PiecewiseFunction->GetNodeValue(minIndex, node);
     if (node[1] > 0.)
       {
-      min = node[0];
       opacity = node[1];
+      max = node[0];
       break;
       }
+    min = node[0];
     }
   if (minIndex == this->PiecewiseFunction->GetSize())
     {
     return;
     }
-  int maxIndex;
-  for (maxIndex = minIndex + 1;
-       maxIndex < this->PiecewiseFunction->GetSize();
-       ++maxIndex)
+  int maxIndex = minIndex + 1;
+  for (;maxIndex < this->PiecewiseFunction->GetSize(); ++maxIndex)
     {
     double node[4];
     this->PiecewiseFunction->GetNodeValue(maxIndex, node);
-    // average the opacities
-    opacity += node[1];
-    if (node[1] == 0.)
+    // use the max opacity
+    opacity = std::max(opacity, node[1]);
+    if (node[1] < opacity)
       {
-      max = node[0];
-      opacity /= maxIndex - minIndex + 1;
       break;
       }
-    }
-  // couldn't find the upper threshold value, use the upper range
-  if (maxIndex == this->PiecewiseFunction->GetSize())
-    {
-    opacity /= maxIndex - minIndex;
+    max = node[0];
     }
 }
 
