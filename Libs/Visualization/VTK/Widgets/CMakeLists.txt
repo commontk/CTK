@@ -76,7 +76,7 @@ SET(KIT_UI_FORMS
 
 # Resources
 SET(KIT_resources
-
+  Resources/ctkVTKWidgets.qrc
 )
 
 # Set VTK_LIBRARIES variable
