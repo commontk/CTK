@@ -60,6 +60,15 @@ public:
   void xRange(double* range)const;
   void yRange(double* range)const;
 
+  ///
+  /// Return the top-left corner widget if any.
+  QWidgetList extraWidgets()const;
+
+  ///
+  /// Add a widget in the top-left corner.
+  /// ctkVTKScalarsToColorsWidget takes ownership of the widget
+  void addExtraWidget(QWidget* extraWidget);
+
 public slots:
   void setCurrentControlPointsItem(vtkControlPointsItem* item);
   void setCurrentPoint(int pointId);

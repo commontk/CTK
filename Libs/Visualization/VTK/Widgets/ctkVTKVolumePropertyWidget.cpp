@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QToolButton>
 
 // CTK includes
 #include "ctkLogger.h"
@@ -61,6 +62,7 @@ public:
   
   vtkVolumeProperty* VolumeProperty;
   int                CurrentComponent;
+  QToolButton*       ShowOpacityThresholdWidgetButton;
 };
 
 // ----------------------------------------------------------------------------
@@ -95,6 +97,17 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
   composite->SetPointsFunction(vtkCompositeControlPointsItem::OpacityPointsFunction);
   this->ScalarColorWidget->view()->addColorTransferFunction(0);
   this->GradientWidget->view()->addPiecewiseFunction(0);
+
+  this->ShowOpacityThresholdWidgetButton = new QToolButton;
+  this->ShowOpacityThresholdWidgetButton->setIcon(
+    QIcon(":Icons/threshold.png"));
+  this->ShowOpacityThresholdWidgetButton->setCheckable(true);
+  this->ShowOpacityThresholdWidgetButton->setAutoRaise(true);
+  QObject::connect(this->ShowOpacityThresholdWidgetButton,
+                   SIGNAL(toggled(bool)),
+                   q, SLOT(onThresholdOpacityToggled(bool)));
+  this->ScalarOpacityWidget->addExtraWidget(
+    this->ShowOpacityThresholdWidgetButton);
   this->ScalarOpacityThresholdWidget->setVisible(false);
 
   QObject::connect(this->ScalarOpacityWidget, SIGNAL(axesModified()),
@@ -226,7 +239,7 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
       d->VolumeProperty->GetGradientOpacity() : 0;
     }
 
-  d->ScalarOpacityThresholdWidget->setPiecewiseFunction(this->useThresholdSlider() ? opacityFunction : 0);
+  d->ScalarOpacityThresholdWidget->setPiecewiseFunction(this->isThresholdVisible() ? opacityFunction : 0);
   
   d->ScalarOpacityWidget->view()->setOpacityFunctionToPlots(opacityFunction);
   d->ScalarOpacityWidget->view()->setColorTransferFunctionToPlots(colorTransferFunction);
@@ -317,7 +330,7 @@ void ctkVTKVolumePropertyWidget::setSpecularPower(double value)
 }
 
 // ----------------------------------------------------------------------------
-bool ctkVTKVolumePropertyWidget::useThresholdSlider()const
+bool ctkVTKVolumePropertyWidget::isThresholdVisible()const
 {
   Q_D(const ctkVTKVolumePropertyWidget);
   return d->ScalarOpacityThresholdWidget->isVisibleTo(
@@ -325,12 +338,33 @@ bool ctkVTKVolumePropertyWidget::useThresholdSlider()const
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKVolumePropertyWidget::setUseThresholdSlider(bool enable)
+void ctkVTKVolumePropertyWidget::showThreshold(bool enable)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  d->ShowOpacityThresholdWidgetButton->setChecked(enable);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::onThresholdOpacityToggled(bool enable)
 {
   Q_D(ctkVTKVolumePropertyWidget);
   d->ScalarOpacityThresholdWidget->setVisible(enable);
-  d->ScalarOpacityWidget->setVisible(!enable);
   this->updateFromVolumeProperty();
+}
+
+// ----------------------------------------------------------------------------
+bool ctkVTKVolumePropertyWidget::hasThresholdVisibilityToggle()const
+{
+  Q_D(const ctkVTKVolumePropertyWidget);
+  return d->ShowOpacityThresholdWidgetButton->isVisibleTo(
+    const_cast<ctkVTKVolumePropertyWidget*>(this));
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setThresholdVisibilityToggle(bool showToggle)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  d->ShowOpacityThresholdWidgetButton->setVisible(showToggle);
 }
 
 // ----------------------------------------------------------------------------

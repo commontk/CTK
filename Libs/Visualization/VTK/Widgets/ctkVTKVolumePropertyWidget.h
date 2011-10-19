@@ -40,7 +40,12 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKVolumePropertyWidget
   ///
   /// Control wether a range slider widget is used to edit the opacity
   /// function instead of a chart editor. False by default
-  Q_PROPERTY(bool useThresholdSlider READ useThresholdSlider WRITE setUseThresholdSlider)
+  Q_PROPERTY(bool thresholdVisibility READ isThresholdVisible WRITE showThreshold)
+
+  ///
+  /// Show or hide the opacity threshold slider toggle button.
+  /// True by default.
+  Q_PROPERTY(bool thresholdVisibilityToggle READ hasThresholdVisibilityToggle WRITE setThresholdVisibilityToggle)
 
 public:
   ctkVTKVolumePropertyWidget(QWidget* parent = 0);
@@ -48,9 +53,10 @@ public:
 
   vtkVolumeProperty* volumeProperty()const;
 
-  bool useThresholdSlider()const;
-  void setUseThresholdSlider(bool enable);
+  bool isThresholdVisible()const;
 
+  bool hasThresholdVisibilityToggle()const;
+  void setThresholdVisibilityToggle(bool showToggle);
 public slots:
   void setVolumeProperty(vtkVolumeProperty* volumeProperty);
 
@@ -66,6 +72,7 @@ public slots:
   /// \sa vtkControlPoints::spreadPoints()
   void spreadAllPoints(double factor = 1.);
 
+  void showThreshold(bool enable);
 protected slots:
   void updateFromVolumeProperty();
 
@@ -76,6 +83,7 @@ protected slots:
   void setSpecular(double value);
   void setSpecularPower(double value);
   
+  void onThresholdOpacityToggled(bool);
   /// Called whenever a view (opacity, colors or gradient) has one of its axis
   /// modified. It synchronize all the views to see the same.
   void onAxesModified();
