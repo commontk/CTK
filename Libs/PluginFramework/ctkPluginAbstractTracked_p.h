@@ -51,7 +51,7 @@ class ctkPluginAbstractTracked : public QMutex
 public:
 
   /* set this to true to compile in debug messages */
-  static const bool	DEBUG; //	= false;
+  static const bool DEBUG; // = false;
 
   /**
    * ctkPluginAbstractTracked constructor.
