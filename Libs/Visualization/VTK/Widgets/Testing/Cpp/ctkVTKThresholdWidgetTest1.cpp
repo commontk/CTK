@@ -23,7 +23,9 @@
 #include <QTimer>
 
 // qMRML includes
+#ifdef CTK_USE_CHARTS
 #include "ctkVTKScalarsToColorsView.h"
+#endif
 #include "ctkVTKThresholdWidget.h"
 
 // VTK includes
@@ -80,9 +82,11 @@ int ctkVTKThresholdWidgetTest1(int argc, char * argv [] )
 
   thresholdWidget.show();
 
+#ifdef CTK_USE_CHARTS
   ctkVTKScalarsToColorsView view;
   view.addOpacityFunction(function.GetPointer());
   view.show();
+#endif
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
