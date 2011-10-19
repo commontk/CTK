@@ -19,15 +19,17 @@
 
 =============================================================================*/
 
+#ifndef CTKTESTPLUGINSACTIVATOR_P_H
+#define CTKTESTPLUGINSACTIVATOR_P_H
 
-#ifndef CTKPLUGINFRAMEWORKTESTACTIVATOR_H
-#define CTKPLUGINFRAMEWORKTESTACTIVATOR_H
+#include <QScopedPointer>
 
 #include <ctkPluginActivator.h>
 
+class ctkTestPluginS;
 
-class ctkPluginFrameworkTestActivator : public QObject,
-                                        public ctkPluginActivator
+class ctkTestPluginSActivator : public QObject,
+                                public ctkPluginActivator
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
@@ -37,11 +39,12 @@ public:
   void start(ctkPluginContext* context);
   void stop(ctkPluginContext* context);
 
+  ~ctkTestPluginSActivator();
+
 private:
 
-  QObject* frameworkTestSuite;
-  QObject* serviceListenerTestSuite;
-  QObject* serviceTrackerTestSuite;
+  QScopedPointer<ctkTestPluginS> s;
+
 };
 
-#endif // CTKPLUGINFRAMEWORKTESTACTIVATOR_H
+#endif // CTKTESTPLUGINSACTIVATOR_P_H

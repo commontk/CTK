@@ -20,28 +20,16 @@
 =============================================================================*/
 
 
-#ifndef CTKPLUGINFRAMEWORKTESTACTIVATOR_H
-#define CTKPLUGINFRAMEWORKTESTACTIVATOR_H
+#ifndef CTKTESTPLUGINSSERVICE0_H
+#define CTKTESTPLUGINSSERVICE0_H
 
-#include <ctkPluginActivator.h>
+#include <qglobal.h>
 
-
-class ctkPluginFrameworkTestActivator : public QObject,
-                                        public ctkPluginActivator
+struct ctkTestPluginSService0
 {
-  Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
-
-public:
-
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
-
-private:
-
-  QObject* frameworkTestSuite;
-  QObject* serviceListenerTestSuite;
-  QObject* serviceTrackerTestSuite;
+  virtual ~ctkTestPluginSService0() {}
 };
 
-#endif // CTKPLUGINFRAMEWORKTESTACTIVATOR_H
+Q_DECLARE_INTERFACE(ctkTestPluginSService0, "org.commontk.pluginStest.TestPluginSService0")
+
+#endif // CTKTESTPLUGINSSERVICE0_H
