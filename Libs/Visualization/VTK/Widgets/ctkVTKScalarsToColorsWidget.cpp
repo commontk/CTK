@@ -421,7 +421,10 @@ void ctkVTKScalarsToColorsWidget::onColorChanged(const QColor& color)
 void ctkVTKScalarsToColorsWidget::onXChanged(double x)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
-  Q_ASSERT(d->CurrentControlPointsItem);
+  if (!d->CurrentControlPointsItem)
+    {
+    return;
+    }
 
   bool validRange = d->checkXRange(x, d->PointIdSpinBox->value());
   if (!validRange)
