@@ -568,3 +568,27 @@ void ctkVTKScalarsToColorsWidget::onExpandButton(bool state)
   d->SharpnessLabel->setVisible(state);
   d->SharpnessSpinBox->setVisible(state);
 }
+
+// ----------------------------------------------------------------------------
+QWidgetList ctkVTKScalarsToColorsWidget::extraWidgets()const
+{
+  Q_D(const ctkVTKScalarsToColorsWidget);
+  QWidgetList widgets;
+  for (int i = 0; i < d->TopLayout->count(); ++i)
+    {
+    QLayoutItem* topLeftItem = d->TopLayout->itemAt(i);
+    if (topLeftItem->spacerItem())
+      {
+      break;
+      }
+    widgets << topLeftItem->widget();
+    }
+  return widgets;
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::addExtraWidget(QWidget* extraWidget)
+{
+  Q_D(const ctkVTKScalarsToColorsWidget);
+  d->TopLayout->insertWidget(this->extraWidgets().count(), extraWidget);
+}

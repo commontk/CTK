@@ -21,9 +21,9 @@
     <number>0</number>
    </property>
    <item row="0" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="TopLayout">
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="TopSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
