@@ -7,6 +7,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/Cpp)
 
 SET(fwtest_plugins
   pluginA_test
+  pluginS_test
   pluginA2_test
   pluginD_test
   pluginSL1_test

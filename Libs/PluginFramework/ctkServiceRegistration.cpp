@@ -44,7 +44,7 @@ ctkServiceRegistration::ctkServiceRegistration()
 ctkServiceRegistration::ctkServiceRegistration(const ctkServiceRegistration& reg)
   : d_ptr(reg.d_ptr)
 {
-  d_func()->ref.ref();
+  if (d_func()) d_func()->ref.ref();
 }
 
 //----------------------------------------------------------------------------

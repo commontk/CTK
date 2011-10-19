@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) German Cancer Research Center,
+  Copyright (c) 2010 German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,34 +19,30 @@
 
 =============================================================================*/
 
-#include "ctkServiceRegistrationPrivate.h"
+
+#include "ctkTestPluginSActivator_p.h"
+#include "ctkTestPluginS_p.h"
+
+#include <ctkPluginContext.h>
+
+#include <QtPlugin>
 
 //----------------------------------------------------------------------------
-ctkServiceRegistrationPrivate::ctkServiceRegistrationPrivate(
-  ctkPluginPrivate* plugin, QObject* service,
-  const ctkDictionary& props)
-  : ref(1), service(service), plugin(plugin), reference(this),
-    properties(props), available(true), unregistering(false),
-    propsLock()
+void ctkTestPluginSActivator::start(ctkPluginContext* context)
+{
+  s.reset(new ctkTestPluginS(context));
+}
+
+//----------------------------------------------------------------------------
+void ctkTestPluginSActivator::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context)
+}
+
+//----------------------------------------------------------------------------
+ctkTestPluginSActivator::~ctkTestPluginSActivator()
 {
 
 }
 
-//----------------------------------------------------------------------------
-ctkServiceRegistrationPrivate::~ctkServiceRegistrationPrivate()
-{
-
-}
-
-//----------------------------------------------------------------------------
-bool ctkServiceRegistrationPrivate::isUsedByPlugin(QSharedPointer<ctkPlugin> p)
-{
-  QHash<QSharedPointer<ctkPlugin>, int> deps = dependents;
-  return deps.contains(p);
-}
-
-//----------------------------------------------------------------------------
-QObject* ctkServiceRegistrationPrivate::getService()
-{
-  return service;
-}
+Q_EXPORT_PLUGIN2(pluginS_test, ctkTestPluginSActivator)

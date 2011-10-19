@@ -122,6 +122,17 @@ QList<ctkServiceReference> ctkServiceTrackerPrivate<S,T>::getInitialReferences(c
 
 //----------------------------------------------------------------------------
 template<class S, class T>
+QList<ctkServiceReference> ctkServiceTrackerPrivate<S,T>::getServiceReferences_unlocked(ctkTrackedService<S,T>* t) const
+{
+  if (t->size() == 0)
+  {
+    return QList<ctkServiceReference>();
+  }
+  return t->getTracked();
+}
+
+//----------------------------------------------------------------------------
+template<class S, class T>
 QSharedPointer<ctkTrackedService<S,T> > ctkServiceTrackerPrivate<S,T>::tracked() const
 {
   return trackedService;

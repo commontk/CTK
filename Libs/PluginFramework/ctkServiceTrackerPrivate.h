@@ -69,6 +69,8 @@ public:
   QList<ctkServiceReference> getInitialReferences(const QString& className,
                                                   const QString& filterString);
 
+  QList<ctkServiceReference> getServiceReferences_unlocked(ctkTrackedService<S,T>* t) const;
+
   /* set this to true to compile in debug messages */
   static const bool	DEBUG; //	= false;
 

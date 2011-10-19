@@ -6,12 +6,14 @@ SET(PLUGIN_SRCS
   ctkPluginFrameworkTestActivator.cpp
   ctkPluginFrameworkTestSuite.cpp
   ctkServiceListenerTestSuite.cpp
+  ctkServiceTrackerTestSuite.cpp
 )
 
 SET(PLUGIN_MOC_SRCS
   ctkPluginFrameworkTestActivator_p.h
   ctkPluginFrameworkTestSuite_p.h
   ctkServiceListenerTestSuite_p.h
+  ctkServiceTrackerTestSuite_p.h
 )
 
 SET(PLUGIN_UI_FORMS
