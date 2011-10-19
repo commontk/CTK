@@ -220,11 +220,7 @@ QList<ctkServiceReference> ctkServiceTracker<S,T>::getServiceReferences() const
   }
   {
     QMutexLocker lockT(t.data());
-    if (t->size() == 0)
-    {
-      return QList<ctkServiceReference>();
-    }
-    return t->getTracked();
+    return d->getServiceReferences_unlocked(t.data());
   }
 }
 
@@ -337,11 +333,12 @@ QList<T> ctkServiceTracker<S,T>::getServices() const
   }
   {
     QMutexLocker lockT(t.data());
-    QList<ctkServiceReference> references = getServiceReferences();
+    QList<ctkServiceReference> references = d->getServiceReferences_unlocked(t.data());
     QList<T> objects;
     foreach (ctkServiceReference ref, references)
     {
-      objects << getService(ref);
+      //objects << getService(ref);
+      objects << t->getCustomizedObject(ref);
     }
     return objects;
   }
@@ -358,7 +355,7 @@ T ctkServiceTracker<S,T>::getService() const
     if (d->DEBUG)
     {
       qDebug() << "ctkServiceTracker<S,T>::getService[cached]:"
-                   << d->filter;
+               << d->filter;
     }
     return service;
   }

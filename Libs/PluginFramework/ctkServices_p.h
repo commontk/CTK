@@ -179,6 +179,11 @@ public:
    */
   QList<ctkServiceRegistration> getUsedByPlugin(QSharedPointer<ctkPlugin> p) const;
 
+private:
+
+  QList<ctkServiceReference> get_unlocked(const QString& clazz, const QString& filter,
+                                          ctkPluginPrivate* plugin) const;
+
 };
 
 

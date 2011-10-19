@@ -63,7 +63,7 @@ ctkDictionary ctkServices::createServiceProperties(const ctkDictionary& in,
 
 //----------------------------------------------------------------------------
 ctkServices::ctkServices(ctkPluginFrameworkContext* fwCtx)
-  : mutex(QMutex::Recursive), framework(fwCtx)
+  : mutex(), framework(fwCtx)
 {
 
 }
@@ -166,7 +166,7 @@ ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& cl
 {
   QMutexLocker lock(&mutex);
   try {
-    QList<ctkServiceReference> srs = get(clazz, QString(), plugin);
+    QList<ctkServiceReference> srs = get_unlocked(clazz, QString(), plugin);
     if (framework->debug.service_reference)
     {
       qDebug() << "get service ref" << clazz << "for plugin"
@@ -186,9 +186,15 @@ ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& cl
 QList<ctkServiceReference> ctkServices::get(const QString& clazz, const QString& filter,
                                             ctkPluginPrivate* plugin) const
 {
-  Q_UNUSED(plugin)
-
   QMutexLocker lock(&mutex);
+  return get_unlocked(clazz, filter, plugin);
+}
+
+//----------------------------------------------------------------------------
+QList<ctkServiceReference> ctkServices::get_unlocked(const QString& clazz, const QString& filter,
+                                                     ctkPluginPrivate* plugin) const
+{
+  Q_UNUSED(plugin)
 
   QListIterator<ctkServiceRegistration>* s = 0;
   QList<ctkServiceRegistration> v;
