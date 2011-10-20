@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDebug>
 #include <QStyle>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -48,10 +49,23 @@ int ctkCheckBoxTest1(int argc, char * argv [] )
   icon.addPixmap(QApplication::style()->standardPixmap(QStyle::SP_DesktopIcon),
                  QIcon::Normal,
                  QIcon::Off);
-  checkBoxWithoutIcon->setCheckIcon(icon);
-  checkBoxWithIcon->setCheckIcon(icon);
-  checkBoxWithIcon->setCheckIcon(QIcon());
-  checkBoxWithIconAndText->setCheckIcon(icon);
+  checkBoxWithoutIcon->setIndicatorIcon(icon);
+//  checkBoxWithoutIcon->setIndicatorIconSize(QSize(15,15));
+  checkBoxWithIcon->setIndicatorIcon(icon);
+  if (checkBoxWithIcon->indicatorIcon().isNull())
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with "
+        << "the function indicatorIcon()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  icon.addPixmap(QApplication::style()->standardPixmap(QStyle::SP_FileLinkIcon),
+                 QIcon::Active,
+                 QIcon::On);
+
+  checkBoxWithIcon->setIndicatorIcon(QIcon());
+  checkBoxWithIconAndText->setIndicatorIcon(icon);
+  checkBoxWithIconAndText->setIndicatorIconSize(QSize(25,25));
   checkBoxWithIconAndText->setText("Test1");
   checkBoxWithIconAndText->setIcon(QApplication::style()->standardIcon(QStyle::SP_FileIcon));
 
