@@ -265,6 +265,21 @@ void ctkDICOMDatabase::closeDatabase()
 }
 
 //------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::patients()
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT UID FROM Patients" );
+  query.exec();
+  QStringList result;
+  while (query.next()) 
+    {
+    result << query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
 QStringList ctkDICOMDatabase::studiesForPatient(QString patientUID)
 {
   Q_D(ctkDICOMDatabase);

@@ -109,6 +109,7 @@ public:
 
   ///
   /// \brief database accessors
+  Q_INVOKABLE QStringList patients ();
   Q_INVOKABLE QStringList studiesForPatient (QString patientUID);
   Q_INVOKABLE QStringList seriesForStudy (QString studyUID);
   Q_INVOKABLE QStringList filesForSeries (QString seriesUID);
