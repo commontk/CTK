@@ -32,11 +32,13 @@ class ctkCheckBoxPrivate;
 /// ctkCheckBox is an advanced QCheckBox that gives more control
 /// over its look and feel.
 /// We can change the indicator check box by a new QIcon, with two mode On/Off.
+/// The indicator icon size can be controled. see setIndicatorIconSize()
 
 class CTK_WIDGETS_EXPORT ctkCheckBox : public QCheckBox
 {
   Q_OBJECT
-  Q_PROPERTY(QIcon checkIcon READ checkIcon WRITE setCheckIcon)
+  Q_PROPERTY(QIcon indicatorIcon READ indicatorIcon WRITE setIndicatorIcon)
+  Q_PROPERTY(QSize indicatorIconSize READ indicatorIconSize WRITE setIndicatorIconSize)
 
 public:
   typedef QCheckBox Superclass;
@@ -44,8 +46,14 @@ public:
   ctkCheckBox(QWidget *_parent);
   virtual ~ctkCheckBox();
 
-  void setCheckIcon(const QIcon& newIcon);
-  QIcon checkIcon() const;
+  void setIndicatorIcon(const QIcon& newIcon);
+  QIcon indicatorIcon() const;
+
+  /// Resize the indicator icon to Qsize.
+  /// If newSize is bigger than the indicator icon's maximum size,
+  /// The icon will get the icon's maximum size and not newSize.
+  void setIndicatorIconSize(const QSize& newSize);
+  QSize indicatorIconSize() const;
 
 protected:
   QScopedPointer<ctkCheckBoxPrivate> d_ptr;
