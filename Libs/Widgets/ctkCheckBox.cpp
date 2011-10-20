@@ -18,7 +18,6 @@
 
 =========================================================================*/
 // QT includes
-#include <QApplication>
 #include <QProxyStyle>
 #include <QStyleOption>
 
@@ -31,44 +30,83 @@
 class ctkCheckBoxStyle : public QProxyStyle
 {
   public:
-  ctkCheckBoxStyle(QStyle *parentStyle)
-    : QProxyStyle(parentStyle)
-    {}
+  ctkCheckBoxStyle(QStyle *parentStyle);
 
-  void setCheckIcon(const QIcon& newIcon)
-  {
-    this->checkBoxIcon = newIcon;
-  }
-  QIcon checkIcon() const
-  {
-    return this->checkBoxIcon;
-  }
+  virtual void drawPrimitive(QStyle::PrimitiveElement pe,
+                             const QStyleOption * opt,
+                             QPainter * p,
+                             const QWidget * widget = 0) const;
 
-  virtual void drawPrimitive(PrimitiveElement pe, const QStyleOption * opt, QPainter * p, const QWidget * widget = 0) const
-  {
-    if (pe == QStyle::PE_IndicatorCheckBox)
-      {
-      const ctkCheckBox* checkBox= qobject_cast<const ctkCheckBox*>(widget);
-      if (checkBox && !checkBoxIcon.isNull())
-        {
-        QIcon::Mode mode =
-            (checkBox->testAttribute(Qt::WA_Hover) && checkBox->underMouse()) ?
-              QIcon::Active : QIcon::Normal;
-        mode = checkBox->isDown() ? QIcon::Selected : mode;
-        mode = checkBox->isEnabled() ? mode : QIcon::Disabled;
-        this->drawItemPixmap(p, opt->rect, Qt::AlignHCenter,
-                             checkBoxIcon.pixmap(
-                               opt->rect.width(), opt->rect.height(),
-                               mode,
-                               checkBox->isChecked() ? QIcon::Off : QIcon::On));
-        return;
-        }
-      }
-    this->QProxyStyle::drawPrimitive(pe, opt, p, widget);
-  }
-protected:
-  QIcon   checkBoxIcon;
+  virtual int pixelMetric(QStyle::PixelMetric metric,
+                          const QStyleOption *option,
+                          const QWidget *widget = 0) const;
+
+  QIcon   indicatorIcon;
+  QSize   indicatorSize;
 };
+
+// ----------------------------------------------------------------------------
+//  Methods ctkCheckBoxStyle
+
+// ----------------------------------------------------------------------------
+ctkCheckBoxStyle::ctkCheckBoxStyle(QStyle *parentStyle)
+  : QProxyStyle(parentStyle)
+{
+}
+
+// ----------------------------------------------------------------------------
+void ctkCheckBoxStyle::drawPrimitive(QStyle::PrimitiveElement pe,
+                                     const QStyleOption * opt,
+                                     QPainter * p, const QWidget * widget) const
+{
+  if (pe == QStyle::PE_IndicatorCheckBox)
+    {
+    const ctkCheckBox* checkBox= qobject_cast<const ctkCheckBox*>(widget);
+    if (checkBox && !indicatorIcon.isNull())
+      {
+      QIcon::Mode mode =
+          (opt->state & QStyle::State_MouseOver) == QStyle::State_MouseOver
+            ? QIcon::Active : QIcon::Normal;
+      mode = (opt->state & QStyle::State_Sunken) == QStyle::State_Sunken
+               ? QIcon::Selected : mode;
+      mode = (opt->state & QStyle::State_Enabled) == QStyle::State_Enabled
+               ? mode : QIcon::Disabled;
+      QIcon::State state =
+          (opt->state & QStyle::State_On) == QStyle::State_On
+            ?  QIcon::Off : QIcon::On;
+      state = (opt->state & QStyle::State_Sunken) == QStyle::State_Sunken
+              ? QIcon::Off : state ;
+
+      this->drawItemPixmap(p, opt->rect, Qt::AlignHCenter,
+                           this->indicatorIcon.pixmap(
+                             opt->rect.width(), opt->rect.height(),
+                             mode,
+                             state));
+      return;
+      }
+    }
+  this->QProxyStyle::drawPrimitive(pe, opt, p, widget);
+}
+
+// ----------------------------------------------------------------------------
+int ctkCheckBoxStyle::pixelMetric(QStyle::PixelMetric metric,
+                                  const QStyleOption *option,
+                                  const QWidget *widget) const
+{
+  const ctkCheckBox* checkBox= qobject_cast<const ctkCheckBox*>(widget);
+  if (checkBox && !indicatorIcon.isNull())
+    {
+    if(metric == QStyle::PM_IndicatorHeight && !this->indicatorSize.isEmpty())
+      {
+      return this->indicatorIcon.actualSize(this->indicatorSize).height();
+      }
+    if(metric == QStyle::PM_IndicatorWidth && !this->indicatorSize.isEmpty())
+      {
+      return this->indicatorIcon.actualSize(this->indicatorSize).width();
+      }
+    }
+  return this->QProxyStyle::pixelMetric(metric, option, widget);
+}
 
 // ----------------------------------------------------------------------------
 class ctkCheckBoxPrivate
@@ -82,6 +120,9 @@ public:
 
   ctkCheckBoxStyle* iconStyle;
 };
+
+// ----------------------------------------------------------------------------
+//  Methods ctkCheckBoxPrivate
 
 // ----------------------------------------------------------------------------
 ctkCheckBoxPrivate::ctkCheckBoxPrivate(ctkCheckBox &object)
@@ -117,16 +158,31 @@ ctkCheckBox::~ctkCheckBox()
 }
 
 // ----------------------------------------------------------------------------
-void ctkCheckBox::setCheckIcon(const QIcon& newIcon)
+void ctkCheckBox::setIndicatorIcon(const QIcon& newIcon)
 {
   Q_D(ctkCheckBox);
-  d->iconStyle->setCheckIcon(newIcon);
+  d->iconStyle->indicatorIcon = newIcon;
   this->update();
 }
 
 // ----------------------------------------------------------------------------
-QIcon ctkCheckBox::checkIcon() const
+QIcon ctkCheckBox::indicatorIcon() const
 {
   Q_D(const ctkCheckBox);
-  return d->iconStyle->checkIcon();
+  return d->iconStyle->indicatorIcon;
+}
+
+// ----------------------------------------------------------------------------
+void ctkCheckBox::setIndicatorIconSize(const QSize& newSize)
+{
+  Q_D(ctkCheckBox);
+  d->iconStyle->indicatorSize = newSize;
+  this->update();
+}
+
+// ----------------------------------------------------------------------------
+QSize ctkCheckBox::indicatorIconSize() const
+{
+  Q_D(const ctkCheckBox);
+  return d->iconStyle->indicatorSize;
 }
