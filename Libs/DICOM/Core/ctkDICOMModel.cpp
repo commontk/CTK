@@ -222,7 +222,11 @@ Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)c
     {// root node
     node->Type = ctkDICOMModel::RootType;
     node->Parent = 0;
+#if CHECKABLE_COLUMNS
+    // CHECKABLE_COLUMNS are disabled by default - they are not yet used by other
+    // parts of the ctkDICOM infrastructure so they are misleading to the user
     node->Data[Qt::CheckStateRole] = Qt::Unchecked;
+#endif
     }
   else
     {
@@ -236,7 +240,9 @@ Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)c
     {
     int field = 0;//nodeParent->Query.record().indexOf("UID");
     node->UID = this->value(parentValue, row, field).toString();
+#if CHECKABLE_COLUMNS
     node->Data[Qt::CheckStateRole] = node->Parent->Data[Qt::CheckStateRole];
+#endif
     }
   
   node->RowCount = 0;
@@ -750,6 +756,7 @@ bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &valu
         }
       }
 
+#ifdef CHECKABLE_COLUMNS
     if(partiallyCheckedExist || (checkedExist && uncheckedExist))
       {
       node->Data[Qt::CheckStateRole] = Qt::PartiallyChecked;
@@ -766,6 +773,7 @@ bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &valu
       {
       node->Data[Qt::CheckStateRole] = Qt::Unchecked;
       }
+#endif
 
     emit dataChanged(index, index);
 
