@@ -83,7 +83,7 @@ void ctkVTKChartViewPrivate::init()
   //q->GetRenderWindow()->SetMultiSamples(0);
   //vtkOpenGLContextDevice2D::SafeDownCast(this->ContextView->GetContext()->GetDevice())
   //                                       ->SetStringRendererToQt();
-#ifdef Q_WS_WIN
+#ifndef Q_WS_X11
   q->GetRenderWindow()->SetLineSmoothing(true);
 #endif
   this->Chart->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
