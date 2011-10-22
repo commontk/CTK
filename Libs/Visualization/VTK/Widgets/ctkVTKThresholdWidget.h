@@ -40,6 +40,9 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKThresholdWidget
   /// Setting the opacity property has no effect when no piecewise function is
   /// set.
   Q_PROPERTY(double opacity READ opacity WRITE setOpacity DESIGNABLE false)
+  /// Use 2 (true) or 4 (false) control points to control the threshold.
+  /// 4 points by default (false).
+  Q_PROPERTY(bool useSharpness READ useSharpness WRITE setUseSharpness)
 public:
   ctkVTKThresholdWidget(QWidget* parent = 0);
   virtual ~ctkVTKThresholdWidget();
@@ -49,6 +52,9 @@ public:
   void range(double* range)const;
   void thresholdValues(double* values)const;
   double opacity()const;
+
+  bool useSharpness()const;
+  void setUseSharpness(bool use);
 
 public slots:
   void setPiecewiseFunction(vtkPiecewiseFunction* function);
