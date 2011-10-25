@@ -108,6 +108,9 @@ FOREACH(type LIBRARY RUNTIME ARCHIVE)
     ENDIF()
   ENDIF()
   SET(CMAKE_${type}_OUTPUT_DIRECTORY ${output_dir} CACHE INTERNAL "Single output directory for building all libraries.")
+  IF(NOT DEFINED CTK_PLUGIN_${type}_OUTPUT_DIRECTORY)
+    SET(CTK_PLUGIN_${type}_OUTPUT_DIRECTORY ${CMAKE_${type}_OUTPUT_DIRECTORY})
+  ENDIF()
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------

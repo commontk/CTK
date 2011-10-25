@@ -256,25 +256,34 @@ MACRO(ctkMacroBuildPlugin)
 
   # Set the output directory for the plugin
   IF(MY_OUTPUT_DIR)
-    SET(output_dir_suffix ${MY_OUTPUT_DIR})
+    SET(output_dir_suffix "/${MY_OUTPUT_DIR}")
   ELSE()
-    SET(output_dir_suffix "plugins")
+    SET(output_dir_suffix "")
   ENDIF()
 
-  IF(MY_TEST_PLUGIN)
-    SET(output_dir_suffix "test_${output_dir_suffix}")
-  ENDIF()
+  FOREACH(type RUNTIME LIBRARY ARCHIVE)
+    IF(NOT DEFINED CTK_PLUGIN_${type}_OUTPUT_DIRECTORY AND CMAKE_${type}_OUTPUT_DIRECTORY)
+      # Put plug-ins by default into a "plugins" subdirectory
+      SET(CTK_PLUGIN_${type}_OUTPUT_DIRECTORY "${CMAKE_${type}_OUTPUT_DIRECTORY}/plugins")
+    ENDIF()
+    
+    IF(IS_ABSOLUTE "${CTK_PLUGIN_${type}_OUTPUT_DIRECTORY}")
+      SET(plugin_${type}_output_dir "${CTK_PLUGIN_${type}_OUTPUT_DIRECTORY}${output_dir_suffix}")
+    ELSEIF(CMAKE_${type}_OUTPUT_DIRECTORY)
+      SET(plugin_${type}_output_dir "${CMAKE_${type}_OUTPUT_DIRECTORY}/${CTK_PLUGIN_${type}_OUTPUT_DIRECTORY}${output_dir_suffix}")
+    ELSE()
+      SET(plugin_${type}_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${CTK_PLUGIN_${type}_OUTPUT_DIRECTORY}${output_dir_suffix}")
+    ENDIF()
 
-  IF(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    SET(runtime_output_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${output_dir_suffix}")
-  ELSE()
-    SET(runtime_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${output_dir_suffix}")
-  ENDIF()
-  IF(CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-    SET(library_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${output_dir_suffix}")
-  ELSE()
-    SET(library_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${output_dir_suffix}")
-  ENDIF()
+    IF(MY_TEST_PLUGIN)
+      # Test plug-ins will always be put in a separate directory
+      IF(CMAKE_${type}_OUTPUT_DIRECTORY)
+        SET(plugin_${type}_output_dir "${CMAKE_${type}_OUTPUT_DIRECTORY}/test_plugins")
+      ELSE()
+        SET(plugin_${type}_output_dir "${PROJECT_BINARY_DIR}/test_plugins")
+      ENDIF()
+    ENDIF()
+  ENDFOREACH()
 
   SET(plugin_compile_flags "-DQT_PLUGIN")
 
@@ -295,8 +304,9 @@ MACRO(ctkMacroBuildPlugin)
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
     COMPILE_FLAGS "${plugin_compile_flags}"
-    RUNTIME_OUTPUT_DIRECTORY ${runtime_output_dir}
-    LIBRARY_OUTPUT_DIRECTORY ${library_output_dir}
+    RUNTIME_OUTPUT_DIRECTORY ${plugin_RUNTIME_output_dir}
+    LIBRARY_OUTPUT_DIRECTORY ${plugin_LIBRARY_output_dir}
+    ARCHIVE_OUTPUT_DIRECTORY ${plugin_ARCHIVE_output_dir}
     PREFIX "lib"
     )
 

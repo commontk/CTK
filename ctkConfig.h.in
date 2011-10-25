@@ -1,7 +1,7 @@
 #ifndef __ctkConfig_h
 #define __ctkConfig_h
 
-#define CTK_PLUGIN_DIR "@CTK_BINARY_DIR@/bin/plugins/"
+#define CTK_PLUGIN_DIR "@CTK_PLUGIN_LIBRARIES_DIR_CONFIG@/"
 
 #endif
 
