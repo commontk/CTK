@@ -65,6 +65,14 @@ public:
 
   Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 
+  /**
+      \brief runs a query and prints debug output of status
+ 
+  */
+  bool loggedExec(QSqlQuery& query);
+  bool loggedExec(QSqlQuery& query, const QString& queryString);
+
+
   ///
   /// set thumbnail generator object
   void setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator* generator);
