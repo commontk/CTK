@@ -167,3 +167,14 @@ ctkDictionary ctkServiceReferencePrivate::getProperties() const
 {
   return registration->properties;
 }
+
+//----------------------------------------------------------------------------
+QVariant ctkServiceReferencePrivate::getProperty(const QString& key, bool lock) const
+{
+  if (lock)
+  {
+    QMutexLocker lock(&registration->propsLock);
+    return registration->properties.value(key);
+  }
+  return registration->properties.value(key);
+}
