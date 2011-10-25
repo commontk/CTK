@@ -30,6 +30,7 @@
 
 #include <ui_ctkPluginBrowserMainWindow.h>
 
+#include <ctkConfig.h>
 #include <ctkPluginException.h>
 #include <ctkPluginFramework.h>
 #include <ctkPluginContext.h>
@@ -65,9 +66,9 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
 
   QStringList pluginDirs;
 #ifdef CMAKE_INTDIR
-  pluginDirs << qApp->applicationDirPath() + "/../plugins/" CMAKE_INTDIR "/";
+  pluginDirs << CTK_PLUGIN_DIR CMAKE_INTDIR "/";
 #else
-  pluginDirs << qApp->applicationDirPath() + "/plugins/";
+  pluginDirs << CTK_PLUGIN_DIR;
 #endif
 
   QStringListIterator dirIt(pluginDirs);

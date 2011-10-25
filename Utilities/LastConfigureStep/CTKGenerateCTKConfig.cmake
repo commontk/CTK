@@ -105,6 +105,22 @@ SET(CTK_INCLUDE_DIRS_CONFIG
 # Library directory.
 SET(CTK_LIBRARY_DIRS_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
+# Plug-in output directory
+IF(WIN32)
+  SET(_plugin_output_type "RUNTIME")
+ELSE()
+  SET(_plugin_output_type "LIBRARY")
+ENDIF()
+IF(DEFINED CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY)
+  IF(IS_ABSOLUTE "${CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY}")
+    SET(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY}")
+  ELSE()
+    SET(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CMAKE_${_plugin_output_type}_OUTPUT_DIRECTORY}/${CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY}")
+  ENDIF()
+ELSE()
+  SET(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CMAKE_${_plugin_output_type}_OUTPUT_DIRECTORY}/plugins")
+ENDIF()
+
 # External project libraries.
 SET(CTK_EXTERNAL_LIBRARIES_CONFIG ${CTK_EXTERNAL_LIBRARIES})
 
@@ -146,7 +162,7 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTKConfig.cmake.in
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTKConfigVersion.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfigVersion.cmake @ONLY IMMEDIATE)
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/ctkConfig.h.in
-               ${CTK_SUPERBUILD_BINARY_DIR}/ctkConfig.h @ONLY IMMEDIATE)
+               ${CTK_CONFIG_H_INCLUDE_DIR}/ctkConfig.h @ONLY IMMEDIATE)
 
 #-----------------------------------------------------------------------------
 # Settings specific to the install tree.

@@ -108,6 +108,9 @@ FOREACH(type LIBRARY RUNTIME ARCHIVE)
     ENDIF()
   ENDIF()
   SET(CMAKE_${type}_OUTPUT_DIRECTORY ${output_dir} CACHE INTERNAL "Single output directory for building all libraries.")
+  IF(NOT DEFINED CTK_PLUGIN_${type}_OUTPUT_DIRECTORY)
+    SET(CTK_PLUGIN_${type}_OUTPUT_DIRECTORY ${CMAKE_${type}_OUTPUT_DIRECTORY})
+  ENDIF()
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
@@ -594,6 +597,12 @@ IF(CTK_SUPERBUILD)
   RETURN()
 ENDIF()
 
+
+#=============================================================================
+# End of Superbuild
+#=============================================================================
+
+
 #-----------------------------------------------------------------------------
 # Expand variables containing include and library directories for external projects
 # This relies on the variable EXTERNAL_TARGETS set in ctkMacroValidateBuildOptions
@@ -660,9 +669,10 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Configure files with settings
 #
-
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/UseCTK.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake COPYONLY IMMEDIATE)
+
+SET(CTK_CONFIG_H_INCLUDE_DIR ${CTK_BINARY_DIR})
 
 #-----------------------------------------------------------------------------
 # Set C/CXX Flags
