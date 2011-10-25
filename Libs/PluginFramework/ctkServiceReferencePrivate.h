@@ -73,6 +73,28 @@ public:
   ctkDictionary getProperties() const;
 
   /**
+   * Returns the property value to which the specified property key is mapped
+   * in the properties <code>ctkDictionary</code> object of the service
+   * referenced by this <code>ctkServiceReference</code> object.
+   *
+   * <p>
+   * Property keys are case-insensitive.
+   *
+   * <p>
+   * This method must continue to return property values after the service has
+   * been unregistered. This is so references to unregistered services can
+   * still be interrogated.
+   *
+   * @param key The property key.
+   * @param lock If <code>true</code>, access of the properties of the service
+   *        referenced by this <code>ctkServiceReference</code> object will be
+   *        synchronized.
+   * @return The property value to which the key is mapped; an invalid QVariant
+   *         if there is no property named after the key.
+   */
+  QVariant getProperty(const QString& key, bool lock) const;
+
+  /**
    * Reference count for implicitly shared private implementation.
    */
   QAtomicInt ref;

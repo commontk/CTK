@@ -100,7 +100,7 @@ void ctkPluginFrameworkListeners::serviceListenerDestroyed(QObject *listener)
 
 //----------------------------------------------------------------------------
 QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
-    const ctkServiceReference& sr)
+    const ctkServiceReference& sr, bool lockProps)
 {
   QMutexLocker lock(&mutex); Q_UNUSED(lock);
 
@@ -123,20 +123,20 @@ QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
   }
 
   // Check the cache
-  QStringList c = sr.getProperty(ctkPluginConstants::OBJECTCLASS).toStringList();
+  QStringList c = sr.d_func()->getProperty(ctkPluginConstants::OBJECTCLASS, lockProps).toStringList();
   foreach (QString objClass, c)
   {
     addToSet(set, OBJECTCLASS_IX, objClass);
   }
 
   bool ok = false;
-  qlonglong service_id = sr.getProperty(ctkPluginConstants::SERVICE_ID).toLongLong(&ok);
+  qlonglong service_id = sr.d_func()->getProperty(ctkPluginConstants::SERVICE_ID, lockProps).toLongLong(&ok);
   if (ok)
   {
     addToSet(set, SERVICE_ID_IX, QString::number(service_id));
   }
 
-  QStringList service_pids = sr.getProperty(ctkPluginConstants::SERVICE_PID).toStringList();
+  QStringList service_pids = sr.d_func()->getProperty(ctkPluginConstants::SERVICE_PID, lockProps).toStringList();
   foreach (QString service_pid, service_pids)
   {
     addToSet(set, SERVICE_PID_IX, service_pid);
