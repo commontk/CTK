@@ -6,12 +6,12 @@
     <message>
         <location filename="ctkTestPluginMTAttrPwdActivator.cpp" line="30"/>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="ctkTestPluginMTAttrPwdActivator.cpp" line="31"/>
         <source>My object class definition</source>
-        <translation type="unfinished"></translation>
+        <translation>Meine Objektklassendefinition</translation>
     </message>
 </context>
 </TS>
