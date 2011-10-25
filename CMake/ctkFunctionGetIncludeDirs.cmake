@@ -26,7 +26,7 @@ FUNCTION(ctkFunctionGetIncludeDirs var_include_dirs)
     MESSAGE(FATAL_ERROR "No targets given")
   ENDIF()
 
-  SET(_include_dirs ${${var_include_dirs}})
+  SET(_include_dirs ${${var_include_dirs}} ${CTK_CONFIG_H_INCLUDE_DIR})
   FOREACH(_target ${ARGN})
 
     # Add the include directories from the plugin dependencies

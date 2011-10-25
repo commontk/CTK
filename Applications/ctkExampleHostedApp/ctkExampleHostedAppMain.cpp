@@ -30,6 +30,7 @@
 #include <QDebug>
 
 // CTK includes
+#include <ctkConfig.h>
 #include <ctkCommandLineParser.h>
 #include <ctkPluginFrameworkFactory.h>
 #include <ctkPluginFramework.h>
@@ -110,9 +111,9 @@ int main(int argv, char** argc)
     }
 
 #ifdef CMAKE_INTDIR
-  QString pluginPath = qApp->applicationDirPath() + "/../plugins/" CMAKE_INTDIR "/";
+  QString pluginPath = CTK_PLUGIN_DIR CMAKE_INTDIR "/";
 #else
-  QString pluginPath = qApp->applicationDirPath() + "/plugins/";
+  QString pluginPath = CTK_PLUGIN_DIR;
 #endif
 
   qApp->addLibraryPath(pluginPath);

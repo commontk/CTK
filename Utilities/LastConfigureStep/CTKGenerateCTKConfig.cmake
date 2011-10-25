@@ -146,7 +146,7 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTKConfig.cmake.in
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTKConfigVersion.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfigVersion.cmake @ONLY IMMEDIATE)
 CONFIGURE_FILE(${CTK_SOURCE_DIR}/ctkConfig.h.in
-               ${CTK_SUPERBUILD_BINARY_DIR}/ctkConfig.h @ONLY IMMEDIATE)
+               ${CTK_CONFIG_H_INCLUDE_DIR}/ctkConfig.h @ONLY IMMEDIATE)
 
 #-----------------------------------------------------------------------------
 # Settings specific to the install tree.

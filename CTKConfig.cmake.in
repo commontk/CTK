@@ -67,6 +67,9 @@ INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroSetupExternalPlugins.cmake")
 
 SET(CTK_EXPORT_HEADER_TEMPLATE "@CTK_EXPORT_HEADER_TEMPLATE@")
 
+# Directory containing the ctkConfig.h file
+SET(CTK_CONFIG_H_INCLUDE_DIR @CTK_CONFIG_H_INCLUDE_DIR@)
+
 # The CTK DGraph executable used to compute target dependency graphs
 SET(CTK_DGRAPH_EXECUTABLE "@DGraph_EXECUTABLE@")
 
