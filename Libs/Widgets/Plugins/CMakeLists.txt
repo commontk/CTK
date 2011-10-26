@@ -18,6 +18,8 @@ SET(PLUGIN_SRCS
   ctkAxesWidgetPlugin.h
   ctkCheckableComboBoxPlugin.cpp
   ctkCheckableComboBoxPlugin.h
+  ctkCheckablePushButtonPlugin.cpp
+  ctkCheckablePushButtonPlugin.h
   ctkCheckBoxPlugin.cpp
   ctkCheckBoxPlugin.h
   ctkCollapsibleButtonPlugin.cpp
@@ -93,6 +95,7 @@ SET(PLUGIN_MOC_SRCS
   ctkActionsWidgetPlugin.h
   ctkAxesWidgetPlugin.h
   ctkCheckableComboBoxPlugin.h
+  ctkCheckablePushButtonPlugin.h
   ctkCheckBoxPlugin.h
   ctkCollapsibleButtonPlugin.h
   ctkCollapsibleGroupBoxPlugin.h
