@@ -29,6 +29,7 @@
 #include "ctkActionsWidgetPlugin.h"
 #include "ctkAxesWidgetPlugin.h"
 #include "ctkCheckableComboBoxPlugin.h"
+#include "ctkCheckablePushButtonPlugin.h"
 #include "ctkCollapsibleButtonPlugin.h"
 #include "ctkCollapsibleGroupBoxPlugin.h"
 #include "ctkColorPickerButtonPlugin.h"
@@ -74,6 +75,7 @@ public:
     plugins << new ctkActionsWidgetPlugin
             << new ctkAxesWidgetPlugin
             << new ctkCheckableComboBoxPlugin
+            << new ctkCheckablePushButtonPlugin
             << new ctkCollapsibleButtonPlugin
             << new ctkCollapsibleGroupBoxPlugin
             << new ctkColorPickerButtonPlugin
