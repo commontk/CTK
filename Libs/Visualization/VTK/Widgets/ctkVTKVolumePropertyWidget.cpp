@@ -193,6 +193,10 @@ void ctkVTKVolumePropertyWidget
 ::setVolumeProperty(vtkVolumeProperty* newVolumeProperty)
 {
   Q_D(ctkVTKVolumePropertyWidget);
+  if (d->VolumeProperty == newVolumeProperty)
+    {
+    return;
+    }
   this->qvtkReconnect(d->VolumeProperty, newVolumeProperty, vtkCommand::ModifiedEvent,
                       this, SLOT(updateFromVolumeProperty()));
   d->VolumeProperty = newVolumeProperty;
