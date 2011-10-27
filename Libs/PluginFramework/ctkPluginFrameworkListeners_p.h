@@ -144,6 +144,12 @@ private:
    * Add all members of the specified list to the specified set.
    */
   void addToSet(QSet<ctkServiceSlotEntry>& set, int cache_ix, const QString& val);
+
+  /**
+   * The unsynchronized version of removeServiceSlot().
+   */
+  void removeServiceSlot_unlocked(QSharedPointer<ctkPlugin> plugin, QObject* receiver,
+                                  const char* slot);
 };
 
 
