@@ -306,7 +306,17 @@ void ctkVTKThresholdWidgetPrivate::setNodeValue(int index, double* nodeValues)
     }
   else
     {
-    this->PiecewiseFunction->SetNodeValue(index, nodeValues);
+    double values[4];
+    this->PiecewiseFunction->GetNodeValue(index, values);
+    // Updating the node will fire a modified event which can be costly
+    // We change the node values only if there is a change.
+    if (values[0] != nodeValues[0] ||
+        values[1] != nodeValues[1] ||
+        values[2] != nodeValues[2] ||
+        values[3] != nodeValues[3])
+      {
+      this->PiecewiseFunction->SetNodeValue(index, nodeValues);
+      }
     }
 }
 
