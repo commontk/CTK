@@ -56,7 +56,7 @@ void ctkPluginFrameworkListeners::addServiceSlot(
   ctkServiceSlotEntry sse(plugin, receiver, slot, filter);
   if (serviceSet.contains(sse))
   {
-    removeServiceSlot(plugin, receiver, slot);
+    removeServiceSlot_unlocked(plugin, receiver, slot);
   }
   serviceSet.insert(sse);
   checkSimple(sse);
@@ -69,8 +69,15 @@ void ctkPluginFrameworkListeners::removeServiceSlot(QSharedPointer<ctkPlugin> pl
                                                     QObject* receiver,
                                                     const char* slot)
 {
-  QMutexLocker lock(&mutex); Q_UNUSED(lock)
+  QMutexLocker lock(&mutex);
+  removeServiceSlot_unlocked(plugin, receiver, slot);
+}
 
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkListeners::removeServiceSlot_unlocked(QSharedPointer<ctkPlugin> plugin,
+                                                             QObject* receiver,
+                                                             const char* slot)
+{
   ctkServiceSlotEntry entryToRemove(plugin, receiver, slot);
   QMutableSetIterator<ctkServiceSlotEntry> it(serviceSet);
   while (it.hasNext())
