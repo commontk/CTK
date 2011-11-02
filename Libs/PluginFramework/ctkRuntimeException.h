@@ -44,7 +44,7 @@ public:
   ~ctkRuntimeException() throw() {}
 
   QString getCause() const;
-  void setCause(const QString& cause) throw(std::logic_error);
+  void setCause(const QString& cause);
 
   const char* what() const throw();
 

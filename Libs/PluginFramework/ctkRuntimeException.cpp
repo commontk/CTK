@@ -54,7 +54,7 @@ QString ctkRuntimeException::getCause() const
 }
 
 //----------------------------------------------------------------------------
-void ctkRuntimeException::setCause(const QString& cause) throw(std::logic_error)
+void ctkRuntimeException::setCause(const QString& cause)
 {
   if (!this->cause.isEmpty()) throw std::logic_error("The cause for this ctkServiceException instance is already set");
 
