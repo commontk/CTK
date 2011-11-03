@@ -173,7 +173,7 @@ ctkVTKChartView::ctkVTKChartView(QWidget* parentWidget)
 {
   Q_D(ctkVTKChartView);
   d->init();
-  this->setAutomaticImageCacheEnabled(true);
+  //this->setAutomaticImageCacheEnabled(true);
 }
 
 // ----------------------------------------------------------------------------
