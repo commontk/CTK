@@ -197,30 +197,12 @@ void ctkVTKVolumePropertyWidget
     {
     return;
     }
-  this->qvtkReconnect(d->VolumeProperty, newVolumeProperty, vtkCommand::ModifiedEvent,
+  this->qvtkReconnect(d->VolumeProperty, newVolumeProperty,
+                      vtkCommand::ModifiedEvent,
                       this, SLOT(updateFromVolumeProperty()));
   d->VolumeProperty = newVolumeProperty;
 
   this->updateFromVolumeProperty();
-
-  double range[2];
-  d->computeRange(range);
-  d->ScalarOpacityThresholdWidget->setRange(range[0], range[1]);
-
-  double chartBounds[8];
-  d->ScalarOpacityWidget->view()->chartBounds(chartBounds);
-  chartBounds[2] = range[0];
-  chartBounds[3] = range[1];
-  d->ScalarOpacityWidget->view()->setChartUserBounds(chartBounds);
-  
-  d->ScalarColorWidget->view()->chartBounds(chartBounds);
-  chartBounds[2] = range[0];
-  chartBounds[3] = range[1];
-  d->ScalarColorWidget->view()->setChartUserBounds(chartBounds);
-  d->GradientWidget->view()->chartBounds(chartBounds);
-  chartBounds[2] = range[0];
-  chartBounds[3] = range[1];
-  d->GradientWidget->view()->setChartUserBounds(chartBounds);
 }
 
 // ----------------------------------------------------------------------------
@@ -244,7 +226,22 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
     }
 
   d->ScalarOpacityThresholdWidget->setPiecewiseFunction(this->isThresholdVisible() ? opacityFunction : 0);
-  
+
+  this->qvtkDisconnect(0, vtkCommand::EndInteractionEvent,
+                       this, SLOT(updateRange()));
+  this->qvtkConnect(opacityFunction, vtkCommand::EndInteractionEvent,
+                    this, SLOT(updateRange()), 0., Qt::QueuedConnection);
+  this->qvtkConnect(opacityFunction, vtkCommand::EndEvent,
+                    this, SLOT(updateRange()), 0., Qt::QueuedConnection);
+  this->qvtkConnect(colorTransferFunction, vtkCommand::EndInteractionEvent,
+                    this, SLOT(updateRange()), 0., Qt::QueuedConnection);
+  this->qvtkConnect(colorTransferFunction, vtkCommand::EndEvent,
+                    this, SLOT(updateRange()), 0., Qt::QueuedConnection);
+  this->qvtkConnect(gradientFunction, vtkCommand::EndInteractionEvent,
+                    this, SLOT(updateRange()), 0., Qt::QueuedConnection);
+  this->qvtkConnect(gradientFunction, vtkCommand::EndEvent,
+                    this, SLOT(updateRange()), 0., Qt::QueuedConnection);
+
   d->ScalarOpacityWidget->view()->setOpacityFunctionToPlots(opacityFunction);
   d->ScalarOpacityWidget->view()->setColorTransferFunctionToPlots(colorTransferFunction);
   d->ScalarColorWidget->view()->setColorTransferFunctionToPlots(colorTransferFunction);
@@ -265,6 +262,36 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
     d->MaterialPropertyWidget->setSpecularPower(
       d->VolumeProperty->GetSpecularPower(d->CurrentComponent));
     }
+  this->updateRange();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::updateRange()
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+
+  double range[2];
+  d->computeRange(range);
+  d->ScalarOpacityThresholdWidget->setRange(range[0], range[1]);
+
+  double chartBounds[8];
+  d->ScalarOpacityWidget->view()->chartBounds(chartBounds);
+  chartBounds[2] = range[0];
+  chartBounds[3] = range[1];
+  d->ScalarOpacityWidget->view()->setChartUserBounds(chartBounds);
+  d->ScalarOpacityWidget->view()->update();
+
+  d->ScalarColorWidget->view()->chartBounds(chartBounds);
+  chartBounds[2] = range[0];
+  chartBounds[3] = range[1];
+  d->ScalarColorWidget->view()->setChartUserBounds(chartBounds);
+  d->ScalarColorWidget->view()->update();
+
+  d->GradientWidget->view()->chartBounds(chartBounds);
+  chartBounds[2] = range[0];
+  chartBounds[3] = range[1];
+  d->GradientWidget->view()->setChartUserBounds(chartBounds);
+  d->GradientWidget->view()->update();
 }
 
 // ----------------------------------------------------------------------------
