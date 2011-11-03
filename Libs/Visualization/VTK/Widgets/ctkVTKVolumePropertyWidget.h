@@ -75,6 +75,7 @@ public slots:
   void showThreshold(bool enable);
 protected slots:
   void updateFromVolumeProperty();
+  void updateRange();
 
   void setInterpolationMode(int mode);
   void setShade(bool);
