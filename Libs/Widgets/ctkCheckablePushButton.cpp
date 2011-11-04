@@ -342,7 +342,7 @@ void ctkCheckablePushButton::paintEvent(QPaintEvent * _event)
   int indicatorSpacing = this->style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, this);
   int buttonMargin = this->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, this);
   // Draw Indicator
-  QStyleOption indicatorOpt;
+  QStyleOptionButton indicatorOpt;
   indicatorOpt.init(this);
   if (!(d->CheckBoxFlags & Qt::ItemIsUserCheckable))
     {
