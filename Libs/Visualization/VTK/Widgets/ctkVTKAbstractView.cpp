@@ -46,7 +46,7 @@ ctkVTKAbstractViewPrivate::ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object)
 {
   this->RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
   this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
-  this->RenderPending = false;
+  this->RequestTimer = 0;
   this->RenderEnabled = true;
 }
 
@@ -63,8 +63,16 @@ void ctkVTKAbstractViewPrivate::init()
   q->layout()->setSpacing(0);
   q->layout()->addWidget(this->VTKWidget);
 
+  this->RequestTimer = new QTimer(q);
+  this->RequestTimer->setSingleShot(true);
+  QObject::connect(this->RequestTimer, SIGNAL(timeout()),
+                   q, SLOT(forceRender()));
+
   this->setupCornerAnnotation();
   this->setupRendering();
+
+  // block renders and observe interactor to enforce framerate
+  q->setInteractor(this->RenderWindow->GetInteractor());
 }
 
 // --------------------------------------------------------------------------
@@ -143,18 +151,44 @@ void ctkVTKAbstractView::scheduleRender()
 {
   Q_D(ctkVTKAbstractView);
 
-  logger.trace(QString("scheduleRender - RenderEnabled: %1 - RenderPending: %2").
+  logger.trace(QString("scheduleRender - RenderEnabled: %1 - Request render elapsed: %2ms").
                arg(d->RenderEnabled ? "true" : "false")
-               .arg(d->RenderPending ? "true:" : "false"));
+               .arg(d->RequestTime.elapsed()));
 
   if (!d->RenderEnabled)
     {
     return;
     }
-  if (!d->RenderPending)
+
+  double msecsBeforeRender = 100. / d->RenderWindow->GetDesiredUpdateRate();
+  if(d->VTKWidget->testAttribute(Qt::WA_WState_InPaintEvent))
     {
-    d->RenderPending = true;
-    QTimer::singleShot(0, this, SLOT(forceRender()));
+    // If the request comes from the system (widget exposed, resized...), the
+    // render must be done immediately.
+    this->forceRender();
+    }
+  else if (!d->RequestTime.isValid())
+    {
+    // If the DesiredUpdateRate is in "still mode", the requested framerate
+    // is fake, it is just a way to allocate as much time as possible for the
+    // rendering, it doesn't really mean that rendering must occur only once
+    // every couple seconds. It just means it should be done when there is
+    // time to do it. A timer of 0, kind of mean a rendering is done next time
+    // it is idle.
+    if (msecsBeforeRender > 10000)
+      {
+      msecsBeforeRender = 0;
+      }
+    d->RequestTime.start();
+    d->RequestTimer->start(static_cast<int>(msecsBeforeRender));
+    }
+  else if (d->RequestTime.elapsed() > msecsBeforeRender)
+    {
+    // The rendering hasn't still be done, but msecsBeforeRender milliseconds
+    // have already been elapsed, it is likely that RequestTimer has already
+    // timed out, but the event queue hasn't been processed yet, rendering is
+    // done now to ensure the desired framerate is respected.
+    this->forceRender();
     }
 }
 
@@ -163,7 +197,19 @@ void ctkVTKAbstractView::forceRender()
 {
   Q_D(ctkVTKAbstractView);
 
-  d->RenderPending = false;
+  if (this->sender() == d->RequestTimer  &&
+      !d->RequestTime.isValid())
+    {
+    // The slot associated to the timeout signal is now called, however the
+    // render has already been executed meanwhile. There is no need to do it
+    // again.
+    return;
+    }
+
+  // The timer can be stopped if it hasn't timed out yet.
+  d->RequestTimer->stop();
+  d->RequestTime = QTime();
+
   logger.trace(QString("forceRender - RenderEnabled: %1")
                .arg(d->RenderEnabled ? "true" : "false"));
 
@@ -185,6 +231,12 @@ void ctkVTKAbstractView::setInteractor(vtkRenderWindowInteractor* newInteractor)
   logger.trace("setInteractor");
 
   d->RenderWindow->SetInteractor(newInteractor);
+  // Prevent the interactor to call Render() on the render window; only
+  // scheduleRender() and forceRender() can Render() the window.
+  // This is done to ensure the desired framerate is respected.
+  newInteractor->SetEnableRender(false);
+  qvtkReconnect(d->RenderWindow->GetInteractor(), newInteractor,
+                vtkCommand::RenderEvent, this, SLOT(scheduleRender()));
 }
 
 //----------------------------------------------------------------------------
