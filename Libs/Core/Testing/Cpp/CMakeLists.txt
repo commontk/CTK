@@ -35,6 +35,7 @@ SET(KITTests_SRCS
   ctkModelTesterTest2.cpp
   ctkUtilsClosestPowerOfTenTest1.cpp
   ctkUtilsOrderOfMagnitudeTest1.cpp
+  ctkUtilsQtHandleToStringTest1.cpp
   ctkUtilsSignificantDecimalsTest1.cpp
   ctkUtilsTest1.cpp
   ctkUtilsTest2.cpp
@@ -148,6 +149,7 @@ SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest2 )
 SIMPLE_TEST( ctkUtilsClosestPowerOfTenTest1 )
 SIMPLE_TEST( ctkUtilsOrderOfMagnitudeTest1 )
+SIMPLE_TEST( ctkUtilsQtHandleToStringTest1 )
 SIMPLE_TEST( ctkUtilsSignificantDecimalsTest1 )
 SIMPLE_TEST( ctkUtilsTest1 )
 SIMPLE_TEST( ctkUtilsTest2 )

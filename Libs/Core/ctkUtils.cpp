@@ -305,3 +305,12 @@ bool ctk::removeDirRecursively(const QString & dirName)
 
   return result;
 }
+
+//-----------------------------------------------------------------------------
+QString ctk::qtHandleToString(Qt::HANDLE handle)
+{
+  QString str;
+  QTextStream s(&str);
+  s << handle;
+  return str;
+}
