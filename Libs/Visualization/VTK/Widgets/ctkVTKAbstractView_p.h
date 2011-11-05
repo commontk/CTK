@@ -23,6 +23,8 @@
 
 // Qt includes
 #include <QObject>
+#include <QTime>
+class QTimer;
 
 // CTK includes
 #include "ctkVTKAbstractView.h"
@@ -56,7 +58,8 @@ public:
 
   QVTKWidget*                                   VTKWidget;
   vtkSmartPointer<vtkRenderWindow>              RenderWindow;
-  bool                                          RenderPending;
+  QTimer*                                       RequestTimer;
+  QTime                                         RequestTime;
   bool                                          RenderEnabled;
 
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;

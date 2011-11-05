@@ -147,6 +147,7 @@ void ctkVTKRenderViewPrivate::yaw(int rotateDegrees,
 //---------------------------------------------------------------------------
 void ctkVTKRenderViewPrivate::doSpin()
 {
+  Q_Q(ctkVTKRenderView);
   if (!this->SpinEnabled)
     {
     return;
@@ -168,12 +169,14 @@ void ctkVTKRenderViewPrivate::doSpin()
       break;
     }
 
+  q->forceRender();
   QTimer::singleShot(this->AnimationIntervalMs, this, SLOT(doSpin()));
 }
 
 //---------------------------------------------------------------------------
 void ctkVTKRenderViewPrivate::doRock()
 {
+  Q_Q(ctkVTKRenderView);
   Q_ASSERT(this->Renderer->IsActiveCameraCreated());
 
   if (!this->RockEnabled)
@@ -195,6 +198,7 @@ void ctkVTKRenderViewPrivate::doRock()
   //Make the lighting follow the camera to avoid illumination changes
   this->Renderer->UpdateLightsGeometryToFollowCamera();
 
+  q->forceRender();
   QTimer::singleShot(this->AnimationIntervalMs, this, SLOT(doRock()));
 }
 

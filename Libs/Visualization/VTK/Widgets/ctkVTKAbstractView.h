@@ -28,6 +28,7 @@
 #include <QVTKWidget.h>
 
 // CTK includes
+#include "ctkVTKObject.h"
 #include "ctkVisualizationVTKWidgetsExport.h"
 class ctkVTKAbstractViewPrivate;
 
@@ -39,6 +40,7 @@ class vtkRenderWindow;
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKAbstractView : public QWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
   Q_PROPERTY(QString cornerAnnotationText READ cornerAnnotationText WRITE setCornerAnnotationText)
   Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
   Q_PROPERTY(QColor backgroundColor2 READ backgroundColor2 WRITE setBackgroundColor)
@@ -51,11 +53,15 @@ public:
   virtual ~ctkVTKAbstractView();
 
 public slots:
-
-  /// If a render has already been scheduled, this called is a no-op
+  /// Notify QVTKWidget that the view needs to be rendered.
+  /// scheduleRender() respects the desired framerate of the render window,
+  /// it won't render the window more than what the current render window
+  /// framerate is.
   void scheduleRender();
 
   /// Force a render even if a render is already ocurring
+  /// Be careful when calling forceRender() as it can slow down your
+  /// application. It is preferable to use scheduleRender() instead.
   void forceRender();
 
   /// Set the background color of the rendering screen.
@@ -81,6 +87,10 @@ public:
 
   /// Set/Get window interactor
   Q_INVOKABLE vtkRenderWindowInteractor* interactor()const;
+  /// QVTKWidget catches all render requests, and ensure the desired framerate
+  /// is respected.
+  /// The interactor never calls Render() on the render window.
+  /// TBD: can we only set a QVTKRenderWindowInteractor ?
   virtual void setInteractor(vtkRenderWindowInteractor* interactor);
 
   /// Get current interactor style
