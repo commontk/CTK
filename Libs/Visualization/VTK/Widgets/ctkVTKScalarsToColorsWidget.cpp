@@ -145,6 +145,12 @@ bool ctkVTKScalarsToColorsWidgetPrivate::checkXRange(double x, int pointId)
   Q_Q(ctkVTKScalarsToColorsWidget);
   QPalette wrongPalette = q->palette();
   wrongPalette.setColor(QPalette::Highlight, Qt::red);
+  if (pointId < 0 ||
+      pointId >= this->PointIdSpinBox->maximum())
+    {
+    QTimer::singleShot(2000, q, SLOT(restorePalette()));
+    return false;
+    }
   if (pointId > 0)
     {
     double previous[4];
