@@ -18,8 +18,13 @@
 
 =========================================================================*/
 
+// Qt includes
+#include <QMutexLocker>
+#include <QThread>
+
 // CTK includes
 #include "ctkErrorLogStreamMessageHandler.h"
+#include "ctkUtils.h"
 
 // STD includes
 #include <iostream>
@@ -41,7 +46,7 @@ class ctkStreamHandler : public std::streambuf
 {
 public:
   ctkStreamHandler(ctkErrorLogStreamMessageHandler* messageHandler,
-                   ctkErrorLogModel::LogLevel logLevel,
+                   ctkErrorLogLevel::LogLevel logLevel,
                    std::ostream& stream);
 
   void setEnabled(bool value);
@@ -51,14 +56,18 @@ protected:
   virtual std::streamsize xsputn(const char *p, std::streamsize n);
 
 private:
+  void initBuffer();
+  std::string* currentBuffer();
+
   ctkErrorLogStreamMessageHandler * MessageHandler;
-  ctkErrorLogModel::LogLevel LogLevel;
+  ctkErrorLogLevel::LogLevel LogLevel;
 
   bool Enabled;
 
   std::ostream&   Stream;
   std::streambuf* SavedBuffer;
-  std::string     StringBuffer;
+  QHash<Qt::HANDLE, std::string*> StringBuffers;
+  QMutex Mutex;
 };
 
 // --------------------------------------------------------------------------
@@ -66,7 +75,7 @@ private:
 
 // --------------------------------------------------------------------------
 ctkStreamHandler::ctkStreamHandler(ctkErrorLogStreamMessageHandler* messageHandler,
-                                   ctkErrorLogModel::LogLevel logLevel,
+                                   ctkErrorLogLevel::LogLevel logLevel,
                                    std::ostream& stream) :
   MessageHandler(messageHandler), LogLevel(logLevel), Stream(stream)
 {
@@ -89,12 +98,12 @@ void ctkStreamHandler::setEnabled(bool value)
   else
     {
     // Output anything that is left
-    if (!this->StringBuffer.empty())
-      {
-      Q_ASSERT(this->MessageHandler->errorLogModel());
-      this->MessageHandler->errorLogModel()->addEntry(
-            this->LogLevel, this->MessageHandler->handlerPrettyName(), this->StringBuffer.c_str());
-      }
+//    if (!this->StringBuffer.empty())
+//      {
+//      Q_ASSERT(this->MessageHandler);
+//      this->MessageHandler->handleMessage(this->LogLevel,
+//          this->MessageHandler->handlerPrettyName(), this->StringBuffer.c_str());
+//      }
     this->Stream.rdbuf(this->SavedBuffer);
     }
 
@@ -102,18 +111,37 @@ void ctkStreamHandler::setEnabled(bool value)
 }
 
 // --------------------------------------------------------------------------
+void ctkStreamHandler::initBuffer()
+{
+  Qt::HANDLE threadId = QThread::currentThreadId();
+  if (!this->StringBuffers.contains(threadId))
+    {
+    this->StringBuffers.insert(threadId, new std::string);
+    }
+}
+
+// --------------------------------------------------------------------------
+std::string* ctkStreamHandler::currentBuffer()
+{
+  return this->StringBuffers.value(QThread::currentThreadId());
+}
+
+// --------------------------------------------------------------------------
 std::streambuf::int_type ctkStreamHandler::overflow(std::streambuf::int_type v)
 {
+  QMutexLocker locker(&this->Mutex);
+  this->initBuffer();
   if (v == '\n')
     {
-    Q_ASSERT(this->MessageHandler->errorLogModel());
-    this->MessageHandler->errorLogModel()->addEntry(
-          this->LogLevel, this->MessageHandler->handlerPrettyName(), this->StringBuffer.c_str());
-    this->StringBuffer.erase(this->StringBuffer.begin(), this->StringBuffer.end());
+    Q_ASSERT(this->MessageHandler);
+    this->MessageHandler->handleMessage(
+          ctk::qtHandleToString(QThread::currentThreadId()), this->LogLevel,
+          this->MessageHandler->handlerPrettyName(), this->currentBuffer()->c_str());
+    this->currentBuffer()->erase(this->currentBuffer()->begin(), this->currentBuffer()->end());
     }
   else
     {
-    this->StringBuffer += v;
+    *this->currentBuffer() += v;
     }
   return v;
 }
@@ -121,19 +149,22 @@ std::streambuf::int_type ctkStreamHandler::overflow(std::streambuf::int_type v)
 // --------------------------------------------------------------------------
 std::streamsize ctkStreamHandler::xsputn(const char *p, std::streamsize n)
 {
-  this->StringBuffer.append(p, p + n);
+  QMutexLocker locker(&this->Mutex);
+  this->initBuffer();
+  this->currentBuffer()->append(p, p + n);
 
   std::string::size_type pos = 0;
   while (pos != std::string::npos)
     {
-    pos = this->StringBuffer.find('\n');
+    pos = this->currentBuffer()->find('\n');
     if (pos != std::string::npos)
       {
-      std::string tmp(this->StringBuffer.begin(), this->StringBuffer.begin() + pos);
-      Q_ASSERT(this->MessageHandler->errorLogModel());
-      this->MessageHandler->errorLogModel()->addEntry(
-            this->LogLevel, this->MessageHandler->handlerPrettyName(), tmp.c_str());
-      this->StringBuffer.erase(this->StringBuffer.begin(), this->StringBuffer.begin() + pos + 1);
+      std::string tmp(this->currentBuffer()->begin(), this->currentBuffer()->begin() + pos);
+      Q_ASSERT(this->MessageHandler);
+      this->MessageHandler->handleMessage(
+            ctk::qtHandleToString(QThread::currentThreadId()), this->LogLevel,
+            this->MessageHandler->handlerPrettyName(), tmp.c_str());
+      this->currentBuffer()->erase(this->currentBuffer()->begin(), this->currentBuffer()->begin() + pos + 1);
       }
     }
   return n;
@@ -181,8 +212,8 @@ ctkErrorLogStreamMessageHandler::ctkErrorLogStreamMessageHandler() :
   Superclass(), d_ptr(new ctkErrorLogStreamMessageHandlerPrivate())
 {
   Q_D(ctkErrorLogStreamMessageHandler);
-  d->CoutStreamHandler = new ctkStreamHandler(this, ctkErrorLogModel::Info, std::cout);
-  d->CerrStreamHandler = new ctkStreamHandler(this, ctkErrorLogModel::Critical, std::cerr);
+  d->CoutStreamHandler = new ctkStreamHandler(this, ctkErrorLogLevel::Info, std::cout);
+  d->CerrStreamHandler = new ctkStreamHandler(this, ctkErrorLogLevel::Critical, std::cerr);
 }
 
 // --------------------------------------------------------------------------

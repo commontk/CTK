@@ -18,8 +18,12 @@
 
 =========================================================================*/
 
+// Qt includes
+#include <QThread>
+
 // CTK includes
 #include "ctkVTKErrorLogMessageHandler.h"
+#include "ctkUtils.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -66,22 +70,31 @@ void ctkVTKOutputWindow::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void ctkVTKOutputWindow::DisplayText(const char* text)
 {
-  this->MessageHandler->errorLogModel()->addEntry(
-        ctkErrorLogModel::Info, this->MessageHandler->handlerPrettyName(), text);
+  Q_ASSERT(this->MessageHandler);
+  this->MessageHandler->handleMessage(
+        ctk::qtHandleToString(QThread::currentThreadId()),
+        ctkErrorLogLevel::Info,
+        this->MessageHandler->handlerPrettyName(), text);
 }
 
 //----------------------------------------------------------------------------
 void ctkVTKOutputWindow::DisplayErrorText(const char* text)
 {
-  this->MessageHandler->errorLogModel()->addEntry(
-        ctkErrorLogModel::Error, this->MessageHandler->handlerPrettyName(), text);
+  Q_ASSERT(this->MessageHandler);
+  this->MessageHandler->handleMessage(
+        ctk::qtHandleToString(QThread::currentThreadId()),
+        ctkErrorLogLevel::Error,
+        this->MessageHandler->handlerPrettyName(), text);
 }
 
 //----------------------------------------------------------------------------
 void ctkVTKOutputWindow::DisplayWarningText(const char* text)
 {
-  this->MessageHandler->errorLogModel()->addEntry(
-        ctkErrorLogModel::Warning, this->MessageHandler->handlerPrettyName(), text);
+  Q_ASSERT(this->MessageHandler);
+  this->MessageHandler->handleMessage(
+        ctk::qtHandleToString(QThread::currentThreadId()),
+        ctkErrorLogLevel::Warning,
+        this->MessageHandler->handlerPrettyName(), text);
 }
 
 //----------------------------------------------------------------------------
@@ -93,8 +106,11 @@ void ctkVTKOutputWindow::DisplayGenericWarningText(const char* text)
 //----------------------------------------------------------------------------
 void ctkVTKOutputWindow::DisplayDebugText(const char* text)
 {
-  this->MessageHandler->errorLogModel()->addEntry(
-        ctkErrorLogModel::Debug, this->MessageHandler->handlerPrettyName(), text);
+  Q_ASSERT(this->MessageHandler);
+  this->MessageHandler->handleMessage(
+        ctk::qtHandleToString(QThread::currentThreadId()),
+        ctkErrorLogLevel::Debug,
+        this->MessageHandler->handlerPrettyName(), text);
 }
 
 } // End of anonymous namespace

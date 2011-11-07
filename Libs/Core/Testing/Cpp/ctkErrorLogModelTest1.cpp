@@ -21,11 +21,8 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDebug>
-#include <QStringList>
-#include <QTimer>
 
 // CTK includes
-#include "ctkErrorLogModel.h"
 #include "ctkErrorLogFDMessageHandler.h"
 #include "ctkErrorLogQtMessageHandler.h"
 #include "ctkErrorLogStreamMessageHandler.h"
@@ -35,74 +32,8 @@
 #include <cstdlib>
 #include <iostream>
 
-namespace
-{
-//-----------------------------------------------------------------------------
-// Utility function
-
-//-----------------------------------------------------------------------------
-QString checkRowCount(int line, int currentRowCount, int expectedRowCount)
-{
-  if (currentRowCount != expectedRowCount)
-    {
-    QString errorMsg("Line %1 - Expected rowCount: %2 - Current rowCount: %3\n");
-    return errorMsg.arg(line).arg(expectedRowCount).arg(currentRowCount);
-    }
-  return QString();
-}
-
-//-----------------------------------------------------------------------------
-QString checkTextMessages(int line, const ctkErrorLogModel& model, const QStringList& expectedMessages)
-{
-  for(int i=0; i < expectedMessages.count(); ++i)
-    {
-    QModelIndex descriptionIndex = model.index(i, ctkErrorLogModel::DescriptionColumn);
-    QString currentMessage = descriptionIndex.data(ctkErrorLogModel::DescriptionTextRole).toString();
-    if (currentMessage.compare(expectedMessages.value(i)) != 0)
-      {
-      QString errorMsg("Line %1 - Problem with row%2 !\n"
-                       "\tExpected message [%3]\n"
-                       "\tCurrent message [%4]\n");
-      return errorMsg.arg(line).arg(i).arg(expectedMessages.value(i)).arg(currentMessage);
-      }
-    }
-  return QString();
-}
-
-//-----------------------------------------------------------------------------
-void printTextMessages(const ctkErrorLogModel& model)
-{
-  fprintf(stdout, "%s", "ErrorLogModel rows:\n");
-  QString text("\trow %1 => %2\n");
-  for (int i=0; i < model.rowCount(); ++i)
-    {
-    QString description =
-        model.index(0, ctkErrorLogModel::DescriptionColumn).data().toString();
-    fprintf(stdout, "%s", qPrintable(text.arg(i).arg(description)));
-    }
-  fflush(stdout);
-}
-
-//-----------------------------------------------------------------------------
-void printErrorMessage(const QString& errorMessage)
-{
-  fprintf(stderr, "%s", qPrintable(errorMessage));
-  fflush(stderr);
-}
-
-//-----------------------------------------------------------------------------
-QString checkInteger(int line, const char* valueName, int current, int expected)
-{
-  if (current != expected)
-    {
-    QString errorMsg("Line %1 - Expected %2: %3 - Current %4: %5\n");
-    return errorMsg.arg(line).arg(valueName).
-        arg(expected).arg(valueName).arg(current);
-    }
-  return QString();
-}
-
-} // end namespace
+// Helper functions
+#include "Testing/Cpp/ctkErrorLogModelTestHelper.cpp"
 
 //-----------------------------------------------------------------------------
 int ctkErrorLogModelTest1(int argc, char * argv [])
@@ -139,6 +70,7 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
+        printTextMessages(model);
         return EXIT_FAILURE;
         }
 
@@ -150,6 +82,9 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       QString qtMessage2("This is a qCritical message");
       qCritical().nospace() << qPrintable(qtMessage2);
+
+      // Give enough time to the ErrorLogModel to consider the queued messages.
+      processEvents(1000);
 
       QStringList expectedQtMessages;
       expectedQtMessages << qtMessage0 << qtMessage1 << qtMessage2;
@@ -168,6 +103,7 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
+        printTextMessages(model);
         return EXIT_FAILURE;
         }
 
@@ -179,6 +115,7 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
+        printTextMessages(model);
         return EXIT_FAILURE;
         }
 
@@ -214,6 +151,7 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         model.disableAllMsgHandler();
         errorMsg = QLatin1String("Line %1 - Qt message handler should be disabled");
         printErrorMessage(errorMsg.arg(__LINE__));
+        printTextMessages(model);
         return EXIT_FAILURE;
         }
 
@@ -232,6 +170,9 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
       QString streamMessage1("This is a Cerr message");
       std::cerr << qPrintable(streamMessage1) << std::endl;
 
+      // Give enough time to the ErrorLogModel to consider the queued messages.
+      processEvents(1000);
+
       QStringList expectedStreamMessages;
       expectedStreamMessages << streamMessage0 << streamMessage1;
 
@@ -249,6 +190,7 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
+        printTextMessages(model);
         return EXIT_FAILURE;
         }
 
@@ -293,9 +235,9 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
       fdMessage0.append(fdMessage0b);
       fflush(stdout);
 
-//      QString fdMessage1("This is a 2nd stdout message");
-//      fprintf(stdout, "%s\n", qPrintable(fdMessage1));
-//      fflush(stdout);
+      QString fdMessage1("This is a 2nd stdout message");
+      fprintf(stdout, "%s\n", qPrintable(fdMessage1));
+      fflush(stdout);
 
       QString fdMessage2("This is a stderr");
       fprintf(stderr, "%s", qPrintable(fdMessage2));
@@ -304,22 +246,17 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
       fdMessage2.append(fdMessage2b);
       fflush(stderr);
 
-//      QString fdMessage3("This is a 2nd stderr message");
-//      fprintf(stderr, "%s\n", qPrintable(fdMessage3));
-//      fflush(stderr);
+      QString fdMessage3("This is a 2nd stderr message");
+      fprintf(stderr, "%s\n", qPrintable(fdMessage3));
+      fflush(stderr);
 
       QStringList expectedFDMessages;
-      expectedFDMessages << fdMessage0 /*<< fdMessage1*/ << fdMessage2 /*<< fdMessage3*/;
+      expectedFDMessages << fdMessage0 << fdMessage1 << fdMessage2 << fdMessage3;
 
-      // Give enough time to the QFileSystemWatcher used internally by ctkErrorLogFDMessageHandler
+      // Give enough time to the ErrorLogModel to consider the queued messages.
+      // and also to the QFileSystemWatcher used internally by ctkErrorLogFDMessageHandler
       // to consider the updated files.
-      QTimer timer;
-      timer.setSingleShot(true);
-      timer.start(1000);
-      while(timer.isActive())
-        {
-        QCoreApplication::processEvents();
-        }
+      processEvents(1500);
 
       errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedFDMessages.count());
       if (!errorMsg.isEmpty())
@@ -335,6 +272,7 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
+        printTextMessages(model);
         return EXIT_FAILURE;
         }
 

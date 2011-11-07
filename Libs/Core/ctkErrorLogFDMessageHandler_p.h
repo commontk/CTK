@@ -22,9 +22,8 @@
 #define __ctkErrorLogFDMessageHandler_p_h
 
 // Qt includes
-#include <QObject>
-#include <QFileSystemWatcher>
-#include <QTemporaryFile>
+#include <QFile>
+#include <QThread>
 
 // CTK includes
 #include "ctkErrorLogModel.h"
@@ -33,40 +32,46 @@
 #include <cstdio>
 
 class ctkErrorLogFDMessageHandler;
+class QTextStream;
 
 // --------------------------------------------------------------------------
-class ctkFDHandler : public QObject
+// ctkFDHandler
+
+// --------------------------------------------------------------------------
+class ctkFDHandler : public QThread
 {
   Q_OBJECT
 public:
   typedef ctkFDHandler Self;
 
   ctkFDHandler(ctkErrorLogFDMessageHandler* messageHandler,
-               ctkErrorLogModel::LogLevel logLevel,
-               int fileDescriptorNumber);
+               ctkErrorLogLevel::LogLevel logLevel,
+               ctkErrorLogModel::TerminalOutput terminalOutput);
+  virtual ~ctkFDHandler();
 
   void setEnabled(bool value);
 
-  static FILE* fileDescriptorFromNumber(int fdNumber);
+  FILE* terminalOutputFile();
 
-public slots:
-  void outputFileChanged(const QString & path);
+protected:
+  void init();
+
+  void run();
 
 private:
   ctkErrorLogFDMessageHandler * MessageHandler;
-  ctkErrorLogModel::LogLevel LogLevel;
+  ctkErrorLogLevel::LogLevel LogLevel;
 
-  /// OutputFile where either stdout or stderr is redirected
-  QTemporaryFile     OutputFile;
+  ctkErrorLogModel::TerminalOutput TerminalOutput;
 
-  /// The fileWatcher will emit the signal 'fileChanged()' each time the outputFile changed.
-  QFileSystemWatcher OutputFileWatcher;
-
-  int    FDNumber;
   int    SavedFDNumber;
   fpos_t SavedFDPos;
-  FILE*  FD;
 
+  int          Pipe[2]; // 0: Read, 1: Write
+  QFile        RedirectionFile;
+  QTextStream* RedirectionStream;
+
+  bool Initialized;
   bool Enabled;
 };
 

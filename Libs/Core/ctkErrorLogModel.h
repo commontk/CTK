@@ -28,53 +28,13 @@
 // CTK includes
 #include "ctkCoreExport.h"
 
-class ctkErrorLogModel;
-class ctkErrorLogModelPrivate;
-class QStandardItemModel;
-
-#include <iostream>
-
 //------------------------------------------------------------------------------
-class CTK_CORE_EXPORT ctkErrorLogAbstractMessageHandler
-{
-public:
-  /// Disabled by default.
-  ctkErrorLogAbstractMessageHandler();
-  virtual ~ctkErrorLogAbstractMessageHandler();
-
-  ctkErrorLogModel * errorLogModel()const;
-  void setErrorLogModel(ctkErrorLogModel * newErrorLogModel);
-
-  virtual QString handlerName()const = 0;
-
-  QString handlerPrettyName()const;
-
-  bool enabled()const;
-  void setEnabled(bool value);
-
-protected:
-  void setHandlerPrettyName(const QString& newHandlerPrettyName);
-
-  virtual void setEnabledInternal(bool value) = 0;
-
-private:
-  QPointer<ctkErrorLogModel> ErrorLogModel;
-  bool Enabled;
-  QString HandlerPrettyName;
-};
-
-//------------------------------------------------------------------------------
-class CTK_CORE_EXPORT ctkErrorLogModel : public QSortFilterProxyModel
+class CTK_CORE_EXPORT ctkErrorLogLevel : public QObject
 {
   Q_OBJECT
   Q_FLAGS(LogLevel)
-  Q_PROPERTY(bool logEntryGrouping READ logEntryGrouping WRITE setLogEntryGrouping)
-  Q_PROPERTY(bool terminalOutputEnabled READ terminalOutputEnabled WRITE  setTerminalOutputEnabled)
 public:
-  typedef QSortFilterProxyModel Superclass;
-  typedef ctkErrorLogModel Self;
-  explicit ctkErrorLogModel(QObject* parentObject = 0);
-  virtual ~ctkErrorLogModel();
+  ctkErrorLogLevel();
 
   enum LogLevel
     {
@@ -91,9 +51,60 @@ public:
     };
   Q_DECLARE_FLAGS(LogLevels, LogLevel)
 
+  QString operator ()(LogLevel logLevel);
+
+  QString logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)const;
+};
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkErrorLogLevel::LogLevels)
+
+//------------------------------------------------------------------------------
+class ctkErrorLogTerminalOutputPrivate;
+
+//------------------------------------------------------------------------------
+class CTK_CORE_EXPORT ctkErrorLogTerminalOutput
+{
+public:
+  ctkErrorLogTerminalOutput();
+  virtual ~ctkErrorLogTerminalOutput();
+
+  bool enabled()const;
+  void setEnabled(bool value);
+
+  int fileDescriptor()const;
+  void setFileDescriptor(int fd);
+
+  void output(const QString& text);
+
+protected:
+  QScopedPointer<ctkErrorLogTerminalOutputPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(ctkErrorLogTerminalOutput);
+  Q_DISABLE_COPY(ctkErrorLogTerminalOutput);
+};
+
+//------------------------------------------------------------------------------
+class ctkErrorLogAbstractMessageHandler;
+class ctkErrorLogModelPrivate;
+
+//------------------------------------------------------------------------------
+class CTK_CORE_EXPORT ctkErrorLogModel : public QSortFilterProxyModel
+{
+  Q_OBJECT
+  Q_FLAGS(TerminalOutput)
+  Q_PROPERTY(bool logEntryGrouping READ logEntryGrouping WRITE setLogEntryGrouping)
+  Q_PROPERTY(TerminalOutput terminalOutputs READ terminalOutputs WRITE  setTerminalOutputs)
+  Q_PROPERTY(bool asynchronousLogging READ asynchronousLogging WRITE  setAsynchronousLogging)
+public:
+  typedef QSortFilterProxyModel Superclass;
+  typedef ctkErrorLogModel Self;
+  explicit ctkErrorLogModel(QObject* parentObject = 0);
+  virtual ~ctkErrorLogModel();
+
   enum ColumnsIds
     {
     TimeColumn = 0,
+    ThreadIdColumn,
     LogLevelColumn,
     OriginColumn,
     DescriptionColumn
@@ -103,11 +114,15 @@ public:
     DescriptionTextRole = Qt::UserRole + 1
     };
 
+  /// Register a message handler.
   bool registerMsgHandler(ctkErrorLogAbstractMessageHandler * msgHandler);
 
   QStringList msgHandlerNames()const;
 
+  /// Return True if the handler identified by \a handlerName is enabled
   bool msgHandlerEnabled(const QString& handlerName) const;
+
+  /// Enable a specific handler given its name
   void setMsgHandlerEnabled(const QString& handlerName, bool enabled);
 
   /// Return names of the enabled message handlers
@@ -120,23 +135,40 @@ public:
   void disableAllMsgHandler();
   void setAllMsgHandlerEnabled(bool enabled);
 
-  /// Return True messages are both printed into the terminal and added to ctkErrorLogModel.
-  bool terminalOutputEnabled()const;
+  enum TerminalOutput
+    {
+    None            = 0x0,
+    StandardError   = 0x1,
+    StandardOutput  = 0x2,
+    All             = StandardError | StandardOutput
+    };
+  Q_DECLARE_FLAGS(TerminalOutputs, TerminalOutput)
 
-  void setTerminalOutputEnabled(bool enabled);
+  /// Return if messages are both printed into the terminal and added to ctkErrorLogModel.
+  /// \note If TerminalOutput::None is returned, message will only be added to the model.
+  TerminalOutputs terminalOutputs()const;
 
-  QString logLevelAsString(LogLevel logLevel)const;
+  /// Set terminal output mode
+  /// \sa terminalOutputs()
+  /// \sa TerminalOutput
+  void setTerminalOutputs(const TerminalOutputs& terminalOutput);
 
-  void addEntry(LogLevel logLevel, const QString& origin, const char* text);
-
+  /// Remove all message from model
   void clear();
 
-  void filterEntry(const LogLevels& logLevel = Unknown, bool disableFilter = false);
+  ctkErrorLogLevel::LogLevels logLevelFilter()const;
 
-  LogLevels logLevelFilter()const;
+  void filterEntry(const ctkErrorLogLevel::LogLevels& logLevel = ctkErrorLogLevel::Unknown, bool disableFilter = false);
 
   bool logEntryGrouping()const;
   void setLogEntryGrouping(bool value);
+
+  bool asynchronousLogging()const;
+  void setAsynchronousLogging(bool value);
+
+public slots:
+  void addEntry(const QDateTime& currentDateTime, const QString& threadId,
+                ctkErrorLogLevel::LogLevel logLevel, const QString& origin, const QString& text);
 
 signals:
   void logLevelFilterChanged();
@@ -148,6 +180,50 @@ private:
   Q_DECLARE_PRIVATE(ctkErrorLogModel);
   Q_DISABLE_COPY(ctkErrorLogModel);
 };
-Q_DECLARE_OPERATORS_FOR_FLAGS(ctkErrorLogModel::LogLevels)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkErrorLogModel::TerminalOutputs)
 
+//------------------------------------------------------------------------------
+class ctkErrorLogAbstractMessageHandlerPrivate;
+
+//------------------------------------------------------------------------------
+class CTK_CORE_EXPORT ctkErrorLogAbstractMessageHandler : public QObject
+{
+  Q_OBJECT
+public:
+  typedef QObject Superclass;
+  /// Disabled by default.
+  ctkErrorLogAbstractMessageHandler();
+  virtual ~ctkErrorLogAbstractMessageHandler();
+
+  virtual QString handlerName()const = 0;
+
+  QString handlerPrettyName()const;
+
+  bool enabled()const;
+  void setEnabled(bool value);
+
+  void handleMessage(const QString& threadId, ctkErrorLogLevel::LogLevel logLevel,
+                     const QString& origin, const QString& text);
+
+  ctkErrorLogTerminalOutput* terminalOutput(ctkErrorLogModel::TerminalOutput terminalOutputType)const;
+  void setTerminalOutput(ctkErrorLogModel::TerminalOutput terminalOutputType,
+                         ctkErrorLogTerminalOutput * terminalOutput);
+
+signals:
+  void messageHandled(const QDateTime& currentDateTime, const QString& threadId,
+                      ctkErrorLogLevel::LogLevel logLevel, const QString& origin,
+                      const QString& text);
+
+protected:
+  void setHandlerPrettyName(const QString& newHandlerPrettyName);
+
+  virtual void setEnabledInternal(bool value) = 0;
+
+protected:
+  QScopedPointer<ctkErrorLogAbstractMessageHandlerPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(ctkErrorLogAbstractMessageHandler);
+  Q_DISABLE_COPY(ctkErrorLogAbstractMessageHandler);
+};
 #endif

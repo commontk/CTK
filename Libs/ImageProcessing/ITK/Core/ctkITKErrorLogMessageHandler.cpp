@@ -18,8 +18,12 @@
 
 =========================================================================*/
 
+// Qt includes
+#include <QThread>
+
 // CTK includes
 #include "ctkITKErrorLogMessageHandler.h"
+#include "ctkUtils.h"
 
 #ifdef __GNUC__
 // Disable warnings related to 'itkSmartPointer.h' file
@@ -73,22 +77,31 @@ public:
 //----------------------------------------------------------------------------
 void ctkITKOutputWindow::DisplayText(const char* text)
 {
-  this->MessageHandler->errorLogModel()->addEntry(
-        ctkErrorLogModel::Info, this->MessageHandler->handlerPrettyName(), text);
+  Q_ASSERT(this->MessageHandler);
+  this->MessageHandler->handleMessage(
+        ctk::qtHandleToString(QThread::currentThreadId()),
+        ctkErrorLogLevel::Info,
+        this->MessageHandler->handlerPrettyName(), text);
 }
 
 //----------------------------------------------------------------------------
 void ctkITKOutputWindow::DisplayErrorText(const char* text)
 {
-  this->MessageHandler->errorLogModel()->addEntry(
-        ctkErrorLogModel::Error, this->MessageHandler->handlerPrettyName(), text);
+  Q_ASSERT(this->MessageHandler);
+  this->MessageHandler->handleMessage(
+        ctk::qtHandleToString(QThread::currentThreadId()),
+        ctkErrorLogLevel::Error,
+        this->MessageHandler->handlerPrettyName(), text);
 }
 
 //----------------------------------------------------------------------------
 void ctkITKOutputWindow::DisplayWarningText(const char* text)
 {
-  this->MessageHandler->errorLogModel()->addEntry(
-        ctkErrorLogModel::Warning, this->MessageHandler->handlerPrettyName(), text);
+  Q_ASSERT(this->MessageHandler);
+  this->MessageHandler->handleMessage(
+        ctk::qtHandleToString(QThread::currentThreadId()),
+        ctkErrorLogLevel::Warning,
+        this->MessageHandler->handlerPrettyName(), text);
 }
 
 //----------------------------------------------------------------------------
@@ -100,8 +113,11 @@ void ctkITKOutputWindow::DisplayGenericWarningText(const char* text)
 //----------------------------------------------------------------------------
 void ctkITKOutputWindow::DisplayDebugText(const char* text)
 {
-  this->MessageHandler->errorLogModel()->addEntry(
-        ctkErrorLogModel::Debug, this->MessageHandler->handlerPrettyName(), text);
+  Q_ASSERT(this->MessageHandler);
+  this->MessageHandler->handleMessage(
+        ctk::qtHandleToString(QThread::currentThreadId()),
+        ctkErrorLogLevel::Debug,
+        this->MessageHandler->handlerPrettyName(), text);
 }
 
 } // End of itk namespace

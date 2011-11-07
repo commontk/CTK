@@ -26,9 +26,12 @@ SET(KITTests_SRCS
   ctkCheckableModelHelperTest1.cpp
   ctkCommandLineParserTest1.cpp
   ctkErrorLogModelTest1.cpp
-  ctkErrorLogModelTest2.cpp
-  ctkErrorLogModelTest3.cpp
+  ctkErrorLogModelEntryGroupingTest1.cpp
+  ctkErrorLogModelTerminalOutputTest1.cpp
   ctkErrorLogModelTest4.cpp
+  ctkErrorLogFDMessageHandlerWithThreadsTest1.cpp
+  ctkErrorLogQtMessageHandlerWithThreadsTest1.cpp
+  ctkErrorLogStreamMessageHandlerWithThreadsTest1.cpp
   ctkHistogramTest1.cpp
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
@@ -104,10 +107,8 @@ ENDIF()
 ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
 TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
-SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-
 MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
+  ADD_TEST(NAME ${TESTNAME} COMMAND $<TARGET_FILE:${KIT}CppTests> ${TESTNAME} ${ARGN})
   SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
 ENDMACRO( SIMPLE_TEST  )
 
@@ -132,13 +133,14 @@ SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkErrorLogModelTest1 )
-SIMPLE_TEST( ctkErrorLogModelTest2 )
-SIMPLE_TEST( ctkErrorLogModelTest3 )
+SIMPLE_TEST( ctkErrorLogModelEntryGroupingTest1 )
+SIMPLE_TEST( ctkErrorLogModelTerminalOutputTest1 --test-launcher $<TARGET_FILE:${KIT}CppTests>)
 SIMPLE_TEST( ctkErrorLogModelTest4 )
+SIMPLE_TEST( ctkErrorLogFDMessageHandlerWithThreadsTest1 )
+SIMPLE_TEST( ctkErrorLogQtMessageHandlerWithThreadsTest1 )
+SIMPLE_TEST( ctkErrorLogStreamMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkHistogramTest1 )
 SIMPLE_TEST( ctkLoggerTest1 )
-SET_TESTS_PROPERTIES(ctkErrorLogModelTest3 PROPERTIES PASS_REGULAR_EXPRESSION
-"This is a qDebug message\nThis is a std::cerr message\nThis is a qWarning message\nThis is a std::cout message\nThis is a qCritical message\n")
 SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkModelTesterTest2 )
 SIMPLE_TEST( ctkPimplTest1 )

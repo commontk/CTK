@@ -20,19 +20,22 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDateTime>
 #include <QDebug>
 #include <QMainWindow>
 #include <QStatusBar>
+#include <QThread>
 
 // CTK includes
 #include "ctkErrorLogStatusMessageHandler.h"
+#include "ctkUtils.h"
 
 // --------------------------------------------------------------------------
 QString ctkErrorLogStatusMessageHandler::HandlerName = QLatin1String("Status");
 
 // --------------------------------------------------------------------------
 ctkErrorLogStatusMessageHandler::ctkErrorLogStatusMessageHandler(QMainWindow * mainWindow) :
-  QObject(), ctkErrorLogAbstractMessageHandler()
+  ctkErrorLogAbstractMessageHandler()
 {
   this->MainWindow = QPointer<QMainWindow>(mainWindow);
 }
@@ -81,6 +84,7 @@ void ctkErrorLogStatusMessageHandler::statusBarMessageChanged(const QString& tex
     {
     return;
     }
-  this->errorLogModel()->addEntry(
-        ctkErrorLogModel::Status, this->handlerPrettyName(), text.toLatin1());
+  this->handleMessage(
+        ctk::qtHandleToString(QThread::currentThreadId()),
+        ctkErrorLogLevel::Status, this->handlerPrettyName(), text);
 }
