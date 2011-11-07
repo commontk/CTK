@@ -45,7 +45,7 @@ int ctkErrorLogModelTest4(int argc, char * argv [])
     model.enableAllMsgHandler();
     model.msgHandlerNames();
     model.filterEntry();
-    model.filterEntry(ctkErrorLogModel::Fatal, true);
+    model.filterEntry(ctkErrorLogLevel::Fatal, true);
 
     model.logLevelFilter();
     model.logEntryGrouping();

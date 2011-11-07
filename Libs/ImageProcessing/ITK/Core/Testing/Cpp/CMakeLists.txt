@@ -4,6 +4,7 @@ SET(KIT ${PROJECT_NAME})
 # Tests
 #
 SET(TEST_SOURCES
+  ctkITKErrorLogMessageHandlerWithThreadsTest1.cpp
   ctkITKErrorLogModelTest1.cpp
   )
 
@@ -66,12 +67,13 @@ ENDMACRO( SIMPLE_TEST  )
 # Add Tests
 #
 
-#SIMPLE_TEST( ctkVTKObjectTest1 )
+SIMPLE_TEST( ctkITKErrorLogMessageHandlerWithThreadsTest1 )
+SIMPLE_TEST( ctkITKErrorLogModelTest1 )
 
 #
 # Add Tests expecting CTKData to be set
 #
 IF(EXISTS "${CTKData_DIR}")
-  SIMPLE_TEST( ctkITKErrorLogModelTest1 )
+
 ENDIF()
 

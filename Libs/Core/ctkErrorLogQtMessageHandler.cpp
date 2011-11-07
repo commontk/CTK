@@ -20,9 +20,11 @@
 
 // Qt includes
 #include <QCoreApplication>
+#include <QThread>
 
 // CTK includes
 #include "ctkErrorLogQtMessageHandler.h"
+#include <ctkUtils.h>
 
 // STD includes
 #include <iostream>
@@ -58,22 +60,22 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const char *msg)
     {
     return;
     }
-  ctkErrorLogModel::LogLevel level = ctkErrorLogModel::Unknown;
+  ctkErrorLogLevel::LogLevel level = ctkErrorLogLevel::Unknown;
   if (type == QtDebugMsg)
     {
-    level = ctkErrorLogModel::Debug;
+    level = ctkErrorLogLevel::Debug;
     }
   else if (type == QtWarningMsg)
     {
-    level = ctkErrorLogModel::Warning;
+    level = ctkErrorLogLevel::Warning;
     }
   else if (type == QtCriticalMsg)
     {
-    level = ctkErrorLogModel::Critical;
+    level = ctkErrorLogLevel::Critical;
     }
   else if (type == QtFatalMsg)
     {
-    level = ctkErrorLogModel::Fatal;
+    level = ctkErrorLogLevel::Fatal;
     }
 
   QCoreApplication * coreApp = QCoreApplication::instance();
@@ -87,12 +89,9 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const char *msg)
 //    //  {
 //    //  continue;
 //    //  }
-    if (!handler->errorLogModel())
-      {
-      std::cout << "ErrorLogModel is Null !" << std::endl;
-      return;
-      }
-    handler->errorLogModel()->addEntry(level, handler->handlerPrettyName(), msg);
+    handler->handleMessage(
+          ctk::qtHandleToString(QThread::currentThreadId()),
+          level, handler->handlerPrettyName(), msg);
     }
 }
 }

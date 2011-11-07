@@ -36,8 +36,29 @@
 // Helper functions
 #include "Testing/Cpp/ctkErrorLogModelTestHelper.cpp"
 
+namespace
+{
 //-----------------------------------------------------------------------------
-int ctkVTKErrorLogModelTest1(int argc, char * argv [])
+class LogVTKMessageThread : public LogMessageThread
+{
+public:
+  LogVTKMessageThread(int id, int maxIteration) : LogMessageThread(id, maxIteration){}
+
+  virtual void logMessage(const QDateTime& dateTime, int threadId, int counterIdx)
+  {
+    QString msg = QString("counterIdx:%1 - %2 - Message from thread: %3\n")
+        .arg(counterIdx).arg(dateTime.toString()).arg(threadId);
+
+    vtkOutputWindowDisplayDebugText(qPrintable(msg));
+    vtkOutputWindowDisplayWarningText(qPrintable(msg));
+    vtkOutputWindowDisplayErrorText(qPrintable(msg));
+  }
+};
+
+}
+
+//-----------------------------------------------------------------------------
+int ctkVTKErrorLogMessageHandlerWithThreadsTest1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
   Q_UNUSED(app);
@@ -45,69 +66,28 @@ int ctkVTKErrorLogModelTest1(int argc, char * argv [])
   ctkErrorLogModel model;
   ctkModelTester modelTester;
   modelTester.setVerbose(false);
-  QString errorMsg;
 
   try
     {
     modelTester.setModel(&model);
 
     // --------------------------------------------------------------------------
-    // Monitor VTK messages
+    // Monitor Stream messages
 
     model.registerMsgHandler(new ctkVTKErrorLogMessageHandler);
     model.setMsgHandlerEnabled(ctkVTKErrorLogMessageHandler::HandlerName, true);
 
-    errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ 0);
-    if (!errorMsg.isEmpty())
-      {
-      model.disableAllMsgHandler();
-      printErrorMessage(errorMsg);
-      printTextMessages(model);
-      return EXIT_FAILURE;
-      }
+    int threadCount = 15;
+    int maxIteration = 5;
+    int messagesPerIteration = 3;
+    startLogMessageThreads<LogVTKMessageThread>(threadCount, maxIteration);
 
-    QString vtkMessage0("This is a VTK debug message");
-    vtkOutputWindowDisplayDebugText(qPrintable(vtkMessage0));
+    // Give enough time for the threads to send their messages
+    QTimer::singleShot(1500, qApp, SLOT(quit()));
+    app.exec();
 
-    QString vtkMessage1("This is a VTK warning message");
-    vtkOutputWindowDisplayWarningText(qPrintable(vtkMessage1));
-
-    QString vtkMessage2("This is a VTK error message");
-    vtkOutputWindowDisplayErrorText(qPrintable(vtkMessage2));
-
-    // Give enough time to the ErrorLogModel to consider the queued messages.
-    processEvents(1000);
-
-    QStringList expectedVTKMessages;
-    expectedVTKMessages << vtkMessage0 << vtkMessage1 << vtkMessage2;
-
-    errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedVTKMessages.count());
-    if (!errorMsg.isEmpty())
-      {
-      model.disableAllMsgHandler();
-      printErrorMessage(errorMsg);
-      return EXIT_FAILURE;
-      }
-
-    errorMsg = checkTextMessages(__LINE__, model, expectedVTKMessages);
-    if (!errorMsg.isEmpty())
-      {
-      model.disableAllMsgHandler();
-      printErrorMessage(errorMsg);
-      return EXIT_FAILURE;
-      }
-
-    // Clear
-    model.clear();
-
-    // Disable VTK messages monitoring
-    model.setMsgHandlerEnabled(ctkVTKErrorLogMessageHandler::HandlerName, false);
-
-    vtkOutputWindowDisplayDebugText("This VTK debug message should appear in the console");
-    vtkOutputWindowDisplayWarningText("This VTK warning message should appear in the console");
-    vtkOutputWindowDisplayErrorText("This VTK error message should appear in the console");
-
-    errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ 0);
+    int expectedMessageCount = threadCount * maxIteration * messagesPerIteration;
+    QString errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedMessageCount);
     if (!errorMsg.isEmpty())
       {
       model.disableAllMsgHandler();

@@ -20,67 +20,81 @@
 
 // Qt includes
 #include <QDebug>
-#include <QDir>
-#include <QFile>
 
 // CTK includes
 #include "ctkErrorLogFDMessageHandler.h"
 #include "ctkErrorLogFDMessageHandler_p.h"
+#include "ctkUtils.h"
 
 // STD includes
 #include <cstdio>
 #ifdef Q_OS_WIN32
-# include <io.h>
+# include <fcntl.h>  // For _O_TEXT
+# include <io.h>     // For _pipe, _dup and _dup2
 #else
-# include <unistd.h>
+# include <unistd.h> // For pipe, dup and dup2
 #endif
 
 // --------------------------------------------------------------------------
 // ctkFDHandler methods
+// See http://stackoverflow.com/questions/5419356/redirect-stdout-stderr-to-a-string
+// and http://stackoverflow.com/questions/955962/how-to-buffer-stdout-in-memory-and-write-it-from-a-dedicated-thread
 
 // --------------------------------------------------------------------------
 ctkFDHandler::ctkFDHandler(ctkErrorLogFDMessageHandler* messageHandler,
-                           ctkErrorLogModel::LogLevel logLevel,
-                           int fileDescriptorNumber)
+                           ctkErrorLogLevel::LogLevel logLevel,
+                           ctkErrorLogModel::TerminalOutput terminalOutput)
 {
   this->MessageHandler = messageHandler;
   this->LogLevel = logLevel;
-  this->FDNumber = fileDescriptorNumber;
+  this->TerminalOutput = terminalOutput;
   this->SavedFDNumber = 0;
-  this->FD = 0;
   this->Enabled = false;
-
-  const QString outputFileTemplateName =  QDir::tempPath()
-    + QDir::separator () + "ctkFDHandler-%1.XXXXXX.txt";
-  this->OutputFile.setFileTemplate(outputFileTemplateName.arg(this->FDNumber));
-
-  connect(&this->OutputFileWatcher, SIGNAL(fileChanged(QString)),
-          SLOT(outputFileChanged(QString)));
+  this->Initialized = false;
+  this->init();
 }
 
 // --------------------------------------------------------------------------
-ctkErrorLogFDMessageHandler::~ctkErrorLogFDMessageHandler()
+ctkFDHandler::~ctkFDHandler()
 {
+  if (this->Initialized)
+    {
+    this->RedirectionFile.close();
+    delete this->RedirectionStream;
+    }
 }
 
 // --------------------------------------------------------------------------
-FILE* ctkFDHandler::fileDescriptorFromNumber(int fdNumber)
+void ctkFDHandler::init()
 {
-  Q_ASSERT(fdNumber == 1 /* stdout*/ || fdNumber == 2 /*stderr*/);
-  if (fdNumber == 1)
+#ifdef Q_OS_WIN32
+  int status = _pipe(this->Pipe, 65536, _O_TEXT);
+#else
+  int status = pipe(this->Pipe);
+#endif
+  if (status != 0)
     {
-    return stdout;
+    qCritical().nospace() << "ctkFDHandler - Failed to create pipe !";
+    return;
     }
-  else if (fdNumber == 2)
-    {
-    return stderr;
-    }
-  return 0;
+  this->RedirectionFile.open(this->Pipe[0], QIODevice::ReadOnly);
+  this->RedirectionStream = new QTextStream(&this->RedirectionFile);
+  this->Initialized = true;
+}
+
+// --------------------------------------------------------------------------
+FILE* ctkFDHandler::terminalOutputFile()
+{
+  return this->TerminalOutput == ctkErrorLogModel::StandardOutput ? stdout : stderr;
 }
 
 // --------------------------------------------------------------------------
 void ctkFDHandler::setEnabled(bool value)
 {
+  if (!this->Initialized)
+    {
+    return;
+    }
   if (this->Enabled == value)
     {
     return;
@@ -89,77 +103,79 @@ void ctkFDHandler::setEnabled(bool value)
   if (value)
     {
     // Flush (stdout|stderr) so that any buffered messages are delivered
-    fflush(Self::fileDescriptorFromNumber(this->FDNumber));
+    fflush(this->terminalOutputFile());
 
     // Save position of current standard output
-    fgetpos(Self::fileDescriptorFromNumber(this->FDNumber), &this->SavedFDPos);
+    fgetpos(this->terminalOutputFile(), &this->SavedFDPos);
 #ifdef Q_OS_WIN32
-    this->SavedFDNumber = _dup(_fileno(Self::fileDescriptorFromNumber(this->FDNumber)));
+    this->SavedFDNumber = _dup(_fileno(this->terminalOutputFile()));
+    _dup2(this->Pipe[1], _fileno(this->terminalOutputFile()));
 #else
-    this->SavedFDNumber = dup(fileno(Self::fileDescriptorFromNumber(this->FDNumber)));
+    this->SavedFDNumber = dup(fileno(this->terminalOutputFile()));
+    dup2(this->Pipe[1], fileno(this->terminalOutputFile()));
 #endif
+    close(this->Pipe[1]);
 
-    // Open and close the OutputFile so that the unique filename is created
-    if (!this->OutputFile.exists())
-      {
-      this->OutputFile.open();
-      this->OutputFile.close();
-      }
-
-    //qDebug() << "ctkFDHandler - OutputFile" << this->OutputFile.fileName();
-
-    if ((this->FD = freopen(this->OutputFile.fileName().toLatin1(),
-                            "w",
-                            Self::fileDescriptorFromNumber(this->FDNumber))) == 0)
-      {
-      // this->SavedFDNumber = 0;
-      }
-
-    // Observe the OutputFile for changes
-    this->OutputFileWatcher.addPath(this->OutputFile.fileName());
+    // Start polling thread
+    this->start();
     }
   else
     {
     // Flush stdout or stderr so that any buffered messages are delivered
-    fflush(Self::fileDescriptorFromNumber(this->FDNumber));
+    fflush(this->terminalOutputFile());
 
     // Flush current stream so that any buffered messages are delivered
-    fflush(this->FD);
+    this->RedirectionFile.flush();
 
-    // Un-observe OutputFile
-    this->OutputFileWatcher.removePath(this->OutputFile.fileName());
+    // Stop polling thread
+    this->terminate();
+    this->wait();
 
-    // Close file and restore standard output to stdout or stderr - which should be the terminal
+    // Close files and restore standard output to stdout or stderr - which should be the terminal
 #ifdef Q_OS_WIN32
-    _dup2(this->SavedFDNumber, _fileno(Self::fileDescriptorFromNumber(this->FDNumber)));
+    _dup2(this->SavedFDNumber, _fileno(this->terminalOutputFile()));
     _close(this->SavedFDNumber);
 #else
-    dup2(this->SavedFDNumber, fileno(Self::fileDescriptorFromNumber(this->FDNumber)));
+    dup2(this->SavedFDNumber, fileno(this->terminalOutputFile()));
     close(this->SavedFDNumber);
 #endif
-    clearerr(Self::fileDescriptorFromNumber(this->FDNumber));
-    fsetpos(Self::fileDescriptorFromNumber(this->FDNumber), &this->SavedFDPos);
+    clearerr(this->terminalOutputFile());
+    fsetpos(this->terminalOutputFile(), &this->SavedFDPos);
+
+    this->SavedFDNumber = fileno(this->terminalOutputFile());
+    }
+
+  ctkErrorLogTerminalOutput * terminalOutput =
+      this->MessageHandler->terminalOutput(this->TerminalOutput);
+  if(terminalOutput)
+    {
+    terminalOutput->setFileDescriptor(this->SavedFDNumber);
     }
 
   this->Enabled = value;
 }
 
 // --------------------------------------------------------------------------
-void ctkFDHandler::outputFileChanged(const QString & path)
+void ctkFDHandler::run()
 {
-  QFile file(path);
-  if (!file.open(QFile::ReadOnly))
+  while(true)
     {
-    qCritical() << "ctkFDHandler - Failed to open file" << path;
-    return;
-    }
-
-  QTextStream stream(&file);
-  while (!stream.atEnd())
-    {
-    Q_ASSERT(this->MessageHandler->errorLogModel());
-    this->MessageHandler->errorLogModel()->addEntry(
-          this->LogLevel, this->MessageHandler->handlerPrettyName(), qPrintable(stream.readLine()));
+    char c = '\0';
+    QString line;
+    while(c != '\n')
+      {
+      read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
+      if (c != '\n')
+        {
+        line += c;
+        }
+      }
+    Q_ASSERT(this->MessageHandler);
+    this->MessageHandler->handleMessage(
+      ctk::qtHandleToString(QThread::currentThreadId()),
+      this->LogLevel,
+      this->MessageHandler->handlerPrettyName(),
+      line);
     }
 }
 
@@ -203,8 +219,13 @@ ctkErrorLogFDMessageHandler::ctkErrorLogFDMessageHandler() :
   Superclass(), d_ptr(new ctkErrorLogFDMessageHandlerPrivate())
 {
   Q_D(ctkErrorLogFDMessageHandler);
-  d->StdOutFDHandler = new ctkFDHandler(this, ctkErrorLogModel::Info, 1 /* stdout */);
-  d->StdErrFDHandler = new ctkFDHandler(this, ctkErrorLogModel::Critical, 2 /* stderr */);
+  d->StdOutFDHandler = new ctkFDHandler(this, ctkErrorLogLevel::Info, ctkErrorLogModel::StandardOutput);
+  d->StdErrFDHandler = new ctkFDHandler(this, ctkErrorLogLevel::Critical, ctkErrorLogModel::StandardError);
+}
+
+// --------------------------------------------------------------------------
+ctkErrorLogFDMessageHandler::~ctkErrorLogFDMessageHandler()
+{
 }
 
 // --------------------------------------------------------------------------

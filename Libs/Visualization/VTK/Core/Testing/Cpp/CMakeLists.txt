@@ -6,6 +6,7 @@ SET(KIT ${PROJECT_NAME})
 SET(TEST_SOURCES
   ctkVTKColorTransferFunctionTest1.cpp
   ctkVTKConnectionTest1.cpp
+  ctkVTKErrorLogMessageHandlerWithThreadsTest1.cpp
   ctkVTKErrorLogModelTest1.cpp
   ctkVTKHistogramTest1.cpp
   ctkVTKHistogramTest2.cpp
@@ -77,6 +78,7 @@ ENDMACRO( SIMPLE_TEST  )
 
 SIMPLE_TEST( ctkVTKColorTransferFunctionTest1 )
 SIMPLE_TEST( ctkVTKConnectionTest1 )
+SIMPLE_TEST( ctkVTKErrorLogMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkVTKErrorLogModelTest1 )
 SIMPLE_TEST( ctkVTKHistogramTest1 )
 SIMPLE_TEST( ctkVTKHistogramTest2 )

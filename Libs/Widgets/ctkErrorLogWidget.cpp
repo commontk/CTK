@@ -37,9 +37,9 @@ public:
   typedef ctkErrorLogWidgetPrivate Self;
   ctkErrorLogWidgetPrivate(ctkErrorLogWidget& object);
 
-  ctkErrorLogModel::LogLevels ErrorButtonFilter;
-  ctkErrorLogModel::LogLevels WarningButtonFilter;
-  ctkErrorLogModel::LogLevels InfoButtonFilter;
+  ctkErrorLogLevel::LogLevels ErrorButtonFilter;
+  ctkErrorLogLevel::LogLevels WarningButtonFilter;
+  ctkErrorLogLevel::LogLevels InfoButtonFilter;
 
   void init();
 
@@ -53,9 +53,9 @@ public:
 ctkErrorLogWidgetPrivate::ctkErrorLogWidgetPrivate(ctkErrorLogWidget& object)
   : q_ptr(&object)
 {
-  this->ErrorButtonFilter = ctkErrorLogModel::Error | ctkErrorLogModel::Critical | ctkErrorLogModel::Fatal;
-  this->WarningButtonFilter = ctkErrorLogModel::Warning;
-  this->InfoButtonFilter = ctkErrorLogModel::Info | ctkErrorLogModel::Debug | ctkErrorLogModel::Trace | ctkErrorLogModel::Status;
+  this->ErrorButtonFilter = ctkErrorLogLevel::Error | ctkErrorLogLevel::Critical | ctkErrorLogLevel::Fatal;
+  this->WarningButtonFilter = ctkErrorLogLevel::Warning;
+  this->InfoButtonFilter = ctkErrorLogLevel::Info | ctkErrorLogLevel::Debug | ctkErrorLogLevel::Trace | ctkErrorLogLevel::Status;
 }
 
 // --------------------------------------------------------------------------
@@ -83,6 +83,8 @@ void ctkErrorLogWidgetPrivate::init()
 
   QObject::connect(this->ClearButton, SIGNAL(clicked()),
                    q, SLOT(removeEntries()));
+
+  this->ErrorLogTableView->setColumnHidden(ctkErrorLogModel::ThreadIdColumn, true);
 }
 
 // --------------------------------------------------------------------------
@@ -150,11 +152,11 @@ void ctkErrorLogWidget::setErrorLogModel(ctkErrorLogModel * newErrorLogModel)
     connect(this->errorLogModel(), SIGNAL(logLevelFilterChanged()),
             this, SLOT(onLogLevelFilterChanged()));
 
-    ctkErrorLogModel::LogLevels logLevelFilter = newErrorLogModel->logLevelFilter();
+    ctkErrorLogLevel::LogLevels logLevelFilter = newErrorLogModel->logLevelFilter();
     this->setErrorEntriesVisible(logLevelFilter & d->ErrorButtonFilter);
     this->setWarningEntriesVisible(logLevelFilter & d->WarningButtonFilter);
     this->setInfoEntriesVisible(logLevelFilter & d->InfoButtonFilter);
-    this->errorLogModel()->filterEntry(logLevelFilter & ctkErrorLogModel::Unknown);
+    this->errorLogModel()->filterEntry(logLevelFilter & ctkErrorLogLevel::Unknown);
 
     // Setup selection model
     d->SelectionModel = QSharedPointer<QItemSelectionModel>(new QItemSelectionModel(this->errorLogModel()));
@@ -226,7 +228,7 @@ void ctkErrorLogWidget::setUnknownEntriesVisible(bool visibility)
     {
     return;
     }
-  this->errorLogModel()->filterEntry(ctkErrorLogModel::Unknown,
+  this->errorLogModel()->filterEntry(ctkErrorLogLevel::Unknown,
       /* disableFilter= */ !visibility);
 }
 
@@ -246,7 +248,7 @@ void ctkErrorLogWidget::onLogLevelFilterChanged()
 {
   Q_D(ctkErrorLogWidget);
   Q_ASSERT(this->errorLogModel());
-  ctkErrorLogModel::LogLevels logLevelFilter = this->errorLogModel()->logLevelFilter();
+  ctkErrorLogLevel::LogLevels logLevelFilter = this->errorLogModel()->logLevelFilter();
   d->ShowErrorEntryButton->setChecked(logLevelFilter & d->ErrorButtonFilter);
   d->ShowWarningEntryButton->setChecked(logLevelFilter & d->WarningButtonFilter);
   d->ShowInfoEntryButton->setChecked(logLevelFilter & d->InfoButtonFilter);

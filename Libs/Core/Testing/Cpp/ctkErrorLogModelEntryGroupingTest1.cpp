@@ -21,10 +21,8 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDebug>
-#include <QStringList>
 
 // CTK includes
-#include "ctkErrorLogModel.h"
 #include "ctkErrorLogQtMessageHandler.h"
 #include "ctkModelTester.h"
 
@@ -32,65 +30,11 @@
 #include <cstdlib>
 #include <iostream>
 
-namespace
-{
-//-----------------------------------------------------------------------------
-// Utility function
+// Helper functions
+#include "Testing/Cpp/ctkErrorLogModelTestHelper.cpp"
 
 //-----------------------------------------------------------------------------
-QString checkRowCount(int line, int currentRowCount, int expectedRowCount)
-{
-  if (currentRowCount != expectedRowCount)
-    {
-    QString errorMsg("Line %1 - Expected rowCount: %2 - Current rowCount: %3\n");
-    return errorMsg.arg(line).arg(expectedRowCount).arg(currentRowCount);
-    }
-  return QString();
-}
-
-//-----------------------------------------------------------------------------
-QString checkTextMessages(int line, const ctkErrorLogModel& model, const QStringList& expectedMessages)
-{
-  for(int i=0; i < expectedMessages.count(); ++i)
-    {
-    QModelIndex descriptionIndex = model.index(i, ctkErrorLogModel::DescriptionColumn);
-    QString currentMessage = descriptionIndex.data(ctkErrorLogModel::DescriptionTextRole).toString();
-    if (currentMessage.compare(expectedMessages.value(i)) != 0)
-      {
-      QString errorMsg("Line %1 - Problem with row%2 !\n"
-                       "\tExpected message [%3]\n"
-                       "\tCurrent message [%4]\n");
-      return errorMsg.arg(line).arg(i).arg(expectedMessages.value(i)).arg(currentMessage);
-      }
-    }
-  return QString();
-}
-
-//-----------------------------------------------------------------------------
-void printTextMessages(const ctkErrorLogModel& model)
-{
-  fprintf(stdout, "%s", "ErrorLogModel rows:\n");
-  QString text("\trow %1 => %2\n");
-  for (int i=0; i < model.rowCount(); ++i)
-    {
-    QString description =
-        model.index(0, ctkErrorLogModel::DescriptionColumn).data().toString();
-    fprintf(stdout, "%s", qPrintable(text.arg(i).arg(description)));
-    }
-  fflush(stdout);
-}
-
-//-----------------------------------------------------------------------------
-void printErrorMessage(const QString& errorMessage)
-{
-  fprintf(stderr, "%s", qPrintable(errorMessage));
-  fflush(stderr);
-}
-
-} // end namespace
-
-//-----------------------------------------------------------------------------
-int ctkErrorLogModelTest2(int argc, char * argv [])
+int ctkErrorLogModelEntryGroupingTest1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
   Q_UNUSED(app);
@@ -128,6 +72,9 @@ int ctkErrorLogModelTest2(int argc, char * argv [])
     QString qtMessage2b("This is a qCritical message - 2");
     qCritical().nospace() << qPrintable(qtMessage2b);
 
+    // Give enough time to the ErrorLogModel to consider the queued messages.
+    processEvents(1000);
+
     QStringList expectedQtMessages;
     expectedQtMessages << qtMessage0.append("\n").append(qtMessage0b)
                        << qtMessage1
@@ -147,6 +94,7 @@ int ctkErrorLogModelTest2(int argc, char * argv [])
       {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
+      printTextMessages(model);
       return EXIT_FAILURE;
       }
 

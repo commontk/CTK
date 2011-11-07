@@ -21,7 +21,6 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDebug>
-#include <QStringList>
 
 #ifdef __GNUC__
 // Disable warnings related to 'itkSmartPointer.h' file
@@ -42,48 +41,8 @@
 #include <cstdlib>
 #include <iostream>
 
-namespace
-{
-//-----------------------------------------------------------------------------
-// Utility function
-
-//-----------------------------------------------------------------------------
-QString checkRowCount(int line, int currentRowCount, int expectedRowCount)
-{
-  if (currentRowCount != expectedRowCount)
-    {
-    QString errorMsg("Line %1 - Expected rowCount: %2 - Current rowCount: %3\n");
-    return errorMsg.arg(line).arg(expectedRowCount).arg(currentRowCount);
-    }
-  return QString();
-}
-
-//-----------------------------------------------------------------------------
-QString checkTextMessages(int line, const ctkErrorLogModel& model, const QStringList& expectedMessages)
-{
-  for(int i=0; i < expectedMessages.count(); ++i)
-    {
-    QModelIndex descriptionIndex = model.index(i, ctkErrorLogModel::DescriptionColumn);
-    QString currentMessage = descriptionIndex.data(ctkErrorLogModel::DescriptionTextRole).toString();
-    if (currentMessage.compare(expectedMessages.value(i)) != 0)
-      {
-      QString errorMsg("Line %1 - Problem with row%2 !\n"
-                       "\tExpected message [%3]\n"
-                       "\tCurrent message [%4]\n");
-      return errorMsg.arg(line).arg(i).arg(expectedMessages.value(i)).arg(currentMessage);
-      }
-    }
-  return QString();
-}
-
-//-----------------------------------------------------------------------------
-void printErrorMessage(const QString& errorMessage)
-{
-  fprintf(stderr, "%s", qPrintable(errorMessage));
-  fflush(stderr);
-}
-
-} // end namespace
+// Helper functions
+#include "Testing/Cpp/ctkErrorLogModelTestHelper.cpp"
 
 //-----------------------------------------------------------------------------
 int ctkITKErrorLogModelTest1(int argc, char * argv [])
@@ -123,6 +82,9 @@ int ctkITKErrorLogModelTest1(int argc, char * argv [])
     QString itkMessage2("This is a ITK error message");
     itk::OutputWindowDisplayErrorText(qPrintable(itkMessage2));
 
+    // Give enough time to the ErrorLogModel to consider the queued messages.
+    processEvents(1000);
+
     QStringList expectedITKMessages;
     expectedITKMessages << itkMessage0 << itkMessage1 << itkMessage2;
 
@@ -131,6 +93,7 @@ int ctkITKErrorLogModelTest1(int argc, char * argv [])
       {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
+      printTextMessages(model);
       return EXIT_FAILURE;
       }
 
@@ -139,6 +102,7 @@ int ctkITKErrorLogModelTest1(int argc, char * argv [])
       {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
+      printTextMessages(model);
       return EXIT_FAILURE;
       }
 
@@ -157,6 +121,7 @@ int ctkITKErrorLogModelTest1(int argc, char * argv [])
       {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
+      printTextMessages(model);
       return EXIT_FAILURE;
       }
     }

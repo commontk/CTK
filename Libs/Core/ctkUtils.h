@@ -116,6 +116,11 @@ double CTK_CORE_EXPORT closestPowerOfTen(double value);
 /// \sa QDir::rmdir
 bool CTK_CORE_EXPORT removeDirRecursively(const QString & dirName);
 
+///
+/// \ingroup Core
+/// Convert Qt::HANDLE to string
+/// \sa Qt::HANDLE
+QString CTK_CORE_EXPORT qtHandleToString(Qt::HANDLE handle);
 }
 
 #endif

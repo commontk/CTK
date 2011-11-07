@@ -29,7 +29,7 @@ class QMainWindow;
 
 //------------------------------------------------------------------------------
 class CTK_WIDGETS_EXPORT ctkErrorLogStatusMessageHandler :
-    public QObject, public ctkErrorLogAbstractMessageHandler
+    public ctkErrorLogAbstractMessageHandler
 {
   Q_OBJECT
 public:
