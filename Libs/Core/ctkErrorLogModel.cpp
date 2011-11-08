@@ -37,7 +37,9 @@
 
 // STD includes
 #include <cstdio> // For _fileno or fileno
-#include <io.h>
+#ifdef _MSC_VER
+# include <io.h> // For _write()
+#endif
 
 // --------------------------------------------------------------------------
 // ctkErrorLogLevel methods
