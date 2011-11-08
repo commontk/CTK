@@ -43,6 +43,13 @@ protected:
 
   friend class ctkServiceRegistration;
 
+  // The ctkServiceReferencePrivate class holds a pointer to a
+  // ctkServiceRegistrationPrivate instance and needs to manipulate
+  // its reference count. This way it can keep the ctkServiceRegistrationPrivate
+  // instance alive and keep returning service properties for
+  // unregistered service instances.
+  friend class ctkServiceReferencePrivate;
+
   /**
    * Reference count for implicitly shared private implementation.
    */

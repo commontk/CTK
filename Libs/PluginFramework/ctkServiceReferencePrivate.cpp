@@ -37,6 +37,14 @@
 ctkServiceReferencePrivate::ctkServiceReferencePrivate(ctkServiceRegistrationPrivate* reg)
   : ref(1), registration(reg)
 {
+  if (registration) registration->ref.ref();
+}
+
+//----------------------------------------------------------------------------
+ctkServiceReferencePrivate::~ctkServiceReferencePrivate()
+{
+  if (registration && !registration->ref.deref())
+    delete registration;
 }
 
 //----------------------------------------------------------------------------

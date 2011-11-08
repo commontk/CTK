@@ -42,7 +42,7 @@ public:
 
   ctkServiceReferencePrivate(ctkServiceRegistrationPrivate* reg);
 
-  virtual ~ctkServiceReferencePrivate() {}
+  ~ctkServiceReferencePrivate();
 
   /**
     * Get the service object.
