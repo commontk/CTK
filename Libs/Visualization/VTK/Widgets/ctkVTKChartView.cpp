@@ -88,6 +88,12 @@ void ctkVTKChartViewPrivate::init()
 #endif
   this->Chart->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
   this->Chart->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::RIGHT_BUTTON);
+
+  q->qvtkConnect(q->chart()->GetAxis(vtkAxis::BOTTOM),vtkCommand::ModifiedEvent,
+                    q, SIGNAL(extentChanged()));
+  q->qvtkConnect(q->chart()->GetAxis(vtkAxis::LEFT),vtkCommand::ModifiedEvent,
+                    q, SIGNAL(extentChanged()));
+
 }
 
 // ----------------------------------------------------------------------------
@@ -237,6 +243,28 @@ void ctkVTKChartView::onChartUpdated()
     {
     emit boundsChanged();
     }
+}
+
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::chartExtent(double* extent)const
+{
+  Q_D(const ctkVTKChartView);
+  extent[0] = extent[2] = extent[4] = extent[6] = VTK_DOUBLE_MAX;
+  extent[1] = extent[3] = extent[5] = extent[7] = VTK_DOUBLE_MIN;
+  vtkChartXY* chart = this->chart();
+  vtkAxis* axis = chart->GetAxis(vtkAxis::BOTTOM);
+  extent[0] = qMin(axis->GetMinimum(), extent[0]);
+  extent[1] = qMax(axis->GetMaximum(), extent[1]);
+  axis = chart->GetAxis(vtkAxis::LEFT);
+  extent[2] = qMin(axis->GetMinimum(), extent[2]);
+  extent[3] = qMax(axis->GetMaximum(), extent[3]);
+  axis = chart->GetAxis(vtkAxis::TOP);
+  extent[4] = qMin(axis->GetMinimum(), extent[4]);
+  extent[5] = qMax(axis->GetMaximum(), extent[5]);
+  axis = chart->GetAxis(vtkAxis::RIGHT);
+  extent[6] = qMin(axis->GetMinimum(), extent[6]);
+  extent[7] = qMax(axis->GetMaximum(), extent[7]);
 }
 
 // ----------------------------------------------------------------------------

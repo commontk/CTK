@@ -57,6 +57,9 @@ public:
 
   bool hasThresholdVisibilityToggle()const;
   void setThresholdVisibilityToggle(bool showToggle);
+
+  void chartsBounds(double bounds[4])const;
+  void chartsExtent(double extent[4])const;
 public slots:
   void setVolumeProperty(vtkVolumeProperty* volumeProperty);
 
@@ -73,6 +76,10 @@ public slots:
   void spreadAllPoints(double factor = 1.);
 
   void showThreshold(bool enable);
+
+signals:
+  void chartsExtentChanged();
+
 protected slots:
   void updateFromVolumeProperty();
   void updateRange();

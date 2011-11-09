@@ -119,10 +119,8 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
   QObject::connect(this->YRangeSlider, SIGNAL(valuesChanged(double,double)),
                    q, SIGNAL(axesModified()));
 
-  q->qvtkConnect(this->View->chart()->GetAxis(0),vtkCommand::ModifiedEvent,
-                    q, SLOT(onAxesModified()));
-  q->qvtkConnect(this->View->chart()->GetAxis(1),vtkCommand::ModifiedEvent,
-                    q, SLOT(onAxesModified()));
+  QObject::connect(this->View, SIGNAL(extentChanged()),
+                   q, SLOT(onAxesModified()));
 
   this->ExpandButton->setMirrorOnExpand(true);
   QObject::connect(this->ExpandButton, SIGNAL(clicked(bool)),

@@ -89,6 +89,9 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
   this->ScalarColorWidget->view()->setValidBounds(validBounds);
   this->GradientWidget->view()->setValidBounds(validBounds);
 
+  QObject::connect(this->ScalarOpacityWidget->view(), SIGNAL(extentChanged()),
+                   q, SIGNAL(chartsExtentChanged()));
+
   this->ScalarOpacityWidget->view()->addCompositeFunction(0, 0, true, true);
   vtkCompositeControlPointsItem* composite = 
   vtkCompositeControlPointsItem::SafeDownCast(
@@ -292,6 +295,44 @@ void ctkVTKVolumePropertyWidget::updateRange()
   chartBounds[3] = range[1];
   d->GradientWidget->view()->setChartUserBounds(chartBounds);
   d->GradientWidget->view()->update();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::chartsBounds(double bounds[4])const
+{
+  Q_D(const ctkVTKVolumePropertyWidget);
+  double chartBounds[4];
+  d->ScalarOpacityWidget->view()->chartBounds(chartBounds);
+  memcpy(bounds, chartBounds, 4*sizeof(double));
+  d->ScalarColorWidget->view()->chartBounds(chartBounds);
+  bounds[0] = qMin(bounds[0], chartBounds[0]);
+  bounds[1] = qMax(bounds[1], chartBounds[1]);
+  bounds[2] = qMin(bounds[2], chartBounds[2]);
+  bounds[3] = qMax(bounds[3], chartBounds[3]);
+  //d->GradientWidget->view()->chartBounds(chartBounds);
+  //bounds[0] = qMin(bounds[0], chartBounds[0]);
+  //bounds[1] = qMax(bounds[1], chartBounds[1]);
+  //bounds[2] = qMin(bounds[2], chartBounds[2]);
+  //bounds[3] = qMax(bounds[3], chartBounds[3]);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::chartsExtent(double extent[4])const
+{
+  Q_D(const ctkVTKVolumePropertyWidget);
+  double chartExtent[8];
+  d->ScalarOpacityWidget->view()->chartExtent(chartExtent);
+  memcpy(extent, chartExtent, 4*sizeof(double));
+  d->ScalarColorWidget->view()->chartExtent(chartExtent);
+  extent[0] = qMin(extent[0], chartExtent[0]);
+  extent[1] = qMax(extent[1], chartExtent[1]);
+  extent[2] = qMin(extent[2], chartExtent[2]);
+  extent[3] = qMax(extent[3], chartExtent[3]);
+  //d->GradientWidget->view()->chartExtent(chartExtent);
+  //extent[0] = qMin(extent[0], chartExtent[0]);
+  //extent[1] = qMin(extent[1], chartExtent[1]);
+  //extent[2] = qMin(extent[2], chartExtent[2]);
+  //extent[3] = qMin(extent[3], chartExtent[3]);
 }
 
 // ----------------------------------------------------------------------------
