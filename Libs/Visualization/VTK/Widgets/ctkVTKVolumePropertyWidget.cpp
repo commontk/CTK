@@ -140,13 +140,15 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
 // ----------------------------------------------------------------------------
 void ctkVTKVolumePropertyWidgetPrivate::computeRange(double* range)
 {
-  range[0] = 0.;
-  range[1] = 1.;
-
   if (!this->VolumeProperty)
     {
+    range[0] = 0.;
+    range[1] = 1.;
     return;
     }
+  range[0] = VTK_DOUBLE_MAX;
+  range[1] = VTK_DOUBLE_MIN;
+
   Q_ASSERT(this->VolumeProperty->GetRGBTransferFunction(this->CurrentComponent));
   Q_ASSERT(this->VolumeProperty->GetScalarOpacity(this->CurrentComponent));
   Q_ASSERT(this->VolumeProperty->GetGradientOpacity(this->CurrentComponent));
