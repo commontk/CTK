@@ -470,16 +470,20 @@ void ctkVTKVolumePropertyWidget::onAxesModified()
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKVolumePropertyWidget::moveAllPoints(double xOffset, double yOffset)
+void ctkVTKVolumePropertyWidget::moveAllPoints(double xOffset, double yOffset,
+                                               bool dontMoveFirstAndLast)
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (d->VolumeProperty)
     {
     d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
     }
-  d->ScalarOpacityWidget->view()->moveAllPoints(xOffset, yOffset);
-  d->ScalarColorWidget->view()->moveAllPoints(xOffset, yOffset);
-  d->GradientWidget->view()->moveAllPoints(xOffset, yOffset);
+  d->ScalarOpacityWidget->view()
+    ->moveAllPoints(xOffset, yOffset, dontMoveFirstAndLast);
+  d->ScalarColorWidget->view()
+    ->moveAllPoints(xOffset, yOffset, dontMoveFirstAndLast);
+  d->GradientWidget->view()
+    ->moveAllPoints(xOffset, yOffset, dontMoveFirstAndLast);
   if (d->VolumeProperty)
     {
     d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
@@ -487,12 +491,16 @@ void ctkVTKVolumePropertyWidget::moveAllPoints(double xOffset, double yOffset)
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKVolumePropertyWidget::spreadAllPoints(double factor)
+void ctkVTKVolumePropertyWidget::spreadAllPoints(double factor,
+                                                 bool dontSpreadFirstAndLast)
 {
   Q_D(ctkVTKVolumePropertyWidget);
   d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
-  d->ScalarOpacityWidget->view()->spreadAllPoints(factor);
-  d->ScalarColorWidget->view()->spreadAllPoints(factor);
-  d->GradientWidget->view()->spreadAllPoints(factor);
+  d->ScalarOpacityWidget->view()
+    ->spreadAllPoints(factor, dontSpreadFirstAndLast);
+  d->ScalarColorWidget->view()
+    ->spreadAllPoints(factor, dontSpreadFirstAndLast);
+  d->GradientWidget->view()
+    ->spreadAllPoints(factor, dontSpreadFirstAndLast);
   d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
 }
