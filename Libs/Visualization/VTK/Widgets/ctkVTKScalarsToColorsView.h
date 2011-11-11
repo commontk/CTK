@@ -98,13 +98,15 @@ public slots:
 
   /// Move all the control points by a given offset.
   /// \sa vtkControlPoints::movePoints()
-  void moveAllPoints(double xOffset, double yOffset = 0.);
+  void moveAllPoints(double xOffset, double yOffset = 0.,
+                     bool dontMoveFirstAndLast = false);
 
   /// Spread all the control points by a given offset.
   /// A value >0 will space the control points, a value <0. will contract
   /// them.
   /// \sa vtkControlPoints::spreadPoints()
-  void spreadAllPoints(double factor = 1.);
+  void spreadAllPoints(double factor = 1.,
+                       bool dontMoveFirstAndLast = false);
 
 protected slots:
   void onBoundsChanged();

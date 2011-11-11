@@ -57,6 +57,7 @@ protected:
   void setNodes(double nodeValues[][4], const int nodeCount);
   void setNodeValue(int index, double* nodeValue);
   double safeX(double value, double& previous)const;
+  static double nextHigher(double value);
 };
 
 // ----------------------------------------------------------------------------
@@ -139,6 +140,20 @@ void ctkVTKThresholdWidgetPrivate::setRange(double min, double max)
   this->ThresholdSliderWidget->blockSignals(wasBlocking);
 }
 
+//----------------------------------------------------------------------------
+double ctkVTKThresholdWidgetPrivate::nextHigher(double value)
+{
+  // Increment the value by the smallest offset possible
+  typedef union {
+      long long i64;
+      double d64;
+    } dbl_64;
+  dbl_64 d;
+  d.d64 = value;
+  d.i64 += (value >= 0) ? 1 : -1;
+  return d.d64;
+}
+
 // ----------------------------------------------------------------------------
 double ctkVTKThresholdWidgetPrivate::safeX(double value, double& previous)const
 {
@@ -148,7 +163,7 @@ double ctkVTKThresholdWidgetPrivate::safeX(double value, double& previous)const
     }
   if (value == previous && !this->PiecewiseFunction->GetAllowDuplicateScalars())
     {
-    value += 0.00000000000001;
+    value = this->nextHigher(value);
     }
   previous = value;
   return value;

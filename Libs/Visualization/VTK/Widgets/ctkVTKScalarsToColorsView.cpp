@@ -587,24 +587,22 @@ void ctkVTKScalarsToColorsView::boundAxesToChartBounds()
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKScalarsToColorsView::moveAllPoints(double xOffset, double yOffset)
+void ctkVTKScalarsToColorsView::moveAllPoints(double xOffset, double yOffset,
+                                              bool dontMoveFirstAndLast)
 {
   vtkVector2f offset(xOffset, yOffset);
   foreach(vtkControlPointsItem* controlPointsItem, this->controlPointsItems())
     {
-    vtkSmartPointer<vtkIdTypeArray> ids;
-    ids.TakeReference(controlPointsItem->GetControlPointsIds());
-    controlPointsItem->MovePoints(offset, ids.GetPointer());
+    controlPointsItem->MovePoints(offset, dontMoveFirstAndLast);
     }
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKScalarsToColorsView::spreadAllPoints(double factor)
+void ctkVTKScalarsToColorsView::spreadAllPoints(double factor,
+                                                bool dontSpreadFirstAndLast)
 {
   foreach(vtkControlPointsItem* controlPointsItem, this->controlPointsItems())
     {
-    vtkSmartPointer<vtkIdTypeArray> ids;
-    ids.TakeReference(controlPointsItem->GetControlPointsIds());\
-    controlPointsItem->SpreadPoints(factor, ids.GetPointer());
+    controlPointsItem->SpreadPoints(factor, dontSpreadFirstAndLast);
     }
 }
