@@ -74,7 +74,11 @@ MACRO(ctkMacroSetupExternalPlugins )
     ENDIF()
 
     LIST(APPEND plugin_subdirs "${plugin_name}")
-    LIST(APPEND plugin_dirswithoption "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_name}^^${option_name}")
+    IF(IS_ABSOLUTE ${plugin_name})
+      LIST(APPEND plugin_dirswithoption "${plugin_name}^^${option_name}")
+    ELSE()
+      LIST(APPEND plugin_dirswithoption "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_name}^^${option_name}")
+    ENDIF()
   ENDFOREACH()
 
   ctkFunctionGenerateDGraphInput(${CMAKE_CURRENT_BINARY_DIR} "${plugin_dirswithoption}" WITH_EXTERNALS)
@@ -86,7 +90,13 @@ MACRO(ctkMacroSetupExternalPlugins )
 
   FOREACH(plugin ${plugin_subdirs})
     IF(${${plugin}_option_name})
-      ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/${plugin})
+      IF(IS_ABSOLUTE ${plugin})
+        # get last directory component
+        GET_FILENAME_COMPONENT(_dirname ${plugin} NAME) 
+        ADD_SUBDIRECTORY(${plugin} private_plugins/${_dirname})
+      ELSE()
+        ADD_SUBDIRECTORY(${plugin})
+      ENDIF()
     ENDIF()
   ENDFOREACH()
 
