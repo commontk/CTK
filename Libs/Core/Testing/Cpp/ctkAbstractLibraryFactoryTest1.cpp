@@ -29,10 +29,12 @@
 #include <cstdlib>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 class ctkDummyLibrary
 {
 };
 
+//-----------------------------------------------------------------------------
 class ctkDummyLibraryItem: public ctkFactoryLibraryItem<ctkDummyLibrary>
 {
 protected:
@@ -52,6 +54,7 @@ protected:
   }
 };
 
+//-----------------------------------------------------------------------------
 class ctkDummyLibraryFactoryItem: public ctkAbstractLibraryFactory<ctkDummyLibrary>
 {
 protected:
@@ -102,7 +105,7 @@ int ctkAbstractLibraryFactoryTest1(int argc, char * argv [])
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   res = libraryFactory.registerFileItem("lib", file);
   if (!res || libraryFactory.itemKeys().count() != 1)
     {
