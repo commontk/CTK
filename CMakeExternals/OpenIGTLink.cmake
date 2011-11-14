@@ -35,7 +35,7 @@ IF(${add_project})
       SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
       INSTALL_COMMAND ""
       CMAKE_GENERATOR ${gen}
-      CMAKE_ARGS
+      CMAKE_CACHE_ARGS
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
         -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
         -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
