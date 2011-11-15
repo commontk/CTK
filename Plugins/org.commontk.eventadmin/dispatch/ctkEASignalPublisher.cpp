@@ -22,19 +22,37 @@
 
 #include "ctkEASignalPublisher_p.h"
 
-#include <service/event/ctkEventAdmin.h>
+#include "ctkEventAdminService_p.h"
 
-ctkEASignalPublisher::ctkEASignalPublisher(ctkEventAdmin* eventAdmin)
-  : eventAdmin(eventAdmin)
+ctkEASignalPublisher::ctkEASignalPublisher(ctkEventAdminService* eventAdmin,
+                                           const QString& signal,
+                                           const QString& topic)
+  : eventAdmin(eventAdmin), signal(signal), topic(topic)
 {
 }
 
-void ctkEASignalPublisher::publishSyncSignal(const ctkEvent& event)
+QString ctkEASignalPublisher::getSignalName() const
 {
+  return signal;
+}
+
+QString ctkEASignalPublisher::getTopicName() const
+{
+  return topic;
+}
+
+void ctkEASignalPublisher::publishSyncSignal(const ctkDictionary& eventProps)
+{
+  ctkDictionary props(eventProps);
+  props.insert(ctkEventConstants::EVENT_TOPIC, topic);
+  ctkEvent event(topic, props);
   eventAdmin->sendEvent(event);
 }
 
-void ctkEASignalPublisher::publishAsyncSignal(const ctkEvent& event)
+void ctkEASignalPublisher::publishAsyncSignal(const ctkDictionary& eventProps)
 {
+  ctkDictionary props(eventProps);
+  props.insert(ctkEventConstants::EVENT_TOPIC, topic);
+  ctkEvent event(topic, props);
   eventAdmin->postEvent(event);
 }

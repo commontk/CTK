@@ -71,7 +71,7 @@ private:
   ctkEventAdminImpl<BlacklistingHandlerTasks, SyncDeliverTasks, AsyncDeliverTasks> impl;
 
   ctkPluginContext* context;
-  ctkEASignalPublisher signalPublisher;
+  QHash<const QObject*, QList<ctkEASignalPublisher*> > signalPublisher;
   QHash<qlonglong, ctkEASlotHandler*> slotHandler;
 
 public:
@@ -89,7 +89,11 @@ public:
   void sendEvent(const ctkEvent& event);
 
   void publishSignal(const QObject* publisher, const char* signal,
+                     const QString& topic,
                      Qt::ConnectionType type = Qt::QueuedConnection);
+
+  void unpublishSignal(const QObject* publisher, const char* signal = 0,
+                       const QString& topic = "");
 
   qlonglong subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties);
 

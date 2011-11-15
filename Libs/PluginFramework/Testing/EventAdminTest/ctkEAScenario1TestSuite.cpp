@@ -220,8 +220,8 @@ void ctkEAScenario1EventPublisher::runTest()
 
   if (useSignalSlot)
   {
-    eventAdmin->publishSignal(this, SIGNAL(syncSignalEvent(ctkEvent)), Qt::DirectConnection);
-    eventAdmin->publishSignal(this, SIGNAL(asyncSignalEvent(ctkEvent)), Qt::QueuedConnection);
+    eventAdmin->publishSignal(this, SIGNAL(syncSignalEvent(ctkDictionary)), "com/acme/timer", Qt::DirectConnection);
+    eventAdmin->publishSignal(this, SIGNAL(asyncSignalEvent(ctkDictionary)), "com/acme/timer", Qt::QueuedConnection);
   }
 
   /* start the delivery thread */
@@ -264,7 +264,7 @@ void ctkEAScenario1EventPublisher::sendEvents()
     ctkEvent event("com/acme/timer", message);
     if (useSignalSlot)
     {
-      emit syncSignalEvent(event);
+      emit syncSignalEvent(message);
     }
     else
     {
@@ -288,7 +288,7 @@ void ctkEAScenario1EventPublisher::postEvents()
     ctkEvent event("com/acme/timer", message);
     if (useSignalSlot)
     {
-      emit asyncSignalEvent(event);
+      emit asyncSignalEvent(message);
     }
     else
     {

@@ -27,23 +27,29 @@
 
 #include <service/event/ctkEvent.h>
 
-struct ctkEventAdmin;
+struct ctkEventAdminService;
 
 class ctkEASignalPublisher : public QObject
 {
   Q_OBJECT
 
 public:
-  ctkEASignalPublisher(ctkEventAdmin* eventAdmin);
+  ctkEASignalPublisher(ctkEventAdminService* eventAdmin,
+                       const QString& signal, const QString& topic);
+
+  QString getSignalName() const;
+  QString getTopicName() const;
 
 protected slots:
 
-  void publishSyncSignal(const ctkEvent& event);
-  void publishAsyncSignal(const ctkEvent& event);
+  void publishSyncSignal(const ctkDictionary& eventProps);
+  void publishAsyncSignal(const ctkDictionary& eventProps);
 
 private:
 
-  ctkEventAdmin* eventAdmin;
+  ctkEventAdminService* eventAdmin;
+  const QString signal;
+  const QString topic;
 };
 
 #endif // CTKEASIGNALPUBLISHER_P_H

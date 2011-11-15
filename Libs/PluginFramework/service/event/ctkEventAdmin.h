@@ -64,13 +64,46 @@ struct ctkEventAdmin
    * Qt::QueuedConnection and as sendEvent() if <code>type</code> is
    * Qt::DirectConnection.
    *
+   * The signal will be associated with the given topic and must have the
+   * following signature:
+   * \code
+   * someSignal(const ctkDictionary& props)
+   * \endcode
+   * where <code>props</code> will be used to construct a ctkEvent class which
+   * will additionally have the EVENT_TOPIC property set to the given <code>topic</code>.
+   *
+   * This method can be called multiple times for the same signal to publish
+   * it under multiple topics. In that case, emitting the signal will result in
+   * multiple events being send.
+   *
    * @param publisher The owner of the signal.
    * @param signal The signal in normalized form.
+   * @param topic The event topic to use.
    * @param type Qt::QueuedConnection for asynchronous delivery and
    *        Qt::DirectConnection for synchronous delivery.
+   *
+   * @see unpublishSignal()
    */
   virtual void publishSignal(const QObject* publisher, const char* signal,
+                             const QString& topic,
                              Qt::ConnectionType type = Qt::QueuedConnection) = 0;
+
+  /**
+   * Unpublish (unregister) a previously published signal. After unpublishing a
+   * signal, no events will be send when the signal is emitted.
+   *
+   * @param publisher The owner of the signal.
+   * @param signal The signal in normalized form. If the signal is <code>NULL</code>
+   *        all signals from the given publisher published under the given
+   *        <code>topic</code> will be unpublished.
+   * @param topic The event topic under which the given <code>signal</code> was
+   *        published. If the <code>topic</code> is empty, the signal is
+   *        unpublished for all topics it was previously pubished under.
+   *
+   * @see publishSlot()
+   */
+  virtual void unpublishSignal(const QObject* publisher, const char* signal = 0,
+                               const QString& topic = "") = 0;
 
   /**
    * Subsribe for (observe) events. The slot is called whenever an event is sent
