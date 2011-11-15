@@ -19,36 +19,33 @@
 
 =============================================================================*/
 
-#ifndef CTKEVENTBUSPLUGIN_H
-#define CTKEVENTBUSPLUGIN_H
+#ifndef CTKEVENTADMINBUS_H
+#define CTKEVENTADMINBUS_H
 
-#include <ctkPluginActivator.h>
-class ctkEventBusImpl;
+#include <service/event/ctkEventAdmin.h>
 
-class ctkEventBusPlugin : public QObject,
-                   public ctkPluginActivator
-                   
+
+/**
+ * The Event Admin service. Plugins wishing to publish events can either
+ * obtain the Event Admin service and call one of the event delivery methods
+ * or publish a Qt signal for a specific event topic.
+ *
+ */
+class ctkEventAdminBus : public ctkEventAdmin
 {
-  Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator)
-
 public:
-  ctkEventBusPlugin(){};
-  ~ctkEventBusPlugin(){};
+  /// @@@ WRITE DOC!
+  virtual bool createServer(const QString &communication_protocol, unsigned int listen_port) = 0;
 
-  void start(ctkPluginContext* context);
-  void stop(ctkPluginContext* context);
+  /// @@@ WRITE DOC!
+  virtual void startListen() = 0;
 
-  static ctkEventBusPlugin* getInstance();
+  /// @@@ WRITE DOC!
+  virtual bool createClient(const QString &communication_protocol, const QString &server_host, unsigned int port) = 0;
 
-  ctkPluginContext* getPluginContext() const;
-
-private:
-
-  static ctkEventBusPlugin* instance;
-  ctkPluginContext* context;
-  ctkEventBusImpl *m_Bus;
 };
 
 
-#endif // CTKEVENTBUSPLUGIN_H
+Q_DECLARE_INTERFACE(ctkEventAdminBus, "org.commontk.service.event.EventAdminBus")
+
+#endif // CTKEVENTADMIN_H
