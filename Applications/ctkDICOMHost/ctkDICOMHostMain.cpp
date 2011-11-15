@@ -23,7 +23,16 @@
 #include <QTreeView>
 #include <QSettings>
 #include <QDir>
+#include <QDirIterator>
 #include <QResource>
+#include <QDebug>
+
+// CTKPluginFramework includes
+#include <ctkConfig.h>
+#include <ctkPluginFrameworkFactory.h>
+#include <ctkPluginFramework.h>
+#include <ctkPluginException.h>
+#include <ctkPluginContext.h>
 
 // CTK widget includes
 #include <ctkDICOMAppWidget.h>
@@ -46,6 +55,66 @@ int main(int argc, char** argv)
   app.setOrganizationName("commontk");
   app.setOrganizationDomain("commontk.org");
   app.setApplicationName("ctkDICOM");
+
+  // startup plugin framework and dah
+  ctkPluginFrameworkFactory fwFactory;
+  QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
+
+  try
+    {
+    framework->init();
+    }
+  catch (const ctkPluginException& exc)
+    {
+    qCritical() << "Failed to initialize the plug-in framework:" << exc;
+    return EXIT_FAILURE;
+    }
+
+#ifdef CMAKE_INTDIR
+  QString pluginPath = CTK_PLUGIN_DIR CMAKE_INTDIR "/";
+#else
+  QString pluginPath = CTK_PLUGIN_DIR;
+#endif
+
+  qApp->addLibraryPath(pluginPath);
+
+  QStringList libFilter;
+  libFilter << "*.dll" << "*.so" << "*.dylib";
+  QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
+
+  QStringList pluginsToInstall;
+  pluginsToInstall << "org_commontk_dah_core" << "org_commontk_dah_host"
+                   << "org_commontk_dah_examplehost";
+
+  QList<QSharedPointer<ctkPlugin> > installedPlugins;
+  while(dirIter.hasNext())
+    {
+    try
+      {
+      QString fileLocation = dirIter.next();
+      foreach(QString pluginToInstall, pluginsToInstall)
+        {
+        if (fileLocation.contains(pluginToInstall))
+          {
+          QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
+          installedPlugins << plugin;
+          break;
+          }
+        }
+      }
+    catch (const ctkPluginException& e)
+      {
+      qCritical() << e.what();
+      }
+    }
+
+  framework->start();
+
+  foreach(QSharedPointer<ctkPlugin> plugin, installedPlugins)
+    {
+    plugin->start();
+    }
+  // end startup plugin framework and dah
 
   // set up Qt resource files
   QResource::registerResource("./Resources/ctkDICOM.qrc");
