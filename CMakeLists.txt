@@ -391,6 +391,7 @@ SET(CTK_PLUGINS
 SET(CTK_APPLICATIONS
   ctkCLIPluginExplorer:OFF
   ctkDICOM:OFF
+  ctkDICOMHost:OFF
   ctkDICOMIndexer:OFF
   ctkDICOMDemoSCU:OFF
   ctkDICOMQuery:OFF
