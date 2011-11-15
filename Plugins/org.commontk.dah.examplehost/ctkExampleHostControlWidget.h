@@ -19,49 +19,52 @@
 
 =============================================================================*/
 
-#ifndef CTKHOSTAPPEXAMPLEWIDGET_H
-#define CTKHOSTAPPEXAMPLEWIDGET_H
+#ifndef ctkExampleHostControlWidget_H
+#define ctkExampleHostControlWidget_H
 
 #include <QWidget>
 #include <QProcess>
 
 #include <ctkDicomAppHostingTypes.h>
 
+#include <org_commontk_dah_examplehost_Export.h>
+
 class ctkExampleDicomHost;
-class ctkExampleHostControlWidget;
 
 namespace Ui {
-  class ctkHostAppExampleWidget;
+  class ctkExampleHostControlWidget;
 }
 
-class ctkHostAppExampleWidget : public QWidget
+class org_commontk_dah_examplehost_EXPORT ctkExampleHostControlWidget : public QWidget
 {
   Q_OBJECT
 
 public:
 
-  explicit ctkHostAppExampleWidget(QWidget *parent = 0);
+  explicit ctkExampleHostControlWidget(ctkExampleDicomHost * host, QWidget *parent = 0);
   void setAppFileName(QString name);
 
-  virtual ~ctkHostAppExampleWidget();
+  virtual ~ctkExampleHostControlWidget();
 
 public slots:
-
-  void loadButtonClicked();
-
-  void placeholderResized();
-
+  void startButtonClicked();
+  void runButtonClicked();
+  void stopButtonClicked();
+  void suspendButtonClicked();
+  void cancelButtonClicked();
   void appProcessError(QProcess::ProcessError error);
+  void appProcessStateChanged(QProcess::ProcessState state);
+  void appStateChanged(ctkDicomAppHosting::State state);
 
+  void outputMessage();
 protected:
 
   ctkExampleDicomHost* Host;
-  ctkExampleHostControlWidget* HostControls;
   QString AppFileName;
 
 private:
 
-  Ui::ctkHostAppExampleWidget *ui;
+  Ui::ctkExampleHostControlWidget *ui;
 
 };
 

@@ -7,6 +7,7 @@ SET(PLUGIN_SRCS
   ctkExampleDicomHostPlugin.cpp
   ctkExampleDicomHostPlugin_p.h
   ctkHostedAppPlaceholderWidget.cpp
+  ctkExampleHostControlWidget.cpp
 )
 
 # Files which should be processed by Qts moc
@@ -14,10 +15,12 @@ SET(PLUGIN_MOC_SRCS
   ctkExampleDicomHost.h
   ctkExampleDicomHostPlugin_p.h
   ctkHostedAppPlaceholderWidget.h
+  ctkExampleHostControlWidget.h
 )
 
 # Qt Designer files which should be processed by Qts uic
 SET(PLUGIN_UI_FORMS
+  ctkExampleHostControlWidget.ui
 )
 
 # QRC Files which should be compiled into the plugin
