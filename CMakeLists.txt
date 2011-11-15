@@ -398,6 +398,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMQueryRetrieve:OFF
   ctkExampleHost:OFF
   ctkExampleHostedApp:OFF
+  ctkEventBusDemo:OFF
   ctkPluginBrowser:OFF
   ctkPluginGenerator:OFF
   ctkDICOMObjectViewer:OFF
