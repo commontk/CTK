@@ -7,14 +7,17 @@ PROJECT(ctkDICOMHost)
 # Source files
 SET(KIT_SRCS
   ctkDICOMHostMain.cpp
+  ctkDICOMHostMainLogic.cpp
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  ctkDICOMHostMainLogic.h
   )
 
 # UI files
 SET(KIT_UI_FORMS
+  ctkDICOMHostMainWidget.ui
 )
 
 # Resources

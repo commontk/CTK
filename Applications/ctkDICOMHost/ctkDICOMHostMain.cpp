@@ -47,6 +47,10 @@
 // STD includes
 #include <iostream>
 
+// ui of this application
+#include "ui_ctkDICOMHostMainWidget.h"
+#include "ctkDICOMHostMainLogic.h"
+
 int main(int argc, char** argv)
 {
   ctkLogger::configure();
@@ -149,10 +153,19 @@ int main(int argc, char** argv)
     }
   }
 
-  ctkDICOMAppWidget DICOMApp;
+  QWidget *widget = new QWidget;
+  Ui::ctkDICOMHostMainWidget ui;
+  ui.setupUi(widget);
 
-  DICOMApp.setDatabaseDirectory(databaseDirectory);
-  DICOMApp.show();
+  widget->show();
+
+  ctkDICOMHostMainLogic *logic = new ctkDICOMHostMainLogic(ui.placeHolderForHostedApp);
+  logic->connect(ui.configureHostedApp,SIGNAL(clicked()), logic, SLOT(configureHostedApp()));
+
+  //ctkDICOMAppWidget DICOMApp(widget);
+
+  ////DICOMApp.setDatabaseDirectory(databaseDirectory);
+  ////DICOMApp.show();
 
   return app.exec();
 }
