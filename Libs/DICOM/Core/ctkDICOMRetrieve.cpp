@@ -54,10 +54,7 @@
 #include <dcmtk/dcmdata/dcrledrg.h>  /* for DcmRLEDecoderRegistration */
 #include <dcmtk/dcmdata/dcrleerg.h>  /* for DcmRLEEncoderRegistration */
 
-// NOTE: using ctk stand-in class for now - switch back
-// to dcmtk's scu.h when cget support is in a release version
-//#include <dcmtk/dcmnet/scu.h>
-#include <ctkDcmSCU.h>
+#include <dcmtk/dcmnet/scu.h>
 
 #include "dcmtk/oflog/oflog.h"
 
@@ -72,7 +69,7 @@ public:
   bool          KeepAssociationOpen;
   bool          ConnectionParamsChanged;
   QSharedPointer<ctkDICOMDatabase> RetrieveDatabase;
-  ctkDcmSCU        SCU;
+  DcmSCU        scu;
   QString MoveDestinationAETitle;
   // do the retrieve, handling both series and study retrieves
   enum RetrieveType { RetrieveSeries, RetrieveStudy };
@@ -88,21 +85,21 @@ public:
 ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate()
 {
   this->RetrieveDatabase = QSharedPointer<ctkDICOMDatabase> (0);
-  this->KeepAssociationOpen = true;
-  this->ConnectionParamsChanged = false;
+  KeepAssociationOpen = true;
+  ConnectionParamsChanged = false;
   logger.info ( "Setting Transfer Syntaxes" );
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
-  this->SCU.addPresentationContext ( UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+  scu.addPresentationContext ( UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
 {
   // At least now be kind to the server and release association
-  this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+  scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
 }
 
 //------------------------------------------------------------------------------
@@ -129,15 +126,15 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
   DcmRLEDecoderRegistration::registerCodecs();
 
   // If we like to query another server than before, be sure to disconnect first
-  if (this->SCU.isConnected() && this->ConnectionParamsChanged)
+  if (scu.isConnected() && ConnectionParamsChanged)
   {
-    this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
   }
   // Connect to server if not already connected
-  if (!this->SCU.isConnected())
+  if (!scu.isConnected())
     {
     // Check and initialize networking parameters in DCMTK
-    if ( !this->SCU.initNetwork().good() )
+    if ( !scu.initNetwork().good() )
       {
       logger.error ( "Error initializing the network" );
       return false;
@@ -145,14 +142,14 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
     // Negotiate (i.e. start the) association
     logger.debug ( "Negotiating Association" );
 
-    if ( !this->SCU.negotiateAssociation().good() )
+    if ( !scu.negotiateAssociation().good() )
       {
       logger.error ( "Error negotiating association" );
       return false;;
       }
     }
 
-  this->ConnectionParamsChanged = false;
+  ConnectionParamsChanged = false;
   // Setup query about what to be received from the PACS
   logger.debug ( "Setting Retrieve Parameters" );
   DcmDataset *retrieveParameters = new DcmDataset();
@@ -171,22 +168,22 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
 
   // Issue request
   logger.debug ( "Sending Move Request" );
-  OFList<RetrieveResponse*> responses;
-  T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(UID_MOVEStudyRootQueryRetrieveInformationModel, "" /* don't care about transfer syntax */ );
+  MOVEResponses responses;
+  T_ASC_PresentationContextID presID = scu.findPresentationContextID(UID_MOVEStudyRootQueryRetrieveInformationModel, "" /* don't care about transfer syntax */ );
   if (presID == 0)
     {
     logger.error ( "MOVE Request failed: No valid Study Root MOVE Presentation Context available" );
-    if (!this->KeepAssociationOpen)
+    if (!KeepAssociationOpen)
       {
-      this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+      scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
       }
     return false;
     }
-  OFCondition status = this->SCU.sendMOVERequest ( presID, this->MoveDestinationAETitle.toStdString().c_str(), retrieveParameters, &responses );
+  OFCondition status = scu.sendMOVERequest ( presID, this->MoveDestinationAETitle.toStdString().c_str(), retrieveParameters, &responses );
   // Close association if we do not want to explicitly keep it open
-  if (!this->KeepAssociationOpen)
+  if (!KeepAssociationOpen)
     {
-    this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    scu.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
     }
   // Free some (little) memory
   delete retrieveParameters;
@@ -206,9 +203,9 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
    * 3) Error code, i.e. no images transferred
    * 4) Warning (one or more failures, i.e. some images transferred)
    */
-  if ( responses.size() == 1 )
+  if ( responses.numResults() == 1 )
     {
-    RetrieveResponse* rsp = *responses.begin();
+    MOVEResponse* rsp = *responses.begin();
     logger.debug ( "MOVE response receveid with status: " + QString(DU_cmoveStatusString(rsp->m_status)) );
     if ((rsp->m_status == STATUS_Success) || (rsp->m_status == STATUS_MOVE_Warning_SubOperationsCompleteOneOrMoreFailures))
       {
@@ -233,9 +230,9 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
       throw std::runtime_error( statusDetail.toStdString() );
       }
     }
-    // Select the last MOVE response to output meaningful status information
-    OFIterator<RetrieveResponse*> it = responses.begin();
-  Uint32 numResults = responses.size();
+  // Select the last MOVE response to output meaningful status information
+  OFListIterator(MOVEResponse*) it = responses.begin();
+  Uint32 numResults = responses.numResults();
   for (Uint32 i = 1; i < numResults; i++)
     {
     it++;
@@ -245,6 +242,48 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
     + QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops))   + " images transferred with warning, and\n"
     + QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))    + " images transfers failed");
 
+  /* Comment from Michael: The code below does not make sense. Using MOVE you never
+   * receive the image here but only status information; thus, rsp->m_dataset is _not_
+   * an image. I leave it inside since it might be moved to a location which makes more
+   * sense.
+   */
+
+ // for ( OFListIterator(MOVEResponse*) it = responses.begin(); it != responses.end(); it++ )
+ // {
+ //    DcmDataset *dataset = (*it)->m_dataset;
+ //   if ( dataset != NULL )
+ //   {
+ //     logger.debug ( "Got a valid dataset" );
+ //     // Save in correct directory
+ //     E_TransferSyntax output_transfersyntax = dataset->getOriginalXfer();
+ //     dataset->chooseRepresentation( output_transfersyntax, NULL );
+ //
+ //     if ( !dataset->canWriteXfer( output_transfersyntax ) )
+ //     {
+ //       // Pick EXS_LittleEndianExplicit as our default
+ //       output_transfersyntax = EXS_LittleEndianExplicit;
+ //     }
+ //
+ //     DcmXfer opt_oxferSyn( output_transfersyntax );
+ //     if ( !dataset->chooseRepresentation( opt_oxferSyn.getXfer(), NULL ).bad() )
+ //     {
+ //       DcmFileFormat fileformat( dataset );
+ //
+ //       // Follow dcmdjpeg example
+ //       OFString SOPInstanceUID;
+ //       dataset->findAndGetOFString ( DCM_SOPInstanceUID, SOPInstanceUID );
+ //       QFileInfo fi ( directory, QString ( SOPInstanceUID.c_str() ) );
+ //       logger.debug ( "Saving file: " + fi.absoluteFilePath() );
+ //       status = fileformat.saveFile ( fi.absoluteFilePath().toStdString().c_str(), opt_oxferSyn.getXfer() );
+ //       if ( !status.good() )
+ //       {
+ //         logger.error ( "Error saving file: " + fi.absoluteFilePath() + " Error is " + status.text() );
+ //       }
+ //      // Insert into our local database
+ //       RetrieveDatabase->insert( dataset, true );
+ //     }
+ //   }
+ // }
   return true;
 }
 
@@ -267,9 +306,9 @@ ctkDICOMRetrieve::~ctkDICOMRetrieve()
 void ctkDICOMRetrieve::setCallingAETitle( const QString& callingAETitle )
 {
   Q_D(ctkDICOMRetrieve);
-  if (strcmp(callingAETitle.toStdString().c_str(), d->SCU.getAETitle().c_str()))
+  if (strcmp(callingAETitle.toStdString().c_str(), d->scu.getAETitle().c_str()))
   {
-    d->SCU.setAETitle(callingAETitle.toStdString().c_str());
+    d->scu.setAETitle(callingAETitle.toStdString().c_str());
     d->ConnectionParamsChanged = true;
   }
 }
@@ -278,16 +317,16 @@ void ctkDICOMRetrieve::setCallingAETitle( const QString& callingAETitle )
 QString ctkDICOMRetrieve::callingAETitle() const
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->SCU.getAETitle().c_str();
+  return d->scu.getAETitle().c_str();
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCalledAETitle( const QString& calledAETitle )
 {
   Q_D(ctkDICOMRetrieve);
-  if (strcmp(calledAETitle.toStdString().c_str(),d->SCU.getPeerAETitle().c_str()))
+  if (strcmp(calledAETitle.toStdString().c_str(),d->scu.getPeerAETitle().c_str()))
   {
-    d->SCU.setPeerAETitle(calledAETitle.toStdString().c_str());
+    d->scu.setPeerAETitle(calledAETitle.toStdString().c_str());
     d->ConnectionParamsChanged = true;
   }
 }
@@ -296,16 +335,16 @@ void ctkDICOMRetrieve::setCalledAETitle( const QString& calledAETitle )
 QString ctkDICOMRetrieve::calledAETitle()const
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->SCU.getPeerAETitle().c_str();
+  return d->scu.getPeerAETitle().c_str();
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setHost( const QString& host )
 {
   Q_D(ctkDICOMRetrieve);
-  if (strcmp(host.toStdString().c_str(), d->SCU.getPeerHostName().c_str()))
+  if (strcmp(host.toStdString().c_str(), d->scu.getPeerHostName().c_str()))
   {
-    d->SCU.setPeerHostName(host.toStdString().c_str());
+    d->scu.setPeerHostName(host.toStdString().c_str());
     d->ConnectionParamsChanged = true;
   }
 }
@@ -314,16 +353,16 @@ void ctkDICOMRetrieve::setHost( const QString& host )
 QString ctkDICOMRetrieve::host()const
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->SCU.getPeerHostName().c_str();
+  return d->scu.getPeerHostName().c_str();
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCalledPort( int port )
 {
   Q_D(ctkDICOMRetrieve);
-  if (d->SCU.getPeerPort() != port)
+  if (d->scu.getPeerPort() != port)
   {
-    d->SCU.setPeerPort(port);
+    d->scu.setPeerPort(port);
     d->ConnectionParamsChanged = true;
   }
 }
@@ -332,7 +371,7 @@ void ctkDICOMRetrieve::setCalledPort( int port )
 int ctkDICOMRetrieve::calledPort()const
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->SCU.getPeerPort();
+  return d->scu.getPeerPort();
 }
 
 //------------------------------------------------------------------------------
