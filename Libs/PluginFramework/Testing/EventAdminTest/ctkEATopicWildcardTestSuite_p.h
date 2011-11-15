@@ -69,7 +69,7 @@ public:
 
 signals:
 
-  void syncSignal(const ctkEvent& event);
+  void syncSignal(const ctkDictionary& event);
 
 private slots:
 

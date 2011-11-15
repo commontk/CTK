@@ -138,8 +138,8 @@ protected slots:
 
 signals:
 
-  void syncSignalEvent(const ctkEvent&);
-  void asyncSignalEvent(const ctkEvent&);
+  void syncSignalEvent(const ctkDictionary&);
+  void asyncSignalEvent(const ctkDictionary&);
 };
 
 /**

@@ -33,7 +33,7 @@ ctkEventAdminService::ctkEventAdminService(ctkPluginContext* context,
                                            int timeout,
                                            const QStringList& ignoreTimeout)
   : impl(managers, syncPool, asyncPool, timeout, ignoreTimeout),
-    context(context), signalPublisher(this)
+    context(context)
 {
 
 }
@@ -54,19 +54,95 @@ void ctkEventAdminService::sendEvent(const ctkEvent& event)
 }
 
 void ctkEventAdminService::publishSignal(const QObject* publisher, const char* signal,
+                                         const QString& topic,
                                          Qt::ConnectionType type)
 {
+  if (topic.isEmpty())
+  {
+    throw std::invalid_argument("topic must not be empty");
+  }
+
+  // check if the signal was already registered under the given topic
+  if (signalPublisher.contains(publisher))
+  {
+    const QList<ctkEASignalPublisher*>& signalPublishers = signalPublisher[publisher];
+    for(int i = 0; i < signalPublishers.size(); ++i)
+    {
+      if (signalPublishers[i]->getSignalName() == signal &&
+          signalPublishers[i]->getTopicName() == topic)
+      {
+        return;
+      }
+    }
+  }
+
+  QList<ctkEASignalPublisher*>& signalList = signalPublisher[publisher];
+  signalList.push_back(new ctkEASignalPublisher(this, signal, topic));
   if (type == Qt::DirectConnection)
   {
-    connect(publisher, signal, &signalPublisher, SLOT(publishSyncSignal(ctkEvent)), Qt::DirectConnection);
+    connect(publisher, signal, signalList.back(), SLOT(publishSyncSignal(ctkDictionary)), Qt::DirectConnection);
   }
   else if (type == Qt::QueuedConnection)
   {
-    connect(publisher, signal, &signalPublisher, SLOT(publishAsyncSignal(ctkEvent)), Qt::DirectConnection);
+    connect(publisher, signal, signalList.back(), SLOT(publishAsyncSignal(ctkDictionary)), Qt::DirectConnection);
   }
   else
   {
     throw std::invalid_argument("type must be either Qt::DirectConnection or Qt::QueuedConnection");
+  }
+}
+
+void ctkEventAdminService::unpublishSignal(const QObject* publisher, const char* signal,
+                                           const QString& topic)
+{
+  if (!signalPublisher.contains(publisher)) return;
+
+  if (signal == 0 && topic.isEmpty())
+  {
+    // unpublish everything from the given publisher
+    // this automatically disconnects signals
+    qDeleteAll(signalPublisher.take(publisher));
+  }
+  else
+  {
+    QList<ctkEASignalPublisher*>& list = signalPublisher[publisher];
+    if (signal == 0)
+    {
+      for (int i = 0; i < list.size(); )
+      {
+        if (list[i]->getTopicName() == topic)
+        {
+          // this automatically disconnects the signals
+          delete list.takeAt(i);
+        }
+        else
+        {
+          ++i;
+        }
+      }
+    }
+    else {
+      for (int i = 0; i < list.size(); )
+      {
+        if (list[i]->getSignalName() == signal)
+        {
+          if (topic.isEmpty() || list[i]->getTopicName() == topic)
+          {
+            // this automatically disconnects the signals
+            delete list.takeAt(i);
+          }
+        }
+        else
+        {
+          ++i;
+        }
+      }
+    }
+
+    if (list.isEmpty())
+    {
+      signalPublisher.remove(publisher);
+    }
   }
 }
 
