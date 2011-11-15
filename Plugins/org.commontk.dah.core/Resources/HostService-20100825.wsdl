@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="HostService-20100825"
+  targetNamespace="http://dicom.nema.org/PS3.19/HostService-20100825"
+  xmlns:tns="http://dicom.nema.org/PS3.19/HostService-20100825"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+  xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+  xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract"
+  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+  xmlns:wsa10="http://www.w3.org/2005/08/addressing"
+  xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://dicom.nema.org/PS3.19/Imports/HostService-20100825">
+      <xsd:import namespace="http://dicom.nema.org/PS3.19/HostService-20100825"
+        schemaLocation="./HostService-20100825.xsd"/>
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"
+        schemaLocation="./Types.xsd"  />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays"
+        schemaLocation="./ArrayOfString.xsd" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/System.Xml.XPath"
+        schemaLocation="./XPathNodeType.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IHostService_GenerateUID_InputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateUID"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_GenerateUID_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateUIDResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_GetAvailableScreen_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAvailableScreen"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_GetAvailableScreen_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAvailableScreenResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_GetOutputLocation_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetOutputLocation"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_GetOutputLocation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetOutputLocationResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_NotifyStateChanged_InputMessage">
+    <wsdl:part name="parameters" element="tns:NotifyStateChanged"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_NotifyStateChanged_OutputMessage">
+    <wsdl:part name="parameters" element="tns:NotifyStateChangedResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_NotifyStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:NotifyStatus"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_NotifyStatus_OutputMessage">
+    <wsdl:part name="parameters" element="tns:NotifyStatusResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_NotifyDataAvailable_InputMessage">
+    <wsdl:part name="parameters" element="tns:NotifyDataAvailable"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_NotifyDataAvailable_OutputMessage">
+    <wsdl:part name="parameters" element="tns:NotifyDataAvailableResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_GetData_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetData"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_GetData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDataResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_ReleaseData_InputMessage">
+    <wsdl:part name="parameters" element="tns:ReleaseData"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_ReleaseData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ReleaseDataResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_GetAsModels_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAsModels"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_GetAsModels_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAsModelsResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_ReleaseModels_InputMessage">
+    <wsdl:part name="parameters" element="tns:ReleaseModels"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_ReleaseModels_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ReleaseModelsResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_QueryModel_InputMessage">
+    <wsdl:part name="parameters" element="tns:QueryModel"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_QueryModel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:QueryModelResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_QueryInfoSet_InputMessage">
+    <wsdl:part name="parameters" element="tns:QueryInfoSet"/>
+  </wsdl:message>
+  <wsdl:message name="IHostService_QueryInfoSet_OutputMessage">
+    <wsdl:part name="parameters" element="tns:QueryInfoSetResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="IHostService-20100825">
+    <wsdl:operation name="GenerateUID">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GenerateUID"
+        message="tns:IHostService_GenerateUID_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GenerateUIDResponse"
+        message="tns:IHostService_GenerateUID_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAvailableScreen">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GetAvailableScreen"
+        message="tns:IHostService_GetAvailableScreen_InputMessage"/>
+      <wsdl:output
+        wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GetAvailableScreenResponse"
+        message="tns:IHostService_GetAvailableScreen_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetOutputLocation">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GetOutputLocation"
+        message="tns:IHostService_GetOutputLocation_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GetOutputLocationResponse"
+        message="tns:IHostService_GetOutputLocation_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyStateChanged">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/NotifyStateChanged"
+        message="tns:IHostService_NotifyStateChanged_InputMessage"/>
+      <wsdl:output
+        wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/NotifyStateChangedResponse"
+        message="tns:IHostService_NotifyStateChanged_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyStatus">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/NotifyStatus"
+        message="tns:IHostService_NotifyStatus_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/NotifyStatusResponse"
+        message="tns:IHostService_NotifyStatus_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyDataAvailable">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/NotifyDataAvailable"
+        message="tns:IHostService_NotifyDataAvailable_InputMessage"/>
+      <wsdl:output
+        wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/NotifyDataAvailableResponse"
+        message="tns:IHostService_NotifyDataAvailable_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetData">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GetData"
+        message="tns:IHostService_GetData_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GetDataResponse"
+        message="tns:IHostService_GetData_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="ReleaseData">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/ReleaseData"
+        message="tns:IHostService_ReleaseData_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/ReleaseDataResponse"
+        message="tns:IHostService_ReleaseData_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAsModels">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GetAsModels"
+        message="tns:IHostService_GetAsModels_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/GetAsModelsResponse"
+        message="tns:IHostService_GetAsModels_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="ReleaseModels">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/ReleaseModels"
+        message="tns:IHostService_ReleaseModels_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/ReleaseModelsResponse"
+        message="tns:IHostService_ReleaseModels_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="QueryModel">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/QueryModel"
+        message="tns:IHostService_QueryModel_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/QueryModelResponse"
+        message="tns:IHostService_QueryModel_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="QueryInfoSet">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/QueryInfoSet"
+        message="tns:IHostService_QueryInfoSet_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IHostService/QueryInfoSetResponse"
+        message="tns:IHostService_QueryInfoSet_OutputMessage"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="HostService-YYYYNNDDBinding" type="tns:IHostService-20100825">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GenerateUID">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/GenerateUID"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAvailableScreen">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/GetAvailableScreen"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOutputLocation">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/GetOutputLocation"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyStateChanged">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/NotifyStateChanged"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyStatus">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/NotifyStatus"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyDataAvailable">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/NotifyDataAvailable"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetData">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/GetData"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReleaseData">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/ReleaseData"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAsModels">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/GetAsModels"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReleaseModels">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/ReleaseModels"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="QueryModel">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/QueryModel"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="QueryInfoSet">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IHostService/QueryInfoSet"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="HostService-20100825">
+    <wsdl:port name="HostServiceBinding" binding="tns:HostService-YYYYNNDDBinding">
+      <soap:address location="http://localhost/Service"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions> 
