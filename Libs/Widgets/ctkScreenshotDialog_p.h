@@ -46,7 +46,7 @@ public:
   void setWaitingForScreenshot(bool waiting);
   bool isWaitingForScreenshot()const;
 
-public slots:
+public Q_SLOTS:
 
   void saveScreenshot(int delayInSeconds);
 

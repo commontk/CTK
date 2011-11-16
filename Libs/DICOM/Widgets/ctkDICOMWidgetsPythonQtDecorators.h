@@ -43,7 +43,7 @@ public:
     {
     }
 
-public slots:
+public Q_SLOTS:
 
   //
   // None yet - refer to other libs for examples

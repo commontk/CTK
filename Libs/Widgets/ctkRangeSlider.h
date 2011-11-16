@@ -111,7 +111,7 @@ public:
   QString handleToolTip()const;
   void setHandleToolTip(const QString& toolTip);
 
-signals:
+Q_SIGNALS:
   ///
   /// This signal is emitted when the slider minimum value has changed, 
   /// with the new slider value as argument.
@@ -143,7 +143,7 @@ signals:
   /// have changed.
   void positionsChanged(int min, int max);
 
-public slots:
+public Q_SLOTS:
   /// 
   /// This property holds the slider's current minimum value.
   /// The slider silently forces min to be within the legal range: 
@@ -169,7 +169,7 @@ public slots:
   /// \sa setMinimumValue, setMaximumValue, setMinimum, setMaximum, setRange
   void setValues(int min, int max);
 
-protected slots:
+protected Q_SLOTS:
   void onRangeChanged(int minimum, int maximum);
 
 protected:

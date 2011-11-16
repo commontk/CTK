@@ -83,7 +83,7 @@ public:
   virtual int numberOfTimesRanOnEntry()const;
   virtual int numberOfTimesRanOnExit()const;
 
-protected slots:
+protected Q_SLOTS:
 
   /// Always returns 1 (validation successful)
   virtual void validate(const QString& desiredBranchId = QString())const;
@@ -98,7 +98,7 @@ protected slots:
   /// Increments the counter numberOfTimesRanOnExit
   virtual void onExit(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
-signals:
+Q_SIGNALS:
   ///
   /// Signals indicating to the workflow that these processes have
   /// completed

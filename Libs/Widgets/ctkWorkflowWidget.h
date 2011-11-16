@@ -65,12 +65,12 @@ public:
   /// Get the widget with the 'next', 'back' and 'goTo' buttons
   Q_INVOKABLE ctkWorkflowButtonBoxWidget* buttonBoxWidget()const;
 
-public slots:
+public Q_SLOTS:
   /// Triggers updates of the the workflowGroupBox and the buttonBoxWidget when the current workflow
   /// step has changed.
   virtual void onCurrentStepChanged(ctkWorkflowStep* currentStep);
 
-protected slots:
+protected Q_SLOTS:
   void onStepRegistered(ctkWorkflowStep* step);
 
 protected:

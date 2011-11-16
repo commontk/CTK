@@ -83,7 +83,7 @@ public:
   /// it manually.
   bool eventFilter(QObject* watched, QEvent* event);
 
-public slots:
+public Q_SLOTS:
   /// If true, it installs the eventFilter on the application. Otherwise
   /// it removes it.
   void setEnabled(bool enable);

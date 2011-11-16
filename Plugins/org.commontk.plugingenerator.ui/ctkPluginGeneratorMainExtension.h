@@ -34,7 +34,7 @@ class ctkPluginGeneratorMainExtension : public ctkPluginGeneratorAbstractUiExten
 public:
     ctkPluginGeneratorMainExtension();
 
-protected slots:
+protected Q_SLOTS:
 
     void updateParameters();
     void symbolicNameChanged();

@@ -52,7 +52,7 @@ public:
   explicit ctkButtonGroup(QObject *_parent = 0);
   virtual ~ctkButtonGroup();
 
-protected slots:
+protected Q_SLOTS:
   void onButtonClicked(int button);
   void onButtonPressed(int button);
 

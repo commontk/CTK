@@ -62,7 +62,7 @@ public :
   /// False by default.
   bool autoReset() const;
 
-signals:
+Q_SIGNALS:
   void currentAxisChanged(ctkAxesWidget::Axis axis);
 
 public slots :

@@ -35,7 +35,7 @@ public:
     this->Value = 0;
     }
 
-public slots:
+public Q_SLOTS:
 
   int value() const { return this->Value; }
   void setValue(int newValue){ this->Value = newValue; }

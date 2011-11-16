@@ -181,7 +181,7 @@ public:
   bool symmetricMoves()const;
   void setSymmetricMoves(bool symmetry);
 
-public slots:
+public Q_SLOTS:
   ///
   /// Reset the slider and spinbox to zero (value and position)
   void reset();
@@ -191,7 +191,7 @@ public slots:
   /// Utility function that set the min and max values at once
   void setValues(double minValue, double maxValue);
 
-signals:
+Q_SIGNALS:
   /// Use with care:
   /// sliderMoved is emitted only when the user moves the slider
   //void sliderMoved(double position);
@@ -202,7 +202,7 @@ signals:
   void valuesChanged(double minValue, double maxValue);
   void rangeChanged(double min, double max);
 
-protected slots:
+protected Q_SLOTS:
   void startChanging();
   void stopChanging();
   void changeValues(double newMinValue, double newMaxValue);

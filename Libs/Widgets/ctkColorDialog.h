@@ -93,7 +93,7 @@ public:
   /// -1 for the "Basic Colors", it's the default behavior
   static void setDefaultTab(int index);
 
-public slots:
+public Q_SLOTS:
   /// Slotify QColorDialog::setCurrentColor(QColor)
   void setColor(const QColor& color);
 

@@ -81,7 +81,7 @@ public:
   /// in the button.
   virtual QSize sizeHint()const;
 
-public slots:
+public Q_SLOTS:
   ///
   /// Set a new current color without opening a dialog
   void setColor(const QColor& color);
@@ -95,12 +95,12 @@ public slots:
   /// By default, this is activated.
   void setDisplayColorName(bool displayColorName);
 
-signals:
+Q_SIGNALS:
   /// colorChanged is fired anytime a new color is set. Programatically or
   /// by the user when choosing a color from the color dialog
   void colorChanged(QColor);
 
-protected slots:
+protected Q_SLOTS:
   void onToggled(bool change = true);
 
 protected:

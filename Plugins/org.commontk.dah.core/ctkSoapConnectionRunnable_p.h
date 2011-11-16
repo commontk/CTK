@@ -40,12 +40,12 @@ public:
 
   void run();
 
-signals:
+Q_SIGNALS:
 
   void incomingSoapMessage(const QtSoapMessage& message, QtSoapMessage* reply);
   void incomingWSDLMessage(const QString& message, QString* reply);
 
-protected slots:
+protected Q_SLOTS:
 
   void aboutToQuit();
 

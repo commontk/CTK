@@ -60,7 +60,7 @@ public:
 
   void chartsBounds(double bounds[4])const;
   void chartsExtent(double extent[4])const;
-public slots:
+public Q_SLOTS:
   void setVolumeProperty(vtkVolumeProperty* volumeProperty);
 
   /// Move all the control points of the opacity, colors and gradient
@@ -79,10 +79,10 @@ public slots:
 
   void showThreshold(bool enable);
 
-signals:
+Q_SIGNALS:
   void chartsExtentChanged();
 
-protected slots:
+protected Q_SLOTS:
   void updateFromVolumeProperty();
   void updateRange();
 

@@ -44,7 +44,7 @@ public:
 
   ctkPluginBrowser(ctkPluginFramework* framework);
 
-private slots:
+private Q_SLOTS:
 
   void pluginSelected(const QModelIndex& index);
   void pluginDoubleClicked(const QModelIndex& index);

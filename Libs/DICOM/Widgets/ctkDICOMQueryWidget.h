@@ -46,11 +46,11 @@ private:
   Q_DECLARE_PRIVATE(ctkDICOMQueryWidget);
   Q_DISABLE_COPY(ctkDICOMQueryWidget);
 
-signals:
+Q_SIGNALS:
   /// This signal is emitted when any of the search parameters changed.
   void parameterChanged();
 
-protected slots:
+protected Q_SLOTS:
   void startTimer();
 };
 

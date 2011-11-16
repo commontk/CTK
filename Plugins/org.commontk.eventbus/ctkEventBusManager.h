@@ -90,7 +90,7 @@ public:
     /// Create the client for remote communication according to the given protocol, server host and port.
     bool createClient(const QString &communication_protocol, const QString &server_host, unsigned int port);
 
-public slots:
+public Q_SLOTS:
     /// Intercepts objects deletation and detach them from the event bus.
     void detachObjectFromBus();
 

@@ -48,7 +48,7 @@ public:
   /// Reimplemented for internal reasons
   virtual int heightForWidth(int width) const;
 
-protected slots:
+protected Q_SLOTS:
   void heightForWidthMayHaveChanged();
 
 protected:

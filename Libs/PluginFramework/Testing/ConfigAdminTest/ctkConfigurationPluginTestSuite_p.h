@@ -78,7 +78,7 @@ public:
   ctkConfigurationPluginTestSuite(ctkPluginContext* pc, long cmPluginId);
   ~ctkConfigurationPluginTestSuite();
 
-private slots:
+private Q_SLOTS:
 
   void init();
   void cleanup();

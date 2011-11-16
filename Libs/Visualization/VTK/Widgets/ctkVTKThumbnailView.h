@@ -43,7 +43,7 @@ public:
 
   void setRendererToListen(vtkRenderer* renderer);
 
-protected slots:
+protected Q_SLOTS:
   void checkAbort();
   void updateBounds();
   void updateCamera();

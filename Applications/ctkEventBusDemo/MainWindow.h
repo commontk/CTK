@@ -13,11 +13,11 @@ namespace Ui {
 class ctkEventDemo : public QObject {
     Q_OBJECT
 
-signals:
+Q_SIGNALS:
     void receiveEventSignal(QVariantList l);
     void updateMessageSignal(QString message);
 
-public slots:
+public Q_SLOTS:
     void receiveEvent(QVariantList l);
 };
 
@@ -28,7 +28,7 @@ public:
     MainWindow(ctkEventAdminBus *bus, QWidget *parent = 0);
     ~MainWindow();
 
-public slots:
+public Q_SLOTS:
     void sendEvent();
     void updateMessage(QString message);
     void connectClient();

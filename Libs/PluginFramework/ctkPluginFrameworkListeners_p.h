@@ -98,14 +98,14 @@ public:
 
   void emitFrameworkEvent(const ctkPluginFrameworkEvent& event);
 
-signals:
+Q_SIGNALS:
 
   void pluginChangedDirect(const ctkPluginEvent& event);
   void pluginChangedQueued(const ctkPluginEvent& event);
 
   void frameworkEvent(const ctkPluginFrameworkEvent& event);
 
-private slots:
+private Q_SLOTS:
 
   void serviceListenerDestroyed(QObject* listener);
 

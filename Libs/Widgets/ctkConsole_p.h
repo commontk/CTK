@@ -102,7 +102,7 @@ public:
   /// Print welcome message
   virtual void printWelcomeMessage();
 
-public slots:
+public Q_SLOTS:
 
   /// Inserts the given completion string at the cursor.  This will replace
   /// the current word that the cursor is touching with the given text.

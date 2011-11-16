@@ -123,7 +123,7 @@ private:
 
   QThread thread;
 
-protected slots:
+protected Q_SLOTS:
 
   void sendEvents();
   void postEvents();
@@ -168,7 +168,7 @@ public:
    */
   ctkEAScenario3TestSuite(ctkPluginContext* context, long eventPluginId);
 
-private slots:
+private Q_SLOTS:
 
   void initTestCase();
   void cleanupTestCase();

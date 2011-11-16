@@ -155,7 +155,7 @@ public:
   /// Reimplemented for internal reasons (handle tooltip).
   virtual bool eventFilter(QObject*, QEvent*);
 
-public slots:
+public Q_SLOTS:
   /// 
   /// This property holds the slider's current value.
   /// The slider forces the value to be within the legal range: 
@@ -168,7 +168,7 @@ public slots:
   /// The orientation must be Qt::Vertical (the default) or Qt::Horizontal.
   void setOrientation(Qt::Orientation orientation);
 
-signals:
+Q_SIGNALS:
   ///
   /// This signal is emitted when the slider value has changed, with the new
   /// slider value as argument.
@@ -198,7 +198,7 @@ signals:
   /// \sa QAbstractSlider::rangeChanged()
   void rangeChanged(double min, double max);
 
-protected slots:
+protected Q_SLOTS:
   void onValueChanged(int value);
   void onSliderMoved(int position);
   void onRangeChanged(int min, int max);

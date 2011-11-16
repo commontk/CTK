@@ -56,13 +56,13 @@ public:
   bool useSharpness()const;
   void setUseSharpness(bool use);
 
-public slots:
+public Q_SLOTS:
   void setPiecewiseFunction(vtkPiecewiseFunction* function);
   void setRange(double min, double max);
   void setThresholdValues(double min, double max);
   void setOpacity(double opacity);
 
-protected slots:
+protected Q_SLOTS:
   void updateFromPiecewiseFunction();
 
 protected:

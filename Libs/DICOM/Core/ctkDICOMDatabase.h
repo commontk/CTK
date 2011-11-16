@@ -142,7 +142,7 @@ public:
   ///
   QString pathForDataset( DcmDataset *dataset);
 
-signals:
+Q_SIGNALS:
   void databaseChanged();
 
 protected:

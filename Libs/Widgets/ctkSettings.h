@@ -112,7 +112,7 @@ public:
   /// Calling this method will cause the modified signal to be emited.
   void alertSettingsModified();
 
-signals:
+Q_SIGNALS:
   void modified();
 };
 

@@ -54,7 +54,7 @@ public:
     /** Contains the conversion between maf datatypes and qxmlrpc datatype based both on QVariant. */
     /*virtual*/ void send(const QString event_id, ctkEventArgumentsList *argList);
 
-private slots:
+private Q_SLOTS:
     /// callback for the client which retrieve the variable from the server
     virtual void processReturnValue( int requestId, QVariant value );
 

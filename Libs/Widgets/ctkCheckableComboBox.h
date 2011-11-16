@@ -63,10 +63,10 @@ public:
   /// Reimplemented for internal reasons
   bool eventFilter(QObject *o, QEvent *e);
   
-signals:
+Q_SIGNALS:
   void checkedIndexesChanged();
 
-protected slots:
+protected Q_SLOTS:
   void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 
 protected:

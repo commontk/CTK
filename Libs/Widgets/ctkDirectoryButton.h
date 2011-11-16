@@ -111,12 +111,12 @@ public:
   const Options& options()const;
 #endif
 
-public slots:
+public Q_SLOTS:
   /// browse() opens a pop up where the user can select a new directory for the
   /// button. browse() is automatically called when the button is clicked.
   void browse();
 
-signals:
+Q_SIGNALS:
   /// directoryChanged is emitted when the current directory changes.
   /// Programatically or by the user via the file dialog that pop up when 
   /// clicking on the button.

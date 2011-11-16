@@ -53,9 +53,9 @@ public:
 
   void refresh();
 
-public slots:
+public Q_SLOTS:
 
-signals:
+Q_SIGNALS:
   void layoutChanged();
 
 protected:

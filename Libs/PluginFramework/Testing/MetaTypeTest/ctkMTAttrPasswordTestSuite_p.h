@@ -41,7 +41,7 @@ public:
 
   ctkMTAttrPasswordTestSuite(ctkPluginContext* pc, long mtPluginId);
 
-private slots:
+private Q_SLOTS:
 
   void initTestCase();
   void cleanupTestCase();

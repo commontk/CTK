@@ -49,7 +49,7 @@ public:
   void setSearchWidgetPopUpMode(bool flag);
   bool searchWidgetPopUpMode();
 
-public slots:
+public Q_SLOTS:
   void setDatabaseDirectory(const QString& directory);
   void onAddToDatabase();
 
@@ -61,13 +61,13 @@ public slots:
   void resumeModel();
   void resetModel();
 
-signals:
+Q_SIGNALS:
   /// Emited when directory is changed
   void databaseDirectoryChanged(const QString&);
 
 protected:
     QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;
-protected slots:
+protected Q_SLOTS:
     void onImportDirectory(QString directory);
     void onModelSelected(const QModelIndex& index);
 
@@ -106,7 +106,7 @@ protected slots:
     /// To be called after image preview displayed an image
     void onImagePreviewDisplayed(int imageID, int count);
 
-private slots:
+private Q_SLOTS:
 
     void onSearchPopUpButtonClicked();
 

@@ -36,7 +36,7 @@ class CTK_WIDGETS_EXPORT ctkSignalMapper: public QSignalMapper
 public:
   ctkSignalMapper(QObject* newParent = 0);
   
-public slots:
+public Q_SLOTS:
   /// ctkSignalMapper exposes the map(QAction*) slot to be conveniently
   /// connected with signals that have a QAction* as their first argument.
   /// ctkSignalMapper reveals to be useful when connecting a

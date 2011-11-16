@@ -57,14 +57,14 @@ public:
 
   QModelIndex currentImageIndex();
 
-signals:
+Q_SIGNALS:
 
   void requestNextImage();
   void requestPreviousImage();
 
   void imageDisplayed(int imageID, int count);
 
-public slots:
+public Q_SLOTS:
 
   void addImage( const QImage & image );
 

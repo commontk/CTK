@@ -65,7 +65,7 @@ public:
   QStandardItem* itemFromArray(vtkDataArray* dataArray, int column = 0)const;
   QModelIndexList indexes(vtkDataArray* dataArray)const;
 
-protected slots:
+protected Q_SLOTS:
   void onDataSetModified(vtkObject* dataSet);
   void onArrayModified(vtkObject* dataArray);
   void onItemChanged(QStandardItem * item);
