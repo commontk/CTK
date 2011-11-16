@@ -68,10 +68,10 @@ void ctkDicomAppPlugin::start(ctkPluginContext* context)
     }
 
   // start the application server
-  this->AppServer = new ctkDicomAppServer(appURL.port());
+  this->AppServer = new ctkDicomAppServer(appURL.port(), appURL.path());
 
   // register the host service, providing callbacks to the hosting application
-  this->HostInterface = new ctkDicomHostService(QUrl(hostURL).port(), "/HostInterface");
+  this->HostInterface = new ctkDicomHostService(QUrl(hostURL).port(), hostURL.path());
   context->registerService<ctkDicomHostInterface>(HostInterface);
 }
 

@@ -35,10 +35,11 @@ class ctkDicomHostServerPrivate : public QObject
   Q_OBJECT
 
 public:
-  ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port);
+  ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port, QString path);
 
   ctkSimpleSoapServer Server;
   int Port;
+  QString Path;
 
 public slots:
 

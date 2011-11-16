@@ -53,16 +53,16 @@ ctkDicomAbstractHostPrivate::ctkDicomAbstractHostPrivate(
 {
   // start server
   if (this->HostPort == 0)
-    {
+  {
     this->HostPort = 8080;
-    }
+  }
   if (this->AppPort == 0)
-    {
+  {
     this->AppPort = 8081;
-    }
+  }
 
-  this->Server = new ctkDicomHostServer(hostInterface,hostPort);
-  this->AppService = new ctkDicomAppService(appPort, "/ApplicationInterface");
+  this->Server = new ctkDicomHostServer(hostInterface, hostPort, "/HostService-20100825");
+  this->AppService = new ctkDicomAppService(appPort, "/ApplicationService-20100825"); //ApplicationInterface
 }
 
 //----------------------------------------------------------------------------
@@ -133,14 +133,14 @@ ctkDicomObjectLocatorCache* ctkDicomAbstractHost::objectLocatorCache()const
 bool ctkDicomAbstractHost::publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData)
 {
   if (!this->objectLocatorCache()->isCached(availableData))
-    {
+  {
     return false;
-    }
+  }
   bool success = this->getDicomAppService()->notifyDataAvailable(availableData, lastData);
   if(!success)
-    {
+  {
     return false;
-    }
+  }
   return true;
 }
 

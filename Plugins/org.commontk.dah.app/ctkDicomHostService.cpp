@@ -37,7 +37,7 @@ ctkDicomHostService::~ctkDicomHostService()
 //----------------------------------------------------------------------------
 QString ctkDicomHostService::generateUID()
 {
-  const QtSoapType& result = submitSoapRequest("generateUID", NULL);
+  const QtSoapType& result = submitSoapRequest("GenerateUID", NULL);
   QString resultUID = ctkDicomSoapUID::getUID(result);
   return resultUID;
 }
@@ -46,8 +46,8 @@ QString ctkDicomHostService::generateUID()
 QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProtocols)
 {
   QtSoapStruct* input = dynamic_cast<QtSoapStruct*>(
-    new ctkDicomSoapArrayOfStringType("string","preferredProtocols", preferredProtocols));
-  const QtSoapType& result = submitSoapRequest("getOutputLocation", input);
+   new ctkDicomSoapArrayOfStringType("string","preferredProtocols", preferredProtocols));
+  const QtSoapType& result = submitSoapRequest("GetOutputLocation", input);
   QString resultString = result.value().toString();
   return resultString;
 }
@@ -56,7 +56,7 @@ QString ctkDicomHostService::getOutputLocation(const QStringList& preferredProto
 QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 {
   QtSoapStruct* input = new ctkDicomSoapRectangle("preferredScreen", preferredScreen);
-  const QtSoapType& result = submitSoapRequest("getAvailableScreen", input);
+  const QtSoapType& result = submitSoapRequest("GetAvailableScreen", input);
   QRect resultRect = ctkDicomSoapRectangle::getQRect(result);
   qDebug() << "x:" << resultRect.x() << " y:" << resultRect.y();
   return resultRect;
@@ -65,8 +65,8 @@ QRect ctkDicomHostService::getAvailableScreen(const QRect& preferredScreen)
 //----------------------------------------------------------------------------
 void ctkDicomHostService::notifyStateChanged(ctkDicomAppHosting::State state)
 {
-  QtSoapType* input = new ctkDicomSoapState("newState", state); // spec would be "state", java has "newState" FIX JAVA/STANDARD
-  submitSoapRequest("notifyStateChanged", input);
+  QtSoapType* input = new ctkDicomSoapState("state", state); // spec would be "state", java has "newState" FIX JAVA/STANDARD
+  submitSoapRequest("NotifyStateChanged", input);
 }
 
 //----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void ctkDicomHostService::notifyStatus(const ctkDicomAppHosting::Status& status)
 {
   //Q_D(ctkDicomService);
   QtSoapStruct* input = new ctkDicomSoapStatus("status", status);
-  submitSoapRequest("notifyStatus", input);
+  submitSoapRequest("NotifyStatus", input);
 }
 
 //----------------------------------------------------------------------------

@@ -228,7 +228,7 @@ void ctkExampleDicomAppLogic::buttonClicked()
     qDebug() << "URI: " << locators.begin()->URI;
     QString filename = locators.begin()->URI;
     if(filename.startsWith("file:/",Qt::CaseInsensitive))
-      filename=filename.remove(0,6);
+      filename=filename.remove(0,8);
     qDebug()<<filename;
     DicomImage dcmtkImage(filename.toLatin1().data());
     ctkDICOMImage ctkImage(&dcmtkImage);

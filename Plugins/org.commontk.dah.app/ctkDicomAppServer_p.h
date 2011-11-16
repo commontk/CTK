@@ -45,7 +45,7 @@ class ctkDicomAppServer : public QObject, ctkServiceTrackerCustomizer<ctkDicomAp
   Q_OBJECT
 
 public:
-  ctkDicomAppServer(int port);
+  ctkDicomAppServer(int port, QString path);
   ~ctkDicomAppServer();
 public slots:
 
@@ -67,6 +67,7 @@ private:
   ctkSoapMessageProcessorList Processors;
   ctkSimpleSoapServer Server;
   int Port;
+  QString Path;
 
   ctkServiceTracker<ctkDicomAppInterface*> AppInterfaceTracker;
 };

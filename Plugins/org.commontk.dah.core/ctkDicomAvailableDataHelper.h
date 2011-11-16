@@ -79,4 +79,12 @@ bool org_commontk_dah_core_EXPORT addToAvailableData(ctkDicomAppHosting::Availab
 
 }
 
+//----------------------------------------------------------------------------
+bool org_commontk_dah_core_EXPORT addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data, 
+                        ctkDicomObjectLocatorCache* objectLocatorCache, 
+                        const ctkDICOMDataset& dataset, 
+                        long length, 
+                        long offset, 
+                        const QString& uri);
+
 #endif // CTKDICOMAVAILABLEDATAHELPER_H

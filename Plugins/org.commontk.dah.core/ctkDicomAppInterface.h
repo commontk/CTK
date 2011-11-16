@@ -24,6 +24,7 @@
 #define CTKDICOMAPPINTERFACE_H
 
 #include "ctkDicomExchangeInterface.h"
+#include <ctkDicomAppHostingTypesHelper.h>
 
 struct ctkDicomAppInterface : public ctkDicomExchangeInterface
 {
