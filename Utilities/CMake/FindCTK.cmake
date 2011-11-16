@@ -26,7 +26,7 @@
 #  CTK_MAJOR_VERSION - The CTK major version number.
 #  CTK_MINOR_VERSION - The CTK minor version number
 #                       (odd non-release).
-#  CTK_BUILD_VERSION - The CTK patch level
+#  CTK_PATCH_VERSION - The CTK patch level
 #                       (meaningless for odd minor).
 #  CTK_INCLUDE_DIRS  - Include directories for CTK
 #  CTK_LIBRARY_DIRS  - Link directories for CTK libraries
