@@ -41,6 +41,7 @@ ctkLogger::ctkLogger(QString name, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new ctkLoggerPrivate)
 {
+  Q_UNUSED(name);
   //Q_D(ctkLogger);
   //d->Logger = Log4Qt::Logger::logger( name.toStdString().c_str());
 }
@@ -50,18 +51,18 @@ ctkLogger::~ctkLogger()
 {
 }
 
-//-----------------------------------------------------------------------------
-void ctkLogger::configure()
-{
-  //Log4Qt::BasicConfigurator::configure();
-}
+////-----------------------------------------------------------------------------
+//void ctkLogger::configure()
+//{
+//  //Log4Qt::BasicConfigurator::configure();
+//}
 
 //-----------------------------------------------------------------------------
 void ctkLogger::debug(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->debug(s);
-  qDebug() << s;
+  qDebug().nospace() << qPrintable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -69,7 +70,7 @@ void ctkLogger::info(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->info(s);
-  qDebug() << s;
+  qDebug().nospace() << qPrintable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -77,7 +78,7 @@ void ctkLogger::trace(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->trace(s);
-  qDebug() << s;
+  qDebug().nospace() << qPrintable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -85,7 +86,7 @@ void ctkLogger::warn(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->warn(s);
-  qWarning() << s;
+  qWarning().nospace() << qPrintable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -93,7 +94,7 @@ void ctkLogger::error(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->error(s);
-  qCritical() << s;
+  qCritical().nospace() << qPrintable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -101,103 +102,103 @@ void ctkLogger::fatal(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->fatal(s);
-  qCritical() << s;
+  qCritical().nospace() << qPrintable(s);
 }
 
-//-----------------------------------------------------------------------------
-void ctkLogger::setOff()
-{
-  //Q_D(ctkLogger);
-  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::OFF_INT));
-}
+////-----------------------------------------------------------------------------
+//void ctkLogger::setOff()
+//{
+//  //Q_D(ctkLogger);
+//  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::OFF_INT));
+//}
 
-//-----------------------------------------------------------------------------
-void ctkLogger::setDebug()
-{
-  //Q_D(ctkLogger);
-  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::DEBUG_INT));
-}
+////-----------------------------------------------------------------------------
+//void ctkLogger::setDebug()
+//{
+//  //Q_D(ctkLogger);
+//  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::DEBUG_INT));
+//}
 
-//-----------------------------------------------------------------------------
-void ctkLogger::setInfo()
-{
-  //Q_D(ctkLogger);
-  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::INFO_INT));
-}
+////-----------------------------------------------------------------------------
+//void ctkLogger::setInfo()
+//{
+//  //Q_D(ctkLogger);
+//  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::INFO_INT));
+//}
 
-//-----------------------------------------------------------------------------
-void ctkLogger::setTrace()
-{
-  //Q_D(ctkLogger);
-  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::TRACE_INT));
-}
+////-----------------------------------------------------------------------------
+//void ctkLogger::setTrace()
+//{
+//  //Q_D(ctkLogger);
+//  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::TRACE_INT));
+//}
 
-//-----------------------------------------------------------------------------
-void ctkLogger::setWarn()
-{
-  //Q_D(ctkLogger);
-  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::WARN_INT));
-}
+////-----------------------------------------------------------------------------
+//void ctkLogger::setWarn()
+//{
+//  //Q_D(ctkLogger);
+//  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::WARN_INT));
+//}
 
-//-----------------------------------------------------------------------------
-void ctkLogger::setError()
-{
-  //Q_D(ctkLogger);
-  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::ERROR_INT));
-}
+////-----------------------------------------------------------------------------
+//void ctkLogger::setError()
+//{
+//  //Q_D(ctkLogger);
+//  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::ERROR_INT));
+//}
 
-//-----------------------------------------------------------------------------
-void ctkLogger::setFatal()
-{
-  //Q_D(ctkLogger);
-  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::FATAL_INT));
-}
+////-----------------------------------------------------------------------------
+//void ctkLogger::setFatal()
+//{
+//  //Q_D(ctkLogger);
+//  //d->Logger->setLevel(Log4Qt::Level(Log4Qt::Level::FATAL_INT));
+//}
 
-//-----------------------------------------------------------------------------
-bool ctkLogger::isOffEnabled()
-{
-  //Q_D(ctkLogger); //Not sure
-  //return d->Logger->isEnabledFor(Log4Qt::Level(Log4Qt::Level::OFF_INT));
-}
+////-----------------------------------------------------------------------------
+//bool ctkLogger::isOffEnabled()
+//{
+//  //Q_D(ctkLogger); //Not sure
+//  //return d->Logger->isEnabledFor(Log4Qt::Level(Log4Qt::Level::OFF_INT));
+//}
 
-//-----------------------------------------------------------------------------
-bool ctkLogger::isDebugEnabled()
-{
-  //Q_D(ctkLogger);
-  //return d->Logger->isDebugEnabled();
-}
+////-----------------------------------------------------------------------------
+//bool ctkLogger::isDebugEnabled()
+//{
+//  //Q_D(ctkLogger);
+//  //return d->Logger->isDebugEnabled();
+//}
 
-//-----------------------------------------------------------------------------
-bool ctkLogger::isInfoEnabled()
-{
-  //Q_D(ctkLogger);
-  //return d->Logger->isInfoEnabled();
-}
+////-----------------------------------------------------------------------------
+//bool ctkLogger::isInfoEnabled()
+//{
+//  //Q_D(ctkLogger);
+//  //return d->Logger->isInfoEnabled();
+//}
 
-//-----------------------------------------------------------------------------
-bool ctkLogger::isTraceEnabled()
-{
-  //Q_D(ctkLogger);
-  //return d->Logger->isTraceEnabled();
-}
+////-----------------------------------------------------------------------------
+//bool ctkLogger::isTraceEnabled()
+//{
+//  //Q_D(ctkLogger);
+//  //return d->Logger->isTraceEnabled();
+//}
 
-//-----------------------------------------------------------------------------
-bool ctkLogger::isWarnEnabled()
-{
-  //Q_D(ctkLogger);
-  //return d->Logger->isWarnEnabled();
-}
+////-----------------------------------------------------------------------------
+//bool ctkLogger::isWarnEnabled()
+//{
+//  //Q_D(ctkLogger);
+//  //return d->Logger->isWarnEnabled();
+//}
 
-//-----------------------------------------------------------------------------
-bool ctkLogger::isErrorEnabled()
-{
-  //Q_D(ctkLogger);
-  //return d->Logger->isErrorEnabled();
-}
+////-----------------------------------------------------------------------------
+//bool ctkLogger::isErrorEnabled()
+//{
+//  //Q_D(ctkLogger);
+//  //return d->Logger->isErrorEnabled();
+//}
 
-//-----------------------------------------------------------------------------
-bool ctkLogger::isFatalEnabled()
-{
-  //Q_D(ctkLogger);
-  //return d->Logger->isFatalEnabled();
-}
+////-----------------------------------------------------------------------------
+//bool ctkLogger::isFatalEnabled()
+//{
+//  //Q_D(ctkLogger);
+//  //return d->Logger->isFatalEnabled();
+//}

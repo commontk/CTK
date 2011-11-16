@@ -42,30 +42,12 @@ public:
   explicit ctkLogger(QString name, QObject* parent = 0);
   virtual ~ctkLogger ();
 
-  static void configure();
-
   void debug(const QString& s);
   void info(const QString& s);
   void trace(const QString& s);
   void warn(const QString& s);
   void error(const QString& s);
   void fatal(const QString& s);
-
-  void setOff();
-  void setDebug();
-  void setInfo();
-  void setTrace();
-  void setError();
-  void setWarn();
-  void setFatal();
-
-  bool isOffEnabled();
-  bool isDebugEnabled();
-  bool isInfoEnabled();
-  bool isTraceEnabled();
-  bool isWarnEnabled();
-  bool isErrorEnabled();
-  bool isFatalEnabled();
 
 protected:
   QScopedPointer<ctkLoggerPrivate> d_ptr;
