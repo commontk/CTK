@@ -39,24 +39,25 @@ ctkDicomAppService::~ctkDicomAppService()
 //----------------------------------------------------------------------------
 ctkDicomAppHosting::State ctkDicomAppService::getState()
 {
-  const QtSoapType & result = submitSoapRequest("getState", NULL);
+  const QtSoapType & result = submitSoapRequest("GetState", NULL);
   return ctkDicomSoapState::getState(result);
 }
 
 //----------------------------------------------------------------------------
 bool ctkDicomAppService::setState(ctkDicomAppHosting::State newState)
 {
-  QtSoapType* input = new ctkDicomSoapState("newState", newState);
-  const QtSoapType & result = submitSoapRequest("setState", input);
+  QtSoapType* input = new ctkDicomSoapState("state", newState);
+  const QtSoapType & result = submitSoapRequest("SetState", input);
   return ctkDicomSoapBool::getBool(result);
+
 }
 
 //----------------------------------------------------------------------------
 bool ctkDicomAppService::bringToFront(const QRect& requestedScreenArea)
 {
-  QtSoapType* input = new ctkDicomSoapRectangle("requestedScreenArea", requestedScreenArea);
-  const QtSoapType & result = submitSoapRequest("bringToFront", input);
-  return ctkDicomSoapBool::getBool(result);
+  QtSoapType* input = new ctkDicomSoapRectangle("RequestedScreenArea", requestedScreenArea);
+  const QtSoapType & result = submitSoapRequest("BringToFront", input);
+  return ctkDicomSoapBool::getBool(result);	
 }
 
 //----------------------------------------------------------------------------

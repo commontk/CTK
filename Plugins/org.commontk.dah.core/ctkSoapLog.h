@@ -22,13 +22,19 @@
 #ifndef CTKSOAPLOG_H
 #define CTKSOAPLOG_H
 
-//#define CTK_SOAP_LOG_LOWLEVEL(msg) qDebug() msg;
-#define CTK_SOAP_LOG_LOWLEVEL(msg)
+#define CTK_SOAP_LOG_LOWLEVEL(msg) qDebug() msg;
+//#define CTK_SOAP_LOG_LOWLEVEL(msg)
 
-//#define CTK_SOAP_LOG(msg) qDebug() msg;
-#define CTK_SOAP_LOG(msg)
+#define CTK_SOAP_LOG(msg) qDebug() msg;
+//#define CTK_SOAP_LOG(msg)
 
-//#define CTK_SOAP_LOG_HIGHLEVEL(msg) qDebug() msg;
-#define CTK_SOAP_LOG_HIGHLEVEL(msg)
+#define CTK_SOAP_LOG_HIGHLEVEL(msg) qDebug() msg;
+//#define CTK_SOAP_LOG_HIGHLEVEL(msg)
+
+//#define CTK_SOAP_LOG_REQUEST(msg) 
+#define CTK_SOAP_LOG_REQUEST(msg) qDebug() msg;
+
+#define CTK_SOAP_LOG_RECEPTION(msg) qDebug() msg;
+//#define CTK_SOAP_LOG_RECEPTION(msg)
 
 #endif // CTKSOAPLOG_H

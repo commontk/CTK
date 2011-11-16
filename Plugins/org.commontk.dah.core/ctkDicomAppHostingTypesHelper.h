@@ -61,11 +61,13 @@ struct org_commontk_dah_core_EXPORT ctkDicomSoapStatus : public QtSoapStruct
 };
 
 //----------------------------------------------------------------------------
-struct org_commontk_dah_core_EXPORT ctkDicomSoapUID : public QtSoapSimpleType
+//struct org_commontk_dah_core_EXPORT ctkDicomSoapUID : public QtSoapSimpleType
+struct org_commontk_dah_core_EXPORT ctkDicomSoapUID : public QtSoapStruct
 {
   ctkDicomSoapUID(const QString& name, const QString& uid);
 
-  static QString getUID(const QtSoapType& type);
+  //static QString getUID(const QtSoapType& type);
+  static QString getUID(const QtSoapType& array);
 };
 
 //----------------------------------------------------------------------------

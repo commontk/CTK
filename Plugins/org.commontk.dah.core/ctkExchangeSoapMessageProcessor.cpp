@@ -24,6 +24,9 @@
 
 #include <ctkDicomAppHostingTypesHelper.h>
 
+#include <QFile>
+#include <QTextStream>
+
 //----------------------------------------------------------------------------
 ctkExchangeSoapMessageProcessor::ctkExchangeSoapMessageProcessor(ctkDicomExchangeInterface* inter)
 : exchangeInterface(inter)
@@ -42,17 +45,17 @@ bool ctkExchangeSoapMessageProcessor::process(
 
   bool foundMethod = false;
 
-  if (methodName == "notifyDataAvailable")
+  if (methodName == "NotifyDataAvailable")
     {
     processNotifyDataAvailable(message, reply);
     foundMethod = true;
     }
-  else if (methodName == "getData")
+  else if (methodName == "GetData")
     {
     processGetData(message, reply);
     foundMethod = true;
     }
-  else if (methodName == "releaseData")
+  else if (methodName == "ReleaseData")
     {
     processReleaseData(message, reply);
     foundMethod = true;
@@ -80,8 +83,8 @@ void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
   // query interface
   bool result = exchangeInterface->notifyDataAvailable(data, lastData);
   // set reply message
-  reply->setMethod("notifyDataAvailable");
-  QtSoapType* resultType = new ctkDicomSoapBool("dataAvailable",result);
+  reply->setMethod("NotifyDataAvailableResponse");
+  QtSoapType* resultType = new ctkDicomSoapBool("NotifyDataAvailableResult",result);
   reply->addMethodArgument(resultType);
 }
 
@@ -90,9 +93,9 @@ void ctkExchangeSoapMessageProcessor::processGetData(
     const QtSoapMessage &message, QtSoapMessage *reply) const
 {
   // extract arguments from input message
-  const QtSoapType& inputType = message.method()["objectUUIDs"];
+  const QtSoapType& inputType = message.method()["objects"];
   const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(inputType);
-  const QtSoapType& inputType2 = message.method()["acceptableTransferSyntaxUIDs"];
+  const QtSoapType& inputType2 = message.method()["acceptableTransferSyntaxes"];
   const QStringList acceptableTransferSyntaxUIDs = ctkDicomSoapArrayOfStringType::getArray(inputType2);
   const QtSoapType& inputType3 = message.method()["includeBulkData"];
   const bool includeBulkData = ctkDicomSoapBool::getBool(inputType3);
@@ -100,8 +103,9 @@ void ctkExchangeSoapMessageProcessor::processGetData(
   const QList<ctkDicomAppHosting::ObjectLocator> result = exchangeInterface->getData(
     objectUUIDs, acceptableTransferSyntaxUIDs, includeBulkData);
   // set reply message
-  reply->setMethod("getData");
-  QtSoapType* resultType = new ctkDicomSoapArrayOfObjectLocators("arrayOfObjectLocator", result);
+  reply->setMethod(QtSoapQName("GetDataResponse","http://dicom.nema.org/PS3.19/ApplicationService-20100825"));
+  //reply->setMethod(QtSoapQName("GetDataResponse","http://dicom.nema.org/PS3.19/HostService-20100825"));
+  QtSoapType* resultType = new ctkDicomSoapArrayOfObjectLocators("GetDataResult", result);
   reply->addMethodArgument(resultType);
 }
 
@@ -110,7 +114,7 @@ void ctkExchangeSoapMessageProcessor::processReleaseData(
     const QtSoapMessage &message, QtSoapMessage * /*reply*/) const
 {
   // extract arguments from input message
-  const QtSoapType& inputType = message.method()["objectUUIDs"];
+  const QtSoapType& inputType = message.method()["objects"];
   const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(
     dynamic_cast<const QtSoapArray&>(inputType));
   // query interface
