@@ -589,6 +589,27 @@ CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
 ctkFunctionGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
 
 #-----------------------------------------------------------------------------
+# CTK dependencies - Projects should be TOPOLOGICALLY ordered
+#-----------------------------------------------------------------------------
+SET(CTK_POSSIBLE_DEPENDENCIES
+  CTKData
+  Log4Qt
+  KWStyle
+  VTK
+  PythonQt
+  PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
+  DCMTK
+  ZMQ
+  QtMobility
+  QtSOAP
+  OpenIGTLink
+  XIP
+  ITK
+  )
+SET(CTK_DEPENDENCIES) # This variable will contain the list of required CTK dependencies
+INCLUDE(CMake/ctkBlockCheckDependencies.cmake)
+
+#-----------------------------------------------------------------------------
 # Superbuild script
 #
 
@@ -596,12 +617,6 @@ IF(CTK_SUPERBUILD)
   INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   RETURN()
 ENDIF()
-
-
-#=============================================================================
-# End of Superbuild
-#=============================================================================
-
 
 #-----------------------------------------------------------------------------
 # Expand variables containing include and library directories for external projects
@@ -615,38 +630,30 @@ ENDFOREACH()
 
 FOREACH(_external_target ${EXTERNAL_TARGETS})
   IF(${_external_target}_INCLUDE_DIRS)
-    STRING(REPLACE "^" ";" _include_variable_list "${${_external_target}_INCLUDE_DIRS}")
-    IF(_include_variable_list)
-      #MESSAGE("[${_external_target}] Resolving include variables: ${${_external_target}_INCLUDE_DIRS}")
-      SET(${_external_target}_INCLUDE_DIRS "")
-      FOREACH(_include_variable ${_include_variable_list})
-        #MESSAGE("[${_external_target}] Appending ${${_include_variable}}")
-        IF(${_include_variable})
-          LIST(APPEND ${_external_target}_INCLUDE_DIRS ${${_include_variable}})
-        ELSE()
-          LIST(APPEND ${_external_target}_INCLUDE_DIRS ${_include_variable})
-        ENDIF()
-        #MESSAGE("[${_external_target}] New dirs: ${${_external_target}_INCLUDE_DIRS}")
-      ENDFOREACH()
-      #MESSAGE("[${_external_target}] Appended dirs: ${${_external_target}_INCLUDE_DIRS}")
-    ENDIF()
+    #MESSAGE("[${_external_target}] Resolving include variables: ${${_external_target}_INCLUDE_DIRS}")
+    FOREACH(_include_variable ${${_external_target}_INCLUDE_DIRS})
+      #MESSAGE("[${_external_target}] Appending ${${_include_variable}}")
+      IF(${_include_variable})
+        LIST(APPEND ${_external_target}_INCLUDE_DIRS ${${_include_variable}})
+      ELSE()
+        LIST(APPEND ${_external_target}_INCLUDE_DIRS ${_include_variable})
+      ENDIF()
+      #MESSAGE("[${_external_target}] New dirs: ${${_external_target}_INCLUDE_DIRS}")
+    ENDFOREACH()
+    #MESSAGE("[${_external_target}] Appended dirs: ${${_external_target}_INCLUDE_DIRS}")
   ENDIF()
   IF(${_external_target}_LIBRARY_DIRS)
-    STRING(REPLACE "^" ";" _library_variable_list "${${_external_target}_LIBRARY_DIRS}")
-    IF(_library_variable_list)
-      #MESSAGE("[${_external_target}] Resolving library variables: ${${_external_target}_LIBRARY_DIRS}")
-      SET(${_external_target}_LIBRARY_DIRS "")
-      FOREACH(_library_variable ${_library_variable_list})
-        #MESSAGE("[${_external_target}] Appending ${${_library_variable}}")
-        IF(${_library_variable})
-          LIST(APPEND ${_external_target}_LIBRARY_DIRS ${${_library_variable}})
-        ELSE()
-          LIST(APPEND ${_external_target}_LIBRARY_DIRS ${_library_variable})
-        ENDIF()
-        #MESSAGE("[${_external_target}] New dirs: ${${_external_target}_LIBRARY_DIRS}")
-      ENDFOREACH()
-      #MESSAGE("[${_external_target}] Appended dirs: ${${_external_target}_LIBRARY_DIRS}")
-    ENDIF()
+    #MESSAGE("[${_external_target}] Resolving library variables: ${${_external_target}_LIBRARY_DIRS}")
+    FOREACH(_library_variable ${${_external_target}_LIBRARY_DIRS})
+      #MESSAGE("[${_external_target}] Appending ${${_library_variable}}")
+      IF(${_library_variable})
+        LIST(APPEND ${_external_target}_LIBRARY_DIRS ${${_library_variable}})
+      ELSE()
+        LIST(APPEND ${_external_target}_LIBRARY_DIRS ${_library_variable})
+      ENDIF()
+      #MESSAGE("[${_external_target}] New dirs: ${${_external_target}_LIBRARY_DIRS}")
+    ENDFOREACH()
+    #MESSAGE("[${_external_target}] Appended dirs: ${${_external_target}_LIBRARY_DIRS}")
   ENDIF()
 ENDFOREACH()
 
