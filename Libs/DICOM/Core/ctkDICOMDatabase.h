@@ -121,25 +121,25 @@ public:
   Q_INVOKABLE QStringList headerKeys ();
   Q_INVOKABLE QString headerValue (QString key);
 
-  /** Insert into the database if not already exsting.
-    *  @param dataset The dataset to store into the database. Usually, this is
-    *                 is a complete DICOM object, like a complete image. However
-    *                 the database also inserts partial objects, like studyl
-    *                 information to the database, even if no image data is
-    *                 contained. This can be helpful to store results from
-    *                 querying the PACS for patient/study/series or image
-    *                 information, where a full hierarchy is only constructed
-    *                 after some queries.
-    *  @param storeFile If store file is set (default), then the dataset will
-    *                   be stored to disk. Note that in case of a memory-only
-    *                   database, this flag is ignored. Usually, this flag
-    *                   does only make sense if a full object is received.
-    *  @param @generateThumbnail If true, a thumbnail is generated.
-    */
+  /// Insert into the database if not already exsting.
+  /// @param dataset The dataset to store into the database. Usually, this is
+  ///                is a complete DICOM object, like a complete image. However
+  ///                the database also inserts partial objects, like studyl
+  ///                information to the database, even if no image data is
+  ///                contained. This can be helpful to store results from
+  ///                querying the PACS for patient/study/series or image
+  ///                information, where a full hierarchy is only constructed
+  ///                after some queries.
+  /// @param storeFile If store file is set (default), then the dataset will
+  ///                  be stored to disk. Note that in case of a memory-only
+  ///                  database, this flag is ignored. Usually, this flag
+  ///                  does only make sense if a full object is received.
+  /// @param @generateThumbnail If true, a thumbnail is generated.
+  ///
   void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
-  /***
-    * Helper method: get the path that should be used to store this image.
-    */
+  ///
+  /// Helper method: get the path that should be used to store this image.
+  ///
   QString pathForDataset( DcmDataset *dataset);
 
 signals:

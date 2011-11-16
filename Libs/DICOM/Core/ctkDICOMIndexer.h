@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMIndexer_h
 #define __ctkDICOMIndexer_h
 
-// Qt includes 
+// Qt includes
 #include <QObject>
 #include <QSqlDatabase>
 
@@ -31,44 +31,44 @@
 class ctkDICOMIndexerPrivate;
 class ctkDICOMAbstractThumbnailGenerator;
 
-/**
-    \brief Indexes DICOM images located in local directory into an Sql database
-*/
+///
+/// \brief Indexes DICOM images located in local directory into an Sql database
+///
 class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer : public QObject
 {
   Q_OBJECT
 public:
   explicit ctkDICOMIndexer(QObject *parent = 0);
   virtual ~ctkDICOMIndexer();
-  
-  /**
-      \brief Adds directory to database and optionally copies files to
-      destinationDirectory.
-      
-      Scan the directory using Dcmtk and populate the database with all the
-      DICOM images accordingly.
-  */
+
+  ///
+  /// \brief Adds directory to database and optionally copies files to
+  /// destinationDirectory.
+  ///
+  /// Scan the directory using Dcmtk and populate the database with all the
+  /// DICOM images accordingly.
+  ///
   Q_INVOKABLE void addDirectory(ctkDICOMDatabase& database, const QString& directoryName,
                     const QString& destinationDirectoryName = "",
                     bool createHierarchy = true, bool createThumbnails = true);
 
-  /**
-      \brief Adds a file to database and optionally copies the file to
-      destinationDirectory.
- 
-      Scan the file using Dcmtk and populate the database with all the
-      DICOM fields accordingly.
-  */
+  ///
+  /// \brief Adds a file to database and optionally copies the file to
+  /// destinationDirectory.
+  ///
+  /// Scan the file using Dcmtk and populate the database with all the
+  /// DICOM fields accordingly.
+  ///
   Q_INVOKABLE void addFile(ctkDICOMDatabase& database, const QString& filePath,
                     const QString& destinationDirectoryName = "",
                     bool createHierarchy = true, bool createThumbnails = true);
 
   Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 
-  /**
-      \brief runs a query and prints debug output of status
- 
-  */
+  ///
+  /// \brief runs a query and prints debug output of status
+  ///
+  ///
   bool loggedExec(QSqlQuery& query);
   bool loggedExec(QSqlQuery& query, const QString& queryString);
 
@@ -87,7 +87,7 @@ signals:
 
 protected:
   QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
-  
+
 private:
   Q_DECLARE_PRIVATE(ctkDICOMIndexer);
   Q_DISABLE_COPY(ctkDICOMIndexer);

@@ -31,9 +31,9 @@
 #include <string>
 
 class ctkDICOMPersonNameData;
-/**
-  \brief A person's name as modelled in DICOM.
-*/
+///
+/// \brief A person's name as modelled in DICOM.
+///
 class CTK_DICOM_CORE_EXPORT ctkDICOMPersonName
 {
 public:
@@ -48,9 +48,9 @@ public:
   ctkDICOMPersonName& operator=(const ctkDICOMPersonName& other);
 
   virtual ~ctkDICOMPersonName();
-  /**
-    \brief "Lastname, FirstName MiddleName, Suffix" (useful for alphabetical sorting)
-  */
+  ///
+  /// \brief "Lastname, FirstName MiddleName, Suffix" (useful for alphabetical sorting)
+  ///
   QString formattedName() const;
 
   QString lastName() const;
