@@ -159,8 +159,10 @@ int main(int argc, char** argv)
 
   widget->show();
 
-  ctkDICOMHostMainLogic *logic = new ctkDICOMHostMainLogic(ui.placeHolderForHostedApp);
+  ctkDICOMHostMainLogic *logic = new ctkDICOMHostMainLogic(ui.placeHolderForHostedApp, ui.placeHolderForDICOMAppWidget);
   logic->connect(ui.configureHostedApp,SIGNAL(clicked()), logic, SLOT(configureHostedApp()));
+  logic->connect(ui.sendDataToHostedApp,SIGNAL(clicked()), logic, SLOT(sendDataToHostedApp()));
+  logic->connect(logic, SIGNAL(TreeSelectionChanged(const QString &)), ui.selection, SLOT(setText(const QString &)));
 
   //ctkDICOMAppWidget DICOMApp(widget);
 

@@ -29,10 +29,12 @@
 class ctkDICOMAppWidgetPrivate;
 class ctkThumbnailLabel;
 class QModelIndex;
+class ctkDICOMDatabase;
 
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(ctkDICOMDatabase* database READ database)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(bool searchWidgetPopUpMode READ searchWidgetPopUpMode WRITE setSearchWidgetPopUpMode)
 
@@ -48,6 +50,8 @@ public:
   /// search widget to be displayed as pop-up widget
   void setSearchWidgetPopUpMode(bool flag);
   bool searchWidgetPopUpMode();
+
+  ctkDICOMDatabase* database();
 
 public slots:
   void setDatabaseDirectory(const QString& directory);
