@@ -82,9 +82,12 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
 {
   Q_D(ctkSimpleSoapClient);
 
-  QString action="\"";
+  /*QString action="\"";
   //action.append(methodName);
   action.append("\"");
+  d->Http.setAction(action);*/
+  QString action = "http://dicom.nema.org/PS3.19/IHostService/" + methodName;
+
   d->Http.setAction(action);
 
   CTK_SOAP_LOG( << "Submitting action " << action
@@ -92,7 +95,8 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
                 << " to path " << d->Path );
 
   QtSoapMessage request;
-  request.setMethod(QtSoapQName(methodName,"http://wg23.dicom.nema.org/"));
+  //request.setMethod(QtSoapQName(methodName,"http://wg23.dicom.nema.org/"));
+  request.setMethod(QtSoapQName(methodName,"http://dicom.nema.org/PS3.19" + d->Path ));
   if(!soapTypes.isEmpty())
     {
     for (QList<QtSoapType*>::ConstIterator it = soapTypes.begin();
@@ -103,6 +107,7 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
                     << " Argument name is " << (*it)->name().name() );
       }
     }
+  CTK_SOAP_LOG_LOWLEVEL( << "Submitting request " << methodName);
   CTK_SOAP_LOG_LOWLEVEL( << request.toXmlString());
 
   d->Http.submitRequest(request, d->Path);;

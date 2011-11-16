@@ -74,6 +74,10 @@ bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
     if (d_ptr->currentState == ctkDicomAppHosting::COMPLETED)
     {
       emit releaseResources();
+	  //inform the host that now the app is idle
+	  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
+	  //also change the internal state
+	  d_ptr->currentState = ctkDicomAppHosting::IDLE;
       result = true;
     }
     break;

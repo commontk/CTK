@@ -1,0 +1,116 @@
+default namespace = "http://dicom.nema.org/PS3.19/models/AbstractImage"
+
+start = AbstractImageDataSet
+AbstractImageDataSet = 
+
+ element AbstractImageDataSet {
+    element Component{
+      attribute idNumber { xsd:positiveInteger },
+      attribute datatype { ComponentDatatype },
+      attribute minValue { xsd:double }?,
+      attribute maxValue { xsd:double }?,
+      element Semantics { CodedTerm },
+      element Unit { CodedTerm  },
+      element RealWordMapping {
+        attribute rescaleSlope { xsd:double },
+        attribute rescaleIntercept { xsd:double },
+        element Unit { CodedTerm },
+        element Semantics { CodedTerm }
+      }*
+    }+,
+    element Dimension {
+      attribute idNumber { xsd:positiveInteger },
+      attribute numberOfSamples { xsd:positiveInteger },
+      element Semantics { CodedTerm },
+      (element Regular {
+         attribute width { xsd:double },
+         attribute spacing { xsd:double },
+         element Unit { CodedTerm  },
+         element AxisDirection { CodedTerm  }?,
+         element AxisOrientation { CodedTerm  }?
+       }
+       | element Irregular {
+           element origin { xsd:double },
+           element SampleLocation {
+             attribute index { xsd:positiveInteger },
+             attribute width { xsd:double },
+             attribute distanceToOrigin { xsd:double }
+           }+,
+         element Unit { CodedTerm  },
+         element AxisDirection { CodedTerm  }?,
+         element AxisOrientation { CodedTerm  }?
+         }
+       | element Qualitative {
+           element Sample {
+             attribute index { xsd:positiveInteger },
+             element Semantics { CodedTerm }
+           }+
+         }),
+      element Origin {
+        attribute index { xsd:positiveInteger }?,
+        attribute xCoord { xsd:double },
+        attribute yCoord { xsd:double },
+        attribute zCoord { xsd:double }
+      }*,
+      element DirectionCosines {
+        attribute concernedSpatialDimension { xsd:positiveInteger },
+        attribute index { xsd:positiveInteger }?,
+        attribute cosAlongX { xsd:double },
+        attribute cosAlongY { xsd:double },
+        attribute cosAlongZ { xsd:double }
+      }*
+    }+,
+    element PixelData { DimensionalData },
+    element PixelMapOfValidData {
+      attribute datatype { PixelMapDatatype },
+      (
+        attribute inValue { xsd:positiveInteger }
+        | attribute outValue { xsd:positiveInteger }
+      ),
+      DimensionalData
+    }?
+  }
+
+ComponentDatatype =
+    "SIGNED_INT8"
+    | "SIGNED_INT16"
+    | "SIGNED_INT32"
+    | "UNSIGNED_CHAR8"
+    | "UNSIGNED_INT16"
+    | "UNSIGNED_INT32"
+    | "FLOAT32"
+    | "FLOAT64"
+  
+PixelMapDatatype = 
+    "BIT1"
+    | "UNSIGNED_INT8"
+
+DimensionalData =
+  element DimensionalData {
+    attribute dimensionID { xsd:positiveInteger },
+    element DataAt 
+    {
+      attribute sampleNumber { xsd:positiveInteger },
+      attribute descriptorUUID { xsd:string }?,
+      ( DimensionalData | BulkDataPointer )
+    }+
+  }
+
+BulkDataPointer = 
+    attribute UUID { xsd:string }
+
+CodedTerm = 
+    element CodeValue { xsd:string },
+    element CodingSchemeDesignator { xsd:string },
+    element CodingSchemeVersion { xsd:string }?,
+    element CodeMeaning { xsd:string }?,
+    (
+      element ContextIdentifier { xsd:string },
+      element MappingResource { xsd:string },
+      element ContextGroupVersion { xsd:string }
+    )?,
+    (
+      element ContextGroupExtensionFlag { xsd:string },
+      element ContextGroupLocalVersion { xsd:string }?,
+      element ContextGroupExtensionCreatorUID { xsd:string }?
+    )?

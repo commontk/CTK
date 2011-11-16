@@ -37,8 +37,8 @@
 #include <stdexcept>
 
 //----------------------------------------------------------------------------
-ctkDicomAppServer::ctkDicomAppServer(int port)
-  : AppInterfaceRegistered(false), Port(port),
+ctkDicomAppServer::ctkDicomAppServer(int port, QString path)
+  : AppInterfaceRegistered(false), Port(port), Path(path),
     AppInterfaceTracker(ctkDicomAppPlugin::getPluginContext(), this)
 {
   this->AppInterfaceTracker.open();
@@ -65,30 +65,31 @@ void ctkDicomAppServer::incomingWSDLMessage(
   const QString& message, QString* reply)
 {
   if (message == "?wsdl")
-    {
-    QFile wsdlfile(":/dah/ApplicationService.wsdl");
+  {
+    QFile wsdlfile(":/dah/ApplicationService-20100825.wsdl");
     wsdlfile.open(QFile::ReadOnly | QFile::Text);
     if(wsdlfile.isOpen())
       {
       QTextStream textstream(&wsdlfile);
       *reply = textstream.readAll();
       QString actualURL="http://localhost:";
-      actualURL+=QString::number(Port)+"/ApplicationInterface"; // FIXME: has to be replaced by url provided by host
+      //actualURL+=QString::number(Port)+"/ApplicationInterface"; // FIXME: has to be replaced by url provided by host
+	  actualURL+=QString::number(Port)+Path; 
       reply->replace("REPLACE_WITH_ACTUAL_URL",actualURL);
-      reply->replace("ApplicationService_schema1.xsd",actualURL+"?xsd=1");
+      reply->replace("ApplicationService-20100825.xsd",actualURL+"?xsd=1");
       //reply->replace("<soap:body use=\"literal\"/>","<soap:body use=\"literal\"></soap:body>");
       }
-    }
+  }
   else if (message == "?xsd=1")
-    {
-    QFile wsdlfile(":/dah/HostService_schema1.xsd");
+  {
+    QFile wsdlfile(":/dah/HostService-20100825.xsd");
     wsdlfile.open(QFile::ReadOnly | QFile::Text);
     if(wsdlfile.isOpen())
       {
       QTextStream textstream(&wsdlfile);
       *reply = textstream.readAll();
       }
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

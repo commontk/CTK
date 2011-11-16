@@ -45,7 +45,7 @@ bool ctkDicomExchangeService::notifyDataAvailable(
   QList<QtSoapType*> list;
   list << new ctkDicomSoapAvailableData("data", data);
   list << new ctkDicomSoapBool("lastData", lastData);
-  const QtSoapType & result = submitSoapRequest("notifyDataAvailable",list);
+  const QtSoapType & result = submitSoapRequest("NotifyDataAvailable",list);
   return ctkDicomSoapBool::getBool(result);
 }
 
@@ -57,10 +57,10 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
   //Q_D(ctkDicomService);
   QList<QtSoapType*> list;
 
-  list << new ctkDicomSoapArrayOfUUIDS("objectUUIDS",objectUUIDs);
-  list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxUIDs", acceptableTransferSyntaxUIDs);
+  list << new ctkDicomSoapArrayOfUUIDS("objects",objectUUIDs);
+  list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxes", acceptableTransferSyntaxUIDs);
   list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
-  const QtSoapType & result = submitSoapRequest("getData",list);
+  const QtSoapType & result = submitSoapRequest("GetData",list);
 //QtSoapType *tt;
 //  list << (tt=new ctkDicomSoapArrayOfUUIDS("uuids",objectUUIDs));
 extern void DumpAll(const QtSoapType& type, int indent=0);
@@ -78,7 +78,7 @@ void ctkDicomExchangeService::releaseData(const QList<QUuid>& objectUUIDs)
 {
   QList<QtSoapType*> list;
 
-  list << new ctkDicomSoapArrayOfUUIDS("objectUUIDS",objectUUIDs);
-   submitSoapRequest("releaseData",list);
+  list << new ctkDicomSoapArrayOfUUIDS("objects",objectUUIDs);
+   submitSoapRequest("ReleaseData",list);
   return;
 }
