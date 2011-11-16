@@ -43,7 +43,7 @@ INCLUDE(ctkFunctionGeneratePluginUseFile)
 # Construct version numbers for CTKConfigVersion.cmake.
 SET(_CTK_VERSION_MAJOR ${CTK_MAJOR_VERSION})
 SET(_CTK_VERSION_MINOR ${CTK_MINOR_VERSION})
-SET(_CTK_VERSION_PATCH ${CTK_BUILD_VERSION})
+SET(_CTK_VERSION_PATCH ${CTK_PATCH_VERSION})
 # We use odd minor numbers for development versions.
 # Use a date for the development patch level.
 # IF("${_CTK_VERSION_MINOR}" MATCHES "[13579]$")

@@ -118,9 +118,9 @@ ENDFOREACH()
 #
 SET(CTK_MAJOR_VERSION 0)
 SET(CTK_MINOR_VERSION 1)
-SET(CTK_BUILD_VERSION 0)
+SET(CTK_PATCH_VERSION 0)
 SET(CTK_VERSION
-    "${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}.${CTK_BUILD_VERSION}")
+    "${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}.${CTK_PATCH_VERSION}")
 
 # Append the library version information to the library target
 # properties.  A parent project may set its own properties and/or may
