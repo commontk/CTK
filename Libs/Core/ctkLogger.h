@@ -21,7 +21,7 @@
 #ifndef __ctkLogger_h
 #define __ctkLogger_h
 
-// Qt includes 
+// Qt includes
 #include <QObject>
 
 // CTK includes
@@ -30,6 +30,8 @@
 
 class ctkLoggerPrivate;
 
+/// \deprecated This class was a wrapper around Log4Qt. Since Log4Qt dependency has been
+/// removed, it is advised to use qDebug(), qWarning() and qCritical() instead.
 /// \ingroup Core
 class CTK_CORE_EXPORT ctkLogger : public QObject
 {
@@ -41,7 +43,7 @@ public:
   virtual ~ctkLogger ();
 
   static void configure();
-  
+
   void debug(const QString& s);
   void info(const QString& s);
   void trace(const QString& s);
