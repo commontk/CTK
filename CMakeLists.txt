@@ -381,7 +381,6 @@ SET(CTK_PLUGINS
   # Misc
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
-  org.commontk.qtmobility.service:OFF
   org.commontk.slicermodule:OFF
   )
 
