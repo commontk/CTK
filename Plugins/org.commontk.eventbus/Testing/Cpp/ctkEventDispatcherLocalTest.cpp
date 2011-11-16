@@ -30,7 +30,7 @@ public:
     /// Return the var's value.
     int var() {return m_Var;}
 
-public slots:
+public Q_SLOTS:
     /// Test slot that will increment the value of m_Var when an UPDATE_OBJECT event is raised.
     // no return value
     void setObjectValue0(){};
@@ -58,7 +58,7 @@ public slots:
     int setObjectValue9WithReturnValue(int v1, int v2, int v3, int v4, int v5, int v6, int v7, int v8, int v9){return v1 + v2 + v3 + v4 +v5 + v6 + v7 + v8 + v9;};
     int setObjectValue10WithReturnValue(int v1, int v2, int v3, int v4, int v5, int v6, int v7, int v8, int v9, int v10){return v1 + v2 + v3 + v4 +v5 + v6 + v7 + v8 + v9 + v10;};
 
-signals:
+Q_SIGNALS:
     void signalSetObjectValue0();
     void signalSetObjectValue1(int v1);
     void signalSetObjectValue2(int v1, int v2);
@@ -109,7 +109,7 @@ testObjectCustomForDispatcherLocal::testObjectCustomForDispatcherLocal() : m_Var
 class ctkEventDispatcherLocalTest : public QObject {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     /// Initialize test variables
     void initTestCase() {
         m_ObjTest = new testObjectCustomForDispatcherLocal;

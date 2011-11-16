@@ -156,14 +156,14 @@ public:
   */
   void setCurrentFileExtension(const QString& extension);
 
-signals:
+Q_SIGNALS:
   /** the signal is emit when the state of hasValidInput changed
   */
   void validInputChanged(bool);
 
   void currentPathChanged(const QString& path);
 
-public slots:
+public Q_SLOTS:
   void setCurrentPath(const QString& path);
 
   /** Open a QFileDialog to select a file or directory and set current text to it
@@ -182,7 +182,7 @@ public slots:
   */
   void addCurrentPathToHistory();
 
-protected slots:
+protected Q_SLOTS:
   void setCurrentDirectory(const QString& directory);
   void updateHasValidInput();
 

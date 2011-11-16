@@ -44,7 +44,7 @@ private:
   Q_DECLARE_PRIVATE(ctkDICOMThumbnailListWidget);
   Q_DISABLE_COPY(ctkDICOMThumbnailListWidget);
 
-public slots:
+public Q_SLOTS:
   void onModelSelected(const QModelIndex& index);
 };
 

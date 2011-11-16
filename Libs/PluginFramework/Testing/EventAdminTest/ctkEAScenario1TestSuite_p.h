@@ -90,7 +90,7 @@ public:
   void cleanup();
   void reset();
 
-public slots:
+public Q_SLOTS:
 
   /**
    * This method takes events from the event admin service.
@@ -131,12 +131,12 @@ public:
 
   void runTest();
 
-protected slots:
+protected Q_SLOTS:
 
   void sendEvents();
   void postEvents();
 
-signals:
+Q_SIGNALS:
 
   void syncSignalEvent(const ctkDictionary&);
   void asyncSignalEvent(const ctkDictionary&);
@@ -179,7 +179,7 @@ public:
    */
   ctkEAScenario1TestSuite(ctkPluginContext* context, long eventPluginId, bool useSignalSlot);
 
-private slots:
+private Q_SLOTS:
 
   void initTestCase();
   void cleanupTestCase();

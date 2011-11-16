@@ -77,7 +77,7 @@ public:
   void setDelay(int seconds);
   int delay()const;
 
-public slots:
+public Q_SLOTS:
   /// Instantanely grabs the content of \a widgetToGrag. Generates a
   /// png file into \a directory. It automatically increments the image name
   /// index suffix.

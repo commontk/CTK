@@ -80,7 +80,7 @@ public:
   /// get thumbnail genrator object
   ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator();
 
-signals:
+Q_SIGNALS:
   void foundFilesToIndex(int);
   void indexingFileNumber(int);
   void indexingFilePath(QString);

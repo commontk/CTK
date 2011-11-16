@@ -126,7 +126,7 @@ public:
   Qt::CheckState defaultCheckState()const;
   void setDefaultCheckState(Qt::CheckState);
 
-public slots:
+public Q_SLOTS:
   void setCheckState(const QModelIndex& modelIndex, Qt::CheckState checkState);
   ///
   /// Warning, setting the check state automatically set the
@@ -137,7 +137,7 @@ public slots:
   void toggleCheckState(const QModelIndex& modelIndex);
   void toggleHeaderCheckState(int section);
 
-private slots:
+private Q_SLOTS:
   void onHeaderDataChanged(Qt::Orientation orient, int first, int last);
 
   void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);

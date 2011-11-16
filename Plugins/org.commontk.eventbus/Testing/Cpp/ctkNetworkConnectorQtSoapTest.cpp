@@ -35,12 +35,12 @@ public:
     /// Return tha var's value.
     int var() {return m_Var;}
 
-public slots:
+public Q_SLOTS:
     /// Test slot that will increment the value of m_Var when an UPDATE_OBJECT event is raised.
     void updateObject();
     void setObjectValue(int v);
 
-signals:
+Q_SIGNALS:
     void valueModified(int v);
     void objectModified();
 
@@ -77,7 +77,7 @@ void testObjectCustomForNetworkConnectorSoap::setObjectValue(int v) {
 class ctkNetworkConnectorQtSoapTest : public QObject {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     /// Initialize test variables
     void initTestCase() {
         m_EventBus = ctkEventBusManager::instance();

@@ -70,7 +70,7 @@ public:
 
   void modifyConfiguration(const ctkServiceReference& reference, ctkDictionary& properties);
 
-public slots:
+public Q_SLOTS:
 
   void pluginChanged(const ctkPluginEvent& event);
 

@@ -49,7 +49,7 @@ public:
   void temporarilyHiddenOn();
   void temporarilyHiddenOff();
 
-public slots:
+public Q_SLOTS:
   void updateVisibility();
   void onApplicationDeactivate();
 

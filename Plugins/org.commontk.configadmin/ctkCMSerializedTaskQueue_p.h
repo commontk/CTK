@@ -44,7 +44,7 @@ public:
 
   void put(QRunnable* newTask);
 
-protected slots:
+protected Q_SLOTS:
 
   void runTasks();
 

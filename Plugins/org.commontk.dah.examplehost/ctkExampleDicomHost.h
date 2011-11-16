@@ -59,7 +59,7 @@ public:
 
   QByteArray processReadAll(){return this->AppProcess.readAllStandardOutput ();}
 
-public slots:
+public Q_SLOTS:
   void onAppReady();
   void onReleaseAvailableResources();
   void onStartProgress();
@@ -69,7 +69,7 @@ public slots:
   void onCanceled();
   void onExited();
 
-signals:
+Q_SIGNALS:
 
 
   void giveAvailableScreen(QRect rect);

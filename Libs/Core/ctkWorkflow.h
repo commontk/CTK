@@ -169,7 +169,7 @@ public:
   bool goBackToOriginStepUponSuccess()const;
   void setGoBackToOriginStepUponSuccess(bool flag);
 
-public slots:
+public Q_SLOTS:
 
   /// Use this to trigger evaluation of the processing state of the current step, and subsequent
   /// conditional transition to the next step.
@@ -201,7 +201,7 @@ protected:
   /// \brief Goes to the step from which the attempt to go to the 'goTo' step was initiated
   void goFromGoToStepToStartingStep();
 
-protected slots:
+protected Q_SLOTS:
 
   /// On an attempt to go to the next step, calls the current step's
   /// validate(const QString&) function to validate the processing step.
@@ -214,7 +214,7 @@ protected slots:
   /// \note Must be sent by a ctkWorkflowTransition.
   void performTransitionBetweenSteps();
 
-signals:
+Q_SIGNALS:
   /// Emitted when the current step has changed, after the step's onEntry() has completed.
   /// \note This signal is not emitted in the process of going to a goToStep
   void currentStepChanged(ctkWorkflowStep* currentStep);

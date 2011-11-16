@@ -131,7 +131,7 @@ public:
   */
   bool publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData);
 
-signals:
+Q_SIGNALS:
   /**
    * @brief Emitted when the ctkDicomAppHosting::IDLE state notification has been received, and the previous state was EXIT, IDLE or CANCELED.
    * @todo: perhaps also send this when completed. Needs discussion.

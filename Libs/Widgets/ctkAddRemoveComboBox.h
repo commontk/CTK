@@ -125,7 +125,7 @@ public:
   /// Remove all the items
   void clear();
 
-signals:
+Q_SIGNALS:
   void currentIndexChanged(int index);
   void activated(int index);
 
@@ -137,12 +137,12 @@ signals:
   void itemAboutToBeRemoved(int index);
   void itemRemoved(int index);
     
-public slots:
+public Q_SLOTS:
   /// 
   /// Select the current index
   void setCurrentIndex(int index);
 
-protected slots:
+protected Q_SLOTS:
   /// 
   virtual void onAdd();
   virtual void onRemove();
@@ -155,7 +155,7 @@ protected:
   int modelColumn()const;
   QAbstractItemModel* model()const;
 
-private slots:
+private Q_SLOTS:
   //void onRowsAboutToBeInserted(const QModelIndex & parent, int start, int end );
   void onRowsAboutToBeRemoved(const QModelIndex & parent, int start, int end);
   void onRowsInserted(const QModelIndex & parent, int start, int end);

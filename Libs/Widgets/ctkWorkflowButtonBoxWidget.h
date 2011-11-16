@@ -102,12 +102,12 @@ public:
   bool hideInvalidButtons()const;
   void setHideInvalidButtons(bool newHide);
 
-public slots:
+public Q_SLOTS:
   /// Updates the buttons to reflect the current status of the workflow, and should be called
   /// whenever the workflow's current step has changed
   virtual void updateButtons(ctkWorkflowStep* currentStep);
 
-protected slots:
+protected Q_SLOTS:
   /// is called when a 'goTo' button is clicked, and retrieves the corresponding goTo step's id to
   /// send to the workflow
   virtual void prepareGoToStep();

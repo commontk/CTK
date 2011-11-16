@@ -168,12 +168,12 @@ public:
 
   static QString stdInRedirectCallBack(void * callData);
 
-signals:
+Q_SIGNALS:
 
   /// This signal emitted before and after a command is executed
   void executing(bool);
 
-public slots:
+public Q_SLOTS:
 
   /// Clears the contents of the console
   virtual void clear();

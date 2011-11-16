@@ -62,7 +62,7 @@ public:
     /// clean the signal and callback hashes.
     /** This method is used when the destructor is called. The destructor of the dispatcher is called by the ctkEventBusManager destructor.*/
     void resetHashes();
-signals:
+Q_SIGNALS:
     /// Default notification signals for default events.
     void notifyDefaultEvent();
 

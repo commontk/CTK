@@ -119,7 +119,7 @@ public:
   Qt::LayoutDirection horizontalDirection()const;
   void setHorizontalDirection(Qt::LayoutDirection direction);
 
-public slots:
+public Q_SLOTS:
   /// Hide the popup if open or opening. It takes around 300ms 
   /// for the fading effect to hide the popup.
   virtual void hidePopup();
@@ -130,7 +130,7 @@ public slots:
   /// signal.
   inline void showPopup(bool show);
 
-signals:
+Q_SIGNALS:
   void popupOpened(bool open);
 
 protected:
@@ -147,7 +147,7 @@ protected:
   virtual bool event(QEvent* event);
   virtual void paintEvent(QPaintEvent*);
 
-protected slots:
+protected Q_SLOTS:
   virtual void onEffectFinished();
   void setEffectAlpha(double alpha);
   void setEffectGeometry(QRect geometry);

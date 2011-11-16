@@ -93,7 +93,7 @@ public:
   /// Reimplemented to set the bounds to the plots as well
   virtual void boundAxesToChartBounds();
 
-public slots:
+public Q_SLOTS:
   void editPoint(vtkObject* plot, void * pointId);
 
   /// Move all the control points by a given offset.
@@ -108,7 +108,7 @@ public slots:
   void spreadAllPoints(double factor = 1.,
                        bool dontMoveFirstAndLast = false);
 
-protected slots:
+protected Q_SLOTS:
   void onBoundsChanged();
 
 protected:

@@ -98,7 +98,7 @@ private:
   Q_DECLARE_PRIVATE(ctkThumbnailLabel);
   Q_DISABLE_COPY(ctkThumbnailLabel);
 
-signals:
+Q_SIGNALS:
   void selected(const ctkThumbnailLabel& widget);
   void doubleClicked(const ctkThumbnailLabel& widget);
 };

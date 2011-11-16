@@ -45,7 +45,7 @@ public:
                                      PythonQtUpcastingOffset<ctkWorkflowWidgetStep,ctkWorkflowStep>());
     }
 
-public slots:
+public Q_SLOTS:
 
   bool hasCreateUserInterfaceCommand(ctkWorkflowWidgetStep* step)const
     {

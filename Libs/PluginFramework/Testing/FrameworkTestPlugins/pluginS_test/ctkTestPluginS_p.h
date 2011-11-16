@@ -47,7 +47,7 @@ public:
 
   ctkTestPluginS(ctkPluginContext* pc);
   
-public slots:
+public Q_SLOTS:
 
   void controlService(int service, const QString& operation, long ranking);
 

@@ -72,15 +72,15 @@ public:
     //retrieve an instance of the object
     virtual ctkNetworkConnector *clone();
 
-signals:
+Q_SIGNALS:
     /// signal for the registration of the functions with parameters
     void registerMethodsServer(mafRegisterMethodsMap registerMethodsList);
 
-public slots:
+public Q_SLOTS:
     /// register methods on the server
     void registerServerMethod(QString methodName, QList<QVariant::Type> types);
 
-private slots:
+private Q_SLOTS:
     /// retrieve response from the service
     void retrieveRemoteResponse();
 

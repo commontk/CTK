@@ -42,7 +42,7 @@ public:
     this->MyTable->Delete();
     }
 
-public slots:
+public Q_SLOTS:
 
   /// Example of slot returning a VTK object
   vtkTable* getTable() const

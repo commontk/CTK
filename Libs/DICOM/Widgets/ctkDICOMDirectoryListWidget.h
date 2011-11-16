@@ -42,12 +42,12 @@ public:
 
   void setDICOMDatabase(ctkDICOMDatabase*);
 
-public slots:
+public Q_SLOTS:
   void addDirectory();
   void addDirectory(const QString&);
   void removeDirectory();
 
-protected slots:
+protected Q_SLOTS:
   void directorySelectionChanged( const QItemSelection  & selected, const QItemSelection  & deselected );
 
 protected:

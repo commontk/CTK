@@ -40,10 +40,10 @@ public:
 
   void setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> database);
 
-public slots:
+public Q_SLOTS:
   void setTopDirectory(const QString& path);
 
-protected slots:
+protected Q_SLOTS:
   void onTopDirectoryChanged(const QString& path);
 
 protected:

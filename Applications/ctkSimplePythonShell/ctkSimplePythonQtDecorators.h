@@ -45,7 +45,7 @@ public:
     Q_UNUSED(pythonManager);
     }
 
-public slots:
+public Q_SLOTS:
 
 };
 

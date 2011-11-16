@@ -40,7 +40,7 @@ class ctkServiceListenerTestSuite : public QObject,
 public:
     ctkServiceListenerTestSuite(ctkPluginContext* pc);
 
-private slots:
+private Q_SLOTS:
 
     void initTestCase();
     void cleanupTestCase();
@@ -102,7 +102,7 @@ public:
 
   bool checkEvents(const QList<ctkServiceEvent::Type>& eventTypes);
 
-protected slots:
+protected Q_SLOTS:
 
   void serviceChanged(const ctkServiceEvent& evt);
 

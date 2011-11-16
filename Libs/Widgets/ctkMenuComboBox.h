@@ -100,13 +100,13 @@ protected:
   virtual bool eventFilter(QObject* target, QEvent* event);
   virtual void resizeEvent(QResizeEvent *event);
 
-public slots:
+public Q_SLOTS:
   void clearActiveAction();
 
-signals:
+Q_SIGNALS:
   void actionChanged(QAction* action);
 
-protected slots:
+protected Q_SLOTS:
   /// Change the current text/icon on the QComboBox
   /// And trigger the action.
   /// action selected from the menu.

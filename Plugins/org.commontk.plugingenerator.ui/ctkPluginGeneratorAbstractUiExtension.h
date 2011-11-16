@@ -51,7 +51,7 @@ public:
 
   QIcon getIcon() const;
 
-signals:
+Q_SIGNALS:
 
   void descriptionChanged(const QString&);
   void titleChanged(const QString&);

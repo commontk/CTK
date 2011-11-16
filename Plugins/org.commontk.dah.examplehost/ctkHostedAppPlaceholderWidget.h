@@ -37,7 +37,7 @@ public:
   explicit ctkHostedAppPlaceholderWidget(QWidget *parent = 0);
   QRect getAbsolutePosition();
 
-signals:
+Q_SIGNALS:
 
   void resized();
 

@@ -70,7 +70,7 @@ public:
   void setAlwaysShowClearIcon(bool);
   bool alwaysShowClearIcon()const;
 
-protected slots:
+protected Q_SLOTS:
   /// Change the clear icon's state to enabled or disabled.
   void updateClearButtonState();
 

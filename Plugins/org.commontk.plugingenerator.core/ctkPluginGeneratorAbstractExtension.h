@@ -53,7 +53,7 @@ public:
 
     ctkPluginGeneratorCodeModel* getCodeModel() const;
 
-signals:
+Q_SIGNALS:
 
     void errorMessageChanged(const QString&);
 

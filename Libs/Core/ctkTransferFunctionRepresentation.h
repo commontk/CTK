@@ -86,7 +86,7 @@ public:
   QColor verticalGradientColor()const;
   void setVerticalGradientColor(QColor verticalGradientColor);
 
-protected slots:
+protected Q_SLOTS:
   virtual void onTransferFunctionChanged();
 
 protected:

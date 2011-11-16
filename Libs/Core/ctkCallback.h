@@ -67,7 +67,7 @@ public:
   /// Set callback data
   void setCallbackData(void * data);
   
-public slots:
+public Q_SLOTS:
   /// Internally calls the pointer function \a callback.
   virtual void invoke();
   

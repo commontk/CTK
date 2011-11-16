@@ -29,7 +29,7 @@ using namespace ctkEventBus;
 class ctkTopicRegistryTest : public QObject {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     /// Initialize test variables
     void initTestCase() {
         m_TopicRegistry = ctkTopicRegistry::instance();

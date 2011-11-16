@@ -44,10 +44,10 @@ public:
 
   vtkProperty* property()const;
 
-public slots:
+public Q_SLOTS:
   void setProperty(vtkProperty* property);
 
-protected slots:
+protected Q_SLOTS:
   void updateFromProperty();
 
 protected:

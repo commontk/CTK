@@ -182,7 +182,7 @@ class PythonQtWrapper_${className} : public QObject
 {
 Q_OBJECT
 public:
-public slots:
+public Q_SLOTS:
   ${className}* new_${className}(${parentClassName}*  parent = 0)
     {
     return new ${className}(parent);
@@ -200,7 +200,7 @@ class Q_DECL_EXPORT PythonQtWrapper_${className} : public QObject
 {
 Q_OBJECT
 public:
-public slots:
+public Q_SLOTS:
   ${className}* new_${className}()
     {
     return new ${className}();

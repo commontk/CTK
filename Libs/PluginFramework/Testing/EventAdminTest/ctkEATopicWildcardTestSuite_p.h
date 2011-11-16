@@ -44,7 +44,7 @@ private:
   mutable QReadWriteLock rwlock;
   ctkEvent last;
 
-public slots:
+public Q_SLOTS:
 
   void handleEvent(const ctkEvent& event);
 
@@ -67,11 +67,11 @@ public:
 
   ctkEATopicWildcardTestSuite(ctkPluginContext* pc, long eventPluginId, bool useSignalSlot);
 
-signals:
+Q_SIGNALS:
 
   void syncSignal(const ctkDictionary& event);
 
-private slots:
+private Q_SLOTS:
 
   void initTestCase();
 

@@ -44,7 +44,7 @@ public:
   ctkErrorLogModel* errorLogModel()const;
   void setErrorLogModel(ctkErrorLogModel * newErrorLogModel);
 
-public slots:
+public Q_SLOTS:
   void setAllEntriesVisible(bool visibility = true);
 
   void setErrorEntriesVisible(bool visibility);
@@ -55,7 +55,7 @@ public slots:
   
   void setUnknownEntriesVisible(bool visibility);
 
-protected slots:
+protected Q_SLOTS:
   void onRowsInserted(const QModelIndex &parent, int first, int last);
 
   void onLogLevelFilterChanged();

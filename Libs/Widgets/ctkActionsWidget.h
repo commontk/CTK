@@ -86,7 +86,7 @@ public:
   /// return the view used to display the action model
   QTreeView* view()const;
 
-protected slots:
+protected Q_SLOTS:
   void updateAction();
 
 protected:

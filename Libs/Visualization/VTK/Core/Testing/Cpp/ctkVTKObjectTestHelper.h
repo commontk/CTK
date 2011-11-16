@@ -49,17 +49,17 @@ public:
   void resetSlotCalls();
 
   void emitSignalEmitted();
-public slots:
+public Q_SLOTS:
   void onVTKObjectModifiedPublic();
   void deleteConnection();
 
-protected slots:
+protected Q_SLOTS:
   void onVTKObjectModifiedProtected();
 
-private slots:
+private Q_SLOTS:
   void onVTKObjectModifiedPrivate();
 
-signals:
+Q_SIGNALS:
   void signalEmitted();
 
 protected:

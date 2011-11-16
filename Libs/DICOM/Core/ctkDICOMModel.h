@@ -73,7 +73,7 @@ public:
   virtual bool setHeaderData ( int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole );
   // Sorting resets the model because fetched/unfetched items could disappear/appear respectively.
   virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
-public slots:
+public Q_SLOTS:
   virtual void reset();
 protected:
   QScopedPointer<ctkDICOMModelPrivate> d_ptr;
