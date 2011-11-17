@@ -83,15 +83,15 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   ctkDICOMRetrieve retrieve;
   retrieve.setCallingAETitle("CTK_AE");
   retrieve.setCalledAETitle("CTK_AE");
-  retrieve.setCalledPort(tester.dcmqrscpPort());
+  retrieve.setPort(tester.dcmqrscpPort());
   retrieve.setHost("localhost");
   retrieve.setMoveDestinationAETitle("CTK_CLIENT_AE");
 
-  retrieve.setRetrieveDatabase(retrieveDatabase);
+  retrieve.setDatabase(retrieveDatabase);
 
   foreach(const QString& study, query.studyInstanceUIDQueried())
     {
-    bool res = retrieve.retrieveStudy(study);
+    bool res = retrieve.moveStudy(study);
     if (!res)
       {
       std::cout << "ctkDICOMRetrieve::retrieveStudy() failed. "
