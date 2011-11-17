@@ -156,6 +156,7 @@ void ctkExampleDicomAppLogic::onExitHostedApp()
   //useless move, but correct:
   setInternalState(ctkDicomAppHosting::EXIT);
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
+  qDebug() << "Exiting";
   //die
   qApp->exit(0);
 }
@@ -262,8 +263,17 @@ void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
   const QPixmap* pixmap = ui.PlaceHolderForImage->pixmap();
   if(pixmap!=NULL)
   {
-    tempfile = new QTemporaryFile(this->AppWidget);
-    pixmap->save(tempfile.fileName(), "PNG");
+    QTemporaryFile *tempfile = new QTemporaryFile("ctkdahscXXXXXX.png",this->AppWidget);
+    QString filename;
+    if(tempfile->open())
+    {
+      filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
+      qDebug() << "Created file: " << filename;
+      tempfile->close();
+      pixmap->save(tempfile->fileName(), "PNG");
+    }
+    else
+      qDebug() << "Creating temporary file failed.";
   }
 
 }
