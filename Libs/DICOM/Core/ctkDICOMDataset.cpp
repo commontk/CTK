@@ -172,7 +172,11 @@ void ctkDICOMDataset::MarkForInitialization()
   Q_D(ctkDICOMDataset);
   d->m_DICOMDataSetInitialized = false;
 }
-
+bool ctkDICOMDataset::IsInitialized() const
+{
+  Q_D(const ctkDICOMDataset);
+  return d->m_DICOMDataSetInitialized;
+}
 void ctkDICOMDataset::EnsureDcmDataSetIsInitialized() const
 {
   const_cast<ctkDICOMDataset*>(this)->Deserialize();

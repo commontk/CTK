@@ -101,6 +101,10 @@ public:
     /// Get/SetElement... methods ensure initialization, which checks this flag.
     void MarkForInitialization();
 
+
+    /// \brief Is this dataset initialized ?
+    bool IsInitialized() const;
+
     ///
     /// \brief Called by all Get/Set methods to initialize DcmDataSet if needed.
     ///
