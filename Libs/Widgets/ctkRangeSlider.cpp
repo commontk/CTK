@@ -272,7 +272,7 @@ void ctkRangeSliderPrivate::drawMinimumSlider( QStylePainter* painter ) const
   option.subControls = QStyle::SC_SliderHandle;
   option.sliderValue = m_MinimumValue;
   option.sliderPosition = m_MinimumPosition;
-  if (this->m_SelectedHandles & MinimumHandle)
+  if (q->isMinimumSliderDown())
     {
     option.activeSubControls = QStyle::SC_SliderHandle;
     option.state |= QStyle::State_Sunken;
@@ -292,7 +292,7 @@ void ctkRangeSliderPrivate::drawMaximumSlider( QStylePainter* painter ) const
   option.subControls = QStyle::SC_SliderHandle;
   option.sliderValue = m_MaximumValue;
   option.sliderPosition = m_MaximumPosition;
-  if (this->m_SelectedHandles & MaximumHandle)
+  if (q->isMaximumSliderDown())
     {
     option.activeSubControls = QStyle::SC_SliderHandle;
     option.state |= QStyle::State_Sunken;
@@ -605,7 +605,7 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
   //  -----------------------------------
   // Render the sliders
   //
-  if (d->m_SelectedHandles & ctkRangeSliderPrivate::MinimumHandle)
+  if (this->isMinimumSliderDown())
     {
     d->drawMaximumSlider( &painter );
     d->drawMinimumSlider( &painter );
@@ -677,9 +677,7 @@ void ctkRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
     d->m_SubclassWidth = (d->m_MaximumPosition - d->m_MinimumPosition) / 2;
     qMax(d->m_SubclassPosition - d->m_MinimumPosition, d->m_MaximumPosition - d->m_SubclassPosition);
     this->setSliderDown(true);
-    if (!(d->m_SelectedHandles & QFlags<ctkRangeSliderPrivate::Handle>(
-            ctkRangeSliderPrivate::MinimumHandle)) || 
-        !(d->m_SelectedHandles & QFlags<ctkRangeSliderPrivate::Handle>(ctkRangeSliderPrivate::MaximumHandle)))
+    if (!this->isMinimumSliderDown() || !this->isMaximumSliderDown())
       {
       d->m_SelectedHandles = 
         QFlags<ctkRangeSliderPrivate::Handle>(ctkRangeSliderPrivate::MinimumHandle) | 
@@ -721,15 +719,15 @@ void ctkRangeSlider::mouseMoveEvent(QMouseEvent* mouseEvent)
       }
     }
 
-  // The lower/left slider is down
-  if (d->m_SelectedHandles == ctkRangeSliderPrivate::MinimumHandle)
+  // Only the lower/left slider is down
+  if (this->isMinimumSliderDown() && !this->isMaximumSliderDown())
     {
     double newMinPos = qMin(newPosition,d->m_MaximumPosition);
     this->setPositions(newMinPos, d->m_MaximumPosition +
       (d->m_SymmetricMoves ? d->m_MinimumPosition - newMinPos : 0));
     }
-  // The upper/right slider is down
-  else if (d->m_SelectedHandles == ctkRangeSliderPrivate::MaximumHandle)
+  // Only the upper/right slider is down
+  else if (this->isMaximumSliderDown() && !this->isMinimumSliderDown())
     {
     double newMaxPos = qMax(d->m_MinimumPosition, newPosition);
     this->setPositions(d->m_MinimumPosition -
@@ -737,8 +735,7 @@ void ctkRangeSlider::mouseMoveEvent(QMouseEvent* mouseEvent)
       newMaxPos);
     }
   // Both handles are down (the user clicked in between the handles)
-  else if (d->m_SelectedHandles & ctkRangeSliderPrivate::MinimumHandle && 
-           d->m_SelectedHandles & ctkRangeSliderPrivate::MaximumHandle)
+  else if (this->isMinimumSliderDown() && this->isMaximumSliderDown())
     {
     this->setPositions(newPosition - d->m_SubclassWidth,
                        newPosition + d->m_SubclassWidth );
