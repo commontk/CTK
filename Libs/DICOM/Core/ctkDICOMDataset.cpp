@@ -32,21 +32,24 @@ class ctkDICOMDatasetPrivate
 {
   public:
 
-    ctkDICOMDatasetPrivate() {}
+    ctkDICOMDatasetPrivate() : m_DcmDataset(0) {}
 
     QString m_SpecificCharacterSet;
 
     bool m_DICOMDataSetInitialized;
+    bool m_StrictErrorHandling;
 
     DcmDataset* m_DcmDataset;
 };
 
 
-ctkDICOMDataset::ctkDICOMDataset()
+ctkDICOMDataset::ctkDICOMDataset(bool strictErrorHandling)
 :d_ptr(new ctkDICOMDatasetPrivate)
 {
   Q_D(ctkDICOMDataset);
   d->m_DICOMDataSetInitialized = false;
+  d->m_StrictErrorHandling = strictErrorHandling;
+
   // d->m_DcmDataset = this;
 }
 
@@ -81,7 +84,7 @@ void ctkDICOMDataset::InitializeFromDataset(DcmDataset* dataset)
       if ( CopyElement( dataset, DCM_SpecificCharacterSet, 3 ) )
       {
         OFString encoding;
-        if ( CheckCondition( findAndGetOFString(DCM_SpecificCharacterSet, encoding) ) )
+        if ( CheckCondition( dataset->findAndGetOFString(DCM_SpecificCharacterSet, encoding) ) )
         {
           d->m_SpecificCharacterSet = encoding.c_str();
         }
@@ -179,7 +182,11 @@ bool ctkDICOMDataset::IsInitialized() const
 }
 void ctkDICOMDataset::EnsureDcmDataSetIsInitialized() const
 {
-  const_cast<ctkDICOMDataset*>(this)->Deserialize();
+  if ( ! this->IsInitialized() )
+  {
+      throw std::logic_error("Calling methods on uninitialized ctkDICOMDataset");
+  }
+  // const_cast<ctkDICOMDataset*>(this)->Deserialize();
 }
 
 void ctkDICOMDataset::Deserialize()
@@ -589,29 +596,50 @@ QDateTime ctkDICOMDataset::GetElementAsDateTime( const DcmTag& tag, unsigned lon
 
 double ctkDICOMDataset::GetElementAsDouble( const DcmTag& tag, unsigned long pos ) const
 {
+  Q_D(const ctkDICOMDataset);
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
   findAndGetElement(tag, element);
 
   DcmDecimalString* ds = dynamic_cast<DcmDecimalString*>(element);
 
-  if (!ds) throw std::logic_error("Element not found or not a decimal number");
+  if (!ds)
+  {
+    if (d->m_StrictErrorHandling)
+    {
+      throw std::logic_error("Element not found or not a decimal number");
+    }
+    else
+    {
+      return 0.0;
+    }
+  }
+  Float64 dvalue;
+  ds->getFloat64(dvalue, pos);
 
-  Float64 d;
-  ds->getFloat64(d, pos);
-
-  return d;
+  return dvalue;
 }
 
 long ctkDICOMDataset::GetElementAsInteger( const DcmTag& tag, unsigned long pos ) const
 {
+  Q_D(const ctkDICOMDataset);
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
   findAndGetElement(tag, element);
 
   DcmIntegerString* is = dynamic_cast<DcmIntegerString*>(element);
 
-  if (!is) throw std::logic_error("Element not found or not an integer");
+  if (!is)
+  {
+    if (d->m_StrictErrorHandling)
+    {
+      throw std::logic_error("Element not found or not an integer");
+    }
+    else
+    {
+      return 0;
+    }
+  }
 
   Sint32 i = 0;
   is->getSint32(i, pos);

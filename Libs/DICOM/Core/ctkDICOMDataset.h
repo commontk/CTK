@@ -60,7 +60,12 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDataset
 {
 public:
     typedef QObject Superclass;
-    ctkDICOMDataset();
+    ///
+    /// \brief Create an empty object. This has to be initialized by one of
+    /// the InitializeFrom... methods before it can be used.
+    ///
+    /// @param strictErrorHandling If set to false (the default) only critical errors throw exceptions.
+    ctkDICOMDataset(bool strictErrorHandling = false);
     virtual ~ctkDICOMDataset();
 
     /// \brief For initialization from a DcmDataset in a constructor / assignment.
