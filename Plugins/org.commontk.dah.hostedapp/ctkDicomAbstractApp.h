@@ -24,7 +24,7 @@
 
 #include <ctkDicomAppInterface.h>
 #include <QScopedPointer>
-#include <org_commontk_dah_app_Export.h>
+#include <org_commontk_dah_hostedapp_Export.h>
 
 class ctkDicomAbstractAppPrivate;
 struct ctkDicomHostInterface;
@@ -40,7 +40,7 @@ class ctkDicomObjectLocatorCache;
  *
  *
 */
-class org_commontk_dah_app_EXPORT ctkDicomAbstractApp : public QObject, public ctkDicomAppInterface
+class org_commontk_dah_hostedapp_EXPORT ctkDicomAbstractApp : public QObject, public ctkDicomAppInterface
 {
   Q_OBJECT
   Q_INTERFACES(ctkDicomAppInterface)
