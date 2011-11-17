@@ -1,2 +1,2 @@
 # CMake Macros
-INCLUDE(CMake/ctkMacroGenerateMocs.cmake)
+include(CMake/ctkMacroGenerateMocs.cmake)

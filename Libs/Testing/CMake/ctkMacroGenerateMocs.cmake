@@ -1,11 +1,11 @@
 
 # QT4_GENERATE_MOCS(inputfiles ... )
 
-MACRO (QT4_GENERATE_MOCS)
+macro (QT4_GENERATE_MOCS)
 
-  FOREACH (fileIt ${ARGN})
+  foreach (fileIt ${ARGN})
     QT4_GENERATE_MOC( ${fileIt} moc_${fileIt})
-    MACRO_ADD_FILE_DEPENDENCIES(${fileIt} moc_${fileIt})
-  ENDFOREACH(fileIt)
+    macro_add_file_dependencies(${fileIt} moc_${fileIt})
+  endforeach()
 
-ENDMACRO (QT4_GENERATE_MOCS)
+endmacro()
