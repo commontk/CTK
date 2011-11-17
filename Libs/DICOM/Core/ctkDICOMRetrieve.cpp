@@ -21,16 +21,6 @@
 #include <stdexcept>
 
 // Qt includes
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QVariant>
-#include <QDate>
-#include <QStringList>
-#include <QSet>
-#include <QFile>
-#include <QDirIterator>
-#include <QFileInfo>
-#include <QDebug>
 
 // ctkDICOMCore includes
 #include "ctkDICOMRetrieve.h"
@@ -64,21 +54,99 @@
 static ctkLogger logger("org.commontk.dicom.DICOMRetrieve");
 
 //------------------------------------------------------------------------------
+// A customized local implemenation of the DcmSCU so that Qt signals can be emitted
+// when retrieve results are obtained
+class ctkDICOMRetrieveSCUPrivate : public ctkDcmSCU
+{
+public:
+  ctkDICOMRetrieve *retrieve;
+  ctkDICOMRetrieveSCUPrivate()
+    {
+    this->retrieve = 0;
+    };
+  ~ctkDICOMRetrieveSCUPrivate() {};
+
+  // called when a move reponse comes in: indicates that the
+  // move request is being handled by the remote server.
+  virtual OFCondition handleMOVEResponse(const T_ASC_PresentationContextID  presID,
+                                         RetrieveResponse *response,
+                                         OFBool &waitForNextResponse)
+    {
+      if (this->retrieve)
+        {
+        emit this->retrieve->moveResponseHandled("Got one!");
+        return this->ctkDcmSCU::handleMOVEResponse(
+                        presID, response, waitForNextResponse);
+        }
+      return false;
+    };
+
+  // called when a data set is coming in from a server in
+  // response to a CGET 
+  virtual OFCondition handleSTORERequest(const T_ASC_PresentationContextID presID,
+                                         DcmDataset *incomingObject,
+                                         OFBool& continueCGETSession,
+                                         Uint16& cStoreReturnStatus)
+    {
+      if (this->retrieve)
+        {
+        emit this->retrieve->storeRequested("Got a store request!");
+        if (this->retrieve && this->retrieve->database())
+          {
+          this->retrieve->database()->insert(incomingObject);
+          return ECC_Normal;
+          }
+        else
+          {
+          return this->ctkDcmSCU::handleSTORERequest(
+                          presID, incomingObject, continueCGETSession, cStoreReturnStatus);
+          }
+        }
+      return false;
+    };
+
+  // called when status information from remote server
+  // comes in from CGET
+  virtual OFCondition handleCGETResponse(const T_ASC_PresentationContextID presID,
+                                         RetrieveResponse* response,
+                                         OFBool& continueCGETSession)
+    {
+      if (this->retrieve)
+        {
+        emit this->retrieve->retrieveStatusChanged("Got a cget response!");
+        return this->ctkDcmSCU::handleCGETResponse(presID, response, continueCGETSession);
+        }
+      return false;
+    };
+};
+
+
+//------------------------------------------------------------------------------
 class ctkDICOMRetrievePrivate
 {
 public:
   ctkDICOMRetrievePrivate();
   ~ctkDICOMRetrievePrivate();
+  /// Keep the currently negotiated connection to the 
+  /// peer host open unless the connection parameters change
   bool          KeepAssociationOpen;
   bool          ConnectionParamsChanged;
-  QSharedPointer<ctkDICOMDatabase> RetrieveDatabase;
-  ctkDcmSCU        SCU;
+  bool          LastRetrieveType;
+  QSharedPointer<ctkDICOMDatabase> Database;
+  ctkDICOMRetrieveSCUPrivate        SCU;
   QString MoveDestinationAETitle;
   // do the retrieve, handling both series and study retrieves
-  enum RetrieveType { RetrieveSeries, RetrieveStudy };
-  bool retrieve ( const QString& studyInstanceUID,
+  enum RetrieveType { RetrieveNone, RetrieveSeries, RetrieveStudy };
+  bool initializeSCU(const QString& studyInstanceUID,
                   const QString& seriesInstanceUID,
-                  const RetrieveType rType );
+                  const RetrieveType retrieveType,
+                  DcmDataset *retrieveParameters);
+  bool move ( const QString& studyInstanceUID,
+                  const QString& seriesInstanceUID,
+                  const RetrieveType retrieveType );
+  bool get ( const QString& studyInstanceUID,
+                  const QString& seriesInstanceUID,
+                  const RetrieveType retrieveType );
 };
 
 //------------------------------------------------------------------------------
@@ -87,35 +155,10 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate()
 {
-  this->RetrieveDatabase = QSharedPointer<ctkDICOMDatabase> (0);
+  this->Database = QSharedPointer<ctkDICOMDatabase> (0);
   this->KeepAssociationOpen = true;
   this->ConnectionParamsChanged = false;
-  logger.info ( "Setting Transfer Syntaxes" );
-  OFList<OFString> transferSyntaxes;
-  transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
-  transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
-  transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
-  this->SCU.addPresentationContext ( UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
-{
-  // At least now be kind to the server and release association
-  this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
-}
-
-//------------------------------------------------------------------------------
-bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
-                                         const QString& seriesInstanceUID,
-                                         const RetrieveType rType )
-{
-
-  if ( !this->RetrieveDatabase )
-    {
-    logger.error ( "No RetrieveDatabase for retrieve transaction" );
-    return false;
-    }
+  this->LastRetrieveType = RetrieveNone;
 
   // Register the JPEG libraries in case we need them
   // (registration only happens once, so it's okay to call repeatedly)
@@ -127,6 +170,42 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
   DcmRLEEncoderRegistration::registerCodecs();
   // register RLE decompression codec
   DcmRLEDecoderRegistration::registerCodecs();
+
+  logger.info ( "Setting Transfer Syntaxes" );
+  OFList<OFString> transferSyntaxes;
+  transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
+  transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
+  this->SCU.addPresentationContext ( 
+      UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+  this->SCU.addPresentationContext ( 
+      UID_GETStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+
+  for (Uint16 i = 0; i < numberOfDcmLongSCUStorageSOPClassUIDs; i++)
+    {
+    this->SCU.addPresentationContext(dcmLongSCUStorageSOPClassUIDs[i], 
+        transferSyntaxes, ASC_SC_ROLE_SCP);
+    }
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
+{
+  // At least now be kind to the server and release association
+  this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrievePrivate::initializeSCU( const QString& studyInstanceUID,
+                                         const QString& seriesInstanceUID,
+                                         const RetrieveType retrieveType,
+                                         DcmDataset *retrieveParameters)
+{
+  if ( !this->Database )
+    {
+    logger.error ( "No Database for retrieve transaction" );
+    return false;
+    }
 
   // If we like to query another server than before, be sure to disconnect first
   if (this->SCU.isConnected() && this->ConnectionParamsChanged)
@@ -155,24 +234,44 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
   this->ConnectionParamsChanged = false;
   // Setup query about what to be received from the PACS
   logger.debug ( "Setting Retrieve Parameters" );
-  DcmDataset *retrieveParameters = new DcmDataset();
-  if ( rType == RetrieveSeries )
+  if ( retrieveType == RetrieveSeries )
     {
     retrieveParameters->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
-    retrieveParameters->putAndInsertString ( DCM_SeriesInstanceUID, seriesInstanceUID.toStdString().c_str() );
+    retrieveParameters->putAndInsertString ( DCM_SeriesInstanceUID, 
+                                                seriesInstanceUID.toStdString().c_str() );
     // Always required to send all highler level unique keys, so add study here (we are in Study Root)
-    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str() );  //TODO
+    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID, 
+                                                studyInstanceUID.toStdString().c_str() );  //TODO
     }
   else
     {
     retrieveParameters->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
-    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str() );
+    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID, 
+                                                studyInstanceUID.toStdString().c_str() );
     }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
+                                         const QString& seriesInstanceUID,
+                                         const RetrieveType retrieveType )
+{
+
+  DcmDataset *retrieveParameters = new DcmDataset();
+  if (! this->initializeSCU(studyInstanceUID, seriesInstanceUID, retrieveType, retrieveParameters) )
+    {
+    delete retrieveParameters;
+    return false;
+    }
+
 
   // Issue request
   logger.debug ( "Sending Move Request" );
   OFList<RetrieveResponse*> responses;
-  T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(UID_MOVEStudyRootQueryRetrieveInformationModel, "" /* don't care about transfer syntax */ );
+  T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(
+                                          UID_MOVEStudyRootQueryRetrieveInformationModel, 
+                                          "" /* don't care about transfer syntax */ );
   if (presID == 0)
     {
     logger.error ( "MOVE Request failed: No valid Study Root MOVE Presentation Context available" );
@@ -180,9 +279,15 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
       {
       this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
       }
+    delete retrieveParameters;
     return false;
     }
-  OFCondition status = this->SCU.sendMOVERequest ( presID, this->MoveDestinationAETitle.toStdString().c_str(), retrieveParameters, &responses );
+
+  // do the actual move request
+  OFCondition status = this->SCU.sendMOVERequest ( 
+                          presID, this->MoveDestinationAETitle.toStdString().c_str(), 
+                          retrieveParameters, &responses );
+
   // Close association if we do not want to explicitly keep it open
   if (!this->KeepAssociationOpen)
     {
@@ -195,7 +300,8 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
   if ( responses.begin() == responses.end() )
     {
     logger.error ( "No responses received at all! (at least one empty response always expected)" );
-    throw std::runtime_error( std::string("No responses received from server!") );
+    //throw std::runtime_error( std::string("No responses received from server!") );
+    return false;
     }
 
   /* The server is permitted to acknowledge every image that was received, or
@@ -209,13 +315,17 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
   if ( responses.size() == 1 )
     {
     RetrieveResponse* rsp = *responses.begin();
-    logger.debug ( "MOVE response receveid with status: " + QString(DU_cmoveStatusString(rsp->m_status)) );
-    if ((rsp->m_status == STATUS_Success) || (rsp->m_status == STATUS_MOVE_Warning_SubOperationsCompleteOneOrMoreFailures))
+    logger.debug ( "MOVE response receveid with status: " + 
+                      QString(DU_cmoveStatusString(rsp->m_status)) );
+
+    if ( (rsp->m_status == STATUS_Success) 
+            || (rsp->m_status == STATUS_MOVE_Warning_SubOperationsCompleteOneOrMoreFailures))
       {
       if (rsp->m_numberOfCompletedSubops == 0)
         {
         logger.error ( "No images transferred by PACS!" );
-        throw std::runtime_error( std::string("No images transferred by PACS!") );
+        //throw std::runtime_error( std::string("No images transferred by PACS!") );
+        return false;
         }
       }
     else
@@ -230,7 +340,8 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
         }
       statusDetail.prepend("MOVE request failed: ");
       logger.error(statusDetail);
-      throw std::runtime_error( statusDetail.toStdString() );
+      //throw std::runtime_error( statusDetail.toStdString() );
+      return false;
       }
     }
     // Select the last MOVE response to output meaningful status information
@@ -241,9 +352,120 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
     it++;
     }
   logger.debug ( "MOVE responses report for study: " + studyInstanceUID +"\n"
-    + QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)) + " images transferred, and\n"
-    + QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops))   + " images transferred with warning, and\n"
-    + QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))    + " images transfers failed");
+    + QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops))
+        + " images transferred, and\n"
+    + QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops))
+        + " images transferred with warning, and\n"
+    + QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))
+        + " images transfers failed");
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
+                                         const QString& seriesInstanceUID,
+                                         const RetrieveType retrieveType )
+{
+  DcmDataset *retrieveParameters = new DcmDataset();
+  if (! this->initializeSCU(studyInstanceUID, seriesInstanceUID, retrieveType, retrieveParameters) )
+    {
+    delete retrieveParameters;
+    return false;
+    }
+
+  // Issue request
+  logger.debug ( "Sending Get Request" );
+  OFList<RetrieveResponse*> responses;
+  T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(
+                                          UID_GETStudyRootQueryRetrieveInformationModel, 
+                                          "" /* don't care about transfer syntax */ );
+  if (presID == 0)
+    {
+    logger.error ( "GET Request failed: No valid Study Root GET Presentation Context available" );
+    if (!this->KeepAssociationOpen)
+      {
+      this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+      }
+    delete retrieveParameters;
+    return false;
+    }
+
+
+  // do the actual move request
+  OFCondition status = this->SCU.sendCGETRequest ( 
+                          presID, retrieveParameters, &responses );
+
+  // Close association if we do not want to explicitly keep it open
+  if (!this->KeepAssociationOpen)
+    {
+    this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    }
+  // Free some (little) memory
+  delete retrieveParameters;
+
+  // If we do not receive a single response, something is fishy
+  if ( responses.begin() == responses.end() )
+    {
+    logger.error ( "No responses received at all! (at least one empty response always expected)" );
+    //throw std::runtime_error( std::string("No responses received from server!") );
+    return false;
+    }
+
+  /* The server is permitted to acknowledge every image that was received, or
+   * to send a single move response.
+   * If there is only a single response, this can mean the following:
+   * 1) No images to transfer (Status Success and Number of Completed Subops = 0)
+   * 2) All images transferred (Status Success and Number of Completed Subops > 0)
+   * 3) Error code, i.e. no images transferred
+   * 4) Warning (one or more failures, i.e. some images transferred)
+   */
+  if ( responses.size() == 1 )
+    {
+    RetrieveResponse* rsp = *responses.begin();
+    logger.debug ( "GET response receveid with status: " + 
+                      QString(DU_cmoveStatusString(rsp->m_status)) );
+
+    if ( (rsp->m_status == STATUS_Success) 
+            || (rsp->m_status == STATUS_GET_Warning_SubOperationsCompleteOneOrMoreFailures))
+      {
+      if (rsp->m_numberOfCompletedSubops == 0)
+        {
+        logger.error ( "No images transferred by PACS!" );
+        //throw std::runtime_error( std::string("No images transferred by PACS!") );
+        return false;
+        }
+      }
+    else
+      {
+      logger.error("GET request failed, server does report error");
+      QString statusDetail("No details");
+      if (rsp->m_statusDetail != NULL)
+        {
+         std::ostringstream out;
+        rsp->m_statusDetail->print(out);
+        statusDetail = "Status Detail: " + statusDetail.fromStdString(out.str());
+        }
+      statusDetail.prepend("GET request failed: ");
+      logger.error(statusDetail);
+      //throw std::runtime_error( statusDetail.toStdString() );
+      return false;
+      }
+    }
+    // Select the last GET response to output meaningful status information
+    OFIterator<RetrieveResponse*> it = responses.begin();
+  Uint32 numResults = responses.size();
+  for (Uint32 i = 1; i < numResults; i++)
+    {
+    it++;
+    }
+  logger.debug ( "GET responses report for study: " + studyInstanceUID +"\n"
+    + QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops))
+        + " images transferred, and\n"
+    + QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops))
+        + " images transferred with warning, and\n"
+    + QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))
+        + " images transfers failed");
 
   return true;
 }
@@ -255,6 +477,8 @@ bool ctkDICOMRetrievePrivate::retrieve ( const QString& studyInstanceUID,
 ctkDICOMRetrieve::ctkDICOMRetrieve()
    : d_ptr(new ctkDICOMRetrievePrivate)
 {
+  Q_D(ctkDICOMRetrieve);
+  d->SCU.retrieve = this; // give the dcmtk level access to this for emitting signals
 }
 
 //------------------------------------------------------------------------------
@@ -318,7 +542,7 @@ QString ctkDICOMRetrieve::host()const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMRetrieve::setCalledPort( int port )
+void ctkDICOMRetrieve::setPort( int port )
 {
   Q_D(ctkDICOMRetrieve);
   if (d->SCU.getPeerPort() != port)
@@ -329,7 +553,7 @@ void ctkDICOMRetrieve::setCalledPort( int port )
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMRetrieve::calledPort()const
+int ctkDICOMRetrieve::port()const
 {
   Q_D(const ctkDICOMRetrieve);
   return d->SCU.getPeerPort();
@@ -353,18 +577,17 @@ QString ctkDICOMRetrieve::moveDestinationAETitle()const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMRetrieve::setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase)
+void ctkDICOMRetrieve::setDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase)
 {
   Q_D(ctkDICOMRetrieve);
-  d->RetrieveDatabase = dicomDatabase;
-  // (server parameters do not have to be changed)
+  d->Database = dicomDatabase;
 }
 
 //------------------------------------------------------------------------------
-QSharedPointer<ctkDICOMDatabase> ctkDICOMRetrieve::retrieveDatabase()const
+QSharedPointer<ctkDICOMDatabase> ctkDICOMRetrieve::database()const
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->RetrieveDatabase;
+  return d->Database;
 }
 
 //------------------------------------------------------------------------------
@@ -382,7 +605,33 @@ bool ctkDICOMRetrieve::keepAssociationOpen()
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrieve::retrieveSeries(const QString& studyInstanceUID,
+bool ctkDICOMRetrieve::moveStudy(const QString& studyInstanceUID)
+{
+  if (studyInstanceUID.isEmpty())
+    {
+    logger.error("Cannot receive series: Study Instance UID empty.");
+    return false;
+    }
+  Q_D(ctkDICOMRetrieve);
+  logger.info ( "Starting moveStudy" );
+  return d->move ( studyInstanceUID, "", ctkDICOMRetrievePrivate::RetrieveStudy );
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrieve::getStudy(const QString& studyInstanceUID)
+{
+  if (studyInstanceUID.isEmpty())
+    {
+    logger.error("Cannot receive series: Study Instance UID empty.");
+    return false;
+    }
+  Q_D(ctkDICOMRetrieve);
+  logger.info ( "Starting getStudy" );
+  return d->get ( studyInstanceUID, "", ctkDICOMRetrievePrivate::RetrieveStudy );
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrieve::moveSeries(const QString& studyInstanceUID,
                                       const QString& seriesInstanceUID)
 {
   if (studyInstanceUID.isEmpty() || seriesInstanceUID.isEmpty())
@@ -391,19 +640,21 @@ bool ctkDICOMRetrieve::retrieveSeries(const QString& studyInstanceUID,
     return false;
     }
   Q_D(ctkDICOMRetrieve);
-  logger.info ( "Starting retrieveSeries" );
-  return d->retrieve ( studyInstanceUID, seriesInstanceUID, ctkDICOMRetrievePrivate::RetrieveSeries );
+  logger.info ( "Starting moveSeries" );
+  return d->move ( studyInstanceUID, seriesInstanceUID, ctkDICOMRetrievePrivate::RetrieveSeries );
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrieve::retrieveStudy( const QString& studyInstanceUID )
+bool ctkDICOMRetrieve::getSeries(const QString& studyInstanceUID,
+                                      const QString& seriesInstanceUID)
 {
-  if (studyInstanceUID.isEmpty())
+  if (studyInstanceUID.isEmpty() || seriesInstanceUID.isEmpty())
     {
     logger.error("Cannot receive series: Either Study or Series Instance UID empty.");
     return false;
     }
   Q_D(ctkDICOMRetrieve);
-  logger.info ( "Starting retrieveStudy" );
-  return d->retrieve ( studyInstanceUID, "", ctkDICOMRetrievePrivate::RetrieveStudy );
+  logger.info ( "Starting getSeries" );
+  return d->get ( studyInstanceUID, seriesInstanceUID, ctkDICOMRetrievePrivate::RetrieveSeries );
 }
+

@@ -55,6 +55,31 @@
 static ctkLogger logger ( "org.commontk.dicom.DICOMQuery" );
 
 //------------------------------------------------------------------------------
+// A customized implemenation so that Qt signals can be emitted
+// when query results are obtained
+class ctkDICOMQuerySCUPrivate : public ctkDcmSCU
+{
+public:
+  ctkDICOMQuery *query;
+  ctkDICOMQuerySCUPrivate()
+    {
+    this->query = 0;
+    };
+  ~ctkDICOMQuerySCUPrivate() {};
+  virtual OFCondition handleFINDResponse(const T_ASC_PresentationContextID  presID,
+                                         QRResponse *response,
+                                         OFBool &waitForNextResponse)
+    {
+      if (this->query)
+        {
+        logger.debug ( "FIND RESPONSE" );
+        emit this->query->queryResponseHandled("Got a find response!");
+        return this->ctkDcmSCU::handleFINDResponse(presID, response, waitForNextResponse);
+        }
+    };
+};
+
+//------------------------------------------------------------------------------
 class ctkDICOMQueryPrivate
 {
 public:
@@ -69,7 +94,7 @@ public:
   QString                 Host;
   int                     Port;
   QMap<QString,QVariant>  Filters;
-  ctkDcmSCU               SCU;
+  ctkDICOMQuerySCUPrivate SCU;
   DcmDataset*             Query;
   QStringList             StudyInstanceUIDList;
 };
@@ -104,6 +129,8 @@ ctkDICOMQuery::ctkDICOMQuery(QObject* parentObject)
   : QObject(parentObject)
   , d_ptr(new ctkDICOMQueryPrivate)
 {
+  Q_D(ctkDICOMQuery);
+  d->SCU.query = this; // give the dcmtk level access to this for emitting signals
 }
 
 //------------------------------------------------------------------------------
