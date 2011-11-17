@@ -693,6 +693,13 @@ set(CMAKE_C_FLAGS ${CTK_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
 set(CTK_EXPORT_HEADER_TEMPLATE "${CTK_SOURCE_DIR}/Libs/ctkExport.h.in")
 
 #-----------------------------------------------------------------------------
+# Setup testing environment before Libs are added
+#
+IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Libs/Testing)
+ENDIF()
+
+#-----------------------------------------------------------------------------
 # Add CTK library subdirectories
 #
 foreach(lib ${CTK_LIBS_SUBDIRS})
