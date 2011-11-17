@@ -38,7 +38,7 @@ ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placehol
     PlaceholderWidget(placeholderWidget),
     exitingApplication(false)
 {
-  connect(this,SIGNAL(appReady()),SLOT(onAppReady()));
+  connect(this,SIGNAL(appReady()),SLOT(onAppReady()), Qt::QueuedConnection);
   connect(this,SIGNAL(startProgress()),this,SLOT(onStartProgress()));
   connect(this,SIGNAL(releaseAvailableResources()),this,SLOT(onReleaseAvailableResources()));
   connect(this,SIGNAL(resumed()),this,SLOT(onResumed()));

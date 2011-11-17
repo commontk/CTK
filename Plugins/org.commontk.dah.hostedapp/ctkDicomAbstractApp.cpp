@@ -119,7 +119,7 @@ bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
     if (d_ptr->currentState == ctkDicomAppHosting::IDLE)
     {
       //maybe not useful:
-      getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
+      //getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
       emit exitHostedApp();
       result = true;
     }
