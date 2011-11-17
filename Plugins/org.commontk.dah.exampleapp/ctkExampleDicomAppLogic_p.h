@@ -75,7 +75,8 @@ protected slots:
   void onExitHostedApp();
   void onReleaseResources();
 
-  void buttonClicked();
+  void onLoadDataClicked();
+  void onCreateSecondaryCapture();
 private:
   QWidget * AppWidget;
   Ui::ctkExampleDicomAppWidget ui;

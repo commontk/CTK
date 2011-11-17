@@ -27,6 +27,7 @@
 #include <QApplication>
 #include <QLabel>
 #include <QRect>
+#include <QTemporaryFile>
 
 // CTK includes
 #include "ctkDICOMImage.h"
@@ -82,7 +83,8 @@ void ctkExampleDicomAppLogic::do_something()
   AppWidget = new QWidget;
   ui.setupUi(AppWidget);
 
-  connect(ui.GetDataButton, SIGNAL(clicked()), this, SLOT(buttonClicked()));
+  connect(ui.LoadDataButton, SIGNAL(clicked()), this, SLOT(onLoadDataClicked()));
+  connect(ui.CreateSecondaryCaptureButton, SIGNAL(clicked()), this, SLOT(onCreateSecondaryCapture()));
   try
     {
     QRect preferred(50,50,100,100);
@@ -123,14 +125,14 @@ void ctkExampleDicomAppLogic::onResumeProgress()
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
   //we're rolling
   //do something else normally, but this is an example
-  ui.GetDataButton->setEnabled(true);
+  ui.LoadDataButton->setEnabled(true);
 }
 
 //----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::onSuspendProgress()
 {
   //release resources it can reclame later to resume work
-  ui.GetDataButton->setEnabled(false);
+  ui.LoadDataButton->setEnabled(false);
   //notify state changed
   setInternalState(ctkDicomAppHosting::SUSPENDED);
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::SUSPENDED);
@@ -194,7 +196,7 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::Avai
     }
   }
   ui.ReceivedDataInformation->setText(s);
-  ui.GetDataButton->setEnabled(true);
+  ui.LoadDataButton->setEnabled(true);
   return false;
 }
 
@@ -218,7 +220,7 @@ void ctkExampleDicomAppLogic::releaseData(const QList<QUuid>& objectUUIDs)
 
 
 
-void ctkExampleDicomAppLogic::buttonClicked()
+void ctkExampleDicomAppLogic::onLoadDataClicked()
 {
   QList<QUuid> uuidlist;
   uuidlist.append(uuid);
@@ -253,4 +255,15 @@ void ctkExampleDicomAppLogic::buttonClicked()
     }
   }
   ui.ReceivedDataInformation->setText(s);
+}
+
+void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
+{
+  const QPixmap* pixmap = ui.PlaceHolderForImage->pixmap();
+  if(pixmap!=NULL)
+  {
+    tempfile = new QTemporaryFile(this->AppWidget);
+    pixmap->save(tempfile.fileName(), "PNG");
+  }
+
 }

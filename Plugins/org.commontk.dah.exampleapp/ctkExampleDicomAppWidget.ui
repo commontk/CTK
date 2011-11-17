@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>322</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,12 +15,12 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QPushButton" name="GetDataButton">
+    <widget class="QPushButton" name="LoadDataButton">
      <property name="enabled">
       <bool>false</bool>
      </property>
      <property name="text">
-      <string>Get Data</string>
+      <string>Load Data</string>
      </property>
     </widget>
    </item>
@@ -50,6 +50,13 @@
      </property>
      <property name="text">
       <string/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="CreateSecondaryCaptureButton">
+     <property name="text">
+      <string>Create Secondary Capture</string>
      </property>
     </widget>
    </item>
