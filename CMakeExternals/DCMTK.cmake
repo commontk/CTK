@@ -41,7 +41,7 @@ if(${add_project})
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       BINARY_DIR ${proj}-build
       PREFIX ${proj}${ep_suffix}
-      GIT_REPOSITORY "file:///home/jchris/Projects/sandbox/dcmtk-git/dcmtk"
+      GIT_REPOSITORY "${git_protocol}://git.dcmtk.org/dcmtk.git"
       GIT_TAG ${revision_tag}
       CMAKE_GENERATOR ${gen}
       UPDATE_COMMAND ""
