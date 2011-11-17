@@ -1,6 +1,6 @@
-PROJECT(org_commontk_dah_app)
+PROJECT(org_commontk_dah_hostedapp)
 
-SET(PLUGIN_export_directive "org_commontk_dah_app_EXPORT")
+SET(PLUGIN_export_directive "org_commontk_dah_hostedapp_EXPORT")
 
 SET(PLUGIN_SRCS
   ctkAppSoapMessageProcessor.cpp
