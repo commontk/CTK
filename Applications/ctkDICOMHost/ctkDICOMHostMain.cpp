@@ -87,8 +87,8 @@ int main(int argc, char** argv)
   QDirIterator dirIter(pluginPath, libFilter, QDir::Files);
 
   QStringList pluginsToInstall;
-  pluginsToInstall << "org_commontk_dah_core" << "org_commontk_dah_host"
-                   << "org_commontk_dah_examplehost";
+  pluginsToInstall << "org_commontk_dah_core." << "org_commontk_dah_host."
+                   << "org_commontk_dah_examplehost.";
 
   QList<QSharedPointer<ctkPlugin> > installedPlugins;
   while(dirIter.hasNext())
