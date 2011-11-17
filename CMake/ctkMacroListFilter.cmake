@@ -3,8 +3,8 @@
 #!
 #! Usage:
 #! \code
-#! LIST_FILTER(<list> <regexp_var> [<regexp_var> ...]
-#!              [OUTPUT_VARIABLE <variable>])
+#! ctkMacroListFilter(<list> <regexp_var> [<regexp_var> ...]
+#!                    [OUTPUT_VARIABLE <variable>])
 #! \endcode
 #!
 #! Removes items from <list> which do not match any of the specified
@@ -17,7 +17,7 @@
 #! http://www.cmake.org/Wiki/CMakeMacroParseArguments
 #!
 #! \ingroup CMakeUtilities
-MACRO(CtkMacroListFilter)
+MACRO(ctkMacroListFilter)
   ctkMacroParseArguments(LIST_FILTER "OUTPUT_VARIABLE" "" ${ARGV})
   # Check arguments.
   LIST(LENGTH LIST_FILTER_DEFAULT_ARGS LIST_FILTER_default_length)
@@ -48,4 +48,4 @@ MACRO(CtkMacroListFilter)
   IF(${LIST_FILTER_OUTPUT_VARIABLE} STREQUAL "LIST_FILTER_internal_output")
     SET(${LIST_FILTER_input_list} ${${LIST_FILTER_OUTPUT_VARIABLE}})
   ENDIF(${LIST_FILTER_OUTPUT_VARIABLE} STREQUAL "LIST_FILTER_internal_output")
-ENDMACRO(CtkMacroListFilter)
+ENDMACRO(ctkMacroListFilter)

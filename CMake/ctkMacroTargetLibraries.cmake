@@ -211,9 +211,10 @@ MACRO(ctkMacroGetAllProjectTargetLibraries all_target_libraries varname)
   ENDIF()
 ENDMACRO()
 
-#
-# Extract all library names *NOT* being build within this project
-#
+#!
+#! Extract all library names *NOT* being build within this project
+#!
+#! \ingroup CMakeUtilities
 MACRO(ctkMacroGetAllNonProjectTargetLibraries all_target_libraries varname)
   ctkMacroGetAllProjectTargetLibraries("${all_target_libraries}" all_project_libraries)
   SET(_tmp_list ${all_target_libraries})
