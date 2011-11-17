@@ -29,7 +29,6 @@
 #include "ctkDICOMDatabase.h"
 
 class ctkDICOMIndexerPrivate;
-class ctkDICOMAbstractThumbnailGenerator;
 
 ///
 /// \brief Indexes DICOM images located in local directory into an Sql database
@@ -64,13 +63,6 @@ public:
                     bool createHierarchy = true, bool createThumbnails = true);
 
   Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
-
-  ///
-  /// set thumbnail generator object
-  void setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator* generator);
-  ///
-  /// get thumbnail genrator object
-  ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator();
 
 signals:
   void foundFilesToIndex(int);

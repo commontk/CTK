@@ -36,7 +36,6 @@
 // ctkDICOM includes
 #include "ctkLogger.h"
 #include "ctkDICOMIndexer.h"
-#include "ctkDICOMAbstractThumbnailGenerator.h"
 
 // DCMTK includes
 #include <dcmtk/dcmdata/dcfilefo.h>
@@ -72,7 +71,6 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate()
 {
-    this->thumbnailGenerator = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -193,16 +191,4 @@ void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& ctkDICOMDatabase, const 
   // and also to add filesystemFiles into the database tables
   */ 
   }
-
-//------------------------------------------------------------------------------
-void ctkDICOMIndexer::setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator *generator){
-    Q_D(ctkDICOMIndexer);
-    d->thumbnailGenerator = generator;
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMAbstractThumbnailGenerator* ctkDICOMIndexer::thumbnailGenerator(){
-    Q_D(ctkDICOMIndexer);
-    return d->thumbnailGenerator;
-}
 
