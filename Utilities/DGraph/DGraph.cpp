@@ -420,6 +420,14 @@ int main(int argc, char** argv)
             std::cout << ";";
             }
           }
+
+        for (pathsIterator = paths.begin(); pathsIterator != paths.end(); pathsIterator++)
+          {
+            if (*pathsIterator != NULL)
+              {
+              delete *pathsIterator;
+              }
+          }
         }
       }
     }

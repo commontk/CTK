@@ -44,6 +44,7 @@ public:
   ctkDependencyGraph* const q_ptr;
 
   ctkDependencyGraphPrivate(ctkDependencyGraph& p);
+  ~ctkDependencyGraphPrivate();
   
   /// Compute outdegree
   void computeOutdegrees(std::vector<int>& computedOutdegrees);
@@ -165,6 +166,18 @@ ctkDependencyGraphPrivate::ctkDependencyGraphPrivate(ctkDependencyGraph& object)
   this->CycleDetected = false;
   this->CycleOrigin = 0;
   this->CycleEnd = 0;
+}
+
+ctkDependencyGraphPrivate::~ctkDependencyGraphPrivate()
+{
+  std::vector<std::vector<int>* >::iterator edgesIterator;
+  for (edgesIterator = this->Edges.begin(); edgesIterator != this->Edges.end(); edgesIterator++)
+    {
+    if (*edgesIterator != NULL)
+      {
+      delete *edgesIterator;
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -436,10 +449,9 @@ ctkDependencyGraph::ctkDependencyGraph(int nvertices)
 //----------------------------------------------------------------------------
 ctkDependencyGraph::~ctkDependencyGraph()
 {
-  // Clean memory
-  for (int i=0; i <= d_ptr->NVertices; i++)
+  if (d_ptr != NULL)
     {
-    delete d_ptr->Edges[i];
+    delete d_ptr;
     }
 }
 
