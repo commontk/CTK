@@ -93,4 +93,4 @@ ctkPluginContext* ctkDicomAppPlugin::getPluginContext()
   return ctkDicomAppPlugin::Context;
 }
 
-Q_EXPORT_PLUGIN2(org_commontk_dah_app, ctkDicomAppPlugin)
+Q_EXPORT_PLUGIN2(org_commontk_dah_hostedapp, ctkDicomAppPlugin)
