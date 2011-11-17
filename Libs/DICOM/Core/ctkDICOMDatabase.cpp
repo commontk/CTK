@@ -752,9 +752,14 @@ void ctkDICOMDatabase::insert ( const QString& filePath, bool storeFile, bool ge
   ctkDICOMDataset ctkDataset;
 
   ctkDataset.InitializeFromFile(filePath);
-
-  this->insert( ctkDataset, storeFile, generateThumbnail );
-
+  if ( ctkDataset.IsInitialized() )
+  {
+    this->insert( ctkDataset, storeFile, generateThumbnail );
+  }
+  else
+  {
+    logger.warn(QString("Could not read DICOM file:") + filePath);
+  }
 }
 
 bool ctkDICOMDatabase::fileExistsAndUpToDate(const QString& filePath)
