@@ -329,9 +329,8 @@ macro(ctkMacroBuildPlugin)
 
   target_link_libraries(${lib_name} ${my_libs})
 
-  # Update CTK_PLUGINS
   if(NOT MY_TEST_PLUGIN)
-    set(CTK_PLUGIN_LIBRARIES ${CTK_PLUGIN_LIBRARIES} ${lib_name} CACHE INTERNAL "CTK plugins" FORCE)
+    set(${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES} ${lib_name} CACHE INTERNAL "CTK plugins" FORCE)
   endif()
 
   # Install headers

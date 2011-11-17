@@ -166,7 +166,7 @@ set(CTK_WRAPPED_LIBRARIES_PYTHONQT CACHE INTERNAL "CTK libraries wrapped using P
 
 # Variable use in CTKConfig.cmake.in
 set(CTK_LIBRARIES CACHE INTERNAL "CTK libraries" FORCE)
-set(CTK_PLUGIN_LIBRARIES CACHE INTERNAL "CTK plugins" FORCE)
+set(${PROJECT_NAME}_PLUGIN_LIBRARIES CACHE INTERNAL "CTK plugins" FORCE)
 
 # Used by CTKGenerateCTKConfig.cmake and also used to reference script from other scripts
 set(CTK_CMAKE_DIR ${CTK_SOURCE_DIR}/CMake)

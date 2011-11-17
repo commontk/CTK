@@ -1,5 +1,10 @@
 # List all plugins
-SET(CTK_PLUGIN_LIBRARIES "@CTK_PLUGIN_LIBRARIES@")
+set(@_ctk_plugin_libraries_variable@ @_ctk_plugin_libraries@)
+
+if(NOT @_ctk_plugin_libraries_variable@_set)
+  set_property(GLOBAL APPEND PROPERTY CTK_PLUGIN_LIBRARIES_VARS @_ctk_plugin_libraries_variable@)
+  set(@_ctk_plugin_libraries_variable@_set 1)
+endif()
 
 # Plugin specific include directories
 @CTK_PLUGIN_INCLUDE_DIRS_CONFIG@
