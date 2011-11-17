@@ -275,7 +275,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 
   // Clear the query
   d->Query->clear();
- 
+
   // Insert all keys that we like to receive values for
   d->Query->insertEmptyElement ( DCM_PatientID );
   d->Query->insertEmptyElement ( DCM_PatientName );
@@ -295,7 +295,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 
   d->Query->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
 
-  /* Now, for all keys that the user provided for filtering on STUDY level, 
+  /* Now, for all keys that the user provided for filtering on STUDY level,
    * overwrite empty keys with value. For now, only Patient's Name, Patient ID,
    * Study Description, Modalities in Study, and Study Date are used.
    */
@@ -346,8 +346,8 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 
   if ( d->Filters.keys().contains("StartDate") && d->Filters.keys().contains("EndDate") )
     {
-    QString dateRange = d->Filters["StartDate"].toString() + 
-                        QString("-") + 
+    QString dateRange = d->Filters["StartDate"].toString() +
+                        QString("-") +
                         d->Filters["EndDate"].toString();
     d->Query->putAndInsertString ( DCM_StudyDate, dateRange.toAscii().data() );
     logger.debug("Query on study date " + dateRange);
