@@ -50,6 +50,7 @@ set(TEST_SOURCES
   ctkModalityWidgetTest1.cpp
   ctkPathLineEditTest1.cpp
   ctkPopupWidgetTest1.cpp
+  ctkRangeSliderTest.cpp
   ctkRangeSliderTest1.cpp
   ctkRangeWidgetTest1.cpp
   ctkRangeWidgetTest2.cpp
@@ -85,7 +86,11 @@ if(EXISTS "${CTKData_DIR}")
     )
 endif()
 
+include_directories(${CMAKE_SOURCE_DIR}/Libs/Testing
+                    ${CMAKE_CURRENT_BINARY_DIR})
+
 create_test_sourcelist(Tests ${KIT}CppTests.cxx
+
   ${TEST_SOURCES}
   )
 
@@ -111,6 +116,9 @@ set(Tests_MOC_SRCS
 
 set(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
+
+QT4_GENERATE_MOC(ctkRangeSliderTest.cpp moc_ctkRangeSliderTest.cpp)
+macro_add_file_dependencies(ctkRangeSliderTest.cpp moc_ctkRangeSliderTest.cpp)
 
 add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
@@ -181,6 +189,7 @@ SIMPLE_TEST( ctkMenuComboBoxTest3 )
 SIMPLE_TEST( ctkModalityWidgetTest1 )
 SIMPLE_TEST( ctkPathLineEditTest1 )
 SIMPLE_TEST( ctkPopupWidgetTest1 )
+SIMPLE_TEST( ctkRangeSliderTest )
 SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest2 )
