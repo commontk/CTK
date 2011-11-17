@@ -20,32 +20,19 @@
 
 // CTK includes
 #include "ctkDependencyGraph.h"
+#include "ctkDependencyGraphTestHelper.h"
 
 // STL includes
 #include <cstdlib>
 #include <iostream>
 
-namespace
-{
-void printIntegerList(const char* msg, const QList<int>& list, bool endl = true)
-{
-  std::cerr << msg; 
-  foreach(int l, list)
-    {
-    std::cerr << l << " "; 
-    }
-  if (endl)
-    {
-    std::cerr << std::endl;
-    }
-}
-}
-
 //-----------------------------------------------------------------------------
 int ctkDependencyGraphTest1(int argc, char * argv [] )
 {
-  Q_UNUSED(argc);
-  Q_UNUSED(argv);  
+  if (argc > 1)
+    {
+    std::cerr << argv[0] << " expects zero arguments" << std::endl;
+    }
 
   const int numberOfVertices = 14;
 
@@ -82,9 +69,8 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
 
   int expectedNumberOfEdge = 15;
   
-
   graph.printAdditionalInfo();
-  graph.printGraph();
+//  graph.printGraph();  // printAdditionalInfo also prints graph.
   
   int nov = graph.numberOfVertices();
 
@@ -117,11 +103,14 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
 
   //int cend = graph.cycleEnd();
 
-  QList<int> path;
-  QList<int> expectedPath;
+  std::list<int> path;
+  std::list<int> expectedPath;
 
   graph.findPath( 8, 7, path );
-  expectedPath << 8 << 6 << 7;
+  expectedPath.push_back(8);
+  expectedPath.push_back(6);
+  expectedPath.push_back(7);
+
   if (path != expectedPath)
     {
     std::cerr << "Problem with findPath()" << std::endl;
@@ -134,7 +123,10 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
   expectedPath.clear();
   
   graph.findPath( 1, 7, path );
-  expectedPath << 1 << 5 << 7;
+  expectedPath.push_back(1);
+  expectedPath.push_back(5);
+  expectedPath.push_back(7);
+
   if (path != expectedPath)
     {
     std::cerr << "Problem with findPath()" << std::endl;
@@ -147,7 +139,12 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
   expectedPath.clear();
   
   graph.findPath( 3, 7, path );
-  expectedPath << 3 << 4 << 1 << 5 << 7;
+  expectedPath.push_back(3);
+  expectedPath.push_back(4);
+  expectedPath.push_back(1);
+  expectedPath.push_back(5);
+  expectedPath.push_back(7);
+
   if (path != expectedPath)
     {
     std::cerr << "Problem with findPath()" << std::endl;
@@ -160,7 +157,10 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
   expectedPath.clear();
   
   graph.findPath( 2, 5, path );
-  expectedPath << 2 << 1 << 5;
+  expectedPath.push_back(2);
+  expectedPath.push_back(1);
+  expectedPath.push_back(5);
+
   if (path != expectedPath)
     {
     std::cerr << "Problem with findPath()" << std::endl;
@@ -172,19 +172,32 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
   path.clear();
   expectedPath.clear();
 
-  QList<QList<int>* > paths;
-  QList<int> expectedPath1;
-  QList<int> expectedPath2;
-  QList<int> expectedPath3;
+  std::list<std::list<int>* > paths;
+  std::list<int> expectedPath1;
+  std::list<int> expectedPath2;
+  std::list<int> expectedPath3;
 
   graph.findPaths(14, 5, paths);
-  expectedPath1 << 14 << 9 << 3 << 4 << 1 << 5;
-  expectedPath2 << 14 << 9 << 2 << 1 << 5;
-  foreach(QList<int>* p, paths)
+
+  expectedPath1.push_back(14);
+  expectedPath1.push_back(9);
+  expectedPath1.push_back(3);
+  expectedPath1.push_back(4);
+  expectedPath1.push_back(1);
+  expectedPath1.push_back(5);
+
+  expectedPath2.push_back(14);
+  expectedPath2.push_back(9);
+  expectedPath2.push_back(2);
+  expectedPath2.push_back(1);
+  expectedPath2.push_back(5);
+
+  std::list<std::list<int>* >::const_iterator pathsIterator;
+  for(pathsIterator = paths.begin(); pathsIterator != paths.end(); pathsIterator++)
     {
-    if (*p != expectedPath1 && *p != expectedPath2)
+    if (*(*pathsIterator) != expectedPath1 && *(*pathsIterator) != expectedPath2)
       {
-      printIntegerList("current:", *p);
+      printIntegerList("current:", *(*pathsIterator));
       printIntegerList("expected:", expectedPath1, false);
       printIntegerList(" or ", expectedPath2);
       return EXIT_FAILURE;
@@ -195,28 +208,40 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
   expectedPath2.clear();
 
   graph.findPaths(14, 7, paths);
-  expectedPath1 << 14 << 9 << 3 << 4 << 1 << 5 << 7;
-  expectedPath2 << 14 << 9 << 2 << 1 << 5 << 7;
-  expectedPath3 << 14 << 13 << 12 << 11 << 10 << 7;
-  foreach(QList<int>* p, paths)
+
+  expectedPath1.push_back(14);
+  expectedPath1.push_back(9);
+  expectedPath1.push_back(3);
+  expectedPath1.push_back(4);
+  expectedPath1.push_back(1);
+  expectedPath1.push_back(5);
+  expectedPath1.push_back(7);
+
+  expectedPath2.push_back(14);
+  expectedPath2.push_back(9);
+  expectedPath2.push_back(2);
+  expectedPath2.push_back(1);
+  expectedPath2.push_back(5);
+  expectedPath2.push_back(7);
+
+  expectedPath3.push_back(14);
+  expectedPath3.push_back(13);
+  expectedPath3.push_back(12);
+  expectedPath3.push_back(11);
+  expectedPath3.push_back(10);
+  expectedPath3.push_back(7);
+
+  for(pathsIterator = paths.begin(); pathsIterator != paths.end(); pathsIterator++)
     {
-    if (*p != expectedPath1 && *p != expectedPath2 && *p != expectedPath3)
+    if (*(*pathsIterator) != expectedPath1 && *(*pathsIterator) != expectedPath2 && *(*pathsIterator) != expectedPath3)
       {
-      printIntegerList("current:", *p);
+      printIntegerList("current:", *(*pathsIterator));
       printIntegerList("expected:", expectedPath1, false);
       printIntegerList(" or ", expectedPath2, false);
       printIntegerList(" or ", expectedPath3);
       return EXIT_FAILURE;
       }
     }
-
-//   QList<int> list;
-//   graph.setEdgeListToExclude( list );
-// 
-//   graph.shouldExcludeEdge(2);
-// 
-//   QList<int> sortedlist;
-//   graph.topologicalSort( sortedlist );
 
   return EXIT_SUCCESS;
 }

@@ -21,21 +21,20 @@
 #ifndef __ctkDependencyGraph_h
 #define __ctkDependencyGraph_h
 
-// Qt includes
-#include <QScopedPointer>
-#include <QString>
-#include <QList>
-#include <QtGlobal>
-
 // CTK includes
 #if !defined(NO_SYMBOL_EXPORT)
 #include "ctkCoreExport.h"
 #else
 #define CTK_CORE_EXPORT
 #endif
+
+#include <list>
+
 class ctkDependencyGraphPrivate;
 
 /// \ingroup Core
+/// \class ctkDependencyGraph
+/// \brief Class to implement a dependency graph, converted to STL instead of Qt.
 class CTK_CORE_EXPORT ctkDependencyGraph
 {
 public:
@@ -73,14 +72,14 @@ public:
 
   /// Retrieve the paths between two vertices
   /// Caller is responsible to clear paths list
-  void findPaths(int from, int to, QList<QList<int>* >& paths);
+  void findPaths(int from, int to, std::list<std::list<int>* >& paths);
   
   /// Retrieve the path between two vertices
-  void findPath(int from, int to, QList<int>& path);
+  void findPath(int from, int to, std::list<int>& path);
   
   /// List of edge to exclude
   /// An edge is specified using its extremity
-  void setEdgeListToExclude(const QList<int>& list);
+  void setEdgeListToExclude(const std::list<int>& list);
   
   /// The default implementation check if 'edge' is in the list of edge to exclude
   /// See setEdgeListToExclude
@@ -93,17 +92,19 @@ public:
   /// Return false if the graph contains cycles
   /// If a rootId is given, the subgraph starting at the root id is sorted
   /// See cycleDetected, cycleOrigin, cycleEnd
-  bool topologicalSort(QList<int>& sorted, int rootId = -1);
+  bool topologicalSort(std::list<int>& sorted, int rootId = -1);
 
   /// Retrieve all vertices with indegree 0
-  void sourceVertices(QList<int>& sources);
+  void sourceVertices(std::list<int>& sources);
 
 protected:
-  QScopedPointer<ctkDependencyGraphPrivate> d_ptr;
+  ctkDependencyGraphPrivate* d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkDependencyGraph);
-  Q_DISABLE_COPY(ctkDependencyGraph);
+
+  // Intentionally disable copy semantics
+  ctkDependencyGraph(const ctkDependencyGraph &);
+  ctkDependencyGraph &operator=(const ctkDependencyGraph &);
 };
 
 #endif
