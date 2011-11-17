@@ -30,8 +30,8 @@
 #include <iostream>
 #include <cstdlib>
 
-int ctkDICOMTest1(int argc, char * argv []) {
-  
+int ctkDICOMCoreTest1(int argc, char * argv []) {
+
   QCoreApplication app(argc, argv);
   QTextStream out(stdout);
   try
@@ -48,7 +48,7 @@ int ctkDICOMTest1(int argc, char * argv []) {
        out << "ERROR: sample DB init failed";
        return EXIT_FAILURE;
     };
-    myCTK.closeDatabase(); 
+    myCTK.closeDatabase();
     }
   catch (std::exception e)
   {

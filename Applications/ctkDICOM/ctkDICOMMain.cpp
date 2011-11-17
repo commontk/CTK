@@ -40,7 +40,6 @@
 
 int main(int argc, char** argv)
 {
-  ctkLogger::configure();
   QApplication app(argc, argv);
 
   app.setOrganizationName("commontk");
@@ -53,7 +52,7 @@ int main(int argc, char** argv)
   QSettings settings;
   QString databaseDirectory;
 
-  // set up the database 
+  // set up the database
   if (argc > 1)
   {
     QString directory(argv[1]);
@@ -71,7 +70,7 @@ int main(int argc, char** argv)
   }
 
   QDir qdir(databaseDirectory);
-  if ( !qdir.exists(databaseDirectory) ) 
+  if ( !qdir.exists(databaseDirectory) )
   {
     if ( !qdir.mkpath(databaseDirectory) )
     {

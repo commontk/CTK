@@ -52,17 +52,6 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 add_executable(${KIT}CppTests ${Tests} ${KIT_HELPER_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
-set( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-
-macro( SIMPLE_TEST  TESTNAME )
-  add_test( ${TESTNAME} ${KIT_TESTS} ${TESTNAME}
-            -D ${CTKData_DIR}/Data
-            -V ${CTKData_DIR}/Baseline/Libs/Visualization/VTK/Core/${TESTNAME}.png
-            -T ${CTK_BINARY_DIR}/Testing/Temporary
-            )
-  set_property(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-endmacro( SIMPLE_TEST  )
-
 #
 # Add Tests
 #
@@ -74,6 +63,7 @@ SIMPLE_TEST( ctkITKErrorLogModelTest1 )
 # Add Tests expecting CTKData to be set
 #
 if(EXISTS "${CTKData_DIR}")
-
+  set(baseline_relative_location "Libs/ImageProcessing/ITK/Core")
+  #SIMPLE_TEST(Foo ${baseline_relative_location}/${TESTNAME}.png)
 endif()
 

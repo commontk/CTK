@@ -1,6 +1,7 @@
 set(KIT ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
+  ctkDICOMCoreTest1.cpp
   ctkDICOMDatabaseTest1.cpp
   ctkDICOMDatasetTest1.cpp
   ctkDICOMIndexerTest1.cpp
@@ -10,7 +11,6 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMQueryTest2.cpp
   ctkDICOMRetrieveTest1.cpp
   ctkDICOMRetrieveTest2.cpp
-  ctkDICOMTest1.cpp
   ctkDICOMTesterTest1.cpp
   ctkDICOMTesterTest2.cpp
   )
@@ -23,46 +23,45 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 add_executable(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
-set( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-
-macro( SIMPLE_TEST  TESTNAME )
-  add_test( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
-  set_property(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-endmacro( SIMPLE_TEST  )
-
 #
 # Add Tests
 #
+
+# ctkDICOMDatabase
 SIMPLE_TEST(ctkDICOMDatabaseTest1)
 SIMPLE_TEST(ctkDICOMDatasetTest1)
 SIMPLE_TEST(ctkDICOMIndexerTest1 )
 
-add_test( ctkDICOMModelTest1 ${KIT_TESTS}
-          ctkDICOMModelTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
-                             ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql)
-set_property(TEST ctkDICOMModelTest1 PROPERTY LABELS ${PROJECT_NAME})
+# ctkDICOMModel
+SIMPLE_TEST(ctkDICOMModelTest1
+  ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
+  )
 SIMPLE_TEST(ctkDICOMPersonNameTest1)
 
 # ctkDICOMQuery
 SIMPLE_TEST( ctkDICOMQueryTest1)
-add_test( ctkDICOMQueryTest2 ${KIT_TESTS}
-          ctkDICOMQueryTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA)
-set_property(TEST ctkDICOMQueryTest2 PROPERTY LABELS ${PROJECT_NAME})
+SIMPLE_TEST( ctkDICOMQueryTest2
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
+  )
 
 # ctkDICOMRetrieve
 SIMPLE_TEST( ctkDICOMRetrieveTest1)
-add_test( ctkDICOMRetrieveTest2 ${KIT_TESTS}
-          ctkDICOMRetrieveTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA)
-set_property(TEST ctkDICOMRetrieveTest2 PROPERTY LABELS ${PROJECT_NAME})
+SIMPLE_TEST( ctkDICOMRetrieveTest2
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
+  )
 
-# ctkDICOMTest
-add_test( ctkDICOMTest1 ${KIT_TESTS}
-          ctkDICOMTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
-                        ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql)
-set_property(TEST ctkDICOMTest1 PROPERTY LABELS ${PROJECT_NAME})
+# ctkDICOMCore
+SIMPLE_TEST( ctkDICOMCoreTest1
+  ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
+  )
 
 # ctkDICOMTester
-SIMPLE_TEST(ctkDICOMTesterTest1)
-add_test( ctkDICOMTesterTest2 ${KIT_TESTS}
-          ctkDICOMTesterTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA)
-set_property(TEST ctkDICOMTesterTest2 PROPERTY LABELS ${PROJECT_NAME})
+SIMPLE_TEST( ctkDICOMTesterTest1 )
+SIMPLE_TEST( ctkDICOMTesterTest2
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
+  )

@@ -48,9 +48,8 @@ void print_usage()
 */
 int main(int argc, char** argv)
 {
-  ctkLogger::configure();
   ctkLogger logger ( "org.commontk.dicom.DICOMRetieveApp" );
-  logger.setDebug();
+
   // Set the DCMTK log level to debug
   dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
   rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);

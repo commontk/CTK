@@ -63,27 +63,6 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 add_executable(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRARIES})
 
-set( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-
-macro( SIMPLE_TEST  TESTNAME )
-  add_test( ${TESTNAME} ${KIT_TESTS} ${TESTNAME}
-            -D "${CTKData_DIR}/Data"
-            -V "${CTKData_DIR}/Baseline/Libs/Visualization/VTK/Widgets"
-            )
-  set_property(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-endmacro( SIMPLE_TEST  )
-
-macro( MAGNIFY_WIDGET_TEST  TESTNAME  TESTTYPE  SIZE  MAGNIFICATION)
-  add_test( ${TESTNAME}${TESTTYPE} ${KIT_TESTS} ${TESTNAME}
-            -D "${CTKData_DIR}/Data"
-            -V "${CTKData_DIR}/Baseline/Libs/Visualization/VTK/Widgets"
-            -T "${TESTTYPE}"
-            -S "${SIZE}"
-            -M "${MAGNIFICATION}"
-            )
-  set_property(TEST ${TESTNAME}${TESTTYPE} PROPERTY LABELS ${PROJECT_NAME})
-endmacro( MAGNIFY_WIDGET_TEST  )
-
 #
 # Add Tests
 #
@@ -101,7 +80,7 @@ SIMPLE_TEST( ctkTransferFunctionViewTest2 )
 SIMPLE_TEST( ctkTransferFunctionViewTest3 )
 SIMPLE_TEST( ctkTransferFunctionViewTest4 )
 SIMPLE_TEST( ctkTransferFunctionViewTest5 )
-IF (CTK_USE_CHARTS)
+IF(CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKChartViewTest1 )
   SIMPLE_TEST( ctkVTKVolumePropertyWidgetTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest1 )
@@ -123,6 +102,16 @@ SIMPLE_TEST( ctkVTKWidgetsUtilsTestGrabWidget )
 # Add Tests expecting CTKData to be set
 #
 if(EXISTS "${CTKData_DIR}")
+  set(baseline_relative_location Libs/Visualization/VTK/Widgets)
+
+  macro(MAGNIFY_WIDGET_TEST TESTNAME TESTTYPE SIZE MAGNIFICATION)
+    SIMPLE_TEST_WITH_DATA(${TESTNAME}${TESTTYPE} ${baseline_relative_location}
+      -T "${TESTTYPE}"
+      -S "${SIZE}"
+      -M "${MAGNIFICATION}"
+      )
+  endmacro()
+
   #
   # Dependencies required so that these tests won't run in parallel
   #
@@ -139,7 +128,8 @@ if(EXISTS "${CTKData_DIR}")
   set_tests_properties( ctkVTKMagnifyViewTest2EvenOdd
                         PROPERTIES DEPENDS
                         ctkVTKMagnifyViewTest2OddEven )
-  SIMPLE_TEST( ctkVTKSliceViewTest2 )
-  SIMPLE_TEST( ctkVTKRenderViewTest2 )
+
+  SIMPLE_TEST_WITH_DATA( ctkVTKRenderViewTest2 ${baseline_relative_location})
+  SIMPLE_TEST_WITH_DATA( ctkVTKSliceViewTest2 ${baseline_relative_location})
 endif()
 

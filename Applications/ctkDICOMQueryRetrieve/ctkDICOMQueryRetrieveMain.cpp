@@ -39,7 +39,6 @@
 
 int main(int argc, char** argv)
 {
-  ctkLogger::configure();
   // Set the DCMTK log level to debug
   dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
   rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);
@@ -53,7 +52,7 @@ int main(int argc, char** argv)
   QSettings settings;
   QString databaseDirectory;
 
-  // set up the database 
+  // set up the database
   if (argc > 1)
   {
     QString directory(argv[1]);
@@ -71,7 +70,7 @@ int main(int argc, char** argv)
   }
 
   QDir qdir(databaseDirectory);
-  if ( !qdir.exists(databaseDirectory) ) 
+  if ( !qdir.exists(databaseDirectory) )
   {
     if ( !qdir.mkpath(databaseDirectory) )
     {
