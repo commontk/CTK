@@ -47,19 +47,15 @@ ctkDICOMDataset::ctkDICOMDataset(bool strictErrorHandling)
 :d_ptr(new ctkDICOMDatasetPrivate)
 {
   Q_D(ctkDICOMDataset);
+  d->m_DcmDataset = new DcmDataset();
   d->m_DICOMDataSetInitialized = false;
   d->m_StrictErrorHandling = strictErrorHandling;
-
-  // d->m_DcmDataset = this;
 }
 
 ctkDICOMDataset::~ctkDICOMDataset()
 {
-//  Q_D(ctkDICOMDataset);
-//  if(d->m_DcmDataset != this)
-//  {
-//    delete d->m_DcmDataset;
-//  }
+  Q_D(ctkDICOMDataset);
+  delete d->m_DcmDataset;
 }
 
 
@@ -137,6 +133,8 @@ void ctkDICOMDataset::InitializeFromFile(const QString& filename,
 void ctkDICOMDataset::Serialize()
 {
   Q_D(ctkDICOMDataset);
+  EnsureDcmDataSetIsInitialized();
+
   // store content of current DcmDataset (our parent) as QByteArray into m_ctkDICOMDataset
   Uint32 buffersize = 1024*1024; // reserve 1MB
   char* writebuffer = new char[buffersize];
@@ -252,12 +250,14 @@ DcmDataset& ctkDICOMDataset::GetDcmDataset() const
 
 OFCondition ctkDICOMDataset::findAndGetElement(const DcmTag& tag, DcmElement*& element, const OFBool searchIntoSub) const
 {
+  EnsureDcmDataSetIsInitialized();
   // this one const_cast allows us to declare quite a lot of methods nicely with const
   return GetDcmDataset().findAndGetElement(tag, element, searchIntoSub);
 }
 
 OFCondition ctkDICOMDataset::findAndGetOFString(const DcmTag& tag, OFString& value, const unsigned long pos, const OFBool searchIntoSub) const
 {
+  EnsureDcmDataSetIsInitialized();
   // this second const_cast allows us to declare quite a lot of methods nicely with const
   return GetDcmDataset().findAndGetOFString(tag, value, pos, searchIntoSub);
 }
