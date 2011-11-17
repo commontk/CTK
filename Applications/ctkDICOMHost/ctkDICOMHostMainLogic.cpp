@@ -87,6 +87,9 @@ void ctkDICOMHostMainLogic::onAppReady()
   {
     bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
     qDebug() << "  setState(INPROGRESS) returned: " << reply;
+
+    QRect rect (this->PlaceHolderForHostedApp->getAbsolutePosition());
+    this->Host->getDicomAppService()->bringToFront(rect);
   }
 }
 
@@ -130,5 +133,8 @@ void ctkDICOMHostMainLogic::publishSelectedData()
     }
     qDebug() << "  notifyDataAvailable returned: " << success;
     SendData=false;
+
+    QRect rect (this->PlaceHolderForHostedApp->getAbsolutePosition());
+    this->Host->getDicomAppService()->bringToFront(rect);
   }
 }

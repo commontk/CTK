@@ -26,6 +26,7 @@
 #include <QPushButton>
 #include <QApplication>
 #include <QLabel>
+#include <QRect>
 
 // CTK includes
 #include "ctkDICOMImage.h"
@@ -63,10 +64,12 @@ ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
 }
 
 //----------------------------------------------------------------------------
-bool ctkExampleDicomAppLogic::bringToFront(const QRect& /*requestedScreenArea*/)
+bool ctkExampleDicomAppLogic::bringToFront(const QRect& requestedScreenArea)
 {
   if(this->AppWidget!=NULL)
   {
+    this->AppWidget->move(requestedScreenArea.topLeft());
+    this->AppWidget->resize(requestedScreenArea.size());
     this->AppWidget->activateWindow();
     this->AppWidget->raise();
   }
