@@ -563,8 +563,13 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
     // QString studySeriesDirectory = studyInstanceUID + "/" + seriesInstanceUID;
     QString destinationDirectoryName = q->databaseDirectory() + "/dicom/";
     QDir destinationDir(destinationDirectoryName);
-    filename = destinationDirectoryName + q->pathForDataset(ctkDataset);
-    destinationDir.mkpath(QFileInfo(q->pathForDataset(ctkDataset)).dir().canonicalPath());
+    filename = destinationDirectoryName +
+        studyInstanceUID + "/" +
+        seriesInstanceUID + "/" +
+        sopInstanceUID;
+
+    destinationDir.mkpath(studyInstanceUID + "/" +
+                          seriesInstanceUID);
 
     if(filePath.isEmpty())
     {
@@ -764,7 +769,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
         QString studySeriesDirectory = studyInstanceUID + "/" + seriesInstanceUID;
         //Create thumbnail here
         QString thumbnailPath = q->databaseDirectory() +
-          "/thumbs/" + q->pathForDataset(ctkDataset) + ".png";
+          "/thumbs/" + studyInstanceUID + "/" + seriesInstanceUID + "/" + sopInstanceUID + ".png";
         //studyInstanceUID + "/" +
         //seriesInstanceUID + "/" +
         //sopInstanceUID + ".png";
@@ -815,21 +820,4 @@ bool ctkDICOMDatabase::isInMemory() const
 {
   Q_D(const ctkDICOMDatabase);
   return d->DatabaseFileName == ":memory:";
-}
-
-
-QString ctkDICOMDatabase::pathForDataset( const ctkDICOMDataset& ctkDataset)
-{
-    // TODO: this is not related to the database
-    // could be static, is it necessary?
-  if ( !ctkDataset.IsInitialized() )
-    {
-    return QString();
-    }
-  QString studyInstanceUID(ctkDataset.GetElementAsString(DCM_StudyInstanceUID) );
-  QString seriesInstanceUID(ctkDataset.GetElementAsString(DCM_SeriesInstanceUID) );
-  QString sopInstanceUID ( ctkDataset.GetElementAsString(DCM_SOPInstanceUID) );
- 
-  return studyInstanceUID + "/" + seriesInstanceUID + "/" + sopInstanceUID;
-
 }

@@ -141,10 +141,6 @@ public:
   void insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail);
   void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
   void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
-  ///
-  /// Helper method: get the path that should be used to store this image.
-  ///
-  QString pathForDataset( const ctkDICOMDataset& dataset);
   
   /// Check if file is already in database and up-to-date
   bool fileExistsAndUpToDate(const QString& filePath);
