@@ -2,27 +2,27 @@
 # XIP
 #
 
-ctkMacroShouldAddExternalProject(XIP_LIBRARIES add_project)
-IF(${add_project})
+ctkMacroShouldAddExternalproject(XIP_LIBRARIES add_project)
+if(${add_project})
   # Sanity checks
-  IF(DEFINED XIP_DIR AND NOT EXISTS ${XIP_DIR})
-    MESSAGE(FATAL_ERROR "XIP_DIR variable is defined but corresponds to non-existing directory")
-  ENDIF()
+  if(DEFINED XIP_DIR AND NOT EXISTS ${XIP_DIR})
+    message(FATAL_ERROR "XIP_DIR variable is defined but corresponds to non-existing directory")
+  endif()
 
-  SET(XIP_enabling_variable XIP_LIBRARIES)
+  set(XIP_enabling_variable XIP_LIBRARIES)
 
-  SET(proj XIP)
-  SET(proj_DEPENDENCIES)
+  set(proj XIP)
+  set(proj_DEPENDENCIES)
 
-  LIST(APPEND CTK_DEPENDENCIES ${proj})
+  list(APPEND CTK_DEPENDENCIES ${proj})
 
-  SET(${XIP_enabling_variable}_INCLUDE_DIRS XIP_LIBRARY_DIRS)
-  SET(${XIP_enabling_variable}_INCLUDE_DIRS XIP_INCLUDE_DIRS)
-  SET(${XIP_enabling_variable}_FIND_PACKAGE_CMD XIP)
+  set(${XIP_enabling_variable}_INCLUDE_DIRS XIP_LIBRARY_DIRS)
+  set(${XIP_enabling_variable}_INCLUDE_DIRS XIP_INCLUDE_DIRS)
+  set(${XIP_enabling_variable}_FIND_PACKAGE_CMD XIP)
 
-  IF(CTK_SUPERBUILD)
+  if(CTK_SUPERBUILD)
 
-    IF(NOT DEFINED XIP_DIR)
+    if(NOT DEFINED XIP_DIR)
       # Set CMake OSX variable to pass down the external project
       set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
       if(APPLE)
@@ -32,7 +32,7 @@ IF(${add_project})
           -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
       endif()
 
-      #   MESSAGE(STATUS "Adding project:${proj}")
+      #   message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
@@ -51,14 +51,14 @@ IF(${add_project})
           -DHAS_VTK:BOOL=OFF
           -DHAS_ITK:BOOL=OFF
         )
-      SET(XIP_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+      set(XIP_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
-    ELSE()
-      ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-    ENDIF()
+    else()
+      ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
+    endif()
 
-    LIST(APPEND CTK_SUPERBUILD_EP_VARS XIP_DIR:PATH)
+    list(APPEND CTK_SUPERBUILD_EP_VARS XIP_DIR:PATH)
 
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()

@@ -19,44 +19,44 @@
 ###########################################################################
 
 #! \ingroup CMakeUtilities
-FUNCTION(ctkFunctionLFtoCRLF input_file output_file)
+function(ctkFunctionLFtoCRLF input_file output_file)
   # Make sure the file exists
-  IF(NOT EXISTS ${input_file})
-    MESSAGE(FATAL_ERROR "Failed to convert LF to CRLF - File [${input_file}] does NOT exist !")
-  ENDIF()
+  if(NOT EXISTS ${input_file})
+    message(FATAL_ERROR "Failed to convert LF to CRLF - File [${input_file}] does NOT exist !")
+  endif()
 
   # Read lines
-  FILE(STRINGS "${input_file}" lines)
+  file(STRINGS "${input_file}" lines)
 
-  SET(string_with_crlf)
-  SET(first_line TRUE)
+  set(string_with_crlf)
+  set(first_line TRUE)
   # Loop over lines and append \r\n
-  FOREACH(line ${lines})
-    IF(first_line)
-      SET(string_with_crlf ${line})
-      SET(first_line FALSE)
-    ELSE()
-      SET(string_with_crlf "${string_with_crlf}\r\n${line}")
-    ENDIF()
-  ENDFOREACH()
+  foreach(line ${lines})
+    if(first_line)
+      set(string_with_crlf ${line})
+      set(first_line FALSE)
+    else()
+      set(string_with_crlf "${string_with_crlf}\r\n${line}")
+    endif()
+  endforeach()
 
-  FILE(WRITE ${output_file} ${string_with_crlf})
-ENDFUNCTION()
+  file(WRITE ${output_file} ${string_with_crlf})
+endfunction()
 
 #
 # Test - Use cmake -DFUNCTION_TESTING:BOOL=ON -DINPUT_FILE:FILEPATH=<FILE> -DOUTPUT_FILE:FILEPATH=<FILE> -P ctkFunctionLFtoCRLF.cmake
 #
-IF(FUNCTION_TESTING)
-  IF(NOT DEFINED INPUT_FILE)
-    MESSAGE(FATAL_ERROR "INPUT_FILE is not defined !")
-  ENDIF()
+if(FUNCTION_TESTING)
+  if(NOT DEFINED INPUT_FILE)
+    message(FATAL_ERROR "INPUT_FILE is not defined !")
+  endif()
 
-  IF(NOT DEFINED OUTPUT_FILE)
-    MESSAGE(FATAL_ERROR "OUTPUT_FILE is not defined !")
-  ENDIF()
+  if(NOT DEFINED OUTPUT_FILE)
+    message(FATAL_ERROR "OUTPUT_FILE is not defined !")
+  endif()
 
-  #MESSAGE(STATUS "INPUT_FILE [${INPUT_FILE}]")
-  #MESSAGE(STATUS "OUTPUT_FILE [${OUTPUT_FILE}]")
+  #message(STATUS "INPUT_FILE [${INPUT_FILE}]")
+  #message(STATUS "OUTPUT_FILE [${OUTPUT_FILE}]")
   
   ctkFunctionLFtoCRLF("${INPUT_FILE}" "${OUTPUT_FILE}")
-ENDIF()
+endif()

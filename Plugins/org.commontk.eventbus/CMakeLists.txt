@@ -1,8 +1,8 @@
-PROJECT(org_commontk_eventbus)
+project(org_commontk_eventbus)
 
-SET(PLUGIN_export_directive "org_commontk_eventbus_EXPORT")
+set(PLUGIN_export_directive "org_commontk_eventbus_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkBusEvent.cpp
   ctkBusEvent.h
   ctkEventAdminBus.h
@@ -33,7 +33,7 @@ SET(PLUGIN_SRCS
   ctkTopicRegistry.h
   )
 
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkEventBusPlugin_p.h
   ctkEventDispatcherLocal.h
   ctkEventBusManager.h
@@ -47,11 +47,11 @@ SET(PLUGIN_MOC_SRCS
   ctkEventBusImpl_p.h
   )
 
-SET(PLUGIN_UI_FORMS
+set(PLUGIN_UI_FORMS
  
   )
 
-SET(PLUGIN_resources
+set(PLUGIN_resources
   #org_commontk_eventbus.qrc
 )
 
@@ -68,6 +68,6 @@ ctkMacroBuildPlugin(
 )
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

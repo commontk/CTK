@@ -5,6 +5,6 @@
 # For example: MYOPT1:OFF MYOPT2:ON
 #
 
-SET(ctk_library_options
+set(ctk_library_options
   USE_TRANSFER_FUNCTION_CHARTS:ON
   )

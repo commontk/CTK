@@ -1,14 +1,14 @@
-PROJECT(CTKDICOMCore)
+project(CTKDICOMCore)
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_DICOM_CORE_EXPORT")
+set(KIT_export_directive "CTK_DICOM_CORE_EXPORT")
 
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkDICOMAbstractThumbnailGenerator.cpp
   ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDatabase.cpp
@@ -32,13 +32,13 @@ SET(KIT_SRCS
 )
 
 # Abstract class should not be wrapped !
-SET_SOURCE_FILES_PROPERTIES(
+set_source_files_properties(
   ctkDICOMAbstractThumbnailGenerator.h
   WRAP_EXCLUDE
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDatabase.h
   ctkDICOMIndexer.h
@@ -50,11 +50,11 @@ SET(KIT_MOC_SRCS
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   Resources/ctkDICOMCore.qrc
 )
 
@@ -64,7 +64,7 @@ ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 # create a dcm query/retrieve service config file that points to the build dir
 set (DCMQRSCP_STORE_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing)
-CONFIGURE_FILE( Resources/dcmqrscp.cfg.in dcmqrscp.cfg )
+configure_file( Resources/dcmqrscp.cfg.in dcmqrscp.cfg )
 set (DCMQRSCP_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/dcmqrscp.cfg)
 
 ctkMacroBuildLib(
@@ -78,20 +78,20 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-IF(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
-ENDIF()
+endif()
 
 # Plugins
-#IF(BUILD_QTDESIGNER_PLUGINS)
-#  ADD_SUBDIRECTORY(Plugins)
-#ENDIF()
+#if(BUILD_QTDESIGNER_PLUGINS)
+#  add_subdirectory(Plugins)
+#endif()
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif(BUILD_TESTING)

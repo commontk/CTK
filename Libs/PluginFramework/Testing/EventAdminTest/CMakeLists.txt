@@ -1,8 +1,8 @@
-PROJECT(org_commontk_eventadmintest)
+project(org_commontk_eventadmintest)
 
-SET(PLUGIN_export_directive "org_commontk_eventadmintest_EXPORT")
+set(PLUGIN_export_directive "org_commontk_eventadmintest_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkEventAdminTestActivator_p.h
   ctkEventAdminTestActivator.cpp
   ctkEAScenario1TestSuite_p.h
@@ -17,7 +17,7 @@ SET(PLUGIN_SRCS
   ctkEATopicWildcardTestSuite.cpp
 )
 
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkEventAdminTestActivator_p.h
   ctkEAScenario1TestSuite_p.h
   ctkEAScenario2TestSuite_p.h
@@ -26,11 +26,11 @@ SET(PLUGIN_MOC_SRCS
   ctkEATopicWildcardTestSuite_p.h
 )
 
-SET(PLUGIN_UI_FORMS
+set(PLUGIN_UI_FORMS
   
 )
 
-SET(PLUGIN_resources
+set(PLUGIN_resources
   
 )
 
@@ -47,4 +47,4 @@ ctkMacroBuildPlugin(
   TEST_PLUGIN
 )
 
-SET(eventadmin_test ${PROJECT_NAME} CACHE INTERNAL "Target name for the plugin containing unit tests for EventAdmin implementations")
+set(eventadmin_test ${PROJECT_NAME} CACHE INTERNAL "Target name for the plugin containing unit tests for EventAdmin implementations")

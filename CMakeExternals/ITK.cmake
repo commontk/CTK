@@ -1,32 +1,32 @@
 #
 # ITK
 #
-ctkMacroShouldAddExternalProject(ITK_LIBRARIES add_project)
-IF(${add_project})
+ctkMacroShouldAddExternalproject(ITK_LIBRARIES add_project)
+if(${add_project})
   # Sanity checks
-  IF(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
-    MESSAGE(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
-  ENDIF()
+  if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
+    message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
+  endif()
 
-  SET(ITK_enabling_variable ITK_LIBRARIES)
+  set(ITK_enabling_variable ITK_LIBRARIES)
 
-  SET(proj ITK)
-  SET(proj_DEPENDENCIES)
+  set(proj ITK)
+  set(proj_DEPENDENCIES)
 
-  LIST(APPEND CTK_DEPENDENCIES ${proj})
+  list(APPEND CTK_DEPENDENCIES ${proj})
 
-  SET(${ITK_enabling_variable}_LIBRARY_DIRS ITK_LIBRARY_DIRS)
-  SET(${ITK_enabling_variable}_INCLUDE_DIRS ITK_INCLUDE_DIRS)
-  SET(${ITK_enabling_variable}_FIND_PACKAGE_CMD ITK)
+  set(${ITK_enabling_variable}_LIBRARY_DIRS ITK_LIBRARY_DIRS)
+  set(${ITK_enabling_variable}_INCLUDE_DIRS ITK_INCLUDE_DIRS)
+  set(${ITK_enabling_variable}_FIND_PACKAGE_CMD ITK)
 
-  IF(CTK_SUPERBUILD)
+  if(CTK_SUPERBUILD)
 
-    IF(NOT DEFINED ITK_DIR)
+    if(NOT DEFINED ITK_DIR)
 
-      SET(revision_tag "v3.20.0")
-      IF(${proj}_REVISION_TAG)
-        SET(revision_tag ${${proj}_REVISION_TAG})
-      ENDIF()
+      set(revision_tag "v3.20.0")
+      if(${proj}_REVISION_TAG)
+        set(revision_tag ${${proj}_REVISION_TAG})
+      endif()
 
       # Set CMake OSX variable to pass down the external project
       set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -37,7 +37,7 @@ IF(${add_project})
           -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
       endif()
 
-  #     MESSAGE(STATUS "Adding project:${proj}")
+  #     message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
@@ -66,19 +66,19 @@ IF(${add_project})
         DEPENDS
           ${proj_DEPENDENCIES}
         )
-      SET(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+      set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
       # Since the link directories associated with ITK is used, it makes sens to
       # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory
-      LIST(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${ITK_DIR}/bin)
+      list(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${ITK_DIR}/bin)
 
-    ELSE()
-      ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-    ENDIF()
+    else()
+      ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
+    endif()
 
-    LIST(APPEND CTK_SUPERBUILD_EP_VARS ITK_DIR:PATH)
+    list(APPEND CTK_SUPERBUILD_EP_VARS ITK_DIR:PATH)
 
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()
 

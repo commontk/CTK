@@ -1,23 +1,23 @@
-PROJECT(CTKCore)
+project(CTKCore)
 
 #
 # 3rd party dependencies
 #
 
 # CMake modules
-SET(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
 
 # CMake Macros
-INCLUDE(CMake/ctkMacroBFDCheck.cmake) # HAVE_BFD will be set to True if it applies
+include(CMake/ctkMacroBFDCheck.cmake) # HAVE_BFD will be set to True if it applies
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_CORE_EXPORT")
+set(KIT_export_directive "CTK_CORE_EXPORT")
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkAbstractFactory.h
   ctkAbstractFactory.tpp
   ctkAbstractFileBasedFactory.h
@@ -72,15 +72,15 @@ SET(KIT_SRCS
   ctkWorkflowTransitions.h
   )
 
-IF(HAVE_BFD)
-  LIST(APPEND KIT_SRCS
+if(HAVE_BFD)
+  list(APPEND KIT_SRCS
     ctkBinaryFileDescriptor.cpp
     ctkBinaryFileDescriptor.h
     )
-ENDIF()
+endif()
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkCallback.h
   ctkCheckableModelHelper.h
   ctkCommandLineParser.h
@@ -98,16 +98,16 @@ SET(KIT_MOC_SRCS
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
 )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
-SET(KIT_target_libraries)
+set(KIT_target_libraries)
 
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
@@ -122,16 +122,16 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-IF(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
-ENDIF()
+endif()
 
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif(BUILD_TESTING)

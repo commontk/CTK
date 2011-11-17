@@ -35,7 +35,7 @@
 #! The downloaded file will have the from: midas_item_<ITEMID>.tar
 #!
 #! \ingroup CMakeUtilities
-FUNCTION( ctkFunctionDownloadData)
+function( ctkFunctionDownloadData)
   ctkMacroParseArguments(MY
     "MIDAS_SERVER_URL;ITEMID;OUTPUT_DIRECTORY"
     "FORCE_DOWNLOAD"
@@ -43,80 +43,80 @@ FUNCTION( ctkFunctionDownloadData)
     )
 
   # Sanity checks
-  FOREACH(arg MIDAS_SERVER_URL ITEMID OUTPUT_DIRECTORY)
-    IF(NOT DEFINED MY_${arg})
-      MESSAGE(FATAL_ERROR "${arg} is mandatory")
-    ENDIF()
-  ENDFOREACH()
+  foreach(arg MIDAS_SERVER_URL ITEMID OUTPUT_DIRECTORY)
+    if(NOT DEFINED MY_${arg})
+      message(FATAL_ERROR "${arg} is mandatory")
+    endif()
+  endforeach()
     
   # Make sure output directory exists
-  IF(NOT EXISTS "${MY_OUTPUT_DIRECTORY}")
-    MESSAGE(FATAL_ERROR "OUTPUT_DIRECTORY '${MY_OUTPUT_DIRECTORY}' doesn't exist !")
-  ENDIF()
+  if(NOT EXISTS "${MY_OUTPUT_DIRECTORY}")
+    message(FATAL_ERROR "OUTPUT_DIRECTORY '${MY_OUTPUT_DIRECTORY}' doesn't exist !")
+  endif()
 
   # Is download required ?
-  SET(dest_file ${MY_OUTPUT_DIRECTORY}/midas_item_${MY_ITEMID}.tar)
+  set(dest_file ${MY_OUTPUT_DIRECTORY}/midas_item_${MY_ITEMID}.tar)
   IF (NOT EXISTS ${dest_file} OR MY_FORCE_DOWNLOAD)
-    SET(url ${MY_MIDAS_SERVER_URL}/${MY_ITEMID})
-    FILE(DOWNLOAD ${url} ${dest_file} STATUS status)
-    LIST(GET status 0 error_code)
-    LIST(GET status 1 error_msg)
-    IF(error_code)
-      MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
-    ENDIF()
-    MESSAGE(STATUS "info: downloaded '${dest_file}'")
-  ENDIF()
+    set(url ${MY_MIDAS_SERVER_URL}/${MY_ITEMID})
+    file(DOWNLOAD ${url} ${dest_file} STATUS status)
+    list(GET status 0 error_code)
+    list(GET status 1 error_msg)
+    if(error_code)
+      message(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+    endif()
+    message(STATUS "info: downloaded '${dest_file}'")
+  endif()
   
-ENDFUNCTION()
+endfunction()
 
 #
 # Test - Use cmake -DMACRO_TESTING:BOOL=ON -P ctkFunctionDownloadData.cmake
 #
-IF(FUNCTION_TESTING)
+if(FUNCTION_TESTING)
 
-  INCLUDE(ctkMacroParseArguments.cmake)
+  include(ctkMacroParseArguments.cmake)
 
-  MESSAGE("Testing ctkFunctionDownloadData ...")
+  message("Testing ctkFunctionDownloadData ...")
   
   #
   # Test1
   #
-  SET(url http://www.insight-journal.org/midas/item/download/)
-  SET(output_dir $ENV{HOME}/Projects/Data)
-  SET(itemid 2461)
-  MESSAGE(STATUS "downloading... [http://www.insight-journal.org/midas/item/download/${itemid}]")
+  set(url http://www.insight-journal.org/midas/item/download/)
+  set(output_dir $ENV{HOME}/Projects/Data)
+  set(itemid 2461)
+  message(STATUS "downloading... [http://www.insight-journal.org/midas/item/download/${itemid}]")
   ctkFunctionDownloadData(
     MIDAS_SERVER_URL ${url}
     ITEMID ${itemid}
     OUTPUT_DIRECTORY ${output_dir}
     )
 
-  SET(expected_file ${output_dir}/midas_item_${itemid}.tar)
+  set(expected_file ${output_dir}/midas_item_${itemid}.tar)
   # Make sure the file exists
-  IF(NOT EXISTS ${expected_file})
-    MESSAGE(FATAL_ERROR "File '${expected_file}' doesn't exists")
-  ENDIF()
+  if(NOT EXISTS ${expected_file})
+    message(FATAL_ERROR "File '${expected_file}' doesn't exists")
+  endif()
 
-  SET(extract_destination_dir ${output_dir}/item_${itemid})
+  set(extract_destination_dir ${output_dir}/item_${itemid})
   
   # Create a folder
-  MESSAGE(STATUS "creating directory ... [${extract_destination_dir}]")
-  FILE(MAKE_DIRECTORY ${extract_destination_dir})
+  message(STATUS "creating directory ... [${extract_destination_dir}]")
+  file(MAKE_DIRECTORY ${extract_destination_dir})
 
   # Extract
-  SET(tar_args xf)
-  MESSAGE(STATUS "extracting... [tar midas_item_${itemid}.tar]")
-  EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar ${tar_args} ${expected_file}
+  set(tar_args xf)
+  message(STATUS "extracting... [tar midas_item_${itemid}.tar]")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E tar ${tar_args} ${expected_file}
     WORKING_DIRECTORY ${extract_destination_dir}
     RESULT_VARIABLE rv)
 
-  IF(NOT rv EQUAL 0)
-    MESSAGE(STATUS "extracting... [error clean up]")
-    FILE(REMOVE_RECURSE ${extract_destination_dir})
-    MESSAGE(FATAL_ERROR "error: extract of '${expected_file}' failed")
-  ENDIF()
+  if(NOT rv EQUAL 0)
+    message(STATUS "extracting... [error clean up]")
+    file(REMOVE_RECURSE ${extract_destination_dir})
+    message(FATAL_ERROR "error: extract of '${expected_file}' failed")
+  endif()
 
   # Remove archive
   #file(REMOVE ${expected_file})
   #file(REMOVE_RECURSE ${extract_destination_dir})
-ENDIF()
+endif()

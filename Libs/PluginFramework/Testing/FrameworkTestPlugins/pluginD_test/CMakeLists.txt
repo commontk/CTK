@@ -1,20 +1,20 @@
-PROJECT(pluginD_test)
+project(pluginD_test)
 
-SET(PLUGIN_export_directive "pluginD_test_EXPORT")
+set(PLUGIN_export_directive "pluginD_test_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkTestPluginD.cpp
 )
 
-SET(lib_name ${PROJECT_NAME})
+set(lib_name ${PROJECT_NAME})
 
-INCLUDE(${QT_USE_FILE})
+include(${QT_USE_FILE})
 
-ADD_LIBRARY(${lib_name} SHARED ${PLUGIN_SRCS})
-TARGET_LINK_LIBRARIES(${lib_name} ${QT_LIBRARIES})
+add_library(${lib_name} SHARED ${PLUGIN_SRCS})
+target_link_libraries(${lib_name} ${QT_LIBRARIES})
 
 # Apply properties to the library target.
-SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+set_target_properties(${lib_name} PROPERTIES
 #    COMPILE_FLAGS "-DQT_PLUGIN"
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_plugins
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/test_plugins

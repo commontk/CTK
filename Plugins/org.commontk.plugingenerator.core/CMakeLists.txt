@@ -1,8 +1,8 @@
-PROJECT(org_commontk_plugingenerator_core)
+project(org_commontk_plugingenerator_core)
 
-SET(PLUGIN_export_directive "org_commontk_plugingenerator_core_EXPORT")
+set(PLUGIN_export_directive "org_commontk_plugingenerator_core_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkPluginGeneratorAbstractExtension.cpp
   ctkPluginGeneratorAbstractTemplate.cpp
   ctkPluginGeneratorConstants.cpp
@@ -15,18 +15,18 @@ SET(PLUGIN_SRCS
   ctkPluginGeneratorTargetLibraries.cpp
 )
 
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkPluginGeneratorAbstractExtension.h
   ctkPluginGeneratorAbstractTemplate.h
   ctkPluginGeneratorCodeModel.h
   ctkPluginGeneratorCorePlugin_p.h
 )
 
-SET(PLUGIN_UI_FORMS
+set(PLUGIN_UI_FORMS
   
 )
 
-SET(PLUGIN_resources
+set(PLUGIN_resources
   
 )
 

@@ -2,24 +2,24 @@
 # qxmlrpc
 #
 
-SET(qxmlrpc_DEPENDS)
-ctkMacroShouldAddExternalProject(qxmlrpc_LIBRARY add_project)
-IF(${add_project})
+set(qxmlrpc_DEPENDS)
+ctkMacroShouldAddExternalproject(qxmlrpc_LIBRARY add_project)
+if(${add_project})
 
   # Sanity checks
-  IF(DEFINED qxmlrpc_DIR AND NOT EXISTS ${qxmlrpc_DIR})
-    MESSAGE(FATAL_ERROR "qxmlrpc_DIR variable is defined but corresponds to non-existing directory")
-  ENDIF()
+  if(DEFINED qxmlrpc_DIR AND NOT EXISTS ${qxmlrpc_DIR})
+    message(FATAL_ERROR "qxmlrpc_DIR variable is defined but corresponds to non-existing directory")
+  endif()
   
-  SET(qxmlrpc_enabling_variable qxmlrpc_LIBRARY)
+  set(qxmlrpc_enabling_variable qxmlrpc_LIBRARY)
   
-  SET(proj qxmlrpc)
-  SET(proj_DEPENDENCIES)
+  set(proj qxmlrpc)
+  set(proj_DEPENDENCIES)
   
-  SET(qxmlrpc_DEPENDS ${proj})
+  set(qxmlrpc_DEPENDS ${proj})
 
-  IF(NOT DEFINED qxmlrpc_DIR)
-    #MESSAGE(STATUS "Adding project:${proj}")
+  if(NOT DEFINED qxmlrpc_DIR)
+    #message(STATUS "Adding project:${proj}")
     
     ExternalProject_Add(${proj}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -35,20 +35,20 @@ IF(${add_project})
       DEPENDS
         ${proj_DEPENDENCIES}
       )
-    SET(qxmlrpc_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
+    set(qxmlrpc_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
     
     # Since qxmlrpc is statically build, there is not need to add its corresponding 
     # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
   
-  ELSE()
-    ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-  ENDIF()
+  else()
+    ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
+  endif()
   
-  LIST(APPEND CTK_SUPERBUILD_EP_VARS qxmlrpc_DIR:PATH)
+  list(APPEND CTK_SUPERBUILD_EP_VARS qxmlrpc_DIR:PATH)
 
-  SET(${qxmlrpc_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)
-  SET(${qxmlrpc_enabling_variable}_INCLUDE_DIRS qxmlrpc_INCLUDE_DIRS)
-  SET(${qxmlrpc_enabling_variable}_FIND_PACKAGE_CMD qxmlrpc)
+  set(${qxmlrpc_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)
+  set(${qxmlrpc_enabling_variable}_INCLUDE_DIRS qxmlrpc_INCLUDE_DIRS)
+  set(${qxmlrpc_enabling_variable}_FIND_PACKAGE_CMD qxmlrpc)
     
-ENDIF()
+endif()
 

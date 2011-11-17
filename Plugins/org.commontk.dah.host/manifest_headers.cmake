@@ -1,1 +1,1 @@
-SET(Require-Plugin org.commontk.dah.core)
+set(Require-Plugin org.commontk.dah.core)

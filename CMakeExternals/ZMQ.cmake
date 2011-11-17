@@ -2,33 +2,33 @@
 # ZMQ
 #
 
-ctkMacroShouldAddExternalProject(ZMQ_LIBRARIES add_project)
-IF(${add_project})
+ctkMacroShouldAddExternalproject(ZMQ_LIBRARIES add_project)
+if(${add_project})
 
   # Sanity checks
-  IF(DEFINED ZMQ_DIR AND NOT EXISTS ${ZMQ_DIR})
-    MESSAGE(FATAL_ERROR "ZMQ_DIR variable is defined but corresponds to non-existing directory")
-  ENDIF()
+  if(DEFINED ZMQ_DIR AND NOT EXISTS ${ZMQ_DIR})
+    message(FATAL_ERROR "ZMQ_DIR variable is defined but corresponds to non-existing directory")
+  endif()
 
-  SET(ZMQ_enabling_variable ZMQ_LIBRARIES)
+  set(ZMQ_enabling_variable ZMQ_LIBRARIES)
 
-  SET(proj ZMQ)
-  SET(proj_DEPENDENCIES)
+  set(proj ZMQ)
+  set(proj_DEPENDENCIES)
 
-  LIST(APPEND CTK_DEPENDENCIES ${proj})
+  list(APPEND CTK_DEPENDENCIES ${proj})
 
-  SET(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_LIBRARY_DIRS)
-  SET(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
-  SET(${ZMQ_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
+  set(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_LIBRARY_DIRS)
+  set(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
+  set(${ZMQ_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
 
-  IF(CTK_SUPERBUILD)
+  if(CTK_SUPERBUILD)
 
-    IF(NOT DEFINED ZMQ_DIR)
+    if(NOT DEFINED ZMQ_DIR)
 
-      SET(revision_tag d2c2f96b49ed3835a47e)
-      IF(${proj}_REVISION_TAG)
-        SET(revision_tag ${${proj}_REVISION_TAG})
-      ENDIF()
+      set(revision_tag d2c2f96b49ed3835a47e)
+      if(${proj}_REVISION_TAG)
+        set(revision_tag ${${proj}_REVISION_TAG})
+      endif()
 
       # Set CMake OSX variable to pass down the external project
       set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -39,7 +39,7 @@ IF(${add_project})
           -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
       endif()
 
-    #   MESSAGE(STATUS "Adding project:${proj}")
+    #   message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
@@ -62,14 +62,14 @@ IF(${add_project})
          DEPENDS
           ${proj_DEPENDENCIES}
         )
-      SET(ZMQ_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+      set(ZMQ_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
-    ELSE()
-      ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-    ENDIF()
+    else()
+      ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
+    endif()
 
-    LIST(APPEND CTK_SUPERBUILD_EP_VARS ZMQ_DIR:PATH)
+    list(APPEND CTK_SUPERBUILD_EP_VARS ZMQ_DIR:PATH)
 
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()

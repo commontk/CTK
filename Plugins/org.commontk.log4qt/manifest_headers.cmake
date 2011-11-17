@@ -1,1 +1,1 @@
-SET(Plugin-Name "Log4Qt Service")
+set(Plugin-Name "Log4Qt Service")

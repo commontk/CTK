@@ -1,21 +1,21 @@
-SET(KIT CTKApplication)
+set(KIT CTKApplication)
 
-SET(KIT_TEST_SRCS)
+set(KIT_TEST_SRCS)
 
 ## Query / Retrieve Testing
 if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
-  LIST(APPEND KIT_TEST_SRCS
+  list(APPEND KIT_TEST_SRCS
     ctkDICOMApplicationTest1.cpp
     )
 endif()
 
 # If there is no tests, exit
-LIST(LENGTH KIT_TEST_SRCS KIT_TEST_SRCS_LENGTH)
+list(LENGTH KIT_TEST_SRCS KIT_TEST_SRCS_LENGTH)
 if(${KIT_TEST_SRCS_LENGTH} EQUAL 0)
-  RETURN()
+  return()
 endif()
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ${KIT_TEST_SRCS}
   )
 
@@ -26,15 +26,15 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${KIT_target_libraries})
+add_executable(${KIT}CppTests ${Tests})
+target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 
-SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
+set( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
 
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-ENDMACRO( SIMPLE_TEST  )
+macro( SIMPLE_TEST  TESTNAME )
+  add_test( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
+  set_property(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
+endmacro( SIMPLE_TEST  )
 
 
 ## Query / Retrieve Testing
@@ -44,7 +44,7 @@ if (CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   set (DCMQRSCP_STORE_DIR ${CTK_BINARY_DIR}/Testing/Temporary)
   set (ctkDICOMRetrieve_STORE_DIR ${CTK_BINARY_DIR}/Testing/Temporary/ctkDICOMRetrieveStorage)
   set (DCMQRSCP_CONFIG ${CTK_BINARY_DIR}/Testing/Temporary/dcmqrscp.cfg)
-  CONFIGURE_FILE( dcmqrscp.cfg.in ${DCMQRSCP_CONFIG} )
+  configure_file( dcmqrscp.cfg.in ${DCMQRSCP_CONFIG} )
 
   set(CTK_APPLICATION_RUNTIME_DIRECTORY ${CTK_CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   if(WIN32)
@@ -60,7 +60,7 @@ if (CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   # Add Tests
   #
 
-  ADD_TEST( ctkDICOMApplicationTest1 ${KIT_TESTS}
+  add_test( ctkDICOMApplicationTest1 ${KIT_TESTS}
             ctkDICOMApplicationTest1
                  ${DCMTK_DCMQRSCP_EXECUTABLE}
                  ${DCMQRSCP_CONFIG}
@@ -72,5 +72,5 @@ if (CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
                  ${ctkDICOMRetrieve_EXECUTABLE}
                  ${ctkDICOMRetrieve_STORE_DIR}
                  )
-  SET_PROPERTY(TEST ctkDICOMApplicationTest1 PROPERTY LABELS ${PROJECT_NAME})
+  set_property(TEST ctkDICOMApplicationTest1 PROPERTY LABELS ${PROJECT_NAME})
 endif (CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)

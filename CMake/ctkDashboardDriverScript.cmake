@@ -117,7 +117,7 @@ set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
 #
 # run_ctest macro
 #
-MACRO(run_ctest)
+macro(run_ctest)
   ctest_start(${model})
   ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" RETURN_VALUE res)
 

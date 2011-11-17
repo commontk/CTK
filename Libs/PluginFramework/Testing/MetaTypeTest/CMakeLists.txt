@@ -1,8 +1,8 @@
-PROJECT(org_commontk_metatypetest)
+project(org_commontk_metatypetest)
 
-SET(PLUGIN_export_directive "org_commontk_metatypetest_EXPORT")
+set(PLUGIN_export_directive "org_commontk_metatypetest_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkMetaTypeTestActivator.cpp
   ctkMTAttrPasswordTestSuite.cpp
   ctkMTLocaleTestSuite.cpp
@@ -12,13 +12,13 @@ SET(PLUGIN_SRCS
   ctkMTLocaleTestSuite_p.h
 )
 
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkMetaTypeTestActivator_p.h
   ctkMTAttrPasswordTestSuite_p.h
   ctkMTLocaleTestSuite_p.h
 )
 
-SET(PLUGIN_resources
+set(PLUGIN_resources
   
 )
 
@@ -34,6 +34,6 @@ ctkMacroBuildPlugin(
   TEST_PLUGIN
 )
 
-ADD_DEPENDENCIES(${PROJECT_NAME} ${metatypetest_plugins})
+add_dependencies(${PROJECT_NAME} ${metatypetest_plugins})
 
-SET(metatype_test ${PROJECT_NAME} CACHE INTERNAL "Target name for the plugin containing unit tests for MetaType implementations")
+set(metatype_test ${PROJECT_NAME} CACHE INTERNAL "Target name for the plugin containing unit tests for MetaType implementations")

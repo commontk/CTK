@@ -1,1 +1,1 @@
-ADD_SUBDIRECTORY(Cpp)
+add_subdirectory(Cpp)

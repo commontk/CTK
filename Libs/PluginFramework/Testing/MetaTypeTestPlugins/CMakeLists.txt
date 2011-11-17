@@ -1,3 +1,3 @@
 foreach(test_plugin ${metatypetest_plugins})
-  ADD_SUBDIRECTORY(${test_plugin})
+  add_subdirectory(${test_plugin})
 endforeach()
