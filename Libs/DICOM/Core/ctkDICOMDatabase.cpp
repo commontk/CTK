@@ -454,8 +454,6 @@ void ctkDICOMDatabase::insert( const ctkDICOMDataset& ctkDataset, bool storeFile
 {
   Q_D(ctkDICOMDatabase);
 
-
-
   // Check to see if the file has already been loaded
   // TODO:
   // It could make sense to actually remove the dataset and re-add it. This needs the remove
