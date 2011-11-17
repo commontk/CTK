@@ -228,7 +228,7 @@
    <sender>startButton</sender>
    <signal>clicked()</signal>
    <receiver>ctkExampleHostControlWidget</receiver>
-   <slot>startButtonClicked()</slot>
+   <slot>StartApplication()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>64</x>
@@ -322,7 +322,7 @@
   </connection>
  </connections>
  <slots>
-  <slot>startButtonClicked()</slot>
+  <slot>StartApplication()</slot>
   <slot>stopButtonClicked()</slot>
   <slot>loadButtonClicked()</slot>
   <slot>runButtonClicked()</slot>

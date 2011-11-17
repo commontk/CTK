@@ -59,11 +59,14 @@ ctkExampleHostControlWidget::~ctkExampleHostControlWidget()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleHostControlWidget::startButtonClicked()
+void ctkExampleHostControlWidget::StartApplication(QString appFileName)
 {
-  qDebug() << "start button clicked";
+  qDebug() << "ctkExampleHostControlWidget::StartApplication";
+  if(appFileName.isEmpty()==false)
+    this->setAppFileName(appFileName);
   if (this->Host)
     {
+    qDebug() << "Starting app";
     this->Host->StartApplication(this->AppFileName);
     //forward output to textedit
     connect(&this->Host->getAppProcess(),SIGNAL(readyReadStandardOutput()),this,SLOT(outputMessage()));

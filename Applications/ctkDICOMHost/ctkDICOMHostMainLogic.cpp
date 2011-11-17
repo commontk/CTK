@@ -68,7 +68,7 @@ void ctkDICOMHostMainLogic::sendDataToHostedApp()
     SendData = true;
     if(this->Host->getApplicationState() == ctkDicomAppHosting::EXIT)
     {
-      this->Host->StartApplication(this->AppFileName);
+      this->HostControls->StartApplication(this->AppFileName);
     }
     if(this->Host->getApplicationState() == ctkDicomAppHosting::IDLE)
     {

@@ -42,12 +42,14 @@ class org_commontk_dah_examplehost_EXPORT ctkExampleHostControlWidget : public Q
 public:
 
   explicit ctkExampleHostControlWidget(ctkExampleDicomHost * host, QWidget *parent = 0);
-  void setAppFileName(QString name);
-
   virtual ~ctkExampleHostControlWidget();
 
 public slots:
-  void startButtonClicked();
+  // the following to in capital letters for compatibility to ctkExampleDicomHost
+  void StartApplication(QString appFileName="");
+
+  void setAppFileName(QString name);
+
   void runButtonClicked();
   void stopButtonClicked();
   void suspendButtonClicked();
