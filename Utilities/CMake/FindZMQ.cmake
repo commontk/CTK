@@ -28,16 +28,16 @@ if(NOT ZMQ_DIR)
   # Get the system search path as a list.
   if(UNIX)
     string(REGEX MATCHALL "[^:]+" ZMQ_DIR_SEARCH1 "$ENV{PATH}")
-  else(UNIX)
+  else()
     string(REGEX REPLACE "\\\\" "/" ZMQ_DIR_SEARCH1 "$ENV{PATH}")
-  endif(UNIX)
+  endif()
   string(REGEX REPLACE "/;" ";" ZMQ_DIR_SEARCH2 ${ZMQ_DIR_SEARCH1})
 
   # Construct a set of paths relative to the system search path.
   set(ZMQ_DIR_SEARCH "")
   foreach(dir ${ZMQ_DIR_SEARCH2})
     set(ZMQ_DIR_SEARCH ${ZMQ_DIR_SEARCH} "${dir}/../lib/zmq")
-  endforeach(dir)
+  endforeach()
 
   #
   # Look for an installation or build tree.
@@ -69,7 +69,7 @@ if(NOT ZMQ_DIR)
     # Help the user find it if we cannot.
     DOC "The ${ZMQ_DIR_STRING}"
   )
-endif(NOT ZMQ_DIR)
+endif()
 
 # If ZMQ was found, load the configuration file to get the rest of the
 # settings.
@@ -79,9 +79,9 @@ if(ZMQ_DIR)
 
   # Set USE_ZMQ_FILE for backward-compatability.
   set(USE_ZMQ_FILE ${ZMQ_USE_FILE})
-else(ZMQ_DIR)
+else()
   set(ZMQ_FOUND 0)
   if(ZMQ_FIND_REQUIRED)
     message(FATAL_ERROR "Please set ZMQ_DIR to the ${ZMQ_DIR_STRING}")
-  endif(ZMQ_FIND_REQUIRED)
-endif(ZMQ_DIR)
+  endif()
+endif()

@@ -113,7 +113,7 @@ IF (${CTK_USE_CHARTS})
       vtkCharts
       ${VTK_LIBRARIES})
   add_definitions(-DCTK_USE_CHARTS)
-endif(${CTK_USE_CHARTS})
+endif()
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
@@ -146,4 +146,4 @@ endif()
 # Testing
 if(BUILD_TESTING)
   add_subdirectory(Testing)
-endif(BUILD_TESTING)
+endif()

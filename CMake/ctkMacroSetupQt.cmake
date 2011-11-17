@@ -48,8 +48,8 @@ macro(ctkMacroSetupQt)
       get_filename_component(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
     endif()
 
-  else(QT4_FOUND)
+  else()
     message(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
-  endif(QT4_FOUND)
+  endif()
 
 endmacro()

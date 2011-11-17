@@ -38,14 +38,14 @@ macro(ctkMacroInitProject test)
         set(MOC_FILE "${FILE_NAME}.moc")
         QT4_GENERATE_MOC(${FILE_NAME_ABS} ${MOC_FILE})
         list(APPEND MY_MOC_CXX "${CMAKE_CURRENT_BINARY_DIR}/${MOC_FILE}")
-      endif(NOT ${FILE_NAME} STREQUAL "main")
+      endif()
     endforeach()
-  else(${test})
+  else()
     ## Moc the library's .h files
     QT4_WRAP_CPP(MY_MOC_CXX ${include_file_list})
     QT4_WRAP_UI(MY_UI_CXX ${ui_file_list})
     #QT4_ADD_RESOURCES(MY_RESOURCE_CXX ${resource_file_list})
-  endif(${test})
+  endif()
 
   set(PROJECT_SRCS
     ${PROJECT_SRCS}
