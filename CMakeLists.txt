@@ -373,7 +373,7 @@ SET(CTK_PLUGINS
 
   # Plug-ins related to DICOM WG23 (Application Hosting)
   org.commontk.dah.core:OFF
-  org.commontk.dah.app:OFF
+  org.commontk.dah.hostedapp:OFF
   org.commontk.dah.host:OFF
   org.commontk.dah.exampleapp:OFF
   org.commontk.dah.examplehost:OFF
