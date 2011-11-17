@@ -49,11 +49,12 @@ void ctkDICOMHostMainLogic::configureHostedApp()
   //qDebug() << "load button clicked";
   AppFileName = QFileDialog::getOpenFileName(PlaceHolderForHostedApp,"Choose hosted application",QApplication::applicationDirPath());
   HostControls->setAppFileName(AppFileName);
+  emit SelectionValid(((this->Host) && (this->HostControls->validAppFileName()) && (ValidSelection)));
 }
 
 void ctkDICOMHostMainLogic::sendDataToHostedApp()
 {
-  if ((this->Host) && (this->AppFileName.isEmpty()==false) && (ValidSelection))
+ if ((this->Host) && (this->HostControls->validAppFileName()) && (ValidSelection))
   {
     foreach (const QString &str, SelectedFiles) {
       if (str.isEmpty())
@@ -83,6 +84,7 @@ void ctkDICOMHostMainLogic::sendDataToHostedApp()
 
 void ctkDICOMHostMainLogic::onAppReady()
 {
+  emit SelectionValid(ValidSelection);
   if(SendData)
   {
     bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
@@ -117,7 +119,7 @@ void ctkDICOMHostMainLogic::onTreeSelectionChanged(const QItemSelection & select
     }
     if (ValidSelection==false)
       emit TreeSelectionChanged("no series selected");
-    emit SelectionValid(ValidSelection);
+    emit SelectionValid(((this->Host) && (this->HostControls->validAppFileName()) && (ValidSelection)));
 }
 
 //----------------------------------------------------------------------------

@@ -35,7 +35,8 @@
 ctkExampleHostControlWidget::ctkExampleHostControlWidget(ctkExampleDicomHost * host, QWidget *parent) :
     Host(host),
     QWidget(parent),
-    ui(new Ui::ctkExampleHostControlWidget)
+    ValidAppFileName(false),
+    ui(new Ui::ctkExampleHostControlWidget)    
 {
   qDebug() << "setup ui";
   ui->setupUi(this);
@@ -64,7 +65,7 @@ void ctkExampleHostControlWidget::StartApplication(QString appFileName)
   qDebug() << "ctkExampleHostControlWidget::StartApplication";
   if(appFileName.isEmpty()==false)
     this->setAppFileName(appFileName);
-  if (this->Host)
+  if ((this->Host) && (validAppFileName()))
     {
     qDebug() << "Starting app";
     this->Host->StartApplication(this->AppFileName);
@@ -99,9 +100,11 @@ void ctkExampleHostControlWidget::setAppFileName(QString name)
   if (QFile(this->AppFileName).permissions() & QFile::ExeUser )
     {
     this->ui->applicationPathLabel->setText(this->AppFileName);
+    ValidAppFileName = true;
     }
   else
     {
+    ValidAppFileName = false;
     this->ui->applicationPathLabel->setText(
         QString("<font color='red'>Not executable:</font>").append(this->AppFileName));
     }
@@ -170,3 +173,7 @@ void ctkExampleHostControlWidget::cancelButtonClicked()
   this->Host->getDicomAppService()->setState(ctkDicomAppHosting::CANCELED);
 }
 
+bool ctkExampleHostControlWidget::validAppFileName()
+{
+  return ValidAppFileName;
+}

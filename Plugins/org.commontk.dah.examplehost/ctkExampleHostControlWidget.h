@@ -44,6 +44,7 @@ public:
   explicit ctkExampleHostControlWidget(ctkExampleDicomHost * host, QWidget *parent = 0);
   virtual ~ctkExampleHostControlWidget();
 
+  bool validAppFileName();
 public slots:
   // the following to in capital letters for compatibility to ctkExampleDicomHost
   void StartApplication(QString appFileName="");
@@ -63,11 +64,11 @@ protected:
 
   ctkExampleDicomHost* Host;
   QString AppFileName;
-
 private:
 
-  Ui::ctkExampleHostControlWidget *ui;
+  bool ValidAppFileName;
 
+  Ui::ctkExampleHostControlWidget *ui;
 };
 
 #endif // CTKHOSTWIDGET_H
