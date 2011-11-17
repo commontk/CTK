@@ -56,7 +56,7 @@ class ctkDICOMDatasetPrivate;
 ///  A subclass could possibly want to store the internal DcmDataset.
 ///  For this purpose, the internal DcmDataset is serialized into a memory buffer using DcmDataset::write(..). This buffer
 ///  is stored in a base64 encoded string. For deserialization we decode the string and use DcmDataset::read(..).
-class CTK_DICOM_CORE_EXPORT ctkDICOMDataset : public DcmDataset
+class CTK_DICOM_CORE_EXPORT ctkDICOMDataset 
 {
 public:
     typedef QObject Superclass;
