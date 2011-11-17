@@ -55,7 +55,7 @@ if(${add_project})
           -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
       endif()
 
-      set(revision_tag 3171a94e16ba9bfee137)
+      set(revision_tag 7e1e07f34b2420e420e2858e5ea9a49fe1e0d235)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
