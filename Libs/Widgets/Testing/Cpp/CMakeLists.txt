@@ -89,8 +89,8 @@ create_test_sourcelist(Tests ${KIT}CppTests.cxx
   ${TEST_SOURCES}
   )
 
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CppTests.cxx)
+set(TestsToRun ${Tests})
+remove(TestsToRun ${KIT}CppTests.cxx)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
@@ -114,16 +114,6 @@ QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
 
 add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
-
-set( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-
-macro( SIMPLE_TEST  TESTNAME )
-  add_test( ${TESTNAME} ${KIT_TESTS} ${TESTNAME}
-            -D "${CTKData_DIR}/Data"
-            -V "${CTKData_DIR}/Baseline/Libs/Widgets"
-            )
-  set_property(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-endmacro( SIMPLE_TEST  )
 
 #
 # Add Tests
@@ -207,5 +197,6 @@ SIMPLE_TEST( ctkWorkflowWidgetTest2 )
 # Add Tests expecting CTKData to be set
 #
 if(EXISTS "${CTKData_DIR}")
-  SIMPLE_TEST( ctkCrosshairLabelTest2 )
+  set(baseline_relative_location "Libs/Widgets") 
+  SIMPLE_TEST_WITH_DATA( ctkCrosshairLabelTest2 ${baseline_relative_location})
 endif()

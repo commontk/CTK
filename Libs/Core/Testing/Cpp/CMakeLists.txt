@@ -68,8 +68,8 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CppTests.cpp)
+SET(TestsToRun ${Tests})
+REMOVE(TestsToRun ${KIT}CppTests.cpp)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
@@ -106,11 +106,6 @@ endif()
 #
 add_executable(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
-
-macro( SIMPLE_TEST  TESTNAME )
-  add_test(NAME ${TESTNAME} COMMAND $<TARGET_FILE:${KIT}CppTests> ${TESTNAME} ${ARGN})
-  set_property(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-endmacro( SIMPLE_TEST  )
 
 #
 # Add Tests

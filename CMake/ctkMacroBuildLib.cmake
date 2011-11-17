@@ -65,6 +65,10 @@ macro(ctkMacroBuildLib)
   include_directories(
     ${my_includes}
     )
+  #message(lib_name:${lib_name})
+  #foreach(i ${my_includes})
+  #  message(i:${i})
+  #endforeach()
 
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})

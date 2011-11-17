@@ -216,6 +216,9 @@ if(BUILD_TESTING)
   set(CPP_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   mark_as_advanced(TCL_TCLSH DART_ROOT)
 
+  include(CMake/ctkMacroSimpleTest.cmake)
+  include(CMake/ctkMacroSimpleTestWithData.cmake)
+
   # Setup file for setting custom ctest vars
   configure_file(
     CMake/CTestCustom.cmake.in

@@ -151,8 +151,6 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
 {
   Q_D(ctkDICOMIndexer);
 
-  logger.setDebug();
-
   DcmFileFormat fileformat;
   DcmDataset *dataset;
 

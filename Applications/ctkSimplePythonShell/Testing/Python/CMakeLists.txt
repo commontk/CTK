@@ -26,12 +26,7 @@ if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
     )
 endif()
 
-
-macro(SIMPLE_TEST_WITH_SCRIPT SCRIPT)
-  get_filename_component(TESTNAME ${SCRIPT} NAME_WE)
-  add_test(ctkSimplePythonShell_${TESTNAME} ${KIT_TESTS} ${CMAKE_CURRENT_SOURCE_DIR}/${SCRIPT})
-endmacro()
-
 foreach(s ${SCRIPTS})
-  SIMPLE_TEST_WITH_SCRIPT(${s})
+  get_filename_component(TESTNAME ${s} NAME_WE)
+  SIMPLE_TEST(ctkSimplePythonShell_${TESTNAME} ${CMAKE_CURRENT_SOURCE_DIR}/${SCRIPT})
 endforeach()
