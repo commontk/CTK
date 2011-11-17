@@ -797,6 +797,21 @@ bool ctkDICOMDataset::SetElementAsUnsignedShort( const DcmTag& tag, int value, u
   return CheckCondition( d->m_DcmDataset->putAndInsertUint16( tag, value, pos ) );
 }
 
+QString ctkDICOMDataset::GetStudyInstanceUID() const
+{
+  return this->GetElementAsString(DCM_StudyInstanceUID);
+}
+
+QString ctkDICOMDataset::GetSeriesInstanceUID() const
+{
+  return this->GetElementAsString(DCM_SeriesInstanceUID);
+}
+
+QString ctkDICOMDataset::GetSOPInstanceUID() const
+{
+  return this->GetElementAsString(DCM_SOPInstanceUID);
+}
+
 QString ctkDICOMDataset::TranslateDefinedTermPatientPosition( const QString& dt )
 {
   static bool initialized = false;

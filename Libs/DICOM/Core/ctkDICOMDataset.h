@@ -197,6 +197,11 @@ public:
     bool SetElementAsUnsignedShort( const DcmTag& tag, int value, unsigned long pos = 0 ); // type US
 
 
+    /// Some convenience getter
+    QString GetStudyInstanceUID() const;
+    QString GetSeriesInstanceUID() const;
+    QString GetSOPInstanceUID() const;
+
     ///
     /// \brief Get a human-readable version of patient position enumerations used e.g. in DICOM series.
     ///
