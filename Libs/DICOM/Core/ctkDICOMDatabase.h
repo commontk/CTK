@@ -48,6 +48,7 @@ class ctkDICOMAbstractThumbnailGenerator;
 /// parallel to "dicom" directory called "thumbs".
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
+
   Q_OBJECT
   Q_PROPERTY(bool isOpen READ isOpen)
   Q_PROPERTY(QString lastError READ lastError)
@@ -137,10 +138,15 @@ public:
   /// @param @generateThumbnail If true, a thumbnail is generated.
   ///
   void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
+  void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
   ///
   /// Helper method: get the path that should be used to store this image.
   ///
   QString pathForDataset( DcmDataset *dataset);
+  
+  /// Check if file is already in database and up-to-date
+  bool fileExistsAndUpToDate(const QString& filePath);
+
 
 signals:
   void databaseChanged();
