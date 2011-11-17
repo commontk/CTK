@@ -97,30 +97,28 @@ ctkDICOMIndexer::~ctkDICOMIndexer()
 //------------------------------------------------------------------------------
 void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase, 
                                    const QString& filePath,
-                                   const QString& destinationDirectoryName,
-                                   bool createHierarchy,
-                                   bool createThumbnails)
+                                   const QString& destinationDirectoryName)
+                                   
 {
   // Q_D(ctkDICOMIndexer);
 
   logger.setDebug();
 
-
-
+  if (!destinationDirectoryName.isEmpty())
+  {
+    logger.warn("Ignoring destinationDirectoryName parameter, just taking it as indication we should copy!");
+  }
 
   emit indexingFilePath(filePath);
 
-  
-  ctkDICOMDatabase.insert(filePath, false, true);
+  ctkDICOMDatabase.insert(filePath, !destinationDirectoryName.isEmpty(), true);
 
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase, 
                                    const QString& directoryName,
-                                   const QString& destinationDirectoryName,
-                                   bool createHierarchy,
-                                   bool createThumbnails)
+                                   const QString& destinationDirectoryName)
 {
   const std::string src_directory(directoryName.toStdString());
 
@@ -148,7 +146,7 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
   {
     emit indexingFileNumber(++fileNumber);
     QString filePath((*iter).c_str());
-    this->addFile(ctkDICOMDatabase, filePath, destinationDirectoryName, createHierarchy, createThumbnails);
+    this->addFile(ctkDICOMDatabase, filePath, destinationDirectoryName);
     ++iter;
   }
 }

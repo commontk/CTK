@@ -48,8 +48,7 @@ public:
   /// DICOM images accordingly.
   ///
   Q_INVOKABLE void addDirectory(ctkDICOMDatabase& database, const QString& directoryName,
-                    const QString& destinationDirectoryName = "",
-                    bool createHierarchy = true, bool createThumbnails = true);
+                    const QString& destinationDirectoryName = "");
 
   ///
   /// \brief Adds a file to database and optionally copies the file to
@@ -59,8 +58,7 @@ public:
   /// DICOM fields accordingly.
   ///
   Q_INVOKABLE void addFile(ctkDICOMDatabase& database, const QString& filePath,
-                    const QString& destinationDirectoryName = "",
-                    bool createHierarchy = true, bool createThumbnails = true);
+                    const QString& destinationDirectoryName = "");
 
   Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 
