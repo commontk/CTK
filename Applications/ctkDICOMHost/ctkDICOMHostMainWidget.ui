@@ -54,6 +54,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="sendDataToHostedApp">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Send Data to Hosted App</string>
        </property>

@@ -163,6 +163,7 @@ int main(int argc, char** argv)
   logic->connect(ui.configureHostedApp,SIGNAL(clicked()), logic, SLOT(configureHostedApp()));
   logic->connect(ui.sendDataToHostedApp,SIGNAL(clicked()), logic, SLOT(sendDataToHostedApp()));
   logic->connect(logic, SIGNAL(TreeSelectionChanged(const QString &)), ui.selection, SLOT(setText(const QString &)));
+  logic->connect(logic, SIGNAL(SelectionValid(bool)), ui.sendDataToHostedApp, SLOT(setEnabled(bool)));
 
   //ctkDICOMAppWidget DICOMApp(widget);
 

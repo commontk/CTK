@@ -20,14 +20,18 @@ ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* plac
   QObject(placeHolder), 
   PlaceHolderForHostedApp(placeHolder),
   DicomAppWidget(dicomAppWidget),
-  ValidSelection(false)
+  ValidSelection(false),
+  SendData(false)
 {
   this->Host = new ctkExampleDicomHost(PlaceHolderForHostedApp);
   this->HostControls = new ctkExampleHostControlWidget(Host, placeHolder);
   this->HostControls->show();
 
+  Data = new ctkDicomAppHosting::AvailableData;
+
   disconnect(this->Host,SIGNAL(startProgress()),this->Host,SLOT(onStartProgress()));
-  connect(this->Host,SIGNAL(startProgress()),this,SLOT(onStartProgress()));
+  connect(this->Host,SIGNAL(appReady()),this,SLOT(onAppReady()), Qt::QueuedConnection);
+  connect(this->Host,SIGNAL(startProgress()),this,SLOT(publishSelectedData()));
 
   QTreeView * treeview = dicomAppWidget->findChild<QTreeView*>("TreeView");
   QItemSelectionModel* selectionmodel = treeview->selectionModel();
@@ -37,25 +41,53 @@ ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* plac
 
 ctkDICOMHostMainLogic::~ctkDICOMHostMainLogic()
 {
+  delete Data;
 }
 
 void ctkDICOMHostMainLogic::configureHostedApp()
 {
   //qDebug() << "load button clicked";
   AppFileName = QFileDialog::getOpenFileName(PlaceHolderForHostedApp,"Choose hosted application",QApplication::applicationDirPath());
-  //HostControls->setAppFileName(name);
-  //if (this->Host)
-  //  {
-  //  this->Host->StartApplication(this->AppFileName);
-  //  bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
-  //  qDebug() << "  setState(INPROGRESS) returned: " << reply;
-  //  }
   HostControls->setAppFileName(AppFileName);
 }
 
 void ctkDICOMHostMainLogic::sendDataToHostedApp()
 {
-  //if(Host->
+  if ((this->Host) && (this->AppFileName.isEmpty()==false) && (ValidSelection))
+  {
+    foreach (const QString &str, SelectedFiles) {
+      if (str.isEmpty())
+        continue;
+      qDebug() << str;
+
+      ctkDicomAvailableDataHelper::addToAvailableData(*Data, 
+        Host->objectLocatorCache(), 
+        str);
+    }
+ 
+    SendData = true;
+    if(this->Host->getApplicationState() == ctkDicomAppHosting::EXIT)
+    {
+      this->Host->StartApplication(this->AppFileName);
+    }
+    if(this->Host->getApplicationState() == ctkDicomAppHosting::IDLE)
+    {
+      bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
+    }
+    if(this->Host->getApplicationState() == ctkDicomAppHosting::INPROGRESS)
+    {
+      publishSelectedData();
+    }
+  }
+}
+
+void ctkDICOMHostMainLogic::onAppReady()
+{
+  if(SendData)
+  {
+    bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
+    qDebug() << "  setState(INPROGRESS) returned: " << reply;
+  }
 }
 
 void ctkDICOMHostMainLogic::onTreeSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
@@ -82,30 +114,21 @@ void ctkDICOMHostMainLogic::onTreeSelectionChanged(const QItemSelection & select
     }
     if (ValidSelection==false)
       emit TreeSelectionChanged("no series selected");
+    emit SelectionValid(ValidSelection);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMHostMainLogic::onStartProgress()
+void ctkDICOMHostMainLogic::publishSelectedData()
 {
-  if(ValidSelection)
+  if(SendData)
   {
-    ctkDicomAppHosting::AvailableData data;
-    foreach (const QString &str, SelectedFiles) {
-      if (str.isEmpty())
-        continue;
-      qDebug() << str;
-
-      ctkDicomAvailableDataHelper::addToAvailableData(data, 
-        Host->objectLocatorCache(), 
-        str);
-    }
-
     qDebug()<<"send dataDescriptors";
-    bool success = Host->publishData(data, true);
+    bool success = Host->publishData(*Data, true);
     if(!success)
     {
       qCritical() << "Failed to publish data";
     }
     qDebug() << "  notifyDataAvailable returned: " << success;
+    SendData=false;
   }
 }

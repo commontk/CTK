@@ -3,6 +3,7 @@
 
 #include <QObject.h>
 #include <QStringList.h>
+#include "ctkDicomAppHostingTypes.h"
 
 class ctkHostedAppPlaceholderWidget;
 class ctkExampleDicomHost;
@@ -23,17 +24,21 @@ public slots:
   void sendDataToHostedApp();
 protected slots:
   void onTreeSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
-  void onStartProgress();
+  void publishSelectedData();
+  void onAppReady();
 signals:
   void TreeSelectionChanged(const QString &);
+  void SelectionValid(bool);
 protected:
   ctkExampleDicomHost* Host;
   ctkExampleHostControlWidget* HostControls;
   ctkHostedAppPlaceholderWidget* PlaceHolderForHostedApp;
   ctkDICOMAppWidget* DicomAppWidget;
+  ctkDicomAppHosting::AvailableData* Data;
   QString AppFileName;
   bool ValidSelection;
   QStringList SelectedFiles;
+  bool SendData;
 };
 
 #endif

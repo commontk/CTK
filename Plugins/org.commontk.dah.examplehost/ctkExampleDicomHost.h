@@ -42,8 +42,6 @@ public:
   ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort = 8080, int appPort = 8081);
   virtual ~ctkExampleDicomHost();
 
-  ctkDicomAppHosting::State getApplicationState() const;
-
   virtual void StartApplication(QString AppPath);
   virtual QString generateUID() { return ""; }
   virtual QRect getAvailableScreen(const QRect& preferredScreen);
