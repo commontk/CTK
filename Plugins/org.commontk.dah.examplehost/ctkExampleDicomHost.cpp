@@ -23,6 +23,8 @@
 #include <QProcess>
 #include <QtDebug>
 #include <QRect>
+#include <QStringList>
+#include <QDir>
 
 // CTK includes
 #include "ctkExampleDicomHost.h"
@@ -178,8 +180,18 @@ void ctkExampleDicomHost::releaseData(const QList<QUuid>& objectUUIDs)
   Q_UNUSED(objectUUIDs)
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleDicomHost::exitApplication()
 {
   this->exitingApplication=true;
   getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
+}
+
+//----------------------------------------------------------------------------
+QString ctkExampleDicomHost::getOutputLocation(const QStringList& preferredProtocols)
+{ 
+  if(preferredProtocols.indexOf("file:")>=0)
+    return QDir::temp().absolutePath();
+
+  return ""; 
 }

@@ -45,7 +45,7 @@ public:
   virtual void StartApplication(QString AppPath);
   virtual QString generateUID() { return ""; }
   virtual QRect getAvailableScreen(const QRect& preferredScreen);
-  virtual QString getOutputLocation(const QStringList& /*preferredProtocols*/) { return ""; }
+  virtual QString getOutputLocation(const QStringList& preferredProtocols);
 
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
   // exchange methods

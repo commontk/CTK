@@ -27,6 +27,8 @@
 #include <QApplication>
 #include <QLabel>
 #include <QRect>
+#include <QStringList>
+#include <QDir>
 #include <QTemporaryFile>
 #include <QPainter>
 
@@ -264,11 +266,17 @@ void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
   const QPixmap* pixmap = ui.PlaceHolderForImage->pixmap();
   if(pixmap!=NULL)
   {
-    QTemporaryFile *tempfile = new QTemporaryFile("ctkdahscXXXXXX.png",this->AppWidget);
-    QString filename;
+    QStringList preferredProtocols;
+    preferredProtocols.append("file:");
+    QString outputlocation = getHostInterface()->getOutputLocation(preferredProtocols);
+    QString templatefilename = QDir(outputlocation).absolutePath();
+    if(templatefilename.isEmpty()==false) templatefilename.append('/'); 
+    templatefilename.append("ctkdahscXXXXXX.png");
+    QTemporaryFile *tempfile = new QTemporaryFile(templatefilename,this->AppWidget);
+
     if(tempfile->open())
     {
-      filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
+      QString filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
       qDebug() << "Created file: " << filename;
       tempfile->close();
       QPixmap tmppixmap(*pixmap);
