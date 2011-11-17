@@ -613,7 +613,7 @@ long ctkDICOMDataset::GetElementAsInteger( const DcmTag& tag, unsigned long pos 
 
   if (!is) throw std::logic_error("Element not found or not an integer");
 
-  Sint32 i;
+  Sint32 i = 0;
   is->getSint32(i, pos);
 
   return i;
