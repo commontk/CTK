@@ -37,7 +37,7 @@
 
 //----------------------------------------------------------------------------
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic():
-ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
+ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), AppWidget(0)
 {
 
 
@@ -62,34 +62,39 @@ ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
   }
 }
 
-
-
 //----------------------------------------------------------------------------
 bool ctkExampleDicomAppLogic::bringToFront(const QRect& /*requestedScreenArea*/)
 {
-  return false;
+  if(this->AppWidget!=NULL)
+  {
+    this->AppWidget->activateWindow();
+    this->AppWidget->raise();
+  }
+  return true;
 }
 
 //----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::do_something()
 {
-  this->Button = new QPushButton("Button from App");
-  connect(this->Button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
+  AppWidget = new QWidget;
+  ui.setupUi(AppWidget);
+
+  connect(ui.GetDataButton, SIGNAL(clicked()), this, SLOT(buttonClicked()));
   try
     {
     QRect preferred(50,50,100,100);
     qDebug() << "  Asking:getAvailableScreen";
     QRect rect = getHostInterface()->getAvailableScreen(preferred);
     qDebug() << "  got sth:" << rect.top();
-    this->Button->move(rect.topLeft());
-    this->Button->resize(rect.size());
+    this->AppWidget->move(rect.topLeft());
+    this->AppWidget->resize(rect.size());
     }
   catch (const std::runtime_error& e)
     {
     qCritical() << e.what();
     return;
     }
-  this->Button->show();
+  this->AppWidget->show();
 }
 
 //----------------------------------------------------------------------------
@@ -115,14 +120,14 @@ void ctkExampleDicomAppLogic::onResumeProgress()
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
   //we're rolling
   //do something else normally, but this is an example
-  this->Button->setEnabled(true);
+  ui.GetDataButton->setEnabled(true);
 }
 
 //----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::onSuspendProgress()
 {
   //release resources it can reclame later to resume work
-  this->Button->setEnabled(false);
+  ui.GetDataButton->setEnabled(false);
   //notify state changed
   setInternalState(ctkDicomAppHosting::SUSPENDED);
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::SUSPENDED);
@@ -153,9 +158,9 @@ void ctkExampleDicomAppLogic::onExitHostedApp()
 //----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::onReleaseResources()
 {
-  this->Button->hide();
-  delete (this->Button);
-  this->Button = 0 ;
+  this->AppWidget->hide();
+  delete (this->AppWidget);
+  this->AppWidget = 0 ;
 }
 
 
@@ -164,7 +169,7 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::Avai
 {
   Q_UNUSED(lastData)
   QString s;
-  if(this->Button == 0)
+  if(this->AppWidget == 0)
     {
     qCritical() << "Button is null!";
     return false;
@@ -185,7 +190,8 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::Avai
       }
     }
   }
-  this->Button->setText(s);
+  ui.ReceivedDataInformation->setText(s);
+  ui.GetDataButton->setEnabled(true);
   return false;
 }
 
@@ -233,7 +239,6 @@ void ctkExampleDicomAppLogic::buttonClicked()
     DicomImage dcmtkImage(filename.toLatin1().data());
     ctkDICOMImage ctkImage(&dcmtkImage);
 
-    QLabel* qtImage = new QLabel;
     QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
     if (pixmap.isNull())
     {
@@ -241,9 +246,8 @@ void ctkExampleDicomAppLogic::buttonClicked()
     }
     else
     {
-      qtImage->setPixmap(pixmap);
-      qtImage->show();
+      ui.PlaceHolderForImage->setPixmap(pixmap);
     }
   }
-  this->Button->setText(s);
+  ui.ReceivedDataInformation->setText(s);
 }

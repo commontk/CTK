@@ -32,9 +32,12 @@
 
 #include <ctkServiceTracker.h>
 
+// ui of this application
+#include "ui_ctkExampleDicomAppWidget.h"
+
 struct ctkDicomHostInterface;
 
-class QPushButton;
+class QWidget;
 
 class ctkExampleDicomAppLogic : public ctkDicomAbstractApp
 {
@@ -74,7 +77,8 @@ protected slots:
 
   void buttonClicked();
 private:
-  QPushButton * Button;
+  QWidget * AppWidget;
+  Ui::ctkExampleDicomAppWidget ui;
 
   QUuid uuid;
 

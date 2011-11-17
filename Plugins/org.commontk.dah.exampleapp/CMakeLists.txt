@@ -17,6 +17,7 @@ SET(PLUGIN_MOC_SRCS
 
 # Qt Designer files which should be processed by Qts uic
 SET(PLUGIN_UI_FORMS
+  ctkExampleDicomAppWidget.ui
 )
 
 # QRC Files which should be compiled into the plugin
