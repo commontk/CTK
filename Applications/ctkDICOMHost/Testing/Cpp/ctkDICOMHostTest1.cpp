@@ -26,10 +26,10 @@
 #include <cstdlib>
 #include <iostream>
 
-int ctkDICOMTest1(int argc, char * argv [])
+int ctkDICOMHostTest1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
-  QString command = QString("ctkDICOM");
+  QString command = QString("ctkDICOMHost");
   QProcess process;
   process.start(command);
   bool res = process.waitForStarted();

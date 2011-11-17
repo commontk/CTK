@@ -12,7 +12,7 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 ADD_EXECUTABLE(${KIT}CppTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${KIT_target_libraries})
+TARGET_LINK_LIBRARIES(${KIT}CppTests ${KIT_target_libraries} ${QT_LIBRARIES})
 
 SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
 IF(WIN32)
@@ -27,4 +27,4 @@ ENDMACRO( SIMPLE_TEST  )
 #
 # Add Tests
 #
-SIMPLE_TEST(ctkDICOMTest1)
+SIMPLE_TEST(ctkDICOMHostTest1)
