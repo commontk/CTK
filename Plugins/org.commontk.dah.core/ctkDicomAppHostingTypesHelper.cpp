@@ -211,11 +211,23 @@ ctkDicomSoapArrayOfStringType::ctkDicomSoapArrayOfStringType(const QString& type
 QStringList ctkDicomSoapArrayOfStringType::getArray(const QtSoapType& type)
 {
   QStringList list;
-  for (int i = 0; i < type.count() ; i++)
+  if(type.type()==QtSoapType::Struct)
+  {
+    const QtSoapType& type(type[0]);
+    for (int i = 0; i < type.count() ; i++)
     {
-    const QString str = type[i].value().toString();
-    list << str;
+      const QString str = type[i].value().toString();
+      list << str;
     }
+  }
+  else
+  {
+    for (int i = 0; i < type.count() ; i++)
+    {
+      const QString str = type[i].value().toString();
+      list << str;
+    }
+  }
   return list;
 }
 
