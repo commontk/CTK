@@ -930,3 +930,12 @@ void ctkDICOMDataset::SetStoredSerialization(QString serializedDataset)
   throw std::runtime_error("No serialization implemented for this object!");
 }
 
+bool ctkDICOMDataset::SaveToFile(const QString& filePath) const
+{
+  Q_D(const ctkDICOMDataset);
+  DcmFileFormat* fileformat = new DcmFileFormat ( d->m_DcmDataset );
+  OFCondition status = fileformat->saveFile ( filePath.toAscii() );
+  delete fileformat;
+  return status.good();
+}
+

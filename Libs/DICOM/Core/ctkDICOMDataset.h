@@ -81,6 +81,14 @@ public:
                     const Uint32 maxReadLength = DCM_MaxReadLength,
                     const E_FileReadMode readMode = ERM_autoDetect);
 
+
+
+    /// \brief Save dataset to file
+    ///
+    /// \returns true on success.
+    bool SaveToFile(const QString& filePath) const;
+
+
     /// \brief Store a string representation of the object to a database field.
     ///
     /// The internal DcmDataset is serialized into a memory buffer using DcmDataset::write(..).
