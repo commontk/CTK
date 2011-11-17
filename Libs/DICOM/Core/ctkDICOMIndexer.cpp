@@ -73,18 +73,6 @@ public:
 ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate()
 {
     this->thumbnailGenerator = NULL;
-
-    /*
-     * moved to database
-     *
-     * 
-    this->lastPatientID = "";
-    this->lastPatientsName = "";
-    this->lastPatientsBirthDate = "";
-    this->lastStudyInstanceUID = "";
-    this->lastSeriesInstanceUID = "";
-    this->lastPatientUID = -1;
-    */
 }
 
 //------------------------------------------------------------------------------
