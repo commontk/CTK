@@ -1,8 +1,8 @@
-PROJECT(pluginS_test)
+project(pluginS_test)
 
-SET(PLUGIN_export_directive "pluginS_test_EXPORT")
+set(PLUGIN_export_directive "pluginS_test_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkTestPluginS.cpp
   ctkTestPluginSActivator.cpp
   ctkTestPluginSService0.h
@@ -11,12 +11,12 @@ SET(PLUGIN_SRCS
   ctkTestPluginSService3.h
 )
 
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkTestPluginS_p.h
   ctkTestPluginSActivator_p.h
 )
 
-SET(PLUGIN_resources
+set(PLUGIN_resources
   
 )
 

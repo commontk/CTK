@@ -1,1 +1,1 @@
-SET(Require-Plugin org.commontk.dah.host)
+set(Require-Plugin org.commontk.dah.host)

@@ -1,6 +1,6 @@
-SET(KIT ${PROJECT_NAME})
+set(KIT ${PROJECT_NAME})
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMIndexerTest1.cpp
   )
 
@@ -11,18 +11,18 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${KIT_target_libraries})
+add_executable(${KIT}CppTests ${Tests})
+target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 
-SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-IF(WIN32)
-  SET(KIT_TESTS ${CPP_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CppTests)
-ENDIF(WIN32)
+set( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
+if(WIN32)
+  set(KIT_TESTS ${CPP_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CppTests)
+endif(WIN32)
 
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-ENDMACRO( SIMPLE_TEST  )
+macro( SIMPLE_TEST  TESTNAME )
+  add_test( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
+  set_property(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
+endmacro( SIMPLE_TEST  )
 
 #
 # Add Tests

@@ -2,33 +2,33 @@
 # DCMTK
 #
 
-ctkMacroShouldAddExternalProject(DCMTK_LIBRARIES add_project)
-IF(${add_project})
+ctkMacroShouldAddExternalproject(DCMTK_LIBRARIES add_project)
+if(${add_project})
 
   # Sanity checks
-  IF(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
-    MESSAGE(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to non-existing directory")
-  ENDIF()
+  if(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
+    message(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to non-existing directory")
+  endif()
 
-  SET(DCMTK_enabling_variable DCMTK_LIBRARIES)
+  set(DCMTK_enabling_variable DCMTK_LIBRARIES)
 
-  SET(proj DCMTK)
-  SET(proj_DEPENDENCIES)
+  set(proj DCMTK)
+  set(proj_DEPENDENCIES)
 
-  LIST(APPEND CTK_DEPENDENCIES ${proj})
+  list(APPEND CTK_DEPENDENCIES ${proj})
 
-  SET(${DCMTK_enabling_variable}_INCLUDE_DIRS DCMTK_INCLUDE_DIR)
-  SET(${DCMTK_enabling_variable}_FIND_PACKAGE_CMD DCMTK)
+  set(${DCMTK_enabling_variable}_INCLUDE_DIRS DCMTK_INCLUDE_DIR)
+  set(${DCMTK_enabling_variable}_FIND_PACKAGE_CMD DCMTK)
 
-  IF(CTK_SUPERBUILD)
+  if(CTK_SUPERBUILD)
 
-    IF(NOT DEFINED DCMTK_DIR)
-      SET(revision_tag 085525e643cab5ac82)
-      IF(${proj}_REVISION_TAG)
-        SET(revision_tag ${${proj}_REVISION_TAG})
-      ENDIF()
+    if(NOT DEFINED DCMTK_DIR)
+      set(revision_tag 085525e643cab5ac82)
+      if(${proj}_REVISION_TAG)
+        set(revision_tag ${${proj}_REVISION_TAG})
+      endif()
 
-  #     MESSAGE(STATUS "Adding project:${proj}")
+  #     message(STATUS "Adding project:${proj}")
       # Set CMake OSX variable to pass down the external project
       set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
       if(APPLE)
@@ -61,7 +61,7 @@ IF(${add_project})
           #-DBUILD_TESTING:BOOL=OFF # Not used
           -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
         )
-      SET(DCMTK_DIR ${ep_install_dir})
+      set(DCMTK_DIR ${ep_install_dir})
 
   # This was used during heavy development on DCMTK itself.
   # Disabling it for now. (It also leads to to build errors
@@ -79,12 +79,12 @@ IF(${add_project})
       # Since DCMTK is statically build, there is not need to add its corresponding
       # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 
-    ELSE()
-      ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-    ENDIF()
+    else()
+      ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
+    endif()
 
-    LIST(APPEND CTK_SUPERBUILD_EP_VARS DCMTK_DIR:PATH)
+    list(APPEND CTK_SUPERBUILD_EP_VARS DCMTK_DIR:PATH)
 
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()

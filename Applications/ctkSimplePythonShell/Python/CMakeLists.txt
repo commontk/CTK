@@ -1,10 +1,10 @@
 
 
-SET(KIT_PYTHON_SCRIPTS
+set(KIT_PYTHON_SCRIPTS
   ctkSimplePythonShell
   )
   
-SET(KIT_PYTHON_RESOURCES
+set(KIT_PYTHON_RESOURCES
   )
   
 ctkMacroCompilePythonScript(

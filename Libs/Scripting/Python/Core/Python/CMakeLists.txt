@@ -1,37 +1,37 @@
 
 
-SET(KIT_PYTHON_SCRIPTS
+set(KIT_PYTHON_SCRIPTS
   qt/__init__
   )
   
-#IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-#  LIST(APPEND KIT_PYTHON_SCRIPTS ctkvtk/__init__)
-#ENDIF()
+#if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+#  list(APPEND KIT_PYTHON_SCRIPTS ctkvtk/__init__)
+#endif()
 
-IF(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+if(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
 
   # Configure variable CTK_PYTHON_WRAPPED_LIBRARIES that will contain
   # the comma separated list of package to load
-  SET(CTK_PYTHON_WRAPPED_LIBRARIES)
-  FOREACH(lib ${CTK_LIBS})
+  set(CTK_PYTHON_WRAPPED_LIBRARIES)
+  foreach(lib ${CTK_LIBS})
     ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
-    IF(${CTK_LIB_${lib_name}})
-      STRING(REPLACE "/" "" lib_name_no_slash ${lib_name})
-      SET(lib_name_no_slash "'${lib_name_no_slash}'") # Add single quotes
-      SET(CTK_PYTHON_WRAPPED_LIBRARIES "${lib_name_no_slash}, ${CTK_PYTHON_WRAPPED_LIBRARIES}")
-    ENDIF()
-  ENDFOREACH()
+    if(${CTK_LIB_${lib_name}})
+      string(REPLACE "/" "" lib_name_no_slash ${lib_name})
+      set(lib_name_no_slash "'${lib_name_no_slash}'") # Add single quotes
+      set(CTK_PYTHON_WRAPPED_LIBRARIES "${lib_name_no_slash}, ${CTK_PYTHON_WRAPPED_LIBRARIES}")
+    endif()
+  endforeach()
 
-  CONFIGURE_FILE(
+  configure_file(
     ctk/__init__.py.in
     ${CMAKE_CURRENT_BINARY_DIR}/ctk/__init__.py
     @ONLY
     )
 
-  LIST(APPEND KIT_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/ctk/__init__.py)
-ENDIF()
+  list(APPEND KIT_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/ctk/__init__.py)
+endif()
 
-SET(KIT_PYTHON_RESOURCES
+set(KIT_PYTHON_RESOURCES
   )
 
 ctkMacroCompilePythonScript(

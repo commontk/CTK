@@ -2,27 +2,27 @@
 # CTKData
 #
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   # Sanity checks
-  IF(DEFINED CTKData_DIR AND NOT EXISTS ${CTKData_DIR})
-    MESSAGE(FATAL_ERROR "CTKData_DIR variable is defined but corresponds to non-existing directory")
-  ENDIF()
+  if(DEFINED CTKData_DIR AND NOT EXISTS ${CTKData_DIR})
+    message(FATAL_ERROR "CTKData_DIR variable is defined but corresponds to non-existing directory")
+  endif()
 
-  SET(proj CTKData)
+  set(proj CTKData)
   set(proj_DEPENDENCIES)
 
-  LIST(APPEND CTK_DEPENDENCIES ${proj})
+  list(APPEND CTK_DEPENDENCIES ${proj})
 
-  IF(CTK_SUPERBUILD)
+  if(CTK_SUPERBUILD)
 
-    IF(NOT DEFINED CTKData_DIR)
+    if(NOT DEFINED CTKData_DIR)
 
-      SET(revision_tag cc07f1ff391b7828459c)
-      IF(${proj}_REVISION_TAG)
-        SET(revision_tag ${${proj}_REVISION_TAG})
-      ENDIF()
+      set(revision_tag cc07f1ff391b7828459c)
+      if(${proj}_REVISION_TAG)
+        set(revision_tag ${${proj}_REVISION_TAG})
+      endif()
 
-  #    MESSAGE(STATUS "Adding project:${proj}")
+  #    message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
@@ -36,13 +36,13 @@ IF(BUILD_TESTING)
         DEPENDS
           ${proj_DEPENDENCIES}
         )
-      SET(CTKData_DIR ${CMAKE_BINARY_DIR}/${proj})
-    ELSE()
-      ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-    ENDIF()
+      set(CTKData_DIR ${CMAKE_BINARY_DIR}/${proj})
+    else()
+      ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
+    endif()
 
-    LIST(APPEND CTK_SUPERBUILD_EP_VARS CTKData_DIR:PATH)
+    list(APPEND CTK_SUPERBUILD_EP_VARS CTKData_DIR:PATH)
 
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()

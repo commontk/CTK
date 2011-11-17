@@ -1,7 +1,7 @@
 
-SET(KIT_TESTS ${CPP_TEST_PATH}/ctkSimplePythonShell)
+set(KIT_TESTS ${CPP_TEST_PATH}/ctkSimplePythonShell)
 
-SET(SCRIPTS
+set(SCRIPTS
   wrappedQInvokableTest.py
   wrappedQPropertyTest.py
   wrappedSlotTest.py
@@ -10,28 +10,28 @@ SET(SCRIPTS
 # Since QTimer is part of QtCore and is used in both 'ctkWidgetsTest.py' and 'derivedQWidgetTest.py', 
 # these two tests should be included only if CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE is ON
 
-IF(CTK_LIB_Widgets AND CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE)
-  LIST(APPEND SCRIPTS ctkWidgetsTest.py)
-ENDIF()
+if(CTK_LIB_Widgets AND CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE)
+  list(APPEND SCRIPTS ctkWidgetsTest.py)
+endif()
 
-IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE AND CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTGUI)
-  LIST(APPEND SCRIPTS derivedQWidgetTest.py)
-ENDIF()
+if(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE AND CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTGUI)
+  list(APPEND SCRIPTS derivedQWidgetTest.py)
+endif()
 
-IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  LIST(APPEND SCRIPTS
+if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  list(APPEND SCRIPTS
     vtkPythonSmoke.py
     wrappedVTKQInvokableTest.py
     wrappedVTKSlotTest.py
     )
-ENDIF()
+endif()
 
 
-MACRO(SIMPLE_TEST_WITH_SCRIPT SCRIPT)
-  GET_FILENAME_COMPONENT(TESTNAME ${SCRIPT} NAME_WE)
-  ADD_TEST(ctkSimplePythonShell_${TESTNAME} ${KIT_TESTS} ${CMAKE_CURRENT_SOURCE_DIR}/${SCRIPT})
-ENDMACRO()
+macro(SIMPLE_TEST_WITH_SCRIPT SCRIPT)
+  get_filename_component(TESTNAME ${SCRIPT} NAME_WE)
+  add_test(ctkSimplePythonShell_${TESTNAME} ${KIT_TESTS} ${CMAKE_CURRENT_SOURCE_DIR}/${SCRIPT})
+endmacro()
 
-FOREACH(s ${SCRIPTS})
+foreach(s ${SCRIPTS})
   SIMPLE_TEST_WITH_SCRIPT(${s})
-ENDFOREACH()
+endforeach()

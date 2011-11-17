@@ -2,45 +2,45 @@
 # VTK
 #
 
-ctkMacroShouldAddExternalProject(VTK_LIBRARIES add_project)
-IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+ctkMacroShouldAddExternalproject(VTK_LIBRARIES add_project)
+if(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   # Sanity checks
-  IF(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
-    MESSAGE(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
-  ENDIF()
+  if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
+    message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
+  endif()
 
-  SET(VTK_enabling_variable VTK_LIBRARIES)
+  set(VTK_enabling_variable VTK_LIBRARIES)
 
-  SET(proj VTK)
-  SET(proj_DEPENDENCIES)
+  set(proj VTK)
+  set(proj_DEPENDENCIES)
 
-  LIST(APPEND CTK_DEPENDENCIES ${proj})
+  list(APPEND CTK_DEPENDENCIES ${proj})
 
-  SET(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
-  SET(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
-  SET(${VTK_enabling_variable}_FIND_PACKAGE_CMD VTK)
+  set(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
+  set(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
+  set(${VTK_enabling_variable}_FIND_PACKAGE_CMD VTK)
 
-  IF(CTK_SUPERBUILD)
+  if(CTK_SUPERBUILD)
 
-    SET(additional_vtk_cmakevars )
-    IF(MINGW)
-      LIST(APPEND additional_vtk_cmakevars -DCMAKE_USE_PTHREADS:BOOL=OFF)
-    ENDIF()
+    set(additional_vtk_cmakevars )
+    if(MINGW)
+      list(APPEND additional_vtk_cmakevars -DCMAKE_USE_PTHREADS:BOOL=OFF)
+    endif()
 
-    IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-      LIST(APPEND additional_vtk_cmakevars
+    if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+      list(APPEND additional_vtk_cmakevars
         -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
         -DPYTHON_LIBRARIES:FILEPATH=${PYTHON_LIBRARIES}
         -DPYTHON_DEBUG_LIBRARIES:FILEPATH=${PYTHON_DEBUG_LIBRARIES}
         )
-    ENDIF()
+    endif()
 
-    IF(NOT DEFINED VTK_DIR)
+    if(NOT DEFINED VTK_DIR)
 
-      SET(revision_tag 4b419e67427e974b51ea0812bae25b174426a2ff)
-      IF(${proj}_REVISION_TAG)
-        SET(revision_tag ${${proj}_REVISION_TAG})
-      ENDIF()
+      set(revision_tag 4b419e67427e974b51ea0812bae25b174426a2ff)
+      if(${proj}_REVISION_TAG)
+        set(revision_tag ${${proj}_REVISION_TAG})
+      endif()
 
       # Set CMake OSX variable to pass down the external project
       set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -51,7 +51,7 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
           -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
       endif()
 
-  #     MESSAGE(STATUS "Adding project:${proj}")
+  #     message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
@@ -82,19 +82,19 @@ IF(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
         DEPENDS
           ${proj_DEPENDENCIES}
         )
-      SET(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+      set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
       # Since the link directories associated with VTK is used, it makes sens to
       # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory
-      LIST(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${VTK_DIR}/bin)
+      list(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${VTK_DIR}/bin)
 
-    ELSE()
-      ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-    ENDIF()
+    else()
+      ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
+    endif()
 
-    LIST(APPEND CTK_SUPERBUILD_EP_VARS VTK_DIR:PATH)
+    list(APPEND CTK_SUPERBUILD_EP_VARS VTK_DIR:PATH)
 
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()
 

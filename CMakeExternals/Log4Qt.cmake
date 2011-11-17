@@ -2,32 +2,32 @@
 # Log4Qt
 #
 
-ctkMacroShouldAddExternalProject(Log4Qt_LIBRARIES add_project)
-IF(${add_project})
+ctkMacroShouldAddExternalproject(Log4Qt_LIBRARIES add_project)
+if(${add_project})
 
   # Sanity checks
-  IF(DEFINED Log4Qt_DIR AND NOT EXISTS ${Log4Qt_DIR})
-    MESSAGE(FATAL_ERROR "Log4Qt_DIR variable is defined but corresponds to non-existing directory")
-  ENDIF()
+  if(DEFINED Log4Qt_DIR AND NOT EXISTS ${Log4Qt_DIR})
+    message(FATAL_ERROR "Log4Qt_DIR variable is defined but corresponds to non-existing directory")
+  endif()
 
-  SET(Log4Qt_enabling_variable Log4Qt_LIBRARIES)
+  set(Log4Qt_enabling_variable Log4Qt_LIBRARIES)
 
-  SET(proj Log4Qt)
-  SET(proj_DEPENDENCIES)
+  set(proj Log4Qt)
+  set(proj_DEPENDENCIES)
 
-  LIST(APPEND CTK_DEPENDENCIES ${proj})
+  list(APPEND CTK_DEPENDENCIES ${proj})
 
-  SET(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
-  SET(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
+  set(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
+  set(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
 
-  IF(CTK_SUPERBUILD)
+  if(CTK_SUPERBUILD)
 
-    IF(NOT DEFINED Log4Qt_DIR)
+    if(NOT DEFINED Log4Qt_DIR)
 
-      SET(revision_tag 8d3558b0f636cbf8ff83)
-      IF(${proj}_REVISION_TAG)
-        SET(revision_tag ${${proj}_REVISION_TAG})
-      ENDIF()
+      set(revision_tag 8d3558b0f636cbf8ff83)
+      if(${proj}_REVISION_TAG)
+        set(revision_tag ${${proj}_REVISION_TAG})
+      endif()
 
       # Set CMake OSX variable to pass down the external project
       set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -38,7 +38,7 @@ IF(${add_project})
           -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
       endif()
 
-  #     MESSAGE(STATUS "Adding project:${proj}")
+  #     message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
@@ -58,17 +58,17 @@ IF(${add_project})
         DEPENDS
           ${proj_DEPENDENCIES}
         )
-      SET(Log4Qt_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+      set(Log4Qt_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
       # Since Log4Qt is statically build, there is not need to add its corresponding
       # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 
-    ELSE()
-      ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-    ENDIF()
+    else()
+      ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
+    endif()
 
-    LIST(APPEND CTK_SUPERBUILD_EP_VARS Log4Qt_DIR:PATH)
+    list(APPEND CTK_SUPERBUILD_EP_VARS Log4Qt_DIR:PATH)
 
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()

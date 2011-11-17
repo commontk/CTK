@@ -1,8 +1,8 @@
-PROJECT(org_commontk_dah_app)
+project(org_commontk_dah_app)
 
-SET(PLUGIN_export_directive "org_commontk_dah_app_EXPORT")
+set(PLUGIN_export_directive "org_commontk_dah_app_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkAppSoapMessageProcessor.cpp
   ctkDicomAbstractApp.cpp
   ctkDicomAppPlugin.cpp
@@ -14,7 +14,7 @@ SET(PLUGIN_SRCS
 )
 
 # Files which should be processed by Qts moc
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkDicomAppPlugin_p.h
   ctkDicomAppServer_p.h
   ctkDicomHostService_p.h
@@ -22,11 +22,11 @@ SET(PLUGIN_MOC_SRCS
 )
 
 # Qt Designer files which should be processed by Qts uic
-SET(PLUGIN_UI_FORMS
+set(PLUGIN_UI_FORMS
 )
 
 # QRC Files which should be compiled into the plugin
-SET(PLUGIN_resources
+set(PLUGIN_resources
 )
 
 #Compute the plugin dependencies

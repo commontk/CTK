@@ -4,27 +4,27 @@
 #
 
 # Python is required
-FIND_PACKAGE(PythonLibs)
-IF(NOT PYTHONLIBS_FOUND)
-  MESSAGE(FATAL_ERROR "error: Python is required to build PythonQt")
-ENDIF()
+find_package(PythonLibs)
+if(NOT PYTHONLIBS_FOUND)
+  message(FATAL_ERROR "error: Python is required to build PythonQt")
+endif()
 
-FIND_PATH(PYTHONQT_INSTALL_DIR include/PythonQt/PythonQt.h DOC "Directory where PythonQt was installed.")
-FIND_PATH(PYTHONQT_INCLUDE_DIR PythonQt.h "${PYTHONQT_INSTALL_DIR}/include/PythonQt" DOC "Path to the PythonQt include directory")
-FIND_LIBRARY(PYTHONQT_LIBRARY PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
+find_path(PYTHONQT_INSTALL_DIR include/PythonQt/PythonQt.h DOC "Directory where PythonQt was installed.")
+find_path(PYTHONQT_INCLUDE_DIR PythonQt.h "${PYTHONQT_INSTALL_DIR}/include/PythonQt" DOC "Path to the PythonQt include directory")
+find_library(PYTHONQT_LIBRARY PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
 
-MARK_AS_ADVANCED(PYTHONQT_INSTALL_DIR)
-MARK_AS_ADVANCED(PYTHONQT_INCLUDE_DIR)
-MARK_AS_ADVANCED(PYTHONQT_LIBRARY)
+mark_as_advanced(PYTHONQT_INSTALL_DIR)
+mark_as_advanced(PYTHONQT_INCLUDE_DIR)
+mark_as_advanced(PYTHONQT_LIBRARY)
 
 # On linux, also find libutil
-IF(UNIX AND NOT APPLE)
-  FIND_LIBRARY(PYTHONQT_LIBUTIL util)
-  MARK_AS_ADVANCED(PYTHONQT_LIBUTIL)
-ENDIF()
+if(UNIX AND NOT APPLE)
+  find_library(PYTHONQT_LIBUTIL util)
+  mark_as_advanced(PYTHONQT_LIBUTIL)
+endif()
 
-SET(PYTHONQT_FOUND 0)
-IF(PYTHONQT_INCLUDE_DIR AND PYTHONQT_LIBRARY)
-  SET(PYTHONQT_FOUND 1)
-  SET(PYTHONQT_LIBRARIES ${PYTHONQT_LIBRARY} ${PYTHONQT_LIBUTIL})
-ENDIF()
+set(PYTHONQT_FOUND 0)
+if(PYTHONQT_INCLUDE_DIR AND PYTHONQT_LIBRARY)
+  set(PYTHONQT_FOUND 1)
+  set(PYTHONQT_LIBRARIES ${PYTHONQT_LIBRARY} ${PYTHONQT_LIBUTIL})
+endif()

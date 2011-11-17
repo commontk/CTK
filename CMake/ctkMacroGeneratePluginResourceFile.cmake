@@ -4,7 +4,7 @@
 #
 
 #! \ingroup CMakeUtilities
-MACRO(ctkMacroGeneratePluginResourceFile QRC_SRCS)
+macro(ctkMacroGeneratePluginResourceFile QRC_SRCS)
 
   CtkMacroParseArguments(MY
     "NAME;PREFIX;RESOURCES;BINARY_RESOURCES"
@@ -12,33 +12,33 @@ MACRO(ctkMacroGeneratePluginResourceFile QRC_SRCS)
     ${ARGN}
     )
 
-  SET(_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${MY_NAME}")
+  set(_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${MY_NAME}")
 
-  SET(_qrc_content
+  set(_qrc_content
 "<!DOCTYPE RCC><RCC version=\"1.0\">
 <qresource prefix=\"/${MY_PREFIX}\">
 ")
 
-  IF(MY_RESOURCES)
-    FOREACH(_resource_file ${MY_RESOURCES})
-      CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/${_resource_file}" "${CMAKE_CURRENT_BINARY_DIR}/${_resource_file}" COPYONLY)
-      SET(_qrc_content "${_qrc_content}<file>${_resource_file}</file>
+  if(MY_RESOURCES)
+    foreach(_resource_file ${MY_RESOURCES})
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${_resource_file}" "${CMAKE_CURRENT_BINARY_DIR}/${_resource_file}" COPYONLY)
+      set(_qrc_content "${_qrc_content}<file>${_resource_file}</file>
 ")
-    ENDFOREACH()
-  ENDIF()
+    endforeach()
+  endif()
 
-  IF(MY_BINARY_RESOURCES)
-    FOREACH(_resource_file ${MY_BINARY_RESOURCES})
-      SET(_qrc_content "${_qrc_content}<file>${_resource_file}</file>
+  if(MY_BINARY_RESOURCES)
+    foreach(_resource_file ${MY_BINARY_RESOURCES})
+      set(_qrc_content "${_qrc_content}<file>${_resource_file}</file>
 ")
-    ENDFOREACH()
-  ENDIF()
+    endforeach()
+  endif()
 
-  SET(_qrc_content "${_qrc_content}</qresource>
+  set(_qrc_content "${_qrc_content}</qresource>
 </RCC>
 ")
-  CONFIGURE_FILE("${CTK_CMAKE_DIR}/plugin_resources_cached.qrc.in" "${_qrc_filepath}" @ONLY)
+  configure_file("${CTK_CMAKE_DIR}/plugin_resources_cached.qrc.in" "${_qrc_filepath}" @ONLY)
 
   QT4_ADD_RESOURCES(${QRC_SRCS} ${_qrc_filepath})
 
-ENDMACRO()
+endmacro()

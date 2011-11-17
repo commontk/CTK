@@ -30,14 +30,14 @@
 # It's then used in Utilities/LastConfigureStep/CTKGenerateCTKConfig.cmake to
 # configure CTKConfig.cmake.in
 # This variable would then be exposed to project building against CTK
-SET(CTK_EXTERNAL_LIBRARY_DIRS)
+set(CTK_EXTERNAL_LIBRARY_DIRS)
 
 #-----------------------------------------------------------------------------
 # Make sure ${CTK_BINARY_DIR}/CTK-build/bin exists
 # May be used by some external project to install libs 
-IF(NOT EXISTS ${CTK_BINARY_DIR}/CTK-build/bin)
-  FILE(MAKE_DIRECTORY ${CTK_BINARY_DIR}/CTK-build/bin)
-ENDIF()
+if(NOT EXISTS ${CTK_BINARY_DIR}/CTK-build/bin)
+  file(MAKE_DIRECTORY ${CTK_BINARY_DIR}/CTK-build/bin)
+endif()
 
 #-----------------------------------------------------------------------------
 # Qt is expected to be setup by CTK/CMakeLists.txt just before it includes the SuperBuild script
@@ -46,31 +46,31 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Attempt to discover Doxygen so that DOXYGEN_EXECUTABLE is set to an appropriate default value
 #
-FIND_PACKAGE(Doxygen QUIET)
+find_package(Doxygen QUIET)
 
 #-----------------------------------------------------------------------------
 # Generate cmake variable name corresponding to Libs, Plugins and Applications
 #
-SET(ctk_libs_bool_vars)
-FOREACH(lib ${CTK_LIBS_SUBDIRS})
-  LIST(APPEND ctk_libs_bool_vars CTK_LIB_${lib})
-ENDFOREACH()
+set(ctk_libs_bool_vars)
+foreach(lib ${CTK_LIBS_SUBDIRS})
+  list(APPEND ctk_libs_bool_vars CTK_LIB_${lib})
+endforeach()
 
-SET(ctk_plugins_bool_vars)
-FOREACH(plugin ${CTK_PLUGINS_SUBDIRS})
-  LIST(APPEND ctk_plugins_bool_vars CTK_PLUGIN_${plugin})
-ENDFOREACH()
+set(ctk_plugins_bool_vars)
+foreach(plugin ${CTK_PLUGINS_SUBDIRS})
+  list(APPEND ctk_plugins_bool_vars CTK_PLUGIN_${plugin})
+endforeach()
 
-SET(ctk_applications_bool_vars)
-FOREACH(app ${CTK_APPLICATIONS_SUBDIRS})
-  LIST(APPEND ctk_applications_bool_vars CTK_APP_${app})
-ENDFOREACH()
+set(ctk_applications_bool_vars)
+foreach(app ${CTK_APPLICATIONS_SUBDIRS})
+  list(APPEND ctk_applications_bool_vars CTK_APP_${app})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Set superbuild boolean args
 #
 
-SET(ctk_cmake_boolean_args
+set(ctk_cmake_boolean_args
   BUILD_TESTING
   BUILD_QTDESIGNER_PLUGINS
   CTK_USE_KWSTYLE
@@ -85,35 +85,35 @@ SET(ctk_cmake_boolean_args
   ${ctk_lib_options_list}
   )
 
-SET(ctk_superbuild_boolean_args)
-FOREACH(ctk_cmake_arg ${ctk_cmake_boolean_args})
-  LIST(APPEND ctk_superbuild_boolean_args -D${ctk_cmake_arg}:BOOL=${${ctk_cmake_arg}})
-ENDFOREACH()
+set(ctk_superbuild_boolean_args)
+foreach(ctk_cmake_arg ${ctk_cmake_boolean_args})
+  list(APPEND ctk_superbuild_boolean_args -D${ctk_cmake_arg}:BOOL=${${ctk_cmake_arg}})
+endforeach()
 
-# MESSAGE("CMake boolean args:")
-# FOREACH(arg ${ctk_superbuild_boolean_args})
-#   MESSAGE("  ${arg}")
-# ENDFOREACH()
+# message("CMake boolean args:")
+# foreach(arg ${ctk_superbuild_boolean_args})
+#   message("  ${arg}")
+# endforeach()
 
 #-----------------------------------------------------------------------------
 # Expand superbuild external project args
 #
-SET(CTK_SUPERBUILD_EP_ARGS)
-SET(CTK_SUPERBUILD_EP_VARNAMES)
-FOREACH(arg ${CTK_SUPERBUILD_EP_VARS})
-  STRING(REPLACE ":" ";" varname_and_vartype ${arg})
-  SET(target_info_list ${target_info_list})
-  LIST(GET varname_and_vartype 0 _varname)
-  LIST(GET varname_and_vartype 1 _vartype)
-  LIST(APPEND CTK_SUPERBUILD_EP_ARGS -D${_varname}:${_vartype}=${${_varname}})
-  LIST(APPEND CTK_SUPERBUILD_EP_VARNAMES ${_varname})
-ENDFOREACH()
-STRING(REPLACE ";" "^" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
+set(CTK_SUPERBUILD_EP_ARGS)
+set(CTK_SUPERBUILD_EP_VARNAMES)
+foreach(arg ${CTK_SUPERBUILD_EP_VARS})
+  string(REPLACE ":" ";" varname_and_vartype ${arg})
+  set(target_info_list ${target_info_list})
+  list(GET varname_and_vartype 0 _varname)
+  list(GET varname_and_vartype 1 _vartype)
+  list(APPEND CTK_SUPERBUILD_EP_ARGS -D${_varname}:${_vartype}=${${_varname}})
+  list(APPEND CTK_SUPERBUILD_EP_VARNAMES ${_varname})
+endforeach()
+string(REPLACE ";" "^" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
 
-# MESSAGE("CMake external project args:")
-# FOREACH(arg ${CTK_SUPERBUILD_EP_ARGS})
-#   MESSAGE("  ${arg}")
-# ENDFOREACH()
+# message("CMake external project args:")
+# foreach(arg ${CTK_SUPERBUILD_EP_ARGS})
+#   message("  ${arg}")
+# endforeach()
 
 #-----------------------------------------------------------------------------
 # Set CMake OSX variable to pass down the external project
@@ -128,7 +128,7 @@ endif()
 #-----------------------------------------------------------------------------
 # CTK Configure
 #
-SET(proj CTK-Configure)
+set(proj CTK-Configure)
 
 ExternalProject_Add(${proj}
   DOWNLOAD_COMMAND ""
@@ -164,32 +164,32 @@ ExternalProject_Add(${proj}
     ${CTK_DEPENDENCIES}
   )
 
-IF(CMAKE_GENERATOR MATCHES ".*Makefiles.*")
-  SET(ctk_build_cmd "$(MAKE)")
-ELSE()
-  SET(ctk_build_cmd ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR})
-ENDIF()
+if(CMAKE_GENERATOR MATCHES ".*Makefiles.*")
+  set(ctk_build_cmd "$(MAKE)")
+else()
+  set(ctk_build_cmd ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR})
+endif()
 
 #-----------------------------------------------------------------------------
 # CTK
 #
-#MESSAGE(STATUS SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:${SUPERBUILD_EXCLUDE_CTKBUILD_TARGET})
-IF(NOT DEFINED SUPERBUILD_EXCLUDE_CTKBUILD_TARGET OR NOT SUPERBUILD_EXCLUDE_CTKBUILD_TARGET)
-  SET(CTKBUILD_TARGET_ALL_OPTION "ALL")
-ELSE()
-  SET(CTKBUILD_TARGET_ALL_OPTION "")
-ENDIF()
+#message(STATUS SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:${SUPERBUILD_EXCLUDE_CTKBUILD_TARGET})
+if(NOT DEFINED SUPERBUILD_EXCLUDE_CTKBUILD_TARGET OR NOT SUPERBUILD_EXCLUDE_CTKBUILD_TARGET)
+  set(CTKBUILD_TARGET_ALL_OPTION "ALL")
+else()
+  set(CTKBUILD_TARGET_ALL_OPTION "")
+endif()
 
-ADD_CUSTOM_TARGET(CTK-build ${CTKBUILD_TARGET_ALL_OPTION}
+add_custom_target(CTK-build ${CTKBUILD_TARGET_ALL_OPTION}
   COMMAND ${ctk_build_cmd}
   WORKING_DIRECTORY ${CTK_BINARY_DIR}/CTK-build
   )
-ADD_DEPENDENCIES(CTK-build CTK-Configure)
+add_dependencies(CTK-build CTK-Configure)
 
 #-----------------------------------------------------------------------------
 # Custom target allowing to drive the build of CTK project itself
 #
-ADD_CUSTOM_TARGET(CTK
+add_custom_target(CTK
   COMMAND ${ctk_build_cmd}
   WORKING_DIRECTORY ${CTK_BINARY_DIR}/CTK-build
   )

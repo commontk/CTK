@@ -2,21 +2,21 @@
 # PythonQtGenerator
 #
 
-IF(CTK_WRAP_PYTHONQT_FULL)
+if(CTK_WRAP_PYTHONQT_FULL)
 
   # Sanity checks
-  IF(DEFINED PYTHONQTGENERATOR_EXECUTABLE AND NOT EXISTS ${PYTHONQTGENERATOR_EXECUTABLE})
-    MESSAGE(FATAL_ERROR "PYTHONQTGENERATOR_EXECUTABLE variable is defined but corresponds to non-existing executable")
-  ENDIF()
+  if(DEFINED PYTHONQTGENERATOR_EXECUTABLE AND NOT EXISTS ${PYTHONQTGENERATOR_EXECUTABLE})
+    message(FATAL_ERROR "PYTHONQTGENERATOR_EXECUTABLE variable is defined but corresponds to non-existing executable")
+  endif()
 
-  SET(proj PythonQtGenerator)
-  SET(proj_DEPENDENCIES)
+  set(proj PythonQtGenerator)
+  set(proj_DEPENDENCIES)
 
-  LIST(APPEND CTK_DEPENDENCIES ${proj})
+  list(APPEND CTK_DEPENDENCIES ${proj})
 
-  IF(CTK_SUPERBUILD)
+  if(CTK_SUPERBUILD)
 
-    IF(NOT DEFINED PYTHONQTGENERATOR_EXECUTABLE)
+    if(NOT DEFINED PYTHONQTGENERATOR_EXECUTABLE)
       # Set CMake OSX variable to pass down the external project
       set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
       if(APPLE)
@@ -35,7 +35,7 @@ IF(CTK_WRAP_PYTHONQT_FULL)
       # See http://qt.gitorious.org/qt-labs/qtscriptgenerator
       #
 
-    #   MESSAGE(STATUS "Adding project:${proj}")
+    #   message(STATUS "Adding project:${proj}")
 
       #
       # If directory PythonQt already exists, the corresponding project will
@@ -43,8 +43,8 @@ IF(CTK_WRAP_PYTHONQT_FULL)
       # on the same repository, we will assume that if the directory PythonQt
       # exists, the generator code will also be available.
       #
-      IF(EXISTS ${CMAKE_BINARY_DIR}/PythonQt)
-        #MESSAGE(STATUS "ExternalProject/PythonQtGenerator: PythonQt already added as ExternalProject")
+      if(EXISTS ${CMAKE_BINARY_DIR}/PythonQt)
+        #message(STATUS "ExternalProject/PythonQtGenerator: PythonQt already added as ExternalProject")
         ExternalProject_Add(${proj}
           SOURCE_DIR ${CMAKE_BINARY_DIR}/PythonQt/generator
           BINARY_DIR ${proj}-build
@@ -62,14 +62,14 @@ IF(CTK_WRAP_PYTHONQT_FULL)
           DEPENDS
             "PythonQt" # To make sure the generator code is checked out, let's depend on PythonQt
           )
-      ELSE()
+      else()
 
-        SET(revision_tag 3171a94e16ba9bfee137)
-        IF(${proj}_REVISION_TAG)
-          SET(revision_tag ${${proj}_REVISION_TAG})
-        ENDIF()
+        set(revision_tag 3171a94e16ba9bfee137)
+        if(${proj}_REVISION_TAG)
+          set(revision_tag ${${proj}_REVISION_TAG})
+        endif()
 
-        #MESSAGE(STATUS "ExternalProject/PythonQtGenerator: PythonQt is NOT an ExternalProject")
+        #message(STATUS "ExternalProject/PythonQtGenerator: PythonQt is NOT an ExternalProject")
         ExternalProject_Add(${proj}
           SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
           BINARY_DIR ${proj}-build
@@ -87,17 +87,17 @@ IF(CTK_WRAP_PYTHONQT_FULL)
             ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
             -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
           )
-      ENDIF()
+      endif()
 
-      SET(PYTHONQTGENERATOR_EXECUTABLE ${CMAKE_BINARY_DIR}/PythonQtGenerator-build/PythonQtGenerator)
+      set(PYTHONQTGENERATOR_EXECUTABLE ${CMAKE_BINARY_DIR}/PythonQtGenerator-build/PythonQtGenerator)
 
       # Since PythonQtGenerator is an executable, there is no need to add its corresponding
       # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 
-    ENDIF()
+    endif()
 
-    LIST(APPEND CTK_SUPERBUILD_EP_VARS PYTHONQTGENERATOR_EXECUTABLE:FILEPATH)
+    list(APPEND CTK_SUPERBUILD_EP_VARS PYTHONQTGENERATOR_EXECUTABLE:FILEPATH)
 
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()
