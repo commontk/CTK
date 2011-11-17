@@ -604,6 +604,7 @@ set(CTK_POSSIBLE_DEPENDENCIES
   DCMTK
   ZMQ
   QtSOAP
+  qxmlrpc
   OpenIGTLink
   XIP
   ITK
