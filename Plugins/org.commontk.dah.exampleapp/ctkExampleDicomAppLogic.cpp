@@ -28,6 +28,7 @@
 #include <QLabel>
 #include <QRect>
 #include <QTemporaryFile>
+#include <QPainter>
 
 // CTK includes
 #include "ctkDICOMImage.h"
@@ -270,7 +271,13 @@ void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
       filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
       qDebug() << "Created file: " << filename;
       tempfile->close();
-      pixmap->save(tempfile->fileName(), "PNG");
+      QPixmap tmppixmap(*pixmap);
+      QPainter painter(&tmppixmap);
+      painter.setPen(Qt::white);
+      painter.setFont(QFont("Arial", 15));
+      painter.drawText(tmppixmap.rect(),Qt::AlignBottom|Qt::AlignLeft,"Secondary capture by ctkExampleDicomApp");
+     //painter.drawText(rect(), Qt::AlignCenter, "Qt");
+      tmppixmap.save(tempfile->fileName(), "PNG");
     }
     else
       qDebug() << "Creating temporary file failed.";
