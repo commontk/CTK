@@ -22,14 +22,9 @@
 #! Write a set of variables containing CTK plugin specific include and library directories
 #! \ingroup CMakeAPI
 FUNCTION(ctkFunctionGeneratePluginUseFile filename)
-  IF(COMMAND GetMyTargetLibraries)
-    GetMyTargetLibraries("${CTK_PLUGIN_LIBRARIES}" my_ctk_plugin_libraries)
-  ELSE()
-    SET(my_ctk_plugin_libraries ${CTK_PLUGIN_LIBRARIES})
-  ENDIF()
-
   SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG)
-  FOREACH(plugin ${my_ctk_plugin_libraries})
+
+  FOREACH(plugin ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES})
     SET(${plugin}_INCLUDE_DIRS )
 
     # The call to ctkFunctionGetIncludeDirs returns all include dirs
@@ -48,12 +43,15 @@ FUNCTION(ctkFunctionGeneratePluginUseFile filename)
     ctkFunctionGetIncludeDirs(${plugin}_INCLUDE_DIRS ${plugin})
 
     SET(CTK_PLUGIN_INCLUDE_DIRS_CONFIG "${CTK_PLUGIN_INCLUDE_DIRS_CONFIG}
-SET(${plugin}_INCLUDE_DIRS \"${${plugin}_INCLUDE_DIRS}\")")
+set(${plugin}_INCLUDE_DIRS \"${${plugin}_INCLUDE_DIRS}\")")
 
     ctkFunctionGetLibraryDirs(${plugin}_LIBRARY_DIRS ${plugin})
     SET(CTK_PLUGIN_LIBRARY_DIRS_CONFIG "${CTK_PLUGIN_LIBRARY_DIRS_CONFIG}
-SET(${plugin}_LIBRARY_DIRS \"${${plugin}_LIBRARY_DIRS}\")")
+set(${plugin}_LIBRARY_DIRS \"${${plugin}_LIBRARY_DIRS}\")")
   ENDFOREACH()
+  
+  SET(_ctk_plugin_libraries_variable ${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES)
+  SET(_ctk_plugin_libraries ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES})
 
   CONFIGURE_FILE("${CTK_CMAKE_DIR}/../CTKPluginUseFile.cmake.in" "${filename}" @ONLY)
 ENDFUNCTION()

@@ -84,10 +84,12 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
   ENDFOREACH()
 
   # This is for external projects using CTK
-  # The variables CTK_PLUGIN_LIBRARIES and CTK_LIBRARIES are set in CTKConfig.cmake
-  IF(CTK_PLUGIN_LIBRARIES)
-    LIST(APPEND known_targets ${CTK_PLUGIN_LIBRARIES})
+  # The variable CTK_EXTERNAL_PLUGIN_LIBRARIES is filled in ctkMacroSetupExternalPlugins
+  # with the help of variables defined in "PluginUseFiles" from external projects.
+  IF(CTK_EXTERNAL_PLUGIN_LIBRARIES)
+    LIST(APPEND known_targets ${CTK_EXTERNAL_PLUGIN_LIBRARIES})
   ENDIF()
+  # The variable CTK_LIBRARIES is set in CTKConfig.cmake
   IF(CTK_LIBRARIES)
     LIST(APPEND known_targets ${CTK_LIBRARIES})
   ENDIF()
@@ -163,7 +165,7 @@ MACRO(ctkMacroValidateBuildOptions dir executable target_directories)
         # If this macro is called from inside CTK itself, we add the external
         # targets to the list of known targets (for external projects calling
         # this macro, targets external to the calling project should be listed
-        # in CTK_LIBRARIES or CTK_PLUGIN_LIBRARIES
+        # in CTK_LIBRARIES or CTK_EXTERNAL_PLUGIN_LIBRARIES
         IF(CTK_SOURCE_DIR)
           IF(${CMAKE_SOURCE_DIR} STREQUAL ${CTK_SOURCE_DIR})
             LIST(APPEND known_targets ${ext_dep_path_list})
