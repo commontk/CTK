@@ -168,11 +168,13 @@ void ctkExampleHostControlWidget::suspendButtonClicked()
   this->Host->getDicomAppService()->setState(ctkDicomAppHosting::SUSPENDED);
 }
 
+//----------------------------------------------------------------------------
 void ctkExampleHostControlWidget::cancelButtonClicked()
 {
   this->Host->getDicomAppService()->setState(ctkDicomAppHosting::CANCELED);
 }
 
+//----------------------------------------------------------------------------
 bool ctkExampleHostControlWidget::validAppFileName()
 {
   return ValidAppFileName;

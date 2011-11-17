@@ -195,3 +195,11 @@ QString ctkExampleDicomHost::getOutputLocation(const QStringList& preferredProto
 
   return ""; 
 }
+
+//----------------------------------------------------------------------------
+ctkDicomAppHosting::State ctkExampleDicomHost::getApplicationState()const
+{
+  if(this->getAppProcess().state() == QProcess::NotRunning)
+    return ctkDicomAppHosting::EXIT;
+  return ctkDicomAbstractHost::getApplicationState();
+}

@@ -218,6 +218,6 @@ void ctkDicomAbstractHost::notifyStateChanged(ctkDicomAppHosting::State newState
 
 ctkDicomAppHosting::State ctkDicomAbstractHost::getApplicationState()const
 {
-  // todo: probably move code from ctkExampleHostControlWidget::getApplicationState() here
+  // todo: probably move code from ctkExampleHostWidget::getApplicationState() here
   return d_ptr->AppState;
 }

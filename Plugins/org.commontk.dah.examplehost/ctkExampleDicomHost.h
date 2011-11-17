@@ -52,6 +52,8 @@ public:
   virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
   virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
+  ctkDicomAppHosting::State getApplicationState() const;
+
   const QProcess& getAppProcess() const { return this->AppProcess; }
   void exitApplication();
 
