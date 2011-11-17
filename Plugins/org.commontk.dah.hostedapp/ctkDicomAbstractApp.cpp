@@ -160,7 +160,7 @@ void ctkDicomAbstractApp::setInternalState(ctkDicomAppHosting::State state)
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractApp::getData(
   const QList<QUuid>& objectUUIDs,
-  const QList<QString>& acceptableTransferSyntaxUIDs,
+  const QList<QUuid>& acceptableTransferSyntaxUIDs,
   bool includeBulkData)
 {
   Q_UNUSED(acceptableTransferSyntaxUIDs);

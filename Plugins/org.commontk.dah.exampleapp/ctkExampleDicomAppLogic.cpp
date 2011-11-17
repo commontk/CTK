@@ -229,7 +229,7 @@ void ctkExampleDicomAppLogic::onLoadDataClicked()
   QList<QUuid> uuidlist;
   uuidlist.append(uuid);
   QString transfersyntax("1.2.840.10008.1.2.1");
-  QList<QString> transfersyntaxlist;
+  QList<QUuid> transfersyntaxlist;
   transfersyntaxlist.append(transfersyntax);
   QList<ctkDicomAppHosting::ObjectLocator> locators;
   locators = getHostInterface()->getData(uuidlist, transfersyntaxlist, false);

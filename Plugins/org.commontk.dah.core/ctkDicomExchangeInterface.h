@@ -38,7 +38,7 @@ struct ctkDicomExchangeInterface
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
     const QList<QUuid>& objectUUIDs,
-    const QList<QString>& acceptableTransferSyntaxUIDs,
+    const QList<QUuid>& acceptableTransferSyntaxUIDs,
     bool includeBulkData) = 0;
 
   virtual void releaseData(const QList<QUuid>& objectUUIDs) = 0;

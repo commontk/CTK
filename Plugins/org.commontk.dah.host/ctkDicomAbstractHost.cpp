@@ -114,7 +114,7 @@ ctkDicomAppInterface* ctkDicomAbstractHost::getDicomAppService() const
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractHost::getData(
   const QList<QUuid>& objectUUIDs,
-  const QList<QString>& acceptableTransferSyntaxUIDs,
+  const QList<QUuid>& acceptableTransferSyntaxUIDs,
   bool includeBulkData)
 {
   Q_UNUSED(acceptableTransferSyntaxUIDs);
@@ -218,5 +218,6 @@ void ctkDicomAbstractHost::notifyStateChanged(ctkDicomAppHosting::State newState
 
 ctkDicomAppHosting::State ctkDicomAbstractHost::getApplicationState()const
 {
+  // todo: probably move code from ctkExampleHostControlWidget::getApplicationState() here
   return d_ptr->AppState;
 }

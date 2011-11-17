@@ -52,13 +52,13 @@ bool ctkDicomExchangeService::notifyDataAvailable(
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
     const QList<QUuid>& objectUUIDs,
-    const QList<QString>& acceptableTransferSyntaxUIDs, bool includeBulkData)
+    const QList<QUuid>& acceptableTransferSyntaxUIDs, bool includeBulkData)
 {
   //Q_D(ctkDicomService);
   QList<QtSoapType*> list;
 
   list << new ctkDicomSoapArrayOfUUIDS("objects",objectUUIDs);
-  list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxes", acceptableTransferSyntaxUIDs);
+  list << new ctkDicomSoapArrayOfUUIDS("acceptableTransferSyntaxes", acceptableTransferSyntaxUIDs);
   list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
   const QtSoapType & result = submitSoapRequest("GetData",list);
 //QtSoapType *tt;
