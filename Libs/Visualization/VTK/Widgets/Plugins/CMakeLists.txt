@@ -62,7 +62,7 @@ if(CTK_USE_CHARTS)
       ctkVTKScalarsToColorsWidgetPlugin.h
       ctkVTKVolumePropertyWidgetPlugin.h
       ${PLUGIN_MOC_SRCS})
-endif(CTK_USE_CHARTS)
+endif()
 
 # Resources
 set(PLUGIN_resources

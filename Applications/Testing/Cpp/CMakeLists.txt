@@ -50,7 +50,7 @@ if (CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   if(WIN32)
     set(CTK_APPLICATION_RUNTIME_DIRECTORY
           ${CTK_APPLICATION_RUNTIME_DIRECTORY}/${CMAKE_BUILD_TYPE})
-  endif(WIN32)
+  endif()
 
   set(ctkDICOMQuery_EXECUTABLE ${CTK_APPLICATION_RUNTIME_DIRECTORY}/ctkDICOMQuery)
   set(ctkDICOMQuery_DB_FILE ${CTK_BINARY_DIR}/Testing/Temporary/ctkDICOMApplicationTest1.db)

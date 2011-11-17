@@ -28,16 +28,16 @@ if(NOT OpenIGTLink_DIR)
   # Get the system search path as a list.
   if(UNIX)
     string(REGEX MATCHALL "[^:]+" OpenIGTLink_DIR_SEARCH1 "$ENV{PATH}")
-  else(UNIX)
+  else()
     string(REGEX REPLACE "\\\\" "/" OpenIGTLink_DIR_SEARCH1 "$ENV{PATH}")
-  endif(UNIX)
+  endif()
   string(REGEX REPLACE "/;" ";" OpenIGTLink_DIR_SEARCH2 ${OpenIGTLink_DIR_SEARCH1})
 
   # Construct a set of paths relative to the system search path.
   set(OpenIGTLink_DIR_SEARCH "")
   foreach(dir ${OpenIGTLink_DIR_SEARCH2})
     set(OpenIGTLink_DIR_SEARCH ${OpenIGTLink_DIR_SEARCH} "${dir}/../lib/igtl")
-  endforeach(dir)
+  endforeach()
 
   #
   # Look for an installation or build tree.
@@ -69,7 +69,7 @@ if(NOT OpenIGTLink_DIR)
     # Help the user find it if we cannot.
     DOC "The ${OpenIGTLink_DIR_STRING}"
   )
-endif(NOT OpenIGTLink_DIR)
+endif()
 
 # If OpenIGTLink was found, load the configuration file to get the rest of the
 # settings.
@@ -79,10 +79,10 @@ if(OpenIGTLink_DIR)
 
   # Set USE_OpenIGTLink_FILE for backward-compatability.
   set(USE_OpenIGTLink_FILE ${OpenIGTLink_USE_FILE})
-else(OpenIGTLink_DIR)
+else()
   set(OpenIGTLink_FOUND 0)
   if(OpenIGTLink_FIND_REQUIRED)
     message(FATAL_ERROR "Please set OpenIGTLink_DIR to the ${OpenIGTLink_DIR_STRING}")
-  endif(OpenIGTLink_FIND_REQUIRED)
-endif(OpenIGTLink_DIR)
+  endif()
+endif()
 

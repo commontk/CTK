@@ -721,7 +721,7 @@ endforeach()
 
 if(BUILD_TESTING)
   add_subdirectory(Applications/Testing)
-endif(BUILD_TESTING)
+endif()
 
 
 #-----------------------------------------------------------------------------

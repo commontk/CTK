@@ -34,7 +34,7 @@ if( NOT DCMTK_FOUND )
   set( DCMTK_DIR "/usr/include/dcmtk/"
     CACHE PATH "Root of DCMTK source tree (optional)." )
   mark_as_advanced( DCMTK_DIR )
-endif( NOT DCMTK_FOUND )
+endif()
 
 find_path( DCMTK_config_INCLUDE_DIR osconfig.h
   PATHS
@@ -299,11 +299,11 @@ if( DCMTK_config_INCLUDE_DIR
    ${DCMTK_LIBRARIES}
    ${DCMTK_imagedb_LIBRARY}
    )
-  endif(DCMTK_imagedb_LIBRARY)
+  endif()
 
   if( WIN32 )
     set( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} ws2_32 netapi32 wsock32)
-  endif( WIN32 )
+  endif()
   
 #   IF (NOT WIN32)
 #     set( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} ${DCMTK_wrap_LIBRARY} )

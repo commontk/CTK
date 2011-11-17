@@ -61,9 +61,9 @@ if( DOXYGEN_FOUND )
       )
     set_target_properties(doc-dev PROPERTIES LABELS Documentation)
 
-  else( DOXYGEN_DOT_FOUND )
+  else()
     message( WARNING
       "Warning: Dot not found - Documentation will not be created"
       )
-  endif( DOXYGEN_DOT_FOUND )
-endif( DOXYGEN_FOUND )
+  endif()
+endif()

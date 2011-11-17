@@ -40,7 +40,7 @@ function(ctkFunctionApplyPatches PATCH_EXE SRC_DIR PATCH_FILES)
     execute_process(COMMAND ${PATCH_EXE} -p0 -i "${patch_file}" -d "${SRC_DIR}" RESULT_VARIABLE result_var)
     if(result_var)
       message("ERROR: ${result_var}")
-    endif(result_var)
+    endif()
   endforeach()
   
 endfunction()

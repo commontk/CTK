@@ -14,7 +14,7 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 set( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
 if(WIN32)
   set(KIT_TESTS ${CPP_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CppTests)
-endif(WIN32)
+endif()
 
 macro( SIMPLE_TEST  TESTNAME )
   add_test( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )

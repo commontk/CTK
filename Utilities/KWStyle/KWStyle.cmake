@@ -51,4 +51,4 @@ if( CTK_USE_KWSTYLE )
   add_custom_target(qCTKStyleCheck DEPENDS ${CTK_BINARY_DIR}/qCTKStyleReport.txt)
   add_test(qCTKStyleTest ${KWSTYLE_EXECUTABLE} ${CTK_KWSTYLE_ARGUMENTS})
 
-endif( CTK_USE_KWSTYLE )
+endif()

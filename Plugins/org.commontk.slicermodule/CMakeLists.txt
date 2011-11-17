@@ -54,4 +54,4 @@ target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 # Testing
 if(BUILD_TESTING)
   add_subdirectory(Testing)
-endif(BUILD_TESTING)
+endif()

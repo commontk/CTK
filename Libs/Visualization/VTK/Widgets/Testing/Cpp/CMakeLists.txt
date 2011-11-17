@@ -37,7 +37,7 @@ if(CTK_USE_CHARTS)
       ctkVTKScalarsToColorsWidgetTest2.cpp
       ctkVTKScalarsToColorsWidgetTest3.cpp
       ${TEST_SOURCES})
-endif(CTK_USE_CHARTS)
+endif()
 
 #
 # Tests expecting CTKData to be set
@@ -111,7 +111,7 @@ IF (CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest2 )
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest3 )
-endif(CTK_USE_CHARTS)
+endif()
 SIMPLE_TEST( ctkVTKRenderViewTest1 )
 SIMPLE_TEST( ctkVTKSliceViewTest1 )
 SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetTest1 )

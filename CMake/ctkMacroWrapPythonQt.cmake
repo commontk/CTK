@@ -119,7 +119,7 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   set(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH}/../lib)
   if(WIN32)
     set(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH})
-  endif(WIN32)
+  endif()
 
   # Clear log file
   file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "")

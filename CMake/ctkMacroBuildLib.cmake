@@ -152,7 +152,7 @@ macro(ctkMacroBuildLib)
 
   if(MINGW)
     list(APPEND my_libs ssp) # add stack smash protection lib
-  endif(MINGW)
+  endif()
   target_link_libraries(${lib_name} ${my_libs})
 
   # Update CTK_BASE_LIBRARIES
