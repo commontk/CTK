@@ -321,6 +321,16 @@ void ctkDICOMAppWidget::onRemoveAction()
     {
       QString seriesUID = d->DICOMModel.data(index0,ctkDICOMModel::UIDRole).toString();
       d->DICOMDatabase->removeSeries(seriesUID);
+    } 
+    else if ( d->DICOMModel.data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType))
+    {
+      QString studyUID = d->DICOMModel.data(index0,ctkDICOMModel::UIDRole).toString();
+      d->DICOMDatabase->removeStudy(studyUID);
+    }
+    else if ( d->DICOMModel.data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType))
+    {
+      QString patientUID = d->DICOMModel.data(index0,ctkDICOMModel::UIDRole).toString();
+      d->DICOMDatabase->removePatient(patientUID);
     }
   }
   d->DICOMModel.reset();
@@ -449,7 +459,10 @@ Q_D(ctkDICOMAppWidget);
           d->NextStudyButton->hide();
           d->PrevStudyButton->hide();
           }
-        d->ActionRemove->setEnabled(model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType) );
+        d->ActionRemove->setEnabled(
+            model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType) ||
+            model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType) ||
+            model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType) );
         }
 
       else

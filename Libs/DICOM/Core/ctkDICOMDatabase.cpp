@@ -798,12 +798,7 @@ bool ctkDICOMDatabase::isInMemory() const
   Q_D(const ctkDICOMDatabase);
   return d->DatabaseFileName == ":memory:";
 }
-/*
-bool ctkDICOMDatabase::removeImage(const QString& sopInstanceUID)
-{
-  return false;
-}
-*/
+
 bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
@@ -881,9 +876,54 @@ bool ctkDICOMDatabase::cleanup()
   seriesCleanup.exec("DELETE FROM Patients WHERE ( SELECT COUNT(*) FROM Studies WHERE Studies.PatientsUID = Patients.UID ) = 0;");
   return true;
 }
-/*
+
 bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
 {
-  return false;
+  Q_D(ctkDICOMDatabase);
+  
+  QSqlQuery seriesForStudy( d->Database );
+  seriesForStudy.prepare("SELECT SeriesInstanceUID FROM Series WHERE StudyInstanceUID = :studyID");
+  seriesForStudy.bindValue(":studyID", studyInstanceUID);
+  bool success = seriesForStudy.exec();
+  if (!success)
+  {
+    logger.error("SQLITE ERROR: " + seriesForStudy.lastError().driverText());
+    return false;
+  }
+  bool result = true;
+  while ( seriesForStudy.next() )
+  {
+    QString seriesInstanceUID = seriesForStudy.value(seriesForStudy.record().indexOf("SeriesInstanceUID")).toString();
+    if ( ! this->removeSeries(seriesInstanceUID) )
+    {
+      result = false;
+    }
+  }
+  return result;;
 }
-*/
+
+bool ctkDICOMDatabase::removePatient(const QString& patientID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QSqlQuery studiesForPatient( d->Database );
+  studiesForPatient.prepare("SELECT StudyInstanceUID FROM Studies WHERE PatientsUID = :patientsID");
+  studiesForPatient.bindValue(":patientsID", patientID);
+  bool success = studiesForPatient.exec();
+  if (!success)
+  {
+    logger.error("SQLITE ERROR: " + studiesForPatient.lastError().driverText());
+    return false;
+  }
+  bool result = true;
+  while ( studiesForPatient.next() )
+  {
+    QString studyInstanceUID = studiesForPatient.value(studiesForPatient.record().indexOf("StudyInstanceUID")).toString();
+    if ( ! this->removeStudy(studyInstanceUID) )
+    {
+      result = false;
+    }
+  }
+  return result;;
+}
+
