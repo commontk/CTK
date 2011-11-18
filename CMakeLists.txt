@@ -372,13 +372,16 @@ ctk_enable_option(Widgets "Enable Qt Widget libraries" OFF
 # This will enable only the framework itself.                  
 ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
                   CTK_LIB_PluginFramework)
-
+                  
 #-----------------------------------------------------------------------------
 # Other options
 
+# The CTK Python Wrapping
+ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
+                  CTK_LIB_Scripting/Python/Core)
+
 # Build examples
-option(CTK_BUILD_EXAMPLES "Enable examples for CTK components" OFF)
-mark_as_advanced(CTK_BUILD_EXAMPLES)
+option(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF)
 
 # Git protocol option
 option(CTK_USE_GIT_PROTOCOL "If behind a firewall turn this OFF to use http instead." ON)
@@ -432,12 +435,11 @@ ctk_lib_option(ImageProcessing/ITK/Core
                "Build the ITK Core library" OFF)
                
 ctk_lib_option(Scripting/Python/Core
-               "Build the Python Core library" OFF
-               CTK_ENABLE_PYTHON_WRAPPING)
+               "Build the Python Core library" OFF)
                
 ctk_lib_option(Scripting/Python/Widgets
                "Build the Python Widgets library" OFF
-               CTK_ENABLE_PYTHON_WRAPPING AND CTK_ENABLE_Widgets)
+               CTK_LIB_Widgets AND CTK_ENABLE_Python_Wrapping)
                
 ctk_lib_option(Visualization/VTK/Core
                "Build the VTK Core library" OFF)
@@ -552,7 +554,7 @@ ctk_app_option(ctkDICOMObjectViewer
                
 ctk_app_option(ctkSimplePythonShell
                "Build the DICOM example application" OFF
-               CTK_ENABLE_PYTHON_WRAPPING AND CTK_BUILD_EXAMPLES)
+               CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
 # Generate target_directories list - List of directory corresponding to the different
@@ -625,26 +627,34 @@ ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" WITH_EX
 ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${target_directories}")
 
 #-----------------------------------------------------------------------------
-# CTK Python wrapping - Propose the option only if CTK_LIB_Scriping/Python/Core is ON
+# CTK Python wrapping
+# Enable CTK_LIB_Scripting/Python/Core if either CTK_ENABLE_Python_Wrapping OR CTK_WRAP_PYTHONQT_FULL
+#
+set(CTK_WRAP_PYTHONQT_LIGHT ${CTK_ENABLE_Python_Wrapping})
+option(CTK_WRAP_PYTHONQT_FULL "Experimental - Wrap CTK classes using Qt meta-object system into Python language" OFF)
+mark_as_advanced(CTK_WRAP_PYTHONQT_FULL)
+if(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
+  message(FATAL_ERROR "CTK_ENABLE_Python_Wrapping AND CTK_WRAP_PYTHONQT_FULL options are mutually exclusive. Please enable only one !")
+endif()
+
+set(logical_expr CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+if((${logical_expr}) AND NOT CTK_LIB_Scripting/Python/Core)
+  set(CTK_LIB_Scripting/Python/Core ON CACHE BOOL "Build the Python Core library" FORCE)
+  set(enabling_msg)
+  ctk_option_logical_expression_to_message(enabling_msg "${logical_expr}")
+  message("Enabling [CTK_LIB_Scripting/Python/Core] because of [${enabling_msg}] evaluates to True")
+endif()
+
+# Check if dependencies are satisfied
 if(CTK_LIB_Scripting/Python/Core)
   find_package(PythonInterp)
   if(NOT PYTHONINTERP_FOUND)
-    message(SEND_ERROR "PYTHON_EXECUTABLE variable should be set to build CTK_LIB_Scripting/Python")
+    message(FATAL_ERROR "PYTHON_EXECUTABLE variable should be set to build CTK_LIB_Scripting/Python")
   endif()
   find_package(PythonLibs)
   if(NOT PYTHONLIBS_FOUND)
     message(FATAL_ERROR "PYTHON_LIBRARIES and PYTHON_INCLUDE_DIRS should be set to build CTK_LIB_Scripting/Python")
   endif()
-  option(CTK_WRAP_PYTHONQT_FULL "Experimental - Wrap CTK classes using Qt meta-object system into Python language" OFF)
-  mark_as_advanced(CTK_WRAP_PYTHONQT_FULL)
-  option(CTK_WRAP_PYTHONQT_LIGHT "Wrap CTK classes using Qt meta-object system into Python language" OFF)
-  if(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
-    message(SEND_ERROR "CTK_WRAP_PYTHONQT_{LIGHT,FULL} options are mutually exclusive. Please enable only one !")
-  endif()
-else()
-  # Note that an unset boolean variable is considered to be False
-  unset(CTK_WRAP_PYTHONQT_FULL CACHE)
-  unset(CTK_WRAP_PYTHONQT_LIGHT CACHE)
 endif()
 
 #-----------------------------------------------------------------------------
