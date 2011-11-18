@@ -26,6 +26,7 @@
 #include <QStringList>
 #include <QSqlDatabase>
 
+#include "ctkDICOMDataset.h"
 #include "ctkDICOMCoreExport.h"
 
 class ctkDICOMDatabasePrivate;
@@ -48,6 +49,7 @@ class ctkDICOMAbstractThumbnailGenerator;
 /// parallel to "dicom" directory called "thumbs".
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
+
   Q_OBJECT
   Q_PROPERTY(bool isOpen READ isOpen)
   Q_PROPERTY(QString lastError READ lastError)
@@ -136,11 +138,13 @@ public:
   ///                  does only make sense if a full object is received.
   /// @param @generateThumbnail If true, a thumbnail is generated.
   ///
+  void insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail);
   void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
-  ///
-  /// Helper method: get the path that should be used to store this image.
-  ///
-  QString pathForDataset( DcmDataset *dataset);
+  void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
+  
+  /// Check if file is already in database and up-to-date
+  bool fileExistsAndUpToDate(const QString& filePath);
+
 
 Q_SIGNALS:
   void databaseChanged();

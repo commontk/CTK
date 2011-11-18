@@ -84,7 +84,6 @@ int ctkDICOMDatabaseTest1( int argc, char * argv [] )
     }
 
   // check if it doesn't crash
-  database.pathForDataset(0);
   database.insert(0, true, true);
   database.insert(0, true, false);
   database.insert(0, false, true);

@@ -56,11 +56,16 @@ class ctkDICOMDatasetPrivate;
 ///  A subclass could possibly want to store the internal DcmDataset.
 ///  For this purpose, the internal DcmDataset is serialized into a memory buffer using DcmDataset::write(..). This buffer
 ///  is stored in a base64 encoded string. For deserialization we decode the string and use DcmDataset::read(..).
-class CTK_DICOM_CORE_EXPORT ctkDICOMDataset : public DcmDataset
+class CTK_DICOM_CORE_EXPORT ctkDICOMDataset
 {
 public:
     typedef QObject Superclass;
-    ctkDICOMDataset();
+    ///
+    /// \brief Create an empty object. This has to be initialized by one of
+    /// the InitializeFrom... methods before it can be used.
+    ///
+    /// @param strictErrorHandling If set to false (the default) only critical errors throw exceptions.
+    ctkDICOMDataset(bool strictErrorHandling = false);
     virtual ~ctkDICOMDataset();
 
     /// \brief For initialization from a DcmDataset in a constructor / assignment.
@@ -81,6 +86,14 @@ public:
                     const Uint32 maxReadLength = DCM_MaxReadLength,
                     const E_FileReadMode readMode = ERM_autoDetect);
 
+
+
+    /// \brief Save dataset to file
+    ///
+    /// \returns true on success.
+    bool SaveToFile(const QString& filePath) const;
+
+
     /// \brief Store a string representation of the object to a database field.
     ///
     /// The internal DcmDataset is serialized into a memory buffer using DcmDataset::write(..).
@@ -100,6 +113,10 @@ public:
     /// This is to allow data to be read as late as possible. All the
     /// Get/SetElement... methods ensure initialization, which checks this flag.
     void MarkForInitialization();
+
+
+    /// \brief Is this dataset initialized ?
+    bool IsInitialized() const;
 
     ///
     /// \brief Called by all Get/Set methods to initialize DcmDataSet if needed.
@@ -179,6 +196,11 @@ public:
     bool SetElementAsSignedShort( const DcmTag& tag, int value, unsigned long pos = 0 ); // type SS
     bool SetElementAsUnsignedShort( const DcmTag& tag, int value, unsigned long pos = 0 ); // type US
 
+
+    /// Some convenience getter
+    QString GetStudyInstanceUID() const;
+    QString GetSeriesInstanceUID() const;
+    QString GetSOPInstanceUID() const;
 
     ///
     /// \brief Get a human-readable version of patient position enumerations used e.g. in DICOM series.
