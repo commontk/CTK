@@ -372,7 +372,7 @@ ctk_enable_option(Widgets "Enable Qt Widget libraries" OFF
 # This will enable only the framework itself.                  
 ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
                   CTK_LIB_PluginFramework)
-                  
+
 #-----------------------------------------------------------------------------
 # Other options
 
@@ -381,7 +381,18 @@ ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system 
                   CTK_LIB_Scripting/Python/Core)
 
 # Build examples
-option(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF)
+# Create the logical expression containing the minium set of required options
+# for the CTK_BUILD_EXAMPLES option to be ON
+set(_build_examples_logical_expr)
+foreach(_app ${CTK_ENABLED_APPS})
+  list(APPEND _build_examples_logical_expr CTK_APP_${_app} AND)
+endforeach()
+if(_build_examples_logical_expr)
+  list(REMOVE_AT _build_examples_logical_expr -1)
+endif()
+
+ctk_enable_option_raw(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF
+                  ${_build_examples_logical_expr})
 
 # Git protocol option
 option(CTK_USE_GIT_PROTOCOL "If behind a firewall turn this OFF to use http instead." ON)
@@ -405,8 +416,6 @@ mark_as_advanced(CTK_BUILD_QTDESIGNER_PLUGINS)
 if(CTK_BUILD_QTDESIGNER_PLUGINS)
   include(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
 endif()
-
-
 
 #-----------------------------------------------------------------------------
 # CTK Libraries
@@ -452,51 +461,6 @@ ctk_lib_option(Visualization/VTK/Widgets
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
-
-#-----------------------------------------------------------------------------
-# CTK Plugins - none of them is build by default
-#
-
-# Plugins in the list below are not build by default
-set(plugin_list
-  # Optional plug-ins implementings interfaces in PluginFramework/service/
-  org.commontk.eventbus
-  org.commontk.configadmin
-  org.commontk.eventadmin
-  org.commontk.log
-  org.commontk.log4qt
-  org.commontk.metatype
-
-  # Misc
-  org.commontk.plugingenerator.core
-  org.commontk.plugingenerator.ui
-  org.commontk.slicermodule
-  )
-
-foreach(_plugin ${plugin_list})  
-  ctk_plugin_option(${_plugin} "Build the ${_plugin} plugin." OFF)
-endforeach()
-
-# Plug-ins related to DICOM WG23 (Application Hosting)
-ctk_plugin_option(org.commontk.dah.core
-                  "Build the org.commontk.dah.core plugin." OFF
-                  CTK_ENABLE_DICOMApplicationHosting)
-                  
-ctk_plugin_option(org.commontk.dah.app
-                  "Build the org.commontk.dah.app plugin." OFF
-                  CTK_ENABLE_DICOMApplicationHosting)
-                  
-ctk_plugin_option(org.commontk.dah.host
-                  "Build the org.commontk.dah.host plugin." OFF
-                  CTK_ENABLE_DICOMApplicationHosting)
-                  
-ctk_plugin_option(org.commontk.dah.exampleapp
-                  "Build the org.commontk.dah.exampleapp plugin." OFF
-                  CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
-                  
-ctk_plugin_option(org.commontk.dah.examplehost
-                  "Build the org.commontk.dah.examplehost plugin." OFF
-                  CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
 # CTK Applications - Use ON or OFF to indicate if the application should be built by default
@@ -555,6 +519,60 @@ ctk_app_option(ctkDICOMObjectViewer
 ctk_app_option(ctkSimplePythonShell
                "Build the DICOM example application" OFF
                CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
+
+# Save the set of enabled apps in a cache file
+set(_enabled_apps)
+foreach(_app ${CTK_APPS})
+  if(CTK_APP_${_app})
+    list(APPEND _enabled_apps ${_app})
+  endif()
+endforeach()
+set(CTK_ENABLED_APPS ${_enabled_apps} CACHE INTERNAL "" FORCE)
+
+#-----------------------------------------------------------------------------
+# CTK Plugins - none of them is build by default
+#
+
+# Plugins in the list below are not build by default
+set(plugin_list
+  # Optional plug-ins implementings interfaces in PluginFramework/service/
+  org.commontk.configadmin
+  org.commontk.eventadmin
+  org.commontk.log
+  org.commontk.log4qt
+  org.commontk.metatype
+
+  # Misc
+  org.commontk.slicermodule
+  )
+
+foreach(_plugin ${plugin_list})  
+  ctk_plugin_option(${_plugin} "Build the ${_plugin} plugin." OFF)
+endforeach()
+
+# Plug-ins related to the PluginGenerator application
+ctk_plugin_option(org.commontk.plugingenerator.core "Build the org.commontk.plugingenerator.core plugin." OFF)
+ctk_plugin_option(org.commontk.plugingenerator.ui
+                  "Build the org.commontk.plugingenerator.ui plugin." OFF
+                  CTK_APP_ctkPluginGenerator)
+
+# Plug-ins related to DICOM WG23 (Application Hosting)
+ctk_plugin_option(org.commontk.dah.core "Build the org.commontk.dah.core plugin." OFF)
+ctk_plugin_option(org.commontk.dah.app "Build the org.commontk.dah.app plugin." OFF)
+ctk_plugin_option(org.commontk.dah.host "Build the org.commontk.dah.host plugin." OFF)
+                  
+ctk_plugin_option(org.commontk.dah.exampleapp
+                  "Build the org.commontk.dah.exampleapp plugin." OFF
+                  CTK_APP_ctkExampleHostedApp)
+                  
+ctk_plugin_option(org.commontk.dah.examplehost
+                  "Build the org.commontk.dah.examplehost plugin." OFF
+                  CTK_APP_ctkExampleHost)
+
+# Plug-ins related to the EventBus demo application
+ctk_plugin_option(org.commontk.eventbus
+                  "Build the org.commontk.eventbus plugin." OFF
+                  CTK_APP_ctkEventBusDemo)
 
 #-----------------------------------------------------------------------------
 # Generate target_directories list - List of directory corresponding to the different
