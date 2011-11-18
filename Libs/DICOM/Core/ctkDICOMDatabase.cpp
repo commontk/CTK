@@ -453,7 +453,7 @@ void ctkDICOMDatabase::insert( DcmDataset *dataset, bool storeFile, bool generat
     return;
   }
   ctkDICOMDataset ctkDataset;
-  ctkDataset.InitializeFromDataset(dataset);
+  ctkDataset.InitializeFromDataset(dataset, false /* do not take ownership */);
   this->insert(ctkDataset,storeFile,generateThumbnail);
 }
 void ctkDICOMDatabase::insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail)
