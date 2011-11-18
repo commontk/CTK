@@ -521,7 +521,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   QString studyInstanceUID(ctkDataset.GetElementAsString(DCM_StudyInstanceUID) );
   QString seriesInstanceUID(ctkDataset.GetElementAsString(DCM_SeriesInstanceUID) );
   QString patientID(ctkDataset.GetElementAsString(DCM_PatientID) );
-  if ( patientsName.isEmpty() || studyInstanceUID.isEmpty() || seriesInstanceUID.isEmpty() || patientID.isEmpty() )
+  if ( patientsName.isEmpty() || studyInstanceUID.isEmpty() || patientID.isEmpty() )
   {
     logger.error("Dataset is missing necessary information!");
     return;
@@ -560,7 +560,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   // have to do something else
   // 
   QString filename = filePath;
-  if ( storeFile && !q->isInMemory() )
+  if ( storeFile && !q->isInMemory() && !seriesInstanceUID.isEmpty() )
   {
     // QString studySeriesDirectory = studyInstanceUID + "/" + seriesInstanceUID;
     QString destinationDirectoryName = q->databaseDirectory() + "/dicom/";
@@ -718,13 +718,13 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
     }
     // TODO: what to do with imported files
     //
-    if ( !filename.isEmpty() )
-    {
-      QSqlQuery checkImageExistsQuery (Database);
-      checkImageExistsQuery.prepare ( "SELECT * FROM Images WHERE Filename = ?" );
-      checkImageExistsQuery.bindValue ( 0, filename );
-      checkImageExistsQuery.exec();
-      if(!checkImageExistsQuery.next())
+   if ( !filename.isEmpty() && !seriesInstanceUID.isEmpty() )
+   {
+     QSqlQuery checkImageExistsQuery (Database);
+     checkImageExistsQuery.prepare ( "SELECT * FROM Images WHERE Filename = ?" );
+     checkImageExistsQuery.bindValue ( 0, filename );
+     checkImageExistsQuery.exec();
+     if(!checkImageExistsQuery.next())
       {
         QSqlQuery insertImageStatement ( Database );
         insertImageStatement.prepare ( "INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ? )" );
@@ -736,59 +736,28 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
       }
     }
 
-    /**
-     * old move/copy code from indexer insert
-     *
-
-     QString studySeriesDirectory = studyInstanceUID + "/" + seriesInstanceUID;
-
-    //----------------------------------
-    //Move file to destination directory
-    //----------------------------------
-
-    QString finalFilePath(filePath);
-    if (!destinationDirectoryName.isEmpty())
-    {
-    QFile currentFile( filePath );
-    QDir destinationDir(destinationDirectoryName + "/dicom");
-    finalFilePath = sopInstanceUID;
-    if (createHierarchy)
-    {
-    destinationDir.mkpath(studySeriesDirectory);
-    finalFilePath.prepend( destinationDir.absolutePath() + "/"  + studySeriesDirectory + "/" );
-    }
-    currentFile.copy(finalFilePath);
-    logger.debug( "Copy file from: " + filePath );
-    logger.debug( "Copy file to  : " + finalFilePath );
-    }
-    logger.debug(QString("finalFilePath: ") + finalFilePath);
-
-*/
-
-    if(generateThumbnail){
-      if(thumbnailGenerator)
+    if( generateThumbnail && thumbnailGenerator && !seriesInstanceUID.isEmpty() )
       {
-        QString studySeriesDirectory = studyInstanceUID + "/" + seriesInstanceUID;
-        //Create thumbnail here
-        QString thumbnailPath = q->databaseDirectory() +
-          "/thumbs/" + studyInstanceUID + "/" + seriesInstanceUID + "/" + sopInstanceUID + ".png";
-        //studyInstanceUID + "/" +
-        //seriesInstanceUID + "/" +
-        //sopInstanceUID + ".png";
-        QFileInfo thumbnailInfo(thumbnailPath);
-        if(!(thumbnailInfo.exists() && (thumbnailInfo.lastModified() > QFileInfo(filename).lastModified()))){
-          QDir(q->databaseDirectory() + "/thumbs/").mkpath(studySeriesDirectory);
-          DicomImage dcmImage(QDir::toNativeSeparators(filename).toAscii());
-          thumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
+      QString studySeriesDirectory = studyInstanceUID + "/" + seriesInstanceUID;
+      //Create thumbnail here
+      QString thumbnailPath = q->databaseDirectory() +
+        "/thumbs/" + studyInstanceUID + "/" + seriesInstanceUID 
+        + "/" + sopInstanceUID + ".png";
+      QFileInfo thumbnailInfo(thumbnailPath);
+      if( !(thumbnailInfo.exists() 
+            && (thumbnailInfo.lastModified() > QFileInfo(filename).lastModified())))
+        {
+        QDir(q->databaseDirectory() + "/thumbs/").mkpath(studySeriesDirectory);
+        DicomImage dcmImage(QDir::toNativeSeparators(filename).toAscii());
+        thumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
         }
       }
-    }
 
     if (q->isInMemory())
-    {
+      {
       emit q->databaseChanged();
+      }
     }
-  }
 }
 
 bool ctkDICOMDatabase::fileExistsAndUpToDate(const QString& filePath)
