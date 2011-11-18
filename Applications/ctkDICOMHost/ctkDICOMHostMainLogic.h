@@ -26,6 +26,7 @@ protected slots:
   void onTreeSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
   void publishSelectedData();
   void onAppReady();
+  void placeHolderResized();
 signals:
   void TreeSelectionChanged(const QString &);
   void SelectionValid(bool);

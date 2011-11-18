@@ -26,13 +26,14 @@ ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* plac
   SendData(false)
 {
   this->Host = new ctkExampleDicomHost(PlaceHolderForHostedApp);
-  this->HostControls = new ctkExampleHostControlWidget(Host, placeHolderForControls);
+  this->HostControls = new ctkExampleHostControlWidget(Host, PlaceHolderForControls);
 
   Data = new ctkDicomAppHosting::AvailableData;
 
   disconnect(this->Host,SIGNAL(startProgress()),this->Host,SLOT(onStartProgress()));
   connect(this->Host,SIGNAL(appReady()),this,SLOT(onAppReady()), Qt::QueuedConnection);
   connect(this->Host,SIGNAL(startProgress()),this,SLOT(publishSelectedData()));
+  connect(this->PlaceHolderForHostedApp,SIGNAL(resized()),this,SLOT(placeHolderResized()));
 
   QTreeView * treeview = dicomAppWidget->findChild<QTreeView*>("TreeView");
   QItemSelectionModel* selectionmodel = treeview->selectionModel();
@@ -140,4 +141,15 @@ void ctkDICOMHostMainLogic::publishSelectedData()
     QRect rect (this->PlaceHolderForHostedApp->getAbsolutePosition());
     this->Host->getDicomAppService()->bringToFront(rect);
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMHostMainLogic::placeHolderResized()
+{
+  ///the following does not work (yet)
+  //if((this->Host) && (this->Host->getApplicationState() != ctkDicomAppHosting::EXIT))
+  //{
+  //  QRect rect (this->PlaceHolderForHostedApp->getAbsolutePosition());
+  //  this->Host->getDicomAppService()->bringToFront(rect);
+  //}
 }
