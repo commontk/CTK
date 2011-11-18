@@ -245,17 +245,30 @@ void ctkExampleDicomAppLogic::onLoadDataClicked()
     if(filename.startsWith("file:/",Qt::CaseInsensitive))
       filename=filename.remove(0,8);
     qDebug()<<filename;
-    DicomImage dcmtkImage(filename.toLatin1().data());
-    ctkDICOMImage ctkImage(&dcmtkImage);
-
-    QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
-    if (pixmap.isNull())
+    if(QFileInfo(filename).exists())
     {
-      qCritical() << "Failed to convert QImage to QPixmap" ;
+      try {
+        DicomImage dcmtkImage(filename.toLatin1().data());
+        ctkDICOMImage ctkImage(&dcmtkImage);
+
+        QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
+        if (pixmap.isNull())
+        {
+          qCritical() << "Failed to convert QImage to QPixmap" ;
+        }
+        else
+        {
+          ui.PlaceHolderForImage->setPixmap(pixmap);
+        }
+      }
+      catch(...)
+      {
+        qCritical() << "Caught exception while trying to load file" << filename;
+      }
     }
     else
     {
-      ui.PlaceHolderForImage->setPixmap(pixmap);
+      qCritical() << "File does not exist: " << filename;
     }
   }
   ui.ReceivedDataInformation->setText(s);
