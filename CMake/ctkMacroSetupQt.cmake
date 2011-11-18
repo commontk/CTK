@@ -24,9 +24,6 @@ macro(ctkMacroSetupQt)
   set(minimum_required_qt_version "4.6")
 
   find_package(Qt4)
-
-  # This option won't show up in the main CMake configure panel
-  mark_as_advanced(QT_QMAKE_EXECUTABLE)
   
   if(QT4_FOUND)
 
