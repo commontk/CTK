@@ -43,11 +43,23 @@ class org_commontk_dah_core_EXPORT ctkDicomAvailableDataAccessor : public QObjec
 public:
   ctkDicomAvailableDataAccessor(ctkDicomAppHosting::AvailableData& ad);
   virtual ~ctkDicomAvailableDataAccessor();
-
+  /**
+    * Method used to retrieve information about a specific patient, giving a patient struct with the ID field already 
+    * defined.
+    *@return the struct with patient information if patient is present inside available data, otherwise return NULL.
+    */
   ctkDicomAppHosting::Patient* getPatient(const ctkDicomAppHosting::Patient& patient) const;
 
+  /**
+    * Method used to retrieve information about a specific study, giving Study UID.
+    *@return the struct with study information if study is present inside available data, otherwise return NULL.
+    */
   ctkDicomAppHosting::Study* getStudy(const QString& studyUID) const;
 
+  /**
+    * Method used to retrieve information about a specific series, giving series UID.
+    *@return the struct with series information if series is present inside available data, otherwise return NULL.
+    */
   ctkDicomAppHosting::Series* getSeries(const QString& seriesUID) const;
 
   void find(const ctkDicomAppHosting::Patient& patient, 
