@@ -159,11 +159,12 @@ int main(int argc, char** argv)
 
   widget->show();
 
-  ctkDICOMHostMainLogic *logic = new ctkDICOMHostMainLogic(ui.placeHolderForHostedApp, ui.placeHolderForDICOMAppWidget);
+  ctkDICOMHostMainLogic *logic = new ctkDICOMHostMainLogic(ui.placeHolderForHostedApp, ui.placeHolderForDICOMAppWidget, ui.placeHolderForControls);
   logic->connect(ui.configureHostedApp,SIGNAL(clicked()), logic, SLOT(configureHostedApp()));
   logic->connect(ui.sendDataToHostedApp,SIGNAL(clicked()), logic, SLOT(sendDataToHostedApp()));
   logic->connect(logic, SIGNAL(TreeSelectionChanged(const QString &)), ui.selection, SLOT(setText(const QString &)));
   logic->connect(logic, SIGNAL(SelectionValid(bool)), ui.sendDataToHostedApp, SLOT(setEnabled(bool)));
+  logic->connect(ui.cbShowControls, SIGNAL(toggled(bool)), ui.placeHolderForControls->children()[0], SLOT(setVisible(bool)));
 
   //ctkDICOMAppWidget DICOMApp(widget);
 

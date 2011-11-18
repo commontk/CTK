@@ -17,7 +17,7 @@ class ctkDICOMHostMainLogic :
 {
   Q_OBJECT
 public:
-  ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget*, ctkDICOMAppWidget*);
+  ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget*, ctkDICOMAppWidget*, QWidget* placeHolderForControls);
   virtual ~ctkDICOMHostMainLogic();
 public slots:
   void configureHostedApp();
@@ -34,6 +34,7 @@ protected:
   ctkExampleHostControlWidget* HostControls;
   ctkHostedAppPlaceholderWidget* PlaceHolderForHostedApp;
   ctkDICOMAppWidget* DicomAppWidget;
+  QWidget* PlaceHolderForControls;
   ctkDicomAppHosting::AvailableData* Data;
   QString AppFileName;
   bool ValidSelection;

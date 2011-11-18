@@ -16,16 +16,17 @@
 #include "ctkDICOMDatabase.h"
 #include "ctkDicomAvailableDataHelper.h"
 
-ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* placeHolder, ctkDICOMAppWidget* dicomAppWidget) : 
+ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* placeHolder, ctkDICOMAppWidget* dicomAppWidget, 
+                                             QWidget* placeHolderForControls) : 
   QObject(placeHolder), 
   PlaceHolderForHostedApp(placeHolder),
   DicomAppWidget(dicomAppWidget),
+  PlaceHolderForControls(placeHolderForControls),
   ValidSelection(false),
   SendData(false)
 {
   this->Host = new ctkExampleDicomHost(PlaceHolderForHostedApp);
-  this->HostControls = new ctkExampleHostControlWidget(Host, placeHolder);
-  this->HostControls->show();
+  this->HostControls = new ctkExampleHostControlWidget(Host, placeHolderForControls);
 
   Data = new ctkDicomAppHosting::AvailableData;
 
