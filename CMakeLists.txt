@@ -558,8 +558,10 @@ ctk_plugin_option(org.commontk.plugingenerator.ui
 
 # Plug-ins related to DICOM WG23 (Application Hosting)
 ctk_plugin_option(org.commontk.dah.core "Build the org.commontk.dah.core plugin." OFF)
-ctk_plugin_option(org.commontk.dah.app "Build the org.commontk.dah.app plugin." OFF)
-ctk_plugin_option(org.commontk.dah.host "Build the org.commontk.dah.host plugin." OFF)
+ctk_plugin_option(org.commontk.dah.app "Build the org.commontk.dah.app plugin." OFF
+                  CTK_ENABLE_DICOMApplicationHosting)
+ctk_plugin_option(org.commontk.dah.host "Build the org.commontk.dah.host plugin." OFF
+                  CTK_ENABLE_DICOMApplicationHosting)
                   
 ctk_plugin_option(org.commontk.dah.exampleapp
                   "Build the org.commontk.dah.exampleapp plugin." OFF
