@@ -902,3 +902,28 @@ bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
   return result;;
 }
 
+bool ctkDICOMDatabase::removePatient(const QString& patientID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QSqlQuery studiesForPatient( d->Database );
+  studiesForPatient.prepare("SELECT StudyInstanceUID FROM Studies WHERE PatientsUID = :patientsID");
+  studiesForPatient.bindValue(":patientsID", patientID);
+  bool success = studiesForPatient.exec();
+  if (!success)
+  {
+    logger.error("SQLITE ERROR: " + studiesForPatient.lastError().driverText());
+    return false;
+  }
+  bool result = true;
+  while ( studiesForPatient.next() )
+  {
+    QString studyInstanceUID = studiesForPatient.value(studiesForPatient.record().indexOf("StudyInstanceUID")).toString();
+    if ( ! this->removeStudy(studyInstanceUID) )
+    {
+      result = false;
+    }
+  }
+  return result;;
+}
+

@@ -149,6 +149,7 @@ public:
   /// thumbnails  
   bool removeSeries(const QString& seriesInstanceUID);
   bool removeStudy(const QString& studyInstanceUID);
+  bool removePatient(const QString& patientID);
   bool cleanup();
 
 Q_SIGNALS:
