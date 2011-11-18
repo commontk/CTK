@@ -66,6 +66,7 @@ Q_SIGNALS:
   void foundFilesToIndex(int);
   void indexingFileNumber(int);
   void indexingFilePath(QString);
+  void progress(int);
 
 protected:
   QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
