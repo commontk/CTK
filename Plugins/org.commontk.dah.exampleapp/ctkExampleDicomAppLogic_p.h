@@ -52,20 +52,20 @@ public:
   // ctkDicomAppInterface
 
   /**
-    * Method triggered by the host. By calling this method, the Hosting System is asking the Hosted Application to take whatever steps are
-    * needed to make its GUI visible as the topmost window, and to gain focus.
-    * @return TRUE if the Hosted Application received the request and will act on it. Otherwise it returns FALSE
-    */
+   * Method triggered by the host. By calling this method, the Hosting System is asking the Hosted Application to take whatever steps are
+   * needed to make its GUI visible as the topmost window, and to gain focus.
+   * \return TRUE if the Hosted Application received the request and will act on it. Otherwise it returns FALSE
+   */
   virtual bool bringToFront(const QRect& requestedScreenArea);
 
   // ctkDicomExchangeInterface
 
   /**
-  * The source of the data calls this method with descriptions of the available data that it can provide to the
-  * recipient. If the source of the data expects that additional data will become available, it shall pass FALSE
-  * in the lastData parameter. Otherwise, it shall pass TRUE.
-  * @return TRUE if the recipient of the data successfully received the AvailableData list.
-  */
+   * The source of the data calls this method with descriptions of the available data that it can provide to the
+   * recipient. If the source of the data expects that additional data will become available, it shall pass FALSE
+   * in the lastData parameter. Otherwise, it shall pass TRUE.
+   * \return TRUE if the recipient of the data successfully received the AvailableData list.
+   */
   virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
@@ -74,9 +74,9 @@ public:
     bool includeBulkData);
 
   /**
-  * The recipient of data invokes this method to release access to binary data provided by the source of the
-  * data through a getData() call. The ArrayOfUUID identifies the data streams that the recipient is releasing.
-  */
+   * The recipient of data invokes this method to release access to binary data provided by the source of the
+   * data through a getData() call. The ArrayOfUUID identifies the data streams that the recipient is releasing.
+   */
   virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
   // some logic

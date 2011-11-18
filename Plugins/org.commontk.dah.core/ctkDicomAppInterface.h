@@ -31,17 +31,18 @@ struct ctkDicomAppInterface : public ctkDicomExchangeInterface
 
   // Application interface methods
   virtual ctkDicomAppHosting::State getState() = 0;
+  
   /**
-    * Method triggered by the host. Changes the state of the hosted application.
-    *@return true if state received and not illegal in the transition diagram from the reference, false if illegal or not recognized.
-    */
+   * Method triggered by the host. Changes the state of the hosted application.
+   * \return true if state received and not illegal in the transition diagram from the reference, false if illegal or not recognized.
+   */
   virtual bool setState(ctkDicomAppHosting::State newState) = 0;
 
   /**
-    * Method triggered by the host. By calling this method, the Hosting System is asking the Hosted Application to take whatever steps are
-    * needed to make its GUI visible as the topmost window, and to gain focus.
-    *@return TRUE if the Hosted Application received the request and will act on it. Otherwise it returns FALSE
-  */
+   * Method triggered by the host. By calling this method, the Hosting System is asking the Hosted Application to take whatever steps are
+   * needed to make its GUI visible as the topmost window, and to gain focus.
+   * \return TRUE if the Hosted Application received the request and will act on it. Otherwise it returns FALSE
+   */
   virtual bool bringToFront(const QRect& requestedScreenArea) = 0;
 
   // Data exchange interface methods

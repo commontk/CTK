@@ -37,44 +37,44 @@ public:
   virtual ~ctkDicomHostService();
 
   /**
-  * Returns a newly created DICOM UID that the Hosted Application might use, e.g., to create new data
-  * objects and structures.
-  */
+   * Returns a newly created DICOM UID that the Hosted Application might use, e.g., to create new data
+   * objects and structures.
+   */
   virtual QString generateUID();
 
   /**
-  * The Hosted Application supplies its preferred screen size in the appPreferredScreen parameter. The
-  * Hosting System may utilize this information as a hint, but may return a window location and size that best
-  * suits the Hosting System’s GUI.
-  */
+   * The Hosted Application supplies its preferred screen size in the appPreferredScreen parameter. The
+   * Hosting System may utilize this information as a hint, but may return a window location and size that best
+   * suits the Hosting System's GUI.
+   */
   virtual QRect getAvailableScreen(const QRect& preferredScreen);
 
   /**
-  * This method returns a URI that a Hosted Application may use to store output that it may provide back to
-  * the Hosting System (e.g. in response to a getData() call).
-  * @return a URI that a Hosted Application may use to store output.
-  */
+   * This method returns a URI that a Hosted Application may use to store output that it may provide back to
+   * the Hosting System (e.g. in response to a getData() call).
+   * \return a URI that a Hosted Application may use to store output.
+   */
   virtual QString getOutputLocation(const QStringList& preferredProtocols);
 
   /**
-  * The Hosted Application shall invoke this method each time the Hosted Application successfully transitions
-  * to a new state. The new state is passed in the state parameter.
-  */
+   * The Hosted Application shall invoke this method each time the Hosted Application successfully transitions
+   * to a new state. The new state is passed in the state parameter.
+   */
   virtual void notifyStateChanged(ctkDicomAppHosting::State state);
 
   /**
-  * Method used by the Hosted Application to inform the Hosting System of notable events that occur during execution.
-  * The Hosted Application invoks this method, passing the information in the status parameter.
-  */
+   * Method used by the Hosted Application to inform the Hosting System of notable events that occur during execution.
+   * The Hosted Application invoks this method, passing the information in the status parameter.
+   */
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
 
   // Exchange methods implemented in ctkDicomExchangeService
   /**
-  * The source of the data calls this method with descriptions of the available data that it can provide to the
-  * recipient. If the source of the data expects that additional data will become available, it shall pass FALSE
-  * in the lastData parameter. Otherwise, it shall pass TRUE.
-  * @return TRUE if the recipient of the data successfully received the AvailableData list.
-  */
+   * The source of the data calls this method with descriptions of the available data that it can provide to the
+   * recipient. If the source of the data expects that additional data will become available, it shall pass FALSE
+   * in the lastData parameter. Otherwise, it shall pass TRUE.
+   * \return TRUE if the recipient of the data successfully received the AvailableData list.
+   */
   virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
@@ -83,9 +83,9 @@ public:
     bool includeBulkData);
 
   /**
-  * The recipient of data invokes this method to release access to binary data provided by the source of the
-  * data through a getData() call. The ArrayOfUUID identifies the data streams that the recipient is releasing.
-  */
+   * The recipient of data invokes this method to release access to binary data provided by the source of the
+   * data through a getData() call. The ArrayOfUUID identifies the data streams that the recipient is releasing.
+   */
   virtual void releaseData(const QList<QUuid>& objectUUIDs);
 
 };
