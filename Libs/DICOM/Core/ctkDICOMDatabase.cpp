@@ -798,3 +798,92 @@ bool ctkDICOMDatabase::isInMemory() const
   Q_D(const ctkDICOMDatabase);
   return d->DatabaseFileName == ":memory:";
 }
+/*
+bool ctkDICOMDatabase::removeImage(const QString& sopInstanceUID)
+{
+  return false;
+}
+*/
+bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  // get all images from series
+  QSqlQuery fileExists ( d->Database );
+  fileExists.prepare("SELECT Filename, SOPInstanceUID, StudyInstanceUID FROM Images,Series WHERE Series.SeriesInstanceUID = Images.SeriesInstanceUID AND Images.SeriesInstanceUID = :seriesID");
+  fileExists.bindValue(":seriesID",seriesInstanceUID);
+  bool success = fileExists.exec();
+  if (!success)
+  {
+    logger.error("SQLITE ERROR: " + fileExists.lastError().driverText());
+    return false;
+  }
+
+  QList< QPair<QString,QString> > removeList;
+  while ( fileExists.next() )
+  {
+    QString dbFilePath = fileExists.value(fileExists.record().indexOf("Filename")).toString();
+    QString sopInstanceUID = fileExists.value(fileExists.record().indexOf("SOPInstanceUID")).toString();
+    QString studyInstanceUID = fileExists.value(fileExists.record().indexOf("StudyInstanceUID")).toString();
+    QString internalFilePath = studyInstanceUID + "/" + seriesInstanceUID + "/" + sopInstanceUID;
+    removeList << qMakePair(dbFilePath,internalFilePath);
+  }
+
+  QSqlQuery fileRemove ( d->Database );
+  fileRemove.prepare("DELETE FROM Images WHERE SeriesInstanceUID == ?");
+  fileRemove.bindValue(0,seriesInstanceUID);
+  fileRemove.exec();
+  
+  QPair<QString,QString> fileToRemove;
+  foreach (fileToRemove, removeList)
+  {
+    QString dbFilePath = fileToRemove.first;
+    QString thumbnailToRemove = databaseDirectory() + "/thumbs/" + fileToRemove.second + ".png";
+
+    // check that the file is below our internal storage
+    if (dbFilePath.startsWith( databaseDirectory() + "/dicom/"))
+    {
+      if (!dbFilePath.endsWith(fileToRemove.second))
+      {
+        logger.error("Database inconsistency detected during delete!");
+        continue;
+      }
+      if (QFile( dbFilePath ).remove())
+      {
+        logger.debug("Removed file " + dbFilePath );
+      }
+      else
+      {
+        logger.warn("Failed to remove file " + dbFilePath );
+      }
+    }
+    if (QFile( thumbnailToRemove ).remove())
+      {
+        logger.debug("Removed thumbnail " + thumbnailToRemove);
+      }
+      else
+      {
+        logger.warn("Failed to remove thumbnail " + thumbnailToRemove);
+      }
+    }    
+
+  this->cleanup();
+
+  return true;
+}
+
+bool ctkDICOMDatabase::cleanup()
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery seriesCleanup ( d->Database );
+  seriesCleanup.exec("DELETE FROM Series WHERE ( SELECT COUNT(*) FROM Images WHERE Images.SeriesInstanceUID = Series.SeriesInstanceUID ) = 0;");
+  seriesCleanup.exec("DELETE FROM Studies WHERE ( SELECT COUNT(*) FROM Series WHERE Series.StudyInstanceUID = Studies.StudyInstanceUID ) = 0;");
+  seriesCleanup.exec("DELETE FROM Patients WHERE ( SELECT COUNT(*) FROM Studies WHERE Studies.PatientsUID = Patients.UID ) = 0;");
+  return true;
+}
+/*
+bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
+{
+  return false;
+}
+*/

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>739</width>
-    <height>638</height>
+    <width>788</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -44,6 +44,7 @@
      <addaction name="ActionExport"/>
      <addaction name="ActionQuery"/>
      <addaction name="ActionSend"/>
+     <addaction name="ActionRemove"/>
     </widget>
    </item>
    <item>
@@ -507,6 +508,17 @@
     <string>Send DICOM Studies to a DICOM node (not yet available)</string>
    </property>
   </action>
+  <action name="ActionRemove">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Remove</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove from database</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -715,9 +727,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>ActionRemove</sender>
+   <signal>triggered()</signal>
+   <receiver>ctkDICOMAppWidget</receiver>
+   <slot>onRemoveAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>303</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <signal>signal1()</signal>
   <slot>openImportDialog()</slot>
   <slot>openExportDialog()</slot>
   <slot>openQueryDialog()</slot>
@@ -730,5 +757,6 @@
   <slot>onPreviousStudy()</slot>
   <slot>onAutoPlayCheckboxStateChanged(int)</slot>
   <slot>onThumbnailWidthSliderValueChanged(int)</slot>
+  <slot>onRemoveAction()</slot>
  </slots>
 </ui>
