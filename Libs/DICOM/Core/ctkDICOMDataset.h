@@ -75,7 +75,7 @@ public:
     /// should copy information from a DcmDataset object.
 
     /// \warning Derived classes must call PDICOMDataset::InitializeFromDataset(...) to correctly copy encoding information.
-    virtual void InitializeFromDataset(DcmDataset* dataset);
+    virtual void InitializeFromDataset(DcmDataset* dataset, bool takeOwnership = false);
 
     ///
     /// \brief For initialization from file in a constructor / assignment.
