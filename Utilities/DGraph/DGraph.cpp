@@ -18,45 +18,103 @@
 
 =========================================================================*/
 
-// Qt includes
-#include <QFile>
-#include <QTextStream>
-#include <QRegExp>
-#include <QStringList>
-#include <QDebug>
-
 // CTK includes
 #include <ctkDependencyGraph.h>
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <map>
+#include <list>
+#include <vector>
+#include <cassert>
+
+using namespace std;
 
 //----------------------------------------------------------------------------
-QString help(const QString& progName)
+std::string help(const std::string& progName)
 {
-  QString msg = "Usage: %1 <graphfile> [-paths Label | -sort Label]";
-  return msg.arg(progName);
+  std::string msg = std::string("Usage: ") + progName + std::string(" <graphfile> [-paths Label | -sort Label]");
+  return msg;
 }
 
 //----------------------------------------------------------------------------
-void displayError(const QString& progName, const QString& msg)
+void displayError(const std::string& progName, const std::string& msg)
 {
-  std::cerr << qPrintable(QString("%1\n%2\n%3\n").arg(progName).
-                                                 arg(msg).
-                                                 arg(help(progName)));
+  std::cerr << progName << std::endl << msg << std::endl << help(progName) << std::endl;
+}
+
+std::vector< std::string > splitString(const std::string& string)
+{
+  std::vector<std::string> results;
+  std::stringstream stringStream;
+  stringStream << string;
+  do
+    {
+    std::string nextString;
+    stringStream >> nextString;
+    size_t found = nextString.find_first_not_of(" ");
+    if (found != string::npos)
+      {
+      results.push_back(nextString.substr(found));
+      }
+    } while (!stringStream.eof());
+
+  return results;
+}
+
+std::string listToString(const std::list<int>& list)
+{
+  std::stringstream stream;
+
+  if (list.size() == 0)
+    {
+    stream << "empty";
+    }
+  else
+  {
+    unsigned int counter = 0;
+    std::list<int>::const_iterator iterator;
+    for (iterator = list.begin(); iterator != list.end(); iterator++)
+      {
+      stream << *iterator;
+      counter++;
+
+      if (counter != list.size())
+        {
+        stream << " ";
+        }
+      }
+  }
+  return stream.str();
+}
+
+int getLastElement(const std::list<int>& list)
+{
+  int result = -1;
+
+  if (list.size() > 0)
+    {
+    std::list<int>::const_reverse_iterator iterator;
+    iterator = list.rend();
+    result = *iterator;
+    }
+
+  return result;
 }
 
 //----------------------------------------------------------------------------
-int getOrGenerateId(QHash<int, QString>& vertexIdToLabel,
-                    QHash<QString, int>& vertexLabelToId,
-                    const QString& label)
+int getOrGenerateId(std::map<int, std::string>& vertexIdToLabel,
+                    std::map<std::string, int>& vertexLabelToId,
+                    const std::string& label)
 {
   // If needed, generate vertex id
   int vertexId = -1;
-  if (!vertexLabelToId.keys().contains(label))
+  if (vertexLabelToId.find(label) == vertexLabelToId.end())
     {
-    vertexId = vertexLabelToId.keys().size() + 1;
+    vertexId = vertexLabelToId.size() + 1;
     vertexLabelToId[label] = vertexId;
     vertexIdToLabel[vertexId] = label;
     }
@@ -72,31 +130,31 @@ int main(int argc, char** argv)
 {
   bool verbose = false;
   bool outputTopologicalOrder = true;
-  
+
   // a graph file is expected
   if (argc < 2)
     {
-    displayError(argv[0], QLatin1String("Missing one argument"));
+    displayError(argv[0], std::string("Missing one argument"));
     return EXIT_FAILURE;
     }
 
   bool outputPath = false;
   bool outputSort = false;
-  QString label;
+  std::string label;
   if (argc == 3)
     {
-    displayError(argv[0], QLatin1String("Wrong argument"));
+    displayError(argv[0], std::string("Wrong argument"));
     return EXIT_FAILURE;
     }
   if (argc == 4)
     {
-    QString arg2 = QString::fromLatin1(argv[2]);
+    std::string arg2 = std::string(argv[2]);
     if (arg2.compare("-paths")!=0 && arg2.compare("-sort")!=0)
       {
-      displayError(argv[0], QString("Wrong argument: %1").arg(arg2));
+      displayError(argv[0], std::string("Wrong argument: ") + arg2);
       return EXIT_FAILURE;
       }
-    label = QLatin1String(argv[3]);
+    label = std::string(argv[3]);
     outputTopologicalOrder = false;
     if (arg2.compare("-paths") == 0)
       {
@@ -109,97 +167,112 @@ int main(int argc, char** argv)
 
     if (verbose)
       {
-      qDebug() << "label:" << label; 
+      std::cout << "label:" << label << std::endl;
       }
     }
-    
-  QString filepath = QString::fromLatin1(argv[1]);
-  if (!QFile::exists(filepath))
+
+  // Open File.
+
+  std::string filepath = std::string(argv[1]);
+  if (verbose)
     {
-    displayError(argv[0], QString("File '%1' doesn't exists !").arg(filepath));
+    std::cout << "filename:" << filepath << std::endl;
+    }
+
+  std::ifstream data;
+  data.open(filepath.c_str(), ifstream::in);
+
+  if (!data.is_open())
+    {
+    displayError(argv[0], std::string("Failed to open file '") + filepath + "' !");
     return EXIT_FAILURE;
     }
 
-  QFile data(filepath);
-  if (!data.open(QFile::ReadOnly))
+  // Read first line, called the header.
+
+  std::string header;
+  std::getline (data, header);
+  if (verbose)
     {
-    displayError(argv[0], QString("Failed to open file '%1' !").arg(filepath));
-    return EXIT_FAILURE; 
+    std::cout << "header:" << header << std::endl;
     }
-    
-  QTextStream in(&data);
-  QString header = in.readLine();
-  if (header.isNull())
+  if (header.length() == 0)
     {
-    displayError(argv[0], QString("Failed to read Header line in file '%1' !").arg(filepath));
+    displayError(argv[0], std::string("Failed to read Header line in file '") + filepath + "' !");
     return EXIT_FAILURE;
     }
 
-  // Regular expression to extract two integers
-  QRegExp twoint_re("^([0-9]+)\\s+([0-9]+)");
+  // Extract two integers
+
+  int numberOfVertices = -1;
+  int numberOfEdges = -1;
+
+  std::stringstream stringStream;
+  stringStream << header;
+  stringStream >> numberOfVertices;
+  stringStream >> numberOfEdges;
   
-  // Extract numberOfVertices and numberOfEdges
-  int pos = twoint_re.indexIn(header.trimmed());
-  if (pos != 0)
+  if (numberOfVertices == -1 || numberOfEdges == -1)
     {
-    displayError(argv[0], QString("Error in file '%1' - First line should look like: <#Vertices> <#Edges>")
-      .arg(filepath));
+    displayError(argv[0], std::string("Error in file '") + filepath + "' - First line should look like: <#Vertices> <#Edges>");
     return EXIT_FAILURE;
     }
-  QStringList list = twoint_re.capturedTexts();
-  Q_ASSERT(list.size() == 3);
-
-  int numberOfVertices = list[1].toInt();
-  int numberOfEdges = list[2].toInt();
 
   if (verbose)
     {
-    qDebug() << "#Vertices:" << numberOfVertices << "#Edges:" << numberOfEdges;
+    std::cout << "#Vertices:" << numberOfVertices << " #Edges:" << numberOfEdges << std::endl;
     }
 
-  // Init
+  // Init dependency graph, and maps.
+
   ctkDependencyGraph mygraph(numberOfVertices);
   mygraph.setVerbose(verbose);
+  std::map<int, std::string> vertexIdToLabel;
+  std::map<std::string, int> vertexLabelToId;
 
-  // Map between vertex label and vertex id
-  QHash<int, QString> vertexIdToLabel;
-  QHash<QString, int> vertexLabelToId;
+  // Repeatedly read lines containing labels.
   
-  // Regular expression to extract two label
-  QRegExp twolabel_re("^\\s*(\\S+)\\s*$|^\\s*(\\S+)\\s*(\\S+)\\s*$");
-  
-  // Read vertex connection
+  std::string line;
   int lineNumber = 2;
-  QString line = in.readLine();
+  std::getline(data, line);
+
   do
     {
     // Skip empty line or commented line
-    if (line.isEmpty() || line.startsWith("#"))
+    if (line.length() == 0 || line[0] == '#')
       {
-      line = in.readLine();
+      std::getline(data, line);
       continue;
       }
 
-    // Extract vertex points
-    
-    int pos = twolabel_re.indexIn(line.trimmed());
-    if (pos != 0)
-      {
-      displayError(argv[0], QString("Error in file '%1' - line:%2 - Expected format is: <label> [<label>]")
-        .arg(filepath).arg(lineNumber));
-      return EXIT_FAILURE;
-      }
-    lineNumber++;
+    // Extract two strings
+    stringStream.clear();
+    stringStream << line;
 
-    QStringList list = twolabel_re.capturedTexts();
-    Q_ASSERT(list.size() == 4);
+    std::vector<std::string> strings = splitString(line);
+
+    if (strings.size() < 1 || strings.size() > 2)
+      {
+      stringStream << "Error in file '" << filepath << "' - line:" << lineNumber << " - Expected format is: <label> [<label>]" << std::endl;
+      std::string message;
+      stringStream >> message;
+      displayError(argv[0], message);
+      }
+    
+    lineNumber++;
 
     int from = -1;
     int to = -1;
-    if (list[1].isEmpty())
+
+    if (strings.size() == 2)
       {
-      from = getOrGenerateId(vertexIdToLabel, vertexLabelToId, list[2]);
-      to = getOrGenerateId(vertexIdToLabel, vertexLabelToId, list[3]);
+      from = getOrGenerateId(vertexIdToLabel, vertexLabelToId, strings[0]);
+      to = getOrGenerateId(vertexIdToLabel, vertexLabelToId, strings[1]);
+
+      if (verbose)
+        {
+        std::cout << "Line='" << line << "', line number " << lineNumber << ", from (" << strings[0] << ", " << from << ") to (" << strings[1] << ", " << to << ")"  << std::endl;
+        }
       }
 
     if (to > -1)
@@ -210,19 +283,19 @@ int main(int argc, char** argv)
     else
       {
       // Just generate an entry in the vertexIdToLabel map
-      getOrGenerateId(vertexIdToLabel, vertexLabelToId, list[1]);
+      getOrGenerateId(vertexIdToLabel, vertexLabelToId, "");
       }
 
-    line = in.readLine();
+    std::getline(data, line);
     }
-  while (!line.isNull());
+  while (!data.eof());
 
-  Q_ASSERT(numberOfEdges == mygraph.numberOfEdges());
+  assert(numberOfEdges == mygraph.numberOfEdges());
 
   if (verbose)
     {
     mygraph.printGraph();
-    qDebug() << "> Check for cycle ...";
+    std::cout << "> Check for cycle ..." << std::endl;
     }
    
   mygraph.checkForCycle();
@@ -230,26 +303,32 @@ int main(int argc, char** argv)
   if (mygraph.cycleDetected())
     {
     std::cerr << "Cycle detected !" << std::endl;
-    QList<int> path;
+
+    std::list<int> path;
+    std::list<int>::iterator pathIterator;
+    unsigned int pathIteratorCounter = 0;
+
     mygraph.findPath(mygraph.cycleOrigin(), mygraph.cycleEnd(), path);
     
-    for(int i = 0; i < path.size(); ++i)
+    for (pathIterator = path.begin(); pathIterator != path.end(); pathIterator++)
       {
-      std::cerr << qPrintable(vertexIdToLabel[path[i]]);
-      if (i != path.size() - 1)
+      std::cerr << vertexIdToLabel[*pathIterator];
+      if (pathIteratorCounter != path.size() - 1)
         {
         std::cerr << " -> ";
         }
+      pathIteratorCounter++;
       }
     std::cerr << std::endl;
     
     path.clear();
     mygraph.findPath(mygraph.cycleEnd(), mygraph.cycleOrigin(), path);
 
-    for(int i = 0; i < path.size(); ++i)
+    pathIteratorCounter = 0;
+    for (pathIterator = path.begin(); pathIterator != path.end(); pathIterator++)
       {
-      std::cerr << qPrintable(vertexIdToLabel[path[i]]);
-      if (i != path.size() - 1)
+      std::cerr << vertexIdToLabel[*pathIterator];
+      if (pathIteratorCounter != path.size() - 1)
         {
         std::cerr << " -> ";
         }
@@ -263,15 +342,19 @@ int main(int argc, char** argv)
     {
     if (verbose)
       {
-      qDebug() << "> Topological order ...";
+      std::cerr << "> Topological order ..." << std::endl;
       }
-    QList<int> out;
+    std::list<int> out;
+    std::list<int>::reverse_iterator outIterator;
+    unsigned int outIteratorCounter = 0;
+
     if (mygraph.topologicalSort(out))
       {
-      for(int i=out.size() - 1; i >= 0; --i)
+      outIteratorCounter = 0;
+      for (outIterator = out.rbegin(); outIterator != out.rend(); outIterator++)
         {
-        std::cout << qPrintable(vertexIdToLabel[out[i]]);
-        if (i != 0)
+        std::cout << vertexIdToLabel[*outIterator];
+        if (outIteratorCounter != out.size() - 1)
           {
           std::cout << " ";
           }
@@ -282,43 +365,68 @@ int main(int argc, char** argv)
 
   if (verbose)
     {
-    QList<int> sources;
+    std::list<int> sources;
     mygraph.sourceVertices(sources);
-    qDebug() << "Source vertices: " << sources;
+    std::cout << "Source vertices: " << listToString(sources) << std::endl;
     }
     
   if (outputPath)
     {
     // TODO Make sure label is valid
-    QList<int> out;
+    std::list<int> out;
     if (mygraph.topologicalSort(out))
       {
-      for(int i=0; i < out.size(); i++)
+      std::list<int>::iterator outIterator;
+      for (outIterator = out.begin(); outIterator != out.end(); outIterator++)
         {
         // Assume all targets depend on the first lib
         // We could get all sinks and find all paths
         // from the rootId to the sink vertices.
-        int rootId = out.last();
+        int rootId = getLastElement(out);
         int labelId = vertexLabelToId[label];
-        QList<QList<int>*> paths;
+
+        std::list<std::list<int>*> paths;
         mygraph.findPaths(labelId, rootId, paths);
-        for(int i=0; i < paths.size(); i++)
+
+        std::list<std::list<int>*>::iterator pathsIterator;
+        std::list<std::list<int>*>::iterator pathsIteratorPlus1;
+
+        for (pathsIterator = paths.begin(); pathsIterator != paths.end(); pathsIterator++)
           {
-          QList<int>* p = paths[i];
-          Q_ASSERT(p);
-          for(int j=0; j < p->size(); j++)
+          std::list<int>* p = *pathsIterator;
+          assert(p);
+
+          std::list<int>::iterator pIterator;
+          std::list<int>::iterator pIteratorPlus1;
+          for (pIterator = p->begin(); pIterator != p->end(); pIterator++)
             {
-            int id = p->at(j);
-            std::cout << qPrintable(vertexIdToLabel[id]);
-            if (j != p->size() - 1)
+            int id = *pIterator;
+            std::cout << vertexIdToLabel[id];
+
+            pIteratorPlus1 = pIterator;
+            pIteratorPlus1++;
+
+            if (pIteratorPlus1 != p->end())
               {
               std::cout << " ";
               }
             }
-          if (i != paths.size() - 1)
+
+          pathsIteratorPlus1 = pathsIterator;
+          pathsIteratorPlus1++;
+
+          if (pathsIteratorPlus1 != paths.end())
             {
             std::cout << ";";
             }
+          }
+
+        for (pathsIterator = paths.begin(); pathsIterator != paths.end(); pathsIterator++)
+          {
+            if (*pathsIterator != NULL)
+              {
+              delete *pathsIterator;
+              }
           }
         }
       }
@@ -327,22 +435,27 @@ int main(int argc, char** argv)
   if (outputSort)
     {
     // TODO Make sure label is valid
-    QList<int> out;
+    std::list<int> out;
     int labelId = vertexLabelToId[label];
     if (mygraph.topologicalSort(out, labelId))
       {
-      for(int i=0; i < out.size(); i++)
-        {
-        int id = out.at(i);
-        std::cout << qPrintable(vertexIdToLabel[id]);
+      std::list<int>::iterator outIterator;
+      std::list<int>::iterator outIteratorPlus1;
 
-        if (i != out.size() - 1)
+      for (outIterator = out.begin(); outIterator != out.end(); outIterator++)
+        {
+        int id = *outIterator;
+        std::cout << vertexIdToLabel[id];
+
+        outIteratorPlus1 = outIterator;
+        outIteratorPlus1++;
+
+        if (outIteratorPlus1 != out.end())
           {
           std::cout << " ";
           }
         }
       }
     }
-    
   return EXIT_SUCCESS;
 }

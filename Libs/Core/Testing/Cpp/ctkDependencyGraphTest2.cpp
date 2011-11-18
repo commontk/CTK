@@ -21,19 +21,18 @@
 
 // CTK includes
 #include "ctkDependencyGraph.h"
+#include "ctkDependencyGraphTestHelper.h"
 
 // STL includes
 #include <cstdlib>
 #include <iostream>
 
-// Qt includes
-#include <QDebug>
-
-
 int ctkDependencyGraphTest2(int argc, char * argv [] )
 {
-  Q_UNUSED(argc);
-  Q_UNUSED(argv);  
+  if (argc > 1)
+    {
+    std::cerr << argv[0] << " expects zero arguments" << std::endl;
+    }
 
   // check that cycle detection works
   {
@@ -55,14 +54,14 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( nov != numberOfVertices )
     {
-    qCritical() << "Number of vertices does not match (expected" << numberOfVertices << "got" << nov << ")";
+    std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
     {
-    qCritical() << "Number of edges does not match (expected" << expectedNumberOfEdge << "got" << noe << ")";
+    std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -70,7 +69,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   
   if( cfc == false )
     {
-    qCritical() << "Cycle detection failed";
+    std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -78,7 +77,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cdtd == false )
     {
-    qCritical() << "Cycle detected flag wrong";
+    std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -87,13 +86,13 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if (co != 2)
     {
-    qCritical() << "Wrong cycle origin (expected" << 2 << "got" << co << ")";
+    std::cerr << "Wrong cycle origin (expected" << 2 << " got " << co << " )" << std::endl;
     return EXIT_FAILURE;
     }
 
   if (ce != 1)
     {
-    qCritical() << "Wrong cycle end (expected" << 1 << "got" << ce << ")";
+    std::cerr << "Wrong cycle end (expected" << 1 << " got " << ce << " )" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -121,14 +120,14 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( nov != numberOfVertices )
     {
-    qCritical() << "Number of vertices does not match (expected" << numberOfVertices << "got" << nov << ")";
+    std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
     {
-    qCritical() << "Number of edges does not match (expected" << expectedNumberOfEdge << "got" << noe << ")";
+    std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -136,7 +135,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cfc == false )
     {
-    qCritical() << "Cycle detection failed";
+    std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -144,7 +143,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cdtd == false )
     {
-    qCritical() << "Cycle detected flag wrong";
+    std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -153,13 +152,13 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if (co != 2)
     {
-    qCritical() << "Wrong cycle origin (expected" << 2 << "got" << co << ")";
+    std::cerr << "Wrong cycle origin (expected" << 2 << " got " << co << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
   if (ce != 4)
     {
-    qCritical() << "Wrong cycle end (expected" << 4 << "got" << ce << ")";
+    std::cerr << "Wrong cycle end (expected" << 4 << " got " << ce << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -195,14 +194,14 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( nov != numberOfVertices )
     {
-    qCritical() << "Number of vertices does not match (expected" << numberOfVertices << "got" << nov << ")";
+    std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
     {
-    qCritical() << "Number of edges does not match (expected" << expectedNumberOfEdge << "got" << noe << ")";
+    std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -210,7 +209,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cfc == false )
     {
-    qCritical() << "Cycle detection failed";
+    std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -218,7 +217,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cdtd == false )
     {
-    qCritical() << "Cycle detected flag wrong";
+    std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -259,14 +258,14 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( nov != numberOfVertices )
     {
-    qCritical() << "Number of vertices does not match (expected" << numberOfVertices << "got" << nov << ")";
+    std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
     {
-    qCritical() << "Number of edges does not match (expected" << expectedNumberOfEdge << "got" << noe << ")";
+    std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -274,7 +273,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cfc == true )
     {
-    qCritical() << "Cycle detection failed";
+    std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -282,41 +281,65 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cdtd == true )
     {
-    qCritical() << "Cycle detected flag wrong";
+    std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
     }
 
-  QList<int> sources;
+  std::list<int> sources;
   graph.sourceVertices(sources);
 
-  QList<int> expectedSources;
-  expectedSources << 1 << 5 << 10;
+  std::list<int> expectedSources;
+  expectedSources.push_back(1);
+  expectedSources.push_back(5);
+  expectedSources.push_back(10);
 
   if (sources != expectedSources)
     {
-    qCritical() << "Source vertices do not match (expected" << expectedSources << "got" << sources << ")";
+    std::cerr << "Problem with sourceVertices()" << std::endl;
+    printIntegerList("sources:", sources);
+    printIntegerList("expectedSources:", expectedSources);
     return EXIT_FAILURE;
     }
 
-  QList<int> globalSort;
+  std::list<int> globalSort;
   graph.topologicalSort(globalSort);
 
-  QList<int> expectedGlobalSort;
-  expectedGlobalSort << 1 << 5 << 10 << 2 << 6 << 11 << 3 << 4 << 7 << 8 << 9;
+  std::list<int> expectedGlobalSort;
+
+  expectedGlobalSort.push_back(1);
+  expectedGlobalSort.push_back(5);
+  expectedGlobalSort.push_back(10);
+  expectedGlobalSort.push_back(2);
+  expectedGlobalSort.push_back(6);
+  expectedGlobalSort.push_back(11);
+  expectedGlobalSort.push_back(3);
+  expectedGlobalSort.push_back(4);
+  expectedGlobalSort.push_back(7);
+  expectedGlobalSort.push_back(8);
+  expectedGlobalSort.push_back(9);
+
   if (globalSort != expectedGlobalSort)
   {
-    qCritical() << "Topological sort error (expected" << expectedGlobalSort << "got" << globalSort << ")";
+    std::cerr << "Problem with topologicalSort(globalSort)" << std::endl;
+    printIntegerList("globalSort:", globalSort);
+    printIntegerList("expectedGlobalSort:", expectedGlobalSort);
     return EXIT_FAILURE;
   }
 
-  QList<int> subSort10;
+  std::list<int> subSort10;
   graph.topologicalSort(subSort10, 10);
 
-  QList<int> expectedSubSort10;
-  expectedSubSort10 << 10 << 8 << 11 << 9;
+  std::list<int> expectedSubSort10;
+  expectedSubSort10.push_back(10);
+  expectedSubSort10.push_back(8);
+  expectedSubSort10.push_back(11);
+  expectedSubSort10.push_back(9);
+
   if (subSort10 != expectedSubSort10)
   {
-    qCritical() << "Topological subgraph sort error (expected" << expectedSubSort10 << "got" << subSort10 << ")";
+    std::cerr << "Problem with topologicalSort(subSort10, 10)" << std::endl;
+    printIntegerList("subSort10:", subSort10);
+    printIntegerList("expectedSubSort10:", expectedSubSort10);
     return EXIT_FAILURE;
   }
 
@@ -359,14 +382,14 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( nov != numberOfVertices )
     {
-    qCritical() << "Number of vertices does not match (expected" << numberOfVertices << "got" << nov << ")";
+    std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
     {
-    qCritical() << "Number of edges does not match (expected" << expectedNumberOfEdge << "got" << noe << ")";
+    std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -374,7 +397,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cfc == true )
     {
-    qCritical() << "Cycle detection failed";
+    std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -382,52 +405,82 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cdtd == true )
     {
-    qCritical() << "Cycle detected flag wrong";
+    std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
     }
 
-  QList<int> sources;
+  std::list<int> sources;
   graph.sourceVertices(sources);
 
-  QList<int> expectedSources;
-  expectedSources << 1 << 5 << 10 << 12 << 13;
+  std::list<int> expectedSources;
+  expectedSources.push_back(1);
+  expectedSources.push_back(5);
+  expectedSources.push_back(10);
+  expectedSources.push_back(12);
+  expectedSources.push_back(13);
 
   if (sources != expectedSources)
     {
-    qCritical() << "Source vertices do not match (expected" << expectedSources << "got" << sources << ")";
+    std::cerr << "Problem with sourceVertices(sources)" << std::endl;
+    printIntegerList("sources:", sources);
+    printIntegerList("expectedSources:", expectedSources);
     return EXIT_FAILURE;
     }
 
-  QList<int> globalSort;
+  std::list<int> globalSort;
   graph.topologicalSort(globalSort);
 
-  QList<int> expectedGlobalSort;
-  expectedGlobalSort << 1 << 5 << 10 << 12 << 13 << 2 << 6 << 11 << 3 << 4 << 7 << 8 << 9;
+  std::list<int> expectedGlobalSort;
+  expectedGlobalSort.push_back(1);
+  expectedGlobalSort.push_back(5);
+  expectedGlobalSort.push_back(10);
+  expectedGlobalSort.push_back(12);
+  expectedGlobalSort.push_back(13);
+  expectedGlobalSort.push_back(2);
+  expectedGlobalSort.push_back(6);
+  expectedGlobalSort.push_back(11);
+  expectedGlobalSort.push_back(3);
+  expectedGlobalSort.push_back(4);
+  expectedGlobalSort.push_back(7);
+  expectedGlobalSort.push_back(8);
+  expectedGlobalSort.push_back(9);
+
   if (globalSort != expectedGlobalSort)
   {
-    qCritical() << "Topological sort error (expected" << expectedGlobalSort << "got" << globalSort << ")";
+    std::cerr << "Problem with topologicalSort(globalSort)" << std::endl;
+    printIntegerList("globalSort:", globalSort);
+    printIntegerList("expectedGlobalSort:", expectedGlobalSort);
     return EXIT_FAILURE;
   }
 
-  QList<int> subSort10;
+  std::list<int> subSort10;
   graph.topologicalSort(subSort10, 10);
 
-  QList<int> expectedSubSort10;
-  expectedSubSort10 << 10 << 8 << 11 << 9;
+  std::list<int> expectedSubSort10;
+  expectedSubSort10.push_back(10);
+  expectedSubSort10.push_back(8);
+  expectedSubSort10.push_back(11);
+  expectedSubSort10.push_back(9);
+
   if (subSort10 != expectedSubSort10)
   {
-    qCritical() << "Topological subgraph sort error (expected" << expectedSubSort10 << "got" << subSort10 << ")";
+    std::cerr << "Problem with topologicalSort(subSort10, 10)" << std::endl;
+    printIntegerList("subSort10:", subSort10);
+    printIntegerList("expectedSubSort10:", expectedSubSort10);
     return EXIT_FAILURE;
   }
 
-  QList<int> subSort12;
+  std::list<int> subSort12;
   graph.topologicalSort(subSort12, 12);
 
-  QList<int> expectedSubSort12;
-  expectedSubSort12 << 12;
+  std::list<int> expectedSubSort12;
+  expectedSubSort12.push_back(12);
+
   if (subSort12 != expectedSubSort12)
   {
-    qCritical() << "Topological subgraph sort error (expected" << expectedSubSort12 << "got" << subSort12 << ")";
+    std::cerr << "Problem with topologicalSort(subSort12, 12)" << std::endl;
+    printIntegerList("subSort12:", subSort12);
+    printIntegerList("expectedSubSort12:", expectedSubSort12);
     return EXIT_FAILURE;
   }
 
@@ -450,14 +503,14 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( nov != numberOfVertices )
     {
-    qCritical() << "Number of vertices does not match (expected" << numberOfVertices << "got" << nov << ")";
+    std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
     {
-    qCritical() << "Number of edges does not match (expected" << expectedNumberOfEdge << "got" << noe << ")";
+    std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -465,7 +518,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cfc == true )
     {
-    qCritical() << "Cycle detection failed";
+    std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -473,41 +526,52 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
 
   if( cdtd == true )
     {
-    qCritical() << "Cycle detected flag wrong";
+    std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
     }
 
-  QList<int> sources;
+  std::list<int> sources;
   graph.sourceVertices(sources);
 
-  QList<int> expectedSources;
-  expectedSources << 1 << 2 << 3;
+  std::list<int> expectedSources;
+  expectedSources.push_back(1);
+  expectedSources.push_back(2);
+  expectedSources.push_back(3);
 
   if (sources != expectedSources)
     {
-    qCritical() << "Source vertices do not match (expected" << expectedSources << "got" << sources << ")";
+    std::cerr << "Problem with sourceVertices(sources)" << std::endl;
+    printIntegerList("sources:", sources);
+    printIntegerList("expectedSources:", expectedSources);
     return EXIT_FAILURE;
     }
 
-  QList<int> globalSort;
+  std::list<int> globalSort;
   graph.topologicalSort(globalSort);
 
-  QList<int> expectedGlobalSort;
-  expectedGlobalSort << 1 << 2 << 3;
+  std::list<int> expectedGlobalSort;
+  expectedGlobalSort.push_back(1);
+  expectedGlobalSort.push_back(2);
+  expectedGlobalSort.push_back(3);
+
   if (globalSort != expectedGlobalSort)
   {
-    qCritical() << "Topological sort error (expected" << expectedGlobalSort << "got" << globalSort << ")";
+    std::cerr << "Problem with topologicalSort(globalSort)" << std::endl;
+    printIntegerList("globalSort:", globalSort);
+    printIntegerList("expectedGlobalSort:", expectedGlobalSort);
     return EXIT_FAILURE;
   }
 
-  QList<int> subSort2;
+  std::list<int> subSort2;
   graph.topologicalSort(subSort2, 2);
 
-  QList<int> expectedSubSort2;
-  expectedSubSort2 << 2;
+  std::list<int> expectedSubSort2;
+  expectedSubSort2.push_back(2);
   if (subSort2 != expectedSubSort2)
   {
-    qCritical() << "Topological subgraph sort error (expected" << expectedSubSort2 << "got" << subSort2 << ")";
+    std::cerr << "Problem with topologicalSort(subSort2, 2)" << std::endl;
+    printIntegerList("subSort2:", subSort2);
+    printIntegerList("expectedSubSort2:", expectedSubSort2);
     return EXIT_FAILURE;
   }
 
