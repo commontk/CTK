@@ -1,8 +1,8 @@
 #ifndef CTKDICOMHOSTMAINLOGIC_H
 #define CTKDICOMHOSTMAINLOGIC_H
 
-#include <QObject.h>
-#include <QStringList.h>
+#include <QObject>
+#include <QStringList>
 
 #include "ctkDicomAppHostingTypes.h"
 

@@ -32,6 +32,8 @@ struct QUuid;
 struct ctkDicomExchangeInterface
 {
 
+  virtual ~ctkDicomExchangeInterface() {};
+
   // Data exchange interface methods
 
   /**

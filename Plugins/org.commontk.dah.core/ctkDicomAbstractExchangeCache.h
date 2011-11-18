@@ -111,7 +111,7 @@ public:
    *
    * @return bool value of @a lastData in incoming notifyDataAvailable call
   */
-  bool ctkDicomAbstractExchangeCache::lastIncomingData() const;
+  bool lastIncomingData() const;
 
   /**
    * @brief Receive notification from other side.

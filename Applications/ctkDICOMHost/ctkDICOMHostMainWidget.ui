@@ -115,7 +115,7 @@
   <customwidget>
    <class>ctkHostedAppPlaceholderWidget</class>
    <extends>QFrame</extends>
-   <header>ctkhostedappplaceholderwidget.h</header>
+   <header>ctkHostedAppPlaceholderWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
