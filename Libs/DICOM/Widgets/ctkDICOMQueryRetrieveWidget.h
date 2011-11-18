@@ -25,6 +25,7 @@
 
 // Qt includes 
 #include <QWidget>
+#include <QItemSelection>
 
 
 // CTK includes
@@ -47,6 +48,7 @@ public Q_SLOTS:
   void query();
   void retrieve();
   void cancel();
+  void onSelectionChanged(const QItemSelection &, const QItemSelection &);
 
 Q_SIGNALS:
   /// Signal emit when studies have been retrieved (user clicked on the

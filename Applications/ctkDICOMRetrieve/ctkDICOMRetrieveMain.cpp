@@ -81,7 +81,7 @@ int main(int argc, char** argv)
   ctkDICOMRetrieve retrieve;
   retrieve.setCallingAETitle ( CallingAETitle );
   retrieve.setCalledAETitle ( CalledAETitle );
-  retrieve.setCalledPort ( CalledPort );
+  retrieve.setPort ( CalledPort );
   retrieve.setHost ( Host );
   retrieve.setMoveDestinationAETitle ( MoveDestinationAETitle );
 
@@ -94,12 +94,12 @@ int main(int argc, char** argv)
 
   QSharedPointer<ctkDICOMDatabase> dicomDatabase =  QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
   dicomDatabase->openDatabase( OutputDirectory.absoluteFilePath(QString("ctkDICOM.sql")) );
-  retrieve.setRetrieveDatabase( dicomDatabase );
+  retrieve.setDatabase( dicomDatabase );
 
   logger.info ( "Starting to retrieve" );
   try
     {
-    retrieve.retrieveStudy ( StudyUID );
+    retrieve.moveStudy ( StudyUID );
     }
   catch (std::exception e)
     {

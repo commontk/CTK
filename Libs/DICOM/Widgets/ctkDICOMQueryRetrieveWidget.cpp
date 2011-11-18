@@ -104,22 +104,12 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
   QObject::connect(this->CancelButton, SIGNAL(clicked()), q, SLOT(cancel()));
 
   this->results->setModel(&this->Model);
-  // TODO: use the checkable headerview when it becomes possible
-  // to select individual studies.  For now, assume that the 
-  // user will use the query terms to narrow down the transfer
-  /*
-  this->Model.setHeaderData(0, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
-  QHeaderView* previousHeaderView = this->results->header();
-  ctkCheckableHeaderView* headerView =
-    new ctkCheckableHeaderView(Qt::Horizontal, this->results);
-  headerView->setClickable(previousHeaderView->isClickable());
-  headerView->setMovable(previousHeaderView->isMovable());
-  headerView->setHighlightSections(previousHeaderView->highlightSections());
-  headerView->checkableModelHelper()->setPropagateDepth(-1);
-  this->results->setHeader(headerView);
-  // headerView is hidden because it was created with a visisble parent widget 
-  headerView->setHidden(false);
-  */
+  this->results->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  this->results->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  QObject::connect(this->results->selectionModel(), 
+    SIGNAL(selectionChanged (const QItemSelection &, const QItemSelection &)), 
+    q, SLOT(onSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 
 //----------------------------------------------------------------------------
@@ -237,7 +227,6 @@ void ctkDICOMQueryRetrieveWidget::query()
   // checkable headers - allow user to select the patient/studies to retrieve
   d->Model.setDatabase(d->QueryResultDatabase.database());
 
-  d->RetrieveButton->setEnabled(d->Model.rowCount());
   progress.setValue(progress.maximum());
   d->ProgressDialog = 0;
 }
@@ -274,6 +263,8 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
   progress.setMaximum(d->QueriesByStudyUID.keys().size());
   progress.open();
   progress.setValue(1);
+
+  // do the rerieval for each selected series
   foreach( QString studyUID, d->QueriesByStudyUID.keys() )
     {
     if (progress.wasCanceled())
@@ -287,10 +278,10 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
 
     // Get information which server we want to get the study from and prepare request accordingly
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
-    retrieve->setRetrieveDatabase( d->RetrieveDatabase );
+    retrieve->setDatabase( d->RetrieveDatabase );
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );
-    retrieve->setCalledPort( query->port() );
+    retrieve->setPort( query->port() );
     retrieve->setHost( query->host() );
     // TODO: check the model item to see if it is checked
     // for now, assume all studies queried and shown to the user will be retrieved
@@ -300,7 +291,9 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     try
       {
       // perform the retrieve
-      retrieve->retrieveStudy ( studyUID );
+      // TODO: give the option to use MOVE instead of CGET
+      //retrieve->moveStudy ( studyUID );
+      retrieve->getStudy ( studyUID );
       }
     catch (std::exception e)
       {
@@ -386,3 +379,15 @@ void ctkDICOMQueryRetrieveWidget::updateRetrieveProgress(int value)
   d->ProgressDialog->setValue( value );
   logger.error(QString("setting value to %1").arg(value) );
 }
+
+//----------------------------------------------------------------------------
+void ctkDICOMQueryRetrieveWidget::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+  Q_UNUSED(selected);
+  Q_UNUSED(deselected);
+  Q_D(ctkDICOMQueryRetrieveWidget);
+
+  logger.debug("Selection change");
+  d->RetrieveButton->setEnabled(d->results->selectionModel()->hasSelection());
+}
+

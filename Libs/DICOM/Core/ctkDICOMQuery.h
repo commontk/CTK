@@ -96,6 +96,10 @@ Q_SIGNALS:
   /// Signal is emitted inside the query() function. It sends the different step
   /// the function is at.
   void progress(const QString& message);
+  /// Signal is emitted from the private SCU class when dicom query responses
+  /// arrive
+  void queryResponseHandled( const QString message );
+
 
 protected:
   QScopedPointer<ctkDICOMQueryPrivate> d_ptr;
@@ -103,6 +107,8 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkDICOMQuery);
   Q_DISABLE_COPY(ctkDICOMQuery);
+
+  friend class ctkDICOMQuerySCUPrivate;  // for access to queryResponseHandled
 };
 
 #endif

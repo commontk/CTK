@@ -76,16 +76,11 @@ struct ctkEventAdmin
    * it under multiple topics. In that case, emitting the signal will result in
    * multiple events being send.
    *
-   * If the <code>topic</code> string is empty, a <code>std::invalid_argument</code>
-   * exception will be thrown.
-   *
    * @param publisher The owner of the signal.
    * @param signal The signal in normalized form.
    * @param topic The event topic to use.
    * @param type Qt::QueuedConnection for asynchronous delivery and
    *        Qt::DirectConnection for synchronous delivery.
-   *
-   * @throws std::invalid_argument If <code>topic</code> is empty.
    *
    * @see unpublishSignal()
    */
