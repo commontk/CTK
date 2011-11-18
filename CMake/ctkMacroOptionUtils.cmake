@@ -30,7 +30,7 @@ macro(ctk_option option_prefix name doc default)
       # Generate user-friendly message
       set(enabling_msg)
       ctk_option_logical_expression_to_message(enabling_msg "${ARGN}")
-      message("Enabling [${option_prefix}_${name}] because of [${enabling_msg}] evaluates to True")
+      message(STATUS "Enabling [${option_prefix}_${name}] because of [${enabling_msg}] evaluates to True")
     endif()
   endif()
 endmacro()
