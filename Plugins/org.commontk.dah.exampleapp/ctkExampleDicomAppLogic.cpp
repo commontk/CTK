@@ -53,7 +53,13 @@ ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), AppWidget(0)
   connect(this, SIGNAL(exitHostedApp()), this, SLOT(onExitHostedApp()), Qt::QueuedConnection);
 
   //notify Host we are ready.
-  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
+  try {
+    getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
+  }
+  catch(...)
+  {
+    qDebug() << "ctkDicomAbstractApp: Could not getHostInterface()";
+  }
 }
 
 //----------------------------------------------------------------------------
