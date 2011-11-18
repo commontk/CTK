@@ -255,11 +255,13 @@ const QSqlDatabase& ctkDICOMDatabase::database() const {
   return d->Database;
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMDatabase::setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator *generator){
     Q_D(ctkDICOMDatabase);
     d->thumbnailGenerator = generator;
 }
 
+//------------------------------------------------------------------------------
 ctkDICOMAbstractThumbnailGenerator* ctkDICOMDatabase::thumbnailGenerator(){
     Q_D(const ctkDICOMDatabase);
     return d->thumbnailGenerator;
