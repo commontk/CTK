@@ -27,5 +27,4 @@ ENDMACRO( SIMPLE_TEST  )
 #
 # Add Tests
 #
-
-# SIMPLE_TEST(ctkDICOMTest1)
+SIMPLE_TEST(ctkDICOMTest1)
