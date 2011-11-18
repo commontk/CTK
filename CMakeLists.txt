@@ -74,6 +74,7 @@ endif()
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Debug' as none was specified.")
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
+  mark_as_advanced(CMAKE_BUILD_TYPE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
     "MinSizeRel" "RelWithDebInfo")
@@ -178,6 +179,7 @@ set(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
 include(CMake/ctkMacroParseArguments.cmake)
 include(CMake/ctkMacroSetPaths.cmake)
 include(CMake/ctkMacroListFilter.cmake)
+include(CMake/ctkMacroOptionUtils.cmake)
 include(CMake/ctkMacroBuildLib.cmake)
 include(CMake/ctkMacroBuildLibWrapper.cmake)
 include(CMake/ctkMacroBuildPlugin.cmake)
@@ -199,17 +201,10 @@ include(CMake/ctkFunctionGetLibraryDirs.cmake)
 include(CMake/ctkFunctionGetGccVersion.cmake)
 
 #-----------------------------------------------------------------------------
-# Qt Designer Plugins
-
-option(BUILD_QTDESIGNER_PLUGINS "Build Qt Designer plugins" ON)
-if(BUILD_QTDESIGNER_PLUGINS)
-  include(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
-endif()
-
-#-----------------------------------------------------------------------------
 # Testing
 #
-option(BUILD_TESTING "Test the project" ON)
+option(BUILD_TESTING "Test the project" OFF)
+mark_as_advanced(BUILD_TESTING)
 if(BUILD_TESTING)
   enable_testing()
   include(CTest)
@@ -249,6 +244,7 @@ endif()
 # Coverage
 #
 option(WITH_COVERAGE "Enable/Disable coverage" OFF)
+mark_as_advanced(WITH_COVERAGE)
 
 #-----------------------------------------------------------------------------
 # Documentation
@@ -344,73 +340,67 @@ if(QT4_FOUND)
 endif()
 
 #-----------------------------------------------------------------------------
-# CTK Libraries - Use ON or OFF to indicate if the library should be built by default
-#
-set(CTK_LIBS
-  Core:ON
-  PluginFramework:ON
-  Widgets:OFF
-  DICOM/Core:OFF
-  DICOM/Widgets:OFF
-  ImageProcessing/ITK/Core:OFF
-  #Messaging/Core:OFF  # MessagingCore library need some love :) - Let's disable it for now :(
-  #ModuleDescription:OFF # ModuleDescription library need some love :) - Let's disable it for now :(
-  Scripting/Python/Core:OFF
-  Scripting/Python/Widgets:OFF
-  Visualization/VTK/Core:OFF
-  Visualization/VTK/Widgets:OFF
-  #Visualization/XIP:OFF # XIP library need some love :) - Let's disable it for now :(
-  )
-
-#-----------------------------------------------------------------------------
-# CTK Plugins - Use ON or OFF to indicate if the plugin should be built by default
-#
-set(CTK_PLUGINS
-  # Optional plug-ins implementings interfaces in PluginFramework/service/
-  org.commontk.eventbus:OFF
-  org.commontk.configadmin:OFF
-  org.commontk.eventadmin:OFF
-  org.commontk.log:OFF
-  org.commontk.log4qt:OFF
-  org.commontk.metatype:OFF
-
-  # Plug-ins related to DICOM WG23 (Application Hosting)
-  org.commontk.dah.core:OFF
-  org.commontk.dah.app:OFF
-  org.commontk.dah.host:OFF
-  org.commontk.dah.exampleapp:OFF
-  org.commontk.dah.examplehost:OFF
-
-  # Misc
-  org.commontk.plugingenerator.core:OFF
-  org.commontk.plugingenerator.ui:OFF
-  org.commontk.slicermodule:OFF
-  )
-
-#-----------------------------------------------------------------------------
-# CTK Applications - Use ON or OFF to indicate if the application should be built by default
-#
-set(CTK_APPLICATIONS
-  ctkCLIPluginExplorer:OFF
-  ctkDICOM:OFF
-  ctkDICOMIndexer:OFF
-  ctkDICOMDemoSCU:OFF
-  ctkDICOMQuery:OFF
-  ctkDICOMRetrieve:OFF
-  ctkDICOMQueryRetrieve:OFF
-  ctkExampleHost:OFF
-  ctkExampleHostedApp:OFF
-  ctkEventBusDemo:OFF
-  ctkPluginBrowser:OFF
-  ctkPluginGenerator:OFF
-  ctkDICOMObjectViewer:OFF
-  ctkSimplePythonShell:OFF
-  )
-
-#-----------------------------------------------------------------------------
 # To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
 # before the SuperBuild script is included
 #
+
+#-----------------------------------------------------------------------------
+# High-Level CTK options
+
+# The ctk_enable_option macro expects a logical expression after the first
+# three arguments. This expression should only contain build option names
+# which belong to leafs in the required dependency tree.
+
+# The CTK infrastructure for high-level DICOM support. This includes
+# DICOM indexing, networking, and GUI widgets.
+ctk_enable_option(DICOM "Enable default DICOM support" OFF
+                  CTK_LIB_DICOM/Widgets)
+
+# The CTK infrastructure for building a DICOM Part 19 compliant application
+# host and/or hosted application. This will not enable any example plugins
+# or executables (enable CTK_ENABLE_EXAMPLES for that).
+ctk_enable_option(DICOMApplicationHosting "Enable DICOM Part 19 Application Hosting support" OFF
+                  CTK_PLUGIN_org.commontk.dah.host AND CTK_PLUGIN_org.commontk.dah.app)
+
+# The CTK Qt Widgets. This will enable the Qt Widget library only.
+# It might trigger the enabling of other widget libraries in combination
+# with other enabled options.
+ctk_enable_option(Widgets "Enable Qt Widget libraries" OFF
+                  CTK_LIB_Widgets)
+
+# The CTK Plugin Framework, a dynamic component system based on OSGi.
+# This will enable only the framework itself.                  
+ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
+                  CTK_LIB_PluginFramework)
+
+#-----------------------------------------------------------------------------
+# Other options
+
+# The CTK Python Wrapping
+ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
+                  CTK_LIB_Scripting/Python/Core)
+
+# Build examples
+# Create the logical expression containing the minium set of required options
+# for the CTK_BUILD_EXAMPLES option to be ON
+set(_build_examples_logical_expr)
+foreach(_app ${CTK_ENABLED_APPS})
+  list(APPEND _build_examples_logical_expr CTK_APP_${_app} AND)
+endforeach()
+if(_build_examples_logical_expr)
+  list(REMOVE_AT _build_examples_logical_expr -1)
+endif()
+
+ctk_enable_option_raw(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF
+                  ${_build_examples_logical_expr})
+
+# Git protocol option
+option(CTK_USE_GIT_PROTOCOL "If behind a firewall turn this OFF to use http instead." ON)
+mark_as_advanced(CTK_USE_GIT_PROTOCOL)
+set(git_protocol "git")
+if(NOT CTK_USE_GIT_PROTOCOL)
+  set(git_protocol "http")
+endif()
 
 # Let's mark as advanced some default properties
 mark_as_advanced(CMAKE_INSTALL_PREFIX)
@@ -418,21 +408,178 @@ mark_as_advanced(DART_TESTING_TIMEOUT)
 
 # KWStyle
 option(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
-#mark_as_advanced(CTK_USE_KWSTYLE)
+mark_as_advanced(CTK_USE_KWSTYLE)
 
-#---------------------------------------------------------------------------
-# Will contain a list of sub-directory without option ON or OFF
-#
-set(CTK_LIBS_SUBDIRS )
-set(CTK_PLUGINS_SUBDIRS )
-set(CTK_APPLICATIONS_SUBDIRS )
+# Qt Designer Plugins
+option(CTK_BUILD_QTDESIGNER_PLUGINS "Build Qt Designer plugins" ON)
+mark_as_advanced(CTK_BUILD_QTDESIGNER_PLUGINS)
+if(CTK_BUILD_QTDESIGNER_PLUGINS)
+  include(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
+endif()
 
 #-----------------------------------------------------------------------------
-# Build options associated with CTK libraries
+# CTK Libraries
+#
+
+ctk_lib_option(Core
+               "Build the Core library" ON)
+
+ctk_lib_option(PluginFramework
+               "Build the Plugin Framework" OFF
+               CTK_ENABLE_PluginFramework)
+
+ctk_lib_option(Widgets
+               "Build the Widgets library" OFF
+               CTK_ENABLE_Widgets OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES))
+               
+ctk_lib_option(DICOM/Core
+               "Build the DICOM Core library" OFF
+               CTK_ENABLE_DICOM OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES))
+               
+ctk_lib_option(DICOM/Widgets
+               "Build the DICOM Widgets library" OFF
+               CTK_ENABLE_DICOM AND CTK_ENABLE_Widgets OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES))
+               
+ctk_lib_option(ImageProcessing/ITK/Core
+               "Build the ITK Core library" OFF)
+               
+ctk_lib_option(Scripting/Python/Core
+               "Build the Python Core library" OFF)
+               
+ctk_lib_option(Scripting/Python/Widgets
+               "Build the Python Widgets library" OFF
+               CTK_LIB_Widgets AND CTK_ENABLE_Python_Wrapping)
+               
+ctk_lib_option(Visualization/VTK/Core
+               "Build the VTK Core library" OFF)
+               
+ctk_lib_option(Visualization/VTK/Widgets
+               "Build the VTK Widgets library" OFF)
+               
+#ctk_lib_option(ModuleDescription
+#               "Build the Command Line Module Description library" OFF)
+
+#ctk_lib_option(Visualization/XIP
+#               "Build the XIP library" OFF)
+
+#-----------------------------------------------------------------------------
+# CTK Applications - Use ON or OFF to indicate if the application should be built by default
+#
+ 
+#ctk_app_option(ctkCLIPluginExplorer "Build the CLI Plugin Explorer" OFF)
+
+ctk_app_option(ctkDICOM
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkDICOMIndexer
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkDICOMDemoSCU
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkDICOMQuery
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkDICOMRetrieve
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkDICOMQueryRetrieve
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkExampleHost
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkExampleHostedApp
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkEventBusDemo
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkPluginBrowser
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkPluginGenerator
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkDICOMObjectViewer
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+               
+ctk_app_option(ctkSimplePythonShell
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
+
+# Save the set of enabled apps in a cache file
+set(_enabled_apps)
+foreach(_app ${CTK_APPS})
+  if(CTK_APP_${_app})
+    list(APPEND _enabled_apps ${_app})
+  endif()
+endforeach()
+set(CTK_ENABLED_APPS ${_enabled_apps} CACHE INTERNAL "" FORCE)
+
+#-----------------------------------------------------------------------------
+# CTK Plugins - none of them is build by default
+#
+
+# Plugins in the list below are not build by default
+set(plugin_list
+  # Optional plug-ins implementings interfaces in PluginFramework/service/
+  org.commontk.configadmin
+  org.commontk.eventadmin
+  org.commontk.log
+  org.commontk.log4qt
+  org.commontk.metatype
+
+  # Misc
+  org.commontk.slicermodule
+  )
+
+foreach(_plugin ${plugin_list})  
+  ctk_plugin_option(${_plugin} "Build the ${_plugin} plugin." OFF)
+endforeach()
+
+# Plug-ins related to the PluginGenerator application
+ctk_plugin_option(org.commontk.plugingenerator.core "Build the org.commontk.plugingenerator.core plugin." OFF)
+ctk_plugin_option(org.commontk.plugingenerator.ui
+                  "Build the org.commontk.plugingenerator.ui plugin." OFF
+                  CTK_APP_ctkPluginGenerator)
+
+# Plug-ins related to DICOM WG23 (Application Hosting)
+ctk_plugin_option(org.commontk.dah.core "Build the org.commontk.dah.core plugin." OFF)
+ctk_plugin_option(org.commontk.dah.app "Build the org.commontk.dah.app plugin." OFF)
+ctk_plugin_option(org.commontk.dah.host "Build the org.commontk.dah.host plugin." OFF)
+                  
+ctk_plugin_option(org.commontk.dah.exampleapp
+                  "Build the org.commontk.dah.exampleapp plugin." OFF
+                  CTK_APP_ctkExampleHostedApp)
+                  
+ctk_plugin_option(org.commontk.dah.examplehost
+                  "Build the org.commontk.dah.examplehost plugin." OFF
+                  CTK_APP_ctkExampleHost)
+
+# Plug-ins related to the EventBus demo application
+ctk_plugin_option(org.commontk.eventbus
+                  "Build the org.commontk.eventbus plugin." OFF
+                  CTK_APP_ctkEventBusDemo)
+
+#-----------------------------------------------------------------------------
+# Generate target_directories list - List of directory corresponding to the different
+# libraries, plugins and applications associated with the corresponding option name.
 #
 # The following FOREACH loops are used to:
-#   1) Add build options associated with either libraries, plugins and applications
-#   2) Update either CTK_LIBS_SUBDIRS, CTK_PLUGINS_SUBDIRS or CTK_APPS_SUBDIRS variables
+#   1) Update either CTK_LIBS_SUBDIRS, CTK_PLUGINS_SUBDIRS or CTK_APPS_SUBDIRS variables
 #
 # For CTK libraries, if the file Libs/<DIR>/<LIBNAME>/ctk_library_options.cmake exists,
 # in addition to 'CTK_LIB_<DIR>/<LIBNAME>' option, the following ones
@@ -447,52 +594,23 @@ set(CTK_APPLICATIONS_SUBDIRS )
 #       OPT2:ON
 #       )
 
-# Build options associated with CTK libraries
-set(ctk_lib_options_list) # This list will be updated in ctkFunctionExtractOptionNameAndValue
-foreach(lib ${CTK_LIBS})
-  ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
-  option(CTK_LIB_${lib_name} "Enable ${lib_name} Library." ${lib_value})
-  if(CTK_LIB_${lib_name})
-    ctkMacroAddCtkLibraryOptions(${lib_name})
-  endif()
-  list(APPEND CTK_LIBS_SUBDIRS "${lib_name}")
-endforeach()
-
-# Build options associated with CTK plugins
-foreach(plugin ${CTK_PLUGINS})
-  ctkFunctionExtractOptionNameAndValue(${plugin} plugin_name plugin_value)
-  option(CTK_PLUGIN_${plugin_name} "Build ${plugin_name} Plugin." ${plugin_value})
-  list(APPEND CTK_PLUGINS_SUBDIRS "${plugin_name}")
-endforeach()
-
-# Build options associated with CTK applications
-foreach(app ${CTK_APPLICATIONS})
-  ctkFunctionExtractOptionNameAndValue(${app} app_name app_value)
-  option(CTK_APP_${app_name} "Build ${app_name} Application." ${app_value})
-  list(APPEND CTK_APPLICATIONS_SUBDIRS "${app_name}")
-endforeach()
-
-#-----------------------------------------------------------------------------
-# Generate target_directories list - List of directory corresponding to the different
-# libraries, plugins and applications associated with the corresponding option name.
-#
-
 # Create list of directories corresponding to the enabled targets
 set(target_directories)
 
-foreach(lib ${CTK_LIBS_SUBDIRS})
-  set(option_name CTK_LIB_${lib})
-  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}^^${option_name}")
+set(ctk_lib_options_list) # This list will be updated in ctkMacroAddCtkLibraryOptions
+foreach(lib ${CTK_LIBS})
+  if(CTK_LIB_${lib})
+    ctkMacroAddCtkLibraryOptions(${lib})
+  endif()
+  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}^^CTK_LIB_${lib}")
 endforeach()
 
-foreach(plugin ${CTK_PLUGINS_SUBDIRS})
-  set(option_name CTK_PLUGIN_${plugin})
-  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^${option_name}")
+foreach(plugin ${CTK_PLUGINS})
+  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^CTK_PLUGIN_${plugin}")
 endforeach()
 
-foreach(app ${CTK_APPLICATIONS_SUBDIRS})
-  set(option_name CTK_APP_${app})
-  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}^^${option_name}")
+foreach(app ${CTK_APPS})
+  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}^^CTK_APP_${app}")
 endforeach()
 
 #message(STATUS target_directories:${target_directories})
@@ -526,26 +644,34 @@ ctkFunctionGenerateDGraphInput(${CTK_BINARY_DIR} "${target_directories}" WITH_EX
 ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${target_directories}")
 
 #-----------------------------------------------------------------------------
-# CTK Python wrapping - Propose the option only if CTK_LIB_Scriping/Python/Core is ON
+# CTK Python wrapping
+# Enable CTK_LIB_Scripting/Python/Core if either CTK_ENABLE_Python_Wrapping OR CTK_WRAP_PYTHONQT_FULL
+#
+set(CTK_WRAP_PYTHONQT_LIGHT ${CTK_ENABLE_Python_Wrapping})
+option(CTK_WRAP_PYTHONQT_FULL "Experimental - Wrap CTK classes using Qt meta-object system into Python language" OFF)
+mark_as_advanced(CTK_WRAP_PYTHONQT_FULL)
+if(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
+  message(FATAL_ERROR "CTK_ENABLE_Python_Wrapping AND CTK_WRAP_PYTHONQT_FULL options are mutually exclusive. Please enable only one !")
+endif()
+
+set(logical_expr CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+if((${logical_expr}) AND NOT CTK_LIB_Scripting/Python/Core)
+  set(CTK_LIB_Scripting/Python/Core ON CACHE BOOL "Build the Python Core library" FORCE)
+  set(enabling_msg)
+  ctk_option_logical_expression_to_message(enabling_msg "${logical_expr}")
+  message("Enabling [CTK_LIB_Scripting/Python/Core] because of [${enabling_msg}] evaluates to True")
+endif()
+
+# Check if dependencies are satisfied
 if(CTK_LIB_Scripting/Python/Core)
   find_package(PythonInterp)
   if(NOT PYTHONINTERP_FOUND)
-    message(SEND_ERROR "PYTHON_EXECUTABLE variable should be set to build CTK_LIB_Scripting/Python")
+    message(FATAL_ERROR "PYTHON_EXECUTABLE variable should be set to build CTK_LIB_Scripting/Python")
   endif()
   find_package(PythonLibs)
   if(NOT PYTHONLIBS_FOUND)
     message(FATAL_ERROR "PYTHON_LIBRARIES and PYTHON_INCLUDE_DIRS should be set to build CTK_LIB_Scripting/Python")
   endif()
-  option(CTK_WRAP_PYTHONQT_FULL "Experimental - Wrap CTK classes using Qt meta-object system into Python language" OFF)
-  mark_as_advanced(CTK_WRAP_PYTHONQT_FULL)
-  option(CTK_WRAP_PYTHONQT_LIGHT "Wrap CTK classes using Qt meta-object system into Python language" OFF)
-  if(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
-    message(SEND_ERROR "CTK_WRAP_PYTHONQT_{LIGHT,FULL} options are mutually exclusive. Please enable only one !")
-  endif()
-else()
-  # Note that an unset boolean variable is considered to be False
-  unset(CTK_WRAP_PYTHONQT_FULL CACHE)
-  unset(CTK_WRAP_PYTHONQT_LIGHT CACHE)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -705,7 +831,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories
 #
-foreach(lib ${CTK_LIBS_SUBDIRS})
+foreach(lib ${CTK_LIBS})
   IF (CTK_LIB_${lib})
     add_subdirectory(Libs/${lib})
   endif()
@@ -714,7 +840,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 # Add CTK plugin subdirectories
 #
-foreach(plugin ${CTK_PLUGINS_SUBDIRS})
+foreach(plugin ${CTK_PLUGINS})
   if(CTK_PLUGIN_${plugin})
     add_subdirectory(Plugins/${plugin})
   endif()
@@ -723,7 +849,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 # Add CTK application subdirectories
 #
-foreach(app ${CTK_APPLICATIONS_SUBDIRS})
+foreach(app ${CTK_APPS})
   IF (CTK_APP_${app})
     add_subdirectory(Applications/${app})
   endif()

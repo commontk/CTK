@@ -54,7 +54,7 @@ if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
 endif()
 
 # Plugins
-#if(BUILD_QTDESIGNER_PLUGINS)
+#if(CTK_BUILD_QTDESIGNER_PLUGINS)
 #  add_subdirectory(Plugins)
 #endif()
 
