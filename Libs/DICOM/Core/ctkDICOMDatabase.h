@@ -145,7 +145,6 @@ public:
   /// Check if file is already in database and up-to-date
   bool fileExistsAndUpToDate(const QString& filePath);
 
-  // bool removeImage(const QString& sopInstanceUID);
   /// remove the series from the database, including images and
   /// thumbnails  
   bool removeSeries(const QString& seriesInstanceUID);

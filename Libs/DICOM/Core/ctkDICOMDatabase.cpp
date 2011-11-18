@@ -798,12 +798,7 @@ bool ctkDICOMDatabase::isInMemory() const
   Q_D(const ctkDICOMDatabase);
   return d->DatabaseFileName == ":memory:";
 }
-/*
-bool ctkDICOMDatabase::removeImage(const QString& sopInstanceUID)
-{
-  return false;
-}
-*/
+
 bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
