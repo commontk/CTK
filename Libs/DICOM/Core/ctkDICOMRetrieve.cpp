@@ -74,7 +74,7 @@ public:
     {
       if (this->retrieve)
         {
-        emit this->retrieve->moveResponseHandled("Got one!");
+        emit this->retrieve->debug("Got one!");
         return this->ctkDcmSCU::handleMOVEResponse(
                         presID, response, waitForNextResponse);
         }
@@ -90,7 +90,7 @@ public:
     {
       if (this->retrieve)
         {
-        emit this->retrieve->storeRequested("Got a store request!");
+        emit this->retrieve->debug("Got a store request!");
         if (this->retrieve && this->retrieve->database())
           {
           this->retrieve->database()->insert(incomingObject);
@@ -113,7 +113,7 @@ public:
     {
       if (this->retrieve)
         {
-        emit this->retrieve->retrieveStatusChanged("Got a cget response!");
+        emit this->retrieve->debug("Got a cget response!");
         return this->ctkDcmSCU::handleCGETResponse(presID, response, continueCGETSession);
         }
       return false;

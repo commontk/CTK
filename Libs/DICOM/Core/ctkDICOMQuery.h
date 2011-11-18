@@ -61,7 +61,7 @@ public:
   /// 0 by default.
   void setPort ( int port );
   int port()const;
-  
+
   /// Query a remote DICOM Image Store SCP
   /// You must at least set the host and port before calling query()
   bool query(ctkDICOMDatabase& database);
@@ -79,7 +79,7 @@ public:
   /// Key         DICOM Tag                Type        Example
   /// -----------------------------------------------------------
   /// Name        DCM_PatientName         QString     JOHNDOE
-  /// Study       DCM_StudyDescription     QString     
+  /// Study       DCM_StudyDescription     QString
   /// Series      DCM_SeriesDescription    QString
   /// ID          DCM_PatientID            QString
   /// Modalities  DCM_ModalitiesInStudy    QStringList CT, MR, MN
@@ -96,10 +96,14 @@ Q_SIGNALS:
   /// Signal is emitted inside the query() function. It sends the different step
   /// the function is at.
   void progress(const QString& message);
-  /// Signal is emitted from the private SCU class when dicom query responses
-  /// arrive
-  void queryResponseHandled( const QString message );
-
+  /// Signal is emitted inside the query() function. It sends 
+  /// detailed feedback for debugging
+  void debug(const QString& message);
+  /// Signal is emitted inside the query() function. It send any error messages
+  void error(const QString& message);
+  /// Signal is emitted inside the query() function when finished with value 
+  /// true for success or false for error
+  void done(const bool& error);
 
 protected:
   QScopedPointer<ctkDICOMQueryPrivate> d_ptr;

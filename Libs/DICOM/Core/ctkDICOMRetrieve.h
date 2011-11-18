@@ -76,7 +76,7 @@ public:
   Q_INVOKABLE void setDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
   Q_INVOKABLE QSharedPointer<ctkDICOMDatabase> database()const;
 
-public slots:
+public Q_SLOTS:
   /// Use CMOVE to ask peer host to store data to move destination
   bool moveSeries( const QString& studyInstanceUID,
                        const QString& seriesInstanceUID );
@@ -88,22 +88,26 @@ public slots:
   /// Use CGET to ask peer host to store data to us
   bool getStudy( const QString& studyInstanceUID );
 
-signals:
-  //TODO: the signature of these signals will change
-  //from string to a more specific format when we decide
-  //what information to send
-  /// emitted when a move response has been received from dcmtk
-  void moveResponseHandled( const QString message );
-  /// emitted when a dataset is incoming from a CGET
-  void storeRequested( const QString message );
-  /// emitted when remote server sends us CGET responses
-  void retrieveStatusChanged( const QString message );
+Q_SIGNALS:
+  /// Signal is emitted inside the retrieve() function. It ranges from 0 to 100.
+  /// In case of an error, you are assured that the progress value 100 is fired
+  void progress(int progress);
+  /// Signal is emitted inside the retrieve() function. It sends the different step
+  /// the function is at.
+  void progress(const QString& message);
+  /// Signal is emitted inside the retrieve() function. It sends 
+  /// detailed feedback for debugging
+  void debug(const QString& message);
+  /// Signal is emitted inside the retrieve() function. It send any error messages
+  void error(const QString& message);
+  /// Signal is emitted inside the retrieve() function when finished with value 
+  /// true for success or false for error
+  void done(const bool& error);
 
 protected:
   QScopedPointer<ctkDICOMRetrievePrivate> d_ptr;
 
 private:
-
   Q_DECLARE_PRIVATE(ctkDICOMRetrieve);
   Q_DISABLE_COPY(ctkDICOMRetrieve);
 

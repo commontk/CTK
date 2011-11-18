@@ -73,7 +73,7 @@ public:
       if (this->query)
         {
         logger.debug ( "FIND RESPONSE" );
-        emit this->query->queryResponseHandled("Got a find response!");
+        emit this->query->debug("Got a find response!");
         return this->ctkDcmSCU::handleFINDResponse(presID, response, waitForNextResponse);
         }
     };
