@@ -122,6 +122,9 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
   OFList<OFString> dcmtkFileNames;
   OFStandard::searchDirectoryRecursively( QDir::toNativeSeparators(src_directory.c_str()).toAscii().data(), originalDcmtkFileNames, "", "");
 
+  int totalNumberOfFiles = originalDcmtkFileNames.size();
+  int numberOfFilesProcessed = 0;
+
   // hack to reverse list of filenames (not neccessary when image loading works correctly)
   for ( OFListIterator(OFString) iter = originalDcmtkFileNames.begin(); iter != originalDcmtkFileNames.end(); ++iter )
   {
@@ -134,13 +137,21 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
 
   if(iter == last) return;
 
-  emit foundFilesToIndex(dcmtkFileNames.size());
+  emit foundFilesToIndex(totalNumberOfFiles);
 
   /* iterate over all input filenames */
   int fileNumber = 0;
+  int currentProgress = -1;
+
   while (iter != last)
   {
     emit indexingFileNumber(++fileNumber);
+    int newProgress = ( fileNumber * 100 ) / totalNumberOfFiles;
+    if (newProgress != currentProgress)
+    {
+      currentProgress = newProgress;
+      emit progress( currentProgress );
+    }
     QString filePath((*iter).c_str());
     this->addFile(ctkDICOMDatabase, filePath, destinationDirectoryName);
     ++iter;
