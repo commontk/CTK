@@ -38,9 +38,9 @@ class ctkDICOMDatasetPrivate
 
     bool m_DICOMDataSetInitialized;
     bool m_StrictErrorHandling;
-    bool m_TakeOwnership;
 
     DcmDataset* m_DcmDataset;
+    bool m_TakeOwnership;
 };
 
 
