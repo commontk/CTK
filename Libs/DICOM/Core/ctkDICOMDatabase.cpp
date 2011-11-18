@@ -876,9 +876,29 @@ bool ctkDICOMDatabase::cleanup()
   seriesCleanup.exec("DELETE FROM Patients WHERE ( SELECT COUNT(*) FROM Studies WHERE Studies.PatientsUID = Patients.UID ) = 0;");
   return true;
 }
-/*
+
 bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
 {
-  return false;
+  Q_D(ctkDICOMDatabase);
+  
+  QSqlQuery seriesForStudy( d->Database );
+  seriesForStudy.prepare("SELECT SeriesInstanceUID FROM Series WHERE StudyInstanceUID = :studyID");
+  seriesForStudy.bindValue(":studyID", studyInstanceUID);
+  bool success = seriesForStudy.exec();
+  if (!success)
+  {
+    logger.error("SQLITE ERROR: " + seriesForStudy.lastError().driverText());
+    return false;
+  }
+  bool result = true;
+  while ( seriesForStudy.next() )
+  {
+    QString seriesInstanceUID = seriesForStudy.value(seriesForStudy.record().indexOf("SeriesInstanceUID")).toString();
+    if ( ! this->removeSeries(seriesInstanceUID) )
+    {
+      result = false;
+    }
+  }
+  return result;;
 }
-*/
+

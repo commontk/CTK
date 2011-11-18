@@ -148,7 +148,7 @@ public:
   /// remove the series from the database, including images and
   /// thumbnails  
   bool removeSeries(const QString& seriesInstanceUID);
-  // bool removeStudy(const QString& studyInstanceUID);
+  bool removeStudy(const QString& studyInstanceUID);
   bool cleanup();
 
 Q_SIGNALS:
