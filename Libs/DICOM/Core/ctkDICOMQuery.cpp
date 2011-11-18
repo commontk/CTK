@@ -87,7 +87,7 @@ public:
   ~ctkDICOMQueryPrivate();
 
   /// Add a StudyInstanceUID to be queried
-  void addStudyInstanceUID(const QString& StudyInstanceUID );
+  void addStudyInstanceUIDAndDataset(const QString& StudyInstanceUID, DcmDataset* dataset );
 
   QString                 CallingAETitle;
   QString                 CalledAETitle;
@@ -97,6 +97,7 @@ public:
   ctkDICOMQuerySCUPrivate SCU;
   DcmDataset*             Query;
   QStringList             StudyInstanceUIDList;
+  QList<DcmDataset*>       StudyDatasetList;
 };
 
 //------------------------------------------------------------------------------
@@ -116,9 +117,10 @@ ctkDICOMQueryPrivate::~ctkDICOMQueryPrivate()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQueryPrivate::addStudyInstanceUID( const QString& s )
+void ctkDICOMQueryPrivate::addStudyInstanceUIDAndDataset( const QString& s, DcmDataset* dataset )
 {
   this->StudyInstanceUIDList.append ( s );
+  this->StudyDatasetList.append ( dataset );
 }
 
 //------------------------------------------------------------------------------
@@ -219,6 +221,10 @@ QStringList ctkDICOMQuery::studyInstanceUIDQueried()const
 //------------------------------------------------------------------------------
 bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 {
+  //// turn on logging if needed for debug:
+  //dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();
+  //log.setLogLevel(OFLogger::DEBUG_LOG_LEVEL);
+
   // ctkDICOMDatabase::setDatabase ( database );
   Q_D(ctkDICOMQuery);
   // In the following, we emit progress(int) after progress(QString), this
@@ -392,7 +398,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
       database.insert ( dataset, false /* do not store to disk*/, false /* no thumbnail*/);
       OFString StudyInstanceUID;
       dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
-      d->addStudyInstanceUID ( StudyInstanceUID.c_str() );
+      d->addStudyInstanceUIDAndDataset ( StudyInstanceUID.c_str(), dataset );
       }
     }
 
@@ -412,9 +418,16 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   // Now search each within each Study that was identified
   d->Query->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
   float progressRatio = 25. / d->StudyInstanceUIDList.count();
-  int i = 0;
+  int i = 0; 
+
+  QListIterator<DcmDataset*> datasetIterator(d->StudyDatasetList);
   foreach ( QString StudyInstanceUID, d->StudyInstanceUIDList )
     {
+    DcmDataset *studyDataset = datasetIterator.next();
+    DcmElement *patientName, *patientID;
+    studyDataset->findAndGetElement(DCM_PatientName, patientName);
+    studyDataset->findAndGetElement(DCM_PatientID, patientID);
+
     logger.debug ( "Starting Series C-FIND for Study: " + StudyInstanceUID );
     emit progress(QString("Starting Series C-FIND for Study: ") + StudyInstanceUID);
     emit progress(50 + (progressRatio * i++));
@@ -429,6 +442,10 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
         DcmDataset *dataset = (*it)->m_dataset;
         if ( dataset != NULL )
           {
+          // add the patient elements not provided for the series level query
+          dataset->insert( patientName, true );
+          dataset->insert( patientID, true );
+          // insert series dataset 
           database.insert ( dataset, false /* do not store */, false /* no thumbnail */ );
           }
         }
