@@ -32,12 +32,13 @@ class ctkDICOMDatasetPrivate
 {
   public:
 
-    ctkDICOMDatasetPrivate() : m_DcmDataset(0) {}
+    ctkDICOMDatasetPrivate() : m_DcmDataset(0), m_TakeOwnership(true) {}
 
     QString m_SpecificCharacterSet;
 
     bool m_DICOMDataSetInitialized;
     bool m_StrictErrorHandling;
+    bool m_TakeOwnership;
 
     DcmDataset* m_DcmDataset;
 };
@@ -48,6 +49,7 @@ ctkDICOMDataset::ctkDICOMDataset(bool strictErrorHandling)
 {
   Q_D(ctkDICOMDataset);
   d->m_DcmDataset = new DcmDataset();
+  d->m_TakeOwnership = true;
   d->m_DICOMDataSetInitialized = false;
   d->m_StrictErrorHandling = strictErrorHandling;
 }
@@ -55,23 +57,30 @@ ctkDICOMDataset::ctkDICOMDataset(bool strictErrorHandling)
 ctkDICOMDataset::~ctkDICOMDataset()
 {
   Q_D(ctkDICOMDataset);
-  delete d->m_DcmDataset;
+  if ( d->m_TakeOwnership)
+  {
+    delete d->m_DcmDataset;
+  }
 }
 
 
-void ctkDICOMDataset::InitializeFromDataset(DcmDataset* dataset)
+void ctkDICOMDataset::InitializeFromDataset(DcmDataset* dataset, bool takeOwnership)
 {
   Q_D(ctkDICOMDataset);
 
   if(d->m_DcmDataset != dataset)
   {
-    delete d->m_DcmDataset;
+    if (d->m_TakeOwnership)
+    {
+      delete d->m_DcmDataset;
+    }
     d->m_DcmDataset = NULL;
   }
 
   if (dataset)
   {
     d->m_DcmDataset=dataset;
+    d->m_TakeOwnership = takeOwnership;
     if (!d->m_DICOMDataSetInitialized)
     {
       d->m_DICOMDataSetInitialized = true;
@@ -127,7 +136,7 @@ void ctkDICOMDataset::InitializeFromFile(const QString& filename,
     return;
   }
 
-  InitializeFromDataset(dataset);
+  InitializeFromDataset(dataset, true);
 }
 
 void ctkDICOMDataset::Serialize()
@@ -977,7 +986,7 @@ bool ctkDICOMDataset::SaveToFile(const QString& filePath) const
 {
   Q_D(const ctkDICOMDataset);
   DcmFileFormat* fileformat = new DcmFileFormat ( d->m_DcmDataset );
-  OFCondition status = fileformat->saveFile ( filePath.toAscii() );
+  OFCondition status = fileformat->saveFile ( QDir::toNativeSeparators( filePath).toAscii()  );
   delete fileformat;
   return status.good();
 }
