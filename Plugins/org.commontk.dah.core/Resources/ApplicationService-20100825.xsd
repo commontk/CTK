@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://dicom.nema.org/PS3.19/ApplicationService-20100825" elementFormDefault="qualified"
+  targetNamespace="http://dicom.nema.org/PS3.19/ApplicationService-20100825" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/System.Xml.XPath"/>
+  <xs:element name="GetState">
+    <xs:complexType>
+      <xs:sequence/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetStateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetStateResult" type="tns:State"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="State">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="IDLE"/>
+      <xs:enumeration value="INPROGRESS"/>
+      <xs:enumeration value="SUSPENDED"/>
+      <xs:enumeration value="COMPLETED"/>
+      <xs:enumeration value="CANCELED"/>
+      <xs:enumeration value="EXIT"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="State" nillable="true" type="tns:State"/>
+  <xs:element name="SetState">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="state" type="tns:State"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetStateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="SetStateResult" type="xs:boolean"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="BringToFront">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="location" nillable="true" type="tns:Rectangle"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="Rectangle">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Height" type="xs:int"/>
+      <xs:element minOccurs="0" name="Width" type="xs:int"/>
+      <xs:element minOccurs="0" name="RefPointX" type="xs:int"/>
+      <xs:element minOccurs="0" name="RefPointY" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Rectangle" nillable="true" type="tns:Rectangle"/>
+  <xs:element name="BringToFrontResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="BringToFrontResult" type="xs:boolean"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="NotifyDataAvailable">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="data" nillable="true" type="tns:AvailableData"/>
+        <xs:element minOccurs="0" name="lastData" type="xs:boolean"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="AvailableData">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ObjectDescriptors" nillable="true"
+        type="tns:ArrayOfObjectDescriptor"/>
+      <xs:element minOccurs="0" name="Patients" nillable="true" type="tns:ArrayOfPatient"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="AvailableData" nillable="true" type="tns:AvailableData"/>
+  <xs:complexType name="ArrayOfObjectDescriptor">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ObjectDescriptor" nillable="true"
+        type="tns:ObjectDescriptor"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfObjectDescriptor" nillable="true" type="tns:ArrayOfObjectDescriptor"/>
+  <xs:complexType name="ObjectDescriptor">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ClassUID" nillable="true" type="tns:UID"/>
+      <xs:element minOccurs="0" name="MimeType" nillable="true" type="tns:MimeType"/>
+      <xs:element minOccurs="0" name="Modality" nillable="true" type="tns:Modality"/>
+      <xs:element minOccurs="0" name="TransferSyntaxUID" nillable="true" type="tns:UID"/>
+      <xs:element minOccurs="0" name="DescriptorUuid" nillable="true" type="tns:UUID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ObjectDescriptor" nillable="true" type="tns:ObjectDescriptor"/>
+  <xs:complexType name="UID">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Uid" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UID" nillable="true" type="tns:UID"/>
+  <xs:complexType name="MimeType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Type" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MimeType" nillable="true" type="tns:MimeType"/>
+  <xs:complexType name="Modality">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Modality" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Modality" nillable="true" type="tns:Modality"/>
+  <xs:complexType name="UUID">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Uuid" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UUID" nillable="true" type="tns:UUID"/>
+  <xs:complexType name="ArrayOfPatient">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Patient" nillable="true"
+        type="tns:Patient"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPatient" nillable="true" type="tns:ArrayOfPatient"/>
+  <xs:complexType name="Patient">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AssigningAuthority" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="DateOfBirth" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="ID" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="ObjectDescriptors" nillable="true"
+        type="tns:ArrayOfObjectDescriptor"/>
+      <xs:element minOccurs="0" name="Sex" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Studies" nillable="true" type="tns:ArrayOfStudy"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Patient" nillable="true" type="tns:Patient"/>
+  <xs:complexType name="ArrayOfStudy">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Study" nillable="true" type="tns:Study"
+      />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfStudy" nillable="true" type="tns:ArrayOfStudy"/>
+  <xs:complexType name="Study">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ObjectDescriptors" nillable="true"
+        type="tns:ArrayOfObjectDescriptor"/>
+      <xs:element minOccurs="0" name="Series" nillable="true" type="tns:ArrayOfSeries"/>
+      <xs:element minOccurs="0" name="StudyUID" nillable="true" type="tns:UID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Study" nillable="true" type="tns:Study"/>
+  <xs:complexType name="ArrayOfSeries">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Series" nillable="true"
+        type="tns:Series"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSeries" nillable="true" type="tns:ArrayOfSeries"/>
+  <xs:complexType name="Series">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ObjectDescriptors" nillable="true"
+        type="tns:ArrayOfObjectDescriptor"/>
+      <xs:element minOccurs="0" name="SeriesUID" nillable="true" type="tns:UID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Series" nillable="true" type="tns:Series"/>
+  <xs:element name="NotifyDataAvailableResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="NotifyDataAvailableResult" type="xs:boolean"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="objects" nillable="true" type="tns:ArrayOfUUID"/>
+        <xs:element minOccurs="0" name="acceptableTransferSyntaxes" nillable="true"
+          type="tns:ArrayOfUID"/>
+        <xs:element minOccurs="0" name="includeBulkData" type="xs:boolean"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfUUID">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="UUID" nillable="true" type="tns:UUID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUUID" nillable="true" type="tns:ArrayOfUUID"/>
+  <xs:complexType name="ArrayOfUID">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="UID" nillable="true" type="tns:UID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUID" nillable="true" type="tns:ArrayOfUID"/>
+  <xs:element name="GetDataResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetDataResult" nillable="true"
+          type="tns:ArrayOfObjectLocator"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfObjectLocator">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ObjectLocator" nillable="true"
+        type="tns:ObjectLocator"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfObjectLocator" nillable="true" type="tns:ArrayOfObjectLocator"/>
+  <xs:complexType name="ObjectLocator">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Length" type="xs:long"/>
+      <xs:element minOccurs="0" name="Offset" type="xs:long"/>
+      <xs:element minOccurs="0" name="TransferSyntax" nillable="true" type="tns:UID"/>
+      <xs:element minOccurs="0" name="URI" nillable="true" type="xs:anyURI"/>
+      <xs:element minOccurs="0" name="Locator" nillable="true" type="tns:UUID"/>
+      <xs:element minOccurs="0" name="Source" nillable="true" type="tns:UUID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ObjectLocator" nillable="true" type="tns:ObjectLocator"/>
+  <xs:element name="ReleaseData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="objects" nillable="true" type="tns:ArrayOfUUID"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReleaseDataResponse">
+    <xs:complexType>
+      <xs:sequence/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAsModels">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="objects" nillable="true" type="tns:ArrayOfUUID"/>
+        <xs:element minOccurs="0" name="classUID" nillable="true" type="tns:UID"/>
+        <xs:element minOccurs="0" name="supportedInfoSetTypes" nillable="true"
+          type="tns:ArrayOfMimeType"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfMimeType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MimeType" nillable="true"
+        type="tns:MimeType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMimeType" nillable="true" type="tns:ArrayOfMimeType"/>
+  <xs:element name="GetAsModelsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetAsModelsResult" nillable="true"
+          type="tns:ModelSetDescriptor"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ModelSetDescriptor">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FailedSourceObjects" nillable="true" type="tns:ArrayOfUUID"/>
+      <xs:element minOccurs="0" name="InfosetType" nillable="true" type="tns:MimeType"/>
+      <xs:element minOccurs="0" name="Models" nillable="true" type="tns:ArrayOfUUID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ModelSetDescriptor" nillable="true" type="tns:ModelSetDescriptor"/>
+  <xs:element name="ReleaseModels">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="models" nillable="true" type="tns:ArrayOfUUID"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReleaseModelsResponse">
+    <xs:complexType>
+      <xs:sequence/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="QueryModel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="models" nillable="true" type="tns:ArrayOfUUID"/>
+        <xs:element minOccurs="0" name="xPaths" nillable="true"
+          xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays"
+          type="q1:ArrayOfstring"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="QueryModelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="QueryModelResult" nillable="true"
+          type="tns:ArrayOfQueryResult"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfQueryResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="QueryResult" nillable="true"
+        type="tns:QueryResult"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfQueryResult" nillable="true" type="tns:ArrayOfQueryResult"/>
+  <xs:complexType name="QueryResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Model" nillable="true" type="tns:UUID"/>
+      <xs:element minOccurs="0" name="Result" nillable="true" type="tns:ArrayOfXPathNode"/>
+      <xs:element minOccurs="0" name="XPath" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="QueryResult" nillable="true" type="tns:QueryResult"/>
+  <xs:complexType name="ArrayOfXPathNode">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="XPathNode" nillable="true"
+        type="tns:XPathNode"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfXPathNode" nillable="true" type="tns:ArrayOfXPathNode"/>
+  <xs:complexType name="XPathNode">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="NodeType"
+        xmlns:q2="http://schemas.datacontract.org/2004/07/System.Xml.XPath" type="q2:XPathNodeType"/>
+      <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="XPathNode" nillable="true" type="tns:XPathNode"/>
+  <xs:element name="QueryInfoSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="models" nillable="true" type="tns:ArrayOfUUID"/>
+        <xs:element minOccurs="0" name="xPaths" nillable="true"
+          xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays"
+          type="q3:ArrayOfstring"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="QueryInfoSetResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="QueryInfoSetResult" nillable="true"
+          type="tns:ArrayOfQueryResultInfoSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfQueryResultInfoSet">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="QueryResultInfoSet" nillable="true"
+        type="tns:QueryResultInfoSet"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfQueryResultInfoSet" nillable="true" type="tns:ArrayOfQueryResultInfoSet"/>
+  <xs:complexType name="QueryResultInfoSet">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Model" nillable="true" type="tns:UUID"/>
+      <xs:element minOccurs="0" name="Result" nillable="true" type="tns:ArrayOfXPathNodeInfoSet"/>
+      <xs:element minOccurs="0" name="XPath" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="QueryResultInfoSet" nillable="true" type="tns:QueryResultInfoSet"/>
+  <xs:complexType name="ArrayOfXPathNodeInfoSet">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="XPathNodeInfoSet" nillable="true"
+        type="tns:XPathNodeInfoSet"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfXPathNodeInfoSet" nillable="true" type="tns:ArrayOfXPathNodeInfoSet"/>
+  <xs:complexType name="XPathNodeInfoSet">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="InfoSetValue" nillable="true" type="xs:base64Binary"/>
+      <xs:element minOccurs="0" name="NodeType"
+        xmlns:q4="http://schemas.datacontract.org/2004/07/System.Xml.XPath" type="q4:XPathNodeType"
+      />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="XPathNodeInfoSet" nillable="true" type="tns:XPathNodeInfoSet"/>
+</xs:schema> 

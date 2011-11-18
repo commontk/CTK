@@ -381,7 +381,6 @@ SET(CTK_PLUGINS
   # Misc
   org.commontk.plugingenerator.core:OFF
   org.commontk.plugingenerator.ui:OFF
-  org.commontk.qtmobility.service:OFF
   org.commontk.slicermodule:OFF
   )
 
@@ -398,6 +397,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMQueryRetrieve:OFF
   ctkExampleHost:OFF
   ctkExampleHostedApp:OFF
+  ctkEventBusDemo:OFF
   ctkPluginBrowser:OFF
   ctkPluginGenerator:OFF
   ctkDICOMObjectViewer:OFF

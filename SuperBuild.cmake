@@ -30,8 +30,8 @@ SET(external_projects
   PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
   DCMTK
   ZMQ
-  QtMobility
   QtSOAP
+  qxmlrpc
   OpenIGTLink
   XIP
   ITK
@@ -52,7 +52,7 @@ SET(CTK_EXTERNAL_LIBRARY_DIRS)
 
 #-----------------------------------------------------------------------------
 # Make sure ${CTK_BINARY_DIR}/CTK-build/bin exists
-# May be used by some external project to install libs (e.g QtMobility)
+# May be used by some external project to install libs 
 IF(NOT EXISTS ${CTK_BINARY_DIR}/CTK-build/bin)
   FILE(MAKE_DIRECTORY ${CTK_BINARY_DIR}/CTK-build/bin)
 ENDIF()

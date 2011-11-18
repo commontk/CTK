@@ -34,8 +34,8 @@
 #include <stdexcept>
 
 //----------------------------------------------------------------------------
-ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port) :
-    Port(port), HostInterface(hostInterface)
+ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* hostInterface, int port, QString path) :
+    Port(port), Path(path), HostInterface(hostInterface)
 {
   connect(&this->Server, SIGNAL(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)),
           this, SLOT(incomingSoapMessage(QtSoapMessage,QtSoapMessage*)));
@@ -43,9 +43,9 @@ ctkDicomHostServerPrivate::ctkDicomHostServerPrivate(ctkDicomHostInterface* host
           this, SLOT(incomingWSDLMessage(QString,QString*)));
 
   if (!this->Server.listen(QHostAddress::LocalHost, this->Port))
-    {
+  {
     qCritical() << "Listening to 127.0.0.1:" << this->Port << " failed.";
-    }
+  }
 
   ctkHostSoapMessageProcessor* hostProcessor = new ctkHostSoapMessageProcessor( hostInterface );
   this->Processors.push_back(hostProcessor);
@@ -59,22 +59,23 @@ void ctkDicomHostServerPrivate::incomingWSDLMessage(
 {
   if (message == "?wsdl")
     {
-    QFile wsdlfile(":/dah/HostService.wsdl");
+    QFile wsdlfile(":/dah/HostService-20100825.wsdl");
     wsdlfile.open(QFile::ReadOnly | QFile::Text);
     if(wsdlfile.isOpen())
       {
       QTextStream textstream(&wsdlfile);
       *reply = textstream.readAll();
       QString actualURL="http://localhost:";
-      actualURL+=QString::number(this->Port)+"/HostInterface"; // FIXME: has to be replaced by url provided by host
+      //actualURL+=QString::number(this->Port)+"/HostInterface"; // FIXME: has to be replaced by url provided by host
+	  actualURL+=QString::number(this->Port)+Path; 
       reply->replace("REPLACE_WITH_ACTUAL_URL",actualURL);
-      reply->replace("HostService_schema1.xsd",actualURL+"?xsd=1");
+      reply->replace("HostService-20100825.xsd",actualURL+"?xsd=1");
       //reply->replace("<soap:body use=\"literal\"/>","<soap:body use=\"literal\"></soap:body>");
       }
     }
   else if (message == "?xsd=1")
     {
-    QFile wsdlfile(":/dah/HostService_schema1.xsd");
+    QFile wsdlfile(":/dah/HostService-20100825.xsd");
     wsdlfile.open(QFile::ReadOnly | QFile::Text);
     if(wsdlfile.isOpen())
       {

@@ -24,8 +24,8 @@
 #include "ctkDicomHostServerPrivate.h"
 
 //----------------------------------------------------------------------------
-ctkDicomHostServer::ctkDicomHostServer(ctkDicomHostInterface* hostInterface, int port)
-  : d_ptr(new ctkDicomHostServerPrivate(hostInterface, port))
+ctkDicomHostServer::ctkDicomHostServer(ctkDicomHostInterface* hostInterface, int port, QString path)
+  : d_ptr(new ctkDicomHostServerPrivate(hostInterface, port, path))
 {
 
 }

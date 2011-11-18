@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="ApplicationService-20100825"
+  targetNamespace="http://dicom.nema.org/PS3.19/ApplicationService-20100825"
+  xmlns:tns="http://dicom.nema.org/PS3.19/ApplicationService-20100825"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+  xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+  xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract"
+  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+  xmlns:wsa10="http://www.w3.org/2005/08/addressing"
+  xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://dicom.nema.org/PS3.19/Imports/ApplicationService-20100825">
+      <xsd:import namespace="http://dicom.nema.org/PS3.19/ApplicationService-20100825"
+        schemaLocation="./ApplicationService-20100825.xsd"/>
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"
+        schemaLocation="./Types.xsd"  />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays"
+        schemaLocation="./ArrayOfString.xsd" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/System.Xml.XPath"
+        schemaLocation="./XPathNodeType.xsd" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IApplicationService_GetState_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetState"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_GetState_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStateResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_SetState_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetState"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_SetState_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetStateResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_BringToFront_InputMessage">
+    <wsdl:part name="parameters" element="tns:BringToFront"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_BringToFront_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BringToFrontResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_NotifyDataAvailable_InputMessage">
+    <wsdl:part name="parameters" element="tns:NotifyDataAvailable"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_NotifyDataAvailable_OutputMessage">
+    <wsdl:part name="parameters" element="tns:NotifyDataAvailableResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_GetData_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetData"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_GetData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDataResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_ReleaseData_InputMessage">
+    <wsdl:part name="parameters" element="tns:ReleaseData"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_ReleaseData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ReleaseDataResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_GetAsModels_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAsModels"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_GetAsModels_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAsModelsResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_ReleaseModels_InputMessage">
+    <wsdl:part name="parameters" element="tns:ReleaseModels"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_ReleaseModels_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ReleaseModelsResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_QueryModel_InputMessage">
+    <wsdl:part name="parameters" element="tns:QueryModel"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_QueryModel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:QueryModelResponse"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_QueryInfoSet_InputMessage">
+    <wsdl:part name="parameters" element="tns:QueryInfoSet"/>
+  </wsdl:message>
+  <wsdl:message name="IApplicationService_QueryInfoSet_OutputMessage">
+    <wsdl:part name="parameters" element="tns:QueryInfoSetResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="IApplicationService-20100825">
+    <wsdl:operation name="GetState">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/GetState"
+        message="tns:IApplicationService_GetState_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/GetStateResponse"
+        message="tns:IApplicationService_GetState_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="SetState">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/SetState"
+        message="tns:IApplicationService_SetState_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/SetStateResponse"
+        message="tns:IApplicationService_SetState_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="BringToFront">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/BringToFront"
+        message="tns:IApplicationService_BringToFront_InputMessage"/>
+      <wsdl:output
+        wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/BringToFrontResponse"
+        message="tns:IApplicationService_BringToFront_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyDataAvailable">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/NotifyDataAvailable"
+        message="tns:IApplicationService_NotifyDataAvailable_InputMessage"/>
+      <wsdl:output
+        wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/NotifyDataAvailableResponse"
+        message="tns:IApplicationService_NotifyDataAvailable_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetData">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/GetData"
+        message="tns:IApplicationService_GetData_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/GetDataResponse"
+        message="tns:IApplicationService_GetData_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="ReleaseData">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/ReleaseData"
+        message="tns:IApplicationService_ReleaseData_InputMessage"/>
+      <wsdl:output
+        wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/ReleaseDataResponse"
+        message="tns:IApplicationService_ReleaseData_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAsModels">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/GetAsModels"
+        message="tns:IApplicationService_GetAsModels_InputMessage"/>
+      <wsdl:output
+        wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/GetAsModelsResponse"
+        message="tns:IApplicationService_GetAsModels_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="ReleaseModels">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/ReleaseModels"
+        message="tns:IApplicationService_ReleaseModels_InputMessage"/>
+      <wsdl:output
+        wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/ReleaseModelsResponse"
+        message="tns:IApplicationService_ReleaseModels_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="QueryModel">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/QueryModel"
+        message="tns:IApplicationService_QueryModel_InputMessage"/>
+      <wsdl:output wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/QueryModelResponse"
+        message="tns:IApplicationService_QueryModel_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="QueryInfoSet">
+      <wsdl:input wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/QueryInfoSet"
+        message="tns:IApplicationService_QueryInfoSet_InputMessage"/>
+      <wsdl:output
+        wsaw:Action="http://dicom.nema.org/PS3.19/IApplicationService/QueryInfoSetResponse"
+        message="tns:IApplicationService_QueryInfoSet_OutputMessage"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ApplicationService-20100825Binding" type="tns:IApplicationService-20100825">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetState">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IApplicationService/GetState"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetState">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IApplicationService/SetState"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BringToFront">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IApplicationService/BringToFront"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyDataAvailable">
+      <soap:operation
+        soapAction="http://dicom.nema.org/PS3.19/IApplicationService/NotifyDataAvailable"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetData">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IApplicationService/GetData"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReleaseData">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IApplicationService/ReleaseData"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAsModels">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IApplicationService/GetAsModels"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReleaseModels">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IApplicationService/ReleaseModels"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="QueryModel">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IApplicationService/QueryModel"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="QueryInfoSet">
+      <soap:operation soapAction="http://dicom.nema.org/PS3.19/IApplicationService/QueryInfoSet"
+        style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ApplicationService-20100825">
+    <wsdl:port name="ApplicationServiceBinding" binding="tns:ApplicationService-20100825Binding">
+      <soap:address location="http://localhost/Service"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions> 

@@ -1,9 +1,12 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/dah">
-  <file>HostService.wsdl</file>
-  <file>HostService_schema1.xsd</file>
-  <file>ApplicationService.wsdl</file>
-  <file>ApplicationService_schema1.xsd</file>
+  <file>HostService-20100825.wsdl</file>
+  <file>HostService-20100825.xsd</file>
+  <file>ApplicationService-20100825.wsdl</file>
+  <file>ApplicationService-20100825.xsd</file>
+  <file>XPathNodeType.xsd</file>
+  <file>ArrayOfString.xsd</file>
+  <file>Types.xsd</file>
 </qresource>
 </RCC>
 
