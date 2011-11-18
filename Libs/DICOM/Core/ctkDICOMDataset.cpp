@@ -84,20 +84,11 @@ void ctkDICOMDataset::InitializeFromDataset(DcmDataset* dataset, bool takeOwners
     if (!d->m_DICOMDataSetInitialized)
     {
       d->m_DICOMDataSetInitialized = true;
-      // remember "specific character set" tag for conversion of strings to the right encoding
-      //std::cerr << "** " << (void*)this << " ctkDICOMDataset: Initialized DcmDataset" << std::endl;
-      if ( CopyElement( dataset, DCM_SpecificCharacterSet, 3 ) )
+      OFString encoding;
+      if ( CheckCondition( dataset->findAndGetOFString(DCM_SpecificCharacterSet, encoding) ) )
       {
-        OFString encoding;
-        if ( CheckCondition( dataset->findAndGetOFString(DCM_SpecificCharacterSet, encoding) ) )
-        {
-          d->m_SpecificCharacterSet = encoding.c_str();
-        }
-        else
-        {
-          std::cerr << "Some implementation error in DCMTK. We put something into a box and now the box is empty. This is not ok." << std::endl;
-          //throw std::logic_error("Some implementation error in DCMTK. We put something into a box and now the box is empty. This is not ok.");
-        }
+        d->m_SpecificCharacterSet = encoding.c_str();
+      }
       }
       if (d->m_SpecificCharacterSet.isEmpty())
       {
@@ -113,7 +104,6 @@ void ctkDICOMDataset::InitializeFromDataset(DcmDataset* dataset, bool takeOwners
       }
     }
   }
-}
 
 
 void ctkDICOMDataset::InitializeFromFile(const QString& filename,
