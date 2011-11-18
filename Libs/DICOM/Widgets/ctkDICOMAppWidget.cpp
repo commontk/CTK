@@ -304,6 +304,29 @@ void ctkDICOMAppWidget::openQueryDialog()
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onRemoveAction()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  //d->QueryRetrieveWidget->show();
+  // d->QueryRetrieveWidget->raise();
+  std::cout << "on remove" << std::endl;
+  QModelIndexList selection = d->TreeView->selectionModel()->selectedIndexes();
+  std::cout << selection.size() << std::endl;
+  QModelIndex index;
+  foreach(index,selection)
+  {
+    QModelIndex index0 = index.sibling(index.row(), 0);
+    if ( d->DICOMModel.data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType))
+    {
+      QString seriesUID = d->DICOMModel.data(index0,ctkDICOMModel::UIDRole).toString();
+      d->DICOMDatabase->removeSeries(seriesUID);
+    }
+  }
+  d->DICOMModel.reset();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::suspendModel()
 {
   Q_D(ctkDICOMAppWidget);
@@ -426,7 +449,9 @@ Q_D(ctkDICOMAppWidget);
           d->NextStudyButton->hide();
           d->PrevStudyButton->hide();
           }
+        d->ActionRemove->setEnabled(model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType) );
         }
+
       else
         {
         d->NextImageButton->hide();
@@ -435,6 +460,7 @@ Q_D(ctkDICOMAppWidget);
         d->PrevSeriesButton->hide();
         d->NextStudyButton->hide();
         d->PrevStudyButton->hide();
+        d->ActionRemove->setEnabled(false);
         }
 }
 

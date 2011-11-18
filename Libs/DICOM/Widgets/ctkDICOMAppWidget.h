@@ -56,6 +56,7 @@ public Q_SLOTS:
   void openImportDialog();
   void openExportDialog();
   void openQueryDialog();
+  void onRemoveAction();
 
   void suspendModel();
   void resumeModel();
