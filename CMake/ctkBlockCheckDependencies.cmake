@@ -13,9 +13,9 @@
 # Collect CTK library target dependencies
 #
 
-ctkMacroCollectAllTargetLibraries("${CTK_LIBS_SUBDIRS}" "Libs" ALL_TARGET_LIBRARIES)
-ctkMacroCollectAllTargetLibraries("${CTK_PLUGINS_SUBDIRS}" "Plugins" ALL_TARGET_LIBRARIES)
-ctkMacroCollectAllTargetLibraries("${CTK_APPLICATIONS_SUBDIRS}" "Applications" ALL_TARGET_LIBRARIES)
+ctkMacroCollectAllTargetLibraries("${CTK_LIBS}" "Libs" ALL_TARGET_LIBRARIES)
+ctkMacroCollectAllTargetLibraries("${CTK_PLUGINS}" "Plugins" ALL_TARGET_LIBRARIES)
+ctkMacroCollectAllTargetLibraries("${CTK_APPS}" "Applications" ALL_TARGET_LIBRARIES)
 #message(STATUS ALL_TARGET_LIBRARIES:${ALL_TARGET_LIBRARIES})
 
 #-----------------------------------------------------------------------------
@@ -25,19 +25,7 @@ ctkMacroCollectAllTargetLibraries("${CTK_APPLICATIONS_SUBDIRS}" "Applications" A
 # of the macro ctkMacroCollectAllTargetLibraries, let's get the list of all Non-CTK dependencies.
 # NON_CTK_DEPENDENCIES is expected by the macro ctkMacroShouldAddExternalProject
 ctkMacroGetAllNonProjectTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPENDENCIES)
-#message(STATUS NON_CTK_DEPENDENCIES:${NON_CTK_DEPENDENCIES})
-
-#-----------------------------------------------------------------------------
-# Include external projects
-#
-#-----------------------------------------------------------------------------
-# Git protocole option
-#
-option(CTK_USE_GIT_PROTOCOL "If behind a firewall turn this OFF to use http instead." ON)
-set(git_protocol "git")
-if(NOT CTK_USE_GIT_PROTOCOL)
-  set(git_protocol "http")
-endif()
+#message(NON_CTK_DEPENDENCIES:${NON_CTK_DEPENDENCIES})
 
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties

@@ -52,17 +52,17 @@ find_package(Doxygen QUIET)
 # Generate cmake variable name corresponding to Libs, Plugins and Applications
 #
 set(ctk_libs_bool_vars)
-foreach(lib ${CTK_LIBS_SUBDIRS})
+foreach(lib ${CTK_LIBS})
   list(APPEND ctk_libs_bool_vars CTK_LIB_${lib})
 endforeach()
 
 set(ctk_plugins_bool_vars)
-foreach(plugin ${CTK_PLUGINS_SUBDIRS})
+foreach(plugin ${CTK_PLUGINS})
   list(APPEND ctk_plugins_bool_vars CTK_PLUGIN_${plugin})
 endforeach()
 
 set(ctk_applications_bool_vars)
-foreach(app ${CTK_APPLICATIONS_SUBDIRS})
+foreach(app ${CTK_APPS})
   list(APPEND ctk_applications_bool_vars CTK_APP_${app})
 endforeach()
 
@@ -72,7 +72,7 @@ endforeach()
 
 set(ctk_cmake_boolean_args
   BUILD_TESTING
-  BUILD_QTDESIGNER_PLUGINS
+  CTK_BUILD_QTDESIGNER_PLUGINS
   CTK_USE_KWSTYLE
   WITH_COVERAGE
   DOCUMENTATION_TARGET_IN_ALL
