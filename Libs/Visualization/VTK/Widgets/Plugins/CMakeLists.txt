@@ -1,13 +1,13 @@
-PROJECT(${PROJECT_NAME}Plugins)
+project(${PROJECT_NAME}Plugins)
 
 #
 # See CTK/CMake/ctkMacroBuildQtDesignerPlugin.cmake for details
 #
 
-SET(PLUGIN_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT")
+set(PLUGIN_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT")
 
 # Source files
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkVTKWidgetsPlugins.cpp
   ctkVTKWidgetsPlugins.h
   ctkVTKWidgetsAbstractPlugin.cpp
@@ -32,7 +32,7 @@ SET(PLUGIN_SRCS
   )
 
 # Headers that should run through moc
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkVTKWidgetsPlugins.h
 
   ctkVTKDataSetArrayComboBoxPlugin.h
@@ -45,8 +45,8 @@ SET(PLUGIN_MOC_SRCS
   ctkVTKThresholdWidgetPlugin.h
   )
   
-IF(CTK_USE_CHARTS)
-  SET(PLUGIN_SRCS
+if(CTK_USE_CHARTS)
+  set(PLUGIN_SRCS
       ctkVTKChartViewPlugin.cpp
       ctkVTKChartViewPlugin.h
       ctkVTKScalarsToColorsViewPlugin.cpp
@@ -56,21 +56,21 @@ IF(CTK_USE_CHARTS)
       ctkVTKVolumePropertyWidgetPlugin.cpp
       ctkVTKVolumePropertyWidgetPlugin.h
       ${PLUGIN_SRCS})
-  SET(PLUGIN_MOC_SRCS
+  set(PLUGIN_MOC_SRCS
       ctkVTKChartViewPlugin.h
       ctkVTKScalarsToColorsViewPlugin.h
       ctkVTKScalarsToColorsWidgetPlugin.h
       ctkVTKVolumePropertyWidgetPlugin.h
       ${PLUGIN_MOC_SRCS})
-ENDIF(CTK_USE_CHARTS)
+endif()
 
 # Resources
-SET(PLUGIN_resources
+set(PLUGIN_resources
   #Resources/CTKVisualizationVTKWidgetsPlugins.qrc
 )
 
 # Target libraries
-SET(PLUGIN_target_libraries
+set(PLUGIN_target_libraries
   CTKVisualizationVTKWidgets
   )
 

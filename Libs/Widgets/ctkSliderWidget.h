@@ -196,14 +196,14 @@ public:
   /// with what you do with the slider as the spinbox might change
   /// properties automatically.
   ctkDoubleSlider* slider();
-public slots:
+public Q_SLOTS:
   /// 
   /// Reset the slider and spinbox to zero (value and position)
   void reset();
   void setValue(double value);
   void setSpinBoxVisible(bool);
 
-signals:
+Q_SIGNALS:
   /// When tracking is on (default), valueChanged is emitted when the
   /// user drags the slider.
   /// If tracking is off, valueChanged() is emitted only when the user
@@ -217,7 +217,7 @@ signals:
   /// \sa valueChanged QAbstractSlider::sliderMoved
   void valueIsChanging(double value);
 
-protected slots:
+protected Q_SLOTS:
   
   void startChanging();
   void stopChanging();

@@ -1,6 +1,6 @@
-SET(KIT ${PROJECT_NAME})
+set(KIT ${PROJECT_NAME})
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkAbstractPythonManagerTest1.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
@@ -8,17 +8,10 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
-
-SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-ENDMACRO( SIMPLE_TEST  )
+add_executable(${KIT}CppTests ${Tests})
+target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 #
 # Add Tests

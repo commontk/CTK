@@ -24,7 +24,7 @@
 #
 
 #! \ingroup CMakeAPI
-MACRO(ctkMacroBuildQtDesignerPlugin)
+macro(ctkMacroBuildQtDesignerPlugin)
   CtkMacroParseArguments(MY
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
     ""
@@ -32,67 +32,67 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
     )
 
   # Sanity checks
-  IF(NOT DEFINED MY_NAME)
-    MESSAGE(FATAL_ERROR "NAME is mandatory")
-  ENDIF()
-  IF(NOT DEFINED MY_EXPORT_DIRECTIVE)
-    MESSAGE(FATAL_ERROR "EXPORT_DIRECTIVE is mandatory")
-  ENDIF()
-  SET(MY_LIBRARY_TYPE "MODULE")
+  if(NOT DEFINED MY_NAME)
+    message(FATAL_ERROR "NAME is mandatory")
+  endif()
+  if(NOT DEFINED MY_EXPORT_DIRECTIVE)
+    message(FATAL_ERROR "EXPORT_DIRECTIVE is mandatory")
+  endif()
+  set(MY_LIBRARY_TYPE "MODULE")
 
   # Define library name
-  SET(lib_name ${MY_NAME})
+  set(lib_name ${MY_NAME})
 
   # --------------------------------------------------------------------------
   # Include dirs
-  SET(my_includes
+  set(my_includes
     ${CTK_BASE_INCLUDE_DIRS}
     ${QT_QTDESIGNER_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MY_INCLUDE_DIRECTORIES}
     )
-  INCLUDE_DIRECTORIES(
+  include_directories(
     ${my_includes}
     )
 
-  SET(MY_LIBRARY_EXPORT_DIRECTIVE ${MY_EXPORT_DIRECTIVE})
-  SET(MY_EXPORT_HEADER_PREFIX ${MY_NAME})
-  STRING(REGEX REPLACE "^CTK" "ctk" MY_EXPORT_HEADER_PREFIX ${MY_EXPORT_HEADER_PREFIX})
-  SET(MY_LIBNAME ${lib_name})
+  set(MY_LIBRARY_EXPORT_DIRECTIVE ${MY_EXPORT_DIRECTIVE})
+  set(MY_EXPORT_HEADER_PREFIX ${MY_NAME})
+  string(REGEX REPLACE "^CTK" "ctk" MY_EXPORT_HEADER_PREFIX ${MY_EXPORT_HEADER_PREFIX})
+  set(MY_LIBNAME ${lib_name})
 
-  CONFIGURE_FILE(
+  configure_file(
     ${CTK_SOURCE_DIR}/Libs/ctkExport.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
-  SET(dynamicHeaders
+  set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
   # Make sure variable are cleared
-  SET(MY_MOC_CPP)
-  SET(MY_UI_CPP)
-  SET(MY_QRC_SRCS)
+  set(MY_MOC_CPP)
+  set(MY_UI_CPP)
+  set(MY_QRC_SRCS)
 
   # Wrap
   QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
   QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
-  SET(MY_QRC_SRCS "")
-  IF(DEFINED MY_RESOURCES)
+  set(MY_QRC_SRCS "")
+  if(DEFINED MY_RESOURCES)
     QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
-  ENDIF()
+  endif()
 
-  SOURCE_GROUP("Resources" FILES
+  source_group("Resources" FILES
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
     )
 
-  SOURCE_GROUP("Generated" FILES
+  source_group("Generated" FILES
     ${MY_MOC_CPP}
     ${MY_QRC_SRCS}
     ${MY_UI_CPP}
     )
 
-  ADD_LIBRARY(${lib_name} ${MY_LIBRARY_TYPE}
+  add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
     ${MY_MOC_CPP}
     ${MY_UI_CPP}
@@ -100,31 +100,31 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
     )
 
   # Extract library name associated with the plugin and use it as label
-  STRING(REGEX REPLACE "(.*)Plugins" "\\1" label ${lib_name})
+  string(REGEX REPLACE "(.*)Plugins" "\\1" label ${lib_name})
 
   # Apply properties to the library target.
-  SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES
+  set_target_properties(${lib_name}  PROPERTIES
     COMPILE_FLAGS "-DQT_PLUGIN"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/designer"
     LABELS ${label}
     )
 
-  SET(my_libs
+  set(my_libs
     ${MY_TARGET_LIBRARIES}
     ${QT_QTDESIGNER_LIBRARY}
     )
-  TARGET_LINK_LIBRARIES(${lib_name} ${my_libs})
+  target_link_libraries(${lib_name} ${my_libs})
 
   # Install the library
-  INSTALL(TARGETS ${lib_name}
+  install(TARGETS ${lib_name}
     RUNTIME DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT RuntimePlugins
     LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT RuntimePlugins
     ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT Development
     )
 
   # Install headers - Are headers required ?
-  #FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  #INSTALL(FILES
+  #file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  #install(FILES
   #  ${headers}
   #  DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
   #  )
@@ -133,16 +133,16 @@ MACRO(ctkMacroBuildQtDesignerPlugin)
   # Since QtDesigner expects plugin to be directly located under the
   # directory 'designer', let's copy them.
 
-  IF(NOT CMAKE_CFG_INTDIR STREQUAL ".")
-    GET_TARGET_PROPERTY(FILE_PATH ${lib_name} LOCATION)
-    GET_TARGET_PROPERTY(DIR_PATH ${lib_name} LIBRARY_OUTPUT_DIRECTORY)
+  if(NOT CMAKE_CFG_INTDIR STREQUAL ".")
+    get_target_property(FILE_PATH ${lib_name} LOCATION)
+    get_target_property(DIR_PATH ${lib_name} LIBRARY_OUTPUT_DIRECTORY)
 
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
       TARGET ${lib_name}
       POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy ${FILE_PATH} ${DIR_PATH}/../designer/${CMAKE_SHARED_LIBRARY_PREFIX}${lib_name}${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
       )
-  ENDIF()
+  endif()
 
-ENDMACRO()
+endmacro()
 

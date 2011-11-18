@@ -40,7 +40,8 @@ public:
   QString getSignalName() const;
   QString getTopicName() const;
 
-protected slots:
+  QString getSignalName() const;
+  QString getTopicName() const;
 
   void publishSyncSignal(const ctkDictionary& eventProps);
   void publishAsyncSignal(const ctkDictionary& eventProps);

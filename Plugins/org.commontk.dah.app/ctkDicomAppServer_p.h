@@ -47,7 +47,7 @@ class ctkDicomAppServer : public QObject, ctkServiceTrackerCustomizer<ctkDicomAp
 public:
   ctkDicomAppServer(int port, QString path);
   ~ctkDicomAppServer();
-public slots:
+public Q_SLOTS:
 
   void incomingSoapMessage(const QtSoapMessage& message,
                            QtSoapMessage* reply);

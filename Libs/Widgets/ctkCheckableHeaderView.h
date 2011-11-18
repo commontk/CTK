@@ -112,13 +112,13 @@ public:
   
   ctkCheckableModelHelper* checkableModelHelper()const;
 
-public slots:
+public Q_SLOTS:
   ///
   /// Warning, setting the check state automatically set the 
   /// header section checkable
   void setCheckState(int section, Qt::CheckState checkState);
 
-private slots:
+private Q_SLOTS:
   void onHeaderDataChanged(Qt::Orientation orient, int first, int last);
   void onHeaderSectionInserted();
   inline void updateHeaderPixmaps();

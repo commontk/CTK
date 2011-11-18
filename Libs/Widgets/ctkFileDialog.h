@@ -60,19 +60,19 @@ public:
 
   /// Internally used
   bool eventFilter(QObject *obj, QEvent *event);
-public slots:
+public Q_SLOTS:
   /// Can be used to prevent the accept button to be enabled. It's typically
   /// a slot that can be connected to assure that the user doesn't accept the
   /// dialog if a value is not set in the extra bottom widget.
   void setAcceptButtonEnable(bool enable);
 
-signals:
+Q_SIGNALS:
   /// Signals QFileDialog::file[s]Selected() are fired only when the Ok button
   /// is pressed, fileSelectionChanged(QStringList) is emitted when the
   /// selection is changed, not just when the dialog is accepted.
   void fileSelectionChanged(const QStringList& selected);
 
-protected slots:
+protected Q_SLOTS:
   void onSelectionChanged();
 
 protected:

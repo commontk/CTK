@@ -35,83 +35,13 @@ int ctkLoggerTest1(int argc, char * argv [] )
 
   //--------------------------------------------------------------------
   ctkLogger logger("LoggerTest");
-  std::cout<< "Logger default : " << logger.isOffEnabled() << std::endl;
-  logger.setOff();
-  if (!logger.isOffEnabled())
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem vith Logger::setOff()" << std::endl;
-    return EXIT_FAILURE;
-    }
-  std::cout<< "Logger after setOff() : " << logger.isOffEnabled() << std::endl;
 
-  //------------------------------------------------------------------
-  std::cout<< "Logger Debug default : " << logger.isDebugEnabled() << std::endl;
-  logger.setDebug();
-  if (!logger.isDebugEnabled())
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem vith Logger::setDebug()" << std::endl;
-    return EXIT_FAILURE;
-    }
-  std::cout << "Logger Debug after setDebug() : "
-            << logger.isDebugEnabled() << std::endl;
-
-  //------------------------------------------------------------------
-  logger.setInfo();
-  if (!logger.isInfoEnabled())
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem vith Logger::setDebug()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  //------------------------------------------------------------------
-  logger.setTrace();
-  if (!logger.isTraceEnabled())
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem vith Logger::setTrace()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  //------------------------------------------------------------------
-  logger.setError();
-  if (!logger.isErrorEnabled())
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem vith Logger::setError()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  //------------------------------------------------------------------
-  logger.setWarn();
-  if (!logger.isWarnEnabled())
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem vith Logger::setWarn()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  //------------------------------------------------------------------
-  logger.setFatal();
-  if (!logger.isFatalEnabled())
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem vith Logger::setFatal()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  //------------------------------------------------------------------
-  logger.configure();
-  QString defaultString;  
-  logger.debug(defaultString);
-  logger.info(defaultString);
-  logger.trace(defaultString);
-  logger.warn(defaultString);
-  logger.warn(defaultString);
-  logger.error(defaultString);
-  logger.fatal(defaultString);
+  logger.debug("logger.debug");
+  logger.info("logger.info");
+  logger.trace("logger.trace");
+  logger.warn("logger.warn");
+  logger.error("logger.error");
+  logger.fatal("logger.fatal");
 
   return EXIT_SUCCESS;
 }

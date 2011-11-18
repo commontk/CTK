@@ -30,13 +30,13 @@
 # Upgraded for GDCM by Mathieu Malaterre.
 # 
 
-IF( NOT DCMTK_FOUND )
-  SET( DCMTK_DIR "/usr/include/dcmtk/"
+if( NOT DCMTK_FOUND )
+  set( DCMTK_DIR "/usr/include/dcmtk/"
     CACHE PATH "Root of DCMTK source tree (optional)." )
-  MARK_AS_ADVANCED( DCMTK_DIR )
-ENDIF( NOT DCMTK_FOUND )
+  mark_as_advanced( DCMTK_DIR )
+endif()
 
-FIND_PATH( DCMTK_config_INCLUDE_DIR osconfig.h
+find_path( DCMTK_config_INCLUDE_DIR osconfig.h
   PATHS
     ${DCMTK_DIR}/config/include
     ${DCMTK_DIR}/config
@@ -46,7 +46,7 @@ FIND_PATH( DCMTK_config_INCLUDE_DIR osconfig.h
   
 )
 
-FIND_PATH( DCMTK_ofstd_INCLUDE_DIR ofstdinc.h
+find_path( DCMTK_ofstd_INCLUDE_DIR ofstdinc.h
   PATHS
     ${DCMTK_DIR}/ofstd/include
     ${DCMTK_DIR}/ofstd
@@ -55,7 +55,7 @@ FIND_PATH( DCMTK_ofstd_INCLUDE_DIR ofstdinc.h
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_ofstd_LIBRARY ofstd
+find_library( DCMTK_ofstd_LIBRARY ofstd
   PATHS
     ${DCMTK_DIR}/ofstd/libsrc
     ${DCMTK_DIR}/ofstd/libsrc/Release
@@ -66,7 +66,7 @@ FIND_LIBRARY( DCMTK_ofstd_LIBRARY ofstd
   NO_DEFAULT_PATH
 )
 
-FIND_PATH( DCMTK_oflog_INCLUDE_DIR logger.h
+find_path( DCMTK_oflog_INCLUDE_DIR logger.h
   PATHS
     ${DCMTK_DIR}/oflog/include
     ${DCMTK_DIR}/oflog
@@ -75,7 +75,7 @@ FIND_PATH( DCMTK_oflog_INCLUDE_DIR logger.h
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_oflog_LIBRARY oflog
+find_library( DCMTK_oflog_LIBRARY oflog
   PATHS
     ${DCMTK_DIR}/oflog/libsrc
     ${DCMTK_DIR}/oflog/libsrc/Release
@@ -88,7 +88,7 @@ FIND_LIBRARY( DCMTK_oflog_LIBRARY oflog
 
 
 
-FIND_PATH( DCMTK_dcmdata_INCLUDE_DIR dctypes.h
+find_path( DCMTK_dcmdata_INCLUDE_DIR dctypes.h
   PATHS
     ${DCMTK_DIR}/include/dcmdata
     ${DCMTK_DIR}/include/dcmtk/dcmdata
@@ -97,7 +97,7 @@ FIND_PATH( DCMTK_dcmdata_INCLUDE_DIR dctypes.h
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_dcmdata_LIBRARY dcmdata
+find_library( DCMTK_dcmdata_LIBRARY dcmdata
   PATHS
     ${DCMTK_DIR}/dcmdata/libsrc
     ${DCMTK_DIR}/dcmdata/libsrc/Release
@@ -108,7 +108,7 @@ FIND_LIBRARY( DCMTK_dcmdata_LIBRARY dcmdata
   NO_DEFAULT_PATH
 )
 
-FIND_PATH( DCMTK_dcmjpeg_INCLUDE_DIR djdecode.h
+find_path( DCMTK_dcmjpeg_INCLUDE_DIR djdecode.h
   PATHS
     ${DCMTK_DIR}/include/dcmjpeg
     ${DCMTK_DIR}/include/dcmtk/dcmjpeg
@@ -117,7 +117,7 @@ FIND_PATH( DCMTK_dcmjpeg_INCLUDE_DIR djdecode.h
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_dcmjpeg_LIBRARY dcmjpeg
+find_library( DCMTK_dcmjpeg_LIBRARY dcmjpeg
   PATHS
     ${DCMTK_DIR}/dcmjpeg/libsrc
     ${DCMTK_DIR}/dcmjpeg/libsrc/Release
@@ -128,7 +128,7 @@ FIND_LIBRARY( DCMTK_dcmjpeg_LIBRARY dcmjpeg
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_ijg12_LIBRARY ijg12
+find_library( DCMTK_ijg12_LIBRARY ijg12
   PATHS
     ${DCMTK_DIR}/dcmjpeg/libsrc
     ${DCMTK_DIR}/dcmjpeg/libsrc/Release
@@ -139,7 +139,7 @@ FIND_LIBRARY( DCMTK_ijg12_LIBRARY ijg12
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_ijg16_LIBRARY ijg16
+find_library( DCMTK_ijg16_LIBRARY ijg16
   PATHS
     ${DCMTK_DIR}/dcmjpeg/libsrc
     ${DCMTK_DIR}/dcmjpeg/libsrc/Release
@@ -150,7 +150,7 @@ FIND_LIBRARY( DCMTK_ijg16_LIBRARY ijg16
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_ijg8_LIBRARY ijg8
+find_library( DCMTK_ijg8_LIBRARY ijg8
   PATHS
     ${DCMTK_DIR}/dcmjpeg/libsrc
     ${DCMTK_DIR}/dcmjpeg/libsrc/Release
@@ -161,7 +161,7 @@ FIND_LIBRARY( DCMTK_ijg8_LIBRARY ijg8
   NO_DEFAULT_PATH
 )
 
-FIND_PATH( DCMTK_dcmnet_INCLUDE_DIR dimse.h
+find_path( DCMTK_dcmnet_INCLUDE_DIR dimse.h
   PATHS
     ${DCMTK_DIR}/include/dcmnet
     ${DCMTK_DIR}/include/dcmtk/dcmnet
@@ -170,7 +170,7 @@ FIND_PATH( DCMTK_dcmnet_INCLUDE_DIR dimse.h
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_dcmnet_LIBRARY dcmnet
+find_library( DCMTK_dcmnet_LIBRARY dcmnet
   PATHS
     ${DCMTK_DIR}/dcmnet/libsrc
     ${DCMTK_DIR}/dcmnet/libsrc/Release
@@ -181,7 +181,7 @@ FIND_LIBRARY( DCMTK_dcmnet_LIBRARY dcmnet
   NO_DEFAULT_PATH
 )
 
-FIND_PATH( DCMTK_dcmimgle_INCLUDE_DIR dcmimage.h
+find_path( DCMTK_dcmimgle_INCLUDE_DIR dcmimage.h
   PATHS
     ${DCMTK_DIR}/dcmimgle/include
     ${DCMTK_DIR}/dcmimgle
@@ -190,7 +190,7 @@ FIND_PATH( DCMTK_dcmimgle_INCLUDE_DIR dcmimage.h
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_dcmimgle_LIBRARY dcmimgle
+find_library( DCMTK_dcmimgle_LIBRARY dcmimgle
   PATHS
     ${DCMTK_DIR}/dcmimgle/libsrc
     ${DCMTK_DIR}/dcmimgle/libsrc/Release
@@ -201,7 +201,7 @@ FIND_LIBRARY( DCMTK_dcmimgle_LIBRARY dcmimgle
   NO_DEFAULT_PATH
 )
 
-FIND_PATH( DCMTK_dcmimage_INCLUDE_DIR diregist.h
+find_path( DCMTK_dcmimage_INCLUDE_DIR diregist.h
   PATHS
     ${DCMTK_DIR}/dcmimage/include
     ${DCMTK_DIR}/dcmimage
@@ -210,7 +210,7 @@ FIND_PATH( DCMTK_dcmimage_INCLUDE_DIR diregist.h
   NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY( DCMTK_dcmimage_LIBRARY dcmimage
+find_library( DCMTK_dcmimage_LIBRARY dcmimage
   PATHS
     ${DCMTK_DIR}/dcmimage/libsrc
     ${DCMTK_DIR}/dcmimage/libsrc/Release
@@ -223,7 +223,7 @@ FIND_LIBRARY( DCMTK_dcmimage_LIBRARY dcmimage
 
 # MM: I could not find this library on debian system / dcmtk 3.5.4
 # Michael Onken: this module is now called dcmqrdb. I will re-work that script soon...
-FIND_LIBRARY(DCMTK_imagedb_LIBRARY imagedb
+find_library(DCMTK_imagedb_LIBRARY imagedb
   PATHS
     ${DCMTK_DIR}/imagectn/libsrc/Release
     ${DCMTK_DIR}/imagectn/libsrc/
@@ -231,7 +231,7 @@ FIND_LIBRARY(DCMTK_imagedb_LIBRARY imagedb
   NO_DEFAULT_PATH
   )
 
-IF( DCMTK_config_INCLUDE_DIR 
+if( DCMTK_config_INCLUDE_DIR 
     AND DCMTK_ofstd_INCLUDE_DIR 
     AND DCMTK_ofstd_LIBRARY
     AND DCMTK_oflog_INCLUDE_DIR    
@@ -248,26 +248,26 @@ IF( DCMTK_config_INCLUDE_DIR
     AND DCMTK_dcmimage_LIBRARY)
 
 #   # Wrap library is required on Linux
-#   IF(NOT WIN32)
-#     FIND_LIBRARY(DCMTK_wrap_LIBRARY wrap)
-#     MESSAGE(DCMTK_wrap_LIBRARY:${DCMTK_wrap_LIBRARY})
-#     IF(NOT DCMTK_wrap_LIBRARY)
-#       MESSAGE(FATAL_ERROR "error: Wrap library is required to use DCMTK. "
+#   if(NOT WIN32)
+#     find_library(DCMTK_wrap_LIBRARY wrap)
+#     message(DCMTK_wrap_LIBRARY:${DCMTK_wrap_LIBRARY})
+#     if(NOT DCMTK_wrap_LIBRARY)
+#       message(FATAL_ERROR "error: Wrap library is required to use DCMTK. "
 #                           "On Ubuntu, you could install it using 'sudo apt-get libwrap0'")
-#     ENDIF()
-#   ENDIF()
+#     endif()
+#   endif()
 
-  SET(CMAKE_THREAD_LIBS_INIT)
-  IF(DCMTK_oflog_LIBRARY)
+  set(CMAKE_THREAD_LIBS_INIT)
+  if(DCMTK_oflog_LIBRARY)
     # Hack - Not having a DCMTKConfig.cmake file to read the settings from, we will attempt to 
     # find the library in all cases.
     # Ideally, pthread library should be discovered only if DCMTK_WITH_THREADS is enabled.
-    SET(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-    FIND_PACKAGE(Threads)
-  ENDIF()
+    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+    find_package(Threads)
+  endif()
   
-  SET( DCMTK_FOUND "YES" )
-  SET( DCMTK_INCLUDE_DIR
+  set( DCMTK_FOUND "YES" )
+  set( DCMTK_INCLUDE_DIR
     ${DCMTK_DIR}/include
     ${DCMTK_config_INCLUDE_DIR}
     ${DCMTK_ofstd_INCLUDE_DIR}
@@ -279,7 +279,7 @@ IF( DCMTK_config_INCLUDE_DIR
     ${DCMTK_dcmimage_INCLUDE_DIR}
   )
 
-  SET( DCMTK_LIBRARIES
+  set( DCMTK_LIBRARIES
     ${DCMTK_dcmimage_LIBRARY}
     ${DCMTK_dcmimgle_LIBRARY}
     ${DCMTK_dcmnet_LIBRARY}    
@@ -294,54 +294,54 @@ IF( DCMTK_config_INCLUDE_DIR
     ${CMAKE_THREAD_LIBS_INIT}
   )
 
-  IF(DCMTK_imagedb_LIBRARY)
-   SET( DCMTK_LIBRARIES
+  if(DCMTK_imagedb_LIBRARY)
+   set( DCMTK_LIBRARIES
    ${DCMTK_LIBRARIES}
    ${DCMTK_imagedb_LIBRARY}
    )
-  ENDIF(DCMTK_imagedb_LIBRARY)
+  endif()
 
-  IF( WIN32 )
-    SET( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} ws2_32 netapi32 wsock32)
-  ENDIF( WIN32 )
+  if( WIN32 )
+    set( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} ws2_32 netapi32 wsock32)
+  endif()
   
 #   IF (NOT WIN32)
-#     SET( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} ${DCMTK_wrap_LIBRARY} )
-#   ENDIF()
+#     set( DCMTK_LIBRARIES ${DCMTK_LIBRARIES} ${DCMTK_wrap_LIBRARY} )
+#   endif()
 
-ENDIF()
+endif()
 
-FIND_PROGRAM(DCMTK_DCMDUMP_EXECUTABLE dcmdump
+find_program(DCMTK_DCMDUMP_EXECUTABLE dcmdump
   PATHS
     ${DCMTK_DIR}/bin
   NO_DEFAULT_PATH
   )
 
-FIND_PROGRAM(DCMTK_DCMDJPEG_EXECUTABLE dcmdjpeg
+find_program(DCMTK_DCMDJPEG_EXECUTABLE dcmdjpeg
   PATHS
     ${DCMTK_DIR}/bin
   NO_DEFAULT_PATH
   )
 
-FIND_PROGRAM(DCMTK_DCMDRLE_EXECUTABLE dcmdrle
+find_program(DCMTK_DCMDRLE_EXECUTABLE dcmdrle
   PATHS
     ${DCMTK_DIR}/bin
   NO_DEFAULT_PATH
   )
 
-FIND_PROGRAM(DCMTK_DCMQRSCP_EXECUTABLE dcmqrscp
+find_program(DCMTK_DCMQRSCP_EXECUTABLE dcmqrscp
   PATHS
     ${DCMTK_DIR}/bin
   NO_DEFAULT_PATH
   )
 
-FIND_PROGRAM(DCMTK_STORESCU_EXECUTABLE storescu
+find_program(DCMTK_STORESCU_EXECUTABLE storescu
   PATHS
     ${DCMTK_DIR}/bin
   NO_DEFAULT_PATH
   )
 
-MARK_AS_ADVANCED(
+mark_as_advanced(
   DCMTK_DCMDUMP_EXECUTABLE
   DCMTK_DCMDJPEG_EXECUTABLE
   DCMTK_DCMDRLE_EXECUTABLE

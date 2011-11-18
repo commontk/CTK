@@ -1,27 +1,27 @@
-PROJECT(ctkExampleHost)
+project(ctkExampleHost)
 
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
 
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkExampleHostMain.cpp
   ctkHostAppExampleWidget.cpp
 )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkHostAppExampleWidget.h
 )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
   ctkExampleHostMainWindow.ui
   ctkHostAppExampleWidget.ui
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   
 )
 
@@ -39,6 +39,6 @@ ctkMacroBuildApp(
   )
 
 # Testing
-IF(BUILD_TESTING)
-#   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+#   add_subdirectory(Testing)
+endif()

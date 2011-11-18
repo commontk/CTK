@@ -72,7 +72,7 @@ public:
 protected:
   virtual void paintEvent(QPaintEvent*);
   
-protected slots:
+protected Q_SLOTS:
   void resizePopup();
   
 protected:

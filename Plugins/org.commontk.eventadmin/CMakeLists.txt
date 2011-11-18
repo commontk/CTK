@@ -1,8 +1,8 @@
-PROJECT(org_commontk_eventadmin)
+project(org_commontk_eventadmin)
 
-SET(PLUGIN_export_directive "org_commontk_eventadmin_EXPORT")
+set(PLUGIN_export_directive "org_commontk_eventadmin_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkEAConfiguration_p.h
   ctkEAConfiguration.cpp
   ctkEAMetaTypeProvider_p.h
@@ -84,7 +84,7 @@ SET(PLUGIN_SRCS
   util/ctkEATimeoutException_p.h
 )
 
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   adapter/ctkEAFrameworkEventAdapter_p.h
   adapter/ctkEALogEventAdapter_p.h
   adapter/ctkEAPluginEventAdapter_p.h
@@ -104,11 +104,11 @@ SET(PLUGIN_MOC_SRCS
   ctkEventAdminService_p.h
 )
 
-SET(PLUGIN_resources
+set(PLUGIN_resources
 
 )
 
-SET(PLUGIN_CACHED_RESOURCEFILES
+set(PLUGIN_CACHED_RESOURCEFILES
   
 )
 
@@ -124,6 +124,6 @@ ctkMacroBuildPlugin(
 )
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

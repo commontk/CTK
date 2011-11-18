@@ -24,23 +24,23 @@
 #
 
 #! \ingroup CMakeUtilities
-FUNCTION(ctkFunctionApplyPatches PATCH_EXE SRC_DIR PATCH_FILES)
+function(ctkFunctionApplyPatches PATCH_EXE SRC_DIR PATCH_FILES)
   
   # Make sure patch executable exists
-  IF(NOT EXISTS ${PATCH_EXE})
-    MESSAGE(FATAL_ERROR "ERROR: Program [${PATCH_EXE}] doesn't exist !")
-  ENDIF()
+  if(NOT EXISTS ${PATCH_EXE})
+    message(FATAL_ERROR "ERROR: Program [${PATCH_EXE}] doesn't exist !")
+  endif()
 
   # Apply patches
-  FOREACH(patch_file ${PATCH_FILES})
-    MESSAGE("Applying patch: ${patch_file}")
-    IF(WIN32)
+  foreach(patch_file ${PATCH_FILES})
+    message("Applying patch: ${patch_file}")
+    if(WIN32)
       ctkFunctionLFtoCRLF("${patch_file}" "${patch_file}")
-    ENDIF()
-    EXECUTE_PROCESS(COMMAND ${PATCH_EXE} -p0 -i "${patch_file}" -d "${SRC_DIR}" RESULT_VARIABLE result_var)
-    IF(result_var)
-      MESSAGE("ERROR: ${result_var}")
-    ENDIF(result_var)
-  ENDFOREACH()
+    endif()
+    execute_process(COMMAND ${PATCH_EXE} -p0 -i "${patch_file}" -d "${SRC_DIR}" RESULT_VARIABLE result_var)
+    if(result_var)
+      message("ERROR: ${result_var}")
+    endif()
+  endforeach()
   
-ENDFUNCTION()
+endfunction()

@@ -27,39 +27,38 @@
 #include <iostream>
 #include <cstdlib>
 
-  /*
-   * This test performs a full dicom store, query, and retrieve.
-   *
-   * To recreate the parts, from the CTK-superbuild directory, run:
-   *
-
-./CMakeExternals/Install/bin/dcmqrscp -c ./CTK-build/Testing/Temporary/dcmqrscp.cfg -d -v
-
-./CMakeExternals/Install/bin/storescu -aec CTK_AE -aet CTK_AE localhost 11112 ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/*.IMA
-
-./CMakeExternals/Install/bin/findscu -aet CTK_AE -aec COMMONTK -P -k 0010,0010=\* localhost 11112 patqry.dcm
-
-./CTK-build/bin/ctkDICOMQuery /tmp/test.db CTK_AE CTK_AE localhost 11112
-
-
-./CTK-build/bin/ctkDICOMRetrieve 1.2.840.113619.2.135.3596.6358736.5118.1115807980.182  /tmp/hoot CTK_AE 11113 CTK_AE localhost 11112 CTK_CLIENT_AE
-
-As invoked by ctest:
-
-% ./CTK-build/bin/CTKApplicationCppTests ctkDICOMApplicationTest1 \
-    ./CMakeExternals/Install/bin/dcmqrscp ./CTK-build/Testing/Temporary/dcmqrscp.cfg \
-        ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000055.IMA \
-        ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000056.IMA \
-    ./CMakeExternals/Install/bin/storescu \
-    ./CTK-build/bin/ctkDICOMQuery \
-    ./CTK-build/Testing/Temporary/ctkDICOMApplicationTest1.db \
-    ./CTK-build/bin/ctkDICOMRetrieve \
-    ./CTK-build/Testing/Temporary/ctkDICOMRetrieveStorage
-
-*/
+//
+//  This test performs a full dicom store, query, and retrieve.
+//
+//  To recreate the parts, from the CTK-superbuild directory, run:
+//
+//
+//  ./CMakeExternals/Install/bin/dcmqrscp -c ./CTK-build/Testing/Temporary/dcmqrscp.cfg -d -v
+//
+//  ./CMakeExternals/Install/bin/storescu -aec CTK_AE -aet CTK_AE localhost 11112 ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/*.IMA
+//
+//  ./CMakeExternals/Install/bin/findscu -aet CTK_AE -aec COMMONTK -P -k 0010,0010=\* localhost 11112 patqry.dcm
+//
+//  ./CTK-build/bin/ctkDICOMQuery /tmp/test.db CTK_AE CTK_AE localhost 11112
+//
+//
+//  ./CTK-build/bin/ctkDICOMRetrieve 1.2.840.113619.2.135.3596.6358736.5118.1115807980.182  /tmp/hoot CTK_AE 11113 CTK_AE localhost 11112 CTK_CLIENT_AE
+//
+//  As invoked by ctest:
+//
+//  % ./CTK-build/bin/CTKApplicationCppTests ctkDICOMApplicationTest1 \
+//      ./CMakeExternals/Install/bin/dcmqrscp ./CTK-build/Testing/Temporary/dcmqrscp.cfg \
+//          ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000055.IMA \
+//          ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000056.IMA \
+//      ./CMakeExternals/Install/bin/storescu \
+//      ./CTK-build/bin/ctkDICOMQuery \
+//      ./CTK-build/Testing/Temporary/ctkDICOMApplicationTest1.db \
+//      ./CTK-build/bin/ctkDICOMRetrieve \
+//      ./CTK-build/Testing/Temporary/ctkDICOMRetrieveStorage
+//
 
 int ctkDICOMApplicationTest1(int argc, char * argv []) {
-  
+
   QCoreApplication app(argc, argv);
   QTextStream out(stdout);
 

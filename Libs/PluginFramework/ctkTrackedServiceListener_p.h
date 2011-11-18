@@ -39,7 +39,7 @@ public:
     : QObject(parent)
   {}
 
-public slots:
+public Q_SLOTS:
 
   /**
    * Slot connected to service events for the

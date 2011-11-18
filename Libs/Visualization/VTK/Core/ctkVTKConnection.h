@@ -91,7 +91,7 @@ public:
   void observeDeletion(bool enable);
   bool deletionObserved()const;
   
-signals:
+Q_SIGNALS:
   /// 
   /// The qt signal emited by the VTK Callback
   /// The signal corresponding to the slot will be emited
@@ -108,7 +108,7 @@ signals:
   /// slot
   void isBroke();
 
-protected slots:
+protected Q_SLOTS:
   void vtkObjectDeleted();
   void qobjectDeleted();
 

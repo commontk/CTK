@@ -58,7 +58,7 @@ public:
 
   virtual QSize sizeHint() const;
 
-private slots:
+private Q_SLOTS:
   void updateIcon(Qt::LayoutDirection newDirection);
 
 protected:

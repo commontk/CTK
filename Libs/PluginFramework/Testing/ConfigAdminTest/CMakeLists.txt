@@ -1,8 +1,8 @@
-PROJECT(org_commontk_configadmintest)
+project(org_commontk_configadmintest)
 
-SET(PLUGIN_export_directive "org_commontk_configadmintest_EXPORT")
+set(PLUGIN_export_directive "org_commontk_configadmintest_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkConfigAdminTestActivator.cpp
   ctkConfigurationAdminTestSuite.cpp
   ctkConfigurationListenerTestSuite.cpp
@@ -18,7 +18,7 @@ SET(PLUGIN_SRCS
   ctkManagedServiceTestSuite_p.h
 )
 
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkConfigAdminTestActivator_p.h
   ctkConfigurationAdminTestSuite_p.h
   ctkConfigurationListenerTestSuite_p.h
@@ -27,11 +27,11 @@ SET(PLUGIN_MOC_SRCS
   ctkManagedServiceTestSuite_p.h
 )
 
-SET(PLUGIN_UI_FORMS
+set(PLUGIN_UI_FORMS
   
 )
 
-SET(PLUGIN_resources
+set(PLUGIN_resources
   
 )
 
@@ -48,4 +48,4 @@ ctkMacroBuildPlugin(
   TEST_PLUGIN
 )
 
-SET(configadmin_test ${PROJECT_NAME} CACHE INTERNAL "Target name for the plugin containing unit tests for ConfigAdmin implementations")
+set(configadmin_test ${PROJECT_NAME} CACHE INTERNAL "Target name for the plugin containing unit tests for ConfigAdmin implementations")

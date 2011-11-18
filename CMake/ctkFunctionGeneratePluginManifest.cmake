@@ -4,7 +4,7 @@
 #
 
 #! \ingroup CMakeUtilities
-FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
+function(ctkFunctionGeneratePluginManifest QRC_SRCS)
 
   CtkMacroParseArguments(MY
     "ACTIVATIONPOLICY;CATEGORY;CONTACT_ADDRESS;COPYRIGHT;DESCRIPTION;DOC_URL;ICON;LICENSE;NAME;REQUIRE_PLUGIN;SYMBOLIC_NAME;VENDOR;VERSION;CUSTOM_HEADERS"
@@ -13,79 +13,79 @@ FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
     )
 
   # Sanity checks
-  IF(NOT DEFINED MY_SYMBOLIC_NAME)
-    MESSAGE(FATAL_ERROR "SYMBOLIC_NAME is mandatory")
-  ENDIF()
+  if(NOT DEFINED MY_SYMBOLIC_NAME)
+    message(FATAL_ERROR "SYMBOLIC_NAME is mandatory")
+  endif()
 
-  SET(_manifest_content "Plugin-SymbolicName: ${MY_SYMBOLIC_NAME}")
+  set(_manifest_content "Plugin-SymbolicName: ${MY_SYMBOLIC_NAME}")
 
-  IF(DEFINED MY_ACTIVATIONPOLICY)
-    STRING(TOLOWER "${MY_ACTIVATIONPOLICY}" _activation_policy)
-    IF(_activation_policy STREQUAL "eager")
-      SET(_manifest_content "${_manifest_content}\nPlugin-ActivationPolicy: eager")
-    ELSE()
-      MESSAGE(FATAL_ERROR "ACTIVATIONPOLICY is set to '${MY_ACTIVATIONPOLICY}', which is not supported")
-    ENDIF()
-  ENDIF()
+  if(DEFINED MY_ACTIVATIONPOLICY)
+    string(TOLOWER "${MY_ACTIVATIONPOLICY}" _activation_policy)
+    if(_activation_policy STREQUAL "eager")
+      set(_manifest_content "${_manifest_content}\nPlugin-ActivationPolicy: eager")
+    else()
+      message(FATAL_ERROR "ACTIVATIONPOLICY is set to '${MY_ACTIVATIONPOLICY}', which is not supported")
+    endif()
+  endif()
 
-  IF(DEFINED MY_CATEGORY)
-    SET(_manifest_content "${_manifest_content}\nPlugin-Category: ${MY_CATEGORY}")
-  ENDIF()
+  if(DEFINED MY_CATEGORY)
+    set(_manifest_content "${_manifest_content}\nPlugin-Category: ${MY_CATEGORY}")
+  endif()
 
-  IF(DEFINED MY_CONTACT_ADDRESS)
-    SET(_manifest_content "${_manifest_content}\nPlugin-ContactAddress: ${MY_CONTACT_ADDRESS}")
-  ENDIF()
+  if(DEFINED MY_CONTACT_ADDRESS)
+    set(_manifest_content "${_manifest_content}\nPlugin-ContactAddress: ${MY_CONTACT_ADDRESS}")
+  endif()
 
-  IF(DEFINED MY_COPYRIGHT)
-    SET(_manifest_content "${_manifest_content}\nPlugin-Copyright: ${MY_COPYRIGHT}")
-  ENDIF()
+  if(DEFINED MY_COPYRIGHT)
+    set(_manifest_content "${_manifest_content}\nPlugin-Copyright: ${MY_COPYRIGHT}")
+  endif()
 
-  IF(DEFINED MY_DESCRIPTION)
-    SET(_manifest_content "${_manifest_content}\nPlugin-Description: ${MY_DESCRIPTION}")
-  ENDIF()
+  if(DEFINED MY_DESCRIPTION)
+    set(_manifest_content "${_manifest_content}\nPlugin-Description: ${MY_DESCRIPTION}")
+  endif()
 
-  IF(DEFINED MY_DOC_URL)
-    SET(_manifest_content "${_manifest_content}\nPlugin-DocURL: ${MY_DOC_URL}")
-  ENDIF()
+  if(DEFINED MY_DOC_URL)
+    set(_manifest_content "${_manifest_content}\nPlugin-DocURL: ${MY_DOC_URL}")
+  endif()
 
-  IF(DEFINED MY_ICON)
-    SET(_manifest_content "${_manifest_content}\nPlugin-Icon: ${MY_ICON}")
-  ENDIF()
+  if(DEFINED MY_ICON)
+    set(_manifest_content "${_manifest_content}\nPlugin-Icon: ${MY_ICON}")
+  endif()
 
-  IF(DEFINED MY_LICENSE)
-    SET(_manifest_content "${_manifest_content}\nPlugin-License: ${MY_LICENSE}")
-  ENDIF()
+  if(DEFINED MY_LICENSE)
+    set(_manifest_content "${_manifest_content}\nPlugin-License: ${MY_LICENSE}")
+  endif()
 
-  IF(DEFINED MY_NAME)
-    SET(_manifest_content "${_manifest_content}\nPlugin-Name: ${MY_NAME}")
-  ENDIF()
+  if(DEFINED MY_NAME)
+    set(_manifest_content "${_manifest_content}\nPlugin-Name: ${MY_NAME}")
+  endif()
 
-  IF(DEFINED MY_REQUIRE_PLUGIN)
-    STRING(REPLACE ";" "," require_plugin "${MY_REQUIRE_PLUGIN}")
-    SET(_manifest_content "${_manifest_content}\nRequire-Plugin: ${require_plugin}")
-  ENDIF()
+  if(DEFINED MY_REQUIRE_PLUGIN)
+    string(REPLACE ";" "," require_plugin "${MY_REQUIRE_PLUGIN}")
+    set(_manifest_content "${_manifest_content}\nRequire-Plugin: ${require_plugin}")
+  endif()
 
-  IF(DEFINED MY_VENDOR)
-    SET(_manifest_content "${_manifest_content}\nPlugin-Vendor: ${MY_VENDOR}")
-  ENDIF()
+  if(DEFINED MY_VENDOR)
+    set(_manifest_content "${_manifest_content}\nPlugin-Vendor: ${MY_VENDOR}")
+  endif()
 
-  IF(DEFINED MY_VERSION)
-    SET(_manifest_content "${_manifest_content}\nPlugin-Version: ${MY_VERSION}")
-  ENDIF()
+  if(DEFINED MY_VERSION)
+    set(_manifest_content "${_manifest_content}\nPlugin-Version: ${MY_VERSION}")
+  endif()
 
-  IF(DEFINED MY_CUSTOM_HEADERS)
-    SET(_manifest_content "${_manifest_content}\n")
-    FOREACH(_custom_header ${MY_CUSTOM_HEADERS})
-      SET(_manifest_content "${_manifest_content}\n${_custom_header}: ${${_custom_header}}")
-    ENDFOREACH()
-  ENDIF()
+  if(DEFINED MY_CUSTOM_HEADERS)
+    set(_manifest_content "${_manifest_content}\n")
+    foreach(_custom_header ${MY_CUSTOM_HEADERS})
+      set(_manifest_content "${_manifest_content}\n${_custom_header}: ${${_custom_header}}")
+    endforeach()
+  endif()
 
-  SET(_manifest_filename "MANIFEST.MF")
-  SET(_manifest_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_manifest_filename}")
-  STRING(REPLACE "." "_" _symbolic_name ${MY_SYMBOLIC_NAME})
-  SET(_manifest_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_symbolic_name}_manifest.qrc")
+  set(_manifest_filename "MANIFEST.MF")
+  set(_manifest_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_manifest_filename}")
+  string(REPLACE "." "_" _symbolic_name ${MY_SYMBOLIC_NAME})
+  set(_manifest_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_symbolic_name}_manifest.qrc")
 
-  SET(_manifest_qrc_content
+  set(_manifest_qrc_content
 "<!DOCTYPE RCC><RCC version=\"1.0\">
 <qresource prefix=\"/${MY_SYMBOLIC_NAME}/META-INF\">
  <file>${_manifest_filename}</file>
@@ -93,11 +93,11 @@ FUNCTION(ctkFunctionGeneratePluginManifest QRC_SRCS)
 </RCC>
 ")
 
-  CONFIGURE_FILE("${CTK_CMAKE_DIR}/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
-  CONFIGURE_FILE("${CTK_CMAKE_DIR}/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
+  configure_file("${CTK_CMAKE_DIR}/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
+  configure_file("${CTK_CMAKE_DIR}/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
 
   QT4_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
 
-  SET(${QRC_SRCS} ${${QRC_SRCS}} ${_qrc_src} PARENT_SCOPE)
+  set(${QRC_SRCS} ${${QRC_SRCS}} ${_qrc_src} PARENT_SCOPE)
 
-ENDFUNCTION()
+endfunction()

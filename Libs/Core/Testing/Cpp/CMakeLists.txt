@@ -1,5 +1,5 @@
 # Dummy plugin used by ctkAbstractPluginFactoryTest1
-ADD_DEFINITIONS( -DCTKDummyPlugin)
+add_definitions( -DCTKDummyPlugin)
 ctkMacroBuildLib(
   NAME "CTKDummyPlugin"
   EXPORT_DIRECTIVE "CTK_DUMMY_EXPORT"
@@ -8,15 +8,15 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${CTK_BASE_LIBRARIES}
   LIBRARY_TYPE "SHARED"
   )
-GET_TARGET_PROPERTY(ctkDummyPluginPATH "CTKDummyPlugin" LOCATION)
-REMOVE_DEFINITIONS(-DCTKDummyPlugin)
+get_target_property(ctkDummyPluginPATH "CTKDummyPlugin" LOCATION)
+remove_definitions(-DCTKDummyPlugin)
 
-SET(KIT ${PROJECT_NAME})
+set(KIT ${PROJECT_NAME})
 
 #
 # Test sources
 #
-SET(KITTests_SRCS
+set(KITTests_SRCS
   ctkAbstractFactoryTest1.cpp
   ctkAbstractLibraryFactoryTest1.cpp
   ctkAbstractObjectFactoryTest1.cpp
@@ -57,26 +57,26 @@ SET(KITTests_SRCS
   ctkWorkflowTest3.cpp
   )
 
-IF(HAVE_BFD)
-  LIST(APPEND KITTests_SRCS
+if(HAVE_BFD)
+  list(APPEND KITTests_SRCS
     ctkBinaryFileDescriptorTest1.cpp
     )
-ENDIF()
+endif()
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ${KITTests_SRCS}
   #EXTRA_INCLUDE TestingMacros.h
   )
 
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CppTests.cpp)
+SET(TestsToRun ${Tests})
+REMOVE(TestsToRun ${KIT}CppTests.cpp)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
 #
 # Tests Helpers sources
 #
-SET(Tests_Helpers_SRCS
+set(Tests_Helpers_SRCS
   ctkBranchingWorkflowStep.h
   ctkExampleDerivedWorkflowStep.cpp
   ctkExampleDerivedWorkflowStep.h
@@ -86,31 +86,26 @@ SET(Tests_Helpers_SRCS
   ctkSingletonTestHelper.h
   )
 
-SET(Tests_Helpers_MOC_SRCS
+set(Tests_Helpers_MOC_SRCS
   ctkExampleWorkflowStepUsingSignalsAndSlots.h
   )
 
-SET(Tests_Helpers_MOC_CPP)
+set(Tests_Helpers_MOC_CPP)
 QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
 
-IF(HAVE_BFD)
-  ADD_EXECUTABLE(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
-ENDIF()
+if(HAVE_BFD)
+  add_executable(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
+endif()
 
-IF(WIN32)
-  ADD_DEFINITIONS( /D _CRT_SECURE_NO_WARNINGS)
-ENDIF()
+if(WIN32)
+  add_definitions( /D _CRT_SECURE_NO_WARNINGS)
+endif()
 
 #
 # Test executable
 #
-ADD_EXECUTABLE(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
-
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST(NAME ${TESTNAME} COMMAND $<TARGET_FILE:${KIT}CppTests> ${TESTNAME} ${ARGN})
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-ENDMACRO( SIMPLE_TEST  )
+add_executable(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
+target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
 #
 # Add Tests
@@ -121,9 +116,9 @@ SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 ${ctkDummyPluginPATH} )
 SIMPLE_TEST( ctkAbstractObjectFactoryTest1 )
 SIMPLE_TEST( ctkAbstractPluginFactoryTest1 ${ctkDummyPluginPATH} )
 SIMPLE_TEST( ctkAbstractQObjectFactoryTest1 )
-IF(HAVE_BFD)
+if(HAVE_BFD)
   SIMPLE_TEST( ctkBinaryFileDescriptorTest1 $<TARGET_FILE:ctkBinaryFileDescriptorTestHelper> )
-ENDIF()
+endif()
 SIMPLE_TEST( ctkCallbackTest1 )
 SIMPLE_TEST( ctkCheckableModelHelperTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
@@ -138,6 +133,7 @@ SIMPLE_TEST( ctkErrorLogQtMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkErrorLogStreamMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkHistogramTest1 )
 SIMPLE_TEST( ctkLoggerTest1 )
+set_property(TEST ctkLoggerTest1 PROPERTY PASS_REGULAR_EXPRESSION "logger.debug\nlogger.info\nlogger.trace\nlogger.warn\nlogger.error\nlogger.fatal")
 SIMPLE_TEST( ctkModelTesterTest1 )
 SIMPLE_TEST( ctkModelTesterTest2 )
 SIMPLE_TEST( ctkPimplTest1 )

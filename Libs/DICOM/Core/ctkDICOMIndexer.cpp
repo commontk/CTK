@@ -100,7 +100,7 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
                                    const QString& destinationDirectoryName)
                                    
 {
-  logger.setDebug();
+  Q_D(ctkDICOMIndexer);
   if (!destinationDirectoryName.isEmpty())
   {
     logger.warn("Ignoring destinationDirectoryName parameter, just taking it as indication we should copy!");

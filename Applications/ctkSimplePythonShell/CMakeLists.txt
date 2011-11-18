@@ -1,15 +1,15 @@
-PROJECT(ctkSimplePythonShell)
+project(ctkSimplePythonShell)
 
 #
 # 3rd party dependencies
 #
-INCLUDE(${VTK_USE_FILE})
+include(${VTK_USE_FILE})
 
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
 
-SET(KIT_SRCS
+set(KIT_SRCS
   ${CMAKE_CURRENT_BINARY_DIR}/ctkSimplePythonManager.cpp
   ctkSimplePythonManager.h
   ctkSimplePythonQtDecorators.h
@@ -19,16 +19,16 @@ SET(KIT_SRCS
   ctkTestWrappedSlot.h
 )
 
-IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  LIST(APPEND KIT_SRCS
+if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  list(APPEND KIT_SRCS
     ctkTestWrappedQListOfVTKObject.h
     ctkTestWrappedVTKSlot.h
     ctkTestWrappedVTKQInvokable.h
     )
-ENDIF()
+endif()
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkSimplePythonManager.h
   ctkSimplePythonQtDecorators.h
   ctkTestWrappedQProperty.h
@@ -36,24 +36,24 @@ SET(KIT_MOC_SRCS
   ctkTestWrappedSlot.h
   )
 
-IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  LIST(APPEND KIT_MOC_SRCS
+if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  list(APPEND KIT_MOC_SRCS
     ctkTestWrappedQListOfVTKObject.h
     ctkTestWrappedVTKSlot.h
     ctkTestWrappedVTKQInvokable.h
     )
-ENDIF()
+endif()
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
 )
 
 # Set VTK_LIBRARIES variable
-SET(VTK_LIBRARIES
+set(VTK_LIBRARIES
   vtkCommon
   vtkFiltering
   )
@@ -64,54 +64,54 @@ ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 # Configure file will be configured using CTK_WRAP_PYTHONQT_{LIGHT, FULL} and
 # CTK_BUILD_SHARED_LIBS variables
-CONFIGURE_FILE(
+configure_file(
   ctkSimplePythonShellConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/ctkSimplePythonShellConfigure.h
   )
 
 # The following block generate the code required to initialize the wrapper
 # when CTK is statically built.
-IF(NOT CTK_BUILD_SHARED_LIBS
+if(NOT CTK_BUILD_SHARED_LIBS
    AND (CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL))
 
   # Update list of target libraries with the list of available PythonQt libraries
   # and set variables holding list of pythonqt initialization method
-  SET(CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION)
-  SET(CTK_PYTHONQT_INITIALIZATION_METHOD_CALL)
+  set(CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION)
+  set(CTK_PYTHONQT_INITIALIZATION_METHOD_CALL)
 
   # To avoid the complex process of resolving the dependencies associated with each
   # external project required by each decorator. For now, let's just include the decorator
   # associated with CTKCore and CTKWidgets.
-  SET(MY_CTK_WRAPPED_LIBRARIES_PYTHONQT)
-  IF(CTK_LIB_Core)
-    LIST(APPEND MY_CTK_WRAPPED_LIBRARIES_PYTHONQT CTKCore)
-  ENDIF()
-  IF(CTK_LIB_Widgets)
-    LIST(APPEND MY_CTK_WRAPPED_LIBRARIES_PYTHONQT CTKWidgets)
-  ENDIF()
-  IF(CTK_LIB_DICOM/Core)
-    LIST(APPEND MY_CTK_WRAPPED_LIBRARIES_PYTHONQT CTKDICOMCore)
-  ENDIF()
-  IF(CTK_LIB_DICOM/Widgets)
-    LIST(APPEND MY_CTK_WRAPPED_LIBRARIES_PYTHONQT CTKDICOMWidgets)
-  ENDIF()
+  set(MY_CTK_WRAPPED_LIBRARIES_PYTHONQT)
+  if(CTK_LIB_Core)
+    list(APPEND MY_CTK_WRAPPED_LIBRARIES_PYTHONQT CTKCore)
+  endif()
+  if(CTK_LIB_Widgets)
+    list(APPEND MY_CTK_WRAPPED_LIBRARIES_PYTHONQT CTKWidgets)
+  endif()
+  if(CTK_LIB_DICOM/Core)
+    list(APPEND MY_CTK_WRAPPED_LIBRARIES_PYTHONQT CTKDICOMCore)
+  endif()
+  if(CTK_LIB_DICOM/Widgets)
+    list(APPEND MY_CTK_WRAPPED_LIBRARIES_PYTHONQT CTKDICOMWidgets)
+  endif()
 
-  FOREACH(lib_name ${MY_CTK_WRAPPED_LIBRARIES_PYTHONQT})
+  foreach(lib_name ${MY_CTK_WRAPPED_LIBRARIES_PYTHONQT})
 
-    LIST(APPEND KIT_target_libraries ${lib_name}PythonQt)
+    list(APPEND KIT_target_libraries ${lib_name}PythonQt)
 
-    SET(CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION
+    set(CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION
       "${CTK_PYTHONQT_INITIALIZATION_METHOD_DEFINITION}
 extern \"C\"{ void init${lib_name}PythonQt(); }")
 
-    SET(CTK_PYTHONQT_INITIALIZATION_METHOD_CALL
+    set(CTK_PYTHONQT_INITIALIZATION_METHOD_CALL
       "${CTK_PYTHONQT_INITIALIZATION_METHOD_CALL}
 init${lib_name}PythonQt();")
 
-  ENDFOREACH()
-ENDIF()
+  endforeach()
+endif()
 
-CONFIGURE_FILE(
+configure_file(
   ctkSimplePythonManager.cpp.in
   ${CMAKE_CURRENT_BINARY_DIR}/ctkSimplePythonManager.cpp
   )
@@ -125,9 +125,9 @@ ctkMacroBuildApp(
   RESOURCES ${KIT_resources}
   )
 
-ADD_SUBDIRECTORY(Python)
+add_subdirectory(Python)
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

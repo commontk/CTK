@@ -55,7 +55,7 @@ public:
   explicit ctkVTKRenderView(QWidget* parent = 0);
   virtual ~ctkVTKRenderView();
 
-public slots:
+public Q_SLOTS:
   /// Show/Hide Orientation widget
   void setOrientationWidgetVisible(bool visible);
 

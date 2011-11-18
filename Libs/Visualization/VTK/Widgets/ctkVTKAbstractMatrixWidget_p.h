@@ -49,7 +49,7 @@ public:
   void setMatrix(vtkMatrix4x4* matrix);
   vtkMatrix4x4* matrix()const;
 
-public slots:
+public Q_SLOTS:
   ///
   /// Triggered upon VTK transform modified event
   void updateMatrix();

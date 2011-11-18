@@ -32,13 +32,13 @@ public:
     /// register a custom callback
     void registerCustomCallback();
 
-public slots:
+public Q_SLOTS:
     /// Test slot that will increment the value of m_Var when an UPDATE_OBJECT event is raised.
     void updateObject();
     void updateObject2();
     void setObjectValue(int v);
 
-signals:
+Q_SIGNALS:
     void valueModify(int v);
     void objectModify();
 
@@ -85,7 +85,7 @@ void testObjectCustomForDispatcher::registerCustomCallback() {
 class ctkEventDispatcherTest : public QObject {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     /// Initialize test variables
     void initTestCase() {
         m_ObjTestObserver = new testObjectCustomForDispatcher;

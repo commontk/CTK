@@ -84,7 +84,7 @@ protected:
   void onExitCompleteInternal()const;
 
 
-signals:
+Q_SIGNALS:
   void invokeValidateCommand(const QString& desiredBranchId)const;
 
   void validationComplete(bool validationSuceeded, const QString& branchId)const;

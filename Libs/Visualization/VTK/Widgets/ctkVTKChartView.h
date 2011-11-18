@@ -74,7 +74,7 @@ public:
   virtual void setAxesToChartBounds();
   virtual void boundAxesToChartBounds();
 
-signals:
+Q_SIGNALS:
   void plotAdded(vtkPlot* plot);
   /// Fired anytime the bound of a plot modifies the overal bounds
   void boundsChanged();

@@ -83,7 +83,7 @@ public:
   virtual bool isCheckBoxUserCheckable()const;
   virtual void setCheckBoxUserCheckable(bool b);
 
-signals:
+Q_SIGNALS:
   /// Fired anytime the checkbox change of state
   void checkBoxToggled(bool);
   /// Fired anytime the checkbox change of state

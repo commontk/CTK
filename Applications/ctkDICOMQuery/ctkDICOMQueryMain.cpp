@@ -65,9 +65,7 @@ void print_usage()
 */
 int main(int argc, char** argv)
 {
-  ctkLogger::configure();
   ctkLogger logger ( "org.commontk.core.Logger" );
-  logger.setDebug();
 
   if (argc < 5)
   {

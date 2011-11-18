@@ -32,9 +32,9 @@ class ctkSettingsPanelTest2Helper : public QObject
 public:
   ctkSettingsPanelTest2Helper(QObject * parent = 0) : QObject(parent){}
   QStringList list()const;
-public slots:
+public Q_SLOTS:
   void setList(const QStringList& alist);
-signals:
+Q_SIGNALS:
   void listChanged();
 private:
   QStringList List;

@@ -1,4 +1,4 @@
-PROJECT(CTKModuleDescription)
+project(CTKModuleDescription)
 
 #
 # 3rd party dependencies
@@ -8,12 +8,12 @@ PROJECT(CTKModuleDescription)
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_MODULDESC_EXPORT")
+set(KIT_export_directive "CTK_MODULDESC_EXPORT")
 
 # Additional directories to include
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkModuleDescription.h
   ctkModuleDescription.cpp
   ctkModuleParameter.h
@@ -33,7 +33,7 @@ SET(KIT_SRCS
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkModuleDescriptionReaderInterface.h
   ctkModuleDescriptionReader.h
   ctkModuleDescriptionConverterInterface.h
@@ -43,11 +43,11 @@ SET(KIT_MOC_SRCS
 )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
 )
 
 # Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
@@ -66,15 +66,15 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-IF(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
-ENDIF()
+endif()
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

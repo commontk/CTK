@@ -1,19 +1,19 @@
-PROJECT(pluginA2_test)
+project(pluginA2_test)
 
-SET(PLUGIN_export_directive "pluginA2_test_EXPORT")
+set(PLUGIN_export_directive "pluginA2_test_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkTestPluginA2.cpp
   ctkTestPluginA2Activator.cpp
   ctkTestPluginA2Service.h
 )
 
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkTestPluginA2_p.h
   ctkTestPluginA2Activator_p.h
 )
 
-SET(PLUGIN_resources
+set(PLUGIN_resources
   
 )
 

@@ -69,14 +69,14 @@ protected:
 
   void createUserInterfaceCompleteInternal()const;
 
-protected slots:
+protected Q_SLOTS:
 
   ///
   /// Calls corresponding function in public implementation
 
   virtual void showUserInterface();
 
-signals:
+Q_SIGNALS:
 
   void invokeShowUserInterfaceCommand()const;
 

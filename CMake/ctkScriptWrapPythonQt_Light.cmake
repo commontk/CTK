@@ -53,18 +53,18 @@ set(verbose 0)
 # Convenient function allowing to log the reason why a given class hasn't been wrapped
 # If verbose=1, it will also be displayed on the standard output
 #
-FUNCTION(log msg)
-  IF(verbose)
-    MESSAGE(${msg})
-  ENDIF()
-  FILE(APPEND "${CMAKE_CURRENT_BINARY_DIR}/ctkScriptWrapPythonQt_Light_log.txt" "${msg}\n")
-ENDFUNCTION()
+function(log msg)
+  if(verbose)
+    message(${msg})
+  endif()
+  file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/ctkScriptWrapPythonQt_Light_log.txt" "${msg}\n")
+endfunction()
 
 #
 # Convenient function allowing to invoke re.search(regex, string) using the given interpreter.
 # Note that is_matching will be set to True if there is a match
 #
-FUNCTION(reSearchFile python_exe python_library_path regex file is_matching)
+function(reSearchFile python_exe python_library_path regex file is_matching)
 
   set(python_cmd "import re\; f = open('${file}', 'r')\;
 res = re.search\(\"${regex}\", f.read(), re.MULTILINE\)\;
@@ -73,15 +73,15 @@ else: print \"TRUE\"
 ")
   #message("python_cmd: ${python_cmd}")
 
-  IF(WIN32)
-    SET(ENV{PATH} ${python_library_path};$ENV{PATH})
-  ELSEIF(APPLE)
-    SET(ENV{DYLD_LIBRARY_PATH} ${python_library_path}:$ENV{DYLD_LIBRARY_PATH})
-  ELSE()
-    SET(ENV{LD_LIBRARY_PATH} ${python_library_path}:$ENV{LD_LIBRARY_PATH})
-  ENDIF()
+  if(WIN32)
+    set(ENV{PATH} ${python_library_path};$ENV{PATH})
+  elseif(APPLE)
+    set(ENV{DYLD_LIBRARY_PATH} ${python_library_path}:$ENV{DYLD_LIBRARY_PATH})
+  else()
+    set(ENV{LD_LIBRARY_PATH} ${python_library_path}:$ENV{LD_LIBRARY_PATH})
+  endif()
 
-  EXECUTE_PROCESS(
+  execute_process(
     COMMAND ${python_exe} -c ${python_cmd};
     RESULT_VARIABLE result
     OUTPUT_VARIABLE output
@@ -89,50 +89,50 @@ else: print \"TRUE\"
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
-  IF(result)
-    MESSAGE(FATAL_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}")
-  ENDIF()
+  if(result)
+    message(FATAL_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}")
+  endif()
   #message(${output})
-  SET(is_matching ${output} PARENT_SCOPE)
+  set(is_matching ${output} PARENT_SCOPE)
 
-ENDFUNCTION()
+endfunction()
 
-IF(NOT DEFINED CMAKE_CURRENT_LIST_DIR)
-  GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-ENDIF()
-IF(NOT DEFINED CMAKE_CURRENT_LIST_FILENAME)
-  GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME)
-ENDIF()
+if(NOT DEFINED CMAKE_CURRENT_LIST_DIR)
+  get_filename_component(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+endif()
+if(NOT DEFINED CMAKE_CURRENT_LIST_FILENAME)
+  get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME)
+endif()
 
 # Check for non-defined var
-FOREACH(var WRAPPING_NAMESPACE TARGET SOURCES INCLUDE_DIRS WRAP_INT_DIR HAS_DECORATOR)
-  IF(NOT DEFINED ${var})
-    MESSAGE(FATAL_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
-  ENDIF()
-ENDFOREACH()
+foreach(var WRAPPING_NAMESPACE TARGET SOURCES INCLUDE_DIRS WRAP_INT_DIR HAS_DECORATOR)
+  if(NOT DEFINED ${var})
+    message(FATAL_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
+  endif()
+endforeach()
 
 # Check for non-existing ${var}
-FOREACH(var QT_QMAKE_EXECUTABLE OUTPUT_DIR PYTHON_EXECUTABLE PYTHON_LIBRARY_PATH)
-  IF(NOT EXISTS ${${var}})
-    MESSAGE(FATAL_ERROR "Failed to find ${var}=\"${${var}}\" when calling ctkScriptWrapPythonQt")
-  ENDIF()
-ENDFOREACH()
+foreach(var QT_QMAKE_EXECUTABLE OUTPUT_DIR PYTHON_EXECUTABLE PYTHON_LIBRARY_PATH)
+  if(NOT EXISTS ${${var}})
+    message(FATAL_ERROR "Failed to find ${var}=\"${${var}}\" when calling ctkScriptWrapPythonQt")
+  endif()
+endforeach()
 
 # Clear log file
-FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkScriptWrapPythonQt_Light_log.txt" "")
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkScriptWrapPythonQt_Light_log.txt" "")
 
 # Convert wrapping namespace to subdir
-STRING(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
+string(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
 
 # Convert ^^ separated string to list
-STRING(REPLACE "^^" ";" SOURCES "${SOURCES}")
+string(REPLACE "^^" ";" SOURCES "${SOURCES}")
 
-FOREACH(FILE ${SOURCES})
+foreach(FILE ${SOURCES})
 
   # what is the filename without the extension
-  GET_FILENAME_COMPONENT(TMP_FILENAME ${FILE} NAME_WE)
+  get_filename_component(TMP_FILENAME ${FILE} NAME_WE)
 
-  SET(includes
+  set(includes
     "${includes}\n#include \"${TMP_FILENAME}.h\"")
 
   # Extract classname - NOTE: We assume the filename matches the associated class
@@ -140,49 +140,49 @@ FOREACH(FILE ${SOURCES})
   #message(STATUS "FILE:${FILE}, className:${className}")
 
   # Extract parent classname
-  SET(parentClassName)
+  set(parentClassName)
 
-  IF("${parentClassName}" STREQUAL "")
+  if("${parentClassName}" STREQUAL "")
     # Does constructor signature is of the form: myclass()
-    SET(regex "[^~]${className}[\\s\\n]*\\([\\s\\n]*\\)")
-    reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH} ${regex} ${FILE} is_matching)
-    IF(is_matching)
-      SET(parentClassName "No")
+    set(regex "[^~]${className}[\\s\\n]*\\([\\s\\n]*\\)")
+    reSearchfile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH} ${regex} ${FILE} is_matching)
+    if(is_matching)
+      set(parentClassName "No")
       log("${TMP_FILENAME} - constructor of the form: ${className}\(\)")
-    ENDIF()
-  ENDIF()
+    endif()
+  endif()
 
-  IF("${parentClassName}" STREQUAL "")
+  if("${parentClassName}" STREQUAL "")
     # Does constructor signature is of the form: myclass(QObject * parent ...)
-    SET(regex "${className}[\\s\\n]*\\([\\s\\n]*QObject[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\))")
-    reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH} ${regex} ${FILE} is_matching)
-    IF(is_matching)
-      SET(parentClassName "QObject")
+    set(regex "${className}[\\s\\n]*\\([\\s\\n]*QObject[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\))")
+    reSearchfile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH} ${regex} ${FILE} is_matching)
+    if(is_matching)
+      set(parentClassName "QObject")
       log("${TMP_FILENAME} - constructor of the form: ${className}\(QObject * parent ... \)")
-    ENDIF()
-  ENDIF()
+    endif()
+  endif()
 
-  IF("${parentClassName}" STREQUAL "")
+  if("${parentClassName}" STREQUAL "")
     # Does constructor signature is of the form: myclass(QWidget * parent ...)
-    SET(regex "${className}[\\s\\n]*\\([\\s\\n]*QWidget[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\))")
-    reSearchFile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH} ${regex} ${FILE} is_matching)
-    IF(is_matching)
-      SET(parentClassName "QWidget")
+    set(regex "${className}[\\s\\n]*\\([\\s\\n]*QWidget[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\))")
+    reSearchfile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH} ${regex} ${FILE} is_matching)
+    if(is_matching)
+      set(parentClassName "QWidget")
       log("${TMP_FILENAME} - constructor of the form: ${className}\(QWidget * parent ... \)")
-    ENDIF()
-  ENDIF()
+    endif()
+  endif()
 
   # Generate PythonQtWrapper class
-  IF("${parentClassName}" STREQUAL "QObject" OR "${parentClassName}" STREQUAL "QWidget")
+  if("${parentClassName}" STREQUAL "QObject" OR "${parentClassName}" STREQUAL "QWidget")
 
-    SET(pythonqtWrappers
+    set(pythonqtWrappers
       "${pythonqtWrappers}
 //-----------------------------------------------------------------------------
 class PythonQtWrapper_${className} : public QObject
 {
 Q_OBJECT
 public:
-public slots:
+public Q_SLOTS:
   ${className}* new_${className}(${parentClassName}*  parent = 0)
     {
     return new ${className}(parent);
@@ -191,16 +191,16 @@ public slots:
 };
 ")
 
-  ELSEIF("${parentClassName}" STREQUAL "No")
+  elseif("${parentClassName}" STREQUAL "No")
 
-    SET(pythonqtWrappers
+    set(pythonqtWrappers
       "${pythonqtWrappers}
 //-----------------------------------------------------------------------------
 class Q_DECL_EXPORT PythonQtWrapper_${className} : public QObject
 {
 Q_OBJECT
 public:
-public slots:
+public Q_SLOTS:
   ${className}* new_${className}()
     {
     return new ${className}();
@@ -209,22 +209,22 @@ public slots:
 };
 ")
 
-  ELSE() # Case parentClassName is empty
+  else() # Case parentClassName is empty
 
-    MESSAGE(WARNING "ctkScriptWrapPythonQt_Light - Problem wrapping ${FILE}")
+    message(WARNING "ctkScriptWrapPythonQt_Light - Problem wrapping ${FILE}")
 
-  ENDIF()
+  endif()
 
   # Generate code allowing to register the class metaobject and its associated "light" wrapper
-  SET(registerclasses "${registerclasses}
+  set(registerclasses "${registerclasses}
   PythonQt::self()->registerClass(
     &${className}::staticMetaObject, \"${TARGET}\",
     PythonQtCreateObject<PythonQtWrapper_${className}>);\n")
 
-ENDFOREACH()
+endforeach()
 
 # Write master include file
-FILE(WRITE ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}0.h "//
+file(WRITE ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}0.h "//
 // File auto-generated by cmake macro ctkScriptWrapPythonQt_Light
 //
 
@@ -238,7 +238,7 @@ ${pythonqtWrappers}
 ")
 
 # Write wrapper header
-FILE(WRITE ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp "//
+file(WRITE ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp "//
 // File auto-generated by cmake macro ctkScriptWrapPythonQt_Light
 //
 
@@ -254,13 +254,13 @@ void PythonQt_init_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}(PyObject* module)
 
 # Configure 'ctkMacroWrapPythonQtModuleInit.cpp.in' replacing TARGET and
 # WRAPPING_NAMESPACE_UNDERSCORE.
-CONFIGURE_FILE(
+configure_file(
   ${CMAKE_CURRENT_LIST_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
   ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_module_init.cpp
   )
 
-# Since FILE(WRITE ) doesn't update the timestamp - Let's touch the files
-EXECUTE_PROCESS(
+# Since file(WRITE ) doesn't update the timestamp - Let's touch the files
+execute_process(
   COMMAND ${CMAKE_COMMAND} -E touch
     ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp
   )

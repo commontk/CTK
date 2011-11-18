@@ -1,8 +1,8 @@
-PROJECT(org_commontk_metatype)
+project(org_commontk_metatype)
 
-SET(PLUGIN_export_directive "org_commontk_metatype_EXPORT")
+set(PLUGIN_export_directive "org_commontk_metatype_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkAttributeDefinitionImpl_p.h
   ctkAttributeDefinitionImpl.cpp
   ctkMetaTypeActivator_p.h
@@ -30,17 +30,17 @@ SET(PLUGIN_SRCS
 )
 
 # Files which should be processed by Qts moc
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkMetaTypeActivator_p.h
   ctkMetaTypeServiceImpl_p.h
 )
 
 # Qt Designer files which should be processed by Qts uic
-SET(PLUGIN_UI_FORMS
+set(PLUGIN_UI_FORMS
 )
 
 # QRC Files which should be compiled into the plugin
-SET(PLUGIN_resources
+set(PLUGIN_resources
 )
 
 #Compute the plugin dependencies
@@ -57,6 +57,6 @@ ctkMacroBuildPlugin(
 )
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

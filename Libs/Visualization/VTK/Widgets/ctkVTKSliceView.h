@@ -90,7 +90,7 @@ public:
   /// \sa setColorWindow();
   double colorWindow()const;
 
-public slots:
+public Q_SLOTS:
 
   /// Reset cameras associated with all renderWindowItem
   /// \sa vtkLightBoxRendererManager::ResetCamera
@@ -126,7 +126,7 @@ public slots:
   /// \sa vtkLightBoxRendererManager::SetRenderWindowColumnCount
   void setLightBoxRendererManagerColumnCount(int newColumnCount);
   
-signals:
+Q_SIGNALS:
   void resized(const QSize& size);
 
 protected:

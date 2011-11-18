@@ -107,7 +107,7 @@ protected:
   /// enterEvent, leaveEvent and mouseMoveEvent).
   virtual bool eventFilter(QObject *obj, QEvent *event);
 
-signals:
+Q_SIGNALS:
   void enteredObservedWidget(QVTKWidget * widget);
   void leftObservedWidget(QVTKWidget * widget);
 

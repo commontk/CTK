@@ -166,11 +166,11 @@ public:
   bool asynchronousLogging()const;
   void setAsynchronousLogging(bool value);
 
-public slots:
+public Q_SLOTS:
   void addEntry(const QDateTime& currentDateTime, const QString& threadId,
                 ctkErrorLogLevel::LogLevel logLevel, const QString& origin, const QString& text);
 
-signals:
+Q_SIGNALS:
   void logLevelFilterChanged();
 
 protected:
@@ -209,7 +209,7 @@ public:
   void setTerminalOutput(ctkErrorLogModel::TerminalOutput terminalOutputType,
                          ctkErrorLogTerminalOutput * terminalOutput);
 
-signals:
+Q_SIGNALS:
   void messageHandled(const QDateTime& currentDateTime, const QString& threadId,
                       ctkErrorLogLevel::LogLevel logLevel, const QString& origin,
                       const QString& text);

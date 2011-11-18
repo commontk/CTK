@@ -24,7 +24,7 @@
 #
 
 #! \ingroup CMakeAPI
-MACRO(ctkMacroBuildApp)
+macro(ctkMacroBuildApp)
   ctkMacroParseArguments(MY
     "NAME;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
     ""
@@ -32,9 +32,9 @@ MACRO(ctkMacroBuildApp)
     )
 
   # Sanity checks
-  IF(NOT DEFINED MY_NAME)
-    MESSAGE(FATAL_ERROR "NAME is mandatory")
-  ENDIF()
+  if(NOT DEFINED MY_NAME)
+    message(FATAL_ERROR "NAME is mandatory")
+  endif()
 
   # Make sure either the source or the binary directory associated with the application
   # contains a file named ${MY_NAME}Main.cpp
@@ -42,16 +42,16 @@ MACRO(ctkMacroBuildApp)
   if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${expected_mainfile} AND
       NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${expected_mainfile}.in AND
       NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${expected_mainfile})
-    MESSAGE(FATAL_ERROR "Application directory: ${MY_NAME} should contain"
+    message(FATAL_ERROR "Application directory: ${MY_NAME} should contain"
                         " a file named ${expected_mainfile} or ${expected_mainfile}.in")
   endif()
 
   # Define library name
-  SET(proj_name ${MY_NAME})
+  set(proj_name ${MY_NAME})
 
   # --------------------------------------------------------------------------
   # Include dirs
-  SET(my_includes
+  set(my_includes
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MY_INCLUDE_DIRECTORIES}
@@ -60,46 +60,46 @@ MACRO(ctkMacroBuildApp)
   # Add the include directories from the library dependencies
   ctkFunctionGetIncludeDirs(my_includes ${proj_name})
 
-  INCLUDE_DIRECTORIES(${my_includes})
+  include_directories(${my_includes})
 
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${proj_name})
 
-  LINK_DIRECTORIES(
+  link_directories(
     ${my_library_dirs}
     )
 
   # Make sure variable are cleared
-  SET(MY_UI_CPP)
-  SET(MY_MOC_CPP)
-  SET(MY_QRC_SRCS)
+  set(MY_UI_CPP)
+  set(MY_MOC_CPP)
+  set(MY_QRC_SRCS)
 
   # Wrap
-  IF(MY_MOC_SRCS)
+  if(MY_MOC_SRCS)
     # this is a workaround for Visual Studio. The relative include paths in the generated
     # moc files can get very long and can't be resolved by the MSVC compiler.
-    FOREACH(moc_src ${MY_MOC_SRCS})
+    foreach(moc_src ${MY_MOC_SRCS})
       QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
-    ENDFOREACH()
-  ENDIF()
+    endforeach()
+  endif()
   QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
-  IF(DEFINED MY_RESOURCES)
+  if(DEFINED MY_RESOURCES)
     QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
-  ENDIF()
+  endif()
 
-  SOURCE_GROUP("Resources" FILES
+  source_group("Resources" FILES
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
     )
 
-  SOURCE_GROUP("Generated" FILES
+  source_group("Generated" FILES
     ${MY_QRC_SRCS}
     ${MY_MOC_CPP}
     ${MY_UI_CPP}
     )
 
   # Create executable
-  ADD_EXECUTABLE(${proj_name}
+  add_executable(${proj_name}
     ${MY_SRCS}
     ${MY_MOC_CPP}
     ${MY_UI_CPP}
@@ -107,26 +107,26 @@ MACRO(ctkMacroBuildApp)
     )
 
   # Set labels associated with the target.
-  SET_TARGET_PROPERTIES(${proj_name} PROPERTIES LABELS ${proj_name})
+  set_target_properties(${proj_name} PROPERTIES LABELS ${proj_name})
 
   # Install rules
-  INSTALL(TARGETS ${proj_name}
+  install(TARGETS ${proj_name}
     RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR} COMPONENT RuntimeApplications
     )
 
-  SET(my_libs
+  set(my_libs
     ${MY_TARGET_LIBRARIES}
     )
-  TARGET_LINK_LIBRARIES(${proj_name} ${my_libs})
+  target_link_libraries(${proj_name} ${my_libs})
 
   # Install headers
-  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  INSTALL(FILES
+  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  install(FILES
     ${headers}
     ${dynamicHeaders}
     DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
     )
 
-ENDMACRO()
+endmacro()
 
 

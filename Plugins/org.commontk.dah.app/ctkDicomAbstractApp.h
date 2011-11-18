@@ -123,7 +123,7 @@ protected:
   */
   void setInternalState(ctkDicomAppHosting::State state);
 
-signals:
+Q_SIGNALS:
   /**
    * @brief ctkDicomAppHosting::INPROGRESS state received and legal.
    *

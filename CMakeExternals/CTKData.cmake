@@ -1,44 +1,48 @@
 #
 # CTKData
 #
-SET(CTKData_DEPENDS)
-IF(BUILD_TESTING)
 
+if(BUILD_TESTING)
   # Sanity checks
-  IF(DEFINED CTKData_DIR AND NOT EXISTS ${CTKData_DIR})
-    MESSAGE(FATAL_ERROR "CTKData_DIR variable is defined but corresponds to non-existing directory")
-  ENDIF()
+  if(DEFINED CTKData_DIR AND NOT EXISTS ${CTKData_DIR})
+    message(FATAL_ERROR "CTKData_DIR variable is defined but corresponds to non-existing directory")
+  endif()
 
-  SET(proj CTKData)
+  set(proj CTKData)
   set(proj_DEPENDENCIES)
 
-  SET(CTKData_DEPENDS ${proj})
+  list(APPEND CTK_DEPENDENCIES ${proj})
 
-  IF(NOT DEFINED CTKData_DIR)
+  if(CTK_SUPERBUILD)
 
-    SET(revision_tag cc07f1ff391b7828459c)
-    IF(${proj}_REVISION_TAG)
-      SET(revision_tag ${${proj}_REVISION_TAG})
-    ENDIF()
+    if(NOT DEFINED CTKData_DIR)
 
-#    MESSAGE(STATUS "Adding project:${proj}")
-    ExternalProject_Add(${proj}
-      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
-      BINARY_DIR ${proj}-build
-      PREFIX ${proj}${ep_suffix}
-      GIT_REPOSITORY ${git_protocol}://github.com/commontk/CTKData.git
-      GIT_TAG ${revision_tag}
-      UPDATE_COMMAND ""
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND ""
-      INSTALL_COMMAND ""
-      DEPENDS
-        ${proj_DEPENDENCIES}
-      )
-    SET(CTKData_DIR ${CMAKE_BINARY_DIR}/${proj})
-  ELSE()
-    ctkMacroEmptyExternalProject(${proj} "${proj_DEPENDENCIES}")
-  ENDIF()
+      set(revision_tag cc07f1ff391b7828459c)
+      if(${proj}_REVISION_TAG)
+        set(revision_tag ${${proj}_REVISION_TAG})
+      endif()
 
-  LIST(APPEND CTK_SUPERBUILD_EP_VARS CTKData_DIR:PATH)
-ENDIF()
+  #    message(STATUS "Adding project:${proj}")
+      ExternalProject_Add(${proj}
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+        BINARY_DIR ${proj}-build
+        PREFIX ${proj}${ep_suffix}
+        GIT_REPOSITORY ${git_protocol}://github.com/commontk/CTKData.git
+        GIT_TAG ${revision_tag}
+        UPDATE_COMMAND ""
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        DEPENDS
+          ${proj_DEPENDENCIES}
+        )
+      set(CTKData_DIR ${CMAKE_BINARY_DIR}/${proj})
+    else()
+      ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
+    endif()
+
+    list(APPEND CTK_SUPERBUILD_EP_VARS CTKData_DIR:PATH)
+
+  endif()
+
+endif()

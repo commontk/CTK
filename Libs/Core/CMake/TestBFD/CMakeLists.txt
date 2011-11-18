@@ -1,14 +1,14 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8)
 
-PROJECT(TestBFD)
+project(TestBFD)
 
 # Sanity checks
-IF("${BFD_LIBRARY_NAME}" STREQUAL "")
-  MESSAGE(FATAL_ERROR "error: ${v} variable is an empty string !")
-ENDIF()
+if("${BFD_LIBRARY_NAME}" STREQUAL "")
+  message(FATAL_ERROR "error: ${v} variable is an empty string !")
+endif()
 
-UNSET(BFD_LIBRARY CACHE)
-FIND_LIBRARY(BFD_LIBRARY ${BFD_LIBRARY_NAME})
+unset(BFD_LIBRARY CACHE)
+find_library(BFD_LIBRARY ${BFD_LIBRARY_NAME})
 
-ADD_EXECUTABLE(TestBFD TestBFD.cpp)
-TARGET_LINK_LIBRARIES(TestBFD ${BFD_LIBRARY})
+add_executable(TestBFD TestBFD.cpp)
+target_link_libraries(TestBFD ${BFD_LIBRARY})

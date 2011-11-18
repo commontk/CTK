@@ -42,7 +42,7 @@ public:
   const QtSoapType & submitSoapRequest(const QString& methodName, const QList<QtSoapType*>& soapTypes);
   const QtSoapType & submitSoapRequest(const QString& methodName, QtSoapType* soapType);
 
-private slots:
+private Q_SLOTS:
 
   void responseReady();
 

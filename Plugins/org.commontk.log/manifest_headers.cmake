@@ -1,2 +1,2 @@
-SET(Plugin-Name "Log Service")
-SET(Plugin-ActivationPolicy "eager")
+set(Plugin-Name "Log Service")
+set(Plugin-ActivationPolicy "eager")

@@ -1,10 +1,10 @@
-PROJECT(org_commontk_dah_core)
+project(org_commontk_dah_core)
 
 #message(QtSOAP_LIBRARY_DIRS:${QtSOAP_LIBRARY_DIRS})
 
-SET(PLUGIN_export_directive "org_commontk_dah_core_EXPORT")
+set(PLUGIN_export_directive "org_commontk_dah_core_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkDicomAppHostingCorePlugin.cpp
   ctkDicomAppHostingCorePlugin_p.h
   ctkDicomAppHostingTypes.cpp
@@ -26,7 +26,7 @@ SET(PLUGIN_SRCS
 )
 
 # Files which should be processed by Qts moc
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkDicomAppHostingCorePlugin_p.h
   ctkSimpleSoapClient.h
   ctkSimpleSoapServer.h
@@ -34,11 +34,11 @@ SET(PLUGIN_MOC_SRCS
 )
 
 # Qt Designer files which should be processed by Qts uic
-SET(PLUGIN_UI_FORMS
+set(PLUGIN_UI_FORMS
 )
 
 # QRC Files which should be compiled into the plugin
-SET(PLUGIN_resources
+set(PLUGIN_resources
   Resources/dah_wsdl.qrc
 )
 
@@ -55,7 +55,7 @@ ctkMacroBuildPlugin(
   TARGET_LIBRARIES ${PLUGIN_target_libraries}
 )
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
 

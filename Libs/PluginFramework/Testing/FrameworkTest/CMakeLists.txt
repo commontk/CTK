@@ -1,26 +1,26 @@
-PROJECT(org_commontk_pluginfwtest)
+project(org_commontk_pluginfwtest)
 
-SET(PLUGIN_export_directive "org_commontk_pluginfwtest_EXPORT")
+set(PLUGIN_export_directive "org_commontk_pluginfwtest_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkPluginFrameworkTestActivator.cpp
   ctkPluginFrameworkTestSuite.cpp
   ctkServiceListenerTestSuite.cpp
   ctkServiceTrackerTestSuite.cpp
 )
 
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkPluginFrameworkTestActivator_p.h
   ctkPluginFrameworkTestSuite_p.h
   ctkServiceListenerTestSuite_p.h
   ctkServiceTrackerTestSuite_p.h
 )
 
-SET(PLUGIN_UI_FORMS
+set(PLUGIN_UI_FORMS
   
 )
 
-SET(PLUGIN_resources
+set(PLUGIN_resources
   
 )
 
@@ -37,29 +37,29 @@ ctkMacroBuildPlugin(
   TEST_PLUGIN
 )
 
-ADD_DEPENDENCIES(${PROJECT_NAME} ${fwtest_plugins})
+add_dependencies(${PROJECT_NAME} ${fwtest_plugins})
 
 
 # =========== Build the test executable ===============
-SET(SRCS
+set(SRCS
   ctkPluginFrameworkTestMain.cpp
 )
 
-SET(MOC_SRCS )
+set(MOC_SRCS )
 
-SET(MY_MOC_CXX )
+set(MY_MOC_CXX )
 
 #QT4_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
 
-SET(test_executable ${fw_lib}CppTests)
+set(test_executable ${fw_lib}CppTests)
 
-ADD_EXECUTABLE(${test_executable} ${SRCS} ${MY_MOC_CXX})
-TARGET_LINK_LIBRARIES(${test_executable}
+add_executable(${test_executable} ${SRCS} ${MY_MOC_CXX})
+target_link_libraries(${test_executable}
   ${fw_lib}
   ${fwtestutil_lib}
 )
 
-ADD_DEPENDENCIES(${test_executable} ${PROJECT_NAME})
+add_dependencies(${test_executable} ${PROJECT_NAME})
 
-ADD_TEST(${fw_lib}Tests ${CPP_TEST_PATH}/${test_executable})
-SET_PROPERTY(TEST ${fw_lib}Tests PROPERTY LABELS ${fw_lib})
+add_test(${fw_lib}Tests ${CPP_TEST_PATH}/${test_executable})
+set_property(TEST ${fw_lib}Tests PROPERTY LABELS ${fw_lib})

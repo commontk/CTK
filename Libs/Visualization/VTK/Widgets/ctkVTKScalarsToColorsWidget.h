@@ -69,18 +69,18 @@ public:
   /// ctkVTKScalarsToColorsWidget takes ownership of the widget
   void addExtraWidget(QWidget* extraWidget);
 
-public slots:
+public Q_SLOTS:
   void setCurrentControlPointsItem(vtkControlPointsItem* item);
   void setCurrentPoint(int pointId);
   void setXRange(double min, double max);
   void setYRange(double min, double max);
 
-signals:
+Q_SIGNALS:
   /// Be carefull, axesModified() can be fired inside the Render() function
   /// of the view. You might want to connect the slot using Qt::QueuedConnection
   void axesModified();
 
-protected slots:
+protected Q_SLOTS:
   void onPlotAdded(vtkPlot*);
   void onBoundsChanged();
   void setCurrentPoint(vtkObject* controlPointsItem, void* pointId);

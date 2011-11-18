@@ -90,7 +90,7 @@ public:
   /// Set the string used as secondary prompt
   virtual void setPs2(const QString& newPs2);
 
-public slots:
+public Q_SLOTS:
 
 //  void executeScript(const QString&);
 

@@ -1,14 +1,14 @@
-PROJECT(CTKPluginFramework)
+project(CTKPluginFramework)
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_PLUGINFW_EXPORT")
+set(KIT_export_directive "CTK_PLUGINFW_EXPORT")
 
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkCaseInsensitiveString.cpp
   ctkDictionary.cpp
   ctkLDAPExpr.cpp
@@ -114,18 +114,18 @@ SET(KIT_SRCS
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkPluginFrameworkListeners_p.h
   ctkTrackedPluginListener_p.h
   ctkTrackedServiceListener_p.h
 )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
 )
 
 # Create a MANIFEST.MF resource for the PluginFramework library,
@@ -151,15 +151,15 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-IF(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
-ENDIF()
+endif()
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

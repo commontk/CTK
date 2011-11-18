@@ -42,14 +42,14 @@ public:
 
   ctkPluginFrameworkTestSuite(ctkPluginContext* pc);
 
-protected slots:
+protected Q_SLOTS:
 
   void frameworkListener(const ctkPluginFrameworkEvent& fwEvent);
   void pluginListener(const ctkPluginEvent& event);
   void syncPluginListener(const ctkPluginEvent& event);
   void serviceListener(const ctkServiceEvent& event);
 
-private slots:
+private Q_SLOTS:
 
   void initTestCase();
   void cleanupTestCase();
@@ -126,7 +126,7 @@ public:
   QList<ctkServiceEvent> getEvents() const;
   void clearEvent();
 
-public slots:
+public Q_SLOTS:
 
   void serviceChanged(const ctkServiceEvent& evt);
 

@@ -51,7 +51,7 @@ public:
     /// register all the signals and slots
     virtual void initializeForEventBus() = 0;
 
-signals:
+Q_SIGNALS:
     /// signal for send a message to through network
     void remoteCommunication(const QString event_id, ctkEventArgumentsList *argList);
 

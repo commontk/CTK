@@ -38,20 +38,20 @@
 # one for installation.  The file tells external projects how to use CTK.
 #
 
-INCLUDE(ctkFunctionGeneratePluginUseFile)
+include(ctkFunctionGeneratePluginUseFile)
 
 # Construct version numbers for CTKConfigVersion.cmake.
-SET(_CTK_VERSION_MAJOR ${CTK_MAJOR_VERSION})
-SET(_CTK_VERSION_MINOR ${CTK_MINOR_VERSION})
-SET(_CTK_VERSION_PATCH ${CTK_BUILD_VERSION})
+set(_CTK_VERSION_MAJOR ${CTK_MAJOR_VERSION})
+set(_CTK_VERSION_MINOR ${CTK_MINOR_VERSION})
+set(_CTK_VERSION_PATCH ${CTK_PATCH_VERSION})
 # We use odd minor numbers for development versions.
 # Use a date for the development patch level.
-# IF("${_CTK_VERSION_MINOR}" MATCHES "[13579]$")
-#   INCLUDE(${CTK_SOURCE_DIR}/Utilities/kwsys/kwsysDateStamp.cmake)
-#   SET(_CTK_VERSION_PATCH
+# if("${_CTK_VERSION_MINOR}" MATCHES "[13579]$")
+#   include(${CTK_SOURCE_DIR}/Utilities/kwsys/kwsysDateStamp.cmake)
+#   set(_CTK_VERSION_PATCH
 #     "${KWSYS_DATE_STAMP_YEAR}${KWSYS_DATE_STAMP_MONTH}${KWSYS_DATE_STAMP_DAY}"
 #     )
-# ENDIF()
+# endif()
 
 #-----------------------------------------------------------------------------
 # Settings shared between the build tree and install tree.
@@ -61,107 +61,107 @@ SET(_CTK_VERSION_PATCH ${CTK_BUILD_VERSION})
 # Settings specific to the build tree.
 
 # The install-only section is empty for the build tree.
-SET(CTK_CONFIG_INSTALL_ONLY)
+set(CTK_CONFIG_INSTALL_ONLY)
 
 # The "use" file.
-SET(CTK_USE_FILE ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake)
+set(CTK_USE_FILE ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake)
 
 # Generate list of target to exports
-SET(CTK_TARGETS_TO_EXPORT ${CTK_LIBRARIES} ${CTK_PLUGIN_LIBRARIES})
+set(CTK_TARGETS_TO_EXPORT ${CTK_LIBRARIES} ${CTK_PLUGIN_LIBRARIES})
 
 # Append CTK PythonQt static libraries
-IF(NOT CTK_BUILD_SHARED_LIBS)
-  FOREACH(lib ${CTK_WRAPPED_LIBRARIES_PYTHONQT})
-    LIST(APPEND CTK_TARGETS_TO_EXPORT ${lib}PythonQt)
-  ENDFOREACH()
-ENDIF()
+if(NOT CTK_BUILD_SHARED_LIBS)
+  foreach(lib ${CTK_WRAPPED_LIBRARIES_PYTHONQT})
+    list(APPEND CTK_TARGETS_TO_EXPORT ${lib}PythonQt)
+  endforeach()
+endif()
 
 # Export targets so they can be imported by a project using CTK
 # as an external library
-EXPORT(TARGETS ${CTK_TARGETS_TO_EXPORT} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
+export(TARGETS ${CTK_TARGETS_TO_EXPORT} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
 
 # Generate a file containing plugin specific variables
-SET(CTK_PLUGIN_USE_FILE "${CTK_SUPERBUILD_BINARY_DIR}/CTKPluginUseFile.cmake")
-ctkFunctionGeneratePluginUseFile(${CTK_PLUGIN_USE_FILE})
+set(CTK_PLUGIN_USE_FILE "${CTK_SUPERBUILD_BINARY_DIR}/CTKPluginUseFile.cmake")
+ctkFunctionGeneratePluginUsefile(${CTK_PLUGIN_USE_FILE})
 
 # Write a set of variables containing library specific include and library directories
-SET(CTK_LIBRARY_INCLUDE_DIRS_CONFIG)
-FOREACH(lib ${CTK_LIBRARIES})
-  SET(${lib}_INCLUDE_DIRS ${${lib}_SOURCE_DIR} ${${lib}_BINARY_DIR})
+set(CTK_LIBRARY_INCLUDE_DIRS_CONFIG)
+foreach(lib ${CTK_LIBRARIES})
+  set(${lib}_INCLUDE_DIRS ${${lib}_SOURCE_DIR} ${${lib}_BINARY_DIR})
   ctkFunctionGetIncludeDirs(${lib}_INCLUDE_DIRS ${lib})
-  SET(CTK_LIBRARY_INCLUDE_DIRS_CONFIG "${CTK_LIBRARY_INCLUDE_DIRS_CONFIG}
-SET(${lib}_INCLUDE_DIRS \"${${lib}_INCLUDE_DIRS}\")")
+  set(CTK_LIBRARY_INCLUDE_DIRS_CONFIG "${CTK_LIBRARY_INCLUDE_DIRS_CONFIG}
+set(${lib}_INCLUDE_DIRS \"${${lib}_INCLUDE_DIRS}\")")
 
   ctkFunctionGetLibraryDirs(${lib}_LIBRARY_DIRS ${lib})
-  SET(CTK_LIBRARY_LIBRARY_DIRS_CONFIG "${CTK_LIBRARY_LIBRARY_DIRS_CONFIG}
-SET(${lib}_LIBRARY_DIRS \"${${lib}_LIBRARY_DIRS}\")")
-ENDFOREACH()
+  set(CTK_LIBRARY_LIBRARY_DIRS_CONFIG "${CTK_LIBRARY_LIBRARY_DIRS_CONFIG}
+set(${lib}_LIBRARY_DIRS \"${${lib}_LIBRARY_DIRS}\")")
+endforeach()
 
 # Determine the include directories needed.
-SET(CTK_INCLUDE_DIRS_CONFIG
+set(CTK_INCLUDE_DIRS_CONFIG
   ${CTK_BASE_INCLUDE_DIRS}
 )
 
 # Library directory.
-SET(CTK_LIBRARY_DIRS_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+set(CTK_LIBRARY_DIRS_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 # Plug-in output directory
-IF(WIN32)
-  SET(_plugin_output_type "RUNTIME")
-ELSE()
-  SET(_plugin_output_type "LIBRARY")
-ENDIF()
-IF(DEFINED CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY)
-  IF(IS_ABSOLUTE "${CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY}")
-    SET(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY}")
-  ELSE()
-    SET(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CMAKE_${_plugin_output_type}_OUTPUT_DIRECTORY}/${CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY}")
-  ENDIF()
-ELSE()
-  SET(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CMAKE_${_plugin_output_type}_OUTPUT_DIRECTORY}/plugins")
-ENDIF()
+if(WIN32)
+  set(_plugin_output_type "RUNTIME")
+else()
+  set(_plugin_output_type "LIBRARY")
+endif()
+if(DEFINED CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY)
+  if(IS_ABSOLUTE "${CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY}")
+    set(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY}")
+  else()
+    set(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CMAKE_${_plugin_output_type}_OUTPUT_DIRECTORY}/${CTK_PLUGIN_${_plugin_output_type}_OUTPUT_DIRECTORY}")
+  endif()
+else()
+  set(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CMAKE_${_plugin_output_type}_OUTPUT_DIRECTORY}/plugins")
+endif()
 
 # External project libraries.
-SET(CTK_EXTERNAL_LIBRARIES_CONFIG ${CTK_EXTERNAL_LIBRARIES})
+set(CTK_EXTERNAL_LIBRARIES_CONFIG ${CTK_EXTERNAL_LIBRARIES})
 
 # External project library directory.
-SET(CTK_EXTERNAL_LIBRARY_DIRS_CONFIG ${CTK_EXTERNAL_LIBRARY_DIRS})
+set(CTK_EXTERNAL_LIBRARY_DIRS_CONFIG ${CTK_EXTERNAL_LIBRARY_DIRS})
 
 # Runtime library directory.
-SET(CTK_RUNTIME_LIBRARY_DIRS_CONFIG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set(CTK_RUNTIME_LIBRARY_DIRS_CONFIG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # Binary executable directory.
-SET(CTK_EXECUTABLE_DIRS_CONFIG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set(CTK_EXECUTABLE_DIRS_CONFIG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # QtDesigner plugins directory
-SET(CTK_QTDESIGNERPLUGINS_DIR_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+set(CTK_QTDESIGNERPLUGINS_DIR_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 # CTK external projects variables
-STRING(REPLACE "^" ";" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
-SET(CTK_SUPERBUILD_EP_VARS_CONFIG)
-FOREACH(varname ${CTK_SUPERBUILD_EP_VARNAMES})
-  SET(CTK_SUPERBUILD_EP_VARS_CONFIG
+string(REPLACE "^" ";" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
+set(CTK_SUPERBUILD_EP_VARS_CONFIG)
+foreach(varname ${CTK_SUPERBUILD_EP_VARNAMES})
+  set(CTK_SUPERBUILD_EP_VARS_CONFIG
    "${CTK_SUPERBUILD_EP_VARS_CONFIG}
-SET(CTK_${varname} \"${${varname}}\")")
-ENDFOREACH()
+set(CTK_${varname} \"${${varname}}\")")
+endforeach()
 
 # Executable locations.
 
 # CMake extension module directory.
-SET(CTK_CMAKE_DIR_CONFIG ${CTK_CMAKE_DIR})
-SET(CTK_CMAKE_UTILITIES_DIR_CONFIG ${CTK_CMAKE_UTILITIES_DIR})
+set(CTK_CMAKE_DIR_CONFIG ${CTK_CMAKE_DIR})
+set(CTK_CMAKE_UTILITIES_DIR_CONFIG ${CTK_CMAKE_UTILITIES_DIR})
 
 # Build configuration information.
-SET(CTK_CONFIGURATION_TYPES_CONFIG ${CMAKE_CONFIGURATION_TYPES})
-SET(CTK_BUILD_TYPE_CONFIG ${CMAKE_BUILD_TYPE})
+set(CTK_CONFIGURATION_TYPES_CONFIG ${CMAKE_CONFIGURATION_TYPES})
+set(CTK_BUILD_TYPE_CONFIG ${CMAKE_BUILD_TYPE})
 
 #-----------------------------------------------------------------------------
 # Configure CTKConfig.cmake for the build tree.
-CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTKConfig.cmake.in
+configure_file(${CTK_SOURCE_DIR}/CTKConfig.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfig.cmake @ONLY IMMEDIATE)
-CONFIGURE_FILE(${CTK_SOURCE_DIR}/CTKConfigVersion.cmake.in
+configure_file(${CTK_SOURCE_DIR}/CTKConfigVersion.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfigVersion.cmake @ONLY IMMEDIATE)
-CONFIGURE_FILE(${CTK_SOURCE_DIR}/ctkConfig.h.in
+configure_file(${CTK_SOURCE_DIR}/ctkConfig.h.in
                ${CTK_CONFIG_H_INCLUDE_DIR}/ctkConfig.h @ONLY IMMEDIATE)
 
 #-----------------------------------------------------------------------------

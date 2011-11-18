@@ -246,7 +246,7 @@ public:
   /// branchId) to the step with the given goalId
   bool pathExistsFromNextStep(const QString& goalId, const QString& branchId)const;
 
-public slots:
+public Q_SLOTS:
 
   /// \brief Workflow processing executed after a step's onEntry function is run.
   void processingAfterOnEntry();

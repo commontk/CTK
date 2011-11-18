@@ -46,9 +46,9 @@ public:
   /// Destructor
   virtual ~ctkTemplateWidget();
 
-public slots:
+public Q_SLOTS:
 
-signals:
+Q_SIGNALS:
 
 protected:
   QScopedPointer<ctkTemplateWidgetPrivate> d_ptr;

@@ -146,7 +146,7 @@ public:
   bool fileExistsAndUpToDate(const QString& filePath);
 
 
-signals:
+Q_SIGNALS:
   void databaseChanged();
 
 protected:

@@ -1,27 +1,27 @@
-PROJECT(ctkEventBusDemo)
+project(ctkEventBusDemo)
 
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
 
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkEventBusDemoMain.cpp
   MainWindow.cpp
   MainWindow.h
 )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   MainWindow.h
 )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
   MainWindow.ui
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   
 )
 
@@ -30,13 +30,13 @@ SET(KIT_resources
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 # Additional directories to include - Note that CTK_INCLUDE_LIBRARIES is already included
-SET(KIT_include_directories
+set(KIT_include_directories
 )
 
 # Fix this after having discussed include dependencies with Jc
-FOREACH(_dep ${${PROJECT_NAME}_DEPENDENCIES})
-  INCLUDE_DIRECTORIES(${${_dep}_SOURCE_DIR} ${${_dep}_BINARY_DIR})
-ENDFOREACH()
+foreach(_dep ${${PROJECT_NAME}_DEPENDENCIES})
+  include_directories(${${_dep}_SOURCE_DIR} ${${_dep}_BINARY_DIR})
+endforeach()
 
 ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
@@ -49,6 +49,6 @@ ctkMacroBuildApp(
   )
 
 # Testing
-IF(BUILD_TESTING)
-#   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+#   add_subdirectory(Testing)
+endif()

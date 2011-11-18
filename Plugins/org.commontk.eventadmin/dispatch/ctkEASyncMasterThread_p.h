@@ -44,7 +44,7 @@ public:
 
   void stop();
 
-public slots:
+public Q_SLOTS:
 
   void runCommand();
 

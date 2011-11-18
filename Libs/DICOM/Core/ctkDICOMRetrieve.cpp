@@ -82,7 +82,7 @@ public:
     };
 
   // called when a data set is coming in from a server in
-  // response to a CGET 
+  // response to a CGET
   virtual OFCondition handleSTORERequest(const T_ASC_PresentationContextID presID,
                                          DcmDataset *incomingObject,
                                          OFBool& continueCGETSession,

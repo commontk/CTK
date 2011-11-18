@@ -84,7 +84,7 @@ public:
   /// \sa pythonInitialized
   bool isPythonInitialized()const;
 
-signals:
+Q_SIGNALS:
 
   /// This signal is emitted after python is pre-initialized. Observers can listen
   /// for this signal to handle additional initialization steps.
@@ -96,7 +96,7 @@ signals:
   /// \sa executeScripts
   void pythonInitialized();
 
-protected slots:
+protected Q_SLOTS:
   void printStderr(const QString&);
   void printStdout(const QString&);
 

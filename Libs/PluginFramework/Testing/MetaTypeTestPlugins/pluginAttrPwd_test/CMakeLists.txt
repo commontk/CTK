@@ -1,26 +1,26 @@
-PROJECT(pluginAttrPwd_test)
+project(pluginAttrPwd_test)
 
-SET(PLUGIN_export_directive "pluginAttrPwd_test_EXPORT")
+set(PLUGIN_export_directive "pluginAttrPwd_test_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkTestPluginMTAttrPwdActivator_p.h
   ctkTestPluginMTAttrPwdActivator.cpp
 )
 
 # Files which should be processed by Qts moc
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkTestPluginMTAttrPwdActivator_p.h
 )
 
 # QRC Files which should be compiled into the plugin
-SET(PLUGIN_resources
+set(PLUGIN_resources
 )
 
-SET(PLUGIN_cached_resources
+set(PLUGIN_cached_resources
   CTK-INF/metatype/testfile.xml
 )
 
-SET(PLUGIN_ts_files
+set(PLUGIN_ts_files
   ${PROJECT_NAME}_de.ts
 )
 

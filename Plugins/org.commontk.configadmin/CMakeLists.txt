@@ -1,8 +1,8 @@
-PROJECT(org_commontk_configadmin)
+project(org_commontk_configadmin)
 
-SET(PLUGIN_export_directive "org_commontk_configadmin_EXPORT")
+set(PLUGIN_export_directive "org_commontk_configadmin_EXPORT")
 
-SET(PLUGIN_SRCS
+set(PLUGIN_SRCS
   ctkCMEventDispatcher.cpp
   ctkCMEventDispatcher_p.h
   ctkCMLogTracker.cpp
@@ -30,7 +30,7 @@ SET(PLUGIN_SRCS
 )
 
 # Files which should be processed by Qts moc
-SET(PLUGIN_MOC_SRCS
+set(PLUGIN_MOC_SRCS
   ctkCMSerializedTaskQueue_p.h
   ctkConfigurationAdminActivator_p.h
   ctkConfigurationAdminFactory_p.h
@@ -39,11 +39,11 @@ SET(PLUGIN_MOC_SRCS
 )
 
 # Qt Designer files which should be processed by Qts uic
-SET(PLUGIN_UI_FORMS
+set(PLUGIN_UI_FORMS
 )
 
 # QRC Files which should be compiled into the plugin
-SET(PLUGIN_resources
+set(PLUGIN_resources
 )
 
 #Compute the plugin dependencies
@@ -60,6 +60,6 @@ ctkMacroBuildPlugin(
 )
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

@@ -49,17 +49,17 @@ public:
   QString currentArrayName()const;
   vtkDataSet* dataSet()const;
 
-public slots:
+public Q_SLOTS:
   void setDataSet(vtkDataSet* dataSet);
   /// The array must exist in the dataset
   void setCurrentArray(vtkDataArray* dataArray);
   /// the array must exist in the dataset
   void setCurrentArray(const QString& name);
 
-signals:
+Q_SIGNALS:
   void currentArrayChanged(vtkDataArray*);
   void currentArrayChanged(const QString& name);
-protected slots:
+protected Q_SLOTS:
   void onCurrentIndexChanged(int);
 protected:
   QScopedPointer<ctkVTKDataSetArrayComboBoxPrivate> d_ptr;

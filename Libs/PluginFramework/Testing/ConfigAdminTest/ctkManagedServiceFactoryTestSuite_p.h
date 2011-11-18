@@ -63,7 +63,7 @@ public:
 
   ctkManagedServiceFactoryTestSuite(ctkPluginContext* pc, long cmPluginId);
 
-private slots:
+private Q_SLOTS:
 
   void init();
   void cleanup();

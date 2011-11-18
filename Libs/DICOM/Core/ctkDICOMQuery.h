@@ -89,7 +89,7 @@ public:
   void setFilters(const QMap<QString,QVariant>&);
   QMap<QString,QVariant> filters()const;
 
-signals:
+Q_SIGNALS:
   /// Signal is emitted inside the query() function. It ranges from 0 to 100.
   /// In case of an error, you are assured that the progress value 100 is fired
   void progress(int progress);

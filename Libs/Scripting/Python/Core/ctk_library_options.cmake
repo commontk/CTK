@@ -5,7 +5,7 @@
 # For example: MYOPT1:OFF MYOPT2:ON
 #
 
-SET(ctk_library_options
+set(ctk_library_options
   PYTHONQT_USE_VTK:OFF
   PYTHONQT_WRAP_QTCORE:OFF
   PYTHONQT_WRAP_QTGUI:OFF

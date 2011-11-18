@@ -62,7 +62,7 @@ public:
 
   Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 
-signals:
+Q_SIGNALS:
   void foundFilesToIndex(int);
   void indexingFileNumber(int);
   void indexingFilePath(QString);

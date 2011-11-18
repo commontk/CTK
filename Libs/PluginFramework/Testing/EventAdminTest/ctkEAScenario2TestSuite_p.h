@@ -115,7 +115,7 @@ public:
 
   void runTest();
 
-protected slots:
+protected Q_SLOTS:
 
   void sendEvents();
   void postEvents();
@@ -154,7 +154,7 @@ public:
    */
   ctkEAScenario2TestSuite(ctkPluginContext* context, long eventPluginId);
 
-private slots:
+private Q_SLOTS:
 
   void initTestCase();
   void cleanupTestCase();

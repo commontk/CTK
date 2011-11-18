@@ -101,7 +101,7 @@ public:
   bool errorTextEnabled()const;
   void setErrorTextEnabled(bool newErrorTextEnabled);
 
-public slots:
+public Q_SLOTS:
 
   virtual void updateGroupBox(ctkWorkflowStep* currentStep);
 

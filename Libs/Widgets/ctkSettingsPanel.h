@@ -63,7 +63,7 @@ public:
   /// The old value can be restored using resetSettings()
   void setSetting(const QString& key, const QVariant& newVal);
 
-public slots:
+public Q_SLOTS:
 
   /// Forget the old property values so next time resetSettings is called it
   /// will set the properties with the same values when applySettings() is
@@ -78,7 +78,7 @@ public slots:
   /// of the properties when they were registered using registerProperty().
   virtual void restoreDefaultSettings();
 
-signals:
+Q_SIGNALS:
   /// Fired anytime a property is modified.
   void settingChanged(const QString& key, const QVariant& value);
 
@@ -95,7 +95,7 @@ protected:
   /// \sa registerProperty();
   QVariant propertyValue(const QString& key) const;
 
-protected slots:
+protected Q_SLOTS:
   void updateSetting(const QString& key);
 
 protected:

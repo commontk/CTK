@@ -41,12 +41,12 @@ public:
 
   ctkSimpleSoapServer(QObject *parent = 0);
 
-signals:
+Q_SIGNALS:
 
   void incomingSoapMessage(const QtSoapMessage& message, QtSoapMessage* reply);
   void incomingWSDLMessage(const QString& message, QString* reply);
 
-public slots:
+public Q_SLOTS:
 
 protected:
 

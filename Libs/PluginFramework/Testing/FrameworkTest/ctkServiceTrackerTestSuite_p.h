@@ -41,7 +41,7 @@ class ctkServiceTrackerTestSuite : public QObject,
 public:
     ctkServiceTrackerTestSuite(ctkPluginContext* pc);
 
-private slots:
+private Q_SLOTS:
 
     void initTestCase();
     void cleanupTestCase();
@@ -54,7 +54,7 @@ private slots:
     // service in the stop()-method.
     void runTest();
 
-signals:
+Q_SIGNALS:
 
     void serviceControl(int service, const QString operation, long rank);
 

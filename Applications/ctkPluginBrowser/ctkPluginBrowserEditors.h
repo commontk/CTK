@@ -41,7 +41,7 @@ private:
 
   QTabWidget tabWidget;
 
-private slots:
+private Q_SLOTS:
 
   void tabCloseRequested(int index);
 };

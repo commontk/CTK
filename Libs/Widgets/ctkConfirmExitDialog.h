@@ -59,7 +59,7 @@ public:
   /// Reimplemented for internal reasons
   virtual void setVisible(bool visible);
 
-public slots:
+public Q_SLOTS:
   /// reimplemented for internal reasons
   virtual void accept();
 

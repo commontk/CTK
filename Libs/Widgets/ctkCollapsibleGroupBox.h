@@ -58,7 +58,7 @@ public:
 
   /// Reimplemented for internal reasons
   virtual void setVisible(bool show);
-protected slots:
+protected Q_SLOTS:
   /// called when the arrow indicator is clicked
   /// users can call it programatically by calling setChecked(bool)
   virtual void expand(bool expand);
