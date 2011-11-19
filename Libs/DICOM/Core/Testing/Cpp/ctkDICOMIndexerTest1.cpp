@@ -37,7 +37,7 @@ int ctkDICOMIndexerTest1( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
   
-  ctkDICOMDatabase database;
+  ctkDICOMDatabase database(":memory:");
   ctkDICOMIndexer indexer;
 
   // Test ctkDICOMIndexer::addDirectory()
