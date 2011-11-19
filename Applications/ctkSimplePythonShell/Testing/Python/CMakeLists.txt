@@ -26,7 +26,12 @@ if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
     )
 endif()
 
-foreach(s ${SCRIPTS})
-  get_filename_component(TESTNAME ${s} NAME_WE)
-  SIMPLE_TEST(ctkSimplePythonShell_${TESTNAME} ${CMAKE_CURRENT_SOURCE_DIR}/${SCRIPT})
+foreach(script ${SCRIPTS})
+  get_filename_component(scriptname ${script} NAME_WE)
+  add_test(
+    NAME ctkSimplePythonShell_${scriptname} 
+    COMMAND $<TARGET_FILE:ctkSimplePythonShell> ${CMAKE_CURRENT_SOURCE_DIR}/${script}
+    )
+  set_property(TEST ctkSimplePythonShell_${scriptname} PROPERTY LABELS ${KIT})
 endforeach()
+
