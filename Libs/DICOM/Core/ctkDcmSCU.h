@@ -55,6 +55,7 @@
 #include "dcmtk/dcmnet/dcasccfg.h"  /* For holding association cfg file infos */
 #include "dcmtk/ofstd/oflist.h"
 
+#include "ctkDICOMCoreExport.h"
 
 //
 // CTK: these return conditions copied from cond.cc
@@ -108,7 +109,7 @@ enum DcmStorageMode
 
 /** Base class for C-FIND, C-MOVE and C-GET responses
  */
-class QRResponse
+class CTK_DICOM_CORE_EXPORT QRResponse
 {
   public:
 
@@ -165,7 +166,7 @@ private:
 
 
 /// Base class representing for single C-GET or C-MOVE response
-class RetrieveResponse : public QRResponse
+class CTK_DICOM_CORE_EXPORT RetrieveResponse : public QRResponse
 {
 public:
   /** Standard constructor
@@ -225,7 +226,7 @@ private:
  *  @warning This class is EXPERIMENTAL. Be careful to use it in production environment.
  *  @warning This is a copy of the DcmSCU class - see not at top of file
  */
-class ctkDcmSCU
+class CTK_DICOM_CORE_EXPORT ctkDcmSCU
 {
 
 public:
