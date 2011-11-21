@@ -217,7 +217,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
     }
   
   d->DICOMModel.setDatabase(d->DICOMDatabase->database());
-  d->DICOMModel.setDisplayLevel(ctkDICOMModel::SeriesType);
+  d->DICOMModel.setEndLevel(ctkDICOMModel::SeriesType);
   d->TreeView->resizeColumnToContents(0);
 
   //pass DICOM database instance to Import widget

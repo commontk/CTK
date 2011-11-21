@@ -23,6 +23,7 @@
 
 // Qt includes 
 #include <QAbstractItemModel>
+#include <QMetaType>
 #include <QSqlDatabase>
 #include <QStringList>
 
@@ -35,6 +36,9 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMModel
 {
   Q_OBJECT
   typedef QAbstractItemModel Superclass;
+  Q_ENUMS(IndexType)
+  /// startLevel contains the hierarchy depth the model contains
+  Q_PROPERTY(IndexType endLevel READ endLevel WRITE setEndLevel);
 public:
 
   enum {
@@ -55,7 +59,10 @@ public:
 
   void setDatabase(const QSqlDatabase& dataBase);
   void setDatabase(const QSqlDatabase& dataBase, const QMap<QString,QVariant>& parameters);
-  void setDisplayLevel(ctkDICOMModel::IndexType level);
+
+  /// Set it before populating the model
+  ctkDICOMModel::IndexType endLevel()const;
+  void setEndLevel(ctkDICOMModel::IndexType level);
 
   virtual bool canFetchMore ( const QModelIndex & parent ) const;
   virtual int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
@@ -85,5 +92,7 @@ private:
   Q_DECLARE_PRIVATE(ctkDICOMModel);
   Q_DISABLE_COPY(ctkDICOMModel);
 };
+
+Q_DECLARE_METATYPE(ctkDICOMModel::IndexType)
 
 #endif
