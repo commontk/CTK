@@ -34,6 +34,7 @@ set(TEST_SOURCES
   ctkErrorLogWidgetTest1.cpp
   ctkExpandButtonTest1.cpp
   ctkFileDialogTest1.cpp
+  ctkFlatProxyModelTest.cpp
   ctkFittedTextBrowserTest1.cpp
   ctkFlowLayoutTest1.cpp
   ctkFontButtonTest1.cpp
@@ -116,7 +117,10 @@ set(Tests_MOC_SRCS
 
 set(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
-QT4_GENERATE_MOCS(ctkRangeSliderTest.cpp)
+QT4_GENERATE_MOCS(
+  ctkRangeSliderTest.cpp
+  ctkFlatProxyModelTest.cpp
+  )
 
 add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
@@ -160,6 +164,7 @@ SIMPLE_TEST( ctkErrorLogWidgetTest1 )
 SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingDerivedSteps )
 SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots )
 SIMPLE_TEST( ctkExpandButtonTest1 )
+SIMPLE_TEST( ctkFlatProxyModelTest )
 SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkFlowLayoutTest1 )

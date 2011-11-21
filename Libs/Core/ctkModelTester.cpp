@@ -293,7 +293,10 @@ void ctkModelTester::testParent(const QModelIndex& vparent)const
       {
       this->test(d->Model->hasIndex(i, j, vparent), "hasIndex should return true for int range {0->rowCount(), 0->columnCount()}");
       QModelIndex child = vparent.child(i, j);
-      this->test(child.parent() == vparent, "A child's parent can't be different from its parent");
+      this->test(child.row() == i, "A child's row must be the same as given");
+      this->test(child.column() == j, "A child's column must be the same as given");
+      QModelIndex childParent = child.parent();
+      this->test(childParent == vparent, "A child's parent can't be different from its parent");
       this->testModelIndex(child);
       }
     }
@@ -325,6 +328,8 @@ void ctkModelTester::testModel()const
       {
       this->test(d->Model->hasIndex(i, j), "hasIndex should return true for int range {0->rowCount(), 0->columnCount()}");
       QModelIndex child = d->Model->index(i, j);
+      this->test(child.row() == i, "Row should be consistent");
+      this->test(child.column() == j, "Column should be consistent");
       this->test(!child.parent().isValid(), "A child's parent can't be different from its parent");
       this->testModelIndex(child);
       }

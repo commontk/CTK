@@ -51,8 +51,6 @@ public:
   virtual ~ctkDICOMModelPrivate();
   void init();
 
-
- 
   void fetch(const QModelIndex& indexValue, int limit);
   Node* createNode(int row, const QModelIndex& parentValue)const;
   Node* nodeFromIndex(const QModelIndex& indexValue)const;
@@ -71,7 +69,8 @@ public:
   QString      Sort;
   QMap<QString, QVariant> SearchParameters;
 
-  ctkDICOMModel::IndexType displayLevel;
+  ctkDICOMModel::IndexType StartLevel;
+  ctkDICOMModel::IndexType EndLevel;
 };
 
 //------------------------------------------------------------------------------
@@ -103,7 +102,8 @@ struct Node
 ctkDICOMModelPrivate::ctkDICOMModelPrivate(ctkDICOMModel& o):q_ptr(&o)
 {
   this->RootNode     = 0;
-  this->displayLevel = ctkDICOMModel::ImageType;
+  this->StartLevel = ctkDICOMModel::RootType;
+  this->EndLevel = ctkDICOMModel::ImageType;
 }
 
 //------------------------------------------------------------------------------
@@ -544,8 +544,8 @@ bool ctkDICOMModel::hasChildren ( const QModelIndex & parentIndex ) const
     return false;
     }
 
-  // We want to show only until displayLevel
-  if(node->Type >= d->displayLevel)return false;
+  // We want to show only until EndLevel
+  if(node->Type >= d->EndLevel)return false;
 
   // It's not because we don't have row that we don't have children, maybe it
   // just means that the children haven't been fetched yet
@@ -853,10 +853,18 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db,const QMap<QString, QVari
   d->fetch(QModelIndex(), 256);
 }
 
-void ctkDICOMModel::setDisplayLevel(ctkDICOMModel::IndexType level){
-    Q_D(ctkDICOMModel);
+//------------------------------------------------------------------------------
+ctkDICOMModel::IndexType  ctkDICOMModel::endLevel()const
+{
+  Q_D(const ctkDICOMModel);
+  return d->EndLevel;
+}
 
-    d->displayLevel = level;
+//------------------------------------------------------------------------------
+void ctkDICOMModel::setEndLevel(ctkDICOMModel::IndexType level)
+{
+  Q_D(ctkDICOMModel);
+  d->EndLevel = level;
 }
 
 //------------------------------------------------------------------------------
