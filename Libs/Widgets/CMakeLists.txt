@@ -71,6 +71,8 @@ set(KIT_SRCS
   ctkFileDialog.h
   ctkFittedTextBrowser.cpp
   ctkFittedTextBrowser.h
+  ctkFlatProxyModel.cpp
+  ctkFlatProxyModel.h
   ctkFlowLayout.cpp
   ctkFlowLayout.h
   ctkFontButton.cpp
@@ -198,6 +200,7 @@ set(KIT_MOC_SRCS
   ctkExpandButton.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
+  ctkFlatProxyModel.h
   ctkFlowLayout.h
   ctkFontButton.h
   ctkIconEnginePlugin.h
