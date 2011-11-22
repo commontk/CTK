@@ -265,13 +265,24 @@ void ctkVTKScalarsToColorsWidget::onBoundsChanged()
 // ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsWidget::setCurrentPoint(vtkObject* caller, void* callData)
 {
+  Q_D(ctkVTKScalarsToColorsWidget);
   vtkControlPointsItem* controlPoints = reinterpret_cast<vtkControlPointsItem*>(caller);
   long newPoint = reinterpret_cast<long>(callData);
   if (!controlPoints || newPoint < -1)
     {
     return;
     }
-  this->setCurrentControlPointsItem(controlPoints);
+  if (d->CurrentControlPointsItem != item)
+    {
+    this->setCurrentControlPointsItem(controlPoints);
+    }
+  else
+    {
+    // When a new point is added, the modified event is fired later.
+    // however we need to update the max of the current spin box before
+    // setting the new value.
+    this->updateCurrentPoint();
+    }
   this->setCurrentPoint(newPoint);
 }
 
