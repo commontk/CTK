@@ -34,7 +34,7 @@ if(QT4_FOUND)
 endif()
 
 #Compute the plugin dependencies
-ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
+ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}

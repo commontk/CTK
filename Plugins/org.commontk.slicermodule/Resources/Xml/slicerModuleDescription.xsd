@@ -5,12 +5,14 @@
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element name="category" type="xsd:string"/>
+                <xsd:element name="index" type="xsd:string"/>
                 <xsd:element name="title" type="xsd:string"/>
                 <xsd:element name="description" type="xsd:string"/>
                 <xsd:element name="version" type="xsd:string"/>
                 <xsd:element name="documentation-url" type="xsd:string"/>
                 <xsd:element name="license" type="xsd:string"/>
                 <xsd:element name="contributor" type="xsd:string"/>
+                <xsd:element name="acknowledgements" type="xsd:string"/>
                 <xsd:element name="parameters" type="parameters" maxOccurs="unbounded"/>
             </xsd:sequence>
         </xsd:complexType>
