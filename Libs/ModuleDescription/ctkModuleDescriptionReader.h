@@ -21,7 +21,7 @@ limitations under the License.
 #ifndef __ctkModuleDescriptionReader_h
 #define __ctkModuleDescriptionReader_h
 
-#include "CTKModuleDescriptionExport.h"
+#include "ctkModuleDescriptionExport.h"
 #include "ctkModuleDescriptionReaderInterface.h"
 
 class QIODevice;

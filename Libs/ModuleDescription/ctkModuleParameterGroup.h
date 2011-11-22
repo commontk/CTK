@@ -22,8 +22,9 @@
 #define __ctkModuleParameterGroup_h
 
 #include "ctkModuleParameter.h"
-#include "QHash"
-#include "QVector"
+
+#include <QHash>
+#include <QVector>
 
 /** 
 *  \brief Group of parameters

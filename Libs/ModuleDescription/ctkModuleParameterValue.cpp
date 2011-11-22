@@ -19,7 +19,8 @@ limitations under the License.
 =============================================================================*/
 
 #include "ctkModuleParameterValue.h"
-#include "QDebug"
+
+#include <QDebug>
 
 //----------------------------------------------------------------------------
 ctkModuleParameterValue::ctkModuleParameterValue( const ctkModuleParameter& param)

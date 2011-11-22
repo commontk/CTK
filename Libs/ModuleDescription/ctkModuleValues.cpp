@@ -19,15 +19,17 @@ limitations under the License.
 =============================================================================*/
 
 #include "ctkModuleValues.h"
-#include <iostream>
-#include "QFile"
-#include "QTextStream"
 #include "ctkModuleParameterGroup.h"
+
+#include <iostream>
+
+#include <QFile>
+#include <QTextStream>
 
 //----------------------------------------------------------------------------
 const QVector<ctkModuleParameterGroupValue*>& ctkModuleValues::valueGroups() const
 {
-	return this->ValueGroups;
+  return this->ValueGroups;
 }
 
 //----------------------------------------------------------------------------

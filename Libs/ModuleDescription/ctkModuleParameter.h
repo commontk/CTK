@@ -21,9 +21,10 @@
 #ifndef __ctkModuleParameter_h
 #define __ctkModuleParameter_h
 
-#include "CTKModuleDescriptionExport.h"
-#include "QHash"
-#include "QTextStream"
+#include "ctkModuleDescriptionExport.h"
+
+#include <QHash>
+#include <QTextStream>
 
 /** 
  *  \brief Single parameter to a module, like a threshold of a filter.

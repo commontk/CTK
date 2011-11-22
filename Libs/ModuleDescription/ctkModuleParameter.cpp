@@ -19,7 +19,7 @@ limitations under the License.
 =============================================================================*/
 
 #include "ctkModuleParameter.h"
-#include "QStringList"
+#include <QStringList>
 
 //----------------------------------------------------------------------------
 bool ctkModuleParameter::isReturnParameter() const

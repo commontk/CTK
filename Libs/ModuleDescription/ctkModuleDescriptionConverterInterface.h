@@ -23,7 +23,7 @@ limitations under the License.
 
 #include <QVariant>
 
-#include "CTKModuleDescriptionExport.h"
+#include "ctkModuleDescriptionExport.h"
 #include "ctkModuleDescription.h"
 
 /** 

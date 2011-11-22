@@ -22,7 +22,8 @@
 #define __ctkModuleParameterGroupValue_h
 
 #include "ctkModuleParameterValue.h"
-#include "QVector"
+
+#include <QVector>
 
 /** 
 *  \brief Group of parameters value

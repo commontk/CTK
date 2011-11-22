@@ -27,7 +27,7 @@ limitations under the License.
 
 // CTK includes
 #include "ctkModuleDescription.h"
-#include "CTKModuleDescriptionExport.h"
+#include "ctkModuleDescriptionExport.h"
 
 /** 
  * \brief Interface of ModuleDescription reader

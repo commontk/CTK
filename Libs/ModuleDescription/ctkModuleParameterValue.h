@@ -21,9 +21,10 @@
 #ifndef __ctkModuleParameterValue_h
 #define __ctkModuleParameterValue_h
 
-#include "CTKModuleDescriptionExport.h"
-#include "CTKModuleParameter.h"
-#include "QVariant.h"
+#include "ctkModuleDescriptionExport.h"
+#include "ctkModuleParameter.h"
+
+#include <QVariant>
 
 /** 
  *  \brief Single parameter value to a module, like a threshold of a filter.

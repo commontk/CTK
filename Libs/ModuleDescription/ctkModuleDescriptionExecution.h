@@ -23,7 +23,7 @@ limitations under the License.
 
 #include <QString>
 
-#include "CTKModuleDescriptionExport.h"
+#include "ctkModuleDescriptionExport.h"
 #include "ctkModuleDescriptionExecutionInterface.h"
 
 /** 
