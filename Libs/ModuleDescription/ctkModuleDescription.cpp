@@ -114,7 +114,7 @@ bool ctkModuleDescription ::readParameterFile(const QString& filename)
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-    std::cout << "Parameter file " << filename.toStdString( ) << " could not be opened." << endl;
+    std::cout << "Parameter file " << filename.toStdString( ) << " could not be opened." << std::endl;
     return false;
     }
 
@@ -162,7 +162,7 @@ writeParameterFile(const QString& filename, bool withHandlesToBulkParameters)con
 
   if (!rtp.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-    std::cout << "Parameter file " << filename.toStdString() << " could not be opened for writing." << endl;
+    std::cout << "Parameter file " << filename.toStdString() << " could not be opened for writing." << std::endl;
     return false;
     }
 
@@ -180,9 +180,9 @@ writeParameterFile(const QString& filename, bool withHandlesToBulkParameters)con
 QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module)
 {
   os << QHash<QString, QString>(module);
-  os << "Icon: " << !module.icon().isNull() << endl;
+  os << "Icon: " << QBool(!module.icon().isNull()) << '\n';
 
-  os << "ParameterGroups: " << endl;
+  os << "ParameterGroups: " << '\n';
   foreach(const ctkModuleParameterGroup* group, module.ParameterGroups)
     {
     os << *group;

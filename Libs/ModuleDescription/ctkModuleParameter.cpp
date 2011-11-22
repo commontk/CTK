@@ -85,7 +85,7 @@ QTextStream & operator<<(QTextStream &os, const QHash<QString, QString> &hash)
         itProp != hash.end( ) ; 
         itProp++ )
     {
-    os << itProp.key( ) << ": " << itProp.value( ) << endl;
+    os << itProp.key( ) << ": " << itProp.value( ) << '\n';
     }
 
   return os;
