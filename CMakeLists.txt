@@ -206,7 +206,6 @@ include(CMake/ctkFunctionCompileSnippets.cmake)
 #-----------------------------------------------------------------------------
 # Testing
 #
-
 include(CTest)
 mark_as_advanced(BUILD_TESTING)
 
@@ -450,8 +449,8 @@ ctk_lib_option(Visualization/VTK/Core
 ctk_lib_option(Visualization/VTK/Widgets
                "Build the VTK Widgets library" OFF)
                
-#ctk_lib_option(ModuleDescription
-#               "Build the Command Line Module Description library" OFF)
+ctk_lib_option(ModuleDescription
+               "Build the Command Line Module Description library" OFF)
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
@@ -603,6 +602,7 @@ ctk_plugin_option(org.commontk.eventbus
 #       OPT1:OFF
 #       OPT2:ON
 #       )
+
 
 # Create list of directories corresponding to the enabled targets
 set(target_directories)
@@ -756,6 +756,7 @@ if(CTK_SUPERBUILD)
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 endif()
+
 
 #-----------------------------------------------------------------------------
 # Expand variables containing include and library directories for external projects

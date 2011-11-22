@@ -20,6 +20,10 @@ set(KIT_SRCS
   ctkModuleParameter.cpp
   ctkModuleParameterGroup.h
   ctkModuleParameterGroup.cpp
+  ctkModuleParameterGroupValue.h
+  ctkModuleParameterGroupValue.cpp
+  ctkModuleParameterValue.h
+  ctkModuleParameterValue.cpp
   ctkModuleDescriptionReaderInterface.cpp
   ctkModuleDescriptionReaderInterface.h
   ctkModuleDescriptionReader.h
@@ -30,6 +34,8 @@ set(KIT_SRCS
   ctkModuleDescriptionExecutionInterface.h
   ctkModuleDescriptionExecution.h
   ctkModuleDescriptionExecution.cpp
+  ctkModuleValues.h
+  ctkModuleValues.cpp
   )
 
 # Headers that should run through moc
@@ -50,9 +56,9 @@ set(KIT_UI_FORMS
 set(KIT_resources
 )
 
-# Target libraries - See CMake/ctkMacroGetTargetLibraries.cmake
+# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
-ctkMacroGetTargetLibraries(KIT_target_libraries)
+ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
