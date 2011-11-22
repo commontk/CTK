@@ -272,7 +272,7 @@ void ctkVTKScalarsToColorsWidget::setCurrentPoint(vtkObject* caller, void* callD
     {
     return;
     }
-  if (d->CurrentControlPointsItem != item)
+  if (d->CurrentControlPointsItem != controlPoints)
     {
     this->setCurrentControlPointsItem(controlPoints);
     }
