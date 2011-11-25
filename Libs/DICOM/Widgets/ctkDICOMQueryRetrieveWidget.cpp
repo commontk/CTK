@@ -99,6 +99,7 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
   Q_Q(ctkDICOMQueryRetrieveWidget);
   this->setupUi(q);
 
+  QObject::connect(this->QueryWidget, SIGNAL(returnPressed()), q, SLOT(query()));
   QObject::connect(this->QueryButton, SIGNAL(clicked()), q, SLOT(query()));
   QObject::connect(this->RetrieveButton, SIGNAL(clicked()), q, SLOT(retrieve()));
   QObject::connect(this->CancelButton, SIGNAL(clicked()), q, SLOT(cancel()));

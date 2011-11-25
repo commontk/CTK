@@ -50,8 +50,12 @@ Q_SIGNALS:
   /// This signal is emitted when any of the search parameters changed.
   void parameterChanged();
 
+  /// This signal is emitted when the user hits return in any of the line edits
+  void returnPressed();
+
 protected Q_SLOTS:
   void startTimer();
+  void onReturnPressed();
 };
 
 #endif
