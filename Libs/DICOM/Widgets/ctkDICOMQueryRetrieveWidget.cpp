@@ -250,7 +250,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     }
 
   // for each of the selected server nodes, send the query
-  QProgressDialog progress("Retrieve from DICOM servers", "Cancel", 0, 100, this,
+  QProgressDialog progress("Retrieve from DICOM servers", "Cancel", 0, 0, this,
                            Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
   // We don't want the progress dialog to resize itself, so we bypass the label
   // by creating our own
@@ -260,6 +260,8 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
   progress.setWindowModality(Qt::ApplicationModal);
   progress.setMinimumDuration(0);
   progress.setValue(0);
+  progress.setMaximum(0);
+  progress.setAutoClose(false);
   progress.show();
 
   QMap<QString,QVariant> serverParameters = d->ServerNodeWidget->parameters();
@@ -279,8 +281,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
       }
 
     progressLabel->setText(QString(tr("Retrieving:\n%1")).arg(studyUID));
-    this->updateRetrieveProgress( step );
-    ++step;
+    this->updateRetrieveProgress(0);
 
     // Get information which server we want to get the study from and prepare request accordingly
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
@@ -337,8 +338,6 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     // d->RetrievalsByStudyUID[studyUID] = retrieve;
     logger.info ( "Retrieve success" );
     }
-  progressLabel->setText(tr("Retrieving Finished"));
-  this->updateRetrieveProgress(progress.maximum());
 
   QString message(tr("Retrieve Process Finished"));
   if (retrieve->wasCanceled())
