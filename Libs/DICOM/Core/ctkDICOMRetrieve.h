@@ -42,6 +42,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject
   Q_PROPERTY(int port READ port WRITE setPort);
   Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle)
   Q_PROPERTY(bool keepAssociationOpen READ keepAssociationOpen WRITE setKeepAssociationOpen)
+  Q_PROPERTY(bool wasCanceled READ wasCanceled WRITE setWasCanceled)
 
 public:
   explicit ctkDICOMRetrieve();
@@ -71,6 +72,10 @@ public:
   /// multiple requests (default true)
   void setKeepAssociationOpen(const bool keepOpen);
   bool keepAssociationOpen();
+  /// did someone cancel us during operation?
+  /// (default false)
+  void setWasCanceled(const bool wasCanceled);
+  bool wasCanceled();
   /// where to insert new data sets obtained via get (must be set for
   /// get to succeed
   Q_INVOKABLE void setDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
@@ -87,6 +92,8 @@ public Q_SLOTS:
                        const QString& seriesInstanceUID );
   /// Use CGET to ask peer host to store data to us
   bool getStudy( const QString& studyInstanceUID );
+  /// Cancel the current operation
+  bool cancel();
 
 Q_SIGNALS:
   /// Signal is emitted inside the retrieve() function. It ranges from 0 to 100.

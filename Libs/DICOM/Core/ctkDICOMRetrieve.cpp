@@ -74,7 +74,8 @@ public:
     {
       if (this->retrieve)
         {
-        emit this->retrieve->debug("Got one!");
+        emit this->retrieve->progress("Got move request");
+        emit this->retrieve->progress(0);
         return this->ctkDcmSCU::handleMOVEResponse(
                         presID, response, waitForNextResponse);
         }
@@ -90,7 +91,12 @@ public:
     {
       if (this->retrieve)
         {
-        emit this->retrieve->debug("Got a store request!");
+        OFString instanceUID;
+        incomingObject->findAndGetOFString(DCM_SOPInstanceUID, instanceUID);
+        QString qInstanceUID(instanceUID.c_str());
+        emit this->retrieve->progress("Got STORE request for " + qInstanceUID);
+        emit this->retrieve->progress(0);
+        continueCGETSession = not this->retrieve->wasCanceled();
         if (this->retrieve && this->retrieve->database())
           {
           this->retrieve->database()->insert(incomingObject);
@@ -113,7 +119,9 @@ public:
     {
       if (this->retrieve)
         {
-        emit this->retrieve->debug("Got a cget response!");
+        emit this->retrieve->progress("Got CGET response");
+        emit this->retrieve->progress(0);
+        continueCGETSession = not this->retrieve->wasCanceled();
         return this->ctkDcmSCU::handleCGETResponse(presID, response, continueCGETSession);
         }
       return false;
@@ -122,13 +130,19 @@ public:
 
 
 //------------------------------------------------------------------------------
-class ctkDICOMRetrievePrivate
+class ctkDICOMRetrievePrivate: public QObject
 {
+  Q_DECLARE_PUBLIC( ctkDICOMRetrieve );
+
+protected:
+  ctkDICOMRetrieve* const q_ptr;
+
 public:
-  ctkDICOMRetrievePrivate();
+  ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj);
   ~ctkDICOMRetrievePrivate();
   /// Keep the currently negotiated connection to the 
   /// peer host open unless the connection parameters change
+  bool          WasCanceled;
   bool          KeepAssociationOpen;
   bool          ConnectionParamsChanged;
   bool          LastRetrieveType;
@@ -153,9 +167,11 @@ public:
 // ctkDICOMRetrievePrivate methods
 
 //------------------------------------------------------------------------------
-ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate()
+ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
+  : q_ptr(&obj)
 {
   this->Database = QSharedPointer<ctkDICOMDatabase> (0);
+  this->WasCanceled = false;
   this->KeepAssociationOpen = true;
   this->ConnectionParamsChanged = false;
   this->LastRetrieveType = RetrieveNone;
@@ -367,6 +383,8 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
                                          const QString& seriesInstanceUID,
                                          const RetrieveType retrieveType )
 {
+  Q_Q(ctkDICOMRetrieve);
+
   DcmDataset *retrieveParameters = new DcmDataset();
   if (! this->initializeSCU(studyInstanceUID, seriesInstanceUID, retrieveType, retrieveParameters) )
     {
@@ -376,6 +394,8 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
 
   // Issue request
   logger.debug ( "Sending Get Request" );
+  emit q->progress("Sending Get Request");
+  emit q->progress(0);
   OFList<RetrieveResponse*> responses;
   T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(
                                           UID_GETStudyRootQueryRetrieveInformationModel, 
@@ -391,10 +411,15 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     return false;
     }
 
+  emit q->progress("Found Presentation Context");
+  emit q->progress(1);
 
   // do the actual move request
   OFCondition status = this->SCU.sendCGETRequest ( 
                           presID, retrieveParameters, &responses );
+
+  emit q->progress("Sent Get Request");
+  emit q->progress(2);
 
   // Close association if we do not want to explicitly keep it open
   if (!this->KeepAssociationOpen)
@@ -409,8 +434,12 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     {
     logger.error ( "No responses received at all! (at least one empty response always expected)" );
     //throw std::runtime_error( std::string("No responses received from server!") );
+    emit q->progress("No Responses from Server!");
     return false;
     }
+
+  emit q->progress("Got Responses");
+  emit q->progress(3);
 
   /* The server is permitted to acknowledge every image that was received, or
    * to send a single move response.
@@ -452,8 +481,8 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
       return false;
       }
     }
-    // Select the last GET response to output meaningful status information
-    OFIterator<RetrieveResponse*> it = responses.begin();
+  // Select the last GET response to output meaningful status information
+  OFIterator<RetrieveResponse*> it = responses.begin();
   Uint32 numResults = responses.size();
   for (Uint32 i = 1; i < numResults; i++)
     {
@@ -467,6 +496,9 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     + QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))
         + " images transfers failed");
 
+  emit q->progress("Finished Get");
+  emit q->progress(100);
+
   return true;
 }
 
@@ -475,7 +507,7 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
 
 //------------------------------------------------------------------------------
 ctkDICOMRetrieve::ctkDICOMRetrieve()
-   : d_ptr(new ctkDICOMRetrievePrivate)
+   : d_ptr(new ctkDICOMRetrievePrivate(*this))
 {
   Q_D(ctkDICOMRetrieve);
   d->SCU.retrieve = this; // give the dcmtk level access to this for emitting signals
@@ -604,6 +636,19 @@ bool ctkDICOMRetrieve::keepAssociationOpen()
   return d->KeepAssociationOpen;
 }
 
+void ctkDICOMRetrieve::setWasCanceled(const bool wasCanceled)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->WasCanceled = wasCanceled;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrieve::wasCanceled()
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->WasCanceled;
+}
+
 //------------------------------------------------------------------------------
 bool ctkDICOMRetrieve::moveStudy(const QString& studyInstanceUID)
 {
@@ -656,5 +701,12 @@ bool ctkDICOMRetrieve::getSeries(const QString& studyInstanceUID,
   Q_D(ctkDICOMRetrieve);
   logger.info ( "Starting getSeries" );
   return d->get ( studyInstanceUID, seriesInstanceUID, ctkDICOMRetrievePrivate::RetrieveSeries );
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrieve::cancel()
+{
+  Q_D(ctkDICOMRetrieve);
+  d->WasCanceled = true;
 }
 

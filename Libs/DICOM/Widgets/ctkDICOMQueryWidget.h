@@ -53,9 +53,11 @@ Q_SIGNALS:
   /// This signal is emitted when the user hits return in any of the line edits
   void returnPressed();
 
+public Q_SLOTS:
+  void onReturnPressed();
+
 protected Q_SLOTS:
   void startTimer();
-  void onReturnPressed();
 };
 
 #endif

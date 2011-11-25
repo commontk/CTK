@@ -97,7 +97,8 @@ public:
   ctkDICOMQuerySCUPrivate SCU;
   DcmDataset*             Query;
   QStringList             StudyInstanceUIDList;
-  QList<DcmDataset*>       StudyDatasetList;
+  QList<DcmDataset*>      StudyDatasetList;
+  bool                    Canceled;
 };
 
 //------------------------------------------------------------------------------
@@ -108,6 +109,7 @@ ctkDICOMQueryPrivate::ctkDICOMQueryPrivate()
 {
   this->Query = new DcmDataset();
   this->Port = 0;
+  this->Canceled = false;
 }
 
 //------------------------------------------------------------------------------
@@ -241,6 +243,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     emit progress("DB not open in Query");
     }
   emit progress(0);
+  if (d->Canceled) {return false;}
 
   d->StudyInstanceUIDList.clear();
   d->SCU.setAETitle ( OFString(this->callingAETitle().toStdString().c_str()) );
@@ -251,6 +254,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   logger.error ( "Setting Transfer Syntaxes" );
   emit progress("Setting Transfer Syntaxes");
   emit progress(10);
+  if (d->Canceled) {return false;}
 
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
@@ -269,6 +273,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   logger.debug ( "Negotiating Association" );
   emit progress("Negatiating Association");
   emit progress(20);
+  if (d->Canceled) {return false;}
 
   OFCondition result = d->SCU.negotiateAssociation();
   if (result.bad())
@@ -359,6 +364,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     logger.debug("Query on study date " + dateRange);
     }
   emit progress(30);
+  if (d->Canceled) {return false;}
 
   OFList<QRResponse *> responses;
 
@@ -376,6 +382,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     emit progress("Found useful presentation context");
     }
   emit progress(40);
+  if (d->Canceled) {return false;}
 
   OFCondition status = d->SCU.sendFINDRequest ( presentationContext, d->Query, &responses );
   if ( !status.good() )
@@ -389,6 +396,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   logger.debug ( "Find succeded");
   emit progress("Find succeded");
   emit progress(50);
+  if (d->Canceled) {return false;}
 
   for ( OFIterator<QRResponse*> it = responses.begin(); it != responses.end(); it++ )
     {
@@ -399,6 +407,9 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
       OFString StudyInstanceUID;
       dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
       d->addStudyInstanceUIDAndDataset ( StudyInstanceUID.c_str(), dataset );
+      emit progress(QString("Processing: ") + QString(StudyInstanceUID.c_str()));
+      emit progress(50);
+      if (d->Canceled) {return false;}
       }
     }
 
@@ -431,6 +442,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     logger.debug ( "Starting Series C-FIND for Study: " + StudyInstanceUID );
     emit progress(QString("Starting Series C-FIND for Study: ") + StudyInstanceUID);
     emit progress(50 + (progressRatio * i++));
+    if (d->Canceled) {return false;}
 
     d->Query->putAndInsertString ( DCM_StudyInstanceUID, StudyInstanceUID.toStdString().c_str() );
     OFList<QRResponse *> responses;
@@ -451,6 +463,8 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
         }
       logger.debug ( "Find succeded on Series level for Study: " + StudyInstanceUID );
       emit progress(QString("Find succeded on Series level for Study: ") + StudyInstanceUID);
+      emit progress(50 + (progressRatio * i++));
+      if (d->Canceled) {return false;}
       }
     else
       {
@@ -458,8 +472,16 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
       emit progress(QString("Find on Series level failed for Study: ") + StudyInstanceUID);
       }
     emit progress(50 + (progressRatio * i++));
+    if (d->Canceled) {return false;}
     }
   d->SCU.closeAssociation ( DCMSCU_RELEASE_ASSOCIATION );
   emit progress(100);
   return true;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQuery::cancel()
+{
+  Q_D(ctkDICOMQuery);
+  d->Canceled = true;
 }

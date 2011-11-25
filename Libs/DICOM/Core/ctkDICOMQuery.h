@@ -105,6 +105,9 @@ Q_SIGNALS:
   /// true for success or false for error
   void done(const bool& error);
 
+public Q_SLOTS:
+  void cancel();
+
 protected:
   QScopedPointer<ctkDICOMQueryPrivate> d_ptr;
 
