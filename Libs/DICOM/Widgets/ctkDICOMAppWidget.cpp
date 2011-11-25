@@ -172,6 +172,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
   connect(d->QueryRetrieveWidget, SIGNAL(canceled()), d->QueryRetrieveWidget, SLOT(hide()) );
+  connect(d->QueryRetrieveWidget, SIGNAL(canceled()), this, SLOT(onQueryRetrieveFinished()) );
 
   connect(d->ImagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
   connect(d->ImagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
@@ -301,6 +302,14 @@ void ctkDICOMAppWidget::openQueryDialog()
   d->QueryRetrieveWidget->show();
   d->QueryRetrieveWidget->raise();
 
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onQueryRetrieveFinished()
+{
+  Q_D(ctkDICOMAppWidget);
+  d->DICOMModel.reset();
+  emit this->queryRetrieveFinished();
 }
 
 //----------------------------------------------------------------------------

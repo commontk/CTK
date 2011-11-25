@@ -65,6 +65,8 @@ public Q_SLOTS:
 Q_SIGNALS:
   /// Emited when directory is changed
   void databaseDirectoryChanged(const QString&);
+  /// Emited when query/retrieve operation has happened
+  void queryRetrieveFinished();
 
 protected:
     QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;
@@ -85,6 +87,9 @@ protected Q_SLOTS:
     void onPreviousSeries();
     void onNextStudy();
     void onPreviousStudy();
+
+    /// To be called when dialog finishes
+    void onQueryRetrieveFinished();
 
     /// To be called when an entry of the tree list is collapsed
     void onTreeCollapsed(const QModelIndex& index);
