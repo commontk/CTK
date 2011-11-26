@@ -397,13 +397,14 @@ void ctkDICOMQueryRetrieveWidget::updateRetrieveProgress(int value)
     {
     return;
     }
-  if (d->ProgressDialog->width() != 500)
+  static int targetWidth = 700;
+  if (d->ProgressDialog->width() != targetWidth)
     {
     QPoint pp = this->mapToGlobal(QPoint(0,0));
     pp = QPoint(pp.x() + (this->width() - d->ProgressDialog->width()) / 2,
                 pp.y() + (this->height() - d->ProgressDialog->height())/ 2);
-    d->ProgressDialog->move(pp - QPoint((500 - d->ProgressDialog->width())/2, 0));
-    d->ProgressDialog->resize(500, d->ProgressDialog->height());
+    d->ProgressDialog->move(pp - QPoint((targetWidth - d->ProgressDialog->width())/2, 0));
+    d->ProgressDialog->resize(targetWidth, d->ProgressDialog->height());
     }
   d->ProgressDialog->setValue( value );
   logger.error(QString("setting value to %1").arg(value) );
