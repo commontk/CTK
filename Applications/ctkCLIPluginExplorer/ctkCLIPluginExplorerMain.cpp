@@ -22,21 +22,21 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDebug>
+#include <QFile>
 
 // CTK includes
-//#include <ctkPluginManager.h>
+#include <ctkModuleDescription.h>
 
 int main(int argc, char** argv)
 {
   QCoreApplication app(argc, argv);
 
-//  ctkPluginManager pluginManager;
-//  pluginManager.addSearchPath("/home/sascha/git/CTK-bin/CTK-build/bin/Plugins");
-//  pluginManager.startAllPlugins();
+  QIODevice* input = new QFile("/home/sascha/tmp/slicer_md1.xml");
 
-//  qDebug() << "List of services: " <<  pluginManager.serviceManager()->findServices();
+  ctkModuleDescription* descr = ctkModuleDescription::parse(input);
 
-//  QObject* service = pluginManager.serviceManager()->loadInterface("org.commontk.cli.ICLIManager");
+  QTextStream cout(stdout, QIODevice::WriteOnly);
+  cout << *descr;
 
   return 0;
 }

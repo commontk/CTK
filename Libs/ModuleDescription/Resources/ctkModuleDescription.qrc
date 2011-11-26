@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ctkModuleDescription.xsd</file>
+    </qresource>
+</RCC>

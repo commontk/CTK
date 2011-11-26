@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) 2010 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Copyright (c) 2010 CISTIB - Universtitat Pompeu Fabra
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,37 +18,48 @@
 
 =============================================================================*/
 
-#ifndef __ctkSlicerModuleReader_h
-#define __ctkSlicerModuleReader_h
+#ifndef __ctkSlicerModuleStringConverter_h
+#define __ctkSlicerModuleStringConverter_h
 
-// Qt includes
-#include <QRegExp>
-#include <QStack>
-#include <QXmlAttributes>
-#include <QXmlDefaultHandler>
+#include <string>
 
-// CTK includes
-#include <ctkModuleDescriptionExport.h>
+#include "ctkModuleDescriptionConverter.h"
+
+class ModuleDescription;
+class ModuleParameterGroup;
+
 
 /**
- * Reader of default module XML description
- * Freely inspired from 
- * Slicer/Libs/SlicerExecutionModel/ModuleDescriptionParser/ModuleDescriptionParser.cxx
+ * Convert Slicer Module description to command line string QStringList
+ *
  */
-class CTK_MODULDESC_EXPORT ctkModuleDescriptionParser
+class ctkSlicerModuleStringConverter : public ctkModuleDescriptionConverter
 {
-
+  Q_OBJECT
 public:
+  ctkSlicerModuleStringConverter() {};
+  ~ctkSlicerModuleStringConverter() {};
 
-  void setInput(QIODevice* input);
+  ///
+  void update( );
 
-  void parseDescription();
-
-  ctkModuleDescription* moduleDescription() const;
+  ///
+  virtual const QVariant GetOutput( );
 
 protected:
 
-  virtual bool validate() const;
+  //!
+  void SetAllParameters();
+
+  //!
+  void SetParameterValue( const ctkModuleParameter &param );
+
+  ///
+  void SetTarget();
+
+protected:
+
+  QStringList CommandLineAsString;
 };
 
 #endif

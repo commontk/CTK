@@ -23,34 +23,48 @@
 
 #include "ctkModuleParameter.h"
 
-#include <QHash>
-#include <QVector>
+class ctkModuleParameterGroupPrivate;
 
 /** 
 *  \brief Group of parameters
 *
 */
-class CTK_MODULDESC_EXPORT ctkModuleParameterGroup : public QHash<QString, QString>
+class CTK_MODULDESC_EXPORT ctkModuleParameterGroup
 {
-public:
-  virtual ~ctkModuleParameterGroup();
-  
-  /// Takes ownership of parameter
-  void addParameter(ctkModuleParameter* parameter);
-  const QVector<ctkModuleParameter*>& parameters() const;
+  Q_DECLARE_PRIVATE(ctkModuleParameterGroup)
 
-  /// Returns 0 if not found.
-  ctkModuleParameter* parameter(const QString& parameterName)const;
-  /// Returns true if at least 1 parameter is a return type
-  bool hasReturnParameters()const;
-  bool writeParameterFile(QTextStream& in, bool withHandlesToBulkParameters = true)const;
+public:
+
+  ctkModuleParameterGroup();
+  ~ctkModuleParameterGroup();
+  
+  void setLabel(const QString& label);
+  QString label() const;
+
+  void setDescription(const QString& description);
+  QString description() const;
+
+  void setAdvanced(const QString& advanced);
+  QString advanced() const;
+
+  void addParameter(ctkModuleParameter* parameter);
+  QList<ctkModuleParameter*> parameters() const;
+
+  bool hasParameter(const QString& name) const;
+
+  ctkModuleParameter* parameter(const QString& name) const;
+
+  bool hasReturnParameters() const;
+
+  bool writeParameterFile(QTextStream& in, bool withHandlesToBulkParameters) const;
   
 private:
-  friend CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup &group);
-  ///
-  QVector<ctkModuleParameter*> Parameters;
+
+  Q_DISABLE_COPY(ctkModuleParameterGroup)
+
+  ctkModuleParameterGroupPrivate * const d_ptr;
 };
 
-CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup &group);
+CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup& group);
 
 #endif

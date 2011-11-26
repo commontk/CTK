@@ -16,36 +16,32 @@ set(KIT_export_directive "CTK_MODULDESC_EXPORT")
 set(KIT_SRCS
   ctkModuleDescription.h
   ctkModuleDescription.cpp
+  #ctkModuleDescriptionReader.h
+  ctkModuleDescriptionReader.cpp
   ctkModuleParameter.h
   ctkModuleParameter.cpp
   ctkModuleParameterGroup.h
   ctkModuleParameterGroup.cpp
-  ctkModuleParameterGroupValue.h
-  ctkModuleParameterGroupValue.cpp
-  ctkModuleParameterValue.h
-  ctkModuleParameterValue.cpp
-  ctkModuleDescriptionReaderInterface.cpp
-  ctkModuleDescriptionReaderInterface.h
-  ctkModuleDescriptionReader.h
-  ctkModuleDescriptionReader.cpp
-  ctkModuleDescriptionConverterInterface.h
-  ctkModuleDescriptionConverter.h
-  ctkModuleDescriptionConverter.cpp
-  ctkModuleDescriptionExecutionInterface.h
-  ctkModuleDescriptionExecution.h
-  ctkModuleDescriptionExecution.cpp
-  ctkModuleValues.h
-  ctkModuleValues.cpp
+  #ctkModuleParameterGroupValue.h
+  #ctkModuleParameterGroupValue.cpp
+  #ctkModuleParameterValue.h
+  #ctkModuleParameterValue.cpp
+  #ctkModuleDescriptionConverterInterface.h
+  #ctkModuleDescriptionConverter.h
+  #ctkModuleDescriptionConverter.cpp
+  #ctkModuleDescriptionExecutionInterface.h
+  #ctkModuleDescriptionExecution.h
+  #ctkModuleDescriptionExecution.cpp
+  #ctkModuleValues.h
+  #ctkModuleValues.cpp
   )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  ctkModuleDescriptionReaderInterface.h
-  ctkModuleDescriptionReader.h
-  ctkModuleDescriptionConverterInterface.h
-  ctkModuleDescriptionConverter.h
-  ctkModuleDescriptionExecutionInterface.h
-  ctkModuleDescriptionExecution.h
+  #ctkModuleDescriptionConverterInterface.h
+  #ctkModuleDescriptionConverter.h
+  #ctkModuleDescriptionExecutionInterface.h
+  #ctkModuleDescriptionExecution.h
 )
 
 # UI files
@@ -54,7 +50,11 @@ set(KIT_UI_FORMS
 
 # Resources
 set(KIT_resources
+  Resources/ctkModuleDescription.qrc
 )
+
+set(QT_USE_QTXMLPATTERNS 1)
+include(${QT_USE_FILE})
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
@@ -71,6 +71,8 @@ ctkMacroBuildLib(
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
+
+target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 
 if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(

@@ -504,6 +504,10 @@ ctk_app_option(ctkExampleHostedApp
 ctk_app_option(ctkEventBusDemo
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
+
+ctk_app_option(ctkCLIPluginExplorer
+               "Build the Command Line Interface Plugin Explorer" OFF
+               CTK_BUILD_EXAMPLES)
                
 ctk_app_option(ctkPluginBrowser
                "Build the DICOM example application" OFF
