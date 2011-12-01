@@ -199,6 +199,7 @@ include(CMake/ctkFunctionCheckCompilerFlags.cmake)
 include(CMake/ctkFunctionGetIncludeDirs.cmake)
 include(CMake/ctkFunctionGetLibraryDirs.cmake)
 include(CMake/ctkFunctionGetGccVersion.cmake)
+include(CMake/ctkFunctionCompileSnippets.cmake)
 
 #-----------------------------------------------------------------------------
 # Testing

@@ -705,6 +705,7 @@ EXCLUDE_PATTERNS       = moc_*.cxx \
                          */Testing/* \
                          */Utilities/* \
                          */Widgets/Plugins/* \
+                         */Snippets/* \
                          @CTK_ADDITIONAL_EXCLUDE_PATTERN@
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
@@ -719,7 +720,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = @CTK_SOURCE_DIR@/Libs/PluginFramework/Documentation/Snippets/
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
