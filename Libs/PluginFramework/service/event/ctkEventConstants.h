@@ -37,14 +37,14 @@
 struct CTK_PLUGINFW_EXPORT ctkEventConstants {
 
   /**
-   * Qt slot property (named <code>event.topics</code>)
-   * specifying the <code>ctkEvent</code> topics of interest to a
-   * subscribed slot.
+   * Registration property (named <code>event.topics</code>)
+   * specifying the <code>ctkEvent</code> topics of interest to an Event Handler
+   * (a service object or a subscribed slot).
    * <p>
-   * Subscribed slots SHOULD be registered with this property. The value of the
+   * Event handlers SHOULD be registered with this property. The value of the
    * property is a QString or a QStringList that describes the topics in
    * which the handler is interested. An asterisk ('*') may be used as a
-   * trailing wildcard. Subscribed slots which do not have a value for this
+   * trailing wildcard. Event handlers which do not have a value for this
    * property must not receive events. More precisely, the value of each
    * string must conform to the following grammar:
    *
@@ -58,19 +58,19 @@ struct CTK_PLUGINFW_EXPORT ctkEventConstants {
   static const QString EVENT_TOPIC; // = "event.topics"
 
   /**
-   * Qt slot property (named <code>event.filter</code>)
+   * Registration property (named <code>event.filter</code>)
    * specifying a filter to further select <code>ctkEvent</code> s of interest to
-   * a subscribed slot.
+   * an Event Handler (a service object or a subscribed slot).
    * <p>
-   * Subscribed slots MAY be registered with this property. The value of this
+   * Event handlers MAY be registered with this property. The value of this
    * property is a QString containing an LDAP-style filter specification. Any
    * of the event's properties may be used in the filter expression. Each
-   * subscribed slot is notified for any event which belongs to the topics in
-   * which the slot has expressed an interest. If the slot is also
+   * event handler is notified for any event which belongs to the topics in
+   * which the handler has expressed an interest. If the event handler is also
    * registered with this property, then the properties of the event
-   * must also match the filter for the event to be delivered to the slot.
+   * must also match the filter for the event to be delivered to the event handler.
    * <p>
-   * If the filter syntax is invalid, then the slot must be ignored
+   * If the filter syntax is invalid, then the Event Handler must be ignored
    * and a warning should be logged.
    *
    * @see ctkEvent
