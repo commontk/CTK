@@ -388,7 +388,6 @@ void ctkDICOMDatabase::loadInstanceHeader (QString sopInstanceUID)
   query.prepare ( "SELECT Filename FROM Images WHERE SOPInstanceUID=?");
   query.bindValue ( 0, sopInstanceUID );
   query.exec();
-  d->LoadedHeader.clear();
   if (query.next())
     {
     QString fileName = query.value(0).toString();
@@ -401,6 +400,7 @@ void ctkDICOMDatabase::loadInstanceHeader (QString sopInstanceUID)
 void ctkDICOMDatabase::loadFileHeader (QString fileName)
 {
   Q_D(ctkDICOMDatabase);
+  d->LoadedHeader.clear();
   DcmFileFormat fileFormat;
   OFCondition status = fileFormat.loadFile(fileName.toLatin1().data());
   if (status.good())
