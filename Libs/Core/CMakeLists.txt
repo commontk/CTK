@@ -134,4 +134,7 @@ endif()
 # Testing
 if(BUILD_TESTING)
   add_subdirectory(Testing)
+  
+  # Compile source code snippets
+  add_subdirectory(Documentation/Snippets)
 endif()
