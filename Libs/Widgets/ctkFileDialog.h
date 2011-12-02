@@ -53,10 +53,10 @@ public:
   /// Add an extra widget under the file format combobox. If a label is
   /// given, it will appear in the first column.
   /// The widget is reparented to ctkFileDialog
-  void setBottomWidget(QWidget* widget, const QString& label=QString());
+  Q_INVOKABLE void setBottomWidget(QWidget* widget, const QString& label=QString());
 
   /// Return the extra widget if any
-  QWidget* bottomWidget()const;
+  Q_INVOKABLE QWidget* bottomWidget()const;
 
   /// Internally used
   bool eventFilter(QObject *obj, QEvent *event);
