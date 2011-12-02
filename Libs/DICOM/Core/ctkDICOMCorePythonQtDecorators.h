@@ -33,7 +33,7 @@
 // for non-static methods.
 //
 
-/// \ingroup DICOMCore
+/// \ingroup DICOM_Core
 class ctkDICOMCorePythonQtDecorators : public QObject
 {
   Q_OBJECT

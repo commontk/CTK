@@ -30,6 +30,7 @@
 class ctkDICOMAbstractThumbnailGeneratorPrivate;
 class DicomImage;
 
+/// \ingroup DICOM_Core
 ///
 /// \brief Abstract thumbnail generator class
 ///

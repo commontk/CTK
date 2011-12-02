@@ -33,6 +33,7 @@ class QTimerEvent;
 // VTK includes
 class QVTKWidget;
 
+/// \ingroup Visualization_VTK_Widgets
 class ctkVTKMagnifyViewPrivate : public QObject
 {
   Q_OBJECT

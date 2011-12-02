@@ -30,6 +30,7 @@
 class ctkMaterialPropertyWidgetPrivate;
 class QListWidgetItem;
 
+/// \ingroup Widgets
 /// ctkMaterialPropertyWidget is a panel to control material properties
 /// such as color and lighting coefficients. It contains a preview icon
 /// and a list of presets.

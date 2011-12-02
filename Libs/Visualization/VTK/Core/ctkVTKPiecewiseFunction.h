@@ -30,6 +30,7 @@
 class vtkPiecewiseFunction;
 class ctkVTKPiecewiseFunctionPrivate;
 
+/// \ingroup Visualization_VTK_Core
 ///
 /// Transfer function for a vtkPiecewiseFunction
 

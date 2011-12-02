@@ -32,6 +32,7 @@ class QString;
 
 class ctkWorkflowStackedWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// \brief ctkWorkflowStackedWidget is the basis for a workflow with a user
 /// interface containing a QStackedWidget.

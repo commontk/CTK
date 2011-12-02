@@ -31,6 +31,7 @@
 
 class ctkMatrixWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkMatrixWidget is the base class of matrix widgets.
 class CTK_WIDGETS_EXPORT ctkMatrixWidget: public QWidget

@@ -28,6 +28,7 @@
 #include "ctkCoreExport.h"
 
 //---------------------------------------------------------------------------
+/// \ingroup Core
 /// The following example prints debug statement everytime the current value
 /// of the slider is changed:
 /// void print() { qDebug() << "signal called"; }

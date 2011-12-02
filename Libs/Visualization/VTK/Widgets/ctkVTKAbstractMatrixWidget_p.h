@@ -33,6 +33,7 @@
 
 class vtkMatrix4x4;
 
+/// \ingroup Visualization_VTK_Widgets
 class ctkVTKAbstractMatrixWidgetPrivate: public QObject
 {
   Q_OBJECT

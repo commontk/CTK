@@ -32,6 +32,7 @@
 class QTableWidgetItem;
 class ctkDICOMServerNodeWidgetPrivate;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMServerNodeWidget : public QWidget
 {
 Q_OBJECT;

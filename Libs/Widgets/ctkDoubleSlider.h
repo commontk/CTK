@@ -31,6 +31,7 @@
 
 class ctkDoubleSliderPrivate;
 
+/// \ingroup Widgets
 /// ctkDoubleSlider is a QSlider that controls doubles instead of integers.
 /// ctkDoubleSlider internally aggregates a QSlider
 /// TODO: ctkDoubleSlider tries to represent a double value with integers. It's

@@ -62,6 +62,7 @@ class QAbstractItemModel;
 
 class ctkCheckableModelHelperPrivate;
 
+/// \ingroup Core
 ///
 /// ctkCheckableModelHelper expose functions to handle checkable models
 class CTK_CORE_EXPORT ctkCheckableModelHelper : public QObject

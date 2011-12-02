@@ -59,6 +59,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ctkWidgetsExport.h"
 class ctkToolTipTrapperPrivate;
 
+/// \ingroup Widgets
 /// To prevent tooltips from appearing, create an instance of this object.
 class CTK_WIDGETS_EXPORT ctkToolTipTrapper : public QObject
 {

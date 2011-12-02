@@ -29,6 +29,7 @@
 
 class ctkColorDialogPrivate;
 
+/// \ingroup Widgets
 /// Customizable QColorDialog.
 /// Extra widgets can be added to the left of the dialog into a QStackedWidget
 class CTK_WIDGETS_EXPORT ctkColorDialog : public QColorDialog

@@ -31,6 +31,7 @@
 
 class ctkMenuComboBoxPrivate;
 
+/// \ingroup Widgets
 /// QComboBox linked with a QMenu. See ctkMenuComboBox::setMenu()
 /// ctkMenuComboBox can be editable, disable,
 /// editable on focus or editable on double click.

@@ -28,6 +28,7 @@
 
 class ctkDICOMFilterProxyModelPrivate;
 
+/// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMFilterProxyModel : public QSortFilterProxyModel{
     Q_OBJECT
 

@@ -34,6 +34,7 @@ class ctkVTKScalarsToColorsWidgetPrivate;
 class vtkControlPointsItem;
 class vtkPlot;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsWidget : public QWidget
 {
   Q_OBJECT

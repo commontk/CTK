@@ -31,6 +31,7 @@
 
 class ctkQImageViewPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkQImageView is the base class of image viewer widgets.
 class CTK_WIDGETS_EXPORT ctkQImageView: public QWidget

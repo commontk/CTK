@@ -26,6 +26,7 @@
 
 class ctkPopupWidgetPrivate;
 
+/// \ingroup Widgets
 /// Description:
 class CTK_WIDGETS_EXPORT ctkPopupWidget : public ctkBasePopupWidget
 {

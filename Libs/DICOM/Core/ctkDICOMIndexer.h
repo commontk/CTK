@@ -30,6 +30,7 @@
 
 class ctkDICOMIndexerPrivate;
 
+/// \ingroup DICOM_Core
 ///
 /// \brief Indexes DICOM images located in local directory into an Sql database
 ///

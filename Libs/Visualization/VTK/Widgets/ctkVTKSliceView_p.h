@@ -40,6 +40,7 @@
 class vtkRenderWindowInteractor;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Visualization_VTK_Widgets
 class ctkVTKSliceViewPrivate : public ctkVTKAbstractViewPrivate
 {
   Q_OBJECT

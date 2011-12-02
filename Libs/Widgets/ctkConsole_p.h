@@ -30,6 +30,7 @@
 #include "ctkConsole.h"
 #include "ctkWidgetsExport.h"
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkConsolePrivate : public QTextEdit
 {
   Q_OBJECT

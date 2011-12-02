@@ -29,6 +29,7 @@
 #include "ui_ctkScreenshotDialog.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class ctkScreenshotDialogPrivate : public QObject, public Ui_ctkScreenshotDialog
 {
   Q_OBJECT

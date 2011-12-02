@@ -34,6 +34,7 @@
 class QComboBox;
 class ctkAddRemoveComboBoxPrivate;
 
+/// \ingroup Widgets
 ///
 /// QComboBox with tool buttons to add/remove entries to the menu list
 class CTK_WIDGETS_EXPORT ctkAddRemoveComboBox : public QWidget

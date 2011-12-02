@@ -35,6 +35,7 @@ class ctkTransferFunctionScenePrivate;
 //class ctkPoint;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkTransferFunctionScene: public QGraphicsScene
 {
   Q_OBJECT

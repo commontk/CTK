@@ -37,6 +37,7 @@ class ctkWorkflowGroupBox;
 
 class ctkWorkflowWidgetStepPrivate;
 
+/// \ingroup Widgets
 ///
 /// \brief ctkWorkflowWidgetStep is a convienience class to quickly
 /// construct a ctkWorkflowStep with a user interface.

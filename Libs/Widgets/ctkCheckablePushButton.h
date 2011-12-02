@@ -31,6 +31,7 @@
 
 class ctkCheckablePushButtonPrivate;
 
+/// \ingroup Widgets
 /// Description
 /// ctkCheckablePushButton is a QPushButton with a checkbox. By default
 /// the checkbox is connected to the checkable property of the push button.

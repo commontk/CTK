@@ -31,6 +31,7 @@
 
 class ctkButtonGroupPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkButtonGroup is a QButtonGroup with a different behavior when exclusive.
 /// An exclusive ctkButtonGroup switches off the previously checked button when

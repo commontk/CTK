@@ -28,6 +28,7 @@
 class ctkErrorLogFDMessageHandlerPrivate;
 
 //------------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkErrorLogFDMessageHandler : public ctkErrorLogAbstractMessageHandler
 {
 public:

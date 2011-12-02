@@ -28,6 +28,7 @@
 #include "ctkWidgetsExport.h"
 class ctkModalityWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkModalityWidget allows the user to select DICOM modalities
 class CTK_WIDGETS_EXPORT ctkModalityWidget : public QWidget

@@ -32,6 +32,7 @@
 class ctkTreeComboBoxPrivate;
 class QTreeView;
 
+/// \ingroup Widgets
 /// Description:
 /// ComboBox that displays the items as a tree view.
 /// See below for a use case:

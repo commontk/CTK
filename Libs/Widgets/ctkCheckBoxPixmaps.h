@@ -63,6 +63,7 @@ class QPixmap;
 class QWidget;
 class ctkCheckBoxPixmapsPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkCheckBoxPixmaps is a helper class that can used to create pixmaps for
 /// checkboxs in various states. This is useful for showing checkboxes in qt-views.

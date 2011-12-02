@@ -28,6 +28,7 @@
 #include "ctkWidgetsExport.h"
 class ctkCollapsibleGroupBoxPrivate;
 
+/// \ingroup Widgets
 /// A QGroupBox with an arrow indicator that shows/hides the groupbox contents
 /// when clicked. It responds to the slot QGroupBox::setChecked(bool) or
 /// ctkCollapsibleGroupBox::setCollapsed(bool)

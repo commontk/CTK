@@ -40,6 +40,7 @@ class ctkVTKObjectEventsObserver;
 class ctkVTKObjectEventsObserverPrivate;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Visualization_VTK_Core
 class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKConnectionFactory
 {
 public:
@@ -58,6 +59,7 @@ protected:
 CTK_SINGLETON_DECLARE_INITIALIZER(CTK_VISUALIZATION_VTK_CORE_EXPORT, ctkVTKConnectionFactory)
 
 //-----------------------------------------------------------------------------
+/// \ingroup Visualization_VTK_Core
 class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKObjectEventsObserver : public QObject
 {
 Q_OBJECT

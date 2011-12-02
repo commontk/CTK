@@ -33,7 +33,8 @@ class ctkDICOMDatabasePrivate;
 class DcmDataset;
 class ctkDICOMAbstractThumbnailGenerator;
 
-
+/// \ingroup DICOM_Core
+///
 /// Class handling a database of DICOM objects. So far, an underlying
 /// SQLITE database is used for that. Usually, added DICOM objects are also
 /// stored within the file system.

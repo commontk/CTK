@@ -33,6 +33,7 @@
 class ctkIconEnginePluginPrivate;
 class ctkIconEnginePrivate;
 
+/// \ingroup Widgets
 /// ctkIconEnginePlugin must be loaded when starting the application.
 /// \code
 /// QApplication myApp;
@@ -69,6 +70,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
+/// \ingroup Widgets
 /// ctkIconEngine is an icon engine that behaves like the default Qt icon engine
 /// QPixmapIconEngine(ctkPixmapIconEngine)), but can automatically support icons
 /// in multiple size. When adding a file to an icon, it will automatically check

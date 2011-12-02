@@ -33,6 +33,7 @@ class QWidget;
 #include "ctkLayoutManager.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkLayoutManagerPrivate
 {
   Q_DECLARE_PUBLIC(ctkLayoutManager);

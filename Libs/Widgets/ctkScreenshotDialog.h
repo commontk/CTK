@@ -29,7 +29,10 @@
 
 class ctkScreenshotDialogPrivate;
 
-/** ctkScreenshotDialog is simple dialog allowing to grab the content 
+/** 
+    \ingroup Widgets
+    
+    ctkScreenshotDialog is simple dialog allowing to grab the content 
     of any widget and save it into a PNG file.
     It can be used as a tool and can take screenshots without being opened nor
     executed.

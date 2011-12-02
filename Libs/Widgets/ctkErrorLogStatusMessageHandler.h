@@ -28,6 +28,7 @@
 class QMainWindow;
 
 //------------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkErrorLogStatusMessageHandler :
     public ctkErrorLogAbstractMessageHandler
 {

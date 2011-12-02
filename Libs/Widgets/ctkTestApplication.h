@@ -79,6 +79,7 @@ int TEST_NAME(int _argc, char * _argv [] )            \
 #include "ctkWidgetsExport.h"
   
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkTestApplication : public QObject
 {
   Q_OBJECT

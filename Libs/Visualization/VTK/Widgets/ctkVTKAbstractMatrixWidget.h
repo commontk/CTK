@@ -30,6 +30,7 @@
 class vtkMatrix4x4;
 class ctkVTKAbstractMatrixWidgetPrivate;
 
+/// \ingroup Visualization_VTK_Widgets
 /// This base class is primarily used by ctkVTKMatrixWidget but can be the base
 /// of other classes (ctkVTKTransformWidget?) that don't want to expose
 /// setMatrix() publicly.

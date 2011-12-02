@@ -33,6 +33,9 @@ class DcmDataDictionary;
 
 
 class ctkDICOMDatasetPrivate;
+
+/// \ingroup DICOM_Core
+///
 ///  \brief Base class for DICOM objects and interface with DICOM toolkit DCMTK.
 ///
 ///  This class serves as the base class for all DICOM objects (patient, study, series, image).

@@ -30,6 +30,7 @@ class QModelIndex;
 class ctkThumbnailListWidgetPrivate;
 class ctkThumbnailLabel;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkThumbnailListWidget : public QWidget
 {
   Q_OBJECT

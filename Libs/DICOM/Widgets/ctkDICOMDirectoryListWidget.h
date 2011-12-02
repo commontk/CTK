@@ -31,6 +31,7 @@
 
 class ctkDICOMDirectoryListWidgetPrivate;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMDirectoryListWidget : public QWidget
 {
   Q_OBJECT

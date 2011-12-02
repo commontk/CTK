@@ -35,6 +35,7 @@ class ctkWorkflowStep;
 
 class ctkWorkflowButtonBoxWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// \brief A widget that controls a workflow
 ///

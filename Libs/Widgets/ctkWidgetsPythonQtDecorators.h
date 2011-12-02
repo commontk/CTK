@@ -34,6 +34,7 @@
 // for non-static methods.
 //
 
+/// \ingroup Widgets
 class ctkWidgetsPythonQtDecorators : public QObject
 {
   Q_OBJECT
@@ -71,6 +72,7 @@ public Q_SLOTS:
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 void initCTKWidgetsPythonQtDecorators()
 {
   PythonQt::self()->addDecorators(new ctkWidgetsPythonQtDecorators);

@@ -29,6 +29,7 @@
 #include "ctkCoreExport.h"
 
 //------------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkErrorLogLevel : public QObject
 {
   Q_OBJECT
@@ -61,6 +62,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(ctkErrorLogLevel::LogLevels)
 class ctkErrorLogTerminalOutputPrivate;
 
 //------------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkErrorLogTerminalOutput
 {
 public:
@@ -88,6 +90,7 @@ class ctkErrorLogAbstractMessageHandler;
 class ctkErrorLogModelPrivate;
 
 //------------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkErrorLogModel : public QSortFilterProxyModel
 {
   Q_OBJECT
@@ -186,6 +189,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(ctkErrorLogModel::TerminalOutputs)
 class ctkErrorLogAbstractMessageHandlerPrivate;
 
 //------------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkErrorLogAbstractMessageHandler : public QObject
 {
   Q_OBJECT

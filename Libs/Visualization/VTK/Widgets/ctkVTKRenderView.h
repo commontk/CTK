@@ -29,6 +29,7 @@ class ctkVTKRenderViewPrivate;
 class vtkCamera;
 class vtkRenderer;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public ctkVTKAbstractView
 {
   Q_OBJECT

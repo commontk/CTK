@@ -31,6 +31,7 @@
 
 class ctkBasePopupWidgetPrivate;
 
+/// \ingroup Widgets
 /// Description:
 class CTK_WIDGETS_EXPORT ctkBasePopupWidget : public QFrame
 {

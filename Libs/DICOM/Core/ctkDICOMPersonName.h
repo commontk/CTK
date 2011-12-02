@@ -31,6 +31,8 @@
 #include <string>
 
 class ctkDICOMPersonNameData;
+
+/// \ingroup DICOM_Core
 ///
 /// \brief A person's name as modelled in DICOM.
 ///

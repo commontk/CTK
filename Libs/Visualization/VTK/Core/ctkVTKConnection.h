@@ -34,6 +34,7 @@ class vtkObject;
 class ctkVTKConnectionPrivate;
 class vtkCallbackCommand;
 
+/// \ingroup Visualization_VTK_Core
 /// Warning the slot must have its signature order:
 /// vtkObject*, vtkObject* : sender, callData
 /// or
@@ -125,6 +126,7 @@ private:
   friend QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
 };
 
+/// \ingroup Visualization_VTK_Core
 QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
 
 #endif

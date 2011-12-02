@@ -33,6 +33,7 @@ class vtkChartXY;
 class vtkContextScene;
 class vtkPlot;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public QVTKWidget
 {
   Q_OBJECT

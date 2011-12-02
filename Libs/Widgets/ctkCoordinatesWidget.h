@@ -27,6 +27,7 @@
 // CTK includes
 #include "ctkWidgetsExport.h"
 
+/// \ingroup Widgets
 ///
 /// ctkCoordinatesWidget is a simple container of dimension coordinates.
 /// For each coordinate a double spinbox is associated, everytime a value is
