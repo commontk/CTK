@@ -6,5 +6,5 @@
 #
 
 set(ctk_library_options
-  USE_TRANSFER_FUNCTION_CHARTS:ON
+  USE_TRANSFER_FUNCTION_CHARTS:OFF
   )
