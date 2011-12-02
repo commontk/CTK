@@ -685,7 +685,8 @@ RECURSIVE              = YES
 EXCLUDE                = @CTK_BINARY_DIR@ \
                          @CTK_SOURCE_DIR@/Utilities \
                          @CTK_SOURCE_DIR@/CMake/ctkDashboardDriverScript.cmake \
-                         @CTK_SOURCE_DIR@/CMake/ctkDashboardScript.TEMPLATE.cmake
+                         @CTK_SOURCE_DIR@/CMake/ctkDashboardScript.TEMPLATE.cmake \
+                         @CTK_SOURCE_DIR@/Libs/Visualization/XIP
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
