@@ -30,6 +30,7 @@ class ctkDICOMImportWidgetPrivate;
 
 class ctkDICOMDatabase;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMImportWidget : public QWidget
 {
   Q_OBJECT

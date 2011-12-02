@@ -30,6 +30,7 @@
 
 class ctkMaterialPropertyPreviewLabelPrivate;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkMaterialPropertyPreviewLabel : public QFrame
 {
   Q_OBJECT

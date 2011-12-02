@@ -34,6 +34,7 @@
 class ctkDICOMDatasetViewPrivate;
 class DicomImage;
 
+/// \ingroup DICOM_Widgets
 ///
 /// ctkDICOMDatasetView is the base class of image viewer widgets.
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMDatasetView

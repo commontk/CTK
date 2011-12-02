@@ -28,6 +28,7 @@
 
 class ctkVTKThumbnailViewPrivate;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKThumbnailView : public ctkVTKRenderView
 {
   Q_OBJECT

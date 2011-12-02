@@ -28,6 +28,7 @@
 
 #include "ctkWidgetsExport.h"
 
+/// \ingroup Widgets
 struct ctkPixmapIconEngineEntry
 {
     ctkPixmapIconEngineEntry():mode(QIcon::Normal), state(QIcon::Off){}
@@ -43,6 +44,7 @@ struct ctkPixmapIconEngineEntry
     bool isNull() const {return (fileName.isEmpty() && pixmap.isNull()); }
 };
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkPixmapIconEngine : public QIconEngineV2 {
 public:
     ctkPixmapIconEngine();

@@ -29,7 +29,7 @@
 
 class ctkConfirmExitDialogPrivate;
 
-///
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkConfirmExitDialog : public QDialog
 {
   Q_OBJECT

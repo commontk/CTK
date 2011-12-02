@@ -34,6 +34,8 @@
 #include "ctkDICOMDatabase.h"
 
 class ctkDICOMQueryPrivate;
+
+/// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
 {
   Q_OBJECT

@@ -26,6 +26,7 @@
 #include "ctkCoreExport.h"
 
 //------------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkErrorLogQtMessageHandler : public ctkErrorLogAbstractMessageHandler
 {
 public:

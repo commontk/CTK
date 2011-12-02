@@ -29,6 +29,7 @@
 #include "ctkWidgetsExport.h"
 class ctkFontButtonPrivate;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkFontButton: public QPushButton
 {
   Q_OBJECT

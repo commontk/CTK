@@ -1,6 +1,9 @@
 /**
-\defgroup PluginFramework CTK Plugin Framework
+
+\defgroup PluginFramework Plugin Framework
 \ingroup Libs
+\ingroup Projects
+
 The CTK Plugin Framework is an OSGi like modularization framework for building
 cross-platform, dynamic, and modular applications. See
 <a href="http://www.commontk.org/index.php/Documentation/Plugin_Framework">

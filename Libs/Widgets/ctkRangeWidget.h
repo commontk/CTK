@@ -32,6 +32,7 @@
 class ctkDoubleRangeSlider;
 class ctkRangeWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkRangeWidget is a wrapper around a ctkDoubleRangeSlider and 2 QSpinBoxes
 /// \image html http://www.commontk.org/images/1/14/CtkRangeWidget.png

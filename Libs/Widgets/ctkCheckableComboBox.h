@@ -30,6 +30,7 @@
 class ctkCheckableModelHelper;
 class ctkCheckableComboBoxPrivate;
 
+/// \ingroup Widgets
 /// Description
 /// ctkCheckableComboBox is a QComboBox that allow its items to be checkable
 class CTK_WIDGETS_EXPORT ctkCheckableComboBox : public QComboBox

@@ -30,6 +30,8 @@
 #include "ctkDICOMCoreExport.h"
 
 class ctkDICOMModelPrivate;
+
+/// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMModel
 //  : public QStandardItemModel
   : public QAbstractItemModel

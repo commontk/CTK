@@ -38,6 +38,7 @@ class QTextStream;
 // ctkFDHandler
 
 // --------------------------------------------------------------------------
+/// \ingroup Core
 class ctkFDHandler : public QThread
 {
   Q_OBJECT

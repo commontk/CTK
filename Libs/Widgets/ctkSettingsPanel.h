@@ -30,6 +30,7 @@
 class QSettings;
 class ctkSettingsPanelPrivate;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkSettingsPanel : public QWidget
 {
   Q_OBJECT

@@ -28,6 +28,7 @@
 
 class ctkDICOMListenerWidgetPrivate;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMListenerWidget : public QWidget
 {
 public:

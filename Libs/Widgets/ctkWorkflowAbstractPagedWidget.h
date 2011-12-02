@@ -32,6 +32,7 @@ class ctkWorkflowStep;
 
 class ctkWorkflowAbstractPagedWidgetPrivate;
 
+/// \ingroup Widgets
 /// ctkWorkflowAbstractPagedWidget is the basis for a workflow with a
 /// user interface containing multiple pages.
 /// By default, each step is placed onto its own page.  Multiple workflow steps can be placed on the

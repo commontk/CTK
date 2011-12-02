@@ -33,6 +33,8 @@
 #include "ctkDICOMDatabase.h"
 
 class ctkDICOMRetrievePrivate;
+
+/// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject
 {
   Q_OBJECT

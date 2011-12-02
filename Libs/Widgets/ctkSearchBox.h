@@ -29,6 +29,7 @@
 
 class ctkSearchBoxPrivate;
 
+/// \ingroup Widgets
 /// QLineEdit with two QIcons on each side: search and clear.
 /// "Search" selects all the text
 /// "Clear" clears the current text

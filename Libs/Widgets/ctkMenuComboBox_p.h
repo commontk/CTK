@@ -30,6 +30,7 @@
 class ctkCompleter;
 class QToolButton;
 
+/// \ingroup Widgets
 class ctkMenuComboBoxInternal: public QComboBox
 {
   Q_OBJECT
@@ -49,6 +50,7 @@ public:
 };
 
 // -------------------------------------------------------------------------
+/// \ingroup Widgets
 class ctkMenuComboBoxPrivate: public QObject
 {
   Q_OBJECT

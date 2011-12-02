@@ -32,6 +32,7 @@
 class ctkCollapsibleButtonPrivate;
 class QStyleOptionButton;
 
+/// \ingroup Widgets
 /// A collapsible button that shows/hides its children depending on its
 /// checked/collapsed property.
 /// Warning: <old behavior> As ctkCollapsibleButton forces the Visiblity of its children to

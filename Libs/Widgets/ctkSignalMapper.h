@@ -28,6 +28,7 @@ class QAction;
 // CTKWidgets includes
 #include "ctkWidgetsExport.h"
 
+/// \ingroup Widgets
 /// Advanced QSignalMapper to simplify the use of mapping.
 class CTK_WIDGETS_EXPORT ctkSignalMapper: public QSignalMapper
 {

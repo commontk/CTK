@@ -31,6 +31,7 @@ class ctkVTKDataSetArrayComboBoxPrivate;
 class vtkDataArray;
 class vtkDataSet;
 
+/// \ingroup Visualization_VTK_Widgets
 ///
 /// QComboBox linked to vtkDataSet field arrays
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDataSetArrayComboBox : public QComboBox

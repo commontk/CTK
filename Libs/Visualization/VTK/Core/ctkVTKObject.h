@@ -21,8 +21,11 @@
 #ifndef __ctkVTKObject_h
 #define __ctkVTKObject_h
 
-/// ctkVTK includes
+// ctkVTK includes
 #include "ctkVTKObjectEventsObserver.h"
+
+/// \ingroup Visualization_VTK_Core
+/// @{
 
 //-----------------------------------------------------------------------------
 #define QVTK_OBJECT_ADD_CONNECTION_METHOD                               \
@@ -145,5 +148,7 @@ protected:                                         \
   QVTK_OBJECT_UNBLOCKALL_CONNECTION_METHOD         \
 private:                                           \
   ctkVTKObjectEventsObserver MyQVTK;
+
+/// @}
 
 #endif

@@ -29,6 +29,7 @@
 #include "ctkWidgetsExport.h"
 class ctkColorPickerButtonPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkColorPickerButton is a QPushButton that refers to a color. The color
 /// and the name of the color (i.e. &#35;FFFFFF) are displayed on the button.

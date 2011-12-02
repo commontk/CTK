@@ -31,6 +31,7 @@
 class ctkDICOMImagePrivate;
 class DicomImage;
 
+/// \ingroup DICOM_Widgets
 ///
 /// \brief Wrapper around a DCMTK DicomImage.
 ///

@@ -62,6 +62,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkConsolePrivate;
 class ctkConsoleCompleter;
 
+/// \ingroup Widgets
 /// QWidget that provides an interactive console
 class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
 {

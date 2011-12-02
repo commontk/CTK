@@ -30,6 +30,7 @@
 
 class ctkFileDialogPrivate;
 
+/// \ingroup Widgets
 /// Customizable QFileDialog.
 /// An extra widget can be added at the bottom of the dialog
 /// under the file format combobox. The Accept button is also controllable

@@ -37,6 +37,7 @@ class ctkWorkflowGroupBox;
 
 class ctkWorkflowWidgetPrivate;
 
+/// \ingroup Widgets
 /// \brief ctkWorkflowWidget is the basis for a workflow with a user interface.  It groups together
 /// and manages a ctkWorkflowGroupBox (to display the step) and a ctkWorkflowButtonBoxWidget
 /// (providing buttons for traversing the workflow).

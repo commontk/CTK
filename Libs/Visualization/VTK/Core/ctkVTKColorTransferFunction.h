@@ -30,6 +30,7 @@
 class vtkColorTransferFunction;
 class ctkVTKColorTransferFunctionPrivate;
 
+/// \ingroup Visualization_VTK_Core
 ///
 /// Transfer function for a vtkColorTransferFunction. 
 /// The value is an RGB QColor (no alpha supported)

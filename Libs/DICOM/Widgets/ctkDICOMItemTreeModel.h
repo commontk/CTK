@@ -29,6 +29,7 @@
 
 class ctkDICOMItemTreeModelPrivate;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMItemTreeModel : public QAbstractItemModel
 {
 public:

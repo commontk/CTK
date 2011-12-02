@@ -34,6 +34,7 @@ class vtkObject;
 class vtkCallbackCommand;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Visualization_VTK_Core
 class ctkVTKConnectionPrivate
 {
   Q_DECLARE_PUBLIC(ctkVTKConnection);

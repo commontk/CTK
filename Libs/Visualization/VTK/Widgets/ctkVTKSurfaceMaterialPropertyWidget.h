@@ -29,6 +29,7 @@
 class ctkVTKSurfaceMaterialPropertyWidgetPrivate;
 class vtkProperty;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSurfaceMaterialPropertyWidget
   : public ctkMaterialPropertyWidget
 {

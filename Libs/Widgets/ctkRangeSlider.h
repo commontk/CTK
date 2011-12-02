@@ -32,6 +32,7 @@
 class QStylePainter;
 class ctkRangeSliderPrivate;
 
+/// \ingroup Widgets
 ///
 /// A ctkRangeSlider is a slider that lets you input 2 values instead of one
 /// (see QSlider). These values are typically a lower and upper bound.

@@ -53,9 +53,9 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "ctkWidgetsExport.h"
 class ctkPathLineEditPrivate;
 
-/** /class Advanced line edit to select file or directory
- *  /brief Widget that remember previous selection (using QSettings and objectName)
- *         the user to select a file on the disk.
+/** 
+ * \ingroup Widgets
+ * \brief Advanced line edit to select file or directory
 */
 class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
 {

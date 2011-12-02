@@ -32,6 +32,7 @@ class QString;
 
 class ctkWorkflowTabWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// \brief ctkWorkflowTabWidget is the basis for a workflow with a user
 class CTK_WIDGETS_EXPORT ctkWorkflowTabWidget : public ctkWorkflowAbstractPagedWidget

@@ -31,6 +31,7 @@
 
 class ctkMenuButtonPrivate;
 
+/// \ingroup Widgets
 /// Description
 /// ctkMenuButton is a QPushButton that separates the clickable area for
 /// poping up the optional QMenu from the traditional area of the QPushButton.

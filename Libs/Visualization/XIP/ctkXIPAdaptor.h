@@ -27,6 +27,8 @@
 #include "ctkVisualizationXIPExport.h"
 
 class ctkXIPAdaptorPrivate;
+
+/// \ingroup Visualization_XIP
 class CTK_VISUALIZATION_XIP_EXPORT ctkXIPAdaptor : public QObject
 {
   Q_OBJECT

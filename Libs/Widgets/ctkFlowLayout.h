@@ -28,6 +28,7 @@
 #include "ctkWidgetsExport.h"
 class ctkFlowLayoutPrivate;
 
+/// \ingroup Widgets
 /// Acts like a QBoxLayout but if the space is horizontally/vertically limited,
 /// it displays items ona a new row/column based on the orientation.
 /// Please note that using a Qt::Vertical orientation without the property

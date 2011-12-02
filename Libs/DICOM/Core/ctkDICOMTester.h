@@ -29,6 +29,8 @@ class QProcess;
 #include "ctkDICOMCoreExport.h"
 class ctkDICOMTesterPrivate;
 
+/// \ingroup DICOM_Core
+///
 /// \brief Utility class to test DICOM network applications
 /// A simple DICOM archive server can be run (startDCMQRSCP()), and images
 /// can be stored into the server using storeData(). It internally uses

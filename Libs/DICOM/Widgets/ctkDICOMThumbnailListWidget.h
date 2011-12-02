@@ -28,6 +28,7 @@ class QModelIndex;
 class ctkDICOMThumbnailListWidgetPrivate;
 class ctkThumbnailWidget;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailListWidget : public ctkThumbnailListWidget
 {
   Q_OBJECT

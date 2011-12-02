@@ -33,6 +33,7 @@
 
 class ctkDICOMQueryRetrieveWidgetPrivate;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryRetrieveWidget : public QWidget
 {
 Q_OBJECT;

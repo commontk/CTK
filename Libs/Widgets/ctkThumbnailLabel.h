@@ -29,6 +29,7 @@
 
 class ctkThumbnailLabelPrivate;
 
+/// \ingroup Widgets
 /// ctkThumbnailLabel is an advanced label that gives control over
 /// the pixmap size and text location.
 /// If a pixmap is set, it is resized to fit the available space but its

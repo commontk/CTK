@@ -31,6 +31,7 @@
 
 class PythonQtObjectPtr;
 
+/// \ingroup Scripting_Python_Core
 class CTK_SCRIPTING_PYTHON_CORE_EXPORT ctkAbstractPythonManager : public QObject
 {
   Q_OBJECT

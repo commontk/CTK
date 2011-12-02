@@ -61,6 +61,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkCheckableHeaderViewPrivate;
 class ctkCheckableModelHelper;
 
+/// \ingroup Widgets
 ///
 /// ctkCheckableHeaderView is a QHeaderView that can display a checkbox 
 /// for any header section.

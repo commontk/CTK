@@ -26,6 +26,7 @@
 #include "ctkPopupWidget.h"
 
 // -------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkPopupWidgetPrivate
   : public ctkBasePopupWidgetPrivate
 {

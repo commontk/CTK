@@ -34,6 +34,7 @@ class ctkWorkflowStep;
 
 class ctkWorkflowGroupBoxPrivate;
 
+/// \ingroup Widgets
 /// \brief ctkWorkflowGroupBox is a widget displaying the user interface elements, title,
 /// description and/or error status of the current step of a ctkWorkflow.
 

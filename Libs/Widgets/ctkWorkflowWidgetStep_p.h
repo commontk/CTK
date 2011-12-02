@@ -31,6 +31,7 @@
 #include "ctkWorkflowStep_p.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class ctkWorkflowWidgetStepPrivate : public ctkWorkflowStepPrivate
 {
   Q_OBJECT

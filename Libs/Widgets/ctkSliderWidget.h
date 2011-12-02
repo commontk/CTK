@@ -34,6 +34,7 @@ class ctkDoubleSlider;
 class ctkPopupWidget;
 class ctkSliderWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkSliderWidget is a wrapper around a ctkDoubleSlider and a QDoubleSpinBox
 /// where the slider value and the spinbox value are synchronized.

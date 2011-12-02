@@ -32,6 +32,7 @@
 class ctkRangeSlider;
 class ctkDoubleRangeSliderPrivate;
 
+/// \ingroup Widgets
 /// ctkDoubleRangeSlider is a slider that controls 2 numbers as double.
 /// ctkDoubleRangeSlider internally aggregates a ctkRangeSlider (not in the
 /// API to prevent misuse). Only subclasses can have access to it.

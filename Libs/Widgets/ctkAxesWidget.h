@@ -30,6 +30,7 @@
 
 class ctkAxesWidgetPrivate;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkAxesWidget : public QWidget
 {
   Q_OBJECT

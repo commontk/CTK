@@ -29,6 +29,7 @@
 class ctkDICOMThumbnailGeneratorPrivate;
 class DicomImage;
 
+/// \ingroup DICOM_Widgets
 ///
 /// \brief  thumbnail generator class
 ///

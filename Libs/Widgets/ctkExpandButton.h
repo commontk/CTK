@@ -31,6 +31,7 @@
 
 class ctkExpandButtonPrivate;
 
+/// \ingroup Widgets
 /// QToolButton with a standard icon
 /// This button has the same behavior as the extension
 /// button which appear as the last item in the toolbar

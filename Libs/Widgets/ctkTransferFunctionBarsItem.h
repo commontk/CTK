@@ -33,6 +33,7 @@ class ctkTransferFunction;
 class ctkTransferFunctionBarsItemPrivate;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkTransferFunctionBarsItem: public ctkTransferFunctionItem
 {
   Q_OBJECT

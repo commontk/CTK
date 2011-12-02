@@ -33,6 +33,7 @@ class QTreeWidgetItem;
 class ctkSettingsDialogPrivate;
 class ctkSettingsPanel;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkSettingsDialog : public QDialog
 {
   Q_OBJECT

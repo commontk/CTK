@@ -33,6 +33,7 @@ class QAbstractButton;
 class QItemSelection;
 class QModelIndex;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkErrorLogWidget : public QWidget
 {
   Q_OBJECT

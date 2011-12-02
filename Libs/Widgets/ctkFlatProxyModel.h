@@ -29,6 +29,7 @@
 
 class ctkFlatProxyModelPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkFlatProxyModel intends to flatten contiguous hierarchies within a model.
 /// For now, it only supports the toplevel hierarchy flatten with the 1 degree

@@ -32,6 +32,7 @@
 class ctkDateRangeWidgetPrivate;
 class QDateTime;
 
+/// \ingroup Widgets
 ///
 /// ctkDateRangeWidget allows the user to select a time range between two
 /// dates
