@@ -70,11 +70,17 @@ private:
   /** The timeout for event handlers, 0 = disabled. */
   long timeout;
 
+  /**
+   * The matcher interface for checking if timeout handling
+   * is disabled for the handler.
+   * Matching is based on the class name of the event handler.
+   */
   struct Matcher
   {
     virtual bool match(const QString& className) const = 0;
   };
 
+  /** Match a class name. */
   struct ClassMatcher : public Matcher
   {
   private:

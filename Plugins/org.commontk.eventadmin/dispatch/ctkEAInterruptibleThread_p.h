@@ -44,6 +44,27 @@ public:
   void setAutoDelete(bool autoDelete) { ref = autoDelete ? 0 : -1; }
 };
 
+class ctkEAScopedRunnableReference
+{
+
+public:
+
+  ctkEAScopedRunnableReference(ctkEARunnable* runnable)
+    : runnable(runnable)
+  {
+    ++runnable->ref;
+  }
+
+  ~ctkEAScopedRunnableReference()
+  {
+    if (!--runnable->ref) delete runnable;
+  }
+
+private:
+
+  ctkEARunnable* runnable;
+};
+
 /**
  * A QThread subclass which can be interrupted when waiting
  * on a wait condition.

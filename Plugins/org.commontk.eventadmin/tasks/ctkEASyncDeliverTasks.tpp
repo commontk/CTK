@@ -37,17 +37,14 @@ public:
   ctkEARendezvous timerBarrier;
   ctkEARendezvous startBarrier;
 
-  _TimeoutRunnable(ctkEARendezvous* cascadingBarrier, HandlerTask* task)
-    : cascadingBarrier(cascadingBarrier), task(task)
+  _TimeoutRunnable(HandlerTask* task)
+    : task(task)
   {
 
   }
 
   void run()
   {
-    ctkEASyncThread* myThread = qobject_cast<ctkEASyncThread*>(QThread::currentThread());
-    Q_ASSERT(myThread != 0);
-    myThread->init(&timerBarrier, cascadingBarrier);
     try
     {
       // notify the outer thread to start the timer
@@ -61,17 +58,10 @@ public:
     {
       // this can happen on shutdown, so we ignore it
     }
-    catch (...)
-    {
-      myThread->uninit();
-      throw;
-    }
-    myThread->uninit();
   }
 
 private:
 
-  ctkEARendezvous* cascadingBarrier;
   HandlerTask* task;
 };
 
@@ -152,19 +142,8 @@ void ctkEASyncDeliverTasks<HandlerTask>::execute(const QList<HandlerTask>& tasks
 template<class HandlerTask>
 void ctkEASyncDeliverTasks<HandlerTask>::executeInSyncMaster(const QList<HandlerTask>& tasks)
 {
-  QThread* sleepingThread = QThread::currentThread();
-  ctkEASyncThread* syncThread = qobject_cast<ctkEASyncThread*>(sleepingThread);
-  ctkEARendezvous cascadingBarrier;
-  // check if this is a cascaded event sending
-  if (syncThread)
-  {
-    // wake up outer thread
-    if (syncThread->isTopMostHandler())
-    {
-      syncThread->getTimerBarrier()->waitForRendezvous();
-    }
-    syncThread->innerEventHandlingStart();
-  }
+  QThread* const sleepingThread = QThread::currentThread();
+  ctkEASyncThread* const syncThread = qobject_cast<ctkEASyncThread*>(sleepingThread);
 
   foreach(HandlerTask task, tasks)
   {
@@ -173,11 +152,24 @@ void ctkEASyncDeliverTasks<HandlerTask>::executeInSyncMaster(const QList<Handler
       // no timeout, we can directly execute
       task.execute();
     }
+    else if (syncThread != 0)
+    {
+      // if this is a cascaded event, we directly use this thread
+      // otherwise we could end up in a starvation
+      //TODO use Qt4.7 API
+      //long startTime = System.currentTimeMillis();
+      QDateTime startTime = QDateTime::currentDateTime();
+      task.execute();
+      if (startTime.time().msecsTo(QDateTime::currentDateTime().time()) > timeout)
+      {
+        task.blackListHandler();
+      }
+    }
     else
     {
       _TimeoutRunnable<HandlerTask>* timeoutRunnable
-          = new _TimeoutRunnable<HandlerTask>(&cascadingBarrier, &task);
-      ++timeoutRunnable->ref;
+          = new _TimeoutRunnable<HandlerTask>(&task);
+      ctkEAScopedRunnableReference runnableRef(timeoutRunnable);
 
       ctkEARendezvous* startBarrier = &timeoutRunnable->startBarrier;
       ctkEARendezvous* timerBarrier = &timeoutRunnable->timerBarrier;
@@ -187,55 +179,19 @@ void ctkEASyncDeliverTasks<HandlerTask>::executeInSyncMaster(const QList<Handler
       startBarrier->waitForRendezvous();
 
       // timeout handling
-      bool finished = true;
-      long sleepTime = timeout;
-      do {
-        finished = true;
-        // we sleep for the sleep time
-        // if someone wakes us up it's the inner task who either
-        // has finished or a cascading event
-        //TODO use Qt4.7 API
-        //long startTime = System.currentTimeMillis();
-        QDateTime startTime = QDateTime::currentDateTime();
-        try
-        {
-          timerBarrier->waitAttemptForRendezvous(sleepTime);
-          // if this occurs no timeout occured or we have a cascaded event
-          if (!task.finished())
-          {
-            // adjust remaining sleep time
-            //TODO use Qt4.7 API
-            //sleepTime = timeout - (System.currentTimeMillis() - startTime);
-            sleepTime = timeout - startTime.time().msecsTo(QDateTime::currentDateTime().time());
-            cascadingBarrier.waitForRendezvous();
-            finished = task.finished();
-          }
-        }
-        catch (const ctkEATimeoutException& )
-        {
-          // if we timed out, we have to blacklist the handler
-          task.blackListHandler();
-        }
-      }
-      while ( !finished );
-
-      if (!--timeoutRunnable->ref) delete timeoutRunnable;
-    }
-  }
-
-  // wake up outer thread again if cascaded
-  if (syncThread)
-  {
-    syncThread->innerEventHandlingStopped();
-    if (syncThread->isTopMostHandler())
-    {
-      if (!syncThread->getTimerBarrier()->isTimedOut())
+      // we sleep for the sleep time
+      // if someone wakes us up it's the finished inner task
+      try
       {
-        syncThread->getCascadingBarrier()->waitForRendezvous();
+        timerBarrier->waitAttemptForRendezvous(timeout);
+      }
+      catch (const ctkEATimeoutException& )
+      {
+        // if we timed out, we have to blacklist the handler
+        task.blackListHandler();
       }
     }
   }
-
 }
 
 template<class HandlerTask>

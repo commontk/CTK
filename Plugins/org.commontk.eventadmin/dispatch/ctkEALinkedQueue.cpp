@@ -87,6 +87,7 @@ ctkEARunnable* ctkEALinkedQueue::take()
       catch(const ctkEAInterruptedException& ex)
       {
         --waitingForTake_;
+        if (x && x->autoDelete() && !--x->ref) delete x;
         putLockWait_.wakeOne();
         throw ex;
       }
@@ -144,6 +145,7 @@ ctkEARunnable* ctkEALinkedQueue::poll(long msecs)
     catch(const ctkEAInterruptedException& ex)
     {
       --waitingForTake_;
+      if (x && x->autoDelete() && !--x->ref) delete x;
       putLockWait_.wakeOne();
       throw ex;
     }
@@ -176,8 +178,8 @@ ctkEARunnable* ctkEALinkedQueue::extract()
     {
       x = first->value;
       first->value = 0;
+      delete head_;
       head_ = first;
-      delete first;
     }
     return x;
   }

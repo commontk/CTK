@@ -23,44 +23,7 @@
 #include "ctkEASyncThread_p.h"
 
 ctkEASyncThread::ctkEASyncThread(ctkEARunnable* target, QObject* parent)
-  : ctkEAInterruptibleThread(target, parent), counter(0)
+  : ctkEAInterruptibleThread(target, parent)
 {
   this->setObjectName(QString("ctkEASyncThread") + QString::number(reinterpret_cast<qint64>(target)));
-}
-
-void ctkEASyncThread::init(ctkEARendezvous* timerBarrier, ctkEARendezvous* cascadingBarrier)
-{
-  this->timerBarrier.testAndSetOrdered(0, timerBarrier);
-  this->cascadingBarrier.testAndSetOrdered(0, cascadingBarrier);
-}
-
-void ctkEASyncThread::uninit()
-{
-  this->timerBarrier.testAndSetOrdered(timerBarrier, 0);
-  this->cascadingBarrier.testAndSetOrdered(cascadingBarrier, 0);
-}
-
-ctkEARendezvous* ctkEASyncThread::getTimerBarrier() const
-{
-  return timerBarrier.fetchAndAddOrdered(0);
-}
-
-ctkEARendezvous* ctkEASyncThread::getCascadingBarrier() const
-{
-  return cascadingBarrier.fetchAndAddOrdered(0);
-}
-
-bool ctkEASyncThread::isTopMostHandler() const
-{
-  return counter.fetchAndAddOrdered(0) == 0;
-}
-
-void ctkEASyncThread::innerEventHandlingStart()
-{
-  counter.ref();
-}
-
-void ctkEASyncThread::innerEventHandlingStopped()
-{
-  counter.deref();
 }

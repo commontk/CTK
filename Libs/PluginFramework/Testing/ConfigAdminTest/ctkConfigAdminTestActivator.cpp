@@ -92,6 +92,18 @@ void ctkConfigAdminTestActivator::start(ctkPluginContext* context)
 void ctkConfigAdminTestActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context);
+
+  delete configAdminTestSuite;
+  delete managedServiceTestSuite;
+  delete managedServiceFactoryTestSuite;
+  delete configPluginTestSuite;
+  delete configListenerTestSuite;
+
+  configAdminTestSuite = 0;
+  managedServiceTestSuite = 0;
+  managedServiceFactoryTestSuite = 0;
+  configPluginTestSuite = 0;
+  configListenerTestSuite = 0;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_configadmintest, ctkConfigAdminTestActivator)

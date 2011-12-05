@@ -74,6 +74,12 @@ void ctkMetaTypeTestActivator::start(ctkPluginContext* context)
 void ctkMetaTypeTestActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context);
+
+  delete attrPwdTestSuite;
+  delete localeTestSuite;
+
+  attrPwdTestSuite = 0;
+  localeTestSuite = 0;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_metatypetest, ctkMetaTypeTestActivator)

@@ -56,7 +56,6 @@ public:
    */
   void waitAttemptForRendezvous(long timeout);
 
-  bool isTimedOut() const;
 };
 
 #endif // CTKEARENDEZVOUS_P_H

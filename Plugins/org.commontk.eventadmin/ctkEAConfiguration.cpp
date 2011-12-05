@@ -77,6 +77,11 @@ ctkEAConfiguration::ctkEAConfiguration(ctkPluginContext* pluginContext )
   }
 }
 
+ctkEAConfiguration::~ctkEAConfiguration()
+{
+  this->destroy();
+}
+
 void ctkEAConfiguration::updateFromConfigAdmin(const ctkDictionary& config)
 {
   QMutexLocker l(&mutex);

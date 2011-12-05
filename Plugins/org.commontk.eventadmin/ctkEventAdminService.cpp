@@ -41,6 +41,10 @@ ctkEventAdminService::ctkEventAdminService(ctkPluginContext* context,
 ctkEventAdminService::~ctkEventAdminService()
 {
   qDeleteAll(slotHandler);
+  foreach(QList<ctkEASignalPublisher*> l, signalPublisher.values())
+  {
+    qDeleteAll(l);
+  }
 }
 
 void ctkEventAdminService::postEvent(const ctkEvent& event)

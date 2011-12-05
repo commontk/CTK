@@ -87,7 +87,7 @@ void ctkEAScenario3EventConsumer::handleEvent(const ctkEvent& event)
     {
       /* its an asyncronous message */
       synchMessages++;
-      qDebug() << "recived a Synchronous event with message:" << message;
+      qDebug() << "received a Synchronous event with message:" << message;
     }
     else
     {
@@ -95,7 +95,7 @@ void ctkEAScenario3EventConsumer::handleEvent(const ctkEvent& event)
       if (!message.isNull())
       {
         asynchMessages++;
-        qDebug() << "recived an Asynchronus event with message:" << message;
+        qDebug() << "received an Asynchronus event with message:" << message;
       }
     }
 

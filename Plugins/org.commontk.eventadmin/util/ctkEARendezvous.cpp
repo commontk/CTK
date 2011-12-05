@@ -62,8 +62,3 @@ void ctkEARendezvous::waitAttemptForRendezvous(long timeout)
     throw te;
   }
 }
-
-bool ctkEARendezvous::isTimedOut() const
-{
-  return timedout.fetchAndAddOrdered(0);
-}

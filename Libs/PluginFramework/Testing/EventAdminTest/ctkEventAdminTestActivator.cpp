@@ -104,6 +104,22 @@ void ctkEventAdminTestActivator::start(ctkPluginContext* context)
 void ctkEventAdminTestActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context);
+
+  delete topicWildcardTestSuite;
+  delete topicWildcardTestSuiteSS;
+  delete scenario1TestSuite;
+  delete scenario1TestSuiteSS;
+  delete scenario2TestSuite;
+  delete scenario3TestSuite;
+  delete scenario4TestSuite;
+
+  topicWildcardTestSuite = 0;
+  topicWildcardTestSuiteSS = 0;
+  scenario1TestSuite = 0;
+  scenario1TestSuiteSS = 0;
+  scenario2TestSuite = 0;
+  scenario3TestSuite = 0;
+  scenario4TestSuite = 0;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_eventadmintest, ctkEventAdminTestActivator)
