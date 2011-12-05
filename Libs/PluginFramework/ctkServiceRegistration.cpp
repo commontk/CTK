@@ -51,7 +51,7 @@ ctkServiceRegistration::ctkServiceRegistration(const ctkServiceRegistration& reg
 ctkServiceRegistration::ctkServiceRegistration(ctkServiceRegistrationPrivate* registrationPrivate)
   : d_ptr(registrationPrivate)
 {
-  d_func()->ref.ref();
+  if(d_func()) d_func()->ref.ref();
 }
 
 //----------------------------------------------------------------------------
@@ -228,7 +228,7 @@ ctkServiceRegistration& ctkServiceRegistration::operator=(const ctkServiceRegist
 {
   ctkServiceRegistrationPrivate* curr_d = d_func();
   d_ptr = registration.d_ptr;
-  d_ptr->ref.ref();
+  if (d_ptr) d_ptr->ref.ref();
 
   if (curr_d && !curr_d->ref.deref())
     delete curr_d;
