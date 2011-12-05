@@ -73,6 +73,13 @@ public:
       ++count;
     }
 
+    // stop the specified plugins
+    foreach(StartPluginPair pluginInfo, startPluginInfos)
+    {
+      QSharedPointer<ctkPlugin> plugin = context->getPlugin(pluginInfo.first);
+      plugin->stop();
+    }
+
     qDebug() << "#########" << count << "out of" << refs.size() << "test suites passed #########";
     if (result > 0)
     {
