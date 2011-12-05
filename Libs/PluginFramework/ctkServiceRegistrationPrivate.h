@@ -123,6 +123,10 @@ public:
 
   virtual QObject* getService();
 
+private:
+
+  Q_DISABLE_COPY(ctkServiceRegistrationPrivate)
+
 };
 
 
