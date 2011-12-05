@@ -63,6 +63,8 @@ int main(int argc, char** argv)
   fwProps.insert("pluginfw.testDir", testpluginDir);
   fwProps.insert("event.impl", "org.commontk.eventadmin");
 
+  fwProps.insert("org.commontk.eventadmin.ThreadPoolSize", 10);
+
   testRunner.init(fwProps);
   return testRunner.run(argc, argv);
 }
