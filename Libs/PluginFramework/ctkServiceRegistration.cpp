@@ -202,7 +202,8 @@ void ctkServiceRegistration::unregister()
       d->plugin = 0;
       d->dependents.clear();
       d->service = 0;
-      d->serviceInstances.clear();;
+      d->serviceInstances.clear();
+      d->reference = 0;
       d->unregistering = false;
     }
   }
