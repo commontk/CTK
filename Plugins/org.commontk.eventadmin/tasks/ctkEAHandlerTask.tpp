@@ -61,8 +61,7 @@ private:
 template<class BlacklistingHandlerTasks>
 ctkEAHandlerTask<BlacklistingHandlerTasks>::ctkEAHandlerTask(const ctkServiceReference& eventHandlerRef,
                                                              const ctkEvent& event, BlacklistingHandlerTasks* handlerTasks)
-  : eventHandlerRef(eventHandlerRef), event(event), handlerTasks(handlerTasks),
-    finishedTask(false)
+  : eventHandlerRef(eventHandlerRef), event(event), handlerTasks(handlerTasks)
 {
 
 }
@@ -70,7 +69,7 @@ ctkEAHandlerTask<BlacklistingHandlerTasks>::ctkEAHandlerTask(const ctkServiceRef
 template<class BlacklistingHandlerTasks>
 ctkEAHandlerTask<BlacklistingHandlerTasks>::ctkEAHandlerTask(const Self& task)
   : eventHandlerRef(task.eventHandlerRef), event(task.event),
-    handlerTasks(task.handlerTasks), finishedTask(task.finishedTask)
+    handlerTasks(task.handlerTasks)
 {
 
 }
@@ -82,7 +81,6 @@ ctkEAHandlerTask<BlacklistingHandlerTasks>::operator=(const Self& task)
   eventHandlerRef = task.eventHandlerRef;
   event = task.event;
   handlerTasks = task.handlerTasks;
-  finishedTask = task.finishedTask;
   return *this;
 }
 
@@ -110,7 +108,6 @@ void ctkEAHandlerTask<BlacklistingHandlerTasks>::execute()
         << "Exception during event dispatch [" << event.getTopic() << "| Plugin("
         << eventHandlerRef.getPlugin()->getSymbolicName() << ")]";
   }
-  finishedTask.testAndSetOrdered(0, 1);
 }
 
 template<class BlacklistingHandlerTasks>
@@ -118,10 +115,3 @@ void ctkEAHandlerTask<BlacklistingHandlerTasks>::blackListHandler()
 {
   handlerTasks->blackListRef(eventHandlerRef);
 }
-
-template<class BlacklistingHandlerTasks>
-bool ctkEAHandlerTask<BlacklistingHandlerTasks>::finished() const
-{
-  return finishedTask.fetchAndAddOrdered(0);
-}
-

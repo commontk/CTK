@@ -32,21 +32,12 @@
 
 /**
  * This thread class is used for sending the events
- * synchronously.
+ * synchronously. It acts like a marker.
  */
 class ctkEASyncThread : public ctkEAInterruptibleThread
 {
 
   Q_OBJECT
-
-private:
-
-  /** Counter to track the nesting level. */
-  mutable QAtomicInt counter;
-
-  /** The barriers for synchronizing. */
-  mutable QAtomicPointer<ctkEARendezvous> timerBarrier;
-  mutable QAtomicPointer<ctkEARendezvous> cascadingBarrier;
 
 public:
 
@@ -55,16 +46,6 @@ public:
    */
   ctkEASyncThread(ctkEARunnable* target, QObject* parent = 0);
 
-  void init(ctkEARendezvous* timerBarrier, ctkEARendezvous* cascadingBarrier);
-  void uninit();
-
-  ctkEARendezvous* getTimerBarrier() const;
-  ctkEARendezvous* getCascadingBarrier() const;
-
-  bool isTopMostHandler() const;
-
-  void innerEventHandlingStart();
-  void innerEventHandlingStopped();
 };
 
 #endif // CTKEASYNCTHREAD_P_H
