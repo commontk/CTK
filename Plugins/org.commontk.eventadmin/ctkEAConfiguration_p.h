@@ -153,6 +153,7 @@ private:
 public:
 
   ctkEAConfiguration(ctkPluginContext* pluginContext);
+  ~ctkEAConfiguration();
 
   void updated(const ctkDictionary& properties);
 
