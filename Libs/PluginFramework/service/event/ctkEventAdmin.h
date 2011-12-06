@@ -108,7 +108,9 @@ struct ctkEventAdmin
   /**
    * Subsribe for (observe) events. The slot is called whenever an event is sent
    * which matches the topic string and LDAP search expression contained
-   * in the properties.
+   * in the properties. Slots are executed either in the event delivery thread of
+   * the Event Admin implemenation or in the subscriber's thread, depending on
+   * the <code>type</code> argument.
    *
    * Slots should be registered with a property ctkEventConstants::EVENT_TOPIC.
    * The value being a QString or QStringList object that describes which
@@ -135,11 +137,19 @@ struct ctkEventAdmin
    * @param subscriber The owner of the slot.
    * @param member The slot in normalized form.
    * @param properties A map containing topics and a filter expression.
+   * @param type One of Qt::AutoConnection, Qt::DirectConnection, Qt::QueuedConnection, or
+   *        Qt::BlockingQueuedConnection. Only a direct or blocking queued connection
+   *        ensures that calls to <code>sendEvent()</code> will block until all event
+   *        handlers completed their tasks.
    * @return Returns an id which can be used to update the properties.
+   *
+   * @throws std::invalid_argument If <code>subscriber</code> or <code>member</code> is 0
+   *         or <code>type</code> is invalid.
    *
    * @see unsubscribeSlot(qlonglong)
    */
-  virtual qlonglong subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties) = 0;
+  virtual qlonglong subscribeSlot(const QObject* subscriber, const char* member,
+                                  const ctkDictionary& properties, Qt::ConnectionType type = Qt::AutoConnection) = 0;
 
   /**
    * Unsubscribe a previously subscribed slot. Use this method to allow the EventAdmin

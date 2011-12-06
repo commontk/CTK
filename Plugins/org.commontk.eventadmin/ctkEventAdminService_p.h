@@ -95,7 +95,8 @@ public:
   void unpublishSignal(const QObject* publisher, const char* signal = 0,
                        const QString& topic = "");
 
-  qlonglong subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties);
+  qlonglong subscribeSlot(const QObject* subscriber, const char* member,
+                          const ctkDictionary& properties, Qt::ConnectionType type = Qt::AutoConnection);
 
   void unsubscribeSlot(qlonglong subscriptionId);
 

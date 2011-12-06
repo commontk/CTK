@@ -150,10 +150,19 @@ void ctkEventAdminService::unpublishSignal(const QObject* publisher, const char*
   }
 }
 
-qlonglong ctkEventAdminService::subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties)
+qlonglong ctkEventAdminService::subscribeSlot(const QObject* subscriber, const char* member,
+                                              const ctkDictionary& properties, Qt::ConnectionType type)
 {
+  if (subscriber == 0) throw std::invalid_argument("subscriber cannot be NULL");
+  if (member == 0) throw std::invalid_argument("slot cannot be NULL");
+  if (type != Qt::AutoConnection && type != Qt::DirectConnection &&
+      type != Qt::QueuedConnection && type != Qt::BlockingQueuedConnection)
+  {
+    throw std::invalid_argument("connection type invalid");
+  }
+
   ctkEASlotHandler* handler = new ctkEASlotHandler();
-  connect(handler, SIGNAL(eventOccured(ctkEvent)), subscriber, member, Qt::DirectConnection);
+  connect(handler, SIGNAL(eventOccured(ctkEvent)), subscriber, member, type);
   ctkServiceRegistration reg = context->registerService<ctkEventHandler>(handler, properties);
   handler->reg = reg;
   qlonglong id = reg.getReference().getProperty(ctkPluginConstants::SERVICE_ID).toLongLong();

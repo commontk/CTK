@@ -61,8 +61,11 @@ void ctkEventBusImpl::unpublishSignal(const QObject *publisher, const char *sign
   //TODO implement
 }
 
-qlonglong ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties)
+qlonglong ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member,
+                                         const ctkDictionary& properties, Qt::ConnectionType type)
 {
+  Q_UNUSED(type)
+
     ctkDictionary toSend(properties);
     QString topic = properties.value(TOPIC).toString();
     toSend.insert(TOPIC, topic);

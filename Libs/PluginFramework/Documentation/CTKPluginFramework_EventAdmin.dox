@@ -18,6 +18,9 @@ Events are composed of two attributes:
 - A \b topic defining the nature of the event. Topic names are usually arranged in a hierarchical namespace, where slashes are used to separate the levels (i.e. "org/commontk/PluginFrameworkEvent/STARTED") and
 - A set of \b properties describing the event.
 
+Read the <a href="http://www.osgi.org/Download/File?url=/download/r4v42/r4.cmpn.pdf">
+EventAdmin Service Specifications</a> (Chapter 113) for an in-depth explanation.
+
 \section EventAdmin_CreatePublisher Creating an Event Publisher
 
 An event publisher can either be a simple C++ class that creates events and sends
@@ -37,6 +40,13 @@ object synchronously. To send it asynchronously, use the <code>ctkEventAdmin::po
 method, such as:
 
 \snippet EventAdmin-Intro/ctkSnippetReportManager.h Publish event async
+
+Synchronous event delivery is significantly more expensive than asynchronous
+delivery. Even for synchronous delivery event notifications could be
+handled in a separate thread (depending on the EventAdmin implementation). This
+implies that <code>sendEvent()</code> callers should generally not hold any
+locks when calling this method. Asynchronous delivery should be preferred
+over the synchronous delivery.
 
 \subsection EventAdmin_CreatePublisher_Signal Using a Qt signal
 
@@ -66,8 +76,14 @@ tied to a specific event topic.
 \section EventAdmin_CreateHandler Creating and registering an Event Handler
 
 An event handler can either be a class implementing the <code>ctkEventHandler</code>
-interface which is registered as a service object or a Qt slot which is registered with the Event Admin (subscribed to certain
-topics).
+interface which is registered as a service object or a Qt slot which is registered
+with the Event Admin (subscribed to certain topics).
+
+Event handlers should not spend too long in the event handling method. This will
+prevent other handlers from being notified. Long running operations should be executed
+in their own thread.
+
+Note that in general, your event handling code will be called from a separate thread.
 
 \subsection EventAdmin_CreateHandler_Service Event Handler as a Service
 
@@ -106,12 +122,18 @@ You can use the same expressions for <code>EVENT_TOPIC</code> and
 <code>EVENT_FILTER</code> as in the examples above for registering the event
 handler as a service object implementing <code>ctkEventHandler</code>.
 
+Using Qt slots as Event Handlers will makes it easy to ensure that the event
+handling code is executed in the receiver's thread (the default connection type
+is Qt::AutoConnection).
+
 \subsection EventAdmin_CreateHandler_Compare Comparison
 
 Registering an event handler using either the <code>ctkEventHandler</code> interface or
 a Qt slot involves approximately the same amount of code. However, using slots
-will be less performant (which might be neglectable, depending on your use case). Further,
-subscribing slots means that you require a registered Event Admin service implementation.
+will be less performant (which might be neglectable, depending on your use case) but the
+code will be automatically synchronized with the receiver thread.
+
+Further, subscribing slots means that you require a registered Event Admin service implementation.
 The <code>ctkEventHandler</code> approach does not need to know anything about the Event
 Admin, since you register your handler as a service object in the framework.
 

@@ -52,7 +52,7 @@ public:
 
   //void publishSignal(const QObject* publisher, const char* signal, Qt::ConnectionType type = Qt::QueuedConnection);
 
-  qlonglong subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties);
+  qlonglong subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties, Qt::ConnectionType type = Qt::AutoConnection);
   virtual void unsubscribeSlot(qlonglong subscriptionId);
 
   virtual bool updateProperties(qlonglong subsriptionId, const ctkDictionary& properties);
