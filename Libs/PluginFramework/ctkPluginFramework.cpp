@@ -27,12 +27,16 @@
 #include "ctkPluginConstants.h"
 #include "ctkPluginArchive_p.h"
 
+#include "service/event/ctkEvent.h"
+
 //----------------------------------------------------------------------------
 ctkPluginFramework::ctkPluginFramework()
   : ctkPlugin()
 {
   qRegisterMetaType<ctkPluginFrameworkEvent>("ctkPluginFrameworkEvent");
   qRegisterMetaType<ctkPluginEvent>("ctkPluginEvent");
+  qRegisterMetaType<ctkServiceEvent>("ctkServiceEvent");
+  qRegisterMetaType<ctkEvent>("ctkEvent");
 }
 
 //----------------------------------------------------------------------------

@@ -136,4 +136,6 @@ public:
 
 };
 
+Q_DECLARE_METATYPE(ctkEvent)
+
 #endif // CTKEVENT_H
