@@ -100,11 +100,32 @@ public:
    * \return <code>true</code> if the plugin was found and successfully
    *         installed, <code>false</code> otherwise.
    *
-   * \see ctkPlugin::StartOption
+   * \see ctkPlugin::StartOptions
    */
   static bool start(const QString& symbolicName = QString(),
                     ctkPlugin::StartOptions options = ctkPlugin::START_ACTIVATION_POLICY,
                     ctkPluginContext* context = 0);
+
+  /**
+   * This method either stops the plug-in with the given <code>symbolicName</code> using
+   * the supplied stop options <code>options</code>
+   * or the complete framework (if <code>symbolicName</code> is empty).
+   *
+   * <p>
+   * If a plugin context is provided, this context is used to find the plug-in,
+   * otherwise the Plugin Framework context is used.
+   *
+   * \param symbolicName The symbolic name of the plugin to stop.
+   * \param options The options used to stop the plugin.
+   * \param context The plugin context to use for finding the plugin.
+   * \return <code>true</code> if the plugin was found and successfully
+   *         stopped or the complete framework was successfully stopped,
+   *         <code>false</code> otherwise.
+   *
+   * \see ctkPlugin::StopOptions
+   */
+  static bool stop(const QString& symbolicName = QString(),
+                    ctkPlugin::StopOptions options = 0, ctkPluginContext* context = 0);
 
   /**
    * Get the plugin context for the Plugin Framework.
