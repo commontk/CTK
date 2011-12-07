@@ -92,7 +92,7 @@ ctkConfigurationEvent::ctkConfigurationEvent(const ctkServiceReference& referenc
 {
   if (pid.isNull())
   {
-    throw std::logic_error("pid must not be null");
+    throw std::invalid_argument("pid must not be null");
   }
 }
 
