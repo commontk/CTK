@@ -213,9 +213,11 @@ void ctkServiceTrackerTestSuite::runTest()
   QTest::qWait(100);
   // register "org.commontk.pluginStest.TestPluginSService3"
   emit serviceControl(3, "register", 2);
+  // wait until the thread is finished
   QVERIFY(worker.wait());
   QVERIFY(worker.waitSuccess);
 
+  delete st1;
 }
 
 ctkServiceTrackerTestWorker::ctkServiceTrackerTestWorker(ctkPluginContext* pc)
@@ -234,4 +236,3 @@ void ctkServiceTrackerTestWorker::run()
   if (obj != 0) waitSuccess = true;
   quit();
 }
-

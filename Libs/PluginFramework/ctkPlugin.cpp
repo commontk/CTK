@@ -22,6 +22,7 @@
 #include "ctkPlugin.h"
 
 #include "ctkPluginContext.h"
+#include "ctkPluginContext_p.h"
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginPrivate_p.h"
 #include "ctkPluginArchive_p.h"
@@ -74,7 +75,7 @@ void ctkPlugin::start(const StartOptions& options)
 
   if (d->state == UNINSTALLED)
   {
-    throw std::logic_error("ctkPlugin is uninstalled");
+    throw ctkIllegalStateException("ctkPlugin is uninstalled");
   }
 
   // Initialize the activation; checks initialization of lazy
@@ -119,24 +120,22 @@ void ctkPlugin::stop(const StopOptions& options)
 {
   Q_D(ctkPlugin);
 
-  const std::exception* savedException = 0;
+  const ctkRuntimeException* savedException = 0;
 
   //1:
   if (d->state == UNINSTALLED)
   {
-    throw std::logic_error("Plugin is uninstalled");
+    throw ctkIllegalStateException("ctkPlugin is uninstalled");
   }
 
-  //2: If activating or deactivating, wait a litle
-  // We don't support threaded start/stop methods, so we don't need to wait
-  //waitOnActivation(fwCtx.packages, "Plugin::stop", false);
+  // 2: If an operation is in progress, wait a little
+  d->waitOnOperation(&d->operationLock, "Plugin::stop", false);
 
   //3:
   if ((options & STOP_TRANSIENT) == 0)
   {
     d->ignoreAutostartSetting();
   }
-  bool wasStarted = false;
 
   switch (d->state)
   {
@@ -148,28 +147,24 @@ void ctkPlugin::stop(const StopOptions& options)
     return;
 
   case ACTIVE:
-    wasStarted = true;
   case STARTING: // Lazy start...
-    try
-    {
-      d->stop0(wasStarted);
-    }
-    catch (const std::exception* exc)
-    {
-      savedException = exc;
-    }
+    savedException = d->stop0();
     break;
   };
 
-  if (savedException)
+  if (savedException != 0)
   {
     if (const ctkPluginException* pluginExc = dynamic_cast<const ctkPluginException*>(savedException))
     {
-      throw pluginExc;
+      ctkPluginException pe(*pluginExc);
+      delete savedException;
+      throw pe;
     }
     else
     {
-      throw dynamic_cast<const std::logic_error*>(savedException);
+      ctkRuntimeException re(*savedException);
+      delete savedException;
+      throw re;
     }
   }
 }
@@ -177,106 +172,109 @@ void ctkPlugin::stop(const StopOptions& options)
 //----------------------------------------------------------------------------
 void ctkPlugin::uninstall()
 {
-  bool wasResolved = false;
-
   Q_D(ctkPlugin);
-  if (d->archive)
   {
-    try
+    ctkPluginPrivate::Locker sync(&d->operationLock);
+
+    if (d->archive)
     {
-      d->archive->setStartLevel(-2); // Mark as uninstalled
+      try
+      {
+        d->archive->setStartLevel(-2); // Mark as uninstalled
+      }
+      catch (...)
+      { }
     }
-    catch (...)
-    { }
-  }
 
-  d->cachedHeaders = getHeaders();
-
-  switch (d->state)
-  {
-  case UNINSTALLED:
-    throw std::logic_error("Plugin is in UNINSTALLED state");
-
-  case STARTING: // Lazy start
-  case ACTIVE:
-  case STOPPING:
-    try
+    switch (d->state)
     {
-      //TODO: If activating or deactivating, wait a litle
-      // we don't use mutliple threads to start plugins for now
-      //d->waitOnActivation(fwCtx.packages, "Bundle.uninstall", false);
-      if (d->state & (ACTIVE | STARTING))
+    case UNINSTALLED:
+      throw ctkIllegalStateException("Plugin is in UNINSTALLED state");
+
+    case STARTING: // Lazy start
+    case ACTIVE:
+    case STOPPING:
+    {
+      const ctkRuntimeException* exception = 0;
+      try
+      {
+        d->waitOnOperation(&d->operationLock, "ctkPlugin::uninstall", true);
+        if (d->state & (ACTIVE | STARTING))
+        {
+          exception = d->stop0();
+        }
+      }
+      catch (const std::exception& e)
+      {
+        // Force to install
+        d->setStateInstalled(false);
+        d->operationLock.wakeAll();
+        exception = new ctkRuntimeException("Stopping plug-in failed", &e);
+      }
+      d->operation.fetchAndStoreOrdered(ctkPluginPrivate::UNINSTALLING);
+      if (exception != 0)
+      {
+        d->fwCtx->listeners.frameworkError(this->d_func()->q_func(), *exception);
+        delete exception;
+      }
+    }
+      // Fall through
+    case RESOLVED:
+    case INSTALLED:
+      d->fwCtx->plugins->remove(d->location);
+      if (d->operation.fetchAndAddOrdered(0) != ctkPluginPrivate::UNINSTALLING)
       {
         try
         {
-          d->stop0(d->state == ACTIVE);
+          d->waitOnOperation(&d->operationLock, "Plugin::uninstall", true);
+          d->operation.fetchAndStoreOrdered(ctkPluginPrivate::UNINSTALLING);
         }
-        catch (const std::exception& exception)
+        catch (const ctkPluginException& pe)
         {
-          // NYI! not call inside lock
-          d->fwCtx->listeners.frameworkError(this->d_func()->q_func(), exception);
+          // Make sure that the context is invalid
+          if (d->pluginContext != 0)
+          {
+            d->pluginContext->d_func()->invalidate();
+            d->pluginContext.reset();
+          }
+          d->operation.fetchAndStoreOrdered(ctkPluginPrivate::UNINSTALLING);
+          d->fwCtx->listeners.frameworkError(this->d_func()->q_func(), pe);
         }
       }
-    }
-    catch (const std::exception& e)
-    {
-      d->deactivating = false;
-      //fwCtx.packages.notifyAll();
-      d->fwCtx->listeners.frameworkError(this->d_func()->q_func(), e);
-    }
-    // Fall through
-  case RESOLVED:
-    wasResolved = true;
-    // Fall through
-  case INSTALLED:
-    d->fwCtx->plugins->remove(d->location);
-    d->pluginActivator = 0;
 
-    if (d->pluginDir.exists())
-    {
-      if (!ctk::removeDirRecursively(d->pluginDir.absolutePath()))
+      d->state = INSTALLED;
+      // TODO: use thread
+      // bundleThread().bundleChanged(new BundleEvent(BundleEvent.UNRESOLVED, this));
+      d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNRESOLVED, d->q_func()));
+      d->cachedHeaders = getHeaders();
+      d->pluginActivator = 0;
+      d->state = UNINSTALLED;
+
+      // Purge old archive
+      if (d->archive)
       {
-        // Plugin dir is not deleted completely, make sure we mark
-        // it as uninstalled for next framework restart
-        if (d->archive)
-        {
-          try
-          {
-            d->archive->setStartLevel(-2); // Mark as uninstalled
-          }
-          catch (const std::exception& e)
-          {
-            // NYI! Generate FrameworkError if dir still exists!?
-            qDebug() << "Failed to mark plugin" <<  d->id
-                     << "as uninstalled," << d->pluginDir.absoluteFilePath()
-                     << "must be deleted manually:" << e.what();
-          }
-        }
+        d->archive->purge();
       }
-      d->pluginDir.setFile("");
+      d->operation.fetchAndStoreOrdered(ctkPluginPrivate::IDLE);
+
+      if (d->pluginDir.exists())
+      {
+        if (!ctk::removeDirRecursively(d->pluginDir.absolutePath()))
+        {
+          d->fwCtx->listeners.frameworkError(this->d_func()->q_func(), std::runtime_error("Failed to delete plugin data"));
+        }
+        d->pluginDir.setFile("");
+      }
+
+      // id, location and headers survive after uninstall.
+
+      // There might be plug-in threads that are running start or stop
+      // operations. This will wake them and give them a chance to terminate.
+      d->operationLock.wakeAll();
+      break;
     }
-    if (d->archive)
-    {
-      d->archive->purge();
-    }
-
-    // id, location and headers survive after uninstall.
-    // TODO: UNRESOLVED must be sent out during installed state
-    // This needs to be reviewed. See OSGi bug #1374
-    d->state = INSTALLED;
-    d->modified();
-
-    // Broadcast events
-    if (wasResolved)
-    {
-      d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNRESOLVED, d->q_ptr));
-    }
-
-    d->state = UNINSTALLED;
-    d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNINSTALLED, d->q_ptr));
-
-    break;
   }
+  d->fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNINSTALLED, d->q_ptr));
 }
 
 //----------------------------------------------------------------------------

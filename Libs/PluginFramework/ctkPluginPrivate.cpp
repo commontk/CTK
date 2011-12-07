@@ -36,6 +36,48 @@
 const ctkPlugin::States ctkPluginPrivate::RESOLVED_FLAGS = ctkPlugin::RESOLVED | ctkPlugin::STARTING | ctkPlugin::ACTIVE | ctkPlugin::STOPPING;
 
 //----------------------------------------------------------------------------
+void ctkPluginPrivate::LockObject::lock()
+{
+  m_Lock.lock();
+}
+
+//----------------------------------------------------------------------------
+bool ctkPluginPrivate::LockObject::tryLock()
+{
+  return m_Lock.tryLock();
+}
+
+//----------------------------------------------------------------------------
+bool ctkPluginPrivate::LockObject::tryLock(int timeout)
+{
+  return m_Lock.tryLock(timeout);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginPrivate::LockObject::unlock()
+{
+  m_Lock.unlock();
+}
+
+//----------------------------------------------------------------------------
+bool ctkPluginPrivate::LockObject::wait(unsigned long time)
+{
+  return m_Condition.wait(&m_Lock, time);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginPrivate::LockObject::wakeAll()
+{
+  m_Condition.wakeAll();
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginPrivate::LockObject::wakeOne()
+{
+  m_Condition.wakeOne();
+}
+
+//----------------------------------------------------------------------------
 ctkPluginPrivate::ctkPluginPrivate(
     QWeakPointer<ctkPlugin> qq,
     ctkPluginFrameworkContext* fw,
@@ -43,7 +85,7 @@ ctkPluginPrivate::ctkPluginPrivate(
       : q_ptr(qq), fwCtx(fw), id(pa->getPluginId()),
       location(pa->getPluginLocation().toString()), state(ctkPlugin::INSTALLED),
       archive(pa), pluginContext(0), pluginActivator(0), pluginLoader(pa->getLibLocation()),
-      eagerActivation(false), activating(false), deactivating(false)
+      resolveFailException(0), eagerActivation(false), wasStarted(false)
 {
   //TODO
   //checkCertificates(pa);
@@ -111,9 +153,9 @@ ctkPluginPrivate::ctkPluginPrivate(QWeakPointer<ctkPlugin> qq,
                                    ctkPluginFrameworkContext* fw,
                                    long id, const QString& loc, const QString& sym, const ctkVersion& ver)
                                      : q_ptr(qq), fwCtx(fw), id(id), location(loc), symbolicName(sym), version(ver),
-                                     state(ctkPlugin::INSTALLED), archive(0), pluginContext(0),
-                                     pluginActivator(0), eagerActivation(false), activating(false),
-                                     deactivating(false)
+                                       state(ctkPlugin::INSTALLED), archive(0), pluginContext(0),
+                                       pluginActivator(0), resolveFailException(0),
+                                       eagerActivation(false), wasStarted(false)
 {
   modified();
 }
@@ -132,21 +174,26 @@ ctkPlugin::State ctkPluginPrivate::getUpdatedState()
   {
     try
     {
+      // NYI, fix double locking
+      Locker sync(&operationLock);
       if (state == ctkPlugin::INSTALLED)
       {
         fwCtx->resolvePlugin(this);
         state = ctkPlugin::RESOLVED;
+        operation.fetchAndStoreOrdered(RESOLVING);
+        // TODO plugin threading
+        //bundleThread().bundleChanged(new BundleEvent(BundleEvent.RESOLVED, this));
         fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::RESOLVED, this->q_func()));
+        operation.fetchAndStoreOrdered(IDLE);
       }
-
     }
     catch (const ctkPluginException& pe)
     {
+      if (resolveFailException) delete resolveFailException;
+      resolveFailException = new ctkPluginException(pe);
       this->fwCtx->listeners.frameworkError(this->q_func(), pe);
-      throw;
     }
   }
-
   return state;
 }
 
@@ -154,6 +201,44 @@ ctkPlugin::State ctkPluginPrivate::getUpdatedState()
 QFileInfo ctkPluginPrivate::getDataRoot()
 {
   return pluginDir;
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginPrivate::setStateInstalled(bool sendEvent)
+{
+  Locker sync(&operationLock);
+
+  // Make sure that the context is invalid
+  if (pluginContext != 0)
+  {
+    pluginContext->d_func()->invalidate();
+    pluginContext.reset();
+  }
+  state = ctkPlugin::INSTALLED;
+  if (sendEvent)
+  {
+    operation.fetchAndStoreOrdered(UNRESOLVING);
+    // TODO: plugin thread
+    //bundleThread().bundleChanged(new BundleEvent(BundleEvent.UNRESOLVED, this));
+    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNRESOLVED, this->q_func()));
+  }
+  operation.fetchAndStoreOrdered(IDLE);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginPrivate::purge()
+{
+  if (state == ctkPlugin::UNINSTALLED)
+  {
+    fwCtx->plugins->remove(location);
+  }
+//  Vector fix = oldGenerations;
+//  if (fix != null) {
+//    oldGenerations = null;
+//    for (Iterator i = fix.iterator(); i.hasNext();) {
+//      ((BundleGeneration)i.next()).purge(true);
+//    }
+//  }
 }
 
 //----------------------------------------------------------------------------
@@ -241,19 +326,22 @@ void ctkPluginPrivate::checkManifestHeaders()
 //----------------------------------------------------------------------------
 void ctkPluginPrivate::finalizeActivation()
 {
+  Locker sync(&operationLock);
+
+  // 4: Resolve plugin (if needed)
   switch (getUpdatedState())
   {
   case ctkPlugin::INSTALLED:
-    // we shouldn't be here, getUpdatedState should have thrown
-    // an exception during resolving the plugin
-    throw ctkPluginException("Internal error: expected exception on plugin resolve not thrown!");
+    Q_ASSERT_X(resolveFailException != 0, Q_FUNC_INFO, "no resolveFailException");
+    throw ctkPluginException(*resolveFailException);
   case ctkPlugin::STARTING:
-    if (activating) return; // finalization already in progress.
+    if (operation.fetchAndAddOrdered(0) == ACTIVATING) return; // finalization already in progress.
     // Lazy activation; fall through to RESOLVED.
   case ctkPlugin::RESOLVED:
+  {
     //6:
     state = ctkPlugin::STARTING;
-    activating = true;
+    operation.fetchAndStoreOrdered(ACTIVATING);
     if (fwCtx->debug.lazy_activation)
     {
       qDebug() << "activating #" << this->id;
@@ -263,106 +351,161 @@ void ctkPluginPrivate::finalizeActivation()
     {
       pluginContext.reset(new ctkPluginContext(this));
     }
-    try
+    // start dependencies
+    startDependencies();
+    //TODO plugin threading
+    //ctkRuntimeException* e = bundleThread().callStart0(this);
+    ctkRuntimeException* e = start0();
+    operation.fetchAndStoreOrdered(IDLE);
+    operationLock.wakeAll();
+    if (e)
     {
-      // start dependencies
-      startDependencies();
-      //TODO maybe call this in its own thread
-      start0();
+      ctkRuntimeException re(*e);
+      delete e;
+      throw re;
     }
-    catch (...)
-    {
-      //8:
-      state = ctkPlugin::STOPPING;
-      // NYI, call outside lock
-      fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPING, this->q_func()));
-      removePluginResources();
-      pluginContext.reset();
-
-      state = ctkPlugin::RESOLVED;
-      // NYI, call outside lock
-      fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, this->q_func()));
-      activating = false;
-      throw;
-    }
-    activating = false;
     break;
-      case ctkPlugin::ACTIVE:
+  }
+  case ctkPlugin::ACTIVE:
     break;
-      case ctkPlugin::STOPPING:
+  case ctkPlugin::STOPPING:
     // This happens if start is called from inside the ctkPluginActivator::stop method.
     // Don't allow it.
     throw ctkPluginException("start called from ctkPluginActivator::stop",
                              ctkPluginException::ACTIVATOR_ERROR);
-      case ctkPlugin::UNINSTALLED:
-    throw std::logic_error("ctkPlugin is in UNINSTALLED state");
+  case ctkPlugin::UNINSTALLED:
+    throw ctkIllegalStateException("ctkPlugin is in UNINSTALLED state");
   }
 }
 
 //----------------------------------------------------------------------------
-void ctkPluginPrivate::stop0(bool wasStarted)
+const ctkRuntimeException* ctkPluginPrivate::stop0()
 {
-  //5:
+  wasStarted = state == ctkPlugin::ACTIVE;
+  // 5:
   state = ctkPlugin::STOPPING;
-  deactivating = true;
-  //6-13:
-  ctkPluginActivator* activator = 0;
-  const std::exception* savedException = 0;
-  try
+  operation.fetchAndStoreOrdered(DEACTIVATING);
+  // 6-13:
+  // TODO plugin threading
+  //const ctkRuntimeException* savedException = pluginThread().callStop1(this);
+  const ctkRuntimeException* savedException = stop1();
+  if (state != ctkPlugin::UNINSTALLED)
   {
-    //6:
-    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPING, q_func()));
+    state = ctkPlugin::RESOLVED;
+    // TODO plugin threading
+    //bundleThread().bundleChanged(new BundleEvent(BundleEvent.STOPPED, this));
+    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, this->q_func()));
 
-    //7:
-    if (wasStarted && pluginActivator)
+    operationLock.wakeAll();
+    operation.fetchAndStoreOrdered(IDLE);
+  }
+  return savedException;
+}
+
+//----------------------------------------------------------------------------
+const ctkRuntimeException* ctkPluginPrivate::stop1()
+{
+  ctkPluginActivator* activator = 0;
+  const ctkRuntimeException* res = 0;
+
+  //6:
+  fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPING, q_func()));
+
+  //7:
+  if (wasStarted && pluginActivator)
+  {
+    try
     {
-      try
+      pluginActivator->stop(pluginContext.data());
+      if (state != ctkPlugin::STOPPING)
       {
-        pluginActivator->stop(pluginContext.data());
+        if (state == ctkPlugin::UNINSTALLED)
+        {
+          return new ctkIllegalStateException("Plug-in is uninstalled");
+        }
+        else
+        {
+          return new ctkIllegalStateException("Plug-in changed state because of refresh during stop");
+        }
       }
-      catch (const std::exception& e)
-      {
-        savedException = new ctkPluginException("ctkPlugin::stop: PluginActivator stop failed",
-                                                ctkPluginException::ACTIVATOR_ERROR, &e);
-      }
-      if (state == ctkPlugin::UNINSTALLED)
-      {
-        throw std::logic_error("Plugin is uninstalled");
-      }
-      activator = pluginActivator;
-      pluginActivator = 0;
     }
+    catch (const std::exception& e)
+    {
+      res = new ctkPluginException("ctkPlugin::stop: PluginActivator stop failed",
+                                              ctkPluginException::ACTIVATOR_ERROR, &e);
+    }
+    activator = pluginActivator;
+    pluginActivator = 0;
+  }
 
-    // Call hooks after we've called PluginActivator::stop(), but before we've cleared all resources
-    // TODO service listener hooks
-    //fwCtx->listeners.serviceListeners.hooksBundleStopped(this);
-
+  if (operation.fetchAndAddOrdered(0) == DEACTIVATING)
+  {
+    // Call hooks after we've called PluginActivator::stop(), but before we've
+    // cleared all resources
     if (pluginContext)
     {
+      // TODO service listener hooks
+      //fwCtx->listeners.serviceListeners.hooksBundleStopped(this);
+
+      //8-10:
+      removePluginResources();
       pluginContext->d_func()->invalidate();
       pluginContext.reset();
     }
-    //8-10:
-    removePluginResources();
-  }
-  catch (const std::exception* exc)
-  {
-    savedException = exc;
   }
 
   delete activator;
 
-  if (state != ctkPlugin::UNINSTALLED)
-  {
-    state = ctkPlugin::RESOLVED;
-    deactivating = false;
-    //fwCtx.packages.notifyAll();
-    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, q_func()));
-  }
+  return res;
+}
 
-  if (savedException)
+//----------------------------------------------------------------------------
+void ctkPluginPrivate::waitOnOperation(LockObject* lock, const QString& src, bool longWait)
+{
+  if (operation.fetchAndAddOrdered(0) != IDLE)
   {
-    throw savedException;
+    qint64 left = longWait ? 20000 : 500;
+    QDateTime waitUntil = QDateTime::currentDateTime().addMSecs(left);
+    do
+    {
+      lock->wait(left);
+      if (operation.fetchAndAddOrdered(0) == IDLE)
+      {
+        return;
+      }
+      left = QDateTime::currentDateTime().msecsTo(waitUntil);
+    } while (left > 0);
+
+    QString op;
+    switch (operation.fetchAndAddOrdered(0))
+    {
+    case IDLE:
+      // Should not happen!
+      return;
+    case ACTIVATING:
+      op = "start";
+      break;
+    case DEACTIVATING:
+      op = "stop";
+      break;
+    case RESOLVING:
+      op = "resolve";
+      break;
+    case UNINSTALLING:
+      op = "uninstall";
+      break;
+    case UNRESOLVING:
+      op = "unresolve";
+      break;
+    case UPDATING:
+      op = "update";
+      break;
+    default:
+      op = "unknown operation";
+      break;
+    }
+    throw ctkPluginException(src + " called during " + op + " of plug-in",
+                             ctkPluginException::STATECHANGE_ERROR);
   }
 }
 
@@ -426,14 +569,18 @@ void ctkPluginPrivate::startDependencies()
 }
 
 //----------------------------------------------------------------------------
-void ctkPluginPrivate::start0()
+ctkPluginException* ctkPluginPrivate::start0()
 {
+  ctkPluginException* res = 0;
+
   fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STARTING, this->q_func()));
 
+  ctkPluginException::Type error_type = ctkPluginException::MANIFEST_ERROR;
   try {
     pluginLoader.load();
     if (!pluginLoader.isLoaded())
     {
+      error_type = ctkPluginException::ACTIVATOR_ERROR;
       throw ctkPluginException(QString("Loading plugin %1 failed: %2").arg(pluginLoader.fileName()).arg(pluginLoader.errorString()),
                                ctkPluginException::ACTIVATOR_ERROR);
     }
@@ -447,15 +594,23 @@ void ctkPluginPrivate::start0()
 
     pluginActivator->start(pluginContext.data());
 
-    if (ctkPlugin::UNINSTALLED == state)
+    if (state != ctkPlugin::STARTING)
     {
-      throw ctkPluginException("ctkPlugin uninstalled during start()", ctkPluginException::STATECHANGE_ERROR);
+      error_type = ctkPluginException::STATECHANGE_ERROR;
+      if (ctkPlugin::UNINSTALLED == state)
+      {
+        throw ctkPluginException("ctkPlugin uninstalled during start()", ctkPluginException::STATECHANGE_ERROR);
+      }
+      else
+      {
+        throw ctkPluginException("ctkPlugin changed state because of refresh during start()", ctkPluginException::STATECHANGE_ERROR);
+      }
     }
     state = ctkPlugin::ACTIVE;
   }
   catch (const std::exception& e)
   {
-    throw ctkPluginException("ctkPlugin start failed", ctkPluginException::ACTIVATOR_ERROR, &e);
+    res = new ctkPluginException("ctkPlugin start failed", error_type, &e);
   }
 
   if (fwCtx->debug.lazy_activation)
@@ -463,8 +618,24 @@ void ctkPluginPrivate::start0()
     qDebug() << "activating #" << id << "completed.";
   }
 
-  //10:
-  fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STARTED, this->q_func()));
+  if (res == 0)
+  {
+    //10:
+    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STARTED, this->q_func()));
+  }
+  else if (operation.fetchAndAddOrdered(0) == ACTIVATING)
+  {
+    // 8:
+    state = ctkPlugin::STOPPING;
+    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPING, this->q_func()));
+    removePluginResources();
+    pluginContext->d_func()->invalidate();
+    pluginContext.reset();
+    state = ctkPlugin::RESOLVED;
+    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::STOPPED, this->q_func()));
+  }
+
+  return res;
 }
 
 //----------------------------------------------------------------------------

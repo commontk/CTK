@@ -53,4 +53,14 @@ private:
   QString  cause;
 };
 
+/**
+ * \ingroup PluginFramework
+ */
+typedef ctkRuntimeException ctkIllegalStateException;
+
+/**
+ * \ingroup PluginFramework
+ */
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkRuntimeException& exc);
+
 #endif // CTKRUNTIMEEXCEPTION_H

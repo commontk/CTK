@@ -22,6 +22,8 @@
 
 #include "ctkRuntimeException.h"
 
+#include <QDebug>
+
 //----------------------------------------------------------------------------
 ctkRuntimeException::ctkRuntimeException(const QString& msg, const std::exception* cause)
   : std::runtime_error(msg.toStdString())
@@ -70,4 +72,12 @@ const char* ctkRuntimeException::what() const throw()
   if (!causeMsg.isEmpty()) fullMsg += std::string("\n  Caused by: ") + causeMsg.toStdString();
 
   return fullMsg.c_str();
+}
+
+//----------------------------------------------------------------------------
+QDebug operator<<(QDebug dbg, const ctkRuntimeException& exc)
+{
+  dbg << "ctkRuntimeException:" << exc.what();
+
+  return dbg.maybeSpace();
 }
