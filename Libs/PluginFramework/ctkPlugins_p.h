@@ -159,7 +159,7 @@ public:
    *
    * @return A List of ctkPlugins.
    */
-  QList<ctkPlugin*> getActivePlugins() const;
+  QList<QSharedPointer<ctkPlugin> > getActivePlugins() const;
 
 
   /**

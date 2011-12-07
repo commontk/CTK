@@ -265,11 +265,11 @@ QList<ctkPlugin*> ctkPlugins::getPlugins(const QString& name, const ctkVersionRa
 }
 
 //----------------------------------------------------------------------------
-QList<ctkPlugin*> ctkPlugins::getActivePlugins() const
+QList<QSharedPointer<ctkPlugin> > ctkPlugins::getActivePlugins() const
 {
   checkIllegalState();
 
-  QList<ctkPlugin*> slist;
+  QList<QSharedPointer<ctkPlugin> > slist;
   {
     QReadLocker lock(&pluginsLock);
     QHashIterator<QString, QSharedPointer<ctkPlugin> > it(plugins);
@@ -278,7 +278,7 @@ QList<ctkPlugin*> ctkPlugins::getActivePlugins() const
       QSharedPointer<ctkPlugin> plugin = it.next().value();
       ctkPlugin::State s = plugin->getState();
       if (s == ctkPlugin::ACTIVE || s == ctkPlugin::STARTING) {
-        slist.push_back(plugin.data());
+        slist.push_back(plugin);
       }
     }
   }
