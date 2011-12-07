@@ -67,6 +67,8 @@ private:
    */
   QMutex objectLock;
 
+  void checkIllegalState() const;
+
 public:
 
   /**

@@ -40,7 +40,7 @@ ctkPluginContextPrivate::ctkPluginContextPrivate(ctkPluginPrivate* plugin)
 void ctkPluginContextPrivate::isPluginContextValid() const
 {
   if (!plugin) {
-    throw std::logic_error("This plugin context is no longer valid");
+    throw ctkIllegalStateException("This plugin context is no longer valid");
   }
 }
 

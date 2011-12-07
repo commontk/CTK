@@ -33,6 +33,15 @@
 #include <QUrl>
 
 //----------------------------------------------------------------------------
+void ctkPlugins::checkIllegalState() const
+{
+  if (!fwCtx)
+  {
+    throw ctkIllegalStateException("This framework instance is not active");
+  }
+}
+
+//----------------------------------------------------------------------------
 ctkPlugins::ctkPlugins(ctkPluginFrameworkContext* fw)
 {
   fwCtx = fw;
@@ -50,10 +59,7 @@ void ctkPlugins::clear()
 //----------------------------------------------------------------------------
 QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* in)
 {
-  if (!fwCtx)
-  { // This ctkPlugins instance has been closed!
-    throw std::logic_error("ctkPlugins::install(location, inputStream) called on closed plugins object.");
-  }
+  checkIllegalState();
 
   QSharedPointer<ctkPlugin> res;
   {
@@ -148,10 +154,7 @@ void ctkPlugins::remove(const QUrl& location)
 //----------------------------------------------------------------------------
 QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(int id) const
 {
-  if (!fwCtx)
-  { // This plugins instance has been closed!
-    throw std::logic_error("ctkPlugins::getPlugin(id) called on closed plugins object.");
-  }
+  checkIllegalState();
 
   {
     QReadLocker lock(&pluginsLock);
@@ -172,10 +175,7 @@ QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(int id) const
 //----------------------------------------------------------------------------
 QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(const QString& location) const
 {
-  if (!fwCtx)
-  { // This plugins instance has been closed!
-    throw std::logic_error("ctkPlugins::getPlugin(location) called on closed plugins object.");
-  }
+  checkIllegalState();
 
   QReadLocker lock(&pluginsLock);
   QHash<QString, QSharedPointer<ctkPlugin> >::const_iterator it = plugins.find(location);
@@ -186,10 +186,7 @@ QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(const QString& location) const
 //----------------------------------------------------------------------------
 QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(const QString& name, const ctkVersion& version) const
 {
-  if (!fwCtx)
-  { // This ctkPlugins instance has been closed!
-    throw std::logic_error("ctkPlugins::getPlugin(name, version) called on closed plugins object.");
-  }
+  checkIllegalState();
 
   {
     QReadLocker lock(&pluginsLock);
@@ -210,10 +207,7 @@ QSharedPointer<ctkPlugin> ctkPlugins::getPlugin(const QString& name, const ctkVe
 //----------------------------------------------------------------------------
 QList<QSharedPointer<ctkPlugin> > ctkPlugins::getPlugins() const
 {
-  if (!fwCtx)
-  { // This plugins instance has been closed!
-    throw std::logic_error("ctkPlugins::getPlugins() called on closed plugins object.");
-  }
+  checkIllegalState();
 
   {
     QReadLocker lock(&pluginsLock);
@@ -245,10 +239,7 @@ QList<ctkPlugin*> ctkPlugins::getPlugins(const QString& name) const
 //----------------------------------------------------------------------------
 QList<ctkPlugin*> ctkPlugins::getPlugins(const QString& name, const ctkVersionRange& range) const
 {
-  if (!fwCtx)
-  { // This plugins instance has been closed!
-    throw std::logic_error("ctkPlugins::getPlugins(name, versionRange) called on closed plugins object.");
-  }
+  checkIllegalState();
 
   QList<ctkPlugin*> pluginsWithName = getPlugins(name);
   QList<ctkPlugin*> res;
@@ -276,10 +267,7 @@ QList<ctkPlugin*> ctkPlugins::getPlugins(const QString& name, const ctkVersionRa
 //----------------------------------------------------------------------------
 QList<ctkPlugin*> ctkPlugins::getActivePlugins() const
 {
-  if (!fwCtx)
-  { // This plugins instance has been closed!
-    throw std::logic_error("ctkPlugins::getActivePlugins() called on closed plugins object.");
-  }
+  checkIllegalState();
 
   QList<ctkPlugin*> slist;
   {

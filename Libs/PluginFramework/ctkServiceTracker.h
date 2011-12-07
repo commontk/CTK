@@ -171,7 +171,7 @@ public:
    * <code>ctkServiceTracker</code> was created are now tracked by this
    * <code>ctkServiceTracker</code>.
    *
-   * @throws std::logic_error If the <code>ctkPluginContext</code>
+   * @throws ctkIllegalStateException If the <code>ctkPluginContext</code>
    *         with which this <code>ctkServiceTracker</code> was created is no
    *         longer valid.
    */

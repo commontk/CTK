@@ -294,8 +294,8 @@ void ctkPluginPrivate::finalizeActivation()
     // Don't allow it.
     throw ctkPluginException("start called from ctkPluginActivator::stop",
                              ctkPluginException::ACTIVATOR_ERROR);
-      case ctkPlugin::UNINSTALLED:
-    throw std::logic_error("ctkPlugin is in UNINSTALLED state");
+  case ctkPlugin::UNINSTALLED:
+    throw ctkIllegalStateException("ctkPlugin is in UNINSTALLED state");
   }
 }
 

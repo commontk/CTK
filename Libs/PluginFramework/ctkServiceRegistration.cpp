@@ -94,8 +94,8 @@ ctkServiceReference ctkServiceRegistration::getReference() const
 {
   Q_D(const ctkServiceRegistration);
 
-  if (!d) throw std::logic_error("ctkServiceRegistration object invalid");
-  if (!d->available) throw std::logic_error("Service is unregistered");
+  if (!d) throw ctkIllegalStateException("ctkServiceRegistration object invalid");
+  if (!d->available) throw ctkIllegalStateException("Service is unregistered");
 
   return d->reference;
 }
@@ -104,7 +104,7 @@ ctkServiceReference ctkServiceRegistration::getReference() const
 void ctkServiceRegistration::setProperties(const ctkDictionary& props)
 {
   Q_D(ctkServiceRegistration);
-  if (!d) throw std::logic_error("ctkServiceRegistration object invalid");
+  if (!d) throw ctkIllegalStateException("ctkServiceRegistration object invalid");
 
   QMutexLocker lock(&d->eventLock);
 
@@ -130,7 +130,7 @@ void ctkServiceRegistration::setProperties(const ctkDictionary& props)
     }
     else
     {
-      throw std::logic_error("Service is unregistered");
+      throw ctkIllegalStateException("Service is unregistered");
     }
   }
   d->plugin->fwCtx->listeners.serviceChanged(
@@ -146,7 +146,7 @@ void ctkServiceRegistration::setProperties(const ctkDictionary& props)
 void ctkServiceRegistration::unregister()
 {
   Q_D(ctkServiceRegistration);
-  if (!d) throw std::logic_error("ctkServiceRegistration object invalid");
+  if (!d) throw ctkIllegalStateException("ctkServiceRegistration object invalid");
 
   if (d->unregistering) return; // Silently ignore redundant unregistration.
   {
@@ -163,7 +163,7 @@ void ctkServiceRegistration::unregister()
     }
     else
     {
-      throw std::logic_error("Service is unregistered");
+      throw ctkIllegalStateException("Service is unregistered");
     }
   }
 

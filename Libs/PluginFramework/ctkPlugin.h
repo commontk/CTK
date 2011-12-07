@@ -354,7 +354,7 @@ public:
    *         be because a code dependency could not be resolved or the
    *         <code>ctkPluginActivator</code> could not be loaded or
    *         threw an exception.
-   * @throws std::logic_error If this plugin has been uninstalled or this
+   * @throws ctkIllegalStateException If this plugin has been uninstalled or this
    *         plugin tries to change its own state.
    */
   virtual void start(const StartOptions& options = START_ACTIVATION_POLICY);
@@ -428,7 +428,7 @@ public:
    *        {@link #STOP_TRANSIENT}.
    * @throws ctkPluginException If this plugin's <code>ctkPluginActivator</code>
    *         threw an exception.
-   * @throws std::logic_error If this plugin has been uninstalled or this
+   * @throws ctkIllegalStateException If this plugin has been uninstalled or this
    *         plugin tries to change its own state.
    */
   virtual void stop(const StopOptions& options = 0);
@@ -488,7 +488,7 @@ public:
    * @throws ctkPluginException If the uninstall failed. This can occur if
    *         another thread is attempting to change this plugin's state and
    *         does not complete in a timely manner.
-   * @throws std::logic_error If this plugin has been uninstalled or this
+   * @throws ctkIllegalStateException If this plugin has been uninstalled or this
    *         plugin tries to change its own state.
    * @see #stop()
    */
@@ -616,7 +616,7 @@ public:
    * @return A list of the resource paths (<code>QString</code>
    *         objects) or an empty list if no entry could be found.
 
-   * @throws std::logic_error If this plugin has been
+   * @throws ctkIllegalStateException If this plugin has been
    *         uninstalled.
    */
   virtual QStringList getResourceList(const QString& path) const;
@@ -658,7 +658,7 @@ public:
    *         does not have the appropriate
    *         <code>AdminPermission[this,RESOURCE]</code>, and the Plugin
    *         Framework supports permissions.
-   * @throws std::logic_error If this plugin has been uninstalled.
+   * @throws ctkIllegalStateException If this plugin has been uninstalled.
    */
   virtual QStringList findResources(const QString& path, const QString& filePattern, bool recurse) const;
 
@@ -675,7 +675,7 @@ public:
    * @param path The path name of the resource.
    * @return A QByteArray to the resource, or a null QByteArray if no resource could be
    *         found.
-   * @throws std::logic_error If this plugin has been
+   * @throws ctkIllegalStateException If this plugin has been
    *         uninstalled.
    */
   virtual QByteArray getResource(const QString& path) const;

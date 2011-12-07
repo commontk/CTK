@@ -74,7 +74,7 @@ void ctkPlugin::start(const StartOptions& options)
 
   if (d->state == UNINSTALLED)
   {
-    throw std::logic_error("ctkPlugin is uninstalled");
+    throw ctkIllegalStateException("ctkPlugin is uninstalled");
   }
 
   // Initialize the activation; checks initialization of lazy
@@ -124,7 +124,7 @@ void ctkPlugin::stop(const StopOptions& options)
   //1:
   if (d->state == UNINSTALLED)
   {
-    throw std::logic_error("Plugin is uninstalled");
+    throw ctkIllegalStateException("ctkPlugin is uninstalled");
   }
 
   //2: If activating or deactivating, wait a litle

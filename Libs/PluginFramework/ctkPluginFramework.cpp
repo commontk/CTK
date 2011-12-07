@@ -55,7 +55,7 @@ void ctkPluginFramework::init()
   case ctkPlugin::ACTIVE:
     return;
   default:
-    throw std::logic_error("INTERNAL ERROR, Illegal state");
+    throw ctkIllegalStateException("INTERNAL ERROR, Illegal state");
   }
   d->init();
 }
@@ -83,7 +83,7 @@ void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
     case ACTIVE:
       return;
     default:
-      throw std::logic_error("INTERNAL ERROR, Illegal state");
+      throw ctkIllegalStateException("INTERNAL ERROR, Illegal state");
     }
 
     pluginsToStart = d->fwCtx->storage->getStartOnLaunchPlugins();
