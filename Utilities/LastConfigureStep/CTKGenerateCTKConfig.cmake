@@ -102,6 +102,18 @@ set(CTK_INCLUDE_DIRS_CONFIG
   ${CTK_BASE_INCLUDE_DIRS}
 )
 
+# Consider "headeronly" libraries
+set(headeronly_libs CTKTesting)
+foreach(lib ${headeronly_libs})
+  set(${lib}_INCLUDE_DIRS ${${lib}_SOURCE_DIR} ${${lib}_BINARY_DIR})
+  ctkFunctionGetIncludeDirs(${lib}_INCLUDE_DIRS ${lib})
+  set(CTK_LIBRARY_INCLUDE_DIRS_CONFIG "${CTK_LIBRARY_INCLUDE_DIRS_CONFIG}
+set(${lib}_INCLUDE_DIRS \"${${lib}_INCLUDE_DIRS}\")")
+  set(CTK_INCLUDE_DIRS_CONFIG ${CTK_INCLUDE_DIRS_CONFIG} ${${lib}_INCLUDE_DIRS})
+endforeach()
+
+
+
 # Library directory.
 set(CTK_LIBRARY_DIRS_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
