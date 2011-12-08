@@ -163,7 +163,7 @@ MACRO(ctkMacroSetupPlugins )
                                  "${plugin_dirswithoption};${previous_plugin_dirswithoption};${MY_APPS}"
                                  WITH_EXTERNALS)
   ctkMacroValidateBuildOptions("${CMAKE_CURRENT_BINARY_DIR}" "${CTK_DGRAPH_EXECUTABLE}"
-                               "${plugin_dirswithoption};${previous_plugin_dirswithoption};${MY_APPS}")
+                               "${MY_APPS};${plugin_dirswithoption};${previous_plugin_dirswithoption}")
 
   # Record the current set of plug-ins and their option names
   SET_PROPERTY(GLOBAL APPEND PROPERTY ctkMacroSetupExternalPlugins_dirswithoption ${plugin_dirswithoption})
