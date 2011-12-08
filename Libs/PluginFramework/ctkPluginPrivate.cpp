@@ -405,7 +405,6 @@ const ctkRuntimeException* ctkPluginPrivate::stop0()
 //----------------------------------------------------------------------------
 const ctkRuntimeException* ctkPluginPrivate::stop1()
 {
-  ctkPluginActivator* activator = 0;
   const ctkRuntimeException* res = 0;
 
   //6:
@@ -434,7 +433,6 @@ const ctkRuntimeException* ctkPluginPrivate::stop1()
       res = new ctkPluginException("ctkPlugin::stop: PluginActivator stop failed",
                                               ctkPluginException::ACTIVATOR_ERROR, &e);
     }
-    activator = pluginActivator;
     pluginActivator = 0;
   }
 
@@ -454,7 +452,15 @@ const ctkRuntimeException* ctkPluginPrivate::stop1()
     }
   }
 
-  delete activator;
+  // This would unload the shared library and delete the activator if
+  // there are no dependencies. However, objects from the plug-in might
+  // have been created via C-function symbol lookups. Hence we cannot
+  // safely unload the DLL. Maybe implement a in-DLL counter later
+  // (http://stackoverflow.com/questions/460809/c-dll-unloading-issue and
+  // http://boost.2283326.n4.nabble.com/shared-ptr-A-smarter-smart-pointer-proposal-for-dynamic-libraries-td2649749.html).
+  // The activator itself will be delete during program termination
+  // (by the QPluginLoader instance).
+  //pluginLoader.unload();
 
   return res;
 }
