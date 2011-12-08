@@ -96,7 +96,7 @@ public:
         QString qInstanceUID(instanceUID.c_str());
         emit this->retrieve->progress("Got STORE request for " + qInstanceUID);
         emit this->retrieve->progress(0);
-        continueCGETSession = not this->retrieve->wasCanceled();
+        continueCGETSession = !this->retrieve->wasCanceled();
         if (this->retrieve && this->retrieve->database())
           {
           this->retrieve->database()->insert(incomingObject);
@@ -121,7 +121,7 @@ public:
         {
         emit this->retrieve->progress("Got CGET response");
         emit this->retrieve->progress(0);
-        continueCGETSession = not this->retrieve->wasCanceled();
+        continueCGETSession = !this->retrieve->wasCanceled();
         return this->ctkDcmSCU::handleCGETResponse(presID, response, continueCGETSession);
         }
       return false;
@@ -704,7 +704,7 @@ bool ctkDICOMRetrieve::getSeries(const QString& studyInstanceUID,
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrieve::cancel()
+void ctkDICOMRetrieve::cancel()
 {
   Q_D(ctkDICOMRetrieve);
   d->WasCanceled = true;

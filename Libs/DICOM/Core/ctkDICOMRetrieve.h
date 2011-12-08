@@ -95,7 +95,7 @@ public Q_SLOTS:
   /// Use CGET to ask peer host to store data to us
   bool getStudy( const QString& studyInstanceUID );
   /// Cancel the current operation
-  bool cancel();
+  void cancel();
 
 Q_SIGNALS:
   /// Signal is emitted inside the retrieve() function. It ranges from 0 to 100.
