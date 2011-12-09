@@ -65,7 +65,7 @@ ctkPluginFrameworkEvent ctkPluginFramework::waitForStop(unsigned long timeout)
 {
   Q_D(ctkPluginFramework);
 
-  ctkPluginPrivate::Locker sync(&d->operationLock);
+  ctkPluginPrivate::Locker sync(&d->lock);
 
   // Already stopped?
   if ((d->state & (INSTALLED | RESOLVED)) == 0)
