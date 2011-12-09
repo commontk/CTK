@@ -827,9 +827,7 @@ set(CTK_EXPORT_HEADER_TEMPLATE "${CTK_SOURCE_DIR}/Libs/ctkExport.h.in")
 #-----------------------------------------------------------------------------
 # Setup testing environment before Libs are added
 #
-if(BUILD_TESTING)
-  add_subdirectory(Libs/Testing)
-endif()
+add_subdirectory(Libs/Testing)
 
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories

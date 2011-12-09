@@ -102,6 +102,8 @@ set(CTK_INCLUDE_DIRS_CONFIG
   ${CTK_BASE_INCLUDE_DIRS}
 )
 
+set(CTKTesting_CMAKE_DIR_CONFIG "${CTKTesting_SOURCE_DIR}/CMake")
+
 # Consider "headeronly" libraries
 set(headeronly_libs CTKTesting)
 foreach(lib ${headeronly_libs})
