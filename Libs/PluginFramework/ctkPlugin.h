@@ -456,7 +456,7 @@ public:
    * <li>If this plugin's state is <code>ACTIVE</code>, <code>STARTING</code>
    * or <code>STOPPING</code>, this plugin is stopped as described in the
    * <code>ctkPlugin::stop</code> method. If <code>ctkPlugin::stop</code> throws an
-   * exception, a Framework event of type ctkFrameworkEvent::ERROR is
+   * exception, a Framework event of type ctkPluginFrameworkEvent::PLUGIN_ERROR is
    * fired containing the exception.
    *
    * <li>This plugin's state is set to <code>UNINSTALLED</code>.

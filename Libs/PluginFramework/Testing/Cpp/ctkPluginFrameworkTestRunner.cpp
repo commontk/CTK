@@ -79,7 +79,7 @@ public:
     // wait for 30 secs
     ctkPluginFrameworkEvent event = fw->waitForStop(30000);
 
-    if (result == 0 && event.getType() == ctkPluginFrameworkEvent::WAIT_TIMEDOUT)
+    if (result == 0 && event.getType() == ctkPluginFrameworkEvent::FRAMEWORK_WAIT_TIMEDOUT)
     {
       qWarning() << "Framework shutdown wait timed out";
       result = 1;

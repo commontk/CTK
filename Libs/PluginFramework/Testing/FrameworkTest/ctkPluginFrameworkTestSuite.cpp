@@ -231,7 +231,7 @@ void ctkPluginFrameworkTestSuite::frame020a()
 
   // check the listeners for events, expect only a plugin event,
   // of type installation
-  bool lStat = checkListenerEvents(false, ctkPluginFrameworkEvent::INFO, true , ctkPluginEvent::INSTALLED,
+  bool lStat = checkListenerEvents(false, ctkPluginFrameworkEvent::PLUGIN_INFO, true , ctkPluginEvent::INSTALLED,
                                    false, ctkServiceEvent::MODIFIED, pA, 0);
 
   QVERIFY(pA->getState() == ctkPlugin::INSTALLED && lStat == true);
@@ -399,7 +399,7 @@ void ctkPluginFrameworkTestSuite::frame040a()
   }
 
   // check the listeners for events, expect no events
-  bool lStat = checkListenerEvents(false, ctkPluginFrameworkEvent::STARTED,
+  bool lStat = checkListenerEvents(false, ctkPluginFrameworkEvent::FRAMEWORK_STARTED,
                                    false , ctkPluginEvent::INSTALLED,
                                    false, ctkServiceEvent::MODIFIED,
                                    pD, 0);
@@ -425,7 +425,7 @@ void ctkPluginFrameworkTestSuite::frame042a()
   }
 
   // check the listeners for events, expect no events
-  bool lStat = checkListenerEvents(false, ctkPluginFrameworkEvent::STARTED,
+  bool lStat = checkListenerEvents(false, ctkPluginFrameworkEvent::FRAMEWORK_STARTED,
                                    false , ctkPluginEvent::INSTALLED,
                                    false, ctkServiceEvent::MODIFIED,
                                    QSharedPointer<ctkPlugin>(), 0);

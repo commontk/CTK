@@ -417,7 +417,7 @@ public:
    * is not an instance of all the classes named when the service
    * was registered or the <code>ctkServiceFactory</code> object throws an
    * exception, <code>0</code> is returned and a Framework event of type
-   * {@link ctkPluginFrameworkEvent::ERROR} containing a {@link ctkServiceException}
+   * {@link ctkPluginFrameworkEvent::PLUGIN_ERROR} containing a {@link ctkServiceException}
    * describing the error is fired.
    * <li>The service object for the service is returned.
    * </ol>

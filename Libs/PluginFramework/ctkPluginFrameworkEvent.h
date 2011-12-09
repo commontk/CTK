@@ -64,7 +64,7 @@ public:
      * has reached the initial start level. The source of this event is the
      * System Plugin.
      */
-    STARTED,
+    FRAMEWORK_STARTED,
 
     /**
      * An error has occurred.
@@ -72,7 +72,7 @@ public:
      * <p>
      * There was an error associated with a plugin.
      */
-    ERROR,
+    PLUGIN_ERROR,
 
     /**
      * A warning has occurred.
@@ -80,7 +80,7 @@ public:
      * <p>
      * There was a warning associated with a plugin.
      */
-    WARNING,
+    PLUGIN_WARNING,
 
     /**
      * An informational event has occurred.
@@ -88,7 +88,7 @@ public:
      * <p>
      * There was an informational event associated with a plugin.
      */
-    INFO,
+    PLUGIN_INFO,
 
     /**
      * The Framework has stopped.
@@ -98,7 +98,7 @@ public:
      * operation on the system plugin. The source of this event is the System
      * Plugin.
      */
-    STOPPED,
+    FRAMEWORK_STOPPED,
 
     /**
      * The Framework has stopped during update.
@@ -108,7 +108,7 @@ public:
      * update operation on the system plugin. The Framework will be restarted
      * after this event is fired. The source of this event is the System Plugin.
      */
-    STOPPED_UPDATE,
+    FRAMEWORK_STOPPED_UPDATE,
 
     /**
      * The Framework did not stop before the wait timeout expired.
@@ -117,7 +117,7 @@ public:
      * This event is fired when the Framework did not stop before the wait
      * timeout expired. The source of this event is the System Plugin.
      */
-    WAIT_TIMEDOUT
+    FRAMEWORK_WAIT_TIMEDOUT
 
   };
 

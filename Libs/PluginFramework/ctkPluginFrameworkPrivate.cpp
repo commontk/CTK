@@ -88,7 +88,7 @@ void ctkPluginFrameworkPrivate::shutdown(bool restart)
       }
       catch (const std::exception& e)
       {
-        systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::ERROR, this->q_func(), e));
+        systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR, this->q_func(), e));
       }
     }
     break;
@@ -140,14 +140,14 @@ void ctkPluginFrameworkPrivate::shutdown0(bool restart, bool wasActive)
   catch (const std::exception& e)
   {
     shuttingDown.fetchAndStoreOrdered(0);
-    systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::ERROR, this->q_func(), e));
+    systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR, this->q_func(), e));
   }
 }
 
 //----------------------------------------------------------------------------
 void ctkPluginFrameworkPrivate::shutdownDone_unlocked(bool restart)
 {
-  ctkPluginFrameworkEvent::Type t = restart ? ctkPluginFrameworkEvent::STOPPED_UPDATE : ctkPluginFrameworkEvent::STOPPED;
+  ctkPluginFrameworkEvent::Type t = restart ? ctkPluginFrameworkEvent::FRAMEWORK_STOPPED_UPDATE : ctkPluginFrameworkEvent::FRAMEWORK_STOPPED;
   systemShuttingdownDone_unlocked(ctkPluginFrameworkEvent(t, this->q_func()));
 }
 

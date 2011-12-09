@@ -75,13 +75,13 @@ ctkPluginFrameworkEvent ctkPluginFramework::waitForStop(unsigned long timeout)
 
     if (d->stopEvent.isNull())
     {
-      return ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::WAIT_TIMEDOUT, this->d_func()->q_func());
+      return ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::FRAMEWORK_WAIT_TIMEDOUT, this->d_func()->q_func());
     }
   }
   else if (d->stopEvent.isNull())
   {
     // Return this if stop or update have not been called and framework is stopped.
-    d->stopEvent = ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::STOPPED, this->d_func()->q_func());
+    d->stopEvent = ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::FRAMEWORK_STOPPED, this->d_func()->q_func());
   }
   return d->stopEvent;
 }
@@ -142,7 +142,7 @@ void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
     d->operation = ctkPluginPrivate::IDLE;
     d->lock.wakeAll();
     d->fwCtx->listeners.emitFrameworkEvent(
-        ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::STARTED, this->d_func()->q_func()));
+        ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::FRAMEWORK_STARTED, this->d_func()->q_func()));
   }
 }
 

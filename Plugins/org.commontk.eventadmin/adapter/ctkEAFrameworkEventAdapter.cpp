@@ -79,19 +79,19 @@ void ctkEAFrameworkEventAdapter::frameworkEvent(const ctkPluginFrameworkEvent& e
 
   switch (event.getType())
   {
-  case ctkPluginFrameworkEvent::STARTED:
+  case ctkPluginFrameworkEvent::FRAMEWORK_STARTED:
     topic.append("STARTED");
     break;
-  case ctkPluginFrameworkEvent::ERROR:
+  case ctkPluginFrameworkEvent::PLUGIN_ERROR:
     topic.append("ERROR");
     break;
 //  case ctkPluginFrameworkEvent::STARTLEVEL_CHANGED:
 //    topic.append("STARTLEVEL_CHANGED");
 //    break;
-  case ctkPluginFrameworkEvent::WARNING:
+  case ctkPluginFrameworkEvent::PLUGIN_WARNING:
     topic.append("WARNING");
     break;
-  case ctkPluginFrameworkEvent::INFO:
+  case ctkPluginFrameworkEvent::PLUGIN_INFO:
     topic.append("INFO");
     break;
   default:

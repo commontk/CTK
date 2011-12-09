@@ -209,7 +209,7 @@ bool ctkPluginFrameworkLauncher::stop(const QString& symbolicName,
     {
       fw->stop();
       ctkPluginFrameworkEvent fe = fw->waitForStop(5000);
-      if (fe.getType() == ctkPluginFrameworkEvent::WAIT_TIMEDOUT)
+      if (fe.getType() == ctkPluginFrameworkEvent::FRAMEWORK_WAIT_TIMEDOUT)
       {
         qWarning() << "Stopping the plugin framework timed out";
         return false;

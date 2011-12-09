@@ -89,21 +89,21 @@ public:
    *        Framework has completely stopped. A value of zero will wait
    *        indefinitely.
    * @return A Framework Event indicating the reason this method returned. The
-   *         following <code>ctkFrameworkEvent</code> types may be returned by
+   *         following <code>ctkPluginFrameworkEvent</code> types may be returned by
    *         this method.
    *         <ul>
-   *         <li>{@link ctkFrameworkEvent#STOPPED STOPPED} - This Framework has
+   *         <li>{@link ctkPluginFrameworkEvent#STOPPED STOPPED} - This Framework has
    *         been stopped. </li>
    *
-   *         <li>{@link ctkFrameworkEvent#STOPPED_UPDATE STOPPED_UPDATE} - This
+   *         <li>{@link ctkPluginFrameworkEvent#STOPPED_UPDATE STOPPED_UPDATE} - This
    *         Framework has been updated which has shutdown and will now
    *         restart.</li>
    *
-   *         <li>{@link ctkFrameworkEvent#ERROR ERROR} - The Framework
+   *         <li>{@link ctkPluginFrameworkEvent#ERROR ERROR} - The Framework
    *         encountered an error while shutting down or an error has occurred
    *         which forced the framework to shutdown. </li>
    *
-   *         <li> {@link ctkFrameworkEvent#WAIT_TIMEDOUT WAIT_TIMEDOUT} - This
+   *         <li> {@link ctkPluginFrameworkEvent#WAIT_TIMEDOUT WAIT_TIMEDOUT} - This
    *         method has timed out and returned before this Framework has
    *         stopped.</li>
    *         </ul>
@@ -124,9 +124,9 @@ public:
    * and some will be started with their <i>declared activation</i> policy.
    * Any exceptions that occur during plugin starting must be wrapped in a
    * {@link ctkPluginException} and then published as a plugin framework event of type
-   * {@link ctkPluginFrameworkEvent::ERROR}</li>
+   * {@link ctkPluginFrameworkEvent::PLUGIN_ERROR}</li>
    * <li>This %PluinFramework's state is set to {@link #ACTIVE}.</li>
-   * <li>A plugin framework event of type {@link ctkPluginFrameworkEvent::STARTED} is fired</li>
+   * <li>A plugin framework event of type {@link ctkPluginFrameworkEvent::FRAMEWORK_STARTED} is fired</li>
    * </ol>
    *
    * @param options Ignored. There are no start options for the %ctkPluginFramework.

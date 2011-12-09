@@ -155,7 +155,7 @@ QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
 //----------------------------------------------------------------------------
 void ctkPluginFrameworkListeners::frameworkError(QSharedPointer<ctkPlugin> p, const std::exception& e)
 {
-  emit frameworkEvent(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::ERROR, p, e));
+  emit frameworkEvent(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR, p, e));
 }
 
 //----------------------------------------------------------------------------
