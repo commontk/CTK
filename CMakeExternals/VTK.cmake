@@ -37,7 +37,7 @@ if(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
 
     if(NOT DEFINED VTK_DIR)
 
-      set(revision_tag 4b419e67427e974b51ea0812bae25b174426a2ff)
+      set(revision_tag f0766a470edcc6b84a779b45ba11feee40ac3bdb)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
