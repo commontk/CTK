@@ -124,70 +124,70 @@ macro(ctkMacroValidateBuildOptions dir executable target_directories)
     endif()
     #message(STATUS target_project_name:${target_project_name})
 
+    # Obtain dependency path
+    ctkMacroSetPaths("${QT_INSTALLED_LIBRARY_DIR}")
+    execute_process(
+      COMMAND "${executable}" "${dir}/DGraphInput-alldep-withext.txt" -sort ${target_project_name}
+      WORKING_DIRECTORY ${dir}
+      RESULT_VARIABLE RESULT_VAR
+      OUTPUT_VARIABLE dep_path
+      ERROR_VARIABLE error
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    if(RESULT_VAR)
+      message(FATAL_ERROR "Failed to obtain dependence path of ${target_project_name}.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
+    endif()
+
+    # Set a variable for each target containing its dependencies
+    # Needed for setting individual include directories for plugins,
+    # depending on other plugins.
+    set(${target_project_name}_DEPENDENCIES )
+
+    # Convert 'dep_path' to a list
+    string(REPLACE " " "\\;" dep_path_list ${dep_path})
+    set(dep_path_list ${dep_path_list})
+    list(REMOVE_ITEM dep_path_list ${target_project_name})
+    list(APPEND ${target_project_name}_DEPENDENCIES ${dep_path_list})
+
+    #message("path for ${target_project_name} is: ${dep_path_list}")
+
+    # Check if all internal CTK targets included in the dependency path are enabled
+    set(int_dep_path_list )
+    set(ext_dep_path_list ${dep_path_list})
+    ctkMacroGetAllProjectTargetLibraries("${dep_path_list}" int_dep_path_list)
+    if(int_dep_path_list)
+      list(REMOVE_ITEM ext_dep_path_list ${int_dep_path_list})
+    endif()
+
+    if(ext_dep_path_list)
+      list(APPEND EXTERNAL_TARGETS ${ext_dep_path_list})
+      # If this macro is called from inside CTK itself, we add the external
+      # targets to the list of known targets (for external projects calling
+      # this macro, targets external to the calling project should be listed
+      # in CTK_LIBRARIES or CTK_EXTERNAL_PLUGIN_LIBRARIES
+      if(CTK_SOURCE_DIR)
+        if(${CMAKE_SOURCE_DIR} STREQUAL ${CTK_SOURCE_DIR})
+          list(APPEND known_targets ${ext_dep_path_list})
+        endif()
+      endif()
+    endif()
+
+    foreach(dep ${int_dep_path_list})
+      list(FIND known_targets ${dep} dep_found)
+      if(dep_found LESS 0)
+        message(FATAL_ERROR "${target_project_name} depends on ${dep}, which does not exist")
+      endif()
+
+      ctkMacroGetOptionName("${target_directories_with_target_name}" ${dep} dep_option)
+      if(${${option_name}} AND NOT ${${dep_option}})
+        # Enable option
+        message(STATUS "Enabling option [${dep_option}] required by [${target_project_name}]")
+        set(${dep_option} ON CACHE BOOL "Enable ${target_project_name} library" FORCE)
+      endif()
+    endforeach()
+
+    # For enabled targets, check if all external targets included in the dependency path are available
     if(${${option_name}})
-      # Obtain dependency path
-      ctkMacroSetPaths("${QT_INSTALLED_LIBRARY_DIR}")
-      execute_process(
-        COMMAND "${executable}" "${dir}/DGraphInput-alldep-withext.txt" -sort ${target_project_name}
-        WORKING_DIRECTORY ${dir}
-        RESULT_VARIABLE RESULT_VAR
-        OUTPUT_VARIABLE dep_path
-        ERROR_VARIABLE error
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-      if(RESULT_VAR)
-        message(FATAL_ERROR "Failed to obtain dependence path of ${target_project_name}.\n${RESULT_VAR}\n${CTK_BINARY_DIR}\n${error}")
-      endif()
-
-      # Set a variable for each target containing its dependencies
-      # Needed for setting individual include directories for plugins,
-      # depending on other plugins.
-      set(${target_project_name}_DEPENDENCIES )
-
-      # Convert 'dep_path' to a list
-      string(REPLACE " " "\\;" dep_path_list ${dep_path})
-      set(dep_path_list ${dep_path_list})
-      list(REMOVE_ITEM dep_path_list ${target_project_name})
-      list(APPEND ${target_project_name}_DEPENDENCIES ${dep_path_list})
-
-      #message("path for ${target_project_name} is: ${dep_path_list}")
-
-      # Check if all internal CTK targets included in the dependency path are enabled
-      set(int_dep_path_list )
-      set(ext_dep_path_list ${dep_path_list})
-      ctkMacroGetAllProjectTargetLibraries("${dep_path_list}" int_dep_path_list)
-      if(int_dep_path_list)
-        list(REMOVE_ITEM ext_dep_path_list ${int_dep_path_list})
-      endif()
-
-      if(ext_dep_path_list)
-        list(APPEND EXTERNAL_TARGETS ${ext_dep_path_list})
-        # If this macro is called from inside CTK itself, we add the external
-        # targets to the list of known targets (for external projects calling
-        # this macro, targets external to the calling project should be listed
-        # in CTK_LIBRARIES or CTK_EXTERNAL_PLUGIN_LIBRARIES
-        if(CTK_SOURCE_DIR)
-          if(${CMAKE_SOURCE_DIR} STREQUAL ${CTK_SOURCE_DIR})
-            list(APPEND known_targets ${ext_dep_path_list})
-          endif()
-        endif()
-      endif()
-
-      foreach(dep ${int_dep_path_list})
-        list(FIND known_targets ${dep} dep_found)
-        if(dep_found LESS 0)
-          message(FATAL_ERROR "${target_project_name} depends on ${dep}, which does not exist")
-        endif()
-
-        ctkMacroGetOptionName("${target_directories_with_target_name}" ${dep} dep_option)
-        if(NOT ${${dep_option}})
-          # Enable option
-          message(STATUS "Enabling option [${dep_option}] required by [${target_project_name}]")
-          set(${dep_option} ON CACHE BOOL "Enable ${target_project_name} library" FORCE)
-        endif()
-      endforeach()
-
-      # Check if all external targets included in the dependency path are available
       foreach(dep ${ext_dep_path_list})
         list(FIND known_targets ${dep} dep_found)
         if(dep_found LESS 0)
