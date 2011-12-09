@@ -48,7 +48,7 @@ struct ctkEALinkedNode
   {
     if (value && value->autoDelete())
     {
-      !--value->ref;
+      --value->ref;
     }
   }
 
