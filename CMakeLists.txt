@@ -204,11 +204,11 @@ include(CMake/ctkFunctionCompileSnippets.cmake)
 #-----------------------------------------------------------------------------
 # Testing
 #
-option(BUILD_TESTING "Test the project" OFF)
+
+include(CTest)
 mark_as_advanced(BUILD_TESTING)
+
 if(BUILD_TESTING)
-  enable_testing()
-  include(CTest)
   set(CPP_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   mark_as_advanced(TCL_TCLSH DART_ROOT)
 
