@@ -19,11 +19,11 @@ set(metatypetest_plugins
   pluginAttrPwd_test
 )
 
-add_subdirectory(FrameworkTest)
+add_subdirectory(org.commontk.pluginfwtest)
 add_subdirectory(FrameworkTestPlugins)
 
-add_subdirectory(ConfigAdminTest)
-add_subdirectory(EventAdminTest)
+add_subdirectory(org.commontk.configadmintest)
+add_subdirectory(org.commontk.eventadmintest)
 
-add_subdirectory(MetaTypeTest)
+add_subdirectory(org.commontk.metatypetest)
 add_subdirectory(MetaTypeTestPlugins)

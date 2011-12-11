@@ -23,6 +23,8 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #  CTK/CMake/ctkMacroGeneratePluginManifest.cmake
 #
+#! \brief Build a CTK plug-in.
+#!
 #! This macro takes the usual arguments for building
 #! a shared library using Qt. Additionally, it generates
 #! plugin meta-data by creating a MANIFEST.MF text file
@@ -57,12 +59,24 @@ macro(ctkMacroBuildPlugin)
   if(NOT DEFINED MY_EXPORT_DIRECTIVE)
     message(FATAL_ERROR "EXPORT_DIRECTIVE is mandatory")
   endif()
-
-  # Plugin are expected to be shared library
-  set(MY_LIBRARY_TYPE "SHARED")
+  
+  # Print a warning if the project name does not match the directory name
+  get_filename_component(_dir_name ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+  string(REPLACE "." "_" _dir_name_with_ ${_dir_name})
+  if(NOT _dir_name_with_ STREQUAL ${PROJECT_NAME})
+    message(WARNING "Discouraged mismatch of plug-in project name [${PROJECT_NAME}] and top-level directory name [${CMAKE_CURRENT_SOURCE_DIR}].")
+  endif()
 
   # Define library name
   set(lib_name ${PROJECT_NAME})
+  
+  # Plug-in target names must contain at leas one _
+  if(NOT lib_name MATCHES _)
+    message(FATAL_ERROR "The plug-in project name ${lib_name} must contain at least one '_' character")
+  endif()
+  
+  # Plugin are expected to be shared library
+  set(MY_LIBRARY_TYPE "SHARED")
 
   # Clear the variables for the manifest headers
   set(Plugin-ActivationPolicy )

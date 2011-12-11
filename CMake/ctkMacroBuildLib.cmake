@@ -23,6 +23,8 @@
 #  CTK/CMake/ctkMacroParseArguments.cmake
 #
 
+#! \brief Build a CTK library.
+#!
 #! \ingroup CMakeAPI
 macro(ctkMacroBuildLib)
   ctkMacroParseArguments(MY
@@ -48,6 +50,11 @@ macro(ctkMacroBuildLib)
 
   # Define library name
   set(lib_name ${MY_NAME})
+  
+  # Library target names must not contain a '_' (reserved for plug-in target names)
+  if(lib_name MATCHES _)
+    message(FATAL_ERROR "The library name ${lib_name} must not contain a '_' character.")
+  endif()
 
   # --------------------------------------------------------------------------
   # Include dirs
