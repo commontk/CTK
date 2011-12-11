@@ -33,7 +33,6 @@ function(ctkFunctionGetPluginDependencies var_deps)
     endif()
   endforeach()
 
-  message("[${MY_PLUGINS}] deps: ${_plugins}")
   set(${var_deps} ${_plugins} PARENT_SCOPE)
 
 endfunction()

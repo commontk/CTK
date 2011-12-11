@@ -36,7 +36,7 @@ function(ctkFunctionGetTargetDependencies var_deps)
       ctkMacroGetAllProjectTargetLibraries("${_targets}" _targets)
     endif()
   endif()
-message("[${MY_TARGETS}] deps: ${_targets}")
+
   set(${var_deps} ${_targets} PARENT_SCOPE)
 
 endfunction()
