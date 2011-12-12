@@ -47,7 +47,7 @@ QString ctkSearchBoxPlugin::domXml() const
 // --------------------------------------------------------------------------
 QIcon ctkSearchBoxPlugin::icon() const
 {
-  return QIcon(":/Icons/search.svg");
+  return QIcon(":/Icons/search.png");
 }
 
 //-----------------------------------------------------------------------------

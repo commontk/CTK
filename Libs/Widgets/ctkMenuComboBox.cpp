@@ -89,7 +89,7 @@ void ctkMenuComboBoxPrivate::init()
 
   // SearchButton
   this->SearchButton = new QToolButton();
-  this->SearchButton->setIcon(QIcon(":/Icons/search.svg"));
+  this->SearchButton->setIcon(QIcon(":/Icons/search.png"));
   this->SearchButton->setCheckable(true);
   this->SearchButton->setAutoRaise(true);
   this->SearchButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Ignored);
