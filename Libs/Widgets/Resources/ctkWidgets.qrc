@@ -6,6 +6,8 @@
     <file>Icons/expand-down.png</file>
     <file>Icons/expand-up.png</file>
     <file>Icons/search.svg</file>
+    <file>Icons/search.png</file>
     <file>Icons/clear.svg</file>
+    <file>Icons/clear.png</file>
   </qresource>
 </RCC>
