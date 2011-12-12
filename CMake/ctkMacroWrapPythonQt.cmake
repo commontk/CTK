@@ -93,7 +93,7 @@ else: print 'TRUE'
     )
 
   if(result)
-    message(FATAL_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}")
+    message(FATAL_ERROR "reSearchFile - Problem with regex: ${regex}\n${error}\nPython exe: ${python_exe}\nPython lib path: ${python_library_path}")
   endif()
   set(is_matching ${output} PARENT_SCOPE)
 endfunction()
