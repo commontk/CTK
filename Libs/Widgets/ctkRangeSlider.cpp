@@ -592,8 +592,8 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
     }
 
   // TODO: Set this based on the supplied transfer function
-  QColor l = Qt::darkGray;
-  QColor u = Qt::black;
+  //QColor l = Qt::darkGray;
+  //QColor u = Qt::black;
 
   gradient.setColorAt(0, highlight.darker(120));
   gradient.setColorAt(1, highlight.lighter(160));

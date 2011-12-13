@@ -59,7 +59,6 @@ ctkFlatProxyModelPrivate::ctkFlatProxyModelPrivate(ctkFlatProxyModel &object)
 // ----------------------------------------------------------------------------
 void ctkFlatProxyModelPrivate::init()
 {
-  Q_Q(ctkFlatProxyModel);
 }
 
 // ----------------------------------------------------------------------------
@@ -329,7 +328,6 @@ QModelIndex ctkFlatProxyModel::index(int row, int column, const QModelIndex &par
 // ----------------------------------------------------------------------------
 QModelIndex ctkFlatProxyModel::parent(const QModelIndex &child) const
 {
-  Q_D(const ctkFlatProxyModel);
   if (!child.isValid())
     {
     return QModelIndex();
@@ -358,7 +356,6 @@ int ctkFlatProxyModel::rowCount(const QModelIndex &parent) const
 // ----------------------------------------------------------------------------
 int ctkFlatProxyModel::columnCount(const QModelIndex &parent) const
 {
-  Q_D(const ctkFlatProxyModel);
   QModelIndex proxyChild = this->index(0, 0, parent);
   if (parent.isValid() && !proxyChild.internalPointer())
     {

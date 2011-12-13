@@ -491,7 +491,6 @@ void ctkVTKScalarsToColorsView
 bool ctkVTKScalarsToColorsView
 ::areBordersVisible()const
 {
-  Q_D(const ctkVTKScalarsToColorsView);
   return this->chart()->GetAxis(0)->GetVisible();
 }
 

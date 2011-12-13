@@ -249,7 +249,6 @@ void ctkVTKChartView::onChartUpdated()
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::chartExtent(double* extent)const
 {
-  Q_D(const ctkVTKChartView);
   extent[0] = extent[2] = extent[4] = extent[6] = VTK_DOUBLE_MAX;
   extent[1] = extent[3] = extent[5] = extent[7] = VTK_DOUBLE_MIN;
   vtkChartXY* chart = this->chart();
