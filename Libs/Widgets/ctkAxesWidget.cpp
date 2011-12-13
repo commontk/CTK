@@ -235,7 +235,7 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
   
   QFontMetrics fm = this->fontMetrics();
   QSize letterSize = fm.size(Qt::TextShowMnemonic, "X") + QSize(1,1);
-  QSize halfLetterSize = letterSize / 2;
+  //QSize halfLetterSize = letterSize / 2;
   int blankSize = (length - diameter) / 2;
   QSize betweenLetterSpace = QSize(blankSize - letterSize.width(), blankSize - letterSize.height()) / 2;
   QList<QRect>  labelRects = d->labelRects(positions, betweenLetterSpace);
