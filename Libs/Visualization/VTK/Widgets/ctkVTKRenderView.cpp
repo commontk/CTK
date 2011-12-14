@@ -68,7 +68,7 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate(ctkVTKRenderView& object)
 // --------------------------------------------------------------------------
 void ctkVTKRenderViewPrivate::setupCornerAnnotation()
 {
-  logger.trace("setupCornerAnnotation");
+  //logger.trace("setupCornerAnnotation");
   this->ctkVTKAbstractViewPrivate::setupCornerAnnotation();
   if (!this->Renderer->HasViewProp(this->CornerAnnotation))
     {
@@ -221,7 +221,7 @@ ctkVTKRenderView::~ctkVTKRenderView()
 void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
 {
   Q_D(ctkVTKRenderView);
-  logger.trace("setInteractor");
+  //logger.trace("setInteractor");
   this->Superclass::setInteractor(newInteractor);
   d->Orientation->SetInteractor(newInteractor);
 }
@@ -258,7 +258,7 @@ vtkCamera* ctkVTKRenderView::activeCamera()
 void ctkVTKRenderView::resetCamera()
 {
   Q_D(ctkVTKRenderView);
-  logger.trace("resetCamera");
+  //logger.trace("resetCamera");
   d->Renderer->ResetCamera();
 }
 
