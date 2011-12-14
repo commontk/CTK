@@ -78,7 +78,7 @@ set(ctk_cmake_boolean_args
   DOCUMENTATION_TARGET_IN_ALL
   CTEST_USE_LAUNCHERS
   CTK_WRAP_PYTHONQT_FULL
-  CTK_WRAP_PYTHONQT_LIGHT
+  CTK_ENABLE_Python_Wrapping
   ${ctk_libs_bool_vars}
   ${ctk_plugins_bool_vars}
   ${ctk_applications_bool_vars}
