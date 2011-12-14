@@ -151,9 +151,9 @@ void ctkVTKAbstractView::scheduleRender()
 {
   Q_D(ctkVTKAbstractView);
 
-  logger.trace(QString("scheduleRender - RenderEnabled: %1 - Request render elapsed: %2ms").
-               arg(d->RenderEnabled ? "true" : "false")
-               .arg(d->RequestTime.elapsed()));
+  //logger.trace(QString("scheduleRender - RenderEnabled: %1 - Request render elapsed: %2ms").
+  //             arg(d->RenderEnabled ? "true" : "false")
+  //             .arg(d->RequestTime.elapsed()));
 
   if (!d->RenderEnabled)
     {
@@ -210,8 +210,8 @@ void ctkVTKAbstractView::forceRender()
   d->RequestTimer->stop();
   d->RequestTime = QTime();
 
-  logger.trace(QString("forceRender - RenderEnabled: %1")
-               .arg(d->RenderEnabled ? "true" : "false"));
+  //logger.trace(QString("forceRender - RenderEnabled: %1")
+  //             .arg(d->RenderEnabled ? "true" : "false"));
 
   if (!d->RenderEnabled || !this->isVisible())
     {
