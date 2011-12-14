@@ -8,13 +8,13 @@ set(KIT_PYTHON_SCRIPTS
 #  list(APPEND KIT_PYTHON_SCRIPTS ctkvtk/__init__)
 #endif()
 
+# If it applies, the variable CTK_PYTHON_WRAPPED_LIBRARIES will contain
+# the comma separated list of package to load
+set(CTK_PYTHON_WRAPPED_LIBRARIES)
+
 if(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
 
-  # Configure variable CTK_PYTHON_WRAPPED_LIBRARIES that will contain
-  # the comma separated list of package to load
-  set(CTK_PYTHON_WRAPPED_LIBRARIES)
-  foreach(lib ${CTK_LIBS})
-    ctkFunctionExtractOptionNameAndValue(${lib} lib_name lib_value)
+  foreach(lib_name ${CTK_LIBS})
     if(${CTK_LIB_${lib_name}})
       string(REPLACE "/" "" lib_name_no_slash ${lib_name})
       set(lib_name_no_slash "'${lib_name_no_slash}'") # Add single quotes
@@ -22,14 +22,14 @@ if(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
     endif()
   endforeach()
 
-  configure_file(
-    ctk/__init__.py.in
-    ${CMAKE_CURRENT_BINARY_DIR}/ctk/__init__.py
-    @ONLY
-    )
-
-  list(APPEND KIT_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/ctk/__init__.py)
 endif()
+
+configure_file(
+  ctk/__init__.py.in
+  ${CMAKE_CURRENT_BINARY_DIR}/ctk/__init__.py
+  @ONLY
+  )
+list(APPEND KIT_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/ctk/__init__.py)
 
 set(KIT_PYTHON_RESOURCES
   )
