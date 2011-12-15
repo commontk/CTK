@@ -46,7 +46,19 @@ public:
   virtual ~ctkVTKChartView();
 
   /// Generic function to add a custom plot. \a plot is added into the chart
+  /// Emit the plotAdded(vtkPlot*) signal.
   virtual void addPlot(vtkPlot* plot);
+
+  /// Remove the plot from the chart. Do nothing if plot is not in the chart.
+  /// Emit the plotRemoved(vtkPlot*) signal.
+  virtual void removePlot(vtkPlot* plot);
+
+  /// Remove all the plots from the chart
+  void removeAllPlots();
+
+  /// Return the id of the plot in the chart.
+  /// -1 if the plot is not found in the chart
+  vtkIdType plotIndex(vtkPlot* plot);
 
   /// Utility function that returns the view chart. It can be used for customizing
   /// the chart display options (axes, legend...)
@@ -77,6 +89,7 @@ public:
 
 Q_SIGNALS:
   void plotAdded(vtkPlot* plot);
+  void plotRemoved(vtkPlot* plot);
   /// Fired anytime the bound of a plot modifies the overal bounds
   void boundsChanged();
   /// Fired anytime an axis is modified.
