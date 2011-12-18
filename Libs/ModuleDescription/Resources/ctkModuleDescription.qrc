@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>ctkModuleDescription.xsd</file>
+        <file>QtDesigner.xsd</file>
     </qresource>
 </RCC>
