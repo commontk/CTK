@@ -48,8 +48,8 @@ public:
   void setTag(const QString& tag);
   QString tag() const;
 
-  void setCPPType(const QString& type);
-  QString cppType() const;
+//  void setCPPType(const QString& type);
+//  QString cppType() const;
 
   void setType(const QString& type);
   QString type() const;
@@ -57,8 +57,8 @@ public:
   void setReference(const QString& ref);
   QString reference() const;
 
-  void setHidden(const QString& hidden);
-  QString hidden() const;
+  void setHidden(bool hidden);
+  bool hidden() const;
 
   // Simple return types are parameters on output channel with no
   // flags and without a specified index
@@ -73,8 +73,8 @@ public:
   void setArgType(const QString& argType);
   QString argType() const;
 
-  void setStringToType(const QString& stringToType);
-  QString stringToType() const;
+  //void setStringToType(const QString& stringToType);
+  //QString stringToType() const;
 
   void setName(const QString& name);
   QString name() const;
@@ -93,8 +93,8 @@ public:
   void setLabel(const QString& label);
   QString label() const;
 
-  void setConstraints(const QString& constraints);
-  QString constraints() const;
+  void setConstraints(bool constraints);
+  bool constraints() const;
 
   void setMaximum(const QString& maximum);
   QString maximum() const;
@@ -111,8 +111,8 @@ public:
   void setChannel(const QString& channel);
   QString channel() const;
 
-  void setIndex(const QString& index);
-  QString index() const;
+  void setIndex(int index);
+  int index() const;
 
   void setDefaultValue(const QString& def);
   QString defaultValue() const;
@@ -128,8 +128,8 @@ public:
   QString deprecatedFlagAliasesAsString() const;
   QStringList deprecatedFlagAliases() const;
 
-  void setMultiple(const QString& multiple);
-  QString multiple() const;
+  void setMultiple(bool multiple);
+  bool multiple() const;
 
   void setAggregate(const QString& aggregate);
   QString aggregate() const;
@@ -141,8 +141,9 @@ public:
   void setCoordinateSystem(const QString& coordinateSystem);
   QString coordinateSystem() const;
 
+  void addElement(const QString& elem);
+  void setElements(const QStringList& elems);
   QStringList elements() const;
-  //QStringList& elements();
 
 private:
 

@@ -44,8 +44,8 @@ public:
   void setDescription(const QString& description);
   QString description() const;
 
-  void setAdvanced(const QString& advanced);
-  QString advanced() const;
+  void setAdvanced(bool advanced);
+  bool advanced() const;
 
   void addParameter(ctkModuleParameter* parameter);
   QList<ctkModuleParameter*> parameters() const;

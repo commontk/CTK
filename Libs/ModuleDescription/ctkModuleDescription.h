@@ -51,9 +51,6 @@ public:
   void setCategory(const QString& cat);
   QString category() const;
 
-  void setIndex(const QString& ind);
-  QString index() const;
-
   void setTitle(const QString& title);
   QString title() const;
 

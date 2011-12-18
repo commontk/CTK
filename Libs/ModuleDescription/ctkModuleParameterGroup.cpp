@@ -29,7 +29,7 @@ struct ctkModuleParameterGroupPrivate
 
   QString Label;
   QString Description;
-  QString Advanced;
+  bool Advanced;
   QList<ctkModuleParameter*> Parameters;
 };
 
@@ -74,14 +74,14 @@ QString ctkModuleParameterGroup::description() const
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameterGroup::setAdvanced(const QString& advanced)
+void ctkModuleParameterGroup::setAdvanced(bool advanced)
 {
   Q_D(ctkModuleParameterGroup);
   d->Advanced = advanced;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameterGroup::advanced() const
+bool ctkModuleParameterGroup::advanced() const
 {
   Q_D(const ctkModuleParameterGroup);
   return d->Advanced;
@@ -162,7 +162,7 @@ bool ctkModuleParameterGroup::writeParameterFile(QTextStream& in, bool withHandl
 //----------------------------------------------------------------------------
 QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup &group)
 { 
-  os << "  Advanced: " << group.advanced() << '\n';
+  os << "  Advanced: " << (group.advanced() ? "true" : "false") << '\n';
   os << "  Label: " << group.label() << '\n';
   os << "  Description: " << group.description() << '\n';
   os << "  Parameters: " << '\n';

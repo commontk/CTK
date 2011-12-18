@@ -24,29 +24,29 @@ limitations under the License.
 struct ctkModuleParameterPrivate
 {
   ctkModuleParameterPrivate()
-    : Multiple("false"), Aggregate("false")
+    : Hidden(false), Constraints(false), Index(-1), Multiple(false), Aggregate("false")
   {}
 
   QString Tag;
   QString Name;
   QString Description;
   QString Label;
-  QString CPPType;
+  //QString CPPType;
   QString Type;
   QString Reference;
-  QString Hidden;
+  bool Hidden;
   QString ArgType;
-  QString StringToType;
+  //QString StringToType;
   QString Default;
   QString Flag;
   QString LongFlag;
-  QString Constraints;
+  bool Constraints;
   QString Minimum;
   QString Maximum;
   QString Step;
   QString Channel;
-  QString Index;
-  QString Multiple;
+  int Index;
+  int Multiple;
   QString Aggregate;
   QString FileExtensionsAsString;
   QStringList FileExtensions;
@@ -101,19 +101,19 @@ QString ctkModuleParameter::tag() const
   return d->Tag;
 }
 
-//----------------------------------------------------------------------------
-void ctkModuleParameter::setCPPType(const QString& type)
-{
-  Q_D(ctkModuleParameter);
-  d->CPPType = type;
-}
+////----------------------------------------------------------------------------
+//void ctkModuleParameter::setCPPType(const QString& type)
+//{
+//  Q_D(ctkModuleParameter);
+//  d->CPPType = type;
+//}
 
-//----------------------------------------------------------------------------
-QString ctkModuleParameter::cppType() const
-{
-  Q_D(const ctkModuleParameter);
-  return d->CPPType;
-}
+////----------------------------------------------------------------------------
+//QString ctkModuleParameter::cppType() const
+//{
+//  Q_D(const ctkModuleParameter);
+//  return d->CPPType;
+//}
 
 //----------------------------------------------------------------------------
 void ctkModuleParameter::setType(const QString& type)
@@ -144,14 +144,14 @@ QString ctkModuleParameter::reference() const
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setHidden(const QString& hidden)
+void ctkModuleParameter::setHidden(bool hidden)
 {
   Q_D(ctkModuleParameter);
   d->Hidden = hidden;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::hidden() const
+bool ctkModuleParameter::hidden() const
 {
   Q_D(const ctkModuleParameter);
   return d->Hidden;
@@ -181,7 +181,7 @@ bool ctkModuleParameter::isFlagParameter() const
 bool ctkModuleParameter::isIndexParameter() const
 {
   Q_D(const ctkModuleParameter);
-  return (d->Index != "");
+  return (d->Index > -1);
 }
 
 //----------------------------------------------------------------------------
@@ -198,19 +198,19 @@ QString ctkModuleParameter::argType() const
   return d->ArgType;
 }
 
-//----------------------------------------------------------------------------
-void ctkModuleParameter::setStringToType(const QString& stringToType)
-{
-  Q_D(ctkModuleParameter);
-  d->StringToType = stringToType;
-}
+////----------------------------------------------------------------------------
+//void ctkModuleParameter::setStringToType(const QString& stringToType)
+//{
+//  Q_D(ctkModuleParameter);
+//  d->StringToType = stringToType;
+//}
 
-//----------------------------------------------------------------------------
-QString ctkModuleParameter::stringToType() const
-{
-  Q_D(const ctkModuleParameter);
-  return d->StringToType;
-}
+////----------------------------------------------------------------------------
+//QString ctkModuleParameter::stringToType() const
+//{
+//  Q_D(const ctkModuleParameter);
+//  return d->StringToType;
+//}
 
 //----------------------------------------------------------------------------
 void ctkModuleParameter::setName(const QString& name)
@@ -299,14 +299,14 @@ QString ctkModuleParameter::label() const
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setConstraints(const QString& constraints)
+void ctkModuleParameter::setConstraints(bool constraints)
 {
   Q_D(ctkModuleParameter);
   d->Constraints = constraints;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::constraints() const
+bool ctkModuleParameter::constraints() const
 {
   Q_D(const ctkModuleParameter);
   return d->Constraints;
@@ -383,14 +383,14 @@ QString ctkModuleParameter::channel() const
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setIndex(const QString& index)
+void ctkModuleParameter::setIndex(int index)
 {
   Q_D(ctkModuleParameter);
   d->Index = index;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::index() const
+int ctkModuleParameter::index() const
 {
   Q_D(const ctkModuleParameter);
   return d->Index;
@@ -469,14 +469,14 @@ QStringList ctkModuleParameter::deprecatedFlagAliases() const
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setMultiple(const QString& multiple)
+void ctkModuleParameter::setMultiple(bool multiple)
 {
   Q_D(ctkModuleParameter);
   d->Multiple = multiple;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::multiple() const
+bool ctkModuleParameter::multiple() const
 {
   Q_D(const ctkModuleParameter);
   return d->Multiple;
@@ -533,6 +533,20 @@ QString ctkModuleParameter::coordinateSystem() const
 }
 
 //----------------------------------------------------------------------------
+void ctkModuleParameter::addElement(const QString &elem)
+{
+  Q_D(ctkModuleParameter);
+  d->Elements.push_back(elem);
+}
+
+//----------------------------------------------------------------------------
+void ctkModuleParameter::setElements(const QStringList& elems)
+{
+  Q_D(ctkModuleParameter);
+  d->Elements = elems;
+}
+
+//----------------------------------------------------------------------------
 QStringList ctkModuleParameter::elements() const
 {
   Q_D(const ctkModuleParameter);
@@ -555,13 +569,13 @@ QTextStream& operator<<(QTextStream& os, const ctkModuleParameter& parameter)
   os << "      " << "Label: " << parameter.label() << '\n';
   os << "      " << "Type: " << parameter.type() << '\n';
   os << "      " << "Reference: " << parameter.reference() << '\n';
-  os << "      " << "Hidden: " << parameter.hidden() << '\n';
-  os << "      " << "CPPType: " << parameter.cppType() << '\n';
+  os << "      " << "Hidden: " << (parameter.hidden() ? "true" : "false") << '\n';
+  //os << "      " << "CPPType: " << parameter.cppType() << '\n';
   os << "      " << "ArgType: " << parameter.argType() << '\n';
-  os << "      " << "StringToType: " << parameter.stringToType() << '\n';
+  //os << "      " << "StringToType: " << parameter.stringToType() << '\n';
   os << "      " << "Default: " << parameter.defaultValue() << '\n';
   os << "      " << "Elements: " << parameter.elements().join(", ") << '\n';
-  os << "      " << "Constraints: " << parameter.constraints() << '\n';
+  os << "      " << "Constraints: " << (parameter.constraints() ? "true" : "false") << '\n';
   os << "      " << "Minimum: " << parameter.minimum() << '\n';
   os << "      " << "Maximum: " << parameter.maximum() << '\n';
   os << "      " << "Step: " << parameter.step() << '\n';
@@ -573,7 +587,7 @@ QTextStream& operator<<(QTextStream& os, const ctkModuleParameter& parameter)
   os << "      " << "Deprecated LongFlag aliases: " << parameter.deprecatedLongFlagAliasesAsString() << '\n';
   os << "      " << "Channel: " << parameter.channel() << '\n';
   os << "      " << "Index: " << parameter.index() << '\n';
-  os << "      " << "Multiple: " << parameter.multiple() << '\n';
+  os << "      " << "Multiple: " << (parameter.multiple() ? "true" : "false") << '\n';
   os << "      " << "Aggregate: " << parameter.aggregate() << '\n';
   os << "      " << "FileExtensions: " << parameter.fileExtensionsAsString() << '\n';
   os << "      " << "CoordinateSystem: " << parameter.coordinateSystem() << '\n';

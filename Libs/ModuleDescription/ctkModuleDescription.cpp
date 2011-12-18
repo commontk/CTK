@@ -32,7 +32,6 @@ struct ctkModuleDescriptionPrivate
 
   QString Title;
   QString Category;
-  QString Index;
   QString Description;
   QString Version;
   QString DocumentationURL;
@@ -78,20 +77,6 @@ QString ctkModuleDescription::category() const
 {
   Q_D(const ctkModuleDescription);
   return d->Category;
-}
-
-//----------------------------------------------------------------------------
-void ctkModuleDescription::setIndex(const QString& ind)
-{
-  Q_D(ctkModuleDescription);
-  d->Index = ind;
-}
-
-//----------------------------------------------------------------------------
-QString ctkModuleDescription::index() const
-{
-  Q_D(const ctkModuleDescription);
-  return d->Index;
 }
 
 //----------------------------------------------------------------------------
@@ -367,7 +352,6 @@ QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module)
 {
   os << "Title: " << module.title() << '\n';
   os << "Category: " << module.category() << '\n';
-  os << "Index: " << module.index() << '\n';
   os << "Description: " << module.description() << '\n';
   os << "Version: " << module.version() << '\n';
   os << "DocumentationURL: " << module.documentationURL() << '\n';
