@@ -19,46 +19,44 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEDESCRIPTIONVALIDATOR_H
-#define CTKMODULEDESCRIPTIONVALIDATOR_H
+#ifndef CTKMODULEREFERENCE_H
+#define CTKMODULEREFERENCE_H
 
 #include <ctkModuleDescriptionExport.h>
 
+#include <QByteArray>
 #include <QString>
 
-class QIODevice;
+class QObject;
 
-class CTK_MODULDESC_EXPORT ctkModuleDescriptionValidator
+class ctkModuleReferencePrivate;
+
+class CTK_MODULDESC_EXPORT ctkModuleReference
 {
-
 public:
 
-  ctkModuleDescriptionValidator(QIODevice* input = 0);
+  ctkModuleReference();
+  ~ctkModuleReference();
 
-  void setInput(QIODevice* input);
-  QString output();
+  ctkModuleReference(const ctkModuleReference& ref);
+  ctkModuleReference& operator=(const ctkModuleReference& ref);
 
-  void setInputSchema(QIODevice* input);
-  void setOutputSchema(QIODevice* output);
+  operator bool();
 
-  void setXSLTransformation(QIODevice* transformation);
+  bool isValid();
 
-  bool validate();
-  bool validateXMLInput();
-  bool validateXSLTOutput();
+  QByteArray xmlDescription() const;
 
-  bool error() const;
-  QString errorString() const;
+  QString location() const;
+
+  QObject* widgetTree() const;
 
 private:
 
-  QIODevice* _input;
-  QIODevice* _inputSchema;
-  QIODevice* _outputSchema;
-  QIODevice* _transformation;
+  friend class ctkModuleManager;
 
-  QString _output;
-  QString _errorStr;
+  ctkModuleReferencePrivate* d;
+
 };
 
-#endif // CTKMODULEDESCRIPTIONVALIDATOR_H
+#endif // CTKMODULEREFERENCE_H

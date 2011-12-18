@@ -59,6 +59,13 @@ public:
   QString label() const;
   QString value() const;
 
+  QString flag() const;
+  QString longFlag() const;
+  int index() const;
+
+  bool isMultiple() const;
+
+
   QVariant property(const QString& propName) const;
 
   TokenType readNext() const;

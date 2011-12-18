@@ -21,23 +21,121 @@
 
 #include "ctkModuleManager.h"
 
+#include "ctkModuleDescriptionValidator.h"
 #include "ctkModuleObjectHierarchyReader.h"
+#include "ctkModuleProcessRunner_p.h"
+#include "ctkModuleReferencePrivate.h"
 
-#include <QDebug>
+#include <QStringList>
+#include <QBuffer>
 
-ctkModuleManager::ctkModuleManager()
+#include <QProcess>
+#include <QFuture>
+
+QString normalizeFlag(const QString& flag)
+{
+  return flag.trimmed().remove(QRegExp("^-*"));
+}
+
+ctkModuleManager::ctkModuleManager(ctkModuleDescriptionFactory *descriptionFactory)
+  : descriptionFactory(descriptionFactory)
 {
 }
 
-QString ctkModuleManager::createCommandLine(QObject *hierarchy)
+QStringList ctkModuleManager::createCommandLineArgs(QObject *hierarchy)
 {
   ctkModuleObjectHierarchyReader reader(hierarchy);
 
-  QString cmdLine;
+  QStringList cmdLineArgs;
+  QHash<int, QString> indexedArgs;
   while(reader.readNextParameter())
   {
-    qDebug() << "Found parameter:" << reader.name() << "," << reader.value();
+    if (reader.index() > -1)
+    {
+      indexedArgs.insert(reader.index(), reader.value());
+    }
+    else
+    {
+      QString argFlag;
+      if (reader.longFlag().isEmpty())
+      {
+        argFlag = QString("-") + normalizeFlag(reader.flag());
+      }
+      else
+      {
+        argFlag = QString("--") + normalizeFlag(reader.longFlag());
+      }
+
+      QStringList args;
+      if (reader.isMultiple())
+      {
+        args = reader.value().split(',', QString::SkipEmptyParts);
+      }
+      else
+      {
+        args.push_back(reader.value());
+      }
+
+      foreach(QString arg, args)
+      {
+        cmdLineArgs << argFlag << arg;
+      }
+    }
   }
 
-  return cmdLine;
+  QList<int> indexes = indexedArgs.keys();
+  qSort(indexes.begin(), indexes.end());
+  foreach(int index, indexes)
+  {
+    cmdLineArgs << indexedArgs[index];
+  }
+
+  return cmdLineArgs;
+}
+
+ctkModuleReference ctkModuleManager::addModule(const QString& location)
+{
+  QProcess process;
+  process.setReadChannel(QProcess::StandardOutput);
+  process.start(location, QStringList("--xml"));
+
+  ctkModuleReference ref;
+  ref.d->loc = location;
+  if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
+      process.error() != QProcess::UnknownError)
+  {
+    qWarning() << "The executable at" << location << "could not be started:" << process.errorString();
+    return ref;
+  }
+
+  process.waitForReadyRead();
+  QByteArray xml = process.readAllStandardOutput();
+
+  qDebug() << xml;
+
+  // validate the outputted xml description
+  QBuffer input(&xml);
+  input.open(QIODevice::ReadOnly);
+
+  ctkModuleDescriptionValidator validator(&input);
+  if (!validator.validateXMLInput())
+  {
+    qCritical() << validator.errorString();
+    return ref;
+  }
+
+  ref.d->xml = xml;
+  ref.d->objectRepresentation = descriptionFactory->createObjectRepresentationFromXML(ref.d->xml);
+  ref.d->setGUI(descriptionFactory->createGUIFromXML(ref.d->xml));
+
+  cache[location] = ref;
+  return ref;
+}
+
+ctkModuleProcessFuture ctkModuleManager::run(const ctkModuleReference& moduleRef)
+{
+  // TODO: manage memory
+  QStringList args = createCommandLineArgs(moduleRef.d->objectRepresentation);
+  ctkModuleProcessRunner* moduleProcess = new ctkModuleProcessRunner(moduleRef.location(), args);
+  return moduleProcess->start();
 }

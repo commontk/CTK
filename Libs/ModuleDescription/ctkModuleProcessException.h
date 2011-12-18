@@ -19,46 +19,38 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEDESCRIPTIONVALIDATOR_H
-#define CTKMODULEDESCRIPTIONVALIDATOR_H
+#ifndef CTKMODULEPROCESSEXCEPTION_H
+#define CTKMODULEPROCESSEXCEPTION_H
 
-#include <ctkModuleDescriptionExport.h>
+#include <qtconcurrentexception.h>
 
-#include <QString>
+#include <QProcess>
 
-class QIODevice;
-
-class CTK_MODULDESC_EXPORT ctkModuleDescriptionValidator
+class ctkModuleProcessException : public QtConcurrent::Exception
 {
-
 public:
 
-  ctkModuleDescriptionValidator(QIODevice* input = 0);
+  ctkModuleProcessException(const QString& msg, int code = 0,
+                            QProcess::ExitStatus status = QProcess::NormalExit);
 
-  void setInput(QIODevice* input);
-  QString output();
+  ~ctkModuleProcessException() throw() {}
 
-  void setInputSchema(QIODevice* input);
-  void setOutputSchema(QIODevice* output);
+  int exitCode() const;
 
-  void setXSLTransformation(QIODevice* transformation);
+  QProcess::ExitStatus exitStatus() const;
 
-  bool validate();
-  bool validateXMLInput();
-  bool validateXSLTOutput();
+  QString message() const;
 
-  bool error() const;
-  QString errorString() const;
+  const char* what() const throw();
+
+  void raise() const;
+  ctkModuleProcessException* clone() const;
 
 private:
 
-  QIODevice* _input;
-  QIODevice* _inputSchema;
-  QIODevice* _outputSchema;
-  QIODevice* _transformation;
-
-  QString _output;
-  QString _errorStr;
+  QString msg;
+  int code;
+  QProcess::ExitStatus status;
 };
 
-#endif // CTKMODULEDESCRIPTIONVALIDATOR_H
+#endif // CTKMODULEPROCESSEXCEPTION_H

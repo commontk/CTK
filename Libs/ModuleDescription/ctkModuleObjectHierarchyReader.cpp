@@ -150,12 +150,35 @@ QString ctkModuleObjectHierarchyReader::label() const
   default: return QString();
   }
 }
-#include <QDebug>
+
 QString ctkModuleObjectHierarchyReader::value() const
 {
   QString valProp = property("valueProperty").toString();
-  qDebug() << "valProp:" << valProp;
   return property(valProp).toString();
+}
+
+QString ctkModuleObjectHierarchyReader::flag() const
+{
+  QVariant v = property("flag");
+  return v.isValid() ? v.toString() : QString();
+}
+
+QString ctkModuleObjectHierarchyReader::longFlag() const
+{
+  QVariant v = property("longflag");
+  return v.isValid() ? v.toString() : QString();
+}
+
+int ctkModuleObjectHierarchyReader::index() const
+{
+  QVariant v = property("index");
+  return v.isValid() ? v.toInt() : -1;
+}
+
+bool ctkModuleObjectHierarchyReader::isMultiple() const
+{
+  QVariant v = property("multiple");
+  return v.isValid() ? v.toBool() : false;
 }
 
 QVariant ctkModuleObjectHierarchyReader::property(const QString &propName) const

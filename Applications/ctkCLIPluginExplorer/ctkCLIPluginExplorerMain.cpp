@@ -20,23 +20,106 @@
 =============================================================================*/
 
 // Qt includes
-#include <QCoreApplication>
+#include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <QBuffer>
+#include <QWidget>
+
+#include <QtXmlPatterns/QXmlQuery>
+#include <QtUiTools/QUiLoader>
 
 // CTK includes
-#include <ctkModuleDescription.h>
+#include <ctkCommandLineParser.h>
+#include <ctkModuleDescriptionValidator.h>
+
+#include "ctkCLIPluginExplorerMainWindow.h"
 
 int main(int argc, char** argv)
 {
-  QCoreApplication app(argc, argv);
+  QApplication myApp(argc, argv);
 
-  QIODevice* input = new QFile("/home/sascha/tmp/slicer_md1.xml");
+  ctkCommandLineParser cmdLineParser;
+  cmdLineParser.setArgumentPrefix("--", "-");
+  cmdLineParser.setStrictModeEnabled(true);
 
-  ctkModuleDescription* descr = ctkModuleDescription::parse(input);
+  cmdLineParser.addArgument("cli", "", QVariant::String, "Path to a CLI module (executable)");
+  cmdLineParser.addArgument("cli-xml", "", QVariant::String, "Path to a CLI XML description.");
 
-  QTextStream cout(stdout, QIODevice::WriteOnly);
-  cout << *descr;
+  cmdLineParser.addArgument("validate-plugin", "", QVariant::String, "Path to a CLI plug-in");
+  cmdLineParser.addArgument("validate-xml", "", QVariant::String, "Path to a CLI XML description.");
+  cmdLineParser.addArgument("verbose", "v", QVariant::Bool, "Be verbose.");
+  cmdLineParser.addArgument("help", "h", QVariant::Bool, "Print this help text.");
 
-  return 0;
+  bool parseOkay = false;
+  QHash<QString, QVariant> args = cmdLineParser.parseArguments(argc, argv, &parseOkay);
+
+  QTextStream out(stdout, QIODevice::WriteOnly);
+
+  if(!parseOkay)
+  {
+    out << "Error parsing command line arguments: " << cmdLineParser.errorString() << '\n';
+    return EXIT_FAILURE;
+  }
+
+  if (args.contains("help"))
+  {
+    out << "Usage:\n" << cmdLineParser.helpText();
+    out.flush();
+    return EXIT_SUCCESS;
+  }
+
+  if (args.contains("validate-xml"))
+  {
+    QFile input(args["validate-xml"].toString());
+    if (!input.exists())
+    {
+      qCritical() << "XML description does not exist:" << input.fileName();
+      return EXIT_FAILURE;
+    }
+    input.open(QIODevice::ReadOnly);
+
+    ctkModuleDescriptionValidator validator(&input);
+    if (!validator.validate())
+    {
+      qCritical() << validator.errorString();
+      return EXIT_FAILURE;
+    }
+
+    if (args.contains("verbose"))
+    {
+      qDebug() << "=================================================";
+      qDebug() << "****          Transformed input              ****";
+      qDebug() << "=================================================";
+      qDebug() << validator.output();
+    }
+    return EXIT_SUCCESS;
+  }
+
+
+  //ctkModuleDescription* descr = ctkModuleDescription::parse(&input);
+
+  ctkCLIPluginExplorerMainWindow mainWindow;
+
+  if (args.contains("cli-xml"))
+  {
+    QFile input(args["cli-xml"].toString());
+    if (!input.exists())
+    {
+      qCritical() << "XML description does not exist:" << input.fileName();
+      return EXIT_FAILURE;
+    }
+    input.open(QIODevice::ReadOnly);
+    QByteArray xml = input.readAll();
+
+    mainWindow.testModuleXML(xml);
+  }
+  else if (args.contains("cli"))
+  {
+    mainWindow.addModule(args["cli"].toString());
+  }
+
+  mainWindow.show();
+
+  return myApp.exec();
 }

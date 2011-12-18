@@ -115,10 +115,10 @@ void ctkModuleDescriptionValidator::setXSLTransformation(QIODevice *transformati
 
 bool ctkModuleDescriptionValidator::validate()
 {
-  return validateInput() && validateOutput();
+  return validateXMLInput() && validateXSLTOutput();
 }
 
-bool ctkModuleDescriptionValidator::validateInput()
+bool ctkModuleDescriptionValidator::validateXMLInput()
 {
   _errorStr.clear();
 
@@ -161,7 +161,7 @@ bool ctkModuleDescriptionValidator::validateInput()
   return true;
 }
 
-bool ctkModuleDescriptionValidator::validateOutput()
+bool ctkModuleDescriptionValidator::validateXSLTOutput()
 {
   _errorStr.clear();
   _output.clear();

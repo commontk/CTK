@@ -151,7 +151,7 @@ void ctkModuleDescriptionParser::validate()
 
   QXmlSchema schema;
   schema.setMessageHandler(&errorHandler);
-  schema.load(QUrl::fromLocalFile(":ctkModuleDescription.xsd"));
+  schema.load(QUrl::fromLocalFile(":/ctkModuleDescription.xsd"));
 
   bool res = schema.isValid();
   if (!res)

@@ -19,46 +19,41 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEDESCRIPTIONVALIDATOR_H
-#define CTKMODULEDESCRIPTIONVALIDATOR_H
+#include "ctkModuleProcessException.h"
 
-#include <ctkModuleDescriptionExport.h>
+ctkModuleProcessException::ctkModuleProcessException(const QString& msg, int code,
+                                                     QProcess::ExitStatus status)
+  : msg(msg), code(code), status(status)
+{}
 
-#include <QString>
-
-class QIODevice;
-
-class CTK_MODULDESC_EXPORT ctkModuleDescriptionValidator
+int ctkModuleProcessException::exitCode() const
 {
+  return code;
+}
 
-public:
+QProcess::ExitStatus ctkModuleProcessException::exitStatus() const
+{
+  return status;
+}
 
-  ctkModuleDescriptionValidator(QIODevice* input = 0);
+QString ctkModuleProcessException::message() const
+{
+  return msg;
+}
 
-  void setInput(QIODevice* input);
-  QString output();
+const char* ctkModuleProcessException::what() const throw()
+{
+  static std::string strMsg;
+  strMsg = msg.toStdString();
+  return strMsg.c_str();
+}
 
-  void setInputSchema(QIODevice* input);
-  void setOutputSchema(QIODevice* output);
+void ctkModuleProcessException::raise() const
+{
+  throw *this;
+}
 
-  void setXSLTransformation(QIODevice* transformation);
-
-  bool validate();
-  bool validateXMLInput();
-  bool validateXSLTOutput();
-
-  bool error() const;
-  QString errorString() const;
-
-private:
-
-  QIODevice* _input;
-  QIODevice* _inputSchema;
-  QIODevice* _outputSchema;
-  QIODevice* _transformation;
-
-  QString _output;
-  QString _errorStr;
-};
-
-#endif // CTKMODULEDESCRIPTIONVALIDATOR_H
+ctkModuleProcessException* ctkModuleProcessException::clone() const
+{
+  return new ctkModuleProcessException(*this);
+}

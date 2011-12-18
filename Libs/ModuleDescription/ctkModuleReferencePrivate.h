@@ -19,46 +19,39 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEDESCRIPTIONVALIDATOR_H
-#define CTKMODULEDESCRIPTIONVALIDATOR_H
+#ifndef CTKMODULEREFERENCEPRIVATE_H
+#define CTKMODULEREFERENCEPRIVATE_H
 
-#include <ctkModuleDescriptionExport.h>
+#include <QByteArray>
+#include <QObject>
 
-#include <QString>
-
-class QIODevice;
-
-class CTK_MODULDESC_EXPORT ctkModuleDescriptionValidator
+class ctkModuleReferencePrivate : public QObject
 {
+  Q_OBJECT
 
 public:
 
-  ctkModuleDescriptionValidator(QIODevice* input = 0);
+  ctkModuleReferencePrivate();
 
-  void setInput(QIODevice* input);
-  QString output();
+  ~ctkModuleReferencePrivate();
 
-  void setInputSchema(QIODevice* input);
-  void setOutputSchema(QIODevice* output);
+  void setGUI(QObject* gui);
 
-  void setXSLTransformation(QIODevice* transformation);
+  QByteArray xml;
+  QString loc;
+  QObject* objectRepresentation;
 
-  bool validate();
-  bool validateXMLInput();
-  bool validateXSLTOutput();
-
-  bool error() const;
-  QString errorString() const;
+  QAtomicInt ref;
 
 private:
 
-  QIODevice* _input;
-  QIODevice* _inputSchema;
-  QIODevice* _outputSchema;
-  QIODevice* _transformation;
+  friend class ctkModuleReference;
 
-  QString _output;
-  QString _errorStr;
+  QObject* gui;
+
+private Q_SLOTS:
+
+  void guiDestroyed();
 };
 
-#endif // CTKMODULEDESCRIPTIONVALIDATOR_H
+#endif // CTKMODULEREFERENCEPRIVATE_H

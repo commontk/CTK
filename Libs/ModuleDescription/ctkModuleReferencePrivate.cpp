@@ -19,46 +19,26 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEDESCRIPTIONVALIDATOR_H
-#define CTKMODULEDESCRIPTIONVALIDATOR_H
+#include "ctkModuleReferencePrivate.h"
 
-#include <ctkModuleDescriptionExport.h>
+ctkModuleReferencePrivate::ctkModuleReferencePrivate()
+  : objectRepresentation(0), ref(1), gui(0)
+{}
 
-#include <QString>
-
-class QIODevice;
-
-class CTK_MODULDESC_EXPORT ctkModuleDescriptionValidator
+ctkModuleReferencePrivate::~ctkModuleReferencePrivate()
 {
+  objectRepresentation->deleteLater();
+  if (gui) gui->deleteLater();
+}
 
-public:
+void ctkModuleReferencePrivate::setGUI(QObject* gui)
+{
+  if (this->gui) disconnect(gui);
+  this->gui = gui;
+  connect(this->gui, SIGNAL(destroyed()), this, SLOT(guiDestroyed()));
+}
 
-  ctkModuleDescriptionValidator(QIODevice* input = 0);
-
-  void setInput(QIODevice* input);
-  QString output();
-
-  void setInputSchema(QIODevice* input);
-  void setOutputSchema(QIODevice* output);
-
-  void setXSLTransformation(QIODevice* transformation);
-
-  bool validate();
-  bool validateXMLInput();
-  bool validateXSLTOutput();
-
-  bool error() const;
-  QString errorString() const;
-
-private:
-
-  QIODevice* _input;
-  QIODevice* _inputSchema;
-  QIODevice* _outputSchema;
-  QIODevice* _transformation;
-
-  QString _output;
-  QString _errorStr;
-};
-
-#endif // CTKMODULEDESCRIPTIONVALIDATOR_H
+void ctkModuleReferencePrivate::guiDestroyed()
+{
+  gui = 0;
+}

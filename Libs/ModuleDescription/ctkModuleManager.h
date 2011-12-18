@@ -22,18 +22,46 @@
 #ifndef CTKMODULEMANAGER_H
 #define CTKMODULEMANAGER_H
 
+#include <QStringList>
 #include <QString>
 
 #include <ctkModuleDescriptionExport.h>
 
+#include "ctkModuleReference.h"
+#include "ctkModuleProcessFuture.h"
+
 class QObject;
 
+struct ctkModuleDescriptionFactory
+{
+  virtual ~ctkModuleDescriptionFactory() {}
+
+  virtual QObject* createGUIFromXML(const QByteArray& xmlDescription)
+  {
+    Q_UNUSED(xmlDescription)
+    return 0;
+  }
+
+  virtual QObject* createObjectRepresentationFromXML(const QByteArray& xmlDescription) = 0;
+};
+
+/// The methods in this class are for playing around... no API design yet
 class CTK_MODULDESC_EXPORT ctkModuleManager
 {
 public:
-  ctkModuleManager();
+  ctkModuleManager(ctkModuleDescriptionFactory* descriptionFactory);
 
-  static QString createCommandLine(QObject* hierarchy);
+  ctkModuleReference addModule(const QString& location);
+
+  static QStringList createCommandLineArgs(QObject* hierarchy);
+
+  static ctkModuleProcessFuture run(const ctkModuleReference& moduleRef);
+
+private:
+
+  ctkModuleDescriptionFactory* descriptionFactory;
+
+  QHash<QString, ctkModuleReference> cache;
 };
 
 #endif // CTKMODULEMANAGER_H

@@ -28,14 +28,22 @@ set(KIT_SRCS
   ctkModuleParameterGroup.h
   ctkModuleParameterGroup.cpp
   ctkModuleParameterParsers_p.h
+  ctkModuleProcessException.h
+  ctkModuleProcessException.cpp
+  ctkModuleProcessFuture.h
+  ctkModuleProcessFuture.cpp
+  ctkModuleProcessRunner_p.h
+  ctkModuleProcessRunner.cpp
+  ctkModuleReference.h
+  ctkModuleReference.cpp
+  ctkModuleReferencePrivate.h
+  ctkModuleReferencePrivate.cpp
  )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  #ctkModuleDescriptionConverterInterface.h
-  #ctkModuleDescriptionConverter.h
-  #ctkModuleDescriptionExecutionInterface.h
-  #ctkModuleDescriptionExecution.h
+  ctkModuleProcessRunner_p.h
+  ctkModuleReferencePrivate.h
 )
 
 # UI files

@@ -19,46 +19,39 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEDESCRIPTIONVALIDATOR_H
-#define CTKMODULEDESCRIPTIONVALIDATOR_H
+#ifndef CTKMODULEPROCESSRUNNER_P_H
+#define CTKMODULEPROCESSRUNNER_P_H
 
-#include <ctkModuleDescriptionExport.h>
+#include <QObject>
+#include <QProcess>
 
-#include <QString>
+#include "ctkModuleProcessFuture.h"
 
-class QIODevice;
-
-class CTK_MODULDESC_EXPORT ctkModuleDescriptionValidator
+class ctkModuleProcessRunner : public QObject, public QRunnable, public ctkModuleProcessFutureInterface
 {
+  Q_OBJECT
 
 public:
 
-  ctkModuleDescriptionValidator(QIODevice* input = 0);
+  ctkModuleProcessRunner(const QString& location, const QStringList& args);
 
-  void setInput(QIODevice* input);
-  QString output();
+  ctkModuleProcessFuture start();
 
-  void setInputSchema(QIODevice* input);
-  void setOutputSchema(QIODevice* output);
+  void run();
 
-  void setXSLTransformation(QIODevice* transformation);
+protected Q_SLOTS:
 
-  bool validate();
-  bool validateXMLInput();
-  bool validateXSLTOutput();
+  void processStarted();
 
-  bool error() const;
-  QString errorString() const;
+  void processFinished(int exitCode, QProcess::ExitStatus status);
+
+  void processError(QProcess::ProcessError);
 
 private:
 
-  QIODevice* _input;
-  QIODevice* _inputSchema;
-  QIODevice* _outputSchema;
-  QIODevice* _transformation;
-
-  QString _output;
-  QString _errorStr;
+  QProcess process;
+  const QString location;
+  const QStringList args;
 };
 
-#endif // CTKMODULEDESCRIPTIONVALIDATOR_H
+#endif // CTKMODULEPROCESSRUNNER_P_H
