@@ -17,6 +17,12 @@ set(KIT_SRCS
   ctkModuleDescription.h
   ctkModuleDescription.cpp
   ctkModuleDescriptionParser.cpp
+  ctkModuleDescriptionValidator.h
+  ctkModuleDescriptionValidator.cpp
+  ctkModuleManager.h
+  ctkModuleManager.cpp
+  ctkModuleObjectHierarchyReader.h
+  ctkModuleObjectHierarchyReader.cpp
   ctkModuleParameter.h
   ctkModuleParameter.cpp
   ctkModuleParameterGroup.h
