@@ -33,6 +33,9 @@
 #include "ctkServiceReferencePrivate.h"
 #include "ctkServiceRegistration.h"
 
+// for ctk::msecsTo() - remove after switching to Qt 4.7
+#include <ctkUtils.h>
+
 const ctkPlugin::States ctkPluginPrivate::RESOLVED_FLAGS = ctkPlugin::RESOLVED | ctkPlugin::STARTING | ctkPlugin::ACTIVE | ctkPlugin::STOPPING;
 
 //----------------------------------------------------------------------------
@@ -479,7 +482,9 @@ void ctkPluginPrivate::waitOnOperation(LockObject* lock, const QString& src, boo
       {
         return;
       }
-      left = QDateTime::currentDateTime().msecsTo(waitUntil);
+      // TODO use Qt 4.7 QDateTime::msecsTo() API
+      //left = QDateTime::currentDateTime().msecsTo(waitUntil);
+      left = ctk::msecsTo(QDateTime::currentDateTime(), waitUntil);
     } while (left > 0);
 
     QString op;
