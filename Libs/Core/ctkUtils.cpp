@@ -314,3 +314,11 @@ QString ctk::qtHandleToString(Qt::HANDLE handle)
   s << handle;
   return str;
 }
+
+//-----------------------------------------------------------------------------
+qint64 ctk::msecsTo(const QDateTime& t1, const QDateTime& t2)
+{
+  qint64 days = t1.daysTo(t2);
+  qint64 msecs = t1.time().msecsTo(t2.time());
+  return days*(1000*3600*24) + msecs;
+}

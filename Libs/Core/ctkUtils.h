@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QStringList>
+#include <QDateTime>
 
 // STD includes
 #include <vector>
@@ -121,6 +122,19 @@ bool CTK_CORE_EXPORT removeDirRecursively(const QString & dirName);
 /// Convert Qt::HANDLE to string
 /// \sa Qt::HANDLE
 QString CTK_CORE_EXPORT qtHandleToString(Qt::HANDLE handle);
+
+
+///
+/// \ingroup Core
+/// \brief Compute the milli secons from one QDateTime to an other.
+///
+/// This function can be used to correctly compute the amount of milli
+/// seconds from <code>t1</code> to <code>t2</code>. This is for
+/// back-wards compatibility with Qt 4.6. Since Qt 4.7 there exists
+/// a QDateTime::msecsTo() method which should be used instead, after
+/// bumping the minimum required Qt version for CTK.
+qint64 CTK_CORE_EXPORT msecsTo(const QDateTime& t1, const QDateTime& t2);
+
 }
 
 #endif

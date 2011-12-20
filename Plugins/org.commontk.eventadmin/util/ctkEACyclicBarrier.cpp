@@ -22,6 +22,9 @@
 
 #include "ctkEACyclicBarrier_p.h"
 
+// for ctk::msecsTo() - remove after switching to Qt 4.7
+#include <ctkUtils.h>
+
 #include <QDateTime>
 #include <QRunnable>
 #include <QDebug>
@@ -128,10 +131,8 @@ int ctkEACyclicBarrier::doBarrier(bool timed, long msecs)
   else
   { // wait until next reset
     int r = resets_;
-    QTime startTime = QDateTime::currentDateTime().time();
-    //TODO use Qt 4.7 API
-    //long startTime = (timed)? QDateTime::toMSecsSinceEpoch() : 0;
-    long waitTime = msecs;
+    QDateTime startTime = QDateTime::currentDateTime();
+    qint64 waitTime = static_cast<qint64>(msecs);
     forever
     {
       try
@@ -165,8 +166,8 @@ int ctkEACyclicBarrier::doBarrier(bool timed, long msecs)
       else if (timed)
       {
         //TODO use Qt 4.7 API
-        //waitTime = msecs - (QDateTime::toMSecsSinceEpoch() - startTime);
-        waitTime = msecs - (startTime.msecsTo(QDateTime::currentDateTime().time()));
+        //waitTime = msecs - QDateTime::toMSecs(startTime);
+        waitTime = static_cast<qint64>(msecs) - ctk::msecsTo(startTime, QDateTime::currentDateTime());
         if  (waitTime <= 0)
         {
           broken_ = true;

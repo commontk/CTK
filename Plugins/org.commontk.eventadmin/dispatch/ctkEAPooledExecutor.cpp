@@ -22,6 +22,9 @@
 
 #include "ctkEAPooledExecutor_p.h"
 
+// for ctk::msecsTo() - remove after switching to Qt 4.7
+#include <ctkUtils.h>
+
 #include "ctkEAChannel_p.h"
 #include <dispatch/ctkEAInterruptibleThread_p.h>
 #include <dispatch/ctkEAInterruptedException_p.h>
@@ -175,7 +178,7 @@ bool ctkEAPooledExecutor::awaitTerminationAfterShutdown(long maxWaitTime) const
     throw std::logic_error("not in shutdown state");
   if (poolSize_ == 0)
     return true;
-  long waitTime = maxWaitTime;
+  qint64 waitTime = static_cast<qint64>(maxWaitTime);
   if (waitTime <= 0)
     return false;
   //TODO Use Qt4.7 API
@@ -185,8 +188,8 @@ bool ctkEAPooledExecutor::awaitTerminationAfterShutdown(long maxWaitTime) const
     waitCond.wait(&shutdownMutex, waitTime);
     if (poolSize_ == 0)
       return true;
-    qint64 currWait = start.time().msecsTo(QDateTime::currentDateTime().time());
-    waitTime = maxWaitTime - currWait;
+    qint64 currWait = ctk::msecsTo(start, QDateTime::currentDateTime());
+    waitTime = static_cast<qint64>(maxWaitTime) - currWait;
     if (waitTime <= 0)
       return false;
   }

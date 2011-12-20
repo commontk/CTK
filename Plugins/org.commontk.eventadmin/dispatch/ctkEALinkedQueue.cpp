@@ -25,6 +25,9 @@
 #include "ctkEAInterruptibleThread_p.h"
 #include "ctkEAInterruptedException_p.h"
 
+// for ctk::msecsTo() - remove after switching to Qt 4.7
+#include <ctkUtils.h>
+
 #include <QDateTime>
 
 
@@ -121,7 +124,7 @@ ctkEARunnable* ctkEALinkedQueue::poll(long msecs)
   {
     QMutexLocker l(&putLock_);
     try {
-      long waitTime = msecs;
+      qint64 waitTime = static_cast<qint64>(msecs);
       //TODO Use Qt4.7 API
       //long start = (msecs <= 0)? 0 : System.currentTimeMillis();
       QDateTime start = QDateTime::currentDateTime();
@@ -138,7 +141,7 @@ ctkEARunnable* ctkEALinkedQueue::poll(long msecs)
         {
           ctkEAInterruptibleThread::currentThread()->wait(&putLock_, &putLockWait_, waitTime);
           //waitTime = msecs - (System.currentTimeMillis() - start);
-          waitTime = msecs - start.time().msecsTo(QDateTime::currentDateTime().time());
+          waitTime = static_cast<qint64>(msecs) - ctk::msecsTo(start, QDateTime::currentDateTime());
         }
       }
     }
