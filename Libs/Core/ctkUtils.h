@@ -126,10 +126,11 @@ QString CTK_CORE_EXPORT qtHandleToString(Qt::HANDLE handle);
 
 ///
 /// \ingroup Core
-/// \brief Compute the milli secons from one QDateTime to an other.
+/// \brief Compute the milli seconds from one QDateTime to an other.
 ///
 /// This function can be used to correctly compute the amount of milli
-/// seconds from <code>t1</code> to <code>t2</code>. This is for
+/// seconds from <code>t1</code> to <code>t2</code>. The QDateTime objects
+/// are converted to Qt::UTC to take daylight saving time into account. This is for
 /// back-wards compatibility with Qt 4.6. Since Qt 4.7 there exists
 /// a QDateTime::msecsTo() method which should be used instead, after
 /// bumping the minimum required Qt version for CTK.
