@@ -12,7 +12,7 @@ function(ctkFunctionExtractOptionNameAndValue my_opt var_opt_name var_opt_value)
   endif()
 
   # Extract option name and option default value
-  string(REPLACE ":" "\\;" my_opt_list ${my_opt})
+  string(REGEX REPLACE ":(ON|OFF)$" "\\\\;\\1" my_opt_list ${my_opt})
   set(my_opt_list ${my_opt_list})
   list(GET my_opt_list 0 opt_name)
   list(GET my_opt_list 1 opt_value)
