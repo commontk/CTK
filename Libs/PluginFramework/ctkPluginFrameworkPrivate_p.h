@@ -62,7 +62,7 @@ public:
   void uninitSystemPlugin();
 
   /**
-   * This method starts a thread that stop this Framework,
+   * This method starts a thread that stops this Framework,
    * stopping all started plug-ins.
    *
    * <p>If the framework is not started, this method does nothing.

@@ -93,7 +93,8 @@ void ctkPluginFrameworkPrivate::shutdown(bool restart)
     }
     break;
   case ctkPlugin::STOPPING:
-    // Shutdown already inprogress
+    // Shutdown already inprogress, fall through
+  case ctkPlugin::UNINSTALLED:
     break;
   }
 }
