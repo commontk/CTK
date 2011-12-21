@@ -107,6 +107,22 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
   static const QString FRAMEWORK_PLUGIN_LOAD_HINTS; // = "org.commontk.pluginfw.loadhints"
 
   /**
+   * Specifies the set of libraries which should be dynamically opened when starting
+   * the framework. The value of this property must be either of type QString
+   * or QStringList. The given libraries are loaded with QLibrary::load(), using the
+   * load hints specified in FRAMEWORK_PLUGIN_LOAD_HINTS. The library search path is
+   * defined by the QLibrary class.
+   *
+   * Setting this property can improve the initial framework start-up time dramatically if
+   * a lot of plug-ins with deeply nested library dependencies are installed. During
+   * initial framework start-up (no plug-in meta-data cached yet), the repeated loading
+   * and unloading of the installed plug-ins will then only lead to repeated loading
+   * and unloading of plug-in dependencies which are not contained in the transitive
+   * dependency closure of the given set of pre-loaded libraries.
+   */
+  static const QString FRAMEWORK_PRELOAD_LIBRARIES; // = "org.commontk.pluginfw.preloadlibs"
+
+  /**
    * Manifest header identifying the plugin's symbolic name.
    *
    * <p>

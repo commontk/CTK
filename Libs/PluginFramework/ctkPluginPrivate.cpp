@@ -181,9 +181,9 @@ ctkPlugin::State ctkPluginPrivate::getUpdatedState()
       Locker sync(&operationLock);
       if (state == ctkPlugin::INSTALLED)
       {
+        operation.fetchAndStoreOrdered(RESOLVING);
         fwCtx->resolvePlugin(this);
         state = ctkPlugin::RESOLVED;
-        operation.fetchAndStoreOrdered(RESOLVING);
         // TODO plugin threading
         //bundleThread().bundleChanged(new BundleEvent(BundleEvent.RESOLVED, this));
         fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::RESOLVED, this->q_func()));
