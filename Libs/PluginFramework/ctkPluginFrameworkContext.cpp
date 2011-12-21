@@ -86,6 +86,32 @@ void ctkPluginFrameworkContext::init()
   services = new ctkServices(this);
   plugins = new ctkPlugins(this);
 
+  // Pre-load libraries
+  // This may speed up installing new plug-ins if they have dependencies on
+  // one of these libraries. It prevents repeated loading and unloading of the
+  // pre-loaded libraries during caching of the plug-in meta-data.
+  if (props[ctkPluginConstants::FRAMEWORK_PRELOAD_LIBRARIES].isValid())
+  {
+    QStringList preloadLibs = props[ctkPluginConstants::FRAMEWORK_PRELOAD_LIBRARIES].toStringList();
+    QLibrary::LoadHints loadHints;
+    QVariant loadHintsVariant = props[ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS];
+    if (loadHintsVariant.isValid())
+    {
+      loadHints = loadHintsVariant.value<QLibrary::LoadHints>();
+    }
+
+    foreach(QString preloadLib, preloadLibs)
+    {
+      QLibrary lib(preloadLib);
+      lib.setLoadHints(loadHints);
+      log() << "Pre-loading library" << preloadLib << "with hints [" << static_cast<int>(loadHints) << "]";
+      if (!lib.load())
+      {
+        qWarning() << "Pre-loading library" << preloadLib << "failed";
+      }
+    }
+  }
+
   plugins->load();
 
   log() << "inited";
