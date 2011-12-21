@@ -219,8 +219,17 @@ void ctkPluginFrameworkContext::checkRequirePlugin(ctkPluginPrivate *plugin)
         else if (p2->state == ctkPlugin::INSTALLED) {
           QSet<ctkPluginPrivate*> oldTempResolved = tempResolved;
           tempResolved.insert(p2);
+
+          // TODO check if operation locking is correct in case of
+          // multi-threaded plug-in start up. Maybe refactor out the dependency
+          // checking (use the "package" lock)
+          ctkPluginPrivate::Locker sync(&p2->operationLock);
+          p2->operation.fetchAndStoreOrdered(ctkPluginPrivate::RESOLVING);
           checkRequirePlugin(p2);
           tempResolved = oldTempResolved;
+          p2->state = ctkPlugin::RESOLVED;
+          listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::RESOLVED, p2->q_func()));
+          p2->operation.fetchAndStoreOrdered(ctkPluginPrivate::IDLE);
           ok = p2;
         }
       }
