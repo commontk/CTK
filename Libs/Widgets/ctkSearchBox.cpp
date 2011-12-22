@@ -61,8 +61,8 @@ public:
 ctkSearchBoxPrivate::ctkSearchBoxPrivate(ctkSearchBox &object)
   : q_ptr(&object)
 {
-  this->clearIcon = QIcon(":Icons/clear.png");
-  this->searchIcon = QIcon(":Icons/search.png");
+  this->clearIcon = QIcon(":Icons/clear.svg");
+  this->searchIcon = QIcon(":Icons/search.svg");
   this->clearIconMode = QIcon::Disabled;
   this->showSearchIcon = false;
   this->alwaysShowClearIcon = false;
