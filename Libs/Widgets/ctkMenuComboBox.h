@@ -56,7 +56,11 @@ class CTK_WIDGETS_EXPORT ctkMenuComboBox : public QWidget
   Q_PROPERTY(QIcon defaultIcon READ defaultIcon WRITE setDefaultIcon)
   Q_PROPERTY(EditableBehavior editBehavior READ editableBehavior WRITE setEditableBehavior)
   Q_PROPERTY(bool searchIconVisible READ isSearchIconVisible WRITE setSearchIconVisible)
-
+  /// This property holds whether the search tool button displays an icon only,
+  /// text only, or text beside/below the icon.
+  /// The default is Qt::ToolButtonIconOnly.
+  /// \sa QToolButton::toolButtonStyle
+  Q_PROPERTY(Qt::ToolButtonStyle toolButtonStyle READ toolButtonStyle WRITE setToolButtonStyle)
 public:
   enum EditableBehavior{
     NotEditable = 0,
@@ -94,15 +98,17 @@ public:
   void setSearchIconVisible(bool state);
   bool isSearchIconVisible() const;
 
+  Qt::ToolButtonStyle toolButtonStyle() const;
+
   /// See QComboBox::setMinimumContentsLength()
   void setMinimumContentsLength(int characters);
 
 protected:
   virtual bool eventFilter(QObject* target, QEvent* event);
-  virtual void resizeEvent(QResizeEvent *event);
 
 public Q_SLOTS:
   void clearActiveAction();
+  void setToolButtonStyle(Qt::ToolButtonStyle style);
 
 Q_SIGNALS:
   void actionChanged(QAction* action);
