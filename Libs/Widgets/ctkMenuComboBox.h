@@ -52,9 +52,22 @@ class CTK_WIDGETS_EXPORT ctkMenuComboBox : public QWidget
 {
   Q_OBJECT
   Q_ENUMS(EditableBehavior)
+  /// This property holds the text shown on the combobox when there is no
+  /// selected item.
+  /// Empty by default.
   Q_PROPERTY(QString defaultText READ defaultText WRITE setDefaultText)
+  /// This property holds the icon shown on the combobox when the current item
+  /// (QAction) doesn't have any icon associated.
+  /// Empty by default
   Q_PROPERTY(QIcon defaultIcon READ defaultIcon WRITE setDefaultIcon)
+  /// This property holds the edit behavior of the combobox, it defines what
+  /// action is needed to turn the combobox into a search mode where the user
+  /// can type the name of the item to select using the combobox line edit.
+  /// ctkMenuComboBox::NotEditable by default
+  /// \sa EditableType
   Q_PROPERTY(EditableBehavior editBehavior READ editableBehavior WRITE setEditableBehavior)
+  /// This property controls whether the search tool button is visible or hidden.
+  /// True by default
   Q_PROPERTY(bool searchIconVisible READ isSearchIconVisible WRITE setSearchIconVisible)
   /// This property holds whether the search tool button displays an icon only,
   /// text only, or text beside/below the icon.
@@ -80,27 +93,22 @@ public:
   void setMenu(QMenu* menu);
   QMenu* menu()const;
 
-  /// Empty by default
-  /// set the first default text.
   void setDefaultText(const QString&);
   QString defaultText()const;
 
-  /// Empty by default
-  /// if a QAction doesn't have icon in the menu, the comboBox takes the defaultIcon.
   void setDefaultIcon(const QIcon&);
   QIcon defaultIcon()const;
 
-  /// set/get the editableType; See enum EditableType for more details.
   void setEditableBehavior(EditableBehavior editBehavior);
   EditableBehavior editableBehavior()const;
 
-  /// set the icon search visible
   void setSearchIconVisible(bool state);
   bool isSearchIconVisible() const;
 
   Qt::ToolButtonStyle toolButtonStyle() const;
 
-  /// See QComboBox::setMinimumContentsLength()
+  /// Set the minimum width of the combobox.
+  /// \sa QComboBox::setMinimumContentsLength()
   void setMinimumContentsLength(int characters);
 
 protected:
