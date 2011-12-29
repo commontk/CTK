@@ -44,7 +44,7 @@ int ctkMessageBoxDontShowAgainTest(int argc, char * argv [] )
   ctkMessageBox confirmDialog;
 
   // Test default values.
-  if (confirmDialog.dontShowAgainVisible() != false ||
+  if (confirmDialog.isDontShowAgainVisible() != false ||
       confirmDialog.dontShowAgain() != false ||
       confirmDialog.dontShowAgainSettingsKey().isEmpty() != true)
     {
