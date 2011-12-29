@@ -26,14 +26,14 @@
 #include <QTimer>
 
 // CTK includes
-#include "ctkConfirmExitDialog.h"
+#include "ctkMessageBox.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkConfirmExitDialogTest1(int argc, char * argv [] )
+int ctkMessageBoxDontShowAgainTest(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   /// set the names for QSettings to work
@@ -41,47 +41,53 @@ int ctkConfirmExitDialogTest1(int argc, char * argv [] )
   app.setOrganizationDomain("www.commontk.org");
   app.setApplicationName("CTK");
 
-  ctkConfirmExitDialog confirmDialog;
-  if (confirmDialog.dontShowAnymore() != false)
+  ctkMessageBox confirmDialog;
+
+  // Test default values.
+  if (confirmDialog.dontShowAgainVisible() != false ||
+      confirmDialog.dontShowAgain() != false ||
+      confirmDialog.dontShowAgainSettingsKey().isEmpty() != true)
     {
-    std::cerr << "ctkConfirmExitDialog::dontShowAnymore failed" << std::endl;
+    std::cerr << "ctkMessageBox default values failed" << std::endl;
     return EXIT_FAILURE;
     }
   confirmDialog.setText("Are you sure you want to exit?");
-  confirmDialog.setPixmap(confirmDialog.style()->standardPixmap(QStyle::SP_MessageBoxQuestion));
-  
+  confirmDialog.setIcon(QMessageBox::Question);
+  confirmDialog.setDontShowAgainVisible(true);
+
   QSettings settings;
   settings.setValue("DontShow", true);
-  
-  confirmDialog.setDontShowAnymoreSettingsKey("DontShow");
-  if (confirmDialog.dontShowAnymoreSettingsKey() != "DontShow")
+
+  confirmDialog.setDontShowAgainSettingsKey("DontShow");
+  if (confirmDialog.dontShowAgainSettingsKey() != "DontShow")
     {
-    std::cerr << "ctkConfirmExitDialog::setDontShowAnymoreSettingsKey failed:"
-              << confirmDialog.dontShowAnymoreSettingsKey().toStdString() << std::endl;
+    std::cerr << "ctkMessageBox::setDontShowAgainSettingsKey failed:"
+              << confirmDialog.dontShowAgainSettingsKey().toStdString() << std::endl;
     return EXIT_FAILURE;
     }
-  if (confirmDialog.dontShowAnymore() != true)
+  if (confirmDialog.dontShowAgain() != true)
     {
-    std::cerr << "ctkConfirmExitDialog::setDontShowAnymoreSettingsKey failed:"
-              << confirmDialog.dontShowAnymore() << std::endl;
-    return EXIT_FAILURE;
-    }
-  
-  // exec() should return automatically because DontShowAnymore is true
-  if (confirmDialog.exec() != QDialog::Accepted)
-    {
-    std::cerr << "ctkConfirmExitDialog::exec failed:" << std::endl;
-    return EXIT_FAILURE;
-    }
-  
-  // test the static version
-  if (ctkConfirmExitDialog::confirmExit("DontShow") != true)
-    {
-    std::cerr << "ctkConfirmExitDialog::confirmExit failed:" << std::endl;
+    std::cerr << "ctkMessageBox::setDontShowAgainSettingsKey failed:"
+              << confirmDialog.dontShowAgain() << std::endl;
     return EXIT_FAILURE;
     }
 
-  confirmDialog.setDontShowAnymore(false);
+  // exec() should return automatically because DontShowAgain is true
+  if (confirmDialog.exec() != QDialog::Accepted)
+    {
+    std::cerr << "ctkMessageBox::exec failed:" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // test the static version
+  if (ctkMessageBox::confirmExit("DontShow") != true)
+    {
+    std::cerr << "ctkMessageBox::confirmExit failed:" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  confirmDialog.setDontShowAgain(false);
+
   // modal dialog
   confirmDialog.open();
 

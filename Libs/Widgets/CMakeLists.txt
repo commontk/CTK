@@ -45,8 +45,6 @@ set(KIT_SRCS
   ctkConsole.cpp
   ctkConsole.h
   ctkConsole_p.h
-  ctkConfirmExitDialog.cpp
-  ctkConfirmExitDialog.h
   ctkCoordinatesWidget.cpp
   ctkCoordinatesWidget.h
   ctkCrosshairLabel.cpp
@@ -92,6 +90,8 @@ set(KIT_SRCS
   ctkMenuComboBox.cpp
   ctkMenuComboBox.h
   ctkMenuComboBox_p.h
+  ctkMessageBox.cpp
+  ctkMessageBox.h
   ctkModalityWidget.cpp
   ctkModalityWidget.h
   ctkPathLineEdit.cpp
@@ -185,7 +185,6 @@ set(KIT_MOC_SRCS
   ctkCollapsibleGroupBox.h
   ctkColorDialog.h
   ctkColorPickerButton.h
-  ctkConfirmExitDialog.h
   ctkConsole.h
   ctkConsole_p.h
   ctkCoordinatesWidget.h
@@ -211,6 +210,7 @@ set(KIT_MOC_SRCS
   ctkMenuButton.h
   ctkMenuComboBox.h
   ctkMenuComboBox_p.h
+  ctkMessageBox.h
   ctkModalityWidget.h
   ctkPathLineEdit.h
   ctkPopupWidget.h
