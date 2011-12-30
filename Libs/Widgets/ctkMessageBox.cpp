@@ -220,6 +220,7 @@ void ctkMessageBox::setDontShowAgainSettingsKey(const QString& key)
     }
   d->DontShowAgainSettingsKey = key;
   d->readSettings();
+  this->setDontShowAgainVisible(!key.isEmpty());
 }
 
 //-----------------------------------------------------------------------------
@@ -290,7 +291,6 @@ bool ctkMessageBox
   dialog.setText(tr("Are you sure you want to exit?"));
   dialog.setIcon(QMessageBox::Question);
   dialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-  dialog.setDontShowAgainVisible(!dontShowAgainKey.isEmpty());
   dialog.setDontShowAgainSettingsKey(dontShowAgainKey);
   return dialog.exec() == QMessageBox::Ok;
 }
