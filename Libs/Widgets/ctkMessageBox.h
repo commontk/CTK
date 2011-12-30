@@ -35,12 +35,6 @@ class ctkMessageBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkMessageBox : public QMessageBox
 {
   Q_OBJECT
-  /// This property controls the visibility of the "Don't show again" checkbox.
-  /// Even if the checkbox is not visible, the dialog is not not shown if
-  /// \a dontShowAgain is true.
-  /// By default, the "Don't show again" checkbox is not visible.
-  Q_PROPERTY(bool dontShowAgainVisible READ isDontShowAgainVisible WRITE setDontShowAgainVisible)
-
   /// This property holds wether the dialog should be shown next time exec()
   /// is called.
   /// \a dontShowAgain can be changed programatically by calling
@@ -59,8 +53,16 @@ class CTK_WIDGETS_EXPORT ctkMessageBox : public QMessageBox
   /// QMessageBox::InvalidRole, the dialog is shown, otherwise it is skipped by
   /// simulating a click on the button corresponding to the settings value (QMessageButton::StandardButton or
   /// QMessageBox::ButtonRole)
+  /// If a non empty key is set, the check box gets visible, otherwise it is
+  /// hidden.
   /// By default, no key is set.
   Q_PROPERTY(QString dontShowAgainSettingsKey READ dontShowAgainSettingsKey WRITE setDontShowAgainSettingsKey)
+
+  /// This property controls the visibility of the "Don't show again" checkbox.
+  /// Even if the checkbox is not visible, the dialog is not not shown if
+  /// \a dontShowAgain is true.
+  /// By default, the "Don't show again" checkbox is not visible.
+  Q_PROPERTY(bool dontShowAgainVisible READ isDontShowAgainVisible WRITE setDontShowAgainVisible)
 
 public:
   typedef QMessageBox Superclass;
@@ -69,13 +71,13 @@ public:
                 QWidget * parent = 0, Qt::WindowFlags f = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint );
   virtual ~ctkMessageBox();
 
-  void setDontShowAgainVisible(bool visible);
-  bool isDontShowAgainVisible()const;
-
   bool dontShowAgain()const;
 
   void setDontShowAgainSettingsKey(const QString& key);
   QString dontShowAgainSettingsKey()const;
+
+  void setDontShowAgainVisible(bool visible);
+  bool isDontShowAgainVisible()const;
 
   /// Utility function that opens a dialog to confirm exit.
   /// If \a dontShowAgainKey is empty, the dontShowAgain checkbox is hidden

@@ -80,6 +80,9 @@ private Q_SLOTS:
   // static utility function
   void testConfirmExit();
   void testConfirmExit_data();
+
+  // test the visibility cases();
+  void testVisible();
   //void testCustomButton();
 };
 
@@ -506,6 +509,20 @@ void ctkMessageBoxDontShowAgainTester::testConfirmExit_data()
   QTest::newRow("DontShowWithAcceptRole") << "DontShowWithAcceptRole" << true;
   QTest::newRow("DontShowWithCancelButton") << "DontShowWithCancelButton" << false;
   QTest::newRow("DontShowWithRejectRole") << "DontShowWithRejectRole" << false;
+}
+
+
+// ----------------------------------------------------------------------------
+void ctkMessageBoxDontShowAgainTester::testVisible()
+{
+  ctkMessageBox messageBox;
+  QCOMPARE(messageBox.isDontShowAgainVisible(), false);
+
+  messageBox.setDontShowAgainSettingsKey("Non Empty key");
+  QCOMPARE(messageBox.isDontShowAgainVisible(), true);
+
+  messageBox.setDontShowAgainSettingsKey(QString());
+  QCOMPARE(messageBox.isDontShowAgainVisible(), false);
 }
 
 // ----------------------------------------------------------------------------
