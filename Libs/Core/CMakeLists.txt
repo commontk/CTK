@@ -36,6 +36,8 @@ set(KIT_SRCS
   ctkCheckableModelHelper.h
   ctkCommandLineParser.cpp
   ctkCommandLineParser.h
+  ctkComplementMapper.cpp
+  ctkComplementMapper.h
   ctkDependencyGraph.cpp
   ctkDependencyGraph.h
   ctkErrorLogModel.cpp
@@ -84,6 +86,7 @@ set(KIT_MOC_SRCS
   ctkCallback.h
   ctkCheckableModelHelper.h
   ctkCommandLineParser.h
+  ctkComplementMapper.h
   ctkErrorLogFDMessageHandler_p.h
   ctkErrorLogModel.h
   ctkLogger.h

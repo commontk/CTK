@@ -25,6 +25,7 @@ set(KITTests_SRCS
   ctkCallbackTest1.cpp
   ctkCheckableModelHelperTest1.cpp
   ctkCommandLineParserTest1.cpp
+  ctkComplementMapperTest.cpp
   ctkErrorLogModelTest1.cpp
   ctkErrorLogModelEntryGroupingTest1.cpp
   ctkErrorLogModelTerminalOutputTest1.cpp
@@ -63,6 +64,11 @@ if(HAVE_BFD)
     )
 endif()
 
+include_directories(
+  ${CMAKE_SOURCE_DIR}/Libs/Testing
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ${KITTests_SRCS}
   #EXTRA_INCLUDE TestingMacros.h
@@ -92,6 +98,9 @@ set(Tests_Helpers_MOC_SRCS
 
 set(Tests_Helpers_MOC_CPP)
 QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
+QT4_GENERATE_MOCS(
+  ctkComplementMapperTest.cpp
+  )
 
 if(HAVE_BFD)
   add_executable(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
@@ -122,6 +131,7 @@ endif()
 SIMPLE_TEST( ctkCallbackTest1 )
 SIMPLE_TEST( ctkCheckableModelHelperTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
+SIMPLE_TEST( ctkComplementMapperTest )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkErrorLogModelTest1 )

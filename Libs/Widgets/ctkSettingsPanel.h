@@ -55,7 +55,14 @@ public:
   /// \a signal is typically the value under NOTIFY in Q_PROPERTY.
   /// The current value of the property is later used when
   /// restoreDefaultSettings() is called.
-  /// \sa Q_PROPERTY()
+  /// If you want to register the logical complement of a boolean property
+  /// you can use ctkComplementMapper:
+  /// <code>
+  /// panel->registerProperty("unchecked",
+  ///                         new ctkComplementMapper(checkBox, "checked", SIGNAL(toggled(bool))),
+  ///                         "valueComplement", SIGNAL(valueComplementChanged(bool)));
+  /// </code>
+  /// \sa Q_PROPERTY(), \sa ctkComplementMapper
   void registerProperty(const QString& key,
                         QObject* object,
                         const QString& property,
