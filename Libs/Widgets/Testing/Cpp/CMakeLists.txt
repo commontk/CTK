@@ -118,8 +118,9 @@ set(Tests_MOC_SRCS
 set(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
-  ctkRangeSliderTest.cpp
   ctkFlatProxyModelTest.cpp
+  ctkMessageBoxDontShowAgainTest.cpp
+  ctkRangeSliderTest.cpp
   )
 
 add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP})
