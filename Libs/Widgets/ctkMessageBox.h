@@ -35,7 +35,10 @@ class ctkMessageBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkMessageBox : public QMessageBox
 {
   Q_OBJECT
-  /// This property controls the visibility of the "Dont show again" checkbox.
+  /// This property controls the visibility of the "Don't show again" checkbox.
+  /// Even if the checkbox is not visible, the dialog is not not shown if
+  /// \a dontShowAgain is true.
+  /// By default, the "Don't show again" checkbox is not visible.
   Q_PROPERTY(bool dontShowAgainVisible READ isDontShowAgainVisible WRITE setDontShowAgainVisible)
 
   /// This property holds wether the dialog should be shown next time exec()
@@ -45,15 +48,18 @@ class CTK_WIDGETS_EXPORT ctkMessageBox : public QMessageBox
   /// checkbox and the dialog is accepted.
   /// If the checkbox is checked by the user but the dialog is rejected (click
   /// on Cancel), \a dontShowAgain is not changed.
-  /// If \a dontShowAgainSettingsKey is set, the \a dontShowAgain is set as
-  /// the value for the key.
+  /// If \a dontShowAgainSettingsKey is set, the \a dontShowAgain is set with
+  /// the value of the key.
   /// By default, dontShowAgain is false.
   Q_PROPERTY(bool dontShowAgain READ dontShowAgain WRITE setDontShowAgain)
 
   /// This property holds the settings key that is used to synchronize the state
   /// of the checkbox "Don't show this message again"
-  /// with the given key value within QSettings.
-  /// By default, no key is set
+  /// with the given key value within QSettings. If the settings value is !=
+  /// QMessageBox::InvalidRole, the dialog is shown, otherwise it is skipped by
+  /// simulating a click on the button corresponding to the settings value (QMessageButton::StandardButton or
+  /// QMessageBox::ButtonRole)
+  /// By default, no key is set.
   Q_PROPERTY(QString dontShowAgainSettingsKey READ dontShowAgainSettingsKey WRITE setDontShowAgainSettingsKey)
 
 public:

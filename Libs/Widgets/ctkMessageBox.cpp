@@ -22,6 +22,7 @@
 #include <QCheckBox>
 #include <QDebug>
 #include <QGridLayout>
+#include <QPushButton>
 #include <QSettings>
 #include <QTimer>
 
@@ -42,18 +43,24 @@ public:
   virtual ~ctkMessageBoxPrivate();
 
   void init();
+  int dontShowAgainButtonOrRole();
+  QAbstractButton* button(int buttonOrRole);
+  int buttonFromSettings();
   void readSettings();
-  void writeSettings();
+  void writeSettings(int button);
 public:
   QString        DontShowAgainSettingsKey;
   QCheckBox*     DontShowAgainCheckBox;
+  bool           SaveDontShowAgainSettingsOnAcceptOnly;
 };
 
 //-----------------------------------------------------------------------------
 ctkMessageBoxPrivate::ctkMessageBoxPrivate(ctkMessageBox& object)
   : q_ptr(&object)
 {
+  this->DontShowAgainSettingsKey = QString();
   this->DontShowAgainCheckBox = 0;
+  this->SaveDontShowAgainSettingsOnAcceptOnly = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -72,6 +79,62 @@ void ctkMessageBoxPrivate::init()
   // is bigger than the text+checkbox height, it would be truncated.
   this->DontShowAgainCheckBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   this->DontShowAgainCheckBox->setChecked(false);
+  this->DontShowAgainCheckBox->hide();
+}
+
+//-----------------------------------------------------------------------------
+int ctkMessageBoxPrivate::dontShowAgainButtonOrRole()
+{
+  int buttonOrRole = QMessageBox::InvalidRole;
+  if (this->DontShowAgainCheckBox->isChecked())
+    {
+    buttonOrRole = this->buttonFromSettings();
+    if (buttonOrRole == QMessageBox::InvalidRole)
+      {
+      buttonOrRole = QMessageBox::AcceptRole;
+      }
+    }
+  return buttonOrRole;
+}
+
+
+//-----------------------------------------------------------------------------
+QAbstractButton* ctkMessageBoxPrivate::button(int buttonOrRole)
+{
+  Q_Q(ctkMessageBox);
+  QAbstractButton* autoAcceptButton = 0;
+  // Special case when no button is in a dialog, QMessageBox adds the Ok
+  // button automatically.
+  if (q->buttons().size() == 0 &&
+      buttonOrRole != QMessageBox::InvalidRole)
+    {
+    q->addButton(QMessageBox::Ok);
+    }
+  if ( q->standardButtons() & buttonOrRole)
+    {
+    autoAcceptButton = q->button(static_cast<QMessageBox::StandardButton>(buttonOrRole));
+    }
+  else
+    {
+    foreach(QAbstractButton* button, q->buttons())
+      {
+      if (q->buttonRole(button) == buttonOrRole)
+        {
+        autoAcceptButton = button;
+        break;
+        }
+      }
+    }
+  return autoAcceptButton;
+}
+
+//-----------------------------------------------------------------------------
+int ctkMessageBoxPrivate::buttonFromSettings()
+{
+  QSettings settings;
+  int button = settings.value(this->DontShowAgainSettingsKey,
+                              static_cast<int>(QMessageBox::InvalidRole)).toInt();
+  return button;
 }
 
 //-----------------------------------------------------------------------------
@@ -81,22 +144,21 @@ void ctkMessageBoxPrivate::readSettings()
     {
     return;
     }
-  QSettings settings;
-  bool dontShow = settings.value(this->DontShowAgainSettingsKey,
-    this->DontShowAgainCheckBox->isChecked()).toBool();
-  this->DontShowAgainCheckBox->setChecked(dontShow);
+  int button = this->buttonFromSettings();
+  this->DontShowAgainCheckBox->setChecked(button != QMessageBox::InvalidRole);
 }
 
 //-----------------------------------------------------------------------------
-void ctkMessageBoxPrivate::writeSettings()
+void ctkMessageBoxPrivate::writeSettings(int button)
 {
   if (this->DontShowAgainSettingsKey.isEmpty())
     {
     return;
     }
   QSettings settings;
-  settings.setValue(this->DontShowAgainSettingsKey, this->DontShowAgainCheckBox->isChecked());
-  qDebug() << "write...";
+  settings.setValue(this->DontShowAgainSettingsKey,
+                    QVariant(this->DontShowAgainCheckBox->isChecked() ?
+                             button : QMessageBox::InvalidRole));
 }
 
 //-----------------------------------------------------------------------------
@@ -137,6 +199,7 @@ void ctkMessageBox::setDontShowAgainVisible(bool visible)
     return;
     }
   QGridLayout *grid = static_cast<QGridLayout *>(this->layout());
+  d->DontShowAgainCheckBox->setVisible(true);
   grid->addWidget(d->DontShowAgainCheckBox, 1, 1, 1, 1);
 }
 
@@ -178,17 +241,24 @@ void ctkMessageBox::setDontShowAgain(bool dontShow)
 {
   Q_D(ctkMessageBox);
   d->DontShowAgainCheckBox->setChecked(dontShow);
-  d->writeSettings();
+  // We don't write into settings here because we want the same behavior
+  // as if the user clicked on the checkbox.
+  // If you want to save the preference into settings even if the user
+  // escape/cancel/reject the dialog, then you must set the QSettings value
+  // manually
 }
 
 //-----------------------------------------------------------------------------
 void ctkMessageBox::done(int resultCode)
 {
   Q_D(ctkMessageBox);
-  if (resultCode == QDialog::Accepted)
+  // Don't save if the button is not an accepting button
+  if (!d->SaveDontShowAgainSettingsOnAcceptOnly ||
+      this->buttonRole( this->clickedButton() ) == QMessageBox::AcceptRole )
     {
-    d->writeSettings();
+    d->writeSettings(resultCode);
     }
+
   this->Superclass::done(resultCode);
 }
 
@@ -198,10 +268,14 @@ void ctkMessageBox::setVisible(bool visible)
   Q_D(ctkMessageBox);
   if (visible)
     {
-    d->readSettings();
-    if (d->DontShowAgainCheckBox->isChecked())
+    int dontShowAgainButtonOrRole = d->dontShowAgainButtonOrRole();
+    QAbstractButton* autoAcceptButton = d->button(dontShowAgainButtonOrRole);
+    if (autoAcceptButton)
       {
-      QTimer::singleShot(0, this, SLOT(accept()));
+      // Don't call click now, it would destroy the message box. The calling
+      // function might expect the message box to be still valid after
+      // setVisible() return.
+      QTimer::singleShot(0, autoAcceptButton, SLOT(click()));
       return;
       }
     }
@@ -214,7 +288,9 @@ bool ctkMessageBox
 {
   ctkMessageBox dialog(parentWidget);
   dialog.setText(tr("Are you sure you want to exit?"));
+  dialog.setIcon(QMessageBox::Question);
+  dialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
   dialog.setDontShowAgainVisible(!dontShowAgainKey.isEmpty());
   dialog.setDontShowAgainSettingsKey(dontShowAgainKey);
-  return dialog.exec() == QDialog::Accepted;
+  return dialog.exec() == QMessageBox::Ok;
 }
