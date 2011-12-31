@@ -56,13 +56,13 @@ public:
   /// The current value of the property is later used when
   /// restoreDefaultSettings() is called.
   /// If you want to register the logical complement of a boolean property
-  /// you can use ctkComplementMapper:
+  /// you can use ctkBooleanMapper:
   /// <code>
   /// panel->registerProperty("unchecked",
-  ///                         new ctkComplementMapper(checkBox, "checked", SIGNAL(toggled(bool))),
-  ///                         "valueComplement", SIGNAL(valueComplementChanged(bool)));
+  ///                         new ctkBooleanMapper(checkBox, "checked", SIGNAL(toggled(bool))),
+  ///                         "complement", SIGNAL(complementChanged(bool)));
   /// </code>
-  /// \sa Q_PROPERTY(), \sa ctkComplementMapper
+  /// \sa Q_PROPERTY(), \sa ctkBooleanMapper
   void registerProperty(const QString& key,
                         QObject* object,
                         const QString& property,

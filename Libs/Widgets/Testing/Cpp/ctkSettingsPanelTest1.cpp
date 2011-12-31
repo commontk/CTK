@@ -27,7 +27,7 @@
 #include <QVariant>
 
 // CTK includes
-#include "ctkComplementMapper.h"
+#include "ctkBooleanMapper.h"
 #include "ctkSettingsPanel.h"
 
 // STD includes
@@ -240,9 +240,9 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
 
   box->setChecked(false);
   settingsPanel.registerProperty("key complement",
-                                 new ctkComplementMapper(box, "checked", SIGNAL(toggled(bool))),
-                                 "valueComplement",
-                                  SIGNAL(valueComplementChanged(bool)));
+                                 new ctkBooleanMapper(box, "checked", SIGNAL(toggled(bool))),
+                                 "complement",
+                                  SIGNAL(complementChanged(bool)));
 
   // Check settings value after a property is registered
   boxVal = settings.value("key complement");

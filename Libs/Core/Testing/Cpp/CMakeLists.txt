@@ -22,10 +22,10 @@ set(KITTests_SRCS
   ctkAbstractObjectFactoryTest1.cpp
   ctkAbstractPluginFactoryTest1.cpp
   ctkAbstractQObjectFactoryTest1.cpp
+  ctkBooleanMapperTest.cpp
   ctkCallbackTest1.cpp
   ctkCheckableModelHelperTest1.cpp
   ctkCommandLineParserTest1.cpp
-  ctkComplementMapperTest.cpp
   ctkErrorLogModelTest1.cpp
   ctkErrorLogModelEntryGroupingTest1.cpp
   ctkErrorLogModelTerminalOutputTest1.cpp
@@ -99,7 +99,7 @@ set(Tests_Helpers_MOC_SRCS
 set(Tests_Helpers_MOC_CPP)
 QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
 QT4_GENERATE_MOCS(
-  ctkComplementMapperTest.cpp
+  ctkBooleanMapperTest.cpp
   )
 
 if(HAVE_BFD)
@@ -128,10 +128,10 @@ SIMPLE_TEST( ctkAbstractQObjectFactoryTest1 )
 if(HAVE_BFD)
   SIMPLE_TEST( ctkBinaryFileDescriptorTest1 $<TARGET_FILE:ctkBinaryFileDescriptorTestHelper> )
 endif()
+SIMPLE_TEST( ctkBooleanMapperTest )
 SIMPLE_TEST( ctkCallbackTest1 )
 SIMPLE_TEST( ctkCheckableModelHelperTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
-SIMPLE_TEST( ctkComplementMapperTest )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkErrorLogModelTest1 )

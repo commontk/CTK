@@ -18,26 +18,27 @@
 
 =========================================================================*/
 
-#ifndef __ctkComplementMapper_h
-#define __ctkComplementMapper_h
+#ifndef __ctkBooleanMapper_h
+#define __ctkBooleanMapper_h
 
 // Qt includes
 #include <QObject>
+#include <QVariant>
 
 // CTK includes
 #include "ctkCoreExport.h"
-class ctkComplementMapperPrivate;
+class ctkBooleanMapperPrivate;
 
 //---------------------------------------------------------------------------
 /// \ingroup Core
 /// QCheckBox* checkBox = new QCheckBox;
-/// ctkComplementMapper* inverter =
-///   new ctkComplementMapper("checked", SIGNAL("toggled(bool)"), checkBox);
+/// ctkBooleanMapper* inverter =
+///   new ctkBooleanMapper("checked", SIGNAL("toggled(bool)"), checkBox);
 /// inverter->setComplementValue(true);
 /// // -> checkBox->checked() == false
 /// inverter->setValue(false);
 /// // -> checkBox->checked() == false
-class CTK_CORE_EXPORT ctkComplementMapper : public QObject
+class CTK_CORE_EXPORT ctkBooleanMapper : public QObject
 {
   Q_OBJECT
   /// This property contains the name of the object mapped property.
@@ -45,20 +46,28 @@ class CTK_CORE_EXPORT ctkComplementMapper : public QObject
 
   /// This property holds the mapped property.
   /// It is the value of the mapped object property
-  Q_PROPERTY(bool value READ value WRITE setValue NOTIFY valueComplementChanged STORED false);
+  Q_PROPERTY(bool value READ value WRITE setValue NOTIFY complementChanged STORED false);
 
   /// This property is the complement of the mapped property.
   /// false if \a value is true and true if \a value is false
-  Q_PROPERTY(bool valueComplement READ valueComplement WRITE setValueComplement NOTIFY valueComplementChanged STORED false)
+  Q_PROPERTY(bool complement READ complement WRITE setComplement NOTIFY complementChanged STORED false)
 
+  Q_PROPERTY(int valueAsInt READ valueAsInt WRITE setValueAsInt NOTIFY valueAsIntChanged STORED false )
+  Q_PROPERTY(QString valueAsString READ valueAsString WRITE setValueAsString NOTIFY valueAsStringChanged STORED false )
+
+  /// 1 by default
+  Q_PROPERTY(QVariant trueValue READ trueValue WRITE setTrueValue )
+
+  /// 0 by default
+  Q_PROPERTY(QVariant falseValue READ falseValue WRITE setFalseValue )
 public:
   /// Map the property \a property of the object.
   /// The mapper becomes a child of \a object and will be destructed when
   /// \a object is destructed.
   /// property and object must be valid and non empty. If signal is 0,
-  /// \a valueChanged(bool) and \a valueComplementChanged(bool) won't be fired.
-  ctkComplementMapper(QObject* targetObject, const QByteArray& propertyName, const char* signal);
-  virtual ~ctkComplementMapper();
+  /// \a valueChanged(bool) and \a complementChanged(bool) won't be fired.
+  ctkBooleanMapper(QObject* targetObject, const QByteArray& propertyName, const char* signal);
+  virtual ~ctkBooleanMapper();
 
   QByteArray propertyName()const;
 
@@ -66,26 +75,40 @@ public:
   QObject* targetObject()const;
 
   bool value()const;
-  bool valueComplement()const;
+  bool complement()const;
+  int valueAsInt()const;
+  QString valueAsString()const;
+
+  QVariant trueValue()const;
+  QVariant falseValue()const;
+
+  void setTrueValue(const QVariant& value);
+  void setFalseValue(const QVariant& value);
 
 public Q_SLOTS:
   void setValue(bool value);
-  void setValueComplement(bool valueComplement);
+  void setComplement(bool complement);
+  void setValueAsInt(int value);
+  void setValueAsString(const QString& value);
 
   void toggle();
 
 Q_SIGNALS:
   void valueChanged(bool value);
-  void valueComplementChanged(bool valueComplement);
+  void complementChanged(bool complement);
+  void valueAsIntChanged(int value);
+  void valueAsStringChanged(const QString& value);
 
 protected Q_SLOTS:
   void emitValueChanged();
+  void emitValueAsChanged();
+
 protected:
-  QScopedPointer<ctkComplementMapperPrivate> d_ptr;
+  QScopedPointer<ctkBooleanMapperPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkComplementMapper);
-  Q_DISABLE_COPY(ctkComplementMapper);
+  Q_DECLARE_PRIVATE(ctkBooleanMapper);
+  Q_DISABLE_COPY(ctkBooleanMapper);
 };
 
 #endif

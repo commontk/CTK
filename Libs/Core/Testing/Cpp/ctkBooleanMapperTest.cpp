@@ -22,7 +22,7 @@
 #include <QSignalSpy>
 
 // CTK includes
-#include "ctkComplementMapper.h"
+#include "ctkBooleanMapper.h"
 #include "ctkTest.h"
 
 // ----------------------------------------------------------------------------
@@ -49,21 +49,22 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-class ctkComplementMapperTester: public QObject
+class ctkBooleanMapperTester: public QObject
 {
   Q_OBJECT
 private Q_SLOTS:
   void testValue();
-  void testValueComplement();
+  void testComplement();
+  void testValueAsInt();
   void testSignals();
 };
 
 // ----------------------------------------------------------------------------
-void ctkComplementMapperTester::testValue()
+void ctkBooleanMapperTester::testValue()
 {
   ctkObjectWithBoolProp object;
-  ctkComplementMapper* complementMapper =
-    new ctkComplementMapper(&object, "checked", SIGNAL(toggled(bool)));
+  ctkBooleanMapper* complementMapper =
+    new ctkBooleanMapper(&object, "checked", SIGNAL(toggled(bool)));
 
   QCOMPARE(object.checked(), false);
   QCOMPARE(complementMapper->value(), false);
@@ -86,57 +87,93 @@ void ctkComplementMapperTester::testValue()
 }
 
 // ----------------------------------------------------------------------------
-void ctkComplementMapperTester::testValueComplement()
+void ctkBooleanMapperTester::testComplement()
 {
   ctkObjectWithBoolProp object;
-  ctkComplementMapper* complementMapper =
-    new ctkComplementMapper(&object, "checked", SIGNAL(toggled(bool)));
+  ctkBooleanMapper* complementMapper =
+    new ctkBooleanMapper(&object, "checked", SIGNAL(toggled(bool)));
 
   QCOMPARE(object.checked(), false);
-  QCOMPARE(complementMapper->valueComplement(), true);
+  QCOMPARE(complementMapper->complement(), true);
 
   object.setChecked(true);
   QCOMPARE(object.checked(), true);
-  QCOMPARE(complementMapper->valueComplement(), false);
+  QCOMPARE(complementMapper->complement(), false);
 
-  complementMapper->setValueComplement(true);
+  complementMapper->setComplement(true);
   QCOMPARE(object.checked(), false);
-  QCOMPARE(complementMapper->valueComplement(), true);
+  QCOMPARE(complementMapper->complement(), true);
+}
+
+
+// ----------------------------------------------------------------------------
+void ctkBooleanMapperTester::testValueAsInt()
+{
+  ctkObjectWithBoolProp object;
+  ctkBooleanMapper* complementMapper =
+    new ctkBooleanMapper(&object, "checked", SIGNAL(toggled(bool)));
+  complementMapper->setTrueValue(QVariant(-1));
+  complementMapper->setFalseValue(QVariant(19));
+
+  QCOMPARE(object.checked(), false);
+  QCOMPARE(complementMapper->valueAsInt(), 19);
+
+  object.setChecked(true);
+  QCOMPARE(object.checked(), true);
+  QCOMPARE(complementMapper->valueAsInt(), -1);
+
+  object.setChecked(false);
+  QCOMPARE(object.checked(), false);
+  QCOMPARE(complementMapper->valueAsInt(), 19);
+
+  complementMapper->setValueAsInt(-1);
+  QCOMPARE(object.checked(), true);
+  QCOMPARE(complementMapper->valueAsInt(), -1);
+
+  complementMapper->setValueAsInt(19);
+  QCOMPARE(object.checked(), false);
+  QCOMPARE(complementMapper->valueAsInt(), 19);
 }
 
 // ----------------------------------------------------------------------------
-void ctkComplementMapperTester::testSignals()
+void ctkBooleanMapperTester::testSignals()
 {
   ctkObjectWithBoolProp object;
-  ctkComplementMapper* complementMapper =
-    new ctkComplementMapper(&object, "checked", SIGNAL(toggled(bool)));
+  ctkBooleanMapper* complementMapper =
+    new ctkBooleanMapper(&object, "checked", SIGNAL(toggled(bool)));
 
   QSignalSpy spyToggled(&object, SIGNAL(toggled(bool)));
   QSignalSpy spyValueChanged(complementMapper, SIGNAL(valueChanged(bool)));
-  QSignalSpy spyValueComplementChanged(complementMapper,
-                                       SIGNAL(valueComplementChanged(bool)));
+  QSignalSpy spyComplementChanged(complementMapper,
+                                  SIGNAL(complementChanged(bool)));
+  QSignalSpy spyValueAsIntChanged(complementMapper,
+                                  SIGNAL(valueAsIntChanged(int)));
 
   object.setChecked(true);
   QCOMPARE(spyToggled.count(), 1);
   QCOMPARE(spyValueChanged.count(), 1);
-  QCOMPARE(spyValueComplementChanged.count(), 1);
+  QCOMPARE(spyComplementChanged.count(), 1);
+  QCOMPARE(spyValueAsIntChanged.count(), 1);
 
   spyToggled.clear();
   spyValueChanged.clear();
-  spyValueComplementChanged.clear();
+  spyComplementChanged.clear();
+  spyValueAsIntChanged.clear();
 
   // no op
   complementMapper->setValue(complementMapper->value());
   QCOMPARE(spyToggled.count(), 0);
   QCOMPARE(spyValueChanged.count(), 0);
-  QCOMPARE(spyValueComplementChanged.count(), 0);
+  QCOMPARE(spyComplementChanged.count(), 0);
+  QCOMPARE(spyValueAsIntChanged.count(), 0);
 
   complementMapper->toggle();
   QCOMPARE(spyToggled.count(), 1);
   QCOMPARE(spyValueChanged.count(), 1);
-  QCOMPARE(spyValueComplementChanged.count(), 1);
+  QCOMPARE(spyComplementChanged.count(), 1);
+  QCOMPARE(spyValueAsIntChanged.count(), 1);
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN(ctkComplementMapperTest)
-#include "moc_ctkComplementMapperTest.cpp"
+CTK_TEST_MAIN(ctkBooleanMapperTest)
+#include "moc_ctkBooleanMapperTest.cpp"
