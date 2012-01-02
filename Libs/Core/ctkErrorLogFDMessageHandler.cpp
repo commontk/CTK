@@ -110,11 +110,12 @@ void ctkFDHandler::setEnabled(bool value)
 #ifdef Q_OS_WIN32
     this->SavedFDNumber = _dup(_fileno(this->terminalOutputFile()));
     _dup2(this->Pipe[1], _fileno(this->terminalOutputFile()));
+    _close(this->Pipe[1]);
 #else
     this->SavedFDNumber = dup(fileno(this->terminalOutputFile()));
     dup2(this->Pipe[1], fileno(this->terminalOutputFile()));
-#endif
     close(this->Pipe[1]);
+#endif
 
     // Start polling thread
     this->start();
@@ -142,7 +143,11 @@ void ctkFDHandler::setEnabled(bool value)
     clearerr(this->terminalOutputFile());
     fsetpos(this->terminalOutputFile(), &this->SavedFDPos);
 
+#ifdef Q_OS_WIN32
+    this->SavedFDNumber = _fileno(this->terminalOutputFile());
+#else
     this->SavedFDNumber = fileno(this->terminalOutputFile());
+#endif
     }
 
   ctkErrorLogTerminalOutput * terminalOutput =
@@ -164,7 +169,11 @@ void ctkFDHandler::run()
     QString line;
     while(c != '\n')
       {
+#ifdef Q_OS_WIN32
+      _read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
+#else
       read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
+#endif
       if (c != '\n')
         {
         line += c;

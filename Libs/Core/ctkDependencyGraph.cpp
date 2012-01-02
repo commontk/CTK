@@ -367,7 +367,7 @@ int ctkDependencyGraphPrivate::subgraphSize(int rootId)
   std::set<int> vertices;
   vertices.insert(rootId);
   this->subgraphSizeRec(rootId, vertices);
-  return vertices.size();
+  return static_cast<int>(vertices.size());
 }
 
 void ctkDependencyGraphPrivate::subgraphInsert(
@@ -396,7 +396,7 @@ int ctkDependencyGraphPrivate::getOrGenerateSubgraphId(
   int subgraphId = -1;
   if (!mapContainsKey<int, int>(globalIdToSubgraph,globalId))
     {
-    subgraphId = globalIdToSubgraph.size() + 1;
+    subgraphId = static_cast<int>(globalIdToSubgraph.size()) + 1;
     globalIdToSubgraph[globalId] = subgraphId;
     subgraphIdToGlobal[subgraphId] = globalId;
     }
@@ -607,7 +607,7 @@ void ctkDependencyGraph::insertEdge(int from, int to)
   assert(to > 0 && to <= d_ptr->NVertices);
   
   // resize if needed
-  int capacity = d_ptr->Edges[from]->capacity();
+  size_t capacity = d_ptr->Edges[from]->capacity();
   if (d_ptr->OutDegree[from] > capacity)
     {
     d_ptr->Edges[from]->resize(capacity + capacity * 0.3);
