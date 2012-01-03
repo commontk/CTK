@@ -1,7 +1,7 @@
 project(${PROJECT_NAME}Plugins)
 
 #
-# See CTK/CMake/ctkMacroBuildQtDesignerPlugin.cmake for details
+# See CTK/CMake/ctkMacroBuildQtPlugin.cmake for details
 #
 
 set(PLUGIN_export_directive "CTK_WIDGETS_PLUGINS_EXPORT")

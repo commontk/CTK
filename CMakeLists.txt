@@ -184,6 +184,7 @@ include(CMake/ctkMacroBuildLib.cmake)
 include(CMake/ctkMacroBuildLibWrapper.cmake)
 include(CMake/ctkMacroBuildPlugin.cmake)
 include(CMake/ctkMacroBuildApp.cmake)
+include(CMake/ctkMacroBuildQtPlugin.cmake)
 include(CMake/ctkMacroCompilePythonScript.cmake)
 include(CMake/ctkMacroWrapPythonQt.cmake)
 include(CMake/ctkMacroSetupQt.cmake)
@@ -414,9 +415,6 @@ mark_as_advanced(CTK_USE_KWSTYLE)
 # Qt Designer Plugins
 option(CTK_BUILD_QTDESIGNER_PLUGINS "Build Qt Designer plugins" ON)
 mark_as_advanced(CTK_BUILD_QTDESIGNER_PLUGINS)
-if(CTK_BUILD_QTDESIGNER_PLUGINS)
-  include(CMake/ctkMacroBuildQtDesignerPlugin.cmake)
-endif()
 
 #-----------------------------------------------------------------------------
 # CTK Libraries

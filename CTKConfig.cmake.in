@@ -53,6 +53,7 @@ INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroSetPaths.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroListFilter.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroBuildLibWrapper.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroBuildPlugin.cmake")
+INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroBuildQtPlugin.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroTargetLibraries.cmake") # Import multiple macros
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkFunctionExtractOptionNameAndValue.cmake")
 INCLUDE("@CTK_CMAKE_DIR_CONFIG@/ctkMacroValidateBuildOptions.cmake")
