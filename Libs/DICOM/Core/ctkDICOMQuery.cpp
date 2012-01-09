@@ -76,6 +76,7 @@ public:
         emit this->query->debug("Got a find response!");
         return this->ctkDcmSCU::handleFINDResponse(presID, response, waitForNextResponse);
         }
+      return DIMSE_NULLKEY;
     };
 };
 

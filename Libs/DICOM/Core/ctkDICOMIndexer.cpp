@@ -100,7 +100,6 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase,
                                    const QString& destinationDirectoryName)
                                    
 {
-  Q_D(ctkDICOMIndexer);
   if (!destinationDirectoryName.isEmpty())
   {
     logger.warn("Ignoring destinationDirectoryName parameter, just taking it as indication we should copy!");
@@ -123,7 +122,6 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
   OFStandard::searchDirectoryRecursively( QDir::toNativeSeparators(src_directory.c_str()).toAscii().data(), originalDcmtkFileNames, "", "");
 
   int totalNumberOfFiles = originalDcmtkFileNames.size();
-  int numberOfFilesProcessed = 0;
 
   // hack to reverse list of filenames (not neccessary when image loading works correctly)
   for ( OFListIterator(OFString) iter = originalDcmtkFileNames.begin(); iter != originalDcmtkFileNames.end(); ++iter )
@@ -159,8 +157,10 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& ctkDICOMDatabase, const QString& directoryName)
+void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& dicomDatabase, const QString& directoryName)
 {
+  Q_UNUSED(dicomDatabase);
+  Q_UNUSED(directoryName);
   /*
    * Probably this should go to the database class as well
    * Or we have to extend the interface to make possible what we do here
@@ -168,7 +168,7 @@ void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& ctkDICOMDatabase, const 
    
 
   /// get all filenames from the database
-  QSqlQuery allFilesQuery(ctkDICOMDatabase.database());
+  QSqlQuery allFilesQuery(dicomDatabase.database());
   QStringList databaseFileNames;
   QStringList filesToRemove;
   this->loggedExec(allFilesQuery, "SELECT Filename from Images;");

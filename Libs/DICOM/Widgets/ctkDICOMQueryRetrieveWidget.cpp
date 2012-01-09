@@ -270,7 +270,6 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
   retrieve->setKeepAssociationOpen(true);
   // pull from GUI
   retrieve->setMoveDestinationAETitle( serverParameters["StorageAETitle"].toString() );
-  int step = 0;
 
   // do the rerieval for each selected series
   foreach( QString studyUID, d->QueriesByStudyUID.keys() )

@@ -117,6 +117,7 @@ void ctkVTKMagnifyViewPrivate::resetEventHandler()
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyViewPrivate::timerEvent(QTimerEvent * event)
 {
+  Q_UNUSED(event);
   Q_ASSERT(event->timerId() == this->EventHandler.TimerId);
 
   if (this->EventHandler.EventType == UpdatePixmapEvent)

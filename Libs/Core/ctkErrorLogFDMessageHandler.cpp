@@ -170,10 +170,14 @@ void ctkFDHandler::run()
     while(c != '\n')
       {
 #ifdef Q_OS_WIN32
-      _read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
+      ssize_t res = _read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
 #else
-      read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
+      ssize_t res = read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
 #endif
+      if (res == -1)
+        {
+        break;
+        }
       if (c != '\n')
         {
         line += c;
