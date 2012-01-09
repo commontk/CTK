@@ -608,7 +608,7 @@ void ctkDependencyGraph::insertEdge(int from, int to)
   
   // resize if needed
   size_t capacity = d_ptr->Edges[from]->capacity();
-  if (d_ptr->OutDegree[from] > capacity)
+  if (d_ptr->OutDegree[from] > static_cast<int>(capacity))
     {
     d_ptr->Edges[from]->resize(capacity + capacity * 0.3);
     }

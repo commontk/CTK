@@ -75,6 +75,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "PythonQt.*src.*PythonQt.*(cpp|h)"
   "include.PythonQt.PythonQt.*h"
 
+  # ctkDcmSCU is a copy from dcmtk, it should be fixed there.
+  ".*ctkDcmSCU.cc.*"
+
   # Suppressing warnings about duplicate libraries in Darwin
   # At some point this may be addressed by CMake feature request: 
   # http://public.kitware.com/Bug/view.php?id=10179

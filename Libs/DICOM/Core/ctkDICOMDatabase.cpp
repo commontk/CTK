@@ -467,6 +467,8 @@ void ctkDICOMDatabase::insert( const ctkDICOMDataset& ctkDataset, bool storeFile
 void ctkDICOMDatabase::insert ( const QString& filePath, bool storeFile, bool generateThumbnail, bool createHierarchy, const QString& destinationDirectoryName)
 {
   Q_D(ctkDICOMDatabase);
+  Q_UNUSED(createHierarchy);
+  Q_UNUSED(destinationDirectoryName);
 
   /// first we check if the file is already in the database
   if (fileExistsAndUpToDate(filePath))

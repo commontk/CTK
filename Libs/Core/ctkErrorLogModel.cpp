@@ -159,10 +159,14 @@ void ctkErrorLogTerminalOutput::output(const QString& text)
     QMutexLocker locker(&d->OutputMutex);
     QString textWithNewLine = text + "\n";
 #ifdef _MSC_VER
-    _write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
+    ssize_t res = _write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
 #else
-    write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
+    ssize_t res = write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
 #endif
+    if (res == -1)
+      {
+      return;
+      }
   }
 }
 
