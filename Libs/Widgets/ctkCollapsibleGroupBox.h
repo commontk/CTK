@@ -38,6 +38,12 @@ class CTK_WIDGETS_EXPORT ctkCollapsibleGroupBox : public QGroupBox
 {
   Q_OBJECT
   Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed)
+
+  /// This property holds the height in pixels of the contents (excludes the title)
+  /// when the box is collapsed.
+  /// 14px by default, it is the smallest height that fit Mac Style.
+  Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight)
+
 public:
   ctkCollapsibleGroupBox(QWidget* parent = 0);
   ctkCollapsibleGroupBox(const QString& title, QWidget* parent = 0);
@@ -52,6 +58,10 @@ public:
   /// Return the collapse state of the groupbox
   /// true if the groupbox is collapsed (closed), false if it is expanded(open)
   inline bool collapsed()const;
+
+  /// Set the height of the collapsed box. Does not include the title height.
+  virtual void setCollapsedHeight(int heightInPixels);
+  int collapsedHeight()const;
 
   /// Reimplemented for internal reasons
   /// Catch when a child widget's visibility is externally changed

@@ -52,9 +52,8 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
   }
 };
 #else
-  
-#endif
 
+#endif
 
 //-----------------------------------------------------------------------------
 class ctkCollapsibleGroupBoxPrivate
@@ -71,6 +70,7 @@ public:
   QSize OldSize;
   /// Maximum allowed height
   int   MaxHeight;
+  int   CollapsedHeight;
 
   /// We change the visibility of the chidren in setChildrenVisibility
   /// and we track when the visibility is changed to force it back to possibly
@@ -91,6 +91,7 @@ ctkCollapsibleGroupBoxPrivate::ctkCollapsibleGroupBoxPrivate(
   this->ForcingVisibility = false;
   this->IsStateCreated = false;
   this->MaxHeight = 0;
+  this->CollapsedHeight = 14;
 }
 
 //-----------------------------------------------------------------------------
@@ -173,6 +174,20 @@ ctkCollapsibleGroupBox::~ctkCollapsibleGroupBox()
 }
 
 //-----------------------------------------------------------------------------
+void ctkCollapsibleGroupBox::setCollapsedHeight(int heightInPixels)
+{
+  Q_D(ctkCollapsibleGroupBox);
+  d->CollapsedHeight = heightInPixels;
+}
+
+//-----------------------------------------------------------------------------
+int ctkCollapsibleGroupBox::collapsedHeight()const
+{
+  Q_D(const ctkCollapsibleGroupBox);
+  return d->CollapsedHeight;
+}
+
+//-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBox::expand(bool _expand)
 {
   Q_D(ctkCollapsibleGroupBox);
@@ -199,7 +214,11 @@ void ctkCollapsibleGroupBox::expand(bool _expand)
   else
     {
     d->MaxHeight = this->maximumHeight();
-    this->setMaximumHeight(22);
+    QStyleOptionGroupBox option;
+    this->initStyleOption(&option);
+    QRect labelRect = this->style()->subControlRect(
+      QStyle::CC_GroupBox, &option, QStyle::SC_GroupBoxLabel, this);
+    this->setMaximumHeight(labelRect.height() + d->CollapsedHeight);
     }
 }
 
@@ -212,7 +231,7 @@ void ctkCollapsibleGroupBox::paintEvent(QPaintEvent* e)
   QStylePainter paint(this);
   QStyleOptionGroupBox option;
   initStyleOption(&option);
-  option.activeSubControls &= !QStyle::SC_GroupBoxCheckBox;
+  option.activeSubControls &= ~QStyle::SC_GroupBoxCheckBox;
   paint.drawComplexControl(QStyle::CC_GroupBox, option);
   
 }
