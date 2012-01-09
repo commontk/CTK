@@ -170,7 +170,7 @@ void ctkFDHandler::run()
     while(c != '\n')
       {
 #ifdef Q_OS_WIN32
-      ssize_t res = _read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
+      int res = _read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
 #else
       ssize_t res = read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
 #endif
