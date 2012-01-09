@@ -96,7 +96,7 @@ void ctkCollapsibleButtonPrivate::init()
   this->ContentsLineWidth = 1;
   this->ContentsMidLineWidth = 0;
 
-  this->CollapsedHeight = 10;
+  this->CollapsedHeight = 14;
   this->ExclusiveMouseOver = false;  
   this->LookOffWhenChecked = true; // set as a prop ?
   

@@ -45,7 +45,10 @@ class QStyleOptionButton;
 class CTK_WIDGETS_EXPORT ctkCollapsibleButton : public QAbstractButton
 {
   Q_OBJECT
-  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed DESIGNABLE isCheckable NOTIFY contentsCollapsed)
+  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed NOTIFY contentsCollapsed)
+  /// This property holds the height in pixels of the contents (excludes the button)
+  /// when the button is collapsed.
+  /// 14 pixels by default (same as ctkCollapsibleGroupBox)
   Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight)
 
   Q_PROPERTY(QFrame::Shape contentsFrameShape READ contentsFrameShape WRITE setContentsFrameShape)
@@ -68,9 +71,9 @@ public:
   void setCollapsed(bool);
   bool collapsed()const;
 
-  /// 
-  /// Height used when the widget is collapsed
-  void setCollapsedHeight(int);
+  ///
+  /// \todo resize the widget when setting the new height
+  void setCollapsedHeight(int heightInPixels);
   int collapsedHeight()const;
 
   /// 
