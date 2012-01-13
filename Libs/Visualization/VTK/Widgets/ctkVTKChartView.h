@@ -47,23 +47,20 @@ public:
 
   /// Generic function to add a custom plot. \a plot is added into the chart
   /// Emit the plotAdded(vtkPlot*) signal.
-  virtual void addPlot(vtkPlot* plot);
+  Q_INVOKABLE virtual void addPlot(vtkPlot* plot);
 
   /// Remove the plot from the chart. Do nothing if plot is not in the chart.
   /// Emit the plotRemoved(vtkPlot*) signal.
-  virtual void removePlot(vtkPlot* plot);
-
-  /// Remove all the plots from the chart
-  void removeAllPlots();
+  Q_INVOKABLE virtual void removePlot(vtkPlot* plot);
 
   /// Return the id of the plot in the chart.
   /// -1 if the plot is not found in the chart
-  vtkIdType plotIndex(vtkPlot* plot);
+  Q_INVOKABLE vtkIdType plotIndex(vtkPlot* plot);
 
   /// Utility function that returns the view chart. It can be used for customizing
   /// the chart display options (axes, legend...)
-  vtkChartXY* chart()const;
-  vtkContextScene* scene()const;
+  Q_INVOKABLE vtkChartXY* chart()const;
+  Q_INVOKABLE vtkContextScene* scene()const;
 
   /// Title that appears inside the view
   QString title()const;
@@ -82,7 +79,13 @@ public:
   void chartBounds(double bounds[8])const;
   void setChartUserBounds(double* bounds);
   void chartUserBounds(double* bounds)const;
+  
 
+public Q_SLOTS:
+
+  /// Remove all the plots from the chart
+  void removeAllPlots();
+  
   /// 
   virtual void setAxesToChartBounds();
   virtual void boundAxesToChartBounds();
