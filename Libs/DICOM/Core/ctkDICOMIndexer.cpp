@@ -98,7 +98,6 @@ ctkDICOMIndexer::~ctkDICOMIndexer()
 void ctkDICOMIndexer::addFile(ctkDICOMDatabase& ctkDICOMDatabase, 
                                    const QString& filePath,
                                    const QString& destinationDirectoryName)
-                                   
 {
   if (!destinationDirectoryName.isEmpty())
   {
