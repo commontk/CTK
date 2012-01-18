@@ -413,7 +413,7 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
     {
     QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
     QString targetDirectory;
-    if (copyOnImport->isEnabled())
+    if (copyOnImport->checkState() == Qt::Checked)
       {
       targetDirectory = d->DICOMDatabase->databaseDirectory();
       }
