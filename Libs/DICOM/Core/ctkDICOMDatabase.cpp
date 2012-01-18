@@ -523,6 +523,11 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   QString studyInstanceUID(ctkDataset.GetElementAsString(DCM_StudyInstanceUID) );
   QString seriesInstanceUID(ctkDataset.GetElementAsString(DCM_SeriesInstanceUID) );
   QString patientID(ctkDataset.GetElementAsString(DCM_PatientID) );
+  if ( patientsName.isEmpty() && !patientID.isEmpty() )
+  { // Use patient id as name if name is empty - can happen on anonymized datasets
+    // see: http://www.na-mic.org/Bug/view.php?id=1643
+    patientsName = patientID;
+  }
   if ( patientsName.isEmpty() || studyInstanceUID.isEmpty() || patientID.isEmpty() )
   {
     logger.error("Dataset is missing necessary information!");
