@@ -43,6 +43,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
   Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCallingAETitle);
   Q_PROPERTY(QString host READ host WRITE setHost);
   Q_PROPERTY(int port READ port WRITE setPort);
+  Q_PROPERTY(bool preferCGET READ preferCGET WRITE setPreferCGET);
 
 public:
   explicit ctkDICOMQuery(QObject* parent = 0);
@@ -63,6 +64,10 @@ public:
   /// 0 by default.
   void setPort ( int port );
   int port()const;
+  /// Prefer CGET over CMOVE for retrieval of query results
+  /// false by default
+  void setPreferCGET ( bool preferCGET );
+  bool preferCGET()const;
 
   /// Query a remote DICOM Image Store SCP
   /// You must at least set the host and port before calling query()

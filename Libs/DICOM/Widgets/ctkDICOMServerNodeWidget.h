@@ -82,7 +82,8 @@ protected:
     NameColumn = 0,
     AETitleColumn,
     AddressColumn,
-    PortColumn
+    PortColumn,
+    CGETColumn
   };
 private:
   Q_DECLARE_PRIVATE(ctkDICOMServerNodeWidget);
