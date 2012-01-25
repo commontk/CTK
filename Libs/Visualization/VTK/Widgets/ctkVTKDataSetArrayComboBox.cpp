@@ -23,7 +23,6 @@
 
 // CTK includes
 #include "ctkVTKDataSetArrayComboBox.h"
-#include "ctkVTKDataSetModel.h"
 
 // VTK includes
 #include <vtkDataArray.h>
@@ -38,7 +37,7 @@ public:
   ctkVTKDataSetArrayComboBoxPrivate(ctkVTKDataSetArrayComboBox& object);
   void init();
   ctkVTKDataSetModel* dataSetModel()const;
-  
+
   int indexFromArrayName(const QString& dataArrayName)const;
   int indexFromArray(vtkDataArray* dataArray)const;
   vtkDataArray* arrayFromIndex(int index)const;
@@ -140,6 +139,24 @@ vtkDataSet* ctkVTKDataSetArrayComboBox::dataSet()const
 {
   Q_D(const ctkVTKDataSetArrayComboBox);
   return d->dataSetModel()->dataSet();
+}
+
+// --------------------------------------------------------------------------
+ctkVTKDataSetModel::AttributeTypes ctkVTKDataSetArrayComboBox::attributeTypes()const
+{
+  return this->dataSetModel()->attributeTypes();
+}
+
+// --------------------------------------------------------------------------
+void ctkVTKDataSetArrayComboBox::setAttributeTypes(const ctkVTKDataSetModel::AttributeTypes& attributeTypes)
+{
+  this->dataSetModel()->setAttributeTypes(attributeTypes);
+}
+
+// --------------------------------------------------------------------------
+ctkVTKDataSetModel* ctkVTKDataSetArrayComboBox::dataSetModel()const
+{
+  return qobject_cast<ctkVTKDataSetModel*>(this->model());
 }
 
 // --------------------------------------------------------------------------

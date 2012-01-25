@@ -26,6 +26,7 @@
 
 // CTK includes
 #include "ctkVisualizationVTKWidgetsExport.h"
+#include "ctkVTKDataSetModel.h"
 class ctkVTKDataSetArrayComboBoxPrivate;
 
 class vtkDataArray;
@@ -37,18 +38,24 @@ class vtkDataSet;
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDataSetArrayComboBox : public QComboBox
 {
   Q_OBJECT
-  
+  Q_PROPERTY(ctkVTKDataSetModel::AttributeTypes attributeTypes READ attributeTypes WRITE setAttributeTypes)
+
 public:
   /// Superclass typedef
   typedef QComboBox Superclass;
-  
+
   /// Constructors
   explicit ctkVTKDataSetArrayComboBox(QWidget* parent = 0);
   virtual ~ctkVTKDataSetArrayComboBox();
-  
+
   vtkDataArray* currentArray()const;
   QString currentArrayName()const;
   vtkDataSet* dataSet()const;
+
+  ctkVTKDataSetModel::AttributeTypes attributeTypes()const;
+  void setAttributeTypes(const ctkVTKDataSetModel::AttributeTypes& attributeTypes);
+
+  ctkVTKDataSetModel* dataSetModel()const;
 
 public Q_SLOTS:
   void setDataSet(vtkDataSet* dataSet);

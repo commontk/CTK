@@ -42,8 +42,12 @@ public:
   void init();
   //void listenDataArrayModifiedEvent();
 
+  static QList<vtkDataArray*> attributeArrayToInsert(const ctkVTKDataSetModel::AttributeTypes& attributeType,
+                                                     vtkDataSetAttributes * dataSetAttributes);
+
   vtkSmartPointer<vtkDataSet> DataSet;
   bool ListenDataArrayModifiedEvent;
+  ctkVTKDataSetModel::AttributeTypes AttributeType;
 };
 
 
@@ -52,6 +56,7 @@ ctkVTKDataSetModelPrivate::ctkVTKDataSetModelPrivate(ctkVTKDataSetModel& object)
   : q_ptr(&object)
 {
   this->ListenDataArrayModifiedEvent = false;
+  this->AttributeType = ctkVTKDataSetModel::AllAttribute;
 }
 
 //------------------------------------------------------------------------------
@@ -64,7 +69,7 @@ void ctkVTKDataSetModelPrivate::init()
 {
   Q_Q(ctkVTKDataSetModel);
   q->setColumnCount(1);
-  
+
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)));
 }
@@ -88,7 +93,46 @@ void ctkVTKDataSetModelPrivate::listenDataArrayModifiedEvent()
 */
 
 //------------------------------------------------------------------------------
+QList<vtkDataArray*> ctkVTKDataSetModelPrivate::attributeArrayToInsert(
+    const ctkVTKDataSetModel::AttributeTypes& attributeType,
+    vtkDataSetAttributes * dataSetAttributes)
+{
+  QList<vtkDataArray*> attributeArraysToInsert;
+  for (int p = 0; p < dataSetAttributes->GetNumberOfArrays(); ++p)
+    {
+    vtkDataArray * dataArray = dataSetAttributes->GetArray(p);
+
+    bool isAttributeArray = false;
+    vtkDataArray* attributeArrays[vtkDataSetAttributes::NUM_ATTRIBUTES];
+    for(int attributeId = 0; attributeId < vtkDataSetAttributes::NUM_ATTRIBUTES; ++attributeId)
+      {
+      attributeArrays[attributeId] = dataSetAttributes->GetAttribute(attributeId);
+      if (!isAttributeArray && attributeArrays[attributeId] == dataArray)
+        {
+        isAttributeArray = true;
+        }
+      }
+
+    if ((attributeType & ctkVTKDataSetModel::ScalarsAttribute && (dataArray == attributeArrays[vtkDataSetAttributes::SCALARS]))
+        || (attributeType & ctkVTKDataSetModel::VectorsAttribute && (dataArray == attributeArrays[vtkDataSetAttributes::VECTORS]))
+        || (attributeType & ctkVTKDataSetModel::NormalsAttribute && (dataArray == attributeArrays[vtkDataSetAttributes::NORMALS]))
+        || (attributeType & ctkVTKDataSetModel::TCoordsAttribute && (dataArray == attributeArrays[vtkDataSetAttributes::TCOORDS]))
+        || (attributeType & ctkVTKDataSetModel::TensorsAttribute && (dataArray == attributeArrays[vtkDataSetAttributes::TENSORS]))
+        || (attributeType & ctkVTKDataSetModel::GlobalIDsAttribute && (dataArray == attributeArrays[vtkDataSetAttributes::GLOBALIDS]))
+        || (attributeType & ctkVTKDataSetModel::PedigreeIDsAttribute && (dataArray == attributeArrays[vtkDataSetAttributes::PEDIGREEIDS]))
+        || (attributeType & ctkVTKDataSetModel::EdgeFlagAttribute && (dataArray == attributeArrays[vtkDataSetAttributes::EDGEFLAG]))
+        || (attributeType & ctkVTKDataSetModel::NoAttribute && !isAttributeArray)
+        )
+      {
+      attributeArraysToInsert << dataSetAttributes->GetArray(p);
+      }
+    }
+  return attributeArraysToInsert;
+}
+
+//------------------------------------------------------------------------------
 // ctkVTKDataSetModel
+
 //------------------------------------------------------------------------------
 ctkVTKDataSetModel::ctkVTKDataSetModel(QObject *_parent)
   : QStandardItemModel(_parent)
@@ -131,6 +175,25 @@ vtkDataSet* ctkVTKDataSetModel::dataSet()const
 {
   Q_D(const ctkVTKDataSetModel);
   return d->DataSet;
+}
+
+//------------------------------------------------------------------------------
+ctkVTKDataSetModel::AttributeTypes ctkVTKDataSetModel::attributeTypes()const
+{
+  Q_D(const ctkVTKDataSetModel);
+  return d->AttributeType;
+}
+
+//------------------------------------------------------------------------------
+void ctkVTKDataSetModel::setAttributeTypes(const AttributeTypes& attributeTypes)
+{
+  Q_D(ctkVTKDataSetModel);
+  if (d->AttributeType == attributeTypes)
+    {
+    return;
+    }
+  d->AttributeType = attributeTypes;
+  this->updateDataSet();
 }
 
 //------------------------------------------------------------------------------
@@ -220,14 +283,12 @@ void ctkVTKDataSetModel::populateDataSet()
   Q_D(ctkVTKDataSetModel);
   Q_ASSERT(d->DataSet);
 
-  for (int p = 0; p < d->DataSet->GetPointData()->GetNumberOfArrays(); ++p)
+  QList<vtkDataArray*> attributeArrays;
+  attributeArrays << ctkVTKDataSetModelPrivate::attributeArrayToInsert(d->AttributeType, d->DataSet->GetPointData());
+  attributeArrays << ctkVTKDataSetModelPrivate::attributeArrayToInsert(d->AttributeType, d->DataSet->GetCellData());
+  foreach(vtkDataArray* attributeArray, attributeArrays)
     {
-    this->insertArray(d->DataSet->GetPointData()->GetArray(p));
-    }
-
-  for (int p = 0; p < d->DataSet->GetCellData()->GetNumberOfArrays(); ++p)
-    {
-    this->insertArray(d->DataSet->GetCellData()->GetArray(p));
+    this->insertArray(attributeArray);
     }
 }
 
