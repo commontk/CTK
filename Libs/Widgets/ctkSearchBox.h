@@ -22,8 +22,8 @@
 #define __ctkSearchBox_h
 
 // QT includes
-#include <QLineEdit>
 #include <QIcon>
+#include <QLineEdit>
 
 // CTK includes
 #include "ctkWidgetsExport.h"
@@ -52,9 +52,15 @@ class CTK_WIDGETS_EXPORT ctkSearchBox : public QLineEdit
   /// manually.
   Q_PROPERTY(QString placeholderText READ placeholderText WRITE setPlaceholderText)
 #endif
+  /// Show an icon at left side of the line edit, indicating that the text
+  /// field is used to search/filter something. The default is <code>false</code>.
   Q_PROPERTY(bool showSearchIcon READ showSearchIcon WRITE setShowSearchIcon)
 
+  /// The QIcon to use for the search icon at the left. The default is a
+  /// magnifying glass icon.
   Q_PROPERTY(QIcon searchIcon READ searchIcon WRITE setSearchIcon)
+  /// The QIcon to use for the clear icon. The default is a round grey button
+  /// with a white cross.
   Q_PROPERTY(QIcon clearIcon READ clearIcon WRITE setClearIcon)
 
 public:
@@ -69,16 +75,21 @@ public:
   void setPlaceholderText(const QString& defaultText);
 #endif
   /// False by default
-  void setShowSearchIcon(bool);
+  void setShowSearchIcon(bool show);
   bool showSearchIcon()const;
 
-  void setAlwaysShowClearIcon(bool);
+  /// False by default
+  void setAlwaysShowClearIcon(bool show);
   bool alwaysShowClearIcon()const;
 
-  void setSearchIcon(const QIcon&);
+  /// Set the search icon.
+  void setSearchIcon(const QIcon& icon);
+  /// Get the current search icon.
   QIcon searchIcon()const;
 
-  void setClearIcon(const QIcon&);
+  /// Set the clear icon.
+  void setClearIcon(const QIcon& icon);
+  /// Get the current clear icon.
   QIcon clearIcon()const;
 
 protected Q_SLOTS:
