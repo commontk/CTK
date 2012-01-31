@@ -94,21 +94,20 @@ QRect ctkSearchBoxPrivate::clearRect()const
 QRect ctkSearchBoxPrivate::searchRect()const
 {
   Q_Q(const ctkSearchBox);
-  QRect sRect;
+  QRect sRect = q->contentsRect();
   // If the QLineEdit has a frame, the icon must be shifted from
   // the frame line width
   if (q->hasFrame())
     {
     QStyleOptionFrameV2 opt;
     q->initStyleOption(&opt);
-    sRect.moveTopLeft(QPoint(opt.lineWidth, opt.lineWidth));
+    sRect.adjust(opt.lineWidth, opt.lineWidth, -opt.lineWidth, -opt.lineWidth);
     }
-  // Hardcoded: shift by 1 pixel because some styles have a focus frame inside
+  // Hardcoded: shrink by 1 pixel because some styles have a focus frame inside
   // the line edit frame.
-  sRect.translate(QPoint(1,1));
+  sRect.adjust(1, 1, -1, -1);
   // Square size
-  sRect.setSize(QSize(q->height(),q->height()) -
-                2*QSize(sRect.left(), sRect.top()));
+  sRect.setWidth(sRect.height());
   return sRect;
 }
 
