@@ -57,8 +57,6 @@ class CTK_WIDGETS_EXPORT ctkSearchBox : public QLineEdit
   Q_PROPERTY(QIcon searchIcon READ searchIcon WRITE setSearchIcon)
   Q_PROPERTY(QIcon clearIcon READ clearIcon WRITE setClearIcon)
 
-  Q_PROPERTY(QIcon::Mode clearIconMode READ clearIconMode WRITE setClearIconMode)
-
 public:
   /// Superclass typedef
   typedef QLineEdit Superclass;
@@ -82,9 +80,6 @@ public:
 
   void setClearIcon(const QIcon&);
   QIcon clearIcon()const;
-
-  void setClearIconMode(QIcon::Mode);
-  QIcon::Mode clearIconMode()const;
 
 protected Q_SLOTS:
   /// Change the clear icon's state to enabled or disabled.
