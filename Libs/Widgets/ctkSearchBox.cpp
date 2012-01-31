@@ -181,6 +181,51 @@ bool ctkSearchBox::alwaysShowClearIcon()const
 }
 
 // --------------------------------------------------
+void ctkSearchBox::setSearchIcon(const QIcon& icon)
+{
+  Q_D(ctkSearchBox);
+  d->searchIcon = icon;
+  this->update();
+}
+
+// --------------------------------------------------
+QIcon ctkSearchBox::searchIcon()const
+{
+  Q_D(const ctkSearchBox);
+  return d->searchIcon;
+}
+
+// --------------------------------------------------
+void ctkSearchBox::setClearIcon(const QIcon& icon)
+{
+  Q_D(ctkSearchBox);
+  d->clearIcon = icon;
+  this->update();
+}
+
+// --------------------------------------------------
+QIcon ctkSearchBox::clearIcon()const
+{
+  Q_D(const ctkSearchBox);
+  return d->clearIcon;
+}
+
+// --------------------------------------------------
+void ctkSearchBox::setClearIconMode(QIcon::Mode mode)
+{
+  Q_D(ctkSearchBox);
+  d->clearIconMode = mode;
+  this->update();
+}
+
+// --------------------------------------------------
+QIcon::Mode ctkSearchBox::clearIconMode()const
+{
+  Q_D(const ctkSearchBox);
+  return d->clearIconMode;
+}
+
+// --------------------------------------------------
 void ctkSearchBox::paintEvent(QPaintEvent * event)
 {
   Q_D(ctkSearchBox);
@@ -251,14 +296,14 @@ void ctkSearchBox::paintEvent(QPaintEvent * event)
   // Draw clearIcon
   if (!d->hideClearIcon)
     {
-    QPixmap closePixmap = d->clearIcon.pixmap(cRect.size(),d->clearIconMode);
+    QPixmap closePixmap = d->clearIcon.pixmap(cRect.size(),this->isEnabled() ? d->clearIconMode : QIcon::Disabled);
     this->style()->drawItemPixmap(&p, cRect, Qt::AlignCenter, closePixmap);
     }
 
   // Draw searchIcon
   if (d->showSearchIcon)
     {
-    QPixmap searchPixmap = d->searchIcon.pixmap(sRect.size());
+    QPixmap searchPixmap = d->searchIcon.pixmap(sRect.size(), this->isEnabled() ? QIcon::Normal : QIcon::Disabled);
     this->style()->drawItemPixmap(&p, sRect, Qt::AlignCenter, searchPixmap);
     }
 }
