@@ -51,7 +51,6 @@ public:
   bool alwaysShowClearIcon;
   bool hideClearIcon;
 
-  QIcon::Mode clearIconMode;
 #if QT_VERSION < 0x040700
   QString placeholderText;
 #endif
@@ -63,7 +62,6 @@ ctkSearchBoxPrivate::ctkSearchBoxPrivate(ctkSearchBox &object)
 {
   this->clearIcon = QIcon(":Icons/clear.svg");
   this->searchIcon = QIcon(":Icons/search.svg");
-  this->clearIconMode = QIcon::Disabled;
   this->showSearchIcon = false;
   this->alwaysShowClearIcon = false;
   this->hideClearIcon = true;
@@ -180,6 +178,36 @@ bool ctkSearchBox::alwaysShowClearIcon()const
 }
 
 // --------------------------------------------------
+void ctkSearchBox::setSearchIcon(const QIcon& icon)
+{
+  Q_D(ctkSearchBox);
+  d->searchIcon = icon;
+  this->update();
+}
+
+// --------------------------------------------------
+QIcon ctkSearchBox::searchIcon()const
+{
+  Q_D(const ctkSearchBox);
+  return d->searchIcon;
+}
+
+// --------------------------------------------------
+void ctkSearchBox::setClearIcon(const QIcon& icon)
+{
+  Q_D(ctkSearchBox);
+  d->clearIcon = icon;
+  this->update();
+}
+
+// --------------------------------------------------
+QIcon ctkSearchBox::clearIcon()const
+{
+  Q_D(const ctkSearchBox);
+  return d->clearIcon;
+}
+
+// --------------------------------------------------
 void ctkSearchBox::paintEvent(QPaintEvent * event)
 {
   Q_D(ctkSearchBox);
@@ -250,14 +278,14 @@ void ctkSearchBox::paintEvent(QPaintEvent * event)
   // Draw clearIcon
   if (!d->hideClearIcon)
     {
-    QPixmap closePixmap = d->clearIcon.pixmap(cRect.size(),d->clearIconMode);
+    QPixmap closePixmap = d->clearIcon.pixmap(cRect.size(),this->isEnabled() ? QIcon::Normal : QIcon::Disabled);
     this->style()->drawItemPixmap(&p, cRect, Qt::AlignCenter, closePixmap);
     }
 
   // Draw searchIcon
   if (d->showSearchIcon)
     {
-    QPixmap searchPixmap = d->searchIcon.pixmap(sRect.size());
+    QPixmap searchPixmap = d->searchIcon.pixmap(sRect.size(), this->isEnabled() ? QIcon::Normal : QIcon::Disabled);
     this->style()->drawItemPixmap(&p, sRect, Qt::AlignCenter, searchPixmap);
     }
 }
