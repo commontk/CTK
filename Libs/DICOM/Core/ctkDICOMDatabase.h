@@ -141,16 +141,16 @@ public:
   ///
   void insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail);
   void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
-  void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
+  Q_INVOKABLE void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
   
   /// Check if file is already in database and up-to-date
   bool fileExistsAndUpToDate(const QString& filePath);
 
   /// remove the series from the database, including images and
   /// thumbnails  
-  bool removeSeries(const QString& seriesInstanceUID);
-  bool removeStudy(const QString& studyInstanceUID);
-  bool removePatient(const QString& patientID);
+  Q_INVOKABLE bool removeSeries(const QString& seriesInstanceUID);
+  Q_INVOKABLE bool removeStudy(const QString& studyInstanceUID);
+  Q_INVOKABLE bool removePatient(const QString& patientID);
   bool cleanup();
 
 Q_SIGNALS:
