@@ -107,6 +107,10 @@ int ctkDICOMServerNodeWidget::addServerNode()
   newItem->setCheckState( Qt::Unchecked );
   d->NodeTable->setItem(rowCount, NameColumn, newItem);
 
+  newItem = new QTableWidgetItem;
+  newItem->setCheckState( Qt::Checked );
+  d->NodeTable->setItem(rowCount, CGETColumn, newItem);
+
   d->NodeTable->setCurrentCell(rowCount, NameColumn);
   // The old rowCount becomes the added row index
   return rowCount;
