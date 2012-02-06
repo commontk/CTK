@@ -78,6 +78,16 @@ public:
   bool alignItems()const;
   void setAlignItems(bool);
 
+  /// Replace the existing BoxLayout of the widget with a
+  /// flow layout.
+  /// When using the Designer, it is not possible to use a flow layout.
+  /// Instead, you can use a H/VBoxLayout and replace it programatically
+  /// in the setupUi() function with a flow layout. replaceLayout() makes
+  /// the operation easier.
+  /// \todo replaceLayout should take an existing layout instead of a widget,
+  /// indeed, a layout can have another layout as a parent, not only a widget.
+  static ctkFlowLayout* replaceLayout(QWidget* widget);
+
   /// Reimplemented for internal reasons
   virtual void addItem(QLayoutItem *item);
   virtual Qt::Orientations expandingDirections() const;
