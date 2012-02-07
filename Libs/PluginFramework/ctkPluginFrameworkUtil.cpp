@@ -23,6 +23,7 @@
 #include "ctkPluginFrameworkContext_p.h"
 
 #include <QString>
+#include <QCoreApplication>
 
 #include <stdexcept>
 

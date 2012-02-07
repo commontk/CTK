@@ -37,6 +37,8 @@ ctkPluginFramework::ctkPluginFramework()
   qRegisterMetaType<ctkPluginEvent>("ctkPluginEvent");
   qRegisterMetaType<ctkServiceEvent>("ctkServiceEvent");
   qRegisterMetaType<ctkEvent>("ctkEvent");
+  qRegisterMetaType<ctkProperties>("ctkProperties");
+  qRegisterMetaType<ctkDictionary>("ctkDictionary");
 }
 
 //----------------------------------------------------------------------------

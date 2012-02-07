@@ -19,15 +19,24 @@
 
 =============================================================================*/
 
-#include "ctkPluginArchive_p.h"
 
-#include "ctkPluginException.h"
-#include "ctkPluginStorage_p.h"
+#ifndef CTKTESTPLUGINA_P_H
+#define CTKTESTPLUGINA_P_H
 
-#include <QStringList>
-#include <QFile>
+#include <QObject>
 
+#include "ctkTestPluginAService.h"
 
-const QString ctkPluginArchive::AUTOSTART_SETTING_STOPPED("stopped");
-const QString ctkPluginArchive::AUTOSTART_SETTING_EAGER("eager");
-const QString ctkPluginArchive::AUTOSTART_SETTING_ACTIVATION_POLICY("activation_policy");
+class ctkPluginContext;
+
+class ctkTestPluginA : public QObject,
+                       public ctkTestPluginAService
+{
+  Q_OBJECT
+  Q_INTERFACES(ctkTestPluginAService)
+
+public:
+  ctkTestPluginA(ctkPluginContext* pc);
+};
+
+#endif // CTKTESTPLUGINA_P_H

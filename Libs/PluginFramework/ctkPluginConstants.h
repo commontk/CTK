@@ -240,6 +240,16 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
   static const QString PLUGIN_ACTIVATIONPOLICY; // = "Plugin-ActivationPolicy"
 
   /**
+   * Manifest header identifying the location from which a new plugin version
+   * is obtained during a plugin update operation.
+   *
+   * <p>
+   * The attribute value may be retrieved from the <code>ctkDictionary</code>
+   * object returned by the <code>ctkPlugin::getHeaders()</code> method.
+   */
+  static const QString PLUGIN_UPDATELOCATION; // = "Plugin-UpdateLocation"
+
+  /**
    * Plugin activation policy declaring the plugin must be activated immediately.
    *
    * <p>

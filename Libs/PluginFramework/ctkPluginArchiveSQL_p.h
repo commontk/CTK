@@ -19,41 +19,45 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINARCHIVE_P_H
-#define CTKPLUGINARCHIVE_P_H
+#ifndef CTKPLUGINARCHIVESQL_P_H
+#define CTKPLUGINARCHIVESQL_P_H
 
+#include <QString>
 #include <QHash>
 #include <QUrl>
 #include <QDateTime>
 
+#include "ctkPluginArchive_p.h"
+#include "ctkPluginManifest_p.h"
+
+// CTK foraward declarations
+class ctkPluginStorageSQL;
+
 /**
  * \ingroup PluginFramework
  *
- * Interface for managing plugin data.
+ * Class for managing plugin data.
  *
  */
-class ctkPluginArchive
+class ctkPluginArchiveSQL : public ctkPluginArchive
 {
 
 public:
 
   /**
-   * Autostart setting stopped.
-   * @see ctkPluginArchive#setAutostartSetting(const QString&)
+   * Construct new plugin archive.
+   *
    */
-  static const QString AUTOSTART_SETTING_STOPPED; // = "stopped"
+  ctkPluginArchiveSQL(ctkPluginStorageSQL* pluginStorage, const QUrl& pluginLocation,
+                      const QString& localPluginPath, int pluginId,
+                      int startLevel = -1, const QDateTime &lastModified = QDateTime(),
+                      int autostartSetting = -1);
 
   /**
-   * Autostart setting eager.
-   * @see ctkPluginArchive#setAutostartSetting(const QString&)
+   * Construct new bundle archive in an existing bundle archive.
+   *
    */
-  static const QString AUTOSTART_SETTING_EAGER; // = "eager"
-
-  /**
-   * Autostart setting declared activation policy.
-   * @see ctkPluginArchive#setAutostartSetting(const QString&)
-   */
-  static const QString AUTOSTART_SETTING_ACTIVATION_POLICY; // = "activation_policy"
+  ctkPluginArchiveSQL(ctkPluginArchiveSQL* old, int generation, const QUrl& pluginLocation, const QString& localPluginPath);
 
 
   /**
@@ -64,38 +68,33 @@ public:
    * @param key Name of attribute to get.
    * @return A string with result or null if the entry doesn't exists.
    */
-  virtual QString getAttribute(const QString& key) const = 0;
-
+  QString getAttribute(const QString& key) const;
 
   /**
    * @returns the (raw/unlocalized) attributes
    */
-  virtual QHash<QString,QString> getUnlocalizedAttributes() const = 0;
-
+  QHash<QString,QString> getUnlocalizedAttributes() const;
 
   /**
    * Get the plugin generation associated with this plugin archive.
    *
    * @return A integer representing the generation.
    */
-  virtual int getPluginGeneration() const = 0;
-
+  int getPluginGeneration() const;
 
   /**
    * Get plugin identifier for this plugin archive.
    *
    * @return ctkPlugin identifier.
    */
-  virtual int getPluginId() const = 0;
-
+  int getPluginId() const;
 
   /**
    * Get plugin location for this plugin archive.
    *
    * @return Bundle location.
    */
-  virtual QUrl getPluginLocation() const = 0;
-
+  QUrl getPluginLocation() const;
 
   /**
    * Get the path to the plugin library on the local
@@ -103,7 +102,7 @@ public:
    *
    * @return Path to the plugin library
    */
-  virtual QString getLibLocation() const = 0;
+  QString getLibLocation() const;
 
 
   /**
@@ -113,7 +112,7 @@ public:
    * @param component Resource to get the byte array from.
    * @return QByteArray to the entry (empty if it doesn't exist).
    */
-  virtual QByteArray getPluginResource(const QString& component) const = 0;
+  QByteArray getPluginResource(const QString& component) const;
 
 
   /**
@@ -124,31 +123,31 @@ public:
    * @param name
    * @return
    */
-  virtual QStringList findResourcesPath(const QString& path) const = 0;
+  QStringList findResourcesPath(const QString& path) const;
 
 
   /**
    * Get stored plugin start level.
    */
-  virtual int getStartLevel() const = 0;
+  int getStartLevel() const;
 
 
   /**
    * Set stored plugin start level.
    */
-  virtual void setStartLevel(int level) = 0;
+  void setStartLevel(int level);
 
 
   /**
    * Get last modified timestamp.
    */
-  virtual QDateTime getLastModified() const = 0;
+  QDateTime getLastModified() const;
 
 
   /**
    * Set stored last modified timestamp.
    */
-  virtual void setLastModified(const QDateTime& timemillisecs) = 0;
+  void setLastModified(const QDateTime& timemillisecs);
 
 
   /**
@@ -156,7 +155,7 @@ public:
    *
    * @return the autostart setting. "-1" if the plugin is not started.
    */
-  virtual int getAutostartSetting() const = 0;
+  int getAutostartSetting() const;
 
 
   /**
@@ -164,38 +163,42 @@ public:
    *
    * @param setting the autostart setting to use.
    */
-  virtual void setAutostartSetting(int setting) = 0;
-
-
-  /**
-   * Get certificate chains associated with a plugin.
-   *
-   * @param onlyTrusted Only return trusted certificates.
-   * @return All certificates or null if bundle is unsigned.
-   */
-  //QList<> getCertificateChains(bool onlyTrusted) const;
-
-
-  /**
-   * Mark certificate associated with the plugin as trusted.
-   *
-   */
-  //void trustCertificateChain(QList<> trustedChain);
-
+  void setAutostartSetting(int setting);
 
   /**
    * Remove plugin from persistent storage.
-   * This will delete the current ctkPluginArchive instance.
+   * This will delete the current ctkPluginArchiveSQL instance.
    */
-  virtual void purge() = 0;
+  void purge();
 
   /**
    * Close archive and all its open files.
    */
-  virtual void close() = 0;
+  void close();
+
+  /**
+   * Create a ctkPluginManifest using the Qt resource under META-INF/MANIFEST.MF
+   */
+  void readManifest(const QByteArray &manifestResource = QByteArray());
+
+public:
+
+  int key;
+
+private:
+
+  int autostartSetting;
+  int id;
+  int generation;
+  int startLevel;
+  QDateTime lastModified;
+  QUrl location;
+  QString localPluginPath;
+  ctkPluginManifest manifest;
+  ctkPluginStorageSQL* storage;
 
 };
 
 
 
-#endif // CTKPLUGINARCHIVE_P_H
+#endif // CTKPLUGINARCHIVESQL_P_H

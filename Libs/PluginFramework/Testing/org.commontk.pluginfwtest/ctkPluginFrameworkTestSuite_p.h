@@ -66,6 +66,7 @@ private Q_SLOTS:
   void frame040a();
   void frame042a();
   void frame045a();
+  void frame070a();
 
 private:
 
@@ -98,6 +99,8 @@ private:
   // Check that the expected events have reached the listeners and
   // reset the events
   bool checkSyncListenerEvents(const QList<ctkPluginEvent>& pEvts);
+
+  void clearEvents();
 
   static int nRunCount;
 

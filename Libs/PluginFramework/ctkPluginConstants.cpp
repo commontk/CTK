@@ -43,6 +43,7 @@ const QString ctkPluginConstants::REQUIRE_PLUGIN = "Require-Plugin";
 const QString ctkPluginConstants::PLUGIN_VERSION_ATTRIBUTE = "plugin-version";
 const QString ctkPluginConstants::PLUGIN_VERSION = "Plugin-Version";
 const QString ctkPluginConstants::PLUGIN_ACTIVATIONPOLICY = "Plugin-ActivationPolicy";
+const QString ctkPluginConstants::PLUGIN_UPDATELOCATION = "Plugin-UpdateLocation";
 
 const QString ctkPluginConstants::ACTIVATION_EAGER = "eager";
 const QString ctkPluginConstants::ACTIVATION_LAZY = "lazy";

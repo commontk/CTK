@@ -19,15 +19,14 @@
 
 =============================================================================*/
 
-#include "ctkPluginArchive_p.h"
 
-#include "ctkPluginException.h"
-#include "ctkPluginStorage_p.h"
+#include "ctkTestPluginA_p.h"
+
+#include <ctkPluginContext.h>
 
 #include <QStringList>
-#include <QFile>
 
-
-const QString ctkPluginArchive::AUTOSTART_SETTING_STOPPED("stopped");
-const QString ctkPluginArchive::AUTOSTART_SETTING_EAGER("eager");
-const QString ctkPluginArchive::AUTOSTART_SETTING_ACTIVATION_POLICY("activation_policy");
+ctkTestPluginA::ctkTestPluginA(ctkPluginContext* pc)
+{
+  pc->registerService<ctkTestPluginAService>(this);
+}

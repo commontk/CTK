@@ -19,15 +19,29 @@
 
 =============================================================================*/
 
-#include "ctkPluginArchive_p.h"
+#ifndef CTKTESTPLUGINAACTIVATOR_P_H
+#define CTKTESTPLUGINAACTIVATOR_P_H
 
-#include "ctkPluginException.h"
-#include "ctkPluginStorage_p.h"
+#include <QScopedPointer>
 
-#include <QStringList>
-#include <QFile>
+#include <ctkPluginActivator.h>
+#include <ctkTestPluginAService.h>
 
+class ctkTestPluginAActivator : public QObject,
+                                public ctkPluginActivator
+{
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator)
 
-const QString ctkPluginArchive::AUTOSTART_SETTING_STOPPED("stopped");
-const QString ctkPluginArchive::AUTOSTART_SETTING_EAGER("eager");
-const QString ctkPluginArchive::AUTOSTART_SETTING_ACTIVATION_POLICY("activation_policy");
+public:
+
+  void start(ctkPluginContext* context);
+  void stop(ctkPluginContext* context);
+
+private:
+
+  QScopedPointer<ctkTestPluginAService> s;
+
+};
+
+#endif // CTKTESTPLUGINAACTIVATOR_P_H
