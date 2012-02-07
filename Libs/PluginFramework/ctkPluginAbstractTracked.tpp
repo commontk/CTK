@@ -26,7 +26,7 @@
 
 //----------------------------------------------------------------------------
 template<class S, class T, class R>
-const bool ctkPluginAbstractTracked<S,T,R>::DEBUG	= true;
+const bool ctkPluginAbstractTracked<S,T,R>::DEBUG = false;
 
 //----------------------------------------------------------------------------
 template<class S, class T, class R>
