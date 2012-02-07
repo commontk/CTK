@@ -27,6 +27,7 @@
 #include <ctkPluginException.h>
 #include <ctkServiceException.h>
 
+#include <QDir>
 #include <QTest>
 #include <QDebug>
 
@@ -455,6 +456,90 @@ void ctkPluginFrameworkTestSuite::frame045a()
 }
 
 //----------------------------------------------------------------------------
+// Reinstalls and the updates testbundle_A.
+// The version is checked to see if an update has been made.
+void ctkPluginFrameworkTestSuite::frame070a()
+{
+  QString pluginA = "pluginA_test";
+  QString pluginA1 = "libpluginA1_test";
+  //InputStream fis;
+  QString versionA;
+  QString versionA1;
+
+  pA.clear();
+
+  clearEvents();
+
+  try
+  {
+    pA = ctkPluginFrameworkTestUtil::installPlugin(pc, pluginA);
+  }
+  catch (const ctkPluginException& pexcA)
+  {
+    qDebug() << "framework test plugin" << pexcA << ":FRAME070A:FAIL";
+  }
+//  catch (const ctkSecurityException& secA)
+//  {
+//    qDebug() << "framework test plugin" << secA << ":FRAME070A:FAIL";
+//    teststatus = false;
+//  }
+
+  QHash<QString,QString> ai = pA->getHeaders();
+  versionA = ai["Plugin-Version"];
+  qDebug() << "Before version =" << versionA;
+
+  QDir testPluginDir(pc->getProperty("pluginfw.testDir").toString());
+  QString pluginA1Path;
+
+  QStringList libSuffixes;
+  libSuffixes << ".so" << ".dll" << ".dylib";
+  foreach(QString libSuffix, libSuffixes)
+  {
+    QFileInfo info(testPluginDir, pluginA1 + libSuffix);
+    if (info.exists())
+    {
+      pluginA1Path = info.absoluteFilePath();
+      break;
+    }
+  }
+
+  if (pluginA1Path.isEmpty())
+  {
+    qDebug() << "Plug-in" << pluginA1 << "not found in" << testPluginDir;
+    QFAIL("Test plug-in not found");
+  }
+
+  QUrl urk = QUrl::fromLocalFile(pluginA1Path);
+  qDebug() << "update from" << urk;
+
+  try
+  {
+    pA->update(urk);
+  }
+  catch (const ctkPluginException& pe)
+  {
+    QFAIL("framework test plug-in, update without new plug-in source :FRAME070A:FAIL");
+  }
+
+  QHash<QString,QString> a1i = pA->getHeaders();
+  versionA1 = a1i["Plugin-Version"];
+  qDebug() << "After version =" << versionA1;
+
+  QList<ctkPluginEvent> pEvts;
+  pEvts << ctkPluginEvent(ctkPluginEvent::INSTALLED, pA);
+  pEvts << ctkPluginEvent(ctkPluginEvent::RESOLVED, pA);
+  pEvts << ctkPluginEvent(ctkPluginEvent::UNRESOLVED, pA);
+  pEvts << ctkPluginEvent(ctkPluginEvent::UPDATED, pA);
+
+
+  QVERIFY2(checkListenerEvents(QList<ctkPluginFrameworkEvent>(),
+                               pEvts, QList<ctkServiceEvent>()),
+           "Unexpected events");
+
+  QVERIFY2(versionA1 != versionA, "framework test plug-in, update of plug-in failed, version info unchanged :FRAME070A:Fail");
+}
+
+//----------------------------------------------------------------------------
 void ctkPluginFrameworkTestSuite::frameworkListener(const ctkPluginFrameworkEvent& fwEvent)
 {
   frameworkEvents.push_back(fwEvent);
@@ -716,6 +801,15 @@ bool ctkPluginFrameworkTestSuite::checkSyncListenerEvents(
 
   syncPluginEvents.clear();
   return listenState;
+}
+
+void ctkPluginFrameworkTestSuite::clearEvents()
+{
+  QTest::qWait(300);
+  pluginEvents.clear();
+  syncPluginEvents.clear();
+  frameworkEvents.clear();
+  serviceEvents.clear();
 }
 
 //----------------------------------------------------------------------------
