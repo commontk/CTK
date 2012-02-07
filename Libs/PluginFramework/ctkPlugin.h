@@ -25,6 +25,7 @@
 #include <QHash>
 #include <QWeakPointer>
 #include <QMetaType>
+#include <QUrl>
 
 #include "ctkVersion.h"
 #include "ctkPluginLocalization.h"
@@ -432,6 +433,86 @@ public:
    *         plugin tries to change its own state.
    */
   virtual void stop(const StopOptions& options = 0);
+
+  /**
+   * Updates this plugin from a <code>QUrl</code>.
+   *
+   * <p>
+   * If the specified <code>QURl</code> is <code>empty</code>, the
+   * Framework creates the <code>QUrl</code> from which to read the
+   * updated plugin by interpreting, in an implementation dependent manner,
+   * this plugin's {@link ctkPluginConstants#PLUGIN_UPDATELOCATION
+   * Plugin-UpdateLocation} Manifest header, if present, or this plugin's
+   * original location.
+   *
+   * <p>
+   * If this plugin's state is <code>ACTIVE</code>, it must be stopped before
+   * the update and started after the update successfully completes.
+   *
+   * <p>
+   * If this plugin has exported any classes that are used by another
+   * plugin, these classes remain available until the Framework is relaunched.
+   *
+   * <p>
+   * The following steps are required to update a plugin:
+   * <ol>
+   * <li>If this plugin's state is <code>UNINSTALLED</code> then an
+   * <code>std::logic_error</code> is thrown.
+   *
+   * <li>If this plugin's state is <code>ACTIVE</code>, <code>STARTING</code>
+   * or <code>STOPPING</code>, this plugin is stopped as described in the
+   * <code>ctkPlugin::stop()</code> method. If <code>ctkPlugin::stop()</code> throws an
+   * exception, the exception is rethrown terminating the update.
+   *
+   * <li>The updated version of this plugin is read from the URL and
+   * installed. If the Framework is unable to install the updated version of
+   * this plugin, the original version of this plugin is restored and a
+   * <code>ctkPluginException</code> is thrown after completion of the
+   * remaining steps.
+   *
+   * <li>This plugin's state is set to <code>INSTALLED</code>.
+   *
+   * <li>If the updated version of this plugin was successfully installed, a
+   * plugin event of type {@link ctkPluginEvent#UPDATED} is fired.
+   *
+   * <li>If this plugin's state was originally <code>ACTIVE</code>, the
+   * updated plugin is started as described in the <code>ctkPlugin::start()</code>
+   * method. If <code>ctkPlugin::start()</code> throws an exception, a Framework
+   * event of type {@link ctkPluginFrameworkEvent#ERROR} is fired containing the
+   * exception.
+   * </ol>
+   *
+   * <b>Preconditions </b>
+   * <ul>
+   * <li><code>getState()</code> not in &#x007B; <code>UNINSTALLED</code>
+   * &#x007D;.
+   * </ul>
+   * <b>Postconditions, no exceptions thrown </b>
+   * <ul>
+   * <li><code>getState()</code> in &#x007B; <code>INSTALLED</code>,
+   * <code>RESOLVED</code>, <code>ACTIVE</code> &#x007D;.
+   * <li>This plugin has been updated.
+   * </ul>
+   * <b>Postconditions, when an exception is thrown </b>
+   * <ul>
+   * <li><code>getState()</code> in &#x007B; <code>INSTALLED</code>,
+   * <code>RESOLVED</code>, <code>ACTIVE</code> &#x007D;.
+   * <li>Original plugin is still used; no update occurred.
+   * </ul>
+   *
+   * @param input The <code>QUrl</code> from which to read the new
+   *        plugin or <code>null</code> to indicate the Framework must create
+   *        the URL from this plugin's
+   *        {@link ctkPluginConstants#PLUGIN_UPDATELOCATION Plugin-UpdateLocation}
+   *        Manifest header, if present, or this plugin's original location.
+   * @throws ctkPluginException If the update location cannot be read or the update
+   *         fails.
+   * @throws std::logic_error If this plugin has been uninstalled or this
+   *         plugin tries to change its own state.
+   * @see #stop()
+   * @see #start()
+   */
+  void update(const QUrl &updateLocation = QUrl());
 
   /**
    * Uninstalls this plugin.

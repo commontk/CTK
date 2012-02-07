@@ -36,6 +36,8 @@
 // for ctk::msecsTo() - remove after switching to Qt 4.7
 #include <ctkUtils.h>
 
+#include <typeinfo>
+
 const ctkPlugin::States ctkPluginPrivate::RESOLVED_FLAGS = ctkPlugin::RESOLVED | ctkPlugin::STARTING | ctkPlugin::ACTIVE | ctkPlugin::STOPPING;
 
 //----------------------------------------------------------------------------
@@ -175,10 +177,19 @@ ctkPlugin::State ctkPluginPrivate::getUpdatedState()
 {
   if (state & ctkPlugin::INSTALLED)
   {
+    Locker sync(&operationLock);
+    getUpdatedState_unlocked();
+  }
+  return state;
+}
+
+//----------------------------------------------------------------------------
+ctkPlugin::State ctkPluginPrivate::getUpdatedState_unlocked()
+{
+  if (state & ctkPlugin::INSTALLED)
+  {
     try
     {
-      // NYI, fix double locking
-      Locker sync(&operationLock);
       if (state == ctkPlugin::INSTALLED)
       {
         operation.fetchAndStoreOrdered(RESOLVING);
@@ -332,7 +343,7 @@ void ctkPluginPrivate::finalizeActivation()
   Locker sync(&operationLock);
 
   // 4: Resolve plugin (if needed)
-  switch (getUpdatedState())
+  switch (getUpdatedState_unlocked())
   {
   case ctkPlugin::INSTALLED:
     Q_ASSERT_X(resolveFailException != 0, Q_FUNC_INFO, "no resolveFailException");
@@ -466,6 +477,129 @@ const ctkRuntimeException* ctkPluginPrivate::stop1()
   //pluginLoader.unload();
 
   return res;
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
+{
+  const bool wasResolved = state == ctkPlugin::RESOLVED;
+  const int oldStartLevel = getStartLevel();
+  ctkPluginArchive* newArchive = 0;
+
+  operation.fetchAndStoreOrdered(UPDATING);
+  try
+  {
+    // New plugin as stream supplied?
+    QUrl updateUrl(updateLocation);
+    if (updateUrl.isEmpty())
+    {
+      // Try Plugin-UpdateLocation
+      QString update = archive != 0 ? archive->getAttribute(ctkPluginConstants::PLUGIN_UPDATELOCATION) : QString();
+      if (update.isEmpty())
+      {
+        // Take original location
+        updateUrl = location;
+      }
+    }
+
+    if(updateUrl.scheme() != "file")
+    {
+      QString msg = "Unsupported update URL:";
+      msg += updateUrl.toString();
+      throw ctkPluginException(msg);
+    }
+
+    newArchive = fwCtx->storage->updatePluginArchive(archive, updateUrl, updateUrl.toLocalFile());
+    //checkCertificates(newArchive);
+    checkManifestHeaders();
+    newArchive->setStartLevel(oldStartLevel);
+    fwCtx->storage->replacePluginArchive(archive, newArchive);
+  }
+  catch (const std::exception& e)
+  {
+    if (newArchive != 0)
+    {
+      newArchive->purge();
+    }
+    operation.fetchAndStoreOrdered(IDLE);
+    if (wasActive)
+    {
+      try
+      {
+        this->q_func().data()->start();
+      }
+      catch (const ctkPluginException& pe)
+      {
+        fwCtx->listeners.frameworkError(this->q_func(), e);
+      }
+    }
+    try
+    {
+      const ctkPluginException& pe = dynamic_cast<const ctkPluginException&>(e);
+      throw pe;
+    }
+    catch (std::bad_cast)
+    {
+      throw ctkPluginException("Failed to get update plugin",
+                               ctkPluginException::UNSPECIFIED, &e);
+    }
+  }
+
+  bool purgeOld = false;
+  // TODO: check if dependent plug-ins are started. If not, set purgeOld to true.
+
+  // Activate new plug-in
+  ctkPluginArchive* oldArchive = archive;
+  archive = newArchive;
+  cachedRawHeaders.clear();
+  state = ctkPlugin::INSTALLED;
+
+  // Purge old archive
+  if (purgeOld)
+  {
+    //secure.purge(this, oldProtectionDomain);
+    if (oldArchive != 0)
+    {
+      oldArchive->purge();
+    }
+  }
+
+  // Broadcast events
+  if (wasResolved)
+  {
+    // TODO: use plugin threading
+    //bundleThread().bundleChanged(new BundleEvent(BundleEvent.UNRESOLVED, this));
+    fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UNRESOLVED, this->q_func()));
+  }
+  //bundleThread().bundleChanged(new BundleEvent(BundleEvent.UPDATED, this));
+  fwCtx->listeners.emitPluginChanged(ctkPluginEvent(ctkPluginEvent::UPDATED, this->q_func()));
+  operation.fetchAndStoreOrdered(IDLE);
+
+   // Restart plugin previously stopped in the operation
+   if (wasActive)
+   {
+     try
+     {
+       this->q_func().data()->start();
+     }
+     catch (const ctkPluginException& pe)
+     {
+       fwCtx->listeners.frameworkError(this->q_func(), pe);
+     }
+   }
+ }
+
+//----------------------------------------------------------------------------
+int ctkPluginPrivate::getStartLevel()
+{
+  if (archive != 0)
+  {
+    return archive->getStartLevel();
+  }
+  else
+  {
+    return 0;
+  }
 }
 
 //----------------------------------------------------------------------------

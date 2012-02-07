@@ -20,11 +20,11 @@ set(KIT_SRCS
   ctkPluginActivator.h
   ctkPluginArchive.cpp
   ctkPluginArchive_p.h
+  ctkPluginArchiveSQL_p.h
+  ctkPluginArchiveSQL.cpp
   ctkPluginConstants.cpp
   ctkPluginContext.cpp
   ctkPluginContext_p.h
-  ctkPluginDatabase.cpp
-  ctkPluginDatabase_p.h
   ctkPluginDatabaseException.cpp
   ctkPluginEvent.cpp
   ctkPluginException.cpp
@@ -50,8 +50,9 @@ set(KIT_SRCS
   ctkPluginPrivate_p.h
   ctkPlugins.cpp
   ctkPlugins_p.h
-  ctkPluginStorage.cpp
   ctkPluginStorage_p.h
+  ctkPluginStorageSQL.cpp
+  ctkPluginStorageSQL_p.h
   ctkPluginTracker.h
   ctkPluginTracker.tpp
   ctkPluginTrackerPrivate.h

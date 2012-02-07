@@ -19,39 +19,90 @@
 
 =============================================================================*/
 
-#ifndef CTKPLUGINDATABASE_P_H
-#define CTKPLUGINDATABASE_P_H
+#ifndef ctkPluginStorageSQL_P_H
+#define ctkPluginStorageSQL_P_H
+
+#include "ctkPluginStorage_p.h"
 
 #include <QtSql>
-#include <QList>
 
 // CTK class forward declarations
-class ctkPluginStorage;
-class ctkPluginArchive;
+class ctkPluginFrameworkContext;
+class ctkPluginArchiveSQL;
 
 /**
  * \ingroup PluginFramework
  */
-class ctkPluginDatabase
+class ctkPluginStorageSQL : public ctkPluginStorage
 {
 
 public:
 
-  ctkPluginDatabase(ctkPluginStorage* storage);
+  /**
+   * Create a container for all plugin data in this framework.
+   * Try to restore all saved plugin archive state.
+   *
+   */
+  ctkPluginStorageSQL(ctkPluginFrameworkContext* framework);
 
-  virtual ~ctkPluginDatabase();
+  virtual ~ctkPluginStorageSQL();
 
   /**
-   * Opens the plugin database. If the database does not
-   * yet exist, it is created using the path from getDatabasePath().
+   * Inserts a new plugin into the database. This method assumes that
+   * the an entry with the same \a location and \a localPath does not
+   * yet exist in the database.
    *
-   * @see setDatabasePath(const QString&)
-   * @see getDatabasePath()
-   * @see ctkPluginDatabaseException
+   * @param location The URL to the plugin.
+   * @param updateLocation Location of the updated plugin.
+   * @param localPath The path to the plugin library on the local file system.
+   * @param createArchive If \c true (default) a new ctkPluginArchive instance is returned.
    *
    * @throws ctkPluginDatabaseException
    */
-  void open();
+  ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath);
+
+  /**
+   * Insert a new plugin (shared library) into the persistent
+   * storagedata as an update
+   * to an existing plugin archive. To commit this data a call to
+   * <code>replacePluginArchive</code> is needed.
+   *
+   * @param old ctkPluginArchive to be replaced.
+   * @param localPath Path to a plugin on the local file system.
+   * @return Plugin archive object.
+   */
+  ctkPluginArchive* updatePluginArchive(ctkPluginArchive* old, const QUrl& updateLocation, const QString& localPath);
+
+  /**
+   * Replace old plugin archive with a new updated plugin archive, that
+   * was created with updatePluginArchive.
+   *
+   * @param oldPA ctkPluginArchive to be replaced.
+   * @param newPA new ctkPluginArchive.
+   */
+  void replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA);
+
+  /**
+   * Removes all persisted data related to the given ctkPluginArchive.
+   *
+   * @throws ctkPluginDatabaseException
+   */
+  bool removeArchive(ctkPluginArchive* pa);
+
+  /**
+   * Get all plugin archive objects.
+   *
+   * @return QList of all PluginArchives.
+   */
+  QList<ctkPluginArchive*> getAllPluginArchives() const;
+
+  /**
+   * Get all plugins to start at next launch of framework.
+   * This list is sorted in increasing plugin id order.
+   *
+   * @return A List with plugin locations.
+   */
+  QList<QString> getStartOnLaunchPlugins() const;
 
   /**
    * Closes the plugin database. Throws a ctkPluginDatabaseException
@@ -61,10 +112,9 @@ public:
    */
   void close();
 
-  /**
-   * Checks if the database is open
-   */
-  bool isOpen() const;
+  // -------------------------------------------------------------
+  // end ctkPluginStorage interface
+  // -------------------------------------------------------------
 
   /**
    * Sets the path of the service database to \a databasePath
@@ -87,7 +137,7 @@ public:
    *
    * @throws ctkPluginDatabaseException
    */
-  QByteArray getPluginResource(long pluginId, const QString& res) const;
+  QByteArray getPluginResource(int key, const QString& res) const;
 
   /**
    * Get a list of resource entries under the given path.
@@ -98,27 +148,7 @@ public:
    *
    * @throws ctkPluginDatabaseException
    */
-  QStringList findResourcesPath(long pluginId, const QString& path) const;
-
-  /**
-   * Inserts a new plugin into the database. This method assumes that
-   * the an entry with the same \a location and \a localPath does not
-   * yet exist in the database.
-   *
-   * @param location The URL to the plugin.
-   * @param localPath The path to the plugin library on the local file system.
-   * @param createArchive If \c true (default) a new ctkPluginArchive instance is returned.
-   *
-   * @throws ctkPluginDatabaseException
-   */
-  ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath, bool createArchive = true);
-
-  /**
-   * Removes all persisted data related to the given ctkPluginArchive.
-   *
-   * @throws ctkPluginDatabaseException
-   */
-  void removeArchive(const ctkPluginArchive* pa);
+  QStringList findResourcesPath(int archiveKey, const QString& path) const;
 
   /**
    * Persist the start level
@@ -126,7 +156,7 @@ public:
    * @param pluginId The Plugin id
    * @param startLevel The new start level
    */
-  void setStartLevel(long pluginId, int startLevel);
+  void setStartLevel(int key, int startLevel);
 
   /**
    * Persist the last modification (state change) time
@@ -134,7 +164,7 @@ public:
    * @param pluginId The Plugin id
    * @param lastModified The modification time
    */
-  void setLastModified(long pluginId, const QDateTime& lastModified);
+  void setLastModified(int key, const QDateTime& lastModified);
 
   /**
    * Persist the auto start setting.
@@ -142,20 +172,46 @@ public:
    * @param pluginId The Plugin id
    * @param autostart The new auto start setting
    */
-  void setAutostartSetting(long pluginId, int autostart);
-
-  /**
-   * Reads the persisted plugin data and returns a ctkPluginArchive object
-   * for each plugin which is not in state UNINSTALLED.
-   *
-   * @throws ctkPluginDatabaseException
-   */
-  QList<ctkPluginArchive*> getPluginArchives() const;
-
+  void setAutostartSetting(int key, int autostart);
 
 private:
 
   enum TransactionType{Read, Write};
+
+  /**
+   * Opens the plugin database. If the database does not
+   * yet exist, it is created using the path from getDatabasePath().
+   *
+   * @see setDatabasePath(const QString&)
+   * @see getDatabasePath()
+   * @see ctkPluginDatabaseException
+   *
+   * @throws ctkPluginDatabaseException
+   */
+  void open();
+
+  /**
+   * Checks if the database is open
+   */
+  bool isOpen() const;
+
+  /**
+   * Find posisition for BundleArchive with specified id
+   *
+   * @param id Bundle archive id to find.
+   * @return String to write
+   */
+  int find(long id) const;
+
+  void initNextFreeIds();
+
+  /**
+   * Reads the persisted plugin data and creates a ctkPluginArchive object
+   * for each plugin which is not in state UNINSTALLED.
+   *
+   * @throws ctkPluginDatabaseException
+   */
+  void restorePluginArchives();
   
   /**
    * Get load hints from the framework for plugins.
@@ -174,7 +230,7 @@ private:
    * Remove all plugins which have been marked as uninstalled
    * (startLevel == -2).
    */
-  void removeUninstalledPlugins();
+  void cleanupDB();
 
   /**
    * Helper method that checks if all the expected tables exist in the database.
@@ -198,6 +254,12 @@ private:
    * This should only be called once when the database is initially opened.
    */
   void updateDB();
+
+  void insertArchive(ctkPluginArchiveSQL *pa);
+
+  void insertArchive(ctkPluginArchiveSQL *pa, QSqlQuery* query);
+
+  void removeArchiveFromDB(ctkPluginArchiveSQL *pa, QSqlQuery *query);
 
   /**
    * Helper function that executes the sql query specified in \a statement.
@@ -248,8 +310,29 @@ private:
   QString m_connectionName;
   bool m_isDatabaseOpen;
   bool m_inTransaction;
-  ctkPluginStorage* m_PluginStorage;
+
+  QMutex m_archivesLock;
+
+  /**
+   * Plugin id sorted list of all active plugin archives.
+   */
+  QList<ctkPluginArchive*> m_archives;
+
+  /**
+   * Framework handle.
+   */
+  ctkPluginFrameworkContext* m_framework;
+
+  /**
+   * Keep track of the next free plug-in id
+   */
+  long m_nextFreeId;
+
+  /**
+   * Keep track of the next free generation for each plugin
+   */
+  QHash<int,int> /* <plugin id, generation> */ m_generations;
 };
 
 
-#endif // CTKPLUGINDATABASE_P_H
+#endif // ctkPluginStorageSQL_P_H

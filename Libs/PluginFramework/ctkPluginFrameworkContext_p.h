@@ -24,6 +24,7 @@
 
 #include <QDebug>
 #include <QMutex>
+#include <QDir>
 
 #include "ctkPluginFrameworkFactory.h"
 #include "ctkPluginFramework.h"

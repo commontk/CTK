@@ -22,59 +22,23 @@
 #ifndef CTKPLUGINSTORAGE_P_H
 #define CTKPLUGINSTORAGE_P_H
 
-#include <QList>
+#include <QUrl>
 #include <QStringList>
-
-#include "ctkPluginDatabase_p.h"
-
-// Qt class forward declarations
-class QIODevice;
-
 
 // CTK class forward declarations
 class ctkPluginArchive;
-class ctkPluginFrameworkContext;
 
 /**
  * \ingroup PluginFramework
  *
- * Storage of all plugin meta-data and resources
+ * Interface for managing all plugin meta-data and resources
  */
 class ctkPluginStorage
 {
 
-private:
-
-  QMutex archivesLock;
-
-  /**
-   * Plugin id sorted list of all active plugin archives.
-   */
-  QList<ctkPluginArchive*> archives;
-
-  /**
-   * Framework handle.
-   */
-  ctkPluginFrameworkContext* framework;
-
-  /**
-   * SQLite db caching plug-in metadata and resources
-   */
-  ctkPluginDatabase pluginDatabase;
-
 public:
 
-  /**
-   * Create a container for all plugin data in this framework.
-   * Try to restore all saved plugin archive state.
-   *
-   */
-  ctkPluginStorage(ctkPluginFrameworkContext* framework);
-
-  /**
-   * Return the framework context.
-   */
-  ctkPluginFrameworkContext* getFrameworkContext() const;
+   virtual ~ctkPluginStorage() {}
 
   /**
    * Insert a plugin (shared library) into the persistent storage
@@ -83,8 +47,7 @@ public:
    * @param localPath Path to the plugin on the local file system
    * @return Plugin archive object.
    */
-  ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath);
-
+  virtual ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath) = 0;
 
   /**
    * Insert a new plugin (shared library) into the persistent
@@ -93,11 +56,11 @@ public:
    * <code>replacePluginArchive</code> is needed.
    *
    * @param old ctkPluginArchive to be replaced.
+   * @param updateLocation Location of the updated plugin.
    * @param localPath Path to a plugin on the local file system.
    * @return Plugin archive object.
    */
-  ctkPluginArchive* updatePluginArchive(ctkPluginArchive* old, const QString& localPath);
-
+  virtual ctkPluginArchive* updatePluginArchive(ctkPluginArchive* old, const QUrl& updateLocation, const QString& localPath) = 0;
 
   /**
    * Replace old plugin archive with a new updated plugin archive, that
@@ -106,28 +69,7 @@ public:
    * @param oldPA ctkPluginArchive to be replaced.
    * @param newPA new ctkPluginArchive.
    */
-  void replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA);
-
-  /**
-   * Persist the plugin start level.
-   *
-   * @param Plugin archive object
-   */
-  void setStartLevel(ctkPluginArchive* pa);
-
-  /**
-   * Persist the last modification (state change) time
-   *
-   * @param Plugin archive object
-   */
-  void setLastModified(ctkPluginArchive* pa);
-
-  /**
-   * Persist the auto start setting.
-   *
-   * @param Plugin archive object
-   */
-  void setAutostartSetting(ctkPluginArchive* pa);
+  virtual void replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA) = 0;
 
   /**
    * Remove plugin archive from archives list and persistent storage.
@@ -137,16 +79,14 @@ public:
    * @param pa Plugin archive to remove.
    * @return true if element was removed.
    */
-  bool removeArchive(ctkPluginArchive* pa);
-
+  virtual bool removeArchive(ctkPluginArchive* pa) = 0;
 
   /**
    * Get all plugin archive objects.
    *
    * @return QList of all PluginArchives.
    */
-  QList<ctkPluginArchive*> getAllPluginArchives() const;
-
+  virtual QList<ctkPluginArchive*> getAllPluginArchives() const = 0;
 
   /**
    * Get all plugins to start at next launch of framework.
@@ -154,18 +94,12 @@ public:
    *
    * @return A List with plugin locations.
    */
-  QList<QString> getStartOnLaunchPlugins();
-
-  QByteArray getPluginResource(long pluginId, const QString& res) const;
-
-  QStringList findResourcesPath(long pluginId, const QString& path) const;
+  virtual QList<QString> getStartOnLaunchPlugins() const = 0;
 
   /**
    * Close this plugin storage and all bundles in it.
    */
-  void close();
-
-  ~ctkPluginStorage();
+  virtual void close() = 0;
 
 };
 

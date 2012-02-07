@@ -24,6 +24,7 @@
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginFrameworkPrivate_p.h"
 #include "ctkPluginArchive_p.h"
+#include "ctkPluginStorageSQL_p.h"
 #include "ctkPluginConstants.h"
 #include "ctkServices_p.h"
 #include "ctkUtils.h"
@@ -81,7 +82,7 @@ void ctkPluginFrameworkContext::init()
   ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin->d_func();
   systemPluginPrivate->initSystemPlugin();
 
-  storage = new ctkPluginStorage(this);
+  storage = new ctkPluginStorageSQL(this);
   dataStorage = ctkPluginFrameworkUtil::getFileStorage(this, "data");
   services = new ctkServices(this);
   plugins = new ctkPlugins(this);

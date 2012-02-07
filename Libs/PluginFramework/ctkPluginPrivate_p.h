@@ -162,6 +162,16 @@ public:
   const ctkRuntimeException* stop1();
 
   /**
+   *
+   */
+  void update0(const QUrl &updateLocation, bool wasActive);
+
+  /**
+   *
+   */
+  int getStartLevel();
+
+  /**
    * Wait for an ongoing operation to finish.
    *
    * @param lock QMutex used for locking.
@@ -299,6 +309,8 @@ private:
    *
    */
   void removePluginResources();
+
+  ctkPlugin::State getUpdatedState_unlocked();
 
 };
 
