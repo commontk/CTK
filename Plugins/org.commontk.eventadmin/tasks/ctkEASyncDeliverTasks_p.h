@@ -77,6 +77,7 @@ private:
    */
   struct Matcher
   {
+    virtual ~Matcher() {}
     virtual bool match(const QString& className) const = 0;
   };
 
