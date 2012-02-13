@@ -40,7 +40,11 @@ void ctkLogQDebug::log(int level, const QString& message, const std::exception* 
 
   QString s = QDateTime::currentDateTime().toString(Qt::ISODate)
       .append(" - ").append(message);
-  exception ? s.append(" (").append(exception->what()).append(")") : false;
+
+  if (exception != 0)
+  {
+    s.append(" (").append(exception->what()).append(")");
+  }
 
   if (file)
   {
@@ -81,7 +85,11 @@ void ctkLogQDebug::log(const ctkServiceReference& sr, int level, const QString& 
   }
 
   s.append(message);
-  exception ? s.append(" (").append(exception->what()).append(")") : false ;
+
+  if(exception != 0)
+  {
+    s.append(" (").append(exception->what()).append(")");
+  }
 
   if (file)
   {

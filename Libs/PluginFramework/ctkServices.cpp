@@ -297,7 +297,7 @@ QList<ctkServiceRegistration> ctkServices::getRegisteredByPlugin(ctkPluginPrivat
   for (QHashIterator<ctkServiceRegistration, QStringList> i(services); i.hasNext(); )
   {
     ctkServiceRegistration sr = i.next().key();
-    if ((sr.d_func()->plugin == p))
+    if (sr.d_func()->plugin == p)
     {
       res.push_back(sr);
     }
