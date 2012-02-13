@@ -214,5 +214,6 @@ void ctkPluginFrameworkPrivate::systemShuttingdownDone_unlocked(const ctkPluginF
     operation.fetchAndStoreOrdered(IDLE);
     lock.wakeAll();
   }
-  stopEvent = fe;
+  stopEvent.isNull = fe.isNull();
+  stopEvent.type = fe.getType();
 }

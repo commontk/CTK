@@ -37,10 +37,22 @@ class ctkPluginFrameworkPrivate : public ctkPluginPrivate
 public:
 
   /**
+   * Holds all information for constructing a ctkPluginFrameworkEvent instance,
+   * except for holding a QSharedPointer to the framework plug-in. This avoids
+   * cyclic references in ctkPluginFramework.
+   */
+  struct FWEventWrapper
+  {
+    FWEventWrapper() : isNull(true) {}
+    bool isNull;
+    ctkPluginFrameworkEvent::Type type;
+  };
+
+  /**
    * The event to return to callers waiting in ctkPluginFramework::waitForStop()
    * when the framework has been stopped.
    */
-  ctkPluginFrameworkEvent stopEvent;
+  FWEventWrapper stopEvent;
 
   /**
    * The flag indicating that the thread that performs shutdown of this
