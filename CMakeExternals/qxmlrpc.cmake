@@ -24,15 +24,6 @@ if(${add_project})
   if(CTK_SUPERBUILD)
 
     if(NOT DEFINED qxmlrpc_DIR)
-    
-      # Set CMake OSX variable to pass down the external project
-      set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-      if(APPLE)
-        list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-          -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-          -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-          -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-      endif()
       
       #message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
@@ -44,7 +35,7 @@ if(${add_project})
         CMAKE_GENERATOR ${gen}
         INSTALL_COMMAND ""
         CMAKE_ARGS
-          ${ep_common_args}
+          ${ep_common_cache_args}
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         DEPENDS
           ${proj_DEPENDENCIES}

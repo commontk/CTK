@@ -30,15 +30,6 @@ if(${add_project})
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
 
-      # Set CMake OSX variable to pass down the external project
-      set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-      if(APPLE)
-        list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-          -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-          -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-          -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-      endif()
-
       #     message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -50,12 +41,8 @@ if(${add_project})
         UPDATE_COMMAND ""
         INSTALL_COMMAND ""
         CMAKE_CACHE_ARGS
-          -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-          -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-          -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+          ${ep_common_cache_args}
           -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:STRING=${CTK_CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-          -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
-          ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         DEPENDS
           ${proj_DEPENDENCIES}

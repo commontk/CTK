@@ -17,14 +17,6 @@ if(CTK_WRAP_PYTHONQT_FULL)
   if(CTK_SUPERBUILD)
 
     if(NOT DEFINED PYTHONQTGENERATOR_EXECUTABLE)
-      # Set CMake OSX variable to pass down the external project
-      set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-      if(APPLE)
-        list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-          -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-          -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-          -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-      endif()
 
       #
       # PythonQtGenerator is the tool allowing to generate the PythonQt decorators using
@@ -53,11 +45,7 @@ if(CTK_WRAP_PYTHONQT_FULL)
           CMAKE_GENERATOR ${gen}
           INSTALL_COMMAND ""
           CMAKE_CACHE_ARGS
-            -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-            -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-            -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
-            ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
+            ${ep_common_cache_args}
             -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
           DEPENDS
             "PythonQt" # To make sure the generator code is checked out, let's depend on PythonQt
@@ -80,11 +68,7 @@ if(CTK_WRAP_PYTHONQT_FULL)
           UPDATE_COMMAND ""
           INSTALL_COMMAND ""
           CMAKE_CACHE_ARGS
-            -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-            -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-            -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
-            ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
+            ${ep_common_cache_args}
             -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
           )
       endif()

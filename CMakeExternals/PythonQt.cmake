@@ -46,15 +46,6 @@ if(${add_project})
         message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
       endif()
 
-      # Set CMake OSX variable to pass down the external project
-      set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-      if(APPLE)
-        list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-          -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-          -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-          -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-      endif()
-
       set(revision_tag 7e1e07f34b2420e420e2858e5ea9a49fe1e0d235)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
@@ -70,11 +61,7 @@ if(${add_project})
         UPDATE_COMMAND ""
         BUILD_COMMAND ""
         CMAKE_CACHE_ARGS
-          -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-          -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-          #-DCMAKE_C_FLAGS:STRING=${ep_common_c_flags} # Not used
-          -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
-          ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
+          ${ep_common_cache_args}
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
           -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
           -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}

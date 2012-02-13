@@ -17,14 +17,6 @@ if(CTK_USE_KWSTYLE)
   if(CTK_SUPERBUILD)
 
     if(NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
-      # Set CMake OSX variable to pass down the external project
-      set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-      if(APPLE)
-        list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-          -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-          -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-          -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-      endif()
 
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -35,12 +27,7 @@ if(CTK_USE_KWSTYLE)
         CVS_MODULE "KWStyle"
         CMAKE_GENERATOR ${gen}
         CMAKE_CACHE_ARGS
-          -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-          -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-          -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-          -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
-          ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-          -DBUILD_TESTING:BOOL=OFF
+          ${ep_common_cache_args}
         DEPENDS
           ${proj_DEPENDENCIES}
         )
