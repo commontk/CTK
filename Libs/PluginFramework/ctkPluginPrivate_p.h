@@ -93,7 +93,7 @@ public:
    * @exception std::invalid_argument Faulty manifest for bundle
    */
   ctkPluginPrivate(QWeakPointer<ctkPlugin> qq, ctkPluginFrameworkContext* fw,
-                   ctkPluginArchive* pa /*, Object checkContext*/);
+                   QSharedPointer<ctkPluginArchive> pa /*, Object checkContext*/);
 
   /**
    * Construct a new empty ctkPlugin.
@@ -223,7 +223,7 @@ public:
   /**
    * ctkPlugin archive
    */
-  ctkPluginArchive* archive;
+  QSharedPointer<ctkPluginArchive> archive;
 
   /**
    * Directory for plugin data

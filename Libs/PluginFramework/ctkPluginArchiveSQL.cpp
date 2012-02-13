@@ -41,7 +41,7 @@ ctkPluginArchiveSQL::ctkPluginArchiveSQL(ctkPluginStorageSQL* pluginStorage,
 }
 
 //----------------------------------------------------------------------------
-ctkPluginArchiveSQL::ctkPluginArchiveSQL(ctkPluginArchiveSQL* old, int generation,
+ctkPluginArchiveSQL::ctkPluginArchiveSQL(QSharedPointer<ctkPluginArchiveSQL> old, int generation,
                                          const QUrl &pluginLocation, const QString &localPluginPath)
   : key(-1), autostartSetting(old->autostartSetting), id(old->id), generation(generation)
   , startLevel(0), location(pluginLocation), localPluginPath(localPluginPath)

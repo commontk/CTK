@@ -86,7 +86,7 @@ void ctkPluginPrivate::LockObject::wakeOne()
 ctkPluginPrivate::ctkPluginPrivate(
     QWeakPointer<ctkPlugin> qq,
     ctkPluginFrameworkContext* fw,
-    ctkPluginArchive* pa)
+    QSharedPointer<ctkPluginArchive> pa)
       : q_ptr(qq), fwCtx(fw), id(pa->getPluginId()),
       location(pa->getPluginLocation().toString()), state(ctkPlugin::INSTALLED),
       archive(pa), pluginContext(0), pluginActivator(0), pluginLoader(pa->getLibLocation()),
@@ -169,7 +169,6 @@ ctkPluginPrivate::ctkPluginPrivate(QWeakPointer<ctkPlugin> qq,
 ctkPluginPrivate::~ctkPluginPrivate()
 {
   qDeleteAll(require);
-  delete archive;
 }
 
 //----------------------------------------------------------------------------
@@ -484,7 +483,7 @@ void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
 {
   const bool wasResolved = state == ctkPlugin::RESOLVED;
   const int oldStartLevel = getStartLevel();
-  ctkPluginArchive* newArchive = 0;
+  QSharedPointer<ctkPluginArchive> newArchive;
 
   operation.fetchAndStoreOrdered(UPDATING);
   try
@@ -517,7 +516,7 @@ void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
   }
   catch (const std::exception& e)
   {
-    if (newArchive != 0)
+    if (!newArchive.isNull())
     {
       newArchive->purge();
     }
@@ -549,7 +548,7 @@ void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
   // TODO: check if dependent plug-ins are started. If not, set purgeOld to true.
 
   // Activate new plug-in
-  ctkPluginArchive* oldArchive = archive;
+  QSharedPointer<ctkPluginArchive> oldArchive = archive;
   archive = newArchive;
   cachedRawHeaders.clear();
   state = ctkPlugin::INSTALLED;

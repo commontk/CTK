@@ -57,7 +57,8 @@ public:
    * Construct new bundle archive in an existing bundle archive.
    *
    */
-  ctkPluginArchiveSQL(ctkPluginArchiveSQL* old, int generation, const QUrl& pluginLocation, const QString& localPluginPath);
+  ctkPluginArchiveSQL(QSharedPointer<ctkPluginArchiveSQL> old, int generation,
+                      const QUrl& pluginLocation, const QString& localPluginPath);
 
 
   /**

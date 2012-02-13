@@ -24,6 +24,7 @@
 
 #include <QUrl>
 #include <QStringList>
+#include <QSharedPointer>
 
 // CTK class forward declarations
 class ctkPluginArchive;
@@ -47,7 +48,7 @@ public:
    * @param localPath Path to the plugin on the local file system
    * @return Plugin archive object.
    */
-  virtual ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath) = 0;
+  virtual QSharedPointer<ctkPluginArchive> insertPlugin(const QUrl& location, const QString& localPath) = 0;
 
   /**
    * Insert a new plugin (shared library) into the persistent
@@ -60,7 +61,8 @@ public:
    * @param localPath Path to a plugin on the local file system.
    * @return Plugin archive object.
    */
-  virtual ctkPluginArchive* updatePluginArchive(ctkPluginArchive* old, const QUrl& updateLocation, const QString& localPath) = 0;
+  virtual QSharedPointer<ctkPluginArchive> updatePluginArchive(QSharedPointer<ctkPluginArchive> old,
+                                                               const QUrl& updateLocation, const QString& localPath) = 0;
 
   /**
    * Replace old plugin archive with a new updated plugin archive, that
@@ -69,7 +71,7 @@ public:
    * @param oldPA ctkPluginArchive to be replaced.
    * @param newPA new ctkPluginArchive.
    */
-  virtual void replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA) = 0;
+  virtual void replacePluginArchive(QSharedPointer<ctkPluginArchive> oldPA, QSharedPointer<ctkPluginArchive> newPA) = 0;
 
   /**
    * Remove plugin archive from archives list and persistent storage.
@@ -79,14 +81,14 @@ public:
    * @param pa Plugin archive to remove.
    * @return true if element was removed.
    */
-  virtual bool removeArchive(ctkPluginArchive* pa) = 0;
+  virtual bool removeArchive(QSharedPointer<ctkPluginArchive> pa) = 0;
 
   /**
    * Get all plugin archive objects.
    *
    * @return QList of all PluginArchives.
    */
-  virtual QList<ctkPluginArchive*> getAllPluginArchives() const = 0;
+  virtual QList<QSharedPointer<ctkPluginArchive> > getAllPluginArchives() const = 0;
 
   /**
    * Get all plugins to start at next launch of framework.

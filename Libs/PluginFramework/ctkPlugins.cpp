@@ -72,7 +72,7 @@ QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* i
     }
 
     // install new plugin
-    ctkPluginArchive* pa = 0;
+    QSharedPointer<ctkPluginArchive> pa;
     QString localPluginPath;
     try
     {
@@ -125,7 +125,7 @@ QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* i
     }
     catch (const std::exception& e)
     {
-      if (pa)
+      if (!pa.isNull())
       {
         pa->purge();
       }
@@ -288,14 +288,14 @@ QList<QSharedPointer<ctkPlugin> > ctkPlugins::getActivePlugins() const
 //----------------------------------------------------------------------------
 void ctkPlugins::load()
 {
-  QList<ctkPluginArchive*> pas = fwCtx->storage->getAllPluginArchives();
-  QListIterator<ctkPluginArchive*> it(pas);
+  QList<QSharedPointer<ctkPluginArchive> > pas = fwCtx->storage->getAllPluginArchives();
+  QListIterator<QSharedPointer<ctkPluginArchive> > it(pas);
 
   {
     QMutexLocker lock(&objectLock);
     while (it.hasNext())
     {
-      ctkPluginArchive* pa = it.next();
+      QSharedPointer<ctkPluginArchive> pa = it.next();
       try
       {
         QSharedPointer<ctkPlugin> plugin(new ctkPlugin());

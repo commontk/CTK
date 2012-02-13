@@ -811,7 +811,7 @@ protected:
 
   ctkPlugin();
   void init(ctkPluginPrivate* dd);
-  void init(const QWeakPointer<ctkPlugin>& self, ctkPluginFrameworkContext* fw, ctkPluginArchive* ba);
+  void init(const QWeakPointer<ctkPlugin>& self, ctkPluginFrameworkContext* fw, QSharedPointer<ctkPluginArchive> ba);
 };
 
 /**

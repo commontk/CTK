@@ -49,7 +49,7 @@ void ctkPlugin::init(ctkPluginPrivate* dd)
 //----------------------------------------------------------------------------
 void ctkPlugin::init(const QWeakPointer<ctkPlugin>& self,
                      ctkPluginFrameworkContext* fw,
-                     ctkPluginArchive* pa)
+                     QSharedPointer<ctkPluginArchive> pa)
 {
   if (d_ptr) throw std::logic_error("ctkPlugin already initialized");
   d_ptr = new ctkPluginPrivate(self, fw, pa);

@@ -259,7 +259,7 @@ void ctkPluginStorageSQL::updateDB()
                       "FROM " PLUGINS_TABLE " GROUP BY ID";
 
   QList<int> outdatedIds;
-  QList<ctkPluginArchiveSQL*> updatedPluginArchives;
+  QList<QSharedPointer<ctkPluginArchiveSQL> > updatedPluginArchives;
   try
   {
     executeQuery(&query, statement);
@@ -275,14 +275,15 @@ void ctkPluginStorageSQL::updateDB()
 
       if (pluginLastModified > getQDateTimeFromString(query.value(EBindIndex4).toString()))
       {
-        ctkPluginArchiveSQL* updatedPA =
-            new ctkPluginArchiveSQL(this,
-                                    query.value(EBindIndex2).toUrl(),    // plug-in location url
-                                    query.value(EBindIndex3).toString(), // plugin local path
-                                    query.value(EBindIndex).toInt(),     // plugin id
-                                    query.value(EBindIndex5).toInt(),    // start level
-                                    QDateTime(),                         // last modififed
-                                    query.value(EBindIndex6).toInt());   // auto start setting
+        QSharedPointer<ctkPluginArchiveSQL> updatedPA(
+              new ctkPluginArchiveSQL(this,
+                                      query.value(EBindIndex2).toUrl(),    // plug-in location url
+                                      query.value(EBindIndex3).toString(), // plugin local path
+                                      query.value(EBindIndex).toInt(),     // plugin id
+                                      query.value(EBindIndex5).toInt(),    // start level
+                                      QDateTime(),                         // last modififed
+                                      query.value(EBindIndex6).toInt())    // auto start setting
+              );
         updatedPA->key = query.value(EBindIndex7).toInt();
         updatedPluginArchives << updatedPA;
 
@@ -329,7 +330,7 @@ void ctkPluginStorageSQL::updateDB()
 
     try
     {
-      foreach (ctkPluginArchiveSQL* updatedPA, updatedPluginArchives)
+      foreach (QSharedPointer<ctkPluginArchiveSQL> updatedPA, updatedPluginArchives)
       {
         insertArchive(updatedPA, &query);
       }
@@ -359,7 +360,7 @@ QLibrary::LoadHints ctkPluginStorageSQL::getPluginLoadHints() const
 }
 
 //----------------------------------------------------------------------------
-ctkPluginArchive* ctkPluginStorageSQL::insertPlugin(const QUrl& location, const QString& localPath)
+QSharedPointer<ctkPluginArchive> ctkPluginStorageSQL::insertPlugin(const QUrl& location, const QString& localPath)
 {
   QMutexLocker lock(&m_archivesLock);
 
@@ -371,8 +372,8 @@ ctkPluginArchive* ctkPluginStorageSQL::insertPlugin(const QUrl& location, const 
 
   const QString libTimestamp = getStringFromQDateTime(fileInfo.lastModified());
 
-  ctkPluginArchiveSQL* archive = new ctkPluginArchiveSQL(this, location, localPath,
-                                                         m_nextFreeId++);
+  QSharedPointer<ctkPluginArchiveSQL> archive(new ctkPluginArchiveSQL(this, location, localPath,
+                                                                      m_nextFreeId++));
   try
   {
     insertArchive(archive);
@@ -381,15 +382,13 @@ ctkPluginArchive* ctkPluginStorageSQL::insertPlugin(const QUrl& location, const 
   }
   catch(...)
   {
-    delete archive;
     m_nextFreeId--;
     throw;
   }
-  return 0;
 }
 
 //----------------------------------------------------------------------------
-void ctkPluginStorageSQL::insertArchive(ctkPluginArchiveSQL* pa)
+void ctkPluginStorageSQL::insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa)
 {
   checkConnection();
 
@@ -412,7 +411,7 @@ void ctkPluginStorageSQL::insertArchive(ctkPluginArchiveSQL* pa)
 }
 
 //----------------------------------------------------------------------------
-void ctkPluginStorageSQL::insertArchive(ctkPluginArchiveSQL* pa, QSqlQuery* query)
+void ctkPluginStorageSQL::insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa, QSqlQuery* query)
 {
 
   QFileInfo fileInfo(pa->getLibLocation());
@@ -495,19 +494,19 @@ void ctkPluginStorageSQL::insertArchive(ctkPluginArchiveSQL* pa, QSqlQuery* quer
 }
 
 //----------------------------------------------------------------------------
-ctkPluginArchive* ctkPluginStorageSQL::updatePluginArchive(ctkPluginArchive* old,
+QSharedPointer<ctkPluginArchive> ctkPluginStorageSQL::updatePluginArchive(QSharedPointer<ctkPluginArchive> old,
                                                            const QUrl& updateLocation,
                                                            const QString& localPath)
 {
-  ctkPluginArchiveSQL* newPA = new ctkPluginArchiveSQL(
-                                 static_cast<ctkPluginArchiveSQL*>(old),
-                                 m_generations[old->getPluginId()]++,
-                                 updateLocation, localPath);
+  QSharedPointer<ctkPluginArchive> newPA(new ctkPluginArchiveSQL(
+                                           qSharedPointerCast<ctkPluginArchiveSQL>(old),
+                                           m_generations[old->getPluginId()]++,
+                                           updateLocation, localPath)
+                                         );
   return newPA;
-
 }
 
-void ctkPluginStorageSQL::replacePluginArchive(ctkPluginArchive *oldPA, ctkPluginArchive *newPA)
+void ctkPluginStorageSQL::replacePluginArchive(QSharedPointer<ctkPluginArchive> oldPA, QSharedPointer<ctkPluginArchive> newPA)
 {
   QMutexLocker lock(&m_archivesLock);
 
@@ -528,8 +527,8 @@ void ctkPluginStorageSQL::replacePluginArchive(ctkPluginArchive *oldPA, ctkPlugi
 
   try
   {
-    removeArchiveFromDB(static_cast<ctkPluginArchiveSQL*>(oldPA), &query);
-    insertArchive(static_cast<ctkPluginArchiveSQL*>(newPA), &query);
+    removeArchiveFromDB(static_cast<ctkPluginArchiveSQL*>(oldPA.data()), &query);
+    insertArchive(qSharedPointerCast<ctkPluginArchiveSQL>(newPA), &query);
 
     commitTransaction(&query);
     m_archives[pos] = newPA;
@@ -548,7 +547,7 @@ void ctkPluginStorageSQL::replacePluginArchive(ctkPluginArchive *oldPA, ctkPlugi
 }
 
 //----------------------------------------------------------------------------
-bool ctkPluginStorageSQL::removeArchive(ctkPluginArchive *pa)
+bool ctkPluginStorageSQL::removeArchive(ctkPluginArchiveSQL* pa)
 {
   checkConnection();
 
@@ -559,11 +558,15 @@ bool ctkPluginStorageSQL::removeArchive(ctkPluginArchive *pa)
 
   try
   {
-    removeArchiveFromDB(static_cast<ctkPluginArchiveSQL*>(pa), &query);
+    removeArchiveFromDB(pa, &query);
     commitTransaction(&query);
 
     QMutexLocker lock(&m_archivesLock);
-    m_archives.removeAll(pa);
+    int idx = find(pa);
+    if (idx >= 0 && idx < m_archives.size())
+    {
+      m_archives.removeAt(idx);
+    }
     return true;
   }
   catch (const ctkRuntimeException& re)
@@ -580,6 +583,12 @@ bool ctkPluginStorageSQL::removeArchive(ctkPluginArchive *pa)
 }
 
 //----------------------------------------------------------------------------
+bool ctkPluginStorageSQL::removeArchive(QSharedPointer<ctkPluginArchive> pa)
+{
+  return removeArchive(static_cast<ctkPluginArchiveSQL*>(pa.data()));
+}
+
+//----------------------------------------------------------------------------
 void ctkPluginStorageSQL::removeArchiveFromDB(ctkPluginArchiveSQL* pa, QSqlQuery* query)
 {
   QString statement = "DELETE FROM " PLUGINS_TABLE " WHERE K=?";
@@ -590,7 +599,7 @@ void ctkPluginStorageSQL::removeArchiveFromDB(ctkPluginArchiveSQL* pa, QSqlQuery
   executeQuery(query, statement, bindValues);
 }
 
-QList<ctkPluginArchive*> ctkPluginStorageSQL::getAllPluginArchives() const
+QList<QSharedPointer<ctkPluginArchive> > ctkPluginStorageSQL::getAllPluginArchives() const
 {
   return m_archives;
 }
@@ -598,10 +607,8 @@ QList<ctkPluginArchive*> ctkPluginStorageSQL::getAllPluginArchives() const
 QList<QString> ctkPluginStorageSQL::getStartOnLaunchPlugins() const
 {
   QList<QString> res;
-  QListIterator<ctkPluginArchive*> i(m_archives);
-  while(i.hasNext())
+  foreach(QSharedPointer<ctkPluginArchive> pa, m_archives)
   {
-    ctkPluginArchive* pa = i.next();
     if (pa->getAutostartSetting() != -1)
     {
       res.push_back(pa->getPluginLocation().toString());
@@ -975,6 +982,16 @@ int ctkPluginStorageSQL::find(long id) const
 }
 
 //----------------------------------------------------------------------------
+int ctkPluginStorageSQL::find(ctkPluginArchive *pa) const
+{
+  for (int i = 0; i < m_archives.size(); ++i)
+  {
+    if (m_archives[i].data() == pa) return i;
+  }
+  return -1;
+}
+
+//----------------------------------------------------------------------------
 void ctkPluginStorageSQL::checkConnection() const
 {
   if(!m_isDatabaseOpen)
@@ -1074,8 +1091,8 @@ void ctkPluginStorageSQL::restorePluginArchives()
 
     try
     {
-      ctkPluginArchiveSQL* pa = new ctkPluginArchiveSQL(this, location, localPath, id,
-                                                        startLevel, lastModified, autoStart);
+      QSharedPointer<ctkPluginArchiveSQL> pa(new ctkPluginArchiveSQL(this, location, localPath, id,
+                                                                     startLevel, lastModified, autoStart));
       pa->key = query.value(EBindIndex6).toInt();
       pa->readManifest();
       m_archives.append(pa);

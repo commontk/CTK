@@ -120,10 +120,9 @@ void ctkPluginFrameworkContext::init()
 
   log() << "Installed plugins:";
   // Use the ordering in the plugin storage to get a sorted list of plugins.
-  QList<ctkPluginArchive*> allPAs = storage->getAllPluginArchives();
-  for (int i = 0; i < allPAs.size(); ++i)
+  QList<QSharedPointer<ctkPluginArchive> > allPAs = storage->getAllPluginArchives();
+  foreach (QSharedPointer<ctkPluginArchive> pa, allPAs)
   {
-    ctkPluginArchive* pa = allPAs[i];
     QSharedPointer<ctkPlugin> plugin = plugins->getPlugin(pa->getPluginLocation().toString());
     log() << " #" << plugin->getPluginId() << " " << plugin->getSymbolicName() << ":"
         << plugin->getVersion() << " location:" << plugin->getLocation();

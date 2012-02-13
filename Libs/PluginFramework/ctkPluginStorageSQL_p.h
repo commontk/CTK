@@ -59,7 +59,7 @@ public:
    *
    * @throws ctkPluginDatabaseException
    */
-  ctkPluginArchive* insertPlugin(const QUrl& location, const QString& localPath);
+  QSharedPointer<ctkPluginArchive> insertPlugin(const QUrl& location, const QString& localPath);
 
   /**
    * Insert a new plugin (shared library) into the persistent
@@ -71,7 +71,8 @@ public:
    * @param localPath Path to a plugin on the local file system.
    * @return Plugin archive object.
    */
-  ctkPluginArchive* updatePluginArchive(ctkPluginArchive* old, const QUrl& updateLocation, const QString& localPath);
+  QSharedPointer<ctkPluginArchive> updatePluginArchive(QSharedPointer<ctkPluginArchive> old,
+                                                       const QUrl& updateLocation, const QString& localPath);
 
   /**
    * Replace old plugin archive with a new updated plugin archive, that
@@ -80,21 +81,21 @@ public:
    * @param oldPA ctkPluginArchive to be replaced.
    * @param newPA new ctkPluginArchive.
    */
-  void replacePluginArchive(ctkPluginArchive* oldPA, ctkPluginArchive* newPA);
+  void replacePluginArchive(QSharedPointer<ctkPluginArchive> oldPA, QSharedPointer<ctkPluginArchive> newPA);
 
   /**
    * Removes all persisted data related to the given ctkPluginArchive.
    *
    * @throws ctkPluginDatabaseException
    */
-  bool removeArchive(ctkPluginArchive* pa);
+  bool removeArchive(QSharedPointer<ctkPluginArchive> pa);
 
   /**
    * Get all plugin archive objects.
    *
    * @return QList of all PluginArchives.
    */
-  QList<ctkPluginArchive*> getAllPluginArchives() const;
+  QList<QSharedPointer<ctkPluginArchive> > getAllPluginArchives() const;
 
   /**
    * Get all plugins to start at next launch of framework.
@@ -174,6 +175,14 @@ public:
    */
   void setAutostartSetting(int key, int autostart);
 
+  /**
+   * Removes all persisted data related to the given ctkPluginArchiveSQL.
+   * This is identical to removeArchive(QSharedPointer<ctkPluginArchive>).
+   *
+   * @throws ctkPluginDatabaseException
+   */
+  bool removeArchive(ctkPluginArchiveSQL* pa);
+
 private:
 
   enum TransactionType{Read, Write};
@@ -196,12 +205,20 @@ private:
   bool isOpen() const;
 
   /**
-   * Find posisition for BundleArchive with specified id
+   * Find position for ctkPluginArchive with specified id
    *
-   * @param id Bundle archive id to find.
-   * @return String to write
+   * @param id Plugin archive id to find.
+   * @return Position in the m_archives List.
    */
   int find(long id) const;
+
+  /**
+   * Find position for ctkPluginArchive
+   *
+   * @param id Plugin archive id to find.
+   * @return Position in the m_archives List.
+   */
+  int find(ctkPluginArchive* pa) const;
 
   void initNextFreeIds();
 
@@ -255,9 +272,9 @@ private:
    */
   void updateDB();
 
-  void insertArchive(ctkPluginArchiveSQL *pa);
+  void insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa);
 
-  void insertArchive(ctkPluginArchiveSQL *pa, QSqlQuery* query);
+  void insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa, QSqlQuery* query);
 
   void removeArchiveFromDB(ctkPluginArchiveSQL *pa, QSqlQuery *query);
 
@@ -316,7 +333,7 @@ private:
   /**
    * Plugin id sorted list of all active plugin archives.
    */
-  QList<ctkPluginArchive*> m_archives;
+  QList<QSharedPointer<ctkPluginArchive> > m_archives;
 
   /**
    * Framework handle.

@@ -55,6 +55,7 @@ public:
    */
   static const QString AUTOSTART_SETTING_ACTIVATION_POLICY; // = "activation_policy"
 
+  virtual ~ctkPluginArchive() {}
 
   /**
    * Get an attribute from the manifest of a plugin.
@@ -185,7 +186,6 @@ public:
 
   /**
    * Remove plugin from persistent storage.
-   * This will delete the current ctkPluginArchive instance.
    */
   virtual void purge() = 0;
 
