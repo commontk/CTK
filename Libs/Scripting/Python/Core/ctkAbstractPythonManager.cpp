@@ -100,6 +100,8 @@ void ctkAbstractPythonManager::initPythonQt()
     initCode << QString("sys.path.append('%1')").arg(QDir::fromNativeSeparators(path));
     }
 
+  initCode << QString("import site");
+
   _mainContext.evalScript(initCode.join("\n"));
 
   this->preInitialization();
