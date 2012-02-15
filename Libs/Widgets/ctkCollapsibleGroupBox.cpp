@@ -117,7 +117,7 @@ void ctkCollapsibleGroupBoxPrivate::init()
 
   this->MaxHeight = q->maximumHeight();
 #if QT_VERSION >= 0x040600
-  q->setStyle(new ctkCollapsibleGroupBoxStyle(q->style()));
+  q->setStyle(new ctkCollapsibleGroupBoxStyle(0));
 #else
   this->setStyleSheet(
     "ctkCollapsibleGroupBox::indicator:checked{"
