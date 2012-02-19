@@ -202,7 +202,7 @@ void ctkPluginStorageSQL::initNextFreeIds()
 
   statement = "SELECT MAX(ID) FROM " PLUGINS_TABLE;
   executeQuery(&query, statement);
-  QVariant id = query.isValid() ? query.value(EBindIndex) : QVariant();
+  QVariant id = query.next() ? query.value(EBindIndex) : QVariant();
   if (id.isValid())
   {
     m_nextFreeId = id.toInt() + 1;
@@ -303,11 +303,10 @@ void ctkPluginStorageSQL::updateDB()
 
   if (!outdatedIds.isEmpty())
   {
-
     // 3. Remove all traces from outdated plug-in data. Due to cascaded delete,
     //    it is sufficient to remove the records from the main table
 
-    statement = "DELETE FROM " PLUGINS_TABLE " WHERE K IN (%1)";
+    statement = "DELETE FROM " PLUGINS_TABLE " WHERE ID IN (%1)";
     QString idStr;
     foreach(int id, outdatedIds)
     {
