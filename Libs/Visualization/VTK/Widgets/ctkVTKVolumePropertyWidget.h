@@ -41,12 +41,12 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKVolumePropertyWidget
   ///
   /// Control wether a range slider widget is used to edit the opacity
   /// function instead of a chart editor. False by default
-  Q_PROPERTY(bool thresholdVisibility READ isThresholdVisible WRITE showThreshold)
+  Q_PROPERTY(bool thresholdEnabled READ isThresholdEnabled WRITE setThresholdEnabled NOTIFY thresholdEnabledChanged)
 
   ///
   /// Show or hide the opacity threshold slider toggle button.
   /// True by default.
-  Q_PROPERTY(bool thresholdVisibilityToggle READ hasThresholdVisibilityToggle WRITE setThresholdVisibilityToggle)
+  Q_PROPERTY(bool thresholdToggleVisibility READ isThresholdToggleVisible WRITE setThresholdToggleVisible)
 
 public:
   ctkVTKVolumePropertyWidget(QWidget* parent = 0);
@@ -54,13 +54,14 @@ public:
 
   vtkVolumeProperty* volumeProperty()const;
 
-  bool isThresholdVisible()const;
+  bool isThresholdEnabled()const;
 
-  bool hasThresholdVisibilityToggle()const;
-  void setThresholdVisibilityToggle(bool showToggle);
+  bool isThresholdToggleVisible()const;
+  void setThresholdToggleVisible(bool showToggle);
 
   void chartsBounds(double bounds[4])const;
   void chartsExtent(double extent[4])const;
+
 public Q_SLOTS:
   void setVolumeProperty(vtkVolumeProperty* volumeProperty);
 
@@ -78,9 +79,10 @@ public Q_SLOTS:
   void spreadAllPoints(double factor = 1.,
                        bool dontSpreadFirstAndLast = false);
 
-  void showThreshold(bool enable);
+  void setThresholdEnabled(bool enable);
 
 Q_SIGNALS:
+  void thresholdEnabledChanged(bool enable);
   void chartsExtentChanged();
 
 protected Q_SLOTS:
@@ -93,7 +95,7 @@ protected Q_SLOTS:
   void setDiffuse(double value);
   void setSpecular(double value);
   void setSpecularPower(double value);
-  
+
   void onThresholdOpacityToggled(bool);
   /// Called whenever a view (opacity, colors or gradient) has one of its axis
   /// modified. It synchronize all the views to see the same.
