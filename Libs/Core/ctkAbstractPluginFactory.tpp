@@ -52,8 +52,24 @@ bool ctkFactoryPluginItem<BaseClassType>::load()
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 QString ctkFactoryPluginItem<BaseClassType>::loadErrorString()const
-{ 
+{
   return this->Loader.errorString();
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+void ctkFactoryPluginItem<BaseClassType>::uninstantiate()
+{
+  if (this->Instance == 0)
+    {
+    return;
+    }
+  // QPluginLoader::unload doc says: "don't try to delete the root component".
+  bool deleted = this->Loader.unload();
+  if (deleted)
+    {
+    this->Instance = 0;
+    }
 }
 
 //----------------------------------------------------------------------------

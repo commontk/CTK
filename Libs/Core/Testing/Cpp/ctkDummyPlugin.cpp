@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QtPlugin>
 
 // CTK includes
@@ -30,9 +31,17 @@ Q_EXPORT_PLUGIN2( ctkDummyPlugin , ctkDummyPlugin)
 ctkDummyPlugin::ctkDummyPlugin(QObject* parent)
   :QObject(parent)
 {
+  qDebug() << "ctkDummyPlugin()";
 }
+
+ctkDummyPlugin::~ctkDummyPlugin()
+{
+  qDebug() << "~ctkDummyPlugin()";
+}
+
 
 //-----------------------------------------------------------------------------
 void ctkDummyPlugin::dummyInterface()
 {
+  qDebug() << "dummyInterface()";
 }

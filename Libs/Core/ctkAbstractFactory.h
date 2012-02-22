@@ -54,7 +54,8 @@ public:
   QStringList loadWarningStrings()const;
 
   BaseClassType* instantiate();
-  bool instantiated()const;
+  bool isInstantiated()const;
+  BaseClassType* instance()const;
   virtual void uninstantiate();
 
   void setVerbose(bool value);
@@ -109,6 +110,10 @@ public:
   /// \brief Create an instance of the object.
   /// The item corresponding to the key should have been registered before.
   virtual BaseClassType * instantiate(const QString& itemKey);
+
+  /// \brief Return the instance associated with \a itemKey if any, otherwise
+  /// return 0.
+  virtual BaseClassType * instance(const QString& itemKey);
 
   /// \brief Uninstanciate the object.
   /// Do nothing if the item given by the key has not be instantiated nor registered.

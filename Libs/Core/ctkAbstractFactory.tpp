@@ -128,19 +128,22 @@ BaseClassType* ctkAbstractFactoryItem<BaseClassType>::instantiate()
 {
   this->clearInstantiateErrorStrings();
   this->clearInstantiateWarningStrings();
-  if (this->Instance)
-    {
-    return this->Instance;
-    }
   this->Instance = this->instanciator();
   return this->Instance;
 }
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFactoryItem<BaseClassType>::instantiated()const 
+bool ctkAbstractFactoryItem<BaseClassType>::isInstantiated()const
 {
-  return (this->Instance != 0); 
+  return (this->Instance != 0);
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+BaseClassType* ctkAbstractFactoryItem<BaseClassType>::instance()const
+{
+  return this->Instance;
 }
 
 //----------------------------------------------------------------------------
@@ -205,8 +208,8 @@ BaseClassType* ctkAbstractFactory<BaseClassType>::instantiate(const QString& ite
   bool wasInstantiated = false;
   if (_item)
     {
-    wasInstantiated = _item->instantiated();
-    instance = _item->instantiate();
+    wasInstantiated = _item->isInstantiated();
+    instance = wasInstantiated ? _item->instance() : _item->instantiate();
     }
   if (!wasInstantiated)
     {
@@ -232,6 +235,15 @@ BaseClassType* ctkAbstractFactory<BaseClassType>::instantiate(const QString& ite
       }
     }
   return instance;
+}
+
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
+BaseClassType* ctkAbstractFactory<BaseClassType>::instance(const QString& itemKey)
+{
+  ctkAbstractFactoryItem<BaseClassType>* factoryItem = this->item(itemKey);
+  return factoryItem ? factoryItem->instance() : 0;
 }
 
 //----------------------------------------------------------------------------
