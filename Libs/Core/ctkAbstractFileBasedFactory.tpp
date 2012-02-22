@@ -87,11 +87,20 @@ void ctkAbstractFileBasedFactory<BaseClassType>::registerAllFileItems(const QStr
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType>
-bool ctkAbstractFileBasedFactory<BaseClassType>
+QString ctkAbstractFileBasedFactory<BaseClassType>
+::itemKey(const QFileInfo& fileInfo)const
+{
+  return this->fileNameToKey(fileInfo.filePath());
+}
+
+//-----------------------------------------------------------------------------
+template<typename BaseClassType>
+QString ctkAbstractFileBasedFactory<BaseClassType>
 ::registerFileItem(const QFileInfo& fileInfo)
 {
-  QString key = this->fileNameToKey(fileInfo.filePath());
-  return this->registerFileItem(key, fileInfo);
+  QString key = this->itemKey(fileInfo);
+  bool registered = this->registerFileItem(key, fileInfo);
+  return registered ? key : QString();
 }
 
 //-----------------------------------------------------------------------------
@@ -103,7 +112,7 @@ bool ctkAbstractFileBasedFactory<BaseClassType>
   if (this->item(key))
     {
     this->displayStatusMessage(QtWarningMsg, description, "Already registered", this->verbose());
-    return false;
+    return true;
     }
   if (this->sharedItem(key))
     {

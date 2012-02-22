@@ -98,44 +98,44 @@ int ctkAbstractLibraryFactoryTest1(int argc, char * argv [])
   ctkDummyLibraryFactoryItem libraryFactory;
   libraryFactory.setVerbose(true);
 
-  bool res = libraryFactory.registerFileItem("fail", QFileInfo("foo/bar.txt"));
-  if (res)
+  QString itemKey  = libraryFactory.registerFileItem(QFileInfo("foo/bar.txt"));
+  if (!itemKey.isEmpty())
     {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() registered bad file"
               << std::endl;
     return EXIT_FAILURE;
     }
 
-  res = libraryFactory.registerFileItem("lib", file);
-  if (!res || libraryFactory.itemKeys().count() != 1)
+  itemKey = libraryFactory.registerFileItem(file);
+  if (itemKey.isEmpty() || libraryFactory.itemKeys().count() != 1)
     {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
               << libraryFactory.itemKeys().count() << std::endl;
     return EXIT_FAILURE;
     }
-  // register twice must return false
-  res = libraryFactory.registerFileItem("lib", file);
-  if (res || libraryFactory.itemKeys().count() != 1)
+  // register twice must be a no-op
+  itemKey = libraryFactory.registerFileItem(file);
+  if (itemKey.isEmpty() || libraryFactory.itemKeys().count() != 1)
     {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
               << libraryFactory.itemKeys().count() << std::endl;
     return EXIT_FAILURE;
     }
-  if (QFileInfo(libraryFactory.path("lib")) != file)
+  if (QFileInfo(libraryFactory.path(itemKey)) != file)
     {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
-              << libraryFactory.path("lib").toStdString() << std::endl;
+              << libraryFactory.path(itemKey).toStdString() << std::endl;
     return EXIT_FAILURE;
     }
 
-  ctkDummyLibrary* library = libraryFactory.instantiate("lib");
+  ctkDummyLibrary* library = libraryFactory.instantiate(itemKey);
   if (library == 0)
     {
     std::cerr << "ctkAbstractLibraryFactory::instantiate() failed" << std::endl;
     return EXIT_FAILURE;
     }
 
-  libraryFactory.uninstantiate("lib");
+  libraryFactory.uninstantiate(itemKey);
   return EXIT_SUCCESS;
 }
 

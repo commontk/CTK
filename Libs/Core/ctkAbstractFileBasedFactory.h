@@ -49,20 +49,25 @@ template<typename BaseClassType>
 class ctkAbstractFileBasedFactory : public ctkAbstractFactory<BaseClassType>
 {
 public:
+  virtual bool isValidFile(const QFileInfo& file)const;
+  QString itemKey(const QFileInfo& file)const;
+
+  /// Register the item and return the itemkey on success, otherwise return an
+  /// empty string.
+  QString registerFileItem(const QFileInfo& file);
+
   /// Get path associated with the library identified by \a key
   virtual QString path(const QString& key);
-
-  bool registerFileItem(const QFileInfo& file);
-  bool registerFileItem(const QString& key, const QFileInfo& file);
 
 protected:
   void registerAllFileItems(const QStringList& directories);
 
-  virtual bool isValidFile(const QFileInfo& file)const;
+  bool registerFileItem(const QString& key, const QFileInfo& file);
+
   virtual ctkAbstractFactoryItem<BaseClassType>* createFactoryFileBasedItem();
   virtual void initItem(ctkAbstractFactoryItem<BaseClassType>* item);
 
-  virtual QString fileNameToKey(const QString& objectName)const;
+  virtual QString fileNameToKey(const QString& path)const;
 };
 
 #include "ctkAbstractFileBasedFactory.tpp"
