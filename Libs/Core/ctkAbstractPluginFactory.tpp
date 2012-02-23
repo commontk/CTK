@@ -64,12 +64,8 @@ void ctkFactoryPluginItem<BaseClassType>::uninstantiate()
     {
     return;
     }
-  // QPluginLoader::unload doc says: "don't try to delete the root component".
-  bool deleted = this->Loader.unload();
-  if (deleted)
-    {
-    this->Instance = 0;
-    }
+  this->Instance->deleteLater();
+  this->Instance = 0;
 }
 
 //----------------------------------------------------------------------------
