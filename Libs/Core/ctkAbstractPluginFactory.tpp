@@ -58,18 +58,6 @@ QString ctkFactoryPluginItem<BaseClassType>::loadErrorString()const
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
-void ctkFactoryPluginItem<BaseClassType>::uninstantiate()
-{
-  if (this->Instance == 0)
-    {
-    return;
-    }
-  this->Instance->deleteLater();
-  this->Instance = 0;
-}
-
-//----------------------------------------------------------------------------
-template<typename BaseClassType>
 BaseClassType* ctkFactoryPluginItem<BaseClassType>::instanciator()
 {
   //qDebug() << "PluginItem::instantiate - name:" << this->path();

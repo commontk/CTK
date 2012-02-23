@@ -36,7 +36,6 @@ class ctkFactoryPluginItem : public ctkAbstractFactoryFileBasedItem<BaseClassTyp
 public:
   virtual bool load();
   virtual QString loadErrorString()const;
-  virtual void uninstantiate();
 
 protected:
   virtual BaseClassType* instanciator();
