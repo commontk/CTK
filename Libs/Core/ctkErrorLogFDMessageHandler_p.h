@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QFile>
+#include <QMutex>
 #include <QThread>
 
 // CTK includes
@@ -42,6 +43,7 @@ class QTextStream;
 class ctkFDHandler : public QThread
 {
   Q_OBJECT
+  Q_PROPERTY(bool enabled READ enabled WRITE setEnabled)
 public:
   typedef ctkFDHandler Self;
 
@@ -50,7 +52,11 @@ public:
                ctkErrorLogModel::TerminalOutput terminalOutput);
   virtual ~ctkFDHandler();
 
+  /// Enable/Disable the handler.
   void setEnabled(bool value);
+
+  /// Return if the handler is enabled. This methods is thread-safe.
+  bool enabled()const;
 
   FILE* terminalOutputFile();
 
@@ -73,6 +79,8 @@ private:
   QTextStream* RedirectionStream;
 
   bool Initialized;
+
+  mutable QMutex EnableMutex;
   bool Enabled;
 };
 
