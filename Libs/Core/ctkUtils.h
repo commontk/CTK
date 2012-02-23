@@ -117,6 +117,16 @@ double CTK_CORE_EXPORT closestPowerOfTen(double value);
 /// \sa QDir::rmdir
 bool CTK_CORE_EXPORT removeDirRecursively(const QString & dirName);
 
+
+///
+/// \ingroup Core
+/// Copy a directory recursively
+/// \param srcPath The directory to be copied
+/// \param dstPath The directory where the file should be copied
+/// \return <code>true</code> on success, <code>false</code> otherwise.
+/// \sa QFile::copy
+bool CTK_CORE_EXPORT copyDirRecursively(const QString &srcPath, const QString &dstPath);
+
 ///
 /// \ingroup Core
 /// Convert Qt::HANDLE to string
