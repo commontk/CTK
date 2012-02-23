@@ -85,6 +85,7 @@ protected Q_SLOTS:
   void onPlotAdded(vtkPlot*);
   void onBoundsChanged();
   void setCurrentPoint(vtkObject* controlPointsItem, void* pointId);
+  void updateNumberOfPoints();
   void updateCurrentPoint();
   void onCurrentPointChanged(int pointId);
   void onColorChanged(const QColor& color);
