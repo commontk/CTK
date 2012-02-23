@@ -118,6 +118,7 @@ void ctkFDHandler::setEnabled(bool value)
 #endif
 
     // Start polling thread
+    this->Enabled = true;
     this->start();
     }
   else
@@ -129,7 +130,19 @@ void ctkFDHandler::setEnabled(bool value)
     this->RedirectionFile.flush();
 
     // Stop polling thread
-    this->terminate();
+    {
+      QMutexLocker locker(&this->EnableMutex);
+      this->Enabled = false;
+    }
+
+    QString newline("\n");
+#ifdef Q_OS_WIN32
+    _write(fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
+#else
+    write(fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
+#endif
+
+    // Wait the polling thread graciously terminates
     this->wait();
 
     // Close files and restore standard output to stdout or stderr - which should be the terminal
@@ -156,8 +169,13 @@ void ctkFDHandler::setEnabled(bool value)
     {
     terminalOutput->setFileDescriptor(this->SavedFDNumber);
     }
+}
 
-  this->Enabled = value;
+// --------------------------------------------------------------------------
+bool ctkFDHandler::enabled()const
+{
+  QMutexLocker locker(&this->EnableMutex);
+  return this->Enabled;
 }
 
 // --------------------------------------------------------------------------
@@ -183,6 +201,12 @@ void ctkFDHandler::run()
         line += c;
         }
       }
+
+    if (!this->enabled())
+      {
+      break;
+      }
+
     Q_ASSERT(this->MessageHandler);
     this->MessageHandler->handleMessage(
       ctk::qtHandleToString(QThread::currentThreadId()),
