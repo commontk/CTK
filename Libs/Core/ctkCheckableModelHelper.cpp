@@ -120,11 +120,13 @@ void ctkCheckableModelHelperPrivate::setCheckState(
     }
   else if (modelIndex != q->rootIndex())
     {
-    q->model()->setData(modelIndex, newCheckState, Qt::CheckStateRole);
+    q->model()->setData(modelIndex, static_cast<int>(newCheckState),
+                        Qt::CheckStateRole);
     }
   else
     {
-    q->model()->setHeaderData(0, q->orientation(), newCheckState, Qt::CheckStateRole);
+    q->model()->setHeaderData(0, q->orientation(), static_cast<int>(newCheckState),
+                              Qt::CheckStateRole);
     }
 }
 
@@ -455,11 +457,11 @@ void ctkCheckableModelHelper::setHeaderCheckState(int section, Qt::CheckState ch
 {
   QAbstractItemModel *current = this->model();
   if(current == 0)
-    {    
+    {
     return;
     }
   current->setHeaderData(section, this->orientation(),
-                         checkState, Qt::CheckStateRole);
+                         static_cast<int>(checkState), Qt::CheckStateRole);
 }
 
 //-----------------------------------------------------------------------------
@@ -467,10 +469,10 @@ void ctkCheckableModelHelper::setCheckState(const QModelIndex& index, Qt::CheckS
 {
   QAbstractItemModel *current = this->model();
   if(current == 0)
-    {    
+    {
     return;
     }
-  current->setData(index, checkState, Qt::CheckStateRole);
+  current->setData(index, static_cast<int>(checkState), Qt::CheckStateRole);
 }
 //-----------------------------------------------------------------------------
 void ctkCheckableModelHelper::toggleCheckState(const QModelIndex& modelIndex)
@@ -496,8 +498,9 @@ void ctkCheckableModelHelper::toggleHeaderCheckState(int section)
     }
   // I've no strong feeling to turn the state checked or unchecked when the 
   // state is PartiallyChecked.
-  this->setHeaderCheckState(section,
-    this->headerCheckState(section) == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+  this->setHeaderCheckState(
+    section, this->headerCheckState(section) == Qt::Checked ?
+    Qt::Unchecked : Qt::Checked);
 }
 
 //-----------------------------------------------------------------------------

@@ -60,7 +60,8 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* parentWidget)
   d->setupUi(this);
 
   // checkable headers.
-  d->NodeTable->model()->setHeaderData(NameColumn, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
+  d->NodeTable->model()->setHeaderData(
+    NameColumn, Qt::Horizontal, static_cast<int>(Qt::Unchecked), Qt::CheckStateRole);
   QHeaderView* previousHeaderView = d->NodeTable->horizontalHeader();
   ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->NodeTable);
   headerView->setClickable(previousHeaderView->isClickable());
@@ -196,21 +197,21 @@ void ctkDICOMServerNodeWidget::readSettings()
     // a dummy example
     QMap<QString, QVariant> defaultServerNode;
     defaultServerNode["Name"] = QString("ExampleHost");
-    defaultServerNode["CheckState"] = Qt::Unchecked;
+    defaultServerNode["CheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["AETitle"] = QString("AETITLE");
     defaultServerNode["Address"] = QString("dicom.example.com");
     defaultServerNode["Port"] = QString("11112");
-    defaultServerNode["CGET"] = Qt::Unchecked;
+    defaultServerNode["CGET"] = static_cast<int>(Qt::Unchecked);
     this->addServerNode(defaultServerNode);
 
     // the uk example - see http://www.dicomserver.co.uk/ 
     // and http://www.medicalconnections.co.uk/
     defaultServerNode["Name"] = QString("MedicalConnections");
-    defaultServerNode["CheckState"] = Qt::Unchecked;
+    defaultServerNode["CheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["AETitle"] = QString("ANYAE");
     defaultServerNode["Address"] = QString("dicomserver.co.uk");
     defaultServerNode["Port"] = QString("11112");
-    defaultServerNode["CGET"] = Qt::Checked;
+    defaultServerNode["CGET"] = static_cast<int>(Qt::Checked);
     this->addServerNode(defaultServerNode);
 
     return;
@@ -344,8 +345,10 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget::serverNodeParameters(int row)c
     node[label] = d->NodeTable->item(row, column)->data(Qt::DisplayRole);
     }
   node["CheckState"] = d->NodeTable->item(row, NameColumn) ?
-    d->NodeTable->item(row,NameColumn)->checkState() : Qt::Unchecked;
+    d->NodeTable->item(row,NameColumn)->checkState() :
+    static_cast<int>(Qt::Unchecked);
   node["CGET"] = d->NodeTable->item(row, CGETColumn) ?
-    d->NodeTable->item(row,CGETColumn)->checkState() : Qt::Unchecked;
+    d->NodeTable->item(row,CGETColumn)->checkState() :
+    static_cast<int>(Qt::Unchecked);
   return node;
 }

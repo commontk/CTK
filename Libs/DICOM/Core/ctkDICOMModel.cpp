@@ -740,15 +740,15 @@ bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &valu
     for(int i=0; i<index.model()->rowCount(index); i++)
       {
       Node* childNode = d->nodeFromIndex(index.child(i,0));
-      if(childNode->Data[Qt::CheckStateRole] ==  Qt::Checked)
+      if(childNode->Data[Qt::CheckStateRole].toUInt() == Qt::Checked)
         {
         checkedExist = true;
         }
-      else if(childNode->Data[Qt::CheckStateRole] ==  Qt::PartiallyChecked)
+      else if(childNode->Data[Qt::CheckStateRole].toUInt() ==  Qt::PartiallyChecked)
         {
         partiallyCheckedExist = true;
         }
-      else if(childNode->Data[Qt::CheckStateRole] ==  Qt::Unchecked)
+      else if(childNode->Data[Qt::CheckStateRole].toUInt() ==  Qt::Unchecked)
         {
         uncheckedExist = true;
         }
@@ -757,19 +757,19 @@ bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &valu
 #ifdef CHECKABLE_COLUMNS
     if(partiallyCheckedExist || (checkedExist && uncheckedExist))
       {
-      node->Data[Qt::CheckStateRole] = Qt::PartiallyChecked;
+      node->Data[Qt::CheckStateRole].toUInt() = Qt::PartiallyChecked;
       }
     else if(checkedExist)
       {
-      node->Data[Qt::CheckStateRole] = Qt::Checked;
+      node->Data[Qt::CheckStateRole].toUInt() = Qt::Checked;
       }
     else if(uncheckedExist)
       {
-      node->Data[Qt::CheckStateRole] = Qt::Unchecked;
+      node->Data[Qt::CheckStateRole].toUInt() = Qt::Unchecked;
       }
     else
       {
-      node->Data[Qt::CheckStateRole] = Qt::Unchecked;
+      node->Data[Qt::CheckStateRole].toUInt() = Qt::Unchecked;
       }
 #endif
 

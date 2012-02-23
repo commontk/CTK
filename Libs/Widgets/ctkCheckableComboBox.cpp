@@ -164,7 +164,8 @@ QModelIndexList ctkCheckableComboBoxPrivate::checkedIndexes()const
 {
   Q_Q(const ctkCheckableComboBox);
   return q->model()->match(
-    q->rootModelIndex().child(0,0), Qt::CheckStateRole, Qt::Checked, -1, Qt::MatchRecursive);
+    q->rootModelIndex().child(0,0), Qt::CheckStateRole,
+    static_cast<int>(Qt::Checked), -1, Qt::MatchRecursive);
 }
 
 //-----------------------------------------------------------------------------
@@ -172,7 +173,8 @@ QModelIndexList ctkCheckableComboBoxPrivate::uncheckedIndexes()const
 {
   Q_Q(const ctkCheckableComboBox);
   return q->model()->match(
-    q->rootModelIndex().child(0,0), Qt::CheckStateRole, Qt::Unchecked, -1, Qt::MatchRecursive);
+    q->rootModelIndex().child(0,0), Qt::CheckStateRole,
+    static_cast<int>(Qt::Unchecked), -1, Qt::MatchRecursive);
 }
 
 //-----------------------------------------------------------------------------
