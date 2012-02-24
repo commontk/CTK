@@ -172,7 +172,7 @@ macro(ctkMacroBuildLib)
   set(CTK_BASE_INCLUDE_DIRS ${CTK_BASE_INCLUDE_DIRS} ${my_includes} CACHE INTERNAL "CTK includes" FORCE)
 
   # Install headers
-  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/*.tpp")
   install(FILES
     ${headers}
     ${dynamicHeaders}
