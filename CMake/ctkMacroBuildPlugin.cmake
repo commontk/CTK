@@ -348,7 +348,7 @@ macro(ctkMacroBuildPlugin)
   endif()
 
   # Install headers
-  #file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  #file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/*.tpp")
   #install(FILES
   # ${headers}
   # ${dynamicHeaders}
