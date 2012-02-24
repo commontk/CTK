@@ -40,7 +40,8 @@ class ctkExpandButtonPrivate;
 /// we can set the orientation of the icon with setOrientation()
 /// the widget can also mirror the icon on click if mirrorOnExpand is true.
 
-class CTK_WIDGETS_EXPORT  ctkExpandButton : public QToolButton
+class CTK_WIDGETS_EXPORT ctkExpandButton
+  : public QToolButton
 {
   Q_OBJECT
   Q_PROPERTY(bool mirrorOnExpand READ mirrorOnExpand WRITE setMirrorOnExpand)
