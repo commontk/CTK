@@ -410,15 +410,12 @@ void ctkDICOMDatabase::loadFileHeader (QString fileName)
     while (dataset->nextObject(stack, true) == EC_Normal)
       {
       DcmObject *dO = stack.top();
-      if (dO->isaString())
-        {
-        QString tag = QString("%1,%2").arg(
-            dO->getGTag(),4,16,QLatin1Char('0')).arg(
-            dO->getETag(),4,16,QLatin1Char('0'));
-        std::ostringstream s;
-        dO->print(s);
-        d->LoadedHeader[tag] = QString(s.str().c_str());
-        }
+      QString tag = QString("%1,%2").arg(
+          dO->getGTag(),4,16,QLatin1Char('0')).arg(
+          dO->getETag(),4,16,QLatin1Char('0'));
+      std::ostringstream s;
+      dO->print(s);
+      d->LoadedHeader[tag] = QString(s.str().c_str());
       }
     }
   return;
