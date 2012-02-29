@@ -17,14 +17,21 @@ if(CTK_USE_KWSTYLE)
   if(CTK_SUPERBUILD)
 
     if(NOT DEFINED CTK_KWSTYLE_EXECUTABLE)
+    
+      set(location_args )
+      if(${proj}_URL)
+        set(location_args URL ${${proj}_URL})
+      else()
+        set(location_args CVS_REPOSITORY ":pserver:anoncvs:@public.kitware.com:/cvsroot/KWStyle"
+                          CVS_MODULE "KWStyle")
+      endif()
 
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
         PREFIX ${proj}${ep_suffix}
         LIST_SEPARATOR ${sep}
-        CVS_REPOSITORY ":pserver:anoncvs:@public.kitware.com:/cvsroot/KWStyle"
-        CVS_MODULE "KWStyle"
+        ${location_args}
         CMAKE_GENERATOR ${gen}
         CMAKE_CACHE_ARGS
           ${ep_common_cache_args}

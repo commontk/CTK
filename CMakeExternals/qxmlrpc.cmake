@@ -24,14 +24,26 @@ if(${add_project})
   if(CTK_SUPERBUILD)
 
     if(NOT DEFINED qxmlrpc_DIR)
+    
+      set(location_args )
+      if(${proj}_URL)
+        set(location_args URL ${${proj}_URL})
+      elseif(${proj}_GIT_REPOSITORY)
+        set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY})
+        if(${proj}_REVISION_TAG)
+          list(APPEND location_args GIT_TAG ${${proj}_REVISION_TAG})
+        endif()
+      else()
+        set(location_args GIT_REPOSITORY "${git_protocol}://github.com/commontk/qxmlrpc.git"
+                          GIT_TAG "origin/patched")
+      endif()
       
       #message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
         PREFIX ${proj}${ep_suffix}
-        GIT_REPOSITORY "${git_protocol}://github.com/commontk/qxmlrpc.git"
-        GIT_TAG "origin/patched"
+        ${location_args}
         CMAKE_GENERATOR ${gen}
         INSTALL_COMMAND ""
         CMAKE_ARGS

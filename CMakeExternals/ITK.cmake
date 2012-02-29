@@ -27,14 +27,24 @@ if(${add_project})
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
+      
+      set(location_args )
+      if(${proj}_URL)
+        set(location_args URL ${${proj}_URL})
+      elseif(${proj}_GIT_REPOSITORY)
+        set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
+                          GIT_TAG ${revision_tag})
+      else()
+        set(location_args GIT_REPOSITORY "${git_protocol}://itk.org/ITK.git"
+                          GIT_TAG ${revision_tag})
+      endif()
 
   #     message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
         PREFIX ${proj}${ep_suffix}
-        GIT_REPOSITORY "${git_protocol}://itk.org/ITK.git"
-        GIT_TAG ${revision_tag}
+        ${location_args}
         UPDATE_COMMAND ""
         INSTALL_COMMAND ""
         CMAKE_GENERATOR ${gen}
