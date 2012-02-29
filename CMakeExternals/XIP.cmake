@@ -23,14 +23,21 @@ if(${add_project})
   if(CTK_SUPERBUILD)
 
     if(NOT DEFINED XIP_DIR)
+    
+      set(location_args )
+      if(${proj}_URL)
+        set(location_args URL ${${proj}_URL})
+      else()
+        set(location_args SVN_REPOSITORY "https://collab01a.scr.siemens.com/svn/xip/releases/latest"
+                          SVN_USERNAME "anonymous")
+      endif()
 
       #   message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
         BINARY_DIR ${proj}-build
         PREFIX ${proj}${ep_suffix}
-        SVN_REPOSITORY "https://collab01a.scr.siemens.com/svn/xip/releases/latest"
-        SVN_USERNAME "anonymous"
+        ${location_args}
         INSTALL_COMMAND ""
         CMAKE_GENERATOR ${gen}
         CMAKE_CACHE_ARGS
