@@ -46,7 +46,12 @@ bool ctkFactoryPluginItem<BaseClassType>::load()
 {
   ctkScopedCurrentDir scopedCurrentDir(QFileInfo(this->path()).path());
   this->Loader.setFileName(this->path());
-  return this->Loader.load();
+  bool loaded = this->Loader.load();
+  if (!loaded)
+    {
+    this->appendLoadErrorString(this->loadErrorString());
+    }
+  return loaded;
 }
 
 //----------------------------------------------------------------------------
@@ -66,7 +71,7 @@ BaseClassType* ctkFactoryPluginItem<BaseClassType>::instanciator()
     {
     if (this->verbose())
       {
-      qWarning() << "Failed to instantiate plugin:" << this->path();
+      this->appendLoadErrorString(QString("Failed to instantiate plugin: %1").arg(this->path()));
       }
     return 0;
     }
@@ -75,8 +80,11 @@ BaseClassType* ctkFactoryPluginItem<BaseClassType>::instanciator()
     {
     if (this->verbose())
       {
-      qWarning() << "Failed to access interface [" << BaseClassType::staticMetaObject.className()
-               << "] in plugin:" << this->path() << "\n instead, got object of type:" << object->metaObject()->className();
+      this->appendLoadErrorString(
+            QString("Plugin %1 - Failed to access expected interface [%2] - Instead got object of type [%3]")
+            .arg(this->path())
+            .arg(BaseClassType::staticMetaObject.className())
+            .arg(object->metaObject()->className()));
       }
     delete object; // Clean memory
     return 0;
