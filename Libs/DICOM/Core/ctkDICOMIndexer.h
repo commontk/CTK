@@ -69,6 +69,9 @@ Q_SIGNALS:
   void indexingFilePath(QString);
   void progress(int);
 
+public Q_SLOTS:
+  void cancel();
+
 protected:
   QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
 

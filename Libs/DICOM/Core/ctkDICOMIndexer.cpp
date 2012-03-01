@@ -62,6 +62,7 @@ public:
   ~ctkDICOMIndexerPrivate();
 
   ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator;
+  bool                    Canceled;
 
 };
 
@@ -71,6 +72,7 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate()
 {
+  this->Canceled = false;
 }
 
 //------------------------------------------------------------------------------
@@ -114,6 +116,8 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
                                    const QString& directoryName,
                                    const QString& destinationDirectoryName)
 {
+  Q_D(ctkDICOMIndexer);
+
   const std::string src_directory(directoryName.toStdString());
 
   OFList<OFString> originalDcmtkFileNames;
@@ -139,9 +143,13 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
   /* iterate over all input filenames */
   int fileNumber = 0;
   int currentProgress = -1;
-
+  d->Canceled = false;
   while (iter != last)
   {
+    if (d->Canceled)
+      {
+      break;
+      }
     emit indexingFileNumber(++fileNumber);
     int newProgress = ( fileNumber * 100 ) / totalNumberOfFiles;
     if (newProgress != currentProgress)
@@ -196,3 +204,9 @@ void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& dicomDatabase, const QSt
   */ 
   }
 
+//----------------------------------------------------------------------------
+void ctkDICOMIndexer::cancel()
+{
+  Q_D(ctkDICOMIndexer);
+  d->Canceled = true;
+}
