@@ -30,6 +30,7 @@
 #include <QMetaType>
 #include <QModelIndex>
 #include <QPersistentModelIndex>
+#include <QProgressDialog>
 #include <QSettings>
 #include <QSlider>
 #include <QTabBar>
@@ -370,6 +371,12 @@ void ctkDICOMAppWidget::resetModel()
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onProgress(int progress)
+{
+  QApplication::processEvents();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onThumbnailSelected(const ctkThumbnailLabel& widget)
 {
     Q_D(ctkDICOMAppWidget);
@@ -417,8 +424,28 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
       {
       targetDirectory = d->DICOMDatabase->databaseDirectory();
       }
+    QProgressDialog progress("DICOM Import", "Cancel", 0, 100, this,
+                           Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+    // We don't want the progress dialog to resize itself, so we bypass the label
+    // by creating our own
+    QLabel* progressLabel = new QLabel(tr("Initialization..."));
+    progress.setLabel(progressLabel);
+    progress.setWindowModality(Qt::ApplicationModal);
+    progress.setMinimumDuration(0);
+    progress.setValue(0);
+    progress.show();
+
+    connect(&progress, SIGNAL(canceled()), d->DICOMIndexer.data(), SLOT(cancel()));
+    connect(d->DICOMIndexer.data(), SIGNAL(indexingFilePath(QString)),
+            progressLabel, SLOT(setText(QString)));
+    connect(d->DICOMIndexer.data(), SIGNAL(progress(int)),
+            &progress, SLOT(setValue(int)));
+    connect(d->DICOMIndexer.data(), SIGNAL(progress(int)),
+            this, SLOT(onProgress(int)));
+
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
     d->DICOMModel.reset();
+
   }
 }
 
