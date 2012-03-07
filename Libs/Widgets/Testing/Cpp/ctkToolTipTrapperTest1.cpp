@@ -37,17 +37,17 @@ int ctkToolTipTrapperTest1(int argc, char * argv [] )
 
   ctkToolTipTrapper trapper;
   
-  if (trapper.isEnabled() != true)
+  if (trapper.toolTipsTrapped() != true)
     {
-    std::cerr << "ctkToolTipTrapper::isEnabled default value" << std::endl;
+    std::cerr << "ctkToolTipTrapper::toolTipsTrapped default value" << std::endl;
     return EXIT_FAILURE;
     }
 
-  trapper.setEnabled(false);
+  trapper.setToolTipsTrapped(false);
 
-  if (trapper.isEnabled() != false)
+  if (trapper.toolTipsTrapped() != false)
     {
-    std::cerr << "ctkToolTipTrapper::setEnabled failed" << std::endl;
+    std::cerr << "ctkToolTipTrapper::setToolTipsTrapped failed" << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -55,7 +55,7 @@ int ctkToolTipTrapperTest1(int argc, char * argv [] )
   button.setToolTip("Button tooltip text");
   button.setCheckable(true);
   QObject::connect(&button, SIGNAL(toggled(bool)),
-                   &trapper, SLOT(setEnabled(bool)));
+                   &trapper, SLOT(setToolTipsTrapped(bool)));
   button.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )

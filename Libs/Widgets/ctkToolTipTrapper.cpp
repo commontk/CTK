@@ -63,14 +63,14 @@ protected:
 public:
   ctkToolTipTrapperPrivate(ctkToolTipTrapper& object);
 
-  bool Enabled;
+  bool ToolTipsTrapped;
 };
 
 // --------------------------------------------------------------------------
 ctkToolTipTrapperPrivate::ctkToolTipTrapperPrivate(ctkToolTipTrapper& object)
   : q_ptr(&object)
 {
-  this->Enabled = false;
+  this->ToolTipsTrapped = false;
 }
 
 //------------------------------------------------------------------------------
@@ -78,15 +78,15 @@ ctkToolTipTrapper::ctkToolTipTrapper(QObject * newParent)
   : Superclass(newParent)
   , d_ptr(new ctkToolTipTrapperPrivate(*this))
 {
-  this->setEnabled(true);
+  this->setToolTipsTrapped(true);
 }
 
 //------------------------------------------------------------------------------
-ctkToolTipTrapper::ctkToolTipTrapper(bool enable, QObject * newParent)
+ctkToolTipTrapper::ctkToolTipTrapper(bool toolTipsTrapped, QObject * newParent)
   : Superclass(newParent)
   , d_ptr(new ctkToolTipTrapperPrivate(*this))
 {
-  this->setEnabled(enable);
+  this->setToolTipsTrapped(toolTipsTrapped);
 }
 
 //------------------------------------------------------------------------------
@@ -95,22 +95,22 @@ ctkToolTipTrapper::~ctkToolTipTrapper()
 }
 
 //------------------------------------------------------------------------------
-bool ctkToolTipTrapper::isEnabled()const
+bool ctkToolTipTrapper::toolTipsTrapped()const
 {
   Q_D(const ctkToolTipTrapper);
-  return d->Enabled;
+  return d->ToolTipsTrapped;
 }
 
 //------------------------------------------------------------------------------
-void ctkToolTipTrapper::setEnabled(bool enable)
+void ctkToolTipTrapper::setToolTipsTrapped(bool toolTipsTrapped)
 {
   Q_D(ctkToolTipTrapper);
-  if (enable == d->Enabled)
+  if (toolTipsTrapped == d->ToolTipsTrapped)
     {
     return;
     }
-  d->Enabled = enable;
-  if (enable)
+  d->ToolTipsTrapped = toolTipsTrapped;
+  if (toolTipsTrapped)
     {
     QCoreApplication::instance()->installEventFilter(this);
     }

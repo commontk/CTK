@@ -60,26 +60,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkToolTipTrapperPrivate;
 
 /// \ingroup Widgets
-/// To prevent tooltips from appearing, create an instance of this object.
+/// Filters tooltips, to prevent tooltips from appearing or to word wrap
+/// tooltips.
+/// If toolTipsTrapped is true, installs an event filter to trap tooltips.
+/// If toolTipsTrapped is false, does not install the event filter.
+/// Tooltips are trapped by default.
 class CTK_WIDGETS_EXPORT ctkToolTipTrapper : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY( bool enabled READ isEnabled WRITE setEnabled)
+  Q_PROPERTY( bool toolTipsTrapped READ toolTipsTrapped WRITE setToolTipsTrapped)
 public:
   typedef QObject Superclass;
   /// Constructs a ToolTip trapper which is a child of objectParent
-  /// The trapper is enabled by default 
   explicit ctkToolTipTrapper(QObject* objectParent = 0);
-  /// Constructs a ToolTip trapper which is a child of objectParent
-  /// If enable is false, the trapper doesn't install the event filter
-  explicit ctkToolTipTrapper(bool enable, QObject* objectParent = 0);
+  explicit ctkToolTipTrapper(bool toolTipsTrapped, QObject* objectParent = 0);
   virtual ~ctkToolTipTrapper();
 
-  /// Returns true if the eventFilter is installed and ToolTip events are
+  /// Returns true if the eventFilter is installed and tooltip events are
   /// filtered
-  bool isEnabled()const;
+  bool toolTipsTrapped()const;
 
-  /// Automatically called when the tooltip is enabled. It prevents the
+  /// Automatically called when the tooltips are trapped. It prevents the
   /// tooltips events from being processed. You shouldn't have to call
   /// it manually.
   bool eventFilter(QObject* watched, QEvent* event);
@@ -87,7 +88,7 @@ public:
 public Q_SLOTS:
   /// If true, it installs the eventFilter on the application. Otherwise
   /// it removes it.
-  void setEnabled(bool enable);
+  void setToolTipsTrapped(bool toolTipsTrapped);
 
 protected:
   QScopedPointer<ctkToolTipTrapperPrivate> d_ptr;
