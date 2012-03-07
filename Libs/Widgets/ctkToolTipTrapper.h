@@ -62,33 +62,41 @@ class ctkToolTipTrapperPrivate;
 /// \ingroup Widgets
 /// Filters tooltips, to prevent tooltips from appearing or to word wrap
 /// tooltips.
-/// If toolTipsTrapped is true, installs an event filter to trap tooltips.
-/// If toolTipsTrapped is false, does not install the event filter.
-/// Tooltips are trapped by default.
+/// If toolTipsTrapped or toolTipsWordWrapped is true, installs an event filter to
+/// trap or wrap tooltips.
+/// If toolTipsTrapped and toolTipsWordWrapped are false, does not install the event
+/// filter.
+/// Tooltips are trapped and not word wrapped by default.
 class CTK_WIDGETS_EXPORT ctkToolTipTrapper : public QObject
 {
   Q_OBJECT
   Q_PROPERTY( bool toolTipsTrapped READ toolTipsTrapped WRITE setToolTipsTrapped)
+  Q_PROPERTY( bool toolTipsWordWrapped READ toolTipsWordWrapped WRITE setToolTipsWordWrapped)
 public:
   typedef QObject Superclass;
   /// Constructs a ToolTip trapper which is a child of objectParent
   explicit ctkToolTipTrapper(QObject* objectParent = 0);
-  explicit ctkToolTipTrapper(bool toolTipsTrapped, QObject* objectParent = 0);
+  explicit ctkToolTipTrapper(bool toolTipsTrapped,
+                             bool toolTipsWordWordWrapped,
+                             QObject* objectParent = 0);
   virtual ~ctkToolTipTrapper();
 
-  /// Returns true if the eventFilter is installed and tooltip events are
-  /// filtered
+  /// Returns true if the tooltips are trapped to prevent them from appearing.
   bool toolTipsTrapped()const;
 
-  /// Automatically called when the tooltips are trapped. It prevents the
-  /// tooltips events from being processed. You shouldn't have to call
-  /// it manually.
+  /// Returns true if the tooltips are word wrapped.
+  bool toolTipsWordWrapped()const;
+
+  /// Automatically called when the tooltips are trapped or word wrapped.
+  /// You shouldn't have to call it manually.
   bool eventFilter(QObject* watched, QEvent* event);
 
 public Q_SLOTS:
-  /// If true, it installs the eventFilter on the application. Otherwise
-  /// it removes it.
+  /// If true, installs the eventFilter on the application if it isn't already
+  /// installed.  Otherwise, removes the eventFilter if tooltips are neither
+  /// trapped nor word wrapped.
   void setToolTipsTrapped(bool toolTipsTrapped);
+  void setToolTipsWordWrapped(bool toolTipsWordWrapped);
 
 protected:
   QScopedPointer<ctkToolTipTrapperPrivate> d_ptr;

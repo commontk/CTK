@@ -50,13 +50,34 @@ int ctkToolTipTrapperTest1(int argc, char * argv [] )
     std::cerr << "ctkToolTipTrapper::setToolTipsTrapped failed" << std::endl;
     return EXIT_FAILURE;
     }
+
+  if (trapper.toolTipsWordWrapped() != false)
+    {
+    std::cerr << "ctkToolTipTrapper::toolTipsWordWrapped default value" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  trapper.setToolTipsWordWrapped(true);
+
+  if (trapper.toolTipsWordWrapped() != true)
+    {
+    std::cerr << "ctkToolTipTrapper::setToolTipsWordWrapped failed" << std::endl;
+    return EXIT_FAILURE;
+    }
   
-  QPushButton button("button");
-  button.setToolTip("Button tooltip text");
-  button.setCheckable(true);
-  QObject::connect(&button, SIGNAL(toggled(bool)),
+  QPushButton trapButton("button");
+  trapButton.setToolTip("Button tooltip text");
+  trapButton.setCheckable(true);
+  QObject::connect(&trapButton, SIGNAL(toggled(bool)),
                    &trapper, SLOT(setToolTipsTrapped(bool)));
-  button.show();
+  trapButton.show();
+
+  QPushButton wrapButton("button");
+  wrapButton.setToolTip("Button tooltip text");
+  wrapButton.setCheckable(true);
+  QObject::connect(&wrapButton, SIGNAL(toggled(bool)),
+                   &trapper, SLOT(setToolTipsWordWrapped(bool)));
+  wrapButton.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
