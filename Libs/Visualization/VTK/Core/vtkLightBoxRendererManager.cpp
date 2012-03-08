@@ -21,30 +21,27 @@
 #include "vtkLightBoxRendererManager.h"
 
 // VTK includes
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-#include <vtkWeakPointer.h>
-#include <vtkRenderWindow.h>
-#include <vtkRendererCollection.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkTextProperty.h>
-#include <vtkProperty2D.h>
 #include <vtkCamera.h>
+#include <vtkCellArray.h>
+#include <vtkCornerAnnotation.h>
 #include <vtkImageData.h>
 #include <vtkImageMapper.h>
-#include <vtkCellArray.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
-#include <vtkCornerAnnotation.h>
+#include <vtkProperty2D.h>
+#include <vtkRendererCollection.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
+#include <vtkTextProperty.h>
+#include <vtkWeakPointer.h>
 
 // STD includes
 #include <vector>
 #include <cassert>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkLightBoxRendererManager, "$Revision:$");
@@ -117,12 +114,12 @@ void RenderWindowItem::SetupImageMapperActor(double colorWindow, double colorLev
   this->ImageMapper->SetColorLevel(colorLevel);
 
   // .. and its corresponding 2D actor
-  VTK_CREATE(vtkActor2D, actor2D);
+  vtkNew<vtkActor2D> actor2D;
   actor2D->SetMapper(this->ImageMapper);
   actor2D->GetProperty()->SetDisplayLocationToBackground();
 
   // .. and add it to the renderer
-  this->Renderer->AddActor2D(actor2D);
+  this->Renderer->AddActor2D(actor2D.GetPointer());
 }
 
 //---------------------------------------------------------------------------
@@ -132,8 +129,8 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   assert(!this->HighlightedBoxActor);
   
   // Create a highlight actor (2D box around viewport)
-  VTK_CREATE(vtkPolyData, poly);
-  VTK_CREATE(vtkPoints, points);
+  vtkNew<vtkPolyData> poly;
+  vtkNew<vtkPoints> points;
   // Normalized Viewport means :
   // 0. -> 0;
   // 1. -> width - 1 ;
@@ -167,7 +164,7 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   points->InsertNextPoint(0. + shift, 1. + shift, 0); // top-left
   points->InsertNextPoint(0. + shift, 0. + shift - 0.1, 0); // bottom-left to fill the 0,0 pixel.
   
-  VTK_CREATE(vtkCellArray, cells);
+  vtkNew<vtkCellArray> cells;
   cells->InsertNextCell(6);
   cells->InsertCellPoint(0);
   cells->InsertCellPoint(1);
@@ -175,20 +172,20 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   cells->InsertCellPoint(3);
   cells->InsertCellPoint(4);
   cells->InsertCellPoint(5);
-  poly->SetPoints(points);
-  poly->SetLines(cells);
+  poly->SetPoints(points.GetPointer());
+  poly->SetLines(cells.GetPointer());
 
-  VTK_CREATE(vtkCoordinate, coordinate);
+  vtkNew<vtkCoordinate> coordinate;
   coordinate->SetCoordinateSystemToNormalizedViewport();
   coordinate->SetViewport(this->Renderer);
 
-  VTK_CREATE(vtkPolyDataMapper2D, polyDataMapper);
-  polyDataMapper->SetInput(poly);
-  polyDataMapper->SetTransformCoordinate(coordinate);
+  vtkNew<vtkPolyDataMapper2D> polyDataMapper;
+  polyDataMapper->SetInput(poly.GetPointer());
+  polyDataMapper->SetTransformCoordinate(coordinate.GetPointer());
   polyDataMapper->SetTransformCoordinateUseDouble(true);
 
   this->HighlightedBoxActor = vtkSmartPointer<vtkActor2D>::New();
-  this->HighlightedBoxActor->SetMapper(polyDataMapper);
+  this->HighlightedBoxActor->SetMapper(polyDataMapper.GetPointer());
   this->HighlightedBoxActor->GetProperty()->SetColor(highlightedBoxColor[0],
                                                      highlightedBoxColor[1],
                                                      highlightedBoxColor[2]);

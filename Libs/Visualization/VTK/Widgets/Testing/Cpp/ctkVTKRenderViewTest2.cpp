@@ -25,9 +25,9 @@
 #include <QDebug>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkRenderer.h>
+#include <vtkNew.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkRenderer.h>
 #include <vtkSphereSource.h>
 
 // CTK includes
@@ -36,10 +36,6 @@
 
 // STD includes
 #include <iostream>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //-----------------------------------------------------------------------------
 int ctkVTKRenderViewTest2(int argc, char * argv [] )
@@ -70,17 +66,17 @@ int ctkVTKRenderViewTest2(int argc, char * argv [] )
   renderView.show();
 
   // Instanciate VTK objects
-  VTK_CREATE(vtkSphereSource, sphere);
-  VTK_CREATE(vtkPolyDataMapper, sphereMapper);
-  VTK_CREATE(vtkActor, sphereActor);
+  vtkNew<vtkSphereSource> sphere;
+  vtkNew<vtkPolyDataMapper> sphereMapper;
+  vtkNew<vtkActor> sphereActor;
 
   // Configure actor
   sphere->SetRadius(0.25);
   sphereMapper->SetInputConnection(sphere->GetOutputPort());
-  sphereActor->SetMapper(sphereMapper);
+  sphereActor->SetMapper(sphereMapper.GetPointer());
 
   // Add actor
-  renderView.renderer()->AddActor(sphereActor);
+  renderView.renderer()->AddActor(sphereActor.GetPointer());
 
   renderView.lookFromAxis(ctkAxesWidget::Right);
   renderView.lookFromAxis(ctkAxesWidget::Left, 10);
