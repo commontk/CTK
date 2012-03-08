@@ -55,15 +55,15 @@ if(CTK_USE_QTTESTING)
         PREFIX ${proj}${ep_suffix}
         ${location_args}
         CMAKE_GENERATOR ${gen}
-        INSTALL_COMMAND ""
         UPDATE_COMMAND ""
-        CMAKE_ARGS
-          ${ep_common_args}
+        CMAKE_CACHE_ARGS
+          ${ep_common_cache_args}
           -DBUILD_SHARED_LIBS:BOOL=ON
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         DEPENDS
           ${proj_DEPENDENCIES}
         )
+      set(QtTesting_INSTALL_DIR ${ep_install_dir})
       set(QtTesting_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
       # Since QtTesting is statically build, there is not need to add its corresponding
@@ -73,7 +73,10 @@ if(CTK_USE_QTTESTING)
       ctkMacroEmptyExternalproject(${proj} "${proj_DEPENDENCIES}")
     endif()
 
-    list(APPEND CTK_SUPERBUILD_EP_VARS QtTesting_DIR:PATH)
+    list(APPEND CTK_SUPERBUILD_EP_VARS
+      QtTesting_INSTALL_DIR:PATH
+      QtTesting_DIR:PATH
+      )
     
   endif()
 
