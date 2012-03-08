@@ -78,7 +78,6 @@ void ctkVTKAbstractViewPrivate::init()
 // --------------------------------------------------------------------------
 void ctkVTKAbstractViewPrivate::setupCornerAnnotation()
 {
-  //logger.trace("setupCornerAnnotation");
   this->CornerAnnotation->SetMaximumLineHeight(0.07);
   vtkTextProperty *tprop = this->CornerAnnotation->GetTextProperty();
   tprop->ShadowOn();
@@ -88,7 +87,6 @@ void ctkVTKAbstractViewPrivate::setupCornerAnnotation()
 //---------------------------------------------------------------------------
 void ctkVTKAbstractViewPrivate::setupRendering()
 {
-  //logger.trace("setupRendering");
   Q_ASSERT(this->RenderWindow);
   this->RenderWindow->SetAlphaBitPlanes(1);
   this->RenderWindow->SetMultiSamples(0);
@@ -228,8 +226,6 @@ void ctkVTKAbstractView::setInteractor(vtkRenderWindowInteractor* newInteractor)
 {
   Q_D(ctkVTKAbstractView);
 
-  //logger.trace("setInteractor");
-
   d->RenderWindow->SetInteractor(newInteractor);
   // Prevent the interactor to call Render() on the render window; only
   // scheduleRender() and forceRender() can Render() the window.
@@ -257,7 +253,6 @@ vtkInteractorObserver* ctkVTKAbstractView::interactorStyle()const
 void ctkVTKAbstractView::setCornerAnnotationText(const QString& text)
 {
   Q_D(ctkVTKAbstractView);
-  //logger.trace(QString("setCornerAnnotationText: %1").arg(text));
   d->CornerAnnotation->ClearAllTexts();
   d->CornerAnnotation->SetText(2, text.toLatin1());
 }
