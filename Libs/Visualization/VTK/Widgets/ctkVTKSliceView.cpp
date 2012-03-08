@@ -39,10 +39,6 @@
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 // --------------------------------------------------------------------------
 // ctkVTKSliceViewPrivate methods
 

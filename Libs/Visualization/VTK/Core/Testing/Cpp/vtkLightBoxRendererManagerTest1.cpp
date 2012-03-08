@@ -25,23 +25,20 @@
 #include "ctkCommandLineParser.h"
 
 // VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindow.h>
-#include <vtkInteractorStyleImage.h>
+#include <vtkImageData.h>
 #include <vtkImageReader2Factory.h>
 #include <vtkImageReader2.h>
-#include <vtkImageData.h>
+#include <vtkInteractorStyleImage.h>
+#include <vtkNew.h>
 #include <vtkRegressionTestImage.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
 #include <vtkTestUtilities.h>
 
 // STD includes
 #include <cstdlib>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
   
 //----------------------------------------------------------------------------
 int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
@@ -52,7 +49,7 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   // Read Image
   //----------------------------------------------------------------------------
   // Instanciate the reader factory
-  VTK_CREATE(vtkImageReader2Factory, imageFactory);
+  vtkNew<vtkImageReader2Factory> imageFactory;
 
   // Instanciate an image reader
   vtkSmartPointer<vtkImageReader2> imageReader;
@@ -71,19 +68,19 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   //----------------------------------------------------------------------------
   // Renderer, RenderWindow and Interactor
   //----------------------------------------------------------------------------
-  VTK_CREATE(vtkRenderer, rr);
-  VTK_CREATE(vtkRenderWindow, rw);
-  VTK_CREATE(vtkRenderWindowInteractor, ri);
+  vtkNew<vtkRenderer> rr;
+  vtkNew<vtkRenderWindow> rw;
+  vtkNew<vtkRenderWindowInteractor> ri;
   rw->SetSize(600, 600);
   rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
-  rw->AddRenderer(rr);
-  rw->SetInteractor(ri);
+  rw->AddRenderer(rr.GetPointer());
+  rw->SetInteractor(ri.GetPointer());
   
   // Set Interactor Style
-  VTK_CREATE(vtkInteractorStyleImage, iStyle);
-  ri->SetInteractorStyle(iStyle);
+  vtkNew<vtkInteractorStyleImage> iStyle;
+  ri->SetInteractorStyle(iStyle.GetPointer());
 
-  VTK_CREATE(vtkLightBoxRendererManager, lightBoxRendererManager);
+  vtkNew<vtkLightBoxRendererManager> lightBoxRendererManager;
 
   //----------------------------------------------------------------------------
   // Check if non initialized case is handled properly / Check default value
@@ -190,7 +187,7 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   // Initialize
   //----------------------------------------------------------------------------
 
-  lightBoxRendererManager->Initialize(rw);
+  lightBoxRendererManager->Initialize(rw.GetPointer());
 
   if (lightBoxRendererManager->IsInitialized() != 1)
     {
@@ -215,7 +212,7 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   double highlightedBoxColor[3] = {1.0, 1.0, 0.0};
   lightBoxRendererManager->SetHighlightedBoxColor(highlightedBoxColor);
 
-  int retval = vtkRegressionTestImage(rw);
+  int retval = vtkRegressionTestImage(rw.GetPointer());
   if (retval == vtkRegressionTester::DO_INTERACTOR)
     {
     rw->GetInteractor()->Initialize();

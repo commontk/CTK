@@ -38,10 +38,6 @@
 // STD includes
 #include <cmath>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKMagnifyView");
 //--------------------------------------------------------------------------
