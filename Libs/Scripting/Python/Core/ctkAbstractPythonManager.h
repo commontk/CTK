@@ -85,6 +85,10 @@ public:
   /// \sa pythonInitialized
   bool isPythonInitialized()const;
 
+  /// Returns True if a python error occured.
+  /// \sa PythonQt::errorOccured()
+  bool pythonErrorOccured()const;
+
 Q_SIGNALS:
 
   /// This signal is emitted after python is pre-initialized. Observers can listen
