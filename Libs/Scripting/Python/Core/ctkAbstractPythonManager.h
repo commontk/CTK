@@ -29,6 +29,7 @@
 // CTK includes
 #include "ctkScriptingPythonCoreExport.h"
 
+class ctkAbstractPythonManagerPrivate;
 class PythonQtObjectPtr;
 
 /// \ingroup Scripting_Python_Core
@@ -39,7 +40,7 @@ class CTK_SCRIPTING_PYTHON_CORE_EXPORT ctkAbstractPythonManager : public QObject
 public:
   typedef QObject Superclass;
   ctkAbstractPythonManager(QObject* _parent=NULL);
-  ~ctkAbstractPythonManager();
+  virtual ~ctkAbstractPythonManager();
 
   PythonQtObjectPtr mainContext();
   void addObjectToPythonMain(const QString& name, QObject* obj);
@@ -117,8 +118,12 @@ protected:
   /// Overload this function to execute script at initialization time
   virtual void            executeInitializationScripts();
 
+protected:
+  QScopedPointer<ctkAbstractPythonManagerPrivate> d_ptr;
+
 private:
-  void (*InitFunction)();
+  Q_DECLARE_PRIVATE(ctkAbstractPythonManager);
+  Q_DISABLE_COPY(ctkAbstractPythonManager);
 
 };
 #endif

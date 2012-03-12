@@ -41,9 +41,40 @@
 #endif
 
 //-----------------------------------------------------------------------------
-ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclass(_parent)
+class ctkAbstractPythonManagerPrivate
+{
+  Q_DECLARE_PUBLIC(ctkAbstractPythonManager);
+protected:
+  ctkAbstractPythonManager* q_ptr;
+public:
+  ctkAbstractPythonManagerPrivate(ctkAbstractPythonManager& object);
+  virtual ~ctkAbstractPythonManagerPrivate();
+
+  void (*InitFunction)();
+};
+
+//-----------------------------------------------------------------------------
+// ctkAbstractPythonManagerPrivate methods
+
+//-----------------------------------------------------------------------------
+ctkAbstractPythonManagerPrivate::ctkAbstractPythonManagerPrivate(ctkAbstractPythonManager &object) :
+  q_ptr(&object)
 {
   this->InitFunction = 0;
+}
+
+//-----------------------------------------------------------------------------
+ctkAbstractPythonManagerPrivate::~ctkAbstractPythonManagerPrivate()
+{
+}
+
+//-----------------------------------------------------------------------------
+// ctkAbstractPythonManager methods
+
+//-----------------------------------------------------------------------------
+ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclass(_parent),
+  d_ptr(new ctkAbstractPythonManagerPrivate(*this))
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -74,6 +105,8 @@ PythonQtObjectPtr ctkAbstractPythonManager::mainContext()
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::initPythonQt()
 {
+  Q_D(ctkAbstractPythonManager);
+
   PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
 
   // Python maps SIGINT (control-c) to its own handler.  We will remap it
@@ -88,14 +121,14 @@ void ctkAbstractPythonManager::initPythonQt()
                 SLOT(printStdout(QString)));
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
                 SLOT(printStderr(QString)));
-  
+
   PythonQt_init_QtBindings();
-  
+
   QStringList initCode;
 
   // Update 'sys.path'
   initCode << "import sys";
-  foreach (QString path, this->pythonPaths())
+  foreach (const QString& path, this->pythonPaths())
     {
     initCode << QString("sys.path.append('%1')").arg(QDir::fromNativeSeparators(path));
     }
@@ -105,9 +138,9 @@ void ctkAbstractPythonManager::initPythonQt()
   _mainContext.evalScript(initCode.join("\n"));
 
   this->preInitialization();
-  if (this->InitFunction)
+  if (d->InitFunction)
     {
-    (*this->InitFunction)();
+    (*d->InitFunction)();
     }
   emit this->pythonPreInitialized();
 
@@ -196,7 +229,8 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
 {
-  this->InitFunction = initFunction;
+  Q_D(ctkAbstractPythonManager);
+  d->InitFunction = initFunction;
 }
 
 //----------------------------------------------------------------------------
