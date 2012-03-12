@@ -122,6 +122,12 @@ bool ctkAbstractPythonManager::isPythonInitialized()const
 }
 
 //-----------------------------------------------------------------------------
+bool ctkAbstractPythonManager::pythonErrorOccured()const
+{
+  return PythonQt::self()->errorOccured();
+}
+
+//-----------------------------------------------------------------------------
 QStringList ctkAbstractPythonManager::pythonPaths()
 {
   return QStringList();
