@@ -183,7 +183,10 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
   PythonQtObjectPtr main = ctkAbstractPythonManager::mainContext();
   if (main)
     {
+    QString path = QFileInfo(filename).absolutePath();
+    this->executeString(QString("import sys\nsys.path.insert(0, '%1')").arg(path));
     main.evalFile(filename);
+    this->executeString(QString("import sys\nif sys.path[0] == '%1': sys.path.pop(0)").arg(path));
     }
 }
 
