@@ -231,13 +231,21 @@ void ctkCheckablePushButton::setCheckState(Qt::CheckState checkState)
     return;
     }
   d->CheckState = checkState;
+  bool emitToggled = false;
   if (d->CheckBoxFlags & Qt::ItemIsEnabled)
     {
+    bool wasChecked = this->isChecked();
+    // QCheckBox::setCheckable() doesn't emit toggled signal
     this->setCheckable(checkState == Qt::Checked);
+    emitToggled = (wasChecked != this->isChecked());
     }
-  this->update();
+  if (emitToggled)
+    {
+    emit toggled(this->isChecked());
+    }
   emit checkStateChanged(d->CheckState);
   emit checkBoxToggled(d->CheckState == Qt::Checked);
+  this->update();
 }
 
 //-----------------------------------------------------------------------------
