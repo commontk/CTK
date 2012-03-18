@@ -430,7 +430,12 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
     // by creating our own
     QLabel* progressLabel = new QLabel(tr("Initialization..."));
     progress.setLabel(progressLabel);
+#ifdef Q_WS_MAC
+    // BUG: avoid deadlock of dialogs on mac
+    progress.setWindowModality(Qt::NonModal);
+#else
     progress.setWindowModality(Qt::ApplicationModal);
+#endif
     progress.setMinimumDuration(0);
     progress.setValue(0);
     progress.show();
@@ -444,8 +449,8 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
             this, SLOT(onProgress(int)));
 
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
-    d->DICOMModel.reset();
 
+    d->DICOMModel.reset();
   }
 }
 
