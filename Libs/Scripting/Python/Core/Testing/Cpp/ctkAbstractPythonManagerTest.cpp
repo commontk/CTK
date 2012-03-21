@@ -21,6 +21,8 @@ private Q_SLOTS:
 
   void testIsPythonInitialized();
 
+  void testSetInitializationFlags();
+
   void testPythonErrorOccured();
   void testPythonErrorOccured_data();
 
@@ -43,6 +45,28 @@ private Q_SLOTS:
 void ctkAbstractPythonManagerTester::testIsPythonInitialized()
 {
   QCOMPARE(this->PythonManager.isPythonInitialized(), false);
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testSetInitializationFlags()
+{
+  QCOMPARE(this->PythonManager.initializationFlags(), PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
+
+  int flagsToSetPreInit = PythonQt::RedirectStdOut;
+  int expectedFlagsPreInit = PythonQt::RedirectStdOut;
+
+  this->PythonManager.setInitializationFlags(flagsToSetPreInit);
+  QCOMPARE(this->PythonManager.initializationFlags(), expectedFlagsPreInit);
+
+  this->PythonManager.mainContext();
+
+  int flagsToSetPostInit = 0;
+  int expectedFlagsPostInit = PythonQt::RedirectStdOut;
+
+  this->PythonManager.setInitializationFlags(flagsToSetPostInit);
+  QCOMPARE(this->PythonManager.initializationFlags(), expectedFlagsPostInit);
+
+  QCOMPARE(this->PythonManager.isPythonInitialized(), true);
 }
 
 // ----------------------------------------------------------------------------

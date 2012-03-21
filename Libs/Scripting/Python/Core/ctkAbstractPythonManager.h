@@ -42,6 +42,15 @@ public:
   ctkAbstractPythonManager(QObject* _parent=NULL);
   virtual ~ctkAbstractPythonManager();
 
+  /// Calling this function after mainContext() has been called at least once is a no-op.
+  /// If not overridden calling this function, the default initialization flags are
+  /// PythonQt::IgnoreSiteModule and PythonQt::RedirectStdOut.
+  /// \sa PythonQt::InitFlags
+  void setInitializationFlags(int flags);
+
+  /// \sa setInitializationFlags
+  int initializationFlags()const;
+
   PythonQtObjectPtr mainContext();
   void addObjectToPythonMain(const QString& name, QObject* obj);
   void registerPythonQtDecorator(QObject* decorator);
@@ -108,7 +117,7 @@ protected Q_SLOTS:
 
 protected:
 
-  void initPythonQt();
+  void initPythonQt(int flags);
 
   virtual QStringList     pythonPaths();
 
