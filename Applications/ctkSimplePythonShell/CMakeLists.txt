@@ -22,8 +22,9 @@ set(KIT_SRCS
 if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   list(APPEND KIT_SRCS
     ctkTestWrappedQListOfVTKObject.h
-    ctkTestWrappedVTKSlot.h
+    ctkTestWrappedVTKObserver.h
     ctkTestWrappedVTKQInvokable.h
+    ctkTestWrappedVTKSlot.h
     )
 endif()
 
@@ -39,8 +40,9 @@ set(KIT_MOC_SRCS
 if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   list(APPEND KIT_MOC_SRCS
     ctkTestWrappedQListOfVTKObject.h
-    ctkTestWrappedVTKSlot.h
+    ctkTestWrappedVTKObserver.h
     ctkTestWrappedVTKQInvokable.h
+    ctkTestWrappedVTKSlot.h
     )
 endif()
 

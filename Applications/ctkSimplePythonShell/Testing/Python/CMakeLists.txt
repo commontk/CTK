@@ -21,6 +21,7 @@ endif()
 if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   list(APPEND SCRIPTS
     vtkPythonSmoke.py
+    wrappedVTKObserverTest.py
     wrappedVTKQInvokableTest.py
     wrappedVTKSlotTest.py
     )
