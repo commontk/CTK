@@ -21,8 +21,10 @@
 // Qt includes
 #include <QApplication>
 #include <QTextStream>
+#include <QTimer>
 
 // CTK includes
+#include <ctkCallback.h>
 #include <ctkPythonConsole.h>
 #include <ctkCommandLineParser.h>
 
@@ -39,6 +41,26 @@
 # include <vtkDebugLeaks.h>
 #endif
 
+namespace
+{
+//-----------------------------------------------------------------------------
+void executeScripts(void * data)
+{
+  ctkSimplePythonManager * pythonManager = reinterpret_cast<ctkSimplePythonManager*>(data);
+  QStringList scripts = pythonManager->property("scripts").toStringList();
+  foreach(const QString& script, scripts)
+    {
+    pythonManager->executeFile(script);
+    if (pythonManager->pythonErrorOccured())
+      {
+      QApplication::exit(EXIT_FAILURE);
+      }
+    }
+}
+
+} // end of anonymous namespace
+
+//-----------------------------------------------------------------------------
 int main(int argc, char** argv)
 {
 #ifdef CTK_WRAP_PYTHONQT_USE_VTK
@@ -75,9 +97,9 @@ int main(int argc, char** argv)
           << parser.helpText();
     return EXIT_SUCCESS;
   }
-  
+
   ctkSimplePythonManager pythonManager;
-  
+
   ctkPythonConsole console;
   console.initialize(&pythonManager);
   console.setAttribute(Qt::WA_QuitOnClose, true);
@@ -112,10 +134,11 @@ int main(int argc, char** argv)
   pythonManager.addObjectToPythonMain("_testWrappedQListOfVTKObjectInstance", &testWrappedQListOfVTKObject);
 #endif
 
-  foreach(const QString& script, parser.unparsedArguments())
-    {
-    pythonManager.executeFile(script);
-    }
-  
+  ctkCallback callback;
+  callback.setCallbackData(&pythonManager);
+  pythonManager.setProperty("scripts", parser.unparsedArguments());
+  callback.setCallback(executeScripts);
+  QTimer::singleShot(0, &callback, SLOT(invoke()));
+
   return app.exec();
 }
