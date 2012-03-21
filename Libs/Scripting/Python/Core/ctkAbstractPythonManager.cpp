@@ -51,6 +51,8 @@ public:
   virtual ~ctkAbstractPythonManagerPrivate();
 
   void (*InitFunction)();
+
+  int PythonQtInitializationFlags;
 };
 
 //-----------------------------------------------------------------------------
@@ -61,6 +63,7 @@ ctkAbstractPythonManagerPrivate::ctkAbstractPythonManagerPrivate(ctkAbstractPyth
   q_ptr(&object)
 {
   this->InitFunction = 0;
+  this->PythonQtInitializationFlags = PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut;
 }
 
 //-----------------------------------------------------------------------------
@@ -88,11 +91,30 @@ ctkAbstractPythonManager::~ctkAbstractPythonManager()
 }
 
 //-----------------------------------------------------------------------------
+void ctkAbstractPythonManager::setInitializationFlags(int flags)
+{
+  Q_D(ctkAbstractPythonManager);
+  if (PythonQt::self())
+    {
+    return;
+    }
+  d->PythonQtInitializationFlags = flags;
+}
+
+//-----------------------------------------------------------------------------
+int ctkAbstractPythonManager::initializationFlags()const
+{
+  Q_D(const ctkAbstractPythonManager);
+  return d->PythonQtInitializationFlags;
+}
+
+//-----------------------------------------------------------------------------
 PythonQtObjectPtr ctkAbstractPythonManager::mainContext()
 {
+  Q_D(ctkAbstractPythonManager);
   if (!PythonQt::self())
     {
-    this->initPythonQt();
+    this->initPythonQt(d->PythonQtInitializationFlags);
     }
   if (PythonQt::self())
     {
@@ -102,11 +124,11 @@ PythonQtObjectPtr ctkAbstractPythonManager::mainContext()
 }
 
 //-----------------------------------------------------------------------------
-void ctkAbstractPythonManager::initPythonQt()
+void ctkAbstractPythonManager::initPythonQt(int flags)
 {
   Q_D(ctkAbstractPythonManager);
 
-  PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
+  PythonQt::init(flags);
 
   // Python maps SIGINT (control-c) to its own handler.  We will remap it
   // to the default so that control-c works.
@@ -131,8 +153,6 @@ void ctkAbstractPythonManager::initPythonQt()
     {
     initCode << QString("sys.path.append('%1')").arg(QDir::fromNativeSeparators(path));
     }
-
-  initCode << QString("import site");
 
   _mainContext.evalScript(initCode.join("\n"));
 
