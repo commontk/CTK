@@ -36,10 +36,15 @@
 # include "ctkTestWrappedQListOfVTKObject.h"
 # include "ctkTestWrappedVTKSlot.h"
 # include "ctkTestWrappedVTKQInvokable.h"
+# include <vtkDebugLeaks.h>
 #endif
 
 int main(int argc, char** argv)
 {
+#ifdef CTK_WRAP_PYTHONQT_USE_VTK
+  vtkDebugLeaks::SetExitError(true);
+#endif
+
   QApplication app(argc, argv);
 
   ctkCommandLineParser parser;
