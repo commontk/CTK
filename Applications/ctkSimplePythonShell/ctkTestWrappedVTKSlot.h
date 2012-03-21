@@ -25,6 +25,7 @@
 #include <QObject>
 
 // VTK includes
+#include <vtkSmartPointer.h>
 #include <vtkTable.h>
 
 class ctkTestWrappedVTKSlot : public QObject
@@ -34,12 +35,11 @@ public:
 
   ctkTestWrappedVTKSlot(QObject * newParent = 0) : QObject(newParent)
     {
-    this->MyTable = vtkTable::New();
+    this->MyTable = vtkSmartPointer<vtkTable>::New();
     }
-    
+
   virtual ~ctkTestWrappedVTKSlot()
     {
-    this->MyTable->Delete();
     }
 
 public Q_SLOTS:
@@ -57,7 +57,7 @@ public Q_SLOTS:
     }
 
 private:
-  vtkTable * MyTable;
+  vtkSmartPointer<vtkTable> MyTable;
 };
 
 #endif
