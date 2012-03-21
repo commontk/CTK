@@ -3,19 +3,19 @@
 # Copied from VTK/Common/Testing/Python/PythonSmoke.py
 #
 
-import sys
+import qt
 
 try:
   import vtk
 
 except:
   print "Cannot import vtk"
-  sys.exit(1)
+  qt.QApplication.exit(1)
 try:
   print dir(vtk)
 except:
   print "Cannot print dir(vtk)"
-  sys.exit(1)
+  qt.QApplication.exit(1)
 
 try:
   try:
@@ -30,7 +30,7 @@ try:
     print "Using Common"
 except:
   print "Cannot create vtkObject"
-  sys.exit(1)
+  qt.QApplication.exit(1)
 
 try:
   print o
@@ -38,7 +38,7 @@ try:
   print "Class name: %s" % o.GetClassName()
 except:
   print "Cannot print object"
-  sys.exit(1)
+  qt.QApplication.exit(1)
 
 try:
   b = vtk.vtkObject()
@@ -46,7 +46,7 @@ try:
   print b, d
 except:
   print "Cannot downcast"
-  sys.exit(1)
+  qt.QApplication.exit(1)
 
-sys.exit(0)
+qt.QApplication.exit(0)
 

@@ -82,8 +82,7 @@ ctkAbstractPythonManager::~ctkAbstractPythonManager()
 {
   if (Py_IsInitialized())
     {
-    PyThreadState* state = PyThreadState_Get();
-    Py_EndInterpreter(state);
+    Py_Finalize();
     }
   PythonQt::cleanup();
 }

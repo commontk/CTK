@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkTestWrappedVTKSlot_h
-#define __ctkTestWrappedVTKSlot_h
+#ifndef __ctkTestWrappedVTKObserver_h
+#define __ctkTestWrappedVTKObserver_h
 
 // Qt includes
 #include <QObject>
@@ -28,17 +28,17 @@
 #include <vtkSmartPointer.h>
 #include <vtkTable.h>
 
-class ctkTestWrappedVTKSlot : public QObject
+class ctkTestWrappedVTKObserver : public QObject
 {
   Q_OBJECT
 public:
 
-  ctkTestWrappedVTKSlot(QObject * newParent = 0) : QObject(newParent)
+  ctkTestWrappedVTKObserver(QObject * newParent = 0) : QObject(newParent)
     {
     this->MyTable = vtkSmartPointer<vtkTable>::New();
     }
 
-  virtual ~ctkTestWrappedVTKSlot()
+  virtual ~ctkTestWrappedVTKObserver()
     {
     }
 
@@ -48,12 +48,6 @@ public Q_SLOTS:
   vtkTable* getTable() const
     {
     return this->MyTable;
-    }
-
-  /// Example ot slot accepting a VTK object as parameter
-  void setTable(vtkTable * newTable)
-    {
-    this->MyTable = newTable;
     }
 
 private:

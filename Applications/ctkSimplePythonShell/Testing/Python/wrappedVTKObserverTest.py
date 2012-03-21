@@ -6,12 +6,12 @@ import qt
 # PythonQt internally uses vtkPythonUtil to properly wrap/unwrap VTK objects
 from vtk import *
 
-t = _testWrappedVTKQInvokableInstance.getTable()
-print t.GetClassName()
+t = _testWrappedVTKObserverInstance.getTable()
 
-t2 = vtkTable()
-_testWrappedVTKQInvokableInstance.setTable(t2)
-if _testWrappedVTKQInvokableInstance.getTable() != t2:
-  qt.QApplication.exit(1)
+def onTableModified(caller, event):
+    print("Table modified !")
+
+t.AddObserver(vtkCommand.ModifiedEvent, onTableModified)
+t.Modified()
 
 qt.QApplication.exit(0)
