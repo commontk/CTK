@@ -288,7 +288,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     return false;
     }
   logger.debug ( "Negotiating Association" );
-  emit progress("Negatiating Association");
+  emit progress("Negotiating Association");
   emit progress(20);
   if (d->Canceled) {return false;}
 
