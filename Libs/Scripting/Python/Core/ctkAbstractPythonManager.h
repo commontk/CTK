@@ -51,7 +51,16 @@ public:
   /// \sa setInitializationFlags
   int initializationFlags()const;
 
+  /// Initialize python context considering the initializationFlags.
+  /// Return \a True if python has been successfully initialized.
+  /// \sa setInitializationFlags, mainContext, isPythonInitialized
+  /// \sa preInitialization, executeInitializationScripts, pythonPreInitialized, pythonInitialized
+  bool initialize();
+
+  /// Return a reference to the python main context.
+  /// Calling this function implicitly call initialize() if it hasn't been done.
   PythonQtObjectPtr mainContext();
+
   void addObjectToPythonMain(const QString& name, QObject* obj);
   void registerPythonQtDecorator(QObject* decorator);
   void registerClassForPythonQt(const QMetaObject* metaobject);
