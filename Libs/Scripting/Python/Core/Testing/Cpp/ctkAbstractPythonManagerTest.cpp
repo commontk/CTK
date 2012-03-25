@@ -26,6 +26,8 @@ private Q_SLOTS:
   void testPythonErrorOccured();
   void testPythonErrorOccured_data();
 
+  void testInitialize();
+
   void testMainContext();
 
   void testAddObjectToPythonMain();
@@ -67,6 +69,12 @@ void ctkAbstractPythonManagerTester::testSetInitializationFlags()
   QCOMPARE(this->PythonManager.initializationFlags(), expectedFlagsPostInit);
 
   QCOMPARE(this->PythonManager.isPythonInitialized(), true);
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testInitialize()
+{
+  QVERIFY(this->PythonManager.initialize());
 }
 
 // ----------------------------------------------------------------------------

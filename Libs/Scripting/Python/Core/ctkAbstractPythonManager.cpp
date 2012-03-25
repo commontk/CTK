@@ -109,14 +109,21 @@ int ctkAbstractPythonManager::initializationFlags()const
 }
 
 //-----------------------------------------------------------------------------
-PythonQtObjectPtr ctkAbstractPythonManager::mainContext()
+bool ctkAbstractPythonManager::initialize()
 {
   Q_D(ctkAbstractPythonManager);
   if (!PythonQt::self())
     {
     this->initPythonQt(d->PythonQtInitializationFlags);
     }
-  if (PythonQt::self())
+  return this->isPythonInitialized();
+}
+
+//-----------------------------------------------------------------------------
+PythonQtObjectPtr ctkAbstractPythonManager::mainContext()
+{
+  bool initalized = this->initialize();
+  if (initalized)
     {
     return PythonQt::self()->getMainModule();
     }
