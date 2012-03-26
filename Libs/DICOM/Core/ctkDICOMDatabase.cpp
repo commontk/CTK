@@ -110,6 +110,7 @@ public:
 ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
 {
     this->thumbnailGenerator = NULL;
+    this->lastPatientUID = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -506,9 +507,17 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   QString sopInstanceUID ( ctkDataset.GetElementAsString(DCM_SOPInstanceUID) );
 
   QSqlQuery fileExists ( Database );
-  fileExists.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == ?");
-  fileExists.bindValue(0,sopInstanceUID);
-  fileExists.exec();
+  fileExists.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
+  fileExists.bindValue(":sopInstanceUID",sopInstanceUID);
+  bool success = fileExists.exec();
+  if (!success)
+  {
+    logger.error("SQLITE ERROR: " + fileExists.lastError().driverText());
+    return;
+  }
+  qDebug() << "filename is: " << fileExists.value(1).toString();
+  qDebug() << "modified date is: " << QFileInfo(fileExists.value(1).toString()).lastModified();
+  qDebug() << "db mod date is: " << QDateTime::fromString(fileExists.value(0).toString(),Qt::ISODate);
   if ( fileExists.next() && QFileInfo(fileExists.value(1).toString()).lastModified() < QDateTime::fromString(fileExists.value(0).toString(),Qt::ISODate) )
   {
     logger.debug ( "File " + fileExists.value(1).toString() + " already added" );
@@ -829,11 +838,10 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
   }
 
   QSqlQuery fileRemove ( d->Database );
-  fileRemove.prepare("DELETE FROM Images WHERE SeriesInstanceUID == ?");
-  fileRemove.bindValue(0,seriesInstanceUID);
-  fileRemove.exec();
+  fileRemove.prepare("DELETE FROM Images WHERE SeriesInstanceUID == :seriesID");
+  fileRemove.bindValue(":seriesID",seriesInstanceUID);
+  logger.debug("SQLITE: removing seriesInstanceUID " + seriesInstanceUID);
   success = fileRemove.exec();
-  logger.error("SQLITE: removing seriesInstanceUID " + seriesInstanceUID);
   if (!success)
   {
     logger.error("SQLITE ERROR: could not remove seriesInstanceUID " + seriesInstanceUID);
@@ -875,6 +883,8 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
 
   this->cleanup();
 
+  d->lastSeriesInstanceUID = "";
+
   return true;
 }
 
@@ -910,7 +920,8 @@ bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
       result = false;
     }
   }
-  return result;;
+  d->lastStudyInstanceUID = "";
+  return result;
 }
 
 bool ctkDICOMDatabase::removePatient(const QString& patientID)
@@ -935,6 +946,10 @@ bool ctkDICOMDatabase::removePatient(const QString& patientID)
       result = false;
     }
   }
-  return result;;
+  d->lastPatientID = "";
+  d->lastPatientsName = "";
+  d->lastPatientsBirthDate = "";
+  d->lastPatientUID = -1;
+  return result;
 }
 
