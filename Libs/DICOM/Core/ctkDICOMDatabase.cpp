@@ -832,6 +832,13 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
   fileRemove.prepare("DELETE FROM Images WHERE SeriesInstanceUID == ?");
   fileRemove.bindValue(0,seriesInstanceUID);
   fileRemove.exec();
+  success = fileRemove.exec();
+  logger.error("SQLITE: removing seriesInstanceUID " + seriesInstanceUID);
+  if (!success)
+  {
+    logger.error("SQLITE ERROR: could not remove seriesInstanceUID " + seriesInstanceUID);
+    logger.error("SQLITE ERROR: " + fileRemove.lastError().driverText());
+  }
   
   QPair<QString,QString> fileToRemove;
   foreach (fileToRemove, removeList)
