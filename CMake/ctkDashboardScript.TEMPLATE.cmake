@@ -22,7 +22,6 @@ set(MY_QT_VERSION "4.6.2")
 set(QT_QMAKE_EXECUTABLE "$ENV{HOME}/Projects/qtsdk-2010.02/qt/bin/qmake")
 set(CTEST_SITE "sagarmatha.kitware") # for example: mymachine.kitware, mymachine.dkfz, ...
 set(CTEST_DASHBOARD_ROOT "$ENV{HOME}/Projects/")
-set(CTEST_CMAKE_COMMAND "$ENV{HOME}/Projects/cmake-trunk-build/bin/cmake")
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 
 #
