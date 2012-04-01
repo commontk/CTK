@@ -70,6 +70,18 @@ ctkWorkflowWidgetPrivate::ctkWorkflowWidgetPrivate()
 //---------------------------------------------------------------------------
 ctkWorkflowWidgetPrivate::~ctkWorkflowWidgetPrivate()
 {
+  if (this->Workflow)
+    {
+    foreach(ctkWorkflowStep* step, this->Workflow->steps())
+      {
+      ctkWorkflowWidgetStep * widgetStep = dynamic_cast<ctkWorkflowWidgetStep*>(step);
+      if (widgetStep)
+        {
+        widgetStep->setVisible(false);
+        widgetStep->setParent(0);
+        }
+      }
+    }
 }
 
 // --------------------------------------------------------------------------
