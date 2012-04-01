@@ -562,12 +562,7 @@ ctkWorkflow::~ctkWorkflow()
   // Clean registered step
   while (!d->RegisteredSteps.isEmpty())
     {
-    ctkWorkflowStep * step = d->RegisteredSteps.takeFirst();
-    if (!step->isWidgetType())
-      {
-      delete step;
-      }
-
+    delete d->RegisteredSteps.takeFirst();
     }
 }
 
