@@ -65,6 +65,10 @@ macro(ctkMacroBuildQtPlugin)
   string(REGEX REPLACE "^CTK" "ctk" MY_EXPORT_HEADER_PREFIX ${MY_EXPORT_HEADER_PREFIX})
   set(MY_LIBNAME ${lib_name})
 
+  if(NOT CTK_EXPORT_HEADER_TEMPLATE)
+    message(FATAL_ERROR "CTK_EXPORT_HEADER_TEMPLATE is mandatory")
+  endif()
+
   configure_file(
     ${CTK_EXPORT_HEADER_TEMPLATE}
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
