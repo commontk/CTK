@@ -49,7 +49,6 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMAppWidget.h"
-#include "ctkDICOMImportWidget.h"
 #include "ctkDICOMThumbnailGenerator.h"
 #include "ctkThumbnailLabel.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
