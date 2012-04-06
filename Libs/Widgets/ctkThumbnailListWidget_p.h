@@ -31,8 +31,6 @@ class ctkThumbnailListWidget;
 class CTK_WIDGETS_EXPORT ctkThumbnailListWidgetPrivate : public Ui_ctkThumbnailListWidget
 {
   Q_DECLARE_PUBLIC(ctkThumbnailListWidget);
-protected:
-  ctkThumbnailListWidget* const q_ptr;
 public:
   ctkThumbnailListWidgetPrivate(ctkThumbnailListWidget* parent);
 
@@ -43,6 +41,12 @@ public:
 
   int CurrentThumbnail;
   QSize ThumbnailSize;
+
+protected:
+  ctkThumbnailListWidget* const q_ptr;
+
+private:
+  Q_DISABLE_COPY( ctkThumbnailListWidgetPrivate );
 };
 
 #endif

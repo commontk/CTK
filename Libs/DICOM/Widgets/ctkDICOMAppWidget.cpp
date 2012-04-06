@@ -372,6 +372,7 @@ void ctkDICOMAppWidget::resetModel()
 //----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onProgress(int progress)
 {
+  Q_UNUSED(progress);
   QApplication::processEvents();
 }
 

@@ -36,12 +36,16 @@ struct Node;
 class ctkDICOMThumbnailGeneratorPrivate
 {
   Q_DECLARE_PUBLIC(ctkDICOMThumbnailGenerator);
-protected:
-  ctkDICOMThumbnailGenerator* const q_ptr;
 
 public:
   ctkDICOMThumbnailGeneratorPrivate(ctkDICOMThumbnailGenerator&);
   virtual ~ctkDICOMThumbnailGeneratorPrivate();
+
+protected:
+  ctkDICOMThumbnailGenerator* const q_ptr;
+
+private:
+  Q_DISABLE_COPY( ctkDICOMThumbnailGeneratorPrivate );
 };
 
 //------------------------------------------------------------------------------
