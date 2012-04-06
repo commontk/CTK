@@ -54,10 +54,6 @@ class ctkDICOMDatasetViewPrivate
 
   Q_DECLARE_PUBLIC( ctkDICOMDatasetView );
 
-protected:
-
-  ctkDICOMDatasetView* const q_ptr;
-
 public:
 
   ctkDICOMDatasetViewPrivate( ctkDICOMDatasetView& object );
@@ -77,6 +73,12 @@ public:
   void onStudyModelSelected(const QModelIndex& index);
   void onSeriesModelSelected(const QModelIndex& index);
   void onImageModelSelected(const QModelIndex& index);
+
+protected:
+  ctkDICOMDatasetView* const q_ptr;
+
+private:
+  Q_DISABLE_COPY( ctkDICOMDatasetViewPrivate );
 };
 
 //--------------------------------------------------------------------------

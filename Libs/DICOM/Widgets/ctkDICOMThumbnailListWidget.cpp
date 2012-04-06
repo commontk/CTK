@@ -60,6 +60,7 @@ Q_DECLARE_METATYPE(QPersistentModelIndex);
 //----------------------------------------------------------------------------
 class ctkDICOMThumbnailListWidgetPrivate : ctkThumbnailListWidgetPrivate
 {
+  Q_DECLARE_PUBLIC(ctkDICOMThumbnailListWidget);
 public:
   typedef ctkThumbnailListWidgetPrivate Superclass;
 
@@ -74,7 +75,8 @@ public:
   void onStudyModelSelected(const QModelIndex &index);
   void onSeriesModelSelected(const QModelIndex &index);
 
-  Q_DECLARE_PUBLIC(ctkDICOMThumbnailListWidget);
+private:
+  Q_DISABLE_COPY( ctkDICOMThumbnailListWidgetPrivate );
 };
 
 //----------------------------------------------------------------------------
