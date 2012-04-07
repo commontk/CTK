@@ -19,8 +19,9 @@
 =========================================================================*/
 
 // Qt includes
-#include <QWidget>
 #include <QDebug>
+#include <QWidget>
+#include <QWeakPointer>
 
 // CTK includes
 #include "ctkWorkflowWidget.h"
@@ -45,7 +46,7 @@ public:
   ctkWorkflowWidgetPrivate();
   ~ctkWorkflowWidgetPrivate();
 
-  ctkWorkflow* Workflow;
+  QWeakPointer<ctkWorkflow>   Workflow;
 
   ctkWorkflowGroupBox*        WorkflowGroupBox;
   ctkWorkflowButtonBoxWidget* ButtonBoxWidget;
@@ -59,8 +60,6 @@ public:
 //---------------------------------------------------------------------------
 ctkWorkflowWidgetPrivate::ctkWorkflowWidgetPrivate()
 {
-  this->Workflow = 0;
-
   this->WorkflowGroupBox = 0;
   this->ButtonBoxWidget = 0;
 
@@ -70,9 +69,9 @@ ctkWorkflowWidgetPrivate::ctkWorkflowWidgetPrivate()
 //---------------------------------------------------------------------------
 ctkWorkflowWidgetPrivate::~ctkWorkflowWidgetPrivate()
 {
-  if (this->Workflow)
+  if (!this->Workflow.isNull())
     {
-    foreach(ctkWorkflowStep* step, this->Workflow->steps())
+    foreach(ctkWorkflowStep* step, this->Workflow.data()->steps())
       {
       ctkWorkflowWidgetStep * widgetStep = dynamic_cast<ctkWorkflowWidgetStep*>(step);
       if (widgetStep)
@@ -102,7 +101,13 @@ ctkWorkflowWidget::~ctkWorkflowWidget()
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(ctkWorkflowWidget, ctkWorkflow*, workflow, Workflow);
+ctkWorkflow* ctkWorkflowWidget::workflow()const
+{
+  Q_D(const ctkWorkflowWidget);
+  return d->Workflow.data();
+}
+
+// --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowWidget, ctkWorkflowGroupBox*, workflowGroupBox, WorkflowGroupBox);
 CTK_GET_CPP(ctkWorkflowWidget, bool, showButtonBoxWidget, ShowButtonBoxWidget);
 CTK_SET_CPP(ctkWorkflowWidget, bool, setShowButtonBoxWidget, ShowButtonBoxWidget);
@@ -119,17 +124,19 @@ void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)
     return;
     }
 
-  if (d->Workflow)
+  if (!d->Workflow.isNull())
     {
-    QObject::disconnect(d->Workflow, SIGNAL(currentStepChanged(ctkWorkflowStep*)), this, SLOT(onCurrentStepChanged(ctkWorkflowStep)));
-    QObject::disconnect(d->Workflow, SIGNAL(stepRegistered(ctkWorkflowStep*)), this, SLOT(onStepRegistered(ctkWorkflowStep)));
+    QObject::disconnect(d->Workflow.data(), SIGNAL(currentStepChanged(ctkWorkflowStep*)),
+                        this, SLOT(onCurrentStepChanged(ctkWorkflowStep)));
+    QObject::disconnect(d->Workflow.data(), SIGNAL(stepRegistered(ctkWorkflowStep*)),
+                        this, SLOT(onStepRegistered(ctkWorkflowStep)));
     }
 
-  d->Workflow = newWorkflow;
+  d->Workflow = QWeakPointer<ctkWorkflow>(newWorkflow);
 
-  if (d->Workflow)
+  if (!d->Workflow.isNull())
     {
-    foreach(ctkWorkflowStep* step, d->Workflow->steps())
+    foreach(ctkWorkflowStep* step, d->Workflow.data()->steps())
       {
       this->onStepRegistered(step);
       }
