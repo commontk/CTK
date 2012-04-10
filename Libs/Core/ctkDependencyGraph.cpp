@@ -33,7 +33,7 @@
 #include <cassert>
 
 #define MAXV 100
-#define MAXDEGREE 50
+#define MAXDEGREE 200
 
 //----------------------------------------------------------------------------
 class ctkDependencyGraphPrivate
