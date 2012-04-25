@@ -75,8 +75,8 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
-SET(TestsToRun ${Tests})
-REMOVE(TestsToRun ${KIT}CppTests.cpp)
+set(TestsToRun ${Tests})
+remove(TestsToRun ${KIT}CppTests.cpp)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
