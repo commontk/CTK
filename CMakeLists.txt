@@ -243,6 +243,12 @@ if(BUILD_TESTING)
 endif()
 
 #-----------------------------------------------------------------------------
+# QtTesting
+#
+option(CTK_USE_QTTESTING "Enable/Disable QtTesting" OFF)
+mark_as_advanced(CTK_USE_QTTESTING)
+
+#-----------------------------------------------------------------------------
 # Coverage
 #
 option(WITH_COVERAGE "Enable/Disable coverage" OFF)
@@ -461,6 +467,14 @@ ctk_lib_option(Visualization/VTK/Widgets
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
 
+# Save the set of enabled libs in a cache file
+set(_enabled_libs)
+foreach(_lib ${CTK_LIBS})
+  if(CTK_LIB_${_lib})
+    list(APPEND _enabled_libs ${_lib})
+  endif()
+endforeach()
+set(CTK_ENABLED_LIBS ${_enabled_libs} CACHE INTERNAL "" FORCE)
 #-----------------------------------------------------------------------------
 # CTK Applications - Use ON or OFF to indicate if the application should be built by default
 #
@@ -722,6 +736,7 @@ ctkFunctionGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_direct
 #-----------------------------------------------------------------------------
 set(CTK_POSSIBLE_DEPENDENCIES
   CTKData
+  QtTesting
   Log4Qt
   KWStyle
   VTK
@@ -835,6 +850,11 @@ foreach(lib ${CTK_LIBS})
     add_subdirectory(Libs/${lib})
   endif()
 endforeach()
+
+#-----------------------------------------------------------------------------
+if(CTK_USE_QTTESTING)
+  add_subdirectory(Libs/QtTesting)
+endif()
 
 #-----------------------------------------------------------------------------
 # Add CTK plugin subdirectories

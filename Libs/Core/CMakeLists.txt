@@ -72,6 +72,8 @@ set(KIT_SRCS
   ctkWorkflowStep.cpp
   ctkWorkflowStep_p.h
   ctkWorkflowTransitions.h
+  ctkSetName.cpp
+  ctkSetName.h
   )
 
 if(HAVE_BFD)
