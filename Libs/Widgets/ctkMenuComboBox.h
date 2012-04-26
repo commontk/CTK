@@ -25,10 +25,12 @@
 #include <QMenu>
 #include <QMetaType>
 #include <QWidget>
+class QComboBox;
+class QToolButton;
 
 // CTK includes
 #include "ctkWidgetsExport.h"
-
+class ctkCompleter;
 class ctkMenuComboBoxPrivate;
 
 /// \ingroup Widgets
@@ -111,6 +113,15 @@ public:
   /// \sa QComboBox::setMinimumContentsLength()
   void setMinimumContentsLength(int characters);
 
+  /// Return the internal combo box
+  QComboBox* menuComboBoxInternal() const;
+
+  /// Return the internal tool button
+  QToolButton* toolButtonInternal() const;
+
+  /// Return the internal completer
+  ctkCompleter* searchCompleter() const;
+
 protected:
   virtual bool eventFilter(QObject* target, QEvent* event);
 
@@ -120,6 +131,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void actionChanged(QAction* action);
+  void popupShown();
 
 protected Q_SLOTS:
   /// Change the current text/icon on the QComboBox

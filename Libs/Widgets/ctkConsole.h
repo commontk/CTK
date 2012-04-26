@@ -172,7 +172,8 @@ public:
 Q_SIGNALS:
 
   /// This signal emitted before and after a command is executed
-  void executing(bool);
+  void aboutToExecute(const QString&);
+  void executed(const QString&);
 
 public Q_SLOTS:
 
@@ -181,6 +182,9 @@ public Q_SLOTS:
 
   /// Clears the contents of the console and display welcome message
   virtual void reset();
+
+  /// Exec the contents of the last console line
+  virtual void exec(const QString&);
 
 protected:
 

@@ -44,7 +44,59 @@ int ctkCheckableComboBoxTest1(int argc, char * argv [] )
   comboBox.addItem("tata");
   comboBox.addItem("titi");
   comboBox.addItem(comboBox.style()->standardIcon(QStyle::SP_FileIcon),"tutu");
-  
+
+  if (comboBox.checkedIndexes().count() != 0 ||
+      comboBox.allChecked() ||
+      !comboBox.noneChecked())
+    {
+    std::cerr << "ctkCheckableComboBox has wrong default values\n"
+              << " count:" << comboBox.checkedIndexes().count()
+              << " all:" << comboBox.allChecked()
+              << " none:" << comboBox.noneChecked() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  int row = 0;
+  QModelIndex firstIndex = comboBox.model()->index(row,0);
+  comboBox.setCheckState(firstIndex, Qt::Checked);
+
+  if (comboBox.checkState(firstIndex) != Qt::Checked)
+    {
+    std::cerr << "ctkCheckableComboBox::setCheckedState failed\n"
+              << static_cast<int>(comboBox.checkState(firstIndex))
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (comboBox.checkedIndexes().count() != 1 ||
+      comboBox.allChecked() ||
+      comboBox.noneChecked())
+    {
+    std::cerr << "ctkCheckableComboBox::setCheckedState(first) failed\n"
+              << " count:" << comboBox.checkedIndexes().count()
+              << " all:" << comboBox.allChecked()
+              << " none:" << comboBox.noneChecked() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Check all the items
+  QModelIndex nextIndex = firstIndex;
+  while( (nextIndex = nextIndex.sibling(++row, 0)).isValid())
+    {
+    comboBox.setCheckState(nextIndex, Qt::Checked);
+    }
+
+  if (comboBox.checkedIndexes().count() != 4 ||
+      !comboBox.allChecked() ||
+      comboBox.noneChecked())
+    {
+    std::cerr << "ctkCheckableComboBox::setCheckedState(all) failed\n"
+              << " count:" << comboBox.checkedIndexes().count()
+              << " all:" << comboBox.allChecked()
+              << " none:" << comboBox.noneChecked() << std::endl;
+    return EXIT_FAILURE;
+    }
+
   comboBox.show();
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
