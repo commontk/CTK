@@ -37,6 +37,7 @@
 // DCMTK includes
 #include "dcmtk/dcmnet/dimse.h"
 #include "dcmtk/dcmnet/diutil.h"
+#include <dcmtk/dcmnet/scu.h>
 
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcfilefo.h>
@@ -47,17 +48,13 @@
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
 
-// NOTE: using ctk stand-in class for now - switch back
-// to dcmtk's scu.h when cget support is in a release version
-//#include <dcmtk/dcmnet/scu.h>
-#include <ctkDcmSCU.h>
 
 static ctkLogger logger ( "org.commontk.dicom.DICOMQuery" );
 
 //------------------------------------------------------------------------------
 // A customized implemenation so that Qt signals can be emitted
 // when query results are obtained
-class ctkDICOMQuerySCUPrivate : public ctkDcmSCU
+class ctkDICOMQuerySCUPrivate : public DcmSCU
 {
 public:
   ctkDICOMQuery *query;
@@ -74,7 +71,7 @@ public:
         {
         logger.debug ( "FIND RESPONSE" );
         emit this->query->debug("Got a find response!");
-        return this->ctkDcmSCU::handleFINDResponse(presID, response, waitForNextResponse);
+        return this->DcmSCU::handleFINDResponse(presID, response, waitForNextResponse);
         }
       return DIMSE_NULLKEY;
     };

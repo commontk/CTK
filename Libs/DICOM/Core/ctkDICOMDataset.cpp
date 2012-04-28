@@ -980,7 +980,7 @@ bool ctkDICOMDataset::SaveToFile(const QString& filePath) const
 {
   Q_D(const ctkDICOMDataset);
   DcmFileFormat* fileformat = new DcmFileFormat ( d->m_DcmDataset );
-  OFCondition status = fileformat->saveFile ( QDir::toNativeSeparators( filePath).toAscii()  );
+  OFCondition status = fileformat->saveFile ( qPrintable(QDir::toNativeSeparators( filePath)) );
   delete fileformat;
   return status.good();
 }

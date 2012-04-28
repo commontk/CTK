@@ -19,7 +19,8 @@
 =========================================================================*/
 
 #include "dcmtk/config/osconfig.h"    /* make sure OS specific configuration is included first */
-#include "ctkDcmSCU.h"
+
+#include "dcmtk/dcmnet/scu.h"
 
 // STD includes
 #include <cstdlib>
@@ -53,7 +54,7 @@ int main(int argc, char** argv)
   }
     
   // Setup SCU
-  ctkDcmSCU scu;
+  DcmSCU scu;
   scu.setPeerHostName(host);
   scu.setPeerPort(port);
   OFString verificationSOP = UID_VerificationSOPClass;

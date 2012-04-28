@@ -23,7 +23,7 @@ if(${add_project})
   if(CTK_SUPERBUILD)
 
     if(NOT DEFINED DCMTK_DIR)
-      set(revision_tag 085525e643cab5ac82)
+      set(revision_tag ae3b946f6e6231)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
@@ -50,6 +50,8 @@ if(${add_project})
         BUILD_COMMAND ""
         CMAKE_CACHE_ARGS
           ${ep_common_cache_args}
+          -DBUILD_SHARED_LIBS:BOOL=OFF
+          -DDCMTK_WITH_DOXYGEN:BOOL=OFF
           -DDCMTK_WITH_ZLIB:BOOL=OFF # see github issue #25
           -DDCMTK_WITH_OPENSSL:BOOL=OFF # see github issue #25
           -DDCMTK_WITH_PNG:BOOL=OFF # see github issue #25

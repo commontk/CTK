@@ -29,11 +29,6 @@ set(KIT_SRCS
   ctkDICOMRetrieve.h
   ctkDICOMTester.cpp
   ctkDICOMTester.h
-  # enhanced DcmSCU class - to be removed when
-  # corresponding functionality is in a 
-  # DCMKT release - see notes in header file.
-  ctkDcmSCU.cc
-
 )
 
 # Abstract class should not be wrapped !
