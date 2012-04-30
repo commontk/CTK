@@ -26,6 +26,9 @@
 // Qt includes 
 #include <QWidget>
 #include <QItemSelection>
+#include <QMap>
+#include <QVariant>
+#include <QString>
 
 
 // CTK includes
@@ -41,6 +44,7 @@ public:
   typedef QWidget Superclass;
   explicit ctkDICOMQueryRetrieveWidget(QWidget* parent=0);
   virtual ~ctkDICOMQueryRetrieveWidget();
+  QMap<QString,QVariant> getServerParameters();
 
   QSharedPointer<ctkDICOMDatabase> retrieveDatabase()const;
 
