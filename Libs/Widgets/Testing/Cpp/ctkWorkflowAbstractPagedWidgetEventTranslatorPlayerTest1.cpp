@@ -32,6 +32,9 @@
 #include "ctkWorkflowAbstractPagedWidget.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 
+// QtTesting includes
+#include "pqTestUtility.h"
+
 // STD includes
 #include <cstdlib>
 #include <iostream>
@@ -55,6 +58,8 @@ int ctkWorkflowAbstractPagedWidgetEventTranslatorPlayerTest1(int argc, char * ar
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
 
   // Test case 1
   ctkWorkflowAbstractPagedWidget* widget = new ctkWorkflowAbstractPagedWidget();

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -16,4 +16,4 @@
         <event widget="fileDialog2/checkBox2" command="set_boolean" arguments="true"/>
         <event widget="fileDialog2" command="newFile" arguments="/home/benjaminlong/GroupBox.png"/>
     </events>
-</xml>
+</QtTesting>

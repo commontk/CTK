@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-5"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-10"/>
@@ -20,4 +20,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/MinimumSpinBox" command="spin" arguments="up"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/MinimumSpinBox" command="spin" arguments="up"/>
     </events>
-</xml>
+</QtTesting>

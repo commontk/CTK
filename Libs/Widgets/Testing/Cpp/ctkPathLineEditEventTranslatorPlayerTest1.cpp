@@ -35,6 +35,9 @@
 #include "ctkEventTranslatorPlayerWidget.h"
 #include "ctkSetName.h"
 
+// QtTesting includes
+#include "pqTestUtility.h"
+
 // STD includes
 #include <cstdlib>
 #include <iostream>
@@ -64,6 +67,8 @@ int ctkPathLineEditEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
   etpWidget.addWidgetEventPlayer(new ctkPathLineEditEventPlayer);
   etpWidget.addWidgetEventTranslator(new ctkPathLineEditEventTranslator);
 

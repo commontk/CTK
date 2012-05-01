@@ -147,6 +147,7 @@ set(KIT_UI_FORMS
 
 # Resources
 set(KIT_resources
+  Resources/ctkQtTesting.qrc
 )
 
 # dependencie dynamic from all the libraries with Widgets + QtTesting

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeSlider2" command="set_max_int" arguments="98"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeSlider2" command="set_max_int" arguments="97"/>
@@ -77,4 +77,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeSlider2" command="set_min_int" arguments="13"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeSlider2" command="set_min_int" arguments="14"/>
     </events>
-</xml>
+</QtTesting>

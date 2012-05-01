@@ -25,6 +25,8 @@
 #include <QFile>
 #include <QMap>
 #include <QMessageBox>
+#include <QXmlSchema>
+#include <QXmlSchemaValidator>
 #include <QVariant>
 
 // CTKQtTesting includes
@@ -62,7 +64,7 @@ bool ctkXMLEventSource::restoreSettingsAuto() const
 }
 
 //-----------------------------------------------------------------------------
-bool ctkXMLEventSource::setContent(const QString& xmlfilename)
+void ctkXMLEventSource::setContent(const QString& xmlfilename)
 {
   delete this->XMLStream;
   this->XMLStream = NULL;
@@ -71,47 +73,48 @@ bool ctkXMLEventSource::setContent(const QString& xmlfilename)
   if (!xml.open(QIODevice::ReadOnly))
     {
     qDebug() << "Failed to load " << xmlfilename;
-    return false;
+    return;
     }
+
+  // Check if the xml file is valid
+  QXmlSchema xmlSchema;
+  if (!xmlSchema.load(QUrl::fromLocalFile(":/XML/XMLDescription.xsd")) ||
+      !xmlSchema.isValid())
+    {
+    qDebug() << "Xml cannot be check.";
+    return;
+    }
+
+  QXmlSchemaValidator validator(xmlSchema);
+  if(!validator.validate(&xml, QUrl::fromLocalFile(xml.fileName())))
+    {
+    qCritical() << xmlfilename << "invalid xml file for qtTesting !";
+    return;
+    }
+
+  xml.reset();
   QByteArray data = xml.readAll();
   this->XMLStream = new QXmlStreamReader(data);
-  /* This checked for valid event objects, but also caused the first event
-   * to get dropped. Commenting this out in the example. If you wish to report
-   * empty XML test files a flag indicating whether valid events were found is
-   * probably the best way to go.
-  while (!this->XMLStream->atEnd())
-    {
-    QXmlStreamReader::TokenType token = this->XMLStream->readNext();
-    if (token == QXmlStreamReader::StartElement)
-      {
-      if (this->XMLStream->name() == "event")
-        {
-        break;
-        }
-      }
-    } */
-  if (this->XMLStream->atEnd())
-    {
-    qDebug() << "Invalid xml" << endl;
-    return false;
-    }
 
   if(this->settingsRecorded())
     {
-    qDebug() << "settings recorded";
     this->OldSettings = this->recoverSettingsFromXML();
     if(!this->settingsUpToData())
       {
-      qDebug() << "restoring ...";
       this->restoreApplicationSettings();
       }
     }
-  return true;
+
+  return;
 }
 
 //-----------------------------------------------------------------------------
 int ctkXMLEventSource::getNextEvent(QString& widget, QString& command, QString&arguments)
 {
+  if (!this->XMLStream)
+    {
+    return EXIT_FAILURE;
+    }
   if (this->XMLStream->atEnd())
     {
     return DONE;
@@ -186,19 +189,20 @@ bool ctkXMLEventSource::restoreApplicationSettings()
       {
       return false;
       }
-
-    result = window->restoreState(
-                QByteArray::fromHex(QByteArray(this->OldSettings.value("state").toLocal8Bit().constData())));
-    result = window->restoreGeometry(
-                QByteArray::fromHex(QByteArray(this->OldSettings.value("geometry").toLocal8Bit().constData())));
-
-    QMap<QObject*, QString>::iterator iter;
-    for(iter = states.begin() ; iter!=states.end() ; ++iter)
-      {
-      iter.key()->setProperty(iter.value().toLatin1(),
-                              QVariant(this->OldSettings.value(iter.value())));
-      }
     }
+
+  result = window->restoreState(
+              QByteArray::fromHex(QByteArray(this->OldSettings.value("state").toLocal8Bit().constData())));
+  result = window->restoreGeometry(
+              QByteArray::fromHex(QByteArray(this->OldSettings.value("geometry").toLocal8Bit().constData())));
+
+  QMap<QObject*, QString>::iterator iter;
+  for(iter = states.begin() ; iter!=states.end() ; ++iter)
+    {
+    iter.key()->setProperty(iter.value().toLatin1(),
+                            QVariant(this->OldSettings.value(iter.value())));
+    }
+
 
   return result;
 }

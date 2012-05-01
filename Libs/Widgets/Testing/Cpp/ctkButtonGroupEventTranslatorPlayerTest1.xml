@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1QPushButton0" command="set_boolean" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1QPushButton2" command="activate" arguments=""/>
@@ -11,4 +11,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1QPushButton1" command="set_boolean" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1QPushButton0" command="set_boolean" arguments="true"/>
     </events>
-</xml>
+</QtTesting>

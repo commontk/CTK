@@ -32,6 +32,9 @@
 #include "ctkColorDialog.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 
+// QtTesting includes
+#include "pqTestUtility.h"
+
 // STD includes
 #include <cstdlib>
 #include <iostream>
@@ -58,6 +61,8 @@ int ctkColorDialogEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
 
   // Test case 1
   ctkColorDialog* widget = new ctkColorDialog();

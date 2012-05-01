@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/TodayRadioButton" command="set_boolean" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/YesterdayRadioButton" command="set_boolean" arguments="true"/>
@@ -31,4 +31,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_calendarview" command="mousePress" arguments="1,1,0,17,10,/2:4"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_calendarview" command="mouseRelease" arguments="1,0,0,17,10,/2:4"/>
     </events>
-</xml>
+</QtTesting>

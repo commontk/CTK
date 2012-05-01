@@ -31,6 +31,9 @@
 #include <ctkCallback.h>
 #include <ctkConfig.h>
 #include "ctkEventTranslatorPlayerWidget.h"
+
+// QtTesting includes
+#include "pqTestUtility.h"
 #include <ctkRangeSliderEventPlayer.h>
 #include <ctkRangeSliderEventTranslator.h>
 #include "ctkSetName.h"
@@ -68,6 +71,8 @@ int ctkRangeSliderEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
   etpWidget.addWidgetEventPlayer(new ctkRangeSliderEventPlayer);
   etpWidget.addWidgetEventTranslator(new ctkRangeSliderEventTranslator);
 

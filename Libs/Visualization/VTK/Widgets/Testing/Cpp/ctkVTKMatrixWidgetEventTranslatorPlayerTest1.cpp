@@ -33,6 +33,9 @@
 #include "ctkCallback.h"
 #include "ctkConfig.h"
 #include "ctkEventTranslatorPlayerWidget.h"
+
+// QtTesting includes
+#include "pqTestUtility.h"
 #include "ctkMatrixWidgetEventPlayer.h"
 #include "ctkMatrixWidgetEventTranslator.h"
 #include "ctkVTKMatrixWidget.h"
@@ -63,6 +66,8 @@ int ctkVTKMatrixWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
   etpWidget.addWidgetEventTranslator(new ctkMatrixWidgetEventTranslator);
   etpWidget.addWidgetEventPlayer(new ctkMatrixWidgetEventPlayer);
 

@@ -67,14 +67,14 @@ ctkEventTranslatorPlayerWidget::ctkEventTranslatorPlayerWidget()
   QObject::connect(d->TestCaseComboBox, SIGNAL(currentIndexChanged(int)),
                    this, SLOT(switchTestCase(int)));
 
-  d->TestUtility = new pqTestUtility(this);
-  d->TestUtility->addEventObserver("xml", new ctkXMLEventObserver(d->TestUtility));
-  d->TestUtility->addEventSource("xml", new ctkXMLEventSource(d->TestUtility));
+  d->TestUtility = 0;
 }
 
 //-----------------------------------------------------------------------------
 ctkEventTranslatorPlayerWidget::~ctkEventTranslatorPlayerWidget()
 {
+  Q_D(ctkEventTranslatorPlayerWidget);
+  d->TestUtility = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -128,8 +128,10 @@ void ctkEventTranslatorPlayerWidget::setTestUtility(pqTestUtility* newTestUtilit
 {
   Q_D(ctkEventTranslatorPlayerWidget);
   d->TestUtility = newTestUtility;
-  d->TestUtility->addEventObserver("xml", new ctkXMLEventObserver(this));
-  d->TestUtility->addEventSource("xml", new ctkXMLEventSource(this));
+  d->TestUtility->addEventObserver("xml", new ctkXMLEventObserver(d->TestUtility));
+  ctkXMLEventSource* eventSource = new ctkXMLEventSource(d->TestUtility);
+  eventSource->setRestoreSettingsAuto(true);
+  d->TestUtility->addEventSource("xml", eventSource);
 }
 
 //-----------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -12,4 +12,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkTreeComboBox0" command="indexChanged" arguments="Test3"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkTreeComboBox0" command="indexChanged" arguments="Test1.2"/>
     </events>
-</xml>
+</QtTesting>

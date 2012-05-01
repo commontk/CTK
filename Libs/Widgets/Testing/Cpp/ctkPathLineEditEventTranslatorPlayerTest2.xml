@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/PathLineEdit2" command="set_path_string" arguments="/"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/PathLineEdit2" command="set_edit_string" arguments="/"/>
@@ -125,4 +125,4 @@
         <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
         <event widget="1QListView0" command="keyEvent" arguments="6,16777220,0,&#13;,0,1"/>
     </events>
-</xml>
+</QtTesting>

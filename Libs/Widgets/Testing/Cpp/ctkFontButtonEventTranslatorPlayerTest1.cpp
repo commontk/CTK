@@ -34,6 +34,9 @@
 #include "ctkFontButtonEventTranslator.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 
+// QtTesting includes
+#include "pqTestUtility.h"
+
 // STD includes
 #include <cstdlib>
 #include <iostream>
@@ -73,6 +76,8 @@ int ctkFontButtonEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
   etpWidget.addWidgetEventPlayer(new ctkFontButtonEventPlayer);
   etpWidget.addWidgetEventTranslator(new ctkFontButtonEventTranslator);
 

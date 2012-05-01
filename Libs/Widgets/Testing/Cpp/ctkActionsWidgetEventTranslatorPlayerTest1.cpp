@@ -31,7 +31,11 @@
 #include <ctkCallback.h>
 #include <ctkConfig.h>
 #include "ctkEventTranslatorPlayerWidget.h"
+
 #include "ctkSetName.h"
+
+// QtTesting includes
+#include "pqTestUtility.h"
 
 // STD includes
 #include <cstdlib>
@@ -57,6 +61,8 @@ int ctkActionsWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
 
   // Test case 1
   ctkActionsWidget* widget = new ctkActionsWidget() << ctkSetName("actionsWidget");

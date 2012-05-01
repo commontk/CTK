@@ -36,6 +36,9 @@
 #include "ctkCheckableHeaderViewEventTranslator.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 
+// QtTesting includes
+#include "pqTestUtility.h"
+
 // STD includes
 #include <cstdlib>
 #include <iostream>
@@ -71,6 +74,8 @@ int ctkCheckableHeaderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
   etpWidget.addWidgetEventTranslator(new ctkCheckableHeaderViewEventTranslator);
   etpWidget.addWidgetEventPlayer(new ctkCheckableHeaderViewEventPlayer);
 

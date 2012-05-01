@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDoubleSlider0/1QSlider0" command="set_int" arguments="-44"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDoubleSlider0/1QSlider0" command="set_int" arguments="-43"/>
@@ -105,4 +105,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDoubleSlider0/1QSlider0" command="set_int" arguments="-30"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDoubleSlider0/1QSlider0" command="set_int" arguments="-31"/>
     </events>
-</xml>
+</QtTesting>

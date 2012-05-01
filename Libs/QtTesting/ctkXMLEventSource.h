@@ -47,7 +47,7 @@ public:
   ctkXMLEventSource(QObject* p);
   ~ctkXMLEventSource();
 
-  virtual bool setContent(const QString& xmlfilename);
+  virtual void setContent(const QString& xmlfilename);
   int getNextEvent(QString& widget, QString& command, QString&arguments);
 
   void setRestoreSettingsAuto(bool value);
@@ -58,9 +58,10 @@ public:
   bool restoreApplicationSettings();
   QMap<QString, QString> recoverSettingsFromXML();
 
-protected:
+private:
   QMainWindow* mainWindow();
 
+protected:
   bool                    Automatic;
   QXmlStreamReader*       XMLStream;
   pqTestUtility*          TestUtility;

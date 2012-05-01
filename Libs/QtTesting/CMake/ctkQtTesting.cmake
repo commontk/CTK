@@ -8,7 +8,6 @@ macro(ctkQtTesting SRCS_OUTPUT_VAR MOC_CPP_OUTPUT_VAR UI_FORMS_OUTPUT_VAR)
     ${CTK_BINARY_DIR}/Libs/QtTesting
     )
 
-  message ("called: ${SRCS_OUTPUT_VAR}")
   list(APPEND ${SRCS_OUTPUT_VAR}
     ${CTK_SOURCE_DIR}/Libs/QtTesting/ctkEventTranslatorPlayerWidget.h
     ${CTK_SOURCE_DIR}/Libs/QtTesting/ctkEventTranslatorPlayerWidget.cpp

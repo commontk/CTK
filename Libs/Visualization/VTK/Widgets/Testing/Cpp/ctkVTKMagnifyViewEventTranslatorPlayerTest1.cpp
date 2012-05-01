@@ -33,6 +33,9 @@
 #include "ctkVTKMagnifyView.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 
+// QtTesting includes
+#include "pqTestUtility.h"
+
 // VTK includes
 #include <QVTKWidget.h>
 
@@ -65,6 +68,8 @@ int ctkVTKMagnifyViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
 
   // Test case 1
   ctkVTKMagnifyView* widget = new ctkVTKMagnifyView();

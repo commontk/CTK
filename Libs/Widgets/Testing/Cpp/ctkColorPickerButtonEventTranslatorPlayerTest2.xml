@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -15,4 +15,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkColorPickerButton0/1QColorDialog0/1QWellArray0" command="mouseRelease" arguments="1,0,0,96,87"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkColorPickerButton0/1QColorDialog0/1QDialogButtonBox0/1QPushButton0" command="activate" arguments=""/>
     </events>
-</xml>
+</QtTesting>

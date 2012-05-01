@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDoubleRangeSlider0" command="set_max_double" arguments="9.11"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDoubleRangeSlider0" command="set_max_double" arguments="8.22"/>
@@ -75,4 +75,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDoubleRangeSlider0" command="set_min_double" arguments="-48.9"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDoubleRangeSlider0" command="set_min_double" arguments="-49.79"/>
     </events>
-</xml>
+</QtTesting>

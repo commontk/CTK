@@ -32,6 +32,9 @@
 #include "ctkTransferFunctionControlPointsItem.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 
+// QtTesting includes
+#include "pqTestUtility.h"
+
 // STD includes
 #include <cstdlib>
 #include <iostream>
@@ -55,6 +58,8 @@ int ctkTransferFunctionControlPointsItemEventTranslatorPlayerTest1(int argc, cha
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
 
   // Test case 1
   ctkTransferFunctionControlPointsItem* widget = new ctkTransferFunctionControlPointsItem();

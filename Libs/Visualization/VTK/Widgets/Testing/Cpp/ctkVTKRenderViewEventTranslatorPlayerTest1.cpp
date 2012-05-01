@@ -102,6 +102,8 @@ int ctkVTKRenderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
+  pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  etpWidget.setTestUtility(testUtility);
   etpWidget.addWidgetEventTranslator(new ctkVTKRenderViewEventTranslator("QVTKWidget"));
   etpWidget.addWidgetEventPlayer(new ctkVTKRenderViewEventPlayer("QVTKWidget"));
 

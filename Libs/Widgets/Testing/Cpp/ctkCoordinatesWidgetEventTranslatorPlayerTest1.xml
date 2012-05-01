@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1QDoubleSpinBox0" command="spin" arguments="up"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1QDoubleSpinBox0" command="spin" arguments="up"/>
@@ -13,4 +13,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1QDoubleSpinBox0" command="spin" arguments="down"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1QDoubleSpinBox0" command="spin" arguments="down"/>
     </events>
-</xml>
+</QtTesting>

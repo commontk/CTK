@@ -128,7 +128,7 @@ void ctkXMLEventObserver::setStream(QTextStream* stream)
     this->XMLStream = new QXmlStreamWriter(&this->XMLString);
     this->XMLStream->setAutoFormatting(true);
     this->XMLStream->writeStartDocument();
-    this->XMLStream->writeStartElement("xml");
+    this->XMLStream->writeStartElement("QtTesting");
     this->recordApplicationSettings();
     this->XMLStream->writeStartElement("events");
     }
