@@ -181,17 +181,7 @@ void ctkLayoutManager::setupLayout()
     layout = hboxLayout;
     }
   // setting the layout to the widget will reparent all the 1 level widgets.
-  // Unfortunately, it has the side effect of hiding
-  // (testAttribute(Qt::WA_WState_Hidden)) the widgets that were already having
-  // a parent (read doc for QWidget::isHidden()).
-  // we then need to manually display the widgets again. Views is not probably
-  // not the best list to use to retrieve the widgets to remove the hidden flag
-  // it seems to fit the bill for the moment so we can keep using it.
   d->Viewport->setLayout(layout);
-  foreach(QWidget* view, d->Views)
-    {
-    view->setHidden(false);
-    }
 }
 
 //-----------------------------------------------------------------------------
