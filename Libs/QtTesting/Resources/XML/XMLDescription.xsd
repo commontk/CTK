@@ -8,6 +8,7 @@
             <xsd:element name="font"/>
             <xsd:element name="version"/>
             <xsd:element name="name"/>
+            <xsd:element name="appsetting" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:choice>
     </xsd:complexType>
 

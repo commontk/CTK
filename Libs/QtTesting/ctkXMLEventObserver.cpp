@@ -82,7 +82,7 @@ void ctkXMLEventObserver::recordApplicationSettings()
     for(iter = states.begin() ; iter!=states.end() ; ++iter)
       {
       this->recordApplicationSetting(
-          iter.value(),
+          QString("appsetting"),
           iter.key()->metaObject()->className(),
           iter.value(),
           iter.key()->property(iter.value().toLatin1()).toString()
