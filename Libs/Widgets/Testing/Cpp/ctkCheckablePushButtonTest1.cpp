@@ -21,6 +21,7 @@
 // Qt includes
 #include <QApplication>
 #include <QCheckBox>
+#include <QMenu>
 #include <QVBoxLayout>
 #include <QStyle>
 #include <QTimer>
@@ -51,6 +52,8 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   ctkCheckablePushButton button11(QObject::tr("Not Connected, User Checkable"));
   ctkCheckablePushButton button12(QObject::tr("Checkbox Not User Checkable\nButton Checkable"));
   ctkCheckablePushButton button13(QObject::tr("Checkbox and Button User Checkable"));
+  ctkCheckablePushButton button14(QObject::tr("Checkable PushButton with menu"));
+  ctkCheckablePushButton button15(QObject::tr("Checkable PushButton with icon"));
 
   QVBoxLayout *layout= new QVBoxLayout;
   layout->addWidget(&button1);
@@ -66,6 +69,8 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   layout->addWidget(&button11);
   layout->addWidget(&button12);
   layout->addWidget(&button13);
+  layout->addWidget(&button14);
+  layout->addWidget(&button15);
   topLevel.setLayout(layout);
 
   topLevel.show();
@@ -119,6 +124,13 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button13.setCheckBoxControlsButton(false);
   button13.setCheckBoxUserCheckable(true);
   button13.setCheckable(true);
+
+  QMenu menu(&button14);
+  menu.addAction("menu action");
+  button14.setMenu(&menu);
+
+  // Icons are not supported
+  button15.setIcon(button15.style()->standardIcon(QStyle::SP_ComputerIcon));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {

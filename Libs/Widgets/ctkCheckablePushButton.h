@@ -46,6 +46,8 @@ class ctkCheckablePushButtonPrivate;
 /// \note You can automatically check the button when the user checks the
 /// checkbox by connecting the checkBoxToggled(bool) signal with the
 /// setChecked(bool) slot.
+/// \warning The checkbox is drawn in place of the pushbuton icon, any icon
+/// will then be ignored.
 class CTK_WIDGETS_EXPORT ctkCheckablePushButton : public QPushButton
 {
   Q_OBJECT
