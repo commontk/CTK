@@ -369,7 +369,6 @@ if(CTK_USE_QTTESTING)
     )
   list(APPEND KIT_target_libraries QtTesting)
 endif()
-message( "KIT_target_libraries: ${KIT_target_libraries}")
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
