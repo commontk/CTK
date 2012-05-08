@@ -57,6 +57,7 @@ if(${add_project})
           -DDCMTK_WITH_PNG:BOOL=OFF # see github issue #25
           -DDCMTK_WITH_TIFF:BOOL=OFF  # see github issue #25
           -DDCMTK_WITH_XML:BOOL=OFF  # see github issue #25
+          -DDCMTK_WITH_ICONV:BOOL=OFF  # see github issue #178
           -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
           -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
         )
