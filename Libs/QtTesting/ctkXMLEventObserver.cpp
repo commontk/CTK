@@ -146,5 +146,11 @@ void ctkXMLEventObserver::onRecordEvent(const QString& widget,
     this->XMLStream->writeAttribute("command", command);
     this->XMLStream->writeAttribute("arguments", arguments);
     this->XMLStream->writeEndElement();
+    if (this->Stream)
+      {
+      *this->Stream << this->XMLString;
+      }
+    this->XMLString = QString();
+    emit this->eventRecorded(widget, command, arguments);
     }
 }
