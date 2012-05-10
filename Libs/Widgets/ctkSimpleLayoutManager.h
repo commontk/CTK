@@ -31,6 +31,8 @@ class ctkSimpleLayoutManagerPrivate;
 /// \ingroup Widgets
 struct ctkWidgetInstanciator
 {
+  virtual void beginSetupLayout(){}
+  virtual void endSetupLayout(){}
   virtual QWidget* createWidget() = 0;
 };
 
@@ -62,8 +64,8 @@ public:
   ctkWidgetInstanciator* viewInstanciator()const;
 
 protected:
- virtual QWidget* viewFromXML(QDomElement viewElement);
-
+  virtual QWidget* viewFromXML(QDomElement viewElement);
+  virtual void setupLayout();
 private:
   Q_DECLARE_PRIVATE(ctkSimpleLayoutManager);
   Q_DISABLE_COPY(ctkSimpleLayoutManager);
