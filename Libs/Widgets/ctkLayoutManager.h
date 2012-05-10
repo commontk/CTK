@@ -65,7 +65,7 @@ protected:
 
   virtual void onViewportChanged();
   void clearLayout();
-  void setupLayout();
+  virtual void setupLayout();
 
   virtual void setLayout(const QDomDocument& newLayout);
   const QDomDocument layout()const;

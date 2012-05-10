@@ -47,10 +47,12 @@ public:
 
   virtual void init();
   void clearLayout(QLayout* layout);
+  void clearWidget(QWidget* widget, QLayout* parentLayout = 0);
 
   QWidget*       Viewport;
   QDomDocument   Layout;
   QSet<QWidget*> Views;
+  QSet<QWidget*> LayoutWidgets;
   int            Spacing;
 };
 

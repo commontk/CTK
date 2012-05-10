@@ -20,10 +20,12 @@
 
 // Qt includse
 #include <QApplication>
+#include <QDebug>
 #include <QPushButton>
 #include <QTimer>
 
 // CTK includes
+#include "ctkSliderWidget.h"
 #include "ctkSimpleLayoutManager.h"
 
 // STD includes
@@ -34,7 +36,7 @@ QString vboxLayout("<layout type=\"vertical\"><item><view/></item><item><view/><
 QString gridLayout(
 "<layout type=\"grid\">"
 " <item><view/></item>"
-" <item col=\"1\"><view/></item>"
+" <item column=\"1\"><view/></item>"
 " <item row=\"1\"><view/></item>"
 " <item row=\"1\" column=\"1\"><view/></item>"
 " <item row=\"2\" colspan=\"2\"><view/></item>"
@@ -70,11 +72,25 @@ QString nestedLayout(
 " <item><view name=\"tab3\"/></item>"
 "</layout>");
 
-class ctkPushButton: public QPushButton
+/// \ingroup Widgets
+struct ctkCachedInstanciator
+  : public ctkWidgetInstanciator
 {
-  Q_OBJECT
-public:
-  Q_INVOKABLE ctkPushButton(): QPushButton(0){}
+  int CreateWidgetCount;
+  QWidgetList CachedWidgets;
+  virtual void beginSetupLayout()
+    {
+    this->CreateWidgetCount = 0;
+    }
+  virtual QWidget* createWidget()
+    {
+    if (this->CreateWidgetCount >= this->CachedWidgets.size())
+      {
+      QWidget* widget = new ctkSliderWidget;
+      this->CachedWidgets.push_back(widget);
+      }
+    return this->CachedWidgets[this->CreateWidgetCount++];
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -94,7 +110,6 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  //layoutManager.setViewMetaObject(QPushButton::staticMetaObject);
   ctkTemplateInstanciator<QPushButton> pButtonInstanciator;
   layoutManager.setViewInstanciator(&pButtonInstanciator);
 
@@ -123,7 +138,6 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
     }
   viewport.show();
 
-
   QWidget vbox;
   vbox.setWindowTitle("Vertical Box Layout");
   ctkSimpleLayoutManager vboxLayoutManager;
@@ -141,7 +155,7 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   grid.show();
 
   QWidget tab;
-  grid.setWindowTitle("Tab Layout");
+  tab.setWindowTitle("Tab Layout");
   ctkSimpleLayoutManager tabLayoutManager;
   tabLayoutManager.setViewInstanciator(&pButtonInstanciator);
   tabLayoutManager.setLayout(tabLayoutDoc);
@@ -149,21 +163,108 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   tab.show();
 
   QWidget nested;
-  grid.setWindowTitle("Nested Layout");
+  nested.setWindowTitle("Nested Layout");
   ctkSimpleLayoutManager nestedLayoutManager;
   nestedLayoutManager.setViewInstanciator(&pButtonInstanciator);
   nestedLayoutManager.setLayout(nestedLayoutDoc);
   nestedLayoutManager.setViewport(&nested);
   nested.show();
 
+  // TabToGrid
+  QWidget tabToGrid;
+  tabToGrid.setWindowTitle("Tab to Grid Layout");
+  ctkCachedInstanciator tabToGridInstanciator;
+  ctkSimpleLayoutManager tabToGridLayoutManager;
+  tabToGridLayoutManager.setViewInstanciator(&tabToGridInstanciator);
+  tabToGridLayoutManager.setLayout(tabLayoutDoc);
+  tabToGridLayoutManager.setViewport(&tabToGrid);
+  tabToGrid.show();
+
+  QTimer::singleShot(200, &app, SLOT(quit()));
+  app.exec();
+
+  tabToGridLayoutManager.setLayout(gridLayoutDoc);
+
+  QTimer::singleShot(200, &app, SLOT(quit()));
+  app.exec();
+
+  if (tabToGridInstanciator.CachedWidgets[0]->isHidden() ||
+      tabToGridInstanciator.CachedWidgets[1]->isHidden() ||
+      tabToGridInstanciator.CachedWidgets[2]->isHidden() ||
+      tabToGridInstanciator.CachedWidgets[3]->isHidden())
+    {
+    std::cout << __LINE__ << " TabToGrid: "
+              << "ctkLayoutManager::setupLayout() failed to show/hide widgets"
+              << tabToGridInstanciator.CachedWidgets[0]->isHidden() << " "
+              << tabToGridInstanciator.CachedWidgets[1]->isHidden() << " "
+              << tabToGridInstanciator.CachedWidgets[2]->isHidden() << " "
+              << tabToGridInstanciator.CachedWidgets[3]->isHidden() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // TabToSimple
   QWidget tabToSimple;
   tabToSimple.setWindowTitle("Tab to Simple Layout");
+  ctkCachedInstanciator tabToSimpleInstanciator;
   ctkSimpleLayoutManager tabToSimpleLayoutManager;
-  tabToSimpleLayoutManager.setViewInstanciator(&pButtonInstanciator);
+  tabToSimpleLayoutManager.setViewInstanciator(&tabToSimpleInstanciator);
+  //tabToSimpleLayoutManager.setLayout(gridLayoutDoc);
   tabToSimpleLayoutManager.setLayout(tabLayoutDoc);
   tabToSimpleLayoutManager.setViewport(&tabToSimple);
   tabToSimple.show();
+
+  QTimer::singleShot(200, &app, SLOT(quit()));
+  app.exec();
+
   tabToSimpleLayoutManager.setLayout(simpleLayoutDoc);
+
+  QTimer::singleShot(200, &app, SLOT(quit()));
+  app.exec();
+
+  if (tabToSimpleInstanciator.CachedWidgets[0]->isHidden() ||
+      tabToSimpleInstanciator.CachedWidgets[1]->isVisible() ||
+      tabToSimpleInstanciator.CachedWidgets[2]->isVisible())
+    {
+    std::cout << __LINE__ << " TabToSimple: "
+              << "ctkLayoutManager::setupLayout() failed to show/hide widgets"
+              << tabToSimpleInstanciator.CachedWidgets[0]->isHidden() << " "
+              << tabToSimpleInstanciator.CachedWidgets[1]->isVisible() << " "
+              << tabToSimpleInstanciator.CachedWidgets[2]->isVisible() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // NestedToTab
+  QWidget nestedToTab;
+  nestedToTab.setWindowTitle("Nested to Tab Layout");
+  ctkCachedInstanciator nestedToTabInstanciator;
+  ctkSimpleLayoutManager nestedToTabLayoutManager;
+  nestedToTabLayoutManager.setViewInstanciator(&nestedToTabInstanciator);
+  nestedToTabLayoutManager.setLayout(nestedLayoutDoc);
+  nestedToTabLayoutManager.setViewport(&nestedToTab);
+  nestedToTab.show();
+
+  QTimer::singleShot(200, &app, SLOT(quit()));
+  app.exec();
+
+  nestedToTabLayoutManager.setLayout(tabLayoutDoc);
+
+  QTimer::singleShot(200, &app, SLOT(quit()));
+  app.exec();
+
+  if (nestedToTabInstanciator.CachedWidgets[0]->isHidden() ||
+      nestedToTabInstanciator.CachedWidgets[1]->isVisible() ||
+      nestedToTabInstanciator.CachedWidgets[2]->isVisible() ||
+      nestedToTabInstanciator.CachedWidgets[3]->isVisible())
+    {
+    std::cout << __LINE__ << " NestedToTab: "
+              << "ctkLayoutManager::setupLayout() failed to show/hide widgets"
+              << nestedToTabInstanciator.CachedWidgets[0]->isHidden() << " "
+              << nestedToTabInstanciator.CachedWidgets[1]->isVisible() << " "
+              << nestedToTabInstanciator.CachedWidgets[2]->isVisible() << " "
+              << nestedToTabInstanciator.CachedWidgets[3]->isVisible() << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {

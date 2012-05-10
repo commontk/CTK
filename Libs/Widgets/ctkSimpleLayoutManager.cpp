@@ -108,3 +108,18 @@ QWidget* ctkSimpleLayoutManager::viewFromXML(QDomElement viewElement)
     }
   return d->ViewInstanciator->createWidget();
 }
+
+//-----------------------------------------------------------------------------
+void ctkSimpleLayoutManager::setupLayout()
+{
+  Q_D(ctkSimpleLayoutManager);
+  if (d->ViewInstanciator)
+    {
+    d->ViewInstanciator->beginSetupLayout();
+    }
+  this->ctkLayoutManager::setupLayout();
+  if (d->ViewInstanciator)
+    {
+    d->ViewInstanciator->endSetupLayout();
+    }
+}
