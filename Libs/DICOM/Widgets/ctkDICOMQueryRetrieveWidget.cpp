@@ -302,7 +302,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
 
     try
       {
-      // perform the retrieve
+      // perform the retrieve Miluba: move per default
       if ( query->preferCGET() )
         {
         retrieve->getStudy ( studyUID );

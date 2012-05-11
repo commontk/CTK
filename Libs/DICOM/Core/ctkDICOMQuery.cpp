@@ -112,7 +112,7 @@ ctkDICOMQueryPrivate::ctkDICOMQueryPrivate()
   this->Query = new DcmDataset();
   this->Port = 0;
   this->Canceled = false;
-  this->PreferCGET = true;
+  this->PreferCGET = false;
 }
 
 //------------------------------------------------------------------------------

@@ -380,12 +380,6 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
                                          const RetrieveType retrieveType )
 {
   Q_Q(ctkDICOMRetrieve);
-  
-  if ( !this->Database )
-    {
-    logger.error ( "No Database for retrieve transaction" );
-    return false;
-    }
 	
   DcmDataset *retrieveParameters = new DcmDataset();
   if (! this->initializeSCU(studyInstanceUID, seriesInstanceUID, retrieveType, retrieveParameters) )
