@@ -76,7 +76,9 @@ foreach(CTK_HEADER_EVENT_PLAYERS ${CTK_HEADERS_EVENT_PLAYERS})
   endif()
 endforeach()
 
+if(CTK_LIB_Widgets)
 set(CTK_ADD_WIDGET_EVENT_PLAYERS "${CTK_ADD_WIDGET_EVENT_PLAYERS}  this->eventPlayer()->addWidgetEventPlayer(new ctkFileDialogEventPlayer(util));\n")
+endif()
 
 set(CTK_ADD_HEADER_EVENT_TRANSLATORS "// Event translator includes\n")
 #set(CTK_ADD_WIDGET_EVENT_TRANSLATORS)
@@ -101,7 +103,9 @@ foreach(CTK_HEADER_EVENT_TRANSLATORS ${CTK_HEADERS_EVENT_TRANSLATORS})
   endif()
 endforeach()
 
-set(CTK_ADD_WIDGET_EVENT_TRANSLATORS "${CTK_ADD_WIDGET_EVENT_TRANSLATORS}  this->eventTranslator()->addWidgetEventTranslator(new ctkFileDialogEventTranslator(util));\n")
+if (CTK_LIB_Widgets)
+  set(CTK_ADD_WIDGET_EVENT_TRANSLATORS "${CTK_ADD_WIDGET_EVENT_TRANSLATORS}  this->eventTranslator()->addWidgetEventTranslator(new ctkFileDialogEventTranslator(util));\n")
+endif()
 
 set(KIT_INCLUDE_DIRECTORIES
   ${QtTesting_INCLUDE_DIRS}
