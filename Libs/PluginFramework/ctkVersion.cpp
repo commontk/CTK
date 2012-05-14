@@ -263,6 +263,12 @@ int ctkVersion::compare(const ctkVersion& other) const
 }
 
 //----------------------------------------------------------------------------
+bool ctkVersion::operator <(const ctkVersion &object) const
+{
+  return this->compare(object) < 0;
+}
+
+//----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkVersion& v)
 {
   dbg << v.toString();
