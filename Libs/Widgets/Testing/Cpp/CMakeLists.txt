@@ -164,7 +164,7 @@ set(Tests_MOC_SRCS
   )
 
 if(CTK_USE_QTTESTING)
-  ctkQtTesting(Tests_SRCS Tests_MOC_SRCS Tests_UI_FORMS)
+  ctkQtTesting(Tests_SRCS Tests_MOC_SRCS Tests_UI_FORMS Tests_RESOURCES)
 endif()
 
 set(Tests_MOC_CPP)
@@ -178,8 +178,10 @@ set(Tests_UI_CPP)
 if(TEST_UI_FORMS)
   QT4_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})
 endif()
+set(Tests_RESOURCES_SRCS)
+QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 
-add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP})
+add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
 #

@@ -86,7 +86,7 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 # If CTK_USE_QTTESTING is ON
 #
 if(CTK_USE_QTTESTING)
-  ctkQtTesting(Tests TEST_MOC_SOURCES TEST_UI_FORMS)
+  ctkQtTesting(Tests TEST_MOC_SOURCES TEST_UI_FORMS Tests_RESOURCES)
 endif()
 
 set(TEST_MOC_CPP)
@@ -97,8 +97,10 @@ set(TEST_UI_CPP)
 if(TEST_UI_FORMS)
   QT4_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
 endif()
+set(Tests_RESOURCES_SRCS)
+QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 
-add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP})
+add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRARIES})
 
 #

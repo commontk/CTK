@@ -1,5 +1,5 @@
 
-macro(ctkQtTesting SRCS_OUTPUT_VAR MOC_CPP_OUTPUT_VAR UI_FORMS_OUTPUT_VAR)
+macro(ctkQtTesting SRCS_OUTPUT_VAR MOC_CPP_OUTPUT_VAR UI_FORMS_OUTPUT_VAR RESOURCES_OUTPUT_VAR)
   # Do not export symbol in ctkEventTranslatorPlayerWidget class
   add_definitions(-DNO_SYMBOL_EXPORT)
 
@@ -24,5 +24,7 @@ macro(ctkQtTesting SRCS_OUTPUT_VAR MOC_CPP_OUTPUT_VAR UI_FORMS_OUTPUT_VAR)
   list(APPEND ${UI_FORMS_OUTPUT_VAR}
     ${CTK_SOURCE_DIR}/Libs/QtTesting/Resources/UI/ctkEventTranslatorPlayerWidget.ui
     )
-
+  list(APPEND ${RESOURCES_OUTPUT_VAR}
+    ${CTK_SOURCE_DIR}/Libs/QtTesting/Resources/ctkQtTesting.qrc
+    )
 endmacro()
