@@ -244,6 +244,12 @@ if(BUILD_TESTING)
 endif()
 
 #-----------------------------------------------------------------------------
+# QtTesting
+#
+option(CTK_USE_QTTESTING "Enable/Disable QtTesting" OFF)
+mark_as_advanced(CTK_USE_QTTESTING)
+
+#-----------------------------------------------------------------------------
 # Coverage
 #
 option(WITH_COVERAGE "Enable/Disable coverage" OFF)
@@ -418,7 +424,7 @@ ctk_lib_option(PluginFramework
 
 ctk_lib_option(Widgets
                "Build the Widgets library" OFF
-               CTK_ENABLE_Widgets OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES))
+               CTK_ENABLE_Widgets OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES) OR CTK_USE_QTTESTING)
                
 ctk_lib_option(DICOM/Core
                "Build the DICOM Core library" OFF
@@ -450,6 +456,14 @@ ctk_lib_option(Visualization/VTK/Widgets
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
 
+# Save the set of enabled libs in a cache file
+set(_enabled_libs)
+foreach(_lib ${CTK_LIBS})
+  if(CTK_LIB_${_lib})
+    list(APPEND _enabled_libs ${_lib})
+  endif()
+endforeach()
+set(CTK_ENABLED_LIBS ${_enabled_libs} CACHE INTERNAL "" FORCE)
 #-----------------------------------------------------------------------------
 # CTK Applications - Use ON or OFF to indicate if the application should be built by default
 #
@@ -507,6 +521,12 @@ ctk_app_option(ctkDICOMObjectViewer
 ctk_app_option(ctkSimplePythonShell
                "Build the DICOM example application" OFF
                CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
+
+if(CTK_USE_QTTESTING)
+  ctk_app_option(ctkQtTesting
+                "Build the ctkQtTesting example application" OFF
+                CTK_BUILD_EXAMPLES)
+endif()
 
 # Save the set of enabled apps in a cache file
 set(_enabled_apps)
@@ -711,6 +731,7 @@ ctkFunctionGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_direct
 #-----------------------------------------------------------------------------
 set(CTK_POSSIBLE_DEPENDENCIES
   CTKData
+  QtTesting
   Log4Qt
   KWStyle
   VTK
@@ -824,6 +845,11 @@ foreach(lib ${CTK_LIBS})
     add_subdirectory(Libs/${lib})
   endif()
 endforeach()
+
+#-----------------------------------------------------------------------------
+if(CTK_USE_QTTESTING)
+  add_subdirectory(Libs/QtTesting)
+endif()
 
 #-----------------------------------------------------------------------------
 # Add CTK plugin subdirectories

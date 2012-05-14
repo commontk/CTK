@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-5"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-10"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-15"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-20"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-25"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-30"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-35"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-40"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_min_double" arguments="-45"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="0.4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="-4.6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="-9.6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="-4.6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="0.4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="-4.6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="-9.6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/MinimumSpinBox" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/MinimumSpinBox" command="spin" arguments="up"/>
+    </events>
+</QtTesting>

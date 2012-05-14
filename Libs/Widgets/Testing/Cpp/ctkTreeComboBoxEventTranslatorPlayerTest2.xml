@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb0001000000000275000000580000046e000001c10000027b0000007100000468000001bb000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000012e00000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkTreeComboBox0" command="indexChanged" arguments="Test2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkTreeComboBox0" command="indexChanged" arguments="Test3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkTreeComboBox0" command="indexChanged" arguments="Test1.2"/>
+    </events>
+</QtTesting>

@@ -50,6 +50,28 @@ if(EXISTS "${CTKData_DIR}")
     )
 endif()
 
+#
+# Test expecting CTK_USE_QTTESTING to be ON
+#
+if(CTK_USE_QTTESTING)
+  list(APPEND TEST_SOURCES
+    ctkVTKDataSetArrayComboBoxEventTranslatorPlayerTest1.cpp
+    ctkVTKDataSetModelEventTranslatorPlayerTest1.cpp
+#    ctkVTKMagnifyViewEventTranslatorPlayerTest1.cpp
+    ctkVTKMatrixWidgetEventTranslatorPlayerTest1.cpp
+    ctkVTKRenderViewEventTranslatorPlayerTest1.cpp
+    ctkVTKScalarBarWidgetEventTranslatorPlayerTest1.cpp
+#    ctkVTKScalarsToColorsUtilsEventTranslatorPlayerTest1.cpp
+#    ctkVTKScalarsToColorsViewEventTranslatorPlayerTest1.cpp
+#    ctkVTKScalarsToColorsWidgetEventTranslatorPlayerTest1.cpp
+#    ctkVTKSliceViewEventTranslatorPlayerTest1.cpp
+#    ctkVTKSurfaceMaterialPropertyWidgetEventTranslatorPlayerTest1.cpp
+    ctkVTKTextPropertyWidgetEventTranslatorPlayerTest1.cpp
+#    ctkVTKThresholdWidgetEventTranslatorPlayerTest1.cpp
+#    ctkVTKVolumePropertyWidgetEventTranslatorPlayerTest1.cpp
+    )
+endif()
+
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ${TEST_SOURCES}
   #EXTRA_INCLUDE TestingMacros.h
@@ -60,7 +82,25 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
-add_executable(${KIT}CppTests ${Tests})
+#
+# If CTK_USE_QTTESTING is ON
+#
+if(CTK_USE_QTTESTING)
+  ctkQtTesting(Tests TEST_MOC_SOURCES TEST_UI_FORMS Tests_RESOURCES)
+endif()
+
+set(TEST_MOC_CPP)
+if(TEST_MOC_SOURCES)
+  QT4_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
+endif()
+set(TEST_UI_CPP)
+if(TEST_UI_FORMS)
+  QT4_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
+endif()
+set(Tests_RESOURCES_SRCS)
+QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+
+add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRARIES})
 
 #
@@ -80,7 +120,7 @@ SIMPLE_TEST( ctkTransferFunctionViewTest2 )
 SIMPLE_TEST( ctkTransferFunctionViewTest3 )
 SIMPLE_TEST( ctkTransferFunctionViewTest4 )
 SIMPLE_TEST( ctkTransferFunctionViewTest5 )
-IF(CTK_USE_CHARTS)
+if(CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKChartViewTest1 )
   SIMPLE_TEST( ctkVTKVolumePropertyWidgetTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest1 )
@@ -133,3 +173,22 @@ if(EXISTS "${CTKData_DIR}")
   SIMPLE_TEST_WITH_DATA( ctkVTKSliceViewTest2 ${baseline_relative_location})
 endif()
 
+#
+# Add Tests expecting CTK_USE_QTTESTING to be set
+#
+if(CTK_USE_QTTESTING)
+    SIMPLE_TEST( ctkVTKDataSetArrayComboBoxEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKDataSetModelEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKMagnifyViewEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKMatrixWidgetEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKRenderViewEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKScalarBarWidgetEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKScalarsToColorsUtilsEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKScalarsToColorsViewEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKScalarsToColorsWidgetEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKSliceViewEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKTextPropertyWidgetEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKThresholdWidgetEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKVolumePropertyWidgetEventTranslatorPlayerTest1 )
+endif()

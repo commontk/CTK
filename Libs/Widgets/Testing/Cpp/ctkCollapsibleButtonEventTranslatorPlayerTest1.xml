@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCollapsibleButton0/1ctkCollapsibleButton1" command="set_boolean" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCollapsibleButton0/1ctkCollapsibleButton1" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCollapsibleButton0/1ctkCollapsibleButton0" command="set_boolean" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCollapsibleButton0/1ctkCollapsibleButton0" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCollapsibleButton0" command="set_boolean" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCollapsibleButton0" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCollapsibleButton0" command="set_boolean" arguments="false"/>
+    </events>
+</QtTesting>

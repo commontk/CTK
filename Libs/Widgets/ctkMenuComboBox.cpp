@@ -104,8 +104,11 @@ void ctkMenuComboBoxPrivate::init()
   this->MenuComboBox->installEventFilter(q);
   this->MenuComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
   this->MenuComboBox->addItem(this->DefaultIcon, this->DefaultText);
+  q->connect(this->MenuComboBox, SIGNAL(popupShown()),
+             q, SIGNAL(popupShown()));
 
-  this->SearchCompleter = new ctkCompleter(QStringList(), q);
+  this->SearchCompleter = new ctkCompleter(QStringList(), this->MenuComboBox);
+  this->SearchCompleter->popup()->setParent(q);
   this->SearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
   this->SearchCompleter->setModelFiltering(ctkCompleter::FilterWordStartsWith);
   q->connect(this->SearchCompleter, SIGNAL(activated(QString)),
@@ -446,6 +449,27 @@ void ctkMenuComboBox::setMinimumContentsLength(int characters)
 {
   Q_D(ctkMenuComboBox);
   d->MenuComboBox->setMinimumContentsLength(characters);
+}
+
+// -------------------------------------------------------------------------
+QComboBox* ctkMenuComboBox::menuComboBoxInternal() const
+{
+  Q_D(const ctkMenuComboBox);
+  return d->MenuComboBox;
+}
+
+// -------------------------------------------------------------------------
+QToolButton* ctkMenuComboBox::toolButtonInternal() const
+{
+  Q_D(const ctkMenuComboBox);
+  return d->SearchButton;
+}
+
+// -------------------------------------------------------------------------
+ctkCompleter* ctkMenuComboBox::searchCompleter() const
+{
+  Q_D(const ctkMenuComboBox);
+  return d->SearchCompleter;
 }
 
 // -------------------------------------------------------------------------

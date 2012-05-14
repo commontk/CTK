@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mousePress" arguments="1,1,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_checked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_checked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mousePress" arguments="1,1,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_unchecked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_unchecked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mousePress" arguments="1,1,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_checked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_checked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mousePress" arguments="1,1,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_unchecked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_unchecked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mousePress" arguments="1,1,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_checked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_checked" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mousePress" arguments="1,1,0,11,15,/1:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mouseRelease" arguments="1,0,0,11,15,/1:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mousePress" arguments="1,1,0,10,14,/2:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mouseRelease" arguments="1,0,0,10,14,/2:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mousePress" arguments="1,1,0,9,16,/1:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mouseRelease" arguments="1,0,0,9,16,/1:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mousePress" arguments="1,1,0,10,11,/2:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mouseRelease" arguments="1,0,0,10,11,/2:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mousePress" arguments="1,1,0,12,13,/1:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0" command="mouseRelease" arguments="1,0,0,12,13,/1:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mousePress" arguments="1,1,0,0,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_unchecked" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_unchecked" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mousePress" arguments="1,1,0,0,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_checked" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_checked" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mousePress" arguments="1,1,0,0,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_unchecked" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QTableView0/1ctkCheckableHeaderView0" command="set_section_unchecked" arguments="1"/>
+    </events>
+</QtTesting>

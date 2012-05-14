@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000018000001f9000001810000000600000031000001f30000017b000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000012e00000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="e"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,69,0,e,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,88,0,x,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="ex"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,88,0,x,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,84,0,t,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="ext"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,82,0,r,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="extr"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,65,0,a,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="extra"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,82,0,r,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,65,0,a,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="extra choice 1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,16777220,0,&#13;,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="triggered" arguments="extra choice 1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="f"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,70,0,f,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,73,0,i,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="fi"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,73,0,i,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,82,0,r,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="fir"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,83,0,s,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="firs"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,82,0,r,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,84,0,t,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="first"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,83,0,s,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,16777220,0,&#13;,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="triggered" arguments="first"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="e"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,69,0,e,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,88,0,x,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="ex"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,88,0,x,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,84,0,t,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="ext"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,82,0,r,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="extr"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,65,0,a,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="extra"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,82,0,r,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,65,0,a,0,1"/>
+        <event widget="1QListView0" command="mousePress" arguments="1,1,0,44,11,/1:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="extra choice 2"/>
+        <event widget="1QListView0" command="mouseRelease" arguments="1,0,0,44,11,/1:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="triggered" arguments="extra choice 2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="e"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,69,0,e,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,88,0,x,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="ex"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,88,0,x,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,84,0,t,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="ext"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,82,0,r,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="extr"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,65,0,a,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="extra"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,82,0,r,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,65,0,a,0,1"/>
+        <event widget="1QListView0" command="mousePress" arguments="1,1,0,39,10,/2:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="set_edit_string" arguments="extra choice 3"/>
+        <event widget="1QListView0" command="mouseRelease" arguments="1,0,0,39,10,/2:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuComboBox0" command="triggered" arguments="extra choice 3"/>
+    </events>
+</QtTesting>

@@ -6,6 +6,16 @@ project(CTKVisualizationVTKWidgets)
 
 set(KIT_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_EXPORT")
 
+#
+# Add the libraries QtTesting
+#
+if(CTK_USE_QTTESTING)
+  find_package(QtTesting REQUIRED)
+  include_directories(
+    ${QtTesting_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR} # For ctkConfig.h
+    )
+endif()
 
 # Source files
 set(KIT_SRCS
@@ -118,6 +128,22 @@ endif()
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
+
+# If we use QtTessting, we add all the dependencies
+if(CTK_USE_QTTESTING)
+  list(APPEND KIT_SRCS
+    ctkVTKRenderViewEventPlayer.cpp
+    ctkVTKRenderViewEventPlayer.h
+    ctkVTKRenderViewEventTranslator.cpp
+    ctkVTKRenderViewEventTranslator.h
+    )
+  list(APPEND KIT_MOC_SRCS
+    ctkVTKRenderViewEventPlayer.h
+    ctkVTKRenderViewEventTranslator.h
+)
+  list(APPEND KIT_target_libraries QtTesting)
+endif()
+
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

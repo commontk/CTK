@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb0001000000000019000000190000029d000001360000002100000037000002950000012e000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd0000000000000275000000e400000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="setCurrent" arguments="0.0.1.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="edit" arguments="0.0.1.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="activate" arguments="0.0.1.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="edit" arguments="0.0.1.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="activate" arguments="0.0.1.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget" command="contextMenu" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="edit" arguments="0.0.1.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="activate" arguments="0.0.1.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="setCurrent" arguments="0.0.0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="edit" arguments="0.0.0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="activate" arguments="0.0.0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="setCurrent" arguments="0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="edit" arguments="0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="activate" arguments="0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="collapse" arguments="0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="edit" arguments="0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="activate" arguments="0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="expand" arguments="0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="collapse" arguments="0.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/actionsWidget/1QTreeView0" command="expand" arguments="0.0"/>
+    </events>
+</QtTesting>

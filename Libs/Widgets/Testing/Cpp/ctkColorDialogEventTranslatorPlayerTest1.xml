@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="DejaVu Sans Mono,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000018000001f9000001810000000600000031000001f30000017b000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000013300000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QPushButton0" command="activate" arguments=""/>
+        <event widget="1ctkColorDialog0/1QTabWidget0/qt_tabwidget_stackedwidget/1QWidget0/1QWellArray0" command="mousePress" arguments="1,1,0,97,34"/>
+        <event widget="1ctkColorDialog0/1QTabWidget0/qt_tabwidget_stackedwidget/1QWidget0/1QWellArray0" command="mouseRelease" arguments="1,0,0,97,34"/>
+        <event widget="1ctkColorDialog0/1QTabWidget0/qt_tabwidget_stackedwidget/1QWidget0/1QWellArray0" command="mousePress" arguments="1,1,0,97,61"/>
+        <event widget="1ctkColorDialog0/1QTabWidget0/qt_tabwidget_stackedwidget/1QWidget0/1QWellArray0" command="mouseRelease" arguments="1,0,0,97,61"/>
+        <event widget="1ctkColorDialog0/1QTabWidget0/qt_tabwidget_stackedwidget/1QWidget0/1QWellArray1" command="mousePress" arguments="1,1,0,17,16"/>
+        <event widget="1ctkColorDialog0/1QTabWidget0/qt_tabwidget_stackedwidget/1QWidget0/1QWellArray1" command="mouseRelease" arguments="1,0,0,17,16"/>
+        <event widget="1ctkColorDialog0/1QColorPicker0" command="mousePress" arguments="1,1,0,147,102"/>
+        <event widget="1ctkColorDialog0/1QColorPicker0" command="mouseRelease" arguments="1,0,0,147,102"/>
+        <event widget="1ctkColorDialog0/1QColorPicker0" command="mousePress" arguments="1,1,0,150,109"/>
+        <event widget="1ctkColorDialog0/1QColorPicker0" command="mouseMove" arguments="1,0,0,160,48"/>
+        <event widget="1ctkColorDialog0/1QColorPicker0" command="mouseRelease" arguments="1,0,0,160,48"/>
+        <event widget="1ctkColorDialog0/1QDialogButtonBox0/1QPushButton0" command="activate" arguments=""/>
+    </events>
+</QtTesting>

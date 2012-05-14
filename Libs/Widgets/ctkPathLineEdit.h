@@ -48,6 +48,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Qt includes
 #include <QWidget>
 #include <QDir>
+class QComboBox;
 
 // CTK includes
 #include "ctkWidgetsExport.h"
@@ -155,6 +156,9 @@ public:
    *  If there is no extension yet, set it
   */
   void setCurrentFileExtension(const QString& extension);
+
+  /// Return the combo box internally used by the path line edit
+  QComboBox* comboBox() const;
 
 Q_SIGNALS:
   /** the signal is emit when the state of hasValidInput changed

@@ -2,6 +2,7 @@
 #define __ctkConfig_h
 
 #define CTK_PLUGIN_DIR "@CTK_PLUGIN_LIBRARIES_DIR_CONFIG@/"
+#define CTK_SOURCE_DIR "@CTK_SOURCE_DIR@"
 
 #endif
 

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKDataSetArrayComboBox0" command="set_string" arguments="Floats"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKDataSetArrayComboBox0" command="set_string" arguments="Ints"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKDataSetArrayComboBox0" command="set_string" arguments="Floats"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKDataSetArrayComboBox0" command="set_string" arguments="Ints"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKDataSetArrayComboBox0" command="set_string" arguments="Floats"/>
+    </events>
+</QtTesting>

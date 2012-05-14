@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777248"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="Te"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="Test"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="Test"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="Test"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777248"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestS"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSe"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSear"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSear"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSearc"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSearch"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777248"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSearchB"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSearchBo"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSearchBox"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777219"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777219"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777219"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777219"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777219"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777219"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="32"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSea asd"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSea asd"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestSea asd"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777248"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="Te"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="Test"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="Test"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="Test"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="key" arguments="16777248"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestTes"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestTest"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestTest"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkSearchBox0" command="set_string" arguments="TestTest"/>
+    </events>
+</QtTesting>

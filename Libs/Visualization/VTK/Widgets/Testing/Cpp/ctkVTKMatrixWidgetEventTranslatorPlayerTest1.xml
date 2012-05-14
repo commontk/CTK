@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKMatrixWidget0" command="set_values" arguments="1 0 0 0 2 1 0 0 0 0 1 0 0 0 0 1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget" command="mousePress" arguments="1,1,0,379,117"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget" command="mouseRelease" arguments="1,0,0,379,117"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKMatrixWidget0" command="set_values" arguments="1 0 0 0 2 1 0 0 -0.14 0 1 0 0 0 0 1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKMatrixWidget0" command="set_values" arguments="1 0 0 5 2 1 0 0 -0.14 0 1 0 0 0 0 1"/>
+    </events>
+</QtTesting>

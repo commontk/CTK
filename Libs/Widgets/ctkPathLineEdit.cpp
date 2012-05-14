@@ -339,6 +339,13 @@ void ctkPathLineEdit::setCurrentFileExtension(const QString& extension)
 }
 
 //------------------------------------------------------------------------------
+QComboBox* ctkPathLineEdit::comboBox() const
+{
+  Q_D(const ctkPathLineEdit);
+  return d->ComboBox;
+}
+
+//------------------------------------------------------------------------------
 QString ctkPathLineEdit::currentPath()const
 {
   Q_D(const ctkPathLineEdit);

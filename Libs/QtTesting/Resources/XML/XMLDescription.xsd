@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:complexType name="settings">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="state"/>
+            <xsd:element name="geometry"/>
+            <xsd:element name="font"/>
+            <xsd:element name="version"/>
+            <xsd:element name="name"/>
+            <xsd:element name="appsetting" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="events">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="event">
+                <xsd:complexType>
+                    <xsd:attribute name="widget" type="xsd:string" />
+                    <xsd:attribute name="command" type="xsd:string" />
+                    <xsd:attribute name="arguments" type="xsd:string" />
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="QtTesting">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="settings" type="settings" minOccurs="0" maxOccurs="1"/>
+                <xsd:element name="events" type="events"/>
+            </xsd:sequence>
+      </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

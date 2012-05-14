@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuButton0" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuButton0/1QMenu0" command="activate" arguments="extra choice 1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuButton0/1QMenu0" command="activate" arguments="extra choice 2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkMenuButton0/1QMenu0" command="activate" arguments="extra choice 3"/>
+    </events>
+</QtTesting>

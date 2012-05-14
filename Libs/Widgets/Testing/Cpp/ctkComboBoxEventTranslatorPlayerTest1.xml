@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkComboBox0" command="set_string" arguments="item 2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkComboBox0" command="set_string" arguments="item 3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkComboBox0" command="set_string" arguments="item 4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkComboBox0" command="set_string" arguments="item 5"/>
+    </events>
+</QtTesting>

@@ -524,6 +524,7 @@ void ctkSliderWidget::setPopupSlider(bool popup)
   if (popup)
     {
     d->SliderPopup = new ctkPopupWidget(this);
+    d->SliderPopup->setObjectName("DoubleSliderPopup");
 
     QHBoxLayout* layout = new QHBoxLayout(d->SliderPopup);
     layout->setContentsMargins(0,0,0,0);

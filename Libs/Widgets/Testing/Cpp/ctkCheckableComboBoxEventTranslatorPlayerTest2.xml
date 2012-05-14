@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkCheckableComboBox0" command="uncheck_indexes" arguments="0 2 3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1ctkCheckableComboBox0" command="check_indexes" arguments="1 2"/>
+    </events>
+</QtTesting>

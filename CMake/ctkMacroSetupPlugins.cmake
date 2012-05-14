@@ -19,9 +19,9 @@
 #
 ###########################################################################
 
-MACRO(ctkMacroSetupExternalPlugins )
-  MESSAGE(SEND_ERROR "This macro has been renamed. Please use ctkMacroSetupPlugins instead")
-ENDMACRO()
+macro(ctkMacroSetupExternalPlugins )
+  message(SEND_ERROR "This macro has been renamed. Please use ctkMacroSetupPlugins instead")
+endmacro()
 
 #! This is the main macro to set up your CTK plug-ins inside your own CMake project.
 #!
@@ -71,88 +71,88 @@ ENDMACRO()
 #! \endcode
 #!
 #! \ingroup CMakeAPI
-MACRO(ctkMacroSetupPlugins )
+macro(ctkMacroSetupPlugins )
 
   ctkMacroParseArguments(MY "BUILD_OPTION_PREFIX;APPS;BUILD_ALL" "COMPACT_OPTIONS" ${ARGN})
 
-  IF(NOT MY_DEFAULT_ARGS)
-    MESSAGE(FATAL_ERROR "Empty plugin list")
-  ENDIF()
+  if(NOT MY_DEFAULT_ARGS)
+    message(FATAL_ERROR "Empty plugin list")
+  endif()
 
-  SET(plugin_list ${MY_DEFAULT_ARGS})
+  set(plugin_list ${MY_DEFAULT_ARGS})
 
-  IF(NOT MY_BUILD_OPTION_PREFIX)
-    SET(MY_BUILD_OPTION_PREFIX "BUILD_")
-  ENDIF()
+  if(NOT MY_BUILD_OPTION_PREFIX)
+    set(MY_BUILD_OPTION_PREFIX "BUILD_")
+  endif()
 
-  IF(NOT MY_BUILD_ALL)
-    SET(MY_BUILD_ALL 0)
-  ENDIF()
+  if(NOT MY_BUILD_ALL)
+    set(MY_BUILD_ALL 0)
+  endif()
   
   # Check if this is the first invocation of this macro
-  GET_PROPERTY(_repeated GLOBAL PROPERTY ctkMacroSetupExternalPlugins_called SET)
-  IF(NOT _repeated)
+  get_property(_repeated GLOBAL PROPERTY ctkMacroSetupExternalPlugins_called SET)
+  if(NOT _repeated)
     # Clear the internal cache variable containing all enabled plug-in targets
     # This variable will be set in ctkMacroBuildPlugin
-    SET(${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES CACHE INTERNAL "CTK plug-in targets" FORCE)
-    SET_PROPERTY(GLOBAL PROPERTY ctkMacroSetupExternalPlugins_called 1)
+    set(${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES CACHE INTERNAL "CTK plug-in targets" FORCE)
+    set_property(GLOBAL PROPERTY ctkMacroSetupExternalPlugins_called 1)
     
     # Add the project specific variable name containing plug-in targets to the list
     set_property(GLOBAL APPEND PROPERTY CTK_PLUGIN_LIBRARIES_VARS ${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES)
-  ENDIF()
+  endif()
   
   # Set up Qt, if not already done
-  IF(NOT QT4_FOUND)
-    SET(minimum_required_qt_version "4.6")
-    FIND_PACKAGE(Qt4 REQUIRED)
+  if(NOT QT4_FOUND)
+    set(minimum_required_qt_version "4.6")
+    find_package(Qt4 REQUIRED)
 
-    IF("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "${minimum_required_qt_version}")
-      MESSAGE(FATAL_ERROR "error: CTK requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
-    ENDIF()
-  ENDIF()
+    if("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "${minimum_required_qt_version}")
+      message(FATAL_ERROR "error: CTK requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
+    endif()
+  endif()
   
   # Set the variable QT_INSTALLED_LIBRARY_DIR that contains all
   # Qt shared libraries
-  SET(QT_INSTALLED_LIBRARY_DIR ${QT_LIBRARY_DIR})
-  IF(WIN32)
-    GET_FILENAME_COMPONENT(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
-  ENDIF()
+  set(QT_INSTALLED_LIBRARY_DIR ${QT_LIBRARY_DIR})
+  if(WIN32)
+    get_filename_component(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
+  endif()
 
-  SET(plugin_dirswithoption )
-  SET(plugin_subdirs )
-  FOREACH(plugin ${plugin_list})
+  set(plugin_dirswithoption )
+  set(plugin_subdirs )
+  foreach(plugin ${plugin_list})
     ctkFunctionExtractOptionNameAndValue(${plugin} plugin_name plugin_value)
-    IF(MY_COMPACT_OPTIONS)
-      STRING(REPLACE "/" ";" _tokens ${plugin_name})
-      LIST(GET _tokens -1 option_name)
-      SET(option_name ${MY_BUILD_OPTION_PREFIX}${option_name})
-    ELSE()
-      SET(option_name ${MY_BUILD_OPTION_PREFIX}${plugin_name})
-    ENDIF()
+    if(MY_COMPACT_OPTIONS)
+      string(REPLACE "/" ";" _tokens ${plugin_name})
+      list(GET _tokens -1 option_name)
+      set(option_name ${MY_BUILD_OPTION_PREFIX}${option_name})
+    else()
+      set(option_name ${MY_BUILD_OPTION_PREFIX}${plugin_name})
+    endif()
     # This variable may have the form "Plugins/org.commontk.bla_option_name"
-    SET(${plugin_name}_option_name ${option_name})
+    set(${plugin_name}_option_name ${option_name})
     # Additionally create a variable of the form "org_commontk_bla_option_name"
-    STRING(REPLACE "/" ";" _tokens ${plugin_name})
-    LIST(GET _tokens -1 plugin_symbolic_name)
-    STRING(REPLACE "." "_" plugin_target ${plugin_symbolic_name})
-    SET(${plugin_target}_option_name ${option_name})
+    string(REPLACE "/" ";" _tokens ${plugin_name})
+    list(GET _tokens -1 plugin_symbolic_name)
+    string(REPLACE "." "_" plugin_target ${plugin_symbolic_name})
+    set(${plugin_target}_option_name ${option_name})
 
-    OPTION(${option_name} "Build ${plugin_name} Plugin." ${plugin_value})
-    IF(MY_BUILD_ALL)
-      SET(${option_name} 1)
-    ENDIF()
+    option(${option_name} "Build ${plugin_name} Plugin." ${plugin_value})
+    if(MY_BUILD_ALL)
+      set(${option_name} 1)
+    endif()
 
-    LIST(APPEND plugin_subdirs "${plugin_name}")
-    IF(IS_ABSOLUTE ${plugin_name})
-      LIST(APPEND plugin_dirswithoption "${plugin_name}^^${option_name}")
-    ELSE()
-      LIST(APPEND plugin_dirswithoption "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_name}^^${option_name}")
-    ENDIF()
-  ENDFOREACH()
+    list(APPEND plugin_subdirs "${plugin_name}")
+    if(IS_ABSOLUTE ${plugin_name})
+      list(APPEND plugin_dirswithoption "${plugin_name}^^${option_name}")
+    else()
+      list(APPEND plugin_dirswithoption "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_name}^^${option_name}")
+    endif()
+  endforeach()
   
   # Get plugin info from possible previous invocations of this macro for
   # validation purposes below
-  GET_PROPERTY(previous_plugin_dirswithoption GLOBAL PROPERTY ctkMacroSetupExternalPlugins_dirswithoption)
+  get_property(previous_plugin_dirswithoption GLOBAL PROPERTY ctkMacroSetupExternalPlugins_dirswithoption)
   
   # Fill the CTK_EXTERNAL_PLUGIN_LIBRARIES variable with external plug-in target names.
   # It will be used in ctkMacroValidateBuildOptions to be able to validate agains plug-ins
@@ -166,22 +166,22 @@ MACRO(ctkMacroSetupPlugins )
                                "${MY_APPS};${plugin_dirswithoption};${previous_plugin_dirswithoption}")
 
   # Record the current set of plug-ins and their option names
-  SET_PROPERTY(GLOBAL APPEND PROPERTY ctkMacroSetupExternalPlugins_dirswithoption ${plugin_dirswithoption})
+  set_property(GLOBAL APPEND PROPERTY ctkMacroSetupExternalPlugins_dirswithoption ${plugin_dirswithoption})
 
   # Get the gcc version (GCC_VERSION will be empty if the compiler is not gcc).
   # This will be used in the ctkMacroBuildPlugin macro to conditionally set compiler flags.
-  ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
+  ctkFunctionGetGccversion(${CMAKE_CXX_COMPILER} GCC_VERSION)
 
-  FOREACH(plugin ${plugin_subdirs})
-    IF(${${plugin}_option_name})
-      IF(IS_ABSOLUTE ${plugin})
+  foreach(plugin ${plugin_subdirs})
+    if(${${plugin}_option_name})
+      if(IS_ABSOLUTE ${plugin})
         # get last directory component
-        GET_FILENAME_COMPONENT(_dirname ${plugin} NAME) 
-        ADD_SUBDIRECTORY(${plugin} private_plugins/${_dirname})
-      ELSE()
-        ADD_SUBDIRECTORY(${plugin})
-      ENDIF()
-    ENDIF()
-  ENDFOREACH()
+        get_filename_component(_dirname ${plugin} NAME) 
+        add_subdirectory(${plugin} private_plugins/${_dirname})
+      else()
+        add_subdirectory(${plugin})
+      endif()
+    endif()
+  endforeach()
 
-ENDMACRO()
+endmacro()

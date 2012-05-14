@@ -76,6 +76,10 @@ protected:
 protected Q_SLOTS:
   void resizePopup();
   
+signals:
+  void popupShow();
+  void popupHide();
+
 protected:
   QScopedPointer<ctkTreeComboBoxPrivate> d_ptr;
 

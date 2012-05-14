@@ -51,12 +51,12 @@ int ctkCheckableHeaderViewTest2(int argc, char * argv [] )
   QList<QStandardItem*> row1;
   row1 << new QStandardItem << new QStandardItem << new QStandardItem;
   row1[0]->setCheckable(true);
-  row1[0]->setText("checkable");
+  row1[0]->setText("checkable1");
   model.appendRow(row1);
   QList<QStandardItem*> row2;
   row2 << new QStandardItem << new QStandardItem << new QStandardItem;
   row2[0]->setCheckable(true);
-  row2[0]->setText("checkable");
+  row2[0]->setText("checkable2");
   model.appendRow(row2);
 
   QTreeView view;

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/TodayRadioButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/YesterdayRadioButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/TodayRadioButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/YesterdayRadioButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/LastWeekRadioButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/LastMonthRadioButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate" command="mousePress" arguments="1,1,0,196,10"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar" command="mouseMove" arguments="1,0,0,196,-7"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar" command="mouseRelease" arguments="1,0,0,196,-7"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_navigationbar/qt_calendar_yearbutton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_navigationbar/qt_calendar_yearedit" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_navigationbar/qt_calendar_yearedit" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_navigationbar/qt_calendar_yearedit" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_navigationbar/qt_calendar_yearedit" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar" command="mouseMove" arguments="1,0,0,176,-53"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar" command="mouseRelease" arguments="1,0,0,176,-53"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_navigationbar/qt_calendar_monthbutton/1QMenu0" command="activate" arguments="November"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_calendarview" command="mousePress" arguments="1,1,0,15,9,/2:5"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/StartDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_calendarview" command="mouseRelease" arguments="1,0,0,15,9,/2:5"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate" command="mousePress" arguments="1,1,0,197,5"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar" command="mouseMove" arguments="1,0,0,197,-11"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar" command="mouseRelease" arguments="1,0,0,197,-11"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_navigationbar/qt_calendar_yearbutton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_navigationbar/qt_calendar_yearedit" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar" command="mouseMove" arguments="1,0,0,176,-101"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar" command="mouseRelease" arguments="1,0,0,176,-101"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_navigationbar/qt_calendar_nextmonth" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_calendarview" command="mousePress" arguments="1,1,0,17,10,/2:4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/dateRangeWidget/DateRangeWidget/EndDate/qt_datetimedit_calendar/1QCalendarWidget0/qt_calendar_calendarview" command="mouseRelease" arguments="1,0,0,17,10,/2:4"/>
+    </events>
+</QtTesting>

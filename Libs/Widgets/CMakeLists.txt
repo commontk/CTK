@@ -6,6 +6,16 @@ project(CTKWidgets)
 
 set(KIT_export_directive "CTK_WIDGETS_EXPORT")
 
+#
+# Add the libraries QtTesting
+#
+if(CTK_USE_QTTESTING)
+  find_package(QtTesting REQUIRED)
+  include_directories(
+    ${QtTesting_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR} # For ctkConfig.h
+    )
+endif()
 
 # Source files
 set(KIT_SRCS
@@ -272,6 +282,93 @@ set(KIT_resources
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
+
+# A player and a translator must be added for custom Qt widgets
+if(CTK_USE_QTTESTING)
+  list(APPEND KIT_SRCS
+    ctkAxesWidgetEventPlayer.cpp
+    ctkAxesWidgetEventPlayer.h
+    ctkAxesWidgetEventTranslator.cpp
+    ctkAxesWidgetEventTranslator.h
+    ctkCheckableComboBoxEventPlayer.cpp
+    ctkCheckableComboBoxEventPlayer.h
+    ctkCheckableComboBoxEventTranslator.cpp
+    ctkCheckableComboBoxEventTranslator.h
+    ctkCheckableHeaderViewEventPlayer.cpp
+    ctkCheckableHeaderViewEventPlayer.h
+    ctkCheckableHeaderViewEventTranslator.cpp
+    ctkCheckableHeaderViewEventTranslator.h
+    ctkConsoleEventPlayer.cpp
+    ctkConsoleEventPlayer.h
+    ctkConsoleEventTranslator.cpp
+    ctkConsoleEventTranslator.h
+    ctkDoubleRangeSliderEventPlayer.cpp
+    ctkDoubleRangeSliderEventPlayer.h
+    ctkDoubleRangeSliderEventTranslator.cpp
+    ctkDoubleRangeSliderEventTranslator.h
+    ctkFileDialogEventPlayer.cpp
+    ctkFileDialogEventPlayer.h
+    ctkFileDialogEventTranslator.cpp
+    ctkFileDialogEventTranslator.h
+    ctkFontButtonEventPlayer.cpp
+    ctkFontButtonEventPlayer.h
+    ctkFontButtonEventTranslator.cpp
+    ctkFontButtonEventTranslator.h
+    ctkMatrixWidgetEventPlayer.cpp
+    ctkMatrixWidgetEventPlayer.h
+    ctkMatrixWidgetEventTranslator.cpp
+    ctkMatrixWidgetEventTranslator.h
+    ctkMenuComboBoxEventPlayer.cpp
+    ctkMenuComboBoxEventPlayer.h
+    ctkMenuComboBoxEventTranslator.cpp
+    ctkMenuComboBoxEventTranslator.h
+    ctkPathLineEditEventPlayer.cpp
+    ctkPathLineEditEventPlayer.h
+    ctkPathLineEditEventTranslator.cpp
+    ctkPathLineEditEventTranslator.h
+    ctkPopupWidgetEventPlayer.cpp
+    ctkPopupWidgetEventPlayer.h
+    ctkPopupWidgetEventTranslator.cpp
+    ctkPopupWidgetEventTranslator.h
+    ctkRangeSliderEventPlayer.cpp
+    ctkRangeSliderEventPlayer.h
+    ctkRangeSliderEventTranslator.cpp
+    ctkRangeSliderEventTranslator.h
+    ctkTreeComboBoxEventPlayer.cpp
+    ctkTreeComboBoxEventPlayer.h
+    ctkTreeComboBoxEventTranslator.cpp
+    ctkTreeComboBoxEventTranslator.h
+    )
+  list(APPEND KIT_MOC_SRCS
+    ctkAxesWidgetEventPlayer.h
+    ctkAxesWidgetEventTranslator.h
+    ctkCheckableComboBoxEventPlayer.h
+    ctkCheckableComboBoxEventTranslator.h
+    ctkCheckableHeaderViewEventPlayer.h
+    ctkCheckableHeaderViewEventTranslator.h
+    ctkConsoleEventPlayer.h
+    ctkConsoleEventTranslator.h
+    ctkDoubleRangeSliderEventPlayer.h
+    ctkDoubleRangeSliderEventTranslator.h
+    ctkFileDialogEventPlayer.h
+    ctkFileDialogEventTranslator.h
+    ctkFontButtonEventPlayer.h
+    ctkFontButtonEventTranslator.h
+    ctkMatrixWidgetEventPlayer.h
+    ctkMatrixWidgetEventTranslator.h
+    ctkMenuComboBoxEventPlayer.h
+    ctkMenuComboBoxEventTranslator.h
+    ctkPathLineEditEventPlayer.h
+    ctkPathLineEditEventTranslator.h
+    ctkPopupWidgetEventPlayer.h
+    ctkPopupWidgetEventTranslator.h
+    ctkRangeSliderEventPlayer.h
+    ctkRangeSliderEventTranslator.h
+    ctkTreeComboBoxEventPlayer.h
+    ctkTreeComboBoxEventTranslator.h
+    )
+  list(APPEND KIT_target_libraries QtTesting)
+endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

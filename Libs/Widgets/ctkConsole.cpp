@@ -480,7 +480,6 @@ void ctkConsolePrivate::internalExecuteCommand()
   Q_Q(ctkConsole);
 
   QString command = this->commandBuffer();
-
   if (this->EditorHints & ctkConsole::RemoveTrailingSpaces)
     {
     command.replace(QRegExp("\\s*$"), ""); // Remove trailing spaces
@@ -502,9 +501,9 @@ void ctkConsolePrivate::internalExecuteCommand()
 
   this->InteractivePosition = this->documentEnd();
 
-  emit q->executing(true);
+  emit q->aboutToExecute(command);
   q->executeCommand(command);
-  emit q->executing(false);
+  emit q->executed(command);
 
   // Find the indent for the command.
   QString indent;
@@ -768,6 +767,14 @@ void ctkConsole::setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolic
 {
   Q_D(ctkConsole);
   d->setVerticalScrollBarPolicy(newScrollBarPolicy);
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::exec(const QString& command)
+{
+  Q_D(ctkConsole);
+  d->replaceCommandBuffer(command);
+  d->internalExecuteCommand();
 }
 
 //-----------------------------------------------------------------------------

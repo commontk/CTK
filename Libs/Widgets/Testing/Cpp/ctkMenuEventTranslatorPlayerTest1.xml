@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Sans,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000033000001ef0000019d000000010000004e000001ee00000198000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000013500000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="subMenuOpen" command="activate" arguments="&amp;Volume..."/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="subMenuOpen" command="activate" arguments="&amp;TData..."/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="subMenuOpen" command="activate" arguments="&amp;Files..."/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="subMenu1" command="activate" arguments="&amp;Save..."/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="subMenu1" command="activate" arguments="&amp;Add..."/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="subMenu2" command="activate" arguments="&amp;Toto..."/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="subMenu2" command="activate" arguments="&amp;Titi..."/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="subMenu2" command="activate" arguments="&amp;Tutu..."/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="MainMenu" command="activate" arguments="&amp;Foo..."/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QMenuBar0" command="activate" arguments="MainMenu"/>
+        <event widget="MainMenu" command="activate" arguments="&amp;Exit..."/>
+    </events>
+</QtTesting>
