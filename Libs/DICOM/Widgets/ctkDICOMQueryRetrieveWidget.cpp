@@ -193,6 +193,7 @@ void ctkDICOMQueryRetrieveWidget::query()
     query->setCalledAETitle(parameters["AETitle"].toString());
     query->setHost(parameters["Address"].toString());
     query->setPort(parameters["Port"].toInt());
+    query->setPreferCGET(parameters["CGET"].toBool());
 
     // populate the query with the current search options
     query->setFilters( d->QueryWidget->parameters() );
