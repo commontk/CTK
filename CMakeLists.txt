@@ -200,6 +200,7 @@ include(CMake/ctkFunctionCheckCompilerFlags.cmake)
 include(CMake/ctkFunctionGetIncludeDirs.cmake)
 include(CMake/ctkFunctionGetLibraryDirs.cmake)
 include(CMake/ctkFunctionGetGccVersion.cmake)
+include(CMake/ctkFunctionGetCompilerVisibilityFlags.cmake)
 include(CMake/ctkFunctionCompileSnippets.cmake)
 
 #-----------------------------------------------------------------------------
@@ -270,21 +271,7 @@ mark_as_advanced(ADDITIONAL_CXX_FLAGS)
 # Set symbol visibility Flags
 #
 
-ctkFunctionGetGccversion(${CMAKE_CXX_COMPILER} GCC_VERSION)
-
-# MinGW does not export all symbols automatically, so no need to set flags.
-#
-# With gcc < 4.5, RTTI symbols from classes declared in third-party libraries
-# which are not "gcc visibility aware" are marked with hidden visibility in
-# DSOs which include the class declaration and which are compiled with
-# hidden visibility. This leads to dynamic_cast and exception handling problems.
-# While this problem could be worked around by sandwiching the include
-# directives for the third-party headers between "#pragma visibility push/pop"
-# statements, it is generally safer to just use default visibility with
-# gcc < 4.5.
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT ${GCC_VERSION} VERSION_LESS "4.5" AND NOT MINGW)
-  set(VISIBILITY_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
-endif()
+ctkFunctionGetCompilerVisibilityFlags(VISIBILITY_CXX_FLAGS)
 
 #-----------------------------------------------------------------------------
 # Set coverage Flags
@@ -308,6 +295,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
   ctkFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
+  
+  ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
 
   # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
   # is introduced. If gcc is smaller than 4.4.0 and the build type is Release let's not include the flag.

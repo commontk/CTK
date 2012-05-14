@@ -300,20 +300,7 @@ macro(ctkMacroBuildPlugin)
   endforeach()
 
   set(plugin_compile_flags "-DQT_PLUGIN")
-
-  # MinGW does not export all symbols automatically, so no need to set flags.
-  #
-  # With gcc < 4.5, RTTI symbols from classes declared in third-party libraries
-  # which are not "gcc visibility aware" are marked with hidden visibility in
-  # DSOs which include the class declaration and which are compiled with
-  # hidden visibility. This leads to dynamic_cast and exception handling problems.
-  # While this problem could be worked around by sandwiching the include
-  # directives for the third-party headers between "#pragma visibility push/pop"
-  # statements, it is generally safer to just use default visibility with
-  # gcc < 4.5.
-  if(CMAKE_COMPILER_IS_GNUCXX AND NOT ${GCC_VERSION} VERSION_LESS "4.5" AND NOT MINGW)
-    set(plugin_compile_flags "${plugin_compile_flags} -fvisibility=hidden -fvisibility-inlines-hidden")
-  endif()
+  ctkFunctionGetCompilerVisibilityFlags(plugin_compile_flags)
 
   # Apply properties to the library target.
   set_target_properties(${lib_name} PROPERTIES
