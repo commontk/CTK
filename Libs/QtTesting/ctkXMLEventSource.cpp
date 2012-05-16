@@ -72,7 +72,7 @@ void ctkXMLEventSource::setContent(const QString& xmlfilename)
   QFile xml(xmlfilename);
   if (!xml.open(QIODevice::ReadOnly))
     {
-    qDebug() << "Failed to load " << xmlfilename;
+    qCritical() << "Failed to load " << xmlfilename;
     return;
     }
 
@@ -81,7 +81,7 @@ void ctkXMLEventSource::setContent(const QString& xmlfilename)
   if (!xmlSchema.load(QUrl::fromLocalFile(":/XML/XMLDescription.xsd")) ||
       !xmlSchema.isValid())
     {
-    qDebug() << "Xml cannot be check.";
+    qCritical() << "Xml cannot be check.";
     return;
     }
 
@@ -200,7 +200,8 @@ bool ctkXMLEventSource::restoreApplicationSettings()
   for(iter = states.begin() ; iter!=states.end() ; ++iter)
     {
     iter.key()->setProperty(iter.value().toLatin1(),
-                            QVariant(this->OldSettings.value(iter.value())));
+                            QVariant(this->OldSettings.value(
+                              QString("appsetting_%1").arg(iter.value()))));
     }
 
 
@@ -219,7 +220,13 @@ QMap<QString, QString> ctkXMLEventSource::recoverSettingsFromXML()
     if (!this->XMLStream->name().isEmpty() &&
         this->XMLStream->tokenType() == QXmlStreamReader::StartElement)
       {
-      settings.insert(this->XMLStream->name().toString(),
+      QString key = this->XMLStream->name().toString();
+      // There might be multiple appsetting elements, ensure key is unique
+      if (this->XMLStream->name().toString() == "appsetting")
+        {
+        key += "_" + this->XMLStream->attributes().value("command").toString();
+        }
+      settings.insert(key,
                       this->XMLStream->attributes().value("arguments").toString());
       }
     }
