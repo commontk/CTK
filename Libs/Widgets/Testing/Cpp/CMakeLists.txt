@@ -36,7 +36,7 @@ set(TEST_SOURCES
   ctkFlatProxyModelTest.cpp
   ctkFittedTextBrowserTest1.cpp
   ctkFlowLayoutTest1.cpp
-  ctkFontButtonTest1.cpp
+  ctkFontButtonTest.cpp
   ctkLayoutManagerTest1.cpp
   ctkMaterialPropertyPreviewLabelTest1.cpp
   ctkMaterialPropertyWidgetTest1.cpp
@@ -171,6 +171,7 @@ set(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
   ctkFlatProxyModelTest.cpp
+  ctkFontButtonTest.cpp
   ctkMessageBoxDontShowAgainTest.cpp
   ctkRangeSliderTest.cpp
   )
@@ -226,7 +227,7 @@ SIMPLE_TEST( ctkFlatProxyModelTest )
 SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkFlowLayoutTest1 )
-SIMPLE_TEST( ctkFontButtonTest1 )
+SIMPLE_TEST( ctkFontButtonTest )
 SIMPLE_TEST( ctkLayoutManagerTest1 )
 SIMPLE_TEST( ctkMaterialPropertyPreviewLabelTest1 )
 SIMPLE_TEST( ctkMaterialPropertyWidgetTest1 )
