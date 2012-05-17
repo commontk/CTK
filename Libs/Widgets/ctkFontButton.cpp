@@ -22,6 +22,8 @@
 #include <QApplication>
 #include <QDebug>
 #include <QFontDialog>
+#include <QMetaEnum>
+#include <QMetaObject>
 
 // CTK includes
 #include "ctkFontButton.h"
@@ -37,8 +39,11 @@ protected:
 public:
   ctkFontButtonPrivate(ctkFontButton& object);
   void init();
+  void updateText();
+  QString fullNameWeight()const;
 
   QFont Font;
+  QString FontTextFormat;
 };
 
 //-----------------------------------------------------------------------------
@@ -46,16 +51,72 @@ ctkFontButtonPrivate::ctkFontButtonPrivate(ctkFontButton& object)
   :q_ptr(&object)
 {
   this->Font = qApp->font();
+  this->FontTextFormat = "fff-sss";
 }
 
 //-----------------------------------------------------------------------------
 void ctkFontButtonPrivate::init()
 {
   Q_Q(ctkFontButton);
-  q->setFont(this->Font);
-  q->setText(this->Font.family());
-  
   QObject::connect(q, SIGNAL(clicked()), q, SLOT(browseFont()));
+
+  this->updateText();
+}
+
+
+//-----------------------------------------------------------------------------
+QString ctkFontButtonPrivate::fullNameWeight()const
+{
+  /** \todo: QFont:Weight is not yet in the meta object system
+  QMetaObject meta = QFont::staticMetaObject;
+  for (int i = 0; i < meta.enumeratorCount(); ++i)
+    {
+    QMetaEnum metaEnum = meta.enumerator(i);
+    if (metaEnum.name() == "Weight")
+      {
+      return QString(metaEnum.valueToKey(this->Font.weight()));
+      }
+    }
+  */
+  switch (this->Font.weight())
+    {
+    case QFont::Light:
+      return QString("Light");
+    case QFont::Normal:
+      return QString("Normal");
+    case QFont::DemiBold:
+      return QString("DemiBold");
+    case QFont::Bold:
+      return QString("Bold");
+    case QFont::Black:
+      return QString("Black");
+    default:
+      return QString();
+    }
+  return QString();
+}
+
+//-----------------------------------------------------------------------------
+void ctkFontButtonPrivate::updateText()
+{
+  Q_Q(ctkFontButton);
+  QString text = this->FontTextFormat;
+  text.replace("fff", this->Font.family());
+  text.replace("sss", QString("%1pt").arg(this->Font.pointSize()));
+  text.replace("ss", QString("%1").arg(this->Font.pointSize()));
+  text.replace("www", this->fullNameWeight());
+  text.replace("ww", QString("%1").arg(this->Font.weight()));
+  text.replace("biu", QString("%1%2%3")
+    .arg(this->Font.bold() ? 'b' : '-')
+    .arg(this->Font.italic() ? 'i' : '-')
+    .arg(this->Font.underline() ? 'u' : '-'));
+  text.replace("bbb", this->Font.bold() ? "bold" : "");
+  text.replace("bb", this->Font.bold() ? "b" : "");
+  text.replace("iii", this->Font.italic() ? "italic" : "");
+  text.replace("ii", this->Font.italic() ? "i" : "");
+  text.replace("uuu", this->Font.underline() ? "underline" : "");
+  text.replace("uu", this->Font.underline() ? "u" : "");
+  q->setText(text);
 }
 
 //-----------------------------------------------------------------------------
@@ -66,16 +127,16 @@ ctkFontButton::ctkFontButton(QWidget * parentWidget)
   Q_D(ctkFontButton);
   d->init();
 }
-    
+
 //-----------------------------------------------------------------------------
-ctkFontButton::ctkFontButton(const QFont& font, 
+ctkFontButton::ctkFontButton(const QFont& font,
                              QWidget * parentWidget)
   : QPushButton(parentWidget)
   , d_ptr(new ctkFontButtonPrivate(*this))
 {
   Q_D(ctkFontButton);
   d->init();
-  this->setFont(font);
+  this->setCurrentFont(font);
 }
 
 //-----------------------------------------------------------------------------
@@ -96,7 +157,7 @@ void ctkFontButton::setCurrentFont(const QFont& newFont)
   d->Font = newFont;
 
   this->setFont(newFont);
-  this->setText(newFont.family());
+  d->updateText();
 
   emit currentFontChanged(newFont);
 }
@@ -119,3 +180,19 @@ void ctkFontButton::browseFont()
     this->setCurrentFont(newFont);
     }
 }
+
+//-----------------------------------------------------------------------------
+void ctkFontButton::setFontTextFormat(const QString& fontTextFormat)
+{
+  Q_D(ctkFontButton);
+  d->FontTextFormat = fontTextFormat;
+  d->updateText();
+}
+
+//-----------------------------------------------------------------------------
+QString ctkFontButton::fontTextFormat()const
+{
+  Q_D(const ctkFontButton);
+  return d->FontTextFormat;
+}
+
