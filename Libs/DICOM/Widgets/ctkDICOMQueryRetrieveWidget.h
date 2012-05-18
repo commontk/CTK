@@ -47,6 +47,9 @@ public:
   QMap<QString,QVariant> getServerParameters();
 
   QSharedPointer<ctkDICOMDatabase> retrieveDatabase()const;
+  
+  /// enable or disable ctk progress bars
+  void                   useProgressDialog(bool enable);
 
 public Q_SLOTS:
   void setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> retrieveDatabase);
