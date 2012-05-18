@@ -111,13 +111,13 @@ void ctkConsolePrivate::init()
   this->CommandTextColor = QColor(0, 0, 150); // Blue
   this->WelcomeTextColor = QColor(0, 0, 255); // Dark Blue
 
-  QFont f;
-  f.setFamily("Courier");
-  f.setStyleHint(QFont::TypeWriter);
-  f.setFixedPitch(true);
+  QFont shellFont;
+  shellFont.setFamily("Courier");
+  shellFont.setStyleHint(QFont::TypeWriter);
+  shellFont.setFixedPitch(true);
 
   QTextCharFormat format;
-  format.setFont(f);
+  format.setFont(shellFont);
   format.setForeground(this->OutputTextColor);
   this->setCurrentCharFormat(format);
 
@@ -686,6 +686,22 @@ void ctkConsole::setFormat(const QTextCharFormat& Format)
 {
   Q_D(ctkConsole);
   d->setCurrentCharFormat(Format);
+}
+
+//-----------------------------------------------------------------------------
+QFont ctkConsole::shellFont() const
+{
+  Q_D(const ctkConsole);
+  return d->currentFont();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::setShellFont(const QFont& font)
+{
+  Q_D(ctkConsole);
+  d->selectAll();
+  d->setCurrentFont(font);
+  d->moveCursor(d->textCursor().End); // Reset cursor to undo highlighting
 }
 
 //-----------------------------------------------------------------------------
