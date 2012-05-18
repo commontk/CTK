@@ -102,6 +102,12 @@ public:
   /// Sets formatting that will be used by printMessage()
   void setFormat(const QTextCharFormat& Format);
 
+  /// Returns current font of python shell
+  QFont shellFont() const;
+
+  /// Sets font of python shell
+  void setShellFont(const QFont& font);
+
   /// Return the completer of this console
   ctkConsoleCompleter* completer() const;
 
