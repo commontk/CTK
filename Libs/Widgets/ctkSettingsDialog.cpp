@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QMap>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSettings>
 
@@ -78,7 +79,7 @@ void ctkSettingsDialogPrivate::init()
   this->SettingsButtonBox->button(QDialogButtonBox::RestoreDefaults)->setToolTip(
     q->tr("Restore settings to their default values."
     "To cancel a \"Restore\", you can \"Reset\" the settings."));
-  this->setResetButton(false);
+  q->setResetButton(false);
 
   q->setSettings(new QSettings(q));
 
@@ -308,7 +309,14 @@ void ctkSettingsDialog::onDialogButtonClicked(QAbstractButton* button)
       this->resetSettings();
       break;
     case QDialogButtonBox::RestoreDefaults:
-      this->restoreDefaultSettings();
+      if (QMessageBox::warning(this,"Restore all settings",
+            "Are you sure you want to reset\n"
+            "all settings to their default values?\n",
+            QMessageBox::RestoreDefaults, QMessageBox::Cancel)
+          == QMessageBox::RestoreDefaults)
+        {
+        this->restoreDefaultSettings();
+        }
       break;
     default:
       break;
