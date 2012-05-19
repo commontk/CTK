@@ -37,6 +37,11 @@ class ctkSettingsPanel;
 class CTK_WIDGETS_EXPORT ctkSettingsDialog : public QDialog
 {
   Q_OBJECT
+  /// This property controls whether the reset button is visible in the
+  /// button box or not. The Cancel button is a reset button and closes
+  /// the dialog at the same time.
+  Q_PROPERTY(bool resetButton READ resetButton WRITE setResetButton);
+
 public:
   /// Superclass typedef
   typedef QDialog Superclass;
@@ -55,11 +60,14 @@ public:
 
   /// Uses the ctkSettingsPanel::windowTitle property to show in the list
   void addPanel(ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
-  /// Utility function 
+  /// Utility function
   void addPanel(const QString& label, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
   void addPanel(const QString& label, const QIcon& icon, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
 
   void adjustTreeWidgetToContents();
+
+  bool resetButton()const;
+  void setResetButton(bool show);
 
 public Q_SLOTS:
   void setCurrentPanel(ctkSettingsPanel* panel);

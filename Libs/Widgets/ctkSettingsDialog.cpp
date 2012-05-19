@@ -69,6 +69,17 @@ void ctkSettingsDialogPrivate::init()
 
   this->setupUi(q);
 
+  this->SettingsButtonBox->button(QDialogButtonBox::Ok)->setToolTip(
+    q->tr("Apply settings and close dialog."));
+  this->SettingsButtonBox->button(QDialogButtonBox::Cancel)->setToolTip(
+    q->tr("Reject settings changes and close dialog."));
+  this->SettingsButtonBox->button(QDialogButtonBox::Reset)->setToolTip(
+    q->tr("Reset settings to their values when the dialog opened"));
+  this->SettingsButtonBox->button(QDialogButtonBox::RestoreDefaults)->setToolTip(
+    q->tr("Restore settings to their default values."
+    "To cancel a \"Restore\", you can \"Reset\" the settings."));
+  this->setResetButton(false);
+
   q->setSettings(new QSettings(q));
 
   QObject::connect(this->SettingsTreeWidget,
@@ -327,3 +338,19 @@ bool ctkSettingsDialog::event(QEvent* event)
     }
   return this->Superclass::event(event);
 }
+
+// -------------------------------------------------------------------------
+bool ctkSettingsDialog::resetButton()const
+{
+  Q_D(const ctkSettingsDialog);
+  return d->SettingsButtonBox->button(QDialogButtonBox::Reset)->isVisibleTo(
+    const_cast<QDialogButtonBox*>(d->SettingsButtonBox));
+}
+
+// -------------------------------------------------------------------------
+void ctkSettingsDialog::setResetButton(bool show)
+{
+  Q_D(ctkSettingsDialog);
+  d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setVisible(show);
+}
+
