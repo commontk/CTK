@@ -59,8 +59,8 @@ set(TEST_SOURCES
   ctkScreenshotDialogTest1.cpp
   ctkSearchBoxTest1.cpp
   ctkSearchBoxTest2.cpp
+  ctkSettingsPanelTest.cpp
   ctkSettingsPanelTest1.cpp
-  ctkSettingsPanelTest2.cpp
   ctkSettingsTest1.cpp
   ctkSettingsDialogTest1.cpp
   ctkSignalMapperTest1.cpp
@@ -174,6 +174,7 @@ QT4_GENERATE_MOCS(
   ctkFontButtonTest.cpp
   ctkMessageBoxDontShowAgainTest.cpp
   ctkRangeSliderTest.cpp
+  ctkSettingsPanelTest.cpp
   )
 set(Tests_UI_CPP)
 if(TEST_UI_FORMS)
@@ -250,8 +251,8 @@ SIMPLE_TEST( ctkScreenshotDialogTest1 )
 SIMPLE_TEST( ctkSearchBoxTest1 )
 SIMPLE_TEST( ctkSearchBoxTest2 )
 SIMPLE_TEST( ctkSettingsDialogTest1 )
+SIMPLE_TEST( ctkSettingsPanelTest )
 SIMPLE_TEST( ctkSettingsPanelTest1 )
-SIMPLE_TEST( ctkSettingsPanelTest2 )
 SIMPLE_TEST( ctkSettingsTest1 )
 SIMPLE_TEST( ctkSignalMapperTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest1 )

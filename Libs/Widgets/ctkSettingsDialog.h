@@ -69,6 +69,11 @@ public:
   bool resetButton()const;
   void setResetButton(bool show);
 
+  /// True if at least one OptionRestartRequired setting is changed.
+  /// It doesn't mean the user accepted to restart the application
+  /// \sa restartRequired
+  bool isRestartRequired()const;
+
 public Q_SLOTS:
   void setCurrentPanel(ctkSettingsPanel* panel);
   void setCurrentPanel(const QString& label);
@@ -82,6 +87,10 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void settingChanged(const QString& key, const QVariant& value);
+  /// Signal fired when the user accepts to restart the application because
+  /// some OptionRestartRequired settings have changed.
+  /// \sa isrestartRequired
+  void restartRequested();
 
 protected Q_SLOTS:
   void onSettingChanged(const QString& key, const QVariant& newVal);
