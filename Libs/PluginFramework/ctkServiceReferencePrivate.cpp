@@ -67,19 +67,18 @@ QObject* ctkServiceReferencePrivate::getService(QSharedPointer<ctkPlugin> plugin
           {
             s = serviceFactory->getService(plugin, ctkServiceRegistration(registration));
           }
-          catch (const std::exception& pe)
+          catch (const ctkException& pe)
           {
             ctkServiceException se("ctkServiceFactory throw an exception",
-                                   ctkServiceException::FACTORY_EXCEPTION, &pe);
-            plugin->d_func()->fwCtx->listeners.frameworkError
-                (registration->plugin->q_func(), se);
+                                   ctkServiceException::FACTORY_EXCEPTION, pe);
+            plugin->d_func()->fwCtx->listeners.frameworkError(registration->plugin->q_func(), se);
             return 0;
           }
-          if (s == 0) {
+          if (s == 0)
+          {
             ctkServiceException se("ctkServiceFactory produced null",
                                    ctkServiceException::FACTORY_ERROR);
-            plugin->d_func()->fwCtx->listeners.frameworkError
-                (registration->plugin->q_func(), se);
+            plugin->d_func()->fwCtx->listeners.frameworkError(registration->plugin->q_func(), se);
             return 0;
           }
           for (QStringListIterator i(classes); i.hasNext(); )
@@ -90,8 +89,7 @@ QObject* ctkServiceReferencePrivate::getService(QSharedPointer<ctkPlugin> plugin
               ctkServiceException se(QString("ctkServiceFactory produced an object ") +
                                      "that did not implement: " + cls,
                                      ctkServiceException::FACTORY_ERROR);
-              plugin->d_func()->fwCtx->listeners.frameworkError
-                  (registration->plugin->q_func(), se);
+              plugin->d_func()->fwCtx->listeners.frameworkError(registration->plugin->q_func(), se);
               return 0;
             }
           }
@@ -159,7 +157,7 @@ bool ctkServiceReferencePrivate::ungetService(QSharedPointer<ctkPlugin> plugin, 
         qobject_cast<ctkServiceFactory*>(
               registration->getService())->ungetService(plugin, ctkServiceRegistration(registration), sfi);
       }
-      catch (const std::exception& e)
+      catch (const ctkException& e)
       {
         plugin->d_func()->fwCtx->listeners.frameworkError(registration->plugin->q_func(), e);
       }

@@ -42,7 +42,7 @@ ctkPlugin::ctkPlugin()
 //----------------------------------------------------------------------------
 void ctkPlugin::init(ctkPluginPrivate* dd)
 {
-  if (d_ptr) throw std::logic_error("ctkPlugin already initialized");
+  if (d_ptr) throw ctkIllegalStateException("ctkPlugin already initialized");
   d_ptr = dd;
 }
 
@@ -51,7 +51,7 @@ void ctkPlugin::init(const QWeakPointer<ctkPlugin>& self,
                      ctkPluginFrameworkContext* fw,
                      QSharedPointer<ctkPluginArchive> pa)
 {
-  if (d_ptr) throw std::logic_error("ctkPlugin already initialized");
+  if (d_ptr) throw ctkIllegalStateException("ctkPlugin already initialized");
   d_ptr = new ctkPluginPrivate(self, fw, pa);
 }
 
@@ -190,13 +190,13 @@ void ctkPlugin::update(const QUrl& updateLocation)
   case STARTING:
     // Wait for RUNNING state, this doesn't happen now
     // since we are synchronized.
-    throw std::logic_error("Plugin is in STARTING state");
+    throw ctkIllegalStateException("Plugin is in STARTING state");
   case STOPPING:
     // Wait for RESOLVED state, this doesn't happen now
     // since we are synchronized.
-    throw std::logic_error("Plugin is in STOPPING state");
+    throw ctkIllegalStateException("Plugin is in STOPPING state");
   case UNINSTALLED:
-    throw std::logic_error("Plugin is in UNINSTALLED state");
+    throw ctkIllegalStateException("Plugin is in UNINSTALLED state");
   }
 }
 
@@ -235,12 +235,12 @@ void ctkPlugin::uninstall()
           exception = d->stop0();
         }
       }
-      catch (const std::exception& e)
+      catch (const ctkException& e)
       {
         // Force to install
         d->setStateInstalled(false);
         d->operationLock.wakeAll();
-        exception = new ctkRuntimeException("Stopping plug-in failed", &e);
+        exception = new ctkRuntimeException("Stopping plug-in failed", e);
       }
       d->operation.fetchAndStoreOrdered(ctkPluginPrivate::UNINSTALLING);
       if (exception != 0)
@@ -292,7 +292,7 @@ void ctkPlugin::uninstall()
       {
         if (!ctk::removeDirRecursively(d->pluginDir.absolutePath()))
         {
-          d->fwCtx->listeners.frameworkError(this->d_func()->q_func(), std::runtime_error("Failed to delete plugin data"));
+          d->fwCtx->listeners.frameworkError(this->d_func()->q_func(), ctkRuntimeException("Failed to delete plugin data"));
         }
         d->pluginDir.setFile("");
       }

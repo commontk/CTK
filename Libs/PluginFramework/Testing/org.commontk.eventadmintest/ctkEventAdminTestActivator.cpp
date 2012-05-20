@@ -57,8 +57,8 @@ void ctkEventAdminTestActivator::start(ctkPluginContext* context)
   QString symbolicName = context->getProperty("event.impl").toString();
   if (symbolicName.isEmpty())
   {
-    throw std::logic_error("Framework property 'event.impl' containing the symbolic "
-                           "name of the EventAdmin implementation not found!");
+    throw ctkRuntimeException("Framework property 'event.impl' containing the symbolic "
+                              "name of the EventAdmin implementation not found!");
   }
 
   long eventPluginId = -1;
@@ -75,7 +75,7 @@ void ctkEventAdminTestActivator::start(ctkPluginContext* context)
   {
     QString msg = QString("The EventAdmin implementation '%1' is not installed.")
         .arg(symbolicName);
-    throw std::logic_error(msg.toStdString());
+    throw ctkRuntimeException(msg);
   }
 
   topicWildcardTestSuite = new ctkEATopicWildcardTestSuite(context, eventPluginId, false);

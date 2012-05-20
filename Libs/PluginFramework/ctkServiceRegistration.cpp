@@ -191,11 +191,10 @@ void ctkServiceRegistration::unregister()
                                                                        *this,
                                                                        obj);
           }
-          catch (const std::exception& ue)
+          catch (const ctkException& ue)
           {
             ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR, d->plugin->q_func(), ue);
-            d->plugin->fwCtx->listeners
-                .emitFrameworkEvent(pfwEvent);
+            d->plugin->fwCtx->listeners.emitFrameworkEvent(pfwEvent);
           }
         }
       }

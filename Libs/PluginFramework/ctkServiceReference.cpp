@@ -127,9 +127,9 @@ bool ctkServiceReference::operator<(const ctkServiceReference& reference) const
   bool sameFw = d_func()->registration->plugin->fwCtx == reference.d_func()->registration->plugin->fwCtx;
   if (!sameFw)
   {
-    throw std::invalid_argument("Can not compare service references "
-                                "belonging to different framework "
-                                "instances.");
+    throw ctkInvalidArgumentException("Can not compare service references "
+                                      "belonging to different framework "
+                                      "instances.");
   }
 
   int r1 = getProperty(ctkPluginConstants::SERVICE_RANKING).toInt();

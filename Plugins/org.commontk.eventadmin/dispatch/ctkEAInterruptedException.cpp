@@ -27,3 +27,17 @@ ctkEAInterruptedException::ctkEAInterruptedException()
 {
 
 }
+
+ctkEAInterruptedException::~ctkEAInterruptedException() throw()
+{
+}
+
+const char *ctkEAInterruptedException::name() const throw()
+{
+  return "ctkEAInterruptedException";
+}
+
+ctkEAInterruptedException *ctkEAInterruptedException::clone() const
+{
+  return new ctkEAInterruptedException(*this);
+}

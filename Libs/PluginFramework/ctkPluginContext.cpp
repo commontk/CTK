@@ -159,7 +159,7 @@ QObject* ctkPluginContext::getService(const ctkServiceReference& reference)
 
   if (!reference)
   {
-    throw std::invalid_argument("Default constructed ctkServiceReference is not a valid input to getService()");
+    throw ctkInvalidArgumentException("Default constructed ctkServiceReference is not a valid input to getService()");
   }
   ctkServiceReference internalRef(reference);
   return internalRef.d_func()->getService(d->plugin->q_func());
@@ -191,7 +191,7 @@ bool ctkPluginContext::connectPluginListener(const QObject* receiver, const char
   }
   else
   {
-    throw std::invalid_argument("Only Qt::DirectConnection, Qt::QueuedConnection, or Qt::BlockingQueuedConnection are allowed as type argument.");
+    throw ctkInvalidArgumentException("Only Qt::DirectConnection, Qt::QueuedConnection, or Qt::BlockingQueuedConnection are allowed as type argument.");
   }
 }
 

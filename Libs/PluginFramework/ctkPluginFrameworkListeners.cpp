@@ -21,6 +21,7 @@
 
 #include "ctkPluginFrameworkListeners_p.h"
 
+#include "ctkException.h"
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginConstants.h"
 #include "ctkLDAPExpr_p.h"
@@ -153,7 +154,7 @@ QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
 }
 
 //----------------------------------------------------------------------------
-void ctkPluginFrameworkListeners::frameworkError(QSharedPointer<ctkPlugin> p, const std::exception& e)
+void ctkPluginFrameworkListeners::frameworkError(QSharedPointer<ctkPlugin> p, const ctkException& e)
 {
   emit frameworkEvent(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR, p, e));
 }
@@ -214,10 +215,15 @@ void ctkPluginFrameworkListeners::serviceChanged(
       ++n;
       l.invokeSlot(evt);
     }
-    catch (const std::exception& pe)
+    catch (const ctkException& pe)
     {
       frameworkError(l.getPlugin(), pe);
     }
+    catch (const std::exception& e)
+    {
+      frameworkError(l.getPlugin(), ctkRuntimeException(e.what()));
+    }
+
     //break;
     //}
     //}

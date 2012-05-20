@@ -94,7 +94,7 @@ void ctkEAScenario1EventConsumer::cleanup()
       serviceRegistration.unregister();
     }
   }
-  catch (const std::logic_error&)
+  catch (const ctkException&)
   {}
 
   if (error)

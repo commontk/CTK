@@ -45,7 +45,7 @@ ctkRequirePlugin::ctkRequirePlugin(ctkPluginPrivate* requestor,
                    + ". The value must be either '"
                    + ctkPluginConstants::RESOLUTION_MANDATORY + "' or '"
                    + ctkPluginConstants::RESOLUTION_OPTIONAL  + "'.";
-    throw std::invalid_argument(what.toStdString());
+    throw ctkInvalidArgumentException(what);
     }
 
 

@@ -39,8 +39,8 @@ void ctkConfigAdminTestActivator::start(ctkPluginContext* context)
   QString symbolicName = context->getProperty("cm.impl").toString();
   if (symbolicName.isEmpty())
   {
-    throw std::logic_error("Framework property 'cm.impl' containing the symbolic "
-                           "name of the ConfigAdmin implementation not found!");
+    throw ctkRuntimeException("Framework property 'cm.impl' containing the symbolic "
+                              "name of the ConfigAdmin implementation not found!");
   }
 
   long cmPluginId = -1;
@@ -57,7 +57,7 @@ void ctkConfigAdminTestActivator::start(ctkPluginContext* context)
   {
     QString msg = QString("The ConfigAdmin implementation '%1' is not installed.")
         .arg(symbolicName);
-    throw std::logic_error(msg.toStdString());
+    throw ctkRuntimeException(msg);
   }
 
   ctkDictionary props;

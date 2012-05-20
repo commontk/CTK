@@ -36,8 +36,8 @@ void ctkMetaTypeTestActivator::start(ctkPluginContext* context)
   QString symbolicName = context->getProperty("metatype.impl").toString();
   if (symbolicName.isEmpty())
   {
-    throw std::logic_error("Framework property 'metatype.impl' containing the symbolic "
-                           "name of the MetaType implementation not found!");
+    throw ctkRuntimeException("Framework property 'metatype.impl' containing the symbolic "
+                              "name of the MetaType implementation not found!");
   }
 
   long mtPluginId = -1;
@@ -54,7 +54,7 @@ void ctkMetaTypeTestActivator::start(ctkPluginContext* context)
   {
     QString msg = QString("The MetaType implementation '%1' is not installed.")
         .arg(symbolicName);
-    throw std::logic_error(msg.toStdString());
+    throw ctkRuntimeException(msg);
   }
 
   ctkDictionary props;
