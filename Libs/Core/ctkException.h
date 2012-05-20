@@ -180,4 +180,8 @@ CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException& exc);
     return new CLS(*this);                                               \
   }
 
+CTK_DECLARE_EXCEPTION(CTK_CORE_EXPORT, ctkRuntimeException, ctkException)
+CTK_DECLARE_EXCEPTION(CTK_CORE_EXPORT, ctkInvalidArgumentException, ctkRuntimeException)
+CTK_DECLARE_EXCEPTION(CTK_CORE_EXPORT, ctkIllegalStateException, ctkRuntimeException)
+
 #endif // __ctkException_h

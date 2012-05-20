@@ -123,3 +123,7 @@ QDebug operator<<(QDebug dbg, const ctkException& exc)
   dbg << exc.what();
   return dbg.maybeSpace();
 }
+
+CTK_IMPLEMENT_EXCEPTION(ctkRuntimeException, ctkException, "ctkRuntimeException")
+CTK_IMPLEMENT_EXCEPTION(ctkInvalidArgumentException, ctkRuntimeException, "ctkInvalidArgumentException")
+CTK_IMPLEMENT_EXCEPTION(ctkIllegalStateException, ctkRuntimeException, "ctkIllegalStateException")
