@@ -28,27 +28,27 @@
 
 // --------------------------------------------------------------------------
 ctkException::ctkException(const QString& msg)
-  : msg(msg), nestedException(0)
+  : Msg(msg), NestedException(0)
 {
 }
 
 // --------------------------------------------------------------------------
 ctkException::ctkException(const QString& msg, const ctkException& cause)
-  : msg(msg), nestedException(cause.clone())
+  : Msg(msg), NestedException(cause.clone())
 {
 }
 
 // --------------------------------------------------------------------------
 ctkException::ctkException(const ctkException& exc)
-  : std::exception(exc), msg(exc.msg)
+  : std::exception(exc), Msg(exc.Msg)
 {
-  nestedException = exc.nestedException ? exc.nestedException->clone() : 0;
+  NestedException = exc.NestedException ? exc.NestedException->clone() : 0;
 }
 
 // --------------------------------------------------------------------------
 ctkException::~ctkException() throw()
 {
-  delete nestedException;
+  delete NestedException;
 }
 
 // --------------------------------------------------------------------------
@@ -56,9 +56,9 @@ ctkException& ctkException::operator=(const ctkException& exc)
 {
   if (&exc != this)
   {
-    delete nestedException;
-    msg = exc.msg;
-    nestedException = exc.nestedException ? exc.nestedException->clone() : 0;
+    delete NestedException;
+    Msg = exc.Msg;
+    NestedException = exc.NestedException ? exc.NestedException->clone() : 0;
   }
   return *this;
 }
@@ -66,14 +66,14 @@ ctkException& ctkException::operator=(const ctkException& exc)
 // --------------------------------------------------------------------------
 const ctkException* ctkException::cause() const throw()
 {
-  return nestedException;
+  return NestedException;
 }
 
 // --------------------------------------------------------------------------
 void ctkException::setCause(const ctkException& cause)
 {
-  delete nestedException;
-  nestedException = cause.clone();
+  delete NestedException;
+  NestedException = cause.clone();
 }
 
 // --------------------------------------------------------------------------
@@ -93,14 +93,14 @@ const char* ctkException::what() const throw()
 {
   static std::string txt;
   txt = std::string(name());
-  if (!msg.isEmpty())
+  if (!Msg.isEmpty())
   {
     txt += ": ";
-    txt += msg.toStdString();
+    txt += Msg.toStdString();
   }
-  if (nestedException)
+  if (NestedException)
   {
-    txt +=  std::string("\n  Caused by: ") + nestedException->what();
+    txt +=  std::string("\n  Caused by: ") + NestedException->what();
   }
   return txt.c_str();
 }

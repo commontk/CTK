@@ -20,8 +20,8 @@
 =============================================================================*/
 
 
-#ifndef CTKEXCEPTION_H
-#define CTKEXCEPTION_H
+#ifndef __ctkException_h
+#define __ctkException_h
 
 // Qt includes
 #include <QString>
@@ -116,8 +116,8 @@ public:
 
 private:
 
-  QString msg;
-  ctkException* nestedException;
+  QString Msg;
+  ctkException* NestedException;
 };
 
 //---------------------------------------------------------------------------
@@ -180,4 +180,4 @@ CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException& exc);
     return new CLS(*this);                                               \
   }
 
-#endif // CTKEXCEPTION_H
+#endif // __ctkException_h
