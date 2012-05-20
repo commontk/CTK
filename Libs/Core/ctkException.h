@@ -48,7 +48,7 @@ public:
    * @brief Create a new ctkException.
    * @param msg The exception message.
    */
-  ctkException(const QString& msg);
+  explicit ctkException(const QString& msg);
 
   /**
    * @brief Create a new ctkException containing another exception as the cause.
@@ -139,7 +139,7 @@ CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException& exc);
   class API CLS : public BASE                         \
   {                                                   \
   public:                                             \
-    CLS(const QString& msg);                          \
+    explicit CLS(const QString& msg);                 \
     CLS(const QString& msg, const ctkException& exc); \
     CLS(const CLS& exc);                              \
     ~CLS() throw();                                   \
