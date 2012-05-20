@@ -175,7 +175,7 @@ CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException& exc);
   {                                                                      \
     return NAME;                                                         \
   }                                                                      \
-  ctkException* CLS::clone() const                                       \
+  CLS* CLS::clone() const                                                \
   {                                                                      \
     return new CLS(*this);                                               \
   }
