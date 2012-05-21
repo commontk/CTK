@@ -699,9 +699,13 @@ QFont ctkConsole::shellFont() const
 void ctkConsole::setShellFont(const QFont& font)
 {
   Q_D(ctkConsole);
+  int savedPosition = d->textCursor().position();
   d->selectAll();
   d->setCurrentFont(font);
-  d->moveCursor(d->textCursor().End); // Reset cursor to undo highlighting
+  QTextCursor tc = d->textCursor();
+  tc.clearSelection();
+  tc.setPosition(savedPosition);
+  d->setTextCursor(tc);
 }
 
 //-----------------------------------------------------------------------------
