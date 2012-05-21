@@ -163,9 +163,6 @@ public:
   /// Secondary prompt
   QString Ps2;
 
-  /// Font of all text in shell
-  QFont ShellFont;
-
   ctkConsole::EditorHints EditorHints;
 
   bool ScrollbarAtBottom;
