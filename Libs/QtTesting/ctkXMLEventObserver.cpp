@@ -77,16 +77,19 @@ void ctkXMLEventObserver::recordApplicationSettings()
       }
 
     // Save extra properties from the application
-    QMap<QObject*, QString> states = this->TestUtility->objectStateProperty();
-    QMap<QObject*, QString>::iterator iter;
+    QMap<QObject*, QStringList> states = this->TestUtility->objectStateProperty();
+    QMap<QObject*, QStringList>::iterator iter;
     for(iter = states.begin() ; iter!=states.end() ; ++iter)
       {
-      this->recordApplicationSetting(
-          QString("appsetting"),
-          iter.key()->metaObject()->className(),
-          iter.value(),
-          iter.key()->property(iter.value().toLatin1()).toString()
-          );
+      foreach(QString property, iter.value())
+        {
+        this->recordApplicationSetting(
+            QString("appsetting"),
+            iter.key()->metaObject()->className(),
+            property,
+            iter.key()->property(property.toLatin1()).toString()
+            );
+        }
       }
 
     this->XMLStream->writeEndElement();
