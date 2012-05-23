@@ -156,16 +156,19 @@ bool ctkXMLEventSource::settingsUpToData()
   QMainWindow* window = this->mainWindow();
 
   bool result = true;
-  QMap<QObject*, QString> states = this->TestUtility->objectStateProperty();
+  QMap<QObject*, QStringList> states = this->TestUtility->objectStateProperty();
 
   result &= (this->OldSettings.value("geometry") == QString(window->saveGeometry().toHex()));
   result &= (this->OldSettings.value("state") == QString(window->saveState().toHex()));
 
-  QMap<QObject*, QString>::iterator iter;
+  QMap<QObject*, QStringList>::iterator iter;
   for(iter = states.begin() ; iter!=states.end() ; ++iter)
     {
-    result &= (this->OldSettings.value(iter.value()) ==
-              iter.key()->property(iter.value().toLatin1()).toString());
+    foreach(QString property, iter.value())
+      {
+      result &= (this->OldSettings.value(QString("appsetting_%1").arg(property)) ==
+                iter.key()->property(property.toLatin1()).toString());
+      }
     }
 
   return result;
@@ -177,7 +180,8 @@ bool ctkXMLEventSource::restoreApplicationSettings()
   QMainWindow* window = this->mainWindow();
 
   bool result = false;
-  QMap<QObject*, QString> states = this->TestUtility->objectStateProperty();
+  QMap<QObject*, QStringList> states = this->TestUtility->objectStateProperty();
+  qDebug() << "restoreApplicationSetting" << states;
 
   if (!this->Automatic)
     {
@@ -196,12 +200,15 @@ bool ctkXMLEventSource::restoreApplicationSettings()
   result = window->restoreGeometry(
               QByteArray::fromHex(QByteArray(this->OldSettings.value("geometry").toLocal8Bit().constData())));
 
-  QMap<QObject*, QString>::iterator iter;
+  QMap<QObject*, QStringList>::iterator iter;
   for(iter = states.begin() ; iter!=states.end() ; ++iter)
     {
-    iter.key()->setProperty(iter.value().toLatin1(),
-                            QVariant(this->OldSettings.value(
-                              QString("appsetting_%1").arg(iter.value()))));
+    foreach(QString property, iter.value())
+      {
+      iter.key()->setProperty(property.toLatin1(),
+                              QVariant(this->OldSettings.value(
+                              QString("appsetting_%1").arg(property))));
+      }
     }
 
 
@@ -226,7 +233,7 @@ QMap<QString, QString> ctkXMLEventSource::recoverSettingsFromXML()
         {
         key += "_" + this->XMLStream->attributes().value("command").toString();
         }
-      settings.insert(key,
+      settings[key].append(
                       this->XMLStream->attributes().value("arguments").toString());
       }
     }
