@@ -60,6 +60,20 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  button.setText("Click here");
+  if (button.text() != "Click here")
+    {
+    std::cerr << "ctkDirectoryButton::setText() failed." << std::endl;
+    return EXIT_FAILURE;
+    }
+  // Restore text to directory path
+  button.setText(QString());
+  if (button.text() != QString())
+    {
+    std::cerr << "ctkDirectoryButton::setText() failed." << std::endl;
+    return EXIT_FAILURE;
+    }
+
   if (button.icon().pixmap(20).toImage() !=
       defaultIcon.pixmap(20).toImage())
     {

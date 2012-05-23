@@ -44,7 +44,14 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString directory READ directory WRITE setDirectory NOTIFY directoryChanged USER true)
+  /// This property holds the title of the file dialog used to select a new directory
+  /// If caption is not set, internally use QWidget::tooltip()
   Q_PROPERTY(QString caption READ caption WRITE setCaption)
+  /// This property holds the text to display on the button. If null (by
+  /// default), the current directory path is displayed instead.
+  Q_PROPERTY(QString text READ text WRITE setText)
+  /// This property holds the icon displayed on the button. QStyle::SP_DirIcon
+  /// by default.
   Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
   /// public API. We need to create a custom property that will be used when
@@ -80,21 +87,30 @@ public:
   /// Creates a ctkDirectoryButton that points to the given directory path
   ctkDirectoryButton(const QString& directory, QWidget * parent = 0);
   ctkDirectoryButton(const QIcon& icon, const QString& directory, QWidget * parent = 0);
-  
+
   /// Destructor
   virtual ~ctkDirectoryButton();
 
   /// Set/get the current directory
   /// If path is empty, the program's working directory, ("."), is used.
-  /// By default, \a directory is the current working directory. 
+  /// By default, \a directory is the current working directory.
   void setDirectory(const QString& path);
   QString directory()const;
 
-  ///
-  /// The title of the file dialog used to select a new directory
-  /// If caption is not set, internally use QWidget::tooltip()
+  /// Set the caption of the directory dialog
+  /// \sa caption
   void setCaption(const QString& caption);
+  /// Get the caption of the directory dialog
+  /// \sa setCaption
   const QString& caption()const;
+
+  /// Set the text of the button. If null (not just empty), the directory path
+  /// is used as text. This doesn't set the "directory", just the displayed text.
+  /// \sa setDirectory
+  void setText(const QString& text);
+  /// Return the text of the button if any. Doesn't return the directory path.
+  /// \sa directory
+  const QString& text()const;
 
   ///
   /// The icon of the button
@@ -119,11 +135,16 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   /// directoryChanged is emitted when the current directory changes.
-  /// Programatically or by the user via the file dialog that pop up when 
+  /// Programatically or by the user via the file dialog that pop up when
   /// clicking on the button.
+  /// \sa directorySelected
   void directoryChanged(const QString&);
+
   /// directorySelected() is emitted anytime the current directory is set
-  /// (even if the new directory is the same than the current value)
+  /// (even if the new directory is the same than the current value). This is
+  /// particularly useful when the browse dialog is accepted without changing
+  /// the current directory.
+  /// \sa directoryChanged
   void directorySelected(const QString&);
 protected:
   QScopedPointer<ctkDirectoryButtonPrivate> d_ptr;
