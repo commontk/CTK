@@ -132,7 +132,6 @@ QTreeWidgetItem* ctkSettingsDialogPrivate::item(const QString& label)const
 // --------------------------------------------------------------------------
 void ctkSettingsDialogPrivate::updatePanelTitle(ctkSettingsPanel* panel)
 {
-  Q_Q(ctkSettingsDialog);
   QTreeWidgetItem* panelItem = this->item(panel);
   QString title = panelItem->text(0);
   title.replace(QRegExp("\\*$"),"");
@@ -288,7 +287,6 @@ ctkSettingsPanel* ctkSettingsDialog::panel(const QString& label)const
 // --------------------------------------------------------------------------
 void ctkSettingsDialog::accept()
 {
-  Q_D(ctkSettingsDialog);
   bool emitRestartRequested = false;
   if (this->isRestartRequired())
     {
