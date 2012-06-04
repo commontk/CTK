@@ -104,7 +104,7 @@ public:
 
   /**
    * This method can be used to stop the delivery of events. The managers variable is
-   * replaced with a null object that throws an std::logic_error on a call
+   * replaced with a null object that throws an ctkIllegalStateException on a call
    * to <tt>createHandlerTasks()</tt>.
    */
   void stop();

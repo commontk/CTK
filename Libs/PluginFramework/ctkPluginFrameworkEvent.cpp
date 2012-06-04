@@ -23,6 +23,8 @@
 
 #include "ctkPlugin.h"
 
+#include <ctkException.h>
+
 #include <QString>
 #include <QDebug>
 
@@ -79,7 +81,7 @@ bool ctkPluginFrameworkEvent::isNull() const
 }
 
 //----------------------------------------------------------------------------
-ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin, const std::exception& fwException)
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin, const ctkException &fwException)
   : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
 {
 

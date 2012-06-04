@@ -78,7 +78,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
    * Get the PID for this <code>ctkConfiguration</code> object.
    *
    * @return the PID for this <code>ctkConfiguration</code> object.
-   * @throws std::logic_error if this configuration has been deleted
+   * @throws ctkIllegalStateException if this configuration has been deleted
    */
   virtual QString getPid() const = 0;
 
@@ -126,10 +126,10 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
    *
    * @param properties the new set of properties for this configuration
    * @throws ctkIOException if update cannot be made persistent
-   * @throws std::invalid_argument if the <code>ctkDictionary</code> object
+   * @throws ctkInvalidArgumentException if the <code>ctkDictionary</code> object
    *         contains invalid configuration types or contains case variants of
    *         the same key name.
-   * @throws std::logic_error if this configuration has been deleted
+   * @throws ctkIllegalStateException if this configuration has been deleted
    */
   virtual void update(const ctkDictionary& properties) = 0;
 
@@ -149,7 +149,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
    * <code>ctkConfigurationEvent::CM_DELETED</code> event.
    *
    * @throws ctkIOException If delete fails
-   * @throws std::logic_error if this configuration has been deleted
+   * @throws ctkIllegalStateException if this configuration has been deleted
    */
   virtual void remove() = 0;
 
@@ -158,7 +158,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
    * Service Factory, else return a null QString.
    *
    * @return factory PID or <code>null</code>
-   * @throws std::logic_error if this configuration has been deleted
+   * @throws ctkIllegalStateException if this configuration has been deleted
    */
   virtual QString getFactoryPid() const = 0;
 
@@ -178,7 +178,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
    * @see ctkConfigurationPlugin
    * @throws ctkIOException if update cannot access the properties in persistent
    *         storage
-   * @throws std::logic_error if this configuration has been deleted
+   * @throws ctkIllegalStateException if this configuration has been deleted
    */
   virtual void update() = 0;
 
@@ -194,7 +194,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
    * plugin location will be set persistently.
    *
    * @param pluginLocation a plugin location or <code>null</code>.
-   * @throws std::logic_error If this configuration has been deleted.
+   * @throws ctkIllegalStateException If this configuration has been deleted.
    * @throws ctkSecurityException If the caller does not have
    *         <code>ctkConfigurationPermission[*,CONFIGURE]</code>.
    */
@@ -208,7 +208,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfiguration
    *
    * @return location to which this configuration is bound, or
    *         <code>null</code>.
-   * @throws std::logic_error If this <code>Configuration</code> object
+   * @throws ctkIllegalStateException If this <code>Configuration</code> object
    *         has been deleted.
    * @throws ctkSecurityException If the caller does not have
    *         <code>ctkConfigurationPermission[*,CONFIGURE]</code>.

@@ -39,7 +39,7 @@ ctkEACyclicBarrier::ctkEACyclicBarrier(int parties, ctkEARunnable* command)
   : parties_(parties), broken_(false), barrierCommand_(command),
     count_(parties), resets_(0)
 {
-  if (parties <= 0) throw new std::invalid_argument("parties cannot be negative");
+  if (parties <= 0) throw ctkInvalidArgumentException("parties cannot be negative");
   if (barrierCommand_) ++barrierCommand_->ref;
 }
 

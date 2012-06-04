@@ -170,7 +170,7 @@ void ctkPluginFrameworkContext::checkOurPlugin(ctkPlugin* plugin) const
   ctkPluginPrivate* pp = plugin->d_func();
   if (this != pp->fwCtx)
   {
-    throw std::invalid_argument("ctkPlugin does not belong to this framework: " + plugin->getSymbolicName().toStdString());
+    throw ctkInvalidArgumentException("ctkPlugin does not belong to this framework: " + plugin->getSymbolicName());
   }
 }
 

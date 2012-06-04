@@ -102,7 +102,7 @@ void ctkEAFrameworkEventAdapter::frameworkEvent(const ctkPluginFrameworkEvent& e
   {
     getEventAdmin()->postEvent(ctkEvent(topic, properties));
   }
-  catch(const std::logic_error& )
+  catch(const ctkIllegalStateException& )
   {
     // This is o.k. - indicates that we are stopped.
   }

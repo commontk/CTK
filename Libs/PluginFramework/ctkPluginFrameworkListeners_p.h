@@ -82,7 +82,7 @@ public:
    * @param p Plugin which caused the error.
    * @param e The exception.
    */
-  void frameworkError(QSharedPointer<ctkPlugin> p, const std::exception& e);
+  void frameworkError(QSharedPointer<ctkPlugin> p, const ctkException& e);
 
   /**
    * Receive notification that a service has had a change occur in its lifecycle.

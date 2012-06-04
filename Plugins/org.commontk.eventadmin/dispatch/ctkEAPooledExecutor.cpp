@@ -64,7 +64,7 @@ int ctkEAPooledExecutor::getMaximumPoolSize() const
 void ctkEAPooledExecutor::setMaximumPoolSize(int newMaximum)
 {
   QMutexLocker lock(&mutex);
-  if (newMaximum <= 0) throw std::invalid_argument("maximum must be > 0");
+  if (newMaximum <= 0) throw ctkInvalidArgumentException("maximum must be > 0");
   maximumPoolSize_ = newMaximum;
 }
 
@@ -77,7 +77,7 @@ int ctkEAPooledExecutor::getMinimumPoolSize() const
 void ctkEAPooledExecutor::setMinimumPoolSize(int newMinimum)
 {
   QMutexLocker lock(&mutex);
-  if (newMinimum < 0) throw std::invalid_argument("minimum must be >= 0");
+  if (newMinimum < 0) throw ctkInvalidArgumentException("minimum must be >= 0");
   minimumPoolSize_ = newMinimum;
 }
 
@@ -175,7 +175,7 @@ bool ctkEAPooledExecutor::awaitTerminationAfterShutdown(long maxWaitTime) const
   QMutexLocker lock(&mutex);
   QMutexLocker shutdownLock(&shutdownMutex);
   if (!shutdown_)
-    throw std::logic_error("not in shutdown state");
+    throw ctkIllegalStateException("not in shutdown state");
   if (poolSize_ == 0)
     return true;
   qint64 waitTime = static_cast<qint64>(maxWaitTime);
@@ -199,7 +199,7 @@ void ctkEAPooledExecutor::awaitTerminationAfterShutdown() const
 {
   QMutexLocker lock(&mutex);
   if (!shutdown_)
-    throw std::logic_error("not in shutdown state");
+    throw ctkIllegalStateException("not in shutdown state");
   while (poolSize_ > 0)
   {
     lock.unlock();

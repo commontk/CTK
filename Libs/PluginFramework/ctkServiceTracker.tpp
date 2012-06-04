@@ -116,10 +116,9 @@ void ctkServiceTracker<S,T>::open()
         /* set tracked with the initial references */
         t->setInitial(references);
       }
-      catch (const std::invalid_argument& e)
+      catch (const ctkInvalidArgumentException& e)
       {
-        throw std::runtime_error(std::string("unexpected std::invalid_argument exception: ")
-            + e.what());
+        throw ctkRuntimeException(QString("unexpected ctkInvalidArgumentException exception: %1").arg(e.what()));
       }
     }
     d->trackedService = t;
@@ -153,7 +152,7 @@ void ctkServiceTracker<S,T>::close()
     {
       d->context->disconnectServiceListener(outgoing.data(), "serviceChanged");
     }
-    catch (const std::logic_error& /*e*/)
+    catch (const ctkIllegalStateException& /*e*/)
     {
       /* In case the context was stopped. */
     }

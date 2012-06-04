@@ -97,7 +97,7 @@ void ctkServiceListenerTestSuite::frameSL25a()
   {
     pc->connectServiceListener(&sListen, "serviceChanged");
   }
-  catch (const std::logic_error& ise)
+  catch (const ctkIllegalStateException& ise)
   {
     qDebug() << "service listener registration failed " << ise.what();
     QFAIL("service listener registration failed");
@@ -309,7 +309,7 @@ void ctkServiceListenerTestSuite::frameSL25a()
     //pc->disconnectServiceListener(&sListen, "serviceChanged");
     sListen.clearEvents();
   } 
-  catch (const std::logic_error& ise)
+  catch (const ctkIllegalStateException& ise)
   {
     qDebug() << ise.what();
     QFAIL("service listener removal failed ");
@@ -330,7 +330,7 @@ bool ctkServiceListenerTestSuite::runStartStopTest(
     {
       pc->connectServiceListener(&sListen, "serviceChanged");
     }
-    catch (const std::logic_error& ise)
+    catch (const ctkIllegalStateException& ise)
     {
       teststatus  = false;
       qDebug() << "service listener registration failed " << ise.what()
@@ -390,7 +390,7 @@ bool ctkServiceListenerTestSuite::runStartStopTest(
       teststatus &= sListen.teststatus;
       sListen.clearEvents();
     }
-    catch (const std::logic_error& ise)
+    catch (const ctkIllegalStateException& ise)
     {
       teststatus  = false;
       qDebug() << "service listener removal failed " << ise.what()

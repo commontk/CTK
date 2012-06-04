@@ -44,7 +44,7 @@ ctkEALinkedQueue::~ctkEALinkedQueue()
 
 void ctkEALinkedQueue::put(ctkEARunnable* x)
 {
-  if (x == 0) throw std::invalid_argument("QRunnable cannot be null");
+  if (x == 0) throw ctkInvalidArgumentException("QRunnable cannot be null");
   if (ctkEAInterruptibleThread::interrupted()) throw ctkEAInterruptedException();
   insert(x);
 }
@@ -53,7 +53,7 @@ bool ctkEALinkedQueue::offer(ctkEARunnable* x, long msecs)
 {
   Q_UNUSED(msecs)
 
-  if (x == 0) throw std::invalid_argument("QRunnable cannot be null");
+  if (x == 0) throw ctkInvalidArgumentException("QRunnable cannot be null");
   if (ctkEAInterruptibleThread::interrupted()) throw ctkEAInterruptedException();
   insert(x);
   return true;

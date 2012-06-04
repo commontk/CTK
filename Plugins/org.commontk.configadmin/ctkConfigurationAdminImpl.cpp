@@ -96,6 +96,6 @@ void ctkConfigurationAdminImpl::checkPID(const QString& pid)
 {
   if (pid.isEmpty())
   {
-    throw std::invalid_argument("PID cannot be empty");
+    throw ctkInvalidArgumentException("PID cannot be empty");
   }
 }

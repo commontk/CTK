@@ -49,7 +49,7 @@ public:
    * @param unique Only allow unique parameters for each ENTRY.
    * @param single_entry If true, only allow one ENTRY is allowed.
    * @return QMap<QString, QString> mapping attributes to values.
-   * @exception std::invalid_argument If syntax error in input string.
+   * @exception ctkInvalidArgumentException If syntax error in input string.
    */
   static QList<QMap<QString, QStringList> > parseEntries(const QString& a, const QString& s,
                                                          bool single, bool unique, bool single_entry);
@@ -62,7 +62,7 @@ public:
    * @param name local directory name.
    * @return A QDir object pointing to the directory. The directory is
    *         guaranteed to exist.
-   * @throws std::runtime_error if there is no global framework storage
+   * @throws ctkRuntimeException if there is no global framework storage
    *         directory or if the directory could not be created.
    */
   static QDir getFileStorage(ctkPluginFrameworkContext* ctx, const QString& name);

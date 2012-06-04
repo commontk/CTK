@@ -63,7 +63,7 @@ void ctkEventAdminService::publishSignal(const QObject* publisher, const char* s
 {
   if (topic.isEmpty())
   {
-    throw std::invalid_argument("topic must not be empty");
+    throw ctkInvalidArgumentException("topic must not be empty");
   }
 
   // check if the signal was already registered under the given topic
@@ -92,7 +92,7 @@ void ctkEventAdminService::publishSignal(const QObject* publisher, const char* s
   }
   else
   {
-    throw std::invalid_argument("type must be either Qt::DirectConnection or Qt::QueuedConnection");
+    throw ctkInvalidArgumentException("type must be either Qt::DirectConnection or Qt::QueuedConnection");
   }
 }
 
@@ -153,12 +153,12 @@ void ctkEventAdminService::unpublishSignal(const QObject* publisher, const char*
 qlonglong ctkEventAdminService::subscribeSlot(const QObject* subscriber, const char* member,
                                               const ctkDictionary& properties, Qt::ConnectionType type)
 {
-  if (subscriber == 0) throw std::invalid_argument("subscriber cannot be NULL");
-  if (member == 0) throw std::invalid_argument("slot cannot be NULL");
+  if (subscriber == 0) throw ctkInvalidArgumentException("subscriber cannot be NULL");
+  if (member == 0) throw ctkInvalidArgumentException("slot cannot be NULL");
   if (type != Qt::AutoConnection && type != Qt::DirectConnection &&
       type != Qt::QueuedConnection && type != Qt::BlockingQueuedConnection)
   {
-    throw std::invalid_argument("connection type invalid");
+    throw ctkInvalidArgumentException("connection type invalid");
   }
 
   ctkEASlotHandler* handler = new ctkEASlotHandler();

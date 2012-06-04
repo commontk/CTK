@@ -67,7 +67,7 @@ void ctkConfigurationAdminTestSuite::testCreateConfigNullPid()
   {
     cm->getConfiguration(QString());
   }
-  catch (const std::invalid_argument& )
+  catch (const ctkException& )
   {
     return;
   }
@@ -88,7 +88,7 @@ void ctkConfigurationAdminTestSuite::testCreateConfigNullPidWithLocation()
   {
     cm->getConfiguration(QString(), QString());
   }
-  catch (const std::invalid_argument& )
+  catch (const ctkException& )
   {
     return;
   }
@@ -131,7 +131,7 @@ void ctkConfigurationAdminTestSuite::testCreateFactoryConfigNullPid()
   {
     cm->createFactoryConfiguration(QString());
   }
-  catch (const std::invalid_argument& )
+  catch (const ctkException& )
   {
     return;
   }
@@ -152,7 +152,7 @@ void ctkConfigurationAdminTestSuite::testCreateFactoryConfigNullPidWithLocation(
   {
     cm->createFactoryConfiguration(QString(), QString());
   }
-  catch (const std::invalid_argument& )
+  catch (const ctkException& )
   {
     return;
   }

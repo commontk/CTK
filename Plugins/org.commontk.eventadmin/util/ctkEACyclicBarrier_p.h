@@ -117,7 +117,7 @@ public:
   /**
    * Create a ctkEACyclicBarrier for the indicated number of parties.
    * and the given command to run at each barrier point.
-   * @throws std::invalid_argument if parties less than or equal to zero.
+   * @throws ctkInvalidArgumentException if parties less than or equal to zero.
    **/
   ctkEACyclicBarrier(int parties, ctkEARunnable* command = 0);
 

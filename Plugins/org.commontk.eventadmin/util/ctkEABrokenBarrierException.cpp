@@ -27,3 +27,17 @@ ctkEABrokenBarrierException::ctkEABrokenBarrierException(int idx, const QString&
 {
 
 }
+
+ctkEABrokenBarrierException::~ctkEABrokenBarrierException() throw()
+{
+}
+
+const char *ctkEABrokenBarrierException::name() const throw()
+{
+  return "ctkEABrokenBarrierException";
+}
+
+ctkEABrokenBarrierException *ctkEABrokenBarrierException::clone() const
+{
+  return new ctkEABrokenBarrierException(*this);
+}

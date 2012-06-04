@@ -54,7 +54,7 @@ public:
       // stop the timer
       timerBarrier.waitForRendezvous();
     }
-    catch (const std::logic_error& )
+    catch (const ctkIllegalStateException& )
     {
       // this can happen on shutdown, so we ignore it
     }

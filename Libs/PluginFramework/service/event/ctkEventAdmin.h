@@ -143,7 +143,7 @@ struct ctkEventAdmin
    *        handlers completed their tasks.
    * @return Returns an id which can be used to update the properties.
    *
-   * @throws std::invalid_argument If <code>subscriber</code> or <code>member</code> is 0
+   * @throws ctkInvalidArgumentException If <code>subscriber</code> or <code>member</code> is 0
    *         or <code>type</code> is invalid.
    *
    * @see unsubscribeSlot(qlonglong)

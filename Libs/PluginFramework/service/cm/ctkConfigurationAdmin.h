@@ -253,7 +253,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfigurationAdmin
    * @return All matching <code>ctkConfiguration</code> objects, or
    *         an empty list if there aren't any.
    * @throws ctkIOException if access to persistent storage fails
-   * @throws std::invalid_argument if the filter string is invalid
+   * @throws ctkInvalidArgumentException if the filter string is invalid
    */
   virtual QList<ctkConfigurationPtr> listConfigurations(const QString& filter = QString()) = 0;
 };

@@ -87,7 +87,7 @@ public:
    * @param service The service object.
    * @param properties The properties for this service.
    * @return A ctkServiceRegistration object.
-   * @exception std::invalid_argument If one of the following is true:
+   * @exception ctkInvalidArgumentException If one of the following is true:
    * <ul>
    * <li>The service object is 0.</li>
    * <li>The service parameter is not a ctkServiceFactory or an

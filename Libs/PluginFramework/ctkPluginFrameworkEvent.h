@@ -28,8 +28,7 @@
 
 #include "ctkPluginFrameworkExport.h"
 
-#include <stdexcept>
-
+class ctkException;
 class ctkPlugin;
 class ctkPluginFrameworkEventData;
 
@@ -144,7 +143,7 @@ public:
    * @param plugin The event source.
    * @param fwException The related exception.
    */
-  ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin, const std::exception& fwException);
+  ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin, const ctkException& fwException);
 
   /**
    * Creates a Framework event regarding the specified plugin.

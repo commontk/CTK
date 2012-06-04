@@ -63,7 +63,7 @@ void ctkEAScenario3EventConsumer::cleanup()
   {
     serviceRegistration.unregister();
   }
-  catch (const std::logic_error&) {}
+  catch (const ctkIllegalStateException&) {}
 
   if (error)
   {

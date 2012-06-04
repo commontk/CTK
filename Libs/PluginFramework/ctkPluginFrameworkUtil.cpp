@@ -25,7 +25,7 @@
 #include <QString>
 #include <QCoreApplication>
 
-#include <stdexcept>
+#include <ctkException.h>
 
 
 /**
@@ -241,7 +241,7 @@ QList<QMap<QString, QStringList> > ctkPluginFrameworkUtil::parseEntries(const QS
         QString what = QString("Definition, ") + a + ", expected key at: " + at.getRest()
                        + ". Key values are terminated by a ';' or a ',' and may not "
                        + "contain ':', '='.";
-        throw std::invalid_argument(what.toStdString());
+        throw ctkInvalidArgumentException(what);
       }
       if (!single)
       {
@@ -261,13 +261,13 @@ QList<QMap<QString, QStringList> > ctkPluginFrameworkUtil::parseEntries(const QS
           QString what = QString("Definition, ") + a + ", duplicate " +
                          (is_directive ? "directive" : "attribute") +
                          ": " + param;
-          throw std::invalid_argument(what.toStdString());
+          throw ctkInvalidArgumentException(what);
         }
         QString value = at.getValue();
         if (value.isNull())
         {
           QString what = QString("Definition, ") + a + ", expected value at: " + at.getRest();
-          throw std::invalid_argument(what.toStdString());
+          throw ctkInvalidArgumentException(what);
         }
         if (is_directive)
         {
@@ -297,13 +297,13 @@ QList<QMap<QString, QStringList> > ctkPluginFrameworkUtil::parseEntries(const QS
       else
       {
         QString what = QString("Definition, ") + a + ", expected end of entry at: " + at.getRest();
-        throw std::invalid_argument(what.toStdString());
+        throw ctkInvalidArgumentException(what);
       }
 
       if (single_entry && !at.getEnd())
       {
         QString what = QString("Definition, ") + a + ", expected end of single entry at: " + at.getRest();
-        throw std::invalid_argument(what.toStdString());
+        throw ctkInvalidArgumentException(what);
       }
 
       params.insert("$directives", directives); // $ is not allowed in
@@ -348,7 +348,7 @@ QDir ctkPluginFrameworkUtil::getFileStorage(ctkPluginFrameworkContext* ctx,
   QString fwdir = getFrameworkDir(ctx);
   if (fwdir.isEmpty())
   {
-    throw std::runtime_error("The framework storge directory is empty");
+    throw ctkRuntimeException("The framework storge directory is empty");
   }
   QDir dir(fwdir + "/" + name);
   if (dir.exists())
@@ -357,7 +357,7 @@ QDir ctkPluginFrameworkUtil::getFileStorage(ctkPluginFrameworkContext* ctx,
     {
       QString msg("Not a directory: ");
       msg.append(dir.absolutePath());
-      throw std::runtime_error(msg.toStdString());
+      throw ctkRuntimeException(msg);
     }
   }
   else
@@ -366,7 +366,7 @@ QDir ctkPluginFrameworkUtil::getFileStorage(ctkPluginFrameworkContext* ctx,
     {
       QString msg("Cannot create directory: ");
       msg.append(dir.absolutePath());
-      throw std::runtime_error(msg.toStdString());
+      throw ctkRuntimeException(msg);
     }
   }
   return dir;

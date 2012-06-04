@@ -24,6 +24,7 @@
 
 #include "ctkLDAPExpr_p.h"
 #include "ctkPlugin.h"
+#include "ctkException.h"
 
 #include <QSharedData>
 
@@ -123,11 +124,11 @@ void ctkServiceSlotEntry::invokeSlot(const ctkServiceEvent &event)
                                  Qt::DirectConnection,
                                  Q_ARG(ctkServiceEvent, event)))
   {
-    throw std::runtime_error(
+    throw ctkRuntimeException(
                 QString("Slot %1 of %2 could not be invoked. A call to "
                         "ctkPluginContext::connectServiceListener() must only contain "
                         "the slot name, not the whole signature.").
-                arg(d->slot).arg(d->receiver->metaObject()->className()).toStdString());
+                arg(d->slot).arg(d->receiver->metaObject()->className()));
   }
 }
 

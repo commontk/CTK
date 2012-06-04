@@ -366,7 +366,7 @@ QSharedPointer<ctkPluginArchive> ctkPluginStorageSQL::insertPlugin(const QUrl& l
   QFileInfo fileInfo(localPath);
   if (!fileInfo.exists())
   {
-    throw std::invalid_argument((localPath + " does not exist").toStdString());
+    throw ctkInvalidArgumentException(localPath + " does not exist");
   }
 
   const QString libTimestamp = getStringFromQDateTime(fileInfo.lastModified());
@@ -431,8 +431,8 @@ void ctkPluginStorageSQL::insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa, 
   pluginLoader.setFileName(pa->getLibLocation());
   if (!pluginLoader.load())
   {
-    ctkPluginException exc(QString("The plugin could not be loaded: %1").arg(pa->getLibLocation()));
-    exc.setCause(pluginLoader.errorString());
+    ctkPluginException exc(QString("The plugin \"%1\" could not be loaded: %2").arg(pa->getLibLocation())
+                           .arg(pluginLoader.errorString()));
     throw exc;
   }
 

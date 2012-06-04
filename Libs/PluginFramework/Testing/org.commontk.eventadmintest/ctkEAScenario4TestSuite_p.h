@@ -27,10 +27,10 @@
 #include <QThread>
 #include <QMutex>
 
+#include <ctkException.h>
 #include <service/event/ctkEventHandler.h>
 #include <ctkTestSuiteInterface.h>
 #include <ctkServiceRegistration.h>
-#include <ctkRuntimeException.h>
 
 struct ctkEventAdmin;
 

@@ -302,8 +302,8 @@ void ctkPluginPrivate::checkManifestHeaders()
 
   if (symbolicName.isEmpty())
   {
-    throw std::invalid_argument(std::string("ctkPlugin has no symbolic name, location=") +
-                                qPrintable(location));
+    throw ctkInvalidArgumentException(QString("ctkPlugin has no symbolic name, location=") +
+                                      location);
   }
 
   QString mpv = archive->getAttribute(ctkPluginConstants::PLUGIN_VERSION);
@@ -315,8 +315,8 @@ void ctkPluginPrivate::checkManifestHeaders()
     }
     catch (const std::exception& e)
     {
-      throw std::invalid_argument(std::string("ctkPlugin does not specify a valid ") +
-                                  qPrintable(ctkPluginConstants::PLUGIN_VERSION) + " header. Got exception: " + e.what());
+      throw ctkInvalidArgumentException(QString("ctkPlugin does not specify a valid ") +
+                                        ctkPluginConstants::PLUGIN_VERSION + " header. Got exception: " + e.what());
     }
   }
 
@@ -324,8 +324,8 @@ void ctkPluginPrivate::checkManifestHeaders()
   // TBD! Should we allow update to same version?
   if (!snp.isNull() && snp->d_func() != this)
   {
-    throw std::invalid_argument(std::string("Plugin with same symbolic name and version is already installed (")
-                                + symbolicName.toStdString() + ", " + version.toString().toStdString() + ")");
+    throw ctkInvalidArgumentException(QString("Plugin with same symbolic name and version is already installed (")
+                                      + symbolicName + ", " + version.toString() + ")");
   }
 
   QString ap = archive->getAttribute(ctkPluginConstants::PLUGIN_ACTIVATIONPOLICY);
@@ -441,10 +441,15 @@ const ctkRuntimeException* ctkPluginPrivate::stop1()
         }
       }
     }
-    catch (const std::exception& e)
+    catch (const ctkException& e)
     {
       res = new ctkPluginException("ctkPlugin::stop: PluginActivator stop failed",
-                                              ctkPluginException::ACTIVATOR_ERROR, &e);
+                                   ctkPluginException::ACTIVATOR_ERROR, e);
+    }
+    catch (...)
+    {
+      res = new ctkPluginException("ctkPlugin::stop: PluginActivator stop failed",
+                                   ctkPluginException::ACTIVATOR_ERROR);
     }
     pluginActivator = 0;
   }
@@ -529,7 +534,7 @@ void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
       }
       catch (const ctkPluginException& pe)
       {
-        fwCtx->listeners.frameworkError(this->q_func(), e);
+        fwCtx->listeners.frameworkError(this->q_func(), pe);
       }
     }
     try
@@ -539,8 +544,8 @@ void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
     }
     catch (std::bad_cast)
     {
-      throw ctkPluginException("Failed to get update plugin",
-                               ctkPluginException::UNSPECIFIED, &e);
+      throw ctkPluginException(QString("Failed to get update plugin: ") + e.what(),
+                               ctkPluginException::UNSPECIFIED);
     }
   }
 
@@ -752,9 +757,13 @@ ctkPluginException* ctkPluginPrivate::start0()
     }
     state = ctkPlugin::ACTIVE;
   }
-  catch (const std::exception& e)
+  catch (const ctkException& e)
   {
-    res = new ctkPluginException("ctkPlugin start failed", error_type, &e);
+    res = new ctkPluginException("ctkPlugin start failed", error_type, e);
+  }
+  catch (...)
+  {
+    res = new ctkPluginException("ctkPlugin start failed", error_type);
   }
 
   if (fwCtx->debug.lazy_activation)
@@ -796,7 +805,7 @@ void ctkPluginPrivate::removePluginResources()
     {
       i.next().unregister();
     }
-    catch (const std::logic_error& /*ignore*/)
+    catch (const ctkIllegalStateException& /*ignore*/)
     {
       // Someone has unregistered the service after stop completed.
       // This should not occur, but we don't want get stuck in

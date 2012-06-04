@@ -85,7 +85,7 @@ class ctkPluginContextPrivate;
  * its context plugin; that is, during the period from when the context plugin
  * is in the <code>STARTING</code>, <code>STOPPING</code>, and
  * <code>ACTIVE</code> plugin states. If the <code>ctkPluginContext</code>
- * object is used subsequently, a <code>std::logic_error</code> must be
+ * object is used subsequently, a <code>ctkIllegalStateException</code> must be
  * thrown. The <code>ctkPluginContext</code> object must never be reused after
  * its context plugin is stopped.
  *
@@ -167,7 +167,7 @@ public:
    * The following steps are required to register a service:
    * <ol>
    * <li>If <code>service</code> is not a <code>ctkServiceFactory</code>, an
-   * <code>std::invalid_argument</code> is thrown if <code>service</code>
+   * <code>ctkInvalidArgumentException</code> is thrown if <code>service</code>
    * is not an instance of all the specified class names.
    * <li>The Framework adds the following service properties to the service
    * properties from the specified <code>ctkDictionary</code> (which may be
@@ -201,7 +201,7 @@ public:
    * @return A <code>ctkServiceRegistration</code> object for use by the plugin
    *         registering the service to update the service's properties or to
    *         unregister the service.
-   * @throws std::invalid_argument If one of the following is true:
+   * @throws ctkInvalidArgumentException If one of the following is true:
    *         <ul>
    *         <li><code>service</code> is <code>0</code>. <li><code>service
    *         </code> is not a <code>ctkServiceFactory</code> object and is not an
@@ -268,7 +268,7 @@ public:
    * of the filter syntax. If the specified <code>filter</code> is
    * empty, all registered services are considered to match the
    * filter. If the specified <code>filter</code> expression cannot be parsed,
-   * an <code>std::invalid_argument</code> will be thrown with a human readable
+   * an <code>ctkInvalidArgumentException</code> will be thrown with a human readable
    * message where the filter became unparsable.
    *
    * <p>
@@ -291,7 +291,7 @@ public:
    * @return A list of <code>ctkServiceReference</code> objects or
    *         an empty list if no services are registered which satisfy the
    *         search.
-   * @throws std::invalid_argument If the specified <code>filter</code>
+   * @throws ctkInvalidArgumentException If the specified <code>filter</code>
    *         contains an invalid filter expression that cannot be parsed.
    * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    */
@@ -312,7 +312,7 @@ public:
    * @return A list of <code>ctkServiceReference</code> objects or
    *         an empty list if no services are registered which satisfy the
    *         search.
-   * @throws std::invalid_argument If the specified <code>filter</code>
+   * @throws ctkInvalidArgumentException If the specified <code>filter</code>
    *         contains an invalid filter expression that cannot be parsed.
    * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    * @see getServiceReferences(const QString&, const QString&)
@@ -431,7 +431,7 @@ public:
    *         an exception.
    * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
-   * @throws std::invalid_argument If the specified
+   * @throws ctkInvalidArgumentException If the specified
    *         <code>ctkServiceReference</code> was not created by the same
    *         framework instance as this <code>ctkPluginContext</code> or
    *         if it is invalid (default constructed).
@@ -455,7 +455,7 @@ public:
    *         an exception or the service could not be casted to the desired type.
    * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
-   * @throws std::invalid_argument If the specified
+   * @throws ctkInvalidArgumentException If the specified
    *         <code>ctkServiceReference</code> was not created by the same
    *         framework instance as this <code>ctkPluginContext</code> or
    *         if it is invalid (default constructed).
@@ -502,7 +502,7 @@ public:
    *         <code>true</code> otherwise.
    * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
-   * @throws std::invalid_argument If the specified
+   * @throws ctkInvalidArgumentException If the specified
    *         <code>ctkServiceReference</code> was not created by the same
    *         framework instance as this <code>ctkPluginContext</code>.
    * @see #getService
@@ -673,7 +673,7 @@ public:
    * @param receiver The object to connect to.
    * @param slot The name of the slot to be connected.
    * @param filter The filter criteria.
-   * @throws std::invalid_argument If <code>filter</code> contains an
+   * @throws ctkInvalidArgumentException If <code>filter</code> contains an
    *         invalid filter string that cannot be parsed.
    * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.

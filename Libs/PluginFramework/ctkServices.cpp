@@ -90,7 +90,7 @@ ctkServiceRegistration ctkServices::registerService(ctkPluginPrivate* plugin,
 {
   if (service == 0)
   {
-    throw std::invalid_argument("Can't register 0 as a service");
+    throw ctkInvalidArgumentException("Can't register 0 as a service");
   }
 
   // Check if service implements claimed classes and that they exist.
@@ -99,7 +99,7 @@ ctkServiceRegistration ctkServices::registerService(ctkPluginPrivate* plugin,
     QString cls = i.next();
     if (cls.isEmpty())
     {
-      throw std::invalid_argument("Can't register as null class");
+      throw ctkInvalidArgumentException("Can't register as null class");
     }
 
     if (!(qobject_cast<ctkServiceFactory*>(service)))
@@ -108,7 +108,7 @@ ctkServiceRegistration ctkServices::registerService(ctkPluginPrivate* plugin,
       {
         QString msg = QString("Service class %1 is not an instance of %2. Maybe you forgot the Q_INTERFACES macro in the service class.")
             .arg(service->metaObject()->className()).arg(cls);
-        throw std::invalid_argument(msg.toStdString());
+        throw ctkInvalidArgumentException(msg);
       }
     }
   }
@@ -176,7 +176,7 @@ ctkServiceReference ctkServices::get(ctkPluginPrivate* plugin, const QString& cl
       return srs.front();
     }
   }
-  catch (const std::invalid_argument& )
+  catch (const ctkInvalidArgumentException& )
   { }
 
   return ctkServiceReference();

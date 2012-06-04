@@ -30,7 +30,7 @@
 #include <service/event/ctkEventHandler.h>
 #include <ctkTestSuiteInterface.h>
 #include <ctkServiceRegistration.h>
-#include <ctkRuntimeException.h>
+#include <ctkException.h>
 
 struct ctkEventAdmin;
 

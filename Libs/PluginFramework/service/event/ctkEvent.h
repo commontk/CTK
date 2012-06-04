@@ -69,7 +69,7 @@ public:
    *
    * @param topic The topic of the event.
    * @param properties The event's properties (may be empty).
-   * @throws std::invalid_argument If topic is not a valid topic name.
+   * @throws ctkInvalidArgumentException If topic is not a valid topic name.
    */
   ctkEvent(const QString& topic, const ctkDictionary& properties = ctkDictionary());
   ctkEvent(const ctkEvent& event);

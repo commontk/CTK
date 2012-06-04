@@ -28,6 +28,7 @@
 #include "ctkMTDataParser_p.h"
 
 #include <ctkPluginConstants.h>
+#include <ctkException.h>
 #include <service/log/ctkLogService.h>
 #include <service/metatype/ctkMetaTypeService.h>
 
@@ -78,7 +79,7 @@ ctkObjectClassDefinitionPtr ctkMetaTypeProviderImpl::getObjectClassDefinition(
   else
   {
     QString msg = QCoreApplication::translate(ctkMTMsg::CONTEXT, ctkMTMsg::OCD_ID_NOT_FOUND).arg(pid);
-    throw std::invalid_argument(msg.toStdString());
+    throw ctkInvalidArgumentException(msg);
   }
 }
 

@@ -21,7 +21,7 @@
 
 #include "ctkDicomAppHostingTypesHelper.h"
 
-#include <stdexcept>
+#include <ctkException.h>
 
 //----------------------------------------------------------------------------
 void DumpAll(const QtSoapType& type, int indent=0)
@@ -96,7 +96,7 @@ ctkDicomAppHosting::State ctkDicomSoapState::fromString(const QString& string)
   if (string == "SUSPENDED") return ctkDicomAppHosting::SUSPENDED;
   if (string == "CANCELED") return ctkDicomAppHosting::CANCELED;
   if (string == "EXIT") return ctkDicomAppHosting::EXIT;
-  throw std::runtime_error((string + "Invalid STATE:").toStdString());
+  throw ctkRuntimeException(string + "Invalid STATE:");
   return ctkDicomAppHosting::EXIT;
 }
 
@@ -118,7 +118,7 @@ QString ctkDicomSoapState::toStringValue(ctkDicomAppHosting::State state)
     case ctkDicomAppHosting::EXIT:
       return "EXIT";
     default:
-      throw std::runtime_error( "Invalid value for state" );
+      throw ctkRuntimeException( "Invalid value for state" );
 
     }
 }

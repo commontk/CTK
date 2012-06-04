@@ -108,7 +108,7 @@ public:
    *
    * @throws ctkIllegalStateException If this <code>ctkServiceRegistration</code>
    *         object has already been unregistered or if it is invalid.
-   * @throws std::invalid_argument If <code>properties</code> contains
+   * @throws ctkInvalidArgumentException If <code>properties</code> contains
    *         case variants of the same key name.
    */
   void setProperties(const ctkDictionary& properties);

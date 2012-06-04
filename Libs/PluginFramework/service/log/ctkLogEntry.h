@@ -28,7 +28,8 @@
 #include <QMetaType>
 
 #include <ctkServiceReference.h>
-#include <ctkRuntimeException.h>
+
+class ctkRuntimeException;
 
 
 /**

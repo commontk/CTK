@@ -86,9 +86,10 @@ void ctkPluginFrameworkPrivate::shutdown(bool restart)
         shuttingDown.fetchAndStoreOrdered(1);
         QtConcurrent::run(this, &ctkPluginFrameworkPrivate::shutdown0, restart, wa);
       }
-      catch (const std::exception& e)
+      catch (const ctkException& e)
       {
-        systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR, this->q_func(), e));
+        systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR,
+                                                       this->q_func(), e));
       }
     }
     break;
@@ -138,10 +139,11 @@ void ctkPluginFrameworkPrivate::shutdown0(bool restart, bool wasActive)
       }
     }
   }
-  catch (const std::exception& e)
+  catch (const ctkException& e)
   {
     shuttingDown.fetchAndStoreOrdered(0);
-    systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR, this->q_func(), e));
+    systemShuttingdownDone(ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR,
+                                                   this->q_func(), e));
   }
 }
 

@@ -60,7 +60,7 @@ void ctkPluginFrameworkTestSuite::initTestCase()
       QFAIL("plugin framework test suite: SETUP:FAIL");
     }
   }
-  catch (const std::logic_error& e)
+  catch (const ctkException& e)
   {
     QString msg  = QString("plugin framework test suite ") + e.what() + ": SETUP:FAIL";
     QFAIL(msg.toAscii());
@@ -74,7 +74,7 @@ void ctkPluginFrameworkTestSuite::initTestCase()
       QFAIL("plugin framework test suite: SETUP:FAIL");
     }
   }
-  catch (const std::logic_error& e)
+  catch (const ctkException& e)
   {
     QString msg  = QString("plugin framework test suite ") + e.what() + ": SETUP:FAIL";
     QFAIL(msg.toAscii());
@@ -88,7 +88,7 @@ void ctkPluginFrameworkTestSuite::initTestCase()
       QFAIL("plugin framework test suite: SETUP:FAIL");
     }
   }
-  catch (const std::logic_error& e)
+  catch (const ctkException& e)
   {
     QString msg  = QString("plugin framework test suite ") + e.what() + ": SETUP:FAIL";
     QFAIL(msg.toAscii());
@@ -98,7 +98,7 @@ void ctkPluginFrameworkTestSuite::initTestCase()
   {
     pc->connectServiceListener(this, "serviceListener");
   }
-  catch (const std::logic_error& e)
+  catch (const ctkException& e)
   {
     QString msg  = QString("plugin framework test suite ") + e.what() + ": SETUP:FAIL";
     QFAIL(msg.toAscii());
@@ -183,20 +183,20 @@ void ctkPluginFrameworkTestSuite::frame010a()
 }
 
 //----------------------------------------------------------------------------
-//Test result of getService(ctkServiceReference()). Should throw std::invalid_argument
+//Test result of getService(ctkServiceReference()). Should throw ctkInvalidArgumentException
 void ctkPluginFrameworkTestSuite::frame018a()
 {
   try
   {
     QObject* obj = pc->getService(ctkServiceReference());
-    qDebug() << "Got service object =" << obj->metaObject()->className() << ", excpected std::invalid_argument exception";
-    QFAIL("Got service object, excpected std::invalid_argument exception");
+    qDebug() << "Got service object =" << obj->metaObject()->className() << ", excpected ctkInvalidArgumentException exception";
+    QFAIL("Got service object, excpected ctkInvalidArgumentException exception");
   }
-  catch (const std::invalid_argument& )
+  catch (const ctkInvalidArgumentException& )
   {}
   catch (...)
   {
-    QFAIL("Got wrong exception, expected std::invalid_argument");
+    QFAIL("Got wrong exception, expected ctkInvalidArgumentException");
   }
 }
 
@@ -253,7 +253,7 @@ void ctkPluginFrameworkTestSuite::frame025b()
     QString failMsg = QString("Unexpected plugin exception: ") + pexcA.what();
     QFAIL(failMsg.toStdString().c_str());
   }
-  catch (const std::logic_error& le)
+  catch (const std::exception& le)
   {
     QString failMsg = QString("Start plugin exception: ") + le.what();
     QFAIL(failMsg.toStdString().c_str());
@@ -270,7 +270,7 @@ void ctkPluginFrameworkTestSuite::frame025b()
     {
       QVERIFY2(pc->ungetService(sr1), "Service unget should return true");
     }
-    catch (const std::logic_error le)
+    catch (const std::exception& le)
     {
       QString failMsg = QString("Unget service exception: ") + le.what();
       QFAIL(failMsg.toStdString().c_str());
@@ -310,9 +310,9 @@ void ctkPluginFrameworkTestSuite::frame030b()
     pA->stop();
     QVERIFY2(pA->getState() == ctkPlugin::RESOLVED, "pluginA should be RESOLVED");
   }
-  catch (const std::logic_error& ise)
+  catch (const ctkIllegalStateException& ise)
   {
-    qDebug() << "Unexpected logic_error exception:" << ise.what();
+    qDebug() << "Unexpected ctkIllegalStateException exception:" << ise.what();
     QFAIL("framework test plugin, stop plugin pluginA");
   }
   catch (const ctkPluginException& pe)
@@ -346,9 +346,9 @@ void ctkPluginFrameworkTestSuite::frame035b()
     QVERIFY2(pA->getState() == ctkPlugin::UNINSTALLED,
              "pluginA_test should be UNINSTALLED");
   }
-  catch (const std::logic_error& ise)
+  catch (const ctkIllegalStateException& ise)
   {
-    qDebug() << "Unexpected logic_error exception:" << ise.what();
+    qDebug() << "Unexpected ctkIllegalStateException exception:" << ise.what();
     QFAIL("framework test plugin, uninstall");
   }
   catch (const ctkPluginException& pe)
@@ -445,7 +445,7 @@ void ctkPluginFrameworkTestSuite::frame045a()
   {
     pc->connectServiceListener(&sListen1, "serviceChanged", brokenFilter);
   }
-  catch (const std::invalid_argument& /*ia*/)
+  catch (const ctkInvalidArgumentException& /*ia*/)
   {
     //assertEquals("InvalidSyntaxException.getFilter should be same as input string", brokenFilter, ise.getFilter());
   }
