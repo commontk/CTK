@@ -183,7 +183,7 @@ void ctkPluginFrameworkTestSuite::frame010a()
 }
 
 //----------------------------------------------------------------------------
-//Test result of getService(ctkServiceReference()). Should throw std::invalid_argument
+//Test result of getService(ctkServiceReference()). Should throw ctkInvalidArgumentException
 void ctkPluginFrameworkTestSuite::frame018a()
 {
   try

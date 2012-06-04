@@ -90,7 +90,7 @@ public:
    * @param fw ctkPluginFrameworkContext for this plugin.
    * @param ba ctkPlugin archive representing the shared library and cached data
    * @param checkContext AccessConrolContext to do permission checks against.
-   * @exception std::invalid_argument Faulty manifest for bundle
+   * @exception ctkInvalidArgumentException Faulty manifest for bundle
    */
   ctkPluginPrivate(QWeakPointer<ctkPlugin> qq, ctkPluginFrameworkContext* fw,
                    QSharedPointer<ctkPluginArchive> pa /*, Object checkContext*/);

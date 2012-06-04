@@ -260,7 +260,7 @@ public:
    *
    * <p>
    * If this plugin's state is <code>UNINSTALLED</code> then an
-   * <code>std::logic_error</code> is thrown.
+   * <code>ctkIllegalStateException</code> is thrown.
    * <p>
    * The following steps are required to start this bundle:
    * <ol>
@@ -367,7 +367,7 @@ public:
    * The following steps are required to stop a plugin:
    * <ol>
    * <li>If this plugin's state is <code>UNINSTALLED</code> then an
-   * <code>std::logic_error</code> is thrown.
+   * <code>ctkIllegalStateException</code> is thrown.
    *
    * <li>If this plugin is in the process of being activated or deactivated
    * then this method must wait for activation or deactivation to complete
@@ -457,7 +457,7 @@ public:
    * The following steps are required to update a plugin:
    * <ol>
    * <li>If this plugin's state is <code>UNINSTALLED</code> then an
-   * <code>std::logic_error</code> is thrown.
+   * <code>ctkIllegalStateException</code> is thrown.
    *
    * <li>If this plugin's state is <code>ACTIVE</code>, <code>STARTING</code>
    * or <code>STOPPING</code>, this plugin is stopped as described in the
@@ -507,7 +507,7 @@ public:
    *        Manifest header, if present, or this plugin's original location.
    * @throws ctkPluginException If the update location cannot be read or the update
    *         fails.
-   * @throws std::logic_error If this plugin has been uninstalled or this
+   * @throws ctkIllegalStateException If this plugin has been uninstalled or this
    *         plugin tries to change its own state.
    * @see #stop()
    * @see #start()
@@ -532,7 +532,7 @@ public:
    * The following steps are required to uninstall a plugin:
    * <ol>
    * <li>If this plugin's state is <code>UNINSTALLED</code> then an
-   * <code>std::logic_error</code> is thrown.
+   * <code>ctkIllegalStateException</code> is thrown.
    *
    * <li>If this plugin's state is <code>ACTIVE</code>, <code>STARTING</code>
    * or <code>STOPPING</code>, this plugin is stopped as described in the

@@ -142,7 +142,7 @@ bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
 ctkDicomHostInterface* ctkDicomAbstractApp::getHostInterface() const
 {
   ctkDicomHostInterface* host = d_ptr->HostTracker.getService();
-  if (!host) throw std::runtime_error("DICOM Host Interface not available");
+  if (!host) throw ctkRuntimeException("DICOM Host Interface not available");
   return host;
 }
 

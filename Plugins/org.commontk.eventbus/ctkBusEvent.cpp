@@ -21,7 +21,7 @@
 
 #include "ctkBusEvent.h"
 #include "ctkEventDefinitions.h"
-#include <stdexcept>
+#include <ctkException.h>
 
 class ctkBusEventData : public QSharedData
 {
@@ -50,7 +50,7 @@ public:
   {
     if (topic.isEmpty())
     {
-      throw std::invalid_argument("empty topic");
+      throw ctkInvalidArgumentException("empty topic");
     }
 
     // Can't start or end with a '/' but anywhere else is okay
@@ -58,7 +58,7 @@ public:
     if (topic.startsWith("/") || topic.endsWith("/") ||
         topic.contains("//"))
     {
-      throw std::invalid_argument(QString("invalid topic: %1").arg(topic).toStdString());
+      throw ctkInvalidArgumentException(QString("invalid topic: %1").arg(topic));
     }
 
     QString::const_iterator topicEnd = topic.end();
@@ -71,7 +71,7 @@ public:
       if ((a <= c) && (c <= z)) continue;
       if ((zero <= c) && (c <= nine)) continue;
       if ((c == underscore) || (c == dash) || (c == slash)) continue;
-      throw std::invalid_argument(QString("invalid topic: %1").arg(topic).toStdString());
+      throw ctkInvalidArgumentException(QString("invalid topic: %1").arg(topic));
     }
   }
 

@@ -185,7 +185,7 @@ public:
    * @return Returns a false or true if this
    *         <code>ctkServiceReference</code> is less than or greater
    *         than the specified <code>ctkServiceReference</code>.
-   * @throws std::invalid_argument If the specified
+   * @throws ctkInvalidArgumentException If the specified
    *         <code>ctkServiceReference</code> was not created by the same
    *         framework instance as this <code>ctkServiceReference</code>.
    */

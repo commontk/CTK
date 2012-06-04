@@ -27,7 +27,7 @@ ctkEACacheTopicHandlerFilters(CacheMapInterface* cache, bool requireTopic)
 {
   if(cache == 0)
   {
-    throw std::invalid_argument("Cache may not be null");
+    throw ctkInvalidArgumentException("Cache may not be null");
   }
 
   filterStart = QString("(|")

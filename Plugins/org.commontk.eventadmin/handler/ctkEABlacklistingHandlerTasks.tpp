@@ -57,7 +57,7 @@ createHandlerTasks(const ctkEvent& event)
     handlerRefs = context->getServiceReferences<ctkEventHandler>(
           topicHandlerFilters->createFilterForTopic(event.getTopic()));
   }
-  catch (const std::invalid_argument& e)
+  catch (const ctkInvalidArgumentException& e)
   {
     CTK_WARN_EXC(ctkEventAdminActivator::getLogService(), &e)
         << "Invalid EVENT_TOPIC [" << event.getTopic() << "]";
@@ -80,7 +80,7 @@ createHandlerTasks(const ctkEvent& event)
           result.push_back(ctkEAHandlerTask<Self>(ref, event, this));
         }
       }
-      catch (const std::invalid_argument& e)
+      catch (const ctkInvalidArgumentException& e)
       {
         CTK_WARN_SR_EXC(ctkEventAdminActivator::getLogService(), ref, &e)
             << "Invalid EVENT_FILTER - Blacklisting ServiceReference ["
@@ -141,7 +141,7 @@ checkNull(void* object, const QString& name)
 {
   if(object == 0)
   {
-    throw std::invalid_argument(qPrintable(name + " may not be null"));
+    throw ctkInvalidArgumentException(qPrintable(name + " may not be null"));
   }
 }
 

@@ -153,7 +153,7 @@ private:
   NullEventHandler nullEventHandler;
 
   /*
-   * This is a utility method that will throw a <tt>std::invalid_argument</tt>
+   * This is a utility method that will throw a <tt>ctkInvalidArgumentException</tt>
    * in case that the given object is null. The message will be of the form name +
    * may not be null.
    */

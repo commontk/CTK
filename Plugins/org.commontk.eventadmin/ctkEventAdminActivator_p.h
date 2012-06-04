@@ -55,7 +55,7 @@ public:
 
   /**
    * Called upon stopping the plugin. This will block until all pending events are
-   * delivered. An std::logic_error will be thrown on new events starting with
+   * delivered. An ctkIllegalStateException will be thrown on new events starting with
    * the begin of this method. However, it might take some time until we settle
    * down which is somewhat cumbersome given that the spec asks for return in
    * a timely manner.

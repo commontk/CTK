@@ -84,7 +84,7 @@ bool ctkSlicerModuleReader::validate()const
   if (!res)
     {
     QString error = errorHandler.statusMessage();
-    throw std::runtime_error( tr("Invalid Schema %1")
+    throw ctkRuntimeException( tr("Invalid Schema %1")
       .arg(errorHandler.statusMessage()).toStdString() );
     }
 
@@ -93,7 +93,7 @@ bool ctkSlicerModuleReader::validate()const
 
   if (!res)
     {
-    throw std::runtime_error( tr("Invalid XML(%1,%2):\n %3")
+    throw ctkRuntimeException( tr("Invalid XML(%1,%2):\n %3")
       .arg(errorHandler.line())
       .arg(errorHandler.column())
       .arg(errorHandler.statusMessage()).toStdString());
@@ -120,7 +120,7 @@ void ctkSlicerModuleReader::update()
 
   if (!res)
     {
-    throw std::runtime_error( tr("Parse error %1")
+    throw ctkRuntimeException( tr("Parse error %1")
       .arg(handler.errorString()).toStdString() );
     }
 }

@@ -84,7 +84,7 @@ void ctkExampleDicomAppLogic::do_something()
     this->Button->move(rect.topLeft());
     this->Button->resize(rect.size());
     }
-  catch (const std::runtime_error& e)
+  catch (const ctkRuntimeException& e)
     {
     qCritical() << e.what();
     return;

@@ -105,7 +105,7 @@ void ctkEventAdminImpl<HandlerTasks,SyncDeliverTasks,AsyncDeliverTasks>::handleE
 {
   if (0 < managers.size())
   {
-    // This might throw an std::logic_error in case that we are stopped
+    // This might throw an ctkIllegalStateException in case that we are stopped
     // and the null object for managers was not fast enough established
     // This is needed in the adapter/* classes due to them sending
     // events whenever they receive an event from their source.
@@ -120,6 +120,6 @@ void ctkEventAdminImpl<HandlerTasks,SyncDeliverTasks,AsyncDeliverTasks>::checkNu
 {
   if(0 == object)
   {
-    throw std::invalid_argument(qPrintable(name + " may not be null"));
+    throw ctkInvalidArgumentException(qPrintable(name + " may not be null"));
   }
 }

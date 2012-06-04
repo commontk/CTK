@@ -55,7 +55,7 @@ public:
    *
    * @param topic The topic of the event.
    * @param properties The event's properties (may be empty).
-   * @throws std::invalid_argument If topic is not a valid topic name.
+   * @throws ctkInvalidArgumentException If topic is not a valid topic name.
    */
   ctkBusEvent(const QString& topic, const ctkDictionary& properties = ctkDictionary());
   ctkBusEvent(const ctkBusEvent& event);

@@ -27,7 +27,7 @@ ctkEALeastRecentlyUsedCacheMap(int maxSize)
 {
   if(0 >= maxSize)
   {
-    throw std::invalid_argument("Size must be positive");
+    throw ctkInvalidArgumentException("Size must be positive");
   }
 
   // We need one more entry then m_maxSize in the cache and a HashMap is

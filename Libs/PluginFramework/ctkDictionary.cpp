@@ -22,7 +22,7 @@
 
 #include "ctkDictionary.h"
 
-#include <stdexcept>
+#include <ctkException.h>
 
 //----------------------------------------------------------------------------
 ctkDictionary::ctkDictionary()
@@ -47,7 +47,7 @@ ctkDictionary::ctkDictionary(const ctkProperties& properties)
     {
       QString msg("ctkProperties object contains case variants of the key: ");
       msg += it.key();
-      throw std::invalid_argument(qPrintable(msg));
+      throw ctkInvalidArgumentException(msg);
     }
     this->insert(it.key(), it.value());
   }

@@ -22,14 +22,14 @@
 
 #include "ctkEAAbstractAdapter_p.h"
 
-#include <stdexcept>
+#include <ctkException.h>
 
 ctkEAAbstractAdapter::ctkEAAbstractAdapter(ctkEventAdmin* admin)
  : admin_(0)
 {
   if (admin == 0)
   {
-    throw std::invalid_argument("EventAdmin must not be null");
+    throw ctkInvalidArgumentException("EventAdmin must not be null");
   }
 
   admin_.testAndSetOrdered(0, admin);

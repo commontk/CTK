@@ -25,7 +25,7 @@
 #include <QIODevice>
 #include <QDebug>
 
-#include <stdexcept>
+#include <ctkException.h>
 
 //----------------------------------------------------------------------------
 ctkPluginManifest::ctkPluginManifest()
@@ -133,7 +133,7 @@ ctkPluginManifest::Attributes ctkPluginManifest::getAttributes(const QString& se
 {
   if (!sections.contains(section))
   {
-    throw std::invalid_argument(std::string("Manifest section invalid: ") + qPrintable(section));
+    throw ctkInvalidArgumentException(QString("Manifest section invalid: ") + section);
   }
 
   return sections[section];

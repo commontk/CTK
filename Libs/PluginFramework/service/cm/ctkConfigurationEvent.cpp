@@ -22,7 +22,7 @@
 
 #include "ctkConfigurationEvent.h"
 
-#include <stdexcept>
+#include <ctkException.h>
 
 class ctkConfigurationEventData : public QSharedData
 {
@@ -92,7 +92,7 @@ ctkConfigurationEvent::ctkConfigurationEvent(const ctkServiceReference& referenc
 {
   if (pid.isNull())
   {
-    throw std::invalid_argument("pid must not be null");
+    throw ctkInvalidArgumentException("pid must not be null");
   }
 }
 

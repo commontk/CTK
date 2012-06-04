@@ -132,7 +132,7 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
     CTK_SOAP_LOG_LOWLEVEL( << response.faultString().toString().toLatin1().constData() << endl );
     CTK_SOAP_LOG_LOWLEVEL( << response.toXmlString() );
     return response.returnValue();
-    //    throw std::runtime_error("ctkSimpleSoapClient: server error (response.IsFault())");
+    //    throw ctkRuntimeException("ctkSimpleSoapClient: server error (response.IsFault())");
     }
 
   CTK_SOAP_LOG_LOWLEVEL( << "Response: " << response.toXmlString() );
