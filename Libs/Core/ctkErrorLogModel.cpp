@@ -39,6 +39,8 @@
 #include <cstdio> // For _fileno or fileno
 #ifdef _MSC_VER
 # include <io.h> // For _write()
+#else
+# include <unistd.h>
 #endif
 
 // --------------------------------------------------------------------------
