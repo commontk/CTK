@@ -1,20 +1,20 @@
 /*=========================================================================
 
-  Library:   CTK
+Library:   CTK
 
-  Copyright (c) Kitware Inc.
+Copyright (c) Kitware Inc.
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0.txt
+http://www.apache.org/licenses/LICENSE-2.0.txt
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 =========================================================================*/
 
@@ -36,45 +36,54 @@ class ctkDICOMIndexerPrivate;
 ///
 class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit ctkDICOMIndexer(QObject *parent = 0);
-  virtual ~ctkDICOMIndexer();
+    explicit ctkDICOMIndexer(QObject *parent = 0);
+    virtual ~ctkDICOMIndexer();
 
-  ///
-  /// \brief Adds directory to database and optionally copies files to
-  /// destinationDirectory.
-  ///
-  /// Scan the directory using Dcmtk and populate the database with all the
-  /// DICOM images accordingly.
-  ///
-  Q_INVOKABLE void addDirectory(ctkDICOMDatabase& database, const QString& directoryName,
-                    const QString& destinationDirectoryName = "");
+    ///
+    /// \brief Adds directory to database and optionally copies files to
+    /// destinationDirectory.
+    ///
+    /// Scan the directory using Dcmtk and populate the database with all the
+    /// DICOM images accordingly.
+    ///
+    Q_INVOKABLE void addDirectory(ctkDICOMDatabase& database, const QString& directoryName,
+        const QString& destinationDirectoryName = "");
 
-  ///
-  /// \brief Adds a file to database and optionally copies the file to
-  /// destinationDirectory.
-  ///
-  /// Scan the file using Dcmtk and populate the database with all the
-  /// DICOM fields accordingly.
-  ///
-  Q_INVOKABLE void addFile(ctkDICOMDatabase& database, const QString& filePath,
-                    const QString& destinationDirectoryName = "");
+    /**
+    \brief Adds directory to database by using DICOMDIR and optionally copies files to
+    destinationDirectory.
+    Scan the directory using Dcmtk and populate the database with all the
+    DICOM images accordingly.
+    */
+    Q_INVOKABLE void addFromDICOMDIR(ctkDICOMDatabase& database, const QString& directoryName,
+        const QString& destinationDirectoryName = "");
 
-  Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
+    ///
+    /// \brief Adds a file to database and optionally copies the file to
+    /// destinationDirectory.
+    ///
+    /// Scan the file using Dcmtk and populate the database with all the
+    /// DICOM fields accordingly.
+    ///
+    Q_INVOKABLE void addFile(ctkDICOMDatabase& database, const QString& filePath,
+        const QString& destinationDirectoryName = "");
+
+    Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 
 Q_SIGNALS:
-  void foundFilesToIndex(int);
-  void indexingFileNumber(int);
-  void indexingFilePath(QString);
-  void progress(int);
+    void foundFilesToIndex(int);
+    void indexingFileNumber(int);
+    void indexingFilePath(QString);
+    void progress(int);
 
 protected:
-  QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
+    QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkDICOMIndexer);
-  Q_DISABLE_COPY(ctkDICOMIndexer);
+    Q_DECLARE_PRIVATE(ctkDICOMIndexer);
+    Q_DISABLE_COPY(ctkDICOMIndexer);
 
 };
 
