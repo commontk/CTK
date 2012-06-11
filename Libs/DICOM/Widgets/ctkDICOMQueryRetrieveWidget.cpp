@@ -1,20 +1,20 @@
 /*=========================================================================
 
-  Library:   CTK
+Library:   CTK
 
-  Copyright (c) Kitware Inc.
+Copyright (c) Kitware Inc.
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0.txt
+http://www.apache.org/licenses/LICENSE-2.0.txt
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 =========================================================================*/
 
@@ -68,6 +68,7 @@ public:
   
   QProgressDialog*                  ProgressDialog;
   QString                           CurrentServer;
+    bool                              UseProgressDialog;
 };
 
 //----------------------------------------------------------------------------
@@ -119,8 +120,8 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
 
 //----------------------------------------------------------------------------
 ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* parentWidget)
-  : Superclass(parentWidget) 
-  , d_ptr(new ctkDICOMQueryRetrieveWidgetPrivate(*this))
+: Superclass(parentWidget) 
+, d_ptr(new ctkDICOMQueryRetrieveWidgetPrivate(*this))
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
   d->init();
@@ -146,6 +147,12 @@ QSharedPointer<ctkDICOMDatabase> ctkDICOMQueryRetrieveWidget::retrieveDatabase()
   return d->RetrieveDatabase;
 }
 
+void ctkDICOMQueryRetrieveWidget::useProgressDialog(bool enable)
+{
+    Q_D(ctkDICOMQueryRetrieveWidget);
+    d->UseProgressDialog=enable;
+}
+
 //----------------------------------------------------------------------------
 void ctkDICOMQueryRetrieveWidget::query()
 {
@@ -163,7 +170,6 @@ void ctkDICOMQueryRetrieveWidget::query()
   }
 
   d->QueriesByStudyUID.clear();
-
   // for each of the selected server nodes, send the query
   QProgressDialog progress("Query DICOM servers", "Cancel", 0, 100, this,
                            Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
@@ -256,6 +262,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
   // We don't want the progress dialog to resize itself, so we bypass the label
   // by creating our own
   QLabel* progressLabel = new QLabel(tr("Initialization..."));
+    if(d->UseProgressDialog){
   progress.setLabel(progressLabel);
   d->ProgressDialog = &progress;
   progress.setWindowModality(Qt::ApplicationModal);
@@ -264,6 +271,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
   progress.setMaximum(0);
   progress.setAutoClose(false);
   progress.show();
+    }
 
   QMap<QString,QVariant> serverParameters = d->ServerNodeWidget->parameters();
   ctkDICOMRetrieve *retrieve = new ctkDICOMRetrieve;
@@ -275,6 +283,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
   // do the rerieval for each selected series
   foreach( QString studyUID, d->QueriesByStudyUID.keys() )
     {
+        if(d->UseProgressDialog){
     if (progress.wasCanceled())
       {
       break;
@@ -282,6 +291,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
 
     progressLabel->setText(QString(tr("Retrieving:\n%1")).arg(studyUID));
     this->updateRetrieveProgress(0);
+        }
 
     // Get information which server we want to get the study from and prepare request accordingly
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
@@ -295,15 +305,16 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     logger.debug("About to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
     logger.info ( "Starting to retrieve" );
 
+        if(d->UseProgressDialog){
     connect(&progress, SIGNAL(canceled()), retrieve, SLOT(cancel()));
     connect(retrieve, SIGNAL(progress(QString)),
             progressLabel, SLOT(setText(QString)));
     connect(retrieve, SIGNAL(progress(int)),
             this, SLOT(updateRetrieveProgress(int)));
-
+        }
     try
       {
-      // perform the retrieve
+            // perform the retrieve Miluba: move per default
       if ( query->preferCGET() )
         {
         retrieve->getStudy ( studyUID );
@@ -316,6 +327,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     catch (std::exception e)
       {
       logger.error ( "Retrieve failed" );
+            if(d->UseProgressDialog){
       if ( QMessageBox::question ( this, 
             tr("Query Retrieve"), tr("Retrieve failed.  Keep trying?"),
             QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
@@ -327,13 +339,15 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
         break;
         }
       }
+        }
 
+        if(d->UseProgressDialog){
     disconnect(retrieve, SIGNAL(progress(QString)),
             progressLabel, SLOT(setText(QString)));
     disconnect(retrieve, SIGNAL(progress(int)),
             this, SLOT(updateRetrieveProgress(int)));
     disconnect(&progress, SIGNAL(canceled()), retrieve, SLOT(cancel()));
-
+        }
     // Store retrieve structure for later use.
     // Comment MO: I do not think that makes much sense; you store per study one fat
     // structure including an SCU. Also, I switched the code to re-use the retrieve
@@ -343,17 +357,21 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     // d->RetrievalsByStudyUID[studyUID] = retrieve;
     logger.info ( "Retrieve success" );
     }
-
+    if(d->UseProgressDialog){
   QString message(tr("Retrieve Process Finished"));
+
   if (retrieve->wasCanceled())
     {
     message = tr("Retrieve Process Canceled");
     }
   QMessageBox::information ( this, tr("Query Retrieve"), message );
+    }
   emit studiesRetrieved(d->RetrievalsByStudyUID.keys());
 
   delete retrieve;
+    if(d->UseProgressDialog){
   d->ProgressDialog = 0;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -427,3 +445,8 @@ void ctkDICOMQueryRetrieveWidget::onSelectionChanged(const QItemSelection &selec
   d->RetrieveButton->setEnabled(d->results->selectionModel()->hasSelection());
 }
 
+QMap<QString,QVariant> ctkDICOMQueryRetrieveWidget::getServerParameters()
+{
+    Q_D(ctkDICOMQueryRetrieveWidget);
+    return d->ServerNodeWidget->parameters();
+}
