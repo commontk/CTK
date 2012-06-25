@@ -246,7 +246,7 @@ void ctkDICOMIndexer::addFromDICOMDIR(ctkDICOMDatabase& ctkDICOMDatabase,
             //    patientDataset->putAndInsertOFStringArray(DCM_PatientComments, patientComments);
 
 
-            }
+            //}
 
             while (((studyRecord = patientRecord->nextSub(studyRecord)) != NULL))
             {
@@ -339,12 +339,11 @@ void ctkDICOMIndexer::addFromDICOMDIR(ctkDICOMDatabase& ctkDICOMDatabase,
                     }
                 }
             }
-        }
 
         emit foundFilesToIndex(fileNumber);
     }
 }
-}
+
 
 //------------------------------------------------------------------------------
 void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& dicomDatabase, const QString& directoryName)
