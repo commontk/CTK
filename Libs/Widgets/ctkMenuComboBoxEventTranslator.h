@@ -29,6 +29,7 @@
 #include "ctkWidgetsExport.h"
 
 class QAction;
+class QAbstractItemView;
 class QMenu;
 
 /// Translate low-level Qt events into high-level events for QtTesting
@@ -47,7 +48,8 @@ private:
   ctkMenuComboBoxEventTranslator(const ctkMenuComboBoxEventTranslator&); // NOT implemented
   ctkMenuComboBoxEventTranslator& operator=(const ctkMenuComboBoxEventTranslator&); // NOT implemented
 
-  QObject* CurrentObject;
+  QObject*            CurrentObject;
+  QAbstractItemView*  CurrentView;
 
   void connectAllMenu(QMenu* menu);
 

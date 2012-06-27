@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QAbstractItemView>
 #include <QComboBox>
 #include <QDebug>
 #include <QEvent>
@@ -36,6 +37,7 @@ ctkMenuComboBoxEventTranslator::ctkMenuComboBoxEventTranslator(QObject *parent)
   : pqWidgetEventTranslator(parent)
 {
   this->CurrentObject = 0;
+  this->CurrentView = 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -45,6 +47,12 @@ bool ctkMenuComboBoxEventTranslator::translateEvent(QObject *Object,
 {
   Q_UNUSED(Error);
   ctkMenuComboBox* menuCombo = NULL;
+  if (this->CurrentView &&
+      qobject_cast<QAbstractItemView*>(Object) == this->CurrentView)
+    {
+    return true;
+    }
+
   for(QObject* test = Object; menuCombo == NULL && test != NULL; test = test->parent())
     {
     menuCombo = qobject_cast<ctkMenuComboBox*>(test);
@@ -64,6 +72,7 @@ bool ctkMenuComboBoxEventTranslator::translateEvent(QObject *Object,
         disconnect(this->CurrentObject, 0, this, 0);
         }
       this->CurrentObject = Object;
+      this->CurrentView = menuCombo->searchCompleter()->popup();
 
       connect(menuCombo, SIGNAL(destroyed(QObject*)),
               this, SLOT(onDestroyed()));
