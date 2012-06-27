@@ -23,7 +23,7 @@ if(CTK_USE_QTTESTING)
 
     if(NOT DEFINED QtTesting_DIR)
 
-      set(revision_tag 4c01c5e7cde0fdeae15c082c0cdd2efcb926675f)
+      set(revision_tag 7dbef1003157941e7315220f53cf4e17d78b5e28)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
