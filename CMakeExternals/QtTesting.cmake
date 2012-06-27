@@ -23,7 +23,7 @@ if(CTK_USE_QTTESTING)
 
     if(NOT DEFINED QtTesting_DIR)
 
-      set(revision_tag ed44502bf430651007f5ba737884a249dbb928e1)
+      set(revision_tag 4c01c5e7cde0fdeae15c082c0cdd2efcb926675f)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
@@ -35,7 +35,7 @@ if(CTK_USE_QTTESTING)
         set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
                           GIT_TAG ${revision_tag})
       else()
-        set(location_args GIT_REPOSITORY "${git_protocol}://github.com/benjaminlong/QtTesting.git"
+        set(location_args GIT_REPOSITORY "${git_protocol}://paraview.org/QtTesting.git"
                           GIT_TAG ${revision_tag})
       endif()
 
