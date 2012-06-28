@@ -87,6 +87,8 @@ set(KIT_SRCS
   ctkFontButton.h
   ctkIconEnginePlugin.cpp
   ctkIconEnginePlugin.h
+  ctkLanguageComboBox.cpp
+  ctkLanguageComboBox.h
   ctkLayoutManager.cpp
   ctkLayoutManager.h
   ctkMaterialPropertyPreviewLabel.cpp
@@ -213,6 +215,7 @@ set(KIT_MOC_SRCS
   ctkFlowLayout.h
   ctkFontButton.h
   ctkIconEnginePlugin.h
+  ctkLanguageComboBox.h
   ctkLayoutManager.h
   ctkMaterialPropertyPreviewLabel.h
   ctkMaterialPropertyWidget.h
