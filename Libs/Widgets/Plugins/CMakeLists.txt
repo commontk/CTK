@@ -50,6 +50,8 @@ set(PLUGIN_SRCS
   ctkFittedTextBrowserPlugin.h
   ctkFontButtonPlugin.cpp
   ctkFontButtonPlugin.h
+  ctkLanguageComboBoxPlugin.cpp
+  ctkLanguageComboBoxPlugin.h
   ctkMaterialPropertyPreviewLabelPlugin.cpp
   ctkMaterialPropertyPreviewLabelPlugin.h
   ctkMaterialPropertyWidgetPlugin.cpp
@@ -111,6 +113,7 @@ set(PLUGIN_MOC_SRCS
   #ctkExtensionFactory.h
   ctkFittedTextBrowserPlugin.h
   ctkFontButtonPlugin.h
+  ctkLanguageComboBoxPlugin.h
   ctkMaterialPropertyWidgetPlugin.h
   ctkMaterialPropertyPreviewLabelPlugin.h
   ctkMatrixWidgetPlugin.h
