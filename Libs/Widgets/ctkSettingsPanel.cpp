@@ -117,7 +117,6 @@ public:
 
   QSettings*                  Settings;
   QMap<QString, PropertyType> Properties;
-  QSignalMapper*              SignalMapper;
   bool                        SaveToSettingsWhenRegister;
 };
 
@@ -128,18 +127,12 @@ ctkSettingsPanelPrivate::ctkSettingsPanelPrivate(ctkSettingsPanel& object)
   qRegisterMetaType<ctkSettingsPanel::SettingOption>("ctkSettingsPanel::SettingOption");
   qRegisterMetaType<ctkSettingsPanel::SettingOptions>("ctkSettingsPanel::SettingOptions");
   this->Settings = 0;
-  this->SignalMapper = 0;
   this->SaveToSettingsWhenRegister = true;
 }
 
 // --------------------------------------------------------------------------
 void ctkSettingsPanelPrivate::init()
 {
-  Q_Q(ctkSettingsPanel);
-  
-  this->SignalMapper = new QSignalMapper(q);
-  QObject::connect(this->SignalMapper, SIGNAL(mapped(QString)),
-                   q, SLOT(updateSetting(QString)));
 }
 
 // --------------------------------------------------------------------------
@@ -259,9 +252,14 @@ void ctkSettingsPanel::registerProperty(const QString& key,
     }
   d->Properties[key] = prop;
 
-  d->SignalMapper->setMapping(object, key);
-  this->connect(object, signal, d->SignalMapper, SLOT(map()));
-  
+  // Create a signal mapper per property to be able to support
+  // multiple signals from the same sender.
+  QSignalMapper* signalMapper = new QSignalMapper(this);
+  QObject::connect(signalMapper, SIGNAL(mapped(QString)),
+                   this, SLOT(updateSetting(QString)));
+  signalMapper->setMapping(object, key);
+  this->connect(object, signal, signalMapper, SLOT(map()));
+
   if (d->SaveToSettingsWhenRegister)
     {
     this->updateSetting(key);
