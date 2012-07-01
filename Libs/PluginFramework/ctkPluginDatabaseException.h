@@ -63,6 +63,11 @@ public:
    */
   ctkPluginDatabaseException* clone() const;
 
+  /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
+
   Type getType() const;
 
 private:

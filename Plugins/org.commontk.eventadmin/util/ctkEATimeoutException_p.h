@@ -57,6 +57,11 @@ public:
    * @see ctkException::clone()
    */
   ctkEATimeoutException* clone() const;
+
+  /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
 };
 
 #endif // CTKEATIMEOUTEXCEPTION_P_H

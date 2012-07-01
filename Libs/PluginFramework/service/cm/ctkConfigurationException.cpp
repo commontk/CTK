@@ -75,6 +75,12 @@ ctkConfigurationException* ctkConfigurationException::clone() const
 }
 
 //----------------------------------------------------------------------------
+void ctkConfigurationException::rethrow() const
+{
+  throw *this;
+}
+
+//----------------------------------------------------------------------------
 QString ctkConfigurationException::getProperty() const
 {
   return property;

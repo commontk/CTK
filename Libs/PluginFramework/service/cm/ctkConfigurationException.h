@@ -74,6 +74,11 @@ public:
   ctkConfigurationException* clone() const;
 
   /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
+
+  /**
    * Return the property name that caused the failure or a null QString.
    *
    * @return name of property or null if no specific property caused the

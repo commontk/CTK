@@ -56,6 +56,11 @@ public:
    * @see ctkException::clone()
    */
   ctkEABrokenBarrierException* clone() const;
+
+  /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
 };
 
 #endif // CTKEABROKENBARRIEREXCEPTION_P_H

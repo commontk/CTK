@@ -137,6 +137,11 @@ public:
   ctkPluginException* clone() const;
 
   /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
+
+  /**
    * Returns the type for this exception or <code>UNSPECIFIED</code> if the
    * type was unspecified or unknown.
    *

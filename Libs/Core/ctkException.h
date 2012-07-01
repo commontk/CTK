@@ -118,7 +118,8 @@ public:
   /**
    * @brief (Re)Throws this exception.
    */
-  void rethrow() const;
+  virtual void rethrow() const;
+
 
 private:
 
@@ -152,6 +153,7 @@ CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException& exc);
     CLS& operator = (const CLS& exc);                 \
     const char* name() const throw();                 \
     CLS* clone() const;                               \
+    void rethrow() const ;                            \
   };
 
 //---------------------------------------------------------------------------
@@ -184,6 +186,10 @@ CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException& exc);
   CLS* CLS::clone() const                                                \
   {                                                                      \
     return new CLS(*this);                                               \
+  }                                                                      \
+  void CLS::rethrow() const                                              \
+  {                                                                      \
+    throw *this;                                                         \
   }
 
 CTK_DECLARE_EXCEPTION(CTK_CORE_EXPORT, ctkRuntimeException, ctkException)

@@ -41,3 +41,8 @@ ctkEABrokenBarrierException *ctkEABrokenBarrierException::clone() const
 {
   return new ctkEABrokenBarrierException(*this);
 }
+
+void ctkEABrokenBarrierException::rethrow() const
+{
+  throw *this;
+}

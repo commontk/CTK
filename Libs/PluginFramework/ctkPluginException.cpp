@@ -80,6 +80,12 @@ ctkPluginException* ctkPluginException::clone() const
 }
 
 //----------------------------------------------------------------------------
+void ctkPluginException::rethrow() const
+{
+  throw *this;
+}
+
+//----------------------------------------------------------------------------
 ctkPluginException::Type ctkPluginException::getType() const
 {
   return type;
