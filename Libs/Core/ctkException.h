@@ -103,6 +103,12 @@ public:
   virtual const char* what() const throw();
 
   /**
+   * @brief Returns the detail message string of this exception.
+   * @return The detail exception message.
+   */
+  QString message() const throw();
+
+  /**
    * @brief Creates a copy of this exception. Use rethrow() to throw the
    * copy again.
    * @return A copy of this exception.

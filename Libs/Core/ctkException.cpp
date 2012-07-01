@@ -106,6 +106,13 @@ const char* ctkException::what() const throw()
 }
 
 // --------------------------------------------------------------------------
+QString ctkException::message() const throw()
+{
+  return Msg;
+}
+
+
+// --------------------------------------------------------------------------
 ctkException* ctkException::clone() const
 {
   return new ctkException(*this);
