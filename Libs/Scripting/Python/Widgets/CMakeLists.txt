@@ -31,7 +31,8 @@ set(KIT_UI_FORMS
 
 # Resources
 set(KIT_resources
-)
+  Resources/ctkScriptingPythonWidgets.qrc
+  )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
