@@ -1,0 +1,2 @@
+
+ctkFunctionCreateCLIModule(Tour)
