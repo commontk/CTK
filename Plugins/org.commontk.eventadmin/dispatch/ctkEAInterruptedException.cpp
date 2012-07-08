@@ -41,3 +41,8 @@ ctkEAInterruptedException *ctkEAInterruptedException::clone() const
 {
   return new ctkEAInterruptedException(*this);
 }
+
+void ctkEAInterruptedException::rethrow() const
+{
+  throw *this;
+}

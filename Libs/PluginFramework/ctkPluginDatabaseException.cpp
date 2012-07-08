@@ -83,6 +83,12 @@ ctkPluginDatabaseException* ctkPluginDatabaseException::clone() const
 }
 
 //----------------------------------------------------------------------------
+void ctkPluginDatabaseException::rethrow() const
+{
+  throw *this;
+}
+
+//----------------------------------------------------------------------------
 ctkPluginDatabaseException::Type ctkPluginDatabaseException::getType() const
 {
   return type;

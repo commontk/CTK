@@ -1,5 +1,6 @@
 # Dummy plugin used by ctkAbstractPluginFactoryTest1
 add_definitions( -DCTKDummyPlugin)
+
 ctkMacroBuildLib(
   NAME "CTKDummyPlugin"
   EXPORT_DIRECTIVE "CTK_DUMMY_EXPORT"
@@ -22,6 +23,7 @@ set(KITTests_SRCS
   ctkAbstractObjectFactoryTest1.cpp
   ctkAbstractPluginFactoryTest1.cpp
   ctkAbstractQObjectFactoryTest1.cpp
+  ctkBackTraceTest.cpp
   ctkBooleanMapperTest.cpp
   ctkCallbackTest1.cpp
   ctkCheckableModelHelperTest1.cpp
@@ -33,6 +35,7 @@ set(KITTests_SRCS
   ctkErrorLogFDMessageHandlerWithThreadsTest1.cpp
   ctkErrorLogQtMessageHandlerWithThreadsTest1.cpp
   ctkErrorLogStreamMessageHandlerWithThreadsTest1.cpp
+  ctkExceptionTest.cpp
   ctkHistogramTest1.cpp
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
@@ -126,6 +129,7 @@ SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 ${ctkDummyPluginPATH} )
 SIMPLE_TEST( ctkAbstractObjectFactoryTest1 )
 SIMPLE_TEST( ctkAbstractPluginFactoryTest1 ${ctkDummyPluginPATH} )
 SIMPLE_TEST( ctkAbstractQObjectFactoryTest1 )
+SIMPLE_TEST( ctkBackTraceTest )
 if(HAVE_BFD)
   SIMPLE_TEST( ctkBinaryFileDescriptorTest1 $<TARGET_FILE:ctkBinaryFileDescriptorTestHelper> )
 endif()
@@ -142,6 +146,7 @@ SIMPLE_TEST( ctkErrorLogModelTest4 )
 SIMPLE_TEST( ctkErrorLogFDMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkErrorLogQtMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkErrorLogStreamMessageHandlerWithThreadsTest1 )
+SIMPLE_TEST( ctkExceptionTest )
 SIMPLE_TEST( ctkHistogramTest1 )
 SIMPLE_TEST( ctkLoggerTest1 )
 set_property(TEST ctkLoggerTest1 PROPERTY PASS_REGULAR_EXPRESSION "logger.debug\nlogger.info\nlogger.trace\nlogger.warn\nlogger.error\nlogger.fatal")

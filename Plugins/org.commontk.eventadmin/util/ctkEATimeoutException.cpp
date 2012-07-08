@@ -41,3 +41,8 @@ ctkEATimeoutException *ctkEATimeoutException::clone() const
 {
   return new ctkEATimeoutException(*this);
 }
+
+void ctkEATimeoutException::rethrow() const
+{
+  throw *this;
+}

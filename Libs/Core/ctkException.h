@@ -25,9 +25,11 @@
 
 // Qt includes
 #include <QString>
+#include <QSet>
 
 // CTK includes
 #include <ctkCoreExport.h>
+#include <ctkBackTrace.h>
 
 //---------------------------------------------------------------------------
 /**
@@ -40,9 +42,22 @@
  *
  * ctkException classes can be copied, saved, and rethrown.
  */
-class CTK_CORE_EXPORT ctkException : public std::exception
+class CTK_CORE_EXPORT ctkException : public std::exception, public ctkBackTrace
 {
 public:
+
+  class TraceManipulator
+  {
+  public:
+
+    TraceManipulator(const ctkException* e);
+
+    QDebug print(QDebug dbg) const;
+
+  private:
+
+    const ctkException* Exc;
+  };
 
   /**
    * @brief Create a new ctkException.
@@ -103,6 +118,26 @@ public:
   virtual const char* what() const throw();
 
   /**
+   * @brief Returns the detail message string of this exception.
+   * @return The detail exception message.
+   */
+  QString message() const throw();
+
+  /**
+   * @brief Returns an object suitable for printing this executable
+   * and its backtrace via qDebug().
+   *
+   * Example usage:
+   * \code
+   * ctkException exc("My error");
+   * qDebug() << exc.printStackTrace();
+   * \endcode
+   *
+   * @return A helper object for streaming to qDebug().
+   */
+  TraceManipulator printStackTrace() const;
+
+  /**
    * @brief Creates a copy of this exception. Use rethrow() to throw the
    * copy again.
    * @return A copy of this exception.
@@ -112,12 +147,28 @@ public:
   /**
    * @brief (Re)Throws this exception.
    */
-  void rethrow() const;
+  virtual void rethrow() const;
+
+protected:
+
+  friend class TraceManipulator;
+
+  /**
+   * @brief Print the stack trace of this exception using the given QDebug object.
+   * @param dbg
+   * @return
+   */
+  virtual QDebug printStackTrace(QDebug dbg) const;
 
 private:
 
   QString Msg;
   ctkException* NestedException;
+
+  void printEnclosedStackTrace(QDebug dbg, const QList<QString>& enclosingTrace,
+                               const QString& caption, const QString& prefix,
+                               QSet<const ctkException*>& dejaVu);
+
 };
 
 //---------------------------------------------------------------------------
@@ -125,6 +176,12 @@ private:
  * \ingroup Core
  */
 CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException& exc);
+
+//---------------------------------------------------------------------------
+/**
+ * \ingroup Core
+ */
+CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException::TraceManipulator& trace);
 
 //---------------------------------------------------------------------------
 /**
@@ -146,6 +203,7 @@ CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException& exc);
     CLS& operator = (const CLS& exc);                 \
     const char* name() const throw();                 \
     CLS* clone() const;                               \
+    void rethrow() const ;                            \
   };
 
 //---------------------------------------------------------------------------
@@ -178,6 +236,10 @@ CTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkException& exc);
   CLS* CLS::clone() const                                                \
   {                                                                      \
     return new CLS(*this);                                               \
+  }                                                                      \
+  void CLS::rethrow() const                                              \
+  {                                                                      \
+    throw *this;                                                         \
   }
 
 CTK_DECLARE_EXCEPTION(CTK_CORE_EXPORT, ctkRuntimeException, ctkException)

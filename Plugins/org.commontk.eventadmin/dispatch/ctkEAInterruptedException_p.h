@@ -46,6 +46,8 @@ public:
   const char* name() const throw();
 
   ctkEAInterruptedException* clone() const;
+
+  void rethrow() const;
 };
 
 #endif // CTKEAINTERRUPTEDEXCEPTION_P_H

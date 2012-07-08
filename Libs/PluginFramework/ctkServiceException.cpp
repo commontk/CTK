@@ -82,6 +82,12 @@ ctkServiceException* ctkServiceException::clone() const
 }
 
 //----------------------------------------------------------------------------
+void ctkServiceException::rethrow() const
+{
+  throw *this;
+}
+
+//----------------------------------------------------------------------------
 ctkServiceException::Type ctkServiceException::getType() const
 {
   return type;
