@@ -30,6 +30,7 @@ set(KIT_SRCS
   ctkAbstractQObjectFactory.tpp
   ctkAbstractLibraryFactory.h
   ctkAbstractLibraryFactory.tpp
+  ctkBackTrace.cpp
   ctkBooleanMapper.cpp
   ctkBooleanMapper.h
   ctkCallback.cpp
@@ -128,6 +129,13 @@ ctkMacroBuildLib(
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
+
+# Needed for ctkBackTrace
+if(UNIX)
+  target_link_libraries(${PROJECT_NAME} dl)
+elseif(WIN32 AND NOT MINGW)
+  target_link_libraries(${PROJECT_NAME} dbghelp)
+endif()
 
 if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(

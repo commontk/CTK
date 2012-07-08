@@ -27,6 +27,20 @@
 #include <QDebug>
 
 // --------------------------------------------------------------------------
+ctkException::TraceManipulator::TraceManipulator(const ctkException* e)
+  : Exc(e)
+{
+}
+
+// --------------------------------------------------------------------------
+QDebug ctkException::TraceManipulator::print(QDebug dbg) const
+{
+  if (Exc)
+    Exc->printStackTrace(dbg);
+  return dbg.maybeSpace();
+}
+
+// --------------------------------------------------------------------------
 ctkException::ctkException(const QString& msg)
   : Msg(msg), NestedException(0)
 {
@@ -40,7 +54,7 @@ ctkException::ctkException(const QString& msg, const ctkException& cause)
 
 // --------------------------------------------------------------------------
 ctkException::ctkException(const ctkException& exc)
-  : std::exception(exc), Msg(exc.Msg)
+  : std::exception(exc), ctkBackTrace(exc), Msg(exc.Msg)
 {
   NestedException = exc.NestedException ? exc.NestedException->clone() : 0;
 }
@@ -98,10 +112,6 @@ const char* ctkException::what() const throw()
     txt += ": ";
     txt += Msg.toStdString();
   }
-  if (NestedException)
-  {
-    txt +=  std::string("\n  Caused by: ") + NestedException->what();
-  }
   return txt.c_str();
 }
 
@@ -111,6 +121,11 @@ QString ctkException::message() const throw()
   return Msg;
 }
 
+// --------------------------------------------------------------------------
+ctkException::TraceManipulator ctkException::printStackTrace() const
+{
+  return TraceManipulator(this);
+}
 
 // --------------------------------------------------------------------------
 ctkException* ctkException::clone() const
@@ -124,11 +139,80 @@ void ctkException::rethrow() const
   throw *this;
 }
 
+// --------------------------------------------------------------------------
+QDebug ctkException::printStackTrace(QDebug dbg) const
+{
+  QSet<const ctkException*> dejaVu;
+  dejaVu.insert(this);
+
+  // Print our stack trace
+  dbg.nospace() << this->what() << '\n';
+  QList<QString> trace = stackTrace();
+  foreach(QString traceElement, trace)
+  {
+    dbg.nospace() << "\tat " << qPrintable(traceElement) << '\n';
+  }
+
+  // Print cause, if any
+  if (NestedException)
+  {
+    NestedException->printEnclosedStackTrace(dbg, trace, "Caused by: ", "", dejaVu);
+  }
+  return dbg;
+}
+
+// --------------------------------------------------------------------------
+void ctkException::printEnclosedStackTrace(QDebug dbg, const QList<QString>& enclosingTrace,
+                                           const QString& caption, const QString& prefix,
+                                           QSet<const ctkException*>& dejaVu)
+{
+  if (dejaVu.contains(this))
+  {
+    dbg.nospace() << "\t[CIRCULAR REFERENCE:" << this->what() << "]\n";
+  }
+  else
+  {
+    dejaVu.insert(this);
+    // Compute number of frames in common between this and enclosing trace
+    QList<QString> trace = stackTrace();
+    int m = trace.size() - 1;
+    int n = enclosingTrace.size() - 1;
+    while (m >= 0 && n >=0 && trace[m] == enclosingTrace[n])
+    {
+      m--; n--;
+    }
+    int framesInCommon = trace.size() - 1 - m;
+
+    // Print our stack trace
+    dbg.nospace() << qPrintable(prefix) << qPrintable(caption) << this->what() << '\n';
+    for (int i = 0; i <= m; i++)
+    {
+      dbg.nospace() << qPrintable(prefix) << "\tat " << qPrintable(trace[i]) << '\n';
+    }
+    if (framesInCommon != 0)
+    {
+      dbg.nospace() << qPrintable(prefix) << "\t... " << framesInCommon << " more\n";
+    }
+
+    // Print cause, if any
+    if (NestedException)
+    {
+      NestedException->printEnclosedStackTrace(dbg, trace, "Caused by: ", prefix, dejaVu);
+    }
+  }
+}
+
 //----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkException& exc)
 {
   dbg << exc.what();
   return dbg.maybeSpace();
+}
+
+//----------------------------------------------------------------------------
+QDebug operator<<(QDebug dbg, const ctkException::TraceManipulator& trace)
+{
+  return trace.print(dbg);
 }
 
 CTK_IMPLEMENT_EXCEPTION(ctkRuntimeException, ctkException, "ctkRuntimeException")
