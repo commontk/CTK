@@ -614,6 +614,21 @@ public:
   bool connectPluginListener(const QObject* receiver, const char* slot, Qt::ConnectionType type = Qt::QueuedConnection);
 
   /**
+   * Disconnects the specified <code>slot</code> from the context
+   * plugin.
+   *
+   * <p>
+   * If <code>slot</code> is not connected to the context plugin,
+   * this method does nothing.
+   *
+   * @param receiver The object which has previously connected <code>slot</code>.
+   * @param slot The Qt slot to be disconnected. If <code>NULL</code>, all slots
+   *        previously connected via connectPluginListener are disconnected.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
+   */
+  void disconnectPluginListener(const QObject* receiver, const char* slot = 0);
+
+  /**
    * Connects the specified <code>slot</code> to the context
    * plugin's signal which emits general Framework events. The signature
    * of the slot must be "slotName(ctkPluginFrameworkEvent)".
@@ -629,6 +644,21 @@ public:
    * @see ctkEventBus
    */
   bool connectFrameworkListener(const QObject* receiver, const char* slot, Qt::ConnectionType type = Qt::QueuedConnection);
+
+  /**
+   * Disconnects the specified <code>slot</slot> from the context
+   * plugin.
+   *
+   * <p>
+   * If <code>slot</code> is not connected to the context plugin,
+   * this method does nothing.
+   *
+   * @param receiver The object which has previously connected <code>slot</code>.
+   * @param slot The Qt slot to be disconnected. If <code>NULL</code>, all slots
+   *        previously connected via connectFrameworkListener are disconnected.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
+   */
+  void disconnectFrameworkListener(const QObject* receiver, const char* slot = 0);
 
   /**
    * Connects the specified <code>slot</code> with the
