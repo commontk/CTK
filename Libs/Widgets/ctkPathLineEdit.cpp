@@ -116,6 +116,9 @@ ctkPathLineEdit::ctkPathLineEdit(QWidget *parentWidget)
 {
   Q_D(ctkPathLineEdit);
   d->init();
+
+  this->setNameFilters(nameFilters());
+  this->setFilters(filters());
 }
 
 //-----------------------------------------------------------------------------
