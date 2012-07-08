@@ -19,8 +19,8 @@
   
 =============================================================================*/
 
-#include "ctkCLIPluginExplorerMainWindow.h"
-#include "ui_ctkCLIPluginExplorerMainWindow.h"
+#include "ctkCLModuleExplorerMainWindow.h"
+#include "ui_ctkCLModuleExplorerMainWindow.h"
 
 #include <ctkModuleDescriptionValidator.h>
 #include <ctkModuleManager.h>
@@ -79,22 +79,22 @@ private:
 };
 
 
-ctkCLIPluginExplorerMainWindow::ctkCLIPluginExplorerMainWindow(QWidget *parent) :
+ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
-  ui(new Ui::ctkCLIPluginExplorerMainWindow),
+  ui(new Ui::ctkCLModuleExplorerMainWindow),
   factory(new ctkModuleDescriptionDefaultFactory),
   moduleManager(factory)
 {
   ui->setupUi(this);
 }
 
-ctkCLIPluginExplorerMainWindow::~ctkCLIPluginExplorerMainWindow()
+ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
 {
   delete ui;
   delete factory;
 }
 
-void ctkCLIPluginExplorerMainWindow::addModuleTab(const ctkModuleReference& moduleRef)
+void ctkCLModuleExplorerMainWindow::addModuleTab(const ctkModuleReference& moduleRef)
 {
   if (moduleRef.widgetTree() == 0) return;
 
@@ -103,7 +103,7 @@ void ctkCLIPluginExplorerMainWindow::addModuleTab(const ctkModuleReference& modu
   mapTabToModuleRef[tabIndex] = moduleRef;
 }
 
-void ctkCLIPluginExplorerMainWindow::addModule(const QString &location)
+void ctkCLModuleExplorerMainWindow::addModule(const QString &location)
 {
   ctkModuleReference ref = moduleManager.addModule(location);
   if (ref.isValid())
@@ -112,7 +112,7 @@ void ctkCLIPluginExplorerMainWindow::addModule(const QString &location)
   }
 }
 
-void ctkCLIPluginExplorerMainWindow::testModuleXML(const QByteArray &xml)
+void ctkCLModuleExplorerMainWindow::testModuleXML(const QByteArray &xml)
 {
   QObject* root = factory->createGUIFromXML(xml);
   if (root)
@@ -123,7 +123,7 @@ void ctkCLIPluginExplorerMainWindow::testModuleXML(const QByteArray &xml)
   }
 }
 
-void ctkCLIPluginExplorerMainWindow::on_actionRun_triggered()
+void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 {
   qDebug() << "Creating module command line...";
 
@@ -142,14 +142,14 @@ void ctkCLIPluginExplorerMainWindow::on_actionRun_triggered()
   futureWatcher.setFuture(future);
 }
 
-void ctkCLIPluginExplorerMainWindow::futureFinished()
+void ctkCLModuleExplorerMainWindow::futureFinished()
 {
   qDebug() << "*** Future finished";
   qDebug() << "stdout:" << futureWatcher.future().standardOutput();
   qDebug() << "stderr:" << futureWatcher.future().standardError();
 }
 
-ctkModuleReference ctkCLIPluginExplorerMainWindow::moduleReference(int tabIndex)
+ctkModuleReference ctkCLModuleExplorerMainWindow::moduleReference(int tabIndex)
 {
   return mapTabToModuleRef[tabIndex];
 }

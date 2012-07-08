@@ -1,4 +1,4 @@
-project(CTKModuleDescription)
+project(CTKCommandLineModules)
 
 #
 # 3rd party dependencies
@@ -8,7 +8,7 @@ project(CTKModuleDescription)
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-set(KIT_export_directive "CTK_MODULDESC_EXPORT")
+set(KIT_export_directive "CTK_CMDLINEMODULE_EXPORT")
 
 # Additional directories to include
 

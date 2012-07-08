@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ctkCLIPluginExplorerMainWindow</class>
- <widget class="QMainWindow" name="ctkCLIPluginExplorerMainWindow">
+ <class>ctkCLModuleExplorerMainWindow</class>
+ <widget class="QMainWindow" name="ctkCLModuleExplorerMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CTK CLI Plug-in Explorer</string>
+   <string>CTK Command Line Module Explorer</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -62,7 +62,7 @@
   </widget>
   <action name="actionRun">
    <property name="icon">
-    <iconset resource="resources/ctkCLIPluginExplorer.qrc">
+    <iconset resource="resources/ctkCLModuleExplorer.qrc">
      <normaloff>:/icons/run.png</normaloff>:/icons/run.png</iconset>
    </property>
    <property name="text">
@@ -77,7 +77,7 @@
   </action>
   <action name="actionStop">
    <property name="icon">
-    <iconset resource="resources/ctkCLIPluginExplorer.qrc">
+    <iconset resource="resources/ctkCLModuleExplorer.qrc">
      <normaloff>:/icons/stop.png</normaloff>:/icons/stop.png</iconset>
    </property>
    <property name="text">
@@ -92,7 +92,7 @@
   </action>
  </widget>
  <resources>
-  <include location="resources/ctkCLIPluginExplorer.qrc"/>
+  <include location="resources/ctkCLModuleExplorer.qrc"/>
  </resources>
  <connections/>
 </ui>

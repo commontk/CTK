@@ -29,7 +29,7 @@ class ctkModuleParameterGroupPrivate;
 *  \brief Group of parameters
 *
 */
-class CTK_MODULDESC_EXPORT ctkModuleParameterGroup
+class CTK_CMDLINEMODULE_EXPORT ctkModuleParameterGroup
 {
   Q_DECLARE_PRIVATE(ctkModuleParameterGroup)
 
@@ -65,6 +65,6 @@ private:
   ctkModuleParameterGroupPrivate * const d_ptr;
 };
 
-CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup& group);
+CTK_CMDLINEMODULE_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup& group);
 
 #endif

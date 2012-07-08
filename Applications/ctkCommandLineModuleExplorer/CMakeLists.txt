@@ -1,28 +1,28 @@
-project(ctkCLIPluginExplorer)
+project(ctkCommandLineModuleExplorer)
 
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
 
 set(KIT_SRCS
-  ctkCLIPluginExplorerMain.cpp
-  ctkCLIPluginExplorerMainWindow.h
-  ctkCLIPluginExplorerMainWindow.cpp
+  ctkCommandLineModuleExplorerMain.cpp
+  ctkCLModuleExplorerMainWindow.h
+  ctkCLModuleExplorerMainWindow.cpp
 )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  ctkCLIPluginExplorerMainWindow.h
+  ctkCLModuleExplorerMainWindow.h
 )
 
 # UI files
 set(KIT_UI_FORMS
-  ctkCLIPluginExplorerMainWindow.ui
+  ctkCLModuleExplorerMainWindow.ui
 )
 
 # Resources
 set(KIT_resources
-  resources/ctkCLIPluginExplorer.qrc
+  resources/ctkCLModuleExplorer.qrc
 )
 
 set(QT_USE_QTUITOOLS 1)

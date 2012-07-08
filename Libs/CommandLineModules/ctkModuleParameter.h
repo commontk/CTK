@@ -21,7 +21,7 @@
 #ifndef __ctkModuleParameter_h
 #define __ctkModuleParameter_h
 
-#include "ctkModuleDescriptionExport.h"
+#include "ctkCommandLineModulesExport.h"
 
 #include <QTextStream>
 
@@ -36,7 +36,7 @@ class ctkModuleParameterPrivate;
  * stored.
  *
  */
-class CTK_MODULDESC_EXPORT ctkModuleParameter
+class CTK_CMDLINEMODULE_EXPORT ctkModuleParameter
 {
   Q_DECLARE_PRIVATE(ctkModuleParameter)
 
@@ -152,6 +152,6 @@ private:
   ctkModuleParameterPrivate * const d_ptr;
 };
 
-CTK_MODULDESC_EXPORT QTextStream& operator<<(QTextStream& os, const ctkModuleParameter& parameter);
+CTK_CMDLINEMODULE_EXPORT QTextStream& operator<<(QTextStream& os, const ctkModuleParameter& parameter);
 
 #endif

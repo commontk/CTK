@@ -5,5 +5,5 @@
 # 
 
 set(target_libraries
-  CTKModuleDescription
+  CTKCommandLineModules
   )

@@ -33,7 +33,7 @@
 #include <ctkCommandLineParser.h>
 #include <ctkModuleDescriptionValidator.h>
 
-#include "ctkCLIPluginExplorerMainWindow.h"
+#include "ctkCLModuleExplorerMainWindow.h"
 
 int main(int argc, char** argv)
 {
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 
   //ctkModuleDescription* descr = ctkModuleDescription::parse(&input);
 
-  ctkCLIPluginExplorerMainWindow mainWindow;
+  ctkCLModuleExplorerMainWindow mainWindow;
 
   if (args.contains("cli-xml"))
   {

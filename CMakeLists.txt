@@ -449,8 +449,8 @@ ctk_lib_option(Visualization/VTK/Core
 ctk_lib_option(Visualization/VTK/Widgets
                "Build the VTK Widgets library" OFF)
                
-ctk_lib_option(ModuleDescription
-               "Build the Command Line Module Description library" OFF)
+ctk_lib_option(CommandLineModules
+               "Build the Command Line Module support library" OFF)
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
@@ -467,8 +467,6 @@ set(CTK_ENABLED_LIBS ${_enabled_libs} CACHE INTERNAL "" FORCE)
 # CTK Applications - Use ON or OFF to indicate if the application should be built by default
 #
  
-#ctk_app_option(ctkCLIPluginExplorer "Build the CLI Plugin Explorer" OFF)
-
 ctk_app_option(ctkDICOM
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
@@ -505,8 +503,8 @@ ctk_app_option(ctkEventBusDemo
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
 
-ctk_app_option(ctkCLIPluginExplorer
-               "Build the Command Line Interface Plugin Explorer" OFF
+ctk_app_option(ctkCommandLineModuleExplorer
+               "Build the Command Line Module Explorer" OFF
                CTK_BUILD_EXAMPLES)
                
 ctk_app_option(ctkPluginBrowser

@@ -29,16 +29,16 @@
 class ctkModuleDescriptionDefaultFactory;
 
 namespace Ui {
-class ctkCLIPluginExplorerMainWindow;
+class ctkCLModuleExplorerMainWindow;
 }
 
-class ctkCLIPluginExplorerMainWindow : public QMainWindow
+class ctkCLModuleExplorerMainWindow : public QMainWindow
 {
   Q_OBJECT
   
 public:
-  explicit ctkCLIPluginExplorerMainWindow(QWidget *parent = 0);
-  ~ctkCLIPluginExplorerMainWindow();
+  explicit ctkCLModuleExplorerMainWindow(QWidget *parent = 0);
+  ~ctkCLModuleExplorerMainWindow();
 
   void addModule(const QString& location);
   void testModuleXML(const QByteArray& xml);
@@ -56,7 +56,7 @@ protected:
   ctkModuleReference moduleReference(int tabIndex);
   
 private:
-  Ui::ctkCLIPluginExplorerMainWindow *ui;
+  Ui::ctkCLModuleExplorerMainWindow *ui;
 
   ctkModuleDescriptionDefaultFactory* factory;
   ctkModuleManager moduleManager;

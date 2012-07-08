@@ -38,7 +38,7 @@ struct ctkModuleDescriptionPrivate;
 * command (with path) for an executable.
 * - Location: This is path to the executable for the module
 */
-class CTK_MODULDESC_EXPORT ctkModuleDescription
+class CTK_CMDLINEMODULE_EXPORT ctkModuleDescription
 {
   Q_DECLARE_PRIVATE(ctkModuleDescription)
 
@@ -123,6 +123,6 @@ private:
 
 };
 
-CTK_MODULDESC_EXPORT QTextStream & operator<<(QTextStream& os, const ctkModuleDescription& module);
+CTK_CMDLINEMODULE_EXPORT QTextStream & operator<<(QTextStream& os, const ctkModuleDescription& module);
 
 #endif

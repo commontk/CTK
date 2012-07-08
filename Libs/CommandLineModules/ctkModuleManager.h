@@ -25,7 +25,7 @@
 #include <QStringList>
 #include <QString>
 
-#include <ctkModuleDescriptionExport.h>
+#include <ctkCommandLineModulesExport.h>
 
 #include "ctkModuleReference.h"
 #include "ctkModuleProcessFuture.h"
@@ -46,7 +46,7 @@ struct ctkModuleDescriptionFactory
 };
 
 /// The methods in this class are for playing around... no API design yet
-class CTK_MODULDESC_EXPORT ctkModuleManager
+class CTK_CMDLINEMODULE_EXPORT ctkModuleManager
 {
 public:
   ctkModuleManager(ctkModuleDescriptionFactory* descriptionFactory);
