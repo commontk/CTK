@@ -21,105 +21,68 @@
 #ifndef __ctkCmdLineModuleDescription_h
 #define __ctkCmdLineModuleDescription_h
 
-#include <QIcon>
+#include <ctkCommandLineModulesExport.h>
 
-#include "ctkCmdLineModuleParameterGroup.h"
+#include <QList>
+#include <QSharedDataPointer>
+
+class QIcon;
+class QIODevice;
+class QTextStream;
 
 struct ctkCmdLineModuleDescriptionPrivate;
+class ctkCmdLineModuleParameterGroup;
+class ctkCmdLineModuleParameter;
 
 /**
-* Description of the parameters of a module
-*
-* The parameters can be used for automated GUI generation or execution
-* of the module.
-*
-* For example:
-* - Target: This is the entry point for a shared object module and the full 
-* command (with path) for an executable.
-* - Location: This is path to the executable for the module
-*/
+ * Description of the parameters of a command line module.
+ *
+ * The parameters can be used for automated GUI generation or execution
+ * of the module.
+ */
 class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleDescription
 {
-  Q_DECLARE_PRIVATE(ctkCmdLineModuleDescription)
 
 public:
 
   ~ctkCmdLineModuleDescription();
 
-  static ctkCmdLineModuleDescription* parse(QIODevice* input);
+  static ctkCmdLineModuleDescription parse(QIODevice* input);
 
-  void setCategory(const QString& cat);
   QString category() const;
 
-  void setTitle(const QString& title);
   QString title() const;
 
-  void setDescription(const QString& description);
   QString description() const;
 
-  void setVersion(const QString& version);
   QString version() const;
 
-  void setDocumentationURL(const QString& documentationURL);
   QString documentationURL() const;
 
-  void setLicense(const QString& license);
   QString license() const;
 
-  void setAcknowledgements(const QString& acknowledgements);
   QString acknowledgements() const;
 
-  void setContributor(const QString& contributor);
   QString contributor() const;
 
-  /// Set the location for the module.  This is path to the file for the module.
-  void setLocation(const QString& target);
-  /// Get the location for the module.  This is path to the file for the module.
-  QString location() const;
-
-  void setLogo(const QIcon& logo);
   QIcon logo() const;
 
-  void addParameterGroup(ctkCmdLineModuleParameterGroup* group);
-  QList<ctkCmdLineModuleParameterGroup*> parameterGroups() const;
-  void setParameterGroups(const QList<ctkCmdLineModuleParameterGroup*>& groups);
+  QList<ctkCmdLineModuleParameterGroup> parameterGroups() const;
 
   bool hasParameter(const QString& name) const;
 
-  ctkCmdLineModuleParameter* parameter(const QString& name) const;
+  ctkCmdLineModuleParameter parameter(const QString& name) const;
 
   // Does the module have any simple (primitive) return types?
   bool hasReturnParameters() const;
 
-  bool setParameterDefaultValue(const QString& name,
-                                const QString& value);
-
-//  const ModuleProcessInformation* processInformation() const
-//  {return &ProcessInformation;}
-
-//  ModuleProcessInformation* processInformation()
-//  {return &ProcessInformation;}
-
-  ///
-  /// Read a parameter file. Syntax of file is "name: value" for each
-  /// parameter. Returns a bool indicating whether any parameter value
-  /// was modified.
-  bool readParameterFile(const QString& filename);
-
-  ///
-  /// Write a parameter file. By default, the method writes out all
-  /// the parameters.  The "withHandlesToBulkParameters" parameter
-  /// controls whether the handles to the bulk parameters (image,
-  /// geometry, etc.) are written to the file.
-  bool writeParameterFile(const QString& filename, bool withHandlesToBulkParameters = true) const;
-
 private:
+
+  friend class ctkCmdLineModuleXmlParser;
 
   ctkCmdLineModuleDescription();
 
-  Q_DISABLE_COPY(ctkCmdLineModuleDescription)
-
-  ctkCmdLineModuleDescriptionPrivate * const d_ptr;
+  QSharedDataPointer<ctkCmdLineModuleDescriptionPrivate> d;
 
 };
 

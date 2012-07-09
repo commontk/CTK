@@ -27,7 +27,12 @@ limitations under the License.
 
 // CTK includes
 #include "ctkCmdLineModuleDescription.h"
+#include "ctkCmdLineModuleDescriptionPrivate.h"
+#include "ctkCmdLineModuleParameterGroup.h"
+#include "ctkCmdLineModuleParameterGroupPrivate.h"
 #include "ctkCmdLineModuleParameterParsers_p.h"
+
+#include "ctkException.h"
 
 // STD includes
 #include <stdexcept>
@@ -44,7 +49,7 @@ public:
 
   void handleExecutableElement();
   void handleParametersElement();
-  ctkCmdLineModuleParameter* handleParameterElement();
+  ctkCmdLineModuleParameter handleParameterElement();
 
 private:
 
@@ -203,35 +208,35 @@ void ctkCmdLineModuleXmlParser::handleExecutableElement()
 
     if (name.compare("category", Qt::CaseInsensitive) == 0)
     {
-      _md->setCategory(_xmlReader.readElementText().trimmed());
+      _md->d->Category = _xmlReader.readElementText().trimmed();
     }
     else if (name.compare("title", Qt::CaseInsensitive) == 0)
     {
-      _md->setTitle(_xmlReader.readElementText().trimmed());
+      _md->d->Title = _xmlReader.readElementText().trimmed();
     }
     else if (name.compare("version", Qt::CaseInsensitive) == 0)
     {
-      _md->setVersion(_xmlReader.readElementText().trimmed());
+      _md->d->Version = _xmlReader.readElementText().trimmed();
     }
     else if (name.compare("documentation-url", Qt::CaseInsensitive) == 0)
     {
-      _md->setDocumentationURL(_xmlReader.readElementText().trimmed());
+      _md->d->DocumentationURL = _xmlReader.readElementText().trimmed();
     }
     else if (name.compare("license", Qt::CaseInsensitive) == 0)
     {
-      _md->setLicense(_xmlReader.readElementText().trimmed());
+      _md->d->License = _xmlReader.readElementText().trimmed();
     }
     else if (name.compare("acknowledgements", Qt::CaseInsensitive) == 0)
     {
-      _md->setAcknowledgements(_xmlReader.readElementText().trimmed());
+      _md->d->Acknowledgements = _xmlReader.readElementText().trimmed();
     }
     else if (name.compare("contributor", Qt::CaseInsensitive) == 0)
     {
-      _md->setContributor(_xmlReader.readElementText().trimmed());
+      _md->d->Contributor = _xmlReader.readElementText().trimmed();
     }
     else if (name.compare("description", Qt::CaseInsensitive) == 0)
     {
-      _md->setDescription(_xmlReader.readElementText().trimmed());
+      _md->d->Description = _xmlReader.readElementText().trimmed();
     }
     else if (name.compare("parameters", Qt::CaseInsensitive) == 0)
     {
@@ -249,9 +254,9 @@ void ctkCmdLineModuleXmlParser::handleExecutableElement()
 // ----------------------------------------------------------------------------
 void ctkCmdLineModuleXmlParser::handleParametersElement()
 {
-  ctkCmdLineModuleParameterGroup* group = new ctkCmdLineModuleParameterGroup();
+  ctkCmdLineModuleParameterGroup group;
 
-  group->setAdvanced(parseBooleanAttribute(_xmlReader.attributes().value("advanced")));
+  group.d->Advanced = parseBooleanAttribute(_xmlReader.attributes().value("advanced"));
 
   while(_xmlReader.readNextStartElement())
   {
@@ -259,63 +264,58 @@ void ctkCmdLineModuleXmlParser::handleParametersElement()
 
     if (name.compare("label", Qt::CaseInsensitive) == 0)
     {
-      group->setLabel(_xmlReader.readElementText().trimmed());
+      group.d->Label = _xmlReader.readElementText().trimmed();
     }
     else if (name.compare("description", Qt::CaseInsensitive) == 0)
     {
-      group->setDescription(_xmlReader.readElementText().trimmed());
+      group.d->Description = _xmlReader.readElementText().trimmed();
     }
     else
     {
-      ctkCmdLineModuleParameter* parameter = this->handleParameterElement();
-      if (parameter)
+      try
       {
-        group->addParameter(parameter);
+        ctkCmdLineModuleParameter parameter = this->handleParameterElement();
+        group.d->Parameters.push_back(parameter);
+      }
+      catch (const ctkException& e)
+      {
+        // Just print the exception and continue
+        qCritical() << e;
       }
     }
   }
 
-  _md->addParameterGroup(group);
+  _md->d->ParameterGroups.push_back(group);
 }
 
 // ----------------------------------------------------------------------------
-ctkCmdLineModuleParameter* ctkCmdLineModuleXmlParser::handleParameterElement()
+ctkCmdLineModuleParameter ctkCmdLineModuleXmlParser::handleParameterElement()
 {
   QString paramTag = _xmlReader.name().toString().toLower();
   ctkCmdLineModuleParameterParser* paramParser = _paramParsers[paramTag];
   if (paramParser == 0)
   {
     _xmlReader.skipCurrentElement();
-    qCritical() << "No parser for element" << paramTag << "available, line"
-                << _xmlReader.lineNumber() << ", column" << _xmlReader.columnNumber();
-    return 0;
+    QString msg = "No parser for element \"%1\" available, line %2, column %3";
+    throw ctkIllegalStateException(msg.arg(paramTag).arg(_xmlReader.lineNumber()).arg(_xmlReader.columnNumber()));
   }
   else
   {
-    ctkCmdLineModuleParameter* moduleParam = paramParser->parse(_xmlReader);
-    moduleParam->setTag(paramTag);
+    ctkCmdLineModuleParameter moduleParam = paramParser->parse(_xmlReader);
+    moduleParam.d->Tag = paramTag;
     return moduleParam;
   }
 }
 
 // ----------------------------------------------------------------------------
-ctkCmdLineModuleDescription* ctkCmdLineModuleDescription::parse(QIODevice* device)
+ctkCmdLineModuleDescription ctkCmdLineModuleDescription::parse(QIODevice* device)
 {
-  ctkCmdLineModuleDescription* moduleDescription = new ctkCmdLineModuleDescription();
-  ctkCmdLineModuleXmlParser parser(device, moduleDescription);
+  ctkCmdLineModuleDescription moduleDescription;
+  ctkCmdLineModuleXmlParser parser(device, &moduleDescription);
 
-  try
-  {
-    // Verify the xml is correct
-    parser.validate();
-
-    parser.doParse();
-  }
-  catch(...)
-  {
-    delete moduleDescription;
-    throw;
-  }
+  // Verify the xml is correct
+  parser.validate();
+  parser.doParse();
 
   return moduleDescription;
 }

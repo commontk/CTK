@@ -25,6 +25,7 @@
 #include <QXmlStreamReader>
 
 #include "ctkCmdLineModuleParameter.h"
+#include "ctkCmdLineModuleParameterPrivate.h"
 
 namespace {
 
@@ -46,15 +47,15 @@ public:
 
   virtual ~ctkCmdLineModuleParameterParser() {}
 
-  virtual ctkCmdLineModuleParameter* parse(QXmlStreamReader &xmlReader)
+  virtual ctkCmdLineModuleParameter parse(QXmlStreamReader &xmlReader)
   {
-    ctkCmdLineModuleParameter* moduleParam = this->createModuleParameter();
+    ctkCmdLineModuleParameter moduleParam = this->createModuleParameter();
 
-    this->handleAttributes(moduleParam, xmlReader);
+    this->handleAttributes(moduleParam.d.data(), xmlReader);
 
     while(xmlReader.readNextStartElement())
     {
-      this->handleSubElement(moduleParam, xmlReader);
+      this->handleSubElement(moduleParam.d.data(), xmlReader);
     }
 
     return moduleParam;
@@ -62,18 +63,18 @@ public:
 
 protected:
 
-  virtual ctkCmdLineModuleParameter* createModuleParameter()
+  virtual ctkCmdLineModuleParameter createModuleParameter()
   {
-    return new ctkCmdLineModuleParameter;
+    return ctkCmdLineModuleParameter();
   }
 
-  virtual void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  virtual void handleAttributes(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
     // handle common attributes
-    moduleParam->setHidden(parseBooleanAttribute(xmlReader.attributes().value("hidden")));
+    moduleParamPrivate->Hidden = parseBooleanAttribute(xmlReader.attributes().value("hidden"));
   }
 
-  virtual bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  virtual bool handleSubElement(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
     // handle common sub-elements
 
@@ -81,39 +82,39 @@ protected:
 
     if (name.compare("name", Qt::CaseInsensitive) == 0)
     {
-      moduleParam->setName(xmlReader.readElementText().trimmed());
+      moduleParamPrivate->Name = xmlReader.readElementText().trimmed();
     }
     else if (name.compare("description", Qt::CaseInsensitive) == 0)
     {
-      moduleParam->setDescription(xmlReader.readElementText().trimmed());
+      moduleParamPrivate->Description = xmlReader.readElementText().trimmed();
     }
     else if (name.compare("label", Qt::CaseInsensitive) == 0)
     {
-      moduleParam->setLabel(xmlReader.readElementText().trimmed());
+      moduleParamPrivate->Label = xmlReader.readElementText().trimmed();
     }
     else if (name.compare("default", Qt::CaseInsensitive) == 0)
     {
-      moduleParam->setDefaultValue(xmlReader.readElementText().trimmed());
+      moduleParamPrivate->Default = xmlReader.readElementText().trimmed();
     }
     else if (name.compare("flag", Qt::CaseInsensitive) == 0)
     {
       QString flag = xmlReader.readElementText().trimmed();
       if (flag.startsWith('-')) flag = flag.remove(0, 1);
-      moduleParam->setFlag(flag);
-      moduleParam->setFlagAliasesAsString(xmlReader.attributes().value("alias").toString());
-      moduleParam->setDeprecatedFlagAliasesAsString(xmlReader.attributes().value("deprecatedalias").toString());
+      moduleParamPrivate->Flag = flag;
+      moduleParamPrivate->FlagAliasesAsString = xmlReader.attributes().value("alias").toString();
+      moduleParamPrivate->DeprecatedFlagAliasesAsString = xmlReader.attributes().value("deprecatedalias").toString();
     }
     else if (name.compare("longflag", Qt::CaseInsensitive) == 0)
     {
       QString longFlag = xmlReader.readElementText().trimmed();
       if (longFlag.startsWith('-')) longFlag = longFlag.remove(0, 1);
-      moduleParam->setLongFlag(longFlag);
-      moduleParam->setLongFlagAliasesAsString(xmlReader.attributes().value("alias").toString());
-      moduleParam->setDeprecatedLongFlagAliasesAsString(xmlReader.attributes().value("deprecatedalias").toString());
+      moduleParamPrivate->LongFlag = longFlag;
+      moduleParamPrivate->LongFlagAliasesAsString = xmlReader.attributes().value("alias").toString();
+      moduleParamPrivate->DeprecatedLongFlagAliasesAsString = xmlReader.attributes().value("deprecatedalias").toString();
     }
     else if (name.compare("index", Qt::CaseInsensitive) == 0)
     {
-      moduleParam->setIndex(xmlReader.readElementText().toInt());
+      moduleParamPrivate->Index = xmlReader.readElementText().toInt();
     }
     else
     {
@@ -124,23 +125,23 @@ protected:
     return true;
   }
 
-  bool handleConstraintsElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleConstraintsElement(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
-    moduleParam->setConstraints(true);
+    moduleParamPrivate->Constraints = true;
     while(xmlReader.readNextStartElement())
     {
       QStringRef constraintElem = xmlReader.name();
       if (constraintElem.compare("minimum", Qt::CaseInsensitive) == 0)
       {
-        moduleParam->setMinimum(xmlReader.readElementText().trimmed());
+        moduleParamPrivate->Minimum = xmlReader.readElementText().trimmed();
       }
       else if (constraintElem.compare("maximum", Qt::CaseInsensitive) == 0)
       {
-        moduleParam->setMaximum(xmlReader.readElementText().trimmed());
+        moduleParamPrivate->Maximum = xmlReader.readElementText().trimmed();
       }
       else if (constraintElem.compare("step", Qt::CaseInsensitive) == 0)
       {
-        moduleParam->setStep(xmlReader.readElementText().trimmed());
+        moduleParamPrivate->Step = xmlReader.readElementText().trimmed();
       }
       else
       {
@@ -157,10 +158,10 @@ class ctkCmdLineModuleMultipleParameterParser : public ctkCmdLineModuleParameter
 
 protected:
 
-  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  void handleAttributes(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
-    ctkCmdLineModuleParameterParser::handleAttributes(moduleParam, xmlReader);
-    moduleParam->setHidden(parseBooleanAttribute(xmlReader.attributes().value("multiple")));
+    ctkCmdLineModuleParameterParser::handleAttributes(moduleParamPrivate, xmlReader);
+    moduleParamPrivate->Hidden = parseBooleanAttribute(xmlReader.attributes().value("multiple"));
   }
 };
 
@@ -169,17 +170,17 @@ class ctkCmdLineModuleScalarVectorParameterParser : public ctkCmdLineModuleParam
 
 protected:
 
-  bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleSubElement(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
     QStringRef name = xmlReader.name();
 
     if (name.compare("constraints", Qt::CaseInsensitive) == 0)
     {
-      return handleConstraintsElement(moduleParam, xmlReader);
+      return handleConstraintsElement(moduleParamPrivate, xmlReader);
     }
     else
     {
-      return ctkCmdLineModuleParameterParser::handleSubElement(moduleParam, xmlReader);
+      return ctkCmdLineModuleParameterParser::handleSubElement(moduleParamPrivate, xmlReader);
     }
   }
 };
@@ -189,17 +190,17 @@ class ctkCmdLineModuleScalarParameterParser : public ctkCmdLineModuleMultiplePar
 
 protected:
 
-  bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleSubElement(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
     QStringRef name = xmlReader.name();
 
     if (name.compare("constraints", Qt::CaseInsensitive) == 0)
     {
-      return handleConstraintsElement(moduleParam, xmlReader);
+      return handleConstraintsElement(moduleParamPrivate, xmlReader);
     }
     else
     {
-      return ctkCmdLineModuleMultipleParameterParser::handleSubElement(moduleParam, xmlReader);
+      return ctkCmdLineModuleMultipleParameterParser::handleSubElement(moduleParamPrivate, xmlReader);
     }
   }
 };
@@ -209,18 +210,18 @@ class ctkCmdLineModuleEnumerationParameterParser : public ctkCmdLineModuleParame
 
 protected:
 
-  bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleSubElement(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
     QStringRef name = xmlReader.name();
 
     if (name.compare("element", Qt::CaseInsensitive) == 0)
     {
-      moduleParam->addElement(xmlReader.readElementText().trimmed());
+      moduleParamPrivate->Elements.push_back(xmlReader.readElementText().trimmed());
       return true;
     }
     else
     {
-      return ctkCmdLineModuleParameterParser::handleSubElement(moduleParam, xmlReader);
+      return ctkCmdLineModuleParameterParser::handleSubElement(moduleParamPrivate, xmlReader);
     }
   }
 };
@@ -230,10 +231,10 @@ class ctkCmdLineModulePointParameterParser : public ctkCmdLineModuleMultiplePara
 
 protected:
 
-  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  void handleAttributes(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
-    ctkCmdLineModuleMultipleParameterParser::handleAttributes(moduleParam, xmlReader);
-    moduleParam->setCoordinateSystem(xmlReader.attributes().value("coordinateSystem").toString().trimmed());
+    ctkCmdLineModuleMultipleParameterParser::handleAttributes(moduleParamPrivate, xmlReader);
+    moduleParamPrivate->CoordinateSystem = xmlReader.attributes().value("coordinateSystem").toString().trimmed();
   }
 };
 
@@ -242,18 +243,18 @@ class ctkCmdLineModuleChannelParameterParser : public ctkCmdLineModuleMultiplePa
 
 protected:
 
-  bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleSubElement(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
     QStringRef name = xmlReader.name();
 
     if (name.compare("channel", Qt::CaseInsensitive) == 0)
     {
-      moduleParam->setChannel(xmlReader.readElementText().trimmed());
+      moduleParamPrivate->Channel = xmlReader.readElementText().trimmed();
       return true;
     }
     else
     {
-      return ctkCmdLineModuleMultipleParameterParser::handleSubElement(moduleParam, xmlReader);
+      return ctkCmdLineModuleMultipleParameterParser::handleSubElement(moduleParamPrivate, xmlReader);
     }
   }
 };
@@ -263,10 +264,10 @@ class ctkCmdLineModuleFileParameterParser : public ctkCmdLineModuleChannelParame
 
 protected:
 
-  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  void handleAttributes(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
-    ctkCmdLineModuleChannelParameterParser::handleAttributes(moduleParam, xmlReader);
-    moduleParam->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
+    ctkCmdLineModuleChannelParameterParser::handleAttributes(moduleParamPrivate, xmlReader);
+    moduleParamPrivate->FileExtensionsAsString =xmlReader.attributes().value("fileExtensions").toString().trimmed();
   }
 };
 
@@ -275,11 +276,11 @@ class ctkCmdLineModuleGeometryParameterParser : public ctkCmdLineModuleMultipleP
 
 protected:
 
-  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  void handleAttributes(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
-    ctkCmdLineModuleMultipleParameterParser::handleAttributes(moduleParam, xmlReader);
-    moduleParam->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
-    moduleParam->setType(xmlReader.attributes().value("type").toString().trimmed());
+    ctkCmdLineModuleMultipleParameterParser::handleAttributes(moduleParamPrivate, xmlReader);
+    moduleParamPrivate->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
+    moduleParamPrivate->Type = xmlReader.attributes().value("type").toString().trimmed();
   }
 };
 
@@ -288,11 +289,11 @@ class ctkCmdLineModuleImageParameterParser : public ctkCmdLineModuleChannelParam
 
 protected:
 
-  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  void handleAttributes(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
-    ctkCmdLineModuleChannelParameterParser::handleAttributes(moduleParam, xmlReader);
-    moduleParam->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
-    moduleParam->setType(xmlReader.attributes().value("type").toString().trimmed());
+    ctkCmdLineModuleChannelParameterParser::handleAttributes(moduleParamPrivate, xmlReader);
+    moduleParamPrivate->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
+    moduleParamPrivate->Type = xmlReader.attributes().value("type").toString().trimmed();
   }
 };
 

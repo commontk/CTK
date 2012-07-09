@@ -15,10 +15,13 @@ set(KIT_export_directive "CTK_CMDLINEMODULE_EXPORT")
 # Source files
 set(KIT_SRCS
   ctkCmdLineModuleDescription.cpp
+  ctkCmdLineModuleDescriptionPrivate.h
   ctkCmdLineModuleManager.cpp
   ctkCmdLineModuleObjectHierarchyReader.cpp
   ctkCmdLineModuleParameter.cpp
+  ctkCmdLineModuleParameterPrivate.cpp
   ctkCmdLineModuleParameterGroup.cpp
+  ctkCmdLineModuleParameterGroupPrivate.h
   ctkCmdLineModuleParameterParsers_p.h
   ctkCmdLineModuleProcessException.cpp
   ctkCmdLineModuleProcessFuture.cpp

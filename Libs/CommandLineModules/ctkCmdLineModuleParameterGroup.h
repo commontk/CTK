@@ -21,8 +21,14 @@
 #ifndef __ctkCmdLineModuleParameterGroup_h
 #define __ctkCmdLineModuleParameterGroup_h
 
-#include "ctkCmdLineModuleParameter.h"
+#include "ctkCommandLineModulesExport.h"
 
+#include <QList>
+#include <QSharedDataPointer>
+
+class QTextStream;
+
+class ctkCmdLineModuleParameter;
 class ctkCmdLineModuleParameterGroupPrivate;
 
 /** 
@@ -31,38 +37,35 @@ class ctkCmdLineModuleParameterGroupPrivate;
 */
 class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleParameterGroup
 {
-  Q_DECLARE_PRIVATE(ctkCmdLineModuleParameterGroup)
 
 public:
 
-  ctkCmdLineModuleParameterGroup();
+  ctkCmdLineModuleParameterGroup(const ctkCmdLineModuleParameterGroup& other);
   ~ctkCmdLineModuleParameterGroup();
-  
-  void setLabel(const QString& label);
+
+  ctkCmdLineModuleParameterGroup& operator=(const ctkCmdLineModuleParameterGroup& other);
+
   QString label() const;
 
-  void setDescription(const QString& description);
   QString description() const;
 
-  void setAdvanced(bool advanced);
   bool advanced() const;
 
-  void addParameter(ctkCmdLineModuleParameter* parameter);
-  QList<ctkCmdLineModuleParameter*> parameters() const;
+  QList<ctkCmdLineModuleParameter> parameters() const;
 
   bool hasParameter(const QString& name) const;
 
-  ctkCmdLineModuleParameter* parameter(const QString& name) const;
+  ctkCmdLineModuleParameter parameter(const QString& name) const;
 
   bool hasReturnParameters() const;
 
-  bool writeParameterFile(QTextStream& in, bool withHandlesToBulkParameters) const;
-  
 private:
 
-  Q_DISABLE_COPY(ctkCmdLineModuleParameterGroup)
+  friend class ctkCmdLineModuleXmlParser;
 
-  ctkCmdLineModuleParameterGroupPrivate * const d_ptr;
+  ctkCmdLineModuleParameterGroup();
+
+  QSharedDataPointer<ctkCmdLineModuleParameterGroupPrivate> d;
 };
 
 CTK_CMDLINEMODULE_EXPORT QTextStream & operator<<(QTextStream &os, const ctkCmdLineModuleParameterGroup& group);

@@ -23,7 +23,10 @@
 
 #include "ctkCommandLineModulesExport.h"
 
-#include <QTextStream>
+#include <QSharedDataPointer>
+
+class QTextStream;
+class QStringList;
 
 class ctkCmdLineModuleParameterPrivate;
 
@@ -38,26 +41,22 @@ class ctkCmdLineModuleParameterPrivate;
  */
 class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleParameter
 {
-  Q_DECLARE_PRIVATE(ctkCmdLineModuleParameter)
 
 public:
 
-  ctkCmdLineModuleParameter();
+  ctkCmdLineModuleParameter(const ctkCmdLineModuleParameter& other);
   ~ctkCmdLineModuleParameter();
 
-  void setTag(const QString& tag);
+  ctkCmdLineModuleParameter& operator=(const ctkCmdLineModuleParameter& other);
+
   QString tag() const;
 
-//  void setCPPType(const QString& type);
 //  QString cppType() const;
 
-  void setType(const QString& type);
   QString type() const;
 
-  void setReference(const QString& ref);
   QString reference() const;
 
-  void setHidden(bool hidden);
   bool hidden() const;
 
   // Simple return types are parameters on output channel with no
@@ -70,86 +69,66 @@ public:
   // Is an index type?
   bool isIndexParameter() const;
 
-  void setArgType(const QString& argType);
   QString argType() const;
 
   //void setStringToType(const QString& stringToType);
   //QString stringToType() const;
 
-  void setName(const QString& name);
   QString name() const;
 
-  void setLongFlag(const QString& longFlag);
   QString longFlag() const;
 
-  void setLongFlagAliasesAsString(const QString& aliases);
   QString longFlagAliasesAsString() const;
   QStringList longFlagAliases() const;
 
-  void setDeprecatedLongFlagAliasesAsString(const QString& aliases);
   QString deprecatedLongFlagAliasesAsString() const;
   QStringList deprecatedLongFlagAliases() const;
 
-  void setLabel(const QString& label);
   QString label() const;
 
-  void setConstraints(bool constraints);
   bool constraints() const;
 
-  void setMaximum(const QString& maximum);
   QString maximum() const;
 
-  void setMinimum(const QString& minimum);
   QString minimum() const;
 
-  void setStep(const QString& step);
   QString step() const;
 
-  void setDescription(const QString& description);
   QString description() const;
 
-  void setChannel(const QString& channel);
   QString channel() const;
 
-  void setIndex(int index);
   int index() const;
 
-  void setDefaultValue(const QString& def);
   QString defaultValue() const;
 
-  void setFlag(const QString& flag);
   QString flag() const;
 
-  void setFlagAliasesAsString(const QString& aliases);
   QString flagAliasesAsString() const;
   QStringList flagAliases() const;
 
-  void setDeprecatedFlagAliasesAsString(const QString& aliases);
   QString deprecatedFlagAliasesAsString() const;
   QStringList deprecatedFlagAliases() const;
 
-  void setMultiple(bool multiple);
   bool multiple() const;
 
-  void setAggregate(const QString& aggregate);
   QString aggregate() const;
 
-  void setFileExtensionsAsString(const QString& extensions);
   QString fileExtensionsAsString() const;
   QStringList fileExtensions() const;
 
-  void setCoordinateSystem(const QString& coordinateSystem);
   QString coordinateSystem() const;
 
-  void addElement(const QString& elem);
-  void setElements(const QStringList& elems);
   QStringList elements() const;
 
 private:
 
-  Q_DISABLE_COPY(ctkCmdLineModuleParameter)
+  friend class ctkCmdLineModuleParameterParser;
+  friend class ctkCmdLineModuleXmlParser;
 
-  ctkCmdLineModuleParameterPrivate * const d_ptr;
+  ctkCmdLineModuleParameter();
+
+  QSharedDataPointer<ctkCmdLineModuleParameterPrivate> d;
 };
 
 CTK_CMDLINEMODULE_EXPORT QTextStream& operator<<(QTextStream& os, const ctkCmdLineModuleParameter& parameter);

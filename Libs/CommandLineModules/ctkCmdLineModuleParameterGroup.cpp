@@ -20,143 +20,94 @@ limitations under the License.
 
 #include "ctkCmdLineModuleParameterGroup.h"
 
-struct ctkCmdLineModuleParameterGroupPrivate
-{
-  ~ctkCmdLineModuleParameterGroupPrivate()
-  {
-    qDeleteAll(Parameters);
-  }
+#include "ctkCmdLineModuleParameter.h"
+#include "ctkCmdLineModuleParameterGroupPrivate.h"
 
-  QString Label;
-  QString Description;
-  bool Advanced;
-  QList<ctkCmdLineModuleParameter*> Parameters;
-};
+#include "ctkException.h"
+
+#include <QTextStream>
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleParameterGroup::ctkCmdLineModuleParameterGroup()
-  : d_ptr(new ctkCmdLineModuleParameterGroupPrivate())
+  : d(new ctkCmdLineModuleParameterGroupPrivate())
+{
+}
+
+//----------------------------------------------------------------------------
+ctkCmdLineModuleParameterGroup::ctkCmdLineModuleParameterGroup(const ctkCmdLineModuleParameterGroup& other)
+  : d(other.d)
 {
 }
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleParameterGroup::~ctkCmdLineModuleParameterGroup()
 {
-  delete d_ptr;
+
 }
 
 //----------------------------------------------------------------------------
-void ctkCmdLineModuleParameterGroup::setLabel(const QString& label)
+ctkCmdLineModuleParameterGroup& ctkCmdLineModuleParameterGroup::operator=(const ctkCmdLineModuleParameterGroup& other)
 {
-  Q_D(ctkCmdLineModuleParameterGroup);
-  d->Label = label;
+  d = other.d;
+  return *this;
 }
 
 //----------------------------------------------------------------------------
 QString ctkCmdLineModuleParameterGroup::label() const
 {
-  Q_D(const ctkCmdLineModuleParameterGroup);
   return d->Label;
-}
-
-//----------------------------------------------------------------------------
-void ctkCmdLineModuleParameterGroup::setDescription(const QString& description)
-{
-  Q_D(ctkCmdLineModuleParameterGroup);
-  d->Description = description;
 }
 
 //----------------------------------------------------------------------------
 QString ctkCmdLineModuleParameterGroup::description() const
 {
-  Q_D(const ctkCmdLineModuleParameterGroup);
   return d->Description;
-}
-
-//----------------------------------------------------------------------------
-void ctkCmdLineModuleParameterGroup::setAdvanced(bool advanced)
-{
-  Q_D(ctkCmdLineModuleParameterGroup);
-  d->Advanced = advanced;
 }
 
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleParameterGroup::advanced() const
 {
-  Q_D(const ctkCmdLineModuleParameterGroup);
   return d->Advanced;
 }
 
 //----------------------------------------------------------------------------
-void ctkCmdLineModuleParameterGroup::addParameter(ctkCmdLineModuleParameter* parameter)
+QList<ctkCmdLineModuleParameter> ctkCmdLineModuleParameterGroup::parameters() const
 {
-  Q_D(ctkCmdLineModuleParameterGroup);
-  d->Parameters.push_back(parameter);
-}
-
-//----------------------------------------------------------------------------
-QList<ctkCmdLineModuleParameter*> ctkCmdLineModuleParameterGroup::parameters() const
-{
-  Q_D(const ctkCmdLineModuleParameterGroup);
   return d->Parameters;
 }
 
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleParameterGroup::hasParameter(const QString& name) const
 {
-  Q_D(const ctkCmdLineModuleParameterGroup);
-  foreach(const ctkCmdLineModuleParameter* param, d->Parameters)
+  foreach(const ctkCmdLineModuleParameter param, d->Parameters)
   {
-    if (param->name() == name) return true;
+    if (param.name() == name) return true;
   }
   return false;
 }
 
 //----------------------------------------------------------------------------
-ctkCmdLineModuleParameter* ctkCmdLineModuleParameterGroup::parameter(const QString& name) const
+ctkCmdLineModuleParameter ctkCmdLineModuleParameterGroup::parameter(const QString& name) const
 {
-  Q_D(const ctkCmdLineModuleParameterGroup);
-  foreach(ctkCmdLineModuleParameter* param, d->Parameters)
+  foreach(const ctkCmdLineModuleParameter param, d->Parameters)
   {
-    if (param->name() == name) return param;
+    if (param.name() == name) return param;
   }
-  return 0;
+  throw ctkInvalidArgumentException(QString("No parameter group named \"%1\" available.").arg(name));
 }
 
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleParameterGroup::hasReturnParameters() const
 {
-  Q_D(const ctkCmdLineModuleParameterGroup);
   // iterate over each parameter in d group
-  foreach(const ctkCmdLineModuleParameter* param, d->Parameters)
+  foreach(const ctkCmdLineModuleParameter param, d->Parameters)
   {
-    if (param->isReturnParameter())
+    if (param.isReturnParameter())
     {
       return true;
     }
   }
   return false;
-}
-
-//----------------------------------------------------------------------------
-bool ctkCmdLineModuleParameterGroup::writeParameterFile(QTextStream& in, bool withHandlesToBulkParameters) const
-{
-  Q_D(const ctkCmdLineModuleParameterGroup);
-  // iterate over each parameter in d group
-  foreach(const ctkCmdLineModuleParameter* param, d->Parameters)
-  {
-    // write out all parameters or just the ones that are not bulk parameters
-    QString tag = param->tag();
-    if (withHandlesToBulkParameters ||
-        !(tag == "image" || tag == "geometry" || tag == "transform" ||
-          tag == "table" || tag == "measurement" ||
-          tag == "point" || tag == "region"))  // point and region are special
-    {
-      in << param->name() << " = " << param->defaultValue() << endl;
-      // multiple="true" may have to be handled differently
-    }
-  }
-  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -166,9 +117,9 @@ QTextStream & operator<<(QTextStream &os, const ctkCmdLineModuleParameterGroup &
   os << "  Label: " << group.label() << '\n';
   os << "  Description: " << group.description() << '\n';
   os << "  Parameters: " << '\n';
-  foreach(ctkCmdLineModuleParameter* param, group.parameters())
+  foreach(const ctkCmdLineModuleParameter param, group.parameters())
   {
-    os << *param;
+    os << param;
   }
   return os;
 }
