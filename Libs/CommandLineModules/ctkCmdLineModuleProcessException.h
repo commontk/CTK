@@ -19,21 +19,21 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEPROCESSEXCEPTION_H
-#define CTKMODULEPROCESSEXCEPTION_H
+#ifndef CTKCMDLINEMODULEPROCESSEXCEPTION_H
+#define CTKCMDLINEMODULEPROCESSEXCEPTION_H
 
 #include <qtconcurrentexception.h>
 
 #include <QProcess>
 
-class ctkModuleProcessException : public QtConcurrent::Exception
+class ctkCmdLineModuleProcessException : public QtConcurrent::Exception
 {
 public:
 
-  ctkModuleProcessException(const QString& msg, int code = 0,
+  ctkCmdLineModuleProcessException(const QString& msg, int code = 0,
                             QProcess::ExitStatus status = QProcess::NormalExit);
 
-  ~ctkModuleProcessException() throw() {}
+  ~ctkCmdLineModuleProcessException() throw() {}
 
   int exitCode() const;
 
@@ -44,7 +44,7 @@ public:
   const char* what() const throw();
 
   void raise() const;
-  ctkModuleProcessException* clone() const;
+  ctkCmdLineModuleProcessException* clone() const;
 
 private:
 
@@ -53,4 +53,4 @@ private:
   QProcess::ExitStatus status;
 };
 
-#endif // CTKMODULEPROCESSEXCEPTION_H
+#endif // CTKCMDLINEMODULEPROCESSEXCEPTION_H

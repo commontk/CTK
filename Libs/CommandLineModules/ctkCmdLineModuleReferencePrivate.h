@@ -19,26 +19,39 @@
   
 =============================================================================*/
 
-#include "ctkModuleReferencePrivate.h"
+#ifndef CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#define CTKCMDLINEMODULEREFERENCEPRIVATE_H
 
-ctkModuleReferencePrivate::ctkModuleReferencePrivate()
-  : objectRepresentation(0), ref(1), gui(0)
-{}
+#include <QByteArray>
+#include <QObject>
 
-ctkModuleReferencePrivate::~ctkModuleReferencePrivate()
+class ctkCmdLineModuleReferencePrivate : public QObject
 {
-  objectRepresentation->deleteLater();
-  if (gui) gui->deleteLater();
-}
+  Q_OBJECT
 
-void ctkModuleReferencePrivate::setGUI(QObject* gui)
-{
-  if (this->gui) disconnect(gui);
-  this->gui = gui;
-  connect(this->gui, SIGNAL(destroyed()), this, SLOT(guiDestroyed()));
-}
+public:
 
-void ctkModuleReferencePrivate::guiDestroyed()
-{
-  gui = 0;
-}
+  ctkCmdLineModuleReferencePrivate();
+
+  ~ctkCmdLineModuleReferencePrivate();
+
+  void setGUI(QObject* gui);
+
+  QByteArray xml;
+  QString loc;
+  QObject* objectRepresentation;
+
+  QAtomicInt ref;
+
+private:
+
+  friend class ctkCmdLineModuleReference;
+
+  QObject* gui;
+
+private Q_SLOTS:
+
+  void guiDestroyed();
+};
+
+#endif // CTKCMDLINEMODULEREFERENCEPRIVATE_H

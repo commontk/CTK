@@ -19,22 +19,22 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEMANAGER_H
-#define CTKMODULEMANAGER_H
+#ifndef CTKCMDLINEMODULEMANAGER_H
+#define CTKCMDLINEMODULEMANAGER_H
 
 #include <QStringList>
 #include <QString>
 
 #include <ctkCommandLineModulesExport.h>
 
-#include "ctkModuleReference.h"
-#include "ctkModuleProcessFuture.h"
+#include "ctkCmdLineModuleReference.h"
+#include "ctkCmdLineModuleProcessFuture.h"
 
 class QObject;
 
-struct ctkModuleDescriptionFactory
+struct ctkCmdLineModuleDescriptionFactory
 {
-  virtual ~ctkModuleDescriptionFactory() {}
+  virtual ~ctkCmdLineModuleDescriptionFactory() {}
 
   virtual QObject* createGUIFromXML(const QByteArray& xmlDescription)
   {
@@ -46,22 +46,22 @@ struct ctkModuleDescriptionFactory
 };
 
 /// The methods in this class are for playing around... no API design yet
-class CTK_CMDLINEMODULE_EXPORT ctkModuleManager
+class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleManager
 {
 public:
-  ctkModuleManager(ctkModuleDescriptionFactory* descriptionFactory);
+  ctkCmdLineModuleManager(ctkCmdLineModuleDescriptionFactory* descriptionFactory);
 
-  ctkModuleReference addModule(const QString& location);
+  ctkCmdLineModuleReference addModule(const QString& location);
 
   static QStringList createCommandLineArgs(QObject* hierarchy);
 
-  static ctkModuleProcessFuture run(const ctkModuleReference& moduleRef);
+  static ctkCmdLineModuleProcessFuture run(const ctkCmdLineModuleReference& moduleRef);
 
 private:
 
-  ctkModuleDescriptionFactory* descriptionFactory;
+  ctkCmdLineModuleDescriptionFactory* descriptionFactory;
 
-  QHash<QString, ctkModuleReference> cache;
+  QHash<QString, ctkCmdLineModuleReference> cache;
 };
 
-#endif // CTKMODULEMANAGER_H
+#endif // CTKCMDLINEMODULEMANAGER_H

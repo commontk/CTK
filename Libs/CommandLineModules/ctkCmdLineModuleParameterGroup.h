@@ -18,25 +18,25 @@
 
 =============================================================================*/
 
-#ifndef __ctkModuleParameterGroup_h
-#define __ctkModuleParameterGroup_h
+#ifndef __ctkCmdLineModuleParameterGroup_h
+#define __ctkCmdLineModuleParameterGroup_h
 
-#include "ctkModuleParameter.h"
+#include "ctkCmdLineModuleParameter.h"
 
-class ctkModuleParameterGroupPrivate;
+class ctkCmdLineModuleParameterGroupPrivate;
 
 /** 
 *  \brief Group of parameters
 *
 */
-class CTK_CMDLINEMODULE_EXPORT ctkModuleParameterGroup
+class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleParameterGroup
 {
-  Q_DECLARE_PRIVATE(ctkModuleParameterGroup)
+  Q_DECLARE_PRIVATE(ctkCmdLineModuleParameterGroup)
 
 public:
 
-  ctkModuleParameterGroup();
-  ~ctkModuleParameterGroup();
+  ctkCmdLineModuleParameterGroup();
+  ~ctkCmdLineModuleParameterGroup();
   
   void setLabel(const QString& label);
   QString label() const;
@@ -47,12 +47,12 @@ public:
   void setAdvanced(bool advanced);
   bool advanced() const;
 
-  void addParameter(ctkModuleParameter* parameter);
-  QList<ctkModuleParameter*> parameters() const;
+  void addParameter(ctkCmdLineModuleParameter* parameter);
+  QList<ctkCmdLineModuleParameter*> parameters() const;
 
   bool hasParameter(const QString& name) const;
 
-  ctkModuleParameter* parameter(const QString& name) const;
+  ctkCmdLineModuleParameter* parameter(const QString& name) const;
 
   bool hasReturnParameters() const;
 
@@ -60,11 +60,11 @@ public:
   
 private:
 
-  Q_DISABLE_COPY(ctkModuleParameterGroup)
+  Q_DISABLE_COPY(ctkCmdLineModuleParameterGroup)
 
-  ctkModuleParameterGroupPrivate * const d_ptr;
+  ctkCmdLineModuleParameterGroupPrivate * const d_ptr;
 };
 
-CTK_CMDLINEMODULE_EXPORT QTextStream & operator<<(QTextStream &os, const ctkModuleParameterGroup& group);
+CTK_CMDLINEMODULE_EXPORT QTextStream & operator<<(QTextStream &os, const ctkCmdLineModuleParameterGroup& group);
 
 #endif

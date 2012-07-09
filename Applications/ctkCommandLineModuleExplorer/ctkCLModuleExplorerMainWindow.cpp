@@ -22,16 +22,16 @@
 #include "ctkCLModuleExplorerMainWindow.h"
 #include "ui_ctkCLModuleExplorerMainWindow.h"
 
-#include <ctkModuleDescriptionValidator.h>
-#include <ctkModuleManager.h>
-#include <ctkModuleProcessFuture.h>
+#include <ctkCmdLineModuleXmlValidator.h>
+#include <ctkCmdLineModuleManager.h>
+#include <ctkCmdLineModuleProcessFuture.h>
 
 #include <QFile>
 #include <QBuffer>
 #include <QUiLoader>
 #include <QDebug>
 
-class ctkModuleDescriptionDefaultFactory : public ctkModuleDescriptionFactory
+class ctkCmdLineModuleDescriptionDefaultFactory : public ctkCmdLineModuleDescriptionFactory
 {
 public:
 
@@ -56,7 +56,7 @@ private:
     input.setData(xmlDescription);
     input.open(QIODevice::ReadOnly);
 
-    ctkModuleDescriptionValidator validator(&input);
+    ctkCmdLineModuleXmlValidator validator(&input);
     if (!validator.validateXSLTOutput())
     {
       qCritical() << validator.errorString();
@@ -82,7 +82,7 @@ private:
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkCLModuleExplorerMainWindow),
-  factory(new ctkModuleDescriptionDefaultFactory),
+  factory(new ctkCmdLineModuleDescriptionDefaultFactory),
   moduleManager(factory)
 {
   ui->setupUi(this);
@@ -94,7 +94,7 @@ ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
   delete factory;
 }
 
-void ctkCLModuleExplorerMainWindow::addModuleTab(const ctkModuleReference& moduleRef)
+void ctkCLModuleExplorerMainWindow::addModuleTab(const ctkCmdLineModuleReference& moduleRef)
 {
   if (moduleRef.widgetTree() == 0) return;
 
@@ -105,7 +105,7 @@ void ctkCLModuleExplorerMainWindow::addModuleTab(const ctkModuleReference& modul
 
 void ctkCLModuleExplorerMainWindow::addModule(const QString &location)
 {
-  ctkModuleReference ref = moduleManager.addModule(location);
+  ctkCmdLineModuleReference ref = moduleManager.addModule(location);
   if (ref.isValid())
   {
     addModuleTab(ref);
@@ -127,10 +127,10 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 {
   qDebug() << "Creating module command line...";
 
-  QStringList cmdLineArgs = ctkModuleManager::createCommandLineArgs(ui->mainTabWidget->currentWidget());
+  QStringList cmdLineArgs = ctkCmdLineModuleManager::createCommandLineArgs(ui->mainTabWidget->currentWidget());
   qDebug() << cmdLineArgs;
 
-  ctkModuleReference moduleRef = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
+  ctkCmdLineModuleReference moduleRef = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
   if (!moduleRef.isValid())
   {
     qWarning() << "Invalid module reference";
@@ -138,7 +138,7 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
   }
 
   connect(&futureWatcher, SIGNAL(finished()), this, SLOT(futureFinished()));
-  ctkModuleProcessFuture future = moduleManager.run(moduleRef);
+  ctkCmdLineModuleProcessFuture future = moduleManager.run(moduleRef);
   futureWatcher.setFuture(future);
 }
 
@@ -149,7 +149,7 @@ void ctkCLModuleExplorerMainWindow::futureFinished()
   qDebug() << "stderr:" << futureWatcher.future().standardError();
 }
 
-ctkModuleReference ctkCLModuleExplorerMainWindow::moduleReference(int tabIndex)
+ctkCmdLineModuleReference ctkCLModuleExplorerMainWindow::moduleReference(int tabIndex)
 {
   return mapTabToModuleRef[tabIndex];
 }

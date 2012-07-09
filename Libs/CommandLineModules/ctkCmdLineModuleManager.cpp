@@ -19,12 +19,12 @@
   
 =============================================================================*/
 
-#include "ctkModuleManager.h"
+#include "ctkCmdLineModuleManager.h"
 
-#include "ctkModuleDescriptionValidator.h"
-#include "ctkModuleObjectHierarchyReader.h"
-#include "ctkModuleProcessRunner_p.h"
-#include "ctkModuleReferencePrivate.h"
+#include "ctkCmdLineModuleXmlValidator.h"
+#include "ctkCmdLineModuleObjectHierarchyReader.h"
+#include "ctkCmdLineModuleProcessRunner_p.h"
+#include "ctkCmdLineModuleReferencePrivate.h"
 
 #include <QStringList>
 #include <QBuffer>
@@ -37,14 +37,14 @@ QString normalizeFlag(const QString& flag)
   return flag.trimmed().remove(QRegExp("^-*"));
 }
 
-ctkModuleManager::ctkModuleManager(ctkModuleDescriptionFactory *descriptionFactory)
+ctkCmdLineModuleManager::ctkCmdLineModuleManager(ctkCmdLineModuleDescriptionFactory *descriptionFactory)
   : descriptionFactory(descriptionFactory)
 {
 }
 
-QStringList ctkModuleManager::createCommandLineArgs(QObject *hierarchy)
+QStringList ctkCmdLineModuleManager::createCommandLineArgs(QObject *hierarchy)
 {
-  ctkModuleObjectHierarchyReader reader(hierarchy);
+  ctkCmdLineModuleObjectHierarchyReader reader(hierarchy);
 
   QStringList cmdLineArgs;
   QHash<int, QString> indexedArgs;
@@ -93,13 +93,13 @@ QStringList ctkModuleManager::createCommandLineArgs(QObject *hierarchy)
   return cmdLineArgs;
 }
 
-ctkModuleReference ctkModuleManager::addModule(const QString& location)
+ctkCmdLineModuleReference ctkCmdLineModuleManager::addModule(const QString& location)
 {
   QProcess process;
   process.setReadChannel(QProcess::StandardOutput);
   process.start(location, QStringList("--xml"));
 
-  ctkModuleReference ref;
+  ctkCmdLineModuleReference ref;
   ref.d->loc = location;
   if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
       process.error() != QProcess::UnknownError)
@@ -117,7 +117,7 @@ ctkModuleReference ctkModuleManager::addModule(const QString& location)
   QBuffer input(&xml);
   input.open(QIODevice::ReadOnly);
 
-  ctkModuleDescriptionValidator validator(&input);
+  ctkCmdLineModuleXmlValidator validator(&input);
   if (!validator.validateXMLInput())
   {
     qCritical() << validator.errorString();
@@ -132,10 +132,10 @@ ctkModuleReference ctkModuleManager::addModule(const QString& location)
   return ref;
 }
 
-ctkModuleProcessFuture ctkModuleManager::run(const ctkModuleReference& moduleRef)
+ctkCmdLineModuleProcessFuture ctkCmdLineModuleManager::run(const ctkCmdLineModuleReference& moduleRef)
 {
   // TODO: manage memory
   QStringList args = createCommandLineArgs(moduleRef.d->objectRepresentation);
-  ctkModuleProcessRunner* moduleProcess = new ctkModuleProcessRunner(moduleRef.location(), args);
+  ctkCmdLineModuleProcessRunner* moduleProcess = new ctkCmdLineModuleProcessRunner(moduleRef.location(), args);
   return moduleProcess->start();
 }

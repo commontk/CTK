@@ -26,32 +26,32 @@ limitations under the License.
 #include <QXmlStreamReader>
 
 // CTK includes
-#include "ctkModuleDescription.h"
-#include "ctkModuleParameterParsers_p.h"
+#include "ctkCmdLineModuleDescription.h"
+#include "ctkCmdLineModuleParameterParsers_p.h"
 
 // STD includes
 #include <stdexcept>
 
-class ctkModuleDescriptionParser
+class ctkCmdLineModuleXmlParser
 {
 public:
 
-  ctkModuleDescriptionParser(QIODevice* device, ctkModuleDescription* md);
-  ~ctkModuleDescriptionParser();
+  ctkCmdLineModuleXmlParser(QIODevice* device, ctkCmdLineModuleDescription* md);
+  ~ctkCmdLineModuleXmlParser();
 
   void validate();
   void doParse();
 
   void handleExecutableElement();
   void handleParametersElement();
-  ctkModuleParameter* handleParameterElement();
+  ctkCmdLineModuleParameter* handleParameterElement();
 
 private:
 
   QIODevice* const _device;
-  ctkModuleDescription* _md;
+  ctkCmdLineModuleDescription* _md;
   QXmlStreamReader _xmlReader;
-  QHash<QString, ctkModuleParameterParser*> _paramParsers;
+  QHash<QString, ctkCmdLineModuleParameterParser*> _paramParsers;
 };
 
 namespace {
@@ -62,39 +62,39 @@ static const QString DESCRIPTION = "description";
 
 
 // ----------------------------------------------------------------------------
-ctkModuleDescriptionParser::ctkModuleDescriptionParser(QIODevice* device,
-                                                       ctkModuleDescription* md)
+ctkCmdLineModuleXmlParser::ctkCmdLineModuleXmlParser(QIODevice* device,
+                                                       ctkCmdLineModuleDescription* md)
   : _device(device), _md(md)
 {
-  _paramParsers["integer"] = new ctkModuleScalarParameterParser; // type="scalarType"/>
-  _paramParsers["integer-vector"] = new ctkModuleScalarVectorParameterParser; // type="scalarVectorType"/>
-  _paramParsers["boolean"] = new ctkModuleParameterParser; // type="paramType"/>
-  _paramParsers["float"] = new ctkModuleScalarParameterParser; // type="scalarType"/>
-  _paramParsers["float-vector"] = new ctkModuleScalarVectorParameterParser; // type="scalarVectorType"/>
-  _paramParsers["double"] = new ctkModuleScalarParameterParser; // type="scalarType"/>
-  _paramParsers["double-vector"] = new ctkModuleScalarVectorParameterParser; // type="scalarVectorType"/>
-  _paramParsers["string"] = new ctkModuleMultipleParameterParser; // type="multipleType"/>
-  _paramParsers["string-vector"] = new ctkModuleParameterParser; // type="paramType"/>
-  _paramParsers["point"] = new ctkModulePointParameterParser; // type="pointType"/>
-  _paramParsers["region"] = new ctkModulePointParameterParser; // type="pointType"/>
-  _paramParsers["string-enumeration"] = new ctkModuleEnumerationParameterParser; // type="enumerationType"/>
-  _paramParsers["integer-enumeration"] = new ctkModuleEnumerationParameterParser; // type="enumerationType"/>
-  _paramParsers["float-enumeration"] = new ctkModuleEnumerationParameterParser; // type="enumerationType"/>
-  _paramParsers["double-enumeration"] = new ctkModuleEnumerationParameterParser; // type="enumerationType"/>
-  _paramParsers["file"] = new ctkModuleFileParameterParser; // type="fileType"/>
-  _paramParsers["directory"] = new ctkModuleChannelParameterParser; // type="channelType"/>
-  _paramParsers["image"] = new ctkModuleImageParameterParser; // type="imageType"/>
-  _paramParsers["geometry"] = new ctkModuleGeometryParameterParser; // type="geometryType"/>
+  _paramParsers["integer"] = new ctkCmdLineModuleScalarParameterParser; // type="scalarType"/>
+  _paramParsers["integer-vector"] = new ctkCmdLineModuleScalarVectorParameterParser; // type="scalarVectorType"/>
+  _paramParsers["boolean"] = new ctkCmdLineModuleParameterParser; // type="paramType"/>
+  _paramParsers["float"] = new ctkCmdLineModuleScalarParameterParser; // type="scalarType"/>
+  _paramParsers["float-vector"] = new ctkCmdLineModuleScalarVectorParameterParser; // type="scalarVectorType"/>
+  _paramParsers["double"] = new ctkCmdLineModuleScalarParameterParser; // type="scalarType"/>
+  _paramParsers["double-vector"] = new ctkCmdLineModuleScalarVectorParameterParser; // type="scalarVectorType"/>
+  _paramParsers["string"] = new ctkCmdLineModuleMultipleParameterParser; // type="multipleType"/>
+  _paramParsers["string-vector"] = new ctkCmdLineModuleParameterParser; // type="paramType"/>
+  _paramParsers["point"] = new ctkCmdLineModulePointParameterParser; // type="pointType"/>
+  _paramParsers["region"] = new ctkCmdLineModulePointParameterParser; // type="pointType"/>
+  _paramParsers["string-enumeration"] = new ctkCmdLineModuleEnumerationParameterParser; // type="enumerationType"/>
+  _paramParsers["integer-enumeration"] = new ctkCmdLineModuleEnumerationParameterParser; // type="enumerationType"/>
+  _paramParsers["float-enumeration"] = new ctkCmdLineModuleEnumerationParameterParser; // type="enumerationType"/>
+  _paramParsers["double-enumeration"] = new ctkCmdLineModuleEnumerationParameterParser; // type="enumerationType"/>
+  _paramParsers["file"] = new ctkCmdLineModuleFileParameterParser; // type="fileType"/>
+  _paramParsers["directory"] = new ctkCmdLineModuleChannelParameterParser; // type="channelType"/>
+  _paramParsers["image"] = new ctkCmdLineModuleImageParameterParser; // type="imageType"/>
+  _paramParsers["geometry"] = new ctkCmdLineModuleGeometryParameterParser; // type="geometryType"/>
 }
 
 // ----------------------------------------------------------------------------
-ctkModuleDescriptionParser::~ctkModuleDescriptionParser()
+ctkCmdLineModuleXmlParser::~ctkCmdLineModuleXmlParser()
 {
   qDeleteAll(_paramParsers.values());
 }
 
 // ----------------------------------------------------------------------------
-void ctkModuleDescriptionParser::validate()
+void ctkCmdLineModuleXmlParser::validate()
 {
   class _MessageHandler : public QAbstractMessageHandler
   {
@@ -151,7 +151,7 @@ void ctkModuleDescriptionParser::validate()
 
   QXmlSchema schema;
   schema.setMessageHandler(&errorHandler);
-  schema.load(QUrl::fromLocalFile(":/ctkModuleDescription.xsd"));
+  schema.load(QUrl::fromLocalFile(":/ctkCmdLineModuleDescription.xsd"));
 
   bool res = schema.isValid();
   if (!res)
@@ -177,7 +177,7 @@ void ctkModuleDescriptionParser::validate()
 }
 
 // ----------------------------------------------------------------------------
-void ctkModuleDescriptionParser::doParse()
+void ctkCmdLineModuleXmlParser::doParse()
 {
   _xmlReader.clear();
   _xmlReader.setDevice(_device);
@@ -195,7 +195,7 @@ void ctkModuleDescriptionParser::doParse()
 }
 
 // ----------------------------------------------------------------------------
-void ctkModuleDescriptionParser::handleExecutableElement()
+void ctkCmdLineModuleXmlParser::handleExecutableElement()
 {
   while(_xmlReader.readNextStartElement())
   {
@@ -247,9 +247,9 @@ void ctkModuleDescriptionParser::handleExecutableElement()
 }
 
 // ----------------------------------------------------------------------------
-void ctkModuleDescriptionParser::handleParametersElement()
+void ctkCmdLineModuleXmlParser::handleParametersElement()
 {
-  ctkModuleParameterGroup* group = new ctkModuleParameterGroup();
+  ctkCmdLineModuleParameterGroup* group = new ctkCmdLineModuleParameterGroup();
 
   group->setAdvanced(parseBooleanAttribute(_xmlReader.attributes().value("advanced")));
 
@@ -267,7 +267,7 @@ void ctkModuleDescriptionParser::handleParametersElement()
     }
     else
     {
-      ctkModuleParameter* parameter = this->handleParameterElement();
+      ctkCmdLineModuleParameter* parameter = this->handleParameterElement();
       if (parameter)
       {
         group->addParameter(parameter);
@@ -279,10 +279,10 @@ void ctkModuleDescriptionParser::handleParametersElement()
 }
 
 // ----------------------------------------------------------------------------
-ctkModuleParameter* ctkModuleDescriptionParser::handleParameterElement()
+ctkCmdLineModuleParameter* ctkCmdLineModuleXmlParser::handleParameterElement()
 {
   QString paramTag = _xmlReader.name().toString().toLower();
-  ctkModuleParameterParser* paramParser = _paramParsers[paramTag];
+  ctkCmdLineModuleParameterParser* paramParser = _paramParsers[paramTag];
   if (paramParser == 0)
   {
     _xmlReader.skipCurrentElement();
@@ -292,17 +292,17 @@ ctkModuleParameter* ctkModuleDescriptionParser::handleParameterElement()
   }
   else
   {
-    ctkModuleParameter* moduleParam = paramParser->parse(_xmlReader);
+    ctkCmdLineModuleParameter* moduleParam = paramParser->parse(_xmlReader);
     moduleParam->setTag(paramTag);
     return moduleParam;
   }
 }
 
 // ----------------------------------------------------------------------------
-ctkModuleDescription* ctkModuleDescription::parse(QIODevice* device)
+ctkCmdLineModuleDescription* ctkCmdLineModuleDescription::parse(QIODevice* device)
 {
-  ctkModuleDescription* moduleDescription = new ctkModuleDescription();
-  ctkModuleDescriptionParser parser(device, moduleDescription);
+  ctkCmdLineModuleDescription* moduleDescription = new ctkCmdLineModuleDescription();
+  ctkCmdLineModuleXmlParser parser(device, moduleDescription);
 
   try
   {

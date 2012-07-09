@@ -19,12 +19,12 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEPARAMETERPARSERS_P_H
-#define CTKMODULEPARAMETERPARSERS_P_H
+#ifndef CTKCMDLINEMODULEPARAMETERPARSERS_P_H
+#define CTKCMDLINEMODULEPARAMETERPARSERS_P_H
 
 #include <QXmlStreamReader>
 
-#include "ctkModuleParameter.h"
+#include "ctkCmdLineModuleParameter.h"
 
 namespace {
 
@@ -40,15 +40,15 @@ static bool parseBooleanAttribute(const QStringRef& attrValue)
 
 }
 
-struct ctkModuleParameterParser
+struct ctkCmdLineModuleParameterParser
 {
 public:
 
-  virtual ~ctkModuleParameterParser() {}
+  virtual ~ctkCmdLineModuleParameterParser() {}
 
-  virtual ctkModuleParameter* parse(QXmlStreamReader &xmlReader)
+  virtual ctkCmdLineModuleParameter* parse(QXmlStreamReader &xmlReader)
   {
-    ctkModuleParameter* moduleParam = this->createModuleParameter();
+    ctkCmdLineModuleParameter* moduleParam = this->createModuleParameter();
 
     this->handleAttributes(moduleParam, xmlReader);
 
@@ -62,18 +62,18 @@ public:
 
 protected:
 
-  virtual ctkModuleParameter* createModuleParameter()
+  virtual ctkCmdLineModuleParameter* createModuleParameter()
   {
-    return new ctkModuleParameter;
+    return new ctkCmdLineModuleParameter;
   }
 
-  virtual void handleAttributes(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  virtual void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
     // handle common attributes
     moduleParam->setHidden(parseBooleanAttribute(xmlReader.attributes().value("hidden")));
   }
 
-  virtual bool handleSubElement(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  virtual bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
     // handle common sub-elements
 
@@ -124,7 +124,7 @@ protected:
     return true;
   }
 
-  bool handleConstraintsElement(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleConstraintsElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
     moduleParam->setConstraints(true);
     while(xmlReader.readNextStartElement())
@@ -152,24 +152,24 @@ protected:
   }
 };
 
-class ctkModuleMultipleParameterParser : public ctkModuleParameterParser
+class ctkCmdLineModuleMultipleParameterParser : public ctkCmdLineModuleParameterParser
 {
 
 protected:
 
-  void handleAttributes(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
-    ctkModuleParameterParser::handleAttributes(moduleParam, xmlReader);
+    ctkCmdLineModuleParameterParser::handleAttributes(moduleParam, xmlReader);
     moduleParam->setHidden(parseBooleanAttribute(xmlReader.attributes().value("multiple")));
   }
 };
 
-class ctkModuleScalarVectorParameterParser : public ctkModuleParameterParser
+class ctkCmdLineModuleScalarVectorParameterParser : public ctkCmdLineModuleParameterParser
 {
 
 protected:
 
-  bool handleSubElement(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
     QStringRef name = xmlReader.name();
 
@@ -179,17 +179,17 @@ protected:
     }
     else
     {
-      return ctkModuleParameterParser::handleSubElement(moduleParam, xmlReader);
+      return ctkCmdLineModuleParameterParser::handleSubElement(moduleParam, xmlReader);
     }
   }
 };
 
-class ctkModuleScalarParameterParser : public ctkModuleMultipleParameterParser
+class ctkCmdLineModuleScalarParameterParser : public ctkCmdLineModuleMultipleParameterParser
 {
 
 protected:
 
-  bool handleSubElement(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
     QStringRef name = xmlReader.name();
 
@@ -199,17 +199,17 @@ protected:
     }
     else
     {
-      return ctkModuleMultipleParameterParser::handleSubElement(moduleParam, xmlReader);
+      return ctkCmdLineModuleMultipleParameterParser::handleSubElement(moduleParam, xmlReader);
     }
   }
 };
 
-class ctkModuleEnumerationParameterParser : public ctkModuleParameterParser
+class ctkCmdLineModuleEnumerationParameterParser : public ctkCmdLineModuleParameterParser
 {
 
 protected:
 
-  bool handleSubElement(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
     QStringRef name = xmlReader.name();
 
@@ -220,29 +220,29 @@ protected:
     }
     else
     {
-      return ctkModuleParameterParser::handleSubElement(moduleParam, xmlReader);
+      return ctkCmdLineModuleParameterParser::handleSubElement(moduleParam, xmlReader);
     }
   }
 };
 
-class ctkModulePointParameterParser : public ctkModuleMultipleParameterParser
+class ctkCmdLineModulePointParameterParser : public ctkCmdLineModuleMultipleParameterParser
 {
 
 protected:
 
-  void handleAttributes(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
-    ctkModuleMultipleParameterParser::handleAttributes(moduleParam, xmlReader);
+    ctkCmdLineModuleMultipleParameterParser::handleAttributes(moduleParam, xmlReader);
     moduleParam->setCoordinateSystem(xmlReader.attributes().value("coordinateSystem").toString().trimmed());
   }
 };
 
-class ctkModuleChannelParameterParser : public ctkModuleMultipleParameterParser
+class ctkCmdLineModuleChannelParameterParser : public ctkCmdLineModuleMultipleParameterParser
 {
 
 protected:
 
-  bool handleSubElement(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  bool handleSubElement(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
     QStringRef name = xmlReader.name();
 
@@ -253,48 +253,48 @@ protected:
     }
     else
     {
-      return ctkModuleMultipleParameterParser::handleSubElement(moduleParam, xmlReader);
+      return ctkCmdLineModuleMultipleParameterParser::handleSubElement(moduleParam, xmlReader);
     }
   }
 };
 
-class ctkModuleFileParameterParser : public ctkModuleChannelParameterParser
+class ctkCmdLineModuleFileParameterParser : public ctkCmdLineModuleChannelParameterParser
 {
 
 protected:
 
-  void handleAttributes(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
-    ctkModuleChannelParameterParser::handleAttributes(moduleParam, xmlReader);
+    ctkCmdLineModuleChannelParameterParser::handleAttributes(moduleParam, xmlReader);
     moduleParam->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
   }
 };
 
-class ctkModuleGeometryParameterParser : public ctkModuleMultipleParameterParser
+class ctkCmdLineModuleGeometryParameterParser : public ctkCmdLineModuleMultipleParameterParser
 {
 
 protected:
 
-  void handleAttributes(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
   {
-    ctkModuleMultipleParameterParser::handleAttributes(moduleParam, xmlReader);
-    moduleParam->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
-    moduleParam->setType(xmlReader.attributes().value("type").toString().trimmed());
-  }
-};
-
-class ctkModuleImageParameterParser : public ctkModuleChannelParameterParser
-{
-
-protected:
-
-  void handleAttributes(ctkModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
-  {
-    ctkModuleChannelParameterParser::handleAttributes(moduleParam, xmlReader);
+    ctkCmdLineModuleMultipleParameterParser::handleAttributes(moduleParam, xmlReader);
     moduleParam->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
     moduleParam->setType(xmlReader.attributes().value("type").toString().trimmed());
   }
 };
 
+class ctkCmdLineModuleImageParameterParser : public ctkCmdLineModuleChannelParameterParser
+{
 
-#endif // CTKMODULEPARAMETERPARSERS_P_H
+protected:
+
+  void handleAttributes(ctkCmdLineModuleParameter* moduleParam, QXmlStreamReader& xmlReader)
+  {
+    ctkCmdLineModuleChannelParameterParser::handleAttributes(moduleParam, xmlReader);
+    moduleParam->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
+    moduleParam->setType(xmlReader.attributes().value("type").toString().trimmed());
+  }
+};
+
+
+#endif // CTKCMDLINEMODULEPARAMETERPARSERS_P_H

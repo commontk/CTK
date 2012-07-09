@@ -19,39 +19,26 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEPROCESSRUNNER_P_H
-#define CTKMODULEPROCESSRUNNER_P_H
+#include "ctkCmdLineModuleReferencePrivate.h"
 
-#include <QObject>
-#include <QProcess>
+ctkCmdLineModuleReferencePrivate::ctkCmdLineModuleReferencePrivate()
+  : objectRepresentation(0), ref(1), gui(0)
+{}
 
-#include "ctkModuleProcessFuture.h"
-
-class ctkModuleProcessRunner : public QObject, public QRunnable, public ctkModuleProcessFutureInterface
+ctkCmdLineModuleReferencePrivate::~ctkCmdLineModuleReferencePrivate()
 {
-  Q_OBJECT
+  objectRepresentation->deleteLater();
+  if (gui) gui->deleteLater();
+}
 
-public:
+void ctkCmdLineModuleReferencePrivate::setGUI(QObject* gui)
+{
+  if (this->gui) disconnect(gui);
+  this->gui = gui;
+  connect(this->gui, SIGNAL(destroyed()), this, SLOT(guiDestroyed()));
+}
 
-  ctkModuleProcessRunner(const QString& location, const QStringList& args);
-
-  ctkModuleProcessFuture start();
-
-  void run();
-
-protected Q_SLOTS:
-
-  void processStarted();
-
-  void processFinished(int exitCode, QProcess::ExitStatus status);
-
-  void processError(QProcess::ProcessError);
-
-private:
-
-  QProcess process;
-  const QString location;
-  const QStringList args;
-};
-
-#endif // CTKMODULEPROCESSRUNNER_P_H
+void ctkCmdLineModuleReferencePrivate::guiDestroyed()
+{
+  gui = 0;
+}

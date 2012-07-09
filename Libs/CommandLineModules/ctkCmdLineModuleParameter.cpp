@@ -18,12 +18,12 @@ limitations under the License.
 
 =============================================================================*/
 
-#include "ctkModuleParameter.h"
+#include "ctkCmdLineModuleParameter.h"
 #include <QStringList>
 
-struct ctkModuleParameterPrivate
+struct ctkCmdLineModuleParameterPrivate
 {
-  ctkModuleParameterPrivate()
+  ctkCmdLineModuleParameterPrivate()
     : Hidden(false), Constraints(false), Index(-1), Multiple(false), Aggregate("false")
   {}
 
@@ -77,90 +77,90 @@ struct ctkModuleParameterPrivate
 };
 
 //----------------------------------------------------------------------------
-ctkModuleParameter::ctkModuleParameter()
-  : d_ptr(new ctkModuleParameterPrivate)
+ctkCmdLineModuleParameter::ctkCmdLineModuleParameter()
+  : d_ptr(new ctkCmdLineModuleParameterPrivate)
 { }
 
 //----------------------------------------------------------------------------
-ctkModuleParameter::~ctkModuleParameter()
+ctkCmdLineModuleParameter::~ctkCmdLineModuleParameter()
 {
   delete d_ptr;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setTag(const QString& tag)
+void ctkCmdLineModuleParameter::setTag(const QString& tag)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Tag = tag;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::tag() const
+QString ctkCmdLineModuleParameter::tag() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Tag;
 }
 
 ////----------------------------------------------------------------------------
-//void ctkModuleParameter::setCPPType(const QString& type)
+//void ctkCmdLineModuleParameter::setCPPType(const QString& type)
 //{
-//  Q_D(ctkModuleParameter);
+//  Q_D(ctkCmdLineModuleParameter);
 //  d->CPPType = type;
 //}
 
 ////----------------------------------------------------------------------------
-//QString ctkModuleParameter::cppType() const
+//QString ctkCmdLineModuleParameter::cppType() const
 //{
-//  Q_D(const ctkModuleParameter);
+//  Q_D(const ctkCmdLineModuleParameter);
 //  return d->CPPType;
 //}
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setType(const QString& type)
+void ctkCmdLineModuleParameter::setType(const QString& type)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Type = type;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::type() const
+QString ctkCmdLineModuleParameter::type() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Type;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setReference(const QString& ref)
+void ctkCmdLineModuleParameter::setReference(const QString& ref)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Reference = ref;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::reference() const
+QString ctkCmdLineModuleParameter::reference() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Reference;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setHidden(bool hidden)
+void ctkCmdLineModuleParameter::setHidden(bool hidden)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Hidden = hidden;
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleParameter::hidden() const
+bool ctkCmdLineModuleParameter::hidden() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Hidden;
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleParameter::isReturnParameter() const
+bool ctkCmdLineModuleParameter::isReturnParameter() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   // could check for tag == float, int, float-vector, ...
   if (d->Channel == "output"
       && !this->isFlagParameter() && !this->isIndexParameter())
@@ -171,396 +171,396 @@ bool ctkModuleParameter::isReturnParameter() const
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleParameter::isFlagParameter() const
+bool ctkCmdLineModuleParameter::isFlagParameter() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return (d->Flag != "" || d->LongFlag != "");
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleParameter::isIndexParameter() const
+bool ctkCmdLineModuleParameter::isIndexParameter() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return (d->Index > -1);
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setArgType(const QString& argType)
+void ctkCmdLineModuleParameter::setArgType(const QString& argType)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->ArgType = argType;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::argType() const
+QString ctkCmdLineModuleParameter::argType() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->ArgType;
 }
 
 ////----------------------------------------------------------------------------
-//void ctkModuleParameter::setStringToType(const QString& stringToType)
+//void ctkCmdLineModuleParameter::setStringToType(const QString& stringToType)
 //{
-//  Q_D(ctkModuleParameter);
+//  Q_D(ctkCmdLineModuleParameter);
 //  d->StringToType = stringToType;
 //}
 
 ////----------------------------------------------------------------------------
-//QString ctkModuleParameter::stringToType() const
+//QString ctkCmdLineModuleParameter::stringToType() const
 //{
-//  Q_D(const ctkModuleParameter);
+//  Q_D(const ctkCmdLineModuleParameter);
 //  return d->StringToType;
 //}
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setName(const QString& name)
+void ctkCmdLineModuleParameter::setName(const QString& name)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Name = name;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::name() const
+QString ctkCmdLineModuleParameter::name() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Name;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setLongFlag(const QString& longFlag)
+void ctkCmdLineModuleParameter::setLongFlag(const QString& longFlag)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->LongFlag = longFlag;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::longFlag() const
+QString ctkCmdLineModuleParameter::longFlag() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->LongFlag;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setLongFlagAliasesAsString(const QString& aliases)
+void ctkCmdLineModuleParameter::setLongFlagAliasesAsString(const QString& aliases)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->LongFlagAliases = d->splitAndTrim(aliases, ",");
   d->LongFlagAliasesAsString = d->LongFlagAliases.join(", ");
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::longFlagAliasesAsString() const
+QString ctkCmdLineModuleParameter::longFlagAliasesAsString() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->LongFlagAliasesAsString;
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkModuleParameter::longFlagAliases() const
+QStringList ctkCmdLineModuleParameter::longFlagAliases() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->LongFlagAliases;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setDeprecatedLongFlagAliasesAsString(const QString& aliases)
+void ctkCmdLineModuleParameter::setDeprecatedLongFlagAliasesAsString(const QString& aliases)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->DeprecatedLongFlagAliases = d->splitAndTrim(aliases, ",");
   d->DeprecatedLongFlagAliasesAsString = d->DeprecatedLongFlagAliases.join(", ");
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::deprecatedLongFlagAliasesAsString() const
+QString ctkCmdLineModuleParameter::deprecatedLongFlagAliasesAsString() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->DeprecatedLongFlagAliasesAsString;
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkModuleParameter::deprecatedLongFlagAliases() const
+QStringList ctkCmdLineModuleParameter::deprecatedLongFlagAliases() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->DeprecatedLongFlagAliases;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setLabel(const QString& label)
+void ctkCmdLineModuleParameter::setLabel(const QString& label)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Label = label;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::label() const
+QString ctkCmdLineModuleParameter::label() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Label;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setConstraints(bool constraints)
+void ctkCmdLineModuleParameter::setConstraints(bool constraints)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Constraints = constraints;
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleParameter::constraints() const
+bool ctkCmdLineModuleParameter::constraints() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Constraints;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setMaximum(const QString& maximum)
+void ctkCmdLineModuleParameter::setMaximum(const QString& maximum)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Maximum = maximum;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::maximum() const
+QString ctkCmdLineModuleParameter::maximum() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Maximum;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setMinimum(const QString& minimum)
+void ctkCmdLineModuleParameter::setMinimum(const QString& minimum)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Minimum = minimum;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::minimum() const
+QString ctkCmdLineModuleParameter::minimum() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Minimum;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setStep(const QString& step)
+void ctkCmdLineModuleParameter::setStep(const QString& step)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Step = step;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::step() const
+QString ctkCmdLineModuleParameter::step() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Step;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setDescription(const QString& description)
+void ctkCmdLineModuleParameter::setDescription(const QString& description)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Description = description;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::description() const
+QString ctkCmdLineModuleParameter::description() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Description;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setChannel(const QString& channel)
+void ctkCmdLineModuleParameter::setChannel(const QString& channel)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Channel = channel;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::channel() const
+QString ctkCmdLineModuleParameter::channel() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Channel;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setIndex(int index)
+void ctkCmdLineModuleParameter::setIndex(int index)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Index = index;
 }
 
 //----------------------------------------------------------------------------
-int ctkModuleParameter::index() const
+int ctkCmdLineModuleParameter::index() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Index;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setDefaultValue(const QString& def)
+void ctkCmdLineModuleParameter::setDefaultValue(const QString& def)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Default = def;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::defaultValue() const
+QString ctkCmdLineModuleParameter::defaultValue() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Default;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setFlag(const QString& flag)
+void ctkCmdLineModuleParameter::setFlag(const QString& flag)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Flag = flag;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::flag() const
+QString ctkCmdLineModuleParameter::flag() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Flag;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setFlagAliasesAsString(const QString& aliases)
+void ctkCmdLineModuleParameter::setFlagAliasesAsString(const QString& aliases)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->FlagAliases = d->splitAndTrim(aliases, ",");
   d->FlagAliasesAsString = d->FlagAliases.join(", ");
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::flagAliasesAsString() const
+QString ctkCmdLineModuleParameter::flagAliasesAsString() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->FlagAliasesAsString;
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkModuleParameter::flagAliases() const
+QStringList ctkCmdLineModuleParameter::flagAliases() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->FlagAliases;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setDeprecatedFlagAliasesAsString(const QString& aliases)
+void ctkCmdLineModuleParameter::setDeprecatedFlagAliasesAsString(const QString& aliases)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->DeprecatedFlagAliases = d->splitAndTrim(aliases, ",");
   d->DeprecatedFlagAliasesAsString = d->DeprecatedFlagAliases.join(", ");
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::deprecatedFlagAliasesAsString() const
+QString ctkCmdLineModuleParameter::deprecatedFlagAliasesAsString() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->DeprecatedFlagAliasesAsString;
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkModuleParameter::deprecatedFlagAliases() const
+QStringList ctkCmdLineModuleParameter::deprecatedFlagAliases() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->DeprecatedFlagAliases;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setMultiple(bool multiple)
+void ctkCmdLineModuleParameter::setMultiple(bool multiple)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Multiple = multiple;
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleParameter::multiple() const
+bool ctkCmdLineModuleParameter::multiple() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Multiple;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setAggregate(const QString& aggregate)
+void ctkCmdLineModuleParameter::setAggregate(const QString& aggregate)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Aggregate = aggregate;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::aggregate() const
+QString ctkCmdLineModuleParameter::aggregate() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Aggregate;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setFileExtensionsAsString(const QString& extensions)
+void ctkCmdLineModuleParameter::setFileExtensionsAsString(const QString& extensions)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->FileExtensions = d->splitAndTrim(extensions, ",");
   d->FileExtensionsAsString = d->FileExtensions.join(",");
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::fileExtensionsAsString() const
+QString ctkCmdLineModuleParameter::fileExtensionsAsString() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->FileExtensionsAsString;
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkModuleParameter::fileExtensions() const
+QStringList ctkCmdLineModuleParameter::fileExtensions() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->FileExtensions;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setCoordinateSystem(const QString& coordinateSystem)
+void ctkCmdLineModuleParameter::setCoordinateSystem(const QString& coordinateSystem)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->CoordinateSystem = coordinateSystem;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleParameter::coordinateSystem() const
+QString ctkCmdLineModuleParameter::coordinateSystem() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->CoordinateSystem;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::addElement(const QString &elem)
+void ctkCmdLineModuleParameter::addElement(const QString &elem)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Elements.push_back(elem);
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleParameter::setElements(const QStringList& elems)
+void ctkCmdLineModuleParameter::setElements(const QStringList& elems)
 {
-  Q_D(ctkModuleParameter);
+  Q_D(ctkCmdLineModuleParameter);
   d->Elements = elems;
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkModuleParameter::elements() const
+QStringList ctkCmdLineModuleParameter::elements() const
 {
-  Q_D(const ctkModuleParameter);
+  Q_D(const ctkCmdLineModuleParameter);
   return d->Elements;
 }
 
 //----------------------------------------------------------------------------
-//QStringList& ctkModuleParameter::elements()
+//QStringList& ctkCmdLineModuleParameter::elements()
 //{
 //  return d->Elements;
 //}
 
 //----------------------------------------------------------------------------
-QTextStream& operator<<(QTextStream& os, const ctkModuleParameter& parameter)
+QTextStream& operator<<(QTextStream& os, const ctkCmdLineModuleParameter& parameter)
 {
   os << "    Parameter" << '\n';
   os << "      " << "Tag: " << parameter.tag() << '\n';

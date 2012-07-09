@@ -19,27 +19,27 @@
   
 =============================================================================*/
 
-#include "ctkModuleReference.h"
-#include "ctkModuleReferencePrivate.h"
+#include "ctkCmdLineModuleReference.h"
+#include "ctkCmdLineModuleReferencePrivate.h"
 
-ctkModuleReference::ctkModuleReference()
-  : d(new ctkModuleReferencePrivate)
+ctkCmdLineModuleReference::ctkCmdLineModuleReference()
+  : d(new ctkCmdLineModuleReferencePrivate)
 {}
 
-ctkModuleReference::~ctkModuleReference()
+ctkCmdLineModuleReference::~ctkCmdLineModuleReference()
 {
   if (!d->ref.deref()) delete d;
 }
 
-ctkModuleReference::ctkModuleReference(const ctkModuleReference &ref)
+ctkCmdLineModuleReference::ctkCmdLineModuleReference(const ctkCmdLineModuleReference &ref)
   : d(ref.d)
 {
   d->ref.ref();
 }
 
-ctkModuleReference &ctkModuleReference::operator =(const ctkModuleReference &ref)
+ctkCmdLineModuleReference &ctkCmdLineModuleReference::operator =(const ctkCmdLineModuleReference &ref)
 {
-  ctkModuleReferencePrivate* curr = d;
+  ctkCmdLineModuleReferencePrivate* curr = d;
   d = ref.d;
   d->ref.ref();
 
@@ -48,27 +48,27 @@ ctkModuleReference &ctkModuleReference::operator =(const ctkModuleReference &ref
   return *this;
 }
 
-ctkModuleReference::operator bool()
+ctkCmdLineModuleReference::operator bool()
 {
   return isValid();
 }
 
-bool ctkModuleReference::isValid()
+bool ctkCmdLineModuleReference::isValid()
 {
   return !(d->xml.isEmpty() || d->objectRepresentation == 0);
 }
 
-QByteArray ctkModuleReference::xmlDescription() const
+QByteArray ctkCmdLineModuleReference::xmlDescription() const
 {
   return d->xml;
 }
 
-QString ctkModuleReference::location() const
+QString ctkCmdLineModuleReference::location() const
 {
   return d->loc;
 }
 
-QObject* ctkModuleReference::widgetTree() const
+QObject* ctkCmdLineModuleReference::widgetTree() const
 {
   return d->gui;
 }

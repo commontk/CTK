@@ -19,8 +19,8 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEOBJECTHIERARCHYREADER_H
-#define CTKMODULEOBJECTHIERARCHYREADER_H
+#ifndef CTKCMDLINEMODULEOBJECTHIERARCHYREADER_H
+#define CTKCMDLINEMODULEOBJECTHIERARCHYREADER_H
 
 #include <QString>
 #include <QScopedPointer>
@@ -30,9 +30,9 @@
 
 class QObject;
 
-class ctkModuleObjectHierarchyReaderPrivate;
+class ctkCmdLineModuleObjectHierarchyReaderPrivate;
 
-class CTK_CMDLINEMODULE_EXPORT ctkModuleObjectHierarchyReader
+class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleObjectHierarchyReader
 {
 
 public:
@@ -44,8 +44,8 @@ public:
     Parameter
   };
 
-  ctkModuleObjectHierarchyReader(QObject* root = 0);
-  ~ctkModuleObjectHierarchyReader();
+  ctkCmdLineModuleObjectHierarchyReader(QObject* root = 0);
+  ~ctkCmdLineModuleObjectHierarchyReader();
 
   void setRootObject(QObject* root);
   void clear();
@@ -77,8 +77,8 @@ public:
 
 private:
 
-  QScopedPointer<ctkModuleObjectHierarchyReaderPrivate> d;
+  QScopedPointer<ctkCmdLineModuleObjectHierarchyReaderPrivate> d;
 
 };
 
-#endif // CTKMODULEOBJECTHIERARCHYREADER_H
+#endif // CTKCMDLINEMODULEOBJECTHIERARCHYREADER_H

@@ -31,7 +31,7 @@
 
 // CTK includes
 #include <ctkCommandLineParser.h>
-#include <ctkModuleDescriptionValidator.h>
+#include <ctkCmdLineModuleXmlValidator.h>
 
 #include "ctkCLModuleExplorerMainWindow.h"
 
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
     }
     input.open(QIODevice::ReadOnly);
 
-    ctkModuleDescriptionValidator validator(&input);
+    ctkCmdLineModuleXmlValidator validator(&input);
     if (!validator.validate())
     {
       qCritical() << validator.errorString();
@@ -97,7 +97,7 @@ int main(int argc, char** argv)
   }
 
 
-  //ctkModuleDescription* descr = ctkModuleDescription::parse(&input);
+  //ctkCmdLineModuleDescription* descr = ctkCmdLineModuleDescription::parse(&input);
 
   ctkCLModuleExplorerMainWindow mainWindow;
 

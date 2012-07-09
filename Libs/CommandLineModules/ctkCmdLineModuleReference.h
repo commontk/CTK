@@ -19,39 +19,44 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEREFERENCEPRIVATE_H
-#define CTKMODULEREFERENCEPRIVATE_H
+#ifndef CTKCMDLINEMODULEREFERENCE_H
+#define CTKCMDLINEMODULEREFERENCE_H
+
+#include <ctkCommandLineModulesExport.h>
 
 #include <QByteArray>
-#include <QObject>
+#include <QString>
 
-class ctkModuleReferencePrivate : public QObject
+class QObject;
+
+class ctkCmdLineModuleReferencePrivate;
+
+class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleReference
 {
-  Q_OBJECT
-
 public:
 
-  ctkModuleReferencePrivate();
+  ctkCmdLineModuleReference();
+  ~ctkCmdLineModuleReference();
 
-  ~ctkModuleReferencePrivate();
+  ctkCmdLineModuleReference(const ctkCmdLineModuleReference& ref);
+  ctkCmdLineModuleReference& operator=(const ctkCmdLineModuleReference& ref);
 
-  void setGUI(QObject* gui);
+  operator bool();
 
-  QByteArray xml;
-  QString loc;
-  QObject* objectRepresentation;
+  bool isValid();
 
-  QAtomicInt ref;
+  QByteArray xmlDescription() const;
+
+  QString location() const;
+
+  QObject* widgetTree() const;
 
 private:
 
-  friend class ctkModuleReference;
+  friend class ctkCmdLineModuleManager;
 
-  QObject* gui;
+  ctkCmdLineModuleReferencePrivate* d;
 
-private Q_SLOTS:
-
-  void guiDestroyed();
 };
 
-#endif // CTKMODULEREFERENCEPRIVATE_H
+#endif // CTKCMDLINEMODULEREFERENCE_H

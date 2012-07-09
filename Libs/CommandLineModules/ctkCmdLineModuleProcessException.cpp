@@ -19,41 +19,41 @@
   
 =============================================================================*/
 
-#include "ctkModuleProcessException.h"
+#include "ctkCmdLineModuleProcessException.h"
 
-ctkModuleProcessException::ctkModuleProcessException(const QString& msg, int code,
+ctkCmdLineModuleProcessException::ctkCmdLineModuleProcessException(const QString& msg, int code,
                                                      QProcess::ExitStatus status)
   : msg(msg), code(code), status(status)
 {}
 
-int ctkModuleProcessException::exitCode() const
+int ctkCmdLineModuleProcessException::exitCode() const
 {
   return code;
 }
 
-QProcess::ExitStatus ctkModuleProcessException::exitStatus() const
+QProcess::ExitStatus ctkCmdLineModuleProcessException::exitStatus() const
 {
   return status;
 }
 
-QString ctkModuleProcessException::message() const
+QString ctkCmdLineModuleProcessException::message() const
 {
   return msg;
 }
 
-const char* ctkModuleProcessException::what() const throw()
+const char* ctkCmdLineModuleProcessException::what() const throw()
 {
   static std::string strMsg;
   strMsg = msg.toStdString();
   return strMsg.c_str();
 }
 
-void ctkModuleProcessException::raise() const
+void ctkCmdLineModuleProcessException::raise() const
 {
   throw *this;
 }
 
-ctkModuleProcessException* ctkModuleProcessException::clone() const
+ctkCmdLineModuleProcessException* ctkCmdLineModuleProcessException::clone() const
 {
-  return new ctkModuleProcessException(*this);
+  return new ctkCmdLineModuleProcessException(*this);
 }

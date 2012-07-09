@@ -19,7 +19,7 @@
   
 =============================================================================*/
 
-#include "ctkModuleObjectHierarchyReader.h"
+#include "ctkCmdLineModuleObjectHierarchyReader.h"
 
 #include <QObject>
 #include <QStack>
@@ -33,12 +33,12 @@ static QString PREFIX_PARAMETER = "parameter:";
 
 }
 
-class ctkModuleObjectHierarchyReaderPrivate
+class ctkCmdLineModuleObjectHierarchyReaderPrivate
 {
 public:
 
-  ctkModuleObjectHierarchyReaderPrivate(QObject* root)
-    : rootObject(root), currentObject(0), currentToken(ctkModuleObjectHierarchyReader::NoToken),
+  ctkCmdLineModuleObjectHierarchyReaderPrivate(QObject* root)
+    : rootObject(root), currentObject(0), currentToken(ctkCmdLineModuleObjectHierarchyReader::NoToken),
       atEnd(false)
   {
   }
@@ -50,29 +50,29 @@ public:
     QString prefixedName;
     switch(currentToken)
     {
-    case ctkModuleObjectHierarchyReader::Executable: prefixedName = PREFIX_EXECUTABLE + propName;
-    case ctkModuleObjectHierarchyReader::ParameterGroup: prefixedName = PREFIX_PARAMETER_GROUP + propName;
-    case ctkModuleObjectHierarchyReader::Parameter: prefixedName = PREFIX_PARAMETER + propName;
+    case ctkCmdLineModuleObjectHierarchyReader::Executable: prefixedName = PREFIX_EXECUTABLE + propName;
+    case ctkCmdLineModuleObjectHierarchyReader::ParameterGroup: prefixedName = PREFIX_PARAMETER_GROUP + propName;
+    case ctkCmdLineModuleObjectHierarchyReader::Parameter: prefixedName = PREFIX_PARAMETER + propName;
     default: ;
     }
 
     return currentObject->property(qPrintable(prefixedName));
   }
 
-  ctkModuleObjectHierarchyReader::TokenType token(QObject* obj)
+  ctkCmdLineModuleObjectHierarchyReader::TokenType token(QObject* obj)
   {
-    if (obj == 0) return ctkModuleObjectHierarchyReader::NoToken;
+    if (obj == 0) return ctkCmdLineModuleObjectHierarchyReader::NoToken;
     QString name = obj->objectName();
-    if (name.startsWith(PREFIX_EXECUTABLE)) return ctkModuleObjectHierarchyReader::Executable;
-    if (name.startsWith(PREFIX_PARAMETER_GROUP)) return ctkModuleObjectHierarchyReader::ParameterGroup;
-    if (name.startsWith(PREFIX_PARAMETER)) return ctkModuleObjectHierarchyReader::Parameter;
-    return ctkModuleObjectHierarchyReader::NoToken;
+    if (name.startsWith(PREFIX_EXECUTABLE)) return ctkCmdLineModuleObjectHierarchyReader::Executable;
+    if (name.startsWith(PREFIX_PARAMETER_GROUP)) return ctkCmdLineModuleObjectHierarchyReader::ParameterGroup;
+    if (name.startsWith(PREFIX_PARAMETER)) return ctkCmdLineModuleObjectHierarchyReader::Parameter;
+    return ctkCmdLineModuleObjectHierarchyReader::NoToken;
   }
 
   bool setCurrent(QObject* obj)
   {
-    ctkModuleObjectHierarchyReader::TokenType t = token(obj);
-    if (t != ctkModuleObjectHierarchyReader::NoToken)
+    ctkCmdLineModuleObjectHierarchyReader::TokenType t = token(obj);
+    if (t != ctkCmdLineModuleObjectHierarchyReader::NoToken)
     {
       currentObject = obj;
       currentToken = t;
@@ -84,50 +84,50 @@ public:
   QObject* rootObject;
   QObject* currentObject;
 
-  ctkModuleObjectHierarchyReader::TokenType currentToken;
+  ctkCmdLineModuleObjectHierarchyReader::TokenType currentToken;
   bool atEnd;
 
   QStack<QObject*> objectStack;
 };
 
-ctkModuleObjectHierarchyReader::ctkModuleObjectHierarchyReader(QObject *root)
-  : d(new ctkModuleObjectHierarchyReaderPrivate(root))
+ctkCmdLineModuleObjectHierarchyReader::ctkCmdLineModuleObjectHierarchyReader(QObject *root)
+  : d(new ctkCmdLineModuleObjectHierarchyReaderPrivate(root))
 {
 }
 
-ctkModuleObjectHierarchyReader::~ctkModuleObjectHierarchyReader()
+ctkCmdLineModuleObjectHierarchyReader::~ctkCmdLineModuleObjectHierarchyReader()
 {
 }
 
-void ctkModuleObjectHierarchyReader::setRootObject(QObject* root)
+void ctkCmdLineModuleObjectHierarchyReader::setRootObject(QObject* root)
 {
   d->rootObject = root;
   clear();
 }
 
-void ctkModuleObjectHierarchyReader::clear()
+void ctkCmdLineModuleObjectHierarchyReader::clear()
 {
   d->currentToken = NoToken;
   d->currentObject = 0;
   d->objectStack.clear();
 }
 
-bool ctkModuleObjectHierarchyReader::atEnd() const
+bool ctkCmdLineModuleObjectHierarchyReader::atEnd() const
 {
   return d->atEnd || d->rootObject == 0;
 }
 
-bool ctkModuleObjectHierarchyReader::isParameterGroup() const
+bool ctkCmdLineModuleObjectHierarchyReader::isParameterGroup() const
 {
   return d->currentToken == ParameterGroup;
 }
 
-bool ctkModuleObjectHierarchyReader::isParameter() const
+bool ctkCmdLineModuleObjectHierarchyReader::isParameter() const
 {
   return d->currentToken == Parameter;
 }
 
-QString ctkModuleObjectHierarchyReader::name() const
+QString ctkCmdLineModuleObjectHierarchyReader::name() const
 {
   if (d->currentObject == 0) return QString();
   switch(d->currentToken)
@@ -139,7 +139,7 @@ QString ctkModuleObjectHierarchyReader::name() const
   }
 }
 
-QString ctkModuleObjectHierarchyReader::label() const
+QString ctkCmdLineModuleObjectHierarchyReader::label() const
 {
   if (d->currentObject == 0) return QString();
   switch(d->currentToken)
@@ -151,37 +151,37 @@ QString ctkModuleObjectHierarchyReader::label() const
   }
 }
 
-QString ctkModuleObjectHierarchyReader::value() const
+QString ctkCmdLineModuleObjectHierarchyReader::value() const
 {
   QString valProp = property("valueProperty").toString();
   return property(valProp).toString();
 }
 
-QString ctkModuleObjectHierarchyReader::flag() const
+QString ctkCmdLineModuleObjectHierarchyReader::flag() const
 {
   QVariant v = property("flag");
   return v.isValid() ? v.toString() : QString();
 }
 
-QString ctkModuleObjectHierarchyReader::longFlag() const
+QString ctkCmdLineModuleObjectHierarchyReader::longFlag() const
 {
   QVariant v = property("longflag");
   return v.isValid() ? v.toString() : QString();
 }
 
-int ctkModuleObjectHierarchyReader::index() const
+int ctkCmdLineModuleObjectHierarchyReader::index() const
 {
   QVariant v = property("index");
   return v.isValid() ? v.toInt() : -1;
 }
 
-bool ctkModuleObjectHierarchyReader::isMultiple() const
+bool ctkCmdLineModuleObjectHierarchyReader::isMultiple() const
 {
   QVariant v = property("multiple");
   return v.isValid() ? v.toBool() : false;
 }
 
-QVariant ctkModuleObjectHierarchyReader::property(const QString &propName) const
+QVariant ctkCmdLineModuleObjectHierarchyReader::property(const QString &propName) const
 {
   if (d->currentObject == 0) return QVariant();
 
@@ -192,7 +192,7 @@ QVariant ctkModuleObjectHierarchyReader::property(const QString &propName) const
   return res;
 }
 
-ctkModuleObjectHierarchyReader::TokenType ctkModuleObjectHierarchyReader::readNext() const
+ctkCmdLineModuleObjectHierarchyReader::TokenType ctkCmdLineModuleObjectHierarchyReader::readNext() const
 {
   if (d->atEnd) return NoToken;
 
@@ -242,25 +242,25 @@ ctkModuleObjectHierarchyReader::TokenType ctkModuleObjectHierarchyReader::readNe
   return NoToken;
 }
 
-bool ctkModuleObjectHierarchyReader::readNextExecutable() const
+bool ctkCmdLineModuleObjectHierarchyReader::readNextExecutable() const
 {
   while (!(readNext() == Executable || d->atEnd));
   return !d->atEnd;
 }
 
-bool ctkModuleObjectHierarchyReader::readNextParameterGroup() const
+bool ctkCmdLineModuleObjectHierarchyReader::readNextParameterGroup() const
 {
   while (!(readNext() == ParameterGroup || d->atEnd));
   return !d->atEnd;
 }
 
-bool ctkModuleObjectHierarchyReader::readNextParameter() const
+bool ctkCmdLineModuleObjectHierarchyReader::readNextParameter() const
 {
   while (!(readNext() == Parameter || d->atEnd));
   return !d->atEnd;
 }
 
-ctkModuleObjectHierarchyReader::TokenType ctkModuleObjectHierarchyReader::tokenType() const
+ctkCmdLineModuleObjectHierarchyReader::TokenType ctkCmdLineModuleObjectHierarchyReader::tokenType() const
 {
   return d->currentToken;
 }

@@ -14,36 +14,26 @@ set(KIT_export_directive "CTK_CMDLINEMODULE_EXPORT")
 
 # Source files
 set(KIT_SRCS
-  ctkModuleDescription.h
-  ctkModuleDescription.cpp
-  ctkModuleDescriptionParser.cpp
-  ctkModuleDescriptionValidator.h
-  ctkModuleDescriptionValidator.cpp
-  ctkModuleManager.h
-  ctkModuleManager.cpp
-  ctkModuleObjectHierarchyReader.h
-  ctkModuleObjectHierarchyReader.cpp
-  ctkModuleParameter.h
-  ctkModuleParameter.cpp
-  ctkModuleParameterGroup.h
-  ctkModuleParameterGroup.cpp
-  ctkModuleParameterParsers_p.h
-  ctkModuleProcessException.h
-  ctkModuleProcessException.cpp
-  ctkModuleProcessFuture.h
-  ctkModuleProcessFuture.cpp
-  ctkModuleProcessRunner_p.h
-  ctkModuleProcessRunner.cpp
-  ctkModuleReference.h
-  ctkModuleReference.cpp
-  ctkModuleReferencePrivate.h
-  ctkModuleReferencePrivate.cpp
- )
+  ctkCmdLineModuleDescription.cpp
+  ctkCmdLineModuleManager.cpp
+  ctkCmdLineModuleObjectHierarchyReader.cpp
+  ctkCmdLineModuleParameter.cpp
+  ctkCmdLineModuleParameterGroup.cpp
+  ctkCmdLineModuleParameterParsers_p.h
+  ctkCmdLineModuleProcessException.cpp
+  ctkCmdLineModuleProcessFuture.cpp
+  ctkCmdLineModuleProcessRunner.cpp
+  ctkCmdLineModuleProcessRunner_p.h
+  ctkCmdLineModuleReference.cpp
+  ctkCmdLineModuleReferencePrivate.cpp
+  ctkCmdLineModuleXmlParser.cpp
+  ctkCmdLineModuleXmlValidator.cpp
+)
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  ctkModuleProcessRunner_p.h
-  ctkModuleReferencePrivate.h
+  ctkCmdLineModuleProcessRunner_p.h
+  ctkCmdLineModuleReferencePrivate.h
 )
 
 # UI files
@@ -52,7 +42,7 @@ set(KIT_UI_FORMS
 
 # Resources
 set(KIT_resources
-  Resources/ctkModuleDescription.qrc
+  Resources/ctkCmdLineModules.qrc
 )
 
 set(QT_USE_QTXMLPATTERNS 1)

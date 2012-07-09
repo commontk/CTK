@@ -18,14 +18,14 @@ limitations under the License.
 
 =============================================================================*/
 
-#include "ctkModuleDescription.h"
+#include "ctkCmdLineModuleDescription.h"
 #include <iostream>
 #include "QFile"
 #include "QTextStream"
 
-struct ctkModuleDescriptionPrivate
+struct ctkCmdLineModuleDescriptionPrivate
 {
-  ~ctkModuleDescriptionPrivate()
+  ~ctkCmdLineModuleDescriptionPrivate()
   {
     qDeleteAll(ParameterGroups);
   }
@@ -47,191 +47,191 @@ struct ctkModuleDescriptionPrivate
 
   QIcon Logo;
 
-  QList<ctkModuleParameterGroup*> ParameterGroups;
+  QList<ctkCmdLineModuleParameterGroup*> ParameterGroups;
 
   //ModuleProcessInformation ProcessInformation;
 };
 
 //----------------------------------------------------------------------------
-ctkModuleDescription::ctkModuleDescription()
-  : d_ptr(new ctkModuleDescriptionPrivate)
+ctkCmdLineModuleDescription::ctkCmdLineModuleDescription()
+  : d_ptr(new ctkCmdLineModuleDescriptionPrivate)
 {
 }
 
 //----------------------------------------------------------------------------
-ctkModuleDescription::~ctkModuleDescription()
+ctkCmdLineModuleDescription::~ctkCmdLineModuleDescription()
 {
   delete d_ptr;
 }
 
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setCategory(const QString& cat)
+void ctkCmdLineModuleDescription::setCategory(const QString& cat)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->Category = cat;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleDescription::category() const
+QString ctkCmdLineModuleDescription::category() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->Category;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setTitle(const QString& title)
+void ctkCmdLineModuleDescription::setTitle(const QString& title)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->Title = title;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleDescription::title() const
+QString ctkCmdLineModuleDescription::title() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->Title;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setDescription(const QString& description)
+void ctkCmdLineModuleDescription::setDescription(const QString& description)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->Description = description;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleDescription::description() const
+QString ctkCmdLineModuleDescription::description() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->Description;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setVersion(const QString& version)
+void ctkCmdLineModuleDescription::setVersion(const QString& version)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->Version = version;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleDescription::version() const
+QString ctkCmdLineModuleDescription::version() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->Version;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setDocumentationURL(const QString& documentationURL)
+void ctkCmdLineModuleDescription::setDocumentationURL(const QString& documentationURL)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->DocumentationURL = documentationURL;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleDescription::documentationURL() const
+QString ctkCmdLineModuleDescription::documentationURL() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->DocumentationURL;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setLicense(const QString& license)
+void ctkCmdLineModuleDescription::setLicense(const QString& license)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->License = license;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleDescription::license() const
+QString ctkCmdLineModuleDescription::license() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->License;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setAcknowledgements(const QString& acknowledgements)
+void ctkCmdLineModuleDescription::setAcknowledgements(const QString& acknowledgements)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->Acknowledgements = acknowledgements;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleDescription::acknowledgements() const
+QString ctkCmdLineModuleDescription::acknowledgements() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->Acknowledgements;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setContributor(const QString& contributor)
+void ctkCmdLineModuleDescription::setContributor(const QString& contributor)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->Contributor = contributor;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleDescription::contributor() const
+QString ctkCmdLineModuleDescription::contributor() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->Contributor;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setLocation(const QString& target)
+void ctkCmdLineModuleDescription::setLocation(const QString& target)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->Location = target;
 }
 
 //----------------------------------------------------------------------------
-QString ctkModuleDescription::location() const
+QString ctkCmdLineModuleDescription::location() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->Location;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setLogo(const QIcon& logo)
+void ctkCmdLineModuleDescription::setLogo(const QIcon& logo)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->Logo = logo;
 }
 
 //----------------------------------------------------------------------------
-QIcon ctkModuleDescription::logo() const
+QIcon ctkCmdLineModuleDescription::logo() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->Logo;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::addParameterGroup(ctkModuleParameterGroup* group)
+void ctkCmdLineModuleDescription::addParameterGroup(ctkCmdLineModuleParameterGroup* group)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->ParameterGroups.push_back(group);
 }
 
 //----------------------------------------------------------------------------
-QList<ctkModuleParameterGroup*> ctkModuleDescription::parameterGroups() const
+QList<ctkCmdLineModuleParameterGroup*> ctkCmdLineModuleDescription::parameterGroups() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   return d->ParameterGroups;
 }
 
 //----------------------------------------------------------------------------
-void ctkModuleDescription::setParameterGroups(const QList<ctkModuleParameterGroup*>& groups)
+void ctkCmdLineModuleDescription::setParameterGroups(const QList<ctkCmdLineModuleParameterGroup*>& groups)
 {
-  Q_D(ctkModuleDescription);
+  Q_D(ctkCmdLineModuleDescription);
   d->ParameterGroups = groups;
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleDescription::hasParameter(const QString& name) const
+bool ctkCmdLineModuleDescription::hasParameter(const QString& name) const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   // iterate over each parameter group
-  foreach(const ctkModuleParameterGroup* group, d->ParameterGroups)
+  foreach(const ctkCmdLineModuleParameterGroup* group, d->ParameterGroups)
   {
     if (group->hasParameter(name)) return true;
   }
@@ -239,23 +239,23 @@ bool ctkModuleDescription::hasParameter(const QString& name) const
 }
 
 //----------------------------------------------------------------------------
-ctkModuleParameter* ctkModuleDescription::parameter(const QString& name) const
+ctkCmdLineModuleParameter* ctkCmdLineModuleDescription::parameter(const QString& name) const
 {
-  Q_D(const ctkModuleDescription);
-  foreach(const ctkModuleParameterGroup* group, d->ParameterGroups)
+  Q_D(const ctkCmdLineModuleDescription);
+  foreach(const ctkCmdLineModuleParameterGroup* group, d->ParameterGroups)
   {
-    ctkModuleParameter* param = group->parameter(name);
+    ctkCmdLineModuleParameter* param = group->parameter(name);
     if (param) return param;
   }
   return 0;
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleDescription::hasReturnParameters() const
+bool ctkCmdLineModuleDescription::hasReturnParameters() const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
   // iterate over each parameter group
-  foreach(const ctkModuleParameterGroup* group, d->ParameterGroups)
+  foreach(const ctkCmdLineModuleParameterGroup* group, d->ParameterGroups)
   {
     if (group->hasReturnParameters()) return true;
   }
@@ -263,10 +263,10 @@ bool ctkModuleDescription::hasReturnParameters() const
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleDescription::setParameterDefaultValue(const QString& name,
+bool ctkCmdLineModuleDescription::setParameterDefaultValue(const QString& name,
                                                     const QString& value)
 {
-  ctkModuleParameter* param = parameter(name);
+  ctkCmdLineModuleParameter* param = parameter(name);
   if (param)
   {
     param->setDefaultValue(value);
@@ -276,7 +276,7 @@ bool ctkModuleDescription::setParameterDefaultValue(const QString& name,
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleDescription ::readParameterFile(const QString& filename)
+bool ctkCmdLineModuleDescription ::readParameterFile(const QString& filename)
 {
   bool modified = false;
 
@@ -307,7 +307,7 @@ bool ctkModuleDescription ::readParameterFile(const QString& filename)
     
     // std::cout << "key=" << key << ", value=" << value << "!" << endl;
 
-    ctkModuleParameter* param = this->parameter(key);
+    ctkCmdLineModuleParameter* param = this->parameter(key);
     if (param)
     {
       if (value != param->defaultValue())
@@ -324,10 +324,10 @@ bool ctkModuleDescription ::readParameterFile(const QString& filename)
 }
 
 //----------------------------------------------------------------------------
-bool ctkModuleDescription::
+bool ctkCmdLineModuleDescription::
 writeParameterFile(const QString& filename, bool withHandlesToBulkParameters)const
 {
-  Q_D(const ctkModuleDescription);
+  Q_D(const ctkCmdLineModuleDescription);
 
   QFile rtp(filename);
 
@@ -339,7 +339,7 @@ writeParameterFile(const QString& filename, bool withHandlesToBulkParameters)con
 
   QTextStream in(&rtp);
   // iterate over each parameter group
-  foreach(const ctkModuleParameterGroup* group, d->ParameterGroups)
+  foreach(const ctkCmdLineModuleParameterGroup* group, d->ParameterGroups)
   {
     group->writeParameterFile(in, withHandlesToBulkParameters);
   }
@@ -348,7 +348,7 @@ writeParameterFile(const QString& filename, bool withHandlesToBulkParameters)con
 }
 
 //----------------------------------------------------------------------------
-QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module)
+QTextStream & operator<<(QTextStream &os, const ctkCmdLineModuleDescription &module)
 {
   os << "Title: " << module.title() << '\n';
   os << "Category: " << module.category() << '\n';
@@ -365,7 +365,7 @@ QTextStream & operator<<(QTextStream &os, const ctkModuleDescription &module)
   //   << *(module.GetProcessInformation());
 
   os << "ParameterGroups: " << '\n';
-  foreach(const ctkModuleParameterGroup* group, module.parameterGroups())
+  foreach(const ctkCmdLineModuleParameterGroup* group, module.parameterGroups())
   {
     os << *group;
   }

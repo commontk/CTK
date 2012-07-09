@@ -19,25 +19,25 @@
   
 =============================================================================*/
 
-#include "ctkModuleProcessRunner_p.h"
+#include "ctkCmdLineModuleProcessRunner_p.h"
 
-#include "ctkModuleProcessException.h"
+#include "ctkCmdLineModuleProcessException.h"
 
 
-ctkModuleProcessRunner::ctkModuleProcessRunner(const QString& location, const QStringList& args)
+ctkCmdLineModuleProcessRunner::ctkCmdLineModuleProcessRunner(const QString& location, const QStringList& args)
   : process(), location(location), args(args)
 {
 }
 
-ctkModuleProcessFuture ctkModuleProcessRunner::start()
+ctkCmdLineModuleProcessFuture ctkCmdLineModuleProcessRunner::start()
 {
   this->reportStarted();
-  ctkModuleProcessFuture future(this);
+  ctkCmdLineModuleProcessFuture future(this);
   run();
   return future;
 }
 
-void ctkModuleProcessRunner::run()
+void ctkCmdLineModuleProcessRunner::run()
 {
   connect(&process, SIGNAL(started()), this, SLOT(processStarted()));
   connect(&process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
@@ -46,13 +46,13 @@ void ctkModuleProcessRunner::run()
   process.start(location, args);
 }
 
-void ctkModuleProcessRunner::processStarted()
+void ctkCmdLineModuleProcessRunner::processStarted()
 {
   qDebug() << "Reporting process started";
   this->reportStarted();
 }
 
-void ctkModuleProcessRunner::processFinished(int exitCode, QProcess::ExitStatus status)
+void ctkCmdLineModuleProcessRunner::processFinished(int exitCode, QProcess::ExitStatus status)
 {
   Q_UNUSED(exitCode)
   Q_UNUSED(status)
@@ -66,9 +66,9 @@ void ctkModuleProcessRunner::processFinished(int exitCode, QProcess::ExitStatus 
   this->reportFinished();
 }
 
-void ctkModuleProcessRunner::processError(QProcess::ProcessError)
+void ctkCmdLineModuleProcessRunner::processError(QProcess::ProcessError)
 {
   qDebug() << "Reporting process error";
-  this->reportException(ctkModuleProcessException(process.errorString(), process.exitCode(),
+  this->reportException(ctkCmdLineModuleProcessException(process.errorString(), process.exitCode(),
                                                   process.exitStatus()));
 }

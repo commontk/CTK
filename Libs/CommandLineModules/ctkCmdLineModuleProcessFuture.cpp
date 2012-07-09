@@ -19,11 +19,11 @@
   
 =============================================================================*/
 
-#include "ctkModuleProcessFuture.h"
+#include "ctkCmdLineModuleProcessFuture.h"
 
-struct ctkModuleProcessFutureInterfacePrivate
+struct ctkCmdLineModuleProcessFutureInterfacePrivate
 {
-  ctkModuleProcessFutureInterfacePrivate()
+  ctkCmdLineModuleProcessFutureInterfacePrivate()
     : refCount(1), _exitCode(0), _exitStatus(QProcess::NormalExit),
       _processError(QProcess::UnknownError)
   {}
@@ -38,20 +38,20 @@ struct ctkModuleProcessFutureInterfacePrivate
   QString _stdErr;
 };
 
-ctkModuleProcessFutureInterface::QFutureInterface(State initialState)
-  : QFutureInterfaceBase(initialState), d(new ctkModuleProcessFutureInterfacePrivate)
+ctkCmdLineModuleProcessFutureInterface::QFutureInterface(State initialState)
+  : QFutureInterfaceBase(initialState), d(new ctkCmdLineModuleProcessFutureInterfacePrivate)
 { }
 
-ctkModuleProcessFutureInterface::QFutureInterface(const ctkModuleProcessFutureInterface& other)
+ctkCmdLineModuleProcessFutureInterface::QFutureInterface(const ctkCmdLineModuleProcessFutureInterface& other)
   : QFutureInterfaceBase(other), d(other.d)
 {
   d->refCount.ref();
 }
 
-ctkModuleProcessFutureInterface ctkModuleProcessFutureInterface::canceledResult()
-{ return ctkModuleProcessFutureInterface(State(Started | Finished | Canceled)); }
+ctkCmdLineModuleProcessFutureInterface ctkCmdLineModuleProcessFutureInterface::canceledResult()
+{ return ctkCmdLineModuleProcessFutureInterface(State(Started | Finished | Canceled)); }
 
-ctkModuleProcessFutureInterface& ctkModuleProcessFutureInterface::operator=(const ctkModuleProcessFutureInterface& other)
+ctkCmdLineModuleProcessFutureInterface& ctkCmdLineModuleProcessFutureInterface::operator=(const ctkCmdLineModuleProcessFutureInterface& other)
 {
   QFutureInterfaceBase::operator=(other);
   other.d->refCount.ref();
@@ -60,38 +60,38 @@ ctkModuleProcessFutureInterface& ctkModuleProcessFutureInterface::operator=(cons
   return *this;
 }
 
-int ctkModuleProcessFutureInterface::exitCode() const
+int ctkCmdLineModuleProcessFutureInterface::exitCode() const
 { QMutexLocker lock(this->mutex()); return d->_exitCode; }
 
-void ctkModuleProcessFutureInterface::reportExitCode(int code)
+void ctkCmdLineModuleProcessFutureInterface::reportExitCode(int code)
 { QMutexLocker lock(this->mutex()); d->_exitCode = code; }
 
-QProcess::ExitStatus ctkModuleProcessFutureInterface::exitStatus() const
+QProcess::ExitStatus ctkCmdLineModuleProcessFutureInterface::exitStatus() const
 { QMutexLocker lock(this->mutex()); return d->_exitStatus; }
 
-void ctkModuleProcessFutureInterface::reportExitStatus(QProcess::ExitStatus status)
+void ctkCmdLineModuleProcessFutureInterface::reportExitStatus(QProcess::ExitStatus status)
 { QMutexLocker lock(this->mutex()); d->_exitStatus = status; }
 
-QProcess::ProcessError ctkModuleProcessFutureInterface::error() const
+QProcess::ProcessError ctkCmdLineModuleProcessFutureInterface::error() const
 { QMutexLocker lock(this->mutex()); return d->_processError; }
 
-void ctkModuleProcessFutureInterface::reportProcessError(QProcess::ProcessError procErr)
+void ctkCmdLineModuleProcessFutureInterface::reportProcessError(QProcess::ProcessError procErr)
 { QMutexLocker lock(this->mutex()); d->_processError = procErr; }
 
-QString ctkModuleProcessFutureInterface::errorString() const
+QString ctkCmdLineModuleProcessFutureInterface::errorString() const
 { QMutexLocker lock(this->mutex()); return d->_errorString; }
 
-void ctkModuleProcessFutureInterface::reportErrorString(const QString& errorStr)
+void ctkCmdLineModuleProcessFutureInterface::reportErrorString(const QString& errorStr)
 { QMutexLocker lock(this->mutex()); d->_errorString = errorStr; }
 
-QString ctkModuleProcessFutureInterface::standardOutput() const
+QString ctkCmdLineModuleProcessFutureInterface::standardOutput() const
 { QMutexLocker lock(this->mutex()); return d->_stdOut; }
 
-void ctkModuleProcessFutureInterface::reportStandardOutput(const QString& stdOut)
+void ctkCmdLineModuleProcessFutureInterface::reportStandardOutput(const QString& stdOut)
 { QMutexLocker lock(this->mutex()); d->_stdOut = stdOut; }
 
-QString ctkModuleProcessFutureInterface::standardError() const
+QString ctkCmdLineModuleProcessFutureInterface::standardError() const
 { QMutexLocker lock(this->mutex()); return d->_stdErr; }
 
-void ctkModuleProcessFutureInterface::reportStandardError(const QString& stdErr)
+void ctkCmdLineModuleProcessFutureInterface::reportStandardError(const QString& stdErr)
 { QMutexLocker lock(this->mutex()); d->_stdErr = stdErr; }

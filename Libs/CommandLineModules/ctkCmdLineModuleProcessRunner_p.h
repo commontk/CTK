@@ -19,44 +19,39 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEREFERENCE_H
-#define CTKMODULEREFERENCE_H
+#ifndef CTKCMDLINEMODULEPROCESSRUNNER_P_H
+#define CTKCMDLINEMODULEPROCESSRUNNER_P_H
 
-#include <ctkCommandLineModulesExport.h>
+#include <QObject>
+#include <QProcess>
 
-#include <QByteArray>
-#include <QString>
+#include "ctkCmdLineModuleProcessFuture.h"
 
-class QObject;
-
-class ctkModuleReferencePrivate;
-
-class CTK_CMDLINEMODULE_EXPORT ctkModuleReference
+class ctkCmdLineModuleProcessRunner : public QObject, public QRunnable, public ctkCmdLineModuleProcessFutureInterface
 {
+  Q_OBJECT
+
 public:
 
-  ctkModuleReference();
-  ~ctkModuleReference();
+  ctkCmdLineModuleProcessRunner(const QString& location, const QStringList& args);
 
-  ctkModuleReference(const ctkModuleReference& ref);
-  ctkModuleReference& operator=(const ctkModuleReference& ref);
+  ctkCmdLineModuleProcessFuture start();
 
-  operator bool();
+  void run();
 
-  bool isValid();
+protected Q_SLOTS:
 
-  QByteArray xmlDescription() const;
+  void processStarted();
 
-  QString location() const;
+  void processFinished(int exitCode, QProcess::ExitStatus status);
 
-  QObject* widgetTree() const;
+  void processError(QProcess::ProcessError);
 
 private:
 
-  friend class ctkModuleManager;
-
-  ctkModuleReferencePrivate* d;
-
+  QProcess process;
+  const QString location;
+  const QStringList args;
 };
 
-#endif // CTKMODULEREFERENCE_H
+#endif // CTKCMDLINEMODULEPROCESSRUNNER_P_H

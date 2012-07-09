@@ -19,8 +19,8 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEPROCESSFUTURE_H
-#define CTKMODULEPROCESSFUTURE_H
+#ifndef CTKCMDLINEMODULEPROCESSFUTURE_H
+#define CTKCMDLINEMODULEPROCESSFUTURE_H
 
 #include <ctkCommandLineModulesExport.h>
 
@@ -28,14 +28,14 @@
 #include <QFutureWatcher>
 #include <QProcess>
 
-class ctkModuleProcessFutureInterfacePrivate;
+class ctkCmdLineModuleProcessFutureInterfacePrivate;
 
-struct ctkModuleProcessDummy {};
-typedef QFutureWatcher<ctkModuleProcessDummy> ctkModuleProcessFutureWatcher;
+struct ctkCmdLineModuleProcessDummy {};
+typedef QFutureWatcher<ctkCmdLineModuleProcessDummy> ctkCmdLineModuleProcessFutureWatcher;
 
 
 template<>
-class CTK_CMDLINEMODULE_EXPORT QFutureInterface<ctkModuleProcessDummy> : public QFutureInterfaceBase
+class CTK_CMDLINEMODULE_EXPORT QFutureInterface<ctkCmdLineModuleProcessDummy> : public QFutureInterfaceBase
 {
 
 public:
@@ -67,23 +67,23 @@ public:
 
 private:
 
-  ctkModuleProcessFutureInterfacePrivate* d;
+  ctkCmdLineModuleProcessFutureInterfacePrivate* d;
 };
 
-typedef QFutureInterface<ctkModuleProcessDummy> ctkModuleProcessFutureInterface;
+typedef QFutureInterface<ctkCmdLineModuleProcessDummy> ctkCmdLineModuleProcessFutureInterface;
 
 
 template<>
-class QFuture<ctkModuleProcessDummy>
+class QFuture<ctkCmdLineModuleProcessDummy>
 {
 
 public:
 
   QFuture()
-    : d(ctkModuleProcessFutureInterface::canceledResult())
+    : d(ctkCmdLineModuleProcessFutureInterface::canceledResult())
   { }
 
-  explicit QFuture(ctkModuleProcessFutureInterface *p) // internal
+  explicit QFuture(ctkCmdLineModuleProcessFutureInterface *p) // internal
     : d(*p)
   { }
 
@@ -121,18 +121,18 @@ public:
 
 private:
 
-  friend class QFutureWatcher<ctkModuleProcessDummy>;
+  friend class QFutureWatcher<ctkCmdLineModuleProcessDummy>;
 
-  mutable ctkModuleProcessFutureInterface d;
+  mutable ctkCmdLineModuleProcessFutureInterface d;
 };
 
-typedef QFuture<ctkModuleProcessDummy> ctkModuleProcessFuture;
+typedef QFuture<ctkCmdLineModuleProcessDummy> ctkCmdLineModuleProcessFuture;
 
 
-inline ctkModuleProcessFuture& ctkModuleProcessFuture::operator=(const ctkModuleProcessFuture& other)
+inline ctkCmdLineModuleProcessFuture& ctkCmdLineModuleProcessFuture::operator=(const ctkCmdLineModuleProcessFuture& other)
 {
   d = other.d;
   return *this;
 }
 
-#endif // CTKMODULEPROCESSFUTURE_H
+#endif // CTKCMDLINEMODULEPROCESSFUTURE_H

@@ -18,32 +18,32 @@
 
 =============================================================================*/
 
-#ifndef __ctkModuleParameter_h
-#define __ctkModuleParameter_h
+#ifndef __ctkCmdLineModuleParameter_h
+#define __ctkCmdLineModuleParameter_h
 
 #include "ctkCommandLineModulesExport.h"
 
 #include <QTextStream>
 
-class ctkModuleParameterPrivate;
+class ctkCmdLineModuleParameterPrivate;
 
 /** 
  *  \brief Single parameter to a module, like a threshold of a filter.
  *
- * ctkModuleParameter describes a single parameters to a
+ * ctkCmdLineModuleParameter describes a single parameters to a
  * module. Information on the parameter type, name, flag, label,
  * description, channel, index, default, and constraints can be
  * stored.
  *
  */
-class CTK_CMDLINEMODULE_EXPORT ctkModuleParameter
+class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleParameter
 {
-  Q_DECLARE_PRIVATE(ctkModuleParameter)
+  Q_DECLARE_PRIVATE(ctkCmdLineModuleParameter)
 
 public:
 
-  ctkModuleParameter();
-  ~ctkModuleParameter();
+  ctkCmdLineModuleParameter();
+  ~ctkCmdLineModuleParameter();
 
   void setTag(const QString& tag);
   QString tag() const;
@@ -147,11 +147,11 @@ public:
 
 private:
 
-  Q_DISABLE_COPY(ctkModuleParameter)
+  Q_DISABLE_COPY(ctkCmdLineModuleParameter)
 
-  ctkModuleParameterPrivate * const d_ptr;
+  ctkCmdLineModuleParameterPrivate * const d_ptr;
 };
 
-CTK_CMDLINEMODULE_EXPORT QTextStream& operator<<(QTextStream& os, const ctkModuleParameter& parameter);
+CTK_CMDLINEMODULE_EXPORT QTextStream& operator<<(QTextStream& os, const ctkCmdLineModuleParameter& parameter);
 
 #endif

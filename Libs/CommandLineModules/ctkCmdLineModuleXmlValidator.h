@@ -19,8 +19,8 @@
   
 =============================================================================*/
 
-#ifndef CTKMODULEDESCRIPTIONVALIDATOR_H
-#define CTKMODULEDESCRIPTIONVALIDATOR_H
+#ifndef CTKCMDLINEMODULEXMLVALIDATOR_H
+#define CTKCMDLINEMODULEXMLVALIDATOR_H
 
 #include <ctkCommandLineModulesExport.h>
 
@@ -28,12 +28,12 @@
 
 class QIODevice;
 
-class CTK_CMDLINEMODULE_EXPORT ctkModuleDescriptionValidator
+class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleXmlValidator
 {
 
 public:
 
-  ctkModuleDescriptionValidator(QIODevice* input = 0);
+  ctkCmdLineModuleXmlValidator(QIODevice* input = 0);
 
   void setInput(QIODevice* input);
   QString output();
@@ -61,4 +61,4 @@ private:
   QString _errorStr;
 };
 
-#endif // CTKMODULEDESCRIPTIONVALIDATOR_H
+#endif // CTKCMDLINEMODULEXMLVALIDATOR_H

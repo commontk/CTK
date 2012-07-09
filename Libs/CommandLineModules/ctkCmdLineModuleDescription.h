@@ -18,14 +18,14 @@
 
 =============================================================================*/
 
-#ifndef __ctkModuleDescription_h
-#define __ctkModuleDescription_h
+#ifndef __ctkCmdLineModuleDescription_h
+#define __ctkCmdLineModuleDescription_h
 
 #include <QIcon>
 
-#include "ctkModuleParameterGroup.h"
+#include "ctkCmdLineModuleParameterGroup.h"
 
-struct ctkModuleDescriptionPrivate;
+struct ctkCmdLineModuleDescriptionPrivate;
 
 /**
 * Description of the parameters of a module
@@ -38,15 +38,15 @@ struct ctkModuleDescriptionPrivate;
 * command (with path) for an executable.
 * - Location: This is path to the executable for the module
 */
-class CTK_CMDLINEMODULE_EXPORT ctkModuleDescription
+class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleDescription
 {
-  Q_DECLARE_PRIVATE(ctkModuleDescription)
+  Q_DECLARE_PRIVATE(ctkCmdLineModuleDescription)
 
 public:
 
-  ~ctkModuleDescription();
+  ~ctkCmdLineModuleDescription();
 
-  static ctkModuleDescription* parse(QIODevice* input);
+  static ctkCmdLineModuleDescription* parse(QIODevice* input);
 
   void setCategory(const QString& cat);
   QString category() const;
@@ -80,13 +80,13 @@ public:
   void setLogo(const QIcon& logo);
   QIcon logo() const;
 
-  void addParameterGroup(ctkModuleParameterGroup* group);
-  QList<ctkModuleParameterGroup*> parameterGroups() const;
-  void setParameterGroups(const QList<ctkModuleParameterGroup*>& groups);
+  void addParameterGroup(ctkCmdLineModuleParameterGroup* group);
+  QList<ctkCmdLineModuleParameterGroup*> parameterGroups() const;
+  void setParameterGroups(const QList<ctkCmdLineModuleParameterGroup*>& groups);
 
   bool hasParameter(const QString& name) const;
 
-  ctkModuleParameter* parameter(const QString& name) const;
+  ctkCmdLineModuleParameter* parameter(const QString& name) const;
 
   // Does the module have any simple (primitive) return types?
   bool hasReturnParameters() const;
@@ -115,14 +115,14 @@ public:
 
 private:
 
-  ctkModuleDescription();
+  ctkCmdLineModuleDescription();
 
-  Q_DISABLE_COPY(ctkModuleDescription)
+  Q_DISABLE_COPY(ctkCmdLineModuleDescription)
 
-  ctkModuleDescriptionPrivate * const d_ptr;
+  ctkCmdLineModuleDescriptionPrivate * const d_ptr;
 
 };
 
-CTK_CMDLINEMODULE_EXPORT QTextStream & operator<<(QTextStream& os, const ctkModuleDescription& module);
+CTK_CMDLINEMODULE_EXPORT QTextStream & operator<<(QTextStream& os, const ctkCmdLineModuleDescription& module);
 
 #endif

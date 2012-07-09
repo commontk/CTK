@@ -19,7 +19,7 @@
   
 =============================================================================*/
 
-#include "ctkModuleDescriptionValidator.h"
+#include "ctkCmdLineModuleXmlValidator.h"
 
 #include <QFile>
 #include <QBuffer>
@@ -83,42 +83,42 @@ private:
   QSourceLocation m_sourceLocation;
 };
 
-ctkModuleDescriptionValidator::ctkModuleDescriptionValidator(QIODevice *input)
+ctkCmdLineModuleXmlValidator::ctkCmdLineModuleXmlValidator(QIODevice *input)
   : _input(input), _inputSchema(0), _outputSchema(0), _transformation(0)
 {
 }
 
-void ctkModuleDescriptionValidator::setInput(QIODevice *input)
+void ctkCmdLineModuleXmlValidator::setInput(QIODevice *input)
 {
   _input = input;
 }
 
-QString ctkModuleDescriptionValidator::output()
+QString ctkCmdLineModuleXmlValidator::output()
 {
   return _output;
 }
 
-void ctkModuleDescriptionValidator::setInputSchema(QIODevice *input)
+void ctkCmdLineModuleXmlValidator::setInputSchema(QIODevice *input)
 {
   _inputSchema = input;
 }
 
-void ctkModuleDescriptionValidator::setOutputSchema(QIODevice *output)
+void ctkCmdLineModuleXmlValidator::setOutputSchema(QIODevice *output)
 {
   _outputSchema = output;
 }
 
-void ctkModuleDescriptionValidator::setXSLTransformation(QIODevice *transformation)
+void ctkCmdLineModuleXmlValidator::setXSLTransformation(QIODevice *transformation)
 {
   _transformation = transformation;
 }
 
-bool ctkModuleDescriptionValidator::validate()
+bool ctkCmdLineModuleXmlValidator::validate()
 {
   return validateXMLInput() && validateXSLTOutput();
 }
 
-bool ctkModuleDescriptionValidator::validateXMLInput()
+bool ctkCmdLineModuleXmlValidator::validateXMLInput()
 {
   _errorStr.clear();
 
@@ -129,7 +129,7 @@ bool ctkModuleDescriptionValidator::validateXMLInput()
   }
 
   QIODevice* inputSchema = _inputSchema;
-  QScopedPointer<QIODevice> defaultInputSchema(new QFile(":/ctkModuleDescription.xsd"));
+  QScopedPointer<QIODevice> defaultInputSchema(new QFile(":/ctkCmdLineModule.xsd"));
   if (!inputSchema)
   {
     inputSchema = defaultInputSchema.data();
@@ -161,7 +161,7 @@ bool ctkModuleDescriptionValidator::validateXMLInput()
   return true;
 }
 
-bool ctkModuleDescriptionValidator::validateXSLTOutput()
+bool ctkCmdLineModuleXmlValidator::validateXSLTOutput()
 {
   _errorStr.clear();
   _output.clear();
@@ -189,7 +189,7 @@ bool ctkModuleDescriptionValidator::validateXSLTOutput()
   }
 
   QIODevice* transformation = _transformation;
-  QScopedPointer<QIODevice> defaultTransform(new QFile(":/ctkQtModuleDescription.xsl"));
+  QScopedPointer<QIODevice> defaultTransform(new QFile(":/ctkCmdLineModuleXmlToQtUi.xsl"));
   if (!transformation)
   {
     transformation = defaultTransform.data();
@@ -248,12 +248,12 @@ bool ctkModuleDescriptionValidator::validateXSLTOutput()
   return true;
 }
 
-bool ctkModuleDescriptionValidator::error() const
+bool ctkCmdLineModuleXmlValidator::error() const
 {
   return !_errorStr.isEmpty();
 }
 
-QString ctkModuleDescriptionValidator::errorString() const
+QString ctkCmdLineModuleXmlValidator::errorString() const
 {
   return _errorStr;
 }
