@@ -178,12 +178,6 @@ void ctkExampleDicomHost::onReleaseAvailableResources()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomHost::releaseData(const QList<QUuid>& objectUUIDs)
-{
-  Q_UNUSED(objectUUIDs)
-}
-
-//----------------------------------------------------------------------------
 void ctkExampleDicomHost::exitApplication()
 {
   this->exitingApplication=true;

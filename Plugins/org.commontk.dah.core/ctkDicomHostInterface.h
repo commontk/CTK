@@ -25,7 +25,7 @@
 
 #include "ctkDicomExchangeInterface.h"
 
-struct ctkDicomHostInterface: public ctkDicomExchangeInterface
+struct ctkDicomHostInterface : public virtual ctkDicomExchangeInterface
 {
   // Host interface methods
 

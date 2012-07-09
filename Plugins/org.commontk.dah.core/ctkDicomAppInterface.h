@@ -26,7 +26,7 @@
 #include "ctkDicomExchangeInterface.h"
 #include <ctkDicomAppHostingTypesHelper.h>
 
-struct ctkDicomAppInterface : public ctkDicomExchangeInterface
+struct ctkDicomAppInterface : public virtual ctkDicomExchangeInterface
 {
 
   // Application interface methods

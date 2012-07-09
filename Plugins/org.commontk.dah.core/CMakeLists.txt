@@ -5,6 +5,7 @@ PROJECT(org_commontk_dah_core)
 SET(PLUGIN_export_directive "org_commontk_dah_core_EXPORT")
 
 SET(PLUGIN_SRCS
+  ctkDicomAbstractExchangeCache.cpp
   ctkDicomAppHostingCorePlugin.cpp
   ctkDicomAppHostingCorePlugin_p.h
   ctkDicomAppHostingTypes.cpp
