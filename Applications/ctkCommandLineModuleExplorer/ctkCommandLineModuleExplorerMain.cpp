@@ -43,10 +43,10 @@ int main(int argc, char** argv)
   cmdLineParser.setArgumentPrefix("--", "-");
   cmdLineParser.setStrictModeEnabled(true);
 
-  cmdLineParser.addArgument("cli", "", QVariant::String, "Path to a CLI module (executable)");
-  cmdLineParser.addArgument("cli-xml", "", QVariant::String, "Path to a CLI XML description.");
+  cmdLineParser.addArgument("module", "", QVariant::String, "Path to a CLI module (executable)");
+  cmdLineParser.addArgument("module-xml", "", QVariant::String, "Path to a CLI XML description.");
 
-  cmdLineParser.addArgument("validate-plugin", "", QVariant::String, "Path to a CLI plug-in");
+  cmdLineParser.addArgument("validate-module", "", QVariant::String, "Path to a CLI module");
   cmdLineParser.addArgument("validate-xml", "", QVariant::String, "Path to a CLI XML description.");
   cmdLineParser.addArgument("verbose", "v", QVariant::Bool, "Be verbose.");
   cmdLineParser.addArgument("help", "h", QVariant::Bool, "Print this help text.");
@@ -69,7 +69,61 @@ int main(int argc, char** argv)
     return EXIT_SUCCESS;
   }
 
-  if (args.contains("validate-xml"))
+  if (args.contains("validate-module"))
+  {
+    if (args.contains("validate-xml"))
+    {
+      out << "Ignoring \"validate-xml\" option.\n\n";
+    }
+
+    QString input = args["validate-module"].toString();
+    if (!QFile::exists(input))
+    {
+      qCritical() << "Module does not exist:" << input;
+      return EXIT_FAILURE;
+    }
+
+    QProcess process;
+    process.setReadChannel(QProcess::StandardOutput);
+    process.start(input, QStringList("--xml"));
+
+    if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
+        process.error() != QProcess::UnknownError)
+    {
+      qWarning() << "The executable at" << input << "could not be started:" << process.errorString();
+      return EXIT_FAILURE;
+    }
+
+    process.waitForReadyRead();
+    QByteArray xml = process.readAllStandardOutput();
+
+    if (args.contains("verbose"))
+    {
+      qDebug() << xml;
+    }
+
+    // validate the outputted xml description
+    QBuffer xmlInput(&xml);
+    xmlInput.open(QIODevice::ReadOnly);
+
+    ctkCmdLineModuleXmlValidator validator(&xmlInput);
+    if (!validator.validate())
+    {
+      qCritical() << validator.errorString();
+      return EXIT_FAILURE;
+    }
+
+    if (args.contains("verbose"))
+    {
+      qDebug() << "=================================================";
+      qDebug() << "****          Transformed input              ****";
+      qDebug() << "=================================================";
+      qDebug() << validator.output();
+    }
+
+    return EXIT_SUCCESS;
+  }
+  else if (args.contains("validate-xml"))
   {
     QFile input(args["validate-xml"].toString());
     if (!input.exists())
@@ -101,9 +155,9 @@ int main(int argc, char** argv)
 
   ctkCLModuleExplorerMainWindow mainWindow;
 
-  if (args.contains("cli-xml"))
+  if (args.contains("module-xml"))
   {
-    QFile input(args["cli-xml"].toString());
+    QFile input(args["module-xml"].toString());
     if (!input.exists())
     {
       qCritical() << "XML description does not exist:" << input.fileName();
@@ -114,9 +168,9 @@ int main(int argc, char** argv)
 
     mainWindow.testModuleXML(xml);
   }
-  else if (args.contains("cli"))
+  else if (args.contains("module"))
   {
-    mainWindow.addModule(args["cli"].toString());
+    mainWindow.addModule(args["module"].toString());
   }
 
   mainWindow.show();
