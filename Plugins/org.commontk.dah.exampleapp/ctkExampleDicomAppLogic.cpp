@@ -36,6 +36,7 @@
 #include "ctkDICOMImage.h"
 #include "ctkExampleDicomAppLogic_p.h"
 #include "ctkExampleDicomAppPlugin_p.h"
+#include "ctkDicomAvailableDataHelper.h"
 
 // DCMTK includes
 #include <dcmimage.h>
@@ -60,6 +61,8 @@ ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), AppWidget(0)
   {
     qDebug() << "ctkDicomAbstractApp: Could not getHostInterface()";
   }
+
+  ResultData = new ctkDicomAppHosting::AvailableData;
 }
 
 //----------------------------------------------------------------------------
@@ -71,6 +74,8 @@ ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
   {
     qDebug() << plugins.at(i)->getSymbolicName ();
   }
+
+  delete ResultData;
 }
 
 //----------------------------------------------------------------------------
@@ -210,25 +215,6 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::Avai
   return false;
 }
 
-//----------------------------------------------------------------------------
-QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
-  const QList<QUuid>& objectUUIDs,
-  const QList<QString>& acceptableTransferSyntaxUIDs,
-  bool includeBulkData)
-{
-  Q_UNUSED(objectUUIDs)
-  Q_UNUSED(acceptableTransferSyntaxUIDs)
-  Q_UNUSED(includeBulkData)
-  return QList<ctkDicomAppHosting::ObjectLocator>();
-}
-
-//----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::releaseData(const QList<QUuid>& objectUUIDs)
-{
-  Q_UNUSED(objectUUIDs)
-}
-
-
 
 void ctkExampleDicomAppLogic::onLoadDataClicked()
 {
@@ -290,7 +276,7 @@ void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
     QString outputlocation = getHostInterface()->getOutputLocation(preferredProtocols);
     QString templatefilename = QDir(outputlocation).absolutePath();
     if(templatefilename.isEmpty()==false) templatefilename.append('/'); 
-    templatefilename.append("ctkdahscXXXXXX.png");
+    templatefilename.append("ctkdahscXXXXXX.jpg");
     QTemporaryFile *tempfile = new QTemporaryFile(templatefilename,this->AppWidget);
 
     if(tempfile->open())
@@ -304,7 +290,20 @@ void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
       painter.setFont(QFont("Arial", 15));
       painter.drawText(tmppixmap.rect(),Qt::AlignBottom|Qt::AlignLeft,"Secondary capture by ctkExampleDicomApp");
      //painter.drawText(rect(), Qt::AlignCenter, "Qt");
-      tmppixmap.save(tempfile->fileName(), "PNG");
+      tmppixmap.save(tempfile->fileName(), "JPEG");
+      qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
+
+      ctkDicomAvailableDataHelper::addToAvailableData(*ResultData, 
+        objectLocatorCache(), 
+        tempfile->fileName());
+
+      bool success = publishData(*ResultData, true);
+      if(!success)
+      {
+        qCritical() << "Failed to publish data";
+      }
+      qDebug() << "  publishData returned: " << success;
+
     }
     else
       qDebug() << "Creating temporary file failed.";

@@ -68,17 +68,6 @@ public:
    */
   virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
-  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-    const QList<QUuid>& objectUUIDs,
-    const QList<QString>& acceptableTransferSyntaxUIDs,
-    bool includeBulkData);
-
-  /**
-   * The recipient of data invokes this method to release access to binary data provided by the source of the
-   * data through a getData() call. The ArrayOfUUID identifies the data streams that the recipient is releasing.
-   */
-  virtual void releaseData(const QList<QUuid>& objectUUIDs);
-
   // some logic
   /** Test function for checking */
   void do_something();
@@ -101,6 +90,7 @@ private:
 
   QUuid uuid;
 
+  ctkDicomAppHosting::AvailableData* ResultData;
 }; // ctkExampleDicomAppLogic
 
 #endif // ctkExampleDicomAppLogic_P_H
