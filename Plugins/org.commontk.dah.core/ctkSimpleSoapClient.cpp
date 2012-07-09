@@ -72,8 +72,11 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
                                                    QtSoapType* soapType )
 {
   QList<QtSoapType*> list;
-  list.append(soapType);
-  return submitSoapRequest(methodName,list);
+  if(soapType != NULL)
+    {
+    list.append(soapType);
+    }
+    return submitSoapRequest(methodName,list);
 }
 
 //----------------------------------------------------------------------------
