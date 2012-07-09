@@ -48,7 +48,7 @@ public:
    * Returns a newly created DICOM UID that the Hosted Application might use, e.g., to create new data
    * objects and structures.
    */
-  virtual QString generateUID() { return ""; }
+  virtual QString generateUID();
 
   /**
    * The Hosted Application supplies its preferred screen size in the appPreferredScreen parameter. The

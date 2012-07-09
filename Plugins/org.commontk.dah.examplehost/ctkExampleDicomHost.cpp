@@ -34,6 +34,9 @@
 // STD includes
 #include <iostream>
 
+// DCMTK includes
+#include <dcuid.h>
+
 //----------------------------------------------------------------------------
 ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
@@ -202,4 +205,12 @@ ctkDicomAppHosting::State ctkExampleDicomHost::getApplicationState()const
   if(this->getAppProcess().state() == QProcess::NotRunning)
     return ctkDicomAppHosting::EXIT;
   return ctkDicomAbstractHost::getApplicationState();
+}
+
+//----------------------------------------------------------------------------
+QString ctkExampleDicomHost::generateUID()
+{
+  char uid[100];
+  dcmGenerateUniqueIdentifier(uid, SITE_INSTANCE_UID_ROOT);
+  return uid;
 }
