@@ -66,10 +66,6 @@ public:
 
   QList<ctkCmdLineModuleInstance*> moduleInstances(const ctkCmdLineModuleReference& moduleRef) const;
 
-  //static QStringList createCommandLineArgs(QObject* hierarchy);
-
-  //static ctkCmdLineModuleProcessFuture run(const ctkCmdLineModuleReference& moduleRef);
-
 private:
 
   QScopedPointer<ctkCmdLineModuleManagerPrivate> d;

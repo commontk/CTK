@@ -121,11 +121,3 @@ ctkCmdLineModuleManager::moduleInstances(const ctkCmdLineModuleReference& module
 {
   throw ctkException("not implemented yet");
 }
-
-//ctkCmdLineModuleProcessFuture ctkCmdLineModuleManager::run(const ctkCmdLineModuleReference& moduleRef)
-//{
-  // TODO: manage memory
-  //QStringList args = createCommandLineArgs(moduleRef.d->objectRepresentation);
-  //ctkCmdLineModuleProcessRunner* moduleProcess = new ctkCmdLineModuleProcessRunner(moduleRef.location(), args);
-  //return moduleProcess->start();
-//}

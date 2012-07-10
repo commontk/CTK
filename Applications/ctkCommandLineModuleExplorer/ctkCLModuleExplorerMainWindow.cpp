@@ -51,7 +51,7 @@ void ctkCLModuleExplorerMainWindow::addModuleTab(const ctkCmdLineModuleReference
 
   QWidget* widget = qobject_cast<QWidget*>(guiHandle);
   int tabIndex = ui->mainTabWidget->addTab(widget, widget->objectName());
-  mapTabToModuleRef[tabIndex] = moduleRef;
+  mapTabToModuleRef[tabIndex] = moduleInstance;
 }
 
 void ctkCLModuleExplorerMainWindow::addModule(const QString &location)
@@ -70,12 +70,16 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 //  QStringList cmdLineArgs = ctkCmdLineModuleManager::createCommandLineArgs(ui->mainTabWidget->currentWidget());
 //  qDebug() << cmdLineArgs;
 
-//  ctkCmdLineModuleReference moduleRef = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
-//  if (!moduleRef.isValid())
-//  {
-//    qWarning() << "Invalid module reference";
-//    return;
-//  }
+  ctkCmdLineModuleInstance* moduleInstance = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
+  if (!moduleInstance)
+  {
+    qWarning() << "Invalid module instance";
+    return;
+  }
+
+  ctkCmdLineModuleProcessFuture future = moduleInstance->run();
+  //future.waitForFinished();
+  //qDebug() << future.standardOutput();
 
 //  connect(&futureWatcher, SIGNAL(finished()), this, SLOT(futureFinished()));
 //  ctkCmdLineModuleProcessFuture future = moduleManager.run(moduleRef);
@@ -89,7 +93,7 @@ void ctkCLModuleExplorerMainWindow::futureFinished()
   qDebug() << "stderr:" << futureWatcher.future().standardError();
 }
 
-ctkCmdLineModuleReference ctkCLModuleExplorerMainWindow::moduleReference(int tabIndex)
-{
-  return mapTabToModuleRef[tabIndex];
-}
+//ctkCmdLineModuleReference ctkCLModuleExplorerMainWindow::moduleReference(int tabIndex)
+//{
+//  return mapTabToModuleRef[tabIndex];
+//}

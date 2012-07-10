@@ -22,9 +22,13 @@
 #ifndef CTKCMDLINEMODULEINSTANCE_H
 #define CTKCMDLINEMODULEINSTANCE_H
 
-#include <ctkCommandLineModulesCoreExport.h>
+#include "ctkCommandLineModulesCoreExport.h"
+#include "ctkCmdLineModuleProcessFuture.h"
 
 #include <QObject>
+
+class ctkCmdLineModuleReference;
+class ctkCmdLineModuleInstancePrivate;
 
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleInstance : public QObject
 {
@@ -32,12 +36,30 @@ class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleInstance : public QObject
 
 public:
 
+  ~ctkCmdLineModuleInstance();
+
   virtual QObject* guiHandle() const = 0;
 
-  virtual QVariant value(const QString& parameter) const = 0;
-  virtual void setValue(const QString& parameter, const QVariant& value) = 0;
+  QVariant value(const QString& parameter) const;
+  void setValue(const QString& parameter, const QVariant& value);
+
+  ctkCmdLineModuleReference moduleReference() const;
+
+  ctkCmdLineModuleProcessFuture run() const;
 
   Q_SIGNAL void valueChanged(const QString& parameter, const QVariant& value);
+
+protected:
+
+  ctkCmdLineModuleInstance(const ctkCmdLineModuleReference& moduleRef);
+
+  virtual QObject* parameterValueModel() const;
+
+private:
+
+  friend class ctkCmdLineModuleInstancePrivate;
+
+  QScopedPointer<ctkCmdLineModuleInstancePrivate> d;
 
 };
 

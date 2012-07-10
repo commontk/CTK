@@ -31,7 +31,8 @@
 #include <QDebug>
 
 ctkCmdLineModuleInstanceQtGui::ctkCmdLineModuleInstanceQtGui(const ctkCmdLineModuleReference& moduleRef)
-  : WidgetTree(NULL), XmlDescription(moduleRef.rawXmlDescription())
+  : ctkCmdLineModuleInstance(moduleRef),
+    WidgetTree(NULL), XmlDescription(moduleRef.rawXmlDescription())
 {
 }
 

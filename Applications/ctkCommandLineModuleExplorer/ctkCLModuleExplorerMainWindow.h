@@ -55,14 +55,15 @@ protected:
 
   void addModuleTab(const ctkCmdLineModuleReference& moduleRef);
 
-  ctkCmdLineModuleReference moduleReference(int tabIndex);
+  //ctkCmdLineModuleReference moduleReference(int tabIndex);
   
 private:
+
   Ui::ctkCLModuleExplorerMainWindow *ui;
 
   ctkCmdLineModuleManager moduleManager;
 
-  QHash<int, ctkCmdLineModuleReference> mapTabToModuleRef;
+  QHash<int, ctkCmdLineModuleInstance*> mapTabToModuleRef;
 
   ctkCmdLineModuleProcessFutureWatcher futureWatcher;
 };

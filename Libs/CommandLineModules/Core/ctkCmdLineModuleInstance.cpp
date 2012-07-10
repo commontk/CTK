@@ -20,9 +20,15 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleInstance.h"
+#include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleObjectHierarchyReader.h"
+#include "ctkCmdLineModuleObjectHierarchyReader.h"
+#include "ctkCmdLineModuleProcessRunner_p.h"
+
+#include "ctkException.h"
 
 #include <QStringList>
+#include <QDebug>
 
 namespace {
 
@@ -35,9 +41,16 @@ QString normalizeFlag(const QString& flag)
 
 struct ctkCmdLineModuleInstancePrivate
 {
-  QStringList createCommandLineArgs(QObject *hierarchy)
+  ctkCmdLineModuleInstancePrivate(ctkCmdLineModuleInstance* qq,
+                                  const ctkCmdLineModuleReference& moduleRef)
+    : ModuleReference(moduleRef), q(qq)
   {
-    ctkCmdLineModuleObjectHierarchyReader reader(hierarchy);
+
+  }
+
+  QStringList createCommandLineArgs()
+  {
+    ctkCmdLineModuleObjectHierarchyReader reader(q->parameterValueModel());
 
     QStringList cmdLineArgs;
     QHash<int, QString> indexedArgs;
@@ -85,4 +98,51 @@ struct ctkCmdLineModuleInstancePrivate
 
     return cmdLineArgs;
   }
+
+  ctkCmdLineModuleReference ModuleReference;
+
+private:
+
+  ctkCmdLineModuleInstance* q;
+
 };
+
+
+ctkCmdLineModuleInstance::ctkCmdLineModuleInstance(const ctkCmdLineModuleReference& moduleRef)
+  : d(new ctkCmdLineModuleInstancePrivate(this, moduleRef))
+{
+}
+
+ctkCmdLineModuleInstance::~ctkCmdLineModuleInstance()
+{
+}
+
+QObject *ctkCmdLineModuleInstance::parameterValueModel() const
+{
+  return guiHandle();
+}
+
+QVariant ctkCmdLineModuleInstance::value(const QString &parameter) const
+{
+  throw ctkException("not implemented yet");
+}
+
+void ctkCmdLineModuleInstance::setValue(const QString &parameter, const QVariant &value)
+{
+  throw ctkException("not implemented yet");
+}
+
+ctkCmdLineModuleReference ctkCmdLineModuleInstance::moduleReference() const
+{
+  return d->ModuleReference;
+}
+
+ctkCmdLineModuleProcessFuture ctkCmdLineModuleInstance::run() const
+{
+  // TODO: manage memory
+  QStringList args = d->createCommandLineArgs();
+  qDebug() << args;
+  ctkCmdLineModuleProcessRunner* moduleProcess =
+      new ctkCmdLineModuleProcessRunner(d->ModuleReference.location(), args);
+  return moduleProcess->start();
+}
