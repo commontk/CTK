@@ -124,8 +124,6 @@ signals:
 private:
 signals:
   void internalDataAvailable();
-private slots:
-  void forwardDataAvailable();
 private:
 
   Q_DECLARE_PRIVATE(ctkDicomAbstractExchangeCache)

@@ -60,7 +60,7 @@ ctkDicomAbstractExchangeCachePrivate::~ctkDicomAbstractExchangeCachePrivate()
 ctkDicomAbstractExchangeCache::ctkDicomAbstractExchangeCache() :
   d_ptr(new ctkDicomAbstractExchangeCachePrivate)
 {
-  connect(this, SIGNAL(internalDataAvailable()), this, SLOT(forwardDataAvailable()), Qt::QueuedConnection);
+  connect(this, SIGNAL(internalDataAvailable()), SIGNAL(dataAvailable()), Qt::QueuedConnection);
 }
 
 //----------------------------------------------------------------------------
@@ -129,10 +129,4 @@ bool ctkDicomAbstractExchangeCache::notifyDataAvailable(const ctkDicomAppHosting
   d->lastIncomingData = lastData;
   emit internalDataAvailable();
   return true;
-}
-
-//----------------------------------------------------------------------------
-void ctkDicomAbstractExchangeCache::forwardDataAvailable()
-{
-  emit dataAvailable();
 }
