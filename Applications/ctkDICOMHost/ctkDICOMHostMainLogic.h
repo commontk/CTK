@@ -27,6 +27,7 @@ protected slots:
   void publishSelectedData();
   void onAppReady();
   void placeHolderResized();
+  void onDataAvailable();
 signals:
   void TreeSelectionChanged(const QString &);
   void SelectionValid(bool);

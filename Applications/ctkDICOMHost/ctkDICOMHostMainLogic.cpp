@@ -39,6 +39,8 @@ ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* plac
   QItemSelectionModel* selectionmodel = treeview->selectionModel();
   connect(selectionmodel, SIGNAL(selectionChanged ( const QItemSelection &, const QItemSelection & )),
     this, SLOT(onTreeSelectionChanged(const QItemSelection &, const QItemSelection &)));
+
+  connect(this->Host, SIGNAL(dataAvailable()), this, SLOT(onDataAvailable()));
 }
 
 ctkDICOMHostMainLogic::~ctkDICOMHostMainLogic()
@@ -152,4 +154,33 @@ void ctkDICOMHostMainLogic::placeHolderResized()
   //  QRect rect (this->PlaceHolderForHostedApp->getAbsolutePosition());
   //  this->Host->getDicomAppService()->bringToFront(rect);
   //}
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMHostMainLogic::onDataAvailable()
+{
+  const ctkDicomAppHosting::AvailableData& data = this->Host->getIncomingAvailableData();
+  QList<QUuid> uuidlist = ctkDicomAvailableDataHelper::getAllUuids(data);
+
+  if(uuidlist.count()==0)
+    return;
+
+  QString transfersyntax("1.2.840.10008.1.2.1");
+  QList<QUuid> transfersyntaxlist;
+  transfersyntaxlist.append(transfersyntax);
+  QList<ctkDicomAppHosting::ObjectLocator> locators;
+  locators = this->Host->getOtherSideExchangeService()->getData(uuidlist, transfersyntaxlist, false);
+  qDebug() << "got locators! " << QString().setNum(locators.count());
+
+  QString s;
+  s=s+" loc.count:"+QString().setNum(locators.count());
+  if(locators.count()>0)
+  {
+    s=s+" URI: "+locators.begin()->URI +" locatorUUID: "+locators.begin()->locator+" sourceUUID: "+locators.begin()->source;
+    qDebug() << "URI: " << locators.begin()->URI;
+    QString filename = locators.begin()->URI;
+    if(filename.startsWith("file:/",Qt::CaseInsensitive))
+      filename=filename.remove(0,8);
+    qDebug()<<filename;
+  }
 }

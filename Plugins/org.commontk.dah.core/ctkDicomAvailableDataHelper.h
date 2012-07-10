@@ -114,7 +114,15 @@ bool org_commontk_dah_core_EXPORT appendToAvailableData(ctkDicomAppHosting::Avai
  */
 QList<QUuid> org_commontk_dah_core_EXPORT getAllUuids(const ctkDicomAppHosting::Patient& patient);
 
-
+//----------------------------------------------------------------------------
+/**
+ * \brief Build list of all UUIDs of available data.
+ *
+ * Result can be used to retrieve data by calling ctkDicomExchangeInterface::getData.
+ *
+ * \return alls UUIDs of all data inside available data, otherwise empty.
+ */
+QList<QUuid> org_commontk_dah_core_EXPORT getAllUuids(const ctkDicomAppHosting::AvailableData& availableData);
 
 } //end namespace ctkDicomAvailableDataHelper
 

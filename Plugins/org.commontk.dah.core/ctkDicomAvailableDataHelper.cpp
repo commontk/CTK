@@ -320,22 +320,57 @@ bool appendToAvailableData(ctkDicomAppHosting::AvailableData& dest,
 }
 
 //----------------------------------------------------------------------------
+void appendAllUuids(const ctkDicomAppHosting::Patient& patient, QList<QUuid> & uuidlist)
+{
+  // Loop over patient level object descriptors
+  foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, patient.objectDescriptors)
+    {
+    uuidlist.append(objectDescriptor.descriptorUUID);
+    }
+
+  // Loop over studies
+  foreach(const ctkDicomAppHosting::Study& study, patient.studies)
+    {
+    // Loop over study level object descriptors
+    foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, study.objectDescriptors)
+      {
+      uuidlist.append(objectDescriptor.descriptorUUID);
+      }
+    // Loop over series
+    foreach(const ctkDicomAppHosting::Series& series, study.series)
+      {
+      // Loop over series level object descriptors
+      foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, series.objectDescriptors)
+        {
+        uuidlist.append(objectDescriptor.descriptorUUID);
+        }
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 QList<QUuid> getAllUuids(const ctkDicomAppHosting::Patient& patient)
 {
   QList<QUuid> uuidlist;
+  appendAllUuids(patient, uuidlist);
+  return uuidlist;
+}
 
-  for (QList<ctkDicomAppHosting::Study>::ConstIterator sit = patient.studies.begin();
-    sit < patient.studies.end(); sit++)
+//----------------------------------------------------------------------------
+QList<QUuid> getAllUuids(const ctkDicomAppHosting::AvailableData& availableData)
+{
+  QList<QUuid> uuidlist;
+
+  // Loop over top level object descriptors
+  foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, availableData.objectDescriptors)
     {
-    for (QList<ctkDicomAppHosting::Series>::ConstIterator seit = sit->series.begin();
-      seit < sit->series.end(); seit++)
-      {
-        for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator oit = seit->objectDescriptors.begin();
-          oit < seit->objectDescriptors.end(); oit++)
-          {
-            uuidlist.append(oit->descriptorUUID);
-          }
-      }
+    uuidlist.append(objectDescriptor.descriptorUUID);
+    }
+
+   // Loop over patients
+  foreach(const ctkDicomAppHosting::Patient& patient, availableData.patients)
+    {
+    appendAllUuids(patient, uuidlist);
     }
   return uuidlist;
 }
