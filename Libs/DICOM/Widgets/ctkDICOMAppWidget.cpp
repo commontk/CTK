@@ -30,6 +30,7 @@
 #include <QMetaType>
 #include <QModelIndex>
 #include <QPersistentModelIndex>
+#include <QProgressDialog>
 #include <QSettings>
 #include <QSlider>
 #include <QTabBar>
@@ -48,7 +49,6 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMAppWidget.h"
-#include "ctkDICOMImportWidget.h"
 #include "ctkDICOMThumbnailGenerator.h"
 #include "ctkThumbnailLabel.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
@@ -97,7 +97,6 @@ ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(ctkDICOMAppWidget* parent): q
   ThumbnailGenerator = QSharedPointer <ctkDICOMThumbnailGenerator> (new ctkDICOMThumbnailGenerator);
   DICOMDatabase->setThumbnailGenerator(ThumbnailGenerator.data());
   DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
-  DICOMIndexer->setThumbnailGenerator(ThumbnailGenerator.data());
 }
 
 //----------------------------------------------------------------------------
@@ -173,6 +172,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
 
   connect(d->QueryRetrieveWidget, SIGNAL(canceled()), d->QueryRetrieveWidget, SLOT(hide()) );
+  connect(d->QueryRetrieveWidget, SIGNAL(canceled()), this, SLOT(onQueryRetrieveFinished()) );
 
   connect(d->ImagePreview, SIGNAL(requestNextImage()), this, SLOT(onNextImage()));
   connect(d->ImagePreview, SIGNAL(requestPreviousImage()), this, SLOT(onPreviousImage()));
@@ -218,7 +218,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
     }
   
   d->DICOMModel.setDatabase(d->DICOMDatabase->database());
-  d->DICOMModel.setDisplayLevel(ctkDICOMModel::SeriesType);
+  d->DICOMModel.setEndLevel(ctkDICOMModel::SeriesType);
   d->TreeView->resizeColumnToContents(0);
 
   //pass DICOM database instance to Import widget
@@ -311,6 +311,47 @@ void ctkDICOMAppWidget::openQueryDialog()
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onQueryRetrieveFinished()
+{
+  Q_D(ctkDICOMAppWidget);
+  d->DICOMModel.reset();
+  emit this->queryRetrieveFinished();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onRemoveAction()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  //d->QueryRetrieveWidget->show();
+  // d->QueryRetrieveWidget->raise();
+  std::cout << "on remove" << std::endl;
+  QModelIndexList selection = d->TreeView->selectionModel()->selectedIndexes();
+  std::cout << selection.size() << std::endl;
+  QModelIndex index;
+  foreach(index,selection)
+  {
+    QModelIndex index0 = index.sibling(index.row(), 0);
+    if ( d->DICOMModel.data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType))
+    {
+      QString seriesUID = d->DICOMModel.data(index0,ctkDICOMModel::UIDRole).toString();
+      d->DICOMDatabase->removeSeries(seriesUID);
+    } 
+    else if ( d->DICOMModel.data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType))
+    {
+      QString studyUID = d->DICOMModel.data(index0,ctkDICOMModel::UIDRole).toString();
+      d->DICOMDatabase->removeStudy(studyUID);
+    }
+    else if ( d->DICOMModel.data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType))
+    {
+      QString patientUID = d->DICOMModel.data(index0,ctkDICOMModel::UIDRole).toString();
+      d->DICOMDatabase->removePatient(patientUID);
+    }
+  }
+  d->DICOMModel.reset();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::suspendModel()
 {
   Q_D(ctkDICOMAppWidget);
@@ -332,6 +373,13 @@ void ctkDICOMAppWidget::resetModel()
   Q_D(ctkDICOMAppWidget);
 
   d->DICOMModel.reset();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onProgress(int progress)
+{
+  Q_UNUSED(progress);
+  QApplication::processEvents();
 }
 
 //----------------------------------------------------------------------------
@@ -378,11 +426,36 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
     {
     QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
     QString targetDirectory;
-    if (copyOnImport->isEnabled())
+    if (copyOnImport->checkState() == Qt::Checked)
       {
       targetDirectory = d->DICOMDatabase->databaseDirectory();
       }
+    QProgressDialog progress("DICOM Import", "Cancel", 0, 100, this,
+                           Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+    // We don't want the progress dialog to resize itself, so we bypass the label
+    // by creating our own
+    QLabel* progressLabel = new QLabel(tr("Initialization..."));
+    progress.setLabel(progressLabel);
+#ifdef Q_WS_MAC
+    // BUG: avoid deadlock of dialogs on mac
+    progress.setWindowModality(Qt::NonModal);
+#else
+    progress.setWindowModality(Qt::ApplicationModal);
+#endif
+    progress.setMinimumDuration(0);
+    progress.setValue(0);
+    progress.show();
+
+    connect(&progress, SIGNAL(canceled()), d->DICOMIndexer.data(), SLOT(cancel()));
+    connect(d->DICOMIndexer.data(), SIGNAL(indexingFilePath(QString)),
+            progressLabel, SLOT(setText(QString)));
+    connect(d->DICOMIndexer.data(), SIGNAL(progress(int)),
+            &progress, SLOT(setValue(int)));
+    connect(d->DICOMIndexer.data(), SIGNAL(progress(int)),
+            this, SLOT(onProgress(int)));
+
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
+
     d->DICOMModel.reset();
   }
 }
@@ -433,7 +506,12 @@ Q_D(ctkDICOMAppWidget);
           d->NextStudyButton->hide();
           d->PrevStudyButton->hide();
           }
+        d->ActionRemove->setEnabled(
+            model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType) ||
+            model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType) ||
+            model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType) );
         }
+
       else
         {
         d->NextImageButton->hide();
@@ -442,6 +520,7 @@ Q_D(ctkDICOMAppWidget);
         d->PrevSeriesButton->hide();
         d->NextStudyButton->hide();
         d->PrevStudyButton->hide();
+        d->ActionRemove->setEnabled(false);
         }
 }
 

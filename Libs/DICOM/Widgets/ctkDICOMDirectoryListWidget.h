@@ -31,6 +31,7 @@
 
 class ctkDICOMDirectoryListWidgetPrivate;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMDirectoryListWidget : public QWidget
 {
   Q_OBJECT
@@ -42,12 +43,12 @@ public:
 
   void setDICOMDatabase(ctkDICOMDatabase*);
 
-public slots:
+public Q_SLOTS:
   void addDirectory();
   void addDirectory(const QString&);
   void removeDirectory();
 
-protected slots:
+protected Q_SLOTS:
   void directorySelectionChanged( const QItemSelection  & selected, const QItemSelection  & deselected );
 
 protected:

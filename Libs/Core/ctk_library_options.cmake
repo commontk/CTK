@@ -8,7 +8,7 @@
 # Note: Options WITH_BFD_SHARED and WITH_BFD_STATIC are mutually exclusive. 
 #       Enabling both options will trigger a configuration error.
 
-SET(ctk_library_options
+set(ctk_library_options
   WITH_BFD_SHARED:OFF
   WITH_BFD_STATIC:OFF
   )

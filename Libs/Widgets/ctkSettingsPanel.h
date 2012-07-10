@@ -22,6 +22,7 @@
 #define __ctkSettingsPanel_h
 
 // Qt includes
+#include <QMetaType>
 #include <QWidget>
 
 // CTK includes
@@ -30,9 +31,12 @@
 class QSettings;
 class ctkSettingsPanelPrivate;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkSettingsPanel : public QWidget
 {
   Q_OBJECT
+  Q_ENUMS(SettingOption)
+  Q_FLAGS(SettingOptions)
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -46,6 +50,12 @@ public:
   QSettings* settings()const;
   void setSettings(QSettings* settings);
 
+  enum SettingOption{
+    OptionNone = 0x0000,
+    OptionRequireRestart = 0x0001,
+    OptionAll_Mask = ~0
+  };
+  Q_DECLARE_FLAGS(SettingOptions, SettingOption)
   /// Add an entry into the settings uniquely defined by the \a key name and the
   /// current value of the property.
   /// The property is then synchronized with the settings by observing the signal
@@ -54,16 +64,35 @@ public:
   /// \a signal is typically the value under NOTIFY in Q_PROPERTY.
   /// The current value of the property is later used when
   /// restoreDefaultSettings() is called.
-  /// \sa Q_PROPERTY()
-  void registerProperty(const QString& key,
+  /// If you want to register the logical complement of a boolean property
+  /// you can use ctkBooleanMapper:
+  /// <code>
+  /// panel->registerProperty("unchecked",
+  ///                         new ctkBooleanMapper(checkBox, "checked", SIGNAL(toggled(bool))),
+  ///                         "complement", SIGNAL(complementChanged(bool)));
+  /// </code>
+  /// \sa Q_PROPERTY(), \sa ctkBooleanMapper
+  void registerProperty(const QString& settingKey,
                         QObject* object,
-                        const QString& property,
-                        const char* signal);
+                        const QString& objectProperty,
+                        const char* propertySignal,
+                        const QString& settingLabel = QString(),
+                        SettingOptions options = OptionNone);
+
   /// Set the setting to the property defined by the key.
   /// The old value can be restored using resetSettings()
   void setSetting(const QString& key, const QVariant& newVal);
 
-public slots:
+  /// Return the list of settings keys that have been modified and are
+  /// not yet applied.
+  QStringList changedSettings()const;
+
+  /// Return the label associated to a setting
+  QString settingLabel(const QString& settingKey)const;
+
+  /// Return the options associated to a setting
+  SettingOptions settingOptions(const QString& settingKey)const;
+public Q_SLOTS:
 
   /// Forget the old property values so next time resetSettings is called it
   /// will set the properties with the same values when applySettings() is
@@ -78,7 +107,7 @@ public slots:
   /// of the properties when they were registered using registerProperty().
   virtual void restoreDefaultSettings();
 
-signals:
+Q_SIGNALS:
   /// Fired anytime a property is modified.
   void settingChanged(const QString& key, const QVariant& value);
 
@@ -95,7 +124,7 @@ protected:
   /// \sa registerProperty();
   QVariant propertyValue(const QString& key) const;
 
-protected slots:
+protected Q_SLOTS:
   void updateSetting(const QString& key);
 
 protected:
@@ -106,5 +135,9 @@ private:
   Q_DECLARE_PRIVATE(ctkSettingsPanel);
   Q_DISABLE_COPY(ctkSettingsPanel);
 };
+
+Q_DECLARE_METATYPE(ctkSettingsPanel::SettingOption)
+Q_DECLARE_METATYPE(ctkSettingsPanel::SettingOptions)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkSettingsPanel::SettingOptions)
 
 #endif

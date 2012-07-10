@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mousePress" arguments="(0.615385,0.512111,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mouseRelease" arguments="(0.615385,0.512111,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mousePress" arguments="(0.589744,0.619377,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mouseRelease" arguments="(0.589744,0.619377,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mousePress" arguments="(0.441026,0.692042,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mouseRelease" arguments="(0.446154,0.692042,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mousePress" arguments="(0.371795,0.539792,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mouseRelease" arguments="(0.371795,0.532872,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mousePress" arguments="(0.389744,0.387543,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mouseRelease" arguments="(0.407692,0.373702,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mousePress" arguments="(0.487179,0.297578,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mouseRelease" arguments="(0.487179,0.311419,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mousePress" arguments="(0.471795,0.564014,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mouseRelease" arguments="(0.471795,0.564014,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mousePress" arguments="(0.653846,0.487889,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkAxesWidget0" command="mouseRelease" arguments="(0.653846,0.487889,1,0,0)"/>
+    </events>
+</QtTesting>

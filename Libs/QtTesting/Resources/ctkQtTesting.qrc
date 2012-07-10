@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>XML/XMLDescription.xsd</file>
+    </qresource>
+</RCC>

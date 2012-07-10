@@ -70,18 +70,18 @@ private:
   {
     /**
      * This is a null object and this method will throw an
-     * std::logic_error due to the plugin being stopped.
+     * ctkIllegalStateException due to the plugin being stopped.
      *
      * @param event An event that is not used.
      *
      * @return This method does not return normally
      *
-     * @throws std::logic_error - This is a null object and this method
-     *          will always throw an std::logic_error
+     * @throws ctkIllegalStateException - This is a null object and this method
+     *          will always throw an ctkIllegalStateException
      */
     QList<ctkEAHandlerTask<HandlerTasks> > createHandlerTasks(const ctkEvent&)
     {
-      throw std::logic_error("The EventAdmin is stopped");
+      throw ctkIllegalStateException("The EventAdmin is stopped");
     }
   };
 
@@ -112,7 +112,7 @@ public:
    *
    * @param event The event to be posted by this service
    *
-   * @throws std::logic_error - In case we are stopped
+   * @throws ctkIllegalStateException - In case we are stopped
    *
    * @see ctkEventAdmin#postEvent(const ctkEvent&)
    */
@@ -123,7 +123,7 @@ public:
    *
    * @param event The event to be send by this service
    *
-   * @throws std::logic_error - In case we are stopped
+   * @throws ctkIllegalStateException - In case we are stopped
    *
    * @see ctkEventAdmin#sendEvent(const ctkEvent&)
    */
@@ -135,7 +135,7 @@ public:
 
   /**
    * This method can be used to stop the delivery of events. The managers variable is
-   * replaced with a null object that throws an std::logic_error on a call
+   * replaced with a null object that throws an ctkIllegalStateException on a call
    * to <tt>createHandlerTasks()</tt>.
    */
   void stop();
@@ -157,7 +157,7 @@ private:
                    DeliverTasks* manager);
 
   /**
-   * This is a utility method that will throw a <tt>std::invalid_argument</tt>
+   * This is a utility method that will throw a <tt>ctkInvalidArgumentException</tt>
    * in case that the given object is null. The message will be of the form
    * "${name} + may not be null".
    */

@@ -29,7 +29,10 @@
 
 class ctkScreenshotDialogPrivate;
 
-/** ctkScreenshotDialog is simple dialog allowing to grab the content 
+/** 
+    \ingroup Widgets
+    
+    ctkScreenshotDialog is simple dialog allowing to grab the content 
     of any widget and save it into a PNG file.
     It can be used as a tool and can take screenshots without being opened nor
     executed.
@@ -77,7 +80,7 @@ public:
   void setDelay(int seconds);
   int delay()const;
 
-public slots:
+public Q_SLOTS:
   /// Instantanely grabs the content of \a widgetToGrag. Generates a
   /// png file into \a directory. It automatically increments the image name
   /// index suffix.

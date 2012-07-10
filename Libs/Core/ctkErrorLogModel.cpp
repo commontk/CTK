@@ -39,6 +39,8 @@
 #include <cstdio> // For _fileno or fileno
 #ifdef _MSC_VER
 # include <io.h> // For _write()
+#else
+# include <unistd.h>
 #endif
 
 // --------------------------------------------------------------------------
@@ -159,10 +161,14 @@ void ctkErrorLogTerminalOutput::output(const QString& text)
     QMutexLocker locker(&d->OutputMutex);
     QString textWithNewLine = text + "\n";
 #ifdef _MSC_VER
-    _write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
+    int res = _write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
 #else
-    write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
+    ssize_t res = write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
 #endif
+    if (res == -1)
+      {
+      return;
+      }
   }
 }
 

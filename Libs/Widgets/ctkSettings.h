@@ -65,6 +65,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class QDialog;
 class QMainWindow;
 
+/// \ingroup Widgets
 /// ctkSettings is a QSettings that additionally can save and restore the 
 /// state (position/size) of QMainWindow and QDialogs.
 class CTK_WIDGETS_EXPORT ctkSettings : public QSettings
@@ -112,7 +113,7 @@ public:
   /// Calling this method will cause the modified signal to be emited.
   void alertSettingsModified();
 
-signals:
+Q_SIGNALS:
   void modified();
 };
 

@@ -1,10 +1,10 @@
-PROJECT(ctkPluginBrowser)
+project(ctkPluginBrowser)
 
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
 
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkPluginBrowser.cpp
   ctkPluginBrowserEditors.cpp
   ctkPluginBrowserMain.cpp
@@ -14,19 +14,19 @@ SET(KIT_SRCS
 )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkPluginBrowser.h
   ctkPluginBrowserEditors.h
   ctkPluginTableModel.h
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
   ctkPluginBrowserMainWindow.ui
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   ctkPluginBrowserResources.qrc
 )
 
@@ -44,6 +44,6 @@ ctkMacroBuildApp(
   )
 
 # Testing
-IF(BUILD_TESTING)
-#   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+#   add_subdirectory(Testing)
+endif()

@@ -30,6 +30,7 @@ class vtkCamera;
 class vtkImageData;
 class vtkRenderer;
 
+/// \ingroup Visualization_VTK_Widgets
 /// Specific implementation for a 2D view that supports lightbox display.
 /// \note There is no support for gradient background yet.
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceView : public ctkVTKAbstractView
@@ -90,7 +91,7 @@ public:
   /// \sa setColorWindow();
   double colorWindow()const;
 
-public slots:
+public Q_SLOTS:
 
   /// Reset cameras associated with all renderWindowItem
   /// \sa vtkLightBoxRendererManager::ResetCamera
@@ -126,7 +127,7 @@ public slots:
   /// \sa vtkLightBoxRendererManager::SetRenderWindowColumnCount
   void setLightBoxRendererManagerColumnCount(int newColumnCount);
   
-signals:
+Q_SIGNALS:
   void resized(const QSize& size);
 
 protected:

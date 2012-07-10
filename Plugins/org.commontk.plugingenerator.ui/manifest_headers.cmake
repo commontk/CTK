@@ -1,1 +1,1 @@
-SET(Require-Plugin org.commontk.plugingenerator.core)
+set(Require-Plugin org.commontk.plugingenerator.core)

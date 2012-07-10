@@ -56,10 +56,11 @@ void ctkDicomAppPlugin::start(ctkPluginContext* context)
 
   ctkDicomAppPlugin::Context = context;
 
+
   QUrl appURL(context->getProperty("dah.appURL").toString());
   if (!appURL.isValid())
     {
-    //throw std::runtime_error("The plugin framework does not contain a valid \"dah.appURL\" property");
+    //throw ctkRuntimeException("The plugin framework does not contain a valid \"dah.appURL\" property");
     qDebug() << "ctkDicomAppPlugin: The plugin framework does not contain a valid \"dah.appURL\" property";
     canStart = false;
     }
@@ -67,7 +68,7 @@ void ctkDicomAppPlugin::start(ctkPluginContext* context)
   QUrl hostURL(context->getProperty("dah.hostURL").toString());
   if (!hostURL.isValid())
     {
-    //throw std::runtime_error("The plugin framework does not contain a valid \"dah.hostURL\" property");
+    //throw ctkRuntimeException("The plugin framework does not contain a valid \"dah.hostURL\" property");
     qDebug() << "ctkDicomAppPlugin: The plugin framework does not contain a valid \"dah.hostURL\" property";
     canStart = false;
     }

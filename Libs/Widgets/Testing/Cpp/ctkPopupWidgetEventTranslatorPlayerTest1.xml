@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000018000001f9000001810000000600000031000001f30000017b000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000012e00000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1ctkCollapsibleButton0/focusComboBox/focusPopup" command="popupOpen" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1ctkCollapsibleButton0" command="set_boolean" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1ctkCollapsibleButton0" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1ctkCollapsibleButton0/focusComboBox/focusPopup" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1ctkCollapsibleButton0/focusComboBox/focusPopup" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1ctkCollapsibleButton0/focusComboBox/focusPopup/popupToolButton/menu" command="activate" arguments="second menu item"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1ctkCollapsibleButton0/focusComboBox/focusPopup" command="popupOpen" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/openButton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/openButton/openPopup" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/openButton/openPopup/openPopupContent" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/openButton/openPopup" command="popupOpen" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/toggleButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/toggleButton/togglePopup" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/toggleButton/togglePopup/togglePopupContent" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/toggleButton" command="set_boolean" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/toggleButton/togglePopup" command="popupOpen" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1QToolButton0/pinPopup" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1QToolButton0/pinPopup" command="popupOpen" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1QToolButton0/pinPopup" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/topLevelWidget/1QToolButton0/pinPopup/pinPopupContent" command="set_boolean" arguments="true"/>
+    </events>
+</QtTesting>

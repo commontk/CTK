@@ -1,19 +1,19 @@
-PROJECT(CTKVisualizationVTKCore)
+project(CTKVisualizationVTKCore)
 
 #
 # 3rd party dependencies
 #
-INCLUDE(${VTK_USE_FILE})
+include(${VTK_USE_FILE})
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_VISUALIZATION_VTK_CORE_EXPORT")
+set(KIT_export_directive "CTK_VISUALIZATION_VTK_CORE_EXPORT")
 
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkVTKColorTransferFunction.cpp
   ctkVTKColorTransferFunction.h
   ctkVTKCompositeFunction.cpp
@@ -36,7 +36,7 @@ SET(KIT_SRCS
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkVTKColorTransferFunction.h
   ctkVTKConnection.h
   ctkVTKCompositeFunction.h
@@ -47,27 +47,27 @@ SET(KIT_MOC_SRCS
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
 )
 
 # Set VTK_LIBRARIES variable
-SET(VTK_LIBRARIES
+set(VTK_LIBRARIES
   vtkCommon
   vtkFiltering
   vtkRendering
   vtkHybrid
   )
 
-IF(Q_WS_X11)
+if(Q_WS_X11)
   # If the faster 'gold' linker is used, to avoid complaints about undefined symbol
   # 'XGetWindowAttributes', 'XCreateWindow', ..., let's link against X11 libraries.
-  FIND_PACKAGE(X11)
-  LIST(APPEND VTK_LIBRARIES ${X11_LIBRARIES})
-ENDIF()
+  find_package(X11)
+  list(APPEND VTK_LIBRARIES ${X11_LIBRARIES})
+endif()
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
@@ -84,20 +84,20 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-IF(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
-ENDIF()
+endif()
 
 # Plugins
-#IF(BUILD_QTDESIGNER_PLUGINS)
-#  ADD_SUBDIRECTORY(Plugins)
-#ENDIF()
+#if(CTK_BUILD_QTDESIGNER_PLUGINS)
+#  add_subdirectory(Plugins)
+#endif()
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

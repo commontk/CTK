@@ -1,12 +1,13 @@
-SET(fw_lib ${PROJECT_NAME} CACHE INTERNAL "Name of the PluginFramework library")
-SET(fwtestutil_lib ${PROJECT_NAME}TestUtil CACHE INTERNAL "Name of the PluginFramework test utility library")
+set(fw_lib ${PROJECT_NAME} CACHE INTERNAL "Name of the PluginFramework library")
+set(fwtestutil_lib ${PROJECT_NAME}TestUtil CACHE INTERNAL "Name of the PluginFramework test utility library")
 
-ADD_SUBDIRECTORY(Cpp)
+add_subdirectory(Cpp)
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/Cpp)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Cpp)
 
-SET(fwtest_plugins
+set(fwtest_plugins
   pluginA_test
+  pluginA1_test
   pluginS_test
   pluginA2_test
   pluginD_test
@@ -15,15 +16,15 @@ SET(fwtest_plugins
   pluginSL4_test
 )
 
-SET(metatypetest_plugins
+set(metatypetest_plugins
   pluginAttrPwd_test
 )
 
-ADD_SUBDIRECTORY(FrameworkTest)
-ADD_SUBDIRECTORY(FrameworkTestPlugins)
+add_subdirectory(org.commontk.pluginfwtest)
+add_subdirectory(FrameworkTestPlugins)
 
-ADD_SUBDIRECTORY(ConfigAdminTest)
-ADD_SUBDIRECTORY(EventAdminTest)
+add_subdirectory(org.commontk.configadmintest)
+add_subdirectory(org.commontk.eventadmintest)
 
-ADD_SUBDIRECTORY(MetaTypeTest)
-ADD_SUBDIRECTORY(MetaTypeTestPlugins)
+add_subdirectory(org.commontk.metatypetest)
+add_subdirectory(MetaTypeTestPlugins)

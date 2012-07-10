@@ -1,29 +1,29 @@
-PROJECT(ctkPluginGenerator)
+project(ctkPluginGenerator)
 
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
 
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkPluginGenerator.cpp
   ctkPluginGeneratorMain.cpp
   ctkPluginGeneratorOptionsDialog.cpp
 )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkPluginGenerator_p.h
   ctkPluginGeneratorOptionsDialog_p.h
 )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
   ctkPluginGeneratorMainWindow.ui
   ctkPluginGeneratorOptionsDialog.ui
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   ctkPluginGenerator.qrc
 )
 
@@ -41,6 +41,6 @@ ctkMacroBuildApp(
   )
 
 # Testing
-IF(BUILD_TESTING)
-#   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+#   add_subdirectory(Testing)
+endif()

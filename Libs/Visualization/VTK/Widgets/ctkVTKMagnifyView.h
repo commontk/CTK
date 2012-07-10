@@ -33,6 +33,7 @@ class QVTKWidget;
 
 class ctkVTKMagnifyViewPrivate;
 
+/// \ingroup Visualization_VTK_Widgets
 /// Gives a magnified view of a QVTKWidget around the mouse position, with
 /// overlaid crosshair (ex. cross-hair).  You must specify the QVTKWidget(s) to be
 /// observed.
@@ -107,7 +108,7 @@ protected:
   /// enterEvent, leaveEvent and mouseMoveEvent).
   virtual bool eventFilter(QObject *obj, QEvent *event);
 
-signals:
+Q_SIGNALS:
   void enteredObservedWidget(QVTKWidget * widget);
   void leftObservedWidget(QVTKWidget * widget);
 

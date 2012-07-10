@@ -51,7 +51,6 @@ public:
   bool alwaysShowClearIcon;
   bool hideClearIcon;
 
-  QIcon::Mode clearIconMode;
 #if QT_VERSION < 0x040700
   QString placeholderText;
 #endif
@@ -63,7 +62,6 @@ ctkSearchBoxPrivate::ctkSearchBoxPrivate(ctkSearchBox &object)
 {
   this->clearIcon = QIcon(":Icons/clear.svg");
   this->searchIcon = QIcon(":Icons/search.svg");
-  this->clearIconMode = QIcon::Disabled;
   this->showSearchIcon = false;
   this->alwaysShowClearIcon = false;
   this->hideClearIcon = true;
@@ -94,21 +92,20 @@ QRect ctkSearchBoxPrivate::clearRect()const
 QRect ctkSearchBoxPrivate::searchRect()const
 {
   Q_Q(const ctkSearchBox);
-  QRect sRect;
+  QRect sRect = q->contentsRect();
   // If the QLineEdit has a frame, the icon must be shifted from
   // the frame line width
   if (q->hasFrame())
     {
     QStyleOptionFrameV2 opt;
     q->initStyleOption(&opt);
-    sRect.moveTopLeft(QPoint(opt.lineWidth, opt.lineWidth));
+    sRect.adjust(opt.lineWidth, opt.lineWidth, -opt.lineWidth, -opt.lineWidth);
     }
-  // Hardcoded: shift by 1 pixel because some styles have a focus frame inside
+  // Hardcoded: shrink by 1 pixel because some styles have a focus frame inside
   // the line edit frame.
-  sRect.translate(QPoint(1,1));
+  sRect.adjust(1, 1, -1, -1);
   // Square size
-  sRect.setSize(QSize(q->height(),q->height()) -
-                2*QSize(sRect.left(), sRect.top()));
+  sRect.setWidth(sRect.height());
   return sRect;
 }
 
@@ -178,6 +175,36 @@ bool ctkSearchBox::alwaysShowClearIcon()const
 {
   Q_D(const ctkSearchBox);
   return d->alwaysShowClearIcon;
+}
+
+// --------------------------------------------------
+void ctkSearchBox::setSearchIcon(const QIcon& icon)
+{
+  Q_D(ctkSearchBox);
+  d->searchIcon = icon;
+  this->update();
+}
+
+// --------------------------------------------------
+QIcon ctkSearchBox::searchIcon()const
+{
+  Q_D(const ctkSearchBox);
+  return d->searchIcon;
+}
+
+// --------------------------------------------------
+void ctkSearchBox::setClearIcon(const QIcon& icon)
+{
+  Q_D(ctkSearchBox);
+  d->clearIcon = icon;
+  this->update();
+}
+
+// --------------------------------------------------
+QIcon ctkSearchBox::clearIcon()const
+{
+  Q_D(const ctkSearchBox);
+  return d->clearIcon;
 }
 
 // --------------------------------------------------
@@ -251,14 +278,14 @@ void ctkSearchBox::paintEvent(QPaintEvent * event)
   // Draw clearIcon
   if (!d->hideClearIcon)
     {
-    QPixmap closePixmap = d->clearIcon.pixmap(cRect.size(),d->clearIconMode);
+    QPixmap closePixmap = d->clearIcon.pixmap(cRect.size(),this->isEnabled() ? QIcon::Normal : QIcon::Disabled);
     this->style()->drawItemPixmap(&p, cRect, Qt::AlignCenter, closePixmap);
     }
 
   // Draw searchIcon
   if (d->showSearchIcon)
     {
-    QPixmap searchPixmap = d->searchIcon.pixmap(sRect.size());
+    QPixmap searchPixmap = d->searchIcon.pixmap(sRect.size(), this->isEnabled() ? QIcon::Normal : QIcon::Disabled);
     this->style()->drawItemPixmap(&p, sRect, Qt::AlignCenter, searchPixmap);
     }
 }

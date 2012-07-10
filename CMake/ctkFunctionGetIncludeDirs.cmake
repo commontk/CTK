@@ -20,75 +20,75 @@
 ###########################################################################
 
 #! \ingroup CMakeUtilities
-FUNCTION(ctkFunctionGetIncludeDirs var_include_dirs)
+function(ctkFunctionGetIncludeDirs var_include_dirs)
 
-  IF(NOT ARGN)
-    MESSAGE(FATAL_ERROR "No targets given")
-  ENDIF()
+  if(NOT ARGN)
+    message(FATAL_ERROR "No targets given")
+  endif()
 
-  SET(_include_dirs ${${var_include_dirs}} ${CTK_CONFIG_H_INCLUDE_DIR})
-  FOREACH(_target ${ARGN})
+  set(_include_dirs ${${var_include_dirs}} ${CTK_CONFIG_H_INCLUDE_DIR})
+  foreach(_target ${ARGN})
 
     # Add the include directories from the plugin dependencies
     # The variable ${_target}_DEPENDENCIES is set in the
     # macro ctkMacroValidateBuildOptions
 
-    SET(ctk_deps )
-    SET(ext_deps )
+    set(ctk_deps )
+    set(ext_deps )
 
     ctkMacroGetAllProjectTargetLibraries("${${_target}_DEPENDENCIES}" ctk_deps)
     ctkMacroGetAllNonProjectTargetLibraries("${${_target}_DEPENDENCIES}" ext_deps)
 
-    FOREACH(dep ${ctk_deps})
+    foreach(dep ${ctk_deps})
 
-      IF(${dep}_INCLUDE_SUFFIXES)
-        FOREACH(_suffix ${${dep}_INCLUDE_SUFFIXES})
-          LIST(APPEND _include_dirs ${${dep}_SOURCE_DIR}/${_suffix})
-        ENDFOREACH()
-        LIST(APPEND _include_dirs ${${dep}_BINARY_DIR})
-      ELSE()
-        LIST(APPEND _include_dirs
+      if(${dep}_INCLUDE_SUFFIXES)
+        foreach(_suffix ${${dep}_INCLUDE_SUFFIXES})
+          list(APPEND _include_dirs ${${dep}_SOURCE_DIR}/${_suffix})
+        endforeach()
+        list(APPEND _include_dirs ${${dep}_BINARY_DIR})
+      else()
+        list(APPEND _include_dirs
              ${${dep}_SOURCE_DIR}
              ${${dep}_BINARY_DIR}
              )
-      ENDIF()
+      endif()
 
       # For external projects, CTKConfig.cmake contains variables
       # listening the include dirs for CTK libraries and plugins
-      IF(${dep}_INCLUDE_DIRS)
-        LIST(APPEND _include_dirs ${${dep}_INCLUDE_DIRS})
-      ENDIF()
-    ENDFOREACH()
+      if(${dep}_INCLUDE_DIRS)
+        list(APPEND _include_dirs ${${dep}_INCLUDE_DIRS})
+      endif()
+    endforeach()
 
-    FOREACH(dep ${ext_deps})
+    foreach(dep ${ext_deps})
 
-      IF(${dep}_INCLUDE_DIRS)
-        STRING(REPLACE "^" ";" _ext_include_dirs "${${dep}_INCLUDE_DIRS}")
-        LIST(APPEND _include_dirs ${_ext_include_dirs})
-      ENDIF()
+      if(${dep}_INCLUDE_DIRS)
+        string(REPLACE "^" ";" _ext_include_dirs "${${dep}_INCLUDE_DIRS}")
+        list(APPEND _include_dirs ${_ext_include_dirs})
+      endif()
 
       # This is for resolving include dependencies between
       # libraries / plugins from external projects using CTK
-      IF(${dep}_SOURCE_DIR AND ${dep}_INCLUDE_SUFFIXES)
-        FOREACH(_suffix ${${dep}_INCLUDE_SUFFIXES})
-          LIST(APPEND _include_dirs ${${dep}_SOURCE_DIR}/${_suffix})
-        ENDFOREACH()
-        LIST(APPEND _include_dirs ${${dep}_BINARY_DIR})
-      ELSEIF(${dep}_SOURCE_DIR)
-        LIST(APPEND _include_dirs ${${dep}_SOURCE_DIR})
-      ENDIF()
+      if(${dep}_SOURCE_DIR AND ${dep}_INCLUDE_SUFFIXES)
+        foreach(_suffix ${${dep}_INCLUDE_SUFFIXES})
+          list(APPEND _include_dirs ${${dep}_SOURCE_DIR}/${_suffix})
+        endforeach()
+        list(APPEND _include_dirs ${${dep}_BINARY_DIR})
+      elseif(${dep}_SOURCE_DIR)
+        list(APPEND _include_dirs ${${dep}_SOURCE_DIR})
+      endif()
 
-      IF(${dep}_BINARY_DIR)
-        LIST(APPEND _include_dirs ${${dep}_BINARY_DIR})
-      ENDIF()
+      if(${dep}_BINARY_DIR)
+        list(APPEND _include_dirs ${${dep}_BINARY_DIR})
+      endif()
 
-    ENDFOREACH()
+    endforeach()
 
-  ENDFOREACH()
+  endforeach()
 
-  IF(_include_dirs)
-    LIST(REMOVE_DUPLICATES _include_dirs)
-  ENDIF()
-  SET(${var_include_dirs} ${_include_dirs} PARENT_SCOPE)
+  if(_include_dirs)
+    list(REMOVE_DUPLICATES _include_dirs)
+  endif()
+  set(${var_include_dirs} ${_include_dirs} PARENT_SCOPE)
 
-ENDFUNCTION()
+endfunction()

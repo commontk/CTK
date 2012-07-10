@@ -23,9 +23,9 @@
 #include <QResizeEvent>
 
 // CTK includes
+#include "ctkPimpl.h"
 #include "ctkVTKSliceView.h"
 #include "ctkVTKSliceView_p.h"
-#include "ctkLogger.h"
 
 // VTK includes
 #include <vtkRendererCollection.h>
@@ -38,14 +38,6 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKSliceView");
-//--------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
 // ctkVTKSliceViewPrivate methods
@@ -61,8 +53,6 @@ ctkVTKSliceViewPrivate::ctkVTKSliceViewPrivate(ctkVTKSliceView& object)
 // --------------------------------------------------------------------------
 void ctkVTKSliceViewPrivate::setupCornerAnnotation()
 {
-  logger.trace("setupCornerAnnotation");
-  // whatever is done in ctkVTKAbsrtactViewPrivate would be overriden anyway
   this->ctkVTKAbstractViewPrivate::setupCornerAnnotation();
   this->LightBoxRendererManager->SetCornerAnnotation(this->CornerAnnotation);
 }

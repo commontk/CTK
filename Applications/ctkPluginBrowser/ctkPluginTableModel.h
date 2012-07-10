@@ -47,7 +47,7 @@ public:
   int columnCount(const QModelIndex& parent = QModelIndex()) const;
   int rowCount(const QModelIndex& parent = QModelIndex()) const;
 
-protected slots:
+protected Q_SLOTS:
 
   void pluginChanged(const ctkPluginEvent& event);
 

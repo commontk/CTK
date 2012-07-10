@@ -307,10 +307,72 @@ bool ctk::removeDirRecursively(const QString & dirName)
 }
 
 //-----------------------------------------------------------------------------
+bool ctk::copyDirRecursively(const QString &srcPath, const QString &dstPath)
+{
+  // See http://stackoverflow.com/questions/2536524/copy-directory-using-qt
+  if (!QFile::exists(srcPath))
+    {
+    qCritical() << "ctk::copyDirRecursively: Failed to copy nonexistent directory" << srcPath;
+    return false;
+    }
+
+  QDir srcDir(srcPath);
+  if (!srcDir.relativeFilePath(dstPath).startsWith(".."))
+    {
+    qCritical() << "ctk::copyDirRecursively: Cannot copy directory" << srcPath << "into itself" << dstPath;
+    return false;
+    }
+
+
+  QDir parentDstDir(QFileInfo(dstPath).path());
+  if (!QFile::exists(dstPath) && !parentDstDir.mkdir(QFileInfo(dstPath).fileName()))
+    {
+    qCritical() << "ctk::copyDirRecursively: Failed to create destination directory" << QFileInfo(dstPath).fileName();
+    return false;
+    }
+
+  foreach(const QFileInfo &info, srcDir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
+    {
+    QString srcItemPath = srcPath + "/" + info.fileName();
+    QString dstItemPath = dstPath + "/" + info.fileName();
+    if (info.isDir())
+      {
+      if (!ctk::copyDirRecursively(srcItemPath, dstItemPath))
+        {
+        qCritical() << "ctk::copyDirRecursively: Failed to copy files from " << srcItemPath << " into " << dstItemPath;
+        return false;
+        }
+      }
+    else if (info.isFile())
+      {
+      if (!QFile::copy(srcItemPath, dstItemPath))
+        {
+        return false;
+        }
+      }
+    else
+      {
+      qWarning() << "ctk::copyDirRecursively: Unhandled item" << info.filePath();
+      }
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 QString ctk::qtHandleToString(Qt::HANDLE handle)
 {
   QString str;
   QTextStream s(&str);
   s << handle;
   return str;
+}
+
+//-----------------------------------------------------------------------------
+qint64 ctk::msecsTo(const QDateTime& t1, const QDateTime& t2)
+{
+  QDateTime utcT1 = t1.toUTC();
+  QDateTime utcT2 = t2.toUTC();
+
+  return static_cast<qint64>(utcT1.daysTo(utcT2)) * static_cast<qint64>(1000*3600*24)
+      + static_cast<qint64>(utcT1.time().msecsTo(utcT2.time()));
 }

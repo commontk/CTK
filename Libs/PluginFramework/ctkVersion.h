@@ -244,6 +244,18 @@ public:
    */
   int compare(const ctkVersion& object) const;
 
+  /**
+   * Compares this <code>ctkVersion</code> object to another object.
+   *
+   * This is a convenience function for use in ordered containers. It relies on
+   * the compare(const ctkVersion&) method.
+   *
+   * @param object The <code>ctkVersion</code> object to be compared.
+   * @return <code>true</code> if this object is less then the specified
+   *         <code>ctkVersion</code> object, <code>false</code> otherwise.
+   */
+  bool operator<(const ctkVersion& object) const;
+
 };
 
 /**

@@ -1,0 +1,12 @@
+/**
+
+\defgroup DICOM_Core DICOM Core
+\ingroup Libs
+\ingroup Project_DICOM
+
+\defgroup DICOM_Widgets DICOM Widgets
+\ingroup Libs
+\ingroup Project_DICOM
+\ingroup Project_Widgets
+
+*/

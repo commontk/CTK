@@ -29,6 +29,7 @@
 
 class ctkColorDialogPrivate;
 
+/// \ingroup Widgets
 /// Customizable QColorDialog.
 /// Extra widgets can be added to the left of the dialog into a QStackedWidget
 class CTK_WIDGETS_EXPORT ctkColorDialog : public QColorDialog
@@ -93,7 +94,7 @@ public:
   /// -1 for the "Basic Colors", it's the default behavior
   static void setDefaultTab(int index);
 
-public slots:
+public Q_SLOTS:
   /// Slotify QColorDialog::setCurrentColor(QColor)
   void setColor(const QColor& color);
 

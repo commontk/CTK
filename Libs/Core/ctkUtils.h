@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QStringList>
+#include <QDateTime>
 
 // STD includes
 #include <vector>
@@ -116,11 +117,35 @@ double CTK_CORE_EXPORT closestPowerOfTen(double value);
 /// \sa QDir::rmdir
 bool CTK_CORE_EXPORT removeDirRecursively(const QString & dirName);
 
+
+///
+/// \ingroup Core
+/// Copy a directory recursively
+/// \param srcPath The directory to be copied
+/// \param dstPath The directory where the file should be copied
+/// \return <code>true</code> on success, <code>false</code> otherwise.
+/// \sa QFile::copy
+bool CTK_CORE_EXPORT copyDirRecursively(const QString &srcPath, const QString &dstPath);
+
 ///
 /// \ingroup Core
 /// Convert Qt::HANDLE to string
 /// \sa Qt::HANDLE
 QString CTK_CORE_EXPORT qtHandleToString(Qt::HANDLE handle);
+
+
+///
+/// \ingroup Core
+/// \brief Compute the milli seconds from one QDateTime to an other.
+///
+/// This function can be used to correctly compute the amount of milli
+/// seconds from <code>t1</code> to <code>t2</code>. The QDateTime objects
+/// are converted to Qt::UTC to take daylight saving time into account. This is for
+/// back-wards compatibility with Qt 4.6. Since Qt 4.7 there exists
+/// a QDateTime::msecsTo() method which should be used instead, after
+/// bumping the minimum required Qt version for CTK.
+qint64 CTK_CORE_EXPORT msecsTo(const QDateTime& t1, const QDateTime& t2);
+
 }
 
 #endif

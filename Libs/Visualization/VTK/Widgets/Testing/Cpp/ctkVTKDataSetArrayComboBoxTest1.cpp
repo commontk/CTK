@@ -25,15 +25,16 @@
 
 // CTK includes
 #include "ctkVTKDataSetArrayComboBox.h"
+#include "ctkVTKDataSetModel.h"
 
 // VTK includes
 #include <vtkCellData.h>
 #include <vtkFloatArray.h>
 #include <vtkIntArray.h>
+#include <vtkNew.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
 
 // STD includes
 #include <iostream>
@@ -43,17 +44,19 @@ int ctkVTKDataSetArrayComboBoxTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  vtkSmartPointer<vtkPolyData> dataSet =
-      vtkSmartPointer<vtkPolyData>::New();
-  vtkSmartPointer<vtkIntArray> ints = vtkSmartPointer<vtkIntArray>::New();
+  vtkNew<vtkPolyData> dataSet;
+
+  vtkNew<vtkIntArray> ints;
   ints->SetName("Ints");
-  dataSet->GetPointData()->AddArray(ints);
-  vtkSmartPointer<vtkFloatArray> floats= vtkSmartPointer<vtkFloatArray>::New();
+  dataSet->GetPointData()->AddArray(ints.GetPointer());
+
+  vtkNew<vtkFloatArray> floats;
   floats->SetName("Floats");
-  dataSet->GetCellData()->AddArray(floats);
-  
+  dataSet->GetCellData()->AddArray(floats.GetPointer());
+
   ctkVTKDataSetArrayComboBox comboBox;
-  comboBox.setDataSet(dataSet);
+  comboBox.dataSetModel()->setAttributeTypes(ctkVTKDataSetModel::AllAttribute);
+  comboBox.setDataSet(dataSet.GetPointer());
   comboBox.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")

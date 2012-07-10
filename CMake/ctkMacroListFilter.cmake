@@ -3,8 +3,8 @@
 #!
 #! Usage:
 #! \code
-#! LIST_FILTER(<list> <regexp_var> [<regexp_var> ...]
-#!              [OUTPUT_VARIABLE <variable>])
+#! ctkMacroListFilter(<list> <regexp_var> [<regexp_var> ...]
+#!                    [OUTPUT_VARIABLE <variable>])
 #! \endcode
 #!
 #! Removes items from <list> which do not match any of the specified
@@ -17,35 +17,35 @@
 #! http://www.cmake.org/Wiki/CMakeMacroParseArguments
 #!
 #! \ingroup CMakeUtilities
-MACRO(CtkMacroListFilter)
+macro(ctkMacroListFilter)
   ctkMacroParseArguments(LIST_FILTER "OUTPUT_VARIABLE" "" ${ARGV})
   # Check arguments.
-  LIST(LENGTH LIST_FILTER_DEFAULT_ARGS LIST_FILTER_default_length)
-  IF(${LIST_FILTER_default_length} EQUAL 0)
-    MESSAGE(FATAL_ERROR "LIST_FILTER: missing list variable.")
-  ENDIF(${LIST_FILTER_default_length} EQUAL 0)
-  IF(${LIST_FILTER_default_length} EQUAL 1)
-    MESSAGE(FATAL_ERROR "LIST_FILTER: missing regular expression variable.")
-  ENDIF(${LIST_FILTER_default_length} EQUAL 1)
+  list(LENGTH LIST_FILTER_DEFAULT_ARGS LIST_FILTER_default_length)
+  if(${LIST_FILTER_default_length} EQUAL 0)
+    message(FATAL_ERROR "LIST_FILTER: missing list variable.")
+  endif()
+  if(${LIST_FILTER_default_length} EQUAL 1)
+    message(FATAL_ERROR "LIST_FILTER: missing regular expression variable.")
+  endif()
   # Reset output variable
-  IF(NOT LIST_FILTER_OUTPUT_VARIABLE)
-    SET(LIST_FILTER_OUTPUT_VARIABLE "LIST_FILTER_internal_output")
-  ENDIF(NOT LIST_FILTER_OUTPUT_VARIABLE)
-  SET(${LIST_FILTER_OUTPUT_VARIABLE})
+  if(NOT LIST_FILTER_OUTPUT_VARIABLE)
+    set(LIST_FILTER_OUTPUT_VARIABLE "LIST_FILTER_internal_output")
+  endif()
+  set(${LIST_FILTER_OUTPUT_VARIABLE})
   # Extract input list from arguments
-  LIST(GET LIST_FILTER_DEFAULT_ARGS 0 LIST_FILTER_input_list)
-  LIST(REMOVE_AT LIST_FILTER_DEFAULT_ARGS 0)
-  FOREACH(LIST_FILTER_item ${${LIST_FILTER_input_list}})
-    FOREACH(LIST_FILTER_regexp_var ${LIST_FILTER_DEFAULT_ARGS})
-      FOREACH(LIST_FILTER_regexp ${${LIST_FILTER_regexp_var}})
-        IF(${LIST_FILTER_item} MATCHES ${LIST_FILTER_regexp})
-          LIST(APPEND ${LIST_FILTER_OUTPUT_VARIABLE} ${LIST_FILTER_item})
-        ENDIF(${LIST_FILTER_item} MATCHES ${LIST_FILTER_regexp})
-      ENDFOREACH(LIST_FILTER_regexp ${${LIST_FILTER_regexp_var}})
-    ENDFOREACH(LIST_FILTER_regexp_var)
-  ENDFOREACH(LIST_FILTER_item)
+  list(GET LIST_FILTER_DEFAULT_ARGS 0 LIST_FILTER_input_list)
+  list(REMOVE_AT LIST_FILTER_DEFAULT_ARGS 0)
+  foreach(LIST_FILTER_item ${${LIST_FILTER_input_list}})
+    foreach(LIST_FILTER_regexp_var ${LIST_FILTER_DEFAULT_ARGS})
+      foreach(LIST_FILTER_regexp ${${LIST_FILTER_regexp_var}})
+        if(${LIST_FILTER_item} MATCHES ${LIST_FILTER_regexp})
+          list(APPEND ${LIST_FILTER_OUTPUT_VARIABLE} ${LIST_FILTER_item})
+        endif()
+      endforeach()
+    endforeach()
+  endforeach()
   # If OUTPUT_VARIABLE is not specified, overwrite the input list.
-  IF(${LIST_FILTER_OUTPUT_VARIABLE} STREQUAL "LIST_FILTER_internal_output")
-    SET(${LIST_FILTER_input_list} ${${LIST_FILTER_OUTPUT_VARIABLE}})
-  ENDIF(${LIST_FILTER_OUTPUT_VARIABLE} STREQUAL "LIST_FILTER_internal_output")
-ENDMACRO(CtkMacroListFilter)
+  if(${LIST_FILTER_OUTPUT_VARIABLE} STREQUAL "LIST_FILTER_internal_output")
+    set(${LIST_FILTER_input_list} ${${LIST_FILTER_OUTPUT_VARIABLE}})
+  endif()
+endmacro(ctkMacroListFilter)

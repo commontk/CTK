@@ -28,6 +28,7 @@
 
 class ctkDICOMQueryWidgetPrivate;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryWidget : public QWidget
 {
     Q_OBJECT
@@ -46,11 +47,17 @@ private:
   Q_DECLARE_PRIVATE(ctkDICOMQueryWidget);
   Q_DISABLE_COPY(ctkDICOMQueryWidget);
 
-signals:
+Q_SIGNALS:
   /// This signal is emitted when any of the search parameters changed.
   void parameterChanged();
 
-protected slots:
+  /// This signal is emitted when the user hits return in any of the line edits
+  void returnPressed();
+
+public Q_SLOTS:
+  void onReturnPressed();
+
+protected Q_SLOTS:
   void startTimer();
 };
 

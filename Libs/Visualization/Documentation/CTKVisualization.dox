@@ -1,0 +1,14 @@
+/**
+
+\defgroup Visualization_VTK_Core Visualization VTK Core
+\ingroup Libs
+
+\defgroup Visualization_VTK_Widgets Visualization VTK Widgets
+\ingroup Libs
+\ingroup Project_Widgets
+
+\defgroup Visualization_XIP Visualization XIP
+\ingroup Libs
+
+
+*/

@@ -28,6 +28,7 @@
 class ctkErrorLogStreamMessageHandlerPrivate;
 
 //------------------------------------------------------------------------------
+/// \ingroup Core
 class CTK_CORE_EXPORT ctkErrorLogStreamMessageHandler
   : public ctkErrorLogAbstractMessageHandler
 {

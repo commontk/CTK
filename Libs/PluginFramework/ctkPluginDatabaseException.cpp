@@ -24,7 +24,16 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
-ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const Type& type, const std::exception* cause)
+ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const Type& type)
+  : ctkRuntimeException(msg),
+    type(type)
+{
+
+}
+
+//----------------------------------------------------------------------------
+ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const Type& type,
+                                                       const ctkException& cause)
   : ctkRuntimeException(msg, cause),
     type(type)
 {
@@ -32,7 +41,8 @@ ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const
 }
 
 //----------------------------------------------------------------------------
-ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg, const std::exception* cause)
+ctkPluginDatabaseException::ctkPluginDatabaseException(const QString& msg,
+                                                       const ctkException& cause)
   : ctkRuntimeException(msg, cause),
     type(UNSPECIFIED)
 {
@@ -55,15 +65,31 @@ ctkPluginDatabaseException& ctkPluginDatabaseException::operator=(const ctkPlugi
 }
 
 //----------------------------------------------------------------------------
-ctkPluginDatabaseException::Type ctkPluginDatabaseException::getType() const
+ctkPluginDatabaseException::~ctkPluginDatabaseException() throw()
 {
-  return type;
+
 }
 
 //----------------------------------------------------------------------------
-QDebug operator<<(QDebug dbg, const ctkPluginDatabaseException& exc)
+const char* ctkPluginDatabaseException::name() const throw()
 {
-  dbg << "ctkPluginDatabaseException:" << exc.what();
+  return "ctkPluginDatabaseException";
+}
 
-  return dbg.maybeSpace();
+//----------------------------------------------------------------------------
+ctkPluginDatabaseException* ctkPluginDatabaseException::clone() const
+{
+  return new ctkPluginDatabaseException(*this);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginDatabaseException::rethrow() const
+{
+  throw *this;
+}
+
+//----------------------------------------------------------------------------
+ctkPluginDatabaseException::Type ctkPluginDatabaseException::getType() const
+{
+  return type;
 }

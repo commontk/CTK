@@ -33,7 +33,7 @@
 // for non-static methods.
 //
 
-/// \ingroup DICOMWidgets
+/// \ingroup DICOM_Widgets
 class ctkDICOMWidgetsPythonQtDecorators : public QObject
 {
   Q_OBJECT
@@ -43,7 +43,7 @@ public:
     {
     }
 
-public slots:
+public Q_SLOTS:
 
   //
   // None yet - refer to other libs for examples

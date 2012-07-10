@@ -37,6 +37,7 @@ class QTimer;
 #include <vtkWeakPointer.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Visualization_VTK_Widgets
 class ctkVTKAbstractViewPrivate : public QObject
 {
   Q_OBJECT

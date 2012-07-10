@@ -23,7 +23,7 @@
 #ifndef CTKEAINTERRUPTEDEXCEPTION_P_H
 #define CTKEAINTERRUPTEDEXCEPTION_P_H
 
-#include <ctkRuntimeException.h>
+#include <ctkException.h>
 
 /**
  * Thrown when a ctkEAInterruptibleThread is waiting, sleeping, or otherwise occupied,
@@ -40,6 +40,14 @@ class ctkEAInterruptedException : public ctkRuntimeException
 {
 public:
   ctkEAInterruptedException();
+
+  ~ctkEAInterruptedException() throw();
+
+  const char* name() const throw();
+
+  ctkEAInterruptedException* clone() const;
+
+  void rethrow() const;
 };
 
 #endif // CTKEAINTERRUPTEDEXCEPTION_P_H

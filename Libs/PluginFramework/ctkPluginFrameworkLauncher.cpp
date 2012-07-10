@@ -163,6 +163,69 @@ bool ctkPluginFrameworkLauncher::start(const QString& symbolicName, ctkPlugin::S
 }
 
 //----------------------------------------------------------------------------
+bool ctkPluginFrameworkLauncher::stop(const QString& symbolicName,
+                                      ctkPlugin::StopOptions options, ctkPluginContext* context)
+{
+  if (d->fwFactory == 0) return true;
+
+  ctkPluginContext* pc = context ? context : getPluginContext();
+  if (pc == 0)
+  {
+    qWarning() << "No valid plug-in context available";
+    return false;
+  }
+
+  if(!symbolicName.isEmpty())
+  {
+    QString pluginPath = getPluginPath(symbolicName);
+    if (pluginPath.isEmpty()) return false;
+
+    try
+    {
+      QList<QSharedPointer<ctkPlugin> > plugins = pc->getPlugins();
+      foreach(QSharedPointer<ctkPlugin> plugin, plugins)
+      {
+        if (plugin->getSymbolicName() == symbolicName)
+        {
+          plugin->stop(options);
+          return true;
+        }
+      }
+      qWarning() << "Plug-in" << symbolicName << "not found";
+      return false;
+    }
+    catch (const ctkPluginException& exc)
+    {
+      qWarning() << "Failed to stop plug-in:" << exc;
+      return false;
+    }
+  }
+  else
+  {
+    // stop the framework
+    QSharedPointer<ctkPluginFramework> fw =
+        qSharedPointerCast<ctkPluginFramework>(pc->getPlugin(0));
+    try
+    {
+      fw->stop();
+      ctkPluginFrameworkEvent fe = fw->waitForStop(5000);
+      if (fe.getType() == ctkPluginFrameworkEvent::FRAMEWORK_WAIT_TIMEDOUT)
+      {
+        qWarning() << "Stopping the plugin framework timed out";
+        return false;
+      }
+    }
+    catch (const ctkRuntimeException& e)
+    {
+      qWarning() << "Stopping the plugin framework failed: " << e;
+      return false;
+    }
+
+    return true;
+  }
+}
+
+//----------------------------------------------------------------------------
 ctkPluginContext* ctkPluginFrameworkLauncher::getPluginContext()
 {
   if (d->fwFactory == 0) return 0;

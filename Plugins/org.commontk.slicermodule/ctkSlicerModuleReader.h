@@ -30,12 +30,14 @@
 // CTK includes
 #include "ctkModuleDescriptionReader.h"
 
+#include <org_commontk_slicermodule_Export.h>
+
 /**
  * Reader of Slicer Module XML description
  * Freely inspired from 
  * Slicer/Libs/SlicerExecutionModel/ModuleDescriptionParser/ModuleDescriptionParser.cxx
  */
-class ctkSlicerModuleReader : public ctkModuleDescriptionReader
+class org_commontk_slicermodule_EXPORT ctkSlicerModuleReader : public ctkModuleDescriptionReader
 {
   Q_OBJECT
 public:

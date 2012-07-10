@@ -31,8 +31,6 @@ limitations under the License.
 #include <QVector>
 #include <QStringList>
 
-#include <stdexcept>
-
 class ctkLDAPExprData;
 
 /**

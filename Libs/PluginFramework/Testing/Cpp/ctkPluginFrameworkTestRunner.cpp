@@ -73,6 +73,18 @@ public:
       ++count;
     }
 
+    // stop the framework
+    QSharedPointer<ctkPluginFramework> fw = qSharedPointerCast<ctkPluginFramework>(context->getPlugin(0));
+    fw->stop();
+    // wait for 30 secs
+    ctkPluginFrameworkEvent event = fw->waitForStop(30000);
+
+    if (result == 0 && event.getType() == ctkPluginFrameworkEvent::FRAMEWORK_WAIT_TIMEDOUT)
+    {
+      qWarning() << "Framework shutdown wait timed out";
+      result = 1;
+    }
+
     qDebug() << "#########" << count << "out of" << refs.size() << "test suites passed #########";
     if (result > 0)
     {

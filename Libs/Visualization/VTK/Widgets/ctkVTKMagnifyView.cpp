@@ -38,10 +38,6 @@
 // STD includes
 #include <cmath>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKMagnifyView");
 //--------------------------------------------------------------------------
@@ -117,6 +113,7 @@ void ctkVTKMagnifyViewPrivate::resetEventHandler()
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyViewPrivate::timerEvent(QTimerEvent * event)
 {
+  Q_UNUSED(event);
   Q_ASSERT(event->timerId() == this->EventHandler.TimerId);
 
   if (this->EventHandler.EventType == UpdatePixmapEvent)

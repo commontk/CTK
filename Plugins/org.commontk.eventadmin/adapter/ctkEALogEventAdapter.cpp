@@ -130,7 +130,7 @@ void _LogListener::logged(ctkLogEntryPtr entry)
   {
     adapter->getEventAdmin()->postEvent(ctkEvent(topic, properties));
   }
-  catch(const std::logic_error&)
+  catch(const ctkIllegalStateException&)
   {
     // This is o.k. - indicates that we are stopped.
   }

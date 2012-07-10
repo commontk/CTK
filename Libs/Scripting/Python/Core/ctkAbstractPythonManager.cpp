@@ -41,9 +41,43 @@
 #endif
 
 //-----------------------------------------------------------------------------
-ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclass(_parent)
+class ctkAbstractPythonManagerPrivate
+{
+  Q_DECLARE_PUBLIC(ctkAbstractPythonManager);
+protected:
+  ctkAbstractPythonManager* q_ptr;
+public:
+  ctkAbstractPythonManagerPrivate(ctkAbstractPythonManager& object);
+  virtual ~ctkAbstractPythonManagerPrivate();
+
+  void (*InitFunction)();
+
+  int PythonQtInitializationFlags;
+};
+
+//-----------------------------------------------------------------------------
+// ctkAbstractPythonManagerPrivate methods
+
+//-----------------------------------------------------------------------------
+ctkAbstractPythonManagerPrivate::ctkAbstractPythonManagerPrivate(ctkAbstractPythonManager &object) :
+  q_ptr(&object)
 {
   this->InitFunction = 0;
+  this->PythonQtInitializationFlags = PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut;
+}
+
+//-----------------------------------------------------------------------------
+ctkAbstractPythonManagerPrivate::~ctkAbstractPythonManagerPrivate()
+{
+}
+
+//-----------------------------------------------------------------------------
+// ctkAbstractPythonManager methods
+
+//-----------------------------------------------------------------------------
+ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclass(_parent),
+  d_ptr(new ctkAbstractPythonManagerPrivate(*this))
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -51,20 +85,45 @@ ctkAbstractPythonManager::~ctkAbstractPythonManager()
 {
   if (Py_IsInitialized())
     {
-    PyThreadState* state = PyThreadState_Get();
-    Py_EndInterpreter(state);
+    Py_Finalize();
     }
   PythonQt::cleanup();
 }
 
 //-----------------------------------------------------------------------------
-PythonQtObjectPtr ctkAbstractPythonManager::mainContext()
+void ctkAbstractPythonManager::setInitializationFlags(int flags)
 {
+  Q_D(ctkAbstractPythonManager);
+  if (PythonQt::self())
+    {
+    return;
+    }
+  d->PythonQtInitializationFlags = flags;
+}
+
+//-----------------------------------------------------------------------------
+int ctkAbstractPythonManager::initializationFlags()const
+{
+  Q_D(const ctkAbstractPythonManager);
+  return d->PythonQtInitializationFlags;
+}
+
+//-----------------------------------------------------------------------------
+bool ctkAbstractPythonManager::initialize()
+{
+  Q_D(ctkAbstractPythonManager);
   if (!PythonQt::self())
     {
-    this->initPythonQt();
+    this->initPythonQt(d->PythonQtInitializationFlags);
     }
-  if (PythonQt::self())
+  return this->isPythonInitialized();
+}
+
+//-----------------------------------------------------------------------------
+PythonQtObjectPtr ctkAbstractPythonManager::mainContext()
+{
+  bool initalized = this->initialize();
+  if (initalized)
     {
     return PythonQt::self()->getMainModule();
     }
@@ -72,9 +131,11 @@ PythonQtObjectPtr ctkAbstractPythonManager::mainContext()
 }
 
 //-----------------------------------------------------------------------------
-void ctkAbstractPythonManager::initPythonQt()
+void ctkAbstractPythonManager::initPythonQt(int flags)
 {
-  PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
+  Q_D(ctkAbstractPythonManager);
+
+  PythonQt::init(flags);
 
   // Python maps SIGINT (control-c) to its own handler.  We will remap it
   // to the default so that control-c works.
@@ -88,14 +149,14 @@ void ctkAbstractPythonManager::initPythonQt()
                 SLOT(printStdout(QString)));
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
                 SLOT(printStderr(QString)));
-  
+
   PythonQt_init_QtBindings();
-  
+
   QStringList initCode;
 
   // Update 'sys.path'
   initCode << "import sys";
-  foreach (QString path, this->pythonPaths())
+  foreach (const QString& path, this->pythonPaths())
     {
     initCode << QString("sys.path.append('%1')").arg(QDir::fromNativeSeparators(path));
     }
@@ -103,9 +164,9 @@ void ctkAbstractPythonManager::initPythonQt()
   _mainContext.evalScript(initCode.join("\n"));
 
   this->preInitialization();
-  if (this->InitFunction)
+  if (d->InitFunction)
     {
-    (*this->InitFunction)();
+    (*d->InitFunction)();
     }
   emit this->pythonPreInitialized();
 
@@ -117,6 +178,12 @@ void ctkAbstractPythonManager::initPythonQt()
 bool ctkAbstractPythonManager::isPythonInitialized()const
 {
   return PythonQt::self() != 0;
+}
+
+//-----------------------------------------------------------------------------
+bool ctkAbstractPythonManager::pythonErrorOccured()const
+{
+  return PythonQt::self()->errorOccured();
 }
 
 //-----------------------------------------------------------------------------
@@ -181,14 +248,18 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
   PythonQtObjectPtr main = ctkAbstractPythonManager::mainContext();
   if (main)
     {
-    main.evalFile(filename);
+    QString path = QFileInfo(filename).absolutePath();
+    this->executeString(QString("import sys\nsys.path.insert(0, '%1')").arg(path));
+    this->executeString(QString("execfile('%1')").arg(filename));
+    this->executeString(QString("import sys\nif sys.path[0] == '%1': sys.path.pop(0)").arg(path));
     }
 }
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
 {
-  this->InitFunction = initFunction;
+  Q_D(ctkAbstractPythonManager);
+  d->InitFunction = initFunction;
 }
 
 //----------------------------------------------------------------------------

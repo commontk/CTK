@@ -32,6 +32,7 @@
 class ctkRangeSlider;
 class ctkDoubleRangeSliderPrivate;
 
+/// \ingroup Widgets
 /// ctkDoubleRangeSlider is a slider that controls 2 numbers as double.
 /// ctkDoubleRangeSlider internally aggregates a ctkRangeSlider (not in the
 /// API to prevent misuse). Only subclasses can have access to it.
@@ -160,7 +161,7 @@ public:
   bool symmetricMoves()const; 
   void setSymmetricMoves(bool symmetry);
 
-signals:
+Q_SIGNALS:
   ///
   /// This signal is emitted when the slider minimum value has changed, 
   /// with the new slider value as argument.
@@ -211,7 +212,7 @@ signals:
   /// \sa QAbstractSlider::rangeChanged()
   void rangeChanged(double min, double max);
 
-public slots:
+public Q_SLOTS:
   /// 
   /// This property holds the slider's current minimum value.
   /// The slider forces the minimum value to be within the legal range: 
@@ -230,7 +231,7 @@ public slots:
   /// Utility function that set the minimum value and maximum value at once.
   void setValues(double minVal, double maxVal);
 
-protected slots:
+protected Q_SLOTS:
   void onValuesChanged(int min, int max);
 
   void onMinPosChanged(int value);

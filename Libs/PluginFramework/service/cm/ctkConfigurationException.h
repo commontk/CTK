@@ -23,7 +23,9 @@
 #ifndef CTKCONFIGURATIONEXCEPTION_H
 #define CTKCONFIGURATIONEXCEPTION_H
 
-#include "ctkRuntimeException.h"
+#include "ctkException.h"
+
+#include <ctkPluginFrameworkEvent.h>
 
 /**
  * \ingroup ConfigAdmin
@@ -42,15 +44,39 @@ public:
    * @param property name of the property that caused the problem,
    *        <code>null</code> if no specific property was the cause
    * @param reason reason for failure
+   */
+  ctkConfigurationException(const QString& property, const QString& reason);
+
+  /**
+   * Create a <code>ctkConfigurationException</code> object.
+   *
+   * @param property name of the property that caused the problem,
+   *        <code>null</code> if no specific property was the cause
+   * @param reason reason for failure
    * @param cause The cause of this exception.
    */
   ctkConfigurationException(const QString& property, const QString& reason,
-                            const std::exception* cause = 0);
+                            const ctkException& cause);
 
   ctkConfigurationException(const ctkConfigurationException& o);
   ctkConfigurationException& operator=(const ctkConfigurationException& o);
 
-  ~ctkConfigurationException() throw() { }
+  ~ctkConfigurationException() throw();
+
+  /**
+   * @see ctkException::name()
+   */
+  const char* name() const throw();
+
+  /**
+   * @see ctkException::clone()
+   */
+  ctkConfigurationException* clone() const;
+
+  /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
 
   /**
    * Return the property name that caused the failure or a null QString.

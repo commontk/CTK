@@ -28,6 +28,7 @@
 #include "ctkWidgetsExport.h"
 class ctkFlowLayoutPrivate;
 
+/// \ingroup Widgets
 /// Acts like a QBoxLayout but if the space is horizontally/vertically limited,
 /// it displays items ona a new row/column based on the orientation.
 /// Please note that using a Qt::Vertical orientation without the property
@@ -76,6 +77,16 @@ public:
   /// True by default.
   bool alignItems()const;
   void setAlignItems(bool);
+
+  /// Replace the existing BoxLayout of the widget with a
+  /// flow layout.
+  /// When using the Designer, it is not possible to use a flow layout.
+  /// Instead, you can use a H/VBoxLayout and replace it programatically
+  /// in the setupUi() function with a flow layout. replaceLayout() makes
+  /// the operation easier.
+  /// \todo replaceLayout should take an existing layout instead of a widget,
+  /// indeed, a layout can have another layout as a parent, not only a widget.
+  static ctkFlowLayout* replaceLayout(QWidget* widget);
 
   /// Reimplemented for internal reasons
   virtual void addItem(QLayoutItem *item);

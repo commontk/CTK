@@ -23,6 +23,8 @@
 
 #include "ctkPlugin.h"
 
+#include <ctkException.h>
+
 #include <QString>
 #include <QDebug>
 
@@ -79,7 +81,7 @@ bool ctkPluginFrameworkEvent::isNull() const
 }
 
 //----------------------------------------------------------------------------
-ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin, const std::exception& fwException)
+ctkPluginFrameworkEvent::ctkPluginFrameworkEvent(Type type, QSharedPointer<ctkPlugin> plugin, const ctkException &fwException)
   : d(new ctkPluginFrameworkEventData(type, plugin, fwException.what()))
 {
 
@@ -129,13 +131,13 @@ QDebug operator<<(QDebug dbg, ctkPluginFrameworkEvent::Type type)
 {
   switch (type)
   {
-  case ctkPluginFrameworkEvent::STARTED:        return dbg << "STARTED";
-  case ctkPluginFrameworkEvent::ERROR:          return dbg << "ERROR";
-  case ctkPluginFrameworkEvent::WARNING:        return dbg << "WARNING";
-  case ctkPluginFrameworkEvent::INFO:           return dbg << "INFO";
-  case ctkPluginFrameworkEvent::STOPPED:        return dbg << "STOPPED";
-  case ctkPluginFrameworkEvent::STOPPED_UPDATE: return dbg << "STOPPED_UPDATE";
-  case ctkPluginFrameworkEvent::WAIT_TIMEDOUT:  return dbg << "WATI_TIMEDOUT";
+  case ctkPluginFrameworkEvent::FRAMEWORK_STARTED:        return dbg << "FRAMEWORK_STARTED";
+  case ctkPluginFrameworkEvent::PLUGIN_ERROR:          return dbg << "PLUGIN_ERROR";
+  case ctkPluginFrameworkEvent::PLUGIN_WARNING:        return dbg << "PLUGIN_WARNING";
+  case ctkPluginFrameworkEvent::PLUGIN_INFO:           return dbg << "PLUGIN_INFO";
+  case ctkPluginFrameworkEvent::FRAMEWORK_STOPPED:        return dbg << "FRAMEWORK_STOPPED";
+  case ctkPluginFrameworkEvent::FRAMEWORK_STOPPED_UPDATE: return dbg << "FRAMEWORK_STOPPED_UPDATE";
+  case ctkPluginFrameworkEvent::FRAMEWORK_WAIT_TIMEDOUT:  return dbg << "FRAMEWORK_WATI_TIMEDOUT";
 
   default: return dbg << "unknown plugin framework event type (" << static_cast<int>(type) << ")";
   }

@@ -28,6 +28,7 @@
 #include "ctkWidgetsExport.h"
 class ctkTemplateWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkTemplateWidget allows the user to ...
 class CTK_WIDGETS_EXPORT ctkTemplateWidget : public QWidget
@@ -46,9 +47,9 @@ public:
   /// Destructor
   virtual ~ctkTemplateWidget();
 
-public slots:
+public Q_SLOTS:
 
-signals:
+Q_SIGNALS:
 
 protected:
   QScopedPointer<ctkTemplateWidgetPrivate> d_ptr;

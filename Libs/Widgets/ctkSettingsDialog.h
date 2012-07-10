@@ -33,9 +33,15 @@ class QTreeWidgetItem;
 class ctkSettingsDialogPrivate;
 class ctkSettingsPanel;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkSettingsDialog : public QDialog
 {
   Q_OBJECT
+  /// This property controls whether the reset button is visible in the
+  /// button box or not. The Cancel button is a reset button and closes
+  /// the dialog at the same time.
+  Q_PROPERTY(bool resetButton READ resetButton WRITE setResetButton);
+
 public:
   /// Superclass typedef
   typedef QDialog Superclass;
@@ -54,13 +60,21 @@ public:
 
   /// Uses the ctkSettingsPanel::windowTitle property to show in the list
   void addPanel(ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
-  /// Utility function 
+  /// Utility function
   void addPanel(const QString& label, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
   void addPanel(const QString& label, const QIcon& icon, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
 
   void adjustTreeWidgetToContents();
 
-public slots:
+  bool resetButton()const;
+  void setResetButton(bool show);
+
+  /// True if at least one OptionRestartRequired setting is changed.
+  /// It doesn't mean the user accepted to restart the application
+  /// \sa restartRequired
+  bool isRestartRequired()const;
+
+public Q_SLOTS:
   void setCurrentPanel(ctkSettingsPanel* panel);
   void setCurrentPanel(const QString& label);
 
@@ -71,10 +85,14 @@ public slots:
   virtual void accept();
   virtual void reject();
 
-signals:
+Q_SIGNALS:
   void settingChanged(const QString& key, const QVariant& value);
+  /// Signal fired when the user accepts to restart the application because
+  /// some OptionRestartRequired settings have changed.
+  /// \sa isrestartRequired
+  void restartRequested();
 
-protected slots:
+protected Q_SLOTS:
   void onSettingChanged(const QString& key, const QVariant& newVal);
   void onCurrentItemChanged(QTreeWidgetItem* currentItem, QTreeWidgetItem* previous);
   void onDialogButtonClicked(QAbstractButton* button);

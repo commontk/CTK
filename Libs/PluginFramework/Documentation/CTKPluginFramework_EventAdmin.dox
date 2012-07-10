@@ -1,0 +1,140 @@
+/**
+
+\page PluginFramework_EventAdmin_Page Event Admin
+
+The Event Admin Service Specification, part of the OSGi Compendium specification,
+defines a general inter-plug-in communication mechanism. The communication conforms
+to the popular publish/subscribe paradigm and can be performed in a synchronous
+or asysnchronous manner.
+
+The main components in a publish/subscribe communication are:
+
+- <b>Event Publisher</b> - sends events or messages related to a specific topic
+- <b>Event Handler</b> (or Subscriber) - expresses interest in one or more topics and
+  receives all the messages belonging to such topics.
+
+Events are composed of two attributes:
+
+- A \b topic defining the nature of the event. Topic names are usually arranged in a hierarchical namespace, where slashes are used to separate the levels (i.e. "org/commontk/PluginFrameworkEvent/STARTED") and
+- A set of \b properties describing the event.
+
+Read the <a href="http://www.osgi.org/Download/File?url=/download/r4v42/r4.cmpn.pdf">
+EventAdmin Service Specifications</a> (Chapter 113) for an in-depth explanation.
+
+\section EventAdmin_CreatePublisher Creating an Event Publisher
+
+An event publisher can either be a simple C++ class that creates events and sends
+them using the <code>ctkEventAdmin</code> service interface or a Qt signal which
+is registered as a "publisher" using the <code>ctkEventAdmin</code> service
+interface.
+
+\subsection EventAdmin_CreatePublisher_Class Using a simple C++ class
+
+The publisher is a function which creates a <code>ctkEvent</code> object and
+sends it by using the <code>ctkEventAdmin</code> service interface.
+
+\snippet EventAdmin-Intro/ctkSnippetReportManager.h Publish event
+
+The <code>ctkEventAdmin::sendEvent()</code> method sends the <code>ctkEvent</code>
+object synchronously. To send it asynchronously, use the <code>ctkEventAdmin::postEvent()</code>
+method, such as:
+
+\snippet EventAdmin-Intro/ctkSnippetReportManager.h Publish event async
+
+Synchronous event delivery is significantly more expensive than asynchronous
+delivery. Even for synchronous delivery event notifications could be
+handled in a separate thread (depending on the EventAdmin implementation). This
+implies that <code>sendEvent()</code> callers should generally not hold any
+locks when calling this method. Asynchronous delivery should be preferred
+over the synchronous delivery.
+
+\subsection EventAdmin_CreatePublisher_Signal Using a Qt signal
+
+Using a Qt signal to publish an event requires declaring a signal and registering (publishing)
+it with the Event Admin:
+
+\snippet EventAdmin-Intro/ctkSnippetReportManager.h Declare signal
+
+Register the signal using a specific topic (emitting the signal will always send
+<code>ctkEvent</code> objects with this topic as <code>EVENT_TOPIC</code> property):
+
+\snippet EventAdmin-Intro/ctkSnippetReportManager.h Register signal
+
+Emitting the signal will automatically create a <code>ctkEvent</code> object, sending
+it synchronuously or asynchronuously, depending on the Qt::ConnectionType used when
+publishing the signal.
+
+\snippet EventAdmin-Intro/ctkSnippetReportManager.h Emit signal
+
+\subsection EventAdmin_CreatePublisher_Compare Comparison
+
+The act of sending an event is simplified by using a Qt signal, after it was registered
+with the Event Admin. However, the Qt signal approach is less performant since the
+signal emission needs to go through the Qt meta object system. Further, the signal is
+tied to a specific event topic.
+
+\section EventAdmin_CreateHandler Creating and registering an Event Handler
+
+An event handler can either be a class implementing the <code>ctkEventHandler</code>
+interface which is registered as a service object or a Qt slot which is registered
+with the Event Admin (subscribed to certain topics).
+
+Event handlers should not spend too long in the event handling method. This will
+prevent other handlers from being notified. Long running operations should be executed
+in their own thread.
+
+Note that in general, your event handling code will be called from a separate thread.
+
+\subsection EventAdmin_CreateHandler_Service Event Handler as a Service
+
+Create an event handler by implementing the <code>ctkEventHandler</code> interface:
+
+\snippet EventAdmin-Intro/ctkSnippetReportManager.h Event Handler service
+
+To receive event notifications, the event handler must be registered as a service under the
+<code>ctkEventHandler</code> interface. When registering the service, a <code>QString</code>
+or <code>QStringList</code> property named <code>EVENT_TOPIC</code> must be specified. This
+property describes the list of topics in which the event handler is interested. For example:
+
+\snippet EventAdmin-Intro/main.cpp Event Handler service registration
+
+It is possible to use '*' as a wildcard in the final character of the <code>EVENT_TOPIC</code>:
+
+\snippet EventAdmin-Intro/main.cpp Event Handler service registration wildcard
+
+Finally, it is possible to specify an additional <code>EVENT_FILTER</code> property to filter
+event notifications. The filter expression follows the normal LDAP syntax:
+
+\snippet EventAdmin-Intro/main.cpp Event Handler service registration filter
+
+\subsection EventAdmin_CreateHandler_Slot Event Handler as a Qt slot
+
+Every Qt slot taking a <code>ctkEvent</code> object as an argument can be subscribed to
+receive event notifications. For example, a slot like
+
+\snippet EventAdmin-Intro/ctkSnippetReportManager.h Event Handler slot
+
+can be subscribed to receive events like
+
+\snippet EventAdmin-Intro/main.cpp Event Handler service registration slot
+
+You can use the same expressions for <code>EVENT_TOPIC</code> and
+<code>EVENT_FILTER</code> as in the examples above for registering the event
+handler as a service object implementing <code>ctkEventHandler</code>.
+
+Using Qt slots as Event Handlers will makes it easy to ensure that the event
+handling code is executed in the receiver's thread (the default connection type
+is Qt::AutoConnection).
+
+\subsection EventAdmin_CreateHandler_Compare Comparison
+
+Registering an event handler using either the <code>ctkEventHandler</code> interface or
+a Qt slot involves approximately the same amount of code. However, using slots
+will be less performant (which might be neglectable, depending on your use case) but the
+code will be automatically synchronized with the receiver thread.
+
+Further, subscribing slots means that you require a registered Event Admin service implementation.
+The <code>ctkEventHandler</code> approach does not need to know anything about the Event
+Admin, since you register your handler as a service object in the framework.
+
+*/

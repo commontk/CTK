@@ -33,6 +33,7 @@
 
 class vtkMatrix4x4;
 
+/// \ingroup Visualization_VTK_Widgets
 class ctkVTKAbstractMatrixWidgetPrivate: public QObject
 {
   Q_OBJECT
@@ -49,7 +50,7 @@ public:
   void setMatrix(vtkMatrix4x4* matrix);
   vtkMatrix4x4* matrix()const;
 
-public slots:
+public Q_SLOTS:
   ///
   /// Triggered upon VTK transform modified event
   void updateMatrix();

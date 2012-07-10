@@ -1,2 +1,2 @@
-SET(Require-Plugin org.commontk.dah.hostedapp)
-SET(Plugin-ActivationPolicy "eager")
+set(Require-Plugin org.commontk.dah.hostedapp)
+set(Plugin-ActivationPolicy "eager")

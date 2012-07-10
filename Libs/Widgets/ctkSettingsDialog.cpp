@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QMap>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSettings>
 
@@ -42,12 +43,16 @@ public:
   ctkSettingsDialogPrivate(ctkSettingsDialog& object);
   void init();
 
+  QList<ctkSettingsPanel*> panels()const;
   ctkSettingsPanel* panel(QTreeWidgetItem* item)const;
   QTreeWidgetItem* item(ctkSettingsPanel* panel)const;
   QTreeWidgetItem* item(const QString& label)const;
 
   void beginGroup(ctkSettingsPanel* panel);
   void endGroup(ctkSettingsPanel* panel);
+
+  void updatePanelTitle(ctkSettingsPanel* panel);
+  void updateRestartRequiredLabel();
 
   QSettings* Settings;
 
@@ -69,6 +74,17 @@ void ctkSettingsDialogPrivate::init()
 
   this->setupUi(q);
 
+  this->SettingsButtonBox->button(QDialogButtonBox::Ok)->setToolTip(
+    q->tr("Apply settings and close dialog."));
+  this->SettingsButtonBox->button(QDialogButtonBox::Cancel)->setToolTip(
+    q->tr("Reject settings changes and close dialog."));
+  this->SettingsButtonBox->button(QDialogButtonBox::Reset)->setToolTip(
+    q->tr("Reset settings to their values when the dialog opened"));
+  this->SettingsButtonBox->button(QDialogButtonBox::RestoreDefaults)->setToolTip(
+    q->tr("Restore settings to their default values."
+    "To cancel a \"Restore\", you can \"Reset\" the settings."));
+  q->setResetButton(false);
+
   q->setSettings(new QSettings(q));
 
   QObject::connect(this->SettingsTreeWidget,
@@ -76,6 +92,15 @@ void ctkSettingsDialogPrivate::init()
     q, SLOT(onCurrentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
   QObject::connect(this->SettingsButtonBox, SIGNAL(clicked(QAbstractButton*)),
                    q, SLOT(onDialogButtonClicked(QAbstractButton*)));
+
+  this->updateRestartRequiredLabel();
+  q->adjustTreeWidgetToContents();
+}
+
+// --------------------------------------------------------------------------
+QList<ctkSettingsPanel*> ctkSettingsDialogPrivate::panels()const
+{
+  return this->Panels.values();
 }
 
 // --------------------------------------------------------------------------
@@ -102,6 +127,49 @@ QTreeWidgetItem* ctkSettingsDialogPrivate::item(const QString& label)const
       }
     }
   return this->SettingsTreeWidget->invisibleRootItem();
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialogPrivate::updatePanelTitle(ctkSettingsPanel* panel)
+{
+  QTreeWidgetItem* panelItem = this->item(panel);
+  QString title = panelItem->text(0);
+  title.replace(QRegExp("\\*$"),"");
+  if (!panel->changedSettings().isEmpty())
+    {
+    title.append('*');
+    }
+  panelItem->setText(0,title);
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsDialogPrivate::updateRestartRequiredLabel()
+{
+  Q_Q(ctkSettingsDialog);
+  QStringList restartRequiredSettings;
+  foreach(const ctkSettingsPanel* panel, this->panels())
+    {
+    foreach(const QString& settingKey, panel->changedSettings())
+      {
+      if (panel->settingOptions(settingKey) & ctkSettingsPanel::OptionRequireRestart)
+        {
+        restartRequiredSettings << (panel->settingLabel(settingKey).isEmpty() ?
+          settingKey : panel->settingLabel(settingKey));
+        }
+      }
+    }
+  bool restartRequired = !restartRequiredSettings.isEmpty();
+  if (restartRequired)
+    {
+    QString header = q->tr(
+      "<b style=\"color:red\">Restart required!</b><br>\n<small>"
+      "The application must be restarted to take into account "
+      "the new values of the following properties:\n");
+    QString footer = q->tr("</small>");
+    restartRequiredSettings.push_front(QString());
+    this->RestartRequiredLabel->setText( header + restartRequiredSettings.join("<br>&nbsp;&nbsp;") + footer);
+    }
+  this->RestartRequiredLabel->setVisible(restartRequired);
 }
 
 // --------------------------------------------------------------------------
@@ -219,8 +287,29 @@ ctkSettingsPanel* ctkSettingsDialog::panel(const QString& label)const
 // --------------------------------------------------------------------------
 void ctkSettingsDialog::accept()
 {
+  bool emitRestartRequested = false;
+  if (this->isRestartRequired())
+    {
+    QMessageBox::StandardButton answer = QMessageBox::question(this,"Restart required",
+      "For settings to be taken into account, the application\n"
+      "must be restarted. Restart the application now ?\n",
+      QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel, QMessageBox::No);
+    if (answer == QMessageBox::Cancel)
+      {
+      return;
+      }
+    else
+      {
+      emitRestartRequested = (answer == QMessageBox::Yes);
+      }
+    }
+
   this->applySettings();
   this->Superclass::accept();
+  if (emitRestartRequested)
+    {
+    emit restartRequested();
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -275,6 +364,8 @@ void ctkSettingsDialog
 {
   Q_D(ctkSettingsDialog);
   d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(true);
+  d->updatePanelTitle(qobject_cast<ctkSettingsPanel*>(this->sender()));
+  d->updateRestartRequiredLabel();
   emit settingChanged(key, newVal);
 }
 
@@ -297,7 +388,14 @@ void ctkSettingsDialog::onDialogButtonClicked(QAbstractButton* button)
       this->resetSettings();
       break;
     case QDialogButtonBox::RestoreDefaults:
-      this->restoreDefaultSettings();
+      if (QMessageBox::warning(this,"Restore all settings",
+            "Are you sure you want to reset\n"
+            "all settings to their default values?\n",
+            QMessageBox::RestoreDefaults, QMessageBox::Cancel)
+          == QMessageBox::RestoreDefaults)
+        {
+        this->restoreDefaultSettings();
+        }
       break;
     default:
       break;
@@ -313,6 +411,7 @@ void ctkSettingsDialog::adjustTreeWidgetToContents()
 
   d->SettingsTreeWidget->setFixedWidth(
       d->SettingsTreeWidget->QAbstractItemView::sizeHintForColumn(0) +
+      d->SettingsTreeWidget->fontMetrics().width('*') +
       2 * d->SettingsTreeWidget->indentation() +
       2 * d->SettingsTreeWidget->frameWidth());
 }
@@ -326,4 +425,27 @@ bool ctkSettingsDialog::event(QEvent* event)
     this->adjustTreeWidgetToContents();
     }
   return this->Superclass::event(event);
+}
+
+// -------------------------------------------------------------------------
+bool ctkSettingsDialog::resetButton()const
+{
+  Q_D(const ctkSettingsDialog);
+  return d->SettingsButtonBox->button(QDialogButtonBox::Reset)->isVisibleTo(
+    const_cast<QDialogButtonBox*>(d->SettingsButtonBox));
+}
+
+// -------------------------------------------------------------------------
+void ctkSettingsDialog::setResetButton(bool show)
+{
+  Q_D(ctkSettingsDialog);
+  d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setVisible(show);
+}
+
+// --------------------------------------------------------------------------
+bool ctkSettingsDialog::isRestartRequired()const
+{
+  Q_D(const ctkSettingsDialog);
+  return d->RestartRequiredLabel->isVisibleTo(
+    const_cast<ctkSettingsDialog*>(this));
 }

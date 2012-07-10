@@ -31,6 +31,7 @@ class vtkImageData;
 class vtkCamera;
 class vtkCornerAnnotation;
 
+/// \ingroup Visualization_VTK_Core
 class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkObject
 {
   vtkTypeRevisionMacro(vtkLightBoxRendererManager,vtkObject);

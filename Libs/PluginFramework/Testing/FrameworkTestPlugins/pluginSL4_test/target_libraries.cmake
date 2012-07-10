@@ -4,6 +4,6 @@
 # For specifying required plugins, see the manifest_headers.cmake file.
 #
 
-SET(target_libraries
+set(target_libraries
   CTKPluginFramework
 )

@@ -48,14 +48,15 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Qt includes
 #include <QWidget>
 #include <QDir>
+class QComboBox;
 
 // CTK includes
 #include "ctkWidgetsExport.h"
 class ctkPathLineEditPrivate;
 
-/** /class Advanced line edit to select file or directory
- *  /brief Widget that remember previous selection (using QSettings and objectName)
- *         the user to select a file on the disk.
+/** 
+ * \ingroup Widgets
+ * \brief Advanced line edit to select file or directory
 */
 class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
 {
@@ -156,14 +157,17 @@ public:
   */
   void setCurrentFileExtension(const QString& extension);
 
-signals:
+  /// Return the combo box internally used by the path line edit
+  QComboBox* comboBox() const;
+
+Q_SIGNALS:
   /** the signal is emit when the state of hasValidInput changed
   */
   void validInputChanged(bool);
 
   void currentPathChanged(const QString& path);
 
-public slots:
+public Q_SLOTS:
   void setCurrentPath(const QString& path);
 
   /** Open a QFileDialog to select a file or directory and set current text to it
@@ -182,7 +186,7 @@ public slots:
   */
   void addCurrentPathToHistory();
 
-protected slots:
+protected Q_SLOTS:
   void setCurrentDirectory(const QString& directory);
   void updateHasValidInput();
 

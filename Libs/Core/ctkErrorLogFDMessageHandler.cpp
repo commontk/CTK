@@ -110,13 +110,15 @@ void ctkFDHandler::setEnabled(bool value)
 #ifdef Q_OS_WIN32
     this->SavedFDNumber = _dup(_fileno(this->terminalOutputFile()));
     _dup2(this->Pipe[1], _fileno(this->terminalOutputFile()));
+    _close(this->Pipe[1]);
 #else
     this->SavedFDNumber = dup(fileno(this->terminalOutputFile()));
     dup2(this->Pipe[1], fileno(this->terminalOutputFile()));
-#endif
     close(this->Pipe[1]);
+#endif
 
     // Start polling thread
+    this->Enabled = true;
     this->start();
     }
   else
@@ -128,7 +130,19 @@ void ctkFDHandler::setEnabled(bool value)
     this->RedirectionFile.flush();
 
     // Stop polling thread
-    this->terminate();
+    {
+      QMutexLocker locker(&this->EnableMutex);
+      this->Enabled = false;
+    }
+
+    QString newline("\n");
+#ifdef Q_OS_WIN32
+    _write(fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
+#else
+    write(fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
+#endif
+
+    // Wait the polling thread graciously terminates
     this->wait();
 
     // Close files and restore standard output to stdout or stderr - which should be the terminal
@@ -142,7 +156,11 @@ void ctkFDHandler::setEnabled(bool value)
     clearerr(this->terminalOutputFile());
     fsetpos(this->terminalOutputFile(), &this->SavedFDPos);
 
+#ifdef Q_OS_WIN32
+    this->SavedFDNumber = _fileno(this->terminalOutputFile());
+#else
     this->SavedFDNumber = fileno(this->terminalOutputFile());
+#endif
     }
 
   ctkErrorLogTerminalOutput * terminalOutput =
@@ -151,8 +169,13 @@ void ctkFDHandler::setEnabled(bool value)
     {
     terminalOutput->setFileDescriptor(this->SavedFDNumber);
     }
+}
 
-  this->Enabled = value;
+// --------------------------------------------------------------------------
+bool ctkFDHandler::enabled()const
+{
+  QMutexLocker locker(&this->EnableMutex);
+  return this->Enabled;
 }
 
 // --------------------------------------------------------------------------
@@ -164,12 +187,26 @@ void ctkFDHandler::run()
     QString line;
     while(c != '\n')
       {
-      read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
+#ifdef Q_OS_WIN32
+      int res = _read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
+#else
+      ssize_t res = read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
+#endif
+      if (res == -1)
+        {
+        break;
+        }
       if (c != '\n')
         {
         line += c;
         }
       }
+
+    if (!this->enabled())
+      {
+      break;
+      }
+
     Q_ASSERT(this->MessageHandler);
     this->MessageHandler->handleMessage(
       ctk::qtHandleToString(QThread::currentThreadId()),

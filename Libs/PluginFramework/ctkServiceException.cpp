@@ -24,7 +24,16 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
-ctkServiceException::ctkServiceException(const QString& msg, const Type& type, const std::exception* cause)
+ctkServiceException::ctkServiceException(const QString& msg, const Type& type)
+  : ctkRuntimeException(msg),
+    type(type)
+{
+
+}
+
+//----------------------------------------------------------------------------
+ctkServiceException::ctkServiceException(const QString& msg, const Type& type,
+                                         const ctkException& cause)
   : ctkRuntimeException(msg, cause),
     type(type)
 {
@@ -32,7 +41,7 @@ ctkServiceException::ctkServiceException(const QString& msg, const Type& type, c
 }
 
 //----------------------------------------------------------------------------
-ctkServiceException::ctkServiceException(const QString& msg, const std::exception* cause)
+ctkServiceException::ctkServiceException(const QString& msg, const ctkException& cause)
   : ctkRuntimeException(msg, cause),
     type(UNSPECIFIED)
 {
@@ -55,15 +64,32 @@ ctkServiceException& ctkServiceException::operator=(const ctkServiceException& o
 }
 
 //----------------------------------------------------------------------------
+ctkServiceException::~ctkServiceException() throw()
+{
+
+}
+
+//----------------------------------------------------------------------------
+const char* ctkServiceException::name() const throw()
+{
+  return "ctkServiceException";
+}
+
+//----------------------------------------------------------------------------
+ctkServiceException* ctkServiceException::clone() const
+{
+  return new ctkServiceException(*this);
+}
+
+//----------------------------------------------------------------------------
+void ctkServiceException::rethrow() const
+{
+  throw *this;
+}
+
+//----------------------------------------------------------------------------
 ctkServiceException::Type ctkServiceException::getType() const
 {
   return type;
 }
 
-//----------------------------------------------------------------------------
-QDebug operator<<(QDebug dbg, const ctkServiceException& exc)
-{
-  dbg << "ctkServiceException:" << exc.what();
-
-  return dbg.maybeSpace();
-}

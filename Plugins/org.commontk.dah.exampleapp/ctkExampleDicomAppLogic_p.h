@@ -63,7 +63,7 @@ public:
   void do_something();
 
 
-protected slots:
+protected Q_SLOTS:
 
   void onStartProgress();
   void onResumeProgress();

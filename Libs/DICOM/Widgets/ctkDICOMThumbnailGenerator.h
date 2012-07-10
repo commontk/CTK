@@ -29,15 +29,16 @@
 class ctkDICOMThumbnailGeneratorPrivate;
 class DicomImage;
 
-/**
-  \brief  thumbnail generator class
-*/
+/// \ingroup DICOM_Widgets
+///
+/// \brief  thumbnail generator class
+///
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailGenerator : public ctkDICOMAbstractThumbnailGenerator
 {
   Q_OBJECT
 public:
-  /** \brief Construct a ctkDICOMThumbnailGenerator object
-  */
+  ///  \brief Construct a ctkDICOMThumbnailGenerator object
+  ///
   explicit ctkDICOMThumbnailGenerator(QObject* parent = 0);
   virtual ~ctkDICOMThumbnailGenerator();
 

@@ -73,6 +73,8 @@ ctkDICOMQueryWidget::ctkDICOMQueryWidget(QWidget* _parent):Superclass(_parent),
   
   d->setupUi(this);
 
+  d->NameSearch->setFocus(Qt::PopupFocusReason);
+
   connect(d->NameSearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
   connect(d->StudySearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
   connect(d->SeriesSearch, SIGNAL(textChanged(QString)), this, SLOT(startTimer()));
@@ -82,6 +84,11 @@ ctkDICOMQueryWidget::ctkDICOMQueryWidget(QWidget* _parent):Superclass(_parent),
   connect(d->ModalityWidget, SIGNAL(selectedModalitiesChanged(QStringList)), this, SLOT(startTimer()));
 
   connect(d->SearchTimer, SIGNAL(timeout()), this, SIGNAL(parameterChanged()));
+
+  connect(d->NameSearch, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
+  connect(d->StudySearch, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
+  connect(d->SeriesSearch, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
+  connect(d->IdSearch, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
 }
 
 //----------------------------------------------------------------------------
@@ -98,6 +105,11 @@ ctkDICOMQueryWidget::~ctkDICOMQueryWidget()
   disconnect(d->ModalityWidget, SIGNAL(selectedModalitiesChanged(QStringList)), this, SLOT(startTimer()));
 
   disconnect(d->SearchTimer, SIGNAL(timeout()), this, SIGNAL(parameterChanged()));
+
+  disconnect(d->NameSearch, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
+  disconnect(d->StudySearch, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
+  disconnect(d->SeriesSearch, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
+  disconnect(d->IdSearch, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()));
 }
 
 
@@ -132,9 +144,16 @@ QMap<QString,QVariant> ctkDICOMQueryWidget::parameters()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryWidget::startTimer(){
+void ctkDICOMQueryWidget::startTimer()
+{
   Q_D(ctkDICOMQueryWidget);
 
   d->SearchTimer->stop();
   d->SearchTimer->start(d->SearchIdleTime);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQueryWidget::onReturnPressed()
+{
+  emit returnPressed();
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDirectoryButton0/1QPushButton0" command="activate" arguments=""/>
+        <event widget="ctkDirectoryButtonEventTranslatorPlayerTest1-app" command="DirOpen" arguments="/home/benjaminlong/work"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDirectoryButton0/1QPushButton0" command="activate" arguments=""/>
+        <event widget="ctkDirectoryButtonEventTranslatorPlayerTest1-app" command="DirOpen" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkDirectoryButton0/1QPushButton0" command="activate" arguments=""/>
+        <event widget="ctkDirectoryButtonEventTranslatorPlayerTest1-app" command="DirOpen" arguments="/home/benjaminlong"/>
+    </events>
+</QtTesting>

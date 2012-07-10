@@ -30,6 +30,7 @@
 
 class ctkDynamicSpacerPrivate;
 
+/// \ingroup Widgets
 /// Description
 /// A spacer widget that has a dynamic size policy controllable via its slot
 /// activate(bool). It can be usefully when you don't want a rigid layout. 
@@ -60,7 +61,7 @@ public:
   bool isActive()const;
   inline bool isInactive()const;
 
-public slots:
+public Q_SLOTS:
   /// Change the size policy. If enable is true, activeSizePolicy is used,
   /// inactiveSizePolicy otherwise
   void setActive(bool enable);

@@ -25,6 +25,7 @@
 #include <QObject>
 
 // VTK includes
+#include <vtkSmartPointer.h>
 #include <vtkTable.h>
 
 class ctkTestWrappedVTKQInvokable : public QObject
@@ -34,12 +35,11 @@ public:
 
   ctkTestWrappedVTKQInvokable(QObject * newParent = 0) : QObject(newParent)
     {
-    this->MyTable = vtkTable::New();
+    this->MyTable = vtkSmartPointer<vtkTable>::New();
     }
-    
+
   virtual ~ctkTestWrappedVTKQInvokable()
     {
-    this->MyTable->Delete();
     }
 
   /// Example of 'invokable' returning a VTK object
@@ -58,7 +58,7 @@ public:
     }
 
 private:
-  vtkTable * MyTable;
+  vtkSmartPointer<vtkTable> MyTable;
 };
 
 #endif

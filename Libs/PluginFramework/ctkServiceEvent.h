@@ -94,7 +94,7 @@ public:
      * @see ctkServiceRegistration#unregister
      * @see ctkPluginContext#ungetService
      */
-    UNREGISTERING		= 0x00000004,
+    UNREGISTERING = 0x00000004,
 
     /**
      * The properties of a registered service have been modified and the new
@@ -108,7 +108,7 @@ public:
      *
      * @see ctkServiceRegistration#setProperties
      */
-    MODIFIED_ENDMATCH	= 0x00000008
+    MODIFIED_ENDMATCH = 0x00000008
 
   };
 

@@ -102,7 +102,7 @@ public:
   int numberOfTimesRanOnEntry()const;
   int numberOfTimesRanOnExit()const;
 
-public slots:
+public Q_SLOTS:
 
   /// Returns 1 (validation successful) if the step's lineEdit
   /// contains an integer whose value is greater than or equal to 10,
@@ -120,7 +120,7 @@ public slots:
   /// showUserInterface() function 
   virtual void createUserInterface();
 
-signals:
+Q_SIGNALS:
 
   /// Signals indicating to the workflow that these processes have
   /// completed

@@ -3,20 +3,20 @@
 # link to it to bootstrap a plugin framework and
 # start registered tests.
 
-SET(SRCS
+set(SRCS
   ctkPluginFrameworkTestUtil.cpp
   ctkPluginFrameworkTestRunner.cpp
   ctkTestSuiteInterface.h
 )
 
-SET(MOC_SRCS )
+set(MOC_SRCS )
 
-SET(MY_MOC_CXX )
+set(MY_MOC_CXX )
 
 #QT4_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
 
-SET(lib_name ${fwtestutil_lib})
+set(lib_name ${fwtestutil_lib})
 
-ADD_LIBRARY(${lib_name} SHARED ${SRCS} ${MY_MOC_CXX})
-TARGET_LINK_LIBRARIES(${lib_name} ${fw_lib})
+add_library(${lib_name} SHARED ${SRCS} ${MY_MOC_CXX})
+target_link_libraries(${lib_name} ${fw_lib})
 

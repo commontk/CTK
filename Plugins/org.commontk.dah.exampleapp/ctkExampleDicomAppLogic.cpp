@@ -109,7 +109,7 @@ void ctkExampleDicomAppLogic::do_something()
     this->AppWidget->move(rect.topLeft());
     this->AppWidget->resize(rect.size());
     }
-  catch (const std::runtime_error& e)
+  catch (const ctkRuntimeException& e)
     {
     qCritical() << e.what();
     return;

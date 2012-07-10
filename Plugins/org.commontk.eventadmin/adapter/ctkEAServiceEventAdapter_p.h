@@ -48,7 +48,7 @@ public:
 
   void destroy(ctkPluginContext* context);
 
-public slots:
+public Q_SLOTS:
 
   /**
    * Once a Service event is received this method assembles and posts an event

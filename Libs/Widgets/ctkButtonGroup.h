@@ -31,6 +31,7 @@
 
 class ctkButtonGroupPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkButtonGroup is a QButtonGroup with a different behavior when exclusive.
 /// An exclusive ctkButtonGroup switches off the previously checked button when
@@ -52,7 +53,7 @@ public:
   explicit ctkButtonGroup(QObject *_parent = 0);
   virtual ~ctkButtonGroup();
 
-protected slots:
+protected Q_SLOTS:
   void onButtonClicked(int button);
   void onButtonPressed(int button);
 

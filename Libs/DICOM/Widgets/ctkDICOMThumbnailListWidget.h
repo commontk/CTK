@@ -28,6 +28,7 @@ class QModelIndex;
 class ctkDICOMThumbnailListWidgetPrivate;
 class ctkThumbnailWidget;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailListWidget : public ctkThumbnailListWidget
 {
   Q_OBJECT
@@ -44,7 +45,7 @@ private:
   Q_DECLARE_PRIVATE(ctkDICOMThumbnailListWidget);
   Q_DISABLE_COPY(ctkDICOMThumbnailListWidget);
 
-public slots:
+public Q_SLOTS:
   void onModelSelected(const QModelIndex& index);
 };
 

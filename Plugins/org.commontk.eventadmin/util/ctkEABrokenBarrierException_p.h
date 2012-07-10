@@ -23,7 +23,7 @@
 #ifndef CTKEABROKENBARRIEREXCEPTION_P_H
 #define CTKEABROKENBARRIEREXCEPTION_P_H
 
-#include <ctkRuntimeException.h>
+#include <ctkException.h>
 
 /**
  * Thrown by barrier classes upon interruption of participant threads
@@ -44,6 +44,23 @@ public:
    * specified index and detail message.
    */
   ctkEABrokenBarrierException(int idx, const QString& message = QString());
+
+  ~ctkEABrokenBarrierException() throw();
+
+  /**
+   * @see ctkException::name()
+   */
+  const char* name() const throw();
+
+  /**
+   * @see ctkException::clone()
+   */
+  ctkEABrokenBarrierException* clone() const;
+
+  /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
 };
 
 #endif // CTKEABROKENBARRIEREXCEPTION_P_H

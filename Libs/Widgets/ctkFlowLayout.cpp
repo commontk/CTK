@@ -463,3 +463,30 @@ QLayoutItem *ctkFlowLayout::takeAt(int index)
   this->invalidate();
   return item;
 }
+
+// --------------------------------------------------------------------------
+ctkFlowLayout* ctkFlowLayout::replaceLayout(QWidget* widget)
+{
+  QLayout* oldLayout = widget->layout();
+
+  ctkFlowLayout* flowLayout = new ctkFlowLayout;
+  bool isVerticalLayout = qobject_cast<QVBoxLayout*>(oldLayout) != 0;
+  flowLayout->setPreferredExpandingDirections(
+    isVerticalLayout ? Qt::Vertical : Qt::Horizontal);
+  flowLayout->setAlignItems(false);
+  int margins[4];
+  oldLayout->getContentsMargins(&margins[0],&margins[1],&margins[2],&margins[3]);
+  QLayoutItem* item = 0;
+  while((item = oldLayout->takeAt(0)))
+    {
+    if (item->widget())
+      {
+      flowLayout->addWidget(item->widget());
+      }
+    }
+  // setLayout() will take care or reparenting layouts and widgets
+  delete oldLayout;
+  flowLayout->setContentsMargins(0,0,0,0);
+  widget->setLayout(flowLayout);
+  return flowLayout;
+}

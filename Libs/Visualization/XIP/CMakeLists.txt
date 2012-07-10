@@ -1,29 +1,29 @@
-PROJECT(CTKVisualizationXIP)
+project(CTKVisualizationXIP)
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_VISUALIZATION_XIP_EXPORT")
+set(KIT_export_directive "CTK_VISUALIZATION_XIP_EXPORT")
 
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkXIPAdaptor.cpp
   ctkXIPAdaptor.h
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkXIPAdaptor.h
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
 )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
@@ -41,20 +41,20 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-IF(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
-ENDIF()
+endif()
 
 # Plugins
-#IF(BUILD_QTDESIGNER_PLUGINS)
-#  ADD_SUBDIRECTORY(Plugins)
-#ENDIF()
+#if(CTK_BUILD_QTDESIGNER_PLUGINS)
+#  add_subdirectory(Plugins)
+#endif()
 
 # Testing
-IF(BUILD_TESTING)
-  #ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  #add_subdirectory(Testing)
+endif()

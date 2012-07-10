@@ -26,6 +26,7 @@
 #include "ctkPopupWidget.h"
 
 // -------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkPopupWidgetPrivate
   : public ctkBasePopupWidgetPrivate
 {
@@ -49,7 +50,7 @@ public:
   void temporarilyHiddenOn();
   void temporarilyHiddenOff();
 
-public slots:
+public Q_SLOTS:
   void updateVisibility();
   void onApplicationDeactivate();
 

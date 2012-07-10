@@ -62,6 +62,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkConsolePrivate;
 class ctkConsoleCompleter;
 
+/// \ingroup Widgets
 /// QWidget that provides an interactive console
 class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
 {
@@ -100,6 +101,12 @@ public:
   
   /// Sets formatting that will be used by printMessage()
   void setFormat(const QTextCharFormat& Format);
+
+  /// Returns current font of python shell
+  QFont shellFont() const;
+
+  /// Sets font of python shell
+  void setShellFont(const QFont& font);
 
   /// Return the completer of this console
   ctkConsoleCompleter* completer() const;
@@ -168,18 +175,22 @@ public:
 
   static QString stdInRedirectCallBack(void * callData);
 
-signals:
+Q_SIGNALS:
 
   /// This signal emitted before and after a command is executed
-  void executing(bool);
+  void aboutToExecute(const QString&);
+  void executed(const QString&);
 
-public slots:
+public Q_SLOTS:
 
   /// Clears the contents of the console
   virtual void clear();
 
   /// Clears the contents of the console and display welcome message
   virtual void reset();
+
+  /// Exec the contents of the last console line
+  virtual void exec(const QString&);
 
 protected:
 

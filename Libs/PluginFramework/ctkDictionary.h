@@ -53,7 +53,7 @@ public:
    * not contain case-variants of the same string.
    *
    * @param properties The ctkProperties object from which to copy the key-value pairs.
-   * @throws std::invalid_argument if <code>properties</code> contains case-variants of a key
+   * @throws ctkInvalidArgumentException if <code>properties</code> contains case-variants of a key
    */
   ctkDictionary(const ctkProperties& properties);
 

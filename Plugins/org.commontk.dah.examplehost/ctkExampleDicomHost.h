@@ -79,7 +79,7 @@ public:
 
   void exitApplicationBlocking(int timeout = 2000);
 
-public slots:
+public Q_SLOTS:
   void onAppReady();
   void onReleaseAvailableResources();
   void onStartProgress();
@@ -89,7 +89,7 @@ public slots:
   void onCanceled();
   void onExited();
 
-signals:
+Q_SIGNALS:
 
 
   void giveAvailableScreen(QRect rect);

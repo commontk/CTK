@@ -27,6 +27,7 @@
 #include <QVariant>
 
 // CTK includes
+#include "ctkBooleanMapper.h"
 #include "ctkSettingsPanel.h"
 
 // STD includes
@@ -237,9 +238,52 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  box->setChecked(false);
+  settingsPanel.registerProperty("key complement",
+                                 new ctkBooleanMapper(box, "checked", SIGNAL(toggled(bool))),
+                                 "complement",
+                                  SIGNAL(complementChanged(bool)));
+
+  // Check settings value after a property is registered
+  boxVal = settings.value("key complement");
+  if (!boxVal.isValid() || boxVal.toBool() != true)
+    {
+    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (settingsPanel.myPreviousPropertyValue("key complement").toBool() != true)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (settingsPanel.myPropertyValue("key complement").toBool() != true)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  // Update value using the object/widget API
+  box->setChecked(true);
+
+  // Check settings value after it has been updated using object/widget API
+  boxVal = settings.value("key complement");
+  if (!boxVal.isValid() || boxVal.toBool() != false)
+    {
+    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (settingsPanel.myPreviousPropertyValue("key complement").toBool() != true)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (settingsPanel.myPropertyValue("key complement").toBool() != false)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   settingsPanel.show();
-      
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

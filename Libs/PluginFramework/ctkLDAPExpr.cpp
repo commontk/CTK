@@ -20,9 +20,14 @@ limitations under the License.
 =============================================================================*/
 
 #include "ctkLDAPExpr_p.h"
+
+#include <ctkException.h>
+
 #include <QSet>
 #include <QVariant>
 #include <QStringList>
+
+#include <stdexcept>
 
 const int ctkLDAPExpr::AND     =  0;
 const int ctkLDAPExpr::OR      =  1;
@@ -53,7 +58,7 @@ private:
 
 public:
 
-  ParseState(const QString &str) throw (std::invalid_argument);
+  ParseState(const QString &str);
 
   //! Move m_pos to remove the prefix \a pre
   bool prefix(const QString &pre);
@@ -79,7 +84,7 @@ public:
   QString getAttributeValue();
 
   //! Throw InvalidSyntaxException exception
-  void error(const QString &m) const throw (std::invalid_argument);
+  void error(const QString &m) const;
 
 };
 
@@ -130,22 +135,23 @@ ctkLDAPExpr::ctkLDAPExpr()
 ctkLDAPExpr::ctkLDAPExpr( const QString &filter )
 {
   ParseState ps(filter);
+
+  ctkLDAPExpr expr;
   try
   {
-    ctkLDAPExpr expr = parseExpr(ps);
- 
-    if (!ps.rest().trimmed().isEmpty())
-    {
-      ps.error(GARBAGE + " '" + ps.rest() + "'");
-    }
-
-    d = expr.d;
-
+    expr = parseExpr(ps);
   }
   catch (const std::out_of_range&)
   {
     ps.error(EOS);
   }
+ 
+  if (!ps.rest().trimmed().isEmpty())
+  {
+    ps.error(GARBAGE + " '" + ps.rest() + "'");
+  }
+
+  d = expr.d;
 }
 
 //----------------------------------------------------------------------------
@@ -547,7 +553,7 @@ const QString ctkLDAPExpr::toString() const
 }
 
 //----------------------------------------------------------------------------
-ctkLDAPExpr::ParseState::ParseState( const QString &str ) throw (std::invalid_argument)
+ctkLDAPExpr::ParseState::ParseState( const QString &str )
 {
   if (str.isEmpty())
   {
@@ -648,8 +654,8 @@ QString ctkLDAPExpr::ParseState::getAttributeValue()
 }
 
 //----------------------------------------------------------------------------
-void ctkLDAPExpr::ParseState::error( const QString &m ) const throw (std::invalid_argument)
+void ctkLDAPExpr::ParseState::error( const QString &m ) const
 {
   QString error = m + ": " + (m_str.isNull() ? "" : m_str.mid(m_pos) );
-  throw std::invalid_argument( error.toStdString() );
+  throw ctkInvalidArgumentException(error);
 }

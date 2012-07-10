@@ -28,6 +28,7 @@
 #include "ctkCoreExport.h"
 
 //---------------------------------------------------------------------------
+/// \ingroup Core
 /// The following example prints debug statement everytime the current value
 /// of the slider is changed:
 /// void print() { qDebug() << "signal called"; }
@@ -67,7 +68,7 @@ public:
   /// Set callback data
   void setCallbackData(void * data);
   
-public slots:
+public Q_SLOTS:
   /// Internally calls the pointer function \a callback.
   virtual void invoke();
   

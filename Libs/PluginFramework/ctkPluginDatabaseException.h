@@ -22,7 +22,9 @@
 #ifndef CTKPLUGINDATABASEEXCEPTION_H
 #define CTKPLUGINDATABASEEXCEPTION_H
 
-#include "ctkRuntimeException.h"
+#include "ctkException.h"
+
+#include <ctkPluginFrameworkExport.h>
 
 /**
  * \ingroup PluginFramework
@@ -42,11 +44,29 @@ public:
     DB_SQL_ERROR
   };
 
-  ctkPluginDatabaseException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception* cause = 0);
-  ctkPluginDatabaseException(const QString& msg, const std::exception* cause);
+  ctkPluginDatabaseException(const QString& msg, const Type& type = UNSPECIFIED);
+  ctkPluginDatabaseException(const QString& msg, const Type& type, const ctkException& cause);
+  ctkPluginDatabaseException(const QString& msg, const ctkException& cause);
 
   ctkPluginDatabaseException(const ctkPluginDatabaseException& o);
   ctkPluginDatabaseException& operator=(const ctkPluginDatabaseException& o);
+
+  ~ctkPluginDatabaseException() throw();
+
+  /**
+   * @see ctkException::name()
+   */
+  const char* name() const throw();
+
+  /**
+   * @see ctkException::clone()
+   */
+  ctkPluginDatabaseException* clone() const;
+
+  /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
 
   Type getType() const;
 
@@ -55,10 +75,5 @@ private:
   Type type;
 
 };
-
-/**
- * \ingroup PluginFramework
- */
-CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkPluginDatabaseException& exc);
 
 #endif // CTKPLUGINDATABASEEXCEPTION_H

@@ -439,7 +439,7 @@ public:
    * size will not immediately kill existing threads, but they may
    * later die when idle.
    *
-   * @throws std::invalid_argument if less or equal to zero.
+   * @throws ctkInvalidArgumentException if less or equal to zero.
    *         (It is not considered an error to set the maximum to be less than than
    *         the minimum. However, in this case there are no guarantees
    *         about behavior.)
@@ -457,7 +457,7 @@ public:
   /**
    * Set the minimum number of threads to use.
    *
-   * @throws std::invalid_argument if less than zero. (It is not
+   * @throws ctkInvalidArgumentException if less than zero. (It is not
    *         considered an error to set the minimum to be greater than the
    *         maximum. However, in this case there are no guarantees about
    *         behavior.)
@@ -551,7 +551,7 @@ public:
    *
    * @param maxWaitTime  the maximum time in milliseconds to wait
    * @return true if the pool has terminated within the max wait period
-   * @throws std::logic_error if shutdown has not been requested
+   * @throws ctkIllegalStateException if shutdown has not been requested
    * @throws ctkEAInterruptedException if the current thread has been interrupted in the course of waiting
    */
   bool awaitTerminationAfterShutdown(long maxWaitTime) const;
@@ -561,7 +561,7 @@ public:
    * only be called <em>after</em> invoking shutdownNow or
    * shutdownAfterProcessingCurrentlyQueuedTasks.
    *
-   * @throws std::logic_error if shutdown has not been requested
+   * @throws ctkIllegalStateException if shutdown has not been requested
    * @throws ctkEAInterruptedException if the current thread has been interrupted in the course of waiting
    */
   void awaitTerminationAfterShutdown() const;

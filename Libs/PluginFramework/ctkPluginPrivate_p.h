@@ -30,6 +30,8 @@
 #include <QPluginLoader>
 #include <QDateTime>
 #include <QFileInfo>
+#include <QMutex>
+#include <QWaitCondition>
 
 
 class ctkPluginActivator;
@@ -45,11 +47,42 @@ protected:
 
   const QWeakPointer<ctkPlugin> q_ptr;
 
+  class LockObject
+  {
+  public:
+
+    LockObject() {};
+
+    void lock();
+    bool tryLock();
+    bool tryLock(int timeout);
+    void unlock();
+
+    bool wait(unsigned long time = ULONG_MAX);
+    void wakeAll();
+    void wakeOne();
+
+  private:
+
+    Q_DISABLE_COPY(LockObject)
+
+    QMutex m_Lock;
+    QWaitCondition m_Condition;
+  };
+
 public:
 
   inline QWeakPointer<ctkPlugin> q_func() { return q_ptr; }
   inline QWeakPointer<const ctkPlugin> q_func() const { return q_ptr; }
   friend class ctkPlugin;
+
+  struct Locker
+  {
+    Locker(LockObject* obj) : m_Obj(obj) { m_Obj->lock(); }
+    ~Locker() { m_Obj->unlock(); }
+  private:
+      LockObject* m_Obj;
+  };
 
   /**
    * Construct a new plugin based on a ctkPluginArchive.
@@ -57,10 +90,10 @@ public:
    * @param fw ctkPluginFrameworkContext for this plugin.
    * @param ba ctkPlugin archive representing the shared library and cached data
    * @param checkContext AccessConrolContext to do permission checks against.
-   * @exception std::invalid_argument Faulty manifest for bundle
+   * @exception ctkInvalidArgumentException Faulty manifest for bundle
    */
   ctkPluginPrivate(QWeakPointer<ctkPlugin> qq, ctkPluginFrameworkContext* fw,
-                   ctkPluginArchive* pa /*, Object checkContext*/);
+                   QSharedPointer<ctkPluginArchive> pa /*, Object checkContext*/);
 
   /**
    * Construct a new empty ctkPlugin.
@@ -94,6 +127,17 @@ public:
   QFileInfo getDataRoot();
 
   /**
+   * Set state to INSTALLED. We assume that the plug-in is resolved
+   * when entering this method.
+   */
+  void setStateInstalled(bool sendEvent);
+
+  /**
+   * Purge any old files associated with this plug-in.
+   */
+  void purge();
+
+  /**
    * Save the autostart setting to the persistent plugin storage.
    *
    * @param setting The autostart options to save.
@@ -109,10 +153,34 @@ public:
    */
   void finalizeActivation();
 
+  const ctkRuntimeException* stop0();
+
   /**
-   * Performs the actual stopping.
+   * Stop code that is executed in the pluginThread without holding the
+   * operationLock.
    */
-  void stop0(bool wasStarted);
+  const ctkRuntimeException* stop1();
+
+  /**
+   *
+   */
+  void update0(const QUrl &updateLocation, bool wasActive);
+
+  /**
+   *
+   */
+  int getStartLevel();
+
+  /**
+   * Wait for an ongoing operation to finish.
+   *
+   * @param lock QMutex used for locking.
+   * @param src Caller to include in exception message.
+   * @param longWait True, if we should wait extra long before aborting.
+   * @throws ctkPluginException if the ongoing (de-)activation does not finish
+   *         within reasonable time.
+   */
+  void waitOnOperation(LockObject* lock, const QString& src, bool longWait);
 
   /**
    *
@@ -155,7 +223,7 @@ public:
   /**
    * ctkPlugin archive
    */
-  ctkPluginArchive* archive;
+  QSharedPointer<ctkPluginArchive> archive;
 
   /**
    * Directory for plugin data
@@ -193,24 +261,36 @@ public:
   QHash<QString, QString> cachedRawHeaders;
 
   /**
+   * Type of operation in progress. Blocks bundle calls during activator and
+   * listener calls
+   */
+  QAtomicInt operation;
+  static const int IDLE = 0;
+  static const int ACTIVATING = 1;
+  static const int DEACTIVATING = 2;
+  static const int RESOLVING = 3;
+  static const int UNINSTALLING = 4;
+  static const int UNRESOLVING = 5;
+  static const int UPDATING = 6;
+
+  LockObject operationLock;
+
+  /** Saved exception of resolve failure. */
+  ctkPluginException* resolveFailException;
+
+  /**
    * True when this plugin has its activation policy
    * set to "eager"
    */
   bool eagerActivation;
 
-  /** True during the finalization of an activation. */
-  bool activating;
-
-  /** True during the state change from active to resolved. */
-  bool deactivating;
-
-  /** Saved exception of resolve failure */
-  //ctkPluginException resolveFailException;
-
   /** List of ctkRequirePlugin entries. */
   QList<ctkRequirePlugin*> require;
 
 private:
+
+  /** Rember if plugin was started */
+  bool wasStarted;
 
   /**
    * Check manifest and cache certain manifest headers as variables.
@@ -219,7 +299,7 @@ private:
 
   // This could potentially be run in its own thread,
   // parallelizing plugin activations
-  void start0();
+  ctkPluginException* start0();
 
   void startDependencies();
 
@@ -229,6 +309,8 @@ private:
    *
    */
   void removePluginResources();
+
+  ctkPlugin::State getUpdatedState_unlocked();
 
 };
 

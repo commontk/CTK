@@ -111,13 +111,13 @@ void ctkConsolePrivate::init()
   this->CommandTextColor = QColor(0, 0, 150); // Blue
   this->WelcomeTextColor = QColor(0, 0, 255); // Dark Blue
 
-  QFont f;
-  f.setFamily("Courier");
-  f.setStyleHint(QFont::TypeWriter);
-  f.setFixedPitch(true);
+  QFont shellFont;
+  shellFont.setFamily("Courier");
+  shellFont.setStyleHint(QFont::TypeWriter);
+  shellFont.setFixedPitch(true);
 
   QTextCharFormat format;
-  format.setFont(f);
+  format.setFont(shellFont);
   format.setForeground(this->OutputTextColor);
   this->setCurrentCharFormat(format);
 
@@ -480,7 +480,6 @@ void ctkConsolePrivate::internalExecuteCommand()
   Q_Q(ctkConsole);
 
   QString command = this->commandBuffer();
-
   if (this->EditorHints & ctkConsole::RemoveTrailingSpaces)
     {
     command.replace(QRegExp("\\s*$"), ""); // Remove trailing spaces
@@ -502,9 +501,9 @@ void ctkConsolePrivate::internalExecuteCommand()
 
   this->InteractivePosition = this->documentEnd();
 
-  emit q->executing(true);
+  emit q->aboutToExecute(command);
   q->executeCommand(command);
-  emit q->executing(false);
+  emit q->executed(command);
 
   // Find the indent for the command.
   QString indent;
@@ -690,6 +689,26 @@ void ctkConsole::setFormat(const QTextCharFormat& Format)
 }
 
 //-----------------------------------------------------------------------------
+QFont ctkConsole::shellFont() const
+{
+  Q_D(const ctkConsole);
+  return d->currentFont();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::setShellFont(const QFont& font)
+{
+  Q_D(ctkConsole);
+  int savedPosition = d->textCursor().position();
+  d->selectAll();
+  d->setCurrentFont(font);
+  QTextCursor tc = d->textCursor();
+  tc.clearSelection();
+  tc.setPosition(savedPosition);
+  d->setTextCursor(tc);
+}
+
+//-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, ctkConsoleCompleter*, completer, Completer);
 
 //-----------------------------------------------------------------------------
@@ -768,6 +787,14 @@ void ctkConsole::setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolic
 {
   Q_D(ctkConsole);
   d->setVerticalScrollBarPolicy(newScrollBarPolicy);
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::exec(const QString& command)
+{
+  Q_D(ctkConsole);
+  d->replaceCommandBuffer(command);
+  d->internalExecuteCommand();
 }
 
 //-----------------------------------------------------------------------------

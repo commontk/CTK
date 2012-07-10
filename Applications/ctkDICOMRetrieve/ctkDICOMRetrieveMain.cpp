@@ -48,9 +48,8 @@ void print_usage()
 */
 int main(int argc, char** argv)
 {
-  ctkLogger::configure();
   ctkLogger logger ( "org.commontk.dicom.DICOMRetieveApp" );
-  logger.setDebug();
+
   // Set the DCMTK log level to debug
   dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
   rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);
@@ -82,7 +81,7 @@ int main(int argc, char** argv)
   ctkDICOMRetrieve retrieve;
   retrieve.setCallingAETitle ( CallingAETitle );
   retrieve.setCalledAETitle ( CalledAETitle );
-  retrieve.setCalledPort ( CalledPort );
+  retrieve.setPort ( CalledPort );
   retrieve.setHost ( Host );
   retrieve.setMoveDestinationAETitle ( MoveDestinationAETitle );
 
@@ -95,12 +94,12 @@ int main(int argc, char** argv)
 
   QSharedPointer<ctkDICOMDatabase> dicomDatabase =  QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
   dicomDatabase->openDatabase( OutputDirectory.absoluteFilePath(QString("ctkDICOM.sql")) );
-  retrieve.setRetrieveDatabase( dicomDatabase );
+  retrieve.setDatabase( dicomDatabase );
 
   logger.info ( "Starting to retrieve" );
   try
     {
-    retrieve.retrieveStudy ( StudyUID );
+    retrieve.moveStudy ( StudyUID );
     }
   catch (std::exception e)
     {

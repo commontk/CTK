@@ -37,6 +37,7 @@ class vtkInteractorObserver;
 class vtkRenderWindowInteractor;
 class vtkRenderWindow;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKAbstractView : public QWidget
 {
   Q_OBJECT
@@ -52,7 +53,7 @@ public:
   explicit ctkVTKAbstractView(QWidget* parent = 0);
   virtual ~ctkVTKAbstractView();
 
-public slots:
+public Q_SLOTS:
   /// Notify QVTKWidget that the view needs to be rendered.
   /// scheduleRender() respects the desired framerate of the render window,
   /// it won't render the window more than what the current render window

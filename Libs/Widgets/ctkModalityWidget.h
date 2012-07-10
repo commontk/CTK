@@ -28,6 +28,7 @@
 #include "ctkWidgetsExport.h"
 class ctkModalityWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkModalityWidget allows the user to select DICOM modalities
 class CTK_WIDGETS_EXPORT ctkModalityWidget : public QWidget
@@ -84,7 +85,7 @@ public:
   /// selectedModalities and visibleModalities.
   QStringList modalities() const;
 
-public slots:
+public Q_SLOTS:
   /// Select all the modalities (visible or not)
   /// Note: only emit the signal selectedModalitiesChanged once.
   void selectAll();
@@ -93,13 +94,13 @@ public slots:
   /// Note: only emit the signal selectedModalitiesChanged once.
   void unselectAll();
 
-signals:
+Q_SIGNALS:
   /// Fired anytime a modality is selected or unselected.
   /// Note: When the user click on "Any", it only emits the signal
   /// once (and not after each item is selected/unselected).
   void selectedModalitiesChanged(const QStringList modalities);
 
-protected slots:
+protected Q_SLOTS:
   void onAnyChanged(int state);
   void onModalityChecked(bool);
 

@@ -37,6 +37,7 @@ class ctkWorkflowGroupBox;
 
 class ctkWorkflowWidgetPrivate;
 
+/// \ingroup Widgets
 /// \brief ctkWorkflowWidget is the basis for a workflow with a user interface.  It groups together
 /// and manages a ctkWorkflowGroupBox (to display the step) and a ctkWorkflowButtonBoxWidget
 /// (providing buttons for traversing the workflow).
@@ -65,12 +66,12 @@ public:
   /// Get the widget with the 'next', 'back' and 'goTo' buttons
   Q_INVOKABLE ctkWorkflowButtonBoxWidget* buttonBoxWidget()const;
 
-public slots:
+public Q_SLOTS:
   /// Triggers updates of the the workflowGroupBox and the buttonBoxWidget when the current workflow
   /// step has changed.
   virtual void onCurrentStepChanged(ctkWorkflowStep* currentStep);
 
-protected slots:
+protected Q_SLOTS:
   void onStepRegistered(ctkWorkflowStep* step);
 
 protected:

@@ -1,29 +1,22 @@
-SET(KIT ${PROJECT_NAME})
+set(KIT ${PROJECT_NAME})
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkSlicerModuleTest.cpp
   )
 
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
+add_executable(${KIT}CppTests ${Tests})
+target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
-SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
-
-SET(TEST_DATA ${${PROJECT_NAME}_SOURCE_DIR}/TestData)
-
-MACRO( SIMPLE_TEST  TESTNAME DATA_FILE )
-  ADD_TEST( ${TESTNAME} "${KIT_TESTS}" "${TESTNAME}" "${TEST_DATA}/${DATA_FILE}" )
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-ENDMACRO( SIMPLE_TEST  )
+set(TEST_DATA ${${PROJECT_NAME}_SOURCE_DIR}/TestData)
 
 #
 # Add Tests
 #
 
-SIMPLE_TEST( ctkSlicerModuleTest ParserTest1.xml )
+SIMPLE_TEST( ctkSlicerModuleTest ${TEST_DATA}/ParserTest1.xml )
 

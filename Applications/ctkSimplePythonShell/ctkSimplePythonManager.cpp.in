@@ -61,14 +61,9 @@ QStringList ctkSimplePythonManager::pythonPaths()
 #ifdef CTK_WRAP_PYTHONQT_USE_VTK
 
   // Try to put the VTK python module location in sys.path.
-  QString vtk_build_dir = "/../../CMakeExternals/Build/VTK/Wrapping/Python";
+  QString vtk_package_dir = "@VTK_DIR@/Wrapping/Python";
   bool found_vtk = false;
-  QString vtk_package_dir = self_dir;
 
-#if defined(CMAKE_INTDIR)
-  vtk_package_dir.append("/..");
-#endif
-  vtk_package_dir.append(vtk_build_dir);
   QFileInfo fi(vtk_package_dir);
   vtk_package_dir = fi.absoluteFilePath();
   if (fi.isDir())

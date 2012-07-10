@@ -32,6 +32,7 @@
 class ctkDateRangeWidgetPrivate;
 class QDateTime;
 
+/// \ingroup Widgets
 ///
 /// ctkDateRangeWidget allows the user to select a time range between two
 /// dates
@@ -77,7 +78,7 @@ public:
   /// Returns true if any of the start or end date is invalid.
   bool isAnyDate()const;
 
-public slots:
+public Q_SLOTS:
   /// Set the start date.
   /// If the date is null or invalid, it will be automatically converted into
   /// a valid date (14 September 1752)
@@ -100,13 +101,13 @@ public slots:
   void setLastMonth();
   void setSelectRange();
 
-signals:
+Q_SIGNALS:
   /// Fired when the start date is changed
   void startDateTimeChanged(const QDateTime& value);
   /// Fired when the end date is changed
   void endDateTimeChanged(const QDateTime& value);
 
-protected slots:
+protected Q_SLOTS:
   void onDateTimeChanged();
 
 protected:

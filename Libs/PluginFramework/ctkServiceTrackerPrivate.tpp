@@ -26,8 +26,6 @@
 #include "ctkPluginConstants.h"
 #include "ctkLDAPSearchFilter.h"
 
-#include <stdexcept>
-
 //----------------------------------------------------------------------------
 template<class S, class T>
 const bool ctkServiceTrackerPrivate<S,T>::DEBUG = false;
@@ -48,13 +46,13 @@ ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
   {
     this->filter = ctkLDAPSearchFilter(listenerFilter);
   }
-  catch (const std::invalid_argument& e)
+  catch (const ctkInvalidArgumentException& e)
   {
     /*
      * we could only get this exception if the ServiceReference was
      * invalid
      */
-    std::invalid_argument ia(std::string("unexpected std::invalid_argument exception: ") + e.what());
+    ctkInvalidArgumentException ia(QString("unexpected ctkInvalidArgumentException exception: %1").arg(e.what()));
     throw ia;
   }
 }
@@ -76,14 +74,14 @@ ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
   {
     this->filter = ctkLDAPSearchFilter(listenerFilter);
   }
-  catch (const std::invalid_argument& e)
+  catch (const ctkInvalidArgumentException& e)
   {
     /*
      * we could only get this exception if the clazz argument was
      * malformed
      */
-    std::invalid_argument ia(
-        std::string("unexpected std::invalid_argument exception: ") + e.what());
+    ctkInvalidArgumentException ia(
+          QString("unexpected ctkInvalidArgumentException exception: %1").arg(e.what()));
     throw ia;
   }
 }
@@ -101,7 +99,7 @@ ctkServiceTrackerPrivate<S,T>::ctkServiceTrackerPrivate(
   this->customizer = customizer ? customizer : q_func();
   if (context == 0)
   {
-    throw std::invalid_argument("The plugin context cannot be null.");
+    throw ctkInvalidArgumentException("The plugin context cannot be null.");
   }
 }
 

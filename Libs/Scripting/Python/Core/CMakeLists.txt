@@ -1,47 +1,47 @@
-PROJECT(CTKScriptingPythonCore)
+project(CTKScriptingPythonCore)
 
 #
 # 3rd party dependencies
 #
-IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  INCLUDE(${VTK_USE_FILE})
-ENDIF()
+if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  include(${VTK_USE_FILE})
+endif()
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_SCRIPTING_PYTHON_CORE_EXPORT")
+set(KIT_export_directive "CTK_SCRIPTING_PYTHON_CORE_EXPORT")
 
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkAbstractPythonManager.cpp
   ctkAbstractPythonManager.h
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkAbstractPythonManager.h
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
 )
 
 #
 # Configure file describing which Qt modules are wrapped
 #
-FOREACH(qtlib CORE GUI NETWORK OPENGL SQL SVG UITOOLS WEBKIT XML XMLPATTERNS)
-  SET(CTK_PYTHONQT_WRAP_QT${qtlib} ${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
+foreach(qtlib CORE GUI NETWORK OPENGL SQL SVG UITOOLS WEBKIT XML XMLPATTERNS)
+  set(CTK_PYTHONQT_WRAP_QT${qtlib} ${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
   #message(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}:${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
-ENDFOREACH()
+endforeach()
 
-CONFIGURE_FILE(
+configure_file(
   ctkScriptingPythonCoreConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/ctkScriptingPythonCoreConfigure.h
   )
@@ -51,9 +51,9 @@ CONFIGURE_FILE(
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 # Link against vtkPython if required
-IF(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  LIST(APPEND KIT_target_libraries vtkPythonCore)
-ENDIF()
+if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  list(APPEND KIT_target_libraries vtkPythonCore)
+endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
@@ -67,13 +67,13 @@ ctkMacroBuildLib(
   )
 
 # Plugins
-#IF(BUILD_QTDESIGNER_PLUGINS)
-#  ADD_SUBDIRECTORY(Plugins)
-#ENDIF()
+#if(CTK_BUILD_QTDESIGNER_PLUGINS)
+#  add_subdirectory(Plugins)
+#endif()
 
-ADD_SUBDIRECTORY(Python)
+add_subdirectory(Python)
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

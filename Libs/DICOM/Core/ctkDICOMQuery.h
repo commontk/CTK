@@ -34,6 +34,8 @@
 #include "ctkDICOMDatabase.h"
 
 class ctkDICOMQueryPrivate;
+
+/// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
 {
   Q_OBJECT
@@ -41,6 +43,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
   Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCallingAETitle);
   Q_PROPERTY(QString host READ host WRITE setHost);
   Q_PROPERTY(int port READ port WRITE setPort);
+  Q_PROPERTY(bool preferCGET READ preferCGET WRITE setPreferCGET);
 
 public:
   explicit ctkDICOMQuery(QObject* parent = 0);
@@ -61,7 +64,11 @@ public:
   /// 0 by default.
   void setPort ( int port );
   int port()const;
-  
+  /// Prefer CGET over CMOVE for retrieval of query results
+  /// false by default
+  void setPreferCGET ( bool preferCGET );
+  bool preferCGET()const;
+
   /// Query a remote DICOM Image Store SCP
   /// You must at least set the host and port before calling query()
   bool query(ctkDICOMDatabase& database);
@@ -79,7 +86,7 @@ public:
   /// Key         DICOM Tag                Type        Example
   /// -----------------------------------------------------------
   /// Name        DCM_PatientName         QString     JOHNDOE
-  /// Study       DCM_StudyDescription     QString     
+  /// Study       DCM_StudyDescription     QString
   /// Series      DCM_SeriesDescription    QString
   /// ID          DCM_PatientID            QString
   /// Modalities  DCM_ModalitiesInStudy    QStringList CT, MR, MN
@@ -89,13 +96,24 @@ public:
   void setFilters(const QMap<QString,QVariant>&);
   QMap<QString,QVariant> filters()const;
 
-signals:
+Q_SIGNALS:
   /// Signal is emitted inside the query() function. It ranges from 0 to 100.
   /// In case of an error, you are assured that the progress value 100 is fired
   void progress(int progress);
   /// Signal is emitted inside the query() function. It sends the different step
   /// the function is at.
   void progress(const QString& message);
+  /// Signal is emitted inside the query() function. It sends 
+  /// detailed feedback for debugging
+  void debug(const QString& message);
+  /// Signal is emitted inside the query() function. It send any error messages
+  void error(const QString& message);
+  /// Signal is emitted inside the query() function when finished with value 
+  /// true for success or false for error
+  void done(const bool& error);
+
+public Q_SLOTS:
+  void cancel();
 
 protected:
   QScopedPointer<ctkDICOMQueryPrivate> d_ptr;
@@ -103,6 +121,8 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkDICOMQuery);
   Q_DISABLE_COPY(ctkDICOMQuery);
+
+  friend class ctkDICOMQuerySCUPrivate;  // for access to queryResponseHandled
 };
 
 #endif

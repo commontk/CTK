@@ -1,25 +1,25 @@
-PROJECT(ctkDICOMDemoSCU)
+project(ctkDICOMDemoSCU)
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
   
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkDICOMDemoSCUMain.cpp
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
@@ -36,9 +36,9 @@ ctkMacroBuildApp(
   )
 
 # Plugins
-#ADD_SUBDIRECTORY(Plugins)
+#add_subdirectory(Plugins)
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

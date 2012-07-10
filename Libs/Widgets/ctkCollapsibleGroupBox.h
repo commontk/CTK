@@ -28,6 +28,7 @@
 #include "ctkWidgetsExport.h"
 class ctkCollapsibleGroupBoxPrivate;
 
+/// \ingroup Widgets
 /// A QGroupBox with an arrow indicator that shows/hides the groupbox contents
 /// when clicked. It responds to the slot QGroupBox::setChecked(bool) or
 /// ctkCollapsibleGroupBox::setCollapsed(bool)
@@ -37,6 +38,12 @@ class CTK_WIDGETS_EXPORT ctkCollapsibleGroupBox : public QGroupBox
 {
   Q_OBJECT
   Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed)
+
+  /// This property holds the height in pixels of the contents (excludes the title)
+  /// when the box is collapsed.
+  /// 14px by default, it is the smallest height that fit Mac Style.
+  Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight)
+
 public:
   ctkCollapsibleGroupBox(QWidget* parent = 0);
   ctkCollapsibleGroupBox(const QString& title, QWidget* parent = 0);
@@ -52,13 +59,17 @@ public:
   /// true if the groupbox is collapsed (closed), false if it is expanded(open)
   inline bool collapsed()const;
 
+  /// Set the height of the collapsed box. Does not include the title height.
+  virtual void setCollapsedHeight(int heightInPixels);
+  int collapsedHeight()const;
+
   /// Reimplemented for internal reasons
   /// Catch when a child widget's visibility is externally changed
   virtual bool eventFilter(QObject* child, QEvent* e);
 
   /// Reimplemented for internal reasons
   virtual void setVisible(bool show);
-protected slots:
+protected Q_SLOTS:
   /// called when the arrow indicator is clicked
   /// users can call it programatically by calling setChecked(bool)
   virtual void expand(bool expand);

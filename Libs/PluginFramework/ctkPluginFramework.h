@@ -22,11 +22,10 @@
 #ifndef CTKPLUGINFRAMEWORK_H
 #define CTKPLUGINFRAMEWORK_H
 
+#include <ctkPluginFrameworkExport.h>
+
 #include "ctkPlugin.h"
-
-
-#include "ctkPluginFrameworkExport.h"
-
+#include "ctkPluginFrameworkEvent.h"
 
 class ctkPluginFrameworkContext;
 class ctkPluginFrameworkPrivate;
@@ -76,6 +75,42 @@ public:
   void init();
 
   /**
+   * Wait until this %ctkPluginFramework has completely stopped. The <code>stop</code>
+   * and <code>update</code> methods perform an asynchronous
+   * stop of the Framework. This method can be used to wait until the
+   * asynchronous stop of this Framework has completed. This method will only
+   * wait if called when this Framework is in the {@link #STARTING},
+   * {@link #ACTIVE}, or {@link #STOPPING} states. Otherwise it will return
+   * immediately.
+   * <p>
+   * A Framework Event is returned to indicate why this Framework has stopped.
+   *
+   * @param timeout Maximum number of milliseconds to wait until this
+   *        Framework has completely stopped. A value of zero will wait
+   *        indefinitely.
+   * @return A Framework Event indicating the reason this method returned. The
+   *         following <code>ctkPluginFrameworkEvent</code> types may be returned by
+   *         this method.
+   *         <ul>
+   *         <li>{@link ctkPluginFrameworkEvent#STOPPED STOPPED} - This Framework has
+   *         been stopped. </li>
+   *
+   *         <li>{@link ctkPluginFrameworkEvent#STOPPED_UPDATE STOPPED_UPDATE} - This
+   *         Framework has been updated which has shutdown and will now
+   *         restart.</li>
+   *
+   *         <li>{@link ctkPluginFrameworkEvent#ERROR ERROR} - The Framework
+   *         encountered an error while shutting down or an error has occurred
+   *         which forced the framework to shutdown. </li>
+   *
+   *         <li> {@link ctkPluginFrameworkEvent#WAIT_TIMEDOUT WAIT_TIMEDOUT} - This
+   *         method has timed out and returned before this Framework has
+   *         stopped.</li>
+   *         </ul>
+   */
+  ctkPluginFrameworkEvent waitForStop(unsigned long timeout);
+
+  /**
    * Start this %ctkPluginFramework.
    *
    * <p>
@@ -89,15 +124,59 @@ public:
    * and some will be started with their <i>declared activation</i> policy.
    * Any exceptions that occur during plugin starting must be wrapped in a
    * {@link ctkPluginException} and then published as a plugin framework event of type
-   * {@link ctkPluginFrameworkEvent::ERROR}</li>
+   * {@link ctkPluginFrameworkEvent::PLUGIN_ERROR}</li>
    * <li>This %PluinFramework's state is set to {@link #ACTIVE}.</li>
-   * <li>A plugin framework event of type {@link ctkPluginFrameworkEvent::STARTED} is fired</li>
+   * <li>A plugin framework event of type {@link ctkPluginFrameworkEvent::FRAMEWORK_STARTED} is fired</li>
    * </ol>
    *
    * @param options Ignored. There are no start options for the %ctkPluginFramework.
    * @throws ctkPluginException If this %ctkPluginFramework could not be started.
    */
   void start(const ctkPlugin::StartOptions& options = 0);
+
+  /**
+   * Stop this %ctkPluginFramework.
+   *
+   * <p>
+   * The method returns immediately to the caller after initiating the
+   * following steps to be taken on another thread.
+   * <ol>
+   * <li>This Framework's state is set to {@link #STOPPING}.</li>
+   * <li>All installed plugins must be stopped without changing each plugin's
+   * persistent <i>autostart setting</i>. If this Framework implements the
+   * optional <i>Start Level Service Specification</i>, then the start level
+   * of this Framework is moved to start level zero (0), as described in the
+   * <i>Start Level Service Specification</i>. Any exceptions that occur
+   * during plugin stopping must be wrapped in a {@link ctkPluginException} and
+   * then published as a framework event of type {@link ctkPluginFrameworkEvent#ERROR}</li>
+   * <li>Unregister all services registered by this Framework.</li>
+   * <li>Event handling is disabled.</li>
+   * <li>This Framework's state is set to {@link #RESOLVED}.</li>
+   * <li>All resources held by this Framework are released. This includes
+   * threads, loaded libraries, open files, etc.</li>
+   * <li>Notify all threads that are waiting at {@link #waitForStop(long)
+   * waitForStop} that the stop operation has completed.</li>
+   * </ol>
+   * <p>
+   * After being stopped, this Framework may be discarded, initialized or
+   * started.
+   *
+   * @param options Ignored. There are no stop options for the Framework.
+   * @throws ctkPluginException If stopping this Framework could not be
+   *         initiated.
+   * @see "Start Level Service Specification"
+   */
+  void stop(const StopOptions& options = 0);
+
+  /**
+   * The %ctkPluginFramework cannot be uninstalled.
+   *
+   * <p>
+   * This method always throws a ctkPluginException.
+   *
+   * @throws ctkPluginException This Framework cannot be uninstalled.
+   */
+  void uninstall();
 
   /**
    * @see ctkPlugin::getHeaders()

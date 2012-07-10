@@ -1,9 +1,9 @@
-SET(KIT ${PROJECT_NAME})
+set(KIT ${PROJECT_NAME})
 
 #
 # Tests
 #
-SET(TEST_SOURCES
+set(TEST_SOURCES
   ctkVTKDataSetArrayComboBoxTest1.cpp
   ctkVTKDataSetModelTest1.cpp
   ctkVTKMatrixWidgetTest1.cpp
@@ -25,8 +25,8 @@ SET(TEST_SOURCES
   ctkVTKWidgetsUtilsTestGrabWidget.cpp
   )
 
-IF(CTK_USE_CHARTS)
-  SET(TEST_SOURCES
+if(CTK_USE_CHARTS)
+  set(TEST_SOURCES
       ctkVTKChartViewTest1.cpp
       ctkVTKVolumePropertyWidgetTest1.cpp
       ctkVTKScalarsToColorsViewTest1.cpp
@@ -37,20 +37,42 @@ IF(CTK_USE_CHARTS)
       ctkVTKScalarsToColorsWidgetTest2.cpp
       ctkVTKScalarsToColorsWidgetTest3.cpp
       ${TEST_SOURCES})
-ENDIF(CTK_USE_CHARTS)
+endif()
 
 #
 # Tests expecting CTKData to be set
 #
-IF(EXISTS "${CTKData_DIR}")
-  LIST(APPEND TEST_SOURCES
+if(EXISTS "${CTKData_DIR}")
+  list(APPEND TEST_SOURCES
     ctkVTKMagnifyViewTest2.cpp
     ctkVTKSliceViewTest2.cpp
     ctkVTKRenderViewTest2.cpp
     )
-ENDIF()
+endif()
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
+#
+# Test expecting CTK_USE_QTTESTING to be ON
+#
+if(CTK_USE_QTTESTING)
+  list(APPEND TEST_SOURCES
+    ctkVTKDataSetArrayComboBoxEventTranslatorPlayerTest1.cpp
+    ctkVTKDataSetModelEventTranslatorPlayerTest1.cpp
+#    ctkVTKMagnifyViewEventTranslatorPlayerTest1.cpp
+    ctkVTKMatrixWidgetEventTranslatorPlayerTest1.cpp
+    ctkVTKRenderViewEventTranslatorPlayerTest1.cpp
+    ctkVTKScalarBarWidgetEventTranslatorPlayerTest1.cpp
+#    ctkVTKScalarsToColorsUtilsEventTranslatorPlayerTest1.cpp
+#    ctkVTKScalarsToColorsViewEventTranslatorPlayerTest1.cpp
+#    ctkVTKScalarsToColorsWidgetEventTranslatorPlayerTest1.cpp
+#    ctkVTKSliceViewEventTranslatorPlayerTest1.cpp
+#    ctkVTKSurfaceMaterialPropertyWidgetEventTranslatorPlayerTest1.cpp
+    ctkVTKTextPropertyWidgetEventTranslatorPlayerTest1.cpp
+#    ctkVTKThresholdWidgetEventTranslatorPlayerTest1.cpp
+#    ctkVTKVolumePropertyWidgetEventTranslatorPlayerTest1.cpp
+    )
+endif()
+
+create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ${TEST_SOURCES}
   #EXTRA_INCLUDE TestingMacros.h
   )
@@ -58,31 +80,28 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRARIES})
+#
+# If CTK_USE_QTTESTING is ON
+#
+if(CTK_USE_QTTESTING)
+  ctkQtTesting(Tests TEST_MOC_SOURCES TEST_UI_FORMS Tests_RESOURCES)
+endif()
 
-SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
+set(TEST_MOC_CPP)
+if(TEST_MOC_SOURCES)
+  QT4_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
+endif()
+set(TEST_UI_CPP)
+if(TEST_UI_FORMS)
+  QT4_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
+endif()
+set(Tests_RESOURCES_SRCS)
+QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME}
-            -D "${CTKData_DIR}/Data"
-            -V "${CTKData_DIR}/Baseline/Libs/Visualization/VTK/Widgets"
-            )
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-ENDMACRO( SIMPLE_TEST  )
-
-MACRO( MAGNIFY_WIDGET_TEST  TESTNAME  TESTTYPE  SIZE  MAGNIFICATION)
-  ADD_TEST( ${TESTNAME}${TESTTYPE} ${KIT_TESTS} ${TESTNAME}
-            -D "${CTKData_DIR}/Data"
-            -V "${CTKData_DIR}/Baseline/Libs/Visualization/VTK/Widgets"
-            -T "${TESTTYPE}"
-            -S "${SIZE}"
-            -M "${MAGNIFICATION}"
-            )
-  SET_PROPERTY(TEST ${TESTNAME}${TESTTYPE} PROPERTY LABELS ${PROJECT_NAME})
-ENDMACRO( MAGNIFY_WIDGET_TEST  )
+add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
+target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRARIES})
 
 #
 # Add Tests
@@ -101,7 +120,7 @@ SIMPLE_TEST( ctkTransferFunctionViewTest2 )
 SIMPLE_TEST( ctkTransferFunctionViewTest3 )
 SIMPLE_TEST( ctkTransferFunctionViewTest4 )
 SIMPLE_TEST( ctkTransferFunctionViewTest5 )
-IF (CTK_USE_CHARTS)
+if(CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKChartViewTest1 )
   SIMPLE_TEST( ctkVTKVolumePropertyWidgetTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest1 )
@@ -111,7 +130,7 @@ IF (CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest2 )
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest3 )
-ENDIF(CTK_USE_CHARTS)
+endif()
 SIMPLE_TEST( ctkVTKRenderViewTest1 )
 SIMPLE_TEST( ctkVTKSliceViewTest1 )
 SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetTest1 )
@@ -122,24 +141,54 @@ SIMPLE_TEST( ctkVTKWidgetsUtilsTestGrabWidget )
 #
 # Add Tests expecting CTKData to be set
 #
-IF(EXISTS "${CTKData_DIR}")
+if(EXISTS "${CTKData_DIR}")
+  set(baseline_relative_location Libs/Visualization/VTK/Widgets)
+
+  macro(MAGNIFY_WIDGET_TEST TESTNAME TESTTYPE SIZE MAGNIFICATION)
+    SIMPLE_TEST_WITH_DATA(${TESTNAME}${TESTTYPE} ${baseline_relative_location}
+      -T "${TESTTYPE}"
+      -S "${SIZE}"
+      -M "${MAGNIFICATION}"
+      )
+  endmacro()
+
   #
   # Dependencies required so that these tests won't run in parallel
   #
   MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 OddOdd 341 17 )
   MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 EvenEven 340 18 )
-  SET_TESTS_PROPERTIES( ctkVTKMagnifyViewTest2EvenEven
+  set_tests_properties( ctkVTKMagnifyViewTest2EvenEven
                         PROPERTIES DEPENDS
                         ctkVTKMagnifyViewTest2OddOdd )
   MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 OddEven 341 18 )
-  SET_TESTS_PROPERTIES( ctkVTKMagnifyViewTest2OddEven
+  set_tests_properties( ctkVTKMagnifyViewTest2OddEven
                         PROPERTIES DEPENDS
                         ctkVTKMagnifyViewTest2EvenEven )
   MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 EvenOdd 340 17 )
-  SET_TESTS_PROPERTIES( ctkVTKMagnifyViewTest2EvenOdd
+  set_tests_properties( ctkVTKMagnifyViewTest2EvenOdd
                         PROPERTIES DEPENDS
                         ctkVTKMagnifyViewTest2OddEven )
-  SIMPLE_TEST( ctkVTKSliceViewTest2 )
-  SIMPLE_TEST( ctkVTKRenderViewTest2 )
-ENDIF()
 
+  SIMPLE_TEST_WITH_DATA( ctkVTKRenderViewTest2 ${baseline_relative_location})
+  SIMPLE_TEST_WITH_DATA( ctkVTKSliceViewTest2 ${baseline_relative_location})
+endif()
+
+#
+# Add Tests expecting CTK_USE_QTTESTING to be set
+#
+if(CTK_USE_QTTESTING)
+    SIMPLE_TEST( ctkVTKDataSetArrayComboBoxEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKDataSetModelEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKMagnifyViewEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKMatrixWidgetEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKRenderViewEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKScalarBarWidgetEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKScalarsToColorsUtilsEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKScalarsToColorsViewEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKScalarsToColorsWidgetEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKSliceViewEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKTextPropertyWidgetEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKThresholdWidgetEventTranslatorPlayerTest1 )
+#    SIMPLE_TEST( ctkVTKVolumePropertyWidgetEventTranslatorPlayerTest1 )
+endif()

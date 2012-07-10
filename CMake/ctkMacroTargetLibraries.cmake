@@ -27,211 +27,212 @@
 #! Without specifying the second argument, the current folder will be used.
 #!
 #! \ingroup CMakeUtilities
-FUNCTION(ctkFunctionGetTargetLibraries varname)
+function(ctkFunctionGetTargetLibraries varname)
 
-  SET(expanded_target_library_list)
+  set(expanded_target_library_list)
 
-  SET(TARGET_DIRECTORY ${ARGV1})
-  IF("${TARGET_DIRECTORY}" STREQUAL "")
-    SET(TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  ENDIF()
+  set(TARGET_DIRECTORY ${ARGV1})
+  if("${TARGET_DIRECTORY}" STREQUAL "")
+    set(TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
 
-  SET(filepath ${TARGET_DIRECTORY}/target_libraries.cmake)
-  SET(manifestpath ${TARGET_DIRECTORY}/manifest_headers.cmake)
+  set(filepath ${TARGET_DIRECTORY}/target_libraries.cmake)
+  set(manifestpath ${TARGET_DIRECTORY}/manifest_headers.cmake)
 
   # Check if "target_libraries.cmake" or "manifest_headers.cmake" file exists
-  IF(NOT EXISTS ${filepath} AND NOT EXISTS ${manifestpath})
-    MESSAGE(FATAL_ERROR "${filepath} or ${manifestpath} doesn't exists !")
-  ENDIF()
+  if(NOT EXISTS ${filepath} AND NOT EXISTS ${manifestpath})
+    message(FATAL_ERROR "${filepath} or ${manifestpath} doesn't exists !")
+  endif()
 
   # Make sure the variable is cleared
-  SET(target_libraries )
-  SET(Require-Plugin )
+  set(target_libraries )
+  set(Require-Plugin )
 
-  IF(EXISTS ${filepath})
+  if(EXISTS ${filepath})
     # Let's make sure target_libraries contains only strings
-    FILE(STRINGS "${filepath}" stringtocheck) # read content of 'filepath' into 'stringtocheck'
-    STRING(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
-    FOREACH(incorrect_element ${incorrect_elements})
-      STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
-      MESSAGE(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
-    ENDFOREACH()
+    file(STRINGS "${filepath}" stringtocheck) # read content of 'filepath' into 'stringtocheck'
+    string(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    foreach(incorrect_element ${incorrect_elements})
+      string(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      message(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
+    endforeach()
 
-    INCLUDE(${filepath})
+    include(${filepath})
 
     # Loop over all target library, if it does *NOT* start with "CTK",
     # let's resolve the variable to access its content
-    FOREACH(target_library ${target_libraries})
-      IF(${target_library} MATCHES "^CTK[a-zA-Z0-9]+$" OR
+    foreach(target_library ${target_libraries})
+      if(${target_library} MATCHES "^CTK[a-zA-Z0-9]+$" OR
          ${target_library} MATCHES "^org_commontk_[a-zA-Z0-9_]+$")
-        LIST(APPEND expanded_target_library_list ${target_library})
-      ELSE()
-        LIST(APPEND expanded_target_library_list "${${target_library}}")
-      ENDIF()
-    ENDFOREACH()
-  ENDIF()
+        list(APPEND expanded_target_library_list ${target_library})
+      else()
+        list(APPEND expanded_target_library_list "${${target_library}}")
+      endif()
+    endforeach()
+  endif()
 
-  IF(EXISTS ${manifestpath})
+  if(EXISTS ${manifestpath})
     # Let's make sure Require-Plugins contains only strings
-    FILE(STRINGS "${manifestpath}" stringtocheck) # read content of 'manifestpath' into 'stringtocheck'
-    STRING(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
-    FOREACH(incorrect_element ${incorrect_elements})
-      STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
-      MESSAGE(FATAL_ERROR "In ${manifestpath}, ${incorrect_element} should be replaced by ${correct_element}")
-    ENDFOREACH()
+    file(STRINGS "${manifestpath}" stringtocheck) # read content of 'manifestpath' into 'stringtocheck'
+    string(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    foreach(incorrect_element ${incorrect_elements})
+      string(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      message(FATAL_ERROR "In ${manifestpath}, ${incorrect_element} should be replaced by ${correct_element}")
+    endforeach()
 
-    INCLUDE(${manifestpath})
+    include(${manifestpath})
 
     # Loop over all plugin dependencies,
-    FOREACH(plugin_symbolicname ${Require-Plugin})
-      STRING(REPLACE "." "_" plugin_library ${plugin_symbolicname})
-      LIST(APPEND expanded_target_library_list ${plugin_library})
-    ENDFOREACH()
-  ENDIF()
+    foreach(plugin_symbolicname ${Require-Plugin})
+      string(REPLACE "." "_" plugin_library ${plugin_symbolicname})
+      list(APPEND expanded_target_library_list ${plugin_library})
+    endforeach()
+  endif()
   
   # Pass the list of target libraries to the caller
-  SET(${varname} ${expanded_target_library_list} PARENT_SCOPE)
+  set(${varname} ${expanded_target_library_list} PARENT_SCOPE)
 
-ENDFUNCTION()
+endfunction()
 
 #! \ingroup CMakeUtilities
-FUNCTION(ctkFunctionCollectTargetLibraryNames target_dir varname)
+function(ctkFunctionCollectTargetLibraryNames target_dir varname)
 
-  SET(target_library_list)
-  #MESSAGE(STATUS target:${target})
-  SET(lib_targets)
+  set(target_library_list)
+  #message(STATUS target:${target})
+  set(lib_targets)
 
-  SET(filepath ${target_dir}/target_libraries.cmake)
-  SET(manifestpath ${target_dir}/manifest_headers.cmake)
+  set(filepath ${target_dir}/target_libraries.cmake)
+  set(manifestpath ${target_dir}/manifest_headers.cmake)
 
   # Check if "target_libraries.cmake" or "manifest_headers.cmake" file exists
-  IF(NOT EXISTS ${filepath} AND NOT EXISTS ${manifestpath})
-    MESSAGE(FATAL_ERROR "${filepath} or ${manifestpath} doesn't exists !")
-  ENDIF()
+  if(NOT EXISTS ${filepath} AND NOT EXISTS ${manifestpath})
+    message(FATAL_ERROR "${filepath} or ${manifestpath} doesn't exists !")
+  endif()
 
   # Make sure the variable is cleared
-  SET(target_libraries )
-  SET(Require-Plugin )
+  set(target_libraries )
+  set(Require-Plugin )
 
-  IF(EXISTS ${filepath})
+  if(EXISTS ${filepath})
     # Let's make sure target_libraries contains only strings
-    FILE(STRINGS "${filepath}" stringtocheck) # read content of 'filepath' into 'stringtocheck'
-    STRING(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
-    FOREACH(incorrect_element ${incorrect_elements})
-      STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
-      MESSAGE(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
-    ENDFOREACH()
+    file(STRINGS "${filepath}" stringtocheck) # read content of 'filepath' into 'stringtocheck'
+    string(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    foreach(incorrect_element ${incorrect_elements})
+      string(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      message(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
+    endforeach()
 
-    INCLUDE(${filepath})
+    include(${filepath})
 
-    LIST(APPEND target_library_list ${target_libraries})
-  ENDIF()
+    list(APPEND target_library_list ${target_libraries})
+  endif()
 
-  IF(EXISTS ${manifestpath})
+  if(EXISTS ${manifestpath})
     # Let's make sure Require-Plugins contains only strings
-    FILE(STRINGS "${manifestpath}" stringtocheck) # read content of 'manifestpath' into 'stringtocheck'
-    STRING(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
-    FOREACH(incorrect_element ${incorrect_elements})
-      STRING(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
-      MESSAGE(FATAL_ERROR "In ${manifestpath}, ${incorrect_element} should be replaced by ${correct_element}")
-    ENDFOREACH()
+    file(STRINGS "${manifestpath}" stringtocheck) # read content of 'manifestpath' into 'stringtocheck'
+    string(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    foreach(incorrect_element ${incorrect_elements})
+      string(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      message(FATAL_ERROR "In ${manifestpath}, ${incorrect_element} should be replaced by ${correct_element}")
+    endforeach()
 
-    INCLUDE(${manifestpath})
+    include(${manifestpath})
 
     # Loop over all plugin dependencies
-    FOREACH(plugin_symbolicname ${Require-Plugin})
-      STRING(REPLACE "." "_" plugin_library ${plugin_symbolicname})
-      LIST(APPEND target_library_list ${plugin_library})
-    ENDFOREACH()
-  ENDIF()
+    foreach(plugin_symbolicname ${Require-Plugin})
+      string(REPLACE "." "_" plugin_library ${plugin_symbolicname})
+      list(APPEND target_library_list ${plugin_library})
+    endforeach()
+  endif()
 
-  LIST(REMOVE_DUPLICATES target_library_list)
+  list(REMOVE_DUPLICATES target_library_list)
   
   # Pass the list of target libraries to the caller
-  SET(${varname} ${target_library_list} PARENT_SCOPE)
-ENDFUNCTION()
+  set(${varname} ${target_library_list} PARENT_SCOPE)
+endfunction()
 
 #! \ingroup CMakeUtilities
-MACRO(ctkMacroCollectAllTargetLibraries targets subdir varname)
+macro(ctkMacroCollectAllTargetLibraries targets subdir varname)
 
-  SET(option_prefix)
-  IF(${subdir} STREQUAL "Libs")
-    SET(option_prefix CTK_LIB_)
-  ELSEIF(${subdir} STREQUAL "Plugins")
-    SET(option_prefix CTK_PLUGIN_)
-  ELSEIF(${subdir} STREQUAL "Applications")
-    SET(option_prefix CTK_APP_)
-  ELSE()
-    MESSAGE(FATAL_ERROR "Unknown subdir:${subdir}, expected value are: 'Libs, 'Plugins' or 'Applications'")
-  ENDIF()
+  set(option_prefix)
+  if(${subdir} STREQUAL "Libs")
+    set(option_prefix CTK_LIB_)
+  elseif(${subdir} STREQUAL "Plugins")
+    set(option_prefix CTK_PLUGIN_)
+  elseif(${subdir} STREQUAL "Applications")
+    set(option_prefix CTK_APP_)
+  else()
+    message(FATAL_ERROR "Unknown subdir:${subdir}, expected value are: 'Libs, 'Plugins' or 'Applications'")
+  endif()
   
-  FOREACH(target ${targets})
+  foreach(target ${targets})
 
     # Make sure the variable is cleared
-    SET(target_libraries )
+    set(target_libraries )
 
-    SET(option_name ${option_prefix}${target})
-    #MESSAGE(STATUS option_name:${option_name})
+    set(option_name ${option_prefix}${target})
+    #message(STATUS option_name:${option_name})
 
-    SET(target_dir "${CTK_SOURCE_DIR}/${subdir}/${target}")
-    #MESSAGE(STATUS target_dir:${target_dir})
+    set(target_dir "${CTK_SOURCE_DIR}/${subdir}/${target}")
+    #message(STATUS target_dir:${target_dir})
 
-    SET(target_libraries)
+    set(target_libraries)
     
     # Collect target libraries only if option is ON
-    IF(${option_name})
+    if(${option_name})
       ctkFunctionCollectTargetLibraryNames(${target_dir} target_libraries)
-    ENDIF()
+    endif()
 
-    IF(target_libraries)
-      LIST(APPEND ${varname} ${target_libraries})
-      LIST(REMOVE_DUPLICATES ${varname})
-    ENDIF()
-  ENDFOREACH()
+    if(target_libraries)
+      list(APPEND ${varname} ${target_libraries})
+      list(REMOVE_DUPLICATES ${varname})
+    endif()
+  endforeach()
   
-ENDMACRO()
+endmacro()
 
 #!
 #! Extract all library names which are build within this project
 #!
 #! \ingroup CMakeUtilities
-MACRO(ctkMacroGetAllProjectTargetLibraries all_target_libraries varname)
+macro(ctkMacroGetAllProjectTargetLibraries all_target_libraries varname)
   # Allow external projects to override the set of internal targets
-  IF(COMMAND GetMyTargetLibraries)
+  if(COMMAND GetMyTargetLibraries)
     GetMyTargetLibraries("${all_target_libraries}" ${varname})
-  ELSE()
-    SET(re_ctklib "^(c|C)(t|T)(k|K)[a-zA-Z0-9]+$")
-    SET(re_ctkplugin "^org_commontk_[a-zA-Z0-9_]+$")
-    SET(_tmp_list)
-    LIST(APPEND _tmp_list ${all_target_libraries})
-    #MESSAGE("calling ctkMacroListFilter with varname:${varname}")
+  else()
+    set(re_ctklib "^(c|C)(t|T)(k|K)[a-zA-Z0-9]+$")
+    set(re_ctkplugin "^org_commontk_[a-zA-Z0-9_]+$")
+    set(_tmp_list)
+    list(APPEND _tmp_list ${all_target_libraries})
+    #message("calling ctkMacroListFilter with varname:${varname}")
     ctkMacroListFilter(_tmp_list re_ctklib re_ctkplugin OUTPUT_VARIABLE ${varname})
-    #MESSAGE(STATUS "getallctklibs from ${all_target_libraries}")
-    #MESSAGE(STATUS varname:${varname}:${${varname}})
-  ENDIF()
-ENDMACRO()
+    #message(STATUS "getallctklibs from ${all_target_libraries}")
+    #message(STATUS varname:${varname}:${${varname}})
+  endif()
+endmacro()
 
-#
-# Extract all library names *NOT* being build within this project
-#
-MACRO(ctkMacroGetAllNonProjectTargetLibraries all_target_libraries varname)
+#!
+#! Extract all library names *NOT* being build within this project
+#!
+#! \ingroup CMakeUtilities
+macro(ctkMacroGetAllNonProjectTargetLibraries all_target_libraries varname)
   ctkMacroGetAllProjectTargetLibraries("${all_target_libraries}" all_project_libraries)
-  SET(_tmp_list ${all_target_libraries})
-  IF(all_project_libraries)
-    LIST(REMOVE_ITEM _tmp_list ${all_project_libraries})
-  ENDIF()
-  SET(${varname} ${_tmp_list})
-  #MESSAGE(STATUS varname:${varname}:${${varname}})
-ENDMACRO()
+  set(_tmp_list ${all_target_libraries})
+  if(all_project_libraries)
+    list(REMOVE_ITEM _tmp_list ${all_project_libraries})
+  endif()
+  set(${varname} ${_tmp_list})
+  #message(varname:${varname}:${${varname}})
+endmacro()
 
 #! \ingroup CMakeUtilities
-MACRO(ctkMacroShouldAddExternalProject libraries_variable_name resultvar)
-  IF(NOT DEFINED NON_CTK_DEPENDENCIES)
-    MESSAGE(FATAL_ERROR "Variable NON_CTK_DEPENDENCIES is undefined !")
-  ENDIF() 
-  LIST(FIND NON_CTK_DEPENDENCIES ${libraries_variable_name} index)
-  SET(${resultvar} FALSE)
-  IF(${index} GREATER -1)
-    SET(${resultvar} TRUE)
-  ENDIF()
-ENDMACRO()
+macro(ctkMacroShouldAddExternalProject libraries_variable_name resultvar)
+  set(${resultvar} FALSE)
+  if(DEFINED NON_CTK_DEPENDENCIES)
+    list(FIND NON_CTK_DEPENDENCIES ${libraries_variable_name} index)
+  
+    if(${index} GREATER -1)
+      set(${resultvar} TRUE)
+    endif()
+  endif()
+endmacro()

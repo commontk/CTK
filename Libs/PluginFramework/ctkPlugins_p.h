@@ -67,6 +67,8 @@ private:
    */
   QMutex objectLock;
 
+  void checkIllegalState() const;
+
 public:
 
   /**
@@ -157,7 +159,7 @@ public:
    *
    * @return A List of ctkPlugins.
    */
-  QList<ctkPlugin*> getActivePlugins() const;
+  QList<QSharedPointer<ctkPlugin> > getActivePlugins() const;
 
 
   /**

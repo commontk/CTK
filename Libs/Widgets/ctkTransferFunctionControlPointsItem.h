@@ -32,6 +32,7 @@
 class ctkTransferFunctionControlPointsItemPrivate;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkTransferFunctionControlPointsItem: public ctkTransferFunctionItem
 {
   Q_OBJECT

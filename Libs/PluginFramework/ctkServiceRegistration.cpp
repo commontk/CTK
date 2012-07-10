@@ -51,7 +51,7 @@ ctkServiceRegistration::ctkServiceRegistration(const ctkServiceRegistration& reg
 ctkServiceRegistration::ctkServiceRegistration(ctkServiceRegistrationPrivate* registrationPrivate)
   : d_ptr(registrationPrivate)
 {
-  d_func()->ref.ref();
+  if(d_func()) d_func()->ref.ref();
 }
 
 //----------------------------------------------------------------------------
@@ -94,8 +94,8 @@ ctkServiceReference ctkServiceRegistration::getReference() const
 {
   Q_D(const ctkServiceRegistration);
 
-  if (!d) throw std::logic_error("ctkServiceRegistration object invalid");
-  if (!d->available) throw std::logic_error("Service is unregistered");
+  if (!d) throw ctkIllegalStateException("ctkServiceRegistration object invalid");
+  if (!d->available) throw ctkIllegalStateException("Service is unregistered");
 
   return d->reference;
 }
@@ -104,7 +104,7 @@ ctkServiceReference ctkServiceRegistration::getReference() const
 void ctkServiceRegistration::setProperties(const ctkDictionary& props)
 {
   Q_D(ctkServiceRegistration);
-  if (!d) throw std::logic_error("ctkServiceRegistration object invalid");
+  if (!d) throw ctkIllegalStateException("ctkServiceRegistration object invalid");
 
   QMutexLocker lock(&d->eventLock);
 
@@ -130,7 +130,7 @@ void ctkServiceRegistration::setProperties(const ctkDictionary& props)
     }
     else
     {
-      throw std::logic_error("Service is unregistered");
+      throw ctkIllegalStateException("Service is unregistered");
     }
   }
   d->plugin->fwCtx->listeners.serviceChanged(
@@ -146,7 +146,7 @@ void ctkServiceRegistration::setProperties(const ctkDictionary& props)
 void ctkServiceRegistration::unregister()
 {
   Q_D(ctkServiceRegistration);
-  if (!d) throw std::logic_error("ctkServiceRegistration object invalid");
+  if (!d) throw ctkIllegalStateException("ctkServiceRegistration object invalid");
 
   if (d->unregistering) return; // Silently ignore redundant unregistration.
   {
@@ -163,7 +163,7 @@ void ctkServiceRegistration::unregister()
     }
     else
     {
-      throw std::logic_error("Service is unregistered");
+      throw ctkIllegalStateException("Service is unregistered");
     }
   }
 
@@ -191,18 +191,18 @@ void ctkServiceRegistration::unregister()
                                                                        *this,
                                                                        obj);
           }
-          catch (const std::exception& ue)
+          catch (const ctkException& ue)
           {
-            ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::ERROR, d->plugin->q_func(), ue);
-            d->plugin->fwCtx->listeners
-                .emitFrameworkEvent(pfwEvent);
+            ctkPluginFrameworkEvent pfwEvent(ctkPluginFrameworkEvent::PLUGIN_ERROR, d->plugin->q_func(), ue);
+            d->plugin->fwCtx->listeners.emitFrameworkEvent(pfwEvent);
           }
         }
       }
       d->plugin = 0;
       d->dependents.clear();
       d->service = 0;
-      d->serviceInstances.clear();;
+      d->serviceInstances.clear();
+      d->reference = 0;
       d->unregistering = false;
     }
   }
@@ -228,7 +228,7 @@ ctkServiceRegistration& ctkServiceRegistration::operator=(const ctkServiceRegist
 {
   ctkServiceRegistrationPrivate* curr_d = d_func();
   d_ptr = registration.d_ptr;
-  d_ptr->ref.ref();
+  if (d_ptr) d_ptr->ref.ref();
 
   if (curr_d && !curr_d->ref.deref())
     delete curr_d;

@@ -27,6 +27,7 @@
 // CTK includes
 #include "ctkWidgetsExport.h"
 
+/// \ingroup Widgets
 /// ctkFittedTextBrowser is a QTextBrowser that adapts its height depending
 /// on its contents and the width available. It always tries to show the whole
 /// contents. ctkFittedTextBrowser doesn't resize itself but acts on the
@@ -48,7 +49,7 @@ public:
   /// Reimplemented for internal reasons
   virtual int heightForWidth(int width) const;
 
-protected slots:
+protected Q_SLOTS:
   void heightForWidthMayHaveChanged();
 
 protected:

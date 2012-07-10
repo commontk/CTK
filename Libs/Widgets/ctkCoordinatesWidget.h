@@ -27,6 +27,7 @@
 // CTK includes
 #include "ctkWidgetsExport.h"
 
+/// \ingroup Widgets
 ///
 /// ctkCoordinatesWidget is a simple container of dimension coordinates.
 /// For each coordinate a double spinbox is associated, everytime a value is
@@ -90,14 +91,14 @@ public:
   void setCoordinates(double* pos);
   double const * coordinates()const;
 
-signals:
+Q_SIGNALS:
   ///
   /// valueChanged is fired anytime a coordinate is modified, the returned
   /// value is the point coordinates
   /// TODO: Don't fire the signal if the new values are not changed 
   void coordinatesChanged(double* pos);
 
-protected slots:
+protected Q_SLOTS:
   void updateCoordinate(double);
   void updateCoordinates();
 

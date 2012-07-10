@@ -25,8 +25,16 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
+ctkConfigurationException::ctkConfigurationException(const QString& property, const QString& reason)
+  : ctkRuntimeException(property + " : " + reason),
+    property(property), reason(reason)
+{
+
+}
+
+//----------------------------------------------------------------------------
 ctkConfigurationException::ctkConfigurationException(const QString& property, const QString& reason,
-                          const std::exception* cause)
+                                                     const ctkException& cause)
   : ctkRuntimeException(property + " : " + reason, cause),
     property(property), reason(reason)
 {
@@ -47,6 +55,29 @@ ctkConfigurationException& ctkConfigurationException::operator=(const ctkConfigu
   property = o.property;
   reason = o.reason;
   return *this;
+}
+
+//----------------------------------------------------------------------------
+ctkConfigurationException::~ctkConfigurationException() throw()
+{
+}
+
+//----------------------------------------------------------------------------
+const char* ctkConfigurationException::name() const throw()
+{
+  return "ctkConfigurationException";
+}
+
+//----------------------------------------------------------------------------
+ctkConfigurationException* ctkConfigurationException::clone() const
+{
+  return new ctkConfigurationException(*this);
+}
+
+//----------------------------------------------------------------------------
+void ctkConfigurationException::rethrow() const
+{
+  throw *this;
 }
 
 //----------------------------------------------------------------------------

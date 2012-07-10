@@ -33,6 +33,7 @@ class vtkChartXY;
 class vtkContextScene;
 class vtkPlot;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public QVTKWidget
 {
   Q_OBJECT
@@ -45,12 +46,21 @@ public:
   virtual ~ctkVTKChartView();
 
   /// Generic function to add a custom plot. \a plot is added into the chart
-  virtual void addPlot(vtkPlot* plot);
+  /// Emit the plotAdded(vtkPlot*) signal.
+  Q_INVOKABLE virtual void addPlot(vtkPlot* plot);
+
+  /// Remove the plot from the chart. Do nothing if plot is not in the chart.
+  /// Emit the plotRemoved(vtkPlot*) signal.
+  Q_INVOKABLE virtual void removePlot(vtkPlot* plot);
+
+  /// Return the id of the plot in the chart.
+  /// -1 if the plot is not found in the chart
+  Q_INVOKABLE vtkIdType plotIndex(vtkPlot* plot);
 
   /// Utility function that returns the view chart. It can be used for customizing
   /// the chart display options (axes, legend...)
-  vtkChartXY* chart()const;
-  vtkContextScene* scene()const;
+  Q_INVOKABLE vtkChartXY* chart()const;
+  Q_INVOKABLE vtkContextScene* scene()const;
 
   /// Title that appears inside the view
   QString title()const;
@@ -69,13 +79,20 @@ public:
   void chartBounds(double bounds[8])const;
   void setChartUserBounds(double* bounds);
   void chartUserBounds(double* bounds)const;
+  
 
+public Q_SLOTS:
+
+  /// Remove all the plots from the chart
+  void removeAllPlots();
+  
   /// 
   virtual void setAxesToChartBounds();
   virtual void boundAxesToChartBounds();
 
-signals:
+Q_SIGNALS:
   void plotAdded(vtkPlot* plot);
+  void plotRemoved(vtkPlot* plot);
   /// Fired anytime the bound of a plot modifies the overal bounds
   void boundsChanged();
   /// Fired anytime an axis is modified.

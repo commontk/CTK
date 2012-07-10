@@ -24,7 +24,7 @@ function(ctkFunctionExtractPluginTargets my_opts my_filter var_targets)
   endif()
 
   if(NOT valid_input)
-    MESSAGE(FATAL_ERROR "${error_msg}")
+    message(FATAL_ERROR "${error_msg}")
   endif()
 
   set(plugin_targets )

@@ -24,25 +24,23 @@
 #include <QSetIterator>
 
 #include "ctkEventHandlerWrapper_p.h"
+#include "ctkBusEvent.h"
+#include "ctkEventDefinitions.h"
 
 
-ctkEventBusImpl* ctkEventBusImpl::instance()
-{
-  static ctkEventBusImpl inst;
-  return &inst;
-}
+#define ctkEventArgument(type,data) QArgument<type >(#type, data)
 
 ctkEventBusImpl::ctkEventBusImpl()
 {
-
+    m_EventBusManager = ctkEventBus::ctkEventBusManager::instance();
 }
 
-void ctkEventBusImpl::postEvent(const ctkEvent& event)
+void ctkEventBusImpl::postEvent(const ::ctkEvent& event)
 {
   dispatchEvent(event, true);
 }
 
-void ctkEventBusImpl::sendEvent(const ctkEvent& event)
+void ctkEventBusImpl::sendEvent(const ::ctkEvent& event)
 {
   dispatchEvent(event, false);
 }
@@ -50,60 +48,82 @@ void ctkEventBusImpl::sendEvent(const ctkEvent& event)
 void ctkEventBusImpl::publishSignal(const QObject* publisher, const char* signal, const QString& topic,
                                     Qt::ConnectionType type)
 {
+    Q_UNUSED(type);
+    ctkBusEvent *mesbEvent = new ctkBusEvent(topic, ctkEventBus::ctkEventTypeLocal, ctkEventBus::ctkSignatureTypeSignal, const_cast<QObject *>(publisher), signal);
+    m_EventBusManager->addEventProperty(*mesbEvent);
+}
+
+void ctkEventBusImpl::unpublishSignal(const QObject *publisher, const char *signal, const QString &topic)
+{
   Q_UNUSED(publisher)
   Q_UNUSED(signal)
   Q_UNUSED(topic)
-  Q_UNUSED(type)
+  //TODO implement
 }
 
-QString ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member, const ctkProperties& properties)
+qlonglong ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member,
+                                         const ctkDictionary& properties, Qt::ConnectionType type)
 {
+  Q_UNUSED(type)
 
-  // TODO check for duplicates
+    ctkDictionary toSend(properties);
+    QString topic = properties.value(TOPIC).toString();
+    toSend.insert(TOPIC, topic);
+    toSend.insert(TYPE, ctkEventBus::ctkEventTypeLocal);
+    toSend.insert(SIGTYPE, ctkEventBus::ctkSignatureTypeCallback);
+    QVariant var;
+    var.setValue(const_cast<QObject *>(subscriber));
+    toSend.insert(OBJECT, var);
+    toSend.insert(SIGNATURE,member);
+    ctkBusEvent *mesbEvent = new ctkBusEvent(topic, toSend);
+    m_EventBusManager->addEventProperty(*mesbEvent);
 
-  ctkEventHandlerWrapper* wrapper = new ctkEventHandlerWrapper(subscriber, member, properties);
-  if (wrapper->init())
-  {
-    bucket(wrapper);
-  }
-
-  // TODO return id
-  return QString();
+    return topic.toLongLong();
 }
 
-void ctkEventBusImpl::updateProperties(const QString& subscriptionId, const ctkProperties& properties)
+void ctkEventBusImpl::unsubscribeSlot(qlonglong subscriptionId) {
+  Q_UNUSED(subscriptionId)
+  // @@@@to be implemented
+}
+
+bool ctkEventBusImpl::updateProperties(qlonglong subscriptionId, const ctkDictionary& properties)
 {
   Q_UNUSED(subscriptionId)
   Q_UNUSED(properties)
+  // @@@@to be implemented
+  return false;
 }
 
 void ctkEventBusImpl::dispatchEvent(const ctkEvent& event, bool isAsync)
 {
   Q_UNUSED(isAsync)
-
-  QString topic = event.topic();
-
-  QSet<ctkEventHandlerWrapper*> eventHandlers = this->handlers(topic);
-  if (eventHandlers.empty()) return;
-
-  QSetIterator<ctkEventHandlerWrapper*> iter(eventHandlers);
-  while (iter.hasNext())
-  {
-    iter.next()->handleEvent(event);
+  ctkBusEvent *mebEvent = new ctkBusEvent("",ctkEventBus::ctkEventTypeRemote,ctkEventBus::ctkSignatureTypeSignal, this, "no");
+  //cycle for all other elements
+  QStringList keyList = event.getPropertyNames();
+  QStringList::const_iterator constIterator;
+  for (constIterator = keyList.constBegin(); constIterator != keyList.constEnd(); ++constIterator) {
+      QVariant value = event.getProperty((*constIterator));
+      //qDebug() << (*constIterator) << " " << value.toString();
+      (*mebEvent)[(*constIterator)] = event.getProperty((*constIterator));
   }
+
+  typedef QList<QGenericArgument> ctkEventArgumentList;
+
+  ctkEventArgumentList list;
+  list.append(Q_ARG(QVariantList,event.getProperty("localEvent").toList()));
+  list.append(Q_ARG(QVariantList,event.getProperty("localData").toList()));
+
+  m_EventBusManager->notifyEvent(*mebEvent, &list);
 }
 
-void ctkEventBusImpl::bucket(ctkEventHandlerWrapper* wrapper)
-{
-  // TODO bucket logic
-  globalWildcard.push_back(wrapper);
+bool ctkEventBusImpl::createServer(const QString &communication_protocol, unsigned int listen_port) {
+        return m_EventBusManager->createServer(communication_protocol,listen_port);
 }
 
-QSet<ctkEventHandlerWrapper*> ctkEventBusImpl::handlers(const QString& topic)
-{
-  Q_UNUSED(topic)
-
-  // TODO
-  return globalWildcard.toSet();
+void ctkEventBusImpl::startListen() {
+        m_EventBusManager->startListen();
 }
 
+bool ctkEventBusImpl::createClient(const QString &communication_protocol, const QString &server_host, unsigned int port) {
+        return m_EventBusManager->createClient(communication_protocol,server_host,port);
+}

@@ -36,6 +36,8 @@ class CTK_DUMMY_EXPORT ctkDummyPlugin: public QObject//, public ctkDummyInterfac
 //  Q_INTERFACES(ctkDummyInterface)
 public:
   ctkDummyPlugin(QObject* parent = 0);
+  ~ctkDummyPlugin();
+
   virtual void dummyInterface();
 };
 

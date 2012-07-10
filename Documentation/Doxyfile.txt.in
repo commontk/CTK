@@ -35,7 +35,7 @@ PROJECT_NUMBER         = @CTK_VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description for a project that appears at the top of each page and should give viewer a quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = "The <a href=\"http://www.commontk.org\">Common Toolkit</a> is a community effort to provide support code for medical image analysis, surgical navigation, and related projects."
+PROJECT_BRIEF          = "The Common Toolkit is a community effort to provide support code for medical image analysis, surgical navigation, and related projects."
 
 # With the PROJECT_LOGO tag one can specify an logo or icon that is
 # included in the documentation. The maximum height of the logo should not
@@ -685,7 +685,8 @@ RECURSIVE              = YES
 EXCLUDE                = @CTK_BINARY_DIR@ \
                          @CTK_SOURCE_DIR@/Utilities \
                          @CTK_SOURCE_DIR@/CMake/ctkDashboardDriverScript.cmake \
-                         @CTK_SOURCE_DIR@/CMake/ctkDashboardScript.TEMPLATE.cmake
+                         @CTK_SOURCE_DIR@/CMake/ctkDashboardScript.TEMPLATE.cmake \
+                         @CTK_SOURCE_DIR@/Libs/Visualization/XIP
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -705,6 +706,7 @@ EXCLUDE_PATTERNS       = moc_*.cxx \
                          */Testing/* \
                          */Utilities/* \
                          */Widgets/Plugins/* \
+                         */Snippets/* \
                          @CTK_ADDITIONAL_EXCLUDE_PATTERN@
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
@@ -719,7 +721,8 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = @CTK_SOURCE_DIR@/Libs/Core/Documentation/Snippets/ \
+                         @CTK_SOURCE_DIR@/Libs/PluginFramework/Documentation/Snippets/
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp

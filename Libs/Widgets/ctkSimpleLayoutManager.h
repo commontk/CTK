@@ -28,17 +28,22 @@
 #include "ctkLayoutManager.h"
 class ctkSimpleLayoutManagerPrivate;
 
+/// \ingroup Widgets
 struct ctkWidgetInstanciator
 {
+  virtual void beginSetupLayout(){}
+  virtual void endSetupLayout(){}
   virtual QWidget* createWidget() = 0;
 };
 
+/// \ingroup Widgets
 template<class T>
 struct ctkTemplateInstanciator:public ctkWidgetInstanciator
 {
   virtual QWidget* createWidget() {return new T;}
 };
 
+/// \ingroup Widgets
 /// Utility class to access control on the DomDocument layout
 class CTK_WIDGETS_EXPORT ctkSimpleLayoutManager: public ctkLayoutManager
 {
@@ -59,8 +64,8 @@ public:
   ctkWidgetInstanciator* viewInstanciator()const;
 
 protected:
- virtual QWidget* viewFromXML(QDomElement viewElement);
-
+  virtual QWidget* viewFromXML(QDomElement viewElement);
+  virtual void setupLayout();
 private:
   Q_DECLARE_PRIVATE(ctkSimpleLayoutManager);
   Q_DISABLE_COPY(ctkSimpleLayoutManager);

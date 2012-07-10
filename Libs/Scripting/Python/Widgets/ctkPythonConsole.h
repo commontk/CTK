@@ -55,7 +55,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctkConsole.h>
 #include "ctkScriptingPythonWidgetsExport.h"
 
-
+/// \ingroup Scripting_Python_Widgets
 ///
 ///  Qt widget that provides an interactive "shell" interface to an embedded Python interpreter.
 ///  You can put an instance of ctkPythonConsole in a dialog or a window, and the user will be able
@@ -90,7 +90,7 @@ public:
   /// Set the string used as secondary prompt
   virtual void setPs2(const QString& newPs2);
 
-public slots:
+public Q_SLOTS:
 
 //  void executeScript(const QString&);
 

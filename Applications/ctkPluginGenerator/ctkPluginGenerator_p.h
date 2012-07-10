@@ -46,7 +46,7 @@ public:
     explicit ctkPluginGenerator(ctkPluginFramework* framework, QWidget *parent = 0);
     ~ctkPluginGenerator();
 
-protected slots:
+protected Q_SLOTS:
 
     void previewClicked();
     void generateClicked();

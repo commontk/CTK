@@ -23,7 +23,9 @@
 #ifndef CTKSERVICEEXCEPTION_H
 #define CTKSERVICEEXCEPTION_H
 
-#include "ctkRuntimeException.h"
+#include "ctkException.h"
+
+#include <ctkPluginFrameworkExport.h>
 
 /**
  * \ingroup PluginFramework
@@ -71,6 +73,15 @@ public:
   };
 
   /**
+   * Creates a <code>ctkServiceException</code> with the specified message and
+   * type.
+   *
+   * @param msg The associated message.
+   * @param type The type for this exception.
+   */
+  ctkServiceException(const QString& msg, const Type& type = UNSPECIFIED);
+
+  /**
    * Creates a <code>ctkServiceException</code> with the specified message,
    * type and exception cause.
    *
@@ -78,7 +89,7 @@ public:
    * @param type The type for this exception.
    * @param cause The cause of this exception.
    */
-  ctkServiceException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception* cause = 0);
+  ctkServiceException(const QString& msg, const Type& type, const ctkException& cause);
 
   /**
    * Creates a <code>ctkServiceException</code> with the specified message and
@@ -87,12 +98,27 @@ public:
    * @param msg The associated message.
    * @param cause The cause of this exception.
    */
-  ctkServiceException(const QString& msg, const std::exception* cause);
+  ctkServiceException(const QString& msg, const ctkException& cause);
 
   ctkServiceException(const ctkServiceException& o);
   ctkServiceException& operator=(const ctkServiceException& o);
 
-  ~ctkServiceException() throw() { }
+  ~ctkServiceException() throw();
+
+  /**
+   * @see ctkException::name()
+   */
+  const char* name() const throw();
+
+  /**
+   * @see ctkException::clone()
+   */
+  ctkServiceException* clone() const;
+
+  /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
 
   /**
    * Returns the type for this exception or <code>UNSPECIFIED</code> if the
@@ -110,10 +136,5 @@ private:
   Type type;
 
 };
-
-/**
- * \ingroup PluginFramework
- */
-CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkServiceException& exc);
 
 #endif // CTKSERVICEEXCEPTION_H

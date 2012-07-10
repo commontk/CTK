@@ -119,11 +119,16 @@ public:
   */
   bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
-signals:
+Q_SIGNALS:
+
   void dataAvailable();
+  
 private:
-signals:
+
+ Q_SIGNALS:
+
   void internalDataAvailable();
+  
 private:
 
   Q_DECLARE_PRIVATE(ctkDicomAbstractExchangeCache)

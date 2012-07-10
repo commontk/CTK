@@ -32,6 +32,7 @@ class QSize;
 
 class ctkCrosshairLabelPrivate;
 
+/// \ingroup Widgets
 /// Draws a crosshair onto a QLabel.  This widget is designed to be used to show
 /// a crosshair overlaid onto an image (the QLabel's pixmap).
 /// Since painting must be done in discrete pixels, this widget looks best

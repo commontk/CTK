@@ -41,7 +41,7 @@ public:
 
   void handleEvent(const ctkEvent& event);
 
-signals:
+Q_SIGNALS:
 
   void eventOccured(const ctkEvent& event);
 

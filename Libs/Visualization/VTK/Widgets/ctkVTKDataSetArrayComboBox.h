@@ -26,40 +26,48 @@
 
 // CTK includes
 #include "ctkVisualizationVTKWidgetsExport.h"
+#include "ctkVTKDataSetModel.h"
 class ctkVTKDataSetArrayComboBoxPrivate;
 
 class vtkDataArray;
 class vtkDataSet;
 
+/// \ingroup Visualization_VTK_Widgets
 ///
 /// QComboBox linked to vtkDataSet field arrays
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDataSetArrayComboBox : public QComboBox
 {
   Q_OBJECT
-  
+  Q_PROPERTY(ctkVTKDataSetModel::AttributeTypes attributeTypes READ attributeTypes WRITE setAttributeTypes)
+
 public:
   /// Superclass typedef
   typedef QComboBox Superclass;
-  
+
   /// Constructors
   explicit ctkVTKDataSetArrayComboBox(QWidget* parent = 0);
   virtual ~ctkVTKDataSetArrayComboBox();
-  
+
   vtkDataArray* currentArray()const;
   QString currentArrayName()const;
   vtkDataSet* dataSet()const;
 
-public slots:
+  ctkVTKDataSetModel::AttributeTypes attributeTypes()const;
+  void setAttributeTypes(const ctkVTKDataSetModel::AttributeTypes& attributeTypes);
+
+  ctkVTKDataSetModel* dataSetModel()const;
+
+public Q_SLOTS:
   void setDataSet(vtkDataSet* dataSet);
   /// The array must exist in the dataset
   void setCurrentArray(vtkDataArray* dataArray);
   /// the array must exist in the dataset
   void setCurrentArray(const QString& name);
 
-signals:
+Q_SIGNALS:
   void currentArrayChanged(vtkDataArray*);
   void currentArrayChanged(const QString& name);
-protected slots:
+protected Q_SLOTS:
   void onCurrentIndexChanged(int);
 protected:
   QScopedPointer<ctkVTKDataSetArrayComboBoxPrivate> d_ptr;

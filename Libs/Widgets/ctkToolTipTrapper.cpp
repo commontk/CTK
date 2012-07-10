@@ -51,6 +51,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Qt includes
 #include <QCoreApplication>
+#include <QTextDocument>
+#include <QWidget>
 
 // CTK includes
 #include "ctkToolTipTrapper.h"
@@ -63,14 +65,44 @@ protected:
 public:
   ctkToolTipTrapperPrivate(ctkToolTipTrapper& object);
 
-  bool Enabled;
+  enum EventFilterToDo
+    {
+    EVENT_FILTER_DO_NOTHING,
+    EVENT_FILTER_INSTALL,
+    EVENT_FILTER_REMOVE
+    };
+
+  static EventFilterToDo getEventFilterToDo(bool beforeToolTipsTrapped,
+                                            bool beforeToolTipsWordWrapped,
+                                            bool afterToolTipsTrapped,
+                                            bool afterToolTipsWordWrapped)
+    {
+    bool eventFilterWasInstalled = beforeToolTipsTrapped || beforeToolTipsWordWrapped;
+    bool eventFilterShouldBeInstalled = afterToolTipsTrapped || afterToolTipsWordWrapped;
+    if (eventFilterWasInstalled == eventFilterShouldBeInstalled)
+      {
+      return EVENT_FILTER_DO_NOTHING;
+      }
+    else if (eventFilterShouldBeInstalled)
+      {
+      return EVENT_FILTER_INSTALL;
+      }
+    else
+      {
+      return EVENT_FILTER_REMOVE;
+      }
+    };
+
+  bool ToolTipsTrapped;
+  bool ToolTipsWordWrapped;
 };
 
 // --------------------------------------------------------------------------
 ctkToolTipTrapperPrivate::ctkToolTipTrapperPrivate(ctkToolTipTrapper& object)
   : q_ptr(&object)
 {
-  this->Enabled = false;
+  this->ToolTipsTrapped = false;
+  this->ToolTipsWordWrapped = false;
 }
 
 //------------------------------------------------------------------------------
@@ -78,15 +110,19 @@ ctkToolTipTrapper::ctkToolTipTrapper(QObject * newParent)
   : Superclass(newParent)
   , d_ptr(new ctkToolTipTrapperPrivate(*this))
 {
-  this->setEnabled(true);
+  this->setToolTipsTrapped(true);
+  this->setToolTipsWordWrapped(false);
 }
 
 //------------------------------------------------------------------------------
-ctkToolTipTrapper::ctkToolTipTrapper(bool enable, QObject * newParent)
+ctkToolTipTrapper::ctkToolTipTrapper(bool toolTipsTrapped,
+                                     bool toolTipsWordWrapped,
+                                     QObject * newParent)
   : Superclass(newParent)
   , d_ptr(new ctkToolTipTrapperPrivate(*this))
 {
-  this->setEnabled(enable);
+  this->setToolTipsTrapped(toolTipsTrapped);
+  this->setToolTipsWordWrapped(toolTipsWordWrapped);
 }
 
 //------------------------------------------------------------------------------
@@ -95,26 +131,61 @@ ctkToolTipTrapper::~ctkToolTipTrapper()
 }
 
 //------------------------------------------------------------------------------
-bool ctkToolTipTrapper::isEnabled()const
+bool ctkToolTipTrapper::toolTipsTrapped()const
 {
   Q_D(const ctkToolTipTrapper);
-  return d->Enabled;
+  return d->ToolTipsTrapped;
 }
 
 //------------------------------------------------------------------------------
-void ctkToolTipTrapper::setEnabled(bool enable)
+bool ctkToolTipTrapper::toolTipsWordWrapped()const
+{
+  Q_D(const ctkToolTipTrapper);
+  return d->ToolTipsWordWrapped;
+}
+//------------------------------------------------------------------------------
+void ctkToolTipTrapper::setToolTipsTrapped(bool toolTipsTrapped)
 {
   Q_D(ctkToolTipTrapper);
-  if (enable == d->Enabled)
+  if (toolTipsTrapped == d->ToolTipsTrapped)
     {
     return;
     }
-  d->Enabled = enable;
-  if (enable)
+  ctkToolTipTrapperPrivate::EventFilterToDo todo =
+      ctkToolTipTrapperPrivate::getEventFilterToDo(d->ToolTipsTrapped,
+                                                   d->ToolTipsWordWrapped,
+                                                   toolTipsTrapped,
+                                                   d->ToolTipsWordWrapped);
+  d->ToolTipsTrapped = toolTipsTrapped;
+  if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_INSTALL)
     {
     QCoreApplication::instance()->installEventFilter(this);
     }
-  else
+  else if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_REMOVE)
+    {
+    QCoreApplication::instance()->removeEventFilter(this);
+    }
+}
+
+//------------------------------------------------------------------------------
+void ctkToolTipTrapper::setToolTipsWordWrapped(bool toolTipsWordWrapped)
+{
+  Q_D(ctkToolTipTrapper);
+  if (toolTipsWordWrapped == d->ToolTipsWordWrapped)
+    {
+    return;
+    }
+  ctkToolTipTrapperPrivate::EventFilterToDo todo =
+      ctkToolTipTrapperPrivate::getEventFilterToDo(d->ToolTipsTrapped,
+                                                   d->ToolTipsWordWrapped,
+                                                   d->ToolTipsTrapped,
+                                                   toolTipsWordWrapped);
+  d->ToolTipsWordWrapped = toolTipsWordWrapped;
+  if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_INSTALL)
+    {
+    QCoreApplication::instance()->installEventFilter(this);
+    }
+  else if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_REMOVE)
     {
     QCoreApplication::instance()->removeEventFilter(this);
     }
@@ -124,9 +195,30 @@ void ctkToolTipTrapper::setEnabled(bool enable)
 bool ctkToolTipTrapper::eventFilter(QObject* watched, QEvent* input_event)
 {
   Q_UNUSED(watched);
-  if(input_event->type() == QEvent::ToolTip)
+  if(input_event->type() == QEvent::ToolTip
+     || input_event->type() == QEvent::ToolTipChange)
     {
-    return true;
+    Q_D(ctkToolTipTrapper);
+    // Trap tooltips so that they are not shown.
+    if (d->ToolTipsTrapped)
+      {
+      return true;
+      }
+    // Convert plain text to rich text to word wrap tooltips, and trigger new
+    // event to show the rich tooltip.
+    // If tooltip is already rich text or empty, let the regular mechanism
+    // handle it.
+    if (d->ToolTipsWordWrapped)
+      {
+      QWidget* widget = qobject_cast<QWidget *>(watched);
+      if (widget && !widget->toolTip().isEmpty()
+          && !Qt::mightBeRichText(widget->toolTip()))
+        {
+        QString richToolTip = Qt::convertFromPlainText(widget->toolTip(), Qt::WhiteSpaceNormal);
+        widget->setToolTip(richToolTip);
+        return true;
+        }
+      }
     }
   return false;
 }

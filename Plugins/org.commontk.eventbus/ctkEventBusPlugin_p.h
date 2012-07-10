@@ -23,26 +23,31 @@
 #define CTKEVENTBUSPLUGIN_H
 
 #include <ctkPluginActivator.h>
-
-#include <QServicePluginInterface>
-
+class ctkEventBusImpl;
 
 class ctkEventBusPlugin : public QObject,
-                   public ctkPluginActivator,
-                   public QtMobility::QServicePluginInterface
+                   public ctkPluginActivator
+                   
 {
   Q_OBJECT
-  Q_INTERFACES(ctkPluginActivator QtMobility::QServicePluginInterface)
+  Q_INTERFACES(ctkPluginActivator)
 
 public:
+  ctkEventBusPlugin(){};
+  ~ctkEventBusPlugin(){};
 
   void start(ctkPluginContext* context);
   void stop(ctkPluginContext* context);
 
-  QObject* createInstance(const QtMobility::QServiceInterfaceDescriptor& descriptor,
-                          QtMobility::QServiceContext* context,
-                          QtMobility::QAbstractSecuritySession* session);
+  static ctkEventBusPlugin* getInstance();
 
+  ctkPluginContext* getPluginContext() const;
+
+private:
+
+  static ctkEventBusPlugin* instance;
+  ctkPluginContext* context;
+  ctkEventBusImpl *m_Bus;
 };
 
 

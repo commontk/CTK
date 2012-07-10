@@ -41,65 +41,73 @@ int ctkMenuComboBoxTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
   QIcon plus(":Icons/plus.png");
 
-  QMenu* file = new QMenu("File");
-  file->addAction("first");
-  QMenu* wizards = new QMenu("Wizards");
-  file->addMenu(wizards);
+  QMenu* menu = new QMenu("Menu");
+  menu->addAction("First item");
+  QMenu* subMenu = new QMenu("SubMenu");
+  menu->addMenu(subMenu);
 
-  QMenu*informatics = new QMenu("Informatics");
-  file->addMenu(informatics);
+  QMenu* subMenu2 = new QMenu("SubMenu2");
+  menu->addMenu(subMenu2);
+
+  ctkMenuComboBox* menuComboBox = new ctkMenuComboBox(0);
+  menuComboBox->setMenu(menu);
+  menuComboBox->setDefaultText("Search");
+  menuComboBox->setAutoFillBackground(true);
+  menuComboBox->setMinimumContentsLength(25);
+  if (menuComboBox->isSearchIconVisible() != true)
+    {
+    std::cerr << "Wrong default isSearchIconVisible: "
+              << menuComboBox->isSearchIconVisible()
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  menuComboBox->setSearchIconVisible(true);
+  if (menuComboBox->isSearchIconVisible() != true)
+    {
+    std::cerr << "Failed to set searchIconVisible: "
+              << menuComboBox->isSearchIconVisible()
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  menuComboBox->setSearchIconVisible(false);
+  if (menuComboBox->toolButtonStyle() != Qt::ToolButtonIconOnly)
+    {
+    std::cerr << "Wrong default toolButtonStyle: "
+              << menuComboBox->toolButtonStyle()
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  menuComboBox->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+  if (menuComboBox->toolButtonStyle() != Qt::ToolButtonTextUnderIcon)
+    {
+    std::cerr << "Failed to set toolButtonStyle: "
+              << menuComboBox->toolButtonStyle()
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  menuComboBox->setSearchIconVisible(true);
+  menuComboBox->setEditableBehavior(ctkMenuComboBox::EditableOnPopup);
 
   QWidget topLevelWidget(0);
-
-  /*ctkMenuComboBox* Menu = new ctkMenuComboBox();
-  Menu->setMenu(file);
-  Menu->setMinimumWidth(200);
-  //Menu->setMinimumWidthComboBox(150);
-  //Menu->setMinimumWidth(150);
-  Menu->setEditableBehavior(ctkMenuComboBox::EditableOnFocus);
-  Menu->show();*/
-
-  ctkMenuComboBox* Menu2 = new ctkMenuComboBox(0);
-  Menu2->setMenu(file);
-  Menu2->setDefaultText("Search");
-  Menu2->setAutoFillBackground(true);
-  Menu2->setMinimumContentsLength(25);
-  Menu2->setSearchIconVisible(false);
-  Menu2->setSearchIconVisible(true);
-  //Menu2->setEditableBehavior(ctkMenuComboBox::EditableOnFocus);
-  Menu2->setEditableBehavior(ctkMenuComboBox::EditableOnPopup);
-  //Menu2->show();
-
-/*
-  ctkMenuComboBox* Menu3 = new ctkMenuComboBox();
-  Menu3->setMenu(file);
-  //Menu3->setMinimumWidth(150);
-  //Menu3->setMinimumWidthComboBox(150);
-  Menu3->setEditableBehavior(ctkMenuComboBox::NotEditable);
-*/
   QVBoxLayout* layout = new QVBoxLayout;
+  topLevelWidget.setLayout(layout);
+
   QToolBar bar;
-  //QWidget bar;
-  //QHBoxLayout* barLayout = new QHBoxLayout(&bar);
-
+  bar.addWidget(menuComboBox);
   layout->addWidget(&bar);
-  bar.addWidget(Menu2);
-  //bar.addWidget(Menu);
-  //layout->addWidget(Menu3);
 
-  file->addAction(plus, "Add ...");
-  file->addAction("Saveeeeeeeeeeeeeeeeeeeeeee ...");
-  wizards->addAction("tutu toto tata tonton");
-  wizards->addMenu(informatics);
-  informatics->addAction("ddd");
+  menu->addAction(plus, "Item with icon");
+  menu->addAction("Long item to test the width of the combobox...");
+  subMenu->addAction("Submenu item");
+  /// subMenu2 is added twice in the menu, once at the toplevel and once
+  /// in the subMenu level.
+  subMenu->addMenu(subMenu2);
+  subMenu2->addAction("Subsubmenu item");
 
-  QAction* actionEnd = wizards->addAction("Quit");
-
+  QAction* actionEnd = subMenu->addAction("Quit");
   actionEnd->setShortcut(QKeySequence("Ctrl+Q"));
-
   QObject::connect(actionEnd, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-  topLevelWidget.setLayout(layout);
   topLevelWidget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
@@ -109,4 +117,3 @@ int ctkMenuComboBoxTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

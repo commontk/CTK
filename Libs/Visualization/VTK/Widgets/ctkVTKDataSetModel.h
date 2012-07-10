@@ -33,6 +33,7 @@
 class vtkDataSet;
 class vtkDataArray;
 
+/// \ingroup Visualization_VTK_Widgets
 namespace ctkVTK
 {
  enum ItemDataRole {
@@ -43,19 +44,45 @@ namespace ctkVTK
 class ctkVTKDataSetModelPrivate;
 
 //------------------------------------------------------------------------------
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDataSetModel
   : public QStandardItemModel
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_FLAGS(AttributeType AttributeTypes)
+
+  /// This property holds the type of attribute that should be listed in the model.s
+  /// By default all attributes are considered.
+  /// \sa ctkVTKDataSetModel::AllAttribute
+  Q_PROPERTY(AttributeTypes attributeTypes READ attributeTypes WRITE setAttributeTypes)
 
 public:
+  typedef ctkVTKDataSetModel Self;
   typedef QStandardItemModel Superclass;
   ctkVTKDataSetModel(QObject *parent=0);
   virtual ~ctkVTKDataSetModel();
 
+  enum AttributeType
+    {
+    NoAttribute = 0x1,
+    ScalarsAttribute = 0x2,
+    VectorsAttribute = 0x4,
+    NormalsAttribute = 0x8,
+    TCoordsAttribute = 0x10,
+    TensorsAttribute = 0x20,
+    GlobalIDsAttribute = 0x40,
+    PedigreeIDsAttribute = 0x80,
+    EdgeFlagAttribute = 0x100,
+    AllAttribute = NoAttribute | ScalarsAttribute | VectorsAttribute | NormalsAttribute | TCoordsAttribute | TensorsAttribute | GlobalIDsAttribute | PedigreeIDsAttribute | EdgeFlagAttribute
+    };
+  Q_DECLARE_FLAGS(AttributeTypes, AttributeType)
+
   virtual void setDataSet(vtkDataSet* dataSet);
   vtkDataSet* dataSet()const;
+
+  AttributeTypes attributeTypes()const;
+  void setAttributeTypes(const AttributeTypes& attributeTypes);
 
   /// Return the vtkDataArray associated to the index.
   /// 0 if the index doesn't contain a vtkDataArray
@@ -65,7 +92,7 @@ public:
   QStandardItem* itemFromArray(vtkDataArray* dataArray, int column = 0)const;
   QModelIndexList indexes(vtkDataArray* dataArray)const;
 
-protected slots:
+protected Q_SLOTS:
   void onDataSetModified(vtkObject* dataSet);
   void onArrayModified(vtkObject* dataArray);
   void onItemChanged(QStandardItem * item);
@@ -88,6 +115,7 @@ private:
   Q_DECLARE_PRIVATE(ctkVTKDataSetModel);
   Q_DISABLE_COPY(ctkVTKDataSetModel);
 };
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkVTKDataSetModel::AttributeTypes);
 
 // -----------------------------------------------------------------------------
 vtkDataArray* ctkVTKDataSetModel::arrayFromIndex(const QModelIndex &nodeIndex)const

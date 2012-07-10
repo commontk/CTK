@@ -31,6 +31,7 @@
 
 class ctkMatrixWidgetPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkMatrixWidget is the base class of matrix widgets.
 class CTK_WIDGETS_EXPORT ctkMatrixWidget: public QWidget
@@ -128,13 +129,13 @@ public:
   virtual QSize minimumSizeHint () const;
   virtual QSize sizeHint () const;
 
-public slots:
+public Q_SLOTS:
 
   ///
   /// Reset the matrix to identity
   void identity();
 
-signals:
+Q_SIGNALS:
   void matrixChanged();
 
 protected:

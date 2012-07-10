@@ -31,6 +31,7 @@ class vtkPiecewiseFunction;
 class vtkColorTransferFunction;
 class ctkVTKCompositeFunctionPrivate;
 
+/// \ingroup Visualization_VTK_Core
 ///
 /// Transfer function for a vtkPiecewiseFunction
 

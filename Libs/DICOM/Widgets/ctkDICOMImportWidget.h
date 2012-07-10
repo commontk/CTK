@@ -24,12 +24,17 @@
 // Qt includes 
 #include <QWidget>
 
+// CTK includes
 #include "ctkDICOMWidgetsExport.h"
-
+class ctkDICOMDatabase;
 class ctkDICOMImportWidgetPrivate;
 
-class ctkDICOMDatabase;
-
+/// \ingroup DICOM_Widgets
+/// Panel to select a directory containing DICOM files on a local file system.
+/// It contains 3 elements: directory selection, listing of directory files and
+/// options to apply when importing.
+/// \todo the passed DICOM database is not used.
+/// \todo expose topDirectory, copyToLibrary... in public API
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMImportWidget : public QWidget
 {
   Q_OBJECT
@@ -40,10 +45,10 @@ public:
 
   void setDICOMDatabase(QSharedPointer<ctkDICOMDatabase> database);
 
-public slots:
+public Q_SLOTS:
   void setTopDirectory(const QString& path);
 
-protected slots:
+protected Q_SLOTS:
   void onTopDirectoryChanged(const QString& path);
 
 protected:

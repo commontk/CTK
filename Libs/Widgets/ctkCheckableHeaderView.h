@@ -61,6 +61,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkCheckableHeaderViewPrivate;
 class ctkCheckableModelHelper;
 
+/// \ingroup Widgets
 ///
 /// ctkCheckableHeaderView is a QHeaderView that can display a checkbox 
 /// for any header section.
@@ -112,13 +113,13 @@ public:
   
   ctkCheckableModelHelper* checkableModelHelper()const;
 
-public slots:
+public Q_SLOTS:
   ///
   /// Warning, setting the check state automatically set the 
   /// header section checkable
   void setCheckState(int section, Qt::CheckState checkState);
 
-private slots:
+private Q_SLOTS:
   void onHeaderDataChanged(Qt::Orientation orient, int first, int last);
   void onHeaderSectionInserted();
   inline void updateHeaderPixmaps();

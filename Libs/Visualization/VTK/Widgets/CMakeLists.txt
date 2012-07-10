@@ -1,14 +1,24 @@
-PROJECT(CTKVisualizationVTKWidgets)
+project(CTKVisualizationVTKWidgets)
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_EXPORT")
+set(KIT_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_EXPORT")
 
+#
+# Add the libraries QtTesting
+#
+if(CTK_USE_QTTESTING)
+  find_package(QtTesting REQUIRED)
+  include_directories(
+    ${QtTesting_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR} # For ctkConfig.h
+    )
+endif()
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkVTKAbstractMatrixWidget.cpp
   ctkVTKAbstractMatrixWidget.h
   ctkVTKAbstractMatrixWidget_p.h
@@ -47,7 +57,7 @@ SET(KIT_SRCS
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkVTKAbstractMatrixWidget_p.h
   ctkVTKAbstractView.h
   ctkVTKAbstractView_p.h
@@ -68,28 +78,28 @@ SET(KIT_MOC_SRCS
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
   Resources/UI/ctkVTKScalarBarWidget.ui
   Resources/UI/ctkVTKTextPropertyWidget.ui
   Resources/UI/ctkVTKThresholdWidget.ui
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   Resources/ctkVTKWidgets.qrc
 )
 
 # Set VTK_LIBRARIES variable
-SET(VTK_LIBRARIES
+set(VTK_LIBRARIES
   QVTK
   )
 
-IF(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
-  SET(CTK_USE_CHARTS 1)
-ENDIF()
+if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
+  set(CTK_USE_CHARTS 1)
+endif()
 
 IF (${CTK_USE_CHARTS})
-  SET(KIT_SRCS
+  set(KIT_SRCS
       ctkVTKChartView.cpp
       ctkVTKChartView.h
       ctkVTKVolumePropertyWidget.cpp
@@ -99,25 +109,41 @@ IF (${CTK_USE_CHARTS})
       ctkVTKScalarsToColorsWidget.cpp
       ctkVTKScalarsToColorsWidget.h
       ${KIT_SRCS})
-  SET(KIT_MOC_SRCS
+  set(KIT_MOC_SRCS
       ctkVTKChartView.h
       ctkVTKVolumePropertyWidget.h
       ctkVTKScalarsToColorsView.h
       ctkVTKScalarsToColorsWidget.h
       ${KIT_MOC_SRCS})
-  SET(KIT_UI_FORMS
+  set(KIT_UI_FORMS
       Resources/UI/ctkVTKVolumePropertyWidget.ui
       Resources/UI/ctkVTKScalarsToColorsWidget.ui
       ${KIT_UI_FORMS})
-  SET(VTK_LIBRARIES
+  set(VTK_LIBRARIES
       vtkCharts
       ${VTK_LIBRARIES})
-  ADD_DEFINITIONS(-DCTK_USE_CHARTS)
-ENDIF(${CTK_USE_CHARTS})
+  add_definitions(-DCTK_USE_CHARTS)
+endif()
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
+
+# If we use QtTessting, we add all the dependencies
+if(CTK_USE_QTTESTING)
+  list(APPEND KIT_SRCS
+    ctkVTKRenderViewEventPlayer.cpp
+    ctkVTKRenderViewEventPlayer.h
+    ctkVTKRenderViewEventTranslator.cpp
+    ctkVTKRenderViewEventTranslator.h
+    )
+  list(APPEND KIT_MOC_SRCS
+    ctkVTKRenderViewEventPlayer.h
+    ctkVTKRenderViewEventTranslator.h
+)
+  list(APPEND KIT_target_libraries QtTesting)
+endif()
+
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
@@ -130,20 +156,20 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-IF(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
-ENDIF()
+endif()
 
 # Plugins
-IF(BUILD_QTDESIGNER_PLUGINS)
-  ADD_SUBDIRECTORY(Plugins)
-ENDIF()
+if(CTK_BUILD_QTDESIGNER_PLUGINS)
+  add_subdirectory(Plugins)
+endif()
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

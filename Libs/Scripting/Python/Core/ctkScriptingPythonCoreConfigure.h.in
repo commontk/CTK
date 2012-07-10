@@ -2,9 +2,10 @@
 #define __ctkScriptingPythonCoreConfigure_h
 
 
+/// \ingroup Scripting_Python_Core
 ///
 /// Here is where system computed values get stored
-///
+/// {@
 
 #cmakedefine CTK_PYTHONQT_WRAP_QTCORE
 #cmakedefine CTK_PYTHONQT_WRAP_QTGUI
@@ -16,5 +17,7 @@
 #cmakedefine CTK_PYTHONQT_WRAP_QTWEBKIT
 #cmakedefine CTK_PYTHONQT_WRAP_QTXML
 #cmakedefine CTK_PYTHONQT_WRAP_QTXMLPATTERNS
+
+/// @}
 
 #endif

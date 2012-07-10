@@ -47,7 +47,7 @@ public:
     PythonQt::self()->registerClass(&ctkWorkflowInterstepTransition::staticMetaObject, "CTKCore");
     }
 
-public slots:
+public Q_SLOTS:
 
   //
   // ctkWorkflowStep

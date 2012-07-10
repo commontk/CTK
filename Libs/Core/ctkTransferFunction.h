@@ -118,7 +118,7 @@ public:
   virtual void setControlPointValue(int index, const QVariant& value)=0;
 
   ctkTransferFunctionRepresentation* representation()const;
-signals:
+Q_SIGNALS:
   void changed();
 protected:
   QScopedPointer<ctkTransferFunctionPrivate> d_ptr;

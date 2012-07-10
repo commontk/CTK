@@ -29,6 +29,7 @@
 
 class ctkCheckBoxPrivate;
 
+/// \ingroup Widgets
 /// ctkCheckBox is an advanced QCheckBox that gives more control
 /// over its look and feel.
 /// We can change the indicator check box by a new QIcon, with two mode On/Off.

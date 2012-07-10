@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb00010000000001ad0000012a000003a600000293000001b300000143000003a00000028d000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000012e00000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QPushButton0" command="activate" arguments=""/>
+        <event widget="fileDialog2/checkBox2" command="set_boolean" arguments="true"/>
+        <event widget="fileDialog2/checkBox2" command="set_boolean" arguments="false"/>
+        <event widget="fileDialog2/checkBox2" command="set_boolean" arguments="true"/>
+        <event widget="fileDialog2/checkBox2" command="set_boolean" arguments="false"/>
+        <event widget="fileDialog2/checkBox2" command="set_boolean" arguments="true"/>
+        <event widget="fileDialog2" command="newFile" arguments="/home/benjaminlong/GroupBox.png"/>
+    </events>
+</QtTesting>

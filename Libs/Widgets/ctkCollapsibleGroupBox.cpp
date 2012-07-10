@@ -36,12 +36,14 @@
 class ctkCollapsibleGroupBoxStyle:public QProxyStyle
 {
   public:
-
+  ctkCollapsibleGroupBoxStyle(QStyle* style = 0) : QProxyStyle(style)
+  {
+  }
   virtual void drawPrimitive(PrimitiveElement pe, const QStyleOption * opt, QPainter * p, const QWidget * widget = 0) const
   {
     if (pe == QStyle::PE_IndicatorCheckBox)
       {
-      const QGroupBox* groupBox= qobject_cast<const QGroupBox*>(widget);
+      const ctkCollapsibleGroupBox* groupBox= qobject_cast<const ctkCollapsibleGroupBox*>(widget);
       if (groupBox)
         {
         this->QProxyStyle::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowDown : QStyle::PE_IndicatorArrowRight, opt, p, widget);
@@ -50,11 +52,22 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
       }
     this->QProxyStyle::drawPrimitive(pe, opt, p, widget);
   }
+  virtual int pixelMetric(PixelMetric metric, const QStyleOption * option, const QWidget * widget) const
+  {
+    if (metric == QStyle::PM_IndicatorHeight)
+      {
+      const ctkCollapsibleGroupBox* groupBox= qobject_cast<const ctkCollapsibleGroupBox*>(widget);
+      if (groupBox)
+        {
+        return groupBox->fontMetrics().height();
+        }
+      }
+    return this->QProxyStyle::pixelMetric(metric, option, widget);
+  }
 };
 #else
-  
-#endif
 
+#endif
 
 //-----------------------------------------------------------------------------
 class ctkCollapsibleGroupBoxPrivate
@@ -71,6 +84,7 @@ public:
   QSize OldSize;
   /// Maximum allowed height
   int   MaxHeight;
+  int   CollapsedHeight;
 
   /// We change the visibility of the chidren in setChildrenVisibility
   /// and we track when the visibility is changed to force it back to possibly
@@ -91,6 +105,7 @@ ctkCollapsibleGroupBoxPrivate::ctkCollapsibleGroupBoxPrivate(
   this->ForcingVisibility = false;
   this->IsStateCreated = false;
   this->MaxHeight = 0;
+  this->CollapsedHeight = 14;
 }
 
 //-----------------------------------------------------------------------------
@@ -102,7 +117,7 @@ void ctkCollapsibleGroupBoxPrivate::init()
 
   this->MaxHeight = q->maximumHeight();
 #if QT_VERSION >= 0x040600
-  q->setStyle(new ctkCollapsibleGroupBoxStyle);
+  q->setStyle(new ctkCollapsibleGroupBoxStyle(0));
 #else
   this->setStyleSheet(
     "ctkCollapsibleGroupBox::indicator:checked{"
@@ -173,6 +188,20 @@ ctkCollapsibleGroupBox::~ctkCollapsibleGroupBox()
 }
 
 //-----------------------------------------------------------------------------
+void ctkCollapsibleGroupBox::setCollapsedHeight(int heightInPixels)
+{
+  Q_D(ctkCollapsibleGroupBox);
+  d->CollapsedHeight = heightInPixels;
+}
+
+//-----------------------------------------------------------------------------
+int ctkCollapsibleGroupBox::collapsedHeight()const
+{
+  Q_D(const ctkCollapsibleGroupBox);
+  return d->CollapsedHeight;
+}
+
+//-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBox::expand(bool _expand)
 {
   Q_D(ctkCollapsibleGroupBox);
@@ -199,7 +228,11 @@ void ctkCollapsibleGroupBox::expand(bool _expand)
   else
     {
     d->MaxHeight = this->maximumHeight();
-    this->setMaximumHeight(22);
+    QStyleOptionGroupBox option;
+    this->initStyleOption(&option);
+    QRect labelRect = this->style()->subControlRect(
+      QStyle::CC_GroupBox, &option, QStyle::SC_GroupBoxLabel, this);
+    this->setMaximumHeight(labelRect.height() + d->CollapsedHeight);
     }
 }
 
@@ -212,7 +245,7 @@ void ctkCollapsibleGroupBox::paintEvent(QPaintEvent* e)
   QStylePainter paint(this);
   QStyleOptionGroupBox option;
   initStyleOption(&option);
-  option.activeSubControls &= !QStyle::SC_GroupBoxCheckBox;
+  option.activeSubControls &= ~QStyle::SC_GroupBoxCheckBox;
   paint.drawComplexControl(QStyle::CC_GroupBox, option);
   
 }

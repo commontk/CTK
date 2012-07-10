@@ -32,6 +32,7 @@
 class ctkTreeComboBoxPrivate;
 class QTreeView;
 
+/// \ingroup Widgets
 /// Description:
 /// ComboBox that displays the items as a tree view.
 /// See below for a use case:
@@ -72,9 +73,13 @@ public:
 protected:
   virtual void paintEvent(QPaintEvent*);
   
-protected slots:
+protected Q_SLOTS:
   void resizePopup();
   
+signals:
+  void popupShow();
+  void popupHide();
+
 protected:
   QScopedPointer<ctkTreeComboBoxPrivate> d_ptr;
 

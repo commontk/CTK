@@ -22,6 +22,9 @@
 
 #include "ctkEAPooledExecutor_p.h"
 
+// for ctk::msecsTo() - remove after switching to Qt 4.7
+#include <ctkUtils.h>
+
 #include "ctkEAChannel_p.h"
 #include <dispatch/ctkEAInterruptibleThread_p.h>
 #include <dispatch/ctkEAInterruptedException_p.h>
@@ -61,7 +64,7 @@ int ctkEAPooledExecutor::getMaximumPoolSize() const
 void ctkEAPooledExecutor::setMaximumPoolSize(int newMaximum)
 {
   QMutexLocker lock(&mutex);
-  if (newMaximum <= 0) throw std::invalid_argument("maximum must be > 0");
+  if (newMaximum <= 0) throw ctkInvalidArgumentException("maximum must be > 0");
   maximumPoolSize_ = newMaximum;
 }
 
@@ -74,7 +77,7 @@ int ctkEAPooledExecutor::getMinimumPoolSize() const
 void ctkEAPooledExecutor::setMinimumPoolSize(int newMinimum)
 {
   QMutexLocker lock(&mutex);
-  if (newMinimum < 0) throw std::invalid_argument("minimum must be >= 0");
+  if (newMinimum < 0) throw ctkInvalidArgumentException("minimum must be >= 0");
   minimumPoolSize_ = newMinimum;
 }
 
@@ -172,10 +175,10 @@ bool ctkEAPooledExecutor::awaitTerminationAfterShutdown(long maxWaitTime) const
   QMutexLocker lock(&mutex);
   QMutexLocker shutdownLock(&shutdownMutex);
   if (!shutdown_)
-    throw std::logic_error("not in shutdown state");
+    throw ctkIllegalStateException("not in shutdown state");
   if (poolSize_ == 0)
     return true;
-  long waitTime = maxWaitTime;
+  qint64 waitTime = static_cast<qint64>(maxWaitTime);
   if (waitTime <= 0)
     return false;
   //TODO Use Qt4.7 API
@@ -185,8 +188,8 @@ bool ctkEAPooledExecutor::awaitTerminationAfterShutdown(long maxWaitTime) const
     waitCond.wait(&shutdownMutex, waitTime);
     if (poolSize_ == 0)
       return true;
-    qint64 currWait = start.time().msecsTo(QDateTime::currentDateTime().time());
-    waitTime = maxWaitTime - currWait;
+    qint64 currWait = ctk::msecsTo(start, QDateTime::currentDateTime());
+    waitTime = static_cast<qint64>(maxWaitTime) - currWait;
     if (waitTime <= 0)
       return false;
   }
@@ -196,7 +199,7 @@ void ctkEAPooledExecutor::awaitTerminationAfterShutdown() const
 {
   QMutexLocker lock(&mutex);
   if (!shutdown_)
-    throw std::logic_error("not in shutdown state");
+    throw ctkIllegalStateException("not in shutdown state");
   while (poolSize_ > 0)
   {
     lock.unlock();
@@ -379,7 +382,9 @@ ctkEAPooledExecutor::DiscardOldestWhenBlocked::DiscardOldestWhenBlocked(ctkEAPoo
 
 bool ctkEAPooledExecutor::DiscardOldestWhenBlocked::blockedAction(ctkEARunnable* command)
 {
-  pe->handOff_->poll(0);
+  ctkEARunnable* tmp = pe->handOff_->poll(0);
+  if (tmp && tmp->autoDelete() && !--tmp->ref) delete tmp;
+
   if (!pe->handOff_->offer(command, 0))
   {
     const bool autoDelete = command->autoDelete();
@@ -393,7 +398,7 @@ void ctkEAPooledExecutor::addThread(ctkEARunnable* command)
 {
   Worker* worker = new Worker(this, command);
   ++worker->ref;
- ctkEAInterruptibleThread* thread = getThreadFactory()->newThread(worker);
+  ctkEAInterruptibleThread* thread = getThreadFactory()->newThread(worker);
   threads_.insert(worker, thread);
   ++poolSize_;
 
@@ -426,8 +431,17 @@ void ctkEAPooledExecutor::workerDone(Worker* w)
     try
     {
       ctkEARunnable* r = handOff_->poll(0);
-      if (r != 0 && !shutdown_) // just consume task if shut down
-        addThread(r);
+      if (r != 0)
+      {
+        if(shutdown_) // just consume task if shut down
+        {
+          if (r->autoDelete() && !r->ref) delete r;
+        }
+        else
+        {
+          addThread(r);
+        }
+      }
     }
     catch(const ctkEAInterruptedException& ) {
       return;

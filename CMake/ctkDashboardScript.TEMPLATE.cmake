@@ -22,7 +22,6 @@ set(MY_QT_VERSION "4.6.2")
 set(QT_QMAKE_EXECUTABLE "$ENV{HOME}/Projects/qtsdk-2010.02/qt/bin/qmake")
 set(CTEST_SITE "sagarmatha.kitware") # for example: mymachine.kitware, mymachine.dkfz, ...
 set(CTEST_DASHBOARD_ROOT "$ENV{HOME}/Projects/")
-set(CTEST_CMAKE_COMMAND "$ENV{HOME}/Projects/cmake-trunk-build/bin/cmake")
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 
 #
@@ -101,20 +100,20 @@ message("coverage: ${WITH_COVERAGE}, memcheck: ${WITH_MEMCHECK}")
 #
 # Convenient macro allowing to download a file
 #
-MACRO(downloadFile url dest)
-  FILE(DOWNLOAD ${url} ${dest} STATUS status)
-  LIST(GET status 0 error_code)
-  LIST(GET status 1 error_msg)
-  IF(error_code)
-    MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
-  ENDIF()
-ENDMACRO()
+macro(downloadFile url dest)
+  file(DOWNLOAD ${url} ${dest} STATUS status)
+  list(GET status 0 error_code)
+  list(GET status 1 error_msg)
+  if(error_code)
+    message(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+  endif()
+endmacro()
 
 #
 # Download and include dashboard driver script 
 #
 set(url http://commontk.org/ctkDashboardDriverScript.cmake)
 set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)
-downloadFile(${url} ${dest})
-INCLUDE(${dest})
+downloadfile(${url} ${dest})
+include(${dest})
 

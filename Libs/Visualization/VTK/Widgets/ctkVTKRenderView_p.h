@@ -43,6 +43,7 @@
 class vtkRenderWindowInteractor;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Visualization_VTK_Widgets
 class ctkVTKRenderViewPrivate : public ctkVTKAbstractViewPrivate
 {
   Q_OBJECT
@@ -61,7 +62,7 @@ public:
   void roll(int rotateDegrees, ctkVTKRenderView::RotateDirection rollDirection);
   void yaw(int rotateDegrees, ctkVTKRenderView::RotateDirection yawDirection);
 
-public slots:
+public Q_SLOTS:
   void doSpin();
   void doRock();
 

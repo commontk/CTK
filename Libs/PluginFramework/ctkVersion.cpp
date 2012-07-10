@@ -21,7 +21,7 @@
 
 #include "ctkVersion.h"
 
-#include <stdexcept>
+#include "ctkException.h"
 
 #include <QStringListIterator>
 #include <QDebug>
@@ -66,7 +66,7 @@ ctkVersion::ctkVersion(bool undefined)
 void ctkVersion::validate()
 {
   if (!RegExp.exactMatch(qualifier))
-    throw std::invalid_argument(std::string("invalid qualifier: ") + qualifier.toStdString());
+    throw ctkInvalidArgumentException(QString("invalid qualifier: ") + qualifier);
 
   undefined = false;
 }
@@ -122,7 +122,7 @@ ctkVersion::ctkVersion(const QString& version)
     }
   }
 
-  if (!ok) throw std::invalid_argument("invalid format");
+  if (!ok) throw ctkInvalidArgumentException("invalid format");
 
   majorVersion = maj;
   minorVersion = min;
@@ -166,28 +166,28 @@ bool ctkVersion::isUndefined() const
 //----------------------------------------------------------------------------
 unsigned int ctkVersion::getMajor() const
 {
-  if (undefined) throw std::logic_error("Version undefined");
+  if (undefined) throw ctkIllegalStateException("Version undefined");
   return majorVersion;
 }
 
 //----------------------------------------------------------------------------
 unsigned int ctkVersion::getMinor() const
 {
-  if (undefined) throw std::logic_error("Version undefined");
+  if (undefined) throw ctkIllegalStateException("Version undefined");
   return minorVersion;
 }
 
 //----------------------------------------------------------------------------
 unsigned int ctkVersion::getMicro() const
 {
-  if (undefined) throw std::logic_error("Version undefined");
+  if (undefined) throw ctkIllegalStateException("Version undefined");
   return microVersion;
 }
 
 //----------------------------------------------------------------------------
 QString ctkVersion::getQualifier() const
 {
-  if (undefined) throw std::logic_error("Version undefined");
+  if (undefined) throw ctkIllegalStateException("Version undefined");
   return qualifier;
 }
 
@@ -214,7 +214,7 @@ bool ctkVersion::operator==(const ctkVersion& other) const
   }
 
   if (other.undefined && this->undefined) return true;
-  if (this->undefined) throw std::logic_error("Version undefined");
+  if (this->undefined) throw ctkIllegalStateException("Version undefined");
   if (other.undefined) return false;
 
   return (majorVersion == other.majorVersion) && (minorVersion == other.minorVersion) && (microVersion
@@ -230,7 +230,7 @@ int ctkVersion::compare(const ctkVersion& other) const
   }
 
   if (this->undefined || other.undefined)
-    throw std::logic_error("Cannot compare undefined version");
+    throw ctkIllegalStateException("Cannot compare undefined version");
 
   if (majorVersion < other.majorVersion)
   {
@@ -260,6 +260,12 @@ int ctkVersion::compare(const ctkVersion& other) const
     }
   }
   return 1;
+}
+
+//----------------------------------------------------------------------------
+bool ctkVersion::operator <(const ctkVersion &object) const
+{
+  return this->compare(object) < 0;
 }
 
 //----------------------------------------------------------------------------

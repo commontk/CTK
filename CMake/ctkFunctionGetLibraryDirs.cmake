@@ -20,37 +20,37 @@
 ###########################################################################
 
 #! \ingroup CMakeUtilities
-FUNCTION(ctkFunctionGetLibraryDirs var_library_dirs)
+function(ctkFunctionGetLibraryDirs var_library_dirs)
 
-  IF(NOT ARGN)
-    MESSAGE(FATAL_ERROR "No targets given")
-  ENDIF()
+  if(NOT ARGN)
+    message(FATAL_ERROR "No targets given")
+  endif()
 
-  SET(_library_dirs ${${var_library_dirs}})
-  FOREACH(_target ${ARGN})
+  set(_library_dirs ${${var_library_dirs}})
+  foreach(_target ${ARGN})
 
     # Add the library directories from the external project
     # The variable ${_target}_DEPENDENCIES is set in the
     # macro ctkMacroValidateBuildOptions
 
-    SET(ext_deps )
+    set(ext_deps )
 
     ctkMacroGetAllNonProjectTargetLibraries("${${_target}_DEPENDENCIES}" ext_deps)
     
-    FOREACH(dep ${ext_deps})
+    foreach(dep ${ext_deps})
 
-      IF(${dep}_LIBRARY_DIRS)
-        STRING(REPLACE "^" ";" _ext_library_dirs "${${dep}_LIBRARY_DIRS}")
-        LIST(APPEND _library_dirs ${_ext_library_dirs})
-      ENDIF()
+      if(${dep}_LIBRARY_DIRS)
+        string(REPLACE "^" ";" _ext_library_dirs "${${dep}_LIBRARY_DIRS}")
+        list(APPEND _library_dirs ${_ext_library_dirs})
+      endif()
 
-    ENDFOREACH()
+    endforeach()
 
-  ENDFOREACH()
+  endforeach()
 
-  IF(_library_dirs)
-    LIST(REMOVE_DUPLICATES _library_dirs)
-  ENDIF()
-  SET(${var_library_dirs} ${_library_dirs} PARENT_SCOPE)
+  if(_library_dirs)
+    list(REMOVE_DUPLICATES _library_dirs)
+  endif()
+  set(${var_library_dirs} ${_library_dirs} PARENT_SCOPE)
 
-ENDFUNCTION()
+endfunction()

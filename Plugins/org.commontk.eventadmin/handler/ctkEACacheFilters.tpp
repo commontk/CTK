@@ -27,12 +27,12 @@ ctkEACacheFilters(CacheMap* cache,
 {
   if(cache == 0)
   {
-    throw std::invalid_argument("Cache may not be null");
+    throw ctkInvalidArgumentException("Cache may not be null");
   }
 
   if(context == 0)
   {
-    throw std::invalid_argument("Context may not be null");
+    throw ctkInvalidArgumentException("Context may not be null");
   }
 }
 

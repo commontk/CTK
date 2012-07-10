@@ -35,14 +35,14 @@ class vtkImageData;
 namespace ctk {
 
 ///
-/// \ingroup VTKWidgets
+/// \ingroup Visualization_VTK_Widgets
 /// Grab the contents of a QWidget and all its children.
 /// Handle correctly the case of QVTKWidget.
 /// \sa ctk::grabWidget QWidget::grabWidget
 QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT grabVTKWidget(QWidget* widget, QRect rectangle = QRect());
 
 ///
-/// \ingroup VTKWidgets
+/// \ingroup Visualization_VTK_Widgets
 /// Convert a vtkImageData into a QImage
 QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT vtkImageDataToQImage(vtkImageData* imageData);
 

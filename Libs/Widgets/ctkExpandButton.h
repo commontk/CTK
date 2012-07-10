@@ -31,6 +31,7 @@
 
 class ctkExpandButtonPrivate;
 
+/// \ingroup Widgets
 /// QToolButton with a standard icon
 /// This button has the same behavior as the extension
 /// button which appear as the last item in the toolbar
@@ -39,9 +40,11 @@ class ctkExpandButtonPrivate;
 /// we can set the orientation of the icon with setOrientation()
 /// the widget can also mirror the icon on click if mirrorOnExpand is true.
 
-class CTK_WIDGETS_EXPORT  ctkExpandButton : public QToolButton
+class CTK_WIDGETS_EXPORT ctkExpandButton
+  : public QToolButton
 {
   Q_OBJECT
+  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
   Q_PROPERTY(bool mirrorOnExpand READ mirrorOnExpand WRITE setMirrorOnExpand)
 public:
   /// Superclass typedef
@@ -58,7 +61,7 @@ public:
 
   virtual QSize sizeHint() const;
 
-private slots:
+private Q_SLOTS:
   void updateIcon(Qt::LayoutDirection newDirection);
 
 protected:

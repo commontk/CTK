@@ -22,7 +22,7 @@
 #ifndef __ctkDICOMImage_h
 #define __ctkDICOMImage_h
 
-// Qt includes 
+// Qt includes
 #include <QObject>
 #include <QImage>
 
@@ -31,45 +31,46 @@
 class ctkDICOMImagePrivate;
 class DicomImage;
 
-/**
-  \brief Wrapper around a DCMTK DicomImage.
-
-  This class wraps a DicomImage object and exposes it as a Qt class.
-*/
+/// \ingroup DICOM_Widgets
+///
+/// \brief Wrapper around a DCMTK DicomImage.
+///
+/// This class wraps a DicomImage object and exposes it as a Qt class.
+///
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMImage : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(unsigned long frameCount READ frameCount);
 public:
-  /** \brief Construct a ctkDICOMImage
-      The dicomImage pointer must remain valid during all the life of
-      the constructed ctkDICOMImage.
-  */
+  ///  \brief Construct a ctkDICOMImage
+  /// The dicomImage pointer must remain valid during all the life of
+  /// the constructed ctkDICOMImage.
+  ///
   explicit ctkDICOMImage(DicomImage* dicomImage, QObject* parent = 0);
   virtual ~ctkDICOMImage();
 
-  /**
-      \brief Returns the pointer on the dicom image given in the constructor.
-      
-      This is provided as a utility function. Do not delete the returned
-      pointer.
-      TBD: Return a "const DicomImage*" instead?
-  */
+  ///
+  /// \brief Returns the pointer on the dicom image given in the constructor.
+  ///
+  /// This is provided as a utility function. Do not delete the returned
+  /// pointer.
+  /// TBD: Return a "const DicomImage*" instead?
+  ///
   DicomImage* dicomImage() const;
 
-  /**
-      \brief Returns a specific frame of the dicom image
-  */
+  ///
+  /// \brief Returns a specific frame of the dicom image
+  ///
   QImage frame(int frame = 0) const;
 
-  /**
-      \brief Returns the number of frames contained in the dicom image.
-      \sa DicomImage::getFrameCount()
-
-      Please note that this function does not return the number of frames
-      stored in the DICOM file/dataset. It rather refers to the number of
-      frames processed by this class.
-  */
+  ///
+  /// \brief Returns the number of frames contained in the dicom image.
+  /// \sa DicomImage::getFrameCount()
+  ///
+  /// Please note that this function does not return the number of frames
+  /// stored in the DICOM file/dataset. It rather refers to the number of
+  /// frames processed by this class.
+  ///
   unsigned long frameCount() const;
 
 protected:

@@ -28,6 +28,7 @@
 
 class ctkDICOMFilterProxyModelPrivate;
 
+/// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMFilterProxyModel : public QSortFilterProxyModel{
     Q_OBJECT
 
@@ -45,7 +46,7 @@ private:
     Q_DECLARE_PRIVATE(ctkDICOMFilterProxyModel);
     Q_DISABLE_COPY(ctkDICOMFilterProxyModel);
 
-public slots:
+public Q_SLOTS:
     void setNameSearchText(const QString& text);
     void setStudySearchText(const QString& text);
     void setSeriesSearchText(const QString& text);

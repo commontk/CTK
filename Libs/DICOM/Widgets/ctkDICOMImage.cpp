@@ -38,28 +38,22 @@ struct Node;
 class ctkDICOMImagePrivate
 {
   Q_DECLARE_PUBLIC(ctkDICOMImage);
-protected:
-  ctkDICOMImage* const q_ptr;
-  
 public:
   ctkDICOMImagePrivate(ctkDICOMImage&);
-  virtual ~ctkDICOMImagePrivate();
 
   ::DicomImage* DicomImage;
+
+protected:
+  ctkDICOMImage* const q_ptr;
+
+private:
+  Q_DISABLE_COPY(ctkDICOMImagePrivate);
 };
 
 //------------------------------------------------------------------------------
 ctkDICOMImagePrivate::ctkDICOMImagePrivate(ctkDICOMImage& o):q_ptr(&o)
 {
-
 }
-
-//------------------------------------------------------------------------------
-ctkDICOMImagePrivate::~ctkDICOMImagePrivate()
-{
-
-}
-
 
 //------------------------------------------------------------------------------
 ctkDICOMImage::ctkDICOMImage(DicomImage* dicomImage, QObject* parentValue)

@@ -22,7 +22,9 @@
 #ifndef CTKPLUGINEXCEPTION_H
 #define CTKPLUGINEXCEPTION_H
 
-#include "ctkRuntimeException.h"
+#include "ctkException.h"
+
+#include <ctkPluginFrameworkExport.h>
 
 /**
  * \ingroup PluginFramework
@@ -93,6 +95,14 @@ public:
   };
 
   /**
+   * Creates a <code>ctkPluginException</code> with the specified message and type.
+   *
+   * @param msg The associated message.
+   * @param type The type for this exception.
+   */
+  ctkPluginException(const QString& msg, const Type& type = UNSPECIFIED);
+
+  /**
    * Creates a <code>ctkPluginException</code> with the specified message, type
    * and exception cause.
    *
@@ -100,7 +110,7 @@ public:
    * @param type The type for this exception.
    * @param cause The cause of this exception.
    */
-  ctkPluginException(const QString& msg, const Type& type = UNSPECIFIED, const std::exception* cause = 0);
+  ctkPluginException(const QString& msg, const Type& type, const ctkException& cause);
 
   /**
    * Creates a <code>ctkPluginException</code> with the specified message and
@@ -109,10 +119,27 @@ public:
    * @param msg The associated message.
    * @param cause The cause of this exception.
    */
-  ctkPluginException(const QString& msg, const std::exception* cause);
+  ctkPluginException(const QString& msg, const ctkException& cause);
 
   ctkPluginException(const ctkPluginException& o);
   ctkPluginException& operator=(const ctkPluginException& o);
+
+  ~ctkPluginException() throw();
+
+  /**
+   * @see ctkException::name()
+   */
+  const char* name() const throw();
+
+  /**
+   * @see ctkException::clone()
+   */
+  ctkPluginException* clone() const;
+
+  /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
 
   /**
    * Returns the type for this exception or <code>UNSPECIFIED</code> if the
@@ -130,10 +157,5 @@ private:
   Type type;
 
 };
-
-/**
- * \ingroup PluginFramework
- */
-CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkPluginException& exc);
 
 #endif // CTKPLUGINEXCEPTION_H

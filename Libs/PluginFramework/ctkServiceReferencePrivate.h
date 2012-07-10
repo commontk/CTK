@@ -103,6 +103,10 @@ public:
    * Link to registration object for this reference.
    */
   ctkServiceRegistrationPrivate* const registration;
+
+private:
+
+  Q_DISABLE_COPY(ctkServiceReferencePrivate)
 };
 
 #endif // CTKSERVICEREFERENCEPRIVATE_H

@@ -28,6 +28,7 @@
 
 class ctkVTKThumbnailViewPrivate;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKThumbnailView : public ctkVTKRenderView
 {
   Q_OBJECT
@@ -43,7 +44,7 @@ public:
 
   void setRendererToListen(vtkRenderer* renderer);
 
-protected slots:
+protected Q_SLOTS:
   void checkAbort();
   void updateBounds();
   void updateCamera();

@@ -116,6 +116,9 @@ ctkPathLineEdit::ctkPathLineEdit(QWidget *parentWidget)
 {
   Q_D(ctkPathLineEdit);
   d->init();
+
+  this->setNameFilters(nameFilters());
+  this->setFilters(filters());
 }
 
 //-----------------------------------------------------------------------------
@@ -336,6 +339,13 @@ void ctkPathLineEdit::setCurrentFileExtension(const QString& extension)
     filename.append(QString(".") + extension);
     }
   this->setCurrentPath(filename);
+}
+
+//------------------------------------------------------------------------------
+QComboBox* ctkPathLineEdit::comboBox() const
+{
+  Q_D(const ctkPathLineEdit);
+  return d->ComboBox;
 }
 
 //------------------------------------------------------------------------------

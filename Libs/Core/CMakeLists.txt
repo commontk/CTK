@@ -1,24 +1,23 @@
-PROJECT(CTKCore)
+project(CTKCore)
 
 #
 # 3rd party dependencies
 #
-INCLUDE(${Log4Qt_USE_FILE})
 
 # CMake modules
-SET(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
 
 # CMake Macros
-INCLUDE(CMake/ctkMacroBFDCheck.cmake) # HAVE_BFD will be set to True if it applies
+include(CMake/ctkMacroBFDCheck.cmake) # HAVE_BFD will be set to True if it applies
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_CORE_EXPORT")
+set(KIT_export_directive "CTK_CORE_EXPORT")
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkAbstractFactory.h
   ctkAbstractFactory.tpp
   ctkAbstractFileBasedFactory.h
@@ -31,6 +30,9 @@ SET(KIT_SRCS
   ctkAbstractQObjectFactory.tpp
   ctkAbstractLibraryFactory.h
   ctkAbstractLibraryFactory.tpp
+  ctkBackTrace.cpp
+  ctkBooleanMapper.cpp
+  ctkBooleanMapper.h
   ctkCallback.cpp
   ctkCallback.h
   ctkCheckableModelHelper.cpp
@@ -48,6 +50,8 @@ SET(KIT_SRCS
   ctkErrorLogQtMessageHandler.h
   ctkErrorLogStreamMessageHandler.cpp
   ctkErrorLogStreamMessageHandler.h
+  ctkException.cpp
+  ctkException.h
   ctkLogger.cpp
   ctkLogger.h
   ctkHistogram.cpp
@@ -71,17 +75,20 @@ SET(KIT_SRCS
   ctkWorkflowStep.cpp
   ctkWorkflowStep_p.h
   ctkWorkflowTransitions.h
+  ctkSetName.cpp
+  ctkSetName.h
   )
 
-IF(HAVE_BFD)
-  LIST(APPEND KIT_SRCS
+if(HAVE_BFD)
+  list(APPEND KIT_SRCS
     ctkBinaryFileDescriptor.cpp
     ctkBinaryFileDescriptor.h
     )
-ENDIF()
+endif()
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
+  ctkBooleanMapper.h
   ctkCallback.h
   ctkCheckableModelHelper.h
   ctkCommandLineParser.h
@@ -99,16 +106,16 @@ SET(KIT_MOC_SRCS
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
 )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
 )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
-SET(KIT_target_libraries)
+set(KIT_target_libraries)
 
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
@@ -123,16 +130,26 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-IF(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+# Needed for ctkBackTrace
+if(UNIX)
+  target_link_libraries(${PROJECT_NAME} dl)
+elseif(WIN32 AND NOT MINGW)
+  target_link_libraries(${PROJECT_NAME} dbghelp)
+endif()
+
+if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
-ENDIF()
+endif()
 
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+  
+  # Compile source code snippets
+  add_subdirectory(Documentation/Snippets)
+endif()

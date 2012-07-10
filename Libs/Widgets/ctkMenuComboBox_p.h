@@ -30,6 +30,7 @@
 class ctkCompleter;
 class QToolButton;
 
+/// \ingroup Widgets
 class ctkMenuComboBoxInternal: public QComboBox
 {
   Q_OBJECT
@@ -42,13 +43,14 @@ public:
   virtual void showPopup();
 
   virtual QSize minimumSizeHint()const;
-signals:
+Q_SIGNALS:
   void popupShown();
 public:
   QWeakPointer<QMenu>  Menu;
 };
 
 // -------------------------------------------------------------------------
+/// \ingroup Widgets
 class ctkMenuComboBoxPrivate: public QObject
 {
   Q_OBJECT
@@ -71,7 +73,7 @@ public:
 
   void removeActionToCompleter(QAction* action);
 
-public slots:
+public Q_SLOTS:
   void setComboBoxEditable(bool editable = true);
 
 protected:

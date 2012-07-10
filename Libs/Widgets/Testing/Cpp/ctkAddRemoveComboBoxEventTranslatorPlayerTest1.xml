@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkAddRemoveComboBox/ComboBox" command="set_string" arguments="Item2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkAddRemoveComboBox/ComboBox" command="set_string" arguments="Item3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkAddRemoveComboBox/AddPushButton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkAddRemoveComboBox/AddPushButton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkAddRemoveComboBox/RemovePushButton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkAddRemoveComboBox/RemovePushButton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkAddRemoveComboBox/EditPushButton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkAddRemoveComboBox/EditPushButton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkAddRemoveComboBox/ComboBox" command="set_string" arguments="Item2"/>
+    </events>
+</QtTesting>

@@ -63,7 +63,7 @@ public:
    * @param filterString The filter criteria or <code>null</code> for all
    *        services.
    * @return The list of initial <code>ctkServiceReference</code>s.
-   * @throws std::invalid_argument If the specified filterString has an
+   * @throws ctkInvalidArgumentException If the specified filterString has an
    *         invalid syntax.
    */
   QList<ctkServiceReference> getInitialReferences(const QString& className,

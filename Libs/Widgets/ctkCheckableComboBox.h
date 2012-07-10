@@ -30,6 +30,7 @@
 class ctkCheckableModelHelper;
 class ctkCheckableComboBoxPrivate;
 
+/// \ingroup Widgets
 /// Description
 /// ctkCheckableComboBox is a QComboBox that allow its items to be checkable
 class CTK_WIDGETS_EXPORT ctkCheckableComboBox : public QComboBox
@@ -63,10 +64,10 @@ public:
   /// Reimplemented for internal reasons
   bool eventFilter(QObject *o, QEvent *e);
   
-signals:
+Q_SIGNALS:
   void checkedIndexesChanged();
 
-protected slots:
+protected Q_SLOTS:
   void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 
 protected:

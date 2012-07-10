@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMTester_h
 #define __ctkDICOMTester_h
 
-// Qt includes 
+// Qt includes
 #include <QObject>
 class QProcess;
 
@@ -29,11 +29,13 @@ class QProcess;
 #include "ctkDICOMCoreExport.h"
 class ctkDICOMTesterPrivate;
 
-/** \brief Utility class to test DICOM network applications
-    A simple DICOM archive server can be run (startDCMQRSCP()), and images
-    can be stored into the server using storeData(). It internally uses
-    storeSCU.
- */
+/// \ingroup DICOM_Core
+///
+/// \brief Utility class to test DICOM network applications
+/// A simple DICOM archive server can be run (startDCMQRSCP()), and images
+/// can be stored into the server using storeData(). It internally uses
+/// storeSCU.
+///
 class CTK_DICOM_CORE_EXPORT ctkDICOMTester : public QObject
 {
   Q_OBJECT
@@ -55,32 +57,32 @@ public:
   void setStoreSCUExecutable(const QString& storescu);
   QString storeSCUExecutable()const;
 
-  /** Port number [0,65365] where the dcmqrscp and storescu communicate.
-      Changing the port won't change the port of any running process.
-      You must stop and restart any process you want to have its port changed
-  */
+  ///  Port number [0,65365] where the dcmqrscp and storescu communicate.
+  /// Changing the port won't change the port of any running process.
+  /// You must stop and restart any process you want to have its port changed
+  ///
   void setDCMQRSCPPort(int port);
   int dcmqrscpPort()const;
 
-  /** Starts a new DCMQRSCP as a separate process. The process is running until
-      stopDCMQRSCP is called or ctkDICOMTester is destroyed.
-      Only one process of DCMQRSCP can be running at a time.
-      Calling startDCMQRSCP() while a DCMQRSCP process is already running
-      results into a no-op. The return value is 0.
-      \sa QProcess::start(),
-   */
+  ///  Starts a new DCMQRSCP as a separate process. The process is running until
+  /// stopDCMQRSCP is called or ctkDICOMTester is destroyed.
+  /// Only one process of DCMQRSCP can be running at a time.
+  /// Calling startDCMQRSCP() while a DCMQRSCP process is already running
+  /// results into a no-op. The return value is 0.
+  /// \sa QProcess::start(),
+  ///
   Q_INVOKABLE QProcess* startDCMQRSCP();
 
-  /** Stop the running DCMQRSCP process. Returns it's exit status or false if
-      there is no running process.
-  */
+  ///  Stop the running DCMQRSCP process. Returns it's exit status or false if
+  /// there is no running process.
+  ///
   Q_INVOKABLE bool stopDCMQRSCP();
 
-  /** Pushes data (DCM images referred to by file name in data list) using DCMTK 
-      storeSCU app. It creates a separate process and waits for its termination.
-      To be working, dcmqrscp must be running
-      \sa startDCMQRSCP()
-   */
+  ///  Pushes data (DCM images referred to by file name in data list) using DCMTK
+  /// storeSCU app. It creates a separate process and waits for its termination.
+  /// To be working, dcmqrscp must be running
+  /// \sa startDCMQRSCP()
+  ///
   Q_INVOKABLE bool storeData(const QStringList& data);
 
 protected:

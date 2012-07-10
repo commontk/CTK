@@ -33,6 +33,7 @@
 class ctkTransferFunctionGradientItemPrivate;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkTransferFunctionGradientItem: public ctkTransferFunctionItem
 {
   Q_OBJECT

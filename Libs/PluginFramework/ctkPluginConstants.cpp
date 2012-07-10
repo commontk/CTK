@@ -30,6 +30,7 @@ const QString ctkPluginConstants::FRAMEWORK_STORAGE = "org.commontk.pluginfw.sto
 const QString ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN = "org.commontk.pluginfw.storage.clean";
 const QString ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT = "onFirstInit";
 const QString ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS = "org.commontk.pluginfw.loadhints";
+const QString ctkPluginConstants::FRAMEWORK_PRELOAD_LIBRARIES = "org.commontk.pluginfw.preloadlibs";
 
 const QString ctkPluginConstants::PLUGIN_SYMBOLICNAME = "Plugin-SymbolicName";
 const QString ctkPluginConstants::PLUGIN_COPYRIGHT = "Plugin-Copyright";
@@ -42,6 +43,7 @@ const QString ctkPluginConstants::REQUIRE_PLUGIN = "Require-Plugin";
 const QString ctkPluginConstants::PLUGIN_VERSION_ATTRIBUTE = "plugin-version";
 const QString ctkPluginConstants::PLUGIN_VERSION = "Plugin-Version";
 const QString ctkPluginConstants::PLUGIN_ACTIVATIONPOLICY = "Plugin-ActivationPolicy";
+const QString ctkPluginConstants::PLUGIN_UPDATELOCATION = "Plugin-UpdateLocation";
 
 const QString ctkPluginConstants::ACTIVATION_EAGER = "eager";
 const QString ctkPluginConstants::ACTIVATION_LAZY = "lazy";

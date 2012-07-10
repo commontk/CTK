@@ -32,6 +32,7 @@ class ctkVTKThresholdWidgetPrivate;
 // VTK includes
 class vtkPiecewiseFunction;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKThresholdWidget
   : public QWidget
 {
@@ -56,13 +57,13 @@ public:
   bool useSharpness()const;
   void setUseSharpness(bool use);
 
-public slots:
+public Q_SLOTS:
   void setPiecewiseFunction(vtkPiecewiseFunction* function);
   void setRange(double min, double max);
   void setThresholdValues(double min, double max);
   void setOpacity(double opacity);
 
-protected slots:
+protected Q_SLOTS:
   void updateFromPiecewiseFunction();
 
 protected:

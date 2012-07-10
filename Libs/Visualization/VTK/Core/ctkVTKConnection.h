@@ -34,6 +34,7 @@ class vtkObject;
 class ctkVTKConnectionPrivate;
 class vtkCallbackCommand;
 
+/// \ingroup Visualization_VTK_Core
 /// Warning the slot must have its signature order:
 /// vtkObject*, vtkObject* : sender, callData
 /// or
@@ -91,7 +92,7 @@ public:
   void observeDeletion(bool enable);
   bool deletionObserved()const;
   
-signals:
+Q_SIGNALS:
   /// 
   /// The qt signal emited by the VTK Callback
   /// The signal corresponding to the slot will be emited
@@ -108,7 +109,7 @@ signals:
   /// slot
   void isBroke();
 
-protected slots:
+protected Q_SLOTS:
   void vtkObjectDeleted();
   void qobjectDeleted();
 
@@ -125,6 +126,7 @@ private:
   friend QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
 };
 
+/// \ingroup Visualization_VTK_Core
 QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
 
 #endif

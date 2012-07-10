@@ -54,7 +54,7 @@ void ctkExpandButtonPrivate::init()
   Q_Q(ctkExpandButton);
   q->setAutoRaise(true);
   q->setOrientation(Qt::Horizontal);
-  q->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+  q->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
   q->setCheckable(true);
 }
 

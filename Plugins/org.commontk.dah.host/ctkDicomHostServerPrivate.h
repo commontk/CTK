@@ -41,7 +41,7 @@ public:
   int Port;
   QString Path;
 
-public slots:
+public Q_SLOTS:
 
   void incomingSoapMessage(const QtSoapMessage& message,
                            QtSoapMessage* reply);

@@ -29,6 +29,7 @@
 
 class ctkThumbnailLabelPrivate;
 
+/// \ingroup Widgets
 /// ctkThumbnailLabel is an advanced label that gives control over
 /// the pixmap size and text location.
 /// If a pixmap is set, it is resized to fit the available space but its
@@ -98,7 +99,7 @@ private:
   Q_DECLARE_PRIVATE(ctkThumbnailLabel);
   Q_DISABLE_COPY(ctkThumbnailLabel);
 
-signals:
+Q_SIGNALS:
   void selected(const ctkThumbnailLabel& widget);
   void doubleClicked(const ctkThumbnailLabel& widget);
 };

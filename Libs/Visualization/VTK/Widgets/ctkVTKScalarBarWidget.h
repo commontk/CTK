@@ -32,6 +32,7 @@
 class ctkVTKScalarBarWidgetPrivate;
 class vtkScalarBarWidget;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarBarWidget : public QWidget
 {
   Q_OBJECT;
@@ -52,7 +53,7 @@ public:
   QString title()const;
   QString labelsFormat()const;
 
-public slots:
+public Q_SLOTS:
   void setScalarBarWidget(vtkScalarBarWidget* scalarBar);
 
   void setDisplay(bool visible);
@@ -61,10 +62,10 @@ public slots:
   void setTitle(const QString& title);
   void setLabelsFormat(const QString& format);
 
-signals:
+Q_SIGNALS:
   void modified();
 
-protected slots:
+protected Q_SLOTS:
   void onScalarBarModified();
 
 protected:

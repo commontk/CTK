@@ -56,7 +56,7 @@ public:
    */
   ctkMetaTypeInformationPtr getMetaTypeInformation(const QSharedPointer<ctkPlugin>& plugin);
 
-public slots:
+public Q_SLOTS:
 
   void pluginChanged(const ctkPluginEvent& event);
 

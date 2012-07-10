@@ -30,6 +30,7 @@
 
 class ctkMaterialPropertyPreviewLabelPrivate;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkMaterialPropertyPreviewLabel : public QFrame
 {
   Q_OBJECT
@@ -62,7 +63,7 @@ public :
   virtual int heightForWidth(int w)const;
   
   virtual QSize sizeHint()const;
-public slots:
+public Q_SLOTS:
   /// Valid range: [0,1]
   void setAmbient(double newAbient);
   /// Valid range: [0,1]

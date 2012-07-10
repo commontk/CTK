@@ -29,6 +29,7 @@ class QLabel;
 #include "ctkBasePopupWidget.h"
 
 // -------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkBasePopupWidgetPrivate
   : public QObject
 {

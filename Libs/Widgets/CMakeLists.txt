@@ -1,14 +1,24 @@
-PROJECT(CTKWidgets)
+project(CTKWidgets)
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-SET(KIT_export_directive "CTK_WIDGETS_EXPORT")
+set(KIT_export_directive "CTK_WIDGETS_EXPORT")
 
+#
+# Add the libraries QtTesting
+#
+if(CTK_USE_QTTESTING)
+  find_package(QtTesting REQUIRED)
+  include_directories(
+    ${QtTesting_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR} # For ctkConfig.h
+    )
+endif()
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ctkActionsWidget.cpp
   ctkActionsWidget.h
   ctkAddRemoveComboBox.cpp
@@ -45,8 +55,6 @@ SET(KIT_SRCS
   ctkConsole.cpp
   ctkConsole.h
   ctkConsole_p.h
-  ctkConfirmExitDialog.cpp
-  ctkConfirmExitDialog.h
   ctkCoordinatesWidget.cpp
   ctkCoordinatesWidget.h
   ctkCrosshairLabel.cpp
@@ -71,12 +79,16 @@ SET(KIT_SRCS
   ctkFileDialog.h
   ctkFittedTextBrowser.cpp
   ctkFittedTextBrowser.h
+  ctkFlatProxyModel.cpp
+  ctkFlatProxyModel.h
   ctkFlowLayout.cpp
   ctkFlowLayout.h
   ctkFontButton.cpp
   ctkFontButton.h
   ctkIconEnginePlugin.cpp
   ctkIconEnginePlugin.h
+  ctkLanguageComboBox.cpp
+  ctkLanguageComboBox.h
   ctkLayoutManager.cpp
   ctkLayoutManager.h
   ctkMaterialPropertyPreviewLabel.cpp
@@ -90,6 +102,8 @@ SET(KIT_SRCS
   ctkMenuComboBox.cpp
   ctkMenuComboBox.h
   ctkMenuComboBox_p.h
+  ctkMessageBox.cpp
+  ctkMessageBox.h
   ctkModalityWidget.cpp
   ctkModalityWidget.h
   ctkPathLineEdit.cpp
@@ -165,7 +179,7 @@ SET(KIT_SRCS
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   ctkActionsWidget.h
   ctkAxesWidget.h
   ctkAddRemoveComboBox.h
@@ -183,7 +197,6 @@ SET(KIT_MOC_SRCS
   ctkCollapsibleGroupBox.h
   ctkColorDialog.h
   ctkColorPickerButton.h
-  ctkConfirmExitDialog.h
   ctkConsole.h
   ctkConsole_p.h
   ctkCoordinatesWidget.h
@@ -198,9 +211,11 @@ SET(KIT_MOC_SRCS
   ctkExpandButton.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
+  ctkFlatProxyModel.h
   ctkFlowLayout.h
   ctkFontButton.h
   ctkIconEnginePlugin.h
+  ctkLanguageComboBox.h
   ctkLayoutManager.h
   ctkMaterialPropertyPreviewLabel.h
   ctkMaterialPropertyWidget.h
@@ -208,6 +223,7 @@ SET(KIT_MOC_SRCS
   ctkMenuButton.h
   ctkMenuComboBox.h
   ctkMenuComboBox_p.h
+  ctkMessageBox.h
   ctkModalityWidget.h
   ctkPathLineEdit.h
   ctkPopupWidget.h
@@ -246,7 +262,7 @@ SET(KIT_MOC_SRCS
   )
 
 # UI files
-SET(KIT_UI_FORMS
+set(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
   Resources/UI/ctkRangeWidget.ui
   Resources/UI/ctkDateRangeWidget.ui
@@ -262,13 +278,100 @@ SET(KIT_UI_FORMS
   )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   Resources/ctkWidgets.qrc
   )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
+
+# A player and a translator must be added for custom Qt widgets
+if(CTK_USE_QTTESTING)
+  list(APPEND KIT_SRCS
+    ctkAxesWidgetEventPlayer.cpp
+    ctkAxesWidgetEventPlayer.h
+    ctkAxesWidgetEventTranslator.cpp
+    ctkAxesWidgetEventTranslator.h
+    ctkCheckableComboBoxEventPlayer.cpp
+    ctkCheckableComboBoxEventPlayer.h
+    ctkCheckableComboBoxEventTranslator.cpp
+    ctkCheckableComboBoxEventTranslator.h
+    ctkCheckableHeaderViewEventPlayer.cpp
+    ctkCheckableHeaderViewEventPlayer.h
+    ctkCheckableHeaderViewEventTranslator.cpp
+    ctkCheckableHeaderViewEventTranslator.h
+    ctkConsoleEventPlayer.cpp
+    ctkConsoleEventPlayer.h
+    ctkConsoleEventTranslator.cpp
+    ctkConsoleEventTranslator.h
+    ctkDoubleRangeSliderEventPlayer.cpp
+    ctkDoubleRangeSliderEventPlayer.h
+    ctkDoubleRangeSliderEventTranslator.cpp
+    ctkDoubleRangeSliderEventTranslator.h
+    ctkFileDialogEventPlayer.cpp
+    ctkFileDialogEventPlayer.h
+    ctkFileDialogEventTranslator.cpp
+    ctkFileDialogEventTranslator.h
+    ctkFontButtonEventPlayer.cpp
+    ctkFontButtonEventPlayer.h
+    ctkFontButtonEventTranslator.cpp
+    ctkFontButtonEventTranslator.h
+    ctkMatrixWidgetEventPlayer.cpp
+    ctkMatrixWidgetEventPlayer.h
+    ctkMatrixWidgetEventTranslator.cpp
+    ctkMatrixWidgetEventTranslator.h
+    ctkMenuComboBoxEventPlayer.cpp
+    ctkMenuComboBoxEventPlayer.h
+    ctkMenuComboBoxEventTranslator.cpp
+    ctkMenuComboBoxEventTranslator.h
+    ctkPathLineEditEventPlayer.cpp
+    ctkPathLineEditEventPlayer.h
+    ctkPathLineEditEventTranslator.cpp
+    ctkPathLineEditEventTranslator.h
+    ctkPopupWidgetEventPlayer.cpp
+    ctkPopupWidgetEventPlayer.h
+    ctkPopupWidgetEventTranslator.cpp
+    ctkPopupWidgetEventTranslator.h
+    ctkRangeSliderEventPlayer.cpp
+    ctkRangeSliderEventPlayer.h
+    ctkRangeSliderEventTranslator.cpp
+    ctkRangeSliderEventTranslator.h
+    ctkTreeComboBoxEventPlayer.cpp
+    ctkTreeComboBoxEventPlayer.h
+    ctkTreeComboBoxEventTranslator.cpp
+    ctkTreeComboBoxEventTranslator.h
+    )
+  list(APPEND KIT_MOC_SRCS
+    ctkAxesWidgetEventPlayer.h
+    ctkAxesWidgetEventTranslator.h
+    ctkCheckableComboBoxEventPlayer.h
+    ctkCheckableComboBoxEventTranslator.h
+    ctkCheckableHeaderViewEventPlayer.h
+    ctkCheckableHeaderViewEventTranslator.h
+    ctkConsoleEventPlayer.h
+    ctkConsoleEventTranslator.h
+    ctkDoubleRangeSliderEventPlayer.h
+    ctkDoubleRangeSliderEventTranslator.h
+    ctkFileDialogEventPlayer.h
+    ctkFileDialogEventTranslator.h
+    ctkFontButtonEventPlayer.h
+    ctkFontButtonEventTranslator.h
+    ctkMatrixWidgetEventPlayer.h
+    ctkMatrixWidgetEventTranslator.h
+    ctkMenuComboBoxEventPlayer.h
+    ctkMenuComboBoxEventTranslator.h
+    ctkPathLineEditEventPlayer.h
+    ctkPathLineEditEventTranslator.h
+    ctkPopupWidgetEventPlayer.h
+    ctkPopupWidgetEventTranslator.h
+    ctkRangeSliderEventPlayer.h
+    ctkRangeSliderEventTranslator.h
+    ctkTreeComboBoxEventPlayer.h
+    ctkTreeComboBoxEventTranslator.h
+    )
+  list(APPEND KIT_target_libraries QtTesting)
+endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
@@ -281,20 +384,20 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-IF(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
     WRAPPER_LIBRARY_TYPE ${CTK_LIBRARY_MODE}
     )
-ENDIF()
+endif()
 
 # Plugins
-IF(BUILD_QTDESIGNER_PLUGINS)
-  ADD_SUBDIRECTORY(Plugins)
-ENDIF()
+if(CTK_BUILD_QTDESIGNER_PLUGINS)
+  add_subdirectory(Plugins)
+endif()
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

@@ -32,6 +32,7 @@
 struct ctkControlPoint;
 class ctkTransferFunctionItemPrivate;
 
+/// \ingroup Widgets
 /// 
 /// TODO: should probably derive from QGraphicsItem or QAbstractGraphicsShapeItem
 class CTK_WIDGETS_EXPORT ctkTransferFunctionItem: public QGraphicsObject

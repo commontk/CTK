@@ -21,28 +21,28 @@
 #                 instead.
 
 
-SET(ZMQ_DIR_STRING "directory containing ZMQConfig.cmake.  This is either the root of the build tree, or PREFIX/lib/zmq for an installation.")
+set(ZMQ_DIR_STRING "directory containing ZMQConfig.cmake.  This is either the root of the build tree, or PREFIX/lib/zmq for an installation.")
 
 # Search only if the location is not already known.
-IF(NOT ZMQ_DIR)
+if(NOT ZMQ_DIR)
   # Get the system search path as a list.
-  IF(UNIX)
-    STRING(REGEX MATCHALL "[^:]+" ZMQ_DIR_SEARCH1 "$ENV{PATH}")
-  ELSE(UNIX)
-    STRING(REGEX REPLACE "\\\\" "/" ZMQ_DIR_SEARCH1 "$ENV{PATH}")
-  ENDIF(UNIX)
-  STRING(REGEX REPLACE "/;" ";" ZMQ_DIR_SEARCH2 ${ZMQ_DIR_SEARCH1})
+  if(UNIX)
+    string(REGEX MATCHALL "[^:]+" ZMQ_DIR_SEARCH1 "$ENV{PATH}")
+  else()
+    string(REGEX REPLACE "\\\\" "/" ZMQ_DIR_SEARCH1 "$ENV{PATH}")
+  endif()
+  string(REGEX REPLACE "/;" ";" ZMQ_DIR_SEARCH2 ${ZMQ_DIR_SEARCH1})
 
   # Construct a set of paths relative to the system search path.
-  SET(ZMQ_DIR_SEARCH "")
-  FOREACH(dir ${ZMQ_DIR_SEARCH2})
-    SET(ZMQ_DIR_SEARCH ${ZMQ_DIR_SEARCH} "${dir}/../lib/zmq")
-  ENDFOREACH(dir)
+  set(ZMQ_DIR_SEARCH "")
+  foreach(dir ${ZMQ_DIR_SEARCH2})
+    set(ZMQ_DIR_SEARCH ${ZMQ_DIR_SEARCH} "${dir}/../lib/zmq")
+  endforeach()
 
   #
   # Look for an installation or build tree.
   #
-  FIND_PATH(ZMQ_DIR ZMQConfig.cmake
+  find_path(ZMQ_DIR ZMQConfig.cmake
     # Look for an environment variable ZMQ_DIR.
     $ENV{ZMQ_DIR}
 
@@ -69,19 +69,19 @@ IF(NOT ZMQ_DIR)
     # Help the user find it if we cannot.
     DOC "The ${ZMQ_DIR_STRING}"
   )
-ENDIF(NOT ZMQ_DIR)
+endif()
 
 # If ZMQ was found, load the configuration file to get the rest of the
 # settings.
-IF(ZMQ_DIR)
-  SET(ZMQ_FOUND 1)
-  INCLUDE(${ZMQ_DIR}/ZMQConfig.cmake)
+if(ZMQ_DIR)
+  set(ZMQ_FOUND 1)
+  include(${ZMQ_DIR}/ZMQConfig.cmake)
 
   # Set USE_ZMQ_FILE for backward-compatability.
-  SET(USE_ZMQ_FILE ${ZMQ_USE_FILE})
-ELSE(ZMQ_DIR)
-  SET(ZMQ_FOUND 0)
-  IF(ZMQ_FIND_REQUIRED)
-    MESSAGE(FATAL_ERROR "Please set ZMQ_DIR to the ${ZMQ_DIR_STRING}")
-  ENDIF(ZMQ_FIND_REQUIRED)
-ENDIF(ZMQ_DIR)
+  set(USE_ZMQ_FILE ${ZMQ_USE_FILE})
+else()
+  set(ZMQ_FOUND 0)
+  if(ZMQ_FIND_REQUIRED)
+    message(FATAL_ERROR "Please set ZMQ_DIR to the ${ZMQ_DIR_STRING}")
+  endif()
+endif()

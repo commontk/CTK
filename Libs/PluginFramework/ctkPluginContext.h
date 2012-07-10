@@ -85,7 +85,7 @@ class ctkPluginContextPrivate;
  * its context plugin; that is, during the period from when the context plugin
  * is in the <code>STARTING</code>, <code>STOPPING</code>, and
  * <code>ACTIVE</code> plugin states. If the <code>ctkPluginContext</code>
- * object is used subsequently, a <code>std::logic_error</code> must be
+ * object is used subsequently, a <code>ctkIllegalStateException</code> must be
  * thrown. The <code>ctkPluginContext</code> object must never be reused after
  * its context plugin is stopped.
  *
@@ -120,7 +120,7 @@ public:
    *
    * @return The <code>ctkPlugin</code> object associated with this
    *         <code>ctkPluginContext</code>.
-   * @throws std::logic_error If this ctkPluginContext is no
+   * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
    */
   QSharedPointer<ctkPlugin> getPlugin() const;
@@ -167,7 +167,7 @@ public:
    * The following steps are required to register a service:
    * <ol>
    * <li>If <code>service</code> is not a <code>ctkServiceFactory</code>, an
-   * <code>std::invalid_argument</code> is thrown if <code>service</code>
+   * <code>ctkInvalidArgumentException</code> is thrown if <code>service</code>
    * is not an instance of all the specified class names.
    * <li>The Framework adds the following service properties to the service
    * properties from the specified <code>ctkDictionary</code> (which may be
@@ -201,7 +201,7 @@ public:
    * @return A <code>ctkServiceRegistration</code> object for use by the plugin
    *         registering the service to update the service's properties or to
    *         unregister the service.
-   * @throws std::invalid_argument If one of the following is true:
+   * @throws ctkInvalidArgumentException If one of the following is true:
    *         <ul>
    *         <li><code>service</code> is <code>0</code>. <li><code>service
    *         </code> is not a <code>ctkServiceFactory</code> object and is not an
@@ -209,7 +209,7 @@ public:
    *         <code>properties</code> contains case variants of the same key
    *         name.
    *         </ul>
-   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    * @see ctkServiceRegistration
    * @see ctkServiceFactory
    */
@@ -233,7 +233,7 @@ public:
    * @return A ctkServiceRegistration object for use by the plugin
    *         registering the service to update the service's properties or to
    *         unregister the service.
-   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    * @see registerService(const QStringList&, QObject*, const ctkDictionary&)
    */
   ctkServiceRegistration registerService(const char* clazz, QObject* service, const ctkDictionary& properties = ctkDictionary());
@@ -268,7 +268,7 @@ public:
    * of the filter syntax. If the specified <code>filter</code> is
    * empty, all registered services are considered to match the
    * filter. If the specified <code>filter</code> expression cannot be parsed,
-   * an <code>std::invalid_argument</code> will be thrown with a human readable
+   * an <code>ctkInvalidArgumentException</code> will be thrown with a human readable
    * message where the filter became unparsable.
    *
    * <p>
@@ -291,9 +291,9 @@ public:
    * @return A list of <code>ctkServiceReference</code> objects or
    *         an empty list if no services are registered which satisfy the
    *         search.
-   * @throws std::invalid_argument If the specified <code>filter</code>
+   * @throws ctkInvalidArgumentException If the specified <code>filter</code>
    *         contains an invalid filter expression that cannot be parsed.
-   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    */
   QList<ctkServiceReference> getServiceReferences(const QString& clazz, const QString& filter = QString());
 
@@ -312,9 +312,9 @@ public:
    * @return A list of <code>ctkServiceReference</code> objects or
    *         an empty list if no services are registered which satisfy the
    *         search.
-   * @throws std::invalid_argument If the specified <code>filter</code>
+   * @throws ctkInvalidArgumentException If the specified <code>filter</code>
    *         contains an invalid filter expression that cannot be parsed.
-   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    * @see getServiceReferences(const QString&, const QString&)
    */
   template<class S>
@@ -351,7 +351,7 @@ public:
    * @param clazz The class name with which the service was registered.
    * @return A <code>ctkServiceReference</code> object, or <code>0</code> if
    *         no services are registered which implement the named class.
-   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    * @throws ctkServiceException It no service was registered under the given class name.
    * @see #getServiceReferences(const QString&, const QString&)
    */
@@ -367,7 +367,7 @@ public:
    *
    * @return A <code>ctkServiceReference</code> object, or <code>0</code> if
    *         no services are registered which implement the named class.
-   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    * @throws ctkServiceException It no service was registered under the given class name.
    * @see #getServiceReference(const QString&)
    * @see #getServiceReferences(const QString&)
@@ -417,7 +417,7 @@ public:
    * is not an instance of all the classes named when the service
    * was registered or the <code>ctkServiceFactory</code> object throws an
    * exception, <code>0</code> is returned and a Framework event of type
-   * {@link ctkPluginFrameworkEvent::ERROR} containing a {@link ctkServiceException}
+   * {@link ctkPluginFrameworkEvent::PLUGIN_ERROR} containing a {@link ctkServiceException}
    * describing the error is fired.
    * <li>The service object for the service is returned.
    * </ol>
@@ -429,9 +429,9 @@ public:
    *         <code>ctkServiceFactory</code> does not implement the classes under
    *         which it was registered or the <code>ctkServiceFactory</code> threw
    *         an exception.
-   * @throws std::logic_error If this ctkPluginContext is no
+   * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
-   * @throws std::invalid_argument If the specified
+   * @throws ctkInvalidArgumentException If the specified
    *         <code>ctkServiceReference</code> was not created by the same
    *         framework instance as this <code>ctkPluginContext</code> or
    *         if it is invalid (default constructed).
@@ -453,9 +453,9 @@ public:
    *         <code>ctkServiceFactory</code> does not implement the classes under
    *         which it was registered, the <code>ctkServiceFactory</code> threw
    *         an exception or the service could not be casted to the desired type.
-   * @throws std::logic_error If this ctkPluginContext is no
+   * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
-   * @throws std::invalid_argument If the specified
+   * @throws ctkInvalidArgumentException If the specified
    *         <code>ctkServiceReference</code> was not created by the same
    *         framework instance as this <code>ctkPluginContext</code> or
    *         if it is invalid (default constructed).
@@ -500,9 +500,9 @@ public:
    * @return <code>false</code> if the context plugin's use count for the
    *         service is zero or if the service has been unregistered;
    *         <code>true</code> otherwise.
-   * @throws std::logic_error If this ctkPluginContext is no
+   * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
-   * @throws std::invalid_argument If the specified
+   * @throws ctkInvalidArgumentException If the specified
    *         <code>ctkServiceReference</code> was not created by the same
    *         framework instance as this <code>ctkPluginContext</code>.
    * @see #getService
@@ -530,7 +530,7 @@ public:
    * @param filename A relative name to the file or directory to be accessed.
    * @return A <code>QFileInfo</code> object that represents the requested file
    *         or directory.
-   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    */
   QFileInfo getDataFile(const QString& filename);
 
@@ -590,7 +590,7 @@ public:
    * @return The <code>ctkPlugin</code> object of the installed plugin.
    * @throws ctkPluginException If the I/O device cannot be read or the
    *         installation failed.
-   * @throws std::logic_error If this ctkPluginContext is no longer valid.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
    */
   QSharedPointer<ctkPlugin> installPlugin(const QUrl& location, QIODevice* input = 0);
 
@@ -606,12 +606,27 @@ public:
    *        Qt::QueuedConnection, or Qt::BlockingQueuedConnection is allowed.
    * @returns <code>true</code> if the connection was successfull;
    *          <code>false</code> otherwise.
-   * @throws std::logic_error If this ctkPluginContext is no
+   * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
    * @see ctkPluginEvent
    * @see ctkEventBus
    */
   bool connectPluginListener(const QObject* receiver, const char* slot, Qt::ConnectionType type = Qt::QueuedConnection);
+
+  /**
+   * Disconnects the specified <code>slot</code> from the context
+   * plugin.
+   *
+   * <p>
+   * If <code>slot</code> is not connected to the context plugin,
+   * this method does nothing.
+   *
+   * @param receiver The object which has previously connected <code>slot</code>.
+   * @param slot The Qt slot to be disconnected. If <code>NULL</code>, all slots
+   *        previously connected via connectPluginListener are disconnected.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
+   */
+  void disconnectPluginListener(const QObject* receiver, const char* slot = 0);
 
   /**
    * Connects the specified <code>slot</code> to the context
@@ -623,12 +638,27 @@ public:
    * @param type The Qt connection type.
    * @returns <code>true</code> if the connection was successfull;
    *          <code>false</code> otherwise.
-   * @throws std::logic_error If this ctkPluginContext is no
+   * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
    * @see ctkPluginFrameworkEvent
    * @see ctkEventBus
    */
   bool connectFrameworkListener(const QObject* receiver, const char* slot, Qt::ConnectionType type = Qt::QueuedConnection);
+
+  /**
+   * Disconnects the specified <code>slot</slot> from the context
+   * plugin.
+   *
+   * <p>
+   * If <code>slot</code> is not connected to the context plugin,
+   * this method does nothing.
+   *
+   * @param receiver The object which has previously connected <code>slot</code>.
+   * @param slot The Qt slot to be disconnected. If <code>NULL</code>, all slots
+   *        previously connected via connectFrameworkListener are disconnected.
+   * @throws ctkIllegalStateException If this ctkPluginContext is no longer valid.
+   */
+  void disconnectFrameworkListener(const QObject* receiver, const char* slot = 0);
 
   /**
    * Connects the specified <code>slot</code> with the
@@ -673,9 +703,9 @@ public:
    * @param receiver The object to connect to.
    * @param slot The name of the slot to be connected.
    * @param filter The filter criteria.
-   * @throws std::invalid_argument If <code>filter</code> contains an
+   * @throws ctkInvalidArgumentException If <code>filter</code> contains an
    *         invalid filter string that cannot be parsed.
-   * @throws std::logic_error If this ctkPluginContext is no
+   * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
    * @see ctkServiceEvent
    * @see disconnectServiceListener()

@@ -32,6 +32,7 @@
 class ctkTransferFunctionNativeItemPrivate;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkTransferFunctionNativeItem: public ctkTransferFunctionItem
 {
   Q_OBJECT

@@ -32,6 +32,7 @@
 class QTableWidgetItem;
 class ctkDICOMServerNodeWidgetPrivate;
 
+/// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMServerNodeWidget : public QWidget
 {
 Q_OBJECT;
@@ -62,7 +63,7 @@ public:
   /// Return the row index added into the table
   int addServerNode(const QMap<QString, QVariant>& parameters);
 
-public slots:
+public Q_SLOTS:
   /// Add an empty server node and make it current
   /// Return the row index added into the table
   int addServerNode();
@@ -72,7 +73,7 @@ public slots:
   void readSettings();
   void saveSettings();
 
-protected slots:
+protected Q_SLOTS:
   void updateRemoveButtonEnableState();
 
 protected:
@@ -81,7 +82,8 @@ protected:
     NameColumn = 0,
     AETitleColumn,
     AddressColumn,
-    PortColumn
+    PortColumn,
+    CGETColumn
   };
 private:
   Q_DECLARE_PRIVATE(ctkDICOMServerNodeWidget);

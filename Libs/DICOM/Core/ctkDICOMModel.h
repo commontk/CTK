@@ -23,18 +23,24 @@
 
 // Qt includes 
 #include <QAbstractItemModel>
+#include <QMetaType>
 #include <QSqlDatabase>
 #include <QStringList>
 
 #include "ctkDICOMCoreExport.h"
 
 class ctkDICOMModelPrivate;
+
+/// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMModel
 //  : public QStandardItemModel
   : public QAbstractItemModel
 {
   Q_OBJECT
   typedef QAbstractItemModel Superclass;
+  Q_ENUMS(IndexType)
+  /// startLevel contains the hierarchy depth the model contains
+  Q_PROPERTY(IndexType endLevel READ endLevel WRITE setEndLevel);
 public:
 
   enum {
@@ -55,7 +61,10 @@ public:
 
   void setDatabase(const QSqlDatabase& dataBase);
   void setDatabase(const QSqlDatabase& dataBase, const QMap<QString,QVariant>& parameters);
-  void setDisplayLevel(ctkDICOMModel::IndexType level);
+
+  /// Set it before populating the model
+  ctkDICOMModel::IndexType endLevel()const;
+  void setEndLevel(ctkDICOMModel::IndexType level);
 
   virtual bool canFetchMore ( const QModelIndex & parent ) const;
   virtual int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
@@ -73,7 +82,7 @@ public:
   virtual bool setHeaderData ( int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole );
   // Sorting resets the model because fetched/unfetched items could disappear/appear respectively.
   virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
-public slots:
+public Q_SLOTS:
   virtual void reset();
 protected:
   QScopedPointer<ctkDICOMModelPrivate> d_ptr;
@@ -85,5 +94,7 @@ private:
   Q_DECLARE_PRIVATE(ctkDICOMModel);
   Q_DISABLE_COPY(ctkDICOMModel);
 };
+
+Q_DECLARE_METATYPE(ctkDICOMModel::IndexType)
 
 #endif

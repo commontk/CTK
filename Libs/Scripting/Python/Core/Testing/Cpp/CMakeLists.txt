@@ -1,27 +1,27 @@
-SET(KIT ${PROJECT_NAME})
+set(KIT ${PROJECT_NAME})
 
-CREATE_TEST_SOURCELIST(Tests ${KIT}CppTests.cpp
-  ctkAbstractPythonManagerTest1.cpp
+create_test_sourcelist(Tests ${KIT}CppTests.cpp
+  ctkAbstractPythonManagerTest.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CppTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
+include_directories(${CMAKE_SOURCE_DIR}/Libs/Testing
+                    ${CMAKE_CURRENT_BINARY_DIR})
 
-SET( KIT_TESTS ${CPP_TEST_PATH}/${KIT}CppTests)
+QT4_GENERATE_MOCS(
+  ctkAbstractPythonManagerTest.cpp
+  )
 
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${KIT_TESTS} ${TESTNAME} )
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${PROJECT_NAME})
-ENDMACRO( SIMPLE_TEST  )
+add_executable(${KIT}CppTests ${Tests})
+target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 #
 # Add Tests
 #
 
-SIMPLE_TEST( ctkAbstractPythonManagerTest1 )
+SIMPLE_TEST( ctkAbstractPythonManagerTest )

@@ -21,8 +21,10 @@
 // Qt includes
 #include <QApplication>
 #include <QTextStream>
+#include <QTimer>
 
 // CTK includes
+#include <ctkCallback.h>
 #include <ctkPythonConsole.h>
 #include <ctkCommandLineParser.h>
 
@@ -34,83 +36,120 @@
 
 #ifdef CTK_WRAP_PYTHONQT_USE_VTK
 # include "ctkTestWrappedQListOfVTKObject.h"
-# include "ctkTestWrappedVTKSlot.h"
+# include "ctkTestWrappedVTKObserver.h"
 # include "ctkTestWrappedVTKQInvokable.h"
+# include "ctkTestWrappedVTKSlot.h"
+# include <vtkDebugLeaks.h>
 #endif
 
+namespace
+{
+//-----------------------------------------------------------------------------
+void executeScripts(void * data)
+{
+  ctkSimplePythonManager * pythonManager = reinterpret_cast<ctkSimplePythonManager*>(data);
+  QStringList scripts = pythonManager->property("scripts").toStringList();
+  foreach(const QString& script, scripts)
+    {
+    pythonManager->executeFile(script);
+    if (pythonManager->pythonErrorOccured())
+      {
+      QApplication::exit(EXIT_FAILURE);
+      }
+    }
+}
+
+} // end of anonymous namespace
+
+//-----------------------------------------------------------------------------
 int main(int argc, char** argv)
 {
-  QApplication app(argc, argv);
-
-  ctkCommandLineParser parser;
-  // Use Unix-style argument names
-  parser.setArgumentPrefix("--", "-");
-
-  // Add command line argument names
-  parser.addArgument("help", "h", QVariant::Bool, "Print usage information and exit.");
-  parser.addArgument("interactive", "I", QVariant::Bool, "Enable interactive mode");
-
-  // Parse the command line arguments
-  bool ok = false;
-  QHash<QString, QVariant> parsedArgs = parser.parseArguments(QCoreApplication::arguments(), &ok);
-  if (!ok)
-  {
-    QTextStream(stderr, QIODevice::WriteOnly) << "Error parsing arguments: "
-                                              << parser.errorString() << "\n";
-    return EXIT_FAILURE;
-  }
-
-  // Show a help message
-  if (parsedArgs.contains("help") || parsedArgs.contains("h"))
-  {
-    QTextStream(stdout, QIODevice::WriteOnly) << "ctkSimplePythonShell\n"
-          << "Usage\n\n"
-          << "  ctkSimplePythonShell [options] [<path-to-python-script> ...]\n\n"
-          << "Options\n"
-          << parser.helpText();
-    return EXIT_SUCCESS;
-  }
-  
-  ctkSimplePythonManager pythonManager;
-  
-  ctkPythonConsole console;
-  console.initialize(&pythonManager);
-  console.setAttribute(Qt::WA_QuitOnClose, true);
-  console.resize(600, 280);
-  console.show();
-
-  console.setProperty("isInteractive", parsedArgs.contains("interactive"));
-
-  QStringList list;
-  list << "qt.QPushButton";
-  console.completer()->setAutocompletePreferenceList(list);
-
-  pythonManager.addObjectToPythonMain("_ctkPythonConsoleInstance", &console);
-
-  ctkTestWrappedQProperty testWrappedQProperty;
-  pythonManager.addObjectToPythonMain("_testWrappedQPropertyInstance", &testWrappedQProperty);
-
-  ctkTestWrappedQInvokable testWrappedQInvokable;
-  pythonManager.addObjectToPythonMain("_testWrappedQInvokableInstance", &testWrappedQInvokable);
-
-  ctkTestWrappedSlot testWrappedSlot;
-  pythonManager.addObjectToPythonMain("_testWrappedSlotInstance", &testWrappedSlot);
-
 #ifdef CTK_WRAP_PYTHONQT_USE_VTK
-  ctkTestWrappedVTKQInvokable testWrappedVTKQInvokable;
-  pythonManager.addObjectToPythonMain("_testWrappedVTKQInvokableInstance", &testWrappedVTKQInvokable);
-
-  ctkTestWrappedVTKSlot testWrappedVTKSlot;
-  pythonManager.addObjectToPythonMain("_testWrappedVTKSlotInstance", &testWrappedVTKSlot);
-
-  ctkTestWrappedQListOfVTKObject testWrappedQListOfVTKObject;
-  pythonManager.addObjectToPythonMain("_testWrappedQListOfVTKObjectInstance", &testWrappedQListOfVTKObject);
+  vtkDebugLeaks::SetExitError(true);
+  ctkTestWrappedVTKObserver testWrappedVTKObserver;
 #endif
 
-  foreach(const QString& script, parser.unparsedArguments())
+  int exitCode = EXIT_FAILURE;
+  {
+    QApplication app(argc, argv);
+
+    ctkCommandLineParser parser;
+    // Use Unix-style argument names
+    parser.setArgumentPrefix("--", "-");
+
+    // Add command line argument names
+    parser.addArgument("help", "h", QVariant::Bool, "Print usage information and exit.");
+    parser.addArgument("interactive", "I", QVariant::Bool, "Enable interactive mode");
+
+    // Parse the command line arguments
+    bool ok = false;
+    QHash<QString, QVariant> parsedArgs = parser.parseArguments(QCoreApplication::arguments(), &ok);
+    if (!ok)
     {
-    pythonManager.executeFile(script);
+      QTextStream(stderr, QIODevice::WriteOnly) << "Error parsing arguments: "
+                                                << parser.errorString() << "\n";
+      return EXIT_FAILURE;
     }
-  
-  return app.exec();
+
+    // Show a help message
+    if (parsedArgs.contains("help") || parsedArgs.contains("h"))
+    {
+      QTextStream(stdout, QIODevice::WriteOnly) << "ctkSimplePythonShell\n"
+            << "Usage\n\n"
+            << "  ctkSimplePythonShell [options] [<path-to-python-script> ...]\n\n"
+            << "Options\n"
+            << parser.helpText();
+      return EXIT_SUCCESS;
+    }
+
+    ctkSimplePythonManager pythonManager;
+
+    ctkPythonConsole console;
+    console.initialize(&pythonManager);
+    console.setAttribute(Qt::WA_QuitOnClose, true);
+    console.resize(600, 280);
+    console.show();
+
+    console.setProperty("isInteractive", parsedArgs.contains("interactive"));
+
+    QStringList list;
+    list << "qt.QPushButton";
+    console.completer()->setAutocompletePreferenceList(list);
+
+    pythonManager.addObjectToPythonMain("_ctkPythonConsoleInstance", &console);
+
+    ctkTestWrappedQProperty testWrappedQProperty;
+    pythonManager.addObjectToPythonMain("_testWrappedQPropertyInstance", &testWrappedQProperty);
+
+    ctkTestWrappedQInvokable testWrappedQInvokable;
+    pythonManager.addObjectToPythonMain("_testWrappedQInvokableInstance", &testWrappedQInvokable);
+
+    ctkTestWrappedSlot testWrappedSlot;
+    pythonManager.addObjectToPythonMain("_testWrappedSlotInstance", &testWrappedSlot);
+
+  #ifdef CTK_WRAP_PYTHONQT_USE_VTK
+    pythonManager.addObjectToPythonMain("_testWrappedVTKObserverInstance", &testWrappedVTKObserver);
+
+    ctkTestWrappedVTKQInvokable testWrappedVTKQInvokable;
+    pythonManager.addObjectToPythonMain("_testWrappedVTKQInvokableInstance", &testWrappedVTKQInvokable);
+
+    ctkTestWrappedVTKSlot testWrappedVTKSlot;
+    pythonManager.addObjectToPythonMain("_testWrappedVTKSlotInstance", &testWrappedVTKSlot);
+
+  //  ctkTestWrappedQListOfVTKObject testWrappedQListOfVTKObject;
+  //  pythonManager.addObjectToPythonMain("_testWrappedQListOfVTKObjectInstance", &testWrappedQListOfVTKObject);
+  #endif
+
+    ctkCallback callback;
+    callback.setCallbackData(&pythonManager);
+    pythonManager.setProperty("scripts", parser.unparsedArguments());
+    callback.setCallback(executeScripts);
+    QTimer::singleShot(0, &callback, SLOT(invoke()));
+
+    exitCode = app.exec();
+  }
+#ifdef CTK_WRAP_PYTHONQT_USE_VTK
+  testWrappedVTKObserver.getTable()->Modified();
+#endif
+  return exitCode;
 }

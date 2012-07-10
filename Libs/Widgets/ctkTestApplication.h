@@ -79,6 +79,7 @@ int TEST_NAME(int _argc, char * _argv [] )            \
 #include "ctkWidgetsExport.h"
   
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkTestApplication : public QObject
 {
   Q_OBJECT
@@ -124,7 +125,7 @@ public:
   static void mouseDClick(QWidget* w, QPoint pos, Qt::MouseButton btn, 
                           Qt::KeyboardModifiers mod, int ms);
 
-public slots:
+public Q_SLOTS:
 
   /// Slot responsible to invoke the virtual function 'runTest'.
   /// The typical use case consists in calling that slot using a singleShot QTimer

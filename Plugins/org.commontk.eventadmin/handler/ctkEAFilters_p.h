@@ -46,8 +46,8 @@ struct ctkEAFilters
    * @param filter The filter as a string
    * @return The <tt>ctkLDAPSearchFilter</tt> of the filter string or the TRUE_FILTER if the
    *      filter string was null
-   * @throws std::invalid_argument if <tt>ctkLDAPSearchFilter()</tt>
-   *      throws an <tt>std::invalid_argument</tt>
+   * @throws ctkInvalidArgumentException if <tt>ctkLDAPSearchFilter()</tt>
+   *      throws an <tt>ctkInvalidArgumentException</tt>
    */
   ctkLDAPSearchFilter createFilter(const QString& filter)
   {

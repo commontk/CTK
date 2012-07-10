@@ -31,6 +31,7 @@
 
 class ctkITKErrorLogMessageHandlerPrivate;
 
+/// \ingroup ImageProcessing_ITK_Core
 class CTK_IMAGEPROCESSING_ITK_CORE_EXPORT ctkITKErrorLogMessageHandler :
     public ctkErrorLogAbstractMessageHandler
 {

@@ -29,40 +29,39 @@
 #include "ctkEventBusPlugin_p.h"
 
 #include <QtPlugin>
-#include <QServiceInterfaceDescriptor>
 
 #include "ctkEventBusImpl_p.h"
 
 #include <iostream>
 
-using namespace QtMobility;
+ctkEventBusPlugin* ctkEventBusPlugin::instance = 0;
 
 void ctkEventBusPlugin::start(ctkPluginContext* context)
 {
-  Q_UNUSED(context)
-  std::cout << "org.commontk.eventbus Plugin started\n";
+  instance = this;
+  this->context = context;
+  qDebug() << "ctkEventBus Plugin starting";
+  m_Bus = new ctkEventBusImpl;
+  qDebug() << "ctkEventBus created";
+  context->registerService(QStringList("ctkEventAdminBus"),m_Bus);
+  qDebug() << "ctkEventBus Plugin started";
 }
 
 void ctkEventBusPlugin::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
   std::cout << "org.commontk.eventbus Plugin stopped\n";
+  delete m_Bus;
 }
 
-QObject* ctkEventBusPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor,
-                            QServiceContext* context,
-                            QAbstractSecuritySession* session)
+ctkEventBusPlugin* ctkEventBusPlugin::getInstance()
 {
-  Q_UNUSED(context)
-  Q_UNUSED(session)
+  return instance;
+}
 
-  std::cout << "Creating service instance for " << descriptor.interfaceName().toStdString() << std::endl;
-  if (descriptor.interfaceName() == "org.commontk.core.EventBus")
-  {
-    return ctkEventBusImpl::instance();
-  }
-
-  return 0;
+ctkPluginContext* ctkEventBusPlugin::getPluginContext() const
+{
+  return context;
 }
 
 Q_EXPORT_PLUGIN2(org_commontk_eventbus, ctkEventBusPlugin)

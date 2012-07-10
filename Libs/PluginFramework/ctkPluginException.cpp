@@ -24,7 +24,15 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
-ctkPluginException::ctkPluginException(const QString& msg, const Type& type, const std::exception* cause)
+ctkPluginException::ctkPluginException(const QString& msg, const Type& type)
+  : ctkRuntimeException(msg),
+    type(type)
+{
+
+}
+
+//----------------------------------------------------------------------------
+ctkPluginException::ctkPluginException(const QString& msg, const Type& type, const ctkException& cause)
   : ctkRuntimeException(msg, cause),
     type(type)
 {
@@ -32,7 +40,7 @@ ctkPluginException::ctkPluginException(const QString& msg, const Type& type, con
 }
 
 //----------------------------------------------------------------------------
-ctkPluginException::ctkPluginException(const QString& msg, const std::exception* cause)
+ctkPluginException::ctkPluginException(const QString& msg, const ctkException& cause)
   : ctkRuntimeException(msg, cause),
     type(UNSPECIFIED)
 {
@@ -55,15 +63,30 @@ ctkPluginException& ctkPluginException::operator=(const ctkPluginException& o)
 }
 
 //----------------------------------------------------------------------------
-ctkPluginException::Type ctkPluginException::getType() const
+ctkPluginException::~ctkPluginException() throw()
 {
-  return type;
 }
 
 //----------------------------------------------------------------------------
-QDebug operator<<(QDebug dbg, const ctkPluginException& exc)
+const char* ctkPluginException::name() const throw()
 {
-  dbg << "ctkPluginException:" << exc.what();
+  return "ctkPluginException";
+}
 
-  return dbg.maybeSpace();
+//----------------------------------------------------------------------------
+ctkPluginException* ctkPluginException::clone() const
+{
+  return new ctkPluginException(*this);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginException::rethrow() const
+{
+  throw *this;
+}
+
+//----------------------------------------------------------------------------
+ctkPluginException::Type ctkPluginException::getType() const
+{
+  return type;
 }

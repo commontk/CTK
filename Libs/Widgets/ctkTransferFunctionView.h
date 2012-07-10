@@ -32,6 +32,7 @@ class ctkTransferFunction;
 class ctkTransferFunctionViewPrivate;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkTransferFunctionView: public QGraphicsView
 {
   Q_OBJECT;

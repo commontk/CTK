@@ -29,6 +29,7 @@
 class ctkVTKSurfaceMaterialPropertyWidgetPrivate;
 class vtkProperty;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSurfaceMaterialPropertyWidget
   : public ctkMaterialPropertyWidget
 {
@@ -44,10 +45,10 @@ public:
 
   vtkProperty* property()const;
 
-public slots:
+public Q_SLOTS:
   void setProperty(vtkProperty* property);
 
-protected slots:
+protected Q_SLOTS:
   void updateFromProperty();
 
 protected:

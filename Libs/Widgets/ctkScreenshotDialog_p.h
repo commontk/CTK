@@ -29,6 +29,7 @@
 #include "ui_ctkScreenshotDialog.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 class ctkScreenshotDialogPrivate : public QObject, public Ui_ctkScreenshotDialog
 {
   Q_OBJECT
@@ -46,7 +47,7 @@ public:
   void setWaitingForScreenshot(bool waiting);
   bool isWaitingForScreenshot()const;
 
-public slots:
+public Q_SLOTS:
 
   void saveScreenshot(int delayInSeconds);
 

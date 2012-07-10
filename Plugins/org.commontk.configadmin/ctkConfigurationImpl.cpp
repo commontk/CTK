@@ -146,7 +146,7 @@ void ctkConfigurationImpl::unlock() const
   QThread* current = QThread::currentThread();
   if (lockHolder != current)
   {
-    throw std::logic_error("Thread not lock owner");
+    throw ctkIllegalStateException("Thread not lock owner");
   }
 
   --lockedCount;
@@ -163,7 +163,7 @@ void ctkConfigurationImpl::checkLocked() const
   QThread* current = QThread::currentThread();
   if (lockHolder != current)
   {
-    throw std::logic_error("Thread not lock owner");
+    throw ctkIllegalStateException("Thread not lock owner");
   }
 }
 
@@ -258,7 +258,7 @@ bool ctkConfigurationImpl::isDeleted() const
 void ctkConfigurationImpl::checkDeleted() const
 {
   if (deleted)
-    throw std::logic_error("deleted");
+    throw ctkIllegalStateException("deleted");
 }
 
 void ctkConfigurationImpl::updateDictionary(const ctkDictionary& properties)

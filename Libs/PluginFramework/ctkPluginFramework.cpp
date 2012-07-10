@@ -27,12 +27,18 @@
 #include "ctkPluginConstants.h"
 #include "ctkPluginArchive_p.h"
 
+#include "service/event/ctkEvent.h"
+
 //----------------------------------------------------------------------------
 ctkPluginFramework::ctkPluginFramework()
   : ctkPlugin()
 {
   qRegisterMetaType<ctkPluginFrameworkEvent>("ctkPluginFrameworkEvent");
   qRegisterMetaType<ctkPluginEvent>("ctkPluginEvent");
+  qRegisterMetaType<ctkServiceEvent>("ctkServiceEvent");
+  qRegisterMetaType<ctkEvent>("ctkEvent");
+  qRegisterMetaType<ctkProperties>("ctkProperties");
+  qRegisterMetaType<ctkDictionary>("ctkDictionary");
 }
 
 //----------------------------------------------------------------------------
@@ -40,8 +46,8 @@ void ctkPluginFramework::init()
 {
   Q_D(ctkPluginFramework);
 
-  QMutexLocker sync(&d->lock);
-  // waitOnActivation(d->lock, "Framework.init", true);
+  ctkPluginPrivate::Locker sync(&d->lock);
+  d->waitOnOperation(&d->lock, "Framework.init", true);
   switch (d->state)
   {
   case ctkPlugin::INSTALLED:
@@ -51,9 +57,37 @@ void ctkPluginFramework::init()
   case ctkPlugin::ACTIVE:
     return;
   default:
-    throw std::logic_error("INTERNAL ERROR, Illegal state");
+    throw ctkIllegalStateException("INTERNAL ERROR, Illegal state");
   }
   d->init();
+}
+
+//----------------------------------------------------------------------------
+ctkPluginFrameworkEvent ctkPluginFramework::waitForStop(unsigned long timeout)
+{
+  Q_D(ctkPluginFramework);
+
+  ctkPluginPrivate::Locker sync(&d->lock);
+
+  // Already stopped?
+  if ((d->state & (INSTALLED | RESOLVED)) == 0)
+  {
+    d->stopEvent.isNull = true;
+    d->lock.wait(timeout ? timeout : ULONG_MAX);
+
+    if (d->stopEvent.isNull)
+    {
+      return ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::FRAMEWORK_WAIT_TIMEDOUT, this->d_func()->q_func());
+    }
+  }
+  else if (d->stopEvent.isNull)
+  {
+    // Return this if stop or update have not been called and framework is stopped.
+    d->stopEvent.isNull = false;
+    d->stopEvent.type = ctkPluginFrameworkEvent::FRAMEWORK_STOPPED;
+  }
+  return d->stopEvent.isNull ? ctkPluginFrameworkEvent() :
+                               ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::FRAMEWORK_STOPPED, this->d_func()->q_func());
 }
 
 //----------------------------------------------------------------------------
@@ -64,9 +98,8 @@ void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
 
   QStringList pluginsToStart;
   {
-    QMutexLocker sync(&d->lock);
-    // TODO: parallel start
-    //waitOnActivation(lock, "ctkPluginFramework::start", true);
+    ctkPluginPrivate::Locker sync(&d->lock);
+    d->waitOnOperation(&d->lock, "ctkPluginFramework::start", true);
 
     switch (d->state)
     {
@@ -74,12 +107,12 @@ void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
     case RESOLVED:
       d->init();
     case STARTING:
-      d->activating = true;
+      d->operation.fetchAndStoreOrdered(ctkPluginPrivate::ACTIVATING);
       break;
     case ACTIVE:
       return;
     default:
-      throw std::logic_error("INTERNAL ERROR, Illegal state");
+      throw ctkIllegalStateException("INTERNAL ERROR, Illegal state");
     }
 
     pluginsToStart = d->fwCtx->storage->getStartOnLaunchPlugins();
@@ -108,12 +141,29 @@ void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
   }
 
   {
-    QMutexLocker sync(&d->lock);
+    ctkPluginPrivate::Locker sync(&d->lock);
     d->state = ACTIVE;
-    d->activating = false;
+    d->operation = ctkPluginPrivate::IDLE;
+    d->lock.wakeAll();
     d->fwCtx->listeners.emitFrameworkEvent(
-        ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::STARTED, this->d_func()->q_func()));
+        ctkPluginFrameworkEvent(ctkPluginFrameworkEvent::FRAMEWORK_STARTED, this->d_func()->q_func()));
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFramework::stop(const StopOptions& options)
+{
+  Q_UNUSED(options)
+
+  Q_D(ctkPluginFramework);
+  d->shutdown(false);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFramework::uninstall()
+{
+  throw ctkPluginException("uninstall of System plugin is not allowed",
+                           ctkPluginException::INVALID_OPERATION);
 }
 
 //----------------------------------------------------------------------------

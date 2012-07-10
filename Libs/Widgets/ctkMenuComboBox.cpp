@@ -89,10 +89,10 @@ void ctkMenuComboBoxPrivate::init()
 
   // SearchButton
   this->SearchButton = new QToolButton();
+  this->SearchButton->setText(q->tr("Search"));
   this->SearchButton->setIcon(QIcon(":/Icons/search.svg"));
   this->SearchButton->setCheckable(true);
   this->SearchButton->setAutoRaise(true);
-  this->SearchButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Ignored);
   layout->addWidget(this->SearchButton);
   q->connect(this->SearchButton, SIGNAL(toggled(bool)),
              this, SLOT(setComboBoxEditable(bool)));
@@ -104,8 +104,11 @@ void ctkMenuComboBoxPrivate::init()
   this->MenuComboBox->installEventFilter(q);
   this->MenuComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
   this->MenuComboBox->addItem(this->DefaultIcon, this->DefaultText);
+  q->connect(this->MenuComboBox, SIGNAL(popupShown()),
+             q, SIGNAL(popupShown()));
 
-  this->SearchCompleter = new ctkCompleter(QStringList(), q);
+  this->SearchCompleter = new ctkCompleter(QStringList(), this->MenuComboBox);
+  this->SearchCompleter->popup()->setParent(q);
   this->SearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
   this->SearchCompleter->setModelFiltering(ctkCompleter::FilterWordStartsWith);
   q->connect(this->SearchCompleter, SIGNAL(activated(QString)),
@@ -429,10 +432,44 @@ bool ctkMenuComboBox::isSearchIconVisible() const
 }
 
 // -------------------------------------------------------------------------
+void ctkMenuComboBox::setToolButtonStyle(Qt::ToolButtonStyle style)
+{
+  Q_D(ctkMenuComboBox);
+  d->SearchButton->setToolButtonStyle(style);
+}
+
+// -------------------------------------------------------------------------
+Qt::ToolButtonStyle ctkMenuComboBox::toolButtonStyle() const
+{
+  Q_D(const ctkMenuComboBox);
+  return d->SearchButton->toolButtonStyle();
+}
+// -------------------------------------------------------------------------
 void ctkMenuComboBox::setMinimumContentsLength(int characters)
 {
   Q_D(ctkMenuComboBox);
   d->MenuComboBox->setMinimumContentsLength(characters);
+}
+
+// -------------------------------------------------------------------------
+QComboBox* ctkMenuComboBox::menuComboBoxInternal() const
+{
+  Q_D(const ctkMenuComboBox);
+  return d->MenuComboBox;
+}
+
+// -------------------------------------------------------------------------
+QToolButton* ctkMenuComboBox::toolButtonInternal() const
+{
+  Q_D(const ctkMenuComboBox);
+  return d->SearchButton;
+}
+
+// -------------------------------------------------------------------------
+ctkCompleter* ctkMenuComboBox::searchCompleter() const
+{
+  Q_D(const ctkMenuComboBox);
+  return d->SearchCompleter;
 }
 
 // -------------------------------------------------------------------------
@@ -525,15 +562,4 @@ bool ctkMenuComboBox::eventFilter(QObject* target, QEvent* event)
     d->removeActionToCompleter(actionEvent->action());
     }
   return this->Superclass::eventFilter(target, event);
-}
-
-// -------------------------------------------------------------------------
-void ctkMenuComboBox::resizeEvent(QResizeEvent *event)
-{
-  Q_D(ctkMenuComboBox);
-  this->Superclass::resizeEvent(event);
-  if (this->isSearchIconVisible())
-    {
-    d->SearchButton->setFixedWidth(d->MenuComboBox->size().height());
-    }
 }

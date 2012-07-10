@@ -19,25 +19,25 @@
 ###########################################################################
 
 #! \ingroup CMakeUtilities
-MACRO(ctkMacroAddCtkLibraryOptions lib)
+macro(ctkMacroAddCtkLibraryOptions lib)
 
-  SET(filepath ${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}/ctk_library_options.cmake)
+  set(filepath ${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}/ctk_library_options.cmake)
 
   # Add options only if "ctk_library_option.cmake" file exists
-  IF(EXISTS ${filepath})
+  if(EXISTS ${filepath})
   
     # Make sure the variable is cleared 
-    SET(ctk_library_options )
+    set(ctk_library_options )
 
-    INCLUDE(${filepath})
+    include(${filepath})
 
-    FOREACH(option ${ctk_library_options})
+    foreach(option ${ctk_library_options})
       ctkFunctionExtractOptionNameAndValue(${option} option_name option_value)
-      OPTION(CTK_LIB_${lib}_${option_name} "Enable ${lib} Library ${option_name} option." ${option_value})
-      MARK_AS_ADVANCED(CTK_LIB_${lib}_${option_name})
-      LIST(APPEND ctk_lib_options_list CTK_LIB_${lib}_${option_name})
-    ENDFOREACH()
+      option(CTK_LIB_${lib}_${option_name} "Enable ${lib} Library ${option_name} option." ${option_value})
+      mark_as_advanced(CTK_LIB_${lib}_${option_name})
+      list(APPEND ctk_lib_options_list CTK_LIB_${lib}_${option_name})
+    endforeach()
     
-  ENDIF()
+  endif()
   
-ENDMACRO()
+endmacro()

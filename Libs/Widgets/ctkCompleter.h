@@ -29,6 +29,7 @@
 #include "ctkWidgetsExport.h"
 class ctkCompleterPrivate;
 
+/// \ingroup Widgets
 /// ctkCompleter is a QCompleter that allows different way of filtering
 /// the model, not just by filtering strings that start with the
 /// \sa completionPrefix (default behavior).

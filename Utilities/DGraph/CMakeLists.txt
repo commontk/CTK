@@ -18,45 +18,39 @@
 #
 ###########################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8)
 
-FOREACH(policy CMP0003)
-  IF(POLICY ${policy})
-    CMAKE_POLICY(SET ${policy} NEW)
-  ENDIF()
-ENDFOREACH()
+foreach(policy CMP0003)
+  if(POLICY ${policy})
+    cmake_policy(SET ${policy} NEW)
+  endif()
+endforeach()
 
-PROJECT(DGraph)
+project(DGraph)
 
-SET(CTK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../)
+set(CTK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../)
 
-SET(QT_DONT_USE_QTGUI TRUE)
-FIND_PACKAGE(Qt4 4.6 REQUIRED)
-INCLUDE(${QT_USE_FILE})
-
-INCLUDE_DIRECTORIES(
+include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CTK_SOURCE_DIR}/Libs/Core
   )
 
 # Do not export symbol in ctkDependencyGraph class
-ADD_DEFINITIONS(-DNO_SYMBOL_EXPORT)
+add_definitions(-DNO_SYMBOL_EXPORT)
 
 # Configure CTKCoreExport.h
-SET(MY_EXPORT_HEADER_PREFIX CTKCore)
-SET(MY_LIBRARY_EXPORT_DIRECTIVE CTK_CORE_EXPORT)
-CONFIGURE_FILE(
+set(MY_EXPORT_HEADER_PREFIX CTKCore)
+set(MY_LIBRARY_EXPORT_DIRECTIVE CTK_CORE_EXPORT)
+configure_file(
   ${CTK_SOURCE_DIR}/Libs/ctkExport.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
   )
 
 # Add excutable
-ADD_EXECUTABLE(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}
   DGraph.cpp
   ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.h
   ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.cpp)
-  
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${QT_LIBRARIES} )
 
   

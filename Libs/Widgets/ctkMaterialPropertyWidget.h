@@ -30,6 +30,7 @@
 class ctkMaterialPropertyWidgetPrivate;
 class QListWidgetItem;
 
+/// \ingroup Widgets
 /// ctkMaterialPropertyWidget is a panel to control material properties
 /// such as color and lighting coefficients. It contains a preview icon
 /// and a list of presets.
@@ -106,7 +107,7 @@ public:
   bool isBackfaceCullingVisible()const;
   void setBackfaceCullingVisible(bool show);
 
-public slots:
+public Q_SLOTS:
   void setColor(const QColor& newColor);
   void setOpacity(double newOpacity);
 
@@ -117,7 +118,7 @@ public slots:
 
   void setBackfaceCulling(bool enable);
 
-signals:
+Q_SIGNALS:
   void colorChanged(QColor newColor);
   void opacityChanged(double newOpacity);
 
@@ -127,7 +128,7 @@ signals:
   void specularPowerChanged(double newSpecularPower);
 
   void backfaceCullingChanged(bool newBackfaceCulling);
-protected slots:
+protected Q_SLOTS:
   virtual void onColorChanged(const QColor& newColor);
   virtual void onOpacityChanged(double newOpacity);
 

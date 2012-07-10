@@ -25,6 +25,7 @@
 #include "ctkVTKAbstractMatrixWidget.h"
 #include "ctkVisualizationVTKWidgetsExport.h"
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKMatrixWidget
   : public ctkVTKAbstractMatrixWidget
 {
@@ -37,7 +38,7 @@ public:
   /// Constructors
   ctkVTKMatrixWidget(QWidget* parent);
 
-public slots:
+public Q_SLOTS:
   void setMatrix(vtkMatrix4x4* matrix);
 };
 

@@ -28,7 +28,8 @@
 #include <QMetaType>
 
 #include <ctkServiceReference.h>
-#include <ctkRuntimeException.h>
+
+class ctkRuntimeException;
 
 
 /**
@@ -48,6 +49,8 @@
  */
 struct ctkLogEntry
 {
+  virtual ~ctkLogEntry() {}
+
   /**
    * Returns the plugin that created this <code>ctkLogEntry</code> object.
    *

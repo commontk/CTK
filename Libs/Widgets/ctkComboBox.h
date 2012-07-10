@@ -29,6 +29,7 @@
 #include "ctkWidgetsExport.h"
 class ctkComboBoxPrivate;
 
+/// \ingroup Widgets
 /// ctkComboBox is an advanced QComboBox. It allows the display of a default
 /// text/icon when the combobox current index is invalid (-1). A typical
 /// default text would be "Select a XXX..."

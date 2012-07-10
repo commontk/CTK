@@ -32,6 +32,7 @@
 class ctkVTKTextPropertyWidgetPrivate;
 class vtkTextProperty;
 
+/// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKTextPropertyWidget : public QWidget
 {
   Q_OBJECT;
@@ -67,7 +68,7 @@ public:
   /// Has the text shadows
   bool hasShadow()const;
 
-public slots:
+public Q_SLOTS:
   void setTextProperty(vtkTextProperty* textProperty);
   void setText(const QString& text);
   void setTextLabel(const QString& label);
@@ -79,10 +80,10 @@ public slots:
   void setItalic(bool enable);
   void setShadow(bool enable);
 
-signals:
+Q_SIGNALS:
   void textChanged(const QString& text);
 
-protected slots:
+protected Q_SLOTS:
   void updateFromTextProperty();
 
 protected:

@@ -82,7 +82,7 @@ public:
    * @param p Plugin which caused the error.
    * @param e The exception.
    */
-  void frameworkError(QSharedPointer<ctkPlugin> p, const std::exception& e);
+  void frameworkError(QSharedPointer<ctkPlugin> p, const ctkException& e);
 
   /**
    * Receive notification that a service has had a change occur in its lifecycle.
@@ -98,14 +98,14 @@ public:
 
   void emitFrameworkEvent(const ctkPluginFrameworkEvent& event);
 
-signals:
+Q_SIGNALS:
 
   void pluginChangedDirect(const ctkPluginEvent& event);
   void pluginChangedQueued(const ctkPluginEvent& event);
 
   void frameworkEvent(const ctkPluginFrameworkEvent& event);
 
-private slots:
+private Q_SLOTS:
 
   void serviceListenerDestroyed(QObject* listener);
 

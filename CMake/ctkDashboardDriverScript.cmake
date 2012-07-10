@@ -34,7 +34,6 @@ set(expected_variables
   CTEST_NOTES_FILES
   CTEST_SITE
   CTEST_DASHBOARD_ROOT
-  CTEST_CMAKE_COMMAND
   CTEST_CMAKE_GENERATOR
   WITH_MEMCHECK
   WITH_COVERAGE
@@ -117,7 +116,7 @@ set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
 #
 # run_ctest macro
 #
-MACRO(run_ctest)
+macro(run_ctest)
   ctest_start(${model})
   ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" RETURN_VALUE res)
 
@@ -278,7 +277,7 @@ ${ADDITIONNAL_CMAKECACHE_OPTION}
 endmacro()
 
 if(SCRIPT_MODE STREQUAL "continuous")
-  while(${CTEST_ELAPSED_TIME} LESS 68400)
+  while(${CTEST_ELAPSED_TIME} LESS 46800) # Lasts 13 hours (Assuming it starts at 9am, it will end around 10pm)
     set(START_TIME ${CTEST_ELAPSED_TIME})
     run_ctest()
     # Loop no faster than once every 5 minutes

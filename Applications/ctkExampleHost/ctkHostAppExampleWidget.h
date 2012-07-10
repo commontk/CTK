@@ -45,7 +45,7 @@ public:
 
   virtual ~ctkHostAppExampleWidget();
 
-public slots:
+public Q_SLOTS:
 
   void loadButtonClicked();
 

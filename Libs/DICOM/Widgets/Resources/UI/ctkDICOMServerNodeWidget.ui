@@ -66,6 +66,9 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QTableWidget" name="NodeTable">
+        <property name="columnCount">
+         <number>5</number>
+        </property>
         <attribute name="horizontalHeaderStretchLastSection">
          <bool>true</bool>
         </attribute>
@@ -90,6 +93,11 @@
         <column>
          <property name="text">
           <string>Port</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>CGET</string>
          </property>
         </column>
        </widget>

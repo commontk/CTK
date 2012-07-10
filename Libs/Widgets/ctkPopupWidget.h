@@ -26,6 +26,7 @@
 
 class ctkPopupWidgetPrivate;
 
+/// \ingroup Widgets
 /// Description:
 class CTK_WIDGETS_EXPORT ctkPopupWidget : public ctkBasePopupWidget
 {
@@ -81,7 +82,7 @@ public:
   int hideDelay()const;
   void setHideDelay(int delay);
 
-public slots:
+public Q_SLOTS:
   /// Convenient function that calls setAutoHide(!pin) and opens the popup
   /// if pin is true regardless of the value of \a AutoShow.
   /// It is typically connected with a checkable button to anchor the popup.
@@ -101,7 +102,7 @@ protected:
   /// it tries to resize itself to fit the same width of \a baseWidget.
   virtual void setBaseWidget(QWidget* baseWidget);
 
-protected slots:
+protected Q_SLOTS:
   void updatePopup();
   virtual void onEffectFinished();
 

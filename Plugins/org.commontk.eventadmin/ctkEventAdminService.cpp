@@ -33,7 +33,7 @@ ctkEventAdminService::ctkEventAdminService(ctkPluginContext* context,
                                            int timeout,
                                            const QStringList& ignoreTimeout)
   : impl(managers, syncPool, asyncPool, timeout, ignoreTimeout),
-    context(context), signalPublisher(this)
+    context(context)
 {
 
 }
@@ -41,6 +41,10 @@ ctkEventAdminService::ctkEventAdminService(ctkPluginContext* context,
 ctkEventAdminService::~ctkEventAdminService()
 {
   qDeleteAll(slotHandler);
+  foreach(QList<ctkEASignalPublisher*> l, signalPublisher.values())
+  {
+    qDeleteAll(l);
+  }
 }
 
 void ctkEventAdminService::postEvent(const ctkEvent& event)
@@ -54,26 +58,111 @@ void ctkEventAdminService::sendEvent(const ctkEvent& event)
 }
 
 void ctkEventAdminService::publishSignal(const QObject* publisher, const char* signal,
+                                         const QString& topic,
                                          Qt::ConnectionType type)
 {
+  if (topic.isEmpty())
+  {
+    throw ctkInvalidArgumentException("topic must not be empty");
+  }
+
+  // check if the signal was already registered under the given topic
+  if (signalPublisher.contains(publisher))
+  {
+    const QList<ctkEASignalPublisher*>& signalPublishers = signalPublisher[publisher];
+    for(int i = 0; i < signalPublishers.size(); ++i)
+    {
+      if (signalPublishers[i]->getSignalName() == signal &&
+          signalPublishers[i]->getTopicName() == topic)
+      {
+        return;
+      }
+    }
+  }
+
+  QList<ctkEASignalPublisher*>& signalList = signalPublisher[publisher];
+  signalList.push_back(new ctkEASignalPublisher(this, signal, topic));
   if (type == Qt::DirectConnection)
   {
-    connect(publisher, signal, &signalPublisher, SLOT(publishSyncSignal(ctkEvent)), Qt::DirectConnection);
+    connect(publisher, signal, signalList.back(), SLOT(publishSyncSignal(ctkDictionary)), Qt::DirectConnection);
   }
   else if (type == Qt::QueuedConnection)
   {
-    connect(publisher, signal, &signalPublisher, SLOT(publishAsyncSignal(ctkEvent)), Qt::DirectConnection);
+    connect(publisher, signal, signalList.back(), SLOT(publishAsyncSignal(ctkDictionary)), Qt::DirectConnection);
   }
   else
   {
-    throw std::invalid_argument("type must be either Qt::DirectConnection or Qt::QueuedConnection");
+    throw ctkInvalidArgumentException("type must be either Qt::DirectConnection or Qt::QueuedConnection");
   }
 }
 
-qlonglong ctkEventAdminService::subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties)
+void ctkEventAdminService::unpublishSignal(const QObject* publisher, const char* signal,
+                                           const QString& topic)
 {
+  if (!signalPublisher.contains(publisher)) return;
+
+  if (signal == 0 && topic.isEmpty())
+  {
+    // unpublish everything from the given publisher
+    // this automatically disconnects signals
+    qDeleteAll(signalPublisher.take(publisher));
+  }
+  else
+  {
+    QList<ctkEASignalPublisher*>& list = signalPublisher[publisher];
+    if (signal == 0)
+    {
+      for (int i = 0; i < list.size(); )
+      {
+        if (list[i]->getTopicName() == topic)
+        {
+          // this automatically disconnects the signals
+          delete list.takeAt(i);
+        }
+        else
+        {
+          ++i;
+        }
+      }
+    }
+    else {
+      for (int i = 0; i < list.size(); )
+      {
+        if (list[i]->getSignalName() == signal)
+        {
+          if (topic.isEmpty() || list[i]->getTopicName() == topic)
+          {
+            // this automatically disconnects the signals
+            delete list.takeAt(i);
+          }
+        }
+        else
+        {
+          ++i;
+        }
+      }
+    }
+
+    if (list.isEmpty())
+    {
+      signalPublisher.remove(publisher);
+    }
+  }
+}
+
+qlonglong ctkEventAdminService::subscribeSlot(const QObject* subscriber, const char* member,
+                                              const ctkDictionary& properties, Qt::ConnectionType type)
+{
+  if (subscriber == 0) throw ctkInvalidArgumentException("subscriber cannot be NULL");
+  if (member == 0) throw ctkInvalidArgumentException("slot cannot be NULL");
+  if (type != Qt::AutoConnection && type != Qt::DirectConnection &&
+      type != Qt::QueuedConnection && type != Qt::BlockingQueuedConnection)
+  {
+    throw ctkInvalidArgumentException("connection type invalid");
+  }
+
   ctkEASlotHandler* handler = new ctkEASlotHandler();
-  connect(handler, SIGNAL(eventOccured(ctkEvent)), subscriber, member, Qt::DirectConnection);
+  connect(handler, SIGNAL(eventOccured(ctkEvent)), subscriber, member, type);
   ctkServiceRegistration reg = context->registerService<ctkEventHandler>(handler, properties);
   handler->reg = reg;
   qlonglong id = reg.getReference().getProperty(ctkPluginConstants::SERVICE_ID).toLongLong();

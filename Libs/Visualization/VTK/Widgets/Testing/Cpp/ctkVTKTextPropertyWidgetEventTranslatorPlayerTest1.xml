@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Sans Serif,9,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000031000001f90000019a000000060000004a000001f300000194000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000013300000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/TextLineEdit" command="key" arguments="16777248"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/TextLineEdit" command="set_string" arguments="Tes"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/TextLineEdit" command="set_string" arguments="Test"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/TextLineEdit" command="set_string" arguments="Test"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/TextLineEdit" command="set_string" arguments="Test"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mousePress" arguments="1,1,0,132,101"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mouseMove" arguments="1,0,0,129,58"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mouseRelease" arguments="1,0,0,129,58"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QDialogButtonBox0/1QPushButton0" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mousePress" arguments="1,1,0,149,54"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mouseRelease" arguments="1,0,0,149,54"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mousePress" arguments="1,1,0,149,32"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mouseRelease" arguments="1,0,0,149,32"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorShower0/1QSpinBox0" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorShower0/1QSpinBox0" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorLuminancePicker0" command="mousePress" arguments="1,1,0,15,201"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorLuminancePicker0" command="mouseMove" arguments="1,0,0,-1,89"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorLuminancePicker0" command="mouseRelease" arguments="1,0,0,-1,89"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mousePress" arguments="1,1,0,180,68"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mouseMove" arguments="1,0,0,137,43"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorPicker0" command="mouseRelease" arguments="1,0,0,137,43"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0" command="mousePress" arguments="1,1,0,511,80"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0" command="mouseMove" arguments="1,0,0,508,18"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0" command="mouseRelease" arguments="1,0,0,508,18"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorLuminancePicker0" command="mousePress" arguments="1,1,0,5,82"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorLuminancePicker0" command="mouseMove" arguments="1,0,0,2,26"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorLuminancePicker0" command="mouseRelease" arguments="1,0,0,2,26"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QDialogButtonBox0/1QPushButton0" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/OpacitySlider/1QSlider0" command="set_int" arguments="9"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/OpacitySlider/1QSlider0" command="set_int" arguments="8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/OpacitySlider/1QSlider0" command="set_int" arguments="7"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/FontComboBox" command="set_string" arguments="Courier"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ItalicCheckBox" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/BoldCheckBox" command="set_boolean" arguments="true"/>
+    </events>
+</QtTesting>

@@ -30,6 +30,7 @@
 
 class ctkAxesWidgetPrivate;
 
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkAxesWidget : public QWidget
 {
   Q_OBJECT
@@ -62,7 +63,7 @@ public :
   /// False by default.
   bool autoReset() const;
 
-signals:
+Q_SIGNALS:
   void currentAxisChanged(ctkAxesWidget::Axis axis);
 
 public slots :

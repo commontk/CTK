@@ -21,7 +21,7 @@
 
 #include "ctkVersionRange_p.h"
 
-#include <stdexcept>
+#include <ctkException.h>
 
 //----------------------------------------------------------------------------
 ctkVersionRange ctkVersionRange::defaultVersionRange()
@@ -50,7 +50,7 @@ ctkVersionRange::ctkVersionRange(const QString& vr)
     }
     else
     {
-      throw std::invalid_argument("Illegal version range: " + vr.toStdString());
+      throw ctkInvalidArgumentException("Illegal version range: " + vr);
     }
   }
   else

@@ -49,9 +49,6 @@ private:
   // Used to blacklist the service or get the service object for the reference
   BlacklistingHandlerTasks* handlerTasks;
 
-  // Is this handler finished
-  mutable QAtomicInt finishedTask;
-
   class _GetAndUngetEventHandler;
 
 public:
@@ -85,11 +82,6 @@ public:
    * Blacklist the handler.
    */
   void blackListHandler();
-
-  /**
-   * Is the delivery finished
-   */
-  bool finished() const;
 
 };
 

@@ -71,7 +71,7 @@ private:
   ctkEventAdminImpl<BlacklistingHandlerTasks, SyncDeliverTasks, AsyncDeliverTasks> impl;
 
   ctkPluginContext* context;
-  ctkEASignalPublisher signalPublisher;
+  QHash<const QObject*, QList<ctkEASignalPublisher*> > signalPublisher;
   QHash<qlonglong, ctkEASlotHandler*> slotHandler;
 
 public:
@@ -89,9 +89,14 @@ public:
   void sendEvent(const ctkEvent& event);
 
   void publishSignal(const QObject* publisher, const char* signal,
+                     const QString& topic,
                      Qt::ConnectionType type = Qt::QueuedConnection);
 
-  qlonglong subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties);
+  void unpublishSignal(const QObject* publisher, const char* signal = 0,
+                       const QString& topic = "");
+
+  qlonglong subscribeSlot(const QObject* subscriber, const char* member,
+                          const ctkDictionary& properties, Qt::ConnectionType type = Qt::AutoConnection);
 
   void unsubscribeSlot(qlonglong subscriptionId);
 
@@ -99,7 +104,7 @@ public:
 
   /**
    * This method can be used to stop the delivery of events. The managers variable is
-   * replaced with a null object that throws an std::logic_error on a call
+   * replaced with a null object that throws an ctkIllegalStateException on a call
    * to <tt>createHandlerTasks()</tt>.
    */
   void stop();

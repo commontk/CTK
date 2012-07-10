@@ -123,7 +123,7 @@ public:
   /// Test a persistent model index
   virtual void testPersistentModelIndex(const QPersistentModelIndex& index)const;
 
-protected slots:
+protected Q_SLOTS:
   void onColumnsAboutToBeInserted(const QModelIndex & parent, int start, int end);
   void onColumnsAboutToBeRemoved(const QModelIndex & parent, int start, int end);
   void onColumnsInserted(const QModelIndex & parent, int start, int end);

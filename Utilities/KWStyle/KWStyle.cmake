@@ -1,54 +1,54 @@
-IF( CTK_USE_KWSTYLE )
-  SET(msvc_default OFF)
-  IF(CMAKE_GENERATOR MATCHES "Visual Studio")
-    SET(msvc_default ON)
-  ENDIF()
+if( CTK_USE_KWSTYLE )
+  set(msvc_default OFF)
+  if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    set(msvc_default ON)
+  endif()
 
-  OPTION(KWSTYLE_USE_VIM_FORMAT "Set KWStyle to generate errors with a VIM-compatible format." OFF)
-  OPTION(KWSTYLE_USE_MSVC_FORMAT "Set KWStyle to generate errors with a VisualStudio-compatible format." ${msvc_default})
-  OPTION(KWSTYLE_USE_GCC_FORMAT "Set KWStyle to generate errors with a GCC-compatible format." OFF)
+  option(KWSTYLE_USE_VIM_FORMAT "Set KWStyle to generate errors with a VIM-compatible format." OFF)
+  option(KWSTYLE_USE_MSVC_FORMAT "Set KWStyle to generate errors with a VisualStudio-compatible format." ${msvc_default})
+  option(KWSTYLE_USE_GCC_FORMAT "Set KWStyle to generate errors with a GCC-compatible format." OFF)
 
-  FIND_PROGRAM(KWSTYLE_EXECUTABLE
+  find_program(KWSTYLE_EXECUTABLE
     NAMES KWStyle
     PATHS
     /usr/local/bin
     )
 
-  CONFIGURE_FILE(
+  configure_file(
     ${PROJECT_SOURCE_DIR}/Utilities/KWStyle/qCTKFiles.txt.in
     ${PROJECT_BINARY_DIR}/Utilities/KWStyle/qCTKFiles.txt)
 
-  CONFIGURE_FILE(
+  configure_file(
     ${PROJECT_SOURCE_DIR}/Utilities/KWStyle/qCTK.kws.xml.in
     ${PROJECT_BINARY_DIR}/Utilities/KWStyle/qCTK.kws.xml)
 
 
-  SET(CTK_KWSTYLE_ARGUMENTS
+  set(CTK_KWSTYLE_ARGUMENTS
     -xml ${PROJECT_BINARY_DIR}/Utilities/KWStyle/qCTK.kws.xml -v
       -D ${PROJECT_BINARY_DIR}/Utilities/KWStyle/qCTKFiles.txt
       -o ${PROJECT_SOURCE_DIR}/Utilities/KWStyle/qCTKOverwrite.txt
     )
 
-  IF(KWSTYLE_USE_VIM_FORMAT)
-    LIST(APPEND CTK_KWSTYLE_ARGUMENTS -vim)
-  ENDIF()
+  if(KWSTYLE_USE_VIM_FORMAT)
+    list(APPEND CTK_KWSTYLE_ARGUMENTS -vim)
+  endif()
 
-  IF(KWSTYLE_USE_MSVC_FORMAT)
-    LIST(APPEND CTK_KWSTYLE_ARGUMENTS -msvc)
-  ENDIF()
+  if(KWSTYLE_USE_MSVC_FORMAT)
+    list(APPEND CTK_KWSTYLE_ARGUMENTS -msvc)
+  endif()
 
-  IF(KWSTYLE_USE_GCC_FORMAT)
-    LIST(APPEND CTK_KWSTYLE_ARGUMENTS -gcc)
-  ENDIF()
+  if(KWSTYLE_USE_GCC_FORMAT)
+    list(APPEND CTK_KWSTYLE_ARGUMENTS -gcc)
+  endif()
 
-  ADD_CUSTOM_COMMAND(
+  add_custom_command(
     OUTPUT ${CTK_BINARY_DIR}/qCTKStyleReport.txt
     COMMAND ${KWSTYLE_EXECUTABLE}
     ARGS    ${CTK_KWSTYLE_ARGUMENTS}
     COMMENT "Coding Style Checker qCTK style"
     )
 
-  ADD_CUSTOM_TARGET(qCTKStyleCheck DEPENDS ${CTK_BINARY_DIR}/qCTKStyleReport.txt)
-  ADD_TEST(qCTKStyleTest ${KWSTYLE_EXECUTABLE} ${CTK_KWSTYLE_ARGUMENTS})
+  add_custom_target(qCTKStyleCheck DEPENDS ${CTK_BINARY_DIR}/qCTKStyleReport.txt)
+  add_test(qCTKStyleTest ${KWSTYLE_EXECUTABLE} ${CTK_KWSTYLE_ARGUMENTS})
 
-ENDIF( CTK_USE_KWSTYLE )
+endif()

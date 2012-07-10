@@ -31,6 +31,7 @@
 
 class ctkQImageViewPrivate;
 
+/// \ingroup Widgets
 ///
 /// ctkQImageView is the base class of image viewer widgets.
 class CTK_WIDGETS_EXPORT ctkQImageView: public QWidget
@@ -76,7 +77,7 @@ public:
 
   double zoom( void );
 
-public slots:
+public Q_SLOTS:
 
   void addImage( const QImage & image );
   void clearImages( void );
@@ -106,7 +107,7 @@ public slots:
 
   virtual void update( bool zoomChanged=false, bool sizeChanged=false );
 
-signals:
+Q_SIGNALS:
 
   void xSpacingChanged( double xSpacing );
   void ySpacingChanged( double ySpacing );

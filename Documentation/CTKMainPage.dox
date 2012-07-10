@@ -4,12 +4,41 @@
 
 \section intro_sec Introduction
 
+The goal of CTK is to support biomedical image computing. CTK code is licensed
+under <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2.0</a>.
+
+CTK works on topics that are not covered by existing toolkits that support the
+mutual interest and needs of the CTK community. The main scope of current CTK
+efforts includes the following topics:
+
+ - \ref Project_DICOM
+ - \ref Project_DICOMAppHosting
+ - \ref Project_Widgets
+ - \ref PluginFramework
+
 See the <a href="http://www.commontk.org">CTK Wiki</a> for more information.
 
-\defgroup Apps CTK Applications
+\defgroup Apps Applications
 
-\defgroup Libs CTK Libraries
+\defgroup Libs Libraries
 
-\defgroup Plugins CTK Plugins
+\defgroup Plugins Plugins
+
+\defgroup Projects Projects
+The Common Toolkit focuses its efforts on the following main projects.
+
+- \ref Project_DICOM
+- \ref Project_DICOMAppHosting
+- \ref Project_Widgets
+- \ref PluginFramework
+
+\defgroup Project_DICOM DICOM
+\ingroup Projects
+
+\defgroup Project_DICOMAppHosting DICOM Application Hosting
+\ingroup Projects
+
+\defgroup Project_Widgets Widgets
+\ingroup Projects
 
 */

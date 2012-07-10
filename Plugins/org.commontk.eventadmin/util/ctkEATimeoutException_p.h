@@ -23,7 +23,7 @@
 #ifndef CTKEATIMEOUTEXCEPTION_P_H
 #define CTKEATIMEOUTEXCEPTION_P_H
 
-#include <ctkRuntimeException.h>
+#include <ctkException.h>
 
 /**
  * Thrown by synchronization classes that report
@@ -46,6 +46,22 @@ public:
    */
   ctkEATimeoutException(long time, const QString& message = QString());
 
+  ~ctkEATimeoutException() throw();
+
+  /**
+   * @see ctkException::name()
+   */
+  const char* name() const throw();
+
+  /**
+   * @see ctkException::clone()
+   */
+  ctkEATimeoutException* clone() const;
+
+  /**
+   * @see ctkException::rethrow()
+   */
+  void rethrow() const;
 };
 
 #endif // CTKEATIMEOUTEXCEPTION_P_H

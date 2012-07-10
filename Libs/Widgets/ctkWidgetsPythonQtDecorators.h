@@ -34,6 +34,7 @@
 // for non-static methods.
 //
 
+/// \ingroup Widgets
 class ctkWidgetsPythonQtDecorators : public QObject
 {
   Q_OBJECT
@@ -45,7 +46,7 @@ public:
                                      PythonQtUpcastingOffset<ctkWorkflowWidgetStep,ctkWorkflowStep>());
     }
 
-public slots:
+public Q_SLOTS:
 
   bool hasCreateUserInterfaceCommand(ctkWorkflowWidgetStep* step)const
     {
@@ -71,6 +72,7 @@ public slots:
 };
 
 //-----------------------------------------------------------------------------
+/// \ingroup Widgets
 void initCTKWidgetsPythonQtDecorators()
 {
   PythonQt::self()->addDecorators(new ctkWidgetsPythonQtDecorators);

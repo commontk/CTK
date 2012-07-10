@@ -79,7 +79,7 @@ public:
    * The <code>ctkServiceReference</code> object may be shared with other
    * plugins.
    *
-   * @throws std::logic_error If this
+   * @throws ctkIllegalStateException If this
    *         <code>ctkServiceRegistration</code> object has already been
    *         unregistered or if it is invalid.
    * @return <code>ctkServiceReference</code> object.
@@ -106,9 +106,9 @@ public:
    *        be made to this object after calling this method. To update the
    *        service's properties this method should be called again.
    *
-   * @throws std::logic_error If this <code>ctkServiceRegistration</code>
+   * @throws ctkIllegalStateException If this <code>ctkServiceRegistration</code>
    *         object has already been unregistered or if it is invalid.
-   * @throws std::invalid_argument If <code>properties</code> contains
+   * @throws ctkInvalidArgumentException If <code>properties</code> contains
    *         case variants of the same key name.
    */
   void setProperties(const ctkDictionary& properties);
@@ -138,7 +138,7 @@ public:
    * the service object for the plugin.
    * </ol>
    *
-   * @throws std::logic_error If this
+   * @throws ctkIllegalStateException If this
    *         <code>ctkServiceRegistration</code> object has already been
    *         unregistered or if it is invalid.
    * @see ctkPluginContext#ungetService

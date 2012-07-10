@@ -38,10 +38,12 @@ protected:
 public:
   ctkDirectoryButtonPrivate(ctkDirectoryButton& object);
   void init();
+  void updateDisplayText();
 
   QDir         Directory;
   QPushButton* PushButton;
   QString      DialogCaption;
+  QString      DisplayText;
 #ifdef USE_QFILEDIALOG_OPTIONS
   QFileDialog::Options DialogOptions;
 #else
@@ -77,6 +79,19 @@ void ctkDirectoryButtonPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
+void ctkDirectoryButtonPrivate::updateDisplayText()
+{
+  Q_Q(ctkDirectoryButton);
+  QString buttonText = this->DisplayText;
+  if (buttonText.isNull())
+    {
+    buttonText = this->DisplayAbsolutePath ?
+      this->Directory.absolutePath() : this->Directory.path();
+    }
+  this->PushButton->setText(buttonText);
+}
+
+//-----------------------------------------------------------------------------
 ctkDirectoryButton::ctkDirectoryButton(QWidget * parentWidget)
   :QWidget(parentWidget)
   , d_ptr(new ctkDirectoryButtonPrivate(*this))
@@ -86,9 +101,9 @@ ctkDirectoryButton::ctkDirectoryButton(QWidget * parentWidget)
   d->PushButton->setText(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
   d->PushButton->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));
 }
-    
+
 //-----------------------------------------------------------------------------
-ctkDirectoryButton::ctkDirectoryButton(const QString& dir, 
+ctkDirectoryButton::ctkDirectoryButton(const QString& dir,
                                        QWidget * parentWidget)
   :QWidget(parentWidget)
   , d_ptr(new ctkDirectoryButtonPrivate(*this))
@@ -133,8 +148,7 @@ void ctkDirectoryButton::setDirectory(const QString& dir)
     }
 
   d->Directory = newDirectory;
-
-  d->PushButton->setText(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
+  d->updateDisplayText();
 
   emit directorySelected(d->DisplayAbsolutePath ?
                          newDirectory.absolutePath() :
@@ -165,12 +179,26 @@ const QString& ctkDirectoryButton::caption()const
 }
 
 //-----------------------------------------------------------------------------
+void ctkDirectoryButton::setText(const QString& text)
+{
+  Q_D(ctkDirectoryButton);
+  d->DisplayText = text;
+  d->updateDisplayText();
+}
+
+//-----------------------------------------------------------------------------
+const QString& ctkDirectoryButton::text()const
+{
+  Q_D(const ctkDirectoryButton);
+  return d->DisplayText;
+}
+
+//-----------------------------------------------------------------------------
 void ctkDirectoryButton::setIcon(const QIcon& newIcon)
 {
   Q_D(const ctkDirectoryButton);
   return d->PushButton->setIcon(newIcon);
 }
-
 
 //-----------------------------------------------------------------------------
 QIcon ctkDirectoryButton::icon()const

@@ -28,6 +28,7 @@
 class QMainWindow;
 
 //------------------------------------------------------------------------------
+/// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkErrorLogStatusMessageHandler :
     public ctkErrorLogAbstractMessageHandler
 {
@@ -40,7 +41,7 @@ public:
   virtual QString handlerName()const;
   virtual void setEnabledInternal(bool value);
 
-public slots:
+public Q_SLOTS:
   void statusBarMessageChanged(const QString& text);
 
 private:

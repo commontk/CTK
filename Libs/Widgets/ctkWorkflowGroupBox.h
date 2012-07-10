@@ -34,6 +34,7 @@ class ctkWorkflowStep;
 
 class ctkWorkflowGroupBoxPrivate;
 
+/// \ingroup Widgets
 /// \brief ctkWorkflowGroupBox is a widget displaying the user interface elements, title,
 /// description and/or error status of the current step of a ctkWorkflow.
 
@@ -101,7 +102,7 @@ public:
   bool errorTextEnabled()const;
   void setErrorTextEnabled(bool newErrorTextEnabled);
 
-public slots:
+public Q_SLOTS:
 
   virtual void updateGroupBox(ctkWorkflowStep* currentStep);
 

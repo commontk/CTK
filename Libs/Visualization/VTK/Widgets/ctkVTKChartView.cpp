@@ -225,6 +225,45 @@ void ctkVTKChartView::addPlot(vtkPlot* plot)
 }
 
 // ----------------------------------------------------------------------------
+void ctkVTKChartView::removePlot(vtkPlot* plot)
+{
+  Q_D(ctkVTKChartView);
+  vtkIdType index = this->plotIndex(plot);
+  if (index == vtkIdType(-1))
+    {
+    return;
+    }
+  d->Chart->RemovePlot(index);
+  emit this->plotRemoved(plot);
+  this->onChartUpdated();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::removeAllPlots()
+{
+  Q_D(ctkVTKChartView);
+  while(d->Chart->GetNumberOfPlots() > 0)
+    {
+    this->removePlot(d->Chart->GetPlot(0));
+    }
+}
+
+// ----------------------------------------------------------------------------
+vtkIdType ctkVTKChartView::plotIndex(vtkPlot* plot)
+{
+  Q_D(ctkVTKChartView);
+  // GetPlotIndex is missing from vtkChart API
+  for (vtkIdType i = 0; i < d->Chart->GetNumberOfPlots(); ++i)
+    {
+    if (plot == d->Chart->GetPlot(i))
+      {
+      return i;
+      }
+    }
+  return -1;
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKChartView::onChartUpdated()
 {
   Q_D(ctkVTKChartView);
@@ -249,7 +288,6 @@ void ctkVTKChartView::onChartUpdated()
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::chartExtent(double* extent)const
 {
-  Q_D(const ctkVTKChartView);
   extent[0] = extent[2] = extent[4] = extent[6] = VTK_DOUBLE_MAX;
   extent[1] = extent[3] = extent[5] = extent[7] = VTK_DOUBLE_MIN;
   vtkChartXY* chart = this->chart();
