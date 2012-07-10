@@ -37,6 +37,9 @@
 // CTK widget includes
 #include <ctkDICOMAppWidget.h>
 
+// Host logic 
+#include "ctkDICOMHostMainLogic.h"
+
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMModel.h"
@@ -46,7 +49,6 @@
 
 // ui of this application
 #include "ui_ctkDICOMHostMainWidget.h"
-#include "ctkDICOMHostMainLogic.h"
 
 int main(int argc, char** argv)
 {
