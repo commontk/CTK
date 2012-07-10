@@ -487,13 +487,22 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
 QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short group, const unsigned short element)
 {
   // here is where the real lookup happens
+  // - for now we create a ctkDICOMDataset and extract the value from there
+  // - then we convert to the appropriate type of string
+  //
+  //As an optimization we could consider
   // - check if we are currently looking at the dataset for this fileName
   // - if so, are we looking for a group/element that is past the last one
   //   accessed
-  //   -- if so, keep looking for the 
+  //   -- if so, keep looking for the requested group/element
+  //   -- if not, start again from the begining
 
-  return( "" );
+  ctkDICOMDataset dataset;
+  dataset.InitializeFromFile(fileName);
+  
+  DcmTagKey tagKey(group, element);
 
+  return( dataset.GetAllElementValuesAsString(tagKey) );
 }
 
 //------------------------------------------------------------------------------
