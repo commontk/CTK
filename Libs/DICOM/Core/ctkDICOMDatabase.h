@@ -147,7 +147,7 @@ public:
   bool fileExistsAndUpToDate(const QString& filePath);
 
   /// remove the series from the database, including images and
-  /// thumbnails  
+  /// thumbnails
   Q_INVOKABLE bool removeSeries(const QString& seriesInstanceUID);
   Q_INVOKABLE bool removeStudy(const QString& studyInstanceUID);
   Q_INVOKABLE bool removePatient(const QString& patientID);
