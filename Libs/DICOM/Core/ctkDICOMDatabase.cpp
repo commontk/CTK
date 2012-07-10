@@ -553,28 +553,9 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
       return;
     }
 
-  QString patientsBirthDate(ctkDataset.GetElementAsString(DCM_PatientBirthDate) );
-  QString patientsBirthTime(ctkDataset.GetElementAsString(DCM_PatientBirthTime) );
-  QString patientsSex(ctkDataset.GetElementAsString(DCM_PatientSex) );
-  QString patientsAge(ctkDataset.GetElementAsString(DCM_PatientAge) );
-  QString patientComments(ctkDataset.GetElementAsString(DCM_PatientComments) );
-  QString studyID(ctkDataset.GetElementAsString(DCM_StudyID) );
-  QString studyDate(ctkDataset.GetElementAsString(DCM_StudyDate) );
-  QString studyTime(ctkDataset.GetElementAsString(DCM_StudyTime) );
-  QString accessionNumber(ctkDataset.GetElementAsString(DCM_AccessionNumber) );
-  QString modalitiesInStudy(ctkDataset.GetElementAsString(DCM_ModalitiesInStudy) );
-  QString institutionName(ctkDataset.GetElementAsString(DCM_InstitutionName) );
-  QString performingPhysiciansName(ctkDataset.GetElementAsString(DCM_PerformingPhysicianName) );
-  QString referringPhysician(ctkDataset.GetElementAsString(DCM_ReferringPhysicianName) );
-  QString studyDescription(ctkDataset.GetElementAsString(DCM_StudyDescription) );
 
-  QString seriesDate(ctkDataset.GetElementAsString(DCM_SeriesDate) );
-  QString seriesTime(ctkDataset.GetElementAsString(DCM_SeriesTime) );
-  QString seriesDescription(ctkDataset.GetElementAsString(DCM_SeriesDescription) );
-  QString bodyPartExamined(ctkDataset.GetElementAsString(DCM_BodyPartExamined) );
-  QString frameOfReferenceUID(ctkDataset.GetElementAsString(DCM_FrameOfReferenceUID) );
-  QString contrastAgent(ctkDataset.GetElementAsString(DCM_ContrastBolusAgent) );
-  QString scanningSequence(ctkDataset.GetElementAsString(DCM_ScanningSequence) );
+
+
 
   long seriesNumber(ctkDataset.GetElementAsInteger(DCM_SeriesNumber) );
   long acquisitionNumber(ctkDataset.GetElementAsInteger(DCM_AcquisitionNumber) );
@@ -630,6 +611,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
     {
       //Speed up: Check if patient is the same as in last file;
       // very probable, as all images belonging to a study have the same patient
+      QString patientsBirthDate(ctkDataset.GetElementAsString(DCM_PatientBirthDate) );
       if ( lastPatientID != patientID
            || lastPatientsBirthDate != patientsBirthDate
            || lastPatientsName != patientsName )
@@ -655,6 +637,12 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
           else
             {
               // Insert it
+
+              QString patientsBirthTime(ctkDataset.GetElementAsString(DCM_PatientBirthTime) );
+              QString patientsSex(ctkDataset.GetElementAsString(DCM_PatientSex) );
+              QString patientsAge(ctkDataset.GetElementAsString(DCM_PatientAge) );
+              QString patientComments(ctkDataset.GetElementAsString(DCM_PatientComments) );
+
               QSqlQuery insertPatientStatement ( Database );
               insertPatientStatement.prepare ( "INSERT INTO Patients ('UID', 'PatientsName', 'PatientID', 'PatientsBirthDate', 'PatientsBirthTime', 'PatientsSex', 'PatientsAge', 'PatientsComments' ) values ( NULL, ?, ?, ?, ?, ?, ?, ? )" );
               insertPatientStatement.bindValue ( 0, patientsName );
@@ -690,6 +678,17 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
           checkStudyExistsQuery.exec();
           if(!checkStudyExistsQuery.next())
             {
+
+              QString studyID(ctkDataset.GetElementAsString(DCM_StudyID) );
+              QString studyDate(ctkDataset.GetElementAsString(DCM_StudyDate) );
+              QString studyTime(ctkDataset.GetElementAsString(DCM_StudyTime) );
+              QString accessionNumber(ctkDataset.GetElementAsString(DCM_AccessionNumber) );
+              QString modalitiesInStudy(ctkDataset.GetElementAsString(DCM_ModalitiesInStudy) );
+              QString institutionName(ctkDataset.GetElementAsString(DCM_InstitutionName) );
+              QString performingPhysiciansName(ctkDataset.GetElementAsString(DCM_PerformingPhysicianName) );
+              QString referringPhysician(ctkDataset.GetElementAsString(DCM_ReferringPhysicianName) );
+              QString studyDescription(ctkDataset.GetElementAsString(DCM_StudyDescription) );
+
               QSqlQuery insertStudyStatement ( Database );
               insertStudyStatement.prepare ( "INSERT INTO Studies ( 'StudyInstanceUID', 'PatientsUID', 'StudyID', 'StudyDate', 'StudyTime', 'AccessionNumber', 'ModalitiesInStudy', 'InstitutionName', 'ReferringPhysician', 'PerformingPhysiciansName', 'StudyDescription' ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
               insertStudyStatement.bindValue ( 0, studyInstanceUID );
@@ -724,6 +723,14 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
           loggedExec(checkSeriesExistsQuery);
           if(!checkSeriesExistsQuery.next())
             {
+              QString seriesDate(ctkDataset.GetElementAsString(DCM_SeriesDate) );
+              QString seriesTime(ctkDataset.GetElementAsString(DCM_SeriesTime) );
+              QString seriesDescription(ctkDataset.GetElementAsString(DCM_SeriesDescription) );
+              QString bodyPartExamined(ctkDataset.GetElementAsString(DCM_BodyPartExamined) );
+              QString frameOfReferenceUID(ctkDataset.GetElementAsString(DCM_FrameOfReferenceUID) );
+              QString contrastAgent(ctkDataset.GetElementAsString(DCM_ContrastBolusAgent) );
+              QString scanningSequence(ctkDataset.GetElementAsString(DCM_ScanningSequence) );
+
               QSqlQuery insertSeriesStatement ( Database );
               insertSeriesStatement.prepare ( "INSERT INTO Series ( 'SeriesInstanceUID', 'StudyInstanceUID', 'SeriesNumber', 'SeriesDate', 'SeriesTime', 'SeriesDescription', 'BodyPartExamined', 'FrameOfReferenceUID', 'AcquisitionNumber', 'ContrastAgent', 'ScanningSequence', 'EchoNumber', 'TemporalPosition' ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
               insertSeriesStatement.bindValue ( 0, seriesInstanceUID );
