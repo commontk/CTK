@@ -382,6 +382,22 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT Filename FROM Images WHERE SOPInstanceUID=?");
+  query.bindValue ( 0, sopInstanceUID );
+  query.exec();
+  QString result;
+  if (query.next()) 
+    {
+    result = query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabase::loadInstanceHeader (QString sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
@@ -437,11 +453,59 @@ QString ctkDICOMDatabase::headerValue (QString key)
 }
 
 //------------------------------------------------------------------------------
-/*
-void ctkDICOMDatabase::insert ( DcmDataset *dataset ) {
-  this->insert ( dataset, QString() );
+QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
+{
+  unsigned short group, element;
+  this->tagToGroupElement(tag, group, element);
+  return( this->instanceValue(sopInstanceUID, group, element) );
 }
-*/
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsigned short group, const unsigned short element)
+{
+  QString filePath = this->fileForInstance(sopInstanceUID);
+  if (filePath != "" )
+    {
+    return( this->fileValue(filePath, group, element) );
+    }
+  else
+    {
+    return ("");
+    }
+}
+
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
+{
+  unsigned short group, element;
+  this->tagToGroupElement(tag, group, element);
+  return( this->fileValue(fileName, group, element) );
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short group, const unsigned short element)
+{
+  // here is where the real lookup happens
+  // - check if we are currently looking at the dataset for this fileName
+  // - if so, are we looking for a group/element that is past the last one
+  //   accessed
+  //   -- if so, keep looking for the 
+
+  return( "" );
+
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::tagToGroupElement(const QString tag, unsigned short& group, unsigned short& element)
+{
+  QStringList groupElement = tag.split(",");
+  bool groupOK, elementOK;
+  group = groupElement[0].toUInt(&groupOK, 16);
+  element = groupElement[1].toUInt(&elementOK, 16);
+
+  return( groupOK && elementOK );
+}
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabase::insert( DcmDataset *dataset, bool storeFile, bool generateThumbnail)
@@ -970,4 +1034,3 @@ bool ctkDICOMDatabase::removePatient(const QString& patientID)
   d->lastPatientUID = -1;
   return result;
 }
-
