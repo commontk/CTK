@@ -19,46 +19,52 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEXMLVALIDATOR_H
-#define CTKCMDLINEMODULEXMLVALIDATOR_H
+#ifndef CTKCMDLINEMODULEXSLTRANSFORM_H
+#define CTKCMDLINEMODULEXSLTRANSFORM_H
 
-#include <ctkCommandLineModulesExport.h>
+#include "ctkCommandLineModulesCoreExport.h"
+#include "ctkCmdLineModuleXmlValidator.h"
 
 #include <QString>
 
 class QIODevice;
 
-class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleXmlValidator
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXslTransform
+    : public ctkCmdLineModuleXmlValidator
 {
 
 public:
 
-  ctkCmdLineModuleXmlValidator(QIODevice* input = 0);
+  ctkCmdLineModuleXslTransform(QIODevice* input = 0);
 
-  void setInput(QIODevice* input);
-  QString output();
-
-  void setInputSchema(QIODevice* input);
   void setOutputSchema(QIODevice* output);
 
-  void setXSLTransformation(QIODevice* transformation);
+  /**
+   * @brief Transforms an XML input via a XSL transformation.
+   *
+   * This method assumes that the input set via setInput() or supplied
+   * in the constructor is a valid XML fragment.
+   *
+   * @return
+   */
+  bool transform();
 
-  bool validate();
-  bool validateXMLInput();
-  bool validateXSLTOutput();
+  QString output() const;
+
+  void setXslTransformation(QIODevice* transformation);
+
+  bool validateOutput();
 
   bool error() const;
   QString errorString() const;
 
 private:
 
-  QIODevice* _input;
-  QIODevice* _inputSchema;
-  QIODevice* _outputSchema;
-  QIODevice* _transformation;
+  QIODevice* OutputSchema;
+  QIODevice* Transformation;
 
-  QString _output;
-  QString _errorStr;
+  QString Output;
+  QString ErrorStr;
 };
 
-#endif // CTKCMDLINEMODULEXMLVALIDATOR_H
+#endif // CTKCMDLINEMODULEXSLTRANSFORM_H

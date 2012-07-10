@@ -36,8 +36,21 @@ ctkCmdLineModuleDescription::ctkCmdLineModuleDescription()
 }
 
 //----------------------------------------------------------------------------
+ctkCmdLineModuleDescription::ctkCmdLineModuleDescription(const ctkCmdLineModuleDescription &description)
+  : d(description.d)
+{
+}
+
+//----------------------------------------------------------------------------
 ctkCmdLineModuleDescription::~ctkCmdLineModuleDescription()
 {
+}
+
+//----------------------------------------------------------------------------
+ctkCmdLineModuleDescription &ctkCmdLineModuleDescription::operator =(const ctkCmdLineModuleDescription &other)
+{
+  d = other.d;
+  return *this;
 }
 
 //----------------------------------------------------------------------------

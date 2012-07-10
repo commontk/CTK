@@ -21,7 +21,7 @@
 #ifndef __ctkCmdLineModuleDescription_h
 #define __ctkCmdLineModuleDescription_h
 
-#include <ctkCommandLineModulesExport.h>
+#include <ctkCommandLineModulesCoreExport.h>
 
 #include <QList>
 #include <QSharedDataPointer>
@@ -40,12 +40,15 @@ class ctkCmdLineModuleParameter;
  * The parameters can be used for automated GUI generation or execution
  * of the module.
  */
-class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleDescription
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleDescription
 {
 
 public:
 
+  ctkCmdLineModuleDescription(const ctkCmdLineModuleDescription& description);
   ~ctkCmdLineModuleDescription();
+
+  ctkCmdLineModuleDescription& operator=(const ctkCmdLineModuleDescription& other);
 
   static ctkCmdLineModuleDescription parse(QIODevice* input);
 
@@ -79,6 +82,7 @@ public:
 private:
 
   friend class ctkCmdLineModuleXmlParser;
+  friend class ctkCmdLineModuleReferencePrivate;
 
   ctkCmdLineModuleDescription();
 
@@ -86,6 +90,6 @@ private:
 
 };
 
-CTK_CMDLINEMODULE_EXPORT QTextStream & operator<<(QTextStream& os, const ctkCmdLineModuleDescription& module);
+CTK_CMDLINEMODULECORE_EXPORT QTextStream & operator<<(QTextStream& os, const ctkCmdLineModuleDescription& module);
 
 #endif

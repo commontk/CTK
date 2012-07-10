@@ -24,66 +24,15 @@
 
 #include <ctkCmdLineModuleXmlValidator.h>
 #include <ctkCmdLineModuleManager.h>
+#include <ctkCmdLineModuleInstance.h>
+#include <ctkCmdLineModuleInstanceFactoryQtGui.h>
 #include <ctkCmdLineModuleProcessFuture.h>
-
-#include <QFile>
-#include <QBuffer>
-#include <QUiLoader>
-#include <QDebug>
-
-class ctkCmdLineModuleDescriptionDefaultFactory : public ctkCmdLineModuleDescriptionFactory
-{
-public:
-
-  QObject* createObjectRepresentationFromXML(const QByteArray &xmlDescription)
-  {
-    return cachedObjectTree(xmlDescription);
-  }
-
-  QObject* createGUIFromXML(const QByteArray &xmlDescription)
-  {
-    return cachedObjectTree(xmlDescription);
-  }
-
-private:
-
-  QObject* cachedObjectTree(const QByteArray& xmlDescription)
-  {
-    QObject* root = cache[xmlDescription];
-    if (root != 0) return root;
-
-    QBuffer input;
-    input.setData(xmlDescription);
-    input.open(QIODevice::ReadOnly);
-
-    ctkCmdLineModuleXmlValidator validator(&input);
-    if (!validator.validateXSLTOutput())
-    {
-      qCritical() << validator.errorString();
-      return 0;
-    }
-
-    QUiLoader uiLoader;
-    QByteArray uiBlob;
-    uiBlob.append(validator.output());
-    qDebug() << validator.output();
-    QBuffer uiForm(&uiBlob);
-
-    root = uiLoader.load(&uiForm);
-    cache[xmlDescription] = root;
-    return root;
-  }
-
-  // TODO: remove entry if QObject was deleted
-  QHash<QByteArray, QObject*> cache;
-};
 
 
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkCLModuleExplorerMainWindow),
-  factory(new ctkCmdLineModuleDescriptionDefaultFactory),
-  moduleManager(factory)
+  moduleManager(new ctkCmdLineModuleInstanceFactoryQtGui())
 {
   ui->setupUi(this);
 }
@@ -91,35 +40,26 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
 ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
 {
   delete ui;
-  delete factory;
 }
 
 void ctkCLModuleExplorerMainWindow::addModuleTab(const ctkCmdLineModuleReference& moduleRef)
 {
-  if (moduleRef.widgetTree() == 0) return;
+  ctkCmdLineModuleInstance* moduleInstance = moduleManager.createModuleInstance(moduleRef);
+  if (!moduleInstance) return;
 
-  QWidget* widget = qobject_cast<QWidget*>(moduleRef.widgetTree());
+  QObject* guiHandle = moduleInstance->guiHandle();
+
+  QWidget* widget = qobject_cast<QWidget*>(guiHandle);
   int tabIndex = ui->mainTabWidget->addTab(widget, widget->objectName());
   mapTabToModuleRef[tabIndex] = moduleRef;
 }
 
 void ctkCLModuleExplorerMainWindow::addModule(const QString &location)
 {
-  ctkCmdLineModuleReference ref = moduleManager.addModule(location);
-  if (ref.isValid())
+  ctkCmdLineModuleReference ref = moduleManager.registerModule(location);
+  if (ref)
   {
     addModuleTab(ref);
-  }
-}
-
-void ctkCLModuleExplorerMainWindow::testModuleXML(const QByteArray &xml)
-{
-  QObject* root = factory->createGUIFromXML(xml);
-  if (root)
-  {
-    QWidget* widget = qobject_cast<QWidget*>(root);
-    int tabIndex = ui->mainTabWidget->addTab(widget, widget->objectName());
-    //mapTabToModuleRef[tabIndex] = moduleRef;
   }
 }
 
@@ -127,19 +67,19 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 {
   qDebug() << "Creating module command line...";
 
-  QStringList cmdLineArgs = ctkCmdLineModuleManager::createCommandLineArgs(ui->mainTabWidget->currentWidget());
-  qDebug() << cmdLineArgs;
+//  QStringList cmdLineArgs = ctkCmdLineModuleManager::createCommandLineArgs(ui->mainTabWidget->currentWidget());
+//  qDebug() << cmdLineArgs;
 
-  ctkCmdLineModuleReference moduleRef = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
-  if (!moduleRef.isValid())
-  {
-    qWarning() << "Invalid module reference";
-    return;
-  }
+//  ctkCmdLineModuleReference moduleRef = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
+//  if (!moduleRef.isValid())
+//  {
+//    qWarning() << "Invalid module reference";
+//    return;
+//  }
 
-  connect(&futureWatcher, SIGNAL(finished()), this, SLOT(futureFinished()));
-  ctkCmdLineModuleProcessFuture future = moduleManager.run(moduleRef);
-  futureWatcher.setFuture(future);
+//  connect(&futureWatcher, SIGNAL(finished()), this, SLOT(futureFinished()));
+//  ctkCmdLineModuleProcessFuture future = moduleManager.run(moduleRef);
+//  futureWatcher.setFuture(future);
 }
 
 void ctkCLModuleExplorerMainWindow::futureFinished()

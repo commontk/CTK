@@ -22,11 +22,14 @@
 #ifndef CTKCLIPLUGINEXPLORERMAINWINDOW_H
 #define CTKCLIPLUGINEXPLORERMAINWINDOW_H
 
-#include <QMainWindow>
-
 #include <ctkCmdLineModuleManager.h>
+#include <ctkCmdLineModuleReference.h>
+#include <ctkCmdLineModuleProcessFuture.h>
 
-class ctkCmdLineModuleDescriptionDefaultFactory;
+#include <QMainWindow>
+#include <QHash>
+
+class ctkCmdLineModuleReference;
 
 namespace Ui {
 class ctkCLModuleExplorerMainWindow;
@@ -41,7 +44,6 @@ public:
   ~ctkCLModuleExplorerMainWindow();
 
   void addModule(const QString& location);
-  void testModuleXML(const QByteArray& xml);
 
 protected Q_SLOTS:
 
@@ -58,7 +60,6 @@ protected:
 private:
   Ui::ctkCLModuleExplorerMainWindow *ui;
 
-  ctkCmdLineModuleDescriptionDefaultFactory* factory;
   ctkCmdLineModuleManager moduleManager;
 
   QHash<int, ctkCmdLineModuleReference> mapTabToModuleRef;

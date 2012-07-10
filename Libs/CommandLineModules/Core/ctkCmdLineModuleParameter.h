@@ -21,7 +21,7 @@
 #ifndef __ctkCmdLineModuleParameter_h
 #define __ctkCmdLineModuleParameter_h
 
-#include "ctkCommandLineModulesExport.h"
+#include "ctkCommandLineModulesCoreExport.h"
 
 #include <QSharedDataPointer>
 
@@ -39,7 +39,7 @@ class ctkCmdLineModuleParameterPrivate;
  * stored.
  *
  */
-class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleParameter
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleParameter
 {
 
 public:
@@ -131,6 +131,6 @@ private:
   QSharedDataPointer<ctkCmdLineModuleParameterPrivate> d;
 };
 
-CTK_CMDLINEMODULE_EXPORT QTextStream& operator<<(QTextStream& os, const ctkCmdLineModuleParameter& parameter);
+CTK_CMDLINEMODULECORE_EXPORT QTextStream& operator<<(QTextStream& os, const ctkCmdLineModuleParameter& parameter);
 
 #endif

@@ -25,12 +25,14 @@
 #include <QTextStream>
 #include <QFile>
 
+#include <cstdlib>
+
 int main(int argc, char* argv[])
 {
   QCoreApplication app(argc, argv);
   // This is used by QSettings
   QCoreApplication::setOrganizationName("CommonTK");
-  QCoreApplication::setApplicationName("CLIModuleTour");
+  QCoreApplication::setApplicationName("CLIModuleBlur2dImage");
 
   ctkCommandLineParser parser;
   // Use Unix-style argument names
@@ -59,9 +61,10 @@ int main(int argc, char* argv[])
 
   if (parsedArgs.contains("xml"))
   {
-    QFile xmlDescription(":/ctkCLIModuleTour.xml");
+    QFile xmlDescription(":/ctkCLIModuleBlur2dImage.xml");
     xmlDescription.open(QIODevice::ReadOnly);
     QTextStream(stdout, QIODevice::WriteOnly) << xmlDescription.readAll();
+    return EXIT_SUCCESS;
   }
 
   // Do something

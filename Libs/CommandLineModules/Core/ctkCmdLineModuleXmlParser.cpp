@@ -68,7 +68,7 @@ static const QString DESCRIPTION = "description";
 
 // ----------------------------------------------------------------------------
 ctkCmdLineModuleXmlParser::ctkCmdLineModuleXmlParser(QIODevice* device,
-                                                       ctkCmdLineModuleDescription* md)
+                                                     ctkCmdLineModuleDescription* md)
   : _device(device), _md(md)
 {
   _paramParsers["integer"] = new ctkCmdLineModuleScalarParameterParser; // type="scalarType"/>
@@ -315,6 +315,7 @@ ctkCmdLineModuleDescription ctkCmdLineModuleDescription::parse(QIODevice* device
 
   // Verify the xml is correct
   parser.validate();
+
   parser.doParse();
 
   return moduleDescription;

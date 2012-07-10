@@ -19,26 +19,20 @@
   
 =============================================================================*/
 
-#include "ctkCmdLineModuleReferencePrivate.h"
+#ifndef CTKCMDLINEMODULEINSTANCEFACTORYQTGUI_H
+#define CTKCMDLINEMODULEINSTANCEFACTORYQTGUI_H
 
-ctkCmdLineModuleReferencePrivate::ctkCmdLineModuleReferencePrivate()
-  : objectRepresentation(0), ref(1), gui(0)
-{}
+#include "ctkCmdLineModuleInstanceFactory.h"
 
-ctkCmdLineModuleReferencePrivate::~ctkCmdLineModuleReferencePrivate()
+#include "ctkCommandLineModulesQtGuiExport.h"
+
+class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleInstanceFactoryQtGui
+    : public ctkCmdLineModuleInstanceFactory
 {
-  objectRepresentation->deleteLater();
-  if (gui) gui->deleteLater();
-}
+public:
 
-void ctkCmdLineModuleReferencePrivate::setGUI(QObject* gui)
-{
-  if (this->gui) disconnect(gui);
-  this->gui = gui;
-  connect(this->gui, SIGNAL(destroyed()), this, SLOT(guiDestroyed()));
-}
+  ctkCmdLineModuleInstance* create(const ctkCmdLineModuleReference& moduleRef);
 
-void ctkCmdLineModuleReferencePrivate::guiDestroyed()
-{
-  gui = 0;
-}
+};
+
+#endif // CTKCMDLINEMODULEINSTANCEFACTORYQTGUI_H

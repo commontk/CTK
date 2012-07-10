@@ -44,7 +44,7 @@ int main(int argc, char** argv)
   cmdLineParser.setStrictModeEnabled(true);
 
   cmdLineParser.addArgument("module", "", QVariant::String, "Path to a CLI module (executable)");
-  cmdLineParser.addArgument("module-xml", "", QVariant::String, "Path to a CLI XML description.");
+  //cmdLineParser.addArgument("module-xml", "", QVariant::String, "Path to a CLI XML description.");
 
   cmdLineParser.addArgument("validate-module", "", QVariant::String, "Path to a CLI module");
   cmdLineParser.addArgument("validate-xml", "", QVariant::String, "Path to a CLI XML description.");
@@ -107,18 +107,10 @@ int main(int argc, char** argv)
     xmlInput.open(QIODevice::ReadOnly);
 
     ctkCmdLineModuleXmlValidator validator(&xmlInput);
-    if (!validator.validate())
+    if (!validator.validateInput())
     {
       qCritical() << validator.errorString();
       return EXIT_FAILURE;
-    }
-
-    if (args.contains("verbose"))
-    {
-      qDebug() << "=================================================";
-      qDebug() << "****          Transformed input              ****";
-      qDebug() << "=================================================";
-      qDebug() << validator.output();
     }
 
     return EXIT_SUCCESS;
@@ -134,19 +126,12 @@ int main(int argc, char** argv)
     input.open(QIODevice::ReadOnly);
 
     ctkCmdLineModuleXmlValidator validator(&input);
-    if (!validator.validate())
+    if (!validator.validateInput())
     {
       qCritical() << validator.errorString();
       return EXIT_FAILURE;
     }
 
-    if (args.contains("verbose"))
-    {
-      qDebug() << "=================================================";
-      qDebug() << "****          Transformed input              ****";
-      qDebug() << "=================================================";
-      qDebug() << validator.output();
-    }
     return EXIT_SUCCESS;
   }
 
@@ -155,20 +140,7 @@ int main(int argc, char** argv)
 
   ctkCLModuleExplorerMainWindow mainWindow;
 
-  if (args.contains("module-xml"))
-  {
-    QFile input(args["module-xml"].toString());
-    if (!input.exists())
-    {
-      qCritical() << "XML description does not exist:" << input.fileName();
-      return EXIT_FAILURE;
-    }
-    input.open(QIODevice::ReadOnly);
-    QByteArray xml = input.readAll();
-
-    mainWindow.testModuleXML(xml);
-  }
-  else if (args.contains("module"))
+  if (args.contains("module"))
   {
     mainWindow.addModule(args["module"].toString());
   }

@@ -26,13 +26,13 @@
 #include <QScopedPointer>
 #include <QVariant>
 
-#include <ctkCommandLineModulesExport.h>
+#include <ctkCommandLineModulesCoreExport.h>
 
 class QObject;
 
 class ctkCmdLineModuleObjectHierarchyReaderPrivate;
 
-class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleObjectHierarchyReader
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleObjectHierarchyReader
 {
 
 public:

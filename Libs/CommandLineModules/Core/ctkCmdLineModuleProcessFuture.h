@@ -22,7 +22,7 @@
 #ifndef CTKCMDLINEMODULEPROCESSFUTURE_H
 #define CTKCMDLINEMODULEPROCESSFUTURE_H
 
-#include <ctkCommandLineModulesExport.h>
+#include <ctkCommandLineModulesCoreExport.h>
 
 #include <QFutureInterface>
 #include <QFutureWatcher>
@@ -35,7 +35,7 @@ typedef QFutureWatcher<ctkCmdLineModuleProcessDummy> ctkCmdLineModuleProcessFutu
 
 
 template<>
-class CTK_CMDLINEMODULE_EXPORT QFutureInterface<ctkCmdLineModuleProcessDummy> : public QFutureInterfaceBase
+class CTK_CMDLINEMODULECORE_EXPORT QFutureInterface<ctkCmdLineModuleProcessDummy> : public QFutureInterfaceBase
 {
 
 public:

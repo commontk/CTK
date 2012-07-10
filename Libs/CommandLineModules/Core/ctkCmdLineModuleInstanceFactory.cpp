@@ -19,39 +19,8 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEREFERENCEPRIVATE_H
-#define CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#include "ctkCmdLineModuleInstanceFactory.h"
 
-#include <QByteArray>
-#include <QObject>
-
-class ctkCmdLineModuleReferencePrivate : public QObject
+ctkCmdLineModuleInstanceFactory::~ctkCmdLineModuleInstanceFactory()
 {
-  Q_OBJECT
-
-public:
-
-  ctkCmdLineModuleReferencePrivate();
-
-  ~ctkCmdLineModuleReferencePrivate();
-
-  void setGUI(QObject* gui);
-
-  QByteArray xml;
-  QString loc;
-  QObject* objectRepresentation;
-
-  QAtomicInt ref;
-
-private:
-
-  friend class ctkCmdLineModuleReference;
-
-  QObject* gui;
-
-private Q_SLOTS:
-
-  void guiDestroyed();
-};
-
-#endif // CTKCMDLINEMODULEREFERENCEPRIVATE_H
+}

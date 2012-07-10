@@ -50,7 +50,6 @@ public:
   virtual ctkCmdLineModuleParameter parse(QXmlStreamReader &xmlReader)
   {
     ctkCmdLineModuleParameter moduleParam = this->createModuleParameter();
-
     this->handleAttributes(moduleParam.d.data(), xmlReader);
 
     while(xmlReader.readNextStartElement())

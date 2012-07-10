@@ -449,8 +449,11 @@ ctk_lib_option(Visualization/VTK/Core
 ctk_lib_option(Visualization/VTK/Widgets
                "Build the VTK Widgets library" OFF)
                
-ctk_lib_option(CommandLineModules
-               "Build the Command Line Module support library" OFF)
+ctk_lib_option(CommandLineModules/Core
+               "Build the Command Line Module core library" OFF)
+
+ctk_lib_option(CommandLineModules/QtGui
+               "Build the QtGui based Command Line Module library" OFF)
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)

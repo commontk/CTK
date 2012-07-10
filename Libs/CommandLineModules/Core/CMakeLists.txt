@@ -1,4 +1,4 @@
-project(CTKCommandLineModules)
+project(CTKCommandLineModulesCore)
 
 #
 # 3rd party dependencies
@@ -8,7 +8,7 @@ project(CTKCommandLineModules)
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-set(KIT_export_directive "CTK_CMDLINEMODULE_EXPORT")
+set(KIT_export_directive "CTK_CMDLINEMODULECORE_EXPORT")
 
 # Additional directories to include
 
@@ -16,6 +16,8 @@ set(KIT_export_directive "CTK_CMDLINEMODULE_EXPORT")
 set(KIT_SRCS
   ctkCmdLineModuleDescription.cpp
   ctkCmdLineModuleDescriptionPrivate.h
+  ctkCmdLineModuleInstance.cpp
+  ctkCmdLineModuleInstanceFactory.cpp
   ctkCmdLineModuleManager.cpp
   ctkCmdLineModuleObjectHierarchyReader.cpp
   ctkCmdLineModuleParameter.cpp
@@ -28,15 +30,18 @@ set(KIT_SRCS
   ctkCmdLineModuleProcessRunner.cpp
   ctkCmdLineModuleProcessRunner_p.h
   ctkCmdLineModuleReference.cpp
-  ctkCmdLineModuleReferencePrivate.cpp
+  ctkCmdLineModuleReferencePrivate.h
+  ctkCmdLineModuleXmlMsgHandler_p.h
+  ctkCmdLineModuleXmlMsgHandler.cpp
   ctkCmdLineModuleXmlParser.cpp
   ctkCmdLineModuleXmlValidator.cpp
+  ctkCmdLineModuleXslTransform.cpp
 )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
+  ctkCmdLineModuleInstance.h
   ctkCmdLineModuleProcessRunner_p.h
-  ctkCmdLineModuleReferencePrivate.h
 )
 
 # UI files

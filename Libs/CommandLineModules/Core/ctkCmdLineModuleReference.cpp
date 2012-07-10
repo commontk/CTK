@@ -19,44 +19,44 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEREFERENCE_H
-#define CTKCMDLINEMODULEREFERENCE_H
+#include "ctkCmdLineModuleReference.h"
+#include "ctkCmdLineModuleReferencePrivate.h"
 
-#include <ctkCommandLineModulesExport.h>
+ctkCmdLineModuleReference::ctkCmdLineModuleReference()
+  : d(new ctkCmdLineModuleReferencePrivate())
+{}
 
-#include <QByteArray>
-#include <QString>
-
-class QObject;
-
-class ctkCmdLineModuleReferencePrivate;
-
-class CTK_CMDLINEMODULE_EXPORT ctkCmdLineModuleReference
+ctkCmdLineModuleReference::~ctkCmdLineModuleReference()
 {
-public:
+}
 
-  ctkCmdLineModuleReference();
-  ~ctkCmdLineModuleReference();
+ctkCmdLineModuleReference::ctkCmdLineModuleReference(const ctkCmdLineModuleReference &ref)
+  : d(ref.d)
+{
+}
 
-  ctkCmdLineModuleReference(const ctkCmdLineModuleReference& ref);
-  ctkCmdLineModuleReference& operator=(const ctkCmdLineModuleReference& ref);
+ctkCmdLineModuleReference &ctkCmdLineModuleReference::operator =(const ctkCmdLineModuleReference &ref)
+{
+  d = ref.d;
+  return *this;
+}
 
-  operator bool();
+ctkCmdLineModuleReference::operator bool()
+{
+  return d;
+}
 
-  bool isValid();
+ctkCmdLineModuleDescription ctkCmdLineModuleReference::description() const
+{
+  return d->Description;
+}
 
-  QByteArray xmlDescription() const;
+QByteArray ctkCmdLineModuleReference::rawXmlDescription() const
+{
+  return d->RawXmlDescription;
+}
 
-  QString location() const;
-
-  QObject* widgetTree() const;
-
-private:
-
-  friend class ctkCmdLineModuleManager;
-
-  ctkCmdLineModuleReferencePrivate* d;
-
-};
-
-#endif // CTKCMDLINEMODULEREFERENCE_H
+QString ctkCmdLineModuleReference::location() const
+{
+  return d->Location;
+}
