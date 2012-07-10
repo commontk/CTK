@@ -80,8 +80,6 @@ private:
   QWidget * AppWidget;
   Ui::ctkExampleDicomAppWidget ui;
 
-  QUuid uuid;
-
   ctkDicomAppHosting::AvailableData* ResultData;
 }; // ctkExampleDicomAppLogic
 

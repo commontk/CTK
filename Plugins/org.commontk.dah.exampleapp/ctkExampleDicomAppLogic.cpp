@@ -206,7 +206,7 @@ void ctkExampleDicomAppLogic::onDataAvailable()
       {
         s=s+" uid:" + data.patients.begin()->studies.begin()->series.begin()->seriesUID;
 //        QUuid uuid("93097dc1-caf9-43a3-a814-51a57f8d861d");//data.patients.begin()->studies.begin()->series.begin()->seriesUID);
-        uuid = data.patients.begin()->studies.begin()->series.begin()->objectDescriptors.begin()->descriptorUUID;
+        QUuid uuid = data.patients.begin()->studies.begin()->series.begin()->objectDescriptors.begin()->descriptorUUID;
         s=s+" uuid:"+uuid.toString();
       }
     }
@@ -218,8 +218,12 @@ void ctkExampleDicomAppLogic::onDataAvailable()
 
 void ctkExampleDicomAppLogic::onLoadDataClicked()
 {
-  QList<QUuid> uuidlist;
-  uuidlist.append(uuid);
+  const ctkDicomAppHosting::AvailableData& data = getIncomingAvailableData();
+  if(data.patients.count()==0)
+    return;
+  const ctkDicomAppHosting::Patient& firstpatient = *data.patients.begin();
+  QList<QUuid> uuidlist = ctkDicomAvailableDataHelper::getAllUuids(firstpatient);
+  
   QString transfersyntax("1.2.840.10008.1.2.1");
   QList<QUuid> transfersyntaxlist;
   transfersyntaxlist.append(transfersyntax);

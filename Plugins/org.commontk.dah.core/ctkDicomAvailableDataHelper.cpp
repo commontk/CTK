@@ -319,4 +319,25 @@ bool appendToAvailableData(ctkDicomAppHosting::AvailableData& dest,
   return true;
 }
 
+//----------------------------------------------------------------------------
+QList<QUuid> getAllUuids(const ctkDicomAppHosting::Patient& patient)
+{
+  QList<QUuid> uuidlist;
+
+  for (QList<ctkDicomAppHosting::Study>::ConstIterator sit = patient.studies.begin();
+    sit < patient.studies.end(); sit++)
+    {
+    for (QList<ctkDicomAppHosting::Series>::ConstIterator seit = sit->series.begin();
+      seit < sit->series.end(); seit++)
+      {
+        for (QList<ctkDicomAppHosting::ObjectDescriptor>::ConstIterator oit = seit->objectDescriptors.begin();
+          oit < seit->objectDescriptors.end(); oit++)
+          {
+            uuidlist.append(oit->descriptorUUID);
+          }
+      }
+    }
+  return uuidlist;
+}
+
 } //end namespace ctkDicomAvailableDataHelper

@@ -26,6 +26,7 @@
 // Qt includes
 #include <QObject>
 #include <QString>
+#include <QUuid>
 
 // CTK includes
 #include <org_commontk_dah_core_Export.h>
@@ -99,8 +100,20 @@ bool org_commontk_dah_core_EXPORT addNonDICOMToAvailableData(ctkDicomAppHosting:
                         const QString& uri);
 
 //----------------------------------------------------------------------------
-bool appendToAvailableData(ctkDicomAppHosting::AvailableData& dest,
+bool org_commontk_dah_core_EXPORT appendToAvailableData(ctkDicomAppHosting::AvailableData& dest,
                         const ctkDicomAppHosting::AvailableData& src);
+
+
+//----------------------------------------------------------------------------
+/**
+ * \brief Build list of all UUIDs of data available for patient.
+ *
+ * Result can be used to retrieve data by calling ctkDicomExchangeInterface::getData.
+ *
+ * \return alls UUIDs of data for patient inside available data, otherwise empty.
+ */
+QList<QUuid> org_commontk_dah_core_EXPORT getAllUuids(const ctkDicomAppHosting::Patient& patient);
+
 
 
 } //end namespace ctkDicomAvailableDataHelper
