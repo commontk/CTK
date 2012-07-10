@@ -26,38 +26,18 @@ limitations under the License.
 #include <QXmlStreamReader>
 
 // CTK includes
+#include "ctkCmdLineModuleXmlParser_p.h"
 #include "ctkCmdLineModuleDescription.h"
 #include "ctkCmdLineModuleDescriptionPrivate.h"
 #include "ctkCmdLineModuleParameterGroup.h"
 #include "ctkCmdLineModuleParameterGroupPrivate.h"
 #include "ctkCmdLineModuleParameterParsers_p.h"
 
-#include "ctkException.h"
+#include "ctkCmdLineModuleXmlException.h"
 
 // STD includes
 #include <stdexcept>
 
-class ctkCmdLineModuleXmlParser
-{
-public:
-
-  ctkCmdLineModuleXmlParser(QIODevice* device, ctkCmdLineModuleDescription* md);
-  ~ctkCmdLineModuleXmlParser();
-
-  void validate();
-  void doParse();
-
-  void handleExecutableElement();
-  void handleParametersElement();
-  ctkCmdLineModuleParameter handleParameterElement();
-
-private:
-
-  QIODevice* const _device;
-  ctkCmdLineModuleDescription* _md;
-  QXmlStreamReader _xmlReader;
-  QHash<QString, ctkCmdLineModuleParameterParser*> _paramParsers;
-};
 
 namespace {
 
@@ -99,89 +79,6 @@ ctkCmdLineModuleXmlParser::~ctkCmdLineModuleXmlParser()
 }
 
 // ----------------------------------------------------------------------------
-void ctkCmdLineModuleXmlParser::validate()
-{
-  class _MessageHandler : public QAbstractMessageHandler
-  {
-  public:
-
-    QString statusMessage() const { return m_description; }
-    int line() const { return m_sourceLocation.line(); }
-    int column() const { return m_sourceLocation.column(); }
-
-  protected:
-    virtual void handleMessage(QtMsgType type, const QString& description,
-                               const QUrl& identifier, const QSourceLocation& sourceLocation)
-    {
-      Q_UNUSED(identifier)
-
-      m_messageType = type;
-      m_sourceLocation = sourceLocation;
-
-      QXmlStreamReader reader(description);
-      m_description.clear();
-      m_description.reserve(description.size());
-      while(!reader.atEnd())
-      {
-        reader.readNext();
-
-        switch(reader.tokenType())
-        {
-        case QXmlStreamReader::Characters:
-        {
-          m_description.append(reader.text().toString());
-          continue;
-        }
-        case QXmlStreamReader::StartElement:
-          /* Fallthrough, */
-        case QXmlStreamReader::EndElement:
-          /* Fallthrough, */
-        case QXmlStreamReader::StartDocument:
-          /* Fallthrough, */
-        case QXmlStreamReader::EndDocument:
-          continue;
-        default:
-          Q_ASSERT_X(false, Q_FUNC_INFO,
-                     "Unexpected node.");
-        }
-      }
-    }
-
-  private:
-    QtMsgType m_messageType;
-    QString m_description;
-    QSourceLocation m_sourceLocation;
-  };
-  _MessageHandler errorHandler;
-
-  QXmlSchema schema;
-  schema.setMessageHandler(&errorHandler);
-  schema.load(QUrl::fromLocalFile(":/ctkCmdLineModuleDescription.xsd"));
-
-  bool res = schema.isValid();
-  if (!res)
-  {
-    QString msg("Invalid Schema at line %1, column %2: %3");
-    msg = msg.arg(errorHandler.line()).arg(errorHandler.column()).arg(errorHandler.statusMessage());
-    throw std::runtime_error(msg.toStdString());
-  }
-
-  QXmlSchemaValidator validator(schema);
-  _device->open(QIODevice::ReadOnly);
-  res = validator.validate(_device);
-  _device->close();
-
-  if (!res)
-  {
-    QString msg("Error validating XML description, at line %1, column %2: %3");
-    throw std::runtime_error(msg.arg(errorHandler.line())
-                             .arg(errorHandler.column())
-                             .arg(errorHandler.statusMessage()).toStdString());
-  }
-
-}
-
-// ----------------------------------------------------------------------------
 void ctkCmdLineModuleXmlParser::doParse()
 {
   _xmlReader.clear();
@@ -194,8 +91,8 @@ void ctkCmdLineModuleXmlParser::doParse()
   if (_xmlReader.hasError())
   {
     QString msg("Error parsing module description at line %1, column %2: %3");
-    throw std::runtime_error(msg.arg(_xmlReader.lineNumber()).arg(_xmlReader.columnNumber())
-                             .arg(_xmlReader.errorString()).toStdString());
+    throw ctkCmdLineModuleXmlException(msg.arg(_xmlReader.lineNumber()).arg(_xmlReader.columnNumber())
+                                       .arg(_xmlReader.errorString()));
   }
 }
 
@@ -305,18 +202,4 @@ ctkCmdLineModuleParameter ctkCmdLineModuleXmlParser::handleParameterElement()
     moduleParam.d->Tag = paramTag;
     return moduleParam;
   }
-}
-
-// ----------------------------------------------------------------------------
-ctkCmdLineModuleDescription ctkCmdLineModuleDescription::parse(QIODevice* device)
-{
-  ctkCmdLineModuleDescription moduleDescription;
-  ctkCmdLineModuleXmlParser parser(device, &moduleDescription);
-
-  // Verify the xml is correct
-  parser.validate();
-
-  parser.doParse();
-
-  return moduleDescription;
 }

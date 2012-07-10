@@ -19,24 +19,6 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEREFERENCEPRIVATE_H
-#define CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#include "ctkCmdLineModuleXmlException.h"
 
-#include <ctkCmdLineModuleDescription.h>
-
-#include <QSharedData>
-#include <QString>
-
-struct ctkCmdLineModuleReferencePrivate : public QSharedData
-{
-  ctkCmdLineModuleDescription description() const;
-
-  QString Location;
-  QByteArray RawXmlDescription;
-
-private:
-
-  mutable ctkCmdLineModuleDescription Description;
-};
-
-#endif // CTKCMDLINEMODULEREFERENCEPRIVATE_H
+CTK_IMPLEMENT_EXCEPTION(ctkCmdLineModuleXmlException, ctkException, "Command Line Module XML exception")

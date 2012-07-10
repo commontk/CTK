@@ -19,24 +19,13 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEREFERENCEPRIVATE_H
-#define CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#ifndef CTKCMDLINEMODULEXMLEXCEPTION_H
+#define CTKCMDLINEMODULEXMLEXCEPTION_H
 
-#include <ctkCmdLineModuleDescription.h>
+#include <ctkException.h>
 
-#include <QSharedData>
-#include <QString>
+#include "ctkCommandLineModulesCoreExport.h"
 
-struct ctkCmdLineModuleReferencePrivate : public QSharedData
-{
-  ctkCmdLineModuleDescription description() const;
+CTK_DECLARE_EXCEPTION(CTK_CMDLINEMODULECORE_EXPORT, ctkCmdLineModuleXmlException, ctkException)
 
-  QString Location;
-  QByteArray RawXmlDescription;
-
-private:
-
-  mutable ctkCmdLineModuleDescription Description;
-};
-
-#endif // CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#endif // CTKCMDLINEMODULEXMLEXCEPTION_H

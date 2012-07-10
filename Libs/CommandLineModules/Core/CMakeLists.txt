@@ -30,9 +30,11 @@ set(KIT_SRCS
   ctkCmdLineModuleProcessRunner.cpp
   ctkCmdLineModuleProcessRunner_p.h
   ctkCmdLineModuleReference.cpp
-  ctkCmdLineModuleReferencePrivate.h
+  ctkCmdLineModuleReferencePrivate.cpp
+  ctkCmdLineModuleXmlException.cpp
   ctkCmdLineModuleXmlMsgHandler_p.h
   ctkCmdLineModuleXmlMsgHandler.cpp
+  ctkCmdLineModuleXmlParser_p.h
   ctkCmdLineModuleXmlParser.cpp
   ctkCmdLineModuleXmlValidator.cpp
   ctkCmdLineModuleXslTransform.cpp

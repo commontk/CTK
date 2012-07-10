@@ -48,7 +48,7 @@ ctkCmdLineModuleReference::operator bool()
 
 ctkCmdLineModuleDescription ctkCmdLineModuleReference::description() const
 {
-  return d->Description;
+  return d->description();
 }
 
 QByteArray ctkCmdLineModuleReference::rawXmlDescription() const

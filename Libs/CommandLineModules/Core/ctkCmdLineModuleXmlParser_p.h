@@ -19,24 +19,38 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEREFERENCEPRIVATE_H
-#define CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#ifndef CTKCMDLINEMODULEXMLPARSER_P_H
+#define CTKCMDLINEMODULEXMLPARSER_P_H
 
-#include <ctkCmdLineModuleDescription.h>
+#include <QXmlStreamReader>
+#include <QHash>
 
-#include <QSharedData>
-#include <QString>
+class ctkCmdLineModuleDescription;
+class ctkCmdLineModuleParameter;
+class ctkCmdLineModuleParameterParser;
 
-struct ctkCmdLineModuleReferencePrivate : public QSharedData
+class QIODevice;
+
+class ctkCmdLineModuleXmlParser
 {
-  ctkCmdLineModuleDescription description() const;
 
-  QString Location;
-  QByteArray RawXmlDescription;
+public:
+
+  ctkCmdLineModuleXmlParser(QIODevice* device, ctkCmdLineModuleDescription* md);
+  ~ctkCmdLineModuleXmlParser();
+
+  void doParse();
 
 private:
 
-  mutable ctkCmdLineModuleDescription Description;
+  void handleExecutableElement();
+  void handleParametersElement();
+  ctkCmdLineModuleParameter handleParameterElement();
+
+  QIODevice* const _device;
+  ctkCmdLineModuleDescription* _md;
+  QXmlStreamReader _xmlReader;
+  QHash<QString, ctkCmdLineModuleParameterParser*> _paramParsers;
 };
 
-#endif // CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#endif // CTKCMDLINEMODULEXMLPARSER_P_H

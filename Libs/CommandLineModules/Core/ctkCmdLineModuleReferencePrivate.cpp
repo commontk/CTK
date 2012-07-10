@@ -19,24 +19,21 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEREFERENCEPRIVATE_H
-#define CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#include "ctkCmdLineModuleReferencePrivate.h"
+#include "ctkCmdLineModuleXmlParser_p.h"
 
-#include <ctkCmdLineModuleDescription.h>
+#include <QBuffer>
 
-#include <QSharedData>
-#include <QString>
-
-struct ctkCmdLineModuleReferencePrivate : public QSharedData
+ctkCmdLineModuleDescription ctkCmdLineModuleReferencePrivate::description() const
 {
-  ctkCmdLineModuleDescription description() const;
+  // lazy creation
+  if (!Description.d)
+  {
+    QByteArray xml(RawXmlDescription);
+    QBuffer xmlInput(&xml);
+    ctkCmdLineModuleXmlParser parser(&xmlInput, &Description);
+    parser.doParse();
+  }
+  return Description;
+}
 
-  QString Location;
-  QByteArray RawXmlDescription;
-
-private:
-
-  mutable ctkCmdLineModuleDescription Description;
-};
-
-#endif // CTKCMDLINEMODULEREFERENCEPRIVATE_H
