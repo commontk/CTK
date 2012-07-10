@@ -3,6 +3,7 @@
 
 #include <QObject.h>
 #include <QStringList.h>
+
 #include "ctkDicomAppHostingTypes.h"
 
 class ctkHostedAppPlaceholderWidget;
@@ -28,6 +29,7 @@ protected slots:
   void onAppReady();
   void placeHolderResized();
   void onDataAvailable();
+  void aboutToQuit();
 signals:
   void TreeSelectionChanged(const QString &);
   void SelectionValid(bool);

@@ -129,8 +129,7 @@ void ctkDicomAbstractHost::notifyStateChanged(ctkDicomAppHosting::State newState
       d_ptr->AppState = ctkDicomAppHosting::IDLE;
       releaseAvailableResources();
     }
-    else if(d_ptr->AppState == ctkDicomAppHosting::EXIT
-            || d_ptr->AppState == ctkDicomAppHosting::IDLE
+    else if(d_ptr->AppState == ctkDicomAppHosting::IDLE
             || d_ptr->AppState == ctkDicomAppHosting::CANCELED)
     {
       d_ptr->AppState = ctkDicomAppHosting::IDLE;

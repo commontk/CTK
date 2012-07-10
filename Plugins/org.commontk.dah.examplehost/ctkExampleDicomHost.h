@@ -77,6 +77,8 @@ public:
 
   QByteArray processReadAll(){return this->AppProcess.readAllStandardOutput ();}
 
+  void exitApplicationBlocking(int timeout = 2000);
+
 public slots:
   void onAppReady();
   void onReleaseAvailableResources();
@@ -91,6 +93,13 @@ signals:
 
 
   void giveAvailableScreen(QRect rect);
+
+protected:
+  QEventLoop BlockingLoopForExiting;
+
+protected slots:
+  void onBlockingExiting(QProcess::ProcessState);
+  void onBlockingExiting();
 
 protected:
 

@@ -41,11 +41,21 @@ ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* plac
     this, SLOT(onTreeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
   connect(this->Host, SIGNAL(dataAvailable()), this, SLOT(onDataAvailable()));
+
+  connect( qApp, SIGNAL(aboutToQuit()), this, SLOT(aboutToQuit()) );
 }
 
 ctkDICOMHostMainLogic::~ctkDICOMHostMainLogic()
 {
   delete Data;
+}
+
+void ctkDICOMHostMainLogic::aboutToQuit()
+{
+  this->Host->exitApplicationBlocking();
+
+  delete this->Host;
+  this->Host = 0;
 }
 
 void ctkDICOMHostMainLogic::configureHostedApp()
