@@ -22,6 +22,7 @@
 // CTK includes
 #include "ctkDicomAbstractExchangeCache.h"
 #include "ctkDicomAppHostingTypesHelper.h"
+#include "ctkDicomAvailableDataHelper.h"
 #include <ctkDicomObjectLocatorCache.h>
 
 class ctkDicomAbstractExchangeCachePrivate
@@ -32,13 +33,16 @@ public:
   ~ctkDicomAbstractExchangeCachePrivate();
 
   ctkDicomObjectLocatorCache ObjectLocatorCache;
+
+  ctkDicomAppHosting::AvailableData IncomingAvailableData;
+  bool lastIncomingData ;
 };
 
 //----------------------------------------------------------------------------
 // ctkDicomAbstractExchangeCachePrivate methods
 
 //----------------------------------------------------------------------------
-ctkDicomAbstractExchangeCachePrivate::ctkDicomAbstractExchangeCachePrivate()
+ctkDicomAbstractExchangeCachePrivate::ctkDicomAbstractExchangeCachePrivate() : lastIncomingData(false)
 {
 
 }
@@ -56,7 +60,7 @@ ctkDicomAbstractExchangeCachePrivate::~ctkDicomAbstractExchangeCachePrivate()
 ctkDicomAbstractExchangeCache::ctkDicomAbstractExchangeCache() :
   d_ptr(new ctkDicomAbstractExchangeCachePrivate)
 {
-
+  connect(this, SIGNAL(internalDataAvailable()), this, SLOT(forwardDataAvailable()), Qt::QueuedConnection);
 }
 
 //----------------------------------------------------------------------------
@@ -76,7 +80,7 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractExchangeCache::getData(
 }
 
 //----------------------------------------------------------------------------
-ctkDicomObjectLocatorCache* ctkDicomAbstractExchangeCache::objectLocatorCache()const
+ctkDicomObjectLocatorCache* ctkDicomAbstractExchangeCache::objectLocatorCache() const
 {
   Q_D(const ctkDicomAbstractExchangeCache);
   return const_cast<ctkDicomObjectLocatorCache*>(&d->ObjectLocatorCache);
@@ -103,3 +107,32 @@ void ctkDicomAbstractExchangeCache::releaseData(const QList<QUuid>& objectUUIDs)
   Q_UNUSED(objectUUIDs)
 }
 
+//----------------------------------------------------------------------------
+const ctkDicomAppHosting::AvailableData& ctkDicomAbstractExchangeCache::getIncomingAvailableData() const
+{
+  Q_D(const ctkDicomAbstractExchangeCache);
+  return d->IncomingAvailableData;
+}
+
+//----------------------------------------------------------------------------
+bool ctkDicomAbstractExchangeCache::lastIncomingData() const
+{
+  Q_D(const ctkDicomAbstractExchangeCache);
+  return d->lastIncomingData;
+}
+
+//----------------------------------------------------------------------------
+bool ctkDicomAbstractExchangeCache::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
+{
+  Q_D(ctkDicomAbstractExchangeCache);
+  ctkDicomAvailableDataHelper::appendToAvailableData(d->IncomingAvailableData, data);
+  d->lastIncomingData = lastData;
+  emit internalDataAvailable();
+  return true;
+}
+
+//----------------------------------------------------------------------------
+void ctkDicomAbstractExchangeCache::forwardDataAvailable()
+{
+  emit dataAvailable();
+}

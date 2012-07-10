@@ -101,15 +101,6 @@ ctkExampleDicomHost::~ctkExampleDicomHost()
   this->AppProcess.kill();
 }
 
-
-//----------------------------------------------------------------------------
-bool ctkExampleDicomHost::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
-{
-  Q_UNUSED(data)
-  Q_UNUSED(lastData)
-  return false;
-}
-
 //----------------------------------------------------------------------------
 void ctkExampleDicomHost::onAppReady()
 {

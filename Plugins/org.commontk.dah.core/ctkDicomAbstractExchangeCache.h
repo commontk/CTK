@@ -37,7 +37,7 @@ class ctkDicomObjectLocatorCache;
 */
 class org_commontk_dah_core_EXPORT ctkDicomAbstractExchangeCache : public QObject, public virtual ctkDicomExchangeInterface
 {
- //Q_OBJECT
+ Q_OBJECT
  Q_INTERFACES(ctkDicomExchangeInterface)
 
 public:
@@ -83,14 +83,14 @@ public:
   void releaseData(const QList<QUuid>& objectUUIDs);
 
   /**
-   * @brief
+   * @brief Return the cache for outgoing data.
    *
    * @return ctkDicomObjectLocatorCache *
   */
   ctkDicomObjectLocatorCache* objectLocatorCache() const;
 
   /**
-   * @brief
+   * @brief Publish data to other side
    *
    * @param availableData
    * @param lastData
@@ -98,6 +98,34 @@ public:
   */
   bool publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData);
 
+  // Methods to support receiving data
+  /**
+   * @brief Return the incoming available data.
+   *
+   * @return AvailableData *
+  */
+  const ctkDicomAppHosting::AvailableData& getIncomingAvailableData() const;
+
+  /**
+   * @brief Return whether the incoming data was marked as @a lastData.
+   *
+   * @return bool value of @a lastData in incoming notifyDataAvailable call
+  */
+  bool ctkDicomAbstractExchangeCache::lastIncomingData() const;
+
+  /**
+   * @brief Receive notification from other side.
+   *
+  */
+  bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
+
+signals:
+  void dataAvailable();
+private:
+signals:
+  void internalDataAvailable();
+private slots:
+  void forwardDataAvailable();
 private:
 
   Q_DECLARE_PRIVATE(ctkDicomAbstractExchangeCache)

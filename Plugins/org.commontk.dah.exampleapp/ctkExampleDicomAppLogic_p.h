@@ -58,16 +58,6 @@ public:
    */
   virtual bool bringToFront(const QRect& requestedScreenArea);
 
-  // ctkDicomExchangeInterface
-
-  /**
-   * The source of the data calls this method with descriptions of the available data that it can provide to the
-   * recipient. If the source of the data expects that additional data will become available, it shall pass FALSE
-   * in the lastData parameter. Otherwise, it shall pass TRUE.
-   * \return TRUE if the recipient of the data successfully received the AvailableData list.
-   */
-  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
-
   // some logic
   /** Test function for checking */
   void do_something();
@@ -84,6 +74,8 @@ protected slots:
 
   void onLoadDataClicked();
   void onCreateSecondaryCapture();
+
+  void onDataAvailable();
 private:
   QWidget * AppWidget;
   Ui::ctkExampleDicomAppWidget ui;

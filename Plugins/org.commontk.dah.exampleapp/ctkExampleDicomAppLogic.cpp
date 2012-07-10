@@ -52,6 +52,7 @@ ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), AppWidget(0)
   connect(this, SIGNAL(suspendProgress()), this, SLOT(onSuspendProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(cancelProgress()), this, SLOT(onCancelProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(exitHostedApp()), this, SLOT(onExitHostedApp()), Qt::QueuedConnection);
+  connect(this, SIGNAL(dataAvailable()), this, SLOT(onDataAvailable()));
 
   //notify Host we are ready.
   try {
@@ -185,14 +186,14 @@ void ctkExampleDicomAppLogic::onReleaseResources()
 
 
 //----------------------------------------------------------------------------
-bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
+void ctkExampleDicomAppLogic::onDataAvailable()
 {
-  Q_UNUSED(lastData)
   QString s;
+  const ctkDicomAppHosting::AvailableData& data = getIncomingAvailableData();
   if(this->AppWidget == 0)
     {
     qCritical() << "Button is null!";
-    return false;
+    return;
     }
   s = "Received notifyDataAvailable with patients.count()= " + QString().setNum(data.patients.count());
   if(data.patients.count()>0)
@@ -212,7 +213,6 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::Avai
   }
   ui.ReceivedDataInformation->setText(s);
   ui.LoadDataButton->setEnabled(true);
-  return false;
 }
 
 

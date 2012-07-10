@@ -185,9 +185,9 @@ bool addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data,
   else
 	   objectDescriptor.mimeType = "text/plain"; //default
 
-  ctkDicomAppHosting::Patient* ppatient;
-  ctkDicomAppHosting::Study* pstudy;
-  ctkDicomAppHosting::Series* pseries;
+  //ctkDicomAppHosting::Patient* ppatient;
+  //ctkDicomAppHosting::Study* pstudy;
+  //ctkDicomAppHosting::Series* pseries;
 
   data.objectDescriptors.append(objectDescriptor);
 
@@ -309,4 +309,14 @@ bool addToAvailableData(ctkDicomAppHosting::AvailableData& data,
   return addToAvailableData(data, objectLocatorCache, ctkdataset, fileinfo.size(), 0, uri);
 
 }
+
+//----------------------------------------------------------------------------
+bool appendToAvailableData(ctkDicomAppHosting::AvailableData& dest,
+                        const ctkDicomAppHosting::AvailableData& src)
+{
+  dest.objectDescriptors.append(src.objectDescriptors);
+  dest.patients.append(src.patients);
+  return true;
 }
+
+} //end namespace ctkDicomAvailableDataHelper

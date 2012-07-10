@@ -70,15 +70,6 @@ public:
    */
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
 
-  // exchange methods
-  /**
-   * The source of the data calls this method with descriptions of the available data that it can provide to the
-   * recipient. If the source of the data expects that additional data will become available, it shall pass FALSE
-   * in the lastData parameter. Otherwise, it shall pass TRUE.
-   * \return TRUE if the recipient of the data successfully received the AvailableData list.
-   */
-  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
-
   ctkDicomAppHosting::State getApplicationState() const;
 
   const QProcess& getAppProcess() const { return this->AppProcess; }

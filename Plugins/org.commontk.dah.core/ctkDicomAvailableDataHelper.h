@@ -90,8 +90,6 @@ bool org_commontk_dah_core_EXPORT addToAvailableData(ctkDicomAppHosting::Availab
                         ctkDicomObjectLocatorCache* objectLocatorCache, 
                         const QString& filename);
 
-}
-
 //----------------------------------------------------------------------------
 bool org_commontk_dah_core_EXPORT addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data, 
                         ctkDicomObjectLocatorCache* objectLocatorCache, 
@@ -99,5 +97,12 @@ bool org_commontk_dah_core_EXPORT addNonDICOMToAvailableData(ctkDicomAppHosting:
                         long length, 
                         long offset, 
                         const QString& uri);
+
+//----------------------------------------------------------------------------
+bool appendToAvailableData(ctkDicomAppHosting::AvailableData& dest,
+                        const ctkDicomAppHosting::AvailableData& src);
+
+
+} //end namespace ctkDicomAvailableDataHelper
 
 #endif // CTKDICOMAVAILABLEDATAHELPER_H
