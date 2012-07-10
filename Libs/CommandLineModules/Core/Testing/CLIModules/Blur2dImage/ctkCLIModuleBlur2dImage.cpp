@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 
   // Do something
 
-  out << "Got parameter: " << QCoreApplication::arguments();
+  //out << "Got parameter: " << QCoreApplication::arguments();
 
   return EXIT_SUCCESS;
 }
