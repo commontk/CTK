@@ -113,16 +113,21 @@ public:
   ///
   /// \brief database accessors
   Q_INVOKABLE QStringList patients ();
-  Q_INVOKABLE QStringList studiesForPatient (QString patientUID);
-  Q_INVOKABLE QStringList seriesForStudy (QString studyUID);
-  Q_INVOKABLE QStringList filesForSeries (QString seriesUID);
+  Q_INVOKABLE QStringList studiesForPatient (const QString patientUID);
+  Q_INVOKABLE QStringList seriesForStudy (const QString studyUID);
+  Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
+  Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
 
   ///
   /// \brief load the header from a file and allow access to elements
-  Q_INVOKABLE void loadInstanceHeader (QString sopInstanceUID);
-  Q_INVOKABLE void loadFileHeader (QString fileName);
+  /// @param sopInstanceUID A string with the uid for a given instance
+  ///                       (corresponding file will be found via database)
+  /// @param fileName Full path to a dicom file to load.
+  /// @param key A group,element tag in zero-filled hex
+  Q_INVOKABLE void loadInstanceHeader (const QString sopInstanceUID);
+  Q_INVOKABLE void loadFileHeader (const QString fileName);
   Q_INVOKABLE QStringList headerKeys ();
-  Q_INVOKABLE QString headerValue (QString key);
+  Q_INVOKABLE QString headerValue (const QString key);
 
   /// Insert into the database if not already exsting.
   /// @param dataset The dataset to store into the database. Usually, this is
@@ -139,7 +144,7 @@ public:
   ///                  does only make sense if a full object is received.
   /// @param @generateThumbnail If true, a thumbnail is generated.
   ///
-  void insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail);
+  Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail);
   void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
   Q_INVOKABLE void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
   
@@ -152,6 +157,22 @@ public:
   Q_INVOKABLE bool removeStudy(const QString& studyInstanceUID);
   Q_INVOKABLE bool removePatient(const QString& patientID);
   bool cleanup();
+
+  ///
+  /// \brief access element values for given instance
+  /// @param sopInstanceUID A string with the uid for a given instance
+  ///                       (corresponding file will be found via database)
+  /// @param fileName Full path to a dicom file to load.
+  /// @param key A group,element tag in zero-filled hex
+  /// @param group The group portion of the tag as an integer
+  /// @param element The element portion of the tag as an integer
+  /// @Returns empty string is element is missing
+  Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const QString tag);
+  Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const unsigned short group, const unsigned short element);
+  Q_INVOKABLE QString fileValue (const QString fileName, const QString tag);
+  Q_INVOKABLE QString fileValue (const QString fileName, const unsigned short group, const unsigned short element);
+  bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
+
 
 Q_SIGNALS:
   void databaseChanged();
