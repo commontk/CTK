@@ -151,10 +151,19 @@ QString ctkCmdLineModuleObjectHierarchyReader::label() const
   }
 }
 
-QString ctkCmdLineModuleObjectHierarchyReader::value() const
+QVariant ctkCmdLineModuleObjectHierarchyReader::value() const
 {
   QString valProp = property("valueProperty").toString();
-  return property(valProp).toString();
+  return property(valProp);
+}
+
+void ctkCmdLineModuleObjectHierarchyReader::setValue(const QVariant& value)
+{
+  QVariant valProp = property("valueProperty");
+  if (valProp.isValid())
+  {
+    d->currentObject->setProperty(qPrintable(valProp.toString()), value);
+  }
 }
 
 QString ctkCmdLineModuleObjectHierarchyReader::flag() const

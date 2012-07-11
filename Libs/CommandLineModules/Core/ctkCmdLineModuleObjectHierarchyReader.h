@@ -57,7 +57,9 @@ public:
 
   QString name() const;
   QString label() const;
-  QString value() const;
+  QVariant value() const;
+
+  void setValue(const QVariant& value);
 
   QString flag() const;
   QString longFlag() const;

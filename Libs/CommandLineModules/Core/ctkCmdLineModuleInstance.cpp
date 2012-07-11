@@ -58,7 +58,7 @@ struct ctkCmdLineModuleInstancePrivate
     {
       if (reader.index() > -1)
       {
-        indexedArgs.insert(reader.index(), reader.value());
+        indexedArgs.insert(reader.index(), reader.value().toString());
       }
       else
       {
@@ -75,11 +75,11 @@ struct ctkCmdLineModuleInstancePrivate
         QStringList args;
         if (reader.isMultiple())
         {
-          args = reader.value().split(',', QString::SkipEmptyParts);
+          args = reader.value().toString().split(',', QString::SkipEmptyParts);
         }
         else
         {
-          args.push_back(reader.value());
+          args.push_back(reader.value().toString());
         }
 
         foreach(QString arg, args)
@@ -129,7 +129,15 @@ QVariant ctkCmdLineModuleInstance::value(const QString &parameter) const
 
 void ctkCmdLineModuleInstance::setValue(const QString &parameter, const QVariant &value)
 {
-  throw ctkException("not implemented yet");
+  ctkCmdLineModuleObjectHierarchyReader reader(parameterValueModel());
+  while(reader.readNextParameter())
+  {
+    if(reader.name() == parameter && reader.value() != value)
+    {
+      reader.setValue(value);
+      emit valueChanged(parameter, value);
+    }
+  }
 }
 
 ctkCmdLineModuleReference ctkCmdLineModuleInstance::moduleReference() const
