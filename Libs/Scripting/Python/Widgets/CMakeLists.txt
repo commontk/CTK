@@ -1,13 +1,6 @@
 project(CTKScriptingPythonWidgets)
 
 #
-# 3rd party dependencies
-#
-if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  include(${VTK_USE_FILE})
-endif()
-
-#
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
