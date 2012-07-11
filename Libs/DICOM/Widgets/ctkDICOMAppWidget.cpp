@@ -424,29 +424,32 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
       {
       targetDirectory = d->DICOMDatabase->databaseDirectory();
       }
-    QProgressDialog progress("DICOM Import", "Cancel", 0, 100, this,
+    QProgressDialog* progress = new QProgressDialog("DICOM Import", "Cancel", 0, 100, this,
                            Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
     // We don't want the progress dialog to resize itself, so we bypass the label
     // by creating our own
     QLabel* progressLabel = new QLabel(tr("Initialization..."));
-    progress.setLabel(progressLabel);
+    progress->setLabel(progressLabel);
 #ifdef Q_WS_MAC
     // BUG: avoid deadlock of dialogs on mac
-    progress.setWindowModality(Qt::NonModal);
+    progress->setWindowModality(Qt::NonModal);
 #else
-    progress.setWindowModality(Qt::ApplicationModal);
+    progress->setWindowModality(Qt::ApplicationModal);
 #endif
-    progress.setMinimumDuration(0);
-    progress.setValue(0);
-    progress.show();
+    progress->setMinimumDuration(0);
+    progress->setValue(0);
+    progress->show();
 
-    connect(&progress, SIGNAL(canceled()), d->DICOMIndexer.data(), SLOT(cancel()));
+    connect(progress, SIGNAL(canceled()), d->DICOMIndexer.data(), SLOT(cancel()));
     connect(d->DICOMIndexer.data(), SIGNAL(indexingFilePath(QString)),
             progressLabel, SLOT(setText(QString)));
     connect(d->DICOMIndexer.data(), SIGNAL(progress(int)),
-            &progress, SLOT(setValue(int)));
+            progress, SLOT(setValue(int)));
     connect(d->DICOMIndexer.data(), SIGNAL(progress(int)),
             this, SLOT(onProgress(int)));
+
+    connect(d->DICOMIndexer.data(), SIGNAL(indexingComplete()),
+            progress, SLOT(close()));
 
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
 
