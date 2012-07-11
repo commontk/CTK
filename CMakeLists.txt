@@ -583,6 +583,10 @@ ctk_plugin_option(org.commontk.dah.exampleapp
                   "Build the org.commontk.dah.exampleapp plugin." OFF
                   CTK_APP_ctkExampleHostedApp)
                   
+ctk_plugin_option(org.commontk.dah.cmdlinemoduleapp
+                  "Build the org.commontk.dah.cmdlinemoduleapp plugin." OFF
+                  CTK_APP_ctkCommandLineModuleApp)
+                  
 ctk_plugin_option(org.commontk.dah.examplehost
                   "Build the org.commontk.dah.examplehost plugin." OFF
                   CTK_APP_ctkExampleHost)
