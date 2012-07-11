@@ -33,6 +33,7 @@
 #include <QFileInfo>
 #include <QDebug>
 #include <QFileSystemWatcher>
+#include <QMutexLocker>
 
 // ctkDICOM includes
 #include "ctkDICOMDatabase.h"
@@ -101,6 +102,10 @@ public:
   QString LastStudyInstanceUID;
   QString LastSeriesInstanceUID;
   int LastPatientUID;
+
+  /// parallel inserts are not allowed (yet)
+  QMutex insertMutex;
+
   int insertPatient(const ctkDICOMDataset& ctkDataset);
   void insertStudy(const ctkDICOMDataset& ctkDataset, int dbPatientID);
   void insertSeries( const ctkDICOMDataset& ctkDataset, QString studyInstanceUID);
@@ -646,6 +651,8 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
 void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile, bool generateThumbnail)
 {
   Q_Q(ctkDICOMDatabase);
+
+  QMutexLocker lock(&insertMutex);
 
   // Check to see if the file has already been loaded
   // TODO:
