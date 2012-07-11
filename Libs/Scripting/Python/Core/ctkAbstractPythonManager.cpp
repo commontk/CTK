@@ -363,6 +363,12 @@ void ctkAbstractPythonManager::addObjectToPythonMain(const QString& name, QObjec
 }
 
 //-----------------------------------------------------------------------------
+void ctkAbstractPythonManager::addWrapperFactory(PythonQtForeignWrapperFactory* factory)
+{
+  PythonQt::self()->addWrapperFactory(factory);
+}
+
+//-----------------------------------------------------------------------------
 QVariant ctkAbstractPythonManager::getVariable(const QString& name)
 {
   PythonQtObjectPtr main = ctkAbstractPythonManager::mainContext();
