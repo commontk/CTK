@@ -625,6 +625,7 @@ int ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMDataset& ctkDataset)
     return dbPatientID;
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMDataset& ctkDataset, int dbPatientID)
 {
   QString studyInstanceUID(ctkDataset.GetElementAsString(DCM_StudyInstanceUID) );
@@ -670,6 +671,7 @@ void ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMDataset& ctkDataset, int
     }
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QString studyInstanceUID)
 {
   QString seriesInstanceUID(ctkDataset.GetElementAsString(DCM_SeriesInstanceUID) );
@@ -721,6 +723,7 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
     }
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile, bool generateThumbnail)
 {
   Q_Q(ctkDICOMDatabase);
@@ -912,6 +915,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
     }
 }
 
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::fileExistsAndUpToDate(const QString& filePath)
 {
   Q_D(ctkDICOMDatabase);
@@ -933,18 +937,21 @@ bool ctkDICOMDatabase::fileExistsAndUpToDate(const QString& filePath)
 }
 
 
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::isOpen() const
 {
   Q_D(const ctkDICOMDatabase);
   return d->Database.isOpen();
 }
 
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::isInMemory() const
 {
   Q_D(const ctkDICOMDatabase);
   return d->DatabaseFileName == ":memory:";
 }
 
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
@@ -1021,6 +1028,7 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
   return true;
 }
 
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::cleanup()
 {
   Q_D(ctkDICOMDatabase);
@@ -1031,6 +1039,7 @@ bool ctkDICOMDatabase::cleanup()
   return true;
 }
 
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
@@ -1057,6 +1066,7 @@ bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
   return result;
 }
 
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::removePatient(const QString& patientID)
 {
   Q_D(ctkDICOMDatabase);
@@ -1085,3 +1095,5 @@ bool ctkDICOMDatabase::removePatient(const QString& patientID)
   d->LastPatientUID = -1;
   return result;
 }
+
+

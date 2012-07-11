@@ -189,6 +189,7 @@ public:
   Q_INVOKABLE bool initializeTagCache (){};
   /// Return the value of a cached tag
   Q_INVOKABLE QString cachedTag (const QString sopInstanceUID, const QString tag){};
+  /// Insert an instance tag's value into to the cache
   Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value){};
 
 
