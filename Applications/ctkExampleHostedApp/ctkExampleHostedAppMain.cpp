@@ -107,19 +107,21 @@ int main(int argv, char** argc)
   QString pluginName = parsedArgs.value("plugin").toString();
   qCritical() << "  Plugin name: " << pluginName;
 
-  // setup the plugin framework
   ctkProperties fwProps;
+  // pass further parameters the plugins
+  if(parser.unparsedArguments().count() > 0)
+    {
+    QString args = parser.unparsedArguments().join(" ");
+    fwProps.insert("dah.args", parser.unparsedArguments().join(" "));
+    }
+
+  // setup the plugin framework
   fwProps.insert("dah.hostURL", hostURL);
   fwProps.insert("dah.appURL", appURL);
   fwProps.insert(ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN, ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
   ctkPluginFrameworkFactory fwFactory(fwProps);
   QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
 
-  // pass further parameters the plugins
-  if(parser.unparsedArguments().count() > 0)
-    {
-    fwProps.insert("dah.args", parser.unparsedArguments().join(" "));
-    }
 
   try
     {
