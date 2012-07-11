@@ -175,14 +175,17 @@ void ctkExampleDicomHost::onReleaseAvailableResources()
 void ctkExampleDicomHost::exitApplication()
 {
   this->exitingApplication=true;
-  if(this->getApplicationState() == ctkDicomAppHosting::EXIT)
-    return;
-  if(this->getApplicationState() == ctkDicomAppHosting::IDLE)
+  if(this->getAppProcess().state() == QProcess::Running)
   {
-    getDicomAppService ()->setState (ctkDicomAppHosting::EXIT);
-    return;
+    if(this->getApplicationState() == ctkDicomAppHosting::EXIT)
+      return;
+    if(this->getApplicationState() == ctkDicomAppHosting::IDLE)
+    {
+      getDicomAppService ()->setState (ctkDicomAppHosting::EXIT);
+      return;
+    }
+    getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
   }
-  getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
 }
 
 //----------------------------------------------------------------------------
