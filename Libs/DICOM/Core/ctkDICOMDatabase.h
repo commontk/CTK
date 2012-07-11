@@ -184,13 +184,13 @@ public:
   /// @Returns empty string if element for uid is missing from cache
   ///
   /// Lightweight check of tag cache existence (once db check per runtime)
-  Q_INVOKABLE bool tagCacheExists (){};
+  Q_INVOKABLE bool tagCacheExists ();
   /// Create a tagCache in the current database.  Delete the existing one if it exists.
-  Q_INVOKABLE bool initializeTagCache (){};
+  Q_INVOKABLE bool initializeTagCache ();
   /// Return the value of a cached tag
-  Q_INVOKABLE QString cachedTag (const QString sopInstanceUID, const QString tag){};
+  Q_INVOKABLE QString cachedTag (const QString sopInstanceUID, const QString tag);
   /// Insert an instance tag's value into to the cache
-  Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value){};
+  Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value);
 
 
 Q_SIGNALS:

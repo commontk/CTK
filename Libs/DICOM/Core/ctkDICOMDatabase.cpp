@@ -106,6 +106,9 @@ public:
   /// parallel inserts are not allowed (yet)
   QMutex insertMutex;
 
+  /// tagCache table has been checked to exist
+  bool TagCacheVerified;
+
   int insertPatient(const ctkDICOMDataset& ctkDataset);
   void insertStudy(const ctkDICOMDataset& ctkDataset, int dbPatientID);
   void insertSeries( const ctkDICOMDataset& ctkDataset, QString studyInstanceUID);
@@ -119,6 +122,7 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
 {
   this->thumbnailGenerator = NULL;
   this->LastPatientUID = -1;
+  this->TagCacheVerified = false;
 }
 
 //------------------------------------------------------------------------------
@@ -1096,4 +1100,79 @@ bool ctkDICOMDatabase::removePatient(const QString& patientID)
   return result;
 }
 
+///
+/// Code related to the tagCache
+///
 
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::tagCacheExists()
+{
+  Q_D(ctkDICOMDatabase);
+  if (d->TagCacheVerified)
+    {
+    return true;
+    }
+  QSqlQuery cacheExists( d->Database );
+  cacheExists.prepare("SELECT * FROM TagCache LIMIT 1");
+  bool success = d->loggedExec(cacheExists);
+  if (success)
+    {
+    d->TagCacheVerified = true;
+    }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::initializeTagCache()
+{
+  Q_D(ctkDICOMDatabase);
+
+  // First, drop any existing table
+  if ( this->tagCacheExists() )
+    {
+    QSqlQuery dropCacheTable( d->Database );
+    dropCacheTable.prepare( "DROP TABLE TagCache" );
+    d->loggedExec(dropCacheTable);
+    }
+
+  // now create a table
+  QSqlQuery createCacheTable( d->Database );
+  createCacheTable.prepare(
+    "CREATE TABLE TagCache (SOPInstanceUID, Tag, Value, PRIMARY KEY (SOPInstanceUID, Tag))" );
+  bool success = d->loggedExec(createCacheTable);
+  if (success)
+    {
+    d->TagCacheVerified = true;
+    return true;
+    }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString tag)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery selectValue( d->Database );
+  selectValue.prepare( "SELECT Value FROM TagCache WHERE SOPInstanceUID = :sopInstanceUID AND Tag = :tag" );
+  selectValue.bindValue(":sopInstanceUID",sopInstanceUID);
+  selectValue.bindValue(":tag",tag);
+  d->loggedExec(selectValue);
+  QString result("");
+  if (selectValue.next()) 
+    {
+    result = selectValue.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::cacheTag(const QString sopInstanceUID, const QString tag, const QString value)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery insertTag( d->Database );
+  insertTag.prepare( "INSERT OR REPLACE INTO TagCache VALUES(:sopInstanceUID, :tag, :value)" );
+  insertTag.bindValue(":sopInstanceUID",sopInstanceUID);
+  insertTag.bindValue(":tag",tag);
+  insertTag.bindValue(":value",value);
+  return d->loggedExec(insertTag);
+}
