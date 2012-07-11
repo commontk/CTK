@@ -30,6 +30,7 @@
 #include "ctkScriptingPythonCoreExport.h"
 
 class ctkAbstractPythonManagerPrivate;
+class PythonQtForeignWrapperFactory;
 class PythonQtObjectPtr;
 
 /// \ingroup Scripting_Python_Core
@@ -62,6 +63,7 @@ public:
   PythonQtObjectPtr mainContext();
 
   void addObjectToPythonMain(const QString& name, QObject* obj);
+  void addWrapperFactory(PythonQtForeignWrapperFactory* factory);
   void registerPythonQtDecorator(QObject* decorator);
   void registerClassForPythonQt(const QMetaObject* metaobject);
   void registerCPPClassForPythonQt(const char* name);

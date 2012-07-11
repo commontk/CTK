@@ -101,7 +101,7 @@ void ctkSimplePythonManager::preInitialization()
 #endif
 
 #ifdef CTK_WRAP_PYTHONQT_USE_VTK
-  PythonQt::self()->addWrapperFactory(new ctkVTKPythonQtWrapperFactory);
+  this->addWrapperFactory(new ctkVTKPythonQtWrapperFactory);
 #endif
 
   // Register decorators
