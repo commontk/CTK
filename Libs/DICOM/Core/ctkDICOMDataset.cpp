@@ -446,7 +446,7 @@ QString ctkDICOMDataset::GetAllElementValuesAsString( const DcmTag& tag ) const
     }
   }
 
-  return qsl.join("|");
+  return qsl.join("\\");
 }
 
 
