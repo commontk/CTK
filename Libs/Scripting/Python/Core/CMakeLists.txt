@@ -1,18 +1,10 @@
 project(CTKScriptingPythonCore)
 
 #
-# 3rd party dependencies
-#
-if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  include(${VTK_USE_FILE})
-endif()
-
-#
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
 set(KIT_export_directive "CTK_SCRIPTING_PYTHON_CORE_EXPORT")
-
 
 # Source files
 set(KIT_SRCS
@@ -49,11 +41,6 @@ configure_file(
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
-
-# Link against vtkPython if required
-if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  list(APPEND KIT_target_libraries vtkPythonCore)
-endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

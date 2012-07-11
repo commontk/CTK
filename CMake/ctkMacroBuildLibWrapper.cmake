@@ -78,18 +78,6 @@ macro(ctkMacroBuildLibWrapper)
   # these ones to avoid complaints of MSVC
   # Note: "LINK_DIRECTORIES" has to be invoked before "ADD_LIBRARY"
   set(my_EXTRA_PYTHON_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
-  # Should we link against VTK
-  #if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  #  list(APPEND my_EXTRA_PYTHON_LIBRARIES vtkCommon vtkPythonCore)
-  #endif()
-
-  # The current library might not be wrapped. Nevertheless, if one of its dependent library
-  # is linked using vtkCommon or vtkPythonCore, VTK_LIBRARY_DIRS should be added
-  # as a link directories.
-  #if(NOT CTK_BUILD_SHARED_LIBS
-  #   AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  #  link_directories(${VTK_LIBRARY_DIRS})
-  #endif()
 
   # Does a header having the expected filename exists ?
   string(REGEX REPLACE "^CTK" "ctk" lib_name_lc_ctk ${lib_name})

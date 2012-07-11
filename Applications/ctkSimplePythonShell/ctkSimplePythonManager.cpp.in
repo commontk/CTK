@@ -10,8 +10,11 @@
 // CTK includes
 #include "ctkSimplePythonManager.h"
 #include "ctkSimplePythonQtDecorators.h"
+#include "ctkSimplePythonShellConfigure.h" // For CTK_WRAP_PYTHONQT_{LIGHT, FULL}, CTK_WRAP_PYTHONQT_USE_VTK and CTK_BUILD_SHARED_LIBS
+#ifdef CTK_WRAP_PYTHONQT_USE_VTK
+# include "ctkVTKPythonQtWrapperFactory.h"
+#endif
 
-#include "ctkSimplePythonShellConfigure.h" // For CTK_WRAP_PYTHONQT_{LIGHT, FULL} and CTK_BUILD_SHARED_LIBS
 
 #if defined(CTK_WRAP_PYTHONQT_LIGHT) || defined(CTK_WRAP_PYTHONQT_FULL)
 # ifndef CTK_BUILD_SHARED_LIBS
@@ -95,6 +98,10 @@ void ctkSimplePythonManager::preInitialization()
   // Initialize wrappers
   @CTK_PYTHONQT_INITIALIZATION_METHOD_CALL@
 # endif
+#endif
+
+#ifdef CTK_WRAP_PYTHONQT_USE_VTK
+  PythonQt::self()->addWrapperFactory(new ctkVTKPythonQtWrapperFactory);
 #endif
 
   // Register decorators
