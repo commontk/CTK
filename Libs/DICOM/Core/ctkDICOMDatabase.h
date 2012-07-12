@@ -171,7 +171,8 @@ public:
   Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const unsigned short group, const unsigned short element);
   Q_INVOKABLE QString fileValue (const QString fileName, const QString tag);
   Q_INVOKABLE QString fileValue (const QString fileName, const unsigned short group, const unsigned short element);
-  bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
+  Q_INVOKABLE bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
+  Q_INVOKABLE QString groupElementToTag (const unsigned short& group, const unsigned short& element);
 
   ///
   /// \brief store values of previously requested instance elements

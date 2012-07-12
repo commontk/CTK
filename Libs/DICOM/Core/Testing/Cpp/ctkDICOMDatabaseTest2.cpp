@@ -97,6 +97,14 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  if ( database.groupElementToTag(group, element) != tag )
+    {
+    std::cerr << "ctkDICOMDatabase: could not convert a uints to tag string" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+
   //
   // Basic test:
   // - insert the file specified on the command line
@@ -123,7 +131,6 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     std::cerr << "ctkDICOMDatabase: invalid element value returned" << std::endl;
     return EXIT_FAILURE;
     }
-
 
   //
   // Test the tag cache

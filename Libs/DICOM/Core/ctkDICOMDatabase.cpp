@@ -534,6 +534,12 @@ bool ctkDICOMDatabase::tagToGroupElement(const QString tag, unsigned short& grou
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDatabase::groupElementToTag(const unsigned short& group, const unsigned short& element)
+{
+  return QString("%1,%2").arg(group,4,16,QLatin1Char('0')).arg(element,4,16,QLatin1Char('0'));
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabase::insert( DcmDataset *dataset, bool storeFile, bool generateThumbnail)
 {
   if (!dataset)
