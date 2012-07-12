@@ -124,6 +124,47 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+
+  //
+  // Test the tag cache
+  //
+
+  if (database.tagCacheExists())
+    {
+    std::cerr << "ctkDICOMDatabase: tag cache should not exist in fresh database" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (!database.initializeTagCache())
+    {
+    std::cerr << "ctkDICOMDatabase: could not initialize tag cache" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (!database.tagCacheExists())
+    {
+    std::cerr << "ctkDICOMDatabase: tag cache should exist but is not detected" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (database.cachedTag(instanceUID, tag) != QString(""))
+    {
+    std::cerr << "ctkDICOMDatabase: tag cache should return empty string for unknown instance tag" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (!database.cacheTag(instanceUID, tag, knownSeriesDescription)) 
+    {
+    std::cerr << "ctkDICOMDatabase: could not insert instance tag" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (database.cachedTag(instanceUID, tag) != knownSeriesDescription) 
+    {
+    std::cerr << "ctkDICOMDatabase: could not retrieve cached tag" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   database.closeDatabase();
   database.initializeDatabase();
 
