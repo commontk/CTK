@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef CTKEVENTBUSDEMOMAINWINDOW_H
+#define CTKEVENTBUSDEMOMAINWINDOW_H
 
 #include <QMainWindow>
 #include <QVariant>
@@ -7,7 +7,7 @@
 class ctkEventAdminBus;
 
 namespace Ui {
-    class MainWindow;
+    class ctkEventBusDemoMainWindow;
 }
 
 class ctkEventDemo : public QObject {
@@ -21,12 +21,12 @@ public Q_SLOTS:
     void receiveEvent(QVariantList l);
 };
 
-class MainWindow : public QMainWindow {
+class ctkEventBusDemoMainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent = 0);
-    MainWindow(ctkEventAdminBus *bus, QWidget *parent = 0);
-    ~MainWindow();
+    ctkEventBusDemoMainWindow(QWidget *parent = 0);
+    ctkEventBusDemoMainWindow(ctkEventAdminBus *bus, QWidget *parent = 0);
+    ~ctkEventBusDemoMainWindow();
 
 public Q_SLOTS:
     void sendEvent();
@@ -38,10 +38,10 @@ protected:
     void connectEvents();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::ctkEventBusDemoMainWindow *ui;
     ctkEventAdminBus *m_EventBus;
 
     ctkEventDemo *handler;
 };
 
-#endif // MAINWINDOW_H
+#endif // CTKEVENTBUSDEMOMAINWINDOW_H
