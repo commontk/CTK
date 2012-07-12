@@ -67,11 +67,11 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     {
     std::cerr << "ctkDICOMDatabase::openDatabase() failed: "
               << "database should not be in memory" << std::endl;
-    return EXIT_FAILURE;    
+    return EXIT_FAILURE;
     }
 
   bool res = database.initializeDatabase();
-  
+
   if (!res)
     {
     std::cerr << "ctkDICOMDatabase::initializeDatabase() failed." << std::endl;
@@ -104,7 +104,6 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     }
 
 
-
   //
   // Basic test:
   // - insert the file specified on the command line
@@ -120,7 +119,15 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     std::cerr << "ctkDICOMDatabase: didn't get back the original file path" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
+  QString foundInstance = database.instanceForFile(dicomFilePath);
+
+  if (foundInstance != instanceUID)
+    {
+    std::cerr << "ctkDICOMDatabase: didn't get back the original instance uid" << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   QString knownSeriesDescription("3D Cor T1 FAST IR-prepped GRE");
 
@@ -160,13 +167,13 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if (!database.cacheTag(instanceUID, tag, knownSeriesDescription)) 
+  if (!database.cacheTag(instanceUID, tag, knownSeriesDescription))
     {
     std::cerr << "ctkDICOMDatabase: could not insert instance tag" << std::endl;
     return EXIT_FAILURE;
     }
 
-  if (database.cachedTag(instanceUID, tag) != knownSeriesDescription) 
+  if (database.cachedTag(instanceUID, tag) != knownSeriesDescription)
     {
     std::cerr << "ctkDICOMDatabase: could not retrieve cached tag" << std::endl;
     return EXIT_FAILURE;

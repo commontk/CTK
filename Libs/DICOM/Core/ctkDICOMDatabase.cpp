@@ -335,6 +335,10 @@ void ctkDICOMDatabase::closeDatabase()
   d->Database.close();
 }
 
+//
+// Patient/study/series convenience methods
+//
+
 //------------------------------------------------------------------------------
 QStringList ctkDICOMDatabase::patients()
 {
@@ -407,12 +411,32 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
   query.bindValue ( 0, sopInstanceUID );
   query.exec();
   QString result;
-  if (query.next()) 
+  if (query.next())
     {
     result = query.value(0).toString();
     }
   return( result );
 }
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::instanceForFile(QString fileName)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT SOPInstanceUID FROM Images WHERE Filename=?");
+  query.bindValue ( 0, fileName );
+  query.exec();
+  QString result;
+  if (query.next())
+    {
+    result = query.value(0).toString();
+    }
+  return( result );
+}
+
+//
+// instance header methods
+//
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabase::loadInstanceHeader (QString sopInstanceUID)
@@ -469,9 +493,18 @@ QString ctkDICOMDatabase::headerValue (QString key)
   return (d->LoadedHeader[key]);
 }
 
+//
+// instanceValue and fileValue methods
+//
+
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
 {
+  QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value != "")
+    {
+    return value;
+    }
   unsigned short group, element;
   this->tagToGroupElement(tag, group, element);
   return( this->instanceValue(sopInstanceUID, group, element) );
@@ -480,6 +513,12 @@ QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsigned short group, const unsigned short element)
 {
+  QString tag = this->groupElementToTag(group,element);
+  QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value != "")
+    {
+    return value;
+    }
   QString filePath = this->fileForInstance(sopInstanceUID);
   if (filePath != "" )
     {
@@ -497,6 +536,12 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
 {
   unsigned short group, element;
   this->tagToGroupElement(tag, group, element);
+  QString sopInstanceUID = this->instanceForFile(fileName);
+  QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value != "")
+    {
+    return value;
+    }
   return( this->fileValue(fileName, group, element) );
 }
 
@@ -504,6 +549,8 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
 QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short group, const unsigned short element)
 {
   // here is where the real lookup happens
+  // - first we check the tagCache to see if the value exists for this instance tag
+  // If not,
   // - for now we create a ctkDICOMDataset and extract the value from there
   // - then we convert to the appropriate type of string
   //
@@ -514,9 +561,17 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
   //   -- if so, keep looking for the requested group/element
   //   -- if not, start again from the begining
 
+  QString tag = this->groupElementToTag(group, element);
+  QString sopInstanceUID = this->instanceForFile(fileName);
+  QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value != "")
+    {
+    return value;
+    }
+
   ctkDICOMDataset dataset;
   dataset.InitializeFromFile(fileName);
-  
+
   DcmTagKey tagKey(group, element);
 
   return( dataset.GetAllElementValuesAsString(tagKey) );
@@ -538,6 +593,10 @@ QString ctkDICOMDatabase::groupElementToTag(const unsigned short& group, const u
 {
   return QString("%1,%2").arg(group,4,16,QLatin1Char('0')).arg(element,4,16,QLatin1Char('0'));
 }
+
+//
+// methods related to insert
+//
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabase::insert( DcmDataset *dataset, bool storeFile, bool generateThumbnail)
@@ -1169,7 +1228,7 @@ QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString 
   selectValue.bindValue(":tag",tag);
   d->loggedExec(selectValue);
   QString result("");
-  if (selectValue.next()) 
+  if (selectValue.next())
     {
     result = selectValue.value(0).toString();
     }

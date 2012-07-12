@@ -117,6 +117,7 @@ public:
   Q_INVOKABLE QStringList seriesForStudy (const QString studyUID);
   Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
   Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
+  Q_INVOKABLE QString instanceForFile (const QString fileName);
 
   ///
   /// \brief load the header from a file and allow access to elements
