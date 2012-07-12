@@ -44,7 +44,7 @@ if(${add_project})
         message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
       endif()
 
-      set(revision_tag 654f3249d1cf3f3ff674b2ff6cca7a2ef3517f60)
+      set(revision_tag 9104fa924859f4a865016f2138c06ec856f449d4)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
