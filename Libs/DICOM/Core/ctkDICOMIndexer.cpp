@@ -18,8 +18,6 @@
 
 =========================================================================*/
 
-#include <tr1/functional>
-
 // Qt includes
 #include <QSqlQuery>
 #include <QSqlRecord>
