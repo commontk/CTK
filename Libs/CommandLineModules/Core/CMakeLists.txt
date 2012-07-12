@@ -21,7 +21,6 @@ set(KIT_SRCS
   ctkCmdLineModuleInstance.cpp
   ctkCmdLineModuleInstanceFactory.cpp
   ctkCmdLineModuleManager.cpp
-  ctkCmdLineModuleObjectHierarchyReader.cpp
   ctkCmdLineModuleParameter.cpp
   ctkCmdLineModuleParameterPrivate.cpp
   ctkCmdLineModuleParameterGroup.cpp

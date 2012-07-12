@@ -20,9 +20,10 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleInstance.h"
+#include "ctkCmdLineModuleDescription.h"
+#include "ctkCmdLineModuleParameter.h"
+#include "ctkCmdLineModuleParameterGroup.h"
 #include "ctkCmdLineModuleReference.h"
-#include "ctkCmdLineModuleObjectHierarchyReader.h"
-#include "ctkCmdLineModuleObjectHierarchyReader.h"
 #include "ctkCmdLineModuleProcess_p.h"
 
 #include "ctkException.h"
@@ -30,14 +31,6 @@
 #include <QStringList>
 #include <QDebug>
 
-namespace {
-
-QString normalizeFlag(const QString& flag)
-{
-  return flag.trimmed().remove(QRegExp("^-*"));
-}
-
-}
 
 struct ctkCmdLineModuleInstancePrivate
 {
@@ -48,58 +41,14 @@ struct ctkCmdLineModuleInstancePrivate
 
   }
 
-  QStringList createCommandLineArgs()
+  QString normalizeFlag(const QString& flag)
   {
-    ctkCmdLineModuleObjectHierarchyReader reader(q->parameterValueModel());
-
-    QStringList cmdLineArgs;
-    QHash<int, QString> indexedArgs;
-    while(reader.readNextParameter())
-    {
-      if (reader.index() > -1)
-      {
-        indexedArgs.insert(reader.index(), reader.value().toString());
-      }
-      else
-      {
-        QString argFlag;
-        if (reader.longFlag().isEmpty())
-        {
-          argFlag = QString("-") + normalizeFlag(reader.flag());
-        }
-        else
-        {
-          argFlag = QString("--") + normalizeFlag(reader.longFlag());
-        }
-
-        QStringList args;
-        if (reader.isMultiple())
-        {
-          args = reader.value().toString().split(',', QString::SkipEmptyParts);
-        }
-        else
-        {
-          args.push_back(reader.value().toString());
-        }
-
-        foreach(QString arg, args)
-        {
-          cmdLineArgs << argFlag << arg;
-        }
-      }
-    }
-
-    QList<int> indexes = indexedArgs.keys();
-    qSort(indexes.begin(), indexes.end());
-    foreach(int index, indexes)
-    {
-      cmdLineArgs << indexedArgs[index];
-    }
-
-    return cmdLineArgs;
+    return flag.trimmed().remove(QRegExp("^-*"));
   }
 
   ctkCmdLineModuleReference ModuleReference;
+
+  QList<QString> ParameterNames;
 
 private:
 
@@ -117,27 +66,19 @@ ctkCmdLineModuleInstance::~ctkCmdLineModuleInstance()
 {
 }
 
-QObject *ctkCmdLineModuleInstance::parameterValueModel() const
+QList<QString> ctkCmdLineModuleInstance::parameterNames() const
 {
-  return guiHandle();
-}
+  if (!d->ParameterNames.isEmpty()) return d->ParameterNames;
 
-QVariant ctkCmdLineModuleInstance::value(const QString &parameter) const
-{
-  throw ctkException("not implemented yet");
-}
-
-void ctkCmdLineModuleInstance::setValue(const QString &parameter, const QVariant &value)
-{
-  ctkCmdLineModuleObjectHierarchyReader reader(parameterValueModel());
-  while(reader.readNextParameter())
+  foreach (ctkCmdLineModuleParameterGroup paramGroup,
+           moduleReference().description().parameterGroups())
   {
-    if(reader.name() == parameter && reader.value() != value)
+    foreach (ctkCmdLineModuleParameter param, paramGroup.parameters())
     {
-      reader.setValue(value);
-      emit valueChanged(parameter, value);
+      d->ParameterNames.push_back(param.name());
     }
   }
+  return d->ParameterNames;
 }
 
 ctkCmdLineModuleReference ctkCmdLineModuleInstance::moduleReference() const
@@ -145,14 +86,95 @@ ctkCmdLineModuleReference ctkCmdLineModuleInstance::moduleReference() const
   return d->ModuleReference;
 }
 
+QString ctkCmdLineModuleInstance::location() const
+{
+  return d->ModuleReference.location();
+}
+
+QStringList ctkCmdLineModuleInstance::commandLineArguments() const
+{
+  QStringList cmdLineArgs;
+  QHash<int, QString> indexedArgs;
+
+  QHash<QString,QVariant> currentValues = values();
+  ctkCmdLineModuleDescription description = moduleReference().description();
+  QHashIterator<QString,QVariant> valuesIter(currentValues);
+  while(valuesIter.hasNext())
+  {
+    valuesIter.next();
+    ctkCmdLineModuleParameter parameter = description.parameter(valuesIter.key());
+    if (parameter.index() > -1)
+    {
+      indexedArgs.insert(parameter.index(), valuesIter.value().toString());
+    }
+    else
+    {
+      QString argFlag;
+      if (parameter.longFlag().isEmpty())
+      {
+        argFlag = QString("-") + d->normalizeFlag(parameter.flag());
+      }
+      else
+      {
+        argFlag = QString("--") + d->normalizeFlag(parameter.longFlag());
+      }
+
+      QStringList args;
+      if (parameter.multiple())
+      {
+        args = valuesIter.value().toString().split(',', QString::SkipEmptyParts);
+      }
+      else
+      {
+        args.push_back(valuesIter.value().toString());
+      }
+
+      foreach(QString arg, args)
+      {
+        cmdLineArgs << argFlag << arg;
+      }
+    }
+  }
+
+  QList<int> indexes = indexedArgs.keys();
+  qSort(indexes.begin(), indexes.end());
+  foreach(int index, indexes)
+  {
+    cmdLineArgs << indexedArgs[index];
+  }
+
+  return cmdLineArgs;
+}
+
 struct ctkCmdLineModuleFuture {};
 
 ctkCmdLineModuleFuture ctkCmdLineModuleInstance::run() const
 {
 //  // TODO: manage memory
-//  QStringList args = d->createCommandLineArgs();
-//  qDebug() << args;
+  QStringList args = commandLineArguments();
+  qDebug() << args;
 //  ctkCmdLineModuleProcessRunner* moduleProcess =
 //      new ctkCmdLineModuleProcessRunner(d->ModuleReference.location(), args);
 //  return moduleProcess->start();
+}
+
+
+QHash<QString, QVariant> ctkCmdLineModuleInstance::values() const
+{
+  QHash<QString,QVariant> result;
+  foreach(QString parameterName, parameterNames())
+  {
+    result.insert(parameterName, value(parameterName));
+  }
+  return result;
+}
+
+void ctkCmdLineModuleInstance::setValues(const QHash<QString, QVariant> &values)
+{
+  QHashIterator<QString,QVariant> iter(values);
+  while(iter.hasNext())
+  {
+    iter.next();
+    setValue(iter.key(), iter.value());
+  }
 }

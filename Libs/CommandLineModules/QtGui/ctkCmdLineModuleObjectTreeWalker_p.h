@@ -19,23 +19,15 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEOBJECTHIERARCHYREADER_H
-#define CTKCMDLINEMODULEOBJECTHIERARCHYREADER_H
+#ifndef CTKCMDLINEMODULEOBJECTTREEWALKER_H
+#define CTKCMDLINEMODULEOBJECTTREEWALKER_H
 
-#include <QString>
-#include <QScopedPointer>
-#include <QVariant>
-
-#include <ctkCommandLineModulesCoreExport.h>
+#include <QStack>
 
 class QObject;
+class QVariant;
 
-class ctkCmdLineModuleObjectHierarchyReaderPrivate;
-
-/**
- *  \ingroup CommandLineModulesCore
- */
-class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleObjectHierarchyReader
+class ctkCmdLineModuleObjectTreeWalker
 {
 
 public:
@@ -47,8 +39,8 @@ public:
     Parameter
   };
 
-  ctkCmdLineModuleObjectHierarchyReader(QObject* root = 0);
-  ~ctkCmdLineModuleObjectHierarchyReader();
+  ctkCmdLineModuleObjectTreeWalker(QObject* root = 0);
+  ~ctkCmdLineModuleObjectTreeWalker();
 
   void setRootObject(QObject* root);
   void clear();
@@ -73,17 +65,27 @@ public:
 
   QVariant property(const QString& propName) const;
 
-  TokenType readNext() const;
-  bool readNextExecutable() const;
-  bool readNextParameterGroup() const;
-  bool readNextParameter() const;
+  TokenType readNext();
+  bool readNextExecutable();
+  bool readNextParameterGroup();
+  bool readNextParameter();
 
   TokenType tokenType() const;
 
 private:
 
-  QScopedPointer<ctkCmdLineModuleObjectHierarchyReaderPrivate> d;
+  TokenType token(QObject* obj);
+  bool setCurrent(QObject* obj);
+  QVariant prefixedProperty(const QString& propName) const;
+
+  QObject* RootObject;
+  QObject* CurrentObject;
+
+  TokenType CurrentToken;
+  bool AtEnd;
+
+  QStack<QObject*> ObjectStack;
 
 };
 
-#endif // CTKCMDLINEMODULEOBJECTHIERARCHYREADER_H
+#endif // CTKCMDLINEMODULEOBJECTTREEWALKER_H

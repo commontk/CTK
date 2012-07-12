@@ -68,15 +68,16 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 {
   qDebug() << "Creating module command line...";
 
-//  QStringList cmdLineArgs = ctkCmdLineModuleManager::createCommandLineArgs(ui->mainTabWidget->currentWidget());
-//  qDebug() << cmdLineArgs;
-
   ctkCmdLineModuleInstance* moduleInstance = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
   if (!moduleInstance)
   {
     qWarning() << "Invalid module instance";
     return;
   }
+
+  QStringList cmdLineArgs = moduleInstance->commandLineArguments();
+  qDebug() << cmdLineArgs;
+
 
   //ctkCmdLineModuleProcessFuture future = moduleInstance->run();
   //future.waitForFinished();
