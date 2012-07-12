@@ -44,7 +44,9 @@ QObject* ctkCmdLineModuleInstanceQtGui::guiHandle() const
   QBuffer input;
   input.setData(moduleReference().rawXmlDescription());
 
-  ctkCmdLineModuleXslTransform xslTransform(&input);
+  QBuffer uiForm;
+  uiForm.open(QIODevice::ReadWrite);
+  ctkCmdLineModuleXslTransform xslTransform(&input, &uiForm);
   if (!xslTransform.transform())
   {
     // maybe throw an exception
@@ -53,10 +55,6 @@ QObject* ctkCmdLineModuleInstanceQtGui::guiHandle() const
   }
 
   QUiLoader uiLoader;
-  QByteArray uiBlob;
-  uiBlob.append(xslTransform.output());
-
-  QBuffer uiForm(&uiBlob);
   WidgetTree = uiLoader.load(&uiForm);
   return WidgetTree;
 }
