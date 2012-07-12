@@ -80,6 +80,7 @@ public:
   ///
   bool loggedExec(QSqlQuery& query);
   bool loggedExec(QSqlQuery& query, const QString& queryString);
+  bool LoggedExecVerbose;
 
   // dataset must be set always
   // filePath has to be set if this is an import of an actual file
@@ -121,6 +122,7 @@ public:
 ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
 {
   this->thumbnailGenerator = NULL;
+  this->LoggedExecVerbose = false;
   this->LastPatientUID = -1;
   this->TagCacheVerified = false;
 }
@@ -179,7 +181,10 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
     }
   else
     {
+      if (LoggedExecVerbose)
+      {
       logger.debug( "SQL worked!\n SQL: " + query.lastQuery());
+      }
     }
   return (success);
 }
