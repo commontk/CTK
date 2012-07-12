@@ -148,7 +148,7 @@ QStringList ctkCmdLineModuleInstance::commandLineArguments() const
 
 struct ctkCmdLineModuleFuture {};
 
-ctkCmdLineModuleFuture ctkCmdLineModuleInstance::run() const
+void ctkCmdLineModuleInstance::run() const
 {
 //  // TODO: manage memory
   QStringList args = commandLineArguments();

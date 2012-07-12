@@ -59,7 +59,7 @@ public:
 
   QStringList commandLineArguments() const;
 
-  ctkCmdLineModuleFuture run() const;
+  void run() const;
 
   Q_SIGNAL void valueChanged(const QString& parameter, const QVariant& value);
 
