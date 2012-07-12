@@ -332,6 +332,9 @@
           <widget class="ctkPathLineEdit"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
+            <property name="filters">
+              <set>ctkPathLineEdit::Files</set>
+            </property>
           </widget>
         </item>
         <item>
@@ -358,8 +361,8 @@
         <item>
           <widget class="ctkPathLineEdit"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
-            <property name="options">
-              <set>ctkPathLineEdit::ShowDirsOnly</set>
+            <property name="filters">
+              <set>ctkPathLineEdit::Dirs</set>
             </property>
           </widget>
         </item>
