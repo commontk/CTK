@@ -127,7 +127,7 @@ macro(ctkMacroBuildQtPlugin)
   # CTK_INSTALL_QTPLUGIN_DIR:STRING can be passed when configuring CTK
   # By default, it is the same path as CTK_INSTALL_LIB_DIR
   # Plugins are installed in a subdirectory corresponding to their types (e.g. designer, iconengines, imageformats...)
-  if (NOT CTK_INSTALL_QTPLUGIN_DIR)
+  if(NOT DEFINED CTK_INSTALL_QTPLUGIN_DIR)
     set(CTK_INSTALL_QTPLUGIN_DIR "${CTK_INSTALL_LIB_DIR}")
   endif()
   install(TARGETS ${lib_name}
