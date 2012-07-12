@@ -18,6 +18,8 @@
 
 =========================================================================*/
 
+#include <iostream>
+
 // Qt includes
 #include <QDebug>
 #include <QFileDialog>
@@ -62,6 +64,8 @@ void ctkDirectoryListWidgetPrivate::setupUi(QWidget * widget)
                    this, SLOT(onRemoveClicked()));
   QObject::connect(this->ExpandButton, SIGNAL(clicked()),
                    this, SLOT(onExpandClicked()));
+  QObject::connect(this->DirectoryList, SIGNAL(directoryListChanged()),
+                   this, SLOT(onDirectoryListChanged()));
 }
 
 //-----------------------------------------------------------------------------
@@ -107,6 +111,13 @@ void ctkDirectoryListWidgetPrivate::onExpandClicked()
   {
     this->GroupBox->show();
   }
+}
+
+//-----------------------------------------------------------------------------
+void ctkDirectoryListWidgetPrivate::onDirectoryListChanged()
+{
+  Q_Q(ctkDirectoryListWidget);
+  emit (q->directoryListChanged(this->DirectoryList->directoryList()));
 }
 
 //-----------------------------------------------------------------------------
