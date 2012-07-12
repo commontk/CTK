@@ -19,40 +19,33 @@
   
 =============================================================================*/
 
-#include "ctkCmdLineModuleProcessRunner_p.h"
-
-#include "ctkCmdLineModuleProcessException.h"
+#include "ctkCmdLineModuleProcess_p.h"
 
 
-ctkCmdLineModuleProcessRunner::ctkCmdLineModuleProcessRunner(const QString& location, const QStringList& args)
+ctkCmdLineModuleProcess::ctkCmdLineModuleProcess(const QString& location, const QStringList& args)
   : process(), location(location), args(args)
 {
 }
 
-ctkCmdLineModuleProcessFuture ctkCmdLineModuleProcessRunner::start()
+ctkCmdLineModuleFuture ctkCmdLineModuleProcess::start()
 {
   this->reportStarted();
-  ctkCmdLineModuleProcessFuture future(this);
-  run();
-  return future;
-}
-
-void ctkCmdLineModuleProcessRunner::run()
-{
+  ctkCmdLineModuleFuture future(this);
   connect(&process, SIGNAL(started()), this, SLOT(processStarted()));
   connect(&process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
   connect(&process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(processFinished(int,QProcess::ExitStatus)));
 
   process.start(location, args);
+  return future;
 }
 
-void ctkCmdLineModuleProcessRunner::processStarted()
+void ctkCmdLineModuleProcess::processStarted()
 {
   qDebug() << "Reporting process started";
   this->reportStarted();
 }
 
-void ctkCmdLineModuleProcessRunner::processFinished(int exitCode, QProcess::ExitStatus status)
+void ctkCmdLineModuleProcess::processFinished(int exitCode, QProcess::ExitStatus status)
 {
   Q_UNUSED(exitCode)
   Q_UNUSED(status)
@@ -66,9 +59,9 @@ void ctkCmdLineModuleProcessRunner::processFinished(int exitCode, QProcess::Exit
   this->reportFinished();
 }
 
-void ctkCmdLineModuleProcessRunner::processError(QProcess::ProcessError)
+void ctkCmdLineModuleProcess::processError(QProcess::ProcessError)
 {
-  qDebug() << "Reporting process error";
-  this->reportException(ctkCmdLineModuleProcessException(process.errorString(), process.exitCode(),
-                                                  process.exitStatus()));
+  //qDebug() << "Reporting process error";
+  //this->reportException(ctkCmdLineModuleProcessException(process.errorString(), process.exitCode(),
+  //                                                process.exitStatus()));
 }

@@ -27,6 +27,9 @@
 class ctkCmdLineModuleInstance;
 class ctkCmdLineModuleReference;
 
+/**
+ * \ingroup CommandLineModulesCore
+ */
 struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleInstanceFactory
 {
   virtual ~ctkCmdLineModuleInstanceFactory();

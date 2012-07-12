@@ -40,11 +40,14 @@ public:
   virtual QVariant value(const QString& parameter) const;
   virtual void setValue(const QString& parameter, const QVariant& value);
 
+  virtual QList<QString> parameterNames() const;
+
 private:
 
   mutable QWidget* WidgetTree;
 
-  const QByteArray XmlDescription;
+  // Cache the list of parameter names
+  mutable QList<QString> ParameterNames;
 };
 
 #endif // CTKCMDLINEMODULEINSTANCEQTGUI_H

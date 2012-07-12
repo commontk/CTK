@@ -25,6 +25,9 @@
 #include <QFile>
 #include <QBuffer>
 #include <QWidget>
+#include <QProcess>
+
+#include <QDebug>
 
 #include <QtXmlPatterns/QXmlQuery>
 #include <QtUiTools/QUiLoader>

@@ -23,13 +23,18 @@
 #define CTKCMDLINEMODULEINSTANCE_H
 
 #include "ctkCommandLineModulesCoreExport.h"
-#include "ctkCmdLineModuleProcessFuture.h"
 
 #include <QObject>
 
+template<class K, class V> class QHash;
+
+class ctkCmdLineModuleFuture;
 class ctkCmdLineModuleReference;
 class ctkCmdLineModuleInstancePrivate;
 
+/**
+ * \ingroup CommandLineModulesCore
+ */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleInstance : public QObject
 {
   Q_OBJECT
@@ -40,12 +45,21 @@ public:
 
   virtual QObject* guiHandle() const = 0;
 
-  QVariant value(const QString& parameter) const;
-  void setValue(const QString& parameter, const QVariant& value);
+  virtual QVariant value(const QString& parameter) const = 0;
+  virtual void setValue(const QString& parameter, const QVariant& value) = 0;
+
+  virtual QList<QString> parameterNames() const;
+
+  virtual QHash<QString,QVariant> values() const;
+  virtual void setValues(const QHash<QString,QVariant>& values);
 
   ctkCmdLineModuleReference moduleReference() const;
 
-  ctkCmdLineModuleProcessFuture run() const;
+  QString location() const;
+
+  QStringList commandLineArguments() const;
+
+  ctkCmdLineModuleFuture run() const;
 
   Q_SIGNAL void valueChanged(const QString& parameter, const QVariant& value);
 
@@ -53,7 +67,7 @@ protected:
 
   ctkCmdLineModuleInstance(const ctkCmdLineModuleReference& moduleRef);
 
-  virtual QObject* parameterValueModel() const;
+  //virtual QObject* parameterValueModel() const;
 
 private:
 

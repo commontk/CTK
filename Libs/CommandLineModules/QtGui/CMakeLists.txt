@@ -17,6 +17,8 @@ set(KIT_SRCS
   ctkCmdLineModuleInstanceFactoryQtGui.cpp
   ctkCmdLineModuleInstanceQtGui_p.h
   ctkCmdLineModuleInstanceQtGui.cpp
+  ctkCmdLineModuleObjectTreeWalker_p.h
+  ctkCmdLineModuleObjectTreeWalker.cpp
 )
 
 # Headers that should run through moc

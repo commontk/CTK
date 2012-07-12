@@ -1,0 +1,18 @@
+/**
+
+\defgroup CommandLineModules Command Line Modules
+\ingroup Projects
+
+CTK provides an API for interfacing with command line modules through a
+self-describing XML description of the supported command line arguments.
+
+\defgroup CommandLineModulesCore Command Line Module Support
+\ingroup Libs
+\ingroup CommandLineModules
+
+\defgroup CommandLineModulesQtGui Command Line Module QtGui Support
+\ingroup Libs
+\ingroup CommandLineModules
+
+*/
+

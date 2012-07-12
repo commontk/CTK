@@ -32,9 +32,11 @@ class ctkCmdLineModuleParameter;
 class ctkCmdLineModuleParameterGroupPrivate;
 
 /** 
-*  \brief Group of parameters
-*
-*/
+ *  \ingroup CommandLineModulesCore
+ *
+ *  \brief Group of parameters
+ *
+ */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleParameterGroup
 {
 

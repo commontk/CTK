@@ -22,8 +22,6 @@
 #include "ctkCmdLineModuleManager.h"
 
 #include "ctkCmdLineModuleXmlValidator.h"
-#include "ctkCmdLineModuleObjectHierarchyReader.h"
-#include "ctkCmdLineModuleProcessRunner_p.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleReferencePrivate.h"
 #include "ctkCmdLineModuleInstanceFactory.h"

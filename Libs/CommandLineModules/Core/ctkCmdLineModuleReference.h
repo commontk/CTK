@@ -29,6 +29,9 @@
 class ctkCmdLineModuleDescription;
 class ctkCmdLineModuleReferencePrivate;
 
+/**
+ * \ingroup CommandLineModulesCore
+ */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleReference
 {
 public:

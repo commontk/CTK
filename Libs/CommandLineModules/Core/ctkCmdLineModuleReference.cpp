@@ -43,7 +43,7 @@ ctkCmdLineModuleReference &ctkCmdLineModuleReference::operator =(const ctkCmdLin
 
 ctkCmdLineModuleReference::operator bool()
 {
-  return d;
+  return !d->RawXmlDescription.isEmpty();
 }
 
 ctkCmdLineModuleDescription ctkCmdLineModuleReference::description() const

@@ -26,6 +26,9 @@
 
 #include "ctkCommandLineModulesCoreExport.h"
 
+/**
+ * \ingroup CommandLineModulesCore
+ */
 CTK_DECLARE_EXCEPTION(CTK_CMDLINEMODULECORE_EXPORT, ctkCmdLineModuleXmlException, ctkException)
 
 #endif // CTKCMDLINEMODULEXMLEXCEPTION_H

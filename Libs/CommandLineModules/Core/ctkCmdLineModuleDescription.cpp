@@ -31,7 +31,7 @@ limitations under the License.
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleDescription::ctkCmdLineModuleDescription()
-  : d(new ctkCmdLineModuleDescriptionPrivate)
+  : d(new ctkCmdLineModuleDescriptionPrivate())
 {
 }
 
