@@ -32,13 +32,18 @@
 #include <QDebug>
 
 
-ctkCmdLineModuleXslTransform::ctkCmdLineModuleXslTransform(QIODevice *input)
+ctkCmdLineModuleXslTransform::ctkCmdLineModuleXslTransform(QIODevice *input, QIODevice *output)
   : ctkCmdLineModuleXmlValidator(input),
-    OutputSchema(0), Transformation(0)
+    Validate(false), OutputSchema(0), Transformation(0), Output(output)
 {
 }
 
-QString ctkCmdLineModuleXslTransform::output() const
+void ctkCmdLineModuleXslTransform::setOutput(QIODevice* output)
+{
+  Output = output;
+}
+
+QIODevice* ctkCmdLineModuleXslTransform::output() const
 {
   return Output;
 }
@@ -50,6 +55,12 @@ void ctkCmdLineModuleXslTransform::setOutputSchema(QIODevice *output)
 
 bool ctkCmdLineModuleXslTransform::transform()
 {
+  if (!Output)
+  {
+    ErrorStr = "No output device set";
+    return false;
+  }
+
   QIODevice* inputDevice = input();
   if (!inputDevice)
   {
@@ -82,15 +93,34 @@ bool ctkCmdLineModuleXslTransform::transform()
   }
   xslTransform.setQuery(transformation);
 
-  if (!xslTransform.evaluateTo(&Output))
+  bool closeOutput = false;
+  if (!(Output->openMode() & QIODevice::WriteOnly))
   {
-    Output.clear();
+    Output->open(QIODevice::WriteOnly);
+    closeOutput = true;
+  }
+
+  if (!xslTransform.evaluateTo(Output))
+  {
     QString msg("Error transforming XML input, at line %1, column %2: %3");
     ErrorStr = msg.arg(msgHandler.line()).arg(msgHandler.column())
         .arg(msgHandler.statusMessage());
     return false;
   }
 
+  if (closeOutput)
+  {
+    Output->close();
+  }
+  else
+  {
+    Output->reset();
+  }
+
+  if (Validate)
+  {
+    return validateOutput();
+  }
   return true;
 }
 
@@ -99,15 +129,14 @@ void ctkCmdLineModuleXslTransform::setXslTransformation(QIODevice *transformatio
   Transformation = transformation;
 }
 
+void ctkCmdLineModuleXslTransform::setValidateOutput(bool validate)
+{
+  Validate = validate;
+}
+
 bool ctkCmdLineModuleXslTransform::validateOutput()
 {
   ErrorStr.clear();
-
-  if (Output.isEmpty())
-  {
-    // nothing to validate
-    return true;
-  }
 
   QIODevice* outputSchema = OutputSchema;
 
@@ -139,10 +168,7 @@ bool ctkCmdLineModuleXslTransform::validateOutput()
   QXmlSchemaValidator validator(schema);
   validator.setMessageHandler(&msgHandler);
 
-  QByteArray outputData;
-  outputData.append(Output);
-
-  if (!validator.validate(outputData))
+  if (!validator.validate(Output))
   {
     QString msg("Error validating transformed XML input, at line %1, column %2: %3");
     ErrorStr = msg.arg(msgHandler.line()).arg(msgHandler.column())

@@ -3,10 +3,6 @@
 set(KIT_PYTHON_SCRIPTS
   qt/__init__
   )
-  
-#if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-#  list(APPEND KIT_PYTHON_SCRIPTS ctkvtk/__init__)
-#endif()
 
 # If it applies, the variable CTK_PYTHON_WRAPPED_LIBRARIES will contain
 # the comma separated list of package to load

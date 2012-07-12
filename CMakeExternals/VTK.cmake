@@ -37,7 +37,7 @@ if(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
 
     if(NOT DEFINED VTK_DIR)
 
-      set(revision_tag f0766a470edcc6b84a779b45ba11feee40ac3bdb)
+      set(revision_tag v5.10.0)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
@@ -74,6 +74,7 @@ if(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
           -DVTK_USE_GUISUPPORT:BOOL=ON
           -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
           -DVTK_USE_QT:BOOL=ON
+          -DVTK_LEGACY_REMOVE:BOOL=ON
           -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         DEPENDS
           ${proj_DEPENDENCIES}

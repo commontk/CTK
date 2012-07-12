@@ -30,9 +30,7 @@ if(${add_project})
       # Should PythonQt use VTK
       if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
         list(APPEND proj_DEPENDENCIES VTK)
-        list(APPEND ep_PythonQt_args -DVTK_DIR:PATH=${VTK_DIR})
       endif()
-      list(APPEND ep_PythonQt_args -DPythonQt_USE_VTK:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK})
 
       # Enable Qt libraries PythonQt wrapping if required
       foreach(qtlib core gui network opengl sql svg uitools webkit xml xmlpatterns)
@@ -46,7 +44,7 @@ if(${add_project})
         message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
       endif()
 
-      set(revision_tag 5935f29978deed892a13ddef02cb14c205c6124d)
+      set(revision_tag 9104fa924859f4a865016f2138c06ec856f449d4)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()

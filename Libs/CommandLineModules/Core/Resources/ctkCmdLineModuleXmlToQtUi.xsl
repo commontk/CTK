@@ -28,25 +28,8 @@
     </xsl:choose>
   </xsl:function>
 
-  <!-- Map xml parameter element names (types) to C++ types. -->
-  <xsl:function name="ctk:mapTypeToCpp">
-    <xsl:param name="cliType"/>
-    <xsl:choose>
-      <xsl:when test="$cliType=('integer', 'integer-enumeration')">int</xsl:when>
-      <xsl:when test="$cliType='boolean'">bool</xsl:when>
-      <xsl:when test="$cliType=('string', 'string-enumeration', 'image', 'file', 'directory', 'geometry')">std::string</xsl:when>
-      <xsl:when test="$cliType='integer-vector'">std::vector&lt;int&gt;</xsl:when>
-      <xsl:when test="$cliType=('double-vector', 'point', 'region')">std::vector&lt;double&gt;</xsl:when>
-      <xsl:when test="$cliType='float-vector'">std::vector&lt;float&gt;</xsl:when>
-      <xsl:when test="$cliType='string-vector'">std::vector&lt;std::string&gt;</xsl:when>
-      <xsl:when test="$cliType='float-enumeration'">float</xsl:when>
-      <xsl:when test="$cliType='double-enumeration'">double</xsl:when>
-      <xsl:otherwise><xsl:value-of select="$cliType"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
-
   <!-- Map xml parameter element names (types) to the Qt widget property containing
-       the current value. The property type should match the Qt C++ type above
+       the current value. The property value type should match the (Qt) C++ type
        (or be convertible to it). -->
   <xsl:function name="ctk:mapTypeToQtValueProperty">
     <xsl:param name="cliType"/>
@@ -74,9 +57,6 @@
 
   <!-- suppress elements not covered in "signals" mode -->
   <xsl:template match="*" mode="signals"/>
-
-  <!-- This guarantees that elements that don't match the dynamicProperties mode don't get output -->
-  <xsl:template match="*" mode="dynamicProperties"/>
 
   <!--
   ===================================================================
@@ -154,18 +134,6 @@
     </item>
   </xsl:template>
 
-  <!-- General template for adding dynamic Qt properties to widgets -->
-  <xsl:template match="*" mode="dynamicProperty">
-    <property  name="parameter:{name()}">
-      <string><xsl:value-of select="text()"/></string>
-    </property>
-  </xsl:template>
-
-  <!-- Exclude certain elements from the set of dynamic properties -->
-  <xsl:template match="*[not(name()=('name', 'constraints'))]" mode="dynamicProperties">
-    <xsl:apply-templates select="." mode="dynamicProperty"/>
-  </xsl:template>
-
   <!-- A named template for adding properties common to all Qt widgets -->
   <xsl:template name="commonWidgetProperties">
     <xsl:apply-templates select="description"/> <!-- tooltip -->
@@ -174,17 +142,12 @@
         <bool>false</bool>
       </property>
     </xsl:if>
-    <property  name="parameter:cppType">
-      <string><xsl:value-of select="ctk:mapTypeToCpp(name())"/></string>
-    </property>
-    <property name="parameter:valueProperty">
+    <property name="parameter:valueProperty"> <!-- property name containing current value -->
       <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name())"/></string>
     </property>
 
     <!-- add additional (optional) information as properties -->
     <xsl:apply-templates select="default"/>
-    <xsl:apply-templates select="constraints"/>
-    <xsl:apply-templates select="./child::*" mode="dynamicProperties"/>
   </xsl:template>
   
   <!-- A named template for creating a QtDesigner stringlist property -->
@@ -369,6 +332,9 @@
           <widget class="ctkPathLineEdit"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
+            <property name="filters">
+              <set>ctkPathLineEdit::Files</set>
+            </property>
           </widget>
         </item>
         <item>
@@ -395,8 +361,8 @@
         <item>
           <widget class="ctkPathLineEdit"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
-            <property name="options">
-              <set>ctkPathLineEdit::ShowDirsOnly</set>
+            <property name="filters">
+              <set>ctkPathLineEdit::Dirs</set>
             </property>
           </widget>
         </item>
