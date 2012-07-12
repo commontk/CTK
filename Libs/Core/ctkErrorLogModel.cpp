@@ -35,8 +35,6 @@
 #include "ctkErrorLogModel.h"
 #include <ctkPimpl.h>
 
-#include <unistd.h>
-
 // STD includes
 #include <cstdio> // For _fileno or fileno
 #ifdef _MSC_VER
