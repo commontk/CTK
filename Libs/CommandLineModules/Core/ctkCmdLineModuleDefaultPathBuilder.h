@@ -30,12 +30,14 @@ class ctkCmdLineModuleDefaultPathBuilderPrivate;
 
 /**
  * \class ctkCmdLineModuleDefaultPathBuilder
- * \brief Builds up a list of file paths to search for command line modules.
+ * \brief Builds up a list of directory paths to search for command line modules.
  *
  * Unfinished:
  *
  * <pre>
- * Implements the following basic strategy:
+ * Implements the following basic strategy, depending on which boolean flags are on:
+ * By default they are all off, as directory scanning is often time consuming.
+ *
  * 1. CTK_MODULE_LOAD_PATH environment variable
  * 2. Home directory
  * 3. Home directory / cli-modules
@@ -55,7 +57,15 @@ public:
   ctkCmdLineModuleDefaultPathBuilder();
   ~ctkCmdLineModuleDefaultPathBuilder();
 
-  virtual QStringList build();
+  virtual void setLoadFromHomeDir(const bool& doLoad);
+
+  virtual void setLoadFromCurrentDir(const bool& doLoad);
+
+  virtual void setLoadFromApplicationDir(const bool& doLoad);
+
+  virtual void setLoadFromCtkModuleLoadPath(const bool& doLoad);
+
+  virtual QStringList build() const;
 
 private:
 
