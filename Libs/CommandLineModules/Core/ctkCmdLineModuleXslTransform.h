@@ -29,6 +29,9 @@
 
 class QIODevice;
 
+/**
+ * \ingroup CommandLineModulesCore
+ */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXslTransform
     : public ctkCmdLineModuleXmlValidator
 {

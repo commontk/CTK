@@ -31,6 +31,8 @@ class QStringList;
 class ctkCmdLineModuleParameterPrivate;
 
 /** 
+ *  \ingroup CommandLineModulesCore
+ *
  *  \brief Single parameter to a module, like a threshold of a filter.
  *
  * ctkCmdLineModuleParameter describes a single parameters to a

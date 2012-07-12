@@ -32,6 +32,9 @@ class QObject;
 
 class ctkCmdLineModuleObjectHierarchyReaderPrivate;
 
+/**
+ *  \ingroup CommandLineModulesCore
+ */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleObjectHierarchyReader
 {
 

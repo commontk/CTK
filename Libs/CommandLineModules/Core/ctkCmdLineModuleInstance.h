@@ -30,6 +30,9 @@
 class ctkCmdLineModuleReference;
 class ctkCmdLineModuleInstancePrivate;
 
+/**
+ * \ingroup CommandLineModulesCore
+ */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleInstance : public QObject
 {
   Q_OBJECT

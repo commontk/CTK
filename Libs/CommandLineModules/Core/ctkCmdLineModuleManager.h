@@ -33,7 +33,9 @@ class ctkCmdLineModuleInstance;
 class ctkCmdLineModuleReference;
 class ctkCmdLineModuleManagerPrivate;
 
-/// The methods in this class are for playing around... no API design yet
+/**
+ * \ingroup CommandLineModulesCore
+ */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleManager
 {
 
