@@ -230,9 +230,9 @@ void ctkCommandLineModuleAppLogic::onDataAvailable()
   ui.LoadDataButton->setEnabled(true);
 
   //FIX: still does not work here: need to postpone onDataAvailable even further (not just via QueuedConnection)
-  //QStringList preferredProtocols;
-  //preferredProtocols.append("file:");
-  //OutputLocation = getHostInterface()->getOutputLocation(preferredProtocols);
+  QStringList preferredProtocols;
+  preferredProtocols.append("file:");
+  OutputLocation = getHostInterface()->getOutputLocation(preferredProtocols);
 }
 
 
@@ -250,10 +250,6 @@ void ctkCommandLineModuleAppLogic::onLoadDataClicked()
   QList<ctkDicomAppHosting::ObjectLocator> locators;
   locators = getHostInterface()->getData(uuidlist, transfersyntaxlist, false);
   qDebug() << "got locators! " << QString().setNum(locators.count());
-
-  QStringList preferredProtocols;
-  preferredProtocols.append("file:");
-  OutputLocation = getHostInterface()->getOutputLocation(preferredProtocols);
 
   QString s;
   s=s+" loc.count:"+QString().setNum(locators.count());

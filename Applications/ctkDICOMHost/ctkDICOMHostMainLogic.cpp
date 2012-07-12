@@ -32,7 +32,7 @@ ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* plac
 
   disconnect(this->Host,SIGNAL(startProgress()),this->Host,SLOT(onStartProgress()));
   connect(this->Host,SIGNAL(appReady()),this,SLOT(onAppReady()), Qt::QueuedConnection);
-  connect(this->Host,SIGNAL(startProgress()),this,SLOT(publishSelectedData()));
+  connect(this->Host,SIGNAL(startProgress()),this,SLOT(publishSelectedData()), Qt::QueuedConnection);
   connect(this->PlaceHolderForHostedApp,SIGNAL(resized()),this,SLOT(placeHolderResized()));
 
   QTreeView * treeview = dicomAppWidget->findChild<QTreeView*>("TreeView");
