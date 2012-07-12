@@ -5,6 +5,5 @@
 # 
 
 set(target_libraries
-  VTK_LIBRARIES
   CTKScriptingPythonWidgets
   )

@@ -355,7 +355,7 @@ void ctkPythonConsole::initialize(ctkAbstractPythonManager* newPythonManager)
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
                 d, SLOT(printErrorMessage(QString)));
 
-  PythonQt::self()->setRedirectStdInCallBack(
+  PythonQt::self()->setRedirectStdInCallback(
         ctkConsole::stdInRedirectCallBack, reinterpret_cast<void*>(this));
 
   // Set primary and secondary prompt
