@@ -47,7 +47,8 @@
 //----------------------------------------------------------------------------
 ctkCommandLineModuleAppLogic::ctkCommandLineModuleAppLogic(const QString & modulelocation):
 ctkDicomAbstractApp(ctkCommandLineModuleAppPlugin::getPluginContext()), AppWidget(0),
-ModuleLocation(modulelocation), ModuleManager(new ctkCmdLineModuleInstanceFactoryQtGui())
+ModuleLocation(modulelocation), ModuleManager(new ctkCmdLineModuleInstanceFactoryQtGui()), 
+ModuleInstance(0)
 {
   connect(this, SIGNAL(startProgress()), this, SLOT(onStartProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(resumeProgress()), this, SLOT(onResumeProgress()), Qt::QueuedConnection);
@@ -106,8 +107,8 @@ void ctkCommandLineModuleAppLogic::do_something()
   ui.CLModuleName->setText(ModuleLocation);
 
   ctkCmdLineModuleReference moduleRef = ModuleManager.registerModule(ModuleLocation);
-  ctkCmdLineModuleInstance* moduleInstance = ModuleManager.createModuleInstance(moduleRef);
-  QObject* guiHandle = moduleInstance->guiHandle();
+  ModuleInstance = ModuleManager.createModuleInstance(moduleRef);
+  QObject* guiHandle = ModuleInstance->guiHandle();
   QWidget* widget = qobject_cast<QWidget*>(guiHandle);
   widget->setParent(ui.PlaceHolder);
   verticalLayout->addWidget(widget);
@@ -260,6 +261,8 @@ void ctkCommandLineModuleAppLogic::onLoadDataClicked()
       try {
         DicomImage dcmtkImage(filename.toLatin1().data());
         ctkDICOMImage ctkImage(&dcmtkImage);
+
+        ModuleInstance->setValue("fileVar", filename);
 
         QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
         if (pixmap.isNull())
