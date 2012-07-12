@@ -26,8 +26,9 @@
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleInstance.h>
 #include <ctkCmdLineModuleInstanceFactoryQtGui.h>
-#include <ctkCmdLineModuleProcessFuture.h>
+//#include <ctkCmdLineModuleFuture.h>
 
+#include <QDebug>
 
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -77,7 +78,7 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
     return;
   }
 
-  ctkCmdLineModuleProcessFuture future = moduleInstance->run();
+  //ctkCmdLineModuleProcessFuture future = moduleInstance->run();
   //future.waitForFinished();
   //qDebug() << future.standardOutput();
 
@@ -89,8 +90,8 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 void ctkCLModuleExplorerMainWindow::futureFinished()
 {
   qDebug() << "*** Future finished";
-  qDebug() << "stdout:" << futureWatcher.future().standardOutput();
-  qDebug() << "stderr:" << futureWatcher.future().standardError();
+  //qDebug() << "stdout:" << futureWatcher.future().standardOutput();
+  //qDebug() << "stderr:" << futureWatcher.future().standardError();
 }
 
 //ctkCmdLineModuleReference ctkCLModuleExplorerMainWindow::moduleReference(int tabIndex)

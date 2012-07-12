@@ -19,38 +19,37 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEPROCESSEXCEPTION_H
-#define CTKCMDLINEMODULEPROCESSEXCEPTION_H
+#ifndef CTKCMDLINEMODULEPROCESS_P_H
+#define CTKCMDLINEMODULEPROCESS_P_H
 
-#include <qtconcurrentexception.h>
-
+#include <QObject>
 #include <QProcess>
 
-class ctkCmdLineModuleProcessException : public QtConcurrent::Exception
+class ctkCmdLineModuleFuture;
+
+class ctkCmdLineModuleProcess : public QObject
 {
+  Q_OBJECT
+
 public:
 
-  ctkCmdLineModuleProcessException(const QString& msg, int code = 0,
-                            QProcess::ExitStatus status = QProcess::NormalExit);
+  ctkCmdLineModuleProcess(const QString& location, const QStringList& args);
 
-  ~ctkCmdLineModuleProcessException() throw() {}
+  ctkCmdLineModuleFuture start();
 
-  int exitCode() const;
+protected Q_SLOTS:
 
-  QProcess::ExitStatus exitStatus() const;
+  void processStarted();
 
-  QString message() const;
+  void processFinished(int exitCode, QProcess::ExitStatus status);
 
-  const char* what() const throw();
-
-  void raise() const;
-  ctkCmdLineModuleProcessException* clone() const;
+  void processError(QProcess::ProcessError);
 
 private:
 
-  QString msg;
-  int code;
-  QProcess::ExitStatus status;
+  QProcess process;
+  const QString location;
+  const QStringList args;
 };
 
-#endif // CTKCMDLINEMODULEPROCESSEXCEPTION_H
+#endif // CTKCMDLINEMODULEPROCESSRUNNER_P_H

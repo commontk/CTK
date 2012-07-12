@@ -23,10 +23,10 @@
 #define CTKCMDLINEMODULEINSTANCE_H
 
 #include "ctkCommandLineModulesCoreExport.h"
-#include "ctkCmdLineModuleProcessFuture.h"
 
 #include <QObject>
 
+class ctkCmdLineModuleFuture;
 class ctkCmdLineModuleReference;
 class ctkCmdLineModuleInstancePrivate;
 
@@ -48,7 +48,7 @@ public:
 
   ctkCmdLineModuleReference moduleReference() const;
 
-  ctkCmdLineModuleProcessFuture run() const;
+  ctkCmdLineModuleFuture run() const;
 
   Q_SIGNAL void valueChanged(const QString& parameter, const QVariant& value);
 

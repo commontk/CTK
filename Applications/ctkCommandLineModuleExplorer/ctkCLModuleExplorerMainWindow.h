@@ -24,7 +24,7 @@
 
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleReference.h>
-#include <ctkCmdLineModuleProcessFuture.h>
+//#include <ctkCmdLineModuleFuture.h>
 
 #include <QMainWindow>
 #include <QHash>
@@ -65,7 +65,7 @@ private:
 
   QHash<int, ctkCmdLineModuleInstance*> mapTabToModuleRef;
 
-  ctkCmdLineModuleProcessFutureWatcher futureWatcher;
+  //ctkCmdLineModuleProcessFutureWatcher futureWatcher;
 };
 
 #endif // CTKCLIPLUGINEXPLORERMAINWINDOW_H

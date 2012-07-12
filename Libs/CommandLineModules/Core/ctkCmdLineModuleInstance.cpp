@@ -23,7 +23,7 @@
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleObjectHierarchyReader.h"
 #include "ctkCmdLineModuleObjectHierarchyReader.h"
-#include "ctkCmdLineModuleProcessRunner_p.h"
+#include "ctkCmdLineModuleProcess_p.h"
 
 #include "ctkException.h"
 
@@ -145,12 +145,14 @@ ctkCmdLineModuleReference ctkCmdLineModuleInstance::moduleReference() const
   return d->ModuleReference;
 }
 
-ctkCmdLineModuleProcessFuture ctkCmdLineModuleInstance::run() const
+struct ctkCmdLineModuleFuture {};
+
+ctkCmdLineModuleFuture ctkCmdLineModuleInstance::run() const
 {
-  // TODO: manage memory
-  QStringList args = d->createCommandLineArgs();
-  qDebug() << args;
-  ctkCmdLineModuleProcessRunner* moduleProcess =
-      new ctkCmdLineModuleProcessRunner(d->ModuleReference.location(), args);
-  return moduleProcess->start();
+//  // TODO: manage memory
+//  QStringList args = d->createCommandLineArgs();
+//  qDebug() << args;
+//  ctkCmdLineModuleProcessRunner* moduleProcess =
+//      new ctkCmdLineModuleProcessRunner(d->ModuleReference.location(), args);
+//  return moduleProcess->start();
 }
