@@ -51,7 +51,7 @@
     </directory>
     <geometry fileExtensions="*.jpg, *.txt">
     <name>geomVar</name>
-    <index>3</index>
+    <index>7</index>
     <description>Some geom</description>
     <label>Some geom</label>
     </geometry>
