@@ -42,7 +42,7 @@ public:
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
     const QList<QUuid>& objectUUIDs,
-    const QList<QUuid>& acceptableTransferSyntaxUIDs,
+    const QList<QString>& acceptableTransferSyntaxUIDs,
     bool includeBulkData);
 
   virtual void releaseData(const QList<QUuid>& objectUUIDs);

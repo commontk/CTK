@@ -180,6 +180,29 @@ QString ctkDicomSoapUID::getUID(const QtSoapType& type)
 }
 
 //----------------------------------------------------------------------------
+ctkDicomSoapArrayOfUIDS::ctkDicomSoapArrayOfUIDS(const QString& name, const QList<QString>& array)
+//  : QtSoapArray(QtSoapQName(name), QtSoapType::String, array.size())
+  : QtSoapStruct(QtSoapQName(name))
+{
+  for (QList<QString>::ConstIterator it = array.constBegin();
+       it < array.constEnd(); it++)
+    {
+    this->insert(new ctkDicomSoapUID("Uid",(*it)));
+    }
+}
+
+//----------------------------------------------------------------------------
+QList<QString> ctkDicomSoapArrayOfUIDS::getArray(const QtSoapType& type)
+{
+  QList<QString> list;
+  for (int i = 0; i < type.count(); i++)
+    {
+    list << ctkDicomSoapUID::getUID(type[i]);
+    }
+  return list;
+}
+
+//----------------------------------------------------------------------------
 ctkDicomSoapBool::ctkDicomSoapBool(const QString& name, bool boolean)
   : QtSoapSimpleType(QtSoapQName(name), boolean, 0)
 {}

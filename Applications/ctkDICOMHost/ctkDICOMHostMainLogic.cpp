@@ -176,7 +176,7 @@ void ctkDICOMHostMainLogic::onDataAvailable()
     return;
 
   QString transfersyntax("1.2.840.10008.1.2.1");
-  QList<QUuid> transfersyntaxlist;
+  QList<QString> transfersyntaxlist;
   transfersyntaxlist.append(transfersyntax);
   QList<ctkDicomAppHosting::ObjectLocator> locators;
   locators = this->Host->getOtherSideExchangeService()->getData(uuidlist, transfersyntaxlist, false);

@@ -71,7 +71,7 @@ ctkDicomAbstractExchangeCache::~ctkDicomAbstractExchangeCache()
 //----------------------------------------------------------------------------
 QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractExchangeCache::getData(
   const QList<QUuid>& objectUUIDs,
-  const QList<QUuid>& acceptableTransferSyntaxUIDs,
+  const QList<QString>& acceptableTransferSyntaxUIDs,
   bool includeBulkData)
 {
   Q_UNUSED(acceptableTransferSyntaxUIDs);

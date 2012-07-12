@@ -228,6 +228,11 @@ void ctkCommandLineModuleAppLogic::onDataAvailable()
   }
   ui.ReceivedDataInformation->setText(s);
   ui.LoadDataButton->setEnabled(true);
+
+  //FIX: still does not work here: need to postpone onDataAvailable even further (not just via QueuedConnection)
+  //QStringList preferredProtocols;
+  //preferredProtocols.append("file:");
+  //OutputLocation = getHostInterface()->getOutputLocation(preferredProtocols);
 }
 
 
@@ -240,11 +245,15 @@ void ctkCommandLineModuleAppLogic::onLoadDataClicked()
   QList<QUuid> uuidlist = ctkDicomAvailableDataHelper::getAllUuids(firstpatient);
   
   QString transfersyntax("1.2.840.10008.1.2.1");
-  QList<QUuid> transfersyntaxlist;
+  QList<QString> transfersyntaxlist;
   transfersyntaxlist.append(transfersyntax);
   QList<ctkDicomAppHosting::ObjectLocator> locators;
   locators = getHostInterface()->getData(uuidlist, transfersyntaxlist, false);
   qDebug() << "got locators! " << QString().setNum(locators.count());
+
+  QStringList preferredProtocols;
+  preferredProtocols.append("file:");
+  OutputLocation = getHostInterface()->getOutputLocation(preferredProtocols);
 
   QString s;
   s=s+" loc.count:"+QString().setNum(locators.count());
@@ -263,6 +272,8 @@ void ctkCommandLineModuleAppLogic::onLoadDataClicked()
         ctkDICOMImage ctkImage(&dcmtkImage);
 
         ModuleInstance->setValue("fileVar", filename);
+        ModuleInstance->setValue("dirVar", OutputLocation);
+        ModuleInstance->run();
 
         QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
         if (pixmap.isNull())
@@ -292,10 +303,7 @@ void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
   const QPixmap* pixmap = ui.PlaceHolderForImage->pixmap();
   if(pixmap!=NULL)
   {
-    QStringList preferredProtocols;
-    preferredProtocols.append("file:");
-    QString outputlocation = getHostInterface()->getOutputLocation(preferredProtocols);
-    QString templatefilename = QDir(outputlocation).absolutePath();
+    QString templatefilename = QDir(OutputLocation).absolutePath();
     if(templatefilename.isEmpty()==false) templatefilename.append('/'); 
     templatefilename.append("ctkdahscXXXXXX.jpg");
     QTemporaryFile *tempfile = new QTemporaryFile(templatefilename,this->AppWidget);

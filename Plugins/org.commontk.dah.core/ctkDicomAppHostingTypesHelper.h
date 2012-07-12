@@ -71,6 +71,14 @@ struct org_commontk_dah_core_EXPORT ctkDicomSoapUID : public QtSoapStruct
 };
 
 //----------------------------------------------------------------------------
+struct org_commontk_dah_core_EXPORT ctkDicomSoapArrayOfUIDS : public QtSoapStruct
+{
+  ctkDicomSoapArrayOfUIDS(const QString& name, const QList<QString>& array);
+
+  static QList<QString> getArray(const QtSoapType& array);
+};
+
+//----------------------------------------------------------------------------
 struct org_commontk_dah_core_EXPORT ctkDicomSoapBool : public QtSoapSimpleType
 {
   ctkDicomSoapBool(const QString& name, bool boolean);

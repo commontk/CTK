@@ -88,6 +88,8 @@ private:
   ctkCmdLineModuleManager ModuleManager;
   ctkCmdLineModuleInstance* ModuleInstance;
 
+  QString OutputLocation;
+
   ctkDicomAppHosting::AvailableData* ResultData;
 }; // ctkCommandLineModuleAppLogic
 
