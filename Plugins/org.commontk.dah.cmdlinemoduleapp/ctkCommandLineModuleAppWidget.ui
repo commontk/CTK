@@ -52,7 +52,7 @@
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
-       <verstretch>2</verstretch>
+       <verstretch>1</verstretch>
       </sizepolicy>
      </property>
     </widget>
@@ -60,10 +60,16 @@
    <item>
     <widget class="QLabel" name="PlaceHolderForImage">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
+       <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
      </property>
      <property name="text">
       <string/>
