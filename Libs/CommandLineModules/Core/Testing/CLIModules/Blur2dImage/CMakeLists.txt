@@ -1,2 +1,0 @@
-
-ctkFunctionCreateCLIModule(Blur2dImage)

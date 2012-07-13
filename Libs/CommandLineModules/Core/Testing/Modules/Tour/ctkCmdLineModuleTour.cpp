@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   QCoreApplication app(argc, argv);
   // This is used by QSettings
   QCoreApplication::setOrganizationName("CommonTK");
-  QCoreApplication::setApplicationName("CLIModuleBlur2dImage");
+  QCoreApplication::setApplicationName("CmdLineModuleTour");
 
   ctkCommandLineParser parser;
   // Use Unix-style argument names
@@ -42,15 +42,12 @@ int main(int argc, char* argv[])
   parser.addArgument("help", "h", QVariant::Bool, "Show this help text");
   parser.addArgument("xml", "", QVariant::Bool, "Print a XML description of this modules command line interface");
 
-  QTextStream out(stdout, QIODevice::WriteOnly);
-  QTextStream err(stderr, QIODevice::WriteOnly);
-
   // Parse the command line arguments
   bool ok = false;
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(QCoreApplication::arguments(), &ok);
   if (!ok)
   {
-    err << "Error parsing arguments: "
+    QTextStream(stderr, QIODevice::WriteOnly) << "Error parsing arguments: "
                                               << parser.errorString() << "\n";
     return EXIT_FAILURE;
   }
@@ -58,21 +55,18 @@ int main(int argc, char* argv[])
   // Show a help message
   if (parsedArgs.contains("help") || parsedArgs.contains("h"))
   {
-    out << parser.helpText();
+    QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
     return EXIT_SUCCESS;
   }
 
   if (parsedArgs.contains("xml"))
   {
-    QFile xmlDescription(":/ctkCLIModuleBlur2dImage.xml");
+    QFile xmlDescription(":/ctkCmdLineModuleTour.xml");
     xmlDescription.open(QIODevice::ReadOnly);
-    out << xmlDescription.readAll();
-    return EXIT_SUCCESS;
+    QTextStream(stdout, QIODevice::WriteOnly) << xmlDescription.readAll();
   }
 
   // Do something
-
-  //out << "Got parameter: " << QCoreApplication::arguments();
 
   return EXIT_SUCCESS;
 }

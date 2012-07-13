@@ -1,0 +1,2 @@
+
+ctkFunctionCreateCmdLineModule(Blur2dImage)
