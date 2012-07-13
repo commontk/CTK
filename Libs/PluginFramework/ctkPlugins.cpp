@@ -19,18 +19,17 @@
 
 =============================================================================*/
 
-#include "ctkPlugins_p.h"
+#include <QUrl>
 
-#include "ctkPluginPrivate_p.h"
+#include "ctkPlugin_p.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginException.h"
 #include "ctkPluginFrameworkContext_p.h"
+#include "ctkPlugins_p.h"
 #include "ctkVersionRange_p.h"
 
 #include <stdexcept>
 #include <iostream>
-
-#include <QUrl>
 
 //----------------------------------------------------------------------------
 void ctkPlugins::checkIllegalState() const

@@ -21,7 +21,7 @@
 
 
 #include "ctkPluginContext.h"
-#include "ctkPluginTrackerPrivate.h"
+#include "ctkPluginTracker_p.h"
 #include "ctkTrackedPlugin_p.h"
 
 #include <QDebug>

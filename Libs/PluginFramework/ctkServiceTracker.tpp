@@ -20,7 +20,7 @@
 =============================================================================*/
 
 
-#include "ctkServiceTrackerPrivate.h"
+#include "ctkServiceTracker_p.h"
 #include "ctkTrackedService_p.h"
 #include "ctkServiceException.h"
 #include "ctkPluginConstants.h"

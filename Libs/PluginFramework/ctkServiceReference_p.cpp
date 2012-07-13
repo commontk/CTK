@@ -19,19 +19,18 @@
 
 =============================================================================*/
 
-#include "ctkServiceReferencePrivate.h"
+#include "ctkServiceReference_p.h"
 
 #include <QObject>
 #include <QMutexLocker>
 
+#include "ctkPlugin_p.h"
 #include "ctkPluginConstants.h"
+#include "ctkPluginFrameworkContext_p.h"
 #include "ctkServiceFactory.h"
 #include "ctkServiceException.h"
-#include "ctkPluginPrivate_p.h"
-
 #include "ctkServices_p.h"
-#include "ctkServiceRegistrationPrivate.h"
-#include "ctkPluginFrameworkContext_p.h"
+#include "ctkServiceRegistration_p.h"
 
 //----------------------------------------------------------------------------
 ctkServiceReferencePrivate::ctkServiceReferencePrivate(ctkServiceRegistrationPrivate* reg)

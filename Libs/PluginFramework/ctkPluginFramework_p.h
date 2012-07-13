@@ -22,10 +22,10 @@
 #ifndef CTKPLUGINFRAMEWORKPRIVATE_P_H
 #define CTKPLUGINFRAMEWORKPRIVATE_P_H
 
-#include "ctkPluginPrivate_p.h"
-#include "ctkPluginFramework.h"
-
 #include <QMutex>
+
+#include "ctkPlugin_p.h"
+#include "ctkPluginFramework.h"
 
 class ctkPluginFrameworkContext;
 

@@ -19,18 +19,17 @@
 
 =============================================================================*/
 
-#include "ctkPlugin.h"
+#include <QStringList>
 
+#include "ctkPlugin.h"
+#include "ctkPlugin_p.h"
 #include "ctkPluginContext.h"
 #include "ctkPluginContext_p.h"
 #include "ctkPluginFrameworkUtil_p.h"
-#include "ctkPluginPrivate_p.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkServices_p.h"
 #include "ctkUtils.h"
-
-#include <QStringList>
 
 //----------------------------------------------------------------------------
 ctkPlugin::ctkPlugin()

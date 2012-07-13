@@ -19,7 +19,7 @@
 
 =============================================================================*/
 
-#include "ctkServiceRegistrationPrivate.h"
+#include "ctkServiceRegistration_p.h"
 
 //----------------------------------------------------------------------------
 ctkServiceRegistrationPrivate::ctkServiceRegistrationPrivate(
