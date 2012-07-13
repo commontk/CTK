@@ -352,6 +352,29 @@ bool ctkDICOMDatabase::initializeDatabase(const char* sqlFileName)
 }
 
 //------------------------------------------------------------------------------
+bool ctkDICOMDatabase::updateSchema(const char* schemaFile)
+{
+  // backup filelist
+  // reinit with the new schema
+  // reinsert everything
+ 
+  Q_D(ctkDICOMDatabase);
+  d->createBackupFileList();
+ 
+  this->initializeDatabase(schemaFile);
+
+  QStringList allFiles = d->filenames("Filenames_backup");
+  foreach(QString file, allFiles)
+  {
+    // TODO: use QFuture
+    this->insert(file,false,false,true);
+  }
+  return true;
+
+}
+
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabase::closeDatabase()
 {
   Q_D(ctkDICOMDatabase);

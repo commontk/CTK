@@ -110,6 +110,9 @@ public:
   /// delete all data and (re-)initialize the database.
   Q_INVOKABLE bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
 
+  /// updates the database schema and reinserts all existing files
+  Q_INVOKABLE bool updateSchema(const char* schemaFile = ":/dicom/dicom-schema.sql");
+
   ///
   /// \brief database accessors
   Q_INVOKABLE QStringList patients ();
@@ -148,7 +151,7 @@ public:
   Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail);
   void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
   Q_INVOKABLE void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
-  
+
   /// Check if file is already in database and up-to-date
   bool fileExistsAndUpToDate(const QString& filePath);
 
