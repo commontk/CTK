@@ -34,7 +34,7 @@
 #include <QWidget>
 #include <QFileInfo>
 
-#include "MainWindow.h"
+#include "ctkEventBusDemoMainWindow.h"
 
 int main(int argv, char** argc) {
   QApplication app(argv, argc);
@@ -104,7 +104,7 @@ int main(int argv, char** argc) {
   ctkServiceReference ebr = framework->getPluginContext()->getServiceReference("ctkEventAdminBus");
   ctkEventAdminBus *eb = framework->getPluginContext()->getService<ctkEventAdminBus>(ebr);
 
-  MainWindow win(eb);
+  ctkEventBusDemoMainWindow win(eb);
   win.show();
 
   return app.exec();

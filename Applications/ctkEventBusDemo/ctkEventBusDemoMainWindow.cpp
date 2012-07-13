@@ -1,30 +1,30 @@
-#include "MainWindow.h"
-#include "ui_MainWindow.h"
+#include "ctkEventBusDemoMainWindow.h"
+#include "ui_ctkEventBusDemoMainWindow.h"
 
 #include "ctkEventAdminBus.h"
 
-MainWindow::MainWindow(QWidget *parent)
-  :  QMainWindow(parent), ui(new Ui::MainWindow)
+ctkEventBusDemoMainWindow::ctkEventBusDemoMainWindow(QWidget *parent)
+  :  QMainWindow(parent), ui(new Ui::ctkEventBusDemoMainWindow)
 {
     ui->setupUi(this);
 }
 
-MainWindow::MainWindow(ctkEventAdminBus *bus, QWidget *parent)
+ctkEventBusDemoMainWindow::ctkEventBusDemoMainWindow(ctkEventAdminBus *bus, QWidget *parent)
   : QMainWindow(parent),
-    ui(new Ui::MainWindow),  m_EventBus(bus)
+    ui(new Ui::ctkEventBusDemoMainWindow),  m_EventBus(bus)
 {
     ui->setupUi(this);
     connectEvents();
 }
 
 
-MainWindow::~MainWindow()
+ctkEventBusDemoMainWindow::~ctkEventBusDemoMainWindow()
 {
     delete handler;
     delete ui;
 }
 
-void MainWindow::connectEvents() {
+void ctkEventBusDemoMainWindow::connectEvents() {
     handler = new ctkEventDemo();
     connect(ui->btnSend, SIGNAL(released()), this, SLOT(sendEvent()));
     connect(handler, SIGNAL(updateMessageSignal(QString)), this, SLOT(updateMessage(QString)));
@@ -37,7 +37,7 @@ void MainWindow::connectEvents() {
     m_EventBus->subscribeSlot(handler, "receiveEvent(QVariantList)", dic);
 }
 
-void MainWindow::sendEvent() {
+void ctkEventBusDemoMainWindow::sendEvent() {
 
     QString textToDisplay("Me: ");
     textToDisplay.append(ui->txtParameter->property("plainText").toString());
@@ -63,7 +63,7 @@ void MainWindow::sendEvent() {
     m_EventBus->sendEvent(event);
 }
 
-void MainWindow::changeEvent(QEvent *e)
+void ctkEventBusDemoMainWindow::changeEvent(QEvent *e)
 {
     QMainWindow::changeEvent(e);
     switch (e->type()) {
@@ -75,11 +75,11 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::updateMessage(QString message) {
+void ctkEventBusDemoMainWindow::updateMessage(QString message) {
     ui->textBrowser->append(message);
 }
 
-void MainWindow::connectClient() {
+void ctkEventBusDemoMainWindow::connectClient() {
     bool result, resultClient, resultServer;
     resultClient = m_EventBus->createServer("XMLRPC", ui->portLineEdit->text().toInt());
     m_EventBus->startListen();

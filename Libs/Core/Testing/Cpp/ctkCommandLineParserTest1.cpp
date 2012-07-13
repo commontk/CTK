@@ -87,17 +87,19 @@ int ctkCommandLineParserTest1(int, char*[])
     return EXIT_FAILURE;
     }
 
-  // Test3 - check if adding QString, int, and QStringList arguments works
+  // Test3 - check if adding QString, int, double, and QStringList arguments works
   QStringList arguments3;
   arguments3 << "ctkCommandLineParserTest1";
   arguments3 << "--test-string" << "TestingIsGood";
   arguments3 << "--test-string2"<< "CTKSuperRocks";
   arguments3 << "--test-integer"<< "-3";
+//  arguments3 << "--test-double"<< "-3.14";
   arguments3 << "--test-stringlist"<< "item1" << "item2" << "item3";
   ctkCommandLineParser parser3;
   parser3.addArgument("--test-string", "", QVariant::String, "This is a test string");
   parser3.addArgument("--test-string2", "", QVariant::String, "This is a test string2", "CTKGood");
   parser3.addArgument("--test-integer", "", QVariant::Int, "This is a test integer");
+//  parser3.addArgument("--test-double", "", QVariant::Double, "This is a test double");
   parser3.addArgument("--test-stringlist", "", QVariant::StringList,
                                 "This is a test stringlist");
   ok = false;
@@ -131,6 +133,14 @@ int ctkCommandLineParserTest1(int, char*[])
         << ", expectedTestInteger" << expectedTestInteger;
     return EXIT_FAILURE;
     }
+
+  //double expectedTestDouble = -3.14;
+  //if (parsedArgs["--test-double"].toDouble() != expectedTestDouble)
+  //  {
+  //  qCritical() << "Test3 - Failed - testDouble" << parsedArgs["--test-double"].toDouble()
+  //      << ", expectedTestDouble" << expectedTestDouble;
+  //  return EXIT_FAILURE;
+  //  }
 
   QStringList expectedTestStringlist;
   expectedTestStringlist << "item1" << "item2" << "item3";
@@ -579,10 +589,23 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // ==================== QSettings tests ====================
 
-  QSettings settings;
+  QSettings settings("CommonTK","ctkCommandLineParserTest1");
   settings.setValue("long-settings-argument", 5);
   settings.setValue("s", "settings-short");
   settings.setValue("invalid", QVariant());
+
+  //  Check that QSettings worked
+  if(settings.status() != QSettings::NoError)
+  {
+    qCritical() << "QSettings tests setup - QSettings::status() returned " << settings.status() << ".";
+    return EXIT_FAILURE;
+  }
+
+  if (settings.value("long-settings-argument") != 5)
+  {
+    qCritical() << "QSettings tests setup - Could not store long-settings-argument in QSettings.";
+    return EXIT_FAILURE;
+  }
 
   // Test14 - Check that QSettings are used
   ctkCommandLineParser parser14(&settings);

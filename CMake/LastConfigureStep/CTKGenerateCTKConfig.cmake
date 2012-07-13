@@ -171,11 +171,11 @@ set(CTK_BUILD_TYPE_CONFIG ${CMAKE_BUILD_TYPE})
 
 #-----------------------------------------------------------------------------
 # Configure CTKConfig.cmake for the build tree.
-configure_file(${CTK_SOURCE_DIR}/CTKConfig.cmake.in
+configure_file(${CTK_SOURCE_DIR}/CMake/CTKConfig.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfig.cmake @ONLY IMMEDIATE)
-configure_file(${CTK_SOURCE_DIR}/CTKConfigVersion.cmake.in
+configure_file(${CTK_SOURCE_DIR}/CMake/CTKConfigVersion.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfigVersion.cmake @ONLY IMMEDIATE)
-configure_file(${CTK_SOURCE_DIR}/ctkConfig.h.in
+configure_file(${CTK_SOURCE_DIR}/CMake/ctkConfig.h.in
                ${CTK_CONFIG_H_INCLUDE_DIR}/ctkConfig.h @ONLY IMMEDIATE)
 
 #-----------------------------------------------------------------------------

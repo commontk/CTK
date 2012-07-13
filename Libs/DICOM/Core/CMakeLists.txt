@@ -19,6 +19,7 @@ set(KIT_SRCS
   ctkDICOMFilterProxyModel.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
+  ctkDICOMIndexerPrivate.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
   ctkDICOMPersonName.cpp
@@ -42,6 +43,7 @@ set(KIT_MOC_SRCS
   ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDatabase.h
   ctkDICOMIndexer.h
+  ctkDICOMIndexerPrivate.h
   ctkDICOMFilterProxyModel.h
   ctkDICOMModel.h
   ctkDICOMQuery.h

@@ -6,18 +6,18 @@ project(ctkEventBusDemo)
 
 set(KIT_SRCS
   ctkEventBusDemoMain.cpp
-  MainWindow.cpp
-  MainWindow.h
+  ctkEventBusDemoMainWindow.cpp
+  ctkEventBusDemoMainWindow.h
 )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  MainWindow.h
+  ctkEventBusDemoMainWindow.h
 )
 
 # UI files
 set(KIT_UI_FORMS
-  MainWindow.ui
+  ctkEventBusDemoMainWindow.ui
 )
 
 # Resources

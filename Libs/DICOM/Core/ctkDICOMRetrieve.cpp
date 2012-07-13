@@ -207,7 +207,10 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
 ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
 {
   // At least now be kind to the server and release association
-  this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+  if (this->SCU.isConnected())
+    {
+    this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    }
 }
 
 //------------------------------------------------------------------------------

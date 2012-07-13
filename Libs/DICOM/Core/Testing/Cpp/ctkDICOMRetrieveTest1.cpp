@@ -38,21 +38,23 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
   ctkDICOMRetrieve retrieve;
 
   // check default values
-  if (!retrieve.callingAETitle().isEmpty() ||
-      !retrieve.calledAETitle().isEmpty() ||
+  std::cerr << "Checking Defaults\n";
+  if (retrieve.callingAETitle() != "ANY-SCU" ||
+      retrieve.calledAETitle() != "ANY-SCP" ||
       !retrieve.host().isEmpty() ||
-      retrieve.port() != 0 ||
+      retrieve.port() != 104 ||
       !retrieve.moveDestinationAETitle().isEmpty())
     {
     std::cerr << "ctkDICOMRetrieve::ctkDICOMRetrieve() failed: "
-              << qPrintable(retrieve.callingAETitle()) << " "
-              << qPrintable(retrieve.calledAETitle()) << " "
-              << qPrintable(retrieve.host()) << " "
-              << retrieve.port() << " "
-              << qPrintable(retrieve.moveDestinationAETitle()) << std::endl;
+              << "callingAETitle: " << qPrintable(retrieve.callingAETitle()) << " "
+              << "calledAETitle: " << qPrintable(retrieve.calledAETitle()) << " "
+              << "host: " << qPrintable(retrieve.host()) << " "
+              << "port: " << retrieve.port() << " "
+              << "moveDestinationAETitle: " << qPrintable(retrieve.moveDestinationAETitle()) << std::endl;
     return EXIT_FAILURE;
     }
 
+  std::cerr << "Set Variables\n";
   retrieve.setCallingAETitle("CallingAETitle");
   if (retrieve.callingAETitle() != "CallingAETitle")
     {
@@ -85,6 +87,7 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  std::cerr << "Set Database\n";
   QSharedPointer<ctkDICOMDatabase> dicomDatabase(new ctkDICOMDatabase);
   retrieve.setDatabase(dicomDatabase);
 
@@ -95,6 +98,7 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  std::cerr << "Move Series\n";
   bool res = retrieve.moveSeries(QString(), QString());
   if (res)
     {
@@ -103,6 +107,7 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  std::cerr << "Move Study\n";
   res = retrieve.moveStudy(QString());
   if (res)
     {
@@ -111,6 +116,7 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  std::cerr << "Get Series\n";
   res = retrieve.getSeries(QString(), QString());
   if (res)
     {
@@ -119,6 +125,7 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  std::cerr << "Get Study\n";
   res = retrieve.getStudy(QString());
   if (res)
     {

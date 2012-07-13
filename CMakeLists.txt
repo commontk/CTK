@@ -736,8 +736,8 @@ IF (subproject_count EQUAL 0)
   set(CTEST_PROJECT_SUBPROJECTS CTKCore)
 endif()
 
-# Configure CTestConfigSubProject.cmake used that could be used by CTest scripts
-configure_file(${CTK_SOURCE_DIR}/CTestConfigSubProject.cmake.in
+# Configure CTestConfigSubProject.cmake that could be used by CTest scripts
+configure_file(${CTK_SOURCE_DIR}/CMake/CTestConfigSubProject.cmake.in
                ${CTK_BINARY_DIR}/CTestConfigSubProject.cmake)
 
 #-----------------------------------------------------------------------------
@@ -832,7 +832,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Configure files with settings
 #
-configure_file(${CTK_SOURCE_DIR}/UseCTK.cmake.in
+configure_file(${CTK_SOURCE_DIR}/CMake/UseCTK.cmake.in
                ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake COPYONLY IMMEDIATE)
 
 set(CTK_CONFIG_H_INCLUDE_DIR ${CTK_BINARY_DIR})

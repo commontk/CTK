@@ -44,6 +44,7 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   QCoreApplication app(argc, argv);
 
   ctkDICOMTester tester;
+  std::cerr << "ctkDICOMRetrieveTest2: Starting dcmqrscp\n";
   tester.startDCMQRSCP();
   
   QStringList arguments = app.arguments();
@@ -54,16 +55,19 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
     ctkDICOMRetrieveTest2PrintUsage();
     return EXIT_FAILURE;
     }
+  std::cerr << "ctkDICOMRetrieveTest2: Storing data to dcmqrscp\n";
   tester.storeData(arguments);
 
   ctkDICOMDatabase queryDatabase;
 
+  std::cerr << "ctkDICOMRetrieveTest2: Setting up query\n";
   ctkDICOMQuery query;
   query.setCallingAETitle("CTK_AE");
   query.setCalledAETitle("CTK_AE");
   query.setHost("localhost");
   query.setPort(tester.dcmqrscpPort());
 
+  std::cerr << "ctkDICOMRetrieveTest2: Running query\n";
   bool res = query.query(queryDatabase);
   if (!res)
     {
@@ -77,6 +81,7 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  std::cerr << "ctkDICOMRetrieveTest2: Setting up retrieve database\n";
   QSharedPointer<ctkDICOMDatabase> retrieveDatabase(new ctkDICOMDatabase);
   retrieveDatabase->openDatabase( "./ctkDICOM.sql" );
 
@@ -89,8 +94,10 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
 
   retrieve.setDatabase(retrieveDatabase);
 
+  std::cerr << "ctkDICOMRetrieveTest2: Retrieving\n";
   foreach(const QString& study, query.studyInstanceUIDQueried())
     {
+    std::cerr << "ctkDICOMRetrieveTest2: Retrieving " << study.toStdString() << "\n";
     bool res = retrieve.moveStudy(study);
     if (!res)
       {
@@ -100,6 +107,8 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
       return EXIT_FAILURE;
       }
     }
+
+  std::cerr << "ctkDICOMRetrieveTest2: Exit success\n";
 
   return EXIT_SUCCESS;
 }

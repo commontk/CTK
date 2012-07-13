@@ -33,10 +33,19 @@ if(${add_project})
       endif()
 
       # Enable Qt libraries PythonQt wrapping if required
-      foreach(qtlib core gui network opengl sql svg uitools webkit xml xmlpatterns)
+      set(qtlibs core gui network opengl sql svg uitools webkit xml)
+      foreach(qtlib All ${qtlibs})
         string(TOUPPER ${qtlib} qtlib_uppercase)
         list(APPEND ep_PythonQt_args -DPythonQt_Wrap_Qt${qtlib}:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib_uppercase}})
       endforeach()
+
+      # Force wrap option to ON if WRAP_QTALL was set to ON
+      if(${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTALL})
+        foreach(qtlib ${qtlibs})
+          string(TOUPPER ${qtlib} qtlib_uppercase)
+          set(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib_uppercase} ON CACHE BOOL "Enable Scripting/Python/Core Library PYTHONQT_WRAP_QT${qtlib_uppercase} option" FORCE)
+        endforeach()
+      endif()
 
       # Python is required
       find_package(PythonLibs)
@@ -44,7 +53,7 @@ if(${add_project})
         message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
       endif()
 
-      set(revision_tag 9104fa924859f4a865016f2138c06ec856f449d4)
+      set(revision_tag 47738f9c8c5d3ffa77c8f2e1844f899e5b548f0c)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
