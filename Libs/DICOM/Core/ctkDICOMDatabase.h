@@ -118,6 +118,7 @@ public:
   Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
   Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
 
+  Q_INVOKABLE QStringList allFiles ();
   ///
   /// \brief load the header from a file and allow access to elements
   /// @param sopInstanceUID A string with the uid for a given instance

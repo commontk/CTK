@@ -398,11 +398,29 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
   query.bindValue ( 0, sopInstanceUID );
   query.exec();
   QString result;
-  if (query.next()) 
+  if (query.next())
     {
     result = query.value(0).toString();
     }
   return( result );
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::allFiles()
+{
+  Q_D(ctkDICOMDatabase);
+
+  /// get all filenames from the database
+  QSqlQuery allFilesQuery(d->Database);
+  QStringList allFileNames;
+  allFilesQuery.prepare("SELECT Filename from Images;");
+  allFilesQuery.exec();
+
+  while (allFilesQuery.next())
+  {
+    allFileNames << allFilesQuery.value(0).toString();
+  }
+  return allFileNames;
 }
 
 //------------------------------------------------------------------------------
