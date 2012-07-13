@@ -525,7 +525,7 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
 
   ctkDICOMDataset dataset;
   dataset.InitializeFromFile(fileName);
-  
+
   DcmTagKey tagKey(group, element);
 
   return( dataset.GetAllElementValuesAsString(tagKey) );
