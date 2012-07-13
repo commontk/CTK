@@ -31,7 +31,7 @@
 #include <QStringList>
 #include <QDebug>
 #include <QFuture>
-
+#include <QVariant>
 
 struct ctkCmdLineModuleInstancePrivate
 {
