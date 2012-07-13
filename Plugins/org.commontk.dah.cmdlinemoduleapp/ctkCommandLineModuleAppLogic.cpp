@@ -267,10 +267,6 @@ void ctkCommandLineModuleAppLogic::onLoadDataClicked()
         DicomImage dcmtkImage(filename.toLatin1().data());
         ctkDICOMImage ctkImage(&dcmtkImage);
 
-        ModuleInstance->setValue("fileVar", filename);
-        ModuleInstance->setValue("dirVar", OutputLocation);
-        ModuleInstance->run();
-
         QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
         if (pixmap.isNull())
         {
@@ -302,36 +298,46 @@ void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
     QString templatefilename = QDir(OutputLocation).absolutePath();
     if(templatefilename.isEmpty()==false) templatefilename.append('/'); 
     templatefilename.append("ctkdahscXXXXXX.jpg");
-    QTemporaryFile *tempfile = new QTemporaryFile(templatefilename,this->AppWidget);
-
-    if(tempfile->open())
+    QString inputFileName, outputFileName;
     {
-      QString filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
-      qDebug() << "Created file: " << filename;
-      tempfile->close();
-      QPixmap tmppixmap(*pixmap);
-      QPainter painter(&tmppixmap);
-      painter.setPen(Qt::white);
-      painter.setFont(QFont("Arial", 15));
-      painter.drawText(tmppixmap.rect(),Qt::AlignBottom|Qt::AlignLeft,"Secondary capture by ctkCommandLineModuleApp");
-     //painter.drawText(rect(), Qt::AlignCenter, "Qt");
-      tmppixmap.save(tempfile->fileName(), "JPEG");
-      qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
+      QTemporaryFile inputtmp(templatefilename,this->AppWidget);
+      if(!inputtmp.open())
+        return;
+      inputFileName = inputtmp.fileName();
+      inputtmp.close();
 
-      ctkDicomAvailableDataHelper::addToAvailableData(*ResultData, 
-        objectLocatorCache(), 
-        tempfile->fileName());
-
-      bool success = publishData(*ResultData, true);
-      if(!success)
-      {
-        qCritical() << "Failed to publish data";
-      }
-      qDebug() << "  publishData returned: " << success;
-
+      QTemporaryFile outputtmp(templatefilename,this->AppWidget);
+      if(!outputtmp.open())
+        return;
+      outputFileName = outputtmp.fileName();
+      outputtmp.close();
     }
-    else
-      qDebug() << "Creating temporary file failed.";
-  }
 
+    pixmap->save(inputFileName);
+
+    ModuleInstance->setValue("fileVar", inputFileName);
+    ModuleInstance->setValue("dirVar", outputFileName);
+    ModuleInstance->run();
+
+    //if(tempfile->open())
+    //{
+    //  QString filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
+    //  qDebug() << "Created file: " << filename;
+    //  tempfile->close();
+    //else
+    //  qDebug() << "Creating temporary file failed.";
+    //}
+    qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
+
+    ctkDicomAvailableDataHelper::addToAvailableData(*ResultData, 
+      objectLocatorCache(), 
+      outputFileName);
+
+    bool success = publishData(*ResultData, true);
+    if(!success)
+    {
+      qCritical() << "Failed to publish data";
+    }
+    qDebug() << "  publishData returned: " << success;
+  }
 }

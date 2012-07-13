@@ -30,6 +30,7 @@
 
 #include <QStringList>
 #include <QDebug>
+#include <QProcess>
 
 
 struct ctkCmdLineModuleInstancePrivate
@@ -153,6 +154,9 @@ void ctkCmdLineModuleInstance::run() const
 //  // TODO: manage memory
   QStringList args = commandLineArguments();
   qDebug() << args;
+  QProcess p;
+  p.start(location(), args);
+  p.waitForFinished();
 //  ctkCmdLineModuleProcessRunner* moduleProcess =
 //      new ctkCmdLineModuleProcessRunner(d->ModuleReference.location(), args);
 //  return moduleProcess->start();

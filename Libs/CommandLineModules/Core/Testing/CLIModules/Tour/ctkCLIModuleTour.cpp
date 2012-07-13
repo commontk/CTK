@@ -21,18 +21,21 @@
 
 #include <ctkCommandLineParser.h>
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QTextStream>
 #include <QFile>
+#include <QPixmap>
+#include <QPainter>
 
 #include <cstdlib>
 
 int main(int argc, char* argv[])
 {
-  QCoreApplication app(argc, argv);
+  // QPixmap (used below) requires QApplication (instead of QCoreApplication)
+  QApplication app(argc, argv);
   // This is used by QSettings
-  QCoreApplication::setOrganizationName("CommonTK");
-  QCoreApplication::setApplicationName("CLIModuleTour");
+  QApplication::setOrganizationName("CommonTK");
+  QApplication::setApplicationName("CLIModuleTour");
 
   ctkCommandLineParser parser;
   // Use Unix-style argument names
@@ -41,6 +44,13 @@ int main(int argc, char* argv[])
   // Add command line argument names
   parser.addArgument("help", "h", QVariant::Bool, "Show this help text");
   parser.addArgument("xml", "", QVariant::Bool, "Print a XML description of this modules command line interface");
+
+  parser.addArgument("integer", "", QVariant::Int, "Show this help text");
+  parser.addArgument("", "b", QVariant::Bool, "Show this help text");
+  parser.addArgument("double", "d", QVariant::Double, "Show this help text");
+  parser.addArgument("floatVector", "f", QVariant::String, "Show this help text");
+  parser.addArgument("enumeration", "e", QVariant::String, "Show this help text");
+  parser.addArgument("", "p", QVariant::String, "Show this help text");
 
   // Parse the command line arguments
   bool ok = false;
@@ -65,8 +75,25 @@ int main(int argc, char* argv[])
     xmlDescription.open(QIODevice::ReadOnly);
     QTextStream(stdout, QIODevice::WriteOnly) << xmlDescription.readAll();
   }
+  if(parsedArgs.contains("p"))
+  {
+    QTextStream(stdout, QIODevice::WriteOnly) << parsedArgs["p"].toString();
+  }
 
   // Do something
+  // do we have enough information (input/output)?
+  if(parser.unparsedArguments().count() >= 2) 
+  {
+    QString input = parser.unparsedArguments().at(0);
+    QString output = parser.unparsedArguments().at(1);
+
+    QPixmap pix(input);
+    QPainter painter(&pix);
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Arial", 15));
+    painter.drawText(pix.rect(),Qt::AlignBottom|Qt::AlignLeft,"Result image produced by ctkCLIModuleTour");
+    pix.save(output, "JPEG");
+  }
 
   return EXIT_SUCCESS;
 }

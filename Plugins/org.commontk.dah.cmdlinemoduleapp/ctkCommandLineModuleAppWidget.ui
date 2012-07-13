@@ -27,7 +27,7 @@
       <bool>false</bool>
      </property>
      <property name="text">
-      <string>Run!</string>
+      <string>Get Data from Host</string>
      </property>
     </widget>
    </item>
@@ -79,7 +79,7 @@
    <item>
     <widget class="QPushButton" name="CreateSecondaryCaptureButton">
      <property name="text">
-      <string>Create Secondary Capture</string>
+      <string>Run and send data to host</string>
      </property>
     </widget>
    </item>
