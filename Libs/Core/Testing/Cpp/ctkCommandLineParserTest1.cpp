@@ -579,10 +579,23 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // ==================== QSettings tests ====================
 
-  QSettings settings;
+  QSettings settings("CommonTK","ctkCommandLineParserTest1");
   settings.setValue("long-settings-argument", 5);
   settings.setValue("s", "settings-short");
   settings.setValue("invalid", QVariant());
+
+  //  Check that QSettings worked
+  if(settings.status() != QSettings::NoError)
+  {
+    qCritical() << "QSettings tests setup - QSettings::status() returned " << settings.status() << ".";
+    return EXIT_FAILURE;
+  }
+
+  if (settings.value("long-settings-argument") != 5)
+  {
+    qCritical() << "QSettings tests setup - Could not store long-settings-argument in QSettings.";
+    return EXIT_FAILURE;
+  }
 
   // Test14 - Check that QSettings are used
   ctkCommandLineParser parser14(&settings);
