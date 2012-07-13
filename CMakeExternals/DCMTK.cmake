@@ -23,7 +23,7 @@ if(${add_project})
   if(CTK_SUPERBUILD)
 
     if(NOT DEFINED DCMTK_DIR)
-      set(revision_tag ae3b946f6e6231)
+      set(revision_tag ab844899a92f46e2d880c38c85ce098933533aef)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
