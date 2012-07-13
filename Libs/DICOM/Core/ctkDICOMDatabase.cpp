@@ -85,6 +85,10 @@ public:
   // filePath has to be set if this is an import of an actual file
   void insert ( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile = true, bool generateThumbnail = true);
 
+  ///
+  /// copy the complete list of files to an extra table
+  ///
+  void createBackupFileList();
 
   /// Name of the database file (i.e. for SQLITE the sqlite file)
   QString      DatabaseFileName;
@@ -179,6 +183,15 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
     }
   return (success);
 }
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::createBackupFileList()
+{
+  QSqlQuery query(this->Database);
+  loggedExec(query, "CREATE TABLE IF NOT EXISTS main.Filenames_backup (Filename TEXT PRIMARY KEY NOT NULL )" );
+  loggedExec(query, "INSERT INTO Filenames_backup SELECT Filename FROM Images;" );
+}
+
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& connectionName )
