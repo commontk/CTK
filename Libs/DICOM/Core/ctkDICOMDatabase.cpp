@@ -90,6 +90,10 @@ public:
   ///
   void createBackupFileList();
 
+  ///
+  /// get all Filename values from table
+  QStringList filenames(QString table);
+
   /// Name of the database file (i.e. for SQLITE the sqlite file)
   QString      DatabaseFileName;
   QString      LastError;
@@ -326,6 +330,21 @@ bool ctkDICOMDatabasePrivate::executeScript(const QString script) {
 }
 
 //------------------------------------------------------------------------------
+QStringList ctkDICOMDatabasePrivate::filenames(QString table)
+{
+  /// get all filenames from the database
+  QSqlQuery allFilesQuery(this->Database);
+  QStringList allFileNames;
+  loggedExec(allFilesQuery,QString("SELECT Filename from %1 ;").arg(table) );
+
+  while (allFilesQuery.next())
+  {
+    allFileNames << allFilesQuery.value(0).toString();
+  }
+  return allFileNames;
+}
+
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::initializeDatabase(const char* sqlFileName)
 {
   Q_D(ctkDICOMDatabase);
@@ -422,18 +441,7 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
 QStringList ctkDICOMDatabase::allFiles()
 {
   Q_D(ctkDICOMDatabase);
-
-  /// get all filenames from the database
-  QSqlQuery allFilesQuery(d->Database);
-  QStringList allFileNames;
-  allFilesQuery.prepare("SELECT Filename from Images;");
-  allFilesQuery.exec();
-
-  while (allFilesQuery.next())
-  {
-    allFileNames << allFilesQuery.value(0).toString();
-  }
-  return allFileNames;
+  return d->filenames("Images");
 }
 
 //------------------------------------------------------------------------------
