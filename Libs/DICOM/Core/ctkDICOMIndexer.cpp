@@ -91,6 +91,9 @@ ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate(ctkDICOMIndexer& o) : q_ptr(&o), 
 //------------------------------------------------------------------------------
 ctkDICOMIndexerPrivate::~ctkDICOMIndexerPrivate()
 {
+  DirectoryImportWatcher.cancel();
+  DirectoryImportWatcher.waitForFinished();
+
 }
 
 void ctkDICOMIndexerPrivate::OnProgress(int progress)
@@ -144,6 +147,11 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
                                    const QString& destinationDirectoryName)
 {
   Q_D(ctkDICOMIndexer);
+
+  // currently it is not supported to have multiple
+  // parallel directory imports so the second call blocks
+  //
+  d->DirectoryImportWatcher.waitForFinished();
 
   const std::string src_directory(directoryName.toStdString());
 
