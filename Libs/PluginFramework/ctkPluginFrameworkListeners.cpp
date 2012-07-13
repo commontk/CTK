@@ -25,7 +25,7 @@
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginConstants.h"
 #include "ctkLDAPExpr_p.h"
-#include "ctkServiceReferencePrivate.h"
+#include "ctkServiceReference_p.h"
 
 #include <QStringListIterator>
 #include <QDebug>

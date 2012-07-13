@@ -19,15 +19,15 @@
 
 =============================================================================*/
 
+#include "ctkPlugin_p.h"
 #include "ctkPluginContext.h"
 #include "ctkPluginContext_p.h"
-
-#include "ctkPluginPrivate_p.h"
 #include "ctkPluginFrameworkContext_p.h"
+
 #include "ctkServices_p.h"
 #include "ctkServiceRegistration.h"
 #include "ctkServiceReference.h"
-#include "ctkServiceReferencePrivate.h"
+#include "ctkServiceReference_p.h"
 
 #include <stdexcept>
 

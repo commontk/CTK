@@ -39,15 +39,15 @@ set(KIT_SRCS
   ctkPluginFrameworkLauncher.cpp
   ctkPluginFrameworkListeners.cpp
   ctkPluginFrameworkListeners_p.h
-  ctkPluginFrameworkPrivate.cpp
-  ctkPluginFrameworkPrivate_p.h
+  ctkPluginFramework_p.cpp
+  ctkPluginFramework_p.h
   ctkPluginFrameworkUtil.cpp
   ctkPluginFrameworkUtil_p.h
   ctkPluginLocalization.cpp
   ctkPluginManifest.cpp
   ctkPluginManifest_p.h
-  ctkPluginPrivate.cpp
-  ctkPluginPrivate_p.h
+  ctkPlugin_p.cpp
+  ctkPlugin_p.h
   ctkPlugins.cpp
   ctkPlugins_p.h
   ctkPluginStorage_p.h
@@ -55,17 +55,17 @@ set(KIT_SRCS
   ctkPluginStorageSQL_p.h
   ctkPluginTracker.h
   ctkPluginTracker.tpp
-  ctkPluginTrackerPrivate.h
-  ctkPluginTrackerPrivate.tpp
+  ctkPluginTracker_p.h
+  ctkPluginTracker_p.tpp
   ctkRequirePlugin.cpp
   ctkRequirePlugin_p.h
   ctkServiceEvent.cpp
   ctkServiceException.cpp
   ctkServiceFactory.h
   ctkServiceReference.cpp
-  ctkServiceReferencePrivate.cpp
+  ctkServiceReference_p.cpp
   ctkServiceRegistration.cpp
-  ctkServiceRegistrationPrivate.cpp
+  ctkServiceRegistration_p.cpp
   ctkServices.cpp
   ctkServices_p.h
   ctkServiceSlotEntry.cpp
@@ -73,8 +73,8 @@ set(KIT_SRCS
   ctkServiceTracker.h
   ctkServiceTracker.tpp
   ctkServiceTrackerCustomizer.h
-  ctkServiceTrackerPrivate.h
-  ctkServiceTrackerPrivate.tpp
+  ctkServiceTracker_p.h
+  ctkServiceTracker_p.tpp
   ctkTrackedPlugin_p.h
   ctkTrackedPlugin.tpp
   ctkTrackedPluginListener_p.h

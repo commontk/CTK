@@ -36,7 +36,7 @@
 // ctkDICOM includes
 #include "ctkLogger.h"
 #include "ctkDICOMIndexer.h"
-#include "ctkDICOMIndexerPrivate.h"
+#include "ctkDICOMIndexer_p.h"
 #include "ctkDICOMDatabase.h"
 
 // DCMTK includes

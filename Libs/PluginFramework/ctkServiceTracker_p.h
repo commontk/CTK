@@ -167,6 +167,6 @@ private:
 
 };
 
-#include "ctkServiceTrackerPrivate.tpp"
+#include "ctkServiceTracker_p.tpp"
 
 #endif // CTKSERVICETRACKERPRIVATE_H

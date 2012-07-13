@@ -19,10 +19,9 @@
 
 =============================================================================*/
 
-#include "ctkRequirePlugin_p.h"
-
+#include "ctkPlugin_p.h"
 #include "ctkPluginConstants.h"
-#include "ctkPluginPrivate_p.h"
+#include "ctkRequirePlugin_p.h"
 
 //----------------------------------------------------------------------------
 ctkRequirePlugin::ctkRequirePlugin(ctkPluginPrivate* requestor,

@@ -19,12 +19,11 @@
 
 =============================================================================*/
 
-#include "ctkPluginFrameworkPrivate_p.h"
-
-#include "ctkPluginFramework.h"
 #include "ctkPluginConstants.h"
 #include "ctkPluginContext.h"
 #include "ctkPluginContext_p.h"
+#include "ctkPluginFramework.h"
+#include "ctkPluginFramework_p.h"
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginFrameworkUtil_p.h"
 
