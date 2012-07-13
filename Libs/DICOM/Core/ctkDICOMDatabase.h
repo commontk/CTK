@@ -107,7 +107,7 @@ public:
   /// close the database. It must not be used afterwards.
   Q_INVOKABLE void closeDatabase();
   ///
-  /// delete all data and reinitialize the database.
+  /// delete all data and (re-)initialize the database.
   Q_INVOKABLE bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
 
   ///
