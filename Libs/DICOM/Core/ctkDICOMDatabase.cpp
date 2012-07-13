@@ -91,6 +91,12 @@ public:
   void createBackupFileList();
 
   ///
+  /// remove the extra table containing the backup
+  ///
+  void removeBackupFileList();
+
+
+  ///
   /// get all Filename values from table
   QStringList filenames(QString table);
 
@@ -195,6 +201,14 @@ void ctkDICOMDatabasePrivate::createBackupFileList()
   loggedExec(query, "CREATE TABLE IF NOT EXISTS main.Filenames_backup (Filename TEXT PRIMARY KEY NOT NULL )" );
   loggedExec(query, "INSERT INTO Filenames_backup SELECT Filename FROM Images;" );
 }
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::removeBackupFileList()
+{
+  QSqlQuery query(this->Database);
+  loggedExec(query, "DROP TABLE main.Filenames_backup; " );
+}
+
 
 
 //------------------------------------------------------------------------------
@@ -369,6 +383,8 @@ bool ctkDICOMDatabase::updateSchema(const char* schemaFile)
     // TODO: use QFuture
     this->insert(file,false,false,true);
   }
+  // TODO: check better that everything is ok
+  d->removeBackupFileList();
   return true;
 
 }
