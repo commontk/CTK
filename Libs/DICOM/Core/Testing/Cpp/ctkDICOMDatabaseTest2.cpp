@@ -67,11 +67,11 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     {
     std::cerr << "ctkDICOMDatabase::openDatabase() failed: "
               << "database should not be in memory" << std::endl;
-    return EXIT_FAILURE;    
+    return EXIT_FAILURE;
     }
 
   bool res = database.initializeDatabase();
-  
+
   if (!res)
     {
     std::cerr << "ctkDICOMDatabase::initializeDatabase() failed." << std::endl;
@@ -112,11 +112,31 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     std::cerr << "ctkDICOMDatabase: didn't get back the original file path" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
 
   QString knownSeriesDescription("3D Cor T1 FAST IR-prepped GRE");
 
   QString foundSeriesDescription = database.instanceValue(instanceUID, tag);
+
+  if (foundSeriesDescription != knownSeriesDescription)
+    {
+    std::cerr << "ctkDICOMDatabase: invalid element value returned" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // now update the database
+  database.updateSchema();
+
+  // and repeat the above checks
+  foundFile = database.fileForInstance(instanceUID);
+
+  if (foundFile != dicomFilePath)
+    {
+    std::cerr << "ctkDICOMDatabase: didn't get back the original file path" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  foundSeriesDescription = database.instanceValue(instanceUID, tag);
 
   if (foundSeriesDescription != knownSeriesDescription)
     {
