@@ -186,7 +186,6 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
   // register RLE decompression codec
   DcmRLEDecoderRegistration::registerCodecs();
 
-  logger.error ( "Setting Transfer Syntaxes" );
   logger.info ( "Setting Transfer Syntaxes" );
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
@@ -202,7 +201,6 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
     this->SCU.addPresentationContext(dcmLongSCUStorageSOPClassUIDs[i], 
         transferSyntaxes, ASC_SC_ROLE_SCP);
     }
-  logger.error ( "Exit constructor" );
 }
 
 //------------------------------------------------------------------------------
