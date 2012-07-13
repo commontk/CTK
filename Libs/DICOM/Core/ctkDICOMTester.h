@@ -42,6 +42,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMTester : public QObject
   Q_PROPERTY(QString dcmqrscpExecutable READ dcmqrscpExecutable WRITE setDCMQRSCPExecutable)
   Q_PROPERTY(QString dcmqrscpConfigFile READ dcmqrscpConfigFile WRITE setDCMQRSCPConfigFile)
   Q_PROPERTY(QString storeSCUExecutable READ storeSCUExecutable WRITE setStoreSCUExecutable)
+  Q_PROPERTY(QString storeSCPExecutable READ storeSCPExecutable WRITE setStoreSCPExecutable)
   Q_PROPERTY(int dcmqrscpPort READ dcmqrscpPort WRITE setDCMQRSCPPort)
 public:
   ctkDICOMTester(QObject* parent = 0);
@@ -56,6 +57,9 @@ public:
 
   void setStoreSCUExecutable(const QString& storescu);
   QString storeSCUExecutable()const;
+
+  void setStoreSCPExecutable(const QString& storescp);
+  QString storeSCPExecutable()const;
 
   ///  Port number [0,65365] where the dcmqrscp and storescu communicate.
   /// Changing the port won't change the port of any running process.
