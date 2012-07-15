@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
-    <height>347</height>
+    <width>435</width>
+    <height>294</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="ctkDirectoryListView" name="DirectoryList" native="true">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -58,7 +58,7 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>224</height>
+          <height>40</height>
          </size>
         </property>
        </spacer>
