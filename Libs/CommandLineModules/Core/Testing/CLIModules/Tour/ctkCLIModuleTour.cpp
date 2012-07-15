@@ -45,11 +45,12 @@ int main(int argc, char* argv[])
   parser.addArgument("help", "h", QVariant::Bool, "Show this help text");
   parser.addArgument("xml", "", QVariant::Bool, "Print a XML description of this modules command line interface");
 
-  parser.addArgument("integer", "", QVariant::Int, "Show this help text");
-  parser.addArgument("", "b", QVariant::Bool, "Show this help text");
+  parser.addArgument("integer", "i", QVariant::Int, "Show this help text",15);
+  parser.addArgument("", "b", QVariant::String, "Show this help text");
   parser.addArgument("double", "d", QVariant::Double, "Show this help text");
   parser.addArgument("floatVector", "f", QVariant::String, "Show this help text");
   parser.addArgument("enumeration", "e", QVariant::String, "Show this help text");
+  parser.addArgument("string_vector", "", QVariant::String, "Show this help text");
   parser.addArgument("", "p", QVariant::String, "Show this help text");
 
   // Parse the command line arguments
@@ -79,6 +80,10 @@ int main(int argc, char* argv[])
   {
     QTextStream(stdout, QIODevice::WriteOnly) << parsedArgs["p"].toString();
   }
+  if(parsedArgs.contains("double"))
+  {
+    QTextStream(stdout, QIODevice::WriteOnly) << parsedArgs["double"].toString();
+  }
 
   // Do something
   // do we have enough information (input/output)?
@@ -90,7 +95,7 @@ int main(int argc, char* argv[])
     QPixmap pix(input);
     QPainter painter(&pix);
     painter.setPen(Qt::white);
-    painter.setFont(QFont("Arial", 15));
+    painter.setFont(QFont("Arial", parsedArgs["integer"].toInt()));
     painter.drawText(pix.rect(),Qt::AlignBottom|Qt::AlignLeft,"Result image produced by ctkCLIModuleTour");
     pix.save(output, "JPEG");
   }

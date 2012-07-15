@@ -319,6 +319,9 @@ void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
     ModuleInstance->setValue("dirVar", outputFileName);
     ModuleInstance->run();
 
+    QPixmap resultpix(outputFileName);
+    ui.PlaceHolderForResult->setPixmap(resultpix);
+
     //if(tempfile->open())
     //{
     //  QString filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
