@@ -62,8 +62,8 @@ void ctkDirectoryListWidgetPrivate::setupUi(QWidget * widget)
                    this, SLOT(onAddClicked()));
   QObject::connect(this->RemoveButton, SIGNAL(clicked()),
                    this, SLOT(onRemoveClicked()));
-  QObject::connect(this->ExpandButton, SIGNAL(clicked()),
-                   this, SLOT(onExpandClicked()));
+  QObject::connect(this->ExpandButton, SIGNAL(clicked(bool)),
+                   this, SLOT(onExpandClicked(bool)));
   QObject::connect(this->DirectoryList, SIGNAL(directoryListChanged()),
                    this, SLOT(onDirectoryListChanged()));
 }
@@ -101,16 +101,9 @@ void ctkDirectoryListWidgetPrivate::onRemoveClicked()
 }
 
 //-----------------------------------------------------------------------------
-void ctkDirectoryListWidgetPrivate::onExpandClicked()
+void ctkDirectoryListWidgetPrivate::onExpandClicked(bool state)
 {
-  if (this->GroupBox->isVisible())
-  {
-    this->GroupBox->hide();
-  }
-  else
-  {
-    this->GroupBox->show();
-  }
+  this->GroupBox->setVisible(state);
 }
 
 //-----------------------------------------------------------------------------

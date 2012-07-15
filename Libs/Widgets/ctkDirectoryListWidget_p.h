@@ -51,7 +51,7 @@ public:
 public Q_SLOTS:
   void onAddClicked();
   void onRemoveClicked();
-  void onExpandClicked();
+  void onExpandClicked(bool);
   void onDirectoryListChanged();
 
 public:
